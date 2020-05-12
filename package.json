@@ -1,0 +1,12 @@
+{
+  "name": "dflex",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "scripts/**"
+  ],
+  "repository": "https://github.com/jalal246/dflex",
+  "author": "Jalal Maskoun <jimmy002020@gmail.com>",
+  "scripts": {},
+  "devDependencies": {}
+}
