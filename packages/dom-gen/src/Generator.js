@@ -1,31 +1,18 @@
-/**
- * Generates unique key by combined depth with element current index.
- *
- * Ideally, each element should be connected with parent-id.
- * If we have element-id1, we should know who's the parent by parent-id.
- * But, currently this is not possible children render first. Instead,
- * we use counters combined with depth as parent-identifier. Vice-versa.
- *
- * @param {number} depth
- * @param {number} index
- * @returns {string} - unique key
- */
-function genKey(dp, i) {
-  return `${dp}-${i}`;
-}
+import genKey from "./utils";
 
 /**
- * Deals with elements distribution order.
+ * Generate keys to connect relations between DOM-elements depending on tree
+ * depth.
  *
- * @class StoresIndicators
+ * @class Generator
  */
-class StoresIndicators {
+class Generator {
   constructor() {
     /**
-     * Counter store. Each depth has it's own counter. Allowing us to go
+     * Counter store. Each depth has it's own indicator. Allowing us to go
      * for endless layers (levels).
      */
-    this.counter = {};
+    this.indicator = {};
 
     /**
      * Store elements ids in order.
@@ -43,39 +30,39 @@ class StoresIndicators {
   }
 
   /**
-   * Initiates self and parent counters if not.
+   * Initiates self and parent indicators if not.
    *
    * @param {number} dp - element depth
-   * @memberof StoresIndicators
+   * @memberof Generator
    */
-  initCounters(dp) {
+  initIndicators(dp) {
     /**
      * initiate self from -1 since self is incremented after the id is added so
-     * it's children won't be confused about their parent counter.
+     * it's children won't be confused about their parent indicator.
      *
      * if start from /dp = 1/
-     * => this.counter[1] = -1
+     * => this.indicator[1] = -1
      * => element added
-     * =>  this.counter[1] + 1
+     * =>  this.indicator[1] + 1
      * Now, If we get /dp = 0/
-     * => this.counter[dp+1] = 0 which is what we want.
+     * => this.indicator[dp+1] = 0 which is what we want.
      *
      * By adding this, we can deal with parents coming first before children.
      */
-    if (this.counter[dp] === undefined) {
-      this.counter[dp] = -1;
+    if (this.indicator[dp] === undefined) {
+      this.indicator[dp] = -1;
     }
 
     /**
      * initiate parents from zero.
-     * this.counter[dp+1] = 0
+     * this.indicator[dp+1] = 0
      */
-    if (this.counter[dp + 1] === undefined) {
-      this.counter[dp + 1] = 0;
+    if (this.indicator[dp + 1] === undefined) {
+      this.indicator[dp + 1] = 0;
     }
 
-    if (this.counter[dp + 2] === undefined) {
-      this.counter[dp + 2] = 0;
+    if (this.indicator[dp + 2] === undefined) {
+      this.indicator[dp + 2] = 0;
     }
   }
 
@@ -85,7 +72,7 @@ class StoresIndicators {
    * @param {string} id - element id
    * @param {string} sK -siblingsKey
    * @returns element index in array.
-   * @memberof StoresIndicators
+   * @memberof Generator
    */
   addToSiblings(id, sK) {
     let index = 0;
@@ -113,28 +100,30 @@ class StoresIndicators {
   }
 
   /**
-   * Add element to elmOrder
+   * Main method.
+   *
+   * Add element to elmOrder.
    *
    * @param {string} id - element id
    * @param {number} depth - element depth
-   * @returns object  { indexes, keys }
-   * @memberof StoresIndicators
+   * @returns object  { order, keys }
+   * @memberof Generator
    */
-  addToOrderStore(id, depth) {
+  getElmRelations(id, depth) {
     if (depth !== this.prevDepth) {
-      this.initCounters(depth);
+      this.initIndicators(depth);
     }
 
     /**
      * Get parent index.
      */
-    const parentIndex = this.counter[depth + 1];
+    const parentIndex = this.indicator[depth + 1];
 
     /**
      * get siblings unique key (sK) and parents key (pK)
      */
     const siblingsKey = genKey(depth, parentIndex);
-    const parentKey = genKey(depth + 1, this.counter[depth + 2]);
+    const parentKey = genKey(depth + 1, this.indicator[depth + 2]);
 
     const index = this.addToSiblings(id, siblingsKey);
 
@@ -142,7 +131,7 @@ class StoresIndicators {
       /**
        * Start new branch.
        */
-      this.counter[0] = 0;
+      this.indicator[0] = 0;
     }
 
     this.prevDepth = depth;
@@ -150,21 +139,21 @@ class StoresIndicators {
     const childrenKey = this.prevKey;
     this.prevKey = siblingsKey;
 
-    this.counter[depth] += 1;
+    this.indicator[depth] += 1;
 
     const keys = {
       sK: siblingsKey,
       pK: parentKey,
-      ...(depth !== 0 && { chK: childrenKey }),
+      chK: depth === 0 ? null : childrenKey,
     };
 
-    const indexes = {
+    const order = {
       self: index,
       parent: parentIndex,
     };
 
-    return { indexes, keys };
+    return { order, keys };
   }
 }
 
-export default StoresIndicators;
+export default Generator;

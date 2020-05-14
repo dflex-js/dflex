@@ -7,6 +7,16 @@
   ],
   "repository": "https://github.com/jalal246/dflex",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
-  "scripts": {},
-  "devDependencies": {}
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.9.6",
+    "babel-jest": "^26.0.1",
+    "eslint": "^7.0.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "2.20.1",
+    "jest": "^26.0.1",
+    "prettier": "^2.0.5"
+  }
 }
