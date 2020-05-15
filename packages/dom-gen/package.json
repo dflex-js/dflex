@@ -1,7 +1,8 @@
 {
   "name": "@dflex/dom-gen",
   "version": "0.0.0",
-  "main": "src/index.js",
+  "main": "src/dflexDomGen.min.cjs.js",
+  "umd:main": "dist/dflexDomGen.min.umd",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "repository": "https://github.com/jalal246/dflex/tree/master/packages/dom-gen",
   "license": "GPL-3.0",
@@ -13,7 +14,7 @@
     "@dflex",
     "@dflex/dom-gen",
     "@folo",
-    "store",
+    "DOM",
     "front-end"
   ],
   "publishConfig": {
