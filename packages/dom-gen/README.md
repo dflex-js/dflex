@@ -31,6 +31,114 @@ related index:
   - `pK: string` - Parent key, shared between all children.
   - `chK: string` - Children Key, valid for all elements above zero depth.
 
+```js
+import Generator from "@dflex/dom-gen";
+
+const domGen = new Generator();
+
+let pointer = domGen.getElmPointer("id-0", 0);
+
+// pointer = {
+//   keys: {
+//     chK: null,
+//     pK: "1-0",
+//     sK: "0-0",
+//   },
+//   order: {
+//     parent: 0,
+//     self: 0,
+//   },
+// };
+```
+
+Internally Generator has build dom tree as following:
+
+```bash
+DOM-root
+│
+│───id-0 => order:{ parent: 0, self: 0 } - keys: { chK: null , pK: "1-0", sK: "0-0" }
+```
+
+Adding more element on the same level:
+
+```js
+const domGen = new Generator();
+
+const pointer1 = domGen.getElmPointer("id-1", 0);
+
+// pointer1 = {
+//   keys: {
+//     chK: null,
+//     pK: "1-0",
+//     sK: "0-0",
+//   },
+//   order: {
+//     parent: 0,
+//     self: 1,
+//   },
+// };
+
+const pointer2 = domGen.getElmPointer("id-2", 0);
+
+// pointer2 = {
+//   keys: {
+//     chK: null,
+//     pK: "1-0",
+//     sK: "0-0",
+//   },
+//   order: {
+//     parent: 0,
+//     self: 2,
+//   },
+// };
+```
+
+And dom tree is:
+
+```bash
+DOM-root
+│
+│───id-0 => (order:{parent: 0, self: 0 }) || (keys: {chK: null,pK: "1-0",sK: "0-0"})
+│
+│───id-1 => (order:{parent: 0, self: 1 }) || (keys: {chK: null,pK: "1-0",sK: "0-0"})
+│
+│───id-2 => (order:{parent: 0, self: 2 }) || (keys: {chK: null,pK: "1-0",sK: "0-0"})
+```
+
+Following the same logic we can go deeper:
+
+```js
+const domGen = new Generator();
+
+const pointer = domGen.getElmPointer("id-parent-1", 1);
+
+// pointer = {
+//   keys: {
+//     chK: "0-0",
+//     pK: "2-0",
+//     sK: "1-0",
+//   },
+//   order: {
+//     parent: 0,
+//     self: 0,
+//   },
+// };
+```
+
+And dom tree is with relational key is as following:
+
+```bash
+DOM-root
+├───id-parent-1 (order:{parent: 0, self: 0 })   || (keys: {chK: "0-0",pK: "2-0",sK: "1-0"})
+    |
+    │───id-0  => (order:{parent: 0, self: 0 })  || (keys: {chK: null,pK: "1-0",sK: "0-0"})
+    │
+    │───id-1 => ..
+    │
+    │───id-2 => ..
+
+```
+
 ## Test
 
 ```sh
