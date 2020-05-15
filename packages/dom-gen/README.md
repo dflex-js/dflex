@@ -107,7 +107,7 @@ DOM-root
 
 **Note:** id/0-2 all have same parent and siblings key. So any incoming parent will
 carry key `1-0` and exists in position `0`. And this goes also for any parent
-which means from any element you can go up and down.
+which means for any element you can go up↑ and down↓ .
 
 Following the same logic we can go deeper:
 
