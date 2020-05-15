@@ -1,6 +1,6 @@
 # @dflex/dom-gen
 
-> Generates relations between dom elements depending on its depth.
+> Generates relations between DOM elements depending on their depth.
 
 ```bash
 npm install @dflex/dom-gen
@@ -51,15 +51,15 @@ let pointer = domGen.getElmPointer("id-0", 0);
 // };
 ```
 
-Internally Generator has build dom tree as following:
+Internally `Generator` has build dom tree as following:
 
 ```bash
 DOM-root
 │
-│───id-0 => order:{ parent: 0, self: 0 } - keys: { chK: null , pK: "1-0", sK: "0-0" }
+│───id-0 => order: { parent: 0, self: 0 } || keys: { chK: null , pK: "1-0", sK: "0-0" }
 ```
 
-Adding more element on the same level:
+Adding more elements on the same level:
 
 ```js
 const domGen = new Generator();
@@ -98,11 +98,11 @@ And dom tree is:
 ```bash
 DOM-root
 │
-│───id-0 => (order:{parent: 0, self: 0 }) || (keys: {chK: null,pK: "1-0",sK: "0-0"})
+│───id-0 => order: {parent: 0, self: 0 } || keys: {chK: null, pK: "1-0", sK: "0-0"}
 │
-│───id-1 => (order:{parent: 0, self: 1 }) || (keys: {chK: null,pK: "1-0",sK: "0-0"})
+│───id-1 => order: {parent: 0, self: 1 } || keys: {chK: null, pK: "1-0", sK: "0-0"}
 │
-│───id-2 => (order:{parent: 0, self: 2 }) || (keys: {chK: null,pK: "1-0",sK: "0-0"})
+│───id-2 => order: {parent: 0, self: 2 } || keys: {chK: null, pK: "1-0", sK: "0-0"}
 ```
 
 Following the same logic we can go deeper:
@@ -129,9 +129,9 @@ And dom tree is with relational key is as following:
 
 ```bash
 DOM-root
-├───id-parent-1 (order:{parent: 0, self: 0 })   || (keys: {chK: "0-0",pK: "2-0",sK: "1-0"})
+├───id-parent-1  => order: {parent: 0, self: 0 } || keys: {chK: "0-0", pK: "2-0", sK: "1-0"}
     |
-    │───id-0  => (order:{parent: 0, self: 0 })  || (keys: {chK: null,pK: "1-0",sK: "0-0"})
+    │───id-0  => order: {parent: 0, self: 0 } || keys: {chK: null, pK: "1-0", sK: "0-0"}
     │
     │───id-1 => ..
     │
