@@ -1,0 +1,23 @@
+{
+  "name": "@dflex/dom-gen",
+  "version": "0.0.0",
+  "main": "src/index.js",
+  "author": "Jalal Maskoun <jimmy002020@gmail.com>",
+  "repository": "https://github.com/jalal246/dflex/tree/master/packages/dom-gen",
+  "license": "GPL-3.0",
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "keywords": [
+    "@dflex",
+    "@dflex/dom-gen",
+    "@folo",
+    "store",
+    "front-end"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  }
+}
