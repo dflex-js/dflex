@@ -143,6 +143,10 @@ DOM-root
 
 ```
 
+`dom-gen` doesn't store keys and ids. All the id's validations should be done
+outside `Generator` logic. Also, storing relationships should be done separately
+in a store.
+
 ## Test
 
 ```sh
