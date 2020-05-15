@@ -75,7 +75,7 @@ class Generator {
    * @memberof Generator
    */
   addToSiblings(id, sK) {
-    let index = 0;
+    let selfIndex = 0;
 
     /**
      * Don't create array for only one child.
@@ -93,10 +93,10 @@ class Generator {
         this.elmOrder[sK].push(prevId);
       }
 
-      index = this.elmOrder[sK].push(id) - 1;
+      selfIndex = this.elmOrder[sK].push(id) - 1;
     }
 
-    return index;
+    return selfIndex;
   }
 
   /**
@@ -109,7 +109,7 @@ class Generator {
    * @returns object  { order, keys }
    * @memberof Generator
    */
-  getElmRelations(id, depth) {
+  getElmPointer(id, depth) {
     if (depth !== this.prevDepth) {
       this.initIndicators(depth);
     }
@@ -125,7 +125,7 @@ class Generator {
     const siblingsKey = genKey(depth, parentIndex);
     const parentKey = genKey(depth + 1, this.indicator[depth + 2]);
 
-    const index = this.addToSiblings(id, siblingsKey);
+    const selfIndex = this.addToSiblings(id, siblingsKey);
 
     if (depth < this.prevDepth) {
       /**
@@ -148,7 +148,7 @@ class Generator {
     };
 
     const order = {
-      self: index,
+      self: selfIndex,
       parent: parentIndex,
     };
 
