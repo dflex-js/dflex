@@ -7,27 +7,29 @@ npm install @dflex/dom-gen
 ```
 
 It figures out relations between DOM element without storing them or creating
-actual dom tree. Instead, it figures relationship based on element depth.
-
-In case you are studying any dom-tree, you can build entire branches and
-navigate through them using generated unique keys.
+actual dom tree. Instead, it gets relationship based on element depth. In case
+you are studying any dom-tree, you can build entire branches and navigate
+through them using generated unique keys.
 
 ```ts
-const domGen = new Generator();
+const domGen = new Generator()
 
-domGen.getElmPointer(id: string, depth: number);
+domGen.getElmPointer(id: string, depth: number)
 ```
 
-Returns pointer object refers to element relation with unique keys and its
-index:
+Returns pointer object refers to element relation with its unique keys and
+related index:
 
 - `order: Object <elementOrder>`
-  - `self: number` - element self index among its siblings.
+
+  - `self: number` - Element self index among its siblings.
   - `parent: number` - Parent index.
-- `keys: Object <relationMap>`
-  - `sK: string` - Siblings Key, where all siblings share this key.
-  - `pK: string` - Parent key, all children share this key.
-  - `chK: string` - Children Key valid for all elements above zero depth.
+
+- `keys: Object <relationKey>`
+
+  - `sK: string` - Siblings Key, where all siblings share the same key.
+  - `pK: string` - Parent key, shared between all children.
+  - `chK: string` - Children Key, valid for all elements above zero depth.
 
 ## Test
 
