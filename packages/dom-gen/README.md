@@ -6,7 +6,7 @@
 npm install @dflex/dom-gen
 ```
 
-It figures out relations between DOM element without storing them or creating
+It figures out relations between DOM elements without storing them or creating
 actual dom tree. Instead, it gets relationship based on element depth. In case
 you are studying any dom-tree, you can build entire branches and navigate
 through them using generated unique keys.
@@ -98,12 +98,16 @@ And dom tree is:
 ```bash
 DOM-root
 │
-│───id-0 => order: {parent: 0, self: 0 } || keys: {chK: null, pK: "1-0", sK: "0-0"}
+│───id-0 => order: {parent: 0, self: 0} || keys: {chK: null, pK: "1-0", sK: "0-0"}
 │
-│───id-1 => order: {parent: 0, self: 1 } || keys: {chK: null, pK: "1-0", sK: "0-0"}
+│───id-1 => order: {parent: 0, self: 1} || keys: {chK: null, pK: "1-0", sK: "0-0"}
 │
-│───id-2 => order: {parent: 0, self: 2 } || keys: {chK: null, pK: "1-0", sK: "0-0"}
+│───id-2 => order: {parent: 0, self: 2} || keys: {chK: null, pK: "1-0", sK: "0-0"}
 ```
+
+**Note:** id/0-2 all have same parent and siblings key. So any incoming parent will
+carry key `1-0` and exists in position `0`. And this goes also for any parent
+which means from any element you can go up and down.
 
 Following the same logic we can go deeper:
 
@@ -116,7 +120,7 @@ const pointer = domGen.getElmPointer("id-parent-1", 1);
 //   keys: {
 //     chK: "0-0",
 //     pK: "2-0",
-//     sK: "1-0",
+//     sK: "1-0", // this key was generated previously in children level
 //   },
 //   order: {
 //     parent: 0,
@@ -129,9 +133,9 @@ And dom tree is with relational key is as following:
 
 ```bash
 DOM-root
-├───id-parent-1  => order: {parent: 0, self: 0 } || keys: {chK: "0-0", pK: "2-0", sK: "1-0"}
+├───id-parent-1  => order: {parent: 0, self: 0} || keys: {chK: "0-0", pK: "2-0", sK: "1-0"}
     |
-    │───id-0  => order: {parent: 0, self: 0 } || keys: {chK: null, pK: "1-0", sK: "0-0"}
+    │───id-0  => order: {parent: 0, self: 0} || keys: {chK: null, pK: "1-0", sK: "0-0"}
     │
     │───id-1 => ..
     │
