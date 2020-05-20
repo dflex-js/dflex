@@ -1,15 +1,21 @@
 # @dflex/dom-gen
 
-> Generates relations between DOM elements depending on their depth.
+> DOM relations generator algorithm
 
 ```bash
 npm install @dflex/dom-gen
 ```
 
-It figures out relations between DOM elements without storing them or creating
-actual dom tree. Instead, it gets relationship based on element depth. In case
-you are studying any dom-tree, you can build entire branches and navigate
-through them using generated unique keys.
+It generates relations between DOM elements without storing them or creating
+actual dom tree. Instead, it gets relationship based on element depth.
+
+For each DOM node, it generates three keys: Siblings, Parent and Children
+keys and indexes one refers to node order in its level and the other refers to
+the parent index in parental level so to speak. Together: keys and indexes
+combined form uniqueness for each element.
+
+In case you are dealing with any DOM-tree, you can build entire branches and navigate
+through them using these generated unique keys and indexes.
 
 ```ts
 const domGen = new Generator()
