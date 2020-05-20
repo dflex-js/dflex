@@ -152,9 +152,16 @@ DOM-root
 
 ```
 
-**Take into consideration** that `dom-gen` doesn't store keys and ids. All the
-id's validations should be done outside `Generator` logic. Also, storing
-relationships should be done separately in a store.
+**Take into consideration two major things:**
+
+- It works both ascending and descending. So, it doesn't care how nodes are
+  mounted and it works with async mounting.
+
+- It automatically attaches the tree and link each node to the suitable family.
+
+- It doesn't store keys and ids. All the id's and depth validations
+  should be done outside `Generator` logic. Also, storing relationships should
+  be done separately in a store.
 
 ## Test
 
