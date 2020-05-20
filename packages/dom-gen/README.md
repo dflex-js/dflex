@@ -15,7 +15,8 @@ the parent index in parental level so to speak. Together: keys and indexes
 combined form uniqueness for each element.
 
 In case you are dealing with any DOM-tree, you can build entire branches and navigate
-through them using these generated unique keys and indexes.
+through them using these generated unique keys and indexes. Think of relational
+database or hash tables but in DOM.
 
 ```ts
 const domGen = new Generator()
