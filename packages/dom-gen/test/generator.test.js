@@ -124,4 +124,37 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
       });
     });
   });
+
+  describe("Add new node starting from zero again", () => {
+    it("Adds new elements as grand parent", () => {
+      // DOM-root
+      // ├───id-grand-parent-1  (order:{parent: 0, self: 0 }) ||  (keys: {chK: "1-0",pK: "3-0",sK: "2-0"})
+      //     |
+      //     ├───id-parent-1 => (order:{parent: 0, self: 0 }) || (keys: {chK: "0-0",pK: "2-0",sK: "1-0"})
+      //         |
+      //         │───id-0  => (order:{parent: 0, self: 0 })  || (keys: {chK: null,pK: "1-0",sK: "0-0"})
+      //         │
+      //         │───id-1 => ..
+      //         │
+      //         │───id-2 => ..
+      //
+      // ├───id-00  (order:{parent: 1, self: 0 }) ||  (keys: {chK: null,pK: "1-1",sK: "0-1"})
+
+      const pointer = domGen.getElmPointer("id-00", 0);
+
+      const expectedKeys = {
+        chK: null,
+        pK: "1-1",
+        sK: "0-1",
+      };
+
+      expect(pointer).toStrictEqual({
+        keys: expectedKeys,
+        order: {
+          parent: 1,
+          self: 0,
+        },
+      });
+    });
+  });
 });
