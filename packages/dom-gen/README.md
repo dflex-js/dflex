@@ -1,15 +1,22 @@
 # @dflex/dom-gen
 
-> Generates relations between DOM elements depending on their depth.
+> DOM relations generator algorithm.
 
 ```bash
 npm install @dflex/dom-gen
 ```
 
-It figures out relations between DOM elements without storing them or creating
-actual dom tree. Instead, it gets relationship based on element depth. In case
-you are studying any dom-tree, you can build entire branches and navigate
-through them using generated unique keys.
+It generates relations between DOM elements without storing them or creating
+actual dom tree. Instead, it gets relationship based on element depth.
+
+For each DOM node, it generates three keys: Siblings, Parent and Children
+keys and two indexes one refers to node order in its level and the other refers to
+the parent index in parental level so to speak. Together: keys and indexes
+combined form of uniqueness for each element.
+
+In case you are dealing with any DOM-tree, you can build entire branches and navigate
+through them using these generated unique keys and indexes. Think of relational
+database or hash tables but applied in DOM tree.
 
 ```ts
 const domGen = new Generator()
@@ -105,9 +112,10 @@ DOM-root
 │───id-2 => order: {parent: 0, self: 2} || keys: {chK: null, pK: "1-0", sK: "0-0"}
 ```
 
-**Note:** id/0-2 all have same parent and siblings key. So any incoming parent will
-carry key `1-0` and exists in position `0`. And this goes also for any parent
-which means for any element you can go up↑ and down↓ .
+**Note:** ids form 0 to 2, all have same parent and siblings key. And it
+guarantees that any any incoming parent will carry key `1-0` and exists in
+position `0`. And this goes also for any parent. Eventually, using keys and
+indexes you can go up↑ and down↓.
 
 Following the same logic we can go deeper:
 
@@ -129,7 +137,8 @@ const pointer = domGen.getElmPointer("id-parent-1", 1);
 // };
 ```
 
-And dom tree is with relational key is as following:
+Changing the depth identifies new level. Take a look at current dom tree that we
+now have:
 
 ```bash
 DOM-root
@@ -143,9 +152,9 @@ DOM-root
 
 ```
 
-`dom-gen` doesn't store keys and ids. All the id's validations should be done
-outside `Generator` logic. Also, storing relationships should be done separately
-in a store.
+**Take into consideration** that `dom-gen` doesn't store keys and ids. All the
+id's validations should be done outside `Generator` logic. Also, storing
+relationships should be done separately in a store.
 
 ## Test
 
@@ -155,4 +164,4 @@ npm test
 
 ## License
 
-This project is licensed under the [GPL-3.0 License](https://github.com/jalal246/dflex/tree/master/packages/dom-gen/LICENSE)
+This package is licensed under the [GPL-3.0 License](https://github.com/jalal246/dflex/tree/master/packages/dom-gen/LICENSE)
