@@ -22,7 +22,7 @@ class Generator {
      * This is an easy solution, to know elements order and update it
      * accordingly.
      */
-    this.elmOrder = {};
+    this.pointers = {};
 
     this.prevDepth = -99;
 
@@ -80,29 +80,40 @@ class Generator {
     /**
      * Don't create array for only one child.
      */
-    if (this.elmOrder[sK] === undefined) {
-      this.elmOrder[sK] = id;
+    if (this.pointers[sK] === undefined) {
+      this.pointers[sK] = id;
     } else {
       /**
        * So here we have multiple children, we better create an array now.
        */
-      if (this.elmOrder[sK].constructor !== Array) {
-        const prevId = this.elmOrder[sK];
+      if (this.pointers[sK].constructor !== Array) {
+        const prevId = this.pointers[sK];
 
-        this.elmOrder[sK] = [];
-        this.elmOrder[sK].push(prevId);
+        this.pointers[sK] = [];
+        this.pointers[sK].push(prevId);
       }
 
-      selfIndex = this.elmOrder[sK].push(id) - 1;
+      selfIndex = this.pointers[sK].push(id) - 1;
     }
 
     return selfIndex;
   }
 
   /**
+   * Gets all element Siblings
+   *
+   * @param {string} sk - sibling key
+   * @returns {string|Array}
+   * @memberof Generator
+   */
+  getElmSiblings(sk) {
+    return sk ? this.pointers[sk] : this.pointers;
+  }
+
+  /**
    * Main method.
    *
-   * Add element to elmOrder.
+   * Add element to pointers.
    *
    * @param {string} id - element id
    * @param {number} depth - element depth
