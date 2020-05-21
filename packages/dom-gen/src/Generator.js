@@ -100,7 +100,7 @@ class Generator {
   }
 
   /**
-   * Gets all element Siblings
+   * Gets all element IDs Siblings
    *
    * @param {string} sk - sibling key
    * @returns {string|Array}

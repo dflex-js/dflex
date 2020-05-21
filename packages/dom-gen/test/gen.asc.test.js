@@ -6,6 +6,8 @@ let pointerChild0D0;
 let pointerChild1D0;
 let pointerChild2D0;
 
+let firstBranchSiblings;
+
 const KEYS_CHILDREN_D0 = {
   chK: null,
   pK: "1-0",
@@ -33,6 +35,10 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
           self: 0,
         },
       });
+
+      const branch = domGen.getElmSiblings(pointerChild0D0.keys.sK);
+
+      expect(branch).toBe("id-0");
     });
 
     it("Preserves keys and parent index for element with same level", () => {
@@ -52,6 +58,10 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
         },
       });
 
+      let branch = domGen.getElmSiblings(pointerChild0D0.keys.sK);
+
+      expect(branch).toStrictEqual(["id-0", "id-1"]);
+
       // DOM-root
       // │
       // │───id-0  => (order:{parent: 0, self: 0 }) || (keys: {chK: null,pK: "1-0",sK: "0-0"})
@@ -69,6 +79,10 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
           self: pointerChild1D0.order.self + 1,
         },
       });
+
+      branch = domGen.getElmSiblings(pointerChild2D0.keys.sK);
+
+      expect(branch).toStrictEqual(["id-0", "id-1", "id-2"]);
     });
   });
 
@@ -100,6 +114,10 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
           self: 0,
         },
       });
+
+      const branch = domGen.getElmSiblings(pointerParent0D1.keys.sK);
+
+      expect(branch).toBe("id-parent-1");
     });
 
     it("Identifies grand parent connects its branch", () => {
@@ -129,6 +147,10 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
           self: 0,
         },
       });
+
+      const branch = domGen.getElmSiblings(pointerGrandParent0D2.keys.sK);
+
+      expect(branch).toBe("id-grand-parent-1");
     });
   });
 
@@ -165,6 +187,23 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
           parent: 1,
           self: 0,
         },
+      });
+
+      const branch = domGen.getElmSiblings(pointerChild3D0.keys.sK);
+
+      expect(branch).toBe("id-00");
+    });
+  });
+
+  describe("Check branches", () => {
+    it("Returns all of branches correctly", () => {
+      const branches = domGen.getElmSiblings();
+
+      expect(branches).toStrictEqual({
+        "0-0": ["id-0", "id-1", "id-2"],
+        "1-0": "id-parent-1",
+        "2-0": "id-grand-parent-1",
+        "0-1": "id-00",
       });
     });
   });
