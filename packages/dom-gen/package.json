@@ -1,7 +1,7 @@
 {
   "name": "@dflex/dom-gen",
-  "version": "0.1.0",
-  "main": "src/dflexDomGen.min.cjs.js",
+  "version": "0.1.1",
+  "main": "dist/dflexDomGen.min.cjs.js",
   "umd:main": "dist/dflexDomGen.min.umd",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "repository": "https://github.com/jalal246/dflex/tree/master/packages/dom-gen",
