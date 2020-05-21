@@ -6,22 +6,20 @@
 npm install @dflex/dom-gen
 ```
 
-It generates relations between DOM elements without storing them or creating
-actual dom tree. Instead, it gets relationship based on element depth.
+Generates relations between DOM elements based on element depth. For each DOM
+node, it generates three keys: Siblings, Parent and Children keys and two
+indexes one refers to node order in its level and the other refers to the parent
+index in parental level. Together: keys and indexes combined form of
+uniqueness for each element.
 
-For each DOM node, it generates three keys: Siblings, Parent and Children
-keys and two indexes one refers to node order in its level and the other refers to
-the parent index in parental level so to speak. Together: keys and indexes
-combined form of uniqueness for each element.
-
-In case you are dealing with any DOM-tree, you can build entire branches and navigate
+In case you are dealing with any DOM-tree, you can build entire branches and traverse
 through them using these generated unique keys and indexes. Think of relational
 database or hash tables but applied in DOM tree.
 
 ## Generates element pointer
 
-Element pointer refers to the element position and relationship in DOM tree and
-represented with `getElmPointer` as following:
+Element pointer refers to the element position and its relationship in DOM tree.
+It's represented with `getElmPointer` as following:
 
 ```ts
 const domGen = new Generator()
@@ -29,19 +27,19 @@ const domGen = new Generator()
 domGen.getElmPointer(id: string, depth: number)
 ```
 
-Returns pointer object refers to element relation with its unique keys and
-related index:
+Returns pointer object refers to element relation with its keys and related
+index:
 
 - `order: Object <elementOrder>`
 
   - `self: number` - Element self index among its siblings.
-  - `parent: number` - Parent index.
+  - `parent: number` - Parent index among its siblings.
 
 - `keys: Object <relationKey>`
 
-  - `sK: string` - Siblings Key, where all siblings share the same key.
-  - `pK: string` - Parent key, shared between all children.
-  - `chK: string` - Children Key, valid for all elements above zero depth.
+  - `sK: string` - Siblings Key, connects nodes in the same level.
+  - `pK: string` - Parent key, connects nodes in the higher level.
+  - `chK: string` - Children Key, connects nodes in the lower level.
 
 ```js
 import Generator from "@dflex/dom-gen";
@@ -117,8 +115,10 @@ DOM-root
 
 **Note:** ids form 0 to 2, all have same parent and siblings key. And it
 guarantees that any any incoming parent will carry key `1-0` and exists in
-position `0`. And this goes also for any parent. Eventually, using keys and
-indexes you can go up↑ and down↓.
+position `0`.
+
+This goes also for any parent. Eventually, by using keys and indexes you can go up↑
+and down↓.
 
 Following the same logic we can go deeper:
 
@@ -129,10 +129,10 @@ const pointer = domGen.getElmPointer("id-parent-1", 1);
 //   keys: {
 //     chK: "0-0",
 //     pK: "2-0",
-//     sK: "1-0", // this key was generated previously in children level
+//     sK: "1-0", // this key was generated previously in children level.
 //   },
 //   order: {
-//     parent: 0,
+//     parent: 0, // all children aware of their parent index.
 //     self: 0,
 //   },
 // };
@@ -168,8 +168,6 @@ data to keep generate unique pointers. Every incoming node element belong to
 branch contains all input ids distrusted by depth/level entries.
 
 ```ts
-const domGen = new Generator()
-
 domGen.getElmBranch(sk: string) : string<id> | Array<ids>
 ```
 
@@ -179,7 +177,7 @@ our generated tree:
 ```js
 const branchChildren = domGen.getElmBranch("0-0");
 
-branchChildren = ["id-0", "id-1", "id-2"];
+// branchChildren = ["id-0", "id-1", "id-2"];
 ```
 
 Since we have only one parent `branchParents` contain one node only:
@@ -187,7 +185,7 @@ Since we have only one parent `branchParents` contain one node only:
 ```js
 const branchParents = domGen.getElmBranch("1-0");
 
-branchParents = "id-parent-1";
+// branchParents = "id-parent-1";
 ```
 
 To get all branches:
@@ -195,16 +193,16 @@ To get all branches:
 ```js
 const { branches } = domGen;
 
-branches = {
-  "0-0": ["id-0", "id-1", "id-2"],
-  "1-0": "id-parent-1",
-};
+// branches = {
+//   "0-0": ["id-0", "id-1", "id-2"],
+//   "1-0": "id-parent-1",
+// };
 ```
 
 ## Test
 
 ```sh
-npm test
+yarn test
 ```
 
 ## License
