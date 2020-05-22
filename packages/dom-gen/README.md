@@ -203,9 +203,9 @@ const { branches } = domGen;
 
 ### Updating branches
 
-There's no point of having DOM tree map without the ability to update it
-according to some logic you've already implemented in your app. Following the
-common sense, you can do it easily with `setElmBranch`
+There's no point in having DOM treemap without the ability to update it
+according to some logic you've already implemented in your app. Following common
+sense, you can do it easily with `setElmBranch`.
 
 ```ts
 domGen.setElmBranch(sk: string, branch: string<id>|Array<ids>)
