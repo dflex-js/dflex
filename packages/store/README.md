@@ -1,6 +1,6 @@
 # @dflex/store
 
->
+> Todo:
 
 ```bash
 npm install @dflex/store
