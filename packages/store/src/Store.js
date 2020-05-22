@@ -1,35 +1,43 @@
+import Generator from "@dflex/dom-gen";
+
 /**
  * Store class contains all dnd elements and their orders.
  *
  * @class Store
  */
-class Store {
+class Store extends Generator {
   constructor() {
+    super();
+
     /**
      * Store registered DOM nodes. Use id as key.
      */
-    this.dflexStore = {};
+    this.registry = {};
   }
 
   /**
-   * Set elements in dflexStore.
+   * Add elements to registry.
    *
    * @param {Object} elmInstance
    * @memberof Store
    */
-  setELm(id, elmInstance) {
-    this.dflexStore[id] = elmInstance;
+  register(elmInstance) {
+    const { id, depth } = elmInstance;
+
+    const pointer = this.getElmPointer(id, depth);
+
+    this.registry[id] = Object.assign(elmInstance, pointer);
   }
 
   /**
-   * Gets element from dflexStore by Id.
+   * Gets element from registry by Id.
    *
    * @param {string} id
    * @returns {elmInstance} - elmInstance Object.
    * @memberof Store
    */
   getElmById(id) {
-    return this.dflexStore[id];
+    return this.registry[id];
   }
 
   /**
