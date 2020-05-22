@@ -4,6 +4,9 @@
   "main": "src/dflexStore.min.cjs.js",
   "umd:main": "dist/dflexStore.min.umd",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
+  "scripts": {
+    "build": "builderz --formats cjs umd -m -l"
+  },
   "repository": "https://github.com/jalal246/dflex/tree/master/packages/dom-gen",
   "license": "GPL-3.0",
   "files": [

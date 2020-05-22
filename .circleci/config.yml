@@ -10,7 +10,7 @@ jobs:
       - node/with-cache:
           steps:
             - run: yarn install --pure-lockfile
-            - run: yarn build
+            - run: yarn workspaces run build
             - run: yarn test
 workflows:
   build-and-test:
