@@ -161,11 +161,13 @@ DOM-root
 - It automatically attaches the tree and links each node to the suitable parent
   and siblings.
 
-## Getting branches
+## Dealing with branches
 
 Despite the fact that `Generator` is not DOM store, it maintains some kind of
 data to keep generate unique pointers. Every incoming node element belong to
 branch contains all input ids distrusted by depth/level entries.
+
+### Getting branches
 
 ```ts
 domGen.getElmBranch(sk: string) : string<id> | Array<ids>
@@ -197,6 +199,27 @@ const { branches } = domGen;
 //   "0-0": ["id-0", "id-1", "id-2"],
 //   "1-0": "id-parent-1",
 // };
+```
+
+### Updating branches
+
+There's no point of having DOM tree map without the ability to update it
+according to some logic you've already implemented in your app. Following the
+common sense, you can do it easily with `setElmBranch`
+
+```ts
+domGen.setElmBranch(sk: string, branch: string<id>|Array<ids>)
+```
+
+Let's continue working on our branches by switching the order of children.
+Currently, we have: `"0-0": ["id-0", "id-1", "id-2"]` but element with `id-1`
+has been switched with `id-2`.
+
+```js
+const { branches } = domGen;
+
+const newBranch = ["id-0", "id-2", "id-1"];
+domGen.setElmBranch("0-0", newBranch);
 ```
 
 ## Test
