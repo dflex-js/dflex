@@ -231,7 +231,7 @@ domGen.setElmBranch("0-0", newBranch);
 ## Test
 
 ```sh
-yarn test
+yarn test dom-gen
 ```
 
 ## License
