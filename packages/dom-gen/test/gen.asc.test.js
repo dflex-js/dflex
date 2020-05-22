@@ -193,12 +193,27 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
     });
   });
 
-  describe("Check branches", () => {
+  describe("Dealing with branches", () => {
     it("Returns all of branches correctly", () => {
       const { branches } = domGen;
 
       expect(branches).toStrictEqual({
         "0-0": ["id-0", "id-1", "id-2"],
+        "1-0": "id-parent-1",
+        "2-0": "id-grand-parent-1",
+        "0-1": "id-00",
+      });
+    });
+
+    it("Updates branches correctly", () => {
+      const newBranch = ["id-2", "id-1", "id-0"];
+
+      domGen.setElmBranch("0-0", newBranch);
+
+      const { branches } = domGen;
+
+      expect(branches).toStrictEqual({
+        "0-0": newBranch,
         "1-0": "id-parent-1",
         "2-0": "id-grand-parent-1",
         "0-1": "id-00",
