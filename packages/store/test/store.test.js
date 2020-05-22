@@ -68,7 +68,20 @@ describe("Testing store", () => {
         order: { self: 0, parent: 0 },
         keys: { sK: "0-0", pK: "1-0", chK: null },
       },
-      parent: undefined,
+      parent: {
+        depth: 1,
+        id: "p-id-0",
+        keys: {
+          chK: "0-0",
+          pK: "2-0",
+          sK: "1-0",
+        },
+        moreInfo: "I am parent",
+        order: {
+          parent: 0,
+          self: 0,
+        },
+      },
       branches: { siblings: ["id-0", "id-1", "id-2"], parents: "p-id-0" },
     });
   });

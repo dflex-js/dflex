@@ -75,7 +75,7 @@ class Store extends Generator {
      */
     let parent = null;
     if (parents !== undefined) {
-      const parentsID = parents[pi];
+      const parentsID = Array.isArray(parents) ? parents[pi] : parents;
       parent = this.getElmById(parentsID);
     }
 
