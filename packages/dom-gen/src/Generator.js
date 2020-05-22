@@ -100,7 +100,7 @@ class Generator {
   }
 
   /**
-   * Gets all element IDs Siblings
+   * Gets all element IDs Siblings in given node represented by sk.
    *
    * @param {string} sk - sibling key
    * @returns {string|Array}
@@ -108,6 +108,17 @@ class Generator {
    */
   getElmBranch(sk) {
     return this.branches[sk];
+  }
+
+  /**
+   * Sets new branch for given key.
+   *
+   * @param {string} k - generated key
+   * @param {string|Array} lst - new branch
+   * @memberof Generator
+   */
+  setElmBranch(sk, branch) {
+    this.branches[sk] = branch;
   }
 
   /**

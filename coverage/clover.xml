@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1590084669128" clover="3.2.0">
-  <project timestamp="1590084669128" name="All files">
-    <metrics statements="36" coveredstatements="36" conditionals="18" coveredconditionals="18" methods="6" coveredmethods="6" elements="60" coveredelements="60" complexity="0" loc="36" ncloc="36" packages="1" files="2" classes="2"/>
+<coverage generated="1590171885729" clover="3.2.0">
+  <project timestamp="1590171885729" name="All files">
+    <metrics statements="37" coveredstatements="37" conditionals="16" coveredconditionals="16" methods="7" coveredmethods="7" elements="60" coveredelements="60" complexity="0" loc="37" ncloc="37" packages="1" files="2" classes="2"/>
     <file name="Generator.js" path="D:\projects\js\published\dflex\packages\dom-gen\src\Generator.js">
-      <metrics statements="35" coveredstatements="35" conditionals="18" coveredconditionals="18" methods="5" coveredmethods="5"/>
+      <metrics statements="36" coveredstatements="36" conditionals="16" coveredconditionals="16" methods="6" coveredmethods="6"/>
       <line num="15" count="2" type="stmt"/>
       <line num="25" count="2" type="stmt"/>
       <line num="27" count="2" type="stmt"/>
@@ -23,22 +23,23 @@
       <line num="93" count="2" type="stmt"/>
       <line num="96" count="3" type="stmt"/>
       <line num="99" count="10" type="stmt"/>
-      <line num="110" count="7" type="cond" truecount="2" falsecount="0"/>
-      <line num="124" count="10" type="cond" truecount="2" falsecount="0"/>
-      <line num="125" count="7" type="stmt"/>
-      <line num="131" count="10" type="stmt"/>
-      <line num="136" count="10" type="stmt"/>
-      <line num="137" count="10" type="stmt"/>
-      <line num="139" count="10" type="stmt"/>
-      <line num="141" count="10" type="cond" truecount="2" falsecount="0"/>
-      <line num="145" count="3" type="stmt"/>
+      <line num="110" count="6" type="stmt"/>
+      <line num="121" count="1" type="stmt"/>
+      <line num="135" count="10" type="cond" truecount="2" falsecount="0"/>
+      <line num="136" count="7" type="stmt"/>
+      <line num="142" count="10" type="stmt"/>
+      <line num="147" count="10" type="stmt"/>
       <line num="148" count="10" type="stmt"/>
       <line num="150" count="10" type="stmt"/>
-      <line num="151" count="10" type="stmt"/>
-      <line num="153" count="10" type="stmt"/>
-      <line num="155" count="10" type="stmt"/>
+      <line num="152" count="10" type="cond" truecount="2" falsecount="0"/>
+      <line num="156" count="3" type="stmt"/>
+      <line num="159" count="10" type="stmt"/>
       <line num="161" count="10" type="stmt"/>
+      <line num="162" count="10" type="stmt"/>
+      <line num="164" count="10" type="stmt"/>
       <line num="166" count="10" type="stmt"/>
+      <line num="172" count="10" type="stmt"/>
+      <line num="177" count="10" type="stmt"/>
     </file>
     <file name="utils.js" path="D:\projects\js\published\dflex\packages\dom-gen\src\utils.js">
       <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>

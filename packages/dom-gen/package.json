@@ -16,7 +16,9 @@
   "keywords": [
     "@dflex",
     "@dflex/dom-gen",
+    "@dflex/store",
     "@folo",
+    "builderz",
     "DOM",
     "front-end"
   ],
