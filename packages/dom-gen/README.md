@@ -219,7 +219,13 @@ has been switched with `id-2`.
 const { branches } = domGen;
 
 const newBranch = ["id-0", "id-2", "id-1"];
+
 domGen.setElmBranch("0-0", newBranch);
+
+// branches = {
+//   "0-0": ["id-0", "id-2", "id-1"],
+//   "1-0": "id-parent-1",
+// };
 ```
 
 ## Test
