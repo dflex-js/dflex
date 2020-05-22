@@ -4,6 +4,8 @@ import Generator from "@dflex/dom-gen";
  * Store class contains all dnd elements and their orders.
  *
  * @class Store
+ * @extends {Generator}
+ *
  */
 class Store extends Generator {
   constructor() {
@@ -65,8 +67,8 @@ class Store extends Generator {
     /**
      * getting connected branches
      */
-    const siblings = this.getListByKey(sK);
-    const parents = this.getListByKey(pK);
+    const siblings = this.getElmBranch(sK);
+    const parents = this.getElmBranch(pK);
 
     /**
      * getting parent instance
