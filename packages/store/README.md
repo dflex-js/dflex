@@ -1,6 +1,6 @@
 # @dflex/store
 
-> Todo:
+>
 
 ```bash
 npm install @dflex/store
@@ -9,7 +9,7 @@ npm install @dflex/store
 ## Test
 
 ```sh
-npm test
+npm test store
 ```
 
 ## License
