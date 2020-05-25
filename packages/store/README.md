@@ -8,15 +8,16 @@ npm install @dflex/store
 
 DFlex store works on connecting all registered elements and organizes the
 relations between them using the DOM relations generator algorithm. Allowing
-each element to be reached, recursively by using its id.
+each element to be reached, recursively using its id.
 
-Why? Increase application performance if it relies heavily on the DOM nodes. To
+Why? To increase application performance if it relies heavily on the DOM nodes. To
 be clear, this is not a case against HTML DOM API. Instead, this a way to
 enhance dealing with nodes more freely when you rely on existing store instead
 of letting the browser reads nodes first then store it to do whatever you want
 to do.
 
-Giving this fact, this Dflex store builds on what you already have `id`.
+Giving this fact, Dflex store is built on what you already have and easy to
+access: `id`.
 
 ## Start by register each node in the store
 
