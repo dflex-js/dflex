@@ -1,6 +1,6 @@
 {
   "name": "@dflex/store",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "main": "src/dflexStore.min.cjs.js",
   "umd:main": "dist/dflexStore.min.umd",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
@@ -27,6 +27,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@dflex/dom-gen": "^0.2.0"
+    "@dflex/dom-gen": "^0.2.1"
   }
 }
