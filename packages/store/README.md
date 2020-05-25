@@ -37,22 +37,20 @@ const elm0D0 = {
   depth: 0,
   moreInfo: "I am the first child",
 };
+store.register(elm0D0);
 
 const elm1D0 = {
   id: "id-1",
   depth: 0,
   moreInfo: "I am the second child",
 };
+store.register(elm1D0);
 
 const elm0D1 = {
   id: "p-id-0",
   depth: 1,
   moreInfo: "I am the parent",
 };
-
-store.register(elm0D0);
-store.register(elm1D0);
-
 store.register(elm0D1);
 ```
 
@@ -114,6 +112,50 @@ Contains element connections in DOM tree with registered information.
 
 ```ts
 store.getElmTreeById(id: string) :  Object<elmInstanceConnection>
+```
+
+`Object<elmInstanceConnection>` includes:
+
+- `element: Object<elmInstanceMeta>`- for our targeted element.
+
+- `parent: Object<elmInstanceMeta>`- for our targeted element.
+
+- `branches: Object<treeBranches>`:
+
+  - `siblings: string<id>|Array<ids>`
+
+  - `parents: string<id>|Array<ids>`
+
+Going back to our first element with `id: id-0`, we can get element instance, its parent instance,
+and its connection branches.
+
+```js
+const elmInstanceConnection = store.getElmTreeById("id-0");
+
+elmInstanceConnection = {
+  element: {
+    id: "id-0",
+    depth: 0,
+    moreInfo: "I am the first child",
+    order: { self: 0, parent: 0 },
+    keys: { sK: "0-0", pK: "1-0", chK: null },
+  },
+  parent: {
+    depth: 1,
+    id: "p-id-0",
+    keys: {
+      chK: "0-0",
+      pK: "2-0",
+      sK: "1-0",
+    },
+    moreInfo: "I am the parent",
+    order: {
+      parent: 0,
+      self: 0,
+    },
+  },
+  branches: { siblings: ["id-0", "id-1"], parents: "p-id-0" },
+};
 ```
 
 ## Test
