@@ -8,13 +8,13 @@ npm install @dflex/store
 
 DFlex store works on connecting all registered elements and organizes the
 relations between them using the DOM relations generator algorithm. Allowing
-each element to be reached, recursively using its id.
+each element to be reached recursively using its id.
 
 Why? To increase application performance if it relies heavily on the DOM nodes. To
 be clear, this is not a case against HTML DOM API. Instead, this a way to
 enhance dealing with nodes more freely when you rely on existing store instead
-of letting the browser reads nodes first then store it to do whatever you want
-to do.
+of letting the browser reads the nodes first then you store it, to do whatever
+you want to do.
 
 Giving this fact, the Dflex store is built on what you already have and easy to
 access: `id`, which is why used as keys.
@@ -31,7 +31,13 @@ Where `elmInstance` should include:
 - `depth: number` - element depth in DOM tree.
 - `rest: any` - another data you want to store it for each element.
 
+Let's try by creating new store and register some elements in it:
+
 ```js
+import Store from "dflex/store";
+
+const store = new Store();
+
 const elm0D0 = {
   id: "id-0",
   depth: 0,
@@ -58,8 +64,8 @@ store.register(elm0D1);
 
 ### Element Instance by ID
 
-Contains element metadata. The generated keys and indexes with registered
-information.
+Contains element metadata. Which includes generated keys and indexes with registered
+data.
 
 ```ts
 store.getElmById(id: string) :  Object<elmInstanceMeta>
