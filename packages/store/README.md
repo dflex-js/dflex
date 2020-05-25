@@ -1,6 +1,6 @@
 # @dflex/store
 
-> The place where you get node connections by id.
+> The place where you traverse through DOM tree by using id.
 
 ```bash
 npm install @dflex/store
@@ -13,11 +13,11 @@ each element to be reached recursively using its id.
 Why? To increase application performance if it relies heavily on the DOM nodes. To
 be clear, this is not a case against HTML DOM API. Instead, this a way to
 enhance dealing with nodes more freely when you rely on existing store instead
-of letting the browser reads the nodes first then you store it, to do whatever
+of letting the browser reads the nodes first, then you store them to do whatever
 you want to do.
 
-Giving this fact, the Dflex store is built on what you already have and easy to
-access: `id`, which is why used as keys.
+Giving this fact, the Dflex store is built on what you already have and you can
+easily access: `id`, which is why ids are used as keys.
 
 ## Registering elements in the store
 
@@ -64,14 +64,12 @@ store.register(elm0D1);
 
 ### Element Instance by ID
 
-Contains element metadata. Which includes generated keys and indexes with registered
-data.
-
 ```ts
 store.getElmById(id: string) :  Object<elmInstanceMeta>
 ```
 
-`Object<elmInstanceMeta>` includes element instance and its relation:
+`Object<elmInstanceMeta>` Contains element metadata. Which includes generated
+keys and indexes with registered data.
 
 - `id: string` - element id.
 
