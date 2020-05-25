@@ -6,9 +6,9 @@
 npm install @dflex/store
 ```
 
-Using DOM relations generator algorithm Dflex store works on connecting all
-registered elements, organizes the relations allowing each element to be
-reached, recursively using its id.
+DFlex store works on connecting all registered elements and organizes the
+relations between them using the DOM relations generator algorithm. Allowing
+each element to be reached, recursively by using its id.
 
 Why? Increase application performance if it relies heavily on the DOM nodes. To
 be clear, this is not a case against HTML DOM API. Instead, this a way to
@@ -89,7 +89,7 @@ store.getElmById(id: string) :  Object<elmInstanceConnection>
   - `pK: string` - Parent key, connects nodes in the higher level.
   - `chK: string` - Children Key, connects nodes in the lower level.
 
-- `rest: any` - another data already entered when register the element.
+- `rest: any` - data already entered when element is registered.
 
 ## Test
 
