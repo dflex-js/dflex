@@ -1,6 +1,6 @@
 # @dflex/store
 
-> The place where you traverse through DOM tree by using id.
+> The place where you traverse through the DOM tree using element-id.
 
 ```bash
 npm install @dflex/store
@@ -68,8 +68,8 @@ store.register(elm0D1);
 store.getElmById(id: string) :  Object<elmInstanceMeta>
 ```
 
-`Object<elmInstanceMeta>` Contains element metadata. Which includes generated
-keys and indexes with registered data.
+It returns `Object<elmInstanceMeta>` which contains element metadata including
+generated keys and indexes with registered data.
 
 - `id: string` - element id.
 
@@ -112,13 +112,12 @@ const elemInstance = store.getElmById("id-0");
 
 ### Element Tree by ID
 
-Contains element connections in DOM tree with registered data.
-
 ```ts
 store.getElmTreeById(id: string) : Object<elmInstanceConnection>
 ```
 
-`Object<elmInstanceConnection>` includes:
+It returns `Object<elmInstanceConnection>` which contains element connections in DOM tree with
+registered data. It includes:
 
 - `element: Object<elmInstanceMeta>`- for targeted element.
 
