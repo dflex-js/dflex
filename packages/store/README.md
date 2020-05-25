@@ -161,9 +161,10 @@ const elmInstanceConnection = store.getElmTreeById("id-0");
 // };
 ```
 
-Why this is matter? Because now traverse through DOM tree with existing store.
-`elmInstanceConnection.branches.parents` you can go up. With
-`elmInstanceConnection.branches.siblings` you can get all siblings. Both ways retrieve nodes in order.
+Why this is matter? Because now you can traverse through DOM tree with existing
+store. Note that `elmInstanceConnection.branches.parents` allows you to go up
+while `elmInstanceConnection.branches.siblings` allows to traverse through all
+node siblings. And not only that, both ways retrieve nodes in order.
 
 ## Test
 
