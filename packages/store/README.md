@@ -17,9 +17,9 @@ of letting the browser reads nodes first then store it to do whatever you want
 to do.
 
 Giving this fact, the Dflex store is built on what you already have and easy to
-access: `id`.
+access: `id`, which is why used as keys.
 
-## Start by register elements in the store
+## Registering elements in the store
 
 ```ts
 store.register(elmInstance: Object<elmInstance>)
