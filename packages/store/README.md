@@ -58,11 +58,16 @@ store.register(elm0D1);
 
 ## Getting element in the store
 
+### Element Instance by ID
+
+Contains element metadata. The generated keys and indexes with registered
+information.
+
 ```ts
-store.getElmById(id: string) :  Object<elmInstanceConnection>
+store.getElmById(id: string) :  Object<elmInstanceMeta>
 ```
 
-`Object<elmInstanceConnection>` includes element instance and its relation:
+`Object<elmInstanceMeta>` includes element instance and its relation:
 
 - `id: string` - element id.
 
@@ -80,6 +85,36 @@ store.getElmById(id: string) :  Object<elmInstanceConnection>
   - `chK: string` - Children Key, connects nodes in the lower level.
 
 - `rest: any` - data already entered when element is registered.
+
+Let's apply it on element with `id: id-0` which we already registered in the
+store:
+
+```js
+const elemInstance = store.getElmById("id-0");
+
+// elemInstance = {
+//   depth: 0,
+//   id: "id-0",
+//   keys: {
+//     chK: null,
+//     pK: "1-0",
+//     sK: "0-0",
+//   },
+//   moreInfo: "I am the first child",
+//   order: {
+//     parent: 0,
+//     self: 0,
+//   },
+// };
+```
+
+### Element Tree by ID
+
+Contains element connections in DOM tree with registered information.
+
+```ts
+store.getElmTreeById(id: string) :  Object<elmInstanceConnection>
+```
 
 ## Test
 
