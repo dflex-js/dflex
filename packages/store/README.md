@@ -31,7 +31,7 @@ Where `elmInstance` should include:
 - `depth: number` - element depth in DOM tree.
 - `rest: any` - another data you want to store it for each element.
 
-Let's try by creating new store and register some elements in it:
+Let's create new store and register some elements in it:
 
 ```js
 import Store from "dflex/store";
@@ -90,7 +90,7 @@ store.getElmById(id: string) :  Object<elmInstanceMeta>
 
 - `rest: any` - data already entered when element is registered.
 
-Let's apply it on element with `id: id-0` which we already registered in the
+Let's apply it on element with `id= id-0` which we already registered in the
 store:
 
 ```js
@@ -114,10 +114,10 @@ const elemInstance = store.getElmById("id-0");
 
 ### Element Tree by ID
 
-Contains element connections in DOM tree with registered information.
+Contains element connections in DOM tree with registered data.
 
 ```ts
-store.getElmTreeById(id: string) :  Object<elmInstanceConnection>
+store.getElmTreeById(id: string) : Object<elmInstanceConnection>
 ```
 
 `Object<elmInstanceConnection>` includes:
@@ -132,8 +132,8 @@ store.getElmTreeById(id: string) :  Object<elmInstanceConnection>
 
   - `parents: string<id>|Array<ids>` - all element's parents.
 
-Going back to our first element with `id: id-0`, we can get element instance, its parent instance,
-and its connection branches.
+Going back to our first element with `id= id-0`, we can get element instance, its parent instance,
+and its connection branches as following:
 
 ```js
 const elmInstanceConnection = store.getElmTreeById("id-0");
@@ -164,10 +164,14 @@ const elmInstanceConnection = store.getElmTreeById("id-0");
 // };
 ```
 
+Why this is matter? Because now traverse through DOM tree with existing store.
+`elmInstanceConnection.branches.parents` you can go up. With
+`elmInstanceConnection.branches.siblings` you can get all siblings. Both ways retrieve nodes in order.
+
 ## Test
 
 ```sh
-npm test
+yarn test store
 ```
 
 ## License
