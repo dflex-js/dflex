@@ -16,10 +16,10 @@ enhance dealing with nodes more freely when you rely on existing store instead
 of letting the browser reads nodes first then store it to do whatever you want
 to do.
 
-Giving this fact, Dflex store is built on what you already have and easy to
+Giving this fact, the Dflex store is built on what you already have and easy to
 access: `id`.
 
-## Start by register each node in the store
+## Start by register elements in the store
 
 ```ts
 store.register(elmInstance: Object<elmInstance>)
