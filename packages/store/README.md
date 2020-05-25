@@ -29,7 +29,7 @@ Where `elmInstance` should include:
 
 - `id: string` - element id.
 - `depth: number` - element depth in DOM tree.
-- `rest: any` - other data you want to store it for each element.
+- `rest: any` - another data you want to store it for each element.
 
 ```js
 const elm0D0 = {
@@ -56,18 +56,7 @@ store.register(elm1D0);
 store.register(elm0D1);
 ```
 
-### Exploring what's inside
-
-```js
-const registeredBranches = store.branches;
-
-registeredBranches = {
-  "0-0": ["id-0", "id-1"],
-  "1-0": "p-id-0",
-};
-```
-
-## Getting element connection in the store
+## Getting element in the store
 
 ```ts
 store.getElmById(id: string) :  Object<elmInstanceConnection>
