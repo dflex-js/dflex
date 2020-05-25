@@ -8,8 +8,7 @@
   "repository": "https://github.com/jalal246/dflex",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
-    "test": "jest",
-    "build": "build"
+    "test": "jest"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.9.6",
