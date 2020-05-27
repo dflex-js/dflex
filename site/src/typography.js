@@ -11,18 +11,18 @@ export default new Typography({
   bodyColor: "inherit",
   includeNormalize: false,
   overrideStyles: () => ({
-    // a: {
-    //   color: colors.blue,
-    // },
-    // pre: {
-    //   fontFamily: '"Roboto Mono", Menlo, monospace',
-    //   color: colors.blue,
-    // },
-    // code: {
-    //   fontFamily: '"Roboto Mono", Menlo, monospace',
-    //   color: colors.blue,
-    //   // backgroundColor: colors.gray,
-    // },
+    a: {
+      color: colors.blue,
+    },
+    pre: {
+      fontFamily: '"Roboto Mono", Menlo, monospace',
+      color: colors.blue,
+    },
+    code: {
+      fontFamily: '"Roboto Mono", Menlo, monospace',
+      color: colors.blue,
+      // backgroundColor: colors.gray,
+    },
   }),
   googleFonts: [
     {

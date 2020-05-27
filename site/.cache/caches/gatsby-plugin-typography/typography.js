@@ -1,0 +1,1 @@
+module.exports = require("D:\\projects\\js\\published\\dflex\\site\\src\\typography")

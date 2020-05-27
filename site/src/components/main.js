@@ -1,11 +1,11 @@
-import React from "react"
+import React from "react";
 
-import Highlight, { defaultProps } from "prism-react-renderer"
-import codeTheme from "../code-theme"
-import { MDXProvider } from "@mdx-js/react"
+import Highlight, { defaultProps } from "prism-react-renderer";
+import codeTheme from "../code-theme";
+import { MDXProvider } from "@mdx-js/react";
 
 function pre({ children: { props } }) {
-  const lang = props.className && props.className.split("-")[1]
+  const lang = props.className && props.className.split("-")[1];
 
   return (
     <div
@@ -39,10 +39,27 @@ function pre({ children: { props } }) {
         )}
       </Highlight>
     </div>
-  )
+  );
 }
 
-const components = { pre }
+function blockquote(props) {
+  return (
+    <blockquote
+      style={{
+        width: "60%",
+        // margin: "50px auto",
+        fontStyle: "italic",
+        color: "#555555",
+        // padding: "1.2em 30px 1.2em 75px",
+        borderLeft: "8px solid #78C0A8",
+        background: "#EDEDED",
+      }}
+      {...props}
+    />
+  );
+}
+
+const components = { pre, blockquote };
 
 function Main({ children }) {
   return (
@@ -55,7 +72,7 @@ function Main({ children }) {
     >
       <MDXProvider components={components}>{children}</MDXProvider>
     </main>
-  )
+  );
 }
 
-export default Main
+export default Main;

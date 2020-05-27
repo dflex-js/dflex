@@ -1,6 +1,6 @@
 # @dflex/store
 
-> The place where you traverse through the DOM tree using element-id.
+The place where you traverse through the DOM tree using element-id.
 
 ```bash
 npm install @dflex/store
@@ -34,30 +34,30 @@ Where `elmInstance` should include:
 Let's create new store and register some elements in it:
 
 ```js
-import Store from "dflex/store"
+import Store from "dflex/store";
 
-const store = new Store()
+const store = new Store();
 
 const elm0D0 = {
   id: "id-0",
   depth: 0,
   moreInfo: "I am the first child",
-}
-store.register(elm0D0)
+};
+store.register(elm0D0);
 
 const elm1D0 = {
   id: "id-1",
   depth: 0,
   moreInfo: "I am the second child",
-}
-store.register(elm1D0)
+};
+store.register(elm1D0);
 
 const elm0D1 = {
   id: "p-id-0",
   depth: 1,
   moreInfo: "I am the parent",
-}
-store.register(elm0D1)
+};
+store.register(elm0D1);
 ```
 
 ## Getting element in the store
@@ -92,7 +92,7 @@ Let's apply it on element with `id= id-0` which we already registered in the
 store:
 
 ```js
-const elemInstance = store.getElmById("id-0")
+const elemInstance = store.getElmById("id-0");
 
 // elemInstance = {
 //   depth: 0,
@@ -133,7 +133,7 @@ Going back to our first element with `id= id-0`, we can get element instance, it
 and its connection branches as following:
 
 ```js
-const elmInstanceConnection = store.getElmTreeById("id-0")
+const elmInstanceConnection = store.getElmTreeById("id-0");
 
 // elmInstanceConnection = {
 //   element: {

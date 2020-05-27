@@ -487,6 +487,7 @@ hr {
   background: hsla(0, 0%, 0%, 0.2);
   border: none;
   height: 1px;
+  width: 20.5rem;
 }
 address {
   margin-left: 0;
