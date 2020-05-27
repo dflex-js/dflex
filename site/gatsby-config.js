@@ -1,5 +1,6 @@
 module.exports = {
   siteMetadata: {
+    pathPrefix: "/jalal246",
     title: `DFlex`,
     description: "A JavaScript ambitious project to manipulate DOM elements",
     author: `Jalal Maskoun`,
