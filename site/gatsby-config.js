@@ -40,6 +40,7 @@ module.exports = {
         pathToConfigModule: `src/typography`,
       },
     },
+    "gatsby-plugin-emotion",
     {
       resolve: "gatsby-plugin-mdx",
       options: {
