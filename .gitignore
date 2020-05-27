@@ -1,8 +1,10 @@
 coverage
 node_modules
 *.log
+.cache
 .changelog
 build
 dist
 draft
 samples
+public

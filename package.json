@@ -3,12 +3,18 @@
   "private": true,
   "workspaces": [
     "packages/*",
-    "scripts/**"
+    "site"
   ],
   "repository": "https://github.com/jalal246/dflex",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "yarn workspaces run build"
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "site"
+    ]
   },
   "devDependencies": {
     "@babel/preset-env": "^7.9.6",
