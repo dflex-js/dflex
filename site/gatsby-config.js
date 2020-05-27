@@ -1,8 +1,22 @@
 module.exports = {
   siteMetadata: {
-    title: `Gatsby Default Starter`,
-    description: `Kick off your next, great Gatsby project with this default starter. This barebones starter ships with the main Gatsby configuration files you might need.`,
-    author: `@gatsbyjs`,
+    title: `DFlex`,
+    description: "A JavaScript ambitious project to manipulate DOM elements",
+    author: `Jalal Maskoun`,
+    menuLinks: [
+      {
+        name: "Generator",
+        link: "/dom-gen",
+      },
+      {
+        name: "Store",
+        link: "/store",
+      },
+      {
+        name: "GitHub",
+        url: "https://github.com/jalal246/dflex",
+      },
+    ],
   },
   plugins: [
     `gatsby-plugin-react-helmet`,
@@ -27,6 +41,29 @@ module.exports = {
         icon: `src/images/gatsby-icon.png`, // This path is relative to the root of the site.
       },
     },
+    {
+      resolve: `gatsby-plugin-typography`,
+      options: {
+        pathToConfigModule: `src/typography`,
+      },
+    },
+    {
+      resolve: "gatsby-plugin-mdx",
+      options: {
+        pathToConfigModule: "src/typography",
+        defaultLayouts: {
+          default: require.resolve("./src/components/layout.js"),
+        },
+        extensions: [`.mdx`, `.md`],
+      },
+    },
+    {
+      resolve: `gatsby-plugin-page-creator`,
+      options: {
+        path: `${__dirname}/src/pages`,
+      },
+    },
+
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
     // `gatsby-plugin-offline`,
