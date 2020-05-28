@@ -1,11 +1,14 @@
+/* eslint-disable react/jsx-key */
 import React from "react";
 
 import Highlight, { defaultProps } from "prism-react-renderer";
-import codeTheme from "../code-theme";
 import { MDXProvider } from "@mdx-js/react";
+import codeTheme from "../code-theme";
 
 function pre({ children: { props } }) {
-  const lang = props.className && props.className.split("-")[1];
+  const { className: cName, children } = props;
+
+  const lang = cName && cName.split("-")[1];
 
   return (
     <div
@@ -23,7 +26,7 @@ function pre({ children: { props } }) {
       <Highlight
         {...defaultProps}
         theme={codeTheme}
-        code={props.children.trim()}
+        code={children.trim()}
         language={lang}
       >
         {({ className, style, tokens, getLineProps, getTokenProps }) => (
