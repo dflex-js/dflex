@@ -1,17 +1,17 @@
 module.exports = {
+  pathPrefix: "/dflex",
   siteMetadata: {
-    pathPrefix: "/jalal246",
     title: `DFlex`,
     description: "A JavaScript ambitious project to manipulate DOM elements",
     author: `Jalal Maskoun`,
     menuLinks: [
       {
         name: "Generator",
-        link: "/dom-gen",
+        link: "/dom-gen/",
       },
       {
         name: "Store",
-        link: "/store",
+        link: "/store/",
       },
       {
         name: "GitHub",
@@ -40,6 +40,7 @@ module.exports = {
         pathToConfigModule: `src/typography`,
       },
     },
+    "gatsby-plugin-emotion",
     {
       resolve: "gatsby-plugin-mdx",
       options: {

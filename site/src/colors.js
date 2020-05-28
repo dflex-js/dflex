@@ -1,5 +1,3 @@
-// @flow
-
 export default {
   base: "#ea2929",
   black: "#493b3b",
@@ -7,4 +5,4 @@ export default {
   blue: "#117fd0",
   pink: "#fdeaf4",
   active: "#7e45ff",
-}
+};

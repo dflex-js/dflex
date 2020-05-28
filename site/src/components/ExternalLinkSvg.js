@@ -1,4 +1,4 @@
-import React from "react"
+import React from "react";
 
 const ExternalLinkSvg = () => (
   <svg x="0px" y="0px" viewBox="0 0 100 100" width={15} height={15}>
@@ -17,6 +17,6 @@ const ExternalLinkSvg = () => (
       `}
     />
   </svg>
-)
+);
 
-export default ExternalLinkSvg
+export default ExternalLinkSvg;

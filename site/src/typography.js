@@ -1,5 +1,5 @@
-import Typography from "typography"
-import colors from "./colors"
+import Typography from "typography";
+import colors from "./colors";
 
 export default new Typography({
   baseFontSize: "16px",
@@ -34,4 +34,4 @@ export default new Typography({
       styles: ["400", "700"],
     },
   ],
-})
+});
