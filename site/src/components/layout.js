@@ -6,7 +6,6 @@
  */
 
 import React from "react";
-import PropTypes from "prop-types";
 
 import Header from "./LayoutHeader/Header";
 
@@ -27,10 +26,6 @@ const Layout = ({ children }) => {
       <Main>{children}</Main>
     </div>
   );
-};
-
-Layout.propTypes = {
-  children: PropTypes.node.isRequired,
 };
 
 export default Layout;
