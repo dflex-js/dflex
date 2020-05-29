@@ -20,7 +20,8 @@ const GitHubNav = () => (
         marginLeft: 10,
         whiteSpace: "nowrap",
         opacity: "95%",
-
+        color: "inherit",
+        textDecoration: "none",
         ":hover": {
           color: colors.logo,
         },
@@ -59,7 +60,7 @@ const style = {
   paddingLeft: 15,
   paddingRight: 15,
   fontWeight: 300,
-
+  textDecoration: "none",
   ":focus": {
     outline: 0,
     backgroundColor: colors.light,
@@ -142,7 +143,7 @@ const Logo = () => (
       height: "100%",
       alignItems: "center",
       color: colors.logo,
-
+      textDecoration: "none",
       ":focus": {
         outline: 0,
         color: colors.white,

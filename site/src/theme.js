@@ -1,19 +1,9 @@
 const colors = {
-  primary: "#6d4c41", // Brown
+  primary: "#6d4c41",
   dark: "#40241a",
   light: "#9c786c",
 
-  // lighter: "#373940", // light blue
-  // // dark: "#282c34", // dark blue
-  // darker: "#20232a", // really dark blue
-  logo: "#ffff8d", // Deep Orange
-  // brandLight: "#bbeffd",
-  // text: "#1a1a1a", // very dark grey / black substitute
-  subtle: "#373940", // light grey for text
-  // subtleOnDark: "#999",
-  // divider: "#ececec", // very light grey
-  // note: "#ffe564", // yellow
-  // error: "#ff6464", // yellow
+  logo: "#ffff8d",
   white: "#ffffff",
   // black: "#000000",
 };

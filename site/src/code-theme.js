@@ -1,7 +1,3 @@
-// @flow
-// Converted automatically using prism-react-renderer/tools/themeFromVsCode
-// from VS Code Gloom
-
 export default {
   plain: {
     color: "#f1eff7",
