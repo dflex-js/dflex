@@ -10,16 +10,22 @@ import PropTypes from "prop-types";
 
 import Header from "./LayoutHeader/Header";
 
-import Main from "./main";
+import Main from "./Main";
 
 import "./layout.css";
 
 const Layout = ({ children }) => {
   return (
-    <>
+    <div
+      css={{
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "calc(100vh - 40px)",
+      }}
+    >
       <Header />
       <Main>{children}</Main>
-    </>
+    </div>
   );
 };
 
