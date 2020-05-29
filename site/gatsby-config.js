@@ -4,20 +4,6 @@ module.exports = {
     title: `DFlex`,
     description: "A JavaScript ambitious project to manipulate DOM elements",
     author: `Jalal Maskoun`,
-    menuLinks: [
-      {
-        name: "Generator",
-        link: "/dom-gen/",
-      },
-      {
-        name: "Store",
-        link: "/store/",
-      },
-      {
-        name: "GitHub",
-        url: "https://github.com/jalal246/dflex",
-      },
-    ],
   },
   plugins: [
     `gatsby-transformer-sharp`,
@@ -40,7 +26,7 @@ module.exports = {
         pathToConfigModule: `src/typography`,
       },
     },
-    "gatsby-plugin-emotion",
+    `gatsby-plugin-glamor`,
     {
       resolve: "gatsby-plugin-mdx",
       options: {

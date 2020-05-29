@@ -7,44 +7,18 @@
 
 import React from "react";
 import PropTypes from "prop-types";
-import { useStaticQuery, graphql } from "gatsby";
 
-import Header from "./header";
+import Header from "./LayoutHeader/Header";
+
 import Main from "./main";
 
 import "./layout.css";
 
 const Layout = ({ children }) => {
-  const data = useStaticQuery(graphql`
-    query SiteTitleQuery {
-      site {
-        siteMetadata {
-          title
-          menuLinks {
-            name
-            link
-            url
-          }
-        }
-      }
-    }
-  `);
-
   return (
     <>
-      <Header
-        menuLinks={data.site.siteMetadata.menuLinks}
-        siteTitle={data.site.siteMetadata.title}
-      />
+      <Header />
       <Main>{children}</Main>
-      <footer
-        style={{
-          background: "rebeccapurple",
-          width: "100%",
-          height: "1rem",
-          marginBottom: "0",
-        }}
-      />
     </>
   );
 };
