@@ -1,4 +1,4 @@
-# Getting Started
+# Overview
 
 **DFlex** is a JavaScript ambitious project to manipulate DOM Elements. It
 offers a solution to manipulate DOM elements with API easy to use

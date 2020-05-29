@@ -3,7 +3,8 @@ import React from "react";
 
 import Highlight, { defaultProps } from "prism-react-renderer";
 import { MDXProvider } from "@mdx-js/react";
-import codeTheme from "../code-theme";
+import codeTheme from "../../code-theme";
+import Container from "../ContainerLayout";
 
 function pre({ children: { props } }) {
   const { className: cName, children } = props;
@@ -66,15 +67,18 @@ const components = { pre, blockquote };
 
 function Main({ children }) {
   return (
-    <main
-      style={{
-        margin: `0 auto`,
-        width: "65%",
-        padding: `0 1.0875rem 1.45rem`,
-      }}
-    >
-      <MDXProvider components={components}>{children}</MDXProvider>
-    </main>
+    <Container>
+      <main
+        css={{
+          margin: `0 auto`,
+          marginTop: "95",
+          width: "65%",
+          padding: `0 1.0875rem 1.45rem`,
+        }}
+      >
+        <MDXProvider components={components}>{children}</MDXProvider>
+      </main>
+    </Container>
   );
 }
 
