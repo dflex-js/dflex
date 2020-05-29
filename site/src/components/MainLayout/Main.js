@@ -3,8 +3,8 @@ import React from "react";
 
 import Highlight, { defaultProps } from "prism-react-renderer";
 import { MDXProvider } from "@mdx-js/react";
-import codeTheme from "../code-theme";
-import Container from "./ContainerLayout";
+import codeTheme from "../../code-theme";
+import Container from "../ContainerLayout";
 
 function pre({ children: { props } }) {
   const { className: cName, children } = props;

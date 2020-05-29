@@ -1,15 +1,7 @@
-/**
- * Layout component that queries for data
- * with Gatsby's useStaticQuery component
- *
- * See: https://www.gatsbyjs.org/docs/use-static-query/
- */
-
 import React from "react";
 
-import Header from "./LayoutHeader/Header";
-
-import Main from "./Main";
+import Header from "./LayoutHeader";
+import Main from "./MainLayout";
 
 import "./layout.css";
 
