@@ -69,9 +69,9 @@ function Main({ children }) {
   return (
     <Container>
       <main
-        style={{
+        css={{
           margin: `0 auto`,
-          marginTop: 60,
+          marginTop: "95",
           width: "65%",
           padding: `0 1.0875rem 1.45rem`,
         }}
