@@ -31,6 +31,7 @@ class Store extends Generator {
 
     let coreInstance = Object.assign(elmInstance, order, keys);
 
+    // TODO: test this
     if (typeof CustomInstance === "function") {
       coreInstance = new CustomInstance(coreInstance);
     }
