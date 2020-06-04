@@ -21,14 +21,21 @@ class Store extends Generator {
    * Add elements to registry.
    *
    * @param {Object} elmInstance
+   * @param {function} CustomInstance - constructor function.
    * @memberof Store
    */
-  register(elmInstance) {
+  register(elmInstance, CustomInstance) {
     const { id, depth } = elmInstance;
 
     const pointer = this.getElmPointer(id, depth);
 
-    this.registry[id] = Object.assign(elmInstance, pointer);
+    let coreInstance = Object.assign(elmInstance, pointer);
+
+    if (typeof CustomInstance === "function") {
+      coreInstance = new CustomInstance(coreInstance);
+    }
+
+    this.registry[id] = coreInstance;
   }
 
   /**
