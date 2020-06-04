@@ -1,7 +1,7 @@
 /**
  * Why storing index here? when it's already sorted in order?
  *
- * Each element has index elmers to element's position in list. It allows us
+ * Each element has index elements to element's position in list. It allows us
  * to avoid looping in idsTreeOrder to know each element position.
  *
  * elem-id = id1
@@ -29,10 +29,11 @@ class CoreInstance {
    *
    * @param {string} id
    * @param {node} elm
+   * @param {number} index - element self index
    */
-  constructor(id, elm, index) {
+  constructor({ id, element, order: { self: index } }) {
     this.id = id;
-    this.elm = elm;
+    this.elm = element;
 
     this.index = index;
 

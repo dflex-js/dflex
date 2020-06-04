@@ -27,9 +27,9 @@ class Store extends Generator {
   register(elmInstance, CustomInstance) {
     const { id, depth } = elmInstance;
 
-    const pointer = this.getElmPointer(id, depth);
+    const { order, keys } = this.getElmPointer(id, depth);
 
-    let coreInstance = Object.assign(elmInstance, pointer);
+    let coreInstance = Object.assign(elmInstance, order, keys);
 
     if (typeof CustomInstance === "function") {
       coreInstance = new CustomInstance(coreInstance);
