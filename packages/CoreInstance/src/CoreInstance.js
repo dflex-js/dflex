@@ -1,7 +1,7 @@
 /**
  * Why storing index here? when it's already sorted in order?
  *
- * Each element has index refers to element's position in list. It allows us
+ * Each element has index elmers to element's position in list. It allows us
  * to avoid looping in idsTreeOrder to know each element position.
  *
  * elem-id = id1
@@ -28,25 +28,18 @@ class CoreInstance {
   /**
    *
    * @param {string} id
-   * @param {node} node
-   * @param {Object} indexes
-   * @param {number} indexes.self  - element current index.
-   * @param {number} indexes.parent - element's parent current index.
-   * @param {Object} keys
-   * @param {string} keys.sK  - siblings key.
-   * @param {string} keys.pK - parent key.
-   * @param {string} keys.chK - children key if any.
+   * @param {node} elm
    */
-  constructor(id, node, indexes, keys) {
+  constructor(id, elm, index) {
     this.id = id;
-    this.ref = node;
+    this.elm = elm;
 
-    this.indexes = indexes;
-    this.keys = keys;
+    this.index = index;
 
     this.isOffsetInit = false;
 
     setTimeout(
+      // eslint-disable-next-line func-names
       function ($) {
         $.startInit();
       },
@@ -65,12 +58,7 @@ class CoreInstance {
    * @memberof CoreInstance
    */
   initOffset() {
-    const {
-      height,
-      width,
-      left,
-      top,
-    } = this.ref.current.getBoundingClientRect();
+    const { height, width, left, top } = this.elm.getBoundingClientRect();
 
     /**
      * Element offset stored once without being triggered to re-calculate.
@@ -108,14 +96,17 @@ class CoreInstance {
   }
 
   /**
-   * Starts process to init offset if we've got the ref(node).
+   * Starts process to init offset if we've got the element (node).
    *
    * @memberof CoreInstance
    */
   startInit() {
+    // TODO: Optimize this: (maybe limited?)
+    // If it's okay, can we add a benchmark to prove this is not resource
+    // consuming.
     while (true) {
       if (!this.isOffsetInit) {
-        if (this.ref) this.initOffset();
+        if (this.elm) this.initOffset();
       } else {
         break;
       }
@@ -130,11 +121,9 @@ class CoreInstance {
    * @memberof CoreInstance
    */
   setIndex(i) {
-    const { self } = this.indexes;
+    const newIndex = this.index + i;
 
-    const newIndex = self + i;
-
-    this.indexes.self = newIndex;
+    this.index = newIndex;
 
     return newIndex;
   }
@@ -148,8 +137,7 @@ class CoreInstance {
    * @memberof CoreInstance
    */
   updateIDsOrder(order, inc, isShuffle) {
-    console.log("inside updateIDsOrder before", order);
-    const oldIndex = this.indexes.self;
+    const oldIndex = this.index;
 
     /**
      * Get new index depending on increment and updating local index (self).
@@ -184,7 +172,6 @@ class CoreInstance {
          * Remove last element.
          */
         order.pop();
-        console.log("suppose to pop but disabled now");
       } else {
         /**
          * Clear old position by assigning it to null:[0, null, 1].
@@ -193,24 +180,20 @@ class CoreInstance {
         order[oldIndex] = null;
       }
     }
-
-    console.log("updateIDsOrder after", order);
   }
 
   seTranslate(sign, topSpace, vIncrement) {
     const _topSpace = sign * topSpace;
-    console.log("TCL: _topSpace", _topSpace, this.ref);
 
     this.currentTop += _topSpace;
 
     this.prevTranslateY = this.translateY;
     this.translateY += _topSpace;
 
-    this.ref.current.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
+    this.elm.current.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
 
     const increment = sign * vIncrement;
 
-    console.log("TCL: increment", increment);
     return increment;
   }
 
@@ -238,8 +221,6 @@ class CoreInstance {
     const increment = this.seTranslate(sign, topSpace, vIncrement);
 
     this.updateIDsOrder(iDsInOrder, increment, isShuffle);
-
-    console.log("=====");
   }
 
   /**
