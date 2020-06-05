@@ -3,6 +3,7 @@
   "private": true,
   "workspaces": [
     "packages/*",
+    "playgrounds/*",
     "site"
   ],
   "repository": "https://github.com/jalal246/dflex",
