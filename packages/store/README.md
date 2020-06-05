@@ -1,6 +1,6 @@
 # @dflex/store
 
-> The place where you traverse through the DOM tree using element-id.
+> Traverse through the DOM tree using element-id.
 
 ```bash
 npm install @dflex/store
