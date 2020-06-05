@@ -17,6 +17,8 @@
     "@dflex",
     "@dflex/dom-gen",
     "@dflex/store",
+    "@dflex/core-instance",
+    "@dflex/mechanisms",
     "@folo",
     "builderz",
     "DOM",
