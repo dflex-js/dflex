@@ -1,0 +1,31 @@
+{
+  "name": "@dflex/mechanisms",
+  "version": "0.0.0",
+  "main": "dist/dflexMechanisms.min.cjs.js",
+  "umd:main": "dist/dflexMechanisms.min.umd",
+  "author": "Jalal Maskoun <jimmy002020@gmail.com>",
+  "scripts": {
+    "build": "builderz --formats cjs umd -m -l"
+  },
+  "repository": "https://github.com/jalal246/dflex/tree/master/packages/mechanisms",
+  "license": "GPL-3.0",
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "keywords": [
+    "@dflex",
+    "@dflex/dom-gen",
+    "@dflex/store",
+    "@dflex/core-instance",
+    "@dflex/mechanisms",
+    "@folo",
+    "builderz",
+    "DOM",
+    "front-end"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  }
+}
