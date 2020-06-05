@@ -22,7 +22,7 @@ easily access: `id`, which is why ids are used as keys.
 ## Registering elements in the store
 
 ```ts
-store.register(elmInstance: Object<elmInstance>)
+store.register(elmInstance: Object<elmInstance>, CustomInstance:? <function>)
 ```
 
 Where `elmInstance` should include:
@@ -30,6 +30,9 @@ Where `elmInstance` should include:
 - `id: string` - element id.
 - `depth: number` - element depth in DOM tree.
 - `rest: any` - another data you want to store it for each element.
+
+And `CustomInstance` is constructor function. In case there's an operation
+depends on pointer result before storing the element.
 
 Let's create new store and register some elements in it:
 
@@ -51,13 +54,24 @@ const elm1D0 = {
   moreInfo: "I am the second child",
 };
 store.register(elm1D0);
+```
+
+To store instance of `ExtraInstanceFunc`, just pass it to the `register`
+
+```js
+function ExtraInstanceFunc({ id, depth, moreInfo, pointer }) {
+  this.id = id;
+  this.depth = depth;
+  this.moreInfo = moreInfo;
+  this.pointer = pointer;
+}
 
 const elm0D1 = {
   id: "p-id-0",
   depth: 1,
   moreInfo: "I am the parent",
 };
-store.register(elm0D1);
+store.register(elm0D1, ExtraInstance);
 ```
 
 ## Getting element in the store

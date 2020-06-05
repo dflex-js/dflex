@@ -1,0 +1,30 @@
+{
+  "name": "@dflex/core-instance",
+  "version": "0.0.0",
+  "main": "dist/dflexCoreInstance.min.cjs.js",
+  "umd:main": "dist/dflexCoreInstance.min.umd",
+  "author": "Jalal Maskoun <jimmy002020@gmail.com>",
+  "scripts": {
+    "build": "builderz --formats cjs umd -m -l"
+  },
+  "repository": "https://github.com/jalal246/dflex/tree/master/packages/core-instance",
+  "license": "GPL-3.0",
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "keywords": [
+    "@dflex",
+    "@dflex/dom-gen",
+    "@dflex/store",
+    "@dflex/core-instance",
+    "@folo",
+    "builderz",
+    "DOM",
+    "front-end"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  }
+}
