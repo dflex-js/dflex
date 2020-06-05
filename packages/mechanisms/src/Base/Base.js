@@ -1,4 +1,4 @@
-import store from "@dflex/store";
+import store from "../store";
 
 import { DRAGGED_ELM, ACTIVE_PARENT } from "../constants";
 
@@ -18,12 +18,14 @@ class Base {
    * @memberof Base
    */
   constructor(elementId) {
-    const { element, parent, siblingsList, parentsList } = store.getDndObjById(
-      elementId
-    );
+    const {
+      element,
+      parent,
+      branches: { siblings, parents },
+    } = store.getElmTreeById(elementId);
 
-    this.parentsList = parentsList;
-    this.siblingsList = siblingsList;
+    this.parentsList = parents;
+    this.siblingsList = siblings;
 
     this.setIsSingleton();
 
@@ -67,7 +69,7 @@ class Base {
     /**
      * Dragged has no siblings.
      */
-    this.isSingleton = !(this.siblingsList.constructor === Array);
+    this.isSingleton = !Array.isArray(this.siblingsList);
   }
 
   /**
@@ -204,8 +206,6 @@ class Base {
    * @memberof Base
    */
   assignActiveParent(coreInstance) {
-    // console.log("%c inside assignActiveParent", "background: lightblue");
-
     /**
      * Assign instance ACTIVE_PARENT which represents droppable. Then
      * assign owner parent so we have from/to.
@@ -229,7 +229,7 @@ class Base {
         keys: { chK },
       } = this[ACTIVE_PARENT];
 
-      this.siblingsList = store.getListByKey(chK);
+      this.siblingsList = store.getElmById(chK);
     }
 
     this.setIsSingleton();
