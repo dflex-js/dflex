@@ -1,10 +1,10 @@
 # @dflex/store
 
-> Traverse through the DOM tree using element-id.
-
 <!-- created with: https://excalidraw.com/ -->
 
 ![store overview](./img/overview.png)
+
+> Traverse through the DOM tree using element-id.
 
 ```bash
 npm install @dflex/store
