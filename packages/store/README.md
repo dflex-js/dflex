@@ -21,6 +21,10 @@ easily access: `id`, which is why ids are used as keys.
 
 ## Registering elements in the store
 
+Registry works on creating
+[pointer](https://github.com/jalal246/dflex/tree/master/packages/dom-gen#generates-element-pointer)
+for element then store it with another passed data.
+
 ```ts
 store.register(elmInstance: Object<elmInstance>, CustomInstance:? <function>)
 ```
@@ -32,7 +36,9 @@ Where `elmInstance` should include:
 - `rest: any` - another data you want to store it for each element.
 
 And `CustomInstance` is constructor function. In case there's an operation
-depends on pointer result before storing the element.
+depends on generated pointer result before storing the element.
+
+![Alt text](./registry.png)
 
 Let's create new store and register some elements in it:
 
@@ -79,7 +85,7 @@ store.register(elm0D1, ExtraInstance);
 ### Element Instance by ID
 
 ```ts
-store.getElmById(id: string) :  Object<elmInstanceMeta>
+store.getElmById(id: string) : Object<elmInstanceMeta>
 ```
 
 It returns `Object<elmInstanceMeta>` which contains element metadata including
