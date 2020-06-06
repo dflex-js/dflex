@@ -2,7 +2,7 @@
 
 <!-- created with: https://excalidraw.com/ -->
 
-![store overview](./img/overview.png)
+![store overview](./img/overview.png?#center)
 
 > Traverse through the DOM tree using element-id.
 
