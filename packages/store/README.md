@@ -40,7 +40,7 @@ depends on generated pointer result before storing the element.
 
 <!-- created with: https://excalidraw.com/ -->
 
-![how register works](./registry.png)
+![how register works](./store-registry.png)
 
 Let's create new store and register some elements in it:
 
