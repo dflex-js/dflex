@@ -21,6 +21,10 @@ easily access: `id`, which is why ids are used as keys.
 
 ## Registering elements in the store
 
+<!-- created with: https://excalidraw.com/ -->
+
+![how register works](./store-registry.png)
+
 Registry works on creating
 [pointer](https://github.com/jalal246/dflex/tree/master/packages/dom-gen#generates-element-pointer)
 for element then store it with another passed data.
@@ -37,10 +41,6 @@ Where `elmInstance` should include:
 
 And `CustomInstance` is constructor function. In case there's an operation
 depends on generated pointer result before storing the element.
-
-<!-- created with: https://excalidraw.com/ -->
-
-![how register works](./store-registry.png)
 
 Let's create new store and register some elements in it:
 
