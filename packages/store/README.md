@@ -38,6 +38,8 @@ Where `elmInstance` should include:
 And `CustomInstance` is constructor function. In case there's an operation
 depends on generated pointer result before storing the element.
 
+<!-- created with: https://excalidraw.com/ -->
+
 ![how register works](./registry.png)
 
 Let's create new store and register some elements in it:
