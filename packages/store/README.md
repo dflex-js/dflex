@@ -84,7 +84,7 @@ store.register(elm0D1, ExtraInstance);
 
 ## Getting element in the store
 
-### Element Instance by ID
+### Element Instance Meta by ID
 
 ```ts
 store.getElmById(id: string) : Object<elmInstanceMeta>
@@ -132,7 +132,7 @@ const elemInstance = store.getElmById("id-0");
 // };
 ```
 
-### Element Tree by ID
+### Element in Tree by ID
 
 ```ts
 store.getElmTreeById(id: string) : Object<elmInstanceConnection>
