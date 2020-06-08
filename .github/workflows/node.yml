@@ -30,7 +30,7 @@ jobs:
         run: yarn
 
       - name: Run Build
-        run: yarn workspaces run build
+        run: yarn build
 
       - name: Run Test
         run: CI=true yarn jest --coverage
