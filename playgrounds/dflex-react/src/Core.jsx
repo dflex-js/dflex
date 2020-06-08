@@ -20,7 +20,7 @@ const Core = (props) => {
   );
 
   React.useEffect(() => {
-    store.register({ id, ref, depth });
+    // store.register({ id, ref, depth });
   }, []);
 
   return (
