@@ -10,8 +10,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build:cra": "react-scripts build",
-    "test:cra": "react-scripts test",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
