@@ -2,6 +2,9 @@ import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
 
+import Core from "./Core";
+import Container from "./Container";
+
 function App() {
   return (
     <div className="App">
