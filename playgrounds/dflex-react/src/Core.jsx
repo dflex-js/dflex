@@ -24,7 +24,7 @@ const Core = (props) => {
   }, []);
 
   return (
-    <CoreComponent ref={ref} className="item" key={id} id={id} {...rest}>
+    <CoreComponent ref={ref} key={id} id={id} {...rest}>
       {children}
     </CoreComponent>
   );
