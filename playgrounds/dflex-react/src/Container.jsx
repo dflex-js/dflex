@@ -7,7 +7,7 @@ const containerRef = React.createRef();
 const Container = ({
   component: ContainerComponent = "div",
   children,
-  initDragging = function() {},
+  initDragging = function () {},
   ...rest
 }) => {
   let mouseEvents;
@@ -16,12 +16,7 @@ const Container = ({
 
   let draggedID = null;
 
-  const onMouseDown = e => {
-    console.log(
-      "%c ********************************************",
-      "color: Purple"
-    );
-
+  const onMouseDown = (e) => {
     const { target, button, clientX, clientY } = e;
 
     // avoid right mouse click and ensure id
@@ -39,7 +34,7 @@ const Container = ({
           { e: "mousemove", target: document, handler: onMouseMove },
           { e: "mouseup", target: document, handler: onMouseUp },
           { e: "mouseover", target, handler: onMouseOver },
-          { e: "mouseout", target, handler: onMouseOut }
+          { e: "mouseout", target, handler: onMouseOut },
           // { e: "mouseleave", target, handler: onMouseLeave },
           // { e: "mouseenter", target, handler: onMouseEnter }
         ];
@@ -51,7 +46,7 @@ const Container = ({
     }
   };
 
-  const onMouseUp = e => {
+  const onMouseUp = (e) => {
     containerRef.current.style.background = "pink";
     if (draggedID) {
       droppable.endAll();
@@ -64,7 +59,7 @@ const Container = ({
     // console.log(store.lists[0].elements);
   };
 
-  const onMouseOver = e => {
+  const onMouseOver = (e) => {
     const { id } = e.target;
 
     // console.log("in", e.target);
@@ -80,12 +75,12 @@ const Container = ({
     // setTo(hoveredID);
   };
 
-  const onMouseOut = e => {
+  const onMouseOut = (e) => {
     // console.log("onMouseOut");
     // containerRef.current.style.background = "red";
   };
 
-  const onMouseMove = e => {
+  const onMouseMove = (e) => {
     const { clientX, clientY } = e;
 
     droppable.startDragging(clientX, clientY);
