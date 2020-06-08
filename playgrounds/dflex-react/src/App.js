@@ -1,16 +1,14 @@
 import React from "react";
 import "./App.css";
 
-import Core from "./Core";
-import Container from "./Container";
+// import Core from "./Core";
+// import Container from "./Container";
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
+        <p>Hi</p>
         <a
           className="App-link"
           href="https://reactjs.org"

@@ -4,6 +4,7 @@
   "workspaces": [
     "packages/*",
     "playgrounds/*",
+    "scripts/*",
     "site"
   ],
   "repository": "https://github.com/jalal246/dflex",
