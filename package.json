@@ -10,7 +10,7 @@
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
     "test": "jest",
-    "build": "yarn workspaces run build"
+    "build": "lerna run build"
   },
   "jest": {
     "testPathIgnorePatterns": [
