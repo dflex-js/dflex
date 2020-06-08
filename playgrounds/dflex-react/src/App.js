@@ -1,26 +1,44 @@
+/* eslint-disable no-plusplus */
 import React from "react";
 import "./App.css";
 
 import Core from "./Core";
 import Container from "./Container";
 
+let index = 1;
+
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container>
+      <Core id="gp0" className="Container" component="div" depth={2}>
+        <Core id="p0-a" component="ul" depth={1}>
+          {[1].map(() => (
+            <Core depth={0} id={`id-${index}`} key={`k${index}`} component="li">
+              Hello-
+              {index++}
+            </Core>
+          ))}
+        </Core>
+
+        <Core id="p0-1b" component="ul" depth={1}>
+          {[1, 2, 3, 4, 5, 6, 7].map(() => (
+            <Core depth={0} id={`id-${index}`} key={`k${index}`} component="li">
+              Hello-
+              {index++}
+            </Core>
+          ))}
+        </Core>
+
+        <Core id="p0-1c" component="ul" depth={1}>
+          {[1, 2, 3].map(() => (
+            <Core depth={0} id={`id-${index}`} key={`k${index}`} component="li">
+              Hello-
+              {index++}
+            </Core>
+          ))}
+        </Core>
+      </Core>
+    </Container>
   );
 }
 

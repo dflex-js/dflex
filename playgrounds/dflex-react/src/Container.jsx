@@ -1,13 +1,13 @@
+/* eslint-disable no-use-before-define */
 import React from "react";
 
-import Droppable from "./MouseSensors";
+// import Droppable from "./MouseSensors";
 
 const containerRef = React.createRef();
 
 const Container = ({
   component: ContainerComponent = "div",
   children,
-  initDragging = function () {},
   ...rest
 }) => {
   let mouseEvents;
@@ -26,21 +26,21 @@ const Container = ({
       if (id) {
         draggedID = id;
 
-        droppable = new Droppable(id, { x: clientX, y: clientY });
+        // droppable = new Droppable(id, { x: clientX, y: clientY });
 
-        let target = containerRef.current;
+        const { current } = containerRef;
 
         mouseEvents = [
-          { e: "mousemove", target: document, handler: onMouseMove },
-          { e: "mouseup", target: document, handler: onMouseUp },
-          { e: "mouseover", target, handler: onMouseOver },
-          { e: "mouseout", target, handler: onMouseOut },
+          { evType: "mousemove", evTarget: document, handler: onMouseMove },
+          { evType: "mouseup", evTarget: document, handler: onMouseUp },
+          { evType: "mouseover", evTarget: current, handler: onMouseOver },
+          { evType: "mouseout", evTarget: current, handler: onMouseOut },
           // { e: "mouseleave", target, handler: onMouseLeave },
           // { e: "mouseenter", target, handler: onMouseEnter }
         ];
 
-        mouseEvents.forEach(({ e, target, handler }, i) => {
-          target.addEventListener(e, handler);
+        mouseEvents.forEach(({ evType, evTarget, handler }) => {
+          evTarget.addEventListener(evType, handler);
         });
       }
     }
@@ -64,10 +64,10 @@ const Container = ({
 
     // console.log("in", e.target);
 
-    //? should i delete it or keep it?
+    // ? should i delete it or keep it?
     // if (!id || id === draggedID || id === hoveredID) return;
-    if (!id || id === draggedID) return;
-
+    // if (!id || id === draggedID) return;
+    //
     // hoveredID = id;
 
     // console.log("hovered", id);
@@ -75,10 +75,7 @@ const Container = ({
     // setTo(hoveredID);
   };
 
-  const onMouseOut = (e) => {
-    // console.log("onMouseOut");
-    // containerRef.current.style.background = "red";
-  };
+  const onMouseOut = (e) => {};
 
   const onMouseMove = (e) => {
     const { clientX, clientY } = e;
