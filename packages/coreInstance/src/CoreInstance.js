@@ -37,16 +37,7 @@ class CoreInstance {
 
     this.index = index;
 
-    this.isOffsetInit = false;
-
-    setTimeout(
-      // eslint-disable-next-line func-names
-      function ($) {
-        $.startInit();
-      },
-      0,
-      this
-    );
+    if (element) this.initOffset();
   }
 
   /**
@@ -92,26 +83,6 @@ class CoreInstance {
      */
     this.currentTop = top + this.translateY;
     this.currentLeft = left + this.translateX;
-
-    this.isOffsetInit = true;
-  }
-
-  /**
-   * Starts process to init offset if we've got the element (node).
-   *
-   * @memberof CoreInstance
-   */
-  startInit() {
-    // TODO: Optimize this: (maybe limited?)
-    // If it's okay, can we add a benchmark to prove this is not resource
-    // consuming.
-    while (true) {
-      if (!this.isOffsetInit) {
-        if (this.elm) this.initOffset();
-      } else {
-        break;
-      }
-    }
   }
 
   /**

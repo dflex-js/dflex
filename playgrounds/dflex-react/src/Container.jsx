@@ -1,9 +1,8 @@
 /* eslint-disable no-use-before-define */
 import React from "react";
 
-// import Droppable from "./MouseSensors";
-
-const containerRef = React.createRef();
+// eslint-disable-next-line import/no-unresolved
+import { Draggable } from "@dflex/draggable";
 
 const Container = ({
   component: ContainerComponent = "div",
@@ -26,17 +25,11 @@ const Container = ({
       if (id) {
         draggedID = id;
 
-        // droppable = new Droppable(id, { x: clientX, y: clientY });
-
-        const { current } = containerRef;
+        droppable = new Draggable(id, { x: clientX, y: clientY });
 
         mouseEvents = [
           { evType: "mousemove", evTarget: document, handler: onMouseMove },
           { evType: "mouseup", evTarget: document, handler: onMouseUp },
-          { evType: "mouseover", evTarget: current, handler: onMouseOver },
-          { evType: "mouseout", evTarget: current, handler: onMouseOut },
-          // { e: "mouseleave", target, handler: onMouseLeave },
-          // { e: "mouseenter", target, handler: onMouseEnter }
         ];
 
         mouseEvents.forEach(({ evType, evTarget, handler }) => {
@@ -46,47 +39,22 @@ const Container = ({
     }
   };
 
-  const onMouseUp = (e) => {
-    containerRef.current.style.background = "pink";
+  const onMouseUp = () => {
     if (draggedID) {
-      droppable.endAll();
-
-      mouseEvents.forEach(({ e, target, handler }) => {
-        target.removeEventListener(e, handler);
+      mouseEvents.forEach(({ evType, evTarget, handler }) => {
+        evTarget.removeEventListener(evType, handler);
       });
     }
-
-    // console.log(store.lists[0].elements);
   };
-
-  const onMouseOver = (e) => {
-    const { id } = e.target;
-
-    // console.log("in", e.target);
-
-    // ? should i delete it or keep it?
-    // if (!id || id === draggedID || id === hoveredID) return;
-    // if (!id || id === draggedID) return;
-    //
-    // hoveredID = id;
-
-    // console.log("hovered", id);
-
-    // setTo(hoveredID);
-  };
-
-  const onMouseOut = (e) => {};
 
   const onMouseMove = (e) => {
     const { clientX, clientY } = e;
 
-    droppable.startDragging(clientX, clientY);
+    droppable.dragAt(clientX, clientY);
   };
 
-  console.log("ContainerController update");
-
   return (
-    <ContainerComponent onMouseDown={onMouseDown} ref={containerRef} {...rest}>
+    <ContainerComponent onMouseDown={onMouseDown} {...rest}>
       {children}
     </ContainerComponent>
   );
