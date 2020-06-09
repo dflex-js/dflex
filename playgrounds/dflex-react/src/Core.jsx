@@ -1,7 +1,8 @@
 import React from "react";
 import { keyGenerator } from "@folo/utils";
 
-// import store from "./Store";
+// eslint-disable-next-line import/no-unresolved
+import { store } from "@dflex/draggable";
 
 const Core = (props) => {
   const {
@@ -20,7 +21,14 @@ const Core = (props) => {
   );
 
   React.useEffect(() => {
-    // store.register({ id, ref, depth });
+    setTimeout(
+      // eslint-disable-next-line func-names
+      function () {
+        store.register({ id, element: ref.current, depth });
+      },
+      0,
+      this
+    );
   }, []);
 
   return (
