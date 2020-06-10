@@ -85,8 +85,8 @@ class Store extends Generator {
     /**
      * getting connected branches
      */
-    const siblings = this.getElmBranch(sK);
-    const parents = this.getElmBranch(pK);
+    const siblings = typeof keys === "object" ? this.getElmBranch(sK) : {};
+    const parents = typeof keys === "object" ? this.getElmBranch(pK) : {};
 
     /**
      * getting parent instance
