@@ -25,18 +25,28 @@ class Store extends Generator {
    * @memberof Store
    */
   register(elmInstance, CustomInstance) {
-    const { id, depth } = elmInstance;
+    const type = Object.prototype.toString.call(elmInstance);
 
-    const pointer = this.getElmPointer(id, depth);
+    let coreInstance = {};
 
-    let coreInstance = Object.assign(elmInstance, pointer);
+    let id;
+    let depth = 0;
 
-    // TODO: test this
+    if (type === "[object Object]") {
+      ({ id, depth } = elmInstance);
+
+      const pointer = this.getElmPointer(id, depth);
+
+      coreInstance = Object.assign(elmInstance, pointer);
+    } else {
+      id = elmInstance;
+    }
+
     if (typeof CustomInstance === "function") {
       coreInstance = new CustomInstance(coreInstance);
     }
 
-    this.registry[id] = coreInstance;
+    if (id) this.registry[id] = coreInstance;
   }
 
   /**
