@@ -14,4 +14,5 @@ module.exports = {
     sourceType: "module",
   },
   rules: {},
+  plugins: ["tree-shaking"],
 };
