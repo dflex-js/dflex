@@ -23,10 +23,6 @@ const draggedStyleProps = [
     value: "1",
   },
   {
-    prop: "background",
-    value: "brown",
-  },
-  {
     prop: "transition",
     value: `opacity 0.2s cubic-bezier(0.2, 0, 0, 1) 0s`,
   },
