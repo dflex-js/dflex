@@ -1,4 +1,4 @@
-import Generator from "@dflex/dom-gen";
+import Generator from "@dflex/dom-gen/src";
 
 /**
  * Store class contains all dnd elements and their orders.
