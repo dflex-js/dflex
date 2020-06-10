@@ -8,6 +8,7 @@ module.exports = (api) => {
           targets: {
             node: "current",
           },
+          modules: false,
         },
       ],
     ],

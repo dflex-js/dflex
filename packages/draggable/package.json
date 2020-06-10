@@ -4,12 +4,11 @@
   "main": "dist/index.js",
   "umd:main": "dist/dflexDraggable.min.umd",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
-  "scripts": {
-    "build": "builderz --formats cjs umd -m -l"
-  },
+  "scripts": {},
   "repository": "https://github.com/jalal246/dflex/tree/master/packages/draggable",
   "license": "GPL-3.0",
   "files": [
+    "src",
     "dist",
     "LICENSE"
   ],

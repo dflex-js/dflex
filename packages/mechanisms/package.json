@@ -8,6 +8,7 @@
   "repository": "https://github.com/jalal246/dflex/tree/master/packages/mechanisms",
   "license": "GPL-3.0",
   "files": [
+    "src",
     "dist",
     "LICENSE"
   ],
