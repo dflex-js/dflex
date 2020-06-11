@@ -1,9 +1,9 @@
 import Generator from "@dflex/dom-gen/src";
+import AbstractStore from "./AbstractStore";
 
 /**
  * Store class contains all dnd elements and their orders.
  *
- * @class Store
  * @extends {Generator}
  *
  */
@@ -11,10 +11,7 @@ class Store extends Generator {
   constructor() {
     super();
 
-    /**
-     * Store registered DOM nodes. Use id as key.
-     */
-    this.registry = {};
+    this.abstractStore = new AbstractStore();
   }
 
   /**
@@ -25,28 +22,13 @@ class Store extends Generator {
    * @memberof Store
    */
   register(elmInstance, CustomInstance) {
-    const type = Object.prototype.toString.call(elmInstance);
+    const { id, depth } = elmInstance;
 
-    let coreInstance = {};
+    const pointer = this.getElmPointer(id, depth);
 
-    let id;
-    let depth = 0;
+    const coreInstance = Object.assign(elmInstance, pointer);
 
-    if (type === "[object Object]") {
-      ({ id, depth } = elmInstance);
-
-      const pointer = this.getElmPointer(id, depth);
-
-      coreInstance = Object.assign(elmInstance, pointer);
-    } else {
-      id = elmInstance;
-    }
-
-    if (typeof CustomInstance === "function") {
-      coreInstance = new CustomInstance(coreInstance);
-    }
-
-    if (id) this.registry[id] = coreInstance;
+    this.abstractStore.register(coreInstance, CustomInstance);
   }
 
   /**
@@ -57,7 +39,7 @@ class Store extends Generator {
    * @memberof Store
    */
   getElmById(id) {
-    return this.registry[id];
+    return this.abstractStore.getElmById(id);
   }
 
   /**
@@ -85,8 +67,8 @@ class Store extends Generator {
     /**
      * getting connected branches
      */
-    const siblings = typeof keys === "object" ? this.getElmBranch(sK) : {};
-    const parents = typeof keys === "object" ? this.getElmBranch(pK) : {};
+    const siblings = this.getElmBranch(sK);
+    const parents = this.getElmBranch(pK);
 
     /**
      * getting parent instance
