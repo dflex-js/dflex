@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 
-import store from "../store";
+import store from "./DraggableStoreImp";
 
 const DRAGGED_ELM = "draggedElm";
 

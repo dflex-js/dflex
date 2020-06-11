@@ -1,8 +1,7 @@
 /* eslint-disable no-use-before-define */
 import React from "react";
 
-// eslint-disable-next-line import/no-unresolved
-import { Draggable } from "@dflex/draggable";
+import { Draggable } from "@dflex/draggable/src";
 
 const Container = ({
   component: ContainerComponent = "div",

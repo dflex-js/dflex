@@ -1,9 +1,9 @@
-import CoreInstance from "@dflex/core-instance/src";
+import AbstractCoreInstance from "@dflex/core-instance/src/AbstractCoreInstance";
 import AbstractStore from "@dflex/store/src/AbstractStore";
 
 class DraggableStoreImp extends AbstractStore {
   register(elmInstance) {
-    super.register(elmInstance, CoreInstance);
+    super.register(elmInstance, AbstractCoreInstance);
   }
 }
 
