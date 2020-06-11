@@ -1,4 +1,4 @@
 import Draggable from "./Draggable";
-import store from "../store";
+import store from "./DraggableStoreImp";
 
 export { Draggable, store };

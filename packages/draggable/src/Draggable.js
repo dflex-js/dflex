@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 
-import store from "../store";
+import store from "./DraggableStoreImp";
 
 const DRAGGED_ELM = "draggedElm";
 
@@ -21,10 +21,6 @@ const draggedStyleProps = [
   {
     prop: "zIndex",
     value: "1",
-  },
-  {
-    prop: "background",
-    value: "brown",
   },
   {
     prop: "transition",
@@ -65,12 +61,6 @@ class Draggable {
     this.draggedStyle = draggedStyle;
 
     /**
-     * previous X and Y are used to calculate mouse directions.
-     */
-    this.prevY = initY;
-    this.prevX = initX;
-
-    /**
      * When dragging start, element shouldn't jump from its translate. So, we
      * calculate offset that make translate X,Y start from zero:
      *  goToX = x + this.offsetX.
@@ -108,52 +98,12 @@ class Draggable {
     draggedStyleProps.forEach(({ prop }) => {
       this.draggedStyle[prop] = null;
     });
+
+    this[DRAGGED_ELM].seTranslate(this.goToX, this.goToY);
   }
 
-  /**
-   * Dragged current-offset is essential to determine dragged position in
-   * layout and parent.
-   *
-   * Is it moved form its translate? Is it out the parent or in
-   * another parent? The answer is related to currentOffset.
-   *
-   * Note: these are the current offset related only to the dragging. When the
-   * operation is done, different calculation will be set.
-   *
-   * @memberof Draggable
-   */
-  setDraggedTempCurrentOffset(x, y) {
-    /**
-     * Each time we got new translate, offset should be updated
-     */
-    const {
-      offset: { top, left, width, height },
-    } = this[DRAGGED_ELM];
-
-    /**
-     * Calculates the new offset
-     */
-    const _left = left + x;
-    const _top = top + y;
-
-    /**
-     * Note, this instance can't be replaced with offset.
-     * By adding translate to offset, with each move will double the
-     * increase:
-     *
-     * Suppose top = 100 and translateY = 20 the result is 120.
-     * But what'll happen to next move translateY = 20 the result is 120 + 20 = 140.
-     *
-     * To solve this issue, we keep the offset and returns the new value with
-     * increase as 100 + 20 or 100 + 40.
-     *
-     * Also, you can always call currentOffset and get the right value since
-     * it's updated with each translate value.
-     */
-    this.currentLeft = _left;
-    this.currentRight = _left + width;
-    this.currentTop = _top;
-    this.currentBottom = _top + height;
+  endDragged() {
+    this.setDragged(false);
   }
 
   /**
@@ -177,8 +127,6 @@ class Draggable {
     this.goToY = y + this.offsetY;
 
     this.draggedStyle.transform = `translate(${this.goToX}px,${this.goToY}px)`;
-
-    this.setDraggedTempCurrentOffset(this.goToX, this.goToY);
   }
 }
 

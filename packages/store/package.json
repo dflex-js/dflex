@@ -10,6 +10,7 @@
   "repository": "https://github.com/jalal246/dflex/tree/master/packages/dom-gen",
   "license": "GPL-3.0",
   "files": [
+    "src",
     "dist",
     "LICENSE"
   ],
@@ -28,7 +29,5 @@
     "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
-  "dependencies": {
-    "@dflex/dom-gen": "^0.2.1"
-  }
+  "dependencies": {}
 }

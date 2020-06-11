@@ -1,9 +1,9 @@
-import Generator from "@dflex/dom-gen";
+import Generator from "@dflex/dom-gen/src";
+import AbstractStore from "./AbstractStore";
 
 /**
  * Store class contains all dnd elements and their orders.
  *
- * @class Store
  * @extends {Generator}
  *
  */
@@ -11,10 +11,7 @@ class Store extends Generator {
   constructor() {
     super();
 
-    /**
-     * Store registered DOM nodes. Use id as key.
-     */
-    this.registry = {};
+    this.abstractStore = new AbstractStore();
   }
 
   /**
@@ -29,14 +26,9 @@ class Store extends Generator {
 
     const pointer = this.getElmPointer(id, depth);
 
-    let coreInstance = Object.assign(elmInstance, pointer);
+    const coreInstance = Object.assign(elmInstance, pointer);
 
-    // TODO: test this
-    if (typeof CustomInstance === "function") {
-      coreInstance = new CustomInstance(coreInstance);
-    }
-
-    this.registry[id] = coreInstance;
+    this.abstractStore.register(coreInstance, CustomInstance);
   }
 
   /**
@@ -47,7 +39,7 @@ class Store extends Generator {
    * @memberof Store
    */
   getElmById(id) {
-    return this.registry[id];
+    return this.abstractStore.getElmById(id);
   }
 
   /**
