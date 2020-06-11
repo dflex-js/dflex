@@ -26,8 +26,7 @@ const Core = (props) => {
       function () {
         store.register({ id, element: ref.current });
       },
-      0,
-      this
+      0
     );
   }, []);
 

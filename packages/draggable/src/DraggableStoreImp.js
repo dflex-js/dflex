@@ -1,4 +1,4 @@
-import AbstractCoreInstance from "@dflex/core-instance/src/AbstractCoreInstance";
+import AbstractCoreInstance from "@dflex/core-instance/src";
 import AbstractStore from "@dflex/store/src/AbstractStore";
 
 class DraggableStoreImp extends AbstractStore {
