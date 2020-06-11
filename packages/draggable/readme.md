@@ -16,7 +16,7 @@ complexity or even migration to different technologies for different frameworks.
 import { store, Draggable } from "@dflex/draggable";
 ```
 
-Just register draggable elements, then trigger drag
+Just register draggable elements, then trigger drag.
 
 For Each draggable element:
 
@@ -24,11 +24,17 @@ For Each draggable element:
 store.register({ id: string, element: Node });
 ```
 
-Triggers dragging `onmousedown`
+Initiates draggable element `onmousedown`:
 
 ```ts
-new Draggable(id: string, { x: event.clientX, y: event.clientY });
+const draggable = new Draggable(id: string, {x: event.clientX, y: event.clientY});
 ```
+
+|                     |                                                         |               |
+| ------------------- | ------------------------------------------------------- | ------------- |
+| **Create Instance** | `new Draggable(id, {x:event.clientX, y:event.clientY})` | `onmousedown` |
+| **Move element**    | `dragAt(event.clientX, event.clientY)`                  | `onmousemove` |
+| **End Dragging**    | `endDragged()`                                          | `onmouseup`   |
 
 ## Test
 
