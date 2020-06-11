@@ -1,0 +1,5 @@
+# https://github.com/JasonEtco/todo
+
+todo:
+  keyword: ["@todo", "TODO"]
+  caseSensitive: false
