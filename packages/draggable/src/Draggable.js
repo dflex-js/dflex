@@ -98,9 +98,7 @@ class Draggable {
     /**
      * Not active: end of dragging.
      */
-    draggedStyleProps.forEach(({ prop }) => {
-      this.draggedStyle[prop] = null;
-    });
+    this.draggedStyle.pointerEvents = null;
 
     this[DRAGGED_ELM].seTranslate(this.goToX, this.goToY);
   }
