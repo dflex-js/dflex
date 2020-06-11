@@ -73,6 +73,9 @@ class Draggable {
     this.offsetX = -initX + translateX;
     this.offsetY = -initY + translateY;
 
+    this.goToX = 0;
+    this.goToY = 0;
+
     this.setDragged(true);
   }
 
