@@ -18,7 +18,7 @@ import { store, Draggable } from "@dflex/draggable";
 
 ### Registry
 
-Register draggable element in Draggable store:
+Register draggable element in draggable store:
 
 ```ts
 store.register({ id: string, element: Node });
