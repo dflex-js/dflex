@@ -9,3 +9,31 @@ npm install @dflex/draggable
 DFlex draggable is the simplest solution to create JavaScript draggable
 elements. No need for special tutorial and thinking about implementation
 complexity or even migration to different technologies for different frameworks.
+
+## API
+
+```js
+import { store, Draggable } from "@dflex/draggable";
+```
+
+Just register draggable elements, then trigger drag
+
+For Each draggable element:
+
+```ts
+store.register({ id: string, element: Node });
+```
+
+Triggers dragging `onmousedown`
+
+```ts
+new Draggable(id: string, { x: event.clientX, y: event.clientY });
+```
+
+## Test
+
+TODO
+
+## License
+
+This package is licensed under the [GPL-3.0 License](https://github.com/jalal246/dflex/tree/master/packages/draggable/LICENSE)
