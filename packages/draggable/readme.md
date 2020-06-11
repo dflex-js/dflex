@@ -16,25 +16,33 @@ complexity or even migration to different technologies for different frameworks.
 import { store, Draggable } from "@dflex/draggable";
 ```
 
-Just register draggable elements, then trigger drag.
+### Registry
 
-For Each draggable element:
+Register draggable element in Draggable store:
 
 ```ts
 store.register({ id: string, element: Node });
 ```
 
-Initiates draggable element `onmousedown`:
+### Draggable instance
+
+Create draggable instance `onmousedown`:
 
 ```ts
 const draggable = new Draggable(id: string, {x: event.clientX, y: event.clientY});
 ```
 
-|                     |                                                         |               |
-| ------------------- | ------------------------------------------------------- | ------------- |
-| **Create Instance** | `new Draggable(id, {x:event.clientX, y:event.clientY})` | `onmousedown` |
-| **Move element**    | `dragAt(event.clientX, event.clientY)`                  | `onmousemove` |
-| **End Dragging**    | `endDragged()`                                          | `onmouseup`   |
+Move element `onmousemove`
+
+```ts
+draggable.dragAt(event.clientX, event.clientY);
+```
+
+End Dragging `onmouseup`
+
+```ts
+draggable.endDragged();
+```
 
 ## Test
 
