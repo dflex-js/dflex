@@ -6,7 +6,7 @@
 npm install @dflex/draggable
 ```
 
-![how draggable works ><](./img/draggable.gif)
+<p align="center"><img src=./img/draggable.gif></p>
 
 DFlex draggable is the simplest solution to create JavaScript draggable
 elements. No need for special tutorial and thinking about implementation
