@@ -1,6 +1,6 @@
 {
   "name": "@dflex/store",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "dist/dflexStore.min.cjs.js",
   "umd:main": "dist/dflexStore.min.umd",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
@@ -28,6 +28,5 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
-  },
-  "dependencies": {}
+  }
 }
