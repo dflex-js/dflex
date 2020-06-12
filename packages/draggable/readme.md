@@ -6,13 +6,12 @@
 npm install @dflex/draggable
 ```
 
-![how draggable works](./img/draggable.gif)
+![how draggable works](./img/draggable.gif){: style="float:right"}
 
 DFlex draggable is the simplest solution to create JavaScript draggable
 elements. No need for special tutorial and thinking about implementation
 complexity or even migration to different technologies for different frameworks.
-It can be used with any JavaScript frameworks React, Vue, Angular, Preact or
-VanillaJS.
+It can be used with any JavaScript frameworks React, Vue, Angular or VanillaJS.
 
 ## API
 
