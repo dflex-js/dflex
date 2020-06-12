@@ -9,34 +9,30 @@ let index = 1;
 
 function App() {
   return (
-    <Container>
-      <Core id="gp0" className="Container" component="div" depth={2}>
-        <Core id="p0-a" component="ul" depth={1}>
-          {[1].map(() => (
-            <Core depth={0} id={`id-${index}`} key={`k${index}`} component="li">
-              Hello-
-              {index++}
-            </Core>
-          ))}
-        </Core>
-
-        <Core id="p0-1b" component="ul" depth={1}>
-          {[1, 2, 3, 4, 5, 6, 7].map(() => (
-            <Core depth={0} id={`id-${index}`} key={`k${index}`} component="li">
-              Hello-
-              {index++}
-            </Core>
-          ))}
-        </Core>
-
-        <Core id="p0-1c" component="ul" depth={1}>
-          {[1, 2, 3].map(() => (
-            <Core depth={0} id={`id-${index}`} key={`k${index}`} component="li">
-              Hello-
-              {index++}
-            </Core>
-          ))}
-        </Core>
+    <Container className="Container">
+      <Core id="p0-a" component="ul" depth={1}>
+        {[1].map(() => (
+          <Core depth={0} id={`id-${index}`} key={`k${index}`} component="li">
+            Hello-
+            {index++}
+          </Core>
+        ))}
+      </Core>
+      <Core id="p0-1b" component="ul" depth={1}>
+        {[1, 2, 3, 4, 5, 6, 7].map(() => (
+          <Core depth={0} id={`id-${index}`} key={`k${index}`} component="li">
+            Hello-
+            {index++}
+          </Core>
+        ))}
+      </Core>
+      <Core id="p0-1c" component="ul" depth={1}>
+        {[1, 2, 3].map(() => (
+          <Core depth={0} id={`id-${index}`} key={`k${index}`} component="li">
+            Hello-
+            {index++}
+          </Core>
+        ))}
       </Core>
     </Container>
   );

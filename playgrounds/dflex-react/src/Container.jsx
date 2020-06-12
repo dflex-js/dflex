@@ -20,14 +20,11 @@ const Container = ({
     // avoid right mouse click and ensure id
     if (typeof button === "number" && button === 0) {
       const { id } = target;
-      console.log("onMouseDown -> id", id);
 
       if (id) {
         draggedID = id;
-        console.log("onMouseDown -> draggedID", draggedID);
 
         droppable = new Draggable(id, { x: clientX, y: clientY });
-        console.log("onMouseDown -> droppable", droppable);
 
         mouseEvents = [
           { evType: "mousemove", evTarget: document, handler: onMouseMove },
@@ -47,7 +44,7 @@ const Container = ({
         evTarget.removeEventListener(evType, handler);
       });
 
-      droppable.endDragged();
+      droppable.end();
     }
   };
 

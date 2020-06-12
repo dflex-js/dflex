@@ -73,6 +73,9 @@ class Draggable {
     this.offsetX = -initX + translateX;
     this.offsetY = -initY + translateY;
 
+    this.goToX = 0;
+    this.goToY = 0;
+
     this.setDragged(true);
   }
 
@@ -95,14 +98,12 @@ class Draggable {
     /**
      * Not active: end of dragging.
      */
-    draggedStyleProps.forEach(({ prop }) => {
-      this.draggedStyle[prop] = null;
-    });
+    this.draggedStyle.pointerEvents = null;
 
     this[DRAGGED_ELM].seTranslate(this.goToX, this.goToY);
   }
 
-  endDragged() {
+  end() {
     this.setDragged(false);
   }
 
