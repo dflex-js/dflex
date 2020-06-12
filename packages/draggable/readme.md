@@ -1,6 +1,6 @@
 # @dflex/draggable
 
-> Draggable native component written in pure JS and works for Web and Mobile
+> Draggable is a native component written in pure JS works for Web and Mobile
 
 ```bash
 npm install @dflex/draggable
@@ -11,7 +11,7 @@ npm install @dflex/draggable
 DFlex draggable is the simplest solution to create JavaScript draggable
 elements. No need for special tutorial and thinking about implementation
 complexity or even migration to different technologies for different frameworks.
-It can be used with any JavaScript frameworks React, Vue, Angular or VanillaJS.
+It can be used with any JavaScript frameworks React, Vue, Angular.
 
 ## API
 
@@ -44,7 +44,7 @@ draggable.dragAt(event.clientX, event.clientY);
 End Dragging `onmouseup`
 
 ```ts
-draggable.endDragged();
+draggable.end();
 ```
 
 ## Test

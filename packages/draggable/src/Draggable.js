@@ -103,7 +103,7 @@ class Draggable {
     this[DRAGGED_ELM].seTranslate(this.goToX, this.goToY);
   }
 
-  endDragged() {
+  end() {
     this.setDragged(false);
   }
 
