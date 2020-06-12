@@ -1,5 +1,5 @@
 {
   "npmClient": "yarn",
-  "packages": ["packages/*"],
+  "packages": ["packages/dom-gen", "packages/store", "packages/draggable"],
   "version": "independent"
 }
