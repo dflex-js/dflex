@@ -23,7 +23,7 @@ easily access: `id`, which is why ids are used as keys.
 
 <!-- created with: https://excalidraw.com/ -->
 
-![how register works](./img/store-registry.png)
+![how register works](https://raw.githubusercontent.com/jalal246/dflex/master/packages/store/img/store-registry.png)
 
 Registry works on creating
 [pointer](https://github.com/jalal246/dflex/tree/master/packages/dom-gen#generates-element-pointer)
