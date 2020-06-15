@@ -18,6 +18,10 @@ database or hash tables but applied in DOM tree.
 
 ## Generates element pointer
 
+<!-- created with: https://excalidraw.com/ -->
+
+![how pointer works](img/pointer.png)
+
 Element pointer refers to the element position and its relationship in DOM tree.
 It's represented with `getElmPointer` as following:
 
