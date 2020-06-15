@@ -117,9 +117,10 @@ DOM-root
 │───id-2 => order: {parent: 0, self: 2} || keys: {chK: null, pK: "1-0", sK: "0-0"}
 ```
 
-**Note:** ids form 0 to 2, all have same parent and siblings key. And it
-guarantees that any any incoming parent will carry key `1-0` and exists in
-position `0`.
+### Auto connect
+
+ids form 0 to 2, all have same parent and siblings key. And it guarantees that
+any any incoming parent will carry key `1-0` and exists in position `0`.
 
 This goes also for any parent. Eventually, by using keys and indexes you can go up↑
 and down↓.
