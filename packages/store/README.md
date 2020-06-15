@@ -23,7 +23,9 @@ easily access: `id`, which is why ids are used as keys.
 
 <!-- created with: https://excalidraw.com/ -->
 
-![how register works](https://raw.githubusercontent.com/jalal246/dflex/master/packages/store/img/store-registry.png)
+<p align="center">
+ <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/store/img/store-registry.png" alt="how register works"/>
+</p>
 
 Registry works on creating
 [pointer](https://github.com/jalal246/dflex/tree/master/packages/dom-gen#generates-element-pointer)
@@ -151,8 +153,8 @@ registered data. It includes:
 
   - `parents: string<id>|Array<ids>` - all element's parents.
 
-Going back to our first element with `id= id-0`, we can get element instance, its parent instance,
-and its connection branches as following:
+Going back to our first element with `id= id-0`, we can get element instance,
+its parent instance, and its connection branches as following:
 
 ```js
 const elmInstanceConnection = store.getElmTreeById("id-0");
