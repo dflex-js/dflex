@@ -8,21 +8,13 @@ JavaScript Project to manipulate DOM Elements
 
 <hr />
 
-## Packages Overview
+## [Dom Generator](https://github.com/jalal246/dflex/tree/master/packages/dom-gen)
 
-### [@dflex/dom-gen](https://github.com/jalal246/dflex/tree/master/packages/dom-gen)
-
-> DOM relations generator algorithm
+> Generates relations between DOM elements based on element depth
 
 <p align="center">
  <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dom-gen/img/connect.png" alt="how algorithm connect nodes"/>
 </p>
-
-Generates relations between DOM elements based on element depth. For each DOM
-node, it generates three keys: Siblings, Parent and Children keys and two
-indexes one refers to node order in its level and the other refers to the parent
-index in parental level. Together: keys and indexes combined form of
-uniqueness for each element.
 
 ### [@dflex/store](https://github.com/jalal246/dflex/tree/master/packages/store)
 
