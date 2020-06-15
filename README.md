@@ -16,7 +16,7 @@ JavaScript Project to Manipulate DOM Elements
  <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dom-gen/img/connect.png" alt="how algorithm connect nodes"/>
 </p>
 
-## [DOM store](https://github.com/jalal246/dflex/tree/master/packages/store)
+## [DOM Store](https://github.com/jalal246/dflex/tree/master/packages/store)
 
 > Traverse through the DOM tree using element id
 
