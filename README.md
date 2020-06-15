@@ -3,7 +3,7 @@ DFlex
 </h1>
 
 <h6 align="center">
-JavaScript Project to manipulate DOM Elements
+JavaScript Project to Manipulate DOM Elements
 </h6>
 
 <hr />
@@ -18,7 +18,7 @@ JavaScript Project to manipulate DOM Elements
 
 ## [DOM store](https://github.com/jalal246/dflex/tree/master/packages/store)
 
-> Traverse through the DOM tree using element-id.
+> Traverse through the DOM tree using element id
 
 <p align="center">
  <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/store/img/store-registry.png" alt="how register works"/>
@@ -26,7 +26,7 @@ JavaScript Project to manipulate DOM Elements
 
 ## [Draggable](https://github.com/jalal246/dflex/tree/master/packages/draggable)
 
-> Draggable native component written in pure JS works for Web and Mobile
+> A native component written in pure JS works for Web and Mobile
 
 <p align="center">
  <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/draggable/img/draggable.gif" alt="how register works"/>
