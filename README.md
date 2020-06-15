@@ -1,6 +1,12 @@
-# @dflex
+<h1 align="center">
+DFlex
+</h1>
 
-> JavaScript Project to manipulate DOM Elements.
+<h6 align="center">
+JavaScript Project to manipulate DOM Elements
+</h6>
+
+<hr />
 
 ## Packages Overview
 
