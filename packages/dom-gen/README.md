@@ -21,7 +21,7 @@ database or hash tables but applied in DOM tree.
 <!-- created with: https://excalidraw.com/ -->
 
 <p align="center">
- <img src="img/pointer.png" alt="how pointer works"/>
+ <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dom-gen/img/pointer.png" alt="how pointer works"/>
 </p>
 
 Element pointer refers to the element position and its relationship in DOM tree.
@@ -124,7 +124,7 @@ DOM-root
 <!-- created with: https://excalidraw.com/ -->
 
 <p align="center">
- <img src="img/connect.png" alt="how algorithm connect nodes"/>
+ <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dom-gen/img/connect.png" alt="how algorithm connect nodes"/>
 </p>
 
 ids form 0 to 2, all have same parent and siblings key. And it guarantees that
