@@ -20,7 +20,9 @@ database or hash tables but applied in DOM tree.
 
 <!-- created with: https://excalidraw.com/ -->
 
-![how pointer works](img/pointer.png)
+<p align="center">
+ <img src="img/pointer.png" alt="how pointer works"/>
+</p>
 
 Element pointer refers to the element position and its relationship in DOM tree.
 It's represented with `getElmPointer` as following:
@@ -121,7 +123,9 @@ DOM-root
 
 <!-- created with: https://excalidraw.com/ -->
 
-![how algorithm connect nodes](img/connect.png)
+<p align="center">
+ <img src="img/connect.png" alt="how algorithm connect nodes"/>
+</p>
 
 ids form 0 to 2, all have same parent and siblings key. And it guarantees that
 any any incoming parent will carry key `1-0` and exists in the same position `0`.
