@@ -18,6 +18,12 @@ database or hash tables but applied in DOM tree.
 
 ## Generates element pointer
 
+<!-- created with: https://excalidraw.com/ -->
+
+<p align="center">
+ <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dom-gen/img/pointer.png" alt="how pointer works"/>
+</p>
+
 Element pointer refers to the element position and its relationship in DOM tree.
 It's represented with `getElmPointer` as following:
 
@@ -113,9 +119,16 @@ DOM-root
 │───id-2 => order: {parent: 0, self: 2} || keys: {chK: null, pK: "1-0", sK: "0-0"}
 ```
 
-**Note:** ids form 0 to 2, all have same parent and siblings key. And it
-guarantees that any any incoming parent will carry key `1-0` and exists in
-position `0`.
+### Auto connect
+
+<!-- created with: https://excalidraw.com/ -->
+
+<p align="center">
+ <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dom-gen/img/connect.png" alt="how algorithm connect nodes"/>
+</p>
+
+ids form 0 to 2, all have same parent and siblings key. And it guarantees that
+any any incoming parent will carry key `1-0` and exists in the same position `0`.
 
 This goes also for any parent. Eventually, by using keys and indexes you can go up↑
 and down↓.
