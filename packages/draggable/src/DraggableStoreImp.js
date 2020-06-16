@@ -3,7 +3,13 @@ import AbstractStore from "@dflex/store/src/AbstractStore";
 
 class DraggableStoreImp extends AbstractStore {
   register(elmInstance) {
-    super.register(elmInstance, AbstractCoreInstance);
+    super.register(
+      Object.assign(elmInstance, {
+        translateY: 0,
+        translateX: 0,
+      }),
+      AbstractCoreInstance
+    );
   }
 }
 

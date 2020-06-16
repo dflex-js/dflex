@@ -100,7 +100,8 @@ class Draggable {
      */
     this.draggedStyle.pointerEvents = null;
 
-    this[DRAGGED_ELM].seTranslate(this.goToX, this.goToY);
+    this[DRAGGED_ELM].translateX = this.goToX;
+    this[DRAGGED_ELM].translateY = this.goToY;
   }
 
   end() {
