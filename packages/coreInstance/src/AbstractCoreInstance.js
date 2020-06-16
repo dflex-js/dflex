@@ -1,21 +1,16 @@
 class AbstractCoreInstance {
   /**
+   * This is the link between store and core element
    *
    * @param {string} id
    * @param {node} elm
-   * @param {number} index - element self index
+   * @param {Object} rest
    */
-  constructor({ id, element }) {
+  constructor({ id, element, ...rest }) {
     this.id = id;
     this.elm = element;
 
-    this.translateY = 0;
-    this.translateX = 0;
-  }
-
-  seTranslate(x, y) {
-    this.translateY = y;
-    this.translateX = x;
+    Object.assign(this, rest);
   }
 }
 

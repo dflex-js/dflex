@@ -49,6 +49,13 @@ End Dragging `onmouseup`
 draggable.end();
 ```
 
+#### Examples
+
+You can see full React template
+[here](https://github.com/jalal246/dflex-react-draggable-starter).
+
+Contributes feel free to apply PR for another frameworks.
+
 ## Test
 
 TODO
