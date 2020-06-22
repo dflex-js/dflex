@@ -1,21 +1,9 @@
 /* eslint-disable no-underscore-dangle */
-import AbstractDraggable from "@dflex/draggable/src/AbstractDraggable";
 
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
+import Base from "../Base";
 
-class ResponsiveDraggable extends AbstractDraggable {
-  constructor(element, clickCoordinates) {
-    super(element, clickCoordinates);
-
-    const { order } = element;
-
-    /**
-     * Initialize temp index that refers to element new position after
-     * transformation happened.
-     */
-    this.draggedTempIndex = order.self;
-  }
-
+class Draggable extends Base {
   /**
    * Dragged current-offset is essential to determine dragged position in
    * layout and parent.
@@ -94,4 +82,4 @@ class ResponsiveDraggable extends AbstractDraggable {
   }
 }
 
-export default ResponsiveDraggable;
+export default Draggable;

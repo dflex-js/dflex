@@ -1,4 +1,6 @@
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
+import AbstractDraggable from "@dflex/draggable/src/AbstractDraggable";
+
 import store from "../store";
 
 import { ACTIVE_PARENT } from "../constants.json";
@@ -11,22 +13,32 @@ import { ACTIVE_PARENT } from "../constants.json";
  *
  * @class Base
  */
-class Base {
+class Base extends AbstractDraggable {
   /**
    * Creates an instance of Base.
    *
    * @param {string} elementId
    * @memberof Base
    */
-  constructor({ parent, siblings, parents }) {
-    // const {
-    //   element,
-    //   parent,
-    //   branches: { siblings, parents },
-    // } = store.getElmTreeById(elementId);
+  constructor(elementTree, clickCoordinates) {
+    const {
+      element,
+      parent,
+      branches: { siblings, parents },
+    } = elementTree;
 
-    // this.parentsList = parents;
-    // this.siblingsList = siblings;
+    super(element, clickCoordinates);
+
+    const { order } = element;
+
+    /**
+     * Initialize temp index that refers to element new position after
+     * transformation happened.
+     */
+    this.draggedTempIndex = order.self;
+
+    this.parentsList = parents;
+    this.siblingsList = siblings;
 
     this.setIsSingleton();
 
@@ -147,15 +159,9 @@ class Base {
   /**
    * Assigns DRAGGED_ELM
    *
-   * @param {CoreInstance} coreInstance
    * @memberof Base
    */
-  assignDragged(coreInstance) {
-    /**
-     * Assign instance for dragged.
-     */
-    this[DRAGGED_ELM] = coreInstance;
-
+  assignDragged() {
     /**
      * Not initiating thresholdOffset for all coreInstances. Only ones which
      * dragged will be initiated.

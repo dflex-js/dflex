@@ -1,4 +1,4 @@
-import { DRAGGED_ELM } from "../constants";
+import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 import store from "../../store";
 
 import Droppable from "./Droppable";
