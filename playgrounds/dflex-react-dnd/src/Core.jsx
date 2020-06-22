@@ -9,7 +9,7 @@ const Core = (props) => {
     component: CoreComponent = "div",
     id: idProps,
     children,
-    depth = 0,
+    depth,
     ...rest
   } = props;
 
