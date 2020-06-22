@@ -1,5 +1,6 @@
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
-import store from "../../store";
+
+import store from "../Store";
 import Draggable from "../Draggable";
 
 /**
