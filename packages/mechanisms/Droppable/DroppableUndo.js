@@ -1,6 +1,6 @@
-import { DRAGGED_ELM } from "../constants";
-import store from "../../store";
+import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 
+import store from "../Store";
 import Droppable from "./Droppable";
 
 class DroppableUndo extends Droppable {

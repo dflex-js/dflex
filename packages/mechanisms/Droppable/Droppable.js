@@ -1,6 +1,7 @@
-import { ACTIVE_PARENT, DRAGGED_ELM } from "../constants";
+import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
+import { ACTIVE_PARENT } from "../constants.json";
 
-import store from "../../store";
+import store from "../Store";
 import AxisX from "./AxisX";
 
 /**

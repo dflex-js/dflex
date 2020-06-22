@@ -1,120 +1,9 @@
-import { DRAGGED_ELM } from "../constants";
+/* eslint-disable no-underscore-dangle */
 
+import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 import Base from "../Base";
 
-/**
- * Draggable element.
- *
- * @class Draggable
- */
 class Draggable extends Base {
-  /**
-   * Style that will be added to dragged element.
-   *
-   * @static
-   * @property draggedStyleProps,
-   * @type {Array}
-   * @readonly
-   * @memberof Draggable
-   */
-  static draggedStyleProps = [
-    {
-      prop: "pointerEvents",
-      value: "none"
-    },
-    {
-      prop: "zIndex",
-      value: "1"
-    },
-    {
-      prop: "background",
-      value: "brown"
-    },
-    {
-      prop: "transition",
-      value: `opacity 0.2s cubic-bezier(0.2, 0, 0, 1) 0s`
-    }
-  ];
-
-  /**
-   * Creates an instance of Draggable.
-   * Works Only on dragged element level.
-   *
-   * @param {string} elementId
-   * @param {Object}  initCoordinates
-   * @param {number}  initCoordinates.x
-   * @param {number}  initCoordinates.y
-   *
-   * @memberof Draggable
-   */
-  constructor(elementId, { x: initX, y: initY }) {
-    super(elementId);
-
-    const {
-      translateX,
-      translateY,
-      indexes,
-      ref: {
-        current: { style: draggedStyle }
-      }
-    } = this[DRAGGED_ELM];
-
-    /**
-     * Initialize temp index that refers to element new position after
-     * transformation happened.
-     */
-    this.draggedTempIndex = indexes.self;
-
-    this.draggedStyle = draggedStyle;
-
-    /**
-     * previous X and Y are used to calculate mouse directions.
-     */
-    this.prevY = initY;
-    this.prevX = initX;
-
-    /**
-     * When dragging start, element shouldn't jump from its translate. So, we
-     * calculate offset that make translate X,Y start from zero:
-     *  goToX = x + this.offsetX.
-     *  goToY = y + this.offsetY.
-     *
-     * goToX and goToY both should be zero with first click. Starts with simple
-     * equating: initX = X. Taking into considerations translate value.
-     *
-     */
-    this.offsetX = -initX + translateX;
-    this.offsetY = -initY + translateY;
-
-    this.setDragged(true);
-  }
-
-  /**
-   * Triggers twice. Once when constructor is initiated, the other when drag is
-   * ended. It adds/removes style.
-   *
-   * @param {boolean} isActive - is dragged operation active or it is ended.
-   * @memberof Draggable
-   */
-  setDragged(isActive) {
-    const { draggedStyleProps } = Draggable;
-
-    if (isActive) {
-      draggedStyleProps.forEach(({ prop, value }) => {
-        this.draggedStyle[prop] = value;
-      });
-
-      return;
-    }
-
-    /**
-     * Not active: end of dragging.
-     */
-    draggedStyleProps.forEach(({ prop }) => {
-      this.draggedStyle[prop] = null;
-    });
-  }
-
   /**
    * Dragged current-offset is essential to determine dragged position in
    * layout and parent.
@@ -132,7 +21,7 @@ class Draggable extends Base {
      * Each time we got new translate, offset should be updated
      */
     const {
-      offset: { top, left, width, height }
+      offset: { top, left, width, height },
     } = this[DRAGGED_ELM];
 
     /**
@@ -171,7 +60,7 @@ class Draggable extends Base {
   isDraggedOut(id) {
     const { parents, dragged } = this.thresholds;
 
-    let $ = id ? parents[id] : dragged;
+    const $ = id ? parents[id] : dragged;
 
     const isOut =
       this.currentLeft < $.maxLeft ||
@@ -190,31 +79,6 @@ class Draggable extends Base {
    */
   isDraggedLastElm() {
     return this.draggedTempIndex === this.siblingsList.length - 1;
-  }
-
-  /**
-   * Executes dragging by applying transform.
-   * Writes to draggedElmCurrentOffset in Transform class.
-   * Set values to isDragged flags.
-   *
-   * @param {number} x - mouse x coordinates
-   * @param {number} y - mouse y coordinates
-   * @memberof Draggable
-   */
-  dragAt(x, y) {
-    /**
-     * Calculates translate coordinates.
-     *
-     * Indicates dragged y-transformation that's will be updated during the
-     * dropping process. Updating Y immediately will effect calculations in
-     * transform, that's why it is updated when dragging is done.
-     */
-    this.goToX = x + this.offsetX;
-    this.goToY = y + this.offsetY;
-
-    this.draggedStyle.transform = `translate(${this.goToX}px,${this.goToY}px)`;
-
-    this.setDraggedTempCurrentOffset(this.goToX, this.goToY);
   }
 }
 
