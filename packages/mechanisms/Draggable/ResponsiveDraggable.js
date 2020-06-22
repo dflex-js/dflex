@@ -1,18 +1,19 @@
+/* eslint-disable no-underscore-dangle */
 import AbstractDraggable from "@dflex/draggable/src/AbstractDraggable";
 
-const DRAGGED_ELM = "draggedElm";
+import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 
 class ResponsiveDraggable extends AbstractDraggable {
   constructor(element, clickCoordinates) {
     super(element, clickCoordinates);
 
-    const { indexes } = element;
+    const { order } = element;
 
     /**
      * Initialize temp index that refers to element new position after
      * transformation happened.
      */
-    this.draggedTempIndex = indexes.self;
+    this.draggedTempIndex = order.self;
   }
 
   /**

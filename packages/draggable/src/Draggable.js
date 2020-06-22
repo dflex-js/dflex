@@ -1,5 +1,3 @@
-/* eslint-disable no-underscore-dangle */
-
 import store from "./DraggableStoreImp";
 import AbstractDraggable from "./AbstractDraggable";
 

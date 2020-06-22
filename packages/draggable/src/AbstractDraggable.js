@@ -1,6 +1,4 @@
-/* eslint-disable no-underscore-dangle */
-
-const DRAGGED_ELM = "draggedElm";
+import { DRAGGED_ELM } from "../constants.json";
 
 /**
  * Style that will be added to dragged element.
@@ -36,6 +34,7 @@ class AbstractDraggable {
    * Creates an instance of AbstractDraggable.
    * Works Only on dragged element level.
    *
+   * @param {Object}  element - object reference from store
    * @param {Object}  initCoordinates
    * @param {number}  initCoordinates.x
    * @param {number}  initCoordinates.y

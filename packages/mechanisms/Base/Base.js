@@ -1,6 +1,7 @@
+import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 import store from "../store";
 
-import { DRAGGED_ELM, ACTIVE_PARENT } from "../constants";
+import { ACTIVE_PARENT } from "../constants.json";
 
 /**
  * Base element.
@@ -17,15 +18,15 @@ class Base {
    * @param {string} elementId
    * @memberof Base
    */
-  constructor(elementId) {
-    const {
-      element,
-      parent,
-      branches: { siblings, parents },
-    } = store.getElmTreeById(elementId);
+  constructor({ parent, siblings, parents }) {
+    // const {
+    //   element,
+    //   parent,
+    //   branches: { siblings, parents },
+    // } = store.getElmTreeById(elementId);
 
-    this.parentsList = parents;
-    this.siblingsList = siblings;
+    // this.parentsList = parents;
+    // this.siblingsList = siblings;
 
     this.setIsSingleton();
 
