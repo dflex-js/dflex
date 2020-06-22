@@ -8,9 +8,7 @@ const Core = (props) => {
   const {
     component: CoreComponent = "div",
     id: idProps,
-    childIndex,
     children,
-    depth,
     ...rest
   } = props;
 

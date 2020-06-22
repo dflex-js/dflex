@@ -8,9 +8,8 @@ const Core = (props) => {
   const {
     component: CoreComponent = "div",
     id: idProps,
-    childIndex,
     children,
-    depth,
+    depth = 0,
     ...rest
   } = props;
 
@@ -24,7 +23,7 @@ const Core = (props) => {
     setTimeout(
       // eslint-disable-next-line func-names
       function () {
-        store.register({ id, element: ref.current });
+        store.register({ id, element: ref.current, depth });
       },
       0
     );
