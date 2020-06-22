@@ -19,7 +19,7 @@
     "@dflex/dom-gen",
     "@dflex/store",
     "@dflex/core-instance",
-    "@dflex/draggable",
+    "@dflex/dnd",
     "@folo",
     "builderz",
     "DOM",
