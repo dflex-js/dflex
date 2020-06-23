@@ -31,12 +31,9 @@ class CoreInstance extends AbstractCoreInstance {
    *
    * @param {string} id
    * @param {node} elm
-   * @param {number} index - element self index
    */
-  constructor({ order: { self: index }, ...rest }) {
-    super(rest);
-
-    this.index = index;
+  constructor(coreInstance) {
+    super(coreInstance);
 
     if (this.element) this.initOffset();
   }
@@ -51,7 +48,7 @@ class CoreInstance extends AbstractCoreInstance {
    * @memberof CoreInstance
    */
   initOffset() {
-    const { height, width, left, top } = this.elm.getBoundingClientRect();
+    const { height, width, left, top } = this.element.getBoundingClientRect();
 
     /**
      * Element offset stored once without being triggered to re-calculate.
@@ -163,7 +160,7 @@ class CoreInstance extends AbstractCoreInstance {
     this.prevTranslateY = this.translateY;
     this.translateY += _topSpace;
 
-    this.elm.current.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
+    this.element.current.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
 
     const increment = sign * vIncrement;
 
