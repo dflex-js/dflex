@@ -10,7 +10,7 @@ class DnDStoreImp extends Store {
 let store;
 
 // eslint-disable-next-line func-names
-(function () {
+export default (function () {
   if (!store) {
     store = new DnDStoreImp();
   }

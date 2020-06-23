@@ -1,3 +1,5 @@
+import AbstractCoreInstance from "./AbstractCoreInstance";
+
 /**
  * Why storing index here? when it's already sorted in order?
  *
@@ -24,20 +26,16 @@
  *
  * To connect element with parents by knowing their locations.
  */
-class CoreInstance {
+class CoreInstance extends AbstractCoreInstance {
   /**
    *
    * @param {string} id
    * @param {node} elm
-   * @param {number} index - element self index
    */
-  constructor({ id, element, order: { self: index } }) {
-    this.id = id;
-    this.elm = element;
+  constructor(coreInstance) {
+    super(coreInstance);
 
-    this.index = index;
-
-    if (element) this.initOffset();
+    if (this.element) this.initOffset();
   }
 
   /**
@@ -50,7 +48,7 @@ class CoreInstance {
    * @memberof CoreInstance
    */
   initOffset() {
-    const { height, width, left, top } = this.elm.getBoundingClientRect();
+    const { height, width, left, top } = this.element.getBoundingClientRect();
 
     /**
      * Element offset stored once without being triggered to re-calculate.
@@ -162,7 +160,7 @@ class CoreInstance {
     this.prevTranslateY = this.translateY;
     this.translateY += _topSpace;
 
-    this.elm.current.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
+    this.element.current.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
 
     const increment = sign * vIncrement;
 

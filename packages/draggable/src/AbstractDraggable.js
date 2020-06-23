@@ -50,7 +50,7 @@ class AbstractDraggable {
     const {
       translateX,
       translateY,
-      elm: { style: draggedStyle },
+      element: { style: draggedStyle },
     } = this[DRAGGED_ELM];
 
     this.draggedStyle = draggedStyle;

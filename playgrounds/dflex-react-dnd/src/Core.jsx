@@ -2,13 +2,12 @@ import React from "react";
 import { keyGenerator } from "@folo/utils";
 
 // eslint-disable-next-line import/no-unresolved
-import { store } from "@dflex/draggable/src";
+import { store } from "@dflex/dnd";
 
 const Core = (props) => {
   const {
     component: CoreComponent = "div",
     id: idProps,
-    childIndex,
     children,
     depth,
     ...rest
@@ -24,7 +23,7 @@ const Core = (props) => {
     setTimeout(
       // eslint-disable-next-line func-names
       function () {
-        store.register({ id, element: ref.current });
+        store.register({ id, element: ref.current, depth });
       },
       0
     );
