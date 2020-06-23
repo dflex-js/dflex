@@ -1,3 +1,5 @@
+import AbstractCoreInstance from "./AbstractCoreInstance";
+
 /**
  * Why storing index here? when it's already sorted in order?
  *
@@ -24,20 +26,19 @@
  *
  * To connect element with parents by knowing their locations.
  */
-class CoreInstance {
+class CoreInstance extends AbstractCoreInstance {
   /**
    *
    * @param {string} id
    * @param {node} elm
    * @param {number} index - element self index
    */
-  constructor({ id, element, order: { self: index } }) {
-    this.id = id;
-    this.elm = element;
+  constructor({ order: { self: index }, ...rest }) {
+    super(rest);
 
     this.index = index;
 
-    if (element) this.initOffset();
+    if (this.element) this.initOffset();
   }
 
   /**

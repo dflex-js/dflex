@@ -8,7 +8,7 @@ class AbstractCoreInstance {
    */
   constructor({ id, element, ...rest }) {
     this.id = id;
-    this.elm = element;
+    this.element = element;
 
     Object.assign(this, rest);
   }
