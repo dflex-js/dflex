@@ -91,9 +91,9 @@ class CoreInstance extends AbstractCoreInstance {
    * @memberof CoreInstance
    */
   setIndex(i) {
-    const newIndex = this.index + i;
+    const newIndex = this.order.self + i;
 
-    this.index = newIndex;
+    this.order.self = newIndex;
 
     return newIndex;
   }
@@ -107,7 +107,7 @@ class CoreInstance extends AbstractCoreInstance {
    * @memberof CoreInstance
    */
   updateIDsOrder(order, inc, isShuffle) {
-    const oldIndex = this.index;
+    const oldIndex = this.order.self;
 
     /**
      * Get new index depending on increment and updating local index (self).
