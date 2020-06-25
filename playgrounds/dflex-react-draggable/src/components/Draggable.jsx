@@ -4,9 +4,9 @@ import { keyGenerator } from "@folo/utils";
 // eslint-disable-next-line import/no-unresolved
 import { store } from "@dflex/draggable/src";
 
-const Core = (props) => {
+const Draggable = (props) => {
   const {
-    component: CoreComponent = "div",
+    component: DraggableComponent = "div",
     id: idProps,
     children,
     ...rest
@@ -29,10 +29,10 @@ const Core = (props) => {
   }, []);
 
   return (
-    <CoreComponent ref={ref} key={id} id={id} {...rest}>
+    <DraggableComponent ref={ref} key={id} id={id} {...rest}>
       {children}
-    </CoreComponent>
+    </DraggableComponent>
   );
 };
 
-export default Core;
+export default Draggable;
