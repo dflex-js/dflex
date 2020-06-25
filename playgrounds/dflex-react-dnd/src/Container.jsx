@@ -44,7 +44,7 @@ const Container = ({
         evTarget.removeEventListener(evType, handler);
       });
 
-      dnd.end();
+      dnd.endAll();
     }
   };
 

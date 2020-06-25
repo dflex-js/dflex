@@ -66,11 +66,16 @@ class DroppableUndo extends Droppable {
       const {
         keys: { chK },
       } = store.getElmById(id);
+      console.log("DroppableUndo -> undoTransformedParents -> store", store);
 
       /**
        * Get parent's children.
        */
-      const children = store.getListByKey(chK);
+      const children = store.getElmBranch(chK);
+      console.log(
+        "DroppableUndo -> undoTransformedParents -> children",
+        children
+      );
 
       this.undoList(children);
     });

@@ -32,7 +32,7 @@ describe("Testing store", () => {
 
     store.register(elm0D1);
 
-    expect(store.branches).toStrictEqual({
+    expect(store.DOMGen.branches).toStrictEqual({
       "0-0": ["id-0", "id-1", "id-2"],
       "1-0": "p-id-0",
     });
