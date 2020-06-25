@@ -31,14 +31,14 @@ class DroppableUndo extends Droppable {
    */
   undoList(lst) {
     const {
-      indexes: { self: from },
+      order: { self: from },
       id,
     } = this[DRAGGED_ELM];
 
     for (let i = from; i < lst.length; i += 1) {
-      const id = lst[i];
+      const listId = lst[i];
 
-      const element = store.getElmById(id);
+      const element = store.getElmById(listId);
 
       /**
        * Note: rolling back won't affect order array. It only deals with element
