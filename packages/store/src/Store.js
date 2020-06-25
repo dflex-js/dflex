@@ -42,6 +42,19 @@ class Store {
   }
 
   /**
+   * TODO: Add this to README documentation
+   *
+   * Gets element branch lists
+   *
+   * @param {string} key
+   * @returns {string|Array} - elements siblings list.
+   * @memberof Store
+   */
+  getElmBranchByKey(ky) {
+    return this.DOMGen.getElmBranch(ky);
+  }
+
+  /**
    * Gets element connections instance for a given id.
    *
    * @param {string} elmId
@@ -66,8 +79,8 @@ class Store {
     /**
      * getting connected branches
      */
-    const siblings = this.DOMGen.getElmBranch(sK);
-    const parents = this.DOMGen.getElmBranch(pK);
+    const siblings = this.getElmBranchByKey(sK);
+    const parents = this.getElmBranchByKey(pK);
 
     /**
      * getting parent instance
