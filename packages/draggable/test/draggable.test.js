@@ -1,15 +1,56 @@
-// import { Container, Draggable } from "dflex-react-draggable/src/comp onents";
+/* eslint-disable no-plusplus */
 
-const path = require("path");
+import { Draggable, store } from "../src";
 
-describe("app", () => {
-  beforeEach(async () => {
-    await page.goto("http://localhost:3000");
+let idCounter = 0;
+
+function addElement() {
+  const newDiv = document.createElement("div");
+
+  const id = `id-${idCounter++}`;
+
+  newDiv.setAttribute("id", id);
+
+  const newContent = document.createTextNode("Hello!");
+  newDiv.appendChild(newContent);
+
+  return { element: newDiv, id };
+}
+
+describe("Draggable Store", () => {
+  it("Has empty registry", () => {
+    expect(store.registry).toStrictEqual({});
   });
 
-  it("should display a react logo", async () => {
-    page;
-    console.log("page", page);
-    await expect(page).toMatch("React");
+  it("Registers element and initiates translateX,Y", () => {
+    const elmInstance1 = addElement();
+    const elmInstance2 = addElement();
+
+    store.register(elmInstance1);
+    store.register(elmInstance2);
+
+    const result = {
+      [elmInstance1.id]: {
+        element: elmInstance1.element,
+        id: elmInstance1.id,
+        translateX: 0,
+        translateY: 0,
+      },
+
+      [elmInstance2.id]: {
+        element: elmInstance2.element,
+        id: elmInstance2.id,
+        translateX: 0,
+        translateY: 0,
+      },
+    };
+
+    expect(store.registry).toEqual(result);
+  });
+});
+
+describe("Draggable mechanism", () => {
+  it("Has empty registry", () => {
+    expect({}).toStrictEqual({});
   });
 });
