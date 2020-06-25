@@ -13,11 +13,6 @@
     "test": "jest",
     "build": "lerna run build"
   },
-  "jest": {
-    "testPathIgnorePatterns": [
-      "site"
-    ]
-  },
   "devDependencies": {
     "@babel/preset-env": "^7.9.6",
     "babel-jest": "^26.0.1",
