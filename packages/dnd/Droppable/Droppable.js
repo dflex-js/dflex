@@ -210,7 +210,7 @@ class Droppable extends AxisX {
     /**
      * Add parent id to setOfTransformedIds.
      */
-    if (!this.isDraggedOrphan) this.addParentAsTransformed();
+    if (!this.isOrphan) this.addParentAsTransformed();
 
     console.groupEnd();
   }
@@ -291,7 +291,7 @@ class Droppable extends AxisX {
      */
     let isDraggedOutParent = false;
 
-    if (!this.isDraggedOrphan) {
+    if (!this.isOrphan) {
       const { id } = this[ACTIVE_PARENT];
       isDraggedOutParent = this.isDraggedOut(id);
     }

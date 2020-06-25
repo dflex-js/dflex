@@ -40,8 +40,6 @@ class Base extends AbstractDraggable {
     this.parentsList = parents;
     this.siblingsList = siblings;
 
-    this.setIsSingleton();
-
     /**
      * Thresholds store, contains max value for each parent and for dragged. Depending on
      * ids as keys.
@@ -51,26 +49,11 @@ class Base extends AbstractDraggable {
       dragged: {},
     };
 
-    this.assignDragged(element);
+    this.checkThresholds(element);
 
-    /**
-     * Dragged has no parent.
-     */
-    this.isDraggedOrphan = true;
+    this.setIsSingleton();
 
-    /**
-     * Not all elements have parents.
-     */
-    if (parent) {
-      /**
-       * Indicator to parents that have changed. This facilitates looping in
-       * affected parents only.
-       */
-      this.setOfTransformedIds = new Set([]);
-      this.assignActiveParent(parent);
-      this.setThreshold(parent, true);
-      this.isDraggedOrphan = false;
-    }
+    this.setIsOrphan(parent);
   }
 
   /**
@@ -86,6 +69,33 @@ class Base extends AbstractDraggable {
   }
 
   /**
+   * Check if dragged has no parent and then set the related operations
+   * accordingly.
+   *
+   * @memberof Base
+   */
+  setIsOrphan(parent) {
+    /**
+     * Dragged has no parent.
+     */
+    this.isOrphan = true;
+
+    /**
+     * Not all elements have parents.
+     */
+    if (parent) {
+      /**
+       * Indicator to parents that have changed. This facilitates looping in
+       * affected parents only.
+       */
+      this.setOfTransformedIds = new Set([]);
+      this.assignActiveParent(parent);
+      this.setThreshold(parent, true);
+      this.isOrphan = false;
+    }
+  }
+
+  /**
    * Sets thresholds for dragged element position depending on its
    * position inside parent which is related to droppable left and top.
    *
@@ -93,7 +103,7 @@ class Base extends AbstractDraggable {
    *
    * @memberof Base
    */
-  setThreshold(droppable, isParent) {
+  setThreshold(droppable, isParent = false) {
     const { parents, dragged } = this.thresholds;
 
     const {
@@ -157,11 +167,12 @@ class Base extends AbstractDraggable {
   }
 
   /**
-   * Assigns DRAGGED_ELM
+   * Check thresholds availability and assign it to thresholds instance in
+   * dragging process.
    *
    * @memberof Base
    */
-  assignDragged() {
+  checkThresholds() {
     /**
      * Not initiating thresholdOffset for all coreInstances. Only ones which
      * dragged will be initiated.

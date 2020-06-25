@@ -10,7 +10,7 @@ const Container = ({
 }) => {
   let mouseEvents;
 
-  let droppable;
+  let dnd;
 
   let draggedID = null;
 
@@ -24,7 +24,7 @@ const Container = ({
       if (id) {
         draggedID = id;
 
-        droppable = new DnD(id, { x: clientX, y: clientY });
+        dnd = new DnD(id, { x: clientX, y: clientY });
 
         mouseEvents = [
           { evType: "mousemove", evTarget: document, handler: onMouseMove },
@@ -44,14 +44,14 @@ const Container = ({
         evTarget.removeEventListener(evType, handler);
       });
 
-      droppable.end();
+      dnd.end();
     }
   };
 
   const onMouseMove = (e) => {
     const { clientX, clientY } = e;
 
-    droppable.dragAt(clientX, clientY);
+    dnd.startDragging(clientX, clientY);
   };
 
   return (
