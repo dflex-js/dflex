@@ -49,7 +49,12 @@ class Base extends AbstractDraggable {
       dragged: {},
     };
 
-    this.checkThresholds(element);
+    this.checkThresholds(this[DRAGGED_ELM]);
+
+    /**
+     * Init max direction for position
+     */
+    this.setThreshold(this[DRAGGED_ELM]);
 
     this.setIsSingleton();
 
@@ -194,11 +199,6 @@ class Base extends AbstractDraggable {
         horizontal: Math.ceil((2 / 3) * width),
       };
     }
-
-    /**
-     * Init max direction for position
-     */
-    this.setThreshold(this[DRAGGED_ELM]);
   }
 
   /**
@@ -249,8 +249,6 @@ class Base extends AbstractDraggable {
 
       this.siblingsList = store.getElmById(chK);
     }
-
-    this.setIsSingleton();
   }
 }
 

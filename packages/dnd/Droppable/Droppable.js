@@ -163,7 +163,7 @@ class Droppable extends AxisX {
      */
 
     this.draggedTempIndex =
-      this[DRAGGED_ELM].indexes.self -
+      this[DRAGGED_ELM].order.self -
       this.elemDirection * this.numberOfElementsTransformed;
 
     /**
@@ -194,7 +194,7 @@ class Droppable extends AxisX {
         const element = store.getElmById(id);
 
         const {
-          indexes: { self },
+          order: { self },
         } = element;
 
         const isQualified = this.isElemSwitchable(self);
@@ -260,6 +260,8 @@ class Droppable extends AxisX {
    */
   startDragging(x, y) {
     this.dragAt(x, y);
+
+    this.setDraggedTempCurrentOffset(x, y);
 
     /**
      * Unlike the rest, these are done in vertical/X level.
