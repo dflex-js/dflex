@@ -9,10 +9,6 @@ const Core = (props) => {
     component: CoreComponent = "div",
     id: idProps,
     children,
-<<<<<<< HEAD
-=======
-    depth,
->>>>>>> master
     ...rest
   } = props;
 
