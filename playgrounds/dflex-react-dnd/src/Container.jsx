@@ -43,20 +43,13 @@ const Container = ({
       mouseEvents.forEach(({ evType, evTarget, handler }) => {
         evTarget.removeEventListener(evType, handler);
       });
-<<<<<<< HEAD
-
-=======
->>>>>>> master
       dnd.endAll();
     }
   };
 
   const onMouseMove = (e) => {
     const { clientX, clientY } = e;
-<<<<<<< HEAD
 
-=======
->>>>>>> master
     dnd.startDragging(clientX, clientY);
   };
 

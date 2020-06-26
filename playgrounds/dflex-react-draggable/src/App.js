@@ -4,10 +4,6 @@ import "./App.css";
 
 import { Container, Draggable } from "./components";
 
-<<<<<<< HEAD
-=======
-
->>>>>>> master
 let index = 1;
 
 function App() {
