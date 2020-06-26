@@ -49,45 +49,58 @@ describe("Draggable Store", () => {
   });
 });
 
-const clientX = 10;
-const clientY = 20;
+const START_CLIENT_X = 10;
+const START_CLIENT_Y = 20;
 
-const movingPixels = 50;
+const MOVING_PIXELS = 50;
 
 let draggable;
 
 describe("Draggable mechanism", () => {
   beforeAll(() => {
-    draggable = new Draggable(elmInstance1.id, { x: clientX, y: clientY });
+    draggable = new Draggable(elmInstance1.id, {
+      x: START_CLIENT_X,
+      y: START_CLIENT_Y,
+    });
   });
 
   describe("FIRST ROUND", () => {
+    const EXPECTED_TRANSLATE_X = 0;
+    const EXPECTED_TRANSLATE_Y = 0;
+
+    const EXPECTED_OFFSET_X = -START_CLIENT_X + EXPECTED_TRANSLATE_X;
+    const EXPECTED_OFFSET_Y = -START_CLIENT_Y + EXPECTED_TRANSLATE_Y;
+
     describe("Stimulates mousedown click - Inits draggable", () => {
       it("Initiates translateX/Y", () => {
-        expect(draggable.draggedElm.translateX).toEqual(0);
-        expect(draggable.draggedElm.translateY).toEqual(0);
+        expect(draggable.draggedElm.translateX).toEqual(EXPECTED_TRANSLATE_X);
+        expect(draggable.draggedElm.translateY).toEqual(EXPECTED_TRANSLATE_Y);
       });
 
       it("Calculates offset", () => {
-        expect(draggable.offsetX).toEqual(-10);
-        expect(draggable.offsetY).toEqual(-20);
+        expect(draggable.offsetX).toEqual(EXPECTED_OFFSET_X);
+        expect(draggable.offsetY).toEqual(EXPECTED_OFFSET_Y);
       });
     });
 
     describe("Stimulates mousemove - Checks dragAt()", () => {
       beforeAll(() => {
-        for (let i = 0; i < movingPixels; i += 1) {
-          draggable.dragAt(clientX + i, clientY + i);
+        for (let i = 0; i < MOVING_PIXELS; i += 1) {
+          draggable.dragAt(START_CLIENT_X, START_CLIENT_Y + i);
         }
       });
 
       it("Offset never change", () => {
-        expect(draggable.offsetX).toEqual(-10);
-        expect(draggable.offsetY).toEqual(-20);
+        expect(draggable.offsetX).toEqual(EXPECTED_OFFSET_X);
+        expect(draggable.offsetY).toEqual(EXPECTED_OFFSET_Y);
       });
 
       it("Draggable updates translateX/Y in store", () => {
         expect(draggable.draggedElm.translateX).toEqual(0);
+        console.log(
+          "draggable.draggedElm.translateX",
+          draggable.draggedElm.translateX
+        );
         expect(draggable.draggedElm.translateY).toEqual(0);
       });
     });
