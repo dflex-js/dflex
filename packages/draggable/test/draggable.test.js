@@ -65,8 +65,8 @@ describe("Draggable mechanism", () => {
   });
 
   describe("FIRST ROUND", () => {
-    const EXPECTED_TRANSLATE_X = 0;
-    const EXPECTED_TRANSLATE_Y = 0;
+    let EXPECTED_TRANSLATE_X = 0;
+    let EXPECTED_TRANSLATE_Y = 0;
 
     const EXPECTED_OFFSET_X = -START_CLIENT_X + EXPECTED_TRANSLATE_X;
     const EXPECTED_OFFSET_Y = -START_CLIENT_Y + EXPECTED_TRANSLATE_Y;
@@ -86,7 +86,10 @@ describe("Draggable mechanism", () => {
     describe("Stimulates mousemove - Checks dragAt()", () => {
       beforeAll(() => {
         for (let i = 0; i < MOVING_PIXELS; i += 1) {
-          draggable.dragAt(START_CLIENT_X, START_CLIENT_Y + i);
+          draggable.dragAt(START_CLIENT_X + i, START_CLIENT_Y + i);
+
+          EXPECTED_TRANSLATE_X = START_CLIENT_X + i + EXPECTED_OFFSET_X;
+          EXPECTED_TRANSLATE_Y = START_CLIENT_Y + i + EXPECTED_OFFSET_Y;
         }
       });
 
@@ -96,18 +99,18 @@ describe("Draggable mechanism", () => {
       });
 
       it("Draggable updates translateX/Y in store", () => {
-        expect(draggable.draggedElm.translateX).toEqual(0);
-        console.log(
-          "draggable.draggedElm.translateX",
-          draggable.draggedElm.translateX
-        );
-        expect(draggable.draggedElm.translateY).toEqual(0);
+        expect(draggable.draggedElm.translateX).toEqual(EXPECTED_TRANSLATE_X);
+        expect(draggable.draggedElm.translateY).toEqual(EXPECTED_TRANSLATE_Y);
       });
     });
 
     describe("Stimulates mouseup - Checks end()", () => {
-      it("end", () => {
+      beforeAll(() => {
         draggable.end();
+      });
+
+      it("Updates style to normal", () => {
+        expect(draggable.draggedStyle.pointerEvents).toBe("");
       });
     });
   });
