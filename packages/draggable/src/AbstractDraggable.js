@@ -68,9 +68,6 @@ class AbstractDraggable {
     this.offsetX = -initX + translateX;
     this.offsetY = -initY + translateY;
 
-    this.goToX = 0;
-    this.goToY = 0;
-
     this.setDragged(true);
   }
 
@@ -94,9 +91,6 @@ class AbstractDraggable {
      * Not active: end of dragging.
      */
     this.draggedStyle.pointerEvents = null;
-
-    this[DRAGGED_ELM].translateX = this.goToX;
-    this[DRAGGED_ELM].translateY = this.goToY;
   }
 
   end() {
@@ -120,10 +114,10 @@ class AbstractDraggable {
      * dropping process. Updating Y immediately will effect calculations in
      * transform, that's why it is updated when dragging is done.
      */
-    this.goToX = x + this.offsetX;
-    this.goToY = y + this.offsetY;
+    this[DRAGGED_ELM].translateX = x + this.offsetX;
+    this[DRAGGED_ELM].translateY = y + this.offsetY;
 
-    this.draggedStyle.transform = `translate(${this.goToX}px,${this.goToY}px)`;
+    this.draggedStyle.transform = `translate(${this[DRAGGED_ELM].translateX}px,${this[DRAGGED_ELM].translateY}px)`;
   }
 }
 
