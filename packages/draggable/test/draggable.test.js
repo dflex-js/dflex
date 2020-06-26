@@ -17,15 +17,15 @@ function addElement() {
   return { element: newDiv, id };
 }
 
+const elmInstance1 = addElement();
+const elmInstance2 = addElement();
+
 describe("Draggable Store", () => {
   it("Has empty registry", () => {
     expect(store.registry).toStrictEqual({});
   });
 
   it("Registers element and initiates translateX,Y", () => {
-    const elmInstance1 = addElement();
-    const elmInstance2 = addElement();
-
     store.register(elmInstance1);
     store.register(elmInstance2);
 
@@ -49,8 +49,41 @@ describe("Draggable Store", () => {
   });
 });
 
+const clientX = 10;
+const clientY = 20;
+
+const movingPixels = 50;
+
+let draggable;
+
 describe("Draggable mechanism", () => {
-  it("Has empty registry", () => {
-    expect({}).toStrictEqual({});
+  it("Stimulates mousedown click- Inits draggable", () => {
+    draggable = new Draggable(elmInstance1.id, { x: clientX, y: clientY });
+
+    expect(draggable.draggedElm.translateX).toEqual(0);
+    expect(draggable.draggedElm.translateY).toEqual(0);
+
+    expect(draggable.goToX).toEqual(0);
+    expect(draggable.goToY).toEqual(0);
+
+    //   offsetX: -10,
+    // offsetY: -20,
+    // goToX: 49,
+    // goToY: 49
+  });
+
+  it("Stimulates mousemove - Checks dragAt()", () => {
+    for (let i = 0; i < movingPixels; i += 1) {
+      draggable.dragAt(clientX + i, clientY + i);
+    }
+    console.log(draggable);
+  });
+
+  it("true", () => {
+    expect(true).toEqual(true);
+  });
+
+  it("end", () => {
+    draggable.end();
   });
 });
