@@ -160,6 +160,7 @@ class CoreInstance extends AbstractCoreInstance {
     this.prevTranslateY = this.translateY;
     this.translateY += _topSpace;
 
+
     this.element.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
 
     const increment = sign * vIncrement;

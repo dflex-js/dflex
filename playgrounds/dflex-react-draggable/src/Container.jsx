@@ -1,7 +1,7 @@
 /* eslint-disable no-use-before-define */
 import React from "react";
 
-import { DnD } from "@dflex/dnd";
+import { Draggable } from "@dflex/draggable/src";
 
 const Container = ({
   component: ContainerComponent = "div",
@@ -10,7 +10,7 @@ const Container = ({
 }) => {
   let mouseEvents;
 
-  let dnd;
+  let droppable;
 
   let draggedID = null;
 
@@ -24,7 +24,7 @@ const Container = ({
       if (id) {
         draggedID = id;
 
-        dnd = new DnD(id, { x: clientX, y: clientY });
+        droppable = new Draggable(id, { x: clientX, y: clientY });
 
         mouseEvents = [
           { evType: "mousemove", evTarget: document, handler: onMouseMove },
@@ -43,13 +43,15 @@ const Container = ({
       mouseEvents.forEach(({ evType, evTarget, handler }) => {
         evTarget.removeEventListener(evType, handler);
       });
-      dnd.endAll();
+
+      droppable.end();
     }
   };
 
   const onMouseMove = (e) => {
     const { clientX, clientY } = e;
-    dnd.startDragging(clientX, clientY);
+
+    droppable.dragAt(clientX, clientY);
   };
 
   return (
