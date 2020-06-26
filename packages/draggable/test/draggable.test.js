@@ -62,25 +62,12 @@ describe("Draggable mechanism", () => {
 
     expect(draggable.draggedElm.translateX).toEqual(0);
     expect(draggable.draggedElm.translateY).toEqual(0);
-
-    expect(draggable.goToX).toEqual(0);
-    expect(draggable.goToY).toEqual(0);
-
-    //   offsetX: -10,
-    // offsetY: -20,
-    // goToX: 49,
-    // goToY: 49
   });
 
   it("Stimulates mousemove - Checks dragAt()", () => {
     for (let i = 0; i < movingPixels; i += 1) {
       draggable.dragAt(clientX + i, clientY + i);
     }
-    console.log(draggable);
-  });
-
-  it("true", () => {
-    expect(true).toEqual(true);
   });
 
   it("end", () => {

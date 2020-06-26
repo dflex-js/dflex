@@ -70,7 +70,6 @@ class Store {
    */
   getElmTreeById(elmId) {
     const element = this.getElmById(elmId);
-    console.log("Store -> getElmTreeById -> element", element);
 
     const {
       keys: { sK, pK },
