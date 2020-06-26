@@ -163,7 +163,7 @@ class Droppable extends AxisX {
      */
 
     this.draggedTempIndex =
-      this[DRAGGED_ELM].indexes.self -
+      this[DRAGGED_ELM].order.self -
       this.elemDirection * this.numberOfElementsTransformed;
 
     /**
@@ -194,7 +194,7 @@ class Droppable extends AxisX {
         const element = store.getElmById(id);
 
         const {
-          indexes: { self },
+          order: { self },
         } = element;
 
         const isQualified = this.isElemSwitchable(self);
@@ -210,7 +210,7 @@ class Droppable extends AxisX {
     /**
      * Add parent id to setOfTransformedIds.
      */
-    if (!this.isDraggedOrphan) this.addParentAsTransformed();
+    if (!this.isOrphan) this.addParentAsTransformed();
 
     console.groupEnd();
   }
@@ -261,6 +261,8 @@ class Droppable extends AxisX {
   startDragging(x, y) {
     this.dragAt(x, y);
 
+    this.setDraggedTempCurrentOffset(x, y);
+
     /**
      * Unlike the rest, these are done in vertical/X level.
      */
@@ -291,7 +293,7 @@ class Droppable extends AxisX {
      */
     let isDraggedOutParent = false;
 
-    if (!this.isDraggedOrphan) {
+    if (!this.isOrphan) {
       const { id } = this[ACTIVE_PARENT];
       isDraggedOutParent = this.isDraggedOut(id);
     }

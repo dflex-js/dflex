@@ -31,14 +31,14 @@ class DroppableUndo extends Droppable {
    */
   undoList(lst) {
     const {
-      indexes: { self: from },
+      order: { self: from },
       id,
     } = this[DRAGGED_ELM];
 
     for (let i = from; i < lst.length; i += 1) {
-      const id = lst[i];
+      const listId = lst[i];
 
-      const element = store.getElmById(id);
+      const element = store.getElmById(listId);
 
       /**
        * Note: rolling back won't affect order array. It only deals with element
@@ -66,11 +66,15 @@ class DroppableUndo extends Droppable {
       const {
         keys: { chK },
       } = store.getElmById(id);
-
+      console.log("DroppableUndo -> undoTransformedParents -> store", store);
       /**
        * Get parent's children.
        */
-      const children = store.getListByKey(chK);
+      const children = store.getElmBranchByKey(chK);
+      console.log(
+        "DroppableUndo -> undoTransformedParents -> children",
+        children
+      );
 
       this.undoList(children);
     });

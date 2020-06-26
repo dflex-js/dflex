@@ -7,11 +7,10 @@ import AbstractStore from "./AbstractStore";
  * @extends {Generator}
  *
  */
-class Store extends Generator {
+class Store {
   constructor() {
-    super();
-
     this.abstractStore = new AbstractStore();
+    this.DOMGen = new Generator();
   }
 
   /**
@@ -24,7 +23,7 @@ class Store extends Generator {
   register(elmInstance, CustomInstance) {
     const { id, depth } = elmInstance;
 
-    const pointer = this.getElmPointer(id, depth);
+    const pointer = this.DOMGen.getElmPointer(id, depth);
 
     const coreInstance = Object.assign(elmInstance, pointer);
 
@@ -40,6 +39,19 @@ class Store extends Generator {
    */
   getElmById(id) {
     return this.abstractStore.getElmById(id);
+  }
+
+  /**
+   * TODO: Add this to README documentation
+   *
+   * Gets element branch lists
+   *
+   * @param {string} key
+   * @returns {string|Array} - elements siblings list.
+   * @memberof Store
+   */
+  getElmBranchByKey(ky) {
+    return this.DOMGen.getElmBranch(ky);
   }
 
   /**
@@ -68,8 +80,8 @@ class Store extends Generator {
     /**
      * getting connected branches
      */
-    const siblings = this.getElmBranch(sK);
-    const parents = this.getElmBranch(pK);
+    const siblings = this.getElmBranchByKey(sK);
+    const parents = this.getElmBranchByKey(pK);
 
     /**
      * getting parent instance
