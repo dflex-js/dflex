@@ -6,8 +6,7 @@ class AbstractCoreInstance {
    * @param {node} elm
    * @param {Object} rest
    */
-  constructor({ id, element, ...rest }) {
-    this.id = id;
+  constructor({ element, ...rest }) {
     this.element = element;
 
     Object.assign(this, rest);
