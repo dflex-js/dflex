@@ -57,20 +57,45 @@ const movingPixels = 50;
 let draggable;
 
 describe("Draggable mechanism", () => {
-  it("Stimulates mousedown click- Inits draggable", () => {
+  beforeAll(() => {
     draggable = new Draggable(elmInstance1.id, { x: clientX, y: clientY });
-
-    expect(draggable.draggedElm.translateX).toEqual(0);
-    expect(draggable.draggedElm.translateY).toEqual(0);
   });
 
-  it("Stimulates mousemove - Checks dragAt()", () => {
-    for (let i = 0; i < movingPixels; i += 1) {
-      draggable.dragAt(clientX + i, clientY + i);
-    }
-  });
+  describe("FIRST ROUND", () => {
+    describe("Stimulates mousedown click - Inits draggable", () => {
+      it("Initiates translateX/Y", () => {
+        expect(draggable.draggedElm.translateX).toEqual(0);
+        expect(draggable.draggedElm.translateY).toEqual(0);
+      });
 
-  it("end", () => {
-    draggable.end();
+      it("Calculates offset", () => {
+        expect(draggable.offsetX).toEqual(-10);
+        expect(draggable.offsetY).toEqual(-20);
+      });
+    });
+
+    describe("Stimulates mousemove - Checks dragAt()", () => {
+      beforeAll(() => {
+        for (let i = 0; i < movingPixels; i += 1) {
+          draggable.dragAt(clientX + i, clientY + i);
+        }
+      });
+
+      it("Offset never change", () => {
+        expect(draggable.offsetX).toEqual(-10);
+        expect(draggable.offsetY).toEqual(-20);
+      });
+
+      it("Draggable updates translateX/Y in store", () => {
+        expect(draggable.draggedElm.translateX).toEqual(0);
+        expect(draggable.draggedElm.translateY).toEqual(0);
+      });
+    });
+
+    describe("Stimulates mouseup - Checks end()", () => {
+      it("end", () => {
+        draggable.end();
+      });
+    });
   });
 });
