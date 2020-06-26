@@ -15,4 +15,12 @@ module.exports = {
   },
   rules: {},
   plugins: ["tree-shaking"],
+  overrides: [
+    {
+      files: ["packages/**/test/*.test.js"],
+      env: {
+        jest: true,
+      },
+    },
+  ],
 };
