@@ -50,10 +50,10 @@ describe("Draggable Store", () => {
 });
 
 describe("Draggable mechanism", () => {
-  describe("FIRST ROUND", () => {
-    let EXPECTED_TRANSLATE_X_R1;
-    let EXPECTED_TRANSLATE_Y_R1;
+  let EXPECTED_TRANSLATE_X_R1;
+  let EXPECTED_TRANSLATE_Y_R1;
 
+  describe("FIRST ROUND", () => {
     const START_CLIENT_X_R1 = 10;
     const START_CLIENT_Y_R1 = 20;
 
@@ -164,28 +164,23 @@ describe("Draggable mechanism", () => {
     });
 
     describe("Stimulates mousedown click - Inits draggable", () => {
-      it("TranslateX/Y are zeros", () => {
-        console.log(">>", store.registry[elmInstance1.id].translateX);
-        expect(EXPECTED_TRANSLATE_X_R2).toEqual(0);
-        expect(EXPECTED_TRANSLATE_Y_R2).toEqual(0);
+      it("TranslateX/Y are not zeros", () => {
+        expect(EXPECTED_TRANSLATE_X_R2).toBeGreaterThan(0);
+        expect(EXPECTED_TRANSLATE_Y_R2).toBeGreaterThan(0);
       });
 
-      it.skip("matches values in draggable with those in store", () => {
-        expect(draggable.draggedElm.translateX).toEqual(
-          EXPECTED_TRANSLATE_X_R2
-        );
-        expect(draggable.draggedElm.translateY).toEqual(
-          EXPECTED_TRANSLATE_Y_R2
-        );
+      it("TranslateX/Y are matching last position", () => {
+        expect(EXPECTED_TRANSLATE_X_R2).toEqual(EXPECTED_TRANSLATE_X_R1);
+        expect(EXPECTED_TRANSLATE_Y_R2).toEqual(EXPECTED_TRANSLATE_Y_R1);
       });
 
-      it.skip("Calculates offset", () => {
+      it("Calculates offset", () => {
         expect(draggable.offsetX).toEqual(EXPECTED_OFFSET_X_R2);
         expect(draggable.offsetY).toEqual(EXPECTED_OFFSET_Y_R2);
       });
     });
 
-    describe.skip("Stimulates mousemove - Checks dragAt()", () => {
+    describe("Stimulates mousemove - Checks dragAt()", () => {
       beforeAll(() => {
         for (let i = 0; i < MOVING_PIXELS_R2; i += 1) {
           draggable.dragAt(START_CLIENT_X_R2 + i, START_CLIENT_Y_R2 + i);
@@ -212,7 +207,7 @@ describe("Draggable mechanism", () => {
       });
     });
 
-    describe.skip("Stimulates mouseup - Checks end()", () => {
+    describe("Stimulates mouseup - Checks end()", () => {
       beforeAll(() => {
         draggable.end();
       });
