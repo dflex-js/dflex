@@ -51,20 +51,26 @@ describe("Draggable Store", () => {
 
 describe("Draggable mechanism", () => {
   describe("FIRST ROUND", () => {
-    let EXPECTED_TRANSLATE_X_R1 = store.registry[elmInstance1.id].translateX;
-    let EXPECTED_TRANSLATE_Y_R1 = store.registry[elmInstance1.id].translateY;
+    let EXPECTED_TRANSLATE_X_R1;
+    let EXPECTED_TRANSLATE_Y_R1;
 
     const START_CLIENT_X_R1 = 10;
     const START_CLIENT_Y_R1 = 20;
 
-    const EXPECTED_OFFSET_X_R1 = -START_CLIENT_X_R1 + EXPECTED_TRANSLATE_X_R1;
-    const EXPECTED_OFFSET_Y_R1 = -START_CLIENT_Y_R1 + EXPECTED_TRANSLATE_Y_R1;
+    let EXPECTED_OFFSET_X_R1;
+    let EXPECTED_OFFSET_Y_R1;
 
     const MOVING_PIXELS_R1 = 50;
 
     let draggable;
 
     beforeAll(() => {
+      EXPECTED_TRANSLATE_X_R1 = store.registry[elmInstance1.id].translateX;
+      EXPECTED_TRANSLATE_Y_R1 = store.registry[elmInstance1.id].translateY;
+
+      EXPECTED_OFFSET_X_R1 = -START_CLIENT_X_R1 + EXPECTED_TRANSLATE_X_R1;
+      EXPECTED_OFFSET_Y_R1 = -START_CLIENT_Y_R1 + EXPECTED_TRANSLATE_Y_R1;
+
       draggable = new Draggable(elmInstance1.id, {
         x: START_CLIENT_X_R1,
         y: START_CLIENT_Y_R1,
@@ -131,20 +137,26 @@ describe("Draggable mechanism", () => {
   });
 
   describe("SECOND ROUND", () => {
-    let EXPECTED_TRANSLATE_X_R2 = store.registry[elmInstance1.id].translateX;
-    let EXPECTED_TRANSLATE_Y_R2 = store.registry[elmInstance1.id].translateY;
+    let EXPECTED_TRANSLATE_X_R2;
+    let EXPECTED_TRANSLATE_Y_R2;
 
     const START_CLIENT_X_R2 = 100;
     const START_CLIENT_Y_R2 = 80;
 
-    const EXPECTED_OFFSET_X_R2 = -START_CLIENT_X_R2 + EXPECTED_TRANSLATE_X_R2;
-    const EXPECTED_OFFSET_Y_R2 = -START_CLIENT_Y_R2 + EXPECTED_TRANSLATE_Y_R2;
+    let EXPECTED_OFFSET_X_R2;
+    let EXPECTED_OFFSET_Y_R2;
 
     const MOVING_PIXELS_R2 = 18;
 
     let draggable;
 
     beforeAll(() => {
+      EXPECTED_TRANSLATE_X_R2 = store.registry[elmInstance1.id].translateX;
+      EXPECTED_TRANSLATE_Y_R2 = store.registry[elmInstance1.id].translateY;
+
+      EXPECTED_OFFSET_X_R2 = -START_CLIENT_X_R2 + EXPECTED_TRANSLATE_X_R2;
+      EXPECTED_OFFSET_Y_R2 = -START_CLIENT_Y_R2 + EXPECTED_TRANSLATE_Y_R2;
+
       draggable = new Draggable(elmInstance1.id, {
         x: START_CLIENT_X_R2,
         y: START_CLIENT_Y_R2,
@@ -153,7 +165,7 @@ describe("Draggable mechanism", () => {
 
     describe("Stimulates mousedown click - Inits draggable", () => {
       it("TranslateX/Y are zeros", () => {
-        console.log(store.registry[elmInstance1.id].translateX);
+        console.log(">>", store.registry[elmInstance1.id].translateX);
         expect(EXPECTED_TRANSLATE_X_R2).toEqual(0);
         expect(EXPECTED_TRANSLATE_Y_R2).toEqual(0);
       });
