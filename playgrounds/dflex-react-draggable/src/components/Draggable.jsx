@@ -26,7 +26,7 @@ const Draggable = (props) => {
       },
       0
     );
-  }, []);
+  }, [id, ref]);
 
   return (
     <DraggableComponent ref={ref} key={id} id={id} {...rest}>
