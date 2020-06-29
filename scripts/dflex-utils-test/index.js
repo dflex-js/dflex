@@ -7,7 +7,7 @@ let idCounter = 0;
  * @returns - {Object} { element, id };
  */
 function createElement({ type = "div", id: argID, children } = {}) {
-  const newDiv = document.createElement(type);
+  const element = document.createElement(type);
 
   let id;
   if (argID) {
@@ -17,12 +17,22 @@ function createElement({ type = "div", id: argID, children } = {}) {
     idCounter += 1;
   }
 
-  newDiv.setAttribute("id", id);
+  element.setAttribute("id", id);
 
-  const newContent = children || document.createTextNode("Hello!");
-  newDiv.appendChild(newContent);
+  if (children) {
+    if (Array.isArray) {
+      children.forEach((child) => {
+        element.appendChild(child);
+      });
+    } else {
+      element.appendChild(children);
+    }
+  } else {
+    const newContent = document.createTextNode("Hello!");
+    element.appendChild(newContent);
+  }
 
-  return { element: newDiv, id };
+  return { element, id };
 }
 
 module.exports = createElement;
