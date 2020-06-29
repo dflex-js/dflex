@@ -1,24 +1,10 @@
 /* eslint-disable no-plusplus */
 
+import createElement from "dflex-utils-test";
 import { Draggable, store } from "../src";
 
-let idCounter = 0;
-
-function addElement() {
-  const newDiv = document.createElement("div");
-
-  const id = `id-${idCounter++}`;
-
-  newDiv.setAttribute("id", id);
-
-  const newContent = document.createTextNode("Hello!");
-  newDiv.appendChild(newContent);
-
-  return { element: newDiv, id };
-}
-
-const elmInstance1 = addElement();
-const elmInstance2 = addElement();
+const elmInstance1 = createElement();
+const elmInstance2 = createElement();
 
 store.register(elmInstance1);
 store.register(elmInstance2);
