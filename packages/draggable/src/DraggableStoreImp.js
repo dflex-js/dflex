@@ -6,7 +6,6 @@ class DraggableStoreImp extends AbstractStore {
    * Register element for Draggable store
    *
    * @param {Object} elmInstance
-   * @param {string} elmInstance.id
    * @param {node} elmInstance.element
    * @memberof DraggableStoreImp
    */
