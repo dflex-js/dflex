@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
-import Base from "../Base";
+import Base from "../../Base";
 
 class Draggable extends Base {
   /**

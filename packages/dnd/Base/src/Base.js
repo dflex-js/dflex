@@ -1,9 +1,9 @@
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 import AbstractDraggable from "@dflex/draggable/src/AbstractDraggable";
 
-import store from "../Store";
+import store from "../../Store";
 
-import { ACTIVE_PARENT } from "../constants.json";
+import { ACTIVE_PARENT } from "../../constants.json";
 
 /**
  * Base element.
