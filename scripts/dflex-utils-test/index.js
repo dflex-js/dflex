@@ -6,7 +6,7 @@ let idCounter = 0;
  * @param {Object} { type = "div", id: argID, children }
  * @returns - {Object} { element, id };
  */
-function createElement({ type = "div", id: argID, children }) {
+function createElement({ type = "div", id: argID, children } = {}) {
   const newDiv = document.createElement(type);
 
   let id;
