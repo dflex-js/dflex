@@ -58,7 +58,9 @@ Contributes feel free to apply PR for another frameworks.
 
 ## Test
 
-TODO
+```sh
+yarn test draggable
+```
 
 ## License
 
