@@ -1,5 +1,3 @@
-/* eslint-disable no-plusplus */
-
 import { elmInstance1 } from "./store.test";
 import { Draggable, store } from "../src";
 
