@@ -54,7 +54,7 @@ class Base extends AbstractDraggable {
     /**
      * Init max direction for position
      */
-    this.setThreshold(this[DRAGGED_ELM]);
+    this.setThreshold(this[DRAGGED_ELM], false);
 
     this.setIsSingleton();
 
@@ -108,7 +108,7 @@ class Base extends AbstractDraggable {
    *
    * @memberof Base
    */
-  setThreshold(droppable, isParent = false) {
+  setThreshold(droppable, isParent) {
     const { parents, dragged } = this.thresholds;
 
     const {

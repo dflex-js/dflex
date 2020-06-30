@@ -6,14 +6,10 @@ import store from "../../Store";
 
 function getBoundingClientRect() {
   return {
-    x: 851.671875,
-    y: 200.046875,
-    width: 8.34375,
-    height: 17,
-    top: 967.046875,
-    right: 860.015625,
-    bottom: 984.046875,
-    left: 851.671875,
+    width: 200,
+    height: 120,
+    top: 50,
+    left: 0,
   };
 }
 
@@ -72,10 +68,17 @@ describe("DND - PKG: Base", () => {
     expect(base.activeParent.id).toBe(parentInstance.id);
   });
 
-  it("Calculates threshold Offset", () => {
-    expect(base[DRAGGED_ELM].thresholdOffset).toStrictEqual({
-      horizontal: 6,
-      vertical: 12,
+  describe("Threshold", () => {
+    it("Calculates threshold Offset", () => {
+      expect(base[DRAGGED_ELM].thresholdOffset).toMatchSnapshot();
+    });
+
+    it("Calculates thresholds for dragged as dropped", () => {
+      expect(base.thresholds.dragged).toMatchSnapshot();
+    });
+
+    it("Calculates thresholds for parent as dropped", () => {
+      expect(base.thresholds.parents).toMatchSnapshot();
     });
   });
 });
