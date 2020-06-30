@@ -1,17 +1,33 @@
-import createElement from "dflex-utils-test";
+import { createElement } from "dflex-utils-test";
+import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 
 import Base from "../src";
 import store from "../../Store";
 
-const childInstance1 = createElement();
-const childInstance2 = createElement();
+// eslint-disable-next-line no-underscore-dangle
+function getBoundingClientRect() {
+  return {
+    x: 851.671875,
+    y: 200.046875,
+    width: 8.34375,
+    height: 17,
+    top: 967.046875,
+    right: 860.015625,
+    bottom: 984.046875,
+    left: 851.671875,
+  };
+}
 
-childInstance1.depth = 0;
-childInstance2.depth = 0;
+const childInstance1 = createElement({ getBoundingClientRect });
+const childInstance2 = createElement({ getBoundingClientRect });
 
 const parentInstance = createElement({
   children: [childInstance1.element, childInstance2.element],
+  getBoundingClientRect,
 });
+
+childInstance1.depth = 0;
+childInstance2.depth = 0;
 parentInstance.depth = 1;
 
 beforeAll(() => {
@@ -40,5 +56,27 @@ describe("DND - PKG: Base", () => {
 
   it("Checks node parent", () => {
     expect(base.isOrphan).toBe(false);
+  });
+
+  it("Checks parent list", () => {
+    expect(base.parentsList).toBe(parentInstance.id);
+  });
+
+  it("Checks siblings list", () => {
+    expect(base.siblingsList).toStrictEqual([
+      childInstance1.id,
+      childInstance2.id,
+    ]);
+  });
+
+  it("Detects activeParent", () => {
+    expect(base.activeParent.id).toBe(parentInstance.id);
+  });
+
+  it("Detects activeParent2", () => {
+    expect(base[DRAGGED_ELM].thresholdOffset).toStrictEqual({
+      horizontal: 0,
+      vertical: 0,
+    });
   });
 });

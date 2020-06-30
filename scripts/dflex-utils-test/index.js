@@ -6,7 +6,7 @@ let idCounter = 0;
  * @param {Object} { type = "div", id: argID, children }
  * @returns - {Object} { element, id };
  */
-function createElement({ type = "div", id: argID, children } = {}) {
+function createElement({ type = "div", id: argID, children, ...rest } = {}) {
   const element = document.createElement(type);
 
   let id;
@@ -32,7 +32,12 @@ function createElement({ type = "div", id: argID, children } = {}) {
     element.appendChild(newContent);
   }
 
+  if (rest) {
+    Object.keys(rest).forEach((ky) => {
+      Object.assign(element, { [ky]: rest[ky] });
+    });
+  }
   return { element, id };
 }
 
-module.exports = createElement;
+module.exports = { createElement };

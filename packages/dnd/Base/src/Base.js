@@ -182,23 +182,23 @@ class Base extends AbstractDraggable {
      * Not initiating thresholdOffset for all coreInstances. Only ones which
      * dragged will be initiated.
      */
-    if (!this[DRAGGED_ELM].thresholdOffset) {
-      const {
-        offset: { width, height },
-      } = this[DRAGGED_ELM];
+    // if (!this[DRAGGED_ELM].thresholdOffset) {
+    const {
+      offset: { width, height },
+    } = this[DRAGGED_ELM];
 
-      /**
-       * Calculates thresholdOffset only for dragged element.
-       *
-       * Two-thirds of the dragged element's space for vertical and horizontal. If
-       * two-thirds of the dragged is out, then trigger isOut whether it is out
-       * position or out parent.
-       */
-      this[DRAGGED_ELM].thresholdOffset = {
-        vertical: Math.ceil((2 / 3) * height),
-        horizontal: Math.ceil((2 / 3) * width),
-      };
-    }
+    /**
+     * Calculates thresholdOffset only for dragged element.
+     *
+     * Two-thirds of the dragged element's space for vertical and horizontal. If
+     * two-thirds of the dragged is out, then trigger isOut whether it is out
+     * position or out parent.
+     */
+    this[DRAGGED_ELM].thresholdOffset = {
+      vertical: Math.ceil((2 / 3) * height),
+      horizontal: Math.ceil((2 / 3) * width),
+    };
+    // }
   }
 
   /**
