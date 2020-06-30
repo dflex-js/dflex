@@ -1,5 +1,3 @@
-/* eslint-disable no-underscore-dangle */
-
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 import Base from "../../Base";
 
@@ -28,11 +26,7 @@ class Draggable extends Base {
 
     /**
      * Calculates the new offset
-     */
-    const _left = left + x;
-    const _top = top + y;
-
-    /**
+     *
      * Note, this instance can't be replaced with offset.
      * By adding translate to offset, with each move will double the
      * increase:
@@ -46,10 +40,10 @@ class Draggable extends Base {
      * Also, you can always call currentOffset and get the right value since
      * it's updated with each translate value.
      */
-    this.currentLeft = _left;
-    this.currentRight = _left + width;
-    this.currentTop = _top;
-    this.currentBottom = _top + height;
+    this.currentLeft = left + x;
+    this.currentRight = this.currentLeft + width;
+    this.currentTop = top + y;
+    this.currentBottom = this.currentTop + height;
   }
 
   /**
