@@ -16,7 +16,9 @@ class Draggable extends Base {
    *
    * @memberof Draggable
    */
-  setDraggedTempCurrentOffset(x, y) {
+  dragAt(x, y) {
+    super.dragAt(x, y);
+
     /**
      * Each time we got new translate, offset should be updated
      */
