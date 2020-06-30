@@ -4,7 +4,6 @@ import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 import Base from "../src";
 import store from "../../Store";
 
-// eslint-disable-next-line no-underscore-dangle
 function getBoundingClientRect() {
   return {
     x: 851.671875,
@@ -19,15 +18,15 @@ function getBoundingClientRect() {
 }
 
 const childInstance1 = createElement({ getBoundingClientRect });
+childInstance1.depth = 0;
+
 const childInstance2 = createElement({ getBoundingClientRect });
+childInstance2.depth = 0;
 
 const parentInstance = createElement({
   children: [childInstance1.element, childInstance2.element],
   getBoundingClientRect,
 });
-
-childInstance1.depth = 0;
-childInstance2.depth = 0;
 parentInstance.depth = 1;
 
 beforeAll(() => {
@@ -73,10 +72,10 @@ describe("DND - PKG: Base", () => {
     expect(base.activeParent.id).toBe(parentInstance.id);
   });
 
-  it("Detects activeParent2", () => {
+  it("Calculates threshold Offset", () => {
     expect(base[DRAGGED_ELM].thresholdOffset).toStrictEqual({
-      horizontal: 0,
-      vertical: 0,
+      horizontal: 6,
+      vertical: 12,
     });
   });
 });
