@@ -1,13 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`DND - PKG: Base Threshold Calculates threshold Offset 1`] = `
+exports[`DND - PKG: Base Testing child Threshold Calculates threshold Offset 1`] = `
 Object {
   "horizontal": 134,
   "vertical": 80,
 }
 `;
 
-exports[`DND - PKG: Base Threshold Calculates thresholds for dragged as dropped 1`] = `
+exports[`DND - PKG: Base Testing child Threshold Calculates thresholds for dragged as dropped 1`] = `
 Object {
   "maxBottom": 130,
   "maxLeft": -134,
@@ -16,7 +16,7 @@ Object {
 }
 `;
 
-exports[`DND - PKG: Base Threshold Calculates thresholds for parent as dropped 1`] = `
+exports[`DND - PKG: Base Testing child Threshold Calculates thresholds for parent as dropped 1`] = `
 Object {
   "id-2": Object {
     "maxBottom": 130,

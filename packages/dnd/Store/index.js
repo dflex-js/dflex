@@ -16,13 +16,9 @@ class DnDStoreImp extends Store {
   }
 }
 
-let store;
-
 // eslint-disable-next-line func-names
 export default (function () {
-  if (!store) {
-    store = new DnDStoreImp();
-  }
+  const store = new DnDStoreImp();
 
   return store;
 })();

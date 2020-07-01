@@ -115,12 +115,7 @@ class Base extends AbstractDraggable {
       thresholdOffset: { vertical, horizontal },
     } = this[DRAGGED_ELM];
 
-    const {
-      currentLeft,
-      currentTop,
-      offset: { width, height },
-      id,
-    } = droppable;
+    const { currentLeft, currentTop, id } = droppable;
 
     const $ = isParent ? (parents[id] = {}) : dragged;
 
