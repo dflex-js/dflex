@@ -79,7 +79,7 @@ describe("Draggable mechanism", () => {
 
     describe("Stimulates mouseup - Checks end()", () => {
       beforeAll(() => {
-        draggable.end();
+        draggable.endDragging();
       });
 
       it("Updates style to normal", () => {
@@ -161,7 +161,7 @@ describe("Draggable mechanism", () => {
 
     describe("Stimulates mouseup - Checks end()", () => {
       beforeAll(() => {
-        draggable.end();
+        draggable.endDragging();
       });
 
       it("Updates style to normal", () => {
