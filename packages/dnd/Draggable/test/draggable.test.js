@@ -89,4 +89,57 @@ describe("DND - PKG: Draggable", () => {
     expect(draggable.innerXOffset).toEqual(innerXOffset);
     expect(draggable.innerYOffset).toEqual(innerYOffset);
   });
+
+  describe("Testing is out", () => {
+    beforeAll(() => {
+      draggable = new Draggable(childInstance2.id, {
+        x: childInstance2.element.getBoundingClientRect().left,
+        y: childInstance2.element.getBoundingClientRect().top,
+      });
+    });
+
+    it("Checks if dragged is last element in the list", () => {
+      expect(draggable.isDraggedLastElm()).toEqual(true);
+    });
+
+    it("Goes out from the right", () => {
+      const MOVING_PIXELS = draggable.thresholds.dragged.maxRight;
+
+      for (let i = 0; i < MOVING_PIXELS + 2; i += 1) {
+        draggable.dragAt(i, 0);
+      }
+
+      expect(draggable.isDraggedOut()).toBe(true);
+    });
+
+    it("Goes out from the left", () => {
+      const MOVING_PIXELS = draggable.thresholds.dragged.maxLeft;
+
+      for (let i = 0; i < MOVING_PIXELS + 2; i += 1) {
+        draggable.dragAt(-i, 0);
+      }
+
+      expect(draggable.isDraggedOut()).toBe(true);
+    });
+
+    it("Goes out from the top", () => {
+      const MOVING_PIXELS = draggable.thresholds.dragged.maxTop;
+
+      for (let i = 0; i < Math.abs(MOVING_PIXELS) + 2; i += 1) {
+        draggable.dragAt(0, -i);
+      }
+
+      expect(draggable.isDraggedOut()).toBe(true);
+    });
+
+    it("Goes out from the bottom", () => {
+      const MOVING_PIXELS = draggable.thresholds.dragged.maxBottom;
+
+      for (let i = 0; i < MOVING_PIXELS + 2; i += 1) {
+        draggable.dragAt(0, i);
+      }
+
+      expect(draggable.isDraggedOut()).toBe(true);
+    });
+  });
 });
