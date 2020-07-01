@@ -9,9 +9,9 @@ Object {
 
 exports[`DND - PKG: Base Threshold Calculates thresholds for dragged as dropped 1`] = `
 Object {
-  "maxBottom": 250,
+  "maxBottom": 130,
   "maxLeft": -134,
-  "maxRight": 334,
+  "maxRight": 134,
   "maxTop": -30,
 }
 `;
@@ -19,9 +19,9 @@ Object {
 exports[`DND - PKG: Base Threshold Calculates thresholds for parent as dropped 1`] = `
 Object {
   "id-2": Object {
-    "maxBottom": 250,
+    "maxBottom": 130,
     "maxLeft": -134,
-    "maxRight": 334,
+    "maxRight": 134,
     "maxTop": -30,
   },
 }
