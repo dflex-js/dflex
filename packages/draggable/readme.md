@@ -46,7 +46,7 @@ draggable.dragAt(event.clientX, event.clientY);
 End Dragging `onmouseup`
 
 ```ts
-draggable.end();
+draggable.endDragging();
 ```
 
 #### Examples

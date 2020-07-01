@@ -9,8 +9,6 @@ class Draggable extends Base {
 
     this.innerXOffset = clickCoordinates.x - this[DRAGGED_ELM].currentLeft;
     this.innerYOffset = clickCoordinates.y - this[DRAGGED_ELM].currentTop;
-
-    console.log(this[DRAGGED_ELM]);
   }
 
   /**
@@ -33,8 +31,6 @@ class Draggable extends Base {
      */
     this.currentLeft = x - this.innerXOffset;
     this.currentTop = y - this.innerYOffset;
-
-    this.isDraggedOut();
   }
 
   /**
@@ -66,11 +62,11 @@ class Draggable extends Base {
       this.currentLeft
     );
 
-    // console.log(
-    //   "Draggable -> isDraggedOut -> this.currentLeft < $.maxLeft",
-    //   this.currentLeft,
-    //   $.maxRight
-    // );
+    console.log(
+      "Draggable -> isDraggedOut -> this.currentLeft < $.maxLeft",
+      this.currentLeft,
+      $.maxRight
+    );
     return isOut;
   }
 
