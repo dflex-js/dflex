@@ -79,6 +79,11 @@ class Draggable extends Base {
   isDraggedLastElm() {
     return this.draggedTempIndex === this.siblingsList.length - 1;
   }
+
+  endDragging() {
+    super.endDragging();
+    this[DRAGGED_ELM].setCurrentOffset();
+  }
 }
 
 export default Draggable;
