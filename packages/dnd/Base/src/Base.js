@@ -155,9 +155,9 @@ class Base extends AbstractDraggable {
 
     /**
      * When going down, currentTop increases (+vertical) with droppable
-     * taking into considerations (+height + vertical).
+     * taking into considerations (+ vertical).
      */
-    $.maxBottom = currentTop + height + vertical;
+    $.maxBottom = currentTop + vertical;
 
     /**
      * When going left, currentLeft decreases (-horizontal).
@@ -166,9 +166,9 @@ class Base extends AbstractDraggable {
 
     /**
      * When going right, currentLeft increases (+horizontal) with droppable
-     * taking into considerations (+width + horizontal).
+     * taking into considerations (+ horizontal).
      */
-    $.maxRight = currentLeft + width + horizontal;
+    $.maxRight = currentLeft + horizontal;
   }
 
   /**

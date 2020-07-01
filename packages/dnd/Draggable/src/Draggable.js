@@ -47,26 +47,10 @@ class Draggable extends Base {
 
     const isOut =
       this.currentLeft < $.maxLeft ||
-      this.currentRight > $.maxRight ||
+      this.currentLeft > $.maxRight ||
       this.currentTop < $.maxTop ||
-      this.currentBottom > $.maxBottom;
+      this.currentTop > $.maxBottom;
 
-    console.log(
-      "$.maxLeft",
-      $.maxLeft,
-
-      "maxRight",
-      $.maxRight,
-
-      "this.currentLeft",
-      this.currentLeft
-    );
-
-    console.log(
-      "Draggable -> isDraggedOut -> this.currentLeft < $.maxLeft",
-      this.currentLeft,
-      $.maxRight
-    );
     return isOut;
   }
 
