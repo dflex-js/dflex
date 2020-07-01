@@ -6,7 +6,6 @@ class DraggableStoreImp extends AbstractStore {
    * Register element for Draggable store
    *
    * @param {Object} elmInstance
-   * @param {string} elmInstance.id
    * @param {node} elmInstance.element
    * @memberof DraggableStoreImp
    */
@@ -21,13 +20,9 @@ class DraggableStoreImp extends AbstractStore {
   }
 }
 
-let store;
-
 // eslint-disable-next-line func-names
 export default (function () {
-  if (!store) {
-    store = new DraggableStoreImp();
-  }
+  const store = new DraggableStoreImp();
 
   return store;
 })();

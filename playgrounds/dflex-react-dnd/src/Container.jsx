@@ -50,7 +50,7 @@ const Container = ({
   const onMouseMove = (e) => {
     const { clientX, clientY } = e;
 
-    dnd.startDragging(clientX, clientY);
+    dnd.dragAt(clientX, clientY);
   };
 
   return (

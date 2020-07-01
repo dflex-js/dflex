@@ -1,9 +1,9 @@
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 import AbstractDraggable from "@dflex/draggable/src/AbstractDraggable";
 
-import store from "../Store";
+import store from "../../Store";
 
-import { ACTIVE_PARENT } from "../constants.json";
+import { ACTIVE_PARENT } from "../../constants.json";
 
 /**
  * Base element.
@@ -54,7 +54,7 @@ class Base extends AbstractDraggable {
     /**
      * Init max direction for position
      */
-    this.setThreshold(this[DRAGGED_ELM]);
+    this.setThreshold(this[DRAGGED_ELM], false);
 
     this.setIsSingleton();
 
@@ -108,7 +108,7 @@ class Base extends AbstractDraggable {
    *
    * @memberof Base
    */
-  setThreshold(droppable, isParent = false) {
+  setThreshold(droppable, isParent) {
     const { parents, dragged } = this.thresholds;
 
     const {
@@ -155,9 +155,9 @@ class Base extends AbstractDraggable {
 
     /**
      * When going down, currentTop increases (+vertical) with droppable
-     * taking into considerations (+height + vertical).
+     * taking into considerations (+ vertical).
      */
-    $.maxBottom = currentTop + height + vertical;
+    $.maxBottom = currentTop + vertical;
 
     /**
      * When going left, currentLeft decreases (-horizontal).
@@ -166,9 +166,9 @@ class Base extends AbstractDraggable {
 
     /**
      * When going right, currentLeft increases (+horizontal) with droppable
-     * taking into considerations (+width + horizontal).
+     * taking into considerations (+ horizontal).
      */
-    $.maxRight = currentLeft + width + horizontal;
+    $.maxRight = currentLeft + horizontal;
   }
 
   /**

@@ -46,7 +46,7 @@ draggable.dragAt(event.clientX, event.clientY);
 End Dragging `onmouseup`
 
 ```ts
-draggable.end();
+draggable.endDragging();
 ```
 
 #### Examples
@@ -58,7 +58,9 @@ Contributes feel free to apply PR for another frameworks.
 
 ## Test
 
-TODO
+```sh
+yarn test draggable
+```
 
 ## License
 

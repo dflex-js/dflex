@@ -261,8 +261,6 @@ class Droppable extends AxisX {
   startDragging(x, y) {
     this.dragAt(x, y);
 
-    this.setDraggedTempCurrentOffset(x, y);
-
     /**
      * Unlike the rest, these are done in vertical/X level.
      */

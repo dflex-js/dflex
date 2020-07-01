@@ -1,53 +1,5 @@
-/* eslint-disable no-plusplus */
-
+import { elmInstance1 } from "./store.test";
 import { Draggable, store } from "../src";
-
-let idCounter = 0;
-
-function addElement() {
-  const newDiv = document.createElement("div");
-
-  const id = `id-${idCounter++}`;
-
-  newDiv.setAttribute("id", id);
-
-  const newContent = document.createTextNode("Hello!");
-  newDiv.appendChild(newContent);
-
-  return { element: newDiv, id };
-}
-
-const elmInstance1 = addElement();
-const elmInstance2 = addElement();
-
-store.register(elmInstance1);
-store.register(elmInstance2);
-
-describe("Draggable Store", () => {
-  it("Registry is not empty", () => {
-    expect(store.registry).toBeTruthy();
-  });
-
-  it("Registers element and initiates translateX,Y", () => {
-    const result = {
-      [elmInstance1.id]: {
-        element: elmInstance1.element,
-        id: elmInstance1.id,
-        translateX: 0,
-        translateY: 0,
-      },
-
-      [elmInstance2.id]: {
-        element: elmInstance2.element,
-        id: elmInstance2.id,
-        translateX: 0,
-        translateY: 0,
-      },
-    };
-
-    expect(store.registry).toEqual(result);
-  });
-});
 
 describe("Draggable mechanism", () => {
   let EXPECTED_TRANSLATE_X_R1;
@@ -127,7 +79,7 @@ describe("Draggable mechanism", () => {
 
     describe("Stimulates mouseup - Checks end()", () => {
       beforeAll(() => {
-        draggable.end();
+        draggable.endDragging();
       });
 
       it("Updates style to normal", () => {
@@ -209,7 +161,7 @@ describe("Draggable mechanism", () => {
 
     describe("Stimulates mouseup - Checks end()", () => {
       beforeAll(() => {
-        draggable.end();
+        draggable.endDragging();
       });
 
       it("Updates style to normal", () => {

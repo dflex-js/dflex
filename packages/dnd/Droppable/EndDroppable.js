@@ -17,7 +17,7 @@ class EndDroppable extends DroppableUndo {
     /**
      * End process related toY dragged elements.
      */
-    this.setDragged(false);
+    this.endDragging();
 
     /**
      * If not activeParent, it means dragged is floating outside known list and

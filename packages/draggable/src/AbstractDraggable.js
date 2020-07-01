@@ -93,7 +93,7 @@ class AbstractDraggable {
     this.draggedStyle.pointerEvents = null;
   }
 
-  end() {
+  endDragging() {
     this.setDragged(false);
   }
 
