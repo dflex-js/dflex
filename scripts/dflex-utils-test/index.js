@@ -40,4 +40,18 @@ function createElement({ type = "div", id: argID, children, ...rest } = {}) {
   return { element, id };
 }
 
-module.exports = { createElement };
+/**
+ * @see: https://github.com/jalal246/dflex/issues/50
+ *
+ * @returns {Objects} - fake rect
+ */
+function getBoundingClientRect() {
+  return {
+    width: 200,
+    height: 120,
+    top: 50,
+    left: 0,
+  };
+}
+
+module.exports = { createElement, getBoundingClientRect };
