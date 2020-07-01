@@ -35,7 +35,11 @@ class CoreInstance extends AbstractCoreInstance {
   constructor(coreInstance) {
     super(coreInstance);
 
-    if (this.element) this.initOffset();
+    if (this.element) {
+      this.initOffset();
+      this.initTranslate();
+      this.setCurrentOffset();
+    }
   }
 
   /**
@@ -65,7 +69,9 @@ class CoreInstance extends AbstractCoreInstance {
       top,
       bottom: top + height,
     };
+  }
 
+  initTranslate() {
     /**
      * Since element render once and being transformed later we keep the data
      * stored to navigate correctly.
@@ -74,6 +80,10 @@ class CoreInstance extends AbstractCoreInstance {
     this.translateX = 0;
     this.prevTranslateY = 0;
     this.prevTranslateX = 0;
+  }
+
+  setCurrentOffset() {
+    const { left, top } = this.offset;
 
     /**
      * This offset related directly to translate Y and Y. It's isolated from

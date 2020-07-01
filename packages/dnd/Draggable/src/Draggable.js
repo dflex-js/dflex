@@ -2,6 +2,13 @@ import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 import Base from "../../Base";
 
 class Draggable extends Base {
+  constructor(elementId, clickCoordinates) {
+    super(elementId, clickCoordinates);
+
+    this.innerXOffset = clickCoordinates.x - this[DRAGGED_ELM].currentLeft;
+    this.innerYOffset = clickCoordinates.y - this[DRAGGED_ELM].currentTop;
+  }
+
   /**
    * Dragged current-offset is essential to determine dragged position in
    * layout and parent.
@@ -18,32 +25,10 @@ class Draggable extends Base {
     super.dragAt(x, y);
 
     /**
-     * Each time we got new translate, offset should be updated
+     * Every time we got new translate, offset should be updated
      */
-    const {
-      offset: { top, left, width, height },
-    } = this[DRAGGED_ELM];
-
-    /**
-     * Calculates the new offset
-     *
-     * Note, this instance can't be replaced with offset.
-     * By adding translate to offset, with each move will double the
-     * increase:
-     *
-     * Suppose top = 100 and translateY = 20 the result is 120.
-     * But what'll happen to next move translateY = 20 the result is 120 + 20 = 140.
-     *
-     * To solve this issue, we keep the offset and returns the new value with
-     * increase as 100 + 20 or 100 + 40.
-     *
-     * Also, you can always call currentOffset and get the right value since
-     * it's updated with each translate value.
-     */
-    this.currentLeft = left + x;
-    this.currentRight = this.currentLeft + width;
-    this.currentTop = top + y;
-    this.currentBottom = this.currentTop + height;
+    this.currentLeft = x - this.innerXOffset;
+    this.currentTop = y - this.innerYOffset;
   }
 
   /**
@@ -60,9 +45,9 @@ class Draggable extends Base {
 
     const isOut =
       this.currentLeft < $.maxLeft ||
-      this.currentRight > $.maxRight ||
+      this.currentLeft > $.maxRight ||
       this.currentTop < $.maxTop ||
-      this.currentBottom > $.maxBottom;
+      this.currentTop > $.maxBottom;
 
     return isOut;
   }
@@ -75,6 +60,11 @@ class Draggable extends Base {
    */
   isDraggedLastElm() {
     return this.draggedTempIndex === this.siblingsList.length - 1;
+  }
+
+  endDragging() {
+    super.endDragging();
+    this[DRAGGED_ELM].setCurrentOffset();
   }
 }
 
