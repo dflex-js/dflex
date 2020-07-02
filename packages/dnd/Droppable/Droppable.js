@@ -258,8 +258,8 @@ class Droppable extends AxisX {
    * @param {number} y - mouse Y coordinate
    * @memberof Droppable
    */
-  startDragging(x, y) {
-    this.dragAt(x, y);
+  dragAt(x, y) {
+    super.dragAt(x, y);
 
     /**
      * Unlike the rest, these are done in vertical/X level.

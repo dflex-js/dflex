@@ -131,21 +131,10 @@ class AxisX extends Draggable {
     }
 
     this.draggedTempIndex = this.droppableIndex;
-    console.log(
-      "t[DRAGGED_ELM].indexes.self ;",
-      this[DRAGGED_ELM].indexes.self
-    );
-    console.log("this.droppableIndex;", this.droppableIndex);
+
     this.numberOfElementsTransformed =
       this.droppableIndex - this[DRAGGED_ELM].indexes.self;
     // this.droppableIndex = null;
-
-    console.log(
-      "TCL: this.numberOfElementsTransformed",
-      this.numberOfElementsTransformed
-    );
-
-    console.groupEnd();
   }
 }
 

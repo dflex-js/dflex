@@ -43,7 +43,7 @@ const Container = ({
       mouseEvents.forEach(({ evType, evTarget, handler }) => {
         evTarget.removeEventListener(evType, handler);
       });
-      dnd.endAll();
+      dnd.endDragging();
     }
   };
 
