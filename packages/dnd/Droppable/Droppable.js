@@ -13,7 +13,7 @@ import Draggable from "../Draggable";
  */
 class Droppable {
   constructor(elementId, clickCoordinates) {
-    this[DRAGGED_ELM] = new Draggable(elementId, clickCoordinates);
+    this.draggable = new Draggable(elementId, clickCoordinates);
 
     /**
      * previous X and Y are used to calculate mouse directions.
@@ -54,7 +54,7 @@ class Droppable {
     /**
      * Element is Switchable when it's directly is above/under dragged.
      */
-    return nextElem === this.this[DRAGGED_ELM].tempIndex;
+    return nextElem === this.draggable.tempIndex;
   }
 
   /**
@@ -96,7 +96,6 @@ class Droppable {
    * @memberof Droppable
    */
   updateElement(element) {
-    console.log("update element: ", element.id);
     /**
      * breakingPoint detects the first element that comes immediately
      * after dragged. Not in original order, but according to isQualified result.
@@ -112,9 +111,10 @@ class Droppable {
     if (!this.isFoundBreakingPoint) {
       const { currentLeft: elmLeft, currentTop: elmTop } = element;
 
-      const { currentLeft: draggedLeft, currentTop: draggedTop } = this[
-        DRAGGED_ELM
-      ];
+      const {
+        currentLeft: draggedLeft,
+        currentTop: draggedTop,
+      } = this.draggable;
 
       /**
        * Sets the transform value by calculating offset difference from
@@ -144,7 +144,7 @@ class Droppable {
      * And we have new translate only once. The first element matched the
      * condition is the breaking point element.
      */
-    this.setThreshold(element);
+    this.draggable.setThreshold(element);
 
     /**
      * With each element that is transformed:
@@ -169,8 +169,10 @@ class Droppable {
      *
      */
 
-    this.draggedTempIndex =
-      this[DRAGGED_ELM].order.self -
+    console.log(this.draggable);
+
+    this.draggable.tempIndex =
+      this.draggable[DRAGGED_ELM].order.self -
       this.elemDirection * this.numberOfElementsTransformed;
 
     /**
@@ -191,13 +193,13 @@ class Droppable {
     /**
      * Using for because in some cases the loop is breakable.
      */
-    for (let i = 0; i < this[DRAGGED_ELM].siblingsList.length; i += 1) {
-      const id = this[DRAGGED_ELM].siblingsList[i];
+    for (let i = 0; i < this.draggable.siblingsList.length; i += 1) {
+      const id = this.draggable.siblingsList[i];
 
       /**
        * Avoid dragged element.
        */
-      if (id && id !== this[DRAGGED_ELM].id) {
+      if (id && id !== this.draggable.id) {
         const element = store.getElmById(id);
 
         const {
@@ -222,7 +224,7 @@ class Droppable {
     /**
      * Add parent id to setOfTransformedIds.
      */
-    if (!this[DRAGGED_ELM].isOrphan) {
+    if (!this.draggable.isOrphan) {
       console.log("TODO..");
       // this.addParentAsTransformed();
     }
@@ -272,7 +274,7 @@ class Droppable {
    * @memberof Droppable
    */
   dragAt(x, y) {
-    this[DRAGGED_ELM].dragAt(x, y);
+    this.draggable.dragAt(x, y);
 
     /**
      * Unlike the rest, these are done in vertical/X level.
@@ -308,11 +310,11 @@ class Droppable {
     let isDraggedOutParent = false;
 
     if (!this.isOrphan) {
-      const { id } = this[DRAGGED_ELM][ACTIVE_PARENT];
-      isDraggedOutParent = this[DRAGGED_ELM].isDraggedOut(id);
+      const { id } = this.draggable[ACTIVE_PARENT];
+      isDraggedOutParent = this.draggable.isDraggedOut(id);
     }
 
-    const isDraggedOutPosition = this[DRAGGED_ELM].isDraggedOut();
+    const isDraggedOutPosition = this.draggable.isDraggedOut();
 
     /**
      * If dragged is outside its position we face two possibilities:
@@ -331,9 +333,9 @@ class Droppable {
         console.log("%c outside parent ", "background: pink");
 
         const isTransformed = !(
-          this[DRAGGED_ELM].isSingleton ||
+          this.draggable.isSingleton ||
           this.isListLocked ||
-          this[DRAGGED_ELM].isDraggedLastElm()
+          this.draggable.isDraggedLastElm()
         );
 
         if (isTransformed) {
@@ -370,7 +372,7 @@ class Droppable {
        * isSingleton to prevent bugs in running transformation in list that has only one
        * child.
        */
-      if (this[DRAGGED_ELM].isSingleton || this.isListLocked) {
+      if (this.draggable.isSingleton || this.isListLocked) {
         return;
       }
 
@@ -385,7 +387,7 @@ class Droppable {
        * If dragged is the last in the list and element should lifted up, don't
        * do anything.
        */
-      if (this[DRAGGED_ELM].isDraggedLastElm() && !isMoveElementDown) {
+      if (this.draggable.isDraggedLastElm() && !isMoveElementDown) {
         console.log("locking list..");
 
         this.isListLocked = true;
@@ -404,7 +406,7 @@ class Droppable {
   }
 
   endDragging() {
-    this[DRAGGED_ELM].endDragging();
+    this.draggable.endDragging();
   }
 }
 
