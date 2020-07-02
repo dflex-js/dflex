@@ -2,7 +2,8 @@ import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 import { ACTIVE_PARENT } from "../constants.json";
 
 import store from "../Store";
-import AxisX from "./AxisX";
+// import AxisX from "./AxisX";
+import Draggable from "../Draggable";
 
 /**
  * Class includes all transformation methods related to droppable.
@@ -10,9 +11,11 @@ import AxisX from "./AxisX";
  * @class Droppable
  * @extends {Draggable}
  */
-class Droppable extends AxisX {
+class Droppable {
   constructor(...args) {
-    super(...args);
+    // super(...args);
+
+    this[DRAGGED_ELM] = new Draggable(...args);
 
     /**
      * It counts number of element that dragged has passed. This counter is
@@ -259,7 +262,7 @@ class Droppable extends AxisX {
    * @memberof Droppable
    */
   dragAt(x, y) {
-    super.dragAt(x, y);
+    this[DRAGGED_ELM].dragAt(x, y);
 
     /**
      * Unlike the rest, these are done in vertical/X level.
@@ -268,8 +271,10 @@ class Droppable extends AxisX {
       /**
        * We don't have parent let's search for one.
        */
-      const coreInstance = this.getDraggedNearestParent();
+      // TODO;
+      // const coreInstance = this.getDraggedNearestParent();
 
+      const coreInstance = false;
       if (coreInstance) {
         /**
          * Reset lock, because there's a possibility that the new parent is the
@@ -278,7 +283,8 @@ class Droppable extends AxisX {
 
         this.assignActiveParent(coreInstance);
 
-        this.insertElement();
+        console.log("should insert element");
+        // this.insertElement();
         // this.isListLocked = false;
       }
 
@@ -292,11 +298,11 @@ class Droppable extends AxisX {
     let isDraggedOutParent = false;
 
     if (!this.isOrphan) {
-      const { id } = this[ACTIVE_PARENT];
-      isDraggedOutParent = this.isDraggedOut(id);
+      const { id } = this[DRAGGED_ELM][ACTIVE_PARENT];
+      isDraggedOutParent = this[DRAGGED_ELM].isDraggedOut(id);
     }
 
-    const isDraggedOutPosition = this.isDraggedOut();
+    const isDraggedOutPosition = this[DRAGGED_ELM].isDraggedOut();
 
     /**
      * If dragged is outside its position we face two possibilities:
@@ -313,9 +319,9 @@ class Droppable extends AxisX {
         console.log("%c outside parent ", "background: pink");
 
         const isTransformed = !(
-          this.isSingleton ||
+          this[DRAGGED_ELM].isSingleton ||
           this.isListLocked ||
-          this.isDraggedLastElm()
+          this[DRAGGED_ELM].isDraggedLastElm()
         );
 
         if (isTransformed) {
@@ -386,6 +392,10 @@ class Droppable extends AxisX {
       this.prevY = y;
       this.switchElement(isLoopBreakable);
     }
+  }
+
+  endDragging() {
+    this[DRAGGED_ELM].endDragging();
   }
 }
 

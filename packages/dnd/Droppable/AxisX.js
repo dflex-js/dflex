@@ -80,9 +80,12 @@ class AxisX extends Draggable {
   insertElement() {
     console.log("%c inside insertElement", "background: red");
 
+    return;
+
     /**
      * Loop to figure out where dragged is.
      */
+    // eslint-disable-next-line no-unreachable
     for (let i = 0; i < this.siblingsList.length; i += 1) {
       const id = this.siblingsList[i];
 
