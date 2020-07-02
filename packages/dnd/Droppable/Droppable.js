@@ -12,10 +12,14 @@ import Draggable from "../Draggable";
  * @extends {Draggable}
  */
 class Droppable {
-  constructor(...args) {
-    // super(...args);
+  constructor(elementId, clickCoordinates) {
+    this[DRAGGED_ELM] = new Draggable(elementId, clickCoordinates);
 
-    this[DRAGGED_ELM] = new Draggable(...args);
+    /**
+     * previous X and Y are used to calculate mouse directions.
+     */
+    this.prevY = clickCoordinates.x;
+    this.prevX = clickCoordinates.x;
 
     /**
      * It counts number of element that dragged has passed. This counter is
@@ -187,8 +191,8 @@ class Droppable {
     /**
      * Using for because in some cases the loop is breakable.
      */
-    for (let i = 0; i < this.siblingsList.length; i += 1) {
-      const id = this.siblingsList[i];
+    for (let i = 0; i < this[DRAGGED_ELM].siblingsList.length; i += 1) {
+      const id = this[DRAGGED_ELM].siblingsList[i];
 
       /**
        * Avoid dragged element.
@@ -213,9 +217,10 @@ class Droppable {
     /**
      * Add parent id to setOfTransformedIds.
      */
-    if (!this.isOrphan) this.addParentAsTransformed();
-
-    console.groupEnd();
+    if (!this[DRAGGED_ELM].isOrphan) {
+      console.log("TODO..");
+      // this.addParentAsTransformed();
+    }
   }
 
   /**
@@ -315,7 +320,9 @@ class Droppable {
      * in directionFilter.
      */
     if (isDraggedOutPosition) {
-      if (isDraggedOutParent) {
+      // TODO
+      // eslint-disable-next-line no-constant-condition
+      if (false && isDraggedOutParent) {
         console.log("%c outside parent ", "background: pink");
 
         const isTransformed = !(
@@ -358,7 +365,7 @@ class Droppable {
        * isSingleton to prevent bugs in running transformation in list that has only one
        * child.
        */
-      if (this.isSingleton || this.isListLocked) {
+      if (this[DRAGGED_ELM].isSingleton || this.isListLocked) {
         return;
       }
 
@@ -367,17 +374,13 @@ class Droppable {
       /**
        * Dragged is out position, but inside parent, swinging up and down.s
        */
-      let isMoveElementDown = false;
-
-      if (y < this.prevY) {
-        isMoveElementDown = true;
-      }
+      const isMoveElementDown = y < this.prevY;
 
       /**
        * If dragged is the last in the list and element should lifted up, don't
        * do anything.
        */
-      if (this.isDraggedLastElm() && !isMoveElementDown) {
+      if (this[DRAGGED_ELM].isDraggedLastElm() && !isMoveElementDown) {
         console.log("locking list..");
 
         this.isListLocked = true;
@@ -389,8 +392,9 @@ class Droppable {
       this.isListLocked = !isLoopBreakable;
       console.log("TCL: isLoopBreakable", isLoopBreakable);
 
-      this.prevY = y;
       this.switchElement(isLoopBreakable);
+
+      this.prevY = y;
     }
   }
 
