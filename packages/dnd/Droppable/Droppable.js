@@ -179,7 +179,7 @@ class Droppable {
      * Start transforming process
      */
     element.setYPosition(
-      this.siblingsList,
+      this.draggable.siblingsList,
       this.elemDirection,
       this.topDifference,
       1,
