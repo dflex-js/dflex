@@ -5,8 +5,8 @@ class Draggable extends Base {
   constructor(elementId, clickCoordinates) {
     super(elementId, clickCoordinates);
 
-    this.innerXOffset = clickCoordinates.x - this[DRAGGED_ELM].currentLeft;
-    this.innerYOffset = clickCoordinates.y - this[DRAGGED_ELM].currentTop;
+    this.innerOffsetX = clickCoordinates.x - this[DRAGGED_ELM].currentLeft;
+    this.innerOffsetY = clickCoordinates.y - this[DRAGGED_ELM].currentTop;
   }
 
   /**
@@ -27,8 +27,8 @@ class Draggable extends Base {
     /**
      * Every time we got new translate, offset should be updated
      */
-    this.currentLeft = x - this.innerXOffset;
-    this.currentTop = y - this.innerYOffset;
+    this[DRAGGED_ELM].currentLeft = x - this.innerOffsetX;
+    this[DRAGGED_ELM].currentTop = y - this.innerOffsetY;
   }
 
   /**
@@ -44,10 +44,10 @@ class Draggable extends Base {
     const $ = id ? parents[id] : dragged;
 
     const isOut =
-      this.currentLeft < $.maxLeft ||
-      this.currentLeft > $.maxRight ||
-      this.currentTop < $.maxTop ||
-      this.currentTop > $.maxBottom;
+      this[DRAGGED_ELM].currentLeft < $.maxLeft ||
+      this[DRAGGED_ELM].currentLeft > $.maxRight ||
+      this[DRAGGED_ELM].currentTop < $.maxTop ||
+      this[DRAGGED_ELM].currentTop > $.maxBottom;
 
     return isOut;
   }
@@ -64,7 +64,6 @@ class Draggable extends Base {
 
   endDragging() {
     super.endDragging();
-    this[DRAGGED_ELM].setCurrentOffset();
   }
 }
 
