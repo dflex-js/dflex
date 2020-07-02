@@ -59,9 +59,7 @@ class Draggable extends Base {
    * @memberof Draggable
    */
   isDraggedLastElm() {
-    return (
-      this.isSingleton || this.draggedTempIndex === this.siblingsList.length - 1
-    );
+    return this.isSingleton || this.tempIndex === this.siblingsList.length - 1;
   }
 
   endDragging() {

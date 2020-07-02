@@ -54,7 +54,7 @@ class Droppable {
     /**
      * Element is Switchable when it's directly is above/under dragged.
      */
-    return nextElem === this.draggedTempIndex;
+    return nextElem === this.this[DRAGGED_ELM].tempIndex;
   }
 
   /**
@@ -205,6 +205,11 @@ class Droppable {
         } = element;
 
         const isQualified = this.isElemSwitchable(self);
+        console.log(
+          "Droppable -> switchElement -> isQualified",
+          isQualified,
+          id
+        );
 
         if (isQualified) {
           this.updateElement(element);
