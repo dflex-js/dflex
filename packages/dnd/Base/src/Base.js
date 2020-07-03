@@ -35,7 +35,7 @@ class Base extends AbstractDraggable {
      * Initialize temp index that refers to element new position after
      * transformation happened.
      */
-    this.draggedTempIndex = order.self;
+    this.tempIndex = order.self;
 
     this.parentsList = parents;
     this.siblingsList = siblings;

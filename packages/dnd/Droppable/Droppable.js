@@ -2,7 +2,8 @@ import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 import { ACTIVE_PARENT } from "../constants.json";
 
 import store from "../Store";
-import AxisX from "./AxisX";
+// import AxisX from "./AxisX";
+import Draggable from "../Draggable";
 
 /**
  * Class includes all transformation methods related to droppable.
@@ -10,9 +11,15 @@ import AxisX from "./AxisX";
  * @class Droppable
  * @extends {Draggable}
  */
-class Droppable extends AxisX {
-  constructor(...args) {
-    super(...args);
+class Droppable {
+  constructor(elementId, clickCoordinates) {
+    this.draggable = new Draggable(elementId, clickCoordinates);
+
+    /**
+     * previous X and Y are used to calculate mouse directions.
+     */
+    this.prevY = clickCoordinates.x;
+    this.prevX = clickCoordinates.x;
 
     /**
      * It counts number of element that dragged has passed. This counter is
@@ -47,7 +54,7 @@ class Droppable extends AxisX {
     /**
      * Element is Switchable when it's directly is above/under dragged.
      */
-    return nextElem === this.draggedTempIndex;
+    return nextElem === this.draggable.tempIndex;
   }
 
   /**
@@ -89,7 +96,6 @@ class Droppable extends AxisX {
    * @memberof Droppable
    */
   updateElement(element) {
-    console.log("update element: ", element.id);
     /**
      * breakingPoint detects the first element that comes immediately
      * after dragged. Not in original order, but according to isQualified result.
@@ -105,9 +111,9 @@ class Droppable extends AxisX {
     if (!this.isFoundBreakingPoint) {
       const { currentLeft: elmLeft, currentTop: elmTop } = element;
 
-      const { currentLeft: draggedLeft, currentTop: draggedTop } = this[
-        DRAGGED_ELM
-      ];
+      const {
+        [DRAGGED_ELM]: { currentLeft: draggedLeft, currentTop: draggedTop },
+      } = this.draggable;
 
       /**
        * Sets the transform value by calculating offset difference from
@@ -121,6 +127,7 @@ class Droppable extends AxisX {
        * the next element margin will be included.
        */
       this.topDifference = Math.abs(elmTop - draggedTop);
+
       this.leftDifference = Math.abs(elmLeft - draggedLeft);
 
       this.isFoundBreakingPoint = true;
@@ -137,7 +144,7 @@ class Droppable extends AxisX {
      * And we have new translate only once. The first element matched the
      * condition is the breaking point element.
      */
-    this.setThreshold(element);
+    this.draggable.setThreshold(element);
 
     /**
      * With each element that is transformed:
@@ -161,16 +168,15 @@ class Droppable extends AxisX {
      * draggedDirection = -elemDirection
      *
      */
-
-    this.draggedTempIndex =
-      this[DRAGGED_ELM].order.self -
+    this.draggable.tempIndex =
+      this.draggable[DRAGGED_ELM].order.self -
       this.elemDirection * this.numberOfElementsTransformed;
 
     /**
      * Start transforming process
      */
     element.setYPosition(
-      this.siblingsList,
+      this.draggable.siblingsList,
       this.elemDirection,
       this.topDifference,
       1,
@@ -179,18 +185,16 @@ class Droppable extends AxisX {
   }
 
   switchElement(isLoopBreakable) {
-    console.log("%c inside switchElement", "background: green");
-
     /**
      * Using for because in some cases the loop is breakable.
      */
-    for (let i = 0; i < this.siblingsList.length; i += 1) {
-      const id = this.siblingsList[i];
+    for (let i = 0; i < this.draggable.siblingsList.length; i += 1) {
+      const id = this.draggable.siblingsList[i];
 
       /**
        * Avoid dragged element.
        */
-      if (id && id !== this[DRAGGED_ELM].id) {
+      if (id && id !== this.draggable.id) {
         const element = store.getElmById(id);
 
         const {
@@ -206,47 +210,6 @@ class Droppable extends AxisX {
         }
       }
     }
-
-    /**
-     * Add parent id to setOfTransformedIds.
-     */
-    if (!this.isOrphan) this.addParentAsTransformed();
-
-    console.groupEnd();
-  }
-
-  /**
-   * Checks direction possibilities depending on dragged index in the list. It
-   * can detect actual direction swinging up/down, leaving the list. This is
-   * called when dragged is not registered yet as out parent.
-   *
-   * @param {boolean} isDraggedGoingUp
-   * @returns {boolean} -  isLoopBreakable value.
-   * @memberof Droppable
-   */
-  directionFilter(isDraggedGoingUp) {
-    if (this.draggedTempIndex === 0 && isDraggedGoingUp) {
-      /**
-       * To know where dragged is exactly heading, we need to check it's position
-       * in the parent list. If first, going up: so dragged is leaving. Then, lift
-       * all elements up.
-       */
-      this.setElemDirection(false);
-
-      /**
-       * Since we will do all elements up, aka isLoopBreakable=false, then lock
-       * up. We'll unlock it when found new list.
-       * This is happening, because lifting happens before detecting
-       * isDraggedOutParent.
-       */
-      this.isListLocked = true;
-
-      return false;
-    }
-
-    this.setElemDirection(isDraggedGoingUp);
-
-    return true;
   }
 
   /**
@@ -258,45 +221,10 @@ class Droppable extends AxisX {
    * @param {number} y - mouse Y coordinate
    * @memberof Droppable
    */
-  startDragging(x, y) {
-    this.dragAt(x, y);
+  dragAt(x, y) {
+    this.draggable.dragAt(x, y);
 
-    /**
-     * Unlike the rest, these are done in vertical/X level.
-     */
-    if (this.isDraggedOutActiveParent) {
-      /**
-       * We don't have parent let's search for one.
-       */
-      const coreInstance = this.getDraggedNearestParent();
-
-      if (coreInstance) {
-        /**
-         * Reset lock, because there's a possibility that the new parent is the
-         * same as old one, like temporary migration.
-         */
-
-        this.assignActiveParent(coreInstance);
-
-        this.insertElement();
-        // this.isListLocked = false;
-      }
-
-      return;
-    }
-
-    /**
-     * With active parent, which means that dragged is inside parent so monitor
-     * its movement for dragging out.
-     */
-    let isDraggedOutParent = false;
-
-    if (!this.isOrphan) {
-      const { id } = this[ACTIVE_PARENT];
-      isDraggedOutParent = this.isDraggedOut(id);
-    }
-
-    const isDraggedOutPosition = this.isDraggedOut();
+    const isDraggedOutPosition = this.draggable.isDraggedOut();
 
     /**
      * If dragged is outside its position we face two possibilities:
@@ -309,40 +237,8 @@ class Droppable extends AxisX {
      * in directionFilter.
      */
     if (isDraggedOutPosition) {
-      if (isDraggedOutParent) {
-        console.log("%c outside parent ", "background: pink");
-
-        const isTransformed = !(
-          this.isSingleton ||
-          this.isListLocked ||
-          this.isDraggedLastElm()
-        );
-
-        if (isTransformed) {
-          /**
-           * Since we don't call directionFilter which help to setElemDirection,
-           * We call it directly as we don't want to guess.
-           */
-          this.setElemDirection(false);
-          this.switchElement();
-        }
-
-        this[ACTIVE_PARENT] = null;
-        this.siblingsList = null;
-
-        /**
-         * This flag is turned off when assigning new ACTIVE_PARENT
-         */
-        this.isDraggedOutActiveParent = true;
-        this.droppableIndex = null;
-
-        this.isListLocked = true;
-
-        return;
-      }
-
       /**
-       * Why using  isListLocked?
+       * Why using isListLocked?
        * The space between out of position and out of list makes
        * isDraggedOutPosition always triggered even if the list is already transformed.
        *
@@ -352,40 +248,52 @@ class Droppable extends AxisX {
        * isSingleton to prevent bugs in running transformation in list that has only one
        * child.
        */
-      if (this.isSingleton || this.isListLocked) {
+      if (this.draggable.isSingleton || this.isListLocked) {
         return;
       }
-
-      console.log("out position", this.isListLocked);
 
       /**
        * Dragged is out position, but inside parent, swinging up and down.s
        */
-      let isMoveElementDown = false;
-
-      if (y < this.prevY) {
-        isMoveElementDown = true;
-      }
+      const isMoveElementDown = y < this.prevY;
 
       /**
        * If dragged is the last in the list and element should lifted up, don't
        * do anything.
        */
-      if (this.isDraggedLastElm() && !isMoveElementDown) {
-        console.log("locking list..");
-
+      if (this.draggable.isDraggedLastElm() && !isMoveElementDown) {
         this.isListLocked = true;
 
         return;
       }
 
-      const isLoopBreakable = this.directionFilter(isMoveElementDown);
-      this.isListLocked = !isLoopBreakable;
-      console.log("TCL: isLoopBreakable", isLoopBreakable);
+      if (this.draggable.tempIndex === 0 && isMoveElementDown) {
+        /**
+         * To know where dragged is exactly heading, we need to check it's position
+         * in the parent list. If first, going up: so dragged is leaving. Then, lift
+         * all elements up.
+         */
+        this.setElemDirection(false);
+
+        /**
+         * Since we will do all elements up, aka isLoopBreakable=false, then lock
+         * up. We'll unlock it when found new list.
+         * This is happening, because lifting happens before detecting
+         * isDraggedOutParent.
+         */
+        this.isListLocked = true;
+      } else {
+        this.setElemDirection(isMoveElementDown);
+      }
+
+      this.switchElement();
 
       this.prevY = y;
-      this.switchElement(isLoopBreakable);
     }
+  }
+
+  endDragging() {
+    this.draggable.endDragging();
   }
 }
 

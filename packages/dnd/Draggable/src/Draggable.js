@@ -5,8 +5,8 @@ class Draggable extends Base {
   constructor(elementId, clickCoordinates) {
     super(elementId, clickCoordinates);
 
-    this.innerXOffset = clickCoordinates.x - this[DRAGGED_ELM].currentLeft;
-    this.innerYOffset = clickCoordinates.y - this[DRAGGED_ELM].currentTop;
+    this.innerOffsetX = clickCoordinates.x - this[DRAGGED_ELM].currentLeft;
+    this.innerOffsetY = clickCoordinates.y - this[DRAGGED_ELM].currentTop;
   }
 
   /**
@@ -27,8 +27,10 @@ class Draggable extends Base {
     /**
      * Every time we got new translate, offset should be updated
      */
-    this.currentLeft = x - this.innerXOffset;
-    this.currentTop = y - this.innerYOffset;
+    this.tempOffset = {
+      currentLeft: x - this.innerOffsetX,
+      currentTop: y - this.innerOffsetY,
+    };
   }
 
   /**
@@ -44,10 +46,10 @@ class Draggable extends Base {
     const $ = id ? parents[id] : dragged;
 
     const isOut =
-      this.currentLeft < $.maxLeft ||
-      this.currentLeft > $.maxRight ||
-      this.currentTop < $.maxTop ||
-      this.currentTop > $.maxBottom;
+      this.tempOffset.currentLeft < $.maxLeft ||
+      this.tempOffset.currentLeft > $.maxRight ||
+      this.tempOffset.currentTop < $.maxTop ||
+      this.tempOffset.currentTop > $.maxBottom;
 
     return isOut;
   }
@@ -59,9 +61,7 @@ class Draggable extends Base {
    * @memberof Draggable
    */
   isDraggedLastElm() {
-    return (
-      this.isSingleton || this.draggedTempIndex === this.siblingsList.length - 1
-    );
+    return this.isSingleton || this.tempIndex === this.siblingsList.length - 1;
   }
 
   endDragging() {

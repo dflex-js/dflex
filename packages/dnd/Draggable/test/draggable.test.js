@@ -28,8 +28,8 @@ let draggable;
 const START_CLIENT_X = 10;
 const START_CLIENT_Y = 20;
 
-let innerXOffset;
-let innerYOffset;
+let innerOffsetX;
+let innerOffsetY;
 describe("DND - PKG: Draggable", () => {
   beforeAll(() => {
     draggable = new Draggable(childInstance1.id, {
@@ -52,11 +52,11 @@ describe("DND - PKG: Draggable", () => {
   });
 
   it("Calculated inner offset", () => {
-    innerXOffset = draggable.innerXOffset;
-    innerYOffset = draggable.innerYOffset;
+    innerOffsetX = draggable.innerOffsetX;
+    innerOffsetY = draggable.innerOffsetY;
 
-    expect(innerXOffset).toBeTruthy();
-    expect(innerYOffset).toBeTruthy();
+    expect(innerOffsetX).toBeTruthy();
+    expect(innerOffsetY).toBeTruthy();
   });
 
   it("Current offset isn't equal to initial offset after element dragged", () => {
@@ -86,8 +86,8 @@ describe("DND - PKG: Draggable", () => {
   });
 
   it("Makes sure inner offset not changed after drag", () => {
-    expect(draggable.innerXOffset).toEqual(innerXOffset);
-    expect(draggable.innerYOffset).toEqual(innerYOffset);
+    expect(draggable.innerOffsetX).toEqual(innerOffsetX);
+    expect(draggable.innerOffsetY).toEqual(innerOffsetY);
   });
 
   describe("Testing is out", () => {

@@ -45,8 +45,8 @@ describe("Draggable mechanism", () => {
       });
 
       it("Calculates offset", () => {
-        expect(draggable.offsetX).toEqual(EXPECTED_OFFSET_X_R1);
-        expect(draggable.offsetY).toEqual(EXPECTED_OFFSET_Y_R1);
+        expect(draggable.outerOffsetX).toEqual(EXPECTED_OFFSET_X_R1);
+        expect(draggable.outerOffsetY).toEqual(EXPECTED_OFFSET_Y_R1);
       });
     });
 
@@ -63,8 +63,8 @@ describe("Draggable mechanism", () => {
       });
 
       it("Offset never change", () => {
-        expect(draggable.offsetX).toEqual(EXPECTED_OFFSET_X_R1);
-        expect(draggable.offsetY).toEqual(EXPECTED_OFFSET_Y_R1);
+        expect(draggable.outerOffsetX).toEqual(EXPECTED_OFFSET_X_R1);
+        expect(draggable.outerOffsetY).toEqual(EXPECTED_OFFSET_Y_R1);
       });
 
       it("Draggable updates translateX/Y in store", () => {
@@ -127,8 +127,8 @@ describe("Draggable mechanism", () => {
       });
 
       it("Calculates offset", () => {
-        expect(draggable.offsetX).toEqual(EXPECTED_OFFSET_X_R2);
-        expect(draggable.offsetY).toEqual(EXPECTED_OFFSET_Y_R2);
+        expect(draggable.outerOffsetX).toEqual(EXPECTED_OFFSET_X_R2);
+        expect(draggable.outerOffsetY).toEqual(EXPECTED_OFFSET_Y_R2);
       });
     });
 
@@ -145,8 +145,8 @@ describe("Draggable mechanism", () => {
       });
 
       it("Offset never change", () => {
-        expect(draggable.offsetX).toEqual(EXPECTED_OFFSET_X_R2);
-        expect(draggable.offsetY).toEqual(EXPECTED_OFFSET_Y_R2);
+        expect(draggable.outerOffsetX).toEqual(EXPECTED_OFFSET_X_R2);
+        expect(draggable.outerOffsetY).toEqual(EXPECTED_OFFSET_Y_R2);
       });
 
       it("Draggable updates translateX/Y in store", () => {

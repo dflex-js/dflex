@@ -58,15 +58,15 @@ class AbstractDraggable {
     /**
      * When dragging start, element shouldn't jump from its translate. So, we
      * calculate offset that make translate X,Y start from zero:
-     *  goToX = x + this.offsetX.
-     *  goToY = y + this.offsetY.
+     *  goToX = x + this.outerOffsetX.
+     *  goToY = y + this.outerOffsetY.
      *
      * goToX and goToY both should be zero with first click. Starts with simple
      * equating: initX = X. Taking into considerations translate value.
      *
      */
-    this.offsetX = -initX + translateX;
-    this.offsetY = -initY + translateY;
+    this.outerOffsetX = -initX + translateX;
+    this.outerOffsetY = -initY + translateY;
 
     this.setDragged(true);
   }
@@ -114,8 +114,8 @@ class AbstractDraggable {
      * dropping process. Updating Y immediately will effect calculations in
      * transform, that's why it is updated when dragging is done.
      */
-    this[DRAGGED_ELM].translateX = x + this.offsetX;
-    this[DRAGGED_ELM].translateY = y + this.offsetY;
+    this[DRAGGED_ELM].translateX = x + this.outerOffsetX;
+    this[DRAGGED_ELM].translateY = y + this.outerOffsetY;
 
     this.draggedStyle.transform = `translate(${this[DRAGGED_ELM].translateX}px,${this[DRAGGED_ELM].translateY}px)`;
   }
