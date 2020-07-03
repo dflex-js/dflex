@@ -90,6 +90,10 @@ class CoreInstance extends AbstractCoreInstance {
      * element current offset and effects only top and left.
      */
     this.currentTop = top + this.translateY;
+    console.log(
+      "CoreInstance -> setCurrentOffset ->   this.currentTop",
+      this.currentTop
+    );
     this.currentLeft = left + this.translateX;
   }
 
@@ -198,7 +202,6 @@ class CoreInstance extends AbstractCoreInstance {
    * @memberof CoreInstance
    */
   setYPosition(iDsInOrder, sign, topSpace, vIncrement = 1, isShuffle = true) {
-    console.log("CoreInstance -> setYPosition -> iDsInOrder", iDsInOrder);
     const increment = this.seTranslate(sign, topSpace, vIncrement);
 
     this.updateIDsOrder(iDsInOrder, increment, isShuffle);

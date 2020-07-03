@@ -127,6 +127,7 @@ class Droppable {
        * the next element margin will be included.
        */
       this.topDifference = Math.abs(elmTop - draggedTop);
+
       this.leftDifference = Math.abs(elmLeft - draggedLeft);
 
       this.isFoundBreakingPoint = true;
