@@ -112,8 +112,7 @@ class Droppable {
       const { currentLeft: elmLeft, currentTop: elmTop } = element;
 
       const {
-        currentLeft: draggedLeft,
-        currentTop: draggedTop,
+        [DRAGGED_ELM]: { currentLeft: draggedLeft, currentTop: draggedTop },
       } = this.draggable;
 
       /**
@@ -168,9 +167,6 @@ class Droppable {
      * draggedDirection = -elemDirection
      *
      */
-
-    console.log(this.draggable);
-
     this.draggable.tempIndex =
       this.draggable[DRAGGED_ELM].order.self -
       this.elemDirection * this.numberOfElementsTransformed;
@@ -188,8 +184,6 @@ class Droppable {
   }
 
   switchElement(isLoopBreakable) {
-    console.log("%c inside switchElement", "background: green");
-
     /**
      * Using for because in some cases the loop is breakable.
      */
@@ -207,11 +201,6 @@ class Droppable {
         } = element;
 
         const isQualified = this.isElemSwitchable(self);
-        console.log(
-          "Droppable -> switchElement -> isQualified",
-          isQualified,
-          id
-        );
 
         if (isQualified) {
           this.updateElement(element);
@@ -220,48 +209,6 @@ class Droppable {
         }
       }
     }
-
-    /**
-     * Add parent id to setOfTransformedIds.
-     */
-    if (!this.draggable.isOrphan) {
-      console.log("TODO..");
-      // this.addParentAsTransformed();
-    }
-  }
-
-  /**
-   * Checks direction possibilities depending on dragged index in the list. It
-   * can detect actual direction swinging up/down, leaving the list. This is
-   * called when dragged is not registered yet as out parent.
-   *
-   * @param {boolean} isDraggedGoingUp
-   * @returns {boolean} -  isLoopBreakable value.
-   * @memberof Droppable
-   */
-  directionFilter(isDraggedGoingUp) {
-    if (this.draggedTempIndex === 0 && isDraggedGoingUp) {
-      /**
-       * To know where dragged is exactly heading, we need to check it's position
-       * in the parent list. If first, going up: so dragged is leaving. Then, lift
-       * all elements up.
-       */
-      this.setElemDirection(false);
-
-      /**
-       * Since we will do all elements up, aka isLoopBreakable=false, then lock
-       * up. We'll unlock it when found new list.
-       * This is happening, because lifting happens before detecting
-       * isDraggedOutParent.
-       */
-      this.isListLocked = true;
-
-      return false;
-    }
-
-    this.setElemDirection(isDraggedGoingUp);
-
-    return true;
   }
 
   /**
@@ -276,44 +223,6 @@ class Droppable {
   dragAt(x, y) {
     this.draggable.dragAt(x, y);
 
-    /**
-     * Unlike the rest, these are done in vertical/X level.
-     */
-    if (this.isDraggedOutActiveParent) {
-      /**
-       * We don't have parent let's search for one.
-       */
-      // TODO;
-      // const coreInstance = this.getDraggedNearestParent();
-
-      const coreInstance = false;
-      if (coreInstance) {
-        /**
-         * Reset lock, because there's a possibility that the new parent is the
-         * same as old one, like temporary migration.
-         */
-
-        this.assignActiveParent(coreInstance);
-
-        console.log("should insert element");
-        // this.insertElement();
-        // this.isListLocked = false;
-      }
-
-      return;
-    }
-
-    /**
-     * With active parent, which means that dragged is inside parent so monitor
-     * its movement for dragging out.
-     */
-    let isDraggedOutParent = false;
-
-    if (!this.isOrphan) {
-      const { id } = this.draggable[ACTIVE_PARENT];
-      isDraggedOutParent = this.draggable.isDraggedOut(id);
-    }
-
     const isDraggedOutPosition = this.draggable.isDraggedOut();
 
     /**
@@ -327,42 +236,8 @@ class Droppable {
      * in directionFilter.
      */
     if (isDraggedOutPosition) {
-      // TODO
-      // eslint-disable-next-line no-constant-condition
-      if (false && isDraggedOutParent) {
-        console.log("%c outside parent ", "background: pink");
-
-        const isTransformed = !(
-          this.draggable.isSingleton ||
-          this.isListLocked ||
-          this.draggable.isDraggedLastElm()
-        );
-
-        if (isTransformed) {
-          /**
-           * Since we don't call directionFilter which help to setElemDirection,
-           * We call it directly as we don't want to guess.
-           */
-          this.setElemDirection(false);
-          this.switchElement();
-        }
-
-        this[ACTIVE_PARENT] = null;
-        this.siblingsList = null;
-
-        /**
-         * This flag is turned off when assigning new ACTIVE_PARENT
-         */
-        this.isDraggedOutActiveParent = true;
-        this.droppableIndex = null;
-
-        this.isListLocked = true;
-
-        return;
-      }
-
       /**
-       * Why using  isListLocked?
+       * Why using isListLocked?
        * The space between out of position and out of list makes
        * isDraggedOutPosition always triggered even if the list is already transformed.
        *
@@ -376,8 +251,6 @@ class Droppable {
         return;
       }
 
-      console.log("out position", this.isListLocked);
-
       /**
        * Dragged is out position, but inside parent, swinging up and down.s
        */
@@ -388,18 +261,31 @@ class Droppable {
        * do anything.
        */
       if (this.draggable.isDraggedLastElm() && !isMoveElementDown) {
-        console.log("locking list..");
-
         this.isListLocked = true;
 
         return;
       }
 
-      const isLoopBreakable = this.directionFilter(isMoveElementDown);
-      this.isListLocked = !isLoopBreakable;
-      console.log("TCL: isLoopBreakable", isLoopBreakable);
+      if (this.draggable.tempIndex === 0 && isMoveElementDown) {
+        /**
+         * To know where dragged is exactly heading, we need to check it's position
+         * in the parent list. If first, going up: so dragged is leaving. Then, lift
+         * all elements up.
+         */
+        this.setElemDirection(false);
 
-      this.switchElement(isLoopBreakable);
+        /**
+         * Since we will do all elements up, aka isLoopBreakable=false, then lock
+         * up. We'll unlock it when found new list.
+         * This is happening, because lifting happens before detecting
+         * isDraggedOutParent.
+         */
+        this.isListLocked = true;
+      } else {
+        this.setElemDirection(isMoveElementDown);
+      }
+
+      this.switchElement();
 
       this.prevY = y;
     }
