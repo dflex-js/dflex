@@ -90,10 +90,6 @@ class CoreInstance extends AbstractCoreInstance {
      * element current offset and effects only top and left.
      */
     this.currentTop = top + this.translateY;
-    console.log(
-      "CoreInstance -> setCurrentOffset ->   this.currentTop",
-      this.currentTop
-    );
     this.currentLeft = left + this.translateX;
   }
 
