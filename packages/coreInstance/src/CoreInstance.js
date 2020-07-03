@@ -166,7 +166,6 @@ class CoreInstance extends AbstractCoreInstance {
 
   seTranslate(sign, topSpace, vIncrement) {
     const _topSpace = sign * topSpace;
-    console.log("CoreInstance -> seTranslate -> _topSpace", _topSpace);
 
     this.currentTop += _topSpace;
 
