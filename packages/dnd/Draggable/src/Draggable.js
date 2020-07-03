@@ -1,5 +1,5 @@
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
-import Base from "../../Base";
+import Base from "./Base";
 
 class Draggable extends Base {
   constructor(elementId, clickCoordinates) {
