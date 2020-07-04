@@ -98,10 +98,6 @@ class AbstractDraggable {
     this.draggedStyle.pointerEvents = null;
   }
 
-  endDragging() {
-    this.setDragged(false);
-  }
-
   /**
    * Executes dragging by applying transform.
    * Writes to draggedElmCurrentOffset in Transform class.

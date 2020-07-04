@@ -68,7 +68,8 @@ class Draggable extends Base {
   }
 
   endDragging() {
-    super.endDragging();
+    this.setDragged(false);
+
     this[DRAGGED_ELM].setCurrentOffset();
   }
 }

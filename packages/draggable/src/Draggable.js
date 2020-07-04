@@ -30,6 +30,10 @@ class Draggable extends AbstractDraggable {
     this[DRAGGED_ELM].translateX = this.tempTranslate.x;
     this[DRAGGED_ELM].translateY = this.tempTranslate.y;
   }
+
+  endDragging() {
+    this.setDragged(false);
+  }
 }
 
 export default Draggable;
