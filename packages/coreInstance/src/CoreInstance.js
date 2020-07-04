@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-underscore-dangle */
 import AbstractCoreInstance from "./AbstractCoreInstance";
 
 /**

@@ -68,6 +68,11 @@ class AbstractDraggable {
     this.outerOffsetX = -initX + translateX;
     this.outerOffsetY = -initY + translateY;
 
+    this.tempTranslate = {
+      x: 0,
+      y: 0,
+    };
+
     this.setDragged(true);
   }
 
@@ -93,10 +98,6 @@ class AbstractDraggable {
     this.draggedStyle.pointerEvents = null;
   }
 
-  endDragging() {
-    this.setDragged(false);
-  }
-
   /**
    * Executes dragging by applying transform.
    * Writes to draggedElmCurrentOffset in Transform class.
@@ -106,7 +107,7 @@ class AbstractDraggable {
    * @param {number} y - mouse y coordinates
    * @memberof AbstractDraggable
    */
-  dragAt(x, y) {
+  translate(x, y) {
     /**
      * Calculates translate coordinates.
      *
@@ -114,10 +115,10 @@ class AbstractDraggable {
      * dropping process. Updating Y immediately will effect calculations in
      * transform, that's why it is updated when dragging is done.
      */
-    this[DRAGGED_ELM].translateX = x + this.outerOffsetX;
-    this[DRAGGED_ELM].translateY = y + this.outerOffsetY;
+    this.tempTranslate.x = x + this.outerOffsetX;
+    this.tempTranslate.y = y + this.outerOffsetY;
 
-    this.draggedStyle.transform = `translate(${this[DRAGGED_ELM].translateX}px,${this[DRAGGED_ELM].translateY}px)`;
+    this.draggedStyle.transform = `translate(${this.tempTranslate.x}px,${this.tempTranslate.y}px)`;
   }
 }
 
