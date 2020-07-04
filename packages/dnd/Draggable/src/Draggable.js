@@ -27,7 +27,7 @@ class Draggable extends Base {
    * @memberof Draggable
    */
   dragAt(x, y) {
-    super.dragAt(x, y);
+    this.translate(x, y);
 
     /**
      * Every time we got new translate, offset should be updated

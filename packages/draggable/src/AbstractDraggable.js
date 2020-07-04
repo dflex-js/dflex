@@ -111,7 +111,7 @@ class AbstractDraggable {
    * @param {number} y - mouse y coordinates
    * @memberof AbstractDraggable
    */
-  dragAt(x, y) {
+  translate(x, y) {
     /**
      * Calculates translate coordinates.
      *
