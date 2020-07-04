@@ -68,6 +68,11 @@ class AbstractDraggable {
     this.outerOffsetX = -initX + translateX;
     this.outerOffsetY = -initY + translateY;
 
+    this.tempTranslate = {
+      x: 0,
+      y: 0,
+    };
+
     this.setDragged(true);
   }
 
@@ -114,10 +119,10 @@ class AbstractDraggable {
      * dropping process. Updating Y immediately will effect calculations in
      * transform, that's why it is updated when dragging is done.
      */
-    this.goToX = x + this.outerOffsetX;
-    this.goToY = y + this.outerOffsetY;
+    this.tempTranslate.x = x + this.outerOffsetX;
+    this.tempTranslate.y = y + this.outerOffsetY;
 
-    this.draggedStyle.transform = `translate(${this.goToX}px,${this.goToY}px)`;
+    this.draggedStyle.transform = `translate(${this.tempTranslate.x}px,${this.tempTranslate.y}px)`;
   }
 }
 

@@ -27,8 +27,8 @@ class Draggable extends AbstractDraggable {
   dragAt(x, y) {
     super.dragAt(x, y);
 
-    this[DRAGGED_ELM].translateX = this.goToX;
-    this[DRAGGED_ELM].translateY = this.goToY;
+    this[DRAGGED_ELM].translateX = this.tempTranslate.x;
+    this[DRAGGED_ELM].translateY = this.tempTranslate.y;
   }
 }
 
