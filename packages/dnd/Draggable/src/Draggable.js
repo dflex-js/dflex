@@ -7,6 +7,11 @@ class Draggable extends Base {
 
     this.innerOffsetX = clickCoordinates.x - this[DRAGGED_ELM].currentLeft;
     this.innerOffsetY = clickCoordinates.y - this[DRAGGED_ELM].currentTop;
+
+    this.tempOffset = {
+      currentLeft: 0,
+      currentTop: 0,
+    };
   }
 
   /**
@@ -27,10 +32,8 @@ class Draggable extends Base {
     /**
      * Every time we got new translate, offset should be updated
      */
-    this.tempOffset = {
-      currentLeft: x - this.innerOffsetX,
-      currentTop: y - this.innerOffsetY,
-    };
+    this.tempOffset.currentLeft = x - this.innerOffsetX;
+    this.tempOffset.currentTop = y - this.innerOffsetY;
   }
 
   /**
