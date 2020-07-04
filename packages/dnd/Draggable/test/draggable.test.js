@@ -59,7 +59,7 @@ describe("DND - PKG: Draggable", () => {
     expect(innerOffsetY).toBeTruthy();
   });
 
-  it("Current offset isn't equal to initial offset after element dragged", () => {
+  it("Current temp offset isn't equal to initial offset after element dragged", () => {
     const MOVING_PIXELS = 100;
     for (let i = 0; i < MOVING_PIXELS; i += 1) {
       draggable.dragAt(START_CLIENT_X + i, START_CLIENT_Y + i);
@@ -68,10 +68,11 @@ describe("DND - PKG: Draggable", () => {
     draggable.endDragging();
 
     expect(draggable[DRAGGED_ELM].offset.top).not.toBe(
-      draggable[DRAGGED_ELM].currentTop
+      draggable.tempOffset.currentTop
     );
+
     expect(draggable[DRAGGED_ELM].offset.left).not.toBe(
-      draggable[DRAGGED_ELM].currentLeft
+      draggable.tempOffset.currentLeft
     );
   });
 

@@ -1,5 +1,6 @@
 import store from "./DraggableStoreImp";
 import AbstractDraggable from "./AbstractDraggable";
+import { DRAGGED_ELM } from "../constants.json";
 
 /**
  * Draggable element.
@@ -21,6 +22,13 @@ class Draggable extends AbstractDraggable {
     const element = store.getElmById(elementId);
 
     super(element, clickCoordinates);
+  }
+
+  dragAt(x, y) {
+    super.dragAt(x, y);
+
+    this[DRAGGED_ELM].translateX = this.goToX;
+    this[DRAGGED_ELM].translateY = this.goToY;
   }
 }
 

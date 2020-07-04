@@ -114,10 +114,10 @@ class AbstractDraggable {
      * dropping process. Updating Y immediately will effect calculations in
      * transform, that's why it is updated when dragging is done.
      */
-    this[DRAGGED_ELM].translateX = x + this.outerOffsetX;
-    this[DRAGGED_ELM].translateY = y + this.outerOffsetY;
+    this.goToX = x + this.outerOffsetX;
+    this.goToY = y + this.outerOffsetY;
 
-    this.draggedStyle.transform = `translate(${this[DRAGGED_ELM].translateX}px,${this[DRAGGED_ELM].translateY}px)`;
+    this.draggedStyle.transform = `translate(${this.goToX}px,${this.goToY}px)`;
   }
 }
 
