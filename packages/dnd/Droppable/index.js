@@ -1,1 +1,1 @@
-export { default } from "./DroppableUndo";
+export { default } from "./Droppable";
