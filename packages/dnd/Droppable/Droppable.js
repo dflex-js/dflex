@@ -1,7 +1,6 @@
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 
 import store from "../Store";
-import Draggable from "../Draggable";
 
 /**
  * Class includes all transformation methods related to droppable.
@@ -10,9 +9,8 @@ import Draggable from "../Draggable";
  * @extends {Draggable}
  */
 class Droppable {
-  constructor(elementId, clickCoordinates) {
-    this.draggable = new Draggable(elementId, clickCoordinates);
-    console.log("Droppable -> constructor -> this", this);
+  constructor(draggable) {
+    this.draggable = draggable;
 
     /**
      * If list is locked, then we can't do any transformation on it. This flag,
@@ -213,16 +211,15 @@ class Droppable {
        */
       this.draggable.updateDraggedDirectionFlags(y);
 
-      // TODO
-      const isLoopBreakable = false;
-
       if (this.draggable.isDraggedHasNoEffect()) {
         this.isListLocked = true;
 
         return;
       }
 
-      this.switchElement(true);
+      const isLeftAllSiblings = this.draggable.isLeftAllSiblings();
+
+      this.switchElement(!isLeftAllSiblings);
     }
   }
 
