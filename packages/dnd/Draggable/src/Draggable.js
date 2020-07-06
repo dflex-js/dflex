@@ -106,10 +106,17 @@ class Draggable extends Base {
    * @memberof Draggable
    */
   isDraggedHasNoEffect() {
-    return (
-      (this.isDraggedFirstElm() && !this.isMovingDown) ||
-      (this.isDraggedLastElm() && this.isMovingDown)
-    );
+    return this.isDraggedLastElm() && this.isMovingDown;
+  }
+
+  /**
+   * Checks if dragged all siblings should be lifted
+   *
+   * @returns {boolean}
+   * @memberof Draggable
+   */
+  isLeftAllSiblings() {
+    return this.isDraggedFirstElm() && !this.isMovingDown;
   }
 
   /**
