@@ -72,12 +72,6 @@ class Droppable {
     }
 
     this.prevIsDraggedGoingUp = isDraggedGoingUp;
-
-    /**
-     * If dragged is going top, element will decrease. So:
-     * Down: -1, up: 1.
-     */
-    this.elemDirection = isDraggedGoingUp ? 1 : -1;
   }
 
   /**
@@ -205,40 +199,6 @@ class Droppable {
   }
 
   /**
-   * Checks direction possibilities depending on dragged index in the list. It
-   * can detect actual direction swinging up/down, leaving the list. This is
-   * called when dragged is not registered yet as out parent.
-   *
-   * @param {boolean} isDraggedGoingUp
-   * @returns {boolean} -  isLoopBreakable value.
-   * @memberof Droppable
-   */
-  directionFilter(isDraggedGoingUp) {
-    if (this.draggedTempIndex === 0 && isDraggedGoingUp) {
-      /**
-       * To know where dragged is exactly heading, we need to check it's position
-       * in the parent list. If first, going up: so dragged is leaving. Then, lift
-       * all elements up.
-       */
-      this.setElemDirection(false);
-
-      /**
-       * Since we will do all elements up, aka isLoopBreakable=false, then lock
-       * up. We'll unlock it when found new list.
-       * This is happening, because lifting happens before detecting
-       * isDraggedOutParent.
-       */
-      this.isListLocked = true;
-
-      return false;
-    }
-
-    this.setElemDirection(isDraggedGoingUp);
-
-    return true;
-  }
-
-  /**
    * Invokes draggable method responsible of transform.
    * Monitors dragged translate and called related methods. Which controls the
    * active and droppable method.
@@ -281,7 +241,11 @@ class Droppable {
       /**
        * Dragged is out position, but inside parent, swinging up and down.s
        */
-      const isMoveElementDown = this.draggable.isDraggedMovingDown(y);
+      const isDraggedMovingDown = this.draggable.isDraggedMovingDown(y);
+      console.log(
+        "Droppable -> dragAt -> isDraggedMovingDown",
+        isDraggedMovingDown
+      );
 
       let isLoopBreakable = false;
 
@@ -289,13 +253,13 @@ class Droppable {
        * If dragged is the last in the list and element should lifted up, don't
        * do anything.
        */
-      if (this.draggable.isDraggedLastElm() && !isMoveElementDown) {
+      if (this.draggable.isDraggedLastElm() && !isDraggedMovingDown) {
         this.isListLocked = true;
 
         return;
       }
 
-      if (this.draggable.isDraggedFirstElm() && isMoveElementDown) {
+      if (this.draggable.isDraggedFirstElm() && isDraggedMovingDown) {
         /**
          * To know where dragged is exactly heading, we need to check it's position
          * in the parent list. If first, going up: so dragged is leaving. Then, lift
@@ -311,7 +275,7 @@ class Droppable {
          */
         this.isListLocked = true;
       } else {
-        this.setElemDirection(isMoveElementDown);
+        this.setElemDirection(!isDraggedMovingDown);
         isLoopBreakable = true;
       }
 

@@ -20,6 +20,11 @@ class Draggable extends Base {
      */
     this.prevX = x;
     this.prevY = y;
+
+    /**
+     * Elements effected by dragged direction.
+     */
+    this.elemDirection = 1;
   }
 
   /**
@@ -86,20 +91,33 @@ class Draggable extends Base {
   }
 
   /**
-   * Checks if dragged is first element in parent list.
+   * If dragged is going up, elements effected will decrease.
+   * So: isDraggedMovingDown: +1 otherwise: -1.
+   *
+   * @memberof Draggable
+   */
+  updateElmDirection(isMovingDown) {
+    /**
+     * If dragged is going top, element will decrease. So:
+     * Down: -1, up: 1.
+     */
+    this.elemDirection = isMovingDown ? 1 : -1;
+  }
+
+  /**
+   * Checks if dragged is moving down and updates element direction sign (+/-).
    *
    * @returns {boolean}
    * @memberof Draggable
    */
   isDraggedMovingDown(y) {
-    /**
-     * Dragged is out position, but inside parent, swinging up and down.s
-     */
-    const isMoveElementDown = y > this.prevY;
+    const isMovingDown = y > this.prevY;
+
+    this.updateElmDirection(isMovingDown);
 
     this.prevY = y;
 
-    return isMoveElementDown;
+    return isMovingDown;
   }
 
   endDragging() {
