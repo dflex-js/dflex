@@ -248,40 +248,7 @@ class Droppable {
   }
 
   endDragging() {
-    this.draggable.endDragging();
-
-    if (!this.isFoundBreakingPoint) {
-      /**
-       * If not isFoundBreakingPoint, it means dragged is out its position, inside
-       * list but didn't reach another element to replace.
-       *
-       * List's elements is in their position, just undo dragged.
-       *
-       * Restore dragged position (translateX, translateY) directly. Why? Because,
-       * dragged depends on extra instance to float in layout that is not related to element
-       * instance.
-       */
-      const { translateX, translateY } = this.draggable[DRAGGED_ELM];
-
-      this.draggable.draggedStyle.transform = `translate(${translateX}px,${translateY}px)`;
-
-      return;
-    }
-
-    /**
-     * Move to new droppable position.
-     *
-     * We already have translate value in for dragged in goX/goY but it is
-     * related to mouse dragging. Instead, we want to translate to droppable
-     * element that is replaced by dragged.
-     */
-    this.draggable[DRAGGED_ELM].setYPosition(
-      this.draggable.siblingsList,
-      -this.draggable.elemDirection /** dragged goes to opposite side */,
-      this.draggable.numberOfElementsTransformed * this.topDifference,
-      this.draggable.numberOfElementsTransformed,
-      false
-    );
+    this.draggable.endDragging(this.isFoundBreakingPoint, this.topDifference);
   }
 }
 
