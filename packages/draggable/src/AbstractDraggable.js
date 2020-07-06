@@ -95,7 +95,9 @@ class AbstractDraggable {
     /**
      * Not active: end of dragging.
      */
-    this.draggedStyle.pointerEvents = null;
+    draggedStyleProps.forEach(({ prop }) => {
+      this.draggedStyle[prop] = null;
+    });
   }
 
   /**

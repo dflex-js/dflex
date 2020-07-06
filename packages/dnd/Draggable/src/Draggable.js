@@ -5,13 +5,35 @@ class Draggable extends Base {
   constructor(elementId, clickCoordinates) {
     super(elementId, clickCoordinates);
 
-    this.innerOffsetX = clickCoordinates.x - this[DRAGGED_ELM].currentLeft;
-    this.innerOffsetY = clickCoordinates.y - this[DRAGGED_ELM].currentTop;
+    const { x, y } = clickCoordinates;
+
+    this.innerOffsetX = x - this[DRAGGED_ELM].currentLeft;
+    this.innerOffsetY = y - this[DRAGGED_ELM].currentTop;
 
     this.tempOffset = {
       currentLeft: 0,
       currentTop: 0,
     };
+
+    /**
+     * previous X and Y are used to calculate mouse directions.
+     */
+    this.prevX = x;
+    this.prevY = y;
+
+    /**
+     * It counts number of element that dragged has passed. This counter is
+     * crucial to calculate drag's translate and index
+     */
+    this.numberOfElementsTransformed = 0;
+
+    /**
+     * Elements effected by dragged direction.
+     */
+    this.elemDirection = 1;
+
+    this.isMovingDownPrev = false;
+    this.isMovingDown = false;
   }
 
   /**
@@ -58,13 +80,52 @@ class Draggable extends Base {
   }
 
   /**
-   * Checks if dragged is last element is parent list.
+   * Checks if dragged is last element in parent list.
    *
    * @returns {boolean}
    * @memberof Draggable
    */
   isDraggedLastElm() {
     return this.isSingleton || this.tempIndex === this.siblingsList.length - 1;
+  }
+
+  /**
+   * Checks if dragged is first element in parent list.
+   *
+   * @returns {boolean}
+   * @memberof Draggable
+   */
+  isDraggedFirstElm() {
+    return this.isSingleton || this.tempIndex === 0;
+  }
+
+  /**
+   * Checks if dragged is moving down and updates element direction sign (+/-).
+   *
+   * @returns {boolean}
+   * @memberof Draggable
+   */
+  updateDraggedDirectionFlags(y) {
+    this.isMovingDownPrev = this.isMovingDown;
+    this.isMovingDown = y > this.prevY;
+    this.prevY = y;
+
+    if (
+      this.numberOfElementsTransformed !== 0 &&
+      this.isMovingDownPrev !== this.isMovingDown
+    ) {
+      /**
+       * In this case, we have a sudden change in mouse movement. So, reverse
+       * numberOfElementsTransformed value, to be compatible with elemDirection.
+       */
+      this.numberOfElementsTransformed *= -1;
+    }
+
+    /**
+     * If dragged is going top, element will decrease. So:
+     * Down: -1, up: 1.
+     */
+    this.elemDirection = this.isMovingDown ? -1 : 1;
   }
 
   endDragging() {
