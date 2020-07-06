@@ -16,8 +16,8 @@ class Droppable {
     /**
      * previous X and Y are used to calculate mouse directions.
      */
-    this.prevY = clickCoordinates.x;
     this.prevX = clickCoordinates.x;
+    this.prevY = clickCoordinates.y;
 
     /**
      * It counts number of element that dragged has passed. This counter is
@@ -211,6 +211,40 @@ class Droppable {
   }
 
   /**
+   * Checks direction possibilities depending on dragged index in the list. It
+   * can detect actual direction swinging up/down, leaving the list. This is
+   * called when dragged is not registered yet as out parent.
+   *
+   * @param {boolean} isDraggedGoingUp
+   * @returns {boolean} -  isLoopBreakable value.
+   * @memberof Droppable
+   */
+  directionFilter(isDraggedGoingUp) {
+    if (this.draggedTempIndex === 0 && isDraggedGoingUp) {
+      /**
+       * To know where dragged is exactly heading, we need to check it's position
+       * in the parent list. If first, going up: so dragged is leaving. Then, lift
+       * all elements up.
+       */
+      this.setElemDirection(false);
+
+      /**
+       * Since we will do all elements up, aka isLoopBreakable=false, then lock
+       * up. We'll unlock it when found new list.
+       * This is happening, because lifting happens before detecting
+       * isDraggedOutParent.
+       */
+      this.isListLocked = true;
+
+      return false;
+    }
+
+    this.setElemDirection(isDraggedGoingUp);
+
+    return true;
+  }
+
+  /**
    * Invokes draggable method responsible of transform.
    * Monitors dragged translate and called related methods. Which controls the
    * active and droppable method.
@@ -253,7 +287,9 @@ class Droppable {
       /**
        * Dragged is out position, but inside parent, swinging up and down.s
        */
-      const isMoveElementDown = y < this.prevY;
+      const isMoveElementDown = y > this.prevY;
+
+      let isLoopBreakable = false;
 
       /**
        * If dragged is the last in the list and element should lifted up, don't
@@ -282,9 +318,10 @@ class Droppable {
         this.isListLocked = true;
       } else {
         this.setElemDirection(isMoveElementDown);
+        isLoopBreakable = true;
       }
 
-      this.switchElement();
+      this.switchElement(true);
 
       this.prevY = y;
     }
