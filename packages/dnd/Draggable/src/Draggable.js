@@ -5,13 +5,21 @@ class Draggable extends Base {
   constructor(elementId, clickCoordinates) {
     super(elementId, clickCoordinates);
 
-    this.innerOffsetX = clickCoordinates.x - this[DRAGGED_ELM].currentLeft;
-    this.innerOffsetY = clickCoordinates.y - this[DRAGGED_ELM].currentTop;
+    const { x, y } = clickCoordinates;
+
+    this.innerOffsetX = x - this[DRAGGED_ELM].currentLeft;
+    this.innerOffsetY = y - this[DRAGGED_ELM].currentTop;
 
     this.tempOffset = {
       currentLeft: 0,
       currentTop: 0,
     };
+
+    /**
+     * previous X and Y are used to calculate mouse directions.
+     */
+    this.prevX = x;
+    this.prevY = y;
   }
 
   /**
@@ -75,6 +83,23 @@ class Draggable extends Base {
    */
   isDraggedFirstElm() {
     return this.isSingleton || this.tempIndex === 0;
+  }
+
+  /**
+   * Checks if dragged is first element in parent list.
+   *
+   * @returns {boolean}
+   * @memberof Draggable
+   */
+  isDraggedMovingDown(y) {
+    /**
+     * Dragged is out position, but inside parent, swinging up and down.s
+     */
+    const isMoveElementDown = y > this.prevY;
+
+    this.prevY = y;
+
+    return isMoveElementDown;
   }
 
   endDragging() {

@@ -14,12 +14,6 @@ class Droppable {
     this.draggable = new Draggable(elementId, clickCoordinates);
 
     /**
-     * previous X and Y are used to calculate mouse directions.
-     */
-    this.prevX = clickCoordinates.x;
-    this.prevY = clickCoordinates.y;
-
-    /**
      * It counts number of element that dragged has passed. This counter is
      * crucial to calculate drag's translate and index
      */
@@ -287,7 +281,7 @@ class Droppable {
       /**
        * Dragged is out position, but inside parent, swinging up and down.s
        */
-      const isMoveElementDown = y > this.prevY;
+      const isMoveElementDown = this.draggable.isDraggedMovingDown(y);
 
       let isLoopBreakable = false;
 
@@ -322,8 +316,6 @@ class Droppable {
       }
 
       this.switchElement(true);
-
-      this.prevY = y;
     }
   }
 
