@@ -58,13 +58,23 @@ class Draggable extends Base {
   }
 
   /**
-   * Checks if dragged is last element is parent list.
+   * Checks if dragged is last element in parent list.
    *
    * @returns {boolean}
    * @memberof Draggable
    */
   isDraggedLastElm() {
     return this.isSingleton || this.tempIndex === this.siblingsList.length - 1;
+  }
+
+  /**
+   * Checks if dragged is first element in parent list.
+   *
+   * @returns {boolean}
+   * @memberof Draggable
+   */
+  isDraggedFirstElm() {
+    return this.isSingleton || this.tempIndex === 0;
   }
 
   endDragging() {

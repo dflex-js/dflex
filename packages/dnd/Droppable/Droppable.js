@@ -301,7 +301,7 @@ class Droppable {
         return;
       }
 
-      if (this.draggable.tempIndex === 0 && isMoveElementDown) {
+      if (this.draggable.isDraggedFirstElm() && isMoveElementDown) {
         /**
          * To know where dragged is exactly heading, we need to check it's position
          * in the parent list. If first, going up: so dragged is leaving. Then, lift
