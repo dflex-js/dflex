@@ -14,12 +14,6 @@ class Droppable {
     this.draggable = new Draggable(elementId, clickCoordinates);
 
     /**
-     * It counts number of element that dragged has passed. This counter is
-     * crucial to calculate drag's translate and index
-     */
-    // this.draggable.numberOfElementsTransformed = 0;
-
-    /**
      * If list is locked, then we can't do any transformation on it. This flag,
      * will prevent revoking transformation methods when it's unnecessary.
      */
@@ -218,6 +212,7 @@ class Droppable {
        */
       this.draggable.updateDraggedDirectionFlags(y);
 
+      // TODO
       let isLoopBreakable = false;
 
       /**
@@ -236,7 +231,6 @@ class Droppable {
          * in the parent list. If first, going up: so dragged is leaving. Then, lift
          * all elements up.
          */
-        // this.setElemDirection(false);
 
         /**
          * Since we will do all elements up, aka isLoopBreakable=false, then lock
@@ -246,7 +240,6 @@ class Droppable {
          */
         this.isListLocked = true;
       } else {
-        // this.setElemDirection(!this.draggable.isMovingDown);
         isLoopBreakable = true;
       }
 

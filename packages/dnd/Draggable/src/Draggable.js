@@ -21,6 +21,10 @@ class Draggable extends Base {
     this.prevX = x;
     this.prevY = y;
 
+    /**
+     * It counts number of element that dragged has passed. This counter is
+     * crucial to calculate drag's translate and index
+     */
     this.numberOfElementsTransformed = 0;
 
     /**
