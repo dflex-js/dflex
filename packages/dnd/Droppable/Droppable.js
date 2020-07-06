@@ -17,7 +17,7 @@ class Droppable {
      * It counts number of element that dragged has passed. This counter is
      * crucial to calculate drag's translate and index
      */
-    // this.this.draggable.numberOfElementsTransformed = 0;
+    // this.draggable.numberOfElementsTransformed = 0;
 
     /**
      * If list is locked, then we can't do any transformation on it. This flag,
@@ -41,7 +41,12 @@ class Droppable {
      *
      * nextElem = elmCurrentIndex +/- 1;
      */
-    const nextElem = elmCurrentIndex + this.elemDirection;
+    const nextElem = elmCurrentIndex + this.draggable.elemDirection;
+    console.log(
+      "Droppable -> isElemSwitchable -> this.draggable.elemDirection",
+      this.draggable.elemDirection
+    );
+    console.log("Droppable -> isElemSwitchable -> nextElem", nextElem);
 
     /**
      * Element is Switchable when it's directly is above/under dragged.
@@ -114,7 +119,7 @@ class Droppable {
      * 3) Update all instances related to element and css-transform it.
      */
 
-    this.this.draggable.numberOfElementsTransformed += 1;
+    this.draggable.numberOfElementsTransformed += 1;
 
     /**
      * Since final index is set when element is transformed, we have no idea what
@@ -131,14 +136,14 @@ class Droppable {
      */
     this.draggable.tempIndex =
       this.draggable[DRAGGED_ELM].order.self -
-      this.elemDirection * this.this.draggable.numberOfElementsTransformed;
+      this.draggable.elemDirection * this.draggable.numberOfElementsTransformed;
 
     /**
      * Start transforming process
      */
     element.setYPosition(
       this.draggable.siblingsList,
-      this.elemDirection,
+      this.draggable.elemDirection,
       this.topDifference,
       1,
       true
@@ -155,18 +160,31 @@ class Droppable {
       /**
        * Avoid dragged element.
        */
-      if (id && id !== this.draggable.id) {
+      if (id && id !== this.draggable[DRAGGED_ELM].id) {
         const element = store.getElmById(id);
+        console.log("Droppable -> switchElement -> element", element);
 
         const {
           order: { self },
         } = element;
 
         const isQualified = this.isElemSwitchable(self);
+        console.log(
+          "Droppable -> switchElement -> isQualified",
+          id,
+          isQualified
+        );
 
         if (isQualified) {
+          console.log(
+            "Droppable -> switchElement -> isQualified",
+            id,
+            isQualified
+          );
+
           this.updateElement(element);
 
+          debugger;
           if (isLoopBreakable) break;
         }
       }
@@ -288,9 +306,9 @@ class Droppable {
      */
     this.draggable[DRAGGED_ELM].setYPosition(
       this.draggable.siblingsList,
-      -this.elemDirection /** dragged goes to opposite side */,
-      this.this.draggable.numberOfElementsTransformed * this.topDifference,
-      this.this.draggable.numberOfElementsTransformed,
+      -this.draggable.elemDirection /** dragged goes to opposite side */,
+      this.draggable.numberOfElementsTransformed * this.topDifference,
+      this.draggable.numberOfElementsTransformed,
       false
     );
   }
