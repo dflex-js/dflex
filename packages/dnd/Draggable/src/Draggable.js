@@ -100,6 +100,19 @@ class Draggable extends Base {
   }
 
   /**
+   * Checks if dragged movement has any effect on it's siblings.
+   *
+   * @returns {boolean}
+   * @memberof Draggable
+   */
+  isDraggedHasNoEffect() {
+    return (
+      (this.isDraggedFirstElm() && !this.isMovingDown) ||
+      (this.isDraggedLastElm() && this.isMovingDown)
+    );
+  }
+
+  /**
    * Checks if dragged is moving down and updates element direction sign (+/-).
    *
    * @returns {boolean}

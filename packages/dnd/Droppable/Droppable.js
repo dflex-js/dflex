@@ -12,6 +12,7 @@ import Draggable from "../Draggable";
 class Droppable {
   constructor(elementId, clickCoordinates) {
     this.draggable = new Draggable(elementId, clickCoordinates);
+    console.log("Droppable -> constructor -> this", this);
 
     /**
      * If list is locked, then we can't do any transformation on it. This flag,
@@ -213,34 +214,12 @@ class Droppable {
       this.draggable.updateDraggedDirectionFlags(y);
 
       // TODO
-      let isLoopBreakable = false;
+      const isLoopBreakable = false;
 
-      /**
-       * If dragged is the last in the list and element should lifted up, don't
-       * do anything.
-       */
-      if (this.draggable.isDraggedLastElm() && this.draggable.isMovingDown) {
+      if (this.draggable.isDraggedHasNoEffect()) {
         this.isListLocked = true;
 
         return;
-      }
-
-      if (this.draggable.isDraggedFirstElm() && !this.draggable.isMovingDown) {
-        /**
-         * To know where dragged is exactly heading, we need to check it's position
-         * in the parent list. If first, going up: so dragged is leaving. Then, lift
-         * all elements up.
-         */
-
-        /**
-         * Since we will do all elements up, aka isLoopBreakable=false, then lock
-         * up. We'll unlock it when found new list.
-         * This is happening, because lifting happens before detecting
-         * isDraggedOutParent.
-         */
-        this.isListLocked = true;
-      } else {
-        isLoopBreakable = true;
       }
 
       this.switchElement(true);
