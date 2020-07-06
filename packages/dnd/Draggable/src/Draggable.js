@@ -121,7 +121,7 @@ class Draggable extends Base {
      * If dragged is going top, element will decrease. So:
      * Down: -1, up: 1.
      */
-    this.elemDirection = this.isMovingDown ? 1 : -1;
+    this.elemDirection = this.isMovingDown ? -1 : 1;
   }
 
   endDragging() {

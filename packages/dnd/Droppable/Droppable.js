@@ -42,11 +42,6 @@ class Droppable {
      * nextElem = elmCurrentIndex +/- 1;
      */
     const nextElem = elmCurrentIndex + this.draggable.elemDirection;
-    console.log(
-      "Droppable -> isElemSwitchable -> this.draggable.elemDirection",
-      this.draggable.elemDirection
-    );
-    console.log("Droppable -> isElemSwitchable -> nextElem", nextElem);
 
     /**
      * Element is Switchable when it's directly is above/under dragged.
@@ -162,29 +157,16 @@ class Droppable {
        */
       if (id && id !== this.draggable[DRAGGED_ELM].id) {
         const element = store.getElmById(id);
-        console.log("Droppable -> switchElement -> element", element);
 
         const {
           order: { self },
         } = element;
 
         const isQualified = this.isElemSwitchable(self);
-        console.log(
-          "Droppable -> switchElement -> isQualified",
-          id,
-          isQualified
-        );
 
         if (isQualified) {
-          console.log(
-            "Droppable -> switchElement -> isQualified",
-            id,
-            isQualified
-          );
-
           this.updateElement(element);
 
-          debugger;
           if (isLoopBreakable) break;
         }
       }
@@ -235,10 +217,6 @@ class Droppable {
        * Dragged is out position, but inside parent, swinging up and down.s
        */
       this.draggable.updateDraggedDirectionFlags(y);
-      console.log(
-        "Droppable -> dragAt -> this.draggable.isMovingDown",
-        this.draggable.isMovingDown
-      );
 
       let isLoopBreakable = false;
 
