@@ -32,7 +32,9 @@ let innerOffsetX;
 let innerOffsetY;
 describe("DND - PKG: Draggable", () => {
   beforeAll(() => {
-    draggable = new Draggable(childInstance1.id, {
+    const elementInstance = store.getElmTreeById(childInstance1.id);
+
+    draggable = new Draggable(elementInstance, {
       x: START_CLIENT_X,
       y: START_CLIENT_Y,
     });
@@ -93,7 +95,9 @@ describe("DND - PKG: Draggable", () => {
 
   describe("Testing is out", () => {
     beforeAll(() => {
-      draggable = new Draggable(childInstance2.id, {
+      const elementInstance = store.getElmTreeById(childInstance2.id);
+
+      draggable = new Draggable(elementInstance, {
         x: childInstance2.element.getBoundingClientRect().left,
         y: childInstance2.element.getBoundingClientRect().top,
       });
