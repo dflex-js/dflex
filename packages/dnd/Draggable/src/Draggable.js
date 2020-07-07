@@ -116,7 +116,13 @@ class Draggable extends Base {
    * @memberof Draggable
    */
   isLeftAllSiblings() {
-    return this.isDraggedFirstElm() && !this.isMovingDown;
+    const isLeftAll = this.isDraggedFirstElm() && !this.isMovingDown;
+
+    if (isLeftAll) {
+      this.elemDirection = -1;
+    }
+
+    return isLeftAll;
   }
 
   /**
@@ -143,7 +149,7 @@ class Draggable extends Base {
 
     /**
      * If dragged is going top, element will decrease. So:
-     * Down: -1, up: 1.
+     * Down: -1, up: 1. Unless, dragged is leaving the list.
      */
     this.elemDirection = this.isMovingDown ? -1 : 1;
   }
