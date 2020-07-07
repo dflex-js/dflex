@@ -31,7 +31,9 @@ describe("DND - PKG: Base", () => {
       const START_CLIENT_X = 10;
       const START_CLIENT_Y = 20;
 
-      base = new Base(childInstance1.id, {
+      const elementInstance = store.getElmTreeById(childInstance1.id);
+
+      base = new Base(elementInstance, {
         x: START_CLIENT_X,
         y: START_CLIENT_Y,
       });
@@ -82,7 +84,9 @@ describe("DND - PKG: Base", () => {
       const START_CLIENT_X = 10;
       const START_CLIENT_Y = 20;
 
-      base = new Base(parentInstance.id, {
+      const elementInstance = store.getElmTreeById(parentInstance.id);
+
+      base = new Base(elementInstance, {
         x: START_CLIENT_X,
         y: START_CLIENT_Y,
       });
