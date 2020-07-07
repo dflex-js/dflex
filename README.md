@@ -8,7 +8,7 @@ JavaScript Project to Manipulate DOM Elements
 
 <hr />
 
-## [Dom Generator](https://github.com/jalal246/dflex/tree/master/packages/dom-gen)
+## [DOM Generator](https://github.com/jalal246/dflex/tree/master/packages/dom-gen)
 
 > Generates relations between DOM elements based on element depth
 
