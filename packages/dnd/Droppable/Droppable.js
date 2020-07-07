@@ -219,6 +219,10 @@ class Droppable {
 
       const isLeftAllSiblings = this.draggable.isLeftAllSiblings();
 
+      if (isLeftAllSiblings) {
+        this.isListLocked = true;
+      }
+
       this.switchElement(!isLeftAllSiblings);
     }
   }
