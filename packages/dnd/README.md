@@ -1,6 +1,6 @@
 # @dflex/dnd
 
-> Simple & light solution for a progressive Drop and Drag app
+> Simple & Light Solution for a Progressive Drop and Drag App
 
 ```bash
 npm install @dflex/dnd
@@ -11,7 +11,7 @@ npm install @dflex/dnd
 </p>
 
 DFlex DnD is written in Pure JavaScript it can be used with different frameworks
-wither its React, Vue, Angular, etc.
+wither it is React, Vue, Angular, etc.
 
 It depends on animation tracking each droppable area which makes the whole
 process run smoothly as possible.
@@ -58,7 +58,7 @@ dnd.dragAt(clientX, clientY);
 
 You can see full React example in
 [playgrounds](https://github.com/jalal246/dflex/tree/master/playgrounds/dflex-react-dnd).
-Contributes feel free to apply PR for another frameworks.
+Contributors feel free to apply PR for another frameworks.
 
 ## Test
 
