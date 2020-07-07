@@ -22,7 +22,7 @@ process runs smoothly as much as possible.
 
 ## Three Steps
 
-You can achieve a drop and drag with three steps only (register, start, end)
+You can achieve a drag and drop with three steps only (register, start, end)
 
 ```js
 import { store, DnD } from "@dflex/dnd";
