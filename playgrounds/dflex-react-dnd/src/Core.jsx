@@ -2,7 +2,7 @@ import React from "react";
 import { keyGenerator } from "@folo/utils";
 
 // eslint-disable-next-line import/no-unresolved
-import { store } from "@dflex/dnd";
+import { store } from "@dflex/dnd/src";
 
 const Core = (props) => {
   const {
@@ -27,7 +27,7 @@ const Core = (props) => {
       },
       0
     );
-  }, []);
+  }, [id, depth, ref]);
 
   return (
     <CoreComponent ref={ref} key={id} id={id} {...rest}>

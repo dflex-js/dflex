@@ -2,7 +2,7 @@ import { createElement, getBoundingClientRect } from "dflex-utils-test";
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 
 import Base from "../src/Base";
-import store from "../../Store";
+import { store } from "../../src";
 
 const childInstance1 = createElement({ getBoundingClientRect });
 childInstance1.depth = 0;
@@ -31,7 +31,9 @@ describe("DND - PKG: Base", () => {
       const START_CLIENT_X = 10;
       const START_CLIENT_Y = 20;
 
-      base = new Base(childInstance1.id, {
+      const elementInstance = store.getElmTreeById(childInstance1.id);
+
+      base = new Base(elementInstance, {
         x: START_CLIENT_X,
         y: START_CLIENT_Y,
       });
@@ -82,7 +84,9 @@ describe("DND - PKG: Base", () => {
       const START_CLIENT_X = 10;
       const START_CLIENT_Y = 20;
 
-      base = new Base(parentInstance.id, {
+      const elementInstance = store.getElmTreeById(parentInstance.id);
+
+      base = new Base(elementInstance, {
         x: START_CLIENT_X,
         y: START_CLIENT_Y,
       });
