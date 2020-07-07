@@ -8,7 +8,7 @@ JavaScript Project to Manipulate DOM Elements
 
 <hr />
 
-## [Dom Generator](https://github.com/jalal246/dflex/tree/master/packages/dom-gen)
+## [DOM Generator](https://github.com/jalal246/dflex/tree/master/packages/dom-gen)
 
 > Generates relations between DOM elements based on element depth
 
@@ -24,9 +24,17 @@ JavaScript Project to Manipulate DOM Elements
  <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/store/img/store-registry.png" alt="how register works"/>
 </p>
 
-## [Draggable](https://github.com/jalal246/dflex/tree/master/packages/draggable)
+## [Drop & Drag](https://github.com/jalal246/dflex/tree/master/packages/dnd)
 
-> A native component written in pure JS works for Web and Mobile
+> A Simple & Light Solution for a Progressive Drop and Drag App
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dnd/public/dnd.gif" alt="show how drag and drop works" />
+</p>
+
+## [Draggable Only](https://github.com/jalal246/dflex/tree/master/packages/draggable)
+
+> A native draggable component written in pure JS works for Web and Mobile
 
 <p align="center">
  <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/draggable/img/draggable.gif" alt="how register works"/>
