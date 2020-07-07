@@ -8,4 +8,5 @@ class DnD extends Droppable {
     super(draggable);
   }
 }
+
 export default DnD;
