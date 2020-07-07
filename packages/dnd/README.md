@@ -41,8 +41,6 @@ store.register({ id: string, element: Node });
 Use `onmousedown` to trigger responsive dragging
 
 ```ts
-let dnd
-
 const { target, clientX, clientY } = event;
 
 dnd = new DnD(id: target.id, { x: clientX, y: clientY });
@@ -60,7 +58,7 @@ dnd.dragAt(clientX, clientY);
 
 You can see full React example in
 [playgrounds](https://github.com/jalal246/dflex/tree/master/playgrounds/dflex-react-dnd).
-Contributors feel free to apply PR for another frameworks.
+Contributors feel free to apply PR for another frameworks and more examples.
 
 ## Test
 
