@@ -100,6 +100,32 @@ class Draggable extends Base {
   }
 
   /**
+   * Checks if dragged movement has any effect on it's siblings.
+   *
+   * @returns {boolean}
+   * @memberof Draggable
+   */
+  isDraggedHasNoEffect() {
+    return this.isDraggedLastElm() && this.isMovingDown;
+  }
+
+  /**
+   * Checks if dragged all siblings should be lifted
+   *
+   * @returns {boolean}
+   * @memberof Draggable
+   */
+  isLeftAllSiblings() {
+    const isLeftAll = this.isDraggedFirstElm() && !this.isMovingDown;
+
+    if (isLeftAll) {
+      this.elemDirection = -1;
+    }
+
+    return isLeftAll;
+  }
+
+  /**
    * Checks if dragged is moving down and updates element direction sign (+/-).
    *
    * @returns {boolean}
@@ -123,15 +149,52 @@ class Draggable extends Base {
 
     /**
      * If dragged is going top, element will decrease. So:
-     * Down: -1, up: 1.
+     * Down: -1, up: 1. Unless, dragged is leaving the list.
      */
     this.elemDirection = this.isMovingDown ? -1 : 1;
   }
 
-  endDragging() {
+  setDraggedPosition(isFoundBreakingPoint, topDifference) {
+    if (!isFoundBreakingPoint) {
+      /**
+       * If not isFoundBreakingPoint, it means dragged is out its position, inside
+       * list but didn't reach another element to replace.
+       *
+       * List's elements is in their position, just undo dragged.
+       *
+       * Restore dragged position (translateX, translateY) directly. Why? Because,
+       * dragged depends on extra instance to float in layout that is not related to element
+       * instance.
+       */
+      const { translateX, translateY } = this[DRAGGED_ELM];
+
+      this.draggedStyle.transform = `translate(${translateX}px,${translateY}px)`;
+
+      return;
+    }
+
+    /**
+     * Move to new droppable position.
+     *
+     * We already have translate value in for dragged in goX/goY but it is
+     * related to mouse dragging. Instead, we want to translate to droppable
+     * element that is replaced by dragged.
+     */
+    this[DRAGGED_ELM].setYPosition(
+      this.siblingsList,
+      -this.elemDirection /** dragged goes to opposite side */,
+      this.numberOfElementsTransformed * topDifference,
+      this.numberOfElementsTransformed,
+      false
+    );
+  }
+
+  endDragging(isFoundBreakingPoint, topDifference) {
     this.setDragged(false);
 
     this[DRAGGED_ELM].setCurrentOffset();
+
+    this.setDraggedPosition(isFoundBreakingPoint, topDifference);
   }
 }
 

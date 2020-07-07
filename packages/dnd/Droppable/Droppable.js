@@ -1,7 +1,6 @@
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 
 import store from "../Store";
-import Draggable from "../Draggable";
 
 /**
  * Class includes all transformation methods related to droppable.
@@ -10,8 +9,8 @@ import Draggable from "../Draggable";
  * @extends {Draggable}
  */
 class Droppable {
-  constructor(elementId, clickCoordinates) {
-    this.draggable = new Draggable(elementId, clickCoordinates);
+  constructor(draggable) {
+    this.draggable = draggable;
 
     /**
      * If list is locked, then we can't do any transformation on it. This flag,
@@ -212,76 +211,24 @@ class Droppable {
        */
       this.draggable.updateDraggedDirectionFlags(y);
 
-      // TODO
-      let isLoopBreakable = false;
-
-      /**
-       * If dragged is the last in the list and element should lifted up, don't
-       * do anything.
-       */
-      if (this.draggable.isDraggedLastElm() && this.draggable.isMovingDown) {
+      if (this.draggable.isDraggedHasNoEffect()) {
         this.isListLocked = true;
 
         return;
       }
 
-      if (this.draggable.isDraggedFirstElm() && !this.draggable.isMovingDown) {
-        /**
-         * To know where dragged is exactly heading, we need to check it's position
-         * in the parent list. If first, going up: so dragged is leaving. Then, lift
-         * all elements up.
-         */
+      const isLeftAllSiblings = this.draggable.isLeftAllSiblings();
 
-        /**
-         * Since we will do all elements up, aka isLoopBreakable=false, then lock
-         * up. We'll unlock it when found new list.
-         * This is happening, because lifting happens before detecting
-         * isDraggedOutParent.
-         */
+      if (isLeftAllSiblings) {
         this.isListLocked = true;
-      } else {
-        isLoopBreakable = true;
       }
 
-      this.switchElement(true);
+      this.switchElement(!isLeftAllSiblings);
     }
   }
 
   endDragging() {
-    this.draggable.endDragging();
-
-    if (!this.isFoundBreakingPoint) {
-      /**
-       * If not isFoundBreakingPoint, it means dragged is out its position, inside
-       * list but didn't reach another element to replace.
-       *
-       * List's elements is in their position, just undo dragged.
-       *
-       * Restore dragged position (translateX, translateY) directly. Why? Because,
-       * dragged depends on extra instance to float in layout that is not related to element
-       * instance.
-       */
-      const { translateX, translateY } = this.draggable[DRAGGED_ELM];
-
-      this.draggable.draggedStyle.transform = `translate(${translateX}px,${translateY}px)`;
-
-      return;
-    }
-
-    /**
-     * Move to new droppable position.
-     *
-     * We already have translate value in for dragged in goX/goY but it is
-     * related to mouse dragging. Instead, we want to translate to droppable
-     * element that is replaced by dragged.
-     */
-    this.draggable[DRAGGED_ELM].setYPosition(
-      this.draggable.siblingsList,
-      -this.draggable.elemDirection /** dragged goes to opposite side */,
-      this.draggable.numberOfElementsTransformed * this.topDifference,
-      this.draggable.numberOfElementsTransformed,
-      false
-    );
+    this.draggable.endDragging(this.isFoundBreakingPoint, this.topDifference);
   }
 }
 
