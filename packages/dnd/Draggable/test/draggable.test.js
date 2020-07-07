@@ -2,7 +2,7 @@ import { createElement, getBoundingClientRect } from "dflex-utils-test";
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 
 import Draggable from "../src";
-import store from "../../Store";
+import { store } from "../../src";
 
 const childInstance1 = createElement({ getBoundingClientRect });
 childInstance1.depth = 0;
