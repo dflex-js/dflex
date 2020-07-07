@@ -58,7 +58,8 @@ dnd.dragAt(clientX, clientY);
 
 You can see full React example in
 [playgrounds](https://github.com/jalal246/dflex/tree/master/playgrounds/dflex-react-dnd).
-Contributors feel free to apply PR for another frameworks and more examples.
+Contributors feel free to apply PR for another frameworks and more examples. For
+Draggable only you can use [DFlex Draggable](https://github.com/jalal246/dflex/tree/master/packages/draggable).
 
 ## Test
 
