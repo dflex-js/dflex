@@ -2,7 +2,7 @@ import React from "react";
 import { keyGenerator } from "@folo/utils";
 
 // eslint-disable-next-line import/no-unresolved
-import { store } from "@dflex/dnd";
+import { store } from "@dflex/dnd/src";
 
 const Core = (props) => {
   const {
