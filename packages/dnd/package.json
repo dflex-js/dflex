@@ -4,7 +4,9 @@
   "main": "dist/dflexDnd.min.cjs.js",
   "umd:main": "dist/dflexDnd.min.umd",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
-  "scripts": {},
+  "scripts": {
+    "build": "builderz --formats cjs umd -m -l"
+  },
   "repository": "https://github.com/jalal246/dflex/tree/master/packages/mechanisms",
   "license": "GPL-3.0",
   "files": [
