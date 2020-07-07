@@ -22,7 +22,7 @@ process runs smoothly as much as possible.
 
 ## Three Steps
 
-You can achieve drop and drag with three steps:
+You can achieve a drop and drag with three steps only
 
 ```js
 import { store, DnD } from "@dflex/dnd";
@@ -30,7 +30,7 @@ import { store, DnD } from "@dflex/dnd";
 
 ### Register element
 
-Each element should be registered in DnD store be active
+Each element should be registered in DnD store in order to be active later
 
 ```ts
 store.register({ id: string, element: Node });
