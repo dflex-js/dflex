@@ -41,6 +41,8 @@ store.register({ id: string, element: Node });
 Use `onmousedown` to trigger responsive dragging
 
 ```ts
+let dnd
+
 const { target, clientX, clientY } = event;
 
 dnd = new DnD(id: target.id, { x: clientX, y: clientY });
