@@ -2,8 +2,8 @@ import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 import Base from "./Base";
 
 class Draggable extends Base {
-  constructor(elementId, clickCoordinates) {
-    super(elementId, clickCoordinates);
+  constructor(elementInstance, clickCoordinates) {
+    super(elementInstance, clickCoordinates);
 
     const { x, y } = clickCoordinates;
 
