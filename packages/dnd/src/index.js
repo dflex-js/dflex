@@ -1,4 +1,4 @@
 import DnD from "./DnD";
-import store from "../Store";
+import store from "./DnDStoreImp";
 
 export { DnD, store };

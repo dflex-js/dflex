@@ -1,7 +1,7 @@
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 import AbstractDraggable from "@dflex/draggable/src/AbstractDraggable";
 
-import store from "../../Store";
+import store from "../../src/DnDStoreImp";
 
 import { ACTIVE_PARENT } from "../../constants.json";
 
@@ -17,15 +17,15 @@ class Base extends AbstractDraggable {
   /**
    * Creates an instance of Base.
    *
-   * @param {string} elementId
+   * @param {Object} elementInstance
    * @memberof Base
    */
-  constructor(elementId, clickCoordinates) {
+  constructor(elementInstance, clickCoordinates) {
     const {
       element,
       parent,
       branches: { siblings, parents },
-    } = store.getElmTreeById(elementId);
+    } = elementInstance;
 
     super(element, clickCoordinates);
 
