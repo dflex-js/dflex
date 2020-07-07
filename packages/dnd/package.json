@@ -1,6 +1,6 @@
 {
   "name": "@dflex/dnd",
-  "version": "0.0.0",
+  "version": "0.1.0-alpha.0",
   "main": "dist/dflexDnd.min.cjs.js",
   "umd:main": "dist/dflexDnd.min.umd",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
