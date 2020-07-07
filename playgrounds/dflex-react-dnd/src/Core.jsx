@@ -27,7 +27,7 @@ const Core = (props) => {
       },
       0
     );
-  }, []);
+  }, [id, depth, ref]);
 
   return (
     <CoreComponent ref={ref} key={id} id={id} {...rest}>
