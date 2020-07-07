@@ -10,10 +10,10 @@ npm install @dflex/dnd
     <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dnd/public/dnd.gif" alt="show how drag and drop works" />
 </p>
 
-DFlex DnD is written in Pure JavaScript and can be used with different frameworks
-wither it is React, Vue, Angular, etc.
+DFlex DnD is written in pure JavaScript and can be used with different frameworks
+whether it is React, Vue, Angular, etc.
 
-It depends on animation, tracking each droppable area which makes the whole
+It depends on animation, tracks each droppable area which makes the whole
 process runs smoothly as much as possible.
 
 <p align="center">
@@ -22,7 +22,7 @@ process runs smoothly as much as possible.
 
 ## Three Steps
 
-You can achieve a drop and drag with three steps only
+You can achieve a drop and drag with three steps only (register, start, end)
 
 ```js
 import { store, DnD } from "@dflex/dnd";
