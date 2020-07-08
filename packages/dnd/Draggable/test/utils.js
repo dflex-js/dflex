@@ -1,5 +1,8 @@
 import { createElement, getBoundingClientRect } from "dflex-utils-test";
 
+import Draggable from "../src";
+import { store } from "../../src";
+
 const childInstance1 = createElement({ getBoundingClientRect });
 childInstance1.depth = 0;
 
@@ -12,4 +15,13 @@ const parentInstance = createElement({
 });
 parentInstance.depth = 1;
 
-export { childInstance1, childInstance2, parentInstance };
+function assignDraggable(instance) {
+  const elementInstance = store.getElmTreeById(instance.id);
+
+  return new Draggable(elementInstance, {
+    x: instance.element.getBoundingClientRect().left,
+    y: instance.element.getBoundingClientRect().top,
+  });
+}
+
+export { childInstance1, childInstance2, parentInstance, assignDraggable };
