@@ -1,6 +1,6 @@
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 
-import store from "../src/DnDStoreImp";
+import store from "../../src/DnDStoreImp";
 
 /**
  * Class includes all transformation methods related to droppable.

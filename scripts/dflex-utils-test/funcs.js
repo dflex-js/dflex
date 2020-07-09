@@ -54,4 +54,7 @@ function getBoundingClientRect() {
   };
 }
 
-module.exports = { createElement, getBoundingClientRect };
+module.exports = {
+  createElement,
+  getBoundingClientRect,
+};

@@ -1,9 +1,13 @@
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 
+import {
+  childInstance1,
+  childInstance2,
+  parentInstance,
+} from "dflex-utils-test/instances";
+
 import Draggable from "../src";
 import { store } from "../../src";
-
-import { childInstance1, childInstance2, parentInstance } from "./utils";
 
 beforeAll(() => {
   store.register(childInstance1);
