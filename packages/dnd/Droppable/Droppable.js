@@ -211,16 +211,15 @@ class Droppable {
        */
       this.draggable.updateDraggedDirectionFlags(y);
 
-      if (this.draggable.isDraggedHasNoEffect()) {
+      const isLeftAllSiblings = this.draggable.isDraggedLeavingFromTop();
+
+      if (isLeftAllSiblings) {
+        this.draggable.elemDirection = -1;
+        this.isListLocked = true;
+      } else if (this.draggable.isDraggedHasNoEffect()) {
         this.isListLocked = true;
 
         return;
-      }
-
-      const isLeftAllSiblings = this.draggable.isLeftAllSiblings();
-
-      if (isLeftAllSiblings) {
-        this.isListLocked = true;
       }
 
       this.switchElement(!isLeftAllSiblings);

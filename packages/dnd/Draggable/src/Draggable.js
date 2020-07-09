@@ -80,33 +80,33 @@ class Draggable extends Base {
   }
 
   /**
-   * Checks if dragged is last element in parent list.
-   *
-   * @returns {boolean}
-   * @memberof Draggable
-   */
-  isDraggedLastElmInList() {
-    return this.tempIndex === this.siblingsList.length - 1;
-  }
-
-  /**
-   * Checks if dragged is last element in parent list or alone in the list
-   *
-   * @returns {boolean}
-   * @memberof Draggable
-   */
-  isDraggedLastElm() {
-    return this.isSingleton || this.isDraggedLastElmInList();
-  }
-
-  /**
    * Checks if dragged is first element in parent list.
    *
    * @returns {boolean}
    * @memberof Draggable
    */
-  isDraggedFirstElm() {
-    return this.isSingleton || this.tempIndex === 0;
+  isDraggedFirstChild() {
+    return this.tempIndex === 0;
+  }
+
+  /**
+   * Checks if dragged is last element in parent list.
+   *
+   * @returns {boolean}
+   * @memberof Draggable
+   */
+  isDraggedLastChild() {
+    return this.tempIndex === this.siblingsList.length - 1;
+  }
+
+  /**
+   * Checks if dragged is the first child and going up.
+   *
+   * @returns {boolean}
+   * @memberof Draggable
+   */
+  isDraggedLeavingFromTop() {
+    return this.isDraggedFirstChild() && !this.isMovingDown;
   }
 
   /**
@@ -116,25 +116,7 @@ class Draggable extends Base {
    * @memberof Draggable
    */
   isDraggedHasNoEffect() {
-    return (
-      this.isSingleton || (this.isDraggedLastElmInList() && this.isMovingDown)
-    );
-  }
-
-  /**
-   * Checks if dragged all siblings should be lifted
-   *
-   * @returns {boolean}
-   * @memberof Draggable
-   */
-  isLeftAllSiblings() {
-    const isLeftAll = this.isDraggedFirstElm() && !this.isMovingDown;
-
-    if (isLeftAll) {
-      this.elemDirection = -1;
-    }
-
-    return isLeftAll;
+    return this.isSingleton || (this.isDraggedLastChild() && this.isMovingDown);
   }
 
   /**
