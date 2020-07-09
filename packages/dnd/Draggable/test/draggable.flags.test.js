@@ -65,62 +65,83 @@ describe("Testing flags and functionalities related", () => {
   });
 
   describe("Testing isDraggedLastElm()", () => {
+    afterEach(() => {
+      draggable.endDragging();
+    });
+
     it("Checks first element correctly", () => {
       draggable = assignDraggable(childInstance1);
       expect(draggable.isDraggedLastElm()).toBe(false);
-      draggable.endDragging();
     });
 
     it("Checks last element correctly", () => {
       draggable = assignDraggable(childInstance2);
       expect(draggable.isDraggedLastElm()).toBe(true);
-      draggable.endDragging();
     });
 
     it("Checks singleton element correctly", () => {
       draggable = assignDraggable(parentInstance);
       expect(draggable.isDraggedLastElm()).toBe(true);
-      draggable.endDragging();
     });
   });
 
   describe("Testing isDraggedFirstElm()", () => {
+    afterEach(() => {
+      draggable.endDragging();
+    });
+
     it("Checks first element correctly", () => {
       draggable = assignDraggable(childInstance1);
       expect(draggable.isDraggedFirstElm()).toBe(true);
-      draggable.endDragging();
     });
 
     it("Checks last element correctly", () => {
       draggable = assignDraggable(childInstance2);
       expect(draggable.isDraggedFirstElm()).toBe(false);
-      draggable.endDragging();
     });
 
     it("Checks singleton element correctly", () => {
       draggable = assignDraggable(parentInstance);
       expect(draggable.isDraggedFirstElm()).toBe(true);
-      draggable.endDragging();
     });
   });
 
-  describe.skip("Testing isDraggedHasNoEffect()", () => {
-    it("Checks first element correctly", () => {
-      draggable = assignDraggable(childInstance1);
-      expect(draggable.isDraggedFirstElm()).toBe(true);
+  describe("Testing isDraggedHasNoEffect()", () => {
+    afterEach(() => {
       draggable.endDragging();
     });
 
-    it("Checks last element correctly", () => {
-      draggable = assignDraggable(childInstance2);
-      expect(draggable.isDraggedFirstElm()).toBe(false);
-      draggable.endDragging();
+    describe("Testing first child", () => {
+      it("Dragged has no effect on list when it is going up", () => {
+        draggable = assignDraggable(childInstance1);
+        draggable.isMovingDown = false;
+
+        expect(draggable.isDraggedHasNoEffect()).toBe(false);
+      });
+
+      // TODO: FIX IT
+      it("Dragged has an effect on list when it is going down", () => {
+        draggable = assignDraggable(childInstance1);
+        draggable.isMovingDown = true;
+
+        expect(draggable.isDraggedHasNoEffect()).toBe(true);
+      });
     });
 
-    it("Checks singleton element correctly", () => {
-      draggable = assignDraggable(parentInstance);
-      expect(draggable.isDraggedFirstElm()).toBe(true);
-      draggable.endDragging();
+    describe("Testing singleton", () => {
+      it("Dragged has no effect on list when it is going down", () => {
+        draggable = assignDraggable(parentInstance);
+        draggable.isMovingDown = true;
+
+        expect(draggable.isDraggedHasNoEffect()).toBe(true);
+      });
+
+      it("Dragged has no effect on list when it is going up", () => {
+        draggable = assignDraggable(parentInstance);
+        draggable.isMovingDown = false;
+
+        expect(draggable.isDraggedHasNoEffect()).toBe(true);
+      });
     });
   });
 });
