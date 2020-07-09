@@ -106,7 +106,6 @@ class Droppable {
      * 2) Update drag temp index that is used in all is-functions.
      * 3) Update all instances related to element and css-transform it.
      */
-
     this.draggable.numberOfElementsTransformed += 1;
 
     /**
@@ -155,12 +154,16 @@ class Droppable {
           order: { self },
         } = element;
 
-        const isQualified = this.isElemSwitchable(self);
+        if (isLoopBreakable) {
+          const isQualified = this.isElemSwitchable(self);
 
-        if (isQualified) {
+          if (isQualified) {
+            this.updateElement(element);
+
+            break;
+          }
+        } else {
           this.updateElement(element);
-
-          if (isLoopBreakable) break;
         }
       }
     }
@@ -202,7 +205,7 @@ class Droppable {
        * isSingleton to prevent bugs in running transformation in list that has only one
        * child.
        */
-      if (this.draggable.isSingleton || this.isListLocked) {
+      if (this.isListLocked) {
         return;
       }
 
@@ -211,19 +214,26 @@ class Droppable {
        */
       this.draggable.updateDraggedDirectionFlags(y);
 
-      if (this.draggable.isDraggedHasNoEffect()) {
+      const isLeavingFromTop = this.draggable.isDraggedLeavingFromTop();
+
+      if (isLeavingFromTop) {
+        this.draggable.updateLeavingFromTopFlags();
+        this.isListLocked = true;
+
+        this.switchElement(false);
+
+        return;
+      }
+
+      const isLeavingFromBottom = this.draggable.isDraggedLeavingFromBottom();
+
+      if (this.draggable.isSingleton || isLeavingFromBottom) {
         this.isListLocked = true;
 
         return;
       }
 
-      const isLeftAllSiblings = this.draggable.isLeftAllSiblings();
-
-      if (isLeftAllSiblings) {
-        this.isListLocked = true;
-      }
-
-      this.switchElement(!isLeftAllSiblings);
+      this.switchElement(true);
     }
   }
 

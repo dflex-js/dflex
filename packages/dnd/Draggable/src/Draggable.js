@@ -80,49 +80,43 @@ class Draggable extends Base {
   }
 
   /**
-   * Checks if dragged is last element in parent list.
-   *
-   * @returns {boolean}
-   * @memberof Draggable
-   */
-  isDraggedLastElm() {
-    return this.isSingleton || this.tempIndex === this.siblingsList.length - 1;
-  }
-
-  /**
    * Checks if dragged is first element in parent list.
    *
    * @returns {boolean}
    * @memberof Draggable
    */
-  isDraggedFirstElm() {
-    return this.isSingleton || this.tempIndex === 0;
+  isDraggedFirstChild() {
+    return this.tempIndex === 0;
   }
 
   /**
-   * Checks if dragged movement has any effect on it's siblings.
+   * Checks if dragged is last element in parent list.
    *
    * @returns {boolean}
    * @memberof Draggable
    */
-  isDraggedHasNoEffect() {
-    return this.isDraggedLastElm() && this.isMovingDown;
+  isDraggedLastChild() {
+    return this.tempIndex === this.siblingsList.length - 1;
   }
 
   /**
-   * Checks if dragged all siblings should be lifted
+   * Checks if dragged is the first child and going up.
    *
    * @returns {boolean}
    * @memberof Draggable
    */
-  isLeftAllSiblings() {
-    const isLeftAll = this.isDraggedFirstElm() && !this.isMovingDown;
+  isDraggedLeavingFromTop() {
+    return this.isDraggedFirstChild() && !this.isMovingDown;
+  }
 
-    if (isLeftAll) {
-      this.elemDirection = -1;
-    }
-
-    return isLeftAll;
+  /**
+   * Checks if dragged is the first child and going down.
+   *
+   * @returns {boolean}
+   * @memberof Draggable
+   */
+  isDraggedLeavingFromBottom() {
+    return this.isDraggedLastChild() && this.isMovingDown;
   }
 
   /**
@@ -132,14 +126,9 @@ class Draggable extends Base {
    * @memberof Draggable
    */
   updateDraggedDirectionFlags(y) {
-    this.isMovingDownPrev = this.isMovingDown;
     this.isMovingDown = y > this.prevY;
-    this.prevY = y;
 
-    if (
-      this.numberOfElementsTransformed !== 0 &&
-      this.isMovingDownPrev !== this.isMovingDown
-    ) {
+    if (this.isMovingDownPrev !== this.isMovingDown) {
       /**
        * In this case, we have a sudden change in mouse movement. So, reverse
        * numberOfElementsTransformed value, to be compatible with elemDirection.
@@ -152,6 +141,14 @@ class Draggable extends Base {
      * Down: -1, up: 1. Unless, dragged is leaving the list.
      */
     this.elemDirection = this.isMovingDown ? -1 : 1;
+
+    this.prevY = y;
+    this.isMovingDownPrev = this.isMovingDown;
+  }
+
+  updateLeavingFromTopFlags() {
+    this.elemDirection = -1;
+    this.numberOfElementsTransformed *= -1;
   }
 
   setDraggedPosition(isFoundBreakingPoint, topDifference) {
