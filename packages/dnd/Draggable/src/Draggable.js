@@ -132,14 +132,9 @@ class Draggable extends Base {
    * @memberof Draggable
    */
   updateDraggedDirectionFlags(y) {
-    this.isMovingDownPrev = this.isMovingDown;
     this.isMovingDown = y > this.prevY;
-    this.prevY = y;
 
-    if (
-      this.numberOfElementsTransformed !== 0 &&
-      this.isMovingDownPrev !== this.isMovingDown
-    ) {
+    if (this.isMovingDownPrev !== this.isMovingDown) {
       /**
        * In this case, we have a sudden change in mouse movement. So, reverse
        * numberOfElementsTransformed value, to be compatible with elemDirection.
@@ -152,6 +147,9 @@ class Draggable extends Base {
      * Down: -1, up: 1. Unless, dragged is leaving the list.
      */
     this.elemDirection = this.isMovingDown ? -1 : 1;
+
+    this.prevY = y;
+    this.isMovingDownPrev = this.isMovingDown;
   }
 
   setDraggedPosition(isFoundBreakingPoint, topDifference) {
