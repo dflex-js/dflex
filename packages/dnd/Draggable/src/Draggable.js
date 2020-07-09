@@ -85,8 +85,18 @@ class Draggable extends Base {
    * @returns {boolean}
    * @memberof Draggable
    */
+  isDraggedLastElmInList() {
+    return this.tempIndex === this.siblingsList.length - 1;
+  }
+
+  /**
+   * Checks if dragged is last element in parent list or alone in the list
+   *
+   * @returns {boolean}
+   * @memberof Draggable
+   */
   isDraggedLastElm() {
-    return this.isSingleton || this.tempIndex === this.siblingsList.length - 1;
+    return this.isSingleton || this.isDraggedLastElmInList();
   }
 
   /**
@@ -106,7 +116,9 @@ class Draggable extends Base {
    * @memberof Draggable
    */
   isDraggedHasNoEffect() {
-    return this.isDraggedLastElm() && this.isMovingDown;
+    return (
+      this.isSingleton || (this.isDraggedLastElmInList() && this.isMovingDown)
+    );
   }
 
   /**
