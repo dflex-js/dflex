@@ -1,20 +1,9 @@
-import { createElement, getBoundingClientRect } from "dflex-utils-test";
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 
 import Base from "../src/Base";
 import { store } from "../../src";
 
-const childInstance1 = createElement({ getBoundingClientRect });
-childInstance1.depth = 0;
-
-const childInstance2 = createElement({ getBoundingClientRect });
-childInstance2.depth = 0;
-
-const parentInstance = createElement({
-  children: [childInstance1.element, childInstance2.element],
-  getBoundingClientRect,
-});
-parentInstance.depth = 1;
+import { childInstance1, childInstance2, parentInstance } from "./utils";
 
 beforeAll(() => {
   store.register(childInstance1);
