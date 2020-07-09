@@ -14,7 +14,7 @@ beforeAll(() => {
 
 let draggable;
 
-describe("Testing the essential", () => {
+describe("Testing the essentials", () => {
   let innerOffsetX;
   let innerOffsetY;
 
