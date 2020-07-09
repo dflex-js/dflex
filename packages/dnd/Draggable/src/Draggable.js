@@ -110,13 +110,13 @@ class Draggable extends Base {
   }
 
   /**
-   * Checks if dragged movement has any effect on it's siblings.
+   * Checks if dragged is the first child and going down.
    *
    * @returns {boolean}
    * @memberof Draggable
    */
-  isDraggedHasNoEffect() {
-    return this.isSingleton || (this.isDraggedLastChild() && this.isMovingDown);
+  isDraggedLeavingFromBottom() {
+    return this.isDraggedLastChild() && this.isMovingDown;
   }
 
   /**
@@ -144,6 +144,11 @@ class Draggable extends Base {
 
     this.prevY = y;
     this.isMovingDownPrev = this.isMovingDown;
+  }
+
+  updateLeavingFromTopFlags() {
+    this.elemDirection = -1;
+    this.numberOfElementsTransformed *= -1;
   }
 
   setDraggedPosition(isFoundBreakingPoint, topDifference) {
