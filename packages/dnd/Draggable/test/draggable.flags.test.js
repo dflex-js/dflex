@@ -17,6 +17,26 @@ beforeAll(() => {
 let draggable;
 
 describe("Testing flags and functionalities related", () => {
+  describe("Testing updateDraggedDirectionFlags()", () => {
+    it("Updates dragged direction flags correctly when Y is increased", () => {
+      draggable = assignDraggable(childInstance1);
+
+      const { prevY } = draggable;
+      const clickY = prevY + 10;
+
+      draggable.updateDraggedDirectionFlags(clickY);
+
+      expect(draggable).toBe();
+
+      //  this.isMovingDownPrev = this.isMovingDown;
+      //  this.isMovingDown = y > this.prevY;
+      //  this.prevY = y;
+      //  elemDirection;
+
+      draggable.endDragging();
+    });
+  });
+
   describe("Testing isDraggedLastElm()", () => {
     it("Checks first element correctly", () => {
       draggable = assignDraggable(childInstance1);
