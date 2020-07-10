@@ -2,7 +2,7 @@
   "name": "dflex",
   "private": true,
   "workspaces": [
-    "packages/*",
+    "packages/**",
     "playgrounds/*",
     "scripts/*",
     "site"
