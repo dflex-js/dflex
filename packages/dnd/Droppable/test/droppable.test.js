@@ -11,6 +11,7 @@ import { assignDraggable } from "@dflex/dnd-draggable/test/utils";
 import Droppable from "../src/Droppable";
 
 let draggable;
+let droppable;
 
 beforeAll(() => {
   store.register(childInstance1);
@@ -21,6 +22,10 @@ beforeAll(() => {
 });
 
 describe("Testing Droppable", () => {
+  beforeAll(() => {
+    droppable = new Droppable(draggable);
+  });
+
   test("should ", () => {
     expect(true).toBe(true);
   });
