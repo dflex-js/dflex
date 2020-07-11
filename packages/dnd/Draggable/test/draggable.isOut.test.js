@@ -18,8 +18,12 @@ beforeAll(() => {
 let draggable;
 
 describe("Testing isDraggedOut()", () => {
-  beforeAll(() => {
+  beforeEach(() => {
     draggable = assignDraggable(childInstance2);
+  });
+
+  afterEach(() => {
+    draggable.endDragging();
   });
 
   it("Goes out from the right", () => {
@@ -35,7 +39,7 @@ describe("Testing isDraggedOut()", () => {
   it("Goes out from the left", () => {
     const MOVING_PIXELS = draggable.thresholds.dragged.maxLeft;
 
-    for (let i = 0; i < MOVING_PIXELS + 2; i += 1) {
+    for (let i = 0; i < Math.abs(MOVING_PIXELS) + 2; i += 1) {
       draggable.dragAt(-i, 0);
     }
 
