@@ -40,6 +40,8 @@ function createElement({ type = "div", id: argID, children, ...rest } = {}) {
   return { element, id };
 }
 
+const height = 120;
+
 /**
  * @see: https://github.com/jalal246/dflex/issues/50
  *
@@ -48,9 +50,9 @@ function createElement({ type = "div", id: argID, children, ...rest } = {}) {
 function getBoundingClientRect() {
   return {
     width: 200,
-    height: 120,
-    top: 50,
-    left: 0,
+    height,
+    top: idCounter * height + 10,
+    left: 600,
   };
 }
 

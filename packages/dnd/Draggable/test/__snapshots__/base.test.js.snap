@@ -9,20 +9,20 @@ Object {
 
 exports[`DND - PKG: Base Testing child Threshold Calculates thresholds for dragged as dropped 1`] = `
 Object {
-  "maxBottom": 130,
-  "maxLeft": -134,
-  "maxRight": 134,
-  "maxTop": -30,
+  "maxBottom": 450,
+  "maxLeft": 466,
+  "maxRight": 734,
+  "maxTop": 290,
 }
 `;
 
 exports[`DND - PKG: Base Testing child Threshold Calculates thresholds for parent as dropped 1`] = `
 Object {
   "id-2": Object {
-    "maxBottom": 130,
-    "maxLeft": -134,
-    "maxRight": 134,
-    "maxTop": -30,
+    "maxBottom": 450,
+    "maxLeft": 466,
+    "maxRight": 734,
+    "maxTop": 290,
   },
 }
 `;
