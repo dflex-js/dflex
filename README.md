@@ -26,7 +26,7 @@ JavaScript Project to Manipulate DOM Elements
 
 ## [Drag & Drop](https://github.com/jalal246/dflex/tree/master/packages/dnd)
 
-> A Simple & Light Solution for a Progressive Drag and Drop App
+> A Simple, lightweight Solution for a Drag & Drop App
 
 <p align="center">
     <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dnd/public/dnd.gif" alt="show how drag and drop works" />
