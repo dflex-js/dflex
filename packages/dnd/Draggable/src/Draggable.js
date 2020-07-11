@@ -126,6 +126,8 @@ class Draggable extends Base {
    * @memberof Draggable
    */
   updateDraggedDirectionFlags(y) {
+    if (y === this.prevY) return;
+
     this.isMovingDown = y > this.prevY;
 
     if (this.isMovingDownPrev !== this.isMovingDown) {
@@ -146,7 +148,7 @@ class Draggable extends Base {
     this.isMovingDownPrev = this.isMovingDown;
   }
 
-  updateLeavingFromTopFlags() {
+  triggerLeavingFromTopFlags() {
     this.elemDirection = -1;
     this.numberOfElementsTransformed *= -1;
   }
