@@ -13,7 +13,10 @@ import Droppable from "../src/Droppable";
 let draggable;
 let droppable;
 
-let spy;
+let switchElement;
+let isDraggedLeavingFromBottom;
+let isDraggedLeavingFromTop;
+let isDraggedOut;
 
 beforeAll(() => {
   store.register(childInstance1);
@@ -26,29 +29,102 @@ beforeAll(() => {
 describe("Testing Droppable", () => {
   beforeAll(() => {
     droppable = new Droppable(draggable);
-    spy = jest.spyOn(droppable, "switchElement");
 
-    const MOVING_PIXELS = draggable.thresholds.dragged.maxRight;
-
-    // Goes out from the right
-    for (let i = 0; i < MOVING_PIXELS + 2; i += 1) {
-      droppable.dragAt(i, 0);
-    }
+    switchElement = jest.spyOn(droppable, "switchElement");
+    isDraggedLeavingFromBottom = jest.spyOn(
+      draggable,
+      "isDraggedLeavingFromBottom"
+    );
+    isDraggedLeavingFromTop = jest.spyOn(draggable, "isDraggedLeavingFromTop");
+    isDraggedOut = jest.spyOn(draggable, "isDraggedOut");
   });
 
-  test("Returns isDraggedOut true", () => {
-    expect(droppable.draggable.isDraggedOut()).toBe(true);
+  afterAll(() => {
+    droppable.endDragging();
+
+    switchElement.mockRestore();
+    isDraggedLeavingFromBottom.mockRestore();
+    isDraggedLeavingFromTop.mockRestore();
+    isDraggedOut.mockRestore();
   });
 
-  test("Returns isDraggedLeavingFromTop false", () => {
-    expect(droppable.draggable.isDraggedLeavingFromTop()).toBe(false);
+  // describe("Goes out from the right", () => {
+  //   beforeAll(() => {
+  //     const MOVING_PIXELS = draggable.thresholds.dragged.maxRight;
+
+  //     // Goes out from the right
+  //     for (let i = 0; i < MOVING_PIXELS + 2; i += 1) {
+  //       droppable.dragAt(i, 0);
+  //     }
+  //   });
+
+  //   test("Returns isDraggedOut true", () => {
+  //     expect(droppable.draggable.isDraggedOut()).toBe(true);
+  //   });
+
+  //   test("Returns isDraggedLeavingFromTop false", () => {
+  //     expect(droppable.draggable.isDraggedLeavingFromTop()).toBe(false);
+  //   });
+
+  //   test("Returns isDraggedLeavingFromBottom false", () => {
+  //     expect(droppable.draggable.isDraggedLeavingFromBottom()).toBe(false);
+  //   });
+
+  //   test("Calls switchElement", () => {
+  //     expect(switchElement).toHaveBeenCalledTimes(1);
+  //   });
+  // });
+
+  describe.only("Goes out from the left", () => {
+    beforeAll(() => {
+      const MOVING_PIXELS = draggable.thresholds.dragged.maxLeft;
+      console.log("MOVING_PIXELS", MOVING_PIXELS);
+
+      for (let i = 0; i < Math.abs(MOVING_PIXELS) + 2; i += 1) {
+        droppable.dragAt(i, 0);
+      }
+    });
+
+    // test("Calls isDraggedOut", () => {
+    //   expect(isDraggedOut).toHaveReturnedWith(true);
+    // });
+
+    test("Calls isDraggedLeavingFromTop once", () => {
+      expect(isDraggedLeavingFromTop).toHaveReturnedWith(false);
+    });
+
+    // test("Doesn't call isDraggedLeavingFromBottom", () => {
+    //   expect(isDraggedLeavingFromBottom).toHaveReturnedWith(false);
+    // });
+
+    // test("Calls switchElement one time", () => {
+    //   expect(switchElement).toHaveBeenNthCalledWith(1, true);
+    // });
   });
 
-  test("Returns isDraggedLeavingFromBottom false", () => {
-    expect(droppable.draggable.isDraggedLeavingFromBottom()).toBe(false);
-  });
+  describe("Goes out from the top", () => {
+    beforeAll(() => {
+      const MOVING_PIXELS = draggable.thresholds.dragged.maxTop;
 
-  test("Calls switchElement", () => {
-    expect(spy).toHaveBeenCalledTimes(1);
+      for (let i = 0; i < Math.abs(MOVING_PIXELS) + 2; i += 1) {
+        droppable.dragAt(0, -i);
+      }
+    });
+
+    test("Calls isDraggedOut", () => {
+      expect(isDraggedOut).toHaveReturnedWith(true);
+    });
+
+    test("Calls isDraggedLeavingFromTop once", () => {
+      expect(isDraggedLeavingFromTop).toHaveNthReturnedWith(1, true);
+    });
+
+    test("Doesn't call isDraggedLeavingFromBottom", () => {
+      expect(isDraggedLeavingFromBottom).toHaveBeenCalledTimes(0);
+    });
+
+    test("Calls switchElement one time", () => {
+      expect(switchElement).toHaveBeenNthCalledWith(1, false);
+    });
   });
 });

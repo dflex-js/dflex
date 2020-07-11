@@ -215,6 +215,7 @@ class Droppable {
       this.draggable.updateDraggedDirectionFlags(y);
 
       const isLeavingFromTop = this.draggable.isDraggedLeavingFromTop();
+      console.log("Droppable -> dragAt -> isLeavingFromTop", isLeavingFromTop);
 
       if (isLeavingFromTop) {
         this.draggable.updateLeavingFromTopFlags();
