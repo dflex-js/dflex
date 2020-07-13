@@ -1,6 +1,7 @@
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
-
 import store from "@dflex/dnd-store";
+
+import { ACTIVE_PARENT } from "../../constants.json";
 
 /**
  * Class includes all transformation methods related to droppable.
@@ -182,6 +183,10 @@ class Droppable {
     this.draggable.dragAt(x, y);
 
     const isDraggedOutPosition = this.draggable.isDraggedOut();
+    console.log(
+      "Droppable -> dragAt -> isDraggedOutPosition",
+      isDraggedOutPosition
+    );
 
     /**
      * If dragged is outside its position we face two possibilities:
@@ -193,6 +198,7 @@ class Droppable {
      * detect the direction of dragged swinging, or out? And that's all done is
      * in directionFilter.
      */
+
     if (isDraggedOutPosition) {
       /**
        * Why using isListLocked?
@@ -206,6 +212,22 @@ class Droppable {
        * child.
        */
       if (this.isListLocked) {
+        return;
+      }
+
+      let isDraggedOutParent;
+
+      if (!this.draggable.isOrphan) {
+        const { id } = this.draggable[ACTIVE_PARENT];
+
+        isDraggedOutParent = this.draggable.isDraggedOut(id);
+      }
+
+      if (isDraggedOutParent) {
+        this.draggable.isOutActiveParent = true;
+
+        this.isListLocked = true;
+
         return;
       }
 

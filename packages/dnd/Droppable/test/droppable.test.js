@@ -26,7 +26,7 @@ beforeAll(() => {
   draggable = assignDraggable(childInstance1);
 });
 
-describe("Testing Droppable", () => {
+describe.skip("Testing Droppable", () => {
   beforeAll(() => {
     droppable = new Droppable(draggable);
 

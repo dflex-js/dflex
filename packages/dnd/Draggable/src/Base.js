@@ -112,7 +112,10 @@ class Base extends AbstractDraggable {
    */
   setThreshold(droppable, isParent) {
     const {
-      thresholdOffset: { vertical, horizontal, verticalParent },
+      thresholdOffset: {
+        vertical: { twoThirds, third },
+        horizontal,
+      },
     } = this[DRAGGED_ELM];
 
     const { currentLeft, currentTop, id } = droppable;
@@ -130,7 +133,7 @@ class Base extends AbstractDraggable {
 
       $ = this.thresholds.parents[id];
 
-      $.maxBottom = currentTop + height - verticalParent;
+      $.maxBottom = currentTop + height - third;
     } else {
       $ = this.thresholds.dragged;
 
@@ -138,7 +141,7 @@ class Base extends AbstractDraggable {
        * When going down, currentTop increases (+vertical) with droppable
        * taking into considerations (+ vertical).
        */
-      $.maxBottom = currentTop + vertical;
+      $.maxBottom = currentTop + twoThirds;
     }
 
     /**
@@ -168,7 +171,7 @@ class Base extends AbstractDraggable {
     /**
      * When going up, currentTop decreases (-vertical).
      */
-    $.maxTop = currentTop - vertical;
+    $.maxTop = currentTop - twoThirds;
 
     /**
      * When going left, currentLeft decreases (-horizontal).
@@ -206,8 +209,10 @@ class Base extends AbstractDraggable {
        * position or out parent.
        */
       this[DRAGGED_ELM].thresholdOffset = {
-        vertical: Math.ceil((2 / 3) * height),
-        verticalParent: Math.ceil((1 / 3) * height),
+        vertical: {
+          twoThirds: Math.ceil((2 / 3) * height),
+          third: Math.ceil((1 / 3) * height),
+        },
         horizontal: Math.ceil((2 / 3) * width),
       };
     }
