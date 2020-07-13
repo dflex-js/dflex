@@ -100,7 +100,11 @@ describe("DND - PKG: Base", () => {
       });
 
       it("Checks siblings list", () => {
-        expect(base.siblingsList).toBe(parentInstance.id);
+        expect(base.siblingsList).toBe(undefined);
+      });
+
+      it("Checks siblings list", () => {
+        expect(base.isSingleton).toBe(true);
       });
 
       it("Detects activeParent", () => {

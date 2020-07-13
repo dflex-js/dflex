@@ -3,7 +3,10 @@
 exports[`DND - PKG: Base Testing child Threshold Calculates threshold Offset 1`] = `
 Object {
   "horizontal": 134,
-  "vertical": 80,
+  "vertical": Object {
+    "third": 40,
+    "twoThirds": 80,
+  },
 }
 `;
 

@@ -1,6 +1,7 @@
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
-
 import store from "@dflex/dnd-store";
+
+import { ACTIVE_PARENT } from "../../constants.json";
 
 /**
  * Class includes all transformation methods related to droppable.
@@ -16,7 +17,7 @@ class Droppable {
      * If list is locked, then we can't do any transformation on it. This flag,
      * will prevent revoking transformation methods when it's unnecessary.
      */
-    this.isListLocked = false;
+    // this.isListLocked = false;
   }
 
   /**
@@ -193,6 +194,7 @@ class Droppable {
      * detect the direction of dragged swinging, or out? And that's all done is
      * in directionFilter.
      */
+
     if (isDraggedOutPosition) {
       /**
        * Why using isListLocked?
@@ -205,7 +207,21 @@ class Droppable {
        * isSingleton to prevent bugs in running transformation in list that has only one
        * child.
        */
-      if (this.isListLocked) {
+      if (this.draggable.isOutActiveParent) {
+        return;
+      }
+
+      let isDraggedOutParent;
+
+      if (!this.draggable.isOrphan) {
+        const { id } = this.draggable[ACTIVE_PARENT];
+
+        isDraggedOutParent = this.draggable.isDraggedOut(id);
+      }
+
+      if (isDraggedOutParent) {
+        this.draggable.isOutActiveParent = true;
+
         return;
       }
 
@@ -220,20 +236,20 @@ class Droppable {
 
       if (isLeavingFromTop) {
         this.draggable.triggerLeavingFromTopFlags();
-        this.isListLocked = true;
+        // this.isListLocked = true;
 
         this.switchElement(false);
 
         return;
       }
 
-      const isLeavingFromBottom = this.draggable.isDraggedLeavingFromBottom();
+      // const isLeavingFromBottom = this.draggable.isDraggedLeavingFromBottom();
 
-      if (this.draggable.isSingleton || isLeavingFromBottom) {
-        this.isListLocked = true;
+      // if (this.draggable.isSingleton || isLeavingFromBottom) {
+      //   this.isListLocked = true;
 
-        return;
-      }
+      //   return;
+      // }
 
       this.switchElement(true);
     }
