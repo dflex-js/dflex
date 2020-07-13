@@ -66,10 +66,7 @@ class CoreInstance extends AbstractCoreInstance {
       width,
 
       left,
-      right: left + width,
-
       top,
-      bottom: top + height,
     };
   }
 
