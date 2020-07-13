@@ -214,7 +214,9 @@ class Droppable {
        */
       this.draggable.updateDraggedDirectionFlags(y);
 
-      const isLeavingFromTop = this.draggable.isDraggedLeavingFromTop();
+      const isLeavingFromTop =
+        this.draggable.isMovingHorizontally ||
+        this.draggable.isDraggedLeavingFromTop();
 
       if (isLeavingFromTop) {
         this.draggable.triggerLeavingFromTopFlags();
@@ -233,7 +235,7 @@ class Droppable {
         return;
       }
 
-      this.switchElement(true, true);
+      this.switchElement(true);
     }
   }
 
