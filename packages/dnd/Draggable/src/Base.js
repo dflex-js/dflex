@@ -37,7 +37,6 @@ class Base extends AbstractDraggable {
     this.tempIndex = order.self;
 
     this.parentsList = parents;
-    this.siblingsList = siblings;
 
     /**
      * Thresholds store, contains max value for each parent and for dragged. Depending on
@@ -55,7 +54,7 @@ class Base extends AbstractDraggable {
      */
     this.setThreshold(this[DRAGGED_ELM], false);
 
-    this.setIsSingleton();
+    this.setIsSingleton(siblings);
 
     this.setIsOrphan(parent);
   }
@@ -65,11 +64,13 @@ class Base extends AbstractDraggable {
    *
    * @memberof Base
    */
-  setIsSingleton() {
-    /**
-     * Dragged has no siblings.
-     */
-    this.isSingleton = !Array.isArray(this.siblingsList);
+  setIsSingleton(siblings) {
+    if (Array.isArray(siblings)) {
+      this.isSingleton = false;
+      this.siblingsList = siblings;
+    } else {
+      this.isSingleton = true;
+    }
   }
 
   /**
@@ -79,11 +80,6 @@ class Base extends AbstractDraggable {
    * @memberof Base
    */
   setIsOrphan(parent) {
-    /**
-     * Dragged has no parent.
-     */
-    this.isOrphan = true;
-
     /**
      * Not all elements have parents.
      */
@@ -95,7 +91,14 @@ class Base extends AbstractDraggable {
       this.setOfTransformedIds = new Set([]);
       this.assignActiveParent(parent);
       this.setThreshold(parent, true);
+
       this.isOrphan = false;
+      this.isOutActiveParent = false;
+    } else {
+      /**
+       * Dragged has no parent.
+       */
+      this.isOrphan = true;
     }
   }
 
@@ -228,15 +231,16 @@ class Base extends AbstractDraggable {
      * Add flag for undo method so we can check which  parent is being
      * transformed and which is not.
      */
-    this[ACTIVE_PARENT].isTransformed = true;
-    this.isDraggedOutActiveParent = false;
+    this.isOutActiveParent = false;
 
     /**
+     * TODO: NEED TO BE UPDATED.
+     *
      * In initiating we get siblingsList. But, when dragged is in another
      * ACTIVE_PARENT we have different siblingsList now. siblingsList is
      * children of new parent. Anyway, check if there no list, get us one.
      */
-    if (!this.siblingsList) {
+    if (!this.isSingleton) {
       const {
         keys: { chK },
       } = this[ACTIVE_PARENT];
