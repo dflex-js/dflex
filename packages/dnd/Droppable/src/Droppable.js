@@ -17,7 +17,7 @@ class Droppable {
      * If list is locked, then we can't do any transformation on it. This flag,
      * will prevent revoking transformation methods when it's unnecessary.
      */
-    this.isListLocked = false;
+    // this.isListLocked = false;
   }
 
   /**
@@ -183,10 +183,6 @@ class Droppable {
     this.draggable.dragAt(x, y);
 
     const isDraggedOutPosition = this.draggable.isDraggedOut();
-    console.log(
-      "Droppable -> dragAt -> isDraggedOutPosition",
-      isDraggedOutPosition
-    );
 
     /**
      * If dragged is outside its position we face two possibilities:
@@ -211,7 +207,7 @@ class Droppable {
        * isSingleton to prevent bugs in running transformation in list that has only one
        * child.
        */
-      if (this.isListLocked) {
+      if (this.draggable.isOutActiveParent) {
         return;
       }
 
@@ -225,8 +221,6 @@ class Droppable {
 
       if (isDraggedOutParent) {
         this.draggable.isOutActiveParent = true;
-
-        this.isListLocked = true;
 
         return;
       }
@@ -242,20 +236,20 @@ class Droppable {
 
       if (isLeavingFromTop) {
         this.draggable.triggerLeavingFromTopFlags();
-        this.isListLocked = true;
+        // this.isListLocked = true;
 
         this.switchElement(false);
 
         return;
       }
 
-      const isLeavingFromBottom = this.draggable.isDraggedLeavingFromBottom();
+      // const isLeavingFromBottom = this.draggable.isDraggedLeavingFromBottom();
 
-      if (this.draggable.isSingleton || isLeavingFromBottom) {
-        this.isListLocked = true;
+      // if (this.draggable.isSingleton || isLeavingFromBottom) {
+      //   this.isListLocked = true;
 
-        return;
-      }
+      //   return;
+      // }
 
       this.switchElement(true);
     }
