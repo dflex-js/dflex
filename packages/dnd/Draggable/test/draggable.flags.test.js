@@ -1,11 +1,12 @@
-import { store } from "../../src";
+import store from "@dflex/dnd-store";
 
 import {
   childInstance1,
   childInstance2,
   parentInstance,
-  assignDraggable,
-} from "./utils";
+} from "dflex-utils-test/instances";
+
+import { assignDraggable } from "./utils";
 
 beforeAll(() => {
   store.register(childInstance1);

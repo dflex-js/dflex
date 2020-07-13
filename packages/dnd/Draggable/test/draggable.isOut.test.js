@@ -1,11 +1,12 @@
-import { store } from "../../src";
+import store from "@dflex/dnd-store";
 
 import {
   childInstance1,
   childInstance2,
   parentInstance,
-  assignDraggable,
-} from "./utils";
+} from "dflex-utils-test/instances";
+
+import { assignDraggable } from "./utils";
 
 beforeAll(() => {
   store.register(childInstance1);
@@ -17,8 +18,12 @@ beforeAll(() => {
 let draggable;
 
 describe("Testing isDraggedOut()", () => {
-  beforeAll(() => {
+  beforeEach(() => {
     draggable = assignDraggable(childInstance2);
+  });
+
+  afterEach(() => {
+    draggable.endDragging();
   });
 
   it("Goes out from the right", () => {
@@ -34,7 +39,7 @@ describe("Testing isDraggedOut()", () => {
   it("Goes out from the left", () => {
     const MOVING_PIXELS = draggable.thresholds.dragged.maxLeft;
 
-    for (let i = 0; i < MOVING_PIXELS + 2; i += 1) {
+    for (let i = 0; i < Math.abs(MOVING_PIXELS) + 2; i += 1) {
       draggable.dragAt(-i, 0);
     }
 

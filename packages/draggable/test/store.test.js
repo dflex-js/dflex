@@ -1,6 +1,6 @@
 /* eslint-disable no-plusplus */
 
-import { createElement } from "dflex-utils-test";
+import { createElement } from "dflex-utils-test/funcs";
 import { store } from "../src";
 
 export const elmInstance1 = createElement();

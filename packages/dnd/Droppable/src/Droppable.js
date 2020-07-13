@@ -1,6 +1,6 @@
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 
-import store from "../src/DnDStoreImp";
+import store from "@dflex/dnd-store";
 
 /**
  * Class includes all transformation methods related to droppable.
@@ -214,10 +214,12 @@ class Droppable {
        */
       this.draggable.updateDraggedDirectionFlags(y);
 
-      const isLeavingFromTop = this.draggable.isDraggedLeavingFromTop();
+      const isLeavingFromTop =
+        this.draggable.isMovingHorizontally ||
+        this.draggable.isDraggedLeavingFromTop();
 
       if (isLeavingFromTop) {
-        this.draggable.updateLeavingFromTopFlags();
+        this.draggable.triggerLeavingFromTopFlags();
         this.isListLocked = true;
 
         this.switchElement(false);

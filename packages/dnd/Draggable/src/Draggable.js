@@ -32,6 +32,7 @@ class Draggable extends Base {
      */
     this.elemDirection = 1;
 
+    this.isMovingHorizontally = false;
     this.isMovingDownPrev = false;
     this.isMovingDown = false;
   }
@@ -126,6 +127,12 @@ class Draggable extends Base {
    * @memberof Draggable
    */
   updateDraggedDirectionFlags(y) {
+    if (y === this.prevY) {
+      this.isMovingHorizontally = true;
+
+      return;
+    }
+
     this.isMovingDown = y > this.prevY;
 
     if (this.isMovingDownPrev !== this.isMovingDown) {
@@ -146,7 +153,7 @@ class Draggable extends Base {
     this.isMovingDownPrev = this.isMovingDown;
   }
 
-  updateLeavingFromTopFlags() {
+  triggerLeavingFromTopFlags() {
     this.elemDirection = -1;
     this.numberOfElementsTransformed *= -1;
   }
