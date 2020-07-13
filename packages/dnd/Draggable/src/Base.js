@@ -111,15 +111,35 @@ class Base extends AbstractDraggable {
    * @memberof Base
    */
   setThreshold(droppable, isParent) {
-    const { parents, dragged } = this.thresholds;
-
     const {
-      thresholdOffset: { vertical, horizontal },
+      thresholdOffset: { vertical, horizontal, verticalParent },
     } = this[DRAGGED_ELM];
 
     const { currentLeft, currentTop, id } = droppable;
 
-    const $ = isParent ? (parents[id] = {}) : dragged;
+    let $;
+
+    if (isParent) {
+      const {
+        offset: { height },
+      } = droppable;
+
+      if (!this.thresholds.parents[id]) {
+        this.thresholds.parents[id] = {};
+      }
+
+      $ = this.thresholds.parents[id];
+
+      $.maxBottom = currentTop + height - verticalParent;
+    } else {
+      $ = this.thresholds.dragged;
+
+      /**
+       * When going down, currentTop increases (+vertical) with droppable
+       * taking into considerations (+ vertical).
+       */
+      $.maxBottom = currentTop + vertical;
+    }
 
     /**
      * Overview:
@@ -149,12 +169,6 @@ class Base extends AbstractDraggable {
      * When going up, currentTop decreases (-vertical).
      */
     $.maxTop = currentTop - vertical;
-
-    /**
-     * When going down, currentTop increases (+vertical) with droppable
-     * taking into considerations (+ vertical).
-     */
-    $.maxBottom = currentTop + vertical;
 
     /**
      * When going left, currentLeft decreases (-horizontal).
@@ -193,6 +207,7 @@ class Base extends AbstractDraggable {
        */
       this[DRAGGED_ELM].thresholdOffset = {
         vertical: Math.ceil((2 / 3) * height),
+        verticalParent: Math.ceil((1 / 3) * height),
         horizontal: Math.ceil((2 / 3) * width),
       };
     }
@@ -240,7 +255,7 @@ class Base extends AbstractDraggable {
      * ACTIVE_PARENT we have different siblingsList now. siblingsList is
      * children of new parent. Anyway, check if there no list, get us one.
      */
-    if (!this.isSingleton) {
+    if (false) {
       const {
         keys: { chK },
       } = this[ACTIVE_PARENT];
