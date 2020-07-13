@@ -75,32 +75,31 @@ describe("Testing Droppable", () => {
   //   });
   // });
 
-  describe.only("Goes out from the left", () => {
-    beforeAll(() => {
-      const MOVING_PIXELS = draggable.thresholds.dragged.maxLeft;
-      console.log("MOVING_PIXELS", MOVING_PIXELS);
+  // describe("Goes out from the left", () => {
+  //   beforeAll(() => {
+  //     const MOVING_PIXELS = draggable.thresholds.dragged.maxLeft;
 
-      for (let i = 0; i < Math.abs(MOVING_PIXELS) + 2; i += 1) {
-        droppable.dragAt(i, 0);
-      }
-    });
+  //     for (let i = 0; i < Math.abs(MOVING_PIXELS) + 2; i += 1) {
+  //       droppable.dragAt(i, 0);
+  //     }
+  //   });
 
-    // test("Calls isDraggedOut", () => {
-    //   expect(isDraggedOut).toHaveReturnedWith(true);
-    // });
+  //   test("Calls isDraggedOut", () => {
+  //     expect(isDraggedOut).toHaveReturnedWith(true);
+  //   });
 
-    test("Calls isDraggedLeavingFromTop once", () => {
-      expect(isDraggedLeavingFromTop).toHaveReturnedWith(false);
-    });
+  //   test("Calls isDraggedLeavingFromTop once", () => {
+  //     expect(isDraggedLeavingFromTop).toHaveReturnedWith(false);
+  //   });
 
-    // test("Doesn't call isDraggedLeavingFromBottom", () => {
-    //   expect(isDraggedLeavingFromBottom).toHaveReturnedWith(false);
-    // });
+  //   test("Doesn't call isDraggedLeavingFromBottom", () => {
+  //     expect(isDraggedLeavingFromBottom).toHaveReturnedWith(false);
+  //   });
 
-    // test("Calls switchElement one time", () => {
-    //   expect(switchElement).toHaveBeenNthCalledWith(1, true);
-    // });
-  });
+  //   test("Calls switchElement one time", () => {
+  //     expect(switchElement).toHaveBeenNthCalledWith(1, true);
+  //   });
+  // });
 
   describe("Goes out from the top", () => {
     beforeAll(() => {
