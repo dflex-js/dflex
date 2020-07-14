@@ -11,6 +11,7 @@
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
     "test": "jest",
+    "test:int": "jest -c jest.integration.config.js",
     "build": "lerna run build"
   },
   "devDependencies": {
