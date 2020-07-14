@@ -8,6 +8,10 @@ module.exports = {
   globals: {
     Atomics: "readonly",
     SharedArrayBuffer: "readonly",
+    page: true,
+    browser: true,
+    context: true,
+    jestPuppeteer: true,
   },
   parserOptions: {
     ecmaVersion: 11,
@@ -17,7 +21,7 @@ module.exports = {
   plugins: ["tree-shaking"],
   overrides: [
     {
-      files: ["packages/**/test/*.test.js"],
+      files: ["*.test.js"],
       env: {
         jest: true,
       },
