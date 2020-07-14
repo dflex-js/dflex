@@ -10,8 +10,9 @@
   "repository": "https://github.com/jalal246/dflex",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
-    "test": "jest",
-    "test:int": "jest -c jest.integration.config.js",
+    "test:unit": "jest",
+    "test:e2e": "jest -c jest.integration.config.js",
+    "test": "yarn test:unit && yarn test:e2e",
     "build": "lerna run build"
   },
   "devDependencies": {
