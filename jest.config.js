@@ -1,4 +1,4 @@
 module.exports = {
   testEnvironment: "jsdom",
-  testPathIgnorePatterns: ["site"],
+  testPathIgnorePatterns: ["site", "test/integration"],
 };
