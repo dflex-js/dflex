@@ -1,16 +1,14 @@
 module.exports = {
   launch: {
-    headless: process.env.CI === "true",
+    headless: false,
+    slowMo: 250,
+    timeout: 60000,
   },
-  browserContext: process.env.INCOGNITO ? "incognito" : "default",
-  server: [
-    {
-      command: `yarn workspace dflex-react-dnd run start `,
-      debug: true,
-    },
-    {
-      command: `yarn workspace dflex-react-draggable run start `,
-      debug: true,
-    },
-  ],
+
+  server: {
+    command: `yarn workspace dflex-react-dnd run start `,
+    launchTimeout: 1000000,
+    port: 3001,
+    debug: true,
+  },
 };
