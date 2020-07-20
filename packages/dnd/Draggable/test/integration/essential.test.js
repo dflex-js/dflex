@@ -8,7 +8,9 @@ describe("Essential", () => {
   it("should work", async (done) => {
     const elm = await page.waitForSelector("#id-10");
     const elmBox = await elm.boundingBox();
-    await page.mouse.move(0, 0);
+    page.setViewport({ width: 900, height: 720 });
+
+    await page.mouse.move(10, 20);
     await page.mouse.down();
     await page.mouse.move(100, 10);
     await page.mouse.up();
