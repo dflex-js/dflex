@@ -1,3 +1,5 @@
+import puppeteer from "puppeteer";
+
 jest.setTimeout(30000);
 
 let startingPointX;
@@ -5,10 +7,14 @@ let startingPointY;
 let elmBox;
 
 describe("Essential", () => {
-  beforeEach(async () => {
+  beforeAll(async () => {
     await page.setViewport({ width: 1920, height: 1080 });
     await page.goto("http://localhost:3001");
 
+    // await page.goto("http://localhost:3000/");
+  });
+
+  beforeEach(async () => {
     const elm = await page.waitForSelector("#id-10");
     elmBox = await elm.boundingBox();
 
@@ -20,12 +26,9 @@ describe("Essential", () => {
     it("Goes out from left", async () => {
       await page.mouse.move(startingPointX, startingPointY);
       await page.mouse.down();
-      await page.mouse.move(
-        startingPointX + ((2 / 3) * elmBox.width + 200),
-        startingPointY
-      );
-      await jestPuppeteer.debug();
-      // await page.mouse.up();
+      await page.mouse.move(startingPointX, 0);
+      // await jestPuppeteer.debug();
+      await page.mouse.up();
       // done();
     });
 
