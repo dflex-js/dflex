@@ -5,7 +5,8 @@
     "packages/**",
     "playgrounds/*",
     "scripts/*",
-    "site"
+    "site",
+    "cypress"
   ],
   "repository": "https://github.com/jalal246/dflex",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
