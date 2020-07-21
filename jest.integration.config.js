@@ -1,4 +1,4 @@
 module.exports = {
   preset: "jest-puppeteer",
-  testRegex: "/integration/",
+  testRegex: "/test/integration/",
 };
