@@ -1,11 +1,9 @@
 module.exports = {
-  browserContext: "incognito",
-
   launch: {
-    dumpio: true,
+    devtools: true,
     headless: false,
     slowMo: 850,
-    timeout: 60000,
+    // timeout: 60000,
   },
 
   server: {

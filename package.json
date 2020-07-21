@@ -19,6 +19,7 @@
     "@babel/preset-env": "^7.9.6",
     "babel-jest": "^26.0.1",
     "builderz": "^0.10.1",
+    "cypress": "^4.10.0",
     "jest": "^26.1.0",
     "jest-puppeteer": "^4.4.0",
     "lerna": "^3.21.0",
