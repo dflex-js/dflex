@@ -177,6 +177,8 @@ class Draggable extends Base {
       return;
     }
 
+    this[DRAGGED_ELM].setCurrentOffset();
+
     /**
      * Move to new droppable position.
      *
@@ -195,8 +197,6 @@ class Draggable extends Base {
 
   endDragging(isFoundBreakingPoint, topDifference) {
     this.setDragged(false);
-
-    this[DRAGGED_ELM].setCurrentOffset();
 
     this.setDraggedPosition(isFoundBreakingPoint, topDifference);
   }

@@ -211,37 +211,21 @@ class Droppable {
         return;
       }
 
-      let isDraggedOutParent;
-
-      if (!this.draggable.isOrphan) {
-        const { id } = this.draggable[ACTIVE_PARENT];
-
-        isDraggedOutParent = this.draggable.isDraggedOut(id);
-      }
-
-      if (isDraggedOutParent) {
-        this.draggable.isOutActiveParent = true;
-
-        return;
-      }
-
       /**
        * Dragged is out position, but inside parent, swinging up and down.s
        */
       this.draggable.updateDraggedDirectionFlags(y);
 
-      const isLeavingFromTop =
-        this.draggable.isMovingHorizontally ||
-        this.draggable.isDraggedLeavingFromTop();
+      // const isLeavingFromTop = this.draggable.isDraggedLeavingFromTops();
 
-      if (isLeavingFromTop) {
-        this.draggable.triggerLeavingFromTopFlags();
-        // this.isListLocked = true;
+      // if (isLeavingFromTop) {
+      //   this.draggable.triggerLeavingFromTopFlags();
+      //   // this.isListLocked = true;
 
-        this.switchElement(false);
+      //   this.switchElement(false);
 
-        return;
-      }
+      //   return;
+      // }
 
       console.log("i am here");
 
@@ -253,12 +237,23 @@ class Droppable {
       //   return;
       // }
 
-      this.switchElement(true);
-    }
-  }
+      // debugger;
 
-  endDragging() {
-    this.draggable.endDragging(this.isFoundBreakingPoint, this.topDifference);
+      this.switchElement(true);
+
+      let isDraggedOutParent;
+
+      if (!this.draggable.isOrphan) {
+        const { id } = this.draggable[ACTIVE_PARENT];
+
+        isDraggedOutParent = this.draggable.isDraggedOut(id);
+      }
+
+      if (isDraggedOutParent) {
+        this.draggable.isOutActiveParent = true;
+        this.isFoundBreakingPoint = false;
+      }
+    }
   }
 }
 
