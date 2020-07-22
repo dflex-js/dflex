@@ -15,7 +15,7 @@ class EndDroppable extends Droppable {
   undoList(lst) {
     const {
       order: { self: from },
-      draggedID,
+      id: draggedID,
     } = this.draggable[DRAGGED_ELM];
 
     for (let i = from; i < lst.length; i += 1) {
