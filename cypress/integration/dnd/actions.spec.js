@@ -82,7 +82,7 @@ context("DnD/Testing is out", () => {
             button: 0,
           })
           .trigger("mousemove", {
-            clientX: startingPointX - ((2 / 3) * elmBox.width + 200),
+            clientX: startingPointX - ((2 / 3) * elmBox.width + 2),
             clientY: startingPointY,
             force: true,
           });

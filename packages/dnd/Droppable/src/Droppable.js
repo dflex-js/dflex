@@ -250,6 +250,8 @@ class Droppable {
       if (isDraggedOutParent) {
         this.draggable.isOutActiveParent = true;
         this.isFoundBreakingPoint = false;
+      } else if (this.draggable.isMovingHorizontally) {
+        this.isFoundBreakingPoint = false;
       }
     }
   }
