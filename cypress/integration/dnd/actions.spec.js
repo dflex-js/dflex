@@ -72,4 +72,72 @@ context("DnD/Testing is out", () => {
       );
     });
   });
+
+  context("Moving horizontally- out form the left", () => {
+    it("Transforms element 10 out", () => {
+      cy.get("#id-10").then((elm) => {
+        elmBox = elm[0].getBoundingClientRect();
+
+        startingPointX = elmBox.x + elmBox.width / 2;
+        startingPointY = elmBox.y + elmBox.height / 2;
+
+        cy.get("#id-10")
+          .trigger("mousedown", {
+            button: 0,
+          })
+          .trigger("mousemove", {
+            clientX: startingPointX - ((2 / 3) * elmBox.width + 2),
+            clientY: startingPointY,
+            force: true,
+          });
+      });
+    });
+
+    it("Effects another element, lowers the up", () => {
+      cy.get("#id-9").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 58)"
+      );
+    });
+
+    it.skip("Does not effect element 11", () => {
+      cy.get("#id-11").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+    });
+
+    it.skip("Triggers mouseup", () => {
+      cy.get("#id-10").trigger("mouseup", { force: true });
+    });
+
+    it.skip("Makes sure list has three elements", () => {
+      cy.get("#p0-1c")
+        .should("not.be.empty")
+        .and(($li) => {
+          expect($li[0].children).to.have.length(3);
+        });
+    });
+
+    it.skip("Resets all positions", () => {
+      cy.get("#id-9").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+      cy.get("#id-10").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+
+      cy.get("#id-11").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+    });
+  });
 });
