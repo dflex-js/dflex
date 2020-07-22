@@ -9,7 +9,7 @@ context("DnD/Testing is out", () => {
     cy.visit("http://localhost:3001/");
   });
 
-  context.only("Moving horizontally- out form the right", () => {
+  context("Moving horizontally- out form the right", () => {
     it("Transforms element 10 out", () => {
       cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
@@ -89,27 +89,23 @@ context("DnD/Testing is out", () => {
       });
     });
 
-    it("Effects another element, lowers the up", () => {
-      cy.get("#id-9").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 58)"
-      );
+    it("Does not effect element 9", () => {
+      cy.get("#id-9").should("have.css", "transform", "none");
     });
 
-    it.skip("Does not effect element 11", () => {
+    it("Effects another element, lowers the up", () => {
       cy.get("#id-11").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
+        "matrix(1, 0, 0, 1, 0, -58)"
       );
     });
 
-    it.skip("Triggers mouseup", () => {
+    it("Triggers mouseup", () => {
       cy.get("#id-10").trigger("mouseup", { force: true });
     });
 
-    it.skip("Makes sure list has three elements", () => {
+    it("Makes sure list has three elements", () => {
       cy.get("#p0-1c")
         .should("not.be.empty")
         .and(($li) => {
@@ -117,12 +113,8 @@ context("DnD/Testing is out", () => {
         });
     });
 
-    it.skip("Resets all positions", () => {
-      cy.get("#id-9").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
-      );
+    it("Resets all positions", () => {
+      cy.get("#id-9").should("have.css", "transform", "none");
       cy.get("#id-10").should(
         "have.css",
         "transform",
