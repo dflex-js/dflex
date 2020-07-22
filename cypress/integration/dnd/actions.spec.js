@@ -9,7 +9,7 @@ context("DnD/Testing is out", () => {
     cy.visit("http://localhost:3001/");
   });
 
-  context("Moving horizontally- out form the right", () => {
+  context.only("Moving horizontally- out form the right", () => {
     it("Transforms element 10 out", () => {
       cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
@@ -29,16 +29,16 @@ context("DnD/Testing is out", () => {
       });
     });
 
-    it("Effects another element, lowers the up", () => {
-      cy.get("#id-9").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 58)"
-      );
+    it("Does not effect element 9", () => {
+      cy.get("#id-9").should("have.css", "transform", "none");
     });
 
-    it("Does not effect element 11", () => {
-      cy.get("#id-11").should("have.css", "transform", "none");
+    it("Effects element 11, lifts it up", () => {
+      cy.get("#id-11").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, -58)"
+      );
     });
 
     it("Triggers mouseup", () => {
@@ -54,11 +54,7 @@ context("DnD/Testing is out", () => {
     });
 
     it("Resets all positions", () => {
-      cy.get("#id-9").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
-      );
+      cy.get("#id-9").should("have.css", "transform", "none");
       cy.get("#id-10").should(
         "have.css",
         "transform",
@@ -86,7 +82,7 @@ context("DnD/Testing is out", () => {
             button: 0,
           })
           .trigger("mousemove", {
-            clientX: startingPointX - ((2 / 3) * elmBox.width + 2),
+            clientX: startingPointX - ((2 / 3) * elmBox.width + 200),
             clientY: startingPointY,
             force: true,
           });

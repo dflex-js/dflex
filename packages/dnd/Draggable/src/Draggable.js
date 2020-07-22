@@ -130,10 +130,10 @@ class Draggable extends Base {
     if (y === this.prevY) {
       this.isMovingHorizontally = true;
 
-      return;
+      this.isMovingDown = true;
+    } else {
+      this.isMovingDown = y > this.prevY;
     }
-
-    this.isMovingDown = y > this.prevY;
 
     if (this.isMovingDownPrev !== this.isMovingDown) {
       /**
