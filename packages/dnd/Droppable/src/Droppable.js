@@ -227,8 +227,6 @@ class Droppable {
       //   return;
       // }
 
-      console.log("i am here");
-
       // const isLeavingFromBottom = this.draggable.isDraggedLeavingFromBottom();
 
       // if (this.draggable.isSingleton || isLeavingFromBottom) {
