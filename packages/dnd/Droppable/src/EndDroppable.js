@@ -40,9 +40,9 @@ class EndDroppable extends Droppable {
   }
 
   endDragging() {
-    this.draggable.endDragging(this.isFoundBreakingPoint, this.topDifference);
+    this.draggable.endDragging(this.isDraggedOutPosition, this.topDifference);
 
-    if (!this.isFoundBreakingPoint) {
+    if (this.isDraggedOutPosition) {
       const {
         keys: { chK },
       } = store.getElmById(this.draggable[ACTIVE_PARENT].id);

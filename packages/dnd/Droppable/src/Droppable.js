@@ -182,7 +182,7 @@ class Droppable {
   dragAt(x, y) {
     this.draggable.dragAt(x, y);
 
-    const isDraggedOutPosition = this.draggable.isDraggedOut();
+    this.isDraggedOutPosition = this.draggable.isDraggedOut();
 
     /**
      * If dragged is outside its position we face two possibilities:
@@ -195,7 +195,7 @@ class Droppable {
      * in directionFilter.
      */
 
-    if (isDraggedOutPosition) {
+    if (this.isDraggedOutPosition) {
       /**
        * Why using isListLocked?
        * The space between out of position and out of list makes
@@ -249,9 +249,6 @@ class Droppable {
 
       if (isDraggedOutParent) {
         this.draggable.isOutActiveParent = true;
-        this.isFoundBreakingPoint = false;
-      } else if (this.draggable.isMovingHorizontally) {
-        this.isFoundBreakingPoint = false;
       }
     }
   }
