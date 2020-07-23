@@ -19,25 +19,31 @@ class EndDroppable extends Droppable {
       id: draggedID,
     } = this.draggable[DRAGGED_ELM];
 
-    for (let i = from; i < lst.length; i += 1) {
+    for (let i = 0; i < lst.length; i += 1) {
       const elmID = lst[i];
+      console.log("EndDroppable -> undoList -> elmID", elmID);
 
-      const element = store.getElmById(elmID);
+      if (elmID) {
+        const element = store.getElmById(elmID);
 
-      /**
-       * Note: rolling back won't affect order array. It only deals with element
-       * itself and totally ignore any instance related to store.
-       */
-      element.rollYBack();
+        /**
+         * Note: rolling back won't affect order array. It only deals with element
+         * itself and totally ignore any instance related to store.
+         */
+        element.rollYBack();
+      }
     }
 
+    console.log("EndDroppable -> undoList -> from", from);
+    lst[from] = draggedID;
     /**
      * Add dragged is to its original position.
      *
      * Note: if elements have transformed, this means dragged also done the
      * same. That's why both are connected here.
      */
-    lst.splice(from, 0, draggedID);
+    // lst.splice(from, 0, draggedID);
+    console.log("EndDroppable -> undoList -> lst", lst);
   }
 
   endDragging() {

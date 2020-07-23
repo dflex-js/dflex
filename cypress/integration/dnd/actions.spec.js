@@ -9,7 +9,7 @@ context("DnD/Testing is out horizontally", () => {
     cy.visit("http://localhost:3001/");
   });
 
-  context("Moving strict horizontally - out form the right", () => {
+  context.only("Moving strict horizontally - out form the right", () => {
     it("Transforms element 10 out", () => {
       cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();

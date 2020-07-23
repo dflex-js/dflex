@@ -142,22 +142,10 @@ class CoreInstance extends AbstractCoreInstance {
      */
     if (isShuffle) {
       /**
-       * If we are at the last element, it means dragged is out the list so
-       * instead of assign the last position to null: [0,1, null]. We simply
-       * delete it: [0,1]
+       * Clear old position by assigning it to null:[0, null, 1].
+       * Note: the null position will be filled later with dragged
        */
-      if (oldIndex + 1 === order.length) {
-        /**
-         * Remove last element.
-         */
-        order.pop();
-      } else {
-        /**
-         * Clear old position by assigning it to null:[0, null, 1].
-         * Note: the null position will be filled later with dragged
-         */
-        order[oldIndex] = null;
-      }
+      order[oldIndex] = null;
     }
   }
 
