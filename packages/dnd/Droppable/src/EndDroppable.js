@@ -13,6 +13,7 @@ class EndDroppable extends Droppable {
    * @memberof EndDroppable
    */
   undoList(lst) {
+    console.log("EndDroppable -> undoList -> lst", lst);
     const {
       order: { self: from },
       id: draggedID,
