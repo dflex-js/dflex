@@ -77,8 +77,6 @@ class CoreInstance extends AbstractCoreInstance {
      */
     this.translateY = 0;
     this.translateX = 0;
-    this.prevTranslateY = 0;
-    this.prevTranslateX = 0;
   }
 
   setCurrentOffset() {
@@ -109,38 +107,11 @@ class CoreInstance extends AbstractCoreInstance {
     return { oldIndex, newIndex };
   }
 
-  /**
-   * Updates index locally and in store.
-   *
-   * @param {Array} iDsInOrder
-   * @param {number} i - increment number
-   * @param {boolean} [isShuffle=true] don't clear for last element.
-   * @memberof CoreInstance
-   */
-  updateIDsOrder(iDsInOrder, draggedId, inc) {
-    /**
-     * Get new index depending on increment and updating local index (self).
-     */
-    const { oldIndex, newIndex } = this.updateIndex(inc);
-
-    /**
-     * Update element id and order in its list.
-     *
-     * This goes for shuffled elements and direct update
-     *
-     * Note: direct update: for dragged element and assigning new order when
-     * inserting and undoing.
-     */
-    iDsInOrder[newIndex] = this.id;
-    iDsInOrder[oldIndex] = draggedId;
-  }
-
   seTranslate(sign, topSpace) {
     const _topSpace = sign * topSpace;
 
     this.currentTop += _topSpace;
 
-    this.prevTranslateY = this.translateY;
     this.translateY += _topSpace;
 
     this.element.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
@@ -166,13 +137,33 @@ class CoreInstance extends AbstractCoreInstance {
    * @param {boolean} [isShuffle=true]
    * @memberof CoreInstance
    */
-  setYPosition(draggedId, iDsInOrder, sign, topSpace, vIncrement = 1) {
+  setYPosition(
+    iDsInOrder,
+    movingMap,
+    parentID,
+    sign,
+    topSpace,
+    vIncrement = 1
+  ) {
     this.seTranslate(sign, topSpace);
 
-    if (draggedId) {
-      this.updateIDsOrder(iDsInOrder, draggedId, sign * vIncrement);
-    } else {
-      this.updateIndex(sign * vIncrement);
+    /**
+     * Get new index depending on increment and updating local index (self).
+     */
+    const { oldIndex, newIndex } = this.updateIndex(sign * vIncrement);
+
+    if (iDsInOrder) {
+      movingMap.push({
+        from: oldIndex,
+        to: newIndex,
+        id: this.id,
+        pId: parentID,
+      });
+
+      const temp = iDsInOrder[newIndex];
+
+      iDsInOrder[newIndex] = this.id;
+      iDsInOrder[oldIndex] = temp;
     }
   }
 
