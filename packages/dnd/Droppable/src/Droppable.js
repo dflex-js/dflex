@@ -13,11 +13,7 @@ class Droppable {
   constructor(draggable) {
     this.draggable = draggable;
 
-    /**
-     * If list is locked, then we can't do any transformation on it. This flag,
-     * will prevent revoking transformation methods when it's unnecessary.
-     */
-    // this.isListLocked = false;
+    this.movingMap = [];
   }
 
   /**
@@ -130,8 +126,9 @@ class Droppable {
      * Start transforming process
      */
     element.setYPosition(
-      this.draggable[DRAGGED_ELM].id,
       this.draggable.siblingsList,
+      this.movingMap,
+      this.draggable[ACTIVE_PARENT],
       this.draggable.elemDirection,
       this.topDifference,
       1
