@@ -16,7 +16,7 @@ class EndDroppable extends Droppable {
    * @param {Array} lst - Array of ids.
    * @memberof EndDroppable
    */
-  undoList(lst, travel = 1) {
+  undoList(lst, travel = this.movingMap.length) {
     for (let i = 0; i < travel; i += 1) {
       const { from, to, id } = this.movingMap[i];
 
