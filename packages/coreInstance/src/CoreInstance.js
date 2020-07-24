@@ -77,6 +77,7 @@ class CoreInstance extends AbstractCoreInstance {
      */
     this.translateY = 0;
     this.translateX = 0;
+    this.prevTranslateY = 0;
   }
 
   setCurrentOffset() {
@@ -111,6 +112,8 @@ class CoreInstance extends AbstractCoreInstance {
     const _topSpace = sign * topSpace;
 
     this.currentTop += _topSpace;
+
+    this.prevTranslateY = this.translateY;
 
     this.translateY += _topSpace;
 
@@ -174,9 +177,11 @@ class CoreInstance extends AbstractCoreInstance {
    * @memberof CoreInstance
    */
   rollYBack() {
-    // const topSpace = this.prevTranslateY - this.translateY;
-    // const increment = this.seTranslate(1, topSpace, 1, false);
-    // this.updateIndex(increment);
+    const topSpace = this.prevTranslateY - this.translateY;
+    this.seTranslate(1, topSpace, 1, false);
+
+    const increment = topSpace > 0 ? 1 : -1;
+    this.updateIndex(increment);
   }
 }
 
