@@ -130,11 +130,11 @@ class Droppable {
      * Start transforming process
      */
     element.setYPosition(
+      this.draggable[DRAGGED_ELM].id,
       this.draggable.siblingsList,
       this.draggable.elemDirection,
       this.topDifference,
-      1,
-      true
+      1
     );
   }
 

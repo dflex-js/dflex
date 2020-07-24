@@ -99,31 +99,29 @@ class CoreInstance extends AbstractCoreInstance {
    * @returns number  - new index.
    * @memberof CoreInstance
    */
-  setIndex(i) {
-    const newIndex = this.order.self + i;
+  updateIndex(i) {
+    const oldIndex = this.order.self;
+
+    const newIndex = oldIndex + i;
 
     this.order.self = newIndex;
 
-    return newIndex;
+    return { oldIndex, newIndex };
   }
 
   /**
    * Updates index locally and in store.
    *
-   * @param {Array} order
+   * @param {Array} iDsInOrder
    * @param {number} i - increment number
    * @param {boolean} [isShuffle=true] don't clear for last element.
    * @memberof CoreInstance
    */
-  updateIDsOrder(order, inc, isShuffle) {
-    const oldIndex = this.order.self;
-
+  updateIDsOrder(iDsInOrder, draggedId, inc) {
     /**
      * Get new index depending on increment and updating local index (self).
      */
-    const newIndex = this.setIndex(inc);
-
-    if (order === null) return;
+    const { oldIndex, newIndex } = this.updateIndex(inc);
 
     /**
      * Update element id and order in its list.
@@ -133,23 +131,11 @@ class CoreInstance extends AbstractCoreInstance {
      * Note: direct update: for dragged element and assigning new order when
      * inserting and undoing.
      */
-    order[newIndex] = this.id;
-
-    /**
-     * Shuffling when:
-     * Still in the list going up/down.
-     * Dragged went up leaving the list entirely.
-     */
-    if (isShuffle) {
-      /**
-       * Clear old position by assigning it to null:[0, null, 1].
-       * Note: the null position will be filled later with dragged
-       */
-      order[oldIndex] = null;
-    }
+    iDsInOrder[newIndex] = this.id;
+    iDsInOrder[oldIndex] = draggedId;
   }
 
-  seTranslate(sign, topSpace, vIncrement) {
+  seTranslate(sign, topSpace) {
     const _topSpace = sign * topSpace;
 
     this.currentTop += _topSpace;
@@ -158,10 +144,6 @@ class CoreInstance extends AbstractCoreInstance {
     this.translateY += _topSpace;
 
     this.element.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
-
-    const increment = sign * vIncrement;
-
-    return increment;
   }
 
   /**
@@ -184,10 +166,14 @@ class CoreInstance extends AbstractCoreInstance {
    * @param {boolean} [isShuffle=true]
    * @memberof CoreInstance
    */
-  setYPosition(iDsInOrder, sign, topSpace, vIncrement = 1, isShuffle = true) {
-    const increment = this.seTranslate(sign, topSpace, vIncrement);
+  setYPosition(draggedId, iDsInOrder, sign, topSpace, vIncrement = 1) {
+    this.seTranslate(sign, topSpace);
 
-    this.updateIDsOrder(iDsInOrder, increment, isShuffle);
+    if (draggedId) {
+      this.updateIDsOrder(iDsInOrder, draggedId, sign * vIncrement);
+    } else {
+      this.updateIndex(sign * vIncrement);
+    }
   }
 
   /**
@@ -197,11 +183,9 @@ class CoreInstance extends AbstractCoreInstance {
    * @memberof CoreInstance
    */
   rollYBack() {
-    const topSpace = this.prevTranslateY - this.translateY;
-
-    const increment = this.seTranslate(1, topSpace, 1, false);
-
-    this.setIndex(increment);
+    // const topSpace = this.prevTranslateY - this.translateY;
+    // const increment = this.seTranslate(1, topSpace, 1, false);
+    // this.updateIndex(increment);
   }
 }
 

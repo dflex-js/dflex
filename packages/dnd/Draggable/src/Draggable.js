@@ -180,11 +180,11 @@ class Draggable extends Base {
      * element that is replaced by dragged.
      */
     this[DRAGGED_ELM].setYPosition(
+      null,
       this.siblingsList,
       -this.elemDirection /** dragged goes to opposite side */,
       this.numberOfElementsTransformed * topDifference,
-      this.numberOfElementsTransformed,
-      false
+      this.numberOfElementsTransformed
     );
   }
 
