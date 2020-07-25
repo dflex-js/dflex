@@ -9,7 +9,7 @@ context("DnD/Testing is out horizontally", () => {
     cy.visit("http://localhost:3001/");
   });
 
-  context.only("Moving strict horizontally - out form the right", () => {
+  context("Moving strict horizontally - out form the right", () => {
     it("Transforms element 10 out", () => {
       cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
@@ -53,7 +53,7 @@ context("DnD/Testing is out horizontally", () => {
       cy.get("#id-10").trigger("mouseup", { force: true });
     });
 
-    it("Makes sure list has three elements", () => {
+    it("Makes sure list has four elements", () => {
       cy.get("#p0-1c")
         .should("not.be.empty")
         .and(($li) => {
@@ -108,8 +108,16 @@ context("DnD/Testing is out horizontally", () => {
       cy.get("#id-9").should("have.css", "transform", "none");
     });
 
-    it("Effects another element, lowers the up", () => {
+    it("Effects element 11,  lifts it up", () => {
       cy.get("#id-11").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, -58)"
+      );
+    });
+
+    it("Effects element 12, lifts it up", () => {
+      cy.get("#id-12").should(
         "have.css",
         "transform",
         "matrix(1, 0, 0, 1, 0, -58)"
@@ -120,16 +128,17 @@ context("DnD/Testing is out horizontally", () => {
       cy.get("#id-10").trigger("mouseup", { force: true });
     });
 
-    it("Makes sure list has three elements", () => {
+    it("Makes sure list has four elements", () => {
       cy.get("#p0-1c")
         .should("not.be.empty")
         .and(($li) => {
-          expect($li[0].children).to.have.length(3);
+          expect($li[0].children).to.have.length(4);
         });
     });
 
     it("Resets all positions", () => {
       cy.get("#id-9").should("have.css", "transform", "none");
+
       cy.get("#id-10").should(
         "have.css",
         "transform",
@@ -137,6 +146,12 @@ context("DnD/Testing is out horizontally", () => {
       );
 
       cy.get("#id-11").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+
+      cy.get("#id-12").should(
         "have.css",
         "transform",
         "matrix(1, 0, 0, 1, 0, 0)"
@@ -176,20 +191,29 @@ context("DnD/Testing is out horizontally", () => {
       );
     });
 
+    it("Effects element 12, lifts it up", () => {
+      cy.get("#id-12").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, -58)"
+      );
+    });
+
     it("Triggers mouseup", () => {
       cy.get("#id-10").trigger("mouseup", { force: true });
     });
 
-    it("Makes sure list has three elements", () => {
+    it("Makes sure list has four elements", () => {
       cy.get("#p0-1c")
         .should("not.be.empty")
         .and(($li) => {
-          expect($li[0].children).to.have.length(3);
+          expect($li[0].children).to.have.length(4);
         });
     });
 
     it("Resets all positions", () => {
       cy.get("#id-9").should("have.css", "transform", "none");
+
       cy.get("#id-10").should(
         "have.css",
         "transform",
@@ -197,6 +221,12 @@ context("DnD/Testing is out horizontally", () => {
       );
 
       cy.get("#id-11").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+
+      cy.get("#id-12").should(
         "have.css",
         "transform",
         "matrix(1, 0, 0, 1, 0, 0)"
@@ -228,8 +258,16 @@ context("DnD/Testing is out horizontally", () => {
       cy.get("#id-9").should("have.css", "transform", "none");
     });
 
-    it("Effects another element, lowers the up", () => {
+    it("Effects element 11, lifts it up", () => {
       cy.get("#id-11").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, -58)"
+      );
+    });
+
+    it("Effects element 12, lifts it up", () => {
+      cy.get("#id-12").should(
         "have.css",
         "transform",
         "matrix(1, 0, 0, 1, 0, -58)"
@@ -240,16 +278,17 @@ context("DnD/Testing is out horizontally", () => {
       cy.get("#id-10").trigger("mouseup", { force: true });
     });
 
-    it("Makes sure list has three elements", () => {
+    it("Makes sure list has four elements", () => {
       cy.get("#p0-1c")
         .should("not.be.empty")
         .and(($li) => {
-          expect($li[0].children).to.have.length(3);
+          expect($li[0].children).to.have.length(4);
         });
     });
 
     it("Resets all positions", () => {
       cy.get("#id-9").should("have.css", "transform", "none");
+
       cy.get("#id-10").should(
         "have.css",
         "transform",
@@ -257,6 +296,12 @@ context("DnD/Testing is out horizontally", () => {
       );
 
       cy.get("#id-11").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+
+      cy.get("#id-12").should(
         "have.css",
         "transform",
         "matrix(1, 0, 0, 1, 0, 0)"
@@ -284,14 +329,6 @@ context("DnD/Testing is out horizontally", () => {
       });
     });
 
-    it("Does not effect element 11", () => {
-      cy.get("#id-11").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
-      );
-    });
-
     it("Effects element 9, lowers it down", () => {
       cy.get("#id-9").should(
         "have.css",
@@ -300,15 +337,31 @@ context("DnD/Testing is out horizontally", () => {
       );
     });
 
+    it("Does not effect element 11", () => {
+      cy.get("#id-11").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+    });
+
+    it("Does not effect element 12", () => {
+      cy.get("#id-12").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+    });
+
     it("Triggers mouseup", () => {
       cy.get("#id-10").trigger("mouseup", { force: true });
     });
 
-    it("Makes sure list has three elements", () => {
+    it("Makes sure list has four elements", () => {
       cy.get("#p0-1c")
         .should("not.be.empty")
         .and(($li) => {
-          expect($li[0].children).to.have.length(3);
+          expect($li[0].children).to.have.length(4);
         });
     });
 
@@ -318,6 +371,7 @@ context("DnD/Testing is out horizontally", () => {
         "transform",
         "matrix(1, 0, 0, 1, 0, 0)"
       );
+
       cy.get("#id-10").should(
         "have.css",
         "transform",
@@ -325,6 +379,12 @@ context("DnD/Testing is out horizontally", () => {
       );
 
       cy.get("#id-11").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+
+      cy.get("#id-12").should(
         "have.css",
         "transform",
         "matrix(1, 0, 0, 1, 0, 0)"

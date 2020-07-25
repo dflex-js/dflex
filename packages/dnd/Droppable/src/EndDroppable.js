@@ -4,11 +4,23 @@ import store from "@dflex/dnd-store";
 import Droppable from "./Droppable";
 import { ACTIVE_PARENT } from "../../constants.json";
 
-function move(arr, from, to) {
-  arr.splice(to, 0, arr.splice(from, 1)[0]);
-}
-
 class EndDroppable extends Droppable {
+  undoElm(lst, i) {
+    const elmID = lst[i];
+
+    if (elmID) {
+      const element = store.getElmById(elmID);
+
+      /**
+       * Note: rolling back won't affect order array. It only deals with element
+       * itself and totally ignore any instance related to store.
+       */
+      element.rollYBack();
+    } else {
+      this.spliceAt = i;
+    }
+  }
+
   /**
    * Undo list elements order and instances including translateX/Y and indexes
    * locally.
@@ -16,15 +28,24 @@ class EndDroppable extends Droppable {
    * @param {Array} lst - Array of ids.
    * @memberof EndDroppable
    */
-  undoList(lst, travel = this.movingMap.length) {
-    for (let i = 0; i < travel; i += 1) {
-      const { from, to, id } = this.movingMap[i];
+  undoList(lst) {
+    const {
+      order: { self: from },
+      id: draggedID,
+    } = this.draggable[DRAGGED_ELM];
 
-      const element = store.getElmById(id);
-      element.rollYBack();
-
-      move(lst, to, from);
+    if (this.draggable.isMovingDown) {
+      for (let i = from; i < lst.length; i += 1) {
+        this.undoElm(lst, i);
+      }
+    } else {
+      for (let i = from; i > 0; i -= 1) {
+        this.undoElm(lst, i);
+      }
     }
+
+    lst.splice(this.spliceAt, 1);
+    lst.splice(from, 0, draggedID);
   }
 
   endDragging() {

@@ -108,6 +108,54 @@ class CoreInstance extends AbstractCoreInstance {
     return { oldIndex, newIndex };
   }
 
+  /**
+   * Updates index locally and in store.
+   *
+   * @param {Array} order
+   * @param {number} i - increment number
+   * @param {boolean} [isShuffle=true] don't clear for last element.
+   * @memberof CoreInstance
+   */
+  updateIDsOrder(order, inc, isShuffle) {
+    const { oldIndex, newIndex } = this.updateIndex(inc);
+
+    /**
+     * Update element id and order in its list.
+     *
+     * This goes for shuffled elements and direct update
+     *
+     * Note: direct update: for dragged element and assigning new order when
+     * inserting and undoing.
+     */
+    order[newIndex] = this.id;
+    order[oldIndex] = null;
+
+    // /**
+    //  * Shuffling when:
+    //  * Still in the list going up/down.
+    //  * Dragged went up leaving the list entirely.
+    //  */
+    // if (isShuffle) {
+    //   /**
+    //    * If we are at the last element, it means dragged is out the list so
+    //    * instead of assign the last position to null: [0,1, null]. We simply
+    //    * delete it: [0,1]
+    //    */
+    //   if (oldIndex + 1 === order.length) {
+    //     /**
+    //      * Remove last element.
+    //      */
+    //     order.pop();
+    //   } else {
+    //     /**
+    //      * Clear old position by assigning it to null:[0, null, 1].
+    //      * Note: the null position will be filled later with dragged
+    //      */
+    //     order[oldIndex] = null;
+    //   }
+    // }
+  }
+
   seTranslate(sign, topSpace) {
     const _topSpace = sign * topSpace;
 
@@ -140,34 +188,10 @@ class CoreInstance extends AbstractCoreInstance {
    * @param {boolean} [isShuffle=true]
    * @memberof CoreInstance
    */
-  setYPosition(
-    iDsInOrder,
-    movingMap,
-    parentID,
-    sign,
-    topSpace,
-    vIncrement = 1
-  ) {
+  setYPosition(iDsInOrder, sign, topSpace, vIncrement = 1, isShuffle = true) {
     this.seTranslate(sign, topSpace);
 
-    /**
-     * Get new index depending on increment and updating local index (self).
-     */
-    const { oldIndex, newIndex } = this.updateIndex(sign * vIncrement);
-
-    if (iDsInOrder) {
-      movingMap.push({
-        from: oldIndex,
-        to: newIndex,
-        id: this.id,
-        pId: parentID,
-      });
-
-      const temp = iDsInOrder[newIndex];
-
-      iDsInOrder[newIndex] = this.id;
-      iDsInOrder[oldIndex] = temp;
-    }
+    this.updateIDsOrder(iDsInOrder, sign * vIncrement, isShuffle);
   }
 
   /**

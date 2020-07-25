@@ -127,15 +127,15 @@ class Droppable {
      */
     element.setYPosition(
       this.draggable.siblingsList,
-      this.movingMap,
-      this.draggable[ACTIVE_PARENT],
       this.draggable.elemDirection,
       this.topDifference,
-      1
+      1,
+      true
     );
   }
 
   switchElement(isLoopBreakable) {
+    console.log("========");
     /**
      * Using for because in some cases the loop is breakable.
      */
@@ -154,11 +154,10 @@ class Droppable {
 
         if (isLoopBreakable) {
           const isQualified = this.isElemSwitchable(self);
+          console.log("isQualified", isQualified, id, self);
 
           if (isQualified) {
             this.updateElement(element);
-
-            break;
           }
         } else {
           this.updateElement(element);
