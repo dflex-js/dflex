@@ -157,7 +157,8 @@ class Droppable {
           if (isQualified) {
             this.updateElement(element);
 
-            // break;
+            if (!this.draggable.isOutHorizontal) break;
+
             // if (!this.isDraggedOutPosition) {
             // }
           }

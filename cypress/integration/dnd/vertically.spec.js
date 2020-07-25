@@ -7,7 +7,7 @@ context("DnD/Testing is out vertically", () => {
     cy.visit("http://localhost:3001/");
   });
 
-  context.skip("Moving strict vertically - out down", () => {
+  context("Moving strict vertically - out down", () => {
     it("Transforms element 10 out", () => {
       cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
