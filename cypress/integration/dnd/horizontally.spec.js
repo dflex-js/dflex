@@ -4,7 +4,7 @@ let startingPointX;
 let startingPointY;
 let elmBox;
 
-context("DnD/Testing is out horizontally", () => {
+context.only("DnD/Testing is out horizontally", () => {
   before(() => {
     cy.visit("http://localhost:3001/");
   });
@@ -329,27 +329,23 @@ context("DnD/Testing is out horizontally", () => {
       });
     });
 
-    it("Effects element 9, lowers it down", () => {
-      cy.get("#id-9").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 58)"
-      );
+    it("Does not effect element 9", () => {
+      cy.get("#id-9").should("have.css", "transform", "none");
     });
 
-    it("Does not effect element 11", () => {
+    it("Effects element 11, lifts it up", () => {
       cy.get("#id-11").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
+        "matrix(1, 0, 0, 1, 0, -58)"
       );
     });
 
-    it("Does not effect element 12", () => {
+    it("Effects element 12, lifts it up", () => {
       cy.get("#id-12").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
+        "matrix(1, 0, 0, 1, 0, -58)"
       );
     });
 
@@ -366,11 +362,9 @@ context("DnD/Testing is out horizontally", () => {
     });
 
     it("Resets all positions", () => {
-      cy.get("#id-9").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
-      );
+      it("Does not effect element 9", () => {
+        cy.get("#id-9").should("have.css", "transform", "none");
+      });
 
       cy.get("#id-10").should(
         "have.css",
@@ -412,27 +406,23 @@ context("DnD/Testing is out horizontally", () => {
       });
     });
 
-    it("Effects element 9, lowers it down", () => {
-      cy.get("#id-9").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 58)"
-      );
+    it("Does not effect element 9", () => {
+      cy.get("#id-9").should("have.css", "transform", "none");
     });
 
-    it("Does not effect element 11", () => {
+    it("Effects element 11, lifts it up", () => {
       cy.get("#id-11").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
+        "matrix(1, 0, 0, 1, 0, -58)"
       );
     });
 
-    it("Does not effect element 12", () => {
+    it("Effects element 12, lifts it up", () => {
       cy.get("#id-12").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
+        "matrix(1, 0, 0, 1, 0, -58)"
       );
     });
 
@@ -449,11 +439,7 @@ context("DnD/Testing is out horizontally", () => {
     });
 
     it("Resets all positions", () => {
-      cy.get("#id-9").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
-      );
+      cy.get("#id-9").should("have.css", "transform", "none");
 
       cy.get("#id-10").should(
         "have.css",
