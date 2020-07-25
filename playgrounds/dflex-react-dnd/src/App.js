@@ -27,7 +27,7 @@ function App() {
         ))}
       </Core>
       <Core id="p0-1c" component="ul" depth={1}>
-        {[1, 2, 3].map(() => (
+        {[1, 2, 3, 4].map(() => (
           <Core depth={0} id={`id-${index}`} key={`k${index}`} component="li">
             Hello-
             {index++}

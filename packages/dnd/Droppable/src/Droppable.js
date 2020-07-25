@@ -13,11 +13,7 @@ class Droppable {
   constructor(draggable) {
     this.draggable = draggable;
 
-    /**
-     * If list is locked, then we can't do any transformation on it. This flag,
-     * will prevent revoking transformation methods when it's unnecessary.
-     */
-    // this.isListLocked = false;
+    this.movingMap = [];
   }
 
   /**
@@ -139,6 +135,7 @@ class Droppable {
   }
 
   switchElement(isLoopBreakable) {
+    console.log("========");
     /**
      * Using for because in some cases the loop is breakable.
      */
@@ -157,11 +154,10 @@ class Droppable {
 
         if (isLoopBreakable) {
           const isQualified = this.isElemSwitchable(self);
+          console.log("isQualified", isQualified, id, self);
 
           if (isQualified) {
             this.updateElement(element);
-
-            break;
           }
         } else {
           this.updateElement(element);
@@ -182,7 +178,7 @@ class Droppable {
   dragAt(x, y) {
     this.draggable.dragAt(x, y);
 
-    const isDraggedOutPosition = this.draggable.isDraggedOut();
+    this.isDraggedOutPosition = this.draggable.isDraggedOut();
 
     /**
      * If dragged is outside its position we face two possibilities:
@@ -195,7 +191,7 @@ class Droppable {
      * in directionFilter.
      */
 
-    if (isDraggedOutPosition) {
+    if (this.isDraggedOutPosition) {
       /**
        * Why using isListLocked?
        * The space between out of position and out of list makes
@@ -211,6 +207,34 @@ class Droppable {
         return;
       }
 
+      /**
+       * Dragged is out position, but inside parent, swinging up and down.s
+       */
+      this.draggable.updateDraggedDirectionFlags(y);
+
+      // const isLeavingFromTop = this.draggable.isDraggedLeavingFromTops();
+
+      // if (isLeavingFromTop) {
+      //   this.draggable.triggerLeavingFromTopFlags();
+      //   // this.isListLocked = true;
+
+      //   this.switchElement(false);
+
+      //   return;
+      // }
+
+      // const isLeavingFromBottom = this.draggable.isDraggedLeavingFromBottom();
+
+      // if (this.draggable.isSingleton || isLeavingFromBottom) {
+      //   this.isListLocked = true;
+
+      //   return;
+      // }
+
+      // debugger;
+
+      this.switchElement(true);
+
       let isDraggedOutParent;
 
       if (!this.draggable.isOrphan) {
@@ -221,42 +245,8 @@ class Droppable {
 
       if (isDraggedOutParent) {
         this.draggable.isOutActiveParent = true;
-
-        return;
       }
-
-      /**
-       * Dragged is out position, but inside parent, swinging up and down.s
-       */
-      this.draggable.updateDraggedDirectionFlags(y);
-
-      const isLeavingFromTop =
-        this.draggable.isMovingHorizontally ||
-        this.draggable.isDraggedLeavingFromTop();
-
-      if (isLeavingFromTop) {
-        this.draggable.triggerLeavingFromTopFlags();
-        // this.isListLocked = true;
-
-        this.switchElement(false);
-
-        return;
-      }
-
-      // const isLeavingFromBottom = this.draggable.isDraggedLeavingFromBottom();
-
-      // if (this.draggable.isSingleton || isLeavingFromBottom) {
-      //   this.isListLocked = true;
-
-      //   return;
-      // }
-
-      this.switchElement(true);
     }
-  }
-
-  endDragging() {
-    this.draggable.endDragging(this.isFoundBreakingPoint, this.topDifference);
   }
 }
 

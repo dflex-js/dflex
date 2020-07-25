@@ -32,7 +32,6 @@ class Draggable extends Base {
      */
     this.elemDirection = 1;
 
-    this.isMovingHorizontally = false;
     this.isMovingDownPrev = false;
     this.isMovingDown = false;
   }
@@ -127,13 +126,7 @@ class Draggable extends Base {
    * @memberof Draggable
    */
   updateDraggedDirectionFlags(y) {
-    if (y === this.prevY) {
-      this.isMovingHorizontally = true;
-
-      return;
-    }
-
-    this.isMovingDown = y > this.prevY;
+    this.isMovingDown = y === this.prevY ? true : y > this.prevY;
 
     if (this.isMovingDownPrev !== this.isMovingDown) {
       /**
@@ -158,10 +151,10 @@ class Draggable extends Base {
     this.numberOfElementsTransformed *= -1;
   }
 
-  setDraggedPosition(isFoundBreakingPoint, topDifference) {
-    if (!isFoundBreakingPoint) {
+  setDraggedPosition(isDraggedOutPosition, topDifference) {
+    if (isDraggedOutPosition) {
       /**
-       * If not isFoundBreakingPoint, it means dragged is out its position, inside
+       * If not isDraggedOutPosition, it means dragged is out its position, inside
        * list but didn't reach another element to replace.
        *
        * List's elements is in their position, just undo dragged.
@@ -176,6 +169,8 @@ class Draggable extends Base {
 
       return;
     }
+
+    this[DRAGGED_ELM].setCurrentOffset();
 
     /**
      * Move to new droppable position.
@@ -193,12 +188,10 @@ class Draggable extends Base {
     );
   }
 
-  endDragging(isFoundBreakingPoint, topDifference) {
+  endDragging(isDraggedOutPosition, topDifference) {
     this.setDragged(false);
 
-    this[DRAGGED_ELM].setCurrentOffset();
-
-    this.setDraggedPosition(isFoundBreakingPoint, topDifference);
+    this.setDraggedPosition(isDraggedOutPosition, topDifference);
   }
 }
 
