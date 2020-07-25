@@ -12,8 +12,6 @@ import { ACTIVE_PARENT } from "../../constants.json";
 class Droppable {
   constructor(draggable) {
     this.draggable = draggable;
-
-    this.movingMap = [];
   }
 
   /**
@@ -158,6 +156,10 @@ class Droppable {
 
           if (isQualified) {
             this.updateElement(element);
+
+            // break;
+            // if (!this.isDraggedOutPosition) {
+            // }
           }
         } else {
           this.updateElement(element);

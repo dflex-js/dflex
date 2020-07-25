@@ -58,6 +58,20 @@ class Draggable extends Base {
     this.tempOffset.currentTop = y - this.innerOffsetY;
   }
 
+  isOutH($) {
+    return (
+      this.tempOffset.currentLeft < $.maxLeft ||
+      this.tempOffset.currentLeft > $.maxRight
+    );
+  }
+
+  isOutV($) {
+    return (
+      this.tempOffset.currentTop < $.maxTop ||
+      this.tempOffset.currentTop > $.maxBottom
+    );
+  }
+
   /**
    * Checks if dragged it out of its position or parent.
    *
@@ -70,13 +84,24 @@ class Draggable extends Base {
 
     const $ = id ? parents[id] : dragged;
 
-    const isOut =
-      this.tempOffset.currentLeft < $.maxLeft ||
-      this.tempOffset.currentLeft > $.maxRight ||
-      this.tempOffset.currentTop < $.maxTop ||
-      this.tempOffset.currentTop > $.maxBottom;
+    if (this.isOutH($)) {
+      this.isOutHorizontal = true;
+      this.isOutVertical = false;
 
-    return isOut;
+      return true;
+    }
+
+    if (this.isOutV($)) {
+      this.isOutHorizontal = false;
+      this.isOutVertical = true;
+
+      return true;
+    }
+
+    this.isOutHorizontal = false;
+    this.isOutVertical = false;
+
+    return false;
   }
 
   /**
@@ -126,7 +151,7 @@ class Draggable extends Base {
    * @memberof Draggable
    */
   updateDraggedDirectionFlags(y) {
-    this.isMovingDown = y === this.prevY ? true : y > this.prevY;
+    this.isMovingDown = this.isOutHorizontal ? true : y > this.prevY;
 
     if (this.isMovingDownPrev !== this.isMovingDown) {
       /**
