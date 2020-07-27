@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "install:win": "cypress cache clear && .\\node_modules\\.bin\\cypress.cmd install --force",
     "start:server": "yarn workspace dflex-react-dnd run start",
     "cy:run": "cypress run",
     "cy:open": "cypress open",
