@@ -6,12 +6,12 @@
     "playgrounds/*",
     "scripts/*",
     "site",
-    "cypress"
+    "e2e-test"
   ],
   "repository": "https://github.com/jalal246/dflex",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
-    "test:e2e": "yarn workspace cypress run test",
+    "test:e2e": "yarn workspace e2e-test run test",
     "test:unit": "jest",
     "test": "yarn test:unit && yarn test:e2e",
     "build": "lerna run build"
