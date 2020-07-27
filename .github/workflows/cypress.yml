@@ -33,6 +33,10 @@ jobs:
 
       - uses: cypress-io/github-action@v2
         with:
+          project: ./e2e-test
+          start: yarn workspace dflex-react-dnd run start
+          wait-on: "http://localhost:3001/"
+          # wait for 2 minutes for the server to respond
+          wait-on-timeout: 120
           browser: chrome
           headless: true
-          project: ./e2e-test
