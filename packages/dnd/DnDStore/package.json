@@ -2,5 +2,9 @@
   "name": "@dflex/dnd-store",
   "version": "0.1.0",
   "main": "index.js",
-  "license": "GPL-3.0"
+  "license": "GPL-3.0",
+  "bundledDependencies": [
+    "@dflex/store",
+    "@dflex/core-instance"
+  ]
 }

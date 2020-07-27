@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "GPL-3.0",
   "bundledDependencies": [
+    "@dflex/draggable",
     "@dflex/dnd-store"
   ],
   "devDependencies": {
