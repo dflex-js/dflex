@@ -35,3 +35,4 @@ jobs:
         with:
           browser: chrome
           headless: true
+          project: ./e2e-test
