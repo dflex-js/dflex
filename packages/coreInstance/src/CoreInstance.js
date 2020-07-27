@@ -116,7 +116,7 @@ class CoreInstance extends AbstractCoreInstance {
    * @param {boolean} [isShuffle=true] don't clear for last element.
    * @memberof CoreInstance
    */
-  updateIDsOrder(order, inc, isShuffle) {
+  updateIDsOrder(order, inc) {
     const { oldIndex, newIndex } = this.updateIndex(inc);
 
     /**

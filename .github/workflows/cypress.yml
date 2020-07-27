@@ -1,0 +1,41 @@
+name: E2E Test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Set Node.js 10.x
+        uses: actions/setup-node@master
+        with:
+          node-version: 10.x
+
+      - name: Cache Dependencies
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install Dependencies
+        run: yarn
+
+      - name: Run Build
+        run: yarn build
+
+      - name: Run Test
+        run: CI=true yarn jest --coverage
+
+      - name: Upload coverage to Codecov
+        run: bash <(curl -s https://codecov.io/bash) -C $GITHUB_SHA -B ${GITHUB_REF#refs/heads/} -Z
+        env:
+          CODECOV_TOKEN: 98cfb3ef-e3ad-4ffc-aaa1-314731222d1b
