@@ -2,5 +2,12 @@
   "name": "@dflex/dnd-draggable",
   "version": "0.0.0",
   "main": "index.js",
-  "license": "GPL-3.0"
+  "license": "GPL-3.0",
+  "bundledDependencies": [
+    "@dflex/draggable",
+    "@dflex/dnd-store"
+  ],
+  "devDependencies": {
+    "dflex-utils-test": "^0.1.0"
+  }
 }

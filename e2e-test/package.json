@@ -1,0 +1,19 @@
+{
+  "name": "e2e-test",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "install:win": "cypress cache clear && .\\node_modules\\.bin\\cypress.cmd install --force",
+    "start:server": "yarn workspace dflex-react-dnd run start",
+    "cy:run": "cypress run",
+    "cy:open": "cypress open",
+    "dev": "start-server-and-test start:server http://localhost:3001 cy:open",
+    "test": "start-server-and-test start:server http://localhost:3001 cy:run"
+  },
+  "dependencies": {
+    "cypress": "^4.10.0",
+    "eslint-plugin-cypress": "^2.11.1",
+    "start-server-and-test": "^1.11.2"
+  }
+}

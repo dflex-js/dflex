@@ -70,6 +70,7 @@ describe("Testing the essentials", () => {
   });
 
   it("Current offset is set correctly", () => {
+    console.log(draggable[DRAGGED_ELM]);
     expect(draggable[DRAGGED_ELM].currentTop).toEqual(
       draggable[DRAGGED_ELM].offset.top + draggable[DRAGGED_ELM].translateX
     );

@@ -82,6 +82,12 @@ class CoreInstance extends AbstractCoreInstance {
 
   setCurrentOffset() {
     const { left, top } = this.offset;
+    console.log(
+      "CoreInstance -> setCurrentOffset -> top",
+      top,
+      this.translateY,
+      this.currentTop
+    );
 
     /**
      * This offset related directly to translate Y and Y. It's isolated from
@@ -116,7 +122,7 @@ class CoreInstance extends AbstractCoreInstance {
    * @param {boolean} [isShuffle=true] don't clear for last element.
    * @memberof CoreInstance
    */
-  updateIDsOrder(order, inc, isShuffle) {
+  updateIDsOrder(order, inc) {
     const { oldIndex, newIndex } = this.updateIndex(inc);
 
     /**
