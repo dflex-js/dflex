@@ -11,8 +11,8 @@
   "repository": "https://github.com/jalal246/dflex",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
+    "test:e2e": "yarn workspace cypress run test",
     "test:unit": "jest",
-    "test:e2e": "jest -c jest.integration.config.js",
     "test": "yarn test:unit && yarn test:e2e",
     "build": "lerna run build"
   },
@@ -25,6 +25,7 @@
     "jest-puppeteer": "^4.4.0",
     "lerna": "^3.21.0",
     "prettier": "^2.0.5",
-    "puppeteer": "^5.1.0"
+    "puppeteer": "^5.1.0",
+    "start-server-and-test": "^1.11.2"
   }
 }
