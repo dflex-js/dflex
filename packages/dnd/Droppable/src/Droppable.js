@@ -12,8 +12,6 @@ import { ACTIVE_PARENT } from "../../constants.json";
 class Droppable {
   constructor(draggable) {
     this.draggable = draggable;
-
-    this.movingMap = [];
   }
 
   /**
@@ -154,10 +152,11 @@ class Droppable {
 
         if (isLoopBreakable) {
           const isQualified = this.isElemSwitchable(self);
-          console.log("isQualified", isQualified, id, self);
 
           if (isQualified) {
             this.updateElement(element);
+
+            if (!this.draggable.isOutHorizontal) break;
           }
         } else {
           this.updateElement(element);
