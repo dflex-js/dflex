@@ -10,7 +10,9 @@
     "dev": "start-server-and-test start:server http://localhost:3001 cy:open",
     "test": "start-server-and-test start:server http://localhost:3001 cy:run"
   },
-  "devDependencies": {
-    "eslint-plugin-cypress": "^2.11.1"
+  "dependencies": {
+    "cypress": "^4.10.0",
+    "eslint-plugin-cypress": "^2.11.1",
+    "start-server-and-test": "^1.11.2"
   }
 }
