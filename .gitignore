@@ -7,3 +7,6 @@ build
 dist
 draft
 samples
+
+cypress/screenshots
+cypress/videos
