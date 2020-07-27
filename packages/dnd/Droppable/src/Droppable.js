@@ -152,15 +152,11 @@ class Droppable {
 
         if (isLoopBreakable) {
           const isQualified = this.isElemSwitchable(self);
-          console.log("isQualified", isQualified, id, self);
 
           if (isQualified) {
             this.updateElement(element);
 
             if (!this.draggable.isOutHorizontal) break;
-
-            // if (!this.isDraggedOutPosition) {
-            // }
           }
         } else {
           this.updateElement(element);
