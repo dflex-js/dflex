@@ -86,20 +86,17 @@ class Draggable extends Base {
 
     if (this.isOutH($)) {
       this.isOutHorizontal = true;
-      this.isOutVertical = false;
 
       return true;
     }
 
     if (this.isOutV($)) {
       this.isOutHorizontal = false;
-      this.isOutVertical = true;
 
       return true;
     }
 
     this.isOutHorizontal = false;
-    this.isOutVertical = false;
 
     return false;
   }
