@@ -14,6 +14,11 @@
     "dist",
     "LICENSE"
   ],
+  "bundledDependencies": [
+    "@dflex/dnd-store",
+    "@dflex/dnd-draggable",
+    "@dflex/dnd-droppable"
+  ],
   "keywords": [
     "@dflex",
     "@dflex/dom-gen",

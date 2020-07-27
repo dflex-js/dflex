@@ -48,59 +48,6 @@ describe.skip("Testing Droppable", () => {
     isDraggedOut.mockRestore();
   });
 
-  // describe("Goes out from the right", () => {
-  //   beforeAll(() => {
-  //     const MOVING_PIXELS = draggable.thresholds.dragged.maxRight;
-
-  //     // Goes out from the right
-  //     for (let i = 0; i < MOVING_PIXELS + 2; i += 1) {
-  //       droppable.dragAt(i, 0);
-  //     }
-  //   });
-
-  //   test("Returns isDraggedOut true", () => {
-  //     expect(droppable.draggable.isDraggedOut()).toBe(true);
-  //   });
-
-  //   test("Returns isDraggedLeavingFromTop false", () => {
-  //     expect(droppable.draggable.isDraggedLeavingFromTop()).toBe(false);
-  //   });
-
-  //   test("Returns isDraggedLeavingFromBottom false", () => {
-  //     expect(droppable.draggable.isDraggedLeavingFromBottom()).toBe(false);
-  //   });
-
-  //   test("Calls switchElement", () => {
-  //     expect(switchElement).toHaveBeenCalledTimes(1);
-  //   });
-  // });
-
-  // describe("Goes out from the left", () => {
-  //   beforeAll(() => {
-  //     const MOVING_PIXELS = draggable.thresholds.dragged.maxLeft;
-
-  //     for (let i = 0; i < Math.abs(MOVING_PIXELS) + 2; i += 1) {
-  //       droppable.dragAt(i, 0);
-  //     }
-  //   });
-
-  //   test("Calls isDraggedOut", () => {
-  //     expect(isDraggedOut).toHaveReturnedWith(true);
-  //   });
-
-  //   test("Calls isDraggedLeavingFromTop once", () => {
-  //     expect(isDraggedLeavingFromTop).toHaveReturnedWith(false);
-  //   });
-
-  //   test("Doesn't call isDraggedLeavingFromBottom", () => {
-  //     expect(isDraggedLeavingFromBottom).toHaveReturnedWith(false);
-  //   });
-
-  //   test("Calls switchElement one time", () => {
-  //     expect(switchElement).toHaveBeenNthCalledWith(1, true);
-  //   });
-  // });
-
   describe("Goes out from the top", () => {
     beforeAll(() => {
       const MOVING_PIXELS = draggable.thresholds.dragged.maxTop;

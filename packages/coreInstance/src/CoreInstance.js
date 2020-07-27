@@ -82,6 +82,12 @@ class CoreInstance extends AbstractCoreInstance {
 
   setCurrentOffset() {
     const { left, top } = this.offset;
+    console.log(
+      "CoreInstance -> setCurrentOffset -> top",
+      top,
+      this.translateY,
+      this.currentTop
+    );
 
     /**
      * This offset related directly to translate Y and Y. It's isolated from
