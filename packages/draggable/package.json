@@ -20,7 +20,7 @@
     "@dflex/core-instance"
   ],
   "devDependencies": {
-    "dflex-utils-test": "^0.0.1"
+    "dflex-utils-test": "^0.1.0"
   },
   "keywords": [
     "@dflex",
