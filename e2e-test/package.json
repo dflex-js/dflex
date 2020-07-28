@@ -12,6 +12,7 @@
     "test": "start-server-and-test start:server http://localhost:3001 cy:run"
   },
   "dependencies": {
+    "@cypress/code-coverage": "^3.8.1",
     "cypress": "^4.10.0",
     "eslint-plugin-cypress": "^2.11.1",
     "start-server-and-test": "^1.11.2"
