@@ -58,7 +58,7 @@ describe("Testing the essentials", () => {
       draggable.dragAt(START_CLIENT_X + i, START_CLIENT_Y + i);
     }
 
-    draggable.endDragging();
+    // draggable.endDragging();
 
     expect(draggable[DRAGGED_ELM].offset.top).not.toBe(
       draggable.tempOffset.currentTop
@@ -70,7 +70,6 @@ describe("Testing the essentials", () => {
   });
 
   it("Current offset is set correctly", () => {
-    console.log(draggable[DRAGGED_ELM]);
     expect(draggable[DRAGGED_ELM].currentTop).toEqual(
       draggable[DRAGGED_ELM].offset.top + draggable[DRAGGED_ELM].translateX
     );
