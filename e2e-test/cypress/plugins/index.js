@@ -18,11 +18,9 @@
  * @type {Cypress.PluginConfig}
  */
 module.exports = (on, config) => {
-  require("@cypress/code-coverage/task")(on, config);
+  require("cypress-react-unit-test/plugins/react-scripts")(on, config);
 
-  // add other tasks to be registered here
+  // on("file:preprocessor", require("@cypress/code-coverage/use-babelrc"));
 
-  // IMPORTANT to return the config object
-  // with the any changed environment variables
   return config;
 };
