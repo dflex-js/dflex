@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "install:win": "cypress cache clear && .\\node_modules\\.bin\\cypress.cmd install --force",
-    "server": "yarn workspace dflex-react-dnd run start",
+    "server": "cross-env BROWSER=none yarn workspace dflex-react-dnd run start",
     "cy:run": "cypress run",
     "cy:open": "cypress open",
     "dev": "start-server-and-test server http://localhost:3001 cy:open",
