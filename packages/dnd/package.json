@@ -20,10 +20,11 @@
     "LICENSE"
   ],
   "devDependencies": {
-    "cross-env": "^7.0.2",
-    "start-server-and-test": "^1.11.2",
     "@cypress/code-coverage": "^3.8.1",
-    "eslint-plugin-cypress": "^2.11.1"
+    "cross-env": "^7.0.2",
+    "cypress": "^4.11.0",
+    "eslint-plugin-cypress": "^2.11.1",
+    "start-server-and-test": "^1.11.2"
   },
   "bundledDependencies": [
     "@dflex/store",
