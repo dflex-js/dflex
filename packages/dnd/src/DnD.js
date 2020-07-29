@@ -1,7 +1,7 @@
-import store from "@dflex/dnd-store";
+import Draggable from "./Draggable";
+import Droppable from "./Droppable";
 
-import Draggable from "@dflex/dnd-draggable";
-import Droppable from "@dflex/dnd-droppable";
+import store from "./DnDStore";
 
 class DnD extends Droppable {
   constructor(elementId, clickCoordinates) {

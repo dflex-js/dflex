@@ -7,7 +7,7 @@ on:
   pull_request:
 
 jobs:
-  cypress:
+  cypress-dnd:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -33,7 +33,7 @@ jobs:
 
       - uses: cypress-io/github-action@v2
         with:
-          project: ./e2e-test
+          project: ./packages/dnd
           start: yarn workspace dflex-react-dnd run start
           wait-on: "http://localhost:3001/"
           # wait for 2 minutes for the server to respond
