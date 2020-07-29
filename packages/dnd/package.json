@@ -20,6 +20,7 @@
     "LICENSE"
   ],
   "devDependencies": {
+    "dflex-utils-test": "^0.1.0",
     "@cypress/code-coverage": "^3.8.1",
     "cross-env": "^7.0.2",
     "cypress": "^4.11.0",
