@@ -7,7 +7,7 @@
   "scripts": {
     "build": "builderz --formats cjs umd -m -l"
   },
-  "repository": "https://github.com/jalal246/dflex/tree/master/packages/mechanisms",
+  "repository": "https://github.com/jalal246/dflex/tree/master/packages/dnd",
   "license": "GPL-3.0",
   "files": [
     "src",
@@ -15,9 +15,9 @@
     "LICENSE"
   ],
   "bundledDependencies": [
-    "@dflex/dnd-store",
-    "@dflex/dnd-draggable",
-    "@dflex/dnd-droppable"
+    "@dflex/store",
+    "@dflex/core-instance",
+    "@dflex/draggable"
   ],
   "keywords": [
     "@dflex",

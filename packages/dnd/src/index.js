@@ -1,5 +1,4 @@
-import store from "@dflex/dnd-store";
-
+import store from "./DnDStore";
 import DnD from "./DnD";
 
 export { DnD, store };

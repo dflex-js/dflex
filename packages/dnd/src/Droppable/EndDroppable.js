@@ -1,6 +1,6 @@
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
-import store from "@dflex/dnd-store";
 
+import store from "../DnDStore";
 import Droppable from "./Droppable";
 import { ACTIVE_PARENT } from "../../constants.json";
 
