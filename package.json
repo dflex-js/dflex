@@ -3,14 +3,13 @@
   "private": true,
   "workspaces": [
     "packages/**",
-    "playgrounds/*",
     "scripts/*",
-    "site",
-    "e2e-test"
+    "site"
   ],
   "repository": "https://github.com/jalal246/dflex",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
+    "cy:install:win": "cypress cache clear && .\\node_modules\\.bin\\cypress.cmd install --force",
     "test:e2e": "yarn workspace e2e-test run test",
     "test:unit": "jest",
     "test": "yarn test:unit && yarn test:e2e",
@@ -22,7 +21,6 @@
     "builderz": "^0.10.1",
     "jest": "^26.1.0",
     "lerna": "^3.21.0",
-    "nyc": "^15.1.0",
     "prettier": "^2.0.5"
   }
 }
