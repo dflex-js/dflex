@@ -6,7 +6,7 @@
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
     "build": "builderz --formats cjs umd -m -l",
-    "server": "cross-env BROWSER=none yarn workspace dflex-react-dnd start:instrument",
+    "server": "cross-env BROWSER=none yarn workspace dflex-react-dnd start",
     "cy:run": "cypress run",
     "cy:open": "cypress open",
     "dev": "start-server-and-test server http://localhost:3001 cy:open",
