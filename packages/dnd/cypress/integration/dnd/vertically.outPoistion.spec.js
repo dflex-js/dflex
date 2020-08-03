@@ -2,12 +2,12 @@ let startingPointX;
 let startingPointY;
 let elmBox;
 
-context("DnD/Testing is out vertically", () => {
+context("DnD/Testing is out position vertically", () => {
   before(() => {
     cy.visit("http://localhost:3001/");
   });
 
-  context("Moving strict vertically - out down", () => {
+  context("Moving strict vertically one siblings - out down", () => {
     it("Transforms element 10 out", () => {
       cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
@@ -78,7 +78,7 @@ context("DnD/Testing is out vertically", () => {
     });
   });
 
-  context("Moving strict vertically - out up", () => {
+  context("Moving strict vertically one siblings - out up", () => {
     it("Transforms element 10 out", () => {
       cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
