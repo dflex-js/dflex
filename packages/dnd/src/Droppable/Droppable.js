@@ -12,6 +12,9 @@ import { ACTIVE_PARENT } from "../../constants.json";
 class Droppable {
   constructor(draggable) {
     this.draggable = draggable;
+
+    this.topDifference = 0;
+    this.isDraggedOutPosition = false;
   }
 
   /**
