@@ -3,7 +3,7 @@ module.exports = {
   rules: {
     "import/no-extraneous-dependencies": [
       "error",
-      { devDependencies: ["./support/*.js", "./plugins/*.js"] },
+      { devDependencies: ["support/*.js", "plugins/*.js"] },
     ],
   },
 };
