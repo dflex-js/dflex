@@ -4,7 +4,7 @@ let startingPointX;
 let startingPointY;
 let elmBox;
 
-context.only("DnD/Testing is out horizontally", () => {
+context("DnD/Testing is out horizontally", () => {
   before(() => {
     cy.visit("http://localhost:3001/");
   });
