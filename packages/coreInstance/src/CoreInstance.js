@@ -116,7 +116,7 @@ class CoreInstance extends AbstractCoreInstance {
    * @param {boolean} [isShuffle=true] don't clear for last element.
    * @memberof CoreInstance
    */
-  updateIDsOrder(order, inc) {
+  updateIDsOrder(order, inc, isShuffle) {
     const { oldIndex, newIndex } = this.updateIndex(inc);
 
     /**
@@ -128,32 +128,7 @@ class CoreInstance extends AbstractCoreInstance {
      * inserting and undoing.
      */
     order[newIndex] = this.id;
-    order[oldIndex] = null;
-
-    // /**
-    //  * Shuffling when:
-    //  * Still in the list going up/down.
-    //  * Dragged went up leaving the list entirely.
-    //  */
-    // if (isShuffle) {
-    //   /**
-    //    * If we are at the last element, it means dragged is out the list so
-    //    * instead of assign the last position to null: [0,1, null]. We simply
-    //    * delete it: [0,1]
-    //    */
-    //   if (oldIndex + 1 === order.length) {
-    //     /**
-    //      * Remove last element.
-    //      */
-    //     order.pop();
-    //   } else {
-    //     /**
-    //      * Clear old position by assigning it to null:[0, null, 1].
-    //      * Note: the null position will be filled later with dragged
-    //      */
-    //     order[oldIndex] = null;
-    //   }
-    // }
+    if (isShuffle) order[oldIndex] = null;
   }
 
   seTranslate(sign, topSpace) {
