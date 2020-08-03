@@ -46,12 +46,5 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
-  },
-  "nyc": {
-    "all": true,
-    "include": [
-      "node_modules"
-    ],
-    "excludeNodeModules": false
   }
 }
