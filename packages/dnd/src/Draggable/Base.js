@@ -1,6 +1,6 @@
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 import AbstractDraggable from "@dflex/draggable/src/AbstractDraggable";
-import store from "../DnDStore";
+// import store from "../DnDStore";
 
 import { ACTIVE_PARENT } from "../../constants.json";
 
@@ -260,13 +260,13 @@ class Base extends AbstractDraggable {
      * ACTIVE_PARENT we have different siblingsList now. siblingsList is
      * children of new parent. Anyway, check if there no list, get us one.
      */
-    if (false) {
-      const {
-        keys: { chK },
-      } = this[ACTIVE_PARENT];
+    // if (false) {
+    //   const {
+    //     keys: { chK },
+    //   } = this[ACTIVE_PARENT];
 
-      this.siblingsList = store.getElmById(chK);
-    }
+    //   this.siblingsList = store.getElmById(chK);
+    // }
   }
 }
 

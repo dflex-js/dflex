@@ -133,7 +133,6 @@ class Droppable {
   }
 
   switchElement(isLoopBreakable) {
-    console.log("========");
     /**
      * Using for because in some cases the loop is breakable.
      */

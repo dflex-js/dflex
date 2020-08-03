@@ -6,7 +6,7 @@
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
     "build": "builderz --formats cjs umd -m -l",
-    "server": "cross-env BROWSER=none yarn workspace dflex-react-dnd run start",
+    "server": "cross-env BROWSER=none yarn workspace dflex-react-dnd start:instrument",
     "cy:run": "cypress run",
     "cy:open": "cypress open",
     "dev": "start-server-and-test server http://localhost:3001 cy:open",
@@ -20,10 +20,10 @@
     "LICENSE"
   ],
   "devDependencies": {
-    "dflex-utils-test": "^0.1.0",
     "@cypress/code-coverage": "^3.8.1",
     "cross-env": "^7.0.2",
     "cypress": "^4.11.0",
+    "dflex-utils-test": "^0.1.0",
     "eslint-plugin-cypress": "^2.11.1",
     "start-server-and-test": "^1.11.2"
   },
