@@ -211,6 +211,11 @@ class Draggable extends Base {
   }
 
   endDragging(isDraggedOutPosition, topDifference) {
+    console.log(
+      "Draggable -> endDragging -> isDraggedOutPosition, topDifference",
+      isDraggedOutPosition,
+      topDifference
+    );
     this.setDragged(false);
 
     this.setDraggedPosition(isDraggedOutPosition, topDifference);

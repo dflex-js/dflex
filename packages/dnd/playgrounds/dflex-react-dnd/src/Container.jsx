@@ -1,7 +1,7 @@
 /* eslint-disable no-use-before-define */
 import React from "react";
 
-import { DnD } from "@dflex/dnd/src";
+import { DnD, store } from "@dflex/dnd/src";
 
 const Container = ({
   component: ContainerComponent = "div",
@@ -44,6 +44,7 @@ const Container = ({
         evTarget.removeEventListener(evType, handler);
       });
       dnd.endDragging();
+      console.log("onMouseUp -> dnd", dnd, store);
     }
   };
 
