@@ -100,14 +100,10 @@ class CoreInstance extends AbstractCoreInstance {
    */
   updateIndex(i) {
     const { self: oldIndex } = this.order;
-    console.log("CoreInstance -> updateIndex -> oldIndex", oldIndex);
 
     const newIndex = oldIndex + i;
-    console.log("CoreInstance -> updateIndex -> newIndex", newIndex);
 
     this.order.self = newIndex;
-    console.log("CoreInstance -> updateIndex -> this.order", this.order);
-    console.log("after", this);
 
     return { oldIndex, newIndex };
   }
@@ -180,15 +176,11 @@ class CoreInstance extends AbstractCoreInstance {
    * @memberof CoreInstance
    */
   rollYBack() {
-    console.log("before", this);
-
     const topSpace = this.prevTranslateY - this.translateY;
     this.seTranslate(1, topSpace, 1, false);
 
     const increment = topSpace > 0 ? 1 : -1;
-    console.log("CoreInstance -> rollYBack -> increment", increment);
     this.updateIndex(increment);
-    console.log("after", this);
   }
 }
 

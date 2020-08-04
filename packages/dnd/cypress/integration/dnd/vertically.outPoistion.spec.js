@@ -9,8 +9,6 @@ context("DnD/Testing is out position vertically", () => {
 
   context("Moving strict vertically one siblings - out down", () => {
     it("Transforms element 10 out", () => {
-      console.log("===============");
-
       cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
 
@@ -78,8 +76,6 @@ context("DnD/Testing is out position vertically", () => {
 
   context("Moving strict vertically one siblings - out up", () => {
     it("Transforms element 10 out", () => {
-      console.log("===============");
-
       cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
 
@@ -155,7 +151,6 @@ context("DnD/Testing is out position vertically", () => {
 
   context("Moving strict vertically multi siblings - out down", () => {
     it("Transforms element 10 out", () => {
-      console.log("===============");
       cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
 

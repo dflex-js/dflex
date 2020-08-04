@@ -44,7 +44,6 @@ const Container = ({
         evTarget.removeEventListener(evType, handler);
       });
       dnd.endDragging();
-      console.log("onMouseUp -> dnd", dnd, store);
     }
   };
 

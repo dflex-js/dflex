@@ -33,7 +33,6 @@ class Droppable {
      * nextElem = elmCurrentIndex +/- 1;
      */
     const nextElem = elmCurrentIndex + this.draggable.elemDirection;
-    console.log("Droppable -> isElemSwitchable -> nextElem", nextElem);
 
     /**
      * Element is Switchable when it's directly is above/under dragged.
@@ -137,19 +136,12 @@ class Droppable {
   }
 
   switchElement(isLoopBreakable) {
-    console.log("start switching====");
-
     /**
      * Using for because in some cases the loop is breakable.
      */
     for (let i = 0; i < this.draggable.siblingsList.length; i += 1) {
-      console.log(
-        "Droppable -> switchElement -> this.draggable.siblingsList",
-        this.draggable.siblingsList
-      );
       const id = this.draggable.siblingsList[i];
 
-      console.log(this.draggable[DRAGGED_ELM].order.self);
       /**
        * Avoid dragged element.
        */
@@ -159,13 +151,6 @@ class Droppable {
         const {
           order: { self },
         } = element;
-
-        console.log(
-          "Droppable -> switchElement -> id",
-          self,
-          id,
-          this.draggable.tempIndex
-        );
 
         if (isLoopBreakable) {
           const isQualified = this.isElemSwitchable(self);
@@ -251,7 +236,6 @@ class Droppable {
 
       this.switchElement(true);
 
-      console.log("end switching====");
       let isDraggedOutParent;
 
       if (!this.draggable.isOrphan) {
