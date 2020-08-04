@@ -15,8 +15,6 @@ class Droppable {
 
     this.topDifference = 0;
     this.isDraggedOutPosition = false;
-
-    this.isListLocked = false;
   }
 
   /**
@@ -138,6 +136,10 @@ class Droppable {
   }
 
   switchElement(isLoopBreakable) {
+    console.log(
+      "Droppable -> switchElement -> isLoopBreakable",
+      isLoopBreakable
+    );
     /**
      * Using for because in some cases the loop is breakable.
      */
@@ -185,12 +187,12 @@ class Droppable {
   dragAt(x, y) {
     this.draggable.dragAt(x, y);
 
-    if (!this.draggable.isOrphan && this.draggable.isOutActiveParent) {
+    if (this.draggable.isOutActiveParent && !this.draggable.isOrphan) {
       const { id } = this.draggable[ACTIVE_PARENT];
       this.draggable.isOutActiveParent = this.draggable.isDraggedOut(id);
-
-      return;
     }
+
+    if (this.draggable.isOutActiveParent) return;
 
     this.isDraggedOutPosition = this.draggable.isDraggedOut();
 
@@ -217,18 +219,16 @@ class Droppable {
        * isSingleton to prevent bugs in running transformation in list that has only one
        * child.
        */
-      // if (this.draggable.isOutActiveParent) {
-      //   const { id } = this.draggable[ACTIVE_PARENT];
-
-      //   this.draggable.isOutActiveParent = this.draggable.isDraggedOut(id);
-
-      //   return;
-      // }
 
       /**
        * Dragged is out position, but inside parent, swinging up and down.s
        */
       this.draggable.updateDraggedDirectionFlags(y);
+
+      // if (!this.draggable.isOrphan && !this.draggable.isOutActiveParent) {
+      //   const { id } = this.draggable[ACTIVE_PARENT];
+      //   this.draggable.isOutActiveParent = this.draggable.isDraggedOut(id);
+      // }
 
       // const isLeavingFromTop = this.draggable.isDraggedLeavingFromTops();
 
@@ -251,13 +251,14 @@ class Droppable {
 
       // debugger;
 
-      this.switchElement(true);
+      const isLeavingFromTop = this.draggable.isDraggedLeavingFromTop();
 
-      if (!this.draggable.isOrphan && !this.draggable.isOutActiveParent) {
-        const { id } = this.draggable[ACTIVE_PARENT];
-
-        this.draggable.isOutActiveParent = this.draggable.isDraggedOut(id);
+      if (isLeavingFromTop) {
+        this.draggable.elemDirection *= -1;
+        this.draggable.isOutActiveParent = true;
       }
+
+      this.switchElement(!isLeavingFromTop);
     }
   }
 }
