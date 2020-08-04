@@ -3,6 +3,7 @@
   height: 800px;
 }
 .Container {
+  margin-top: 88px;
   display: flex;
   width: 41.53rem;
   /* border: 4px green solid; */

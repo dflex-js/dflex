@@ -207,6 +207,26 @@ context("DnD/Testing is out position vertically", () => {
       });
     });
 
+    it("Moving out parent preservers the last transformation", () => {
+      cy.get("#id-9").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+
+      cy.get("#id-11").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, -58)"
+      );
+
+      cy.get("#id-12").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, -58)"
+      );
+    });
+
     it("Triggers mouseup", () => {
       cy.get("#id-10").trigger("mouseup", { force: true });
     });
@@ -220,6 +240,123 @@ context("DnD/Testing is out position vertically", () => {
     });
 
     it("Resets all positions", () => {
+      cy.get("#id-9").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+
+      cy.get("#id-10").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+
+      cy.get("#id-11").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+
+      cy.get("#id-12").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+    });
+  });
+
+  context("Moving strict vertically multi siblings - out up", () => {
+    it("Transforms element 11 out", () => {
+      cy.get("#id-11").then((elm) => {
+        elmBox = elm[0].getBoundingClientRect();
+
+        startingPointX = elmBox.x + elmBox.width / 2;
+        startingPointY = elmBox.y + elmBox.height / 2;
+
+        cy.get("#id-11")
+          .trigger("mousedown", {
+            button: 0,
+          })
+          .trigger("mousemove", {
+            clientX: startingPointX,
+            clientY: startingPointY - ((2 / 3) * elmBox.height + 2),
+            force: true,
+          })
+          .trigger("mousemove", {
+            clientX: startingPointX,
+            clientY:
+              startingPointY - (2 * elmBox.height + (1 / 3) * elmBox.height),
+            force: true,
+          });
+      });
+    });
+
+    it("Effects element 9, moves it down", () => {
+      cy.get("#id-9").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 58)"
+      );
+    });
+
+    it("Effects element 10, lifts it up", () => {
+      cy.get("#id-10").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 58)"
+      );
+    });
+
+    it("Does not effect element 12", () => {
+      cy.get("#id-12").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+    });
+
+    it("Moves outside the parent", () => {
+      cy.get("#id-11").trigger("mousemove", {
+        clientX: startingPointX,
+        clientY: startingPointY - (2 * elmBox.height + 2 * elmBox.height),
+        force: true,
+      });
+    });
+
+    it("Moving out parent from the top, effects element 9, moves it up", () => {
+      cy.get("#id-9").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+
+      // cy.get("#id-10").should(
+      //   "have.css",
+      //   "transform",
+      //   "matrix(1, 0, 0, 1, 0, 58)"
+      // );
+
+      // cy.get("#id-12").should(
+      //   "have.css",
+      //   "transform",
+      //   "matrix(1, 0, 0, 1, 0, 0)"
+      // );
+    });
+
+    it.skip("Triggers mouseup", () => {
+      cy.get("#id-10").trigger("mouseup", { force: true });
+    });
+
+    it.skip("Makes sure list has four elements", () => {
+      cy.get("#p0-1c")
+        .should("not.be.empty")
+        .and(($li) => {
+          expect($li[0].children).to.have.length(4);
+        });
+    });
+
+    it.skip("Resets all positions", () => {
       cy.get("#id-9").should(
         "have.css",
         "transform",
