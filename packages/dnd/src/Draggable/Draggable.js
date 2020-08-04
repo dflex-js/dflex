@@ -148,10 +148,7 @@ class Draggable extends Base {
    * @memberof Draggable
    */
   updateDraggedDirectionFlags(y) {
-    this.isMovingDown =
-      this.isOutHorizontal || this.isDraggedLeavingFromTop()
-        ? true
-        : y > this.prevY;
+    this.isMovingDown = this.isOutHorizontal ? true : y > this.prevY;
 
     if (this.isMovingDownPrev !== this.isMovingDown) {
       /**
