@@ -77,7 +77,7 @@ class CoreInstance extends AbstractCoreInstance {
      */
     this.translateY = 0;
     this.translateX = 0;
-    this.prevTranslateY = 0;
+    this.prevTranslateY = [];
   }
 
   setCurrentOffset() {
@@ -131,12 +131,12 @@ class CoreInstance extends AbstractCoreInstance {
     if (isShuffle) order[oldIndex] = null;
   }
 
-  seTranslate(sign, topSpace) {
+  seTranslate(sign, topSpace, isMovingNew) {
     const _topSpace = sign * topSpace;
 
     this.currentTop += _topSpace;
 
-    this.prevTranslateY = this.translateY;
+    if (isMovingNew) this.prevTranslateY.push(this.translateY);
 
     this.translateY += _topSpace;
 
@@ -164,7 +164,7 @@ class CoreInstance extends AbstractCoreInstance {
    * @memberof CoreInstance
    */
   setYPosition(iDsInOrder, sign, topSpace, vIncrement = 1, isShuffle = true) {
-    this.seTranslate(sign, topSpace);
+    this.seTranslate(sign, topSpace, true);
 
     this.updateIDsOrder(iDsInOrder, sign * vIncrement, isShuffle);
   }
@@ -176,10 +176,11 @@ class CoreInstance extends AbstractCoreInstance {
    * @memberof CoreInstance
    */
   rollYBack() {
-    const topSpace = this.prevTranslateY - this.translateY;
-    this.seTranslate(1, topSpace, 1, false);
+    const topSpace = this.prevTranslateY.pop() - this.translateY;
 
     const increment = topSpace > 0 ? 1 : -1;
+
+    this.seTranslate(1, topSpace, false);
     this.updateIndex(increment);
   }
 }

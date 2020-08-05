@@ -136,10 +136,6 @@ class Droppable {
   }
 
   switchElement(isLoopBreakable) {
-    console.log(
-      "Droppable -> switchElement -> isLoopBreakable",
-      isLoopBreakable
-    );
     /**
      * Using for because in some cases the loop is breakable.
      */
@@ -165,11 +161,7 @@ class Droppable {
             if (!this.draggable.isOutHorizontal) break;
           }
         } else {
-          console.log(this.draggable.siblingsList);
-          console.log("am in", i);
           this.updateElement(element);
-
-          if (i === 5) break;
         }
       }
     }

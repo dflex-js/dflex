@@ -324,31 +324,31 @@ context("DnD/Testing is out position vertically", () => {
       });
     });
 
-    it("Moving out parent from the top, effects element 9, moves it up", () => {
+    it("Moving out parent from the top, effects element 9/10/12, moves it up", () => {
       cy.get("#id-9").should(
         "have.css",
         "transform",
         "matrix(1, 0, 0, 1, 0, 0)"
       );
 
-      // cy.get("#id-10").should(
-      //   "have.css",
-      //   "transform",
-      //   "matrix(1, 0, 0, 1, 0, 58)"
-      // );
+      cy.get("#id-10").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
 
-      // cy.get("#id-12").should(
-      //   "have.css",
-      //   "transform",
-      //   "matrix(1, 0, 0, 1, 0, 0)"
-      // );
+      cy.get("#id-12").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, -58)"
+      );
     });
 
-    it.skip("Triggers mouseup", () => {
-      cy.get("#id-10").trigger("mouseup", { force: true });
+    it("Triggers mouseup", () => {
+      cy.get("#id-11").trigger("mouseup", { force: true });
     });
 
-    it.skip("Makes sure list has four elements", () => {
+    it("Makes sure list has four elements", () => {
       cy.get("#p0-1c")
         .should("not.be.empty")
         .and(($li) => {
@@ -356,7 +356,7 @@ context("DnD/Testing is out position vertically", () => {
         });
     });
 
-    it.skip("Resets all positions", () => {
+    it("Resets all positions", () => {
       cy.get("#id-9").should(
         "have.css",
         "transform",
