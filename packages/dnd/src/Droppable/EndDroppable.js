@@ -9,6 +9,7 @@ class EndDroppable extends Droppable {
     const elmID = lst[i];
 
     if (elmID) {
+      console.log("EndDroppable -> undoElmTranslate -> elmID", elmID);
       const element = store.getElmById(elmID);
 
       if (this.draggable.numberOfElementsTransformed > 0) {
@@ -23,6 +24,13 @@ class EndDroppable extends Droppable {
         this.draggable.numberOfElementsTransformed -= 1;
       }
     } else {
+      console.log(
+        "EndDroppable -> undoElmTranslate -> noooo elmID",
+        lst,
+        i,
+        lst[i]
+      );
+
       this.spliceAt = i;
     }
   }
@@ -35,6 +43,7 @@ class EndDroppable extends Droppable {
    * @memberof EndDroppable
    */
   undoList(lst) {
+    console.log("EndDroppable -> undoList -> lst", lst);
     const {
       order: { self: from },
       id: draggedID,
@@ -47,7 +56,13 @@ class EndDroppable extends Droppable {
         this.undoElmTranslate(lst, i);
       }
     } else {
-      for (let i = from; i > 0; i -= 1) {
+      /**
+       * If from is zero, means dragged left, and all siblings are lifted up.
+       */
+      const actualFrom = from === 0 ? lst.length - 1 : from;
+      console.log("EndDroppable -> undoList -> actualFrom", actualFrom);
+
+      for (let i = actualFrom; i >= 0; i -= 1) {
         // if (this.draggable.numberOfElementsTransformed === 0) break;
 
         this.undoElmTranslate(lst, i);
