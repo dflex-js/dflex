@@ -2,7 +2,7 @@ let startingPointX;
 let startingPointY;
 let elmBox;
 
-context("DnD/Testing occupying multiple positions vertically", () => {
+context("DnD/Testing occupying multiple positions vertically down", () => {
   before(() => {
     cy.visit("http://localhost:3001/");
   });
@@ -254,15 +254,15 @@ context("DnD/Testing occupying multiple positions vertically", () => {
     });
   });
 
-  context("Moving element 9 down, outside the parent", () => {
+  context("Moving element 10 down, to occupy 11 position", () => {
     it("Transforms element 10 out", () => {
-      cy.get("#id-9").then((elm) => {
+      cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
 
         startingPointX = elmBox.x + elmBox.width / 2;
         startingPointY = elmBox.y + elmBox.height / 2;
 
-        cy.get("#id-9")
+        cy.get("#id-10")
           .trigger("mousedown", {
             button: 0,
           })
@@ -284,23 +284,27 @@ context("DnD/Testing occupying multiple positions vertically", () => {
       });
     });
 
-    it("All elements preserve their positions", () => {
-      cy.get("#id-10").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, -58)"
-      );
-
+    it("Effects element 11, lifts it up", () => {
       cy.get("#id-11").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -58)"
+        "matrix(1, 0, 0, 1, 0, -116)"
       );
+    });
 
+    it("Does not effect element 12", () => {
       cy.get("#id-12").should(
         "have.css",
         "transform",
         "matrix(1, 0, 0, 1, 0, -58)"
+      );
+    });
+
+    it("Does not effect element 9", () => {
+      cy.get("#id-9").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 174)"
       );
     });
 
@@ -317,30 +321,28 @@ context("DnD/Testing occupying multiple positions vertically", () => {
     });
 
     it("All elements preserve their positions", () => {
+      cy.get("#id-9").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 174)"
+      );
+
       cy.get("#id-10").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -58)"
+        "matrix(1, 0, 0, 1, 0, 0)"
       );
 
       cy.get("#id-11").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -58)"
+        "matrix(1, 0, 0, 1, 0, -116)"
       );
 
       cy.get("#id-12").should(
         "have.css",
         "transform",
         "matrix(1, 0, 0, 1, 0, -58)"
-      );
-    });
-
-    it("Resets the last position of element 9", () => {
-      cy.get("#id-9").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 174)"
       );
     });
   });
