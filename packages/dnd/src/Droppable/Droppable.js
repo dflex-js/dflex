@@ -12,6 +12,9 @@ import { ACTIVE_PARENT } from "../../constants.json";
 class Droppable {
   constructor(draggable) {
     this.draggable = draggable;
+
+    this.topDifference = 0;
+    this.isDraggedOutPosition = false;
   }
 
   /**
@@ -176,6 +179,13 @@ class Droppable {
   dragAt(x, y) {
     this.draggable.dragAt(x, y);
 
+    if (this.draggable.isOutActiveParent && !this.draggable.isOrphan) {
+      const { id } = this.draggable[ACTIVE_PARENT];
+      this.draggable.isOutActiveParent = this.draggable.isDraggedOut(id);
+    }
+
+    if (this.draggable.isOutActiveParent) return;
+
     this.isDraggedOutPosition = this.draggable.isDraggedOut();
 
     /**
@@ -201,20 +211,22 @@ class Droppable {
        * isSingleton to prevent bugs in running transformation in list that has only one
        * child.
        */
-      if (this.draggable.isOutActiveParent) {
-        return;
-      }
 
       /**
        * Dragged is out position, but inside parent, swinging up and down.s
        */
       this.draggable.updateDraggedDirectionFlags(y);
 
+      // if (!this.draggable.isOrphan && !this.draggable.isOutActiveParent) {
+      //   const { id } = this.draggable[ACTIVE_PARENT];
+      //   this.draggable.isOutActiveParent = this.draggable.isDraggedOut(id);
+      // }
+
       // const isLeavingFromTop = this.draggable.isDraggedLeavingFromTops();
 
       // if (isLeavingFromTop) {
       //   this.draggable.triggerLeavingFromTopFlags();
-      //   // this.isListLocked = true;
+      // this.isListLocked = true;
 
       //   this.switchElement(false);
 
@@ -231,19 +243,14 @@ class Droppable {
 
       // debugger;
 
-      this.switchElement(true);
+      const isLeavingFromTop = this.draggable.isDraggedLeavingFromTop();
 
-      let isDraggedOutParent;
-
-      if (!this.draggable.isOrphan) {
-        const { id } = this.draggable[ACTIVE_PARENT];
-
-        isDraggedOutParent = this.draggable.isDraggedOut(id);
-      }
-
-      if (isDraggedOutParent) {
+      if (isLeavingFromTop) {
+        this.draggable.elemDirection *= -1;
         this.draggable.isOutActiveParent = true;
       }
+
+      this.switchElement(!isLeavingFromTop);
     }
   }
 }

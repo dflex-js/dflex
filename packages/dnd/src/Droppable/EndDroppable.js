@@ -5,17 +5,23 @@ import Droppable from "./Droppable";
 import { ACTIVE_PARENT } from "../../constants.json";
 
 class EndDroppable extends Droppable {
-  undoElm(lst, i) {
+  undoElmTranslate(lst, i) {
     const elmID = lst[i];
 
     if (elmID) {
       const element = store.getElmById(elmID);
 
-      /**
-       * Note: rolling back won't affect order array. It only deals with element
-       * itself and totally ignore any instance related to store.
-       */
-      element.rollYBack();
+      if (this.draggable.numberOfElementsTransformed > 0) {
+        while (element.prevTranslateY.length > 0) {
+          /**
+           * Note: rolling back won't affect order array. It only deals with element
+           * itself and totally ignore any instance related to store.
+           */
+          element.rollYBack();
+        }
+
+        this.draggable.numberOfElementsTransformed -= 1;
+      }
     } else {
       this.spliceAt = i;
     }
@@ -36,11 +42,15 @@ class EndDroppable extends Droppable {
 
     if (this.draggable.isMovingDown) {
       for (let i = from; i < lst.length; i += 1) {
-        this.undoElm(lst, i);
+        // if (this.draggable.numberOfElementsTransformed === 0) break;
+
+        this.undoElmTranslate(lst, i);
       }
     } else {
       for (let i = from; i > 0; i -= 1) {
-        this.undoElm(lst, i);
+        // if (this.draggable.numberOfElementsTransformed === 0) break;
+
+        this.undoElmTranslate(lst, i);
       }
     }
 

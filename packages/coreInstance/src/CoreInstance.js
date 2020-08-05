@@ -77,7 +77,7 @@ class CoreInstance extends AbstractCoreInstance {
      */
     this.translateY = 0;
     this.translateX = 0;
-    this.prevTranslateY = 0;
+    this.prevTranslateY = [];
   }
 
   setCurrentOffset() {
@@ -99,7 +99,7 @@ class CoreInstance extends AbstractCoreInstance {
    * @memberof CoreInstance
    */
   updateIndex(i) {
-    const oldIndex = this.order.self;
+    const { self: oldIndex } = this.order;
 
     const newIndex = oldIndex + i;
 
@@ -116,7 +116,7 @@ class CoreInstance extends AbstractCoreInstance {
    * @param {boolean} [isShuffle=true] don't clear for last element.
    * @memberof CoreInstance
    */
-  updateIDsOrder(order, inc) {
+  updateIDsOrder(order, inc, isShuffle) {
     const { oldIndex, newIndex } = this.updateIndex(inc);
 
     /**
@@ -128,40 +128,15 @@ class CoreInstance extends AbstractCoreInstance {
      * inserting and undoing.
      */
     order[newIndex] = this.id;
-    order[oldIndex] = null;
-
-    // /**
-    //  * Shuffling when:
-    //  * Still in the list going up/down.
-    //  * Dragged went up leaving the list entirely.
-    //  */
-    // if (isShuffle) {
-    //   /**
-    //    * If we are at the last element, it means dragged is out the list so
-    //    * instead of assign the last position to null: [0,1, null]. We simply
-    //    * delete it: [0,1]
-    //    */
-    //   if (oldIndex + 1 === order.length) {
-    //     /**
-    //      * Remove last element.
-    //      */
-    //     order.pop();
-    //   } else {
-    //     /**
-    //      * Clear old position by assigning it to null:[0, null, 1].
-    //      * Note: the null position will be filled later with dragged
-    //      */
-    //     order[oldIndex] = null;
-    //   }
-    // }
+    if (isShuffle) order[oldIndex] = null;
   }
 
-  seTranslate(sign, topSpace) {
+  seTranslate(sign, topSpace, isMovingNew) {
     const _topSpace = sign * topSpace;
 
     this.currentTop += _topSpace;
 
-    this.prevTranslateY = this.translateY;
+    if (isMovingNew) this.prevTranslateY.push(this.translateY);
 
     this.translateY += _topSpace;
 
@@ -189,7 +164,7 @@ class CoreInstance extends AbstractCoreInstance {
    * @memberof CoreInstance
    */
   setYPosition(iDsInOrder, sign, topSpace, vIncrement = 1, isShuffle = true) {
-    this.seTranslate(sign, topSpace);
+    this.seTranslate(sign, topSpace, true);
 
     this.updateIDsOrder(iDsInOrder, sign * vIncrement, isShuffle);
   }
@@ -201,10 +176,11 @@ class CoreInstance extends AbstractCoreInstance {
    * @memberof CoreInstance
    */
   rollYBack() {
-    const topSpace = this.prevTranslateY - this.translateY;
-    this.seTranslate(1, topSpace, 1, false);
+    const topSpace = this.prevTranslateY.pop() - this.translateY;
 
     const increment = topSpace > 0 ? 1 : -1;
+
+    this.seTranslate(1, topSpace, false);
     this.updateIndex(increment);
   }
 }
