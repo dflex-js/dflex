@@ -21,6 +21,16 @@ context("DnD/Testing occupying multiple positions vertically", () => {
           })
           .trigger("mousemove", {
             clientX: startingPointX,
+            clientY: startingPointY + ((1 / 3) * elmBox.height + 8),
+            force: true,
+          })
+          .trigger("mousemove", {
+            clientX: startingPointX,
+            clientY: startingPointY + ((2 / 3) * elmBox.height + 8),
+            force: true,
+          })
+          .trigger("mousemove", {
+            clientX: startingPointX,
             clientY: startingPointY + ((3 / 3) * elmBox.height + 8),
             force: true,
           });
