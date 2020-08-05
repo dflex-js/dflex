@@ -174,6 +174,15 @@ class Draggable extends Base {
   }
 
   setDraggedPosition(isDraggedOutPosition, topDifference) {
+    const { translateX, translateY } = this[DRAGGED_ELM];
+
+    /**
+     * In this case, the use clicked without making any move.
+     */
+    if (translateX === 0 && translateY === 0) {
+      return;
+    }
+
     if (isDraggedOutPosition) {
       /**
        * If not isDraggedOutPosition, it means dragged is out its position, inside
@@ -185,7 +194,6 @@ class Draggable extends Base {
        * dragged depends on extra instance to float in layout that is not related to element
        * instance.
        */
-      const { translateX, translateY } = this[DRAGGED_ELM];
 
       this.draggedStyle.transform = `translate(${translateX}px,${translateY}px)`;
 
