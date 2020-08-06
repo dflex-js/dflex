@@ -85,18 +85,20 @@ class Droppable {
       this.isFoundBreakingPoint = true;
     }
 
-    /**
-     * By updating the dragged translate, we guarantee that dragged
-     * transformation will not triggered until dragged is over threshold
-     * which will be detected by isDraggedOutPosition.
-     *
-     * However, this is only effective when dragged is fit in its new
-     * translate.
-     *
-     * And we have new translate only once. The first element matched the
-     * condition is the breaking point element.
-     */
-    this.draggable.setThreshold(element);
+    if (isUpdateTempIndex) {
+      /**
+       * By updating the dragged translate, we guarantee that dragged
+       * transformation will not triggered until dragged is over threshold
+       * which will be detected by isDraggedOutPosition.
+       *
+       * However, this is only effective when dragged is fit in its new
+       * translate.
+       *
+       * And we have new translate only once. The first element matched the
+       * condition is the breaking point element.
+       */
+      this.draggable.setThreshold(element);
+    }
 
     /**
      * With each element that is transformed:
@@ -124,6 +126,8 @@ class Droppable {
         this.draggable[DRAGGED_ELM].order.self -
         this.draggable.elemDirection *
           this.draggable.numberOfElementsTransformed;
+    } else {
+      this.draggable.tempIndex = -1;
     }
 
     /**
@@ -182,12 +186,11 @@ class Droppable {
   dragAt(x, y) {
     this.draggable.dragAt(x, y);
 
-    // if (this.draggable.isOutActiveParent && !this.draggable.isOrphan) {
-    //   const { id } = this.draggable[ACTIVE_PARENT];
-    //   this.draggable.isOutActiveParent = this.draggable.isDraggedOut(id);
-    // }
-
     this.isDraggedOutPosition = this.draggable.isDraggedOut();
+    console.log(
+      "Droppable -> dragAt ->  this.isDraggedOutPosition ",
+      this.isDraggedOutPosition
+    );
 
     /**
      * If dragged is outside its position we face two possibilities:
@@ -201,14 +204,6 @@ class Droppable {
      */
 
     if (this.isDraggedOutPosition) {
-      this.isLeavingFromTop = this.draggable.isDraggedLeavingFromTop();
-      console.log(
-        "Droppable -> dragAt -> this.isLeavingFromTop",
-        this.isLeavingFromTop
-      );
-
-      if (this.isListLocked) return;
-
       /**
        * Why using isListLocked?
        * The space between out of position and out of list makes
@@ -224,23 +219,33 @@ class Droppable {
       /**
        * Dragged is out position, but inside parent, swinging up and down.s
        */
-      this.draggable.updateDraggedDirectionFlags(y);
+      this.draggable.setDraggedMovingDown(y);
 
       // if (!this.draggable.isOrphan && !this.draggable.isOutActiveParent) {
       //   const { id } = this.draggable[ACTIVE_PARENT];
       //   this.draggable.isOutActiveParent = this.draggable.isDraggedOut(id);
       // }
 
-      // const isLeavingFromTop = this.draggable.isDraggedLeavingFromTops();
+      const isLeavingFromTop = this.draggable.isDraggedLeavingFromTop();
 
-      // if (isLeavingFromTop) {
-      //   this.draggable.triggerLeavingFromTopFlags();
-      // this.isListLocked = true;
+      if (isLeavingFromTop) {
+        if (this.isListLocked) {
+          console.log("locked");
+          return;
+        }
 
-      //   this.switchElement(false);
+        this.draggable.elemDirection *= -1;
+        this.draggable.isOutActiveParent = true;
 
-      //   return;
-      // }
+        this.isListLocked = true;
+      } else if (this.isListLocked) {
+        if (!this.draggable.isOrphan) {
+          const { id } = this.draggable[ACTIVE_PARENT];
+          this.draggable.isOutActiveParent = this.draggable.isDraggedOut(id);
+
+          return;
+        }
+      }
 
       // const isLeavingFromBottom = this.draggable.isDraggedLeavingFromBottom();
 
@@ -252,20 +257,22 @@ class Droppable {
 
       // debugger;
 
-      this.isLeavingFromTop = this.draggable.isDraggedLeavingFromTop();
-      console.log(
-        "Droppable -> dragAt -> isLeavingFromTop",
-        this.isLeavingFromTop
-      );
+      this.draggable.updateDraggedDirectionFlags(isLeavingFromTop);
 
-      if (this.isLeavingFromTop) {
-        this.draggable.elemDirection *= -1;
-        this.draggable.isOutActiveParent = true;
+      console.log("Droppable -> dragAt -> switchElement", isLeavingFromTop);
+      this.switchElement(!isLeavingFromTop);
 
-        this.isListLocked = true;
-      }
+      return;
+    }
 
-      this.switchElement(!this.isLeavingFromTop);
+    if (this.isListLocked) {
+      console.log("unlocked");
+
+      this.isListLocked = false;
+
+      this.draggable.updateDraggedDirectionFlags(false);
+
+      this.switchElement(true);
     }
   }
 }
