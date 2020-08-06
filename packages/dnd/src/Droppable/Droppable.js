@@ -47,7 +47,7 @@ class Droppable {
    * @param {CoreInstance} element
    * @memberof Droppable
    */
-  updateElement(element) {
+  updateElement(element, isUpdateTempIndex) {
     /**
      * breakingPoint detects the first element that comes immediately
      * after dragged. Not in original order, but according to isQualified result.
@@ -106,22 +106,25 @@ class Droppable {
      */
     this.draggable.numberOfElementsTransformed += 1;
 
-    /**
-     * Since final index is set when element is transformed, we have no idea what
-     * the current index in dragged is. To solve this issue, we have a simple
-     * equation
-     *
-     * Current temp index = currentIndex +/- this.draggable.numberOfElementsTransformed
-     *
-     * Dragged is always going to the opposite side of element direction. So, if
-     * elemDirection is up (+1) dragged is down:
-     *
-     * draggedDirection = -elemDirection
-     *
-     */
-    this.draggable.tempIndex =
-      this.draggable[DRAGGED_ELM].order.self -
-      this.draggable.elemDirection * this.draggable.numberOfElementsTransformed;
+    if (isUpdateTempIndex) {
+      /**
+       * Since final index is set when element is transformed, we have no idea what
+       * the current index in dragged is. To solve this issue, we have a simple
+       * equation
+       *
+       * Current temp index = currentIndex +/- this.draggable.numberOfElementsTransformed
+       *
+       * Dragged is always going to the opposite side of element direction. So, if
+       * elemDirection is up (+1) dragged is down:
+       *
+       * draggedDirection = -elemDirection
+       *
+       */
+      this.draggable.tempIndex =
+        this.draggable[DRAGGED_ELM].order.self -
+        this.draggable.elemDirection *
+          this.draggable.numberOfElementsTransformed;
+    }
 
     /**
      * Start transforming process
@@ -156,12 +159,12 @@ class Droppable {
           const isQualified = this.isElemSwitchable(self);
 
           if (isQualified) {
-            this.updateElement(element);
+            this.updateElement(element, true);
 
             if (!this.draggable.isOutHorizontal) break;
           }
         } else {
-          this.updateElement(element);
+          this.updateElement(element, false);
         }
       }
     }
@@ -179,12 +182,10 @@ class Droppable {
   dragAt(x, y) {
     this.draggable.dragAt(x, y);
 
-    if (this.draggable.isOutActiveParent && !this.draggable.isOrphan) {
-      const { id } = this.draggable[ACTIVE_PARENT];
-      this.draggable.isOutActiveParent = this.draggable.isDraggedOut(id);
-    }
-
-    if (this.draggable.isOutActiveParent) return;
+    // if (this.draggable.isOutActiveParent && !this.draggable.isOrphan) {
+    //   const { id } = this.draggable[ACTIVE_PARENT];
+    //   this.draggable.isOutActiveParent = this.draggable.isDraggedOut(id);
+    // }
 
     this.isDraggedOutPosition = this.draggable.isDraggedOut();
 
@@ -200,6 +201,14 @@ class Droppable {
      */
 
     if (this.isDraggedOutPosition) {
+      this.isLeavingFromTop = this.draggable.isDraggedLeavingFromTop();
+      console.log(
+        "Droppable -> dragAt -> this.isLeavingFromTop",
+        this.isLeavingFromTop
+      );
+
+      if (this.isListLocked) return;
+
       /**
        * Why using isListLocked?
        * The space between out of position and out of list makes
@@ -243,14 +252,20 @@ class Droppable {
 
       // debugger;
 
-      const isLeavingFromTop = this.draggable.isDraggedLeavingFromTop();
+      this.isLeavingFromTop = this.draggable.isDraggedLeavingFromTop();
+      console.log(
+        "Droppable -> dragAt -> isLeavingFromTop",
+        this.isLeavingFromTop
+      );
 
-      if (isLeavingFromTop) {
+      if (this.isLeavingFromTop) {
         this.draggable.elemDirection *= -1;
         this.draggable.isOutActiveParent = true;
+
+        this.isListLocked = true;
       }
 
-      this.switchElement(!isLeavingFromTop);
+      this.switchElement(!this.isLeavingFromTop);
     }
   }
 }
