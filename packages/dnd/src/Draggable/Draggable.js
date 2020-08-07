@@ -129,6 +129,10 @@ class Draggable extends Base {
 
   setEffectedElemDirection(isUp) {
     this.effectedElemDirection = isUp ? -1 : 1;
+    console.log(
+      "Draggable -> setEffectedElemDirection -> this.effectedElemDirection",
+      this.effectedElemDirection
+    );
   }
 
   setDraggedPosition(isDraggedOutPosition, topDifference) {

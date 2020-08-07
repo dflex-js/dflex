@@ -36,6 +36,19 @@ class Droppable {
      * nextElem = elmCurrentIndex +/- 1;
      */
     const nextElem = elmCurrentIndex + this.draggable.effectedElemDirection;
+    console.log(
+      "elmCurrentIndex",
+      elmCurrentIndex,
+
+      "effectedElemDirection",
+      this.draggable.effectedElemDirection,
+
+      "nextElem",
+      nextElem,
+
+      "tempIndex",
+      this.draggable.tempIndex
+    );
 
     /**
      * Element is Switchable when it's directly is above/under dragged.
@@ -141,17 +154,12 @@ class Droppable {
     );
   }
 
-  switchElement(isLoopBreakable) {
+  switchElement(isLoopBreakable, isBreakable) {
     /**
      * Using for because in some cases the loop is breakable.
      */
     for (let i = 0; i < this.draggable.siblingsList.length; i += 1) {
       const id = this.draggable.siblingsList[i];
-      console.log("Droppable -> switchElement -> id", id);
-      console.log(
-        "Droppable -> switchElement -> list",
-        this.draggable.siblingsList
-      );
 
       /**
        * Avoid dragged element.
@@ -169,13 +177,47 @@ class Droppable {
           if (isQualified) {
             this.updateElement(element, true);
 
-            if (!this.draggable.isOutHorizontal) break;
+            if (isBreakable && !this.draggable.isOutHorizontal) {
+              console.log("gonna break");
+              break;
+            }
           }
         } else {
           this.updateElement(element, false);
           // debugger;
         }
       }
+
+      if (i === 15) break;
+    }
+  }
+
+  switchElement2() {
+    /**
+     * Using for because in some cases the loop is breakable.
+     */
+    for (let i = this.draggable.siblingsList.length - 1; i > 0; i -= 1) {
+      const id = this.draggable.siblingsList[i];
+      console.log("Droppable -> id", id);
+
+      /**
+       * Avoid dragged element.
+       */
+      if (id && id !== this.draggable[DRAGGED_ELM].id) {
+        const element = store.getElmById(id);
+
+        // const {
+        //   order: { self },
+        // } = element;
+
+        console.log("Droppable -> in");
+
+        this.draggable.setEffectedElemDirection(false);
+
+        this.updateElement(element, true);
+      }
+
+      if (i === 15) break;
     }
   }
 
@@ -215,17 +257,39 @@ class Droppable {
         // lock the parent
         this.draggable.isOutActiveParent = true;
         this.isListLocked = true;
-      } else if (this.prevIsListLocked && !this.isListLocked) {
-        // move element down
-        this.draggable.setEffectedElemDirection(true);
 
-        this.prevIsListLocked = false;
-      } else {
-        // inside the list, effected should be related to mouse movement
-        this.draggable.setEffectedElemDirection(this.draggable.isMovingDown);
+        this.switchElement(false, false);
+
+        return;
       }
 
-      this.switchElement(!isLeavingFromTop);
+      if (!this.isListLocked) {
+        console.log("here!");
+        /**
+         * normal movement inside the parent
+         */
+        if (this.prevIsListLocked) {
+          console.log("here too!");
+
+          // move element up
+          this.draggable.setEffectedElemDirection(true);
+
+          this.switchElement2();
+
+          this.prevIsListLocked = false;
+
+          return;
+        }
+
+        // console.log("normal movement!");
+
+        // // inside the list, effected should be related to mouse movement
+        // this.draggable.setEffectedElemDirection(this.draggable.isMovingDown);
+
+        // this.switchElement(!isLeavingFromTop, true);
+
+        return;
+      }
 
       return;
     }
