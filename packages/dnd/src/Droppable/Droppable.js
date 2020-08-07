@@ -15,6 +15,9 @@ class Droppable {
 
     this.topDifference = 0;
     this.isDraggedOutPosition = false;
+
+    this.isListLocked = false;
+    this.prevIsListLocked = false;
   }
 
   /**
@@ -85,6 +88,14 @@ class Droppable {
       this.isFoundBreakingPoint = true;
     }
 
+    /**
+     * With each element that is transformed:
+     * 1) Increase elements transformed courter: this.draggable.numberOfElementsTransformed
+     * 2) Update drag temp index that is used in all is-functions.
+     * 3) Update all instances related to element and css-transform it.
+     */
+    this.draggable.numberOfElementsTransformed += 1;
+
     if (isUpdateTempIndex) {
       /**
        * By updating the dragged translate, we guarantee that dragged
@@ -98,17 +109,7 @@ class Droppable {
        * condition is the breaking point element.
        */
       this.draggable.setThreshold(element);
-    }
 
-    /**
-     * With each element that is transformed:
-     * 1) Increase elements transformed courter: this.draggable.numberOfElementsTransformed
-     * 2) Update drag temp index that is used in all is-functions.
-     * 3) Update all instances related to element and css-transform it.
-     */
-    this.draggable.numberOfElementsTransformed += 1;
-
-    if (isUpdateTempIndex) {
       /**
        * Since final index is set when element is transformed, we have no idea what
        * the current index in dragged is. To solve this issue, we have a simple
@@ -127,6 +128,7 @@ class Droppable {
         this.draggable.elemDirection *
           this.draggable.numberOfElementsTransformed;
     } else {
+      // TODO:
       this.draggable.tempIndex = -1;
     }
 
@@ -187,10 +189,6 @@ class Droppable {
     this.draggable.dragAt(x, y);
 
     this.isDraggedOutPosition = this.draggable.isDraggedOut();
-    console.log(
-      "Droppable -> dragAt ->  this.isDraggedOutPosition ",
-      this.isDraggedOutPosition
-    );
 
     /**
      * If dragged is outside its position we face two possibilities:
@@ -204,18 +202,6 @@ class Droppable {
      */
 
     if (this.isDraggedOutPosition) {
-      /**
-       * Why using isListLocked?
-       * The space between out of position and out of list makes
-       * isDraggedOutPosition always triggered even if the list is already transformed.
-       *
-       * This happens when there's space between dragged and the list
-       * boundaries. Otherwise, we don't need it. Anyway, it's enhancement.
-       *
-       * isSingleton to prevent bugs in running transformation in list that has only one
-       * child.
-       */
-
       /**
        * Dragged is out position, but inside parent, swinging up and down.s
        */
@@ -247,20 +233,15 @@ class Droppable {
         }
       }
 
-      // const isLeavingFromBottom = this.draggable.isDraggedLeavingFromBottom();
+      let directionSign;
 
-      // if (this.draggable.isSingleton || isLeavingFromBottom) {
-      //   this.isListLocked = true;
-
-      //   return;
-      // }
-
-      // debugger;
+      if (this.prevIsListLocked && !this.isListLocked) {
+        directionSign = true;
+        this.prevIsListLocked = false;
+      }
 
       this.draggable.updateDraggedDirectionFlags(isLeavingFromTop);
-
-      console.log("Droppable -> dragAt -> switchElement", isLeavingFromTop);
-      this.switchElement(!isLeavingFromTop);
+      this.switchElement(!isLeavingFromTop, directionSign);
 
       return;
     }
@@ -269,10 +250,7 @@ class Droppable {
       console.log("unlocked");
 
       this.isListLocked = false;
-
-      this.draggable.updateDraggedDirectionFlags(false);
-
-      this.switchElement(true);
+      this.prevIsListLocked = true;
     }
   }
 }
