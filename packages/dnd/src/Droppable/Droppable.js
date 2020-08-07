@@ -154,6 +154,10 @@ class Droppable {
     );
   }
 
+  isIDEligible2Move(id) {
+    return id && id !== this.draggable[DRAGGED_ELM].id;
+  }
+
   switchElement(isLoopBreakable, isBreakable) {
     /**
      * Using for because in some cases the loop is breakable.
@@ -164,7 +168,7 @@ class Droppable {
       /**
        * Avoid dragged element.
        */
-      if (id && id !== this.draggable[DRAGGED_ELM].id) {
+      if (this.isIDEligible2Move(id)) {
         const element = store.getElmById(id);
 
         const {
@@ -178,13 +182,11 @@ class Droppable {
             this.updateElement(element, true);
 
             if (isBreakable && !this.draggable.isOutHorizontal) {
-              console.log("gonna break");
               break;
             }
           }
         } else {
           this.updateElement(element, false);
-          // debugger;
         }
       }
 
@@ -198,26 +200,15 @@ class Droppable {
      */
     for (let i = this.draggable.siblingsList.length - 1; i > 0; i -= 1) {
       const id = this.draggable.siblingsList[i];
-      console.log("Droppable -> id", id);
 
       /**
        * Avoid dragged element.
        */
-      if (id && id !== this.draggable[DRAGGED_ELM].id) {
+      if (this.isIDEligible2Move(id)) {
         const element = store.getElmById(id);
-
-        // const {
-        //   order: { self },
-        // } = element;
-
-        console.log("Droppable -> in");
-
-        this.draggable.setEffectedElemDirection(false);
 
         this.updateElement(element, true);
       }
-
-      if (i === 15) break;
     }
   }
 
@@ -251,7 +242,7 @@ class Droppable {
           return;
         }
 
-        // move element ups
+        // move element up
         this.draggable.setEffectedElemDirection(true);
 
         // lock the parent
@@ -272,7 +263,7 @@ class Droppable {
           console.log("here too!");
 
           // move element up
-          this.draggable.setEffectedElemDirection(true);
+          this.draggable.setEffectedElemDirection(false);
 
           this.switchElement2();
 
@@ -281,12 +272,12 @@ class Droppable {
           return;
         }
 
-        // console.log("normal movement!");
+        console.log("normal movement!");
 
-        // // inside the list, effected should be related to mouse movement
-        // this.draggable.setEffectedElemDirection(this.draggable.isMovingDown);
+        // inside the list, effected should be related to mouse movement
+        this.draggable.setEffectedElemDirection(this.draggable.isMovingDown);
 
-        // this.switchElement(!isLeavingFromTop, true);
+        this.switchElement(!isLeavingFromTop, true);
 
         return;
       }
