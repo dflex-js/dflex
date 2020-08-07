@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 import Base from "./Base";
 
@@ -30,7 +31,7 @@ class Draggable extends Base {
     /**
      * Elements effected by dragged direction.
      */
-    this.elemDirection = 1;
+    this.effectedElemDirection = 1;
 
     this.isMovingDownPrev = false;
     this.isMovingDown = false;
@@ -102,16 +103,6 @@ class Draggable extends Base {
   }
 
   /**
-   * Checks if dragged is first element in parent list.
-   *
-   * @returns {boolean}
-   * @memberof Draggable
-   */
-  isDraggedFirstChild() {
-    return this.tempIndex === 0;
-  }
-
-  /**
    * Checks if dragged is last element in parent list.
    *
    * @returns {boolean}
@@ -128,7 +119,7 @@ class Draggable extends Base {
    * @memberof Draggable
    */
   isDraggedLeavingFromTop() {
-    return this.isDraggedFirstChild() && !this.isMovingDown;
+    return this.tempIndex <= 0 && !this.isMovingDown;
   }
 
   /**
@@ -141,36 +132,53 @@ class Draggable extends Base {
     return this.isDraggedLastChild() && this.isMovingDown;
   }
 
+  setDraggedMovingDown(y) {
+    this.isMovingDown = this.isOutHorizontal ? true : y > this.prevY;
+
+    this.prevY = y;
+  }
+
   /**
    * Checks if dragged is moving down and updates element direction sign (+/-).
    *
    * @returns {boolean}
    * @memberof Draggable
    */
-  updateDraggedDirectionFlags(y) {
-    this.isMovingDown = this.isOutHorizontal ? true : y > this.prevY;
-
+  updateDraggedDirectionFlags(isLeavingFromTop, isReturningToTop) {
     if (this.isMovingDownPrev !== this.isMovingDown) {
       /**
        * In this case, we have a sudden change in mouse movement. So, reverse
-       * numberOfElementsTransformed value, to be compatible with elemDirection.
+       * numberOfElementsTransformed value, to be compatible with effectedElemDirection.
        */
       this.numberOfElementsTransformed *= -1;
     }
+
+    this.isMovingDownPrev = this.isMovingDown;
 
     /**
      * If dragged is going top, element will decrease. So:
      * Down: -1, up: 1. Unless, dragged is leaving the list.
      */
-    this.elemDirection = this.isMovingDown ? -1 : 1;
+    // this.effectedElemDirection = isLeavingFromTop || this.isMovingDown ? -1 : 1;
+    this.effectedElemDirection = isLeavingFromTop
+      ? -1
+      : isReturningToTop
+      ? 1
+      : this.isMovingDown
+      ? -1
+      : 1;
 
-    this.prevY = y;
-    this.isMovingDownPrev = this.isMovingDown;
-  }
+    console.log(
+      "Draggable -> updateDraggedDirectionFlags -> this.isMovingDown",
+      this.isMovingDown
+    );
 
-  triggerLeavingFromTopFlags() {
-    this.elemDirection = -1;
-    this.numberOfElementsTransformed *= -1;
+    console.log(
+      "isReverse",
+      "effectedElemDirection",
+      this.effectedElemDirection
+    );
+    console.log("isReverse", "isReturningToTop", this.isReturningToTop);
   }
 
   setDraggedPosition(isDraggedOutPosition, topDifference) {
@@ -206,7 +214,7 @@ class Draggable extends Base {
      */
     this[DRAGGED_ELM].setYPosition(
       this.siblingsList,
-      -this.elemDirection /** dragged goes to opposite side */,
+      -this.effectedElemDirection /** dragged goes to opposite side */,
       this.numberOfElementsTransformed * topDifference,
       this.numberOfElementsTransformed,
       false
