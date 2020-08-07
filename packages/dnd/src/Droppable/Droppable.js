@@ -1,8 +1,6 @@
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 import store from "../DnDStore";
 
-import { ACTIVE_PARENT } from "../../constants.json";
-
 /**
  * Class includes all transformation methods related to droppable.
  *
@@ -36,19 +34,6 @@ class Droppable {
      * nextElem = elmCurrentIndex +/- 1;
      */
     const nextElem = elmCurrentIndex + this.draggable.effectedElemDirection;
-    console.log(
-      "elmCurrentIndex",
-      elmCurrentIndex,
-
-      "effectedElemDirection",
-      this.draggable.effectedElemDirection,
-
-      "nextElem",
-      nextElem,
-
-      "tempIndex",
-      this.draggable.tempIndex
-    );
 
     /**
      * Element is Switchable when it's directly is above/under dragged.
@@ -194,7 +179,7 @@ class Droppable {
     }
   }
 
-  switchElement2() {
+  moveElementsDown() {
     /**
      * Using for because in some cases the loop is breakable.
      */
@@ -265,7 +250,7 @@ class Droppable {
           // move element up
           this.draggable.setEffectedElemDirection(false);
 
-          this.switchElement2();
+          this.moveElementsDown();
 
           this.prevIsListLocked = false;
 
@@ -277,7 +262,7 @@ class Droppable {
         // inside the list, effected should be related to mouse movement
         this.draggable.setEffectedElemDirection(this.draggable.isMovingDown);
 
-        this.switchElement(!isLeavingFromTop, true);
+        this.switchElement(true, true);
 
         return;
       }
