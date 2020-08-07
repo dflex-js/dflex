@@ -31,7 +31,7 @@ class Draggable extends Base {
     /**
      * Elements effected by dragged direction.
      */
-    this.elemDirection = 1;
+    this.effectedElemDirection = 1;
 
     this.isMovingDownPrev = false;
     this.isMovingDown = false;
@@ -144,11 +144,11 @@ class Draggable extends Base {
    * @returns {boolean}
    * @memberof Draggable
    */
-  updateDraggedDirectionFlags(isLeavingFromTop) {
+  updateDraggedDirectionFlags(isLeavingFromTop, isReturningToTop) {
     if (this.isMovingDownPrev !== this.isMovingDown) {
       /**
        * In this case, we have a sudden change in mouse movement. So, reverse
-       * numberOfElementsTransformed value, to be compatible with elemDirection.
+       * numberOfElementsTransformed value, to be compatible with effectedElemDirection.
        */
       this.numberOfElementsTransformed *= -1;
     }
@@ -159,12 +159,26 @@ class Draggable extends Base {
      * If dragged is going top, element will decrease. So:
      * Down: -1, up: 1. Unless, dragged is leaving the list.
      */
-    this.elemDirection = isLeavingFromTop || this.isMovingDown ? -1 : 1;
+    // this.effectedElemDirection = isLeavingFromTop || this.isMovingDown ? -1 : 1;
+    this.effectedElemDirection = isLeavingFromTop
+      ? -1
+      : isReturningToTop
+      ? 1
+      : this.isMovingDown
+      ? -1
+      : 1;
+
     console.log(
-      "Draggable -> updateDraggedDirectionFlags -> this.elemDirection",
-      this.elemDirection,
-      isLeavingFromTop
+      "Draggable -> updateDraggedDirectionFlags -> this.isMovingDown",
+      this.isMovingDown
     );
+
+    console.log(
+      "isReverse",
+      "effectedElemDirection",
+      this.effectedElemDirection
+    );
+    console.log("isReverse", "isReturningToTop", this.isReturningToTop);
   }
 
   setDraggedPosition(isDraggedOutPosition, topDifference) {
@@ -200,7 +214,7 @@ class Draggable extends Base {
      */
     this[DRAGGED_ELM].setYPosition(
       this.siblingsList,
-      -this.elemDirection /** dragged goes to opposite side */,
+      -this.effectedElemDirection /** dragged goes to opposite side */,
       this.numberOfElementsTransformed * topDifference,
       this.numberOfElementsTransformed,
       false

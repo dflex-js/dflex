@@ -22,7 +22,7 @@ class Droppable {
 
   /**
    * Compares the dragged index with element index and returns
-   * true if element is next/previous depending on elemDirection.
+   * true if element is next/previous depending on effectedElemDirection.
    *
    * @param {number} elmCurrentIndex
    * @returns {boolean} - true if isElemSwitchable up/down
@@ -35,7 +35,7 @@ class Droppable {
      *
      * nextElem = elmCurrentIndex +/- 1;
      */
-    const nextElem = elmCurrentIndex + this.draggable.elemDirection;
+    const nextElem = elmCurrentIndex + this.draggable.effectedElemDirection;
 
     /**
      * Element is Switchable when it's directly is above/under dragged.
@@ -118,14 +118,14 @@ class Droppable {
        * Current temp index = currentIndex +/- this.draggable.numberOfElementsTransformed
        *
        * Dragged is always going to the opposite side of element direction. So, if
-       * elemDirection is up (+1) dragged is down:
+       * effectedElemDirection is up (+1) dragged is down:
        *
-       * draggedDirection = -elemDirection
+       * draggedDirection = -effectedElemDirection
        *
        */
       this.draggable.tempIndex =
         this.draggable[DRAGGED_ELM].order.self -
-        this.draggable.elemDirection *
+        this.draggable.effectedElemDirection *
           this.draggable.numberOfElementsTransformed;
     } else {
       // TODO:
@@ -137,7 +137,7 @@ class Droppable {
      */
     element.setYPosition(
       this.draggable.siblingsList,
-      this.draggable.elemDirection,
+      this.draggable.effectedElemDirection,
       this.topDifference,
       1,
       true
@@ -220,7 +220,7 @@ class Droppable {
           return;
         }
 
-        this.draggable.elemDirection *= -1;
+        this.draggable.effectedElemDirection *= -1;
         this.draggable.isOutActiveParent = true;
 
         this.isListLocked = true;
