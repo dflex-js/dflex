@@ -9,28 +9,23 @@ class EndDroppable extends Droppable {
     const elmID = lst[i];
 
     if (elmID) {
-      console.log("EndDroppable -> undoElmTranslate -> elmID", elmID);
       const element = store.getElmById(elmID);
 
-      if (this.draggable.numberOfElementsTransformed > 0) {
-        while (element.prevTranslateY.length > 0) {
+      console.log(this.draggable.numberOfElementsTransformed);
+      if (this.draggable.numberOfElementsTransformed >= 0) {
+        const rollNum = element.prevTranslateY.length > 1 ? 2 : 1;
+        console.log("EndDroppable -> undoElmTranslate -> rollNum", rollNum);
+
+        for (let j = 0; j < rollNum; j += 1) {
           /**
            * Note: rolling back won't affect order array. It only deals with element
            * itself and totally ignore any instance related to store.
            */
           element.rollYBack();
         }
-
         this.draggable.numberOfElementsTransformed -= 1;
       }
     } else {
-      console.log(
-        "EndDroppable -> undoElmTranslate -> noooo elmID",
-        lst,
-        i,
-        lst[i]
-      );
-
       this.spliceAt = i;
     }
   }

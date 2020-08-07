@@ -103,16 +103,6 @@ class Draggable extends Base {
   }
 
   /**
-   * Checks if dragged is last element in parent list.
-   *
-   * @returns {boolean}
-   * @memberof Draggable
-   */
-  isDraggedLastChild() {
-    return this.tempIndex === this.siblingsList.length - 1;
-  }
-
-  /**
    * Checks if dragged is the first child and going up.
    *
    * @returns {boolean}
@@ -122,29 +112,10 @@ class Draggable extends Base {
     return this.tempIndex <= 0 && !this.isMovingDown;
   }
 
-  /**
-   * Checks if dragged is the first child and going down.
-   *
-   * @returns {boolean}
-   * @memberof Draggable
-   */
-  isDraggedLeavingFromBottom() {
-    return this.isDraggedLastChild() && this.isMovingDown;
-  }
-
   setDraggedMovingDown(y) {
     this.isMovingDown = this.isOutHorizontal ? true : y > this.prevY;
-
     this.prevY = y;
-  }
 
-  /**
-   * Checks if dragged is moving down and updates element direction sign (+/-).
-   *
-   * @returns {boolean}
-   * @memberof Draggable
-   */
-  updateDraggedDirectionFlags(isLeavingFromTop, isReturningToTop) {
     if (this.isMovingDownPrev !== this.isMovingDown) {
       /**
        * In this case, we have a sudden change in mouse movement. So, reverse
@@ -154,31 +125,10 @@ class Draggable extends Base {
     }
 
     this.isMovingDownPrev = this.isMovingDown;
+  }
 
-    /**
-     * If dragged is going top, element will decrease. So:
-     * Down: -1, up: 1. Unless, dragged is leaving the list.
-     */
-    // this.effectedElemDirection = isLeavingFromTop || this.isMovingDown ? -1 : 1;
-    this.effectedElemDirection = isLeavingFromTop
-      ? -1
-      : isReturningToTop
-      ? 1
-      : this.isMovingDown
-      ? -1
-      : 1;
-
-    console.log(
-      "Draggable -> updateDraggedDirectionFlags -> this.isMovingDown",
-      this.isMovingDown
-    );
-
-    console.log(
-      "isReverse",
-      "effectedElemDirection",
-      this.effectedElemDirection
-    );
-    console.log("isReverse", "isReturningToTop", this.isReturningToTop);
+  setEffectedElemDirection(isUp) {
+    this.effectedElemDirection = isUp ? -1 : 1;
   }
 
   setDraggedPosition(isDraggedOutPosition, topDifference) {

@@ -141,6 +141,11 @@ class CoreInstance extends AbstractCoreInstance {
     this.translateY += _topSpace;
 
     this.element.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
+
+    console.log(
+      "CoreInstance -> seTranslate -> this.prevTranslateY",
+      this.prevTranslateY
+    );
   }
 
   /**

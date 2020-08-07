@@ -267,7 +267,7 @@ context("DnD/Testing is out position vertically", () => {
   });
 
   context("Moving strict vertically multi siblings - out up", () => {
-    it("Transforms element 11 out", () => {
+    it("Transforms element 11 out, two siblings 9/10", () => {
       cy.get("#id-11").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
 
