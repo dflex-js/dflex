@@ -1,8 +1,6 @@
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 import store from "../DnDStore";
 
-import { ACTIVE_PARENT } from "../../constants.json";
-
 /**
  * Class includes all transformation methods related to droppable.
  *
@@ -127,9 +125,6 @@ class Droppable {
         this.draggable[DRAGGED_ELM].order.self -
         this.draggable.effectedElemDirection *
           this.draggable.numberOfElementsTransformed;
-    } else {
-      // TODO:
-      this.draggable.tempIndex = -1;
     }
 
     /**
@@ -144,7 +139,11 @@ class Droppable {
     );
   }
 
-  switchElement(isLoopBreakable) {
+  isIDEligible2Move(id) {
+    return id && id !== this.draggable[DRAGGED_ELM].id;
+  }
+
+  switchElement(isLoopBreakable, isBreakable) {
     /**
      * Using for because in some cases the loop is breakable.
      */
@@ -154,7 +153,7 @@ class Droppable {
       /**
        * Avoid dragged element.
        */
-      if (id && id !== this.draggable[DRAGGED_ELM].id) {
+      if (this.isIDEligible2Move(id)) {
         const element = store.getElmById(id);
 
         const {
@@ -167,11 +166,34 @@ class Droppable {
           if (isQualified) {
             this.updateElement(element, true);
 
-            if (!this.draggable.isOutHorizontal) break;
+            if (isBreakable && !this.draggable.isOutHorizontal) {
+              break;
+            }
           }
         } else {
           this.updateElement(element, false);
         }
+      }
+
+      if (i === 15) break;
+    }
+  }
+
+  moveElementsDown() {
+    /**
+     * Using for because in some cases the loop is breakable. Avoid first
+     * element in the list.
+     */
+    for (let i = this.draggable.siblingsList.length - 1; i > 0; i -= 1) {
+      const id = this.draggable.siblingsList[i];
+
+      /**
+       * Avoid dragged element.
+       */
+      if (this.isIDEligible2Move(id)) {
+        const element = store.getElmById(id);
+
+        this.updateElement(element, true);
       }
     }
   }
@@ -190,65 +212,69 @@ class Droppable {
 
     this.isDraggedOutPosition = this.draggable.isDraggedOut();
 
-    /**
-     * If dragged is outside its position we face two possibilities:
-     *
-     * 1) Inside parent but swinging up and down.
-     * 2) Inside parent, in way out.
-     *
-     * In both possibilities, we use same function call, with smart if can
-     * detect the direction of dragged swinging, or out? And that's all done is
-     * in directionFilter.
-     */
-
     if (this.isDraggedOutPosition) {
       /**
        * Dragged is out position, but inside parent, swinging up and down.s
        */
       this.draggable.setDraggedMovingDown(y);
 
-      // if (!this.draggable.isOrphan && !this.draggable.isOutActiveParent) {
-      //   const { id } = this.draggable[ACTIVE_PARENT];
-      //   this.draggable.isOutActiveParent = this.draggable.isDraggedOut(id);
-      // }
-
       const isLeavingFromTop = this.draggable.isDraggedLeavingFromTop();
 
       if (isLeavingFromTop) {
+        /**
+         * If leaving and parent locked, do nothing.
+         */
         if (this.isListLocked) {
-          console.log("locked");
           return;
         }
 
-        this.draggable.effectedElemDirection *= -1;
+        // move element up
+        this.draggable.setEffectedElemDirection(true);
+
+        // lock the parent
         this.draggable.isOutActiveParent = true;
-
         this.isListLocked = true;
-      } else if (this.isListLocked) {
-        if (!this.draggable.isOrphan) {
-          const { id } = this.draggable[ACTIVE_PARENT];
-          this.draggable.isOutActiveParent = this.draggable.isDraggedOut(id);
+
+        this.switchElement(false, false);
+
+        return;
+      }
+
+      if (!this.isListLocked) {
+        console.log("here!");
+        /**
+         * normal movement inside the parent
+         */
+        if (this.prevIsListLocked) {
+          console.log("here too!");
+
+          // move element up
+          this.draggable.setEffectedElemDirection(false);
+
+          this.moveElementsDown();
+
+          this.prevIsListLocked = false;
 
           return;
         }
+
+        console.log("normal movement!");
+
+        // inside the list, effected should be related to mouse movement
+        this.draggable.setEffectedElemDirection(this.draggable.isMovingDown);
+
+        this.switchElement(true, true);
+
+        return;
       }
-
-      let directionSign;
-
-      if (this.prevIsListLocked && !this.isListLocked) {
-        directionSign = true;
-        this.prevIsListLocked = false;
-      }
-
-      this.draggable.updateDraggedDirectionFlags(isLeavingFromTop);
-      this.switchElement(!isLeavingFromTop, directionSign);
 
       return;
     }
 
+    /**
+     * When dragged is out parent and returning to it.
+     */
     if (this.isListLocked) {
-      console.log("unlocked");
-
       this.isListLocked = false;
       this.prevIsListLocked = true;
     }
