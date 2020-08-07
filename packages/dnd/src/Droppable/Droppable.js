@@ -181,7 +181,8 @@ class Droppable {
 
   moveElementsDown() {
     /**
-     * Using for because in some cases the loop is breakable.
+     * Using for because in some cases the loop is breakable. Avoid first
+     * element in the list.
      */
     for (let i = this.draggable.siblingsList.length - 1; i > 0; i -= 1) {
       const id = this.draggable.siblingsList[i];
