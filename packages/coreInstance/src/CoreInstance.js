@@ -105,6 +105,16 @@ class CoreInstance extends AbstractCoreInstance {
 
     this.order.self = newIndex;
 
+    // console.log("=======");
+    // console.log(
+    //   "CoreInstance -> updateIndex -> i",
+    //   i,
+    //   this.id,
+    //   this.order.self,
+    //   newIndex
+    // );
+    // console.log("=======");
+
     return { oldIndex, newIndex };
   }
 
@@ -131,29 +141,23 @@ class CoreInstance extends AbstractCoreInstance {
     if (isShuffle) order[oldIndex] = null;
   }
 
-  seTranslate(sign, topSpace, isMovingNew) {
-    const _topSpace = sign * topSpace;
-    console.log("CoreInstance -> seTranslate -> id", this.id);
-    console.log("CoreInstance -> seTranslate -> _topSpace", sign, _topSpace);
-
-    this.currentTop += _topSpace;
+  seTranslate(topSpace, isMovingNew) {
+    this.currentTop += topSpace;
 
     if (isMovingNew) this.prevTranslateY.push(this.translateY);
 
-    this.translateY += _topSpace;
-    console.log(
-      "CoreInstance -> seTranslate -> this.translateY",
-      this.translateY
-    );
+    this.translateY += topSpace;
 
     this.element.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
 
-    // console.log(
-    //   "CoreInstance -> seTranslate -> this.prevTranslateY",
-    //   this.prevTranslateY
-    // );
-
-    // if (this.id === "id-10") debugger;
+    if (!isMovingNew) {
+      console.log(
+        "CoreInstance -> seTranslate -> this.prevTranslateY",
+        this.id,
+        // this.prevTranslateY,
+        this.translateY
+      );
+    }
   }
 
   /**
@@ -177,9 +181,11 @@ class CoreInstance extends AbstractCoreInstance {
    * @memberof CoreInstance
    */
   setYPosition(iDsInOrder, sign, topSpace, vIncrement = 1, isShuffle = true) {
-    this.seTranslate(sign, topSpace, true);
+    this.seTranslate(sign * topSpace, true);
 
     this.updateIDsOrder(iDsInOrder, sign * vIncrement, isShuffle);
+
+    console.log("CoreInstance -> seTranslate -> id", this.id, this.order);
   }
 
   /**
@@ -192,9 +198,11 @@ class CoreInstance extends AbstractCoreInstance {
     const topSpace = this.prevTranslateY.pop() - this.translateY;
 
     const increment = topSpace > 0 ? 1 : -1;
+    // console.log("CoreInstance -> rollYBack -> topSpace", increment, topSpace);
 
-    this.seTranslate(1, topSpace, false);
+    this.seTranslate(topSpace, false);
     this.updateIndex(increment);
+    console.log("CoreInstance -> seTranslate -> id", this.id, this.order);
   }
 }
 

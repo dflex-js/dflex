@@ -232,7 +232,6 @@ class Droppable {
         this.draggable.setEffectedElemDirection(true);
 
         // lock the parent
-        this.draggable.isOutActiveParent = true;
         this.isListLocked = true;
 
         this.switchElement(false, false);
@@ -250,10 +249,23 @@ class Droppable {
           return;
         }
 
-        console.log("normal movement!");
-
         // inside the list, effected should be related to mouse movement
         this.draggable.setEffectedElemDirection(this.draggable.isMovingDown);
+
+        /**
+         * Going out from the list: Right/left.
+         */
+        if (this.draggable.isOutHorizontal) {
+          console.log("out from side");
+
+          this.isListLocked = true;
+
+          this.switchElement(true, false);
+
+          return;
+        }
+
+        console.log("normal movement!");
 
         this.switchElement(true, true);
 
