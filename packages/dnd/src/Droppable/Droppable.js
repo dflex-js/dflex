@@ -184,7 +184,7 @@ class Droppable {
      * Using for because in some cases the loop is breakable. Avoid first
      * element in the list.
      */
-    for (let i = this.draggable.siblingsList.length - 1; i > 0; i -= 1) {
+    for (let i = this.draggable.siblingsList.length - 1; i >= 0; i -= 1) {
       const id = this.draggable.siblingsList[i];
 
       /**
@@ -241,18 +241,10 @@ class Droppable {
       }
 
       if (!this.isListLocked) {
-        console.log("here!");
         /**
          * normal movement inside the parent
          */
         if (this.prevIsListLocked) {
-          console.log("here too!");
-
-          // move element up
-          this.draggable.setEffectedElemDirection(false);
-
-          this.moveElementsDown();
-
           this.prevIsListLocked = false;
 
           return;
@@ -275,6 +267,11 @@ class Droppable {
      * When dragged is out parent and returning to it.
      */
     if (this.isListLocked) {
+      // move element up
+      this.draggable.setEffectedElemDirection(false);
+
+      this.moveElementsDown();
+
       this.isListLocked = false;
       this.prevIsListLocked = true;
     }
