@@ -241,18 +241,10 @@ class Droppable {
       }
 
       if (!this.isListLocked) {
-        console.log("here!");
         /**
          * normal movement inside the parent
          */
         if (this.prevIsListLocked) {
-          console.log("here too!");
-
-          // move element up
-          //   this.draggable.setEffectedElemDirection(false);
-
-          //   this.moveElementsDown();
-
           this.prevIsListLocked = false;
 
           return;

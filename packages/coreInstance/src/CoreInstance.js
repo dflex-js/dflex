@@ -133,6 +133,7 @@ class CoreInstance extends AbstractCoreInstance {
 
   seTranslate(sign, topSpace, isMovingNew) {
     const _topSpace = sign * topSpace;
+    console.log("CoreInstance -> seTranslate -> id", this.id);
     console.log("CoreInstance -> seTranslate -> _topSpace", sign, _topSpace);
 
     this.currentTop += _topSpace;
@@ -151,6 +152,8 @@ class CoreInstance extends AbstractCoreInstance {
     //   "CoreInstance -> seTranslate -> this.prevTranslateY",
     //   this.prevTranslateY
     // );
+
+    // if (this.id === "id-10") debugger;
   }
 
   /**
