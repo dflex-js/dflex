@@ -1,6 +1,8 @@
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 import store from "../DnDStore";
 
+import { ACTIVE_PARENT } from "../../constants.json";
+
 /**
  * Class includes all transformation methods related to droppable.
  *
@@ -265,6 +267,37 @@ class Droppable {
     }
   }
 
+  draggedIsComingIn() {
+    console.log("unlock");
+
+    // move element up
+    this.draggable.setEffectedElemDirection(false);
+
+    /**
+     * If tempIndex is zero, the dragged is coming from the top. So, move them
+     * down all: to=0
+     */
+    let to = 0;
+
+    /**
+     * Otherwise, detect where it coming from and update tempIndex
+     * accordingly.
+     */
+    if (this.draggable.tempIndex !== 0) {
+      to = this.detectDroppableIndex();
+      if (typeof to !== "number") return;
+      this.draggable.tempIndex = to;
+    }
+
+    this.moveDown(to, "movePositionIFEligibleID");
+
+    this.draggable.numberOfElementsTransformed =
+      this.draggable[DRAGGED_ELM].order.self - this.draggable.tempIndex;
+
+    this.isListLocked = false;
+    this.prevIsListLocked = true;
+  }
+
   /**
    * Invokes draggable method responsible of transform.
    * Monitors dragged translate and called related methods. Which controls the
@@ -279,44 +312,38 @@ class Droppable {
 
     this.isDraggedOutPosition = this.draggable.isDraggedOut();
 
+    let isOutParent;
+
     if (this.isDraggedOutPosition) {
       this.draggedOutPosition(y);
 
+      if (!this.isListLocked) return;
+
+      if (!this.draggable.isOrphan) {
+        console.log("not Orphan");
+        const { id: parenID } = this.draggable[ACTIVE_PARENT];
+
+        isOutParent = this.draggable.isDraggedOut(parenID);
+
+        if (isOutParent) return;
+
+        console.log("isnide parent");
+
+        if (this.draggable.isOutHorizontal) this.draggedIsComingIn();
+
+        return;
+      }
+
       return;
     }
+
+    console.log("Droppable -> dragAt -> isOutParent", isOutParent);
 
     /**
      * When dragged is out parent and returning to it.
      */
     if (this.isListLocked) {
-      console.log("unlock");
-
-      // move element up
-      this.draggable.setEffectedElemDirection(false);
-
-      /**
-       * If tempIndex is zero, the dragged is coming from the top. So, move them
-       * down all: to=0
-       */
-      let to = 0;
-
-      /**
-       * Otherwise, detect where it coming from and update tempIndex
-       * accordingly.
-       */
-      if (this.draggable.tempIndex !== 0) {
-        to = this.detectDroppableIndex();
-        if (typeof to !== "number") return;
-        this.draggable.tempIndex = to;
-      }
-
-      this.moveDown(to, "movePositionIFEligibleID");
-
-      this.draggable.numberOfElementsTransformed =
-        this.draggable[DRAGGED_ELM].order.self - this.draggable.tempIndex;
-
-      this.isListLocked = false;
-      this.prevIsListLocked = true;
+      this.draggedIsComingIn();
     }
   }
 }
