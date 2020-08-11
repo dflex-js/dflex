@@ -181,6 +181,7 @@ class CoreInstance extends AbstractCoreInstance {
    * @memberof CoreInstance
    */
   setYPosition(iDsInOrder, sign, topSpace, vIncrement = 1, isShuffle = true) {
+    console.log("CoreInstance -> setYPosition -> vIncrement", vIncrement);
     this.seTranslate(sign * topSpace, true);
 
     this.updateIDsOrder(iDsInOrder, sign * vIncrement, isShuffle);

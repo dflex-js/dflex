@@ -147,10 +147,6 @@ class Droppable {
 
       if (isQualified) {
         droppableIndex = i;
-        console.log(
-          "Droppable -> detectDroppableIndex -> droppableIndex",
-          droppableIndex
-        );
 
         break;
       }
@@ -303,6 +299,7 @@ class Droppable {
        */
       if (this.draggable.tempIndex !== 0) {
         to = this.detectDroppableIndex();
+        if (typeof to !== "number") return;
         this.draggable.tempIndex = to;
       }
 
