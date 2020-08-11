@@ -16,6 +16,8 @@ class Droppable {
 
     this.isListLocked = false;
     this.prevIsListLocked = false;
+
+    this.droppableIndex = -1;
   }
 
   /**
@@ -116,6 +118,39 @@ class Droppable {
     );
   }
 
+  /**
+   * Compares the dragged offset with element offset and returns
+   * true if element is matched.
+   *
+   * @param {number} elmCurrentOffsetTop - element vertical offset (offsetTop)
+   * @returns {boolean} - true if isElemUnderDragged
+   * @memberof Droppable
+   */
+  isElemUnderDragged(elmCurrentOffsetTop) {
+    /**
+     * Element is Switchable when it's under dragged.
+     */
+    return elmCurrentOffsetTop >= this.draggable.tempOffset.currentTop;
+  }
+
+  detectDroppableIndex() {
+    for (let i = 0; i < this.siblingsList.length; i += 1) {
+      const id = this.siblingsList[i];
+
+      const element = store.getElmById(id);
+
+      const { currentTop } = element;
+
+      const isQualified = this.isElemUnderDragged(currentTop);
+
+      if (isQualified) {
+        this.droppableIndex = i;
+
+        break;
+      }
+    }
+  }
+
   isIDEligible2Move(id) {
     return id && id !== this.draggable[DRAGGED_ELM].id;
   }
@@ -166,10 +201,6 @@ class Droppable {
     this.draggable.dragAt(x, y);
 
     this.isDraggedOutPosition = this.draggable.isDraggedOut();
-    console.log(
-      "Droppable -> dragAt -> this.isDraggedOutPosition",
-      this.isDraggedOutPosition
-    );
 
     if (this.isDraggedOutPosition) {
       /**
