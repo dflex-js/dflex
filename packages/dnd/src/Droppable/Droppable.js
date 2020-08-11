@@ -225,6 +225,7 @@ class Droppable {
 
       // lock the parent
       this.isListLocked = true;
+      this.isLeftFromTop = true;
 
       this.liftUp(1, "movePositionIFEligibleID");
 
@@ -312,14 +313,14 @@ class Droppable {
 
     this.isDraggedOutPosition = this.draggable.isDraggedOut();
 
-    let isOutParent;
+    let isOutParent = false;
 
     if (this.isDraggedOutPosition) {
       this.draggedOutPosition(y);
 
       if (!this.isListLocked) return;
 
-      if (!this.draggable.isOrphan) {
+      if (!this.isLeftFromTop && !this.draggable.isOrphan) {
         console.log("not Orphan");
         const { id: parenID } = this.draggable[ACTIVE_PARENT];
 
@@ -327,22 +328,24 @@ class Droppable {
 
         if (isOutParent) return;
 
-        console.log("isnide parent");
+        console.log("inside parent");
 
-        if (this.draggable.isOutHorizontal) this.draggedIsComingIn();
+        this.draggedIsComingIn();
 
         return;
       }
 
+      // if (!isOutParent) this.draggedIsComingIn();
+
+      console.log("ignore");
       return;
     }
-
-    console.log("Droppable -> dragAt -> isOutParent", isOutParent);
 
     /**
      * When dragged is out parent and returning to it.
      */
     if (this.isListLocked) {
+      console.log("when?");
       this.draggedIsComingIn();
     }
   }
