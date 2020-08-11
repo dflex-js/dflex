@@ -16,29 +16,8 @@ class Droppable {
 
     this.isListLocked = false;
     this.prevIsListLocked = false;
-  }
 
-  /**
-   * Compares the dragged index with element index and returns
-   * true if element is next/previous depending on effectedElemDirection.
-   *
-   * @param {number} elmCurrentIndex
-   * @returns {boolean} - true if isElemSwitchable up/down
-   * @memberof Droppable
-   */
-  isElemSwitchable(elmCurrentIndex) {
-    /**
-     * If dragged is going up, next element is the element above, which means
-     * its index is elmCurrentIndex -1 and vice versa when going down.
-     *
-     * nextElem = elmCurrentIndex +/- 1;
-     */
-    const nextElem = elmCurrentIndex + this.draggable.effectedElemDirection;
-
-    /**
-     * Element is Switchable when it's directly is above/under dragged.
-     */
-    return nextElem === this.draggable.tempIndex;
+    this.droppableIndex = -1;
   }
 
   /**
@@ -139,35 +118,57 @@ class Droppable {
     );
   }
 
+  /**
+   * Compares the dragged offset with element offset and returns
+   * true if element is matched.
+   *
+   * @param {number} elmCurrentOffsetTop - element vertical offset (offsetTop)
+   * @returns {boolean} - true if isElemUnderDragged
+   * @memberof Droppable
+   */
+  isElemUnderDragged(elmCurrentOffsetTop) {
+    /**
+     * Element is Switchable when it's under dragged.
+     */
+    return elmCurrentOffsetTop >= this.draggable.tempOffset.currentTop;
+  }
+
+  detectDroppableIndex() {
+    let droppableIndex;
+
+    for (let i = 0; i < this.draggable.siblingsList.length; i += 1) {
+      const id = this.draggable.siblingsList[i];
+
+      const element = store.getElmById(id);
+
+      const { currentTop } = element;
+
+      const isQualified = this.isElemUnderDragged(currentTop);
+
+      if (isQualified) {
+        droppableIndex = i;
+
+        break;
+      }
+    }
+
+    return droppableIndex;
+  }
+
   isIDEligible2Move(id) {
     return id && id !== this.draggable[DRAGGED_ELM].id;
   }
 
   switchElement() {
-    /**
-     * Using for because in some cases the loop is breakable.
-     */
-    for (let i = 0; i < this.draggable.siblingsList.length; i += 1) {
-      const id = this.draggable.siblingsList[i];
+    const elmIndex =
+      this.draggable.tempIndex + -1 * this.draggable.effectedElemDirection;
 
-      /**
-       * Avoid dragged element.
-       */
-      if (this.isIDEligible2Move(id)) {
-        const element = store.getElmById(id);
+    const id = this.draggable.siblingsList[elmIndex];
 
-        const {
-          order: { self },
-        } = element;
+    if (this.isIDEligible2Move(id)) {
+      const element = store.getElmById(id);
 
-        const isQualified = this.isElemSwitchable(self);
-
-        if (isQualified) {
-          this.updateElement(element);
-
-          break;
-        }
-      }
+      this.updateElement(element);
     }
   }
 
@@ -181,15 +182,15 @@ class Droppable {
     }
   }
 
-  liftElementsUP(from) {
+  loopAsc(from, func) {
     for (let i = from; i < this.draggable.siblingsList.length; i += 1) {
-      this.movePositionIFEligibleID(i);
+      this[func](i);
     }
   }
 
-  moveElementsDown(from = this.draggable.siblingsList.length - 1) {
-    for (let i = from; i >= 0; i -= 1) {
-      this.movePositionIFEligibleID(i);
+  loopDesc(to, func) {
+    for (let i = this.draggable.siblingsList.length - 1; i >= to; i -= 1) {
+      this[func](i);
     }
   }
 
@@ -206,10 +207,6 @@ class Droppable {
     this.draggable.dragAt(x, y);
 
     this.isDraggedOutPosition = this.draggable.isDraggedOut();
-    console.log(
-      "Droppable -> dragAt -> this.isDraggedOutPosition",
-      this.isDraggedOutPosition
-    );
 
     if (this.isDraggedOutPosition) {
       /**
@@ -233,7 +230,7 @@ class Droppable {
         // lock the parent
         this.isListLocked = true;
 
-        this.liftElementsUP(1);
+        this.loopAsc(1, "movePositionIFEligibleID");
 
         return;
       }
@@ -260,7 +257,10 @@ class Droppable {
           // lock the parent
           this.isListLocked = true;
 
-          this.liftElementsUP(this.draggable.tempIndex + 1);
+          this.loopAsc(
+            this.draggable.tempIndex + 1,
+            "movePositionIFEligibleID"
+          );
 
           return;
         }
@@ -287,7 +287,26 @@ class Droppable {
       // move element up
       this.draggable.setEffectedElemDirection(false);
 
-      this.moveElementsDown();
+      /**
+       * If tempIndex is zero, the dragged is coming from the top. So, move them
+       * down all: to=0
+       */
+      let to = 0;
+
+      /**
+       * Otherwise, detect where it coming from and update tempIndex
+       * accordingly.
+       */
+      if (this.draggable.tempIndex !== 0) {
+        to = this.detectDroppableIndex();
+        if (typeof to !== "number") return;
+        this.draggable.tempIndex = to;
+      }
+
+      this.loopDesc(to, "movePositionIFEligibleID");
+
+      this.draggable.numberOfElementsTransformed =
+        this.draggable[DRAGGED_ELM].order.self - this.draggable.tempIndex;
 
       this.isListLocked = false;
       this.prevIsListLocked = true;
