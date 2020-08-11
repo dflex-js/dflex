@@ -11,17 +11,12 @@ class EndDroppable extends Droppable {
     if (elmID) {
       const element = store.getElmById(elmID);
 
-      if (this.draggable.numberOfElementsTransformed > 0) {
-        while (element.prevTranslateY.length > 0) {
-          /**
-           * Note: rolling back won't affect order array. It only deals with element
-           * itself and totally ignore any instance related to store.
-           */
-          element.rollYBack();
-        }
-
-        this.draggable.numberOfElementsTransformed -= 1;
-      }
+      /**
+       * Note: rolling back won't affect order array. It only deals with element
+       * itself and totally ignore any instance related to store.
+       */
+      element.rollYBack();
+      this.draggable.numberOfElementsTransformed -= 1;
     } else {
       this.spliceAt = i;
     }
@@ -35,6 +30,7 @@ class EndDroppable extends Droppable {
    * @memberof EndDroppable
    */
   undoList(lst) {
+    console.log("EndDroppable -> undoList -> lst", lst);
     const {
       order: { self: from },
       id: draggedID,
@@ -42,13 +38,18 @@ class EndDroppable extends Droppable {
 
     if (this.draggable.isMovingDown) {
       for (let i = from; i < lst.length; i += 1) {
-        // if (this.draggable.numberOfElementsTransformed === 0) break;
+        if (this.draggable.numberOfElementsTransformed === 0) break;
 
         this.undoElmTranslate(lst, i);
       }
     } else {
-      for (let i = from; i > 0; i -= 1) {
-        // if (this.draggable.numberOfElementsTransformed === 0) break;
+      /**
+       * If from is zero, means dragged left, and all siblings are lifted up.
+       */
+      const actualFrom = from === 0 ? lst.length - 1 : from;
+
+      for (let i = actualFrom; i >= 0; i -= 1) {
+        if (this.draggable.numberOfElementsTransformed === 0) break;
 
         this.undoElmTranslate(lst, i);
       }
