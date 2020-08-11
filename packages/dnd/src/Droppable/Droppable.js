@@ -134,8 +134,10 @@ class Droppable {
   }
 
   detectDroppableIndex() {
-    for (let i = 0; i < this.siblingsList.length; i += 1) {
-      const id = this.siblingsList[i];
+    let droppableIndex;
+
+    for (let i = 0; i < this.draggable.siblingsList.length; i += 1) {
+      const id = this.draggable.siblingsList[i];
 
       const element = store.getElmById(id);
 
@@ -144,11 +146,17 @@ class Droppable {
       const isQualified = this.isElemUnderDragged(currentTop);
 
       if (isQualified) {
-        this.droppableIndex = i;
+        droppableIndex = i;
+        console.log(
+          "Droppable -> detectDroppableIndex -> droppableIndex",
+          droppableIndex
+        );
 
         break;
       }
     }
+
+    return droppableIndex;
   }
 
   isIDEligible2Move(id) {
@@ -182,8 +190,8 @@ class Droppable {
     }
   }
 
-  loopDesc(from, func) {
-    for (let i = from; i >= 0; i -= 1) {
+  loopDesc(to, func) {
+    for (let i = this.draggable.siblingsList.length - 1; i >= to; i -= 1) {
       this[func](i);
     }
   }
@@ -281,10 +289,24 @@ class Droppable {
       // move element up
       this.draggable.setEffectedElemDirection(false);
 
-      this.loopDesc(
-        this.draggable.siblingsList.length - 1,
-        "movePositionIFEligibleID"
-      );
+      console.log(this.draggable.tempIndex);
+
+      /**
+       * If tempIndex is zero, the dragged is coming from the top. So, move them
+       * down all: to=0
+       */
+      let to = 0;
+
+      /**
+       * Otherwise, detect where it coming from and update tempIndex
+       * accordingly.
+       */
+      if (this.draggable.tempIndex !== 0) {
+        to = this.detectDroppableIndex();
+        this.draggable.tempIndex = to;
+      }
+
+      this.loopDesc(to, "movePositionIFEligibleID");
 
       this.isListLocked = false;
       this.prevIsListLocked = true;
