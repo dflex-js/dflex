@@ -169,9 +169,11 @@ class Droppable {
 
     const id = this.draggable.siblingsList[elmIndex];
 
-    const element = store.getElmById(id);
+    if (this.isIDEligible2Move(id)) {
+      const element = store.getElmById(id);
 
-    this.updateElement(element);
+      this.updateElement(element);
+    }
   }
 
   movePositionIFEligibleID(i) {
@@ -289,8 +291,6 @@ class Droppable {
       // move element up
       this.draggable.setEffectedElemDirection(false);
 
-      console.log(this.draggable.tempIndex);
-
       /**
        * If tempIndex is zero, the dragged is coming from the top. So, move them
        * down all: to=0
@@ -307,6 +307,9 @@ class Droppable {
       }
 
       this.loopDesc(to, "movePositionIFEligibleID");
+
+      this.draggable.numberOfElementsTransformed =
+        this.draggable[DRAGGED_ELM].order.self - this.draggable.tempIndex;
 
       this.isListLocked = false;
       this.prevIsListLocked = true;
