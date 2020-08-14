@@ -137,7 +137,7 @@ class Droppable {
 
   detectDroppableIndex() {
     console.log("Droppable -> detectDroppableIndex -> detectDroppableIndex");
-    let droppableIndex;
+    let droppableIndex = null;
 
     for (let i = 0; i < this.draggable.siblingsList.length; i += 1) {
       const id = this.draggable.siblingsList[i];
@@ -290,13 +290,13 @@ class Droppable {
       this.draggable.tempIndex = to;
     }
 
+    this.isListLocked = false;
+    this.prevIsListLocked = true;
+
     this.moveDown(to, "movePositionIFEligibleID");
 
     this.draggable.numberOfElementsTransformed =
       this.draggable[DRAGGED_ELM].order.self - this.draggable.tempIndex;
-
-    this.isListLocked = false;
-    this.prevIsListLocked = true;
   }
 
   /**
@@ -321,10 +321,11 @@ class Droppable {
       if (!this.isListLocked) return;
 
       if (!this.isLeftFromTop && !this.draggable.isOrphan) {
-        console.log("not Orphan");
+        console.log("not Orphan?>>>>>>>>");
         const { id: parenID } = this.draggable[ACTIVE_PARENT];
 
         isOutParent = this.draggable.isDraggedOut(parenID);
+        console.log("Droppable -> dragAt -> isOutParent", isOutParent);
 
         if (isOutParent) return;
 
@@ -346,7 +347,9 @@ class Droppable {
      */
     if (this.isListLocked) {
       console.log("when?");
-      this.draggedIsComingIn();
+      // isNormalMove = false;
+
+      // this.draggedIsComingIn();
     }
   }
 }
