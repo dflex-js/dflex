@@ -29,7 +29,7 @@ class Droppable {
    * @param {CoreInstance} element
    * @memberof Droppable
    */
-  updateElement(element) {
+  updateElement(element, isUpdateTempIndex) {
     /**
      * breakingPoint detects the first element that comes immediately
      * after dragged. Not in original order, but according to isQualified result.
@@ -89,23 +89,30 @@ class Droppable {
        */
       this.draggable.setThreshold(element);
 
-      /**
-       * Since final index is set when element is transformed, we have no idea what
-       * the current index in dragged is. To solve this issue, we have a simple
-       * equation
-       *
-       * Current temp index = currentIndex +/- this.draggable.numberOfElementsTransformed
-       *
-       * Dragged is always going to the opposite side of element direction. So, if
-       * effectedElemDirection is up (+1) dragged is down:
-       *
-       * draggedDirection = -effectedElemDirection
-       *
-       */
-      this.draggable.tempIndex =
-        this.draggable[DRAGGED_ELM].order.self -
-        this.draggable.effectedElemDirection *
-          this.draggable.numberOfElementsTransformed;
+      if (isUpdateTempIndex) {
+        /**
+         * Since final index is set when element is transformed, we have no idea what
+         * the current index in dragged is. To solve this issue, we have a simple
+         * equation
+         *
+         * Current temp index = currentIndex +/- this.draggable.numberOfElementsTransformed
+         *
+         * Dragged is always going to the opposite side of element direction. So, if
+         * effectedElemDirection is up (+1) dragged is down:
+         *
+         * draggedDirection = -effectedElemDirection
+         *
+         */
+        this.draggable.tempIndex =
+          this.draggable[DRAGGED_ELM].order.self -
+          this.draggable.effectedElemDirection *
+            this.draggable.numberOfElementsTransformed;
+
+        console.log(
+          "Droppable -> updateElement -> this.draggable.tempInde",
+          this.draggable.tempIndex
+        );
+      }
     }
 
     /**
@@ -187,7 +194,7 @@ class Droppable {
     if (this.isIDEligible2Move(id)) {
       const element = store.getElmById(id);
 
-      this.updateElement(element);
+      this.updateElement(element, true);
     }
   }
 
@@ -374,7 +381,6 @@ class Droppable {
      */
     if (this.isListLocked) {
       console.log("when?");
-      // isNormalMove = false;
 
       this.draggedIsComingIn();
     }
