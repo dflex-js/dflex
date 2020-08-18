@@ -30,7 +30,7 @@ class EndDroppable extends Droppable {
    * @memberof EndDroppable
    */
   undoList(lst) {
-    console.log("EndDroppable -> undoList -> lst", lst);
+    console.log("EndDroppable -> undoList -> before", lst);
     const {
       order: { self: from },
       id: draggedID,
@@ -57,6 +57,8 @@ class EndDroppable extends Droppable {
 
     lst.splice(this.spliceAt, 1);
     lst.splice(from, 0, draggedID);
+
+    console.log("EndDroppable -> undoList -> after", lst);
   }
 
   endDragging() {
