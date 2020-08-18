@@ -207,7 +207,14 @@ class CoreInstance extends AbstractCoreInstance {
    * @param {Array} iDsInOrder - Array that holds new ids order.
    * @memberof CoreInstance
    */
-  rollYBack() {
+  rollYBack(operationID) {
+    if (
+      this.prevTranslateY[this.prevTranslateY.length - 1].ID !== operationID
+    ) {
+      console.log("ops", this.id, operationID);
+      return;
+    }
+
     const topSpace = this.prevTranslateY.pop().translateY - this.translateY;
 
     const increment = topSpace > 0 ? 1 : -1;

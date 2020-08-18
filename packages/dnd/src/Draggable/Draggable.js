@@ -167,7 +167,8 @@ class Draggable extends Base {
       -this.effectedElemDirection /** dragged goes to opposite side */,
       this.numberOfElementsTransformed * topDifference,
       this.numberOfElementsTransformed,
-      false
+      false,
+      this.dragID
     );
   }
 

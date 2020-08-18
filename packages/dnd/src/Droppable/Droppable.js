@@ -124,7 +124,7 @@ class Droppable {
       this.topDifference,
       1,
       true,
-      this.counter
+      this.draggable.dragID
     );
   }
 

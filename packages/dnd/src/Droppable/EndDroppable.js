@@ -15,7 +15,7 @@ class EndDroppable extends Droppable {
        * Note: rolling back won't affect order array. It only deals with element
        * itself and totally ignore any instance related to store.
        */
-      element.rollYBack();
+      element.rollYBack(this.draggable.dragID);
       this.draggable.numberOfElementsTransformed -= 1;
     } else {
       this.spliceAt = i;
@@ -66,6 +66,7 @@ class EndDroppable extends Droppable {
   endDragging() {
     this.draggable.endDragging(this.isDraggedOutPosition, this.topDifference);
 
+    console.log(this.draggable[ACTIVE_PARENT].id);
     if (this.isDraggedOutPosition) {
       const {
         keys: { chK },
