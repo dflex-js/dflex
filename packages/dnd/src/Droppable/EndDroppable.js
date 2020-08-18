@@ -36,21 +36,23 @@ class EndDroppable extends Droppable {
       id: draggedID,
     } = this.draggable[DRAGGED_ELM];
 
-    if (this.draggable.isMovingDown) {
+    if (this.isListLocked || this.draggable.isMovingDown) {
+      console.log("EndDroppable -> undoList -> isMovingDown");
+
       for (let i = from; i < lst.length; i += 1) {
-        if (this.draggable.numberOfElementsTransformed === 0) break;
+        console.log("EndDroppable -> undoList -> isMovingDown");
 
         this.undoElmTranslate(lst, i);
       }
     } else {
+      console.log("EndDroppable -> undoList -> isMovingUp");
+
       /**
        * If from is zero, means dragged left, and all siblings are lifted up.
        */
       const actualFrom = from === 0 ? lst.length - 1 : from;
 
       for (let i = actualFrom; i >= 0; i -= 1) {
-        if (this.draggable.numberOfElementsTransformed === 0) break;
-
         this.undoElmTranslate(lst, i);
       }
     }

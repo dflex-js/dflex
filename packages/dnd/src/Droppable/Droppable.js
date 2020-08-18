@@ -123,7 +123,8 @@ class Droppable {
       this.draggable.effectedElemDirection,
       this.topDifference,
       1,
-      true
+      true,
+      this.counter
     );
   }
 
