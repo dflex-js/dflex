@@ -105,16 +105,6 @@ class CoreInstance extends AbstractCoreInstance {
 
     this.order.self = newIndex;
 
-    // console.log("=======");
-    // console.log(
-    //   "CoreInstance -> updateIndex -> i",
-    //   i,
-    //   this.id,
-    //   this.order.self,
-    //   newIndex
-    // );
-    // console.log("=======");
-
     return { oldIndex, newIndex };
   }
 
@@ -153,16 +143,6 @@ class CoreInstance extends AbstractCoreInstance {
     this.translateY += topSpace;
 
     this.element.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
-
-    // if (!isMovingNew) {
-    console.log(
-      "CoreInstance -> seTranslate -> this.prevTranslateY",
-      this.id,
-      // this.prevTranslateY,
-      this.translateY,
-      this.prevTranslateY
-    );
-    // }
   }
 
   /**
@@ -193,12 +173,9 @@ class CoreInstance extends AbstractCoreInstance {
     isShuffle = true,
     operationID
   ) {
-    console.log("CoreInstance -> setYPosition -> vIncrement", vIncrement);
     this.seTranslate(sign * topSpace, true, operationID);
 
     this.updateIDsOrder(iDsInOrder, sign * vIncrement, isShuffle);
-
-    console.log("CoreInstance -> seTranslate -> id", this.id, this.order);
   }
 
   /**
@@ -212,18 +189,15 @@ class CoreInstance extends AbstractCoreInstance {
       this.prevTranslateY.length === 0 ||
       this.prevTranslateY[this.prevTranslateY.length - 1].ID !== operationID
     ) {
-      console.log("ops", this.id, operationID);
       return;
     }
 
     const topSpace = this.prevTranslateY.pop().translateY - this.translateY;
 
     const increment = topSpace > 0 ? 1 : -1;
-    // console.log("CoreInstance -> rollYBack -> topSpace", increment, topSpace);
 
     this.seTranslate(topSpace, false);
     this.updateIndex(increment);
-    console.log("CoreInstance -> seTranslate -> id", this.id, this.order);
   }
 }
 
