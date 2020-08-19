@@ -10,7 +10,6 @@
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
     "cy:install:win": "cypress cache clear && .\\node_modules\\.bin\\cypress.cmd install --force",
-    "test:e2e": "yarn workspace e2e-test run test",
     "test:unit": "jest",
     "test": "yarn test:unit && yarn test:e2e",
     "build": "lerna run build"
