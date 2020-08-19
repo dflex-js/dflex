@@ -15,6 +15,13 @@
     "dist",
     "LICENSE"
   ],
+  "bundledDependencies": [
+    "@dflex/store",
+    "@dflex/core-instance"
+  ],
+  "devDependencies": {
+    "dflex-utils-test": "^0.1.0"
+  },
   "keywords": [
     "@dflex",
     "@dflex/dom-gen",

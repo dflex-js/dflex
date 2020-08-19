@@ -14,6 +14,9 @@
     "dist",
     "LICENSE"
   ],
+  "bundledDependencies": [
+    "@dflex/dom-gen"
+  ],
   "keywords": [
     "@dflex",
     "@dflex/dom-gen",

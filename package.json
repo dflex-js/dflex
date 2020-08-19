@@ -2,15 +2,16 @@
   "name": "dflex",
   "private": true,
   "workspaces": [
-    "packages/*",
-    "playgrounds/*",
+    "packages/**",
     "scripts/*",
     "site"
   ],
   "repository": "https://github.com/jalal246/dflex",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
-    "test": "jest",
+    "cy:install:win": "cypress cache clear && .\\node_modules\\.bin\\cypress.cmd install --force",
+    "test:unit": "jest",
+    "test": "yarn test:unit && yarn test:e2e",
     "build": "lerna run build"
   },
   "devDependencies": {

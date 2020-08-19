@@ -66,10 +66,7 @@ class CoreInstance extends AbstractCoreInstance {
       width,
 
       left,
-      right: left + width,
-
       top,
-      bottom: top + height,
     };
   }
 
@@ -80,8 +77,7 @@ class CoreInstance extends AbstractCoreInstance {
      */
     this.translateY = 0;
     this.translateX = 0;
-    this.prevTranslateY = 0;
-    this.prevTranslateX = 0;
+    this.prevTranslateY = [];
   }
 
   setCurrentOffset() {
@@ -102,12 +98,14 @@ class CoreInstance extends AbstractCoreInstance {
    * @returns number  - new index.
    * @memberof CoreInstance
    */
-  setIndex(i) {
-    const newIndex = this.order.self + i;
+  updateIndex(i) {
+    const { self: oldIndex } = this.order;
+
+    const newIndex = oldIndex + i;
 
     this.order.self = newIndex;
 
-    return newIndex;
+    return { oldIndex, newIndex };
   }
 
   /**
@@ -119,14 +117,7 @@ class CoreInstance extends AbstractCoreInstance {
    * @memberof CoreInstance
    */
   updateIDsOrder(order, inc, isShuffle) {
-    const oldIndex = this.order.self;
-
-    /**
-     * Get new index depending on increment and updating local index (self).
-     */
-    const newIndex = this.setIndex(inc);
-
-    if (order === null) return;
+    const { oldIndex, newIndex } = this.updateIndex(inc);
 
     /**
      * Update element id and order in its list.
@@ -137,46 +128,21 @@ class CoreInstance extends AbstractCoreInstance {
      * inserting and undoing.
      */
     order[newIndex] = this.id;
-
-    /**
-     * Shuffling when:
-     * Still in the list going up/down.
-     * Dragged went up leaving the list entirely.
-     */
-    if (isShuffle) {
-      /**
-       * If we are at the last element, it means dragged is out the list so
-       * instead of assign the last position to null: [0,1, null]. We simply
-       * delete it: [0,1]
-       */
-      if (oldIndex + 1 === order.length) {
-        /**
-         * Remove last element.
-         */
-        order.pop();
-      } else {
-        /**
-         * Clear old position by assigning it to null:[0, null, 1].
-         * Note: the null position will be filled later with dragged
-         */
-        order[oldIndex] = null;
-      }
-    }
+    if (isShuffle) order[oldIndex] = null;
   }
 
-  seTranslate(sign, topSpace, vIncrement) {
-    const _topSpace = sign * topSpace;
+  seTranslate(topSpace, isMovingNew, operationID) {
+    this.currentTop += topSpace;
 
-    this.currentTop += _topSpace;
+    if (isMovingNew)
+      this.prevTranslateY.push({
+        ID: operationID,
+        translateY: this.translateY,
+      });
 
-    this.prevTranslateY = this.translateY;
-    this.translateY += _topSpace;
+    this.translateY += topSpace;
 
     this.element.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
-
-    const increment = sign * vIncrement;
-
-    return increment;
   }
 
   /**
@@ -199,10 +165,17 @@ class CoreInstance extends AbstractCoreInstance {
    * @param {boolean} [isShuffle=true]
    * @memberof CoreInstance
    */
-  setYPosition(iDsInOrder, sign, topSpace, vIncrement = 1, isShuffle = true) {
-    const increment = this.seTranslate(sign, topSpace, vIncrement);
+  setYPosition(
+    iDsInOrder,
+    sign,
+    topSpace,
+    vIncrement = 1,
+    isShuffle = true,
+    operationID
+  ) {
+    this.seTranslate(sign * topSpace, true, operationID);
 
-    this.updateIDsOrder(iDsInOrder, increment, isShuffle);
+    this.updateIDsOrder(iDsInOrder, sign * vIncrement, isShuffle);
   }
 
   /**
@@ -211,12 +184,20 @@ class CoreInstance extends AbstractCoreInstance {
    * @param {Array} iDsInOrder - Array that holds new ids order.
    * @memberof CoreInstance
    */
-  rollYBack() {
-    const topSpace = this.prevTranslateY - this.translateY;
+  rollYBack(operationID) {
+    if (
+      this.prevTranslateY.length === 0 ||
+      this.prevTranslateY[this.prevTranslateY.length - 1].ID !== operationID
+    ) {
+      return;
+    }
 
-    const increment = this.seTranslate(1, topSpace, 1, false);
+    const topSpace = this.prevTranslateY.pop().translateY - this.translateY;
 
-    this.setIndex(increment);
+    const increment = topSpace > 0 ? 1 : -1;
+
+    this.seTranslate(topSpace, false);
+    this.updateIndex(increment);
   }
 }
 

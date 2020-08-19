@@ -1,6 +1,6 @@
 # @dflex/dnd
 
-> Simple & Light Solution for a Progressive Drag and Drop App
+> A Simple, lightweight Solution for a Drag & Drop App
 
 ```bash
 npm install @dflex/dnd
