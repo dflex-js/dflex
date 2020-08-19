@@ -209,6 +209,7 @@ class CoreInstance extends AbstractCoreInstance {
    */
   rollYBack(operationID) {
     if (
+      this.prevTranslateY.length === 0 ||
       this.prevTranslateY[this.prevTranslateY.length - 1].ID !== operationID
     ) {
       console.log("ops", this.id, operationID);
