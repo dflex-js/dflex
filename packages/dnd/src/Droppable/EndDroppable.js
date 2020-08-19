@@ -30,23 +30,16 @@ class EndDroppable extends Droppable {
    * @memberof EndDroppable
    */
   undoList(lst) {
-    console.log("EndDroppable -> undoList -> before", lst);
     const {
       order: { self: from },
       id: draggedID,
     } = this.draggable[DRAGGED_ELM];
 
     if (this.isListLocked || this.draggable.isMovingDown) {
-      console.log("EndDroppable -> undoList -> isMovingDown");
-
       for (let i = from; i < lst.length; i += 1) {
-        console.log("EndDroppable -> undoList -> isMovingDown");
-
         this.undoElmTranslate(lst, i);
       }
     } else {
-      console.log("EndDroppable -> undoList -> isMovingUp");
-
       /**
        * If from is zero, means dragged left, and all siblings are lifted up.
        */
@@ -59,14 +52,11 @@ class EndDroppable extends Droppable {
 
     lst.splice(this.spliceAt, 1);
     lst.splice(from, 0, draggedID);
-
-    console.log("EndDroppable -> undoList -> after", lst);
   }
 
   endDragging() {
     this.draggable.endDragging(this.isDraggedOutPosition, this.topDifference);
 
-    console.log(this.draggable[ACTIVE_PARENT].id);
     if (this.isDraggedOutPosition) {
       const {
         keys: { chK },
