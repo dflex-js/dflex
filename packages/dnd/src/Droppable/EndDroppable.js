@@ -15,7 +15,7 @@ class EndDroppable extends Droppable {
        * Note: rolling back won't affect order array. It only deals with element
        * itself and totally ignore any instance related to store.
        */
-      element.rollYBack();
+      element.rollYBack(this.draggable.dragID);
       this.draggable.numberOfElementsTransformed -= 1;
     } else {
       this.spliceAt = i;
@@ -30,38 +30,43 @@ class EndDroppable extends Droppable {
    * @memberof EndDroppable
    */
   undoList(lst) {
-    console.log("EndDroppable -> undoList -> lst", lst);
+    console.log("EndDroppable -> undoList -> before", lst);
     const {
       order: { self: from },
       id: draggedID,
     } = this.draggable[DRAGGED_ELM];
 
-    if (this.draggable.isMovingDown) {
+    if (this.isListLocked || this.draggable.isMovingDown) {
+      console.log("EndDroppable -> undoList -> isMovingDown");
+
       for (let i = from; i < lst.length; i += 1) {
-        if (this.draggable.numberOfElementsTransformed === 0) break;
+        console.log("EndDroppable -> undoList -> isMovingDown");
 
         this.undoElmTranslate(lst, i);
       }
     } else {
+      console.log("EndDroppable -> undoList -> isMovingUp");
+
       /**
        * If from is zero, means dragged left, and all siblings are lifted up.
        */
       const actualFrom = from === 0 ? lst.length - 1 : from;
 
       for (let i = actualFrom; i >= 0; i -= 1) {
-        if (this.draggable.numberOfElementsTransformed === 0) break;
-
         this.undoElmTranslate(lst, i);
       }
     }
 
     lst.splice(this.spliceAt, 1);
     lst.splice(from, 0, draggedID);
+
+    console.log("EndDroppable -> undoList -> after", lst);
   }
 
   endDragging() {
     this.draggable.endDragging(this.isDraggedOutPosition, this.topDifference);
 
+    console.log(this.draggable[ACTIVE_PARENT].id);
     if (this.isDraggedOutPosition) {
       const {
         keys: { chK },

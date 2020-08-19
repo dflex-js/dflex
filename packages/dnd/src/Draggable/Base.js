@@ -1,6 +1,6 @@
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 import AbstractDraggable from "@dflex/draggable/src/AbstractDraggable";
-// import store from "../DnDStore";
+import store from "../DnDStore";
 
 import { ACTIVE_PARENT } from "../../constants.json";
 
@@ -57,6 +57,8 @@ class Base extends AbstractDraggable {
     this.setIsSingleton(siblings);
 
     this.setIsOrphan(parent);
+
+    this.dragID = store.tracker.newTravel();
   }
 
   /**

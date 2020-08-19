@@ -1,5 +1,6 @@
 import Generator from "@dflex/dom-gen/src";
 import AbstractStore from "./AbstractStore";
+import Tracker from "./Tracker";
 
 /**
  * Store class contains all dnd elements and their orders.
@@ -11,6 +12,8 @@ class Store {
   constructor() {
     this.abstractStore = new AbstractStore();
     this.DOMGen = new Generator();
+
+    this.tracker = new Tracker();
   }
 
   /**

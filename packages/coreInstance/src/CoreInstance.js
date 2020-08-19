@@ -141,23 +141,28 @@ class CoreInstance extends AbstractCoreInstance {
     if (isShuffle) order[oldIndex] = null;
   }
 
-  seTranslate(topSpace, isMovingNew) {
+  seTranslate(topSpace, isMovingNew, operationID) {
     this.currentTop += topSpace;
 
-    if (isMovingNew) this.prevTranslateY.push(this.translateY);
+    if (isMovingNew)
+      this.prevTranslateY.push({
+        ID: operationID,
+        translateY: this.translateY,
+      });
 
     this.translateY += topSpace;
 
     this.element.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
 
-    if (!isMovingNew) {
-      console.log(
-        "CoreInstance -> seTranslate -> this.prevTranslateY",
-        this.id,
-        // this.prevTranslateY,
-        this.translateY
-      );
-    }
+    // if (!isMovingNew) {
+    console.log(
+      "CoreInstance -> seTranslate -> this.prevTranslateY",
+      this.id,
+      // this.prevTranslateY,
+      this.translateY,
+      this.prevTranslateY
+    );
+    // }
   }
 
   /**
@@ -180,9 +185,16 @@ class CoreInstance extends AbstractCoreInstance {
    * @param {boolean} [isShuffle=true]
    * @memberof CoreInstance
    */
-  setYPosition(iDsInOrder, sign, topSpace, vIncrement = 1, isShuffle = true) {
+  setYPosition(
+    iDsInOrder,
+    sign,
+    topSpace,
+    vIncrement = 1,
+    isShuffle = true,
+    operationID
+  ) {
     console.log("CoreInstance -> setYPosition -> vIncrement", vIncrement);
-    this.seTranslate(sign * topSpace, true);
+    this.seTranslate(sign * topSpace, true, operationID);
 
     this.updateIDsOrder(iDsInOrder, sign * vIncrement, isShuffle);
 
@@ -195,8 +207,16 @@ class CoreInstance extends AbstractCoreInstance {
    * @param {Array} iDsInOrder - Array that holds new ids order.
    * @memberof CoreInstance
    */
-  rollYBack() {
-    const topSpace = this.prevTranslateY.pop() - this.translateY;
+  rollYBack(operationID) {
+    if (
+      this.prevTranslateY.length === 0 ||
+      this.prevTranslateY[this.prevTranslateY.length - 1].ID !== operationID
+    ) {
+      console.log("ops", this.id, operationID);
+      return;
+    }
+
+    const topSpace = this.prevTranslateY.pop().translateY - this.translateY;
 
     const increment = topSpace > 0 ? 1 : -1;
     // console.log("CoreInstance -> rollYBack -> topSpace", increment, topSpace);
