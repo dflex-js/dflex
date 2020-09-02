@@ -51,7 +51,7 @@ const GitHubNav = () => (
   </div>
 );
 
-const style = {
+const menuLinkCSS = {
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
@@ -68,7 +68,7 @@ const style = {
   },
 
   [media.size("xsmall")]: {
-    paddingLeft: 8,
+    paddingLeft: 22,
     paddingRight: 8,
   },
 
@@ -90,7 +90,7 @@ const style = {
 
 const MenuLink = ({ name, to }) => {
   return (
-    <Link css={style} to={to}>
+    <Link css={menuLinkCSS} to={to}>
       {name}
     </Link>
   );

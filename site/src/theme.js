@@ -5,7 +5,6 @@ const colors = {
 
   logo: "#ffff8d",
   white: "#ffffff",
-  // black: "#000000",
 };
 
 const SIZES = {
