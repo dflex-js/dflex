@@ -33,21 +33,35 @@ module.exports = {
       options: {
         pathToConfigModule: "src/typography",
         defaultLayouts: {
-          default: require.resolve("./src/components/layout.js"),
+          default: require.resolve("./src/templates/docs.js"),
         },
+        gatsbyRemarkPlugins: [
+          {
+            resolve: "gatsby-remark-images",
+            options: {
+              maxWidth: 1035,
+              sizeByPixelDensity: true,
+            },
+          },
+          {
+            resolve: "gatsby-remark-copy-linked-files",
+          },
+        ],
         extensions: [`.mdx`, `.md`],
       },
     },
+    // {
+    //   resolve: `gatsby-plugin-page-creator`,
+    //   options: {
+    //     path: `${__dirname}/src/pages`,
+    //   },
+    // },
     {
-      resolve: `gatsby-plugin-page-creator`,
-      options: {
-        path: `${__dirname}/src/pages`,
-      },
-    },
-    {
-      resolve: `gatsby-plugin-google-analytics`,
+      resolve: `gatsby-plugin-gtag`,
       options: {
         trackingId: "UA-167775444-1",
+        head: true,
+        anonymize: false,
       },
     },
 
