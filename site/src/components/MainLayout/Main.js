@@ -5,6 +5,7 @@ import Highlight, { defaultProps } from "prism-react-renderer";
 import { MDXProvider } from "@mdx-js/react";
 import codeTheme from "../../code-theme";
 import Container from "../ContainerLayout";
+import { media } from "../../theme";
 
 function pre({ children: { props } }) {
   const { className: cName, children } = props;
@@ -73,7 +74,12 @@ function Main({ children }) {
           margin: `0 auto`,
           marginTop: "95",
           width: "65%",
+
           padding: `0 1.0875rem 1.45rem`,
+
+          [media.lessThan("large")]: {
+            width: "100%",
+          },
         }}
       >
         <MDXProvider components={components}>{children}</MDXProvider>
