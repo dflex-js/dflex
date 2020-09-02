@@ -6,8 +6,15 @@ module.exports = {
     author: `Jalal Maskoun`,
   },
   plugins: [
-    `gatsby-transformer-sharp`,
+    `gatsby-plugin-sitemap`,
     `gatsby-plugin-sharp`,
+    {
+      resolve: "gatsby-source-filesystem",
+      options: {
+        name: "docs",
+        path: `${__dirname}/content/`,
+      },
+    },
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
