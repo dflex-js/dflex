@@ -3,14 +3,14 @@ import React from "react";
 import Header from "../LayoutHeader";
 import Footer from "../LayoutFooter";
 
-// import Main from "../MainLayout";
-
 import Flex from "../Flex";
 
-import "./layout.css";
+// import Main from "../MainLayout";
+// import "./layout.css";
+
 import { media } from "../../theme";
 
-const Layout = ({ children }) => {
+const Layout = ({ children, location }) => {
   return (
     <div
       css={{
@@ -19,7 +19,7 @@ const Layout = ({ children }) => {
         minHeight: "calc(100vh - 40px)",
       }}
     >
-      <Header />
+      <Header location={location} />
       <Flex
         direction="column"
         justifyContent="stretch"
