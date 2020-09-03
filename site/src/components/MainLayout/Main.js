@@ -4,7 +4,7 @@ import React from "react";
 import Highlight, { defaultProps } from "prism-react-renderer";
 import { MDXProvider } from "@mdx-js/react";
 import codeTheme from "../../code-theme";
-import Container from "../ContainerLayout";
+import Container from "../Container";
 import { media } from "../../theme";
 
 function pre({ children: { props } }) {

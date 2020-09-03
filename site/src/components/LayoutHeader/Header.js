@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "gatsby";
 import { colors, media } from "../../theme";
-import ContainerLayout from "../ContainerLayout";
+import ContainerLayout from "../Container";
 import menuLinks from "./content";
 import ExternalLinkSvg from "./ExternalLinkSvg";
 

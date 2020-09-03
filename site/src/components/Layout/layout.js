@@ -1,7 +1,7 @@
 import React from "react";
 
-import Header from "./LayoutHeader";
-import Main from "./MainLayout";
+import Header from "../LayoutHeader";
+import Main from "../MainLayout";
 
 import "./layout.css";
 
