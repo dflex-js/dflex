@@ -15,7 +15,7 @@ const activeAfterStyle = {
   },
 };
 
-const menuLinkCSS = {
+const style = {
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
@@ -24,7 +24,7 @@ const menuLinkCSS = {
   paddingLeft: 15,
   paddingRight: 15,
   fontWeight: 300,
-  textDecoration: "none",
+
   ":focus": {
     outline: 0,
     backgroundColor: colors.light,
@@ -32,7 +32,7 @@ const menuLinkCSS = {
   },
 
   [media.size("xsmall")]: {
-    paddingLeft: 22,
+    paddingLeft: 8,
     paddingRight: 8,
   },
 
@@ -52,9 +52,17 @@ const menuLinkCSS = {
   },
 };
 
+const activeStyle = {
+  color: colors.brand,
+
+  [media.greaterThan("small")]: {
+    position: "relative",
+  },
+};
+
 const MenuLink = ({ name, to, isActive }) => {
   return (
-    <Link css={menuLinkCSS} to={to}>
+    <Link css={[style, isActive && activeStyle]} to={to}>
       {name}
       {isActive && <span css={activeAfterStyle} />}
     </Link>

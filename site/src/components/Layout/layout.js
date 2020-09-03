@@ -10,7 +10,7 @@ import Flex from "../Flex";
 
 import { media } from "../../theme";
 
-const Layout = ({ children, location }) => {
+const Layout = ({ children, location = {} }) => {
   return (
     <div
       css={{

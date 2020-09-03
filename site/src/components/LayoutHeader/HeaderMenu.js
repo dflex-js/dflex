@@ -42,7 +42,7 @@ const Nav = ({ location }) => (
         key={name}
         name={name}
         to={to}
-        isActive={location.pathname.includes(to.activeSelector)}
+        isActive={false && location.pathname.includes(to.activeSelector)}
       />
     ))}
   </nav>

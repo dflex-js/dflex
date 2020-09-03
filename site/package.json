@@ -21,6 +21,7 @@
     "gatsby-remark-images": "^3.3.28",
     "gatsby-source-filesystem": "^2.3.4",
     "glamor": "^2.20.40",
+    "normalize.css": "^8.0.1",
     "prism-react-renderer": "^1.1.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
