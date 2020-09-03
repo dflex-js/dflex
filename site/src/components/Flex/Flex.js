@@ -9,6 +9,7 @@ function Flex({
   basis = "auto",
   justifyContent = "flex-start",
   alignItems = "flex-start",
+  ...rest
 }) {
   return (
     <Component
@@ -21,6 +22,7 @@ function Flex({
         justifyContent,
         alignItems,
       }}
+      {...rest}
     >
       {children}
     </Component>
