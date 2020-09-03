@@ -1,3 +1,5 @@
+const path = require("path");
+
 module.exports = {
   pathPrefix: "/dflex",
   siteMetadata: {
@@ -14,6 +16,12 @@ module.exports = {
       options: {
         name: "docs",
         path: `${__dirname}/content/`,
+      },
+    },
+    {
+      resolve: `gatsby-plugin-alias-imports`,
+      options: {
+        alias: { config: path.resolve(__dirname, "config.js") },
       },
     },
     {
