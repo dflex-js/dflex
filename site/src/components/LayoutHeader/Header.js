@@ -3,7 +3,7 @@ import { Link } from "gatsby";
 
 import { colors, media } from "../../theme";
 
-import ContainerLayout from "../Container";
+import Container from "../Container";
 import ExternalLinkSvg from "../ExternalLinkSvg";
 import Nav from "./HeaderMenu";
 
@@ -120,7 +120,7 @@ const Header = ({ location }) => (
       },
     }}
   >
-    <ContainerLayout>
+    <Container>
       <div
         css={{
           display: "flex",
@@ -139,7 +139,7 @@ const Header = ({ location }) => (
         <Nav location={location} />
         <GitHubNav />
       </div>
-    </ContainerLayout>
+    </Container>
   </header>
 );
 
