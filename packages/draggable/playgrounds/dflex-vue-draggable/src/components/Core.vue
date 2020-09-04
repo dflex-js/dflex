@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { store } from "@dflex/draggable";
+import { store } from "@dflex/draggable/src";
 
 export default {
   props: {
