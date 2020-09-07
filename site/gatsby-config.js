@@ -40,10 +40,6 @@ module.exports = {
     {
       resolve: "gatsby-plugin-mdx",
       options: {
-        pathToConfigModule: "src/typography",
-        defaultLayouts: {
-          default: require.resolve("./src/templates/docs.js"),
-        },
         gatsbyRemarkPlugins: [
           {
             resolve: "gatsby-remark-images",
@@ -55,16 +51,17 @@ module.exports = {
           {
             resolve: "gatsby-remark-copy-linked-files",
           },
+          {
+            resolve: "gatsby-remark-prismjs",
+            options: {
+              classPrefix: "gatsby-code-",
+            },
+          },
         ],
         extensions: [`.mdx`, `.md`],
       },
     },
-    // {
-    //   resolve: `gatsby-plugin-page-creator`,
-    //   options: {
-    //     path: `${__dirname}/src/pages`,
-    //   },
-    // },
+
     {
       resolve: `gatsby-plugin-gtag`,
       options: {
@@ -73,9 +70,5 @@ module.exports = {
         anonymize: false,
       },
     },
-
-    // this (optional) plugin enables Progressive Web App + Offline functionality
-    // To learn more, visit: https://gatsby.dev/offline
-    // `gatsby-plugin-offline`,
   ],
 };

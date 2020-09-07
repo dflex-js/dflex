@@ -1,3 +1,11 @@
+---
+id: Overview
+title: Overview FAQ
+permalink: Overview/v-faq2.html
+prev: hooks-store.html
+next: code-splitting.html
+---
+
 # Overview
 
 **DFlex** is a JavaScript ambitious project to manipulate DOM Elements. It

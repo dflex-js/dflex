@@ -5,12 +5,9 @@ import Footer from "../LayoutFooter";
 
 import Flex from "../Flex";
 
-// import Main from "../MainLayout";
-// import "./layout.css";
-
 import { media } from "../../theme";
 
-const Layout = ({ children, location = {} }) => {
+const Layout = ({ children, location }) => {
   return (
     <div
       css={{

@@ -1,8 +1,8 @@
 ---
-id: store
-title: store FAQ
-permalink: docs/v-faq2.html
-prev: hooks-store.html
+id: example
+title: Hooks FAQ
+permalink: docs/hooks-faq2.html
+prev: hooks-reference.html
 next: code-splitting.html
 ---
 

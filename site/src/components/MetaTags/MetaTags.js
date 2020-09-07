@@ -14,7 +14,7 @@ function MetaTags({
   ogDescription = defaultDescription,
 }) {
   return (
-    <Helmet>
+    <Helmet title={title}>
       <meta name="title" content={title} />
       <meta property="og:title" content={title} />
       <meta property="og:type" content={ogType} />
