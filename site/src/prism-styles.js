@@ -1,7 +1,8 @@
 import { css } from "glamor";
-import { colors } from "./theme";
 
 const prismColors = {
+  background: "#282c34",
+  white: "#ffffff",
   char: "#D8DEE9",
   comment: "#B2B2B2",
   keyword: "#c5a5c5",
@@ -19,8 +20,8 @@ const prismColors = {
 };
 
 css.global(".gatsby-highlight", {
-  background: colors.dark,
-  color: colors.white,
+  background: prismColors.background,
+  color: prismColors.white,
   borderRadius: 10,
   overflow: "auto",
   tabSize: "1.5em",
