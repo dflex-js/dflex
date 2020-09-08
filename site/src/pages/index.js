@@ -1,6 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 import React from "react";
-import { graphql } from "gatsby";
+import { graphql, Link } from "gatsby";
 import MDXRenderer from "gatsby-plugin-mdx/mdx-renderer";
 import Layout from "../components/Layout";
 import MetaTags from "../components/MetaTags/MetaTags";
@@ -11,6 +11,7 @@ import { siteMetadata } from "../../config";
 import { colors, media, sharedStyles } from "../theme";
 
 import Container from "../components/Container";
+import ExternalLinkSvg from "../components/ExternalLinkSvg";
 
 const { title, description } = siteMetadata;
 
@@ -49,8 +50,8 @@ function HomeHeader() {
           },
 
           [media.greaterThan("xlarge")]: {
-            paddingTop: 95,
-            paddingBottom: 85,
+            // paddingTop: 95,
+            // paddingBottom: 85,
             maxWidth: 1500, // Positioning of background logo
             marginLeft: "auto",
             marginRight: "auto",
@@ -125,8 +126,7 @@ function HomeHeader() {
   );
 }
 
-function HomeContent({ allMdx }) {
-  console.log("HomeContent -> allMdx", allMdx);
+function HomeContent2({ allMdx }) {
   return (
     <Container>
       <div css={sharedStyles.markdown}>
@@ -191,8 +191,12 @@ function HomeContent({ allMdx }) {
                     },
                   }}
                 >
-                  <h3
+                  <Link
                     css={[
+                      {
+                        background: "none !important",
+                        borderBottom: "none !important",
+                      },
                       headingStyles,
                       {
                         "&&": {
@@ -208,10 +212,20 @@ function HomeContent({ allMdx }) {
                         },
                       },
                     ]}
+                    to={frontmatter.next}
                   >
                     {frontmatter.title}
-                  </h3>
-                  <MDXRenderer>{body}</MDXRenderer>
+                    <ExternalLinkSvg
+                      cssProps={{
+                        marginLeft: 5,
+                        verticalAlign: -2,
+                        color: colors.primary,
+                      }}
+                    />
+                  </Link>
+                  <div>
+                    <MDXRenderer>{body}</MDXRenderer>
+                  </div>
                 </div>
               );
             })}
@@ -235,7 +249,7 @@ function Home({ data, location }) {
         }}
       >
         <HomeHeader />
-        <HomeContent allMdx={data.allMdx} />
+        <HomeContent2 allMdx={data.allMdx} />
       </div>
     </Layout>
   );
@@ -251,6 +265,7 @@ export const pageQuery = graphql`
             body
             frontmatter {
               title
+              next
             }
           }
         }
