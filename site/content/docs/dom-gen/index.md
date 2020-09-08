@@ -1,7 +1,7 @@
 ---
 id: hooks-faq
 title: Hooks FAQ
-permalink: docs/hooks-faq.html
+# permalink: docs/hooks-faq.html
 prev: hooks-reference.html
 next: code-splitting.html
 ---
