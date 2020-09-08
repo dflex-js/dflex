@@ -135,7 +135,7 @@ const Header = ({ location }) => (
           },
         }}
       >
-        <Logo />
+        {location.pathname !== "/" && <Logo />}
         <Nav location={location} />
         <GitHubNav />
       </div>

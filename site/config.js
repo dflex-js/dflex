@@ -4,7 +4,7 @@ const config = {
 
   siteMetadata: {
     title: `DFlex`,
-    description: "A JavaScript ambitious project to manipulate DOM elements",
+    description: "A JavaScript Ambitious Project to Manipulate DOM Elements",
     docsLocation: null,
     author: `Jalal Maskoun`,
     ogImage: null,

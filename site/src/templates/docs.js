@@ -19,8 +19,8 @@ const Docs = ({ data, location }) => {
   );
 };
 
-export const query = graphql`
-  query($slug: String!) {
+export const pageQuery = graphql`
+  query TemplateDocsMdx($slug: String!) {
     mdx(fields: { slug: { eq: $slug } }) {
       body
       frontmatter {
