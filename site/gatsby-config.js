@@ -1,11 +1,13 @@
 const path = require("path");
+const config = require("./config");
 
 module.exports = {
-  pathPrefix: "/dflex",
+  pathPrefix: config.gatsby.pathPrefix,
   siteMetadata: {
-    title: `DFlex`,
-    description: "A JavaScript ambitious project to manipulate DOM elements",
-    author: `Jalal Maskoun`,
+    title: config.siteMetadata.title,
+    description: config.siteMetadata.description,
+    author: config.siteMetadata.author,
+    siteUrl: config.siteUrl,
   },
   plugins: [
     `gatsby-plugin-sitemap`,

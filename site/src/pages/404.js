@@ -7,8 +7,8 @@ import { sharedStyles } from "../theme";
 import Header from "../components/LayoutHeader";
 import MetaTags from "../components/MetaTags/MetaTags";
 
-const NotFoundPage = () => (
-  <Layout>
+const NotFoundPage = ({ location }) => (
+  <Layout location={location}>
     <Container>
       <div css={sharedStyles.articleLayout.container}>
         <div css={sharedStyles.articleLayout.content}>

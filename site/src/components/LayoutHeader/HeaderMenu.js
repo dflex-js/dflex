@@ -40,13 +40,13 @@ const hide = {
 };
 
 const Nav = ({ location }) => (
-  <nav css={[navStyle, location.pathname === "/" && hide]}>
+  <nav css={[navStyle, location && location.pathname === "/" && hide]}>
     {menuLinks.map(({ name, to }) => (
       <MenuLink
         key={name}
         name={name}
         to={to}
-        isActive={false && location.pathname.includes(to.activeSelector)}
+        isActive={location && location.pathname.includes(to.activeSelector)}
       />
     ))}
   </nav>
