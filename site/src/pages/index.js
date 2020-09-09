@@ -3,7 +3,7 @@ import React from "react";
 import { graphql, Link } from "gatsby";
 import MDXRenderer from "gatsby-plugin-mdx/mdx-renderer";
 import Layout from "../components/Layout";
-import MetaTags from "../components/MetaTags/MetaTags";
+import MetaTags from "../components/MetaTags";
 
 import createCanonicalUrl from "../utils/createCanonicalUrl";
 
@@ -126,7 +126,7 @@ function HomeHeader() {
   );
 }
 
-function HomeContent2({ allMdx }) {
+function HomeContent({ allMdx }) {
   return (
     <Container>
       <div css={sharedStyles.markdown}>
@@ -237,6 +237,7 @@ function HomeContent2({ allMdx }) {
 }
 
 function Home({ data, location }) {
+  const { allMdx } = data;
   return (
     <Layout location={location}>
       <MetaTags
@@ -249,7 +250,7 @@ function Home({ data, location }) {
         }}
       >
         <HomeHeader />
-        <HomeContent2 allMdx={data.allMdx} />
+        <HomeContent allMdx={allMdx} />
       </div>
     </Layout>
   );
