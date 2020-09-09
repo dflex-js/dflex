@@ -1,4 +1,3 @@
-const path = require("path");
 const config = require("./config");
 
 module.exports = {
@@ -25,12 +24,6 @@ module.exports = {
       options: {
         name: "content",
         path: `${__dirname}/content/`,
-      },
-    },
-    {
-      resolve: `gatsby-plugin-alias-imports`,
-      options: {
-        alias: { config: path.resolve(__dirname, "config.js") },
       },
     },
     {
@@ -74,7 +67,7 @@ module.exports = {
     {
       resolve: `gatsby-plugin-gtag`,
       options: {
-        trackingId: "UA-167775444-1",
+        trackingId: config.trackingId,
         head: true,
         anonymize: false,
       },

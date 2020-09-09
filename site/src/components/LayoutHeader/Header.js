@@ -7,6 +7,8 @@ import Container from "../Container";
 import ExternalLinkSvg from "../ExternalLinkSvg";
 import Nav from "./HeaderMenu";
 
+import { gatsby } from "../../../config";
+
 const GitHubNav = () => (
   <div
     css={{
@@ -108,6 +110,7 @@ const Logo = () => (
 const Header = ({ location }) => (
   <header
     css={{
+      fontFamily: "georgia, serif",
       backgroundColor: colors.dark,
       color: colors.white,
       position: "fixed",
@@ -135,7 +138,7 @@ const Header = ({ location }) => (
           },
         }}
       >
-        {location && location.pathname !== "/" && <Logo />}
+        {location && location.pathname !== `${gatsby.pathPrefix}/` && <Logo />}
         <Nav location={location} />
         <GitHubNav />
       </div>
