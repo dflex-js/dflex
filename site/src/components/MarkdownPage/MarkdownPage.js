@@ -10,9 +10,13 @@ import MetaTags from "../MetaTags";
 import MarkdownHeader from "../MarkdownHeader";
 
 import { sharedStyles } from "../../theme";
+import Sidebar from "../Sidebar";
 
 function MarkdownPage({
   ogDescription,
+  location,
+  sectionList,
+  createLink,
   mdx: { frontmatter, fields, body },
   titlePostfix = "",
 }) {
@@ -49,6 +53,14 @@ function MarkdownPage({
                 </div>
               </div>
             </Flex>
+
+            <div css={sharedStyles.articleLayout.sidebar}>
+              <Sidebar
+                location={location}
+                sectionList={sectionList}
+                createLink={createLink}
+              />
+            </div>
           </div>
         </Container>
       </div>

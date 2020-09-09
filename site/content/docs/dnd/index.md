@@ -1,22 +1,19 @@
 ---
-id: store
 title: DFlex DnD
 permalink: docs/dnd/index.html
 prev: /
-next: code-splitting.html
+next: /
 ---
 
-> A Simple, lightweight Solution for a Drag & Drop App
+DFlex DnD is a simple, lightweight Solution for a Drag & Drop App.
+
+### Installation
 
 ```bash
 npm install @dflex/dnd
 ```
 
-## Why Accessibility? {#why-accessibility}
-
-<p align="center">
-    <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dnd/public/dnd.gif" alt="show how drag and drop works" />
-</p>
+### Usage
 
 DFlex DnD is written in pure JavaScript and can be used with different frameworks
 whether it is React, Vue, Angular, etc.
@@ -25,10 +22,14 @@ It depends on animation, tracks each droppable area which makes the whole
 process runs smoothly as much as possible.
 
 <p align="center">
+    <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dnd/public/dnd.gif" alt="show how drag and drop works" />
+</p>
+
+<p align="center">
     <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dnd/public/dnd.png" alt="show drag and drop performance" />
 </p>
 
-## Three Steps
+### Three Steps
 
 You can achieve a drag and drop with three steps only (register, start, end)
 

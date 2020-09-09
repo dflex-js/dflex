@@ -1,18 +1,17 @@
 ---
-id: hooks-faq
-title: Hooks FAQ
-# permalink: docs/hooks-faq.html
-prev: hooks-reference.html
-next: code-splitting.html
+title: DOM Relations Generator Algorithm
+permalink: docs/dom-gen/index.html
+prev: /
+next: /
 ---
 
-# @dflex/dom-gen
-
-DOM relations generator algorithm.
+## Installation
 
 ```bash
 npm install @dflex/dom-gen
 ```
+
+## How it works
 
 Generates relations between DOM elements based on element depth. For each DOM
 node, it generates three keys: Siblings, Parent and Children keys and two

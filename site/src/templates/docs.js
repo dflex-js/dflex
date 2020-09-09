@@ -14,7 +14,12 @@ const Docs = ({ data, location }) => {
 
   return (
     <Layout location={location}>
-      <MarkdownPage mdx={mdx} />
+      <MarkdownPage
+        mdx={mdx}
+        location={location}
+        createLink={() => {}}
+        sectionList={[]}
+      />
     </Layout>
   );
 };
