@@ -1,9 +1,11 @@
 import React from "react";
 import { Link } from "gatsby";
+
 import { colors, media } from "../../theme";
-import ContainerLayout from "../ContainerLayout";
-import menuLinks from "./content";
-import ExternalLinkSvg from "./ExternalLinkSvg";
+
+import Container from "../Container";
+import ExternalLinkSvg from "../ExternalLinkSvg";
+import Nav from "./HeaderMenu";
 
 const GitHubNav = () => (
   <div
@@ -49,90 +51,6 @@ const GitHubNav = () => (
       />
     </a>
   </div>
-);
-
-const style = {
-  display: "flex",
-  flexDirection: "row",
-  alignItems: "center",
-  color: colors.white,
-  transition: "color 0.2s ease-out",
-  paddingLeft: 15,
-  paddingRight: 15,
-  fontWeight: 300,
-  textDecoration: "none",
-  ":focus": {
-    outline: 0,
-    backgroundColor: colors.light,
-    color: colors.white,
-  },
-
-  [media.size("xsmall")]: {
-    paddingLeft: 8,
-    paddingRight: 8,
-  },
-
-  [media.between("small", "medium")]: {
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
-
-  [media.greaterThan("xlarge")]: {
-    paddingLeft: 20,
-    paddingRight: 20,
-    fontSize: 18,
-
-    ":hover:not(:focus)": {
-      color: colors.logo,
-    },
-  },
-};
-
-const MenuLink = ({ name, to }) => {
-  return (
-    <Link css={style} to={to}>
-      {name}
-    </Link>
-  );
-};
-
-const Nav = () => (
-  <nav
-    css={{
-      flex: "1",
-      display: "flex",
-      flexDirection: "row",
-      alignItems: "stretch",
-      overflowX: "auto",
-      overflowY: "hidden",
-      WebkitOverflowScrolling: "touch",
-      height: "100%",
-      opacity: "95%",
-
-      // Hide horizontal scrollbar
-      scrollbarWidth: "none",
-      msOverflowStyle: "none",
-      "::-webkit-scrollbar": {
-        display: "none",
-      },
-
-      [media.size("xsmall")]: {
-        flexGrow: "1",
-        width: "auto",
-      },
-      [media.greaterThan("xlarge")]: {
-        width: null,
-      },
-      [media.lessThan("small")]: {
-        maskImage:
-          "linear-gradient(to right, transparent, black 20px, black 90%, transparent)",
-      },
-    }}
-  >
-    {menuLinks.map(({ name, to }) => (
-      <MenuLink key={name} name={name} to={to} />
-    ))}
-  </nav>
 );
 
 const Logo = () => (
@@ -187,7 +105,7 @@ const Logo = () => (
   </Link>
 );
 
-const Header = () => (
+const Header = ({ location }) => (
   <header
     css={{
       backgroundColor: colors.dark,
@@ -202,7 +120,7 @@ const Header = () => (
       },
     }}
   >
-    <ContainerLayout>
+    <Container>
       <div
         css={{
           display: "flex",
@@ -217,11 +135,11 @@ const Header = () => (
           },
         }}
       >
-        <Logo />
-        <Nav />
+        {location.pathname !== "/" && <Logo />}
+        <Nav location={location} />
         <GitHubNav />
       </div>
-    </ContainerLayout>
+    </Container>
   </header>
 );
 
