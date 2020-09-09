@@ -108,6 +108,7 @@ const Logo = () => (
 const Header = ({ location }) => (
   <header
     css={{
+      fontFamily: "georgia, serif",
       backgroundColor: colors.dark,
       color: colors.white,
       position: "fixed",

@@ -35,6 +35,7 @@ function HomeHeader() {
   return (
     <header
       css={{
+        fontFamily: "georgia, serif",
         backgroundColor: colors.dark,
         color: colors.white,
       }}
