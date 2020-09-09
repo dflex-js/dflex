@@ -6,10 +6,6 @@ import Layout from "../components/Layout";
 import MarkdownPage from "../components/MarkdownPage";
 
 const Docs = ({ data, location }) => {
-  if (!data) {
-    return null;
-  }
-
   const { mdx } = data;
 
   return (
