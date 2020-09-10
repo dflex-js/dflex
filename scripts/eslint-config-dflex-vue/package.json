@@ -1,0 +1,9 @@
+{
+  "name": "eslint-config-dflex-vue",
+  "version": "0.1.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "eslint-plugin-vue": "^6.2.2"
+  }
+}
