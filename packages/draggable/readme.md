@@ -51,8 +51,9 @@ draggable.endDragging();
 
 #### Examples
 
-You can see full React template
-[here](https://github.com/jalal246/dflex-react-draggable-starter).
+- [Full React example](https://github.com/jalal246/dflex/tree/master/packages/draggable/playgrounds/dflex-react-draggable)
+
+- [Full Vue example](https://github.com/jalal246/dflex/tree/master/packages/draggable/playgrounds/dflex-vue-draggable)
 
 Contributes feel free to apply PR for another frameworks.
 
