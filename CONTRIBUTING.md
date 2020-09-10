@@ -11,7 +11,7 @@
 
 ## Running Tests
 
-- `yarn test` runs the tests in each package available in workspace.
+- `yarn test` to run the tests in each package available in workspace.
 
 ## Dealing with packages
 
