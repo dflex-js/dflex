@@ -20,7 +20,7 @@ export default {
     // Register element in store
     store.register({ id: this.id, element: this.$refs[this.id] });
   },
-}
+};
 </script>
 
 <style>

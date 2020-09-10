@@ -1,5 +1,5 @@
 <template>
-  <li :id="id" :ref="id"> {{content}} </li>
+  <li :id="id" :ref="id">{{content}}</li>
 </template>
 
 <script>
@@ -12,14 +12,14 @@ export default {
       required: true,
       default: Math.random().toString(),
     },
-    content: {}
+    content: {},
   },
 
   mounted() {
     // Register element in store
     store.register({ id: this.id, element: this.$refs[this.id] });
   },
-}
+};
 </script>
 
 <style scoped>
