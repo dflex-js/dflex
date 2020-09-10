@@ -10,3 +10,5 @@ samples
 
 cypress/screenshots
 cypress/videos
+
+packages/draggable/playgrounds/dflex-vue-draggable/node_modules
