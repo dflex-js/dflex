@@ -214,9 +214,6 @@ class Droppable {
       /**
        * If leaving and parent locked, do nothing.
        */
-      if (this.isListLocked) {
-        return;
-      }
 
       // move element up
       this.draggable.setEffectedElemDirection(true);
@@ -231,6 +228,7 @@ class Droppable {
     }
 
     if (!this.isListLocked) {
+      console.log("i am here! isListLocked");
       /**
        * normal movement inside the parent
        */
@@ -244,6 +242,8 @@ class Droppable {
        * Going out from the list: Right/left.
        */
       if (this.draggable.isOutHorizontal) {
+        console.log("in here! isOutHorizontal");
+
         // move element up
         this.draggable.setEffectedElemDirection(true);
 
@@ -312,6 +312,7 @@ class Droppable {
 
     if (this.isDraggedOutPosition) {
       if (!this.isListLocked) {
+        console.log("locking");
         this.draggedOutPosition(y);
 
         return;
@@ -324,10 +325,13 @@ class Droppable {
 
         if (isOutParent) return;
 
+        console.log("comming in-1");
         this.draggedIsComingIn();
 
         return;
       }
+
+      console.log("ignore");
 
       // if (!isOutParent) this.draggedIsComingIn();
 
@@ -338,6 +342,7 @@ class Droppable {
      * When dragged is out parent and returning to it.
      */
     if (this.isListLocked) {
+      console.log("comming in-2");
       this.draggedIsComingIn();
     }
   }
