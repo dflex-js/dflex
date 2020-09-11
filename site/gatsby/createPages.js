@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const { resolve } = require("path");
 
 async function createPages({ graphql, actions }) {
