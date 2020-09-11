@@ -208,9 +208,7 @@ class Droppable {
      */
     this.draggable.setDraggedMovingDown(y);
 
-    const isLeavingFromTop = this.draggable.isDraggedLeavingFromTop();
-
-    if (isLeavingFromTop) {
+    if (this.draggable.isDraggedLeavingFromTop()) {
       /**
        * If leaving and parent locked, do nothing.
        */
@@ -220,9 +218,19 @@ class Droppable {
 
       // lock the parent
       this.isListLocked = true;
-      this.isLeftFromTop = true;
 
       this.liftUp("movePositionIfEligibleID");
+
+      return;
+    }
+
+    if (this.draggable.isDraggedLeavingFromEnd()) {
+      console.log(
+        "Droppable -> draggedOutPosition -> isLeavingFromEnd",
+        this.isLeavingFromEnd
+      );
+
+      this.isListLocked = true;
 
       return;
     }
@@ -254,6 +262,8 @@ class Droppable {
 
         return;
       }
+
+      console.log("normal, switch");
 
       // inside the list, effected should be related to mouse movement
       this.draggable.setEffectedElemDirection(this.draggable.isMovingDown);
@@ -308,8 +318,6 @@ class Droppable {
 
     this.isDraggedOutPosition = this.draggable.isDraggedOut();
 
-    let isOutParent = false;
-
     if (this.isDraggedOutPosition) {
       if (!this.isListLocked) {
         console.log("locking");
@@ -318,13 +326,7 @@ class Droppable {
         return;
       }
 
-      if (!this.isLeftFromTop && !this.draggable.isOrphan) {
-        const { id: parenID } = this.draggable[ACTIVE_PARENT];
-
-        isOutParent = this.draggable.isDraggedOut(parenID);
-
-        if (isOutParent) return;
-
+      if (this.draggable.isDraggedInsideList()) {
         console.log("comming in-1");
         this.draggedIsComingIn();
 
@@ -343,7 +345,13 @@ class Droppable {
      */
     if (this.isListLocked) {
       console.log("comming in-2");
-      this.draggedIsComingIn();
+
+      if (this.draggable.isDraggedLeavingFromTop()) {
+        this.draggedIsComingIn();
+      } else {
+        this.isListLocked = false;
+        this.prevIsListLocked = true;
+      }
     }
   }
 }
