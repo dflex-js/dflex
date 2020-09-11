@@ -179,7 +179,7 @@ class Droppable {
     }
   }
 
-  movePositionIFEligibleID(i) {
+  movePositionIfEligibleID(i) {
     const id = this.draggable.siblingsList[i];
 
     if (this.isIDEligible2Move(id)) {
@@ -222,7 +222,7 @@ class Droppable {
       this.isListLocked = true;
       this.isLeftFromTop = true;
 
-      this.liftUp("movePositionIFEligibleID");
+      this.liftUp("movePositionIfEligibleID");
 
       return;
     }
@@ -250,7 +250,7 @@ class Droppable {
         // lock the parent
         this.isListLocked = true;
 
-        this.liftUp("movePositionIFEligibleID");
+        this.liftUp("movePositionIfEligibleID");
 
         return;
       }
@@ -285,7 +285,7 @@ class Droppable {
     this.isListLocked = false;
     this.prevIsListLocked = true;
 
-    this.moveDown(to, "movePositionIFEligibleID");
+    this.moveDown(to, "movePositionIfEligibleID");
 
     this.draggable.siblingsList[to] = this.draggable[DRAGGED_ELM].id;
 
