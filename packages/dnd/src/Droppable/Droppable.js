@@ -1,8 +1,6 @@
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 import store from "../DnDStore";
 
-import { ACTIVE_PARENT } from "../../constants.json";
-
 /**
  * Class includes all transformation methods related to droppable.
  *
@@ -225,18 +223,12 @@ class Droppable {
     }
 
     if (this.draggable.isDraggedLeavingFromEnd()) {
-      console.log(
-        "Droppable -> draggedOutPosition -> isLeavingFromEnd",
-        this.isLeavingFromEnd
-      );
-
       this.isListLocked = true;
 
       return;
     }
 
     if (!this.isListLocked) {
-      console.log("i am here! isListLocked");
       /**
        * normal movement inside the parent
        */
@@ -250,8 +242,6 @@ class Droppable {
        * Going out from the list: Right/left.
        */
       if (this.draggable.isOutHorizontal) {
-        console.log("in here! isOutHorizontal");
-
         // move element up
         this.draggable.setEffectedElemDirection(true);
 
@@ -263,7 +253,7 @@ class Droppable {
         return;
       }
 
-      console.log("normal, switch");
+      // console.log("normal, switch");
 
       // inside the list, effected should be related to mouse movement
       this.draggable.setEffectedElemDirection(this.draggable.isMovingDown);
@@ -320,20 +310,16 @@ class Droppable {
 
     if (this.isDraggedOutPosition) {
       if (!this.isListLocked) {
-        console.log("locking");
         this.draggedOutPosition(y);
 
         return;
       }
 
       if (this.draggable.isDraggedInsideList()) {
-        console.log("comming in-1");
         this.draggedIsComingIn();
 
         return;
       }
-
-      console.log("ignore");
 
       // if (!isOutParent) this.draggedIsComingIn();
 
@@ -344,8 +330,6 @@ class Droppable {
      * When dragged is out parent and returning to it.
      */
     if (this.isListLocked) {
-      console.log("comming in-2");
-
       if (this.draggable.isDraggedLeavingFromTop()) {
         this.draggedIsComingIn();
       } else {
