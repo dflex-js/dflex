@@ -1,10 +1,14 @@
 export default [
   {
-    name: "Generator",
-    to: "/dom-gen/",
+    name: "DOM Generator",
+    to: "/docs/dom-gen/index.html",
   },
   {
     name: "Store",
-    to: "/store/",
+    to: "/docs/store/index.html",
+  },
+  {
+    name: "DnD",
+    to: "/docs/dnd/index.html",
   },
 ];

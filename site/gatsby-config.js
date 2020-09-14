@@ -1,13 +1,31 @@
+const config = require("./config");
+
 module.exports = {
-  pathPrefix: "/dflex",
+  pathPrefix: config.gatsby.pathPrefix,
   siteMetadata: {
-    title: `DFlex`,
-    description: "A JavaScript ambitious project to manipulate DOM elements",
-    author: `Jalal Maskoun`,
+    title: config.siteMetadata.title,
+    description: config.siteMetadata.description,
+    author: config.siteMetadata.author,
+    siteUrl: config.siteUrl,
   },
   plugins: [
-    `gatsby-transformer-sharp`,
+    `gatsby-plugin-sitemap`,
     `gatsby-plugin-sharp`,
+    `gatsby-plugin-react-helmet`,
+    {
+      resolve: "gatsby-source-filesystem",
+      options: {
+        name: "pages",
+        path: `${__dirname}/src/pages`,
+      },
+    },
+    {
+      resolve: "gatsby-source-filesystem",
+      options: {
+        name: "content",
+        path: `${__dirname}/content/`,
+      },
+    },
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
@@ -24,28 +42,35 @@ module.exports = {
     {
       resolve: "gatsby-plugin-mdx",
       options: {
-        pathToConfigModule: "src/typography",
-        defaultLayouts: {
-          default: require.resolve("./src/components/layout.js"),
-        },
+        gatsbyRemarkPlugins: [
+          `gatsby-remark-external-links`,
+          `gatsby-remark-copy-linked-files`,
+          `gatsby-remark-autolink-headers`,
+          {
+            resolve: "gatsby-remark-images",
+            options: {
+              maxWidth: 1035,
+              sizeByPixelDensity: true,
+            },
+          },
+          {
+            resolve: "gatsby-remark-prismjs",
+            options: {
+              classPrefix: "gatsby-code-",
+            },
+          },
+        ],
         extensions: [`.mdx`, `.md`],
       },
     },
-    {
-      resolve: `gatsby-plugin-page-creator`,
-      options: {
-        path: `${__dirname}/src/pages`,
-      },
-    },
-    {
-      resolve: `gatsby-plugin-google-analytics`,
-      options: {
-        trackingId: "UA-167775444-1",
-      },
-    },
 
-    // this (optional) plugin enables Progressive Web App + Offline functionality
-    // To learn more, visit: https://gatsby.dev/offline
-    // `gatsby-plugin-offline`,
+    {
+      resolve: `gatsby-plugin-gtag`,
+      options: {
+        trackingId: config.trackingId,
+        head: true,
+        anonymize: false,
+      },
+    },
   ],
 };
