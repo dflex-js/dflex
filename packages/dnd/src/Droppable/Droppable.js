@@ -244,7 +244,6 @@ class Droppable {
        * Going out from the list: Right/left.
        */
       if (this.draggable.isOutHorizontal) {
-        console.log("yay i am here!");
         // move element up
         this.draggable.setEffectedElemDirection(true);
 
@@ -268,11 +267,8 @@ class Droppable {
   }
 
   unlockParent() {
-    console.log("Droppable -> unlockParent -> unlockParent");
     this.isListLocked = false;
     this.prevIsListLocked = true;
-
-    this.isOutStatusHorizontally = false;
   }
 
   draggedIsComingIn() {
@@ -295,7 +291,6 @@ class Droppable {
       this.draggable.tempIndex = to;
     }
 
-    console.log("right, this is the issue");
     this.unlockParent();
 
     this.moveDown(to, "movePositionIfEligibleID");
@@ -323,7 +318,6 @@ class Droppable {
 
     if (this.isDraggedOutPosition) {
       if (!this.isListLocked) {
-        console.log("unlocked!");
         this.draggedOutPosition(y);
 
         return;
@@ -335,7 +329,6 @@ class Droppable {
         return;
       }
 
-      console.log("ignore ");
       // if (!isOutParent) this.draggedIsComingIn();
 
       return;
@@ -350,8 +343,8 @@ class Droppable {
         this.draggable.isDraggedLeavingFromTop()
       ) {
         this.draggedIsComingIn();
+        this.isOutStatusHorizontally = false;
       } else {
-        console.log("wrong entry");
         this.unlockParent();
       }
     }
