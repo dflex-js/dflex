@@ -9,6 +9,10 @@ const Container = ({ children }) => (
       marginLeft: "auto",
       marginRight: "auto",
 
+      [media.lessThan("medium")]: {
+        width: "100%",
+      },
+
       [media.greaterThan("medium")]: {
         width: "90%",
       },

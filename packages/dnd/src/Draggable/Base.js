@@ -113,6 +113,8 @@ class Base extends AbstractDraggable {
    * @memberof Base
    */
   setThreshold(droppable, isParent) {
+    // TODO: is this necessary to assign parent?
+
     const {
       thresholdOffset: {
         vertical: { twoThirds, third },
