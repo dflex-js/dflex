@@ -262,6 +262,11 @@ class Droppable {
     }
   }
 
+  unlockParent() {
+    this.isListLocked = false;
+    this.prevIsListLocked = true;
+  }
+
   draggedIsComingIn() {
     // move element up
     this.draggable.setEffectedElemDirection(false);
@@ -282,8 +287,7 @@ class Droppable {
       this.draggable.tempIndex = to;
     }
 
-    this.isListLocked = false;
-    this.prevIsListLocked = true;
+    this.unlockParent();
 
     this.moveDown(to, "movePositionIfEligibleID");
 
@@ -333,8 +337,7 @@ class Droppable {
       if (this.draggable.isDraggedLeavingFromTop()) {
         this.draggedIsComingIn();
       } else {
-        this.isListLocked = false;
-        this.prevIsListLocked = true;
+        this.unlockParent();
       }
     }
   }
