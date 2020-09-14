@@ -1,8 +1,6 @@
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 import store from "../DnDStore";
 
-import { ACTIVE_PARENT } from "../../constants.json";
-
 /**
  * Class includes all transformation methods related to droppable.
  *
@@ -179,7 +177,7 @@ class Droppable {
     }
   }
 
-  movePositionIFEligibleID(i) {
+  movePositionIfEligibleID(i) {
     const id = this.draggable.siblingsList[i];
 
     if (this.isIDEligible2Move(id)) {
@@ -208,24 +206,24 @@ class Droppable {
      */
     this.draggable.setDraggedMovingDown(y);
 
-    const isLeavingFromTop = this.draggable.isDraggedLeavingFromTop();
-
-    if (isLeavingFromTop) {
+    if (this.draggable.isDraggedLeavingFromTop()) {
       /**
        * If leaving and parent locked, do nothing.
        */
-      if (this.isListLocked) {
-        return;
-      }
 
       // move element up
       this.draggable.setEffectedElemDirection(true);
 
       // lock the parent
       this.isListLocked = true;
-      this.isLeftFromTop = true;
 
-      this.liftUp("movePositionIFEligibleID");
+      this.liftUp("movePositionIfEligibleID");
+
+      return;
+    }
+
+    if (this.draggable.isDraggedLeavingFromEnd()) {
+      this.isListLocked = true;
 
       return;
     }
@@ -250,10 +248,12 @@ class Droppable {
         // lock the parent
         this.isListLocked = true;
 
-        this.liftUp("movePositionIFEligibleID");
+        this.liftUp("movePositionIfEligibleID");
 
         return;
       }
+
+      // console.log("normal, switch");
 
       // inside the list, effected should be related to mouse movement
       this.draggable.setEffectedElemDirection(this.draggable.isMovingDown);
@@ -285,7 +285,7 @@ class Droppable {
     this.isListLocked = false;
     this.prevIsListLocked = true;
 
-    this.moveDown(to, "movePositionIFEligibleID");
+    this.moveDown(to, "movePositionIfEligibleID");
 
     this.draggable.siblingsList[to] = this.draggable[DRAGGED_ELM].id;
 
@@ -308,8 +308,6 @@ class Droppable {
 
     this.isDraggedOutPosition = this.draggable.isDraggedOut();
 
-    let isOutParent = false;
-
     if (this.isDraggedOutPosition) {
       if (!this.isListLocked) {
         this.draggedOutPosition(y);
@@ -317,13 +315,7 @@ class Droppable {
         return;
       }
 
-      if (!this.isLeftFromTop && !this.draggable.isOrphan) {
-        const { id: parenID } = this.draggable[ACTIVE_PARENT];
-
-        isOutParent = this.draggable.isDraggedOut(parenID);
-
-        if (isOutParent) return;
-
+      if (this.draggable.isDraggedInsideList()) {
         this.draggedIsComingIn();
 
         return;
@@ -338,7 +330,12 @@ class Droppable {
      * When dragged is out parent and returning to it.
      */
     if (this.isListLocked) {
-      this.draggedIsComingIn();
+      if (this.draggable.isDraggedLeavingFromTop()) {
+        this.draggedIsComingIn();
+      } else {
+        this.isListLocked = false;
+        this.prevIsListLocked = true;
+      }
     }
   }
 }

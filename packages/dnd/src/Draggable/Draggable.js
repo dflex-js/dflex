@@ -112,6 +112,24 @@ class Draggable extends Base {
     return this.tempIndex <= 0 && !this.isMovingDown;
   }
 
+  /**
+   * Checks if dragged is the last child and going down.
+   *
+   * @returns {boolean}
+   * @memberof Draggable
+   */
+  isDraggedLeavingFromEnd() {
+    return this.tempIndex >= this.siblingsList.length - 1 && this.isMovingDown;
+  }
+
+  isDraggedInsideList() {
+    return (
+      !this.isSingleton &&
+      !this.isDraggedLeavingFromTop() &&
+      !this.isDraggedLeavingFromEnd()
+    );
+  }
+
   setDraggedMovingDown(y) {
     this.isMovingDown = this.isOutHorizontal ? true : y > this.prevY;
     this.prevY = y;
