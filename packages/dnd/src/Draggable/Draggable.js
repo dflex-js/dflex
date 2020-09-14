@@ -122,8 +122,9 @@ class Draggable extends Base {
     return this.tempIndex >= this.siblingsList.length - 1 && this.isMovingDown;
   }
 
-  isDraggedInsideList() {
+  isDraggedVerticallyInsideList() {
     return (
+      !this.isOutHorizontal &&
       !this.isSingleton &&
       !this.isDraggedLeavingFromTop() &&
       !this.isDraggedLeavingFromEnd()

@@ -17,6 +17,8 @@ class Droppable {
     this.isListLocked = false;
     this.prevIsListLocked = false;
 
+    this.isOutStatusHorizontally = false;
+
     this.droppableIndex = -1;
   }
 
@@ -250,6 +252,8 @@ class Droppable {
 
         this.liftUp("movePositionIfEligibleID");
 
+        this.isOutStatusHorizontally = true;
+
         return;
       }
 
@@ -260,6 +264,11 @@ class Droppable {
 
       this.switchElement();
     }
+  }
+
+  unlockParent() {
+    this.isListLocked = false;
+    this.prevIsListLocked = true;
   }
 
   draggedIsComingIn() {
@@ -282,8 +291,7 @@ class Droppable {
       this.draggable.tempIndex = to;
     }
 
-    this.isListLocked = false;
-    this.prevIsListLocked = true;
+    this.unlockParent();
 
     this.moveDown(to, "movePositionIfEligibleID");
 
@@ -315,7 +323,7 @@ class Droppable {
         return;
       }
 
-      if (this.draggable.isDraggedInsideList()) {
+      if (this.draggable.isDraggedVerticallyInsideList()) {
         this.draggedIsComingIn();
 
         return;
@@ -330,11 +338,14 @@ class Droppable {
      * When dragged is out parent and returning to it.
      */
     if (this.isListLocked) {
-      if (this.draggable.isDraggedLeavingFromTop()) {
+      if (
+        this.isOutStatusHorizontally ||
+        this.draggable.isDraggedLeavingFromTop()
+      ) {
         this.draggedIsComingIn();
+        this.isOutStatusHorizontally = false;
       } else {
-        this.isListLocked = false;
-        this.prevIsListLocked = true;
+        this.unlockParent();
       }
     }
   }
