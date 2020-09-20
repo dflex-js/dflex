@@ -16,8 +16,8 @@ export default {
   },
 
   mounted() {
-    // Register element in store
-    store.register({ id: this.id, element: this.$refs[this.id] });
+    // Register element in store -- Notice lower depth than the parent component!
+    store.register({ id: this.id, element: this.$refs[this.id], depth: 0 });
   },
 };
 </script>
