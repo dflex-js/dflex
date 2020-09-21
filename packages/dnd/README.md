@@ -56,8 +56,15 @@ const { clientX, clientY } = event;
 dnd.dragAt(clientX, clientY);
 ```
 
-You can see full React example in
-[playgrounds](https://github.com/jalal246/dflex/tree/master/playgrounds/dflex-react-dnd).
+
+#### Examples
+
+- [Full React example](https://github.com/jalal246/dflex/tree/master/playgrounds/dflex-react-dnd)
+
+- [Full Vue example](https://github.com/jalal246/dflex/tree/master/playgrounds/dflex-vue-dnd)
+
+Contributes feel free to apply PR for another frameworks.
+
 Contributors feel free to apply PR for another frameworks and more examples. For
 Draggable only you can use [DFlex Draggable](https://github.com/jalal246/dflex/tree/master/packages/draggable).
 
