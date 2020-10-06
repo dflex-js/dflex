@@ -36,8 +36,12 @@ const TitleAndMeta = ({
 
   const canonicalUrl = url || siteUrl;
   const renderDesc = description || defaultDescription;
-  const renderTitle = title ? `${siteName} - ${title}` : siteName;
+  const renderTitle = title
+    ? `${siteName} - ${title}`
+    : `${siteName} - ${defaultDescription}`;
   const renderAuthor = author || defaultAuthorName;
+
+  console.log("canonicalUrl", canonicalUrl);
 
   return (
     <Helmet title={renderTitle}>

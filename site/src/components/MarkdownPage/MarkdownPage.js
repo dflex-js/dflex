@@ -10,17 +10,8 @@ import MetaTags from "../MetaTags";
 import MarkdownHeader from "../MarkdownHeader";
 
 import { sharedStyles } from "../../theme";
-import Sidebar from "../Sidebar";
 
-function MarkdownPage({
-  description,
-  location,
-  mdx: {
-    frontmatter: { title },
-    fields: { slug },
-    body,
-  },
-}) {
+function MarkdownPage({ description, title, slug, body }) {
   return (
     <Flex
       direction="column"
@@ -52,10 +43,6 @@ function MarkdownPage({
                 </div>
               </div>
             </Flex>
-
-            <div css={sharedStyles.articleLayout.sidebar}>
-              <Sidebar location={location} />
-            </div>
           </div>
         </Container>
       </div>

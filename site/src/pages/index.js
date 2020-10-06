@@ -5,15 +5,10 @@ import MDXRenderer from "gatsby-plugin-mdx/mdx-renderer";
 import Layout from "../components/Layout";
 import MetaTags from "../components/MetaTags";
 
-import createCanonicalUrl from "../utils/createCanonicalUrl";
-
-import { siteMetadata } from "../../config";
 import { colors, media, sharedStyles } from "../theme";
 
 import Container from "../components/Container";
 import ExternalLinkSvg from "../components/ExternalLinkSvg";
-
-const { title, description } = siteMetadata;
 
 const sectionStyles = {
   marginTop: 20,
@@ -31,7 +26,7 @@ const headingStyles = {
   },
 };
 
-function HomeHeader() {
+function HomeHeader({ title, description }) {
   return (
     <header
       css={{
@@ -58,7 +53,7 @@ function HomeHeader() {
             marginRight: "auto",
             position: "relative",
             "::before": {
-              content: " ",
+              content: `" "`,
               position: "absolute",
               top: 0,
               left: 0,
@@ -238,19 +233,21 @@ function HomeContent({ allMdx }) {
 }
 
 function Home({ data, location }) {
-  const { allMdx } = data;
+  const {
+    allMdx,
+    site: {
+      siteMetadata: { title, description },
+    },
+  } = data;
   return (
     <Layout location={location}>
-      <MetaTags
-        title={`${title} - ${description}`}
-        canonicalUrl={createCanonicalUrl("/")}
-      />
+      <MetaTags />
       <div
         css={{
           width: "100%",
         }}
       >
-        <HomeHeader />
+        <HomeHeader title={title} description={description} />
         <HomeContent allMdx={allMdx} />
       </div>
     </Layout>
@@ -259,18 +256,23 @@ function Home({ data, location }) {
 
 export const pageQuery = graphql`
   query IndexMarkdown {
-    allMdx(
-      filter: {fileAbsolutePath: {regex: "\"//home/"}},
-      sort: {fields: frontmatter___order, order: ASC}) {
-        edges {
-          node {
-            body
-            frontmatter {
-              title
-              next
-            }
+    allMdx(filter: {fileAbsolutePath: {regex: "\"//home/"}}, sort: {fields: frontmatter___order, order: ASC}) {
+      edges {
+        node {
+          body
+          frontmatter {
+            title
+            next
           }
         }
+      }
+    }
+
+    site {
+      siteMetadata {
+        title
+        description
+      }
     }
   }
 `;

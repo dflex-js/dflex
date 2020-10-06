@@ -6,16 +6,17 @@ import Layout from "../components/Layout";
 import MarkdownPage from "../components/MarkdownPage";
 
 const Docs = ({ data, location }) => {
-  const { mdx } = data;
+  const {
+    mdx: {
+      body,
+      frontmatter: { title },
+      fields: { slug },
+    },
+  } = data;
 
   return (
     <Layout location={location}>
-      <MarkdownPage
-        mdx={mdx}
-        location={location}
-        createLink={() => {}}
-        sectionList={[]}
-      />
+      <MarkdownPage title={title} slug={slug} body={body} location={location} />
     </Layout>
   );
 };
@@ -26,12 +27,9 @@ export const pageQuery = graphql`
       body
       frontmatter {
         title
-        next
-        prev
       }
       fields {
-        path
-        redirect
+        slug
       }
     }
   }
