@@ -1,0 +1,136 @@
+:root {
+  --background-root: #282c34;
+  --white-root: #ffffff;
+  --char-root: #d8dee9;
+  --comment-root: #b2b2b2;
+  --keyword-root: #c5a5c5;
+  --lineHighlight-root: #353b45;
+  --primitive-root: #5a9bcf;
+  --string-root: #8dc891;
+  --variable-root: #d7deea;
+  --boolean: #ff8b50;
+  --punctuation-root: #88c6be;
+  --tag-root: #fc929e;
+  --function-root: #79b6f2;
+  --className-root: #fac863;
+  --method-root: #6699cc;
+  --operator-root: #fc929e;
+}
+
+.gatsby-highlight {
+  background: var(--background-root);
+  color: var(--white-root);
+  border-radius: 10px;
+  overflow: auto;
+  tab-size: 1.5em;
+  -webkit-overflow-scrolling: touch;
+}
+
+.gatsby-highlight > code,
+.gatsby-highlight > pre,
+.gatsby-highlight > pre > prism-code {
+  height: auto !important;
+  margin: 1rem;
+  font-size: 14px;
+  line-height: 20px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.gatsby-highlight > .gatsby-highlight {
+  margin-top: 20;
+}
+
+.gatsby-highlight-code-line {
+  background-color: var(--lineHighlight-root);
+  display: block;
+  margin: -0.125rem calc(-1rem - 15px);
+  padding: 0.125rem calc(1rem + 15px);
+}
+
+.token.attr-name {
+  color: var(--keyword-root);
+}
+
+.token.comment,
+.token.block-comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: var(--comment-root);
+}
+
+.token.property,
+.token.number,
+.token.function-name,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: var(--primitive-root);
+}
+
+.token.boolean {
+  color: var(--boolean);
+}
+
+.token.tag {
+  color: var(--tag-root);
+}
+
+.token.string {
+  color: var(--string-root);
+}
+
+.token.punctuation {
+  color: var(--punctuation-root);
+}
+
+.token.selector,
+.token.char,
+.token.builtin,
+.token.inserted {
+  color: var(--char-root);
+}
+
+.token.function {
+  color: var(--function-root);
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.token.variable {
+  color: var(--variable-root);
+}
+
+.token.attr-value {
+  color: var(--string-root);
+}
+
+.token.keyword {
+  color: var(--keyword-root);
+}
+
+.token.atrule,
+.token.class-name {
+  color: var(--className-root);
+}
+
+.token.important {
+  font-weight: 400;
+}
+
+.token.bold {
+  font-weight: 700;
+}
+.token.italic {
+  font-style: italic;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+.namespace {
+  opacity: 0.7;
+}
