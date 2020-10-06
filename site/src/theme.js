@@ -237,10 +237,6 @@ const sharedStyles = {
         marginTop: 15,
       },
 
-      "&:first-of-type": {
-        marginTop: 0,
-      },
-
       [media.lessThan("large")]: {
         fontSize: 16,
         marginTop: 25,

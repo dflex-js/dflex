@@ -28,7 +28,7 @@ const plugins = [
       background_color: "#40241a",
       theme_color: "#40241a",
       display: `minimal-ui`,
-      icon: `content/assets/gatsby-icon.png`,
+      icon: `static/favicon-32x32.png`,
     },
   },
   {
