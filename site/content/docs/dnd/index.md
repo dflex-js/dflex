@@ -1,11 +1,9 @@
 ---
-title: DFlex DnD
+title: DFlex Drag & Drop
 permalink: docs/dnd/index.html
 prev: /
 next: /
 ---
-
-DFlex DnD is a simple, lightweight Solution for a Drag & Drop App.
 
 ### Installation
 
@@ -14,6 +12,8 @@ npm install @dflex/dnd
 ```
 
 ### Usage
+
+DFlex DnD is a simple, lightweight Solution for a Drag & Drop App.
 
 DFlex DnD is written in pure JavaScript and can be used with different frameworks
 whether it is React, Vue, Angular, etc.

@@ -213,19 +213,19 @@ const sharedStyles = {
 
     "& a:not(.anchor):not(.gatsby-resp-image-link)": linkStyle,
 
-    "& > p:first-child": {
-      fontSize: 18,
-      fontWeight: 300,
-      color: colors.subtle,
+    // "& > p:first-of-type": {
+    //   fontSize: 18,
+    //   fontWeight: 300,
+    //   color: colors.subtle,
 
-      [media.greaterThan("xlarge")]: {
-        fontSize: 24,
-      },
+    //   [media.greaterThan("xlarge")]: {
+    //     fontSize: 24,
+    //   },
 
-      "& a, & strong": {
-        fontWeight: 400,
-      },
-    },
+    //   "& a, & strong": {
+    //     fontWeight: 400,
+    //   },
+    // },
 
     "& p": {
       marginTop: 30,
@@ -235,10 +235,6 @@ const sharedStyles = {
 
       "&:first-of-type": {
         marginTop: 15,
-      },
-
-      "&:first-child": {
-        marginTop: 0,
       },
 
       [media.lessThan("large")]: {
@@ -269,7 +265,7 @@ const sharedStyles = {
       borderBottom: `1px solid ${colors.divider}`,
       marginTop: 40,
 
-      ":first-child": {
+      ":first-of-type": {
         marginTop: 0,
       },
     },
@@ -292,7 +288,7 @@ const sharedStyles = {
 
     "& h2": {
       "::before": {
-        content: " ",
+        content: `" "`,
         display: "block",
         borderBottom: `1px solid ${colors.divider}`,
         paddingTop: 44,
@@ -301,9 +297,9 @@ const sharedStyles = {
 
       lineHeight: 1.2,
 
-      ":first-child": {
+      ":first-of-type": {
         "::before": {
-          content: " ",
+          content: `" "`,
           display: "block",
           borderBottom: 0,
           paddingTop: 40,
@@ -326,7 +322,7 @@ const sharedStyles = {
 
     "& h3": {
       "::before": {
-        content: " ",
+        content: `" "`,
         display: "block",
         paddingTop: 90,
         marginTop: -45,
@@ -345,7 +341,7 @@ const sharedStyles = {
 
     "& h2 + h3, & h2 + h3:first-of-type": {
       "::before": {
-        content: " ",
+        content: `" "`,
         display: "block",
         paddingTop: 60,
         marginTop: -30,
@@ -354,7 +350,7 @@ const sharedStyles = {
 
     "& h4": {
       "::before": {
-        content: " ",
+        content: `" "`,
         display: "block",
         paddingTop: 100,
         marginTop: -50,
@@ -448,7 +444,7 @@ const sharedStyles = {
 
     "& .gatsby-highlight + h4": {
       "::before": {
-        content: " ",
+        content: `" "`,
         display: "block",
         paddingTop: 85,
         marginTop: -60,

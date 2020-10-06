@@ -10,18 +10,8 @@ import MetaTags from "../MetaTags";
 import MarkdownHeader from "../MarkdownHeader";
 
 import { sharedStyles } from "../../theme";
-import Sidebar from "../Sidebar";
 
-function MarkdownPage({
-  ogDescription,
-  location,
-  sectionList,
-  createLink,
-  mdx: { frontmatter, fields, body },
-  titlePostfix = "",
-}) {
-  const titlePrefix = frontmatter.title || "";
-
+function MarkdownPage({ description, title, slug, body }) {
   return (
     <Flex
       direction="column"
@@ -36,16 +26,16 @@ function MarkdownPage({
       }}
     >
       <MetaTags
-        ogDescription={ogDescription}
-        ogType="article"
-        canonicalUrl={createCanonicalUrl(fields.slug)}
-        title={`${titlePrefix}${titlePostfix}`}
+        description={description}
+        type="article"
+        url={createCanonicalUrl(slug)}
+        title={title}
       />
       <div css={{ flex: "1 0 auto" }}>
         <Container>
           <div css={sharedStyles.articleLayout.container}>
             <Flex Component="article" direction="column" grow="1">
-              <MarkdownHeader title={titlePrefix} />
+              <MarkdownHeader title={title} />
 
               <div css={sharedStyles.articleLayout.content}>
                 <div css={[sharedStyles.markdown]}>
@@ -53,14 +43,6 @@ function MarkdownPage({
                 </div>
               </div>
             </Flex>
-
-            <div css={sharedStyles.articleLayout.sidebar}>
-              <Sidebar
-                location={location}
-                sectionList={sectionList}
-                createLink={createLink}
-              />
-            </div>
           </div>
         </Container>
       </div>

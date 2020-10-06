@@ -3,7 +3,6 @@ import React from "react";
 import MenuLink from "./HeaderMenuLink";
 import { media } from "../../theme";
 import menuLinks from "./content";
-import { gatsby } from "../../../config";
 
 const navStyle = {
   flex: "1",
@@ -41,12 +40,7 @@ const hide = {
 };
 
 const Nav = ({ location }) => (
-  <nav
-    css={[
-      navStyle,
-      location && location.pathname === `${gatsby.pathPrefix}/` && hide,
-    ]}
-  >
+  <nav css={[navStyle, location && location.pathname === `/` && hide]}>
     {menuLinks.map(({ name, to }) => (
       <MenuLink
         key={name}

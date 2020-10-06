@@ -6,15 +6,23 @@ import Layout from "../components/Layout";
 import MarkdownPage from "../components/MarkdownPage";
 
 const Docs = ({ data, location }) => {
-  const { mdx } = data;
+  const {
+    mdx: {
+      body,
+      excerpt,
+      frontmatter: { title },
+      fields: { slug },
+    },
+  } = data;
 
   return (
     <Layout location={location}>
       <MarkdownPage
-        mdx={mdx}
+        title={title}
+        slug={slug}
+        description={excerpt}
+        body={body}
         location={location}
-        createLink={() => {}}
-        sectionList={[]}
       />
     </Layout>
   );
@@ -24,14 +32,12 @@ export const pageQuery = graphql`
   query TemplateDocsMdx($slug: String!) {
     mdx(fields: { slug: { eq: $slug } }) {
       body
+      excerpt
       frontmatter {
         title
-        next
-        prev
       }
       fields {
-        path
-        redirect
+        slug
       }
     }
   }

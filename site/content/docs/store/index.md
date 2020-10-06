@@ -5,8 +5,6 @@ prev: /
 next: /
 ---
 
-The place where you traverse through the DOM tree using element-id
-
 ## Installation
 
 ```bash
@@ -14,6 +12,8 @@ npm install @dflex/store
 ```
 
 ## How it works
+
+<!-- The place where you traverse through the DOM tree using element-id -->
 
 DFlex store works on connecting all registered elements and organizes the
 relations between them using the DOM relations generator algorithm. Allowing

@@ -24,7 +24,6 @@ async function createPages({ graphql, actions }) {
             node {
               fields {
                 path
-                redirect
                 slug
               }
             }

@@ -5,7 +5,7 @@ import Layout from "../components/Layout";
 import Container from "../components/Container";
 import { sharedStyles } from "../theme";
 import Header from "../components/LayoutHeader";
-import MetaTags from "../components/MetaTags/MetaTags";
+import MetaTags from "../components/MetaTags";
 
 const NotFoundPage = ({ location }) => (
   <Layout location={location}>
@@ -13,7 +13,7 @@ const NotFoundPage = ({ location }) => (
       <div css={sharedStyles.articleLayout.container}>
         <div css={sharedStyles.articleLayout.content}>
           <Header>Page Not Found</Header>
-          <MetaTags title="DFlex - Page Not Found" />
+          <MetaTags title="Page Not Found" />
           <div css={sharedStyles.markdown}>
             <p>NOT FOUND</p>
             <p>You just hit a route that doesn't exist... the sadness.</p>
