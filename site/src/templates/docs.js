@@ -9,6 +9,7 @@ const Docs = ({ data, location }) => {
   const {
     mdx: {
       body,
+      excerpt,
       frontmatter: { title },
       fields: { slug },
     },
@@ -16,7 +17,13 @@ const Docs = ({ data, location }) => {
 
   return (
     <Layout location={location}>
-      <MarkdownPage title={title} slug={slug} body={body} location={location} />
+      <MarkdownPage
+        title={title}
+        slug={slug}
+        description={excerpt}
+        body={body}
+        location={location}
+      />
     </Layout>
   );
 };
@@ -25,6 +32,7 @@ export const pageQuery = graphql`
   query TemplateDocsMdx($slug: String!) {
     mdx(fields: { slug: { eq: $slug } }) {
       body
+      excerpt
       frontmatter {
         title
       }
