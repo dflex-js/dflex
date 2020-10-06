@@ -213,19 +213,19 @@ const sharedStyles = {
 
     "& a:not(.anchor):not(.gatsby-resp-image-link)": linkStyle,
 
-    "& > p:first-of-type": {
-      fontSize: 18,
-      fontWeight: 300,
-      color: colors.subtle,
+    // "& > p:first-of-type": {
+    //   fontSize: 18,
+    //   fontWeight: 300,
+    //   color: colors.subtle,
 
-      [media.greaterThan("xlarge")]: {
-        fontSize: 24,
-      },
+    //   [media.greaterThan("xlarge")]: {
+    //     fontSize: 24,
+    //   },
 
-      "& a, & strong": {
-        fontWeight: 400,
-      },
-    },
+    //   "& a, & strong": {
+    //     fontWeight: 400,
+    //   },
+    // },
 
     "& p": {
       marginTop: 30,
