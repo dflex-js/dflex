@@ -301,7 +301,6 @@ class Droppable {
     // TODO: Is this right?
     this.draggable.numberOfElementsTransformed =
       this.draggable[DRAGGED_ELM].order.self - this.draggable.tempIndex;
-    );
   }
 
   /**
