@@ -135,7 +135,10 @@ class Draggable extends Base {
     this.isMovingDown = this.isOutHorizontal ? true : y > this.prevY;
     this.prevY = y;
 
-    if (this.isMovingDownPrev !== this.isMovingDown) {
+    if (
+      this.numberOfElementsTransformed !== 0 &&
+      this.isMovingDownPrev !== this.isMovingDown
+    ) {
       /**
        * In this case, we have a sudden change in mouse movement. So, reverse
        * numberOfElementsTransformed value, to be compatible with effectedElemDirection.
