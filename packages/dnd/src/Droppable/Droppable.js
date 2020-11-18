@@ -103,6 +103,7 @@ class Droppable {
          * draggedDirection = -effectedElemDirection
          *
          */
+        // TODO: FOUND A BUG numberOfElementsTransformed!
         this.draggable.tempIndex =
           this.draggable[DRAGGED_ELM].order.self -
           this.draggable.effectedElemDirection *
@@ -185,20 +186,20 @@ class Droppable {
     if (this.isIDEligible2Move(id)) {
       const element = store.getElmById(id);
 
-      this.updateElement(element);
+      this.updateElement(element, false);
     }
   }
 
-  liftUp(func) {
+  liftUp() {
     const from = this.draggable.tempIndex + 1;
     for (let i = from; i < this.draggable.siblingsList.length; i += 1) {
-      this[func](i);
+      this.movePositionIfEligibleID(i);
     }
   }
 
-  moveDown(to, func) {
+  moveDown(to) {
     for (let i = this.draggable.siblingsList.length - 1; i >= to; i -= 1) {
-      this[func](i);
+      this.movePositionIfEligibleID(i);
     }
   }
 
@@ -219,7 +220,7 @@ class Droppable {
       // lock the parent
       this.isListLocked = true;
 
-      this.liftUp("movePositionIfEligibleID");
+      this.liftUp();
 
       return;
     }
@@ -250,7 +251,7 @@ class Droppable {
         // lock the parent
         this.isListLocked = true;
 
-        this.liftUp("movePositionIfEligibleID");
+        this.liftUp();
 
         this.isOutStatusHorizontally = true;
 
@@ -293,13 +294,14 @@ class Droppable {
 
     this.unlockParent();
 
-    this.moveDown(to, "movePositionIfEligibleID");
+    this.moveDown(to);
 
     this.draggable.siblingsList[to] = this.draggable[DRAGGED_ELM].id;
 
     // TODO: Is this right?
     this.draggable.numberOfElementsTransformed =
       this.draggable[DRAGGED_ELM].order.self - this.draggable.tempIndex;
+    );
   }
 
   /**
