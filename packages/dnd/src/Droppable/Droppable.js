@@ -186,20 +186,9 @@ class Droppable {
   }
 
   moveDown(to) {
-    /**
-     * Toggle elements transformed incremental to decrease number of transformed
-     * elements. It's like undoing transformation.
-     */
-    this.draggable.toggleElementsTransformedInc();
-
     for (let i = this.draggable.siblingsList.length - 1; i >= to; i -= 1) {
       this.movePositionIfEligibleID(i);
     }
-
-    /**
-     * End toggling and continue as it was.
-     */
-    this.draggable.toggleElementsTransformedInc();
   }
 
   draggedOutPosition(y) {
@@ -275,9 +264,6 @@ class Droppable {
   }
 
   draggedIsComingIn() {
-    // move element up
-    this.draggable.setEffectedElemDirection(false);
-
     /**
      * If tempIndex is zero, the dragged is coming from the top. So, move them
      * down all: to=0
@@ -310,7 +296,30 @@ class Droppable {
       this.draggable.numberOfElementsTransformed
     );
 
+    /**
+     * Moving element down by setting is up to false
+     */
+    this.draggable.setEffectedElemDirection(false);
+
+    /**
+     * Toggle elements transformed incremental to decrease number of transformed
+     * elements. It's like undoing transformation.
+     */
+    this.draggable.toggleElementsTransformedInc();
+
     this.moveDown(to);
+
+    /**
+     * End toggling and continue as it was.
+     */
+    this.draggable.toggleElementsTransformedInc();
+
+    /**
+     * Now, resitting direction by figuring out if dragged settled up/dwn.
+     */
+    const isElmUp =
+      this.draggable.tempIndex > this.draggable[DRAGGED_ELM].order.self;
+    this.draggable.setEffectedElemDirection(isElmUp);
 
     this.draggable.siblingsList[to] = this.draggable[DRAGGED_ELM].id;
   }
