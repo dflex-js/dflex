@@ -29,7 +29,9 @@ class Droppable {
    * @param {CoreInstance} element
    * @memberof Droppable
    */
-  updateElement(element, isUpdateTempIndex, isIncNumOfElemTransformed) {
+  updateElement(id) {
+    const element = store.getElmById(id);
+
     /**
      * breakingPoint detects the first element that comes immediately
      * after dragged. Not in original order, but according to isQualified result.
@@ -67,16 +69,7 @@ class Droppable {
       this.isFoundBreakingPoint = true;
     }
 
-    /**
-     * With each element that is transformed:
-     * 1) Increase elements transformed courter: this.draggable.numberOfElementsTransformed
-     * 2) Update drag temp index that is used in all is-functions.
-     * 3) Update all instances related to element and css-transform it.
-     */
-    // this.draggable.setNumOfElementsTransformed(
-    //   this.draggable.numberOfElementsTransformed + 1
-    // );
-    // this.draggable.incNumOfElementsTransformed();
+    this.draggable.incNumOfElementsTransformed();
 
     if (!this.isListLocked) {
       /**
@@ -157,11 +150,8 @@ class Droppable {
 
     if (this.isIDEligible2Move(id)) {
       this.draggable.tempIndex = elmIndex;
-      this.draggable.incNumOfElementsTransformed();
 
-      const element = store.getElmById(id);
-
-      this.updateElement(element, true);
+      this.updateElement(id);
     }
   }
 
@@ -169,10 +159,7 @@ class Droppable {
     const id = this.draggable.siblingsList[i];
 
     if (this.isIDEligible2Move(id)) {
-      const element = store.getElmById(id);
-      this.draggable.incNumOfElementsTransformed();
-
-      this.updateElement(element, false);
+      this.updateElement(id);
     }
   }
 
@@ -198,7 +185,6 @@ class Droppable {
     this.draggable.setDraggedMovingDown(y);
 
     if (this.draggable.isDraggedLeavingFromTop()) {
-      console.log("isDraggedLeavingFromTop", this.isListLocked);
       /**
        * If leaving and parent locked, do nothing.
        */
@@ -215,7 +201,6 @@ class Droppable {
     }
 
     if (this.draggable.isDraggedLeavingFromEnd()) {
-      console.log("isDraggedLeavingFromEnd");
       this.isListLocked = true;
 
       return;
@@ -235,7 +220,6 @@ class Droppable {
        * Going out from the list: Right/left.
        */
       if (this.draggable.isOutHorizontal) {
-        console.log("isOutHorizontal");
         // move element up
         this.draggable.setEffectedElemDirection(true);
 
@@ -249,7 +233,9 @@ class Droppable {
         return;
       }
 
-      // console.log("normal, switch");
+      /**
+       * Normal state, switch.
+       */
 
       // inside the list, effected should be related to mouse movement
       this.draggable.setEffectedElemDirection(this.draggable.isMovingDown);
