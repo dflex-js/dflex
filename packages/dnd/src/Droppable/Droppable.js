@@ -29,7 +29,7 @@ class Droppable {
    * @param {CoreInstance} element
    * @memberof Droppable
    */
-  updateElement(element, isUpdateTempIndex) {
+  updateElement(element, isUpdateTempIndex, isIncNumOfElemTransformed) {
     /**
      * breakingPoint detects the first element that comes immediately
      * after dragged. Not in original order, but according to isQualified result.
@@ -73,7 +73,10 @@ class Droppable {
      * 2) Update drag temp index that is used in all is-functions.
      * 3) Update all instances related to element and css-transform it.
      */
-    this.draggable.numberOfElementsTransformed += 1;
+    // this.draggable.setNumOfElementsTransformed(
+    //   this.draggable.numberOfElementsTransformed + 1
+    // );
+    // this.draggable.incNumOfElementsTransformed();
 
     if (!this.isListLocked) {
       /**
@@ -88,27 +91,6 @@ class Droppable {
        * condition is the breaking point element.
        */
       this.draggable.setThreshold(element);
-
-      if (isUpdateTempIndex) {
-        /**
-         * Since final index is set when element is transformed, we have no idea what
-         * the current index in dragged is. To solve this issue, we have a simple
-         * equation
-         *
-         * Current temp index = currentIndex +/- this.draggable.numberOfElementsTransformed
-         *
-         * Dragged is always going to the opposite side of element direction. So, if
-         * effectedElemDirection is up (+1) dragged is down:
-         *
-         * draggedDirection = -effectedElemDirection
-         *
-         */
-        // TODO: FOUND A BUG numberOfElementsTransformed!
-        this.draggable.tempIndex =
-          this.draggable[DRAGGED_ELM].order.self -
-          this.draggable.effectedElemDirection *
-            this.draggable.numberOfElementsTransformed;
-      }
     }
 
     /**
@@ -174,6 +156,9 @@ class Droppable {
     const id = this.draggable.siblingsList[elmIndex];
 
     if (this.isIDEligible2Move(id)) {
+      this.draggable.tempIndex = elmIndex;
+      this.draggable.incNumOfElementsTransformed();
+
       const element = store.getElmById(id);
 
       this.updateElement(element, true);
@@ -185,6 +170,7 @@ class Droppable {
 
     if (this.isIDEligible2Move(id)) {
       const element = store.getElmById(id);
+      this.draggable.incNumOfElementsTransformed();
 
       this.updateElement(element, false);
     }
@@ -192,15 +178,28 @@ class Droppable {
 
   liftUp() {
     const from = this.draggable.tempIndex + 1;
+    this.draggable.tempIndex = -1;
+
     for (let i = from; i < this.draggable.siblingsList.length; i += 1) {
       this.movePositionIfEligibleID(i);
     }
   }
 
   moveDown(to) {
+    /**
+     * Toggle elements transformed incremental to decrease number of transformed
+     * elements. It's like undoing transformation.
+     */
+    this.draggable.toggleElementsTransformedInc();
+
     for (let i = this.draggable.siblingsList.length - 1; i >= to; i -= 1) {
       this.movePositionIfEligibleID(i);
     }
+
+    /**
+     * End toggling and continue as it was.
+     */
+    this.draggable.toggleElementsTransformedInc();
   }
 
   draggedOutPosition(y) {
@@ -210,6 +209,7 @@ class Droppable {
     this.draggable.setDraggedMovingDown(y);
 
     if (this.draggable.isDraggedLeavingFromTop()) {
+      console.log("isDraggedLeavingFromTop", this.isListLocked);
       /**
        * If leaving and parent locked, do nothing.
        */
@@ -226,6 +226,7 @@ class Droppable {
     }
 
     if (this.draggable.isDraggedLeavingFromEnd()) {
+      console.log("isDraggedLeavingFromEnd");
       this.isListLocked = true;
 
       return;
@@ -245,6 +246,7 @@ class Droppable {
        * Going out from the list: Right/left.
        */
       if (this.draggable.isOutHorizontal) {
+        console.log("isOutHorizontal");
         // move element up
         this.draggable.setEffectedElemDirection(true);
 
@@ -288,19 +290,29 @@ class Droppable {
      */
     if (this.draggable.tempIndex !== 0) {
       to = this.detectDroppableIndex();
+      console.log("to", to);
       if (typeof to !== "number") return;
       this.draggable.tempIndex = to;
+
+      console.log(" this.draggable.tempIndex", this.draggable.tempIndex);
     }
 
     this.unlockParent();
 
+    // // TODO: Is this right?
+    // this.draggable.setNumOfElementsTransformed(
+    //   this.draggable[DRAGGED_ELM].order.self - this.draggable.tempIndex
+    // );
+
+    // this.draggable.numberOfElementsTransformed *= -1;
+    console.log(
+      "this.draggable.numberOfElementsTransformed",
+      this.draggable.numberOfElementsTransformed
+    );
+
     this.moveDown(to);
 
     this.draggable.siblingsList[to] = this.draggable[DRAGGED_ELM].id;
-
-    // TODO: Is this right?
-    this.draggable.numberOfElementsTransformed =
-      this.draggable[DRAGGED_ELM].order.self - this.draggable.tempIndex;
   }
 
   /**
@@ -325,6 +337,7 @@ class Droppable {
       }
 
       if (this.draggable.isDraggedVerticallyInsideList()) {
+        console.log("isDraggedVerticallyInsideList");
         this.draggedIsComingIn();
 
         return;

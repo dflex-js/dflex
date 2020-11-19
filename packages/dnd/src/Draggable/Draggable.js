@@ -27,13 +27,14 @@ class Draggable extends Base {
      * crucial to calculate drag's translate and index
      */
     this.numberOfElementsTransformed = 0;
+    this.inc = 1;
 
     /**
      * Elements effected by dragged direction.
      */
     this.effectedElemDirection = 1;
 
-    this.isMovingDownPrev = false;
+    this.isMovingDownPrev = null;
     this.isMovingDown = false;
   }
 
@@ -131,19 +132,27 @@ class Draggable extends Base {
     );
   }
 
+  toggleElementsTransformedInc() {
+    this.inc *= -1;
+  }
+
+  resetElementsTransformedInc() {
+    this.inc = 1;
+  }
+
   setDraggedMovingDown(y) {
     this.isMovingDown = this.isOutHorizontal ? true : y > this.prevY;
     this.prevY = y;
 
     if (
-      this.numberOfElementsTransformed !== 0 &&
+      this.numberOfElementsTransformed > 0 &&
       this.isMovingDownPrev !== this.isMovingDown
     ) {
       /**
        * In this case, we have a sudden change in mouse movement. So, reverse
        * numberOfElementsTransformed value, to be compatible with effectedElemDirection.
        */
-      this.numberOfElementsTransformed *= -1;
+      this.toggleElementsTransformedInc();
     }
 
     this.isMovingDownPrev = this.isMovingDown;
@@ -151,6 +160,19 @@ class Draggable extends Base {
 
   setEffectedElemDirection(isUp) {
     this.effectedElemDirection = isUp ? -1 : 1;
+  }
+
+  incNumOfElementsTransformed() {
+    if (this.numberOfElementsTransformed === 0) {
+      this.resetElementsTransformedInc();
+    }
+
+    this.numberOfElementsTransformed += this.inc;
+
+    console.log(
+      "is this.numberOfElementsTransformed",
+      this.numberOfElementsTransformed
+    );
   }
 
   setDraggedPosition(isDraggedOutPosition, topDifference) {
