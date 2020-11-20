@@ -2,6 +2,7 @@ let startingPointX;
 let startingPointY;
 let elmBox;
 
+// let stepX;
 let stepY;
 
 context("DnD/Testing a collections new positions", () => {
@@ -16,7 +17,7 @@ context("DnD/Testing a collections new positions", () => {
         startingPointX = elmBox.x + elmBox.width / 2;
         startingPointY = elmBox.y + elmBox.height / 2;
 
-        stepX = (2 / 3) * elmBox.width + 2;
+        // stepX = (2 / 3) * elmBox.width + 2;
         stepY = elmBox.height + 2;
 
         cy.get("#id-9").trigger("mousedown", {
