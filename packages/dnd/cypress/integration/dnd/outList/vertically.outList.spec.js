@@ -4,7 +4,7 @@ let elmBox;
 
 let step;
 
-context("DnD/Testing is out the list vertically", () => {
+context("DnD/Testing is out the list vertically: out down/in/out up", () => {
   before(() => {
     cy.visit("http://localhost:3001/");
   });
