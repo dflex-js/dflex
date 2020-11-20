@@ -175,11 +175,14 @@ class Draggable extends Base {
     );
   }
 
-  setDraggedPosition(isDraggedOutPosition, topDifference) {
+  setDraggedPosition(topDifference) {
     /**
      * In this case, the use clicked without making any move.
      */
-    if (isDraggedOutPosition || this.numberOfElementsTransformed === 0) {
+    if (
+      (!this.isDraggedLeavingFromEnd() && this.isDraggedOut()) ||
+      this.numberOfElementsTransformed === 0
+    ) {
       /**
        * If not isDraggedOutPosition, it means dragged is out its position, inside
        * list but didn't reach another element to replace.
@@ -199,6 +202,7 @@ class Draggable extends Base {
 
     this[DRAGGED_ELM].setCurrentOffset();
 
+    console.log(this.numberOfElementsTransformed);
     /**
      * Move to new droppable position.
      *
@@ -216,10 +220,10 @@ class Draggable extends Base {
     );
   }
 
-  endDragging(isDraggedOutPosition, topDifference) {
+  endDragging(topDifference) {
     this.setDragged(false);
 
-    this.setDraggedPosition(isDraggedOutPosition, topDifference);
+    this.setDraggedPosition(topDifference);
   }
 }
 

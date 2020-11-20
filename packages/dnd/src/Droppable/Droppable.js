@@ -12,7 +12,6 @@ class Droppable {
     this.draggable = draggable;
 
     this.topDifference = 0;
-    this.isDraggedOutPosition = false;
 
     this.isListLocked = false;
     this.prevIsListLocked = false;
@@ -262,25 +261,11 @@ class Droppable {
      */
     if (this.draggable.tempIndex !== 0) {
       to = this.detectDroppableIndex();
-      console.log("to", to);
       if (typeof to !== "number") return;
       this.draggable.tempIndex = to;
-
-      console.log(" this.draggable.tempIndex", this.draggable.tempIndex);
     }
 
     this.unlockParent();
-
-    // // TODO: Is this right?
-    // this.draggable.setNumOfElementsTransformed(
-    //   this.draggable[DRAGGED_ELM].order.self - this.draggable.tempIndex
-    // );
-
-    // this.draggable.numberOfElementsTransformed *= -1;
-    console.log(
-      "this.draggable.numberOfElementsTransformed",
-      this.draggable.numberOfElementsTransformed
-    );
 
     /**
      * Moving element down by setting is up to false
@@ -322,9 +307,7 @@ class Droppable {
   dragAt(x, y) {
     this.draggable.dragAt(x, y);
 
-    this.isDraggedOutPosition = this.draggable.isDraggedOut();
-
-    if (this.isDraggedOutPosition) {
+    if (this.draggable.isDraggedOut()) {
       if (!this.isListLocked) {
         this.draggedOutPosition(y);
 
@@ -332,7 +315,6 @@ class Droppable {
       }
 
       if (this.draggable.isDraggedVerticallyInsideList()) {
-        console.log("isDraggedVerticallyInsideList");
         this.draggedIsComingIn();
 
         return;
