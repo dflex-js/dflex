@@ -175,12 +175,12 @@ context("DnD/Testing is out the list horizontally", () => {
       cy.get("#id-9").trigger("mouseup", { force: true });
     });
 
-    // it("Dragged takes new position in the end of the list", () => {
-    //   cy.get("#id-9").should(
-    //     "have.css",
-    //     "transform",
-    //     "matrix(1, 0, 0, 1, 0, -58)"
-    //   );
-    // });
+    it("Dragged takes new position in the end of the list", () => {
+      cy.get("#id-9").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 174)"
+      );
+    });
   });
 });
