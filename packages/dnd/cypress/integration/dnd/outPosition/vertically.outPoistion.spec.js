@@ -7,7 +7,7 @@ context("DnD/Testing is out position vertically", () => {
     cy.visit("http://localhost:3001/");
   });
 
-  context.only("Moving strict vertically one siblings - out down", () => {
+  context("Moving strict vertically one siblings - out down", () => {
     it("Transforms element 10 out vertically", () => {
       cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
@@ -75,7 +75,7 @@ context("DnD/Testing is out position vertically", () => {
     });
   });
 
-  context.only("Moving strict vertically one siblings - out up", () => {
+  context("Moving strict vertically one siblings - out up", () => {
     it("Transforms element 10 out up vertically", () => {
       cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
@@ -139,7 +139,7 @@ context("DnD/Testing is out position vertically", () => {
     });
   });
 
-  context.only("Moving strict vertically multi siblings - out down", () => {
+  context("Moving strict vertically multi siblings - out down", () => {
     it("Transforms element 10 out down multi steps", () => {
       cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
@@ -236,14 +236,12 @@ context("DnD/Testing is out position vertically", () => {
     });
   });
 
-  context.only("Moving strict vertically multi siblings - out up", () => {
-    it("Transforms element 11 out, two siblings 9/10", () => {
+  context("Moving strict vertically multi siblings - out up", () => {
+    it("Transforms element 11 out from above", () => {
       cy.get("#id-11").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
-
         startingPointX = elmBox.x + elmBox.width / 2;
         startingPointY = elmBox.y + elmBox.height / 2;
-
         cy.get("#id-11")
           .trigger("mousedown", {
             button: 0,
@@ -262,56 +260,30 @@ context("DnD/Testing is out position vertically", () => {
       });
     });
 
-    it("Effects element 9, moves it down", () => {
+    it("Makes sure all siblings lifted up to fill the gap", () => {
       cy.get("#id-9").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 58)"
+        "matrix(1, 0, 0, 1, 0, 0)"
       );
-    });
-
-    it("Effects element 10, lifts it up", () => {
+      cy.get("#id-12").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, -116)"
+      );
       cy.get("#id-10").should(
         "have.css",
         "transform",
         "matrix(1, 0, 0, 1, 0, 58)"
-      );
-    });
-
-    it("Does not effect element 12", () => {
-      cy.get("#id-12").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
       );
     });
 
     it("Moves outside the parent", () => {
       cy.get("#id-11").trigger("mousemove", {
         clientX: startingPointX,
-        clientY: startingPointY - (2 * elmBox.height + 2 * elmBox.height),
+        clientY: startingPointY - (2 * elmBox.height + elmBox.height),
         force: true,
       });
-    });
-
-    it("Moving out parent from the top, effects element 9/10/12, moves it up", () => {
-      cy.get("#id-9").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
-      );
-
-      cy.get("#id-10").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
-      );
-
-      cy.get("#id-12").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, -58)"
-      );
     });
 
     it("Triggers mouseup", () => {
@@ -326,14 +298,8 @@ context("DnD/Testing is out position vertically", () => {
         });
     });
 
-    it("Resets all positions", () => {
+    it("Resets all positions considering leaving from above is not suitable", () => {
       cy.get("#id-9").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
-      );
-
-      cy.get("#id-10").should(
         "have.css",
         "transform",
         "matrix(1, 0, 0, 1, 0, 0)"
@@ -342,13 +308,19 @@ context("DnD/Testing is out position vertically", () => {
       cy.get("#id-11").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
+        "matrix(1, 0, 0, 1, 0, -58)"
       );
 
       cy.get("#id-12").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
+        "matrix(1, 0, 0, 1, 0, -58)"
+      );
+
+      cy.get("#id-10").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 116)"
       );
     });
   });
