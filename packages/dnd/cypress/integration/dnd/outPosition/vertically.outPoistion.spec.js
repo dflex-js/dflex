@@ -7,8 +7,8 @@ context("DnD/Testing is out position vertically", () => {
     cy.visit("http://localhost:3001/");
   });
 
-  context("Moving strict vertically one siblings - out down", () => {
-    it("Transforms element 10 out", () => {
+  context.only("Moving strict vertically one siblings - out down", () => {
+    it("Transforms element 10 out vertically", () => {
       cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
 
@@ -55,27 +55,28 @@ context("DnD/Testing is out position vertically", () => {
         });
     });
 
-    it("Resets all positions", () => {
-      cy.get("#id-9").should("have.css", "transform", "none");
-
+    it("Dragged takes new position switching the other element", () => {
       cy.get("#id-10").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
+        "matrix(1, 0, 0, 1, 0, 58)"
       );
 
       cy.get("#id-11").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
+        "matrix(1, 0, 0, 1, 0, -58)"
       );
+    });
 
+    it("ELement not involved are not effected", () => {
+      cy.get("#id-9").should("have.css", "transform", "none");
       cy.get("#id-12").should("have.css", "transform", "none");
     });
   });
 
-  context("Moving strict vertically one siblings - out up", () => {
-    it("Transforms element 10 out", () => {
+  context.only("Moving strict vertically one siblings - out up", () => {
+    it("Transforms element 10 out up vertically", () => {
       cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
 
@@ -94,15 +95,7 @@ context("DnD/Testing is out position vertically", () => {
       });
     });
 
-    it("Effects element 9, moves it down", () => {
-      cy.get("#id-9").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 58)"
-      );
-    });
-
-    it("Does not effect element 11", () => {
+    it("Effects element 11, moves it down", () => {
       cy.get("#id-11").should(
         "have.css",
         "transform",
@@ -110,7 +103,8 @@ context("DnD/Testing is out position vertically", () => {
       );
     });
 
-    it("Does not effect element 12", () => {
+    it("Does not effect elements 9 and 12", () => {
+      cy.get("#id-9").should("have.css", "transform", "none");
       cy.get("#id-12").should("have.css", "transform", "none");
     });
 
@@ -126,12 +120,8 @@ context("DnD/Testing is out position vertically", () => {
         });
     });
 
-    it("Resets all positions", () => {
-      cy.get("#id-9").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
-      );
+    it("Effected elements are switched again", () => {
+      cy.get("#id-9").should("have.css", "transform", "none");
 
       cy.get("#id-10").should(
         "have.css",
@@ -149,8 +139,8 @@ context("DnD/Testing is out position vertically", () => {
     });
   });
 
-  context("Moving strict vertically multi siblings - out down", () => {
-    it("Transforms element 10 out", () => {
+  context.only("Moving strict vertically multi siblings - out down", () => {
+    it("Transforms element 10 out down multi steps", () => {
       cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
 
@@ -176,11 +166,7 @@ context("DnD/Testing is out position vertically", () => {
     });
 
     it("Does not effect element 9", () => {
-      cy.get("#id-9").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
-      );
+      cy.get("#id-9").should("have.css", "transform", "none");
     });
 
     it("Effects element 11, lifts it up", () => {
@@ -199,20 +185,14 @@ context("DnD/Testing is out position vertically", () => {
       );
     });
 
-    it("Moves outside the parent", () => {
+    it("Moves outside the parent preservers the last transformation", () => {
       cy.get("#id-10").trigger("mousemove", {
         clientX: startingPointX,
         clientY: startingPointY + (2 * elmBox.height + 2 * elmBox.height),
         force: true,
       });
-    });
 
-    it("Moving out parent preservers the last transformation", () => {
-      cy.get("#id-9").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
-      );
+      cy.get("#id-9").should("have.css", "transform", "none");
 
       cy.get("#id-11").should(
         "have.css",
@@ -239,34 +219,24 @@ context("DnD/Testing is out position vertically", () => {
         });
     });
 
-    it("Resets all positions", () => {
-      cy.get("#id-9").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
-      );
-
-      cy.get("#id-10").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
-      );
+    it("Effected elements are switched ", () => {
+      cy.get("#id-9").should("have.css", "transform", "none");
 
       cy.get("#id-11").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
+        "matrix(1, 0, 0, 1, 0, -58)"
       );
 
       cy.get("#id-12").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
+        "matrix(1, 0, 0, 1, 0, -58)"
       );
     });
   });
 
-  context("Moving strict vertically multi siblings - out up", () => {
+  context.only("Moving strict vertically multi siblings - out up", () => {
     it("Transforms element 11 out, two siblings 9/10", () => {
       cy.get("#id-11").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
