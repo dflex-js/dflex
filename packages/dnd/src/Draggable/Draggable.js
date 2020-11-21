@@ -202,7 +202,9 @@ class Draggable extends Base {
 
     this[DRAGGED_ELM].setCurrentOffset();
 
-    console.log(this.numberOfElementsTransformed);
+    const draggedDirection =
+      this.tempIndex < this[DRAGGED_ELM].order.self ? -1 : 1;
+
     /**
      * Move to new droppable position.
      *
@@ -212,7 +214,7 @@ class Draggable extends Base {
      */
     this[DRAGGED_ELM].setYPosition(
       this.siblingsList,
-      -this.effectedElemDirection /** dragged goes to opposite side */,
+      draggedDirection,
       this.numberOfElementsTransformed * topDifference,
       this.numberOfElementsTransformed,
       false,
