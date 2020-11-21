@@ -12,7 +12,11 @@ class Droppable {
     this.draggable = draggable;
 
     this.topDifference = 0;
-    this.isDraggedOutPosition = false;
+
+    /**
+     * Elements effected by dragged direction.
+     */
+    this.effectedElemDirection = 1;
 
     this.isListLocked = false;
     this.prevIsListLocked = false;
@@ -22,6 +26,10 @@ class Droppable {
     this.droppableIndex = -1;
   }
 
+  setEffectedElemDirection(isUp) {
+    this.effectedElemDirection = isUp ? -1 : 1;
+  }
+
   /**
    * Updates element instance and calculates the required transform distance. It
    * invokes for each eligible element in the parent container.
@@ -29,7 +37,9 @@ class Droppable {
    * @param {CoreInstance} element
    * @memberof Droppable
    */
-  updateElement(element, isUpdateTempIndex) {
+  updateElement(id) {
+    const element = store.getElmById(id);
+
     /**
      * breakingPoint detects the first element that comes immediately
      * after dragged. Not in original order, but according to isQualified result.
@@ -67,13 +77,7 @@ class Droppable {
       this.isFoundBreakingPoint = true;
     }
 
-    /**
-     * With each element that is transformed:
-     * 1) Increase elements transformed courter: this.draggable.numberOfElementsTransformed
-     * 2) Update drag temp index that is used in all is-functions.
-     * 3) Update all instances related to element and css-transform it.
-     */
-    this.draggable.numberOfElementsTransformed += 1;
+    this.draggable.incNumOfElementsTransformed();
 
     if (!this.isListLocked) {
       /**
@@ -88,26 +92,6 @@ class Droppable {
        * condition is the breaking point element.
        */
       this.draggable.setThreshold(element);
-
-      if (isUpdateTempIndex) {
-        /**
-         * Since final index is set when element is transformed, we have no idea what
-         * the current index in dragged is. To solve this issue, we have a simple
-         * equation
-         *
-         * Current temp index = currentIndex +/- this.draggable.numberOfElementsTransformed
-         *
-         * Dragged is always going to the opposite side of element direction. So, if
-         * effectedElemDirection is up (+1) dragged is down:
-         *
-         * draggedDirection = -effectedElemDirection
-         *
-         */
-        this.draggable.tempIndex =
-          this.draggable[DRAGGED_ELM].order.self -
-          this.draggable.effectedElemDirection *
-            this.draggable.numberOfElementsTransformed;
-      }
     }
 
     /**
@@ -115,7 +99,7 @@ class Droppable {
      */
     element.setYPosition(
       this.draggable.siblingsList,
-      this.draggable.effectedElemDirection,
+      this.effectedElemDirection,
       this.topDifference,
       1,
       true,
@@ -167,15 +151,14 @@ class Droppable {
   }
 
   switchElement() {
-    const elmIndex =
-      this.draggable.tempIndex + -1 * this.draggable.effectedElemDirection;
+    const elmIndex = this.draggable.tempIndex + -1 * this.effectedElemDirection;
 
     const id = this.draggable.siblingsList[elmIndex];
 
     if (this.isIDEligible2Move(id)) {
-      const element = store.getElmById(id);
+      this.draggable.tempIndex = elmIndex;
 
-      this.updateElement(element, true);
+      this.updateElement(id);
     }
   }
 
@@ -183,22 +166,22 @@ class Droppable {
     const id = this.draggable.siblingsList[i];
 
     if (this.isIDEligible2Move(id)) {
-      const element = store.getElmById(id);
-
-      this.updateElement(element);
+      this.updateElement(id);
     }
   }
 
-  liftUp(func) {
+  liftUp() {
     const from = this.draggable.tempIndex + 1;
+    this.draggable.tempIndex = -1;
+
     for (let i = from; i < this.draggable.siblingsList.length; i += 1) {
-      this[func](i);
+      this.movePositionIfEligibleID(i);
     }
   }
 
-  moveDown(to, func) {
+  moveDown(to) {
     for (let i = this.draggable.siblingsList.length - 1; i >= to; i -= 1) {
-      this[func](i);
+      this.movePositionIfEligibleID(i);
     }
   }
 
@@ -214,12 +197,12 @@ class Droppable {
        */
 
       // move element up
-      this.draggable.setEffectedElemDirection(true);
+      this.setEffectedElemDirection(true);
 
       // lock the parent
       this.isListLocked = true;
 
-      this.liftUp("movePositionIfEligibleID");
+      this.liftUp();
 
       return;
     }
@@ -245,22 +228,24 @@ class Droppable {
        */
       if (this.draggable.isOutHorizontal) {
         // move element up
-        this.draggable.setEffectedElemDirection(true);
+        this.setEffectedElemDirection(true);
 
         // lock the parent
         this.isListLocked = true;
 
-        this.liftUp("movePositionIfEligibleID");
+        this.liftUp();
 
         this.isOutStatusHorizontally = true;
 
         return;
       }
 
-      // console.log("normal, switch");
+      /**
+       * Normal state, switch.
+       */
 
       // inside the list, effected should be related to mouse movement
-      this.draggable.setEffectedElemDirection(this.draggable.isMovingDown);
+      this.setEffectedElemDirection(this.draggable.isMovingDown);
 
       this.switchElement();
     }
@@ -272,9 +257,6 @@ class Droppable {
   }
 
   draggedIsComingIn() {
-    // move element up
-    this.draggable.setEffectedElemDirection(false);
-
     /**
      * If tempIndex is zero, the dragged is coming from the top. So, move them
      * down all: to=0
@@ -293,13 +275,32 @@ class Droppable {
 
     this.unlockParent();
 
-    this.moveDown(to, "movePositionIfEligibleID");
+    /**
+     * Moving element down by setting is up to false
+     */
+    this.setEffectedElemDirection(false);
+
+    /**
+     * Toggle elements transformed incremental to decrease number of transformed
+     * elements. It's like undoing transformation.
+     */
+    this.draggable.toggleElementsTransformedInc();
+
+    this.moveDown(to);
+
+    /**
+     * End toggling and continue as it was.
+     */
+    this.draggable.toggleElementsTransformedInc();
+
+    /**
+     * Now, resitting direction by figuring out if dragged settled up/dwn.
+     */
+    const isElmUp =
+      this.draggable.tempIndex > this.draggable[DRAGGED_ELM].order.self;
+    this.setEffectedElemDirection(isElmUp);
 
     this.draggable.siblingsList[to] = this.draggable[DRAGGED_ELM].id;
-
-    // TODO: Is this right?
-    this.draggable.numberOfElementsTransformed =
-      this.draggable[DRAGGED_ELM].order.self - this.draggable.tempIndex;
   }
 
   /**
@@ -314,9 +315,7 @@ class Droppable {
   dragAt(x, y) {
     this.draggable.dragAt(x, y);
 
-    this.isDraggedOutPosition = this.draggable.isDraggedOut();
-
-    if (this.isDraggedOutPosition) {
+    if (this.draggable.isDraggedOut()) {
       if (!this.isListLocked) {
         this.draggedOutPosition(y);
 

@@ -27,13 +27,9 @@ class Draggable extends Base {
      * crucial to calculate drag's translate and index
      */
     this.numberOfElementsTransformed = 0;
+    this.inc = 1;
 
-    /**
-     * Elements effected by dragged direction.
-     */
-    this.effectedElemDirection = 1;
-
-    this.isMovingDownPrev = false;
+    this.isMovingDownPrev = null;
     this.isMovingDown = false;
   }
 
@@ -131,30 +127,53 @@ class Draggable extends Base {
     );
   }
 
+  toggleElementsTransformedInc() {
+    this.inc *= -1;
+  }
+
+  resetElementsTransformedInc() {
+    this.inc = 1;
+  }
+
   setDraggedMovingDown(y) {
     this.isMovingDown = this.isOutHorizontal ? true : y > this.prevY;
     this.prevY = y;
 
-    if (this.isMovingDownPrev !== this.isMovingDown) {
+    if (
+      this.numberOfElementsTransformed > 0 &&
+      this.isMovingDownPrev !== this.isMovingDown
+    ) {
       /**
        * In this case, we have a sudden change in mouse movement. So, reverse
        * numberOfElementsTransformed value, to be compatible with effectedElemDirection.
        */
-      this.numberOfElementsTransformed *= -1;
+      this.toggleElementsTransformedInc();
     }
 
     this.isMovingDownPrev = this.isMovingDown;
   }
 
-  setEffectedElemDirection(isUp) {
-    this.effectedElemDirection = isUp ? -1 : 1;
+  incNumOfElementsTransformed() {
+    if (this.numberOfElementsTransformed === 0) {
+      this.resetElementsTransformedInc();
+    }
+
+    this.numberOfElementsTransformed += this.inc;
+
+    // console.log(
+    //   "is this.numberOfElementsTransformed",
+    //   this.numberOfElementsTransformed
+    // );
   }
 
-  setDraggedPosition(isDraggedOutPosition, topDifference) {
+  setDraggedPosition(topDifference) {
     /**
      * In this case, the use clicked without making any move.
      */
-    if (isDraggedOutPosition || this.numberOfElementsTransformed === 0) {
+    if (
+      (!this.isDraggedLeavingFromEnd() && this.isDraggedOut()) ||
+      this.numberOfElementsTransformed === 0
+    ) {
       /**
        * If not isDraggedOutPosition, it means dragged is out its position, inside
        * list but didn't reach another element to replace.
@@ -174,6 +193,9 @@ class Draggable extends Base {
 
     this[DRAGGED_ELM].setCurrentOffset();
 
+    const draggedDirection =
+      this.tempIndex < this[DRAGGED_ELM].order.self ? -1 : 1;
+
     /**
      * Move to new droppable position.
      *
@@ -183,7 +205,7 @@ class Draggable extends Base {
      */
     this[DRAGGED_ELM].setYPosition(
       this.siblingsList,
-      -this.effectedElemDirection /** dragged goes to opposite side */,
+      draggedDirection,
       this.numberOfElementsTransformed * topDifference,
       this.numberOfElementsTransformed,
       false,
@@ -191,10 +213,10 @@ class Draggable extends Base {
     );
   }
 
-  endDragging(isDraggedOutPosition, topDifference) {
+  endDragging(topDifference) {
     this.setDragged(false);
 
-    this.setDraggedPosition(isDraggedOutPosition, topDifference);
+    this.setDraggedPosition(topDifference);
   }
 }
 
