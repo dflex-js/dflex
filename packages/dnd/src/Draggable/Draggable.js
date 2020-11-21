@@ -29,11 +29,6 @@ class Draggable extends Base {
     this.numberOfElementsTransformed = 0;
     this.inc = 1;
 
-    /**
-     * Elements effected by dragged direction.
-     */
-    this.effectedElemDirection = 1;
-
     this.isMovingDownPrev = null;
     this.isMovingDown = false;
   }
@@ -156,10 +151,6 @@ class Draggable extends Base {
     }
 
     this.isMovingDownPrev = this.isMovingDown;
-  }
-
-  setEffectedElemDirection(isUp) {
-    this.effectedElemDirection = isUp ? -1 : 1;
   }
 
   incNumOfElementsTransformed() {

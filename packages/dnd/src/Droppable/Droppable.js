@@ -13,12 +13,21 @@ class Droppable {
 
     this.topDifference = 0;
 
+    /**
+     * Elements effected by dragged direction.
+     */
+    this.effectedElemDirection = 1;
+
     this.isListLocked = false;
     this.prevIsListLocked = false;
 
     this.isOutStatusHorizontally = false;
 
     this.droppableIndex = -1;
+  }
+
+  setEffectedElemDirection(isUp) {
+    this.effectedElemDirection = isUp ? -1 : 1;
   }
 
   /**
@@ -90,7 +99,7 @@ class Droppable {
      */
     element.setYPosition(
       this.draggable.siblingsList,
-      this.draggable.effectedElemDirection,
+      this.effectedElemDirection,
       this.topDifference,
       1,
       true,
@@ -142,8 +151,7 @@ class Droppable {
   }
 
   switchElement() {
-    const elmIndex =
-      this.draggable.tempIndex + -1 * this.draggable.effectedElemDirection;
+    const elmIndex = this.draggable.tempIndex + -1 * this.effectedElemDirection;
 
     const id = this.draggable.siblingsList[elmIndex];
 
@@ -189,7 +197,7 @@ class Droppable {
        */
 
       // move element up
-      this.draggable.setEffectedElemDirection(true);
+      this.setEffectedElemDirection(true);
 
       // lock the parent
       this.isListLocked = true;
@@ -220,7 +228,7 @@ class Droppable {
        */
       if (this.draggable.isOutHorizontal) {
         // move element up
-        this.draggable.setEffectedElemDirection(true);
+        this.setEffectedElemDirection(true);
 
         // lock the parent
         this.isListLocked = true;
@@ -237,7 +245,7 @@ class Droppable {
        */
 
       // inside the list, effected should be related to mouse movement
-      this.draggable.setEffectedElemDirection(this.draggable.isMovingDown);
+      this.setEffectedElemDirection(this.draggable.isMovingDown);
 
       this.switchElement();
     }
@@ -270,7 +278,7 @@ class Droppable {
     /**
      * Moving element down by setting is up to false
      */
-    this.draggable.setEffectedElemDirection(false);
+    this.setEffectedElemDirection(false);
 
     /**
      * Toggle elements transformed incremental to decrease number of transformed
@@ -290,7 +298,7 @@ class Droppable {
      */
     const isElmUp =
       this.draggable.tempIndex > this.draggable[DRAGGED_ELM].order.self;
-    this.draggable.setEffectedElemDirection(isElmUp);
+    this.setEffectedElemDirection(isElmUp);
 
     this.draggable.siblingsList[to] = this.draggable[DRAGGED_ELM].id;
   }
