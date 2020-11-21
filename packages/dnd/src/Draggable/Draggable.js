@@ -160,10 +160,10 @@ class Draggable extends Base {
 
     this.numberOfElementsTransformed += this.inc;
 
-    console.log(
-      "is this.numberOfElementsTransformed",
-      this.numberOfElementsTransformed
-    );
+    // console.log(
+    //   "is this.numberOfElementsTransformed",
+    //   this.numberOfElementsTransformed
+    // );
   }
 
   setDraggedPosition(topDifference) {
