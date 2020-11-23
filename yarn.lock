@@ -10373,7 +10373,7 @@ eslint-config-airbnb@^18.1.0:
     object.assign "^4.1.2"
     object.entries "^1.1.2"
 
-eslint-config-prettier@^6.11.0:
+eslint-config-prettier@^6.11.0, eslint-config-prettier@^6.15.0:
   version "6.15.0"
   resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-6.15.0.tgz#7f93f6cb7d45a92f1537a70ecc06366e1ac6fed9"
   integrity sha512-a1+kOYLR8wMGustcgAjdydMsQ2A/2ipRPwRKUmfYaSxc9ZPcrku080Ctl6zrZzZNs/U82MjSv+qKREkoq3bJaw==
