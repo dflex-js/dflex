@@ -58,6 +58,7 @@ class EndDroppable extends Droppable {
     this.draggable.endDragging(this.topDifference);
 
     if (
+      this.draggable[ACTIVE_PARENT] &&
       !this.draggable.isDraggedLeavingFromEnd() &&
       this.draggable.isDraggedOut()
     ) {
