@@ -24,24 +24,28 @@ const thirdContainer = [
   { label: "container3 |> elm-4", id: "12" },
 ];
 
+const ID_PARENT_1 = "P1";
+const ID_PARENT_2 = "P2";
+const ID_PARENT_3 = "P3";
+
 function App() {
   return (
     <Container className="Container">
-      <Core id="p0-a" component="ul" depth={1}>
+      <Core id={ID_PARENT_1} component="ul" depth={1}>
         {firstContainer.map(({ label, id }) => (
           <Core depth={0} id={`id-${id}`} key={`k${id}`} component="li">
             {label}
           </Core>
         ))}
       </Core>
-      <Core id="p0-1b" component="ul" depth={1}>
+      <Core id={ID_PARENT_2} component="ul" depth={1}>
         {secondContainer.map(({ label, id }) => (
           <Core depth={0} id={`id-${id}`} key={`k-${id}`} component="li">
             {label}
           </Core>
         ))}
       </Core>
-      <Core id="p0-1c" component="ul" depth={1}>
+      <Core id={ID_PARENT_3} component="ul" depth={1}>
         {thirdContainer.map(({ label, id }) => (
           <Core depth={0} id={`id-${id}`} key={`k-${id}`} component="li">
             {label}
