@@ -11,17 +11,17 @@ import { DRAGGED_ELM } from "../constants.json";
  */
 const draggedStyleProps = [
   {
-    prop: "pointerEvents",
-    value: "none",
-  },
-  {
     prop: "zIndex",
-    value: "1",
+    value: "99",
   },
-  {
-    prop: "transition",
-    value: `opacity 0.2s cubic-bezier(0.2, 0, 0, 1) 0s`,
-  },
+  // {
+  //   prop: "pointerEvents",
+  //   value: "none",
+  // },
+  // {
+  //   prop: "transition",
+  //   value: `opacity 0.2s cubic-bezier(0.2, 0, 0, 1) 0s`,
+  // },
 ];
 
 /**
