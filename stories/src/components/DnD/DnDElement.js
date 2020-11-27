@@ -1,24 +1,20 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable import/no-extraneous-dependencies */
 import React from "react";
 
-import { keyGenerator } from "@folo/utils";
-import { store } from "@dflex/dnd/src";
+import { store, DnD } from "@dflex/dnd/src";
 
-const DnDElement = (props) => {
-  const {
-    component: DnDComponent = "div",
-    id: idProps,
-    children,
-    depth,
-  } = props;
+// shared dragged event
+let draggedEvent;
+
+const draggedEventElement = (props) => {
+  const { id, depth, children } = props;
 
   const ref = React.createRef();
-
-  const [id] = React.useState(
-    idProps || `${keyGenerator(new Date().getTime())}`
-  );
+  const [isDragged, setIsDragged] = React.useState(false);
 
   React.useEffect(() => {
+    console.log("register");
     setTimeout(
       // eslint-disable-next-line func-names
       function () {
@@ -28,11 +24,48 @@ const DnDElement = (props) => {
     );
   }, [id, depth, ref]);
 
+  const onMouseUp = () => {
+    if (draggedEvent) {
+      draggedEvent.endDragging();
+      draggedEvent = null;
+    }
+  };
+
+  const onMouseMove = (e) => {
+    if (draggedEvent) {
+      const { clientX, clientY } = e;
+
+      draggedEvent.dragAt(clientX, clientY);
+    }
+  };
+
+  const onMouseDown = (e) => {
+    const { button, clientX, clientY } = e;
+
+    // avoid right mouse click and ensure id
+    if (typeof button === "number" && button === 0) {
+      if (id) {
+        draggedEvent = new DnD(id, { x: clientX, y: clientY });
+        setIsDragged(true);
+      }
+    }
+  };
+
   return (
-    <DnDComponent ref={ref} key={id} id={id}>
+    <li
+      ref={ref}
+      key={id}
+      id={id}
+      onMouseDown={onMouseDown}
+      onMouseMove={onMouseMove}
+      onMouseUp={onMouseUp}
+      className={`bg-indigo-300 p-7 hover:bg-indigo-200 rounded shadow cursor-pointer ${
+        isDragged ? "transition-none" : "transition-none"
+      }`}
+    >
       {children}
-    </DnDComponent>
+    </li>
   );
 };
 
-export default DnDElement;
+export default draggedEventElement;
