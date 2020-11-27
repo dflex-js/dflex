@@ -13,7 +13,7 @@ function backToOriginalPosition() {
   });
 }
 
-context("DnD/Testing single element is the list", () => {
+context("DnD/Testing single element in the list", () => {
   before(() => {
     cy.visit("http://localhost:3001/");
   });
