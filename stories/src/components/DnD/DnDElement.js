@@ -14,7 +14,6 @@ const draggedEventElement = (props) => {
   const [isDragged, setIsDragged] = React.useState(false);
 
   React.useEffect(() => {
-    console.log("register");
     setTimeout(
       // eslint-disable-next-line func-names
       function () {
@@ -22,12 +21,13 @@ const draggedEventElement = (props) => {
       },
       0
     );
-  }, [id, depth, ref]);
+  }, []);
 
   const onMouseUp = () => {
     if (draggedEvent) {
       draggedEvent.endDragging();
       draggedEvent = null;
+      setIsDragged(false);
     }
   };
 
@@ -60,7 +60,7 @@ const draggedEventElement = (props) => {
       onMouseMove={onMouseMove}
       onMouseUp={onMouseUp}
       className={`bg-indigo-300 p-7 hover:bg-indigo-200 rounded shadow cursor-pointer ${
-        isDragged ? "transition-none" : "transition-none"
+        isDragged ? "transition-none" : "transition-all"
       }`}
     >
       {children}
