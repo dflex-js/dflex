@@ -9,77 +9,80 @@ context(
       cy.visit("http://localhost:3001/");
     });
 
-    context("Moving element 9 down to occupy 10 position", () => {
-      it("Transforms element 10 out", () => {
-        cy.get("#id-9").then((elm) => {
-          elmBox = elm[0].getBoundingClientRect();
+    context(
+      "Moving (container3 |> elm-1) down to occupy (container3 |> elm-2) position",
+      () => {
+        it("Transforms (container3 |> elm-2) out", () => {
+          cy.get("#id-9").then((elm) => {
+            elmBox = elm[0].getBoundingClientRect();
 
-          startingPointX = elmBox.x + elmBox.width / 2;
-          startingPointY = elmBox.y + elmBox.height / 2;
+            startingPointX = elmBox.x + elmBox.width / 2;
+            startingPointY = elmBox.y + elmBox.height / 2;
 
-          cy.get("#id-9")
-            .trigger("mousedown", {
-              button: 0,
-            })
-            .trigger("mousemove", {
-              clientX: startingPointX,
-              clientY: startingPointY + ((1 / 3) * elmBox.height + 8),
-              force: true,
-            })
-            .trigger("mousemove", {
-              clientX: startingPointX,
-              clientY: startingPointY + ((2 / 3) * elmBox.height + 8),
-              force: true,
-            })
-            .trigger("mousemove", {
-              clientX: startingPointX,
-              clientY: startingPointY + ((3 / 3) * elmBox.height + 8),
-              force: true,
-            });
-        });
-      });
-
-      it("Does not effect element 11", () => {
-        cy.get("#id-11").should("have.css", "transform", "none");
-      });
-
-      it("Does not effect element 12", () => {
-        cy.get("#id-12").should("have.css", "transform", "none");
-      });
-
-      it("Triggers mouseup", () => {
-        cy.get("#id-9").trigger("mouseup", { force: true });
-      });
-
-      it("Makes sure list has four elements", () => {
-        cy.get("#p0-1c")
-          .should("not.be.empty")
-          .and(($li) => {
-            expect($li[0].children).to.have.length(4);
+            cy.get("#id-9")
+              .trigger("mousedown", {
+                button: 0,
+              })
+              .trigger("mousemove", {
+                clientX: startingPointX,
+                clientY: startingPointY + ((1 / 3) * elmBox.height + 8),
+                force: true,
+              })
+              .trigger("mousemove", {
+                clientX: startingPointX,
+                clientY: startingPointY + ((2 / 3) * elmBox.height + 8),
+                force: true,
+              })
+              .trigger("mousemove", {
+                clientX: startingPointX,
+                clientY: startingPointY + ((3 / 3) * elmBox.height + 8),
+                force: true,
+              });
           });
-      });
+        });
 
-      it("All elements preserve their positions", () => {
-        cy.get("#id-9").should(
-          "have.css",
-          "transform",
-          "matrix(1, 0, 0, 1, 0, 58)"
-        );
+        it("Does not effect (container3 |> elm-3)", () => {
+          cy.get("#id-11").should("have.css", "transform", "none");
+        });
 
-        cy.get("#id-10").should(
-          "have.css",
-          "transform",
-          "matrix(1, 0, 0, 1, 0, -58)"
-        );
+        it("Does not effect (container3 |> elm-4)", () => {
+          cy.get("#id-12").should("have.css", "transform", "none");
+        });
 
-        cy.get("#id-11").should("have.css", "transform", "none");
+        it("Triggers mouseup", () => {
+          cy.get("#id-9").trigger("mouseup", { force: true });
+        });
 
-        cy.get("#id-12").should("have.css", "transform", "none");
-      });
-    });
+        it("Makes sure list has four elements", () => {
+          cy.get("#p0-1c")
+            .should("not.be.empty")
+            .and(($li) => {
+              expect($li[0].children).to.have.length(4);
+            });
+        });
 
-    context("Moving element 9 down to occupy 11 position", () => {
-      it("Transforms element 10 out", () => {
+        it("All elements preserve their positions", () => {
+          cy.get("#id-9").should(
+            "have.css",
+            "transform",
+            "matrix(1, 0, 0, 1, 0, 58)"
+          );
+
+          cy.get("#id-10").should(
+            "have.css",
+            "transform",
+            "matrix(1, 0, 0, 1, 0, -58)"
+          );
+
+          cy.get("#id-11").should("have.css", "transform", "none");
+
+          cy.get("#id-12").should("have.css", "transform", "none");
+        });
+      }
+    );
+
+    context("Moving (container3 |> elm-1) down to occupy 11 position", () => {
+      it("Transforms (container3 |> elm-2) out", () => {
         cy.get("#id-9").then((elm) => {
           elmBox = elm[0].getBoundingClientRect();
 
@@ -108,7 +111,7 @@ context(
         });
       });
 
-      it("Does not effect element 10", () => {
+      it("Does not effect (container3 |> elm-2)", () => {
         cy.get("#id-10").should(
           "have.css",
           "transform",
@@ -116,7 +119,7 @@ context(
         );
       });
 
-      it("Effects element 11, lifts it up", () => {
+      it("Effects (container3 |> elm-3), lifts it up", () => {
         cy.get("#id-11").should(
           "have.css",
           "transform",
@@ -124,7 +127,7 @@ context(
         );
       });
 
-      it("Does not effect element 12", () => {
+      it("Does not effect (container3 |> elm-4)", () => {
         cy.get("#id-12").should("have.css", "transform", "none");
       });
 
@@ -163,8 +166,8 @@ context(
       });
     });
 
-    context("Moving element 9 down to occupy 12 position", () => {
-      it("Transforms element 10 out", () => {
+    context("Moving (container3 |> elm-1) down to occupy 12 position", () => {
+      it("Transforms (container3 |> elm-2) out", () => {
         cy.get("#id-9").then((elm) => {
           elmBox = elm[0].getBoundingClientRect();
 
@@ -193,7 +196,7 @@ context(
         });
       });
 
-      it("Does not effect element 10", () => {
+      it("Does not effect (container3 |> elm-2)", () => {
         cy.get("#id-10").should(
           "have.css",
           "transform",
@@ -201,7 +204,7 @@ context(
         );
       });
 
-      it("Does not effect element 11", () => {
+      it("Does not effect (container3 |> elm-3)", () => {
         cy.get("#id-11").should(
           "have.css",
           "transform",
@@ -209,7 +212,7 @@ context(
         );
       });
 
-      it("Effect element 12, lifts it up", () => {
+      it("Effect (container3 |> elm-4), lifts it up", () => {
         cy.get("#id-12").should(
           "have.css",
           "transform",
@@ -256,8 +259,8 @@ context(
       });
     });
 
-    context("Moving element 10 down, to occupy 11 position", () => {
-      it("Transforms element 10 out", () => {
+    context("Moving (container3 |> elm-2) down, to occupy 11 position", () => {
+      it("Transforms (container3 |> elm-2) out", () => {
         cy.get("#id-10").then((elm) => {
           elmBox = elm[0].getBoundingClientRect();
 
@@ -286,7 +289,7 @@ context(
         });
       });
 
-      it("Effects element 11, lifts it up", () => {
+      it("Effects (container3 |> elm-3), lifts it up", () => {
         cy.get("#id-11").should(
           "have.css",
           "transform",
@@ -294,7 +297,7 @@ context(
         );
       });
 
-      it("Does not effect element 12", () => {
+      it("Does not effect (container3 |> elm-4)", () => {
         cy.get("#id-12").should(
           "have.css",
           "transform",
@@ -302,7 +305,7 @@ context(
         );
       });
 
-      it("Does not effect element 9", () => {
+      it("Does not effect (container3 |> elm-1)", () => {
         cy.get("#id-9").should(
           "have.css",
           "transform",
@@ -352,7 +355,7 @@ context(
 );
 
 context("DnD/Testing occupying multiple positions vertically up", () => {
-  it("Transforms element 9 out - one sibling to 12", () => {
+  it("Transforms (container3 |> elm-1) out - one sibling to 12", () => {
     cy.get("#id-9").then((elm) => {
       elmBox = elm[0].getBoundingClientRect();
 
@@ -381,7 +384,7 @@ context("DnD/Testing occupying multiple positions vertically up", () => {
     });
   });
 
-  it("Transforms element 9 out - two siblings to 10", () => {
+  it("Transforms (container3 |> elm-1) out - two siblings to 10", () => {
     cy.get("#id-9")
       .trigger("mousemove", {
         clientX: startingPointX,
@@ -418,7 +421,7 @@ context("DnD/Testing occupying multiple positions vertically up", () => {
       });
   });
 
-  it("Does not effect element 11", () => {
+  it("Does not effect (container3 |> elm-3)", () => {
     cy.get("#id-11").should(
       "have.css",
       "transform",
@@ -426,7 +429,7 @@ context("DnD/Testing occupying multiple positions vertically up", () => {
     );
   });
 
-  it("Puts element 9 in a new position ", () => {
+  it("Puts (container3 |> elm-1) in a new position ", () => {
     cy.get("#id-9").should(
       "have.css",
       "transform",
@@ -434,7 +437,7 @@ context("DnD/Testing occupying multiple positions vertically up", () => {
     );
   });
 
-  it("Puts element 10 in a new position ", () => {
+  it("Puts (container3 |> elm-2) in a new position ", () => {
     cy.get("#id-10").should(
       "have.css",
       "transform",
@@ -442,7 +445,7 @@ context("DnD/Testing occupying multiple positions vertically up", () => {
     );
   });
 
-  it("Puts element 12 in a new position ", () => {
+  it("Puts (container3 |> elm-4) in a new position ", () => {
     cy.get("#id-12").should(
       "have.css",
       "transform",
@@ -450,7 +453,7 @@ context("DnD/Testing occupying multiple positions vertically up", () => {
     );
   });
 
-  it("Moves element 11 outside the parent", () => {
+  it("Moves (container3 |> elm-3) outside the parent", () => {
     cy.get("#id-11").then((elm) => {
       elmBox = elm[0].getBoundingClientRect();
 

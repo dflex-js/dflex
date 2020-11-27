@@ -10,7 +10,7 @@ context("DnD/Testing is out position horizontally", () => {
   });
 
   context("Moving strict horizontally - out form the right", () => {
-    it("Transforms element 10 out", () => {
+    it("Transforms (container3 |> elm-2) out", () => {
       cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
 
@@ -29,11 +29,11 @@ context("DnD/Testing is out position horizontally", () => {
       });
     });
 
-    it("Does not effect element 9", () => {
+    it("Does not effect (container3 |> elm-1)", () => {
       cy.get("#id-9").should("have.css", "transform", "none");
     });
 
-    it("Effects element 11, lifts it up", () => {
+    it("Effects (container3 |> elm-3), lifts it up", () => {
       cy.get("#id-11").should(
         "have.css",
         "transform",
@@ -41,7 +41,7 @@ context("DnD/Testing is out position horizontally", () => {
       );
     });
 
-    it("Effects element 12, lifts it up", () => {
+    it("Effects (container3 |> elm-4), lifts it up", () => {
       cy.get("#id-12").should(
         "have.css",
         "transform",
@@ -85,7 +85,7 @@ context("DnD/Testing is out position horizontally", () => {
   });
 
   context("Moving strict horizontally - out form the left", () => {
-    it("Transforms element 10 out", () => {
+    it("Transforms (container3 |> elm-2) out", () => {
       cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
 
@@ -104,11 +104,11 @@ context("DnD/Testing is out position horizontally", () => {
       });
     });
 
-    it("Does not effect element 9", () => {
+    it("Does not effect (container3 |> elm-1)", () => {
       cy.get("#id-9").should("have.css", "transform", "none");
     });
 
-    it("Effects element 11,  lifts it up", () => {
+    it("Effects (container3 |> elm-3),  lifts it up", () => {
       cy.get("#id-11").should(
         "have.css",
         "transform",
@@ -116,7 +116,7 @@ context("DnD/Testing is out position horizontally", () => {
       );
     });
 
-    it("Effects element 12, lifts it up", () => {
+    it("Effects (container3 |> elm-4), lifts it up", () => {
       cy.get("#id-12").should(
         "have.css",
         "transform",
@@ -160,7 +160,7 @@ context("DnD/Testing is out position horizontally", () => {
   });
 
   context("Moving horizontally & slightly down - out form the right", () => {
-    it("Transforms element 10 out", () => {
+    it("Transforms (container3 |> elm-2) out", () => {
       cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
 
@@ -179,11 +179,11 @@ context("DnD/Testing is out position horizontally", () => {
       });
     });
 
-    it("Does not effect element 9", () => {
+    it("Does not effect (container3 |> elm-1)", () => {
       cy.get("#id-9").should("have.css", "transform", "none");
     });
 
-    it("Effects element 11, lifts it up", () => {
+    it("Effects (container3 |> elm-3), lifts it up", () => {
       cy.get("#id-11").should(
         "have.css",
         "transform",
@@ -191,7 +191,7 @@ context("DnD/Testing is out position horizontally", () => {
       );
     });
 
-    it("Effects element 12, lifts it up", () => {
+    it("Effects (container3 |> elm-4), lifts it up", () => {
       cy.get("#id-12").should(
         "have.css",
         "transform",
@@ -235,7 +235,7 @@ context("DnD/Testing is out position horizontally", () => {
   });
 
   context("Moving horizontally & slightly down - out form the left", () => {
-    it("Transforms element 10 out", () => {
+    it("Transforms (container3 |> elm-2) out", () => {
       cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
 
@@ -254,11 +254,11 @@ context("DnD/Testing is out position horizontally", () => {
       });
     });
 
-    it("Does not effect element 9", () => {
+    it("Does not effect (container3 |> elm-1)", () => {
       cy.get("#id-9").should("have.css", "transform", "none");
     });
 
-    it("Effects element 11, lifts it up", () => {
+    it("Effects (container3 |> elm-3), lifts it up", () => {
       cy.get("#id-11").should(
         "have.css",
         "transform",
@@ -266,7 +266,7 @@ context("DnD/Testing is out position horizontally", () => {
       );
     });
 
-    it("Effects element 12, lifts it up", () => {
+    it("Effects (container3 |> elm-4), lifts it up", () => {
       cy.get("#id-12").should(
         "have.css",
         "transform",
@@ -310,7 +310,7 @@ context("DnD/Testing is out position horizontally", () => {
   });
 
   context("Moving horizontally & slightly up - out form the right", () => {
-    it("Transforms element 10 out", () => {
+    it("Transforms (container3 |> elm-2) out", () => {
       cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
 
@@ -329,11 +329,11 @@ context("DnD/Testing is out position horizontally", () => {
       });
     });
 
-    it("Does not effect element 9", () => {
+    it("Does not effect (container3 |> elm-1)", () => {
       cy.get("#id-9").should("have.css", "transform", "none");
     });
 
-    it("Effects element 11, lifts it up", () => {
+    it("Effects (container3 |> elm-3), lifts it up", () => {
       cy.get("#id-11").should(
         "have.css",
         "transform",
@@ -341,7 +341,7 @@ context("DnD/Testing is out position horizontally", () => {
       );
     });
 
-    it("Effects element 12, lifts it up", () => {
+    it("Effects (container3 |> elm-4), lifts it up", () => {
       cy.get("#id-12").should(
         "have.css",
         "transform",
@@ -362,7 +362,7 @@ context("DnD/Testing is out position horizontally", () => {
     });
 
     it("Resets all positions", () => {
-      it("Does not effect element 9", () => {
+      it("Does not effect (container3 |> elm-1)", () => {
         cy.get("#id-9").should("have.css", "transform", "none");
       });
 
@@ -387,7 +387,7 @@ context("DnD/Testing is out position horizontally", () => {
   });
 
   context("Moving horizontally & slightly up - out form the left", () => {
-    it("Transforms element 10 out", () => {
+    it("Transforms (container3 |> elm-2) out", () => {
       cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
 
@@ -406,11 +406,11 @@ context("DnD/Testing is out position horizontally", () => {
       });
     });
 
-    it("Does not effect element 9", () => {
+    it("Does not effect (container3 |> elm-1)", () => {
       cy.get("#id-9").should("have.css", "transform", "none");
     });
 
-    it("Effects element 11, lifts it up", () => {
+    it("Effects (container3 |> elm-3), lifts it up", () => {
       cy.get("#id-11").should(
         "have.css",
         "transform",
@@ -418,7 +418,7 @@ context("DnD/Testing is out position horizontally", () => {
       );
     });
 
-    it("Effects element 12, lifts it up", () => {
+    it("Effects (container3 |> elm-4), lifts it up", () => {
       cy.get("#id-12").should(
         "have.css",
         "transform",

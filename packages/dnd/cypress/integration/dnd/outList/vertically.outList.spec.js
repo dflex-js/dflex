@@ -10,7 +10,7 @@ context("DnD/Testing is out the list vertically: out down/in/out up", () => {
   });
 
   context("Moving first element down outside the list", () => {
-    it("Transforms element 9 out, one position", () => {
+    it("Transforms (container3 |> elm-1) out, one position", () => {
       cy.get("#id-9").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
         startingPointX = elmBox.x + elmBox.width / 2;
@@ -156,7 +156,7 @@ context("DnD/Testing is out the list vertically: out down/in/out up", () => {
       );
     });
 
-    it("Transforms element 9 out the list", () => {
+    it("Transforms (container3 |> elm-1) out the list", () => {
       cy.get("#id-9").trigger("mousemove", {
         clientX: startingPointX,
         clientY: startingPointY - step - 35,
