@@ -26,6 +26,13 @@ class Store {
   register(elmInstance, CustomInstance) {
     const { id, depth } = elmInstance;
 
+    /**
+     * Avoid register same elmInstance twice.
+     */
+    if (this.abstractStore[id]) {
+      return;
+    }
+
     const pointer = this.DOMGen.getElmPointer(id, depth);
 
     const coreInstance = Object.assign(elmInstance, pointer);
