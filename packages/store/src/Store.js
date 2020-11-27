@@ -28,8 +28,9 @@ class Store {
 
     /**
      * Avoid register same elmInstance twice.
+     * TODO: Add this to test
      */
-    if (this.abstractStore[id]) {
+    if (this.abstractStore.registry[id]) {
       return;
     }
 
