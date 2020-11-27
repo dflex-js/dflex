@@ -58,11 +58,7 @@ class EndDroppable extends Droppable {
     this.draggable.endDragging(this.topDifference);
 
     // TODO: Add tests to cover dragged whiteout parents
-    if (
-      !this.draggable.isSingleton &&
-      !this.draggable.isDraggedLeavingFromEnd() &&
-      this.draggable.isDraggedOut()
-    ) {
+    if (!this.draggable.isSingleton && this.draggable.isSiblingsTransformed()) {
       const {
         keys: { chK },
       } = store.getElmById(this.draggable[ACTIVE_PARENT].id);

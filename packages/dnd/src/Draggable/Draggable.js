@@ -126,6 +126,10 @@ class Draggable extends Base {
     );
   }
 
+  isSiblingsTransformed() {
+    return !this.isDraggedLeavingFromEnd() && this.isDraggedOut();
+  }
+
   toggleElementsTransformedInc() {
     this.inc *= -1;
   }
@@ -171,7 +175,7 @@ class Draggable extends Base {
      */
     if (
       this.isSingleton ||
-      (!this.isDraggedLeavingFromEnd() && this.isDraggedOut()) ||
+      this.isSiblingsTransformed() ||
       this.numberOfElementsTransformed === 0
     ) {
       /**
