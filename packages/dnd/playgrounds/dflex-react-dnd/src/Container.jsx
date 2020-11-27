@@ -1,7 +1,8 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-use-before-define */
 import React from "react";
 
-import { DnD, store } from "@dflex/dnd/src";
+import { DnD } from "@dflex/dnd/src";
 
 const Container = ({
   component: ContainerComponent = "div",
