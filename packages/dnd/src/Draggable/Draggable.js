@@ -121,7 +121,6 @@ class Draggable extends Base {
   isDraggedVerticallyInsideList() {
     return (
       !this.isOutHorizontal &&
-      !this.isSingleton &&
       !this.isDraggedLeavingFromTop() &&
       !this.isDraggedLeavingFromEnd()
     );
@@ -171,6 +170,7 @@ class Draggable extends Base {
      * In this case, the use clicked without making any move.
      */
     if (
+      this.isSingleton ||
       (!this.isDraggedLeavingFromEnd() && this.isDraggedOut()) ||
       this.numberOfElementsTransformed === 0
     ) {

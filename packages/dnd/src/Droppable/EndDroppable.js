@@ -59,7 +59,7 @@ class EndDroppable extends Droppable {
 
     // TODO: Add tests to cover dragged whiteout parents
     if (
-      this.draggable[ACTIVE_PARENT] &&
+      !this.draggable.isSingleton &&
       !this.draggable.isDraggedLeavingFromEnd() &&
       this.draggable.isDraggedOut()
     ) {
