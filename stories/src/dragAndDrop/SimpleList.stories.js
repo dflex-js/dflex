@@ -2,40 +2,27 @@
 import React from "react";
 import { DnDContainer, DnDElement } from "../components/DnD";
 
-import "tailwindcss/tailwind.css";
+import "../style/style.css";
 
-const index = 1;
+// const index = 1;
 
 function App() {
   return (
-    <>
-      <DnDContainer className="Container" depth={1} component="ul">
-        <DnDElement
-          depth={0}
-          id={`id-${index}`}
-          key={`k${index}`}
-          component="li"
-        >
-          Element-1
-        </DnDElement>
-        <DnDElement
-          depth={0}
-          id={`id-${index}`}
-          key={`k${index}`}
-          component="li"
-        >
-          Element-2
-        </DnDElement>
-        <DnDElement
-          depth={0}
-          id={`id-${index}`}
-          key={`k${index}`}
-          component="li"
-        >
-          Element-3
-        </DnDElement>
-      </DnDContainer>
-    </>
+    <div className="flex items-center justify-center bg-white w-full">
+      <div className="bg-yellow-100 p-7 w-9/12">
+        <DnDContainer className="Container" depth={1}>
+          <DnDElement depth={0} id="elm-1">
+            Element-1
+          </DnDElement>
+          <DnDElement depth={0} id="elm-2">
+            Element-2
+          </DnDElement>
+          <DnDElement depth={0} id="elm-3">
+            Element-3
+          </DnDElement>
+        </DnDContainer>
+      </div>
+    </div>
   );
 }
 
