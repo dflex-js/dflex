@@ -13,7 +13,7 @@ function backToOriginalPosition() {
   });
 }
 
-context("DnD/Testing single element in the list", () => {
+context("DnD/Testing singleton element - Draggable without siblings", () => {
   before(() => {
     cy.visit("http://localhost:3001/");
   });
