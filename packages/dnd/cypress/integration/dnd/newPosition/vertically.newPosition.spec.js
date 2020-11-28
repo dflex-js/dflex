@@ -54,7 +54,7 @@ context(
         });
 
         it("Makes sure list has four elements", () => {
-          cy.get("#p0-1c")
+          cy.get("#id-p3")
             .should("not.be.empty")
             .and(($li) => {
               expect($li[0].children).to.have.length(4);
@@ -136,7 +136,7 @@ context(
       });
 
       it("Makes sure list has four elements", () => {
-        cy.get("#p0-1c")
+        cy.get("#id-p3")
           .should("not.be.empty")
           .and(($li) => {
             expect($li[0].children).to.have.length(4);
@@ -225,7 +225,7 @@ context(
       });
 
       it("Makes sure list has four elements", () => {
-        cy.get("#p0-1c")
+        cy.get("#id-p3")
           .should("not.be.empty")
           .and(($li) => {
             expect($li[0].children).to.have.length(4);
@@ -318,7 +318,7 @@ context(
       });
 
       it("Makes sure list has four elements", () => {
-        cy.get("#p0-1c")
+        cy.get("#id-p3")
           .should("not.be.empty")
           .and(($li) => {
             expect($li[0].children).to.have.length(4);
@@ -414,7 +414,7 @@ context("DnD/Testing occupying multiple positions vertically up", () => {
   });
 
   it("Makes sure list has four elements", () => {
-    cy.get("#p0-1c")
+    cy.get("#id-p3")
       .should("not.be.empty")
       .and(($li) => {
         expect($li[0].children).to.have.length(4);
@@ -503,7 +503,7 @@ context("DnD/Testing occupying multiple positions vertically up", () => {
   });
 
   it("Makes sure list has four elements", () => {
-    cy.get("#p0-1c")
+    cy.get("#id-p3")
       .should("not.be.empty")
       .and(($li) => {
         expect($li[0].children).to.have.length(4);
