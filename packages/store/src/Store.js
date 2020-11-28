@@ -28,7 +28,7 @@ class Store {
 
     /**
      * Avoid register same elmInstance twice.
-     * TODO: Add this to test
+     * TODO: Add test to this
      */
     if (this.abstractStore.registry[id]) {
       return;
