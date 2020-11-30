@@ -25,7 +25,15 @@ const Container = ({
       if (id) {
         draggedID = id;
 
-        dnd = new DnD(id, { x: clientX, y: clientY });
+        dnd = new DnD(
+          id,
+          { x: clientX, y: clientY },
+          {
+            onDragged: {
+              isTransitionEnabled: true,
+            },
+          }
+        );
 
         mouseEvents = [
           { evType: "mousemove", evTarget: document, handler: onMouseMove },
