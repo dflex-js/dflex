@@ -11,7 +11,6 @@ const draggedEventElement = (props) => {
   const { id, depth, children } = props;
 
   const ref = React.createRef();
-  const [isDragged, setIsDragged] = React.useState(false);
 
   React.useEffect(() => {
     setTimeout(
@@ -27,7 +26,6 @@ const draggedEventElement = (props) => {
     if (draggedEvent) {
       draggedEvent.endDragging();
       draggedEvent = null;
-      setIsDragged(false);
     }
   };
 
@@ -45,8 +43,15 @@ const draggedEventElement = (props) => {
     // avoid right mouse click and ensure id
     if (typeof button === "number" && button === 0) {
       if (id) {
-        draggedEvent = new DnD(id, { x: clientX, y: clientY });
-        setIsDragged(true);
+        draggedEvent = new DnD(
+          id,
+          { x: clientX, y: clientY },
+          {
+            onDragged: {
+              isTransitionEnabled: false,
+            },
+          }
+        );
       }
     }
   };
@@ -59,9 +64,7 @@ const draggedEventElement = (props) => {
       onMouseDown={onMouseDown}
       onMouseMove={onMouseMove}
       onMouseUp={onMouseUp}
-      className={`bg-indigo-300 p-7 hover:bg-indigo-200 rounded shadow cursor-pointer ${
-        isDragged ? "transition-none" : "transition-all"
-      }`}
+      className="bg-indigo-300 p-7 hover:bg-indigo-200 rounded shadow cursor-pointer"
     >
       {children}
     </li>
