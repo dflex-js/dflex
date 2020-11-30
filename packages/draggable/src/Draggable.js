@@ -18,10 +18,10 @@ class Draggable extends AbstractDraggable {
    *
    * @memberof Draggable
    */
-  constructor(elementId, clickCoordinates) {
+  constructor(elementId, clickCoordinates, opts) {
     const element = store.getElmById(elementId);
 
-    super(element, clickCoordinates);
+    super(element, clickCoordinates, opts);
   }
 
   dragAt(x, y) {
