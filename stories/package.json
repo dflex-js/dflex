@@ -32,9 +32,6 @@
     ]
   },
   "devDependencies": {
-    "autoprefixer": "9",
-    "postcss-cli": "7",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat",
     "@babel/core": "^7.12.7",
     "@storybook/addon-actions": "^6.1.2",
     "@storybook/addon-essentials": "^6.1.2",
@@ -42,6 +39,9 @@
     "@storybook/node-logger": "^6.1.2",
     "@storybook/preset-create-react-app": "^3.1.5",
     "@storybook/react": "^6.1.2",
-    "babel-loader": "^8.2.1"
+    "autoprefixer": "9",
+    "babel-loader": "^8.2.1",
+    "postcss-cli": "7",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat"
   }
 }
