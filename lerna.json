@@ -4,7 +4,8 @@
     "packages/dom-gen",
     "packages/store",
     "packages/draggable",
-    "packages/dnd"
+    "packages/dnd",
+    "packages/coreInstance"
   ],
   "version": "independent"
 }
