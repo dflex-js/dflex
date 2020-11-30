@@ -39,9 +39,10 @@
     "@storybook/node-logger": "^6.1.2",
     "@storybook/preset-create-react-app": "^3.1.5",
     "@storybook/react": "^6.1.2",
-    "autoprefixer": "9",
+    "autoprefixer": "^10.0.4",
     "babel-loader": "^8.2.1",
+    "postcss": "^8.1.10",
     "postcss-cli": "7",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat"
+    "tailwindcss": "^2.0.1"
   }
 }
