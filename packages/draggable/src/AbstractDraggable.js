@@ -1,30 +1,6 @@
 import { DRAGGED_ELM } from "../constants.json";
 
 /**
- * Style that will be added to dragged element.
- *
- * @static
- * @property draggedStyleProps,
- * @type {Array}
- * @readonly
- * @memberof AbstractDraggable
- */
-const draggedStyleProps = [
-  {
-    prop: "pointerEvents",
-    value: "none",
-  },
-  {
-    prop: "zIndex",
-    value: "1",
-  },
-  {
-    prop: "transition",
-    value: `opacity 0.2s cubic-bezier(0.2, 0, 0, 1) 0s`,
-  },
-];
-
-/**
  * AbstractDraggable element.
  *
  * @class AbstractDraggable
@@ -41,7 +17,9 @@ class AbstractDraggable {
    *
    * @memberof AbstractDraggable
    */
-  constructor(element, { x: initX, y: initY }) {
+  constructor(element, { x: initX, y: initY }, opts = {}) {
+    const { isTransitionEnabled } = opts;
+
     /**
      * Assign instance for dragged.
      */
@@ -54,6 +32,14 @@ class AbstractDraggable {
     } = this[DRAGGED_ELM];
 
     this.draggedStyle = draggedStyle;
+
+    // if (this.draggedClassName) {
+    //   this[DRAGGED_ELM].element.classList.add(this.draggedClassName);
+    // }
+
+    // if (style) {
+    //   this[DRAGGED_ELM].element.setAttribute("style", JSON.stringify(style));
+    // }
 
     /**
      * When dragging start, element shouldn't jump from its translate. So, we
@@ -73,6 +59,28 @@ class AbstractDraggable {
       y: 0,
     };
 
+    this.draggedStyleProps = isTransitionEnabled
+      ? [
+          {
+            prop: "zIndex",
+            value: "99",
+          },
+          {
+            prop: "pointerEvents",
+            value: "none",
+          },
+          {
+            prop: "transition",
+            value: `opacity 0.2s cubic-bezier(0.2, 0, 0, 1) 0s`,
+          },
+        ]
+      : [
+          {
+            prop: "zIndex",
+            value: "99",
+          },
+        ];
+
     this.setDragged(true);
   }
 
@@ -85,7 +93,7 @@ class AbstractDraggable {
    */
   setDragged(isActive) {
     if (isActive) {
-      draggedStyleProps.forEach(({ prop, value }) => {
+      this.draggedStyleProps.forEach(({ prop, value }) => {
         this.draggedStyle[prop] = value;
       });
 
@@ -95,7 +103,7 @@ class AbstractDraggable {
     /**
      * Not active: end of dragging.
      */
-    draggedStyleProps.forEach(({ prop }) => {
+    this.draggedStyleProps.forEach(({ prop }) => {
       this.draggedStyle[prop] = null;
     });
   }

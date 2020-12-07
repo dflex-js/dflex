@@ -4,12 +4,20 @@ import Droppable from "./Droppable";
 import store from "./DnDStore";
 
 class DnD extends Droppable {
-  constructor(elementId, clickCoordinates) {
+  constructor(
+    elementId,
+    clickCoordinates,
+    opts = { onDragged: {}, onDropped: {} }
+  ) {
     const elementInstance = store.getElmTreeById(elementId);
 
-    const draggable = new Draggable(elementInstance, clickCoordinates);
+    const draggable = new Draggable(
+      elementInstance,
+      clickCoordinates,
+      opts.onDragged
+    );
 
-    super(draggable);
+    super(draggable, opts.onDragged);
   }
 }
 

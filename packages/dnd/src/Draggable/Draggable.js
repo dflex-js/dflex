@@ -3,8 +3,8 @@ import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 import Base from "./Base";
 
 class Draggable extends Base {
-  constructor(elementInstance, clickCoordinates) {
-    super(elementInstance, clickCoordinates);
+  constructor(elementInstance, clickCoordinates, opts) {
+    super(elementInstance, clickCoordinates, opts);
 
     const { x, y } = clickCoordinates;
 
@@ -121,10 +121,13 @@ class Draggable extends Base {
   isDraggedVerticallyInsideList() {
     return (
       !this.isOutHorizontal &&
-      !this.isSingleton &&
       !this.isDraggedLeavingFromTop() &&
       !this.isDraggedLeavingFromEnd()
     );
+  }
+
+  isSiblingsTransformed() {
+    return !this.isDraggedLeavingFromEnd() && this.isDraggedOut();
   }
 
   toggleElementsTransformedInc() {
@@ -171,7 +174,8 @@ class Draggable extends Base {
      * In this case, the use clicked without making any move.
      */
     if (
-      (!this.isDraggedLeavingFromEnd() && this.isDraggedOut()) ||
+      this.isSingleton ||
+      this.isSiblingsTransformed() ||
       this.numberOfElementsTransformed === 0
     ) {
       /**

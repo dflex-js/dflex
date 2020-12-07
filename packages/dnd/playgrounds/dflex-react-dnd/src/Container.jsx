@@ -1,7 +1,8 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-use-before-define */
 import React from "react";
 
-import { DnD, store } from "@dflex/dnd/src";
+import { DnD } from "@dflex/dnd/src";
 
 const Container = ({
   component: ContainerComponent = "div",
@@ -24,7 +25,15 @@ const Container = ({
       if (id) {
         draggedID = id;
 
-        dnd = new DnD(id, { x: clientX, y: clientY });
+        dnd = new DnD(
+          id,
+          { x: clientX, y: clientY },
+          {
+            onDragged: {
+              isTransitionEnabled: true,
+            },
+          }
+        );
 
         mouseEvents = [
           { evType: "mousemove", evTarget: document, handler: onMouseMove },

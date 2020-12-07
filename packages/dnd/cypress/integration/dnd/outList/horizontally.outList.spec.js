@@ -36,7 +36,7 @@ context(
     });
 
     context("Moving first element right outside the list", () => {
-      it("Transforms element 9 out horizontally", () => {
+      it("Transforms (container3 |> elm-1) out horizontally", () => {
         cy.get("#id-9").then((elm) => {
           elmBox = elm[0].getBoundingClientRect();
           startingPointX = elmBox.x + elmBox.width / 2;

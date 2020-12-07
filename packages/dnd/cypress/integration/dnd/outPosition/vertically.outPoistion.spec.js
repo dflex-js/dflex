@@ -8,7 +8,7 @@ context("DnD/Testing is out position vertically", () => {
   });
 
   context("Moving strict vertically one siblings - out down", () => {
-    it("Transforms element 10 out vertically", () => {
+    it("Transforms (container3 |> elm-2) out vertically", () => {
       cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
 
@@ -27,11 +27,11 @@ context("DnD/Testing is out position vertically", () => {
       });
     });
 
-    it("Does not effect element 9", () => {
+    it("Does not effect (container3 |> elm-1)", () => {
       cy.get("#id-9").should("have.css", "transform", "none");
     });
 
-    it("Effects element 11, lifts it up", () => {
+    it("Effects (container3 |> elm-3), lifts it up", () => {
       cy.get("#id-11").should(
         "have.css",
         "transform",
@@ -39,7 +39,7 @@ context("DnD/Testing is out position vertically", () => {
       );
     });
 
-    it("Does not effect element 12", () => {
+    it("Does not effect (container3 |> elm-4)", () => {
       cy.get("#id-12").should("have.css", "transform", "none");
     });
 
@@ -48,7 +48,7 @@ context("DnD/Testing is out position vertically", () => {
     });
 
     it("Makes sure list has four elements", () => {
-      cy.get("#p0-1c")
+      cy.get("#id-p3")
         .should("not.be.empty")
         .and(($li) => {
           expect($li[0].children).to.have.length(4);
@@ -76,7 +76,7 @@ context("DnD/Testing is out position vertically", () => {
   });
 
   context("Moving strict vertically one siblings - out up", () => {
-    it("Transforms element 10 out up vertically", () => {
+    it("Transforms (container3 |> elm-2) out up vertically", () => {
       cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
 
@@ -95,7 +95,7 @@ context("DnD/Testing is out position vertically", () => {
       });
     });
 
-    it("Effects element 11, moves it down", () => {
+    it("Effects (container3 |> elm-3), moves it down", () => {
       cy.get("#id-11").should(
         "have.css",
         "transform",
@@ -113,7 +113,7 @@ context("DnD/Testing is out position vertically", () => {
     });
 
     it("Makes sure list has four elements", () => {
-      cy.get("#p0-1c")
+      cy.get("#id-p3")
         .should("not.be.empty")
         .and(($li) => {
           expect($li[0].children).to.have.length(4);
@@ -140,7 +140,7 @@ context("DnD/Testing is out position vertically", () => {
   });
 
   context("Moving strict vertically multi siblings - out down", () => {
-    it("Transforms element 10 out down multi steps", () => {
+    it("Transforms (container3 |> elm-2) out down multi steps", () => {
       cy.get("#id-10").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
 
@@ -165,11 +165,11 @@ context("DnD/Testing is out position vertically", () => {
       });
     });
 
-    it("Does not effect element 9", () => {
+    it("Does not effect (container3 |> elm-1)", () => {
       cy.get("#id-9").should("have.css", "transform", "none");
     });
 
-    it("Effects element 11, lifts it up", () => {
+    it("Effects (container3 |> elm-3), lifts it up", () => {
       cy.get("#id-11").should(
         "have.css",
         "transform",
@@ -177,7 +177,7 @@ context("DnD/Testing is out position vertically", () => {
       );
     });
 
-    it("Effects element 12, lifts it up", () => {
+    it("Effects (container3 |> elm-4), lifts it up", () => {
       cy.get("#id-12").should(
         "have.css",
         "transform",
@@ -212,7 +212,7 @@ context("DnD/Testing is out position vertically", () => {
     });
 
     it("Makes sure list has four elements", () => {
-      cy.get("#p0-1c")
+      cy.get("#id-p3")
         .should("not.be.empty")
         .and(($li) => {
           expect($li[0].children).to.have.length(4);
@@ -237,7 +237,7 @@ context("DnD/Testing is out position vertically", () => {
   });
 
   context("Moving strict vertically multi siblings - out up", () => {
-    it("Transforms element 11 out from above", () => {
+    it("Transforms (container3 |> elm-3) out from above", () => {
       cy.get("#id-11").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
         startingPointX = elmBox.x + elmBox.width / 2;
@@ -291,7 +291,7 @@ context("DnD/Testing is out position vertically", () => {
     });
 
     it("Makes sure list has four elements", () => {
-      cy.get("#p0-1c")
+      cy.get("#id-p3")
         .should("not.be.empty")
         .and(($li) => {
           expect($li[0].children).to.have.length(4);

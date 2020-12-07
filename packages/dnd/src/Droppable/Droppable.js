@@ -315,6 +315,8 @@ class Droppable {
   dragAt(x, y) {
     this.draggable.dragAt(x, y);
 
+    if (this.draggable.isSingleton) return;
+
     if (this.draggable.isDraggedOut()) {
       if (!this.isListLocked) {
         this.draggedOutPosition(y);

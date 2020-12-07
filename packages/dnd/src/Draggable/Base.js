@@ -19,14 +19,14 @@ class Base extends AbstractDraggable {
    * @param {Object} elementInstance
    * @memberof Base
    */
-  constructor(elementInstance, clickCoordinates) {
+  constructor(elementInstance, clickCoordinates, opts) {
     const {
       element,
       parent,
       branches: { siblings, parents },
     } = elementInstance;
 
-    super(element, clickCoordinates);
+    super(element, clickCoordinates, opts);
 
     const { order } = element;
 

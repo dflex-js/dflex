@@ -1,12 +1,7 @@
-.Huge {
-  background: rebeccapurple;
-  height: 800px;
-}
-.Container {
+.container {
   margin-top: 88px;
   display: flex;
   width: 41.53rem;
-  /* border: 4px green solid; */
   background: #07718f;
 }
 
