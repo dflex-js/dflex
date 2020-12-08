@@ -41,3 +41,15 @@ jobs:
           wait-on-timeout: 120
           browser: chrome
           headless: true
+
+      - name: Testing DnD - Event based on component
+      - uses: cypress-io/github-action@v2
+        with:
+          project: ./packages/dnd
+          start: yarn workspace dflex-react-dnd start:component_based
+          wait-on: "http://localhost:3002/"
+          # wait for 2 minutes for the server to respond
+          wait-on-timeout: 120
+          browser: chrome
+          headless: true
+
