@@ -4,11 +4,7 @@ let startingPointX;
 let startingPointY;
 let elmBox;
 
-context("DnD/Testing is out position horizontally", () => {
-  before(() => {
-    cy.visit("http://localhost:3001/");
-  });
-
+function myContext() {
   context("Moving strict horizontally - out form the right", () => {
     it("Transforms (container3 |> elm-2) out", () => {
       cy.get("#id-10").then((elm) => {
@@ -458,6 +454,32 @@ context("DnD/Testing is out position horizontally", () => {
         "transform",
         "matrix(1, 0, 0, 1, 0, 0)"
       );
+    });
+  });
+}
+
+context("DnD/Testing is out position horizontally", () => {
+  const URLs = [
+    {
+      url: "http://localhost:3001/",
+      desc: "Testing Container Based Event",
+    },
+  ];
+
+  if (Cypress.env("extended")) {
+    URLs.push({
+      url: "http://localhost:3001/component-based-event",
+      desc: "Testing Component Based Event",
+    });
+  }
+
+  URLs.forEach(({ url, desc }) => {
+    context(desc, () => {
+      before(() => {
+        cy.visit(url);
+      });
+
+      myContext();
     });
   });
 });

@@ -5,11 +5,7 @@ let elmBox;
 let stepX;
 let stepY;
 
-context("DnD/Testing orphan element - Draggable without parent", () => {
-  before(() => {
-    cy.visit("http://localhost:3001/");
-  });
-
+function myContext() {
   context("Moving container horizontally and vertically", () => {
     it("Clicks on (container1)", () => {
       cy.get("#id-p1").then((elm) => {
@@ -38,6 +34,32 @@ context("DnD/Testing orphan element - Draggable without parent", () => {
   context("End transformation", () => {
     it("Triggers mouseup safely without errors", () => {
       cy.get("#id-p1").trigger("mouseup", { force: true });
+    });
+  });
+}
+
+context("DnD/Testing orphan element - Draggable without parent", () => {
+  const URLs = [
+    {
+      url: "http://localhost:3001/",
+      desc: "Testing Container Based Event",
+    },
+  ];
+
+  if (Cypress.env("extended")) {
+    URLs.push({
+      url: "http://localhost:3001/component-based-event",
+      desc: "Testing Component Based Event",
+    });
+  }
+
+  URLs.forEach(({ url, desc }) => {
+    context(desc, () => {
+      before(() => {
+        cy.visit(url);
+      });
+
+      myContext();
     });
   });
 });
