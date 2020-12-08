@@ -31,10 +31,11 @@ jobs:
       - name: Run Build
         run: yarn build
 
+      - name: Testing DnD - Event based on container
       - uses: cypress-io/github-action@v2
         with:
           project: ./packages/dnd
-          start: yarn workspace dflex-react-dnd run start
+          start: yarn workspace dflex-react-dnd start:container_based
           wait-on: "http://localhost:3001/"
           # wait for 2 minutes for the server to respond
           wait-on-timeout: 120
