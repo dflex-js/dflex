@@ -32,7 +32,7 @@ jobs:
       - name: Run Build
         run: yarn build
 
-      - name: Test Container Based Event
+      - name: Test Container Based Event - DnD APP
         uses: cypress-io/github-action@v2
         with:
           project: ./packages/dnd
@@ -43,7 +43,8 @@ jobs:
           browser: chrome
           headless: true
 
-      - uses: cypress-io/github-action@v2
+      - name: Test Component Based Event - DnD APP
+        uses: cypress-io/github-action@v2
         with:
           project: ./packages/dnd
           start: yarn workspace dflex-react-dnd start:component_based
