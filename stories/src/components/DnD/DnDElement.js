@@ -7,10 +7,9 @@ import { store, DnD } from "@dflex/dnd/src";
 // shared dragged event
 let draggedEvent;
 
-const draggedEventElement = (props) => {
-  const { id, depth, children } = props;
-
+const draggedEventElement = ({ id, depth, children }) => {
   const ref = React.createRef();
+  // const [isDragged, setIsDragged] = React.useState(false);
 
   React.useEffect(() => {
     setTimeout(
@@ -26,6 +25,7 @@ const draggedEventElement = (props) => {
     if (draggedEvent) {
       draggedEvent.endDragging();
       draggedEvent = null;
+      // setIsDragged(false);
     }
   };
 
@@ -43,15 +43,8 @@ const draggedEventElement = (props) => {
     // avoid right mouse click and ensure id
     if (typeof button === "number" && button === 0) {
       if (id) {
-        draggedEvent = new DnD(
-          id,
-          { x: clientX, y: clientY },
-          {
-            onDragged: {
-              isTransitionEnabled: false,
-            },
-          }
-        );
+        draggedEvent = new DnD(id, { x: clientX, y: clientY });
+        // setIsDragged(true);
       }
     }
   };
