@@ -18,7 +18,8 @@ jobs:
           node-version: 14.x
 
       - name: Cache Dependencies
-        uses: actions/cache@v1
+        uses: actions/cache@v2.1.3
+        
         with:
           path: node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
@@ -31,12 +32,14 @@ jobs:
       - name: Run Build
         run: yarn build
 
-      - uses: cypress-io/github-action@v2
+      - name: Extended Test for DnD React APP
+        uses: cypress-io/github-action@v2
         with:
           project: ./packages/dnd
-          start: yarn workspace dflex-react-dnd run start
+          start: yarn workspace dflex-react-dnd start
           wait-on: "http://localhost:3001/"
           # wait for 2 minutes for the server to respond
           wait-on-timeout: 120
           browser: chrome
           headless: true
+

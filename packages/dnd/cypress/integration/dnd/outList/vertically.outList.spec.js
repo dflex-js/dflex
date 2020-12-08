@@ -4,11 +4,7 @@ let elmBox;
 
 let step;
 
-context("DnD/Testing is out the list vertically: out down/in/out up", () => {
-  before(() => {
-    cy.visit("http://localhost:3001/");
-  });
-
+function myContext() {
   context("Moving first element down outside the list", () => {
     it("Transforms (container3 |> elm-1) out, one position", () => {
       cy.get("#id-9").then((elm) => {
@@ -208,6 +204,32 @@ context("DnD/Testing is out the list vertically: out down/in/out up", () => {
         "transform",
         "matrix(1, 0, 0, 1, 0, 0)"
       );
+    });
+  });
+}
+
+context("DnD/Testing is out the list vertically: out down/in/out up", () => {
+  const URLs = [
+    {
+      url: "http://localhost:3001/",
+      desc: "Testing Container Based Event",
+    },
+  ];
+
+  if (Cypress.env("extended")) {
+    URLs.push({
+      url: "http://localhost:3001/component-based-event",
+      desc: "Testing Component Based Event",
+    });
+  }
+
+  URLs.forEach(({ url, desc }) => {
+    context(desc, () => {
+      before(() => {
+        cy.visit(url);
+      });
+
+      myContext();
     });
   });
 });

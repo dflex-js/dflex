@@ -5,13 +5,9 @@ let elmBox;
 // let stepX;
 let stepY;
 
-context("DnD/Testing a collections new positions", () => {
-  before(() => {
-    cy.visit("http://localhost:3001/");
-  });
-
+function myContext() {
   context(
-    "Moving (container3 |> elm-1) down outside the list then moving it up",
+    `Moving (container3 |> elm-1) down outside the list then moving it up`,
     () => {
       it("Clicks (container3 |> elm-1)", () => {
         cy.get("#id-9").then((elm) => {
@@ -165,4 +161,30 @@ context("DnD/Testing a collections new positions", () => {
       });
     }
   );
+}
+
+context("DnD/Testing a collections new positions", () => {
+  const URLs = [
+    {
+      url: "http://localhost:3001/",
+      desc: "Testing Container Based Event",
+    },
+  ];
+
+  if (Cypress.env("extended")) {
+    URLs.push({
+      url: "http://localhost:3001/component-based-event",
+      desc: "Testing Component Based Event",
+    });
+  }
+
+  URLs.forEach(({ url, desc }) => {
+    context(desc, () => {
+      before(() => {
+        cy.visit(url);
+      });
+
+      myContext();
+    });
+  });
 });
