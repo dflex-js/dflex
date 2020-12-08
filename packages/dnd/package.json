@@ -6,13 +6,15 @@
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
     "build": "builderz --formats cjs umd -m -l",
-    "server": "cross-env BROWSER=none yarn workspace dflex-react-dnd start:container_based",
+    "server:3001": "cross-env BROWSER=none yarn workspace dflex-react-dnd start",
     "cy:run": "cypress run",
+    "cy:run:extended": "cypress run --env extended=true",
     "cy:open": "cypress open",
-    "dev": "start-server-and-test server `http://localhost:3001` cy:open",
-    "test:container_based": "cross-env NODE_ENV=e2e start-server-and-test server http://localhost:3001 cy:run",
-    "test:component_based": "cross-env NODE_ENV=e2e start-server-and-test server http://localhost:3002 cy:run",
-    "test": "yarn test:container_based && yarn test:component_based"
+    "cy:open:extended": "cypress open --env extended=true",
+    "dev": "start-server-and-test server:3001 http://localhost:3001 cy:open",
+    "dev:extended": "start-server-and-test server:3001 http://localhost:3001 cy:open:extended",
+    "test": "cross-env NODE_ENV=e2e start-server-and-test server:3001 http://localhost:3001 cy:run",
+    "test:extended": "start-server-and-test server:3001 http://localhost:3001 cy:run:extended"
   },
   "repository": "https://github.com/jalal246/dflex/tree/master/packages/dnd",
   "license": "GPL-3.0",

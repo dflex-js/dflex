@@ -32,23 +32,12 @@ jobs:
       - name: Run Build
         run: yarn build
 
-      - name: Test Container Based Event - DnD APP
+      - name: Extended Test for DnD React APP
         uses: cypress-io/github-action@v2
         with:
           project: ./packages/dnd
-          start: yarn workspace dflex-react-dnd start:container_based
+          start: yarn workspace dflex-react-dnd start
           wait-on: "http://localhost:3001/"
-          # wait for 2 minutes for the server to respond
-          wait-on-timeout: 120
-          browser: chrome
-          headless: true
-
-      - name: Test Component Based Event - DnD APP
-        uses: cypress-io/github-action@v2
-        with:
-          project: ./packages/dnd
-          start: yarn workspace dflex-react-dnd start:component_based
-          wait-on: "http://localhost:3002/"
           # wait for 2 minutes for the server to respond
           wait-on-timeout: 120
           browser: chrome

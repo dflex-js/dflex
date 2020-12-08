@@ -7,12 +7,12 @@
     "@folo/utils": "^0.1.3",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.0"
   },
   "scripts": {
-    "start:container_based": "cross-env REACT_APP_EVENT_BASED=CONTAINER_BASED_EVENT PORT=3001 react-scripts start",
-    "start:component_based": "cross-env REACT_APP_EVENT_BASED=COMPONENT_BASED_EVENT PORT=3002 react-scripts start",
-    "start:instrument": "react-scripts -r @cypress/instrument-cra start:container_based start:component_based",
+    "start": "cross-env PORT=3001 react-scripts start",
+    "start:instrument": "react-scripts -r @cypress/instrument-cra start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

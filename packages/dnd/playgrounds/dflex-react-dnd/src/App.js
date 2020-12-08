@@ -1,5 +1,7 @@
 /* eslint-disable no-plusplus */
 import React from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+
 import "./App.css";
 
 import {
@@ -11,17 +13,6 @@ import {
   Core as CoreInComponentBasedEvent,
   Container as ContainerInComponentBasedEvent,
 } from "./component-based-event";
-
-let Core;
-let Container;
-
-if (process.env.REACT_APP_EVENT_BASED?.trim() === "CONTAINER_BASED_EVENT") {
-  Core = CoreInContainerBasedEvent;
-  Container = ContainerInContainerBasedEvent;
-} else {
-  Core = CoreInComponentBasedEvent;
-  Container = ContainerInComponentBasedEvent;
-}
 
 const firstContainer = [{ label: "container1 |> elm-1", id: "1" }];
 
@@ -46,7 +37,7 @@ const ID_PARENT_1 = "p1";
 const ID_PARENT_2 = "p2";
 const ID_PARENT_3 = "p3";
 
-function App() {
+const BaseApp = ({ Container, Core }) => {
   return (
     <Container className="container">
       <Core id={`id-${ID_PARENT_1}`} component="ul" depth={1}>
@@ -71,6 +62,27 @@ function App() {
         ))}
       </Core>
     </Container>
+  );
+};
+
+function App() {
+  return (
+    <Router>
+      <Switch>
+        <Route path="/">
+          <BaseApp
+            Core={CoreInContainerBasedEvent}
+            Container={ContainerInContainerBasedEvent}
+          />
+        </Route>
+        <Route path="/component-based-event">
+          <BaseApp
+            Core={CoreInComponentBasedEvent}
+            Container={ContainerInComponentBasedEvent}
+          />
+        </Route>
+      </Switch>
+    </Router>
   );
 }
 
