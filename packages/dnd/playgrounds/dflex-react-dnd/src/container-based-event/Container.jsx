@@ -25,15 +25,10 @@ const Container = ({
       if (id) {
         draggedID = id;
 
-        dnd = new DnD(
-          id,
-          { x: clientX, y: clientY },
-          {
-            onDragged: {
-              isTransitionEnabled: true,
-            },
-          }
-        );
+        dnd = new DnD(id, { x: clientX, y: clientY });
+
+        target.style.background = "pink";
+        target.style.transition = "opacity 0.2s cubic-bezier(0.2, 0, 0, 1) 0s";
 
         mouseEvents = [
           { evType: "mousemove", evTarget: document, handler: onMouseMove },
@@ -47,12 +42,17 @@ const Container = ({
     }
   };
 
-  const onMouseUp = () => {
+  const onMouseUp = (e) => {
+    const { target } = e;
+
     if (draggedID) {
       mouseEvents.forEach(({ evType, evTarget, handler }) => {
         evTarget.removeEventListener(evType, handler);
       });
       dnd.endDragging();
+
+      target.style.background = "whitesmoke";
+      target.style.transition = "none";
     }
   };
 

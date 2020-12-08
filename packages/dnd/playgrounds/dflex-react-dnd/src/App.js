@@ -2,8 +2,26 @@
 import React from "react";
 import "./App.css";
 
-import Core from "./Core";
-import Container from "./Container";
+import {
+  Core as CoreInContainerBasedEvent,
+  Container as ContainerInContainerBasedEvent,
+} from "./container-based-event";
+
+import {
+  Core as CoreInComponentBasedEvent,
+  Container as ContainerInComponentBasedEvent,
+} from "./component-based-event";
+
+let Core;
+let Container;
+
+if (process.env.REACT_APP_EVENT_BASED?.trim() === "CONTAINER_BASED_EVENT") {
+  Core = CoreInContainerBasedEvent;
+  Container = ContainerInContainerBasedEvent;
+} else {
+  Core = CoreInComponentBasedEvent;
+  Container = ContainerInComponentBasedEvent;
+}
 
 const firstContainer = [{ label: "container1 |> elm-1", id: "1" }];
 
