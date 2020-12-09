@@ -42,7 +42,7 @@
     "autoprefixer": "^10.0.4",
     "babel-loader": "^8.2.1",
     "postcss": "^8.1.10",
-    "postcss-cli": "7",
+    "postcss-cli": "8",
     "tailwindcss": "^2.0.1"
   }
 }

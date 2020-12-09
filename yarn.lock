@@ -15483,6 +15483,11 @@ lodash.defaults@^4.0.1:
   resolved "https://registry.yarnpkg.com/lodash.defaults/-/lodash.defaults-4.2.0.tgz#d09178716ffea4dde9e5fb7b37f6f0802274580c"
   integrity sha1-0JF4cW/+pN3p5ft7N/bwgCJ0WAw=
 
+lodash.difference@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.difference/-/lodash.difference-4.5.0.tgz#9ccb4e505d486b91651345772885a2df27fd017c"
+  integrity sha1-nMtOUF1Ia5FlE0V3KIWi3yf9AXw=
+
 lodash.every@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/lodash.every/-/lodash.every-4.6.0.tgz#eb89984bebc4364279bb3aefbbd1ca19bfa6c6a7"
@@ -15508,10 +15513,20 @@ lodash.foreach@^4.3.0, lodash.foreach@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash.foreach/-/lodash.foreach-4.5.0.tgz#1a6a35eace401280c7f06dddec35165ab27e3e53"
   integrity sha1-Gmo16s5AEoDH8G3d7DUWWrJ+PlM=
 
+lodash.forown@^4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/lodash.forown/-/lodash.forown-4.4.0.tgz#85115cf04f73ef966eced52511d3893cc46683af"
+  integrity sha1-hRFc8E9z75ZuztUlEdOJPMRmg68=
+
 lodash.get@^4, lodash.get@^4.4.2:
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/lodash.get/-/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
   integrity sha1-LRd/ZS+jHpObRDjVNBSZ36OCXpk=
+
+lodash.groupby@^4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/lodash.groupby/-/lodash.groupby-4.6.0.tgz#0b08a1dcf68397c397855c3239783832df7403d1"
+  integrity sha1-Cwih3PaDl8OXhVwyOXg4Mt90A9E=
 
 lodash.ismatch@^4.4.0:
   version "4.4.0"
@@ -15625,7 +15640,7 @@ log-symbols@^1.0.2:
   dependencies:
     chalk "^1.0.0"
 
-log-symbols@^2.1.0, log-symbols@^2.2.0:
+log-symbols@^2.1.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/log-symbols/-/log-symbols-2.2.0.tgz#5740e1c5d6f0dfda4ad9323b5332107ef6b4c40a"
   integrity sha512-VeIAFslyIerEJLXHziedo2basKbMKtTw3vfn5IzG0XTjhAVEJyNHnL2p7vc+wBDSdQuUpNw3M2u6xb9QsAY5Eg==
@@ -18185,10 +18200,10 @@ postcss-calc@^7.0.1:
     postcss-selector-parser "^6.0.2"
     postcss-value-parser "^4.0.2"
 
-postcss-cli@7:
-  version "7.1.2"
-  resolved "https://registry.yarnpkg.com/postcss-cli/-/postcss-cli-7.1.2.tgz#ba8d5d918b644bd18e80ad2c698064d4c0da51cd"
-  integrity sha512-3mlEmN1v2NVuosMWZM2tP8bgZn7rO5PYxRRrXtdSyL5KipcgBDjJ9ct8/LKxImMCJJi3x5nYhCGFJOkGyEqXBQ==
+postcss-cli@8:
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/postcss-cli/-/postcss-cli-8.3.0.tgz#fa06c96cbd0620768c788cae74ba462622a9013c"
+  integrity sha512-GqWohD9VmH+LCe+xsv6VCdcgNylNBmsrbxJlyXUGteGGdcmazj2YxSiJMUmQpg8pE6LRox9idtsTB7JZq5a+rw==
   dependencies:
     chalk "^4.0.0"
     chokidar "^3.3.0"
@@ -18196,12 +18211,12 @@ postcss-cli@7:
     fs-extra "^9.0.0"
     get-stdin "^8.0.0"
     globby "^11.0.0"
-    postcss "^7.0.0"
-    postcss-load-config "^2.0.0"
-    postcss-reporter "^6.0.0"
+    postcss-load-config "^3.0.0"
+    postcss-reporter "^7.0.0"
     pretty-hrtime "^1.0.3"
     read-cache "^1.0.0"
-    yargs "^15.0.2"
+    slash "^3.0.0"
+    yargs "^16.0.0"
 
 postcss-color-functional-notation@^2.0.1:
   version "2.0.1"
@@ -18424,6 +18439,14 @@ postcss-load-config@^2.0.0, postcss-load-config@^2.1.0:
   dependencies:
     cosmiconfig "^5.0.0"
     import-cwd "^2.0.0"
+
+postcss-load-config@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/postcss-load-config/-/postcss-load-config-3.0.0.tgz#850bb066edd65b734329eacf83af0c0764226c87"
+  integrity sha512-lErrN8imuEF1cSiHBV8MiR7HeuzlDpCGNtaMyYHlOBuJHHOGw6S4xOMZp8BbXPr7AGQp14L6PZDlIOpfFJ6f7w==
+  dependencies:
+    cosmiconfig "^7.0.0"
+    import-cwd "^3.0.0"
 
 postcss-loader@3.0.0, postcss-loader@^3.0.0:
   version "3.0.0"
@@ -18808,15 +18831,17 @@ postcss-replace-overflow-wrap@^3.0.0:
   dependencies:
     postcss "^7.0.2"
 
-postcss-reporter@^6.0.0:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/postcss-reporter/-/postcss-reporter-6.0.1.tgz#7c055120060a97c8837b4e48215661aafb74245f"
-  integrity sha512-LpmQjfRWyabc+fRygxZjpRxfhRf9u/fdlKf4VHG4TSPbV2XNsuISzYW1KL+1aQzx53CAppa1bKG4APIB/DOXXw==
+postcss-reporter@^7.0.0:
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/postcss-reporter/-/postcss-reporter-7.0.2.tgz#03e9e7381c1afe40646f9c22e7aeeb860e051065"
+  integrity sha512-JyQ96NTQQsso42y6L1H1RqHfWH1C3Jr0pt91mVv5IdYddZAE9DUZxuferNgk6q0o6vBVOrfVJb10X1FgDzjmDw==
   dependencies:
-    chalk "^2.4.1"
-    lodash "^4.17.11"
-    log-symbols "^2.2.0"
-    postcss "^7.0.7"
+    colorette "^1.2.1"
+    lodash.difference "^4.5.0"
+    lodash.forown "^4.4.0"
+    lodash.get "^4.4.2"
+    lodash.groupby "^4.6.0"
+    lodash.sortby "^4.7.0"
 
 postcss-safe-parser@5.0.2:
   version "5.0.2"
@@ -18943,7 +18968,7 @@ postcss@^6.0.1, postcss@^6.0.23, postcss@^6.0.9:
     source-map "^0.6.1"
     supports-color "^5.4.0"
 
-postcss@^7, postcss@^7.0.0, postcss@^7.0.1, postcss@^7.0.14, postcss@^7.0.17, postcss@^7.0.2, postcss@^7.0.26, postcss@^7.0.27, postcss@^7.0.32, postcss@^7.0.5, postcss@^7.0.6, postcss@^7.0.7:
+postcss@^7, postcss@^7.0.0, postcss@^7.0.1, postcss@^7.0.14, postcss@^7.0.17, postcss@^7.0.2, postcss@^7.0.26, postcss@^7.0.27, postcss@^7.0.32, postcss@^7.0.5, postcss@^7.0.6:
   version "7.0.35"
   resolved "https://registry.yarnpkg.com/postcss/-/postcss-7.0.35.tgz#d2be00b998f7f211d8a276974079f2e92b970e24"
   integrity sha512-3QT8bBJeX/S5zKTTjTCIjRF3If4avAT6kqxcASlTWEtAFCb9NH0OUxNDfgZSWdP5fJnBYCMEWkIFfWeugjzYMg==
@@ -24890,10 +24915,10 @@ yargs@^15.0.2, yargs@^15.3.1, yargs@^15.4.1:
     y18n "^4.0.0"
     yargs-parser "^18.1.2"
 
-yargs@^16.1.0:
-  version "16.1.1"
-  resolved "https://registry.yarnpkg.com/yargs/-/yargs-16.1.1.tgz#5a4a095bd1ca806b0a50d0c03611d38034d219a1"
-  integrity sha512-hAD1RcFP/wfgfxgMVswPE+z3tlPFtxG8/yWUrG2i17sTWGCGqWnxKcLTF4cUKDUK8fzokwsmO9H0TDkRbMHy8w==
+yargs@^16.0.0, yargs@^16.1.0:
+  version "16.2.0"
+  resolved "https://registry.yarnpkg.com/yargs/-/yargs-16.2.0.tgz#1c82bf0f6b6a66eafce7ef30e376f49a12477f66"
+  integrity sha512-D1mvvtDG0L5ft/jGWkLpG1+m0eQxOfaBvTNELraWj22wSVUMWxZUvYgJYcKh6jGGIkJFhH4IZPQhR4TKpc8mBw==
   dependencies:
     cliui "^7.0.2"
     escalade "^3.1.1"
