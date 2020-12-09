@@ -3,25 +3,8 @@
 /* eslint-disable func-names */
 /* eslint-disable no-undef */
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
+
 import store from "../DnDStore";
-
-class Evt {
-  constructor(elem, eventType) {
-    const event = new Event(eventType);
-
-    // Listen for the event.
-    elem.addEventListener(
-      eventType,
-      function (e) {
-        /* ... */
-      },
-      false
-    );
-
-    // Dispatch the event.
-    elem.dispatchEvent(event);
-  }
-}
 
 /**
  * Class includes all transformation methods related to droppable.
@@ -32,8 +15,7 @@ class Evt {
 class Droppable {
   constructor(draggable, opts) {
     this.draggable = draggable;
-
-    this.onDragOver = opts.onDragOver || function noop() {};
+    this.event = opts.event;
 
     this.topDifference = 0;
 
@@ -130,7 +112,7 @@ class Droppable {
       this.draggable.dragID
     );
 
-    this.onDragOver(element);
+    if (this.event) this.event.dispatch(element);
   }
 
   /**
