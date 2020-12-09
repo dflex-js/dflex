@@ -1,7 +1,3 @@
-/* eslint-disable max-classes-per-file */
-/* eslint-disable no-unused-vars */
-/* eslint-disable func-names */
-/* eslint-disable no-undef */
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 
 import store from "../DnDStore";
@@ -13,7 +9,7 @@ import store from "../DnDStore";
  * @extends {Draggable}
  */
 class Droppable {
-  constructor(draggable, opts) {
+  constructor(draggable) {
     this.draggable = draggable;
 
     this.topDifference = 0;
@@ -99,7 +95,7 @@ class Droppable {
       this.draggable.setThreshold(element);
     }
 
-    if (typeof element.onDragOver === "function") element.onDragOver();
+    element.onDragOver();
 
     /**
      * Start transforming process
@@ -113,7 +109,7 @@ class Droppable {
       this.draggable.dragID
     );
 
-    if (typeof element.onDragLeave === "function") element.onDragLeave();
+    element.onDragLeave();
   }
 
   /**

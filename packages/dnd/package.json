@@ -34,8 +34,7 @@
   "bundledDependencies": [
     "@dflex/store",
     "@dflex/core-instance",
-    "@dflex/draggable",
-    "@dflex/event"
+    "@dflex/draggable"
   ],
   "keywords": [
     "@dflex",

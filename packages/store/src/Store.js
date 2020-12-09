@@ -21,6 +21,7 @@ class Store {
    *
    * @param {Object} elmInstance
    * @param {function} CustomInstance - constructor function.
+   * @param {Object} opts - extra options to be stored in the registry.
    * @memberof Store
    */
   register(elmInstance, CustomInstance, opts) {
