@@ -1,5 +1,27 @@
+/* eslint-disable max-classes-per-file */
+/* eslint-disable no-unused-vars */
+/* eslint-disable func-names */
+/* eslint-disable no-undef */
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 import store from "../DnDStore";
+
+class Evt {
+  constructor(elem, eventType) {
+    const event = new Event(eventType);
+
+    // Listen for the event.
+    elem.addEventListener(
+      eventType,
+      function (e) {
+        /* ... */
+      },
+      false
+    );
+
+    // Dispatch the event.
+    elem.dispatchEvent(event);
+  }
+}
 
 /**
  * Class includes all transformation methods related to droppable.
@@ -8,8 +30,10 @@ import store from "../DnDStore";
  * @extends {Draggable}
  */
 class Droppable {
-  constructor(draggable) {
+  constructor(draggable, opts) {
     this.draggable = draggable;
+
+    this.onDragOver = opts.onDragOver || function noop() {};
 
     this.topDifference = 0;
 
@@ -105,6 +129,8 @@ class Droppable {
       true,
       this.draggable.dragID
     );
+
+    this.onDragOver(element);
   }
 
   /**
