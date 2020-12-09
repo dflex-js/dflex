@@ -1,6 +1,12 @@
 import Store from "@dflex/store/src";
 import CoreInstance from "@dflex/core-instance/src";
 
+function noop() {
+  console.log("hehe");
+}
+
+const handlers = ["onDragOver", "onDragLeave"];
+
 class DnDStoreImp extends Store {
   /**
    * Register element for Store
@@ -11,8 +17,14 @@ class DnDStoreImp extends Store {
    * @param {node} elmInstance.element
    * @memberof DraggableStoreImp
    */
-  register(elmInstance) {
-    super.register(elmInstance, CoreInstance);
+  register(elmInstance, opts) {
+    const finalOpts = opts || {};
+
+    handlers.forEach((handler) => {
+      if (typeof finalOpts[handler] !== "function") finalOpts[handler] = noop;
+    });
+
+    super.register(elmInstance, CoreInstance, finalOpts);
   }
 }
 

@@ -15,7 +15,6 @@ import store from "../DnDStore";
 class Droppable {
   constructor(draggable, opts) {
     this.draggable = draggable;
-    this.event = opts.event;
 
     this.topDifference = 0;
 
@@ -100,6 +99,8 @@ class Droppable {
       this.draggable.setThreshold(element);
     }
 
+    if (typeof element.onDragOver === "function") element.onDragOver();
+
     /**
      * Start transforming process
      */
@@ -112,7 +113,7 @@ class Droppable {
       this.draggable.dragID
     );
 
-    if (this.event) this.event.dispatch(element);
+    if (typeof element.onDragLeave === "function") element.onDragLeave();
   }
 
   /**

@@ -1,3 +1,5 @@
+import Event from "@dflex/event/src";
+
 import Draggable from "./Draggable";
 import Droppable from "./Droppable";
 
@@ -11,13 +13,24 @@ class DnD extends Droppable {
   ) {
     const elementInstance = store.getElmTreeById(elementId);
 
+    const { onDraggedOver } = opts;
+
     const draggable = new Draggable(
       elementInstance,
       clickCoordinates,
       opts.onDragged
     );
 
-    super(draggable, opts.onDragged);
+    let droppableOpts = opts;
+
+    if (onDraggedOver && typeof onDraggedOver === "function") {
+      const onDraggedOverEvt = new Event("onDraggedOver");
+      onDraggedOverEvt.create();
+
+      droppableOpts = { event: onDraggedOverEvt, ...opts.onDropped };
+    }
+
+    super(draggable, droppableOpts);
   }
 }
 

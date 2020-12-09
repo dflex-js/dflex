@@ -23,7 +23,7 @@ class Store {
    * @param {function} CustomInstance - constructor function.
    * @memberof Store
    */
-  register(elmInstance, CustomInstance) {
+  register(elmInstance, CustomInstance, opts) {
     const { id, depth } = elmInstance;
 
     /**
@@ -36,7 +36,7 @@ class Store {
 
     const pointer = this.DOMGen.getElmPointer(id, depth);
 
-    const coreInstance = Object.assign(elmInstance, pointer);
+    const coreInstance = Object.assign(elmInstance, pointer, opts);
 
     this.abstractStore.register(coreInstance, CustomInstance);
   }

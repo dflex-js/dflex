@@ -19,18 +19,44 @@ const Core = (props) => {
     idProps || `${keyGenerator(new Date().getTime())}`
   );
 
+  const [isDragged, setIsDragged] = React.useState(false);
+
+  function onDragOver() {
+    console.log("dragged is over the element!");
+
+    if (!isDragged) setIsDragged(true);
+  }
+
+  function onDragLeave() {
+    console.log("dragged is leaving the element!");
+  }
+
+  const handlers = { onDragOver, onDragLeave };
+
   React.useEffect(() => {
     setTimeout(
       // eslint-disable-next-line func-names
       function () {
-        store.register({ id, element: ref.current, depth });
+        store.register({ id, element: ref.current, depth }, handlers);
       },
       0
     );
   }, [id, depth, ref]);
 
   return (
-    <CoreComponent ref={ref} key={id} id={id} {...rest}>
+    <CoreComponent
+      ref={ref}
+      key={id}
+      id={id}
+      style={
+        isDragged
+          ? {
+              background: "#bce6eb",
+            }
+          : {}
+      }
+      {...rest}
+    >
       {children}
     </CoreComponent>
   );
