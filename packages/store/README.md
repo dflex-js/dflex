@@ -32,7 +32,11 @@ Registry works on creating
 for element then store it with another passed data.
 
 ```ts
-store.register(elmInstance: Object<elmInstance>, CustomInstance:? <function>)
+store.register(
+  elmInstance: Object<elmInstance>,
+  CustomInstance:? <function>,
+  options:? Object
+)
 ```
 
 Where `elmInstance` should include:
@@ -43,6 +47,10 @@ Where `elmInstance` should include:
 
 And `CustomInstance` is constructor function. In case there's an operation
 depends on generated pointer result before storing the element.
+
+While `options` is plain objects holds extra data to be registered in the store if
+there's any. Gives more flexibility to separate the essential data in
+`elmInstance` from extra once that will passed in `options`.
 
 Let's create new store and register some elements in it:
 
@@ -81,7 +89,8 @@ const elm0D1 = {
   depth: 1,
   moreInfo: "I am the parent",
 };
-store.register(elm0D1, ExtraInstance);
+
+store.register(elm0D1, ExtraInstanceFunc);
 ```
 
 ## Getting element in the store

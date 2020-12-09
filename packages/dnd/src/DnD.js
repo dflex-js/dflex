@@ -17,7 +17,7 @@ class DnD extends Droppable {
       opts.onDragged
     );
 
-    super(draggable, opts.onDragged);
+    super(draggable, opts.onDropped);
   }
 }
 

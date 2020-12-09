@@ -1,4 +1,5 @@
 import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
+
 import store from "../DnDStore";
 
 /**
@@ -94,6 +95,8 @@ class Droppable {
       this.draggable.setThreshold(element);
     }
 
+    element.onDragOver();
+
     /**
      * Start transforming process
      */
@@ -105,6 +108,8 @@ class Droppable {
       true,
       this.draggable.dragID
     );
+
+    element.onDragLeave();
   }
 
   /**
