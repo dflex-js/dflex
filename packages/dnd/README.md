@@ -33,7 +33,7 @@ import { store, DnD } from "@dflex/dnd";
 Each element should be registered in DnD store in order to be active later
 
 ```ts
-store.register({ id: string, element: Node });
+store.register({ id: String, element: HTMLElement, depth: Number });
 ```
 
 ### Trigger dragging
@@ -43,7 +43,7 @@ Use `onmousedown` to trigger responsive dragging
 ```ts
 const { target, clientX, clientY } = event;
 
-dnd = new DnD(id: target.id, { x: clientX, y: clientY });
+dnd = new DnD(id: target.id, { x: clientX, y: clientY }, 0);
 ```
 
 ### End dragging
@@ -55,7 +55,6 @@ const { clientX, clientY } = event;
 
 dnd.dragAt(clientX, clientY);
 ```
-
 
 #### Examples
 
