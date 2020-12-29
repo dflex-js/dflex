@@ -3,7 +3,7 @@
   "name": "@dflex/site",
   "version": "0.1.0",
   "dependencies": {
-    "@emotion/core": "^10.0.35",
+    "@emotion/core": "^11.0.0",
     "@emotion/styled": "^10.0.27",
     "@mdx-js/mdx": "^1.6.4",
     "@mdx-js/react": "^1.6.4",
@@ -29,7 +29,7 @@
     "normalize.css": "^8.0.1",
     "prism-react-renderer": "^1.1.1",
     "prismjs": "^1.21.0",
-    "react": "^16.12.0",
+    "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-helmet": "^6.1.0"
   },
