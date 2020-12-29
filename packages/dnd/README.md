@@ -22,28 +22,38 @@ process runs smoothly as much as possible.
 
 ## Three Steps
 
-You can achieve a drag and drop with three steps only (register, start, end)
+You can achieve a drag and drop with three steps only:
+
+- Register element in the store.
+- Start dragging when mouse is down.
+- End dragging to release element when mouse is up.
 
 ```js
 import { store, DnD } from "@dflex/dnd";
 ```
 
-### Register element
+### Register Element
 
 Each element should be registered in DnD store in order to be active later
 
 ```ts
-store.register({ id: string, element: Node });
+store.register({ id: String, element: HTMLElement, depth: Number });
 ```
 
-### Trigger dragging
+- `id: String` is unique identifer for an element in the registry.
+- `element: HTMLElement` targeted DOM element.
+- `depth: Number` Element depth in tree. Start from bottom up. So child is `0`,
+  parents are `1` so on so forth. The idea of depth is to be able to targeted
+  multiple containers when you can move a child or a parent wrapper.
+
+### Start Dragging
 
 Use `onmousedown` to trigger responsive dragging
 
 ```ts
 const { target, clientX, clientY } = event;
 
-dnd = new DnD(id: target.id, { x: clientX, y: clientY });
+dnd = new DnD(target.id, { x: clientX, y: clientY });
 ```
 
 ### End dragging
@@ -51,11 +61,8 @@ dnd = new DnD(id: target.id, { x: clientX, y: clientY });
 Use `onmouseup` to end dragging
 
 ```ts
-const { clientX, clientY } = event;
-
-dnd.dragAt(clientX, clientY);
+dnd.endDragging();
 ```
-
 
 #### Examples
 
