@@ -2,11 +2,9 @@
   <img src="https://raw.githubusercontent.com/jalal246/dflex/dev/logo/DFlex-full-size.png" alt="folo live example" />
 </h1>
 
-<h6 align="center">
-JavaScript Project to Manipulate DOM Elements
-</h6>
-
 <hr />
+
+# Project Content
 
 ## [DOM Generator](https://github.com/jalal246/dflex/tree/master/packages/dom-gen)
 
