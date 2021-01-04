@@ -1,6 +1,18 @@
 <h1 align="center">
-  <img src="https://raw.githubusercontent.com/jalal246/dflex/dev/logo/DFlex-full-size.png" alt="folo live example" />
+  <img src="https://raw.githubusercontent.com/jalal246/dflex/dev/logo/DFlex-full-size.png" alt="Dflex logo" />
 </h1>
+
+<p align="center">
+    <a href="https://github.com/jalal246/dflex">
+        <img src="https://img.shields.io/github/workflow/status/jalal246/dflex/Unit Test" alt="Dflex build status" />
+    </a>
+    <a href="https://codecov.io/gh/jalal246/dflex">
+        <img src="https://img.shields.io/codecov/c/github/jalal246/dflex.svg" alt="Dflex code converge status" />
+    </a>
+    <a href="https://github.com/jalal246/dflex/pulls">
+       <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs welcome" />
+    </a>
+</p>
 
 # Project Content
 
@@ -17,12 +29,6 @@
   High-performance draggable elements.
 
 ## Installation
-
-Run locally:
-
-- `git clone https://github.com/jalal246/folo.git`
-- `yarn`
-- `yarn build`
 
 Packages are decoupled and work separately. Each package has it own universe
 including test and playground. For more info take a look at [contribution guide](CONTRIBUTING.md).
