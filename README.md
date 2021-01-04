@@ -2,19 +2,17 @@
   <img src="https://raw.githubusercontent.com/jalal246/dflex/dev/logo/DFlex-full-size.png" alt="folo live example" />
 </h1>
 
-<hr />
-
 # Project Content
 
-## [DOM Generator](https://github.com/jalal246/dflex/tree/master/packages/dom-gen)
+# [DOM Generator](https://github.com/jalal246/dflex/tree/master/packages/dom-gen)
 
-> Generates relations between DOM elements based on element depth
+Generates relations between DOM elements based on element depth
 
 <p align="center">
  <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dom-gen/img/connect.png" alt="how algorithm connect nodes"/>
 </p>
 
-## [DOM Store](https://github.com/jalal246/dflex/tree/master/packages/store)
+# [DOM Store](https://github.com/jalal246/dflex/tree/master/packages/store)
 
 > Traverse through the DOM tree using element id
 
