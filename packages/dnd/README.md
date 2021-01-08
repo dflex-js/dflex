@@ -66,9 +66,9 @@ dnd.endDragging();
 
 #### Examples
 
-- [Full React example](https://github.com/jalal246/dflex/tree/master/playgrounds/dflex-react-dnd)
+- [Full React example](https://github.com/jalal246/dflex/tree/master/packages/dnd/playgrounds/dflex-react-dnd)
 
-- [Full Vue example](https://github.com/jalal246/dflex/tree/master/playgrounds/dflex-vue-dnd)
+- [Full Vue example](https://github.com/jalal246/dflex/tree/master/packages/dnd/playgrounds/dflex-vue-dnd)
 
 Contributes feel free to apply PR for another frameworks.
 
