@@ -7,7 +7,9 @@ npm install @dflex/dnd
 ```
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dnd/public/dnd.gif" alt="show how drag and drop works" />
+ <img 
+  src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dnd/public/dnd.gif" 
+  alt="show how drag and drop works" />
 </p>
 
 DFlex DnD is written in pure JavaScript and can be used with different frameworks
@@ -17,7 +19,8 @@ It depends on animation, tracks each droppable area which makes the whole
 process runs smoothly as much as possible.
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dnd/public/dnd.png" alt="show drag and drop performance" />
+ <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dnd/public/dnd.png"
+ alt="show drag and drop performance" />
 </p>
 
 ## Three Steps
@@ -69,11 +72,6 @@ dnd.endDragging();
 - [Full React example](https://github.com/jalal246/dflex/tree/master/packages/dnd/playgrounds/dflex-react-dnd)
 
 - [Full Vue example](https://github.com/jalal246/dflex/tree/master/packages/dnd/playgrounds/dflex-vue-dnd)
-
-Contributes feel free to apply PR for another frameworks.
-
-Contributors feel free to apply PR for another frameworks and more examples. For
-Draggable only you can use [DFlex Draggable](https://github.com/jalal246/dflex/tree/master/packages/draggable).
 
 ## Test
 
