@@ -57,4 +57,4 @@ If you like this project, you can support it by contributing. If you find a bug,
 please let me know, applying a pull request is welcome. This project needs your
 support. You can fix typos, add new examples, or build with me new features.
 
-> Support this project by giving it a star ⭐
+> Support this project by giving it a Star ⭐

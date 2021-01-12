@@ -82,3 +82,11 @@ yarn test dnd
 ## License
 
 This package is licensed under the [GPL-3.0 License](https://github.com/jalal246/dflex/tree/master/packages/dnd/LICENSE)
+
+## Contribution
+
+If you like this project, you can support it by contributing. If you find a bug,
+please let me know, applying a pull request is welcome. This project needs your
+support. You can fix typos, add new examples, or build with me new features.
+
+> Support this project by giving it a Star ⭐
