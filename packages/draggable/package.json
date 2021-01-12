@@ -8,7 +8,8 @@
     "build": "builderz --formats cjs umd -m -l",
     "test": "jest"
   },
-  "repository": "https://github.com/jalal246/dflex/tree/master/packages/draggable",
+  "homepage": "https://github.com/jalal246/dflex/tree/master/packages/draggable",
+  "repository": "https://github.com/jalal246/dflex",
   "license": "GPL-3.0",
   "files": [
     "src",

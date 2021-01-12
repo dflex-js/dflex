@@ -1,19 +1,21 @@
 # @dflex/draggable
 
-> Draggable is a native component written in pure JS works for Web and Mobile
+> Draggable is a native utility written in pure JS works for Web and Mobile
 
 ```bash
 npm install @dflex/draggable
 ```
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/draggable/img/draggable.gif" alt="show how dragabble works" />
+    <img
+     src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/draggable/img/draggable.gif" 
+     alt="show how draggable works" />
 </p>
 
 DFlex draggable is the simplest solution to create JavaScript draggable
-elements. No need for special tutorial and thinking about implementation
+elements. No need for a special tutorial and thinking about implementation
 complexity or even migration to different technologies for different frameworks.
-It can be used with any JavaScript frameworks React, Vue, Angular.
+It can be used with any app you have whether it is React, Vue, Angular or Svelte.s
 
 ## API
 
@@ -55,8 +57,6 @@ draggable.endDragging();
 
 - [Full Vue example](https://github.com/jalal246/dflex/tree/master/packages/draggable/playgrounds/dflex-vue-draggable)
 
-Contributes feel free to apply PR for another frameworks.
-
 ## Test
 
 ```sh
@@ -66,3 +66,11 @@ yarn test draggable
 ## License
 
 This package is licensed under the [GPL-3.0 License](https://github.com/jalal246/dflex/tree/master/packages/draggable/LICENSE)
+
+## Contribution
+
+If you like this project, you can support it by contributing. If you find a bug,
+please let me know, applying a pull request is welcome. This project needs your
+support. You can fix typos, add new examples, or build with me new features.
+
+> Support this project by giving it a star ⭐
