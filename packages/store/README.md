@@ -10,21 +10,33 @@ DFlex store works on connecting all registered elements and organizes the
 relations between them using the DOM relations generator algorithm. Allowing
 each element to be reached recursively using its id.
 
-Why? To increase application performance if it relies heavily on the DOM nodes. To
-be clear, this is not a case against HTML DOM API. Instead, this a way to
-enhance dealing with nodes more freely when you rely on existing store instead
-of letting the browser reads the nodes first, then you store them to do whatever
-you want to do.
+## Why
+
+To increase application performance if it relies heavily on the DOM nodes. To be
+clear, this is not a case against HTML DOM API. Instead, this a way to enhance
+dealing with nodes more freely when you rely on existing DOM store.
 
 Giving this fact, the Dflex store is built on what you already have and you can
-easily access: `id`, which is why ids are used as keys.
+easily access each DOM node with `id`. In DFlex store ids are used as keys.
 
-## Registering elements in the store
+## Features
+
+- Read once from the browser and avoid unnecessary painting.
+
+- This is the only solution that allows you to get a full DOM tree.
+
+- Avoid the slowness of `getElementById`.
+
+- Implement it everywhere because it is not related to any framework/library.
+
+## Register elements in the store
 
 <!-- created with: https://excalidraw.com/ -->
 
 <p align="center">
- <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/store/img/store-registry.png" alt="how register works"/>
+ <img
+ src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/store/img/store-registry.png" 
+ alt="how register works"/>
 </p>
 
 Registry works on creating
@@ -34,7 +46,7 @@ for element then store it with another passed data.
 ```ts
 store.register(
   elmInstance: Object<elmInstance>,
-  CustomInstance:? <function>,
+  CustomInstance:? <Function>,
   options:? Object
 )
 ```
@@ -208,3 +220,11 @@ yarn test store
 ## License
 
 This package is licensed under the [GPL-3.0 License](https://github.com/jalal246/dflex/tree/master/packages/store/LICENSE)
+
+## Contribution
+
+If you like this project, you can support it by contributing. If you find a bug,
+please let me know, applying a pull request is welcome. This project needs your
+support. You can fix typos, add new examples, or build with me new features.
+
+> Support this project by giving it a Star ⭐
