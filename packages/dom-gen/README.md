@@ -1,27 +1,30 @@
 # @dflex/dom-gen
 
-> DOM relations generator algorithm.
+> DOM relations generator algorithm. Generates relations between DOM elements
+> based on element depth without browser.
 
 ```bash
 npm install @dflex/dom-gen
 ```
 
-Generates relations between DOM elements based on element depth. For each DOM
-node, it generates three keys: Siblings, Parent and Children keys and two
+It generates three keys: Siblings, Parent and Children keys and two
 indexes one refers to node order in its level and the other refers to the parent
-index in parental level. Together: keys and indexes combined form of
-uniqueness for each element.
+index in parental level.
+
+Together: keys and indexes combined form of uniqueness for each element.
 
 In case you are dealing with any DOM-tree, you can build entire branches and traverse
 through them using these generated unique keys and indexes. Think of relational
 database or hash tables but applied in DOM tree.
 
-## Generates element pointer
+## Generate element pointer
 
 <!-- created with: https://excalidraw.com/ -->
 
 <p align="center">
- <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dom-gen/img/pointer.png" alt="how pointer works"/>
+ <img
+  src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dom-gen/img/pointer.png"
+  alt="how pointer works"/>
 </p>
 
 Element pointer refers to the element position and its relationship in DOM tree.
@@ -124,7 +127,9 @@ DOM-root
 <!-- created with: https://excalidraw.com/ -->
 
 <p align="center">
- <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dom-gen/img/connect.png" alt="how algorithm connect nodes"/>
+ <img
+  src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dom-gen/img/connect.png"
+  alt="how algorithm connect nodes"/>
 </p>
 
 ids form 0 to 2, all have same parent and siblings key. And it guarantees that
@@ -250,3 +255,11 @@ yarn test dom-gen
 ## License
 
 This package is licensed under the [GPL-3.0 License](https://github.com/jalal246/dflex/tree/master/packages/dom-gen/LICENSE)
+
+## Contribution
+
+If you like this project, you can support it by contributing. If you find a bug,
+please let me know, applying a pull request is welcome. This project needs your
+support. You can fix typos, add new examples, or build with me new features.
+
+> Support this project by giving it a Star ⭐

@@ -16,7 +16,8 @@
     "test": "cross-env NODE_ENV=e2e start-server-and-test server:3001 http://localhost:3001 cy:run",
     "test:extended": "start-server-and-test server:3001 http://localhost:3001 cy:run:extended"
   },
-  "repository": "https://github.com/jalal246/dflex/tree/master/packages/dnd",
+  "homepage": "https://github.com/jalal246/dflex/tree/master/packages/dnd",
+  "repository": "https://github.com/jalal246/dflex",
   "license": "GPL-3.0",
   "files": [
     "src",
