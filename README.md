@@ -32,7 +32,7 @@
   </a>
 </p>
 
-# About DFLex
+# About DFlex
 
 DFlex is a real solution to native-like browser API focused on performance and easy
 implementation. It's not a React solution or a Vue implementation. It's just
@@ -42,7 +42,7 @@ implementations.
 All packages are decoupled. Work separately to prevent a bloated bundle in
 production and to make it easer to maintain.
 
-Think of DFLex as a collection of utility packages for DOM. Some packages
+Think of DFlex as a collection of utility packages for DOM. Some packages
 connect and store layout elements others do extra steps and manipulate them in
 many different ways.
 
