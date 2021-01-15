@@ -32,7 +32,7 @@
   </a>
 </p>
 
-# What's DFLex
+# About DFLex
 
 DFlex is a real solution to native-like browser API focused on performance and easy
 implementation. It's not a React solution or a Vue implementation. It's just
@@ -75,7 +75,7 @@ without reading from the browser.
 ### [**Drag & Drop**](https://github.com/jalal246/dflex/tree/master/packages/dnd)
 
 A Simple, lightweight Solution for a Drag & Drop App based on enhanced DOM store
-algorithm.
+algorithm. You can achieve a drag and drop with three steps only with mouse event.
 
 ### [**Draggable**](https://github.com/jalal246/dflex/tree/master/packages/draggable)
 
