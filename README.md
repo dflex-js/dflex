@@ -32,19 +32,54 @@
   </a>
 </p>
 
-# Project Content
+# What's DFLex
 
-- [**DOM Generator**](https://github.com/jalal246/dflex/tree/master/packages/dom-gen)
-  DOM relations generator algorithm.
+DFlex is a real solution to native-like browser API focused on performance and easy
+implementation. It's not a React solution or a Vue implementation. It's just
+pure JavaScript. Every fix, feature, or enhancement will affect all framework
+implementations.
 
-- [**DOM Store**](https://github.com/jalal246/dflex/tree/master/packages/store)
-  Traverse through the DOM tree using element id.
+All packages are decoupled. Work separately to prevent a bloated bundle in
+production and to make it easer to maintain.
 
-- [**Drag & Drop**](https://github.com/jalal246/dflex/tree/master/packages/dnd)
-  Lightweight Solution for a Drag & Drop App based on enhanced store algorithm.
+Think of DFLex as a collection of utility packages for DOM. Some packages
+connect and store layout elements others do extra steps and manipulate them in
+many different ways.
 
-- [**Draggable**](https://github.com/jalal246/dflex/tree/master/packages/draggable)
-  High-performance draggable elements.
+Each DOM node movement calculates the current position and triggers any effect that
+movement caused. So It may cause "dragging only with zero effect" Or "Switch
+with another element".
+
+DFlex has also parent/children architecture. So you can manipulate a child or
+parent.
+
+It is also extendable. In most existing solutions the more elements you are
+trying to manipulate the more lagging you get. With DFlex, no matter how many
+elements you are dealing with it’s always going to interpret each movement to
+CSS transform without asking the browser to get the node for each request.
+
+## Project Content
+
+Inside each package, there's a description and full documentation.
+
+### [**DOM Generator**](https://github.com/jalal246/dflex/tree/master/packages/dom-gen)
+
+DOM relations generator algorithm. Generate relations between DOM elements based
+on element depth without a browser.
+
+### [**DOM Store**](https://github.com/jalal246/dflex/tree/master/packages/store)
+
+The only Store that allows you to traverse through the DOM tree using element id
+without reading from the browser.
+
+### [**Drag & Drop**](https://github.com/jalal246/dflex/tree/master/packages/dnd)
+
+A Simple, lightweight Solution for a Drag & Drop App based on enhanced DOM store
+algorithm.
+
+### [**Draggable**](https://github.com/jalal246/dflex/tree/master/packages/draggable)
+
+High-performance draggable elements written in pure JS works for Web and Mobile.
 
 ## Installation
 
