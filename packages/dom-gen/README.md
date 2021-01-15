@@ -1,7 +1,7 @@
 # @dflex/dom-gen
 
-> DOM relations generator algorithm. Generates relations between DOM elements
-> based on element depth without browser.
+> DOM relations generator algorithm. Generate relations between DOM elements
+> based on element depth without a browser.
 
 ```bash
 npm install @dflex/dom-gen
