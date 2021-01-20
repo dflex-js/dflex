@@ -3,6 +3,7 @@ node_modules
 *.log
 .cache
 .changelog
+.docusaurus
 build
 dist
 draft
