@@ -141,11 +141,11 @@ export default {
       "@docusaurus/preset-classic",
       {
         "docs": {
-          "sidebarPath": "D:\\projects\\dflex-docs\\dflex-site\\sidebars.js",
+          "sidebarPath": "D:\\projects\\dflex\\docs\\sidebars.js",
           "editUrl": "https://github.com/jalal246/dflex/edit/master/docs/"
         },
         "theme": {
-          "customCss": "D:\\projects\\dflex-docs\\dflex-site\\src\\css\\custom.css"
+          "customCss": "D:\\projects\\dflex\\docs\\src\\css\\custom.css"
         }
       }
     ]
