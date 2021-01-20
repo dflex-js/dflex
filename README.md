@@ -10,11 +10,6 @@
     src="https://img.shields.io/github/workflow/status/jalal246/dflex/Unit Test"
     alt="Dflex build status" />
   </a>
-  <a href="https://codecov.io/gh/jalal246/dflex">
-    <img
-    src="https://img.shields.io/codecov/c/github/jalal246/dflex.svg"
-    alt="Dflex code converge status" />
-  </a>
   <a href="https://github.com/jalal246/dflex/pulls">
     <img
     src="https://img.shields.io/github/issues-pr/jalal246/dflex" 
