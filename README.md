@@ -27,31 +27,34 @@
   </a>
 </p>
 
-# About DFlex
+## DFlex
 
-DFlex is a real solution to native-like browser API focused on performance and easy
-implementation. It's not a React solution or a Vue implementation. It's just
-pure JavaScript. Every fix, feature, or enhancement will affect all framework
-implementations.
+> JavaScript Project to Manipulate DOM Elements
 
-All packages are decoupled. Work separately to prevent a bloated bundle in
-production and to make it easer to maintain.
+DFlex is a JavaScript solution. It is not a solution for a specific
+framework. A pure JavaScript library. Every fix, feature, or enhancement
+will affect all framework implementations.
 
-Think of DFlex as a collection of utility packages for DOM. Some packages
-connect and store layout elements others do extra steps and manipulate them in
-many different ways.
+It is a solution to native-like browser API focused on performance and easy
+implementation.
 
-Each DOM node movement calculates the current position and triggers any effect that
-movement caused. So It may cause "dragging only with zero effect" Or "Switch
-with another element".
+Dflex contains a collection of utility packages for DOM. Focused on
+performance and extensibility. All packages are decoupled. Work
+separately to prevent a bloated bundle in production and to make it
+easier to maintain.
 
-DFlex has also parent/children architecture. So you can manipulate a child or
-parent.
+DFlex is also extensible. In most existing solutions the more elements
+you are trying to manipulate the more lagging you get. With DFlex, no
+matter how many elements you are dealing with it’s always going to be
+smooth manipulation.
 
-It is also extendable. In most existing solutions the more elements you are
-trying to manipulate the more lagging you get. With DFlex, no matter how many
-elements you are dealing with it’s always going to interpret each movement to
-CSS transform without asking the browser to get the node for each request.
+It has parent/children architecture. So you can manipulate a child or parent.
+Entries are not an array, and not necessary to be in order. Works with async
+rendering from parents to children or vice versa because it has a flexible
+design.
+
+Every node manipulation is calculated and exposed. So you can add your
+own functionality without starting from scratch.
 
 ## Project Content
 
