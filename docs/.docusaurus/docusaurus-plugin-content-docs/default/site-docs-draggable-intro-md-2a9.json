@@ -1,0 +1,21 @@
+{
+  "unversionedId": "draggable/introduction",
+  "id": "draggable/introduction",
+  "isDocsHomePage": false,
+  "title": "Introduction",
+  "description": "Draggable is a native utility written in pure JS works for Web and Mobile",
+  "source": "@site/docs\\draggable\\intro.md",
+  "slug": "/draggable/introduction",
+  "permalink": "/docs/draggable/introduction",
+  "editUrl": "https://github.com/jalal246/dflex/edit/master/docs/docs/draggable/intro.md",
+  "version": "current",
+  "sidebar": "someSidebar",
+  "previous": {
+    "title": "Introduction",
+    "permalink": "/docs/dom-store/introduction"
+  },
+  "next": {
+    "title": "Examples",
+    "permalink": "/docs/draggable/examples"
+  }
+}

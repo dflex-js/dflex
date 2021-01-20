@@ -1,0 +1,13 @@
+{
+  "unversionedId": "doc1",
+  "id": "doc1",
+  "isDocsHomePage": false,
+  "title": "Style Guide",
+  "description": "You can write content using GitHub-flavored Markdown syntax.",
+  "source": "@site/docs\\doc1.md",
+  "slug": "/doc",
+  "permalink": "/docs/doc",
+  "editUrl": "https://github.com/facebook/docusaurus/edit/master/website/docs/doc1.md",
+  "version": "current",
+  "sidebar_label": "Style Guide"
+}

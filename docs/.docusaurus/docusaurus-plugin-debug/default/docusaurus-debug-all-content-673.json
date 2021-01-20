@@ -1,0 +1,432 @@
+{
+  "docusaurus-plugin-content-docs": {
+    "default": {
+      "loadedVersions": [
+        {
+          "versionName": "current",
+          "versionLabel": "Next",
+          "versionPath": "/docs",
+          "isLast": true,
+          "routePriority": -1,
+          "sidebarFilePath": "D:\\projects\\dflex-docs\\dflex-site\\sidebars.js",
+          "docsDirPath": "D:\\projects\\dflex-docs\\dflex-site\\docs",
+          "docsDirPathLocalized": "D:\\projects\\dflex-docs\\dflex-site\\i18n\\en\\docusaurus-plugin-content-docs\\current",
+          "mainDocId": "getting-started/introduction",
+          "sidebars": {
+            "someSidebar": [
+              {
+                "collapsed": true,
+                "type": "category",
+                "label": "Getting Started",
+                "items": [
+                  {
+                    "type": "doc",
+                    "id": "getting-started/introduction"
+                  },
+                  {
+                    "type": "doc",
+                    "id": "getting-started/guiding-principles"
+                  }
+                ]
+              },
+              {
+                "collapsed": true,
+                "type": "category",
+                "label": "DOM Generator",
+                "items": [
+                  {
+                    "type": "doc",
+                    "id": "dom-gen/introduction"
+                  }
+                ]
+              },
+              {
+                "collapsed": true,
+                "type": "category",
+                "label": "DOM Store",
+                "items": [
+                  {
+                    "type": "doc",
+                    "id": "dom-store/introduction"
+                  }
+                ]
+              },
+              {
+                "collapsed": true,
+                "type": "category",
+                "label": "Draggable",
+                "items": [
+                  {
+                    "type": "doc",
+                    "id": "draggable/introduction"
+                  },
+                  {
+                    "type": "doc",
+                    "id": "draggable/examples"
+                  }
+                ]
+              },
+              {
+                "collapsed": true,
+                "type": "category",
+                "label": "Drag and Drop",
+                "items": [
+                  {
+                    "type": "doc",
+                    "id": "drag-drop/introduction"
+                  },
+                  {
+                    "type": "doc",
+                    "id": "drag-drop/examples"
+                  }
+                ]
+              }
+            ]
+          },
+          "permalinkToSidebar": {
+            "/docs/dom-gen/introduction": "someSidebar",
+            "/docs/dom-store/introduction": "someSidebar",
+            "/docs/drag-drop/examples": "someSidebar",
+            "/docs/drag-drop/introduction": "someSidebar",
+            "/docs/draggable/examples": "someSidebar",
+            "/docs/draggable/introduction": "someSidebar",
+            "/docs/guiding-principles": "someSidebar",
+            "/docs/": "someSidebar"
+          },
+          "docs": [
+            {
+              "unversionedId": "dom-gen/introduction",
+              "id": "dom-gen/introduction",
+              "isDocsHomePage": false,
+              "title": "Introduction",
+              "description": "DOM relations generator algorithm.",
+              "source": "@site/docs\\dom-gen\\intro.md",
+              "slug": "/dom-gen/introduction",
+              "permalink": "/docs/dom-gen/introduction",
+              "editUrl": "https://github.com/jalal246/dflex/edit/master/docs/docs/dom-gen/intro.md",
+              "version": "current",
+              "sidebar": "someSidebar",
+              "previous": {
+                "title": "Guiding Principles",
+                "permalink": "/docs/guiding-principles"
+              },
+              "next": {
+                "title": "Introduction",
+                "permalink": "/docs/dom-store/introduction"
+              }
+            },
+            {
+              "unversionedId": "dom-store/introduction",
+              "id": "dom-store/introduction",
+              "isDocsHomePage": false,
+              "title": "Introduction",
+              "description": "Traverse through the DOM tree using element-id.",
+              "source": "@site/docs\\dom-store\\intro.md",
+              "slug": "/dom-store/introduction",
+              "permalink": "/docs/dom-store/introduction",
+              "editUrl": "https://github.com/jalal246/dflex/edit/master/docs/docs/dom-store/intro.md",
+              "version": "current",
+              "sidebar": "someSidebar",
+              "previous": {
+                "title": "Introduction",
+                "permalink": "/docs/dom-gen/introduction"
+              },
+              "next": {
+                "title": "Introduction",
+                "permalink": "/docs/draggable/introduction"
+              }
+            },
+            {
+              "unversionedId": "drag-drop/examples",
+              "id": "drag-drop/examples",
+              "isDocsHomePage": false,
+              "title": "Examples",
+              "description": "React",
+              "source": "@site/docs\\drag-drop\\examples.md",
+              "slug": "/drag-drop/examples",
+              "permalink": "/docs/drag-drop/examples",
+              "editUrl": "https://github.com/jalal246/dflex/edit/master/docs/docs/drag-drop/examples.md",
+              "version": "current",
+              "sidebar": "someSidebar",
+              "previous": {
+                "title": "Introduction",
+                "permalink": "/docs/drag-drop/introduction"
+              }
+            },
+            {
+              "unversionedId": "drag-drop/introduction",
+              "id": "drag-drop/introduction",
+              "isDocsHomePage": false,
+              "title": "Introduction",
+              "description": "A Simple, lightweight Solution for a Drag & Drop App",
+              "source": "@site/docs\\drag-drop\\intro.md",
+              "slug": "/drag-drop/introduction",
+              "permalink": "/docs/drag-drop/introduction",
+              "editUrl": "https://github.com/jalal246/dflex/edit/master/docs/docs/drag-drop/intro.md",
+              "version": "current",
+              "sidebar": "someSidebar",
+              "previous": {
+                "title": "Examples",
+                "permalink": "/docs/draggable/examples"
+              },
+              "next": {
+                "title": "Examples",
+                "permalink": "/docs/drag-drop/examples"
+              }
+            },
+            {
+              "unversionedId": "draggable/examples",
+              "id": "draggable/examples",
+              "isDocsHomePage": false,
+              "title": "Examples",
+              "description": "React",
+              "source": "@site/docs\\draggable\\examples.md",
+              "slug": "/draggable/examples",
+              "permalink": "/docs/draggable/examples",
+              "editUrl": "https://github.com/jalal246/dflex/edit/master/docs/docs/draggable/examples.md",
+              "version": "current",
+              "sidebar": "someSidebar",
+              "previous": {
+                "title": "Introduction",
+                "permalink": "/docs/draggable/introduction"
+              },
+              "next": {
+                "title": "Introduction",
+                "permalink": "/docs/drag-drop/introduction"
+              }
+            },
+            {
+              "unversionedId": "draggable/introduction",
+              "id": "draggable/introduction",
+              "isDocsHomePage": false,
+              "title": "Introduction",
+              "description": "Draggable is a native utility written in pure JS works for Web and Mobile",
+              "source": "@site/docs\\draggable\\intro.md",
+              "slug": "/draggable/introduction",
+              "permalink": "/docs/draggable/introduction",
+              "editUrl": "https://github.com/jalal246/dflex/edit/master/docs/docs/draggable/intro.md",
+              "version": "current",
+              "sidebar": "someSidebar",
+              "previous": {
+                "title": "Introduction",
+                "permalink": "/docs/dom-store/introduction"
+              },
+              "next": {
+                "title": "Examples",
+                "permalink": "/docs/draggable/examples"
+              }
+            },
+            {
+              "unversionedId": "getting-started/guiding-principles",
+              "id": "getting-started/guiding-principles",
+              "isDocsHomePage": false,
+              "title": "Guiding Principles",
+              "description": "Build, Traverse, Manipulate",
+              "source": "@site/docs\\getting-started\\guiding-principles.md",
+              "slug": "/guiding-principles",
+              "permalink": "/docs/guiding-principles",
+              "editUrl": "https://github.com/jalal246/dflex/edit/master/docs/docs/getting-started/guiding-principles.md",
+              "version": "current",
+              "sidebar": "someSidebar",
+              "previous": {
+                "title": "Introduction",
+                "permalink": "/docs/"
+              },
+              "next": {
+                "title": "Introduction",
+                "permalink": "/docs/dom-gen/introduction"
+              }
+            },
+            {
+              "unversionedId": "getting-started/introduction",
+              "id": "getting-started/introduction",
+              "isDocsHomePage": false,
+              "title": "Introduction",
+              "description": "JavaScript Project to Manipulate DOM Elements",
+              "source": "@site/docs\\getting-started\\intro.md",
+              "slug": "/",
+              "permalink": "/docs/",
+              "editUrl": "https://github.com/jalal246/dflex/edit/master/docs/docs/getting-started/intro.md",
+              "version": "current",
+              "sidebar": "someSidebar",
+              "next": {
+                "title": "Guiding Principles",
+                "permalink": "/docs/guiding-principles"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "docusaurus-plugin-content-blog": {
+    "default": {
+      "blogPosts": [
+        {
+          "id": "welcome",
+          "metadata": {
+            "permalink": "/blog/welcome",
+            "source": "@site/blog\\2019-05-30-welcome.md",
+            "description": "Blog features are powered by the blog plugin. Simply add files to the blog directory. It supports tags as well!",
+            "date": "2019-05-30T00:00:00.000Z",
+            "tags": [
+              {
+                "label": "facebook",
+                "permalink": "/blog/tags/facebook"
+              },
+              {
+                "label": "hello",
+                "permalink": "/blog/tags/hello"
+              },
+              {
+                "label": "docusaurus",
+                "permalink": "/blog/tags/docusaurus"
+              }
+            ],
+            "title": "Welcome",
+            "readingTime": 0.175,
+            "truncated": false,
+            "nextItem": {
+              "title": "Hello",
+              "permalink": "/blog/hello-world"
+            }
+          }
+        },
+        {
+          "id": "hello-world",
+          "metadata": {
+            "permalink": "/blog/hello-world",
+            "source": "@site/blog\\2019-05-29-hello-world.md",
+            "description": "Welcome to this blog. This blog is created with Docusaurus 2 alpha.",
+            "date": "2019-05-29T00:00:00.000Z",
+            "tags": [
+              {
+                "label": "hello",
+                "permalink": "/blog/tags/hello"
+              },
+              {
+                "label": "docusaurus",
+                "permalink": "/blog/tags/docusaurus"
+              }
+            ],
+            "title": "Hello",
+            "readingTime": 0.12,
+            "truncated": true,
+            "prevItem": {
+              "title": "Welcome",
+              "permalink": "/blog/welcome"
+            },
+            "nextItem": {
+              "title": "Hola",
+              "permalink": "/blog/hola"
+            }
+          }
+        },
+        {
+          "id": "hola",
+          "metadata": {
+            "permalink": "/blog/hola",
+            "source": "@site/blog\\2019-05-28-hola.md",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet",
+            "date": "2019-05-28T00:00:00.000Z",
+            "tags": [
+              {
+                "label": "hola",
+                "permalink": "/blog/tags/hola"
+              },
+              {
+                "label": "docusaurus",
+                "permalink": "/blog/tags/docusaurus"
+              }
+            ],
+            "title": "Hola",
+            "readingTime": 0.12,
+            "truncated": false,
+            "prevItem": {
+              "title": "Hello",
+              "permalink": "/blog/hello-world"
+            }
+          }
+        }
+      ],
+      "blogListPaginated": [
+        {
+          "metadata": {
+            "permalink": "/blog",
+            "page": 1,
+            "postsPerPage": 10,
+            "totalPages": 1,
+            "totalCount": 3,
+            "previousPage": null,
+            "nextPage": null,
+            "blogDescription": "Blog",
+            "blogTitle": "Blog"
+          },
+          "items": [
+            "welcome",
+            "hello-world",
+            "hola"
+          ]
+        }
+      ],
+      "blogTags": {
+        "facebook": {
+          "name": "facebook",
+          "items": [
+            "welcome"
+          ],
+          "permalink": "/blog/tags/facebook"
+        },
+        "hello": {
+          "name": "hello",
+          "items": [
+            "welcome",
+            "hello-world"
+          ],
+          "permalink": "/blog/tags/hello"
+        },
+        "docusaurus": {
+          "name": "docusaurus",
+          "items": [
+            "welcome",
+            "hello-world",
+            "hola"
+          ],
+          "permalink": "/blog/tags/docusaurus"
+        },
+        "hola": {
+          "name": "hola",
+          "items": [
+            "hola"
+          ],
+          "permalink": "/blog/tags/hola"
+        }
+      },
+      "blogTagsListPath": "/blog/tags"
+    }
+  },
+  "docusaurus-plugin-content-pages": {
+    "default": [
+      {
+        "type": "jsx",
+        "permalink": "/",
+        "source": "@site/src\\pages\\index.js"
+      }
+    ]
+  },
+  "docusaurus-plugin-debug": {
+    "default": null
+  },
+  "docusaurus-theme-classic": {
+    "default": null
+  },
+  "docusaurus-plugin-google-gtag": {
+    "default": null
+  },
+  "docusaurus-plugin-pwa": {
+    "default": null
+  },
+  "docusaurus-plugin-sitemap": {
+    "default": null
+  }
+}

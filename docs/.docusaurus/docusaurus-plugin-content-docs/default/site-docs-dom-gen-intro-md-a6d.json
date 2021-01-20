@@ -1,0 +1,21 @@
+{
+  "unversionedId": "dom-gen/introduction",
+  "id": "dom-gen/introduction",
+  "isDocsHomePage": false,
+  "title": "Introduction",
+  "description": "DOM relations generator algorithm.",
+  "source": "@site/docs\\dom-gen\\intro.md",
+  "slug": "/dom-gen/introduction",
+  "permalink": "/docs/dom-gen/introduction",
+  "editUrl": "https://github.com/jalal246/dflex/edit/master/docs/docs/dom-gen/intro.md",
+  "version": "current",
+  "sidebar": "someSidebar",
+  "previous": {
+    "title": "Guiding Principles",
+    "permalink": "/docs/guiding-principles"
+  },
+  "next": {
+    "title": "Introduction",
+    "permalink": "/docs/dom-store/introduction"
+  }
+}

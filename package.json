@@ -4,8 +4,7 @@
   "workspaces": [
     "packages/**",
     "scripts/*",
-    "site",
-    "stories"
+    "docs"
   ],
   "repository": "https://github.com/jalal246/dflex",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",

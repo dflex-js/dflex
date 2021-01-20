@@ -1,0 +1,12 @@
+{
+  "unversionedId": "introduction",
+  "id": "introduction",
+  "isDocsHomePage": false,
+  "title": "Introduction",
+  "source": "@site/docs\\intro.mdx",
+  "slug": "/",
+  "permalink": "/docs/",
+  "editUrl": "https://github.com/facebook/docusaurus/edit/master/website/docs/intro.mdx",
+  "version": "current",
+  "sidebar_label": "Style Guide"
+}

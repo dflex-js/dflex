@@ -1,0 +1,21 @@
+{
+  "unversionedId": "draggable/examples",
+  "id": "draggable/examples",
+  "isDocsHomePage": false,
+  "title": "Examples",
+  "description": "React",
+  "source": "@site/docs\\draggable\\examples.md",
+  "slug": "/draggable/examples",
+  "permalink": "/docs/draggable/examples",
+  "editUrl": "https://github.com/jalal246/dflex/edit/master/docs/docs/draggable/examples.md",
+  "version": "current",
+  "sidebar": "someSidebar",
+  "previous": {
+    "title": "Introduction",
+    "permalink": "/docs/draggable/introduction"
+  },
+  "next": {
+    "title": "Introduction",
+    "permalink": "/docs/drag-drop/introduction"
+  }
+}

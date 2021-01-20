@@ -1,0 +1,17 @@
+{
+  "unversionedId": "GettingStarted/introduction",
+  "id": "GettingStarted/introduction",
+  "isDocsHomePage": false,
+  "title": "Introduction",
+  "description": "JavaScript Project to Manipulate DOM Elements",
+  "source": "@site/docs\\GettingStarted\\intro.md",
+  "slug": "/",
+  "permalink": "/docs/",
+  "editUrl": "https://github.com/facebook/docusaurus/edit/master/website/docs/GettingStarted/intro.md",
+  "version": "current",
+  "sidebar": "someSidebar",
+  "next": {
+    "title": "Guiding Principles",
+    "permalink": "/docs/guiding-principles"
+  }
+}

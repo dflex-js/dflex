@@ -1,0 +1,21 @@
+{
+  "unversionedId": "drag-drop/introduction",
+  "id": "drag-drop/introduction",
+  "isDocsHomePage": false,
+  "title": "Introduction",
+  "description": "A Simple, lightweight Solution for a Drag & Drop App",
+  "source": "@site/docs\\drag-drop\\intro.md",
+  "slug": "/drag-drop/introduction",
+  "permalink": "/docs/drag-drop/introduction",
+  "editUrl": "https://github.com/jalal246/dflex/edit/master/docs/docs/drag-drop/intro.md",
+  "version": "current",
+  "sidebar": "someSidebar",
+  "previous": {
+    "title": "Examples",
+    "permalink": "/docs/draggable/examples"
+  },
+  "next": {
+    "title": "Examples",
+    "permalink": "/docs/drag-drop/examples"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "unversionedId": "drag-drop/examples",
+  "id": "drag-drop/examples",
+  "isDocsHomePage": false,
+  "title": "Examples",
+  "description": "React",
+  "source": "@site/docs\\drag-drop\\examples.md",
+  "slug": "/drag-drop/examples",
+  "permalink": "/docs/drag-drop/examples",
+  "editUrl": "https://github.com/jalal246/dflex/edit/master/docs/docs/drag-drop/examples.md",
+  "version": "current",
+  "sidebar": "someSidebar",
+  "previous": {
+    "title": "Introduction",
+    "permalink": "/docs/drag-drop/introduction"
+  }
+}
