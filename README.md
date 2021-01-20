@@ -27,7 +27,7 @@
   </a>
 </p>
 
-## DFlex
+# DFlex
 
 > JavaScript Project to Manipulate DOM Elements
 
@@ -55,6 +55,10 @@ design.
 
 Every node manipulation is calculated and exposed. So you can add your
 own functionality without starting from scratch.
+
+## Documentation
+
+Visit Dflex site for more jalal246.github.io/dflex/
 
 ## Project Content
 
