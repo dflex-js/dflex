@@ -81,7 +81,7 @@ High-performance draggable elements written in pure JS works for Web and Mobile.
 
 ## Documentation
 
-Visit Dflex site for more https://jalal246.github.io/dflex/
+Visit DFlex site for more https://jalal246.github.io/dflex/
 
 ## Installation
 
