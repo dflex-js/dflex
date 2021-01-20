@@ -56,10 +56,6 @@ design.
 Every node manipulation is calculated and exposed. So you can add your
 own functionality without starting from scratch.
 
-## Documentation
-
-Visit Dflex site for more jalal246.github.io/dflex/
-
 ## Project Content
 
 Inside each package, there's a description and full documentation.
@@ -82,6 +78,10 @@ algorithm. You can achieve a drag and drop with three steps only with mouse even
 ### [**Draggable**](https://github.com/jalal246/dflex/tree/master/packages/draggable)
 
 High-performance draggable elements written in pure JS works for Web and Mobile.
+
+## Documentation
+
+Visit Dflex site for more https://jalal246.github.io/dflex/
 
 ## Installation
 
