@@ -1,53 +1,53 @@
 {
   "docusaurus-plugin-content-docs": {
     "default": {
-      "path": "/docs",
+      "path": "/dflex/docs",
       "versions": [
         {
           "name": "current",
           "label": "Next",
           "isLast": true,
-          "path": "/docs",
+          "path": "/dflex/docs",
           "mainDocId": "getting-started/introduction",
           "docs": [
             {
               "id": "dom-gen/introduction",
-              "path": "/docs/dom-gen/introduction",
+              "path": "/dflex/docs/dom-gen/introduction",
               "sidebar": "someSidebar"
             },
             {
               "id": "dom-store/introduction",
-              "path": "/docs/dom-store/introduction",
+              "path": "/dflex/docs/dom-store/introduction",
               "sidebar": "someSidebar"
             },
             {
               "id": "drag-drop/examples",
-              "path": "/docs/drag-drop/examples",
+              "path": "/dflex/docs/drag-drop/examples",
               "sidebar": "someSidebar"
             },
             {
               "id": "drag-drop/introduction",
-              "path": "/docs/drag-drop/introduction",
+              "path": "/dflex/docs/drag-drop/introduction",
               "sidebar": "someSidebar"
             },
             {
               "id": "draggable/examples",
-              "path": "/docs/draggable/examples",
+              "path": "/dflex/docs/draggable/examples",
               "sidebar": "someSidebar"
             },
             {
               "id": "draggable/introduction",
-              "path": "/docs/draggable/introduction",
+              "path": "/dflex/docs/draggable/introduction",
               "sidebar": "someSidebar"
             },
             {
               "id": "getting-started/guiding-principles",
-              "path": "/docs/guiding-principles",
+              "path": "/dflex/docs/guiding-principles",
               "sidebar": "someSidebar"
             },
             {
               "id": "getting-started/introduction",
-              "path": "/docs/",
+              "path": "/dflex/docs/",
               "sidebar": "someSidebar"
             }
           ]

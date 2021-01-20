@@ -1,8 +1,8 @@
 export default {
   "title": "DFlex",
   "tagline": "JavaScript Project to Manipulate DOM Elements",
-  "url": "https://your-docusaurus-test-site.com",
-  "baseUrl": "/",
+  "url": "https://jalal246.github.io/",
+  "baseUrl": "/dflex/",
   "onBrokenLinks": "throw",
   "onBrokenMarkdownLinks": "warn",
   "favicon": "img/favicon.ico",
@@ -97,45 +97,7 @@ export default {
     },
     "hideableSidebar": false
   },
-  "plugins": [
-    "@docusaurus/plugin-google-gtag",
-    [
-      "@docusaurus/plugin-pwa",
-      {
-        "debug": true,
-        "offlineModeActivationStrategies": [
-          "appInstalled",
-          "queryString"
-        ],
-        "pwaHead": [
-          {
-            "tagName": "link",
-            "rel": "icon",
-            "href": "/img/logo-footer.png"
-          },
-          {
-            "tagName": "link",
-            "rel": "manifest",
-            "href": "/manifest.json"
-          },
-          {
-            "tagName": "meta",
-            "name": "theme-color",
-            "content": " #40241a"
-          }
-        ]
-      }
-    ],
-    [
-      "@docusaurus/plugin-sitemap",
-      {
-        "cacheTime": 600000,
-        "changefreq": "weekly",
-        "priority": 0.5,
-        "trailingSlash": false
-      }
-    ]
-  ],
+  "plugins": [],
   "presets": [
     [
       "@docusaurus/preset-classic",
@@ -146,6 +108,12 @@ export default {
         },
         "theme": {
           "customCss": "D:\\projects\\dflex\\docs\\src\\css\\custom.css"
+        },
+        "sitemap": {
+          "cacheTime": 600000,
+          "changefreq": "weekly",
+          "priority": 0.5,
+          "trailingSlash": false
         }
       }
     ]

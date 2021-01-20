@@ -6,16 +6,16 @@
   "description": "Traverse through the DOM tree using element-id.",
   "source": "@site/docs\\dom-store\\intro.md",
   "slug": "/dom-store/introduction",
-  "permalink": "/docs/dom-store/introduction",
+  "permalink": "/dflex/docs/dom-store/introduction",
   "editUrl": "https://github.com/jalal246/dflex/edit/master/docs/docs/dom-store/intro.md",
   "version": "current",
   "sidebar": "someSidebar",
   "previous": {
     "title": "Introduction",
-    "permalink": "/docs/dom-gen/introduction"
+    "permalink": "/dflex/docs/dom-gen/introduction"
   },
   "next": {
     "title": "Introduction",
-    "permalink": "/docs/draggable/introduction"
+    "permalink": "/dflex/docs/draggable/introduction"
   }
 }

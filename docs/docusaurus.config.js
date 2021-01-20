@@ -1,8 +1,8 @@
 module.exports = {
   title: "DFlex",
   tagline: "JavaScript Project to Manipulate DOM Elements",
-  url: "https://your-docusaurus-test-site.com",
-  baseUrl: "/",
+  url: "https://jalal246.github.io/",
+  baseUrl: "/dflex/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.ico",
@@ -78,40 +78,30 @@ module.exports = {
     },
   },
   plugins: [
-    "@docusaurus/plugin-google-gtag",
-    [
-      "@docusaurus/plugin-pwa",
-      {
-        debug: true,
-        offlineModeActivationStrategies: ["appInstalled", "queryString"],
-        pwaHead: [
-          {
-            tagName: "link",
-            rel: "icon",
-            href: "/img/logo-footer.png",
-          },
-          {
-            tagName: "link",
-            rel: "manifest",
-            href: "/manifest.json", // your PWA manifest
-          },
-          {
-            tagName: "meta",
-            name: "theme-color",
-            content: " #40241a",
-          },
-        ],
-      },
-    ],
-    [
-      "@docusaurus/plugin-sitemap",
-      {
-        cacheTime: 600 * 1000, // 600 sec - cache purge period
-        changefreq: "weekly",
-        priority: 0.5,
-        trailingSlash: false,
-      },
-    ],
+    // [
+    //   "@docusaurus/plugin-pwa",
+    //   {
+    //     debug: true,
+    //     offlineModeActivationStrategies: ["appInstalled", "queryString"],
+    //     pwaHead: [
+    //       {
+    //         tagName: "link",
+    //         rel: "icon",
+    //         href: "/img/logo-footer.png",
+    //       },
+    //       {
+    //         tagName: "link",
+    //         rel: "manifest",
+    //         href: "/manifest.json", // your PWA manifest
+    //       },
+    //       {
+    //         tagName: "meta",
+    //         name: "theme-color",
+    //         content: " #40241a",
+    //       },
+    //     ],
+    //   },
+    // ],
   ],
   presets: [
     [
@@ -124,6 +114,12 @@ module.exports = {
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
+        },
+        sitemap: {
+          cacheTime: 600 * 1000, // 600 sec - cache purge period
+          changefreq: "weekly",
+          priority: 0.5,
+          trailingSlash: false,
         },
       },
     ],

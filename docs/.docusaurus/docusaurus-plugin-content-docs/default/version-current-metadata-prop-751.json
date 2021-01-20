@@ -13,12 +13,12 @@
           {
             "type": "link",
             "label": "Introduction",
-            "href": "/docs/"
+            "href": "/dflex/docs/"
           },
           {
             "type": "link",
             "label": "Guiding Principles",
-            "href": "/docs/guiding-principles"
+            "href": "/dflex/docs/guiding-principles"
           }
         ]
       },
@@ -30,7 +30,7 @@
           {
             "type": "link",
             "label": "Introduction",
-            "href": "/docs/dom-gen/introduction"
+            "href": "/dflex/docs/dom-gen/introduction"
           }
         ]
       },
@@ -42,7 +42,7 @@
           {
             "type": "link",
             "label": "Introduction",
-            "href": "/docs/dom-store/introduction"
+            "href": "/dflex/docs/dom-store/introduction"
           }
         ]
       },
@@ -54,12 +54,12 @@
           {
             "type": "link",
             "label": "Introduction",
-            "href": "/docs/draggable/introduction"
+            "href": "/dflex/docs/draggable/introduction"
           },
           {
             "type": "link",
             "label": "Examples",
-            "href": "/docs/draggable/examples"
+            "href": "/dflex/docs/draggable/examples"
           }
         ]
       },
@@ -71,25 +71,25 @@
           {
             "type": "link",
             "label": "Introduction",
-            "href": "/docs/drag-drop/introduction"
+            "href": "/dflex/docs/drag-drop/introduction"
           },
           {
             "type": "link",
             "label": "Examples",
-            "href": "/docs/drag-drop/examples"
+            "href": "/dflex/docs/drag-drop/examples"
           }
         ]
       }
     ]
   },
   "permalinkToSidebar": {
-    "/docs/dom-gen/introduction": "someSidebar",
-    "/docs/dom-store/introduction": "someSidebar",
-    "/docs/drag-drop/examples": "someSidebar",
-    "/docs/drag-drop/introduction": "someSidebar",
-    "/docs/draggable/examples": "someSidebar",
-    "/docs/draggable/introduction": "someSidebar",
-    "/docs/guiding-principles": "someSidebar",
-    "/docs/": "someSidebar"
+    "/dflex/docs/dom-gen/introduction": "someSidebar",
+    "/dflex/docs/dom-store/introduction": "someSidebar",
+    "/dflex/docs/drag-drop/examples": "someSidebar",
+    "/dflex/docs/drag-drop/introduction": "someSidebar",
+    "/dflex/docs/draggable/examples": "someSidebar",
+    "/dflex/docs/draggable/introduction": "someSidebar",
+    "/dflex/docs/guiding-principles": "someSidebar",
+    "/dflex/docs/": "someSidebar"
   }
 }

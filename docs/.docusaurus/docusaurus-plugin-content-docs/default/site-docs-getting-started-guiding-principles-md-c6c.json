@@ -6,16 +6,16 @@
   "description": "Build, Traverse, Manipulate",
   "source": "@site/docs\\getting-started\\guiding-principles.md",
   "slug": "/guiding-principles",
-  "permalink": "/docs/guiding-principles",
+  "permalink": "/dflex/docs/guiding-principles",
   "editUrl": "https://github.com/jalal246/dflex/edit/master/docs/docs/getting-started/guiding-principles.md",
   "version": "current",
   "sidebar": "someSidebar",
   "previous": {
     "title": "Introduction",
-    "permalink": "/docs/"
+    "permalink": "/dflex/docs/"
   },
   "next": {
     "title": "Introduction",
-    "permalink": "/docs/dom-gen/introduction"
+    "permalink": "/dflex/docs/dom-gen/introduction"
   }
 }

@@ -6,16 +6,16 @@
   "description": "React",
   "source": "@site/docs\\draggable\\examples.md",
   "slug": "/draggable/examples",
-  "permalink": "/docs/draggable/examples",
+  "permalink": "/dflex/docs/draggable/examples",
   "editUrl": "https://github.com/jalal246/dflex/edit/master/docs/docs/draggable/examples.md",
   "version": "current",
   "sidebar": "someSidebar",
   "previous": {
     "title": "Introduction",
-    "permalink": "/docs/draggable/introduction"
+    "permalink": "/dflex/docs/draggable/introduction"
   },
   "next": {
     "title": "Introduction",
-    "permalink": "/docs/drag-drop/introduction"
+    "permalink": "/dflex/docs/drag-drop/introduction"
   }
 }

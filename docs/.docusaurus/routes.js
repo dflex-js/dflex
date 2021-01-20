@@ -3,88 +3,53 @@ import React from 'react';
 import ComponentCreator from '@docusaurus/ComponentCreator';
 export default [
 {
-  path: '/',
-  component: ComponentCreator('/','d7d'),
+  path: '/dflex/',
+  component: ComponentCreator('/dflex/','9ab'),
   exact: true,
 },
 {
-  path: '/__docusaurus/debug',
-  component: ComponentCreator('/__docusaurus/debug','3d6'),
-  exact: true,
-},
-{
-  path: '/__docusaurus/debug/config',
-  component: ComponentCreator('/__docusaurus/debug/config','914'),
-  exact: true,
-},
-{
-  path: '/__docusaurus/debug/content',
-  component: ComponentCreator('/__docusaurus/debug/content','d12'),
-  exact: true,
-},
-{
-  path: '/__docusaurus/debug/globalData',
-  component: ComponentCreator('/__docusaurus/debug/globalData','3cf'),
-  exact: true,
-},
-{
-  path: '/__docusaurus/debug/metadata',
-  component: ComponentCreator('/__docusaurus/debug/metadata','31b'),
-  exact: true,
-},
-{
-  path: '/__docusaurus/debug/registry',
-  component: ComponentCreator('/__docusaurus/debug/registry','0da'),
-  exact: true,
-},
-{
-  path: '/__docusaurus/debug/routes',
-  component: ComponentCreator('/__docusaurus/debug/routes','244'),
-  exact: true,
-},
-{
-  path: '/docs',
-  component: ComponentCreator('/docs','459'),
+  path: '/dflex/docs',
+  component: ComponentCreator('/dflex/docs','dda'),
   
   routes: [
 {
-  path: '/docs/',
-  component: ComponentCreator('/docs/','01d'),
+  path: '/dflex/docs/',
+  component: ComponentCreator('/dflex/docs/','24a'),
   exact: true,
 },
 {
-  path: '/docs/dom-gen/introduction',
-  component: ComponentCreator('/docs/dom-gen/introduction','746'),
+  path: '/dflex/docs/dom-gen/introduction',
+  component: ComponentCreator('/dflex/docs/dom-gen/introduction','6bb'),
   exact: true,
 },
 {
-  path: '/docs/dom-store/introduction',
-  component: ComponentCreator('/docs/dom-store/introduction','8a3'),
+  path: '/dflex/docs/dom-store/introduction',
+  component: ComponentCreator('/dflex/docs/dom-store/introduction','edc'),
   exact: true,
 },
 {
-  path: '/docs/drag-drop/examples',
-  component: ComponentCreator('/docs/drag-drop/examples','22e'),
+  path: '/dflex/docs/drag-drop/examples',
+  component: ComponentCreator('/dflex/docs/drag-drop/examples','908'),
   exact: true,
 },
 {
-  path: '/docs/drag-drop/introduction',
-  component: ComponentCreator('/docs/drag-drop/introduction','519'),
+  path: '/dflex/docs/drag-drop/introduction',
+  component: ComponentCreator('/dflex/docs/drag-drop/introduction','166'),
   exact: true,
 },
 {
-  path: '/docs/draggable/examples',
-  component: ComponentCreator('/docs/draggable/examples','7c6'),
+  path: '/dflex/docs/draggable/examples',
+  component: ComponentCreator('/dflex/docs/draggable/examples','6d6'),
   exact: true,
 },
 {
-  path: '/docs/draggable/introduction',
-  component: ComponentCreator('/docs/draggable/introduction','e84'),
+  path: '/dflex/docs/draggable/introduction',
+  component: ComponentCreator('/dflex/docs/draggable/introduction','c8c'),
   exact: true,
 },
 {
-  path: '/docs/guiding-principles',
-  component: ComponentCreator('/docs/guiding-principles','60e'),
+  path: '/dflex/docs/guiding-principles',
+  component: ComponentCreator('/dflex/docs/guiding-principles','e55'),
   exact: true,
 },
 ]
