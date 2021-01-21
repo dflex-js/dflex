@@ -1,6 +1,6 @@
 ---
 id: introduction
-title: Introduction
+title: What's it & Why use it?
 slug: /
 ---
 

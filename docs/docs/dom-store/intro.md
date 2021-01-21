@@ -1,6 +1,6 @@
 ---
 id: introduction
-title: Introduction
+title: Introduction To DOM Store
 ---
 
 > Traverse through the DOM tree using element-id.

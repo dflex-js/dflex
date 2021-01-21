@@ -1,6 +1,6 @@
 ---
 id: introduction
-title: Introduction
+title: Introduction To Drag & Drop
 ---
 
 > A Simple, lightweight Solution for a Drag & Drop App
