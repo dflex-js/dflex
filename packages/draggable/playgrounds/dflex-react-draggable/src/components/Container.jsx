@@ -44,7 +44,7 @@ const Container = ({
         evTarget.removeEventListener(evType, handler);
       });
 
-      draggable.end();
+      draggable.endDragging();
     }
   };
 
