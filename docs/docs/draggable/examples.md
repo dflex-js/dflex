@@ -1,6 +1,6 @@
 ---
 id: examples
-title: Live Examples
+title: Draggable Live Examples
 ---
 
 ### React

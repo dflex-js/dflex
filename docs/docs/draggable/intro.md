@@ -1,6 +1,6 @@
 ---
 id: introduction
-title: Introduction
+title: Introduction To Draggable
 ---
 
 > Draggable is a native utility written in pure JS works for Web and Mobile
