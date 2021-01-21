@@ -1,6 +1,6 @@
 ---
 id: implementations
-title: Draggable Implementations
+title: Draggable Framework Implementations
 ---
 
 ### React

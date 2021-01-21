@@ -1,6 +1,6 @@
 ---
-id: examples
-title: Examples
+id: implementations
+title: Drag & Drop Framework Implementations
 ---
 
 ### React

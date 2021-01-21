@@ -11,6 +11,10 @@ module.exports = {
       "draggable/examples",
       "draggable/implementations",
     ],
-    "Drag and Drop": ["drag-drop/introduction", "drag-drop/implementations"],
+    "Drag and Drop": [
+      "drag-drop/introduction",
+      "drag-drop/examples",
+      "drag-drop/implementations",
+    ],
   },
 };
