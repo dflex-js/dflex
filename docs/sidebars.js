@@ -3,6 +3,7 @@ module.exports = {
     "Getting Started": [
       "getting-started/introduction",
       "getting-started/guiding-principles",
+      "getting-started/contributing",
     ],
     "DOM Generator": ["dom-gen/introduction"],
     "DOM Store": ["dom-store/introduction"],
