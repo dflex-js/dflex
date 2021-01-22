@@ -1,6 +1,15 @@
 ---
 id: examples
 title: Draggable Live Examples
+description: DFlex draggable examples
+keywords:
+  - draggable
+  - JavaScript
+  - examples
+  - Vue
+  - React
+  - DOM
+  - dflex
 ---
 
 > It's all about mouse events.

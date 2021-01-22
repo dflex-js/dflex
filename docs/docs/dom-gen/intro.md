@@ -1,6 +1,13 @@
 ---
 id: introduction
-title: Introduction To DOM Generator
+title: DOM Generator
+sidebar_label: Introduction to DOM Generator
+description: DOM relations generator algorithm
+keywords:
+  - algorithm
+  - docs
+  - DOM
+  - dflex
 ---
 
 > DOM relations generator algorithm.

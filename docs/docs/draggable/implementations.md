@@ -1,6 +1,14 @@
 ---
 id: implementations
 title: Draggable Framework Implementations
+description: Draggable implementations
+keywords:
+  - draggable
+  - JavaScript
+  - Vue
+  - React
+  - DOM
+  - dflex
 ---
 
 ### React

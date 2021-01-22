@@ -2,6 +2,11 @@
 id: introduction
 title: What's it & Why use it?
 slug: /
+description: JavaScript Project to Manipulate DOM Elements
+keywords:
+  - docs
+  - DOM
+  - dflex
 ---
 
 > JavaScript Project to Manipulate DOM Elements

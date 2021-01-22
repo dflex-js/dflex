@@ -1,6 +1,13 @@
 ---
 id: introduction
-title: Introduction To Draggable
+title: Draggable
+sidebar_label: Introduction To Draggable
+description: Draggable component written in pure JS works for Web and Mobile
+keywords:
+  - draggable
+  - JavaScript
+  - DOM
+  - dflex
 ---
 
 > Draggable is a native utility written in pure JS works for Web and Mobile

@@ -1,6 +1,14 @@
 ---
 id: contributing
-title: Contributing To DFlex
+title: Contributing
+sidebar_label: Contributing To DFlex
+description: How to contribute to open source project
+keywords:
+  - contributing
+  - docs
+  - DOM
+  - github
+  - dflex
 ---
 
 This project and the idea of this project need your help that's why any
