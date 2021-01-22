@@ -1,7 +1,7 @@
 ---
 id: examples
 title: Drag & Drop Live Examples
-description: DFlex drag and drop examples
+description: JavaScript drag and drop examples
 keywords:
   - draggable
   - droppable

@@ -1,7 +1,7 @@
 ---
 id: examples
 title: Draggable Live Examples
-description: DFlex draggable examples
+description: JavaScript draggable examples
 keywords:
   - draggable
   - JavaScript
@@ -80,20 +80,6 @@ function Draggable() {
   );
 }
 ```
-
-### Key points related to draggable
-
-- You can add strictly draggable, moving only horizontal or vertical by yourself
-  because you control dragging coordinations.
-
-- You can control the clickable area, simply because it's a mouse event. Could
-  be on the entire element or a small button of the element. It's up to you.
-
-- You know when the dragging is going to start and end without adding additional
-  API functions.
-
-- It can be nested dragging. Related to a list of elements or just one element. It
-  doesn't matter. It is always the same.
 
 ### Adding more control to draggable
 
