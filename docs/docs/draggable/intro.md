@@ -25,7 +25,7 @@ npm install @dflex/draggable
 
 <p align="center">
     <img
-     src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/draggable/img/draggable.gif" 
+     src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/draggable/img/draggable.gif"
      alt="show how draggable works" />
 </p>
 
@@ -66,3 +66,70 @@ You can end dragging with`onmouseup` handler
 ```ts
 draggable.endDragging();
 ```
+
+### Add Custom Style
+
+While you can add style, classes related to drag since you trigger `dragAt` and `endDragging`.
+You can also control the few style properties that Draggable use when dragging.
+
+When create draggable Instance you can use `draggedStyle: Array<draggedStyleObj>`
+
+```ts
+draggedStyleObj: {
+  prop: string;
+  dragValue: string;
+  afterDragValue:? string;
+}
+```
+
+Default value for `draggedStyle`:
+
+```js
+const draggedStyle = [
+  {
+    prop: "zIndex",
+    dragValue: "99",
+    afterDragValue: null,
+  },
+  {
+    prop: "pointerEvents",
+    dragValue: "none",
+    afterDragValue: null,
+  },
+];
+```
+
+You can change it after creating dragged instance. The following example
+will change background color `red` during the drag and `purple` after finish dragging.
+
+```js
+draggable.draggedStyle = [
+  {
+    prop: "zIndex",
+    dragValue: "99",
+    afterDragValue: null,
+  },
+  {
+    prop: "pointerEvents",
+    dragValue: "none",
+    afterDragValue: null,
+  },
+  {
+    prop: "background",
+    dragValue: "red",
+    afterDragValue: "purple",
+  },
+];
+```
+
+## Key points
+
+- You can add strictly draggable, moving only horizontal or vertical by yourself
+  because you control dragging coordinations.
+
+- You can control the clickable area, simply because it's a mouse event. Could
+  be on the entire element or a small button of the element. It's up to you.
+
+- You know when the dragging is going to start and end without adding additional API functions.
+
+- It can be nested dragging. Related to a list of elements or just one element It doesn't matter. It is always the same.

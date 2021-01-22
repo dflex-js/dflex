@@ -18,7 +18,7 @@ class Draggable extends AbstractDraggable {
    *
    * @memberof Draggable
    */
-  constructor(elementId, clickCoordinates, opts) {
+  constructor(elementId, clickCoordinates, opts = {}) {
     const element = store.getElmById(elementId);
 
     super(element, clickCoordinates, opts);
