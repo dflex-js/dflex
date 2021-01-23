@@ -190,7 +190,7 @@ class Draggable extends Base {
        */
       const { translateX, translateY } = this[DRAGGED_ELM];
 
-      this.draggedStyle.transform = `translate(${translateX}px,${translateY}px)`;
+      this.draggedStyleRef.transform = `translate(${translateX}px,${translateY}px)`;
 
       return;
     }
