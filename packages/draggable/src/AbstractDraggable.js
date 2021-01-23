@@ -77,20 +77,18 @@ class AbstractDraggable {
    * @memberof AbstractDraggable
    */
   setDragged(isActive) {
-    if (isActive) {
-      this.draggedStyle.forEach(({ prop, dragValue }) => {
-        this.draggedStyleRef[prop] = dragValue;
-      });
-
-      return;
-    }
-
-    /**
-     * Not active: end of dragging.
-     */
-    this.draggedStyle.forEach(({ prop, afterDragValue }) => {
-      this.draggedStyleRef[prop] = afterDragValue;
-    });
+    // if (isActive) {
+    //   this.draggedStyle.forEach(({ prop, dragValue }) => {
+    //     this.draggedStyleRef[prop] = dragValue;
+    //   });
+    //   return;
+    // }
+    // /**
+    //  * Not active: end of dragging.
+    //  */
+    // this.draggedStyle.forEach(({ prop, afterDragValue }) => {
+    //   this.draggedStyleRef[prop] = afterDragValue;
+    // });
   }
 
   /**
