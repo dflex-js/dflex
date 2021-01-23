@@ -91,11 +91,6 @@ const draggedStyle = [
     dragValue: "99",
     afterDragValue: null,
   },
-  {
-    prop: "pointerEvents",
-    dragValue: "none",
-    afterDragValue: null,
-  },
 ];
 ```
 
@@ -111,7 +106,7 @@ draggable.draggedStyle = [
   },
   {
     prop: "pointerEvents",
-    dragValue: "none",
+    dragValue: "pointer",
     afterDragValue: null,
   },
   {

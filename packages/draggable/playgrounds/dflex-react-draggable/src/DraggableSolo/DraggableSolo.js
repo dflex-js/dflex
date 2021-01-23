@@ -3,6 +3,7 @@
 import React from "react";
 
 import { store, Draggable } from "@dflex/draggable/src";
+import "./button.css";
 
 // shared dragged event
 let draggedEvent;
@@ -56,7 +57,14 @@ const DraggableSolo = ({ id = "draggableSolo", depth = 0 }) => {
   };
 
   return (
-    <button type="button" ref={ref} key={id} id={id} onMouseDown={onMouseDown}>
+    <button
+      className="Button"
+      type="button"
+      ref={ref}
+      key={id}
+      id={id}
+      onMouseDown={onMouseDown}
+    >
       Drag me!
     </button>
   );

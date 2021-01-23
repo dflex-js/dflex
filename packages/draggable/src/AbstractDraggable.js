@@ -7,11 +7,6 @@ const draggedStyleProps = [
     dragValue: "99",
     afterDragValue: null,
   },
-  {
-    prop: "pointerEvents",
-    dragValue: "none",
-    afterDragValue: null,
-  },
 ];
 
 /**

@@ -74,7 +74,14 @@ function Draggable({ id = Date.now(), depth = 0 }) {
   };
 
   return (
-    <button type="button" ref={ref} key={id} id={id} onMouseDown={onMouseDown}>
+    <button
+      className="button-solo"
+      type="button"
+      ref={ref}
+      key={id}
+      id={id}
+      onMouseDown={onMouseDown}
+    >
       Drag me!
     </button>
   );
