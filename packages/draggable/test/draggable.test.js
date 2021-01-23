@@ -83,7 +83,7 @@ describe("Draggable mechanism", () => {
       });
 
       it("Updates style to normal", () => {
-        expect(draggable.draggedStyle.pointerEvents).toBe("");
+        expect(draggable.draggedStyle.pointerEvents).toBe(undefined);
       });
     });
   });
@@ -165,7 +165,7 @@ describe("Draggable mechanism", () => {
       });
 
       it("Updates style to normal", () => {
-        expect(draggable.draggedStyle.pointerEvents).toBe("");
+        expect(draggable.draggedStyle.pointerEvents).toBe(undefined);
       });
     });
   });

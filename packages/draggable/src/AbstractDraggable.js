@@ -1,10 +1,25 @@
 import { DRAGGED_ELM } from "../constants.json";
 
+/** @type  { prop: string, dragValue: string, afterDragValue:? string }[]  */
+const draggedStyleProps = [
+  {
+    prop: "zIndex",
+    dragValue: "99",
+    afterDragValue: null,
+  },
+  {
+    prop: "pointerEvents",
+    dragValue: "none",
+    afterDragValue: null,
+  },
+];
+
 /**
  * AbstractDraggable element.
  *
  * @class AbstractDraggable
  */
+
 class AbstractDraggable {
   /**
    * Creates an instance of AbstractDraggable.
@@ -29,7 +44,7 @@ class AbstractDraggable {
       element: { style: draggedStyle },
     } = this[DRAGGED_ELM];
 
-    this.draggedStyle = draggedStyle;
+    this.draggedStyleRef = draggedStyle;
 
     /**
      * When dragging start, element shouldn't jump from its translate. So, we
@@ -49,12 +64,7 @@ class AbstractDraggable {
       y: 0,
     };
 
-    this.draggedStyleProps = [
-      {
-        prop: "zIndex",
-        value: "99",
-      },
-    ];
+    this.draggedStyle = draggedStyleProps;
 
     this.setDragged(true);
   }
@@ -68,18 +78,16 @@ class AbstractDraggable {
    */
   setDragged(isActive) {
     if (isActive) {
-      this.draggedStyleProps.forEach(({ prop, value }) => {
-        this.draggedStyle[prop] = value;
+      this.draggedStyle.forEach(({ prop, dragValue }) => {
+        this.draggedStyleRef[prop] = dragValue;
       });
-
       return;
     }
-
     /**
      * Not active: end of dragging.
      */
-    this.draggedStyleProps.forEach(({ prop }) => {
-      this.draggedStyle[prop] = null;
+    this.draggedStyle.forEach(({ prop, afterDragValue }) => {
+      this.draggedStyleRef[prop] = afterDragValue;
     });
   }
 
@@ -103,7 +111,7 @@ class AbstractDraggable {
     this.tempTranslate.x = x + this.outerOffsetX;
     this.tempTranslate.y = y + this.outerOffsetY;
 
-    this.draggedStyle.transform = `translate(${this.tempTranslate.x}px,${this.tempTranslate.y}px)`;
+    this.draggedStyleRef.transform = `translate(${this.tempTranslate.x}px,${this.tempTranslate.y}px)`;
   }
 }
 

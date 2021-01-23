@@ -1,6 +1,14 @@
 ---
 id: introduction
-title: Introduction
+title: DOM Store
+sidebar_label: Introduction To DOM Store
+description: DOM store traverse through the DOM tree using element-id
+keywords:
+  - algorithm
+  - store
+  - docs
+  - DOM
+  - dflex
 ---
 
 > Traverse through the DOM tree using element-id.

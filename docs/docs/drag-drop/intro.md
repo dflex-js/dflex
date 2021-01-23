@@ -1,6 +1,15 @@
 ---
 id: introduction
-title: Introduction
+title: Drag & Drop
+sidebar_label: Introduction To Drag & Drop
+description: Draggable and Drop component written in pure JS works for Web and Mobile
+keywords:
+  - draggable
+  - drop
+  - drag
+  - JavaScript
+  - DOM
+  - dflex
 ---
 
 > A Simple, lightweight Solution for a Drag & Drop App

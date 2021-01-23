@@ -77,6 +77,7 @@ module.exports = {
       anonymizeIP: true,
     },
   },
+  themes: ["@docusaurus/theme-live-codeblock"],
   plugins: [
     // [
     //   "@docusaurus/plugin-pwa",

@@ -2,6 +2,12 @@
 id: guiding-principles
 title: Guiding Principles
 slug: /guiding-principles
+description: Guiding principles for DFlex project
+keywords:
+  - principles
+  - docs
+  - DOM
+  - dflex
 ---
 
 > Build, Traverse, Manipulate

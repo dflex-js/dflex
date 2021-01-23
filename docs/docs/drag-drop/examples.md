@@ -1,12 +1,16 @@
 ---
 id: examples
-title: Examples
+title: Drag & Drop Live Examples
+description: JavaScript drag and drop examples
+keywords:
+  - draggable
+  - droppable
+  - JavaScript
+  - examples
+  - Vue
+  - React
+  - DOM
+  - dflex
 ---
 
-### React
-
-[Full React example](https://github.com/jalal246/dflex/tree/master/packages/dnd/playgrounds/dflex-react-dnd)
-
-### Vue
-
-[Full Vue example](https://github.com/jalal246/dflex/tree/master/packages/dnd/playgrounds/dflex-vue-dnd)
+> Soon!

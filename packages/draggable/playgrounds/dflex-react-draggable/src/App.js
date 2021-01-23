@@ -1,39 +1,22 @@
-/* eslint-disable no-plusplus */
 import React from "react";
-import "./App.css";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
-import { Container, Draggable } from "./components";
-
-let index = 1;
+import Lists from "./Lists";
+import DraggableSolo from "./DraggableSolo";
 
 function App() {
   return (
-    <Container className="Container">
-      <Draggable id="p0-a" component="ul">
-        {[1].map(() => (
-          <Draggable id={`id-${index}`} key={`k${index}`} component="li">
-            Hello-
-            {index++}
-          </Draggable>
-        ))}
-      </Draggable>
-      <Draggable id="p0-1b" component="ul">
-        {[1, 2, 3, 4, 5, 6, 7].map(() => (
-          <Draggable id={`id-${index}`} key={`k${index}`} component="li">
-            Hello-
-            {index++}
-          </Draggable>
-        ))}
-      </Draggable>
-      <Draggable id="p0-1c" component="ul">
-        {[1, 2, 3].map(() => (
-          <Draggable id={`id-${index}`} key={`k${index}`} component="li">
-            Hello-
-            {index++}
-          </Draggable>
-        ))}
-      </Draggable>
-    </Container>
+    <Router>
+      <Switch>
+        <Route path="/draggable-solo">
+          <DraggableSolo />
+        </Route>
+
+        <Route path="/">
+          <Lists />
+        </Route>
+      </Switch>
+    </Router>
   );
 }
 

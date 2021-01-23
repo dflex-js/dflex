@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-use-before-define */
 import React from "react";
 
@@ -44,7 +45,7 @@ const Container = ({
         evTarget.removeEventListener(evType, handler);
       });
 
-      draggable.end();
+      draggable.endDragging();
     }
   };
 

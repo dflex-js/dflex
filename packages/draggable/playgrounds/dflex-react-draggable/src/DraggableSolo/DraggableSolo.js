@@ -1,36 +1,20 @@
----
-id: examples
-title: Draggable Live Examples
-description: JavaScript draggable examples
-keywords:
-  - draggable
-  - JavaScript
-  - examples
-  - Vue
-  - React
-  - DOM
-  - dflex
----
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable import/no-extraneous-dependencies */
+import React from "react";
 
-> It's all about mouse events.
+import { store, Draggable } from "@dflex/draggable/src";
 
-### Basic Draggable Component
+// shared dragged event
+let draggedEvent;
 
-```jsx live
-// Create useable Draggable component
-function Draggable({ id = Date.now(), depth = 0 }) {
-  const { store, Draggable } = DFlexDraggable;
-
-  // Create Shared dragged event holder
-  let draggedEvent;
-
+const DraggableSolo = ({ id = "draggableSolo", depth = 0 }) => {
   // This reference enable DFlex to move the element when required
   const ref = React.createRef();
+  //   const [isDragged, setIsDragged] = React.useState(false);
 
   React.useEffect(() => {
-    // Wait until component is mounted to get the reference
     setTimeout(
-      // Register element in the store
+      // eslint-disable-next-line func-names
       function () {
         store.register({ id, element: ref.current, depth });
       },
@@ -60,13 +44,11 @@ function Draggable({ id = Date.now(), depth = 0 }) {
   const onMouseDown = (e) => {
     const { button, clientX, clientY } = e;
 
-    // Avoid right mouse click and ensure id
+    // avoid right mouse click and ensure id
     if (typeof button === "number" && button === 0) {
       if (id) {
-        // Create Draggable instance
         draggedEvent = new Draggable(id, { x: clientX, y: clientY });
 
-        // Add event listeners to the entire document. Not just the button boundaries.
         document.addEventListener("mouseup", onMouseUp);
         document.addEventListener("mousemove", onMouseMove);
       }
@@ -78,5 +60,6 @@ function Draggable({ id = Date.now(), depth = 0 }) {
       Drag me!
     </button>
   );
-}
-```
+};
+
+export default DraggableSolo;

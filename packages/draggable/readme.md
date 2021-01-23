@@ -31,23 +31,27 @@ Register draggable element in draggable store:
 store.register({ id: string, element: Node });
 ```
 
-### Draggable instance
+### Draggable Instance
 
-Create draggable instance `onmousedown`:
+Create draggable instance with `onmousedown`handler
 
 ```ts
 const draggable = new Draggable(id: string, {x: event.clientX, y: event.clientY});
 ```
 
-Move element `onmousemove`
+### Movement
+
+Move the element with `onmousemove` handler
 
 ```ts
 draggable.dragAt(event.clientX, event.clientY);
 ```
 
-End Dragging `onmouseup`
+### End Dragging
 
-```ts
+You can end dragging with`onmouseup` handler
+
+````ts
 draggable.endDragging();
 ```
 
@@ -61,7 +65,7 @@ draggable.endDragging();
 
 ```sh
 yarn test draggable
-```
+````
 
 ## License
 
