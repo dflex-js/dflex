@@ -18,65 +18,65 @@ keywords:
 
 ```jsx live
 // Create useable Draggable component
-function Draggable() {
+function Draggable({ id = Date.now(), depth = 0 }) {
   const { store, Draggable } = DFlexDraggable;
 
-  // draggable instance holder
-  let draggable;
-
-  // Always provide unique id
-  const id = "myID";
+  // Create Shared dragged event holder
+  let draggedEvent;
 
   // This reference enable DFlex to move the element when required
   const ref = React.createRef();
 
   React.useEffect(() => {
-    setTimeout(function () {
-      // Register our element in the store
-      store.register({ id, element: ref.current });
-    }, 0);
-  }, [id, ref]);
+    // Wait until component is mounted to get the reference
+    setTimeout(
+      // Register element in the store
+      function () {
+        store.register({ id, element: ref.current, depth });
+      },
+      0
+    );
+  }, []);
 
-  const onMouseDown = (e) => {
-    const { target, button, clientX, clientY } = e;
+  const onMouseMove = (e) => {
+    if (draggedEvent) {
+      const { clientX, clientY } = e;
 
-    // Avoid right mouse click and ensure id
-    if (typeof button === "number" && button === 0) {
-      const { id } = target;
-
-      // Create Draggable instance
-      draggable = new Draggable(id, { x: clientX, y: clientY });
+      // Drag when mouse is moving!
+      draggedEvent.dragAt(clientX, clientY);
     }
   };
 
   const onMouseUp = () => {
-    if (draggable) {
-      draggable.endDragging();
-      draggable = null;
+    if (draggedEvent) {
+      draggedEvent.endDragging();
+      draggedEvent = null;
+
+      document.removeEventListener("mouseup", onMouseUp);
+      document.removeEventListener("mousemove", onMouseMove);
     }
   };
 
-  const onMouseMove = (e) => {
-    if (draggable) {
-      const { clientX, clientY } = e;
+  const onMouseDown = (e) => {
+    const { button, clientX, clientY } = e;
 
-      // Drag when mouse is moving!
-      draggable.dragAt(clientX, clientY);
+    // Avoid right mouse click and ensure id
+    if (typeof button === "number" && button === 0) {
+      if (id) {
+        // Create Draggable instance
+        draggedEvent = new Draggable(id, { x: clientX, y: clientY });
+
+        // Add event listeners to the entire document. Not just the button boundaries.
+        document.addEventListener("mouseup", onMouseUp);
+        document.addEventListener("mousemove", onMouseMove);
+      }
     }
   };
 
   return (
-    <div
-      ref={ref}
-      key={id}
-      id={id}
-      onMouseDown={onMouseDown}
-      onMouseMove={onMouseMove}
-      onMouseUp={onMouseUp}
-      style={DraggableStyle}
-    >
-      Drag me, nicely!
-    </div>
+    <button type="button" ref={ref} key={id} id={id} onMouseDown={onMouseDown}>
+      Drag me!
+    </button>
   );
 }
 ```

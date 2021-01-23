@@ -8,6 +8,7 @@ import { store, Draggable } from "@dflex/draggable/src";
 let draggedEvent;
 
 const DraggableSolo = ({ id = "draggableSolo", depth = 0 }) => {
+  // This reference enable DFlex to move the element when required
   const ref = React.createRef();
   //   const [isDragged, setIsDragged] = React.useState(false);
 
@@ -25,6 +26,7 @@ const DraggableSolo = ({ id = "draggableSolo", depth = 0 }) => {
     if (draggedEvent) {
       const { clientX, clientY } = e;
 
+      // Drag when mouse is moving!
       draggedEvent.dragAt(clientX, clientY);
     }
   };
@@ -36,8 +38,6 @@ const DraggableSolo = ({ id = "draggableSolo", depth = 0 }) => {
 
       document.removeEventListener("mouseup", onMouseUp);
       document.removeEventListener("mousemove", onMouseMove);
-
-      //   setIsDragged(false);
     }
   };
 
