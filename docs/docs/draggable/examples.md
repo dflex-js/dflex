@@ -171,6 +171,8 @@ function Draggable({ id = Date.now(), depth = 0 }) {
 }
 ```
 
+### Horizontal & Vertical
+
 Now compare this component to other components available. See how much code you usually write and how deep complexity you can add to achieve the same result with DFlex.
 
 To add Horizontal or Vertical only dragging you control the input so you can freeze X or Y:
