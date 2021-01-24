@@ -1,0 +1,33 @@
+.draggable {
+  padding: 1.2rem 1.2rem;
+  border: none;
+  background-color: #22140e;
+  color: #f6f8ff;
+  width: fit-content;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.text {
+  padding-right: 3rem;
+}
+
+.handler {
+  cursor: pointer;
+  font-size: 6.2rem;
+}
+
+.button-solo {
+  padding: 1.2rem 1.2rem;
+  border: none;
+  background-color: #22140e;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  min-width: 10rem;
+  min-height: 2.8rem;
+  color: #f6f8ff;
+  cursor: pointer;
+  outline: none;
+  transform: scale(1);
+}

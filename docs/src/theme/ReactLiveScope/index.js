@@ -1,18 +1,13 @@
 import React from "react";
 import DFlexDraggable from "@dflex/draggable";
 
-const DraggableStyle = {
-  backgroundColor: "white",
-  border: "solid red",
-  borderRadius: 20,
-  padding: 10,
-  cursor: "pointer",
-};
+import "./index.css";
+import HandlerSVG from "./HandlerSVG";
 
 const ReactLiveScope = {
   React,
   ...React,
-  DraggableStyle,
+  HandlerSVG,
   DFlexDraggable,
 };
 
