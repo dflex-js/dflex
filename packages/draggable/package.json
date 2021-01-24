@@ -1,6 +1,6 @@
 {
   "name": "@dflex/draggable",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "main": "dist/dflexDraggable.min.cjs.js",
   "umd:main": "dist/dflexDraggable.min.umd",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
