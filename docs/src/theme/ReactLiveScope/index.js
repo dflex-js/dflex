@@ -1,10 +1,13 @@
 import React from "react";
 import DFlexDraggable from "@dflex/draggable";
-import "./button.css";
+
+import "./index.css";
+import HandlerSVG from "./HandlerSVG";
 
 const ReactLiveScope = {
   React,
   ...React,
+  HandlerSVG,
   DFlexDraggable,
 };
 
