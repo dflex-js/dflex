@@ -13,6 +13,10 @@ It can be used with any app you have whether it is React, Vue, Angular or Svelte
      alt="show how draggable works" />
 </p>
 
+## Documentation
+
+Visit DFlex site for more <https://jalal246.github.io/dflex/> and to see live examples with full code.
+
 ## Installation
 
 ```bash
@@ -68,7 +72,7 @@ When create draggable Instance you can use `draggedStyle: Array<draggedStyleObj>
 draggedStyleObj: {
   prop: string;
   dragValue: string;
-  afterDragValue:? string;
+  afterDragValue?: string;
 }
 ```
 
