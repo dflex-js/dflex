@@ -7,7 +7,7 @@
     "eslint-config-airbnb": "^18.1.0",
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-jsx-a11y": "6.2.3",
-    "eslint-plugin-react": "7.19.0",
+    "eslint-plugin-react": "7.22.0",
     "eslint-plugin-react-hooks": "2.5.0"
   }
 }
