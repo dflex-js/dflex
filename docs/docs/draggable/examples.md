@@ -87,3 +87,7 @@ function Draggable({ id = Date.now(), depth = 0 }) {
   );
 }
 ```
+
+Simple as that. No special components. No extra functionality. Every thing so natural. And you don't have to as for extra features. You have full control.
+
+### A button with handler, maybe?

@@ -3,12 +3,13 @@
 import React from "react";
 
 import { store, Draggable } from "@dflex/draggable/src";
-import "./button.css";
+import "./draggableHandler.css";
+import HandlerSVG from "./HandlerSVG";
 
 // shared dragged event
 let draggedEvent;
 
-const DraggableSolo = ({ id = "draggableSolo", depth = 0 }) => {
+const DraggableHandler = ({ id = "draggableSolo", depth = 0 }) => {
   // This reference enable DFlex to move the element when required
   const ref = React.createRef();
   //   const [isDragged, setIsDragged] = React.useState(false);
@@ -57,17 +58,11 @@ const DraggableSolo = ({ id = "draggableSolo", depth = 0 }) => {
   };
 
   return (
-    <button
-      className="button-solo"
-      type="button"
-      ref={ref}
-      key={id}
-      id={id}
-      onMouseDown={onMouseDown}
-    >
-      Drag me!
-    </button>
+    <div className="draggable" ref={ref} key={id} id={id}>
+      <span className="text"> Drag me</span>
+      <HandlerSVG onMouseDown={onMouseDown} />
+    </div>
   );
 };
 
-export default DraggableSolo;
+export default DraggableHandler;
