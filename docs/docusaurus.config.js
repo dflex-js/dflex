@@ -69,6 +69,11 @@ module.exports = {
           items: liveExampleItems,
         },
         {
+          label: "Help",
+          position: "right",
+          to: "docs/help/",
+        },
+        {
           href: "https://github.com/jalal246/dflex",
           label: "GitHub",
           position: "right",
