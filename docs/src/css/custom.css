@@ -35,3 +35,26 @@
 .navbar__items:not(.react-toggle) {
   font-size: 1.3rem;
 }
+
+
+
+/* Dark theme fixes */
+
+.color-white,
+a.color-white:hover
+{
+  color: #fff;
+}
+
+.navbar__link:hover{
+  color: inherit;
+  text-decoration: underline;
+}
+
+html[data-theme="dark"] a.footer__link-item:hover,
+html[data-theme="dark"] .menu__link--active,
+html[data-theme="dark"] .navbar__link--active,
+html[data-theme="dark"] .pagination-nav__label
+{
+  color: #fff;
+}
