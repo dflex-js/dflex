@@ -98,12 +98,12 @@ function Home() {
     <Layout title={`${siteConfig.title}`} description={siteConfig.tagline}>
       <header className={clsx("hero hero--primary", styles.heroBanner)}>
         <div className="container">
-          <h1 className="hero__title">{siteConfig.title}</h1>
-          <p className="hero__subtitle">{siteConfig.tagline}</p>
+          <h1 className="hero__title color-white">{siteConfig.title}</h1>
+          <p className="hero__subtitle color-white">{siteConfig.tagline}</p>
           <div className={styles.buttons}>
             <Link
               className={clsx(
-                "button button--outline button--secondary button--lg",
+                "button button--outline button--lg color-white",
                 styles.getStarted
               )}
               to={useBaseUrl("docs/")}
