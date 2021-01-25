@@ -1,3 +1,44 @@
+const liveExampleItems = [
+  {
+    label: "Draggable",
+    to: "docs/draggable/examples",
+  },
+  {
+    label: "Drag & Drop",
+    to: "docs/drag-drop/examples",
+  },
+];
+
+const socialItems = [
+  {
+    label: "Github",
+    to: "https://github.com/jalal246/dflex/",
+  },
+];
+
+const docItems = [
+  {
+    label: "DFlex Guide",
+    to: "docs/",
+  },
+  {
+    label: "DOM Generator",
+    to: "docs/dom-gen/introduction",
+  },
+  {
+    label: "DOM Store",
+    to: "docs/dom-store/introduction",
+  },
+  {
+    label: "Draggable",
+    to: "docs/draggable/introduction",
+  },
+  {
+    label: "Drag and Drop",
+    to: "docs/drag-drop/introduction",
+  },
+];
+
 module.exports = {
   title: "DFlex",
   tagline: "JavaScript Project to Manipulate DOM Elements",
@@ -23,6 +64,16 @@ module.exports = {
           position: "left",
         },
         {
+          label: "Examples",
+          position: "left",
+          items: liveExampleItems,
+        },
+        {
+          label: "Help",
+          position: "right",
+          to: "docs/help/",
+        },
+        {
           href: "https://github.com/jalal246/dflex",
           label: "GitHub",
           position: "right",
@@ -34,37 +85,15 @@ module.exports = {
       links: [
         {
           title: "Docs",
-          items: [
-            {
-              label: "DFlex Guide",
-              to: "docs/",
-            },
-            {
-              label: "DOM Generator",
-              to: "docs/dom-gen/introduction",
-            },
-            {
-              label: "DOM Store",
-              to: "docs/dom-store/introduction",
-            },
-            {
-              label: "Draggable",
-              to: "docs/draggable/introduction",
-            },
-            {
-              label: "Drag and Drop",
-              to: "docs/drag-drop/introduction",
-            },
-          ],
+          items: docItems,
+        },
+        {
+          title: "Live Examples",
+          items: liveExampleItems,
         },
         {
           title: "Social",
-          items: [
-            {
-              label: "Github",
-              to: "https://github.com/jalal246/dflex/",
-            },
-          ],
+          items: socialItems,
         },
       ],
       copyright: `Copyright © ${new Date().getFullYear()} Jalal MK  and contributors`,

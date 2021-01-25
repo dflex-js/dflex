@@ -164,7 +164,7 @@ function Draggable({ id = Date.now(), depth = 0 }) {
 
   return (
     <div className="draggable" ref={ref} key={id} id={id}>
-      <span className="text"> Drag me</span>
+      <span className="text"> Drag my handler</span>
       <HandlerSVG onMouseDown={onMouseDown} />
     </div>
   );
