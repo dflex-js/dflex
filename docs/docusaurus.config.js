@@ -23,6 +23,22 @@ module.exports = {
           position: "left",
         },
         {
+          to: "examples/",
+          activeBasePath: "examples",
+          label: "Live Examples",
+          position: "left",
+          items: [
+            {
+              label: "Draggable",
+              to: "docs/draggable/examples",
+            },
+            {
+              label: "Drag & Drop",
+              to: "docs/drag-drop/examples",
+            },
+          ],
+        },
+        {
           href: "https://github.com/jalal246/dflex",
           label: "GitHub",
           position: "right",
