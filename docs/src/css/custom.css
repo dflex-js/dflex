@@ -7,13 +7,24 @@
 
 /* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #311c14;
-  --ifm-color-primary-dark: #2c1912;
-  --ifm-color-primary-darker: #2a1811;
-  --ifm-color-primary-darkest: #22140e;
-  --ifm-color-primary-light: #361f16;
-  --ifm-color-primary-lighter: #382017;
-  --ifm-color-primary-lightest: #40241a;
+  --ifm-color-primary: #36250d;
+  --ifm-color-primary-dark: #31210c;
+  --ifm-color-primary-darker: #2e1f0b;
+  --ifm-color-primary-darkest: #261a09;
+  --ifm-color-primary-light: #3b290e;
+  --ifm-color-primary-lighter: #3e2b0f;
+  --ifm-color-primary-lightest: #463011;
+
+  --ifm-color-secondary: #ffe564;
+  --ifm-color-secondary-dark: #ffdf41;
+  --ifm-color-secondary-darker: #ffdc2f;
+  --ifm-color-secondary-darkest: #f9cf00;
+  --ifm-color-secondary-light: #ffeb87;
+  --ifm-color-secondary-lighter: #ffee99;
+  --ifm-color-secondary-lightest: #fff7cf;
+
+  --ifm-logo--color: #ffe564;
+
   --ifm-code-font-size: 95%;
 }
 
@@ -24,37 +35,36 @@
   padding: 0 var(--ifm-pre-padding);
 }
 
-.navbar {
-  height: 100%;
+html[data-theme="dark"] {
+  --ifm-color-primary: var(--ifm-logo--color);
+  --ifm-blockquote-color: #bbeffd;
+  --ifm-footer-background-color: #242526;
+
+  --ifm-hero-background-color: inherit;
+  --ifm-features-color: var(--ifm-logo--color);
+
+  --ifm-markdown-background-color: inherit;
+}
+
+html[data-theme="light"] {
+  --ifm-hero-background-color: var(--ifm-color-primary);
+  --ifm-features-color: var(--ifm-color-primary);
+
+  --ifm-markdown-background-color: var(--ifm-color-secondary-lightest);
+}
+
+.button.button--secondary.button--outline:not(.button--active):not(:hover) {
+  color: #fff7cf;
 }
 
 .navbar__brand {
-  height: 5rem;
+  color: var(--ifm-color-primary);
 }
 
-.navbar__items:not(.react-toggle) {
-  font-size: 1.3rem;
+.markdown a {
+  background: var(--ifm-markdown-background-color);
 }
 
-
-
-/* Dark theme fixes */
-
-.color-white,
-a.color-white:hover
-{
-  color: #fff;
-}
-
-.navbar__link:hover{
-  color: inherit;
-  text-decoration: underline;
-}
-
-html[data-theme="dark"] a.footer__link-item:hover,
-html[data-theme="dark"] .menu__link--active,
-html[data-theme="dark"] .navbar__link--active,
-html[data-theme="dark"] .pagination-nav__label
-{
-  color: #fff;
+.markdown img {
+  background: white;
 }
