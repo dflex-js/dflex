@@ -1,7 +1,7 @@
 .draggable {
-  padding: 1.2rem 1.2rem;
+  padding: 1rem 1rem;
   border: none;
-  background-color: #22140e;
+  background-color: #ae4472;
   color: #f6f8ff;
   width: fit-content;
   font-size: 1.2rem;
@@ -20,7 +20,7 @@
 .button-solo {
   padding: 1.2rem 1.2rem;
   border: none;
-  background-color: #22140e;
+  background-color: #ae4472;
   border-radius: 8px;
   font-size: 1.2rem;
   font-weight: 600;
