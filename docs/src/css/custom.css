@@ -7,18 +7,24 @@
 
 /* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #311c14;
-  --ifm-color-primary-dark: #593324;
+  --ifm-color-primary: #36250d;
+  --ifm-color-primary-dark: #31210c;
+  --ifm-color-primary-darker: #2e1f0b;
+  --ifm-color-primary-darkest: #261a09;
+  --ifm-color-primary-light: #3b290e;
+  --ifm-color-primary-lighter: #3e2b0f;
+  --ifm-color-primary-lightest: #463011;
 
-  /*  --ifm-color-primary-darker: #2a1811;
-  --ifm-color-primary-darkest: #22140e; */
+  --ifm-color-secondary: #ffe564;
+  --ifm-color-secondary-dark: #ffdf41;
+  --ifm-color-secondary-darker: #ffdc2f;
+  --ifm-color-secondary-darkest: #f9cf00;
+  --ifm-color-secondary-light: #ffeb87;
+  --ifm-color-secondary-lighter: #ffee99;
+  --ifm-color-secondary-lightest: #fff7cf;
 
-  /* --ifm-color-primary-light: #ffd700; */
-  /* --ifm-color-primary-lighter: #e6c100;
-  --ifm-color-primary-lightest: #ffd700; */
+  --ifm-logo--color: #ffe564;
 
-  --ifm-color-logo-dark: #ffd700;
-  --ifm-color-logo-light: #ffff8d;
   --ifm-code-font-size: 95%;
 }
 
@@ -30,9 +36,35 @@
 }
 
 html[data-theme="dark"] {
-  --ifm-color-primary: var(--ifm-color-logo-light);
-  --ifm-blockquote-color: var(--ifm-color-logo-light);
-  --ifm-hero-background-color: var(--ifm-color-primary);
+  --ifm-color-primary: var(--ifm-logo--color);
+  --ifm-blockquote-color: #bbeffd;
+  --ifm-footer-background-color: #242526;
 
-  --ifm-heading-color: var(--ifm-color-logo-light);
+  --ifm-hero-background-color: inherit;
+  --ifm-features-color: var(--ifm-logo--color);
+
+  --ifm-markdown-background-color: inherit;
+}
+
+html[data-theme="light"] {
+  --ifm-hero-background-color: var(--ifm-color-primary);
+  --ifm-features-color: var(--ifm-color-primary);
+
+  --ifm-markdown-background-color: var(--ifm-color-secondary-lightest);
+}
+
+.button.button--secondary.button--outline:not(.button--active):not(:hover) {
+  color: #fff7cf;
+}
+
+.navbar__brand {
+  color: var(--ifm-color-primary);
+}
+
+.markdown a {
+  background: var(--ifm-markdown-background-color);
+}
+
+.markdown img {
+  background: white;
 }

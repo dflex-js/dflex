@@ -10,9 +10,9 @@
   text-align: center;
   position: relative;
   overflow: hidden;
-  font-weight: 700;
-  background-color: var(--ifm-footer-background-color);
-  color: var(--ifm-color-logo-light);
+
+  background-color: var(--ifm-hero-background-color);
+  color: var(--ifm-logo--color);
 }
 
 @media screen and (max-width: 966px) {
@@ -25,6 +25,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: var(--ifm-hero-background-color);
+  color: var(--ifm-logo--color);
 }
 
 .features {
@@ -32,6 +34,10 @@
   align-items: center;
   padding: 2rem 0;
   width: 100%;
+}
+
+.featureTitle {
+  color: var(--ifm-features-color);
 }
 
 .featureImage {
