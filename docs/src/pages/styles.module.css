@@ -10,6 +10,9 @@
   text-align: center;
   position: relative;
   overflow: hidden;
+  font-weight: 700;
+  background-color: var(--ifm-footer-background-color);
+  color: var(--ifm-color-logo-light);
 }
 
 @media screen and (max-width: 966px) {

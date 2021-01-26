@@ -8,12 +8,17 @@
 /* You can override the default Infima variables here. */
 :root {
   --ifm-color-primary: #311c14;
-  --ifm-color-primary-dark: #2c1912;
-  --ifm-color-primary-darker: #2a1811;
-  --ifm-color-primary-darkest: #22140e;
-  --ifm-color-primary-light: #361f16;
-  --ifm-color-primary-lighter: #382017;
-  --ifm-color-primary-lightest: #40241a;
+  --ifm-color-primary-dark: #593324;
+
+  /*  --ifm-color-primary-darker: #2a1811;
+  --ifm-color-primary-darkest: #22140e; */
+
+  /* --ifm-color-primary-light: #ffd700; */
+  /* --ifm-color-primary-lighter: #e6c100;
+  --ifm-color-primary-lightest: #ffd700; */
+
+  --ifm-color-logo-dark: #ffd700;
+  --ifm-color-logo-light: #ffff8d;
   --ifm-code-font-size: 95%;
 }
 
@@ -24,37 +29,10 @@
   padding: 0 var(--ifm-pre-padding);
 }
 
-.navbar {
-  height: 100%;
-}
+html[data-theme="dark"] {
+  --ifm-color-primary: var(--ifm-color-logo-light);
+  --ifm-blockquote-color: var(--ifm-color-logo-light);
+  --ifm-hero-background-color: var(--ifm-color-primary);
 
-.navbar__brand {
-  height: 5rem;
-}
-
-.navbar__items:not(.react-toggle) {
-  font-size: 1.3rem;
-}
-
-
-
-/* Dark theme fixes */
-
-.color-white,
-a.color-white:hover
-{
-  color: #fff;
-}
-
-.navbar__link:hover{
-  color: inherit;
-  text-decoration: underline;
-}
-
-html[data-theme="dark"] a.footer__link-item:hover,
-html[data-theme="dark"] .menu__link--active,
-html[data-theme="dark"] .navbar__link--active,
-html[data-theme="dark"] .pagination-nav__label
-{
-  color: #fff;
+  --ifm-heading-color: var(--ifm-color-logo-light);
 }
