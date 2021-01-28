@@ -42,13 +42,15 @@ easily access each DOM node with `id`. In DFlex store ids are used as keys.
 
 - Implement it everywhere because it is not related to any framework/library.
 
-## Register elements in the store
+## API
+
+### Register Elements in the Store
 
 <!-- created with: https://excalidraw.com/ -->
 
 <p align="center">
  <img
- src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/store/img/store-registry.png" 
+ src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/store/img/store-registry.png"
  alt="how register works"/>
 </p>
 
@@ -59,8 +61,8 @@ for element then store it with another passed data.
 ```ts
 store.register(
   elmInstance: Object<elmInstance>,
-  CustomInstance:? <Function>,
-  options:? Object
+  CustomInstance?: <Function>,
+  options?: Object
 )
 ```
 
@@ -76,6 +78,8 @@ depends on generated pointer result before storing the element.
 While `options` is plain objects holds extra data to be registered in the store if
 there's any. Gives more flexibility to separate the essential data in
 `elmInstance` from extra once that will passed in `options`.
+
+#### Registry Example
 
 Let's create new store and register some elements in it:
 
@@ -118,9 +122,7 @@ const elm0D1 = {
 store.register(elm0D1, ExtraInstanceFunc);
 ```
 
-## Getting element in the store
-
-### Element Instance Meta by ID
+### Get Element Meta By ID
 
 ```ts
 store.getElmById(id: string) : Object<elmInstanceMeta>
@@ -146,6 +148,8 @@ generated keys and indexes with registered data.
 
 - `rest: any` - data already entered when element is registered.
 
+#### getElmById Example
+
 Let's apply it on element with `id= id-0` which we already registered in the
 store:
 
@@ -168,7 +172,7 @@ const elemInstance = store.getElmById("id-0");
 // };
 ```
 
-### Element in Tree by ID
+### Get Element Tree By ID
 
 ```ts
 store.getElmTreeById(id: string) : Object<elmInstanceConnection>
@@ -186,6 +190,8 @@ registered data. It includes:
   - `siblings: string<id>|Array<ids>` - all element's siblings.
 
   - `parents: string<id>|Array<ids>` - all element's parents.
+
+#### getElmTreeById Example
 
 Going back to our first element with `id= id-0`, we can get element instance,
 its parent instance, and its connection branches as following:
