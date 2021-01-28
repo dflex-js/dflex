@@ -225,7 +225,7 @@ const elmInstanceConnection = store.getElmTreeById("id-0");
 // };
 ```
 
-## Why this is matter
+#### Why this is matter
 
 Because now you can traverse through DOM tree with existing store. Note that
 `elmInstanceConnection.branches.parents` allows you to go up while
