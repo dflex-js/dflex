@@ -130,3 +130,19 @@ The new coordinates are stored in the store, so each time the user decides to ma
 > No validation
 
 The API is established on the goodwill behavior. This means validation should be done outside DFlex API to avoid unnecessary complexity and doing the same steps multiple times.
+
+### Strict Movement
+
+You can achieve Horizontal or Vertical done by dragging by yourself. You control the input so you can freeze `X` or `Y`:
+
+```jsx
+draggedEvent.dragAt(fixedX, clientY);
+
+// or maybe
+
+draggedEvent.dragAt(clientX, fixedY);
+```
+
+How about adding drag handler?
+
+Instead of adding an event to the entire element you can add it to the SVG-handler.
