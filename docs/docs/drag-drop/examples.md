@@ -28,7 +28,7 @@ function TodoList() {
 
   const { store, DnD } = DFlexDnD;
 
-  const Task = ({ id, task }) => {
+  const Task = ({ id = Date.now(), task }) => {
     // This reference enable DFlex to move the element when required
     const ref = React.createRef();
 
@@ -99,17 +99,17 @@ function TodoList() {
   // of course here's any array for the sake of simplify.
   // DFlex depend son `register` to connect nodes which each other.
   const tasks = [
-    { id: "mtg", msg: "Meet with Laura" },
-    { id: "org", msg: "Organize weekly meetup" },
-    { id: "gym", msg: "Hit the gym" },
-    { id: "proj", msg: "The Rosie Project" },
+    { msg: "Meet with Laura" },
+    { msg: "Organize weekly meetup" },
+    { msg: "Hit the gym" },
+    { msg: "The Rosie Project" },
   ];
 
   return (
     <div className="todo-container">
       <ul ref={listRef} id={toID}>
-        {tasks.map(({ msg, id }) => (
-          <Task task={msg} id={id} key={id} />
+        {tasks.map(({ msg }) => (
+          <Task task={msg} key={id} />
         ))}
       </ul>
     </div>
