@@ -58,21 +58,13 @@ class EndDroppable extends Droppable {
 
     // TODO: Add tests to cover dragged whiteout parents
     if (!this.draggable.isSingleton && this.draggable.isSiblingsTransformed()) {
-      const { branches } = store.getElmTreeById(this.draggable[DRAGGED_ELM].id);
+      const {
+        keys: { sK },
+      } = store.getElmById(this.draggable[DRAGGED_ELM].id);
 
-      const { siblings } = branches;
-      if (siblings) {
-        // const {
-        //   keys: { chK },
-        // } = store.getElmById(this.draggable[ACTIVE_PARENT].id);
+      const siblings = store.getElmBranchByKey(sK);
 
-        // /**
-        //  * Get parent's children.
-        //  */
-        // const children = store.getElmBranchByKey(chK);
-
-        this.undoList(siblings);
-      }
+      this.undoList(siblings);
     }
   }
 }
