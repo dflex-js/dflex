@@ -45,12 +45,6 @@ function TodoList() {
 
         // Drag when mouse is moving!
         draggedEvent.dragAt(clientX, clientY);
-
-        console.log(
-          "file: examples.md ~ line 44 ~ draggedEvent",
-          clientX,
-          clientY
-        );
       }
     };
 
@@ -71,16 +65,6 @@ function TodoList() {
       // Avoid right mouse click and ensure id
       if (typeof button === "number" && button === 0) {
         if (id) {
-          console.log(
-            "file: examples.md ~ line 69 ~ clientX, clientY",
-            clientX,
-            clientY
-          );
-          console.log(
-            "file: examples.md ~ line 69 ~ clientX, clientY",
-            clientX,
-            clientY
-          );
           // Add event listeners to the entire document.
           // Not just the button boundaries.
           document.addEventListener("mouseup", onMouseUp);
@@ -88,11 +72,6 @@ function TodoList() {
 
           // Create Draggable instance
           draggedEvent = new DnD(id, { x: clientX, y: clientY });
-
-          console.log(
-            "file: examples.md ~ line 75 ~ draggedEvent",
-            draggedEvent
-          );
         }
       }
     };
