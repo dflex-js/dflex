@@ -2,7 +2,6 @@ import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 
 import store from "../DnDStore";
 import Droppable from "./Droppable";
-import { ACTIVE_PARENT } from "../../constants.json";
 
 class EndDroppable extends Droppable {
   undoElmTranslate(lst, i) {
@@ -58,21 +57,22 @@ class EndDroppable extends Droppable {
     this.draggable.endDragging(this.topDifference);
 
     // TODO: Add tests to cover dragged whiteout parents
-    if (
-      !this.draggable.isOrphan &&
-      !this.draggable.isSingleton &&
-      this.draggable.isSiblingsTransformed()
-    ) {
-      const {
-        keys: { chK },
-      } = store.getElmById(this.draggable[ACTIVE_PARENT].id);
+    if (!this.draggable.isSingleton && this.draggable.isSiblingsTransformed()) {
+      const { branches } = store.getElmTreeById(this.draggable[DRAGGED_ELM].id);
 
-      /**
-       * Get parent's children.
-       */
-      const children = store.getElmBranchByKey(chK);
+      const { siblings } = branches;
+      if (siblings) {
+        // const {
+        //   keys: { chK },
+        // } = store.getElmById(this.draggable[ACTIVE_PARENT].id);
 
-      this.undoList(children);
+        // /**
+        //  * Get parent's children.
+        //  */
+        // const children = store.getElmBranchByKey(chK);
+
+        this.undoList(siblings);
+      }
     }
   }
 }
