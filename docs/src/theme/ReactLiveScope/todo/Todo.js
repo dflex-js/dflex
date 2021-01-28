@@ -9,17 +9,13 @@ import { store, DnD } from "@dflex/dnd";
 // shared dragged event
 let draggedEvent;
 
-const Task = ({ id, task, depth = 0 }) => {
+const Task = ({ id, task }) => {
   const taskRef = React.createRef();
 
   React.useEffect(() => {
-    setTimeout(
-      // eslint-disable-next-line func-names
-      function () {
-        store.register({ id, element: taskRef.current, depth });
-      },
-      0
-    );
+    setTimeout(function () {
+      store.register({ id, element: taskRef.current, depth: 0 });
+    }, 0);
   }, []);
 
   const onMouseMove = (e) => {
@@ -78,7 +74,7 @@ const TodoList = () => {
     { id: "mtg", msg: "Meet with Laura" },
     { id: "org", msg: "Organize weekly meetup" },
     { id: "gym", msg: "Hit the gym" },
-    { id: "proj", msg: "Continue working on the project" },
+    { id: "proj", msg: "The Rosie Project" },
   ];
 
   return (

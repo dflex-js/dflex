@@ -3,125 +3,28 @@
   margin: 0 auto;
   max-width: 40rem;
   padding: 1rem;
+  background: #eaefbd;
 }
 
-/* 
-  Gradient Ordered List
-  Erin E. Sullivan 
-*/
-ol.gradient-list > li,
-ol.gradient-list > li::before {
-  box-shadow: 0.25rem 0.25rem 0.6rem rgba(0, 0, 0, 0.05),
-    0 0.5rem 1.125rem rgba(75, 0, 0, 0.05);
-}
-
-ol.gradient-list {
-  counter-reset: gradient-counter;
-  list-style: none;
-  margin: 1.75rem 0;
-  padding-left: 1rem;
-}
-ol.gradient-list > li {
-  background: white;
-  border-radius: 0 0.5rem 0.5rem 0.5rem;
-  counter-increment: gradient-counter;
-  margin-top: 1rem;
-  min-height: 3rem;
-  padding: 1rem 1rem 1rem 3rem;
-  position: relative;
-}
-ol.gradient-list > li::before,
-ol.gradient-list > li::after {
-  background: linear-gradient(135deg, #83e4e2 0%, #a2ed56 100%);
-  border-radius: 1rem 1rem 0 1rem;
-  content: "";
-  height: 3rem;
-  left: -1rem;
-  overflow: hidden;
-  position: absolute;
-  top: -1rem;
-  width: 3rem;
-}
-ol.gradient-list > li::before {
-  align-items: flex-end;
-  content: counter(gradient-counter);
-  color: #1d1f20;
+.todo-container ul {
   display: flex;
-  font: 900 1.5em/1 "Montserrat";
-  justify-content: flex-end;
-  padding: 0.125em 0.25em;
-  z-index: 1;
+  flex-direction: column;
+  align-items: center;
 }
-ol.gradient-list > li:nth-child(10n + 1):before {
-  background: linear-gradient(
-    135deg,
-    rgba(162, 237, 86, 0.2) 0%,
-    rgba(253, 220, 50, 0.2) 100%
-  );
-}
-ol.gradient-list > li:nth-child(10n + 2):before {
-  background: linear-gradient(
-    135deg,
-    rgba(162, 237, 86, 0.4) 0%,
-    rgba(253, 220, 50, 0.4) 100%
-  );
-}
-ol.gradient-list > li:nth-child(10n + 3):before {
-  background: linear-gradient(
-    135deg,
-    rgba(162, 237, 86, 0.6) 0%,
-    rgba(253, 220, 50, 0.6) 100%
-  );
-}
-ol.gradient-list > li:nth-child(10n + 4):before {
-  background: linear-gradient(
-    135deg,
-    rgba(162, 237, 86, 0.8) 0%,
-    rgba(253, 220, 50, 0.8) 100%
-  );
-}
-ol.gradient-list > li:nth-child(10n + 5):before {
-  background: linear-gradient(
-    135deg,
-    rgba(162, 237, 86, 1) 0%,
-    rgba(253, 220, 50, 1) 100%
-  );
-}
-ol.gradient-list > li:nth-child(10n + 6):before {
-  background: linear-gradient(
-    135deg,
-    rgba(162, 237, 86, 0.8) 0%,
-    rgba(253, 220, 50, 0.8) 100%
-  );
-}
-ol.gradient-list > li:nth-child(10n + 7):before {
-  background: linear-gradient(
-    135deg,
-    rgba(162, 237, 86, 0.6) 0%,
-    rgba(253, 220, 50, 0.6) 100%
-  );
-}
-ol.gradient-list > li:nth-child(10n + 8):before {
-  background: linear-gradient(
-    135deg,
-    rgba(162, 237, 86, 0.4) 0%,
-    rgba(253, 220, 50, 0.4) 100%
-  );
-}
-ol.gradient-list > li:nth-child(10n + 9):before {
-  background: linear-gradient(
-    135deg,
-    rgba(162, 237, 86, 0.2) 0%,
-    rgba(253, 220, 50, 0.2) 100%
-  );
-}
-ol.gradient-list > li:nth-child(10n + 10):before {
-  background: linear-gradient(
-    135deg,
-    rgba(162, 237, 86, 0) 0%,
-    rgba(253, 220, 50, 0) 100%
-  );
-}
-ol.gradient-list > li + li {
-  margin-top: 2rem;
+
+.todo-container li {
+  cursor: pointer;
+  width: 12rem;
+  list-style: none;
+  padding: 1.5rem 1.5rem;
+  margin: 0.6rem 0.6rem;
+  background-color: #f1dede;
+  color: #333;
+  font-weight: 500;
+  font-size: 1rem;
+  white-space: normal;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
+    rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+  outline: none;
+  transition: box-shadow 200ms cubic-bezier(0.18, 0.67, 0.6, 1.22);
 }

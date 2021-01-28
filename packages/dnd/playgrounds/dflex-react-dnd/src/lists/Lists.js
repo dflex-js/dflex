@@ -38,7 +38,7 @@ const ID_PARENT_3 = "p3";
 
 const BaseApp = ({ Container, Core }) => {
   return (
-    <Container className="container">
+    <Container className="list-container">
       <Core id={`id-${ID_PARENT_1}`} component="ul" depth={1}>
         {firstContainer.map(({ label, id }) => (
           <Core depth={0} id={`id-${id}`} key={`k${id}`} component="li">
