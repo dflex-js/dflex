@@ -15,7 +15,6 @@ const ReactLiveScope = {
   HandlerSVG,
   DFlexDraggable,
   DFlexDnD,
-  Todo,
 };
 
 export default ReactLiveScope;
