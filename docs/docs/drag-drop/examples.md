@@ -45,6 +45,12 @@ function TodoList() {
 
         // Drag when mouse is moving!
         draggedEvent.dragAt(clientX, clientY);
+
+        console.log(
+          "file: examples.md ~ line 44 ~ draggedEvent",
+          clientX,
+          clientY
+        );
       }
     };
 
@@ -65,6 +71,16 @@ function TodoList() {
       // Avoid right mouse click and ensure id
       if (typeof button === "number" && button === 0) {
         if (id) {
+          console.log(
+            "file: examples.md ~ line 69 ~ clientX, clientY",
+            clientX,
+            clientY
+          );
+          console.log(
+            "file: examples.md ~ line 69 ~ clientX, clientY",
+            clientX,
+            clientY
+          );
           // Add event listeners to the entire document.
           // Not just the button boundaries.
           document.addEventListener("mouseup", onMouseUp);
@@ -72,6 +88,11 @@ function TodoList() {
 
           // Create Draggable instance
           draggedEvent = new DnD(id, { x: clientX, y: clientY });
+
+          console.log(
+            "file: examples.md ~ line 75 ~ draggedEvent",
+            draggedEvent
+          );
         }
       }
     };
@@ -119,13 +140,17 @@ function TodoList() {
 
 ### Key points
 
-> DOM elements are not re-ordered.
+> DOM elements are not re-ordered
 
 Reordering the element on each movement will eventually lead to performance disaster. Increase scripting and painting time. Waste all the enhancements you've made on your application.
 
 Instead, simple calculations are made directly to animate each element with `translate(x,y)`.
 
 The new coordinates are stored in the store, so each time the user decides to manipulate the layout DFlex already knows the coordinates without communicating with the browser. Another win for your application performance.
+
+> Minimal side effect
+
+Because DFlex operates on each DOM node individually it doesn't affect far siblings. Let's suppose you switch first element with the second in a container list contains 100 elements. In mot solutions all the siblings will be notified and manipulated even if they are not effected. With DFlex this is not the case, If you switch A with B then only A and B will be affected and manipulated.
 
 > No validation
 
