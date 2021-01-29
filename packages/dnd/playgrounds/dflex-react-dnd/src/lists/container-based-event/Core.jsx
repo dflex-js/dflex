@@ -42,11 +42,14 @@ const Core = (props) => {
       },
       0
     );
+  }, [id, depth, ref]);
 
+  React.useEffect(() => {
     return function cleanup() {
+      console.log("inside clean up", id);
       store.cleanup(id);
     };
-  }, [id, depth, ref]);
+  }, []);
 
   return (
     <CoreComponent
