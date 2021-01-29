@@ -1,11 +1,11 @@
-.container {
+.list-container {
   margin-top: 88px;
   display: flex;
   width: 41.53rem;
   background: #07718f;
 }
 
-ul {
+.list-container ul {
   /* display: flex; */
   flex-direction: column;
   list-style: none;
@@ -16,7 +16,7 @@ ul {
   height: fit-content;
 }
 
-li {
+.list-container li {
   position: relative;
   width: 150px;
   height: 30px;

@@ -29,14 +29,10 @@ function Draggable({ id = Date.now(), depth = 0 }) {
 
   React.useEffect(() => {
     // Wait until component is mounted to get the reference
-    setTimeout(
-      // Register element in the store
-      function () {
-        store.register({ id, element: ref.current, depth });
-      },
-      0
-    );
-  }, []);
+    if (ref) {
+      store.register({ id, element: ref.current, depth });
+    }
+  }, [ref]);
 
   const onMouseMove = (e) => {
     if (draggedEvent) {

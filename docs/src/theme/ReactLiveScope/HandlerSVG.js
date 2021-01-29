@@ -1,5 +1,5 @@
 import React from "react";
-import "./index.css";
+import "./draggable.css";
 
 const HandlerSVG = (props) => {
   return (

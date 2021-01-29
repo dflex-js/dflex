@@ -54,9 +54,7 @@ class Store {
   }
 
   /**
-   * TODO: Add this to README documentation
-   *
-   * Gets element branch lists
+   * Gets all element IDs Siblings in given node represented by sibling key.
    *
    * @param {string} key
    * @returns {string|Array} - elements siblings list.
