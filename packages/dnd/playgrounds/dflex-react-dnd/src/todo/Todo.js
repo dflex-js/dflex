@@ -16,6 +16,10 @@ const Task = ({ id, task, depth = 0 }) => {
     if (taskRef) {
       store.register({ id, element: taskRef.current, depth });
     }
+
+    return function cleanup() {
+      store.cleanup({ id });
+    };
   });
 
   const onMouseMove = (e) => {
@@ -68,6 +72,10 @@ const TodoList = () => {
         depth: 1,
       });
     }
+
+    return function cleanup() {
+      store.cleanup({ id: "todo-list" });
+    };
   }, [listRef]);
 
   const tasks = [

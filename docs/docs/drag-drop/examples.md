@@ -26,7 +26,7 @@ function TodoList() {
   // Create Shared dragged event holder
   let draggedEvent;
 
-  const { store, DnD } = DFlexDnD;
+  // const { store, DnD } = DFlexDnD;
 
   const Task = ({ id, task }) => {
     // This reference enable DFlex to move the element when required
@@ -37,6 +37,10 @@ function TodoList() {
       if (ref) {
         store.register({ id, element: ref.current, depth: 0 });
       }
+
+      return function cleanup() {
+        store.cleanup(id);
+      };
     }, [ref]);
 
     const onMouseMove = (e) => {
@@ -94,6 +98,10 @@ function TodoList() {
       // drag & drop won't work without the correct depth.
       store.register({ id: toID, element: listRef.current, depth: 1 });
     }
+
+    return function cleanup() {
+      store.cleanup(toID);
+    };
   }, [listRef]);
 
   // of course here's any array for the sake of simplify.
