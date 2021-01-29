@@ -30,7 +30,9 @@ In case you are dealing with any DOM-tree, you can build entire branches and tra
 through them using these generated unique keys and indexes. Think of relational
 database or hash tables but applied in DOM tree.
 
-## Generate element pointer
+## API
+
+### Generate Element Pointer
 
 <!-- created with: https://excalidraw.com/ -->
 
@@ -49,7 +51,9 @@ const domGen = new Generator()
 domGen.getElmPointer(id: string, depth: number)
 ```
 
-Returns pointer object refers to element relation with its keys and related
+Where `depth` represents element depth in the layout. The deeper the lower. The base node will be `depth=0`.
+
+`getElmPointer` returns pointer object refers to element relation with its keys and related
 index:
 
 - `order: Object <elementOrder>`
@@ -135,7 +139,7 @@ DOM-root
 │───id-2 => order: {parent: 0, self: 2} || keys: {chK: null, pK: "1-0", sK: "0-0"}
 ```
 
-### Auto connect
+#### Auto connect
 
 <!-- created with: https://excalidraw.com/ -->
 
@@ -184,7 +188,7 @@ DOM-root
 
 ```
 
-**Take into consideration some major points:**
+Take into consideration some major points:
 
 - It works both ascending and descending. So, it doesn't care how nodes are
   mounted and it works with async mounting.
@@ -192,13 +196,11 @@ DOM-root
 - It automatically attaches the tree and links each node to the suitable parent
   and siblings.
 
-## Dealing with branches
+### Getting Branches
 
 Despite the fact that `Generator` is not DOM store, it maintains some kind of
 data to keep generate unique pointers. Every incoming node element belong to
 branch contains all input ids distrusted by depth/level entries.
-
-### Getting branches
 
 ```ts
 domGen.getElmBranch(sk: string) : string<id> | Array<ids>
@@ -232,7 +234,7 @@ const { branches } = domGen;
 // };
 ```
 
-### Updating branches
+### Updating Branches
 
 There's no point in having DOM treemap without the ability to update it
 according to some logic you've already implemented in your app. Following common
@@ -258,3 +260,5 @@ domGen.setElmBranch("0-0", newBranch);
 //   "1-0": "id-parent-1",
 // };
 ```
+
+### Deleting Branches
