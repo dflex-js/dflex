@@ -223,7 +223,9 @@ const branchParents = domGen.getElmBranch("1-0");
 // branchParents = "id-parent-1";
 ```
 
-To get all branches:
+> Branches in DOM-Gen represented by siblings key (sk)
+
+So, to get all branches:
 
 ```js
 const { branches } = domGen;
@@ -260,5 +262,3 @@ domGen.setElmBranch("0-0", newBranch);
 //   "1-0": "id-parent-1",
 // };
 ```
-
-### Deleting Branches

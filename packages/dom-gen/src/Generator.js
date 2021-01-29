@@ -67,6 +67,17 @@ class Generator {
   }
 
   /**
+   * Checks if element has no siblings in the branch
+   *
+   * @param {string} sK -siblingsKey
+   * @returns {Boolean}
+   * @memberof Generator
+   */
+  isElmSingleton(sK) {
+    return this.branches[sK].constructor !== Array;
+  }
+
+  /**
    * Adds elements to its siblings.
    *
    * @param {string} id - element id
@@ -86,7 +97,7 @@ class Generator {
       /**
        * So here we have multiple children, we better create an array now.
        */
-      if (this.branches[sK].constructor !== Array) {
+      if (this.isElmSingleton(sK)) {
         const prevId = this.branches[sK];
 
         this.branches[sK] = [];
@@ -113,13 +124,25 @@ class Generator {
   /**
    * Sets new branch for given key.
    *
-   * @param {string} k - generated key
+   * @param {string} sK - sibling key
    * @param {string|Array} lst - new branch
    * @memberof Generator
    */
-  setElmBranch(sk, branch) {
-    this.branches[sk] = branch;
+  setElmBranch(sK, branch) {
+    this.branches[sK] = branch;
   }
+
+  // /**
+  //  * Deletes branch.
+  //  *
+  //  * @param {string} sK - sibling key
+  //  * @memberof Generator
+  //  */
+  // deleteBranch(sK) {
+  //   const { [sK]: deletedBranch, ...restBranches } = this.branches;
+
+  //   this.branches = restBranches;
+  // }
 
   /**
    * Main method.
