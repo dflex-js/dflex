@@ -25,21 +25,44 @@ class Store {
    * @memberof Store
    */
   register(elmInstance, CustomInstance, opts) {
-    const { id, depth } = elmInstance;
+    const { id, depth, ...restOfElmInstance } = elmInstance;
 
-    /**
-     * Avoid register same elmInstance twice.
-     * TODO: Add test to this
-     */
-    if (this.abstractStore.registry[id]) {
-      return;
+    const elementRecord = this.abstractStore.registry[id];
+
+    let coreInstance;
+
+    if (elementRecord) {
+      /**
+       * Element already exist with all properties
+       */
+      if (elementRecord.element) return;
+
+      /**
+       * Element has been in and rested. Create new coreInstance
+       */
+      coreInstance = Object.assign(restOfElmInstance, elementRecord, opts);
+    } else {
+      /**
+       * Element is completely new.
+       */
+      const pointer = this.DOMGen.getElmPointer(id, depth);
+
+      coreInstance = Object.assign(elmInstance, pointer, opts);
     }
 
-    const pointer = this.DOMGen.getElmPointer(id, depth);
+    // Register the element when we have coreInstance
+    if (coreInstance) this.abstractStore.register(coreInstance, CustomInstance);
+  }
 
-    const coreInstance = Object.assign(elmInstance, pointer, opts);
-
-    this.abstractStore.register(coreInstance, CustomInstance);
+  /**
+   * Cleans up element reference and any associated properties.
+   * Preserve element pointer.
+   *
+   * @param {string} elmId
+   * @memberof Store
+   */
+  cleanup(elmId) {
+    this.abstractStore.resetElmById(elmId);
   }
 
   /**
