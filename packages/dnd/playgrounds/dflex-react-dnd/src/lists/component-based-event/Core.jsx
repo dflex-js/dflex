@@ -25,6 +25,10 @@ const Core = ({
       },
       0
     );
+
+    return function cleanup() {
+      store.cleanup(id);
+    };
   }, []);
 
   const onMouseUp = () => {

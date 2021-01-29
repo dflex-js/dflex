@@ -18,7 +18,7 @@ const Task = ({ id, task, depth = 0 }) => {
     }
 
     return function cleanup() {
-      store.cleanup({ id });
+      store.cleanup(id);
     };
   });
 
@@ -74,7 +74,7 @@ const TodoList = () => {
     }
 
     return function cleanup() {
-      store.cleanup({ id: "todo-list" });
+      store.cleanup("todo-list");
     };
   }, [listRef]);
 

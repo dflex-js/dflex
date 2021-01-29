@@ -42,6 +42,10 @@ const Core = (props) => {
       },
       0
     );
+
+    return function cleanup() {
+      store.cleanup(id);
+    };
   }, [id, depth, ref]);
 
   return (
