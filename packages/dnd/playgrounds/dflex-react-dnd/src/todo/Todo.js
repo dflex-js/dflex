@@ -4,7 +4,7 @@
 import React from "react";
 import "./Todo.css";
 
-import { store, DnD } from "@dflex/dnd";
+import { store, DnD } from "@dflex/dnd/src";
 
 // shared dragged event
 let draggedEvent;
@@ -13,14 +13,10 @@ const Task = ({ id, task, depth = 0 }) => {
   const taskRef = React.createRef();
 
   React.useEffect(() => {
-    setTimeout(
-      // eslint-disable-next-line func-names
-      function () {
-        store.register({ id, element: taskRef.current, depth });
-      },
-      0
-    );
-  }, []);
+    if (taskRef) {
+      store.register({ id, element: taskRef.current, depth });
+    }
+  });
 
   const onMouseMove = (e) => {
     if (draggedEvent) {
@@ -65,14 +61,14 @@ const TodoList = () => {
   const listRef = React.createRef();
 
   React.useEffect(() => {
-    setTimeout(
-      // eslint-disable-next-line func-names
-      function () {
-        store.register({ id: "todo-list", element: listRef.current, depth: 1 });
-      },
-      0
-    );
-  }, []);
+    if (listRef) {
+      store.register({
+        id: "todo-list",
+        element: listRef.current,
+        depth: 1,
+      });
+    }
+  }, [listRef]);
 
   const tasks = [
     { id: "mtg", msg: "Meet with Laura" },
