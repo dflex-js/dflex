@@ -99,10 +99,10 @@ function TodoList() {
   // of course here's any array for the sake of simplify.
   // DFlex depend son `register` to connect nodes which each other.
   const tasks = [
-    { msg: "Meet with Laura" },
-    { msg: "Organize weekly meetup" },
-    { msg: "Hit the gym" },
-    { msg: "The Rosie Project" },
+    { id: "mtg", msg: "Meet with Laura" },
+    { id: "meetup", msg: "Organize weekly meetup" },
+    { id: "gym", msg: "Hit the gym" },
+    { id: "proj", msg: "The Rosie Project" },
   ];
 
   return (
