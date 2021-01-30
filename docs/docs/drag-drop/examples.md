@@ -26,7 +26,7 @@ function TodoList() {
   // Create Shared dragged event holder
   let draggedEvent;
 
-  // const { store, DnD } = DFlexDnD;
+  const { store, DnD } = DFlexDnD;
 
   const Task = ({ id, task }) => {
     // This reference enable DFlex to move the element when required
@@ -72,7 +72,6 @@ function TodoList() {
 
           // Create Draggable instance
           draggedEvent = new DnD(id, { x: clientX, y: clientY });
-          console.log(store);
         }
       }
     };
