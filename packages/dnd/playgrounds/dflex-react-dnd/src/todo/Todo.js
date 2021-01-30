@@ -13,12 +13,12 @@ const Task = ({ id, task, depth = 0 }) => {
   const taskRef = React.createRef();
 
   React.useEffect(() => {
-    if (taskRef) {
-      store.register({ id, element: taskRef.current, depth });
-    }
+    store.register({ id, element: taskRef.current, depth });
+    // if (taskRef) {
+    // }
 
     return function cleanup() {
-      store.cleanup(id);
+      store.cleanup({ id });
     };
   });
 
@@ -76,7 +76,7 @@ const TodoList = () => {
     return function cleanup() {
       store.cleanup("todo-list");
     };
-  }, [listRef]);
+  });
 
   const tasks = [
     { id: "mtg", msg: "Meet with Laura" },

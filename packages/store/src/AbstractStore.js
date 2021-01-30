@@ -22,19 +22,6 @@ class AbstractStore {
   getElmById(id) {
     return this.registry[id];
   }
-
-  /**
-   * Resets element reference and any associated properties.
-   * Preserve element pointer. (id, depth, keys, order )
-   *
-   * @param {string} id
-   * @memberof AbstractStore
-   */
-  resetElmById(id) {
-    const { keys, order, depth } = this.registry[id];
-
-    this.registry[id] = { id, depth, keys, order };
-  }
 }
 
 export default AbstractStore;
