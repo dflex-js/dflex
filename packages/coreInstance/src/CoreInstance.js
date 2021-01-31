@@ -131,6 +131,10 @@ class CoreInstance extends AbstractCoreInstance {
     if (isShuffle) order[oldIndex] = null;
   }
 
+  transformElm() {
+    this.element.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
+  }
+
   seTranslate(topSpace, isMovingNew, operationID) {
     this.currentTop += topSpace;
 
@@ -142,7 +146,7 @@ class CoreInstance extends AbstractCoreInstance {
 
     this.translateY += topSpace;
 
-    this.element.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
+    this.transformElm();
   }
 
   /**
