@@ -157,7 +157,6 @@ class Droppable {
 
   switchElement() {
     const elmIndex = this.draggable.tempIndex + -1 * this.effectedElemDirection;
-
     const id = this.draggable.siblingsList[elmIndex];
 
     if (this.isIDEligible2Move(id)) {
@@ -191,9 +190,6 @@ class Droppable {
   }
 
   draggedOutPosition(y) {
-    /**
-     * Dragged is out position, but inside parent, swinging up and down.s
-     */
     this.draggable.setDraggedMovingDown(y);
 
     if (this.draggable.isDraggedLeavingFromTop()) {
@@ -222,11 +218,11 @@ class Droppable {
       /**
        * normal movement inside the parent
        */
-      if (this.prevIsListLocked) {
-        this.prevIsListLocked = false;
+      // if (this.prevIsListLocked) {
+      //   this.prevIsListLocked = false;
 
-        return;
-      }
+      //   return;
+      // }
 
       /**
        * Going out from the list: Right/left.
@@ -261,7 +257,7 @@ class Droppable {
     this.prevIsListLocked = true;
   }
 
-  draggedIsComingIn() {
+  draggedIsComingIn(y) {
     /**
      * If tempIndex is zero, the dragged is coming from the top. So, move them
      * down all: to=0
@@ -276,6 +272,13 @@ class Droppable {
       to = this.detectDroppableIndex();
       if (typeof to !== "number") return;
       this.draggable.tempIndex = to;
+
+      /**
+       * Last prevY update when leaving the parent container. When we have
+       * coming element inside we need new value so we can assign isMoveDown
+       * correctly.
+       */
+      this.draggable.prevY = y;
     }
 
     this.unlockParent();
@@ -330,7 +333,7 @@ class Droppable {
       }
 
       if (this.draggable.isDraggedVerticallyInsideList()) {
-        this.draggedIsComingIn();
+        this.draggedIsComingIn(y);
 
         return;
       }
@@ -348,7 +351,7 @@ class Droppable {
         this.isOutStatusHorizontally ||
         this.draggable.isDraggedLeavingFromTop()
       ) {
-        this.draggedIsComingIn();
+        this.draggedIsComingIn(y);
         this.isOutStatusHorizontally = false;
       } else {
         this.unlockParent();

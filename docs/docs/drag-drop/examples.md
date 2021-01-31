@@ -30,14 +30,14 @@ function TodoList() {
 
   const Task = ({ id, task }) => {
     // This reference enable DFlex to move the element when required
-    const ref = React.createRef();
+    const ref = React.useRef();
 
     React.useEffect(() => {
       // Wait until component is mounted to get the reference
       if (ref) {
         store.register({ id, element: ref.current, depth: 0 });
       }
-    }, [ref]);
+    }, []);
 
     const onMouseMove = (e) => {
       if (draggedEvent) {
@@ -83,19 +83,6 @@ function TodoList() {
     );
   };
 
-  const listRef = React.createRef();
-  const toID = "myTodo-id";
-
-  React.useEffect(() => {
-    // The store only register the element once.
-    //Avoid calling register without the correct arguments.
-    if (listRef) {
-      // Note: depth is one. ul, is higher than list.
-      // drag & drop won't work without the correct depth.
-      store.register({ id: toID, element: listRef.current, depth: 1 });
-    }
-  }, [listRef]);
-
   // of course here's any array for the sake of simplify.
   // DFlex depend son `register` to connect nodes which each other.
   const tasks = [
@@ -107,7 +94,7 @@ function TodoList() {
 
   return (
     <div className="todo-container">
-      <ul ref={listRef} id={toID}>
+      <ul>
         {tasks.map(({ msg, id }) => (
           <Task task={msg} key={id} id={id} />
         ))}

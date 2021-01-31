@@ -42,7 +42,7 @@ const Core = (props) => {
       },
       0
     );
-  }, [id, depth, ref]);
+  }, []);
 
   return (
     <CoreComponent

@@ -1,6 +1,7 @@
 import React from "react";
 import DFlexDraggable from "@dflex/draggable";
 import DFlexDnD from "@dflex/dnd";
+// import { store, DnD } from "@dflex/dnd/src";
 
 // Draggable live
 import "./draggable.css";
@@ -15,6 +16,8 @@ const ReactLiveScope = {
   HandlerSVG,
   DFlexDraggable,
   DFlexDnD,
+  // store,
+  // DnD,
 };
 
 export default ReactLiveScope;

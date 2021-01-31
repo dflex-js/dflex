@@ -14,7 +14,7 @@ const Core = ({
   depth,
   ...rest
 }) => {
-  const ref = React.createRef();
+  const ref = React.useRef();
   const [isDragged, setIsDragged] = React.useState(false);
 
   React.useEffect(() => {

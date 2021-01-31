@@ -16,6 +16,7 @@ class AbstractStore {
    * Gets element from registry by Id.
    *
    * @param {string} id
+   * @returns {Object} coreInstance
    * @memberof AbstractStore
    */
   getElmById(id) {
