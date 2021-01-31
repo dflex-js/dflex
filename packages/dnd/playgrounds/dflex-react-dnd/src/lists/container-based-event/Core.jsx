@@ -44,13 +44,6 @@ const Core = (props) => {
     );
   }, []);
 
-  React.useEffect(() => {
-    return function cleanup() {
-      console.log("inside clean up", id);
-      store.cleanup(id);
-    };
-  }, []);
-
   return (
     <CoreComponent
       ref={ref}
