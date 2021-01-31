@@ -17,6 +17,45 @@ class Store {
   }
 
   /**
+   * Reattach element reference.
+   * This happens when element is unmounted from the screen and mounted again.
+   * In this case, we need to reattach its reference and transform it to the
+   * last know position.
+   *
+   * @param {string} id
+   * @param {HTMLElement} elmRef
+   * @memberof Store
+   */
+  reattachElmRef(id, elmRef) {
+    this.abstractStore.registry[id].element = elmRef;
+    // Preserves last changes.
+    this.abstractStore.registry[id].transformElm();
+  }
+
+  /**
+   * Detach element reference.
+   * This happens when element is unmounted from the screen.
+   *
+   * @param {string} id
+   * @memberof Store
+   */
+  detachElmRef(id) {
+    this.abstractStore.registry[id].element = null;
+  }
+
+  /**
+   * Clear element from the registry. Should be called only when element is
+   * unmounted and expected to return with different positions only. Otherwise,
+   * call `detachElmRef.`
+   *
+   * @param {string} id
+   * @memberof Store
+   */
+  resetElm(id) {
+    this.abstractStore.registry[id] = null;
+  }
+
+  /**
    * Add elements to registry.
    *
    * @param {Object} elmInstance
@@ -27,9 +66,16 @@ class Store {
   register(elmInstance, CustomInstance, opts) {
     const { id, depth } = elmInstance;
 
-    // if (this.abstractStore.registry[id] || !elmInstance.element) {
-    //   return;
-    // }
+    /**
+     * If element already exist in the store, then the reattach the reference.
+     */
+    if (this.abstractStore.registry[id]) {
+      if (elmInstance.element) {
+        this.reattachElmRef(id, elmInstance.element);
+      }
+
+      return;
+    }
 
     const pointer = this.DOMGen.getElmPointer(id, depth);
 
