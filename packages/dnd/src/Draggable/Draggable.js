@@ -140,7 +140,9 @@ class Draggable extends Base {
 
   setDraggedMovingDown(y) {
     this.isMovingDown = this.isOutHorizontal ? true : y > this.prevY;
-    this.prevY = y;
+
+    // no point assigning the same value.
+    if (this.prevY !== y) this.prevY = y;
 
     if (
       this.numberOfElementsTransformed > 0 &&
