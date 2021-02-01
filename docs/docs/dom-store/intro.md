@@ -54,12 +54,10 @@ easily access each DOM node with `id`. In DFlex store ids are used as keys.
  alt="how register works"/>
 </p>
 
-Registry works on creating
-[pointer](https://github.com/jalal246/dflex/tree/master/packages/dom-gen#generates-element-pointer)
-for element then store it with another passed data.
+Registry works on creating [pointer](../dom-gen/introduction#generate-element-pointer) for element then store it with another passed data.
 
 ```ts
-store.register(
+register(
   elmInstance: Object<elmInstance>,
   CustomInstance?: <Function>,
   options?: Object
@@ -135,20 +133,20 @@ To reattach DOM element reference in the store (usually when an element updated 
 the screen):
 
 ```ts
-store.reattachElmRef(id: string, elmRef: HTMLElement)
+reattachElmRef(id: string, elmRef: HTMLElement)
 ```
 
 To detach DOM element reference in the store (usually when an element disappear
 from the screen):
 
 ```ts
-store.detachElmRef(id: string)
+detachElmRef(id: string)
 ```
 
 ### Get Element Meta By ID
 
 ```ts
-store.getElmById(id: string) : Object<elmInstanceMeta>
+getElmById(id: string) : Object<elmInstanceMeta>
 ```
 
 It returns `Object<elmInstanceMeta>` which contains element metadata including
@@ -198,7 +196,7 @@ const elemInstance = store.getElmById("id-0");
 ### Get Element Tree By ID
 
 ```ts
-store.getElmTreeById(id: string) : Object<elmInstanceConnection>
+getElmTreeById(id: string) : Object<elmInstanceConnection>
 ```
 
 It returns `Object<elmInstanceConnection>` which contains element connections in DOM tree with
@@ -254,3 +252,13 @@ Because now you can traverse through DOM tree with existing store. Note that
 `elmInstanceConnection.branches.parents` allows you to go up while
 `elmInstanceConnection.branches.siblings` allows you to traverse through all
 node siblings. And not only that, both ways retrieve nodes in order.
+
+### Reset Element
+
+To clear element from the registry. Should be called only when element is
+unmounted and expected to return with different positions only. Otherwise, call
+[detachElmRef](introduction#attachreattach-element-reference)
+
+```ts
+resetElm(id: string)
+```
