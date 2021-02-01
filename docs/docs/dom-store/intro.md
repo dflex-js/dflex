@@ -122,6 +122,29 @@ const elm0D1 = {
 store.register(elm0D1, ExtraInstanceFunc);
 ```
 
+> Calling register multiple times will cause updating DOM reference.
+
+The register is typically called once to register the element reference inside
+the store but calls it multiple times is expected as the layout usually changes
+in your app. That's why calls it multiple times will cause updating DOM
+reference and preserves others instance.
+
+### Attach/Reattach Element reference
+
+To reattach DOM element reference in the store (usually when an element updated in
+the screen):
+
+```ts
+store.reattachElmRef(id: string, elmRef: HTMLElement)
+```
+
+To detach DOM element reference in the store (usually when an element disappear
+from the screen):
+
+```ts
+store.detachElmRef(id: string)
+```
+
 ### Get Element Meta By ID
 
 ```ts
