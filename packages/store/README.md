@@ -290,18 +290,18 @@ resetElm(id: string)
 
 DFlex Store is part of project contains:
 
-- [DOM Generator](https://github.com/jalal246/dflex/tree/master/packages/dom-gen) - DOM
-  relations generator algorithm. Generate relations between DOM elements based
-  on element depth without a browser.
+- [DOM
+  Generator](https://github.com/jalal246/dflex/tree/master/packages/dom-gen):
+  DOM relations generator algorithm. Generate relations between DOM elements
+  based on element depth without a browser.
 
-- [Drag & Drop](https://github.com/jalal246/dflex/tree/master/packages/dnd) - A
+- [Drag & Drop](https://github.com/jalal246/dflex/tree/master/packages/dnd): A
   Simple, lightweight Solution for a Drag & Drop App based on enhanced DOM store
   algorithm. You can achieve a drag and drop with three steps only with mouse
   event.
 
-- [Draggable](https://github.com/jalal246/dflex/tree/master/packages/draggable)
-  - High-performance draggable elements written in pure JS works for Web and
-    Mobile.
+- [Draggable](https://github.com/jalal246/dflex/tree/master/packages/draggable):
+  A High-performance draggable elements written in pure JS works for Web and Mobile.
 
 ## Test
 
