@@ -4,6 +4,24 @@ import store from "../DnDStore";
 import Droppable from "./Droppable";
 
 class EndDroppable extends Droppable {
+  /**
+   * Gets the current statues of dragged siblings. If it's called before ending
+   * dragged then `null` is expected in the dragged index. Otherwise, it returns
+   * all element in order.
+   *
+   * @return {Array|string}
+   * @memberof EndDroppable
+   */
+  getStatus() {
+    const {
+      keys: { sK },
+    } = store.getElmById(this.draggable[DRAGGED_ELM].id);
+
+    const siblings = store.getElmBranchByKey(sK);
+
+    return siblings;
+  }
+
   undoElmTranslate(lst, i) {
     const elmID = lst[i];
 
@@ -58,12 +76,7 @@ class EndDroppable extends Droppable {
 
     // TODO: Add tests to cover dragged whiteout parents
     if (!this.draggable.isSingleton && this.draggable.isSiblingsTransformed()) {
-      const {
-        keys: { sK },
-      } = store.getElmById(this.draggable[DRAGGED_ELM].id);
-
-      const siblings = store.getElmBranchByKey(sK);
-
+      const siblings = this.getStatus();
       this.undoList(siblings);
     }
   }
