@@ -114,6 +114,13 @@ Instead, simple calculations are made directly to animate each element with `tra
 
 The new coordinates are stored in the store, so each time the user decides to manipulate the layout DFlex already knows the coordinates without communicating with the browser. Another win for your application performance.
 
+> Continuity
+
+One of the most important concepts in DFlex is to preserve the layout state.
+And this is guaranteed temporarily and permanently by keeping track of each
+change in the layout and make sure it can be restored automatically in case DOM
+node is updated outside DFlex territory.
+
 > Minimal side effect
 
 Because DFlex operates on each DOM node individually it doesn't affect far siblings. Let's suppose you switch first element with the second in a container list contains 100 elements. In mot solutions all the siblings will be notified and manipulated even if they are not effected. With DFlex this is not the case, If you switch A with B then only A and B will be affected and manipulated.
