@@ -286,6 +286,23 @@ unmounted and expected to return with different positions only. Otherwise, call
 resetElm(id: string)
 ```
 
+## Project Content
+
+DFlex Store is part of project contains:
+
+- [DOM Generator](https://github.com/jalal246/dflex/tree/master/packages/dom-gen) - DOM
+  relations generator algorithm. Generate relations between DOM elements based
+  on element depth without a browser.
+
+- [Drag & Drop](https://github.com/jalal246/dflex/tree/master/packages/dnd) - A
+  Simple, lightweight Solution for a Drag & Drop App based on enhanced DOM store
+  algorithm. You can achieve a drag and drop with three steps only with mouse
+  event.
+
+- [Draggable](https://github.com/jalal246/dflex/tree/master/packages/draggable)
+  - High-performance draggable elements written in pure JS works for Web and
+    Mobile.
+
 ## Test
 
 ```sh
@@ -295,29 +312,6 @@ yarn test store
 ## License
 
 This package is licensed under the [GPL-3.0 License](https://github.com/jalal246/dflex/tree/master/packages/store/LICENSE)
-
-## Project Content
-
-Inside each package, there's a description and full documentation.
-
-### [**DOM Generator**](https://github.com/jalal246/dflex/tree/master/packages/dom-gen)
-
-DOM relations generator algorithm. Generate relations between DOM elements based
-on element depth without a browser.
-
-### [**DOM Store**](https://github.com/jalal246/dflex/tree/master/packages/store)
-
-The only Store that allows you to traverse through the DOM tree using element id
-without reading from the browser.
-
-### [**Drag & Drop**](https://github.com/jalal246/dflex/tree/master/packages/dnd)
-
-A Simple, lightweight Solution for a Drag & Drop App based on enhanced DOM store
-algorithm. You can achieve a drag and drop with three steps only with mouse event.
-
-### [**Draggable**](https://github.com/jalal246/dflex/tree/master/packages/draggable)
-
-High-performance draggable elements written in pure JS works for Web and Mobile.
 
 ## Contribution
 
