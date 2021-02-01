@@ -27,8 +27,8 @@ npm install @dflex/dnd
 ```
 
 <p align="center">
- <img 
-  src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dnd/public/dnd.gif" 
+ <img
+  src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dnd/public/dnd.gif"
   alt="show how drag and drop works" />
 </p>
 
@@ -37,7 +37,15 @@ npm install @dflex/dnd
  alt="show drag and drop performance" />
 </p>
 
-## Three Steps
+## Features
+
+- DOM elements are not re-ordered instead they are being transformed.
+
+- Preserve continuity of the layout transformation.
+
+- Minimal side effect, only effected elements are manipulated.
+
+## API
 
 You can achieve a drag and drop with three steps only:
 
@@ -81,8 +89,48 @@ Use `onmouseup` to end dragging
 dnd.endDragging();
 ```
 
-#### Examples
+## Advanced
 
-- [Full React example](https://github.com/jalal246/dflex/tree/master/packages/dnd/playgrounds/dflex-react-dnd)
+### Attach/Reattach Element Reference in the Store
 
-- [Full Vue example](https://github.com/jalal246/dflex/tree/master/packages/dnd/playgrounds/dflex-vue-dnd)
+To reattach DOM element reference in the store (usually when an element updated in
+the screen):
+
+```ts
+store.reattachElmRef(id: string, elmRef: HTMLElement)
+```
+
+To detach DOM element reference in the store (usually when an element disappear
+from the screen):
+
+```ts
+store.detachElmRef(id: string)
+```
+
+### Reset Element in the Store
+
+To clear element from the registry. Should be called only when element is
+unmounted and expected to return with different positions only. Otherwise, call
+[detachElmRef](introduction#attachreattach-element-reference)
+
+```ts
+resetElm(id: string)
+```
+
+### Getting dragged Index
+
+In case you need to know the current index of dragged element.
+
+```ts
+dnd.getDraggedTempIndex() : number
+```
+
+### Getting Current Order
+
+To get current layout container order you can always do `getStatus`. Calling it
+while dragging happens will return element order in an array with `null` in the
+dragged index considering the dragged position is not settled yet.
+
+```ts
+dnd.getStatus() : Array|string
+```

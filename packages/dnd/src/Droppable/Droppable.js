@@ -28,7 +28,7 @@ class Droppable {
   }
 
   /**
-   * Gets the current index of dragged before it occupies new position.
+   * Gets the temporary index of dragged before it occupies new position.
    *
    * @return {number}
    * @memberof Droppable
