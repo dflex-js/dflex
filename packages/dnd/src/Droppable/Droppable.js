@@ -27,6 +27,16 @@ class Droppable {
     this.droppableIndex = -1;
   }
 
+  /**
+   * Gets the current index of dragged before it occupies new position.
+   *
+   * @return {number}
+   * @memberof Droppable
+   */
+  getDraggedTempIndex() {
+    return this.draggable.tempIndex;
+  }
+
   setEffectedElemDirection(isUp) {
     this.effectedElemDirection = isUp ? -1 : 1;
   }
