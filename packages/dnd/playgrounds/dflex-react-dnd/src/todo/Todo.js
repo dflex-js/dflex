@@ -14,12 +14,6 @@ const Task = ({ id, task, depth = 0 }) => {
 
   React.useEffect(() => {
     store.register({ id, element: taskRef.current, depth });
-    // if (taskRef) {
-    // }
-
-    return function cleanup() {
-      store.cleanup({ id });
-    };
   });
 
   const onMouseMove = (e) => {
@@ -32,7 +26,14 @@ const Task = ({ id, task, depth = 0 }) => {
 
   const onMouseUp = () => {
     if (draggedEvent) {
+      const layoutStatus1 = draggedEvent.getStatus();
+      const layoutStatus1ww = draggedEvent.getDraggedTempIndex();
+      console.log("file: Todo.js ~ line 31 ~ layoutStatus1ww", layoutStatus1ww);
+      console.log("file: Todo.js ~ line 30 ~ layoutStatus", layoutStatus1);
       draggedEvent.endDragging();
+      const layoutStatus = draggedEvent.getStatus();
+      console.log("file: Todo.js ~ line 30 ~ layoutStatus", layoutStatus);
+
       draggedEvent = null;
 
       document.removeEventListener("mouseup", onMouseUp);
@@ -72,10 +73,6 @@ const TodoList = () => {
         depth: 1,
       });
     }
-
-    return function cleanup() {
-      store.cleanup("todo-list");
-    };
   });
 
   const tasks = [
