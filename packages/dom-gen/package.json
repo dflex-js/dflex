@@ -1,6 +1,6 @@
 {
   "name": "@dflex/dom-gen",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "main": "dist/dflexDomGen.min.cjs.js",
   "umd:main": "dist/dflexDomGen.min.umd",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",

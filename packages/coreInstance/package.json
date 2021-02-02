@@ -1,6 +1,6 @@
 {
   "name": "@dflex/core-instance",
-  "version": "0.1.0-alpha.0",
+  "version": "0.1.0",
   "main": "dist/dflexCoreInstance.min.cjs.js",
   "umd:main": "dist/dflexCoreInstance.min.umd",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",

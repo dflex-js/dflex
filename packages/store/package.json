@@ -1,6 +1,6 @@
 {
   "name": "@dflex/store",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "main": "dist/dflexStore.min.cjs.js",
   "umd:main": "dist/dflexStore.min.umd",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
