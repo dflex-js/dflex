@@ -1,6 +1,7 @@
 ---
 id: examples
 title: Draggable Live Examples
+sidebar_label: Live Examples
 description: JavaScript draggable examples
 keywords:
   - draggable
