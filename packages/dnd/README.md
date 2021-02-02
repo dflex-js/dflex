@@ -160,7 +160,7 @@ dnd.getStatus() : Array|string
 
 ## Project Content
 
-DFlex Store is part of project contains:
+DFlex Drag and Drop is part of project contains:
 
 - [DOM
   Generator](https://github.com/jalal246/dflex/tree/master/packages/dom-gen):
