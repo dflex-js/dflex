@@ -37,6 +37,11 @@ whether it is React, Vue, Angular, etc.
 It depends on animation, tracks each droppable area which makes the whole
 process runs smoothly as much as possible.
 
+## Documentation
+
+Visit DFlex site for more <https://jalal246.github.io/dflex/> and to see live
+examples with the full code.
+
 ## Installation
 
 ```bash
