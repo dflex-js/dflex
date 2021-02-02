@@ -1,6 +1,7 @@
 ---
 id: implementations
 title: Drag & Drop Framework Implementations
+sidebar_label: Framework Implementations
 description: Draggable implementations
 keywords:
   - draggable

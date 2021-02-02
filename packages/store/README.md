@@ -1,14 +1,50 @@
+<h1 align="center">
+  <img
+  src="https://raw.githubusercontent.com/jalal246/dflex/master/dflex-full-size.png"
+  alt="Dflex logo" />
+</h1>
+
+<p align="center">
+  <a href="https://github.com/jalal246/dflex">
+    <img
+    src="https://img.shields.io/github/workflow/status/jalal246/dflex/Unit Test"
+    alt="Dflex build status" />
+  </a>
+  <a href="https://github.com/jalal246/dflex/pulls">
+    <img
+    src="https://img.shields.io/github/issues-pr/jalal246/dflex"
+    alt="number of opened pull requests"/>
+  </a>
+  <a href="https://github.com/jalal246/dflex/issues">
+  <img
+    src="https://img.shields.io/github/issues/jalal246/dflex"
+    alt="number of opened issues"/>
+  </a>
+  <a href="https://github.com/jalal246/dflex/pulls">
+   <img
+   src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"
+   alt="Dflex welcomes pull request" />
+  </a>
+</p>
+
 # @dflex/store
 
 > Traverse through the DOM tree using element-id.
 
-```bash
-npm install @dflex/store
-```
-
 DFlex store works on connecting all registered elements and organizes the
 relations between them using the DOM relations generator algorithm. Allowing
 each element to be reached recursively using its id.
+
+## Documentation
+
+Visit DFlex site for more <https://jalal246.github.io/dflex/> and to see live
+examples with the full code.
+
+## Installation
+
+```bash
+npm install @dflex/store
+```
 
 ## Why
 
@@ -29,25 +65,25 @@ easily access each DOM node with `id`. In DFlex store ids are used as keys.
 
 - Implement it everywhere because it is not related to any framework/library.
 
-## Register elements in the store
+## API
+
+### Register Elements in the Store
 
 <!-- created with: https://excalidraw.com/ -->
 
 <p align="center">
  <img
- src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/store/img/store-registry.png" 
+ src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/store/img/store-registry.png"
  alt="how register works"/>
 </p>
 
-Registry works on creating
-[pointer](https://github.com/jalal246/dflex/tree/master/packages/dom-gen#generates-element-pointer)
-for element then store it with another passed data.
+Registry works on creating [pointer](../dom-gen/introduction#generate-element-pointer) for element then store it with another passed data.
 
 ```ts
-store.register(
+register(
   elmInstance: Object<elmInstance>,
-  CustomInstance:? <Function>,
-  options:? Object
+  CustomInstance?: <Function>,
+  options?: Object
 )
 ```
 
@@ -63,6 +99,8 @@ depends on generated pointer result before storing the element.
 While `options` is plain objects holds extra data to be registered in the store if
 there's any. Gives more flexibility to separate the essential data in
 `elmInstance` from extra once that will passed in `options`.
+
+#### Registry Example
 
 Let's create new store and register some elements in it:
 
@@ -105,12 +143,33 @@ const elm0D1 = {
 store.register(elm0D1, ExtraInstanceFunc);
 ```
 
-## Getting element in the store
+> Calling register multiple times will cause updating DOM reference.
 
-### Element Instance Meta by ID
+The register is typically called once to register the element reference inside
+the store but calls it multiple times is expected as the layout usually changes
+in your app. That's why calls it multiple times will cause updating DOM
+reference and preserves others instance.
+
+### Attach/Reattach Element reference
+
+To reattach DOM element reference in the store (usually when an element updated in
+the screen):
 
 ```ts
-store.getElmById(id: string) : Object<elmInstanceMeta>
+reattachElmRef(id: string, elmRef: HTMLElement)
+```
+
+To detach DOM element reference in the store (usually when an element disappear
+from the screen):
+
+```ts
+detachElmRef(id: string)
+```
+
+### Get Element Meta By ID
+
+```ts
+getElmById(id: string) : Object<elmInstanceMeta>
 ```
 
 It returns `Object<elmInstanceMeta>` which contains element metadata including
@@ -132,6 +191,8 @@ generated keys and indexes with registered data.
   - `chK: string` - Children Key, connects nodes in the lower level.
 
 - `rest: any` - data already entered when element is registered.
+
+#### getElmById Example
 
 Let's apply it on element with `id= id-0` which we already registered in the
 store:
@@ -155,10 +216,10 @@ const elemInstance = store.getElmById("id-0");
 // };
 ```
 
-### Element in Tree by ID
+### Get Element Tree By ID
 
 ```ts
-store.getElmTreeById(id: string) : Object<elmInstanceConnection>
+getElmTreeById(id: string) : Object<elmInstanceConnection>
 ```
 
 It returns `Object<elmInstanceConnection>` which contains element connections in DOM tree with
@@ -173,6 +234,8 @@ registered data. It includes:
   - `siblings: string<id>|Array<ids>` - all element's siblings.
 
   - `parents: string<id>|Array<ids>` - all element's parents.
+
+#### getElmTreeById Example
 
 Going back to our first element with `id= id-0`, we can get element instance,
 its parent instance, and its connection branches as following:
@@ -206,10 +269,39 @@ const elmInstanceConnection = store.getElmTreeById("id-0");
 // };
 ```
 
-Why this is matter? Because now you can traverse through DOM tree with existing
-store. Note that `elmInstanceConnection.branches.parents` allows you to go up
-while `elmInstanceConnection.branches.siblings` allows you to traverse through all
+#### Why this is matter
+
+Because now you can traverse through DOM tree with existing store. Note that
+`elmInstanceConnection.branches.parents` allows you to go up while
+`elmInstanceConnection.branches.siblings` allows you to traverse through all
 node siblings. And not only that, both ways retrieve nodes in order.
+
+### Reset Element
+
+To clear element from the registry. Should be called only when element is
+unmounted and expected to return with different positions only. Otherwise, call
+[detachElmRef](introduction#attachreattach-element-reference)
+
+```ts
+resetElm(id: string)
+```
+
+## Project Content
+
+DFlex Store is part of project contains:
+
+- [DOM
+  Generator](https://github.com/jalal246/dflex/tree/master/packages/dom-gen):
+  DOM relations generator algorithm. Generate relations between DOM elements
+  based on element depth without a browser.
+
+- [Drag & Drop](https://github.com/jalal246/dflex/tree/master/packages/dnd): A
+  Simple, lightweight Solution for a Drag & Drop App based on enhanced DOM store
+  algorithm. You can achieve a drag and drop with three steps only with mouse
+  event.
+
+- [Draggable](https://github.com/jalal246/dflex/tree/master/packages/draggable):
+  A High-performance draggable elements written in pure JS works for Web and Mobile.
 
 ## Test
 

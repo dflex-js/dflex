@@ -1,6 +1,7 @@
 ---
 id: examples
 title: Drag & Drop Live Examples
+sidebar_label: Live Examples
 description: JavaScript drag and drop examples
 keywords:
   - draggable
@@ -113,6 +114,13 @@ Reordering the element on each movement will eventually lead to performance disa
 Instead, simple calculations are made directly to animate each element with `translate(x,y)`.
 
 The new coordinates are stored in the store, so each time the user decides to manipulate the layout DFlex already knows the coordinates without communicating with the browser. Another win for your application performance.
+
+> Continuity
+
+One of the most important concepts in DFlex is to preserve the layout state.
+And this is guaranteed temporarily and permanently by keeping track of each
+change in the layout and make sure it can be restored automatically in case DOM
+node is updated outside DFlex territory.
 
 > Minimal side effect
 

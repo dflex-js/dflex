@@ -54,12 +54,10 @@ easily access each DOM node with `id`. In DFlex store ids are used as keys.
  alt="how register works"/>
 </p>
 
-Registry works on creating
-[pointer](https://github.com/jalal246/dflex/tree/master/packages/dom-gen#generates-element-pointer)
-for element then store it with another passed data.
+Registry works on creating [pointer](../dom-gen/introduction#generate-element-pointer) for element then store it with another passed data.
 
 ```ts
-store.register(
+register(
   elmInstance: Object<elmInstance>,
   CustomInstance?: <Function>,
   options?: Object
@@ -122,10 +120,33 @@ const elm0D1 = {
 store.register(elm0D1, ExtraInstanceFunc);
 ```
 
+> Calling register multiple times will cause updating DOM reference.
+
+The register is typically called once to register the element reference inside
+the store but calls it multiple times is expected as the layout usually changes
+in your app. That's why calls it multiple times will cause updating DOM
+reference and preserves others instance.
+
+### Attach/Reattach Element reference
+
+To reattach DOM element reference in the store (usually when an element updated in
+the screen):
+
+```ts
+reattachElmRef(id: string, elmRef: HTMLElement)
+```
+
+To detach DOM element reference in the store (usually when an element disappear
+from the screen):
+
+```ts
+detachElmRef(id: string)
+```
+
 ### Get Element Meta By ID
 
 ```ts
-store.getElmById(id: string) : Object<elmInstanceMeta>
+getElmById(id: string) : Object<elmInstanceMeta>
 ```
 
 It returns `Object<elmInstanceMeta>` which contains element metadata including
@@ -175,7 +196,7 @@ const elemInstance = store.getElmById("id-0");
 ### Get Element Tree By ID
 
 ```ts
-store.getElmTreeById(id: string) : Object<elmInstanceConnection>
+getElmTreeById(id: string) : Object<elmInstanceConnection>
 ```
 
 It returns `Object<elmInstanceConnection>` which contains element connections in DOM tree with
@@ -231,3 +252,13 @@ Because now you can traverse through DOM tree with existing store. Note that
 `elmInstanceConnection.branches.parents` allows you to go up while
 `elmInstanceConnection.branches.siblings` allows you to traverse through all
 node siblings. And not only that, both ways retrieve nodes in order.
+
+### Reset Element
+
+To clear element from the registry. Should be called only when element is
+unmounted and expected to return with different positions only. Otherwise, call
+[detachElmRef](introduction#attachreattach-element-reference)
+
+```ts
+resetElm(id: string)
+```
