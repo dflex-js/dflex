@@ -291,17 +291,16 @@ domGen.setElmBranch("0-0", newBranch);
 
 DFlex DOM Generator is part of project contains:
 
-- [DOM Store](https://github.com/jalal246/dflex/tree/master/packages/store):The
+- [DOM Store](https://github.com/jalal246/dflex/tree/master/packages/store) The
   only Store that allows you to traverse through the DOM tree using element id
   without reading from the browser.
 
-- [Drag & Drop](https://github.com/jalal246/dflex/tree/master/packages/dnd): A
+- [Drag & Drop](https://github.com/jalal246/dflex/tree/master/packages/dnd) A
   Simple, lightweight Solution for a Drag & Drop App based on enhanced DOM store
   algorithm. You can achieve a drag and drop with three steps only with mouse
   event.
 
-- [Draggable](https://github.com/jalal246/dflex/tree/master/packages/draggable):
-  A High-performance draggable elements written in pure JS works for Web and Mobile.
+- [Draggable](https://github.com/jalal246/dflex/tree/master/packages/draggable) A High-performance draggable elements written in pure JS works for Web and Mobile.
 
 ## Test
 

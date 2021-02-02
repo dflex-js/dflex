@@ -167,17 +167,17 @@ dnd.getStatus() : Array|string
 
 DFlex Drag and Drop is part of project contains:
 
-- [DOM
-  Generator](https://github.com/jalal246/dflex/tree/master/packages/dom-gen):
-  DOM relations generator algorithm. Generate relations between DOM elements
+- [DOM Generator](https://github.com/jalal246/dflex/tree/master/packages/dom-gen) DOM
+  relations generator algorithm. Generate relations between DOM elements
   based on element depth without a browser.
 
-- [DOM Store](https://github.com/jalal246/dflex/tree/master/packages/store):The
+- [DOM Store](https://github.com/jalal246/dflex/tree/master/packages/store) The
   only Store that allows you to traverse through the DOM tree using element id
   without reading from the browser.
 
-- [Draggable](https://github.com/jalal246/dflex/tree/master/packages/draggable):
-  A High-performance draggable elements written in pure JS works for Web and Mobile.
+- [Draggable](https://github.com/jalal246/dflex/tree/master/packages/draggable)
+  A High-performance draggable elements written in pure JS works for Web and
+  Mobile.
 
 ## Test
 
