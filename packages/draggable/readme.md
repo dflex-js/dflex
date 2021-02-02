@@ -132,7 +132,7 @@ draggable.draggedStyle = [
 
 ## Project Content
 
-DFlex Store is part of project contains:
+DFlex Draggable is part of project contains:
 
 - [DOM
   Generator](https://github.com/jalal246/dflex/tree/master/packages/dom-gen):
