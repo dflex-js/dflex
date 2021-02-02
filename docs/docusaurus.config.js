@@ -50,6 +50,9 @@ module.exports = {
   organizationName: "jalal246", // Usually your GitHub org/user name.
   projectName: "dflex", // Usually your repo name.
   themeConfig: {
+    colorMode: {
+      defaultMode: "dark",
+    },
     navbar: {
       title: "DFlex",
       logo: {
