@@ -1,8 +1,32 @@
+/**
+ * @typedef {Object} ElmInstance
+ * @property {string} elmInstance.id
+ * @property {number} elmInstance.depth
+ * @property {HTMLElement} elmInstance.element
+ */
+
+/**
+ *
+ * @class AbstractStore
+ */
 class AbstractStore {
+  /**
+   * Creates an instance of AbstractStore.
+   * @constructor
+   * @memberof AbstractStore
+   */
   constructor() {
+    /** @type {Object.<string, ElmInstance>} */
     this.registry = {};
   }
 
+  /**
+   * Add elements to registry.
+   *
+   * @param {ElmInstance} elmInstance
+   * @param {new (object: elmInstance) => ElmInstance} CustomInstance - constructor function.
+   * @memberof AbstractStore
+   */
   register(elmInstance, CustomInstance) {
     const { id } = elmInstance;
 
@@ -16,7 +40,7 @@ class AbstractStore {
    * Gets element from registry by Id.
    *
    * @param {string} id
-   * @returns {Object} coreInstance
+   * @returns {ElmInstance} coreInstance
    * @memberof AbstractStore
    */
   getElmById(id) {

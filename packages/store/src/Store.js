@@ -5,8 +5,6 @@ import Tracker from "./Tracker";
 /**
  * Store class contains all dnd elements and their orders.
  *
- * @extends {Generator}
- *
  */
 class Store {
   constructor() {
@@ -52,13 +50,18 @@ class Store {
    * @memberof Store
    */
   resetElm(id) {
-    this.abstractStore.registry[id] = null;
+    this.abstractStore.registry[id] = {};
   }
 
   /**
    * Add elements to registry.
    *
-   * @param {Object} elmInstance
+   * @namespace
+   * @param {object} elmInstance
+   * @param {string} elmInstance.id
+   * @param {number} elmInstance.depth
+   * @param {HTMLElement} elmInstance.element
+   *
    * @param {function} CustomInstance - constructor function.
    * @param {Object} opts - extra options to be stored in the registry.
    * @memberof Store
@@ -66,7 +69,7 @@ class Store {
   register(elmInstance, CustomInstance, opts) {
     const { id, depth } = elmInstance;
 
-    /**
+    /*
      * If element already exist in the store, then the reattach the reference.
      */
     if (this.abstractStore.registry[id]) {
@@ -98,8 +101,8 @@ class Store {
   /**
    * Gets all element IDs Siblings in given node represented by sibling key.
    *
-   * @param {string} key
-   * @returns {string|Array} - elements siblings list.
+   * @param {string} ky
+   * @returns {string|Array<string>} - elements siblings list.
    * @memberof Store
    */
   getElmBranchByKey(ky) {
