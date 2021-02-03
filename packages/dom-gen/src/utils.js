@@ -6,8 +6,8 @@
  * But, currently this is not possible children render first. Instead,
  * we use counters combined with depth as parent-identifier. Vice-versa.
  *
- * @param {number} depth
- * @param {number} index
+ * @param {number} dp - depth
+ * @param {number} i - index
  * @returns {string} - unique key
  */
 function genKey(dp, i) {

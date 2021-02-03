@@ -1,6 +1,25 @@
 import genKey from "./utils";
 
 /**
+ * @typedef {Object} Keys
+ * @property {string} Keys.sK - Siblings Key
+ * @property {string} Keys.pK - Parent Key
+ * @property {string|null} Keys.chK - Children Key
+ */
+
+/**
+ * @typedef {Object} Order
+ * @property {number} Order.self
+ * @property {number} Order.parent
+ */
+
+/**
+ * @typedef {Object} Pointer
+ * @property {Keys} Pointer.keys
+ * @property {Order} Pointer.order
+ */
+
+/**
  * Generate keys to connect relations between DOM-elements depending on tree
  * depth.
  *
@@ -11,6 +30,8 @@ class Generator {
     /**
      * Counter store. Each depth has it's own indicator. Allowing us to go
      * for endless layers (levels).
+     *
+     * @type {Object.<number, number>}
      */
     this.indicator = {};
 
@@ -21,6 +42,8 @@ class Generator {
      *
      * This is an easy solution, to know elements order and update it
      * accordingly.
+     *
+     * @type {Object.<string, Array<string>|string>}
      */
     this.branches = {};
 
@@ -101,9 +124,11 @@ class Generator {
         const prevId = this.branches[sK];
 
         this.branches[sK] = [];
+        // @ts-ignore
         this.branches[sK].push(prevId);
       }
 
+      // @ts-ignore
       selfIndex = this.branches[sK].push(id) - 1;
     }
 
@@ -114,7 +139,7 @@ class Generator {
    * Gets all element IDs Siblings in given node represented by sk.
    *
    * @param {string} sk - sibling key
-   * @returns {string|Array}
+   * @returns {string|Array<string>}
    * @memberof Generator
    */
   getElmBranch(sk) {
@@ -125,24 +150,12 @@ class Generator {
    * Sets new branch for given key.
    *
    * @param {string} sK - sibling key
-   * @param {string|Array} lst - new branch
+   * @param {string|Array<string>} branch - new branch
    * @memberof Generator
    */
   setElmBranch(sK, branch) {
     this.branches[sK] = branch;
   }
-
-  // /**
-  //  * Deletes branch.
-  //  *
-  //  * @param {string} sK - sibling key
-  //  * @memberof Generator
-  //  */
-  // deleteBranch(sK) {
-  //   const { [sK]: deletedBranch, ...restBranches } = this.branches;
-
-  //   this.branches = restBranches;
-  // }
 
   /**
    * Main method.
@@ -151,7 +164,7 @@ class Generator {
    *
    * @param {string} id - element id
    * @param {number} depth - element depth
-   * @returns object  { order, keys }
+   * @returns {Pointer}
    * @memberof Generator
    */
   getElmPointer(id, depth) {
@@ -186,12 +199,14 @@ class Generator {
 
     this.indicator[depth] += 1;
 
+    /** @type {Keys} */
     const keys = {
       sK: siblingsKey,
       pK: parentKey,
       chK: depth === 0 ? null : childrenKey,
     };
 
+    /** @type {Order} */
     const order = {
       self: selfIndex,
       parent: parentIndex,
