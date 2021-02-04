@@ -1,0 +1,32 @@
+{
+  "exclude": ["node_modules", "dist", "lib", "**/*.test*", "**/*.spec*"],
+  "files": [],
+  "compilerOptions": {
+    "skipLibCheck": false,
+    "target": "esnext",
+    "module": "esnext",
+    "lib": ["dom", "esnext"],
+    "jsx": "react",
+    "rootDir": ".",
+    "outDir": "lib",
+    "downlevelIteration": true,
+    "strict": true,
+    "removeComments": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "@dflex/*": ["packages/*/src"]
+    },
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
+  }
+}

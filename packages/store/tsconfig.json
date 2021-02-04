@@ -1,8 +1,9 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "include": ["src/**/*"],
-
+  "include": ["src", "../dom-gen"],
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "./lib"
+    "outDir": "lib",
+    "allowJs": true,
+    "checkJs": true
   }
 }

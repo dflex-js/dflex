@@ -1,15 +1,26 @@
+/**
+ * @typedef {Object} CoreInstance
+ * @property {string} ElmInstance.id
+ * @property {number} ElmInstance.depth
+ * @property {HTMLElement} ElmInstance.element
+ */
+
+/**
+ * This is the link (bridge) between the Store and element actions/classes.
+ *
+ *
+ * @class AbstractCoreInstance
+ */
 class AbstractCoreInstance {
   /**
-   * This is the link between store and core element
-   *
-   * @param {string} id
-   * @param {node} elm
-   * @param {Object} rest
+   * Creates an instance of AbstractCoreInstance.
+   * @param {CoreInstance} coreInstance
+   * @memberof AbstractCoreInstance
    */
-  constructor({ element, ...rest }) {
+  constructor({ element, id, pointer, ...rest }) {
     this.element = element;
-
-    Object.assign(this, rest);
+    this.id = id;
+    this.depth = depth;
   }
 }
 

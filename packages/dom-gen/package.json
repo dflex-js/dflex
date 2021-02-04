@@ -11,8 +11,8 @@
   "repository": "https://github.com/jalal246/dflex",
   "license": "GPL-3.0",
   "files": [
-    "src",
     "dist",
+    "types",
     "LICENSE"
   ],
   "keywords": [

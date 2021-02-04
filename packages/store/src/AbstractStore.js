@@ -1,8 +1,8 @@
 /**
  * @typedef {Object} ElmInstance
- * @property {string} elmInstance.id
- * @property {number} elmInstance.depth
- * @property {HTMLElement} elmInstance.element
+ * @property {string} ElmInstance.id
+ * @property {number} ElmInstance.depth
+ * @property {HTMLElement} ElmInstance.element
  */
 
 /**
