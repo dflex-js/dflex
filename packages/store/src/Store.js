@@ -1,6 +1,5 @@
 import Generator from "@dflex/dom-gen/src";
 import AbstractStore from "./AbstractStore";
-import Tracker from "./Tracker";
 
 /**
  * @typedef {Object} ElmInstance
@@ -21,8 +20,6 @@ class Store {
   constructor() {
     this.abstractStore = new AbstractStore();
     this.DOMGen = new Generator();
-
-    this.tracker = new Tracker();
   }
 
   /**
