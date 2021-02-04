@@ -1,8 +1,8 @@
 /**
  * @typedef {Object} CoreInstance
- * @property {string} ElmInstance.id
- * @property {number} ElmInstance.depth
- * @property {HTMLElement} ElmInstance.element
+ * @property {string} CoreInstance.id
+ * @property {number} CoreInstance.depth
+ * @property {HTMLElement} CoreInstance.element
  */
 
 /**
@@ -10,14 +10,15 @@
  *
  *
  * @class AbstractCoreInstance
+ * @deprecated
  */
 class AbstractCoreInstance {
   /**
    * Creates an instance of AbstractCoreInstance.
-   * @param {CoreInstance} coreInstance
+   * @param {CoreInstance}
    * @memberof AbstractCoreInstance
    */
-  constructor({ element, id, pointer, ...rest }) {
+  constructor({ element, id, depth }) {
     this.element = element;
     this.id = id;
     this.depth = depth;

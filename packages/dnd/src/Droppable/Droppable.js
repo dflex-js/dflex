@@ -114,9 +114,9 @@ class Droppable {
       this.draggable.siblingsList,
       this.effectedElemDirection,
       this.topDifference,
+      this.draggable.dragID,
       1,
-      true,
-      this.draggable.dragID
+      true
     );
 
     element.onDragLeave();

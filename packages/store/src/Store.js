@@ -3,6 +3,17 @@ import AbstractStore from "./AbstractStore";
 import Tracker from "./Tracker";
 
 /**
+ * @typedef {Object} ElmInstance
+ * @property {string} ElmInstance.id
+ * @property {number} ElmInstance.depth
+ * @property {HTMLElement} ElmInstance.element
+ */
+
+/**
+ * @typedef {new (object: any) => object} ConstructorFunc
+ */
+
+/**
  * Store class contains all dnd elements and their orders.
  *
  */
@@ -50,19 +61,18 @@ class Store {
    * @memberof Store
    */
   resetElm(id) {
-    this.abstractStore.registry[id] = {};
+    this.abstractStore.registry[id] = {
+      id,
+      depth: 0,
+      element: null,
+    };
   }
 
   /**
    * Add elements to registry.
    *
-   * @namespace
-   * @param {object} elmInstance
-   * @param {string} elmInstance.id
-   * @param {number} elmInstance.depth
-   * @param {HTMLElement} elmInstance.element
-   *
-   * @param {function} CustomInstance - constructor function.
+   * @param {ElmInstance} elmInstance
+   * @param {ConstructorFunc} CustomInstance - Constructor Function.
    * @param {Object} opts - extra options to be stored in the registry.
    * @memberof Store
    */
@@ -84,7 +94,7 @@ class Store {
 
     const coreInstance = Object.assign(elmInstance, pointer, opts);
 
-    this.abstractStore.register(coreInstance, CustomInstance);
+    this.abstractStore.register(id, coreInstance, CustomInstance);
   }
 
   /**

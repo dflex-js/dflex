@@ -1,6 +1,20 @@
 /* eslint-disable no-param-reassign */
-/* eslint-disable no-underscore-dangle */
-import AbstractCoreInstance from "./AbstractCoreInstance";
+/**
+ * @typedef {Object} CoreInstanceElm
+ * @property {string} CoreInstanceElm.id
+ * @property {number} CoreInstanceElm.depth
+ * @property {HTMLElement} CoreInstanceElm.element
+ */
+
+/**
+ * @typedef {Object} ELmOrder
+ * @property {number} ELmOrder.self
+ * @property {number} ELmOrder.parent
+ */
+
+/**
+ * @typedef {Array<string>} BranchELmOrder
+ */
 
 /**
  * Why storing index here? when it's already sorted in order?
@@ -28,20 +42,52 @@ import AbstractCoreInstance from "./AbstractCoreInstance";
  *
  * To connect element with parents by knowing their locations.
  */
-class CoreInstance extends AbstractCoreInstance {
+class CoreInstance {
   /**
+   * Creates an instance of CoreInstance.
    *
-   * @param {string} id
-   * @param {node} elm
+   * @param {CoreInstanceElm} coreInstance
+   * @memberof CoreInstance
    */
-  constructor(coreInstance) {
-    super(coreInstance);
+  constructor({ element, id, depth }) {
+    this.element = element;
+    this.id = id;
+    this.depth = depth;
+
+    /**
+     * Since element render once and being transformed later we keep the data
+     * stored to navigate correctly.
+     */
+    this.translateY = 0;
+    this.translateX = 0;
+
+    /**
+     * Store history of Y-transition according to unique ID.
+     *
+     * @type {Array<{ID: string, translateY:number}>} */
+    this.prevTranslateY = [];
+
+    this.offset = {
+      height: 0,
+      width: 0,
+
+      left: 0,
+      top: 0,
+    };
+
+    /**
+     * Used for dragged, storing temporary top, left new positions during the transition.
+     */
+    this.currentTop = 0;
+    this.currentLeft = 0;
 
     if (this.element) {
       this.initOffset();
-      this.initTranslate();
       this.setCurrentOffset();
     }
+
+    /** @type {ELmOrder} */
+    this.order = { self: 0, parent: 0 };
   }
 
   /**
@@ -70,32 +116,32 @@ class CoreInstance extends AbstractCoreInstance {
     };
   }
 
-  initTranslate() {
-    /**
-     * Since element render once and being transformed later we keep the data
-     * stored to navigate correctly.
-     */
-    this.translateY = 0;
-    this.translateX = 0;
-    this.prevTranslateY = [];
-  }
-
+  /**
+   * @memberof CoreInstance
+   */
   setCurrentOffset() {
     const { left, top } = this.offset;
-
     /**
      * This offset related directly to translate Y and Y. It's isolated from
      * element current offset and effects only top and left.
      */
+
     this.currentTop = top + this.translateY;
     this.currentLeft = left + this.translateX;
   }
 
   /**
-   * Sets new value to internal index and returns it.
+   * @memberof CoreInstance
+   */
+  transformElm() {
+    this.element.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
+  }
+
+  /**
+   * Update element index in order  branch
    *
-   * @param {number} i - increment number
-   * @returns number  - new index.
+   * @param {number} i - index
+   * @return {{oldIndex:number, newIndex:number}}
    * @memberof CoreInstance
    */
   updateIndex(i) {
@@ -111,12 +157,12 @@ class CoreInstance extends AbstractCoreInstance {
   /**
    * Updates index locally and in store.
    *
-   * @param {Array} order
-   * @param {number} i - increment number
+   * @param {BranchELmOrder} branchIDsOrder
+   * @param {number} inc - increment number
    * @param {boolean} [isShuffle=true] don't clear for last element.
    * @memberof CoreInstance
    */
-  updateIDsOrder(order, inc, isShuffle) {
+  updateIDsOrder(branchIDsOrder, inc, isShuffle) {
     const { oldIndex, newIndex } = this.updateIndex(inc);
 
     /**
@@ -127,22 +173,26 @@ class CoreInstance extends AbstractCoreInstance {
      * Note: direct update: for dragged element and assigning new order when
      * inserting and undoing.
      */
-    order[newIndex] = this.id;
-    if (isShuffle) order[oldIndex] = null;
+    branchIDsOrder[newIndex] = this.id;
+    if (isShuffle) branchIDsOrder[oldIndex] = "";
   }
 
-  transformElm() {
-    this.element.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
-  }
-
-  seTranslate(topSpace, isMovingNew, operationID) {
+  /**
+   * Set a new translate position and store the old one.
+   *
+   * @param {number} topSpace
+   * @param {string?} operationID - Only if moving to a new position.
+   * @memberof CoreInstance
+   */
+  seTranslate(topSpace, operationID) {
     this.currentTop += topSpace;
 
-    if (isMovingNew)
+    if (operationID) {
       this.prevTranslateY.push({
         ID: operationID,
         translateY: this.translateY,
       });
+    }
 
     this.translateY += topSpace;
 
@@ -162,22 +212,23 @@ class CoreInstance extends AbstractCoreInstance {
    * position but when updating last element the array is ready and done we need
    * to update one position only so don't clear previous.
    *
-   * @param {Array} iDsInOrder
+   * @param {BranchELmOrder} iDsInOrder
    * @param {number} sign - (+1/-1)
    * @param {number} topSpace - space between dragged and the immediate next element.
    * @param {number} [vIncrement=1] - number of passed elements.
    * @param {boolean} [isShuffle=true]
+   * @param {string?} operationID - Unique ID used to store translate history
    * @memberof CoreInstance
    */
   setYPosition(
     iDsInOrder,
     sign,
     topSpace,
+    operationID,
     vIncrement = 1,
-    isShuffle = true,
-    operationID
+    isShuffle = true
   ) {
-    this.seTranslate(sign * topSpace, true, operationID);
+    this.seTranslate(sign * topSpace, operationID);
 
     this.updateIDsOrder(iDsInOrder, sign * vIncrement, isShuffle);
   }
@@ -185,7 +236,7 @@ class CoreInstance extends AbstractCoreInstance {
   /**
    * Roll back element position vertically(y).
    *
-   * @param {Array} iDsInOrder - Array that holds new ids order.
+   * @param {string} operationID
    * @memberof CoreInstance
    */
   rollYBack(operationID) {
@@ -196,11 +247,12 @@ class CoreInstance extends AbstractCoreInstance {
       return;
     }
 
+    // @ts-ignore
     const topSpace = this.prevTranslateY.pop().translateY - this.translateY;
 
     const increment = topSpace > 0 ? 1 : -1;
 
-    this.seTranslate(topSpace, false);
+    this.seTranslate(topSpace, null);
     this.updateIndex(increment);
   }
 }

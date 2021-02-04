@@ -1,8 +1,5 @@
 /**
- * @typedef {Object} ElmInstance
- * @property {string} ElmInstance.id
- * @property {number} ElmInstance.depth
- * @property {HTMLElement} ElmInstance.element
+ * @typedef {new (object: any) => object} ConstructorFunc
  */
 
 /**
@@ -16,22 +13,22 @@ class AbstractStore {
    * @memberof AbstractStore
    */
   constructor() {
-    /** @type {Object.<string, ElmInstance>} */
+    /** @type {Object.<string, Object>} */
     this.registry = {};
   }
 
   /**
-   * Add elements to registry.
+   * Mutate elmInstance into CustomInstance then add the new object to registry
+   * by id.
    *
-   * @param {ElmInstance} elmInstance
-   * @param {new (object: elmInstance) => ElmInstance} CustomInstance - constructor function.
+   * @param {string} id
+   * @param {ConstructorFunc} CustomInstance - Constructor Function.
+   * @param {Object} elmInstance
    * @memberof AbstractStore
    */
-  register(elmInstance, CustomInstance) {
-    const { id } = elmInstance;
-
+  register(id, CustomInstance, elmInstance) {
     this.registry[id] =
-      typeof CustomInstance === "function"
+      typeof CustomInstance.constructor === "function"
         ? new CustomInstance(elmInstance)
         : elmInstance;
   }
@@ -40,7 +37,7 @@ class AbstractStore {
    * Gets element from registry by Id.
    *
    * @param {string} id
-   * @returns {ElmInstance} coreInstance
+   * @returns {Object} coreInstance
    * @memberof AbstractStore
    */
   getElmById(id) {

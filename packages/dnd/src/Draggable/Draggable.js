@@ -213,9 +213,9 @@ class Draggable extends Base {
       this.siblingsList,
       draggedDirection,
       this.numberOfElementsTransformed * topDifference,
+      this.dragID,
       this.numberOfElementsTransformed,
-      false,
-      this.dragID
+      false
     );
   }
 
