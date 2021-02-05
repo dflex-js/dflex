@@ -2,21 +2,21 @@ import genKey from "./utils";
 
 /**
  * @typedef {Object} Keys
- * @property {string} Keys.sK - Siblings Key
- * @property {string} Keys.pK - Parent Key
- * @property {string|null} Keys.chK - Children Key
+ * @property {string} sK - Siblings Key
+ * @property {string} pK - Parent Key
+ * @property {string|null} chK - Children Key
  */
 
 /**
  * @typedef {Object} Order
- * @property {number} Order.self
- * @property {number} Order.parent
+ * @property {number} self
+ * @property {number} parent
  */
 
 /**
  * @typedef {Object} Pointer
- * @property {Keys} Pointer.keys
- * @property {Order} Pointer.order
+ * @property {Keys} keys
+ * @property {Order} order
  */
 
 /**
@@ -164,7 +164,7 @@ class Generator {
    *
    * @param {string} id - element id
    * @param {number} depth - element depth
-   * @returns {Pointer}
+   * @returns {Pointer} { order, keys }
    * @memberof Generator
    */
   getElmPointer(id, depth) {

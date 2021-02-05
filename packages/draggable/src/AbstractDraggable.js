@@ -1,6 +1,7 @@
 import { DRAGGED_ELM } from "../constants.json";
 
-/** @type  { prop: string, dragValue: string, afterDragValue:? string }[]  */
+// /** @type  { prop: string, dragValue: string, afterDragValue:? string }[]  */
+
 const draggedStyleProps = [
   {
     prop: "zIndex",

@@ -1,41 +1,58 @@
 import Generator from "@dflex/dom-gen/src";
-import AbstractStore from "./AbstractStore";
+
+/** @typedef {import("packages/coreInstance/src/AbstractCoreInstance").ElmInstance} ElmInstance  */
+
+/** @typedef {import("packages/dom-gen/src/Generator").Order} Order */
+/** @typedef {import("packages/dom-gen/src/Generator").Keys} Keys */
 
 /**
- * @typedef {Object} ElmInstance
- * @property {string} ElmInstance.id
- * @property {number} ElmInstance.depth
- * @property {HTMLElement} ElmInstance.element
- */
-
-/**
- * @typedef {new (object: any) => object} ConstructorFunc
- */
-
-/**
- * Store class contains all dnd elements and their orders.
+ * @typedef {Object} CoreElement - Element stored in registry without mutating
+ * with external class.
  *
+ * @property {string} id
+ * @property {number} depth
+ * @property {HTMLElement?} element
+ * @property {Order} order
+ * @property {Keys} keys
+ */
+
+/**
+ * @typedef {Object} ElmTree
+ * @property {CoreElement} element
+ * @property {CoreElement?} parent
+ * @property {Object} branches
+ * @property {string | string[]} branches.siblings
+ * @property {string | string[]} branches.parents
+ */
+
+/**
+ *
+ * @class Store
  */
 class Store {
+  /**
+   * Creates an instance of Store.
+   *
+   * @constructor
+   * @memberof Store
+   */
   constructor() {
-    this.abstractStore = new AbstractStore();
+    /** @type {Object.<string, CoreElement>} */
+    this.registry = {};
+
     this.DOMGen = new Generator();
   }
 
   /**
    * Reattach element reference.
    * This happens when element is unmounted from the screen and mounted again.
-   * In this case, we need to reattach its reference and transform it to the
-   * last know position.
    *
    * @param {string} id
    * @param {HTMLElement} elmRef
    * @memberof Store
    */
   reattachElmRef(id, elmRef) {
-    this.abstractStore.registry[id].element = elmRef;
-    // Preserves last changes.
-    this.abstractStore.registry[id].transformElm();
+    this.registry[id].element = elmRef;
   }
 
   /**
@@ -46,63 +63,55 @@ class Store {
    * @memberof Store
    */
   detachElmRef(id) {
-    this.abstractStore.registry[id].element = null;
+    this.registry[id].element = null;
   }
 
   /**
-   * Clear element from the registry. Should be called only when element is
+   * Delete element from the registry. Should be called only when element is
    * unmounted and expected to return with different positions only. Otherwise,
    * call `detachElmRef.`
    *
    * @param {string} id
    * @memberof Store
    */
-  resetElm(id) {
-    this.abstractStore.registry[id] = {
-      id,
-      depth: 0,
-      element: null,
-    };
+  deleteElm(id) {
+    const { [id]: oldRecord, ...rest } = this.registry;
+
+    this.registry = rest;
   }
 
   /**
-   * Add elements to registry.
+   * Mutate elmInstance into CustomInstance then add the new object to registry
+   * by id.
    *
    * @param {ElmInstance} elmInstance
-   * @param {ConstructorFunc} CustomInstance - Constructor Function.
-   * @param {Object} opts - extra options to be stored in the registry.
+   * @param {null|{new (coreElement:any) : any}} CustomInstance - Constructor Function.
    * @memberof Store
    */
-  register(elmInstance, CustomInstance, opts) {
-    const { id, depth } = elmInstance;
+  register(elmInstance, CustomInstance) {
+    const { id, depth, element } = elmInstance;
 
-    /*
-     * If element already exist in the store, then the reattach the reference.
-     */
-    if (this.abstractStore.registry[id]) {
-      if (elmInstance.element) {
-        this.reattachElmRef(id, elmInstance.element);
-      }
+    if (!element) return;
 
-      return;
-    }
+    const { order, keys } = this.DOMGen.getElmPointer(id, depth);
 
-    const pointer = this.DOMGen.getElmPointer(id, depth);
+    const coreElement = { id, depth, element, order, keys };
 
-    const coreInstance = Object.assign(elmInstance, pointer, opts);
-
-    this.abstractStore.register(id, coreInstance, CustomInstance);
+    this.registry[id] =
+      CustomInstance && typeof CustomInstance.constructor === "function"
+        ? new CustomInstance(coreElement)
+        : coreElement;
   }
 
   /**
    * Gets element from registry by Id.
    *
    * @param {string} id
-   * @returns {elmInstance} - elmInstance Object.
+   * @returns {CoreElement} coreElement
    * @memberof Store
    */
   getElmById(id) {
-    return this.abstractStore.getElmById(id);
+    return this.registry[id];
   }
 
   /**
@@ -119,19 +128,12 @@ class Store {
   /**
    * Gets element connections instance for a given id.
    *
-   * @param {string} elmId
-   *
-   * @returns {Object}  connectObj
-   * @returns {elmInstance} connectObj.element  - Targeted element.
-   * @returns {elmInstance} connectObj.parent - Container element.
-   * @returns {Object} connectObj.branches - Container element.
-   * @returns {Array} branches.siblings - Array contains ids, siblings to element-id.
-   * @returns {Array} branches.parents - Array contains ids, parents to element-id.
-   *
+   * @param {string} id
+   * @returns {ElmTree}
    * @memberof Store
    */
-  getElmTreeById(elmId) {
-    const element = this.getElmById(elmId);
+  getElmTreeById(id) {
+    const element = this.getElmById(id);
 
     const {
       keys: { sK, pK },

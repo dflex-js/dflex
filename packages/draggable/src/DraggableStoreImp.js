@@ -1,22 +1,17 @@
 import AbstractCoreInstance from "@dflex/core-instance/src/AbstractCoreInstance";
-import AbstractStore from "@dflex/store/src/AbstractStore";
+import Store from "@dflex/store/src/Store";
 
-class DraggableStoreImp extends AbstractStore {
+/** @typedef {import("packages/store/src/Store").ElmInstance} ElmInstance */
+
+class DraggableStoreImp extends Store {
   /**
    * Register element for Draggable store
    *
-   * @param {Object} elmInstance
-   * @param {node} elmInstance.element
+   * @param {ElmInstance} elmInstance
    * @memberof DraggableStoreImp
    */
   register(elmInstance) {
-    super.register(
-      Object.assign(elmInstance, {
-        translateY: 0,
-        translateX: 0,
-      }),
-      AbstractCoreInstance
-    );
+    super.register(elmInstance, AbstractCoreInstance);
   }
 }
 

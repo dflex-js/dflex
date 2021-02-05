@@ -1,15 +1,15 @@
 /* eslint-disable no-param-reassign */
+
+import AbstractCoreInstance from "./AbstractCoreInstance";
+
 /**
- * @typedef {Object} CoreInstanceElm
- * @property {string} CoreInstanceElm.id
- * @property {number} CoreInstanceElm.depth
- * @property {HTMLElement} CoreInstanceElm.element
+ * @typedef {import("./AbstractCoreInstance").ElmInstance} ElmInstance
  */
 
 /**
  * @typedef {Object} ELmOrder
- * @property {number} ELmOrder.self
- * @property {number} ELmOrder.parent
+ * @property {number} self
+ * @property {number} parent
  */
 
 /**
@@ -42,24 +42,15 @@
  *
  * To connect element with parents by knowing their locations.
  */
-class CoreInstance {
+class CoreInstance extends AbstractCoreInstance {
   /**
    * Creates an instance of CoreInstance.
    *
-   * @param {CoreInstanceElm} coreInstance
+   * @param {ElmInstance} elemInstance
    * @memberof CoreInstance
    */
-  constructor({ element, id, depth }) {
-    this.element = element;
-    this.id = id;
-    this.depth = depth;
-
-    /**
-     * Since element render once and being transformed later we keep the data
-     * stored to navigate correctly.
-     */
-    this.translateY = 0;
-    this.translateX = 0;
+  constructor(elemInstance) {
+    super(elemInstance);
 
     /**
      * Store history of Y-transition according to unique ID.
