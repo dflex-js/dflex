@@ -4,7 +4,7 @@ module.exports = {
     browser: true,
     es6: true,
   },
-  extends: ["airbnb-base", "prettier"],
+  extends: ["airbnb-base", "prettier", "plugin:jsdoc/recommended"],
   globals: {
     Atomics: "readonly",
     SharedArrayBuffer: "readonly",
@@ -17,8 +17,18 @@ module.exports = {
     ecmaVersion: 11,
     sourceType: "module",
   },
-  rules: {},
-  plugins: ["tree-shaking"],
+  rules: {
+    "jsdoc/require-property-description": 0,
+    "jsdoc/require-returns-description": 0,
+  },
+  settings: {
+    jsdoc: {
+      preferredTypes: {
+        object: "Object",
+      },
+    },
+  },
+  plugins: ["jsdoc"],
   overrides: [
     {
       files: ["*.test.js"],
