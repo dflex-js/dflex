@@ -1,0 +1,9 @@
+{
+  "include": ["src"],
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "emitDeclarationOnly": true,
+    "outDir": "types"
+  }
+}
