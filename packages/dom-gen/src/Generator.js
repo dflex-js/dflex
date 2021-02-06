@@ -43,7 +43,7 @@ class Generator {
      * This is an easy solution, to know elements order and update it
      * accordingly.
      *
-     * @type {Object.<string, Array<string>|string>}
+     * @type {Object.<string, Array<string> | string>}
      */
     this.branches = {};
 
@@ -93,7 +93,7 @@ class Generator {
    * Checks if element has no siblings in the branch
    *
    * @param {string} sK -siblingsKey
-   * @returns {Boolean}
+   * @returns {boolean}
    * @memberof Generator
    */
   isElmSingleton(sK) {
@@ -105,7 +105,7 @@ class Generator {
    *
    * @param {string} id - element id
    * @param {string} sK -siblingsKey
-   * @returns element index in array.
+   * @returns {number} element index in array.
    * @memberof Generator
    */
   addToSiblings(id, sK) {
