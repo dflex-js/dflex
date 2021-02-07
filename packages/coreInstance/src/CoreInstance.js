@@ -2,14 +2,21 @@
 
 import AbstractCoreInstance from "./AbstractCoreInstance";
 
-/**
- * @typedef {import("./AbstractCoreInstance").ElmInstance} ElmInstance
- */
+/** @typedef {import("packages/store/src/Store").ElmInstance} ElmInstance */
+
+/** @typedef {import("packages/dom-gen/src/Generator").Order} Order */
+/** @typedef {import("packages/dom-gen/src/Generator").Keys} Keys */
 
 /**
- * @typedef {Object} ELmOrder
- * @property {number} self
- * @property {number} parent
+ * @typedef {Object} FullCoreElm - Element with essentials to be dragged.
+ * @property {string} id
+ * @property {number} depth
+ * @property {HTMLElement} ref
+ * @property {Order} order
+ * @property {Keys} keys
+ * @property {number} translateY
+ * @property {number} translateX
+ * @property {Function} transformElm
  */
 
 /**
@@ -46,11 +53,11 @@ class CoreInstance extends AbstractCoreInstance {
   /**
    * Creates an instance of CoreInstance.
    *
-   * @param {ElmInstance} elemInstance
+   * @param {ElmInstance} element
    * @memberof CoreInstance
    */
-  constructor(elemInstance) {
-    super(elemInstance);
+  constructor(element) {
+    super(element);
 
     /**
      * Store history of Y-transition according to unique ID.
@@ -72,12 +79,12 @@ class CoreInstance extends AbstractCoreInstance {
     this.currentTop = 0;
     this.currentLeft = 0;
 
-    if (this.element) {
+    if (this.ref) {
       this.initOffset();
       this.setCurrentOffset();
     }
 
-    /** @type {ELmOrder} */
+    /** @type {import("packages/dom-gen/src/Generator").Order} */
     this.order = { self: 0, parent: 0 };
   }
 
@@ -91,7 +98,7 @@ class CoreInstance extends AbstractCoreInstance {
    * @memberof CoreInstance
    */
   initOffset() {
-    const { height, width, left, top } = this.element.getBoundingClientRect();
+    const { height, width, left, top } = this.ref.getBoundingClientRect();
 
     /**
      * Element offset stored once without being triggered to re-calculate.
@@ -125,7 +132,7 @@ class CoreInstance extends AbstractCoreInstance {
    * @memberof CoreInstance
    */
   transformElm() {
-    this.element.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
+    this.ref.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
   }
 
   /**

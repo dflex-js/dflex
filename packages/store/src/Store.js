@@ -1,25 +1,33 @@
 import Generator from "@dflex/dom-gen/src";
 
-/** @typedef {import("packages/coreInstance/src/AbstractCoreInstance").ElmInstance} ElmInstance  */
-
 /** @typedef {import("packages/dom-gen/src/Generator").Order} Order */
 /** @typedef {import("packages/dom-gen/src/Generator").Keys} Keys */
 
+/** @typedef {import("packages/coreInstance/src/AbstractCoreInstance").AbstractCoreElm} AbstractCoreElm */
+/** @typedef {import("packages/coreInstance/src/CoreInstance").FullCoreElm} FullCoreElm */
+
 /**
- * @typedef {Object} CoreElement - Element stored in registry without mutating
- * with external class.
- *
+ * @typedef {Object} ElmInstance - Incoming element to registry.
  * @property {string} id
  * @property {number} depth
- * @property {HTMLElement?} element
+ * @property {HTMLElement} ref
+ */
+
+/**
+ * @typedef {Object} ElmWIthPointer - Generated Pointer with Element instance.
+ * @property {string} id
+ * @property {number} depth
+ * @property {HTMLElement?} ref
  * @property {Order} order
  * @property {Keys} keys
  */
 
+/** @typedef {Object.<string, ElmWIthPointer|AbstractCoreElm|FullCoreElm>} Registry */
+
 /**
  * @typedef {Object} ElmTree
- * @property {CoreElement} element
- * @property {CoreElement?} parent
+ * @property {any} element
+ * @property {any?} parent
  * @property {Object} branches
  * @property {string | string[]} branches.siblings
  * @property {string | string[]} branches.parents
@@ -37,7 +45,7 @@ class Store {
    * @memberof Store
    */
   constructor() {
-    /** @type {Object.<string, CoreElement>} */
+    /** @type {Registry} */
     this.registry = {};
 
     this.DOMGen = new Generator();
@@ -52,7 +60,7 @@ class Store {
    * @memberof Store
    */
   reattachElmRef(id, elmRef) {
-    this.registry[id].element = elmRef;
+    this.registry[id].ref = elmRef;
   }
 
   /**
@@ -63,7 +71,7 @@ class Store {
    * @memberof Store
    */
   detachElmRef(id) {
-    this.registry[id].element = null;
+    this.registry[id].ref = null;
   }
 
   /**
@@ -84,18 +92,18 @@ class Store {
    * Mutate elmInstance into CustomInstance then add the new object to registry
    * by id.
    *
-   * @param {ElmInstance} elmInstance
+   * @param {ElmInstance} element
    * @param {null|{new (coreElement:any) : any}} CustomInstance - Constructor Function.
    * @memberof Store
    */
-  register(elmInstance, CustomInstance) {
-    const { id, depth, element } = elmInstance;
+  register(element, CustomInstance) {
+    const { id, depth, ref } = element;
 
-    if (!element) return;
+    if (!ref) return;
 
     const { order, keys } = this.DOMGen.getElmPointer(id, depth);
 
-    const coreElement = { id, depth, element, order, keys };
+    const coreElement = { id, depth, ref, order, keys };
 
     this.registry[id] =
       CustomInstance && typeof CustomInstance.constructor === "function"
@@ -107,7 +115,6 @@ class Store {
    * Gets element from registry by Id.
    *
    * @param {string} id
-   * @returns {CoreElement} coreElement
    * @memberof Store
    */
   getElmById(id) {

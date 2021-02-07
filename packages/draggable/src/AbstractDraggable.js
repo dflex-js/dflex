@@ -1,6 +1,13 @@
-import { DRAGGED_ELM } from "../constants.json";
+/**
+ * @typedef {object} MouseCoordinates
+ * @property {number} x - X Coordinates
+ * @property {number} y - Y Coordinates
+ */
 
-// /** @type  { prop: string, dragValue: string, afterDragValue:? string }[]  */
+/** @typedef {import("packages/dom-gen/src/Generator").Order} Order */
+/** @typedef {import("packages/dom-gen/src/Generator").Keys} Keys */
+
+/** @typedef  {import("packages/coreInstance/src/AbstractCoreInstance").AbstractCoreElm} AbstractCoreElm */
 
 const draggedStyleProps = [
   {
@@ -11,7 +18,7 @@ const draggedStyleProps = [
 ];
 
 /**
- * AbstractDraggable element.
+ * AbstractDraggable Element.
  *
  * @class AbstractDraggable
  */
@@ -21,24 +28,23 @@ class AbstractDraggable {
    * Creates an instance of AbstractDraggable.
    * Works Only on dragged element level.
    *
-   * @param {Object}  element - object reference from store
-   * @param {Object}  initCoordinates
-   * @param {number}  initCoordinates.x
-   * @param {number}  initCoordinates.y
+   * @param {AbstractCoreElm}  abstractCoreElm - Element with Pointer & Abstract Core Instance
+   * @param {MouseCoordinates} initCoordinates
    *
    * @memberof AbstractDraggable
    */
-  constructor(element, { x: initX, y: initY }) {
+  constructor(abstractCoreElm, { x: initX, y: initY }) {
     /**
      * Assign instance for dragged.
      */
-    this[DRAGGED_ELM] = element;
+
+    this.draggedElm = abstractCoreElm;
 
     const {
       translateX,
       translateY,
-      element: { style: draggedStyle },
-    } = this[DRAGGED_ELM];
+      ref: { style: draggedStyle },
+    } = this.draggedElm;
 
     this.draggedStyleRef = draggedStyle;
 
@@ -75,6 +81,7 @@ class AbstractDraggable {
   setDragged(isActive) {
     if (isActive) {
       this.draggedStyle.forEach(({ prop, dragValue }) => {
+        // @ts-ignore
         this.draggedStyleRef[prop] = dragValue;
       });
       return;
@@ -83,6 +90,7 @@ class AbstractDraggable {
      * Not active: end of dragging.
      */
     this.draggedStyle.forEach(({ prop, afterDragValue }) => {
+      // @ts-ignore
       this.draggedStyleRef[prop] = afterDragValue;
     });
   }
