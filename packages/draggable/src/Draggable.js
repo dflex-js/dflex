@@ -1,7 +1,8 @@
 import store from "./DraggableStoreImp";
 import AbstractDraggable from "./AbstractDraggable";
 
-/** @typedef {import("packages/store/src/Store").AbstractCoreElement} AbstractCoreElement */
+/** @typedef  {import("packages/coreInstance/src/AbstractCoreInstance").AbstractCoreElm} AbstractCoreElm */
+/** @typedef {import("./AbstractDraggable").MouseCoordinates} MouseCoordinates */
 
 /**
  * Draggable element.
@@ -14,19 +15,18 @@ class Draggable extends AbstractDraggable {
    * Works Only on dragged element level.
    *
    * @param {string} elementId
-   * @param {import("./AbstractDraggable").MouseCoordinates} clickCoordinates
+   * @param {MouseCoordinates} clickCoordinates
    * @memberof Draggable
    */
   constructor(elementId, clickCoordinates) {
-    /** @type {AbstractCoreElement} */
+    /** @type {AbstractCoreElm} */
+    // @ts-ignore
     const element = store.getElmById(elementId);
 
     super(element, clickCoordinates);
   }
 
   /**
-   *
-   *
    * @param {number} x
    * @param {number} y
    * @memberof Draggable

@@ -18,7 +18,7 @@ const draggedStyleProps = [
 ];
 
 /**
- * AbstractDraggable Element.
+ * Abstract Draggable. Shared class with Draggable & DnD.
  *
  * @class AbstractDraggable
  */
