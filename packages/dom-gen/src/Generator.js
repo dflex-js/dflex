@@ -1,20 +1,20 @@
 import genKey from "./utils";
 
 /**
- * @typedef {Object} Keys
+ * @typedef {Object} Keys - Element unique keys in DOM tree.
  * @property {string} sK - Siblings Key
  * @property {string} pK - Parent Key
  * @property {string|null} chK - Children Key
  */
 
 /**
- * @typedef {Object} Order
- * @property {number} self
- * @property {number} parent
+ * @typedef {Object} Order - Element order in its branch & higher branch
+ * @property {number} self - Element self order in its own branch
+ * @property {number} parent - Element parent order in its own branch
  */
 
 /**
- * @typedef {Object} Pointer
+ * @typedef {Object} Pointer - Generated element pointer
  * @property {Keys} keys
  * @property {Order} order
  */
