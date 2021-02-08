@@ -49,6 +49,12 @@ import AbstractCoreInstance from "./AbstractCoreInstance";
  *
  * To connect element with parents by knowing their locations.
  */
+/**
+ *
+ *
+ * @class CoreInstance
+ * @extends {AbstractCoreInstance}
+ */
 class CoreInstance extends AbstractCoreInstance {
   /**
    * Creates an instance of CoreInstance.

@@ -1,4 +1,4 @@
-import Store from "@dflex/store/src";
+import Store from "@dflex/store/src/Storeeeeeeee";
 import CoreInstance from "@dflex/core-instance/src";
 import Tracker from "./Tracker";
 
@@ -7,13 +7,16 @@ import Tracker from "./Tracker";
 // const handlers = ["onDragOver", "onDragLeave"];
 
 /**
- *
- *
- * @class DnDStoreImp
- * @extends Store<CoreInstance>
+ * @typedef {Object} FullCoreElm - Element with essentials to be dragged.
+ * @property {string} id
+ * @property {number} depth
+ * @property {HTMLElement} ref
+ * @property {number} translateY
+ * @property {number} translateX
+ * @property {Function} transformElm
  */
 
-class DnDStoreImp extends Store {
+class DnDStoreImp extends Store<CoreInstance> {
   /**
    * Register DnD element.
    *
@@ -45,7 +48,7 @@ class DnDStoreImp extends Store {
    */
   reattachElmRef(id, elmRef) {
     super.registry[id].ref = elmRef;
-    this.registry[id].dd = "";
+    super.registry[id].dd = "";
   }
 
   /**

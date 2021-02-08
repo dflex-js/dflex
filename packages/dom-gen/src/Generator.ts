@@ -1,50 +1,62 @@
 import genKey from "./utils";
 
 /**
- * @typedef {Object} Keys - Element unique keys in DOM tree.
- * @property {string} sK - Siblings Key
- * @property {string} pK - Parent Key
- * @property {string|null} chK - Children Key
+ * Element unique keys in DOM tree.
  */
+type Keys = {
+  sK: string;
+  pK: string;
+  chK: string | null;
+};
 
 /**
- * @typedef {Object} Order - Element order in its branch & higher branch
- * @property {number} self - Element self order in its own branch
- * @property {number} parent - Element parent order in its own branch
+ * Element order in its branch & higher branch
  */
+type Order = {
+  self: number;
+  parent: number;
+};
 
 /**
- * @typedef {Object} Pointer - Generated element pointer
- * @property {Keys} keys
- * @property {Order} order
+ * Generated element pointer
  */
+type Pointer = {
+  keys: Keys;
+  order: Order;
+};
 
 /**
  * Generate keys to connect relations between DOM-elements depending on tree
  * depth.
- *
- * @class Generator
  */
 class Generator {
+  /**
+   * Counter store. Each depth has it's own indicator. Allowing us to go
+   * for endless layers (levels).
+   */
+  indicator: {
+    [keys: number]: number;
+  };
+
+  /**
+   * Store elements ids in order.
+   * For example, by default, id-0 stored in iDsInOrder[0]=id-0, but after
+   * transformed id-0, it is in iDsInOrder[3].
+   *
+   * This is an easy solution, to know elements order and update it
+   * accordingly.
+   */
+  branches: {
+    [keys: string]: Array<string> | string;
+  };
+
+  prevDepth: number;
+
+  prevKey: string;
+
   constructor() {
-    /**
-     * Counter store. Each depth has it's own indicator. Allowing us to go
-     * for endless layers (levels).
-     *
-     * @type {Object.<number, number>}
-     */
     this.indicator = {};
 
-    /**
-     * Store elements ids in order.
-     * For example, by default, id-0 stored in iDsInOrder[0]=id-0, but after
-     * transformed id-0, it is in iDsInOrder[3].
-     *
-     * This is an easy solution, to know elements order and update it
-     * accordingly.
-     *
-     * @type {Object.<string, Array<string> | string>}
-     */
     this.branches = {};
 
     this.prevDepth = -99;
@@ -55,20 +67,19 @@ class Generator {
   /**
    * Initiates self and parent indicators if not.
    *
-   * @param {number} dp - element depth
-   * @memberof Generator
+   * @param dp - element depth
    */
-  initIndicators(dp) {
+  initIndicators(dp: number) {
     /**
      * initiate self from -1 since self is incremented after the id is added so
      * it's children won't be confused about their parent indicator.
      *
      * if start from /dp = 1/
-     * => this.indicator[1] = -1
-     * => element added
-     * =>  this.indicator[1] + 1
+     * - this.indicator[1] = -1
+     * - element added
+     * -  this.indicator[1] + 1
      * Now, If we get /dp = 0/
-     * => this.indicator[dp+1] = 0 which is what we want.
+     * - this.indicator[dp+1] = 0 which is what we want.
      *
      * By adding this, we can deal with parents coming first before children.
      */
@@ -90,25 +101,21 @@ class Generator {
   }
 
   /**
-   * Checks if element has no siblings in the branch
+   *  Checks if element has no siblings in the branch
    *
-   * @param {string} sK -siblingsKey
-   * @returns {boolean}
-   * @memberof Generator
+   * @param  sk - Siblings Key- siblings key
    */
-  isElmSingleton(sK) {
+  isElmSingleton(sK: string) {
     return this.branches[sK].constructor !== Array;
   }
 
   /**
    * Adds elements to its siblings.
    *
-   * @param {string} id - element id
-   * @param {string} sK -siblingsKey
-   * @returns {number} element index in array.
-   * @memberof Generator
+   * @param id - element id
+   * @param  sk - Siblings Key- siblings key
    */
-  addToSiblings(id, sK) {
+  addToSiblings(id: string, sK: string) {
     let selfIndex = 0;
 
     /**
@@ -138,22 +145,19 @@ class Generator {
   /**
    * Gets all element IDs Siblings in given node represented by sk.
    *
-   * @param {string} sk - sibling key
-   * @returns {string|Array<string>}
-   * @memberof Generator
+   * @param  sk - Siblings Key
    */
-  getElmBranch(sk) {
+  getElmBranch(sk: string): string | Array<string> {
     return this.branches[sk];
   }
 
   /**
    * Sets new branch for given key.
    *
-   * @param {string} sK - sibling key
-   * @param {string|Array<string>} branch - new branch
-   * @memberof Generator
+   * @param  sk - Siblings Key- sibling key
+   * @param branch - new branch
    */
-  setElmBranch(sK, branch) {
+  setElmBranch(sK: string, branch: string | Array<string>) {
     this.branches[sK] = branch;
   }
 
@@ -162,12 +166,10 @@ class Generator {
    *
    * Add element to branches.
    *
-   * @param {string} id - element id
-   * @param {number} depth - element depth
-   * @returns {Pointer} { order, keys }
-   * @memberof Generator
+   * @param id - element id
+   * @param depth - element depth
    */
-  getElmPointer(id, depth) {
+  getElmPointer(id: string, depth: number): Pointer {
     if (depth !== this.prevDepth) {
       this.initIndicators(depth);
     }
@@ -199,15 +201,13 @@ class Generator {
 
     this.indicator[depth] += 1;
 
-    /** @type {Keys} */
-    const keys = {
+    const keys: Keys = {
       sK: siblingsKey,
       pK: parentKey,
       chK: depth === 0 ? null : childrenKey,
     };
 
-    /** @type {Order} */
-    const order = {
+    const order: Order = {
       self: selfIndex,
       parent: parentIndex,
     };

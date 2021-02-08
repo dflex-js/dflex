@@ -1,5 +1,5 @@
 {
-  "include": ["src"],
+  "include": ["src", "../store", "../coreInstance", "../draggable"],
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "emitDeclarationOnly": true,

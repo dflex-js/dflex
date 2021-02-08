@@ -1,15 +1,22 @@
 /* eslint-disable no-nested-ternary */
-import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
+
 import Base from "./Base";
 
 class Draggable extends Base {
-  constructor(elementInstance, clickCoordinates, opts) {
-    super(elementInstance, clickCoordinates, opts);
+  /**
+   * Creates an instance of Draggable.
+   *
+   * @param {import("packages/store/src/Store").ElmTree} elmTree
+   * @param {import("packages/draggable/src/AbstractDraggable").MouseCoordinates} initCoordinates
+   * @memberof Draggable
+   */
+  constructor(elmTree, initCoordinates) {
+    super(elmTree, initCoordinates);
 
-    const { x, y } = clickCoordinates;
+    const { x, y } = initCoordinates;
 
-    this.innerOffsetX = x - this[DRAGGED_ELM].currentLeft;
-    this.innerOffsetY = y - this[DRAGGED_ELM].currentTop;
+    this.innerOffsetX = x - this.draggedElm.currentLeft;
+    this.innerOffsetY = y - this.draggedElm.currentTop;
 
     this.tempOffset = {
       currentLeft: 0,
@@ -190,17 +197,17 @@ class Draggable extends Base {
        * dragged depends on extra instance to float in layout that is not related to element
        * instance.
        */
-      const { translateX, translateY } = this[DRAGGED_ELM];
+      const { translateX, translateY } = this.draggedElm;
 
       this.draggedStyleRef.transform = `translate(${translateX}px,${translateY}px)`;
 
       return;
     }
 
-    this[DRAGGED_ELM].setCurrentOffset();
+    this.draggedElm.setCurrentOffset();
 
     const draggedDirection =
-      this.tempIndex < this[DRAGGED_ELM].order.self ? -1 : 1;
+      this.tempIndex < this.draggedElm.order.self ? -1 : 1;
 
     /**
      * Move to new droppable position.
@@ -209,7 +216,7 @@ class Draggable extends Base {
      * related to mouse dragging. Instead, we want to translate to droppable
      * element that is replaced by dragged.
      */
-    this[DRAGGED_ELM].setYPosition(
+    this.draggedElm.setYPosition(
       this.siblingsList,
       draggedDirection,
       this.numberOfElementsTransformed * topDifference,

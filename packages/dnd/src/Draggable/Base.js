@@ -1,8 +1,7 @@
-import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
 import AbstractDraggable from "@dflex/draggable/src/AbstractDraggable";
 import store from "../DnDStore";
 
-import { ACTIVE_PARENT } from "../../constants.json";
+/** @typedef {import("packages/coreInstance/src/CoreInstance").FullCoreElm} FullCoreElm */
 
 /**
  * Base element.
@@ -16,17 +15,18 @@ class Base extends AbstractDraggable {
   /**
    * Creates an instance of Base.
    *
-   * @param {Object} elementInstance
+   * @param {import("packages/store/src/Store").ElmTree} elmTree
+   * @param {import("packages/draggable/src/AbstractDraggable").MouseCoordinates} initCoordinates
    * @memberof Base
    */
-  constructor(elementInstance, clickCoordinates, opts) {
+  constructor(elmTree, initCoordinates) {
     const {
       element,
       parent,
       branches: { siblings, parents },
-    } = elementInstance;
+    } = elmTree;
 
-    super(element, clickCoordinates, opts);
+    super(element, initCoordinates);
 
     const { order } = element;
 
@@ -47,12 +47,12 @@ class Base extends AbstractDraggable {
       dragged: {},
     };
 
-    this.checkThresholds(this[DRAGGED_ELM]);
+    this.checkThresholds();
 
     /**
      * Init max direction for position
      */
-    this.setThreshold(this[DRAGGED_ELM], false);
+    this.setThreshold(this.draggedElm, false);
 
     this.setIsSingleton(siblings);
 
@@ -64,6 +64,7 @@ class Base extends AbstractDraggable {
   /**
    * Check if dragged has no siblings and then set the related flag.
    *
+   * @param {string | string[]} siblings
    * @memberof Base
    */
   setIsSingleton(siblings) {
@@ -79,6 +80,7 @@ class Base extends AbstractDraggable {
    * Check if dragged has no parent and then set the related operations
    * accordingly.
    *
+   * @param {FullCoreElm} parent
    * @memberof Base
    */
   setIsOrphan(parent) {
@@ -110,6 +112,8 @@ class Base extends AbstractDraggable {
    *
    * maxDirection = current position + droppable-allowed spaces
    *
+   * @param {FullCoreElm} droppable
+   * @param {boolean} isParent
    * @memberof Base
    */
   setThreshold(droppable, isParent) {
@@ -120,7 +124,7 @@ class Base extends AbstractDraggable {
         vertical: { twoThirds, third },
         horizontal,
       },
-    } = this[DRAGGED_ELM];
+    } = this.draggedElm;
 
     const { currentLeft, currentTop, id } = droppable;
 
@@ -200,10 +204,10 @@ class Base extends AbstractDraggable {
      * Not initiating thresholdOffset for all coreInstances. Only ones which
      * dragged will be initiated.
      */
-    if (!this[DRAGGED_ELM].thresholdOffset) {
+    if (!this.draggedElm.thresholdOffset) {
       const {
         offset: { width, height },
-      } = this[DRAGGED_ELM];
+      } = this.draggedElm;
 
       /**
        * Calculates thresholdOffset only for dragged element.
@@ -212,7 +216,7 @@ class Base extends AbstractDraggable {
        * two-thirds of the dragged is out, then trigger isOut whether it is out
        * position or out parent.
        */
-      this[DRAGGED_ELM].thresholdOffset = {
+      this.draggedElm.thresholdOffset = {
         vertical: {
           twoThirds: Math.ceil((2 / 3) * height),
           third: Math.ceil((1 / 3) * height),
@@ -230,7 +234,7 @@ class Base extends AbstractDraggable {
    * @memberof Base
    */
   addParentAsTransformed() {
-    const { id } = this[ACTIVE_PARENT];
+    const { id } = this.activeParent;
 
     /**
      * Avoid adding same parents more than once using sets.
@@ -241,7 +245,7 @@ class Base extends AbstractDraggable {
   /**
    * Assigns new ACTIVE_PARENT: parent who contains dragged
    *
-   * @param {CoreInstance} coreInstance
+   * @param {FullCoreElm} coreInstance
    * @memberof Base
    */
   assignActiveParent(coreInstance) {
@@ -249,7 +253,7 @@ class Base extends AbstractDraggable {
      * Assign instance ACTIVE_PARENT which represents droppable. Then
      * assign owner parent so we have from/to.
      */
-    this[ACTIVE_PARENT] = coreInstance;
+    this.activeParent = coreInstance;
 
     /**
      * Add flag for undo method so we can check which  parent is being
@@ -267,7 +271,7 @@ class Base extends AbstractDraggable {
     // if (false) {
     //   const {
     //     keys: { chK },
-    //   } = this[ACTIVE_PARENT];
+    //   } = this.activeParent;
 
     //   this.siblingsList = store.getElmById(chK);
     // }

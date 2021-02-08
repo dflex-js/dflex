@@ -1,5 +1,3 @@
-import { DRAGGED_ELM } from "@dflex/draggable/constants.json";
-
 import store from "../DnDStore";
 import Droppable from "./Droppable";
 

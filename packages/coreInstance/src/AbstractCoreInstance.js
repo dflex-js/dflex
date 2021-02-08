@@ -6,8 +6,6 @@
  * @property {string} id
  * @property {number} depth
  * @property {HTMLElement} ref
- * @property {Order} order
- * @property {Keys} keys
  * @property {number} translateY
  * @property {number} translateX
  */
