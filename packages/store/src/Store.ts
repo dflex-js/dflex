@@ -6,7 +6,7 @@ export interface ElmInstance {
   ref: HTMLElement;
 }
 
-interface ElmWIthPointer {
+export interface ElmWIthPointer {
   id: string;
   depth: number;
   order: any;

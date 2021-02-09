@@ -2,15 +2,15 @@ import Draggable from "./Draggable";
 import Droppable from "./Droppable";
 
 import store from "./DnDStore";
+import { MouseCoordinates } from "@dflex/draggable/src/AbstractDraggable";
 
 class DnD extends Droppable {
   /**
-   * Creates an instance of DnD.
-   * @param {string} id
-   * @param {import("packages/draggable/src/AbstractDraggable").MouseCoordinates} initCoordinates
-   * @memberof DnD
+   *
+   * @param id
+   * @param initCoordinates
    */
-  constructor(id, initCoordinates) {
+  constructor(id: string, initCoordinates: MouseCoordinates) {
     const elmTree = store.getElmTreeById(id);
 
     const draggable = new Draggable(elmTree, initCoordinates);

@@ -1,7 +1,8 @@
 /* eslint-disable no-param-reassign */
 
 import AbstractCoreInstance, { ElmInstance } from "./AbstractCoreInstance";
-import { Order } from "@dflex/dom-gen/src/Generator";
+import { Order, Keys } from "@dflex/dom-gen/src/Generator";
+import { ElmWIthPointer } from "@dflex/store/src/Store";
 
 type BranchELmOrder = string[];
 
@@ -47,8 +48,11 @@ class CoreInstance extends AbstractCoreInstance {
   currentLeft: number;
 
   order: Order;
+  keys: Keys;
 
-  constructor(element: ElmInstance) {
+  constructor(elementWithPointer: ElmWIthPointer) {
+    const { order, keys, ...element } = elementWithPointer;
+
     super(element);
 
     this.prevTranslateY = [];
@@ -72,7 +76,8 @@ class CoreInstance extends AbstractCoreInstance {
       this.setCurrentOffset();
     }
 
-    this.order = { self: 0, parent: 0 };
+    this.order = order;
+    this.keys = keys;
   }
 
   /**

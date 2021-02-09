@@ -1,6 +1,7 @@
 /* eslint-disable no-nested-ternary */
 
 import Base from "./Base";
+import { MouseCoordinates } from "@dflex/draggable/src/AbstractDraggable";
 
 class Draggable extends Base {
   /**
@@ -10,7 +11,7 @@ class Draggable extends Base {
    * @param {import("packages/draggable/src/AbstractDraggable").MouseCoordinates} initCoordinates
    * @memberof Draggable
    */
-  constructor(elmTree, initCoordinates) {
+  constructor(elmTree, initCoordinates: MouseCoordinates) {
     super(elmTree, initCoordinates);
 
     const { x, y } = initCoordinates;
