@@ -8,7 +8,8 @@ import { ElmInstance } from "packages/store/src/Store";
 // const handlers = ["onDragOver", "onDragLeave"];
 
 class DnDStoreImp extends Store<CoreInstance> {
-  tracker: typeof Tracker;
+  // TODO: is this right?
+  tracker: Tracker = new Tracker();
 
   /**
    *  Register DnD element.
