@@ -3,7 +3,7 @@ import genKey from "./utils";
 /**
  * Element unique keys in DOM tree.
  */
-type Keys = {
+export type Keys = {
   sK: string;
   pK: string;
   chK: string | null;
@@ -12,7 +12,7 @@ type Keys = {
 /**
  * Element order in its branch & higher branch
  */
-type Order = {
+export type Order = {
   self: number;
   parent: number;
 };
@@ -20,7 +20,7 @@ type Order = {
 /**
  * Generated element pointer
  */
-type Pointer = {
+export type Pointer = {
   keys: Keys;
   order: Order;
 };

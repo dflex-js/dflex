@@ -1,27 +1,9 @@
 /* eslint-disable no-param-reassign */
 
-import AbstractCoreInstance from "./AbstractCoreInstance";
+import AbstractCoreInstance, { ElmInstance } from "./AbstractCoreInstance";
+import { Order } from "@dflex/dom-gen/src/Generator";
 
-/** @typedef {import("packages/store/src/Store").ElmInstance} ElmInstance */
-
-/** @typedef {import("packages/dom-gen/src/Generator").Order} Order */
-/** @typedef {import("packages/dom-gen/src/Generator").Keys} Keys */
-
-/**
- * @typedef {Object} FullCoreElm - Element with essentials to be dragged.
- * @property {string} id
- * @property {number} depth
- * @property {HTMLElement} ref
- * @property {Order} order
- * @property {Keys} keys
- * @property {number} translateY
- * @property {number} translateX
- * @property {Function} transformElm
- */
-
-/**
- * @typedef {Array<string>} BranchELmOrder
- */
+type BranchELmOrder = string[];
 
 /**
  * Why storing index here? when it's already sorted in order?
@@ -49,26 +31,26 @@ import AbstractCoreInstance from "./AbstractCoreInstance";
  *
  * To connect element with parents by knowing their locations.
  */
-/**
- *
- *
- * @class CoreInstance
- * @extends {AbstractCoreInstance}
- */
+
 class CoreInstance extends AbstractCoreInstance {
-  /**
-   * Creates an instance of CoreInstance.
-   *
-   * @param {ElmInstance} element
-   * @memberof CoreInstance
-   */
-  constructor(element) {
+  offset: {
+    height: number;
+    width: number;
+    left: number;
+    top: number;
+  };
+
+  /** Store history of Y-transition according to unique ID. */
+  prevTranslateY: { ID: string; translateY: number }[];
+
+  currentTop: number;
+  currentLeft: number;
+
+  order: Order;
+
+  constructor(element: ElmInstance) {
     super(element);
 
-    /**
-     * Store history of Y-transition according to unique ID.
-     *
-     * @type {Array<{ID: string, translateY:number}>} */
     this.prevTranslateY = [];
 
     this.offset = {
@@ -90,7 +72,6 @@ class CoreInstance extends AbstractCoreInstance {
       this.setCurrentOffset();
     }
 
-    /** @type {import("packages/dom-gen/src/Generator").Order} */
     this.order = { self: 0, parent: 0 };
   }
 
@@ -100,8 +81,6 @@ class CoreInstance extends AbstractCoreInstance {
    * idle element because it's costly.
    *
    * So, basically any working element in DnD should be initiated first.
-   *
-   * @memberof CoreInstance
    */
   initOffset() {
     const { height, width, left, top } = this.ref.getBoundingClientRect();
@@ -120,9 +99,6 @@ class CoreInstance extends AbstractCoreInstance {
     };
   }
 
-  /**
-   * @memberof CoreInstance
-   */
   setCurrentOffset() {
     const { left, top } = this.offset;
     /**
@@ -134,21 +110,16 @@ class CoreInstance extends AbstractCoreInstance {
     this.currentLeft = left + this.translateX;
   }
 
-  /**
-   * @memberof CoreInstance
-   */
   transformElm() {
     this.ref.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
   }
 
   /**
-   * Update element index in order  branch
+   *  Update element index in order  branch
    *
-   * @param {number} i - index
-   * @return {{oldIndex:number, newIndex:number}}
-   * @memberof CoreInstance
+   * @param i - index
    */
-  updateIndex(i) {
+  updateIndex(i: number) {
     const { self: oldIndex } = this.order;
 
     const newIndex = oldIndex + i;
@@ -159,14 +130,17 @@ class CoreInstance extends AbstractCoreInstance {
   }
 
   /**
-   * Updates index locally and in store.
+   *  Updates index locally and in store.
    *
-   * @param {BranchELmOrder} branchIDsOrder
-   * @param {number} inc - increment number
-   * @param {boolean} [isShuffle=true] don't clear for last element.
-   * @memberof CoreInstance
+   * @param branchIDsOrder
+   * @param inc - increment number
+   * @param isShuffle
    */
-  updateIDsOrder(branchIDsOrder, inc, isShuffle) {
+  updateIDsOrder(
+    branchIDsOrder: BranchELmOrder,
+    inc: number,
+    isShuffle: boolean
+  ) {
     const { oldIndex, newIndex } = this.updateIndex(inc);
 
     /**
@@ -182,13 +156,12 @@ class CoreInstance extends AbstractCoreInstance {
   }
 
   /**
-   * Set a new translate position and store the old one.
+   *  Set a new translate position and store the old one.
    *
-   * @param {number} topSpace
-   * @param {string?} operationID - Only if moving to a new position.
-   * @memberof CoreInstance
+   * @param topSpace
+   * @param operationID  - Only if moving to a new position.
    */
-  seTranslate(topSpace, operationID) {
+  seTranslate(topSpace: number, operationID?: string) {
     this.currentTop += topSpace;
 
     if (operationID) {
@@ -216,19 +189,18 @@ class CoreInstance extends AbstractCoreInstance {
    * position but when updating last element the array is ready and done we need
    * to update one position only so don't clear previous.
    *
-   * @param {BranchELmOrder} iDsInOrder
-   * @param {number} sign - (+1/-1)
-   * @param {number} topSpace - space between dragged and the immediate next element.
-   * @param {number} [vIncrement=1] - number of passed elements.
-   * @param {boolean} [isShuffle=true]
-   * @param {string?} operationID - Unique ID used to store translate history
-   * @memberof CoreInstance
+   * @param iDsInOrder
+   * @param sign - (+1/-1)
+   * @param topSpace - space between dragged and the immediate next element.
+   * @param operationID - A unique ID used to store translate history
+   * @param vIncrement - the number of passed elements.
+   * @param isShuffle
    */
   setYPosition(
-    iDsInOrder,
-    sign,
-    topSpace,
-    operationID,
+    iDsInOrder: BranchELmOrder,
+    sign: number,
+    topSpace: number,
+    operationID: string,
     vIncrement = 1,
     isShuffle = true
   ) {
@@ -240,10 +212,9 @@ class CoreInstance extends AbstractCoreInstance {
   /**
    * Roll back element position vertically(y).
    *
-   * @param {string} operationID
-   * @memberof CoreInstance
+   * @param operationID
    */
-  rollYBack(operationID) {
+  rollYBack(operationID: string) {
     if (
       this.prevTranslateY.length === 0 ||
       this.prevTranslateY[this.prevTranslateY.length - 1].ID !== operationID
@@ -256,7 +227,7 @@ class CoreInstance extends AbstractCoreInstance {
 
     const increment = topSpace > 0 ? 1 : -1;
 
-    this.seTranslate(topSpace, null);
+    this.seTranslate(topSpace);
     this.updateIndex(increment);
   }
 }

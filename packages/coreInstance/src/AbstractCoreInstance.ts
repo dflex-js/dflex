@@ -1,8 +1,19 @@
 /**
+ *
+ */
+export interface ElmInstance {
+  ref: HTMLElement;
+
+  id: string;
+
+  depth: number;
+}
+
+/**
  * This is the link (bridge) between the Store and element actions/classes.
  * Abstract is essential for Draggable & extended Store.
  */
-class AbstractCoreInstance {
+class AbstractCoreInstance implements ElmInstance {
   ref: HTMLElement;
 
   id: string;
@@ -16,15 +27,7 @@ class AbstractCoreInstance {
   /**
    * Creates an instance of AbstractCoreInstance.
    */
-  constructor({
-    ref,
-    id,
-    depth,
-  }: {
-    ref: HTMLElement;
-    id: string;
-    depth: number;
-  }) {
+  constructor({ ref, id, depth }: ElmInstance) {
     this.ref = ref;
     this.id = id;
     this.depth = depth;
