@@ -1,8 +1,5 @@
 import Generator from "@dflex/dom-gen/src";
 
-/** @typedef {import("packages/dom-gen/src/Generator").Order} Order */
-/** @typedef {import("packages/dom-gen/src/Generator").Keys} Keys */
-
 interface ElmInstance {
   id: string;
   depth: number;
@@ -40,6 +37,8 @@ class Store<T> {
     [id: string]: T | ElmWIthPointer;
   };
 
+  DOMGen: Generator;
+
   constructor() {
     this.registry = {};
 
@@ -50,6 +49,8 @@ class Store<T> {
    * Delete element from the registry. Should be called only when element is
    * unmounted and expected to return with different positions only. Otherwise,
    * call `detachElmRef.`
+   *
+   * @param id
    */
   deleteElm(id: string) {
     const { [id]: oldRecord, ...rest } = this.registry;
@@ -60,6 +61,9 @@ class Store<T> {
   /**
    * Mutate elmInstance into CustomInstance then add the new object to registry
    * by id.
+   *
+   * @param element
+   * @param CustomInstance
    */
   register(element: ElmInstance, CustomInstance?: Class<T>) {
     const { id, depth, ref } = element;
@@ -78,6 +82,8 @@ class Store<T> {
 
   /**
    * Gets element from registry by Id.
+   *
+   * @param id
    */
   getElmById(id: string) {
     return this.registry[id];
@@ -85,6 +91,8 @@ class Store<T> {
 
   /**
    * Gets all element IDs Siblings in given node represented by sibling key.
+   *
+   * @param ky
    */
   getElmBranchByKey(ky: string): string | Array<string> {
     return this.DOMGen.getElmBranch(ky);
