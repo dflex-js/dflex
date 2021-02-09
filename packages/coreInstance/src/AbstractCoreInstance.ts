@@ -1,13 +1,4 @@
-/**
- *
- */
-export interface ElmInstance {
-  ref: HTMLElement;
-
-  id: string;
-
-  depth: number;
-}
+import { ElmInstance } from "@dflex/store/src/Store";
 
 /**
  * This is the link (bridge) between the Store and element actions/classes.

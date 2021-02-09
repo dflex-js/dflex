@@ -1,15 +1,14 @@
-/* eslint-disable tree-shaking/no-side-effects-in-initialization */
+import Store, { ElmInstance } from "@dflex/store/src/Store";
 import AbstractCoreInstance from "@dflex/core-instance/src/AbstractCoreInstance";
-import Store from "@dflex/store/src/Store";
 
-class DraggableStoreImp extends Store {
+class DraggableStoreImp extends Store<AbstractCoreInstance> {
   /**
    * Register element for Draggable store
    *
    * @param {ElmInstance} element
    * @memberof DraggableStoreImp
    */
-  register(element) {
+  register(element: ElmInstance) {
     super.register(element, AbstractCoreInstance);
   }
 }

@@ -1,6 +1,6 @@
 import Generator from "@dflex/dom-gen/src";
 
-interface ElmInstance {
+export interface ElmInstance {
   id: string;
   depth: number;
   ref: HTMLElement;

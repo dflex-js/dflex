@@ -1,13 +1,9 @@
-/**
- * @typedef {object} MouseCoordinates
- * @property {number} x - X Coordinates
- * @property {number} y - Y Coordinates
- */
+import AbstractCoreInstance from "packages/coreInstance/src/AbstractCoreInstance";
 
-/** @typedef {import("packages/dom-gen/src/Generator").Order} Order */
-/** @typedef {import("packages/dom-gen/src/Generator").Keys} Keys */
-
-/** @typedef  {import("packages/coreInstance/src/AbstractCoreInstance").AbstractCoreElm} AbstractCoreElm */
+export interface MouseCoordinates {
+  x: number;
+  y: number;
+}
 
 const draggedStyleProps = [
   {
@@ -17,23 +13,42 @@ const draggedStyleProps = [
   },
 ];
 
-/**
- * Abstract Draggable. Shared class with Draggable & DnD.
- *
- * @class AbstractDraggable
- */
-
 class AbstractDraggable {
+  draggedElm: AbstractCoreInstance;
+
+  draggedStyleRef: CSSStyleDeclaration;
+
+  /**
+   * When dragging start, element shouldn't jump from its translate. So, we
+   * calculate offset that make translate X,Y start from zero:
+   *  goToX = x + this.outerOffsetX.
+   *  goToY = y + this.outerOffsetY.
+   *
+   * goToX and goToY both should be zero with first click. Starts with simple
+   * equating: initX = X. Taking into considerations translate value.
+   *
+   */
+  outerOffsetX: number;
+  outerOffsetY: number;
+
+  tempTranslate: {
+    x: number;
+    y: number;
+  };
+
+  draggedStyle: typeof draggedStyleProps;
+
   /**
    * Creates an instance of AbstractDraggable.
    * Works Only on dragged element level.
    *
-   * @param {AbstractCoreElm}  abstractCoreElm - Element with Pointer & Abstract Core Instance
-   * @param {MouseCoordinates} initCoordinates
-   *
-   * @memberof AbstractDraggable
+   * @param abstractCoreElm
+   * @param initCoordinates
    */
-  constructor(abstractCoreElm, { x: initX, y: initY }) {
+  constructor(
+    abstractCoreElm: AbstractCoreInstance,
+    { x: initX, y: initY }: MouseCoordinates
+  ) {
     /**
      * Assign instance for dragged.
      */
@@ -48,16 +63,6 @@ class AbstractDraggable {
 
     this.draggedStyleRef = draggedStyle;
 
-    /**
-     * When dragging start, element shouldn't jump from its translate. So, we
-     * calculate offset that make translate X,Y start from zero:
-     *  goToX = x + this.outerOffsetX.
-     *  goToY = y + this.outerOffsetY.
-     *
-     * goToX and goToY both should be zero with first click. Starts with simple
-     * equating: initX = X. Taking into considerations translate value.
-     *
-     */
     this.outerOffsetX = -initX + translateX;
     this.outerOffsetY = -initY + translateY;
 
@@ -75,10 +80,9 @@ class AbstractDraggable {
    * Triggers twice. Once when constructor is initiated, the other when drag is
    * ended. It adds/removes style.
    *
-   * @param {boolean} isActive - is dragged operation active or it is ended.
-   * @memberof AbstractDraggable
+   * @param isActive - is dragged operation active or it is ended.
    */
-  setDragged(isActive) {
+  setDragged(isActive: boolean) {
     if (isActive) {
       this.draggedStyle.forEach(({ prop, dragValue }) => {
         // @ts-ignore
@@ -100,11 +104,10 @@ class AbstractDraggable {
    * Writes to draggedElmCurrentOffset in Transform class.
    * Set values to isDragged flags.
    *
-   * @param {number} x - mouse x coordinates
-   * @param {number} y - mouse y coordinates
-   * @memberof AbstractDraggable
+   * @param x - mouse x coordinates
+   * @param y - mouse y coordinates
    */
-  translate(x, y) {
+  translate(x: number, y: number) {
     /**
      * Calculates translate coordinates.
      *
