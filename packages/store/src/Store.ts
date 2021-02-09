@@ -34,7 +34,7 @@ type Class<T> = new (...args: any[]) => T;
 
 class Store<T> {
   registry: {
-    [id: string]: T | ElmWIthPointer;
+    [id: string]: T;
   };
 
   DOMGen: Generator;
@@ -65,7 +65,7 @@ class Store<T> {
    * @param element
    * @param CustomInstance
    */
-  register(element: ElmInstance, CustomInstance?: Class<T>) {
+  register(element: ElmInstance, CustomInstance: Class<T>) {
     const { id, depth, ref } = element;
 
     if (!ref) return;
@@ -74,10 +74,7 @@ class Store<T> {
 
     const coreElement = { id, depth, ref, order, keys };
 
-    this.registry[id] =
-      CustomInstance && typeof CustomInstance.constructor === "function"
-        ? new CustomInstance(coreElement)
-        : coreElement;
+    this.registry[id] = new CustomInstance(coreElement);
   }
 
   /**
