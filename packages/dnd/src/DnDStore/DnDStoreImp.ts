@@ -1,30 +1,21 @@
-import Store from "@dflex/store/src/Storeeeeeeee";
+import Store from "@dflex/store/src";
 import CoreInstance from "@dflex/core-instance/src";
 import Tracker from "./Tracker";
+import { ElmInstance } from "packages/store/src/Store";
 
 // function noop() {}
 
 // const handlers = ["onDragOver", "onDragLeave"];
 
-/**
- * @typedef {Object} FullCoreElm - Element with essentials to be dragged.
- * @property {string} id
- * @property {number} depth
- * @property {HTMLElement} ref
- * @property {number} translateY
- * @property {number} translateX
- * @property {Function} transformElm
- */
-
 class DnDStoreImp extends Store<CoreInstance> {
+  tracker: typeof Tracker;
+
   /**
-   * Register DnD element.
+   *  Register DnD element.
    *
-   * @param {import("packages/store/src/Store").ElmInstance} element
-   * @memberof DnDStoreImp
-   * @override
+   * @param element
    */
-  register(element) {
+  register(element: ElmInstance) {
     // const finalOpts = opts || {};
 
     // /**
@@ -42,34 +33,29 @@ class DnDStoreImp extends Store<CoreInstance> {
    * Reattach element reference.
    * This happens when element is unmounted from the screen and mounted again.
    *
-   * @param {string} id
-   * @param {HTMLElement} elmRef
-   * @memberof Store
+   * @param id
+   * @param elmRef
    */
-  reattachElmRef(id, elmRef) {
+  reattachElmRef(id: string, elmRef: HTMLElement) {
     super.registry[id].ref = elmRef;
-    super.registry[id].dd = "";
   }
 
   /**
    * Detach element reference.
    * This happens when element is unmounted from the screen.
    *
-   * @param {string} id
-   * @memberof Store
+   * @param id
    */
-  detachElmRef(id) {
+  detachElmRef(id: string) {
     this.registry[id].ref = null;
   }
 
   /**
    * Gets element connections instance for a given id.
    *
-   * @param {string} id
-   * @returns {ElmTree}
-   * @memberof Store
+   * @param id
    */
-  getElmTreeById(id) {
+  getElmTreeById(id: string) {
     const element = this.getElmById(id);
 
     const {

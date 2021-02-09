@@ -1,9 +1,6 @@
-/**
- *
- *
- * @class Tracker
- */
 class Tracker {
+  travelID: number;
+
   /**
    * Creates an instance of Tracker.
    *
@@ -15,9 +12,6 @@ class Tracker {
 
   /**
    * Increment travels and return the last one.
-   *
-   * @return {number}
-   * @memberof Tracker
    */
   newTravel() {
     this.travelID += 1;
