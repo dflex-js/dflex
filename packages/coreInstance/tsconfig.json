@@ -1,9 +1,9 @@
 {
-  "include": ["src", "../store", "../coreInstance"],
+  "include": ["src", "../store"],
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "composite": true,
-    "rootDir": "./src",
     "outDir": "./lib"
-  }
+  },
+  "references": [{ "path": "../store" }]
 }

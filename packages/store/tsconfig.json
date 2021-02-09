@@ -3,7 +3,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "composite": true,
-    "rootDir": "./src",
     "outDir": "./lib"
-  }
+  },
+  "references": [{ "path": "../dom-gen" }]
 }

@@ -1,8 +1,9 @@
 {
-  "include": ["src"],
+  "include": ["src", "../coreInstance"],
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "emitDeclarationOnly": true,
-    "outDir": "types"
-  }
+    "composite": true,
+    "outDir": "./lib"
+  },
+  "references": [{ "path": "../coreInstance" }]
 }
