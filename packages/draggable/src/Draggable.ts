@@ -1,5 +1,6 @@
 import store from "./DraggableStoreImp";
-import AbstractDraggable, { MouseCoordinates } from "./AbstractDraggable";
+import AbstractDraggable from "./AbstractDraggable";
+import { MouseCoordinates } from "./types";
 
 class Draggable extends AbstractDraggable {
   /**
@@ -20,14 +21,14 @@ class Draggable extends AbstractDraggable {
    * @param x
    * @param y
    */
-  dragAt(x: number, y: number) {
+  protected dragAt(x: number, y: number) {
     this.translate(x, y);
 
     this.draggedElm.translateX = this.tempTranslate.x;
     this.draggedElm.translateY = this.tempTranslate.y;
   }
 
-  endDragging() {
+  protected endDragging() {
     this.setDragged(false);
   }
 }

@@ -1,7 +1,9 @@
-import Store, { ElmInstance } from "@dflex/store/src/Store";
-import AbstractCoreInstance from "@dflex/core-instance/src/AbstractCoreInstance";
+import Store from "@dflex/store/src/Store";
+import AbstractCoreInstance from "packages/coreInstance/src/AbstractCoreInstance";
+import { AbstractCore } from "packages/coreInstance/src/types";
+import { ElmInstance } from "packages/store/src/types";
 
-class DraggableStoreImp extends Store<AbstractCoreInstance> {
+class DraggableStoreImp extends Store<AbstractCore> {
   /**
    * Register element for Draggable store
    *

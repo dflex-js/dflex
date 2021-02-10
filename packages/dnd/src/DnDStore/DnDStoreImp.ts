@@ -3,6 +3,15 @@ import CoreInstance from "@dflex/core-instance/src";
 import Tracker from "./Tracker";
 import { ElmInstance } from "packages/store/src/Store";
 
+export interface ElmTree {
+  element: CoreInstance;
+  parent: CoreInstance | null;
+  branches: {
+    siblings: string | string[];
+    parents: string | string[];
+  };
+}
+
 // function noop() {}
 
 // const handlers = ["onDragOver", "onDragLeave"];
@@ -28,6 +37,7 @@ class DnDStoreImp extends Store<CoreInstance> {
 
     this.tracker = new Tracker();
     super.register(element, CoreInstance);
+    // this.registry.l
   }
 
   /**
@@ -56,7 +66,7 @@ class DnDStoreImp extends Store<CoreInstance> {
    *
    * @param id
    */
-  getElmTreeById(id: string) {
+  getElmTreeById(id: string): ElmTree {
     const element = this.getElmById(id);
 
     const {

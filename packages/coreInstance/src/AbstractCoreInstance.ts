@@ -1,10 +1,11 @@
-import { ElmInstance } from "@dflex/store/src/Store";
+import { ElmInstance } from "packages/store/src/types";
+import { AbstractCore } from "./types";
 
 /**
  * This is the link (bridge) between the Store and element actions/classes.
  * Abstract is essential for Draggable & extended Store.
  */
-class AbstractCoreInstance implements ElmInstance {
+class AbstractCoreInstance implements AbstractCore {
   ref: HTMLElement;
 
   id: string;

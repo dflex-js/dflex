@@ -1,11 +1,12 @@
-import AbstractCoreInstance from "packages/coreInstance/src/AbstractCoreInstance";
+import { AbstractCore } from "packages/coreInstance/src/types";
+import {
+  AbstractDraggableInterface,
+  DraggedStyle,
+  MouseCoordinates,
+  TempTranslate,
+} from "./types";
 
-export interface MouseCoordinates {
-  x: number;
-  y: number;
-}
-
-const draggedStyleProps = [
+const draggedStyleProps: DraggedStyle = [
   {
     prop: "zIndex",
     dragValue: "99",
@@ -13,8 +14,8 @@ const draggedStyleProps = [
   },
 ];
 
-class AbstractDraggable {
-  draggedElm: AbstractCoreInstance;
+class AbstractDraggable implements AbstractDraggableInterface {
+  draggedElm: AbstractCore;
 
   draggedStyleRef: CSSStyleDeclaration;
 
@@ -31,12 +32,9 @@ class AbstractDraggable {
   outerOffsetX: number;
   outerOffsetY: number;
 
-  tempTranslate: {
-    x: number;
-    y: number;
-  };
+  tempTranslate: TempTranslate;
 
-  draggedStyle: typeof draggedStyleProps;
+  draggedStyle: DraggedStyle;
 
   /**
    * Creates an instance of AbstractDraggable.
@@ -46,7 +44,7 @@ class AbstractDraggable {
    * @param initCoordinates
    */
   constructor(
-    abstractCoreElm: AbstractCoreInstance,
+    abstractCoreElm: AbstractCore,
     { x: initX, y: initY }: MouseCoordinates
   ) {
     /**
@@ -82,7 +80,7 @@ class AbstractDraggable {
    *
    * @param isActive - is dragged operation active or it is ended.
    */
-  setDragged(isActive: boolean) {
+  protected setDragged(isActive: boolean) {
     if (isActive) {
       this.draggedStyle.forEach(({ prop, dragValue }) => {
         // @ts-ignore
@@ -107,7 +105,7 @@ class AbstractDraggable {
    * @param x - mouse x coordinates
    * @param y - mouse y coordinates
    */
-  translate(x: number, y: number) {
+  protected translate(x: number, y: number) {
     /**
      * Calculates translate coordinates.
      *

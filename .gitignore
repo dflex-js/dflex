@@ -8,7 +8,7 @@ build
 dist
 draft
 samples
-
+tsconfig.tsbuildinfo
 cypress/screenshots
 cypress/videos
 

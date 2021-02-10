@@ -1,8 +1,10 @@
 /* eslint-disable no-param-reassign */
 
-import AbstractCoreInstance, { ElmInstance } from "./AbstractCoreInstance";
-import { Order, Keys } from "@dflex/dom-gen/src/Generator";
-import { ElmWIthPointer } from "@dflex/store/src/Store";
+import { Keys, Order } from "packages/dom-gen/src/types";
+import { ElmWIthPointer } from "packages/store/src/types";
+
+import AbstractCoreInstance from "./AbstractCoreInstance";
+import { Offset, TransitionHistory } from "./types";
 
 type BranchELmOrder = string[];
 
@@ -33,16 +35,11 @@ type BranchELmOrder = string[];
  * To connect element with parents by knowing their locations.
  */
 
-class CoreInstance extends AbstractCoreInstance {
-  offset: {
-    height: number;
-    width: number;
-    left: number;
-    top: number;
-  };
+class CoreInstance extends AbstractCoreInstance implements CoreInstance {
+  offset: Offset;
 
   /** Store history of Y-transition according to unique ID. */
-  prevTranslateY: { ID: string; translateY: number }[];
+  prevTranslateY: TransitionHistory;
 
   currentTop: number;
   currentLeft: number;
@@ -87,7 +84,7 @@ class CoreInstance extends AbstractCoreInstance {
    *
    * So, basically any working element in DnD should be initiated first.
    */
-  initOffset() {
+  private initOffset() {
     const { height, width, left, top } = this.ref.getBoundingClientRect();
 
     /**
@@ -104,7 +101,7 @@ class CoreInstance extends AbstractCoreInstance {
     };
   }
 
-  setCurrentOffset() {
+  private setCurrentOffset() {
     const { left, top } = this.offset;
     /**
      * This offset related directly to translate Y and Y. It's isolated from
@@ -124,7 +121,7 @@ class CoreInstance extends AbstractCoreInstance {
    *
    * @param i - index
    */
-  updateIndex(i: number) {
+  private updateIndex(i: number) {
     const { self: oldIndex } = this.order;
 
     const newIndex = oldIndex + i;
@@ -141,7 +138,7 @@ class CoreInstance extends AbstractCoreInstance {
    * @param inc - increment number
    * @param isShuffle
    */
-  updateIDsOrder(
+  private updateIDsOrder(
     branchIDsOrder: BranchELmOrder,
     inc: number,
     isShuffle: boolean
@@ -166,7 +163,7 @@ class CoreInstance extends AbstractCoreInstance {
    * @param topSpace
    * @param operationID  - Only if moving to a new position.
    */
-  seTranslate(topSpace: number, operationID?: string) {
+  private seTranslate(topSpace: number, operationID?: string) {
     this.currentTop += topSpace;
 
     if (operationID) {

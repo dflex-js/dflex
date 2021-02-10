@@ -1,12 +1,4 @@
 {
-  "files": [],
-  // "references": [
-  //   { "path": "./packages/coreInstance" },
-  //   { "path": "./packages/dnd" },
-  //   { "path": "./packages/dom-gen" },
-  //   { "path": "./packages/draggable" },
-  //   { "path": "./packages/store" }
-  // ],
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
@@ -22,5 +14,12 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
-  }
+  },
+  "references": [
+    { "path": "./packages/coreInstance" },
+    { "path": "./packages/dnd" },
+    { "path": "./packages/dom-gen" },
+    { "path": "./packages/draggable" },
+    { "path": "./packages/store" }
+  ]
 }

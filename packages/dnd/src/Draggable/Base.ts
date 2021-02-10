@@ -1,25 +1,29 @@
-import AbstractDraggable from "@dflex/draggable/src/AbstractDraggable";
+import CoreInstance from "@dflex/coreInstance/src";
+import AbstractDraggable, {
+  MouseCoordinates,
+} from "@dflex/draggable/src/AbstractDraggable";
 import store from "../DnDStore";
-
-/** @typedef {import("packages/coreInstance/src/CoreInstance").FullCoreElm} FullCoreElm */
+import { ElmTree } from "../DnDStore/DnDStoreImp";
 
 /**
  * Base element.
  *
  * Creates draggedElm and activeParent and initializes thresholds.
- *
- *
- * @class Base
  */
 class Base extends AbstractDraggable {
-  /**
-   * Creates an instance of Base.
-   *
-   * @param {import("packages/store/src/Store").ElmTree} elmTree
-   * @param {import("packages/draggable/src/AbstractDraggable").MouseCoordinates} initCoordinates
-   * @memberof Base
-   */
-  constructor(elmTree, initCoordinates) {
+  tempIndex: number;
+  dragID: string;
+
+  parentsList: CoreInstance | null;
+  siblingsList;
+
+  thresholds;
+
+  isSingleton: boolean;
+  isOrphan: boolean;
+  isOutActiveParent: boolean;
+
+  constructor(elmTree: ElmTree, initCoordinates: MouseCoordinates) {
     const {
       element,
       parent,

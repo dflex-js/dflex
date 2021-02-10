@@ -1,29 +1,5 @@
+import { ELmBranch, Keys, Order, Pointer } from "./types";
 import genKey from "./utils";
-
-/**
- * Element unique keys in DOM tree.
- */
-export type Keys = {
-  sK: string;
-  pK: string;
-  chK: string | null;
-};
-
-/**
- * Element order in its branch & higher branch
- */
-export type Order = {
-  self: number;
-  parent: number;
-};
-
-/**
- * Generated element pointer
- */
-export type Pointer = {
-  keys: Keys;
-  order: Order;
-};
 
 /**
  * Generate keys to connect relations between DOM-elements depending on tree
@@ -47,7 +23,7 @@ class Generator {
    * accordingly.
    */
   branches: {
-    [keys: string]: Array<string> | string;
+    [keys: string]: ELmBranch;
   };
 
   prevDepth: number;
@@ -69,7 +45,7 @@ class Generator {
    *
    * @param dp - element depth
    */
-  initIndicators(dp: number) {
+  private initIndicators(dp: number) {
     /**
      * initiate self from -1 since self is incremented after the id is added so
      * it's children won't be confused about their parent indicator.
@@ -105,7 +81,7 @@ class Generator {
    *
    * @param  sk - Siblings Key- siblings key
    */
-  isElmSingleton(sK: string) {
+  private isElmSingleton(sK: string) {
     return this.branches[sK].constructor !== Array;
   }
 
@@ -115,7 +91,7 @@ class Generator {
    * @param id - element id
    * @param  sk - Siblings Key- siblings key
    */
-  addToSiblings(id: string, sK: string) {
+  private addToSiblings(id: string, sK: string) {
     let selfIndex = 0;
 
     /**
@@ -147,7 +123,7 @@ class Generator {
    *
    * @param  sk - Siblings Key
    */
-  getElmBranch(sk: string): string | Array<string> {
+  getElmBranch(sk: string): ELmBranch {
     return this.branches[sk];
   }
 
@@ -157,7 +133,7 @@ class Generator {
    * @param  sk - Siblings Key- sibling key
    * @param branch - new branch
    */
-  setElmBranch(sK: string, branch: string | Array<string>) {
+  setElmBranch(sK: string, branch: ELmBranch) {
     this.branches[sK] = branch;
   }
 
