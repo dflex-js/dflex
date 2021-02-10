@@ -1,24 +1,20 @@
 import Store from "@dflex/store/src";
 import CoreInstance from "@dflex/core-instance/src";
 import Tracker from "./Tracker";
-import { ElmInstance } from "packages/store/src/Store";
-
-export interface ElmTree {
-  element: CoreInstance;
-  parent: CoreInstance | null;
-  branches: {
-    siblings: string | string[];
-    parents: string | string[];
-  };
-}
+import { ElmInstance } from "packages/store/src/types";
+import { ElmTree } from "./types";
 
 // function noop() {}
 
 // const handlers = ["onDragOver", "onDragLeave"];
 
 class DnDStoreImp extends Store<CoreInstance> {
-  // TODO: is this right?
-  tracker: Tracker = new Tracker();
+  tracker: Tracker;
+
+  constructor() {
+    super();
+    this.tracker = new Tracker();
+  }
 
   /**
    *  Register DnD element.
@@ -35,9 +31,7 @@ class DnDStoreImp extends Store<CoreInstance> {
     //   if (typeof finalOpts[handler] !== "function") finalOpts[handler] = noop;
     // });
 
-    this.tracker = new Tracker();
     super.register(element, CoreInstance);
-    // this.registry.l
   }
 
   /**

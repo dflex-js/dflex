@@ -6,7 +6,7 @@ import { AbstractCore } from "./types";
  * Abstract is essential for Draggable & extended Store.
  */
 class AbstractCoreInstance implements AbstractCore {
-  ref: HTMLElement;
+  ref: HTMLElement | null;
 
   id: string;
 

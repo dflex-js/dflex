@@ -85,6 +85,7 @@ class CoreInstance extends AbstractCoreInstance implements CoreInstance {
    * So, basically any working element in DnD should be initiated first.
    */
   private initOffset() {
+    // @ts-ignore
     const { height, width, left, top } = this.ref.getBoundingClientRect();
 
     /**
@@ -113,7 +114,9 @@ class CoreInstance extends AbstractCoreInstance implements CoreInstance {
   }
 
   transformElm() {
-    this.ref.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
+    if (this.ref) {
+      this.ref.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
+    }
   }
 
   /**

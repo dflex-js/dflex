@@ -1,7 +1,7 @@
 import { Keys, Order } from "packages/dom-gen/src/types";
 
 export interface AbstractCore {
-  ref: HTMLElement;
+  ref: HTMLElement | null;
 
   id: string;
 
