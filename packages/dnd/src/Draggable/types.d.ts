@@ -1,4 +1,5 @@
 import { CoreInstanceInterface } from "packages/coreInstance/src/types";
+import { ELmBranch } from "packages/dom-gen/src/types";
 import {
   AbstractDraggableInterface,
   DraggedElm,
@@ -26,8 +27,8 @@ export interface DraggableDnDBase
   tempIndex: number;
   dragID: string;
 
-  parentsList: CoreInstanceInterface | null;
-  siblingsList;
+  parentsList: ELmBranch | null;
+  siblingsList: ELmBranch;
 
   thresholds: Thresholds;
 

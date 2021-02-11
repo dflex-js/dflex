@@ -46,16 +46,6 @@ class DnDStoreImp extends Store<CoreInstance> {
   }
 
   /**
-   * Detach element reference.
-   * This happens when element is unmounted from the screen.
-   *
-   * @param id
-   */
-  detachElmRef(id: string) {
-    this.registry[id].ref = null;
-  }
-
-  /**
    * Gets element connections instance for a given id.
    *
    * @param id

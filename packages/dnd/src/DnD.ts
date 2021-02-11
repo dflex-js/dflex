@@ -3,6 +3,7 @@ import Droppable from "./Droppable";
 
 import store from "./DnDStore";
 import { MouseCoordinates } from "packages/draggable/src/types";
+import { ElmTree } from "./DnDStore/types";
 
 class DnD extends Droppable {
   /**
@@ -11,7 +12,7 @@ class DnD extends Droppable {
    * @param initCoordinates
    */
   constructor(id: string, initCoordinates: MouseCoordinates) {
-    const elmCoreInstanceWithTree = store.getElmTreeById(id);
+    const elmCoreInstanceWithTree: ElmTree = store.getElmTreeById(id);
 
     const draggable = new Draggable(elmCoreInstanceWithTree, initCoordinates);
 

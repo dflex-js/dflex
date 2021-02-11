@@ -20,9 +20,10 @@ class Base
   tempIndex: number;
   dragID: string;
 
-  parentsList: CoreInstance | null;
-  siblingsList!: CoreInstance[];
-  activeParent: CoreInstance | null;
+  parentsList: ELmBranch;
+  siblingsList!: ELmBranch;
+
+  activeParent!: CoreInstanceInterface | null;
   setOfTransformedIds!: Set<string>;
   thresholds!: Thresholds;
 
@@ -55,7 +56,7 @@ class Base
      */
     this.thresholds = {
       parents: {},
-      // @ts-ignore
+      // @ts-expect-error
       dragged: {},
     };
 
@@ -218,21 +219,21 @@ class Base
    * unnecessary process the parent goes through it when it's flagged as
    * transformed.
    */
-  private addParentAsTransformed() {
-    const { id } = this.activeParent;
+  // private addParentAsTransformed() {
+  //   const { id } = this.activeParent;
 
-    /**
-     * Avoid adding same parents more than once using sets.
-     */
-    this.setOfTransformedIds.add(id);
-  }
+  //   /**
+  //    * Avoid adding same parents more than once using sets.
+  //    */
+  //   this.setOfTransformedIds.add(id);
+  // }
 
   /**
    * Assigns new ACTIVE_PARENT: parent who contains dragged
    *
    * @param element
    */
-  private assignActiveParent(element: CoreInstance | null) {
+  private assignActiveParent(element: CoreInstance) {
     /**
      * Assign instance ACTIVE_PARENT which represents droppable. Then
      * assign owner parent so we have from/to.

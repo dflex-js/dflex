@@ -110,7 +110,7 @@ class CoreInstance
     };
   }
 
-  private setCurrentOffset() {
+  setCurrentOffset() {
     const { left, top } = this.offset;
     /**
      * This offset related directly to translate Y and Y. It's isolated from

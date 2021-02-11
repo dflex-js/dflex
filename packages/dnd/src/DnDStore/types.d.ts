@@ -1,10 +1,11 @@
-import { CoreInstance } from "packages/coreInstance/src/types";
+import { CoreInstanceInterface } from "packages/coreInstance/src/types";
+import { ELmBranch } from "packages/dom-gen/src/types";
 
 export interface ElmTree {
-  element: CoreInstance;
-  parent: CoreInstance | null;
+  element: CoreInstanceInterface;
+  parent: CoreInstanceInterface | null;
   branches: {
-    siblings: string | string[];
-    parents: string | string[];
+    siblings: ELmBranch;
+    parents: ELmBranch;
   };
 }

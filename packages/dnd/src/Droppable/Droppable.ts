@@ -1,16 +1,25 @@
 import store from "../DnDStore";
+import { DraggableDnD } from "../Draggable/types";
 
 /**
  * Class includes all transformation methods related to droppable.
- *
- * @class Droppable
- * @extends {Draggable}
  */
 class Droppable {
-  constructor(draggable) {
+  draggable: DraggableDnD;
+  topDifference: number;
+  leftDifference: number;
+  effectedElemDirection: number;
+  isListLocked: boolean;
+  prevIsListLocked: boolean;
+  isOutStatusHorizontally: boolean;
+  droppableIndex: number;
+  isFoundBreakingPoint: boolean;
+
+  constructor(draggable: DraggableDnD) {
     this.draggable = draggable;
 
     this.topDifference = 0;
+    this.leftDifference = 0;
 
     /**
      * Elements effected by dragged direction.
@@ -23,6 +32,7 @@ class Droppable {
     this.isOutStatusHorizontally = false;
 
     this.droppableIndex = -1;
+    this.isFoundBreakingPoint = false;
   }
 
   /**
@@ -35,7 +45,7 @@ class Droppable {
     return this.draggable.tempIndex;
   }
 
-  setEffectedElemDirection(isUp) {
+  setEffectedElemDirection(isUp: boolean) {
     this.effectedElemDirection = isUp ? -1 : 1;
   }
 
@@ -46,7 +56,7 @@ class Droppable {
    * @param {CoreInstance} element
    * @memberof Droppable
    */
-  updateElement(id) {
+  updateElement(id: string) {
     const element = store.getElmById(id);
 
     /**
@@ -65,7 +75,7 @@ class Droppable {
       const { currentLeft: elmLeft, currentTop: elmTop } = element;
 
       const {
-        [DRAGGED_ELM]: { currentLeft: draggedLeft, currentTop: draggedTop },
+        draggedElm: { currentLeft: draggedLeft, currentTop: draggedTop },
       } = this.draggable;
 
       /**
@@ -124,11 +134,9 @@ class Droppable {
    * Compares the dragged offset with element offset and returns
    * true if element is matched.
    *
-   * @param {number} elmCurrentOffsetTop - element vertical offset (offsetTop)
-   * @returns {boolean} - true if isElemUnderDragged
-   * @memberof Droppable
+   * @param elmCurrentOffsetTop
    */
-  isElemUnderDragged(elmCurrentOffsetTop) {
+  isElemUnderDragged(elmCurrentOffsetTop: number) {
     /**
      * Element is Switchable when it's under dragged.
      */
@@ -159,8 +167,12 @@ class Droppable {
     return droppableIndex;
   }
 
-  isIDEligible2Move(id) {
-    return id && id !== this.draggable[DRAGGED_ELM].id;
+  /**
+   *
+   * @param id
+   */
+  isIDEligible2Move(id: string) {
+    return id && id !== this.draggable.draggedElm.id;
   }
 
   switchElement() {
@@ -174,7 +186,11 @@ class Droppable {
     }
   }
 
-  movePositionIfEligibleID(i) {
+  /**
+   *
+   * @param i - index
+   */
+  movePositionIfEligibleID(i: number) {
     const id = this.draggable.siblingsList[i];
 
     if (this.isIDEligible2Move(id)) {
@@ -191,13 +207,21 @@ class Droppable {
     }
   }
 
-  moveDown(to) {
+  /**
+   *
+   * @param to - index
+   */
+  moveDown(to: number) {
     for (let i = this.draggable.siblingsList.length - 1; i >= to; i -= 1) {
       this.movePositionIfEligibleID(i);
     }
   }
 
-  draggedOutPosition(y) {
+  /**
+   *
+   * @param y
+   */
+  draggedOutPosition(y: number) {
     this.draggable.setDraggedMovingDown(y);
 
     if (this.draggable.isDraggedLeavingFromTop()) {
@@ -265,12 +289,16 @@ class Droppable {
     this.prevIsListLocked = true;
   }
 
-  draggedIsComingIn(y) {
+  /**
+   *
+   * @param y
+   */
+  draggedIsComingIn(y: number) {
     /**
      * If tempIndex is zero, the dragged is coming from the top. So, move them
      * down all: to=0
      */
-    let to = 0;
+    let to: number | null = 0;
 
     /**
      * Otherwise, detect where it coming from and update tempIndex
@@ -313,10 +341,10 @@ class Droppable {
      * Now, resitting direction by figuring out if dragged settled up/dwn.
      */
     const isElmUp =
-      this.draggable.tempIndex > this.draggable[DRAGGED_ELM].order.self;
+      this.draggable.tempIndex > this.draggable.draggedElm.order.self;
     this.setEffectedElemDirection(isElmUp);
 
-    this.draggable.siblingsList[to] = this.draggable[DRAGGED_ELM].id;
+    this.draggable.siblingsList[to] = this.draggable.draggedElm.id;
   }
 
   /**
@@ -324,11 +352,10 @@ class Droppable {
    * Monitors dragged translate and called related methods. Which controls the
    * active and droppable method.
    *
-   * @param {number} x - mouse X coordinate
-   * @param {number} y - mouse Y coordinate
-   * @memberof Droppable
+   * @param x- mouse X coordinate
+   * @param y- mouse Y coordinate
    */
-  dragAt(x, y) {
+  dragAt(x: number, y: number) {
     this.draggable.dragAt(x, y);
 
     if (this.draggable.isSingleton) return;
