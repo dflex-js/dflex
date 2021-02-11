@@ -132,7 +132,7 @@ class Base
    * @param droppable
    * @param isParent
    */
-  protected setThreshold(droppable: CoreInstance, isParent: boolean) {
+  setThreshold(droppable: CoreInstanceInterface, isParent?: boolean) {
     const {
       thresholdOffset: {
         // @ts-ignore

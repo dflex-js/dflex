@@ -1,10 +1,11 @@
 import store from "../DnDStore";
 import { DraggableDnD } from "../Draggable/types";
+import { DroppableInterface } from "./types";
 
 /**
  * Class includes all transformation methods related to droppable.
  */
-class Droppable {
+class Droppable implements DroppableInterface {
   draggable: DraggableDnD;
   topDifference: number;
   leftDifference: number;
@@ -37,9 +38,6 @@ class Droppable {
 
   /**
    * Gets the temporary index of dragged before it occupies new position.
-   *
-   * @return {number}
-   * @memberof Droppable
    */
   getDraggedTempIndex() {
     return this.draggable.tempIndex;
@@ -53,8 +51,7 @@ class Droppable {
    * Updates element instance and calculates the required transform distance. It
    * invokes for each eligible element in the parent container.
    *
-   * @param {CoreInstance} element
-   * @memberof Droppable
+   * @param id
    */
   updateElement(id: string) {
     const element = store.getElmById(id);
@@ -113,12 +110,13 @@ class Droppable {
       this.draggable.setThreshold(element);
     }
 
-    element.onDragOver();
+    // element.onDragOver();
 
     /**
      * Start transforming process
      */
     element.setYPosition(
+      // @ts-expect-error
       this.draggable.siblingsList,
       this.effectedElemDirection,
       this.topDifference,
@@ -127,7 +125,7 @@ class Droppable {
       true
     );
 
-    element.onDragLeave();
+    // element.onDragLeave();
   }
 
   /**
@@ -344,6 +342,7 @@ class Droppable {
       this.draggable.tempIndex > this.draggable.draggedElm.order.self;
     this.setEffectedElemDirection(isElmUp);
 
+    // @ts-expect-error
     this.draggable.siblingsList[to] = this.draggable.draggedElm.id;
   }
 

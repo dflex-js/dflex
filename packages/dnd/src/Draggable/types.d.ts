@@ -35,6 +35,7 @@ export interface DraggableDnDBase
   isSingleton: boolean;
   isOrphan: boolean;
   isOutActiveParent: boolean;
+  setThreshold(droppable: CoreInstanceInterface, isParent?: boolean): void;
 }
 
 export interface DraggableDnD extends DraggableDnDBase {
@@ -48,4 +49,12 @@ export interface DraggableDnD extends DraggableDnDBase {
   isMovingDownPrev: boolean;
   isMovingDown: boolean;
   isOutHorizontal: boolean;
+  dragAt(x: number, y: number): void;
+  incNumOfElementsTransformed(): void;
+  setDraggedMovingDown(y: number): void;
+  toggleElementsTransformedInc(): void;
+  isDraggedOut(id?: string): boolean;
+  isDraggedVerticallyInsideList(): boolean;
+  isDraggedLeavingFromTop(): boolean;
+  isDraggedLeavingFromEnd(): boolean;
 }
