@@ -55,10 +55,17 @@ class Base
      */
     this.thresholds = {
       parents: {},
+      // @ts-ignore
       dragged: {},
     };
 
-    this.checkThresholds();
+    /**
+     * Not initiating thresholdOffset for all coreInstances. Only ones which
+     * dragged will be initiated.
+     */
+    if (!this.draggedElm.thresholdOffset) {
+      this.draggedElm.setThreshold();
+    }
 
     /**
      * Init max direction for position
@@ -77,7 +84,7 @@ class Base
    *
    * @param siblings
    */
-  setIsSingleton(siblings: ELmBranch) {
+  private setIsSingleton(siblings: ELmBranch) {
     if (Array.isArray(siblings)) {
       this.isSingleton = false;
       this.siblingsList = siblings;
@@ -92,7 +99,7 @@ class Base
    *
    * @param parent
    */
-  setIsOrphan(parent: CoreInstance | null) {
+  private setIsOrphan(parent: CoreInstance | null) {
     /**
      * Not all elements have parents.
      */
@@ -124,12 +131,12 @@ class Base
    * @param droppable
    * @param isParent
    */
-  setThreshold(droppable: CoreInstance, isParent: boolean) {
-    // TODO: is this necessary to assign parent?
-
+  protected setThreshold(droppable: CoreInstance, isParent: boolean) {
     const {
       thresholdOffset: {
+        // @ts-ignore
         vertical: { twoThirds, third },
+        // @ts-ignore
         horizontal,
       },
     } = this.draggedElm;
@@ -207,42 +214,11 @@ class Base
   }
 
   /**
-   * Check thresholds availability and assign it to thresholds instance in
-   * dragging process.
-   */
-  checkThresholds() {
-    /**
-     * Not initiating thresholdOffset for all coreInstances. Only ones which
-     * dragged will be initiated.
-     */
-    if (!this.draggedElm.thresholdOffset) {
-      const {
-        offset: { width, height },
-      } = this.draggedElm;
-
-      /**
-       * Calculates thresholdOffset only for dragged element.
-       *
-       * Two-thirds of the dragged element's space for vertical and horizontal. If
-       * two-thirds of the dragged is out, then trigger isOut whether it is out
-       * position or out parent.
-       */
-      this.draggedElm.thresholdOffset = {
-        vertical: {
-          twoThirds: Math.ceil((2 / 3) * height),
-          third: Math.ceil((1 / 3) * height),
-        },
-        horizontal: Math.ceil((2 / 3) * width),
-      };
-    }
-  }
-
-  /**
    * Add parent id to setOfTransformedIds. The goal here, is to avoid any
    * unnecessary process the parent goes through it when it's flagged as
    * transformed.
    */
-  addParentAsTransformed() {
+  private addParentAsTransformed() {
     const { id } = this.activeParent;
 
     /**
@@ -256,7 +232,7 @@ class Base
    *
    * @param element
    */
-  assignActiveParent(element: CoreInstance | null) {
+  private assignActiveParent(element: CoreInstance | null) {
     /**
      * Assign instance ACTIVE_PARENT which represents droppable. Then
      * assign owner parent so we have from/to.

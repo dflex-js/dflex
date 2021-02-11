@@ -33,4 +33,14 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
   order: Order;
   keys: Keys;
   thresholdOffset?: ThresholdOffset;
+  setThreshold(): void;
+  setCurrentOffset(): void;
+  setYPosition(
+    iDsInOrder: BranchELmOrder,
+    sign: number,
+    topSpace: number,
+    operationID: string,
+    vIncrement = 1,
+    isShuffle = true
+  ): void;
 }

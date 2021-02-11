@@ -4,8 +4,7 @@ import { MouseCoordinates } from "packages/draggable/src/types";
 import Base from "./Base";
 
 import { ElmTree } from "../DnDStore/types";
-import { DraggableDnD, TempOffset } from "./types";
-import { CoreInstanceInterface } from "packages/coreInstance/src/types";
+import { DraggableDnD, TempOffset, Threshold } from "./types";
 
 class Draggable extends Base implements DraggableDnD {
   innerOffsetX: number;
@@ -17,6 +16,7 @@ class Draggable extends Base implements DraggableDnD {
   inc: number;
   isMovingDownPrev: boolean;
   isMovingDown: boolean;
+  isOutHorizontal: boolean;
 
   constructor(
     elmCoreInstanceWithTree: ElmTree,
@@ -47,8 +47,9 @@ class Draggable extends Base implements DraggableDnD {
     this.numberOfElementsTransformed = 0;
     this.inc = 1;
 
-    this.isMovingDownPrev = null;
+    this.isMovingDownPrev = false;
     this.isMovingDown = false;
+    this.isOutHorizontal = false;
   }
 
   /**
@@ -61,9 +62,10 @@ class Draggable extends Base implements DraggableDnD {
    * Note: these are the current offset related only to the dragging. When the
    * operation is done, different calculation will be set.
    *
-   * @memberof Draggable
+   * @param x
+   * @param y
    */
-  dragAt(x, y) {
+  dragAt(x: number, y: number) {
     this.translate(x, y);
 
     /**
@@ -73,14 +75,22 @@ class Draggable extends Base implements DraggableDnD {
     this.tempOffset.currentTop = y - this.innerOffsetY;
   }
 
-  isOutH($) {
+  /**
+   *
+   * @param $
+   */
+  isOutH($: Threshold) {
     return (
       this.tempOffset.currentLeft < $.maxLeft ||
       this.tempOffset.currentLeft > $.maxRight
     );
   }
 
-  isOutV($) {
+  /**
+   *
+   * @param $
+   */
+  isOutV($: Threshold) {
     return (
       this.tempOffset.currentTop < $.maxTop ||
       this.tempOffset.currentTop > $.maxBottom
@@ -90,11 +100,9 @@ class Draggable extends Base implements DraggableDnD {
   /**
    * Checks if dragged it out of its position or parent.
    *
-   * @param {this|this.parentThreshold[currentIndex]} $
-   * @returns {boolean} isOut
-   * @memberof Draggable
+   * @param id
    */
-  isDraggedOut(id) {
+  isDraggedOut(id?: string) {
     const { parents, dragged } = this.thresholds;
 
     const $ = id ? parents[id] : dragged;
@@ -118,9 +126,6 @@ class Draggable extends Base implements DraggableDnD {
 
   /**
    * Checks if dragged is the first child and going up.
-   *
-   * @returns {boolean}
-   * @memberof Draggable
    */
   isDraggedLeavingFromTop() {
     return this.tempIndex <= 0 && !this.isMovingDown;
@@ -128,9 +133,6 @@ class Draggable extends Base implements DraggableDnD {
 
   /**
    * Checks if dragged is the last child and going down.
-   *
-   * @returns {boolean}
-   * @memberof Draggable
    */
   isDraggedLeavingFromEnd() {
     return this.tempIndex >= this.siblingsList.length - 1 && this.isMovingDown;
@@ -156,7 +158,10 @@ class Draggable extends Base implements DraggableDnD {
     this.inc = 1;
   }
 
-  setDraggedMovingDown(y) {
+  /**
+   * @param y
+   */
+  setDraggedMovingDown(y: number) {
     this.isMovingDown = this.isOutHorizontal ? true : y > this.prevY;
 
     // no point assigning the same value.
@@ -182,14 +187,13 @@ class Draggable extends Base implements DraggableDnD {
     }
 
     this.numberOfElementsTransformed += this.inc;
-
-    // console.log(
-    //   "is this.numberOfElementsTransformed",
-    //   this.numberOfElementsTransformed
-    // );
   }
 
-  setDraggedPosition(topDifference) {
+  /**
+   *
+   * @param topDifference
+   */
+  setDraggedPosition(topDifference: number) {
     /**
      * In this case, the use clicked without making any move.
      */
@@ -237,7 +241,10 @@ class Draggable extends Base implements DraggableDnD {
     );
   }
 
-  endDragging(topDifference) {
+  /**
+   * @param topDifference
+   */
+  endDragging(topDifference: number) {
     this.setDragged(false);
 
     this.setDraggedPosition(topDifference);

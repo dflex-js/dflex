@@ -10,16 +10,14 @@ export interface TempOffset {
 }
 
 export interface Threshold {
-  [id: string]: {
-    maxBottom: number;
-    maxTop: number;
-    maxLeft: number;
-    maxRight: number;
-  };
+  maxBottom: number;
+  maxTop: number;
+  maxLeft: number;
+  maxRight: number;
 }
 
 export interface Thresholds {
-  parents: Threshold;
+  parents: { [id: string]: ThresholdContent };
   dragged: Threshold;
 }
 
@@ -48,4 +46,5 @@ export interface DraggableDnD extends DraggableDnDBase {
   inc: number;
   isMovingDownPrev: boolean;
   isMovingDown: boolean;
+  isOutHorizontal: boolean;
 }

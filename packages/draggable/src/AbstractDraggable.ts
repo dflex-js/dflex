@@ -13,7 +13,8 @@ const draggedStyleProps: DraggedStyle = [
     afterDragValue: null,
   },
 ];
-class AbstractDraggable<T extends AbstractCoreInterface> {
+class AbstractDraggable<T extends AbstractCoreInterface>
+  implements AbstractDraggableInterface<T> {
   draggedElm: T;
 
   draggedStyleRef: CSSStyleDeclaration;
