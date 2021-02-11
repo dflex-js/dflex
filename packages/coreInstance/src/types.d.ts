@@ -1,14 +1,10 @@
 import { Keys, Order } from "packages/dom-gen/src/types";
 
-export interface AbstractCore {
-  ref: HTMLElement | null;
-
+export interface AbstractCoreInterface {
+  ref: HTMLElement;
   id: string;
-
   depth: number;
-
   translateY: number;
-
   translateX: number;
 }
 
@@ -21,11 +17,20 @@ export interface Offset {
 
 export type TransitionHistory = { ID: string; translateY: number }[];
 
-export interface CoreInstance extends AbstractCore {
+export interface ThresholdOffset {
+  vertical: {
+    twoThirds: number;
+    third: number;
+  };
+  horizontal: number;
+}
+
+export interface CoreInstanceInterface extends AbstractCoreInterface {
   offset: Offset;
   prevTranslateY: TransitionHistory;
   currentTop: number;
   currentLeft: number;
   order: Order;
   keys: Keys;
+  thresholdOffset?: ThresholdOffset;
 }

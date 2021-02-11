@@ -1,27 +1,34 @@
 import CoreInstance from "@dflex/coreInstance/src";
-import AbstractDraggable, {
-  MouseCoordinates,
-} from "@dflex/draggable/src/AbstractDraggable";
+import AbstractDraggable from "@dflex/draggable/src/AbstractDraggable";
 import store from "../DnDStore";
-import { ElmTree } from "../DnDStore/DnDStoreImp";
+
+import { ELmBranch } from "packages/dom-gen/src/types";
+import { MouseCoordinates } from "packages/draggable/src/types";
+import { ElmTree } from "../DnDStore/types";
+
+import { DraggableDnDBase, Thresholds } from "./types";
+import { CoreInstanceInterface } from "packages/coreInstance/src/types";
 
 /**
  * Base element.
  *
  * Creates draggedElm and activeParent and initializes thresholds.
  */
-class Base extends AbstractDraggable {
+class Base
+  extends AbstractDraggable<CoreInstanceInterface>
+  implements DraggableDnDBase {
   tempIndex: number;
   dragID: string;
 
   parentsList: CoreInstance | null;
-  siblingsList;
+  siblingsList!: CoreInstance[];
+  activeParent: CoreInstance | null;
+  setOfTransformedIds!: Set<string>;
+  thresholds!: Thresholds;
 
-  thresholds;
-
-  isSingleton: boolean;
-  isOrphan: boolean;
-  isOutActiveParent: boolean;
+  isSingleton!: boolean;
+  isOrphan!: boolean;
+  isOutActiveParent!: boolean;
 
   constructor(elmTree: ElmTree, initCoordinates: MouseCoordinates) {
     const {
@@ -68,10 +75,9 @@ class Base extends AbstractDraggable {
   /**
    * Check if dragged has no siblings and then set the related flag.
    *
-   * @param {string | string[]} siblings
-   * @memberof Base
+   * @param siblings
    */
-  setIsSingleton(siblings) {
+  setIsSingleton(siblings: ELmBranch) {
     if (Array.isArray(siblings)) {
       this.isSingleton = false;
       this.siblingsList = siblings;
@@ -84,10 +90,9 @@ class Base extends AbstractDraggable {
    * Check if dragged has no parent and then set the related operations
    * accordingly.
    *
-   * @param {FullCoreElm} parent
-   * @memberof Base
+   * @param parent
    */
-  setIsOrphan(parent) {
+  setIsOrphan(parent: CoreInstance | null) {
     /**
      * Not all elements have parents.
      */
@@ -116,11 +121,10 @@ class Base extends AbstractDraggable {
    *
    * maxDirection = current position + droppable-allowed spaces
    *
-   * @param {FullCoreElm} droppable
-   * @param {boolean} isParent
-   * @memberof Base
+   * @param droppable
+   * @param isParent
    */
-  setThreshold(droppable, isParent) {
+  setThreshold(droppable: CoreInstance, isParent: boolean) {
     // TODO: is this necessary to assign parent?
 
     const {
@@ -140,7 +144,12 @@ class Base extends AbstractDraggable {
       } = droppable;
 
       if (!this.thresholds.parents[id]) {
-        this.thresholds.parents[id] = {};
+        this.thresholds.parents[id] = {
+          maxBottom: 0,
+          maxTop: 0,
+          maxLeft: 0,
+          maxRight: 0,
+        };
       }
 
       $ = this.thresholds.parents[id];
@@ -200,8 +209,6 @@ class Base extends AbstractDraggable {
   /**
    * Check thresholds availability and assign it to thresholds instance in
    * dragging process.
-   *
-   * @memberof Base
    */
   checkThresholds() {
     /**
@@ -234,8 +241,6 @@ class Base extends AbstractDraggable {
    * Add parent id to setOfTransformedIds. The goal here, is to avoid any
    * unnecessary process the parent goes through it when it's flagged as
    * transformed.
-   *
-   * @memberof Base
    */
   addParentAsTransformed() {
     const { id } = this.activeParent;
@@ -249,36 +254,20 @@ class Base extends AbstractDraggable {
   /**
    * Assigns new ACTIVE_PARENT: parent who contains dragged
    *
-   * @param {FullCoreElm} coreInstance
-   * @memberof Base
+   * @param element
    */
-  assignActiveParent(coreInstance) {
+  assignActiveParent(element: CoreInstance | null) {
     /**
      * Assign instance ACTIVE_PARENT which represents droppable. Then
      * assign owner parent so we have from/to.
      */
-    this.activeParent = coreInstance;
+    this.activeParent = element;
 
     /**
      * Add flag for undo method so we can check which  parent is being
      * transformed and which is not.
      */
     this.isOutActiveParent = false;
-
-    /**
-     * TODO: NEED TO BE UPDATED.
-     *
-     * In initiating we get siblingsList. But, when dragged is in another
-     * ACTIVE_PARENT we have different siblingsList now. siblingsList is
-     * children of new parent. Anyway, check if there no list, get us one.
-     */
-    // if (false) {
-    //   const {
-    //     keys: { chK },
-    //   } = this.activeParent;
-
-    //   this.siblingsList = store.getElmById(chK);
-    // }
   }
 }
 

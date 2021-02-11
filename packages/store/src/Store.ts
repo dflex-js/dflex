@@ -43,7 +43,7 @@ class Store<T> {
 
     const { order, keys } = this.DOMGen.getElmPointer(id, depth);
 
-    const coreElement = { id, depth, ref, order, keys };
+    const coreElement: ElmWIthPointer = { id, depth, ref, order, keys };
 
     // @ts-ignore
     this.registry[id] =

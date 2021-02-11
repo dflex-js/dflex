@@ -1,18 +1,28 @@
 /* eslint-disable no-nested-ternary */
 
+import { MouseCoordinates } from "packages/draggable/src/types";
 import Base from "./Base";
-import { MouseCoordinates } from "@dflex/draggable/src/AbstractDraggable";
 
-class Draggable extends Base {
-  /**
-   * Creates an instance of Draggable.
-   *
-   * @param {import("packages/store/src/Store").ElmTree} elmTree
-   * @param {import("packages/draggable/src/AbstractDraggable").MouseCoordinates} initCoordinates
-   * @memberof Draggable
-   */
-  constructor(elmTree, initCoordinates: MouseCoordinates) {
-    super(elmTree, initCoordinates);
+import { ElmTree } from "../DnDStore/types";
+import { DraggableDnD, TempOffset } from "./types";
+import { CoreInstanceInterface } from "packages/coreInstance/src/types";
+
+class Draggable extends Base implements DraggableDnD {
+  innerOffsetX: number;
+  innerOffsetY: number;
+  tempOffset: TempOffset;
+  prevX: number;
+  prevY: number;
+  numberOfElementsTransformed: number;
+  inc: number;
+  isMovingDownPrev: boolean;
+  isMovingDown: boolean;
+
+  constructor(
+    elmCoreInstanceWithTree: ElmTree,
+    initCoordinates: MouseCoordinates
+  ) {
+    super(elmCoreInstanceWithTree, initCoordinates);
 
     const { x, y } = initCoordinates;
 

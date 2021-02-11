@@ -16,7 +16,7 @@ class Tracker {
   newTravel() {
     this.travelID += 1;
 
-    return this.travelID;
+    return `${this.travelID}`;
   }
 }
 

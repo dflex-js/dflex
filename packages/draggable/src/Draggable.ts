@@ -1,8 +1,9 @@
 import store from "./DraggableStoreImp";
 import AbstractDraggable from "./AbstractDraggable";
 import { MouseCoordinates } from "./types";
+import { AbstractCoreInterface } from "packages/coreInstance/src/types";
 
-class Draggable extends AbstractDraggable {
+class Draggable extends AbstractDraggable<AbstractCoreInterface> {
   /**
    * Creates an instance of Draggable.
    * Works Only on dragged element level.

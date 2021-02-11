@@ -4,7 +4,12 @@ import { Keys, Order } from "packages/dom-gen/src/types";
 import { ElmWIthPointer } from "packages/store/src/types";
 
 import AbstractCoreInstance from "./AbstractCoreInstance";
-import { Offset, TransitionHistory } from "./types";
+import {
+  CoreInstanceInterface,
+  Offset,
+  TransitionHistory,
+  ThresholdOffset,
+} from "./types";
 
 type BranchELmOrder = string[];
 
@@ -35,7 +40,9 @@ type BranchELmOrder = string[];
  * To connect element with parents by knowing their locations.
  */
 
-class CoreInstance extends AbstractCoreInstance implements CoreInstance {
+class CoreInstance
+  extends AbstractCoreInstance
+  implements CoreInstanceInterface {
   offset: Offset;
 
   /** Store history of Y-transition according to unique ID. */
@@ -46,6 +53,8 @@ class CoreInstance extends AbstractCoreInstance implements CoreInstance {
 
   order: Order;
   keys: Keys;
+
+  thresholdOffset?: ThresholdOffset;
 
   constructor(elementWithPointer: ElmWIthPointer) {
     const { order, keys, ...element } = elementWithPointer;
@@ -85,7 +94,6 @@ class CoreInstance extends AbstractCoreInstance implements CoreInstance {
    * So, basically any working element in DnD should be initiated first.
    */
   private initOffset() {
-    // @ts-ignore
     const { height, width, left, top } = this.ref.getBoundingClientRect();
 
     /**
@@ -113,10 +121,31 @@ class CoreInstance extends AbstractCoreInstance implements CoreInstance {
     this.currentLeft = left + this.translateX;
   }
 
-  transformElm() {
-    if (this.ref) {
-      this.ref.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
+  setThreshold() {
+    if (!this.thresholdOffset) {
+      const {
+        offset: { width, height },
+      } = this;
+
+      /**
+       * Calculates thresholdOffset only when required.
+       *
+       * Two-thirds of the dragged element's space for vertical and horizontal. If
+       * two-thirds of the dragged is out, then trigger isOut whether it is out
+       * position or out parent.
+       */
+      this.thresholdOffset = {
+        vertical: {
+          twoThirds: Math.ceil((2 / 3) * height),
+          third: Math.ceil((1 / 3) * height),
+        },
+        horizontal: Math.ceil((2 / 3) * width),
+      };
     }
+  }
+
+  transformElm() {
+    this.ref.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
   }
 
   /**

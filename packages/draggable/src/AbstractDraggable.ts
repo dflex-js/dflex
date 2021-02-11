@@ -1,4 +1,4 @@
-import { AbstractCore } from "packages/coreInstance/src/types";
+import { AbstractCoreInterface } from "packages/coreInstance/src/types";
 import {
   AbstractDraggableInterface,
   DraggedStyle,
@@ -13,9 +13,8 @@ const draggedStyleProps: DraggedStyle = [
     afterDragValue: null,
   },
 ];
-
-class AbstractDraggable implements AbstractDraggableInterface {
-  draggedElm: AbstractCore;
+class AbstractDraggable<T extends AbstractCoreInterface> {
+  draggedElm: T;
 
   draggedStyleRef: CSSStyleDeclaration;
 
@@ -43,10 +42,7 @@ class AbstractDraggable implements AbstractDraggableInterface {
    * @param abstractCoreElm
    * @param initCoordinates
    */
-  constructor(
-    abstractCoreElm: AbstractCore,
-    { x: initX, y: initY }: MouseCoordinates
-  ) {
+  constructor(abstractCoreElm: T, { x: initX, y: initY }: MouseCoordinates) {
     /**
      * Assign instance for dragged.
      */

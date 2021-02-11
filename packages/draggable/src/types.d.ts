@@ -1,5 +1,7 @@
-import CoreInstance from "@dflex/coreInstance/src";
-import { AbstractCore } from "packages/coreInstance/src/types";
+import {
+  AbstractCoreInterface,
+  CoreInstanceInterface,
+} from "packages/coreInstance/src/types";
 
 export interface TempTranslate {
   x: number;
@@ -12,8 +14,8 @@ export type DraggedStyle = {
   afterDragValue: null;
 }[];
 
-export interface AbstractDraggableInterface {
-  draggedElm: AbstractCore | CoreInstance;
+export interface AbstractDraggableInterface<T extends AbstractCoreInterface> {
+  draggedElm: T;
 
   draggedStyleRef: CSSStyleDeclaration;
 

@@ -1,20 +1,16 @@
 import { ElmInstance } from "packages/store/src/types";
-import { AbstractCore } from "./types";
+import { AbstractCoreInterface } from "./types";
 
 /**
  * This is the link (bridge) between the Store and element actions/classes.
  * Abstract is essential for Draggable & extended Store.
  */
-class AbstractCoreInstance implements AbstractCore {
-  ref: HTMLElement | null;
-
+class AbstractCoreInstance implements AbstractCoreInterface {
+  ref: HTMLElement;
   id: string;
-
-  depth: number = 0;
-
-  translateY: number = 0;
-
-  translateX: number = 0;
+  depth: number;
+  translateY: number;
+  translateX: number;
 
   /**
    * Creates an instance of AbstractCoreInstance.

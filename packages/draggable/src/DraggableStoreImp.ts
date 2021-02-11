@@ -1,9 +1,9 @@
 import Store from "@dflex/store/src/Store";
 import AbstractCoreInstance from "packages/coreInstance/src/AbstractCoreInstance";
-import { AbstractCore } from "packages/coreInstance/src/types";
+import { AbstractCoreInterface } from "packages/coreInstance/src/types";
 import { ElmInstance } from "packages/store/src/types";
 
-class DraggableStoreImp extends Store<AbstractCore> {
+class DraggableStoreImp extends Store<AbstractCoreInterface> {
   /**
    * Register element for Draggable store
    *
