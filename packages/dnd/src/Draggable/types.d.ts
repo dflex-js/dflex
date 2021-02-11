@@ -57,4 +57,6 @@ export interface DraggableDnD extends DraggableDnDBase {
   isDraggedVerticallyInsideList(): boolean;
   isDraggedLeavingFromTop(): boolean;
   isDraggedLeavingFromEnd(): boolean;
+  isSiblingsTransformed(): boolean;
+  endDragging(topDifference: number): void;
 }
