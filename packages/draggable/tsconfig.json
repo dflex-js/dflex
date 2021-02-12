@@ -5,5 +5,4 @@
     "composite": true,
     "outDir": "./lib"
   },
-  "references": [{ "path": "../coreInstance" }]
 }

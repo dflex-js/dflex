@@ -20,6 +20,13 @@ module.exports = {
         ts: "never",
       },
     ],
+    "no-unused-vars": [
+      "error",
+      "ignorePackages",
+      {
+        "pkgTypes.ts": "never",
+      },
+    ],
   },
   settings: {},
 };
