@@ -13,6 +13,13 @@ module.exports = {
   },
   rules: {
     "tsdoc/syntax": "warn",
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        ts: "never",
+      },
+    ],
   },
   settings: {},
 };

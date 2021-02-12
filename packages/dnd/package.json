@@ -34,6 +34,7 @@
   },
   "bundledDependencies": [
     "@dflex/store",
+    "@dflex/dom-gen",
     "@dflex/core-instance",
     "@dflex/draggable"
   ],

@@ -1,9 +1,8 @@
 {
-  "include": ["src", "../dom-gen"],
+  "include": ["src"],
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "composite": true,
     "outDir": "./lib"
-  },
-  "references": [{ "path": "../dom-gen" }]
+  }
 }

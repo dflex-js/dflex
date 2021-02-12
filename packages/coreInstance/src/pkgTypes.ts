@@ -1,4 +1,5 @@
-import { Keys, Order } from "@dflex/dom-gen/src/pkgTypes";
+/* eslint-disable no-unused-vars */
+import { ELmBranch, Keys, Order } from "@dflex/dom-gen/src/pkgTypes";
 
 export interface AbstractCoreInterface {
   ref: HTMLElement;
@@ -36,7 +37,7 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
   setThreshold(): void;
   setCurrentOffset(): void;
   setYPosition(
-    iDsInOrder: BranchELm,
+    iDsInOrder: ELmBranch,
     sign: number,
     topSpace: number,
     operationID: string,

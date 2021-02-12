@@ -49,9 +49,11 @@ class CoreInstance
   prevTranslateY: TransitionHistory;
 
   currentTop: number;
+
   currentLeft: number;
 
   order: Order;
+
   keys: Keys;
 
   thresholdOffset?: ThresholdOffset;
@@ -166,9 +168,9 @@ class CoreInstance
   /**
    *  Updates index locally and in store.
    *
-   * @param branchIDsOrder
+   * @param branchIDsOrder -
    * @param inc - increment number
-   * @param isShuffle
+   * @param isShuffle -
    */
   private updateIDsOrder(
     branchIDsOrder: BranchELmOrder,
@@ -192,7 +194,7 @@ class CoreInstance
   /**
    *  Set a new translate position and store the old one.
    *
-   * @param topSpace
+   * @param topSpace -
    * @param operationID  - Only if moving to a new position.
    */
   private seTranslate(topSpace: number, operationID?: string) {
@@ -223,12 +225,12 @@ class CoreInstance
    * position but when updating last element the array is ready and done we need
    * to update one position only so don't clear previous.
    *
-   * @param iDsInOrder
+   * @param iDsInOrder -
    * @param sign - (+1/-1)
    * @param topSpace - space between dragged and the immediate next element.
    * @param operationID - A unique ID used to store translate history
    * @param vIncrement - the number of passed elements.
-   * @param isShuffle
+   * @param isShuffle -
    */
   setYPosition(
     iDsInOrder: BranchELmOrder,
@@ -246,7 +248,7 @@ class CoreInstance
   /**
    * Roll back element position vertically(y).
    *
-   * @param operationID
+   * @param operationID -
    */
   rollYBack(operationID: string) {
     if (

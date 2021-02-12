@@ -1,7 +1,7 @@
+import { AbstractCoreInterface } from "@dflex/core-instance/src/pkgTypes";
 import store from "./DraggableStoreImp";
 import AbstractDraggable from "./AbstractDraggable";
 import { MouseCoordinates } from "./pkTypes";
-import { AbstractCoreInterface } from "@dflex/core-instance/src/pkgTypes";
 
 class Draggable extends AbstractDraggable<AbstractCoreInterface> {
   /**
@@ -10,7 +10,7 @@ class Draggable extends AbstractDraggable<AbstractCoreInterface> {
    *
    *
    * @param id - elementId
-   * @param clickCoordinates
+   * @param clickCoordinates -
    */
   constructor(id: string, clickCoordinates: MouseCoordinates) {
     const element = store.getElmById(id);
@@ -19,8 +19,8 @@ class Draggable extends AbstractDraggable<AbstractCoreInterface> {
   }
 
   /**
-   * @param x
-   * @param y
+   * @param x -
+   * @param y -
    */
   protected dragAt(x: number, y: number) {
     this.translate(x, y);

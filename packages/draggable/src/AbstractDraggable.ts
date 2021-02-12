@@ -30,6 +30,7 @@ class AbstractDraggable<T extends AbstractCoreInterface>
    *
    */
   outerOffsetX: number;
+
   outerOffsetY: number;
 
   tempTranslate: TempTranslate;
@@ -40,8 +41,8 @@ class AbstractDraggable<T extends AbstractCoreInterface>
    * Creates an instance of AbstractDraggable.
    * Works Only on dragged element level.
    *
-   * @param abstractCoreElm
-   * @param initCoordinates
+   * @param abstractCoreElm -
+   * @param initCoordinates -
    */
   constructor(abstractCoreElm: T, { x: initX, y: initY }: MouseCoordinates) {
     /**

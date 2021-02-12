@@ -1,7 +1,8 @@
 import Store from "@dflex/store/src";
 import CoreInstance from "@dflex/core-instance/src";
-import Tracker from "./Tracker";
 import { ElmInstance } from "@dflex/store/src/pkgTypes";
+import Tracker from "./Tracker";
+
 import { ElmTree } from "./pkgTypes";
 
 // function noop() {}
@@ -19,7 +20,7 @@ class DnDStoreImp extends Store<CoreInstance> {
   /**
    *  Register DnD element.
    *
-   * @param element
+   * @param element -
    */
   register(element: ElmInstance) {
     // const finalOpts = opts || {};
@@ -38,8 +39,8 @@ class DnDStoreImp extends Store<CoreInstance> {
    * Reattach element reference.
    * This happens when element is unmounted from the screen and mounted again.
    *
-   * @param id
-   * @param elmRef
+   * @param id -
+   * @param elmRef -
    */
   reattachElmRef(id: string, elmRef: HTMLElement) {
     super.registry[id].ref = elmRef;
@@ -48,7 +49,7 @@ class DnDStoreImp extends Store<CoreInstance> {
   /**
    * Gets element connections instance for a given id.
    *
-   * @param id
+   * @param id -
    */
   getElmTreeById(id: string): ElmTree {
     const element = this.getElmById(id);

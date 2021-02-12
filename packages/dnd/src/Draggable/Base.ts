@@ -1,13 +1,13 @@
-import CoreInstance from "@dflex/coreInstance/src";
+import CoreInstance from "@dflex/core-instance/src";
 import AbstractDraggable from "@dflex/draggable/src/AbstractDraggable";
-import store from "../DnDStore";
-
 import { ELmBranch } from "@dflex/dom-gen/src/pkgTypes";
 import { MouseCoordinates } from "@dflex/draggable/src/pkTypes";
+import { CoreInstanceInterface } from "@dflex/core-instance/src/pkgTypes";
+import store from "../DnDStore";
+
 import { ElmTree } from "../DnDStore/pkgTypes";
 
 import { DraggableDnDBase, Thresholds } from "./pkgTypes";
-import { CoreInstanceInterface } from "@dflex/core-instance/src/pkgTypes";
 
 /**
  * Base element.
@@ -18,17 +18,23 @@ class Base
   extends AbstractDraggable<CoreInstanceInterface>
   implements DraggableDnDBase {
   tempIndex: number;
+
   dragID: string;
 
   parentsList: ELmBranch;
+
   siblingsList!: ELmBranch;
 
   activeParent!: CoreInstanceInterface | null;
+
   setOfTransformedIds!: Set<string>;
+
   thresholds!: Thresholds;
 
   isSingleton!: boolean;
+
   isOrphan!: boolean;
+
   isOutActiveParent!: boolean;
 
   constructor(elmTree: ElmTree, initCoordinates: MouseCoordinates) {
@@ -83,7 +89,7 @@ class Base
   /**
    * Check if dragged has no siblings and then set the related flag.
    *
-   * @param siblings
+   * @param siblings -
    */
   private setIsSingleton(siblings: ELmBranch) {
     if (Array.isArray(siblings)) {
@@ -98,9 +104,9 @@ class Base
    * Check if dragged has no parent and then set the related operations
    * accordingly.
    *
-   * @param parent
+   * @param parent -
    */
-  private setIsOrphan(parent: CoreInstance | null) {
+  private setIsOrphan(parent?: CoreInstance) {
     /**
      * Not all elements have parents.
      */
@@ -129,8 +135,8 @@ class Base
    *
    * maxDirection = current position + droppable-allowed spaces
    *
-   * @param droppable
-   * @param isParent
+   * @param droppable -
+   * @param isParent -
    */
   setThreshold(droppable: CoreInstanceInterface, isParent?: boolean) {
     const {
@@ -231,7 +237,7 @@ class Base
   /**
    * Assigns new ACTIVE_PARENT: parent who contains dragged
    *
-   * @param element
+   * @param element -
    */
   private assignActiveParent(element: CoreInstance) {
     /**

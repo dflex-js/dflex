@@ -1,9 +1,6 @@
 import { CoreInstanceInterface } from "@dflex/core-instance/src/pkgTypes";
 import { ELmBranch } from "@dflex/dom-gen/src/pkgTypes";
-import {
-  AbstractDraggableInterface,
-  DraggedElm,
-} from "@dflex/draggable/src/pkTypes";
+import { AbstractDraggableInterface } from "@dflex/draggable/src/pkTypes";
 
 export interface TempOffset {
   currentLeft: number;
@@ -18,7 +15,7 @@ export interface Threshold {
 }
 
 export interface Thresholds {
-  parents: { [id: string]: ThresholdContent };
+  parents: { [id: string]: Threshold };
   dragged: Threshold;
 }
 

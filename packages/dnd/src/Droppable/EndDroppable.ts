@@ -10,6 +10,7 @@ class EndDroppable extends Droppable {
     super(draggable);
     this.spliceAt = -1;
   }
+
   /**
    * Gets the current statues of dragged siblings. If it's called before ending
    * dragged then `null` is expected in the dragged index. Otherwise, it returns
@@ -28,8 +29,8 @@ class EndDroppable extends Droppable {
 
   /**
    *
-   * @param lst
-   * @param i
+   * @param lst -
+   * @param i -
    */
   undoElmTranslate(lst: ELmBranch, i: number) {
     const elmID = lst[i];

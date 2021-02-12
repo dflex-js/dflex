@@ -7,9 +7,13 @@ import { AbstractCoreInterface } from "./pkgTypes";
  */
 class AbstractCoreInstance implements AbstractCoreInterface {
   ref: HTMLElement;
+
   id: string;
+
   depth: number;
+
   translateY: number;
+
   translateX: number;
 
   /**

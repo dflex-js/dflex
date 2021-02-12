@@ -1,3 +1,5 @@
+import { DraggableDnD } from "../Draggable/pkgTypes";
+
 export interface DroppableInterface {
   draggable: DraggableDnD;
   topDifference: number;

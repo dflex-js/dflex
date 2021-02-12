@@ -7,13 +7,21 @@ import { DroppableInterface } from "./pkgTypes";
  */
 class Droppable implements DroppableInterface {
   draggable: DraggableDnD;
+
   topDifference: number;
+
   leftDifference: number;
+
   effectedElemDirection: number;
+
   isListLocked: boolean;
+
   prevIsListLocked: boolean;
+
   isOutStatusHorizontally: boolean;
+
   droppableIndex: number;
+
   isFoundBreakingPoint: boolean;
 
   constructor(draggable: DraggableDnD) {
@@ -51,7 +59,7 @@ class Droppable implements DroppableInterface {
    * Updates element instance and calculates the required transform distance. It
    * invokes for each eligible element in the parent container.
    *
-   * @param id
+   * @param id -
    */
   updateElement(id: string) {
     const element = store.getElmById(id);
@@ -132,7 +140,7 @@ class Droppable implements DroppableInterface {
    * Compares the dragged offset with element offset and returns
    * true if element is matched.
    *
-   * @param elmCurrentOffsetTop
+   * @param elmCurrentOffsetTop -
    */
   isElemUnderDragged(elmCurrentOffsetTop: number) {
     /**
@@ -167,7 +175,7 @@ class Droppable implements DroppableInterface {
 
   /**
    *
-   * @param id
+   * @param id -
    */
   isIDEligible2Move(id: string) {
     return id && id !== this.draggable.draggedElm.id;
@@ -217,7 +225,7 @@ class Droppable implements DroppableInterface {
 
   /**
    *
-   * @param y
+   * @param y -
    */
   draggedOutPosition(y: number) {
     this.draggable.setDraggedMovingDown(y);
@@ -289,7 +297,7 @@ class Droppable implements DroppableInterface {
 
   /**
    *
-   * @param y
+   * @param y -
    */
   draggedIsComingIn(y: number) {
     /**

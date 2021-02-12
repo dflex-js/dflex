@@ -8,14 +8,23 @@ import { DraggableDnD, TempOffset, Threshold } from "./pkgTypes";
 
 class Draggable extends Base implements DraggableDnD {
   innerOffsetX: number;
+
   innerOffsetY: number;
+
   tempOffset: TempOffset;
+
   prevX: number;
+
   prevY: number;
+
   numberOfElementsTransformed: number;
+
   inc: number;
+
   isMovingDownPrev: boolean;
+
   isMovingDown: boolean;
+
   isOutHorizontal: boolean;
 
   constructor(
@@ -62,8 +71,8 @@ class Draggable extends Base implements DraggableDnD {
    * Note: these are the current offset related only to the dragging. When the
    * operation is done, different calculation will be set.
    *
-   * @param x
-   * @param y
+   * @param x -
+   * @param y -
    */
   dragAt(x: number, y: number) {
     this.translate(x, y);
@@ -77,7 +86,7 @@ class Draggable extends Base implements DraggableDnD {
 
   /**
    *
-   * @param $
+   * @param $ -
    */
   isOutH($: Threshold) {
     return (
@@ -88,7 +97,7 @@ class Draggable extends Base implements DraggableDnD {
 
   /**
    *
-   * @param $
+   * @param $ -
    */
   isOutV($: Threshold) {
     return (
@@ -100,7 +109,7 @@ class Draggable extends Base implements DraggableDnD {
   /**
    * Checks if dragged it out of its position or parent.
    *
-   * @param id
+   * @param id -
    */
   isDraggedOut(id?: string) {
     const { parents, dragged } = this.thresholds;
@@ -159,7 +168,7 @@ class Draggable extends Base implements DraggableDnD {
   }
 
   /**
-   * @param y
+   * @param y -
    */
   setDraggedMovingDown(y: number) {
     this.isMovingDown = this.isOutHorizontal ? true : y > this.prevY;
@@ -191,7 +200,7 @@ class Draggable extends Base implements DraggableDnD {
 
   /**
    *
-   * @param topDifference
+   * @param topDifference -
    */
   setDraggedPosition(topDifference: number) {
     /**
@@ -242,7 +251,7 @@ class Draggable extends Base implements DraggableDnD {
   }
 
   /**
-   * @param topDifference
+   * @param topDifference -
    */
   endDragging(topDifference: number) {
     this.setDragged(false);

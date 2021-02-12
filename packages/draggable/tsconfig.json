@@ -1,5 +1,5 @@
 {
-  "include": ["src", "../coreInstance"],
+  "include": ["src"],
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "composite": true,

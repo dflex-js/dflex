@@ -3,8 +3,6 @@ class Tracker {
 
   /**
    * Creates an instance of Tracker.
-   *
-   * @memberof Tracker
    */
   constructor() {
     this.travelID = 0;
