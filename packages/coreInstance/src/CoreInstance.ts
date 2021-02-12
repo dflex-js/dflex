@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 
-import { Keys, Order } from "packages/dom-gen/src/types";
-import { ElmWIthPointer } from "packages/store/src/types";
+import { Keys, Order } from "@dflex/dom-gen/src/pkgTypes";
+import { ElmWIthPointer } from "@dflex/store/src/pkgTypes";
 
 import AbstractCoreInstance from "./AbstractCoreInstance";
 import {
@@ -9,7 +9,7 @@ import {
   Offset,
   TransitionHistory,
   ThresholdOffset,
-} from "./types";
+} from "./pkgTypes";
 
 type BranchELmOrder = string[];
 

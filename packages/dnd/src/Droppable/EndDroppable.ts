@@ -1,6 +1,6 @@
-import { ELmBranch } from "packages/dom-gen/src/types";
+import { ELmBranch } from "@dflex/dom-gen/src/pkgTypes";
 import store from "../DnDStore";
-import { DraggableDnD } from "../Draggable/types";
+import { DraggableDnD } from "../Draggable/pkgTypes";
 import Droppable from "./Droppable";
 
 class EndDroppable extends Droppable {

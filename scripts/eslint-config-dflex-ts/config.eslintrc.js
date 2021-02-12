@@ -4,12 +4,8 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  extends: ["airbnb-base", "prettier"],
-  plugins: [
-    "@typescript-eslint",
-    "plugin:import/typescript",
-    "eslint-plugin-tsdoc",
-  ],
+  extends: ["airbnb-base", "prettier", "plugin:import/typescript"],
+  plugins: ["@typescript-eslint", "eslint-plugin-tsdoc"],
   globals: {},
   parserOptions: {
     ecmaVersion: 12,

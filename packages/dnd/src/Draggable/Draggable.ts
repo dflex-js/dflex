@@ -1,10 +1,10 @@
 /* eslint-disable no-nested-ternary */
 
-import { MouseCoordinates } from "packages/draggable/src/types";
+import { MouseCoordinates } from "@dflex/draggable/src/pkTypes";
 import Base from "./Base";
 
-import { ElmTree } from "../DnDStore/types";
-import { DraggableDnD, TempOffset, Threshold } from "./types";
+import { ElmTree } from "../DnDStore/pkgTypes";
+import { DraggableDnD, TempOffset, Threshold } from "./pkgTypes";
 
 class Draggable extends Base implements DraggableDnD {
   innerOffsetX: number;

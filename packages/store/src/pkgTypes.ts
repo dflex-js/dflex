@@ -1,4 +1,4 @@
-import { Keys, Order } from "packages/dom-gen/src/types";
+import { Keys, Order } from "@dflex/dom-gen/src/pkgTypes";
 
 export type Class<classInstance> = new (...args: any[]) => classInstance;
 

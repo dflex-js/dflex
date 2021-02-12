@@ -1,6 +1,6 @@
 import store from "../DnDStore";
-import { DraggableDnD } from "../Draggable/types";
-import { DroppableInterface } from "./types";
+import { DraggableDnD } from "../Draggable/pkgTypes";
+import { DroppableInterface } from "./pkgTypes";
 
 /**
  * Class includes all transformation methods related to droppable.

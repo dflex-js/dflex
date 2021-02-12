@@ -2,12 +2,12 @@ import CoreInstance from "@dflex/coreInstance/src";
 import AbstractDraggable from "@dflex/draggable/src/AbstractDraggable";
 import store from "../DnDStore";
 
-import { ELmBranch } from "packages/dom-gen/src/types";
-import { MouseCoordinates } from "packages/draggable/src/types";
-import { ElmTree } from "../DnDStore/types";
+import { ELmBranch } from "@dflex/dom-gen/src/pkgTypes";
+import { MouseCoordinates } from "@dflex/draggable/src/pkTypes";
+import { ElmTree } from "../DnDStore/pkgTypes";
 
-import { DraggableDnDBase, Thresholds } from "./types";
-import { CoreInstanceInterface } from "packages/coreInstance/src/types";
+import { DraggableDnDBase, Thresholds } from "./pkgTypes";
+import { CoreInstanceInterface } from "@dflex/core-instance/src/pkgTypes";
 
 /**
  * Base element.

@@ -1,7 +1,7 @@
 import Generator from "@dflex/dom-gen/src";
 
-import { ELmBranch } from "packages/dom-gen/src/types";
-import { Class, ElmInstance, ElmWIthPointer } from "./types";
+import { ELmBranch } from "@dflex/dom-gen/src/pkgTypes";
+import { Class, ElmInstance, ElmWIthPointer } from "./pkgTypes";
 
 class Store<T> {
   registry: {

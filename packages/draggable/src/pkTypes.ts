@@ -1,7 +1,7 @@
 import {
   AbstractCoreInterface,
   CoreInstanceInterface,
-} from "packages/coreInstance/src/types";
+} from "@dflex/core-instance/src/pkgTypes";
 
 export interface TempTranslate {
   x: number;
