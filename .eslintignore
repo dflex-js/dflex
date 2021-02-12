@@ -5,3 +5,4 @@ pubic/
 .cache/
 coverage/
 packages/*/dist
+dist
