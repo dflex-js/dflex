@@ -18,13 +18,7 @@ module.exports = {
       "ignorePackages",
       {
         ts: "never",
-      },
-    ],
-    "no-unused-vars": [
-      "error",
-      "ignorePackages",
-      {
-        "pkgTypes.ts": "never",
+        js: "never",
       },
     ],
   },
