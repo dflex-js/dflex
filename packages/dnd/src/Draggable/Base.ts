@@ -1,4 +1,3 @@
-import CoreInstance from "@dflex/core-instance/src";
 import AbstractDraggable from "@dflex/draggable/src/AbstractDraggable";
 import { ELmBranch } from "@dflex/dom-gen/src/pkgTypes";
 import { MouseCoordinates } from "@dflex/draggable/src/pkTypes";
@@ -106,7 +105,7 @@ class Base
    *
    * @param parent -
    */
-  private setIsOrphan(parent?: CoreInstance) {
+  private setIsOrphan(parent: CoreInstanceInterface | null) {
     /**
      * Not all elements have parents.
      */
@@ -239,7 +238,7 @@ class Base
    *
    * @param element -
    */
-  private assignActiveParent(element: CoreInstance) {
+  private assignActiveParent(element: CoreInstanceInterface) {
     /**
      * Assign instance ACTIVE_PARENT which represents droppable. Then
      * assign owner parent so we have from/to.
