@@ -6,6 +6,7 @@ node_modules
 .docusaurus
 build
 dist
+lib
 draft
 samples
 tsconfig.tsbuildinfo

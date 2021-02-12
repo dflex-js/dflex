@@ -1,0 +1,112 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@master
+
+      - name: Use latest version of Node.j
+        uses: actions/setup-node@master
+        with:
+          node-version: "*"
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: Cache yarn cache
+        uses: actions/cache@v2.1.4
+        id: yarn-cache #`steps.yarn-cache.outputs.cache-hit != 'true'
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install Dependencies
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        run: yarn install
+
+      - name: Run lint
+        run: yarn eslint .
+
+  types:
+    name: Check Types
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@master
+
+      - name: Use latest version of Node.j
+        uses: actions/setup-node@master
+        with:
+          node-version: "*"
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: Cache yarn cache
+        uses: actions/cache@v2.1.4
+        id: yarn-cache #`steps.yarn-cache.outputs.cache-hit != 'true'
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install Dependencies
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        run: yarn install
+
+      - name: type check project
+        run: "yarn tsc -b"
+
+  unit-test:
+    name: Unit Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@master
+
+      - name: Use latest version of Node.j
+        uses: actions/setup-node@master
+        with:
+          node-version: "*"
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: Cache yarn cache
+        uses: actions/cache@v2.1.4
+        id: yarn-cache #`steps.yarn-cache.outputs.cache-hit != 'true'
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install Dependencies
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        run: yarn install
+
+      - name: Run Build
+        run: yarn build
+
+      - name: Run Test
+        run: CI=true yarn jest --coverage
+
+      - name: Upload coverage to Codecov
+        run: bash <(curl -s https://codecov.io/bash) -C $GITHUB_SHA -B ${GITHUB_REF#refs/heads/} -Z
+        env:
+          CODECOV_TOKEN: 98cfb3ef-e3ad-4ffc-aaa1-314731222d1b
