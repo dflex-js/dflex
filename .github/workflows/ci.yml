@@ -68,12 +68,8 @@ jobs:
         if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: yarn install
 
-      - name: type check core-instance
-          "yarn workspace @dflex/core-instance tsc --noEmit"
-          "yarn workspace @dflex/dom-gen tsc --noEmit"
-          "yarn workspace @dflex/store tsc --noEmit"
-          "yarn workspace @dflex/draggable tsc --noEmit"
-          "yarn workspace @dflex/dnd tsc --noEmit"
+      - name: check types
+        run: "yarn tsc --noEmit"
 
   unit-test:
     name: Unit Test
