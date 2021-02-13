@@ -1,4 +1,5 @@
 /* eslint-disable no-plusplus */
+// eslint-disable-next-line no-use-before-define
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 

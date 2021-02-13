@@ -1,4 +1,5 @@
 /* eslint-disable no-plusplus */
+// eslint-disable-next-line no-use-before-define
 import React from "react";
 
 import "./List.css";
@@ -36,33 +37,31 @@ const ID_PARENT_1 = "p1";
 const ID_PARENT_2 = "p2";
 const ID_PARENT_3 = "p3";
 
-const BaseApp = ({ Container, Core }) => {
-  return (
-    <Container className="list-container">
-      <Core id={`id-${ID_PARENT_1}`} component="ul" depth={1}>
-        {firstContainer.map(({ label, id }) => (
-          <Core depth={0} id={`id-${id}`} key={`k${id}`} component="li">
-            {label}
-          </Core>
-        ))}
-      </Core>
-      <Core id={`id-${ID_PARENT_2}`} component="ul" depth={1}>
-        {secondContainer.map(({ label, id }) => (
-          <Core depth={0} id={`id-${id}`} key={`k-${id}`} component="li">
-            {label}
-          </Core>
-        ))}
-      </Core>
-      <Core id={`id-${ID_PARENT_3}`} component="ul" depth={1}>
-        {thirdContainer.map(({ label, id }) => (
-          <Core depth={0} id={`id-${id}`} key={`k-${id}`} component="li">
-            {label}
-          </Core>
-        ))}
-      </Core>
-    </Container>
-  );
-};
+const BaseApp = ({ Container, Core }) => (
+  <Container className="list-container">
+    <Core id={`id-${ID_PARENT_1}`} component="ul" depth={1}>
+      {firstContainer.map(({ label, id }) => (
+        <Core depth={0} id={`id-${id}`} key={`k${id}`} component="li">
+          {label}
+        </Core>
+      ))}
+    </Core>
+    <Core id={`id-${ID_PARENT_2}`} component="ul" depth={1}>
+      {secondContainer.map(({ label, id }) => (
+        <Core depth={0} id={`id-${id}`} key={`k-${id}`} component="li">
+          {label}
+        </Core>
+      ))}
+    </Core>
+    <Core id={`id-${ID_PARENT_3}`} component="ul" depth={1}>
+      {thirdContainer.map(({ label, id }) => (
+        <Core depth={0} id={`id-${id}`} key={`k-${id}`} component="li">
+          {label}
+        </Core>
+      ))}
+    </Core>
+  </Container>
+);
 
 function ComponentBasedEvent() {
   return (

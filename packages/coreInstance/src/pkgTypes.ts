@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { ELmBranch, Keys, Order } from "@dflex/dom-gen/src/pkgTypes";
 
 export interface AbstractCoreInterface {

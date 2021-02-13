@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-extraneous-dependencies */
+// eslint-disable-next-line no-use-before-define
 import React from "react";
 import { keyGenerator } from "@folo/utils";
 
@@ -37,7 +38,7 @@ const Core = (props) => {
   React.useEffect(() => {
     setTimeout(
       // eslint-disable-next-line func-names
-      function () {
+      () => {
         store.register({ id, element: ref.current, depth }, handlers);
       },
       0
