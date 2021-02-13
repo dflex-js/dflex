@@ -4,5 +4,5 @@
   "compilerOptions": {
     "composite": true,
     "outDir": "./lib"
-  },
+  }
 }

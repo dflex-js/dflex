@@ -1,3 +1,4 @@
 module.exports = {
-  extends: ["airbnb", "prettier", "plugin:vue/essential"],
+  extends: ["eslint-config-dflex", "plugin:vue/essential"],
+  plugins: ["vue"],
 };

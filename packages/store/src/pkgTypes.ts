@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Keys, Order } from "@dflex/dom-gen/src/pkgTypes";
 
 export type Class<classInstance> = new (...args: any[]) => classInstance;

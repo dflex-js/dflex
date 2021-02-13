@@ -1,10 +1,10 @@
 module.exports = {
-  extends: ["airbnb", "prettier", "plugin:react/recommended"],
+  extends: ["plugin:react/recommended", "eslint-config-dflex"],
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
     },
-    ecmaVersion: 2018,
+    ecmaVersion: 12,
     sourceType: "module",
   },
   plugins: ["react"],
