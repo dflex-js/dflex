@@ -69,19 +69,11 @@ jobs:
         run: yarn install
 
       - name: type check core-instance
-        run: "yarn workspace @dflex/core-instance tsc --noEmit"
-
-      - name: type check Dom-gen
-        run: "yarn workspace @dflex/dom-gen tsc --noEmit"
-
-      - name: type check Store
-        run: "yarn workspace @dflex/store tsc --noEmit"
-     
-     - name: type check Draggable
-        run: "yarn workspace @dflex/draggable tsc --noEmit"
-     
-     - name: type check DnD
-        run: "yarn workspace @dflex/dnd tsc --noEmit"
+          "yarn workspace @dflex/core-instance tsc --noEmit"
+          "yarn workspace @dflex/dom-gen tsc --noEmit"
+          "yarn workspace @dflex/store tsc --noEmit"
+          "yarn workspace @dflex/draggable tsc --noEmit"
+          "yarn workspace @dflex/dnd tsc --noEmit"
 
   unit-test:
     name: Unit Test
