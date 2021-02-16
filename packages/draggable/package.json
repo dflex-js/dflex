@@ -21,6 +21,7 @@
     "@dflex/core-instance"
   ],
   "devDependencies": {
+    "cypress": "^6.4.0",
     "dflex-utils-test": "^0.1.0"
   },
   "keywords": [
