@@ -38,5 +38,9 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
+  },
+  "dependencies": {
+    "cross-env": "^7.0.3",
+    "eslint-plugin-cypress": "^2.11.2"
   }
 }
