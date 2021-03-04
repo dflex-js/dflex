@@ -5,7 +5,9 @@
   "umd:main": "dist/dflexStore.min.umd",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
-    "build": "builderz --formats cjs umd -m -l"
+    "compile": "tsc",
+    "prebuild": "yarn compile",
+    "build": "builderz --entires=./lib/index.js --formats cjs umd -m -l"
   },
   "homepage": "https://github.com/jalal246/dflex/tree/master/packages/store",
   "repository": "https://github.com/jalal246/dflex",

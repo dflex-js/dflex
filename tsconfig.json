@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "ESNext",
+    "module": "commonjs",
     "declaration": true,
     "declarationMap": true,
     "composite": true,
+    "sourceMap": true,
     "moduleResolution": "Node",
     "strict": true,
     "baseUrl": ".",
@@ -12,6 +13,7 @@
       "@dflex/*": ["packages/*/src"]
     },
     "esModuleInterop": true,
+    "resolveJsonModule": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },

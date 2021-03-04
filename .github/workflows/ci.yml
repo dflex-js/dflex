@@ -69,7 +69,7 @@ jobs:
         run: yarn install
 
       - name: check types
-        run: "yarn tsc --noEmit"
+        run: "lerna exec -- tsc --noEmit"
 
   unit-test:
     name: Unit Test
