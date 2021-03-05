@@ -1,9 +1,9 @@
 import Store from "@dflex/store/src";
 import CoreInstance from "@dflex/core-instance/src";
-import { ElmInstance } from "@dflex/store/src/pkgTypes";
+import { ElmInstance } from "@dflex/store/src/interfaces";
 import Tracker from "./Tracker";
 
-import { ElmTree } from "./pkgTypes";
+import { ElmTree } from "./interfaces";
 
 // function noop() {}
 

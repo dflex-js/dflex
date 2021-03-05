@@ -1,4 +1,4 @@
-import { DraggableDnD } from "../Draggable/pkgTypes";
+import { DraggableDnD } from "../Draggable/interfaces";
 
 export interface DroppableInterface {
   draggable: DraggableDnD;

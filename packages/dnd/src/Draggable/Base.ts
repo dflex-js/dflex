@@ -4,13 +4,13 @@ import { MouseCoordinates } from "@dflex/draggable/src/interfaces";
 import { CoreInstanceInterface } from "@dflex/core-instance/src/interfaces";
 import store from "../DnDStore";
 
-import { ElmTree } from "../DnDStore/pkgTypes";
+import { ElmTree } from "../DnDStore/interfaces";
 
-import { DraggableDnDBase, Thresholds } from "./pkgTypes";
+import { DraggableDnDBase, Thresholds } from "./interfaces";
 
 /**
  * Base element.
- *
+ *ss
  * Creates draggedElm and activeParent and initializes thresholds.
  */
 class Base

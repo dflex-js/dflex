@@ -3,7 +3,7 @@ import Draggable from "./Draggable";
 import Droppable from "./Droppable";
 
 import store from "./DnDStore";
-import { ElmTree } from "./DnDStore/pkgTypes";
+import { ElmTree } from "./DnDStore/interfaces";
 
 class DnD extends Droppable {
   /**

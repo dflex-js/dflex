@@ -3,8 +3,8 @@
 import { MouseCoordinates } from "@dflex/draggable/src/interfaces";
 import Base from "./Base";
 
-import { ElmTree } from "../DnDStore/pkgTypes";
-import { DraggableDnD, TempOffset, Threshold } from "./pkgTypes";
+import { ElmTree } from "../DnDStore/interfaces";
+import { DraggableDnD, TempOffset, Threshold } from "./interfaces";
 
 class Draggable extends Base implements DraggableDnD {
   innerOffsetX: number;
