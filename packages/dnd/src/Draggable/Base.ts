@@ -1,7 +1,7 @@
 import AbstractDraggable from "@dflex/draggable/src/AbstractDraggable";
-import { ELmBranch } from "@dflex/dom-gen/src/pkgTypes";
-import { MouseCoordinates } from "@dflex/draggable/src/pkTypes";
-import { CoreInstanceInterface } from "@dflex/core-instance/src/pkgTypes";
+import { ELmBranch } from "@dflex/dom-gen/src/interfaces";
+import { MouseCoordinates } from "@dflex/draggable/src/interfaces";
+import { CoreInstanceInterface } from "@dflex/core-instance/src/interfaces";
 import store from "../DnDStore";
 
 import { ElmTree } from "../DnDStore/pkgTypes";

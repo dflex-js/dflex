@@ -1,19 +1,16 @@
 {
   "name": "@dflex/store",
   "version": "1.3.0",
-  "main": "dist/dflexStore.min.cjs.js",
-  "umd:main": "dist/dflexStore.min.umd",
+  "main": "dist/dflexStore.js",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
-    "compile": "tsc",
-    "prebuild": "yarn compile",
-    "build": "builderz --entires=./lib/index.js --formats cjs umd -m -l"
+    "types": "tsc --emitDeclarationOnly",
+    "build": "esbuild src/index.ts --format=esm --bundle --outfile=dist/dflexStore.js"
   },
   "homepage": "https://github.com/jalal246/dflex/tree/master/packages/store",
   "repository": "https://github.com/jalal246/dflex",
   "license": "GPL-3.0",
   "files": [
-    "src",
     "dist",
     "LICENSE"
   ],

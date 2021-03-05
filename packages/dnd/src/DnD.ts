@@ -1,4 +1,4 @@
-import { MouseCoordinates } from "@dflex/draggable/src/pkTypes";
+import { MouseCoordinates } from "@dflex/draggable/src/interfaces";
 import Draggable from "./Draggable";
 import Droppable from "./Droppable";
 

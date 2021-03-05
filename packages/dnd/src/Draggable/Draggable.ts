@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 
-import { MouseCoordinates } from "@dflex/draggable/src/pkTypes";
+import { MouseCoordinates } from "@dflex/draggable/src/interfaces";
 import Base from "./Base";
 
 import { ElmTree } from "../DnDStore/pkgTypes";

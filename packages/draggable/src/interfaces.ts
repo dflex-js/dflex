@@ -1,4 +1,4 @@
-import { AbstractCoreInterface } from "@dflex/core-instance/src/pkgTypes";
+import { AbstractCoreInterface } from "@dflex/core-instance/src/interfaces";
 
 export interface TempTranslate {
   x: number;

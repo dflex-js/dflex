@@ -1,6 +1,6 @@
-import { CoreInstanceInterface } from "@dflex/core-instance/src/pkgTypes";
-import { ELmBranch } from "@dflex/dom-gen/src/pkgTypes";
-import { AbstractDraggableInterface } from "@dflex/draggable/src/pkTypes";
+import { CoreInstanceInterface } from "@dflex/core-instance/src/interfaces";
+import { ELmBranch } from "@dflex/dom-gen/src/interfaces";
+import { AbstractDraggableInterface } from "@dflex/draggable/src/interfaces";
 
 export interface TempOffset {
   currentLeft: number;

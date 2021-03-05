@@ -1,11 +1,11 @@
 {
   "name": "@dflex/dnd",
   "version": "1.4.0",
-  "main": "dist/dflexDnd.min.cjs.js",
-  "umd:main": "dist/dflexDnd.min.umd",
+  "main": "dist/dflexDnd.js",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
-    "build": "builderz --formats cjs umd -m -l",
+    "types": "tsc --emitDeclarationOnly",
+    "build": "esbuild src/index.ts --format=esm --bundle --outfile=dist/dflexDnd.js",
     "server:3001": "cross-env BROWSER=none yarn workspace dflex-react-dnd start",
     "cy:run": "cypress run",
     "cy:run:extended": "cypress run --env extended=true",

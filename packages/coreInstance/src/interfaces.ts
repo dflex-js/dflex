@@ -1,5 +1,6 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-unused-vars */
-import { ELmBranch, Keys, Order } from "@dflex/dom-gen/src/pkgTypes";
+import { ELmBranch, Keys, Order } from "@dflex/dom-gen/src/interfaces";
 
 export interface AbstractCoreInterface {
   ref: HTMLElement;
