@@ -1,9 +1,6 @@
 node_modules/
-dist/
-draft/
 pubic/
 .cache/
 coverage/
-packages/*/dist
-dist
-lib
+lib/
+dist/

@@ -11,6 +11,7 @@ module.exports = {
   },
   plugins: ["@typescript-eslint"],
   rules: {
+    "@typescript-eslint/no-use-before-define": "error",
     "import/extensions": [
       "error",
       "ignorePackages",

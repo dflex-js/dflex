@@ -1,1 +1,3 @@
-export { default } from "./Generator";
+import Generator from "./Generator";
+
+export default Generator;

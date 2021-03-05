@@ -32,6 +32,7 @@
     ]
   },
   "dependencies": {
+    "esbuild": "^0.8.55",
     "remove": "^0.1.5"
   }
 }
