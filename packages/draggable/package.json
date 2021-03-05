@@ -5,6 +5,7 @@
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
     "types": "tsc --emitDeclarationOnly",
+    "prebuild": "yarn types",
     "build": "esbuild src/index.ts --format=esm --bundle --outfile=dist/dflexDraggable.js",
     "test": "jest"
   },

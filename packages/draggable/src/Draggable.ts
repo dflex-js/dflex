@@ -1,4 +1,4 @@
-import { AbstractCoreInterface } from "@dflex/core-instance/src/pkgTypes";
+import { AbstractCoreInterface } from "@dflex/core-instance/src/interfaces";
 import store from "./DraggableStoreImp";
 import AbstractDraggable from "./AbstractDraggable";
 import { MouseCoordinates } from "./interfaces";

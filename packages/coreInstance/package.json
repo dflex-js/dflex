@@ -5,6 +5,7 @@
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
     "types": "tsc --emitDeclarationOnly",
+    "prebuild": "yarn types",
     "build": "esbuild src/index.ts --format=esm --bundle --outfile=dist/dflexCoreInstance.js"
   },
   "repository": "https://github.com/jalal246/dflex/tree/master/packages/core-instance",

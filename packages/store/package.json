@@ -5,6 +5,7 @@
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
     "types": "tsc --emitDeclarationOnly",
+    "prebuild": "yarn types",
     "build": "esbuild src/index.ts --format=esm --bundle --outfile=dist/dflexStore.js"
   },
   "homepage": "https://github.com/jalal246/dflex/tree/master/packages/store",
