@@ -1,4 +1,4 @@
-import { ELmBranch, Keys, Order, Pointer } from "./interfaces";
+import { ELmBranch, Keys, Order, Pointer } from "./types";
 import genKey from "./utils";
 
 /**
