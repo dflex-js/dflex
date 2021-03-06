@@ -7,9 +7,9 @@
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@dflex/*": ["./node_modules/@dflex/*/src"],
+      "@dflex/*": ["./node_modules/@dflex/*/src"]
       // "@dflex/*": ["packages/*/src"],
-      "*": ["node_modules", "packages"]
+      // "*": ["node_modules", "packages"]
     },
     "skipLibCheck": true,
     "declaration": true,
