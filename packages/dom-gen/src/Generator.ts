@@ -43,8 +43,9 @@ class Generator {
   /**
    * Initiates self and parent indicators if not.
    *
-   * @param dp - element depth
+   * @param {dp} - element depth
    */
+
   private initIndicators(dp: number) {
     /**
      * initiate self from -1 since self is incremented after the id is added so
