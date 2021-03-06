@@ -1,6 +1,5 @@
-import Generator from "@dflex/dom-gen/src";
+import Generator, { ELmBranch } from "@dflex/dom-gen";
 
-import { ELmBranch } from "@dflex/dom-gen/src/interfaces";
 import { Class, ElmInstance, ElmWIthPointer } from "./interfaces";
 
 class Store<T> {

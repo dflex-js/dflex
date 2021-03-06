@@ -1,3 +1,3 @@
-import Generator from "./Generator";
+export * from "./interfaces";
 
-export default Generator;
+export { default } from "./Generator";

@@ -1,16 +1,16 @@
 {
   "compilerOptions": {
+    "strict": true,
     "target": "ESNext",
     "module": "ESNext",
-    "sourceMap": true,
-    "composite": true,
     "moduleResolution": "Node",
-    "strict": true,
+    "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@dflex/*": ["packages/*/src"]
+      "@dflex/*": ["./node_modules/@dflex/*/src"],
+      // "@dflex/*": ["packages/*/src"],
+      "*": ["node_modules", "packages"]
     },
-    "resolveJsonModule": true,
     "skipLibCheck": true,
     "declaration": true,
     "forceConsistentCasingInFileNames": true,
@@ -18,5 +18,6 @@
     "isolatedModules": true,
     "esModuleInterop": true
   },
+  "include": ["packages"],
   "exclude": ["node_modules", "dist"]
 }
