@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "strict": true,
+    "noEmit": true,
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Node",
@@ -8,8 +9,6 @@
     "baseUrl": ".",
     "paths": {
       "@dflex/*": ["./node_modules/@dflex/*/src"]
-      // "@dflex/*": ["packages/*/src"],
-      // "*": ["node_modules", "packages"]
     },
     "skipLibCheck": true,
     "declaration": true,
