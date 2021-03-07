@@ -4,7 +4,7 @@ import {
   DraggedStyle,
   MouseCoordinates,
   TempTranslate,
-} from "./interfaces";
+} from "./types";
 
 const draggedStyleProps: DraggedStyle = [
   {
