@@ -1,25 +1,23 @@
 {
   "compilerOptions": {
+    "strict": true,
     "target": "ESNext",
     "module": "ESNext",
-    "declaration": true,
-    "declarationMap": true,
-    "composite": true,
     "moduleResolution": "Node",
-    "strict": true,
+    "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@dflex/*": ["packages/*/src"]
+      "@dflex/*": ["./node_modules/@dflex/*/src"]
+      // "@dflex/*": ["packages/*/src"],
+      // "*": ["node_modules", "packages"]
     },
-    "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "declaration": true,
+    "forceConsistentCasingInFileNames": true,
+    // https://esbuild.github.io/content-types/#typescript-caveats
+    "isolatedModules": true,
+    "esModuleInterop": true
   },
-  "references": [
-    { "path": "./packages/coreInstance" },
-    { "path": "./packages/dnd" },
-    { "path": "./packages/dom-gen" },
-    { "path": "./packages/draggable" },
-    { "path": "./packages/store" }
-  ]
+  "include": ["packages"],
+  "exclude": ["node_modules", "dist"]
 }

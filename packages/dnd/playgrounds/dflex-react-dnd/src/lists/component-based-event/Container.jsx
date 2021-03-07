@@ -4,8 +4,6 @@ const Container = ({
   component: ContainerComponent = "div",
   children,
   ...rest
-}) => {
-  return <ContainerComponent {...rest}>{children}</ContainerComponent>;
-};
+}) => <ContainerComponent {...rest}>{children}</ContainerComponent>;
 
 export default Container;

@@ -1,7 +1,12 @@
 <template>
   <div @mousedown.prevent="onMouseDown" class="Container">
     <Drag :id="generateKey()">
-      <Core v-for="n in [1]" :key="'left-' + n" :id="generateKey()" :content="'Hello-' + n" />
+      <Core
+        v-for="n in [1]"
+        :key="'left-' + n"
+        :id="generateKey()"
+        :content="'Hello-' + n"
+      />
     </Drag>
     <Drag :id="generateKey()">
       <Core
@@ -12,7 +17,12 @@
       />
     </Drag>
     <Drag :id="generateKey()">
-      <Core v-for="n in [1, 2, 3]" :key="'right-' + n" :id="generateKey()" :content="'Hello-' + n" />
+      <Core
+        v-for="n in [1, 2, 3]"
+        :key="'right-' + n"
+        :id="generateKey()"
+        :content="'Hello-' + n"
+      />
     </Drag>
   </div>
 </template>

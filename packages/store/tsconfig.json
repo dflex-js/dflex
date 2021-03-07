@@ -1,8 +1,10 @@
 {
-  "include": ["src"],
   "extends": "../../tsconfig.json",
+  "include": ["src/**/*"],
   "compilerOptions": {
-    "composite": true,
-    "outDir": "./lib"
-  }
+    "emitDeclarationOnly": true,
+    "outDir": "./dist",
+    "rootDir": "./src"
+  },
+  "references": [{ "path": "../dom-gen" }]
 }

@@ -1,4 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
+
 import React from "react";
 import { keyGenerator } from "@folo/utils";
 
@@ -22,7 +23,7 @@ const Draggable = (props) => {
   React.useEffect(() => {
     setTimeout(
       // eslint-disable-next-line func-names
-      function () {
+      () => {
         store.register({ id, element: ref.current });
       },
       0

@@ -1,16 +1,13 @@
-import AbstractDraggable from "@dflex/draggable/src/AbstractDraggable";
-import { ELmBranch } from "@dflex/dom-gen/src/pkgTypes";
-import { MouseCoordinates } from "@dflex/draggable/src/pkTypes";
-import { CoreInstanceInterface } from "@dflex/core-instance/src/pkgTypes";
-import store from "../DnDStore";
+import { AbstractDraggable, MouseCoordinates } from "@dflex/draggable";
+import { ELmBranch } from "@dflex/dom-gen";
+import { CoreInstanceInterface } from "@dflex/core-instance";
+import store, { ElmTree } from "../DnDStore";
 
-import { ElmTree } from "../DnDStore/pkgTypes";
-
-import { DraggableDnDBase, Thresholds } from "./pkgTypes";
+import { DraggableDnDBase, Thresholds } from "./types";
 
 /**
  * Base element.
- *
+ *ss
  * Creates draggedElm and activeParent and initializes thresholds.
  */
 class Base

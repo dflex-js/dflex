@@ -1,6 +1,7 @@
-import { CoreInstanceInterface } from "@dflex/core-instance/src/pkgTypes";
-import { ELmBranch } from "@dflex/dom-gen/src/pkgTypes";
-import { AbstractDraggableInterface } from "@dflex/draggable/src/pkTypes";
+/* eslint-disable no-unused-vars */
+import { CoreInstanceInterface } from "@dflex/core-instance";
+import { ELmBranch } from "@dflex/dom-gen";
+import { AbstractDraggableInterface } from "@dflex/draggable";
 
 export interface TempOffset {
   currentLeft: number;

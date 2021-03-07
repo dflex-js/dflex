@@ -1,18 +1,19 @@
 {
   "name": "@dflex/dom-gen",
   "version": "0.2.6",
-  "main": "dist/dflexDomGen.min.cjs.js",
-  "umd:main": "dist/dflexDomGen.min.umd",
+  "main": "dist/dflexDomGen.js",
+  "types": "./dist/index.d.ts",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
-    "build": "builderz --formats cjs umd -m -l"
+    "types": "tsc --emitDeclarationOnly",
+    "prebuild": "yarn types",
+    "build": "esbuild src/index.ts --format=esm --bundle --outfile=dist/dflexDomGen.js"
   },
   "homepage": "https://github.com/jalal246/dflex/tree/master/packages/dom-gen",
   "repository": "https://github.com/jalal246/dflex",
   "license": "GPL-3.0",
   "files": [
     "dist",
-    "types",
     "LICENSE"
   ],
   "keywords": [

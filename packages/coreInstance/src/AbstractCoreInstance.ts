@@ -1,5 +1,5 @@
-import { ElmInstance } from "@dflex/store/src/pkgTypes";
-import { AbstractCoreInterface } from "./pkgTypes";
+import { ElmInstance } from "@dflex/store";
+import { AbstractCoreInterface } from "./types";
 
 /**
  * This is the link (bridge) between the Store and element actions/classes.

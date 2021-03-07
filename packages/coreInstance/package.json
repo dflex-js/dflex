@@ -1,23 +1,23 @@
 {
   "name": "@dflex/core-instance",
   "version": "0.1.0",
-  "main": "dist/dflexCoreInstance.min.cjs.js",
-  "umd:main": "dist/dflexCoreInstance.min.umd",
+  "main": "dist/dflexCoreInstance.js",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
-    "build": "builderz --formats cjs umd -m -l"
+    "types": "tsc --emitDeclarationOnly",
+    "prebuild": "yarn types",
+    "build": "esbuild src/index.ts --format=esm --bundle --outfile=dist/dflexCoreInstance.js"
   },
   "repository": "https://github.com/jalal246/dflex/tree/master/packages/core-instance",
   "license": "GPL-3.0",
   "files": [
-    "src",
     "dist",
     "LICENSE"
   ],
-  "bundledDependencies": [
-    "@dflex/store",
-    "@dflex/dom-gen"
-  ],
+  "dependencies": {
+    "@dflex/store": "*",
+    "@dflex/dom-gen": "*"
+  },
   "keywords": [
     "@dflex",
     "@dflex/dom-gen",

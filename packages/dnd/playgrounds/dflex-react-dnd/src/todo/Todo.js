@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/no-array-index-key */
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable import/no-extraneous-dependencies */
+
 import React from "react";
 import "./Todo.css";
 
@@ -28,11 +29,8 @@ const Task = ({ id, task, depth = 0 }) => {
     if (draggedEvent) {
       const layoutStatus1 = draggedEvent.getStatus();
       const layoutStatus1ww = draggedEvent.getDraggedTempIndex();
-      console.log("file: Todo.js ~ line 31 ~ layoutStatus1ww", layoutStatus1ww);
-      console.log("file: Todo.js ~ line 30 ~ layoutStatus", layoutStatus1);
       draggedEvent.endDragging();
       const layoutStatus = draggedEvent.getStatus();
-      console.log("file: Todo.js ~ line 30 ~ layoutStatus", layoutStatus);
 
       draggedEvent = null;
 

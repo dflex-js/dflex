@@ -1,10 +1,10 @@
-import { AbstractCoreInterface } from "@dflex/core-instance/src/pkgTypes";
+import { AbstractCoreInterface } from "@dflex/core-instance";
 import {
   AbstractDraggableInterface,
   DraggedStyle,
   MouseCoordinates,
   TempTranslate,
-} from "./pkTypes";
+} from "./types";
 
 const draggedStyleProps: DraggedStyle = [
   {
@@ -13,6 +13,7 @@ const draggedStyleProps: DraggedStyle = [
     afterDragValue: null,
   },
 ];
+
 class AbstractDraggable<T extends AbstractCoreInterface>
   implements AbstractDraggableInterface<T> {
   draggedElm: T;
