@@ -1,5 +1,5 @@
-import Draggable from "./Draggable";
-import store from "./DraggableStoreImp";
-import * as types from "./types";
+export { default as Draggable } from "./Draggable";
+export { default as store } from "./DraggableStoreImp";
+export { default as AbstractDraggable } from "./AbstractDraggable";
 
-export { Draggable, store, types };
+export * from "./types";

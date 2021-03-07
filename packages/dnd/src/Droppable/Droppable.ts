@@ -1,5 +1,5 @@
 import store from "../DnDStore";
-import { DraggableDnD } from "../Draggable/interfaces";
+import { DraggableDnD } from "../Draggable/types";
 import { DroppableInterface } from "./interfaces";
 
 /**

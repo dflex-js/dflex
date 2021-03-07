@@ -1,5 +1,5 @@
-import { CoreInstanceInterface } from "@dflex/core-instance/src/interfaces";
-import { ELmBranch } from "@dflex/dom-gen/src/interfaces";
+import { CoreInstanceInterface } from "@dflex/core-instance";
+import { ELmBranch } from "@dflex/dom-gen";
 
 export interface ElmTree {
   element: CoreInstanceInterface;
