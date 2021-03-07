@@ -12,7 +12,8 @@ module.exports = {
   plugins: ["@typescript-eslint", "eslint-plugin-tsdoc"],
   ignorePatterns: ["node_modules", "dist", "lib", "coverage", "**/*.d.ts"],
   rules: {
-    "@typescript-eslint/no-use-before-define": "error",
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": ["error"],
     "prettier/prettier": [
       "error",
       {
