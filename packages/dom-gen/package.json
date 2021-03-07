@@ -5,7 +5,7 @@
   "types": "./dist/index.d.ts",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
-    "prebuild": "yarn types tsc",
+    "prebuild": "yarn tsc",
     "build": "esbuild src/index.ts --format=esm --bundle --outfile=dist/dflexDomGen.js"
   },
   "homepage": "https://github.com/jalal246/dflex/tree/master/packages/dom-gen",

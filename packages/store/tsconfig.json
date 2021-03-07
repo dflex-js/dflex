@@ -5,6 +5,5 @@
     "emitDeclarationOnly": true,
     "outDir": "./dist",
     "rootDir": "./src"
-  },
-  "references": [{ "path": "../dom-gen" }]
+  }
 }
