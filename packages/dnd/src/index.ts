@@ -1,4 +1,2 @@
-import store from "./DnDStore";
-import DnD from "./DnD";
-
-export { DnD, store };
+export { default as store } from "./DnDStore";
+export { default as DnD } from "./DnD";
