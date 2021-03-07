@@ -4,8 +4,7 @@
   "main": "dist/dflexDnd.js",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
-    "types": "tsc --emitDeclarationOnly",
-    "prebuild": "yarn types",
+    "prebuild": "yarn types tsc",
     "build": "esbuild src/index.ts --format=esm --bundle --outfile=dist/dflexDnd.js",
     "server:3001": "cross-env BROWSER=none yarn workspace dflex-react-dnd start",
     "cy:run": "cypress run",

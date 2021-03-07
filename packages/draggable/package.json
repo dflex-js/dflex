@@ -4,8 +4,7 @@
   "main": "dist/dflexDraggable.js",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
-    "types": "tsc --emitDeclarationOnly",
-    "prebuild": "yarn types",
+    "prebuild": "yarn types tsc",
     "build": "esbuild src/index.ts --format=esm --bundle --outfile=dist/dflexDraggable.js",
     "test": "jest"
   },
