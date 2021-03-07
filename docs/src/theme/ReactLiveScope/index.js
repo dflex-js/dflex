@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-use-before-define
 import React from "react";
 import DFlexDraggable from "@dflex/draggable";
 import DFlexDnD from "@dflex/dnd";
