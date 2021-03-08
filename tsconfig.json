@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "strict": true,
-    "target": "ESNext",
-    "module": "ESNext",
+    "target": "ES2018",
+    "module": "CommonJS",
     "moduleResolution": "Node",
     "rootDir": ".",
     "baseUrl": ".",
