@@ -19,6 +19,7 @@ describe("DOM Relationship Generator: Descending-Simple", () => {
       pointerParent0D3 = domGen.getElmPointer("id-0", 3);
 
       // parents should always have children keys
+      // @ts-expect-error
       expect([pointerParent0D3.keys].chK).not.toBe(null);
 
       expect(pointerParent0D3).toStrictEqual({

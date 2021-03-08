@@ -24,7 +24,7 @@ const elm0D1 = {
   moreInfo: "I am parent",
 };
 
-describe("Testing store", () => {
+describe.only("Testing store", () => {
   it("Registers new elements", () => {
     store.register(elm0D0);
     store.register(elm1D0);
