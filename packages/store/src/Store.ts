@@ -44,6 +44,7 @@ class Store<T> {
 
     const coreElement: ElmWIthPointer = { id, depth, ref, order, keys };
 
+    // TODO: fix TS error here.
     // @ts-ignore
     this.registry[id] =
       CustomInstance && typeof CustomInstance.constructor === "function"
