@@ -1,12 +1,12 @@
 {
   "name": "@dflex/dom-gen",
   "version": "0.2.6",
-  "main": "dist/dflexDomGen.js",
-  "types": "./dist/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
-    "prebuild": "yarn tsc",
-    "build": "esbuild src/index.ts --format=esm --bundle --outfile=dist/dflexDomGen.js"
+    "compile": "yarn rimraf ./dist && yarn tsc",
+    "build": "yarn compile"
   },
   "homepage": "https://github.com/jalal246/dflex/tree/master/packages/dom-gen",
   "repository": "https://github.com/jalal246/dflex",

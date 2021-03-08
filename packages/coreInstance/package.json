@@ -1,11 +1,12 @@
 {
   "name": "@dflex/core-instance",
   "version": "0.1.0",
-  "main": "dist/dflexCoreInstance.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
-    "prebuild": "yarn tsc",
-    "build": "esbuild src/index.ts --format=esm --bundle --outfile=dist/dflexCoreInstance.js"
+    "compile": "yarn rimraf ./dist && yarn tsc",
+    "build": "yarn compile"
   },
   "repository": "https://github.com/jalal246/dflex/tree/master/packages/core-instance",
   "license": "GPL-3.0",
@@ -14,8 +15,8 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@dflex/store": "*",
-    "@dflex/dom-gen": "*"
+    "@dflex/store": "1.3.0",
+    "@dflex/dom-gen": "0.2.6"
   },
   "keywords": [
     "@dflex",

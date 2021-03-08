@@ -1,15 +1,16 @@
 /* eslint-disable no-param-reassign */
 
-import { Keys, Order } from "@dflex/dom-gen";
-import { ElmWIthPointer } from "@dflex/store";
+import type { Keys, Order } from "@dflex/dom-gen";
+import type { ElmWIthPointer } from "@dflex/store";
 
 import AbstractCoreInstance from "./AbstractCoreInstance";
-import {
+
+import type {
   CoreInstanceInterface,
   Offset,
   TransitionHistory,
   ThresholdOffset,
-} from "./types";
+} from "./typings";
 
 type BranchELmOrder = string[];
 
