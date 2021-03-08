@@ -1,8 +1,9 @@
-import { MouseCoordinates } from "@dflex/draggable";
+import type { MouseCoordinates } from "@dflex/draggable";
 import Draggable from "./Draggable";
 import Droppable from "./Droppable";
 
-import store, { ElmTree } from "./DnDStore";
+import store from "./DnDStore";
+import type { ElmTree } from "./DnDStore";
 
 class DnD extends Droppable {
   /**

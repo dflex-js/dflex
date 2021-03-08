@@ -1,15 +1,13 @@
 {
   "compilerOptions": {
     "strict": true,
-    "target": "ESNext",
-    "module": "ESNext",
+    "target": "ES2018",
+    "module": "CommonJS",
     "moduleResolution": "Node",
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
       "@dflex/*": ["./node_modules/@dflex/*/src"]
-      // "@dflex/*": ["packages/*/src"],
-      // "*": ["node_modules", "packages"]
     },
     "skipLibCheck": true,
     "declaration": true,

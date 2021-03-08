@@ -1,4 +1,4 @@
-import { ELmBranch } from "@dflex/dom-gen";
+import type { ELmBranch } from "@dflex/dom-gen";
 import store from "../DnDStore";
 import { DraggableDnD } from "../Draggable";
 import Droppable from "./Droppable";

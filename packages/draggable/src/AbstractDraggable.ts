@@ -1,5 +1,5 @@
 import { AbstractCoreInterface } from "@dflex/core-instance";
-import {
+import type {
   AbstractDraggableInterface,
   DraggedStyle,
   MouseCoordinates,
