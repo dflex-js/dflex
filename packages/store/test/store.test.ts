@@ -46,6 +46,10 @@ describe("Testing Store Package", () => {
     });
   });
 
+  it("Snaps shot registry", () => {
+    expect(store.registry).toMatchSnapshot();
+  });
+
   it("Returns element instance by element id", () => {
     const elemInstance = store.getElmById(elm0D0.id);
 
@@ -69,21 +73,18 @@ describe("Testing Store Package", () => {
     const elemInstance = store.getElmById(elm0D0.id);
 
     const elemBranch = store.getElmBranchByKey(elemInstance.keys.sK);
-    console.log("file: store.test.ts ~ line 72 ~ elemBranch", elemBranch);
 
-    // expect(elemBranch).toStrictEqual({
-    //   depth: 0,
-    //   id: "id-0",
-    //   keys: {
-    //     chK: null,
-    //     pK: "1-0",
-    //     sK: "0-0",
-    //   },
-    //   order: {
-    //     parent: 0,
-    //     self: 0,
-    //   },
-    //   ref,
-    // });
+    expect(elemBranch).toStrictEqual(["id-0", "id-1", "id-2"]);
+  });
+
+  it("Deletes element", () => {
+    store.deleteElm(elm0D0.id);
+    const elemInstance = store.getElmById(elm0D0.id);
+
+    expect(elemInstance).toBeUndefined();
+  });
+
+  it("Snaps shot registry after delete", () => {
+    expect(store.registry).toMatchSnapshot();
   });
 });
