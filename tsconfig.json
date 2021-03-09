@@ -12,12 +12,11 @@
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@dflex/*": ["./packages/*/src"]
+      "@dflex/*": ["./node_modules/@dflex/*/src"]
     },
     "skipLibCheck": true,
     "declaration": true,
     "forceConsistentCasingInFileNames": true,
-    // https://esbuild.github.io/content-types/#typescript-caveats
     "isolatedModules": true,
     "esModuleInterop": true
   },
