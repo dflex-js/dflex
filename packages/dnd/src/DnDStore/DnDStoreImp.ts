@@ -1,13 +1,10 @@
 import Store from "@dflex/store";
 import type { ElmInstance } from "@dflex/store";
-
 import CoreInstance from "@dflex/core-instance";
 
 import Tracker from "./Tracker";
 
 import type { ElmTree } from "./types";
-
-console.log("file: DnDStoreImp.ts ~ line 5 ~ CoreInstance", CoreInstance);
 
 // function noop() {}
 
