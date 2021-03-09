@@ -10,7 +10,7 @@ const elmInstance1 = {
 
 store.register(elmInstance1);
 
-describe("Draggable mechanism", () => {
+describe("Draggable Only Package", () => {
   let EXPECTED_TRANSLATE_X_R1;
   let EXPECTED_TRANSLATE_Y_R1;
 

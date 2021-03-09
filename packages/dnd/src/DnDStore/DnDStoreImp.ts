@@ -1,5 +1,6 @@
 import Store from "@dflex/store";
 import type { ElmInstance } from "@dflex/store";
+
 import CoreInstance from "@dflex/core-instance";
 
 import Tracker from "./Tracker";
@@ -32,6 +33,8 @@ class DnDStoreImp extends Store<CoreInstance> {
     // handlers.forEach((handler) => {
     //   if (typeof finalOpts[handler] !== "function") finalOpts[handler] = noop;
     // });
+
+    console.log("file: DnDStoreImp.ts ~ line 4 ~ CoreInstance", CoreInstance);
 
     super.register(element, CoreInstance);
   }
