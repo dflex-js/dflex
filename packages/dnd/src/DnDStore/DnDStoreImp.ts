@@ -87,8 +87,7 @@ class DnDStoreImp extends Store<CoreInstance> {
   }
 }
 
-// eslint-disable-next-line func-names
-export default (function () {
+export default (function createStoreInstance() {
   const store = new DnDStoreImp();
 
   return store;

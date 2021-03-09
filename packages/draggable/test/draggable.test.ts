@@ -1,5 +1,14 @@
-import { elmInstance1 } from "./store.test";
 import { Draggable, store } from "../src";
+
+const ref = document.createElement("div");
+
+const elmInstance1 = {
+  id: "id-0",
+  depth: 0,
+  ref,
+};
+
+store.register(elmInstance1);
 
 describe("Draggable mechanism", () => {
   let EXPECTED_TRANSLATE_X_R1;

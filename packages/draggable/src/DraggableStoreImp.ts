@@ -1,4 +1,5 @@
 import Store from "@dflex/store";
+
 import AbstractCoreInstance, {
   AbstractCoreInterface,
 } from "@dflex/core-instance";
@@ -16,8 +17,7 @@ class DraggableStoreImp extends Store<AbstractCoreInterface> {
   }
 }
 
-// eslint-disable-next-line func-names
-export default (function () {
+export default (function createStoreInstance() {
   const store = new DraggableStoreImp();
 
   return store;
