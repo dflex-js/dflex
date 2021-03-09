@@ -30,14 +30,16 @@ const elm0D1 = {
   // moreInfo: "I am parent",
 };
 
-describe("Testing store", () => {
-  it("Registers new elements", () => {
+describe("Testing Store Package", () => {
+  beforeAll(() => {
     store.register(elm0D0);
     store.register(elm1D0);
     store.register(elm2D0);
 
     store.register(elm0D1);
+  });
 
+  it("Registers new elements", () => {
     expect(store.DOMGen.branches).toStrictEqual({
       "0-0": ["id-0", "id-1", "id-2"],
       "1-0": "p-id-0",
@@ -61,5 +63,27 @@ describe("Testing store", () => {
       },
       ref,
     });
+  });
+
+  it("Returns element branch", () => {
+    const elemInstance = store.getElmById(elm0D0.id);
+
+    const elemBranch = store.getElmBranchByKey(elemInstance.keys.sK);
+    console.log("file: store.test.ts ~ line 72 ~ elemBranch", elemBranch);
+
+    // expect(elemBranch).toStrictEqual({
+    //   depth: 0,
+    //   id: "id-0",
+    //   keys: {
+    //     chK: null,
+    //     pK: "1-0",
+    //     sK: "0-0",
+    //   },
+    //   order: {
+    //     parent: 0,
+    //     self: 0,
+    //   },
+    //   ref,
+    // });
   });
 });
