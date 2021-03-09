@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "strict": true,
-    "lib": ["dom", "es2017"],
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "lib": ["dom", "ESNext"],
     "target": "ES2018",
     "module": "CommonJS",
     "moduleResolution": "Node",
@@ -17,5 +21,5 @@
     "esModuleInterop": true
   },
   "include": ["packages"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist", "**/*.test*", "**/*.spec*"]
 }
