@@ -7,6 +7,8 @@ import Tracker from "./Tracker";
 
 import type { ElmTree } from "./types";
 
+console.log("file: DnDStoreImp.ts ~ line 5 ~ CoreInstance", CoreInstance);
+
 // function noop() {}
 
 // const handlers = ["onDragOver", "onDragLeave"];

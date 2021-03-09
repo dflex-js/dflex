@@ -4,5 +4,6 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src"
-  }
+  },
+  "references": [{ "path": "../store" }, { "path": "../coreInstance" }]
 }

@@ -12,7 +12,7 @@
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@dflex/*": ["./node_modules/@dflex/*/src"]
+      "@dflex/*": ["packages/*/src"]
     },
     "skipLibCheck": true,
     "declaration": true,
