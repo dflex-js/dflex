@@ -1,10 +1,6 @@
 {
   "compilerOptions": {
     "strict": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "strictFunctionTypes": true,
-    "strictNullChecks": true,
     "lib": ["dom", "es2017"],
     "target": "ES2018",
     "module": "CommonJS",
