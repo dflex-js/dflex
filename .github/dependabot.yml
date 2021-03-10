@@ -9,7 +9,6 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "monthly"
-      day: "sunday"
 
   - package-ecosystem: "github-actions"
     directory: "/"

@@ -1,21 +1,25 @@
 {
   "compilerOptions": {
     "strict": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "lib": ["dom", "ESNext"],
     "target": "ES2018",
     "module": "CommonJS",
     "moduleResolution": "Node",
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@dflex/*": ["./node_modules/@dflex/*/src"]
+      "@dflex/*": ["packages/*/src"]
     },
     "skipLibCheck": true,
     "declaration": true,
     "forceConsistentCasingInFileNames": true,
-    // https://esbuild.github.io/content-types/#typescript-caveats
     "isolatedModules": true,
     "esModuleInterop": true
   },
   "include": ["packages"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist", "**/*.test*", "**/*.spec*"]
 }

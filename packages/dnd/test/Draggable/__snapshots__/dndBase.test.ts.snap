@@ -2,30 +2,30 @@
 
 exports[`DND - PKG: Base Testing child Threshold Calculates threshold Offset 1`] = `
 Object {
-  "horizontal": 134,
+  "horizontal": 0,
   "vertical": Object {
-    "third": 40,
-    "twoThirds": 80,
+    "third": 0,
+    "twoThirds": 0,
   },
 }
 `;
 
 exports[`DND - PKG: Base Testing child Threshold Calculates thresholds for dragged as dropped 1`] = `
 Object {
-  "maxBottom": 450,
-  "maxLeft": 466,
-  "maxRight": 734,
-  "maxTop": 290,
+  "maxBottom": 0,
+  "maxLeft": 0,
+  "maxRight": 0,
+  "maxTop": 0,
 }
 `;
 
 exports[`DND - PKG: Base Testing child Threshold Calculates thresholds for parent as dropped 1`] = `
 Object {
-  "id-2": Object {
-    "maxBottom": 450,
-    "maxLeft": 466,
-    "maxRight": 734,
-    "maxTop": 290,
+  "id-p-0": Object {
+    "maxBottom": 0,
+    "maxLeft": 0,
+    "maxRight": 0,
+    "maxTop": 0,
   },
 }
 `;

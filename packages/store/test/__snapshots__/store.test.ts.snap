@@ -1,0 +1,109 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Testing Store Package Snaps shot registry 1`] = `
+Object {
+  "id-0": Object {
+    "depth": 0,
+    "id": "id-0",
+    "keys": Object {
+      "chK": null,
+      "pK": "1-0",
+      "sK": "0-0",
+    },
+    "order": Object {
+      "parent": 0,
+      "self": 0,
+    },
+    "ref": <div />,
+  },
+  "id-1": Object {
+    "depth": 0,
+    "id": "id-1",
+    "keys": Object {
+      "chK": null,
+      "pK": "1-0",
+      "sK": "0-0",
+    },
+    "order": Object {
+      "parent": 0,
+      "self": 1,
+    },
+    "ref": <div />,
+  },
+  "id-2": Object {
+    "depth": 0,
+    "id": "id-2",
+    "keys": Object {
+      "chK": null,
+      "pK": "1-0",
+      "sK": "0-0",
+    },
+    "order": Object {
+      "parent": 0,
+      "self": 2,
+    },
+    "ref": <div />,
+  },
+  "p-id-0": Object {
+    "depth": 1,
+    "id": "p-id-0",
+    "keys": Object {
+      "chK": "0-0",
+      "pK": "2-0",
+      "sK": "1-0",
+    },
+    "order": Object {
+      "parent": 0,
+      "self": 0,
+    },
+    "ref": <div />,
+  },
+}
+`;
+
+exports[`Testing Store Package Snaps shot registry after delete 1`] = `
+Object {
+  "id-1": Object {
+    "depth": 0,
+    "id": "id-1",
+    "keys": Object {
+      "chK": null,
+      "pK": "1-0",
+      "sK": "0-0",
+    },
+    "order": Object {
+      "parent": 0,
+      "self": 1,
+    },
+    "ref": <div />,
+  },
+  "id-2": Object {
+    "depth": 0,
+    "id": "id-2",
+    "keys": Object {
+      "chK": null,
+      "pK": "1-0",
+      "sK": "0-0",
+    },
+    "order": Object {
+      "parent": 0,
+      "self": 2,
+    },
+    "ref": <div />,
+  },
+  "p-id-0": Object {
+    "depth": 1,
+    "id": "p-id-0",
+    "keys": Object {
+      "chK": "0-0",
+      "pK": "2-0",
+      "sK": "1-0",
+    },
+    "order": Object {
+      "parent": 0,
+      "self": 0,
+    },
+    "ref": <div />,
+  },
+}
+`;

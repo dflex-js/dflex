@@ -1,4 +1,4 @@
-import Generator from "../src/Generator";
+import Generator from "../src";
 
 const domGen = new Generator();
 

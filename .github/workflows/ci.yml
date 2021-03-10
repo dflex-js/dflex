@@ -95,11 +95,7 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - name: Install Dependencies
-        if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: yarn install
-
-      - name: Run Build
-        run: yarn build
 
       - name: Run Test
         run: CI=true yarn jest --coverage

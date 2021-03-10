@@ -2,7 +2,7 @@ import Generator from "@dflex/dom-gen";
 import type { ELmBranch } from "@dflex/dom-gen";
 import type { Class, ElmInstance, ElmWIthPointer } from "./types";
 
-class Store<T> {
+class Store<T = ElmWIthPointer> {
   registry: {
     [id: string]: T;
   };
@@ -44,6 +44,7 @@ class Store<T> {
 
     const coreElement: ElmWIthPointer = { id, depth, ref, order, keys };
 
+    // TODO: fix TS error here.
     // @ts-ignore
     this.registry[id] =
       CustomInstance && typeof CustomInstance.constructor === "function"
@@ -63,10 +64,10 @@ class Store<T> {
   /**
    * Gets all element IDs Siblings in given node represented by sibling key.
    *
-   * @param ky -
+   * @param siblingsKy -
    */
-  getElmBranchByKey(ky: string): ELmBranch {
-    return this.DOMGen.getElmBranch(ky);
+  getElmBranchByKey(siblingsKy: string): ELmBranch {
+    return this.DOMGen.getElmBranch(siblingsKy);
   }
 }
 

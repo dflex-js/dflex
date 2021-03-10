@@ -1,10 +1,25 @@
-import {
-  childInstance1,
-  childInstance2,
-  parentInstance,
-} from "dflex-utils-test/instances";
-import store from "../../DnDStore";
-import Base from "../Base";
+import store from "../../src/DnDStore";
+import Base from "../../src/Draggable";
+
+const ref = document.createElement("div");
+
+const childInstance1 = {
+  id: "id-0",
+  depth: 0,
+  ref,
+};
+
+const childInstance2 = {
+  id: "id-1",
+  depth: 0,
+  ref,
+};
+
+const parentInstance = {
+  id: "id-p-0",
+  depth: 1,
+  ref,
+};
 
 const DRAGGED_ELM = "draggedElm";
 
