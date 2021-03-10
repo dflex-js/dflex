@@ -1,6 +1,6 @@
 import store from "../../src/DnDStore";
 
-import { assignDraggable } from "./utils";
+import { assignDraggable } from "../utils";
 
 const ref = document.createElement("div");
 

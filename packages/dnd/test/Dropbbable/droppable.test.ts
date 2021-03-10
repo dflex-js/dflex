@@ -1,13 +1,26 @@
-import {
-  childInstance1,
-  childInstance2,
-  parentInstance,
-} from "dflex-utils-test/instances";
+import store from "../../src/DnDStore";
+import Droppable from "../../src/Droppable";
+import { assignDraggable } from "../utils";
 
-import { assignDraggable } from "../../Draggable/test/utils";
+const ref = document.createElement("div");
 
-import store from "../../DnDStore";
-import Droppable from "../Droppable";
+const childInstance1 = {
+  id: "id-0",
+  depth: 0,
+  ref,
+};
+
+const childInstance2 = {
+  id: "id-1",
+  depth: 0,
+  ref,
+};
+
+const parentInstance = {
+  id: "id-p-0",
+  depth: 1,
+  ref,
+};
 
 let draggable;
 let droppable;
@@ -25,7 +38,7 @@ beforeAll(() => {
   draggable = assignDraggable(childInstance1);
 });
 
-describe.skip("Testing Droppable", () => {
+describe("Testing Droppable", () => {
   beforeAll(() => {
     droppable = new Droppable(draggable);
 
