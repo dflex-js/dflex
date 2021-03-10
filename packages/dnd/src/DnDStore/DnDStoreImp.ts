@@ -33,8 +33,6 @@ class DnDStoreImp extends Store<CoreInstance> {
     //   if (typeof finalOpts[handler] !== "function") finalOpts[handler] = noop;
     // });
 
-    console.log("file: DnDStoreImp.ts ~ line 4 ~ CoreInstance", CoreInstance);
-
     super.register(element, CoreInstance);
   }
 

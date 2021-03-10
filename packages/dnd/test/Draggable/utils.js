@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
-import Draggable from "../Draggable";
-import store from "../../DnDStore";
+import Draggable from "../../src/Draggable";
+import store from "../../src/DnDStore";
 
 function assignDraggable(instance) {
   const elementInstance = store.getElmTreeById(instance.id);

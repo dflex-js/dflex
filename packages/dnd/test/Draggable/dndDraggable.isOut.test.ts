@@ -1,71 +1,86 @@
-// import {
-//   childInstance1,
-//   childInstance2,
-//   parentInstance,
-// } from "dflex-utils-test/instances";
+import store from "../../src/DnDStore";
 
-// import store from "../../DnDStore";
-// import { assignDraggable } from "./utils";
+import { assignDraggable } from "./utils";
 
-// beforeAll(() => {
-//   store.register(childInstance1);
-//   store.register(childInstance2);
+const ref = document.createElement("div");
 
-//   store.register(parentInstance);
-// });
+const childInstance1 = {
+  id: "id-0",
+  depth: 0,
+  ref,
+};
 
-// let draggable;
+const childInstance2 = {
+  id: "id-1",
+  depth: 0,
+  ref,
+};
 
-// describe("Testing isDraggedOut()", () => {
-//   beforeEach(() => {
-//     draggable = assignDraggable(childInstance2);
-//   });
+const parentInstance = {
+  id: "id-p-0",
+  depth: 1,
+  ref,
+};
 
-//   afterEach(() => {
-//     draggable.endDragging();
-//   });
+beforeAll(() => {
+  store.register(childInstance1);
+  store.register(childInstance2);
 
-//   it("Goes out from the right", () => {
-//     const MOVING_PIXELS = draggable.thresholds.dragged.maxRight;
+  store.register(parentInstance);
+});
 
-//     for (let i = 0; i < MOVING_PIXELS + 2; i += 1) {
-//       draggable.dragAt(i, 0);
-//     }
+let draggable;
 
-//     expect(draggable.isDraggedOut()).toBe(true);
-//   });
+describe("Testing isDraggedOut()", () => {
+  beforeEach(() => {
+    draggable = assignDraggable(childInstance2);
+  });
 
-//   it("Goes out from the left", () => {
-//     const MOVING_PIXELS = draggable.thresholds.dragged.maxLeft;
+  afterEach(() => {
+    draggable.endDragging();
+  });
 
-//     for (let i = 0; i < Math.abs(MOVING_PIXELS) + 2; i += 1) {
-//       draggable.dragAt(-i, 0);
-//     }
+  it("Goes out from the right", () => {
+    const MOVING_PIXELS = draggable.thresholds.dragged.maxRight;
 
-//     expect(draggable.isDraggedOut()).toBe(true);
-//   });
+    for (let i = 0; i < MOVING_PIXELS + 2; i += 1) {
+      draggable.dragAt(i, 0);
+    }
 
-//   it("Goes out from the top", () => {
-//     const MOVING_PIXELS = draggable.thresholds.dragged.maxTop;
+    expect(draggable.isDraggedOut()).toBe(true);
+  });
 
-//     for (let i = 0; i < Math.abs(MOVING_PIXELS) + 2; i += 1) {
-//       draggable.dragAt(0, -i);
-//     }
+  it("Goes out from the left", () => {
+    const MOVING_PIXELS = draggable.thresholds.dragged.maxLeft;
 
-//     expect(draggable.isDraggedOut()).toBe(true);
-//   });
+    for (let i = 0; i < Math.abs(MOVING_PIXELS) + 2; i += 1) {
+      draggable.dragAt(-i, 0);
+    }
 
-//   it("Goes out from the bottom", () => {
-//     const MOVING_PIXELS = draggable.thresholds.dragged.maxBottom;
+    expect(draggable.isDraggedOut()).toBe(true);
+  });
 
-//     for (let i = 0; i < MOVING_PIXELS + 2; i += 1) {
-//       draggable.dragAt(0, i);
-//     }
+  it("Goes out from the top", () => {
+    const MOVING_PIXELS = draggable.thresholds.dragged.maxTop;
 
-//     expect(draggable.isDraggedOut()).toBe(true);
-//   });
+    for (let i = 0; i < Math.abs(MOVING_PIXELS) + 2; i += 1) {
+      draggable.dragAt(0, -i);
+    }
 
-//   afterAll(() => {
-//     draggable.endDragging();
-//   });
-// });
+    expect(draggable.isDraggedOut()).toBe(true);
+  });
+
+  it("Goes out from the bottom", () => {
+    const MOVING_PIXELS = draggable.thresholds.dragged.maxBottom;
+
+    for (let i = 0; i < MOVING_PIXELS + 2; i += 1) {
+      draggable.dragAt(0, i);
+    }
+
+    expect(draggable.isDraggedOut()).toBe(true);
+  });
+
+  afterAll(() => {
+    draggable.endDragging();
+  });
+});
