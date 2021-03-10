@@ -1,7 +1,5 @@
 import store from "../../src/DnDStore";
 
-console.log("file: dndStore.test.ts ~ line 2 ~ store", store);
-
 const ref = document.createElement("div");
 
 const elm0D0 = {
@@ -16,6 +14,7 @@ describe("DnD Store", () => {
   });
 
   it("Element is initiated", () => {
+    // @ts-expect-error
     expect(store.registry).toMatchSnapshot();
   });
 

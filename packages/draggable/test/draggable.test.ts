@@ -26,7 +26,10 @@ describe("Draggable Only Package", () => {
     let draggable;
 
     beforeAll(() => {
+      // Why this is an error? Do you know why? If so, there's a PR waiting for you.
+      // @ts-expect-error
       EXPECTED_TRANSLATE_X_R1 = store.registry[elmInstance1.id].translateX;
+      // @ts-expect-error
       EXPECTED_TRANSLATE_Y_R1 = store.registry[elmInstance1.id].translateY;
 
       EXPECTED_OFFSET_X_R1 = -START_CLIENT_X_R1 + EXPECTED_TRANSLATE_X_R1;
@@ -112,7 +115,9 @@ describe("Draggable Only Package", () => {
     let draggable;
 
     beforeAll(() => {
+      // @ts-expect-error
       EXPECTED_TRANSLATE_X_R2 = store.registry[elmInstance1.id].translateX;
+      // @ts-expect-error
       EXPECTED_TRANSLATE_Y_R2 = store.registry[elmInstance1.id].translateY;
 
       EXPECTED_OFFSET_X_R2 = -START_CLIENT_X_R2 + EXPECTED_TRANSLATE_X_R2;
