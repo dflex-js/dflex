@@ -2,22 +2,22 @@
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable import/no-extraneous-dependencies */
 
-import React from "react";
+import React, { MouseEventHandler } from "react";
 import "./Todo.css";
 
-import { store, DnD } from "@dflex/dnd/src";
+import { store, DnD } from "@dflex/dnd";
 
 // shared dragged event
-let draggedEvent;
+let draggedEvent: DnD | null;
 
-const Task = ({ id, task, depth = 0 }) => {
-  const taskRef = React.createRef();
+const Task = ({ id, task, depth = 0 }: any) => {
+  const taskRef = React.createRef<HTMLLIElement>();
 
   React.useEffect(() => {
-    store.register({ id, element: taskRef.current, depth });
+    store.register({ id, ref: taskRef.current!, depth });
   });
 
-  const onMouseMove = (e) => {
+  const onMouseMove = (e: MouseEvent) => {
     if (draggedEvent) {
       const { clientX, clientY } = e;
 
@@ -39,7 +39,7 @@ const Task = ({ id, task, depth = 0 }) => {
     }
   };
 
-  const onMouseDown = (e) => {
+  const onMouseDown = (e: React.MouseEvent) => {
     const { button, clientX, clientY } = e;
 
     // avoid right mouse click and ensure id
@@ -61,13 +61,13 @@ const Task = ({ id, task, depth = 0 }) => {
 };
 
 const TodoList = () => {
-  const listRef = React.createRef();
+  const listRef = React.createRef<HTMLUListElement>();
 
   React.useEffect(() => {
     if (listRef) {
       store.register({
         id: "todo-list",
-        element: listRef.current,
+        ref: listRef.current!,
         depth: 1,
       });
     }

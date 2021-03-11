@@ -2,11 +2,13 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 import React from "react";
+
+//@ts-expect-error
 import { keyGenerator } from "@folo/utils";
 
-import { store } from "@dflex/dnd/src";
+import { store } from "@dflex/dnd";
 
-const Core = (props) => {
+const Core = (props: any) => {
   const {
     component: CoreComponent = "div",
     id: idProps,
@@ -33,13 +35,13 @@ const Core = (props) => {
     console.log("dragged is leaving the element!");
   }
 
-  const handlers = { onDragOver, onDragLeave };
+  // const handlers = { onDragOver, onDragLeave };
 
   React.useEffect(() => {
     setTimeout(
       // eslint-disable-next-line func-names
       () => {
-        store.register({ id, element: ref.current, depth }, handlers);
+        store.register({ id, ref: ref.current as HTMLElement, depth });
       },
       0
     );

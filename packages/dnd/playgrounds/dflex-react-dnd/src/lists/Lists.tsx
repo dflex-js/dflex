@@ -37,7 +37,7 @@ const ID_PARENT_1 = "p1";
 const ID_PARENT_2 = "p2";
 const ID_PARENT_3 = "p3";
 
-const BaseApp = ({ Container, Core }) => (
+const BaseApp = ({ Container, Core }: any) => (
   <Container className="list-container">
     <Core id={`id-${ID_PARENT_1}`} component="ul" depth={1}>
       {firstContainer.map(({ label, id }) => (

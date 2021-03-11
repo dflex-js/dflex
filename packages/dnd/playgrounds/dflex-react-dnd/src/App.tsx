@@ -1,6 +1,7 @@
 /* eslint-disable no-plusplus */
 
 import React from "react";
+// @ts-expect-error
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import { ComponentBasedEvent, ContainerBasedEvent } from "./lists";

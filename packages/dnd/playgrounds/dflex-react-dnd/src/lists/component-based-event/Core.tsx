@@ -2,10 +2,10 @@
 
 import React from "react";
 
-import { store, DnD } from "@dflex/dnd/src";
+import { store, DnD } from "@dflex/dnd";
 
 // shared dragged event
-let draggedEvent;
+let draggedEvent: DnD | null;
 
 const Core = ({
   component: CoreComponent = "div",
@@ -13,15 +13,16 @@ const Core = ({
   children,
   depth,
   ...rest
-}) => {
-  const ref = React.useRef();
+}: any) => {
+  const ref = React.useRef<HTMLHeadingElement>();
+
   const [isDragged, setIsDragged] = React.useState(false);
 
   React.useEffect(() => {
     setTimeout(
       // eslint-disable-next-line func-names
       () => {
-        store.register({ id, element: ref.current, depth });
+        store.register({ id, ref: ref.current!, depth });
       },
       0
     );
@@ -35,7 +36,7 @@ const Core = ({
     }
   };
 
-  const onMouseMove = (e) => {
+  const onMouseMove = (e: MouseEvent) => {
     if (draggedEvent) {
       const { clientX, clientY } = e;
 
@@ -43,7 +44,7 @@ const Core = ({
     }
   };
 
-  const onMouseDown = (e) => {
+  const onMouseDown = (e: MouseEvent) => {
     e.stopPropagation();
 
     const { button, clientX, clientY } = e;
