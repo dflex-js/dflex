@@ -1,31 +1,21 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-use-before-define */
 import React from "react";
 
 import { DnD } from "@dflex/dnd";
 
-interface IProps {
-  component: any;
-  children?: React.ReactNode;
-}
-
 const Container = ({
   component: ContainerComponent = "div",
   children,
   ...rest
-}: IProps) => {
-  let mouseEvents: {
-    evType: string;
-    evTarget: Document;
-    // eslint-disable-next-line no-unused-vars
-    handler: (e: React.MouseEvent<HTMLButtonElement>) => MouseEvent;
-  }[];
+}) => {
+  let mouseEvents;
+  let dnd;
 
-  let dnd: DnD;
+  let draggedID;
 
-  let draggedID: string | null = null;
-
-  const onMouseDown = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const onMouseDown = (e) => {
     const { currentTarget, button, clientX, clientY } = e;
 
     // const target = e.target as HTMLTextAreaElement;
@@ -55,7 +45,7 @@ const Container = ({
     }
   };
 
-  const onMouseUp = (e: MouseEvent) => {
+  const onMouseUp = (e) => {
     if (e.currentTarget && draggedID) {
       mouseEvents.forEach(({ evType, evTarget, handler }) => {
         // @ts-expect-error
@@ -63,12 +53,12 @@ const Container = ({
       });
       dnd.endDragging();
 
-      (e.currentTarget as HTMLBodyElement).style.background = "whitesmoke";
-      (e.currentTarget as HTMLBodyElement).style.transition = "none";
+      e.currentTarget.style.background = "whitesmoke";
+      e.currentTarget.style.transition = "none";
     }
   };
 
-  const onMouseMove = (e: MouseEvent) => {
+  const onMouseMove = (e) => {
     const { clientX, clientY } = e;
 
     dnd.dragAt(clientX, clientY);

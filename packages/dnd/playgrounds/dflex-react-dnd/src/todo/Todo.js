@@ -8,16 +8,16 @@ import "./Todo.css";
 import { store, DnD } from "@dflex/dnd";
 
 // shared dragged event
-let draggedEvent: DnD | null;
+let draggedEvent;
 
-const Task = ({ id, task, depth = 0 }: any) => {
-  const taskRef = React.createRef<HTMLLIElement>();
+const Task = ({ id, task, depth = 0 }) => {
+  const taskRef = React.createRef();
 
   React.useEffect(() => {
-    store.register({ id, ref: taskRef.current!, depth });
+    store.register({ id, ref: taskRef.current, depth });
   });
 
-  const onMouseMove = (e: MouseEvent) => {
+  const onMouseMove = (e) => {
     if (draggedEvent) {
       const { clientX, clientY } = e;
 
@@ -39,7 +39,7 @@ const Task = ({ id, task, depth = 0 }: any) => {
     }
   };
 
-  const onMouseDown = (e: React.MouseEvent) => {
+  const onMouseDown = (e) => {
     const { button, clientX, clientY } = e;
 
     // avoid right mouse click and ensure id
@@ -61,13 +61,13 @@ const Task = ({ id, task, depth = 0 }: any) => {
 };
 
 const TodoList = () => {
-  const listRef = React.createRef<HTMLUListElement>();
+  const listRef = React.createRef();
 
   React.useEffect(() => {
     if (listRef) {
       store.register({
         id: "todo-list",
-        ref: listRef.current!,
+        ref: listRef.current,
         depth: 1,
       });
     }

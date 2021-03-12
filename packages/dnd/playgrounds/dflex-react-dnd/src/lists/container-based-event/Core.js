@@ -1,14 +1,15 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-console */
 /* eslint-disable import/no-extraneous-dependencies */
 
 import React from "react";
 
-//@ts-expect-error
+// @ts-expect-error
 import { keyGenerator } from "@folo/utils";
 
 import { store } from "@dflex/dnd";
 
-const Core = (props: any) => {
+const Core = (props) => {
   const {
     component: CoreComponent = "div",
     id: idProps,
@@ -41,7 +42,7 @@ const Core = (props: any) => {
     setTimeout(
       // eslint-disable-next-line func-names
       () => {
-        store.register({ id, ref: ref.current as HTMLElement, depth });
+        store.register({ id, ref: ref.current, depth });
       },
       0
     );

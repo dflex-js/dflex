@@ -35,6 +35,9 @@ jobs:
       - name: Install Dependencies
         run: yarn install
 
+      - name: Build packages
+        run: yarn build
+
       - name: Extended Test for DnD React APP
         uses: cypress-io/github-action@v2
         with:

@@ -5,7 +5,7 @@ import React from "react";
 import { store, DnD } from "@dflex/dnd";
 
 // shared dragged event
-let draggedEvent: DnD | null;
+let draggedEvent;
 
 const Core = ({
   component: CoreComponent = "div",
@@ -13,8 +13,8 @@ const Core = ({
   children,
   depth,
   ...rest
-}: any) => {
-  const ref = React.useRef<HTMLHeadingElement>();
+}) => {
+  const ref = React.useRef();
 
   const [isDragged, setIsDragged] = React.useState(false);
 
@@ -22,7 +22,7 @@ const Core = ({
     setTimeout(
       // eslint-disable-next-line func-names
       () => {
-        store.register({ id, ref: ref.current!, depth });
+        store.register({ id, ref: ref.current, depth });
       },
       0
     );
@@ -36,7 +36,7 @@ const Core = ({
     }
   };
 
-  const onMouseMove = (e: MouseEvent) => {
+  const onMouseMove = (e) => {
     if (draggedEvent) {
       const { clientX, clientY } = e;
 
@@ -44,7 +44,7 @@ const Core = ({
     }
   };
 
-  const onMouseDown = (e: MouseEvent) => {
+  const onMouseDown = (e) => {
     e.stopPropagation();
 
     const { button, clientX, clientY } = e;
