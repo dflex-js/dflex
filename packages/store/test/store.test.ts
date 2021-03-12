@@ -30,6 +30,10 @@ const elm0D1 = {
   // moreInfo: "I am parent",
 };
 
+// TODO:
+// Add tests to cover passing custom element instance with class?
+// If you are interested open PR!
+
 describe("Testing Store Package", () => {
   beforeAll(() => {
     store.register(elm0D0);

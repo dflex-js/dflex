@@ -76,7 +76,7 @@ import { store, Draggable } from "@dflex/draggable";
 Register draggable element in draggable store:
 
 ```ts
-store.register({ id: string, element: Node });
+store.register({ id: string, ref: HTMLElement });
 ```
 
 ### Draggable Instance

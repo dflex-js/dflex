@@ -54,28 +54,25 @@ easily access each DOM node with `id`. In DFlex store ids are used as keys.
  alt="how register works"/>
 </p>
 
-Registry works on creating [pointer](../dom-gen/introduction#generate-element-pointer) for element then store it with another passed data.
+Registry works on creating
+[pointer](../dom-gen/introduction#generate-element-pointer) for the element then
+store it with the default input data.
 
 ```ts
-register(
-  elmInstance: Object<elmInstance>,
-  CustomInstance?: <Function>,
-  options?: Object
+register<T = ElmWIthPointer>(
+  element: ElmInstance,
+  CustomInstance?: Class<T>
 )
 ```
 
-Where `elmInstance` should include:
+Where `ElmInstance` should include:
 
-- `id: string` - element id.
-- `depth: number` - element depth in DOM tree.
-- `rest: any` - another data you want to store it for each element.
+- `id: string` - Element id.
+- `depth: number` - Element depth in DOM tree. Starts from zero for the children.
+- `ref: HTMLElement` - HTML element reference.
 
-And `CustomInstance` is constructor function. In case there's an operation
+And `CustomInstance` is a class/constructor function. In case there's an operation
 depends on generated pointer result before storing the element.
-
-While `options` is plain objects holds extra data to be registered in the store if
-there's any. Gives more flexibility to separate the essential data in
-`elmInstance` from extra once that will passed in `options`.
 
 #### Registry Example
 
@@ -86,38 +83,39 @@ import Store from "dflex/store";
 
 const store = new Store();
 
-const elm0D0 = {
+const refElm0 = document.createElement("div");
+
+const elm0 = {
   id: "id-0",
   depth: 0,
-  moreInfo: "I am the first child",
+  ref: refElm0,
 };
-store.register(elm0D0);
 
-const elm1D0 = {
-  id: "id-1",
-  depth: 0,
-  moreInfo: "I am the second child",
-};
-store.register(elm1D0);
+store.register(elm0);
 ```
 
-To store instance of `ExtraInstanceFunc`, just pass it to the `register`
+To store instance of `MyCustomClass` inside the store, just pass the class to the `register`
 
 ```js
-function ExtraInstanceFunc({ id, depth, moreInfo, pointer }) {
-  this.id = id;
-  this.depth = depth;
-  this.moreInfo = moreInfo;
-  this.pointer = pointer;
+class MyCustomClass {
+  constructor({id, depth, ref, order, keys}){
+    this.id = id;
+    this.depth = depth;
+    this.ref = ref;
+    this.order = order;
+    this.keys = keys;
+    // Maybe another useful things depend on generated pointer.
+  }
 }
 
-const elm0D1 = {
+
+const elm1 = {
   id: "p-id-0",
   depth: 1,
-  moreInfo: "I am the parent",
+  ref: <div id="p-id-0">
 };
 
-store.register(elm0D1, ExtraInstanceFunc);
+store.register(elm1, MyCustomClass);
 ```
 
 > Calling register multiple times will cause updating DOM reference.
@@ -127,29 +125,13 @@ the store but calls it multiple times is expected as the layout usually changes
 in your app. That's why calls it multiple times will cause updating DOM
 reference and preserves others instance.
 
-### Attach/Reattach Element reference
-
-To reattach DOM element reference in the store (usually when an element updated in
-the screen):
+### Get Stored Element By ID
 
 ```ts
-reattachElmRef(id: string, elmRef: HTMLElement)
+getElmById(id: string) : Object<ElmWIthPointer>
 ```
 
-To detach DOM element reference in the store (usually when an element disappear
-from the screen):
-
-```ts
-detachElmRef(id: string)
-```
-
-### Get Element Meta By ID
-
-```ts
-getElmById(id: string) : Object<elmInstanceMeta>
-```
-
-It returns `Object<elmInstanceMeta>` which contains element metadata including
+It returns `Object<ElmWIthPointer>` which contains element metadata including
 generated keys and indexes with registered data.
 
 - `id: string` - element id.
@@ -167,7 +149,7 @@ generated keys and indexes with registered data.
   - `pK: string` - Parent key, connects nodes in the higher level.
   - `chK: string` - Children Key, connects nodes in the lower level.
 
-- `rest: any` - data already entered when element is registered.
+- `rest: ClassInstance` - Class custom instance, if there's any passed when element is registered.
 
 #### getElmById Example
 
@@ -180,12 +162,12 @@ const elemInstance = store.getElmById("id-0");
 // elemInstance = {
 //   depth: 0,
 //   id: "id-0",
+//   ref: <div id="id-0">
 //   keys: {
 //     chK: null,
 //     pK: "1-0",
 //     sK: "0-0",
 //   },
-//   moreInfo: "I am the first child",
 //   order: {
 //     parent: 0,
 //     self: 0,
@@ -193,72 +175,18 @@ const elemInstance = store.getElmById("id-0");
 // };
 ```
 
-### Get Element Tree By ID
+### Get Element branch
+
+Gets all element IDs Siblings in given node represented by sibling key.
 
 ```ts
-getElmTreeById(id: string) : Object<elmInstanceConnection>
+getElmBranchByKey(siblingsKy: string)
 ```
 
-It returns `Object<elmInstanceConnection>` which contains element connections in DOM tree with
-registered data. It includes:
+### Delete Element
 
-- `element: Object<elmInstanceMeta>`- for targeted element.
-
-- `parent: Object<elmInstanceMeta>`- for element's parent.
-
-- `branches: Object<treeBranches>`:
-
-  - `siblings: string<id>|Array<ids>` - all element's siblings.
-
-  - `parents: string<id>|Array<ids>` - all element's parents.
-
-#### getElmTreeById Example
-
-Going back to our first element with `id= id-0`, we can get element instance,
-its parent instance, and its connection branches as following:
-
-```js
-const elmInstanceConnection = store.getElmTreeById("id-0");
-
-// elmInstanceConnection = {
-//   element: {
-//     id: "id-0",
-//     depth: 0,
-//     moreInfo: "I am the first child",
-//     order: { self: 0, parent: 0 },
-//     keys: { sK: "0-0", pK: "1-0", chK: null },
-//   },
-//   parent: {
-//     depth: 1,
-//     id: "p-id-0",
-//     keys: {
-//       chK: "0-0",
-//       pK: "2-0",
-//       sK: "1-0",
-//     },
-//     moreInfo: "I am the parent",
-//     order: {
-//       parent: 0,
-//       self: 0,
-//     },
-//   },
-//   branches: { siblings: ["id-0", "id-1"], parents: "p-id-0" },
-// };
-```
-
-#### Why this is matter
-
-Because now you can traverse through DOM tree with existing store. Note that
-`elmInstanceConnection.branches.parents` allows you to go up while
-`elmInstanceConnection.branches.siblings` allows you to traverse through all
-node siblings. And not only that, both ways retrieve nodes in order.
-
-### Reset Element
-
-To clear element from the registry. Should be called only when element is
-unmounted and expected to return with different positions only. Otherwise, call
-[detachElmRef](introduction#attachreattach-element-reference)
+Delete element from the registry. Should be called only when element is unmounted and expected to return with different positions only.
 
 ```ts
-resetElm(id: string)
+deleteElm(id: string)
 ```

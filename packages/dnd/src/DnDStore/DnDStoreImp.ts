@@ -44,7 +44,7 @@ class DnDStoreImp extends Store<CoreInstance> {
    * @param elmRef -
    */
   reattachElmRef(id: string, elmRef: HTMLElement) {
-    super.registry[id].ref = elmRef;
+    this.registry[id].ref = elmRef;
   }
 
   /**

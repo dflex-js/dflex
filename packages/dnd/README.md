@@ -84,11 +84,11 @@ import { store, DnD } from "@dflex/dnd";
 Each element should be registered in DnD store in order to be active later
 
 ```ts
-store.register({ id: String, element: HTMLElement, depth: Number });
+store.register({ id: String, ref: HTMLElement, depth: Number });
 ```
 
 - `id: String` is unique identifer for an element in the registry.
-- `element: HTMLElement` targeted DOM element.
+- `ref: HTMLElement` targeted DOM element.
 - `depth: Number` Element depth in tree. Start from bottom up. So child is `0`,
   parents are `1` so on so forth. The idea of depth is to be able to targeted
   multiple containers when you can move a child or a parent wrapper.
@@ -122,23 +122,6 @@ the screen):
 store.reattachElmRef(id: string, elmRef: HTMLElement)
 ```
 
-To detach DOM element reference in the store (usually when an element disappear
-from the screen):
-
-```ts
-store.detachElmRef(id: string)
-```
-
-### Reset Element in the Store
-
-To clear element from the registry. Should be called only when element is
-unmounted and expected to return with different positions only. Otherwise, call
-[detachElmRef](introduction#attachreattach-element-reference)
-
-```ts
-resetElm(id: string)
-```
-
 ### Getting dragged Index
 
 In case you need to know the current index of dragged element.
@@ -156,6 +139,66 @@ dragged index considering the dragged position is not settled yet.
 ```ts
 dnd.getStatus() : Array|string
 ```
+
+### Get Element Tree By ID
+
+```ts
+store.getElmTreeById(id: string) : Object<ElmTree>
+```
+
+It returns `Object<ElmTree>` which contains element connections in DOM tree with
+registered data. It includes:
+
+- `element: Object<elmInstanceMeta>`- for targeted element.
+
+- `parent: Object<elmInstanceMeta>`- for element's parent.
+
+- `branches: Object<treeBranches>`:
+
+  - `siblings: string<id>|Array<ids>` - all element's siblings.
+
+  - `parents: string<id>|Array<ids>` - all element's parents.
+
+#### getElmTreeById Example
+
+Going back to our first element with `id= id-0`, we can get element instance,
+its parent instance, and its connection branches as following:
+
+```js
+const elmInstanceConnection = store.getElmTreeById("id-0");
+
+// elmInstanceConnection = {
+//   element: {
+//     id: "id-0",
+//     depth: 0,
+//     moreInfo: "I am the first child",
+//     order: { self: 0, parent: 0 },
+//     keys: { sK: "0-0", pK: "1-0", chK: null },
+//   },
+//   parent: {
+//     depth: 1,
+//     id: "p-id-0",
+//     keys: {
+//       chK: "0-0",
+//       pK: "2-0",
+//       sK: "1-0",
+//     },
+//     moreInfo: "I am the parent",
+//     order: {
+//       parent: 0,
+//       self: 0,
+//     },
+//   },
+//   branches: { siblings: ["id-0", "id-1"], parents: "p-id-0" },
+// };
+```
+
+#### Why this is matter
+
+Because now you can traverse through DOM tree with existing store. Note that
+`elmInstanceConnection.branches.parents` allows you to go up while
+`elmInstanceConnection.branches.siblings` allows you to traverse through all
+node siblings. And not only that, both ways retrieve nodes in order.
 
 #### Examples
 
