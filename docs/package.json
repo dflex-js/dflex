@@ -16,7 +16,7 @@
     "@dflex/draggable": "^0.3.2",
     "@docusaurus/core": "2.0.0-alpha.70",
     "@docusaurus/plugin-pwa": "^2.0.0-alpha.70",
-    "@docusaurus/preset-classic": "2.0.0-alpha.70",
+    "@docusaurus/preset-classic": "2.0.0-alpha.71",
     "@docusaurus/theme-live-codeblock": "^2.0.0-alpha.70",
     "@folo/utils": "^0.1.5",
     "@mdx-js/react": "^1.6.21",
