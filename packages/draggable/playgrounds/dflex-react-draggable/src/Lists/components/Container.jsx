@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-use-before-define */
+
 import React from "react";
 
-import { Draggable } from "@dflex/draggable/src";
+import { Draggable } from "@dflex/draggable";
 
 const Container = ({
   component: ContainerComponent = "div",

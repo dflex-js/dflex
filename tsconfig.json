@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "lib": ["dom", "ESNext"],
+    "target": "ES2018",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "@dflex/*": ["packages/*/src"]
+    },
+    "skipLibCheck": true,
+    "declaration": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "esModuleInterop": true
+  },
+  "include": ["packages"],
+  "exclude": ["node_modules", "dist", "**/*.test*", "**/*.spec*"]
+}

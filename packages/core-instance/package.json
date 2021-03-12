@@ -1,0 +1,41 @@
+{
+  "name": "@dflex/core-instance",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "author": "Jalal Maskoun <jimmy002020@gmail.com>",
+  "scripts": {
+    "compile": "yarn rimraf ./dist tsconfig.tsbuildinfo && yarn tsc -b",
+    "build": "yarn compile"
+  },
+  "repository": "https://github.com/jalal246/dflex/tree/master/packages/core-instance",
+  "license": "GPL-3.0",
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@dflex/store": "1.3.0",
+    "@dflex/dom-gen": "0.2.6"
+  },
+  "keywords": [
+    "drag-drop",
+    "dnd",
+    "sortable",
+    "reorder",
+    "drag",
+    "drop",
+    "DOM",
+    "front-end",
+    "@dflex",
+    "@dflex/dom-gen",
+    "@dflex/store",
+    "@dflex/core-instance",
+    "@dflex/draggable",
+    "@dflex/dnd"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  }
+}

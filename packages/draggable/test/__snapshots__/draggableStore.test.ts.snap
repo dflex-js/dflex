@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Draggable Store Registers element and initiates translateX,Y 1`] = `
+Object {
+  "id-0": CoreInstance {
+    "currentLeft": 0,
+    "currentTop": 0,
+    "depth": 0,
+    "id": "id-0",
+    "keys": Object {
+      "chK": null,
+      "pK": "1-0",
+      "sK": "0-0",
+    },
+    "offset": Object {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
+    },
+    "order": Object {
+      "parent": 0,
+      "self": 0,
+    },
+    "prevTranslateY": Array [],
+    "ref": <div />,
+    "translateX": 0,
+    "translateY": 0,
+  },
+}
+`;

@@ -1,9 +1,10 @@
 /* eslint-disable import/no-extraneous-dependencies */
+
 import React from "react";
 import { keyGenerator } from "@folo/utils";
 
 // eslint-disable-next-line import/no-unresolved
-import { store } from "@dflex/draggable/src";
+import { store } from "@dflex/draggable";
 
 const Draggable = (props) => {
   const {
@@ -22,7 +23,7 @@ const Draggable = (props) => {
   React.useEffect(() => {
     setTimeout(
       // eslint-disable-next-line func-names
-      function () {
+      () => {
         store.register({ id, element: ref.current });
       },
       0

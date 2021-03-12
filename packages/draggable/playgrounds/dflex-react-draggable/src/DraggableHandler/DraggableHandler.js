@@ -1,8 +1,7 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable import/no-extraneous-dependencies */
 import React from "react";
 
-import { store, Draggable } from "@dflex/draggable/src";
+import { store, Draggable } from "@dflex/draggable";
 import "./draggableHandler.css";
 import HandlerSVG from "./HandlerSVG";
 
@@ -17,7 +16,7 @@ const DraggableHandler = ({ id = "draggableSolo", depth = 0 }) => {
   React.useEffect(() => {
     setTimeout(
       // eslint-disable-next-line func-names
-      function () {
+      () => {
         store.register({ id, element: ref.current, depth });
       },
       0

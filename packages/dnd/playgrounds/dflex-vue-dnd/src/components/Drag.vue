@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { store } from "@dflex/dnd/src";
+import { store } from "@dflex/dnd";
 
 export default {
   props: {
@@ -18,7 +18,7 @@ export default {
 
   mounted() {
     // Register element in store -- Notice higher depth than the child components!
-    store.register({ id: this.id, element: this.$refs[this.id], depth: 1 });
+    store.register({ id: this.id, ref: this.$refs[this.id], depth: 1 });
   },
 };
 </script>

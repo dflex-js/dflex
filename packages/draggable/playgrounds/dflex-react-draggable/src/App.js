@@ -1,6 +1,5 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-
 import Lists from "./Lists";
 import DraggableSolo from "./DraggableSolo";
 import DraggableHandler from "./DraggableHandler";

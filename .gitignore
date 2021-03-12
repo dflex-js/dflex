@@ -4,11 +4,13 @@ node_modules
 .cache
 .changelog
 .docusaurus
+.DS_Store
 build
 dist
+lib
 draft
 samples
-
+tsconfig.tsbuildinfo
 cypress/screenshots
 cypress/videos
 
