@@ -1,8 +1,14 @@
 {
-  "extends": "../../tsconfig.json",
-  "include": ["src/**/*"],
+  "extends": "../../../../tsconfig.json",
+  "include": [
+    "src/**/*"
+  ],
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "strictFunctionTypes": false,
     "allowJs": true,
     "skipLibCheck": true,
@@ -20,5 +26,9 @@
     "outDir": "./dist",
     "rootDir": "./src"
   },
-  "references": [{ "path": "../../tsconfig.json" }]
+  "references": [
+    {
+      "path": "../../tsconfig.json"
+    }
+  ]
 }

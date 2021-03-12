@@ -54,7 +54,7 @@ module.exports = {
     {
       files: ["*.types.ts"],
       rules: {
-        "no-unused-vars": "ignore",
+        "no-unused-vars": "off",
       },
     },
   ],
