@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-use-before-define */
 import React from "react";
 
-import { DnD } from "@dflex/dnd/src";
+import { DnD } from "@dflex/dnd";
 
 const Container = ({
   component: ContainerComponent = "div",
@@ -10,10 +11,9 @@ const Container = ({
   ...rest
 }) => {
   let mouseEvents;
-
   let dnd;
 
-  let draggedID = null;
+  let draggedID;
 
   const onMouseDown = (e) => {
     const { target, button, clientX, clientY } = e;
@@ -43,16 +43,15 @@ const Container = ({
   };
 
   const onMouseUp = (e) => {
-    const { target } = e;
-
-    if (draggedID) {
+    if (e.target && draggedID) {
       mouseEvents.forEach(({ evType, evTarget, handler }) => {
         evTarget.removeEventListener(evType, handler);
       });
+
       dnd.endDragging();
 
-      target.style.background = "whitesmoke";
-      target.style.transition = "none";
+      e.target.style.background = "whitesmoke";
+      e.target.style.transition = "none";
     }
   };
 

@@ -4,7 +4,7 @@ import React from "react";
 import { keyGenerator } from "@folo/utils";
 
 // eslint-disable-next-line import/no-unresolved
-import { store } from "@dflex/draggable/src";
+import { store } from "@dflex/draggable";
 
 const Draggable = (props) => {
   const {

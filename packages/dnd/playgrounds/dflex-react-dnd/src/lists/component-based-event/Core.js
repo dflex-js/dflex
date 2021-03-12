@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { store, DnD } from "@dflex/dnd/src";
+import { store, DnD } from "@dflex/dnd";
 
 // shared dragged event
 let draggedEvent;
@@ -15,13 +15,14 @@ const Core = ({
   ...rest
 }) => {
   const ref = React.useRef();
+
   const [isDragged, setIsDragged] = React.useState(false);
 
   React.useEffect(() => {
     setTimeout(
       // eslint-disable-next-line func-names
       () => {
-        store.register({ id, element: ref.current, depth });
+        store.register({ id, ref: ref.current, depth });
       },
       0
     );

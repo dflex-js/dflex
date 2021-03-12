@@ -2,10 +2,10 @@
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable import/no-extraneous-dependencies */
 
-import React from "react";
+import React, { MouseEventHandler } from "react";
 import "./Todo.css";
 
-import { store, DnD } from "@dflex/dnd/src";
+import { store, DnD } from "@dflex/dnd";
 
 // shared dragged event
 let draggedEvent;
@@ -14,7 +14,7 @@ const Task = ({ id, task, depth = 0 }) => {
   const taskRef = React.createRef();
 
   React.useEffect(() => {
-    store.register({ id, element: taskRef.current, depth });
+    store.register({ id, ref: taskRef.current, depth });
   });
 
   const onMouseMove = (e) => {
@@ -67,7 +67,7 @@ const TodoList = () => {
     if (listRef) {
       store.register({
         id: "todo-list",
-        element: listRef.current,
+        ref: listRef.current,
         depth: 1,
       });
     }

@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { store, Draggable } from "@dflex/draggable/src";
+import { store, Draggable } from "@dflex/draggable";
 import "./button.css";
 
 // shared dragged event

@@ -33,10 +33,9 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - name: Install Dependencies
-        if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: yarn install
 
-      - name: Run Build
+      - name: Build packages
         run: yarn build
 
       - name: Extended Test for DnD React APP

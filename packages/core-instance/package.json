@@ -5,7 +5,7 @@
   "types": "dist/index.d.ts",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
-    "compile": "yarn rimraf ./dist && yarn tsc",
+    "compile": "yarn rimraf ./dist tsconfig.tsbuildinfo && yarn tsc -b",
     "build": "yarn compile"
   },
   "repository": "https://github.com/jalal246/dflex/tree/master/packages/core-instance",
