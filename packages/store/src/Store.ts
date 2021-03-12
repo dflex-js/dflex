@@ -17,8 +17,7 @@ class Store<T = ElmWIthPointer> {
 
   /**
    * Delete element from the registry. Should be called only when element is
-   * unmounted and expected to return with different positions only. Otherwise,
-   * call `detachElmRef.`
+   * unmounted and expected to return with different positions only.
    *
    * @param id -
    */
