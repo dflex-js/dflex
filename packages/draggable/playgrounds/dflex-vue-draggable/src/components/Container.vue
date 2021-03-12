@@ -29,7 +29,7 @@
 
 <script>
 // Import dependencies
-import { Draggable } from "@dflex/draggable/src";
+import { Draggable } from "@dflex/draggable";
 import { keyGenerator } from "@folo/utils";
 // Import components
 import Drag from "./Drag.vue";
