@@ -17,6 +17,7 @@ const Container = ({
   let mouseEvents: {
     evType: string;
     evTarget: Document;
+    // eslint-disable-next-line no-unused-vars
     handler: (e: React.MouseEvent<HTMLButtonElement>) => MouseEvent;
   }[];
 
@@ -42,7 +43,7 @@ const Container = ({
         currentTarget.style.transition =
           "opacity 0.2s cubic-bezier(0.2, 0, 0, 1) 0s";
 
-        const mouseEvents = [
+        mouseEvents = [
           { evType: "mousemove", evTarget: document, handler: onMouseMove },
           { evType: "mouseup", evTarget: document, handler: onMouseUp },
         ];
@@ -57,7 +58,7 @@ const Container = ({
   const onMouseUp = (e: MouseEvent) => {
     if (e.currentTarget && draggedID) {
       mouseEvents.forEach(({ evType, evTarget, handler }) => {
-        //@ts-expect-error
+        // @ts-expect-error
         evTarget.removeEventListener(evType, handler);
       });
       dnd.endDragging();

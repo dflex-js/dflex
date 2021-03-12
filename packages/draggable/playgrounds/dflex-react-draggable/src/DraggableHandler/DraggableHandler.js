@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from "react";
 
-import { store, Draggable } from "@dflex/draggable/src";
+import { store, Draggable } from "@dflex/draggable";
 import "./draggableHandler.css";
 import HandlerSVG from "./HandlerSVG";
 
