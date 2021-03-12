@@ -20,7 +20,14 @@
     "@dflex/store": "1.3.0",
     "@dflex/core-instance": "0.1.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@cypress/code-coverage": "^3.9.2",
+    "cross-env": "^7.0.3",
+    "cypress": "^6.4.0",
+    "dflex-utils-test": "^0.1.0",
+    "eslint-plugin-cypress": "^2.11.2",
+    "start-server-and-test": "^1.12.0"
+  },
   "keywords": [
     "@dflex",
     "@dflex/dom-gen",

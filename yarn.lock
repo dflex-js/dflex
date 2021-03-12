@@ -1590,10 +1590,17 @@
   resolved "https://registry.yarnpkg.com/@dflex/draggable/-/draggable-0.3.3.tgz#4298509912707332fb74fae826bb262ff649fd95"
   integrity sha512-XNVM/N7v8F1cOSzsDdXAPB20AAIEz8TOVkm8niNpKIckL9Gch95t+mRcJTbyaHeoNFAsezwjthkZJFa5bpUWhg==
 
+<<<<<<< HEAD
 "@docsearch/css@3.0.0-alpha.34":
   version "3.0.0-alpha.34"
   resolved "https://registry.yarnpkg.com/@docsearch/css/-/css-3.0.0-alpha.34.tgz#5d5c39955956e237884a9997eb29e28c8adc99fa"
   integrity sha512-ZUbmxbN9gQp3vuBo9GDnm+ywB9aZQSh0ogjt6865PmeRUvyCCvgSwyZktliLPvAztoGX56qewQjxNcso3RrSow==
+=======
+"@docsearch/css@3.0.0-alpha.32":
+  version "3.0.0-alpha.32"
+  resolved "https://registry.yarnpkg.com/@docsearch/css/-/css-3.0.0-alpha.32.tgz#3d89c8db4035531d201f74ef2115f72094a24036"
+  integrity sha512-wafLX/jT1NPAwifPhzMJX394PjKdqf5TA4cz/JgvBYR1/+MiErLk/pyCmocXkawWGR17/6u2qw3wYvXu/Qe/DQ==
+>>>>>>> master
 
 "@docsearch/react@^3.0.0-alpha.31":
   version "3.0.0-alpha.34"
