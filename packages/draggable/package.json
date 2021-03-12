@@ -28,15 +28,20 @@
     "start-server-and-test": "^1.11.2"
   },
   "keywords": [
+    "drag-drop",
+    "dnd",
+    "sortable",
+    "reorder",
+    "drag",
+    "drop",
+    "DOM",
+    "front-end",
     "@dflex",
     "@dflex/dom-gen",
     "@dflex/store",
     "@dflex/core-instance",
-    "@dflex/dnd",
-    "@folo",
-    "builderz",
-    "DOM",
-    "front-end"
+    "@dflex/draggable",
+    "@dflex/dnd"
   ],
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",

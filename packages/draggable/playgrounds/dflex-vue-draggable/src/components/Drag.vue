@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { store } from "@dflex/draggable/src";
+import { store } from "@dflex/draggable";
 
 export default {
   props: {
@@ -18,7 +18,7 @@ export default {
 
   mounted() {
     // Register element in store
-    store.register({ id: this.id, element: this.$refs[this.id] });
+    store.register({ id: this.id, ref: this.$refs[this.id] });
   },
 };
 </script>

@@ -1,9 +1,9 @@
 <template>
-  <li :id="id" :ref="id">{{content}}</li>
+  <li :id="id" :ref="id">{{ content }}</li>
 </template>
 
 <script>
-import { store } from "@dflex/dnd/src";
+import { store } from "@dflex/dnd";
 
 export default {
   props: {
@@ -17,7 +17,7 @@ export default {
 
   mounted() {
     // Register element in store -- Notice lower depth than the parent component!
-    store.register({ id: this.id, element: this.$refs[this.id], depth: 0 });
+    store.register({ id: this.id, ref: this.$refs[this.id], depth: 0 });
   },
 };
 </script>
