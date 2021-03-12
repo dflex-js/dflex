@@ -62,11 +62,11 @@ import { store, DnD } from "@dflex/dnd";
 Each element should be registered in DnD store in order to be active later
 
 ```ts
-store.register({ id: String, element: HTMLElement, depth: Number });
+store.register({ id: String, ref: HTMLElement, depth: Number });
 ```
 
 - `id: String` is unique identifer for an element in the registry.
-- `element: HTMLElement` targeted DOM element.
+- `ref: HTMLElement` targeted DOM element.
 - `depth: Number` Element depth in tree. Start from bottom up. So child is `0`,
   parents are `1` so on so forth. The idea of depth is to be able to targeted
   multiple containers when you can move a child or a parent wrapper.
