@@ -52,11 +52,5 @@ module.exports = {
         "tsdoc/syntax": "error",
       },
     },
-    {
-      files: ["*.types.ts"],
-      rules: {
-        "no-unused-vars": "off",
-      },
-    },
   ],
 };
