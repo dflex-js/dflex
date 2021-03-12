@@ -122,23 +122,6 @@ the screen):
 store.reattachElmRef(id: string, elmRef: HTMLElement)
 ```
 
-To detach DOM element reference in the store (usually when an element disappear
-from the screen):
-
-```ts
-store.detachElmRef(id: string)
-```
-
-### Reset Element in the Store
-
-To clear element from the registry. Should be called only when element is
-unmounted and expected to return with different positions only. Otherwise, call
-[detachElmRef](introduction#attachreattach-element-reference)
-
-```ts
-resetElm(id: string)
-```
-
 ### Getting dragged Index
 
 In case you need to know the current index of dragged element.
