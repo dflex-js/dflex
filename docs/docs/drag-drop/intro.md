@@ -134,3 +134,63 @@ dragged index considering the dragged position is not settled yet.
 ```ts
 dnd.getStatus() : Array|string
 ```
+
+### Get Element Tree By ID
+
+```ts
+store.getElmTreeById(id: string) : Object<ElmTree>
+```
+
+It returns `Object<ElmTree>` which contains element connections in DOM tree with
+registered data. It includes:
+
+- `element: Object<elmInstanceMeta>`- for targeted element.
+
+- `parent: Object<elmInstanceMeta>`- for element's parent.
+
+- `branches: Object<treeBranches>`:
+
+  - `siblings: string<id>|Array<ids>` - all element's siblings.
+
+  - `parents: string<id>|Array<ids>` - all element's parents.
+
+#### getElmTreeById Example
+
+Going back to our first element with `id= id-0`, we can get element instance,
+its parent instance, and its connection branches as following:
+
+```js
+const elmInstanceConnection = store.getElmTreeById("id-0");
+
+// elmInstanceConnection = {
+//   element: {
+//     id: "id-0",
+//     depth: 0,
+//     moreInfo: "I am the first child",
+//     order: { self: 0, parent: 0 },
+//     keys: { sK: "0-0", pK: "1-0", chK: null },
+//   },
+//   parent: {
+//     depth: 1,
+//     id: "p-id-0",
+//     keys: {
+//       chK: "0-0",
+//       pK: "2-0",
+//       sK: "1-0",
+//     },
+//     moreInfo: "I am the parent",
+//     order: {
+//       parent: 0,
+//       self: 0,
+//     },
+//   },
+//   branches: { siblings: ["id-0", "id-1"], parents: "p-id-0" },
+// };
+```
+
+#### Why this is matter
+
+Because now you can traverse through DOM tree with existing store. Note that
+`elmInstanceConnection.branches.parents` allows you to go up while
+`elmInstanceConnection.branches.siblings` allows you to traverse through all
+node siblings. And not only that, both ways retrieve nodes in order.
