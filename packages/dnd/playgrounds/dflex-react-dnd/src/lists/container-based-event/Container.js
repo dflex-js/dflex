@@ -16,22 +16,19 @@ const Container = ({
   let draggedID;
 
   const onMouseDown = (e) => {
-    const { currentTarget, button, clientX, clientY } = e;
-
-    // const target = e.target as HTMLTextAreaElement;
+    const { target, button, clientX, clientY } = e;
 
     // avoid right mouse click and ensure id
     if (typeof button === "number" && button === 0) {
-      const { id } = currentTarget;
+      const { id } = target;
 
-      if (currentTarget && id) {
+      if (id) {
         draggedID = id;
 
         dnd = new DnD(id, { x: clientX, y: clientY });
 
-        currentTarget.style.background = "pink";
-        currentTarget.style.transition =
-          "opacity 0.2s cubic-bezier(0.2, 0, 0, 1) 0s";
+        target.style.background = "pink";
+        target.style.transition = "opacity 0.2s cubic-bezier(0.2, 0, 0, 1) 0s";
 
         mouseEvents = [
           { evType: "mousemove", evTarget: document, handler: onMouseMove },
@@ -46,15 +43,15 @@ const Container = ({
   };
 
   const onMouseUp = (e) => {
-    if (e.currentTarget && draggedID) {
+    if (e.target && draggedID) {
       mouseEvents.forEach(({ evType, evTarget, handler }) => {
-        // @ts-expect-error
         evTarget.removeEventListener(evType, handler);
       });
+
       dnd.endDragging();
 
-      e.currentTarget.style.background = "whitesmoke";
-      e.currentTarget.style.transition = "none";
+      e.target.style.background = "whitesmoke";
+      e.target.style.transition = "none";
     }
   };
 
