@@ -19,9 +19,7 @@ keywords:
 
 ```jsx live
 // Create useable Draggable component
-function Draggable({ id = Date.now(), depth = 0 }) {
-  const { store, Draggable } = DFlexDraggable;
-
+function DraggableComponent({ id = Date.now(), depth = 0 }) {
   // Create Shared dragged event holder
   let draggedEvent;
 
@@ -31,7 +29,7 @@ function Draggable({ id = Date.now(), depth = 0 }) {
   React.useEffect(() => {
     // Wait until component is mounted to get the reference
     if (ref) {
-      store.register({ id, element: ref.current, depth });
+      DraggableStore.register({ id, ref: ref.current, depth });
     }
   }, [ref]);
 
@@ -104,9 +102,7 @@ The full code will be:
 
 ```jsx live
 // Create useable Draggable component
-function Draggable({ id = Date.now(), depth = 0 }) {
-  const { store, Draggable } = DFlexDraggable;
-
+function DraggableWithHandler({ id = Date.now(), depth = 0 }) {
   // Create Shared dragged event holder
   let draggedEvent;
 
@@ -118,7 +114,7 @@ function Draggable({ id = Date.now(), depth = 0 }) {
     setTimeout(
       // Register element in the store
       function () {
-        store.register({ id, element: ref.current, depth });
+        DraggableStore.register({ id, ref: ref.current, depth });
       },
       0
     );

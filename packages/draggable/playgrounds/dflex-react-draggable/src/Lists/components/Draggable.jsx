@@ -24,7 +24,7 @@ const Draggable = (props) => {
     setTimeout(
       // eslint-disable-next-line func-names
       () => {
-        store.register({ id, element: ref.current });
+        store.register({ id, ref: ref.current });
       },
       0
     );
