@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
-/* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable no-use-before-define */
-
 import React from "react";
 
 import { Draggable } from "@dflex/draggable";
@@ -16,6 +12,22 @@ const Container = ({
   let draggable;
 
   let draggedID = null;
+
+  const onMouseUp = () => {
+    if (draggedID) {
+      mouseEvents.forEach(({ evType, evTarget, handler }) => {
+        evTarget.removeEventListener(evType, handler);
+      });
+
+      draggable.endDragging();
+    }
+  };
+
+  const onMouseMove = (e) => {
+    const { clientX, clientY } = e;
+
+    draggable.dragAt(clientX, clientY);
+  };
 
   const onMouseDown = (e) => {
     const { target, button, clientX, clientY } = e;
@@ -39,22 +51,6 @@ const Container = ({
         });
       }
     }
-  };
-
-  const onMouseUp = () => {
-    if (draggedID) {
-      mouseEvents.forEach(({ evType, evTarget, handler }) => {
-        evTarget.removeEventListener(evType, handler);
-      });
-
-      draggable.endDragging();
-    }
-  };
-
-  const onMouseMove = (e) => {
-    const { clientX, clientY } = e;
-
-    draggable.dragAt(clientX, clientY);
   };
 
   return (

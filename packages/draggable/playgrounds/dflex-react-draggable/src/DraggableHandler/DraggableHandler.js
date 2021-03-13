@@ -17,7 +17,7 @@ const DraggableHandler = ({ id = "draggableSolo", depth = 0 }) => {
     setTimeout(
       // eslint-disable-next-line func-names
       () => {
-        store.register({ id, element: ref.current, depth });
+        store.register({ id, ref: ref.current, depth });
       },
       0
     );

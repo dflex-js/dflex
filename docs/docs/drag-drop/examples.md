@@ -27,8 +27,6 @@ function TodoList() {
   // Create Shared dragged event holder
   let draggedEvent;
 
-  const { store, DnD } = DFlexDnD;
-
   const Task = ({ id, task }) => {
     // This reference enable DFlex to move the element when required
     const ref = React.useRef();
@@ -36,7 +34,7 @@ function TodoList() {
     React.useEffect(() => {
       // Wait until component is mounted to get the reference
       if (ref) {
-        store.register({ id, element: ref.current, depth: 0 });
+        DNDStore.register({ id, ref: ref.current, depth: 0 });
       }
     }, []);
 
