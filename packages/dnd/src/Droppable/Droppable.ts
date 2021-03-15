@@ -152,8 +152,8 @@ class Droppable implements DroppableInterface {
   detectDroppableIndex() {
     let droppableIndex = null;
 
-    for (let i = 0; i < this.draggable.siblingsList.length; i += 1) {
-      const id = this.draggable.siblingsList[i];
+    for (let i = 0; i < this.draggable.siblingsList!.length; i += 1) {
+      const id = this.draggable.siblingsList![i];
 
       if (this.isIDEligible2Move(id)) {
         const element = store.getElmById(id);
@@ -183,7 +183,7 @@ class Droppable implements DroppableInterface {
 
   switchElement() {
     const elmIndex = this.draggable.tempIndex + -1 * this.effectedElemDirection;
-    const id = this.draggable.siblingsList[elmIndex];
+    const id = this.draggable.siblingsList![elmIndex];
 
     if (this.isIDEligible2Move(id)) {
       this.draggable.tempIndex = elmIndex;
@@ -197,7 +197,7 @@ class Droppable implements DroppableInterface {
    * @param i - index
    */
   movePositionIfEligibleID(i: number) {
-    const id = this.draggable.siblingsList[i];
+    const id = this.draggable.siblingsList![i];
 
     if (this.isIDEligible2Move(id)) {
       this.updateElement(id);
@@ -208,7 +208,7 @@ class Droppable implements DroppableInterface {
     const from = this.draggable.tempIndex + 1;
     this.draggable.tempIndex = -1;
 
-    for (let i = from; i < this.draggable.siblingsList.length; i += 1) {
+    for (let i = from; i < this.draggable.siblingsList!.length; i += 1) {
       this.movePositionIfEligibleID(i);
     }
   }
@@ -218,7 +218,7 @@ class Droppable implements DroppableInterface {
    * @param to - index
    */
   moveDown(to: number) {
-    for (let i = this.draggable.siblingsList.length - 1; i >= to; i -= 1) {
+    for (let i = this.draggable.siblingsList!.length - 1; i >= to; i -= 1) {
       this.movePositionIfEligibleID(i);
     }
   }
@@ -228,6 +228,7 @@ class Droppable implements DroppableInterface {
    * @param y -
    */
   draggedOutPosition(y: number) {
+    console.log("defenitely here!");
     this.draggable.setDraggedMovingDown(y);
 
     if (this.draggable.isDraggedLeavingFromTop()) {
@@ -266,6 +267,8 @@ class Droppable implements DroppableInterface {
        * Going out from the list: Right/left.
        */
       if (this.draggable.isOutHorizontal) {
+        // Is is out parent?
+
         // move element up
         this.setEffectedElemDirection(true);
 
@@ -365,10 +368,14 @@ class Droppable implements DroppableInterface {
   dragAt(x: number, y: number) {
     this.draggable.dragAt(x, y);
 
-    if (this.draggable.isSingleton) return;
+    if (this.draggable.siblingsList === null) return;
 
     if (this.draggable.isDraggedOut()) {
       if (!this.isListLocked) {
+        if (!this.draggable.activeParent) {
+          // this.draggable.isDraggedOut(this.draggable.activeParent!);
+        }
+
         this.draggedOutPosition(y);
 
         return;

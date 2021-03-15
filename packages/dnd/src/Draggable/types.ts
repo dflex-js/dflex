@@ -26,12 +26,11 @@ export interface DraggableDnDBase
   dragID: string;
 
   parentsList: ELmBranch | null;
-  siblingsList: ELmBranch;
+  siblingsList: ELmBranch | null;
+  activeParent: CoreInstanceInterface | null;
 
   thresholds: Thresholds;
 
-  isSingleton: boolean;
-  isOrphan: boolean;
   isOutActiveParent: boolean;
   setThreshold(droppable: CoreInstanceInterface, isParent?: boolean): void;
 }
@@ -40,7 +39,6 @@ export interface DraggableDnD extends DraggableDnDBase {
   innerOffsetX: number;
   innerOffsetY: number;
   tempOffset: TempOffset;
-  prevX: number;
   prevY: number;
   numberOfElementsTransformed: number;
   inc: number;

@@ -13,8 +13,6 @@ class Draggable extends Base implements DraggableDnD {
 
   tempOffset: TempOffset;
 
-  prevX: number;
-
   prevY: number;
 
   numberOfElementsTransformed: number;
@@ -46,7 +44,6 @@ class Draggable extends Base implements DraggableDnD {
     /**
      * previous X and Y are used to calculate mouse directions.
      */
-    this.prevX = x;
     this.prevY = y;
 
     /**
@@ -144,7 +141,10 @@ class Draggable extends Base implements DraggableDnD {
    * Checks if dragged is the last child and going down.
    */
   isDraggedLeavingFromEnd() {
-    return this.tempIndex >= this.siblingsList.length - 1 && this.isMovingDown;
+    return (
+      this.siblingsList === null ||
+      (this.tempIndex >= this.siblingsList.length - 1 && this.isMovingDown)
+    );
   }
 
   isDraggedVerticallyInsideList() {
@@ -207,7 +207,7 @@ class Draggable extends Base implements DraggableDnD {
      * In this case, the use clicked without making any move.
      */
     if (
-      this.isSingleton ||
+      this.siblingsList === null ||
       this.isSiblingsTransformed() ||
       this.numberOfElementsTransformed === 0
     ) {

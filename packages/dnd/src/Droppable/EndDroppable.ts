@@ -12,12 +12,9 @@ class EndDroppable extends Droppable {
   }
 
   /**
-   * Gets the current statues of dragged siblings. If it's called before ending
-   * dragged then `null` is expected in the dragged index. Otherwise, it returns
-   * all element in order.
    *
    */
-  getStatus() {
+  getSiblings() {
     const {
       keys: { sK },
     } = store.getElmById(this.draggable.draggedElm.id);
@@ -82,8 +79,11 @@ class EndDroppable extends Droppable {
     this.draggable.endDragging(this.topDifference);
 
     // TODO: Add tests to cover dragged whiteout parents
-    if (!this.draggable.isSingleton && this.draggable.isSiblingsTransformed()) {
-      const siblings = this.getStatus();
+    if (
+      !this.draggable.siblingsList !== null &&
+      this.draggable.isSiblingsTransformed()
+    ) {
+      const siblings = this.getSiblings();
 
       // @ts-expect-error
       this.undoList(siblings);

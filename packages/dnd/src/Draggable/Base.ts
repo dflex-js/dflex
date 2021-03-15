@@ -12,7 +12,7 @@ import type { DraggableDnDBase, Thresholds } from "./types";
 
 /**
  * Base element.
- *ss
+ *
  * Creates draggedElm and activeParent and initializes thresholds.
  */
 class Base
@@ -24,17 +24,13 @@ class Base
 
   parentsList: ELmBranch;
 
-  siblingsList!: ELmBranch;
+  siblingsList: ELmBranch | null;
 
   activeParent!: CoreInstanceInterface | null;
 
   setOfTransformedIds!: Set<string>;
 
   thresholds!: Thresholds;
-
-  isSingleton!: boolean;
-
-  isOrphan!: boolean;
 
   isOutActiveParent!: boolean;
 
@@ -80,25 +76,15 @@ class Base
      */
     this.setThreshold(this.draggedElm, false);
 
-    this.setIsSingleton(siblings);
+    if (Array.isArray(siblings)) {
+      this.siblingsList = siblings;
+    } else {
+      this.siblingsList = null;
+    }
 
     this.setIsOrphan(parent);
 
     this.dragID = store.tracker.newTravel();
-  }
-
-  /**
-   * Check if dragged has no siblings and then set the related flag.
-   *
-   * @param siblings -
-   */
-  private setIsSingleton(siblings: ELmBranch) {
-    if (Array.isArray(siblings)) {
-      this.isSingleton = false;
-      this.siblingsList = siblings;
-    } else {
-      this.isSingleton = true;
-    }
   }
 
   /**
@@ -120,13 +106,12 @@ class Base
       this.assignActiveParent(parent);
       this.setThreshold(parent, true);
 
-      this.isOrphan = false;
       this.isOutActiveParent = false;
     } else {
       /**
        * Dragged has no parent.
        */
-      this.isOrphan = true;
+      this.activeParent = null;
     }
   }
 
