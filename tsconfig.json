@@ -6,8 +6,6 @@
     "strictFunctionTypes": true,
     "strictNullChecks": true,
     "lib": ["dom", "ESNext"],
-    "target": "ES5",
-    "module": "CommonJS",
     "moduleResolution": "Node",
     "rootDir": ".",
     "baseUrl": ".",

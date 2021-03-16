@@ -1,7 +1,17 @@
 /* eslint-disable no-unused-vars */
-import type { CoreInstanceInterface } from "@dflex/core-instance";
+import type { CoreInstanceInterface, Offset } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
 import type { AbstractDraggableInterface } from "@dflex/draggable";
+
+export interface ThresholdPercentages {
+  vertical: {
+    twoThirds: number;
+    third: number;
+  };
+  horizontal: {
+    twoThirds: number;
+  };
+}
 
 export interface TempOffset {
   currentLeft: number;
@@ -16,7 +26,7 @@ export interface Threshold {
 }
 
 export interface Thresholds {
-  parents: { [id: string]: Threshold };
+  siblings: { [sk: string]: Threshold };
   dragged: Threshold;
 }
 
@@ -32,7 +42,8 @@ export interface DraggableDnDBase
   thresholds: Thresholds;
 
   isOutActiveParent: boolean;
-  setThreshold(droppable: CoreInstanceInterface, isParent?: boolean): void;
+  thresholdsPercentages: ThresholdPercentages;
+  setThreshold(offset: Offset, siblingsK?: string): void;
 }
 
 export interface DraggableDnD extends DraggableDnDBase {
@@ -50,7 +61,6 @@ export interface DraggableDnD extends DraggableDnDBase {
   setDraggedMovingDown(y: number): void;
   toggleElementsTransformedInc(): void;
   isDraggedOut(id?: string): boolean;
-  isDraggedVerticallyInsideList(): boolean;
   isDraggedLeavingFromTop(): boolean;
   isDraggedLeavingFromEnd(): boolean;
   isSiblingsTransformed(): boolean;

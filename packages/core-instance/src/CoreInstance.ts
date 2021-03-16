@@ -9,7 +9,6 @@ import type {
   CoreInstanceInterface,
   Offset,
   TransitionHistory,
-  ThresholdOffset,
 } from "./typings";
 
 type BranchELmOrder = string[];
@@ -56,8 +55,6 @@ class CoreInstance
   order: Order;
 
   keys: Keys;
-
-  thresholdOffset?: ThresholdOffset;
 
   constructor(elementWithPointer: ElmWIthPointer) {
     const { order, keys, ...element } = elementWithPointer;
@@ -122,29 +119,6 @@ class CoreInstance
 
     this.currentTop = top + this.translateY;
     this.currentLeft = left + this.translateX;
-  }
-
-  setThreshold() {
-    if (!this.thresholdOffset) {
-      const {
-        offset: { width, height },
-      } = this;
-
-      /**
-       * Calculates thresholdOffset only when required.
-       *
-       * Two-thirds of the dragged element's space for vertical and horizontal. If
-       * two-thirds of the dragged is out, then trigger isOut whether it is out
-       * position or out parent.
-       */
-      this.thresholdOffset = {
-        vertical: {
-          twoThirds: Math.ceil((2 / 3) * height),
-          third: Math.ceil((1 / 3) * height),
-        },
-        horizontal: Math.ceil((2 / 3) * width),
-      };
-    }
   }
 
   transformElm() {

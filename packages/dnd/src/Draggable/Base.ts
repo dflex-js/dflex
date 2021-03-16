@@ -4,11 +4,16 @@ import type { MouseCoordinates } from "@dflex/draggable";
 import type { ELmBranch } from "@dflex/dom-gen";
 
 import { CoreInstanceInterface } from "@dflex/core-instance";
+import type { Offset } from "@dflex/core-instance";
 
 import store from "../DnDStore";
 import type { ElmTree } from "../DnDStore";
 
-import type { DraggableDnDBase, Thresholds } from "./types";
+import type {
+  DraggableDnDBase,
+  ThresholdPercentages,
+  Thresholds,
+} from "./types";
 
 /**
  * Base element.
@@ -28,13 +33,20 @@ class Base
 
   activeParent!: CoreInstanceInterface | null;
 
-  setOfTransformedIds!: Set<string>;
-
-  thresholds!: Thresholds;
-
   isOutActiveParent!: boolean;
 
-  constructor(elmTree: ElmTree, initCoordinates: MouseCoordinates) {
+  setOfTransformedIds!: Set<string>;
+
+  thresholds: Thresholds;
+
+  thresholdsPercentages: ThresholdPercentages;
+
+  constructor(
+    elmTree: ElmTree,
+    siblingsK: string,
+    siblingsBoundaries: Offset,
+    initCoordinates: MouseCoordinates
+  ) {
     const {
       element,
       parent,
@@ -58,29 +70,39 @@ class Base
      * ids as keys.
      */
     this.thresholds = {
-      parents: {},
-      // @ts-expect-error
-      dragged: {},
+      siblings: {},
+      dragged: {
+        maxBottom: 0,
+        maxTop: 0,
+        maxLeft: 0,
+        maxRight: 0,
+      },
     };
 
-    /**
-     * Not initiating thresholdOffset for all coreInstances. Only ones which
-     * dragged will be initiated.
-     */
-    if (!this.draggedElm.thresholdOffset) {
-      this.draggedElm.setThreshold();
-    }
+    this.thresholdsPercentages = {
+      vertical: {
+        twoThirds: Math.ceil((2 / 3) * this.draggedElm.offset.height),
+        third: Math.ceil((2 / 3) * this.draggedElm.offset.width),
+      },
+      horizontal: {
+        twoThirds: Math.ceil((1 / 3) * this.draggedElm.offset.height),
+      },
+    };
 
     /**
      * Init max direction for position
      */
-    this.setThreshold(this.draggedElm, false);
+    const { currentLeft, currentTop, offset } = this.draggedElm;
+    this.setThreshold({
+      left: currentLeft,
+      top: currentTop,
+      width: offset.width,
+      height: offset.height,
+    });
 
-    if (Array.isArray(siblings)) {
-      this.siblingsList = siblings;
-    } else {
-      this.siblingsList = null;
-    }
+    this.setThreshold(siblingsBoundaries, siblingsK);
+
+    this.siblingsList = Array.isArray(siblings) ? siblings : null;
 
     this.setIsOrphan(parent);
 
@@ -104,7 +126,6 @@ class Base
        */
       this.setOfTransformedIds = new Set([]);
       this.assignActiveParent(parent);
-      this.setThreshold(parent, true);
 
       this.isOutActiveParent = false;
     } else {
@@ -122,29 +143,14 @@ class Base
    * maxDirection = current position + droppable-allowed spaces
    *
    * @param droppable -
-   * @param isParent -
+   * @param siblingsK -
    */
-  setThreshold(droppable: CoreInstanceInterface, isParent?: boolean) {
-    const {
-      thresholdOffset: {
-        // @ts-ignore
-        vertical: { twoThirds, third },
-        // @ts-ignore
-        horizontal,
-      },
-    } = this.draggedElm;
-
-    const { currentLeft, currentTop, id } = droppable;
-
+  setThreshold(offset: Offset, siblingsK?: string) {
     let $;
 
-    if (isParent) {
-      const {
-        offset: { height },
-      } = droppable;
-
-      if (!this.thresholds.parents[id]) {
-        this.thresholds.parents[id] = {
+    if (siblingsK) {
+      if (!this.thresholds.siblings[siblingsK]) {
+        this.thresholds.siblings[siblingsK] = {
           maxBottom: 0,
           maxTop: 0,
           maxLeft: 0,
@@ -152,9 +158,10 @@ class Base
         };
       }
 
-      $ = this.thresholds.parents[id];
+      $ = this.thresholds.siblings[siblingsK];
 
-      $.maxBottom = currentTop + height - third;
+      $.maxBottom =
+        offset.top + offset.height - this.thresholdsPercentages.vertical.third;
     } else {
       $ = this.thresholds.dragged;
 
@@ -162,63 +169,43 @@ class Base
        * When going down, currentTop increases (+vertical) with droppable
        * taking into considerations (+ vertical).
        */
-      $.maxBottom = currentTop + twoThirds;
+      $.maxBottom = offset.top + this.thresholdsPercentages.vertical.twoThirds;
     }
-
-    /**
-     * Overview:
-     *
-     * this.maxDirection: contains max value allowed for dragged to move. If dragged passes
-     * these values, that means it's out.
-     *
-     * This threshold is related to droppable offset. If droppable changes, then
-     * max/threshold changes.
-     *
-     * parentThreshold: to detect if dragged is moved inside or outside
-     * parent. But what if we have multiple lists?
-     *
-     * Updating positionMax when dragged is located in new position is easy but
-     * in lists we need to know all listMax(s) before entering to parent. Why?
-     * because in this way we know where dragged is to detect the activeParent.
-     *
-     * The solution is to create parentThreshold. An object stores positionMax
-     * depending on currentIndex as keys.
-     */
 
     /**
      * Calculate max-vertical for up and down:
      */
 
     /**
-     * When going up, currentTop decreases (-vertical).
+     * When going up, top decreases (-vertical).
      */
-    $.maxTop = currentTop - twoThirds;
+    $.maxTop = offset.top - this.thresholdsPercentages.vertical.twoThirds;
 
     /**
      * When going left, currentLeft decreases (-horizontal).
      */
-    $.maxLeft = currentLeft - horizontal;
+    $.maxLeft = offset.left - this.thresholdsPercentages.horizontal.twoThirds;
 
     /**
      * When going right, currentLeft increases (+horizontal) with droppable
      * taking into considerations (+ horizontal).
      */
-    $.maxRight = currentLeft + horizontal;
+    $.maxRight = offset.left + this.thresholdsPercentages.horizontal.twoThirds;
   }
 
-  /**
-   * Add parent id to setOfTransformedIds. The goal here, is to avoid any
-   * unnecessary process the parent goes through it when it's flagged as
-   * transformed.
-   */
-  // private addParentAsTransformed() {
-  //   const { id } = this.activeParent;
+  setDraggedThreshold() {
+    /**
+     * Init max direction for position
+     */
+    const { currentLeft, currentTop, offset } = this.draggedElm;
 
-  //   /**
-  //    * Avoid adding same parents more than once using sets.
-  //    */
-  //   this.setOfTransformedIds.add(id);
-  // }
+    this.setThreshold({
+      left: currentLeft,
+      top: currentTop,
+      width: offset.width,
+      height: offset.height,
+    });
+  }
 
   /**
    * Assigns new ACTIVE_PARENT: parent who contains dragged

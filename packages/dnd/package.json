@@ -7,7 +7,8 @@
   "scripts": {
     "clean": "yarn rimraf ./dist tsconfig.tsbuildinfo",
     "compile": "yarn tsc -b",
-    "build": "yarn clean && yarn compile",
+    "compile:build": "yarn tsc -b tsconfig.build.json",
+    "build": "yarn clean && yarn compile:build",
     "server:3001": "cross-env BROWSER=none yarn workspace dflex-react-dnd start",
     "cy:run": "cypress run",
     "cy:run:extended": "cypress run --env extended=true",

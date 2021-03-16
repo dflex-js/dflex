@@ -1,4 +1,6 @@
 import type { MouseCoordinates } from "@dflex/draggable";
+import type { Offset } from "@dflex/core-instance";
+
 import Draggable from "./Draggable";
 import Droppable from "./Droppable";
 
@@ -14,7 +16,18 @@ class DnD extends Droppable {
   constructor(id: string, initCoordinates: MouseCoordinates) {
     const elmCoreInstanceWithTree: ElmTree = store.getElmTreeById(id);
 
-    const draggable = new Draggable(elmCoreInstanceWithTree, initCoordinates);
+    const {
+      keys: { sK },
+    } = store.registry[id];
+
+    const siblingsBoundaries = store.boundaries[sK];
+
+    const draggable = new Draggable(
+      elmCoreInstanceWithTree,
+      sK,
+      siblingsBoundaries,
+      initCoordinates
+    );
 
     super(draggable);
   }

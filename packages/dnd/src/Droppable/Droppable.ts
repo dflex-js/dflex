@@ -115,7 +115,12 @@ class Droppable implements DroppableInterface {
        * And we have new translate only once. The first element matched the
        * condition is the breaking point element.
        */
-      this.draggable.setThreshold(element);
+      this.draggable.setThreshold({
+        left: element.currentLeft,
+        top: element.currentTop,
+        width: element.offset.width,
+        height: element.offset.height,
+      });
     }
 
     // element.onDragOver();
@@ -228,10 +233,13 @@ class Droppable implements DroppableInterface {
    * @param y -
    */
   draggedOutPosition(y: number) {
-    console.log("defenitely here!");
     this.draggable.setDraggedMovingDown(y);
 
-    if (this.draggable.isDraggedLeavingFromTop()) {
+    if (
+      this.draggable.isOutHorizontal ||
+      this.draggable.isDraggedLeavingFromTop()
+    ) {
+      console.log("yes");
       /**
        * If leaving and parent locked, do nothing.
        */
@@ -248,6 +256,8 @@ class Droppable implements DroppableInterface {
     }
 
     if (this.draggable.isDraggedLeavingFromEnd()) {
+      console.log("noooooo");
+
       this.isListLocked = true;
 
       return;
@@ -294,6 +304,8 @@ class Droppable implements DroppableInterface {
   }
 
   unlockParent() {
+    console.log("unlocked!");
+
     this.isListLocked = false;
     this.prevIsListLocked = true;
   }
@@ -372,17 +384,18 @@ class Droppable implements DroppableInterface {
 
     if (this.draggable.isDraggedOut()) {
       if (!this.isListLocked) {
-        if (!this.draggable.activeParent) {
-          // this.draggable.isDraggedOut(this.draggable.activeParent!);
-        }
-
         this.draggedOutPosition(y);
 
         return;
       }
 
-      if (this.draggable.isDraggedVerticallyInsideList()) {
-        this.draggedIsComingIn(y);
+      // when it's out, and on of theses is true then it's happening.
+      if (
+        this.draggable.isDraggedLeavingFromTop() ||
+        this.draggable.isDraggedLeavingFromEnd()
+      ) {
+        // this.draggedIsComingIn(y);
+        console.log("comming", this.draggable.isDraggedLeavingFromTop());
 
         return;
       }
@@ -400,10 +413,12 @@ class Droppable implements DroppableInterface {
         this.isOutStatusHorizontally ||
         this.draggable.isDraggedLeavingFromTop()
       ) {
+        console.log("lgloog");
         this.draggedIsComingIn(y);
         this.isOutStatusHorizontally = false;
       } else {
         this.unlockParent();
+        console.log("lgloog");
       }
     }
   }

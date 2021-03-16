@@ -18,14 +18,6 @@ export interface Offset {
 
 export type TransitionHistory = { ID: string; translateY: number }[];
 
-export interface ThresholdOffset {
-  vertical: {
-    twoThirds: number;
-    third: number;
-  };
-  horizontal: number;
-}
-
 export interface CoreInstanceInterface extends AbstractCoreInterface {
   offset: Offset;
   prevTranslateY: TransitionHistory;
@@ -33,8 +25,6 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
   currentLeft: number;
   order: Order;
   keys: Keys;
-  thresholdOffset?: ThresholdOffset;
-  setThreshold(): void;
   setCurrentOffset(): void;
   setYPosition(
     iDsInOrder: ELmBranch,

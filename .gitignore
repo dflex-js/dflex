@@ -11,6 +11,7 @@ lib
 draft
 samples
 tsconfig.tsbuildinfo
+tsconfig.build.tsbuildinfo
 cypress/screenshots
 cypress/videos
 

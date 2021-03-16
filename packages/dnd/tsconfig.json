@@ -3,6 +3,8 @@
   "include": ["src/**/*"],
   "compilerOptions": {
     "composite": true,
+    "target": "ESNext",
+    "module": "ESNext",
     "outDir": "./dist",
     "rootDir": "./src"
   },

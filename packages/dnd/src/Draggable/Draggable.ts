@@ -1,8 +1,9 @@
 /* eslint-disable no-nested-ternary */
 
 import type { MouseCoordinates } from "@dflex/draggable";
-import Base from "./Base";
+import type { Offset } from "@dflex/core-instance";
 
+import Base from "./Base";
 import type { ElmTree } from "../DnDStore";
 import type { DraggableDnD, TempOffset, Threshold } from "./types";
 
@@ -26,10 +27,12 @@ class Draggable extends Base implements DraggableDnD {
   isOutHorizontal: boolean;
 
   constructor(
-    elmCoreInstanceWithTree: ElmTree,
+    elmTree: ElmTree,
+    siblingsK: string,
+    siblingsBoundaries: Offset,
     initCoordinates: MouseCoordinates
   ) {
-    super(elmCoreInstanceWithTree, initCoordinates);
+    super(elmTree, siblingsK, siblingsBoundaries, initCoordinates);
 
     const { x, y } = initCoordinates;
 
@@ -55,6 +58,7 @@ class Draggable extends Base implements DraggableDnD {
 
     this.isMovingDownPrev = false;
     this.isMovingDown = false;
+
     this.isOutHorizontal = false;
   }
 
@@ -106,12 +110,12 @@ class Draggable extends Base implements DraggableDnD {
   /**
    * Checks if dragged it out of its position or parent.
    *
-   * @param id -
+   * @param siblingsK -
    */
-  isDraggedOut(id?: string) {
-    const { parents, dragged } = this.thresholds;
+  isDraggedOut(siblingsK?: string) {
+    const { siblings, dragged } = this.thresholds;
 
-    const $ = id ? parents[id] : dragged;
+    const $ = siblingsK ? siblings[siblingsK] : dragged;
 
     if (this.isOutH($)) {
       this.isOutHorizontal = true;
@@ -134,7 +138,7 @@ class Draggable extends Base implements DraggableDnD {
    * Checks if dragged is the first child and going up.
    */
   isDraggedLeavingFromTop() {
-    return this.tempIndex <= 0 && !this.isMovingDown;
+    return !this.isOutHorizontal && this.tempIndex <= 0 && !this.isMovingDown;
   }
 
   /**
@@ -142,16 +146,10 @@ class Draggable extends Base implements DraggableDnD {
    */
   isDraggedLeavingFromEnd() {
     return (
-      this.siblingsList === null ||
-      (this.tempIndex >= this.siblingsList.length - 1 && this.isMovingDown)
-    );
-  }
-
-  isDraggedVerticallyInsideList() {
-    return (
+      this.siblingsList !== null &&
       !this.isOutHorizontal &&
-      !this.isDraggedLeavingFromTop() &&
-      !this.isDraggedLeavingFromEnd()
+      this.isMovingDown &&
+      this.tempIndex >= this.siblingsList.length - 1
     );
   }
 
@@ -171,14 +169,14 @@ class Draggable extends Base implements DraggableDnD {
    * @param y -
    */
   setDraggedMovingDown(y: number) {
-    this.isMovingDown = this.isOutHorizontal ? true : y > this.prevY;
+    this.isMovingDown = y > this.prevY;
 
     // no point assigning the same value.
     if (this.prevY !== y) this.prevY = y;
 
     if (
       this.numberOfElementsTransformed > 0 &&
-      this.isMovingDownPrev !== this.isMovingDown
+      (this.isOutHorizontal || this.isMovingDownPrev !== this.isMovingDown)
     ) {
       /**
        * In this case, we have a sudden change in mouse movement. So, reverse
