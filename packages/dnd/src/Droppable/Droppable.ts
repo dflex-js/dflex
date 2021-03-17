@@ -115,12 +115,7 @@ class Droppable implements DroppableInterface {
        * And we have new translate only once. The first element matched the
        * condition is the breaking point element.
        */
-      this.draggable.setThreshold({
-        left: element.currentLeft,
-        top: element.currentTop,
-        width: element.offset.width,
-        height: element.offset.height,
-      });
+      this.draggable.setThreshold(element.currentLeft, element.currentTop);
     }
 
     // element.onDragOver();
@@ -389,16 +384,22 @@ class Droppable implements DroppableInterface {
         return;
       }
 
-      // when it's out, and on of theses is true then it's happening.
-      if (
-        this.draggable.isDraggedLeavingFromTop() ||
-        this.draggable.isDraggedLeavingFromEnd()
-      ) {
-        // this.draggedIsComingIn(y);
-        console.log("comming", this.draggable.isDraggedLeavingFromTop());
+      const isOutSiblingsContainer = this.draggable.isDraggedOut(
+        store.getElmById(this.draggable.draggedElm.id).keys.sK
+      );
 
-        return;
-      }
+      console.log("isOutSibilingsContianer", isOutSiblingsContainer);
+
+      // // when it's out, and on of theses is true then it's happening.
+      // if (
+      //   this.draggable.isDraggedLeavingFromTop() ||
+      //   this.draggable.isDraggedLeavingFromEnd()
+      // ) {
+      //   // this.draggedIsComingIn(y);
+      //   console.log("comming", this.draggable.isDraggedLeavingFromTop());
+
+      //   return;
+      // }
 
       // if (!isOutParent) this.draggedIsComingIn();
 

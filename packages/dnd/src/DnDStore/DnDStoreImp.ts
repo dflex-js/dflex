@@ -27,20 +27,21 @@ class DnDStoreImp extends Store<CoreInstance> {
     const $ = this.boundaries[siblingsK];
 
     if ($) {
-      if ($.height > elemOffset.height) {
-        $.height = elemOffset.height;
-      }
-      if ($.left > elemOffset.left) {
+      $.height += elemOffset.height;
+
+      if ($.left < elemOffset.left) {
         $.left = elemOffset.left;
       }
+
       if ($.top > elemOffset.top) {
         $.top = elemOffset.top;
       }
+
       if ($.width > elemOffset.width) {
         $.width = elemOffset.width;
       }
     } else {
-      this.boundaries[siblingsK] = elemOffset;
+      this.boundaries[siblingsK] = { ...elemOffset };
     }
   }
 
@@ -50,15 +51,6 @@ class DnDStoreImp extends Store<CoreInstance> {
    * @param element -
    */
   register(element: ElmInstance) {
-    // const finalOpts = opts || {};
-
-    // /**
-    //  * Initiates available event handlers
-    //  */
-    // handlers.forEach((handler) => {
-    //   if (typeof finalOpts[handler] !== "function") finalOpts[handler] = noop;
-    // });
-
     super.register(element, CoreInstance);
 
     const {

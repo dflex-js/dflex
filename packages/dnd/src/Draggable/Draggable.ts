@@ -6,6 +6,7 @@ import type { Offset } from "@dflex/core-instance";
 import Base from "./Base";
 import type { ElmTree } from "../DnDStore";
 import type { DraggableDnD, TempOffset, Threshold } from "./types";
+import type { DndOpts } from "../types";
 
 class Draggable extends Base implements DraggableDnD {
   innerOffsetX: number;
@@ -30,9 +31,10 @@ class Draggable extends Base implements DraggableDnD {
     elmTree: ElmTree,
     siblingsK: string,
     siblingsBoundaries: Offset,
-    initCoordinates: MouseCoordinates
+    initCoordinates: MouseCoordinates,
+    opts: DndOpts
   ) {
-    super(elmTree, siblingsK, siblingsBoundaries, initCoordinates);
+    super(elmTree, siblingsK, siblingsBoundaries, initCoordinates, opts);
 
     const { x, y } = initCoordinates;
 

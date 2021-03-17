@@ -4,13 +4,8 @@ import type { ELmBranch } from "@dflex/dom-gen";
 import type { AbstractDraggableInterface } from "@dflex/draggable";
 
 export interface ThresholdPercentages {
-  vertical: {
-    twoThirds: number;
-    third: number;
-  };
-  horizontal: {
-    twoThirds: number;
-  };
+  vertical: number;
+  horizontal: number;
 }
 
 export interface TempOffset {
@@ -43,7 +38,12 @@ export interface DraggableDnDBase
 
   isOutActiveParent: boolean;
   thresholdsPercentages: ThresholdPercentages;
-  setThreshold(offset: Offset, siblingsK?: string): void;
+  setThreshold(
+    top: number,
+    left: number,
+    height?: number,
+    siblingsK?: string
+  ): void;
 }
 
 export interface DraggableDnD extends DraggableDnDBase {

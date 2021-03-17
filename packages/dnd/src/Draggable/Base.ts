@@ -15,6 +15,8 @@ import type {
   Thresholds,
 } from "./types";
 
+import type { DndOpts } from "../types";
+
 /**
  * Base element.
  *
@@ -45,7 +47,8 @@ class Base
     elmTree: ElmTree,
     siblingsK: string,
     siblingsBoundaries: Offset,
-    initCoordinates: MouseCoordinates
+    initCoordinates: MouseCoordinates,
+    opts: DndOpts
   ) {
     const {
       element,
@@ -80,27 +83,25 @@ class Base
     };
 
     this.thresholdsPercentages = {
-      vertical: {
-        twoThirds: Math.ceil((2 / 3) * this.draggedElm.offset.height),
-        third: Math.ceil((2 / 3) * this.draggedElm.offset.width),
-      },
-      horizontal: {
-        twoThirds: Math.ceil((1 / 3) * this.draggedElm.offset.height),
-      },
+      vertical: Math.round(
+        (opts.thresholds.vertical * this.draggedElm.offset.height) / 100
+      ),
+      horizontal: Math.round(
+        (opts.thresholds.horizontal * this.draggedElm.offset.width) / 100
+      ),
     };
 
     /**
      * Init max direction for position
      */
-    const { currentLeft, currentTop, offset } = this.draggedElm;
-    this.setThreshold({
-      left: currentLeft,
-      top: currentTop,
-      width: offset.width,
-      height: offset.height,
-    });
+    this.setThreshold(this.draggedElm.currentTop, this.draggedElm.currentLeft);
 
-    this.setThreshold(siblingsBoundaries, siblingsK);
+    this.setThreshold(
+      siblingsBoundaries.top,
+      siblingsBoundaries.left,
+      siblingsBoundaries.height,
+      siblingsK
+    );
 
     this.siblingsList = Array.isArray(siblings) ? siblings : null;
 
@@ -140,15 +141,17 @@ class Base
    * Sets thresholds for dragged element position depending on its
    * position inside parent which is related to droppable left and top.
    *
-   * maxDirection = current position + droppable-allowed spaces
-   *
-   * @param droppable -
+   * @param top -
+   * @param left -
+   * @param height -
    * @param siblingsK -
    */
-  setThreshold(offset: Offset, siblingsK?: string) {
+  setThreshold(top: number, left: number, height?: number, siblingsK?: string) {
+    const { vertical, horizontal } = this.thresholdsPercentages;
+
     let $;
 
-    if (siblingsK) {
+    if (siblingsK && height) {
       if (!this.thresholds.siblings[siblingsK]) {
         this.thresholds.siblings[siblingsK] = {
           maxBottom: 0,
@@ -160,8 +163,7 @@ class Base
 
       $ = this.thresholds.siblings[siblingsK];
 
-      $.maxBottom =
-        offset.top + offset.height - this.thresholdsPercentages.vertical.third;
+      $.maxBottom = top + height - vertical;
     } else {
       $ = this.thresholds.dragged;
 
@@ -169,7 +171,7 @@ class Base
        * When going down, currentTop increases (+vertical) with droppable
        * taking into considerations (+ vertical).
        */
-      $.maxBottom = offset.top + this.thresholdsPercentages.vertical.twoThirds;
+      $.maxBottom = top + vertical;
     }
 
     /**
@@ -177,34 +179,30 @@ class Base
      */
 
     /**
-     * When going up, top decreases (-vertical).
+     * When going up, currentTop decreases (-vertical).
      */
-    $.maxTop = offset.top - this.thresholdsPercentages.vertical.twoThirds;
+    $.maxTop = top - vertical;
+
+    // height
+    console.log("file: Base.ts ~ line 186 ~ vertical", vertical);
+    console.log("file: Base.ts ~ line 185 ~ top", top);
+    console.log(
+      "file: Base.ts ~ line 185 ~ height",
+      this.draggedElm.offset.height
+    );
+    console.log("file: Base.ts ~ line 185 ~ vertical", vertical);
+    console.log("file: Base.ts ~ line 186 ~  $.maxTop", $.maxTop);
 
     /**
      * When going left, currentLeft decreases (-horizontal).
      */
-    $.maxLeft = offset.left - this.thresholdsPercentages.horizontal.twoThirds;
+    $.maxLeft = left - horizontal;
 
     /**
      * When going right, currentLeft increases (+horizontal) with droppable
      * taking into considerations (+ horizontal).
      */
-    $.maxRight = offset.left + this.thresholdsPercentages.horizontal.twoThirds;
-  }
-
-  setDraggedThreshold() {
-    /**
-     * Init max direction for position
-     */
-    const { currentLeft, currentTop, offset } = this.draggedElm;
-
-    this.setThreshold({
-      left: currentLeft,
-      top: currentTop,
-      width: offset.width,
-      height: offset.height,
-    });
+    $.maxRight = left + horizontal;
   }
 
   /**

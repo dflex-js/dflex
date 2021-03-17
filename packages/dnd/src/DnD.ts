@@ -1,5 +1,4 @@
 import type { MouseCoordinates } from "@dflex/draggable";
-import type { Offset } from "@dflex/core-instance";
 
 import Draggable from "./Draggable";
 import Droppable from "./Droppable";
@@ -7,13 +6,20 @@ import Droppable from "./Droppable";
 import store from "./DnDStore";
 import type { ElmTree } from "./DnDStore";
 
+import type { DndOpts } from "./types";
+
+const defaultThresholds = {
+  vertical: 60,
+  horizontal: 60,
+};
+
 class DnD extends Droppable {
   /**
    *
    * @param id -
    * @param initCoordinates -
    */
-  constructor(id: string, initCoordinates: MouseCoordinates) {
+  constructor(id: string, initCoordinates: MouseCoordinates, opts?: DndOpts) {
     const elmCoreInstanceWithTree: ElmTree = store.getElmTreeById(id);
 
     const {
@@ -22,11 +28,27 @@ class DnD extends Droppable {
 
     const siblingsBoundaries = store.boundaries[sK];
 
+    // @ts-expect-error
+    let options: DndOpts = {};
+
+    if (opts) {
+      if (!opts.thresholds) {
+        options.thresholds = defaultThresholds;
+      } else {
+        options.thresholds = opts.thresholds;
+      }
+    } else {
+      options = {
+        thresholds: defaultThresholds,
+      };
+    }
+
     const draggable = new Draggable(
       elmCoreInstanceWithTree,
       sK,
       siblingsBoundaries,
-      initCoordinates
+      initCoordinates,
+      options
     );
 
     super(draggable);
