@@ -115,7 +115,11 @@ class Droppable implements DroppableInterface {
        * And we have new translate only once. The first element matched the
        * condition is the breaking point element.
        */
-      this.draggable.setThreshold(element.currentLeft, element.currentTop);
+      this.draggable.setThreshold(
+        element.currentTop,
+        element.currentLeft,
+        element.offset.height
+      );
     }
 
     // element.onDragOver();
@@ -234,7 +238,6 @@ class Droppable implements DroppableInterface {
       this.draggable.isOutHorizontal ||
       this.draggable.isDraggedLeavingFromTop()
     ) {
-      console.log("yes");
       /**
        * If leaving and parent locked, do nothing.
        */
@@ -251,8 +254,6 @@ class Droppable implements DroppableInterface {
     }
 
     if (this.draggable.isDraggedLeavingFromEnd()) {
-      console.log("noooooo");
-
       this.isListLocked = true;
 
       return;
@@ -299,8 +300,6 @@ class Droppable implements DroppableInterface {
   }
 
   unlockParent() {
-    console.log("unlocked!");
-
     this.isListLocked = false;
     this.prevIsListLocked = true;
   }
@@ -388,18 +387,12 @@ class Droppable implements DroppableInterface {
         store.getElmById(this.draggable.draggedElm.id).keys.sK
       );
 
-      console.log("isOutSibilingsContianer", isOutSiblingsContainer);
-
       // // when it's out, and on of theses is true then it's happening.
-      // if (
-      //   this.draggable.isDraggedLeavingFromTop() ||
-      //   this.draggable.isDraggedLeavingFromEnd()
-      // ) {
-      //   // this.draggedIsComingIn(y);
-      //   console.log("comming", this.draggable.isDraggedLeavingFromTop());
+      if (!isOutSiblingsContainer) {
+        this.draggedIsComingIn(y);
 
-      //   return;
-      // }
+        return;
+      }
 
       // if (!isOutParent) this.draggedIsComingIn();
 
@@ -414,12 +407,10 @@ class Droppable implements DroppableInterface {
         this.isOutStatusHorizontally ||
         this.draggable.isDraggedLeavingFromTop()
       ) {
-        console.log("lgloog");
         this.draggedIsComingIn(y);
         this.isOutStatusHorizontally = false;
       } else {
         this.unlockParent();
-        console.log("lgloog");
       }
     }
   }
