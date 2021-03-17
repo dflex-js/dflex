@@ -12,7 +12,7 @@ class Droppable implements DroppableInterface {
 
   leftDifference: number;
 
-  effectedElemDirection: number;
+  private effectedElemDirection: number;
 
   isListLocked: boolean;
 
@@ -101,7 +101,7 @@ class Droppable implements DroppableInterface {
       this.isFoundBreakingPoint = true;
     }
 
-    this.draggable.incNumOfElementsTransformed();
+    this.draggable.incNumOfElementsTransformed(this.effectedElemDirection);
 
     if (!this.isListLocked) {
       /**
@@ -263,11 +263,6 @@ class Droppable implements DroppableInterface {
       /**
        * normal movement inside the parent
        */
-      // if (this.prevIsListLocked) {
-      //   this.prevIsListLocked = false;
-
-      //   return;
-      // }
 
       /**
        * Going out from the list: Right/left.
@@ -339,18 +334,7 @@ class Droppable implements DroppableInterface {
      */
     this.setEffectedElemDirection(false);
 
-    /**
-     * Toggle elements transformed incremental to decrease number of transformed
-     * elements. It's like undoing transformation.
-     */
-    this.draggable.toggleElementsTransformedInc();
-
     this.moveDown(to);
-
-    /**
-     * End toggling and continue as it was.
-     */
-    this.draggable.toggleElementsTransformedInc();
 
     /**
      * Now, resitting direction by figuring out if dragged settled up/dwn.
@@ -393,8 +377,6 @@ class Droppable implements DroppableInterface {
 
         return;
       }
-
-      // if (!isOutParent) this.draggedIsComingIn();
 
       return;
     }

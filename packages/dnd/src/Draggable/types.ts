@@ -52,14 +52,12 @@ export interface DraggableDnD extends DraggableDnDBase {
   tempOffset: TempOffset;
   prevY: number;
   numberOfElementsTransformed: number;
-  inc: number;
   isMovingDownPrev: boolean;
   isMovingDown: boolean;
   isOutHorizontal: boolean;
   dragAt(x: number, y: number): void;
-  incNumOfElementsTransformed(): void;
+  incNumOfElementsTransformed(effectedElemDirection: number): void;
   setDraggedMovingDown(y: number): void;
-  toggleElementsTransformedInc(): void;
   isDraggedOut(id?: string): boolean;
   isDraggedLeavingFromTop(): boolean;
   isDraggedLeavingFromEnd(): boolean;

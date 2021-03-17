@@ -5,6 +5,8 @@
     "noImplicitReturns": true,
     "strictFunctionTypes": true,
     "strictNullChecks": true,
+    "target": "ES5",
+    "module": "CommonJS",
     "lib": ["dom", "ESNext"],
     "moduleResolution": "Node",
     "rootDir": ".",

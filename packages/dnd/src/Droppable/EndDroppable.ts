@@ -85,8 +85,7 @@ class EndDroppable extends Droppable {
     ) {
       const siblings = this.getSiblings();
 
-      // @ts-expect-error
-      this.undoList(siblings);
+      if (Array.isArray(siblings)) this.undoList(siblings);
     }
   }
 }

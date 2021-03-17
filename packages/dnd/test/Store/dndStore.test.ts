@@ -14,7 +14,6 @@ describe("DnD Store", () => {
   });
 
   it("Element is initiated", () => {
-    // @ts-expect-error
     expect(store.registry).toMatchSnapshot();
   });
 

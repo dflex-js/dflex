@@ -5,9 +5,9 @@
   "types": "dist/index.d.ts",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
-    "clean": "yarn rimraf ./dist tsconfig.tsbuildinfo",
+    "clean": "yarn rimraf ./dist *.tsbuildinfo",
     "compile": "yarn tsc -b",
-    "compile:build": "yarn tsc -b tsconfig.build.json",
+    "compile:build": "yarn tsc -b",
     "build": "yarn clean && yarn compile:build",
     "server:3001": "cross-env BROWSER=none yarn workspace dflex-react-dnd start",
     "cy:run": "cypress run",
