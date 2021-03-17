@@ -51,7 +51,7 @@ context("Moving and returning from the same position", () => {
     cy.get("#id-9").trigger("mouseup", { force: true });
   });
 
-  it("Siblings hold positions", () => {
+  it("All list holds the right position", () => {
     cy.get("#id-9").should("have.css", "transform", "matrix(1, 0, 0, 1, 0, 0)");
 
     cy.get("#id-10").should(
