@@ -119,6 +119,8 @@ class Draggable extends Base implements DraggableDnD {
 
     const $ = siblingsK ? siblings[siblingsK] : dragged;
 
+    if (!$) return false;
+
     if (this.isOutH($)) {
       this.isOutHorizontal = true;
 
@@ -159,14 +161,6 @@ class Draggable extends Base implements DraggableDnD {
     return !this.isDraggedLeavingFromEnd() && this.isDraggedOut();
   }
 
-  toggleElementsTransformedInc() {
-    this.inc *= -1;
-  }
-
-  resetElementsTransformedInc() {
-    this.inc = 1;
-  }
-
   /**
    * @param y -
    */
@@ -176,26 +170,11 @@ class Draggable extends Base implements DraggableDnD {
     // no point assigning the same value.
     if (this.prevY !== y) this.prevY = y;
 
-    if (
-      this.numberOfElementsTransformed > 0 &&
-      (this.isOutHorizontal || this.isMovingDownPrev !== this.isMovingDown)
-    ) {
-      /**
-       * In this case, we have a sudden change in mouse movement. So, reverse
-       * numberOfElementsTransformed value, to be compatible with effectedElemDirection.
-       */
-      this.toggleElementsTransformedInc();
-    }
-
     this.isMovingDownPrev = this.isMovingDown;
   }
 
-  incNumOfElementsTransformed() {
-    if (this.numberOfElementsTransformed === 0) {
-      this.resetElementsTransformedInc();
-    }
-
-    this.numberOfElementsTransformed += this.inc;
+  incNumOfElementsTransformed(effectedElemDirection: number) {
+    this.numberOfElementsTransformed += -1 * effectedElemDirection;
   }
 
   /**
@@ -232,6 +211,10 @@ class Draggable extends Base implements DraggableDnD {
 
     const draggedDirection =
       this.tempIndex < this.draggedElm.order.self ? -1 : 1;
+
+    this.numberOfElementsTransformed = Math.abs(
+      this.numberOfElementsTransformed
+    );
 
     /**
      * Move to new droppable position.
