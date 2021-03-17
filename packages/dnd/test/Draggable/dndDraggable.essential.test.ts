@@ -42,10 +42,16 @@ describe("Testing the essentials", () => {
   beforeAll(() => {
     const elementInstance = store.getElmTreeById(childInstance1.id);
 
-    draggable = new Draggable(elementInstance, {
-      x: START_CLIENT_X,
-      y: START_CLIENT_Y,
-    });
+    draggable = new Draggable(
+      elementInstance,
+      "",
+      { width: 100, height: 300, left: 0, top: 0 },
+      {
+        x: START_CLIENT_X,
+        y: START_CLIENT_Y,
+      },
+      { thresholds: { horizontal: 30, vertical: 30 } }
+    );
   });
 
   it("Current offset is equal to initial offset", () => {
