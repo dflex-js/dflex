@@ -183,16 +183,6 @@ class Base
      */
     $.maxTop = top - vertical;
 
-    // height
-    console.log("file: Base.ts ~ line 186 ~ vertical", vertical);
-    console.log("file: Base.ts ~ line 185 ~ top", top);
-    console.log(
-      "file: Base.ts ~ line 185 ~ height",
-      this.draggedElm.offset.height
-    );
-    console.log("file: Base.ts ~ line 185 ~ vertical", vertical);
-    console.log("file: Base.ts ~ line 186 ~  $.maxTop", $.maxTop);
-
     /**
      * When going left, currentLeft decreases (-horizontal).
      */

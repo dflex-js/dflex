@@ -24,24 +24,26 @@ class DnDStoreImp extends Store<CoreInstance> {
   }
 
   assignSiblingsBoundaries(siblingsK: string, elemOffset: Offset) {
+    if (!this.boundaries[siblingsK]) {
+      this.boundaries[siblingsK] = { ...elemOffset };
+
+      return;
+    }
+
     const $ = this.boundaries[siblingsK];
 
-    if ($) {
-      $.height += elemOffset.height;
+    if ($.left < elemOffset.left) {
+      $.left = elemOffset.left;
+    }
 
-      if ($.left < elemOffset.left) {
-        $.left = elemOffset.left;
-      }
-
-      if ($.top > elemOffset.top) {
-        $.top = elemOffset.top;
-      }
-
-      if ($.width > elemOffset.width) {
-        $.width = elemOffset.width;
-      }
+    if ($.top > elemOffset.top) {
+      $.top = elemOffset.top;
     } else {
-      this.boundaries[siblingsK] = { ...elemOffset };
+      $.height = elemOffset.top + elemOffset.height;
+    }
+
+    if ($.width > elemOffset.width) {
+      $.width = elemOffset.width;
     }
   }
 
