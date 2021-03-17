@@ -394,8 +394,6 @@ class Droppable implements DroppableInterface {
         return;
       }
 
-      // if (!isOutParent) this.draggedIsComingIn();
-
       return;
     }
 
