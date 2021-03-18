@@ -78,7 +78,7 @@ context("Moving and returning from the same position", () => {
   });
 });
 
-context("Swinging - Confusion", () => {
+context("Swinging - Confusion starts from up/down", () => {
   before(() => {
     cy.visit("http://localhost:3001");
   });
