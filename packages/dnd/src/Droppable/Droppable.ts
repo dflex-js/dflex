@@ -316,7 +316,7 @@ class Droppable implements DroppableInterface {
      */
     if (this.draggable.tempIndex !== 0) {
       to = this.detectDroppableIndex();
-      if (typeof to !== "number") return;
+      if (typeof to !== "number" || to === this.draggable.tempIndex) return;
       this.draggable.tempIndex = to;
 
       /**
