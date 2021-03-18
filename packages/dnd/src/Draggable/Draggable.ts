@@ -103,10 +103,9 @@ class Draggable extends Base implements DraggableDnD {
    * @param $ -
    */
   isOutV($: Threshold) {
-    return (
-      this.tempOffset.currentTop < $.maxTop ||
-      this.tempOffset.currentTop > $.maxBottom
-    );
+    return this.isMovingDown
+      ? this.tempOffset.currentTop > $.maxBottom
+      : this.tempOffset.currentTop < $.maxTop;
   }
 
   /**
