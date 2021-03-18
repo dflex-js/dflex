@@ -102,9 +102,76 @@ context("Swinging - Confusion", () => {
   });
 
   it("Transforms (container3 |> elm-1) in threshold confusion", () => {
-    steps = elmBox.height + 2 + 180;
+    // steps = elmBox.height + 2 + 180;
+    steps = elmBox.height + 2 + 22;
 
     for (let i = 0; i < steps; i += 1) {
+      cy.get("#id-9").trigger("mousemove", {
+        clientX: startingPointX - (elmBox.width - i),
+        clientY: startingPointY - (elmBox.height + 2) + i,
+        force: true,
+      });
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(waitingTime);
+    }
+  });
+
+  it("Checking the stability of the new positions", () => {
+    cy.get("#id-10").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, -58)"
+    );
+
+    cy.get("#id-11").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, 0)"
+    );
+
+    cy.get("#id-12").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, 0)"
+    );
+  });
+
+  it("Continue movement", () => {
+    for (let i = steps; i < steps + 120; i += 1) {
+      cy.get("#id-9").trigger("mousemove", {
+        clientX: startingPointX - (elmBox.width - i),
+        clientY: startingPointY - (elmBox.height + 2) + i,
+        force: true,
+      });
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(waitingTime);
+    }
+
+    steps += 120;
+  });
+
+  it("Checking the stability of the new positions", () => {
+    cy.get("#id-10").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, -58)"
+    );
+
+    cy.get("#id-11").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, -58)"
+    );
+
+    cy.get("#id-12").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, 0)"
+    );
+  });
+
+  it("Continue movement", () => {
+    for (let i = steps; i < steps + 20; i += 1) {
       cy.get("#id-9").trigger("mousemove", {
         clientX: startingPointX - (elmBox.width - i),
         clientY: startingPointY - (elmBox.height + 2) + i,
