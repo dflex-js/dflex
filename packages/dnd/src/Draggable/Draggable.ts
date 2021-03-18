@@ -21,8 +21,6 @@ class Draggable extends Base implements DraggableDnD {
 
   inc: number;
 
-  isMovingDownPrev: boolean;
-
   isMovingDown: boolean;
 
   isOutHorizontal: boolean;
@@ -58,7 +56,6 @@ class Draggable extends Base implements DraggableDnD {
     this.numberOfElementsTransformed = 0;
     this.inc = 1;
 
-    this.isMovingDownPrev = false;
     this.isMovingDown = false;
 
     this.isOutHorizontal = false;
@@ -103,10 +100,9 @@ class Draggable extends Base implements DraggableDnD {
    * @param $ -
    */
   isOutV($: Threshold) {
-    return (
-      this.tempOffset.currentTop < $.maxTop ||
-      this.tempOffset.currentTop > $.maxBottom
-    );
+    return this.isMovingDown
+      ? this.tempOffset.currentTop > $.maxBottom
+      : this.tempOffset.currentTop < $.maxTop;
   }
 
   /**
@@ -165,12 +161,11 @@ class Draggable extends Base implements DraggableDnD {
    * @param y -
    */
   setDraggedMovingDown(y: number) {
+    if (this.prevY === y) return;
+
     this.isMovingDown = y > this.prevY;
 
-    // no point assigning the same value.
-    if (this.prevY !== y) this.prevY = y;
-
-    this.isMovingDownPrev = this.isMovingDown;
+    this.prevY = y;
   }
 
   incNumOfElementsTransformed(effectedElemDirection: number) {

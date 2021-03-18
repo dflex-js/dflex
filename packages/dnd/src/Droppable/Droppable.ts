@@ -146,7 +146,7 @@ class Droppable implements DroppableInterface {
     /**
      * Element is Switchable when it's under dragged.
      */
-    return elmCurrentOffsetTop >= this.draggable.tempOffset.currentTop;
+    return elmCurrentOffsetTop > this.draggable.tempOffset.currentTop;
   }
 
   detectDroppableIndex() {
@@ -223,13 +223,7 @@ class Droppable implements DroppableInterface {
     }
   }
 
-  /**
-   *
-   * @param y -
-   */
-  draggedOutPosition(y: number) {
-    this.draggable.setDraggedMovingDown(y);
-
+  draggedOutPosition() {
     if (
       this.draggable.isOutHorizontal ||
       this.draggable.isDraggedLeavingFromTop()
@@ -355,12 +349,13 @@ class Droppable implements DroppableInterface {
     if (this.draggable.siblingsList === null) return;
 
     let isOutSiblingsContainer = false;
-
     const { sK } = store.getElmById(this.draggable.draggedElm.id).keys;
+
+    this.draggable.setDraggedMovingDown(y);
 
     if (this.draggable.isDraggedOut()) {
       if (!this.isListLocked) {
-        this.draggedOutPosition(y);
+        this.draggedOutPosition();
 
         return;
       }

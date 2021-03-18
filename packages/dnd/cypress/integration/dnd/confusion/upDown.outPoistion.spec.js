@@ -4,7 +4,8 @@ let startingPointY;
 
 let steps;
 
-const waitingTime = 1;
+// eslint-disable-next-line no-unused-vars
+const waitingTime = 0;
 
 context("Moving and returning from the same position", () => {
   before(() => {
@@ -36,7 +37,7 @@ context("Moving and returning from the same position", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(waitingTime);
+      // cy.wait(waitingTime);
     }
   });
 
@@ -47,7 +48,7 @@ context("Moving and returning from the same position", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(waitingTime);
+      // cy.wait(waitingTime);
     }
   });
 
@@ -78,7 +79,7 @@ context("Moving and returning from the same position", () => {
   });
 });
 
-context("Swinging - Confusion", () => {
+context("Swinging - Confusion starts from up/down", () => {
   before(() => {
     cy.visit("http://localhost:3001");
   });
@@ -102,7 +103,8 @@ context("Swinging - Confusion", () => {
   });
 
   it("Transforms (container3 |> elm-1) in threshold confusion", () => {
-    steps = elmBox.height + 2 + 180;
+    // steps = elmBox.height + 2 + 180;
+    steps = elmBox.height + 2 + 22;
 
     for (let i = 0; i < steps; i += 1) {
       cy.get("#id-9").trigger("mousemove", {
@@ -111,8 +113,76 @@ context("Swinging - Confusion", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(waitingTime);
+      // cy.wait(waitingTime);
     }
+  });
+
+  it("Checking the stability of the new positions", () => {
+    cy.get("#id-10").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, -58)"
+    );
+
+    cy.get("#id-11").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, 0)"
+    );
+
+    cy.get("#id-12").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, 0)"
+    );
+  });
+
+  it("Continue movement", () => {
+    for (let i = steps; i < steps + 120; i += 1) {
+      cy.get("#id-9").trigger("mousemove", {
+        clientX: startingPointX - (elmBox.width - i),
+        clientY: startingPointY - (elmBox.height + 2) + i,
+        force: true,
+      });
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      // cy.wait(waitingTime);
+    }
+
+    steps += 120;
+  });
+
+  it("Checking the stability of the new positions", () => {
+    cy.get("#id-10").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, -58)"
+    );
+
+    cy.get("#id-11").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, -58)"
+    );
+
+    cy.get("#id-12").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, 0)"
+    );
+  });
+
+  it("Continue movement", () => {
+    for (let i = steps; i < steps + 20; i += 1) {
+      cy.get("#id-9").trigger("mousemove", {
+        clientX: startingPointX - (elmBox.width - i),
+        clientY: startingPointY - (elmBox.height + 2) + i,
+        force: true,
+      });
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      // cy.wait(waitingTime);
+    }
+
+    steps += 20;
   });
 
   it("Triggers mouseup", () => {
@@ -142,6 +212,63 @@ context("Swinging - Confusion", () => {
       "have.css",
       "transform",
       "matrix(1, 0, 0, 1, 0, -58)"
+    );
+  });
+});
+
+context("Testing continuity", () => {
+  it("Initiates location", () => {
+    cy.get("#id-9").then((elm) => {
+      elmBox = elm[0].getBoundingClientRect();
+      startingPointX = elmBox.x + elmBox.width / 2;
+      startingPointY = elmBox.y + elmBox.height / 2;
+
+      cy.get("#id-9").trigger("mousedown", {
+        button: 0,
+      });
+    });
+  });
+
+  it("Transforms (container3 |> elm-1) up", () => {
+    for (let i = 0; i < 35; i += 1) {
+      cy.get("#id-9").trigger("mousemove", {
+        clientX: startingPointX - i,
+        clientY: startingPointY - i,
+
+        force: true,
+      });
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      // cy.wait(waitingTime);
+    }
+  });
+
+  it("Triggers mouseup", () => {
+    cy.get("#id-9").trigger("mouseup", { force: true });
+  });
+
+  it("Checking the stability of the new positions", () => {
+    cy.get("#id-9").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, 116)"
+    );
+
+    cy.get("#id-10").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, -58)"
+    );
+
+    cy.get("#id-11").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, -58)"
+    );
+
+    cy.get("#id-12").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, 0)"
     );
   });
 });
