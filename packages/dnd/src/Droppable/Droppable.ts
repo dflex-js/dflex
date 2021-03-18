@@ -385,8 +385,6 @@ class Droppable implements DroppableInterface {
 
       if (!isOutSiblingsContainer) {
         this.draggedIsComingIn(y);
-      } else {
-        this.unlockParent();
       }
     }
   }
