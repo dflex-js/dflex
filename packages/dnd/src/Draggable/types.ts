@@ -52,7 +52,6 @@ export interface DraggableDnD extends DraggableDnDBase {
   tempOffset: TempOffset;
   prevY: number;
   numberOfElementsTransformed: number;
-  isMovingDownPrev: boolean;
   isMovingDown: boolean;
   isOutHorizontal: boolean;
   dragAt(x: number, y: number): void;

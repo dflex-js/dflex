@@ -4,7 +4,7 @@ let startingPointY;
 
 let steps;
 
-const waitingTime = 1;
+const waitingTime = 0;
 
 context("Moving and returning from the same position", () => {
   before(() => {
@@ -180,6 +180,8 @@ context("Swinging - Confusion starts from up/down", () => {
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(waitingTime);
     }
+
+    steps += 20;
   });
 
   it("Triggers mouseup", () => {
@@ -209,6 +211,63 @@ context("Swinging - Confusion starts from up/down", () => {
       "have.css",
       "transform",
       "matrix(1, 0, 0, 1, 0, -58)"
+    );
+  });
+});
+
+context("Testing continuity", () => {
+  it("Initiates location", () => {
+    cy.get("#id-9").then((elm) => {
+      elmBox = elm[0].getBoundingClientRect();
+      startingPointX = elmBox.x + elmBox.width / 2;
+      startingPointY = elmBox.y + elmBox.height / 2;
+
+      cy.get("#id-9").trigger("mousedown", {
+        button: 0,
+      });
+    });
+  });
+
+  it("Transforms (container3 |> elm-1) up", () => {
+    for (let i = 0; i < 35; i += 1) {
+      cy.get("#id-9").trigger("mousemove", {
+        clientX: startingPointX - i,
+        clientY: startingPointY - i,
+
+        force: true,
+      });
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(waitingTime);
+    }
+  });
+
+  it("Triggers mouseup", () => {
+    cy.get("#id-9").trigger("mouseup", { force: true });
+  });
+
+  it("Checking the stability of the new positions", () => {
+    cy.get("#id-9").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, 116)"
+    );
+
+    cy.get("#id-10").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, -58)"
+    );
+
+    cy.get("#id-11").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, -58)"
+    );
+
+    cy.get("#id-12").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, 0)"
     );
   });
 });
