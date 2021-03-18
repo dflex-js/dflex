@@ -18,8 +18,6 @@ class Droppable implements DroppableInterface {
 
   prevIsListLocked: boolean;
 
-  isOutStatusHorizontally: boolean;
-
   droppableIndex: number;
 
   isFoundBreakingPoint: boolean;
@@ -37,8 +35,6 @@ class Droppable implements DroppableInterface {
 
     this.isListLocked = false;
     this.prevIsListLocked = false;
-
-    this.isOutStatusHorizontally = false;
 
     this.droppableIndex = -1;
     this.isFoundBreakingPoint = false;
@@ -278,8 +274,6 @@ class Droppable implements DroppableInterface {
 
         this.liftUp();
 
-        this.isOutStatusHorizontally = true;
-
         return;
       }
 
@@ -327,8 +321,6 @@ class Droppable implements DroppableInterface {
       this.draggable.prevY = y;
     }
 
-    this.unlockParent();
-
     /**
      * Moving element down by setting is up to false
      */
@@ -360,21 +352,25 @@ class Droppable implements DroppableInterface {
 
     if (this.draggable.siblingsList === null) return;
 
+    const { sK } = store.getElmById(this.draggable.draggedElm.id).keys;
+
+    let isOutSiblingsContainer = false;
+
     if (this.draggable.isDraggedOut()) {
+      console.log("file: Droppable.ts ~ line 366 ~ isDraggedOut");
       if (!this.isListLocked) {
         this.draggedOutPosition(y);
 
         return;
       }
 
-      const isOutSiblingsContainer = this.draggable.isDraggedOut(
-        store.getElmById(this.draggable.draggedElm.id).keys.sK
-      );
+      isOutSiblingsContainer = this.draggable.isDraggedOut(sK);
 
       // // when it's out, and on of theses is true then it's happening.
       if (!isOutSiblingsContainer) {
         this.draggedIsComingIn(y);
-
+        console.log("file: Droppable.ts ~ line 375 ~ draggedIsComingIn");
+        this.unlockParent();
         return;
       }
 
@@ -385,13 +381,11 @@ class Droppable implements DroppableInterface {
      * When dragged is out parent and returning to it.
      */
     if (this.isListLocked) {
-      if (
-        this.isOutStatusHorizontally ||
-        this.draggable.isDraggedLeavingFromTop()
-      ) {
+      isOutSiblingsContainer = this.draggable.isDraggedOut(sK);
+
+      if (!isOutSiblingsContainer) {
+        console.log("file: Droppable.ts ~ line 388 ~ isOutSiblingsContainer");
         this.draggedIsComingIn(y);
-        this.isOutStatusHorizontally = false;
-      } else {
         this.unlockParent();
       }
     }

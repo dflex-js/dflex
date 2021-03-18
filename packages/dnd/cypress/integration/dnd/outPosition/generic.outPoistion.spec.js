@@ -76,7 +76,7 @@
 //   });
 // });
 
-// context.only("Swinging", () => {
+// context("Swinging", () => {
 //   before(() => {
 //     cy.visit("http://localhost:3001");
 //   });
