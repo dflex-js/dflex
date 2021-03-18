@@ -18,8 +18,6 @@ class Droppable implements DroppableInterface {
 
   prevIsListLocked: boolean;
 
-  isOutStatusHorizontally: boolean;
-
   droppableIndex: number;
 
   isFoundBreakingPoint: boolean;
@@ -37,8 +35,6 @@ class Droppable implements DroppableInterface {
 
     this.isListLocked = false;
     this.prevIsListLocked = false;
-
-    this.isOutStatusHorizontally = false;
 
     this.droppableIndex = -1;
     this.isFoundBreakingPoint = false;
@@ -278,8 +274,6 @@ class Droppable implements DroppableInterface {
 
         this.liftUp();
 
-        this.isOutStatusHorizontally = true;
-
         return;
       }
 
@@ -316,7 +310,7 @@ class Droppable implements DroppableInterface {
      */
     if (this.draggable.tempIndex !== 0) {
       to = this.detectDroppableIndex();
-      if (typeof to !== "number") return;
+      if (typeof to !== "number" || to === this.draggable.tempIndex) return;
       this.draggable.tempIndex = to;
 
       /**
@@ -360,6 +354,10 @@ class Droppable implements DroppableInterface {
 
     if (this.draggable.siblingsList === null) return;
 
+    let isOutSiblingsContainer = false;
+
+    const { sK } = store.getElmById(this.draggable.draggedElm.id).keys;
+
     if (this.draggable.isDraggedOut()) {
       if (!this.isListLocked) {
         this.draggedOutPosition(y);
@@ -367,9 +365,7 @@ class Droppable implements DroppableInterface {
         return;
       }
 
-      const isOutSiblingsContainer = this.draggable.isDraggedOut(
-        store.getElmById(this.draggable.draggedElm.id).keys.sK
-      );
+      isOutSiblingsContainer = this.draggable.isDraggedOut(sK);
 
       // // when it's out, and on of theses is true then it's happening.
       if (!isOutSiblingsContainer) {
@@ -385,12 +381,10 @@ class Droppable implements DroppableInterface {
      * When dragged is out parent and returning to it.
      */
     if (this.isListLocked) {
-      if (
-        this.isOutStatusHorizontally ||
-        this.draggable.isDraggedLeavingFromTop()
-      ) {
+      isOutSiblingsContainer = this.draggable.isDraggedOut(sK);
+
+      if (!isOutSiblingsContainer) {
         this.draggedIsComingIn(y);
-        this.isOutStatusHorizontally = false;
       } else {
         this.unlockParent();
       }
