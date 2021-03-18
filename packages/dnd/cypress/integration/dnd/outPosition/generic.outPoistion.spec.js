@@ -4,7 +4,11 @@ let startingPointY;
 
 let steps;
 
-const waitingTime = 6;
+const waitingTime = Cypress.env("extended") ? 0 : 6;
+console.log(
+  "file: generic.outPoistion.spec.js ~ line 8 ~ waitingTime",
+  waitingTime
+);
 
 context("Moving and returning from the same position", () => {
   before(() => {
