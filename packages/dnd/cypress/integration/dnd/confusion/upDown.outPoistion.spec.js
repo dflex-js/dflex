@@ -4,6 +4,7 @@ let startingPointY;
 
 let steps;
 
+// eslint-disable-next-line no-unused-vars
 const waitingTime = 0;
 
 context("Moving and returning from the same position", () => {
@@ -36,7 +37,7 @@ context("Moving and returning from the same position", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(waitingTime);
+      // cy.wait(waitingTime);
     }
   });
 
@@ -47,7 +48,7 @@ context("Moving and returning from the same position", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(waitingTime);
+      // cy.wait(waitingTime);
     }
   });
 
@@ -112,7 +113,7 @@ context("Swinging - Confusion starts from up/down", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(waitingTime);
+      // cy.wait(waitingTime);
     }
   });
 
@@ -144,7 +145,7 @@ context("Swinging - Confusion starts from up/down", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(waitingTime);
+      // cy.wait(waitingTime);
     }
 
     steps += 120;
@@ -178,7 +179,7 @@ context("Swinging - Confusion starts from up/down", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(waitingTime);
+      // cy.wait(waitingTime);
     }
 
     steps += 20;
@@ -237,7 +238,7 @@ context("Testing continuity", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(waitingTime);
+      // cy.wait(waitingTime);
     }
   });
 

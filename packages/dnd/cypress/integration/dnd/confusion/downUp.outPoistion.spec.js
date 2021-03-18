@@ -4,7 +4,8 @@ let startingPointY;
 
 let steps;
 
-const waitingTime = 1;
+// eslint-disable-next-line no-unused-vars
+const waitingTime = 0;
 
 context("Swinging - Confusion starts form bottom/up", () => {
   before(() => {
@@ -34,7 +35,7 @@ context("Swinging - Confusion starts form bottom/up", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(waitingTime);
+      // cy.wait(waitingTime);
     }
   });
 
@@ -58,7 +59,7 @@ context("Swinging - Confusion starts form bottom/up", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(waitingTime);
+      // cy.wait(waitingTime);
     }
 
     steps += 45;
@@ -88,7 +89,7 @@ context("Swinging - Confusion starts form bottom/up", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(waitingTime);
+      // cy.wait(waitingTime);
     }
 
     steps += 45;
@@ -118,7 +119,7 @@ context("Swinging - Confusion starts form bottom/up", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(waitingTime);
+      // cy.wait(waitingTime);
     }
 
     steps += 45;
@@ -131,7 +132,7 @@ context("Swinging - Confusion starts form bottom/up", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(waitingTime);
+      // cy.wait(waitingTime);
     }
   });
 

@@ -118,7 +118,7 @@ function myContext() {
             force: true,
           });
           // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(10);
+          // cy.wait(10);
         }
 
         cy.get("#id-12").should(
