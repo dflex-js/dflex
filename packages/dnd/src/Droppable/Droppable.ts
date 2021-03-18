@@ -143,10 +143,6 @@ class Droppable implements DroppableInterface {
    * @param elmCurrentOffsetTop -
    */
   isElemUnderDragged(elmCurrentOffsetTop: number) {
-    // console.log("thresholds", this.draggable.thresholdsPercentages.vertical);
-    // console.log("elmCurrentOffsetTop", elmCurrentOffsetTop);
-    // console.log("tempOffset", this.draggable.tempOffset.currentTop);
-
     /**
      * Element is Switchable when it's under dragged.
      */
