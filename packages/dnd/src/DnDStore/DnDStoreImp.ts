@@ -1,6 +1,7 @@
 import Store from "@dflex/store";
-import type { ElmInstance } from "@dflex/store";
 import CoreInstance from "@dflex/core-instance";
+import type { ElmInstance } from "@dflex/store";
+import type { Offset } from "@dflex/core-instance";
 
 import Tracker from "./Tracker";
 
@@ -13,9 +14,37 @@ import type { ElmTree } from "./types";
 class DnDStoreImp extends Store<CoreInstance> {
   tracker: Tracker;
 
+  boundaries: { [k: string]: Offset };
+
   constructor() {
     super();
+
+    this.boundaries = {};
     this.tracker = new Tracker();
+  }
+
+  assignSiblingsBoundaries(siblingsK: string, elemOffset: Offset) {
+    if (!this.boundaries[siblingsK]) {
+      this.boundaries[siblingsK] = { ...elemOffset };
+
+      return;
+    }
+
+    const $ = this.boundaries[siblingsK];
+
+    if ($.left < elemOffset.left) {
+      $.left = elemOffset.left;
+    }
+
+    if ($.top > elemOffset.top) {
+      $.top = elemOffset.top;
+    } else {
+      $.height = elemOffset.top + elemOffset.height;
+    }
+
+    if ($.width > elemOffset.width) {
+      $.width = elemOffset.width;
+    }
   }
 
   /**
@@ -24,16 +53,14 @@ class DnDStoreImp extends Store<CoreInstance> {
    * @param element -
    */
   register(element: ElmInstance) {
-    // const finalOpts = opts || {};
-
-    // /**
-    //  * Initiates available event handlers
-    //  */
-    // handlers.forEach((handler) => {
-    //   if (typeof finalOpts[handler] !== "function") finalOpts[handler] = noop;
-    // });
-
     super.register(element, CoreInstance);
+
+    const {
+      offset,
+      keys: { sK },
+    } = this.registry[element.id];
+
+    this.assignSiblingsBoundaries(sK, offset);
   }
 
   /**
