@@ -1,12 +1,12 @@
 import type { ELmBranch } from "@dflex/dom-gen";
 import store from "../DnDStore";
-import { DraggableDnD } from "../Draggable";
+import { DraggableDnDInterface } from "../Draggable";
 import Droppable from "./Droppable";
 
 class EndDroppable extends Droppable {
   spliceAt: number;
 
-  constructor(draggable: DraggableDnD) {
+  constructor(draggable: DraggableDnDInterface) {
     super(draggable);
     this.spliceAt = -1;
   }

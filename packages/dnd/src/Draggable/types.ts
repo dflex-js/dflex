@@ -8,11 +8,6 @@ export interface ThresholdPercentages {
   horizontal: number;
 }
 
-export interface TempOffset {
-  currentLeft: number;
-  currentTop: number;
-}
-
 export interface Threshold {
   maxBottom: number;
   maxTop: number;
@@ -20,12 +15,21 @@ export interface Threshold {
   maxRight: number;
 }
 
-export interface Thresholds {
+export interface LayoutThresholds {
   siblings: { [sk: string]: Threshold };
   dragged: Threshold;
 }
 
-export interface DraggableDnDBase
+export interface TempOffset {
+  currentLeft: number;
+  currentTop: number;
+}
+
+export interface DraggableOpts {
+  thresholds: ThresholdPercentages;
+}
+
+export interface DraggableBaseInterface
   extends AbstractDraggableInterface<CoreInstanceInterface> {
   tempIndex: number;
   dragID: string;
@@ -34,7 +38,7 @@ export interface DraggableDnDBase
   siblingsList: ELmBranch | null;
   activeParent: CoreInstanceInterface | null;
 
-  thresholds: Thresholds;
+  thresholds: LayoutThresholds;
 
   isOutActiveParent: boolean;
   thresholdsPercentages: ThresholdPercentages;
@@ -46,7 +50,7 @@ export interface DraggableDnDBase
   ): void;
 }
 
-export interface DraggableDnD extends DraggableDnDBase {
+export interface DraggableDnDInterface extends DraggableBaseInterface {
   innerOffsetX: number;
   innerOffsetY: number;
   tempOffset: TempOffset;

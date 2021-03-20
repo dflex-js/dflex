@@ -1,12 +1,13 @@
 import store from "../DnDStore";
-import type { DraggableDnD } from "../Draggable";
+
+import type { DraggableDnDInterface } from "../Draggable";
 import type { DroppableInterface } from "./types";
 
 /**
  * Class includes all transformation methods related to droppable.
  */
 class Droppable implements DroppableInterface {
-  draggable: DraggableDnD;
+  draggable: DraggableDnDInterface;
 
   topDifference: number;
 
@@ -22,7 +23,7 @@ class Droppable implements DroppableInterface {
 
   isFoundBreakingPoint: boolean;
 
-  constructor(draggable: DraggableDnD) {
+  constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
 
     this.topDifference = 0;

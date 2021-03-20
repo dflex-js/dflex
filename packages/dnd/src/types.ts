@@ -1,3 +1,5 @@
+import type { ThresholdPercentages } from "./Draggable";
+
 export interface Restrictions {
   allowLeavingFromTop: boolean;
   allowLeavingFromBottom: boolean;
@@ -5,12 +7,7 @@ export interface Restrictions {
   allowLeavingFromRight: boolean;
 }
 
-export interface Thresholds {
-  vertical: number;
-  horizontal: number;
-}
-
 export interface DndOpts {
-  thresholds: Thresholds;
+  thresholds: ThresholdPercentages;
   restrictions: Restrictions;
 }

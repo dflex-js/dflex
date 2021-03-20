@@ -50,7 +50,7 @@ class DnD extends Droppable {
       sK,
       siblingsBoundaries,
       initCoordinates,
-      options.thresholds
+      options
     );
 
     super(draggable);

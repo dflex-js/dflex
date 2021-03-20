@@ -1,21 +1,21 @@
 import { AbstractDraggable } from "@dflex/draggable";
-import type { MouseCoordinates } from "@dflex/draggable";
-
-import type { ELmBranch } from "@dflex/dom-gen";
 
 import { CoreInstanceInterface } from "@dflex/core-instance";
+
+import type { MouseCoordinates } from "@dflex/draggable";
+import type { ELmBranch } from "@dflex/dom-gen";
 import type { Offset } from "@dflex/core-instance";
 
 import store from "../DnDStore";
+
 import type { ElmTree } from "../DnDStore";
 
 import type {
-  DraggableDnDBase,
+  DraggableBaseInterface,
   ThresholdPercentages,
-  Thresholds,
+  LayoutThresholds,
+  DraggableOpts,
 } from "./types";
-
-import type { DndOpts } from "../types";
 
 /**
  * Base element.
@@ -24,7 +24,7 @@ import type { DndOpts } from "../types";
  */
 class Base
   extends AbstractDraggable<CoreInstanceInterface>
-  implements DraggableDnDBase {
+  implements DraggableBaseInterface {
   tempIndex: number;
 
   dragID: string;
@@ -39,7 +39,7 @@ class Base
 
   setOfTransformedIds!: Set<string>;
 
-  thresholds: Thresholds;
+  thresholds: LayoutThresholds;
 
   thresholdsPercentages: ThresholdPercentages;
 
@@ -48,7 +48,7 @@ class Base
     siblingsK: string,
     siblingsBoundaries: Offset,
     initCoordinates: MouseCoordinates,
-    opts: DndOpts
+    opts: DraggableOpts
   ) {
     const {
       element,

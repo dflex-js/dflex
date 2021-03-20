@@ -1,7 +1,7 @@
-import { DraggableDnD } from "../Draggable";
+import type { DraggableDnDInterface } from "../Draggable";
 
 export interface DroppableInterface {
-  draggable: DraggableDnD;
+  draggable: DraggableDnDInterface;
   topDifference: number;
   leftDifference: number;
   isListLocked: boolean;
