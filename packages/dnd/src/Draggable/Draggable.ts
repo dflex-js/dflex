@@ -106,6 +106,8 @@ class Draggable extends Base implements DraggableDnDInterface {
    * @param y -
    */
   dragAt(x: number, y: number) {
+    if (this.isMovementRestricted(x, y)) return;
+
     this.translate(x, y);
 
     /**
@@ -119,7 +121,7 @@ class Draggable extends Base implements DraggableDnDInterface {
    *
    * @param $ -
    */
-  isOutH($: Threshold) {
+  private isOutH($: Threshold) {
     return (
       this.tempOffset.currentLeft < $.maxLeft ||
       this.tempOffset.currentLeft > $.maxRight
@@ -130,7 +132,7 @@ class Draggable extends Base implements DraggableDnDInterface {
    *
    * @param $ -
    */
-  isOutV($: Threshold) {
+  private isOutV($: Threshold) {
     return this.isMovingDown
       ? this.tempOffset.currentTop > $.maxBottom
       : this.tempOffset.currentTop < $.maxTop;
