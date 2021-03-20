@@ -8,10 +8,19 @@ import type { ElmTree } from "./DnDStore";
 
 import type { DndOpts } from "./types";
 
-const defaultThresholds = {
-  vertical: 60,
-  horizontal: 60,
-};
+const defaultOpts = Object.freeze({
+  thresholds: {
+    vertical: 60,
+    horizontal: 60,
+  },
+
+  restrictions: {
+    allowLeavingFromTop: true,
+    allowLeavingFromBottom: true,
+    allowLeavingFromLeft: true,
+    allowLeavingFromRight: true,
+  },
+});
 
 class DnD extends Droppable {
   /**
@@ -28,17 +37,12 @@ class DnD extends Droppable {
 
     const siblingsBoundaries = store.boundaries[sK];
 
-    // @ts-expect-error
-    let options: DndOpts = opts || {};
+    const options: DndOpts = opts || defaultOpts;
 
     if (options) {
       if (!options.thresholds) {
-        options.thresholds = defaultThresholds;
+        options.thresholds = defaultOpts.thresholds;
       }
-    } else {
-      options = {
-        thresholds: defaultThresholds,
-      };
     }
 
     const draggable = new Draggable(
@@ -46,7 +50,7 @@ class DnD extends Droppable {
       sK,
       siblingsBoundaries,
       initCoordinates,
-      options
+      options.thresholds
     );
 
     super(draggable);
