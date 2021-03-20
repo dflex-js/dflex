@@ -29,13 +29,11 @@ class DnD extends Droppable {
     const siblingsBoundaries = store.boundaries[sK];
 
     // @ts-expect-error
-    let options: DndOpts = {};
+    let options: DndOpts = opts || {};
 
-    if (opts) {
-      if (!opts.thresholds) {
+    if (options) {
+      if (!options.thresholds) {
         options.thresholds = defaultThresholds;
-      } else {
-        options.thresholds = opts.thresholds;
       }
     } else {
       options = {
