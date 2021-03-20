@@ -25,7 +25,15 @@ export interface TempOffset {
   currentTop: number;
 }
 
+export interface Restrictions {
+  allowLeavingFromTop: boolean;
+  allowLeavingFromBottom: boolean;
+  allowLeavingFromLeft: boolean;
+  allowLeavingFromRight: boolean;
+}
+
 export interface DraggableOpts {
+  restrictions: Restrictions;
   thresholds: ThresholdPercentages;
 }
 
@@ -33,6 +41,8 @@ export interface DraggableBaseInterface
   extends AbstractDraggableInterface<CoreInstanceInterface> {
   tempIndex: number;
   dragID: string;
+
+  opts: DraggableOpts;
 
   parentsList: ELmBranch | null;
   siblingsList: ELmBranch | null;
@@ -63,7 +73,7 @@ export interface DraggableDnDInterface extends DraggableBaseInterface {
   setDraggedMovingDown(y: number): void;
   isDraggedOut(id?: string): boolean;
   isDraggedLeavingFromTop(): boolean;
-  isDraggedLeavingFromEnd(): boolean;
+  isDraggedLeavingFromBottom(): boolean;
   isSiblingsTransformed(): boolean;
   endDragging(topDifference: number): void;
 }

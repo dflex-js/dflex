@@ -65,6 +65,33 @@ class Draggable extends Base implements DraggableDnDInterface {
     this.isOutHorizontal = false;
   }
 
+  private isMovementRestricted(x: number, y: number) {
+    const permissionUp = x < this.draggedElm.currentTop;
+
+    if (permissionUp) {
+      if (this.tempIndex === 0 && !this.opts.restrictions.allowLeavingFromTop) {
+        return true;
+      }
+    } else if (
+      this.tempIndex === this.siblingsList?.length &&
+      !this.opts.restrictions.allowLeavingFromBottom
+    ) {
+      return true;
+    }
+
+    const permissionRight = y > this.draggedElm.currentLeft;
+
+    if (permissionRight) {
+      if (!this.opts.restrictions.allowLeavingFromRight) {
+        return true;
+      }
+    } else if (!this.opts.restrictions.allowLeavingFromLeft) {
+      return true;
+    }
+
+    return false;
+  }
+
   /**
    * Dragged current-offset is essential to determine dragged position in
    * layout and parent.
@@ -148,7 +175,7 @@ class Draggable extends Base implements DraggableDnDInterface {
   /**
    * Checks if dragged is the last child and going down.
    */
-  isDraggedLeavingFromEnd() {
+  isDraggedLeavingFromBottom() {
     return (
       this.siblingsList !== null &&
       !this.isOutHorizontal &&
@@ -158,7 +185,7 @@ class Draggable extends Base implements DraggableDnDInterface {
   }
 
   isSiblingsTransformed() {
-    return !this.isDraggedLeavingFromEnd() && this.isDraggedOut();
+    return !this.isDraggedLeavingFromBottom() && this.isDraggedOut();
   }
 
   /**

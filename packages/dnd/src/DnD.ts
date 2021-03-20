@@ -54,7 +54,7 @@ class DnD extends Droppable {
       options
     );
 
-    super(draggable, options);
+    super(draggable);
   }
 }
 

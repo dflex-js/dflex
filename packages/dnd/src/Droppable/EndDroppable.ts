@@ -4,12 +4,11 @@ import store from "../DnDStore";
 import type { DraggableDnDInterface } from "../Draggable";
 
 import Droppable from "./Droppable";
-import type { DroppableOpts } from "./types";
 
 class EndDroppable extends Droppable {
   spliceAt: number;
 
-  constructor(draggable: DraggableDnDInterface, opts: DroppableOpts) {
+  constructor(draggable: DraggableDnDInterface) {
     super(draggable);
     this.spliceAt = -1;
   }

@@ -244,7 +244,7 @@ class Droppable implements DroppableInterface {
       return;
     }
 
-    if (this.draggable.isDraggedLeavingFromEnd()) {
+    if (this.draggable.isDraggedLeavingFromBottom()) {
       this.isListLocked = true;
 
       return;

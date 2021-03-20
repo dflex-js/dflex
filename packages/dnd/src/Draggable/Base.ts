@@ -29,6 +29,8 @@ class Base
 
   dragID: string;
 
+  opts: DraggableOpts;
+
   parentsList: ELmBranch;
 
   siblingsList: ELmBranch | null;
@@ -60,6 +62,8 @@ class Base
 
     const { order } = element;
 
+    this.opts = opts;
+
     /**
      * Initialize temp index that refers to element new position after
      * transformation happened.
@@ -84,10 +88,10 @@ class Base
 
     this.thresholdsPercentages = {
       vertical: Math.round(
-        (opts.thresholds.vertical * this.draggedElm.offset.height) / 100
+        (this.opts.thresholds.vertical * this.draggedElm.offset.height) / 100
       ),
       horizontal: Math.round(
-        (opts.thresholds.horizontal * this.draggedElm.offset.width) / 100
+        (this.opts.thresholds.horizontal * this.draggedElm.offset.width) / 100
       ),
     };
 
