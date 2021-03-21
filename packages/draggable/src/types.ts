@@ -8,7 +8,7 @@ export interface TempTranslate {
 export type DraggedStyle = {
   prop: string;
   dragValue: string;
-  afterDragValue: null;
+  afterDragValue: string | null;
 }[];
 
 export interface AbstractDraggableInterface<T extends AbstractCoreInterface> {

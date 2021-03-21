@@ -9,6 +9,11 @@ import type {
 
 const draggedStyleProps: DraggedStyle = [
   {
+    prop: "position",
+    dragValue: "relative",
+    afterDragValue: "relative",
+  },
+  {
     prop: "zIndex",
     dragValue: "99",
     afterDragValue: null,

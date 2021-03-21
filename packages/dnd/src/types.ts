@@ -1,5 +1,4 @@
-import type { ThresholdPercentages } from "./Draggable";
-import type { Restrictions } from "./Droppable";
+import type { ThresholdPercentages, Restrictions } from "./Draggable";
 
 export interface DndOpts {
   thresholds: ThresholdPercentages;
