@@ -17,7 +17,7 @@ const Item = ({ id: idProps, children }) => {
 
       dnd.endDragging();
 
-      e.target.style.background = "whitesmoke";
+      // e.target.style.background = "whitesmoke";
       e.target.style.transition = "none";
     }
   };
@@ -38,7 +38,11 @@ const Item = ({ id: idProps, children }) => {
       if (id) {
         draggedID = id;
 
-        dnd = new DnD(id, { x: clientX, y: clientY });
+        dnd = new DnD(
+          id,
+          { x: clientX, y: clientY },
+          { restrictions: { allowLeavingFromTop: false } }
+        );
 
         target.style.background = "pink";
         target.style.transition = "opacity 0.2s cubic-bezier(0.2, 0, 0, 1) 0s";
@@ -77,11 +81,10 @@ const Item = ({ id: idProps, children }) => {
 const RestrictedUp = () => {
   return (
     <div className="list-restriction-container">
-      <ul>
+      <ul id="p">
         <Item id="item-restricted-up-1">{1}</Item>
         <Item id="item-restricted-up-2">{2}</Item>
         <Item id="item-restricted-up-3">{3}</Item>
-        <Item id="item-restricted-up-4">{5}</Item>
         <Item id="item-restricted-up-5">{5}</Item>
         <Item id="item-restricted-up-6">{6}</Item>
       </ul>

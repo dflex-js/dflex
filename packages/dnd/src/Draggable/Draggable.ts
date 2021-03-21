@@ -3,6 +3,8 @@
 import type { MouseCoordinates } from "@dflex/draggable";
 import type { Offset } from "@dflex/core-instance";
 
+import store from "../DnDStore";
+
 import Base from "./Base";
 import type { ElmTree } from "../DnDStore";
 import type {
@@ -31,12 +33,11 @@ class Draggable extends Base implements DraggableDnDInterface {
 
   constructor(
     elmTree: ElmTree,
-    siblingsK: string,
     siblingsBoundaries: Offset,
     initCoordinates: MouseCoordinates,
     opts: DraggableOpts
   ) {
-    super(elmTree, siblingsK, siblingsBoundaries, initCoordinates, opts);
+    super(elmTree, siblingsBoundaries, initCoordinates, opts);
 
     const { x, y } = initCoordinates;
 
@@ -65,31 +66,22 @@ class Draggable extends Base implements DraggableDnDInterface {
     this.isOutHorizontal = false;
   }
 
-  private isMovementRestricted(x: number, y: number) {
-    const permissionUp = x < this.draggedElm.currentTop;
+  private isRestrictedHorizontally(y: number) {
+    const { top, height } = store.boundaries[
+      store.registry[this.draggedElm.id].keys.sK
+    ];
 
-    if (permissionUp) {
-      if (this.tempIndex === 0 && !this.opts.restrictions.allowLeavingFromTop) {
-        return true;
+    if (!this.opts.restrictions.allowLeavingFromTop) {
+      if (this.tempIndex === -1 || this.tempIndex === 0) {
+        const needPermissionUp = y - this.innerOffsetY <= top;
+
+        if (needPermissionUp) {
+          return top + this.innerOffsetY;
+        }
       }
-    } else if (
-      this.tempIndex === this.siblingsList?.length &&
-      !this.opts.restrictions.allowLeavingFromBottom
-    ) {
-      return true;
     }
 
-    const permissionRight = y > this.draggedElm.currentLeft;
-
-    if (permissionRight) {
-      if (!this.opts.restrictions.allowLeavingFromRight) {
-        return true;
-      }
-    } else if (!this.opts.restrictions.allowLeavingFromLeft) {
-      return true;
-    }
-
-    return false;
+    return undefined;
   }
 
   /**
@@ -106,7 +98,13 @@ class Draggable extends Base implements DraggableDnDInterface {
    * @param y -
    */
   dragAt(x: number, y: number) {
-    if (this.isMovementRestricted(x, y)) return;
+    const restrictedY = this.isRestrictedHorizontally(y);
+
+    if (restrictedY) {
+      this.translate(x, restrictedY);
+
+      return;
+    }
 
     this.translate(x, y);
 
