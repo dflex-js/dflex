@@ -29,7 +29,11 @@ class DnD extends Droppable {
    * @param initCoordinates -
    * @param opts -
    */
-  constructor(id: string, initCoordinates: MouseCoordinates, opts?: DndOpts) {
+  constructor(
+    id: string,
+    initCoordinates: MouseCoordinates,
+    opts: DndOpts = defaultOpts
+  ) {
     const elmCoreInstanceWithTree: ElmTree = store.getElmTreeById(id);
 
     const {
@@ -38,17 +42,25 @@ class DnD extends Droppable {
 
     const siblingsBoundaries = store.boundaries[sK];
 
-    const options: DndOpts = opts || defaultOpts;
+    const options = opts;
 
-    if (options) {
-      if (!options.thresholds) {
-        options.thresholds = defaultOpts.thresholds;
+    (Object.keys(defaultOpts) as Array<keyof typeof defaultOpts>).forEach(
+      (props) => {
+        if (!options[props]) {
+          // @ts-expect-error
+          options[props] = defaultOpts[props];
+        } else {
+          // @ts-expect-error
+          options[props] = {
+            ...defaultOpts[props],
+            ...options[props],
+          };
+        }
       }
-    }
+    );
 
     const draggable = new Draggable(
       elmCoreInstanceWithTree,
-      sK,
       siblingsBoundaries,
       initCoordinates,
       options

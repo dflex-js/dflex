@@ -47,7 +47,6 @@ class Base
 
   constructor(
     elmTree: ElmTree,
-    siblingsK: string,
     siblingsBoundaries: Offset,
     initCoordinates: MouseCoordinates,
     opts: DraggableOpts
@@ -104,7 +103,7 @@ class Base
       siblingsBoundaries.top,
       siblingsBoundaries.left,
       siblingsBoundaries.height,
-      siblingsK
+      store.registry[this.draggedElm.id].keys.sK
     );
 
     this.siblingsList = Array.isArray(siblings) ? siblings : null;
