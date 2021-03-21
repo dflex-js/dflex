@@ -48,22 +48,6 @@ class DnDStoreImp extends Store<CoreInstance> {
   }
 
   /**
-   *  Register DnD element.
-   *
-   * @param element -
-   */
-  register(element: ElmInstance) {
-    super.register(element, CoreInstance);
-
-    const {
-      offset,
-      keys: { sK },
-    } = this.registry[element.id];
-
-    this.assignSiblingsBoundaries(sK, offset);
-  }
-
-  /**
    * Reattach element reference.
    * This happens when element is unmounted from the screen and mounted again.
    *
@@ -72,6 +56,36 @@ class DnDStoreImp extends Store<CoreInstance> {
    */
   reattachElmRef(id: string, elmRef: HTMLElement) {
     this.registry[id].ref = elmRef;
+
+    // Preserves last changes.
+    this.registry[id].transformElm();
+  }
+
+  /**
+   *  Register DnD element.
+   *
+   * @param element -
+   */
+  register(element: ElmInstance) {
+    /**
+     * If element already exist in the store, then the reattach the reference.
+     */
+    if (this.registry[element.id]) {
+      if (element.ref) {
+        this.reattachElmRef(element.id, element.ref);
+      }
+
+      return;
+    }
+
+    super.register(element, CoreInstance);
+
+    const {
+      offset,
+      keys: { sK },
+    } = this.registry[element.id];
+
+    this.assignSiblingsBoundaries(sK, offset);
   }
 
   /**
