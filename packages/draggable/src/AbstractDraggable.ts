@@ -11,7 +11,7 @@ const draggedStyleProps: DraggedStyle = [
   {
     prop: "position",
     dragValue: "relative",
-    afterDragValue: "relative",
+    afterDragValue: null,
   },
   {
     prop: "zIndex",
@@ -88,7 +88,7 @@ class AbstractDraggable<T extends AbstractCoreInterface>
   protected setDragged(isActive: boolean) {
     if (isActive) {
       this.draggedStyle.forEach(({ prop, dragValue }) => {
-        // @ts-ignore
+        // @ts-expect-error
         this.draggedStyleRef[prop] = dragValue;
       });
       return;
