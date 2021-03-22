@@ -70,11 +70,6 @@ class Draggable extends Base implements DraggableDnDInterface {
       store.registry[this.draggedElm.id].keys.sK
     ];
 
-    // console.log(
-    //   "file: Draggable.ts ~ line 77 ~ needPermissionUp",
-    //   this.tempIndex,
-    //   this.siblingsList
-    // );
     if (!this.opts.restrictions.allowLeavingFromTop) {
       if (this.tempIndex === -1 || this.tempIndex === 0) {
         const needPermissionUp = y - this.innerOffsetY <= maxTop;
