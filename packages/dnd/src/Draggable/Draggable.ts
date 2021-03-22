@@ -44,8 +44,8 @@ class Draggable extends Base implements DraggableDnDInterface {
     this.innerOffsetY = y - this.draggedElm.currentTop;
 
     this.tempOffset = {
-      currentLeft: 0,
-      currentTop: 0,
+      currentLeft: this.draggedElm.currentLeft,
+      currentTop: this.draggedElm.currentTop,
     };
 
     /**
@@ -73,15 +73,15 @@ class Draggable extends Base implements DraggableDnDInterface {
     if (!this.opts.restrictions.allowLeavingFromLeft) {
       const needPermissionLeft = x - this.innerOffsetX <= left;
 
-      if (needPermissionLeft) return 0;
+      if (needPermissionLeft) return -this.outerOffsetX;
     }
 
-    if (!this.opts.restrictions.allowLeavingFromRight) {
-      const needPermissionRight =
-        x - this.innerOffsetX <= left + this.draggedElm.offset.width;
+    // if (!this.opts.restrictions.allowLeavingFromRight) {
+    //   const needPermissionRight =
+    //     x - this.innerOffsetX <= left + this.draggedElm.offset.width;
 
-      if (needPermissionRight) return 0;
-    }
+    //   if (needPermissionRight) return 0;
+    // }
 
     return -1;
   }
@@ -92,7 +92,7 @@ class Draggable extends Base implements DraggableDnDInterface {
     ];
 
     if (!this.opts.restrictions.allowLeavingFromTop) {
-      if (this.tempIndex === -1 || this.tempIndex === 0) {
+      if (this.tempIndex <= 0) {
         const needPermissionUp = y - this.innerOffsetY <= maxTop;
 
         if (needPermissionUp) return maxTop + this.innerOffsetY;
@@ -131,18 +131,18 @@ class Draggable extends Base implements DraggableDnDInterface {
     const restrictedY = this.isRestrictedToContainerV(y);
 
     if (restrictedY > -1) {
+      console.log("file: Draggable.ts ~ line 132 ~ restrictedY", restrictedY);
       this.translate(x, restrictedY);
-
       return;
     }
 
-    const restrictedX = this.isSelfRestrictedH(x);
+    // const restrictedX = this.isSelfRestrictedH(x);
 
-    if (restrictedX > -1) {
-      this.translateOnY(y);
+    // if (restrictedX > -1) {
+    //   this.translate(restrictedX, y);
 
-      return;
-    }
+    //   return;
+    // }
 
     this.translate(x, y);
 
