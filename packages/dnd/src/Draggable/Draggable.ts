@@ -65,6 +65,30 @@ class Draggable extends Base implements DraggableDnDInterface {
     this.isOutHorizontal = false;
   }
 
+  private containerFilterTop(y: number) {
+    const { maxTop } = store.boundaries[
+      store.registry[this.draggedElm.id].keys.sK
+    ];
+
+    return y - this.innerOffsetY <= maxTop ? maxTop + this.innerOffsetY : y;
+  }
+
+  private containerFilterBottom(y: number) {
+    const { minTop } = store.boundaries[
+      store.registry[this.draggedElm.id].keys.sK
+    ];
+
+    return y - this.innerOffsetY >= minTop ? -this.outerOffsetX : y;
+  }
+
+  private selfFilterLeft(x: number) {
+    const { left } = store.boundaries[
+      store.registry[this.draggedElm.id].keys.sK
+    ];
+
+    return x - this.innerOffsetX <= left ? -this.outerOffsetX : x;
+  }
+
   private isSelfRestrictedH(x: number) {
     const { left } = store.boundaries[
       store.registry[this.draggedElm.id].keys.sK
@@ -86,7 +110,7 @@ class Draggable extends Base implements DraggableDnDInterface {
     return -1;
   }
 
-  private isRestrictedToContainerV(y: number) {
+  private isRestrictedToContainerV(x: number, y: number) {
     const { maxTop, minTop } = store.boundaries[
       store.registry[this.draggedElm.id].keys.sK
     ];
@@ -95,7 +119,13 @@ class Draggable extends Base implements DraggableDnDInterface {
       if (this.tempIndex <= 0) {
         const needPermissionUp = y - this.innerOffsetY <= maxTop;
 
-        if (needPermissionUp) return maxTop + this.innerOffsetY;
+        if (needPermissionUp) {
+          const rx = maxTop + this.innerOffsetY;
+
+          const restrictedY = this.isSelfRestrictedH(x);
+
+          return rx;
+        }
       }
     }
 
@@ -128,7 +158,7 @@ class Draggable extends Base implements DraggableDnDInterface {
    * @param y -
    */
   dragAt(x: number, y: number) {
-    const restrictedY = this.isRestrictedToContainerV(y);
+    const restrictedY = this.isRestrictedToContainerV(x, y);
 
     if (restrictedY > -1) {
       console.log("file: Draggable.ts ~ line 132 ~ restrictedY", restrictedY);
