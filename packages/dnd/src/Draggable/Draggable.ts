@@ -30,6 +30,8 @@ class Draggable extends Base implements DraggableDnDInterface {
 
   isOutHorizontal: boolean;
 
+  noAxesFilterNeeded: boolean;
+
   constructor(
     elmTree: ElmTree,
     siblingsBoundaries: BoundariesOffset,
@@ -63,12 +65,22 @@ class Draggable extends Base implements DraggableDnDInterface {
     this.isMovingDown = false;
 
     this.isOutHorizontal = false;
+
+    const $ = this.opts.restrictions;
+
+    this.noAxesFilterNeeded =
+      $.allowLeavingFromLeft &&
+      $.allowLeavingFromRight &&
+      $.allowLeavingFromTop &&
+      $.allowLeavingFromBottom;
   }
 
   private containerFilterTop(y: number) {
     const { maxTop } = store.boundaries[
       store.registry[this.draggedElm.id].keys.sK
     ];
+
+    console.log("filter top", y - this.innerOffsetY <= maxTop);
 
     return y - this.innerOffsetY <= maxTop ? maxTop + this.innerOffsetY : y;
   }
@@ -110,38 +122,32 @@ class Draggable extends Base implements DraggableDnDInterface {
     return -1;
   }
 
-  private isRestrictedToContainerV(x: number, y: number) {
-    const { maxTop, minTop } = store.boundaries[
-      store.registry[this.draggedElm.id].keys.sK
-    ];
+  private AxesFilter(x: number, y: number) {
+    /**
+     * Are you prevented from going left?
+     */
+    const fX = this.opts.restrictions.allowLeavingFromLeft
+      ? this.opts.restrictions.allowLeavingFromRight
+        ? x
+        : this.selfFilterLeft(x)
+      : this.selfFilterLeft(x);
 
-    if (!this.opts.restrictions.allowLeavingFromTop) {
-      if (this.tempIndex <= 0) {
-        const needPermissionUp = y - this.innerOffsetY <= maxTop;
+    const fY = this.opts.restrictions.allowLeavingFromTop
+      ? this.opts.restrictions.allowLeavingFromBottom
+        ? y
+        : (this.siblingsList &&
+            this.tempIndex === this.siblingsList.length - 1) ||
+          this.tempIndex === -1
+        ? this.containerFilterBottom(y)
+        : y
+      : this.tempIndex <= 0
+      ? this.containerFilterTop(y)
+      : y;
 
-        if (needPermissionUp) {
-          const rx = maxTop + this.innerOffsetY;
-
-          const restrictedY = this.isSelfRestrictedH(x);
-
-          return rx;
-        }
-      }
-    }
-
-    if (!this.opts.restrictions.allowLeavingFromBottom) {
-      if (this.siblingsList) {
-        const lastIndex = this.siblingsList.length - 1;
-
-        if (this.tempIndex === lastIndex || this.tempIndex === -1) {
-          const needPermissionDown = y - this.innerOffsetY >= minTop;
-
-          if (needPermissionDown) return minTop + this.innerOffsetY;
-        }
-      }
-    }
-
-    return -1;
+    return {
+      fY,
+      fX,
+    };
   }
 
   /**
@@ -158,23 +164,13 @@ class Draggable extends Base implements DraggableDnDInterface {
    * @param y -
    */
   dragAt(x: number, y: number) {
-    const restrictedY = this.isRestrictedToContainerV(x, y);
+    if (this.noAxesFilterNeeded) {
+      this.translate(x, y);
+    } else {
+      const filtered = this.AxesFilter(x, y);
 
-    if (restrictedY > -1) {
-      console.log("file: Draggable.ts ~ line 132 ~ restrictedY", restrictedY);
-      this.translate(x, restrictedY);
-      return;
+      this.translate(filtered.fX, filtered.fY);
     }
-
-    // const restrictedX = this.isSelfRestrictedH(x);
-
-    // if (restrictedX > -1) {
-    //   this.translate(restrictedX, y);
-
-    //   return;
-    // }
-
-    this.translate(x, y);
 
     /**
      * Every time we got new translate, offset should be updated
