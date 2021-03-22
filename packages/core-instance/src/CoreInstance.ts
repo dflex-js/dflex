@@ -164,6 +164,11 @@ class CoreInstance
      */
     branchIDsOrder[newIndex] = this.id;
     if (isShuffle) branchIDsOrder[oldIndex] = "";
+    console.log(
+      "file: CoreInstance.ts ~ line 167 ~ branchIDsOrder",
+      branchIDsOrder,
+      this.id
+    );
   }
 
   /**

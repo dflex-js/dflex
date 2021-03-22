@@ -208,6 +208,10 @@ class Droppable implements DroppableInterface {
   liftUp() {
     const from = this.draggable.tempIndex + 1;
     this.draggable.tempIndex = -1;
+    console.log(
+      "file: Droppable.ts ~ line 211 ~ tempIndex",
+      this.draggable.tempIndex
+    );
 
     for (let i = from; i < this.draggable.siblingsList!.length; i += 1) {
       this.movePositionIfEligibleID(i);

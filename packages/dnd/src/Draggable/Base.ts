@@ -4,11 +4,10 @@ import { CoreInstanceInterface } from "@dflex/core-instance";
 
 import type { MouseCoordinates } from "@dflex/draggable";
 import type { ELmBranch } from "@dflex/dom-gen";
-import type { Offset } from "@dflex/core-instance";
 
 import store from "../DnDStore";
 
-import type { ElmTree } from "../DnDStore";
+import type { ElmTree, BoundariesOffset } from "../DnDStore";
 
 import type {
   DraggableBaseInterface,
@@ -47,7 +46,7 @@ class Base
 
   constructor(
     elmTree: ElmTree,
-    siblingsBoundaries: Offset,
+    siblingsBoundaries: BoundariesOffset,
     initCoordinates: MouseCoordinates,
     opts: DraggableOpts
   ) {
@@ -100,7 +99,7 @@ class Base
     this.setThreshold(this.draggedElm.currentTop, this.draggedElm.currentLeft);
 
     this.setThreshold(
-      siblingsBoundaries.top,
+      siblingsBoundaries.maxTop,
       siblingsBoundaries.left,
       siblingsBoundaries.height,
       store.registry[this.draggedElm.id].keys.sK

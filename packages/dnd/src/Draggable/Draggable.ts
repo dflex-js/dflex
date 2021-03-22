@@ -1,12 +1,11 @@
 /* eslint-disable no-nested-ternary */
 
 import type { MouseCoordinates } from "@dflex/draggable";
-import type { Offset } from "@dflex/core-instance";
 
 import store from "../DnDStore";
 
 import Base from "./Base";
-import type { ElmTree } from "../DnDStore";
+import type { ElmTree, BoundariesOffset } from "../DnDStore";
 import type {
   DraggableDnDInterface,
   TempOffset,
@@ -33,7 +32,7 @@ class Draggable extends Base implements DraggableDnDInterface {
 
   constructor(
     elmTree: ElmTree,
-    siblingsBoundaries: Offset,
+    siblingsBoundaries: BoundariesOffset,
     initCoordinates: MouseCoordinates,
     opts: DraggableOpts
   ) {
@@ -71,6 +70,11 @@ class Draggable extends Base implements DraggableDnDInterface {
       store.registry[this.draggedElm.id].keys.sK
     ];
 
+    // console.log(
+    //   "file: Draggable.ts ~ line 77 ~ needPermissionUp",
+    //   this.tempIndex,
+    //   this.siblingsList
+    // );
     if (!this.opts.restrictions.allowLeavingFromTop) {
       if (this.tempIndex === -1 || this.tempIndex === 0) {
         const needPermissionUp = y - this.innerOffsetY <= maxTop;
