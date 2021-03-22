@@ -2,24 +2,38 @@ import type { MouseCoordinates } from "@dflex/draggable";
 
 import Draggable from "./Draggable";
 import Droppable from "./Droppable";
-
 import store from "./DnDStore";
+
 import type { ElmTree } from "./DnDStore";
 
 import type { DndOpts } from "./types";
 
-const defaultThresholds = {
-  vertical: 60,
-  horizontal: 60,
-};
+const defaultOpts = Object.freeze({
+  thresholds: {
+    vertical: 60,
+    horizontal: 60,
+  },
+
+  restrictions: {
+    allowLeavingFromTop: true,
+    allowLeavingFromBottom: true,
+    allowLeavingFromLeft: true,
+    allowLeavingFromRight: true,
+  },
+});
 
 class DnD extends Droppable {
   /**
    *
    * @param id -
    * @param initCoordinates -
+   * @param opts -
    */
-  constructor(id: string, initCoordinates: MouseCoordinates, opts?: DndOpts) {
+  constructor(
+    id: string,
+    initCoordinates: MouseCoordinates,
+    opts: DndOpts = defaultOpts
+  ) {
     const elmCoreInstanceWithTree: ElmTree = store.getElmTreeById(id);
 
     const {
@@ -28,24 +42,25 @@ class DnD extends Droppable {
 
     const siblingsBoundaries = store.boundaries[sK];
 
-    // @ts-expect-error
-    let options: DndOpts = {};
+    const options = opts;
 
-    if (opts) {
-      if (!opts.thresholds) {
-        options.thresholds = defaultThresholds;
-      } else {
-        options.thresholds = opts.thresholds;
+    (Object.keys(defaultOpts) as Array<keyof typeof defaultOpts>).forEach(
+      (props) => {
+        if (!options[props]) {
+          // @ts-expect-error
+          options[props] = defaultOpts[props];
+        } else {
+          // @ts-expect-error
+          options[props] = {
+            ...defaultOpts[props],
+            ...options[props],
+          };
+        }
       }
-    } else {
-      options = {
-        thresholds: defaultThresholds,
-      };
-    }
+    );
 
     const draggable = new Draggable(
       elmCoreInstanceWithTree,
-      sK,
       siblingsBoundaries,
       initCoordinates,
       options

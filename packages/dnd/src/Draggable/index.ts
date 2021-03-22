@@ -1,9 +1,7 @@
 export type {
-  TempOffset,
-  Threshold,
-  Thresholds,
-  DraggableDnDBase,
-  DraggableDnD,
+  ThresholdPercentages,
+  DraggableDnDInterface,
+  Restrictions,
 } from "./types";
 
 export { default } from "./Draggable";

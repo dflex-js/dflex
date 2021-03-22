@@ -1,14 +1,19 @@
 /* eslint-disable no-nested-ternary */
 
 import type { MouseCoordinates } from "@dflex/draggable";
-import type { Offset } from "@dflex/core-instance";
+
+import store from "../DnDStore";
 
 import Base from "./Base";
-import type { ElmTree } from "../DnDStore";
-import type { DraggableDnD, TempOffset, Threshold } from "./types";
-import type { DndOpts } from "../types";
+import type { ElmTree, BoundariesOffset } from "../DnDStore";
+import type {
+  DraggableDnDInterface,
+  TempOffset,
+  Threshold,
+  DraggableOpts,
+} from "./types";
 
-class Draggable extends Base implements DraggableDnD {
+class Draggable extends Base implements DraggableDnDInterface {
   innerOffsetX: number;
 
   innerOffsetY: number;
@@ -27,12 +32,11 @@ class Draggable extends Base implements DraggableDnD {
 
   constructor(
     elmTree: ElmTree,
-    siblingsK: string,
-    siblingsBoundaries: Offset,
+    siblingsBoundaries: BoundariesOffset,
     initCoordinates: MouseCoordinates,
-    opts: DndOpts
+    opts: DraggableOpts
   ) {
-    super(elmTree, siblingsK, siblingsBoundaries, initCoordinates, opts);
+    super(elmTree, siblingsBoundaries, initCoordinates, opts);
 
     const { x, y } = initCoordinates;
 
@@ -61,6 +65,34 @@ class Draggable extends Base implements DraggableDnD {
     this.isOutHorizontal = false;
   }
 
+  private isRestrictedHorizontally(y: number) {
+    const { maxTop, minTop } = store.boundaries[
+      store.registry[this.draggedElm.id].keys.sK
+    ];
+
+    if (!this.opts.restrictions.allowLeavingFromTop) {
+      if (this.tempIndex === -1 || this.tempIndex === 0) {
+        const needPermissionUp = y - this.innerOffsetY <= maxTop;
+
+        if (needPermissionUp) return maxTop + this.innerOffsetY;
+      }
+    }
+
+    if (!this.opts.restrictions.allowLeavingFromBottom) {
+      if (this.siblingsList) {
+        const lastIndex = this.siblingsList.length - 1;
+
+        if (this.tempIndex === lastIndex || this.tempIndex === -1) {
+          const needPermissionDown = y - this.innerOffsetY >= minTop;
+
+          if (needPermissionDown) return minTop + this.innerOffsetY;
+        }
+      }
+    }
+
+    return undefined;
+  }
+
   /**
    * Dragged current-offset is essential to determine dragged position in
    * layout and parent.
@@ -75,6 +107,14 @@ class Draggable extends Base implements DraggableDnD {
    * @param y -
    */
   dragAt(x: number, y: number) {
+    const restrictedY = this.isRestrictedHorizontally(y);
+
+    if (restrictedY) {
+      this.translate(x, restrictedY);
+
+      return;
+    }
+
     this.translate(x, y);
 
     /**
@@ -88,7 +128,7 @@ class Draggable extends Base implements DraggableDnD {
    *
    * @param $ -
    */
-  isOutH($: Threshold) {
+  private isOutH($: Threshold) {
     return (
       this.tempOffset.currentLeft < $.maxLeft ||
       this.tempOffset.currentLeft > $.maxRight
@@ -99,7 +139,7 @@ class Draggable extends Base implements DraggableDnD {
    *
    * @param $ -
    */
-  isOutV($: Threshold) {
+  private isOutV($: Threshold) {
     return this.isMovingDown
       ? this.tempOffset.currentTop > $.maxBottom
       : this.tempOffset.currentTop < $.maxTop;
@@ -144,7 +184,7 @@ class Draggable extends Base implements DraggableDnD {
   /**
    * Checks if dragged is the last child and going down.
    */
-  isDraggedLeavingFromEnd() {
+  isDraggedLeavingFromBottom() {
     return (
       this.siblingsList !== null &&
       !this.isOutHorizontal &&
@@ -154,7 +194,7 @@ class Draggable extends Base implements DraggableDnD {
   }
 
   isSiblingsTransformed() {
-    return !this.isDraggedLeavingFromEnd() && this.isDraggedOut();
+    return !this.isDraggedLeavingFromBottom() && this.isDraggedOut();
   }
 
   /**

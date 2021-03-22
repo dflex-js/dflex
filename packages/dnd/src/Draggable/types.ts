@@ -8,11 +8,6 @@ export interface ThresholdPercentages {
   horizontal: number;
 }
 
-export interface TempOffset {
-  currentLeft: number;
-  currentTop: number;
-}
-
 export interface Threshold {
   maxBottom: number;
   maxTop: number;
@@ -20,21 +15,40 @@ export interface Threshold {
   maxRight: number;
 }
 
-export interface Thresholds {
+export interface LayoutThresholds {
   siblings: { [sk: string]: Threshold };
   dragged: Threshold;
 }
 
-export interface DraggableDnDBase
+export interface TempOffset {
+  currentLeft: number;
+  currentTop: number;
+}
+
+export interface Restrictions {
+  allowLeavingFromTop: boolean;
+  allowLeavingFromBottom: boolean;
+  allowLeavingFromLeft: boolean;
+  allowLeavingFromRight: boolean;
+}
+
+export interface DraggableOpts {
+  restrictions: Restrictions;
+  thresholds: ThresholdPercentages;
+}
+
+export interface DraggableBaseInterface
   extends AbstractDraggableInterface<CoreInstanceInterface> {
   tempIndex: number;
   dragID: string;
+
+  opts: DraggableOpts;
 
   parentsList: ELmBranch | null;
   siblingsList: ELmBranch | null;
   activeParent: CoreInstanceInterface | null;
 
-  thresholds: Thresholds;
+  thresholds: LayoutThresholds;
 
   isOutActiveParent: boolean;
   thresholdsPercentages: ThresholdPercentages;
@@ -46,7 +60,7 @@ export interface DraggableDnDBase
   ): void;
 }
 
-export interface DraggableDnD extends DraggableDnDBase {
+export interface DraggableDnDInterface extends DraggableBaseInterface {
   innerOffsetX: number;
   innerOffsetY: number;
   tempOffset: TempOffset;
@@ -59,7 +73,7 @@ export interface DraggableDnD extends DraggableDnDBase {
   setDraggedMovingDown(y: number): void;
   isDraggedOut(id?: string): boolean;
   isDraggedLeavingFromTop(): boolean;
-  isDraggedLeavingFromEnd(): boolean;
+  isDraggedLeavingFromBottom(): boolean;
   isSiblingsTransformed(): boolean;
   endDragging(topDifference: number): void;
 }

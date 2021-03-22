@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Basic from "./horizontal/list/Basic";
 
 import { ComponentBasedEvent, ContainerBasedEvent } from "./lists";
+import { RestrictedUp } from "./restrictions";
 import TodoList from "./todo";
 
 function App() {
@@ -14,6 +15,9 @@ function App() {
       <Switch>
         <Route path="/h-basic">
           <Basic />
+        </Route>
+        <Route path="/restrict-up">
+          <RestrictedUp />
         </Route>
         <Route path="/todo">
           <TodoList />

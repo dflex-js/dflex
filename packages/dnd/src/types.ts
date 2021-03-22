@@ -1,6 +1,6 @@
+import type { ThresholdPercentages, Restrictions } from "./Draggable";
+
 export interface DndOpts {
-  thresholds: {
-    vertical: number;
-    horizontal: number;
-  };
+  thresholds: ThresholdPercentages;
+  restrictions: Restrictions;
 }

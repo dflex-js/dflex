@@ -1,21 +1,20 @@
 import { AbstractDraggable } from "@dflex/draggable";
-import type { MouseCoordinates } from "@dflex/draggable";
-
-import type { ELmBranch } from "@dflex/dom-gen";
 
 import { CoreInstanceInterface } from "@dflex/core-instance";
-import type { Offset } from "@dflex/core-instance";
+
+import type { MouseCoordinates } from "@dflex/draggable";
+import type { ELmBranch } from "@dflex/dom-gen";
 
 import store from "../DnDStore";
-import type { ElmTree } from "../DnDStore";
+
+import type { ElmTree, BoundariesOffset } from "../DnDStore";
 
 import type {
-  DraggableDnDBase,
+  DraggableBaseInterface,
   ThresholdPercentages,
-  Thresholds,
+  LayoutThresholds,
+  DraggableOpts,
 } from "./types";
-
-import type { DndOpts } from "../types";
 
 /**
  * Base element.
@@ -24,10 +23,12 @@ import type { DndOpts } from "../types";
  */
 class Base
   extends AbstractDraggable<CoreInstanceInterface>
-  implements DraggableDnDBase {
+  implements DraggableBaseInterface {
   tempIndex: number;
 
   dragID: string;
+
+  opts: DraggableOpts;
 
   parentsList: ELmBranch;
 
@@ -39,16 +40,15 @@ class Base
 
   setOfTransformedIds!: Set<string>;
 
-  thresholds: Thresholds;
+  thresholds: LayoutThresholds;
 
   thresholdsPercentages: ThresholdPercentages;
 
   constructor(
     elmTree: ElmTree,
-    siblingsK: string,
-    siblingsBoundaries: Offset,
+    siblingsBoundaries: BoundariesOffset,
     initCoordinates: MouseCoordinates,
-    opts: DndOpts
+    opts: DraggableOpts
   ) {
     const {
       element,
@@ -59,6 +59,8 @@ class Base
     super(element, initCoordinates);
 
     const { order } = element;
+
+    this.opts = opts;
 
     /**
      * Initialize temp index that refers to element new position after
@@ -84,10 +86,10 @@ class Base
 
     this.thresholdsPercentages = {
       vertical: Math.round(
-        (opts.thresholds.vertical * this.draggedElm.offset.height) / 100
+        (this.opts.thresholds.vertical * this.draggedElm.offset.height) / 100
       ),
       horizontal: Math.round(
-        (opts.thresholds.horizontal * this.draggedElm.offset.width) / 100
+        (this.opts.thresholds.horizontal * this.draggedElm.offset.width) / 100
       ),
     };
 
@@ -97,10 +99,10 @@ class Base
     this.setThreshold(this.draggedElm.currentTop, this.draggedElm.currentLeft);
 
     this.setThreshold(
-      siblingsBoundaries.top,
+      siblingsBoundaries.maxTop,
       siblingsBoundaries.left,
       siblingsBoundaries.height,
-      siblingsK
+      store.registry[this.draggedElm.id].keys.sK
     );
 
     this.siblingsList = Array.isArray(siblings) ? siblings : null;
