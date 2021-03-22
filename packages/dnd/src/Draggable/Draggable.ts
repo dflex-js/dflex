@@ -67,16 +67,26 @@ class Draggable extends Base implements DraggableDnDInterface {
   }
 
   private isRestrictedHorizontally(y: number) {
-    const { top, height } = store.boundaries[
+    const { maxTop, minTop } = store.boundaries[
       store.registry[this.draggedElm.id].keys.sK
     ];
 
     if (!this.opts.restrictions.allowLeavingFromTop) {
       if (this.tempIndex === -1 || this.tempIndex === 0) {
-        const needPermissionUp = y - this.innerOffsetY <= top;
+        const needPermissionUp = y - this.innerOffsetY <= maxTop;
 
-        if (needPermissionUp) {
-          return top + this.innerOffsetY;
+        if (needPermissionUp) return maxTop + this.innerOffsetY;
+      }
+    }
+
+    if (!this.opts.restrictions.allowLeavingFromBottom) {
+      if (this.siblingsList) {
+        const lastIndex = this.siblingsList.length - 1;
+
+        if (this.tempIndex === lastIndex || this.tempIndex === -1) {
+          const needPermissionDown = y - this.innerOffsetY >= minTop;
+
+          if (needPermissionDown) return minTop + this.innerOffsetY;
         }
       }
     }

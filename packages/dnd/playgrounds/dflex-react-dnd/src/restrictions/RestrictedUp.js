@@ -41,7 +41,12 @@ const Item = ({ id: idProps, children }) => {
         dnd = new DnD(
           id,
           { x: clientX, y: clientY },
-          { restrictions: { allowLeavingFromTop: false } }
+          {
+            restrictions: {
+              allowLeavingFromTop: false,
+              allowLeavingFromBottom: false,
+            },
+          }
         );
 
         target.style.background = "pink";
