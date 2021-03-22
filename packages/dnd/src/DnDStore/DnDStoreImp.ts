@@ -1,11 +1,12 @@
 import Store from "@dflex/store";
 import CoreInstance from "@dflex/core-instance";
-import type { ElmInstance } from "@dflex/store";
+
 import type { Offset } from "@dflex/core-instance";
+import type { ElmInstance } from "@dflex/store";
 
 import Tracker from "./Tracker";
 
-import type { ElmTree } from "./types";
+import type { ElmTree, BoundariesOffset } from "./types";
 
 // function noop() {}
 
@@ -14,7 +15,7 @@ import type { ElmTree } from "./types";
 class DnDStoreImp extends Store<CoreInstance> {
   tracker: Tracker;
 
-  boundaries: { [k: string]: Offset };
+  boundaries: { [k: string]: BoundariesOffset };
 
   constructor() {
     super();
@@ -25,7 +26,13 @@ class DnDStoreImp extends Store<CoreInstance> {
 
   assignSiblingsBoundaries(siblingsK: string, elemOffset: Offset) {
     if (!this.boundaries[siblingsK]) {
-      this.boundaries[siblingsK] = { ...elemOffset };
+      this.boundaries[siblingsK] = {
+        height: elemOffset.height,
+        width: elemOffset.width,
+        left: elemOffset.left,
+        maxTop: elemOffset.top,
+        minTop: elemOffset.top,
+      };
 
       return;
     }
@@ -36,9 +43,10 @@ class DnDStoreImp extends Store<CoreInstance> {
       $.left = elemOffset.left;
     }
 
-    if ($.top > elemOffset.top) {
-      $.top = elemOffset.top;
+    if ($.maxTop > elemOffset.top) {
+      $.maxTop = elemOffset.top;
     } else {
+      $.minTop = elemOffset.top;
       $.height = elemOffset.top + elemOffset.height;
     }
 
