@@ -65,7 +65,28 @@ class Draggable extends Base implements DraggableDnDInterface {
     this.isOutHorizontal = false;
   }
 
-  private isRestrictedHorizontally(y: number) {
+  private isSelfRestrictedH(x: number) {
+    const { left } = store.boundaries[
+      store.registry[this.draggedElm.id].keys.sK
+    ];
+
+    if (!this.opts.restrictions.allowLeavingFromLeft) {
+      const needPermissionLeft = x - this.innerOffsetX <= left;
+
+      if (needPermissionLeft) return 0;
+    }
+
+    if (!this.opts.restrictions.allowLeavingFromRight) {
+      const needPermissionRight =
+        x - this.innerOffsetX <= left + this.draggedElm.offset.width;
+
+      if (needPermissionRight) return 0;
+    }
+
+    return -1;
+  }
+
+  private isRestrictedToContainerV(y: number) {
     const { maxTop, minTop } = store.boundaries[
       store.registry[this.draggedElm.id].keys.sK
     ];
@@ -90,7 +111,7 @@ class Draggable extends Base implements DraggableDnDInterface {
       }
     }
 
-    return undefined;
+    return -1;
   }
 
   /**
@@ -107,10 +128,18 @@ class Draggable extends Base implements DraggableDnDInterface {
    * @param y -
    */
   dragAt(x: number, y: number) {
-    const restrictedY = this.isRestrictedHorizontally(y);
+    const restrictedY = this.isRestrictedToContainerV(y);
 
-    if (restrictedY) {
+    if (restrictedY > -1) {
       this.translate(x, restrictedY);
+
+      return;
+    }
+
+    const restrictedX = this.isSelfRestrictedH(x);
+
+    if (restrictedX > -1) {
+      this.translateOnY(y);
 
       return;
     }
