@@ -24,8 +24,6 @@ class Draggable extends Base implements DraggableDnDInterface {
 
   numberOfElementsTransformed: number;
 
-  inc: number;
-
   isMovingDown: boolean;
 
   isOutHorizontal: boolean;
@@ -60,7 +58,6 @@ class Draggable extends Base implements DraggableDnDInterface {
      * crucial to calculate drag's translate and index
      */
     this.numberOfElementsTransformed = 0;
-    this.inc = 1;
 
     this.isMovingDown = false;
 
