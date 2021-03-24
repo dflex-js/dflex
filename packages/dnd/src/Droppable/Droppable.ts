@@ -17,8 +17,6 @@ class Droppable implements DroppableInterface {
 
   isListLocked: boolean;
 
-  prevIsListLocked: boolean;
-
   droppableIndex: number;
 
   isFoundBreakingPoint: boolean;
@@ -35,7 +33,6 @@ class Droppable implements DroppableInterface {
     this.effectedElemDirection = 1;
 
     this.isListLocked = false;
-    this.prevIsListLocked = false;
 
     this.droppableIndex = -1;
     this.isFoundBreakingPoint = false;
@@ -285,7 +282,6 @@ class Droppable implements DroppableInterface {
 
   unlockParent() {
     this.isListLocked = false;
-    this.prevIsListLocked = true;
   }
 
   /**
