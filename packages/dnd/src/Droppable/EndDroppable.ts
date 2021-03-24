@@ -41,7 +41,7 @@ class EndDroppable extends Droppable {
        * Note: rolling back won't affect order array. It only deals with element
        * itself and totally ignore any instance related to store.
        */
-      element.rollYBack(this.draggable.dragID);
+      element.rollYBack(this.draggable.operationID);
       this.draggable.numberOfElementsTransformed -= 1;
     } else {
       this.spliceAt = i;
@@ -78,8 +78,6 @@ class EndDroppable extends Droppable {
   }
 
   endDragging() {
-    this.draggable.endDragging(this.topDifference);
-
     // TODO: Add tests to cover dragged whiteout parents
     if (
       !this.draggable.siblingsList !== null &&
@@ -89,6 +87,8 @@ class EndDroppable extends Droppable {
 
       if (Array.isArray(siblings)) this.undoList(siblings);
     }
+
+    this.draggable.endDragging(this.topDifference);
   }
 }
 

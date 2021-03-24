@@ -45,6 +45,8 @@ const Item = ({ id: idProps, children }) => {
             restrictions: {
               allowLeavingFromTop: false,
               allowLeavingFromBottom: false,
+              allowLeavingFromLeft: false,
+              allowLeavingFromRight: false,
             },
           }
         );

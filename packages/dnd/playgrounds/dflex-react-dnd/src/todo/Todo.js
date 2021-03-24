@@ -27,10 +27,7 @@ const Task = ({ id, task, depth = 0 }) => {
 
   const onMouseUp = () => {
     if (draggedEvent) {
-      const layoutStatus1 = draggedEvent.getStatus();
-      const layoutStatus1ww = draggedEvent.getDraggedTempIndex();
       draggedEvent.endDragging();
-      const layoutStatus = draggedEvent.getStatus();
 
       draggedEvent = null;
 

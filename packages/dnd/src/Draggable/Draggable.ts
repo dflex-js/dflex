@@ -30,6 +30,8 @@ class Draggable extends Base implements DraggableDnDInterface {
 
   isOutHorizontal: boolean;
 
+  axesFilterNeeded: boolean;
+
   constructor(
     elmTree: ElmTree,
     siblingsBoundaries: BoundariesOffset,
@@ -44,8 +46,8 @@ class Draggable extends Base implements DraggableDnDInterface {
     this.innerOffsetY = y - this.draggedElm.currentTop;
 
     this.tempOffset = {
-      currentLeft: 0,
-      currentTop: 0,
+      currentLeft: this.draggedElm.currentLeft,
+      currentTop: this.draggedElm.currentTop,
     };
 
     /**
@@ -63,34 +65,64 @@ class Draggable extends Base implements DraggableDnDInterface {
     this.isMovingDown = false;
 
     this.isOutHorizontal = false;
+
+    const $ = this.opts.restrictions;
+
+    this.axesFilterNeeded =
+      !$.allowLeavingFromLeft ||
+      !$.allowLeavingFromRight ||
+      !$.allowLeavingFromTop ||
+      !$.allowLeavingFromBottom;
   }
 
-  private isRestrictedHorizontally(y: number) {
+  private isDraggedFirstOrOutside() {
+    return this.siblingsList !== null && this.tempIndex <= 0;
+  }
+
+  private isDraggedLastELm() {
+    return (
+      this.siblingsList !== null &&
+      this.tempIndex === this.siblingsList.length - 1
+    );
+  }
+
+  private selfRightAxesFilter(x: number, left: number) {
+    return x - this.innerOffsetX <= left + this.draggedElm.offset.width
+      ? -this.outerOffsetX
+      : x;
+  }
+
+  private selfHorizontalAxesFilter(x: number) {
+    const { left } = store.boundaries[
+      store.registry[this.draggedElm.id].keys.sK
+    ];
+
+    return this.opts.restrictions.allowLeavingFromLeft
+      ? this.selfRightAxesFilter(x, left)
+      : x - this.innerOffsetX <= left
+      ? -this.outerOffsetX
+      : this.selfRightAxesFilter(x, left);
+  }
+
+  private containerBottomAxesFilter(y: number, minTop: number) {
+    return this.opts.restrictions.allowLeavingFromBottom
+      ? y
+      : this.tempIndex <= 0 ||
+        (this.isDraggedLastELm() && y - this.innerOffsetY >= minTop)
+      ? minTop + this.innerOffsetY
+      : y;
+  }
+
+  private containerVerticalAxesFilter(y: number) {
     const { maxTop, minTop } = store.boundaries[
       store.registry[this.draggedElm.id].keys.sK
     ];
 
-    if (!this.opts.restrictions.allowLeavingFromTop) {
-      if (this.tempIndex === -1 || this.tempIndex === 0) {
-        const needPermissionUp = y - this.innerOffsetY <= maxTop;
-
-        if (needPermissionUp) return maxTop + this.innerOffsetY;
-      }
-    }
-
-    if (!this.opts.restrictions.allowLeavingFromBottom) {
-      if (this.siblingsList) {
-        const lastIndex = this.siblingsList.length - 1;
-
-        if (this.tempIndex === lastIndex || this.tempIndex === -1) {
-          const needPermissionDown = y - this.innerOffsetY >= minTop;
-
-          if (needPermissionDown) return minTop + this.innerOffsetY;
-        }
-      }
-    }
-
-    return undefined;
+    return this.opts.restrictions.allowLeavingFromTop
+      ? this.containerBottomAxesFilter(y, minTop)
+      : this.isDraggedFirstOrOutside() && y - this.innerOffsetY <= maxTop
+      ? maxTop + this.innerOffsetY
+      : this.containerBottomAxesFilter(y, minTop);
   }
 
   /**
@@ -107,21 +139,21 @@ class Draggable extends Base implements DraggableDnDInterface {
    * @param y -
    */
   dragAt(x: number, y: number) {
-    const restrictedY = this.isRestrictedHorizontally(y);
+    let filteredY = y;
+    let filteredX = x;
 
-    if (restrictedY) {
-      this.translate(x, restrictedY);
-
-      return;
+    if (this.axesFilterNeeded) {
+      filteredY = this.containerVerticalAxesFilter(y);
+      filteredX = this.selfHorizontalAxesFilter(x);
     }
 
-    this.translate(x, y);
+    this.translate(filteredX, filteredY);
 
     /**
      * Every time we got new translate, offset should be updated
      */
-    this.tempOffset.currentLeft = x - this.innerOffsetX;
-    this.tempOffset.currentTop = y - this.innerOffsetY;
+    this.tempOffset.currentLeft = filteredX - this.innerOffsetX;
+    this.tempOffset.currentTop = filteredY - this.innerOffsetY;
   }
 
   /**
@@ -178,7 +210,11 @@ class Draggable extends Base implements DraggableDnDInterface {
    * Checks if dragged is the first child and going up.
    */
   isDraggedLeavingFromTop() {
-    return !this.isOutHorizontal && this.tempIndex <= 0 && !this.isMovingDown;
+    return (
+      this.isDraggedFirstOrOutside() &&
+      !this.isOutHorizontal &&
+      !this.isMovingDown
+    );
   }
 
   /**
@@ -186,10 +222,7 @@ class Draggable extends Base implements DraggableDnDInterface {
    */
   isDraggedLeavingFromBottom() {
     return (
-      this.siblingsList !== null &&
-      !this.isOutHorizontal &&
-      this.isMovingDown &&
-      this.tempIndex >= this.siblingsList.length - 1
+      this.isDraggedLastELm() && !this.isOutHorizontal && this.isMovingDown
     );
   }
 
@@ -235,9 +268,15 @@ class Draggable extends Base implements DraggableDnDInterface {
        * dragged depends on extra instance to float in layout that is not related to element
        * instance.
        */
-      const { translateX, translateY } = this.draggedElm;
 
-      this.draggedStyleRef.transform = `translate(${translateX}px,${translateY}px)`;
+      this.draggedElm.transformElm();
+
+      if (this.siblingsList) {
+        this.draggedElm.assignNewPosition(
+          this.siblingsList,
+          this.draggedElm.order.self
+        );
+      }
 
       return;
     }
@@ -262,7 +301,7 @@ class Draggable extends Base implements DraggableDnDInterface {
       this.siblingsList,
       draggedDirection,
       this.numberOfElementsTransformed * topDifference,
-      this.dragID,
+      this.operationID,
       this.numberOfElementsTransformed,
       false
     );

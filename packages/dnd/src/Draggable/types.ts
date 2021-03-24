@@ -40,7 +40,7 @@ export interface DraggableOpts {
 export interface DraggableBaseInterface
   extends AbstractDraggableInterface<CoreInstanceInterface> {
   tempIndex: number;
-  dragID: string;
+  operationID: string;
 
   opts: DraggableOpts;
 
