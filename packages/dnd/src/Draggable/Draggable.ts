@@ -75,14 +75,14 @@ class Draggable extends Base implements DraggableDnDInterface {
       !$.allowLeavingFromBottom;
   }
 
-  private isDraggedFirstELm() {
+  private isDraggedFirstOrOutside() {
     return this.siblingsList !== null && this.tempIndex <= 0;
   }
 
   private isDraggedLastELm() {
     return (
       this.siblingsList !== null &&
-      (this.tempIndex === this.siblingsList.length - 1 || this.tempIndex <= 0)
+      this.tempIndex === this.siblingsList.length - 1
     );
   }
 
@@ -107,7 +107,8 @@ class Draggable extends Base implements DraggableDnDInterface {
   private containerBottomAxesFilter(y: number, minTop: number) {
     return this.opts.restrictions.allowLeavingFromBottom
       ? y
-      : this.isDraggedLastELm() && y - this.innerOffsetY >= minTop
+      : this.tempIndex <= 0 ||
+        (this.isDraggedLastELm() && y - this.innerOffsetY >= minTop)
       ? minTop + this.innerOffsetY
       : y;
   }
@@ -119,7 +120,7 @@ class Draggable extends Base implements DraggableDnDInterface {
 
     return this.opts.restrictions.allowLeavingFromTop
       ? this.containerBottomAxesFilter(y, minTop)
-      : this.isDraggedFirstELm() && y - this.innerOffsetY <= maxTop
+      : this.isDraggedFirstOrOutside() && y - this.innerOffsetY <= maxTop
       ? maxTop + this.innerOffsetY
       : this.containerBottomAxesFilter(y, minTop);
   }
@@ -209,7 +210,11 @@ class Draggable extends Base implements DraggableDnDInterface {
    * Checks if dragged is the first child and going up.
    */
   isDraggedLeavingFromTop() {
-    return !this.isOutHorizontal && this.tempIndex <= 0 && !this.isMovingDown;
+    return (
+      this.isDraggedFirstOrOutside() &&
+      !this.isOutHorizontal &&
+      !this.isMovingDown
+    );
   }
 
   /**
@@ -217,10 +222,7 @@ class Draggable extends Base implements DraggableDnDInterface {
    */
   isDraggedLeavingFromBottom() {
     return (
-      this.siblingsList !== null &&
-      !this.isOutHorizontal &&
-      this.isMovingDown &&
-      this.tempIndex >= this.siblingsList.length - 1
+      this.isDraggedLastELm() && !this.isOutHorizontal && this.isMovingDown
     );
   }
 
