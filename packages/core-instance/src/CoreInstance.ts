@@ -1,17 +1,15 @@
 /* eslint-disable no-param-reassign */
 
-import type { Keys, Order } from "@dflex/dom-gen";
+import type { ELmBranch, Keys, Order } from "@dflex/dom-gen";
 import type { ElmWIthPointer } from "@dflex/store";
 
 import AbstractCoreInstance from "./AbstractCoreInstance";
 
 import type {
-  CoreInstanceInterface,
   Offset,
+  CoreInstanceInterface,
   TransitionHistory,
 } from "./typings";
-
-type BranchELmOrder = string[];
 
 /**
  * Why storing index here? when it's already sorted in order?
@@ -147,11 +145,7 @@ class CoreInstance
    * @param inc - increment number
    * @param isShuffle -
    */
-  private updateIDsOrder(
-    branchIDsOrder: BranchELmOrder,
-    inc: number,
-    isShuffle: boolean
-  ) {
+  updateIDsOrder(branchIDsOrder: string[], inc: number, isShuffle: boolean) {
     const { oldIndex, newIndex } = this.updateIndex(inc);
 
     /**
@@ -164,11 +158,6 @@ class CoreInstance
      */
     branchIDsOrder[newIndex] = this.id;
     if (isShuffle) branchIDsOrder[oldIndex] = "";
-    console.log(
-      "file: CoreInstance.ts ~ line 167 ~ branchIDsOrder",
-      branchIDsOrder,
-      this.id
-    );
   }
 
   /**
@@ -213,7 +202,7 @@ class CoreInstance
    * @param isShuffle -
    */
   setYPosition(
-    iDsInOrder: BranchELmOrder,
+    iDsInOrder: ELmBranch,
     sign: number,
     topSpace: number,
     operationID: string,
@@ -222,7 +211,9 @@ class CoreInstance
   ) {
     this.seTranslate(sign * topSpace, operationID);
 
-    this.updateIDsOrder(iDsInOrder, sign * vIncrement, isShuffle);
+    if (Array.isArray(iDsInOrder)) {
+      this.updateIDsOrder(iDsInOrder, sign * vIncrement, isShuffle);
+    }
   }
 
   /**

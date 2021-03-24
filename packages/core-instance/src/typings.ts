@@ -34,4 +34,10 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
     vIncrement: number,
     isShuffle: boolean
   ): void;
+  transformElm(): void;
+  updateIDsOrder(
+    branchIDsOrder: string[],
+    inc: number,
+    isShuffle: boolean
+  ): void;
 }
