@@ -35,9 +35,9 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
     isShuffle: boolean
   ): void;
   transformElm(): void;
-  updateIDsOrder(
-    branchIDsOrder: string[],
-    inc: number,
-    isShuffle: boolean
-  ): void;
+  // assignNewPosition(
+  //   branchIDsOrder: string[],
+  //   newIndex: number,
+  //   oldIndex?: number
+  // ): void;
 }

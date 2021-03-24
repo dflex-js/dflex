@@ -78,8 +78,6 @@ class EndDroppable extends Droppable {
   }
 
   endDragging() {
-    this.draggable.endDragging(this.topDifference);
-
     // TODO: Add tests to cover dragged whiteout parents
     if (
       !this.draggable.siblingsList !== null &&
@@ -89,6 +87,8 @@ class EndDroppable extends Droppable {
 
       if (Array.isArray(siblings)) this.undoList(siblings);
     }
+
+    this.draggable.endDragging(this.topDifference);
   }
 }
 

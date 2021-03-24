@@ -1,13 +1,13 @@
 /* eslint-disable no-param-reassign */
 
-import type { ELmBranch, Keys, Order } from "@dflex/dom-gen";
+import type { Keys, Order } from "@dflex/dom-gen";
 import type { ElmWIthPointer } from "@dflex/store";
 
 import AbstractCoreInstance from "./AbstractCoreInstance";
 
 import type {
-  Offset,
   CoreInstanceInterface,
+  Offset,
   TransitionHistory,
 } from "./typings";
 
@@ -145,7 +145,11 @@ class CoreInstance
    * @param inc - increment number
    * @param isShuffle -
    */
-  updateIDsOrder(branchIDsOrder: string[], inc: number, isShuffle: boolean) {
+  private updateIDsOrder(
+    branchIDsOrder: string[],
+    inc: number,
+    isShuffle: boolean
+  ) {
     const { oldIndex, newIndex } = this.updateIndex(inc);
 
     /**
@@ -202,7 +206,7 @@ class CoreInstance
    * @param isShuffle -
    */
   setYPosition(
-    iDsInOrder: ELmBranch,
+    iDsInOrder: string[],
     sign: number,
     topSpace: number,
     operationID: string,
@@ -211,9 +215,7 @@ class CoreInstance
   ) {
     this.seTranslate(sign * topSpace, operationID);
 
-    if (Array.isArray(iDsInOrder)) {
-      this.updateIDsOrder(iDsInOrder, sign * vIncrement, isShuffle);
-    }
+    this.updateIDsOrder(iDsInOrder, sign * vIncrement, isShuffle);
   }
 
   /**
