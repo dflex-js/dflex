@@ -26,13 +26,13 @@ class Base
   implements DraggableBaseInterface {
   tempIndex: number;
 
-  dragID: string;
+  operationID: string;
 
   opts: DraggableOpts;
 
   parentsList: ELmBranch;
 
-  siblingsList: ELmBranch | null;
+  siblingsList: string[] | null;
 
   activeParent!: CoreInstanceInterface | null;
 
@@ -109,7 +109,7 @@ class Base
 
     this.setIsOrphan(parent);
 
-    this.dragID = store.tracker.newTravel();
+    this.operationID = store.tracker.newTravel();
   }
 
   /**

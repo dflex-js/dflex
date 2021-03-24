@@ -11,8 +11,6 @@ import type {
   TransitionHistory,
 } from "./typings";
 
-type BranchELmOrder = string[];
-
 /**
  * Why storing index here? when it's already sorted in order?
  *
@@ -140,35 +138,13 @@ class CoreInstance
     return { oldIndex, newIndex };
   }
 
-  /**
-   *  Updates index locally and in store.
-   *
-   * @param branchIDsOrder -
-   * @param inc - increment number
-   * @param isShuffle -
-   */
-  private updateIDsOrder(
-    branchIDsOrder: BranchELmOrder,
-    inc: number,
-    isShuffle: boolean
+  assignNewPosition(
+    branchIDsOrder: string[],
+    newIndex: number,
+    oldIndex?: number
   ) {
-    const { oldIndex, newIndex } = this.updateIndex(inc);
-
-    /**
-     * Update element id and order in its list.
-     *
-     * This goes for shuffled elements and direct update
-     *
-     * Note: direct update: for dragged element and assigning new order when
-     * inserting and undoing.
-     */
     branchIDsOrder[newIndex] = this.id;
-    if (isShuffle) branchIDsOrder[oldIndex] = "";
-    console.log(
-      "file: CoreInstance.ts ~ line 167 ~ branchIDsOrder",
-      branchIDsOrder,
-      this.id
-    );
+    if (oldIndex !== undefined) branchIDsOrder[oldIndex] = "";
   }
 
   /**
@@ -213,7 +189,7 @@ class CoreInstance
    * @param isShuffle -
    */
   setYPosition(
-    iDsInOrder: BranchELmOrder,
+    iDsInOrder: string[],
     sign: number,
     topSpace: number,
     operationID: string,
@@ -222,7 +198,13 @@ class CoreInstance
   ) {
     this.seTranslate(sign * topSpace, operationID);
 
-    this.updateIDsOrder(iDsInOrder, sign * vIncrement, isShuffle);
+    const { oldIndex, newIndex } = this.updateIndex(sign * vIncrement);
+
+    this.assignNewPosition(
+      iDsInOrder,
+      newIndex,
+      isShuffle ? oldIndex : undefined
+    );
   }
 
   /**
