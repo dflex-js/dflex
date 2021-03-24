@@ -18,6 +18,11 @@ const draggedStyleProps: DraggedStyle = [
     dragValue: "99",
     afterDragValue: null,
   },
+  {
+    prop: "user-select",
+    dragValue: "none",
+    afterDragValue: "auto",
+  },
 ];
 
 class AbstractDraggable<T extends AbstractCoreInterface>
