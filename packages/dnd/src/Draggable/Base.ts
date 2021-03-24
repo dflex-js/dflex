@@ -32,7 +32,7 @@ class Base
 
   parentsList: ELmBranch;
 
-  siblingsList: ELmBranch | null;
+  siblingsList: string[] | null;
 
   activeParent!: CoreInstanceInterface | null;
 
