@@ -282,9 +282,12 @@ class Draggable extends Base implements DraggableDnDInterface {
        * dragged depends on extra instance to float in layout that is not related to element
        * instance.
        */
-      const { translateX, translateY } = this.draggedElm;
 
-      this.draggedStyleRef.transform = `translate(${translateX}px,${translateY}px)`;
+      this.draggedElm.transformElm();
+
+      if (this.siblingsList) {
+        this.draggedElm.updateIDsOrder(this.siblingsList, 0, false);
+      }
 
       return;
     }
