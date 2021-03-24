@@ -26,7 +26,7 @@ class Base
   implements DraggableBaseInterface {
   tempIndex: number;
 
-  dragID: string;
+  operationID: string;
 
   opts: DraggableOpts;
 
@@ -109,7 +109,7 @@ class Base
 
     this.setIsOrphan(parent);
 
-    this.dragID = store.tracker.newTravel();
+    this.operationID = store.tracker.newTravel();
   }
 
   /**
