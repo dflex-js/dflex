@@ -33,7 +33,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(0);
+        // cy.wait(0);
       }
     });
 
@@ -65,7 +65,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(0);
+        // cy.wait(0);
       }
 
       steps = 0;
@@ -123,7 +123,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(0);
+        // cy.wait(0);
       }
     });
 
@@ -144,6 +144,50 @@ context(
         "have.css",
         "transform",
         "matrix(1, 0, 0, 1, 0, -58)"
+      );
+    });
+
+    it("Moves it down to the top of the list", () => {
+      steps = 120;
+
+      for (let i = steps; i > 75; i -= 1) {
+        cy.get("#id-10").trigger("mousemove", {
+          clientX: startingPointX,
+          clientY: startingPointY - i,
+          force: true,
+        });
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        // cy.wait(0);
+      }
+    });
+
+    it("Triggers mouse up for id-10", () => {
+      cy.get("#id-10").trigger("mouseup", { force: true });
+    });
+
+    it("Container has new positions", () => {
+      cy.get("#id-9").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 58)"
+      );
+
+      cy.get("#id-10").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, -58)"
+      );
+
+      cy.get("#id-11").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+
+      cy.get("#id-12").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
       );
     });
   }
