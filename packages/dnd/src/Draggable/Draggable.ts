@@ -75,22 +75,6 @@ class Draggable extends Base implements DraggableDnDInterface {
       !$.allowLeavingFromBottom;
   }
 
-  private containerFilterTop(y: number) {
-    const { maxTop } = store.boundaries[
-      store.registry[this.draggedElm.id].keys.sK
-    ];
-
-    return y - this.innerOffsetY <= maxTop ? maxTop + this.innerOffsetY : y;
-  }
-
-  private selfFilterLeft(x: number) {
-    const { left } = store.boundaries[
-      store.registry[this.draggedElm.id].keys.sK
-    ];
-
-    return x - this.innerOffsetX <= left ? -this.outerOffsetX : x;
-  }
-
   private isDraggedFirstELm() {
     return this.siblingsList !== null && this.tempIndex <= 0;
   }
