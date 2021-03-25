@@ -23,6 +23,11 @@ const draggedStyleProps: DraggedStyle = [
     dragValue: "none",
     afterDragValue: "auto",
   },
+  {
+    prop: "pointer-events",
+    dragValue: "none",
+    afterDragValue: "auto",
+  },
 ];
 
 class AbstractDraggable<T extends AbstractCoreInterface>
