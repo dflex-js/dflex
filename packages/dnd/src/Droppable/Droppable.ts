@@ -3,7 +3,6 @@ import store from "../DnDStore";
 import type { DraggableDnDInterface } from "../Draggable";
 import type { DroppableInterface } from "./types";
 
-let transformationOffsetY = 0;
 /**
  * Class includes all transformation methods related to droppable.
  */
@@ -13,8 +12,6 @@ class Droppable implements DroppableInterface {
   elmYSpace: number;
 
   draggedYSPace: number;
-
-  transformationOffsetY: number;
 
   leftDifference: number;
 
@@ -31,7 +28,6 @@ class Droppable implements DroppableInterface {
 
     this.elmYSpace = 0;
     this.draggedYSPace = 0;
-    this.transformationOffsetY = 0;
 
     this.leftDifference = 0;
 
@@ -59,7 +55,6 @@ class Droppable implements DroppableInterface {
 
   getNextTop(i: number) {
     const nextElmID = this.draggable.siblingsList![i];
-    console.log("file: Droppable.ts ~ line 58 ~ nextElmID", nextElmID);
 
     const nextElm = store.getElmById(nextElmID);
 
@@ -103,31 +98,26 @@ class Droppable implements DroppableInterface {
       } = this.draggable;
 
       const heightOffset = Math.abs(draggedHight - elmHight);
-      console.log("file: Droppable.ts ~ line 101 ~ heightOffset", heightOffset);
-      console.log("file: Droppable.ts ~ line 101 ~ draggedHight", draggedHight);
-      console.log("file: Droppable.ts ~ line 101 ~ elmHight", elmHight);
-
-      console.log(this.effectedElemDirection);
 
       this.draggedYSPace = Math.abs(elmTop - draggedTop);
 
       this.elmYSpace = this.draggedYSPace;
 
-      if (draggedHight > heightOffset) {
-        if (transformationOffsetY === 0) {
-          this.elmYSpace += heightOffset;
-          transformationOffsetY = heightOffset;
-          console.log("one");
-        } else {
-          this.draggedYSPace -= heightOffset;
-          transformationOffsetY = 0;
-          console.log("two");
-        }
-      }
-      console.log(
-        "file: Droppable.ts ~ line 110 ~ this.elmYSpace ",
-        this.elmYSpace
-      );
+      // if (draggedHight > heightOffset) {
+      //   if (transformationOffsetY === 0) {
+      //     this.elmYSpace += heightOffset;
+      //     transformationOffsetY = heightOffset;
+      //     console.log("one");
+      //   } else {
+      //     this.draggedYSPace -= heightOffset;
+      //     transformationOffsetY = 0;
+      //     console.log("two");
+      //   }
+      // }
+      // console.log(
+      //   "file: Droppable.ts ~ line 110 ~ this.elmYSpace ",
+      //   this.elmYSpace
+      // );
 
       /**
        * Sets the transform value by calculating offset difference from
