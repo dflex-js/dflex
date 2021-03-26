@@ -160,6 +160,7 @@ class CoreInstance
       this.prevTranslateY.push({
         ID: operationID,
         translateY: this.translateY,
+        shiftOffsetY: 0,
       });
     }
 

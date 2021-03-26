@@ -16,7 +16,11 @@ export interface Offset {
   top: number;
 }
 
-export type TransitionHistory = { ID: string; translateY: number }[];
+export type TransitionHistory = {
+  ID: string;
+  translateY: number;
+  shiftOffsetY: number;
+}[];
 
 export interface CoreInstanceInterface extends AbstractCoreInterface {
   offset: Offset;
