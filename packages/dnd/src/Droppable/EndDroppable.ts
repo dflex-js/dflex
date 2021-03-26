@@ -88,7 +88,7 @@ class EndDroppable extends Droppable {
       if (Array.isArray(siblings)) this.undoList(siblings);
     }
 
-    this.draggable.endDragging(this.topDifference);
+    this.draggable.endDragging(this.draggedYSPace);
   }
 }
 

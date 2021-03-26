@@ -92,7 +92,7 @@ class Draggable extends Base implements DraggableDnDInterface {
   }
 
   private selfHorizontalAxesFilter(x: number) {
-    const { left } = store.boundaries[
+    const { left } = store.siblingsBoundaries[
       store.registry[this.draggedElm.id].keys.sK
     ];
 
@@ -113,7 +113,7 @@ class Draggable extends Base implements DraggableDnDInterface {
   }
 
   private containerVerticalAxesFilter(y: number) {
-    const { maxTop, minTop } = store.boundaries[
+    const { maxTop, minTop } = store.siblingsBoundaries[
       store.registry[this.draggedElm.id].keys.sK
     ];
 

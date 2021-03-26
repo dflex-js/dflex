@@ -2,7 +2,7 @@ import type { DraggableDnDInterface } from "../Draggable";
 
 export interface DroppableInterface {
   draggable: DraggableDnDInterface;
-  topDifference: number;
+  elmYSpace: number;
   leftDifference: number;
   isListLocked: boolean;
   droppableIndex: number;

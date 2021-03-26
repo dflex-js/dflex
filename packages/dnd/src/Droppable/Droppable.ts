@@ -3,17 +3,22 @@ import store from "../DnDStore";
 import type { DraggableDnDInterface } from "../Draggable";
 import type { DroppableInterface } from "./types";
 
+let transformationOffsetY = 0;
 /**
  * Class includes all transformation methods related to droppable.
  */
 class Droppable implements DroppableInterface {
   draggable: DraggableDnDInterface;
 
-  topDifference: number;
+  elmYSpace: number;
+
+  draggedYSPace: number;
+
+  transformationOffsetY: number;
 
   leftDifference: number;
 
-  private effectedElemDirection: number;
+  private effectedElemDirection: 1 | -1;
 
   isListLocked: boolean;
 
@@ -24,7 +29,10 @@ class Droppable implements DroppableInterface {
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
 
-    this.topDifference = 0;
+    this.elmYSpace = 0;
+    this.draggedYSPace = 0;
+    this.transformationOffsetY = 0;
+
     this.leftDifference = 0;
 
     /**
@@ -49,6 +57,15 @@ class Droppable implements DroppableInterface {
     this.effectedElemDirection = isUp ? -1 : 1;
   }
 
+  getNextTop(i: number) {
+    const nextElmID = this.draggable.siblingsList![i];
+    console.log("file: Droppable.ts ~ line 58 ~ nextElmID", nextElmID);
+
+    const nextElm = store.getElmById(nextElmID);
+
+    return nextElm.currentTop;
+  }
+
   /**
    * Updates element instance and calculates the required transform distance. It
    * invokes for each eligible element in the parent container.
@@ -71,11 +88,46 @@ class Droppable implements DroppableInterface {
      * isQualified. So, all elements will be lifted up except elm1.
      */
     if (!this.isFoundBreakingPoint) {
-      const { currentLeft: elmLeft, currentTop: elmTop } = element;
+      const {
+        currentLeft: elmLeft,
+        currentTop: elmTop,
+        offset: { height: elmHight },
+      } = element;
 
       const {
-        draggedElm: { currentLeft: draggedLeft, currentTop: draggedTop },
+        draggedElm: {
+          currentLeft: draggedLeft,
+          currentTop: draggedTop,
+          offset: { height: draggedHight },
+        },
       } = this.draggable;
+
+      const heightOffset = Math.abs(draggedHight - elmHight);
+      console.log("file: Droppable.ts ~ line 101 ~ heightOffset", heightOffset);
+      console.log("file: Droppable.ts ~ line 101 ~ draggedHight", draggedHight);
+      console.log("file: Droppable.ts ~ line 101 ~ elmHight", elmHight);
+
+      console.log(this.effectedElemDirection);
+
+      this.draggedYSPace = Math.abs(elmTop - draggedTop);
+
+      this.elmYSpace = this.draggedYSPace;
+
+      if (draggedHight > heightOffset) {
+        if (transformationOffsetY === 0) {
+          this.elmYSpace += heightOffset;
+          transformationOffsetY = heightOffset;
+          console.log("one");
+        } else {
+          this.draggedYSPace -= heightOffset;
+          transformationOffsetY = 0;
+          console.log("two");
+        }
+      }
+      console.log(
+        "file: Droppable.ts ~ line 110 ~ this.elmYSpace ",
+        this.elmYSpace
+      );
 
       /**
        * Sets the transform value by calculating offset difference from
@@ -88,7 +140,6 @@ class Droppable implements DroppableInterface {
        * This step here do the trick: By measuring the space toY
        * the next element margin will be included.
        */
-      this.topDifference = Math.abs(elmTop - draggedTop);
 
       this.leftDifference = Math.abs(elmLeft - draggedLeft);
 
@@ -125,7 +176,7 @@ class Droppable implements DroppableInterface {
       // @ts-expect-error
       this.draggable.siblingsList,
       this.effectedElemDirection,
-      this.topDifference,
+      this.elmYSpace,
       this.draggable.operationID,
       1,
       true
