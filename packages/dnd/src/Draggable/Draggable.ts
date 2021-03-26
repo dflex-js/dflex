@@ -226,7 +226,11 @@ class Draggable extends Base implements DraggableDnDInterface {
   }
 
   isSiblingsTransformed() {
-    return !this.isDraggedLeavingFromBottom() && this.isDraggedOut();
+    return (
+      this.siblingsList !== null &&
+      !this.isDraggedLeavingFromBottom() &&
+      this.isDraggedOut()
+    );
   }
 
   /**
@@ -270,10 +274,12 @@ class Draggable extends Base implements DraggableDnDInterface {
 
       this.draggedElm.transformElm();
 
-      this.draggedElm.assignNewPosition(
-        this.siblingsList!,
-        this.draggedElm.order.self
-      );
+      if (this.siblingsList) {
+        this.draggedElm.assignNewPosition(
+          this.siblingsList,
+          this.draggedElm.order.self
+        );
+      }
 
       return;
     }

@@ -83,9 +83,10 @@ class EndDroppable extends Droppable {
       !this.draggable.siblingsList !== null &&
       this.draggable.isSiblingsTransformed()
     ) {
-      const siblings = this.getSiblings();
+      // const siblings = this.getSiblings();
 
-      if (Array.isArray(siblings)) this.undoList(siblings);
+      if (Array.isArray(this.draggable.siblingsList))
+        this.undoList(this.draggable.siblingsList);
     }
 
     this.draggable.endDragging(this.draggedYSPace);
