@@ -278,7 +278,8 @@ class Draggable extends Base implements DraggableDnDInterface {
       return;
     }
 
-    // this.draggedElm.setCurrentOffset();
+    // @ts-expect-error
+    this.draggedElm.setCurrentOffset();
 
     const draggedDirection =
       this.tempIndex < this.draggedElm.order.self ? -1 : 1;
