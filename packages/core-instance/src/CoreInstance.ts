@@ -166,6 +166,7 @@ class CoreInstance
     this.translateY += topSpace;
 
     this.transformElm();
+    this.setCurrentOffset();
   }
 
   /**

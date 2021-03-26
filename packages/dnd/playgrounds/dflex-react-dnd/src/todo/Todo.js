@@ -72,14 +72,14 @@ const TodoList = () => {
 
   const tasks = [
     { id: "mtg", msg: "Meet with Laura" },
-    { id: "org", msg: "Organize weekly meetup" },
     { id: "proj", msg: "Continue working on the project" },
+    { id: "org", msg: "Organize weekly meetup" },
     { id: "gym", msg: "Hit the gym" },
   ];
 
   return (
     <div className="todo-container">
-      <ul ref={listRef}>
+      <ul id="dnd-todo-list" ref={listRef}>
         {tasks.map(({ msg, id }) => (
           <Task task={msg} id={id} key={id} />
         ))}
