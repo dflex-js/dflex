@@ -9,6 +9,7 @@ import type { ElmTree, BoundariesOffset } from "../DnDStore";
 import type {
   DraggableDnDInterface,
   TempOffset,
+  OccupiedOffset,
   Threshold,
   DraggableOpts,
 } from "./types";
@@ -19,6 +20,8 @@ class Draggable extends Base implements DraggableDnDInterface {
   innerOffsetY: number;
 
   tempOffset: TempOffset;
+
+  occupiedOffset: OccupiedOffset;
 
   prevY: number;
 
@@ -46,6 +49,12 @@ class Draggable extends Base implements DraggableDnDInterface {
     this.tempOffset = {
       currentLeft: this.draggedElm.currentLeft,
       currentTop: this.draggedElm.currentTop,
+    };
+
+    this.occupiedOffset = {
+      currentLeft: this.draggedElm.currentLeft,
+      currentTop: this.draggedElm.currentTop,
+      currentHeight: this.draggedElm.offset.height,
     };
 
     /**
@@ -252,7 +261,7 @@ class Draggable extends Base implements DraggableDnDInterface {
    *
    * @param topDifference -
    */
-  setDraggedPosition(topDifference: number) {
+  setDraggedPosition(topDifference: number, shiftOffsetY: number) {
     /**
      * In this case, the use clicked without making any move.
      */
@@ -304,7 +313,8 @@ class Draggable extends Base implements DraggableDnDInterface {
     this.draggedElm.setYPosition(
       this.siblingsList,
       draggedDirection,
-      this.numberOfElementsTransformed * topDifference,
+      1 * topDifference,
+      shiftOffsetY,
       this.operationID,
       this.numberOfElementsTransformed,
       false
@@ -314,10 +324,10 @@ class Draggable extends Base implements DraggableDnDInterface {
   /**
    * @param topDifference -
    */
-  endDragging(topDifference: number) {
+  endDragging(topDifference: number, shiftOffsetY: number) {
     this.setDragged(false);
 
-    this.setDraggedPosition(topDifference);
+    this.setDraggedPosition(topDifference, shiftOffsetY);
   }
 }
 

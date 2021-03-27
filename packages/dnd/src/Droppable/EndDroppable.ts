@@ -89,7 +89,11 @@ class EndDroppable extends Droppable {
         this.undoList(this.draggable.siblingsList);
     }
 
-    this.draggable.endDragging(this.draggedYSPace);
+    this.draggable.endDragging(this.draggedYSPace, 0);
+    console.log(
+      "file: EndDroppable.ts ~ line 93 ~ this.draggedYSPace",
+      this.draggedYSPace
+    );
   }
 }
 

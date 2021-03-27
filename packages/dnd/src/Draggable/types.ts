@@ -25,6 +25,12 @@ export interface TempOffset {
   currentTop: number;
 }
 
+export interface OccupiedOffset {
+  currentLeft: number;
+  currentTop: number;
+  currentHeight: number;
+}
+
 export interface Restrictions {
   allowLeavingFromTop: boolean;
   allowLeavingFromBottom: boolean;
@@ -64,6 +70,7 @@ export interface DraggableDnDInterface extends DraggableBaseInterface {
   innerOffsetX: number;
   innerOffsetY: number;
   tempOffset: TempOffset;
+  occupiedOffset: OccupiedOffset;
   prevY: number;
   numberOfElementsTransformed: number;
   isMovingDown: boolean;
@@ -77,5 +84,5 @@ export interface DraggableDnDInterface extends DraggableBaseInterface {
   isSiblingsTransformed(): boolean;
   getLastElmIndex(): number;
   isDraggedLastELm(): boolean;
-  endDragging(topDifference: number): void;
+  endDragging(topDifference: number, shiftOffsetY: number): void;
 }

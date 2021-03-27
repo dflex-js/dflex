@@ -33,6 +33,7 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
     iDsInOrder: ELmBranch,
     sign: number,
     topSpace: number,
+    shiftOffsetY: number,
     operationID: string,
     vIncrement: number,
     isShuffle: boolean
