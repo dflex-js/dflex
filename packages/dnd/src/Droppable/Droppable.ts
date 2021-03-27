@@ -94,43 +94,22 @@ class Droppable implements DroppableInterface {
 
     const {
       draggedElm: {
-        // currentLeft: draggedLeft,
-        // currentTop: draggedTop,
         offset: { height: draggedHight },
       },
       occupiedOffset: { currentLeft: draggedLeft, currentTop: draggedTop },
     } = this.draggable;
 
-    console.log("file: Droppable.ts ~ line 106 ~ draggedHight", draggedHight);
-    console.log(
-      "file: Droppable.ts ~ line 106 ~ left and top",
-      draggedLeft,
-      draggedTop
-    );
     const heightOffset = Math.abs(draggedHight - elmHight);
 
     this.shiftOffsetY = heightOffset;
 
     if (this.effectedElemDirection === -1) {
       this.elmYSpace = Math.abs(elmTop - draggedTop);
-      console.log(
-        "file: Droppable.ts ~ line 116 ~ this.elmYSpace",
-        this.elmYSpace
-      );
 
       if (draggedHight > elmHight) {
-        console.log("tada 1");
-
         this.draggedYSPace = this.elmYSpace - heightOffset;
       } else {
-        console.log("tada 2");
-
         this.draggedYSPace += this.elmYSpace + heightOffset;
-        console.log(
-          "file: Droppable.ts ~ line 129 ~ this.draggedYSPace",
-          this.draggedYSPace,
-          heightOffset
-        );
       }
     } else {
       this.draggedYSPace = Math.abs(elmTop - draggedTop);
@@ -201,7 +180,6 @@ class Droppable implements DroppableInterface {
       this.draggable.siblingsList,
       this.effectedElemDirection,
       this.elmYSpace,
-      0,
       this.draggable.operationID,
       1,
       true

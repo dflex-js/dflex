@@ -261,7 +261,7 @@ class Draggable extends Base implements DraggableDnDInterface {
    *
    * @param topDifference -
    */
-  setDraggedPosition(topDifference: number, shiftOffsetY: number) {
+  setDraggedPosition(topDifference: number) {
     /**
      * In this case, the use clicked without making any move.
      */
@@ -314,7 +314,6 @@ class Draggable extends Base implements DraggableDnDInterface {
       this.siblingsList,
       draggedDirection,
       1 * topDifference,
-      shiftOffsetY,
       this.operationID,
       this.numberOfElementsTransformed,
       false
@@ -324,10 +323,10 @@ class Draggable extends Base implements DraggableDnDInterface {
   /**
    * @param topDifference -
    */
-  endDragging(topDifference: number, shiftOffsetY: number) {
+  endDragging(topDifference: number) {
     this.setDragged(false);
 
-    this.setDraggedPosition(topDifference, shiftOffsetY);
+    this.setDraggedPosition(topDifference);
   }
 }
 

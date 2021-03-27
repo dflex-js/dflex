@@ -46,8 +46,6 @@ class CoreInstance
   /** Store history of Y-transition according to unique ID. */
   prevTranslateY: TransitionHistory;
 
-  shiftOffsetY: number;
-
   currentTop: number;
 
   currentLeft: number;
@@ -76,7 +74,6 @@ class CoreInstance
      */
     this.currentTop = 0;
     this.currentLeft = 0;
-    this.shiftOffsetY = 0;
 
     if (this.ref) {
       this.initOffset();
@@ -156,18 +153,13 @@ class CoreInstance
    * @param topSpace -
    * @param operationID  - Only if moving to a new position.
    */
-  private seTranslate(
-    topSpace: number,
-    shiftOffsetY: number,
-    operationID?: string
-  ) {
+  private seTranslate(topSpace: number, operationID?: string) {
     this.currentTop += topSpace;
 
     if (operationID) {
       this.prevTranslateY.push({
         ID: operationID,
         translateY: this.translateY,
-        shiftOffsetY,
       });
     }
 
@@ -200,12 +192,11 @@ class CoreInstance
     iDsInOrder: string[],
     sign: number,
     topSpace: number,
-    shiftOffsetY: number,
     operationID: string,
     vIncrement = 1,
     isShuffle = true
   ) {
-    this.seTranslate(sign * topSpace, shiftOffsetY, operationID);
+    this.seTranslate(sign * topSpace, operationID);
 
     const { oldIndex, newIndex } = this.updateIndex(sign * vIncrement);
 
@@ -226,8 +217,6 @@ class CoreInstance
       this.prevTranslateY.length === 0 ||
       this.prevTranslateY[this.prevTranslateY.length - 1].ID !== operationID
     ) {
-      console.log("what?");
-
       return;
     }
 
@@ -236,7 +225,7 @@ class CoreInstance
 
     const increment = topSpace > 0 ? 1 : -1;
 
-    this.seTranslate(topSpace, 0);
+    this.seTranslate(topSpace);
     this.updateIndex(increment);
   }
 }
