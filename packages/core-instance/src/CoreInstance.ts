@@ -163,7 +163,7 @@ class CoreInstance
   ) {
     this.currentTop += topSpace;
 
-    if (operationID && shiftOffsetY) {
+    if (operationID) {
       this.prevTranslateY.push({
         ID: operationID,
         translateY: this.translateY,
@@ -172,15 +172,6 @@ class CoreInstance
     }
 
     this.translateY += topSpace;
-    console.log("file: CoreInstance.ts ~ line 175 ~ topSpace", topSpace);
-    console.log(
-      "file: CoreInstance.ts ~ line 175 ~ this.translateY ",
-      this.translateY,
-      this.id
-    );
-    this.shiftOffsetY += shiftOffsetY;
-
-    // this.translateY += shiftOffsetY;
 
     this.transformElm();
   }
@@ -235,6 +226,8 @@ class CoreInstance
       this.prevTranslateY.length === 0 ||
       this.prevTranslateY[this.prevTranslateY.length - 1].ID !== operationID
     ) {
+      console.log("what?");
+
       return;
     }
 

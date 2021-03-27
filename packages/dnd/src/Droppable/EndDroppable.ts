@@ -37,6 +37,8 @@ class EndDroppable extends Droppable {
     if (elmID) {
       const element = store.getElmById(elmID);
 
+      console.log(elmID);
+
       /**
        * Note: rolling back won't affect order array. It only deals with element
        * itself and totally ignore any instance related to store.
@@ -85,8 +87,9 @@ class EndDroppable extends Droppable {
     ) {
       // const siblings = this.getSiblings();
 
-      if (Array.isArray(this.draggable.siblingsList))
+      if (Array.isArray(this.draggable.siblingsList)) {
         this.undoList(this.draggable.siblingsList);
+      }
     }
 
     this.draggable.endDragging(this.draggedYSPace, 0);
