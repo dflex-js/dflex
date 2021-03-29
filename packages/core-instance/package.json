@@ -9,7 +9,7 @@
     "build": "yarn compile"
   },
   "repository": "https://github.com/jalal246/dflex/tree/master/packages/core-instance",
-  "license": "GPL-3.0",
+  "license": "AGPL-3.0",
   "files": [
     "dist",
     "LICENSE"

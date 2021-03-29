@@ -99,7 +99,7 @@ module.exports = {
           items: socialItems,
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Jalal MK  and contributors`,
+      copyright: `Copyright © ${new Date().getFullYear()} Jalal Maskoun`,
       logo: {
         src: "img/logo-footer.png",
       },
