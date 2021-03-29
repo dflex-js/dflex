@@ -9,8 +9,8 @@
     "build": "yarn compile",
     "test": "jest"
   },
-  "homepage": "https://github.com/jalal246/dflex/tree/master/packages/draggable",
-  "repository": "https://github.com/jalal246/dflex",
+  "homepage": "https://github.com/dflex-js/dflex/tree/master/packages/draggable",
+  "repository": "https://github.com/dflex-js/dflex",
   "license": "AGPL-3.0",
   "files": [
     "dist",

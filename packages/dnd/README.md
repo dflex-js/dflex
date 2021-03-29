@@ -1,26 +1,26 @@
 <h1 align="center">
   <img
-  src="https://raw.githubusercontent.com/jalal246/dflex/master/dflex-full-size.png"
+  src="https://raw.githubusercontent.com/dflex-js/dflex/master/dflex-full-size.png"
   alt="Dflex logo" />
 </h1>
 
 <p align="center">
-  <a href="https://github.com/jalal246/dflex">
+  <a href="https://github.com/dflex-js/dflex">
     <img
-    src="https://img.shields.io/github/workflow/status/jalal246/dflex/Unit Test"
+    src="https://img.shields.io/github/workflow/status/dflex-js/dflex/Unit Test"
     alt="Dflex build status" />
   </a>
-  <a href="https://github.com/jalal246/dflex/pulls">
+  <a href="https://github.com/dflex-js/dflex/pulls">
     <img
-    src="https://img.shields.io/github/issues-pr/jalal246/dflex"
+    src="https://img.shields.io/github/issues-pr/dflex-js/dflex"
     alt="number of opened pull requests"/>
   </a>
-  <a href="https://github.com/jalal246/dflex/issues">
+  <a href="https://github.com/dflex-js/dflex/issues">
   <img
-    src="https://img.shields.io/github/issues/jalal246/dflex"
+    src="https://img.shields.io/github/issues/dflex-js/dflex"
     alt="number of opened issues"/>
   </a>
-  <a href="https://github.com/jalal246/dflex/pulls">
+  <a href="https://github.com/dflex-js/dflex/pulls">
    <img
    src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"
    alt="Dflex welcomes pull request" />
@@ -39,7 +39,7 @@ process runs smoothly as much as possible.
 
 ## Documentation
 
-Visit DFlex site for more <https://jalal246.github.io/dflex/> and to see live
+Visit DFlex site for more <https://dflex-js.github.io/dflex/> and to see live
 examples with the full code.
 
 ## Installation
@@ -50,12 +50,12 @@ npm install @dflex/dnd
 
 <p align="center">
  <img
-  src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dnd/public/dnd.gif"
+  src="https://raw.githubusercontent.com/dflex-js/dflex/master/packages/dnd/public/dnd.gif"
   alt="show how drag and drop works" />
 </p>
 
 <p align="center">
- <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dnd/public/dnd.png"
+ <img src="https://raw.githubusercontent.com/dflex-js/dflex/master/packages/dnd/public/dnd.png"
  alt="show drag and drop performance" />
 </p>
 
@@ -202,23 +202,23 @@ node siblings. And not only that, both ways retrieve nodes in order.
 
 #### Examples
 
-- [Full React example](https://github.com/jalal246/dflex/tree/master/packages/dnd/playgrounds/dflex-react-dnd)
+- [Full React example](https://github.com/dflex-js/dflex/tree/master/packages/dnd/playgrounds/dflex-react-dnd)
 
-- [Full Vue example](https://github.com/jalal246/dflex/tree/master/packages/dnd/playgrounds/dflex-vue-dnd)
+- [Full Vue example](https://github.com/dflex-js/dflex/tree/master/packages/dnd/playgrounds/dflex-vue-dnd)
 
 ## Project Content
 
 DFlex Drag and Drop is part of project contains:
 
-- [DOM Generator](https://github.com/jalal246/dflex/tree/master/packages/dom-gen) DOM
+- [DOM Generator](https://github.com/dflex-js/dflex/tree/master/packages/dom-gen) DOM
   relations generator algorithm. Generate relations between DOM elements
   based on element depth without a browser.
 
-- [DOM Store](https://github.com/jalal246/dflex/tree/master/packages/store) The
+- [DOM Store](https://github.com/dflex-js/dflex/tree/master/packages/store) The
   only Store that allows you to traverse through the DOM tree using element id
   without reading from the browser.
 
-- [Draggable](https://github.com/jalal246/dflex/tree/master/packages/draggable)
+- [Draggable](https://github.com/dflex-js/dflex/tree/master/packages/draggable)
   A High-performance draggable elements written in pure JS works for Web and
   Mobile.
 
@@ -231,7 +231,7 @@ yarn test dnd
 ## License
 
 DFlex is open source and dual-licensed as
-[AGPL](https://github.com/jalal246/dflex/tree/master/packages/dnd/LICENSE)/Commercial
+[AGPL](https://github.com/dflex-js/dflex/tree/master/packages/dnd/LICENSE)/Commercial
 software.
 
 DFlex is free software: you can redistribute it and/or modify it under

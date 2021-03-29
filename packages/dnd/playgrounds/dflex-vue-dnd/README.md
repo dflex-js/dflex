@@ -1,8 +1,8 @@
 # vue-dnd-starter
-This is a quick starter to build Vue components using [dflex/dnd](https://github.com/jalal246/dflex/tree/master/packages/dnd), it was generated with the Vue CLI.
+This is a quick starter to build Vue components using [dflex/dnd](https://github.com/dflex-js/dflex/tree/master/packages/dnd), it was generated with the Vue CLI.
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dnd/public/dnd.gif" alt="show how dnd works" />
+    <img src="https://raw.githubusercontent.com/dflex-js/dflex/master/packages/dnd/public/dnd.gif" alt="show how dnd works" />
 </p>
 
 

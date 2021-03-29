@@ -1,26 +1,26 @@
 <h1 align="center">
   <img
-  src="https://raw.githubusercontent.com/jalal246/dflex/master/dflex-full-size.png"
+  src="https://raw.githubusercontent.com/dflex-js/dflex/master/dflex-full-size.png"
   alt="Dflex logo" />
 </h1>
 
 <p align="center">
-  <a href="https://github.com/jalal246/dflex">
+  <a href="https://github.com/dflex-js/dflex">
     <img
-    src="https://img.shields.io/github/workflow/status/jalal246/dflex/Unit Test"
+    src="https://img.shields.io/github/workflow/status/dflex-js/dflex/Unit Test"
     alt="Dflex build status" />
   </a>
-  <a href="https://github.com/jalal246/dflex/pulls">
+  <a href="https://github.com/dflex-js/dflex/pulls">
     <img
-    src="https://img.shields.io/github/issues-pr/jalal246/dflex"
+    src="https://img.shields.io/github/issues-pr/dflex-js/dflex"
     alt="number of opened pull requests"/>
   </a>
-  <a href="https://github.com/jalal246/dflex/issues">
+  <a href="https://github.com/dflex-js/dflex/issues">
   <img
-    src="https://img.shields.io/github/issues/jalal246/dflex"
+    src="https://img.shields.io/github/issues/dflex-js/dflex"
     alt="number of opened issues"/>
   </a>
-  <a href="https://github.com/jalal246/dflex/pulls">
+  <a href="https://github.com/dflex-js/dflex/pulls">
    <img
    src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"
    alt="Dflex welcomes pull request" />
@@ -41,7 +41,7 @@ Together: keys and indexes combined form of uniqueness for each element.
 
 ## Documentation
 
-Visit DFlex site for more <https://jalal246.github.io/dflex/> and to see live
+Visit DFlex site for more <https://dflex-js.github.io/dflex/> and to see live
 examples with the full code.
 
 ## Installation
@@ -62,7 +62,7 @@ database or hash tables but applied in DOM tree.
 
 <p align="center">
  <img
-  src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dom-gen/img/pointer.png"
+  src="https://raw.githubusercontent.com/dflex-js/dflex/master/packages/dom-gen/img/pointer.png"
   alt="how pointer works"/>
 </p>
 
@@ -169,7 +169,7 @@ DOM-root
 
 <p align="center">
  <img
-  src="https://raw.githubusercontent.com/jalal246/dflex/master/packages/dom-gen/img/connect.png"
+  src="https://raw.githubusercontent.com/dflex-js/dflex/master/packages/dom-gen/img/connect.png"
   alt="how algorithm connect nodes"/>
 </p>
 
@@ -291,16 +291,16 @@ domGen.setElmBranch("0-0", newBranch);
 
 DFlex DOM Generator is part of project contains:
 
-- [DOM Store](https://github.com/jalal246/dflex/tree/master/packages/store) The
+- [DOM Store](https://github.com/dflex-js/dflex/tree/master/packages/store) The
   only Store that allows you to traverse through the DOM tree using element id
   without reading from the browser.
 
-- [Drag & Drop](https://github.com/jalal246/dflex/tree/master/packages/dnd) A
+- [Drag & Drop](https://github.com/dflex-js/dflex/tree/master/packages/dnd) A
   Simple, lightweight Solution for a Drag & Drop App based on enhanced DOM store
   algorithm. You can achieve a drag and drop with three steps only with mouse
   event.
 
-- [Draggable](https://github.com/jalal246/dflex/tree/master/packages/draggable) A High-performance draggable elements written in pure JS works for Web and Mobile.
+- [Draggable](https://github.com/dflex-js/dflex/tree/master/packages/draggable) A High-performance draggable elements written in pure JS works for Web and Mobile.
 
 ## Test
 
@@ -311,7 +311,7 @@ yarn test dom-gen
 ## License
 
 DFlex is open source and dual-licensed as
-[AGPL](https://github.com/jalal246/dflex/tree/master/packages/dom-gen/LICENSE)/Commercial
+[AGPL](https://github.com/dflex-js/dflex/tree/master/packages/dom-gen/LICENSE)/Commercial
 software.
 
 DFlex is free software: you can redistribute it and/or modify it under
