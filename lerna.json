@@ -6,6 +6,5 @@
     "packages/draggable",
     "packages/dnd",
     "packages/core-instance"
-  ],
-  "version": "independent"
+  ]
 }
