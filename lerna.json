@@ -6,5 +6,6 @@
     "packages/draggable",
     "packages/dnd",
     "packages/core-instance"
-  ]
+  ],
+  "version": "2.0.0"
 }
