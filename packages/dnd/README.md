@@ -230,7 +230,18 @@ yarn test dnd
 
 ## License
 
-This package is licensed under the [GPL-3.0 License](https://github.com/jalal246/dflex/tree/master/packages/dnd/LICENSE)
+DFlex is open source and dual-licensed as
+[AGPL](https://github.com/jalal246/dflex/tree/master/packages/dnd/LICENSE)/Commercial
+software.
+
+DFlex is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+Buying a license is mandatory if you develop commercial activities using
+DFlex inside your product or deploying it on a network without disclosing the
+source code of your own applications under the AGPL license.
 
 ## Contribution
 
