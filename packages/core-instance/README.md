@@ -1,26 +1,26 @@
 <h1 align="center">
   <img
-  src="https://raw.githubusercontent.com/jalal246/dflex/master/dflex-full-size.png"
+  src="https://raw.githubusercontent.com/dflex-js/dflex/master/dflex-full-size.png"
   alt="Dflex logo" />
 </h1>
 
 <p align="center">
-  <a href="https://github.com/jalal246/dflex">
+  <a href="https://github.com/dflex-js/dflex">
     <img
-    src="https://img.shields.io/github/workflow/status/jalal246/dflex/Unit Test"
+    src="https://img.shields.io/github/workflow/status/dflex-js/dflex/Unit Test"
     alt="Dflex build status" />
   </a>
-  <a href="https://github.com/jalal246/dflex/pulls">
+  <a href="https://github.com/dflex-js/dflex/pulls">
     <img
-    src="https://img.shields.io/github/issues-pr/jalal246/dflex"
+    src="https://img.shields.io/github/issues-pr/dflex-js/dflex"
     alt="number of opened pull requests"/>
   </a>
-  <a href="https://github.com/jalal246/dflex/issues">
+  <a href="https://github.com/dflex-js/dflex/issues">
   <img
-    src="https://img.shields.io/github/issues/jalal246/dflex"
+    src="https://img.shields.io/github/issues/dflex-js/dflex"
     alt="number of opened issues"/>
   </a>
-  <a href="https://github.com/jalal246/dflex/pulls">
+  <a href="https://github.com/dflex-js/dflex/pulls">
    <img
    src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"
    alt="Dflex welcomes pull request" />
@@ -29,4 +29,4 @@
 
 # @dflex/core-instance
 
-Visit DFlex site for more <https://jalal246.github.io/dflex/>
+Visit DFlex site for more <https://dflex-js.github.io/dflex/>

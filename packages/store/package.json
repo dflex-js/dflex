@@ -8,8 +8,8 @@
     "compile": "yarn rimraf ./dist tsconfig.tsbuildinfo && yarn tsc -b",
     "build": "yarn compile"
   },
-  "homepage": "https://github.com/jalal246/dflex/tree/master/packages/store",
-  "repository": "https://github.com/jalal246/dflex",
+  "homepage": "https://github.com/dflex-js/dflex/tree/master/packages/store",
+  "repository": "https://github.com/dflex-js/dflex",
   "license": "AGPL-3.0",
   "files": [
     "dist",

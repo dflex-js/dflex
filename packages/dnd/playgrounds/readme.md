@@ -10,6 +10,6 @@ useful as starter.
 **Note** Currently, all end-to-end tests are used with react playground any
 changes in it will break the results.
 
-As we have here [React](https://github.com/jalal246/dflex/tree/master/packages/dnd/playgrounds/dflex-react-dnd)
-and [Vue](https://github.com/jalal246/dflex/tree/master/packages/dnd/playgrounds/dflex-vue-dnd),
+As we have here [React](https://github.com/dflex-js/dflex/tree/master/packages/dnd/playgrounds/dflex-react-dnd)
+and [Vue](https://github.com/dflex-js/dflex/tree/master/packages/dnd/playgrounds/dflex-vue-dnd),
 further implementations can be added as starters.
