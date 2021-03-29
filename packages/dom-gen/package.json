@@ -10,7 +10,7 @@
   },
   "homepage": "https://github.com/jalal246/dflex/tree/master/packages/dom-gen",
   "repository": "https://github.com/jalal246/dflex",
-  "license": "GPL-3.0",
+  "license": "AGPL-3.0",
   "files": [
     "dist",
     "LICENSE"
