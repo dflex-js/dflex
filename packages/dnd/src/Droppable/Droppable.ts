@@ -94,10 +94,14 @@ class Droppable implements DroppableInterface {
 
     const {
       draggedElm: {
+        currentTop: draggedTop,
         offset: { height: draggedHight },
       },
-      occupiedOffset: { currentLeft: draggedLeft, currentTop: draggedTop },
+      occupiedOffset: { currentLeft: draggedLeft },
     } = this.draggable;
+
+    console.log("file: Droppable.ts ~ line 136 ~ draggedTop", draggedTop);
+    console.log("file: Droppable.ts ~ line 136 ~ elmTop", elmTop);
 
     const heightOffset = Math.abs(draggedHight - elmHight);
 
@@ -107,9 +111,18 @@ class Droppable implements DroppableInterface {
       this.elmYSpace = Math.abs(elmTop - draggedTop);
 
       if (draggedHight > elmHight) {
-        this.draggedYSPace = this.elmYSpace - heightOffset;
+        this.draggedYSPace += this.elmYSpace - heightOffset;
+
+        console.log(
+          "updating top",
+          elmTop,
+          this.draggable.occupiedOffset.currentTop
+        );
+        console.log("alpha");
       } else {
         this.draggedYSPace += this.elmYSpace + heightOffset;
+
+        console.log("beta");
       }
     } else {
       this.draggedYSPace = Math.abs(elmTop - draggedTop);
@@ -123,10 +136,24 @@ class Droppable implements DroppableInterface {
     }
 
     this.draggable.occupiedOffset.currentLeft = elmLeft;
+    this.draggable.occupiedOffset.currentTop = elmTop;
 
-    if (this.effectedElemDirection === -1) {
-      this.draggable.occupiedOffset.currentTop = elmTop + heightOffset;
-    }
+    // if (this.effectedElemDirection === -1) {
+    //   this.draggable.occupiedOffset.currentTop = elmTop + heightOffset;
+
+    //   console.log(
+    //     "updating top",
+    //     elmTop,
+    //     this.draggable.occupiedOffset.currentTop
+    //   );
+    // } else {
+    //   this.draggable.occupiedOffset.currentTop = elmTop;
+    //   console.log(
+    //     "updating top beta",
+    //     elmTop,
+    //     this.draggable.occupiedOffset.currentTop
+    //   );
+    // }
     // this.draggable.occupiedOffset.currentTop = elmTop + heightOffset;
 
     // this.draggable.occupiedOffset.currentHeight = elmHight;

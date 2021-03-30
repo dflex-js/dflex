@@ -110,11 +110,11 @@ class CoreInstance
 
   setCurrentOffset() {
     const { left, top } = this.offset;
+
     /**
      * This offset related directly to translate Y and Y. It's isolated from
      * element current offset and effects only top and left.
      */
-
     this.currentTop = top + this.translateY;
     this.currentLeft = left + this.translateX;
   }
