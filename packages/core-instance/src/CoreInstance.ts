@@ -108,7 +108,7 @@ class CoreInstance
     };
   }
 
-  setCurrentOffset() {
+  private setCurrentOffset() {
     const { left, top } = this.offset;
 
     /**
@@ -166,6 +166,7 @@ class CoreInstance
     this.translateY += topSpace;
 
     this.transformElm();
+    this.setCurrentOffset();
   }
 
   /**
