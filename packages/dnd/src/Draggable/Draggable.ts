@@ -69,10 +69,11 @@ class Draggable extends Base implements DraggableDnDInterface {
     const $ = this.opts.restrictions;
 
     this.axesFilterNeeded =
-      !$.allowLeavingFromLeft ||
-      !$.allowLeavingFromRight ||
-      !$.allowLeavingFromTop ||
-      !$.allowLeavingFromBottom;
+      this.siblingsList !== null &&
+      (!$.allowLeavingFromLeft ||
+        !$.allowLeavingFromRight ||
+        !$.allowLeavingFromTop ||
+        !$.allowLeavingFromBottom);
   }
 
   private isDraggedFirstOrOutside() {
