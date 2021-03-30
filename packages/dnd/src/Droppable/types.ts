@@ -5,7 +5,6 @@ export interface DroppableInterface {
   topDifference: number;
   leftDifference: number;
   isListLocked: boolean;
-  prevIsListLocked: boolean;
   droppableIndex: number;
   isFoundBreakingPoint: boolean;
 }
