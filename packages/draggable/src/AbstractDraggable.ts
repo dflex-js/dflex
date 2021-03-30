@@ -21,7 +21,7 @@ const draggedStyleProps: DraggedStyle = [
   {
     prop: "user-select",
     dragValue: "none",
-    afterDragValue: "auto",
+    afterDragValue: null,
   },
 ];
 

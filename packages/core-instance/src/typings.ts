@@ -25,7 +25,6 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
   currentLeft: number;
   order: Order;
   keys: Keys;
-  setCurrentOffset(): void;
   setYPosition(
     iDsInOrder: ELmBranch,
     sign: number,
@@ -40,4 +39,5 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
     newIndex: number,
     oldIndex?: number
   ): void;
+  getOffset(): Offset;
 }

@@ -76,8 +76,7 @@ class CoreInstance
     this.currentLeft = 0;
 
     if (this.ref) {
-      this.initOffset();
-      this.setCurrentOffset();
+      this.initIndicators();
     }
 
     this.order = order;
@@ -91,7 +90,7 @@ class CoreInstance
    *
    * So, basically any working element in DnD should be initiated first.
    */
-  private initOffset() {
+  private initIndicators() {
     const { height, width, left, top } = this.ref.getBoundingClientRect();
 
     /**
@@ -106,15 +105,32 @@ class CoreInstance
       left,
       top,
     };
+
+    this.currentTop = top;
+    this.currentLeft = left;
   }
 
-  setCurrentOffset() {
+  private mergeOffset() {
+    this.offset.top = this.currentTop;
+    this.offset.left = this.currentLeft;
+  }
+
+  getOffset() {
+    this.mergeOffset();
+
+    return this.offset;
+  }
+
+  private updateCurrentIndicators(topSpace: number, leftSpace: number) {
+    this.translateY += topSpace;
+    this.translateX += leftSpace;
+
     const { left, top } = this.offset;
+
     /**
      * This offset related directly to translate Y and Y. It's isolated from
      * element current offset and effects only top and left.
      */
-
     this.currentTop = top + this.translateY;
     this.currentLeft = left + this.translateX;
   }
@@ -154,8 +170,6 @@ class CoreInstance
    * @param operationID  - Only if moving to a new position.
    */
   private seTranslate(topSpace: number, operationID?: string) {
-    this.currentTop += topSpace;
-
     if (operationID) {
       this.prevTranslateY.push({
         ID: operationID,
@@ -163,8 +177,7 @@ class CoreInstance
       });
     }
 
-    this.translateY += topSpace;
-
+    this.updateCurrentIndicators(topSpace, 0);
     this.transformElm();
   }
 
