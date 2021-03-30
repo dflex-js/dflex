@@ -77,7 +77,6 @@ class CoreInstance
 
     if (this.ref) {
       this.initOffset();
-      this.setCurrentOffset();
     }
 
     this.order = order;
@@ -106,9 +105,15 @@ class CoreInstance
       left,
       top,
     };
+
+    this.currentTop = top;
+    this.currentLeft = left;
   }
 
-  private setCurrentOffset() {
+  private updateCurrentIndicators(topSpace: number, leftSpace: number) {
+    this.translateY += topSpace;
+    this.translateX += leftSpace;
+
     const { left, top } = this.offset;
 
     /**
@@ -161,10 +166,8 @@ class CoreInstance
       });
     }
 
-    this.translateY += topSpace;
-
     this.transformElm();
-    this.setCurrentOffset();
+    this.updateCurrentIndicators(topSpace, 0);
   }
 
   /**
