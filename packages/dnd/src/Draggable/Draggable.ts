@@ -76,15 +76,16 @@ class Draggable extends Base implements DraggableDnDInterface {
         !$.allowLeavingFromBottom);
   }
 
+  getLastElmIndex() {
+    return this.siblingsList!.length - 1;
+  }
+
   private isDraggedFirstOrOutside() {
     return this.siblingsList !== null && this.tempIndex <= 0;
   }
 
-  private isDraggedLastELm() {
-    return (
-      this.siblingsList !== null &&
-      this.tempIndex === this.siblingsList.length - 1
-    );
+  isDraggedLastELm() {
+    return this.tempIndex === this.getLastElmIndex();
   }
 
   private selfRightAxesFilter(x: number, left: number) {
@@ -228,7 +229,11 @@ class Draggable extends Base implements DraggableDnDInterface {
   }
 
   isSiblingsTransformed() {
-    return !this.isDraggedLeavingFromBottom() && this.isDraggedOut();
+    return (
+      this.siblingsList !== null &&
+      !this.isDraggedLeavingFromBottom() &&
+      this.isDraggedOut()
+    );
   }
 
   /**
