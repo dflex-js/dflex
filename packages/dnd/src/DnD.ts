@@ -40,7 +40,7 @@ class DnD extends Droppable {
       keys: { sK },
     } = store.registry[id];
 
-    const siblingsBoundaries = store.boundaries[sK];
+    const siblingsBoundaries = store.siblingsBoundaries[sK];
 
     const options = opts;
 

@@ -9,15 +9,15 @@ import type { DroppableInterface } from "./types";
 class Droppable implements DroppableInterface {
   draggable: DraggableDnDInterface;
 
-  topDifference: number;
+  elmYSpace: number;
+
+  draggedYSpace: number;
 
   leftDifference: number;
 
-  private effectedElemDirection: number;
+  private effectedElemDirection: 1 | -1;
 
   isListLocked: boolean;
-
-  prevIsListLocked: boolean;
 
   droppableIndex: number;
 
@@ -26,7 +26,8 @@ class Droppable implements DroppableInterface {
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
 
-    this.topDifference = 0;
+    this.elmYSpace = 0;
+    this.draggedYSpace = 0;
     this.leftDifference = 0;
 
     /**
@@ -35,7 +36,6 @@ class Droppable implements DroppableInterface {
     this.effectedElemDirection = 1;
 
     this.isListLocked = false;
-    this.prevIsListLocked = false;
 
     this.droppableIndex = -1;
     this.isFoundBreakingPoint = false;
@@ -91,7 +91,8 @@ class Droppable implements DroppableInterface {
        * This step here do the trick: By measuring the space toY
        * the next element margin will be included.
        */
-      this.topDifference = Math.abs(elmTop - draggedTop);
+      this.draggedYSpace = Math.abs(elmTop - draggedTop);
+      this.elmYSpace = this.draggedYSpace;
 
       this.leftDifference = Math.abs(elmLeft - draggedLeft);
 
@@ -128,7 +129,7 @@ class Droppable implements DroppableInterface {
       // @ts-expect-error
       this.draggable.siblingsList,
       this.effectedElemDirection,
-      this.topDifference,
+      this.elmYSpace,
       this.draggable.operationID,
       1,
       true
@@ -285,7 +286,6 @@ class Droppable implements DroppableInterface {
 
   unlockParent() {
     this.isListLocked = false;
-    this.prevIsListLocked = true;
   }
 
   /**

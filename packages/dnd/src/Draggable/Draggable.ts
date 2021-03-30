@@ -69,21 +69,23 @@ class Draggable extends Base implements DraggableDnDInterface {
     const $ = this.opts.restrictions;
 
     this.axesFilterNeeded =
-      !$.allowLeavingFromLeft ||
-      !$.allowLeavingFromRight ||
-      !$.allowLeavingFromTop ||
-      !$.allowLeavingFromBottom;
+      this.siblingsList !== null &&
+      (!$.allowLeavingFromLeft ||
+        !$.allowLeavingFromRight ||
+        !$.allowLeavingFromTop ||
+        !$.allowLeavingFromBottom);
+  }
+
+  getLastElmIndex() {
+    return this.siblingsList!.length - 1;
   }
 
   private isDraggedFirstOrOutside() {
     return this.siblingsList !== null && this.tempIndex <= 0;
   }
 
-  private isDraggedLastELm() {
-    return (
-      this.siblingsList !== null &&
-      this.tempIndex === this.siblingsList.length - 1
-    );
+  isDraggedLastELm() {
+    return this.tempIndex === this.getLastElmIndex();
   }
 
   private selfRightAxesFilter(x: number, left: number) {
@@ -93,7 +95,7 @@ class Draggable extends Base implements DraggableDnDInterface {
   }
 
   private selfHorizontalAxesFilter(x: number) {
-    const { left } = store.boundaries[
+    const { left } = store.siblingsBoundaries[
       store.registry[this.draggedElm.id].keys.sK
     ];
 
@@ -114,7 +116,7 @@ class Draggable extends Base implements DraggableDnDInterface {
   }
 
   private containerVerticalAxesFilter(y: number) {
-    const { maxTop, minTop } = store.boundaries[
+    const { maxTop, minTop } = store.siblingsBoundaries[
       store.registry[this.draggedElm.id].keys.sK
     ];
 
@@ -227,7 +229,11 @@ class Draggable extends Base implements DraggableDnDInterface {
   }
 
   isSiblingsTransformed() {
-    return !this.isDraggedLeavingFromBottom() && this.isDraggedOut();
+    return (
+      this.siblingsList !== null &&
+      !this.isDraggedLeavingFromBottom() &&
+      this.isDraggedOut()
+    );
   }
 
   /**

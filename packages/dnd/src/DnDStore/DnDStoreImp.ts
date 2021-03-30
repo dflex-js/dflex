@@ -15,18 +15,18 @@ import type { ElmTree, BoundariesOffset } from "./types";
 class DnDStoreImp extends Store<CoreInstance> {
   tracker: Tracker;
 
-  boundaries: { [k: string]: BoundariesOffset };
+  siblingsBoundaries: { [k: string]: BoundariesOffset };
 
   constructor() {
     super();
 
-    this.boundaries = {};
+    this.siblingsBoundaries = {};
     this.tracker = new Tracker();
   }
 
   assignSiblingsBoundaries(siblingsK: string, elemOffset: Offset) {
-    if (!this.boundaries[siblingsK]) {
-      this.boundaries[siblingsK] = {
+    if (!this.siblingsBoundaries[siblingsK]) {
+      this.siblingsBoundaries[siblingsK] = {
         height: elemOffset.height,
         width: elemOffset.width,
         left: elemOffset.left,
@@ -37,7 +37,7 @@ class DnDStoreImp extends Store<CoreInstance> {
       return;
     }
 
-    const $ = this.boundaries[siblingsK];
+    const $ = this.siblingsBoundaries[siblingsK];
 
     if ($.left < elemOffset.left) {
       $.left = elemOffset.left;
