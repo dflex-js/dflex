@@ -108,7 +108,7 @@ class CoreInstance
     };
   }
 
-  setCurrentOffset() {
+  private setCurrentOffset() {
     const { left, top } = this.offset;
     /**
      * This offset related directly to translate Y and Y. It's isolated from
@@ -167,6 +167,7 @@ class CoreInstance
     this.translateY += topSpace;
 
     this.transformElm();
+    this.setCurrentOffset();
   }
 
   /**
