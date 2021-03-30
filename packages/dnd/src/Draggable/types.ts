@@ -84,5 +84,5 @@ export interface DraggableDnDInterface extends DraggableBaseInterface {
   isSiblingsTransformed(): boolean;
   getLastElmIndex(): number;
   isDraggedLastELm(): boolean;
-  endDragging(topDifference: number, shiftOffsetY: number): void;
+  endDragging(topDifference: number): void;
 }

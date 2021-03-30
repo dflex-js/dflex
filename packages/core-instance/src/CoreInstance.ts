@@ -154,8 +154,6 @@ class CoreInstance
    * @param operationID  - Only if moving to a new position.
    */
   private seTranslate(topSpace: number, operationID?: string) {
-    this.currentTop += topSpace;
-
     if (operationID) {
       this.prevTranslateY.push({
         ID: operationID,

@@ -90,7 +90,7 @@ class EndDroppable extends Droppable {
       }
     }
 
-    this.draggable.endDragging(this.draggedYSPace, 0);
+    this.draggable.endDragging(this.draggedYSPace);
   }
 }
 

@@ -262,8 +262,9 @@ class Draggable extends Base implements DraggableDnDInterface {
    * @param topDifference -
    */
   setDraggedPosition(topDifference: number) {
+    console.log("file: Draggable.ts ~ line 265 ~ topDifference", topDifference);
     /**
-     * In this case, the use clicked without making any move.
+     * In this case, the user clicked without making any move.
      */
     if (
       this.siblingsList === null ||

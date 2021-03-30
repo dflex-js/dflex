@@ -64,6 +64,16 @@ class Droppable implements DroppableInterface {
     return nextElm.currentTop;
   }
 
+  private setOccupiedOffset(elmTop: number) {
+    console.log("file: Droppable.ts ~ line 68 ~ elmTop", elmTop);
+    this.draggable.occupiedOffset.currentTop = elmTop;
+    console.log(
+      "file: Droppable.ts ~ line 70 ~ this.draggable.occupiedOffset.currentTop",
+      this.draggable.occupiedOffset.currentTop
+    );
+    this.draggable.occupiedOffset.currentLeft += 0;
+  }
+
   /**
    * Updates element instance and calculates the required transform distance. It
    * invokes for each eligible element in the parent container.
@@ -73,19 +83,6 @@ class Droppable implements DroppableInterface {
   updateElement(id: string) {
     const element = store.getElmById(id);
 
-    /**
-     * breakingPoint detects the first element that comes immediately
-     * after dragged. Not in original order, but according to isQualified result.
-     *
-     * The problem:
-     *
-     * Supposed we moved elem1 to the last. And we have in order,
-     * elm2/elm3/elm4/elm1.
-     * Now, we pulled elem2 out of the parent and isQualified is triggered at
-     * elm3. That's mean, escaping elm1 from the loop because it's not
-     * isQualified. So, all elements will be lifted up except elm1.
-     */
-    // if (!this.isFoundBreakingPoint) {
     const {
       currentLeft: elmLeft,
       currentTop: elmTop,
@@ -94,39 +91,29 @@ class Droppable implements DroppableInterface {
 
     const {
       draggedElm: {
-        currentTop: draggedTop,
         offset: { height: draggedHight },
       },
-      occupiedOffset: { currentLeft: draggedLeft },
+      occupiedOffset: { currentLeft: draggedLeft, currentTop: draggedTop },
     } = this.draggable;
 
-    console.log("file: Droppable.ts ~ line 136 ~ draggedTop", draggedTop);
-    console.log("file: Droppable.ts ~ line 136 ~ elmTop", elmTop);
+    console.log("file: Droppable.ts ~ line 98 ~ draggedTop", draggedTop);
 
     const heightOffset = Math.abs(draggedHight - elmHight);
-
-    this.shiftOffsetY = heightOffset;
 
     if (this.effectedElemDirection === -1) {
       this.elmYSpace = Math.abs(elmTop - draggedTop);
 
       if (draggedHight > elmHight) {
-        this.draggedYSPace += this.elmYSpace - heightOffset;
+        this.draggedYSPace = this.elmYSpace - heightOffset;
 
-        console.log(
-          "updating top",
-          elmTop,
-          this.draggable.occupiedOffset.currentTop
-        );
         console.log("alpha");
       } else {
-        this.draggedYSPace += this.elmYSpace + heightOffset;
+        this.draggedYSPace = this.elmYSpace + heightOffset;
 
-        console.log("beta");
+        console.log("beta", this.draggedYSPace);
       }
     } else {
       this.draggedYSPace = Math.abs(elmTop - draggedTop);
-      this.draggable.occupiedOffset.currentTop = elmTop;
 
       if (draggedHight < elmHight) {
         this.elmYSpace = this.draggedYSPace - heightOffset;
@@ -135,48 +122,11 @@ class Droppable implements DroppableInterface {
       }
     }
 
-    this.draggable.occupiedOffset.currentLeft = elmLeft;
-    this.draggable.occupiedOffset.currentTop = elmTop;
-
-    // if (this.effectedElemDirection === -1) {
-    //   this.draggable.occupiedOffset.currentTop = elmTop + heightOffset;
-
-    //   console.log(
-    //     "updating top",
-    //     elmTop,
-    //     this.draggable.occupiedOffset.currentTop
-    //   );
-    // } else {
-    //   this.draggable.occupiedOffset.currentTop = elmTop;
-    //   console.log(
-    //     "updating top beta",
-    //     elmTop,
-    //     this.draggable.occupiedOffset.currentTop
-    //   );
-    // }
-    // this.draggable.occupiedOffset.currentTop = elmTop + heightOffset;
-
-    // this.draggable.occupiedOffset.currentHeight = elmHight;
-    // console.log("file: Droppable.ts ~ line 133 ~ currentHeight", elmHight);
-
-    /**
-     * Sets the transform value by calculating offset difference from
-     * the first braking point between element and dragged. It's done once
-     * and for all.
-     *
-     * This value represents the amount of pixels the element will move
-     * up or down.
-     *
-     * This step here do the trick: By measuring the space toY
-     * the next element margin will be included.
-     */
-
     this.leftDifference = Math.abs(elmLeft - draggedLeft);
 
-    this.isFoundBreakingPoint = true;
-    // }
-
     this.draggable.incNumOfElementsTransformed(this.effectedElemDirection);
+
+    this.draggable.occupiedOffset.currentTop = elmTop;
 
     if (!this.isListLocked) {
       /**
