@@ -1,16 +1,13 @@
 import store from "../../src/DnDStore";
 
-const ref = document.createElement("div");
-
-const elm0D0 = {
-  id: "id-0",
-  depth: 0,
-  ref,
-};
+import { elm1, elm2, elm3, elm4 } from "../utils";
 
 describe("DnD Store", () => {
   beforeAll(() => {
-    store.register(elm0D0);
+    store.register(elm1);
+    store.register(elm2);
+    store.register(elm3);
+    store.register(elm4);
   });
 
   it("Element is initiated", () => {
@@ -18,7 +15,7 @@ describe("DnD Store", () => {
   });
 
   it("Returns all element connections and instance", () => {
-    const elemInstance = store.getElmTreeById(elm0D0.id);
+    const elemInstance = store.getElmTreeById(elm1.id);
 
     expect(elemInstance).toMatchSnapshot();
   });

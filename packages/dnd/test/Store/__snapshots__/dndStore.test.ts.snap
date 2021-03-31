@@ -2,25 +2,100 @@
 
 exports[`DnD Store Element is initiated 1`] = `
 Object {
-  "id-0": CoreInstance {
-    "currentLeft": 0,
-    "currentTop": 0,
+  "id-1": CoreInstance {
+    "currentLeft": 450,
+    "currentTop": 114,
     "depth": 0,
-    "id": "id-0",
+    "id": "id-1",
     "keys": Object {
       "chK": null,
       "pK": "1-0",
       "sK": "0-0",
     },
     "offset": Object {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
+      "height": 50,
+      "left": 450,
+      "top": 114,
+      "width": 170,
     },
     "order": Object {
       "parent": 0,
       "self": 0,
+    },
+    "prevTranslateY": Array [],
+    "ref": <div />,
+    "translateX": 0,
+    "translateY": 0,
+  },
+  "id-2": CoreInstance {
+    "currentLeft": 450,
+    "currentTop": 172,
+    "depth": 0,
+    "id": "id-2",
+    "keys": Object {
+      "chK": null,
+      "pK": "1-0",
+      "sK": "0-0",
+    },
+    "offset": Object {
+      "height": 50,
+      "left": 450,
+      "top": 172,
+      "width": 170,
+    },
+    "order": Object {
+      "parent": 0,
+      "self": 1,
+    },
+    "prevTranslateY": Array [],
+    "ref": <div />,
+    "translateX": 0,
+    "translateY": 0,
+  },
+  "id-3": CoreInstance {
+    "currentLeft": 450,
+    "currentTop": 230,
+    "depth": 0,
+    "id": "id-3",
+    "keys": Object {
+      "chK": null,
+      "pK": "1-0",
+      "sK": "0-0",
+    },
+    "offset": Object {
+      "height": 50,
+      "left": 450,
+      "top": 230,
+      "width": 170,
+    },
+    "order": Object {
+      "parent": 0,
+      "self": 2,
+    },
+    "prevTranslateY": Array [],
+    "ref": <div />,
+    "translateX": 0,
+    "translateY": 0,
+  },
+  "id-4": CoreInstance {
+    "currentLeft": 450,
+    "currentTop": 288,
+    "depth": 0,
+    "id": "id-4",
+    "keys": Object {
+      "chK": null,
+      "pK": "1-0",
+      "sK": "0-0",
+    },
+    "offset": Object {
+      "height": 50,
+      "left": 450,
+      "top": 288,
+      "width": 170,
+    },
+    "order": Object {
+      "parent": 0,
+      "self": 3,
     },
     "prevTranslateY": Array [],
     "ref": <div />,
@@ -34,23 +109,28 @@ exports[`DnD Store Returns all element connections and instance 1`] = `
 Object {
   "branches": Object {
     "parents": undefined,
-    "siblings": "id-0",
+    "siblings": Array [
+      "id-1",
+      "id-2",
+      "id-3",
+      "id-4",
+    ],
   },
   "element": CoreInstance {
-    "currentLeft": 0,
-    "currentTop": 0,
+    "currentLeft": 450,
+    "currentTop": 114,
     "depth": 0,
-    "id": "id-0",
+    "id": "id-1",
     "keys": Object {
       "chK": null,
       "pK": "1-0",
       "sK": "0-0",
     },
     "offset": Object {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
+      "height": 50,
+      "left": 450,
+      "top": 114,
+      "width": 170,
     },
     "order": Object {
       "parent": 0,
