@@ -25,6 +25,11 @@ export interface TempOffset {
   currentTop: number;
 }
 
+export interface TempTranslate {
+  translateX: number;
+  translateY: number;
+}
+
 export interface Restrictions {
   allowLeavingFromTop: boolean;
   allowLeavingFromBottom: boolean;
@@ -64,6 +69,8 @@ export interface DraggableDnDInterface extends DraggableBaseInterface {
   innerOffsetX: number;
   innerOffsetY: number;
   tempOffset: TempOffset;
+  occupiedOffset: TempOffset;
+  occupiedTranslate: TempTranslate;
   prevY: number;
   numberOfElementsTransformed: number;
   isMovingDown: boolean;

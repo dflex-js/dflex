@@ -1,0 +1,129 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Checking Store Instance Checking offset of elements 1`] = `
+Object {
+  "height": 50,
+  "left": 900,
+  "top": 288,
+  "width": 170,
+}
+`;
+
+exports[`Checking Store Instance Checking offset of elements 2`] = `
+Object {
+  "height": 50,
+  "left": 450,
+  "top": 114,
+  "width": 170,
+}
+`;
+
+exports[`Checking Store Instance Checking offset of elements 3`] = `
+Object {
+  "height": 50,
+  "left": 450,
+  "top": 172,
+  "width": 170,
+}
+`;
+
+exports[`Checking Store Instance Checking offset of elements 4`] = `
+Object {
+  "height": 50,
+  "left": 450,
+  "top": 230,
+  "width": 170,
+}
+`;
+
+exports[`Checking Store Instance Checking transition of elements 1`] = `
+Object {
+  "translateX": 0,
+  "translateY": 174,
+}
+`;
+
+exports[`Checking Store Instance Checking transition of elements 2`] = `
+Object {
+  "translateX": 0,
+  "translateY": -58,
+}
+`;
+
+exports[`Checking Store Instance Checking transition of elements 3`] = `
+Object {
+  "translateX": 0,
+  "translateY": -58,
+}
+`;
+
+exports[`Checking Store Instance Checking transition of elements 4`] = `
+Object {
+  "translateX": 0,
+  "translateY": -58,
+}
+`;
+
+exports[`Checking Store Instance Restore offset of elements 1`] = `
+Object {
+  "height": 50,
+  "left": 1800,
+  "top": 230,
+  "width": 170,
+}
+`;
+
+exports[`Checking Store Instance Restore offset of elements 2`] = `
+Object {
+  "height": 50,
+  "left": 450,
+  "top": 114,
+  "width": 170,
+}
+`;
+
+exports[`Checking Store Instance Restore offset of elements 3`] = `
+Object {
+  "height": 50,
+  "left": 450,
+  "top": -2,
+  "width": 170,
+}
+`;
+
+exports[`Checking Store Instance Restore offset of elements 4`] = `
+Object {
+  "height": 50,
+  "left": 450,
+  "top": 114,
+  "width": 170,
+}
+`;
+
+exports[`Checking Store Instance Restore transition of elements 1`] = `
+Object {
+  "translateX": 0,
+  "translateY": 348,
+}
+`;
+
+exports[`Checking Store Instance Restore transition of elements 2`] = `
+Object {
+  "translateX": 0,
+  "translateY": -58,
+}
+`;
+
+exports[`Checking Store Instance Restore transition of elements 3`] = `
+Object {
+  "translateX": 0,
+  "translateY": -174,
+}
+`;
+
+exports[`Checking Store Instance Restore transition of elements 4`] = `
+Object {
+  "translateX": 0,
+  "translateY": -116,
+}
+`;

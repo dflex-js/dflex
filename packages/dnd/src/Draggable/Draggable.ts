@@ -10,6 +10,7 @@ import type {
   DraggableDnDInterface,
   TempOffset,
   Threshold,
+  TempTranslate,
   DraggableOpts,
 } from "./types";
 
@@ -19,6 +20,10 @@ class Draggable extends Base implements DraggableDnDInterface {
   innerOffsetY: number;
 
   tempOffset: TempOffset;
+
+  occupiedOffset: TempOffset;
+
+  occupiedTranslate: TempTranslate;
 
   prevY: number;
 
@@ -48,6 +53,16 @@ class Draggable extends Base implements DraggableDnDInterface {
     this.tempOffset = {
       currentLeft: this.draggedElm.currentLeft,
       currentTop: this.draggedElm.currentTop,
+    };
+
+    this.occupiedOffset = {
+      currentLeft: this.draggedElm.currentLeft,
+      currentTop: this.draggedElm.currentTop,
+    };
+
+    this.occupiedTranslate = {
+      translateX: this.draggedElm.translateX,
+      translateY: this.draggedElm.translateY,
     };
 
     /**
@@ -229,11 +244,7 @@ class Draggable extends Base implements DraggableDnDInterface {
   }
 
   isSiblingsTransformed() {
-    return (
-      this.siblingsList !== null &&
-      !this.isDraggedLeavingFromBottom() &&
-      this.isDraggedOut()
-    );
+    return !this.isDraggedLeavingFromBottom() && this.isDraggedOut();
   }
 
   /**
@@ -259,56 +270,76 @@ class Draggable extends Base implements DraggableDnDInterface {
     /**
      * In this case, the use clicked without making any move.
      */
-    if (
-      this.siblingsList === null ||
-      this.isSiblingsTransformed() ||
-      this.numberOfElementsTransformed === 0
-    ) {
-      /**
-       * If not isDraggedOutPosition, it means dragged is out its position, inside
-       * list but didn't reach another element to replace.
-       *
-       * List's elements is in their position, just undo dragged.
-       *
-       * Restore dragged position (translateX, translateY) directly. Why? Because,
-       * dragged depends on extra instance to float in layout that is not related to element
-       * instance.
-       */
+    // if (
+    //   this.siblingsList === null ||
+    //   this.isSiblingsTransformed() ||
+    //   this.numberOfElementsTransformed === 0
+    // ) {
+    //   /**
+    //    * If not isDraggedOutPosition, it means dragged is out its position, inside
+    //    * list but didn't reach another element to replace.
+    //    *
+    //    * List's elements is in their position, just undo dragged.
+    //    *
+    //    * Restore dragged position (translateX, translateY) directly. Why? Because,
+    //    * dragged depends on extra instance to float in layout that is not related to element
+    //    * instance.
+    //    */
 
-      this.draggedElm.transformElm();
+    //   this.draggedElm.transformElm();
 
-      if (this.siblingsList) {
-        this.draggedElm.assignNewPosition(
-          this.siblingsList,
-          this.draggedElm.order.self
-        );
-      }
+    //   if (this.siblingsList) {
+    //     this.draggedElm.assignNewPosition(
+    //       this.siblingsList,
+    //       this.draggedElm.order.self
+    //     );
+    //   }
 
-      return;
+    //   return;
+    // }
+
+    this.draggedElm.currentTop = this.occupiedOffset.currentTop;
+    console.log(
+      "file: Draggable.ts ~ line 306 ~ this.draggedElm.currentTop",
+      this.draggedElm.currentTop
+    );
+    this.draggedElm.currentLeft += this.occupiedOffset.currentLeft;
+
+    this.draggedElm.translateX = this.occupiedTranslate.translateX;
+    this.draggedElm.translateY = this.occupiedTranslate.translateY;
+    console.log(
+      "file: Draggable.ts ~ line 314 ~ this.draggedElm.translateY",
+      this.draggedElm.translateY
+    );
+
+    this.draggedElm.transformElm();
+
+    if (this.siblingsList) {
+      this.draggedElm.assignNewPosition(this.siblingsList, this.tempIndex);
     }
 
-    const draggedDirection =
-      this.tempIndex < this.draggedElm.order.self ? -1 : 1;
+    // const draggedDirection =
+    //   this.tempIndex < this.draggedElm.order.self ? -1 : 1;
 
-    this.numberOfElementsTransformed = Math.abs(
-      this.numberOfElementsTransformed
-    );
+    // this.numberOfElementsTransformed = Math.abs(
+    //   this.numberOfElementsTransformed
+    // );
 
-    /**
-     * Move to new droppable position.
-     *
-     * We already have translate value in for dragged in goX/goY but it is
-     * related to mouse dragging. Instead, we want to translate to droppable
-     * element that is replaced by dragged.
-     */
-    this.draggedElm.setYPosition(
-      this.siblingsList,
-      draggedDirection,
-      this.numberOfElementsTransformed * topDifference,
-      this.operationID,
-      this.numberOfElementsTransformed,
-      false
-    );
+    // /**
+    //  * Move to new droppable position.
+    //  *
+    //  * We already have translate value in for dragged in goX/goY but it is
+    //  * related to mouse dragging. Instead, we want to translate to droppable
+    //  * element that is replaced by dragged.
+    //  */
+    // this.draggedElm.setYPosition(
+    //   this.siblingsList,
+    //   draggedDirection,
+    //   topDifference,
+    //   this.operationID,
+    //   this.numberOfElementsTransformed,
+    //   false
+    // );
   }
 
   /**
