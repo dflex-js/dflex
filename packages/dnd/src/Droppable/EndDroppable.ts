@@ -80,7 +80,7 @@ class EndDroppable extends Droppable {
   endDragging() {
     // TODO: Add tests to cover dragged whiteout parents
     if (
-      !this.draggable.siblingsList !== null &&
+      this.draggable.siblingsList !== null &&
       this.draggable.isSiblingsTransformed()
     ) {
       const siblings = this.getSiblings();

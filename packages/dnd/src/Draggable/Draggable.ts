@@ -271,7 +271,8 @@ class Draggable extends Base implements DraggableDnDInterface {
      * In this case, the use clicked without making any move.
      */
     if (
-      (this.siblingsList !== null && !this.isSiblingsTransformed()) ||
+      this.siblingsList === null ||
+      (this.siblingsList !== null && this.isSiblingsTransformed()) ||
       this.numberOfElementsTransformed === 0
     ) {
       /**
@@ -324,7 +325,6 @@ class Draggable extends Base implements DraggableDnDInterface {
      * element that is replaced by dragged.
      */
     this.draggedElm.setYPosition(
-      // @ts-expect-error
       this.siblingsList,
       draggedDirection,
       this.numberOfElementsTransformed * topDifference,
