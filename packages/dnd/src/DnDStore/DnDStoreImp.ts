@@ -3,16 +3,15 @@ import CoreInstance from "@dflex/core-instance";
 
 import type { Offset } from "@dflex/core-instance";
 import type { ElmInstance } from "@dflex/store";
+import type { ElmTree, BoundariesOffset, DnDStoreInterface } from "./types";
 
 import Tracker from "./Tracker";
-
-import type { ElmTree, BoundariesOffset } from "./types";
 
 // function noop() {}
 
 // const handlers = ["onDragOver", "onDragLeave"];
 
-class DnDStoreImp extends Store<CoreInstance> {
+class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   tracker: Tracker;
 
   siblingsBoundaries: { [k: string]: BoundariesOffset };
@@ -24,7 +23,7 @@ class DnDStoreImp extends Store<CoreInstance> {
     this.tracker = new Tracker();
   }
 
-  assignSiblingsBoundaries(siblingsK: string, elemOffset: Offset) {
+  private assignSiblingsBoundaries(siblingsK: string, elemOffset: Offset) {
     if (!this.siblingsBoundaries[siblingsK]) {
       this.siblingsBoundaries[siblingsK] = {
         height: elemOffset.height,
@@ -94,6 +93,16 @@ class DnDStoreImp extends Store<CoreInstance> {
     } = this.registry[element.id];
 
     this.assignSiblingsBoundaries(sK, offset);
+  }
+
+  getELmOffsetById(id: string) {
+    return this.getElmById(id).getOffset();
+  }
+
+  getELmTranslateById(id: string) {
+    const { translateX, translateY } = this.getElmById(id);
+
+    return { translateX, translateY };
   }
 
   /**

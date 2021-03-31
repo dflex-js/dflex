@@ -10,6 +10,7 @@ import type {
   DraggableDnDInterface,
   TempOffset,
   Threshold,
+  // TempTranslate,
   DraggableOpts,
 } from "./types";
 
@@ -19,6 +20,10 @@ class Draggable extends Base implements DraggableDnDInterface {
   innerOffsetY: number;
 
   tempOffset: TempOffset;
+
+  // occupiedOffset: TempOffset;
+
+  // occupiedTranslate: TempTranslate;
 
   prevY: number;
 
@@ -49,6 +54,16 @@ class Draggable extends Base implements DraggableDnDInterface {
       currentLeft: this.draggedElm.currentLeft,
       currentTop: this.draggedElm.currentTop,
     };
+
+    // this.occupiedOffset = {
+    //   currentLeft: this.draggedElm.currentLeft,
+    //   currentTop: this.draggedElm.currentTop,
+    // };
+
+    // this.occupiedTranslate = {
+    //   translateX: this.draggedElm.translateX,
+    //   translateY: this.draggedElm.translateY,
+    // };
 
     /**
      * previous X and Y are used to calculate mouse directions.
@@ -229,11 +244,7 @@ class Draggable extends Base implements DraggableDnDInterface {
   }
 
   isSiblingsTransformed() {
-    return (
-      this.siblingsList !== null &&
-      !this.isDraggedLeavingFromBottom() &&
-      this.isDraggedOut()
-    );
+    return !this.isDraggedLeavingFromBottom() && this.isDraggedOut();
   }
 
   /**
@@ -261,7 +272,7 @@ class Draggable extends Base implements DraggableDnDInterface {
      */
     if (
       this.siblingsList === null ||
-      this.isSiblingsTransformed() ||
+      (this.siblingsList !== null && this.isSiblingsTransformed()) ||
       this.numberOfElementsTransformed === 0
     ) {
       /**
@@ -286,6 +297,18 @@ class Draggable extends Base implements DraggableDnDInterface {
 
       return;
     }
+
+    // this.draggedElm.currentTop = this.occupiedOffset.currentTop;
+    // this.draggedElm.currentLeft += this.occupiedOffset.currentLeft;
+
+    // this.draggedElm.translateX = this.occupiedTranslate.translateX;
+    // this.draggedElm.translateY = this.occupiedTranslate.translateY;
+
+    // this.draggedElm.transformElm();
+
+    // if (this.siblingsList) {
+    //   this.draggedElm.assignNewPosition(this.siblingsList, this.tempIndex);
+    // }
 
     const draggedDirection =
       this.tempIndex < this.draggedElm.order.self ? -1 : 1;

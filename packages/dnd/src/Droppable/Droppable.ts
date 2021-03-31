@@ -1,27 +1,25 @@
 import store from "../DnDStore";
 
 import type { DraggableDnDInterface } from "../Draggable";
-import type { DroppableInterface } from "./types";
-
 /**
  * Class includes all transformation methods related to droppable.
  */
-class Droppable implements DroppableInterface {
-  draggable: DraggableDnDInterface;
+class Droppable {
+  protected draggable: DraggableDnDInterface;
 
-  elmYSpace: number;
+  private elmYSpace: number;
 
-  draggedYSpace: number;
+  protected draggedYSpace: number;
 
-  leftDifference: number;
+  private leftDifference: number;
 
   private effectedElemDirection: 1 | -1;
 
-  isListLocked: boolean;
+  protected isListLocked: boolean;
 
-  droppableIndex: number;
+  private droppableIndex: number;
 
-  isFoundBreakingPoint: boolean;
+  private isFoundBreakingPoint: boolean;
 
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
@@ -48,9 +46,38 @@ class Droppable implements DroppableInterface {
     return this.draggable.tempIndex;
   }
 
-  setEffectedElemDirection(isUp: boolean) {
+  private setEffectedElemDirection(isUp: boolean) {
     this.effectedElemDirection = isUp ? -1 : 1;
   }
+
+  // private updateOccupiedOffset(elmTop: number) {
+  //   console.log(this.effectedElemDirection);
+
+  //   this.draggable.occupiedTranslate.translateY += 1 * this.draggedYSpace;
+
+  //   this.draggable.occupiedTranslate.translateX += 0;
+
+  //   const { currentTop, currentLeft } = this.draggable.draggedElm;
+  //   console.log("file: Droppable.ts ~ line 65 ~ currentTop", currentTop);
+
+  //   /**
+  //    * This offset related directly to translate Y and Y. It's isolated from
+  //    * element current offset and effects only top and left.
+  //    */
+  //   this.draggable.occupiedOffset.currentTop = elmTop;
+  //   this.draggable.occupiedOffset.currentLeft =
+  //     currentLeft + this.draggable.occupiedTranslate.translateX;
+
+  //   console.log("occupiedOffset", this.draggable.occupiedOffset);
+  //   console.log(
+  //     "file: Droppable.ts ~ line 57 ~ this.draggable.occupiedTranslate.translateY ",
+  //     this.draggable.occupiedTranslate.translateY
+  //   );
+  //   console.log(
+  //     "file: Droppable.ts ~ line 61 ~ this.draggedYSpace",
+  //     this.draggedYSpace
+  //   );
+  // }
 
   /**
    * Updates element instance and calculates the required transform distance. It
@@ -144,14 +171,14 @@ class Droppable implements DroppableInterface {
    *
    * @param elmCurrentOffsetTop -
    */
-  isElemUnderDragged(elmCurrentOffsetTop: number) {
+  private isElemUnderDragged(elmCurrentOffsetTop: number) {
     /**
      * Element is Switchable when it's under dragged.
      */
     return elmCurrentOffsetTop > this.draggable.tempOffset.currentTop;
   }
 
-  detectDroppableIndex() {
+  private detectDroppableIndex() {
     let droppableIndex = null;
 
     for (let i = 0; i < this.draggable.siblingsList!.length; i += 1) {
@@ -179,11 +206,11 @@ class Droppable implements DroppableInterface {
    *
    * @param id -
    */
-  isIDEligible2Move(id: string) {
+  private isIDEligible2Move(id: string) {
     return id && id !== this.draggable.draggedElm.id;
   }
 
-  switchElement() {
+  private switchElement() {
     const elmIndex = this.draggable.tempIndex + -1 * this.effectedElemDirection;
     const id = this.draggable.siblingsList![elmIndex];
 
@@ -198,7 +225,7 @@ class Droppable implements DroppableInterface {
    *
    * @param i - index
    */
-  movePositionIfEligibleID(i: number) {
+  private movePositionIfEligibleID(i: number) {
     const id = this.draggable.siblingsList![i];
 
     if (this.isIDEligible2Move(id)) {
@@ -206,7 +233,7 @@ class Droppable implements DroppableInterface {
     }
   }
 
-  liftUp() {
+  private liftUp() {
     const from = this.draggable.tempIndex + 1;
     this.draggable.tempIndex = -1;
 
@@ -219,13 +246,13 @@ class Droppable implements DroppableInterface {
    *
    * @param to - index
    */
-  moveDown(to: number) {
+  private moveDown(to: number) {
     for (let i = this.draggable.siblingsList!.length - 1; i >= to; i -= 1) {
       this.movePositionIfEligibleID(i);
     }
   }
 
-  draggedOutPosition() {
+  private draggedOutPosition() {
     if (
       this.draggable.isOutHorizontal ||
       this.draggable.isDraggedLeavingFromTop()
@@ -284,7 +311,7 @@ class Droppable implements DroppableInterface {
     }
   }
 
-  unlockParent() {
+  private unlockParent() {
     this.isListLocked = false;
   }
 
@@ -292,7 +319,7 @@ class Droppable implements DroppableInterface {
    *
    * @param y -
    */
-  draggedIsComingIn(y: number) {
+  private draggedIsComingIn(y: number) {
     /**
      * If tempIndex is zero, the dragged is coming from the top. So, move them
      * down all: to=0

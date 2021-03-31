@@ -6,7 +6,7 @@ import type { DraggableDnDInterface } from "../Draggable";
 import Droppable from "./Droppable";
 
 class EndDroppable extends Droppable {
-  spliceAt: number;
+  private spliceAt: number;
 
   constructor(draggable: DraggableDnDInterface) {
     super(draggable);
@@ -31,7 +31,7 @@ class EndDroppable extends Droppable {
    * @param lst -
    * @param i -
    */
-  undoElmTranslate(lst: ELmBranch, i: number) {
+  private undoElmTranslate(lst: ELmBranch, i: number) {
     const elmID = lst[i];
 
     if (elmID) {
@@ -52,7 +52,7 @@ class EndDroppable extends Droppable {
    * Undo list elements order and instances including translateX/Y and indexes
    * locally.
    */
-  undoList(lst: Array<string>) {
+  private undoList(lst: Array<string>) {
     const {
       order: { self: from },
       id: draggedID,
@@ -80,7 +80,7 @@ class EndDroppable extends Droppable {
   endDragging() {
     // TODO: Add tests to cover dragged whiteout parents
     if (
-      !this.draggable.siblingsList !== null &&
+      this.draggable.siblingsList !== null &&
       this.draggable.isSiblingsTransformed()
     ) {
       const siblings = this.getSiblings();

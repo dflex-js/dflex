@@ -42,7 +42,7 @@ class DnD extends Droppable {
 
     const siblingsBoundaries = store.siblingsBoundaries[sK];
 
-    const options = opts;
+    const options = { ...opts };
 
     (Object.keys(defaultOpts) as Array<keyof typeof defaultOpts>).forEach(
       (props) => {
