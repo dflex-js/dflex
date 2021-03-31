@@ -69,8 +69,8 @@ export interface DraggableDnDInterface extends DraggableBaseInterface {
   innerOffsetX: number;
   innerOffsetY: number;
   tempOffset: TempOffset;
-  occupiedOffset: TempOffset;
-  occupiedTranslate: TempTranslate;
+  // occupiedOffset: TempOffset;
+  // occupiedTranslate: TempTranslate;
   prevY: number;
   numberOfElementsTransformed: number;
   isMovingDown: boolean;

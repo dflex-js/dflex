@@ -79,15 +79,14 @@ class EndDroppable extends Droppable {
 
   endDragging() {
     // TODO: Add tests to cover dragged whiteout parents
-    // if (
-    //   !this.draggable.siblingsList !== null &&
-    //   this.draggable.isSiblingsTransformed()
-    // ) {
-    //   const siblings = this.getSiblings();
-    //   console.log("hohho");
+    if (
+      !this.draggable.siblingsList !== null &&
+      this.draggable.isSiblingsTransformed()
+    ) {
+      const siblings = this.getSiblings();
 
-    //   if (Array.isArray(siblings)) this.undoList(siblings);
-    // }
+      if (Array.isArray(siblings)) this.undoList(siblings);
+    }
 
     this.draggable.endDragging(this.draggedYSpace);
   }

@@ -50,34 +50,34 @@ class Droppable {
     this.effectedElemDirection = isUp ? -1 : 1;
   }
 
-  private updateOccupiedOffset(elmTop: number) {
-    console.log(this.effectedElemDirection);
+  // private updateOccupiedOffset(elmTop: number) {
+  //   console.log(this.effectedElemDirection);
 
-    this.draggable.occupiedTranslate.translateY += 1 * this.draggedYSpace;
+  //   this.draggable.occupiedTranslate.translateY += 1 * this.draggedYSpace;
 
-    this.draggable.occupiedTranslate.translateX += 0;
+  //   this.draggable.occupiedTranslate.translateX += 0;
 
-    const { currentTop, currentLeft } = this.draggable.draggedElm;
-    console.log("file: Droppable.ts ~ line 65 ~ currentTop", currentTop);
+  //   const { currentTop, currentLeft } = this.draggable.draggedElm;
+  //   console.log("file: Droppable.ts ~ line 65 ~ currentTop", currentTop);
 
-    /**
-     * This offset related directly to translate Y and Y. It's isolated from
-     * element current offset and effects only top and left.
-     */
-    this.draggable.occupiedOffset.currentTop = elmTop;
-    this.draggable.occupiedOffset.currentLeft =
-      currentLeft + this.draggable.occupiedTranslate.translateX;
+  //   /**
+  //    * This offset related directly to translate Y and Y. It's isolated from
+  //    * element current offset and effects only top and left.
+  //    */
+  //   this.draggable.occupiedOffset.currentTop = elmTop;
+  //   this.draggable.occupiedOffset.currentLeft =
+  //     currentLeft + this.draggable.occupiedTranslate.translateX;
 
-    console.log("occupiedOffset", this.draggable.occupiedOffset);
-    console.log(
-      "file: Droppable.ts ~ line 57 ~ this.draggable.occupiedTranslate.translateY ",
-      this.draggable.occupiedTranslate.translateY
-    );
-    console.log(
-      "file: Droppable.ts ~ line 61 ~ this.draggedYSpace",
-      this.draggedYSpace
-    );
-  }
+  //   console.log("occupiedOffset", this.draggable.occupiedOffset);
+  //   console.log(
+  //     "file: Droppable.ts ~ line 57 ~ this.draggable.occupiedTranslate.translateY ",
+  //     this.draggable.occupiedTranslate.translateY
+  //   );
+  //   console.log(
+  //     "file: Droppable.ts ~ line 61 ~ this.draggedYSpace",
+  //     this.draggedYSpace
+  //   );
+  // }
 
   /**
    * Updates element instance and calculates the required transform distance. It
@@ -85,7 +85,7 @@ class Droppable {
    *
    * @param id -
    */
-  private updateElement(id: string) {
+  updateElement(id: string) {
     const element = store.getElmById(id);
 
     /**
@@ -100,34 +100,31 @@ class Droppable {
      * elm3. That's mean, escaping elm1 from the loop because it's not
      * isQualified. So, all elements will be lifted up except elm1.
      */
-    // if (true) {
-    const { currentLeft: elmLeft, currentTop: elmTop } = element;
+    if (!this.isFoundBreakingPoint) {
+      const { currentLeft: elmLeft, currentTop: elmTop } = element;
 
-    const {
-      occupiedOffset: { currentLeft: draggedLeft, currentTop: draggedTop },
-    } = this.draggable;
+      const {
+        draggedElm: { currentLeft: draggedLeft, currentTop: draggedTop },
+      } = this.draggable;
 
-    /**
-     * Sets the transform value by calculating offset difference from
-     * the first braking point between element and dragged. It's done once
-     * and for all.
-     *
-     * This value represents the amount of pixels the element will move
-     * up or down.
-     *
-     * This step here do the trick: By measuring the space toY
-     * the next element margin will be included.
-     */
-    this.draggedYSpace = Math.abs(elmTop - draggedTop);
+      /**
+       * Sets the transform value by calculating offset difference from
+       * the first braking point between element and dragged. It's done once
+       * and for all.
+       *
+       * This value represents the amount of pixels the element will move
+       * up or down.
+       *
+       * This step here do the trick: By measuring the space toY
+       * the next element margin will be included.
+       */
+      this.draggedYSpace = Math.abs(elmTop - draggedTop);
+      this.elmYSpace = this.draggedYSpace;
 
-    this.elmYSpace = this.draggedYSpace;
+      this.leftDifference = Math.abs(elmLeft - draggedLeft);
 
-    this.leftDifference = Math.abs(elmLeft - draggedLeft);
-
-    // this.isFoundBreakingPoint = true;
-
-    this.updateOccupiedOffset(elmTop);
-    // }
+      this.isFoundBreakingPoint = true;
+    }
 
     this.draggable.incNumOfElementsTransformed(this.effectedElemDirection);
 
