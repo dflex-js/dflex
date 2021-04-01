@@ -285,53 +285,52 @@ class Draggable extends Base implements DraggableDnDInterface {
        * dragged depends on extra instance to float in layout that is not related to element
        * instance.
        */
-
-      this.draggedElm.transformElm();
-
-      if (this.siblingsList) {
-        this.draggedElm.assignNewPosition(
-          this.siblingsList,
-          this.draggedElm.order.self
-        );
-      }
-
-      return;
+      // this.draggedElm.transformElm();
+      // if (this.siblingsList) {
+      //   this.draggedElm.assignNewPosition(
+      //     this.siblingsList,
+      //     this.draggedElm.order.self
+      //   );
+      // }
+      // return;
     }
 
-    // this.draggedElm.currentTop = this.occupiedOffset.currentTop;
-    // this.draggedElm.currentLeft += this.occupiedOffset.currentLeft;
+    this.draggedElm.currentTop = this.occupiedOffset.currentTop;
+    this.draggedElm.currentLeft += this.occupiedOffset.currentLeft;
 
-    // this.draggedElm.translateX = this.occupiedTranslate.translateX;
-    // this.draggedElm.translateY = this.occupiedTranslate.translateY;
+    this.draggedElm.translateX = this.occupiedTranslate.translateX;
+    this.draggedElm.translateY = this.occupiedTranslate.translateY;
 
-    // this.draggedElm.transformElm();
+    this.draggedElm.transformElm();
 
-    // if (this.siblingsList) {
-    //   this.draggedElm.assignNewPosition(this.siblingsList, this.tempIndex);
-    // }
+    console.log("tempIndex", this.tempIndex);
 
-    const draggedDirection =
-      this.tempIndex < this.draggedElm.order.self ? -1 : 1;
+    if (this.siblingsList) {
+      this.draggedElm.assignNewPosition(this.siblingsList, this.tempIndex);
+    }
 
-    this.numberOfElementsTransformed = Math.abs(
-      this.numberOfElementsTransformed
-    );
+    // const draggedDirection =
+    //   this.tempIndex < this.draggedElm.order.self ? -1 : 1;
 
-    /**
-     * Move to new droppable position.
-     *
-     * We already have translate value in for dragged in goX/goY but it is
-     * related to mouse dragging. Instead, we want to translate to droppable
-     * element that is replaced by dragged.
-     */
-    this.draggedElm.setYPosition(
-      this.siblingsList,
-      draggedDirection,
-      this.numberOfElementsTransformed * topDifference,
-      this.operationID,
-      this.numberOfElementsTransformed,
-      false
-    );
+    // this.numberOfElementsTransformed = Math.abs(
+    //   this.numberOfElementsTransformed
+    // );
+
+    // /**
+    //  * Move to new droppable position.
+    //  *
+    //  * We already have translate value in for dragged in goX/goY but it is
+    //  * related to mouse dragging. Instead, we want to translate to droppable
+    //  * element that is replaced by dragged.
+    //  */
+    // this.draggedElm.setYPosition(
+    //   this.siblingsList,
+    //   draggedDirection,
+    //   this.numberOfElementsTransformed * topDifference,
+    //   this.operationID,
+    //   this.numberOfElementsTransformed,
+    //   false
+    // );
   }
 
   /**
@@ -341,6 +340,8 @@ class Draggable extends Base implements DraggableDnDInterface {
     this.setDragged(false);
 
     this.setDraggedPosition(topDifference);
+
+    // store.getElmSiblingsById()
   }
 }
 

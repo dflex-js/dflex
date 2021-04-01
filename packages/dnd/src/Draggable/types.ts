@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import type { CoreInstanceInterface, Offset } from "@dflex/core-instance";
+import type { CoreInstanceInterface } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
 import type { AbstractDraggableInterface } from "@dflex/draggable";
 

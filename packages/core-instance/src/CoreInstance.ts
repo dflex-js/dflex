@@ -144,8 +144,9 @@ class CoreInstance
    *
    * @param i - index
    */
-  private updateIndex(i: number) {
+  private updateOrderIndexing(i: number) {
     const { self: oldIndex } = this.order;
+    console.log("file: CoreInstance.ts ~ line 149 ~ self", this.order);
 
     const newIndex = oldIndex + i;
 
@@ -159,8 +160,12 @@ class CoreInstance
     newIndex: number,
     oldIndex?: number
   ) {
+    // if (newIndex >= 0) {
     branchIDsOrder[newIndex] = this.id;
     if (oldIndex !== undefined) branchIDsOrder[oldIndex] = "";
+    // }
+
+    console.log("branchIDsOrder", branchIDsOrder);
   }
 
   /**
@@ -211,7 +216,7 @@ class CoreInstance
   ) {
     this.seTranslate(sign * topSpace, operationID);
 
-    const { oldIndex, newIndex } = this.updateIndex(sign * vIncrement);
+    const { oldIndex, newIndex } = this.updateOrderIndexing(sign * vIncrement);
 
     this.assignNewPosition(
       iDsInOrder,
@@ -239,7 +244,7 @@ class CoreInstance
     const increment = topSpace > 0 ? 1 : -1;
 
     this.seTranslate(topSpace);
-    this.updateIndex(increment);
+    this.updateOrderIndexing(increment);
   }
 }
 

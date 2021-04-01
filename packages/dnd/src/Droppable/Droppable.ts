@@ -1,6 +1,9 @@
+import type { CoreInstanceInterface } from "@dflex/core-instance";
+
 import store from "../DnDStore";
 
 import type { DraggableDnDInterface } from "../Draggable";
+
 /**
  * Class includes all transformation methods related to droppable.
  */
@@ -63,6 +66,34 @@ class Droppable {
     this.draggable.occupiedOffset.currentLeft = elmLeft;
   }
 
+  private calculateYDistance(element: CoreInstanceInterface) {
+    const { currentLeft: elmLeft, currentTop: elmTop } = element;
+
+    const {
+      occupiedOffset: { currentLeft: draggedLeft, currentTop: draggedTop },
+    } = this.draggable;
+
+    /**
+     * Sets the transform value by calculating offset difference from
+     * the first braking point between element and dragged. It's done once
+     * and for all.
+     *
+     * This value represents the amount of pixels the element will move
+     * up or down.
+     *
+     * This step here do the trick: By measuring the space toY
+     * the next element margin will be included.
+     */
+    this.draggedYSpace = Math.abs(elmTop - draggedTop);
+    this.elmYSpace = this.draggedYSpace;
+
+    this.leftDifference = Math.abs(elmLeft - draggedLeft);
+
+    this.isFoundBreakingPoint = true;
+
+    this.updateOccupiedOffset(elmTop, elmLeft);
+  }
+
   /**
    * Updates element instance and calculates the required transform distance. It
    * invokes for each eligible element in the parent container.
@@ -72,45 +103,7 @@ class Droppable {
   updateElement(id: string) {
     const element = store.getElmById(id);
 
-    /**
-     * breakingPoint detects the first element that comes immediately
-     * after dragged. Not in original order, but according to isQualified result.
-     *
-     * The problem:
-     *
-     * Supposed we moved elem1 to the last. And we have in order,
-     * elm2/elm3/elm4/elm1.
-     * Now, we pulled elem2 out of the parent and isQualified is triggered at
-     * elm3. That's mean, escaping elm1 from the loop because it's not
-     * isQualified. So, all elements will be lifted up except elm1.
-     */
-    if (!this.isFoundBreakingPoint) {
-      const { currentLeft: elmLeft, currentTop: elmTop } = element;
-
-      const {
-        occupiedOffset: { currentLeft: draggedLeft, currentTop: draggedTop },
-      } = this.draggable;
-
-      /**
-       * Sets the transform value by calculating offset difference from
-       * the first braking point between element and dragged. It's done once
-       * and for all.
-       *
-       * This value represents the amount of pixels the element will move
-       * up or down.
-       *
-       * This step here do the trick: By measuring the space toY
-       * the next element margin will be included.
-       */
-      this.draggedYSpace = Math.abs(elmTop - draggedTop);
-      this.elmYSpace = this.draggedYSpace;
-
-      this.leftDifference = Math.abs(elmLeft - draggedLeft);
-
-      this.isFoundBreakingPoint = true;
-
-      this.updateOccupiedOffset(elmTop, elmLeft);
-    }
+    this.calculateYDistance(element);
 
     this.draggable.incNumOfElementsTransformed(this.effectedElemDirection);
 
@@ -202,6 +195,10 @@ class Droppable {
 
     if (this.isIDEligible2Move(id)) {
       this.draggable.tempIndex = elmIndex;
+      console.log(
+        "file: Droppable.ts ~ line 198 ~ here is going to update temp index",
+        elmIndex
+      );
 
       this.updateElement(id);
     }
