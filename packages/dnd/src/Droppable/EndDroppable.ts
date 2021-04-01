@@ -15,19 +15,6 @@ class EndDroppable extends Droppable {
 
   /**
    *
-   */
-  getSiblings() {
-    const {
-      keys: { sK },
-    } = store.getElmById(this.draggable.draggedElm.id);
-
-    const siblings = store.getElmBranchByKey(sK);
-
-    return siblings;
-  }
-
-  /**
-   *
    * @param lst -
    * @param i -
    */
@@ -83,7 +70,7 @@ class EndDroppable extends Droppable {
       this.draggable.siblingsList !== null &&
       this.draggable.isSiblingsTransformed()
     ) {
-      const siblings = this.getSiblings();
+      const siblings = store.getElmSiblingsById(this.draggable.draggedElm.id);
 
       if (Array.isArray(siblings)) this.undoList(siblings);
     }
