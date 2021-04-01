@@ -10,7 +10,7 @@ import type {
   DraggableDnDInterface,
   TempOffset,
   Threshold,
-  // TempTranslate,
+  TempTranslate,
   DraggableOpts,
 } from "./types";
 
@@ -21,9 +21,9 @@ class Draggable extends Base implements DraggableDnDInterface {
 
   tempOffset: TempOffset;
 
-  // occupiedOffset: TempOffset;
+  occupiedOffset: TempOffset;
 
-  // occupiedTranslate: TempTranslate;
+  occupiedTranslate: TempTranslate;
 
   prevY: number;
 
@@ -55,15 +55,15 @@ class Draggable extends Base implements DraggableDnDInterface {
       currentTop: this.draggedElm.currentTop,
     };
 
-    // this.occupiedOffset = {
-    //   currentLeft: this.draggedElm.currentLeft,
-    //   currentTop: this.draggedElm.currentTop,
-    // };
+    this.occupiedOffset = {
+      currentLeft: this.draggedElm.currentLeft,
+      currentTop: this.draggedElm.currentTop,
+    };
 
-    // this.occupiedTranslate = {
-    //   translateX: this.draggedElm.translateX,
-    //   translateY: this.draggedElm.translateY,
-    // };
+    this.occupiedTranslate = {
+      translateX: this.draggedElm.translateX,
+      translateY: this.draggedElm.translateY,
+    };
 
     /**
      * previous X and Y are used to calculate mouse directions.
