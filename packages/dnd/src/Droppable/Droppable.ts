@@ -50,34 +50,18 @@ class Droppable {
     this.effectedElemDirection = isUp ? -1 : 1;
   }
 
-  // private updateOccupiedOffset(elmTop: number) {
-  //   console.log(this.effectedElemDirection);
+  private updateOccupiedOffset(elmTop: number, elmLeft: number) {
+    const draggedDirection =
+      this.draggable.tempIndex < this.draggable.draggedElm.order.self ? -1 : 1;
 
-  //   this.draggable.occupiedTranslate.translateY += 1 * this.draggedYSpace;
+    this.draggable.occupiedTranslate.translateY +=
+      draggedDirection * this.draggedYSpace;
 
-  //   this.draggable.occupiedTranslate.translateX += 0;
+    this.draggable.occupiedTranslate.translateX += 0;
 
-  //   const { currentTop, currentLeft } = this.draggable.draggedElm;
-  //   console.log("file: Droppable.ts ~ line 65 ~ currentTop", currentTop);
-
-  //   /**
-  //    * This offset related directly to translate Y and Y. It's isolated from
-  //    * element current offset and effects only top and left.
-  //    */
-  //   this.draggable.occupiedOffset.currentTop = elmTop;
-  //   this.draggable.occupiedOffset.currentLeft =
-  //     currentLeft + this.draggable.occupiedTranslate.translateX;
-
-  //   console.log("occupiedOffset", this.draggable.occupiedOffset);
-  //   console.log(
-  //     "file: Droppable.ts ~ line 57 ~ this.draggable.occupiedTranslate.translateY ",
-  //     this.draggable.occupiedTranslate.translateY
-  //   );
-  //   console.log(
-  //     "file: Droppable.ts ~ line 61 ~ this.draggedYSpace",
-  //     this.draggedYSpace
-  //   );
-  // }
+    this.draggable.occupiedOffset.currentTop = elmTop;
+    this.draggable.occupiedOffset.currentLeft = elmLeft;
+  }
 
   /**
    * Updates element instance and calculates the required transform distance. It
@@ -104,7 +88,7 @@ class Droppable {
       const { currentLeft: elmLeft, currentTop: elmTop } = element;
 
       const {
-        draggedElm: { currentLeft: draggedLeft, currentTop: draggedTop },
+        occupiedOffset: { currentLeft: draggedLeft, currentTop: draggedTop },
       } = this.draggable;
 
       /**
@@ -124,6 +108,8 @@ class Droppable {
       this.leftDifference = Math.abs(elmLeft - draggedLeft);
 
       this.isFoundBreakingPoint = true;
+
+      this.updateOccupiedOffset(elmTop, elmLeft);
     }
 
     this.draggable.incNumOfElementsTransformed(this.effectedElemDirection);
