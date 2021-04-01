@@ -2,7 +2,6 @@
 import type { CoreInstanceInterface, Offset } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
 import type { ElmInstance } from "@dflex/store";
-import Tracker from "./Tracker";
 
 export interface BoundariesOffset {
   height: number;
@@ -21,15 +20,16 @@ export interface ElmTree {
   };
 }
 
+export interface Translate {
+  translateX: number;
+  translateY: number;
+}
+
 export interface DnDStoreInterface {
   reattachElmRef(id: string, elmRef: HTMLElement): void;
   register(element: ElmInstance): void;
   getELmOffsetById(id: string): Offset;
-  getELmTranslateById(
-    id: string
-  ): {
-    translateX: number;
-    translateY: number;
-  };
+  getELmTranslateById(id: string): Translate;
   getElmTreeById(id: string): ElmTree;
+  getElmSiblingsById(id: string): ELmBranch;
 }

@@ -105,6 +105,18 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     return { translateX, translateY };
   }
 
+  getElmSiblingsById(id: string) {
+    const element = this.getElmById(id);
+
+    const {
+      keys: { sK },
+    } = element;
+
+    const siblings = this.getElmBranchByKey(sK);
+
+    return siblings;
+  }
+
   /**
    * Gets element connections instance for a given id.
    *
