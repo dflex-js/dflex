@@ -33,9 +33,9 @@ class Draggable extends Base implements DraggableDnDInterface {
 
   isMovingDown: boolean;
 
-  isOutPositionH: boolean;
+  isOutPositionHorizontally: boolean;
 
-  isOutContainerH: boolean;
+  isOutSiblingsHorizontally: boolean;
 
   axesFilterNeeded: boolean;
 
@@ -81,8 +81,8 @@ class Draggable extends Base implements DraggableDnDInterface {
 
     this.isMovingDown = false;
 
-    this.isOutPositionH = false;
-    this.isOutContainerH = false;
+    this.isOutPositionHorizontally = false;
+    this.isOutSiblingsHorizontally = false;
 
     const $ = this.opts.restrictions;
 
@@ -210,42 +210,21 @@ class Draggable extends Base implements DraggableDnDInterface {
     if (!$) return false;
 
     if (this.isOutH($)) {
-      this.isOutPositionH = true;
+      if (!siblingsK) this.isOutPositionHorizontally = true;
+      else this.isOutSiblingsHorizontally = true;
 
       return true;
     }
 
     if (this.isOutV($)) {
-      this.isOutPositionH = false;
+      if (!siblingsK) this.isOutPositionHorizontally = false;
+      else this.isOutSiblingsHorizontally = false;
 
       return true;
     }
 
-    this.isOutPositionH = false;
-
-    return false;
-  }
-
-  isDraggedOutSiblings(siblingsK: string) {
-    const { siblings } = this.thresholds;
-
-    const $ = siblings[siblingsK];
-
-    if (!$) return false;
-
-    if (this.isOutH($)) {
-      this.isOutContainerH = true;
-
-      return true;
-    }
-
-    if (this.isOutV($)) {
-      this.isOutContainerH = false;
-
-      return true;
-    }
-
-    this.isOutContainerH = false;
+    if (!siblingsK) this.isOutPositionHorizontally = false;
+    else this.isOutSiblingsHorizontally = false;
 
     return false;
   }
@@ -256,7 +235,7 @@ class Draggable extends Base implements DraggableDnDInterface {
   isDraggedLeavingFromTop() {
     return (
       this.isDraggedFirstOrOutside() &&
-      !this.isOutPositionH &&
+      !this.isOutSiblingsHorizontally &&
       !this.isMovingDown
     );
   }
@@ -265,7 +244,11 @@ class Draggable extends Base implements DraggableDnDInterface {
    * Checks if dragged is the last child and going down.
    */
   isDraggedLeavingFromBottom() {
-    return this.isDraggedLastELm() && !this.isOutPositionH && this.isMovingDown;
+    return (
+      this.isDraggedLastELm() &&
+      !this.isOutSiblingsHorizontally &&
+      this.isMovingDown
+    );
   }
 
   isSiblingsTransformed() {

@@ -1,6 +1,6 @@
 {
   "name": "@dflex/dnd",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",

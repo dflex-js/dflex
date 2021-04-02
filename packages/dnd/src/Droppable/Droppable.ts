@@ -239,14 +239,7 @@ class Droppable {
   }
 
   private draggedOutPosition() {
-    if (
-      this.draggable.isOutPositionH ||
-      this.draggable.isDraggedLeavingFromTop()
-    ) {
-      console.log("lift up..............");
-      console.log(this.draggable.isDraggedLeavingFromTop());
-      console.log(this.draggable.isOutPositionH);
-
+    if (this.draggable.isDraggedLeavingFromTop()) {
       /**
        * If leaving and parent locked, do nothing.
        */
@@ -276,7 +269,7 @@ class Droppable {
       /**
        * Going out from the list: Right/left.
        */
-      if (this.draggable.isOutPositionH) {
+      if (this.draggable.isOutPositionHorizontally) {
         // Is is out parent?
 
         // move element up
