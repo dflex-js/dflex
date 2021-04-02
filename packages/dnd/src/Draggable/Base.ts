@@ -196,7 +196,7 @@ class Base
      */
     $.maxRight = left + horizontal;
 
-    console.log($, siblingsK);
+    console.log($, { siblingsK }, { top, left, height });
   }
 
   /**

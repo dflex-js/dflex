@@ -112,7 +112,7 @@ class Droppable {
     this.draggable.incNumOfElementsTransformed(this.effectedElemDirection);
 
     if (true) {
-      console.log("update threshold", element.id);
+      console.log("update threshold", element);
 
       /**
        * By updating the dragged translate, we guarantee that dragged
@@ -226,7 +226,7 @@ class Droppable {
     const from = this.draggable.tempIndex + 1;
     this.draggable.tempIndex = -1;
     console.log("wow");
-
+    debugger;
     for (let i = from; i < this.draggable.siblingsList!.length; i += 1) {
       this.movePositionIfEligibleID(i);
     }
