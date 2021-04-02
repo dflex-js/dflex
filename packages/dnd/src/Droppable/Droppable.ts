@@ -327,7 +327,33 @@ class Droppable {
      * Otherwise, detect where it coming from and update tempIndex
      * accordingly.
      */
-    if (this.draggable.tempIndex < 0) {
+    if (this.draggable.tempIndex !== 0) {
+      const { sK } = store.getElmById(this.draggable.draggedElm.id).keys;
+
+      /**
+       * Are you last element and outside the container? If so, get the f**k out
+       * of here.
+       */
+      if (
+        this.draggable.isDraggedLastELm() &&
+        this.draggable.tempOffset.currentTop >
+          this.draggable.thresholds.siblings[sK].maxBottom
+      ) {
+        return;
+      }
+
+      /**
+       * Are you coming from top and outside the container? Everyone clam down.
+       * we've got this.
+       */
+      if (
+        this.draggable.tempIndex < 0 &&
+        this.draggable.tempOffset.currentTop <
+          this.draggable.thresholds.siblings[sK].maxTop
+      ) {
+        return;
+      }
+
       to = this.detectDroppableIndex();
       if (typeof to !== "number" || to === this.draggable.tempIndex) return;
       this.draggable.tempIndex = to;
@@ -389,6 +415,7 @@ class Droppable {
 
       // // when it's out, and on of theses is true then it's happening.
       if (!isOutSiblingsContainer) {
+        // debugger;
         this.draggedIsComingIn(y);
 
         return;
