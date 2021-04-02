@@ -165,7 +165,7 @@ class Base
 
       $ = this.thresholds.siblings[siblingsK];
 
-      $.maxBottom = top + height - vertical;
+      $.maxBottom = height - vertical;
     } else {
       $ = this.thresholds.dragged;
 
