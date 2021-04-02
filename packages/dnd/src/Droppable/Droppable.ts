@@ -57,10 +57,6 @@ class Droppable {
     const draggedDirection =
       this.draggable.tempIndex < this.draggable.draggedElm.order.self ? -1 : 1;
 
-    console.log(
-      "file: Droppable.ts ~ line 58 ~ draggedDirection",
-      draggedDirection
-    );
     this.draggable.occupiedTranslate.translateY +=
       draggedDirection * this.draggedYSpace;
 
@@ -111,7 +107,7 @@ class Droppable {
 
     this.draggable.incNumOfElementsTransformed(this.effectedElemDirection);
 
-    if (true) {
+    if (!this.isListLocked) {
       console.log("update threshold", element);
 
       /**
@@ -179,6 +175,8 @@ class Droppable {
         if (isQualified) {
           droppableIndex = i;
 
+          // this.updateOccupiedOffset(element.currentTop, element.currentLeft);
+
           break;
         }
       }
@@ -225,7 +223,6 @@ class Droppable {
   private liftUp() {
     const from = this.draggable.tempIndex + 1;
     this.draggable.tempIndex = -1;
-    console.log("wow");
 
     for (let i = from; i < this.draggable.siblingsList!.length; i += 1) {
       this.movePositionIfEligibleID(i);
@@ -249,12 +246,12 @@ class Droppable {
        */
 
       // move element up
-      // this.setEffectedElemDirection(true);
+      this.setEffectedElemDirection(true);
 
       // lock the parent
-      // this.isListLocked = true;
+      this.isListLocked = true;
 
-      // this.liftUp();
+      this.liftUp();
 
       return;
     }

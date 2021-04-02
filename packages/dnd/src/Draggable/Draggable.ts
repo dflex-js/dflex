@@ -307,14 +307,14 @@ class Draggable extends Base implements DraggableDnDInterface {
        * dragged depends on extra instance to float in layout that is not related to element
        * instance.
        */
-      // this.draggedElm.transformElm();
-      // if (this.siblingsList) {
-      //   this.draggedElm.assignNewPosition(
-      //     this.siblingsList,
-      //     this.draggedElm.order.self
-      //   );
-      // }
-      // return;
+      this.draggedElm.transformElm();
+      if (this.siblingsList) {
+        this.draggedElm.assignNewPosition(
+          this.siblingsList,
+          this.draggedElm.order.self
+        );
+      }
+      return;
     }
 
     this.draggedElm.currentTop = this.occupiedOffset.currentTop;
