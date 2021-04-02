@@ -253,10 +253,7 @@ class Droppable {
   }
 
   private draggedOutPosition() {
-    if (
-      this.draggable.isOutHorizontal ||
-      this.draggable.isDraggedLeavingFromTop()
-    ) {
+    if (this.draggable.isDraggedLeavingFromTop()) {
       /**
        * If leaving and parent locked, do nothing.
        */
@@ -286,7 +283,7 @@ class Droppable {
       /**
        * Going out from the list: Right/left.
        */
-      if (this.draggable.isOutHorizontal) {
+      if (this.draggable.isOutPositionHorizontally) {
         // Is is out parent?
 
         // move element up

@@ -33,7 +33,9 @@ class Draggable extends Base implements DraggableDnDInterface {
 
   isMovingDown: boolean;
 
-  isOutHorizontal: boolean;
+  isOutPositionHorizontally: boolean;
+
+  isOutSiblingsHorizontally: boolean;
 
   axesFilterNeeded: boolean;
 
@@ -79,7 +81,8 @@ class Draggable extends Base implements DraggableDnDInterface {
 
     this.isMovingDown = false;
 
-    this.isOutHorizontal = false;
+    this.isOutPositionHorizontally = false;
+    this.isOutSiblingsHorizontally = false;
 
     const $ = this.opts.restrictions;
 
@@ -207,18 +210,21 @@ class Draggable extends Base implements DraggableDnDInterface {
     if (!$) return false;
 
     if (this.isOutH($)) {
-      this.isOutHorizontal = true;
+      if (!siblingsK) this.isOutPositionHorizontally = true;
+      else this.isOutSiblingsHorizontally = true;
 
       return true;
     }
 
     if (this.isOutV($)) {
-      this.isOutHorizontal = false;
+      if (!siblingsK) this.isOutPositionHorizontally = false;
+      else this.isOutSiblingsHorizontally = false;
 
       return true;
     }
 
-    this.isOutHorizontal = false;
+    if (!siblingsK) this.isOutPositionHorizontally = false;
+    else this.isOutSiblingsHorizontally = false;
 
     return false;
   }
@@ -229,7 +235,7 @@ class Draggable extends Base implements DraggableDnDInterface {
   isDraggedLeavingFromTop() {
     return (
       this.isDraggedFirstOrOutside() &&
-      !this.isOutHorizontal &&
+      !this.isOutSiblingsHorizontally &&
       !this.isMovingDown
     );
   }
@@ -239,7 +245,9 @@ class Draggable extends Base implements DraggableDnDInterface {
    */
   isDraggedLeavingFromBottom() {
     return (
-      this.isDraggedLastELm() && !this.isOutHorizontal && this.isMovingDown
+      this.isDraggedLastELm() &&
+      !this.isOutSiblingsHorizontally &&
+      this.isMovingDown
     );
   }
 
