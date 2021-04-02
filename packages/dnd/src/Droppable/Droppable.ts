@@ -327,7 +327,7 @@ class Droppable {
      * Otherwise, detect where it coming from and update tempIndex
      * accordingly.
      */
-    if (this.draggable.tempIndex !== 0) {
+    if (this.draggable.tempIndex < 0) {
       to = this.detectDroppableIndex();
       if (typeof to !== "number" || to === this.draggable.tempIndex) return;
       this.draggable.tempIndex = to;
