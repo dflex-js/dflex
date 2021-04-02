@@ -181,6 +181,17 @@ class Draggable extends Base implements DraggableDnDInterface {
    * @param $ -
    */
   private isOutH($: Threshold) {
+    console.log(
+      this.tempOffset.currentLeft,
+      $.maxLeft,
+
+      "left",
+      this.tempOffset.currentLeft < $.maxLeft,
+
+      "right",
+      this.tempOffset.currentLeft > $.maxRight
+    );
+
     return (
       this.tempOffset.currentLeft < $.maxLeft ||
       this.tempOffset.currentLeft > $.maxRight
@@ -210,8 +221,11 @@ class Draggable extends Base implements DraggableDnDInterface {
     if (!$) return false;
 
     if (this.isOutH($)) {
-      if (!siblingsK) this.isOutPositionHorizontally = true;
-      else this.isOutSiblingsHorizontally = true;
+      if (!siblingsK) {
+        console.log("isOutPositionHorizontally!! ", $);
+
+        this.isOutPositionHorizontally = true;
+      } else this.isOutSiblingsHorizontally = true;
 
       return true;
     }
@@ -304,6 +318,10 @@ class Draggable extends Base implements DraggableDnDInterface {
     }
 
     this.draggedElm.currentTop = this.occupiedOffset.currentTop;
+    console.log(
+      "file: Draggable.ts ~ line 310 ~ this.draggedElm.currentTop",
+      this.draggedElm.currentTop
+    );
     this.draggedElm.currentLeft += this.occupiedOffset.currentLeft;
 
     this.draggedElm.translateX = this.occupiedTranslate.translateX;

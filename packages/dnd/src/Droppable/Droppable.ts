@@ -57,6 +57,10 @@ class Droppable {
     const draggedDirection =
       this.draggable.tempIndex < this.draggable.draggedElm.order.self ? -1 : 1;
 
+    console.log(
+      "file: Droppable.ts ~ line 58 ~ draggedDirection",
+      draggedDirection
+    );
     this.draggable.occupiedTranslate.translateY +=
       draggedDirection * this.draggedYSpace;
 
@@ -108,7 +112,7 @@ class Droppable {
     this.draggable.incNumOfElementsTransformed(this.effectedElemDirection);
 
     if (true) {
-      console.log("update threshold");
+      console.log("update threshold", element.id);
 
       /**
        * By updating the dragged translate, we guarantee that dragged
@@ -365,11 +369,7 @@ class Droppable {
     this.draggable.setDraggedMovingDown(y);
 
     if (this.draggable.isDraggedOut()) {
-      console.log("here, alpha!");
-
       if (!this.isListLocked) {
-        console.log("here, beta!");
-
         this.draggedOutPosition();
 
         return;

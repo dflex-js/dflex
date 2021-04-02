@@ -195,6 +195,8 @@ class Base
      * taking into considerations (+ horizontal).
      */
     $.maxRight = left + horizontal;
+
+    console.log($, siblingsK);
   }
 
   /**
