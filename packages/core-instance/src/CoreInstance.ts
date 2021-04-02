@@ -146,7 +146,6 @@ class CoreInstance
    */
   private updateOrderIndexing(i: number) {
     const { self: oldIndex } = this.order;
-    console.log("file: CoreInstance.ts ~ line 149 ~ self", this.order);
 
     const newIndex = oldIndex + i;
 
@@ -160,9 +159,11 @@ class CoreInstance
     newIndex: number,
     oldIndex?: number
   ) {
+    // TODO: Add this to confusion mode:newIndex >= 0)
     // if (newIndex >= 0) {
     branchIDsOrder[newIndex] = this.id;
     if (oldIndex !== undefined) branchIDsOrder[oldIndex] = "";
+
     // }
 
     console.log("branchIDsOrder", branchIDsOrder);

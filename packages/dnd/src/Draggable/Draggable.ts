@@ -33,7 +33,9 @@ class Draggable extends Base implements DraggableDnDInterface {
 
   isMovingDown: boolean;
 
-  isOutHorizontal: boolean;
+  isOutPositionH: boolean;
+
+  isOutContainerH: boolean;
 
   axesFilterNeeded: boolean;
 
@@ -79,7 +81,8 @@ class Draggable extends Base implements DraggableDnDInterface {
 
     this.isMovingDown = false;
 
-    this.isOutHorizontal = false;
+    this.isOutPositionH = false;
+    this.isOutContainerH = false;
 
     const $ = this.opts.restrictions;
 
@@ -207,18 +210,42 @@ class Draggable extends Base implements DraggableDnDInterface {
     if (!$) return false;
 
     if (this.isOutH($)) {
-      this.isOutHorizontal = true;
+      this.isOutPositionH = true;
 
       return true;
     }
 
     if (this.isOutV($)) {
-      this.isOutHorizontal = false;
+      this.isOutPositionH = false;
 
       return true;
     }
 
-    this.isOutHorizontal = false;
+    this.isOutPositionH = false;
+
+    return false;
+  }
+
+  isDraggedOutSiblings(siblingsK: string) {
+    const { siblings } = this.thresholds;
+
+    const $ = siblings[siblingsK];
+
+    if (!$) return false;
+
+    if (this.isOutH($)) {
+      this.isOutContainerH = true;
+
+      return true;
+    }
+
+    if (this.isOutV($)) {
+      this.isOutContainerH = false;
+
+      return true;
+    }
+
+    this.isOutContainerH = false;
 
     return false;
   }
@@ -229,7 +256,7 @@ class Draggable extends Base implements DraggableDnDInterface {
   isDraggedLeavingFromTop() {
     return (
       this.isDraggedFirstOrOutside() &&
-      !this.isOutHorizontal &&
+      !this.isOutPositionH &&
       !this.isMovingDown
     );
   }
@@ -238,9 +265,7 @@ class Draggable extends Base implements DraggableDnDInterface {
    * Checks if dragged is the last child and going down.
    */
   isDraggedLeavingFromBottom() {
-    return (
-      this.isDraggedLastELm() && !this.isOutHorizontal && this.isMovingDown
-    );
+    return this.isDraggedLastELm() && !this.isOutPositionH && this.isMovingDown;
   }
 
   isSiblingsTransformed() {
@@ -308,6 +333,13 @@ class Draggable extends Base implements DraggableDnDInterface {
     if (this.siblingsList) {
       this.draggedElm.assignNewPosition(this.siblingsList, this.tempIndex);
     }
+
+    this.draggedElm.order.self = this.tempIndex;
+    console.log(
+      "file: Draggable.ts ~ line 313 ~ this.draggedElm.order",
+      this.tempIndex,
+      this.draggedElm.order
+    );
 
     // const draggedDirection =
     //   this.tempIndex < this.draggedElm.order.self ? -1 : 1;

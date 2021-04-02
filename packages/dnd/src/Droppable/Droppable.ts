@@ -107,7 +107,9 @@ class Droppable {
 
     this.draggable.incNumOfElementsTransformed(this.effectedElemDirection);
 
-    if (!this.isListLocked) {
+    if (true) {
+      console.log("update threshold");
+
       /**
        * By updating the dragged translate, we guarantee that dragged
        * transformation will not triggered until dragged is over threshold
@@ -219,6 +221,7 @@ class Droppable {
   private liftUp() {
     const from = this.draggable.tempIndex + 1;
     this.draggable.tempIndex = -1;
+    console.log("wow");
 
     for (let i = from; i < this.draggable.siblingsList!.length; i += 1) {
       this.movePositionIfEligibleID(i);
@@ -237,20 +240,24 @@ class Droppable {
 
   private draggedOutPosition() {
     if (
-      this.draggable.isOutHorizontal ||
+      this.draggable.isOutPositionH ||
       this.draggable.isDraggedLeavingFromTop()
     ) {
+      console.log("lift up..............");
+      console.log(this.draggable.isDraggedLeavingFromTop());
+      console.log(this.draggable.isOutPositionH);
+
       /**
        * If leaving and parent locked, do nothing.
        */
 
       // move element up
-      this.setEffectedElemDirection(true);
+      // this.setEffectedElemDirection(true);
 
       // lock the parent
-      this.isListLocked = true;
+      // this.isListLocked = true;
 
-      this.liftUp();
+      // this.liftUp();
 
       return;
     }
@@ -269,7 +276,7 @@ class Droppable {
       /**
        * Going out from the list: Right/left.
        */
-      if (this.draggable.isOutHorizontal) {
+      if (this.draggable.isOutPositionH) {
         // Is is out parent?
 
         // move element up
@@ -365,7 +372,11 @@ class Droppable {
     this.draggable.setDraggedMovingDown(y);
 
     if (this.draggable.isDraggedOut()) {
+      console.log("here, alpha!");
+
       if (!this.isListLocked) {
+        console.log("here, beta!");
+
         this.draggedOutPosition();
 
         return;

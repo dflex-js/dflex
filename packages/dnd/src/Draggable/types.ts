@@ -74,7 +74,7 @@ export interface DraggableDnDInterface extends DraggableBaseInterface {
   prevY: number;
   numberOfElementsTransformed: number;
   isMovingDown: boolean;
-  isOutHorizontal: boolean;
+  isOutPositionH: boolean;
   dragAt(x: number, y: number): void;
   incNumOfElementsTransformed(effectedElemDirection: number): void;
   setDraggedMovingDown(y: number): void;
