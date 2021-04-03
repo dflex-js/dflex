@@ -253,7 +253,7 @@ class Droppable {
   }
 
   private draggedOutPosition() {
-    if (this.draggable.isDraggedLeavingFromTop()) {
+    if (this.draggable.isLeavingFromTop()) {
       /**
        * If leaving and parent locked, do nothing.
        */
@@ -269,7 +269,7 @@ class Droppable {
       return;
     }
 
-    if (this.draggable.isDraggedLeavingFromBottom()) {
+    if (this.draggable.isLeavingFromBottom()) {
       this.isListLocked = true;
 
       return;
@@ -378,14 +378,14 @@ class Droppable {
 
     this.draggable.setDraggedMovingDown(y);
 
-    if (this.draggable.isDraggedOut()) {
+    if (this.draggable.isOutThreshold()) {
       if (!this.isListLocked) {
         this.draggedOutPosition();
 
         return;
       }
 
-      isOutSiblingsContainer = this.draggable.isDraggedOut(sK);
+      isOutSiblingsContainer = this.draggable.isOutThreshold(sK);
 
       // // when it's out, and on of theses is true then it's happening.
       if (!isOutSiblingsContainer) {
@@ -401,7 +401,7 @@ class Droppable {
      * When dragged is out parent and returning to it.
      */
     if (this.isListLocked) {
-      isOutSiblingsContainer = this.draggable.isDraggedOut(sK);
+      isOutSiblingsContainer = this.draggable.isOutThreshold(sK);
 
       if (!isOutSiblingsContainer) {
         this.draggedIsComingIn(y);
