@@ -37,7 +37,7 @@ context(
       }
     });
 
-    it("The element is coming back, still outside the threshold", () => {
+    it("The element is coming back, inside the threshold but outside position", () => {
       steps = 100;
 
       for (let i = steps; i > 65; i -= 1) {
@@ -47,7 +47,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(0);
+        // cy.wait(0);
       }
     });
 
@@ -71,34 +71,34 @@ context(
       );
     });
 
-    // it("Triggers mouse up", () => {
-    //   cy.get("#id-9").trigger("mouseup", { force: true });
-    // });
+    it("Triggers mouse up", () => {
+      cy.get("#id-9").trigger("mouseup", { force: true });
+    });
 
-    // it("Siblings back to normal", () => {
-    //   cy.get("#id-9").should(
-    //     "have.css",
-    //     "transform",
-    //     "matrix(1, 0, 0, 1, 0, 0)"
-    //   );
+    it("Siblings back to normal", () => {
+      cy.get("#id-9").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
 
-    //   cy.get("#id-10").should(
-    //     "have.css",
-    //     "transform",
-    //     "matrix(1, 0, 0, 1, 0, 0)"
-    //   );
+      cy.get("#id-10").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
 
-    //   cy.get("#id-11").should(
-    //     "have.css",
-    //     "transform",
-    //     "matrix(1, 0, 0, 1, 0, 0)"
-    //   );
+      cy.get("#id-11").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
 
-    //   cy.get("#id-12").should(
-    //     "have.css",
-    //     "transform",
-    //     "matrix(1, 0, 0, 1, 0, 0)"
-    //   );
-    // });
+      cy.get("#id-12").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+    });
   }
 );

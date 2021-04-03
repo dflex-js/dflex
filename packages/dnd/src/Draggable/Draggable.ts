@@ -98,11 +98,11 @@ class Draggable extends Base implements DraggableDnDInterface {
     return this.siblingsList!.length - 1;
   }
 
-  private isDraggedFirstOrOutside() {
+  private isFirstOrOutside() {
     return this.siblingsList !== null && this.tempIndex <= 0;
   }
 
-  isDraggedLastELm() {
+  isLastELm() {
     return this.tempIndex === this.getLastElmIndex();
   }
 
@@ -128,7 +128,7 @@ class Draggable extends Base implements DraggableDnDInterface {
     return this.opts.restrictions.allowLeavingFromBottom
       ? y
       : this.tempIndex <= 0 ||
-        (this.isDraggedLastELm() && y - this.innerOffsetY >= minTop)
+        (this.isLastELm() && y - this.innerOffsetY >= minTop)
       ? minTop + this.innerOffsetY
       : y;
   }
@@ -140,7 +140,7 @@ class Draggable extends Base implements DraggableDnDInterface {
 
     return this.opts.restrictions.allowLeavingFromTop
       ? this.containerBottomAxesFilter(y, minTop)
-      : this.isDraggedFirstOrOutside() && y - this.innerOffsetY <= maxTop
+      : this.isFirstOrOutside() && y - this.innerOffsetY <= maxTop
       ? maxTop + this.innerOffsetY
       : this.containerBottomAxesFilter(y, minTop);
   }
@@ -176,25 +176,60 @@ class Draggable extends Base implements DraggableDnDInterface {
     this.tempOffset.currentTop = filteredY - this.innerOffsetY;
   }
 
-  /**
-   *
-   * @param $ -
-   */
-  private isOutH($: Threshold) {
+  private isOutThresholdH($: Threshold) {
     return (
       this.tempOffset.currentLeft < $.maxLeft ||
       this.tempOffset.currentLeft > $.maxRight
     );
   }
 
-  /**
-   *
-   * @param $ -
-   */
-  private isOutV($: Threshold) {
+  private isOutPositionV($: Threshold) {
     return this.isMovingDown
       ? this.tempOffset.currentTop > $.maxBottom
       : this.tempOffset.currentTop < $.maxTop;
+  }
+
+  private isOutContainerV($: Threshold) {
+    /**
+     * Are you last element and outside the container? Or are you coming from top
+     * and outside the container?
+     */
+    return (
+      (this.isLastELm() && this.tempOffset.currentTop > $.maxBottom) ||
+      (this.tempIndex < 0 && this.tempOffset.currentTop < $.maxTop)
+    );
+  }
+
+  private isOutPosition($: Threshold) {
+    this.isOutPositionHorizontally = false;
+
+    if (this.isOutThresholdH($)) {
+      this.isOutPositionHorizontally = true;
+
+      return true;
+    }
+
+    if (this.isOutPositionV($)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  private isOutContainer($: Threshold) {
+    this.isOutSiblingsHorizontally = false;
+
+    if (this.isOutContainerV($)) {
+      this.isOutSiblingsHorizontally = true;
+
+      return true;
+    }
+
+    if (this.isOutThresholdH($)) {
+      return true;
+    }
+
+    return false;
   }
 
   /**
@@ -202,39 +237,20 @@ class Draggable extends Base implements DraggableDnDInterface {
    *
    * @param siblingsK -
    */
-  isDraggedOut(siblingsK?: string) {
+  isOutThreshold(siblingsK?: string) {
     const { siblings, dragged } = this.thresholds;
 
-    const $ = siblingsK ? siblings[siblingsK] : dragged;
-
-    if (!$) return false;
-
-    if (this.isOutH($)) {
-      if (!siblingsK) this.isOutPositionHorizontally = true;
-      else this.isOutSiblingsHorizontally = true;
-
-      return true;
-    }
-
-    if (this.isOutV($)) {
-      if (!siblingsK) this.isOutPositionHorizontally = false;
-      else this.isOutSiblingsHorizontally = false;
-
-      return true;
-    }
-
-    if (!siblingsK) this.isOutPositionHorizontally = false;
-    else this.isOutSiblingsHorizontally = false;
-
-    return false;
+    return siblingsK
+      ? this.isOutContainer(siblings[siblingsK])
+      : this.isOutPosition(dragged);
   }
 
   /**
    * Checks if dragged is the first child and going up.
    */
-  isDraggedLeavingFromTop() {
+  isLeavingFromTop() {
     return (
-      this.isDraggedFirstOrOutside() &&
+      this.isFirstOrOutside() &&
       !this.isOutSiblingsHorizontally &&
       !this.isMovingDown
     );
@@ -243,16 +259,14 @@ class Draggable extends Base implements DraggableDnDInterface {
   /**
    * Checks if dragged is the last child and going down.
    */
-  isDraggedLeavingFromBottom() {
+  isLeavingFromBottom() {
     return (
-      this.isDraggedLastELm() &&
-      !this.isOutSiblingsHorizontally &&
-      this.isMovingDown
+      this.isLastELm() && !this.isOutSiblingsHorizontally && this.isMovingDown
     );
   }
 
   isSiblingsTransformed() {
-    return !this.isDraggedLeavingFromBottom() && this.isDraggedOut();
+    return !this.isLeavingFromBottom() && this.isOutThreshold();
   }
 
   /**

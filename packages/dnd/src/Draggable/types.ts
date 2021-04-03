@@ -79,11 +79,11 @@ export interface DraggableDnDInterface extends DraggableBaseInterface {
   dragAt(x: number, y: number): void;
   incNumOfElementsTransformed(effectedElemDirection: number): void;
   setDraggedMovingDown(y: number): void;
-  isDraggedOut(siblingsK?: string): boolean;
-  isDraggedLeavingFromTop(): boolean;
-  isDraggedLeavingFromBottom(): boolean;
+  isOutThreshold(siblingsK?: string): boolean;
+  isLeavingFromTop(): boolean;
+  isLeavingFromBottom(): boolean;
   isSiblingsTransformed(): boolean;
   getLastElmIndex(): number;
-  isDraggedLastELm(): boolean;
+  isLastELm(): boolean;
   endDragging(topDifference: number): void;
 }
