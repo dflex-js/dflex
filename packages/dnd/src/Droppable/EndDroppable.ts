@@ -65,8 +65,7 @@ class EndDroppable extends Droppable {
   }
 
   endDragging() {
-    // TODO: Add tests to cover dragged whiteout parents
-    if (this.draggable.isSiblingsTransformed()) {
+    if (this.draggable.isNotSettled()) {
       const siblings = store.getElmSiblingsById(this.draggable.draggedElm.id);
 
       if (Array.isArray(siblings)) this.undoList(siblings);
