@@ -66,8 +66,8 @@ export interface DraggableBaseInterface
 }
 
 export interface DraggableDnDInterface extends DraggableBaseInterface {
-  innerOffsetX: number;
-  innerOffsetY: number;
+  // innerOffsetX: number;
+  // innerOffsetY: number;
   tempOffset: TempOffset;
   // occupiedOffset: TempOffset;
   // occupiedTranslate: TempTranslate;
@@ -82,8 +82,9 @@ export interface DraggableDnDInterface extends DraggableBaseInterface {
   isOutThreshold(siblingsK?: string): boolean;
   isLeavingFromTop(): boolean;
   isLeavingFromBottom(): boolean;
-  isSiblingsTransformed(): boolean;
-  getLastElmIndex(): number;
-  isLastELm(): boolean;
+  isNotSettled(): boolean;
+  // getLastElmIndex(): number;
+  // isLastELm(): boolean;
+
   endDragging(topDifference: number): void;
 }

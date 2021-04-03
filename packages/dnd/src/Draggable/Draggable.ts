@@ -15,9 +15,9 @@ import type {
 } from "./types";
 
 class Draggable extends Base implements DraggableDnDInterface {
-  innerOffsetX: number;
+  private innerOffsetX: number;
 
-  innerOffsetY: number;
+  private innerOffsetY: number;
 
   tempOffset: TempOffset;
 
@@ -29,15 +29,13 @@ class Draggable extends Base implements DraggableDnDInterface {
 
   numberOfElementsTransformed: number;
 
-  inc: number;
-
   isMovingDown: boolean;
 
   isOutPositionHorizontally: boolean;
 
   isOutSiblingsHorizontally: boolean;
 
-  axesFilterNeeded: boolean;
+  private axesFilterNeeded: boolean;
 
   constructor(
     elmTree: ElmTree,
@@ -77,7 +75,6 @@ class Draggable extends Base implements DraggableDnDInterface {
      * crucial to calculate drag's translate and index
      */
     this.numberOfElementsTransformed = 0;
-    this.inc = 1;
 
     this.isMovingDown = false;
 
@@ -94,7 +91,7 @@ class Draggable extends Base implements DraggableDnDInterface {
         !$.allowLeavingFromBottom);
   }
 
-  getLastElmIndex() {
+  private getLastElmIndex() {
     return this.siblingsList!.length - 1;
   }
 
@@ -102,7 +99,7 @@ class Draggable extends Base implements DraggableDnDInterface {
     return this.siblingsList !== null && this.tempIndex <= 0;
   }
 
-  isLastELm() {
+  private isLastELm() {
     return this.tempIndex === this.getLastElmIndex();
   }
 
@@ -269,8 +266,14 @@ class Draggable extends Base implements DraggableDnDInterface {
     );
   }
 
-  isSiblingsTransformed() {
-    return !this.isLeavingFromBottom() && this.isOutThreshold();
+  isNotSettled() {
+    const { sK } = store.getElmById(this.draggedElm.id).keys;
+
+    return (
+      this.siblingsList !== null &&
+      !this.isLeavingFromBottom() &&
+      (this.isOutThreshold() || this.isOutThreshold(sK))
+    );
   }
 
   /**
@@ -298,8 +301,8 @@ class Draggable extends Base implements DraggableDnDInterface {
      */
     if (
       this.siblingsList === null ||
-      (this.siblingsList !== null && this.isSiblingsTransformed()) ||
-      this.numberOfElementsTransformed === 0
+      this.numberOfElementsTransformed === 0 ||
+      this.isNotSettled()
     ) {
       /**
        * If not isDraggedOutPosition, it means dragged is out its position, inside
