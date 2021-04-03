@@ -260,8 +260,12 @@ class Draggable extends Base implements DraggableDnDInterface {
    * Checks if dragged is the last child and going down.
    */
   isLeavingFromBottom() {
+    const { sK } = store.getElmById(this.draggedElm.id).keys;
+
     return (
-      this.isLastELm() && !this.isOutSiblingsHorizontally && this.isMovingDown
+      this.isLastELm() &&
+      this.isMovingDown &&
+      this.isOutContainerV(this.thresholds.siblings[sK])
     );
   }
 

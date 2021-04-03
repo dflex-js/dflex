@@ -67,7 +67,6 @@ class EndDroppable extends Droppable {
   endDragging() {
     const { sK } = store.getElmById(this.draggable.draggedElm.id).keys;
 
-    // if (!this.draggable.isDraggedOut()) debugger;
     // TODO: Add tests to cover dragged whiteout parents
     if (
       this.draggable.siblingsList !== null &&
