@@ -404,9 +404,6 @@ class Droppable {
       isOutSiblingsContainer = this.draggable.isOutThreshold(sK);
 
       if (!isOutSiblingsContainer) {
-        console.log("what???!", this.draggable.isOutThreshold());
-
-        // debugger;
         this.draggedIsComingIn(y);
       }
     }
