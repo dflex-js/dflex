@@ -307,10 +307,9 @@ class Draggable extends Base implements DraggableDnDInterface {
      * In this case, the use clicked without making any move.
      */
     if (
-      (this.siblingsList === null ||
-        this.numberOfElementsTransformed === 0 ||
-        this.isNotSettled()) &&
-      this.hasMoved()
+      this.siblingsList === null ||
+      this.numberOfElementsTransformed === 0 ||
+      this.isNotSettled()
     ) {
       /**
        * If not isDraggedOutPosition, it means dragged is out its position, inside
@@ -323,13 +322,15 @@ class Draggable extends Base implements DraggableDnDInterface {
        * instance.
        */
 
-      this.draggedElm.transformElm();
+      if (this.hasMoved()) {
+        this.draggedElm.transformElm();
 
-      if (this.siblingsList) {
-        this.draggedElm.assignNewPosition(
-          this.siblingsList,
-          this.draggedElm.order.self
-        );
+        if (this.siblingsList) {
+          this.draggedElm.assignNewPosition(
+            this.siblingsList,
+            this.draggedElm.order.self
+          );
+        }
       }
 
       return;
