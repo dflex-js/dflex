@@ -65,7 +65,7 @@ context("Moving out then insert - Up/Down", () => {
     cy.get("#id-2").trigger("mouseup", { force: true });
   });
 
-  it("The element (container2 |> elm-1) is the third now", () => {
+  it("Siblings have new positions", () => {
     cy.get("#id-2").should(
       "have.css",
       "transform",
@@ -138,7 +138,7 @@ context("Moving out then insert - Up/Down", () => {
     cy.get("#id-2").trigger("mouseup", { force: true });
   });
 
-  it("The element (container2 |> elm-1) is the third now", () => {
+  it("Siblings have new positions", () => {
     cy.get("#id-2").should(
       "have.css",
       "transform",
@@ -223,7 +223,7 @@ context("Moving out then insert - Up/Down", () => {
     cy.get("#id-2").trigger("mouseup", { force: true });
   });
 
-  it("The element (container2 |> elm-1) is the third now", () => {
+  it("Siblings have new positions", () => {
     cy.get("#id-2").should(
       "have.css",
       "transform",
