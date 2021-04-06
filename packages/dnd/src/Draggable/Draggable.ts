@@ -344,6 +344,10 @@ class Draggable extends Base implements DraggableDnDInterface {
 
     this.draggedElm.translateX = this.occupiedTranslate.translateX;
     this.draggedElm.translateY = this.occupiedTranslate.translateY;
+    console.log(
+      "file: Draggable.ts ~ line 347 ~ this.draggedElm.translateY",
+      this.draggedElm.translateY
+    );
 
     this.draggedElm.transformElm();
 
@@ -361,7 +365,7 @@ class Draggable extends Base implements DraggableDnDInterface {
     );
 
     // const draggedDirection =
-    //   this.tempIndex < this.draggedElm.order.self ? -1 : 1;
+    // this.tempIndex < this.draggedElm.order.self ? -1 : 1;
 
     // this.numberOfElementsTransformed = Math.abs(
     //   this.numberOfElementsTransformed

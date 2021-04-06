@@ -24,6 +24,9 @@ class Droppable {
 
   private isFoundBreakingPoint: boolean;
 
+  // Should be removed later
+  private leftAtIndex: number;
+
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
 
@@ -39,6 +42,7 @@ class Droppable {
     this.isListLocked = false;
 
     this.droppableIndex = -1;
+    this.leftAtIndex = -1;
     this.isFoundBreakingPoint = false;
   }
 
@@ -53,12 +57,31 @@ class Droppable {
     this.effectedElemDirection = isUp ? -1 : 1;
   }
 
-  private updateOccupiedOffset(elmTop: number, elmLeft: number) {
-    const draggedDirection =
-      this.draggable.tempIndex < this.draggable.draggedElm.order.self ? -1 : 1;
+  private updateOccupiedOffset(
+    elmTop: number,
+    elmLeft: number,
+    isUpdateOccupiedOffset: boolean,
+    draggedDirection: 1 | -1
+  ) {
+    if (isUpdateOccupiedOffset) {
+      console.log(
+        "file: Droppable.ts ~ line 62 ~ draggedDirection",
+        draggedDirection
+      );
 
-    this.draggable.occupiedTranslate.translateY +=
-      draggedDirection * this.draggedYSpace;
+      // console.log(
+      //   "file: Droppable.ts ~ line 62 ~ effectedElemDirection",
+      //   this.effectedElemDirection
+      // );
+
+      this.draggable.occupiedTranslate.translateY +=
+        draggedDirection * this.draggedYSpace;
+
+      console.log(
+        "file: Droppable.ts ~ line 61 ~ this.draggable.occupiedTranslate.translateY",
+        this.draggable.occupiedTranslate.translateY
+      );
+    }
 
     this.draggable.occupiedTranslate.translateX += 0;
 
@@ -66,7 +89,11 @@ class Droppable {
     this.draggable.occupiedOffset.currentLeft = elmLeft;
   }
 
-  private calculateYDistance(element: CoreInstanceInterface) {
+  private calculateYDistance(
+    element: CoreInstanceInterface,
+    isUpdateOccupiedOffset: boolean,
+    draggedDirection: 1 | -1
+  ) {
     const { currentLeft: elmLeft, currentTop: elmTop } = element;
 
     const {
@@ -91,7 +118,13 @@ class Droppable {
 
     this.isFoundBreakingPoint = true;
 
-    this.updateOccupiedOffset(elmTop, elmLeft);
+    this.updateOccupiedOffset(
+      elmTop,
+      elmLeft,
+      isUpdateOccupiedOffset,
+      draggedDirection
+    );
+    // if (isUpdateOccupiedOffset)
   }
 
   /**
@@ -100,15 +133,19 @@ class Droppable {
    *
    * @param id -
    */
-  updateElement(id: string) {
+  updateElement(
+    id: string,
+    isUpdateOccupiedOffset: boolean,
+    draggedDirection: 1 | -1
+  ) {
     const element = store.getElmById(id);
 
-    this.calculateYDistance(element);
+    this.calculateYDistance(element, isUpdateOccupiedOffset, draggedDirection);
 
     this.draggable.incNumOfElementsTransformed(this.effectedElemDirection);
 
     if (!this.isListLocked) {
-      console.log("update threshold", element);
+      console.log("update threshold");
 
       /**
        * By updating the dragged translate, we guarantee that dragged
@@ -175,8 +212,6 @@ class Droppable {
         if (isQualified) {
           droppableIndex = i;
 
-          // this.updateOccupiedOffset(element.currentTop, element.currentLeft);
-
           break;
         }
       }
@@ -199,12 +234,8 @@ class Droppable {
 
     if (this.isIDEligible2Move(id)) {
       this.draggable.tempIndex = elmIndex;
-      console.log(
-        "file: Droppable.ts ~ line 198 ~ here is going to update temp index",
-        elmIndex
-      );
 
-      this.updateElement(id);
+      this.updateElement(id, true, this.effectedElemDirection === -1 ? 1 : -1);
     }
   }
 
@@ -212,21 +243,40 @@ class Droppable {
    *
    * @param i - index
    */
-  private movePositionIfEligibleID(i: number) {
+  private movePositionIfEligibleID(
+    i: number,
+    isUpdateOccupiedOffset: boolean,
+    draggedDirection: 1 | -1
+  ) {
     const id = this.draggable.siblingsList![i];
 
     if (this.isIDEligible2Move(id)) {
-      this.updateElement(id);
+      this.updateElement(id, isUpdateOccupiedOffset, draggedDirection);
     }
   }
 
   private liftUp() {
     const from = this.draggable.tempIndex + 1;
+
+    this.leftAtIndex = this.draggable.tempIndex;
     this.draggable.tempIndex = -1;
 
     for (let i = from; i < this.draggable.siblingsList!.length; i += 1) {
-      this.movePositionIfEligibleID(i);
+      /**
+       * Don't update translate because it's not permanent. Releasing dragged
+       * means undoing last position.
+       */
+      this.movePositionIfEligibleID(
+        i,
+        false,
+        this.draggable.tempIndex < this.draggable.draggedElm.order.self ? -1 : 1 // ignore
+      );
     }
+
+    console.log(
+      "lift elements dragged y is",
+      this.draggable.occupiedTranslate.translateY
+    );
   }
 
   /**
@@ -234,9 +284,36 @@ class Droppable {
    * @param to - index
    */
   private moveDown(to: number) {
+    console.log(
+      "insertion starts right now============",
+      this.draggable.siblingsList
+    );
+
     for (let i = this.draggable.siblingsList!.length - 1; i >= to; i -= 1) {
-      this.movePositionIfEligibleID(i);
+      if (i === to && to !== this.leftAtIndex) {
+        console.log(
+          "file: Droppable.ts ~ line 277 ~ this.draggable.leftAtIndex",
+          this.leftAtIndex
+        );
+
+        console.log(
+          "file: Droppable.ts ~ line 277 ~ this.draggable.tempIndex",
+          this.draggable.tempIndex
+        );
+
+        console.log(
+          "direction",
+          this.leftAtIndex < this.draggable.tempIndex ? 1 : -1
+        );
+      }
+
+      /**
+       * occupied offset is assigned to breaking point.
+       */
+      this.movePositionIfEligibleID(i, i === to && to !== this.leftAtIndex, 1);
     }
+
+    this.leftAtIndex = -1;
   }
 
   private draggedOutPosition() {
@@ -290,6 +367,7 @@ class Droppable {
 
       // inside the list, effected should be related to mouse movement
       this.setEffectedElemDirection(this.draggable.isMovingDown);
+      console.log("isMovingDown", this.draggable.isMovingDown);
 
       this.switchElement();
     }
@@ -316,7 +394,9 @@ class Droppable {
      */
     if (this.draggable.tempIndex !== 0) {
       to = this.detectDroppableIndex();
-      if (typeof to !== "number" || to === this.draggable.tempIndex) return;
+      if (typeof to !== "number") return;
+      console.log(to, this.draggable.tempIndex);
+
       this.draggable.tempIndex = to;
 
       /**
@@ -339,9 +419,8 @@ class Droppable {
     /**
      * Now, resitting direction by figuring out if dragged settled up/dwn.
      */
-    const isElmUp =
-      this.draggable.tempIndex > this.draggable.draggedElm.order.self;
-    this.setEffectedElemDirection(isElmUp);
+    this.setEffectedElemDirection(this.draggable.isMovingDown);
+    console.log("isMovingDown", this.draggable.isMovingDown);
 
     // @ts-expect-error
     this.draggable.siblingsList[to] = this.draggable.draggedElm.id;
