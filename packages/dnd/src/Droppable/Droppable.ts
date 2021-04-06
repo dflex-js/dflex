@@ -20,11 +20,8 @@ class Droppable {
 
   protected isListLocked: boolean;
 
-  private droppableIndex: number;
-
   private isFoundBreakingPoint: boolean;
 
-  // Should be removed later
   private leftAtIndex: number;
 
   private preserveLastElmOffset: TempOffset;
@@ -43,8 +40,8 @@ class Droppable {
 
     this.isListLocked = false;
 
-    this.droppableIndex = -1;
     this.leftAtIndex = -1;
+
     this.isFoundBreakingPoint = false;
 
     this.preserveLastElmOffset = {
@@ -125,6 +122,7 @@ class Droppable {
    *
    * @param id -
    */
+
   updateElement(
     id: string,
     isPreservePosition: boolean,
@@ -181,6 +179,45 @@ class Droppable {
     );
 
     // element.onDragLeave();
+  }
+
+  private isElemAboveDragged(elmCurrentOffsetTop: number) {
+    return elmCurrentOffsetTop < this.draggable.tempOffset.currentTop;
+  }
+
+  private checkIfDraggedIsLastElm() {
+    let isLast = false;
+
+    for (let i = this.draggable.siblingsList!.length - 1; i >= 0; i -= 1) {
+      const id = this.draggable.siblingsList![i];
+
+      if (this.isIDEligible2Move(id)) {
+        const element = store.getElmById(id);
+
+        const { currentTop } = element;
+
+        const isQualified = this.isElemAboveDragged(currentTop);
+
+        if (isQualified) {
+          isLast = true;
+
+          /**
+           * Update threshold from here since there's no calling to updateElement.
+           */
+          this.draggable.setThreshold(
+            this.preserveLastElmOffset.currentTop,
+            this.preserveLastElmOffset.currentLeft,
+            element.offset.height
+          );
+
+          break;
+        }
+
+        break;
+      }
+    }
+
+    return isLast;
   }
 
   /**
@@ -248,6 +285,7 @@ class Droppable {
    *
    * @param i - index
    */
+
   private movePositionIfEligibleID(
     i: number,
     isPreservePosition: boolean,
@@ -404,6 +442,7 @@ class Droppable {
      * down all: to=0
      */
     let to: number | null = 0;
+    let hasToMoveSiblingsDown = true;
 
     /**
      * Otherwise, detect where it coming from and update tempIndex
@@ -411,8 +450,16 @@ class Droppable {
      */
     if (this.draggable.tempIndex !== 0) {
       to = this.detectDroppableIndex();
-      if (typeof to !== "number") return;
-      console.log(to, this.draggable.tempIndex);
+
+      if (typeof to !== "number") {
+        // check if it's the last element
+
+        if (!this.checkIfDraggedIsLastElm()) return;
+
+        to = this.draggable.siblingsList!.length - 1;
+
+        hasToMoveSiblingsDown = false;
+      }
 
       this.draggable.tempIndex = to;
 
@@ -431,16 +478,26 @@ class Droppable {
      */
     this.setEffectedElemDirection(false);
 
-    this.moveDown(to);
+    if (hasToMoveSiblingsDown) {
+      this.moveDown(to);
 
-    /**
-     * Now, resitting direction by figuring out if dragged settled up/dwn.
-     */
-    this.setEffectedElemDirection(this.draggable.isMovingDown);
-    console.log("isMovingDown", this.draggable.isMovingDown);
+      /**
+       * Now, resitting direction by figuring out if dragged settled up/dwn.
+       */
+      const isElmUp = this.leftAtIndex > this.draggable.tempIndex;
+
+      this.setEffectedElemDirection(isElmUp);
+    } else {
+      this.setEffectedElemDirection(true);
+    }
 
     // @ts-expect-error
     this.draggable.siblingsList[to] = this.draggable.draggedElm.id;
+
+    /**
+     * Reset index.
+     */
+    this.leftAtIndex = -1;
   }
 
   /**
