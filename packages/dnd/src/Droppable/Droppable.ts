@@ -202,6 +202,13 @@ class Droppable {
             element.offset.height
           );
 
+          this.updateOccupiedOffset(
+            this.preserveLastElmOffset.currentTop,
+            this.preserveLastElmOffset.currentLeft
+          );
+
+          this.updateOccupiedTranslate(1);
+
           break;
         }
 
@@ -311,23 +318,6 @@ class Droppable {
     );
 
     for (let i = this.draggable.siblingsList!.length - 1; i >= to; i -= 1) {
-      if (i === to && to !== this.leftAtIndex) {
-        console.log(
-          "file: Droppable.ts ~ line 277 ~ this.draggable.leftAtIndex",
-          this.leftAtIndex
-        );
-
-        console.log(
-          "file: Droppable.ts ~ line 277 ~ this.draggable.tempIndex",
-          this.draggable.tempIndex
-        );
-
-        console.log(
-          "direction",
-          this.leftAtIndex < this.draggable.tempIndex ? 1 : -1
-        );
-      }
-
       const id = this.draggable.siblingsList![i];
 
       if (this.isIDEligible2Move(id)) {
@@ -336,7 +326,15 @@ class Droppable {
          */
         const isUpdateOccupiedTranslate = i === to && to !== this.leftAtIndex;
 
-        this.updateElement(id, false, isUpdateOccupiedTranslate, 1);
+        const draggedDirection =
+          this.leftAtIndex < this.draggable.tempIndex ? 1 : -1;
+
+        this.updateElement(
+          id,
+          false,
+          isUpdateOccupiedTranslate,
+          draggedDirection
+        );
       }
     }
 
@@ -429,6 +427,10 @@ class Droppable {
         if (!this.checkIfDraggedIsLastElm()) return;
 
         to = this.draggable.siblingsList!.length - 1;
+        console.log(
+          "file: Droppable.ts ~ line 423 ~ to coming from the last",
+          to
+        );
 
         hasToMoveSiblingsDown = false;
       }
