@@ -1,6 +1,7 @@
 export type {
   ThresholdPercentages,
   DraggableDnDInterface,
+  TempOffset,
   Restrictions,
 } from "./types";
 
