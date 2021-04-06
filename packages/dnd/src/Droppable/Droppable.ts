@@ -1,6 +1,7 @@
 import store from "../DnDStore";
 
-import type { DraggableDnDInterface } from "../Draggable";
+import type { TempOffset, DraggableDnDInterface } from "../Draggable";
+
 /**
  * Class includes all transformation methods related to droppable.
  */
@@ -21,6 +22,8 @@ class Droppable {
 
   private leftAtIndex: number;
 
+  private preserveLastElmOffset: TempOffset;
+
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
 
@@ -38,6 +41,11 @@ class Droppable {
     this.leftAtIndex = -1;
 
     this.isFoundBreakingPoint = false;
+
+    this.preserveLastElmOffset = {
+      currentLeft: 0,
+      currentTop: 0,
+    };
   }
 
   /**
@@ -86,8 +94,10 @@ class Droppable {
    *
    * @param id -
    */
-  updateElement(id: string) {
+  updateElement(id: string, isPreservePosition: boolean) {
     const element = store.getElmById(id);
+
+    const { currentLeft: elmLeft, currentTop: elmTop } = element;
 
     /**
      * breakingPoint detects the first element that comes immediately
@@ -102,8 +112,6 @@ class Droppable {
      * isQualified. So, all elements will be lifted up except elm1.
      */
     if (!this.isFoundBreakingPoint) {
-      const { currentLeft: elmLeft, currentTop: elmTop } = element;
-
       const {
         draggedElm: { currentLeft: draggedLeft, currentTop: draggedTop },
       } = this.draggable;
@@ -150,6 +158,11 @@ class Droppable {
 
     // element.onDragOver();
 
+    if (isPreservePosition) {
+      this.preserveLastElmOffset.currentLeft = elmLeft;
+      this.preserveLastElmOffset.currentTop = elmTop;
+    }
+
     /**
      * Start transforming process
      */
@@ -190,8 +203,8 @@ class Droppable {
            * Update threshold from here since there's no calling to updateElement.
            */
           this.draggable.setThreshold(
-            element.currentTop,
-            element.currentLeft,
+            this.preserveLastElmOffset.currentTop,
+            this.preserveLastElmOffset.currentLeft,
             element.offset.height
           );
 
@@ -257,7 +270,7 @@ class Droppable {
     if (this.isIDEligible2Move(id)) {
       this.draggable.tempIndex = elmIndex;
 
-      this.updateElement(id);
+      this.updateElement(id, false);
     }
   }
 
@@ -265,11 +278,11 @@ class Droppable {
    *
    * @param i - index
    */
-  private movePositionIfEligibleID(i: number) {
+  private movePositionIfEligibleID(i: number, isPreservePosition: boolean) {
     const id = this.draggable.siblingsList![i];
 
     if (this.isIDEligible2Move(id)) {
-      this.updateElement(id);
+      this.updateElement(id, isPreservePosition);
     }
   }
 
@@ -280,7 +293,10 @@ class Droppable {
     this.draggable.tempIndex = -1;
 
     for (let i = from; i < this.draggable.siblingsList!.length; i += 1) {
-      this.movePositionIfEligibleID(i);
+      this.movePositionIfEligibleID(
+        i,
+        i === this.draggable.siblingsList!.length - 1
+      );
     }
   }
 
@@ -290,7 +306,7 @@ class Droppable {
    */
   private moveDown(to: number) {
     for (let i = this.draggable.siblingsList!.length - 1; i >= to; i -= 1) {
-      this.movePositionIfEligibleID(i);
+      this.movePositionIfEligibleID(i, false);
     }
   }
 

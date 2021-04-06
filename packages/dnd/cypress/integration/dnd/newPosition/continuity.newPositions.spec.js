@@ -5,7 +5,7 @@ let startingPointY;
 let stepsX;
 let stepsY;
 
-const waitingTime = 0;
+// const waitingTime = 0;
 
 context("Moving out then insert - Up/Down", () => {
   before(() => {
@@ -34,7 +34,7 @@ context("Moving out then insert - Up/Down", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(waitingTime);
+      // cy.wait(waitingTime);
     }
 
     // stepsX -= startingPointX;
@@ -46,7 +46,7 @@ context("Moving out then insert - Up/Down", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(waitingTime);
+      // cy.wait(waitingTime);
     }
   });
 
@@ -57,7 +57,7 @@ context("Moving out then insert - Up/Down", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(waitingTime);
+      // cy.wait(waitingTime);
     }
   });
 
@@ -107,7 +107,7 @@ context("Moving out then insert - Up/Down", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(waitingTime);
+      // cy.wait(waitingTime);
     }
 
     // stepsX -= startingPointX;
@@ -119,7 +119,7 @@ context("Moving out then insert - Up/Down", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(waitingTime);
+      // cy.wait(waitingTime);
     }
   });
 
@@ -130,7 +130,7 @@ context("Moving out then insert - Up/Down", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(waitingTime);
+      // cy.wait(waitingTime);
     }
   });
 
@@ -192,7 +192,7 @@ context("Moving out then insert - Up/Down", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(waitingTime);
+      // cy.wait(waitingTime);
     }
 
     // stepsX -= startingPointX;
@@ -204,7 +204,7 @@ context("Moving out then insert - Up/Down", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(waitingTime);
+      // cy.wait(waitingTime);
     }
   });
 
@@ -215,7 +215,7 @@ context("Moving out then insert - Up/Down", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(waitingTime);
+      // cy.wait(waitingTime);
     }
   });
 
@@ -227,7 +227,7 @@ context("Moving out then insert - Up/Down", () => {
     cy.get("#id-2").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, 232)"
+      "matrix(1, 0, 0, 1, 0, 348)"
     );
 
     cy.get("#id-3").should(
