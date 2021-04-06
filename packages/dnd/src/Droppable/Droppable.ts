@@ -61,28 +61,24 @@ class Droppable {
     this.effectedElemDirection = isUp ? -1 : 1;
   }
 
-  private updateOccupiedOffset(
-    elmTop: number,
-    elmLeft: number,
-    isUpdateOccupiedOffset: boolean,
-    draggedDirection: 1 | -1
-  ) {
-    if (isUpdateOccupiedOffset) {
-      this.draggable.occupiedTranslate.translateY +=
-        draggedDirection * this.draggedYSpace;
+  private updateLastElmOffset(elmTop: number, elmLeft: number) {
+    this.preserveLastElmOffset.currentLeft = elmLeft;
+    this.preserveLastElmOffset.currentTop = elmTop;
+  }
 
-      this.draggable.occupiedTranslate.translateX += 0;
-    }
-
+  private updateOccupiedOffset(elmTop: number, elmLeft: number) {
     this.draggable.occupiedOffset.currentTop = elmTop;
     this.draggable.occupiedOffset.currentLeft = elmLeft;
   }
 
-  private calculateYDistance(
-    element: CoreInstanceInterface,
-    isUpdateOccupiedOffset: boolean,
-    draggedDirection: 1 | -1
-  ) {
+  private updateOccupiedTranslate(direction: 1 | -1) {
+    this.draggable.occupiedTranslate.translateY +=
+      direction * this.draggedYSpace;
+
+    this.draggable.occupiedTranslate.translateX += 0;
+  }
+
+  private calculateYDistance(element: CoreInstanceInterface) {
     const { currentLeft: elmLeft, currentTop: elmTop } = element;
 
     const {
@@ -106,14 +102,6 @@ class Droppable {
     this.leftDifference = Math.abs(elmLeft - draggedLeft);
 
     this.isFoundBreakingPoint = true;
-
-    this.updateOccupiedOffset(
-      elmTop,
-      elmLeft,
-      isUpdateOccupiedOffset,
-      draggedDirection
-    );
-    // if (isUpdateOccupiedOffset)
   }
 
   /**
@@ -122,16 +110,15 @@ class Droppable {
    *
    * @param id -
    */
-
   updateElement(
     id: string,
     isPreservePosition: boolean,
-    isUpdateOccupiedOffset: boolean,
-    draggedDirection: 1 | -1
+    isUpdateOccupiedTranslate: boolean,
+    draggedDirection?: 1 | -1
   ) {
     const element = store.getElmById(id);
 
-    this.calculateYDistance(element, isUpdateOccupiedOffset, draggedDirection);
+    this.calculateYDistance(element);
 
     this.draggable.incNumOfElementsTransformed(this.effectedElemDirection);
 
@@ -158,11 +145,16 @@ class Droppable {
 
     // element.onDragOver();
 
-    if (isPreservePosition) {
-      const { currentLeft: elmLeft, currentTop: elmTop } = element;
+    const { currentLeft: elmLeft, currentTop: elmTop } = element;
 
-      this.preserveLastElmOffset.currentLeft = elmLeft;
-      this.preserveLastElmOffset.currentTop = elmTop;
+    if (isPreservePosition) {
+      this.updateLastElmOffset(elmTop, elmLeft);
+    }
+
+    this.updateOccupiedOffset(elmTop, elmLeft);
+
+    if (isUpdateOccupiedTranslate) {
+      this.updateOccupiedTranslate(draggedDirection!);
     }
 
     /**
@@ -281,29 +273,6 @@ class Droppable {
     }
   }
 
-  /**
-   *
-   * @param i - index
-   */
-
-  private movePositionIfEligibleID(
-    i: number,
-    isPreservePosition: boolean,
-    isUpdateOccupiedOffset: boolean,
-    draggedDirection: 1 | -1
-  ) {
-    const id = this.draggable.siblingsList![i];
-
-    if (this.isIDEligible2Move(id)) {
-      this.updateElement(
-        id,
-        isPreservePosition,
-        isUpdateOccupiedOffset,
-        draggedDirection
-      );
-    }
-  }
-
   private liftUp() {
     const from = this.draggable.tempIndex + 1;
 
@@ -315,12 +284,14 @@ class Droppable {
        * Don't update translate because it's not permanent. Releasing dragged
        * means undoing last position.
        */
-      this.movePositionIfEligibleID(
-        i,
-        i === this.draggable.siblingsList!.length - 1,
-        false,
-        this.draggable.tempIndex < this.draggable.draggedElm.order.self ? -1 : 1 // ignore
-      );
+      const id = this.draggable.siblingsList![i];
+
+      if (this.isIDEligible2Move(id)) {
+        const isPreservePosition =
+          i === this.draggable.siblingsList!.length - 1;
+
+        this.updateElement(id, isPreservePosition, false);
+      }
     }
 
     console.log(
@@ -357,15 +328,16 @@ class Droppable {
         );
       }
 
-      /**
-       * occupied offset is assigned to breaking point.
-       */
-      this.movePositionIfEligibleID(
-        i,
-        false,
-        i === to && to !== this.leftAtIndex,
-        1
-      );
+      const id = this.draggable.siblingsList![i];
+
+      if (this.isIDEligible2Move(id)) {
+        /**
+         * occupied offset is assigned to breaking point.
+         */
+        const isUpdateOccupiedTranslate = i === to && to !== this.leftAtIndex;
+
+        this.updateElement(id, false, isUpdateOccupiedTranslate, 1);
+      }
     }
 
     this.leftAtIndex = -1;
