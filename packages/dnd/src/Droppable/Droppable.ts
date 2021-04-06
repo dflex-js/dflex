@@ -2,7 +2,7 @@ import type { CoreInstanceInterface } from "@dflex/core-instance";
 
 import store from "../DnDStore";
 
-import type { DraggableDnDInterface } from "../Draggable";
+import type { TempOffset, DraggableDnDInterface } from "../Draggable";
 
 /**
  * Class includes all transformation methods related to droppable.
@@ -27,6 +27,8 @@ class Droppable {
   // Should be removed later
   private leftAtIndex: number;
 
+  private preserveLastElmOffset: TempOffset;
+
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
 
@@ -44,6 +46,11 @@ class Droppable {
     this.droppableIndex = -1;
     this.leftAtIndex = -1;
     this.isFoundBreakingPoint = false;
+
+    this.preserveLastElmOffset = {
+      currentLeft: 0,
+      currentTop: 0,
+    };
   }
 
   /**
@@ -64,26 +71,11 @@ class Droppable {
     draggedDirection: 1 | -1
   ) {
     if (isUpdateOccupiedOffset) {
-      console.log(
-        "file: Droppable.ts ~ line 62 ~ draggedDirection",
-        draggedDirection
-      );
-
-      // console.log(
-      //   "file: Droppable.ts ~ line 62 ~ effectedElemDirection",
-      //   this.effectedElemDirection
-      // );
-
       this.draggable.occupiedTranslate.translateY +=
         draggedDirection * this.draggedYSpace;
 
-      console.log(
-        "file: Droppable.ts ~ line 61 ~ this.draggable.occupiedTranslate.translateY",
-        this.draggable.occupiedTranslate.translateY
-      );
+      this.draggable.occupiedTranslate.translateX += 0;
     }
-
-    this.draggable.occupiedTranslate.translateX += 0;
 
     this.draggable.occupiedOffset.currentTop = elmTop;
     this.draggable.occupiedOffset.currentLeft = elmLeft;
@@ -135,6 +127,7 @@ class Droppable {
    */
   updateElement(
     id: string,
+    isPreservePosition: boolean,
     isUpdateOccupiedOffset: boolean,
     draggedDirection: 1 | -1
   ) {
@@ -166,6 +159,13 @@ class Droppable {
     }
 
     // element.onDragOver();
+
+    if (isPreservePosition) {
+      const { currentLeft: elmLeft, currentTop: elmTop } = element;
+
+      this.preserveLastElmOffset.currentLeft = elmLeft;
+      this.preserveLastElmOffset.currentTop = elmTop;
+    }
 
     /**
      * Start transforming process
@@ -235,7 +235,12 @@ class Droppable {
     if (this.isIDEligible2Move(id)) {
       this.draggable.tempIndex = elmIndex;
 
-      this.updateElement(id, true, this.effectedElemDirection === -1 ? 1 : -1);
+      this.updateElement(
+        id,
+        false,
+        true,
+        this.effectedElemDirection === -1 ? 1 : -1
+      );
     }
   }
 
@@ -245,13 +250,19 @@ class Droppable {
    */
   private movePositionIfEligibleID(
     i: number,
+    isPreservePosition: boolean,
     isUpdateOccupiedOffset: boolean,
     draggedDirection: 1 | -1
   ) {
     const id = this.draggable.siblingsList![i];
 
     if (this.isIDEligible2Move(id)) {
-      this.updateElement(id, isUpdateOccupiedOffset, draggedDirection);
+      this.updateElement(
+        id,
+        isPreservePosition,
+        isUpdateOccupiedOffset,
+        draggedDirection
+      );
     }
   }
 
@@ -268,6 +279,7 @@ class Droppable {
        */
       this.movePositionIfEligibleID(
         i,
+        i === this.draggable.siblingsList!.length - 1,
         false,
         this.draggable.tempIndex < this.draggable.draggedElm.order.self ? -1 : 1 // ignore
       );
@@ -310,7 +322,12 @@ class Droppable {
       /**
        * occupied offset is assigned to breaking point.
        */
-      this.movePositionIfEligibleID(i, i === to && to !== this.leftAtIndex, 1);
+      this.movePositionIfEligibleID(
+        i,
+        false,
+        i === to && to !== this.leftAtIndex,
+        1
+      );
     }
 
     this.leftAtIndex = -1;
