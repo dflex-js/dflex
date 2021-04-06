@@ -7,7 +7,7 @@ let stepsY;
 
 // const waitingTime = 0;
 
-context("Moving out then insert - Up/Down", () => {
+context("Moving out then insert - Up/Down - Releasing the dragged", () => {
   before(() => {
     cy.visit("http://localhost:3001");
   });
