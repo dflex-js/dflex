@@ -26,7 +26,7 @@ class Droppable {
 
   private leftAtIndex: number;
 
-  private preserveLastElmOffset: TempOffset;
+  private preserveLastElmOffset!: TempOffset;
 
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
@@ -47,10 +47,7 @@ class Droppable {
 
     this.isFoundBreakingPoint = false;
 
-    this.preserveLastElmOffset = {
-      currentLeft: 0,
-      currentTop: 0,
-    };
+    this.updateLastElmOffset();
   }
 
   /**
@@ -64,9 +61,16 @@ class Droppable {
     this.effectedElemDirection = isUp ? -1 : 1;
   }
 
-  private updateLastElmOffset(elmTop: number, elmLeft: number) {
-    this.preserveLastElmOffset.currentLeft = elmLeft;
-    this.preserveLastElmOffset.currentTop = elmTop;
+  private updateLastElmOffset() {
+    const lastIndex = this.draggable.siblingsList!.length - 1;
+    const id = this.draggable.siblingsList![lastIndex];
+    const element = store.getElmById(id);
+    const { currentTop, currentLeft } = element;
+
+    this.preserveLastElmOffset = {
+      currentLeft,
+      currentTop,
+    };
   }
 
   private updateOccupiedOffset(elmTop: number, elmLeft: number) {
@@ -124,7 +128,6 @@ class Droppable {
    */
   updateElement(
     id: string,
-    isPreservePosition: boolean,
     isUpdateDraggedTranslate: boolean,
     draggedDirection?: 1 | -1
   ) {
@@ -159,11 +162,6 @@ class Droppable {
     // element.onDragOver();
 
     const { currentLeft: elmLeft, currentTop: elmTop } = element;
-
-    // TODO: always true for last element
-    if (isPreservePosition) {
-      this.updateLastElmOffset(elmTop, elmLeft);
-    }
 
     this.updateOccupiedOffset(elmTop, elmLeft);
 
@@ -205,7 +203,13 @@ class Droppable {
         const isQualified = this.isElemAboveDragged(currentTop);
 
         if (isQualified) {
+          console.log("file: Droppable.ts ~ line 208 ~ id", id);
           isLast = true;
+          console.log("file: Droppable.ts ~ line 209 ~ isLast", isLast);
+          console.log(
+            "file: Droppable.ts ~ line 209 ~ preserveLastElmOffset currentTop",
+            this.preserveLastElmOffset.currentTop
+          );
 
           /**
            * Update threshold from here since there's no calling to updateElement.
@@ -220,8 +224,6 @@ class Droppable {
             this.preserveLastElmOffset.currentTop,
             this.preserveLastElmOffset.currentLeft
           );
-
-          // this.updateOccupiedTranslate(1);
 
           break;
         }
@@ -285,12 +287,7 @@ class Droppable {
     if (this.isIDEligible2Move(id)) {
       this.draggable.tempIndex = elmIndex;
 
-      this.updateElement(
-        id,
-        false,
-        true,
-        this.effectedElemDirection === -1 ? 1 : -1
-      );
+      this.updateElement(id, true, this.effectedElemDirection === -1 ? 1 : -1);
     }
   }
 
@@ -308,10 +305,7 @@ class Droppable {
       const id = this.draggable.siblingsList![i];
 
       if (this.isIDEligible2Move(id)) {
-        const isPreservePosition =
-          i === this.draggable.siblingsList!.length - 1;
-
-        this.updateElement(id, isPreservePosition, true, 1);
+        this.updateElement(id, true, 1);
       }
     }
   }
@@ -330,7 +324,7 @@ class Droppable {
       const id = this.draggable.siblingsList![i];
 
       if (this.isIDEligible2Move(id)) {
-        this.updateElement(id, false, true, -1);
+        this.updateElement(id, true, -1);
       }
     }
   }
@@ -496,6 +490,10 @@ class Droppable {
 
       // // when it's out, and on of theses is true then it's happening.
       if (!isOutSiblingsContainer) {
+        console.log(
+          "file: Droppable.ts ~ line 499 ~ isOutSiblingsContainer",
+          isOutSiblingsContainer
+        );
         this.draggedIsComingIn(y);
 
         return;
@@ -511,6 +509,10 @@ class Droppable {
       isOutSiblingsContainer = this.draggable.isOutThreshold(sK);
 
       if (!isOutSiblingsContainer) {
+        console.log(
+          "file: Droppable.ts ~ line 514 ~ isOutSiblingsContainer",
+          isOutSiblingsContainer
+        );
         this.draggedIsComingIn(y);
       }
     }
