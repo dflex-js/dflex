@@ -62,10 +62,15 @@ class Droppable {
   }
 
   private updateLastElmOffset() {
-    const lastIndex = this.draggable.siblingsList!.length - 1;
-    const id = this.draggable.siblingsList![lastIndex];
-    const element = store.getElmById(id);
-    const { currentTop, currentLeft } = element;
+    let currentTop = 0;
+    let currentLeft = 0;
+
+    if (this.draggable.siblingsList) {
+      const lastIndex = this.draggable.siblingsList.length - 1;
+      const id = this.draggable.siblingsList[lastIndex];
+      const element = store.getElmById(id);
+      ({ currentTop, currentLeft } = element);
+    }
 
     this.preserveLastElmOffset = {
       currentLeft,
