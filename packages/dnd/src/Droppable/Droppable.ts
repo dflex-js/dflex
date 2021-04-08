@@ -12,8 +12,6 @@ class Droppable {
 
   private elmYSpace: number;
 
-  private draggedYSpaceAcc: number;
-
   protected draggedYSpace: number;
 
   private leftDifference: number;
@@ -21,8 +19,6 @@ class Droppable {
   private effectedElemDirection: 1 | -1;
 
   protected isListLocked: boolean;
-
-  private isFoundBreakingPoint: boolean;
 
   private leftAtIndex: number;
 
@@ -33,7 +29,6 @@ class Droppable {
 
     this.elmYSpace = 0;
     this.draggedYSpace = 0;
-    this.draggedYSpaceAcc = 0;
     this.leftDifference = 0;
 
     /**
@@ -44,8 +39,6 @@ class Droppable {
     this.isListLocked = false;
 
     this.leftAtIndex = -1;
-
-    this.isFoundBreakingPoint = false;
 
     this.updateLastElmOffset();
   }
@@ -84,17 +77,8 @@ class Droppable {
   }
 
   private updateOccupiedTranslate(direction: 1 | -1) {
-    console.log(
-      "translateY before",
-      this.draggable.occupiedTranslate.translateY
-    );
     this.draggable.occupiedTranslate.translateY +=
       direction * this.draggedYSpace;
-
-    console.log(
-      "translateY after",
-      this.draggable.occupiedTranslate.translateY
-    );
 
     this.draggable.occupiedTranslate.translateX += 0;
   }
@@ -121,8 +105,6 @@ class Droppable {
     this.elmYSpace = this.draggedYSpace;
 
     this.leftDifference = Math.abs(elmLeft - draggedLeft);
-
-    this.isFoundBreakingPoint = true;
   }
 
   /**
@@ -144,8 +126,6 @@ class Droppable {
 
     // TODO: always true for the first element
     if (!this.isListLocked) {
-      console.log("update threshold");
-
       /**
        * By updating the dragged translate, we guarantee that dragged
        * transformation will not triggered until dragged is over threshold
@@ -208,13 +188,7 @@ class Droppable {
         const isQualified = this.isElemAboveDragged(currentTop);
 
         if (isQualified) {
-          console.log("file: Droppable.ts ~ line 208 ~ id", id);
           isLast = true;
-          console.log("file: Droppable.ts ~ line 209 ~ isLast", isLast);
-          console.log(
-            "file: Droppable.ts ~ line 209 ~ preserveLastElmOffset currentTop",
-            this.preserveLastElmOffset.currentTop
-          );
 
           /**
            * Update threshold from here since there's no calling to updateElement.
@@ -320,11 +294,6 @@ class Droppable {
    * @param to - index
    */
   private moveDown(to: number) {
-    console.log(
-      "insertion starts right now============",
-      this.draggable.siblingsList
-    );
-
     for (let i = this.draggable.siblingsList!.length - 1; i >= to; i -= 1) {
       const id = this.draggable.siblingsList![i];
 
@@ -419,10 +388,6 @@ class Droppable {
         if (!this.checkIfDraggedIsLastElm()) return;
 
         to = this.draggable.siblingsList!.length - 1;
-        console.log(
-          "file: Droppable.ts ~ line 423 ~ to coming from the last",
-          to
-        );
 
         hasToMoveSiblingsDown = false;
       }
@@ -495,10 +460,6 @@ class Droppable {
 
       // // when it's out, and on of theses is true then it's happening.
       if (!isOutSiblingsContainer) {
-        console.log(
-          "file: Droppable.ts ~ line 499 ~ isOutSiblingsContainer",
-          isOutSiblingsContainer
-        );
         this.draggedIsComingIn(y);
 
         return;
@@ -514,10 +475,6 @@ class Droppable {
       isOutSiblingsContainer = this.draggable.isOutThreshold(sK);
 
       if (!isOutSiblingsContainer) {
-        console.log(
-          "file: Droppable.ts ~ line 514 ~ isOutSiblingsContainer",
-          isOutSiblingsContainer
-        );
         this.draggedIsComingIn(y);
       }
     }
