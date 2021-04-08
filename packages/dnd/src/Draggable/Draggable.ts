@@ -289,6 +289,10 @@ class Draggable extends Base implements DraggableDnDInterface {
 
   incNumOfElementsTransformed(effectedElemDirection: number) {
     this.numberOfElementsTransformed += -1 * effectedElemDirection;
+    console.log(
+      "file: Draggable.ts ~ line 292 ~  this.numberOfElementsTransformed",
+      this.numberOfElementsTransformed
+    );
   }
 
   hasMoved() {
@@ -336,33 +340,33 @@ class Draggable extends Base implements DraggableDnDInterface {
     }
 
     this.draggedElm.currentTop = this.occupiedOffset.currentTop;
-    console.log(
-      "file: Draggable.ts ~ line 310 ~ this.draggedElm.currentTop",
-      this.draggedElm.currentTop
-    );
+    // console.log(
+    //   "file: Draggable.ts ~ line 310 ~ this.draggedElm.currentTop",
+    //   this.draggedElm.currentTop
+    // );
     this.draggedElm.currentLeft = this.occupiedOffset.currentLeft;
 
     this.draggedElm.translateX = this.occupiedTranslate.translateX;
     this.draggedElm.translateY = this.occupiedTranslate.translateY;
-    console.log(
-      "file: Draggable.ts ~ line 347 ~ this.draggedElm.translateY",
-      this.draggedElm.translateY
-    );
+    // console.log(
+    //   "file: Draggable.ts ~ line 347 ~ this.draggedElm.translateY",
+    //   this.draggedElm.translateY
+    // );
 
     this.draggedElm.transformElm();
 
-    console.log("tempIndex", this.tempIndex);
+    // console.log("tempIndex", this.tempIndex);
 
     if (this.siblingsList) {
       this.draggedElm.assignNewPosition(this.siblingsList, this.tempIndex);
     }
 
     this.draggedElm.order.self = this.tempIndex;
-    console.log(
-      "file: Draggable.ts ~ line 313 ~ this.draggedElm.order",
-      this.tempIndex,
-      this.draggedElm.order
-    );
+    // console.log(
+    //   "file: Draggable.ts ~ line 313 ~ this.draggedElm.order",
+    //   this.tempIndex,
+    //   this.draggedElm.order
+    // );
 
     // const draggedDirection =
     // this.tempIndex < this.draggedElm.order.self ? -1 : 1;

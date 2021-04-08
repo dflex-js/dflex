@@ -12,6 +12,8 @@ class Droppable {
 
   private elmYSpace: number;
 
+  private draggedYSpaceAcc: number;
+
   protected draggedYSpace: number;
 
   private leftDifference: number;
@@ -24,13 +26,14 @@ class Droppable {
 
   private leftAtIndex: number;
 
-  private preserveLastElmOffset: TempOffset;
+  private preserveLastElmOffset!: TempOffset;
 
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
 
     this.elmYSpace = 0;
     this.draggedYSpace = 0;
+    this.draggedYSpaceAcc = 0;
     this.leftDifference = 0;
 
     /**
@@ -44,10 +47,7 @@ class Droppable {
 
     this.isFoundBreakingPoint = false;
 
-    this.preserveLastElmOffset = {
-      currentLeft: 0,
-      currentTop: 0,
-    };
+    this.updateLastElmOffset();
   }
 
   /**
@@ -61,9 +61,21 @@ class Droppable {
     this.effectedElemDirection = isUp ? -1 : 1;
   }
 
-  private updateLastElmOffset(elmTop: number, elmLeft: number) {
-    this.preserveLastElmOffset.currentLeft = elmLeft;
-    this.preserveLastElmOffset.currentTop = elmTop;
+  private updateLastElmOffset() {
+    let currentTop = 0;
+    let currentLeft = 0;
+
+    if (this.draggable.siblingsList) {
+      const lastIndex = this.draggable.siblingsList.length - 1;
+      const id = this.draggable.siblingsList[lastIndex];
+      const element = store.getElmById(id);
+      ({ currentTop, currentLeft } = element);
+    }
+
+    this.preserveLastElmOffset = {
+      currentLeft,
+      currentTop,
+    };
   }
 
   private updateOccupiedOffset(elmTop: number, elmLeft: number) {
@@ -72,8 +84,17 @@ class Droppable {
   }
 
   private updateOccupiedTranslate(direction: 1 | -1) {
+    console.log(
+      "translateY before",
+      this.draggable.occupiedTranslate.translateY
+    );
     this.draggable.occupiedTranslate.translateY +=
       direction * this.draggedYSpace;
+
+    console.log(
+      "translateY after",
+      this.draggable.occupiedTranslate.translateY
+    );
 
     this.draggable.occupiedTranslate.translateX += 0;
   }
@@ -112,8 +133,7 @@ class Droppable {
    */
   updateElement(
     id: string,
-    isPreservePosition: boolean,
-    isUpdateOccupiedTranslate: boolean,
+    isUpdateDraggedTranslate: boolean,
     draggedDirection?: 1 | -1
   ) {
     const element = store.getElmById(id);
@@ -122,6 +142,7 @@ class Droppable {
 
     this.draggable.incNumOfElementsTransformed(this.effectedElemDirection);
 
+    // TODO: always true for the first element
     if (!this.isListLocked) {
       console.log("update threshold");
 
@@ -147,13 +168,9 @@ class Droppable {
 
     const { currentLeft: elmLeft, currentTop: elmTop } = element;
 
-    if (isPreservePosition) {
-      this.updateLastElmOffset(elmTop, elmLeft);
-    }
-
     this.updateOccupiedOffset(elmTop, elmLeft);
 
-    if (isUpdateOccupiedTranslate) {
+    if (isUpdateDraggedTranslate) {
       this.updateOccupiedTranslate(draggedDirection!);
     }
 
@@ -191,7 +208,13 @@ class Droppable {
         const isQualified = this.isElemAboveDragged(currentTop);
 
         if (isQualified) {
+          console.log("file: Droppable.ts ~ line 208 ~ id", id);
           isLast = true;
+          console.log("file: Droppable.ts ~ line 209 ~ isLast", isLast);
+          console.log(
+            "file: Droppable.ts ~ line 209 ~ preserveLastElmOffset currentTop",
+            this.preserveLastElmOffset.currentTop
+          );
 
           /**
            * Update threshold from here since there's no calling to updateElement.
@@ -206,8 +229,6 @@ class Droppable {
             this.preserveLastElmOffset.currentTop,
             this.preserveLastElmOffset.currentLeft
           );
-
-          this.updateOccupiedTranslate(1);
 
           break;
         }
@@ -271,12 +292,7 @@ class Droppable {
     if (this.isIDEligible2Move(id)) {
       this.draggable.tempIndex = elmIndex;
 
-      this.updateElement(
-        id,
-        false,
-        true,
-        this.effectedElemDirection === -1 ? 1 : -1
-      );
+      this.updateElement(id, true, this.effectedElemDirection === -1 ? 1 : -1);
     }
   }
 
@@ -294,17 +310,9 @@ class Droppable {
       const id = this.draggable.siblingsList![i];
 
       if (this.isIDEligible2Move(id)) {
-        const isPreservePosition =
-          i === this.draggable.siblingsList!.length - 1;
-
-        this.updateElement(id, isPreservePosition, false);
+        this.updateElement(id, true, 1);
       }
     }
-
-    console.log(
-      "lift elements dragged y is",
-      this.draggable.occupiedTranslate.translateY
-    );
   }
 
   /**
@@ -321,24 +329,9 @@ class Droppable {
       const id = this.draggable.siblingsList![i];
 
       if (this.isIDEligible2Move(id)) {
-        /**
-         * occupied offset is assigned to breaking point.
-         */
-        const isUpdateOccupiedTranslate = i === to && to !== this.leftAtIndex;
-
-        const draggedDirection =
-          this.leftAtIndex < this.draggable.tempIndex ? 1 : -1;
-
-        this.updateElement(
-          id,
-          false,
-          isUpdateOccupiedTranslate,
-          draggedDirection
-        );
+        this.updateElement(id, true, -1);
       }
     }
-
-    this.leftAtIndex = -1;
   }
 
   private draggedOutPosition() {
@@ -392,7 +385,6 @@ class Droppable {
 
       // inside the list, effected should be related to mouse movement
       this.setEffectedElemDirection(this.draggable.isMovingDown);
-      console.log("isMovingDown", this.draggable.isMovingDown);
 
       this.switchElement();
     }
@@ -503,6 +495,10 @@ class Droppable {
 
       // // when it's out, and on of theses is true then it's happening.
       if (!isOutSiblingsContainer) {
+        console.log(
+          "file: Droppable.ts ~ line 499 ~ isOutSiblingsContainer",
+          isOutSiblingsContainer
+        );
         this.draggedIsComingIn(y);
 
         return;
@@ -518,6 +514,10 @@ class Droppable {
       isOutSiblingsContainer = this.draggable.isOutThreshold(sK);
 
       if (!isOutSiblingsContainer) {
+        console.log(
+          "file: Droppable.ts ~ line 514 ~ isOutSiblingsContainer",
+          isOutSiblingsContainer
+        );
         this.draggedIsComingIn(y);
       }
     }

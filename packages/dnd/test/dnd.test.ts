@@ -19,28 +19,64 @@ describe("Checks Store Instance", () => {
     dnd.endDragging();
   });
 
-  it("Checks offset of elements", () => {
+  it("Checks offset of element-1", () => {
     const offsetElm1 = store.getELmOffsetById(elm1.id);
-    const offsetElm2 = store.getELmOffsetById(elm2.id);
-    const offsetElm3 = store.getELmOffsetById(elm3.id);
-    const offsetElm4 = store.getELmOffsetById(elm4.id);
-
-    expect(offsetElm1).toMatchSnapshot();
-    expect(offsetElm2).toMatchSnapshot();
-    expect(offsetElm3).toMatchSnapshot();
-    expect(offsetElm4).toMatchSnapshot();
+    expect(offsetElm1).toStrictEqual({
+      height: 50,
+      left: 450,
+      top: 288,
+      width: 170,
+    });
   });
 
-  it("Checks transition of elements", () => {
-    const transElm1 = store.getELmTranslateById(elm1.id);
-    const transElm2 = store.getELmTranslateById(elm2.id);
-    const transElm3 = store.getELmTranslateById(elm3.id);
-    const transElm4 = store.getELmTranslateById(elm4.id);
+  it("Checks offset of element-2", () => {
+    const offsetElm2 = store.getELmOffsetById(elm2.id);
+    expect(offsetElm2).toStrictEqual({
+      height: 50,
+      left: 450,
+      top: 114,
+      width: 170,
+    });
+  });
 
-    expect(transElm1).toMatchSnapshot();
-    expect(transElm2).toMatchSnapshot();
-    expect(transElm3).toMatchSnapshot();
-    expect(transElm4).toMatchSnapshot();
+  it("Checks offset of element-3", () => {
+    const offsetElm3 = store.getELmOffsetById(elm3.id);
+    expect(offsetElm3).toStrictEqual({
+      height: 50,
+      left: 450,
+      top: 172,
+      width: 170,
+    });
+  });
+
+  it("Checks offset of element-4", () => {
+    const offsetElm4 = store.getELmOffsetById(elm4.id);
+    expect(offsetElm4).toStrictEqual({
+      height: 50,
+      left: 450,
+      top: 230,
+      width: 170,
+    });
+  });
+
+  it("Checks transition of element-1", () => {
+    const transElm1 = store.getELmTranslateById(elm1.id);
+    expect(transElm1).toStrictEqual({ translateX: 0, translateY: 174 });
+  });
+
+  it("Checks transition of element-2", () => {
+    const transElm2 = store.getELmTranslateById(elm2.id);
+    expect(transElm2).toStrictEqual({ translateX: 0, translateY: -58 });
+  });
+
+  it("Checks transition of element-3", () => {
+    const transElm3 = store.getELmTranslateById(elm3.id);
+    expect(transElm3).toStrictEqual({ translateX: 0, translateY: -58 });
+  });
+
+  it("Checks transition of element-4", () => {
+    const transElm4 = store.getELmTranslateById(elm4.id);
+    expect(transElm4).toStrictEqual({ translateX: 0, translateY: -58 });
   });
 
   it("Checks the order of siblings", () => {
@@ -59,33 +95,28 @@ describe("Checks Store Instance", () => {
     dnd.endDragging();
   });
 
-  it("Restore offset of elements", () => {
+  it("Restore offset of element-1", () => {
     const offsetElm1 = store.getELmOffsetById(elm1.id);
-    const offsetElm2 = store.getELmOffsetById(elm2.id);
-    const offsetElm3 = store.getELmOffsetById(elm3.id);
-    const offsetElm4 = store.getELmOffsetById(elm4.id);
-
-    expect(offsetElm1).toMatchSnapshot();
-    expect(offsetElm2).toMatchSnapshot();
-    expect(offsetElm3).toMatchSnapshot();
-    expect(offsetElm4).toMatchSnapshot();
+    expect(offsetElm1).toStrictEqual(elm1.ref.getBoundingClientRect());
   });
 
-  it("Restore transition of elements", () => {
-    const transElm1 = store.getELmTranslateById(elm1.id);
-    const transElm2 = store.getELmTranslateById(elm2.id);
-    const transElm3 = store.getELmTranslateById(elm3.id);
-    const transElm4 = store.getELmTranslateById(elm4.id);
+  it("Restore offset of element-4", () => {
+    const offsetElm4 = store.getELmOffsetById(elm4.id);
+    expect(offsetElm4).toStrictEqual(elm4.ref.getBoundingClientRect());
+  });
 
-    expect(transElm1).toMatchSnapshot();
-    expect(transElm2).toMatchSnapshot();
-    expect(transElm3).toMatchSnapshot();
-    expect(transElm4).toMatchSnapshot();
+  it("Restore offset of element-3", () => {
+    const offsetElm3 = store.getELmOffsetById(elm3.id);
+    expect(offsetElm3).toStrictEqual(elm3.ref.getBoundingClientRect());
+  });
+
+  it("Restore offset of element-4", () => {
+    const offsetElm4 = store.getELmOffsetById(elm4.id);
+    expect(offsetElm4).toStrictEqual(elm4.ref.getBoundingClientRect());
   });
 
   it("Makes sure the order of siblings is back in correct order", () => {
     const siblings = store.getElmSiblingsById(elm1.id);
-
     expect(siblings).toStrictEqual(["id-1", "id-2", "id-3", "id-4"]);
   });
 });
