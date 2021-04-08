@@ -10,7 +10,7 @@ import { store, DnD } from "@dflex/dnd";
 // shared dragged event
 let draggedEvent;
 
-const Task = ({ id, task, depth = 0 }) => {
+const Task = ({ id, style, task, depth = 0 }) => {
   const taskRef = React.createRef();
 
   React.useEffect(() => {
@@ -51,7 +51,7 @@ const Task = ({ id, task, depth = 0 }) => {
   };
 
   return (
-    <li ref={taskRef} id={id} onMouseDown={onMouseDown}>
+    <li ref={taskRef} id={id} style={style} onMouseDown={onMouseDown}>
       {task}
     </li>
   );
@@ -71,17 +71,21 @@ const TodoList = () => {
   });
 
   const tasks = [
-    { id: "mtg", msg: "Meet with Laura" },
-    { id: "org", msg: "Organize weekly meetup" },
-    { id: "gym", msg: "Hit the gym" },
-    { id: "proj", msg: "Continue working on the project" },
+    { id: "mtg", msg: "Meet with Laura", style: { height: "3rem" } },
+    { id: "org", msg: "Organize weekly meetup", style: { height: "3.5rem" } },
+    {
+      id: "proj",
+      msg: "Continue working on the project",
+      style: { height: "5rem" },
+    },
+    { id: "gym", msg: "Hit the gym", style: { height: "4.5rem" } },
   ];
 
   return (
     <div className="todo-container">
       <ul ref={listRef}>
-        {tasks.map(({ msg, id }) => (
-          <Task task={msg} id={id} key={id} />
+        {tasks.map(({ msg, id, style }) => (
+          <Task task={msg} id={id} style={style} key={id} />
         ))}
       </ul>
     </div>
