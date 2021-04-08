@@ -10,7 +10,7 @@ import type {
   DraggableDnDInterface,
   TempOffset,
   Threshold,
-  // TempTranslate,
+  TempTranslate,
   DraggableOpts,
 } from "./types";
 
@@ -21,9 +21,9 @@ class Draggable extends Base implements DraggableDnDInterface {
 
   tempOffset: TempOffset;
 
-  // occupiedOffset: TempOffset;
+  occupiedOffset: TempOffset;
 
-  // occupiedTranslate: TempTranslate;
+  occupiedTranslate: TempTranslate;
 
   prevY: number;
 
@@ -55,15 +55,15 @@ class Draggable extends Base implements DraggableDnDInterface {
       currentTop: this.draggedElm.currentTop,
     };
 
-    // this.occupiedOffset = {
-    //   currentLeft: this.draggedElm.currentLeft,
-    //   currentTop: this.draggedElm.currentTop,
-    // };
+    this.occupiedOffset = {
+      currentLeft: this.draggedElm.currentLeft,
+      currentTop: this.draggedElm.currentTop,
+    };
 
-    // this.occupiedTranslate = {
-    //   translateX: this.draggedElm.translateX,
-    //   translateY: this.draggedElm.translateY,
-    // };
+    this.occupiedTranslate = {
+      translateX: this.draggedElm.translateX,
+      translateY: this.draggedElm.translateY,
+    };
 
     /**
      * previous X and Y are used to calculate mouse directions.
@@ -298,11 +298,7 @@ class Draggable extends Base implements DraggableDnDInterface {
     );
   }
 
-  /**
-   *
-   * @param topDifference -
-   */
-  setDraggedPosition(topDifference: number) {
+  setDraggedPosition() {
     /**
      * In this case, the use clicked without making any move.
      */
@@ -332,53 +328,28 @@ class Draggable extends Base implements DraggableDnDInterface {
           );
         }
       }
-
       return;
     }
 
-    // this.draggedElm.currentTop = this.occupiedOffset.currentTop;
-    // this.draggedElm.currentLeft += this.occupiedOffset.currentLeft;
+    this.draggedElm.currentTop = this.occupiedOffset.currentTop;
+    this.draggedElm.currentLeft = this.occupiedOffset.currentLeft;
 
-    // this.draggedElm.translateX = this.occupiedTranslate.translateX;
-    // this.draggedElm.translateY = this.occupiedTranslate.translateY;
+    this.draggedElm.translateX = this.occupiedTranslate.translateX;
+    this.draggedElm.translateY = this.occupiedTranslate.translateY;
 
-    // this.draggedElm.transformElm();
+    this.draggedElm.transformElm();
 
-    // if (this.siblingsList) {
-    //   this.draggedElm.assignNewPosition(this.siblingsList, this.tempIndex);
-    // }
+    if (this.siblingsList) {
+      this.draggedElm.assignNewPosition(this.siblingsList, this.tempIndex);
+    }
 
-    const draggedDirection =
-      this.tempIndex < this.draggedElm.order.self ? -1 : 1;
-
-    this.numberOfElementsTransformed = Math.abs(
-      this.numberOfElementsTransformed
-    );
-
-    /**
-     * Move to new droppable position.
-     *
-     * We already have translate value in for dragged in goX/goY but it is
-     * related to mouse dragging. Instead, we want to translate to droppable
-     * element that is replaced by dragged.
-     */
-    this.draggedElm.setYPosition(
-      this.siblingsList!,
-      draggedDirection,
-      this.numberOfElementsTransformed * topDifference,
-      this.operationID,
-      this.numberOfElementsTransformed,
-      false
-    );
+    this.draggedElm.order.self = this.tempIndex;
   }
 
-  /**
-   * @param topDifference -
-   */
-  endDragging(topDifference: number) {
+  endDragging() {
     this.setDragged(false);
 
-    this.setDraggedPosition(topDifference);
+    this.setDraggedPosition();
   }
 }
 

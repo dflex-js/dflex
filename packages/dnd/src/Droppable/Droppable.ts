@@ -1,3 +1,5 @@
+import type { CoreInstanceInterface } from "@dflex/core-instance";
+
 import store from "../DnDStore";
 
 import type { TempOffset, DraggableDnDInterface } from "../Draggable";
@@ -18,11 +20,9 @@ class Droppable {
 
   protected isListLocked: boolean;
 
-  private isFoundBreakingPoint: boolean;
-
   private leftAtIndex: number;
 
-  private preserveLastElmOffset: TempOffset;
+  private preserveLastElmOffset!: TempOffset;
 
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
@@ -40,12 +40,7 @@ class Droppable {
 
     this.leftAtIndex = -1;
 
-    this.isFoundBreakingPoint = false;
-
-    this.preserveLastElmOffset = {
-      currentLeft: 0,
-      currentTop: 0,
-    };
+    this.updateLastElmOffset();
   }
 
   /**
@@ -59,34 +54,58 @@ class Droppable {
     this.effectedElemDirection = isUp ? -1 : 1;
   }
 
-  // private updateOccupiedOffset(elmTop: number) {
-  //   console.log(this.effectedElemDirection);
+  private updateLastElmOffset() {
+    let currentTop = 0;
+    let currentLeft = 0;
 
-  //   this.draggable.occupiedTranslate.translateY += 1 * this.draggedYSpace;
+    if (this.draggable.siblingsList) {
+      const lastIndex = this.draggable.siblingsList.length - 1;
+      const id = this.draggable.siblingsList[lastIndex];
+      const element = store.getElmById(id);
+      ({ currentTop, currentLeft } = element);
+    }
 
-  //   this.draggable.occupiedTranslate.translateX += 0;
+    this.preserveLastElmOffset = {
+      currentLeft,
+      currentTop,
+    };
+  }
 
-  //   const { currentTop, currentLeft } = this.draggable.draggedElm;
-  //   console.log("file: Droppable.ts ~ line 65 ~ currentTop", currentTop);
+  private updateOccupiedOffset(elmTop: number, elmLeft: number) {
+    this.draggable.occupiedOffset.currentTop = elmTop;
+    this.draggable.occupiedOffset.currentLeft = elmLeft;
+  }
 
-  //   /**
-  //    * This offset related directly to translate Y and Y. It's isolated from
-  //    * element current offset and effects only top and left.
-  //    */
-  //   this.draggable.occupiedOffset.currentTop = elmTop;
-  //   this.draggable.occupiedOffset.currentLeft =
-  //     currentLeft + this.draggable.occupiedTranslate.translateX;
+  private updateOccupiedTranslate(direction: 1 | -1) {
+    this.draggable.occupiedTranslate.translateY +=
+      direction * this.draggedYSpace;
 
-  //   console.log("occupiedOffset", this.draggable.occupiedOffset);
-  //   console.log(
-  //     "file: Droppable.ts ~ line 57 ~ this.draggable.occupiedTranslate.translateY ",
-  //     this.draggable.occupiedTranslate.translateY
-  //   );
-  //   console.log(
-  //     "file: Droppable.ts ~ line 61 ~ this.draggedYSpace",
-  //     this.draggedYSpace
-  //   );
-  // }
+    this.draggable.occupiedTranslate.translateX += 0;
+  }
+
+  private calculateYDistance(element: CoreInstanceInterface) {
+    const { currentLeft: elmLeft, currentTop: elmTop } = element;
+
+    const {
+      occupiedOffset: { currentLeft: draggedLeft, currentTop: draggedTop },
+    } = this.draggable;
+
+    /**
+     * Sets the transform value by calculating offset difference from
+     * the first braking point between element and dragged. It's done once
+     * and for all.
+     *
+     * This value represents the amount of pixels the element will move
+     * up or down.
+     *
+     * This step here do the trick: By measuring the space toY
+     * the next element margin will be included.
+     */
+    this.draggedYSpace = Math.abs(elmTop - draggedTop);
+    this.elmYSpace = this.draggedYSpace;
+
+    this.leftDifference = Math.abs(elmLeft - draggedLeft);
+  }
 
   /**
    * Updates element instance and calculates the required transform distance. It
@@ -94,49 +113,18 @@ class Droppable {
    *
    * @param id -
    */
-  updateElement(id: string, isPreservePosition: boolean) {
+  updateElement(
+    id: string,
+    isUpdateDraggedTranslate: boolean,
+    draggedDirection?: 1 | -1
+  ) {
     const element = store.getElmById(id);
 
-    const { currentLeft: elmLeft, currentTop: elmTop } = element;
-
-    /**
-     * breakingPoint detects the first element that comes immediately
-     * after dragged. Not in original order, but according to isQualified result.
-     *
-     * The problem:
-     *
-     * Supposed we moved elem1 to the last. And we have in order,
-     * elm2/elm3/elm4/elm1.
-     * Now, we pulled elem2 out of the parent and isQualified is triggered at
-     * elm3. That's mean, escaping elm1 from the loop because it's not
-     * isQualified. So, all elements will be lifted up except elm1.
-     */
-    if (!this.isFoundBreakingPoint) {
-      const {
-        draggedElm: { currentLeft: draggedLeft, currentTop: draggedTop },
-      } = this.draggable;
-
-      /**
-       * Sets the transform value by calculating offset difference from
-       * the first braking point between element and dragged. It's done once
-       * and for all.
-       *
-       * This value represents the amount of pixels the element will move
-       * up or down.
-       *
-       * This step here do the trick: By measuring the space toY
-       * the next element margin will be included.
-       */
-      this.draggedYSpace = Math.abs(elmTop - draggedTop);
-      this.elmYSpace = this.draggedYSpace;
-
-      this.leftDifference = Math.abs(elmLeft - draggedLeft);
-
-      this.isFoundBreakingPoint = true;
-    }
+    this.calculateYDistance(element);
 
     this.draggable.incNumOfElementsTransformed(this.effectedElemDirection);
 
+    // TODO: always true for the first element
     if (!this.isListLocked) {
       /**
        * By updating the dragged translate, we guarantee that dragged
@@ -158,9 +146,12 @@ class Droppable {
 
     // element.onDragOver();
 
-    if (isPreservePosition) {
-      this.preserveLastElmOffset.currentLeft = elmLeft;
-      this.preserveLastElmOffset.currentTop = elmTop;
+    const { currentLeft: elmLeft, currentTop: elmTop } = element;
+
+    this.updateOccupiedOffset(elmTop, elmLeft);
+
+    if (isUpdateDraggedTranslate) {
+      this.updateOccupiedTranslate(draggedDirection!);
     }
 
     /**
@@ -206,6 +197,11 @@ class Droppable {
             this.preserveLastElmOffset.currentTop,
             this.preserveLastElmOffset.currentLeft,
             element.offset.height
+          );
+
+          this.updateOccupiedOffset(
+            this.preserveLastElmOffset.currentTop,
+            this.preserveLastElmOffset.currentLeft
           );
 
           break;
@@ -270,19 +266,7 @@ class Droppable {
     if (this.isIDEligible2Move(id)) {
       this.draggable.tempIndex = elmIndex;
 
-      this.updateElement(id, false);
-    }
-  }
-
-  /**
-   *
-   * @param i - index
-   */
-  private movePositionIfEligibleID(i: number, isPreservePosition: boolean) {
-    const id = this.draggable.siblingsList![i];
-
-    if (this.isIDEligible2Move(id)) {
-      this.updateElement(id, isPreservePosition);
+      this.updateElement(id, true, this.effectedElemDirection === -1 ? 1 : -1);
     }
   }
 
@@ -293,10 +277,15 @@ class Droppable {
     this.draggable.tempIndex = -1;
 
     for (let i = from; i < this.draggable.siblingsList!.length; i += 1) {
-      this.movePositionIfEligibleID(
-        i,
-        i === this.draggable.siblingsList!.length - 1
-      );
+      /**
+       * Don't update translate because it's not permanent. Releasing dragged
+       * means undoing last position.
+       */
+      const id = this.draggable.siblingsList![i];
+
+      if (this.isIDEligible2Move(id)) {
+        this.updateElement(id, true, 1);
+      }
     }
   }
 
@@ -306,7 +295,11 @@ class Droppable {
    */
   private moveDown(to: number) {
     for (let i = this.draggable.siblingsList!.length - 1; i >= to; i -= 1) {
-      this.movePositionIfEligibleID(i, false);
+      const id = this.draggable.siblingsList![i];
+
+      if (this.isIDEligible2Move(id)) {
+        this.updateElement(id, true, -1);
+      }
     }
   }
 

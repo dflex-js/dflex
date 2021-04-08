@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import type { CoreInstanceInterface, Offset } from "@dflex/core-instance";
+import type { CoreInstanceInterface } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
 import type { AbstractDraggableInterface } from "@dflex/draggable";
 
@@ -69,11 +69,12 @@ export interface DraggableDnDInterface extends DraggableBaseInterface {
   // innerOffsetX: number;
   // innerOffsetY: number;
   tempOffset: TempOffset;
-  // occupiedOffset: TempOffset;
-  // occupiedTranslate: TempTranslate;
+  occupiedOffset: TempOffset;
+  occupiedTranslate: TempTranslate;
   prevY: number;
   numberOfElementsTransformed: number;
   isMovingDown: boolean;
+
   isOutPositionHorizontally: boolean;
   isOutSiblingsHorizontally: boolean;
   dragAt(x: number, y: number): void;
@@ -85,6 +86,5 @@ export interface DraggableDnDInterface extends DraggableBaseInterface {
   isNotSettled(): boolean;
   // getLastElmIndex(): number;
   // isLastELm(): boolean;
-
-  endDragging(topDifference: number): void;
+  endDragging(): void;
 }
