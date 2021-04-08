@@ -110,15 +110,14 @@ class CoreInstance
     this.currentLeft = left;
   }
 
-  private mergeOffset() {
-    this.offset.top = this.currentTop;
-    this.offset.left = this.currentLeft;
-  }
-
   getOffset() {
-    this.mergeOffset();
+    return {
+      height: this.offset.height,
+      width: this.offset.width,
 
-    return this.offset;
+      left: this.currentLeft,
+      top: this.currentTop,
+    };
   }
 
   private updateCurrentIndicators(topSpace: number, leftSpace: number) {
@@ -159,14 +158,9 @@ class CoreInstance
     newIndex: number,
     oldIndex?: number
   ) {
-    // TODO: Add this to confusion mode:newIndex >= 0)
-    // if (newIndex >= 0) {
+    // TODO: Add this to confusion mode:newIndex < 0)
     branchIDsOrder[newIndex] = this.id;
     if (oldIndex !== undefined) branchIDsOrder[oldIndex] = "";
-
-    // }
-
-    console.log("branchIDsOrder", branchIDsOrder);
   }
 
   /**
