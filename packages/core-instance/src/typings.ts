@@ -33,8 +33,8 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
     sign: number,
     topSpace: number,
     operationID: string,
-    vIncrement: number,
-    isShuffle: boolean
+    vIncrement?: number,
+    isShuffle?: boolean
   ): void;
   transformElm(): void;
   assignNewPosition(
