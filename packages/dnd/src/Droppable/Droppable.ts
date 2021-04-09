@@ -202,7 +202,6 @@ class Droppable {
       this.draggable.siblingsList,
       this.effectedElemDirection,
       this.elmTransitionY,
-      0,
       this.draggable.operationID,
       1,
       true

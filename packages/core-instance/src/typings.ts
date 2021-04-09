@@ -19,7 +19,6 @@ export interface Offset {
 export type TransitionHistory = {
   ID: string;
   translateY: number;
-  verticalOffset: number;
 }[];
 
 export interface CoreInstanceInterface extends AbstractCoreInterface {
@@ -33,7 +32,6 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
     iDsInOrder: ELmBranch,
     sign: number,
     topSpace: number,
-    verticalOffset: number,
     operationID: string,
     vIncrement: number,
     isShuffle: boolean

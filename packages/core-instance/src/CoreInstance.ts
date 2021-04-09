@@ -124,40 +124,17 @@ class CoreInstance
     };
   }
 
-  private updateCurrentIndicators(
-    topSpace: number,
-    verticalOffset: number,
-    leftSpace: number
-  ) {
+  private updateCurrentIndicators(topSpace: number, leftSpace: number) {
     this.translateY += topSpace;
     this.translateX += leftSpace;
 
     const { left, top } = this.offset;
 
-    let offsetY = 0;
-
-    if (verticalOffset !== 0) {
-      if (this.offsetTop === 0) {
-        this.offsetTop = verticalOffset;
-        offsetY = verticalOffset;
-      } else {
-        this.offsetTop = 0;
-        console.log("no offset added");
-      }
-    } else {
-      console.log("what?");
-    }
-
     /**
      * This offset related directly to translate Y and Y. It's isolated from
      * element current offset and effects only top and left.
      */
-    this.currentTop = top + (this.translateY - offsetY);
-    console.log(
-      "file: CoreInstance.ts ~ line 138 ~  this.currentTop",
-      this.currentTop
-    );
-
+    this.currentTop = top + this.translateY;
     this.currentLeft = left + this.translateX;
   }
 
@@ -196,20 +173,15 @@ class CoreInstance
    * @param topSpace -
    * @param operationID  - Only if moving to a new position.
    */
-  private seTranslate(
-    topSpace: number,
-    verticalOffset: number,
-    operationID?: string
-  ) {
+  private seTranslate(topSpace: number, operationID?: string) {
     if (operationID) {
       this.prevTranslateY.push({
         ID: operationID,
         translateY: this.translateY,
-        verticalOffset,
       });
     }
 
-    this.updateCurrentIndicators(topSpace, verticalOffset, 0);
+    this.updateCurrentIndicators(topSpace, 0);
     this.transformElm();
   }
 
@@ -237,12 +209,11 @@ class CoreInstance
     iDsInOrder: string[],
     sign: number,
     topSpace: number,
-    verticalOffset: number,
     operationID: string,
     vIncrement = 1,
     isShuffle = true
   ) {
-    this.seTranslate(sign * topSpace, verticalOffset, operationID);
+    this.seTranslate(sign * topSpace, operationID);
 
     const { oldIndex, newIndex } = this.updateOrderIndexing(sign * vIncrement);
 
@@ -266,13 +237,13 @@ class CoreInstance
       return;
     }
     // @ts-ignore
-    const { translateY, verticalOffset } = this.prevTranslateY.pop();
+    const { translateY } = this.prevTranslateY.pop();
 
     const topSpace = translateY - this.translateY;
 
     const increment = topSpace > 0 ? 1 : -1;
 
-    this.seTranslate(topSpace, verticalOffset);
+    this.seTranslate(topSpace);
     this.updateOrderIndexing(increment);
   }
 }
