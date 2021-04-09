@@ -198,13 +198,11 @@ class Droppable {
      * Start transforming process
      */
     element.setYPosition(
-      // @ts-expect-error
-      this.draggable.siblingsList,
+      this.draggable.siblingsList!,
       this.effectedElemDirection,
       this.elmTransitionY,
-      this.draggable.operationID,
-      1,
-      true
+
+      this.draggable.operationID
     );
 
     // element.onDragLeave();

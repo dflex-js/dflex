@@ -50,7 +50,7 @@ export interface DraggableBaseInterface
   opts: DraggableOpts;
 
   parentsList: ELmBranch | null;
-  siblingsList: ELmBranch | null;
+  siblingsList: string[] | null;
   activeParent: CoreInstanceInterface | null;
 
   thresholds: LayoutThresholds;
