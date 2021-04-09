@@ -12,7 +12,11 @@ class Droppable {
 
   private elmYSpace: number;
 
+  private elmYOffset: number;
+
   protected draggedYSpace: number;
+
+  private draggedYOffset: number;
 
   private leftDifference: number;
 
@@ -28,7 +32,11 @@ class Droppable {
     this.draggable = draggable;
 
     this.elmYSpace = 0;
+    this.elmYOffset = 0;
+
     this.draggedYSpace = 0;
+    this.draggedYOffset = 0;
+
     this.leftDifference = 0;
 
     /**
@@ -84,11 +92,20 @@ class Droppable {
   }
 
   private calculateYDistance(element: CoreInstanceInterface) {
-    const { currentLeft: elmLeft, currentTop: elmTop } = element;
+    const {
+      currentLeft: elmLeft,
+      currentTop: elmTop,
+      offset: { height: elmHight },
+    } = element;
 
     const {
       occupiedOffset: { currentLeft: draggedLeft, currentTop: draggedTop },
+      draggedElm: {
+        offset: { height: draggedHight },
+      },
     } = this.draggable;
+
+    const heightOffset = Math.abs(draggedHight - elmHight);
 
     /**
      * Sets the transform value by calculating offset difference from
@@ -104,6 +121,24 @@ class Droppable {
     this.draggedYSpace = Math.abs(elmTop - draggedTop);
     this.elmYSpace = this.draggedYSpace;
 
+    if (draggedHight > elmHight) {
+      this.elmYSpace += heightOffset;
+
+      this.elmYOffset = heightOffset;
+      this.draggedYOffset = 0;
+      console.log("alpha");
+    } else {
+      this.draggedYSpace += heightOffset;
+
+      this.elmYOffset = 0;
+      this.draggedYOffset = heightOffset;
+      console.log("beta");
+    }
+
+    console.log(
+      "file: Droppable.ts ~ line 133 ~ this.elmYOffset",
+      this.elmYOffset
+    );
     this.leftDifference = Math.abs(elmLeft - draggedLeft);
   }
 
@@ -162,6 +197,7 @@ class Droppable {
       this.draggable.siblingsList,
       this.effectedElemDirection,
       this.elmYSpace,
+      this.elmYOffset,
       this.draggable.operationID,
       1,
       true

@@ -332,6 +332,10 @@ class Draggable extends Base implements DraggableDnDInterface {
     }
 
     this.draggedElm.currentTop = this.occupiedOffset.currentTop;
+    console.log(
+      "file: Draggable.ts ~ line 335 ~ this.draggedElm.currentTop",
+      this.draggedElm.currentTop
+    );
     this.draggedElm.currentLeft = this.occupiedOffset.currentLeft;
 
     this.draggedElm.translateX = this.occupiedTranslate.translateX;
