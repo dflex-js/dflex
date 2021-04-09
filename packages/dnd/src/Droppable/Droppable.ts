@@ -10,11 +10,9 @@ import type { TempOffset, DraggableDnDInterface } from "../Draggable";
 class Droppable {
   protected draggable: DraggableDnDInterface;
 
-  private elmTransition: number;
+  private elmTransitionY: number;
 
-  private elmYOffset: number;
-
-  private draggedTransitionY: number;
+  private draggedAccumulatedTransitionY: number;
 
   private draggedYOffset: number;
 
@@ -31,10 +29,9 @@ class Droppable {
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
 
-    this.elmTransition = 0;
-    this.elmYOffset = 0;
+    this.elmTransitionY = 0;
 
-    this.draggedTransitionY = 0;
+    this.draggedAccumulatedTransitionY = 0;
     this.draggedYOffset = 0;
 
     this.leftDifference = 0;
@@ -86,7 +83,7 @@ class Droppable {
 
   private updateOccupiedTranslate(direction: 1 | -1) {
     this.draggable.occupiedTranslate.translateY +=
-      direction * this.draggedTransitionY;
+      direction * this.draggedAccumulatedTransitionY;
 
     this.draggable.occupiedTranslate.translateX += 0;
   }
@@ -105,40 +102,19 @@ class Droppable {
       },
     } = this.draggable;
 
+    this.draggedYOffset = 0;
+    this.elmTransitionY = 0;
+
     this.leftDifference = Math.abs(elmLeft - draggedLeft);
+
+    const topDifference = Math.abs(elmTop - draggedTop);
+
+    this.draggedAccumulatedTransitionY = topDifference;
+    this.elmTransitionY = topDifference;
 
     const heightOffset = Math.abs(draggedHight - elmHight);
 
-    this.draggedTransitionY = Math.abs(elmTop - draggedTop);
-    this.elmTransition = this.draggedTransitionY;
-
-    // if (this.effectedElemDirection === -1) {
-    //   if (draggedHight > elmHight) {
-    //     // this.elmTransition += heightOffset;
-    //     // this.draggedTransitionY = 0;
-    //     // this.draggedYOffset = 0;
-    //     console.log("alpha down");
-    //   } else {
-    //     this.draggedTransitionY += heightOffset;
-    //     this.draggedYOffset = heightOffset;
-
-    //     console.log("beta down");
-    //   }
-
-    //   return;
-    // }
-
-    // if (draggedHight > elmHight) {
-    //   this.elmTransition += heightOffset;
-    //   this.elmYOffset = heightOffset;
-
-    //   console.log("alpha up");
-    // } else {
-    //   this.elmTransition -= heightOffset;
-    //   this.elmYOffset = 0;
-
-    //   console.log("beta up");
-    // }
+    if (heightOffset === 0) return;
 
     if (draggedHight < elmHight) {
       console.log("elmHight is bigger");
@@ -146,13 +122,12 @@ class Droppable {
       if (this.effectedElemDirection === -1) {
         console.log("elm going up");
 
-        this.draggedTransitionY += heightOffset;
+        this.draggedAccumulatedTransitionY += heightOffset;
         this.draggedYOffset = heightOffset;
       } else {
         console.log("elm going down");
 
-        this.elmTransition -= heightOffset;
-        this.elmYOffset = 0;
+        this.elmTransitionY -= heightOffset;
       }
 
       return;
@@ -163,13 +138,12 @@ class Droppable {
     if (this.effectedElemDirection === -1) {
       console.log("elm going up");
 
-      this.draggedTransitionY -= heightOffset;
+      this.draggedAccumulatedTransitionY -= heightOffset;
       this.draggedYOffset = -heightOffset;
     } else {
       console.log("elm going down");
 
-      this.elmTransition += heightOffset;
-      this.elmYOffset = 0;
+      this.elmTransitionY += heightOffset;
     }
   }
 
@@ -227,8 +201,8 @@ class Droppable {
       // @ts-expect-error
       this.draggable.siblingsList,
       this.effectedElemDirection,
-      this.elmTransition,
-      this.elmYOffset,
+      this.elmTransitionY,
+      0,
       this.draggable.operationID,
       1,
       true
@@ -295,6 +269,8 @@ class Droppable {
   }
 
   private detectDroppableIndex() {
+    console.log("insertion begins");
+
     let droppableIndex = null;
 
     for (let i = 0; i < this.draggable.siblingsList!.length; i += 1) {
