@@ -10,11 +10,11 @@ import type { TempOffset, DraggableDnDInterface } from "../Draggable";
 class Droppable {
   protected draggable: DraggableDnDInterface;
 
-  private elmYSpace: number;
+  private elmTransition: number;
 
   private elmYOffset: number;
 
-  protected draggedYSpace: number;
+  private draggedTransitionY: number;
 
   private draggedYOffset: number;
 
@@ -31,10 +31,10 @@ class Droppable {
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
 
-    this.elmYSpace = 0;
+    this.elmTransition = 0;
     this.elmYOffset = 0;
 
-    this.draggedYSpace = 0;
+    this.draggedTransitionY = 0;
     this.draggedYOffset = 0;
 
     this.leftDifference = 0;
@@ -80,13 +80,13 @@ class Droppable {
   }
 
   private updateOccupiedOffset(elmTop: number, elmLeft: number) {
-    this.draggable.occupiedOffset.currentTop = elmTop;
+    this.draggable.occupiedOffset.currentTop = elmTop + this.draggedYOffset;
     this.draggable.occupiedOffset.currentLeft = elmLeft;
   }
 
   private updateOccupiedTranslate(direction: 1 | -1) {
     this.draggable.occupiedTranslate.translateY +=
-      direction * this.draggedYSpace;
+      direction * this.draggedTransitionY;
 
     this.draggable.occupiedTranslate.translateX += 0;
   }
@@ -105,41 +105,72 @@ class Droppable {
       },
     } = this.draggable;
 
+    this.leftDifference = Math.abs(elmLeft - draggedLeft);
+
     const heightOffset = Math.abs(draggedHight - elmHight);
 
-    /**
-     * Sets the transform value by calculating offset difference from
-     * the first braking point between element and dragged. It's done once
-     * and for all.
-     *
-     * This value represents the amount of pixels the element will move
-     * up or down.
-     *
-     * This step here do the trick: By measuring the space toY
-     * the next element margin will be included.
-     */
-    this.draggedYSpace = Math.abs(elmTop - draggedTop);
-    this.elmYSpace = this.draggedYSpace;
+    this.draggedTransitionY = Math.abs(elmTop - draggedTop);
+    this.elmTransition = this.draggedTransitionY;
 
-    if (draggedHight > elmHight) {
-      this.elmYSpace += heightOffset;
+    // if (this.effectedElemDirection === -1) {
+    //   if (draggedHight > elmHight) {
+    //     // this.elmTransition += heightOffset;
+    //     // this.draggedTransitionY = 0;
+    //     // this.draggedYOffset = 0;
+    //     console.log("alpha down");
+    //   } else {
+    //     this.draggedTransitionY += heightOffset;
+    //     this.draggedYOffset = heightOffset;
 
-      this.elmYOffset = heightOffset;
-      this.draggedYOffset = 0;
-      console.log("alpha");
-    } else {
-      this.draggedYSpace += heightOffset;
+    //     console.log("beta down");
+    //   }
 
-      this.elmYOffset = 0;
-      this.draggedYOffset = heightOffset;
-      console.log("beta");
+    //   return;
+    // }
+
+    // if (draggedHight > elmHight) {
+    //   this.elmTransition += heightOffset;
+    //   this.elmYOffset = heightOffset;
+
+    //   console.log("alpha up");
+    // } else {
+    //   this.elmTransition -= heightOffset;
+    //   this.elmYOffset = 0;
+
+    //   console.log("beta up");
+    // }
+
+    if (draggedHight < elmHight) {
+      console.log("elmHight is bigger");
+
+      if (this.effectedElemDirection === -1) {
+        console.log("elm going up");
+
+        this.draggedTransitionY += heightOffset;
+        this.draggedYOffset = heightOffset;
+      } else {
+        console.log("elm going down");
+
+        this.elmTransition -= heightOffset;
+        this.elmYOffset = 0;
+      }
+
+      return;
     }
 
-    console.log(
-      "file: Droppable.ts ~ line 133 ~ this.elmYOffset",
-      this.elmYOffset
-    );
-    this.leftDifference = Math.abs(elmLeft - draggedLeft);
+    console.log("elmHight is smaller");
+
+    if (this.effectedElemDirection === -1) {
+      console.log("elm going up");
+
+      this.draggedTransitionY -= heightOffset;
+      this.draggedYOffset = -heightOffset;
+    } else {
+      console.log("elm going down");
+
+      this.elmTransition += heightOffset;
+      this.elmYOffset = 0;
+    }
   }
 
   /**
@@ -196,7 +227,7 @@ class Droppable {
       // @ts-expect-error
       this.draggable.siblingsList,
       this.effectedElemDirection,
-      this.elmYSpace,
+      this.elmTransition,
       this.elmYOffset,
       this.draggable.operationID,
       1,

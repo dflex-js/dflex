@@ -72,7 +72,7 @@ const TodoList = () => {
 
   const tasks = [
     { id: "mtg", msg: "Meet with Laura", style: { height: "3rem" } },
-    { id: "org", msg: "Organize weekly meetup", style: { height: "3.5rem" } },
+    { id: "org", msg: "Organize weekly meetup", style: { height: "6.5rem" } },
     {
       id: "proj",
       msg: "Continue working on the project",

@@ -142,7 +142,10 @@ class CoreInstance
         offsetY = verticalOffset;
       } else {
         this.offsetTop = 0;
+        console.log("no offset added");
       }
+    } else {
+      console.log("what?");
     }
 
     /**
