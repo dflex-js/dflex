@@ -3,6 +3,6 @@ export type {
   Offset,
   TransitionHistory,
   CoreInstanceInterface,
-} from "./typings";
+} from "./types";
 
 export { default } from "./CoreInstance";

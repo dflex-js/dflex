@@ -5,11 +5,7 @@ import type { ElmWIthPointer } from "@dflex/store";
 
 import AbstractCoreInstance from "./AbstractCoreInstance";
 
-import type {
-  CoreInstanceInterface,
-  Offset,
-  TransitionHistory,
-} from "./typings";
+import type { CoreInstanceInterface, Offset, TransitionHistory } from "./types";
 
 /**
  * Why storing index here? when it's already sorted in order?
