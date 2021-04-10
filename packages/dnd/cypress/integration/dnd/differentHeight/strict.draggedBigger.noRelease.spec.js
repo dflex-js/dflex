@@ -31,7 +31,7 @@ context("Moving Elements Strict - Dragged is bigger - No Release", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(0);
+      // cy.wait(0);
     }
   });
 
@@ -54,7 +54,7 @@ context("Moving Elements Strict - Dragged is bigger - No Release", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(0);
+      // cy.wait(0);
     }
 
     stepsY += 155;
@@ -124,7 +124,7 @@ context("Moving Elements Strict - Dragged is bigger - No Release", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(0);
+      // cy.wait(0);
     }
   });
 
@@ -147,7 +147,7 @@ context("Moving Elements Strict - Dragged is bigger - No Release", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(0);
+      // cy.wait(0);
     }
 
     stepsY += 155;
@@ -168,7 +168,7 @@ context("Moving Elements Strict - Dragged is bigger - No Release", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(0);
+      // cy.wait(0);
     }
   });
 
