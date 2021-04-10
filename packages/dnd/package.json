@@ -1,6 +1,6 @@
 {
   "name": "@dflex/dnd",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
@@ -34,9 +34,9 @@
     "start-server-and-test": "^1.11.2"
   },
   "dependencies": {
-    "@dflex/core-instance": "^2.6.0",
+    "@dflex/core-instance": "^2.6.1",
     "@dflex/dom-gen": "^2.2.2",
-    "@dflex/draggable": "^2.6.0",
+    "@dflex/draggable": "^2.6.1",
     "@dflex/store": "^2.2.2"
   },
   "keywords": [
