@@ -50,8 +50,6 @@ class CoreInstance
 
   currentLeft: number;
 
-  offsetTop: number;
-
   order: Order;
 
   keys: Keys;
@@ -75,7 +73,6 @@ class CoreInstance
      * Used for dragged, storing temporary top, left new positions during the transition.
      */
     this.currentTop = 0;
-    this.offsetTop = 0;
 
     this.currentLeft = 0;
 
