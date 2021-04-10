@@ -117,15 +117,15 @@ class Droppable {
     if (heightOffset === 0) return;
 
     if (draggedHight < elmHight) {
-      console.log("elmHight is bigger");
+      // console.log("elmHight is bigger");
 
       if (this.effectedElemDirection === -1) {
-        console.log("elm going up");
+        // console.log("elm going up");
 
         this.draggedAccumulatedTransitionY += heightOffset;
         this.draggedYOffset = heightOffset;
       } else {
-        console.log("elm going down");
+        // console.log("elm going down");
 
         this.elmTransitionY -= heightOffset;
       }
@@ -133,15 +133,15 @@ class Droppable {
       return;
     }
 
-    console.log("elmHight is smaller");
+    // console.log("elmHight is smaller");
 
     if (this.effectedElemDirection === -1) {
-      console.log("elm going up");
+      // console.log("elm going up");
 
       this.draggedAccumulatedTransitionY -= heightOffset;
       this.draggedYOffset = -heightOffset;
     } else {
-      console.log("elm going down");
+      // console.log("elm going down");
 
       this.elmTransitionY += heightOffset;
     }
@@ -266,8 +266,6 @@ class Droppable {
   }
 
   private detectDroppableIndex() {
-    console.log("insertion begins");
-
     let droppableIndex = null;
 
     for (let i = 0; i < this.draggable.siblingsList!.length; i += 1) {
