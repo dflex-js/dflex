@@ -1,11 +1,15 @@
 /* eslint-disable no-param-reassign */
 
-import type { Keys, Order } from "@dflex/dom-gen";
-import type { ElmWIthPointer } from "@dflex/store";
-
 import AbstractCoreInstance from "./AbstractCoreInstance";
 
-import type { CoreInstanceInterface, Offset, TransitionHistory } from "./types";
+import type {
+  Keys,
+  Order,
+  ElmWIthPointer,
+  CoreInstanceInterface,
+  Offset,
+  TransitionHistory,
+} from "./types";
 
 /**
  * Why storing index here? when it's already sorted in order?

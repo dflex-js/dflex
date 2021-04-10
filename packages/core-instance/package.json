@@ -15,10 +15,6 @@
     "dist",
     "LICENSE"
   ],
-  "dependencies": {
-    "@dflex/dom-gen": "0.2.6",
-    "@dflex/store": "1.3.0"
-  },
   "keywords": [
     "drag-drop",
     "dnd",
