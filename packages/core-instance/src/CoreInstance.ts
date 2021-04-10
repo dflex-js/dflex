@@ -73,6 +73,7 @@ class CoreInstance
      * Used for dragged, storing temporary top, left new positions during the transition.
      */
     this.currentTop = 0;
+
     this.currentLeft = 0;
 
     if (this.ref) {
@@ -232,9 +233,10 @@ class CoreInstance
     ) {
       return;
     }
-
     // @ts-ignore
-    const topSpace = this.prevTranslateY.pop().translateY - this.translateY;
+    const { translateY } = this.prevTranslateY.pop();
+
+    const topSpace = translateY - this.translateY;
 
     const increment = topSpace > 0 ? 1 : -1;
 

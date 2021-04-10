@@ -16,7 +16,10 @@ export interface Offset {
   top: number;
 }
 
-export type TransitionHistory = { ID: string; translateY: number }[];
+export type TransitionHistory = {
+  ID: string;
+  translateY: number;
+}[];
 
 export interface CoreInstanceInterface extends AbstractCoreInterface {
   offset: Offset;
@@ -30,8 +33,8 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
     sign: number,
     topSpace: number,
     operationID: string,
-    vIncrement: number,
-    isShuffle: boolean
+    vIncrement?: number,
+    isShuffle?: boolean
   ): void;
   transformElm(): void;
   assignNewPosition(

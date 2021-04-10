@@ -14,13 +14,10 @@ describe("Draggable Store", () => {
   });
 
   it("Registry is not empty", () => {
-    // Why this is an error? Do you know why? If so, there's a PR waiting for you.
-    // @ts-expect-error
     expect(store.registry).toBeTruthy();
   });
 
   it("Registers element and initiates translateX,Y", () => {
-    // @ts-expect-error
     expect(store.registry).toMatchSnapshot();
   });
 });

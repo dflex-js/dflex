@@ -10,9 +10,11 @@ import type { TempOffset, DraggableDnDInterface } from "../Draggable";
 class Droppable {
   protected draggable: DraggableDnDInterface;
 
-  private elmYSpace: number;
+  private elmTransitionY: number;
 
-  protected draggedYSpace: number;
+  private draggedAccumulatedTransitionY: number;
+
+  private draggedYOffset: number;
 
   private leftDifference: number;
 
@@ -27,8 +29,11 @@ class Droppable {
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
 
-    this.elmYSpace = 0;
-    this.draggedYSpace = 0;
+    this.elmTransitionY = 0;
+
+    this.draggedAccumulatedTransitionY = 0;
+    this.draggedYOffset = 0;
+
     this.leftDifference = 0;
 
     /**
@@ -72,39 +77,74 @@ class Droppable {
   }
 
   private updateOccupiedOffset(elmTop: number, elmLeft: number) {
-    this.draggable.occupiedOffset.currentTop = elmTop;
+    this.draggable.occupiedOffset.currentTop = elmTop + this.draggedYOffset;
     this.draggable.occupiedOffset.currentLeft = elmLeft;
   }
 
   private updateOccupiedTranslate(direction: 1 | -1) {
     this.draggable.occupiedTranslate.translateY +=
-      direction * this.draggedYSpace;
+      direction * this.draggedAccumulatedTransitionY;
 
     this.draggable.occupiedTranslate.translateX += 0;
   }
 
   private calculateYDistance(element: CoreInstanceInterface) {
-    const { currentLeft: elmLeft, currentTop: elmTop } = element;
+    const {
+      currentLeft: elmLeft,
+      currentTop: elmTop,
+      offset: { height: elmHight },
+    } = element;
 
     const {
       occupiedOffset: { currentLeft: draggedLeft, currentTop: draggedTop },
+      draggedElm: {
+        offset: { height: draggedHight },
+      },
     } = this.draggable;
 
-    /**
-     * Sets the transform value by calculating offset difference from
-     * the first braking point between element and dragged. It's done once
-     * and for all.
-     *
-     * This value represents the amount of pixels the element will move
-     * up or down.
-     *
-     * This step here do the trick: By measuring the space toY
-     * the next element margin will be included.
-     */
-    this.draggedYSpace = Math.abs(elmTop - draggedTop);
-    this.elmYSpace = this.draggedYSpace;
+    this.draggedYOffset = 0;
+    this.elmTransitionY = 0;
 
     this.leftDifference = Math.abs(elmLeft - draggedLeft);
+
+    const topDifference = Math.abs(elmTop - draggedTop);
+
+    this.draggedAccumulatedTransitionY = topDifference;
+    this.elmTransitionY = topDifference;
+
+    const heightOffset = Math.abs(draggedHight - elmHight);
+
+    if (heightOffset === 0) return;
+
+    if (draggedHight < elmHight) {
+      // console.log("elmHight is bigger");
+
+      if (this.effectedElemDirection === -1) {
+        // console.log("elm going up");
+
+        this.draggedAccumulatedTransitionY += heightOffset;
+        this.draggedYOffset = heightOffset;
+      } else {
+        // console.log("elm going down");
+
+        this.elmTransitionY -= heightOffset;
+      }
+
+      return;
+    }
+
+    // console.log("elmHight is smaller");
+
+    if (this.effectedElemDirection === -1) {
+      // console.log("elm going up");
+
+      this.draggedAccumulatedTransitionY -= heightOffset;
+      this.draggedYOffset = -heightOffset;
+    } else {
+      // console.log("elm going down");
+
+      this.elmTransitionY += heightOffset;
+    }
   }
 
   /**
@@ -158,13 +198,11 @@ class Droppable {
      * Start transforming process
      */
     element.setYPosition(
-      // @ts-expect-error
-      this.draggable.siblingsList,
+      this.draggable.siblingsList!,
       this.effectedElemDirection,
-      this.elmYSpace,
-      this.draggable.operationID,
-      1,
-      true
+      this.elmTransitionY,
+
+      this.draggable.operationID
     );
 
     // element.onDragLeave();
