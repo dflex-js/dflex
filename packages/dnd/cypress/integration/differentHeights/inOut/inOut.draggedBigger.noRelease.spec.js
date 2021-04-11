@@ -36,7 +36,7 @@ context(
         // cy.wait(0);
       }
 
-      stepsY = 155;
+      stepsY = 115;
       for (let i = 0; i < stepsY; i += 1) {
         cy.get("#org").trigger("mousemove", {
           clientY: startingPointY + i,
@@ -63,7 +63,7 @@ context(
       );
     });
 
-    it("Insert element (org) inside to the tail", () => {
+    it("Insert element (org) inside", () => {
       for (let i = stepsX; i >= 0; i -= 1) {
         cy.get("#org").trigger("mousemove", {
           clientX: startingPointX - i,
@@ -74,13 +74,12 @@ context(
       }
 
       stepsX = 0;
-      stepsY = 0;
     });
 
     it("Siblings have new positions", () => {
       cy.get("#mtg").should("have.css", "transform", "none");
 
-      cy.get("#org").should(
+      cy.get("#proj").should(
         "have.css",
         "transform",
         "matrix(1, 0, 0, 1, 0, -171.188)"
@@ -89,8 +88,43 @@ context(
       cy.get("#gym").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0,  -171.188)"
+        "matrix(1, 0, 0, 1, 0, 0)"
       );
+    });
+
+    it("Transforms element (org) - outside the list", () => {
+      stepsX = 240;
+      for (let i = 0; i < stepsX; i += 1) {
+        cy.get("#org").trigger("mousemove", {
+          clientX: startingPointX - i,
+          force: true,
+        });
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        // cy.wait(0);
+      }
+
+      stepsY = 115;
+      for (let i = stepsY; i < stepsY + 155; i += 1) {
+        cy.get("#org").trigger("mousemove", {
+          clientY: startingPointY + i,
+          force: true,
+        });
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        // cy.wait(0);
+      }
+    });
+
+    it("Insert element (org) inside", () => {
+      for (let i = stepsX; i >= 0; i -= 1) {
+        cy.get("#org").trigger("mousemove", {
+          clientX: startingPointX - i,
+          force: true,
+        });
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        // cy.wait(0);
+      }
+
+      stepsX = 0;
     });
 
     it("Triggers mouseup", () => {
