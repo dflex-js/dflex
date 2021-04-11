@@ -89,11 +89,11 @@ const Restricted = () => {
   return (
     <div className="list-restriction-container">
       <ul id="p">
-        <Item id="item-restricted-up-1">{1}</Item>
-        <Item id="item-restricted-up-2">{2}</Item>
-        <Item id="item-restricted-up-3">{3}</Item>
-        <Item id="item-restricted-up-5">{5}</Item>
-        <Item id="item-restricted-up-6">{6}</Item>
+        <Item id="item-rest-1">{1}</Item>
+        <Item id="item-rest-2">{2}</Item>
+        <Item id="item-rest-3">{3}</Item>
+        <Item id="item-rest-4">{4}</Item>
+        <Item id="item-rest-5">{5}</Item>
       </ul>
     </div>
   );
