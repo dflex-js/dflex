@@ -16,7 +16,7 @@ function App() {
         <Route path="/h-basic">
           <Basic />
         </Route>
-        <Route path="/restrict-up">
+        <Route path="/restrict">
           <RestrictedUp />
         </Route>
         <Route path="/todo">

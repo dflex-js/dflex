@@ -1,4 +1,4 @@
 /* eslint-disable import/prefer-default-export */
-import RestrictedUp from "./RestrictedUp";
+import Restricted from "./Restricted";
 
-export { RestrictedUp };
+export default Restricted;

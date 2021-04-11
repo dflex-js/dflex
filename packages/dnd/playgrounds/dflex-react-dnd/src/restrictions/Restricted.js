@@ -85,7 +85,7 @@ const Item = ({ id: idProps, children }) => {
   );
 };
 
-const RestrictedUp = () => {
+const Restricted = () => {
   return (
     <div className="list-restriction-container">
       <ul id="p">
@@ -99,4 +99,4 @@ const RestrictedUp = () => {
   );
 };
 
-export default RestrictedUp;
+export default Restricted;
