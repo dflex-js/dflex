@@ -90,7 +90,7 @@ context(
     });
 
     it("Siblings positions are not changed", () => {
-      cy.get("#item-rest-2").should(
+      cy.get("#item-rest-1").should(
         "have.css",
         "transform",
         "matrix(1, 0, 0, 1, 0, 0)"
