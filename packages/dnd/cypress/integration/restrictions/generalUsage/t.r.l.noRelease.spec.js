@@ -40,13 +40,6 @@ context(
       );
     });
 
-    it("non-effected siblings are not transformed", () => {
-      cy.get("#item-rest-2").should("have.css", "transform", "none");
-      cy.get("#item-rest-3").should("have.css", "transform", "none");
-      cy.get("#item-rest-4").should("have.css", "transform", "none");
-      cy.get("#item-rest-5").should("have.css", "transform", "none");
-    });
-
     it("Transforms element (#item-rest-1) to restricted right", () => {
       for (let i = 0; i < 52; i += 1) {
         cy.get("#item-rest-1").trigger("mousemove", {
