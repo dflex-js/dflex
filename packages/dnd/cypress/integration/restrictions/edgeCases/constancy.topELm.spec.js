@@ -57,9 +57,7 @@ context("Checking restrictions constancy for the first element", () => {
   });
 
   it("Transforms element (#item-rest-1) to restricted left", () => {
-    stepsX = 200;
-
-    for (let i = stepsX; i > 0; i -= 1) {
+    for (let i = stepsX; i < stepsX + 210; i += 1) {
       cy.get("#item-rest-1").trigger("mousemove", {
         clientX: startingPointX - i,
         force: true,
@@ -67,6 +65,7 @@ context("Checking restrictions constancy for the first element", () => {
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       // cy.wait(0);
     }
+    stepsX += 210;
   });
 
   it("Dragged is inside", () => {
@@ -78,16 +77,16 @@ context("Checking restrictions constancy for the first element", () => {
   });
 
   it("Transforms element (#item-rest-1) to restricted right", () => {
-    stepsX = 200;
-
-    for (let i = 0; i < stepsX; i += 1) {
+    for (let i = stepsX; i > -370; i -= 1) {
       cy.get("#item-rest-1").trigger("mousemove", {
-        clientX: startingPointX + i,
+        clientX: startingPointX - i,
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       // cy.wait(0);
     }
+
+    stepsX += -370;
   });
 
   it("Dragged is inside", () => {
@@ -98,10 +97,22 @@ context("Checking restrictions constancy for the first element", () => {
     );
   });
 
+  it("Transforms element (#item-rest-1) to origin", () => {
+    cy.get("#item-rest-1").trigger("mousemove", {
+      clientX: startingPointX,
+      clientY: startingPointY,
+      force: true,
+    });
+  });
+
   it("Restricted movements don't trigger any transformation", () => {
     cy.get("#item-rest-2").should("have.css", "transform", "none");
     cy.get("#item-rest-3").should("have.css", "transform", "none");
     cy.get("#item-rest-4").should("have.css", "transform", "none");
     cy.get("#item-rest-5").should("have.css", "transform", "none");
+  });
+
+  it("Triggers mouseup", () => {
+    cy.get("#item-rest-1").trigger("mouseup", { force: true });
   });
 });
