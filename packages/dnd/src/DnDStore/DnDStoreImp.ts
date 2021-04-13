@@ -25,16 +25,17 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   private assignSiblingsBoundaries(siblingsK: string, elemOffset: Offset) {
     const elmRight = elemOffset.left + elemOffset.width;
+    console.log(
+      "file: DnDStoreImp.ts ~ line 54 ~ elemOffset.height;",
+      elemOffset.height
+    );
 
     if (!this.siblingsBoundaries[siblingsK]) {
       this.siblingsBoundaries[siblingsK] = {
-        height: elemOffset.height,
-
+        top: elemOffset.top,
         maxLeft: elemOffset.left,
         minRight: elmRight,
-
-        maxTop: elemOffset.top,
-        minTop: elemOffset.top,
+        bottom: elemOffset.height,
       };
 
       return;
@@ -50,11 +51,10 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       $.minRight = elmRight;
     }
 
-    if ($.maxTop > elemOffset.top) {
-      $.maxTop = elemOffset.top;
+    if ($.top > elemOffset.top) {
+      $.top = elemOffset.top;
     } else {
-      $.minTop = elemOffset.top;
-      $.height = elemOffset.top + elemOffset.height;
+      $.bottom = elemOffset.top + elemOffset.height;
     }
   }
 

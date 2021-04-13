@@ -2,7 +2,7 @@ let elmBox;
 let startingPointX;
 let startingPointY;
 
-const stepsX = 0;
+let stepsX = 0;
 let stepsY = 0;
 
 context(
@@ -170,80 +170,80 @@ context(
       cy.get("#item-rest-1").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 208)"
+        "matrix(1, 0, 0, 1, 0, 280)"
       );
     });
 
-    // it("Transforms element (#item-rest-1) to restricted right", () => {
-    //   for (let i = stepsX; i < stepsX + 52; i += 1) {
-    //     cy.get("#item-rest-1").trigger("mousemove", {
-    //       clientX: startingPointX + i,
-    //       force: true,
-    //     });
-    //     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    //     cy.wait(0);
-    //   }
+    it("Transforms element (#item-rest-1) to restricted right", () => {
+      for (let i = stepsX; i < stepsX + 52; i += 1) {
+        cy.get("#item-rest-1").trigger("mousemove", {
+          clientX: startingPointX + i,
+          force: true,
+        });
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(0);
+      }
 
-    //   stepsX += 52;
-    // });
+      stepsX += 52;
+    });
 
-    // it("Dragged still inside the definition area", () => {
-    //   cy.get("#item-rest-1").should(
-    //     "have.css",
-    //     "transform",
-    //     "matrix(1, 0, 0, 1, 0, 208)"
-    //   );
-    // });
+    it("Dragged still inside the definition area", () => {
+      cy.get("#item-rest-1").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 280)"
+      );
+    });
 
-    // it("Transforms element (#item-rest-1) to restricted left", () => {
-    //   for (let i = stepsX; i > 0; i -= 1) {
-    //     cy.get("#item-rest-1").trigger("mousemove", {
-    //       clientX: startingPointX - i,
-    //       force: true,
-    //     });
-    //     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    //     cy.wait(0);
-    //   }
+    it("Transforms element (#item-rest-1) to restricted left", () => {
+      for (let i = stepsX; i > 0; i -= 1) {
+        cy.get("#item-rest-1").trigger("mousemove", {
+          clientX: startingPointX - i,
+          force: true,
+        });
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(0);
+      }
 
-    //   stepsX = 0;
-    // });
+      stepsX = 0;
+    });
 
-    // it("Dragged still inside the definition area", () => {
-    //   cy.get("#item-rest-1").should(
-    //     "have.css",
-    //     "transform",
-    //     "matrix(1, 0, 0, 1, 0, 208)"
-    //   );
-    // });
+    it("Dragged still inside the definition area", () => {
+      cy.get("#item-rest-1").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 280)"
+      );
+    });
 
-    // it("Triggers mouseup", () => {
-    //   cy.get("#item-rest-1").trigger("mouseup", { force: true });
-    // });
+    it("Triggers mouseup", () => {
+      cy.get("#item-rest-1").trigger("mouseup", { force: true });
+    });
 
-    // it("Siblings have new positions", () => {
-    //   cy.get("#item-rest-2").should(
-    //     "have.css",
-    //     "transform",
-    //     "matrix(1, 0, 0, 1, 0, -52)"
-    //   );
+    it("Siblings have new positions", () => {
+      cy.get("#item-rest-2").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, -76)"
+      );
 
-    //   cy.get("#item-rest-3").should(
-    //     "have.css",
-    //     "transform",
-    //     "matrix(1, 0, 0, 1, 0, -52)"
-    //   );
+      cy.get("#item-rest-3").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, -76)"
+      );
 
-    //   cy.get("#item-rest-4").should(
-    //     "have.css",
-    //     "transform",
-    //     "matrix(1, 0, 0, 1, 0, -52)"
-    //   );
+      cy.get("#item-rest-4").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, -76)"
+      );
 
-    //   cy.get("#item-rest-5").should(
-    //     "have.css",
-    //     "transform",
-    //     "matrix(1, 0, 0, 1, 0, -52)"
-    //   );
-    // });
+      cy.get("#item-rest-5").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, -76)"
+      );
+    });
   }
 );

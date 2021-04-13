@@ -4,13 +4,10 @@ import type { ELmBranch } from "@dflex/dom-gen";
 import type { ElmInstance } from "@dflex/store";
 
 export interface BoundariesOffset {
-  height: number;
-
+  top: number;
   maxLeft: number;
   minRight: number;
-
-  maxTop: number;
-  minTop: number;
+  bottom: number;
 }
 
 export interface ElmTree {

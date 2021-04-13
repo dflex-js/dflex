@@ -99,9 +99,9 @@ class Base
     this.setThreshold(this.draggedElm.currentTop, this.draggedElm.currentLeft);
 
     this.setThreshold(
-      siblingsBoundaries.maxTop,
+      siblingsBoundaries.top,
       siblingsBoundaries.maxLeft,
-      siblingsBoundaries.height,
+      siblingsBoundaries.bottom,
       store.registry[this.draggedElm.id].keys.sK
     );
 

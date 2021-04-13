@@ -125,14 +125,12 @@ class AbstractDraggable<T extends AbstractCoreInterface>
      */
     this.tempTranslate.x = x + this.outerOffsetX;
     this.tempTranslate.y = y + this.outerOffsetY;
+    console.log(
+      "file: AbstractDraggable.ts ~ line 128 ~ this.outerOffsetY",
+      this.outerOffsetY
+    );
 
     this.draggedStyleRef.transform = `translate(${this.tempTranslate.x}px,${this.tempTranslate.y}px)`;
-  }
-
-  protected translateOnY(y: number) {
-    this.tempTranslate.y = y + this.outerOffsetY;
-
-    this.translate(-this.outerOffsetX, y);
   }
 }
 

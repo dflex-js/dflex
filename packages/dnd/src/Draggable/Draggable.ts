@@ -129,10 +129,10 @@ class Draggable extends Base implements DraggableDnDInterface {
       : this.axesRightFilter(fx, minRight);
   }
 
-  private axesBottomFilter(y: number, minTop: number) {
+  private axesBottomFilter(y: number, bottom: number) {
     return (this.tempIndex < 0 || this.isLastELm()) &&
-      y - this.innerOffsetY >= minTop
-      ? minTop - this.innerOffsetY
+      y - this.innerOffsetY + this.draggedElm.offset.height >= bottom
+      ? bottom + this.innerOffsetY - this.draggedElm.offset.height
       : y;
   }
 
@@ -143,19 +143,19 @@ class Draggable extends Base implements DraggableDnDInterface {
   }
 
   private containerVerticalAxesFilter(y: number) {
-    const { maxTop, height } = store.siblingsBoundaries[
+    const { top, bottom } = store.siblingsBoundaries[
       store.registry[this.draggedElm.id].keys.sK
     ];
 
     const fy = this.opts.restrictions.allowLeavingFromTop
       ? this.opts.restrictions.allowLeavingFromBottom
         ? y
-        : this.axesBottomFilter(y, height)
-      : this.axesTopFilter(y, maxTop);
+        : this.axesBottomFilter(y, bottom)
+      : this.axesTopFilter(y, top);
 
     return this.opts.restrictions.allowLeavingFromBottom
       ? fy
-      : this.axesBottomFilter(fy, height);
+      : this.axesBottomFilter(fy, bottom);
   }
 
   /**
