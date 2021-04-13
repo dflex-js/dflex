@@ -3,7 +3,7 @@ import "./Restriction.css";
 
 import { store, DnD } from "@dflex/dnd";
 
-const Item = ({ id: idProps, children }) => {
+const Item = ({ id: idProps, children, style }) => {
   let mouseEvents;
   let dnd;
 
@@ -79,7 +79,13 @@ const Item = ({ id: idProps, children }) => {
   }, []);
 
   return (
-    <li ref={ref} key={idProps} id={idProps} onMouseDown={onMouseDown}>
+    <li
+      ref={ref}
+      key={idProps}
+      id={idProps}
+      style={style}
+      onMouseDown={onMouseDown}
+    >
       {children}
     </li>
   );
@@ -89,11 +95,21 @@ const Restricted = () => {
   return (
     <div className="list-restriction-container">
       <ul id="p">
-        <Item id="item-rest-1">{1}</Item>
-        <Item id="item-rest-2">{2}</Item>
-        <Item id="item-rest-3">{3}</Item>
-        <Item id="item-rest-4">{4}</Item>
-        <Item id="item-rest-5">{5}</Item>
+        <Item id="item-rest-1" style={{ width: "10rem", height: "3rem" }}>
+          {1}
+        </Item>
+        <Item id="item-rest-2" style={{ width: "12rem", height: "3.5rem" }}>
+          {2}
+        </Item>
+        <Item id="item-rest-3" style={{ width: "16rem", height: "2rem" }}>
+          {3}
+        </Item>
+        <Item id="item-rest-4" style={{ width: "13rem", height: "4rem" }}>
+          {4}
+        </Item>
+        <Item id="item-rest-5" style={{ width: "18rem", height: "1rem" }}>
+          {5}
+        </Item>
       </ul>
     </div>
   );

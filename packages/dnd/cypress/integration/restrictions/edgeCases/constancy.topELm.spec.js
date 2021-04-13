@@ -5,7 +5,7 @@ let startingPointY;
 let stepsX = 0;
 let stepsY = 0;
 
-context("Checking restrictions constancy", () => {
+context("Checking restrictions constancy for the first element", () => {
   before(() => {
     cy.visit("http://localhost:3001/restricted");
   });
@@ -42,7 +42,7 @@ context("Checking restrictions constancy", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(0);
+      // cy.wait(0);
     }
 
     stepsY += 100;
