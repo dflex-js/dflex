@@ -2,7 +2,7 @@ let elmBox;
 let startingPointX;
 let startingPointY;
 
-let stepsX = 0;
+const stepsX = 0;
 let stepsY = 0;
 
 context(
@@ -25,50 +25,50 @@ context(
     });
 
     it("Transforms element (#item-rest-1)", () => {
-      for (let i = stepsY; i < stepsY + 52; i += 1) {
+      for (let i = stepsY; i < stepsY + 88; i += 1) {
         cy.get("#item-rest-1").trigger("mousemove", {
           clientY: startingPointY + i,
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
 
-      stepsY += 52;
+      stepsY += 88;
     });
 
     it("Effected siblings are transformed", () => {
       cy.get("#item-rest-2").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -52)"
+        "matrix(1, 0, 0, 1, 0, -76)"
       );
     });
 
     it("Transforms element (#item-rest-1)", () => {
-      for (let i = stepsY; i < stepsY + 52; i += 1) {
+      for (let i = stepsY; i < stepsY + 58; i += 1) {
         cy.get("#item-rest-1").trigger("mousemove", {
           clientY: startingPointY + i,
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
 
-      stepsY += 52;
+      stepsY += 58;
     });
 
     it("Effected siblings are transformed", () => {
       cy.get("#item-rest-2").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -52)"
+        "matrix(1, 0, 0, 1, 0, -76)"
       );
 
       cy.get("#item-rest-3").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -52)"
+        "matrix(1, 0, 0, 1, 0, -76)"
       );
     });
 
@@ -78,35 +78,35 @@ context(
     });
 
     it("Transforms element (#item-rest-1)", () => {
-      for (let i = stepsY; i < stepsY + 52; i += 1) {
+      for (let i = stepsY; i < stepsY + 92; i += 1) {
         cy.get("#item-rest-1").trigger("mousemove", {
           clientY: startingPointY + i,
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
 
-      stepsY += 52;
+      stepsY += 92;
     });
 
     it("Effected siblings are transformed", () => {
       cy.get("#item-rest-2").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -52)"
+        "matrix(1, 0, 0, 1, 0, -76)"
       );
 
       cy.get("#item-rest-3").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -52)"
+        "matrix(1, 0, 0, 1, 0, -76)"
       );
 
       cy.get("#item-rest-4").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -52)"
+        "matrix(1, 0, 0, 1, 0, -76)"
       );
     });
 
@@ -115,41 +115,41 @@ context(
     });
 
     it("Transforms element (#item-rest-1)", () => {
-      for (let i = stepsY; i < stepsY + 52; i += 1) {
+      for (let i = stepsY; i < stepsY + 42; i += 1) {
         cy.get("#item-rest-1").trigger("mousemove", {
           clientY: startingPointY + i,
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
 
-      stepsY += 52;
+      stepsY += 42;
     });
 
     it("Effected siblings are transformed", () => {
       cy.get("#item-rest-2").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -52)"
+        "matrix(1, 0, 0, 1, 0, -76)"
       );
 
       cy.get("#item-rest-3").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -52)"
+        "matrix(1, 0, 0, 1, 0, -76)"
       );
 
       cy.get("#item-rest-4").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -52)"
+        "matrix(1, 0, 0, 1, 0, -76)"
       );
 
       cy.get("#item-rest-5").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -52)"
+        "matrix(1, 0, 0, 1, 0, -76)"
       );
     });
 
@@ -160,7 +160,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
 
       stepsY += 52;
@@ -174,76 +174,76 @@ context(
       );
     });
 
-    it("Transforms element (#item-rest-1) to restricted right", () => {
-      for (let i = stepsX; i < stepsX + 52; i += 1) {
-        cy.get("#item-rest-1").trigger("mousemove", {
-          clientX: startingPointX + i,
-          force: true,
-        });
-        // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
-      }
+    // it("Transforms element (#item-rest-1) to restricted right", () => {
+    //   for (let i = stepsX; i < stepsX + 52; i += 1) {
+    //     cy.get("#item-rest-1").trigger("mousemove", {
+    //       clientX: startingPointX + i,
+    //       force: true,
+    //     });
+    //     // eslint-disable-next-line cypress/no-unnecessary-waiting
+    //     cy.wait(0);
+    //   }
 
-      stepsX += 52;
-    });
+    //   stepsX += 52;
+    // });
 
-    it("Dragged still inside the definition area", () => {
-      cy.get("#item-rest-1").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 208)"
-      );
-    });
+    // it("Dragged still inside the definition area", () => {
+    //   cy.get("#item-rest-1").should(
+    //     "have.css",
+    //     "transform",
+    //     "matrix(1, 0, 0, 1, 0, 208)"
+    //   );
+    // });
 
-    it("Transforms element (#item-rest-1) to restricted left", () => {
-      for (let i = stepsX; i > 0; i -= 1) {
-        cy.get("#item-rest-1").trigger("mousemove", {
-          clientX: startingPointX - i,
-          force: true,
-        });
-        // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
-      }
+    // it("Transforms element (#item-rest-1) to restricted left", () => {
+    //   for (let i = stepsX; i > 0; i -= 1) {
+    //     cy.get("#item-rest-1").trigger("mousemove", {
+    //       clientX: startingPointX - i,
+    //       force: true,
+    //     });
+    //     // eslint-disable-next-line cypress/no-unnecessary-waiting
+    //     cy.wait(0);
+    //   }
 
-      stepsX = 0;
-    });
+    //   stepsX = 0;
+    // });
 
-    it("Dragged still inside the definition area", () => {
-      cy.get("#item-rest-1").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 208)"
-      );
-    });
+    // it("Dragged still inside the definition area", () => {
+    //   cy.get("#item-rest-1").should(
+    //     "have.css",
+    //     "transform",
+    //     "matrix(1, 0, 0, 1, 0, 208)"
+    //   );
+    // });
 
-    it("Triggers mouseup", () => {
-      cy.get("#item-rest-1").trigger("mouseup", { force: true });
-    });
+    // it("Triggers mouseup", () => {
+    //   cy.get("#item-rest-1").trigger("mouseup", { force: true });
+    // });
 
-    it("Siblings have new positions", () => {
-      cy.get("#item-rest-2").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, -52)"
-      );
+    // it("Siblings have new positions", () => {
+    //   cy.get("#item-rest-2").should(
+    //     "have.css",
+    //     "transform",
+    //     "matrix(1, 0, 0, 1, 0, -52)"
+    //   );
 
-      cy.get("#item-rest-3").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, -52)"
-      );
+    //   cy.get("#item-rest-3").should(
+    //     "have.css",
+    //     "transform",
+    //     "matrix(1, 0, 0, 1, 0, -52)"
+    //   );
 
-      cy.get("#item-rest-4").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, -52)"
-      );
+    //   cy.get("#item-rest-4").should(
+    //     "have.css",
+    //     "transform",
+    //     "matrix(1, 0, 0, 1, 0, -52)"
+    //   );
 
-      cy.get("#item-rest-5").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, -52)"
-      );
-    });
+    //   cy.get("#item-rest-5").should(
+    //     "have.css",
+    //     "transform",
+    //     "matrix(1, 0, 0, 1, 0, -52)"
+    //   );
+    // });
   }
 );

@@ -103,8 +103,8 @@ class Draggable extends Base implements DraggableDnDInterface {
     return this.tempIndex === this.getLastElmIndex();
   }
 
-  private axesRightFilter(x: number, maxRight: number) {
-    return x - this.innerOffsetX + this.draggedElm.offset.width >= maxRight
+  private axesRightFilter(x: number, minRight: number) {
+    return x - this.innerOffsetX + this.draggedElm.offset.width >= minRight
       ? -this.outerOffsetX
       : x;
   }
@@ -114,25 +114,25 @@ class Draggable extends Base implements DraggableDnDInterface {
   }
 
   private containerHorizontalAxesFilter(x: number) {
-    const { maxLeft, maxRight } = store.siblingsBoundaries[
+    const { maxLeft, minRight } = store.siblingsBoundaries[
       store.registry[this.draggedElm.id].keys.sK
     ];
 
     const fx = this.opts.restrictions.allowLeavingFromLeft
       ? this.opts.restrictions.allowLeavingFromRight
         ? x
-        : this.axesRightFilter(x, maxRight)
+        : this.axesRightFilter(x, minRight)
       : this.axesLeftFilter(x, maxLeft);
 
     return this.opts.restrictions.allowLeavingFromRight
       ? fx
-      : this.axesRightFilter(fx, maxRight);
+      : this.axesRightFilter(fx, minRight);
   }
 
   private axesBottomFilter(y: number, minTop: number) {
     return (this.tempIndex < 0 || this.isLastELm()) &&
       y - this.innerOffsetY >= minTop
-      ? minTop + this.innerOffsetY
+      ? minTop - this.innerOffsetY
       : y;
   }
 
@@ -143,19 +143,19 @@ class Draggable extends Base implements DraggableDnDInterface {
   }
 
   private containerVerticalAxesFilter(y: number) {
-    const { maxTop, minTop } = store.siblingsBoundaries[
+    const { maxTop, height } = store.siblingsBoundaries[
       store.registry[this.draggedElm.id].keys.sK
     ];
 
     const fy = this.opts.restrictions.allowLeavingFromTop
       ? this.opts.restrictions.allowLeavingFromBottom
         ? y
-        : this.axesBottomFilter(y, minTop)
+        : this.axesBottomFilter(y, height)
       : this.axesTopFilter(y, maxTop);
 
     return this.opts.restrictions.allowLeavingFromBottom
       ? fy
-      : this.axesBottomFilter(fy, minTop);
+      : this.axesBottomFilter(fy, height);
   }
 
   /**

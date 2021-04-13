@@ -24,12 +24,15 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   }
 
   private assignSiblingsBoundaries(siblingsK: string, elemOffset: Offset) {
+    const elmRight = elemOffset.left + elemOffset.width;
+
     if (!this.siblingsBoundaries[siblingsK]) {
       this.siblingsBoundaries[siblingsK] = {
         height: elemOffset.height,
-        width: elemOffset.width,
+
         maxLeft: elemOffset.left,
-        maxRight: elemOffset.left + elemOffset.width,
+        minRight: elmRight,
+
         maxTop: elemOffset.top,
         minTop: elemOffset.top,
       };
@@ -43,10 +46,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       $.maxLeft = elemOffset.left;
     }
 
-    const elmRight = elemOffset.left + elemOffset.width;
-
-    if ($.maxRight > elmRight) {
-      $.maxRight = elmRight;
+    if ($.minRight > elmRight) {
+      $.minRight = elmRight;
     }
 
     if ($.maxTop > elemOffset.top) {
@@ -54,10 +55,6 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     } else {
       $.minTop = elemOffset.top;
       $.height = elemOffset.top + elemOffset.height;
-    }
-
-    if ($.width > elemOffset.width) {
-      $.width = elemOffset.width;
     }
   }
 
@@ -98,6 +95,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       offset,
       keys: { sK },
     } = this.registry[element.id];
+    console.log("file: DnDStoreImp.ts ~ line 105 ~ id", element.id);
 
     this.assignSiblingsBoundaries(sK, offset);
   }

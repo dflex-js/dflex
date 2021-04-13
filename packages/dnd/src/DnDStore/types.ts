@@ -5,9 +5,10 @@ import type { ElmInstance } from "@dflex/store";
 
 export interface BoundariesOffset {
   height: number;
-  width: number;
+
   maxLeft: number;
-  maxRight: number;
+  minRight: number;
+
   maxTop: number;
   minTop: number;
 }

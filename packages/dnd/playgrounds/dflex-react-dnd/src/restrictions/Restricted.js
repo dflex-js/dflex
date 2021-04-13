@@ -95,16 +95,28 @@ const Restricted = () => {
   return (
     <div className="list-restriction-container">
       <ul id="p">
-        <Item id="item-rest-1" style={{ width: "10rem", height: "3rem" }}>
+        <Item
+          id="item-rest-1"
+          style={{ width: "10rem", height: "3rem", marginLeft: "92px" }}
+        >
           {1}
         </Item>
-        <Item id="item-rest-2" style={{ width: "12rem", height: "3.5rem" }}>
+        <Item
+          id="item-rest-2"
+          style={{ width: "12rem", height: "3.5rem", marginLeft: "22px" }}
+        >
           {2}
         </Item>
-        <Item id="item-rest-3" style={{ width: "16rem", height: "2rem" }}>
+        <Item
+          id="item-rest-3"
+          style={{ width: "16rem", height: "2rem", marginLeft: "32px" }}
+        >
           {3}
         </Item>
-        <Item id="item-rest-4" style={{ width: "13rem", height: "4rem" }}>
+        <Item
+          id="item-rest-4"
+          style={{ width: "13rem", height: "4rem", marginLeft: "12px" }}
+        >
           {4}
         </Item>
         <Item id="item-rest-5" style={{ width: "18rem", height: "1rem" }}>
