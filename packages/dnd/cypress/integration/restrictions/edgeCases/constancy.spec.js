@@ -57,7 +57,7 @@ context("Checking restrictions constancy", () => {
   });
 
   it("Transforms element (#item-rest-1) to restricted left", () => {
-    stepsX = 100;
+    stepsX = 200;
 
     for (let i = stepsX; i > 0; i -= 1) {
       cy.get("#item-rest-1").trigger("mousemove", {
@@ -67,8 +67,6 @@ context("Checking restrictions constancy", () => {
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       // cy.wait(0);
     }
-
-    stepsX = 0;
   });
 
   it("Dragged is inside", () => {
@@ -82,7 +80,7 @@ context("Checking restrictions constancy", () => {
   it("Transforms element (#item-rest-1) to restricted right", () => {
     stepsX = 200;
 
-    for (let i = stepsX; i > 0; i -= 1) {
+    for (let i = 0; i < stepsX; i += 1) {
       cy.get("#item-rest-1").trigger("mousemove", {
         clientX: startingPointX + i,
         force: true,
@@ -90,8 +88,6 @@ context("Checking restrictions constancy", () => {
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       // cy.wait(0);
     }
-
-    stepsX = 0;
   });
 
   it("Dragged is inside", () => {
