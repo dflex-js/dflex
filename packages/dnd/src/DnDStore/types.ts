@@ -7,6 +7,7 @@ export interface BoundariesOffset {
   height: number;
   width: number;
   maxLeft: number;
+  maxRight: number;
   maxTop: number;
   minTop: number;
 }

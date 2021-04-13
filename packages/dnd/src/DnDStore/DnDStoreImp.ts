@@ -29,6 +29,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
         height: elemOffset.height,
         width: elemOffset.width,
         maxLeft: elemOffset.left,
+        maxRight: elemOffset.left + elemOffset.width,
         maxTop: elemOffset.top,
         minTop: elemOffset.top,
       };
@@ -40,6 +41,12 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     if ($.maxLeft < elemOffset.left) {
       $.maxLeft = elemOffset.left;
+    }
+
+    const elmRight = elemOffset.left + elemOffset.width;
+
+    if ($.maxRight > elmRight) {
+      $.maxRight = elmRight;
     }
 
     if ($.maxTop > elemOffset.top) {
