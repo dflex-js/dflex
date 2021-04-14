@@ -1,8 +1,14 @@
-/* eslint-disable no-unused-vars */
+/**
+ * Copyright (c) Jalal Maskoun.
+ *
+ * This source code is licensed under the AGPL3.0 license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable import/no-extraneous-dependencies */
 
-import React, { MouseEventHandler } from "react";
+import React from "react";
 import "./Todo.css";
 
 import { store, DnD } from "@dflex/dnd";

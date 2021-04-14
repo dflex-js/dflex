@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) Jalal Maskoun.
+ *
+ * This source code is licensed under the AGPL3.0 license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 import { AbstractCoreInterface } from "@dflex/core-instance";
 
 import type {
@@ -125,10 +131,6 @@ class AbstractDraggable<T extends AbstractCoreInterface>
      */
     this.tempTranslate.x = x + this.outerOffsetX;
     this.tempTranslate.y = y + this.outerOffsetY;
-    console.log(
-      "file: AbstractDraggable.ts ~ line 128 ~ this.outerOffsetY",
-      this.outerOffsetY
-    );
 
     this.draggedStyleRef.transform = `translate(${this.tempTranslate.x}px,${this.tempTranslate.y}px)`;
   }
