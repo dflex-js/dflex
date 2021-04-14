@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) Jalal Maskoun.
+ *
+ * This source code is licensed under the AGPL3.0 license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 import Store from "@dflex/store";
 import CoreInstance from "@dflex/core-instance";
 
@@ -25,10 +32,6 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   private assignSiblingsBoundaries(siblingsK: string, elemOffset: Offset) {
     const elmRight = elemOffset.left + elemOffset.width;
-    console.log(
-      "file: DnDStoreImp.ts ~ line 54 ~ elemOffset.height;",
-      elemOffset.height
-    );
 
     if (!this.siblingsBoundaries[siblingsK]) {
       this.siblingsBoundaries[siblingsK] = {
@@ -95,7 +98,6 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       offset,
       keys: { sK },
     } = this.registry[element.id];
-    console.log("file: DnDStoreImp.ts ~ line 105 ~ id", element.id);
 
     this.assignSiblingsBoundaries(sK, offset);
   }

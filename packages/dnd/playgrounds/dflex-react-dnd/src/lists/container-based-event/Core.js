@@ -1,4 +1,10 @@
-/* eslint-disable no-unused-vars */
+/**
+ * Copyright (c) Jalal Maskoun.
+ *
+ * This source code is licensed under the AGPL3.0 license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 /* eslint-disable no-console */
 /* eslint-disable import/no-extraneous-dependencies */
 
@@ -24,17 +30,18 @@ const Core = (props) => {
     idProps || `${keyGenerator(new Date().getTime())}`
   );
 
+  // eslint-disable-next-line no-unused-vars
   const [isDragged, setIsDragged] = React.useState(false);
 
-  function onDragOver() {
-    console.log("dragged is over the element!");
+  // function onDragOver() {
+  //   console.log("dragged is over the element!");
 
-    if (!isDragged) setIsDragged(true);
-  }
+  //   if (!isDragged) setIsDragged(true);
+  // }
 
-  function onDragLeave() {
-    console.log("dragged is leaving the element!");
-  }
+  // function onDragLeave() {
+  //   console.log("dragged is leaving the element!");
+  // }
 
   // const handlers = { onDragOver, onDragLeave };
 
