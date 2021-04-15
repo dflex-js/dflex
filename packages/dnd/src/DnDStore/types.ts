@@ -1,14 +1,19 @@
-/* eslint-disable no-unused-vars */
+/**
+ * Copyright (c) Jalal Maskoun.
+ *
+ * This source code is licensed under the AGPL3.0 license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 import type { CoreInstanceInterface, Offset } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
 import type { ElmInstance } from "@dflex/store";
 
 export interface BoundariesOffset {
-  height: number;
-  width: number;
-  left: number;
-  maxTop: number;
-  minTop: number;
+  top: number;
+  maxLeft: number;
+  minRight: number;
+  bottom: number;
 }
 
 export interface ElmTree {

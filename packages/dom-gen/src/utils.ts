@@ -1,11 +1,10 @@
 /**
- * Generates unique key by combined depth with element current index.
+ * Copyright (c) Jalal Maskoun.
  *
- * Ideally, each element should be connected with parent-id.
- * If we have element-id1, we should know who's the parent by parent-id.
- * But, currently this is not possible children render first. Instead,
- * we use counters combined with depth as parent-identifier. Vice-versa.
+ * This source code is licensed under the AGPL3.0 license found in the
+ * LICENSE file in the root directory of this source tree.
  */
+
 function genKey(dp: number, i: number): string {
   return `${dp}-${i}`;
 }

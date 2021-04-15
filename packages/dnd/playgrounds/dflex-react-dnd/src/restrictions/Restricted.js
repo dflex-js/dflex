@@ -1,9 +1,15 @@
+/**
+ * Copyright (c) Jalal Maskoun.
+ *
+ * This source code is licensed under the AGPL3.0 license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 import React from "react";
 import "./Restriction.css";
 
 import { store, DnD } from "@dflex/dnd";
 
-const Item = ({ id: idProps, children }) => {
+const Item = ({ id: idProps, children, style }) => {
   let mouseEvents;
   let dnd;
 
@@ -79,24 +85,52 @@ const Item = ({ id: idProps, children }) => {
   }, []);
 
   return (
-    <li ref={ref} key={idProps} id={idProps} onMouseDown={onMouseDown}>
+    <li
+      ref={ref}
+      key={idProps}
+      id={idProps}
+      style={style}
+      onMouseDown={onMouseDown}
+    >
       {children}
     </li>
   );
 };
 
-const RestrictedUp = () => {
+const Restricted = () => {
   return (
     <div className="list-restriction-container">
       <ul id="p">
-        <Item id="item-restricted-up-1">{1}</Item>
-        <Item id="item-restricted-up-2">{2}</Item>
-        <Item id="item-restricted-up-3">{3}</Item>
-        <Item id="item-restricted-up-5">{5}</Item>
-        <Item id="item-restricted-up-6">{6}</Item>
+        <Item
+          id="item-rest-1"
+          style={{ width: "10rem", height: "3rem", marginLeft: "92px" }}
+        >
+          {1}
+        </Item>
+        <Item
+          id="item-rest-2"
+          style={{ width: "12rem", height: "3.5rem", marginLeft: "22px" }}
+        >
+          {2}
+        </Item>
+        <Item
+          id="item-rest-3"
+          style={{ width: "16rem", height: "2rem", marginLeft: "32px" }}
+        >
+          {3}
+        </Item>
+        <Item
+          id="item-rest-4"
+          style={{ width: "13rem", height: "4rem", marginLeft: "12px" }}
+        >
+          {4}
+        </Item>
+        <Item id="item-rest-5" style={{ width: "18rem", height: "1rem" }}>
+          {5}
+        </Item>
       </ul>
     </div>
   );
 };
 
-export default RestrictedUp;
+export default Restricted;

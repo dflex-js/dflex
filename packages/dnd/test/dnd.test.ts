@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) Jalal Maskoun.
+ *
+ * This source code is licensed under the AGPL3.0 license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 import { store, DnD } from "../src/index";
 
 import { elm1, elm2, elm3, elm4 } from "./utils";

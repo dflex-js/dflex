@@ -1,4 +1,10 @@
-/* eslint-disable tsdoc/syntax */
+/**
+ * Copyright (c) Jalal Maskoun.
+ *
+ * This source code is licensed under the AGPL3.0 license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 /// <reference types="cypress" />
 // ***********************************************************
 // This example plugins/index.js can be used to load plugins
@@ -18,7 +24,7 @@
  */
 module.exports = (on, config) => {
   // eslint-disable-next-line global-require
-  require("@cypress/code-coverage/task")(on, config);
+  // require("@cypress/code-coverage/task")(on, config);
 
   // add other tasks to be registered here
 

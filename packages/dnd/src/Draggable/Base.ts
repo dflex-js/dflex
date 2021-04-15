@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) Jalal Maskoun.
+ *
+ * This source code is licensed under the AGPL3.0 license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 import { AbstractDraggable } from "@dflex/draggable";
 
 import { CoreInstanceInterface } from "@dflex/core-instance";
@@ -99,9 +105,9 @@ class Base
     this.setThreshold(this.draggedElm.currentTop, this.draggedElm.currentLeft);
 
     this.setThreshold(
-      siblingsBoundaries.maxTop,
-      siblingsBoundaries.left,
-      siblingsBoundaries.height,
+      siblingsBoundaries.top,
+      siblingsBoundaries.maxLeft,
+      siblingsBoundaries.bottom,
       store.registry[this.draggedElm.id].keys.sK
     );
 

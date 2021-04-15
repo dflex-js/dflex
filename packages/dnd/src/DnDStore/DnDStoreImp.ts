@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) Jalal Maskoun.
+ *
+ * This source code is licensed under the AGPL3.0 license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 import Store from "@dflex/store";
 import CoreInstance from "@dflex/core-instance";
 
@@ -24,13 +31,14 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   }
 
   private assignSiblingsBoundaries(siblingsK: string, elemOffset: Offset) {
+    const elmRight = elemOffset.left + elemOffset.width;
+
     if (!this.siblingsBoundaries[siblingsK]) {
       this.siblingsBoundaries[siblingsK] = {
-        height: elemOffset.height,
-        width: elemOffset.width,
-        left: elemOffset.left,
-        maxTop: elemOffset.top,
-        minTop: elemOffset.top,
+        top: elemOffset.top,
+        maxLeft: elemOffset.left,
+        minRight: elmRight,
+        bottom: elemOffset.height,
       };
 
       return;
@@ -38,19 +46,18 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     const $ = this.siblingsBoundaries[siblingsK];
 
-    if ($.left < elemOffset.left) {
-      $.left = elemOffset.left;
+    if ($.maxLeft < elemOffset.left) {
+      $.maxLeft = elemOffset.left;
     }
 
-    if ($.maxTop > elemOffset.top) {
-      $.maxTop = elemOffset.top;
+    if ($.minRight > elmRight) {
+      $.minRight = elmRight;
+    }
+
+    if ($.top > elemOffset.top) {
+      $.top = elemOffset.top;
     } else {
-      $.minTop = elemOffset.top;
-      $.height = elemOffset.top + elemOffset.height;
-    }
-
-    if ($.width > elemOffset.width) {
-      $.width = elemOffset.width;
+      $.bottom = elemOffset.top + elemOffset.height;
     }
   }
 
