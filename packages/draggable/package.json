@@ -1,6 +1,6 @@
 {
   "name": "@dflex/draggable",
-  "version": "2.6.1",
+  "version": "2.7.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
@@ -17,8 +17,8 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@dflex/core-instance": "^2.6.1",
-    "@dflex/store": "^2.2.2"
+    "@dflex/core-instance": "^2.7.0",
+    "@dflex/store": "^2.7.0"
   },
   "devDependencies": {
     "@cypress/code-coverage": "^3.8.1",
