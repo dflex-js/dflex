@@ -1,6 +1,6 @@
 <h1 align="center">
   <img
-  src="https://raw.githubusercontent.com/jalal246/dflex/update_docs/dflex-github-readme.png"
+  src="https://raw.githubusercontent.com/jalal246/dflex/update_docs/DFlex-readme.png"
   alt="Dflex logo" />
 </h1>
 
