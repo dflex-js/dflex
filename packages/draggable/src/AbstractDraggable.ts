@@ -32,7 +32,8 @@ const draggedStyleProps: DraggedStyle = [
 ];
 
 class AbstractDraggable<T extends AbstractCoreInterface>
-  implements AbstractDraggableInterface<T> {
+  implements AbstractDraggableInterface<T>
+{
   draggedElm: T;
 
   draggedStyleRef: CSSStyleDeclaration;

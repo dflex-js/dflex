@@ -29,7 +29,8 @@ import type {
  */
 class Base
   extends AbstractDraggable<CoreInstanceInterface>
-  implements DraggableBaseInterface {
+  implements DraggableBaseInterface
+{
   tempIndex: number;
 
   operationID: string;

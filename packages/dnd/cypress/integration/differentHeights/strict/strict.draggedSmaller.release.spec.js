@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 let elmBox;
-let startingPointX;
+// let startingPointX;
 let startingPointY;
 
 // let stepsX;
@@ -21,7 +21,7 @@ context(
     it("Getting the first element (mtg)", () => {
       cy.get("#mtg").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
-        startingPointX = elmBox.x + elmBox.width / 2;
+        // startingPointX = elmBox.x + elmBox.width / 2;
         startingPointY = elmBox.y + elmBox.height / 2;
 
         cy.get("#mtg").trigger("mousedown", {
@@ -68,7 +68,7 @@ context(
     it("Getting the second element (mtg)", () => {
       cy.get("#mtg").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
-        startingPointX = elmBox.x + elmBox.width / 2;
+        // startingPointX = elmBox.x + elmBox.width / 2;
         startingPointY = elmBox.y + elmBox.height / 2;
 
         cy.get("#mtg").trigger("mousedown", {
@@ -119,7 +119,7 @@ context(
     it("Getting the third element (mtg)", () => {
       cy.get("#mtg").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
-        startingPointX = elmBox.x + elmBox.width / 2;
+        // startingPointX = elmBox.x + elmBox.width / 2;
         startingPointY = elmBox.y + elmBox.height / 2;
 
         cy.get("#mtg").trigger("mousedown", {
@@ -174,7 +174,7 @@ context(
     it("Getting the last element (mtg)", () => {
       cy.get("#mtg").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
-        startingPointX = elmBox.x + elmBox.width / 2;
+        // startingPointX = elmBox.x + elmBox.width / 2;
         startingPointY = elmBox.y + elmBox.height / 2;
 
         cy.get("#mtg").trigger("mousedown", {
@@ -229,7 +229,7 @@ context(
     it("Getting the last element (mtg)", () => {
       cy.get("#mtg").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
-        startingPointX = elmBox.x + elmBox.width / 2;
+        // startingPointX = elmBox.x + elmBox.width / 2;
         startingPointY = elmBox.y + elmBox.height / 2;
 
         cy.get("#mtg").trigger("mousedown", {
@@ -284,7 +284,7 @@ context(
     it("Getting the third element (mtg)", () => {
       cy.get("#mtg").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
-        startingPointX = elmBox.x + elmBox.width / 2;
+        // startingPointX = elmBox.x + elmBox.width / 2;
         startingPointY = elmBox.y + elmBox.height / 2;
 
         cy.get("#mtg").trigger("mousedown", {
@@ -339,7 +339,7 @@ context(
     it("Getting the second element (mtg)", () => {
       cy.get("#mtg").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
-        startingPointX = elmBox.x + elmBox.width / 2;
+        // startingPointX = elmBox.x + elmBox.width / 2;
         startingPointY = elmBox.y + elmBox.height / 2;
 
         cy.get("#mtg").trigger("mousedown", {
@@ -395,7 +395,7 @@ context(
       cy.get("#mtg").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
         // eslint-disable-next-line no-unused-vars
-        startingPointX = elmBox.x + elmBox.width / 2;
+        // startingPointX = elmBox.x + elmBox.width / 2;
         startingPointY = elmBox.y + elmBox.height / 2;
 
         cy.get("#mtg").trigger("mousedown", {
