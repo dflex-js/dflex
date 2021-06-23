@@ -38,7 +38,7 @@ It can be used with any app you have whether it is React, Vue, Angular or Svelte
 
 ## Documentation
 
-Visit DFlex site for more <https://dflex-js.github.io/dflex/> and to see live
+Visit DFlex site for more <https://www.dflex.dev/> and to see live
 examples with the full code.
 
 ## Installation

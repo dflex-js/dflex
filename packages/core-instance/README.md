@@ -29,4 +29,4 @@
 
 # @dflex/core-instance
 
-Visit DFlex site for more <https://dflex-js.github.io/dflex/>
+Visit DFlex site for more <https://www.dflex.dev/>
