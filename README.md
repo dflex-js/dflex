@@ -1,26 +1,26 @@
 <h1 align="center">
   <img
-  src="https://raw.githubusercontent.com/jalal246/dflex/master/dflex-full-size.png"
+  src="https://raw.githubusercontent.com/jalal246/dflex/master/DFlex-readme.png"
   alt="Dflex logo" />
 </h1>
 
 <p align="center">
-  <a href="https://github.com/jalal246/dflex">
+  <a href="https://github.com/dflex-js/dflex">
     <img
     src="https://img.shields.io/github/workflow/status/jalal246/dflex/Unit Test"
     alt="Dflex build status" />
   </a>
-  <a href="https://github.com/jalal246/dflex/pulls">
+  <a href="https://github.com/dflex-js/dflex/pulls">
     <img
-    src="https://img.shields.io/github/issues-pr/jalal246/dflex"
+    src="https://img.shields.io/github/issues-pr/dflex-js/dflex"
     alt="number of opened pull requests"/>
   </a>
-  <a href="https://github.com/jalal246/dflex/issues">
+  <a href="https://github.com/dflex-js/dflex/issues">
   <img
-    src="https://img.shields.io/github/issues/jalal246/dflex"
+    src="https://img.shields.io/github/issues/dflex-js/dflex"
     alt="number of opened issues"/>
   </a>
-  <a href="https://github.com/jalal246/dflex/pulls">
+  <a href="https://github.com/dflex-js/dflex/pulls">
    <img
    src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"
    alt="Dflex welcomes pull request" />
@@ -58,30 +58,28 @@ own functionality without starting from scratch.
 
 ## Project Content
 
-Inside each package, there's a description and full documentation.
-
-### [**DOM Generator**](https://github.com/jalal246/dflex/tree/master/packages/dom-gen)
+### [**DOM Generator**](https://github.com/dflex-js/dflex/tree/master/packages/dom-gen)
 
 DOM relations generator algorithm. Generate relations between DOM elements based
 on element depth without a browser.
 
-### [**DOM Store**](https://github.com/jalal246/dflex/tree/master/packages/store)
+### [**DOM Store**](https://github.com/dflex-js/dflex/tree/master/packages/store)
 
 The only Store that allows you to traverse through the DOM tree using element id
 without reading from the browser.
 
-### [**Drag & Drop**](https://github.com/jalal246/dflex/tree/master/packages/dnd)
+### [**Drag & Drop**](https://github.com/dflex-js/dflex/tree/master/packages/dnd)
 
 A Simple, lightweight Solution for a Drag & Drop App based on enhanced DOM store
 algorithm. You can achieve a drag and drop with three steps only with mouse event.
 
-### [**Draggable**](https://github.com/jalal246/dflex/tree/master/packages/draggable)
+### [**Draggable**](https://github.com/dflex-js/dflex/tree/master/packages/draggable)
 
 High-performance draggable elements written in pure JS works for Web and Mobile.
 
 ## Documentation
 
-Visit DFlex site for more <https://jalal246.github.io/dflex/>
+Visit DFlex site for more <https://www.dflex.dev/>
 
 ## Installation
 
@@ -113,5 +111,3 @@ the public domain under Creative Commons CC0 1.0 Universal.
 If you like this project, you can support it by contributing. If you find a bug,
 please let me know, applying a pull request is welcome. This project needs your
 support. You can fix typos, add new examples, or build with me new features.
-
-> Support this project by giving it a Star ⭐

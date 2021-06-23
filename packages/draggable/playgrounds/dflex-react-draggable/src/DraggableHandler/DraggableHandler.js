@@ -5,6 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/* eslint-disable import/no-extraneous-dependencies */
+
 import React from "react";
 
 import { store, Draggable } from "@dflex/draggable";

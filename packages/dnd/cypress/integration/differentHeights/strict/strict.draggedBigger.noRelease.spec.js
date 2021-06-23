@@ -4,8 +4,9 @@
  * This source code is licensed under the AGPL3.0 license found in the
  * LICENSE file in the root directory of this source tree.
  */
+
 let elmBox;
-let startingPointX;
+// let startingPointX;
 let startingPointY;
 
 // let stepsX;
@@ -19,7 +20,7 @@ context("Moving Elements Strict - Dragged is bigger - No Release", () => {
   it("Getting the second element (org)", () => {
     cy.get("#org").then((elm) => {
       elmBox = elm[0].getBoundingClientRect();
-      startingPointX = elmBox.x + elmBox.width / 2;
+      // startingPointX = elmBox.x + elmBox.width / 2;
       startingPointY = elmBox.y + elmBox.height / 2;
 
       cy.get("#org").trigger("mousedown", {
@@ -112,7 +113,7 @@ context("Moving Elements Strict - Dragged is bigger - No Release", () => {
     cy.get("#org").then((elm) => {
       elmBox = elm[0].getBoundingClientRect();
       // eslint-disable-next-line no-unused-vars
-      startingPointX = elmBox.x + elmBox.width / 2;
+      // startingPointX = elmBox.x + elmBox.width / 2;
       startingPointY = elmBox.y + elmBox.height / 2;
 
       cy.get("#org").trigger("mousedown", {

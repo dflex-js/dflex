@@ -47,7 +47,8 @@ import type {
 
 class CoreInstance
   extends AbstractCoreInstance
-  implements CoreInstanceInterface {
+  implements CoreInstanceInterface
+{
   offset: Offset;
 
   /** Store history of Y-transition according to unique ID. */

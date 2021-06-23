@@ -1,6 +1,6 @@
 <h1 align="center">
   <img
-  src="https://raw.githubusercontent.com/dflex-js/dflex/master/dflex-full-size.png"
+  src="https://raw.githubusercontent.com/jalal246/dflex/master/DFlex-readme.png"
   alt="Dflex logo" />
 </h1>
 
@@ -29,4 +29,4 @@
 
 # @dflex/core-instance
 
-Visit DFlex site for more <https://dflex-js.github.io/dflex/>
+Visit DFlex site for more <https://www.dflex.dev/>
