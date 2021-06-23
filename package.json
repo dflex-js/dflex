@@ -3,11 +3,10 @@
   "private": true,
   "workspaces": [
     "packages/**",
-    "scripts/*",
-    "docs"
+    "scripts/*"
   ],
-  "repository": "https://github.com/jalal246/dflex",
-  "author": "Jalal Maskoun <jimmy002020@gmail.com>",
+  "repository": "https://github.com/dflex-js/dflex",
+  "author": "Jalal MK",
   "scripts": {
     "cy:install:win": "cypress cache clear && .\\node_modules\\.bin\\cypress.cmd install --force",
     "test:unit": "jest",
