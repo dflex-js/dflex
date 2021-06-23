@@ -1,6 +1,6 @@
 {
   "name": "@dflex/dnd",
-  "version": "2.7.0",
+  "version": "2.7.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
@@ -35,10 +35,10 @@
     "v8-to-istanbul": "^8.0.0"
   },
   "dependencies": {
-    "@dflex/core-instance": "^2.7.0",
-    "@dflex/dom-gen": "^2.7.0",
-    "@dflex/draggable": "^2.7.0",
-    "@dflex/store": "^2.7.0"
+    "@dflex/core-instance": "^2.7.1",
+    "@dflex/dom-gen": "^2.7.1",
+    "@dflex/draggable": "^2.7.1",
+    "@dflex/store": "^2.7.1"
   },
   "keywords": [
     "drag-drop",
