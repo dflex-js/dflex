@@ -20,13 +20,7 @@
     "@dflex/core-instance": "^2.7.0",
     "@dflex/store": "^2.7.0"
   },
-  "devDependencies": {
-    "@cypress/code-coverage": "^3.8.1",
-    "cross-env": "^7.0.2",
-    "cypress": "^6.3.0",
-    "eslint-plugin-cypress": "^2.11.1",
-    "start-server-and-test": "^1.11.2"
-  },
+  "devDependencies": {},
   "keywords": [
     "drag-drop",
     "dnd",
