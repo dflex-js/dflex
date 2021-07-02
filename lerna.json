@@ -1,11 +1,22 @@
 {
   "npmClient": "yarn",
+  "version": "2.7.1",
   "packages": [
+    "packages/core-instance",
     "packages/dom-gen",
     "packages/store",
     "packages/draggable",
-    "packages/dnd",
-    "packages/core-instance"
+    "packages/dnd"
   ],
-  "version": "2.7.1"
+  "changelog": {
+    "repo": "dflex-js/dflex",
+    "labels": {
+      "tag: documentation": ":memo: Documentation",
+      "tag: patch": ":nail_care: Patch",
+      "tag: enhancement": ":running_woman: Enhancement",
+      "tag: bug": ":bug: Bug Fix",
+      "tag: feature": ":rocket: New Feature"
+    },
+    "cacheDir": ".changelog"
+  }
 }
