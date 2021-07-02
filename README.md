@@ -29,15 +29,16 @@
 
 # DFlex
 
-A Drag-and-Drop library for all JavaScript frameworks implementing an enhanced transformation mechanism
-to manipulate DOM elements.
+A Drag-and-Drop library for all JavaScript frameworks implementing an enhanced
+transformation mechanism to manipulate DOM elements.
 
 ## Project Content
 
 ### [**Drag & Drop**](https://github.com/dflex-js/dflex/tree/master/packages/dnd)
 
 A Simple, lightweight Solution for a Drag & Drop App based on enhanced DOM store
-algorithm. You can achieve a drag and drop with three steps only with mouse/touch event.
+algorithm. You can achieve a drag and drop with three steps only with
+mouse/touch event.
 
 ### [**Draggable**](https://github.com/dflex-js/dflex/tree/master/packages/draggable)
 
