@@ -29,26 +29,27 @@
 
 # DFlex
 
-DFlex is a JavaScript project implementing an enhanced transformation mechanism
-to manipulate DOM elements.
+A Drag-and-Drop library for all JavaScript frameworks implementing an enhanced
+transformation mechanism to manipulate DOM elements.
 
 ## Project Content
 
 ### [**Drag & Drop**](https://github.com/dflex-js/dflex/tree/master/packages/dnd)
 
 A Simple, lightweight Solution for a Drag & Drop App based on enhanced DOM store
-algorithm. You can achieve a drag and drop with three steps only with mouse event.
+algorithm. You can achieve a drag and drop with three steps only with
+mouse/touch event.
 
 ### [**Draggable**](https://github.com/dflex-js/dflex/tree/master/packages/draggable)
 
 High-performance draggable elements written in pure JS works for Web and Mobile.
 
-### [**DOM Generator**](https://github.com/dflex-js/dflex/tree/master/packages/dom-gen)
+### [**Utils/DOM Generator**](https://github.com/dflex-js/dflex/tree/master/packages/dom-gen)
 
 DOM relations generator algorithm. Generate relations between DOM elements based
 on element depth without a browser.
 
-### [**DOM Store**](https://github.com/dflex-js/dflex/tree/master/packages/store)
+### [**Utils/DOM Store**](https://github.com/dflex-js/dflex/tree/master/packages/store)
 
 The only Store that allows you to traverse through the DOM tree using element id
 without reading from the browser.
