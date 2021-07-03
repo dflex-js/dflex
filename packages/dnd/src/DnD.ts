@@ -14,6 +14,7 @@ import store from "./DnDStore";
 import type { ElmTree } from "./DnDStore";
 
 import type { DndOpts } from "./types";
+import { DraggableOpts } from "./Draggable/types";
 
 const defaultOpts = Object.freeze({
   thresholds: {
@@ -54,10 +55,8 @@ class DnD extends Droppable {
     (Object.keys(defaultOpts) as Array<keyof typeof defaultOpts>).forEach(
       (props) => {
         if (!options[props]) {
-          // @ts-expect-error
           options[props] = defaultOpts[props];
         } else {
-          // @ts-expect-error
           options[props] = {
             ...defaultOpts[props],
             ...options[props],
@@ -70,7 +69,7 @@ class DnD extends Droppable {
       elmCoreInstanceWithTree,
       siblingsBoundaries,
       initCoordinates,
-      options
+      options as DraggableOpts
     );
 
     super(draggable);
