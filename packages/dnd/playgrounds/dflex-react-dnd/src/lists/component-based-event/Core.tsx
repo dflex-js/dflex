@@ -12,7 +12,14 @@ import React from "react";
 import { store, DnD } from "@dflex/dnd";
 
 // shared dragged event
-let draggedEvent;
+let draggedEvent: DnD | null;
+
+interface Props {
+  component: string | React.JSXElementConstructor<any>;
+  id: string;
+  children: React.ReactNode;
+  depth: number;
+}
 
 const Core = ({
   component: CoreComponent = "div",
@@ -20,8 +27,8 @@ const Core = ({
   children,
   depth,
   ...rest
-}) => {
-  const ref = React.useRef();
+}: Props) => {
+  const ref = React.useRef(null) as React.MutableRefObject<any>;
 
   const [isDragged, setIsDragged] = React.useState(false);
 
@@ -43,7 +50,7 @@ const Core = ({
     }
   };
 
-  const onMouseMove = (e) => {
+  const onMouseMove = (e: React.MouseEvent) => {
     if (draggedEvent) {
       const { clientX, clientY } = e;
 
@@ -51,7 +58,7 @@ const Core = ({
     }
   };
 
-  const onMouseDown = (e) => {
+  const onMouseDown = (e: React.MouseEvent) => {
     e.stopPropagation();
 
     const { button, clientX, clientY } = e;

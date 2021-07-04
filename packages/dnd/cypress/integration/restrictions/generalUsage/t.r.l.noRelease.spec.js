@@ -42,7 +42,7 @@ context(
       cy.get("#item-rest-1").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
+        "matrix(1, 0, 0, 1, 0, 0.59375)"
       );
     });
 
@@ -61,7 +61,7 @@ context(
       cy.get("#item-rest-1").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
+        "matrix(1, 0, 0, 1, 0, 1)"
       );
     });
 
@@ -80,7 +80,7 @@ context(
       cy.get("#item-rest-1").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
+        "matrix(1, 0, 0, 1, 0, 1)"
       );
     });
 

@@ -5,6 +5,4 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import Restricted from "./Restricted";
-
-export default Restricted;
+export { default } from "./Restricted";
