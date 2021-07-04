@@ -15,16 +15,21 @@ import { keyGenerator } from "@folo/utils";
 
 import { store } from "@dflex/dnd";
 
-const Core = (props) => {
-  const {
-    component: CoreComponent = "div",
-    id: idProps,
-    children,
-    depth,
-    ...rest
-  } = props;
+interface Props {
+  component: string | React.JSXElementConstructor<any>;
+  id: string;
+  children: React.ReactNode;
+  depth: number;
+}
 
-  const ref = React.createRef();
+const Core = ({
+  component: CoreComponent = "div",
+  id: idProps,
+  children,
+  depth,
+  ...rest
+}: Props) => {
+  const ref = React.useRef(null) as React.MutableRefObject<any>;
 
   const [id] = React.useState(
     idProps || `${keyGenerator(new Date().getTime())}`

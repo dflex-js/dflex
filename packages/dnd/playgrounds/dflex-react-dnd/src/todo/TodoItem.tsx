@@ -12,7 +12,7 @@ import React from "react";
 import { store, DnD } from "@dflex/dnd";
 
 // shared dragged event
-let draggedEvent: DnD | null;
+let dndEvent: DnD | null;
 
 interface Props {
   id: string;
@@ -29,18 +29,18 @@ export const TodoItem = ({ id, task, style, depth = 0 }: Props) => {
   }, []);
 
   const onMouseMove = (e: MouseEvent) => {
-    if (draggedEvent) {
+    if (dndEvent) {
       const { clientX, clientY } = e;
 
-      draggedEvent.dragAt(clientX, clientY);
+      dndEvent.dragAt(clientX, clientY);
     }
   };
 
   const onMouseUp = () => {
-    if (draggedEvent) {
-      draggedEvent.endDragging();
+    if (dndEvent) {
+      dndEvent.endDragging();
 
-      draggedEvent = null;
+      dndEvent = null;
 
       document.removeEventListener("mouseup", onMouseUp);
       document.removeEventListener("mousemove", onMouseMove);
@@ -56,24 +56,24 @@ export const TodoItem = ({ id, task, style, depth = 0 }: Props) => {
         document.addEventListener("mouseup", onMouseUp);
         document.addEventListener("mousemove", onMouseMove);
 
-        draggedEvent = new DnD(id, { x: clientX, y: clientY });
+        dndEvent = new DnD(id, { x: clientX, y: clientY });
       }
     }
   };
 
   const onTouchMove = (e: TouchEvent) => {
-    if (draggedEvent) {
+    if (dndEvent) {
       const { clientX, clientY } = e.touches[0];
 
-      draggedEvent.dragAt(clientX, clientY);
+      dndEvent.dragAt(clientX, clientY);
     }
   };
 
   const onTouchEnd = () => {
-    if (draggedEvent) {
-      draggedEvent.endDragging();
+    if (dndEvent) {
+      dndEvent.endDragging();
 
-      draggedEvent = null;
+      dndEvent = null;
 
       document.removeEventListener("touchend", onTouchEnd);
       document.removeEventListener("touchmove", onTouchMove);
@@ -84,7 +84,7 @@ export const TodoItem = ({ id, task, style, depth = 0 }: Props) => {
     const { clientX, clientY } = e.touches[0];
 
     if (id) {
-      draggedEvent = new DnD(id, { x: clientX, y: clientY });
+      dndEvent = new DnD(id, { x: clientX, y: clientY });
 
       document.addEventListener("touchend", onTouchEnd);
       document.addEventListener("touchmove", onTouchMove);

@@ -7,10 +7,12 @@
 
 import React from "react";
 
-const Container = ({
-  component: ContainerComponent = "div",
-  children,
-  ...rest
-}) => <ContainerComponent {...rest}>{children}</ContainerComponent>;
+interface Props {
+  children: React.ReactNode;
+  [x: string]: any;
+}
+const Container = ({ children, ...rest }: Props) => (
+  <div {...rest}>{children}</div>
+);
 
 export default Container;
