@@ -50,7 +50,6 @@ const RestrictedItem = ({ id, title, style, depth = 0 }: Props) => {
         draggedEvent = new DnD(
           id,
           { x: clientX, y: clientY },
-          // @ts-expect-error
           {
             restrictions: {
               allowLeavingFromTop: false,
@@ -93,7 +92,6 @@ const RestrictedItem = ({ id, title, style, depth = 0 }: Props) => {
       draggedEvent = new DnD(
         id,
         { x: clientX, y: clientY },
-        // @ts-expect-error
         {
           restrictions: {
             allowLeavingFromTop: false,
