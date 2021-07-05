@@ -3,6 +3,7 @@
   "version": "2.7.2",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "description": "Modern drag and drop package for all JavaScript frameworks",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {
     "clean": "yarn rimraf ./dist *.tsbuildinfo",

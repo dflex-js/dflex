@@ -4,6 +4,8 @@
   alt="Dflex logo" />
 </h1>
 
+<h1 align="center">Modern drag and drop package for all JavaScript frameworks</h1>
+
 <p align="center">
   <a href="https://github.com/dflex-js/dflex">
     <img
@@ -29,21 +31,48 @@
 
 # @dflex/dnd
 
-> A Simple, lightweight Solution for a Drag & Drop App
-
-DFlex DnD is written in pure JavaScript and can be used with different frameworks
+DFlex Drag and Drop is a modern drag and drop package for all JavaScript
+frameworks written in pure JavaScript and can be used with different frameworks
 whether it is React, Vue, Angular, etc.
 
 It depends on animation, tracks each droppable area which makes the whole
 process runs smoothly as much as possible.
 
-## Installation
+## DFlex Features ✅
+
+- Dynamic architecture.
+- Traverse DOM without calling browser API.
+- Transform elements instead of reordering the DOM tree.
+- Animated movement from point-x to point-y.
+- Prevent drag and drop layout shift.
+- Isolated from data flow.
+- Headless as it is just functions that do manipulation.
+- Event driven API.
+- Targeting each DOM node individually.
+- Extensible using JSON tree instead of flat recursion.
+
+## Installation 📦
 
 ```bash
 npm install @dflex/dnd
 ```
 
-## API
+## Documentation 📖
 
-Visit DFlex site for more <https://www.dflex.dev/> and to see live
-examples with the full code.
+Visit DFlex site for docs <https://www.dflex.dev/> and live demo.
+
+## Related Content 🏋️‍
+
+### [**Draggable**](https://github.com/dflex-js/dflex/tree/master/packages/dnd)
+
+DFlex Draggable is the simplest solution to create JavaScript draggable only elements.
+
+### [**Utils/DOM Generator**](https://github.com/dflex-js/dflex/tree/master/packages/dom-gen)
+
+DOM relations generator algorithm. Generate relations between DOM elements based
+on element depth without a browser.
+
+### [**Utils/DOM Store**](https://github.com/dflex-js/dflex/tree/master/packages/store)
+
+The only Store that allows you to traverse through the DOM tree using element id
+without reading from the browser.
