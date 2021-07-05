@@ -13,7 +13,7 @@
     "test:e2e": "yarn workspace @dflex/dnd test",
     "test": "yarn test:unit && yarn test:e2e",
     "build": "lerna run build",
-    "publish": "lerna publish --no-git-tag-version --no-push",
+    "publish": "lerna publish --force-publish",
     "changelog": "lerna-changelog"
   },
   "devDependencies": {
