@@ -4,6 +4,8 @@
   alt="Dflex logo" />
 </h1>
 
+<h1 align="center">Modern Draggable package for all JavaScript frameworks</h1>
+
 <p align="center">
   <a href="https://github.com/dflex-js/dflex">
     <img
@@ -29,20 +31,49 @@
 
 # @dflex/draggable
 
-> Draggable is a native utility written in pure JS works for Web and Mobile
-
-DFlex draggable is the simplest solution to create JavaScript draggable
+DFlex Draggable is the simplest solution to create JavaScript draggable
 elements. No need for a special tutorial and thinking about implementation
 complexity or even migration to different technologies for different frameworks.
-It can be used with any app you have whether it is React, Vue, Angular or Svelte.
+It can be used with any app you have whether it is React, Vue, Angular or
+Svelte.
 
-## Installation
+## DFlex Features ✅
+
+- Dynamic architecture.
+- Traverse DOM without calling browser API.
+- Transform elements instead of reordering the DOM tree.
+- Animated movement from point-x to point-y.
+- Prevent drag and drop layout shift.
+- Isolated from data flow.
+- Headless as it is just functions that do manipulation.
+- Event driven API.
+- Targeting each DOM node individually.
+- Extensible using JSON tree instead of flat recursion.
+
+## Installation 📦
 
 ```bash
 npm install @dflex/draggable
 ```
 
-## API
+## Documentation 📖
 
-Visit DFlex site for more <https://www.dflex.dev/> and to see live
-examples with the full code.
+Visit DFlex site for docs <https://www.dflex.dev/> and live demo.
+
+## Related Content 🏋️‍
+
+### [**Drag & Drop**](https://github.com/dflex-js/dflex/tree/master/packages/dnd)
+
+A Drag-and-Drop package for all JavaScript frameworks implementing an enhanced
+transformation mechanism to manipulate DOM elements. You can achieve a drag and
+drop with three steps only with mouse/touch event.
+
+### [**Utils/DOM Generator**](https://github.com/dflex-js/dflex/tree/master/packages/dom-gen)
+
+DOM relations generator algorithm. Generate relations between DOM elements based
+on element depth without a browser.
+
+### [**Utils/DOM Store**](https://github.com/dflex-js/dflex/tree/master/packages/store)
+
+The only Store that allows you to traverse through the DOM tree using element id
+without reading from the browser.

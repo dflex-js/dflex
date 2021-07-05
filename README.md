@@ -4,6 +4,8 @@
   alt="Dflex logo" />
 </h1>
 
+<h1 align="center">JavaScript Project to Manipulate DOM Elements</h1>
+
 <p align="center">
   <a href="https://github.com/dflex-js/dflex">
     <img
@@ -32,7 +34,20 @@
 A Drag-and-Drop library for all JavaScript frameworks implementing an enhanced
 transformation mechanism to manipulate DOM elements.
 
-## Project Content
+## Features ✅
+
+- Dynamic architecture.
+- Traverse DOM without calling browser API.
+- Transform elements instead of reordering the DOM tree.
+- Animated movement from point-x to point-y.
+- Prevent drag and drop layout shift.
+- Isolated from data flow.
+- Headless as it is just functions that do manipulation.
+- Event driven API.
+- Targeting each DOM node individually.
+- Extensible using JSON tree instead of flat recursion.
+
+## Project Content 🔥
 
 ### [**Drag & Drop**](https://github.com/dflex-js/dflex/tree/master/packages/dnd)
 
@@ -54,16 +69,16 @@ on element depth without a browser.
 The only Store that allows you to traverse through the DOM tree using element id
 without reading from the browser.
 
-## Documentation
+## Documentation 📖
 
 Visit DFlex site for more <https://www.dflex.dev/>
 
-## Installation
+## Installation 📦
 
 Packages are decoupled and work separately. Each package has it own universe
 including test and playground. For more info take a look at [contribution guide](CONTRIBUTING.md).
 
-## License
+## License 🤝
 
 DFlex is open source and dual-licensed as [AGPL](LICENSE)/Commercial software.
 
@@ -76,7 +91,7 @@ Buying a license is mandatory if you develop commercial activities using
 DFlex inside your product or deploying it on a network without disclosing the
 source code of your own applications under the AGPL license.
 
-## Contribution
+## Contribution 🌎
 
 Like many open-source projects, DFlex requires that contributors should provide a
 Contributor License Agreement (CLA). By submitting code to the DFlex project,
