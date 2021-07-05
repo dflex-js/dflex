@@ -4,6 +4,8 @@
   alt="Dflex logo" />
 </h1>
 
+<h1 align="center">DOM relations generator algorithm</h1>
+
 <p align="center">
   <a href="https://github.com/dflex-js/dflex">
     <img
@@ -29,23 +31,38 @@
 
 # @dflex/dom-gen
 
-> DOM relations generator algorithm.
-
 Dom generator generates relations between DOM elements based on element depth
 without a browser.
-It generates three keys: Siblings, Parent and Children keys and two
-indexes one refers to node order in its level and the other refers to the parent
-index in parental level.
+
+It generates three keys: Siblings, Parent and Children keys and two indexes one
+refers to node order in its level and the other refers to the parent index in
+parental level.
 
 Together: keys and indexes combined form of uniqueness for each element.
 
-## Installation
+## Installation 📦
 
 ```bash
 npm install @dflex/dom-gen
 ```
 
-## API
+## Documentation 📖
 
-Visit DFlex site for more <https://www.dflex.dev/> and to see live
-examples with the full code.
+Visit DFlex site for docs <https://www.dflex.dev/> and live demo.
+
+## Related Content 🏋️‍
+
+### [**Drag & Drop**](https://github.com/dflex-js/dflex/tree/master/packages/dnd)
+
+A Drag-and-Drop package for all JavaScript frameworks implementing an enhanced
+transformation mechanism to manipulate DOM elements. You can achieve a drag and
+drop with three steps only with mouse/touch event.
+
+### [**Draggable**](https://github.com/dflex-js/dflex/tree/master/packages/dnd)
+
+DFlex Draggable is the simplest solution to create JavaScript draggable only elements.
+
+### [**Utils/DOM Store**](https://github.com/dflex-js/dflex/tree/master/packages/store)
+
+The only Store that allows you to traverse through the DOM tree using element id
+without reading from the browser.
