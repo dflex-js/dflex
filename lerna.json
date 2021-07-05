@@ -11,11 +11,11 @@
   "changelog": {
     "repo": "dflex-js/dflex",
     "labels": {
-      "tag: documentation": ":memo: Documentation",
-      "tag: patch": ":nail_care: Patch",
-      "tag: enhancement": ":running_woman: Enhancement",
-      "tag: bug": ":bug: Bug Fix",
-      "tag: feature": ":rocket: New Feature"
+      "documentation": ":memo: Documentation",
+      "patch": ":nail_care: Patch",
+      "enhancement": ":running_woman: Enhancement",
+      "bug": ":bug: Bug Fix",
+      "feature": ":rocket: New Feature"
     },
     "cacheDir": ".changelog"
   }
