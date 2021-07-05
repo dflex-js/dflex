@@ -1,6 +1,6 @@
 {
   "name": "@dflex/draggable",
-  "version": "2.7.1",
+  "version": "2.7.2",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
@@ -17,8 +17,8 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@dflex/core-instance": "^2.7.1",
-    "@dflex/store": "^2.7.1"
+    "@dflex/core-instance": "^2.7.2",
+    "@dflex/store": "^2.7.2"
   },
   "keywords": [
     "drag-drop",
