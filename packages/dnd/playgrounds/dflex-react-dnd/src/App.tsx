@@ -11,11 +11,15 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { ComponentBasedEvent, ContainerBasedEvent } from "./lists";
 import Restricted from "./restrictions";
 import TodoList from "./todo";
+import ExtendedList from "./extended";
 
 function App() {
   return (
     <Router>
       <Switch>
+        <Route path="/extended">
+          <ExtendedList />
+        </Route>
         <Route path="/restricted">
           <Restricted />
         </Route>
