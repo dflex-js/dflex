@@ -6,7 +6,11 @@
  */
 import type { ThresholdPercentages, Restrictions } from "./Draggable";
 
-export interface DndOpts {
+export interface DndObjectOpts {
   thresholds?: Partial<ThresholdPercentages>;
   restrictions?: Partial<Restrictions>;
+}
+
+export interface DndOpts extends DndObjectOpts {
+  autoScroll?: boolean;
 }

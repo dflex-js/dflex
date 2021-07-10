@@ -13,10 +13,10 @@ import store from "./DnDStore";
 
 import type { ElmTree } from "./DnDStore";
 
-import type { DndOpts } from "./types";
+import type { DndObjectOpts, DndOpts } from "./types";
 import { DraggableOpts } from "./Draggable/types";
 
-const defaultOpts = Object.freeze({
+const defaultOpts: DndOpts = Object.freeze({
   thresholds: {
     vertical: 60,
     horizontal: 60,
@@ -28,6 +28,8 @@ const defaultOpts = Object.freeze({
     allowLeavingFromLeft: true,
     allowLeavingFromRight: true,
   },
+
+  autoScroll: true,
 });
 
 class DnD extends Droppable {
@@ -54,12 +56,14 @@ class DnD extends Droppable {
 
     (Object.keys(defaultOpts) as Array<keyof typeof defaultOpts>).forEach(
       (props) => {
-        if (!options[props]) {
+        if (options[props] === undefined) {
+          // @ts-expect-error
           options[props] = defaultOpts[props];
-        } else {
+        } else if (typeof options[props] === "object") {
+          // @ts-expect-error
           options[props] = {
-            ...defaultOpts[props],
-            ...options[props],
+            ...(defaultOpts[props] as DndObjectOpts),
+            ...(options[props] as DndObjectOpts),
           };
         }
       }
