@@ -46,6 +46,7 @@ export interface Restrictions {
 export interface DraggableOpts {
   restrictions: Restrictions;
   thresholds: ThresholdPercentages;
+  autoScroll: boolean;
 }
 
 export interface DraggableBaseInterface
@@ -53,16 +54,6 @@ export interface DraggableBaseInterface
   tempIndex: number;
   operationID: string;
 
-  opts: DraggableOpts;
-
-  parentsList: ELmBranch | null;
-  siblingsList: string[] | null;
-  activeParent: CoreInstanceInterface | null;
-
-  thresholds: LayoutThresholds;
-
-  isOutActiveParent: boolean;
-  thresholdsPercentages: ThresholdPercentages;
   setThreshold(
     top: number,
     left: number,

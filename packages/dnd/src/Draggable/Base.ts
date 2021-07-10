@@ -35,21 +35,23 @@ class Base
 
   operationID: string;
 
-  opts: DraggableOpts;
+  protected opts: DraggableOpts;
 
-  parentsList: ELmBranch;
+  protected parentsList: ELmBranch;
 
-  siblingsList: string[] | null;
+  protected siblingsList: string[] | null;
 
-  activeParent!: CoreInstanceInterface | null;
+  private activeParent!: CoreInstanceInterface | null;
 
-  isOutActiveParent!: boolean;
+  private isOutActiveParent!: boolean;
 
-  setOfTransformedIds!: Set<string>;
+  private setOfTransformedIds!: Set<string>;
 
-  thresholds: LayoutThresholds;
+  protected thresholds: LayoutThresholds;
 
-  thresholdsPercentages: ThresholdPercentages;
+  private thresholdsPercentages: ThresholdPercentages;
+
+  private scroll?: any;
 
   constructor(
     elmTree: ElmTree,

@@ -32,6 +32,8 @@ class Droppable {
 
   private preserveLastElmOffset!: TempOffset;
 
+  private scroll?: any;
+
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
 
