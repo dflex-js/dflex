@@ -58,6 +58,14 @@ class CoreInstance
 
   currentLeft: number;
 
+  scrollWidth?: number;
+
+  scrollHeight?: number;
+
+  clientWidth?: number;
+
+  clientHeight?: number;
+
   order: Order;
 
   keys: Keys;
@@ -117,6 +125,18 @@ class CoreInstance
 
     this.currentTop = top;
     this.currentLeft = left;
+
+    if (this.keys.chK !== null) {
+      // We have a parent, let's celebrate.
+
+      const { scrollWidth, scrollHeight, clientWidth, clientHeight } = this.ref;
+
+      this.scrollWidth = scrollWidth;
+      this.clientWidth = clientWidth;
+
+      this.scrollHeight = scrollHeight;
+      this.clientHeight = clientHeight;
+    }
   }
 
   getOffset() {
