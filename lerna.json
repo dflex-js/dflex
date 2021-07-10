@@ -15,7 +15,8 @@
       "patch": ":nail_care: Patch",
       "enhancement": ":running_woman: Enhancement",
       "bug": ":bug: Bug Fix",
-      "feature": ":rocket: New Feature"
+      "feature": ":rocket: New Feature",
+      "test": ":wrench: Improve Test"
     },
     "cacheDir": ".changelog"
   }
