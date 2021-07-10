@@ -6,8 +6,9 @@
  */
 
 import type { CoreInstanceInterface } from "@dflex/core-instance";
-import type { ELmBranch } from "@dflex/dom-gen";
+// import type { ELmBranch } from "@dflex/dom-gen";
 import type { AbstractDraggableInterface } from "@dflex/draggable";
+import AutoScroll from "../Scroll";
 
 export interface ThresholdPercentages {
   vertical: number;
@@ -53,7 +54,18 @@ export interface DraggableBaseInterface
   extends AbstractDraggableInterface<CoreInstanceInterface> {
   tempIndex: number;
   operationID: string;
+  scroll?: AutoScroll;
 
+  // opts: DraggableOpts;
+
+  // parentsList: ELmBranch | null;
+  siblingsList: string[] | null;
+  // activeParent: CoreInstanceInterface | null;
+
+  // thresholds: LayoutThresholds;
+
+  // isOutActiveParent: boolean;
+  // thresholdsPercentages: ThresholdPercentages;
   setThreshold(
     top: number,
     left: number,

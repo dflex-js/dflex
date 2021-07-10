@@ -21,6 +21,10 @@ import type {
   LayoutThresholds,
   DraggableOpts,
 } from "./types";
+import AutoScroll from "../Scroll";
+
+const overflowRegex = /(auto|scroll|overlay)/;
+const properties = ["overflow", "overflowX", "overflowY"];
 
 /**
  * Base element.
@@ -39,7 +43,7 @@ class Base
 
   protected parentsList: ELmBranch;
 
-  protected siblingsList: string[] | null;
+  siblingsList: string[] | null;
 
   private activeParent!: CoreInstanceInterface | null;
 
@@ -51,7 +55,7 @@ class Base
 
   private thresholdsPercentages: ThresholdPercentages;
 
-  private scroll?: any;
+  scroll?: AutoScroll;
 
   constructor(
     elmTree: ElmTree,
@@ -140,6 +144,29 @@ class Base
       this.assignActiveParent(parent);
 
       this.isOutActiveParent = false;
+      if (this.opts.autoScroll) {
+        console.log("file: Base.ts ~ line 139 ~ parent", parent);
+
+        const computedStyle = window.getComputedStyle(parent.ref);
+        console.log("file: Base.ts ~ line 151 ~ computedStyle", computedStyle);
+
+        for (let i = 0; i < properties.length; i += 1) {
+          const value =
+            computedStyle[properties[i] as keyof CSSStyleDeclaration];
+
+          console.log(
+            "file: Base.ts ~ line 152 ~ value",
+            value
+            // parent.ref.style
+          );
+          if (typeof value === "string" && overflowRegex.test(value)) {
+            this.scroll = new AutoScroll(parent);
+            console.log("here?");
+
+            break;
+          }
+        }
+      }
     } else {
       /**
        * Dragged has no parent.

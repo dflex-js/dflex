@@ -12,9 +12,8 @@ import Droppable from "./Droppable";
 import store from "./DnDStore";
 
 import type { ElmTree } from "./DnDStore";
-
 import type { DndObjectOpts, DndOpts } from "./types";
-import { DraggableOpts } from "./Draggable/types";
+import type { DraggableOpts } from "./Draggable/types";
 
 const defaultOpts: DndOpts = Object.freeze({
   thresholds: {

@@ -49,7 +49,7 @@ class CoreInstance
   extends AbstractCoreInstance
   implements CoreInstanceInterface
 {
-  offset: Offset;
+  offset!: Offset;
 
   /** Store history of Y-transition according to unique ID. */
   prevTranslateY: TransitionHistory;
@@ -77,19 +77,10 @@ class CoreInstance
 
     this.prevTranslateY = [];
 
-    this.offset = {
-      height: 0,
-      width: 0,
-
-      left: 0,
-      top: 0,
-    };
-
     /**
      * Used for dragged, storing temporary top, left new positions during the transition.
      */
     this.currentTop = 0;
-
     this.currentLeft = 0;
 
     if (this.ref) {
@@ -98,6 +89,8 @@ class CoreInstance
 
     this.order = order;
     this.keys = keys;
+
+    if (this.keys.chK !== null) this.getScroll();
   }
 
   /**
@@ -125,18 +118,15 @@ class CoreInstance
 
     this.currentTop = top;
     this.currentLeft = left;
+  }
 
-    if (this.keys.chK !== null) {
-      // We have a parent, let's celebrate.
+  private getScroll() {
+    const { scrollWidth, scrollHeight, clientWidth, clientHeight } = this.ref;
 
-      const { scrollWidth, scrollHeight, clientWidth, clientHeight } = this.ref;
-
-      this.scrollWidth = scrollWidth;
-      this.clientWidth = clientWidth;
-
-      this.scrollHeight = scrollHeight;
-      this.clientHeight = clientHeight;
-    }
+    this.scrollWidth = scrollWidth;
+    this.clientWidth = clientWidth;
+    this.scrollHeight = scrollHeight;
+    this.clientHeight = clientHeight;
   }
 
   getOffset() {
