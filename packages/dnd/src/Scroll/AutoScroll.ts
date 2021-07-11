@@ -5,7 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/* eslint-disable class-methods-use-this */
+
 import type { CoreInstanceInterface } from "@dflex/core-instance";
+import type { ScrollOpt } from "./types";
 
 class AutoScroll {
   parent: CoreInstanceInterface;
@@ -19,7 +22,7 @@ class AutoScroll {
     y: number;
   };
 
-  constructor(parent: CoreInstanceInterface) {
+  constructor(parent: CoreInstanceInterface, opt: ScrollOpt) {
     this.parent = parent;
     this.speed = 0;
     this.direction = 1;
@@ -47,7 +50,64 @@ class AutoScroll {
     const isRight = scrollLeft >= this.maxScrollArea.x;
   }
 
-  scrollBy() {}
+  isParenOverflow() {
+    const parentBottom = this.parent.offset.top + this.parent.offset.height;
+
+    const elemOverflowX = parentBottom > window.innerHeight;
+    const elemOverflowY = this.parent.offset.top < 0;
+    const isElmOverflow = elemOverflowX || elemOverflowY;
+
+    return isElmOverflow;
+  }
+
+  scroll(clientX: number, clientY: number) {
+    console.log("am in");
+
+    const speed = 6;
+    const sensitivity = 50;
+
+    const documentScrollingElement = getDocumentScrollingElement();
+
+    if (
+      this.parent.ref !== document.body &&
+      this.parent.ref !== document.documentElement &&
+      !this.isParenOverflow()
+    ) {
+      console.log("am in 2");
+
+      const { top, left, height, width } = this.parent.offset;
+
+      if (top + height - clientY < sensitivity) {
+        this.parent.ref.scrollTop += speed;
+      } else if (clientY - top < sensitivity) {
+        this.parent.ref.scrollTop -= speed;
+      }
+
+      if (left + width - clientX < sensitivity) {
+        this.parent.ref.scrollLeft += speed;
+      } else if (clientX - left < sensitivity) {
+        this.parent.ref.scrollLeft -= speed;
+      }
+    } else {
+      const { innerHeight, innerWidth } = window;
+
+      if (clientY < sensitivity) {
+        documentScrollingElement.scrollTop -= speed;
+      } else if (innerHeight - clientY < sensitivity) {
+        documentScrollingElement.scrollTop += speed;
+      }
+
+      if (clientX < sensitivity) {
+        documentScrollingElement.scrollLeft -= speed;
+      } else if (innerWidth - clientX < sensitivity) {
+        documentScrollingElement.scrollLeft += speed;
+      }
+    }
+  }
+}
+
+function getDocumentScrollingElement() {
+  return document.scrollingElement || document.documentElement;
 }
 
 export default AutoScroll;

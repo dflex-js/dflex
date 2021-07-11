@@ -32,7 +32,7 @@ const ExtendedList = () => {
   return (
     <div className={s.root}>
       <div className={s.todo}>
-        <ul ref={ulRef}>
+        <ul ref={ulRef} id="parent-extended">
           {tasks.map(({ task, id, key }) => (
             <DnDItem id={id} key={key} task={task} />
           ))}

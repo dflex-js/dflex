@@ -44,12 +44,6 @@ export interface Restrictions {
   allowLeavingFromRight: boolean;
 }
 
-export interface DraggableOpts {
-  restrictions: Restrictions;
-  thresholds: ThresholdPercentages;
-  autoScroll: boolean;
-}
-
 export interface DraggableBaseInterface
   extends AbstractDraggableInterface<CoreInstanceInterface> {
   tempIndex: number;

@@ -19,12 +19,10 @@ import type {
   DraggableBaseInterface,
   ThresholdPercentages,
   LayoutThresholds,
-  DraggableOpts,
 } from "./types";
-import AutoScroll from "../Scroll";
 
-const overflowRegex = /(auto|scroll|overlay)/;
-const properties = ["overflow", "overflowX", "overflowY"];
+import AutoScroll from "../Scroll";
+import type { FinalDndOpts } from "../types";
 
 /**
  * Base element.
@@ -39,7 +37,7 @@ class Base
 
   operationID: string;
 
-  protected opts: DraggableOpts;
+  protected opts: FinalDndOpts;
 
   protected parentsList: ELmBranch;
 
@@ -61,7 +59,7 @@ class Base
     elmTree: ElmTree,
     siblingsBoundaries: BoundariesOffset,
     initCoordinates: MouseCoordinates,
-    opts: DraggableOpts
+    opts: FinalDndOpts
   ) {
     const {
       element,
@@ -144,29 +142,9 @@ class Base
       this.assignActiveParent(parent);
 
       this.isOutActiveParent = false;
-      if (this.opts.autoScroll) {
-        console.log("file: Base.ts ~ line 139 ~ parent", parent);
 
-        const computedStyle = window.getComputedStyle(parent.ref);
-        console.log("file: Base.ts ~ line 151 ~ computedStyle", computedStyle);
-
-        for (let i = 0; i < properties.length; i += 1) {
-          const value =
-            computedStyle[properties[i] as keyof CSSStyleDeclaration];
-
-          console.log(
-            "file: Base.ts ~ line 152 ~ value",
-            value
-            // parent.ref.style
-          );
-          if (typeof value === "string" && overflowRegex.test(value)) {
-            this.scroll = new AutoScroll(parent);
-            console.log("here?");
-
-            break;
-          }
-        }
-      }
+      const { enable, ...rest } = this.opts.scroll;
+      if (enable) this.scroll = new AutoScroll(parent, rest);
     } else {
       /**
        * Dragged has no parent.

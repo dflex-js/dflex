@@ -511,6 +511,8 @@ class Droppable {
         return;
       }
 
+      this.draggable.scroll?.scroll(x, y);
+
       return;
     }
 
