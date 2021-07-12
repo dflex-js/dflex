@@ -144,7 +144,14 @@ class Base
       this.isOutActiveParent = false;
 
       const { enable, ...rest } = this.opts.scroll;
-      if (enable) this.scroll = new AutoScroll(parent, rest);
+
+      if (enable) {
+        const { parent: gParent } = store.getElmTreeById(parent.id);
+
+        if (gParent) {
+          this.scroll = new AutoScroll(gParent, rest);
+        }
+      }
     } else {
       /**
        * Dragged has no parent.

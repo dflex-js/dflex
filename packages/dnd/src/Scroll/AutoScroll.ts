@@ -17,7 +17,6 @@ class AutoScroll {
 
   constructor(parent: CoreInstanceInterface, opts: ScrollOpt) {
     this.parent = parent;
-
     this.opts = opts;
   }
 
@@ -68,7 +67,11 @@ class AutoScroll {
     if (clientY < this.opts.threshold) {
       documentScrollingElement.scrollTop -= this.opts.speed;
     } else if (innerHeight - clientY < this.opts.threshold) {
-      documentScrollingElement.scrollTop += this.opts.speed;
+      window.scroll(0, documentScrollingElement.scrollTop + this.opts.speed);
+
+      // documentScrollingElement.scrollTop += this.opts.speed;
+      // drag(clientX, clientY - this.opts.speed);
+      console.log("?>>", this.opts.speed);
     }
 
     if (clientX < this.opts.threshold) {

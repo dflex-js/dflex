@@ -29,7 +29,7 @@ const defaultOpts: DndOpts = Object.freeze({
 
   scroll: {
     enable: true,
-    speed: 6,
+    speed: 10,
     threshold: 50,
   },
 });

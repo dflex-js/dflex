@@ -32,7 +32,7 @@ class Droppable {
 
   private preserveLastElmOffset!: TempOffset;
 
-  private scroll?: any;
+  private scrollAnimationFrame: number | null;
 
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
@@ -54,6 +54,8 @@ class Droppable {
     this.leftAtIndex = -1;
 
     this.updateLastElmOffset();
+
+    this.scrollAnimationFrame = null;
   }
 
   /**
@@ -486,6 +488,23 @@ class Droppable {
    * @param y- mouse Y coordinate
    */
   dragAt(x: number, y: number) {
+    console.log("file: Droppable.ts ~ line 491 ~ x", y);
+    if (
+      y >= 460 &&
+      this.draggable.scroll &&
+      this.scrollAnimationFrame === null
+    ) {
+      this.scrollAnimationFrame = requestAnimationFrame(() => {
+        this.draggable.scroll!.scroll(x, y);
+        this.draggable.dragAt(
+          x,
+          y + (document.scrollingElement || document.documentElement).scrollTop
+        );
+        this.scrollAnimationFrame = null;
+      });
+      return;
+    }
+
     this.draggable.dragAt(x, y);
 
     if (this.draggable.siblingsList === null) return;
@@ -510,8 +529,6 @@ class Droppable {
 
         return;
       }
-
-      this.draggable.scroll?.scroll(x, y);
 
       return;
     }
