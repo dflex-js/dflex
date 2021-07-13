@@ -19,8 +19,8 @@ import type {
   DraggableBaseInterface,
   ThresholdPercentages,
   LayoutThresholds,
-  DraggableOpts,
 } from "./types";
+import { FinalDndOpts } from "../types";
 
 /**
  * Base element.
@@ -35,7 +35,7 @@ class Base
 
   operationID: string;
 
-  opts: DraggableOpts;
+  opts: FinalDndOpts;
 
   parentsList: ELmBranch;
 
@@ -55,7 +55,7 @@ class Base
     elmTree: ElmTree,
     siblingsBoundaries: BoundariesOffset,
     initCoordinates: MouseCoordinates,
-    opts: DraggableOpts
+    opts: FinalDndOpts
   ) {
     const {
       element,
