@@ -6,7 +6,23 @@
  */
 import type { ThresholdPercentages, Restrictions } from "./Draggable";
 
+export interface ScrollOpt {
+  speed: number;
+  threshold: number;
+}
+
+export interface Scroll extends ScrollOpt {
+  enable: boolean;
+}
+
+export interface FinalDndOpts {
+  thresholds: ThresholdPercentages;
+  restrictions: Restrictions;
+  scroll: Scroll;
+}
+
 export interface DndOpts {
   thresholds?: Partial<ThresholdPercentages>;
   restrictions?: Partial<Restrictions>;
+  scroll?: Partial<Scroll>;
 }
