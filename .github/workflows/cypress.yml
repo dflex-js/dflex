@@ -10,6 +10,7 @@ jobs:
   cypress-dnd:
     name: E2E Test For DnD React APP
     runs-on: ubuntu-latest
+    if: github.event.pull_request.draft != true
     steps:
       - name: Check out repository
         uses: actions/checkout@master
