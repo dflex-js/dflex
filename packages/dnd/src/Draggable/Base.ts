@@ -204,6 +204,15 @@ class Base
     $.maxRight = left + horizontal;
   }
 
+  isParenOverflowX() {
+    const parentBottom =
+      this.activeParent!.offset.top + this.activeParent!.offset.height;
+
+    const elemOverflowX = parentBottom > window.innerHeight;
+
+    return elemOverflowX;
+  }
+
   /**
    * Assigns new ACTIVE_PARENT: parent who contains dragged
    *
@@ -221,6 +230,12 @@ class Base
      * transformed and which is not.
      */
     this.isOutActiveParent = false;
+
+    if (this.opts.scroll.enable) {
+      this.opts.scroll.enable = this.opts.scroll.enable
+        ? this.isParenOverflowX()
+        : false;
+    }
   }
 }
 
