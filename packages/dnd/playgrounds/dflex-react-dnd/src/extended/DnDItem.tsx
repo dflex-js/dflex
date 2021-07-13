@@ -29,6 +29,8 @@ export const TodoItem = ({ id, task, style, depth = 0 }: Props) => {
   }, []);
 
   const onMouseMove = (e: MouseEvent) => {
+    e.stopPropagation();
+
     if (dndEvent) {
       const { clientX, clientY } = e;
 
@@ -61,41 +63,41 @@ export const TodoItem = ({ id, task, style, depth = 0 }: Props) => {
     }
   };
 
-  const onTouchMove = (e: TouchEvent) => {
-    if (dndEvent) {
-      const { clientX, clientY } = e.touches[0];
+  // const onTouchMove = (e: TouchEvent) => {
+  //   if (dndEvent) {
+  //     const { clientX, clientY } = e.touches[0];
 
-      dndEvent.dragAt(clientX, clientY);
-    }
-  };
+  //     dndEvent.dragAt(clientX, clientY);
+  //   }
+  // };
 
-  const onTouchEnd = () => {
-    if (dndEvent) {
-      dndEvent.endDragging();
+  // const onTouchEnd = () => {
+  //   if (dndEvent) {
+  //     dndEvent.endDragging();
 
-      dndEvent = null;
+  //     dndEvent = null;
 
-      document.removeEventListener("touchend", onTouchEnd);
-      document.removeEventListener("touchmove", onTouchMove);
-    }
-  };
+  //     document.removeEventListener("touchend", onTouchEnd);
+  //     document.removeEventListener("touchmove", onTouchMove);
+  //   }
+  // };
 
-  const onTouchStart = (e: React.TouchEvent) => {
-    const { clientX, clientY } = e.touches[0];
+  // const onTouchStart = (e: React.TouchEvent) => {
+  //   const { clientX, clientY } = e.touches[0];
 
-    if (id) {
-      dndEvent = new DnD(id, { x: clientX, y: clientY });
+  //   if (id) {
+  //     dndEvent = new DnD(id, { x: clientX, y: clientY });
 
-      document.addEventListener("touchend", onTouchEnd);
-      document.addEventListener("touchmove", onTouchMove);
-    }
-  };
+  //     document.addEventListener("touchend", onTouchEnd);
+  //     document.addEventListener("touchmove", onTouchMove);
+  //   }
+  // };
 
   return (
     <li
       ref={taskRef}
       id={id}
-      onTouchStart={onTouchStart}
+      // onTouchStart={onTouchStart}
       onMouseDown={onMouseDown}
       style={style}
     >
