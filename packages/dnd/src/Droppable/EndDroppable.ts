@@ -41,7 +41,7 @@ class EndDroppable extends Droppable {
     }
   }
 
-    loopAscWithAnimationFrame = (from: number, lst: Array<string>) => {
+  loopAscWithAnimationFrame = (from: number, lst: Array<string>) => {
     let i = from;
 
     const run = () => {
@@ -70,7 +70,6 @@ class EndDroppable extends Droppable {
 
     requestAnimationFrame(run);
   };
-
 
   /**
    * Undo list elements order and instances including translateX/Y and indexes
@@ -108,7 +107,7 @@ class EndDroppable extends Droppable {
       if (Array.isArray(siblings)) this.undoList(siblings);
     }
 
-        if (this.draggedAnimationFrame !== null) {
+    if (this.draggedAnimationFrame !== null) {
       cancelAnimationFrame(this.draggedAnimationFrame);
     }
 
