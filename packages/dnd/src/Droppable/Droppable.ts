@@ -72,8 +72,15 @@ class Droppable {
     if (this.draggable.siblingsList) {
       const lastIndex = this.draggable.siblingsList.length - 1;
       const id = this.draggable.siblingsList[lastIndex];
-      const element = store.getElmById(id);
-      ({ currentTop, currentLeft } = element);
+
+      // TODO: What causes this? Need investigation.
+      if (id) {
+        const element = store.getElmById(id);
+
+        if (element) {
+          if (element) ({ currentTop, currentLeft } = element);
+        }
+      }
     }
 
     this.preserveLastElmOffset = {
