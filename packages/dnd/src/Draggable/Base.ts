@@ -19,8 +19,8 @@ import type {
   DraggableBaseInterface,
   ThresholdPercentages,
   LayoutThresholds,
-  DraggableOpts,
 } from "./types";
+import { FinalDndOpts } from "../types";
 
 /**
  * Base element.
@@ -35,7 +35,7 @@ class Base
 
   operationID: string;
 
-  opts: DraggableOpts;
+  opts: FinalDndOpts;
 
   parentsList: ELmBranch;
 
@@ -55,7 +55,7 @@ class Base
     elmTree: ElmTree,
     siblingsBoundaries: BoundariesOffset,
     initCoordinates: MouseCoordinates,
-    opts: DraggableOpts
+    opts: FinalDndOpts
   ) {
     const {
       element,
@@ -204,6 +204,15 @@ class Base
     $.maxRight = left + horizontal;
   }
 
+  isParenOverflowX() {
+    const parentBottom =
+      this.activeParent!.offset.top + this.activeParent!.offset.height;
+
+    const elemOverflowX = parentBottom > window.innerHeight;
+
+    return elemOverflowX;
+  }
+
   /**
    * Assigns new ACTIVE_PARENT: parent who contains dragged
    *
@@ -221,6 +230,12 @@ class Base
      * transformed and which is not.
      */
     this.isOutActiveParent = false;
+
+    if (this.opts.scroll.enable) {
+      this.opts.scroll.enable = this.opts.scroll.enable
+        ? this.isParenOverflowX()
+        : false;
+    }
   }
 }
 

@@ -8,6 +8,7 @@
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
 import type { AbstractDraggableInterface } from "@dflex/draggable";
+import type { FinalDndOpts } from "../types";
 
 export interface ThresholdPercentages {
   vertical: number;
@@ -43,17 +44,12 @@ export interface Restrictions {
   allowLeavingFromRight: boolean;
 }
 
-export interface DraggableOpts {
-  restrictions: Restrictions;
-  thresholds: ThresholdPercentages;
-}
-
 export interface DraggableBaseInterface
   extends AbstractDraggableInterface<CoreInstanceInterface> {
   tempIndex: number;
   operationID: string;
 
-  opts: DraggableOpts;
+  opts: FinalDndOpts;
 
   parentsList: ELmBranch | null;
   siblingsList: string[] | null;
