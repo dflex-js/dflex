@@ -82,18 +82,13 @@ class EndDroppable extends Droppable {
     } = this.draggable.draggedElm;
 
     if (this.isListLocked || this.draggable.isMovingDown) {
-      for (let i = from; i < lst.length; i += 1) {
-        this.undoElmTranslate(lst, i);
-      }
+      this.loopAscWithAnimationFrame(from, lst);
     } else {
       /**
        * If from is zero, means dragged left, and all siblings are lifted up.
        */
       const actualFrom = from === 0 ? lst.length - 1 : from;
-
-      for (let i = actualFrom; i >= 0; i -= 1) {
-        this.undoElmTranslate(lst, i);
-      }
+      this.loopDesWithAnimationFrame(actualFrom, lst);
     }
 
     lst.splice(this.spliceAt, 1);
@@ -105,10 +100,6 @@ class EndDroppable extends Droppable {
       const siblings = store.getElmSiblingsById(this.draggable.draggedElm.id);
 
       if (Array.isArray(siblings)) this.undoList(siblings);
-    }
-
-    if (this.draggedAnimationFrame !== null) {
-      cancelAnimationFrame(this.draggedAnimationFrame);
     }
 
     this.draggable.endDragging();

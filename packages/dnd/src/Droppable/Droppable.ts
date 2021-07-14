@@ -32,9 +32,6 @@ class Droppable {
 
   private preserveLastElmOffset!: TempOffset;
 
-  protected draggedAnimationFrame: null | number;
-
-
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
 
@@ -55,8 +52,6 @@ class Droppable {
     this.leftAtIndex = -1;
 
     this.updateLastElmOffset();
-
-    this.draggedAnimationFrame = null;
   }
 
   /**
@@ -488,7 +483,7 @@ class Droppable {
    * @param x- mouse X coordinate
    * @param y- mouse Y coordinate
    */
-   private dragAtAnimation(x: number, y: number) {
+  dragAt(x: number, y: number) {
     this.draggable.dragAt(x, y);
 
     if (this.draggable.siblingsList === null) return;
@@ -526,16 +521,6 @@ class Droppable {
       if (!isOutSiblingsContainer) {
         this.draggedIsComingIn(y);
       }
-    }
-  }
-
-  
-  dragAt(x: number, y: number) {
-    if (this.draggedAnimationFrame === null) {
-      this.draggedAnimationFrame = requestAnimationFrame(() => {
-        this.dragAtAnimation(x, y);
-        this.draggedAnimationFrame = null;
-      });
     }
   }
 }
