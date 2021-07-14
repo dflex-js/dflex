@@ -1,6 +1,6 @@
 {
   "name": "@dflex/dnd",
-  "version": "2.7.2",
+  "version": "2.8.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Modern drag and drop package for all JavaScript frameworks",
@@ -36,10 +36,10 @@
     "v8-to-istanbul": "^8.0.0"
   },
   "dependencies": {
-    "@dflex/core-instance": "^2.7.2",
-    "@dflex/dom-gen": "^2.7.2",
-    "@dflex/draggable": "^2.7.2",
-    "@dflex/store": "^2.7.2"
+    "@dflex/core-instance": "^2.8.0",
+    "@dflex/dom-gen": "^2.8.0",
+    "@dflex/draggable": "^2.8.0",
+    "@dflex/store": "^2.8.0"
   },
   "keywords": [
     "drag-drop",
@@ -60,5 +60,6 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
-  }
+  },
+  "gitHead": "c1db275a3790fa1aff5df818066721488ae305bb"
 }
