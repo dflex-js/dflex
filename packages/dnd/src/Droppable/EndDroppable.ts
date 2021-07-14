@@ -41,7 +41,7 @@ class EndDroppable extends Droppable {
     }
   }
 
-  loopAscWithAnimationFrame = (from: number, lst: Array<string>) => {
+  private loopAscWithAnimationFrame = (from: number, lst: Array<string>) => {
     let i = from;
 
     const run = () => {
@@ -56,7 +56,7 @@ class EndDroppable extends Droppable {
     requestAnimationFrame(run);
   };
 
-  loopDesWithAnimationFrame = (from: number, lst: Array<string>) => {
+  private loopDesWithAnimationFrame = (from: number, lst: Array<string>) => {
     let i = from;
 
     const run = () => {
