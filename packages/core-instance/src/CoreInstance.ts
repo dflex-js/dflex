@@ -177,18 +177,19 @@ class CoreInstance
           }`
         );
       }
+
       return siblingsEmptyElmIndex;
     }
 
     if (oldIndex > -1) {
-      if (
-        siblingsEmptyElmIndex === oldIndex &&
-        process.env.NODE_ENV !== "production"
-      ) {
-        // eslint-disable-next-line no-console
-        console.error(
-          `Illegal Attempt: More than one element have left the siblings list ${branchIDsOrder}`
-        );
+      if (siblingsEmptyElmIndex >= 0 && siblingsEmptyElmIndex !== newIndex) {
+        if (process.env.NODE_ENV !== "production") {
+          // eslint-disable-next-line no-console
+          console.error(
+            "Illegal Attempt: More than one element have left the siblings list",
+            branchIDsOrder
+          );
+        }
 
         return siblingsEmptyElmIndex;
       }
