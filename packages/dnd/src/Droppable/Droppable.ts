@@ -32,7 +32,7 @@ class Droppable {
 
   private preserveLastElmOffset!: TempOffset;
 
-  private activeSiblingsHasEmptyElm: boolean;
+  private siblingsEmptyElmIndex: number;
 
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
@@ -55,7 +55,7 @@ class Droppable {
 
     this.updateLastElmOffset();
 
-    this.activeSiblingsHasEmptyElm = false;
+    this.siblingsEmptyElmIndex = -1;
   }
 
   /**
@@ -214,13 +214,13 @@ class Droppable {
     /**
      * Start transforming process
      */
-    this.activeSiblingsHasEmptyElm = element.setYPosition(
+    this.siblingsEmptyElmIndex = element.setYPosition(
       this.draggable.siblingsList!,
       this.effectedElemDirection,
       this.elmTransitionY,
 
       this.draggable.operationID,
-      this.activeSiblingsHasEmptyElm
+      this.siblingsEmptyElmIndex
     );
 
     // element.onDragLeave();

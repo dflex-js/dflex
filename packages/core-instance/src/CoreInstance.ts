@@ -166,7 +166,7 @@ class CoreInstance
     branchIDsOrder: string[],
     newIndex: number,
     oldIndex = -1,
-    siblingsHasEmptyElm = false
+    siblingsEmptyElmIndex = -1
   ) {
     if (newIndex < 0 || newIndex > branchIDsOrder.length - 1) {
       if (process.env.NODE_ENV !== "production") {
@@ -177,17 +177,20 @@ class CoreInstance
           }`
         );
       }
-      return false;
+      return siblingsEmptyElmIndex;
     }
 
     if (oldIndex > -1) {
-      if (siblingsHasEmptyElm && process.env.NODE_ENV !== "production") {
+      if (
+        siblingsEmptyElmIndex === oldIndex &&
+        process.env.NODE_ENV !== "production"
+      ) {
         // eslint-disable-next-line no-console
         console.error(
           `Illegal Attempt: More than one element have left the siblings list ${branchIDsOrder}`
         );
 
-        return false;
+        return siblingsEmptyElmIndex;
       }
 
       branchIDsOrder[oldIndex] = "";
@@ -195,7 +198,7 @@ class CoreInstance
 
     branchIDsOrder[newIndex] = this.id;
 
-    return true;
+    return oldIndex;
   }
 
   /**
@@ -241,7 +244,7 @@ class CoreInstance
     sign: number,
     topSpace: number,
     operationID: string,
-    siblingsHasEmptyElm = false,
+    siblingsEmptyElmIndex = -1,
     vIncrement = 1,
     isShuffle = true
   ) {
@@ -253,7 +256,7 @@ class CoreInstance
       iDsInOrder,
       newIndex,
       isShuffle ? oldIndex : undefined,
-      siblingsHasEmptyElm
+      siblingsEmptyElmIndex
     );
 
     return newStatusSiblingsHasEmptyElm;
