@@ -165,11 +165,37 @@ class CoreInstance
   assignNewPosition(
     branchIDsOrder: string[],
     newIndex: number,
-    oldIndex?: number
+    oldIndex = -1,
+    siblingsHasEmptyElm = false
   ) {
-    // TODO: Add this to confusion mode:newIndex < 0)
+    if (newIndex < 0 || newIndex > branchIDsOrder.length - 1) {
+      if (process.env.NODE_ENV !== "production") {
+        // eslint-disable-next-line no-console
+        console.error(
+          `Illegal Attempt: Received an index:${newIndex} on siblings list:${
+            branchIDsOrder.length - 1
+          }`
+        );
+      }
+      return false;
+    }
+
+    if (oldIndex > -1) {
+      if (siblingsHasEmptyElm && process.env.NODE_ENV !== "production") {
+        // eslint-disable-next-line no-console
+        console.error(
+          `Illegal Attempt: More than one element have left the siblings list ${branchIDsOrder}`
+        );
+
+        return false;
+      }
+
+      branchIDsOrder[oldIndex] = "";
+    }
+
     branchIDsOrder[newIndex] = this.id;
-    if (oldIndex !== undefined) branchIDsOrder[oldIndex] = "";
+
+    return true;
   }
 
   /**
@@ -215,6 +241,7 @@ class CoreInstance
     sign: number,
     topSpace: number,
     operationID: string,
+    siblingsHasEmptyElm = false,
     vIncrement = 1,
     isShuffle = true
   ) {
@@ -222,11 +249,14 @@ class CoreInstance
 
     const { oldIndex, newIndex } = this.updateOrderIndexing(sign * vIncrement);
 
-    this.assignNewPosition(
+    const newStatusSiblingsHasEmptyElm = this.assignNewPosition(
       iDsInOrder,
       newIndex,
-      isShuffle ? oldIndex : undefined
+      isShuffle ? oldIndex : undefined,
+      siblingsHasEmptyElm
     );
+
+    return newStatusSiblingsHasEmptyElm;
   }
 
   /**
