@@ -354,11 +354,13 @@ class Draggable extends Base implements DraggableDnDInterface {
 
     this.draggedElm.transformElm();
 
-    if (this.siblingsList) {
-      this.draggedElm.assignNewPosition(this.siblingsList, this.tempIndex);
-    }
+    if (this.tempIndex !== null) {
+      if (this.siblingsList) {
+        this.draggedElm.assignNewPosition(this.siblingsList, this.tempIndex);
+      }
 
-    this.draggedElm.order.self = this.tempIndex;
+      this.draggedElm.order.self = this.tempIndex;
+    }
   }
 
   endDragging() {
