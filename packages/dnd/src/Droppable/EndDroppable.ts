@@ -18,7 +18,10 @@ function verify(lst: string[]) {
     if (elmID) {
       const element = store.getElmById(elmID);
 
-      return element.offset.top === element.ref.getBoundingClientRect().top;
+      return (
+        Math.floor(element.currentTop) ===
+        Math.floor(element.ref.getBoundingClientRect().top)
+      );
     }
   }
 
