@@ -478,8 +478,16 @@ class Droppable {
       this.setEffectedElemDirection(true);
     }
 
-    // @ts-expect-error
-    this.draggable.siblingsList[to] = this.draggable.draggedElm.id;
+    // Prevent elements collision. Add only if empty.
+    if (this.draggable.siblingsList![to].length === 0) {
+      this.draggable.siblingsList![to] = this.draggable.draggedElm.id;
+    } else if (process.env.NODE_ENV !== "production") {
+      // eslint-disable-next-line no-console
+      console.error(
+        `Illegal Attempt: dragged is positioned above the existing element in the index ${to}`,
+        this.draggable.siblingsList
+      );
+    }
 
     /**
      * Reset index.
