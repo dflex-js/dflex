@@ -8,7 +8,7 @@ import { store, DnD } from "../src/index";
 
 import { elm1, elm2, elm3, elm4 } from "./utils";
 
-describe("Checks Store Instance", () => {
+describe.skip("Checks Store Instance", () => {
   beforeAll(() => {
     store.register(elm1);
     store.register(elm2);
