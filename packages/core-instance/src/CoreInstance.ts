@@ -195,6 +195,16 @@ class CoreInstance
       }
 
       branchIDsOrder[oldIndex] = "";
+    } else if (branchIDsOrder[newIndex].length > 0) {
+      if (process.env.NODE_ENV !== "production") {
+        // eslint-disable-next-line no-console
+        console.error(
+          "Illegal Attempt: Colliding in positions",
+          branchIDsOrder
+        );
+      }
+
+      return siblingsEmptyElmIndex;
     }
 
     branchIDsOrder[newIndex] = this.id;
@@ -284,6 +294,7 @@ class CoreInstance
 
     this.seTranslate(topSpace);
     this.updateOrderIndexing(increment);
+    this.rollYBack(operationID);
   }
 }
 
