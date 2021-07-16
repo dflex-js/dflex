@@ -41,7 +41,7 @@ context("Swinging - Confusion starts form bottom/up", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      // cy.wait(waitingTime);
+      cy.wait(waitingTime);
     }
   });
 
@@ -65,7 +65,7 @@ context("Swinging - Confusion starts form bottom/up", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      // cy.wait(waitingTime);
+      cy.wait(waitingTime);
     }
 
     steps += 45;
@@ -95,7 +95,7 @@ context("Swinging - Confusion starts form bottom/up", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      // cy.wait(waitingTime);
+      cy.wait(waitingTime);
     }
 
     steps += 45;
@@ -125,7 +125,7 @@ context("Swinging - Confusion starts form bottom/up", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      // cy.wait(waitingTime);
+      cy.wait(waitingTime);
     }
 
     steps += 45;
@@ -138,7 +138,7 @@ context("Swinging - Confusion starts form bottom/up", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      // cy.wait(waitingTime);
+      cy.wait(waitingTime);
     }
   });
 

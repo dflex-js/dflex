@@ -88,5 +88,5 @@ export interface DraggableDnDInterface extends DraggableBaseInterface {
   isNotSettled(): boolean;
   // getLastElmIndex(): number;
   // isLastELm(): boolean;
-  endDragging(): void;
+  endDragging(isFallback: boolean): void;
 }
