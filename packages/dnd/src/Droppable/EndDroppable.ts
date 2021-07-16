@@ -96,10 +96,12 @@ class EndDroppable extends Droppable {
   }
 
   endDragging() {
-    if (this.draggable.isNotSettled()) {
-      const siblings = store.getElmSiblingsById(this.draggable.draggedElm.id);
+    const siblings = store.getElmSiblingsById(this.draggable.draggedElm.id);
 
-      if (Array.isArray(siblings)) this.undoList(siblings);
+    if (Array.isArray(siblings)) {
+      if (this.draggable.isNotSettled()) {
+        this.undoList(siblings);
+      }
     }
 
     this.draggable.endDragging();
