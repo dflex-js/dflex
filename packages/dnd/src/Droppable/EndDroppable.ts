@@ -11,23 +11,6 @@ import type { DraggableDnDInterface } from "../Draggable";
 
 import Droppable from "./Droppable";
 
-function verify(lst: string[]) {
-  for (let i = 1; i < lst.length; i += 1) {
-    const elmID = lst[i];
-
-    if (elmID) {
-      const element = store.getElmById(elmID);
-
-      return (
-        Math.floor(element.currentTop) ===
-        Math.floor(element.ref.getBoundingClientRect().top)
-      );
-    }
-  }
-
-  return false;
-}
-
 class EndDroppable extends Droppable {
   private spliceAt: number;
 
@@ -112,13 +95,30 @@ class EndDroppable extends Droppable {
     lst.splice(from, 0, draggedID);
   }
 
+  private verify(lst: string[]) {
+    for (let i = 1; i < lst.length; i += 1) {
+      const elmID = lst[i];
+
+      if (elmID && elmID !== this.draggable.draggedElm.id) {
+        const element = store.getElmById(elmID);
+
+        return (
+          Math.floor(element.currentTop) ===
+          Math.floor(element.ref.getBoundingClientRect().top)
+        );
+      }
+    }
+
+    return false;
+  }
+
   endDragging() {
     const siblings = store.getElmSiblingsById(this.draggable.draggedElm.id);
 
     let isFallback = false;
 
     if (Array.isArray(siblings)) {
-      if (this.draggable.isNotSettled() || !verify(siblings)) {
+      if (this.draggable.isNotSettled() || !this.verify(siblings)) {
         isFallback = true;
         this.undoList(siblings);
       }
