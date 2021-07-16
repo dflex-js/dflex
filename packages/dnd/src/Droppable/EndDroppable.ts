@@ -11,6 +11,20 @@ import type { DraggableDnDInterface } from "../Draggable";
 
 import Droppable from "./Droppable";
 
+function verify(lst: string[]) {
+  for (let i = 1; i < lst.length; i += 1) {
+    const elmID = lst[i];
+
+    if (elmID) {
+      const element = store.getElmById(elmID);
+
+      return element.offset.top === element.ref.offsetTop;
+    }
+  }
+
+  return false;
+}
+
 class EndDroppable extends Droppable {
   private spliceAt: number;
 
@@ -99,7 +113,7 @@ class EndDroppable extends Droppable {
     const siblings = store.getElmSiblingsById(this.draggable.draggedElm.id);
 
     if (Array.isArray(siblings)) {
-      if (this.draggable.isNotSettled()) {
+      if (this.draggable.isNotSettled() || !verify(siblings)) {
         this.undoList(siblings);
       }
     }
