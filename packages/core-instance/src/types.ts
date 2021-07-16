@@ -77,6 +77,7 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
     sign: number,
     topSpace: number,
     operationID: string,
+    siblingsHasEmptyElm?: number,
     vIncrement?: number,
     isShuffle?: boolean
   ): void;
@@ -84,7 +85,8 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
   assignNewPosition(
     branchIDsOrder: string[],
     newIndex: number,
-    oldIndex?: number
-  ): void;
+    oldIndex?: number,
+    siblingsHasEmptyElm?: number
+  ): number;
   getOffset(): Offset;
 }

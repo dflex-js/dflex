@@ -32,6 +32,8 @@ class Droppable {
 
   private preserveLastElmOffset!: TempOffset;
 
+  private siblingsEmptyElmIndex: number;
+
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
 
@@ -52,6 +54,8 @@ class Droppable {
     this.leftAtIndex = -1;
 
     this.updateLastElmOffset();
+
+    this.siblingsEmptyElmIndex = -1;
   }
 
   /**
@@ -210,12 +214,13 @@ class Droppable {
     /**
      * Start transforming process
      */
-    element.setYPosition(
+    this.siblingsEmptyElmIndex = element.setYPosition(
       this.draggable.siblingsList!,
       this.effectedElemDirection,
       this.elmTransitionY,
 
-      this.draggable.operationID
+      this.draggable.operationID,
+      this.siblingsEmptyElmIndex
     );
 
     // element.onDragLeave();
@@ -473,8 +478,16 @@ class Droppable {
       this.setEffectedElemDirection(true);
     }
 
-    // @ts-expect-error
-    this.draggable.siblingsList[to] = this.draggable.draggedElm.id;
+    // Prevent elements collision. Add only if empty.
+    if (this.draggable.siblingsList![to].length === 0) {
+      this.draggable.siblingsList![to] = this.draggable.draggedElm.id;
+    } else if (process.env.NODE_ENV !== "production") {
+      // eslint-disable-next-line no-console
+      console.error(
+        `Illegal Attempt: dragged is positioned above the existing element in the index ${to}`,
+        this.draggable.siblingsList
+      );
+    }
 
     /**
      * Reset index.

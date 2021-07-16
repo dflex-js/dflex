@@ -165,11 +165,51 @@ class CoreInstance
   assignNewPosition(
     branchIDsOrder: string[],
     newIndex: number,
-    oldIndex?: number
+    oldIndex = -1,
+    siblingsEmptyElmIndex = -1
   ) {
-    // TODO: Add this to confusion mode:newIndex < 0)
+    if (newIndex < 0 || newIndex > branchIDsOrder.length - 1) {
+      if (process.env.NODE_ENV !== "production") {
+        // eslint-disable-next-line no-console
+        console.error(
+          `Illegal Attempt: Received an index:${newIndex} on siblings list:${
+            branchIDsOrder.length - 1
+          }`
+        );
+      }
+
+      return siblingsEmptyElmIndex;
+    }
+
+    if (oldIndex > -1) {
+      if (siblingsEmptyElmIndex >= 0 && siblingsEmptyElmIndex !== newIndex) {
+        if (process.env.NODE_ENV !== "production") {
+          // eslint-disable-next-line no-console
+          console.error(
+            "Illegal Attempt: More than one element have left the siblings list",
+            branchIDsOrder
+          );
+        }
+
+        return siblingsEmptyElmIndex;
+      }
+
+      branchIDsOrder[oldIndex] = "";
+    } else if (branchIDsOrder[newIndex].length > 0) {
+      if (process.env.NODE_ENV !== "production") {
+        // eslint-disable-next-line no-console
+        console.error(
+          "Illegal Attempt: Colliding in positions",
+          branchIDsOrder
+        );
+      }
+
+      return siblingsEmptyElmIndex;
+    }
+
     branchIDsOrder[newIndex] = this.id;
-    if (oldIndex !== undefined) branchIDsOrder[oldIndex] = "";
+
+    return oldIndex;
   }
 
   /**
@@ -215,6 +255,7 @@ class CoreInstance
     sign: number,
     topSpace: number,
     operationID: string,
+    siblingsEmptyElmIndex = -1,
     vIncrement = 1,
     isShuffle = true
   ) {
@@ -222,11 +263,14 @@ class CoreInstance
 
     const { oldIndex, newIndex } = this.updateOrderIndexing(sign * vIncrement);
 
-    this.assignNewPosition(
+    const newStatusSiblingsHasEmptyElm = this.assignNewPosition(
       iDsInOrder,
       newIndex,
-      isShuffle ? oldIndex : undefined
+      isShuffle ? oldIndex : undefined,
+      siblingsEmptyElmIndex
     );
+
+    return newStatusSiblingsHasEmptyElm;
   }
 
   /**
@@ -250,6 +294,7 @@ class CoreInstance
 
     this.seTranslate(topSpace);
     this.updateOrderIndexing(increment);
+    this.rollYBack(operationID);
   }
 }
 
