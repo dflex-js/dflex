@@ -1,6 +1,6 @@
 {
   "name": "@dflex/store",
-  "version": "2.8.0",
+  "version": "2.9.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
@@ -17,7 +17,7 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@dflex/dom-gen": "^2.8.0"
+    "@dflex/dom-gen": "^2.9.0"
   },
   "keywords": [
     "drag-drop",
