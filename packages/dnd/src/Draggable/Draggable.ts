@@ -317,14 +317,15 @@ class Draggable extends Base implements DraggableDnDInterface {
     );
   }
 
-  setDraggedPosition() {
+  setDraggedPosition(isFallback: boolean) {
     /**
      * In this case, the use clicked without making any move.
      */
     if (
+      isFallback ||
       this.siblingsList === null ||
-      this.numberOfElementsTransformed === 0 ||
-      this.isNotSettled()
+      this.numberOfElementsTransformed === 0
+      // this.isNotSettled()
     ) {
       /**
        * If not isDraggedOutPosition, it means dragged is out its position, inside
@@ -368,10 +369,10 @@ class Draggable extends Base implements DraggableDnDInterface {
     this.draggedElm.order.self = this.tempIndex;
   }
 
-  endDragging() {
+  endDragging(isFallback: boolean) {
     this.setDragged(false);
 
-    this.setDraggedPosition();
+    this.setDraggedPosition(isFallback);
   }
 }
 

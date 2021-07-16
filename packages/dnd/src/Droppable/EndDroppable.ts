@@ -112,13 +112,16 @@ class EndDroppable extends Droppable {
   endDragging() {
     const siblings = store.getElmSiblingsById(this.draggable.draggedElm.id);
 
+    let isFallback = false;
+
     if (Array.isArray(siblings)) {
       if (this.draggable.isNotSettled() || !verify(siblings)) {
+        isFallback = true;
         this.undoList(siblings);
       }
     }
 
-    this.draggable.endDragging();
+    this.draggable.endDragging(isFallback);
   }
 }
 
