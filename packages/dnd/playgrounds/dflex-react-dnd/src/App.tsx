@@ -12,6 +12,7 @@ import { ComponentBasedEvent, ContainerBasedEvent } from "./lists";
 import Restricted from "./restrictions";
 import TodoList from "./todo";
 import ExtendedList from "./extended";
+import Depth1 from "./depth-1";
 
 function App() {
   return (
@@ -25,6 +26,9 @@ function App() {
         </Route>
         <Route path="/todo">
           <TodoList />
+        </Route>
+        <Route path="/depth-1">
+          <Depth1 />
         </Route>
         <Route path="/component-based-event">
           <ComponentBasedEvent />

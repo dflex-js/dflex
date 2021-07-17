@@ -15,13 +15,22 @@ import { store, DnD } from "@dflex/dnd";
 let dndEvent: DnD | null;
 
 interface Props {
+  Component?: string | React.JSXElementConstructor<any>;
   id: string;
   style?: { [key: string]: string };
-  task: string;
+  className?: string;
   depth?: number;
+  children: React.ReactNode;
 }
 
-export const TodoItem = ({ id, task, style, depth = 0 }: Props) => {
+export const TodoItem = ({
+  Component = "li",
+  id,
+  style,
+  className,
+  children,
+  depth = 0,
+}: Props) => {
   const taskRef = React.useRef() as React.MutableRefObject<HTMLLIElement>;
 
   React.useEffect(() => {
@@ -63,46 +72,47 @@ export const TodoItem = ({ id, task, style, depth = 0 }: Props) => {
     }
   };
 
-  // const onTouchMove = (e: TouchEvent) => {
-  //   if (dndEvent) {
-  //     const { clientX, clientY } = e.touches[0];
+  const onTouchMove = (e: TouchEvent) => {
+    if (dndEvent) {
+      const { clientX, clientY } = e.touches[0];
 
-  //     dndEvent.dragAt(clientX, clientY);
-  //   }
-  // };
+      dndEvent.dragAt(clientX, clientY);
+    }
+  };
 
-  // const onTouchEnd = () => {
-  //   if (dndEvent) {
-  //     dndEvent.endDragging();
+  const onTouchEnd = () => {
+    if (dndEvent) {
+      dndEvent.endDragging();
 
-  //     dndEvent = null;
+      dndEvent = null;
 
-  //     document.removeEventListener("touchend", onTouchEnd);
-  //     document.removeEventListener("touchmove", onTouchMove);
-  //   }
-  // };
+      document.removeEventListener("touchend", onTouchEnd);
+      document.removeEventListener("touchmove", onTouchMove);
+    }
+  };
 
-  // const onTouchStart = (e: React.TouchEvent) => {
-  //   const { clientX, clientY } = e.touches[0];
+  const onTouchStart = (e: React.TouchEvent) => {
+    const { clientX, clientY } = e.touches[0];
 
-  //   if (id) {
-  //     dndEvent = new DnD(id, { x: clientX, y: clientY });
+    if (id) {
+      dndEvent = new DnD(id, { x: clientX, y: clientY });
 
-  //     document.addEventListener("touchend", onTouchEnd);
-  //     document.addEventListener("touchmove", onTouchMove);
-  //   }
-  // };
+      document.addEventListener("touchend", onTouchEnd);
+      document.addEventListener("touchmove", onTouchMove);
+    }
+  };
 
   return (
-    <li
+    <Component
       ref={taskRef}
       id={id}
-      // onTouchStart={onTouchStart}
+      onTouchStart={onTouchStart}
       onMouseDown={onMouseDown}
+      className={className}
       style={style}
     >
-      {task}
-    </li>
+      {children}
+    </Component>
   );
 };
 

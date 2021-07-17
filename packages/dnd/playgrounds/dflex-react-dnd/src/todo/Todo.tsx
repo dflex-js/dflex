@@ -11,7 +11,7 @@
 import React from "react";
 import s from "../Demo.module.css";
 
-import TodoItem from "./TodoItem";
+import DnDComponent from "../DnDComponent";
 
 const TodoList = () => {
   const tasks = [
@@ -30,7 +30,9 @@ const TodoList = () => {
       <div className={s.todo}>
         <ul>
           {tasks.map(({ msg, id, style }) => (
-            <TodoItem id={id} key={id} task={msg} style={style} />
+            <DnDComponent id={id} key={id} style={style}>
+              {msg}
+            </DnDComponent>
           ))}
         </ul>
       </div>
