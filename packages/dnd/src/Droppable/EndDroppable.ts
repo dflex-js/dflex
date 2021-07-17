@@ -41,7 +41,7 @@ class EndDroppable extends Droppable {
     }
   }
 
-  private loopAscWithAnimationFrame = (from: number, lst: Array<string>) => {
+  private loopAscWithAnimationFrame(from: number, lst: string[]) {
     let i = from;
 
     const run = () => {
@@ -54,9 +54,9 @@ class EndDroppable extends Droppable {
     };
 
     requestAnimationFrame(run);
-  };
+  }
 
-  private loopDesWithAnimationFrame = (from: number, lst: Array<string>) => {
+  private loopDesWithAnimationFrame(from: number, lst: string[]) {
     let i = from;
 
     const run = () => {
@@ -69,7 +69,7 @@ class EndDroppable extends Droppable {
     };
 
     requestAnimationFrame(run);
-  };
+  }
 
   /**
    * Undo list elements order and instances including translateX/Y and indexes
@@ -113,8 +113,7 @@ class EndDroppable extends Droppable {
     const element = store.getElmById(id);
 
     return (
-      Math.floor(siblingsBoundaries.top) ===
-      Math.floor(element.ref.getBoundingClientRect().top)
+      Math.floor(siblingsBoundaries.top) === Math.floor(element.currentTop)
     );
   }
 
