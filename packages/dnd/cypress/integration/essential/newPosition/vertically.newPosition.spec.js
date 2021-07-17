@@ -53,6 +53,8 @@ function myContext() {
           });
 
           it("Triggers mouseup", () => {
+            // eslint-disable-next-line cypress/no-unnecessary-waiting
+            cy.wait(0);
             cy.get("#id-9").trigger("mouseup", { force: true });
           });
 
@@ -135,6 +137,8 @@ function myContext() {
         });
 
         it("Triggers mouseup", () => {
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.wait(0);
           cy.get("#id-9").trigger("mouseup", { force: true });
         });
 
