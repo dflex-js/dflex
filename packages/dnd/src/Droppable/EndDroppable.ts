@@ -41,7 +41,7 @@ class EndDroppable extends Droppable {
     }
   }
 
-  private loopAscWithAnimationFrame = (from: number, lst: Array<string>) => {
+  private loopAscWithAnimationFrame(from: number, lst: string[]) {
     let i = from;
 
     const run = () => {
@@ -54,9 +54,9 @@ class EndDroppable extends Droppable {
     };
 
     requestAnimationFrame(run);
-  };
+  }
 
-  private loopDesWithAnimationFrame = (from: number, lst: Array<string>) => {
+  private loopDesWithAnimationFrame(from: number, lst: string[]) {
     let i = from;
 
     const run = () => {
@@ -69,13 +69,13 @@ class EndDroppable extends Droppable {
     };
 
     requestAnimationFrame(run);
-  };
+  }
 
   /**
    * Undo list elements order and instances including translateX/Y and indexes
    * locally.
    */
-  private undoList(lst: Array<string>) {
+  private undoList(lst: string[]) {
     const {
       order: { self: from },
       id: draggedID,
@@ -96,20 +96,25 @@ class EndDroppable extends Droppable {
   }
 
   private verify(lst: string[]) {
-    for (let i = 1; i < lst.length; i += 1) {
-      const elmID = lst[i];
+    const siblingsBoundaries =
+      store.siblingsBoundaries[
+        store.registry[this.draggable.draggedElm.id].keys.sK
+      ];
 
-      if (elmID && elmID !== this.draggable.draggedElm.id) {
-        const element = store.getElmById(elmID);
+    const id = lst[0];
 
-        return (
-          Math.floor(element.currentTop) ===
-          Math.floor(element.ref.getBoundingClientRect().top)
-        );
-      }
+    if (id.length === 0 || this.draggable.draggedElm.id === id) {
+      return (
+        Math.floor(siblingsBoundaries.top) ===
+        Math.floor(this.draggable.occupiedOffset.currentTop)
+      );
     }
 
-    return false;
+    const element = store.getElmById(id);
+
+    return (
+      Math.floor(siblingsBoundaries.top) === Math.floor(element.currentTop)
+    );
   }
 
   endDragging() {
@@ -120,6 +125,7 @@ class EndDroppable extends Droppable {
     if (Array.isArray(siblings)) {
       if (this.draggable.isNotSettled() || !this.verify(siblings)) {
         isFallback = true;
+
         this.undoList(siblings);
       }
     }

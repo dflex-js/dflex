@@ -10,7 +10,7 @@ import type { MouseCoordinates } from "@dflex/draggable";
 import store from "../DnDStore";
 
 import Base from "./Base";
-import type { ElmTree, BoundariesOffset } from "../DnDStore";
+import type { ElmTree } from "../DnDStore";
 import type {
   DraggableDnDInterface,
   TempOffset,
@@ -44,11 +44,10 @@ class Draggable extends Base implements DraggableDnDInterface {
 
   constructor(
     elmTree: ElmTree,
-    siblingsBoundaries: BoundariesOffset,
     initCoordinates: MouseCoordinates,
     opts: FinalDndOpts
   ) {
-    super(elmTree, siblingsBoundaries, initCoordinates, opts);
+    super(elmTree, initCoordinates, opts);
 
     const { x, y } = initCoordinates;
 

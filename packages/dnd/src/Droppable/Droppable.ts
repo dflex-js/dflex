@@ -311,7 +311,7 @@ class Droppable {
    *
    * @param id -
    */
-  private isIDEligible2Move(id: string) {
+  protected isIDEligible2Move(id: string) {
     return id && id !== this.draggable.draggedElm.id;
   }
 
