@@ -9,7 +9,7 @@
 import React from "react";
 import s from "../Demo.module.css";
 
-import DnDItem from "./DnDItem";
+import DnDComponent from "../DnDComponent";
 
 const ExtendedList = () => {
   const tasks = [];
@@ -25,7 +25,9 @@ const ExtendedList = () => {
       <div className={s.todo}>
         <ul>
           {tasks.map(({ task, id, key }) => (
-            <DnDItem id={id} key={key} task={task} />
+            <DnDComponent id={id} key={key}>
+              {task}
+            </DnDComponent>
           ))}
         </ul>
       </div>
