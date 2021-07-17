@@ -1,6 +1,6 @@
 {
   "name": "@dflex/draggable",
-  "version": "2.9.0",
+  "version": "2.9.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Modern Draggable package for all JavaScript frameworks",
@@ -18,8 +18,8 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@dflex/core-instance": "^2.9.0",
-    "@dflex/store": "^2.9.0"
+    "@dflex/core-instance": "^2.9.1",
+    "@dflex/store": "^2.9.1"
   },
   "keywords": [
     "drag-drop",
@@ -41,5 +41,5 @@
     "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
-  "gitHead": "c1db275a3790fa1aff5df818066721488ae305bb"
+  "gitHead": "b631e811029a1f4b8c7751375d767e3225ea7bb1"
 }
