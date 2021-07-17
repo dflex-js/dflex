@@ -49,12 +49,6 @@ class DnD extends Droppable {
   ) {
     const elmCoreInstanceWithTree: ElmTree = store.getElmTreeById(id);
 
-    const {
-      keys: { sK },
-    } = store.registry[id];
-
-    const siblingsBoundaries = store.siblingsBoundaries[sK];
-
     const options = { ...opts };
 
     (Object.keys(defaultOpts) as Array<keyof typeof defaultOpts>).forEach(
@@ -72,7 +66,6 @@ class DnD extends Droppable {
 
     const draggable = new Draggable(
       elmCoreInstanceWithTree,
-      siblingsBoundaries,
       initCoordinates,
       options as FinalDndOpts
     );

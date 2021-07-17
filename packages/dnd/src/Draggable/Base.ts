@@ -13,7 +13,7 @@ import type { ELmBranch } from "@dflex/dom-gen";
 
 import store from "../DnDStore";
 
-import type { ElmTree, BoundariesOffset } from "../DnDStore";
+import type { ElmTree } from "../DnDStore";
 
 import type {
   DraggableBaseInterface,
@@ -53,7 +53,6 @@ class Base
 
   constructor(
     elmTree: ElmTree,
-    siblingsBoundaries: BoundariesOffset,
     initCoordinates: MouseCoordinates,
     opts: FinalDndOpts
   ) {
@@ -104,6 +103,9 @@ class Base
      * Init max direction for position
      */
     this.setThreshold(this.draggedElm.currentTop, this.draggedElm.currentLeft);
+
+    const siblingsBoundaries =
+      store.siblingsBoundaries[store.registry[this.draggedElm.id].keys.sK];
 
     this.setThreshold(
       siblingsBoundaries.top,

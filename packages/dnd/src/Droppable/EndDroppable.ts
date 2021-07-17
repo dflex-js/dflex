@@ -96,10 +96,10 @@ class EndDroppable extends Droppable {
   }
 
   private verify(lst: string[]) {
-    for (let i = 1; i < lst.length; i += 1) {
+    for (let i = 0; i < lst.length; i += 1) {
       const elmID = lst[i];
 
-      if (elmID && elmID !== this.draggable.draggedElm.id) {
+      if (this.isIDEligible2Move(elmID)) {
         const element = store.getElmById(elmID);
 
         return (
