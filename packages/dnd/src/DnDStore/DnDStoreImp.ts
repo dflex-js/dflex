@@ -84,9 +84,17 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     /**
      * If element already exist in the store, then the reattach the reference.
      */
-    if (this.registry[element.id]) {
+    const id = element.id || element.ref.id;
+
+    if (this.registry[id]) {
       if (element.ref) {
-        this.reattachElmRef(element.id, element.ref);
+        if (this.registry[id].ref.isEqualNode(element.ref)) {
+          this.reattachElmRef(id, element.ref);
+        } else {
+          throw new Error(
+            `DFlex: Element with id:${id} is already registered. Please, provide DFlex with a unique id.`
+          );
+        }
       }
 
       return;
@@ -97,7 +105,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     const {
       offset,
       keys: { sK },
-    } = this.registry[element.id];
+    } = this.registry[id];
 
     this.assignSiblingsBoundaries(sK, offset);
   }
