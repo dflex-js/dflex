@@ -41,9 +41,19 @@ class Store<T = ElmWIthPointer> {
    * @param CustomInstance -
    */
   register(element: ElmInstance, CustomInstance?: Class<T>) {
-    const { id, depth, ref } = element;
+    const { id: idElm, depth = 0, ref } = element;
 
-    if (!ref) return;
+    if (!ref || ref.nodeType !== Node.ELEMENT_NODE) {
+      throw new Error(
+        `DFlex: Invalid HTMLElement: ${ref} is passed to registry`
+      );
+    }
+
+    if (!idElm && !ref.id) {
+      throw new Error(`DFlex: A valid and unique id is required.`);
+    }
+
+    const id = idElm || ref.id;
 
     const { order, keys } = this.DOMGen.getElmPointer(id, depth);
 
