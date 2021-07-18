@@ -88,7 +88,13 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     if (this.registry[id]) {
       if (element.ref) {
-        this.reattachElmRef(id, element.ref);
+        if (this.registry[id].ref.isEqualNode(element.ref)) {
+          this.reattachElmRef(id, element.ref);
+        } else {
+          throw new Error(
+            `DFlex: Element with id:${id} is already registered. Please, provide DFlex with a unique id.`
+          );
+        }
       }
 
       return;
