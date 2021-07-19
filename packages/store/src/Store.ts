@@ -40,7 +40,7 @@ class Store<T = ElmWIthPointer> {
    * @param element -
    * @param CustomInstance -
    */
-  register(element: ElmInstance, CustomInstance?: Class<T>) {
+  register(element: ElmInstance, CustomInstance?: Class<T>, opts?: {}) {
     const { id: idElm, depth = 0, ref } = element;
 
     if (!ref || ref.nodeType !== Node.ELEMENT_NODE) {
@@ -63,7 +63,7 @@ class Store<T = ElmWIthPointer> {
     // @ts-ignore
     this.registry[id] =
       CustomInstance && typeof CustomInstance.constructor === "function"
-        ? new CustomInstance(coreElement)
+        ? new CustomInstance(coreElement, opts)
         : coreElement;
   }
 
