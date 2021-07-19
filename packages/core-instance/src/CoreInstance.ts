@@ -18,6 +18,12 @@ import type {
   TransitionHistory,
 } from "./types";
 
+interface Opts {
+  isPause: boolean;
+  viewportHeight: number;
+  viewportWidth: number;
+}
+
 class CoreInstance
   extends AbstractCoreInstance
   implements CoreInstanceInterface
@@ -35,7 +41,12 @@ class CoreInstance
 
   keys: Keys;
 
-  constructor(elementWithPointer: ElmWIthPointer, isPause = false) {
+  isVisible: boolean;
+
+  constructor(
+    elementWithPointer: ElmWIthPointer,
+    { isPause = false, viewportHeight = 0, viewportWidth = 0 }: Opts
+  ) {
     const { order, keys, ...element } = elementWithPointer;
 
     super(element);
@@ -59,10 +70,22 @@ class CoreInstance
 
     if (this.ref && !isPause) {
       this.initIndicators();
+      this.isVisible = this.isElementVisible(viewportHeight, viewportWidth);
+    } else {
+      this.isVisible = false;
     }
 
     this.order = order;
     this.keys = keys;
+  }
+
+  isElementVisible(viewportHeight: number, viewportWidth: number) {
+    return (
+      this.offset.top + this.offset.height <= viewportHeight &&
+      this.offset.left + this.offset.width <= viewportWidth &&
+      this.offset.top >= 0 &&
+      this.offset.left >= 0
+    );
   }
 
   /**
