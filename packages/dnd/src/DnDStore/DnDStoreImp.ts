@@ -111,7 +111,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   }
 
   getELmOffsetById(id: string) {
-    return this.getElmById(id).getOffset();
+    return this.getElmById(id).offset;
   }
 
   getELmTranslateById(id: string) {

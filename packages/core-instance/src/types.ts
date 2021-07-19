@@ -88,5 +88,4 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
     oldIndex?: number,
     siblingsHasEmptyElm?: number
   ): number;
-  getOffset(): Offset;
 }

@@ -18,33 +18,6 @@ import type {
   TransitionHistory,
 } from "./types";
 
-/**
- * Why storing index here? when it's already sorted in order?
- *
- * Each element has index elements to element's position in list. It allows us
- * to avoid looping in idsTreeOrder to know each element position.
- *
- * elem-id = id1
- * iDsInOrder[id3, id1, id2]
- * How do we get elem-id from iDsInOrder without loop? We don't want to loop
- * twice once to know the qualified element to transform and the second to
- * figure out element position.
- *
- * So, iDsInOrder[index] is our position in list. And, to update to
- * new position: iDsInOrder[new-index] = elem-id.
- *
- *
- * Why storing prev-index?
- *
- * Currently, there's no undo history. But, still need one-step back. Why?
- * Because if dragged is out and release, it should go back to its
- * prevIndex aka selfIndex before transformation.
- *
- * why Storing parent-index?
- *
- * To connect element with parents by knowing their locations.
- */
-
 class CoreInstance
   extends AbstractCoreInstance
   implements CoreInstanceInterface
@@ -62,7 +35,7 @@ class CoreInstance
 
   keys: Keys;
 
-  constructor(elementWithPointer: ElmWIthPointer) {
+  constructor(elementWithPointer: ElmWIthPointer, isPause = false) {
     const { order, keys, ...element } = elementWithPointer;
 
     super(element);
@@ -84,7 +57,7 @@ class CoreInstance
 
     this.currentLeft = 0;
 
-    if (this.ref) {
+    if (this.ref && !isPause) {
       this.initIndicators();
     }
 
@@ -117,16 +90,6 @@ class CoreInstance
 
     this.currentTop = top;
     this.currentLeft = left;
-  }
-
-  getOffset() {
-    return {
-      height: this.offset.height,
-      width: this.offset.width,
-
-      left: this.currentLeft,
-      top: this.currentTop,
-    };
   }
 
   private updateCurrentIndicators(topSpace: number, leftSpace: number) {
