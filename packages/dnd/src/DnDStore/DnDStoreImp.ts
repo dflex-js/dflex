@@ -48,15 +48,6 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     );
   }
 
-  isElementVisible(elemOffset: Offset) {
-    return (
-      elemOffset.top + elemOffset.height <= this.viewportHeight &&
-      elemOffset.left + elemOffset.width <= this.viewportWidth &&
-      elemOffset.top >= 0 &&
-      elemOffset.left >= 0
-    );
-  }
-
   private assignSiblingsBoundaries(siblingsK: string, elemOffset: Offset) {
     const elmRight = elemOffset.left + elemOffset.width;
 
@@ -101,22 +92,6 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     // Preserves last changes.
     this.registry[id].transformElm();
   }
-
-  // isElementOnViewport(id: string) {
-  //   const {
-  //     offset,
-  //     keys: { sK },
-  //   } = this.registry[id];
-
-  //   const { top, bottom, left, right } = this.siblingsBoundaries[sK];
-
-  //   return (
-  //     offset.top >= top &&
-  //     offset.top <= bottom &&
-  //     offset.left >= left &&
-  //     offset.left <= right
-  //   );
-  // }
 
   /**
    *  Register DnD element.
