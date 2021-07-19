@@ -72,7 +72,7 @@ class CoreInstance
    *
    * So, basically any working element in DnD should be initiated first.
    */
-  private initIndicators() {
+  initIndicators() {
     const { height, width, left, top } = this.ref.getBoundingClientRect();
 
     /**
