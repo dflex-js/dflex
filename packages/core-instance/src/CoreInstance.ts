@@ -91,15 +91,16 @@ class CoreInstance
 
   updatePixelRatio(devicePixelRatio: number, sign: 1 | -1) {
     let trigger = false;
+    const ratio = sign * (1 / devicePixelRatio);
 
     if (this.translateY > 0) {
       trigger = true;
-      this.translateY += sign * (1 / devicePixelRatio);
+      this.translateY += ratio;
     }
 
     if (this.translateX > 0) {
       trigger = true;
-      this.translateX += sign * (1 / devicePixelRatio);
+      this.translateX += ratio;
     }
 
     if (trigger && this.isVisible) {
