@@ -18,12 +18,6 @@ import type {
   TransitionHistory,
 } from "./types";
 
-interface Opts {
-  isPause: boolean;
-  viewportHeight: number;
-  viewportWidth: number;
-}
-
 class CoreInstance
   extends AbstractCoreInstance
   implements CoreInstanceInterface
@@ -33,9 +27,9 @@ class CoreInstance
   /** Store history of Y-transition according to unique ID. */
   prevTranslateY: TransitionHistory;
 
-  currentTop: number;
+  currentTop!: number;
 
-  currentLeft: number;
+  currentLeft!: number;
 
   order: Order;
 
@@ -43,10 +37,7 @@ class CoreInstance
 
   isVisible: boolean;
 
-  constructor(
-    elementWithPointer: ElmWIthPointer,
-    { isPause = false, viewportHeight = 0, viewportWidth = 0 }: Opts
-  ) {
+  constructor(elementWithPointer: ElmWIthPointer, isPause = false) {
     const { order, keys, ...element } = elementWithPointer;
 
     super(element);
@@ -61,31 +52,14 @@ class CoreInstance
       top: 0,
     };
 
-    /**
-     * Used for dragged, storing temporary top, left new positions during the transition.
-     */
-    this.currentTop = 0;
-
-    this.currentLeft = 0;
-
-    if (this.ref && !isPause) {
-      this.initIndicators();
-      this.isVisible = this.isElementVisible(viewportHeight, viewportWidth);
-    } else {
-      this.isVisible = false;
-    }
-
     this.order = order;
     this.keys = keys;
-  }
 
-  isElementVisible(viewportHeight: number, viewportWidth: number) {
-    return (
-      this.offset.top + this.offset.height <= viewportHeight &&
-      this.offset.left + this.offset.width <= viewportWidth &&
-      this.offset.top >= 0 &&
-      this.offset.left >= 0
-    );
+    this.isVisible = !isPause;
+
+    if (this.ref && this.isVisible) {
+      this.initIndicators();
+    }
   }
 
   /**
@@ -113,6 +87,34 @@ class CoreInstance
 
     this.currentTop = top;
     this.currentLeft = left;
+  }
+
+  updatePixelRatio(devicePixelRatio: number, sign: 1 | -1) {
+    let trigger = false;
+
+    if (this.translateY > 0) {
+      trigger = true;
+      this.translateY += sign * (1 / devicePixelRatio);
+    }
+
+    if (this.translateX > 0) {
+      trigger = true;
+      this.translateX += sign * (1 / devicePixelRatio);
+    }
+
+    if (trigger && this.isVisible) {
+      this.transformElm();
+    }
+  }
+
+  visibilityHasChanged(isVisible: boolean) {
+    if (isVisible === this.isVisible) return;
+
+    if (isVisible && !this.isVisible) {
+      this.transformElm();
+    }
+
+    this.isVisible = isVisible;
   }
 
   private updateCurrentIndicators(topSpace: number, leftSpace: number) {
@@ -172,8 +174,7 @@ class CoreInstance
         if (process.env.NODE_ENV !== "production") {
           // eslint-disable-next-line no-console
           console.error(
-            "Illegal Attempt: More than one element have left the siblings list",
-            branchIDsOrder
+            "Illegal Attempt: More than one element have left the siblings list"
           );
         }
 
@@ -184,10 +185,7 @@ class CoreInstance
     } else if (branchIDsOrder[newIndex].length > 0) {
       if (process.env.NODE_ENV !== "production") {
         // eslint-disable-next-line no-console
-        console.error(
-          "Illegal Attempt: Colliding in positions",
-          branchIDsOrder
-        );
+        console.error("Illegal Attempt: Colliding in positions");
       }
 
       return siblingsEmptyElmIndex;
@@ -213,7 +211,8 @@ class CoreInstance
     }
 
     this.updateCurrentIndicators(topSpace, 0);
-    this.transformElm();
+
+    if (this.isVisible) this.transformElm();
   }
 
   /**
@@ -238,7 +237,7 @@ class CoreInstance
    */
   setYPosition(
     iDsInOrder: string[],
-    sign: number,
+    sign: 1 | -1,
     topSpace: number,
     operationID: string,
     siblingsEmptyElmIndex = -1,
