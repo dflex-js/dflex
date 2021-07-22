@@ -89,25 +89,6 @@ class CoreInstance
     this.currentLeft = left;
   }
 
-  updatePixelRatio(devicePixelRatio: number, sign: 1 | -1) {
-    let trigger = false;
-    const ratio = sign * (1 / devicePixelRatio);
-
-    if (this.translateY > 0) {
-      trigger = true;
-      this.translateY += ratio;
-    }
-
-    if (this.translateX > 0) {
-      trigger = true;
-      this.translateX += ratio;
-    }
-
-    if (trigger && this.isVisible) {
-      this.transformElm();
-    }
-  }
-
   visibilityHasChanged(isVisible: boolean) {
     if (isVisible === this.isVisible) return;
 
@@ -193,6 +174,8 @@ class CoreInstance
     }
 
     branchIDsOrder[newIndex] = this.id;
+
+    this.ref.dataset.index = `${newIndex}`;
 
     return oldIndex;
   }

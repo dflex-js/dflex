@@ -89,6 +89,5 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
     siblingsHasEmptyElm?: number
   ): number;
   initIndicators(): void;
-  updatePixelRatio(devicePixelRatio: number, sign: 1 | -1): void;
   visibilityHasChanged(isVisible: boolean): void;
 }
