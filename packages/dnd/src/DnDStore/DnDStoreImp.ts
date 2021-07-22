@@ -68,6 +68,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     if (!this.throttle) {
       window.requestAnimationFrame(() => {
         this.updateRegisteredLayoutIndicators();
+        this.throttle = false;
       });
 
       this.throttle = true;
