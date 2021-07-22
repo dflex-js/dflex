@@ -32,14 +32,12 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   scrollX!: number;
 
-  elmIndicator: {
+  private throttle: boolean;
+
+  private elmIndicator: {
     currentKy: string;
 
     prevKy: string;
-
-    order: number;
-
-    prevElmVisibility: boolean;
 
     exceptionToNextElm: boolean;
   };
@@ -53,23 +51,30 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.elmIndicator = {
       currentKy: "",
       prevKy: "",
-      order: -1,
-      prevElmVisibility: false,
       exceptionToNextElm: false,
     };
 
     this.setViewport();
     this.setScrollXY();
 
-    window.addEventListener(
-      "scroll",
-      this.updateRegisteredLayoutIndicators.bind(this)
-    );
+    this.throttle = false;
+
+    window.addEventListener("scroll", this.animatedScroll.bind(this));
   }
 
-  updateRegisteredLayoutIndicators() {
+  private animatedScroll() {
     this.setScrollXY();
 
+    if (!this.throttle) {
+      window.requestAnimationFrame(() => {
+        this.updateRegisteredLayoutIndicators();
+      });
+
+      this.throttle = true;
+    }
+  }
+
+  private updateRegisteredLayoutIndicators() {
     Object.keys(this.DOMGen.branches).forEach((branchKey) => {
       // Ignore non array branches.
       if (Array.isArray(this.DOMGen.branches[branchKey])) {
@@ -84,7 +89,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     });
   }
 
-  setViewport() {
+  private setViewport() {
     this.viewportHeight = Math.max(
       document.documentElement.clientHeight || 0,
       window.innerHeight || 0
@@ -96,7 +101,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     );
   }
 
-  setScrollXY() {
+  private setScrollXY() {
     this.scrollY = Math.round(
       document.documentElement.scrollTop || window.pageYOffset
     );
@@ -105,7 +110,10 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     );
   }
 
-  isElementHiddenInViewport(currentTop: number, currentLeft: number): boolean {
+  private isElementHiddenInViewport(
+    currentTop: number,
+    currentLeft: number
+  ): boolean {
     return (
       currentTop < this.scrollY ||
       currentTop >= this.viewportHeight + this.scrollY ||
@@ -271,6 +279,10 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
         parents,
       },
     };
+  }
+
+  cleanup() {
+    window.removeEventListener("scroll", this.animatedScroll.bind(this));
   }
 }
 
