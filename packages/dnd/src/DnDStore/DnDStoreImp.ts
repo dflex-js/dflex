@@ -32,11 +32,31 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   scrollX!: number;
 
+  elmIndicator: {
+    currentKy: string;
+
+    prevKy: string;
+
+    order: number;
+
+    prevElmVisibility: boolean;
+
+    exceptionToNextElm: boolean;
+  };
+
   constructor() {
     super();
 
     this.siblingsBoundaries = {};
     this.tracker = new Tracker();
+
+    this.elmIndicator = {
+      currentKy: "",
+      prevKy: "",
+      order: -1,
+      prevElmVisibility: false,
+      exceptionToNextElm: false,
+    };
 
     this.setViewport();
     this.setScrollXY();
@@ -170,15 +190,26 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       offset,
       currentTop,
       currentLeft,
-      keys: { sK },
+      keys: { sK, pK },
     } = this.registry[id];
 
     this.assignSiblingsBoundaries(sK, offset);
 
-    this.registry[id].isVisible = !this.isElementHiddenInViewport(
-      currentTop,
-      currentLeft
-    );
+    let isVisible = !this.isElementHiddenInViewport(currentTop, currentLeft);
+
+    // same branch
+    this.elmIndicator.currentKy = sK + pK;
+
+    if (this.elmIndicator.currentKy === this.elmIndicator.prevKy) {
+      if (!isVisible && !this.elmIndicator.exceptionToNextElm) {
+        this.elmIndicator.exceptionToNextElm = true;
+        isVisible = true;
+      }
+    }
+
+    this.registry[id].isVisible = isVisible;
+
+    this.elmIndicator.prevKy = this.elmIndicator.currentKy;
   }
 
   getELmOffsetById(id: string) {
