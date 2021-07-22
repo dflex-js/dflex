@@ -82,8 +82,8 @@ class CoreInstance
       height,
       width,
 
-      left: Math.round(Math.abs(left)),
-      top: Math.round(Math.abs(top)),
+      left: Math.abs(left),
+      top: Math.abs(top),
     };
 
     this.currentTop = this.offset.top;
