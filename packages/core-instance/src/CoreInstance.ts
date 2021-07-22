@@ -59,6 +59,7 @@ class CoreInstance
 
     if (this.ref && this.isVisible) {
       this.initIndicators();
+      this.ref.dataset.index = `${this.order.self}`;
     }
   }
 
@@ -81,12 +82,12 @@ class CoreInstance
       height,
       width,
 
-      left,
-      top,
+      left: Math.round(Math.abs(left)),
+      top: Math.round(Math.abs(top)),
     };
 
-    this.currentTop = top;
-    this.currentLeft = left;
+    this.currentTop = this.offset.top;
+    this.currentLeft = this.offset.left;
   }
 
   visibilityHasChanged(isVisible: boolean) {
