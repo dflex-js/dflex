@@ -13,6 +13,7 @@ import type { ElmInstance } from "@dflex/store";
 import type { ElmTree, BoundariesOffset, DnDStoreInterface } from "./types";
 
 import Tracker from "./Tracker";
+// import Environment from "../Environment";
 
 // function noop() {}
 
@@ -27,6 +28,10 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   viewportWidth!: number;
 
+  scrollY!: number;
+
+  scrollX!: number;
+
   constructor() {
     super();
 
@@ -34,6 +39,29 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.tracker = new Tracker();
 
     this.setViewport();
+    this.setScrollXY();
+
+    window.addEventListener(
+      "scroll",
+      this.updateRegisteredLayoutIndicators.bind(this)
+    );
+  }
+
+  updateRegisteredLayoutIndicators() {
+    this.setScrollXY();
+
+    Object.keys(this.DOMGen.branches).forEach((branchKey) => {
+      // Ignore non array branches.
+      if (Array.isArray(this.DOMGen.branches[branchKey])) {
+        (this.DOMGen.branches[branchKey] as string[]).forEach((elmID) => {
+          const { currentTop, currentLeft } = this.registry[elmID];
+
+          this.registry[elmID].visibilityHasChanged(
+            !this.isElementHiddenInViewport(currentTop, currentLeft)
+          );
+        });
+      }
+    });
   }
 
   setViewport() {
@@ -45,6 +73,24 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.viewportWidth = Math.max(
       document.documentElement.clientWidth || 0,
       window.innerWidth || 0
+    );
+  }
+
+  setScrollXY() {
+    this.scrollY = Math.round(
+      document.documentElement.scrollTop || window.pageYOffset
+    );
+    this.scrollX = Math.round(
+      document.documentElement.scrollLeft || window.pageXOffset
+    );
+  }
+
+  isElementHiddenInViewport(currentTop: number, currentLeft: number): boolean {
+    return (
+      currentTop < this.scrollY ||
+      currentTop >= this.viewportHeight + this.scrollY ||
+      currentLeft < this.scrollX ||
+      currentLeft >= this.viewportWidth + this.scrollX
     );
   }
 
@@ -118,17 +164,21 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       return;
     }
 
-    super.register(element, CoreInstance, {
-      viewportHeight: this.viewportHeight,
-      viewportWidth: this.viewportWidth,
-    });
+    super.register(element, CoreInstance);
 
     const {
       offset,
+      currentTop,
+      currentLeft,
       keys: { sK },
     } = this.registry[id];
 
     this.assignSiblingsBoundaries(sK, offset);
+
+    this.registry[id].isVisible = !this.isElementHiddenInViewport(
+      currentTop,
+      currentLeft
+    );
   }
 
   getELmOffsetById(id: string) {
