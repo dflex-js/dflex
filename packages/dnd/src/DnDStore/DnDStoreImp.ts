@@ -34,11 +34,9 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   private throttle: boolean;
 
-  private elmIndicator: {
+  private elmIndicator!: {
     currentKy: string;
-
     prevKy: string;
-
     exceptionToNextElm: boolean;
   };
 
@@ -48,11 +46,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.siblingsBoundaries = {};
     this.tracker = new Tracker();
 
-    this.elmIndicator = {
-      currentKy: "",
-      prevKy: "",
-      exceptionToNextElm: false,
-    };
+    this.initELmIndicator();
 
     this.setViewport();
     this.setScrollXY();
@@ -60,34 +54,6 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.throttle = false;
 
     window.addEventListener("scroll", this.animatedScroll.bind(this));
-  }
-
-  private animatedScroll() {
-    this.setScrollXY();
-
-    if (!this.throttle) {
-      window.requestAnimationFrame(() => {
-        this.updateRegisteredLayoutIndicators();
-        this.throttle = false;
-      });
-
-      this.throttle = true;
-    }
-  }
-
-  private updateRegisteredLayoutIndicators() {
-    Object.keys(this.DOMGen.branches).forEach((branchKey) => {
-      // Ignore non array branches.
-      if (Array.isArray(this.DOMGen.branches[branchKey])) {
-        (this.DOMGen.branches[branchKey] as string[]).forEach((elmID) => {
-          const { currentTop, currentLeft } = this.registry[elmID];
-
-          this.registry[elmID].visibilityHasChanged(
-            !this.isElementHiddenInViewport(currentTop, currentLeft)
-          );
-        });
-      }
-    });
   }
 
   private setViewport() {
@@ -111,6 +77,16 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     );
   }
 
+  private initELmIndicator() {
+    this.elmIndicator = {
+      currentKy: "",
+
+      prevKy: "",
+
+      exceptionToNextElm: false,
+    };
+  }
+
   private isElementHiddenInViewport(
     currentTop: number,
     currentLeft: number
@@ -121,6 +97,41 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       currentLeft < this.scrollX ||
       currentLeft >= this.viewportWidth + this.scrollX
     );
+  }
+
+  private updateRegisteredLayoutIndicators() {
+    this.initELmIndicator();
+
+    Object.keys(this.DOMGen.branches).forEach((branchKey) => {
+      // Ignore non array branches.
+      if (Array.isArray(this.DOMGen.branches[branchKey])) {
+        let prevIndex = 0;
+
+        (this.DOMGen.branches[branchKey] as string[]).forEach((elmID, i) => {
+          if (elmID.length > 0) {
+            const { currentTop, currentLeft } = this.registry[elmID];
+
+            let isVisible = !this.isElementHiddenInViewport(
+              currentTop,
+              currentLeft
+            );
+
+            if (
+              !isVisible &&
+              !this.elmIndicator.exceptionToNextElm &&
+              i > prevIndex
+            ) {
+              this.elmIndicator.exceptionToNextElm = true;
+              isVisible = true;
+            } else if (isVisible && this.elmIndicator.exceptionToNextElm) {
+              this.initELmIndicator();
+            }
+            this.registry[elmID].visibilityHasChanged(isVisible);
+            prevIndex = i;
+          }
+        });
+      }
+    });
   }
 
   private assignSiblingsBoundaries(siblingsK: string, elemOffset: Offset) {
@@ -196,9 +207,9 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     super.register(element, CoreInstance);
 
     const {
-      offset,
       currentTop,
       currentLeft,
+      offset,
       keys: { sK, pK },
     } = this.registry[id];
 
@@ -207,13 +218,15 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     let isVisible = !this.isElementHiddenInViewport(currentTop, currentLeft);
 
     // same branch
-    this.elmIndicator.currentKy = sK + pK;
+    this.elmIndicator.currentKy = `${sK}${pK}`;
 
-    if (this.elmIndicator.currentKy === this.elmIndicator.prevKy) {
-      if (!isVisible && !this.elmIndicator.exceptionToNextElm) {
-        this.elmIndicator.exceptionToNextElm = true;
-        isVisible = true;
-      }
+    if (
+      !isVisible &&
+      !this.elmIndicator.exceptionToNextElm &&
+      this.elmIndicator.currentKy === this.elmIndicator.prevKy
+    ) {
+      this.elmIndicator.exceptionToNextElm = true;
+      isVisible = true;
     }
 
     this.registry[id].isVisible = isVisible;
@@ -280,6 +293,19 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
         parents,
       },
     };
+  }
+
+  private animatedScroll() {
+    this.setScrollXY();
+
+    if (!this.throttle) {
+      window.requestAnimationFrame(() => {
+        this.updateRegisteredLayoutIndicators();
+        this.throttle = false;
+      });
+
+      this.throttle = true;
+    }
   }
 
   cleanup() {
