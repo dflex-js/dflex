@@ -115,7 +115,7 @@ class CoreInstance
   }
 
   transformElm() {
-    this.ref.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
+    this.ref.style.transform = `translate3d(${this.translateX}px,${this.translateY}px, 0)`;
   }
 
   /**
