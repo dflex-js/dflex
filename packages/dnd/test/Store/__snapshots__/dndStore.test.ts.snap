@@ -7,6 +7,7 @@ Object {
     "currentTop": 114,
     "depth": 0,
     "id": "id-1",
+    "isVisible": true,
     "keys": Object {
       "chK": null,
       "pK": "1-0",
@@ -23,7 +24,9 @@ Object {
       "self": 0,
     },
     "prevTranslateY": Array [],
-    "ref": <div />,
+    "ref": <div
+      data-index="0"
+    />,
     "translateX": 0,
     "translateY": 0,
   },
@@ -32,6 +35,7 @@ Object {
     "currentTop": 172,
     "depth": 0,
     "id": "id-2",
+    "isVisible": true,
     "keys": Object {
       "chK": null,
       "pK": "1-0",
@@ -48,7 +52,9 @@ Object {
       "self": 1,
     },
     "prevTranslateY": Array [],
-    "ref": <div />,
+    "ref": <div
+      data-index="1"
+    />,
     "translateX": 0,
     "translateY": 0,
   },
@@ -57,6 +63,7 @@ Object {
     "currentTop": 230,
     "depth": 0,
     "id": "id-3",
+    "isVisible": true,
     "keys": Object {
       "chK": null,
       "pK": "1-0",
@@ -73,7 +80,9 @@ Object {
       "self": 2,
     },
     "prevTranslateY": Array [],
-    "ref": <div />,
+    "ref": <div
+      data-index="2"
+    />,
     "translateX": 0,
     "translateY": 0,
   },
@@ -82,6 +91,7 @@ Object {
     "currentTop": 288,
     "depth": 0,
     "id": "id-4",
+    "isVisible": true,
     "keys": Object {
       "chK": null,
       "pK": "1-0",
@@ -98,7 +108,9 @@ Object {
       "self": 3,
     },
     "prevTranslateY": Array [],
-    "ref": <div />,
+    "ref": <div
+      data-index="3"
+    />,
     "translateX": 0,
     "translateY": 0,
   },
@@ -121,6 +133,7 @@ Object {
     "currentTop": 114,
     "depth": 0,
     "id": "id-1",
+    "isVisible": true,
     "keys": Object {
       "chK": null,
       "pK": "1-0",
@@ -137,7 +150,9 @@ Object {
       "self": 0,
     },
     "prevTranslateY": Array [],
-    "ref": <div />,
+    "ref": <div
+      data-index="0"
+    />,
     "translateX": 0,
     "translateY": 0,
   },
