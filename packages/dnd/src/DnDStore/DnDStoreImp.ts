@@ -124,6 +124,11 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
               this.elmIndicator.exceptionToNextElm = true;
               isVisible = true;
             } else if (isVisible && this.elmIndicator.exceptionToNextElm) {
+              // In this case, we are moving from hidden to visible.
+              // Eg: 1, 2 are hidden the rest of the list is visible.
+              // But, there's a possibility that the rest of the branch elements
+              // are hidden.
+              // Eg: 1, 2: hidden 3, 4, 5, 6, 7:visible 8, 9, 10: hidden.
               this.initELmIndicator();
             }
             this.registry[elmID].visibilityHasChanged(isVisible);
