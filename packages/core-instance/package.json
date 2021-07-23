@@ -1,6 +1,6 @@
 {
   "name": "@dflex/core-instance",
-  "version": "2.9.1",
+  "version": "2.10.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
@@ -35,5 +35,5 @@
     "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
-  "gitHead": "b631e811029a1f4b8c7751375d767e3225ea7bb1"
+  "gitHead": "e84ec2529421a3b5a26ffbf6a41035e00f4cb798"
 }
