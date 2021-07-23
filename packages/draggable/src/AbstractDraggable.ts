@@ -103,6 +103,9 @@ class AbstractDraggable<T extends AbstractCoreInterface>
         // @ts-expect-error
         this.draggedStyleRef[prop] = dragValue;
       });
+
+      getSelection()?.removeAllRanges();
+
       return;
     }
     /**

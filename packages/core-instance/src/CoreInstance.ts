@@ -18,33 +18,6 @@ import type {
   TransitionHistory,
 } from "./types";
 
-/**
- * Why storing index here? when it's already sorted in order?
- *
- * Each element has index elements to element's position in list. It allows us
- * to avoid looping in idsTreeOrder to know each element position.
- *
- * elem-id = id1
- * iDsInOrder[id3, id1, id2]
- * How do we get elem-id from iDsInOrder without loop? We don't want to loop
- * twice once to know the qualified element to transform and the second to
- * figure out element position.
- *
- * So, iDsInOrder[index] is our position in list. And, to update to
- * new position: iDsInOrder[new-index] = elem-id.
- *
- *
- * Why storing prev-index?
- *
- * Currently, there's no undo history. But, still need one-step back. Why?
- * Because if dragged is out and release, it should go back to its
- * prevIndex aka selfIndex before transformation.
- *
- * why Storing parent-index?
- *
- * To connect element with parents by knowing their locations.
- */
-
 class CoreInstance
   extends AbstractCoreInstance
   implements CoreInstanceInterface
@@ -54,15 +27,17 @@ class CoreInstance
   /** Store history of Y-transition according to unique ID. */
   prevTranslateY: TransitionHistory;
 
-  currentTop: number;
+  currentTop!: number;
 
-  currentLeft: number;
+  currentLeft!: number;
 
   order: Order;
 
   keys: Keys;
 
-  constructor(elementWithPointer: ElmWIthPointer) {
+  isVisible: boolean;
+
+  constructor(elementWithPointer: ElmWIthPointer, isPause = false) {
     const { order, keys, ...element } = elementWithPointer;
 
     super(element);
@@ -77,19 +52,15 @@ class CoreInstance
       top: 0,
     };
 
-    /**
-     * Used for dragged, storing temporary top, left new positions during the transition.
-     */
-    this.currentTop = 0;
-
-    this.currentLeft = 0;
-
-    if (this.ref) {
-      this.initIndicators();
-    }
-
     this.order = order;
     this.keys = keys;
+
+    this.isVisible = !isPause;
+
+    if (this.ref && this.isVisible) {
+      this.initIndicators();
+      this.ref.dataset.index = `${this.order.self}`;
+    }
   }
 
   /**
@@ -99,7 +70,7 @@ class CoreInstance
    *
    * So, basically any working element in DnD should be initiated first.
    */
-  private initIndicators() {
+  initIndicators() {
     const { height, width, left, top } = this.ref.getBoundingClientRect();
 
     /**
@@ -111,22 +82,22 @@ class CoreInstance
       height,
       width,
 
-      left,
-      top,
+      left: Math.abs(left),
+      top: Math.abs(top),
     };
 
-    this.currentTop = top;
-    this.currentLeft = left;
+    this.currentTop = this.offset.top;
+    this.currentLeft = this.offset.left;
   }
 
-  getOffset() {
-    return {
-      height: this.offset.height,
-      width: this.offset.width,
+  visibilityHasChanged(isVisible: boolean) {
+    if (isVisible === this.isVisible) return;
 
-      left: this.currentLeft,
-      top: this.currentTop,
-    };
+    if (isVisible && !this.isVisible) {
+      this.transformElm();
+    }
+
+    this.isVisible = isVisible;
   }
 
   private updateCurrentIndicators(topSpace: number, leftSpace: number) {
@@ -186,8 +157,7 @@ class CoreInstance
         if (process.env.NODE_ENV !== "production") {
           // eslint-disable-next-line no-console
           console.error(
-            "Illegal Attempt: More than one element have left the siblings list",
-            branchIDsOrder
+            "Illegal Attempt: More than one element have left the siblings list"
           );
         }
 
@@ -198,16 +168,15 @@ class CoreInstance
     } else if (branchIDsOrder[newIndex].length > 0) {
       if (process.env.NODE_ENV !== "production") {
         // eslint-disable-next-line no-console
-        console.error(
-          "Illegal Attempt: Colliding in positions",
-          branchIDsOrder
-        );
+        console.error("Illegal Attempt: Colliding in positions");
       }
 
       return siblingsEmptyElmIndex;
     }
 
     branchIDsOrder[newIndex] = this.id;
+
+    this.ref.dataset.index = `${newIndex}`;
 
     return oldIndex;
   }
@@ -227,7 +196,8 @@ class CoreInstance
     }
 
     this.updateCurrentIndicators(topSpace, 0);
-    this.transformElm();
+
+    if (this.isVisible) this.transformElm();
   }
 
   /**
@@ -252,7 +222,7 @@ class CoreInstance
    */
   setYPosition(
     iDsInOrder: string[],
-    sign: number,
+    sign: 1 | -1,
     topSpace: number,
     operationID: string,
     siblingsEmptyElmIndex = -1,

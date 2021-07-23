@@ -7,6 +7,7 @@ Object {
     "currentTop": 0,
     "depth": 0,
     "id": "id-0",
+    "isVisible": true,
     "keys": Object {
       "chK": null,
       "pK": "1-0",
@@ -23,7 +24,9 @@ Object {
       "self": 0,
     },
     "prevTranslateY": Array [],
-    "ref": <div />,
+    "ref": <div
+      data-index="0"
+    />,
     "translateX": 0,
     "translateY": 0,
   },

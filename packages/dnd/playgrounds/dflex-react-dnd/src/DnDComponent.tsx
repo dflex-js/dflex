@@ -38,7 +38,7 @@ export const TodoItem = ({
   }, []);
 
   const onMouseMove = (e: MouseEvent) => {
-    e.stopPropagation();
+    // e.stopPropagation();
 
     if (dndEvent) {
       const { clientX, clientY } = e;
@@ -66,6 +66,7 @@ export const TodoItem = ({
       if (id) {
         document.addEventListener("mouseup", onMouseUp);
         document.addEventListener("mousemove", onMouseMove);
+        // document.addEventListener("scroll", onMouseScroll);
 
         dndEvent = new DnD(id, { x: clientX, y: clientY });
       }

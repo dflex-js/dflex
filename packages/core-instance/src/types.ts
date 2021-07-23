@@ -74,7 +74,7 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
   keys: Keys;
   setYPosition(
     iDsInOrder: ELmBranch,
-    sign: number,
+    sign: 1 | -1,
     topSpace: number,
     operationID: string,
     siblingsHasEmptyElm?: number,
@@ -88,5 +88,6 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
     oldIndex?: number,
     siblingsHasEmptyElm?: number
   ): number;
-  getOffset(): Offset;
+  initIndicators(): void;
+  visibilityHasChanged(isVisible: boolean): void;
 }
