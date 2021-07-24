@@ -240,10 +240,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       return;
     }
 
-    super.register(element, CoreInstance, {
-      scrollX: this.scrollX,
-      scrollY: this.scrollY,
-    });
+    super.register(element, CoreInstance);
 
     const {
       currentTop,
@@ -335,8 +332,6 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   }
 
   private animatedListener(setter: "setViewport" | "setScrollXY") {
-    console.log("yes??");
-
     this[setter]();
 
     if (!this.throttle) {
