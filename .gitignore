@@ -5,14 +5,12 @@ node_modules
 .changelog
 .docusaurus
 .DS_Store
-build
 dist
-lib
-draft
-samples
 tsconfig.tsbuildinfo
 tsconfig.build.tsbuildinfo
 cypress/screenshots
 cypress/videos
 
-packages/draggable/playgrounds/dflex-vue-draggable/node_modules
+# next.js
+.next/
+out/

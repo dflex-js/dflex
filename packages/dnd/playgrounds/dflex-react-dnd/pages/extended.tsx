@@ -6,6 +6,6 @@
  */
 
 /* eslint-disable import/no-extraneous-dependencies */
-import { ExtendedList } from "../src/components";
+import ExtendedList from "../src/components/extended";
 
 export default ExtendedList;

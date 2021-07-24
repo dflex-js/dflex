@@ -59,7 +59,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.initELmIndicator();
 
     this.animatedScroll = this.animatedScroll.bind(this);
-    this.setViewport = this.setViewport.bind(this);
+    this.animatedResize = this.animatedResize.bind(this);
 
     this.isDOM = canUseDOM();
 
@@ -74,7 +74,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.setViewport();
     this.setScrollXY();
 
-    window.addEventListener("resize", this.setViewport);
+    window.addEventListener("resize", this.animatedResize);
     window.addEventListener("scroll", this.animatedScroll);
     window.onbeforeunload = this.cleanup;
   }
@@ -240,7 +240,10 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       return;
     }
 
-    super.register(element, CoreInstance);
+    super.register(element, CoreInstance, {
+      scrollX: this.scrollX,
+      scrollY: this.scrollY,
+    });
 
     const {
       currentTop,
@@ -331,8 +334,10 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     };
   }
 
-  private animatedScroll() {
-    this.setScrollXY();
+  private animatedListener(setter: "setViewport" | "setScrollXY") {
+    console.log("yes??");
+
+    this[setter]();
 
     if (!this.throttle) {
       window.requestAnimationFrame(() => {
@@ -344,9 +349,17 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     }
   }
 
+  private animatedScroll() {
+    this.animatedListener.call(this, "setScrollXY");
+  }
+
+  private animatedResize() {
+    this.animatedListener.call(this, "setViewport");
+  }
+
   cleanup() {
     window.removeEventListener("scroll", this.animatedScroll);
-    window.removeEventListener("resize", this.setViewport);
+    window.removeEventListener("resize", this.animatedResize);
   }
 }
 
