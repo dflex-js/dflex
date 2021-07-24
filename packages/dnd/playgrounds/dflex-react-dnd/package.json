@@ -8,12 +8,14 @@
     "@types/react": "^17.0.13",
     "@types/react-dom": "^17.0.8",
     "@types/react-router-dom": "^5.1.7",
+    "next": "11.0.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3"
   },
   "scripts": {
+    "dev:next": "next dev",
     "start": "cross-env PORT=3001 react-scripts start",
     "start:instrument": "react-scripts -r @cypress/instrument-cra start",
     "build": "react-scripts build",
