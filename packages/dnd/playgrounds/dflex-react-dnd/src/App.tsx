@@ -16,7 +16,7 @@ import {
   Depth1,
   ComponentBasedEvent,
   ContainerBasedEvent,
-} from "dflex-react-components";
+} from "./components";
 
 function App() {
   return (
