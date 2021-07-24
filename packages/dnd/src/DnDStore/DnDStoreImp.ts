@@ -32,6 +32,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   siblingsBoundaries: { [k: string]: BoundariesOffset };
 
+  isDOM: boolean;
+
   viewportHeight!: number;
 
   viewportWidth!: number;
@@ -59,25 +61,25 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.animatedScroll = this.animatedScroll.bind(this);
     this.setViewport = this.setViewport.bind(this);
 
-    if (canUseDOM()) {
+    this.isDOM = canUseDOM();
+
+    if (this.isDOM) {
       this.init();
     }
-
-    this.setViewport();
-    this.setScrollXY();
 
     this.throttle = false;
   }
 
   private init() {
+    this.setViewport();
+    this.setScrollXY();
+
     window.addEventListener("resize", this.setViewport);
     window.addEventListener("scroll", this.animatedScroll);
     window.onbeforeunload = this.cleanup;
   }
 
   private setViewport() {
-    console.log("file: DnDStoreImp.ts ~ line 79 ~ setViewport");
-
     this.viewportHeight = Math.max(
       document.documentElement.clientHeight || 0,
       window.innerHeight || 0
@@ -124,12 +126,9 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.initELmIndicator();
 
     Object.keys(this.DOMGen.branches).forEach((branchKey) => {
-      console.log("updateRegisteredLayoutIndicators", branchKey);
-
       // Ignore non array branches.
       if (Array.isArray(this.DOMGen.branches[branchKey])) {
         let prevIndex = 0;
-        console.log("updateRegisteredLayoutIndicators", branchKey);
 
         (this.DOMGen.branches[branchKey] as string[]).forEach((elmID, i) => {
           if (elmID.length > 0) {
@@ -214,10 +213,12 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
    * @param element -
    */
   register(element: ElmInstance) {
-    if (!canUseDOM()) {
-      console.log("ignore register");
+    if (!this.isDOM) {
+      this.isDOM = canUseDOM();
 
-      return;
+      if (!this.isDOM) return;
+
+      this.init();
     }
 
     /**
