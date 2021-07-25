@@ -484,8 +484,7 @@ class Droppable {
     } else if (process.env.NODE_ENV !== "production") {
       // eslint-disable-next-line no-console
       console.error(
-        `Illegal Attempt: dragged is positioned above the existing element in the index ${to}`,
-        this.draggable.siblingsList
+        `Illegal Attempt: dragged is positioned above the existing element in the index ${to}`
       );
     }
 
