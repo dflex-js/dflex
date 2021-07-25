@@ -343,12 +343,15 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     };
   }
 
-  private animatedListener(setter: "setViewport" | "setScrollXY") {
+  private animatedListener(
+    setter: "setViewport" | "setScrollXY",
+    response: "updateRegisteredLayoutIndicators"
+  ) {
     this[setter]();
 
     if (!this.throttle) {
       window.requestAnimationFrame(() => {
-        this.updateRegisteredLayoutIndicators();
+        this[response]();
         this.throttle = false;
       });
 
@@ -357,11 +360,19 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   }
 
   private animatedScroll() {
-    this.animatedListener.call(this, "setScrollXY");
+    this.animatedListener.call(
+      this,
+      "setScrollXY",
+      "updateRegisteredLayoutIndicators"
+    );
   }
 
   private animatedResize() {
-    this.animatedListener.call(this, "setViewport");
+    this.animatedListener.call(
+      this,
+      "setViewport",
+      "updateRegisteredLayoutIndicators"
+    );
   }
 
   cleanup() {

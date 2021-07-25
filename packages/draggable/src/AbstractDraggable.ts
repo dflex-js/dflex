@@ -106,6 +106,8 @@ class AbstractDraggable<T extends AbstractCoreInterface>
 
       getSelection()?.removeAllRanges();
 
+      this.draggedElm.ref.setAttribute("dragged", "true");
+
       return;
     }
     /**
@@ -115,6 +117,8 @@ class AbstractDraggable<T extends AbstractCoreInterface>
       // @ts-ignore
       this.draggedStyleRef[prop] = afterDragValue;
     });
+
+    this.draggedElm.ref.removeAttribute("dragged");
   }
 
   /**
