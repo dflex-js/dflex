@@ -39,7 +39,7 @@ class CoreInstance
 
   constructor(
     elementWithPointer: ElmWIthPointer,
-    { isPause = false, scrollX = 0, scrollY = 0 }
+    { isPause = false, scrollX = 0, scrollY = 0 } = {}
   ) {
     const { order, keys, ...element } = elementWithPointer;
 
