@@ -339,6 +339,7 @@ class Draggable extends Base implements DraggableDnDInterface {
 
       if (this.hasMoved()) {
         this.draggedElm.transformElm();
+        this.draggedElm.updateDataset(this.draggedElm.order.self);
 
         if (
           this.siblingsList &&

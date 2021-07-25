@@ -90,4 +90,5 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
   ): number;
   initIndicators(scrollX: number, scrollY: number): void;
   visibilityHasChanged(isVisible: boolean): void;
+  updateDataset(index: number): void;
 }

@@ -67,7 +67,7 @@ class Droppable {
 
   private setDraggedTempIndex(tempIndex: number) {
     this.draggable.tempIndex = tempIndex;
-    this.draggable.draggedElm.ref.dataset.index = `${tempIndex}`;
+    this.draggable.draggedElm.updateDataset(tempIndex);
   }
 
   private setEffectedElemDirection(isUp: boolean) {
