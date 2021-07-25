@@ -136,7 +136,7 @@ class AbstractDraggable<T extends AbstractCoreInterface>
     this.tempTranslate.x = x + this.outerOffsetX;
     this.tempTranslate.y = y + this.outerOffsetY;
 
-    this.draggedStyleRef.transform = `translate(${this.tempTranslate.x}px,${this.tempTranslate.y}px)`;
+    this.draggedStyleRef.transform = `translate3d(${this.tempTranslate.x}px,${this.tempTranslate.y}px, 0)`;
   }
 }
 

@@ -5,14 +5,18 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/* eslint-disable import/no-extraneous-dependencies */
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
-import { ComponentBasedEvent, ContainerBasedEvent } from "./lists";
-import Restricted from "./restrictions";
-import TodoList from "./todo";
-import ExtendedList from "./extended";
-import Depth1 from "./depth-1";
+import {
+  Restricted,
+  TodoList,
+  ExtendedList,
+  Depth1,
+  ComponentBasedEvent,
+  ContainerBasedEvent,
+} from "./components";
 
 function App() {
   return (

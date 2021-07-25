@@ -37,7 +37,10 @@ class CoreInstance
 
   isVisible: boolean;
 
-  constructor(elementWithPointer: ElmWIthPointer, isPause = false) {
+  constructor(
+    elementWithPointer: ElmWIthPointer,
+    { isPause = false, scrollX = 0, scrollY = 0 } = {}
+  ) {
     const { order, keys, ...element } = elementWithPointer;
 
     super(element);
@@ -58,7 +61,7 @@ class CoreInstance
     this.isVisible = !isPause;
 
     if (this.ref && this.isVisible) {
-      this.initIndicators();
+      this.initIndicators(scrollX, scrollY);
       this.ref.dataset.index = `${this.order.self}`;
     }
   }
@@ -70,7 +73,7 @@ class CoreInstance
    *
    * So, basically any working element in DnD should be initiated first.
    */
-  initIndicators() {
+  initIndicators(scrollX: number, scrollY: number) {
     const { height, width, left, top } = this.ref.getBoundingClientRect();
 
     /**
@@ -82,8 +85,8 @@ class CoreInstance
       height,
       width,
 
-      left: Math.abs(left),
-      top: Math.abs(top),
+      left: left + scrollX,
+      top: top + scrollY,
     };
 
     this.currentTop = this.offset.top;
@@ -115,7 +118,7 @@ class CoreInstance
   }
 
   transformElm() {
-    this.ref.style.transform = `translate(${this.translateX}px,${this.translateY}px)`;
+    this.ref.style.transform = `translate3d(${this.translateX}px,${this.translateY}px, 0)`;
   }
 
   /**

@@ -19,10 +19,22 @@ import Tracker from "./Tracker";
 
 // const handlers = ["onDragOver", "onDragLeave"];
 
+function canUseDOM() {
+  return (
+    typeof window !== "undefined" &&
+    typeof window.document !== "undefined" &&
+    typeof window.document.createElement !== "undefined"
+  );
+}
+
 class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   tracker: Tracker;
 
   siblingsBoundaries: { [k: string]: BoundariesOffset };
+
+  isDOM: boolean;
+
+  isInitialized: boolean;
 
   viewportHeight!: number;
 
@@ -48,12 +60,24 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     this.initELmIndicator();
 
-    this.setViewport();
-    this.setScrollXY();
+    this.animatedScroll = this.animatedScroll.bind(this);
+    this.animatedResize = this.animatedResize.bind(this);
+
+    this.isDOM = canUseDOM();
+
+    this.isInitialized = false;
+
+    if (this.isDOM) {
+      this.init();
+    }
 
     this.throttle = false;
+  }
 
-    window.addEventListener("scroll", this.animatedScroll.bind(this));
+  private init() {
+    window.addEventListener("resize", this.animatedResize);
+    window.addEventListener("scroll", this.animatedScroll);
+    window.addEventListener("beforeunload", this.cleanup);
   }
 
   private setViewport() {
@@ -190,6 +214,21 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
    * @param element -
    */
   register(element: ElmInstance) {
+    if (!this.isDOM) {
+      this.isDOM = canUseDOM();
+
+      if (!this.isDOM) return;
+
+      this.init();
+    }
+
+    if (!this.isInitialized) {
+      this.setViewport();
+      this.setScrollXY();
+
+      this.isInitialized = true;
+    }
+
     /**
      * If element already exist in the store, then the reattach the reference.
      */
@@ -209,7 +248,10 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       return;
     }
 
-    super.register(element, CoreInstance);
+    super.register(element, CoreInstance, {
+      scrollX: this.scrollX,
+      scrollY: this.scrollY,
+    });
 
     const {
       currentTop,
@@ -300,8 +342,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     };
   }
 
-  private animatedScroll() {
-    this.setScrollXY();
+  private animatedListener(setter: "setViewport" | "setScrollXY") {
+    this[setter]();
 
     if (!this.throttle) {
       window.requestAnimationFrame(() => {
@@ -313,8 +355,18 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     }
   }
 
+  private animatedScroll() {
+    this.animatedListener.call(this, "setScrollXY");
+  }
+
+  private animatedResize() {
+    this.animatedListener.call(this, "setViewport");
+  }
+
   cleanup() {
-    window.removeEventListener("scroll", this.animatedScroll.bind(this));
+    window.removeEventListener("scroll", this.animatedScroll);
+    window.removeEventListener("resize", this.animatedResize);
+    window.removeEventListener("beforeunload", this.cleanup);
   }
 }
 
