@@ -75,15 +75,12 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   }
 
   private init() {
-    console.log("inside init");
-
     window.addEventListener("resize", this.animatedResize);
     window.addEventListener("scroll", this.animatedScroll);
     window.addEventListener("beforeunload", this.cleanup);
   }
 
   private setViewport() {
-    console.log("file: DnDStoreImp.ts ~ line 94 ~ setViewport");
     this.viewportHeight = Math.max(
       document.documentElement.clientHeight || 0,
       window.innerHeight || 0
@@ -96,8 +93,6 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   }
 
   private setScrollXY() {
-    console.log("setting scroll");
-
     this.scrollY = Math.round(
       document.documentElement.scrollTop || window.pageYOffset
     );
@@ -233,13 +228,6 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
       this.isInitialized = true;
     }
-
-    // console.log(this.isInitialized);
-
-    // else if (!this.isInitialized) {
-    //   this.setScrollXY();
-    //   this.isInitialized = true;
-    // }
 
     /**
      * If element already exist in the store, then the reattach the reference.
