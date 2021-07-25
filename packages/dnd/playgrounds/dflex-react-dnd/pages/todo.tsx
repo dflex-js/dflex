@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import List from "../src/components/extended";
+/* eslint-disable import/no-extraneous-dependencies */
+import List from "../src/components/todo/basic";
 
 export default List;

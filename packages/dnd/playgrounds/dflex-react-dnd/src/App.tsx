@@ -12,6 +12,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import {
   Restricted,
   TodoList,
+  TodoListCase1,
   ExtendedList,
   Depth1,
   ComponentBasedEvent,
@@ -30,6 +31,9 @@ function App() {
         </Route>
         <Route path="/todo">
           <TodoList />
+        </Route>
+        <Route path="/todo-case-1">
+          <TodoListCase1 />
         </Route>
         <Route path="/depth-1">
           <Depth1 />
