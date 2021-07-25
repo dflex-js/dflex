@@ -345,11 +345,11 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   private animatedListener(
     setter: "setViewport" | "setScrollXY",
-    response: "updateRegisteredLayoutIndicators"
+    response?: "updateRegisteredLayoutIndicators"
   ) {
     this[setter]();
 
-    if (!this.throttle) {
+    if (!this.throttle && response) {
       window.requestAnimationFrame(() => {
         this[response]();
         this.throttle = false;
@@ -368,11 +368,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   }
 
   private animatedResize() {
-    this.animatedListener.call(
-      this,
-      "setViewport",
-      "updateRegisteredLayoutIndicators"
-    );
+    this.animatedListener.call(this, "setViewport");
   }
 
   cleanup() {
