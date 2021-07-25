@@ -65,6 +65,11 @@ class Droppable {
     return this.draggable.tempIndex;
   }
 
+  private setDraggedTempIndex(tempIndex: number) {
+    this.draggable.tempIndex = tempIndex;
+    this.draggable.draggedElm.ref.dataset.index = `${tempIndex}`;
+  }
+
   private setEffectedElemDirection(isUp: boolean) {
     this.effectedElemDirection = isUp ? -1 : 1;
   }
@@ -320,7 +325,7 @@ class Droppable {
     const id = this.draggable.siblingsList![elmIndex];
 
     if (this.isIDEligible2Move(id)) {
-      this.draggable.tempIndex = elmIndex;
+      this.setDraggedTempIndex(elmIndex);
 
       this.updateElement(id, true, this.effectedElemDirection === -1 ? 1 : -1);
     }
@@ -330,7 +335,7 @@ class Droppable {
     const from = this.draggable.tempIndex + 1;
 
     this.leftAtIndex = this.draggable.tempIndex;
-    this.draggable.tempIndex = -1;
+    this.setDraggedTempIndex(-1);
 
     for (let i = from; i < this.draggable.siblingsList!.length; i += 1) {
       /**
@@ -448,7 +453,7 @@ class Droppable {
         hasToMoveSiblingsDown = false;
       }
 
-      this.draggable.tempIndex = to;
+      this.setDraggedTempIndex(to);
 
       /**
        * Last prevY update when leaving the parent container. When we have
