@@ -88,6 +88,6 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
     oldIndex?: number,
     siblingsHasEmptyElm?: number
   ): number;
-  initIndicators(): void;
+  initIndicators(scrollX: number, scrollY: number): void;
   visibilityHasChanged(isVisible: boolean): void;
 }
