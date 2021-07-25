@@ -9,9 +9,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 import React from "react";
-import s from "../Demo.module.css";
+import s from "../../Demo.module.css";
 
-import DnDComponent from "../DnDComponent";
+import DnDComponent from "../../DnDComponent";
 
 const TodoList = () => {
   const tasks = [
