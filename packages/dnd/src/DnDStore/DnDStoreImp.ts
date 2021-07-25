@@ -34,6 +34,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   isDOM: boolean;
 
+  isInitialized: boolean;
+
   viewportHeight!: number;
 
   viewportWidth!: number;
@@ -63,6 +65,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     this.isDOM = canUseDOM();
 
+    this.isInitialized = false;
+
     if (this.isDOM) {
       this.init();
     }
@@ -71,15 +75,15 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   }
 
   private init() {
-    this.setViewport();
-    this.setScrollXY();
+    console.log("inside init");
 
     window.addEventListener("resize", this.animatedResize);
     window.addEventListener("scroll", this.animatedScroll);
-    window.onbeforeunload = this.cleanup;
+    window.addEventListener("beforeunload", this.cleanup);
   }
 
   private setViewport() {
+    console.log("file: DnDStoreImp.ts ~ line 94 ~ setViewport");
     this.viewportHeight = Math.max(
       document.documentElement.clientHeight || 0,
       window.innerHeight || 0
@@ -92,6 +96,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   }
 
   private setScrollXY() {
+    console.log("setting scroll");
+
     this.scrollY = Math.round(
       document.documentElement.scrollTop || window.pageYOffset
     );
@@ -221,6 +227,20 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       this.init();
     }
 
+    if (!this.isInitialized) {
+      this.setViewport();
+      this.setScrollXY();
+
+      this.isInitialized = true;
+    }
+
+    // console.log(this.isInitialized);
+
+    // else if (!this.isInitialized) {
+    //   this.setScrollXY();
+    //   this.isInitialized = true;
+    // }
+
     /**
      * If element already exist in the store, then the reattach the reference.
      */
@@ -240,7 +260,10 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       return;
     }
 
-    super.register(element, CoreInstance);
+    super.register(element, CoreInstance, {
+      scrollX: this.scrollX,
+      scrollY: this.scrollY,
+    });
 
     const {
       currentTop,
@@ -355,6 +378,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   cleanup() {
     window.removeEventListener("scroll", this.animatedScroll);
     window.removeEventListener("resize", this.animatedResize);
+    window.removeEventListener("beforeunload", this.cleanup);
   }
 }
 
