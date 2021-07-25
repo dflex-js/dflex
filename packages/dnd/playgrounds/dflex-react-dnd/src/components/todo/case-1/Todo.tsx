@@ -6,9 +6,8 @@
  */
 
 import React from "react";
-import s from "../src/components/Demo.module.css";
-
-import TodoItem from "../src/components/DnDComponent";
+import s from "../../Demo.module.css";
+import TodoItem from "../../DnDComponent";
 
 const TodoList = () => {
   const tasks = [
