@@ -34,6 +34,7 @@ export interface DnDStoreInterface {
   reattachElmRef(id: string, elmRef: HTMLElement): void;
   register(element: ElmInstance, x?: boolean): void;
   unregister(id: string): void;
+  destroy(): void;
   getELmOffsetById(id: string): Offset;
   getELmTranslateById(id: string): Translate;
   getElmTreeById(id: string): ElmTree;
