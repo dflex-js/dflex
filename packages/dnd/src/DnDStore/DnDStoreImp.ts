@@ -77,7 +77,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   private init() {
     window.addEventListener("resize", this.animatedResize);
     window.addEventListener("scroll", this.animatedScroll);
-    window.addEventListener("beforeunload", this.cleanup);
+    window.onbeforeunload = this.dispose();
   }
 
   private setViewport() {
@@ -104,9 +104,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   private initELmIndicator() {
     this.elmIndicator = {
       currentKy: "",
-
       prevKy: "",
-
       exceptionToNextElm: false,
     };
   }
@@ -208,6 +206,10 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.registry[id].transformElm();
   }
 
+  unregister(id: string) {
+    delete this.registry[id];
+  }
+
   /**
    *  Register DnD element.
    *
@@ -236,8 +238,9 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     if (this.registry[id]) {
       if (
-        !this.registry[id].ref.isConnected ||
-        this.registry[id].ref.isEqualNode(element.ref)
+        this.registry[id].ref &&
+        (!this.registry[id].ref.isConnected ||
+          this.registry[id].ref.isEqualNode(element.ref))
       ) {
         this.reattachElmRef(id, element.ref);
       } else {
@@ -345,7 +348,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   private animatedListener(
     setter: "setViewport" | "setScrollXY",
-    response?: "updateRegisteredLayoutIndicators"
+    response: "updateRegisteredLayoutIndicators" | null
   ) {
     this[setter]();
 
@@ -368,14 +371,33 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   }
 
   private animatedResize() {
-    this.animatedListener.call(this, "setViewport");
+    this.animatedListener.call(this, "setViewport", null);
   }
 
-  cleanup() {
-    window.removeEventListener("scroll", this.animatedScroll);
+  private dispose() {
     window.removeEventListener("resize", this.animatedResize);
-    window.removeEventListener("beforeunload", this.cleanup);
+    window.removeEventListener("scroll", this.animatedScroll);
+
+    return null;
   }
+
+  // cleanup() {
+  // Object.keys(this.DOMGen.branches).forEach((branchKey) => {
+  //   // Ignore non array branches.
+  //   if (Array.isArray(this.DOMGen.branches[branchKey])) {
+  //     (this.DOMGen.branches[branchKey] as string[]).forEach((elmID) => {
+  //       this.destroyElm(elmID);
+  //       throw new Error(
+  //         `DFlex: Element with id:${this.registry[elmID]} is already registered. Please, provide DFlex with a unique id.`
+  //       );
+  //     });
+  //   } else {
+  //     this.destroyElm(this.DOMGen.branches[branchKey] as string);
+  //   }
+  // });
+
+  // return null;
+  // }
 }
 
 export default (function createStoreInstance() {
