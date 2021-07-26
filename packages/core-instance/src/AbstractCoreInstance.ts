@@ -18,24 +18,26 @@ class AbstractCoreInstance implements AbstractCoreInterface {
 
   depth: number;
 
-  translateY: number;
+  translateY!: number;
 
-  translateX: number;
+  translateX!: number;
 
   /**
    * Creates an instance of AbstractCoreInstance.
    */
-  constructor({ ref, id, depth }: ElmInstance) {
+  constructor({ ref, id, depth }: ElmInstance, isPause = false) {
     this.ref = ref;
     this.id = id;
     this.depth = depth;
 
-    /**
-     * Since element render once and being transformed later we keep the data
-     * stored to navigate correctly.
-     */
-    this.translateY = 0;
-    this.translateX = 0;
+    if (!isPause) {
+      /**
+       * Since element render once and being transformed later we keep the data
+       * stored to navigate correctly.
+       */
+      this.translateY = 0;
+      this.translateX = 0;
+    }
   }
 }
 

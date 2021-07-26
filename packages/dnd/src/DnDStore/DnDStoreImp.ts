@@ -32,9 +32,11 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   siblingsBoundaries: { [k: string]: BoundariesOffset };
 
-  isDOM: boolean;
+  private isDOM: boolean;
 
-  isInitialized: boolean;
+  private isInitialized: boolean;
+
+  private isPauseRegistration: boolean;
 
   viewportHeight!: number;
 
@@ -65,6 +67,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     this.isInitialized = false;
     this.isDOM = false;
+    this.isPauseRegistration = false;
     this.throttle = false;
   }
 
@@ -131,7 +134,11 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
         (this.DOMGen.branches[branchKey] as string[]).forEach((elmID, i) => {
           if (elmID.length > 0) {
-            const { currentTop, currentLeft } = this.registry[elmID];
+            const { currentTop, currentLeft, isPause } = this.registry[elmID];
+
+            if (isPause) {
+              this.registry[elmID].initIndicators(this.scrollX, this.scrollY);
+            }
 
             let isVisible = !this.isElementHiddenInViewport(
               currentTop,
@@ -250,7 +257,10 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     super.register(element, CoreInstance, {
       scrollX: this.scrollX,
       scrollY: this.scrollY,
+      isPause: this.isPauseRegistration,
     });
+
+    if (this.isPauseRegistration) return;
 
     const {
       currentTop,
@@ -273,6 +283,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     ) {
       this.elmIndicator.exceptionToNextElm = true;
       isVisible = true;
+      this.isPauseRegistration = true;
     }
 
     this.registry[id].isVisible = isVisible;
