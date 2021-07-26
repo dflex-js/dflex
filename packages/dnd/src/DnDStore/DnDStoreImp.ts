@@ -63,21 +63,21 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.animatedScroll = this.animatedScroll.bind(this);
     this.animatedResize = this.animatedResize.bind(this);
 
-    this.isDOM = canUseDOM();
-
     this.isInitialized = false;
-
-    if (this.isDOM) {
-      this.init();
-    }
-
+    this.isDOM = false;
     this.throttle = false;
   }
 
   private init() {
+    this.setViewport();
+    this.setScrollXY();
+
     window.addEventListener("resize", this.animatedResize);
     window.addEventListener("scroll", this.animatedScroll);
-    window.addEventListener("beforeunload", this.cleanup);
+
+    window.onbeforeunload = this.dispose();
+
+    this.isInitialized = true;
   }
 
   private setViewport() {
@@ -104,9 +104,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   private initELmIndicator() {
     this.elmIndicator = {
       currentKy: "",
-
       prevKy: "",
-
       exceptionToNextElm: false,
     };
   }
@@ -208,6 +206,10 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.registry[id].transformElm();
   }
 
+  unregister(id: string) {
+    delete this.registry[id];
+  }
+
   /**
    *  Register DnD element.
    *
@@ -218,15 +220,10 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       this.isDOM = canUseDOM();
 
       if (!this.isDOM) return;
-
-      this.init();
     }
 
     if (!this.isInitialized) {
-      this.setViewport();
-      this.setScrollXY();
-
-      this.isInitialized = true;
+      this.init();
     }
 
     /**
@@ -236,8 +233,9 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     if (this.registry[id]) {
       if (
-        !this.registry[id].ref.isConnected ||
-        this.registry[id].ref.isEqualNode(element.ref)
+        this.registry[id].ref &&
+        (!this.registry[id].ref.isConnected ||
+          this.registry[id].ref.isEqualNode(element.ref))
       ) {
         this.reattachElmRef(id, element.ref);
       } else {
@@ -343,12 +341,15 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     };
   }
 
-  private animatedListener(setter: "setViewport" | "setScrollXY") {
+  private animatedListener(
+    setter: "setViewport" | "setScrollXY",
+    response: "updateRegisteredLayoutIndicators" | null
+  ) {
     this[setter]();
 
-    if (!this.throttle) {
+    if (!this.throttle && response) {
       window.requestAnimationFrame(() => {
-        this.updateRegisteredLayoutIndicators();
+        this[response]();
         this.throttle = false;
       });
 
@@ -357,17 +358,41 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   }
 
   private animatedScroll() {
-    this.animatedListener.call(this, "setScrollXY");
+    this.animatedListener.call(
+      this,
+      "setScrollXY",
+      "updateRegisteredLayoutIndicators"
+    );
   }
 
   private animatedResize() {
-    this.animatedListener.call(this, "setViewport");
+    this.animatedListener.call(this, "setViewport", null);
   }
 
-  cleanup() {
-    window.removeEventListener("scroll", this.animatedScroll);
+  private dispose() {
+    if (!this.isInitialized) return null;
+
     window.removeEventListener("resize", this.animatedResize);
-    window.removeEventListener("beforeunload", this.cleanup);
+    window.removeEventListener("scroll", this.animatedScroll);
+
+    this.isInitialized = false;
+
+    return null;
+  }
+
+  destroy() {
+    this.dispose();
+
+    Object.keys(this.DOMGen.branches).forEach((branchKey) => {
+      // Ignore non array branches.
+      if (Array.isArray(this.DOMGen.branches[branchKey])) {
+        (this.DOMGen.branches[branchKey] as string[]).forEach((elmID) => {
+          this.unregister(elmID);
+        });
+      } else {
+        this.unregister(this.DOMGen.branches[branchKey] as string);
+      }
+    });
   }
 }
 

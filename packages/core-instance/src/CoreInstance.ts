@@ -121,6 +121,10 @@ class CoreInstance
     this.ref.style.transform = `translate3d(${this.translateX}px,${this.translateY}px, 0)`;
   }
 
+  updateDataset(i: number) {
+    this.ref.dataset.index = `${i}`;
+  }
+
   /**
    *  Update element index in order  branch
    *
@@ -179,7 +183,7 @@ class CoreInstance
 
     branchIDsOrder[newIndex] = this.id;
 
-    this.ref.dataset.index = `${newIndex}`;
+    this.updateDataset(newIndex);
 
     return oldIndex;
   }
@@ -266,7 +270,11 @@ class CoreInstance
     const increment = topSpace > 0 ? 1 : -1;
 
     this.seTranslate(topSpace);
-    this.updateOrderIndexing(increment);
+
+    const { newIndex } = this.updateOrderIndexing(increment);
+
+    this.updateDataset(newIndex);
+
     this.rollYBack(operationID);
   }
 }
