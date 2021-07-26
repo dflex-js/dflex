@@ -233,6 +233,16 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       this.init();
     }
 
+    if (!element.ref) {
+      if (!element.id) return;
+      const ref = document.getElementById(element.id);
+
+      if (!ref) return;
+
+      // eslint-disable-next-line no-param-reassign
+      element.ref = ref;
+    }
+
     /**
      * If element already exist in the store, then the reattach the reference.
      */
