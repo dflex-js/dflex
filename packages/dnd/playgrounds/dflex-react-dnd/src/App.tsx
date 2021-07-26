@@ -8,6 +8,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { store } from "@dflex/dnd";
 
 import {
   Restricted,
@@ -20,6 +21,12 @@ import {
 } from "./components";
 
 function App() {
+  React.useEffect(() => {
+    return () => {
+      store.destroy();
+    };
+  }, []);
+
   return (
     <Router>
       <Switch>

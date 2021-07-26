@@ -34,8 +34,14 @@ export const TodoItem = ({
   const taskRef = React.useRef() as React.MutableRefObject<HTMLLIElement>;
 
   React.useEffect(() => {
-    store.register({ id, ref: taskRef.current!, depth });
-  }, []);
+    if (taskRef.current) {
+      store.register({ id, ref: taskRef.current!, depth });
+    }
+
+    return () => {
+      store.unregister(id);
+    };
+  }, [taskRef.current]);
 
   const onMouseMove = (e: MouseEvent) => {
     // e.stopPropagation();

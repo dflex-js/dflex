@@ -381,23 +381,20 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     return null;
   }
 
-  // cleanup() {
-  // Object.keys(this.DOMGen.branches).forEach((branchKey) => {
-  //   // Ignore non array branches.
-  //   if (Array.isArray(this.DOMGen.branches[branchKey])) {
-  //     (this.DOMGen.branches[branchKey] as string[]).forEach((elmID) => {
-  //       this.destroyElm(elmID);
-  //       throw new Error(
-  //         `DFlex: Element with id:${this.registry[elmID]} is already registered. Please, provide DFlex with a unique id.`
-  //       );
-  //     });
-  //   } else {
-  //     this.destroyElm(this.DOMGen.branches[branchKey] as string);
-  //   }
-  // });
+  destroy() {
+    this.dispose();
 
-  // return null;
-  // }
+    Object.keys(this.DOMGen.branches).forEach((branchKey) => {
+      // Ignore non array branches.
+      if (Array.isArray(this.DOMGen.branches[branchKey])) {
+        (this.DOMGen.branches[branchKey] as string[]).forEach((elmID) => {
+          this.unregister(elmID);
+        });
+      } else {
+        this.unregister(this.DOMGen.branches[branchKey] as string);
+      }
+    });
+  }
 }
 
 export default (function createStoreInstance() {
