@@ -61,7 +61,7 @@ describe("Testing Store Package", () => {
   });
 
   it("Returns element instance by element id", () => {
-    const elemInstance = store.getElmById(elm0D0.id);
+    const elemInstance = store.registry[elm0D0.id];
 
     expect(elemInstance).toStrictEqual({
       depth: 0,
@@ -80,18 +80,11 @@ describe("Testing Store Package", () => {
   });
 
   it("Returns element branch", () => {
-    const elemInstance = store.getElmById(elm0D0.id);
+    const elemInstance = store.registry[elm0D0.id];
 
     const elemBranch = store.getElmBranchByKey(elemInstance.keys.sK);
 
     expect(elemBranch).toStrictEqual(["id-0", "id-1", "id-2"]);
-  });
-
-  it("Deletes element", () => {
-    store.deleteElm(elm0D0.id);
-    const elemInstance = store.getElmById(elm0D0.id);
-
-    expect(elemInstance).toBeUndefined();
   });
 
   it("Snaps shot registry after delete", () => {
