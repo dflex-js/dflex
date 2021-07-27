@@ -30,13 +30,29 @@ export interface Translate {
   translateY: number;
 }
 
+interface RegisterInputDepth {
+  depth?: number;
+}
+
+interface RegisterInputID {
+  id: string;
+  ref?: never;
+}
+
+interface RegisterInputRef {
+  id?: never;
+  ref: HTMLElement;
+}
+
+interface RegisterInputAll {
+  id: string;
+  ref: HTMLElement;
+}
+
 export type RegisterInput =
-  | {
-      depth?: number;
-      id: string;
-      ref: never;
-    }
-  | { depth?: number; id: never; ref: HTMLElement };
+  | (RegisterInputDepth & RegisterInputAll)
+  | (RegisterInputDepth & RegisterInputID)
+  | (RegisterInputDepth & RegisterInputRef);
 
 export interface DnDStoreInterface {
   reattachElmRef(id: string, elmRef: HTMLElement): void;

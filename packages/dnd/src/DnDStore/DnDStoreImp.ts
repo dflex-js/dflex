@@ -6,6 +6,8 @@
  */
 
 import Store from "@dflex/store";
+import type { ElmInstance } from "@dflex/store";
+
 import CoreInstance from "@dflex/core-instance";
 
 import type { Offset } from "@dflex/core-instance";
@@ -249,6 +251,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
       if (!ref) return;
 
+      // @ts-expect-error
       // eslint-disable-next-line no-param-reassign
       element.ref = ref;
     }
@@ -274,7 +277,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       return;
     }
 
-    super.register(element, CoreInstance, {
+    super.register(element as ElmInstance, CoreInstance, {
       scrollX: this.scrollX,
       scrollY: this.scrollY,
       isPause: this.isPauseRegistration,
