@@ -19,7 +19,7 @@ class Draggable extends AbstractDraggable<AbstractCoreInterface> {
    * @param clickCoordinates -
    */
   constructor(id: string, clickCoordinates: MouseCoordinates) {
-    const element = store.getElmById(id);
+    const element = store.registry[id];
 
     super(element, clickCoordinates);
   }
