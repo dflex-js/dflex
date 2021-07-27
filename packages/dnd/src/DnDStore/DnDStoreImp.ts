@@ -242,6 +242,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     if (!this.isInitialized) {
       this.init();
+      this.isPauseRegistration = false;
     }
 
     if (!element.ref) {
@@ -280,6 +281,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     super.register(element as ElmInstance, CoreInstance, {
       scrollX: this.scrollX,
       scrollY: this.scrollY,
+      isInitialized: true,
       isPause: this.isPauseRegistration,
     });
 

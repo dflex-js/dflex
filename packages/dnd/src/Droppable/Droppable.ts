@@ -320,7 +320,9 @@ class Droppable {
    * @param id -
    */
   protected isIDEligible2Move(id: string) {
-    return id && id !== this.draggable.draggedElm.id;
+    return (
+      id && id !== this.draggable.draggedElm.id && store.registry[id].offset
+    );
   }
 
   private switchElement() {
