@@ -7,6 +7,31 @@
 
 /* eslint-disable no-unused-vars */
 
+export type AbstractCoreInput =
+  | {
+      id: string;
+      isPause: true;
+      ref: HTMLElement | null;
+    }
+  | {
+      id: string;
+      isPause: false;
+      ref: HTMLElement;
+    };
+
+export interface AbstractCoreInterface {
+  ref: HTMLElement | null;
+  id: string;
+  translateY?: number;
+  translateX?: number;
+}
+
+export interface ElmInstance {
+  id: string;
+  depth: number;
+  ref: HTMLElement;
+}
+
 export type ELmBranch = string | string[];
 
 /**
@@ -34,23 +59,9 @@ export interface Pointer {
   order: Order;
 }
 
-export interface ElmInstance {
-  id: string;
-  depth: number;
-  ref: HTMLElement;
-}
-
 export interface ElmWIthPointer extends ElmInstance {
   order: Order;
   keys: Keys;
-}
-
-export interface AbstractCoreInterface {
-  ref: HTMLElement;
-  id: string;
-  depth: number;
-  translateY: number;
-  translateX: number;
 }
 
 export interface Offset {
@@ -66,10 +77,10 @@ export type TransitionHistory = {
 }[];
 
 export interface CoreInstanceInterface extends AbstractCoreInterface {
-  offset: Offset;
-  prevTranslateY: TransitionHistory;
-  currentTop: number;
-  currentLeft: number;
+  offset?: Offset;
+  prevTranslateY?: TransitionHistory;
+  currentTop?: number;
+  currentLeft?: number;
   order: Order;
   keys: Keys;
   setYPosition(

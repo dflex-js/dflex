@@ -43,7 +43,7 @@ export interface DnDStoreInterface {
   register(element: ElmInstance, x?: boolean): void;
   unregister(id: string): void;
   destroy(): void;
-  getELmOffsetById(id: string): Offset;
+  getELmOffsetById(id: string): Offset | undefined;
   getELmTranslateById(id: string): Translate;
   getElmTreeById(id: string): ElmTree;
   getElmSiblingsById(id: string): ELmBranch;

@@ -146,8 +146,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
             }
 
             let isVisible = !this.isElementHiddenInViewport(
-              currentTop,
-              currentLeft
+              currentTop!,
+              currentLeft!
             );
 
             if (
@@ -257,8 +257,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     if (this.registry[id]) {
       if (
         this.registry[id].ref &&
-        (!this.registry[id].ref.isConnected ||
-          this.registry[id].ref.isEqualNode(element.ref))
+        (!this.registry[id].ref!.isConnected ||
+          this.registry[id].ref!.isEqualNode(element.ref))
       ) {
         this.reattachElmRef(id, element.ref);
       } else {
@@ -285,9 +285,9 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       keys: { sK, pK },
     } = this.registry[id];
 
-    this.assignSiblingsBoundaries(sK, offset);
+    this.assignSiblingsBoundaries(sK, offset!);
 
-    let isVisible = !this.isElementHiddenInViewport(currentTop, currentLeft);
+    let isVisible = !this.isElementHiddenInViewport(currentTop!, currentLeft!);
 
     // same branch
     this.elmIndicator.currentKy = `${sK}${pK}`;
@@ -314,7 +314,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   getELmTranslateById(id: string) {
     const { translateX, translateY } = this.getElmById(id);
 
-    return { translateX, translateY };
+    return { translateX: translateX || 0, translateY: translateY || 0 };
   }
 
   getElmSiblingsById(id: string) {

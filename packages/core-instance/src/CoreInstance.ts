@@ -22,14 +22,14 @@ class CoreInstance
   extends AbstractCoreInstance
   implements CoreInstanceInterface
 {
-  offset!: Offset;
+  offset?: Offset;
 
   /** Store history of Y-transition according to unique ID. */
-  prevTranslateY!: TransitionHistory;
+  prevTranslateY?: TransitionHistory;
 
-  currentTop!: number;
+  currentTop?: number;
 
-  currentLeft!: number;
+  currentLeft?: number;
 
   order: Order;
 
@@ -45,7 +45,7 @@ class CoreInstance
   ) {
     const { order, keys, ...element } = elementWithPointer;
 
-    super(element, isPause);
+    super({ ...element, isPause });
 
     this.order = order;
     this.keys = keys;
@@ -53,11 +53,14 @@ class CoreInstance
     this.isVisible = isPause;
     this.isPause = isPause;
 
-    if (this.ref && !isPause) {
+    if (!this.isInvalid()) {
       this.initIndicators(scrollX, scrollY);
+      this.updateDataset(this.order.self);
     }
+  }
 
-    this.ref.dataset.index = `${this.order.self}`;
+  private isInvalid() {
+    return this.ref === null && this.isPause;
   }
 
   /**
@@ -70,7 +73,7 @@ class CoreInstance
   initIndicators(scrollX: number, scrollY: number) {
     this.prevTranslateY = [];
 
-    const { height, width, left, top } = this.ref.getBoundingClientRect();
+    const { height, width, left, top } = this.ref!.getBoundingClientRect();
 
     /**
      * Element offset stored once without being triggered to re-calculate.
@@ -106,25 +109,25 @@ class CoreInstance
   }
 
   private updateCurrentIndicators(topSpace: number, leftSpace: number) {
-    this.translateY += topSpace;
-    this.translateX += leftSpace;
+    this.translateY! += topSpace;
+    this.translateX! += leftSpace;
 
-    const { left, top } = this.offset;
+    const { left, top } = this.offset!;
 
     /**
      * This offset related directly to translate Y and Y. It's isolated from
      * element current offset and effects only top and left.
      */
-    this.currentTop = top + this.translateY;
-    this.currentLeft = left + this.translateX;
+    this.currentTop = top + this.translateY!;
+    this.currentLeft = left + this.translateX!;
   }
 
   transformElm() {
-    this.ref.style.transform = `translate3d(${this.translateX}px,${this.translateY}px, 0)`;
+    this.ref!.style.transform = `translate3d(${this.translateX}px,${this.translateY}px, 0)`;
   }
 
   updateDataset(i: number) {
-    this.ref.dataset.index = `${i}`;
+    this.ref!.dataset.index = `${i}`;
   }
 
   /**
@@ -198,9 +201,9 @@ class CoreInstance
    */
   private seTranslate(topSpace: number, operationID?: string) {
     if (operationID) {
-      this.prevTranslateY.push({
+      this.prevTranslateY!.push({
         ID: operationID,
-        translateY: this.translateY,
+        translateY: this.translateY!,
       });
     }
 
@@ -259,15 +262,15 @@ class CoreInstance
    */
   rollYBack(operationID: string) {
     if (
-      this.prevTranslateY.length === 0 ||
-      this.prevTranslateY[this.prevTranslateY.length - 1].ID !== operationID
+      this.prevTranslateY!.length === 0 ||
+      this.prevTranslateY![this.prevTranslateY!.length - 1].ID !== operationID
     ) {
       return;
     }
     // @ts-ignore
     const { translateY } = this.prevTranslateY.pop();
 
-    const topSpace = translateY - this.translateY;
+    const topSpace = translateY - this.translateY!;
 
     const increment = topSpace > 0 ? 1 : -1;
 
