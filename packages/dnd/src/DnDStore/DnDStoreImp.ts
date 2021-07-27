@@ -9,8 +9,13 @@ import Store from "@dflex/store";
 import CoreInstance from "@dflex/core-instance";
 
 import type { Offset } from "@dflex/core-instance";
-import type { ElmInstance } from "@dflex/store";
-import type { ElmTree, BoundariesOffset, DnDStoreInterface } from "./types";
+
+import type {
+  ElmTree,
+  BoundariesOffset,
+  DnDStoreInterface,
+  RegisterInput,
+} from "./types";
 
 import Tracker from "./Tracker";
 // import Environment from "../Environment";
@@ -124,7 +129,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     );
   }
 
-  private updateRegisteredLayoutIndicators() {
+  updateRegisteredLayoutIndicators() {
     this.initELmIndicator();
 
     Object.keys(this.DOMGen.branches).forEach((branchKey) => {
@@ -222,7 +227,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
    *
    * @param element -
    */
-  register(element: ElmInstance) {
+  register(element: RegisterInput) {
     if (!this.isDOM) {
       this.isDOM = canUseDOM();
 
@@ -235,6 +240,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     if (!element.ref) {
       if (!element.id) return;
+
       const ref = document.getElementById(element.id);
 
       if (!ref) return;
