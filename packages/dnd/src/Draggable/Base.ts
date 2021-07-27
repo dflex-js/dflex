@@ -66,6 +66,10 @@ class Base
 
     const { order } = element;
 
+    if (!this.draggedElm.offset) {
+      this.draggedElm.initIndicators(store.scrollX, store.scrollY);
+    }
+
     this.opts = opts;
 
     /**
@@ -92,17 +96,20 @@ class Base
 
     this.thresholdsPercentages = {
       vertical: Math.round(
-        (this.opts.thresholds.vertical * this.draggedElm.offset.height) / 100
+        (this.opts.thresholds.vertical * this.draggedElm.offset!.height) / 100
       ),
       horizontal: Math.round(
-        (this.opts.thresholds.horizontal * this.draggedElm.offset.width) / 100
+        (this.opts.thresholds.horizontal * this.draggedElm.offset!.width) / 100
       ),
     };
 
     /**
      * Init max direction for position
      */
-    this.setThreshold(this.draggedElm.currentTop, this.draggedElm.currentLeft);
+    this.setThreshold(
+      this.draggedElm.currentTop!,
+      this.draggedElm.currentLeft!
+    );
 
     const siblingsBoundaries =
       store.siblingsBoundaries[store.registry[this.draggedElm.id].keys.sK];
@@ -208,7 +215,7 @@ class Base
 
   isParenOverflowX() {
     const parentBottom =
-      this.activeParent!.offset.top + this.activeParent!.offset.height;
+      this.activeParent!.offset!.top + this.activeParent!.offset!.height;
 
     const elemOverflowX = parentBottom > window.innerHeight;
 

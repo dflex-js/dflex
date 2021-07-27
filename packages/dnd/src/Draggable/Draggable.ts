@@ -51,22 +51,22 @@ class Draggable extends Base implements DraggableDnDInterface {
 
     const { x, y } = initCoordinates;
 
-    this.innerOffsetX = x - this.draggedElm.currentLeft;
-    this.innerOffsetY = y - this.draggedElm.currentTop;
+    this.innerOffsetX = x - this.draggedElm.currentLeft!;
+    this.innerOffsetY = y - this.draggedElm.currentTop!;
 
     this.tempOffset = {
-      currentLeft: this.draggedElm.currentLeft,
-      currentTop: this.draggedElm.currentTop,
+      currentLeft: this.draggedElm.currentLeft!,
+      currentTop: this.draggedElm.currentTop!,
     };
 
     this.occupiedOffset = {
-      currentLeft: this.draggedElm.currentLeft,
-      currentTop: this.draggedElm.currentTop,
+      currentLeft: this.draggedElm.currentLeft!,
+      currentTop: this.draggedElm.currentTop!,
     };
 
     this.occupiedTranslate = {
-      translateX: this.draggedElm.translateX,
-      translateY: this.draggedElm.translateY,
+      translateX: this.draggedElm.translateX!,
+      translateY: this.draggedElm.translateY!,
     };
 
     /**
@@ -108,7 +108,7 @@ class Draggable extends Base implements DraggableDnDInterface {
   }
 
   private axesRightFilter(x: number, minRight: number) {
-    return x - this.innerOffsetX + this.draggedElm.offset.width >= minRight
+    return x - this.innerOffsetX + this.draggedElm.offset!.width >= minRight
       ? -this.outerOffsetX
       : x;
   }
@@ -134,8 +134,8 @@ class Draggable extends Base implements DraggableDnDInterface {
 
   private axesBottomFilter(y: number, bottom: number) {
     return (this.tempIndex < 0 || this.isLastELm()) &&
-      y - this.innerOffsetY + this.draggedElm.offset.height >= bottom
-      ? bottom + this.innerOffsetY - this.draggedElm.offset.height
+      y - this.innerOffsetY + this.draggedElm.offset!.height >= bottom
+      ? bottom + this.innerOffsetY - this.draggedElm.offset!.height
       : y;
   }
 
@@ -275,7 +275,7 @@ class Draggable extends Base implements DraggableDnDInterface {
    * Checks if dragged is the last child and going down.
    */
   isLeavingFromBottom() {
-    const { sK } = store.getElmById(this.draggedElm.id).keys;
+    const { sK } = store.registry[this.draggedElm.id].keys;
 
     return (
       this.isLastELm() &&
@@ -285,7 +285,7 @@ class Draggable extends Base implements DraggableDnDInterface {
   }
 
   isNotSettled() {
-    const { sK } = store.getElmById(this.draggedElm.id).keys;
+    const { sK } = store.registry[this.draggedElm.id].keys;
 
     return (
       this.siblingsList !== null &&
