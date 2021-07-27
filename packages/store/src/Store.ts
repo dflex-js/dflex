@@ -22,18 +22,6 @@ class Store<T = ElmWIthPointer> {
   }
 
   /**
-   * Delete element from the registry. Should be called only when element is
-   * unmounted and expected to return with different positions only.
-   *
-   * @param id -
-   */
-  deleteElm(id: string) {
-    const { [id]: oldRecord, ...rest } = this.registry;
-
-    this.registry = rest;
-  }
-
-  /**
    * Mutate elmInstance into CustomInstance then add the new object to registry
    * by id.
    *
@@ -65,15 +53,6 @@ class Store<T = ElmWIthPointer> {
       CustomInstance && typeof CustomInstance.constructor === "function"
         ? new CustomInstance(coreElement, opts)
         : coreElement;
-  }
-
-  /**
-   * Gets element from registry by Id.
-   *
-   * @param id -
-   */
-  getElmById(id: string) {
-    return this.registry[id];
   }
 
   /**
