@@ -5,9 +5,9 @@ Object {
   "id-0": CoreInstance {
     "currentLeft": 0,
     "currentTop": 0,
-    "depth": 0,
     "id": "id-0",
-    "isVisible": true,
+    "isInitialized": true,
+    "isVisible": false,
     "keys": Object {
       "chK": null,
       "pK": "1-0",
