@@ -5,37 +5,60 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { ElmInstance, AbstractCoreInterface } from "./types";
+import type { AbstractCoreInterface, AbstractCoreInput } from "./types";
 
 /**
  * This is the link (bridge) between the Store and element actions/classes.
  * Abstract is essential for Draggable & extended Store.
  */
 class AbstractCoreInstance implements AbstractCoreInterface {
-  ref: HTMLElement;
+  ref: HTMLElement | null;
 
   id: string;
 
-  depth: number;
+  translateY?: number;
 
-  translateY: number;
+  translateX?: number;
 
-  translateX: number;
+  isInitialized: boolean;
 
   /**
    * Creates an instance of AbstractCoreInstance.
    */
-  constructor({ ref, id, depth }: ElmInstance) {
+  constructor({ ref, id, isInitialized = true }: AbstractCoreInput) {
     this.ref = ref;
     this.id = id;
-    this.depth = depth;
 
+    this.isInitialized = isInitialized;
+
+    if (this.isInitialized) {
+      this.initialize();
+    }
+  }
+
+  private initTranslate() {
     /**
      * Since element render once and being transformed later we keep the data
      * stored to navigate correctly.
      */
     this.translateY = 0;
     this.translateX = 0;
+  }
+
+  initialize() {
+    if (!this.ref) {
+      const ref = document.getElementById(this.id);
+      if (!ref) {
+        throw new Error(`Element with ID: ${this.id} is not found.`);
+      }
+      this.ref = ref;
+    }
+
+    this.initTranslate();
+
+    if (!this.isInitialized) {
+      this.isInitialized = true;
+    }
   }
 }
 

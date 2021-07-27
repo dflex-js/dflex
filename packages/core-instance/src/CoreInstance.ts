@@ -22,14 +22,14 @@ class CoreInstance
   extends AbstractCoreInstance
   implements CoreInstanceInterface
 {
-  offset: Offset;
+  offset?: Offset;
 
   /** Store history of Y-transition according to unique ID. */
-  prevTranslateY: TransitionHistory;
+  prevTranslateY?: TransitionHistory;
 
-  currentTop!: number;
+  currentTop?: number;
 
-  currentLeft!: number;
+  currentLeft?: number;
 
   order: Order;
 
@@ -39,30 +39,20 @@ class CoreInstance
 
   constructor(
     elementWithPointer: ElmWIthPointer,
-    { isPause = false, scrollX = 0, scrollY = 0 } = {}
+    { isInitialized = true, isPause = false, scrollX = 0, scrollY = 0 } = {}
   ) {
     const { order, keys, ...element } = elementWithPointer;
 
-    super(element);
-
-    this.prevTranslateY = [];
-
-    this.offset = {
-      height: 0,
-      width: 0,
-
-      left: 0,
-      top: 0,
-    };
+    super({ ...element, isInitialized });
 
     this.order = order;
     this.keys = keys;
 
-    this.isVisible = !isPause;
+    this.isVisible = isPause;
 
-    if (this.ref && this.isVisible) {
+    if (isInitialized && !isPause) {
       this.initIndicators(scrollX, scrollY);
-      this.ref.dataset.index = `${this.order.self}`;
+      this.updateDataset(this.order.self);
     }
   }
 
@@ -74,7 +64,9 @@ class CoreInstance
    * So, basically any working element in DnD should be initiated first.
    */
   initIndicators(scrollX: number, scrollY: number) {
-    const { height, width, left, top } = this.ref.getBoundingClientRect();
+    this.prevTranslateY = [];
+
+    const { height, width, left, top } = this.ref!.getBoundingClientRect();
 
     /**
      * Element offset stored once without being triggered to re-calculate.
@@ -104,25 +96,25 @@ class CoreInstance
   }
 
   private updateCurrentIndicators(topSpace: number, leftSpace: number) {
-    this.translateY += topSpace;
-    this.translateX += leftSpace;
+    this.translateY! += topSpace;
+    this.translateX! += leftSpace;
 
-    const { left, top } = this.offset;
+    const { left, top } = this.offset!;
 
     /**
      * This offset related directly to translate Y and Y. It's isolated from
      * element current offset and effects only top and left.
      */
-    this.currentTop = top + this.translateY;
-    this.currentLeft = left + this.translateX;
+    this.currentTop = top + this.translateY!;
+    this.currentLeft = left + this.translateX!;
   }
 
   transformElm() {
-    this.ref.style.transform = `translate3d(${this.translateX}px,${this.translateY}px, 0)`;
+    this.ref!.style.transform = `translate3d(${this.translateX}px,${this.translateY}px, 0)`;
   }
 
   updateDataset(i: number) {
-    this.ref.dataset.index = `${i}`;
+    this.ref!.dataset.index = `${i}`;
   }
 
   /**
@@ -196,9 +188,9 @@ class CoreInstance
    */
   private seTranslate(topSpace: number, operationID?: string) {
     if (operationID) {
-      this.prevTranslateY.push({
+      this.prevTranslateY!.push({
         ID: operationID,
-        translateY: this.translateY,
+        translateY: this.translateY!,
       });
     }
 
@@ -257,15 +249,15 @@ class CoreInstance
    */
   rollYBack(operationID: string) {
     if (
-      this.prevTranslateY.length === 0 ||
-      this.prevTranslateY[this.prevTranslateY.length - 1].ID !== operationID
+      this.prevTranslateY!.length === 0 ||
+      this.prevTranslateY![this.prevTranslateY!.length - 1].ID !== operationID
     ) {
       return;
     }
     // @ts-ignore
     const { translateY } = this.prevTranslateY.pop();
 
-    const topSpace = translateY - this.translateY;
+    const topSpace = translateY - this.translateY!;
 
     const increment = topSpace > 0 ? 1 : -1;
 

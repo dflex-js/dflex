@@ -6,11 +6,18 @@
  */
 
 import Store from "@dflex/store";
+import type { ElmInstance } from "@dflex/store";
+
 import CoreInstance from "@dflex/core-instance";
 
 import type { Offset } from "@dflex/core-instance";
-import type { ElmInstance } from "@dflex/store";
-import type { ElmTree, BoundariesOffset, DnDStoreInterface } from "./types";
+
+import type {
+  ElmTree,
+  BoundariesOffset,
+  DnDStoreInterface,
+  RegisterInput,
+} from "./types";
 
 import Tracker from "./Tracker";
 // import Environment from "../Environment";
@@ -32,9 +39,11 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   siblingsBoundaries: { [k: string]: BoundariesOffset };
 
-  isDOM: boolean;
+  private isDOM: boolean;
 
-  isInitialized: boolean;
+  private isInitialized: boolean;
+
+  private isPauseRegistration: boolean;
 
   viewportHeight!: number;
 
@@ -65,6 +74,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     this.isInitialized = false;
     this.isDOM = false;
+    this.isPauseRegistration = false;
     this.throttle = false;
   }
 
@@ -121,7 +131,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     );
   }
 
-  private updateRegisteredLayoutIndicators() {
+  updateRegisteredLayoutIndicators() {
     this.initELmIndicator();
 
     Object.keys(this.DOMGen.branches).forEach((branchKey) => {
@@ -131,11 +141,19 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
         (this.DOMGen.branches[branchKey] as string[]).forEach((elmID, i) => {
           if (elmID.length > 0) {
+            if (!this.registry[elmID].isInitialized) {
+              this.registry[elmID].initialize();
+            }
+
+            if (!this.registry[elmID].offset) {
+              this.registry[elmID].initIndicators(this.scrollX, this.scrollY);
+            }
+
             const { currentTop, currentLeft } = this.registry[elmID];
 
             let isVisible = !this.isElementHiddenInViewport(
-              currentTop,
-              currentLeft
+              currentTop!,
+              currentLeft!
             );
 
             if (
@@ -215,7 +233,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
    *
    * @param element -
    */
-  register(element: ElmInstance) {
+  register(element: RegisterInput) {
     if (!this.isDOM) {
       this.isDOM = canUseDOM();
 
@@ -224,6 +242,19 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     if (!this.isInitialized) {
       this.init();
+      this.isPauseRegistration = false;
+    }
+
+    if (!element.ref) {
+      if (!element.id) return;
+
+      const ref = document.getElementById(element.id);
+
+      if (!ref) return;
+
+      // @ts-expect-error
+      // eslint-disable-next-line no-param-reassign
+      element.ref = ref;
     }
 
     /**
@@ -234,8 +265,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     if (this.registry[id]) {
       if (
         this.registry[id].ref &&
-        (!this.registry[id].ref.isConnected ||
-          this.registry[id].ref.isEqualNode(element.ref))
+        (!this.registry[id].ref!.isConnected ||
+          this.registry[id].ref!.isEqualNode(element.ref))
       ) {
         this.reattachElmRef(id, element.ref);
       } else {
@@ -247,10 +278,14 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       return;
     }
 
-    super.register(element, CoreInstance, {
+    super.register(element as ElmInstance, CoreInstance, {
       scrollX: this.scrollX,
       scrollY: this.scrollY,
+      isInitialized: true,
+      isPause: this.isPauseRegistration,
     });
+
+    if (this.isPauseRegistration) return;
 
     const {
       currentTop,
@@ -259,9 +294,9 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       keys: { sK, pK },
     } = this.registry[id];
 
-    this.assignSiblingsBoundaries(sK, offset);
+    this.assignSiblingsBoundaries(sK, offset!);
 
-    let isVisible = !this.isElementHiddenInViewport(currentTop, currentLeft);
+    let isVisible = !this.isElementHiddenInViewport(currentTop!, currentLeft!);
 
     // same branch
     this.elmIndicator.currentKy = `${sK}${pK}`;
@@ -273,6 +308,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     ) {
       this.elmIndicator.exceptionToNextElm = true;
       isVisible = true;
+      this.isPauseRegistration = true;
     }
 
     this.registry[id].isVisible = isVisible;
@@ -281,17 +317,17 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   }
 
   getELmOffsetById(id: string) {
-    return this.getElmById(id).offset;
+    return this.registry[id].offset;
   }
 
   getELmTranslateById(id: string) {
-    const { translateX, translateY } = this.getElmById(id);
+    const { translateX, translateY } = this.registry[id];
 
-    return { translateX, translateY };
+    return { translateX: translateX || 0, translateY: translateY || 0 };
   }
 
   getElmSiblingsById(id: string) {
-    const element = this.getElmById(id);
+    const element = this.registry[id];
 
     const {
       keys: { sK },
@@ -308,7 +344,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
    * @param id -
    */
   getElmTreeById(id: string): ElmTree {
-    const element = this.getElmById(id);
+    const element = this.registry[id];
 
     const {
       keys: { sK, pK },
@@ -327,7 +363,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     let parent = null;
     if (parents !== undefined) {
       const parentsID = Array.isArray(parents) ? parents[pi] : parents;
-      parent = this.getElmById(parentsID);
+      parent = this.registry[parentsID];
     }
 
     return {

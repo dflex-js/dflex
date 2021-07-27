@@ -28,14 +28,15 @@ class EndDroppable extends Droppable {
     const elmID = lst[i];
 
     if (elmID) {
-      const element = store.getElmById(elmID);
-
-      /**
-       * Note: rolling back won't affect order array. It only deals with element
-       * itself and totally ignore any instance related to store.
-       */
-      element.rollYBack(this.draggable.operationID);
-      this.draggable.numberOfElementsTransformed -= 1;
+      const element = store.registry[elmID];
+      if (element.offset) {
+        /**
+         * Note: rolling back won't affect order array. It only deals with element
+         * itself and totally ignore any instance related to store.
+         */
+        element.rollYBack(this.draggable.operationID);
+        this.draggable.numberOfElementsTransformed -= 1;
+      }
     } else {
       this.spliceAt = i;
     }
@@ -110,10 +111,10 @@ class EndDroppable extends Droppable {
       );
     }
 
-    const element = store.getElmById(id);
+    const element = store.registry[id];
 
     return (
-      Math.floor(siblingsBoundaries.top) === Math.floor(element.currentTop)
+      Math.floor(siblingsBoundaries.top) === Math.floor(element.currentTop!)
     );
   }
 

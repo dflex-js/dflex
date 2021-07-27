@@ -84,9 +84,10 @@ class Droppable {
 
       // TODO: What causes this? Need investigation.
       if (id) {
-        const element = store.getElmById(id);
+        const element = store.registry[id];
 
-        if (element) {
+        if (element && element.offset) {
+          // @ts-expect-error Checking for offset availability means current is valid
           if (element) ({ currentTop, currentLeft } = element);
         }
       }
@@ -114,12 +115,14 @@ class Droppable {
     const {
       currentLeft: elmLeft,
       currentTop: elmTop,
+      // @ts-expect-error
       offset: { height: elmHight },
     } = element;
 
     const {
       occupiedOffset: { currentLeft: draggedLeft, currentTop: draggedTop },
       draggedElm: {
+        // @ts-expect-error
         offset: { height: draggedHight },
       },
     } = this.draggable;
@@ -127,9 +130,9 @@ class Droppable {
     this.draggedYOffset = 0;
     this.elmTransitionY = 0;
 
-    this.leftDifference = Math.abs(elmLeft - draggedLeft);
+    this.leftDifference = Math.abs(elmLeft! - draggedLeft);
 
-    const topDifference = Math.abs(elmTop - draggedTop);
+    const topDifference = Math.abs(elmTop! - draggedTop);
 
     this.draggedAccumulatedTransitionY = topDifference;
     this.elmTransitionY = topDifference;
@@ -180,7 +183,7 @@ class Droppable {
     isUpdateDraggedTranslate: boolean,
     draggedDirection?: 1 | -1
   ) {
-    const element = store.getElmById(id);
+    const element = store.registry[id];
 
     this.calculateYDistance(element);
 
@@ -200,9 +203,9 @@ class Droppable {
        * condition is the breaking point element.
        */
       this.draggable.setThreshold(
-        element.currentTop,
-        element.currentLeft,
-        element.offset.height
+        element.currentTop!,
+        element.currentLeft!,
+        element.offset!.height
       );
     }
 
@@ -210,7 +213,7 @@ class Droppable {
 
     const { currentLeft: elmLeft, currentTop: elmTop } = element;
 
-    this.updateOccupiedOffset(elmTop, elmLeft);
+    this.updateOccupiedOffset(elmTop!, elmLeft!);
 
     if (isUpdateDraggedTranslate) {
       this.updateOccupiedTranslate(draggedDirection!);
@@ -242,11 +245,11 @@ class Droppable {
       const id = this.draggable.siblingsList![i];
 
       if (this.isIDEligible2Move(id)) {
-        const element = store.getElmById(id);
+        const element = store.registry[id];
 
         const { currentTop } = element;
 
-        const isQualified = this.isElemAboveDragged(currentTop);
+        const isQualified = this.isElemAboveDragged(currentTop!);
 
         if (isQualified) {
           isLast = true;
@@ -257,7 +260,7 @@ class Droppable {
           this.draggable.setThreshold(
             this.preserveLastElmOffset.currentTop,
             this.preserveLastElmOffset.currentLeft,
-            element.offset.height
+            element.offset!.height
           );
 
           this.updateOccupiedOffset(
@@ -295,11 +298,11 @@ class Droppable {
       const id = this.draggable.siblingsList![i];
 
       if (this.isIDEligible2Move(id)) {
-        const element = store.getElmById(id);
+        const element = store.registry[id];
 
         const { currentTop } = element;
 
-        const isQualified = this.isElemUnderDragged(currentTop);
+        const isQualified = this.isElemUnderDragged(currentTop!);
 
         if (isQualified) {
           droppableIndex = i;
@@ -317,7 +320,9 @@ class Droppable {
    * @param id -
    */
   protected isIDEligible2Move(id: string) {
-    return id && id !== this.draggable.draggedElm.id;
+    return (
+      id && id !== this.draggable.draggedElm.id && store.registry[id].offset
+    );
   }
 
   private switchElement() {
@@ -513,7 +518,7 @@ class Droppable {
     if (this.draggable.siblingsList === null) return;
 
     let isOutSiblingsContainer = false;
-    const { sK } = store.getElmById(this.draggable.draggedElm.id).keys;
+    const { sK } = store.registry[this.draggable.draggedElm.id].keys;
 
     this.draggable.setDraggedMovingDown(y);
 

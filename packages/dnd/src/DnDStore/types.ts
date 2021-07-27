@@ -30,12 +30,36 @@ export interface Translate {
   translateY: number;
 }
 
+interface RegisterInputDepth {
+  depth?: number;
+}
+
+interface RegisterInputID {
+  id: string;
+  ref?: never;
+}
+
+interface RegisterInputRef {
+  id?: never;
+  ref: HTMLElement;
+}
+
+interface RegisterInputAll {
+  id: string;
+  ref: HTMLElement;
+}
+
+export type RegisterInput =
+  | (RegisterInputDepth & RegisterInputAll)
+  | (RegisterInputDepth & RegisterInputID)
+  | (RegisterInputDepth & RegisterInputRef);
+
 export interface DnDStoreInterface {
   reattachElmRef(id: string, elmRef: HTMLElement): void;
   register(element: ElmInstance, x?: boolean): void;
   unregister(id: string): void;
   destroy(): void;
-  getELmOffsetById(id: string): Offset;
+  getELmOffsetById(id: string): Offset | undefined;
   getELmTranslateById(id: string): Translate;
   getElmTreeById(id: string): ElmTree;
   getElmSiblingsById(id: string): ELmBranch;

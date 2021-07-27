@@ -70,16 +70,21 @@ class AbstractDraggable<T extends AbstractCoreInterface>
 
     this.draggedElm = abstractCoreElm;
 
+    if (!this.draggedElm.isInitialized) {
+      this.draggedElm.initialize();
+    }
+
     const {
       translateX,
       translateY,
+      // @ts-expect-error Element was checked and initialized before.
       ref: { style: draggedStyle },
     } = this.draggedElm;
 
     this.draggedStyleRef = draggedStyle;
 
-    this.outerOffsetX = -initX + translateX;
-    this.outerOffsetY = -initY + translateY;
+    this.outerOffsetX = -initX + translateX!;
+    this.outerOffsetY = -initY + translateY!;
 
     this.tempTranslate = {
       x: 0,
@@ -106,7 +111,7 @@ class AbstractDraggable<T extends AbstractCoreInterface>
 
       getSelection()?.removeAllRanges();
 
-      this.draggedElm.ref.setAttribute("dragged", "true");
+      this.draggedElm.ref!.setAttribute("dragged", "true");
 
       return;
     }
@@ -118,7 +123,7 @@ class AbstractDraggable<T extends AbstractCoreInterface>
       this.draggedStyleRef[prop] = afterDragValue;
     });
 
-    this.draggedElm.ref.removeAttribute("dragged");
+    this.draggedElm.ref!.removeAttribute("dragged");
   }
 
   /**
