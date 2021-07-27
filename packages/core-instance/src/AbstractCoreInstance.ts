@@ -20,20 +20,44 @@ class AbstractCoreInstance implements AbstractCoreInterface {
 
   translateX?: number;
 
+  isInitialized: boolean;
+
   /**
    * Creates an instance of AbstractCoreInstance.
    */
-  constructor({ ref, id, isPause = false }: AbstractCoreInput) {
+  constructor({ ref, id, isInitialized = true }: AbstractCoreInput) {
     this.ref = ref;
     this.id = id;
 
-    if (!isPause) {
-      /**
-       * Since element render once and being transformed later we keep the data
-       * stored to navigate correctly.
-       */
-      this.translateY = 0;
-      this.translateX = 0;
+    this.isInitialized = isInitialized;
+
+    if (this.isInitialized) {
+      this.initialize();
+    }
+  }
+
+  private initTranslate() {
+    /**
+     * Since element render once and being transformed later we keep the data
+     * stored to navigate correctly.
+     */
+    this.translateY = 0;
+    this.translateX = 0;
+  }
+
+  initialize() {
+    if (!this.ref) {
+      const ref = document.getElementById(this.id);
+      if (!ref) {
+        throw new Error(`Element with ID: ${this.id} is not found.`);
+      }
+      this.ref = ref;
+    }
+
+    this.initTranslate();
+
+    if (!this.isInitialized) {
+      this.isInitialized = true;
     }
   }
 }

@@ -10,20 +10,22 @@
 export type AbstractCoreInput =
   | {
       id: string;
-      isPause: true;
+      isInitialized: false;
       ref: HTMLElement | null;
     }
   | {
       id: string;
-      isPause: false;
+      isInitialized: true;
       ref: HTMLElement;
     };
 
 export interface AbstractCoreInterface {
+  isInitialized: boolean;
   ref: HTMLElement | null;
   id: string;
   translateY?: number;
   translateX?: number;
+  initialize(): void;
 }
 
 export interface ElmInstance {

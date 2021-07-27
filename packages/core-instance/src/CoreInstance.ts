@@ -37,30 +37,23 @@ class CoreInstance
 
   isVisible: boolean;
 
-  isPause: boolean;
-
   constructor(
     elementWithPointer: ElmWIthPointer,
-    { isPause = false, scrollX = 0, scrollY = 0 } = {}
+    { isInitialized = true, isPause = false, scrollX = 0, scrollY = 0 } = {}
   ) {
     const { order, keys, ...element } = elementWithPointer;
 
-    super({ ...element, isPause });
+    super({ ...element, isInitialized });
 
     this.order = order;
     this.keys = keys;
 
     this.isVisible = isPause;
-    this.isPause = isPause;
 
-    if (!this.isInvalid()) {
+    if (isInitialized && !isPause) {
       this.initIndicators(scrollX, scrollY);
       this.updateDataset(this.order.self);
     }
-  }
-
-  private isInvalid() {
-    return this.ref === null && this.isPause;
   }
 
   /**
@@ -90,12 +83,6 @@ class CoreInstance
 
     this.currentTop = this.offset.top;
     this.currentLeft = this.offset.left;
-
-    // Paused from the abstract class.
-    this.translateY = 0;
-    this.translateX = 0;
-
-    this.isPause = false;
   }
 
   visibilityHasChanged(isVisible: boolean) {
