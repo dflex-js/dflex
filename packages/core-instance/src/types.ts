@@ -31,6 +31,7 @@ export interface AbstractCoreInterface {
   id: string;
   isDetached: boolean;
   isPaused: boolean;
+  isInitialized: boolean;
   translateY?: number;
   translateX?: number;
   initialize(ref: HTMLElement | null): void;

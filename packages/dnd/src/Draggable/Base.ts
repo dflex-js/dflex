@@ -66,10 +66,6 @@ class Base
 
     const { order } = element;
 
-    if (this.draggedElm.isPaused) {
-      this.draggedElm.resume(store.scrollX, store.scrollY);
-    }
-
     this.opts = opts;
 
     /**

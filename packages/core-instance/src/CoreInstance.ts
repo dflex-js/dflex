@@ -95,6 +95,16 @@ class CoreInstance
     this.isPaused = false;
   }
 
+  attach(ref: HTMLElement | null) {
+    this.validateAndAssignRef(ref);
+    this.isDetached = false;
+  }
+
+  detach() {
+    this.ref = null;
+    this.isDetached = true;
+  }
+
   visibilityHasChanged(isVisible: boolean) {
     if (isVisible === this.isVisible) return;
 

@@ -70,9 +70,6 @@ class AbstractDraggable<T extends AbstractCoreInterface>
 
     this.draggedElm = abstractCoreElm;
 
-    if (!this.draggedElm.initialize) this.draggedElm.initialize(null);
-    if (!this.draggedElm.isPaused) this.draggedElm.initTranslate();
-
     const {
       translateX,
       translateY,

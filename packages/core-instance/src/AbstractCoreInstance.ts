@@ -16,7 +16,7 @@ class AbstractCoreInstance implements AbstractCoreInterface {
 
   translateX?: number;
 
-  protected isInitialized: boolean;
+  isInitialized: boolean;
 
   isPaused: boolean;
 
@@ -49,18 +49,7 @@ class AbstractCoreInstance implements AbstractCoreInterface {
     this.isDetached = false;
   }
 
-  initTranslate() {
-    /**
-     * Since element render once and being transformed later we keep the data
-     * stored to navigate correctly.
-     */
-    this.translateY = 0;
-    this.translateX = 0;
-
-    this.isPaused = false;
-  }
-
-  validateAndAssignRef(incomingRef: HTMLElement | null) {
+  protected validateAndAssignRef(incomingRef: HTMLElement | null) {
     if (!incomingRef) {
       const ref = document.getElementById(this.id);
       if (!ref) {
@@ -73,6 +62,17 @@ class AbstractCoreInstance implements AbstractCoreInterface {
     }
 
     this.ref = incomingRef;
+  }
+
+  initTranslate() {
+    /**
+     * Since element render once and being transformed later we keep the data
+     * stored to navigate correctly.
+     */
+    this.translateY = 0;
+    this.translateX = 0;
+
+    this.isPaused = false;
   }
 
   initialize(ref: HTMLElement | null) {

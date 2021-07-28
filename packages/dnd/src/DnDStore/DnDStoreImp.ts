@@ -6,7 +6,6 @@
  */
 
 import Store from "@dflex/store";
-import type { ElmInstance } from "@dflex/store";
 
 import CoreInstance from "@dflex/core-instance";
 
@@ -214,14 +213,20 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
    * @param elmRef -
    */
   reattachElmRef(id: string, elmRef: HTMLElement | null) {
-    this.registry[id].ref = elmRef;
-
-    // Preserves last changes.
-    this.registry[id].transformElm();
+    if (this.registry[id].isInitialized) {
+      this.registry[id].attach(elmRef);
+    }
   }
 
-  unregister(id: string) {
-    delete this.registry[id];
+  unregister(id: string, isPreserveTransformation = true) {
+    if (!isPreserveTransformation) {
+      delete this.registry[id];
+      return;
+    }
+
+    if (!this.registry[id].isInitialized) {
+      this.registry[id].detach();
+    }
   }
 
   /**
@@ -422,10 +427,10 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       // Ignore non array branches.
       if (Array.isArray(this.DOMGen.branches[branchKey])) {
         (this.DOMGen.branches[branchKey] as string[]).forEach((elmID) => {
-          this.unregister(elmID);
+          this.unregister(elmID, false);
         });
       } else {
-        this.unregister(this.DOMGen.branches[branchKey] as string);
+        this.unregister(this.DOMGen.branches[branchKey] as string, false);
       }
     });
   }
