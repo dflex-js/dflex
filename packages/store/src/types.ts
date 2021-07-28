@@ -10,12 +10,11 @@ import type { Keys, Order } from "@dflex/dom-gen";
 export type Class<classInstance> = new (...args: any[]) => classInstance;
 
 export interface ElmInstance {
-  id?: string;
+  id: string;
   depth?: number;
-  ref: HTMLElement;
 }
 
-export interface ElmWIthPointer extends ElmInstance {
+export interface ElmWithPointer extends ElmInstance {
   id: string;
   order: Order;
   keys: Keys;
