@@ -100,4 +100,14 @@ context("Visible elements have transformation", () => {
       cy.get(`#${i}-extended`).should("have.css", "transform", "none");
     }
   });
+
+  it("Checking dataset index stays the same", () => {
+    for (let i = 1; i < 10; i += 1) {
+      cy.get(`#${i}-extended`).then((elm) => {
+        const { index } = elm[0].dataset;
+
+        expect(index).to.be.eq(`${i - 1}`);
+      });
+    }
+  });
 });
