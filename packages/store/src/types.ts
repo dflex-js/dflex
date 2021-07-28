@@ -11,11 +11,15 @@ export type Class<classInstance> = new (...args: any[]) => classInstance;
 
 export interface ElmInstance {
   id: string;
-  depth?: number;
+  depth: number;
 }
 
-export interface ElmWithPointer extends ElmInstance {
-  id: string;
+export interface ElmInstanceWithProps extends Required<ElmInstance> {
+  [key: string]: any;
+}
+
+export interface ElmWithPointerWithProps
+  extends Omit<ElmInstanceWithProps, "depth"> {
   order: Order;
   keys: Keys;
 }

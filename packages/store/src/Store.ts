@@ -6,9 +6,13 @@
  */
 import Generator from "@dflex/dom-gen";
 import type { ELmBranch } from "@dflex/dom-gen";
-import type { Class, ElmInstance, ElmWithPointer } from "./types";
+import type {
+  Class,
+  ElmInstanceWithProps,
+  ElmWithPointerWithProps,
+} from "./types";
 
-class Store<T = ElmWithPointer> {
+class Store<T = ElmWithPointerWithProps> {
   registry: {
     [id: string]: T;
   };
@@ -28,12 +32,16 @@ class Store<T = ElmWithPointer> {
    * @param element -
    * @param CustomInstance -
    */
-  register(element: ElmInstance, CustomInstance?: Class<T>, opts?: {}) {
-    const { id, depth = 0, ...rest } = element;
+  register(
+    element: ElmInstanceWithProps,
+    CustomInstance?: Class<T>,
+    opts?: {}
+  ) {
+    const { id, depth, ...rest } = element;
 
     const { order, keys } = this.DOMGen.getElmPointer(id, depth);
 
-    const coreElement: ElmWithPointer = { id, order, keys, ...rest };
+    const coreElement: ElmWithPointerWithProps = { id, order, keys, ...rest };
 
     // TODO: fix TS error here.
     // @ts-ignore
