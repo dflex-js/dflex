@@ -213,7 +213,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
    * @param id -
    * @param elmRef -
    */
-  reattachElmRef(id: string, elmRef: HTMLElement) {
+  reattachElmRef(id: string, elmRef: HTMLElement | null) {
     this.registry[id].ref = elmRef;
 
     // Preserves last changes.
@@ -241,30 +241,27 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       this.isPauseRegistration = false;
     }
 
-    if (!element.ref) {
-      if (!element.id) return;
-
-      const ref = document.getElementById(element.id);
-
-      if (!ref) return;
-
-      // @ts-expect-error
-      // eslint-disable-next-line no-param-reassign
-      element.ref = ref;
+    if (!element.ref && !element.id) {
+      throw new Error(
+        `DFlex: A valid unique id Or/and HTML element is required.`
+      );
     }
 
     /**
      * If element already exist in the store, then the reattach the reference.
      */
-    const id = element.id || element.ref.id;
+    const id = element.id || element.ref?.id;
+
+    if (!id) {
+      throw new Error(`DFlex: A valid and unique id is required.`);
+    }
 
     if (this.registry[id]) {
       if (
-        this.registry[id].ref &&
-        (!this.registry[id].ref!.isConnected ||
-          this.registry[id].ref!.isEqualNode(element.ref))
+        !this.registry[id].ref ||
+        (this.registry[id].ref && !this.registry[id].ref!.isConnected)
       ) {
-        this.reattachElmRef(id, element.ref);
+        this.reattachElmRef(id, element.ref || null);
       } else {
         throw new Error(
           `DFlex: Element with id:${id} is already registered. Please, provide DFlex with a unique id.`
@@ -274,12 +271,18 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       return;
     }
 
-    super.register(element as ElmInstance, CoreInstance, {
-      scrollX: this.scrollX,
-      scrollY: this.scrollY,
-      isInitialized: true,
-      isPause: this.isPauseRegistration,
-    });
+    super.register(
+      {
+        id,
+        depth: element.depth || 0,
+        ref: element.ref || null,
+        scrollX: this.scrollX,
+        scrollY: this.scrollY,
+        isInitialized: true,
+        isPause: this.isPauseRegistration,
+      },
+      CoreInstance
+    );
 
     if (this.isPauseRegistration) return;
 

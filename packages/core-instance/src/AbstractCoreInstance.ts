@@ -56,6 +56,8 @@ class AbstractCoreInstance implements AbstractCoreInterface {
      */
     this.translateY = 0;
     this.translateX = 0;
+
+    this.isPaused = false;
   }
 
   validateAndAssignRef(incomingRef: HTMLElement | null) {
@@ -64,6 +66,10 @@ class AbstractCoreInstance implements AbstractCoreInterface {
       if (!ref) {
         throw new Error(`Element with ID: ${this.id} is not found.`);
       }
+    } else if (incomingRef.nodeType !== Node.ELEMENT_NODE) {
+      throw new Error(
+        `DFlex: Invalid HTMLElement: ${incomingRef} is passed to registry.`
+      );
     }
 
     this.ref = incomingRef;
@@ -71,7 +77,6 @@ class AbstractCoreInstance implements AbstractCoreInterface {
 
   initialize(ref: HTMLElement | null) {
     this.validateAndAssignRef(ref);
-    this.initTranslate();
     this.isInitialized = true;
   }
 
