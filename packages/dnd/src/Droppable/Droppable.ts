@@ -321,7 +321,7 @@ class Droppable {
    */
   protected isIDEligible2Move(id: string) {
     return (
-      id && id !== this.draggable.draggedElm.id && store.registry[id].offset
+      id && id !== this.draggable.draggedElm.id && !store.registry[id].isPaused
     );
   }
 

@@ -7,12 +7,8 @@
 
 import type { AbstractCoreInterface, AbstractCoreInput } from "./types";
 
-/**
- * This is the link (bridge) between the Store and element actions/classes.
- * Abstract is essential for Draggable & extended Store.
- */
 class AbstractCoreInstance implements AbstractCoreInterface {
-  ref: HTMLElement | null;
+  ref!: HTMLElement | null;
 
   id: string;
 
@@ -20,23 +16,40 @@ class AbstractCoreInstance implements AbstractCoreInterface {
 
   translateX?: number;
 
-  isInitialized: boolean;
+  protected isInitialized: boolean;
+
+  isPaused: boolean;
+
+  isDetached: boolean;
 
   /**
    * Creates an instance of AbstractCoreInstance.
    */
-  constructor({ ref, id, isInitialized = true }: AbstractCoreInput) {
-    this.ref = ref;
+  constructor({
+    ref,
+    id,
+    isPaused = false,
+    isInitialized = true,
+  }: AbstractCoreInput) {
     this.id = id;
 
     this.isInitialized = isInitialized;
+    this.isPaused = isPaused;
 
     if (this.isInitialized) {
-      this.initialize();
+      this.validateAndAssignRef(ref);
+    } else {
+      this.ref = null;
     }
+
+    if (!this.isPaused) {
+      this.initTranslate();
+    }
+
+    this.isDetached = false;
   }
 
-  private initTranslate() {
+  initTranslate() {
     /**
      * Since element render once and being transformed later we keep the data
      * stored to navigate correctly.
@@ -45,20 +58,31 @@ class AbstractCoreInstance implements AbstractCoreInterface {
     this.translateX = 0;
   }
 
-  initialize() {
-    if (!this.ref) {
+  validateAndAssignRef(incomingRef: HTMLElement | null) {
+    if (!incomingRef) {
       const ref = document.getElementById(this.id);
       if (!ref) {
         throw new Error(`Element with ID: ${this.id} is not found.`);
       }
-      this.ref = ref;
     }
 
+    this.ref = incomingRef;
+  }
+
+  initialize(ref: HTMLElement | null) {
+    this.validateAndAssignRef(ref);
     this.initTranslate();
+    this.isInitialized = true;
+  }
 
-    if (!this.isInitialized) {
-      this.isInitialized = true;
-    }
+  attach(ref: HTMLElement | null) {
+    this.validateAndAssignRef(ref);
+    this.isDetached = false;
+  }
+
+  detach() {
+    this.ref = null;
+    this.isDetached = true;
   }
 }
 

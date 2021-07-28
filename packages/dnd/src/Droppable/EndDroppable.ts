@@ -27,16 +27,15 @@ class EndDroppable extends Droppable {
   private undoElmTranslate(lst: ELmBranch, i: number) {
     const elmID = lst[i];
 
-    if (elmID) {
+    if (this.isIDEligible2Move(elmID)) {
       const element = store.registry[elmID];
-      if (element.offset) {
-        /**
-         * Note: rolling back won't affect order array. It only deals with element
-         * itself and totally ignore any instance related to store.
-         */
-        element.rollYBack(this.draggable.operationID);
-        this.draggable.numberOfElementsTransformed -= 1;
-      }
+
+      /**
+       * Note: rolling back won't affect order array. It only deals with element
+       * itself and totally ignore any instance related to store.
+       */
+      element.rollYBack(this.draggable.operationID);
+      this.draggable.numberOfElementsTransformed -= 1;
     } else {
       this.spliceAt = i;
     }

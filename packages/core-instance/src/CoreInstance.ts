@@ -12,10 +12,10 @@ import AbstractCoreInstance from "./AbstractCoreInstance";
 import type {
   Keys,
   Order,
-  ElmWIthPointer,
   CoreInstanceInterface,
   Offset,
   TransitionHistory,
+  CoreInput,
 } from "./types";
 
 class CoreInstance
@@ -37,21 +37,22 @@ class CoreInstance
 
   isVisible: boolean;
 
-  constructor(
-    elementWithPointer: ElmWIthPointer,
-    { isInitialized = true, isPause = false, scrollX = 0, scrollY = 0 } = {}
-  ) {
-    const { order, keys, ...element } = elementWithPointer;
+  constructor(elementWithPointer: CoreInput) {
+    const { order, keys, scrollX, scrollY, ...element } = elementWithPointer;
 
-    super({ ...element, isInitialized });
+    super(element);
 
     this.order = order;
     this.keys = keys;
 
-    this.isVisible = isPause;
+    this.isVisible =
+      !element.isInitialized || (element.isInitialized && !element.isPaused);
 
-    if (isInitialized && !isPause) {
+    if (!element.isPaused) {
       this.initIndicators(scrollX, scrollY);
+    }
+
+    if (element.isInitialized) {
       this.updateDataset(this.order.self);
     }
   }
@@ -63,7 +64,7 @@ class CoreInstance
    *
    * So, basically any working element in DnD should be initiated first.
    */
-  initIndicators(scrollX: number, scrollY: number) {
+  private initIndicators(scrollX: number, scrollY: number) {
     this.prevTranslateY = [];
 
     const { height, width, left, top } = this.ref!.getBoundingClientRect();
@@ -83,6 +84,15 @@ class CoreInstance
 
     this.currentTop = this.offset.top;
     this.currentLeft = this.offset.left;
+  }
+
+  resume(scrollX: number, scrollY: number) {
+    if (!this.initialize) this.initialize(null);
+
+    this.initTranslate();
+    this.initIndicators(scrollX, scrollY);
+
+    this.isPaused = false;
   }
 
   visibilityHasChanged(isVisible: boolean) {
