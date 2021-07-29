@@ -88,8 +88,9 @@ class AbstractDraggable<T extends AbstractCoreInterface>
   protected setDragged(isActive: boolean) {
     if (isActive) {
       AbstractDraggable.draggedStyleProps.forEach(({ prop, dragValue }) => {
-        // @ts-expect-error
-        this.draggedElm.ref.style[prop] = dragValue;
+        // TODO: Fix TS error.
+        // @ts-expect-error.
+        this.draggedElm.ref!.style[prop] = dragValue;
       });
 
       getSelection()?.removeAllRanges();
@@ -102,11 +103,15 @@ class AbstractDraggable<T extends AbstractCoreInterface>
      * Not active: end of dragging.
      */
     AbstractDraggable.draggedStyleProps.forEach(({ prop, afterDragValue }) => {
-      // @ts-ignore
-      this.draggedElm.ref.style[prop] = afterDragValue;
+      // TODO: Fix TS error.
+      // @ts-expect-error.
+      this.draggedElm.ref!.style[prop] = afterDragValue;
     });
 
     this.draggedElm.ref!.removeAttribute("dragged");
+
+    // @ts-expect-error It's okay, we are destroying reference.
+    this.draggedElm = null;
   }
 
   /**
