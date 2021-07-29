@@ -29,7 +29,6 @@ export type AbstractCoreInput =
 export interface AbstractCoreInterface {
   ref: HTMLElement | null;
   id: string;
-  isDetached: boolean;
   isPaused: boolean;
   isInitialized: boolean;
   translateY?: number;
@@ -112,6 +111,6 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
     oldIndex?: number,
     siblingsHasEmptyElm?: number
   ): number;
-  visibilityHasChanged(isVisible: boolean): void;
+  // visibilityHasChanged(isVisible: boolean): void;
   updateDataset(index: number): void;
 }

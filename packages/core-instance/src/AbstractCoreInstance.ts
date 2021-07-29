@@ -20,8 +20,6 @@ class AbstractCoreInstance implements AbstractCoreInterface {
 
   isPaused: boolean;
 
-  isDetached: boolean;
-
   /**
    * Creates an instance of AbstractCoreInstance.
    */
@@ -45,8 +43,6 @@ class AbstractCoreInstance implements AbstractCoreInterface {
     if (!this.isPaused) {
       this.initTranslate();
     }
-
-    this.isDetached = false;
   }
 
   protected validateAndAssignRef(incomingRef: HTMLElement | null) {
@@ -64,6 +60,11 @@ class AbstractCoreInstance implements AbstractCoreInterface {
     this.ref = incomingRef;
   }
 
+  initialize(ref: HTMLElement | null) {
+    this.validateAndAssignRef(ref);
+    this.isInitialized = true;
+  }
+
   initTranslate() {
     /**
      * Since element render once and being transformed later we keep the data
@@ -75,19 +76,12 @@ class AbstractCoreInstance implements AbstractCoreInterface {
     this.isPaused = false;
   }
 
-  initialize(ref: HTMLElement | null) {
-    this.validateAndAssignRef(ref);
-    this.isInitialized = true;
-  }
-
   attach(ref: HTMLElement | null) {
     this.validateAndAssignRef(ref);
-    this.isDetached = false;
   }
 
   detach() {
     this.ref = null;
-    this.isDetached = true;
   }
 }
 

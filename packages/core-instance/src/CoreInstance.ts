@@ -87,7 +87,7 @@ class CoreInstance
   }
 
   resume(scrollX: number, scrollY: number) {
-    if (!this.initialize) this.initialize(null);
+    if (!this.isInitialized) this.initialize(null);
 
     this.initTranslate();
     this.initIndicators(scrollX, scrollY);
@@ -95,25 +95,15 @@ class CoreInstance
     this.isPaused = false;
   }
 
-  attach(ref: HTMLElement | null) {
-    this.validateAndAssignRef(ref);
-    this.isDetached = false;
-  }
+  // visibilityHasChanged(isVisible: boolean) {
+  //   if (isVisible === this.isVisible) return;
 
-  detach() {
-    this.ref = null;
-    this.isDetached = true;
-  }
+  //   if (isVisible && !this.isVisible) {
+  //     this.transformElm();
+  //   }
 
-  visibilityHasChanged(isVisible: boolean) {
-    if (isVisible === this.isVisible) return;
-
-    if (isVisible && !this.isVisible) {
-      this.transformElm();
-    }
-
-    this.isVisible = isVisible;
-  }
+  //   this.isVisible = isVisible;
+  // }
 
   private updateCurrentIndicators(topSpace: number, leftSpace: number) {
     this.translateY! += topSpace;
