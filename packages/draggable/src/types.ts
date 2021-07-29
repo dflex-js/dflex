@@ -20,8 +20,6 @@ export type DraggedStyle = {
 export interface AbstractDraggableInterface<T extends AbstractCoreInterface> {
   draggedElm: T;
 
-  draggedStyleRef: CSSStyleDeclaration;
-
   /**
    * When dragging start, element shouldn't jump from its translate. So, we
    * calculate offset that make translate X,Y start from zero:
@@ -36,8 +34,6 @@ export interface AbstractDraggableInterface<T extends AbstractCoreInterface> {
   outerOffsetY: number;
 
   tempTranslate: TempTranslate;
-
-  draggedStyle: DraggedStyle;
 }
 
 export interface MouseCoordinates {
