@@ -166,7 +166,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
               // Eg: 1, 2: hidden 3, 4, 5, 6, 7:visible 8, 9, 10: hidden.
               this.initELmIndicator();
             }
-            this.registry[elmID].visibilityHasChanged(isVisible);
+            this.registry[elmID].isVisible = isVisible;
             prevIndex = i;
           }
         });
@@ -212,7 +212,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
    * @param id -
    * @param elmRef -
    */
-  reattachElmRef(id: string, elmRef: HTMLElement | null) {
+  attachElmRef(id: string, elmRef: HTMLElement | null) {
     if (this.registry[id].isInitialized) {
       this.registry[id].attach(elmRef);
     }
@@ -220,13 +220,12 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   unregister(id: string, isPreserveTransformation = true) {
     if (!isPreserveTransformation) {
+      console.log(`element deleted${id}`);
       delete this.registry[id];
       return;
     }
 
-    if (!this.registry[id].isInitialized) {
-      this.registry[id].detach();
-    }
+    this.registry[id].detach();
   }
 
   /**
@@ -266,7 +265,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
         !this.registry[id].ref ||
         (this.registry[id].ref && !this.registry[id].ref!.isConnected)
       ) {
-        this.reattachElmRef(id, element.ref || null);
+        this.attachElmRef(id, element.ref || null);
       } else {
         throw new Error(
           `DFlex: Element with id:${id} is already registered. Please, provide DFlex with a unique id.`
