@@ -39,8 +39,6 @@ class Base
 
   parentsList: ELmBranch;
 
-  siblingsList: string[] | null;
-
   activeParent!: CoreInstanceInterface | null;
 
   isOutActiveParent!: boolean;
@@ -59,7 +57,7 @@ class Base
     const {
       element,
       parent,
-      branches: { siblings, parents },
+      branches: { parents },
     } = elmTree;
 
     super(element, initCoordinates);
@@ -116,8 +114,6 @@ class Base
       siblingsBoundaries.bottom,
       store.registry[this.draggedElm.id].keys.sK
     );
-
-    this.siblingsList = Array.isArray(siblings) ? siblings : null;
 
     this.setIsOrphan(parent);
 

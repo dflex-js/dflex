@@ -88,7 +88,7 @@ class Draggable extends Base implements DraggableDnDInterface {
     const $ = this.opts.restrictions;
 
     this.axesFilterNeeded =
-      this.siblingsList !== null &&
+      store.getElmSiblingsById(this.draggedElm.id) !== null &&
       (!$.allowLeavingFromLeft ||
         !$.allowLeavingFromRight ||
         !$.allowLeavingFromTop ||
@@ -96,11 +96,14 @@ class Draggable extends Base implements DraggableDnDInterface {
   }
 
   private getLastElmIndex() {
-    return this.siblingsList!.length - 1;
+    return store.getElmSiblingsById(this.draggedElm.id)!.length - 1;
   }
 
   private isFirstOrOutside() {
-    return this.siblingsList !== null && this.tempIndex <= 0;
+    return (
+      store.getElmSiblingsById(this.draggedElm.id) !== null &&
+      this.tempIndex <= 0
+    );
   }
 
   private isLastELm() {
@@ -286,9 +289,10 @@ class Draggable extends Base implements DraggableDnDInterface {
 
   isNotSettled() {
     const { sK } = store.registry[this.draggedElm.id].keys;
+    const siblings = store.getElmSiblingsById(this.draggedElm.id);
 
     return (
-      this.siblingsList !== null &&
+      siblings !== null &&
       !this.isLeavingFromBottom() &&
       (this.isOutThreshold() || this.isOutThreshold(sK))
     );
@@ -317,12 +321,14 @@ class Draggable extends Base implements DraggableDnDInterface {
   }
 
   setDraggedPosition(isFallback: boolean) {
+    const siblings = store.getElmSiblingsById(this.draggedElm.id);
+
     /**
      * In this case, the use clicked without making any move.
      */
     if (
       isFallback ||
-      this.siblingsList === null ||
+      siblings === null ||
       this.numberOfElementsTransformed === 0
       // this.isNotSettled()
     ) {
@@ -342,11 +348,12 @@ class Draggable extends Base implements DraggableDnDInterface {
         this.draggedElm.updateDataset(this.draggedElm.order.self);
 
         if (
-          this.siblingsList &&
-          this.siblingsList[this.draggedElm.order.self] !== this.draggedElm.id
+          siblings &&
+          Array.isArray(siblings) &&
+          siblings[this.draggedElm.order.self] !== this.draggedElm.id
         ) {
           this.draggedElm.assignNewPosition(
-            this.siblingsList,
+            siblings,
             this.draggedElm.order.self
           );
         }
@@ -362,8 +369,8 @@ class Draggable extends Base implements DraggableDnDInterface {
 
     this.draggedElm.transformElm();
 
-    if (this.siblingsList) {
-      this.draggedElm.assignNewPosition(this.siblingsList, this.tempIndex);
+    if (siblings && Array.isArray(siblings)) {
+      this.draggedElm.assignNewPosition(siblings, this.tempIndex);
     }
 
     this.draggedElm.order.self = this.tempIndex;

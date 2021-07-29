@@ -52,7 +52,7 @@ export interface DraggableBaseInterface
   opts: FinalDndOpts;
 
   parentsList: ELmBranch | null;
-  siblingsList: string[] | null;
+  // siblingsList: string[] | null;
   activeParent: CoreInstanceInterface | null;
 
   thresholds: LayoutThresholds;

@@ -75,12 +75,14 @@ class Droppable {
   }
 
   private updateLastElmOffset() {
+    const siblings = store.getElmSiblingsById(this.draggable.draggedElm.id);
+
     let currentTop = 0;
     let currentLeft = 0;
 
-    if (this.draggable.siblingsList) {
-      const lastIndex = this.draggable.siblingsList.length - 1;
-      const id = this.draggable.siblingsList[lastIndex];
+    if (siblings) {
+      const lastIndex = siblings.length - 1;
+      const id = siblings[lastIndex];
 
       // TODO: What causes this? Need investigation.
       if (id) {
@@ -219,11 +221,14 @@ class Droppable {
       this.updateOccupiedTranslate(draggedDirection!);
     }
 
+    const siblings = store.getElmSiblingsById(this.draggable.draggedElm.id);
+
     /**
      * Start transforming process
      */
     this.siblingsEmptyElmIndex = element.setYPosition(
-      this.draggable.siblingsList!,
+      // @ts-expect-error It's an array.
+      siblings!,
       this.effectedElemDirection,
       this.elmTransitionY,
 
@@ -241,8 +246,10 @@ class Droppable {
   private checkIfDraggedIsLastElm() {
     let isLast = false;
 
-    for (let i = this.draggable.siblingsList!.length - 1; i >= 0; i -= 1) {
-      const id = this.draggable.siblingsList![i];
+    const siblings = store.getElmSiblingsById(this.draggable.draggedElm.id);
+
+    for (let i = siblings.length - 1; i >= 0; i -= 1) {
+      const id = siblings![i];
 
       if (this.isIDEligible2Move(id)) {
         const element = store.registry[id];
@@ -293,9 +300,10 @@ class Droppable {
 
   private detectDroppableIndex() {
     let droppableIndex = null;
+    const siblings = store.getElmSiblingsById(this.draggable.draggedElm.id);
 
-    for (let i = 0; i < this.draggable.siblingsList!.length; i += 1) {
-      const id = this.draggable.siblingsList![i];
+    for (let i = 0; i < siblings!.length; i += 1) {
+      const id = siblings![i];
 
       if (this.isIDEligible2Move(id)) {
         const element = store.registry[id];
@@ -320,14 +328,18 @@ class Droppable {
    * @param id -
    */
   protected isIDEligible2Move(id: string) {
+    const { ref, isVisible } = store.registry[id];
+
     return (
-      id && id !== this.draggable.draggedElm.id && !store.registry[id].isPaused
+      ref !== null && id && id !== this.draggable.draggedElm.id && isVisible
     );
   }
 
   private switchElement() {
+    const siblings = store.getElmSiblingsById(this.draggable.draggedElm.id);
+
     const elmIndex = this.draggable.tempIndex + -1 * this.effectedElemDirection;
-    const id = this.draggable.siblingsList![elmIndex];
+    const id = siblings[elmIndex];
 
     if (this.isIDEligible2Move(id)) {
       this.setDraggedTempIndex(elmIndex);
@@ -342,12 +354,14 @@ class Droppable {
     this.leftAtIndex = this.draggable.tempIndex;
     this.setDraggedTempIndex(-1);
 
-    for (let i = from; i < this.draggable.siblingsList!.length; i += 1) {
+    const siblings = store.getElmSiblingsById(this.draggable.draggedElm.id);
+
+    for (let i = from; i < siblings!.length; i += 1) {
       /**
        * Don't update translate because it's not permanent. Releasing dragged
        * means undoing last position.
        */
-      const id = this.draggable.siblingsList![i];
+      const id = siblings![i];
 
       if (this.isIDEligible2Move(id)) {
         this.updateElement(id, true, 1);
@@ -360,8 +374,10 @@ class Droppable {
    * @param to - index
    */
   private moveDown(to: number) {
-    for (let i = this.draggable.siblingsList!.length - 1; i >= to; i -= 1) {
-      const id = this.draggable.siblingsList![i];
+    const siblings = store.getElmSiblingsById(this.draggable.draggedElm.id);
+
+    for (let i = siblings!.length - 1; i >= to; i -= 1) {
+      const id = siblings![i];
 
       if (this.isIDEligible2Move(id)) {
         this.updateElement(id, true, -1);
@@ -434,6 +450,10 @@ class Droppable {
    * @param y -
    */
   private draggedIsComingIn(y: number) {
+    const siblings = store.getElmSiblingsById(
+      this.draggable.draggedElm.id
+    ) as string[];
+
     /**
      * If tempIndex is zero, the dragged is coming from the top. So, move them
      * down all: to=0
@@ -453,7 +473,7 @@ class Droppable {
 
         if (!this.checkIfDraggedIsLastElm()) return;
 
-        to = this.draggable.siblingsList!.length - 1;
+        to = siblings.length - 1;
 
         hasToMoveSiblingsDown = false;
       }
@@ -489,8 +509,8 @@ class Droppable {
     }
 
     // Prevent elements collision. Add only if empty.
-    if (this.draggable.siblingsList![to].length === 0) {
-      this.draggable.siblingsList![to] = this.draggable.draggedElm.id;
+    if (siblings[to].length === 0) {
+      siblings[to] = this.draggable.draggedElm.id;
     } else if (process.env.NODE_ENV !== "production") {
       // eslint-disable-next-line no-console
       console.error(
@@ -515,7 +535,9 @@ class Droppable {
   dragAt(x: number, y: number) {
     this.draggable.dragAt(x, y);
 
-    if (this.draggable.siblingsList === null) return;
+    const siblings = store.getElmSiblingsById(this.draggable.draggedElm.id);
+
+    if (siblings === null) return;
 
     let isOutSiblingsContainer = false;
     const { sK } = store.registry[this.draggable.draggedElm.id].keys;
