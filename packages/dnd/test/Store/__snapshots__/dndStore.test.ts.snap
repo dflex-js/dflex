@@ -7,6 +7,7 @@ Object {
     "currentTop": 114,
     "id": "id-1",
     "isInitialized": true,
+    "isPaused": false,
     "isVisible": true,
     "keys": Object {
       "chK": null,
@@ -35,6 +36,7 @@ Object {
     "currentTop": 172,
     "id": "id-2",
     "isInitialized": true,
+    "isPaused": false,
     "isVisible": true,
     "keys": Object {
       "chK": null,
@@ -63,6 +65,7 @@ Object {
     "currentTop": 230,
     "id": "id-3",
     "isInitialized": true,
+    "isPaused": false,
     "isVisible": true,
     "keys": Object {
       "chK": null,
@@ -91,6 +94,7 @@ Object {
     "currentTop": 288,
     "id": "id-4",
     "isInitialized": true,
+    "isPaused": false,
     "isVisible": true,
     "keys": Object {
       "chK": null,
@@ -133,6 +137,7 @@ Object {
     "currentTop": 114,
     "id": "id-1",
     "isInitialized": true,
+    "isPaused": false,
     "isVisible": true,
     "keys": Object {
       "chK": null,

@@ -3,11 +3,12 @@
 exports[`Draggable Store Registers element and initiates translateX,Y 1`] = `
 Object {
   "id-0": CoreInstance {
-    "currentLeft": 0,
-    "currentTop": 0,
+    "currentLeft": NaN,
+    "currentTop": NaN,
     "id": "id-0",
     "isInitialized": true,
-    "isVisible": false,
+    "isPaused": false,
+    "isVisible": undefined,
     "keys": Object {
       "chK": null,
       "pK": "1-0",
@@ -15,8 +16,8 @@ Object {
     },
     "offset": Object {
       "height": 0,
-      "left": 0,
-      "top": 0,
+      "left": NaN,
+      "top": NaN,
       "width": 0,
     },
     "order": Object {
@@ -24,9 +25,7 @@ Object {
       "self": 0,
     },
     "prevTranslateY": Array [],
-    "ref": <div
-      data-index="0"
-    />,
+    "ref": <div />,
     "translateX": 0,
     "translateY": 0,
   },
