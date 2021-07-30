@@ -52,7 +52,6 @@ export interface DraggableBaseInterface
   opts: FinalDndOpts;
 
   parentsList: ELmBranch | null;
-  siblingsList: string[] | null;
   activeParent: CoreInstanceInterface | null;
 
   thresholds: LayoutThresholds;
@@ -68,15 +67,12 @@ export interface DraggableBaseInterface
 }
 
 export interface DraggableDnDInterface extends DraggableBaseInterface {
-  // innerOffsetX: number;
-  // innerOffsetY: number;
   tempOffset: TempOffset;
   occupiedOffset: TempOffset;
   occupiedTranslate: TempTranslate;
   prevY: number;
   numberOfElementsTransformed: number;
   isMovingDown: boolean;
-
   isOutPositionHorizontally: boolean;
   isOutSiblingsHorizontally: boolean;
   dragAt(x: number, y: number): void;
@@ -86,7 +82,5 @@ export interface DraggableDnDInterface extends DraggableBaseInterface {
   isLeavingFromTop(): boolean;
   isLeavingFromBottom(): boolean;
   isNotSettled(): boolean;
-  // getLastElmIndex(): number;
-  // isLastELm(): boolean;
   endDragging(isFallback: boolean): void;
 }
