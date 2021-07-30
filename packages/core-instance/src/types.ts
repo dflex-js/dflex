@@ -7,31 +7,36 @@
 
 /* eslint-disable no-unused-vars */
 
-export type AbstractCoreInput =
-  | {
-      id: string;
-      isInitialized: false;
-      ref: HTMLElement | null;
-    }
-  | {
-      id: string;
-      isInitialized: true;
-      ref: HTMLElement;
-    };
-
-export interface AbstractCoreInterface {
-  isInitialized: boolean;
-  ref: HTMLElement | null;
+interface AbsCoreEssential {
   id: string;
-  translateY?: number;
-  translateX?: number;
-  initialize(): void;
+  isPaused?: boolean;
 }
 
-export interface ElmInstance {
-  id: string;
-  depth: number;
+interface AbsCoreWithRef {
+  isInitialized: true;
   ref: HTMLElement;
+}
+
+interface AbsCoreWithoutRef {
+  isInitialized: false;
+  ref: null;
+}
+
+export type AbstractCoreInput =
+  | (AbsCoreEssential & AbsCoreWithoutRef)
+  | (AbsCoreEssential & AbsCoreWithRef);
+
+export interface AbstractCoreInterface {
+  ref: HTMLElement | null;
+  id: string;
+  isPaused: boolean;
+  isInitialized: boolean;
+  translateY?: number;
+  translateX?: number;
+  initialize(ref: HTMLElement | null): void;
+  initTranslate(): void;
+  attach(ref: HTMLElement | null): void;
+  detach(): void;
 }
 
 export type ELmBranch = string | string[];
@@ -61,10 +66,14 @@ export interface Pointer {
   order: Order;
 }
 
-export interface ElmWIthPointer extends ElmInstance {
+export interface CoreEssential {
   order: Order;
   keys: Keys;
+  scrollX: number;
+  scrollY: number;
 }
+
+export type CoreInput = CoreEssential & AbstractCoreInput;
 
 export interface Offset {
   height: number;
@@ -85,6 +94,7 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
   currentLeft?: number;
   order: Order;
   keys: Keys;
+  resume(scrollX: number, scrollY: number): void;
   setYPosition(
     iDsInOrder: ELmBranch,
     sign: 1 | -1,
@@ -101,7 +111,5 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
     oldIndex?: number,
     siblingsHasEmptyElm?: number
   ): number;
-  initIndicators(scrollX: number, scrollY: number): void;
-  visibilityHasChanged(isVisible: boolean): void;
   updateDataset(index: number): void;
 }

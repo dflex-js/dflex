@@ -7,12 +7,8 @@
 
 import type { AbstractCoreInterface, AbstractCoreInput } from "./types";
 
-/**
- * This is the link (bridge) between the Store and element actions/classes.
- * Abstract is essential for Draggable & extended Store.
- */
 class AbstractCoreInstance implements AbstractCoreInterface {
-  ref: HTMLElement | null;
+  ref!: HTMLElement | null;
 
   id: string;
 
@@ -22,43 +18,66 @@ class AbstractCoreInstance implements AbstractCoreInterface {
 
   isInitialized: boolean;
 
+  isPaused: boolean;
+
   /**
    * Creates an instance of AbstractCoreInstance.
    */
-  constructor({ ref, id, isInitialized = true }: AbstractCoreInput) {
-    this.ref = ref;
+  constructor({
+    ref,
+    id,
+    isPaused = false,
+    isInitialized = true,
+  }: AbstractCoreInput) {
     this.id = id;
 
     this.isInitialized = isInitialized;
+    this.isPaused = isPaused;
 
     if (this.isInitialized) {
-      this.initialize();
+      this.attach(ref);
+    } else {
+      this.ref = null;
+    }
+
+    if (!this.isPaused) {
+      this.initTranslate();
     }
   }
 
-  private initTranslate() {
+  attach(incomingRef: HTMLElement | null) {
+    if (!incomingRef) {
+      const ref = document.getElementById(this.id);
+      if (!ref) {
+        throw new Error(`DFlex: Element with ID: ${this.id} is not found.`);
+      }
+    } else if (incomingRef.nodeType !== Node.ELEMENT_NODE) {
+      throw new Error(
+        `DFlex: Invalid HTMLElement: ${incomingRef} is passed to registry.`
+      );
+    }
+
+    this.ref = incomingRef;
+  }
+
+  detach() {
+    this.ref = null;
+  }
+
+  initialize(ref: HTMLElement | null) {
+    this.attach(ref);
+    this.isInitialized = true;
+  }
+
+  initTranslate() {
     /**
      * Since element render once and being transformed later we keep the data
      * stored to navigate correctly.
      */
     this.translateY = 0;
     this.translateX = 0;
-  }
 
-  initialize() {
-    if (!this.ref) {
-      const ref = document.getElementById(this.id);
-      if (!ref) {
-        throw new Error(`Element with ID: ${this.id} is not found.`);
-      }
-      this.ref = ref;
-    }
-
-    this.initTranslate();
-
-    if (!this.isInitialized) {
-      this.isInitialized = true;
-    }
+    this.isPaused = false;
   }
 }
 
