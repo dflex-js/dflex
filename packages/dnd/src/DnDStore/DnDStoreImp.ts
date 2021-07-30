@@ -141,15 +141,11 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
         (this.DOMGen.branches[branchKey] as string[]).forEach((elmID, i) => {
           if (elmID.length > 0) {
-            if (!this.registry[elmID].isInitialized) {
-              this.registry[elmID].initialize();
-            }
+            const { currentTop, currentLeft, isPaused } = this.registry[elmID];
 
-            if (!this.registry[elmID].offset) {
-              this.registry[elmID].initIndicators(this.scrollX, this.scrollY);
+            if (isPaused) {
+              this.registry[elmID].resume(this.scrollX, this.scrollY);
             }
-
-            const { currentTop, currentLeft } = this.registry[elmID];
 
             let isVisible = !this.isElementHiddenInViewport(
               currentTop!,
@@ -171,7 +167,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
               // Eg: 1, 2: hidden 3, 4, 5, 6, 7:visible 8, 9, 10: hidden.
               this.initELmIndicator();
             }
-            this.registry[elmID].visibilityHasChanged(isVisible);
+            this.registry[elmID].isVisible = isVisible;
             prevIndex = i;
           }
         });
