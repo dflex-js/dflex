@@ -45,6 +45,10 @@ class AbstractCoreInstance implements AbstractCoreInterface {
     }
   }
 
+  hasValidRef() {
+    return this.isInitialized && this.ref !== null && this.ref.isConnected;
+  }
+
   attach(incomingRef: HTMLElement | null) {
     if (!incomingRef) {
       const ref = document.getElementById(this.id);

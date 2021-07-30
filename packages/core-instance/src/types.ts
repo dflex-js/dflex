@@ -37,6 +37,7 @@ export interface AbstractCoreInterface {
   initTranslate(): void;
   attach(ref: HTMLElement | null): void;
   detach(): void;
+  hasValidRef(): void;
 }
 
 export type ELmBranch = string | string[];
