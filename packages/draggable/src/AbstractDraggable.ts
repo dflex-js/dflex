@@ -13,30 +13,10 @@ import type {
   TempTranslate,
 } from "./types";
 
-const draggedStyleProps: DraggedStyle = [
-  {
-    prop: "position",
-    dragValue: "relative",
-    afterDragValue: null,
-  },
-  {
-    prop: "zIndex",
-    dragValue: "99",
-    afterDragValue: null,
-  },
-  {
-    prop: "user-select",
-    dragValue: "none",
-    afterDragValue: null,
-  },
-];
-
 class AbstractDraggable<T extends AbstractCoreInterface>
   implements AbstractDraggableInterface<T>
 {
   draggedElm: T;
-
-  draggedStyleRef: CSSStyleDeclaration;
 
   /**
    * When dragging start, element shouldn't jump from its translate. So, we
@@ -54,7 +34,23 @@ class AbstractDraggable<T extends AbstractCoreInterface>
 
   tempTranslate: TempTranslate;
 
-  draggedStyle: DraggedStyle;
+  static draggedStyleProps: DraggedStyle = [
+    {
+      prop: "position",
+      dragValue: "relative",
+      afterDragValue: null,
+    },
+    {
+      prop: "zIndex",
+      dragValue: "99",
+      afterDragValue: null,
+    },
+    {
+      prop: "user-select",
+      dragValue: "none",
+      afterDragValue: null,
+    },
+  ];
 
   /**
    * Creates an instance of AbstractDraggable.
@@ -70,18 +66,7 @@ class AbstractDraggable<T extends AbstractCoreInterface>
 
     this.draggedElm = abstractCoreElm;
 
-    if (!this.draggedElm.isInitialized) {
-      this.draggedElm.initialize();
-    }
-
-    const {
-      translateX,
-      translateY,
-      // @ts-expect-error Element was checked and initialized before.
-      ref: { style: draggedStyle },
-    } = this.draggedElm;
-
-    this.draggedStyleRef = draggedStyle;
+    const { translateX, translateY } = this.draggedElm;
 
     this.outerOffsetX = -initX + translateX!;
     this.outerOffsetY = -initY + translateY!;
@@ -90,8 +75,6 @@ class AbstractDraggable<T extends AbstractCoreInterface>
       x: 0,
       y: 0,
     };
-
-    this.draggedStyle = draggedStyleProps;
 
     this.setDragged(true);
   }
@@ -104,9 +87,10 @@ class AbstractDraggable<T extends AbstractCoreInterface>
    */
   protected setDragged(isActive: boolean) {
     if (isActive) {
-      this.draggedStyle.forEach(({ prop, dragValue }) => {
-        // @ts-expect-error
-        this.draggedStyleRef[prop] = dragValue;
+      AbstractDraggable.draggedStyleProps.forEach(({ prop, dragValue }) => {
+        // TODO: Fix TS error.
+        // @ts-expect-error.
+        this.draggedElm.ref!.style[prop] = dragValue;
       });
 
       getSelection()?.removeAllRanges();
@@ -118,9 +102,10 @@ class AbstractDraggable<T extends AbstractCoreInterface>
     /**
      * Not active: end of dragging.
      */
-    this.draggedStyle.forEach(({ prop, afterDragValue }) => {
-      // @ts-ignore
-      this.draggedStyleRef[prop] = afterDragValue;
+    AbstractDraggable.draggedStyleProps.forEach(({ prop, afterDragValue }) => {
+      // TODO: Fix TS error.
+      // @ts-expect-error.
+      this.draggedElm.ref!.style[prop] = afterDragValue;
     });
 
     this.draggedElm.ref!.removeAttribute("dragged");
@@ -145,7 +130,7 @@ class AbstractDraggable<T extends AbstractCoreInterface>
     this.tempTranslate.x = x + this.outerOffsetX;
     this.tempTranslate.y = y + this.outerOffsetY;
 
-    this.draggedStyleRef.transform = `translate3d(${this.tempTranslate.x}px,${this.tempTranslate.y}px, 0)`;
+    this.draggedElm.ref!.style.transform = `translate3d(${this.tempTranslate.x}px,${this.tempTranslate.y}px, 0)`;
   }
 }
 
