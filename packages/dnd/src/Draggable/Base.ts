@@ -9,11 +9,8 @@ import { AbstractDraggable } from "@dflex/draggable";
 import { CoreInstanceInterface } from "@dflex/core-instance";
 
 import type { MouseCoordinates } from "@dflex/draggable";
-import type { ELmBranch } from "@dflex/dom-gen";
 
 import store from "../DnDStore";
-
-import type { ElmTree } from "../DnDStore";
 
 import type {
   DraggableBaseInterface,
@@ -37,8 +34,6 @@ class Base
 
   opts: FinalDndOpts;
 
-  parentsList: ELmBranch;
-
   activeParent!: CoreInstanceInterface | null;
 
   isOutActiveParent!: boolean;
@@ -50,15 +45,11 @@ class Base
   thresholdsPercentages: ThresholdPercentages;
 
   constructor(
-    elmTree: ElmTree,
+    id: string,
     initCoordinates: MouseCoordinates,
     opts: FinalDndOpts
   ) {
-    const {
-      element,
-      parent,
-      branches: { parents },
-    } = elmTree;
+    const { element, parent } = store.getElmTreeById(id);
 
     super(element, initCoordinates);
 
@@ -75,8 +66,6 @@ class Base
      * transformation happened.
      */
     this.tempIndex = order.self;
-
-    this.parentsList = parents;
 
     /**
      * Thresholds store, contains max value for each parent and for dragged. Depending on

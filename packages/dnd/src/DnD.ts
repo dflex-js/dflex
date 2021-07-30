@@ -9,9 +9,6 @@ import type { MouseCoordinates } from "@dflex/draggable";
 
 import Draggable from "./Draggable";
 import Droppable from "./Droppable";
-import store from "./DnDStore";
-
-import type { ElmTree } from "./DnDStore";
 
 import type { DndOpts, FinalDndOpts } from "./types";
 
@@ -47,8 +44,6 @@ class DnD extends Droppable {
     initCoordinates: MouseCoordinates,
     opts: DndOpts = defaultOpts
   ) {
-    const elmCoreInstanceWithTree: ElmTree = store.getElmTreeById(id);
-
     const options = { ...opts };
 
     (Object.keys(defaultOpts) as Array<keyof typeof defaultOpts>).forEach(
@@ -65,7 +60,7 @@ class DnD extends Droppable {
     );
 
     const draggable = new Draggable(
-      elmCoreInstanceWithTree,
+      id,
       initCoordinates,
       options as FinalDndOpts
     );

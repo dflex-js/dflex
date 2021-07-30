@@ -28,14 +28,14 @@ class Draggable extends AbstractDraggable<AbstractCoreInterface> {
    * @param x -
    * @param y -
    */
-  protected dragAt(x: number, y: number) {
+  dragAt(x: number, y: number) {
     this.translate(x, y);
 
     this.draggedElm.translateX = this.tempTranslate.x;
     this.draggedElm.translateY = this.tempTranslate.y;
   }
 
-  protected endDragging() {
+  endDragging() {
     this.setDragged(false);
   }
 }
