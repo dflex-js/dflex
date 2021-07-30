@@ -14,7 +14,7 @@ import DnDComponent from "../DnDComponent";
 const ExtendedList = () => {
   const tasks = [];
 
-  for (let i = 1; i <= 1000; i += 1) {
+  for (let i = 1; i <= 100; i += 1) {
     const uni = `${i}-extended`;
 
     tasks.push({ id: uni, key: uni, task: `${i}` });
@@ -22,7 +22,7 @@ const ExtendedList = () => {
 
   return (
     <div className={s.root}>
-      <div className={s.todo}>
+      <div className={s.extended}>
         <ul>
           {tasks.map(({ task, id, key }) => (
             <DnDComponent id={id} key={key}>
