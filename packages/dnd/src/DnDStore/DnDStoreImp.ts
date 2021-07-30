@@ -6,8 +6,6 @@
  */
 
 import Store from "@dflex/store";
-import type { ElmInstance } from "@dflex/store";
-
 import CoreInstance from "@dflex/core-instance";
 
 import type { Offset } from "@dflex/core-instance";
@@ -206,20 +204,6 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     }
   }
 
-  /**
-   * Reattach element reference.
-   * This happens when element is unmounted from the screen and mounted again.
-   *
-   * @param id -
-   * @param elmRef -
-   */
-  reattachElmRef(id: string, elmRef: HTMLElement) {
-    this.registry[id].ref = elmRef;
-
-    // Preserves last changes.
-    this.registry[id].transformElm();
-  }
-
   unregister(id: string) {
     delete this.registry[id];
   }
@@ -260,11 +244,17 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     if (this.registry[id]) {
       if (
-        this.registry[id].ref &&
-        (!this.registry[id].ref!.isConnected ||
-          this.registry[id].ref!.isEqualNode(element.ref))
+        (this.registry[id].ref &&
+          this.registry[id].isInitialized &&
+          !this.registry[id].ref!.isConnected) ||
+        this.registry[id].ref!.isEqualNode(element.ref)
       ) {
-        this.reattachElmRef(id, element.ref);
+        this.registry[id].attach(element.ref);
+
+        if (this.registry[id].isVisible) {
+          // Preserves last changes.
+          this.registry[id].transformElm();
+        }
       } else {
         throw new Error(
           `DFlex: Element with id:${id} is already registered. Please, provide DFlex with a unique id.`
@@ -274,12 +264,18 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       return;
     }
 
-    super.register(element as ElmInstance, CoreInstance, {
-      scrollX: this.scrollX,
-      scrollY: this.scrollY,
-      isInitialized: true,
-      isPause: this.isPauseRegistration,
-    });
+    super.register(
+      {
+        id,
+        depth: element.depth || 0,
+        ref: element.ref || null,
+        scrollX: this.scrollX,
+        scrollY: this.scrollY,
+        isInitialized: true,
+        isPause: this.isPauseRegistration,
+      },
+      CoreInstance
+    );
 
     if (this.isPauseRegistration) return;
 
