@@ -45,8 +45,8 @@ jobs:
           project: ./packages/dnd
           start: yarn workspace dflex-react-dnd start
           wait-on: "http://localhost:3001/"
-          # wait for 2 minutes for the server to respond
-          wait-on-timeout: 120
+          # wait for 1/5 minutes for the server to respond
+          wait-on-timeout: 30
           browser: chrome
           headless: true
         env:

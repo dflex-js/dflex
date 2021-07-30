@@ -63,4 +63,5 @@ export interface DnDStoreInterface {
   getELmTranslateById(id: string): Translate;
   getElmTreeById(id: string): ElmTree;
   getElmSiblingsById(id: string): ELmBranch;
+  getElmSiblingsListById(id: string): string[] | null;
 }
