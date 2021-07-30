@@ -253,18 +253,17 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       return;
     }
 
-    super.register(
-      {
-        id,
-        depth: element.depth || 0,
-        ref: element.ref || null,
-        scrollX: this.scrollX,
-        scrollY: this.scrollY,
-        isInitialized: true,
-        isPause: this.isPauseRegistration,
-      },
-      CoreInstance
-    );
+    const coreInput = {
+      id,
+      depth: element.depth || 0,
+      ref: element.ref || null,
+      scrollX: this.scrollX,
+      scrollY: this.scrollY,
+      isInitialized: true,
+      isPaused: this.isPauseRegistration,
+    };
+
+    super.register(coreInput, CoreInstance);
 
     if (this.isPauseRegistration) return;
 
