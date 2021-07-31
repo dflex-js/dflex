@@ -69,4 +69,4 @@ jobs:
           browser: chrome
           headless: true
         env:
-          isNextJS: true
+          Cypress_isNextJS: true
