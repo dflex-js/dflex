@@ -49,6 +49,17 @@ jobs:
           headless: true
           spec: "packages/dnd/cypress/integration/essential/**/*.spec.js"
 
+      - name: SSR Test - Next
+        uses: cypress-io/github-action@v2
+        with:
+          project: ./packages/dnd
+          start: yarn workspace dflex-next-dnd dev
+          wait-on: "http://localhost:3000/"
+          browser: chrome
+          headless: true
+        env:
+          Cypress_isNextJS: true
+
       - name: Extended Test for DnD React APP - Chrome
         uses: cypress-io/github-action@v2
         with:
@@ -59,14 +70,3 @@ jobs:
           headless: true
         env:
           Cypress_extended: true
-
-      - name: SSR Test - Next
-        uses: cypress-io/github-action@v2
-        with:
-          project: ./packages/dnd
-          start: yarn workspace dflex-next-dnd
-          wait-on: "http://localhost:3000/"
-          browser: chrome
-          headless: true
-        env:
-          Cypress_isNextJS: true
