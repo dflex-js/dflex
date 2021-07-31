@@ -57,6 +57,8 @@ jobs:
           wait-on: "http://localhost:3000/"
           browser: chrome
           headless: true
+          spec: "packages/dnd/cypress/integration/nextjs/*.spec.js"
+
         env:
           Cypress_isNextJS: true
 
