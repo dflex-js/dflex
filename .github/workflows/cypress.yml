@@ -58,4 +58,4 @@ jobs:
           wait-on: "http://localhost:3001/"
           browser: firefox
           headless: true
-          spec: "cypress/integration/essential/newPosition/collections.newPosition.spec.js"
+          spec: "packages/dnd/cypress/integration/essential/newPosition/collections.newPosition.spec.js"
