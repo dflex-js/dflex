@@ -5,4 +5,5 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/* eslint-disable import/prefer-default-export */
 export { default as TodoList } from "./basic";

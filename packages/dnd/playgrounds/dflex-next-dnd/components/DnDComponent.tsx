@@ -41,7 +41,7 @@ export const TodoItem = ({
     return () => {
       store.unregister(id);
     };
-  }, [taskRef.current]);
+  }, [id, depth]);
 
   const onMouseMove = (e: MouseEvent) => {
     // e.stopPropagation();
