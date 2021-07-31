@@ -14,10 +14,6 @@ let stepsX = 0;
 
 function myContext() {
   context("Visible elements have transformation", () => {
-    before(() => {
-      cy.visit("http://localhost:3000/extended");
-    });
-
     it("Checking first 10 elements all have index dataset", () => {
       for (let i = 1; i < 10; i += 1) {
         cy.get(`#${i}-extended`).then((elm) => {
