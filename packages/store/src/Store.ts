@@ -6,9 +6,13 @@
  */
 import Generator from "@dflex/dom-gen";
 import type { ELmBranch } from "@dflex/dom-gen";
-import type { Class, ElmInstance, ElmWIthPointer } from "./types";
+import type {
+  Class,
+  ElmInstanceWithProps,
+  ElmWithPointerWithProps,
+} from "./types";
 
-class Store<T = ElmWIthPointer> {
+class Store<T = ElmWithPointerWithProps> {
   registry: {
     [id: string]: T;
   };
@@ -28,24 +32,16 @@ class Store<T = ElmWIthPointer> {
    * @param element -
    * @param CustomInstance -
    */
-  register(element: ElmInstance, CustomInstance?: Class<T>, opts?: {}) {
-    const { id: idElm, depth = 0, ref } = element;
-
-    if (!ref || ref.nodeType !== Node.ELEMENT_NODE) {
-      throw new Error(
-        `DFlex: Invalid HTMLElement: ${ref} is passed to registry`
-      );
-    }
-
-    if (!idElm && !ref.id) {
-      throw new Error(`DFlex: A valid and unique id is required.`);
-    }
-
-    const id = idElm || ref.id;
+  register(
+    element: ElmInstanceWithProps,
+    CustomInstance?: Class<T>,
+    opts?: {}
+  ) {
+    const { id, depth, ...rest } = element;
 
     const { order, keys } = this.DOMGen.getElmPointer(id, depth);
 
-    const coreElement: ElmWIthPointer = { id, depth, ref, order, keys };
+    const coreElement: ElmWithPointerWithProps = { id, order, keys, ...rest };
 
     // TODO: fix TS error here.
     // @ts-ignore

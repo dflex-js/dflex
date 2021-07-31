@@ -6,8 +6,6 @@
  */
 
 import Store from "@dflex/store";
-import type { ElmInstance } from "@dflex/store";
-
 import CoreInstance from "@dflex/core-instance";
 
 import type { Offset } from "@dflex/core-instance";
@@ -91,24 +89,41 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   }
 
   private setViewport() {
-    this.viewportHeight = Math.max(
+    const viewportHeight = Math.max(
       document.documentElement.clientHeight || 0,
       window.innerHeight || 0
     );
 
-    this.viewportWidth = Math.max(
+    const viewportWidth = Math.max(
       document.documentElement.clientWidth || 0,
       window.innerWidth || 0
     );
+
+    const isUpdated =
+      viewportHeight !== this.viewportHeight ||
+      viewportWidth !== this.viewportWidth;
+
+    this.viewportHeight = viewportHeight;
+    this.viewportWidth = viewportWidth;
+
+    return isUpdated;
   }
 
   private setScrollXY() {
-    this.scrollY = Math.round(
+    const scrollY = Math.round(
       document.documentElement.scrollTop || window.pageYOffset
     );
-    this.scrollX = Math.round(
+
+    const scrollX = Math.round(
       document.documentElement.scrollLeft || window.pageXOffset
     );
+
+    const isUpdated = scrollY !== this.scrollY || scrollX !== this.scrollX;
+
+    this.scrollY = scrollY;
+    this.scrollX = scrollX;
+
+    return isUpdated;
   }
 
   private initELmIndicator() {
@@ -141,19 +156,13 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
         (this.DOMGen.branches[branchKey] as string[]).forEach((elmID, i) => {
           if (elmID.length > 0) {
-            if (!this.registry[elmID].isInitialized) {
-              this.registry[elmID].initialize();
+            if (this.registry[elmID].isPaused) {
+              this.registry[elmID].resume(this.scrollX, this.scrollY);
             }
-
-            if (!this.registry[elmID].offset) {
-              this.registry[elmID].initIndicators(this.scrollX, this.scrollY);
-            }
-
-            const { currentTop, currentLeft } = this.registry[elmID];
 
             let isVisible = !this.isElementHiddenInViewport(
-              currentTop!,
-              currentLeft!
+              this.registry[elmID].currentTop!,
+              this.registry[elmID].currentLeft!
             );
 
             if (
@@ -171,7 +180,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
               // Eg: 1, 2: hidden 3, 4, 5, 6, 7:visible 8, 9, 10: hidden.
               this.initELmIndicator();
             }
-            this.registry[elmID].visibilityHasChanged(isVisible);
+            this.registry[elmID].changeVisibility(isVisible);
+
             prevIndex = i;
           }
         });
@@ -210,20 +220,6 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     }
   }
 
-  /**
-   * Reattach element reference.
-   * This happens when element is unmounted from the screen and mounted again.
-   *
-   * @param id -
-   * @param elmRef -
-   */
-  reattachElmRef(id: string, elmRef: HTMLElement) {
-    this.registry[id].ref = elmRef;
-
-    // Preserves last changes.
-    this.registry[id].transformElm();
-  }
-
   unregister(id: string) {
     delete this.registry[id];
   }
@@ -245,45 +241,45 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       this.isPauseRegistration = false;
     }
 
-    if (!element.ref) {
-      if (!element.id) return;
-
-      const ref = document.getElementById(element.id);
-
-      if (!ref) return;
-
-      // @ts-expect-error
-      // eslint-disable-next-line no-param-reassign
-      element.ref = ref;
+    if (!element.ref && !element.id) {
+      throw new Error(
+        `DFlex: A valid unique id Or/and HTML element is required.`
+      );
     }
 
     /**
      * If element already exist in the store, then the reattach the reference.
      */
-    const id = element.id || element.ref.id;
+    const id = element.id || element.ref?.id;
+
+    if (!id) {
+      throw new Error(`DFlex: A valid and unique id is required.`);
+    }
 
     if (this.registry[id]) {
-      if (
-        this.registry[id].ref &&
-        (!this.registry[id].ref!.isConnected ||
-          this.registry[id].ref!.isEqualNode(element.ref))
-      ) {
-        this.reattachElmRef(id, element.ref);
-      } else {
-        throw new Error(
-          `DFlex: Element with id:${id} is already registered. Please, provide DFlex with a unique id.`
-        );
+      if (this.registry[id].isInitialized) {
+        this.registry[id].attach(element.ref || null);
+      }
+
+      if (this.registry[id].isVisible) {
+        // Preserves last changes.
+        this.registry[id].transformElm();
       }
 
       return;
     }
 
-    super.register(element as ElmInstance, CoreInstance, {
+    const coreInput = {
+      id,
+      depth: element.depth || 0,
+      ref: element.ref || null,
       scrollX: this.scrollX,
       scrollY: this.scrollY,
       isInitialized: true,
-      isPause: this.isPauseRegistration,
-    });
+      isPaused: this.isPauseRegistration,
+    };
+
+    super.register(coreInput, CoreInstance);
 
     if (this.isPauseRegistration) return;
 
@@ -309,9 +305,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       this.elmIndicator.exceptionToNextElm = true;
       isVisible = true;
       this.isPauseRegistration = true;
+      this.registry[id].changeVisibility(isVisible);
     }
-
-    this.registry[id].isVisible = isVisible;
 
     this.elmIndicator.prevKy = this.elmIndicator.currentKy;
   }
@@ -387,9 +382,9 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     setter: "setViewport" | "setScrollXY",
     response: "updateRegisteredLayoutIndicators" | null
   ) {
-    this[setter]();
+    const isUpdated = this[setter]();
 
-    if (!this.throttle && response) {
+    if (isUpdated && !this.throttle && response) {
       window.requestAnimationFrame(() => {
         this[response]();
         this.throttle = false;

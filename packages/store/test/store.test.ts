@@ -64,7 +64,6 @@ describe("Testing Store Package", () => {
     const elemInstance = store.registry[elm0D0.id];
 
     expect(elemInstance).toStrictEqual({
-      depth: 0,
       id: "id-0",
       keys: {
         chK: null,

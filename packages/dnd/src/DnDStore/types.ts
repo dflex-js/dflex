@@ -55,7 +55,6 @@ export type RegisterInput =
   | (RegisterInputDepth & RegisterInputRef);
 
 export interface DnDStoreInterface {
-  reattachElmRef(id: string, elmRef: HTMLElement): void;
   register(element: ElmInstance, x?: boolean): void;
   unregister(id: string): void;
   destroy(): void;

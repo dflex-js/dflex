@@ -55,10 +55,6 @@ class Base
 
     const { order } = element;
 
-    if (!this.draggedElm.offset) {
-      this.draggedElm.initIndicators(store.scrollX, store.scrollY);
-    }
-
     this.opts = opts;
 
     /**

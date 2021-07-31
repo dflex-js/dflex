@@ -81,19 +81,9 @@ context("Visible elements have transformation", () => {
     }
   });
 
-  it("Scroll to element 21", () => {
-    cy.scrollTo(0, 600); // Scroll the window 500px down
-  });
-
-  it("DFlex automatically activate visible element to transformation - until 22", () => {
-    for (let i = 1; i < 23; i += 1) {
-      cy.get(`#${i}-extended`).should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
-      );
-    }
-  });
+  // it("Scroll to element 21", () => {
+  //   cy.scrollTo(0, 600); // Scroll the window 500px down
+  // });
 
   it("Rest of non-visible and not effected elements have no transformation", () => {
     for (let i = 24; i < 100; i += 1) {
