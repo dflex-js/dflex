@@ -39,18 +39,18 @@ jobs:
       - name: Build packages
         run: yarn build
 
-      # - name: Extended Test for DnD React APP
-      #   uses: cypress-io/github-action@v2
-      #   with:
-      #     project: ./packages/dnd
-      #     start: yarn workspace dflex-react-dnd start
-      #     wait-on: "http://localhost:3001/"
-      #     browser: chrome
-      #     headless: true
-      #   env:
-      #     Cypress_extended: true
+      - name: Extended Test for DnD React APP - Chrome
+        uses: cypress-io/github-action@v2
+        with:
+          project: ./packages/dnd
+          start: yarn workspace dflex-react-dnd start
+          wait-on: "http://localhost:3001/"
+          browser: chrome
+          headless: true
+        env:
+          Cypress_extended: true
 
-      - name: Extended Test for DnD React APP
+      - name: Essential Test for DnD React APP - Firefox
         uses: cypress-io/github-action@v2
         with:
           project: ./packages/dnd
