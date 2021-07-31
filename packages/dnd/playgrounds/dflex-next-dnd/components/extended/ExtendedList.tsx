@@ -14,7 +14,7 @@ import DnDComponent from "../DnDComponent";
 const ExtendedList = () => {
   const tasks = [];
 
-  for (let i = 1; i <= 100; i += 1) {
+  for (let i = 1; i <= 1000; i += 1) {
     const uni = `${i}-extended`;
 
     tasks.push({ id: uni, key: uni, task: `${i}` });
