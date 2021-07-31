@@ -89,24 +89,41 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   }
 
   private setViewport() {
-    this.viewportHeight = Math.max(
+    const viewportHeight = Math.max(
       document.documentElement.clientHeight || 0,
       window.innerHeight || 0
     );
 
-    this.viewportWidth = Math.max(
+    const viewportWidth = Math.max(
       document.documentElement.clientWidth || 0,
       window.innerWidth || 0
     );
+
+    const isUpdated =
+      viewportHeight !== this.viewportHeight ||
+      viewportWidth !== this.viewportWidth;
+
+    this.viewportHeight = viewportHeight;
+    this.viewportWidth = viewportWidth;
+
+    return isUpdated;
   }
 
   private setScrollXY() {
-    this.scrollY = Math.round(
+    const scrollY = Math.round(
       document.documentElement.scrollTop || window.pageYOffset
     );
-    this.scrollX = Math.round(
+
+    const scrollX = Math.round(
       document.documentElement.scrollLeft || window.pageXOffset
     );
+
+    const isUpdated = scrollY !== this.scrollY || scrollX !== this.scrollX;
+
+    this.scrollY = scrollY;
+    this.scrollX = scrollX;
+
+    return isUpdated;
   }
 
   private initELmIndicator() {
@@ -139,15 +156,13 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
         (this.DOMGen.branches[branchKey] as string[]).forEach((elmID, i) => {
           if (elmID.length > 0) {
-            const { currentTop, currentLeft, isPaused } = this.registry[elmID];
-
-            if (isPaused) {
+            if (this.registry[elmID].isPaused) {
               this.registry[elmID].resume(this.scrollX, this.scrollY);
             }
 
             let isVisible = !this.isElementHiddenInViewport(
-              currentTop!,
-              currentLeft!
+              this.registry[elmID].currentTop!,
+              this.registry[elmID].currentLeft!
             );
 
             if (
@@ -165,7 +180,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
               // Eg: 1, 2: hidden 3, 4, 5, 6, 7:visible 8, 9, 10: hidden.
               this.initELmIndicator();
             }
-            this.registry[elmID].isVisible = isVisible;
+            this.registry[elmID].changeVisibility(isVisible);
+
             prevIndex = i;
           }
         });
@@ -289,9 +305,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       this.elmIndicator.exceptionToNextElm = true;
       isVisible = true;
       this.isPauseRegistration = true;
+      this.registry[id].changeVisibility(isVisible);
     }
-
-    this.registry[id].isVisible = isVisible;
 
     this.elmIndicator.prevKy = this.elmIndicator.currentKy;
   }
@@ -367,9 +382,9 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     setter: "setViewport" | "setScrollXY",
     response: "updateRegisteredLayoutIndicators" | null
   ) {
-    this[setter]();
+    const isUpdated = this[setter]();
 
-    if (!this.throttle && response) {
+    if (isUpdated && !this.throttle && response) {
       window.requestAnimationFrame(() => {
         this[response]();
         this.throttle = false;
