@@ -94,6 +94,10 @@ class CoreInstance
     this.isPaused = false;
   }
 
+  changeVisibility(isVisible: boolean) {
+    this.isVisible = isVisible;
+  }
+
   private updateCurrentIndicators(topSpace: number, leftSpace: number) {
     this.translateY! += topSpace;
     this.translateX! += leftSpace;

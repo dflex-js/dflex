@@ -96,6 +96,7 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
   order: Order;
   keys: Keys;
   resume(scrollX: number, scrollY: number): void;
+  changeVisibility(isVisible: boolean): void;
   setYPosition(
     iDsInOrder: ELmBranch,
     sign: 1 | -1,
