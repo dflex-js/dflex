@@ -47,7 +47,7 @@ jobs:
           wait-on: "http://localhost:3001/"
           browser: firefox
           headless: true
-          spec: "packages/dnd/cypress/essential/**/*.spec.js"
+          spec: "packages/dnd/cypress/integration/essential/**/*.spec.js"
         env:
           Cypress_extended: true
 
@@ -72,6 +72,6 @@ jobs:
           browser: chrome
           headless: true
           spec: "packages/dnd/cypress/integration/differentHeights/**/*.spec.js,
-          packages/dnd/cypress/restrictions/**/*.spec.js,
-          packages/dnd/cypress/extended/*.spec.js"
+          packages/dnd/cypress/integration/restrictions/**/*.spec.js,
+          packages/dnd/cypress/integration/extended/*.spec.js"
 
