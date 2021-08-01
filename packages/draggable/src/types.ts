@@ -17,6 +17,26 @@ export type DraggedStyle = {
   afterDragValue: string | null;
 }[];
 
+interface RegisterInputID {
+  id: string;
+  ref?: never;
+}
+
+interface RegisterInputRef {
+  id?: never;
+  ref: HTMLElement;
+}
+
+interface RegisterInputIDWithRef {
+  id: string;
+  ref: HTMLElement;
+}
+
+export type RegisterInput =
+  | RegisterInputIDWithRef
+  | RegisterInputID
+  | RegisterInputRef;
+
 export interface AbstractDraggableInterface<T extends AbstractCoreInterface> {
   draggedElm: T;
 
