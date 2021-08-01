@@ -47,7 +47,9 @@ jobs:
           wait-on: "http://localhost:3001/"
           browser: firefox
           headless: true
-          spec: "packages/dnd/cypress/integration/differentHeights/**/*.spec.js"
+          spec: "packages/dnd/cypress/essential/**/*.spec.js"
+        env:
+          Cypress_extended: true
 
       - name: SSR Test - Next
         uses: cypress-io/github-action@v2
@@ -69,8 +71,7 @@ jobs:
           wait-on: "http://localhost:3001/"
           browser: chrome
           headless: true
-          spec: "packages/dnd/cypress/essential/**/*.spec.js,
+          spec: "packages/dnd/cypress/integration/differentHeights/**/*.spec.js,
           packages/dnd/cypress/restrictions/**/*.spec.js,
           packages/dnd/cypress/extended/*.spec.js"
-        env:
-          Cypress_extended: true
+
