@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 import "../styles/globals.css";
-import React from "react";
 
 import type { AppProps } from "next/app";
 
