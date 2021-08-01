@@ -64,6 +64,7 @@ jobs:
           spec: "packages/dnd/cypress/integration/nextjs/**/*.spec.js"
         env:
           Cypress_isNextJS: true
+          Cypress_extended: false
 
       - name: Extended Test for DnD React APP - Chrome
         uses: cypress-io/github-action@v2
