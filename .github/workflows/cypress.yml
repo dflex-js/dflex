@@ -39,18 +39,6 @@ jobs:
       - name: Build packages
         run: yarn build
 
-      - name: SSR Test - Next
-        uses: cypress-io/github-action@v2
-        with:
-          project: ./packages/dnd
-          start: yarn workspace dflex-next-dnd dev
-          wait-on: "http://localhost:3000/"
-          browser: chrome
-          headless: true
-          spec: "packages/dnd/cypress/integration/nextjs/**/*.spec.js"
-        env:
-          Cypress_isNextJS: true
-
       - name: Essential Test for DnD React APP - Firefox
         uses: cypress-io/github-action@v2
         with:
@@ -59,7 +47,19 @@ jobs:
           wait-on: "http://localhost:3001/"
           browser: firefox
           headless: true
-          spec: "packages/dnd/cypress/integration/essential/**/*.spec.js"
+          spec: "packages/dnd/cypress/integration/differentHeights/**/*.spec.js"
+
+      - name: SSR Test - Next
+        uses: cypress-io/github-action@v2
+        with:
+          project: ./packages/dnd
+          start: yarn workspace dflex-next-dnd build && yarn workspace dflex-next-dnd start
+          wait-on: "http://localhost:3000/"
+          browser: chrome
+          headless: true
+          spec: "packages/dnd/cypress/integration/nextjs/**/*.spec.js"
+        env:
+          Cypress_isNextJS: true
 
       - name: Extended Test for DnD React APP - Chrome
         uses: cypress-io/github-action@v2
@@ -69,5 +69,8 @@ jobs:
           wait-on: "http://localhost:3001/"
           browser: chrome
           headless: true
+          spec: "packages/dnd/cypress/essential/**/*.spec.js,
+          packages/dnd/cypress/restrictions/**/*.spec.js,
+          packages/dnd/cypress/extended/*.spec.js"
         env:
           Cypress_extended: true
