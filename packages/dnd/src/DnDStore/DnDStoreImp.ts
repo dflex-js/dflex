@@ -158,6 +158,11 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
           if (elmID.length > 0) {
             if (this.registry[elmID].isPaused) {
               this.registry[elmID].resume(this.scrollX, this.scrollY);
+
+              this.assignSiblingsBoundaries(
+                this.registry[elmID].keys.sK,
+                this.registry[elmID].offset!
+              );
             }
 
             let isVisible = !this.isElementHiddenInViewport(
