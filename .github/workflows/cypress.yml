@@ -54,8 +54,10 @@ jobs:
       - name: SSR Test - Next
         uses: cypress-io/github-action@v2
         with:
+          install: false
           project: ./packages/dnd
-          start: yarn workspace dflex-next-dnd build & yarn workspace dflex-next-dnd start
+          start: yarn workspace dflex-next-dnd build
+          start-server: yarn workspace dflex-next-dnd start
           wait-on: "http://localhost:3000/"
           browser: chrome
           headless: true
@@ -66,12 +68,13 @@ jobs:
       - name: Extended Test for DnD React APP - Chrome
         uses: cypress-io/github-action@v2
         with:
+          install: false
           project: ./packages/dnd
           start: yarn workspace dflex-react-dnd start
           wait-on: "http://localhost:3001/"
           browser: chrome
           headless: true
-          spec: "packages/dnd/cypress/integration/differentHeights/**/*.spec.js,
-          packages/dnd/cypress/integration/restrictions/**/*.spec.js,
-          packages/dnd/cypress/integration/extended/*.spec.js"
-
+          spec: |
+            packages/dnd/cypress/integration/differentHeights/**/*.spec.js
+            packages/dnd/cypress/integration/restrictions/**/*.spec.js
+            packages/dnd/cypress/integration/extended/*.spec.js
