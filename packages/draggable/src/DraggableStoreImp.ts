@@ -10,7 +10,7 @@ import AbstractCoreInstance, {
   AbstractCoreInterface,
 } from "@dflex/core-instance";
 
-import type { ElmInstance } from "@dflex/store";
+import type { RegisterInput } from "./types";
 
 class DraggableStoreImp extends Store<AbstractCoreInterface> {
   /**
@@ -18,8 +18,29 @@ class DraggableStoreImp extends Store<AbstractCoreInterface> {
    *
    * @param element -
    */
-  register(element: ElmInstance) {
-    super.register(element, AbstractCoreInstance);
+  register(element: RegisterInput) {
+    if (!element.ref && !element.id) {
+      throw new Error(
+        `DFlex: A valid unique id Or/and HTML element is required.`
+      );
+    }
+
+    /**
+     * If element already exist in the store, then the reattach the reference.
+     */
+    const id = element.id || element.ref?.id;
+
+    if (!id) {
+      throw new Error(`DFlex: A valid and unique id is required.`);
+    }
+
+    const elm = {
+      ...element,
+      id,
+      depth: 0,
+    };
+
+    super.register(elm, AbstractCoreInstance);
   }
 }
 
