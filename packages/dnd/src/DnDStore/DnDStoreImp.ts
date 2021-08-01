@@ -37,6 +37,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   siblingsBoundaries: { [k: string]: BoundariesOffset };
 
+  siblingsOverflow: { [k: string]: boolean };
+
   private isDOM: boolean;
 
   private isInitialized: boolean;
@@ -63,6 +65,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     super();
 
     this.siblingsBoundaries = {};
+    this.siblingsOverflow = {};
+
     this.tracker = new Tracker();
 
     this.initELmIndicator();
@@ -146,7 +150,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     );
   }
 
-  updateRegisteredLayoutIndicators() {
+  private updateRegisteredLayoutIndicators() {
     this.initELmIndicator();
 
     Object.keys(this.DOMGen.branches).forEach((branchKey) => {
@@ -282,7 +286,11 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     super.register(coreInput, CoreInstance);
 
-    if (this.isPauseRegistration) return;
+    if (this.isPauseRegistration) {
+      this.siblingsOverflow[this.registry[id].keys.sK] = true;
+
+      return;
+    }
 
     const {
       currentTop,
