@@ -39,18 +39,18 @@ jobs:
       - name: Build packages
         run: yarn build
 
-      # - name: Essential Features Test for DnD React APP - Firefox
-      #   uses: cypress-io/github-action@v2
-      #   with:
-      #     project: ./packages/dnd
-      #     start: yarn workspace dflex-react-dnd start
-      #     wait-on: "http://localhost:3001/"
-      #     browser: firefox
-      #     headless: true
-      #     spec: "packages/dnd/cypress/integration/essential/**/*.spec.js"
-      #   env:
-      #     Cypress_isNextJS: false
-      #     Cypress_extended: true
+      - name: Essential Features Test for DnD React APP - Firefox
+        uses: cypress-io/github-action@v2
+        with:
+          project: ./packages/dnd
+          start: yarn workspace dflex-react-dnd start
+          wait-on: "http://localhost:3001/"
+          browser: firefox
+          headless: true
+          spec: "packages/dnd/cypress/integration/essential/**/*.spec.js"
+        env:
+          Cypress_isNextJS: false
+          Cypress_extended: true
 
       - name: SSR Test - Testing DnD work with NextJS
         uses: cypress-io/github-action@v2
