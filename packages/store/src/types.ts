@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { Keys, Order } from "@dflex/dom-gen";
+import type { Keys, Order, ELmBranch } from "@dflex/dom-gen";
 
 export type Class<classInstance> = new (...args: any[]) => classInstance;
 
@@ -22,4 +22,15 @@ export interface ElmWithPointerWithProps
   extends Omit<ElmInstanceWithProps, "depth"> {
   order: Order;
   keys: Keys;
+}
+
+export interface StoreInterface<T> {
+  register(
+    element: ElmInstanceWithProps,
+    CustomInstance?: Class<T>,
+    opts?: {}
+  ): void;
+  unregister(id: string): void;
+  destroy(): void;
+  getElmBranchByKey(siblingsKy: string): ELmBranch;
 }

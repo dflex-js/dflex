@@ -10,9 +10,10 @@ import type {
   Class,
   ElmInstanceWithProps,
   ElmWithPointerWithProps,
+  StoreInterface,
 } from "./types";
 
-class Store<T = ElmWithPointerWithProps> {
+class Store<T = ElmWithPointerWithProps> implements StoreInterface<T> {
   registry: {
     [id: string]: T;
   };
@@ -49,6 +50,23 @@ class Store<T = ElmWithPointerWithProps> {
       CustomInstance && typeof CustomInstance.constructor === "function"
         ? new CustomInstance(coreElement, opts)
         : coreElement;
+  }
+
+  unregister(id: string) {
+    delete this.registry[id];
+  }
+
+  destroy() {
+    Object.keys(this.DOMGen.branches).forEach((branchKey) => {
+      // Ignore non array branches.
+      if (Array.isArray(this.DOMGen.branches[branchKey])) {
+        (this.DOMGen.branches[branchKey] as string[]).forEach((elmID) => {
+          this.unregister(elmID);
+        });
+      } else {
+        this.unregister(this.DOMGen.branches[branchKey] as string);
+      }
+    });
   }
 
   /**

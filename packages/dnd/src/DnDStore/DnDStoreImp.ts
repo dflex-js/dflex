@@ -220,10 +220,6 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     }
   }
 
-  unregister(id: string) {
-    delete this.registry[id];
-  }
-
   /**
    *  Register DnD element.
    *
@@ -419,17 +415,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   destroy() {
     this.dispose();
-
-    Object.keys(this.DOMGen.branches).forEach((branchKey) => {
-      // Ignore non array branches.
-      if (Array.isArray(this.DOMGen.branches[branchKey])) {
-        (this.DOMGen.branches[branchKey] as string[]).forEach((elmID) => {
-          this.unregister(elmID);
-        });
-      } else {
-        this.unregister(this.DOMGen.branches[branchKey] as string);
-      }
-    });
+    super.destroy();
   }
 }
 
