@@ -131,7 +131,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.viewportHeight = viewportHeight;
     this.viewportWidth = viewportWidth;
 
-    if (isUpdated) {
+    // Don't update if it's not initialized.
+    if (isUpdated && this.scrollThreshold) {
       this.updateViewportThreshold();
     }
 
