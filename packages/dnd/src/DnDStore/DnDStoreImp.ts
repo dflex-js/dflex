@@ -54,7 +54,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   scrollX!: number;
 
-  private throttle: boolean;
+  hasThrottledFrame: boolean;
 
   private elmIndicator!: {
     currentKy: string;
@@ -87,7 +87,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.isInitialized = false;
     this.isDOM = false;
     this.isPauseRegistration = false;
-    this.throttle = false;
+    this.hasThrottledFrame = false;
 
     // this.scrollThreshold = { x: 0, y: 0 };
     // this.scrollThresholdInputOpt = { horizontal: 0, vertical: 0 };
@@ -143,6 +143,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   }
 
   private setScrollXY() {
+    console.log("file: DnDStoreImp.ts ~ line 146 ~ setScrollXY");
+
     const scrollY = Math.round(
       document.documentElement.scrollTop || window.pageYOffset
     );
@@ -438,13 +440,13 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   ) {
     const isUpdated = this[setter]();
 
-    if (isUpdated && !this.throttle && response) {
+    if (isUpdated && !this.hasThrottledFrame && response) {
       window.requestAnimationFrame(() => {
         this[response]();
-        this.throttle = false;
+        this.hasThrottledFrame = false;
       });
 
-      this.throttle = true;
+      this.hasThrottledFrame = true;
     }
   }
 

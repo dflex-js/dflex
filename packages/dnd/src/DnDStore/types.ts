@@ -56,6 +56,7 @@ export type RegisterInput =
   | (RegisterInputDepth & RegisterInputRef);
 
 export interface DnDStoreInterface {
+  hasThrottledFrame: boolean;
   register(element: ElmInstance, x?: boolean): void;
   seScrollViewportThreshold(
     scrollThresholdInputOpt: ThresholdPercentages
