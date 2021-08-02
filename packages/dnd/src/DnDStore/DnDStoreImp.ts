@@ -17,8 +17,9 @@ import type {
   RegisterInput,
 } from "./types";
 
+import type { ThresholdPercentages } from "../Draggable";
+
 import Tracker from "./Tracker";
-// import Environment from "../Environment";
 
 // function noop() {}
 
@@ -61,6 +62,13 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     exceptionToNextElm: boolean;
   };
 
+  scrollThresholdInputOpt!: ThresholdPercentages;
+
+  scrollThreshold!: {
+    x: number;
+    y: number;
+  };
+
   constructor() {
     super();
 
@@ -78,6 +86,9 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.isDOM = false;
     this.isPauseRegistration = false;
     this.throttle = false;
+
+    // this.scrollThreshold = { x: 0, y: 0 };
+    // this.scrollThresholdInputOpt = { horizontal: 0, vertical: 0 };
   }
 
   private init() {
@@ -90,6 +101,16 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     window.onbeforeunload = this.dispose();
 
     this.isInitialized = true;
+  }
+
+  private updateViewportThreshold() {
+    this.scrollThreshold.x = Math.round(
+      (this.scrollThresholdInputOpt.horizontal * this.viewportWidth) / 100
+    );
+
+    this.scrollThreshold.y = Math.round(
+      (this.scrollThresholdInputOpt.vertical * this.viewportHeight) / 100
+    );
   }
 
   private setViewport() {
@@ -110,6 +131,10 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.viewportHeight = viewportHeight;
     this.viewportWidth = viewportWidth;
 
+    if (isUpdated) {
+      this.updateViewportThreshold();
+    }
+
     return isUpdated;
   }
 
@@ -128,6 +153,19 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.scrollX = scrollX;
 
     return isUpdated;
+  }
+
+  seScrollViewportThreshold(scrollThresholdInputOpt: ThresholdPercentages) {
+    this.scrollThresholdInputOpt = scrollThresholdInputOpt;
+
+    const x = Math.round(
+      (this.scrollThresholdInputOpt.horizontal * this.viewportWidth) / 100
+    );
+    const y = Math.round(
+      (this.scrollThresholdInputOpt.vertical * this.viewportHeight) / 100
+    );
+
+    this.scrollThreshold = { x, y };
   }
 
   private initELmIndicator() {

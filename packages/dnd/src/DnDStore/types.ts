@@ -8,6 +8,7 @@
 import type { CoreInstanceInterface, Offset } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
 import type { ElmInstance } from "@dflex/store";
+import type { ThresholdPercentages } from "../Draggable";
 
 export interface BoundariesOffset {
   top: number;
@@ -56,6 +57,9 @@ export type RegisterInput =
 
 export interface DnDStoreInterface {
   register(element: ElmInstance, x?: boolean): void;
+  seScrollViewportThreshold(
+    scrollThresholdInputOpt: ThresholdPercentages
+  ): void;
   getELmOffsetById(id: string): Offset | undefined;
   getELmTranslateById(id: string): Translate;
   getElmTreeById(id: string): ElmTree;

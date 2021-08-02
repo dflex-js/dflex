@@ -16,7 +16,9 @@ import type {
   TempOffset,
   Threshold,
   TempTranslate,
+  Restrictions,
 } from "./types";
+
 import type { FinalDndOpts } from "../types";
 
 class Draggable extends Base implements DraggableDnDInterface {
@@ -42,12 +44,16 @@ class Draggable extends Base implements DraggableDnDInterface {
 
   private axesFilterNeeded: boolean;
 
+  private restrictions: Restrictions;
+
   constructor(
     id: string,
     initCoordinates: MouseCoordinates,
     opts: FinalDndOpts
   ) {
-    super(id, initCoordinates, opts);
+    const { restrictions, ...rest } = opts;
+
+    super(id, initCoordinates, rest);
 
     const { x, y } = initCoordinates;
 
@@ -85,16 +91,16 @@ class Draggable extends Base implements DraggableDnDInterface {
     this.isOutPositionHorizontally = false;
     this.isOutSiblingsHorizontally = false;
 
-    const $ = this.opts.restrictions;
+    this.restrictions = restrictions;
 
     const siblings = store.getElmSiblingsListById(this.draggedElm.id);
 
     this.axesFilterNeeded =
       siblings !== null &&
-      (!$.allowLeavingFromLeft ||
-        !$.allowLeavingFromRight ||
-        !$.allowLeavingFromTop ||
-        !$.allowLeavingFromBottom);
+      (!restrictions.allowLeavingFromLeft ||
+        !restrictions.allowLeavingFromRight ||
+        !restrictions.allowLeavingFromTop ||
+        !restrictions.allowLeavingFromBottom);
   }
 
   private getLastElmIndex() {
@@ -127,13 +133,13 @@ class Draggable extends Base implements DraggableDnDInterface {
     const { maxLeft, minRight } =
       store.siblingsBoundaries[store.registry[this.draggedElm.id].keys.sK];
 
-    const fx = this.opts.restrictions.allowLeavingFromLeft
-      ? this.opts.restrictions.allowLeavingFromRight
+    const fx = this.restrictions.allowLeavingFromLeft
+      ? this.restrictions.allowLeavingFromRight
         ? x
         : this.axesRightFilter(x, minRight)
       : this.axesLeftFilter(x, maxLeft);
 
-    return this.opts.restrictions.allowLeavingFromRight
+    return this.restrictions.allowLeavingFromRight
       ? fx
       : this.axesRightFilter(fx, minRight);
   }
@@ -155,13 +161,13 @@ class Draggable extends Base implements DraggableDnDInterface {
     const { top, bottom } =
       store.siblingsBoundaries[store.registry[this.draggedElm.id].keys.sK];
 
-    const fy = this.opts.restrictions.allowLeavingFromTop
-      ? this.opts.restrictions.allowLeavingFromBottom
+    const fy = this.restrictions.allowLeavingFromTop
+      ? this.restrictions.allowLeavingFromBottom
         ? y
         : this.axesBottomFilter(y, bottom)
       : this.axesTopFilter(y, top);
 
-    return this.opts.restrictions.allowLeavingFromBottom
+    return this.restrictions.allowLeavingFromBottom
       ? fy
       : this.axesBottomFilter(fy, bottom);
   }
