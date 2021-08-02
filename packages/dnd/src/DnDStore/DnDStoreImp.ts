@@ -69,6 +69,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     y: number;
   };
 
+  documentScrollingElement!: Element;
+
   constructor() {
     super();
 
@@ -89,6 +91,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     // this.scrollThreshold = { x: 0, y: 0 };
     // this.scrollThresholdInputOpt = { horizontal: 0, vertical: 0 };
+    // this.documentScrollingElement = null;
   }
 
   private init() {
@@ -167,6 +170,9 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     );
 
     this.scrollThreshold = { x, y };
+
+    this.documentScrollingElement =
+      document.scrollingElement || document.documentElement;
   }
 
   private initELmIndicator() {

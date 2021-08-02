@@ -7,6 +7,7 @@
 
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 import type { AbstractDraggableInterface } from "@dflex/draggable";
+import type { ScrollOptWithThreshold } from "../types";
 
 export interface ThresholdPercentages {
   vertical: number;
@@ -49,6 +50,7 @@ export interface DraggableBaseInterface
   thresholds: LayoutThresholds;
   isOutActiveParent: boolean;
   thresholdsPercentages: ThresholdPercentages;
+  scroll: ScrollOptWithThreshold;
   setThreshold(
     top: number,
     left: number,

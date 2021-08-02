@@ -86,6 +86,16 @@ class Base
 
     this.scroll = opts.scroll;
 
+    const siblings = store.getElmSiblingsListById(this.draggedElm.id);
+
+    if (siblings === null) {
+      this.scroll.enable = false;
+    }
+
+    if (this.scroll.enable) {
+      store.seScrollViewportThreshold(this.scroll.threshold);
+    }
+
     /**
      * Init max direction for position
      */
