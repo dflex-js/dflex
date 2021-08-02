@@ -37,6 +37,8 @@ class CoreInstance
 
   isVisible: boolean;
 
+  hasToTransform!: boolean;
+
   constructor(elementWithPointer: CoreInput) {
     const { order, keys, scrollX, scrollY, ...element } = elementWithPointer;
 
@@ -83,6 +85,8 @@ class CoreInstance
 
     this.currentTop = this.offset.top;
     this.currentLeft = this.offset.left;
+
+    this.hasToTransform = false;
   }
 
   resume(scrollX: number, scrollY: number) {
@@ -95,7 +99,14 @@ class CoreInstance
   }
 
   changeVisibility(isVisible: boolean) {
+    if (isVisible === this.isVisible) return;
+
     this.isVisible = isVisible;
+
+    if (this.hasToTransform && this.isVisible) {
+      this.transformElm();
+      this.hasToTransform = false;
+    }
   }
 
   private updateCurrentIndicators(topSpace: number, leftSpace: number) {
@@ -110,6 +121,8 @@ class CoreInstance
      */
     this.currentTop = top + this.translateY!;
     this.currentLeft = left + this.translateX!;
+
+    if (!this.isVisible) this.hasToTransform = true;
   }
 
   transformElm() {
