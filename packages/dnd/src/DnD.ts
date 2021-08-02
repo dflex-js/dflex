@@ -11,26 +11,7 @@ import Draggable from "./Draggable";
 import Droppable from "./Droppable";
 
 import type { DndOpts, FinalDndOpts } from "./types";
-
-const defaultOpts: DndOpts = Object.freeze({
-  thresholds: {
-    vertical: 60,
-    horizontal: 60,
-  },
-
-  restrictions: {
-    allowLeavingFromTop: true,
-    allowLeavingFromBottom: true,
-    allowLeavingFromLeft: true,
-    allowLeavingFromRight: true,
-  },
-
-  scroll: {
-    enable: true,
-    speed: 10,
-    threshold: 50,
-  },
-});
+import { extractOpts, defaultOpts } from "./utils/extractOpts";
 
 class DnD extends Droppable {
   /**
@@ -44,20 +25,7 @@ class DnD extends Droppable {
     initCoordinates: MouseCoordinates,
     opts: DndOpts = defaultOpts
   ) {
-    const options = { ...opts };
-
-    (Object.keys(defaultOpts) as Array<keyof typeof defaultOpts>).forEach(
-      (props) => {
-        if (!options[props]) {
-          options[props] = defaultOpts[props];
-        } else {
-          options[props] = {
-            ...defaultOpts[props],
-            ...options[props],
-          };
-        }
-      }
-    );
+    const options = extractOpts(opts);
 
     const draggable = new Draggable(
       id,
