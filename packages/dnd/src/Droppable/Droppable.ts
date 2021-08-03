@@ -34,6 +34,8 @@ class Droppable {
 
   private siblingsEmptyElmIndex: number;
 
+  private scrollAnimationFrame: number | null;
+
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
 
@@ -56,6 +58,8 @@ class Droppable {
     this.updateLastElmOffset();
 
     this.siblingsEmptyElmIndex = -1;
+
+    this.scrollAnimationFrame = null;
   }
 
   /**
@@ -320,17 +324,21 @@ class Droppable {
     return droppableIndex;
   }
 
+  protected isIDEligible(id: string) {
+    return (
+      id.length > 0 &&
+      id !== this.draggable.draggedElm.id &&
+      store.registry[id] &&
+      store.registry[id].ref !== null
+    );
+  }
+
   /**
    *
    * @param id -
    */
-  protected isIDEligible2Move(id: string) {
-    return (
-      id.length > 0 &&
-      id !== this.draggable.draggedElm.id &&
-      store.registry[id].ref !== null &&
-      store.registry[id].isVisible
-    );
+  private isIDEligible2Move(id: string) {
+    return this.isIDEligible(id) && store.registry[id].isVisible;
   }
 
   private switchElement() {
@@ -530,6 +538,28 @@ class Droppable {
    */
   dragAt(x: number, y: number) {
     const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
+
+    if (
+      this.draggable.scroll.enable &&
+      this.scrollAnimationFrame === null &&
+      !store.hasThrottledFrame &&
+      (x >= store.scrollThreshold.x || y >= store.scrollThreshold.y)
+    ) {
+      store.hasThrottledFrame = true;
+      this.scrollAnimationFrame = requestAnimationFrame(() => {
+        const direction = this.draggable.isMovingDown ? 1 : -1;
+
+        store.documentScrollingElement.scrollTop +=
+          direction * this.draggable.scroll.speed;
+
+        this.draggable.dragAt(x, store.documentScrollingElement.scrollTop + y);
+
+        this.scrollAnimationFrame = null;
+        store.hasThrottledFrame = false;
+      });
+
+      return;
+    }
 
     this.draggable.dragAt(x, y);
 
