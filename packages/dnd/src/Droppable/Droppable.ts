@@ -329,7 +329,8 @@ class Droppable {
       id.length > 0 &&
       id !== this.draggable.draggedElm.id &&
       store.registry[id] &&
-      store.registry[id].ref !== null
+      store.registry[id].ref !== null &&
+      !store.registry[id].isPaused
     );
   }
 
@@ -338,7 +339,7 @@ class Droppable {
    * @param id -
    */
   private isIDEligible2Move(id: string) {
-    return this.isIDEligible(id) && store.registry[id].isVisible;
+    return this.isIDEligible(id);
   }
 
   private switchElement() {
