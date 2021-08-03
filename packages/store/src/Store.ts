@@ -76,7 +76,9 @@ class Store<T = ElmWithPointerWithProps> implements StoreInterface<T> {
       }
     });
 
+    // TODO: Add reset method to DOM Gen.
     this.DOMGen.branches = {};
+    this.DOMGen.indicator = {};
   }
 
   /**
