@@ -27,7 +27,7 @@ class EndDroppable extends Droppable {
   private undoElmTranslate(lst: ELmBranch, i: number) {
     const elmID = lst[i];
 
-    if (this.isIDEligible(elmID)) {
+    if (this.isIDEligible2Undo(elmID)) {
       const element = store.registry[elmID];
 
       /**

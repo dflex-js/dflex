@@ -329,8 +329,7 @@ class Droppable {
       id.length > 0 &&
       id !== this.draggable.draggedElm.id &&
       store.registry[id] &&
-      store.registry[id].ref !== null &&
-      !store.registry[id].isPaused
+      store.registry[id].ref !== null
     );
   }
 
@@ -339,7 +338,19 @@ class Droppable {
    * @param id -
    */
   private isIDEligible2Move(id: string) {
-    return this.isIDEligible(id);
+    if (this.isIDEligible(id)) {
+      // Won't trigger any resume if auto-scroll is disabled.
+      if (this.draggable.scroll.enable && store.registry[id].isPaused) {
+        store.registry[id].resume(store.scrollX, store.scrollY);
+      }
+
+      return true;
+    }
+    return false;
+  }
+
+  protected isIDEligible2Undo(id: string) {
+    return this.isIDEligible(id) && !store.registry[id].isPaused;
   }
 
   private switchElement() {
