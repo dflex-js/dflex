@@ -202,7 +202,11 @@ class CoreInstance
    * @param topSpace -
    * @param operationID  - Only if moving to a new position.
    */
-  private seTranslate(topSpace: number, operationID?: string) {
+  private seTranslate(
+    topSpace: number,
+    operationID?: string,
+    isForceTransform = false
+  ) {
     if (operationID) {
       this.prevTranslateY!.push({
         ID: operationID,
@@ -211,6 +215,12 @@ class CoreInstance
     }
 
     this.updateCurrentIndicators(topSpace, 0);
+
+    if (!isForceTransform && !this.isVisible) {
+      this.hasToTransform = true;
+
+      return;
+    }
 
     this.transformElm();
   }
@@ -277,7 +287,7 @@ class CoreInstance
 
     const increment = topSpace > 0 ? 1 : -1;
 
-    this.seTranslate(topSpace);
+    this.seTranslate(topSpace, undefined, true);
 
     const { newIndex } = this.updateOrderIndexing(increment);
 
