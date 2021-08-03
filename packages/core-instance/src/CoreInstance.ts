@@ -223,6 +223,7 @@ class CoreInstance
     }
 
     this.transformElm();
+    this.hasToTransform = false;
   }
 
   /**
@@ -287,7 +288,8 @@ class CoreInstance
 
     const increment = topSpace > 0 ? 1 : -1;
 
-    this.seTranslate(topSpace, undefined, true);
+    // Don't update UI if it's zero and wasn't transformed.
+    this.seTranslate(topSpace, undefined, translateY !== 0 && this.isVisible);
 
     const { newIndex } = this.updateOrderIndexing(increment);
 
