@@ -143,8 +143,6 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   }
 
   private setScrollXY() {
-    console.log("file: DnDStoreImp.ts ~ line 146 ~ setScrollXY");
-
     const scrollY = Math.round(
       document.documentElement.scrollTop || window.pageYOffset
     );
@@ -392,7 +390,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   getElmSiblingsListById(id: string) {
     const siblings = this.getElmSiblingsById(id);
 
-    return Array.isArray(siblings) ? siblings : null;
+    return Array.isArray(siblings) && siblings.length > 0 ? siblings : null;
   }
 
   /**
