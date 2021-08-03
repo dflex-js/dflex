@@ -27,8 +27,9 @@ class EndDroppable extends Droppable {
   private undoElmTranslate(lst: ELmBranch, i: number) {
     const elmID = lst[i];
 
-    if (this.isIDEligible2Move(elmID)) {
+    if (this.isIDEligible(elmID)) {
       const element = store.registry[elmID];
+
       /**
        * Note: rolling back won't affect order array. It only deals with element
        * itself and totally ignore any instance related to store.
