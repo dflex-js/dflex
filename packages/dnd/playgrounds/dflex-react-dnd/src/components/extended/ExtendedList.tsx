@@ -25,7 +25,11 @@ const ExtendedList = () => {
       <div className={s.extended}>
         <ul>
           {tasks.map(({ task, id, key }) => (
-            <DnDComponent id={id} key={key}>
+            <DnDComponent
+              id={id}
+              key={key}
+              // opts={{ scroll: { enable: false } }}
+            >
               {task}
             </DnDComponent>
           ))}
