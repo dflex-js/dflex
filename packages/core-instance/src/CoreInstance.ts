@@ -212,7 +212,7 @@ class CoreInstance
 
     this.updateCurrentIndicators(topSpace, 0);
 
-    if (this.isVisible) this.transformElm();
+    this.transformElm();
   }
 
   /**
