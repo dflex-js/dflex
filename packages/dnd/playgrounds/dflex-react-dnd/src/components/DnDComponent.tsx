@@ -10,6 +10,7 @@
 import React from "react";
 
 import { store, DnD } from "@dflex/dnd";
+import type { DndOpts } from "@dflex/dnd";
 
 // shared dragged event
 let dndEvent: DnD | null;
@@ -21,6 +22,7 @@ interface Props {
   className?: string;
   depth?: number;
   children: React.ReactNode;
+  opts?: DndOpts;
 }
 
 export const TodoItem = ({
@@ -29,6 +31,7 @@ export const TodoItem = ({
   style,
   className,
   children,
+  opts,
   depth = 0,
 }: Props) => {
   const taskRef = React.useRef() as React.MutableRefObject<HTMLLIElement>;
@@ -74,7 +77,7 @@ export const TodoItem = ({
         document.addEventListener("mousemove", onMouseMove);
         // document.addEventListener("scroll", onMouseScroll);
 
-        dndEvent = new DnD(id, { x: clientX, y: clientY });
+        dndEvent = new DnD(id, { x: clientX, y: clientY }, opts);
       }
     }
   };
@@ -102,7 +105,7 @@ export const TodoItem = ({
     const { clientX, clientY } = e.touches[0];
 
     if (id) {
-      dndEvent = new DnD(id, { x: clientX, y: clientY });
+      dndEvent = new DnD(id, { x: clientX, y: clientY }, opts);
 
       document.addEventListener("touchend", onTouchEnd);
       document.addEventListener("touchmove", onTouchMove);
