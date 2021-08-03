@@ -280,8 +280,8 @@ class CoreInstance
     ) {
       return;
     }
-    // @ts-ignore
-    const { translateY } = this.prevTranslateY.pop();
+
+    const { translateY } = (this.prevTranslateY as TransitionHistory).pop()!;
 
     const topSpace = translateY - this.translateY!;
 
