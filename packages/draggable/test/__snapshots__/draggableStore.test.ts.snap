@@ -5,6 +5,7 @@ Object {
   "id-0": CoreInstance {
     "currentLeft": NaN,
     "currentTop": NaN,
+    "hasToTransform": false,
     "id": "id-0",
     "isInitialized": true,
     "isPaused": false,

@@ -15,10 +15,12 @@ import type {
   BoundariesOffset,
   DnDStoreInterface,
   RegisterInput,
+  ScrollThreshold,
 } from "./types";
 
+import type { ThresholdPercentages } from "../Draggable";
+
 import Tracker from "./Tracker";
-// import Environment from "../Environment";
 
 // function noop() {}
 
@@ -35,7 +37,9 @@ function canUseDOM() {
 class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   tracker: Tracker;
 
-  siblingsBoundaries: { [k: string]: BoundariesOffset };
+  siblingsBoundaries: { [siblingKey: string]: BoundariesOffset };
+
+  siblingsOverflow: { [siblingKey: string]: boolean };
 
   private isDOM: boolean;
 
@@ -51,7 +55,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   scrollX!: number;
 
-  private throttle: boolean;
+  hasThrottledFrame: boolean;
 
   private elmIndicator!: {
     currentKy: string;
@@ -59,10 +63,18 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     exceptionToNextElm: boolean;
   };
 
+  scrollThresholdInputOpt!: ThresholdPercentages;
+
+  scrollThreshold!: ScrollThreshold;
+
+  documentScrollingElement!: Element;
+
   constructor() {
     super();
 
     this.siblingsBoundaries = {};
+    this.siblingsOverflow = {};
+
     this.tracker = new Tracker();
 
     this.initELmIndicator();
@@ -73,7 +85,11 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.isInitialized = false;
     this.isDOM = false;
     this.isPauseRegistration = false;
-    this.throttle = false;
+    this.hasThrottledFrame = false;
+
+    // this.scrollThreshold = { x: 0, y: 0 };
+    // this.scrollThresholdInputOpt = { horizontal: 0, vertical: 0 };
+    // this.documentScrollingElement = null;
   }
 
   private init() {
@@ -86,6 +102,24 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     window.onbeforeunload = this.dispose();
 
     this.isInitialized = true;
+  }
+
+  private updateViewportThreshold() {
+    this.scrollThreshold.maxX = Math.round(
+      (this.scrollThresholdInputOpt.horizontal * this.viewportWidth) / 100
+    );
+
+    this.scrollThreshold.minX = Math.round(
+      this.scrollThresholdInputOpt.horizontal / 100
+    );
+
+    this.scrollThreshold.maxY = Math.round(
+      (this.scrollThresholdInputOpt.vertical * this.viewportHeight) / 100
+    );
+
+    this.scrollThreshold.minY = Math.round(
+      this.scrollThresholdInputOpt.vertical / 100
+    );
   }
 
   private setViewport() {
@@ -106,6 +140,11 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.viewportHeight = viewportHeight;
     this.viewportWidth = viewportWidth;
 
+    // Don't update if it's not initialized.
+    if (isUpdated && this.scrollThreshold) {
+      this.updateViewportThreshold();
+    }
+
     return isUpdated;
   }
 
@@ -124,6 +163,17 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.scrollX = scrollX;
 
     return isUpdated;
+  }
+
+  seScrollViewportThreshold(scrollThresholdInputOpt: ThresholdPercentages) {
+    this.scrollThresholdInputOpt = scrollThresholdInputOpt;
+
+    this.scrollThreshold = { minX: 0, maxX: 0, maxY: 0, minY: 0 };
+
+    this.updateViewportThreshold();
+
+    this.documentScrollingElement =
+      document.scrollingElement || document.documentElement;
   }
 
   private initELmIndicator() {
@@ -146,7 +196,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     );
   }
 
-  updateRegisteredLayoutIndicators() {
+  private updateRegisteredLayoutIndicators() {
     this.initELmIndicator();
 
     Object.keys(this.DOMGen.branches).forEach((branchKey) => {
@@ -158,6 +208,11 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
           if (elmID.length > 0) {
             if (this.registry[elmID].isPaused) {
               this.registry[elmID].resume(this.scrollX, this.scrollY);
+
+              this.assignSiblingsBoundaries(
+                this.registry[elmID].keys.sK,
+                this.registry[elmID].offset!
+              );
             }
 
             let isVisible = !this.isElementHiddenInViewport(
@@ -277,7 +332,11 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     super.register(coreInput, CoreInstance);
 
-    if (this.isPauseRegistration) return;
+    if (this.isPauseRegistration) {
+      this.siblingsOverflow[this.registry[id].keys.sK] = true;
+
+      return;
+    }
 
     const {
       currentTop,
@@ -320,6 +379,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   getElmSiblingsById(id: string) {
     const element = this.registry[id];
 
+    if (!element) return null;
+
     const {
       keys: { sK },
     } = element;
@@ -332,7 +393,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   getElmSiblingsListById(id: string) {
     const siblings = this.getElmSiblingsById(id);
 
-    return Array.isArray(siblings) ? siblings : null;
+    return Array.isArray(siblings) && siblings.length > 0 ? siblings : null;
   }
 
   /**
@@ -380,13 +441,13 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   ) {
     const isUpdated = this[setter]();
 
-    if (isUpdated && !this.throttle && response) {
+    if (isUpdated && !this.hasThrottledFrame && response) {
       window.requestAnimationFrame(() => {
         this[response]();
-        this.throttle = false;
+        this.hasThrottledFrame = false;
       });
 
-      this.throttle = true;
+      this.hasThrottledFrame = true;
     }
   }
 

@@ -37,6 +37,8 @@ class CoreInstance
 
   isVisible: boolean;
 
+  hasToTransform!: boolean;
+
   constructor(elementWithPointer: CoreInput) {
     const { order, keys, scrollX, scrollY, ...element } = elementWithPointer;
 
@@ -83,6 +85,8 @@ class CoreInstance
 
     this.currentTop = this.offset.top;
     this.currentLeft = this.offset.left;
+
+    this.hasToTransform = false;
   }
 
   resume(scrollX: number, scrollY: number) {
@@ -95,7 +99,14 @@ class CoreInstance
   }
 
   changeVisibility(isVisible: boolean) {
+    if (isVisible === this.isVisible) return;
+
     this.isVisible = isVisible;
+
+    if (this.hasToTransform && this.isVisible) {
+      this.transformElm();
+      this.hasToTransform = false;
+    }
   }
 
   private updateCurrentIndicators(topSpace: number, leftSpace: number) {
@@ -110,6 +121,8 @@ class CoreInstance
      */
     this.currentTop = top + this.translateY!;
     this.currentLeft = left + this.translateX!;
+
+    if (!this.isVisible) this.hasToTransform = true;
   }
 
   transformElm() {
@@ -189,7 +202,11 @@ class CoreInstance
    * @param topSpace -
    * @param operationID  - Only if moving to a new position.
    */
-  private seTranslate(topSpace: number, operationID?: string) {
+  private seTranslate(
+    topSpace: number,
+    operationID?: string,
+    isForceTransform = false
+  ) {
     if (operationID) {
       this.prevTranslateY!.push({
         ID: operationID,
@@ -199,7 +216,15 @@ class CoreInstance
 
     this.updateCurrentIndicators(topSpace, 0);
 
-    if (this.isVisible) this.transformElm();
+    if (!isForceTransform && !this.isVisible) {
+      this.hasToTransform = true;
+
+      return;
+    }
+
+    this.transformElm();
+
+    this.hasToTransform = false;
   }
 
   /**
@@ -250,27 +275,28 @@ class CoreInstance
    *
    * @param operationID -
    */
-  rollYBack(operationID: string) {
+  rollYBack(operationID: string, isForceTransform: boolean) {
     if (
       this.prevTranslateY!.length === 0 ||
       this.prevTranslateY![this.prevTranslateY!.length - 1].ID !== operationID
     ) {
       return;
     }
-    // @ts-ignore
-    const { translateY } = this.prevTranslateY.pop();
+
+    const { translateY } = (this.prevTranslateY as TransitionHistory).pop()!;
 
     const topSpace = translateY - this.translateY!;
 
     const increment = topSpace > 0 ? 1 : -1;
 
-    this.seTranslate(topSpace);
+    // Don't update UI if it's zero and wasn't transformed.
+    this.seTranslate(topSpace, undefined, isForceTransform);
 
     const { newIndex } = this.updateOrderIndexing(increment);
 
     this.updateDataset(newIndex);
 
-    this.rollYBack(operationID);
+    this.rollYBack(operationID, isForceTransform);
   }
 }
 

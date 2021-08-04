@@ -17,7 +17,7 @@ import type {
   ThresholdPercentages,
   LayoutThresholds,
 } from "./types";
-import { FinalDndOpts } from "../types";
+import { FinalDndOpts, ScrollOptWithThreshold } from "../types";
 
 /**
  * Base element.
@@ -32,8 +32,6 @@ class Base
 
   operationID: string;
 
-  opts: FinalDndOpts;
-
   activeParent!: CoreInstanceInterface | null;
 
   isOutActiveParent!: boolean;
@@ -44,18 +42,22 @@ class Base
 
   thresholdsPercentages: ThresholdPercentages;
 
+  scroll: ScrollOptWithThreshold;
+
   constructor(
     id: string,
     initCoordinates: MouseCoordinates,
-    opts: FinalDndOpts
+    opts: Omit<FinalDndOpts, "restrictions">
   ) {
     const { element, parent } = store.getElmTreeById(id);
+
+    if (element.isPaused) {
+      element.resume(store.scrollX, store.scrollY);
+    }
 
     super(element, initCoordinates);
 
     const { order } = element;
-
-    this.opts = opts;
 
     /**
      * Initialize temp index that refers to element new position after
@@ -79,12 +81,26 @@ class Base
 
     this.thresholdsPercentages = {
       vertical: Math.round(
-        (this.opts.thresholds.vertical * this.draggedElm.offset!.height) / 100
+        (opts.threshold.vertical * this.draggedElm.offset!.height) / 100
       ),
       horizontal: Math.round(
-        (this.opts.thresholds.horizontal * this.draggedElm.offset!.width) / 100
+        (opts.threshold.horizontal * this.draggedElm.offset!.width) / 100
       ),
     };
+
+    this.scroll = opts.scroll;
+
+    const siblings = store.getElmSiblingsListById(this.draggedElm.id);
+
+    const { sK } = store.registry[this.draggedElm.id].keys;
+
+    if (siblings === null || !store.siblingsOverflow[sK]) {
+      this.scroll.enable = false;
+    }
+
+    if (this.scroll.enable) {
+      store.seScrollViewportThreshold(this.scroll.threshold);
+    }
 
     /**
      * Init max direction for position
@@ -94,8 +110,7 @@ class Base
       this.draggedElm.currentLeft!
     );
 
-    const siblingsBoundaries =
-      store.siblingsBoundaries[store.registry[this.draggedElm.id].keys.sK];
+    const siblingsBoundaries = store.siblingsBoundaries[sK];
 
     this.setThreshold(
       siblingsBoundaries.top,
@@ -194,7 +209,7 @@ class Base
     $.maxRight = left + horizontal;
   }
 
-  isParenOverflowX() {
+  private isParenOverflowX() {
     const parentBottom =
       this.activeParent!.offset!.top + this.activeParent!.offset!.height;
 
@@ -220,12 +235,6 @@ class Base
      * transformed and which is not.
      */
     this.isOutActiveParent = false;
-
-    if (this.opts.scroll.enable) {
-      this.opts.scroll.enable = this.opts.scroll.enable
-        ? this.isParenOverflowX()
-        : false;
-    }
   }
 }
 
