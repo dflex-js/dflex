@@ -9,7 +9,7 @@ Object {
     "allowLeavingFromTop": true,
   },
   "scroll": Object {
-    "enable": true,
+    "enable": false,
     "speed": 10,
     "threshold": Object {
       "horizontal": 9000,
@@ -32,7 +32,7 @@ Object {
     "allowLeavingFromTop": true,
   },
   "scroll": Object {
-    "enable": true,
+    "enable": false,
     "speed": 10,
     "threshold": Object {
       "horizontal": 75,
@@ -55,7 +55,7 @@ Object {
     "allowLeavingFromTop": true,
   },
   "scroll": Object {
-    "enable": true,
+    "enable": false,
     "speed": 10,
     "threshold": Object {
       "horizontal": 75,
@@ -78,7 +78,7 @@ Object {
     "allowLeavingFromTop": true,
   },
   "scroll": Object {
-    "enable": true,
+    "enable": false,
     "speed": 10,
     "threshold": Object {
       "horizontal": 1000,

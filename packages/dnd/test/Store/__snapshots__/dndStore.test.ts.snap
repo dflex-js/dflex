@@ -5,6 +5,7 @@ Object {
   "id-1": CoreInstance {
     "currentLeft": 450,
     "currentTop": 114,
+    "hasToTransform": false,
     "id": "id-1",
     "isInitialized": true,
     "isPaused": false,
@@ -34,6 +35,7 @@ Object {
   "id-2": CoreInstance {
     "currentLeft": 450,
     "currentTop": 172,
+    "hasToTransform": false,
     "id": "id-2",
     "isInitialized": true,
     "isPaused": false,
@@ -63,6 +65,7 @@ Object {
   "id-3": CoreInstance {
     "currentLeft": 450,
     "currentTop": 230,
+    "hasToTransform": false,
     "id": "id-3",
     "isInitialized": true,
     "isPaused": false,
@@ -92,6 +95,7 @@ Object {
   "id-4": CoreInstance {
     "currentLeft": 450,
     "currentTop": 288,
+    "hasToTransform": false,
     "id": "id-4",
     "isInitialized": true,
     "isPaused": false,
@@ -135,6 +139,7 @@ Object {
   "element": CoreInstance {
     "currentLeft": 450,
     "currentTop": 114,
+    "hasToTransform": false,
     "id": "id-1",
     "isInitialized": true,
     "isPaused": false,
