@@ -51,6 +51,10 @@ class Base
   ) {
     const { element, parent } = store.getElmTreeById(id);
 
+    if (element.isPaused) {
+      element.resume(store.scrollX, store.scrollY);
+    }
+
     super(element, initCoordinates);
 
     const { order } = element;
