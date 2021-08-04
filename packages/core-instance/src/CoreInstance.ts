@@ -223,6 +223,7 @@ class CoreInstance
     }
 
     this.transformElm();
+
     this.hasToTransform = false;
   }
 
@@ -274,7 +275,7 @@ class CoreInstance
    *
    * @param operationID -
    */
-  rollYBack(operationID: string) {
+  rollYBack(operationID: string, isForceTransform: boolean) {
     if (
       this.prevTranslateY!.length === 0 ||
       this.prevTranslateY![this.prevTranslateY!.length - 1].ID !== operationID
@@ -289,13 +290,13 @@ class CoreInstance
     const increment = topSpace > 0 ? 1 : -1;
 
     // Don't update UI if it's zero and wasn't transformed.
-    this.seTranslate(topSpace, undefined, translateY !== 0 && this.isVisible);
+    this.seTranslate(topSpace, undefined, isForceTransform);
 
     const { newIndex } = this.updateOrderIndexing(increment);
 
     this.updateDataset(newIndex);
 
-    this.rollYBack(operationID);
+    this.rollYBack(operationID, isForceTransform);
   }
 }
 
