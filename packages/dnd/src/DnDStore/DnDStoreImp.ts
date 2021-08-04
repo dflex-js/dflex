@@ -15,6 +15,7 @@ import type {
   BoundariesOffset,
   DnDStoreInterface,
   RegisterInput,
+  ScrollThreshold,
 } from "./types";
 
 import type { ThresholdPercentages } from "../Draggable";
@@ -64,10 +65,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   scrollThresholdInputOpt!: ThresholdPercentages;
 
-  scrollThreshold!: {
-    x: number;
-    y: number;
-  };
+  scrollThreshold!: ScrollThreshold;
 
   documentScrollingElement!: Element;
 
@@ -107,12 +105,20 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   }
 
   private updateViewportThreshold() {
-    this.scrollThreshold.x = Math.round(
+    this.scrollThreshold.maxX = Math.round(
       (this.scrollThresholdInputOpt.horizontal * this.viewportWidth) / 100
     );
 
-    this.scrollThreshold.y = Math.round(
+    this.scrollThreshold.minX = Math.round(
+      this.scrollThresholdInputOpt.horizontal / 100
+    );
+
+    this.scrollThreshold.maxY = Math.round(
       (this.scrollThresholdInputOpt.vertical * this.viewportHeight) / 100
+    );
+
+    this.scrollThreshold.minY = Math.round(
+      this.scrollThresholdInputOpt.vertical / 100
     );
   }
 
@@ -162,14 +168,9 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   seScrollViewportThreshold(scrollThresholdInputOpt: ThresholdPercentages) {
     this.scrollThresholdInputOpt = scrollThresholdInputOpt;
 
-    const x = Math.round(
-      (this.scrollThresholdInputOpt.horizontal * this.viewportWidth) / 100
-    );
-    const y = Math.round(
-      (this.scrollThresholdInputOpt.vertical * this.viewportHeight) / 100
-    );
+    this.scrollThreshold = { minX: 0, maxX: 0, maxY: 0, minY: 0 };
 
-    this.scrollThreshold = { x, y };
+    this.updateViewportThreshold();
 
     this.documentScrollingElement =
       document.scrollingElement || document.documentElement;
@@ -377,6 +378,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   getElmSiblingsById(id: string) {
     const element = this.registry[id];
+
+    if (!element) return null;
 
     const {
       keys: { sK },

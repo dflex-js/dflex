@@ -55,8 +55,16 @@ export type RegisterInput =
   | (RegisterInputDepth & RegisterInputID)
   | (RegisterInputDepth & RegisterInputRef);
 
+export interface ScrollThreshold {
+  maxX: number;
+  maxY: number;
+  minX: number;
+  minY: number;
+}
+
 export interface DnDStoreInterface {
   hasThrottledFrame: boolean;
+  scrollThreshold: ScrollThreshold;
   register(element: ElmInstance, x?: boolean): void;
   seScrollViewportThreshold(
     scrollThresholdInputOpt: ThresholdPercentages
@@ -64,6 +72,6 @@ export interface DnDStoreInterface {
   getELmOffsetById(id: string): Offset | undefined;
   getELmTranslateById(id: string): Translate;
   getElmTreeById(id: string): ElmTree;
-  getElmSiblingsById(id: string): ELmBranch;
+  getElmSiblingsById(id: string): ELmBranch | null;
   getElmSiblingsListById(id: string): string[] | null;
 }
