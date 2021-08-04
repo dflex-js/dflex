@@ -4,6 +4,7 @@
  * This source code is licensed under the AGPL3.0 license found in the
  * LICENSE file in the root directory of this source tree.
  */
+/* eslint-disable  */
 import type { ELmBranch } from "@dflex/dom-gen";
 
 import store from "../DnDStore";
@@ -19,33 +20,71 @@ class EndDroppable extends Droppable {
     this.spliceAt = -1;
   }
 
+  private isIDEligible2Undo(id: string) {
+    return this.isIDEligible(id) && !store.registry[id].isPaused;
+  }
+
   /**
    *
    * @param lst -
    * @param i -
    */
-  private undoElmTranslate(lst: ELmBranch, i: number) {
+  private undoElmTranslate(
+    lst: ELmBranch,
+    i: number,
+    prevVisibility: boolean,
+    listVisibility: boolean
+  ) {
     const elmID = lst[i];
 
     if (this.isIDEligible2Undo(elmID)) {
       const element = store.registry[elmID];
 
+      const { isVisible } = element;
+
+      if (i === 0) {
+        // Init prev visibility flag.
+        prevVisibility = isVisible;
+      }
+
+      if (prevVisibility !== isVisible) {
+        listVisibility = isVisible;
+      }
+
       /**
        * Note: rolling back won't affect order array. It only deals with element
        * itself and totally ignore any instance related to store.
        */
-      element.rollYBack(this.draggable.operationID);
+      element.rollYBack(this.draggable.operationID, listVisibility);
+
       this.draggable.numberOfElementsTransformed -= 1;
+
+      prevVisibility = isVisible;
     } else {
       this.spliceAt = i;
     }
+
+    return { prevVisibility, listVisibility };
+  }
+
+  spliceList(from: number, lst: string[]) {
+    lst.splice(this.spliceAt, 1);
+    lst.splice(from, 0, this.draggable.draggedElm.id);
   }
 
   private loopAscWithAnimationFrame(from: number, lst: string[]) {
     let i = from;
 
+    let prevVisibility = false;
+    let listVisibility = true;
+
     const run = () => {
-      this.undoElmTranslate(lst, i);
+      ({ prevVisibility, listVisibility } = this.undoElmTranslate(
+        lst,
+        i,
+        prevVisibility,
+        listVisibility
+      ));
       i += 1;
 
       if (i < lst.length) {
@@ -54,13 +93,23 @@ class EndDroppable extends Droppable {
     };
 
     requestAnimationFrame(run);
+
+    this.spliceList(from, lst);
   }
 
   private loopDesWithAnimationFrame(from: number, lst: string[]) {
     let i = from;
 
+    let prevVisibility = false;
+    let listVisibility = true;
+
     const run = () => {
-      this.undoElmTranslate(lst, i);
+      ({ prevVisibility, listVisibility } = this.undoElmTranslate(
+        lst,
+        i,
+        prevVisibility,
+        listVisibility
+      ));
       i -= 1;
 
       if (i >= 0) {
@@ -69,6 +118,8 @@ class EndDroppable extends Droppable {
     };
 
     requestAnimationFrame(run);
+
+    this.spliceList(from, lst);
   }
 
   /**
@@ -78,7 +129,6 @@ class EndDroppable extends Droppable {
   private undoList(lst: string[]) {
     const {
       order: { self: from },
-      id: draggedID,
     } = this.draggable.draggedElm;
 
     if (this.isListLocked || this.draggable.isMovingDown) {
@@ -90,9 +140,6 @@ class EndDroppable extends Droppable {
       const actualFrom = from === 0 ? lst.length - 1 : from;
       this.loopDesWithAnimationFrame(actualFrom, lst);
     }
-
-    lst.splice(this.spliceAt, 1);
-    lst.splice(from, 0, draggedID);
   }
 
   private verify(lst: string[]) {

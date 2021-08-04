@@ -349,10 +349,6 @@ class Droppable {
     return false;
   }
 
-  protected isIDEligible2Undo(id: string) {
-    return this.isIDEligible(id) && !store.registry[id].isPaused;
-  }
-
   private switchElement() {
     const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
 
@@ -551,11 +547,13 @@ class Droppable {
   dragAt(x: number, y: number) {
     const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
 
+    // console.log(x, store.scrollThreshold.maxX);
+
     if (
       this.draggable.scroll.enable &&
       this.scrollAnimationFrame === null &&
       !store.hasThrottledFrame &&
-      (x >= store.scrollThreshold.x || y >= store.scrollThreshold.y)
+      (x >= store.scrollThreshold.maxX || y >= store.scrollThreshold.maxY)
     ) {
       store.hasThrottledFrame = true;
       this.scrollAnimationFrame = requestAnimationFrame(() => {
