@@ -92,7 +92,9 @@ class Base
 
     const siblings = store.getElmSiblingsListById(this.draggedElm.id);
 
-    if (siblings === null) {
+    const { sK } = store.registry[this.draggedElm.id].keys;
+
+    if (siblings === null || !store.siblingsOverflow[sK]) {
       this.scroll.enable = false;
     }
 
@@ -108,8 +110,7 @@ class Base
       this.draggedElm.currentLeft!
     );
 
-    const siblingsBoundaries =
-      store.siblingsBoundaries[store.registry[this.draggedElm.id].keys.sK];
+    const siblingsBoundaries = store.siblingsBoundaries[sK];
 
     this.setThreshold(
       siblingsBoundaries.top,

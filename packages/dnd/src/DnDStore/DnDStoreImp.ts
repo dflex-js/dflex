@@ -37,9 +37,9 @@ function canUseDOM() {
 class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   tracker: Tracker;
 
-  siblingsBoundaries: { [k: string]: BoundariesOffset };
+  siblingsBoundaries: { [siblingKey: string]: BoundariesOffset };
 
-  siblingsOverflow: { [k: string]: boolean };
+  siblingsOverflow: { [siblingKey: string]: boolean };
 
   private isDOM: boolean;
 
