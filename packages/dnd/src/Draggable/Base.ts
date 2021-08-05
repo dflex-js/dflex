@@ -94,7 +94,10 @@ class Base
 
     const { sK } = store.registry[this.draggedElm.id].keys;
 
-    if (siblings === null || !store.siblingsOverflow[sK]) {
+    if (
+      siblings === null ||
+      (!store.siblingsOverflow[sK].x && !store.siblingsOverflow[sK].y)
+    ) {
       this.scroll.enable = false;
     }
 
