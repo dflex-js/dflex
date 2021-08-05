@@ -62,11 +62,16 @@ export interface ScrollThreshold {
   minY: number;
 }
 
+export interface Overflow {
+  x: boolean;
+  y: boolean;
+}
+
 export interface DnDStoreInterface {
   hasThrottledFrame: boolean;
   scrollThreshold: ScrollThreshold;
   siblingsBoundaries: { [siblingKey: string]: BoundariesOffset };
-  siblingsOverflow: { [siblingKey: string]: boolean };
+  siblingsOverflow: { [siblingKey: string]: Overflow };
   register(element: ElmInstance, x?: boolean): void;
   seScrollViewportThreshold(
     scrollThresholdInputOpt: ThresholdPercentages

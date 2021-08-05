@@ -16,6 +16,7 @@ import type {
   DnDStoreInterface,
   RegisterInput,
   ScrollThreshold,
+  Overflow,
 } from "./types";
 
 import type { ThresholdPercentages } from "../Draggable";
@@ -39,7 +40,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   siblingsBoundaries: { [siblingKey: string]: BoundariesOffset };
 
-  siblingsOverflow: { [siblingKey: string]: boolean };
+  siblingsOverflow: { [siblingKey: string]: Overflow };
 
   private isDOM: boolean;
 
@@ -184,15 +185,17 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     };
   }
 
-  private isElementHiddenInViewport(
-    currentTop: number,
-    currentLeft: number
-  ): boolean {
+  private isElementVisibleInHorizontalViewport(currentLeft: number): boolean {
     return (
-      currentTop < this.scrollY ||
-      currentTop >= this.viewportHeight + this.scrollY ||
-      currentLeft < this.scrollX ||
-      currentLeft >= this.viewportWidth + this.scrollX
+      currentLeft >= this.scrollX &&
+      currentLeft <= this.viewportWidth + this.scrollX
+    );
+  }
+
+  private isElementVisibleInVerticalViewport(currentTop: number): boolean {
+    return (
+      currentTop >= this.scrollY &&
+      currentTop <= this.viewportHeight + this.scrollY
     );
   }
 
@@ -215,10 +218,13 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
               );
             }
 
-            let isVisible = !this.isElementHiddenInViewport(
-              this.registry[elmID].currentTop!,
-              this.registry[elmID].currentLeft!
-            );
+            let isVisible =
+              this.isElementVisibleInVerticalViewport(
+                this.registry[elmID].currentTop!
+              ) &&
+              this.isElementVisibleInHorizontalViewport(
+                this.registry[elmID].currentLeft!
+              );
 
             if (
               !isVisible &&
@@ -226,6 +232,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
               i > prevIndex
             ) {
               this.elmIndicator.exceptionToNextElm = true;
+
+              // Override the result.
               isVisible = true;
             } else if (isVisible && this.elmIndicator.exceptionToNextElm) {
               // In this case, we are moving from hidden to visible.
@@ -235,6 +243,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
               // Eg: 1, 2: hidden 3, 4, 5, 6, 7:visible 8, 9, 10: hidden.
               this.initELmIndicator();
             }
+
             this.registry[elmID].changeVisibility(isVisible);
 
             prevIndex = i;
@@ -332,11 +341,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     super.register(coreInput, CoreInstance);
 
-    if (this.isPauseRegistration) {
-      this.siblingsOverflow[this.registry[id].keys.sK] = true;
-
-      return;
-    }
+    if (this.isPauseRegistration) return;
 
     const {
       currentTop,
@@ -347,20 +352,29 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     this.assignSiblingsBoundaries(sK, offset!);
 
-    let isVisible = !this.isElementHiddenInViewport(currentTop!, currentLeft!);
+    const isVisibleY = this.isElementVisibleInVerticalViewport(currentTop!);
+    const isVisibleX = this.isElementVisibleInHorizontalViewport(currentLeft!);
 
     // same branch
     this.elmIndicator.currentKy = `${sK}${pK}`;
 
     if (
-      !isVisible &&
+      (!isVisibleY || !isVisibleX) &&
       !this.elmIndicator.exceptionToNextElm &&
       this.elmIndicator.currentKy === this.elmIndicator.prevKy
     ) {
       this.elmIndicator.exceptionToNextElm = true;
-      isVisible = true;
+
+      // Stop registering the element process.
       this.isPauseRegistration = true;
-      this.registry[id].changeVisibility(isVisible);
+
+      // Override the actual value.
+      this.registry[id].changeVisibility(true);
+
+      this.siblingsOverflow[this.registry[id].keys.sK] = {
+        x: isVisibleX,
+        y: isVisibleY,
+      };
     }
 
     this.elmIndicator.prevKy = this.elmIndicator.currentKy;
