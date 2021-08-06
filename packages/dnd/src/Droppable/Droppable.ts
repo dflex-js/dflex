@@ -666,8 +666,8 @@ class Droppable {
       this.draggable.dragAt(x, y);
     } else {
       this.draggable.dragAt(
-        x + store.documentScrollingElement.scrollLeft - this.scrollXOffset,
-        y + store.documentScrollingElement.scrollTop - this.scrollYOffset
+        x + store.scrollX - this.scrollXOffset,
+        y + store.scrollY - this.scrollYOffset
       );
     }
 
