@@ -169,7 +169,7 @@ class EndDroppable extends Droppable {
 
     let isFallback = false;
 
-    if (siblings !== null) {
+    if (siblings) {
       if (this.draggable.isNotSettled() || !this.verify(siblings)) {
         isFallback = true;
 
