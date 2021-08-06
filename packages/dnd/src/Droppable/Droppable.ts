@@ -662,14 +662,14 @@ class Droppable {
       }
     }
 
-    this.draggable.dragAt(
-      this.scrollXOffset === null
-        ? x
-        : x + store.documentScrollingElement.scrollLeft - this.scrollXOffset,
-      this.scrollYOffset === null
-        ? y
-        : y + store.documentScrollingElement.scrollTop - this.scrollYOffset
-    );
+    if (this.scrollXOffset === null || this.scrollYOffset === null) {
+      this.draggable.dragAt(x, y);
+    } else {
+      this.draggable.dragAt(
+        x + store.documentScrollingElement.scrollLeft - this.scrollXOffset,
+        y + store.documentScrollingElement.scrollTop - this.scrollYOffset
+      );
+    }
 
     if (siblings === null) return;
 
