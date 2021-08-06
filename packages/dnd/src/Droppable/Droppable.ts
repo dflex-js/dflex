@@ -38,11 +38,7 @@ class Droppable {
 
   private scrollYOffset: number | null;
 
-  private scrollXShiftLeftToRight: number;
-
-  private scrollYShiftBottomToTop: number;
-
-  private scrollXShiftBottomToTop: number;
+  private scrollXOffset: number | null;
 
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
@@ -70,9 +66,7 @@ class Droppable {
     this.scrollAnimationFrame = null;
 
     this.scrollYOffset = null;
-    this.scrollYShiftBottomToTop = 0;
-    this.scrollXShiftLeftToRight = store.scrollX;
-    this.scrollXShiftBottomToTop = store.viewportWidth;
+    this.scrollXOffset = null;
   }
 
   /**
@@ -555,17 +549,65 @@ class Droppable {
     store.hasThrottledFrame = 1;
 
     this.scrollAnimationFrame = requestAnimationFrame(() => {
-      if (this.scrollYOffset === null) {
+      if (this.scrollYOffset === null || this.scrollXOffset === null) {
         this.scrollYOffset = store.scrollY;
+        this.scrollXOffset = store.scrollX;
       }
 
       store.documentScrollingElement.scrollTop +=
         direction * this.draggable.scroll.speed;
 
       this.draggable.dragAt(
-        x + this.scrollXShiftLeftToRight,
+        x,
         y + store.documentScrollingElement.scrollTop - this.scrollYOffset
       );
+
+      // Reset animation flags
+      this.scrollAnimationFrame = null;
+      store.hasThrottledFrame = null;
+    });
+  }
+
+  private initScrollOffset() {
+    this.scrollYOffset = store.scrollY;
+    this.scrollXOffset = store.scrollX;
+  }
+
+  private scrollElementOnY(x: number, y: number, direction: 1 | -1) {
+    store.documentScrollingElement.scrollTop +=
+      direction * this.draggable.scroll.speed;
+
+    this.draggable.dragAt(
+      x,
+      y + store.documentScrollingElement.scrollTop - this.scrollYOffset!
+    );
+  }
+
+  private scrollElementOnX(x: number, y: number, direction: 1 | -1) {
+    store.documentScrollingElement.scrollLeft +=
+      direction * this.draggable.scroll.speed;
+
+    this.draggable.dragAt(
+      x + store.documentScrollingElement.scrollLeft - this.scrollXOffset!,
+      y
+    );
+  }
+
+  private scrollElement(
+    x: number,
+    y: number,
+    direction: 1 | -1,
+    on: "scrollElementOnX" | "scrollElementOnY"
+  ) {
+    // Prevent store from implementing any animation response.
+    store.hasThrottledFrame = 1;
+
+    this.scrollAnimationFrame = requestAnimationFrame(() => {
+      if (this.scrollYOffset === null || this.scrollXOffset === null) {
+        this.initScrollOffset();
+      }
+
+      this[on](x, y, direction);
 
       // Reset animation flags
       this.scrollAnimationFrame = null;
@@ -591,31 +633,39 @@ class Droppable {
     ) {
       const { sK } = store.registry[this.draggable.draggedElm.id].keys;
 
-      if (
-        this.draggable.isMovingDown &&
-        store.siblingsOverflow[sK].y &&
-        y >= store.scrollThreshold.maxY
-      ) {
-        this.scroll(x, y, 1);
+      if (store.siblingsOverflow[sK].y) {
+        if (y >= store.scrollThreshold.maxY) {
+          this.scrollElement(x, y, 1, "scrollElementOnY");
 
-        return;
+          return;
+        }
+
+        if (y <= store.scrollThreshold.minY) {
+          this.scrollElement(x, y, -1, "scrollElementOnY");
+
+          return;
+        }
       }
 
-      if (
-        !this.draggable.isMovingDown &&
-        store.siblingsOverflow[sK].y &&
-        y <= store.scrollThreshold.minY
-      ) {
-        this.scroll(x, y, -1);
+      if (store.siblingsOverflow[sK].x) {
+        if (y >= store.scrollThreshold.maxX) {
+          this.scrollElement(x, y, 1, "scrollElementOnX");
 
-        return;
+          return;
+        }
+
+        if (y <= store.scrollThreshold.minX) {
+          this.scrollElement(x, y, -1, "scrollElementOnX");
+
+          return;
+        }
       }
-
-      // TODO: Build an horizontal scroll
     }
 
     this.draggable.dragAt(
-      x + this.scrollXShiftLeftToRight,
+      this.scrollXOffset === null
+        ? x
+        : x + store.documentScrollingElement.scrollLeft - this.scrollXOffset,
       this.scrollYOffset === null
         ? y
         : y + store.documentScrollingElement.scrollTop - this.scrollYOffset
