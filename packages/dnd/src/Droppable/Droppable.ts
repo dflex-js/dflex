@@ -36,6 +36,14 @@ class Droppable {
 
   private scrollAnimationFrame: number | null;
 
+  private scrollYOffset: number | null;
+
+  private scrollXShiftLeftToRight: number;
+
+  private scrollYShiftBottomToTop: number;
+
+  private scrollXShiftBottomToTop: number;
+
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
 
@@ -60,6 +68,11 @@ class Droppable {
     this.siblingsEmptyElmIndex = -1;
 
     this.scrollAnimationFrame = null;
+
+    this.scrollYOffset = null;
+    this.scrollYShiftBottomToTop = 0;
+    this.scrollXShiftLeftToRight = store.scrollX;
+    this.scrollXShiftBottomToTop = store.viewportWidth;
   }
 
   /**
@@ -326,6 +339,7 @@ class Droppable {
 
   protected isIDEligible(id: string) {
     return (
+      id &&
       id.length > 0 &&
       id !== this.draggable.draggedElm.id &&
       store.registry[id] &&
@@ -536,6 +550,29 @@ class Droppable {
     this.leftAtIndex = -1;
   }
 
+  scroll(x: number, y: number, direction: 1 | -1) {
+    // Prevent store from implementing any animation response.
+    store.hasThrottledFrame = 1;
+
+    this.scrollAnimationFrame = requestAnimationFrame(() => {
+      if (this.scrollYOffset === null) {
+        this.scrollYOffset = store.scrollY;
+      }
+
+      store.documentScrollingElement.scrollTop +=
+        direction * this.draggable.scroll.speed;
+
+      this.draggable.dragAt(
+        x + this.scrollXShiftLeftToRight,
+        y + store.documentScrollingElement.scrollTop - this.scrollYOffset
+      );
+
+      // Reset animation flags
+      this.scrollAnimationFrame = null;
+      store.hasThrottledFrame = null;
+    });
+  }
+
   /**
    * Invokes draggable method responsible of transform.
    * Monitors dragged translate and called related methods. Which controls the
@@ -547,31 +584,42 @@ class Droppable {
   dragAt(x: number, y: number) {
     const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
 
-    // console.log(x, store.scrollThreshold.maxX);
-
     if (
       this.draggable.scroll.enable &&
       this.scrollAnimationFrame === null &&
-      !store.hasThrottledFrame &&
-      (x >= store.scrollThreshold.maxX || y >= store.scrollThreshold.maxY)
+      !store.hasThrottledFrame
     ) {
-      store.hasThrottledFrame = true;
-      this.scrollAnimationFrame = requestAnimationFrame(() => {
-        const direction = this.draggable.isMovingDown ? 1 : -1;
+      const { sK } = store.registry[this.draggable.draggedElm.id].keys;
 
-        store.documentScrollingElement.scrollTop +=
-          direction * this.draggable.scroll.speed;
+      if (
+        this.draggable.isMovingDown &&
+        store.siblingsOverflow[sK].y &&
+        y >= store.scrollThreshold.maxY
+      ) {
+        this.scroll(x, y, 1);
 
-        this.draggable.dragAt(x, store.documentScrollingElement.scrollTop + y);
+        return;
+      }
 
-        this.scrollAnimationFrame = null;
-        store.hasThrottledFrame = false;
-      });
+      if (
+        !this.draggable.isMovingDown &&
+        store.siblingsOverflow[sK].y &&
+        y <= store.scrollThreshold.minY
+      ) {
+        this.scroll(x, y, -1);
 
-      return;
+        return;
+      }
+
+      // TODO: Build an horizontal scroll
     }
 
-    this.draggable.dragAt(x, y);
+    this.draggable.dragAt(
+      x + this.scrollXShiftLeftToRight,
+      this.scrollYOffset === null
+        ? y
+        : y + store.documentScrollingElement.scrollTop - this.scrollYOffset
+    );
 
     if (siblings === null) return;
 
