@@ -56,7 +56,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   scrollX!: number;
 
-  hasThrottledFrame: boolean;
+  hasThrottledFrame: number | null;
 
   private elmIndicator!: {
     currentKy: string;
@@ -64,7 +64,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     exceptionToNextElm: boolean;
   };
 
-  scrollThresholdInputOpt!: ThresholdPercentages;
+  private scrollThresholdInputOpt!: ThresholdPercentages;
 
   scrollThreshold!: ScrollThreshold;
 
@@ -86,11 +86,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.isInitialized = false;
     this.isDOM = false;
     this.isPauseRegistration = false;
-    this.hasThrottledFrame = false;
-
-    // this.scrollThreshold = { x: 0, y: 0 };
-    // this.scrollThresholdInputOpt = { horizontal: 0, vertical: 0 };
-    // this.documentScrollingElement = null;
+    this.hasThrottledFrame = null;
   }
 
   private init() {
@@ -111,7 +107,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     );
 
     this.scrollThreshold.minX = Math.round(
-      this.scrollThresholdInputOpt.horizontal / 100
+      100 - this.scrollThresholdInputOpt.horizontal
     );
 
     this.scrollThreshold.maxY = Math.round(
@@ -119,7 +115,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     );
 
     this.scrollThreshold.minY = Math.round(
-      this.scrollThresholdInputOpt.vertical / 100
+      100 - this.scrollThresholdInputOpt.vertical
     );
   }
 
@@ -372,8 +368,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       this.registry[id].changeVisibility(true);
 
       this.siblingsOverflow[this.registry[id].keys.sK] = {
-        x: isVisibleX,
-        y: isVisibleY,
+        x: !isVisibleX,
+        y: !isVisibleY,
       };
     }
 
@@ -456,12 +452,12 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     const isUpdated = this[setter]();
 
     if (isUpdated && !this.hasThrottledFrame && response) {
-      window.requestAnimationFrame(() => {
+      this.hasThrottledFrame = window.requestAnimationFrame(() => {
         this[response]();
-        this.hasThrottledFrame = false;
+        this.hasThrottledFrame = null;
       });
 
-      this.hasThrottledFrame = true;
+      // this.hasThrottledFrame = true;
     }
   }
 

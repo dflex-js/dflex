@@ -68,7 +68,7 @@ export interface Overflow {
 }
 
 export interface DnDStoreInterface {
-  hasThrottledFrame: boolean;
+  hasThrottledFrame: number | null;
   scrollThreshold: ScrollThreshold;
   siblingsBoundaries: { [siblingKey: string]: BoundariesOffset };
   siblingsOverflow: { [siblingKey: string]: Overflow };
