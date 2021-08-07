@@ -99,6 +99,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     window.onbeforeunload = this.dispose();
 
     this.isInitialized = true;
+
+    //  this.siblingsOverflow[this.registry[id].keys.sK]=
   }
 
   private updateViewportThreshold() {
@@ -286,17 +288,6 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
    * @param element -
    */
   register(element: RegisterInput) {
-    if (!this.isDOM) {
-      this.isDOM = canUseDOM();
-
-      if (!this.isDOM) return;
-    }
-
-    if (!this.isInitialized) {
-      this.init();
-      this.isPauseRegistration = false;
-    }
-
     if (!element.ref && !element.id) {
       throw new Error(
         `DFlex: A valid unique id Or/and HTML element is required.`
@@ -310,6 +301,17 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     if (!id) {
       throw new Error(`DFlex: A valid and unique id is required.`);
+    }
+
+    if (!this.isDOM) {
+      this.isDOM = canUseDOM();
+
+      if (!this.isDOM) return;
+    }
+
+    if (!this.isInitialized) {
+      this.init();
+      this.isPauseRegistration = false;
     }
 
     if (this.registry[id]) {
@@ -371,8 +373,14 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
         x: !isVisibleX,
         y: !isVisibleY,
       };
+    } else if (!this.siblingsOverflow[this.registry[id].keys.sK]) {
+      // If we don't do this, and the list is not overflowing, then the object
+      // will be undefined.
+      this.siblingsOverflow[this.registry[id].keys.sK] = {
+        x: false,
+        y: false,
+      };
     }
-
     this.elmIndicator.prevKy = this.elmIndicator.currentKy;
   }
 
