@@ -17,6 +17,7 @@ class EndDroppable extends Droppable {
 
   constructor(draggable: DraggableDnDInterface) {
     super(draggable);
+
     this.spliceAt = -1;
   }
 
@@ -72,7 +73,11 @@ class EndDroppable extends Droppable {
     lst.splice(from, 0, this.draggable.draggedElm.id);
   }
 
-  private loopAscWithAnimationFrame(from: number, lst: string[]) {
+  private loopAscWithAnimationFrame(
+    from: number,
+    lst: string[],
+    cb: (i: number) => void
+  ) {
     let i = from;
 
     let prevVisibility = false;
@@ -94,10 +99,14 @@ class EndDroppable extends Droppable {
 
     requestAnimationFrame(run);
 
-    this.spliceList(from, lst);
+    cb(from);
   }
 
-  private loopDesWithAnimationFrame(from: number, lst: string[]) {
+  private loopDesWithAnimationFrame(
+    from: number,
+    lst: string[],
+    cb: (i: number) => void
+  ) {
     let i = from;
 
     let prevVisibility = false;
@@ -119,26 +128,26 @@ class EndDroppable extends Droppable {
 
     requestAnimationFrame(run);
 
-    this.spliceList(from, lst);
+    cb(from);
   }
 
   /**
    * Undo list elements order and instances including translateX/Y and indexes
    * locally.
    */
-  private undoList(lst: string[]) {
+  private undoList(lst: string[], cb: (i: number) => void) {
     const {
       order: { self: from },
     } = this.draggable.draggedElm;
 
     if (this.isListLocked || this.draggable.isMovingDown) {
-      this.loopAscWithAnimationFrame(from, lst);
+      this.loopAscWithAnimationFrame(from, lst, cb);
     } else {
       /**
        * If from is zero, means dragged left, and all siblings are lifted up.
        */
       const actualFrom = from === 0 ? lst.length - 1 : from;
-      this.loopDesWithAnimationFrame(actualFrom, lst);
+      this.loopDesWithAnimationFrame(actualFrom, lst, cb);
     }
   }
 
@@ -167,17 +176,18 @@ class EndDroppable extends Droppable {
   endDragging() {
     const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
 
-    let isFallback = false;
-
     if (siblings) {
       if (this.draggable.isNotSettled() || !this.verify(siblings)) {
-        isFallback = true;
+        this.undoList(siblings, (from) => {
+          this.spliceList(from, siblings);
+          this.draggable.endDragging(true);
+        });
 
-        this.undoList(siblings);
+        return;
       }
     }
 
-    this.draggable.endDragging(isFallback);
+    this.draggable.endDragging(false);
   }
 }
 
