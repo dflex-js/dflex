@@ -16,6 +16,7 @@ import type {
   DnDStoreInterface,
   RegisterInput,
   ScrollThreshold,
+  Overflow,
 } from "./types";
 
 import type { ThresholdPercentages } from "../Draggable";
@@ -39,7 +40,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   siblingsBoundaries: { [siblingKey: string]: BoundariesOffset };
 
-  siblingsOverflow: { [siblingKey: string]: boolean };
+  siblingsOverflow: { [siblingKey: string]: Overflow };
 
   private isDOM: boolean;
 
@@ -55,7 +56,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   scrollX!: number;
 
-  hasThrottledFrame: boolean;
+  hasThrottledFrame: number | null;
 
   private elmIndicator!: {
     currentKy: string;
@@ -63,7 +64,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     exceptionToNextElm: boolean;
   };
 
-  scrollThresholdInputOpt!: ThresholdPercentages;
+  private scrollThresholdInputOpt!: ThresholdPercentages;
 
   scrollThreshold!: ScrollThreshold;
 
@@ -85,11 +86,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.isInitialized = false;
     this.isDOM = false;
     this.isPauseRegistration = false;
-    this.hasThrottledFrame = false;
-
-    // this.scrollThreshold = { x: 0, y: 0 };
-    // this.scrollThresholdInputOpt = { horizontal: 0, vertical: 0 };
-    // this.documentScrollingElement = null;
+    this.hasThrottledFrame = null;
   }
 
   private init() {
@@ -110,7 +107,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     );
 
     this.scrollThreshold.minX = Math.round(
-      this.scrollThresholdInputOpt.horizontal / 100
+      100 - this.scrollThresholdInputOpt.horizontal
     );
 
     this.scrollThreshold.maxY = Math.round(
@@ -118,7 +115,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     );
 
     this.scrollThreshold.minY = Math.round(
-      this.scrollThresholdInputOpt.vertical / 100
+      100 - this.scrollThresholdInputOpt.vertical
     );
   }
 
@@ -184,15 +181,17 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     };
   }
 
-  private isElementHiddenInViewport(
-    currentTop: number,
-    currentLeft: number
-  ): boolean {
+  private isElementVisibleInHorizontalViewport(currentLeft: number): boolean {
     return (
-      currentTop < this.scrollY ||
-      currentTop >= this.viewportHeight + this.scrollY ||
-      currentLeft < this.scrollX ||
-      currentLeft >= this.viewportWidth + this.scrollX
+      currentLeft >= this.scrollX &&
+      currentLeft <= this.viewportWidth + this.scrollX
+    );
+  }
+
+  private isElementVisibleInVerticalViewport(currentTop: number): boolean {
+    return (
+      currentTop >= this.scrollY &&
+      currentTop <= this.viewportHeight + this.scrollY
     );
   }
 
@@ -208,17 +207,15 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
           if (elmID.length > 0) {
             if (this.registry[elmID].isPaused) {
               this.registry[elmID].resume(this.scrollX, this.scrollY);
-
-              this.assignSiblingsBoundaries(
-                this.registry[elmID].keys.sK,
-                this.registry[elmID].offset!
-              );
             }
 
-            let isVisible = !this.isElementHiddenInViewport(
-              this.registry[elmID].currentTop!,
-              this.registry[elmID].currentLeft!
-            );
+            let isVisible =
+              this.isElementVisibleInVerticalViewport(
+                this.registry[elmID].currentTop!
+              ) &&
+              this.isElementVisibleInHorizontalViewport(
+                this.registry[elmID].currentLeft!
+              );
 
             if (
               !isVisible &&
@@ -226,15 +223,30 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
               i > prevIndex
             ) {
               this.elmIndicator.exceptionToNextElm = true;
+
+              // Override the result.
               isVisible = true;
-            } else if (isVisible && this.elmIndicator.exceptionToNextElm) {
-              // In this case, we are moving from hidden to visible.
-              // Eg: 1, 2 are hidden the rest of the list is visible.
-              // But, there's a possibility that the rest of the branch elements
-              // are hidden.
-              // Eg: 1, 2: hidden 3, 4, 5, 6, 7:visible 8, 9, 10: hidden.
-              this.initELmIndicator();
+
+              this.assignSiblingsBoundaries(
+                this.registry[elmID].keys.sK,
+                this.registry[elmID].offset!
+              );
+            } else if (isVisible) {
+              this.assignSiblingsBoundaries(
+                this.registry[elmID].keys.sK,
+                this.registry[elmID].offset!
+              );
+
+              if (this.elmIndicator.exceptionToNextElm) {
+                // In this case, we are moving from hidden to visible.
+                // Eg: 1, 2 are hidden the rest of the list is visible.
+                // But, there's a possibility that the rest of the branch elements
+                // are hidden.
+                // Eg: 1, 2: hidden 3, 4, 5, 6, 7:visible 8, 9, 10: hidden.
+                this.initELmIndicator();
+              }
             }
+
             this.registry[elmID].changeVisibility(isVisible);
 
             prevIndex = i;
@@ -281,17 +293,6 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
    * @param element -
    */
   register(element: RegisterInput) {
-    if (!this.isDOM) {
-      this.isDOM = canUseDOM();
-
-      if (!this.isDOM) return;
-    }
-
-    if (!this.isInitialized) {
-      this.init();
-      this.isPauseRegistration = false;
-    }
-
     if (!element.ref && !element.id) {
       throw new Error(
         `DFlex: A valid unique id Or/and HTML element is required.`
@@ -305,6 +306,17 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     if (!id) {
       throw new Error(`DFlex: A valid and unique id is required.`);
+    }
+
+    if (!this.isDOM) {
+      this.isDOM = canUseDOM();
+
+      if (!this.isDOM) return;
+    }
+
+    if (!this.isInitialized) {
+      this.init();
+      this.isPauseRegistration = false;
     }
 
     if (this.registry[id]) {
@@ -332,11 +344,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     super.register(coreInput, CoreInstance);
 
-    if (this.isPauseRegistration) {
-      this.siblingsOverflow[this.registry[id].keys.sK] = true;
-
-      return;
-    }
+    if (this.isPauseRegistration) return;
 
     const {
       currentTop,
@@ -347,22 +355,37 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     this.assignSiblingsBoundaries(sK, offset!);
 
-    let isVisible = !this.isElementHiddenInViewport(currentTop!, currentLeft!);
+    const isVisibleY = this.isElementVisibleInVerticalViewport(currentTop!);
+    const isVisibleX = this.isElementVisibleInHorizontalViewport(currentLeft!);
 
     // same branch
     this.elmIndicator.currentKy = `${sK}${pK}`;
 
     if (
-      !isVisible &&
+      (!isVisibleY || !isVisibleX) &&
       !this.elmIndicator.exceptionToNextElm &&
       this.elmIndicator.currentKy === this.elmIndicator.prevKy
     ) {
       this.elmIndicator.exceptionToNextElm = true;
-      isVisible = true;
-      this.isPauseRegistration = true;
-      this.registry[id].changeVisibility(isVisible);
-    }
 
+      // Stop registering the element process.
+      this.isPauseRegistration = true;
+
+      // Override the actual value.
+      this.registry[id].changeVisibility(true);
+
+      this.siblingsOverflow[this.registry[id].keys.sK] = {
+        x: !isVisibleX,
+        y: !isVisibleY,
+      };
+    } else if (!this.siblingsOverflow[this.registry[id].keys.sK]) {
+      // If we don't do this, and the list is not overflowing, then the object
+      // will be undefined.
+      this.siblingsOverflow[this.registry[id].keys.sK] = {
+        x: false,
+        y: false,
+      };
+    }
     this.elmIndicator.prevKy = this.elmIndicator.currentKy;
   }
 
@@ -442,12 +465,12 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     const isUpdated = this[setter]();
 
     if (isUpdated && !this.hasThrottledFrame && response) {
-      window.requestAnimationFrame(() => {
+      this.hasThrottledFrame = window.requestAnimationFrame(() => {
         this[response]();
-        this.hasThrottledFrame = false;
+        this.hasThrottledFrame = null;
       });
 
-      this.hasThrottledFrame = true;
+      // this.hasThrottledFrame = true;
     }
   }
 
