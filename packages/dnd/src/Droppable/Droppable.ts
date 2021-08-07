@@ -674,10 +674,14 @@ class Droppable {
       }
     }
 
-    this.draggable.dragAt(
-      x + store.scrollX - this.scrollXOffset,
-      y + store.scrollY - this.scrollYOffset
-    );
+    if (this.isScrollOffsetInitiated) {
+      this.draggable.dragAt(
+        x + store.scrollX - this.scrollXOffset,
+        y + store.scrollY - this.scrollYOffset
+      );
+    } else {
+      this.draggable.dragAt(x, y);
+    }
 
     if (siblings === null) return;
 
