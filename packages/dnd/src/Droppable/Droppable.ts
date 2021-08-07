@@ -580,10 +580,10 @@ class Droppable {
     store.documentScrollingElement.scrollTop +=
       direction * this.draggable.scroll.speed;
 
-    const finalY =
-      y + store.documentScrollingElement.scrollTop - this.scrollYOffset!;
-
-    this.draggable.dragAt(x, finalY);
+    this.draggable.dragAt(
+      x,
+      y + store.documentScrollingElement.scrollTop - this.scrollYOffset!
+    );
   }
 
   private scrollElementOnX(x: number, y: number, direction: 1 | -1) {
