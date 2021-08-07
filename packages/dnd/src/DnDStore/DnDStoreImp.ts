@@ -99,8 +99,6 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     window.onbeforeunload = this.dispose();
 
     this.isInitialized = true;
-
-    //  this.siblingsOverflow[this.registry[id].keys.sK]=
   }
 
   private updateViewportThreshold() {
@@ -209,11 +207,6 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
           if (elmID.length > 0) {
             if (this.registry[elmID].isPaused) {
               this.registry[elmID].resume(this.scrollX, this.scrollY);
-
-              this.assignSiblingsBoundaries(
-                this.registry[elmID].keys.sK,
-                this.registry[elmID].offset!
-              );
             }
 
             let isVisible =
@@ -233,13 +226,25 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
               // Override the result.
               isVisible = true;
-            } else if (isVisible && this.elmIndicator.exceptionToNextElm) {
-              // In this case, we are moving from hidden to visible.
-              // Eg: 1, 2 are hidden the rest of the list is visible.
-              // But, there's a possibility that the rest of the branch elements
-              // are hidden.
-              // Eg: 1, 2: hidden 3, 4, 5, 6, 7:visible 8, 9, 10: hidden.
-              this.initELmIndicator();
+
+              this.assignSiblingsBoundaries(
+                this.registry[elmID].keys.sK,
+                this.registry[elmID].offset!
+              );
+            } else if (isVisible) {
+              this.assignSiblingsBoundaries(
+                this.registry[elmID].keys.sK,
+                this.registry[elmID].offset!
+              );
+
+              if (this.elmIndicator.exceptionToNextElm) {
+                // In this case, we are moving from hidden to visible.
+                // Eg: 1, 2 are hidden the rest of the list is visible.
+                // But, there's a possibility that the rest of the branch elements
+                // are hidden.
+                // Eg: 1, 2: hidden 3, 4, 5, 6, 7:visible 8, 9, 10: hidden.
+                this.initELmIndicator();
+              }
             }
 
             this.registry[elmID].changeVisibility(isVisible);
