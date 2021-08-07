@@ -94,12 +94,12 @@ class EndDroppable extends Droppable {
 
       if (i < lst.length) {
         requestAnimationFrame(run);
+      } else {
+        cb(from);
       }
     };
 
     requestAnimationFrame(run);
-
-    cb(from);
   }
 
   private loopDesWithAnimationFrame(
@@ -123,12 +123,12 @@ class EndDroppable extends Droppable {
 
       if (i >= 0) {
         requestAnimationFrame(run);
+      } else {
+        cb(from);
       }
     };
 
     requestAnimationFrame(run);
-
-    cb(from);
   }
 
   /**
@@ -178,9 +178,10 @@ class EndDroppable extends Droppable {
 
     if (siblings) {
       if (this.draggable.isNotSettled() || !this.verify(siblings)) {
+        this.draggable.endDragging(true);
+
         this.undoList(siblings, (from) => {
           this.spliceList(from, siblings);
-          this.draggable.endDragging(true);
         });
 
         return;
