@@ -36,9 +36,11 @@ class Droppable {
 
   private scrollAnimationFrame: number | null;
 
-  private scrollYOffset: number | null;
+  private isScrollOffsetInitiated: boolean;
 
-  private scrollXOffset: number | null;
+  private scrollYOffset: number;
+
+  private scrollXOffset: number;
 
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
@@ -65,8 +67,9 @@ class Droppable {
 
     this.scrollAnimationFrame = null;
 
-    this.scrollYOffset = null;
-    this.scrollXOffset = null;
+    this.isScrollOffsetInitiated = false;
+    this.scrollYOffset = 0;
+    this.scrollXOffset = 0;
   }
 
   /**
@@ -577,10 +580,10 @@ class Droppable {
     store.documentScrollingElement.scrollTop +=
       direction * this.draggable.scroll.speed;
 
-    this.draggable.dragAt(
-      x,
-      y + store.documentScrollingElement.scrollTop - this.scrollYOffset!
-    );
+    const finalY =
+      y + store.documentScrollingElement.scrollTop - this.scrollYOffset!;
+
+    this.draggable.dragAt(x, finalY);
   }
 
   private scrollElementOnX(x: number, y: number, direction: 1 | -1) {
@@ -603,8 +606,9 @@ class Droppable {
     store.hasThrottledFrame = 1;
 
     this.scrollAnimationFrame = requestAnimationFrame(() => {
-      if (this.scrollYOffset === null || this.scrollXOffset === null) {
+      if (!this.isScrollOffsetInitiated) {
         this.initScrollOffset();
+        this.isScrollOffsetInitiated = true;
       }
 
       this[on](x, y, direction);
@@ -634,7 +638,10 @@ class Droppable {
       const { sK } = store.registry[this.draggable.draggedElm.id].keys;
 
       if (store.siblingsOverflow[sK].y) {
-        if (y >= store.scrollThreshold.maxY) {
+        if (
+          y < store.siblingsBoundaries[sK].bottom &&
+          y >= store.scrollThreshold.maxY
+        ) {
           this.scrollElement(x, y, 1, "scrollElementOnY");
 
           return;
@@ -662,14 +669,10 @@ class Droppable {
       }
     }
 
-    if (this.scrollXOffset === null || this.scrollYOffset === null) {
-      this.draggable.dragAt(x, y);
-    } else {
-      this.draggable.dragAt(
-        x + store.scrollX - this.scrollXOffset,
-        y + store.scrollY - this.scrollYOffset
-      );
-    }
+    this.draggable.dragAt(
+      x + store.scrollX - this.scrollXOffset,
+      y + store.scrollY - this.scrollYOffset
+    );
 
     if (siblings === null) return;
 
