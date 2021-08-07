@@ -639,7 +639,8 @@ class Droppable {
 
       if (store.siblingsOverflow[sK].y) {
         if (
-          y < store.siblingsBoundaries[sK].bottom &&
+          y + store.documentScrollingElement.scrollTop - this.scrollYOffset <
+            store.siblingsBoundaries[sK].bottom &&
           y >= store.scrollThreshold.maxY
         ) {
           this.scrollElement(x, y, 1, "scrollElementOnY");
@@ -655,13 +656,17 @@ class Droppable {
       }
 
       if (store.siblingsOverflow[sK].x) {
-        if (y >= store.scrollThreshold.maxX) {
+        if (
+          x + store.documentScrollingElement.scrollLeft - this.scrollXOffset <
+            store.siblingsBoundaries[sK].minRight &&
+          x >= store.scrollThreshold.maxX
+        ) {
           this.scrollElement(x, y, 1, "scrollElementOnX");
 
           return;
         }
 
-        if (y <= store.scrollThreshold.minX) {
+        if (x <= store.scrollThreshold.minX) {
           this.scrollElement(x, y, -1, "scrollElementOnX");
 
           return;
