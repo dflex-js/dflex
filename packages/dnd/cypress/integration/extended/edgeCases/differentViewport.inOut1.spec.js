@@ -1,0 +1,200 @@
+/**
+ * Copyright (c) Jalal Maskoun.
+ *
+ * This source code is licensed under the AGPL3.0 license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+let elmBox;
+let startingPointX;
+// eslint-disable-next-line no-unused-vars
+let startingPointY;
+
+let stepsX = 0;
+// const stepsY = 0;
+
+context(
+  "Testing lifting elements up with visibility and scroll - Start from the end (1)",
+  () => {
+    before(() => {
+      cy.visit("http://localhost:3001/extended");
+    });
+
+    context("Scroll to element 90", () => {
+      it("Scroll to element 90", () => {
+        cy.get("#90-extended").scrollIntoView({
+          duration: 0,
+        });
+      });
+
+      it("Getting element (90)", () => {
+        cy.get("#90-extended").then((elm) => {
+          elmBox = elm[0].getBoundingClientRect();
+          // eslint-disable-next-line no-unused-vars
+          startingPointX = elmBox.x + elmBox.width / 2;
+          startingPointY = elmBox.y + elmBox.height / 2;
+          cy.get("#90-extended").trigger("mousedown", {
+            button: 0,
+          });
+        });
+      });
+
+      it("Transforms element (90) - outside the list", () => {
+        stepsX = 240;
+        for (let i = 0; i < stepsX; i += 1) {
+          cy.get("#90-extended").trigger("mousemove", {
+            clientX: startingPointX - i,
+            force: true,
+          });
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.wait(0);
+        }
+      });
+
+      it("Visible elements all are lifted up", () => {
+        for (let i = 91; i < 100; i += 1) {
+          cy.get(`#${i}-extended`).should(
+            "have.css",
+            "transform",
+            "matrix(1, 0, 0, 1, 0, -59.1875)"
+          );
+        }
+      });
+
+      it("Release Dragged", () => {
+        cy.get("#90-extended").trigger("mouseup", { force: true });
+      });
+
+      it("Invisible elements are not transformed", () => {
+        for (let i = 1; i < 90; i += 1) {
+          cy.get(`#${i}-extended`).should("have.css", "transform", "none");
+        }
+      });
+
+      it("Elements are back", () => {
+        for (let i = 91; i < 100; i += 1) {
+          cy.get(`#${i}-extended`).should(
+            "have.css",
+            "transform",
+            "matrix(1, 0, 0, 1, 0, 0)"
+          );
+        }
+      });
+    });
+
+    context("Scroll to element 1", () => {
+      it("Scroll to element 1", () => {
+        cy.get("#1-extended").scrollIntoView({
+          duration: 0,
+        });
+      });
+
+      it("Getting the first element (1)", () => {
+        cy.get("#1-extended").then((elm) => {
+          elmBox = elm[0].getBoundingClientRect();
+          // eslint-disable-next-line no-unused-vars
+          startingPointX = elmBox.x + elmBox.width / 2;
+          startingPointY = elmBox.y + elmBox.height / 2;
+          cy.get("#1-extended").trigger("mousedown", {
+            button: 0,
+          });
+        });
+      });
+
+      it("Transforms element (1) - outside the list", () => {
+        stepsX = 240;
+        for (let i = 0; i < stepsX; i += 1) {
+          cy.get("#1-extended").trigger("mousemove", {
+            clientX: startingPointX - i,
+            force: true,
+          });
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.wait(0);
+        }
+      });
+
+      it("Visible elements all are lifted up", () => {
+        for (let i = 2; i < 11; i += 1) {
+          cy.get(`#${i}-extended`).should(
+            "have.css",
+            "transform",
+            "matrix(1, 0, 0, 1, 0, -59.1875)"
+          );
+        }
+      });
+
+      it("Release Dragged", () => {
+        cy.get("#1-extended").trigger("mouseup", { force: true });
+      });
+
+      it("Elements are back", () => {
+        for (let i = 2; i < 11; i += 1) {
+          cy.get(`#${i}-extended`).should(
+            "have.css",
+            "transform",
+            "matrix(1, 0, 0, 1, 0, 0)"
+          );
+        }
+      });
+    });
+
+    context("Scroll to element 60", () => {
+      it("Scroll to element 60", () => {
+        cy.get("#60-extended").scrollIntoView({
+          duration: 0,
+        });
+      });
+
+      it("Getting element (60)", () => {
+        cy.get("#60-extended").then((elm) => {
+          elmBox = elm[0].getBoundingClientRect();
+          // eslint-disable-next-line no-unused-vars
+          startingPointX = elmBox.x + elmBox.width / 2;
+          startingPointY = elmBox.y + elmBox.height / 2;
+
+          cy.get("#60-extended").trigger("mousedown", {
+            button: 0,
+          });
+        });
+      });
+
+      it("Transforms element (60) - outside the list", () => {
+        stepsX = 240;
+
+        for (let i = 0; i < stepsX; i += 1) {
+          cy.get("#60-extended").trigger("mousemove", {
+            clientX: startingPointX - i,
+            force: true,
+          });
+
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.wait(0);
+        }
+      });
+
+      it("Visible elements all are lifted up", () => {
+        for (let i = 61; i < 72; i += 1) {
+          cy.get(`#${i}-extended`).should(
+            "have.css",
+            "transform",
+            "matrix(1, 0, 0, 1, 0, -59.1875)"
+          );
+        }
+      });
+
+      it("Release Dragged", () => {
+        cy.get("#60-extended").trigger("mouseup", { force: true });
+      });
+
+      it("Elements are back", () => {
+        for (let i = 61; i < 72; i += 1) {
+          cy.get(`#${i}-extended`).should(
+            "have.css",
+            "transform",
+            "matrix(1, 0, 0, 1, 0, 0)"
+          );
+        }
+      });
+    });
+  }
+);
