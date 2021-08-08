@@ -76,7 +76,7 @@ jobs:
           spec: |
             packages/dnd/cypress/integration/differentHeights/**/*.spec.js
             packages/dnd/cypress/integration/restrictions/**/*.spec.js
-            packages/dnd/cypress/integration/extended/*.spec.js
+            packages/dnd/cypress/integration/extended/**/*.spec.js
         env:
           Cypress_isNextJS: false
           Cypress_extended: false
