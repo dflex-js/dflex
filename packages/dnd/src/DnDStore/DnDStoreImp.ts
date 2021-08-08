@@ -48,6 +48,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   private isPauseRegistration: boolean;
 
+  private hasVisibleElements: boolean;
+
   viewportHeight!: number;
 
   viewportWidth!: number;
@@ -85,6 +87,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     this.isInitialized = false;
     this.isDOM = false;
+    this.hasVisibleElements = false;
     this.isPauseRegistration = false;
     this.hasThrottledFrame = null;
   }
@@ -332,6 +335,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       return;
     }
 
+    const isPaused = this.isPauseRegistration && this.hasVisibleElements;
+
     const coreInput = {
       id,
       depth: element.depth || 0,
@@ -339,12 +344,12 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       scrollX: this.scrollX,
       scrollY: this.scrollY,
       isInitialized: true,
-      isPaused: this.isPauseRegistration,
+      isPaused,
     };
 
     super.register(coreInput, CoreInstance);
 
-    if (this.isPauseRegistration) return;
+    if (isPaused) return;
 
     const {
       currentTop,
@@ -361,8 +366,16 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     // same branch
     this.elmIndicator.currentKy = `${sK}${pK}`;
 
-    if (
-      (!isVisibleY || !isVisibleX) &&
+    if (isVisibleY || isVisibleX) {
+      if (!this.siblingsOverflow[this.registry[id].keys.sK]) {
+        // If we don't do this, and the list is not overflowing, then the object
+        // will be undefined.
+        this.siblingsOverflow[this.registry[id].keys.sK] = {
+          x: false,
+          y: false,
+        };
+      }
+    } else if (
       !this.elmIndicator.exceptionToNextElm &&
       this.elmIndicator.currentKy === this.elmIndicator.prevKy
     ) {
@@ -378,14 +391,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
         x: !isVisibleX,
         y: !isVisibleY,
       };
-    } else if (!this.siblingsOverflow[this.registry[id].keys.sK]) {
-      // If we don't do this, and the list is not overflowing, then the object
-      // will be undefined.
-      this.siblingsOverflow[this.registry[id].keys.sK] = {
-        x: false,
-        y: false,
-      };
     }
+
     this.elmIndicator.prevKy = this.elmIndicator.currentKy;
   }
 
