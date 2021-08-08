@@ -349,15 +349,22 @@ class Droppable {
    * @param id -
    */
   private isIDEligible2Move(id: string) {
-    if (this.isIDEligible(id)) {
-      // Won't trigger any resume if auto-scroll is disabled.
-      if (this.draggable.scroll.enable && store.registry[id].isPaused) {
+    if (!this.isIDEligible(id)) {
+      return false;
+    }
+
+    // Won't trigger any resume if auto-scroll is disabled.
+    if (store.registry[id].isPaused) {
+      if (this.draggable.scroll.enable) {
         store.registry[id].resume(store.scrollX, store.scrollY);
+
+        return true;
       }
 
-      return true;
+      return false;
     }
-    return false;
+
+    return true;
   }
 
   private switchElement() {
