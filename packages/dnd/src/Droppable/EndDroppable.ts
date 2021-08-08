@@ -68,10 +68,10 @@ class EndDroppable extends Droppable {
     return { prevVisibility, listVisibility };
   }
 
-  spliceList(from: number, lst: string[]) {
-    lst.splice(this.spliceAt, 1);
-    lst.splice(from, 0, this.draggable.draggedElm.id);
-  }
+  // spliceList(from: number, lst: string[]) {
+  //   lst.splice(this.spliceAt, 1);
+  //   lst.splice(from, 0, this.draggable.draggedElm.id);
+  // }
 
   private loopAscWithAnimationFrame(
     from: number,
@@ -180,9 +180,7 @@ class EndDroppable extends Droppable {
       if (this.draggable.isNotSettled() || !this.verify(siblings)) {
         this.draggable.endDragging(true);
 
-        this.undoList(siblings, (from) => {
-          this.spliceList(from, siblings);
-        });
+        this.undoList(siblings, (from) => {});
 
         return;
       }

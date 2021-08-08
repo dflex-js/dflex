@@ -336,7 +336,7 @@ class Droppable {
 
   protected isIDEligible(id: string) {
     return (
-      // id &&
+      id &&
       id.length > 0 &&
       id !== this.draggable.draggedElm.id &&
       store.registry[id] &&
