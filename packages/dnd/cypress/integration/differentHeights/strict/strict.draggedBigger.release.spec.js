@@ -33,7 +33,7 @@ context(
     it("Transforms element (org) - one step", () => {
       stepsY = 155;
 
-      for (let i = 0; i < stepsY; i += 1) {
+      for (let i = 0; i < stepsY; i += 10) {
         cy.get("#org").trigger("mousemove", {
           clientY: startingPointY + i,
           force: true,
@@ -80,7 +80,7 @@ context(
     it("Transforms element (org) - Occupy #gym", () => {
       stepsY = 155;
 
-      for (let i = 0; i < stepsY; i += 1) {
+      for (let i = 0; i < stepsY; i += 10) {
         cy.get("#org").trigger("mousemove", {
           clientY: startingPointY + i,
           force: true,
@@ -131,7 +131,7 @@ context(
     it("Transforms element (org) up to occupy gym", () => {
       stepsY = 155;
 
-      for (let i = 0; i < stepsY; i += 1) {
+      for (let i = 0; i < stepsY; i += 10) {
         cy.get("#org").trigger("mousemove", {
           clientY: startingPointY - i,
           force: true,
@@ -182,7 +182,7 @@ context(
     it("Transforms element (org) up to occupy #prog", () => {
       stepsY = 155;
 
-      for (let i = 0; i < stepsY; i += 1) {
+      for (let i = 0; i < stepsY; i += 10) {
         cy.get("#org").trigger("mousemove", {
           clientY: startingPointY - i,
           force: true,
@@ -233,7 +233,7 @@ context(
     it("Transforms element (org) up to occupy the first position", () => {
       stepsY = 155;
 
-      for (let i = 0; i < stepsY; i += 1) {
+      for (let i = 0; i < stepsY; i += 10) {
         cy.get("#org").trigger("mousemove", {
           clientY: startingPointY - i,
           force: true,
@@ -289,7 +289,7 @@ context(
     it("Transforms element outside the list", () => {
       stepsY = 100;
 
-      for (let i = 0; i < stepsY; i += 1) {
+      for (let i = 0; i < stepsY; i += 10) {
         cy.get("#org").trigger("mousemove", {
           clientY: startingPointY - i,
           force: true,

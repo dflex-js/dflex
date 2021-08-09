@@ -34,7 +34,7 @@ context("Moving out then insert - Up/Down - Releasing the dragged", () => {
     // steps = elmBox.height + 2 + 180;
     stepsX = 185;
 
-    for (let i = 0; i < stepsX; i += 1) {
+    for (let i = 0; i < stepsX; i += 10) {
       cy.get("#id-2").trigger("mousemove", {
         clientX: startingPointX - i,
         force: true,
@@ -46,7 +46,7 @@ context("Moving out then insert - Up/Down - Releasing the dragged", () => {
     // stepsX -= startingPointX;
 
     stepsY = 94;
-    for (let i = 0; i < stepsY; i += 1) {
+    for (let i = 0; i < stepsY; i += 10) {
       cy.get("#id-2").trigger("mousemove", {
         clientY: startingPointY + i,
         force: true,
@@ -57,7 +57,7 @@ context("Moving out then insert - Up/Down - Releasing the dragged", () => {
   });
 
   it("Insert the element inside the list", () => {
-    for (let i = stepsX; i >= 0; i -= 1) {
+    for (let i = stepsX; i >= 0; i -= 10) {
       cy.get("#id-2").trigger("mousemove", {
         clientX: startingPointX - i,
         force: true,
@@ -107,7 +107,7 @@ context("Moving out then insert - Up/Down - Releasing the dragged", () => {
     // steps = elmBox.height + 2 + 180;
     stepsX = 185;
 
-    for (let i = 0; i < stepsX; i += 1) {
+    for (let i = 0; i < stepsX; i += 10) {
       cy.get("#id-2").trigger("mousemove", {
         clientX: startingPointX - i,
         force: true,
@@ -119,7 +119,7 @@ context("Moving out then insert - Up/Down - Releasing the dragged", () => {
     // stepsX -= startingPointX;
 
     stepsY = 94;
-    for (let i = 0; i < stepsY; i += 1) {
+    for (let i = 0; i < stepsY; i += 10) {
       cy.get("#id-2").trigger("mousemove", {
         clientY: startingPointY + i,
         force: true,
@@ -130,7 +130,7 @@ context("Moving out then insert - Up/Down - Releasing the dragged", () => {
   });
 
   it("Insert the element inside the list", () => {
-    for (let i = stepsX; i >= 0; i -= 1) {
+    for (let i = stepsX; i >= 0; i -= 10) {
       cy.get("#id-2").trigger("mousemove", {
         clientX: startingPointX - i,
         force: true,
@@ -192,7 +192,7 @@ context("Moving out then insert - Up/Down - Releasing the dragged", () => {
     // steps = elmBox.height + 2 + 180;
     stepsX = 185;
 
-    for (let i = 0; i < stepsX; i += 1) {
+    for (let i = 0; i < stepsX; i += 10) {
       cy.get("#id-2").trigger("mousemove", {
         clientX: startingPointX - i,
         force: true,
@@ -204,7 +204,7 @@ context("Moving out then insert - Up/Down - Releasing the dragged", () => {
     // stepsX -= startingPointX;
 
     stepsY = 94;
-    for (let i = 0; i < stepsY; i += 1) {
+    for (let i = 0; i < stepsY; i += 10) {
       cy.get("#id-2").trigger("mousemove", {
         clientY: startingPointY + i,
         force: true,
@@ -215,7 +215,7 @@ context("Moving out then insert - Up/Down - Releasing the dragged", () => {
   });
 
   it("Insert the element inside the list", () => {
-    for (let i = stepsX; i >= 0; i -= 1) {
+    for (let i = stepsX; i >= 0; i -= 10) {
       cy.get("#id-2").trigger("mousemove", {
         clientX: startingPointX - i,
         force: true,

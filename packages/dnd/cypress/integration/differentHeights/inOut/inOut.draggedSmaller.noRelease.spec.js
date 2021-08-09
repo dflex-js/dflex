@@ -33,7 +33,7 @@ context(
 
     it("Transforms element (mtg) - outside the list", () => {
       stepsX = 240;
-      for (let i = 0; i < stepsX; i += 1) {
+      for (let i = 0; i < stepsX; i += 10) {
         cy.get("#mtg").trigger("mousemove", {
           clientX: startingPointX - i,
           force: true,
@@ -43,7 +43,7 @@ context(
       }
 
       stepsY = 155;
-      for (let i = 0; i < stepsY; i += 1) {
+      for (let i = 0; i < stepsY; i += 10) {
         cy.get("#mtg").trigger("mousemove", {
           clientY: startingPointY + i,
           force: true,
@@ -74,7 +74,7 @@ context(
     });
 
     it("Insert element (mtg) inside - Occupy #proj", () => {
-      for (let i = stepsX; i >= 0; i -= 1) {
+      for (let i = stepsX; i >= 0; i -= 10) {
         cy.get("#mtg").trigger("mousemove", {
           clientX: startingPointX - i,
           force: true,
@@ -106,7 +106,7 @@ context(
     });
 
     it("Transforms out one step", () => {
-      for (let i = stepsX; i < stepsX + 190; i += 1) {
+      for (let i = stepsX; i < stepsX + 190; i += 10) {
         cy.get("#mtg").trigger("mousemove", {
           clientX: startingPointX - i,
           force: true,
@@ -116,7 +116,7 @@ context(
       }
       stepsX += 190;
 
-      for (let i = stepsY; i < stepsY + 150; i += 1) {
+      for (let i = stepsY; i < stepsY + 150; i += 10) {
         cy.get("#mtg").trigger("mousemove", {
           clientY: startingPointY + i,
           force: true,
@@ -128,7 +128,7 @@ context(
     });
 
     it("Insert element (mtg) inside - Occupy #gym", () => {
-      for (let i = stepsX; i >= 0; i -= 1) {
+      for (let i = stepsX; i >= 0; i -= 10) {
         cy.get("#mtg").trigger("mousemove", {
           clientX: startingPointX - i,
           force: true,
@@ -167,7 +167,7 @@ context(
     });
 
     it("Transforms out one step", () => {
-      for (let i = stepsX; i < stepsX + 190; i += 1) {
+      for (let i = stepsX; i < stepsX + 190; i += 10) {
         cy.get("#mtg").trigger("mousemove", {
           clientX: startingPointX - i,
           force: true,
@@ -177,7 +177,7 @@ context(
       }
       stepsX += 190;
 
-      for (let i = stepsY; i < stepsY + 150; i += 1) {
+      for (let i = stepsY; i < stepsY + 150; i += 10) {
         cy.get("#mtg").trigger("mousemove", {
           clientY: startingPointY + i,
           force: true,
@@ -189,7 +189,7 @@ context(
     });
 
     it("Insert element (mtg) to the tail", () => {
-      for (let i = stepsX; i >= 0; i -= 1) {
+      for (let i = stepsX; i >= 0; i -= 10) {
         cy.get("#mtg").trigger("mousemove", {
           clientX: startingPointX - i,
           force: true,

@@ -34,7 +34,7 @@ context("Working with visibility, changing positions and continuity", () => {
   it("Transforms element (1) - outside the list", () => {
     stepsX = 240;
 
-    for (let i = 0; i < stepsX; i += 1) {
+    for (let i = 0; i < stepsX; i += 10) {
       cy.get("#1-extended").trigger("mousemove", {
         clientX: startingPointX - i,
         force: true,
@@ -45,7 +45,7 @@ context("Working with visibility, changing positions and continuity", () => {
     }
 
     stepsY = 72;
-    for (let i = 0; i < stepsY; i += 1) {
+    for (let i = 0; i < stepsY; i += 10) {
       cy.get("#1-extended").trigger("mousemove", {
         clientY: startingPointY + i,
         force: true,
@@ -57,7 +57,7 @@ context("Working with visibility, changing positions and continuity", () => {
   });
 
   it("Insert element (1) inside the list", () => {
-    for (let i = stepsX; i > 0; i -= 1) {
+    for (let i = stepsX; i > 0; i -= 10) {
       cy.get("#1-extended").trigger("mousemove", {
         clientX: startingPointX - i,
         force: true,
@@ -142,7 +142,7 @@ context("Working with visibility, changing positions and continuity", () => {
   });
 
   it("Non-visible elements don't have any transformation", () => {
-    for (let i = 14; i < 100; i += 1) {
+    for (let i = 14; i < 100; i += 10) {
       cy.get(`#${i}-extended`).should("have.css", "transform", "none");
     }
   });
@@ -215,7 +215,7 @@ context("Working with visibility, changing positions and continuity", () => {
   it("Transforms element (1) - outside the list", () => {
     stepsX = 240;
 
-    for (let i = 0; i < stepsX; i += 1) {
+    for (let i = 0; i < stepsX; i += 10) {
       cy.get("#1-extended").trigger("mousemove", {
         clientX: startingPointX - i,
         force: true,
@@ -226,7 +226,7 @@ context("Working with visibility, changing positions and continuity", () => {
     }
 
     stepsY = 112;
-    for (let i = 0; i < stepsY; i += 1) {
+    for (let i = 0; i < stepsY; i += 10) {
       cy.get("#1-extended").trigger("mousemove", {
         clientY: startingPointY + i,
         force: true,
@@ -237,7 +237,7 @@ context("Working with visibility, changing positions and continuity", () => {
   });
 
   it("Insert element (1) inside the list", () => {
-    for (let i = stepsX; i > 0; i -= 1) {
+    for (let i = stepsX; i > 0; i -= 10) {
       cy.get("#1-extended").trigger("mousemove", {
         clientX: startingPointX - i,
         force: true,
@@ -249,7 +249,7 @@ context("Working with visibility, changing positions and continuity", () => {
   });
 
   it("Splitting the list at 6", () => {
-    for (let i = 2; i < 6; i += 1) {
+    for (let i = 2; i < 6; i += 10) {
       cy.get(`#${i}-extended`).should(
         "have.css",
         "transform",
@@ -261,7 +261,7 @@ context("Working with visibility, changing positions and continuity", () => {
   it("Transom element down", () => {
     stepsY = 522;
 
-    for (let i = 112; i < stepsY; i += 1) {
+    for (let i = 112; i < stepsY; i += 10) {
       cy.get("#1-extended").trigger("mousemove", {
         clientY: startingPointY + i,
         force: true,
@@ -279,7 +279,7 @@ context("Working with visibility, changing positions and continuity", () => {
   });
 
   it("Siblings order dataset is updated now", () => {
-    for (let i = 2; i < 13; i += 1) {
+    for (let i = 2; i < 13; i += 10) {
       cy.get(`#${i}-extended`).then((elm) => {
         const { index } = elm[0].dataset;
         expect(index).to.be.eq(`${i - 2}`);
@@ -292,7 +292,7 @@ context("Working with visibility, changing positions and continuity", () => {
   });
 
   it("Siblings have new positions", () => {
-    for (let i = 2; i < 13; i += 1) {
+    for (let i = 2; i < 13; i += 10) {
       cy.get(`#${i}-extended`).should(
         "have.css",
         "transform",
@@ -308,7 +308,7 @@ context("Working with visibility, changing positions and continuity", () => {
   });
 
   it("Non-visible elements don't have any transformation", () => {
-    for (let i = 16; i < 100; i += 1) {
+    for (let i = 16; i < 100; i += 10) {
       cy.get(`#${i}-extended`).should("have.css", "transform", "none");
     }
   });

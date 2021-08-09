@@ -36,7 +36,7 @@ context(
       it("Transforms element (1) - outside the list", () => {
         stepsX = 240;
 
-        for (let i = 0; i < stepsX; i += 1) {
+        for (let i = 0; i < stepsX; i += 10) {
           cy.get("#1-extended").trigger("mousemove", {
             clientX: startingPointX - i,
             force: true,
@@ -48,7 +48,7 @@ context(
       });
 
       it("Visible elements all are lifted up", () => {
-        for (let i = 2; i < 11; i += 1) {
+        for (let i = 2; i < 11; i += 10) {
           cy.get(`#${i}-extended`).should(
             "have.css",
             "transform",
@@ -72,7 +72,7 @@ context(
       });
 
       it("All sibling dataset index is updated", () => {
-        for (let i = 2; i < 100; i += 1) {
+        for (let i = 2; i < 100; i += 10) {
           cy.get(`#${i}-extended`).then((elm) => {
             const { index } = elm[0].dataset;
             expect(index).to.be.eq(`${i - 2}`);
@@ -81,7 +81,7 @@ context(
       });
 
       it("Invisible elements are not transformed", () => {
-        for (let i = 20; i < 100; i += 1) {
+        for (let i = 20; i < 100; i += 10) {
           cy.get(`#${i}-extended`).should("have.css", "transform", "none");
         }
       });
@@ -100,7 +100,7 @@ context(
       });
 
       it("Visible elements have zero transformation", () => {
-        for (let i = 2; i < 11; i += 1) {
+        for (let i = 2; i < 11; i += 10) {
           cy.get(`#${i}-extended`).should(
             "have.css",
             "transform",
@@ -110,13 +110,13 @@ context(
       });
 
       it("Invisible elements are not transformed", () => {
-        for (let i = 20; i < 100; i += 1) {
+        for (let i = 20; i < 100; i += 10) {
           cy.get(`#${i}-extended`).should("have.css", "transform", "none");
         }
       });
 
       it("Checking dataset index stays the same", () => {
-        for (let i = 1; i < 99; i += 1) {
+        for (let i = 1; i < 99; i += 10) {
           // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(0)
             .get(`#${i}-extended`)
@@ -153,7 +153,7 @@ context(
       it("Transforms element (90) - outside the list", () => {
         stepsX = 240;
 
-        for (let i = 0; i < stepsX; i += 1) {
+        for (let i = 0; i < stepsX; i += 10) {
           cy.get("#90-extended").trigger("mousemove", {
             clientX: startingPointX - i,
             force: true,
@@ -165,7 +165,7 @@ context(
       });
 
       it("Visible elements all are lifted up", () => {
-        for (let i = 91; i < 100; i += 1) {
+        for (let i = 91; i < 100; i += 10) {
           cy.get(`#${i}-extended`).should(
             "have.css",
             "transform",
@@ -179,7 +179,7 @@ context(
       });
 
       it("Checking dataset index stays the same", () => {
-        for (let i = 1; i < 99; i += 1) {
+        for (let i = 1; i < 99; i += 10) {
           // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(0)
             .get(`#${i}-extended`)

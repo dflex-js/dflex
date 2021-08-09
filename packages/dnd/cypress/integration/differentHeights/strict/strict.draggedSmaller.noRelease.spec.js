@@ -32,7 +32,7 @@ context("Moving Elements Strict - Dragged is smaller - No Release", () => {
   it("Transforms element (mtg) - one step", () => {
     stepsY = 155;
 
-    for (let i = 0; i < stepsY; i += 1) {
+    for (let i = 0; i < stepsY; i += 10) {
       cy.get("#mtg").trigger("mousemove", {
         clientY: startingPointY + i,
         force: true,
@@ -55,7 +55,7 @@ context("Moving Elements Strict - Dragged is smaller - No Release", () => {
   });
 
   it("Transforms element (mtg) - Occupy #proj", () => {
-    for (let i = stepsY; i < stepsY + 155; i += 1) {
+    for (let i = stepsY; i < stepsY + 155; i += 10) {
       cy.get("#mtg").trigger("mousemove", {
         clientY: startingPointY + i,
         force: true,
@@ -84,7 +84,7 @@ context("Moving Elements Strict - Dragged is smaller - No Release", () => {
   });
 
   it("Transforms element (mtg) - Occupy #gym", () => {
-    for (let i = stepsY; i < stepsY + 155; i += 1) {
+    for (let i = stepsY; i < stepsY + 155; i += 10) {
       cy.get("#mtg").trigger("mousemove", {
         clientY: startingPointY + i,
         force: true,

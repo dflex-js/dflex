@@ -33,7 +33,7 @@ context(
     it("Transforms element (mtg) - one step", () => {
       stepsY = 155;
 
-      for (let i = 0; i < stepsY; i += 1) {
+      for (let i = 0; i < stepsY; i += 10) {
         cy.get("#mtg").trigger("mousemove", {
           clientY: startingPointY + i,
           force: true,
@@ -80,7 +80,7 @@ context(
     it("Transforms element (mtg) - Occupy #proj", () => {
       stepsY = 155;
 
-      for (let i = 0; i < stepsY; i += 1) {
+      for (let i = 0; i < stepsY; i += 10) {
         cy.get("#mtg").trigger("mousemove", {
           clientY: startingPointY + i,
           force: true,
@@ -131,7 +131,7 @@ context(
     it("Transforms element (mtg) - Occupy #gym", () => {
       stepsY = 155;
 
-      for (let i = 0; i < stepsY; i += 1) {
+      for (let i = 0; i < stepsY; i += 10) {
         cy.get("#mtg").trigger("mousemove", {
           clientY: startingPointY + i,
           force: true,
@@ -186,7 +186,7 @@ context(
     it("Transforms element (mtg) outside the list", () => {
       stepsY = 60;
 
-      for (let i = 0; i < stepsY; i += 1) {
+      for (let i = 0; i < stepsY; i += 10) {
         cy.get("#mtg").trigger("mousemove", {
           clientY: startingPointY + i,
           force: true,
@@ -241,7 +241,7 @@ context(
     it("Transforms element (mtg) up to occupy #gym", () => {
       stepsY = 155;
 
-      for (let i = 0; i < stepsY; i += 1) {
+      for (let i = 0; i < stepsY; i += 10) {
         cy.get("#mtg").trigger("mousemove", {
           clientY: startingPointY - i,
           force: true,
@@ -296,7 +296,7 @@ context(
     it("Transforms element (mtg) - Occupy #proj", () => {
       stepsY = 155;
 
-      for (let i = 0; i < stepsY; i += 1) {
+      for (let i = 0; i < stepsY; i += 10) {
         cy.get("#mtg").trigger("mousemove", {
           clientY: startingPointY - i,
           force: true,
@@ -351,7 +351,7 @@ context(
     it("Transforms element (mtg) back to first", () => {
       stepsY = 155;
 
-      for (let i = 0; i < stepsY; i += 1) {
+      for (let i = 0; i < stepsY; i += 10) {
         cy.get("#mtg").trigger("mousemove", {
           clientY: startingPointY - i,
           force: true,
@@ -407,7 +407,7 @@ context(
     it("Transforms element (mtg) outside the list", () => {
       stepsY = 75;
 
-      for (let i = 0; i < stepsY; i += 1) {
+      for (let i = 0; i < stepsY; i += 10) {
         cy.get("#mtg").trigger("mousemove", {
           clientY: startingPointY - i,
           force: true,
