@@ -99,20 +99,6 @@ context(
         });
       });
 
-      // it("All sibling/Dragged dataset index is undone", () => {
-      //   const genArr = Array.from({ length: 100 }, (v, k) => k + 1);
-
-      //   cy.wrap(genArr).each((i) => {
-      //     // eslint-disable-next-line cypress/no-unnecessary-waiting
-      //     cy.wait(0);
-      //     cy.get(`#${i}-extended`).then((elm) => {
-      //       const { index } = elm[0].dataset;
-
-      //       expect(index).to.be.eq(`${i - 1}`);
-      //     });
-      //   });
-      // });
-
       it("Visible elements have zero transformation", () => {
         for (let i = 2; i < 11; i += 1) {
           cy.get(`#${i}-extended`).should(
@@ -126,6 +112,19 @@ context(
       it("Invisible elements are not transformed", () => {
         for (let i = 20; i < 100; i += 1) {
           cy.get(`#${i}-extended`).should("have.css", "transform", "none");
+        }
+      });
+
+      it("Checking dataset index stays the same", () => {
+        for (let i = 1; i < 99; i += 1) {
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.wait(0)
+            .get(`#${i}-extended`)
+            .then((elm) => {
+              const { index } = elm[0].dataset;
+
+              expect(index).to.be.eq(`${i - 1}`);
+            });
         }
       });
     });
@@ -172,6 +171,23 @@ context(
             "transform",
             "matrix(1, 0, 0, 1, 0, -59.1875)"
           );
+        }
+      });
+
+      it("Release Dragged", () => {
+        cy.get("#90-extended").trigger("mouseup", { force: true });
+      });
+
+      it("Checking dataset index stays the same", () => {
+        for (let i = 1; i < 99; i += 1) {
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.wait(0)
+            .get(`#${i}-extended`)
+            .then((elm) => {
+              const { index } = elm[0].dataset;
+
+              expect(index).to.be.eq(`${i - 1}`);
+            });
         }
       });
     });
