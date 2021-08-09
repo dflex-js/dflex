@@ -184,7 +184,7 @@ context(
       cy.get("#gym").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -115.188)"
+        "matrix(1, 0, 0, 1, 0, 0)"
       );
     });
   }

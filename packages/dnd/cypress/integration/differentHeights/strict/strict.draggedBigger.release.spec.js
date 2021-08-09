@@ -289,7 +289,7 @@ context(
     it("Transforms element outside the list", () => {
       stepsY = 100;
 
-      for (let i = 0; i < stepsY; i += 10) {
+      for (let i = 0; i < stepsY; i += 5) {
         cy.get("#org").trigger("mousemove", {
           clientY: startingPointY - i,
           force: true,
