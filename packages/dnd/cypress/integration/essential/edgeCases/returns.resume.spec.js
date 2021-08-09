@@ -39,7 +39,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(1);
+        // // cy.wait(0);
       }
     });
 
@@ -71,7 +71,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(1);
+        // cy.wait(0);
       }
 
       steps = 0;
@@ -129,7 +129,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(1);
+        // cy.wait(0);
       }
     });
 
@@ -163,7 +163,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(1);
+        // cy.wait(0);
       }
     });
 
