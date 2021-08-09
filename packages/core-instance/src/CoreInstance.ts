@@ -126,7 +126,9 @@ class CoreInstance
   }
 
   transformElm() {
-    this.ref!.style.transform = `translate3d(${this.translateX}px,${this.translateY}px, 0)`;
+    requestAnimationFrame(() => {
+      this.ref!.style.transform = `translate3d(${this.translateX}px,${this.translateY}px, 0)`;
+    });
   }
 
   updateDataset(i: number) {
