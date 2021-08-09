@@ -13,11 +13,11 @@ import type { DraggableDnDInterface } from "../Draggable";
 import Droppable from "./Droppable";
 
 class EndDroppable extends Droppable {
-  private spliceAt: number;
+  // private spliceAt: number;
 
   constructor(draggable: DraggableDnDInterface) {
     super(draggable);
-    this.spliceAt = -1;
+    // this.spliceAt = -1;
   }
 
   private isIDEligible2Undo(id: string) {
@@ -60,17 +60,15 @@ class EndDroppable extends Droppable {
       this.draggable.numberOfElementsTransformed -= 1;
 
       prevVisibility = isVisible;
-    } else {
-      this.spliceAt = i;
     }
 
     return { prevVisibility, listVisibility };
   }
 
-  spliceList(from: number, lst: string[]) {
-    lst.splice(this.spliceAt, 1);
-    lst.splice(from, 0, this.draggable.draggedElm.id);
-  }
+  // spliceList(from: number, lst: string[]) {
+  //   lst.splice(this.spliceAt, 1);
+  //   lst.splice(from, 0, this.draggable.draggedElm.id);
+  // }
 
   private loopAscWithAnimationFrame(from: number, lst: string[]) {
     let i = from;
@@ -94,7 +92,7 @@ class EndDroppable extends Droppable {
 
     requestAnimationFrame(run);
 
-    this.spliceList(from, lst);
+    // this.spliceList(from, lst);
   }
 
   private loopDesWithAnimationFrame(from: number, lst: string[]) {
@@ -119,7 +117,7 @@ class EndDroppable extends Droppable {
 
     requestAnimationFrame(run);
 
-    this.spliceList(from, lst);
+    // this.spliceList(from, lst);
   }
 
   /**
