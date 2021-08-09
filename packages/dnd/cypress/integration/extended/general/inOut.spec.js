@@ -41,7 +41,7 @@ context("Working with visibility, changing positions and continuity", () => {
       });
 
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(0);
+      // // cy.wait(0);
     }
 
     stepsY = 72;
@@ -52,7 +52,7 @@ context("Working with visibility, changing positions and continuity", () => {
       });
 
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(0);
+      // // cy.wait(0);
     }
   });
 
@@ -64,7 +64,7 @@ context("Working with visibility, changing positions and continuity", () => {
       });
 
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(0);
+      // cy.wait(0);
     }
     stepsX = 0;
   });
@@ -222,7 +222,7 @@ context("Working with visibility, changing positions and continuity", () => {
       });
 
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(0);
+      // cy.wait(0);
     }
 
     stepsY = 112;
@@ -232,7 +232,7 @@ context("Working with visibility, changing positions and continuity", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(0);
+      // cy.wait(0);
     }
   });
 
@@ -243,7 +243,7 @@ context("Working with visibility, changing positions and continuity", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(0);
+      // cy.wait(0);
     }
     stepsX = 0;
   });
@@ -268,7 +268,7 @@ context("Working with visibility, changing positions and continuity", () => {
       });
 
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(0);
+      // cy.wait(0);
     }
 
     stepsX = 0;

@@ -43,7 +43,7 @@ context(
           });
 
           // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(0);
+          // cy.wait(0);
         }
       });
 
@@ -118,13 +118,11 @@ context(
       it("Checking dataset index stays the same", () => {
         for (let i = 1; i < 99; i += 10) {
           // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(0)
-            .get(`#${i}-extended`)
-            .then((elm) => {
-              const { index } = elm[0].dataset;
+          cy.get(`#${i}-extended`).then((elm) => {
+            const { index } = elm[0].dataset;
 
-              expect(index).to.be.eq(`${i - 1}`);
-            });
+            expect(index).to.be.eq(`${i - 1}`);
+          });
         }
       });
     });
@@ -160,7 +158,7 @@ context(
           });
 
           // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(0);
+          // cy.wait(0);
         }
       });
 
