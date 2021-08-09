@@ -32,7 +32,7 @@ context("Moving Elements Strict - Dragged is bigger - No Release", () => {
   it("Transforms element (org) - one step", () => {
     stepsY = 155;
 
-    for (let i = 0; i < stepsY; i += 1) {
+    for (let i = 0; i < stepsY; i += 10) {
       cy.get("#org").trigger("mousemove", {
         clientY: startingPointY + i,
         force: true,
@@ -55,7 +55,7 @@ context("Moving Elements Strict - Dragged is bigger - No Release", () => {
   });
 
   it("Transforms element (org) - Occupy #gym", () => {
-    for (let i = stepsY; i < stepsY + 155; i += 1) {
+    for (let i = stepsY; i < stepsY + 155; i += 10) {
       cy.get("#org").trigger("mousemove", {
         clientY: startingPointY + i,
         force: true,
@@ -125,7 +125,7 @@ context("Moving Elements Strict - Dragged is bigger - No Release", () => {
   it("Transforms element (org) up to occupy gym", () => {
     stepsY = 155;
 
-    for (let i = 0; i < stepsY; i += 1) {
+    for (let i = 0; i < stepsY; i += 10) {
       cy.get("#org").trigger("mousemove", {
         clientY: startingPointY - i,
         force: true,
@@ -148,7 +148,7 @@ context("Moving Elements Strict - Dragged is bigger - No Release", () => {
   });
 
   it("Transforms element (org) up to occupy #prog", () => {
-    for (let i = stepsY; i < stepsY + 155; i += 1) {
+    for (let i = stepsY; i < stepsY + 155; i += 10) {
       cy.get("#org").trigger("mousemove", {
         clientY: startingPointY - i,
         force: true,
@@ -169,7 +169,7 @@ context("Moving Elements Strict - Dragged is bigger - No Release", () => {
   });
 
   it("Transforms element (org) up to occupy the first position", () => {
-    for (let i = stepsY; i < stepsY + 120; i += 1) {
+    for (let i = stepsY; i < stepsY + 120; i += 10) {
       cy.get("#org").trigger("mousemove", {
         clientY: startingPointY - i,
         force: true,

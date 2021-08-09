@@ -339,7 +339,6 @@ class Draggable extends Base implements DraggableDnDInterface {
       isFallback ||
       siblings === null ||
       this.numberOfElementsTransformed === 0
-      // this.isNotSettled()
     ) {
       /**
        * If not isDraggedOutPosition, it means dragged is out its position, inside
@@ -356,6 +355,12 @@ class Draggable extends Base implements DraggableDnDInterface {
         this.draggedElm.transformElm();
         this.draggedElm.updateDataset(this.draggedElm.order.self);
 
+        /**
+         * There's a rare case where dragged leaves and returns to the same
+         * position. In this case, undo won't be triggered so that we have to do
+         * it manually here. Otherwise, undoing will handle repositioning. I
+         * don't like it but it is what it is.
+         */
         if (
           siblings &&
           siblings[this.draggedElm.order.self] !== this.draggedElm.id
@@ -366,6 +371,7 @@ class Draggable extends Base implements DraggableDnDInterface {
           );
         }
       }
+
       return;
     }
 

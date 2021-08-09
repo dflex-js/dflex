@@ -67,7 +67,7 @@ class EndDroppable extends Droppable {
     return { prevVisibility, listVisibility };
   }
 
-  spliceList(from: number, lst: string[]) {
+  insertDragged(from: number, lst: string[]) {
     lst.splice(this.spliceAt, 1);
     lst.splice(from, 0, this.draggable.draggedElm.id);
   }
@@ -88,13 +88,15 @@ class EndDroppable extends Droppable {
       i += 1;
 
       if (i < lst.length) {
-        requestAnimationFrame(run);
+        // requestAnimationFrame(run);
+        run();
       }
     };
 
-    requestAnimationFrame(run);
+    // requestAnimationFrame(run);
+    run();
 
-    this.spliceList(from, lst);
+    this.insertDragged(from, lst);
   }
 
   private loopDesWithAnimationFrame(from: number, lst: string[]) {
@@ -113,13 +115,15 @@ class EndDroppable extends Droppable {
       i -= 1;
 
       if (i >= 0) {
-        requestAnimationFrame(run);
+        // requestAnimationFrame(run);
+        run();
       }
     };
 
-    requestAnimationFrame(run);
+    // requestAnimationFrame(run);
+    run();
 
-    this.spliceList(from, lst);
+    this.insertDragged(from, lst);
   }
 
   /**

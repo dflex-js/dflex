@@ -117,7 +117,7 @@ function myContext() {
       });
 
       it("Moving (container3 |> elm-1) up, inside the list to replace 12", () => {
-        for (let i = 0; i < 20; i += 1) {
+        for (let i = 0; i < 20; i += 5) {
           cy.get("#id-9").trigger("mousemove", {
             clientX: startingPointX,
             clientY: startingPointY + (4 - i / 10) * stepY,

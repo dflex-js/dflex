@@ -41,18 +41,32 @@ context(
 
       it("Transforms element (90) - outside the list", () => {
         stepsX = 240;
-        for (let i = 0; i < stepsX; i += 1) {
+        for (let i = 0; i < stepsX; i += 10) {
           cy.get("#90-extended").trigger("mousemove", {
             clientX: startingPointX - i,
             force: true,
           });
           // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(0);
+          // cy.wait(0);
         }
       });
 
+      it("Dataset index updated for dragged", () => {
+        cy.get(`#${90}-extended`).then((elm) => {
+          const { index } = elm[0].dataset;
+          expect(index).to.be.eq(`-1`);
+        });
+      });
+
+      it("dragged-element has dragged attribute", () => {
+        cy.get(`#${90}-extended`).then((elm) => {
+          const dragged = elm[0].getAttribute("dragged");
+          expect(dragged).to.be.eq(`true`);
+        });
+      });
+
       it("Visible elements all are lifted up", () => {
-        for (let i = 91; i < 100; i += 1) {
+        for (let i = 91; i < 100; i += 10) {
           cy.get(`#${i}-extended`).should(
             "have.css",
             "transform",
@@ -66,18 +80,28 @@ context(
       });
 
       it("Invisible elements are not transformed", () => {
-        for (let i = 1; i < 90; i += 1) {
+        for (let i = 1; i < 90; i += 10) {
           cy.get(`#${i}-extended`).should("have.css", "transform", "none");
         }
       });
 
       it("Elements are back", () => {
-        for (let i = 91; i < 100; i += 1) {
+        for (let i = 91; i < 100; i += 10) {
           cy.get(`#${i}-extended`).should(
             "have.css",
             "transform",
             "matrix(1, 0, 0, 1, 0, 0)"
           );
+        }
+      });
+
+      it("Checking dataset index stays the same", () => {
+        for (let i = 1; i < 99; i += 10) {
+          cy.get(`#${i}-extended`).then((elm) => {
+            const { index } = elm[0].dataset;
+
+            expect(index).to.be.eq(`${i - 1}`);
+          });
         }
       });
     });
@@ -103,18 +127,32 @@ context(
 
       it("Transforms element (1) - outside the list", () => {
         stepsX = 240;
-        for (let i = 0; i < stepsX; i += 1) {
+        for (let i = 0; i < stepsX; i += 10) {
           cy.get("#1-extended").trigger("mousemove", {
             clientX: startingPointX - i,
             force: true,
           });
           // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(0);
+          // cy.wait(0);
         }
       });
 
+      it("Dataset index updated for dragged", () => {
+        cy.get(`#${1}-extended`).then((elm) => {
+          const { index } = elm[0].dataset;
+          expect(index).to.be.eq(`-1`);
+        });
+      });
+
+      it("dragged-element has dragged attribute", () => {
+        cy.get(`#${1}-extended`).then((elm) => {
+          const dragged = elm[0].getAttribute("dragged");
+          expect(dragged).to.be.eq(`true`);
+        });
+      });
+
       it("Visible elements all are lifted up", () => {
-        for (let i = 2; i < 11; i += 1) {
+        for (let i = 2; i < 11; i += 10) {
           cy.get(`#${i}-extended`).should(
             "have.css",
             "transform",
@@ -128,12 +166,23 @@ context(
       });
 
       it("Elements are back", () => {
-        for (let i = 2; i < 11; i += 1) {
+        for (let i = 2; i < 11; i += 10) {
           cy.get(`#${i}-extended`).should(
             "have.css",
             "transform",
             "matrix(1, 0, 0, 1, 0, 0)"
           );
+        }
+      });
+
+      it("Checking dataset index stays the same", () => {
+        for (let i = 1; i < 99; i += 10) {
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.get(`#${i}-extended`).then((elm) => {
+            const { index } = elm[0].dataset;
+
+            expect(index).to.be.eq(`${i - 1}`);
+          });
         }
       });
     });
@@ -161,19 +210,32 @@ context(
       it("Transforms element (60) - outside the list", () => {
         stepsX = 240;
 
-        for (let i = 0; i < stepsX; i += 1) {
+        for (let i = 0; i < stepsX; i += 10) {
           cy.get("#60-extended").trigger("mousemove", {
             clientX: startingPointX - i,
             force: true,
           });
-
           // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(0);
         }
       });
 
+      it("Dataset index updated for dragged", () => {
+        cy.get(`#${60}-extended`).then((elm) => {
+          const { index } = elm[0].dataset;
+          expect(index).to.be.eq(`-1`);
+        });
+      });
+
+      it("dragged-element has dragged attribute", () => {
+        cy.get(`#${60}-extended`).then((elm) => {
+          const dragged = elm[0].getAttribute("dragged");
+          expect(dragged).to.be.eq(`true`);
+        });
+      });
+
       it("Visible elements all are lifted up", () => {
-        for (let i = 61; i < 72; i += 1) {
+        for (let i = 61; i < 72; i += 10) {
           cy.get(`#${i}-extended`).should(
             "have.css",
             "transform",
@@ -187,12 +249,25 @@ context(
       });
 
       it("Elements are back", () => {
-        for (let i = 61; i < 72; i += 1) {
+        for (let i = 61; i < 72; i += 10) {
           cy.get(`#${i}-extended`).should(
             "have.css",
             "transform",
             "matrix(1, 0, 0, 1, 0, 0)"
           );
+        }
+      });
+
+      it("Checking dataset index stays the same", () => {
+        for (let i = 1; i < 99; i += 10) {
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.wait(0)
+            .get(`#${i}-extended`)
+            .then((elm) => {
+              const { index } = elm[0].dataset;
+
+              expect(index).to.be.eq(`${i - 1}`);
+            });
         }
       });
     });

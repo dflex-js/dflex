@@ -34,7 +34,7 @@ class Droppable {
 
   private siblingsEmptyElmIndex: number;
 
-  private scrollAnimationFrame: number | null;
+  private scrollAnimatedFrame: number | null;
 
   private isScrollOffsetInitiated: boolean;
 
@@ -65,7 +65,7 @@ class Droppable {
 
     this.siblingsEmptyElmIndex = -1;
 
-    this.scrollAnimationFrame = null;
+    this.scrollAnimatedFrame = null;
 
     this.isScrollOffsetInitiated = false;
     this.scrollYOffset = 0;
@@ -538,16 +538,6 @@ class Droppable {
       this.setEffectedElemDirection(true);
     }
 
-    // Prevent elements collision. Add only if empty.
-    if (siblings![to].length === 0) {
-      siblings![to] = this.draggable.draggedElm.id;
-    } else if (process.env.NODE_ENV !== "production") {
-      // eslint-disable-next-line no-console
-      console.error(
-        `Illegal Attempt: dragged is positioned above the existing element in the index ${to}`
-      );
-    }
-
     /**
      * Reset index.
      */
@@ -558,7 +548,7 @@ class Droppable {
     // Prevent store from implementing any animation response.
     store.hasThrottledFrame = 1;
 
-    this.scrollAnimationFrame = requestAnimationFrame(() => {
+    this.scrollAnimatedFrame = requestAnimationFrame(() => {
       if (this.scrollYOffset === null || this.scrollXOffset === null) {
         this.scrollYOffset = store.scrollY;
         this.scrollXOffset = store.scrollX;
@@ -573,7 +563,7 @@ class Droppable {
       );
 
       // Reset animation flags
-      this.scrollAnimationFrame = null;
+      this.scrollAnimatedFrame = null;
       store.hasThrottledFrame = null;
     });
   }
@@ -612,7 +602,7 @@ class Droppable {
     // Prevent store from implementing any animation response.
     store.hasThrottledFrame = 1;
 
-    this.scrollAnimationFrame = requestAnimationFrame(() => {
+    this.scrollAnimatedFrame = requestAnimationFrame(() => {
       if (!this.isScrollOffsetInitiated) {
         this.initScrollOffset();
         this.isScrollOffsetInitiated = true;
@@ -621,7 +611,7 @@ class Droppable {
       this[on](x, y, direction);
 
       // Reset animation flags
-      this.scrollAnimationFrame = null;
+      this.scrollAnimatedFrame = null;
       store.hasThrottledFrame = null;
     });
   }
@@ -639,7 +629,7 @@ class Droppable {
 
     if (
       this.draggable.scroll.enable &&
-      this.scrollAnimationFrame === null &&
+      this.scrollAnimatedFrame === null &&
       !store.hasThrottledFrame
     ) {
       const { sK } = store.registry[this.draggable.draggedElm.id].keys;

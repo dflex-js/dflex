@@ -33,7 +33,7 @@ context(
 
     it("Transforms element (org) - outside the list", () => {
       stepsX = 240;
-      for (let i = 0; i < stepsX; i += 1) {
+      for (let i = 0; i < stepsX; i += 10) {
         cy.get("#org").trigger("mousemove", {
           clientX: startingPointX - i,
           force: true,
@@ -43,7 +43,7 @@ context(
       }
 
       stepsY = 115;
-      for (let i = 0; i < stepsY; i += 1) {
+      for (let i = 0; i < stepsY; i += 10) {
         cy.get("#org").trigger("mousemove", {
           clientY: startingPointY + i,
           force: true,
@@ -70,7 +70,7 @@ context(
     });
 
     it("Insert element (org) inside", () => {
-      for (let i = stepsX; i >= 0; i -= 1) {
+      for (let i = stepsX; i >= 0; i -= 10) {
         cy.get("#org").trigger("mousemove", {
           clientX: startingPointX - i,
           force: true,
@@ -100,7 +100,7 @@ context(
 
     it("Transforms element (org) - outside the list", () => {
       stepsX = 240;
-      for (let i = 0; i < stepsX; i += 1) {
+      for (let i = 0; i < stepsX; i += 10) {
         cy.get("#org").trigger("mousemove", {
           clientX: startingPointX - i,
           force: true,
@@ -110,7 +110,7 @@ context(
       }
 
       stepsY = 115;
-      for (let i = stepsY; i < stepsY + 155; i += 1) {
+      for (let i = stepsY; i < stepsY + 155; i += 10) {
         cy.get("#org").trigger("mousemove", {
           clientY: startingPointY + i,
           force: true,
@@ -121,7 +121,7 @@ context(
     });
 
     it("Insert element (org) inside", () => {
-      for (let i = stepsX; i >= 0; i -= 1) {
+      for (let i = stepsX; i >= 0; i -= 10) {
         cy.get("#org").trigger("mousemove", {
           clientX: startingPointX - i,
           force: true,
