@@ -39,7 +39,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(0);
+        // cy.wait(0);
       }
 
       stepsY = 155;
@@ -49,7 +49,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(0);
+        // cy.wait(0);
       }
     });
 
@@ -80,7 +80,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(0);
+        // cy.wait(0);
       }
       stepsX = 0;
     });
@@ -112,7 +112,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(0);
+        // cy.wait(0);
       }
       stepsX += 190;
 
@@ -122,7 +122,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(0);
+        // cy.wait(0);
       }
       stepsY += 150;
     });
@@ -134,7 +134,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(0);
+        // cy.wait(0);
       }
 
       stepsX = 0;
@@ -167,7 +167,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(0);
+        // cy.wait(0);
       }
       stepsX += 190;
 
@@ -177,7 +177,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(0);
+        // cy.wait(0);
       }
       stepsY += 150;
     });
@@ -189,7 +189,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(0);
+        // cy.wait(0);
       }
 
       stepsX = 0;
