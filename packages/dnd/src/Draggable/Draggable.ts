@@ -339,7 +339,6 @@ class Draggable extends Base implements DraggableDnDInterface {
       isFallback ||
       siblings === null ||
       this.numberOfElementsTransformed === 0
-      // this.isNotSettled()
     ) {
       /**
        * If not isDraggedOutPosition, it means dragged is out its position, inside
@@ -372,6 +371,7 @@ class Draggable extends Base implements DraggableDnDInterface {
           );
         }
       }
+
       return;
     }
 
