@@ -89,12 +89,6 @@ context(
     });
 
     it("Siblings have new positions", () => {
-      cy.get("#mtg").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 171.188)"
-      );
-
       cy.get("#org").should(
         "have.css",
         "transform",
