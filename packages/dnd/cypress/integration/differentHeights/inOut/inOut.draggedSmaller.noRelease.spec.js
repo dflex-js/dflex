@@ -39,7 +39,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
 
       stepsY = 155;
@@ -49,7 +49,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
     });
 
@@ -80,7 +80,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
       stepsX = 0;
     });
@@ -112,7 +112,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
       stepsX += 190;
 
@@ -122,7 +122,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
       stepsY += 150;
     });
@@ -134,19 +134,13 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
 
       stepsX = 0;
     });
 
     it("Siblings have new positions", () => {
-      cy.get("#mtg").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 305)"
-      );
-
       cy.get("#org").should(
         "have.css",
         "transform",
@@ -173,7 +167,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
       stepsX += 190;
 
@@ -183,7 +177,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
       stepsY += 150;
     });
