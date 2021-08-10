@@ -1,6 +1,7 @@
 {
   "name": "@dflex/core-instance",
   "version": "2.11.0",
+  "main": "dist/index.js",
   "exports": {
     ".": "./dist/index.js"
   },
