@@ -212,15 +212,6 @@ class Base
     $.maxRight = left + horizontal;
   }
 
-  private isParenOverflowX() {
-    const parentBottom =
-      this.activeParent!.offset!.top + this.activeParent!.offset!.height;
-
-    const elemOverflowX = parentBottom > window.innerHeight;
-
-    return elemOverflowX;
-  }
-
   /**
    * Assigns new ACTIVE_PARENT: parent who contains dragged
    *
