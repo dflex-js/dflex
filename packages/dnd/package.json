@@ -1,8 +1,17 @@
 {
   "name": "@dflex/dnd",
   "version": "2.11.0",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "dist/index.d.ts"
+      ]
+    }
+  },
+  "type": "module",
   "description": "Modern drag and drop package for all JavaScript frameworks",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "scripts": {

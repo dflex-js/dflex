@@ -1,8 +1,17 @@
 {
   "name": "@dflex/store",
   "version": "2.11.0",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "dist/index.d.ts"
+      ]
+    }
+  },
+  "type": "module",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
   "description": "DOM store allows you to traverse through the DOM tree with element-id",
   "scripts": {
