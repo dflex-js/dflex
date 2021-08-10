@@ -3,6 +3,7 @@
 exports[`Draggable Store Registers element and initiates translateX,Y 1`] = `
 Object {
   "id-0": CoreInstance {
+    "animatedFrame": null,
     "currentLeft": NaN,
     "currentTop": NaN,
     "hasToTransform": false,
