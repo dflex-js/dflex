@@ -145,18 +145,17 @@ class Draggable extends Base implements DraggableDnDInterface {
   }
 
   private axesBottomFilter(y: number, bottom: number) {
-    return (this.tempIndex < 0 || this.isLastELm()) &&
-      y - this.innerOffsetY + this.draggedElm.offset!.height >= bottom
+    return y - this.innerOffsetY + this.draggedElm.offset!.height >= bottom
       ? bottom + this.innerOffsetY - this.draggedElm.offset!.height
       : y;
   }
 
   private axesTopFilter(y: number, maxTop: number) {
-    return this.tempIndex <= 0 && y - this.innerOffsetY <= maxTop
-      ? maxTop + this.innerOffsetY
-      : y;
+    return y - this.innerOffsetY <= maxTop ? maxTop + this.innerOffsetY : y;
   }
 
+  //  (this.tempIndex < 0 || this.isLastELm())
+  // this.tempIndex <= 0 &&
   private containerVerticalAxesFilter(y: number) {
     const { top, bottom } =
       store.siblingsBoundaries[store.registry[this.draggedElm.id].keys.sK];
