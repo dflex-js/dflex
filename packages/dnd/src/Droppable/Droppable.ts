@@ -575,8 +575,6 @@ class Droppable {
     direction: 1 | -1,
     on: "scrollElementOnX" | "scrollElementOnY"
   ) {
-    console.log("in here");
-
     // Prevent store from implementing any animation response.
     store.hasThrottledFrame = 1;
 
