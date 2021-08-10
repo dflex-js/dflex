@@ -95,6 +95,7 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
   currentLeft?: number;
   order: Order;
   keys: Keys;
+  animatedFrame: number | null;
   resume(scrollX: number, scrollY: number): void;
   changeVisibility(isVisible: boolean): void;
   setYPosition(

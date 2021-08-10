@@ -366,7 +366,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     // same branch
     this.elmIndicator.currentKy = `${sK}${pK}`;
 
-    if (isVisibleY || isVisibleX) {
+    if (isVisibleY && isVisibleX) {
       if (!this.siblingsOverflow[this.registry[id].keys.sK]) {
         // If we don't do this, and the list is not overflowing, then the object
         // will be undefined.

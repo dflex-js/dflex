@@ -194,7 +194,7 @@ class Droppable {
    *
    * @param id -
    */
-  updateElement(
+  private updateElement(
     id: string,
     isUpdateDraggedTranslate: boolean,
     draggedDirection?: 1 | -1
@@ -544,30 +544,6 @@ class Droppable {
     this.leftAtIndex = -1;
   }
 
-  scroll(x: number, y: number, direction: 1 | -1) {
-    // Prevent store from implementing any animation response.
-    store.hasThrottledFrame = 1;
-
-    this.scrollAnimatedFrame = requestAnimationFrame(() => {
-      if (this.scrollYOffset === null || this.scrollXOffset === null) {
-        this.scrollYOffset = store.scrollY;
-        this.scrollXOffset = store.scrollX;
-      }
-
-      store.documentScrollingElement.scrollTop +=
-        direction * this.draggable.scroll.speed;
-
-      this.draggable.dragAt(
-        x,
-        y + store.documentScrollingElement.scrollTop - this.scrollYOffset
-      );
-
-      // Reset animation flags
-      this.scrollAnimatedFrame = null;
-      store.hasThrottledFrame = null;
-    });
-  }
-
   private initScrollOffset() {
     this.scrollYOffset = store.scrollY;
     this.scrollXOffset = store.scrollX;
@@ -599,6 +575,8 @@ class Droppable {
     direction: 1 | -1,
     on: "scrollElementOnX" | "scrollElementOnY"
   ) {
+    console.log("in here");
+
     // Prevent store from implementing any animation response.
     store.hasThrottledFrame = 1;
 
@@ -627,6 +605,7 @@ class Droppable {
   dragAt(x: number, y: number) {
     const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
 
+    console.log("in here??", this.draggable.scroll.enable);
     if (
       this.draggable.scroll.enable &&
       this.scrollAnimatedFrame === null &&
