@@ -39,6 +39,8 @@ class CoreInstance
 
   hasToTransform!: boolean;
 
+  animatedFrame: number | null;
+
   constructor(elementWithPointer: CoreInput) {
     const { order, keys, scrollX, scrollY, ...element } = elementWithPointer;
 
@@ -56,6 +58,8 @@ class CoreInstance
     if (!element.isPaused) {
       this.initIndicators(scrollX, scrollY);
     }
+
+    this.animatedFrame = null;
   }
 
   /**
@@ -126,7 +130,14 @@ class CoreInstance
   }
 
   transformElm() {
-    this.ref!.style.transform = `translate3d(${this.translateX}px,${this.translateY}px, 0)`;
+    if (this.animatedFrame !== null) {
+      window.cancelAnimationFrame(this.animatedFrame);
+    }
+
+    this.animatedFrame = window.requestAnimationFrame(() => {
+      this.ref!.style.transform = `translate3d(${this.translateX}px,${this.translateY}px, 0)`;
+      this.animatedFrame = null;
+    });
   }
 
   updateDataset(i: number) {
