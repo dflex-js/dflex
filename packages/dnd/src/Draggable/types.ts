@@ -49,8 +49,9 @@ export interface DraggableBaseInterface
   operationID: string;
   thresholds: LayoutThresholds;
   isOutActiveParent: boolean;
-  thresholdsPercentages: ThresholdPercentages;
+  draggedThreshold: ThresholdPercentages;
   scroll: ScrollOptWithThreshold;
+  seDraggedThreshold(relativeTo: CoreInstanceInterface): void;
   setThreshold(
     top: number,
     left: number,

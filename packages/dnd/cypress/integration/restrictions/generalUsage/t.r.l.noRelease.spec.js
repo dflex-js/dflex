@@ -28,7 +28,7 @@ context(
     });
 
     it("Transforms element (#item-rest-1) to the top outside the list", () => {
-      for (let i = 52; i >= 0; i -= 1) {
+      for (let i = 50; i >= 0; i -= 10) {
         cy.get("#item-rest-1").trigger("mousemove", {
           clientY: startingPointY - i,
           force: true,
@@ -47,7 +47,7 @@ context(
     });
 
     it("Transforms element (#item-rest-1) to restricted right", () => {
-      for (let i = 0; i < 52; i += 1) {
+      for (let i = 0; i < 50; i += 10) {
         cy.get("#item-rest-1").trigger("mousemove", {
           clientX: startingPointX + i,
           force: true,
@@ -66,13 +66,13 @@ context(
     });
 
     it("Transforms element (#item-rest-1) to restricted left", () => {
-      for (let i = 52; i > 0; i -= 1) {
+      for (let i = 50; i > 0; i -= 10) {
         cy.get("#item-rest-1").trigger("mousemove", {
           clientX: startingPointX - i,
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // // cy.wait(0);
+        // cy.wait(0);
       }
     });
 

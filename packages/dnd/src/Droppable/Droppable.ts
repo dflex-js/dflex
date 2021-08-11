@@ -194,7 +194,7 @@ class Droppable {
    *
    * @param id -
    */
-  updateElement(
+  private updateElement(
     id: string,
     isUpdateDraggedTranslate: boolean,
     draggedDirection?: 1 | -1
@@ -218,11 +218,9 @@ class Droppable {
        * And we have new translate only once. The first element matched the
        * condition is the breaking point element.
        */
-      this.draggable.setThreshold(
-        element.currentTop!,
-        element.currentLeft!,
-        element.offset!.height
-      );
+      this.draggable.seDraggedThreshold(element);
+
+      this.draggable.setThreshold(element.currentTop!, element.currentLeft!);
     }
 
     // element.onDragOver();
@@ -542,30 +540,6 @@ class Droppable {
      * Reset index.
      */
     this.leftAtIndex = -1;
-  }
-
-  scroll(x: number, y: number, direction: 1 | -1) {
-    // Prevent store from implementing any animation response.
-    store.hasThrottledFrame = 1;
-
-    this.scrollAnimatedFrame = requestAnimationFrame(() => {
-      if (this.scrollYOffset === null || this.scrollXOffset === null) {
-        this.scrollYOffset = store.scrollY;
-        this.scrollXOffset = store.scrollX;
-      }
-
-      store.documentScrollingElement.scrollTop +=
-        direction * this.draggable.scroll.speed;
-
-      this.draggable.dragAt(
-        x,
-        y + store.documentScrollingElement.scrollTop - this.scrollYOffset
-      );
-
-      // Reset animation flags
-      this.scrollAnimatedFrame = null;
-      store.hasThrottledFrame = null;
-    });
   }
 
   private initScrollOffset() {
