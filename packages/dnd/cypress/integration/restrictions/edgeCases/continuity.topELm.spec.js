@@ -36,7 +36,7 @@ context("Checking restrictions continuity for the first element", () => {
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // // // cy.wait(0);
+        // // // // cy.wait(0));
       }
 
       stepsY += 2;
@@ -49,7 +49,7 @@ context("Checking restrictions continuity for the first element", () => {
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // // cy.wait(0);
+        // // // cy.wait(0));
       }
 
       stepsY += 100;
@@ -70,7 +70,7 @@ context("Checking restrictions continuity for the first element", () => {
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // // cy.wait(0);
+        // // // cy.wait(0));
       }
       stepsX += 210;
     });
@@ -90,7 +90,7 @@ context("Checking restrictions continuity for the first element", () => {
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // // cy.wait(0);
+        // // // cy.wait(0));
       }
 
       stepsX += -370;
@@ -123,7 +123,7 @@ context("Checking restrictions continuity for the first element", () => {
     });
   });
 
-  context.only("Last element", () => {
+  context("Last element", () => {
     it("Getting the last element (#item-rest-5)", () => {
       cy.get("#item-rest-5").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
@@ -143,7 +143,7 @@ context("Checking restrictions continuity for the first element", () => {
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(0);
+        // cy.wait(0));
       }
 
       stepsY = 400;
@@ -190,7 +190,7 @@ context("Checking restrictions continuity for the first element", () => {
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(0);
+        // cy.wait(0));
       }
 
       stepsY = 400;
