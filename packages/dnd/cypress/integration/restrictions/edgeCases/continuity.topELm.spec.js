@@ -11,7 +11,7 @@ let startingPointY;
 let stepsX = 0;
 let stepsY = 0;
 
-context("Checking restrictions constancy for the first element", () => {
+context("Checking restrictions continuity for the first element", () => {
   before(() => {
     cy.visit("http://localhost:3001/restricted");
   });
