@@ -119,29 +119,39 @@ class Draggable extends Base implements DraggableDnDInterface {
     return this.tempIndex === this.getLastElmIndex();
   }
 
-  private axesRightFilter(x: number, minRight: number) {
+  private axesRightFilter(x: number, minRight: number, fallback: number) {
     return x - this.innerOffsetX + this.draggedElm.offset!.width >= minRight
-      ? -this.outerOffsetX
+      ? fallback
       : x;
   }
 
-  private axesLeftFilter(x: number, maxLeft: number) {
-    return x - this.innerOffsetX <= maxLeft ? -this.outerOffsetX : x;
+  private axesLeftFilter(x: number, maxLeft: number, fallback: number) {
+    return x - this.innerOffsetX <= maxLeft ? fallback : x;
   }
 
-  private containerHorizontalAxesFilter(x: number) {
+  private selHorizontalAxesFilter(x: number) {
     const { maxLeft, minRight } =
       store.siblingsBoundaries[store.registry[this.draggedElm.id].keys.sK];
 
     const fx = this.restrictions.allowLeavingFromLeft
       ? this.restrictions.allowLeavingFromRight
         ? x
-        : this.axesRightFilter(x, minRight)
-      : this.axesLeftFilter(x, maxLeft);
+        : this.axesRightFilter(x, minRight, -this.outerOffsetX)
+      : this.axesLeftFilter(x, maxLeft, -this.outerOffsetX);
 
     return this.restrictions.allowLeavingFromRight
       ? fx
-      : this.axesRightFilter(fx, minRight);
+      : this.axesRightFilter(fx, minRight, -this.outerOffsetX);
+  }
+
+  private viewportHorizontalAxesFilter(x: number) {
+    const fx = this.axesLeftFilter(x, 0, this.innerOffsetX);
+
+    return this.axesRightFilter(
+      fx,
+      store.viewportWidth,
+      store.viewportWidth - (this.draggedElm.offset!.width - this.innerOffsetX)
+    );
   }
 
   private axesBottomFilter(y: number, bottom: number) {
@@ -171,6 +181,12 @@ class Draggable extends Base implements DraggableDnDInterface {
       : this.axesBottomFilter(fy, bottom);
   }
 
+  private viewportVerticalAxesFilter(y: number) {
+    const fy = this.axesTopFilter(y, 0);
+
+    return this.axesBottomFilter(fy, store.viewportHeight);
+  }
+
   /**
    * Dragged current-offset is essential to determine dragged position in
    * layout and parent.
@@ -190,7 +206,10 @@ class Draggable extends Base implements DraggableDnDInterface {
 
     if (this.axesFilterNeeded) {
       filteredY = this.containerVerticalAxesFilter(y);
-      filteredX = this.containerHorizontalAxesFilter(x);
+      filteredX = this.selHorizontalAxesFilter(x);
+    } else {
+      filteredX = this.viewportHorizontalAxesFilter(x);
+      filteredY = this.viewportVerticalAxesFilter(y);
     }
 
     this.translate(filteredX, filteredY);
