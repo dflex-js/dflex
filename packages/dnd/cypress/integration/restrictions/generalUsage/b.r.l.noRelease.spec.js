@@ -31,29 +31,8 @@ context(
       });
     });
 
-    it("Transforms element (#item-rest-1)", () => {
-      for (let i = stepsY; i < stepsY + 88; i += 1) {
-        cy.get("#item-rest-1").trigger("mousemove", {
-          clientY: startingPointY + i,
-          force: true,
-        });
-        // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // // cy.wait(0);
-      }
-
-      stepsY += 88;
-    });
-
-    it("Effected siblings are transformed", () => {
-      cy.get("#item-rest-2").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, -99.1875)"
-      );
-    });
-
-    it("Transforms element (#item-rest-1)", () => {
-      for (let i = stepsY; i < stepsY + 58; i += 1) {
+    it("Transforms element (#item-rest-1) one step down", () => {
+      for (let i = stepsY; i < stepsY + 120; i += 10) {
         cy.get("#item-rest-1").trigger("mousemove", {
           clientY: startingPointY + i,
           force: true,
@@ -62,10 +41,31 @@ context(
         // cy.wait(0);
       }
 
-      stepsY += 58;
+      stepsY += 120;
     });
 
-    it("Effected siblings are transformed", () => {
+    it("Effected siblings (2) are transformed", () => {
+      cy.get("#item-rest-2").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, -99.1875)"
+      );
+    });
+
+    it("Transforms element (#item-rest-1) one more step", () => {
+      for (let i = stepsY; i < stepsY + 80; i += 10) {
+        cy.get("#item-rest-1").trigger("mousemove", {
+          clientY: startingPointY + i,
+          force: true,
+        });
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        // cy.wait(0);
+      }
+
+      stepsY += 80;
+    });
+
+    it("Effected siblings (2,3) are transformed", () => {
       cy.get("#item-rest-2").should(
         "have.css",
         "transform",
@@ -74,22 +74,21 @@ context(
     });
 
     it("non-effected siblings are not transformed", () => {
-      cy.get("#item-rest-3").should("have.css", "transform", "none");
       cy.get("#item-rest-4").should("have.css", "transform", "none");
       cy.get("#item-rest-5").should("have.css", "transform", "none");
     });
 
-    it("Transforms element (#item-rest-1)", () => {
-      for (let i = stepsY; i < stepsY + 122; i += 1) {
+    it("Transforms element (#item-rest-1) to position at 4", () => {
+      for (let i = stepsY; i < stepsY + 120; i += 10) {
         cy.get("#item-rest-1").trigger("mousemove", {
           clientY: startingPointY + i,
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // // cy.wait(0);
+        // cy.wait(0);
       }
 
-      stepsY += 122;
+      stepsY += 120;
     });
 
     it("Effected siblings are transformed", () => {
@@ -116,8 +115,8 @@ context(
       cy.get("#item-rest-5").should("have.css", "transform", "none");
     });
 
-    it("Transforms element (#item-rest-1)", () => {
-      for (let i = stepsY; i < stepsY + 79; i += 1) {
+    it("Transforms element (#item-rest-1) to the tail", () => {
+      for (let i = stepsY; i < stepsY + 80; i += 10) {
         cy.get("#item-rest-1").trigger("mousemove", {
           clientY: startingPointY + i,
           force: true,
@@ -126,7 +125,7 @@ context(
         // cy.wait(0);
       }
 
-      stepsY += 79;
+      stepsY += 80;
     });
 
     it("Effected siblings are transformed", () => {
@@ -156,7 +155,7 @@ context(
     });
 
     it("Transforms element (#item-rest-1) to restricted bottom", () => {
-      for (let i = stepsY; i < stepsY + 52; i += 1) {
+      for (let i = stepsY; i < stepsY + 50; i += 10) {
         cy.get("#item-rest-1").trigger("mousemove", {
           clientY: startingPointY + i,
           force: true,
@@ -165,7 +164,7 @@ context(
         // cy.wait(0);
       }
 
-      stepsY += 52;
+      stepsY += 50;
     });
 
     it("Dragged still inside the definition area", () => {
@@ -177,7 +176,7 @@ context(
     });
 
     it("Transforms element (#item-rest-1) to restricted right", () => {
-      for (let i = stepsX; i < stepsX + 52; i += 1) {
+      for (let i = stepsX; i < stepsX + 50; i += 10) {
         cy.get("#item-rest-1").trigger("mousemove", {
           clientX: startingPointX + i,
           force: true,
@@ -186,7 +185,7 @@ context(
         // cy.wait(0);
       }
 
-      stepsX += 52;
+      stepsX += 50;
     });
 
     it("Dragged still inside the definition area", () => {

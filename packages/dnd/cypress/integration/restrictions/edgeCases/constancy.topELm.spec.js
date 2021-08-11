@@ -35,20 +35,20 @@ context("Checking restrictions constancy for the first element", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      // cy.wait(0);
+      // // // cy.wait(0);
     }
 
     stepsY += 2;
   });
 
   it("Transforms element (#item-rest-1) to restricted up", () => {
-    for (let i = stepsY; i < stepsY + 100; i += 1) {
+    for (let i = stepsY; i < stepsY + 100; i += 10) {
       cy.get("#item-rest-1").trigger("mousemove", {
         clientY: startingPointY - i,
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      // cy.wait(0);
+      // // cy.wait(0);
     }
 
     stepsY += 100;
@@ -63,13 +63,13 @@ context("Checking restrictions constancy for the first element", () => {
   });
 
   it("Transforms element (#item-rest-1) to restricted left", () => {
-    for (let i = stepsX; i < stepsX + 210; i += 1) {
+    for (let i = stepsX; i < stepsX + 210; i += 10) {
       cy.get("#item-rest-1").trigger("mousemove", {
         clientX: startingPointX - i,
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      // cy.wait(0);
+      // // cy.wait(0);
     }
     stepsX += 210;
   });
@@ -83,13 +83,13 @@ context("Checking restrictions constancy for the first element", () => {
   });
 
   it("Transforms element (#item-rest-1) to restricted right", () => {
-    for (let i = stepsX; i > -370; i -= 1) {
+    for (let i = stepsX; i > -370; i -= 10) {
       cy.get("#item-rest-1").trigger("mousemove", {
         clientX: startingPointX - i,
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      // cy.wait(0);
+      // // cy.wait(0);
     }
 
     stepsX += -370;
