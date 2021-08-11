@@ -26,7 +26,7 @@ export const defaultOpts: DndOpts = Object.freeze({
   },
 
   scroll: {
-    enable: true,
+    enable: false,
     speed: 10,
     threshold: {
       vertical: 75,
