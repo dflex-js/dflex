@@ -603,7 +603,6 @@ class Droppable {
   dragAt(x: number, y: number) {
     const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
 
-    console.log("in here??", this.draggable.scroll.enable);
     if (
       this.draggable.scroll.enable &&
       this.scrollAnimatedFrame === null &&
