@@ -40,7 +40,9 @@ class Base
 
   thresholds: LayoutThresholds;
 
-  thresholdsPercentages: ThresholdPercentages;
+  private draggedThresholdInputOpt: ThresholdPercentages;
+
+  draggedThreshold!: ThresholdPercentages;
 
   scroll: ScrollOptWithThreshold;
 
@@ -79,16 +81,9 @@ class Base
       },
     };
 
-    this.thresholdsPercentages = {
-      vertical: Math.round(
-        (opts.threshold.vertical * this.draggedElm.offset!.height) / 100
-      ),
-      horizontal: Math.round(
-        (opts.threshold.horizontal * this.draggedElm.offset!.width) / 100
-      ),
-    };
-
     this.scroll = opts.scroll;
+
+    this.draggedThresholdInputOpt = opts.threshold;
 
     const siblings = store.getElmSiblingsListById(this.draggedElm.id);
 
@@ -104,6 +99,11 @@ class Base
     if (this.scroll.enable) {
       store.seScrollViewportThreshold(this.scroll.threshold);
     }
+
+    /**
+     * Extract dragged threshold from options.
+     */
+    this.seDraggedThreshold();
 
     /**
      * Init max direction for position
@@ -155,6 +155,26 @@ class Base
   }
 
   /**
+   * Threshold not always related to the dragged. Since DFlex introduced
+   * multiple height and widths, threshold now related to the occupied element
+   * offset. The initial state is assigned to dragged element.
+   *
+   * @param relativeTo - The occupied element.
+   */
+  seDraggedThreshold(relativeTo = this.draggedElm) {
+    this.draggedThreshold = {
+      vertical: Math.round(
+        (this.draggedThresholdInputOpt.vertical * relativeTo.offset!.height) /
+          100
+      ),
+      horizontal: Math.round(
+        (this.draggedThresholdInputOpt.horizontal * relativeTo.offset!.width) /
+          100
+      ),
+    };
+  }
+
+  /**
    * Sets thresholds for dragged element position depending on its
    * position inside parent which is related to droppable left and top.
    *
@@ -164,7 +184,7 @@ class Base
    * @param siblingsK -
    */
   setThreshold(top: number, left: number, height?: number, siblingsK?: string) {
-    const { vertical, horizontal } = this.thresholdsPercentages;
+    const { vertical, horizontal } = this.draggedThreshold;
 
     let $;
 

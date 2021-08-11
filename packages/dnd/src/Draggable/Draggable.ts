@@ -296,11 +296,9 @@ class Draggable extends Base implements DraggableDnDInterface {
   }
 
   isNotSettled() {
-    const siblings = store.getElmSiblingsListById(this.draggedElm.id);
     const { sK } = store.registry[this.draggedElm.id].keys;
 
     return (
-      siblings !== null &&
       !this.isLeavingFromBottom() &&
       (this.isOutThreshold() || this.isOutThreshold(sK))
     );
