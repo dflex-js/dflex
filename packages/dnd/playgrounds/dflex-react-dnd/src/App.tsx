@@ -12,6 +12,7 @@ import { store } from "@dflex/dnd";
 
 import {
   Restricted,
+  RestrictedDifferent,
   TodoList,
   TodoListCase1,
   ExtendedList,
@@ -35,6 +36,9 @@ function App() {
         </Route>
         <Route path="/restricted">
           <Restricted />
+        </Route>
+        <Route path="/restricted-diff">
+          <RestrictedDifferent />
         </Route>
         <Route path="/todo">
           <TodoList />
