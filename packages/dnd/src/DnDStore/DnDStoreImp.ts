@@ -323,6 +323,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     }
 
     if (this.registry[id]) {
+      console.log("registry", id);
+
       if (this.registry[id].isInitialized) {
         this.registry[id].attach(element.ref || null);
       }

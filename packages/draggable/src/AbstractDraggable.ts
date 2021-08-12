@@ -70,6 +70,10 @@ class AbstractDraggable<T extends AbstractCoreInterface>
 
     this.outerOffsetX = -initX + translateX!;
     this.outerOffsetY = -initY + translateY!;
+    console.log(
+      "file: AbstractDraggable.ts ~ line 73 ~ this.outerOffsetY ",
+      this.outerOffsetY
+    );
 
     this.tempTranslate = {
       x: 0,
