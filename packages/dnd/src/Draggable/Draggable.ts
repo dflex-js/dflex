@@ -120,33 +120,6 @@ class Draggable extends Base implements DraggableDnDInterface {
     return this.tempIndex === this.getLastElmIndex();
   }
 
-  private axesRightFilter(x: number, maxRight: number, fallback: number) {
-    const currentRight = x + this.innerOffsetX;
-
-    return currentRight >= maxRight ? fallback : x;
-  }
-
-  private axesLeftFilter(x: number, maxLeft: number, fallback: number) {
-    const currentLeft = x - this.innerOffsetX;
-
-    return currentLeft <= maxLeft ? fallback : x;
-  }
-
-  private selfXAxesFilter(x: number) {
-    const { maxLeft, minRight } =
-      store.siblingsBoundaries[store.registry[this.draggedElm.id].keys.sK];
-
-    const fx = this.restrictions.allowLeavingFromLeft
-      ? this.restrictions.allowLeavingFromRight
-        ? x
-        : this.axesRightFilter(x, minRight, -this.outerOffsetX)
-      : this.axesLeftFilter(x, maxLeft, -this.outerOffsetX);
-
-    return this.restrictions.allowLeavingFromRight
-      ? fx
-      : this.axesRightFilter(fx, minRight, -this.outerOffsetX);
-  }
-
   private axesYContainerFilter(
     y: number,
     topThreshold: number,
