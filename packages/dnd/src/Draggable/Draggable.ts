@@ -44,6 +44,8 @@ class Draggable extends Base implements DraggableDnDInterface {
 
   private axesFilterNeeded: boolean;
 
+  private containerRestricted: boolean;
+
   private restrictions: Restrictions;
 
   constructor(
@@ -51,15 +53,19 @@ class Draggable extends Base implements DraggableDnDInterface {
     initCoordinates: MouseCoordinates,
     opts: FinalDndOpts
   ) {
-    const { restrictions, ...rest } = opts;
+    const { restrictions: $, ...rest } = opts;
 
     super(id, initCoordinates, rest);
 
     const { x, y } = initCoordinates;
 
     this.innerOffsetX = Math.round(x - this.draggedElm.currentLeft!);
-
     this.innerOffsetY = Math.round(y - this.draggedElm.currentTop!);
+
+    // this.nextTempOffset = {
+    //   currentLeft = x - this.innerOffsetX;
+    //   currentRight = currentLeft + this.draggedElm.offset!.width;
+    // };
 
     this.tempOffset = {
       currentLeft: this.draggedElm.currentLeft!,
@@ -92,16 +98,25 @@ class Draggable extends Base implements DraggableDnDInterface {
     this.isOutPositionHorizontally = false;
     this.isOutSiblingsHorizontally = false;
 
-    this.restrictions = restrictions;
+    this.restrictions = $;
 
     const siblings = store.getElmSiblingsListById(this.draggedElm.id);
 
     this.axesFilterNeeded =
       siblings !== null &&
-      (!restrictions.allowLeavingFromLeft ||
-        !restrictions.allowLeavingFromRight ||
-        !restrictions.allowLeavingFromTop ||
-        !restrictions.allowLeavingFromBottom);
+      !(
+        $.allowLeavingFromLeft &&
+        $.allowLeavingFromRight &&
+        $.allowLeavingFromTop &&
+        $.allowLeavingFromBottom
+      );
+
+    this.containerRestricted = this.axesFilterNeeded
+      ? !$.allowLeavingFromLeft &&
+        !$.allowLeavingFromRight &&
+        !$.allowLeavingFromTop &&
+        !$.allowLeavingFromBottom
+      : false;
   }
 
   private getLastElmIndex() {
@@ -153,9 +168,11 @@ class Draggable extends Base implements DraggableDnDInterface {
       return leftThreshold + this.innerOffsetX;
     }
 
-    if (currentRight >= rightThreshold) {
+    if (currentRight + 20 >= rightThreshold) {
       // TODO: fix this with http://localhost:3001/extended
-      return rightThreshold + this.innerOffsetX - this.draggedElm.offset!.width;
+      return (
+        rightThreshold + this.innerOffsetX - this.draggedElm.offset!.width - 20
+      );
     }
 
     return x;
@@ -198,11 +215,13 @@ class Draggable extends Base implements DraggableDnDInterface {
     let filteredX = x;
 
     if (this.axesFilterNeeded) {
-      const { top, bottom, maxLeft, minRight } =
-        store.siblingsBoundaries[store.registry[this.draggedElm.id].keys.sK];
+      if (this.containerRestricted) {
+        const { top, bottom, maxLeft, minRight } =
+          store.siblingsBoundaries[store.registry[this.draggedElm.id].keys.sK];
 
-      filteredY = this.axesYContainerFilter(y, top, bottom);
-      filteredX = this.axesXSelfFilter(x, maxLeft, minRight);
+        filteredY = this.axesYContainerFilter(y, top, bottom);
+        filteredX = this.axesXSelfFilter(x, maxLeft, minRight);
+      }
     } else {
       filteredX = this.axesXContainerFilter(x, 0, store.viewportWidth);
       filteredY = this.axesYContainerFilter(y, 0, store.viewportHeight);
