@@ -36,20 +36,27 @@ describe("extractOpts", () => {
   it("Returns the default options with input restrictions/allowLeavingFromBottom", () => {
     const opts = extractOpts({
       restrictions: {
-        allowLeavingFromBottom: false,
+        container: {
+          allowLeavingFromBottom: false,
+        },
       },
     });
 
     expect(opts).toMatchSnapshot();
 
-    expect(opts.restrictions.allowLeavingFromBottom).toEqual(false);
+    expect(opts.restrictions.container.allowLeavingFromBottom).toEqual(false);
   });
 });
 
 it("Returns the default options with input restrictions/threshold/scroll", () => {
   const opts = extractOpts({
     restrictions: {
-      allowLeavingFromBottom: false,
+      container: {
+        allowLeavingFromBottom: false,
+      },
+      self: {
+        allowLeavingFromTop: false,
+      },
     },
     threshold: {
       horizontal: 9000,
@@ -63,7 +70,12 @@ it("Returns the default options with input restrictions/threshold/scroll", () =>
 
   expect(opts).toMatchSnapshot();
 
-  expect(opts.restrictions.allowLeavingFromBottom).toEqual(false);
+  expect(opts.restrictions.container.allowLeavingFromBottom).toEqual(false);
+  expect(opts.restrictions.self.allowLeavingFromTop).toEqual(false);
+
+  expect(opts.restrictionsStatus.isContainerRestricted).toEqual(true);
+  expect(opts.restrictionsStatus.isSelfRestricted).toEqual(true);
+
   expect(opts.threshold.horizontal).toEqual(9000);
   expect(opts.scroll.threshold.horizontal).toEqual(9000);
 });
