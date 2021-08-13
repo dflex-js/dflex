@@ -12,6 +12,7 @@ import { store } from "@dflex/dnd";
 
 import {
   RestrictedContainerAll,
+  RestrictedContainerDiff,
   RestrictedSelf,
   TodoList,
   TodoListCase1,
@@ -36,6 +37,9 @@ function App() {
         </Route>
         <Route path="/restricted-container-all">
           <RestrictedContainerAll />
+        </Route>
+        <Route path="/restricted-container-diff">
+          <RestrictedContainerDiff />
         </Route>
         <Route path="/restricted-self">
           <RestrictedSelf />

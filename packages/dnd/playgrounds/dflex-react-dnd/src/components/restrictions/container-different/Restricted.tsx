@@ -12,29 +12,95 @@ import RestrictedItem from "../RestrictedItem";
 const Restricted = () => {
   const items = [
     {
-      id: "item-rest-1",
-      item: "1",
-      style: { width: "10rem", height: "2rem", marginLeft: "92px" },
+      id: "item-rest-container-left",
+      item: "restricted left only",
+      style: { width: "10rem", height: "1rem", marginLeft: "92px" },
+      restrictions: {
+        container: {
+          allowLeavingFromTop: true,
+          allowLeavingFromBottom: true,
+          allowLeavingFromLeft: false,
+          allowLeavingFromRight: true,
+        },
+      },
     },
     {
-      id: "item-rest-2",
-      item: "2",
-      style: { width: "12rem", height: "2.5rem", marginLeft: "22px" },
+      id: "item-rest-container-right",
+      item: "restricted right only",
+      style: { width: "12rem", height: "1.5rem", marginLeft: "22px" },
+      restrictions: {
+        container: {
+          allowLeavingFromTop: true,
+          allowLeavingFromBottom: true,
+          allowLeavingFromLeft: true,
+          allowLeavingFromRight: false,
+        },
+      },
     },
     {
-      id: "item-rest-3",
-      item: "3",
+      id: "item-rest-container-left-right",
+      item: "restricted left & right only",
       style: { width: "16rem", height: "1rem", marginLeft: "32px" },
+      restrictions: {
+        container: {
+          allowLeavingFromTop: true,
+          allowLeavingFromBottom: true,
+          allowLeavingFromLeft: false,
+          allowLeavingFromRight: false,
+        },
+      },
     },
     {
-      id: "item-rest-4",
-      item: "4",
-      style: { width: "13rem", height: "3rem", marginLeft: "12px" },
+      id: "item-rest-container-top",
+      item: "restricted top only",
+      style: { width: "10rem", height: "1rem", marginLeft: "92px" },
+      restrictions: {
+        container: {
+          allowLeavingFromTop: false,
+          allowLeavingFromBottom: true,
+          allowLeavingFromLeft: true,
+          allowLeavingFromRight: true,
+        },
+      },
     },
     {
-      id: "item-rest-5",
-      item: "5",
-      style: { width: "18rem", height: "0.25rem" },
+      id: "item-rest-container-bottom",
+      item: "restricted bottom only",
+      style: { width: "12rem", height: "1.5rem", marginLeft: "22px" },
+      restrictions: {
+        container: {
+          allowLeavingFromTop: true,
+          allowLeavingFromBottom: false,
+          allowLeavingFromLeft: true,
+          allowLeavingFromRight: true,
+        },
+      },
+    },
+    {
+      id: "item-rest-container-top-bottom",
+      item: "restricted top & bottom only",
+      style: { width: "16rem", height: "1rem", marginLeft: "32px" },
+      restrictions: {
+        container: {
+          allowLeavingFromTop: false,
+          allowLeavingFromBottom: false,
+          allowLeavingFromLeft: true,
+          allowLeavingFromRight: true,
+        },
+      },
+    },
+    {
+      id: "item-rest-container-all",
+      item: "restricted all",
+      style: { width: "16rem", height: "1rem", marginLeft: "32px" },
+      restrictions: {
+        container: {
+          allowLeavingFromTop: false,
+          allowLeavingFromBottom: false,
+          allowLeavingFromLeft: false,
+          allowLeavingFromRight: false,
+        },
+      },
     },
   ];
 
@@ -42,20 +108,13 @@ const Restricted = () => {
     <div className={s.root}>
       <div className={s.todo}>
         <ul>
-          {items.map(({ id, style, item }) => (
+          {items.map(({ id, style, item, ...rest }) => (
             <RestrictedItem
               key={id}
               id={id}
               style={style}
               title={item}
-              restrictions={{
-                container: {
-                  allowLeavingFromBottom: false,
-                  allowLeavingFromTop: false,
-                  allowLeavingFromLeft: false,
-                  allowLeavingFromRight: false,
-                },
-              }}
+              {...rest}
             />
           ))}
         </ul>
