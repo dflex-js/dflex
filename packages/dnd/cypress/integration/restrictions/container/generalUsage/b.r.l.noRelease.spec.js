@@ -16,7 +16,7 @@ context(
   "Moving A Complete Restricted Element - Dragged is not released - Bottom/right/left",
   () => {
     before(() => {
-      cy.visit("http://localhost:3001/restricted-container");
+      cy.visit("http://localhost:3001/restricted-container-all");
     });
 
     it("Getting the first element (#item-rest-1)", () => {

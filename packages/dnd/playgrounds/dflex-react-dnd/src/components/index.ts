@@ -7,6 +7,6 @@
 export { default as Depth1 } from "./depth-1";
 export { default as ExtendedList } from "./extended";
 
-export { RestrictedSelf, RestrictedContainer } from "./restrictions";
+export { RestrictedSelf, RestrictedContainerAll } from "./restrictions";
 export { TodoList, TodoListCase1 } from "./todo";
 export { ComponentBasedEvent, ContainerBasedEvent } from "./essential";

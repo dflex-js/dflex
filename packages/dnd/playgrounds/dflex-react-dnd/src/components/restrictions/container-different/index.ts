@@ -5,5 +5,4 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-export { default as RestrictedContainerAll } from "./container-all";
-export { default as RestrictedSelf } from "./self";
+export { default } from "./Restricted";
