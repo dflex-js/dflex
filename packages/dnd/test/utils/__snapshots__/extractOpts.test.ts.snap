@@ -3,10 +3,22 @@
 exports[`Returns the default options with input restrictions/threshold/scroll 1`] = `
 Object {
   "restrictions": Object {
-    "allowLeavingFromBottom": false,
-    "allowLeavingFromLeft": true,
-    "allowLeavingFromRight": true,
-    "allowLeavingFromTop": true,
+    "container": Object {
+      "allowLeavingFromBottom": false,
+      "allowLeavingFromLeft": true,
+      "allowLeavingFromRight": true,
+      "allowLeavingFromTop": true,
+    },
+    "self": Object {
+      "allowLeavingFromBottom": true,
+      "allowLeavingFromLeft": true,
+      "allowLeavingFromRight": true,
+      "allowLeavingFromTop": false,
+    },
+  },
+  "restrictionsStatus": Object {
+    "isContainerRestricted": true,
+    "isSelfRestricted": true,
   },
   "scroll": Object {
     "enable": false,
@@ -26,10 +38,22 @@ Object {
 exports[`extractOpts Returns default options when empty object is passed 1`] = `
 Object {
   "restrictions": Object {
-    "allowLeavingFromBottom": true,
-    "allowLeavingFromLeft": true,
-    "allowLeavingFromRight": true,
-    "allowLeavingFromTop": true,
+    "container": Object {
+      "allowLeavingFromBottom": true,
+      "allowLeavingFromLeft": true,
+      "allowLeavingFromRight": true,
+      "allowLeavingFromTop": true,
+    },
+    "self": Object {
+      "allowLeavingFromBottom": true,
+      "allowLeavingFromLeft": true,
+      "allowLeavingFromRight": true,
+      "allowLeavingFromTop": true,
+    },
+  },
+  "restrictionsStatus": Object {
+    "isContainerRestricted": false,
+    "isSelfRestricted": false,
   },
   "scroll": Object {
     "enable": false,
@@ -49,10 +73,22 @@ Object {
 exports[`extractOpts Returns the default options with input restrictions/allowLeavingFromBottom 1`] = `
 Object {
   "restrictions": Object {
-    "allowLeavingFromBottom": false,
-    "allowLeavingFromLeft": true,
-    "allowLeavingFromRight": true,
-    "allowLeavingFromTop": true,
+    "container": Object {
+      "allowLeavingFromBottom": false,
+      "allowLeavingFromLeft": true,
+      "allowLeavingFromRight": true,
+      "allowLeavingFromTop": true,
+    },
+    "self": Object {
+      "allowLeavingFromBottom": true,
+      "allowLeavingFromLeft": true,
+      "allowLeavingFromRight": true,
+      "allowLeavingFromTop": true,
+    },
+  },
+  "restrictionsStatus": Object {
+    "isContainerRestricted": true,
+    "isSelfRestricted": false,
   },
   "scroll": Object {
     "enable": false,
@@ -72,10 +108,22 @@ Object {
 exports[`extractOpts Returns the default options with input scroll/threshold 1`] = `
 Object {
   "restrictions": Object {
-    "allowLeavingFromBottom": true,
-    "allowLeavingFromLeft": true,
-    "allowLeavingFromRight": true,
-    "allowLeavingFromTop": true,
+    "container": Object {
+      "allowLeavingFromBottom": true,
+      "allowLeavingFromLeft": true,
+      "allowLeavingFromRight": true,
+      "allowLeavingFromTop": true,
+    },
+    "self": Object {
+      "allowLeavingFromBottom": true,
+      "allowLeavingFromLeft": true,
+      "allowLeavingFromRight": true,
+      "allowLeavingFromTop": true,
+    },
+  },
+  "restrictionsStatus": Object {
+    "isContainerRestricted": false,
+    "isSelfRestricted": false,
   },
   "scroll": Object {
     "enable": false,
@@ -95,10 +143,22 @@ Object {
 exports[`extractOpts Returns the default options with input scroll/threshold/enable 1`] = `
 Object {
   "restrictions": Object {
-    "allowLeavingFromBottom": true,
-    "allowLeavingFromLeft": true,
-    "allowLeavingFromRight": true,
-    "allowLeavingFromTop": true,
+    "container": Object {
+      "allowLeavingFromBottom": true,
+      "allowLeavingFromLeft": true,
+      "allowLeavingFromRight": true,
+      "allowLeavingFromTop": true,
+    },
+    "self": Object {
+      "allowLeavingFromBottom": true,
+      "allowLeavingFromLeft": true,
+      "allowLeavingFromRight": true,
+      "allowLeavingFromTop": true,
+    },
+  },
+  "restrictionsStatus": Object {
+    "isContainerRestricted": false,
+    "isSelfRestricted": false,
   },
   "scroll": Object {
     "enable": false,

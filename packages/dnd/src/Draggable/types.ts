@@ -37,10 +37,18 @@ export interface TempTranslate {
 }
 
 export interface Restrictions {
-  allowLeavingFromTop: boolean;
-  allowLeavingFromBottom: boolean;
-  allowLeavingFromLeft: boolean;
-  allowLeavingFromRight: boolean;
+  self: {
+    allowLeavingFromTop: boolean;
+    allowLeavingFromBottom: boolean;
+    allowLeavingFromLeft: boolean;
+    allowLeavingFromRight: boolean;
+  };
+  container: {
+    allowLeavingFromTop: boolean;
+    allowLeavingFromBottom: boolean;
+    allowLeavingFromLeft: boolean;
+    allowLeavingFromRight: boolean;
+  };
 }
 
 export interface DraggableBaseInterface

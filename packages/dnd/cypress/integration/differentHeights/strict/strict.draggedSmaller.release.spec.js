@@ -5,10 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 let elmBox;
-// let startingPointX;
+let startingPointX;
 let startingPointY;
 
-// let stepsX;
+let stepsX;
 let stepsY;
 
 context(
@@ -395,7 +395,7 @@ context(
       cy.get("#mtg").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
         // eslint-disable-next-line no-unused-vars
-        // startingPointX = elmBox.x + elmBox.width / 2;
+        startingPointX = elmBox.x + elmBox.width / 2;
         startingPointY = elmBox.y + elmBox.height / 2;
 
         cy.get("#mtg").trigger("mousedown", {
@@ -405,11 +405,11 @@ context(
     });
 
     it("Transforms element (mtg) outside the list", () => {
-      stepsY = 75;
+      stepsX = 200;
 
-      for (let i = 0; i < stepsY; i += 10) {
+      for (let i = 0; i < stepsX; i += 10) {
         cy.get("#mtg").trigger("mousemove", {
-          clientY: startingPointY - i,
+          clientX: startingPointX - i,
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting

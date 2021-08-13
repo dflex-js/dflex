@@ -19,10 +19,18 @@ export const defaultOpts: DndOpts = Object.freeze({
   },
 
   restrictions: {
-    allowLeavingFromTop: true,
-    allowLeavingFromBottom: true,
-    allowLeavingFromLeft: true,
-    allowLeavingFromRight: true,
+    self: {
+      allowLeavingFromTop: true,
+      allowLeavingFromBottom: true,
+      allowLeavingFromLeft: true,
+      allowLeavingFromRight: true,
+    },
+    container: {
+      allowLeavingFromTop: true,
+      allowLeavingFromBottom: true,
+      allowLeavingFromLeft: true,
+      allowLeavingFromRight: true,
+    },
   },
 
   scroll: {
@@ -39,6 +47,13 @@ export function extractOpts(opts: DndOpts) {
   const options = { ...opts };
 
   (Object.keys(defaultOpts) as Array<keyof FinalDndOpts>).forEach((props) => {
+    if (props === "restrictions") {
+      options.restrictionsStatus = {
+        isSelfRestricted: false,
+        isContainerRestricted: false,
+      };
+    }
+
     if (!options[props]) {
       options[props] = { ...defaultOpts[props] };
 
@@ -53,6 +68,33 @@ export function extractOpts(opts: DndOpts) {
             ...options[props][subProp],
           };
 
+          if (props === "restrictions") {
+            const restrictionsKeys = Object.keys(options.restrictions.self);
+
+            let isSelfRestricted = false;
+
+            for (let i = 0; i < restrictionsKeys.length; i += 1) {
+              if (!options[props].self[restrictionsKeys[i]]) {
+                isSelfRestricted = true;
+
+                break;
+              }
+            }
+
+            let isContainerRestricted = false;
+
+            for (let i = 0; i < restrictionsKeys.length; i += 1) {
+              if (!options[props].container[restrictionsKeys[i]]) {
+                isContainerRestricted = true;
+
+                break;
+              }
+            }
+
+            options.restrictionsStatus.isSelfRestricted = isSelfRestricted;
+            options.restrictionsStatus.isContainerRestricted =
+              isContainerRestricted;
+          }
           return;
         }
 

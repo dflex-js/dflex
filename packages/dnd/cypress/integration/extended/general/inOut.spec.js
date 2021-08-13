@@ -41,10 +41,10 @@ context("Working with visibility, changing positions and continuity", () => {
       });
 
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      // // cy.wait(0);
+      // cy.wait(0);
     }
 
-    stepsY = 72;
+    stepsY = 70;
     for (let i = 0; i < stepsY; i += 10) {
       cy.get("#1-extended").trigger("mousemove", {
         clientY: startingPointY + i,
@@ -52,7 +52,7 @@ context("Working with visibility, changing positions and continuity", () => {
       });
 
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      // // cy.wait(0);
+      // cy.wait(0);
     }
   });
 
@@ -225,7 +225,7 @@ context("Working with visibility, changing positions and continuity", () => {
       // cy.wait(0);
     }
 
-    stepsY = 112;
+    stepsY = 120;
     for (let i = 0; i < stepsY; i += 10) {
       cy.get("#1-extended").trigger("mousemove", {
         clientY: startingPointY + i,
@@ -249,7 +249,7 @@ context("Working with visibility, changing positions and continuity", () => {
   });
 
   it("Splitting the list at 6", () => {
-    for (let i = 2; i < 6; i += 10) {
+    for (let i = 2; i < 6; i += 1) {
       cy.get(`#${i}-extended`).should(
         "have.css",
         "transform",
@@ -259,7 +259,7 @@ context("Working with visibility, changing positions and continuity", () => {
   });
 
   it("Transom element down", () => {
-    stepsY = 522;
+    stepsY = 520;
 
     for (let i = 112; i < stepsY; i += 10) {
       cy.get("#1-extended").trigger("mousemove", {
@@ -279,7 +279,7 @@ context("Working with visibility, changing positions and continuity", () => {
   });
 
   it("Siblings order dataset is updated now", () => {
-    for (let i = 2; i < 13; i += 10) {
+    for (let i = 2; i < 12; i += 1) {
       cy.get(`#${i}-extended`).then((elm) => {
         const { index } = elm[0].dataset;
         expect(index).to.be.eq(`${i - 2}`);
@@ -287,12 +287,12 @@ context("Working with visibility, changing positions and continuity", () => {
     }
     cy.get(`#1-extended`).then((elm) => {
       const { index } = elm[0].dataset;
-      expect(index).to.be.eq(`11`);
+      expect(index).to.be.eq(`10`);
     });
   });
 
   it("Siblings have new positions", () => {
-    for (let i = 2; i < 13; i += 10) {
+    for (let i = 2; i < 12; i += 1) {
       cy.get(`#${i}-extended`).should(
         "have.css",
         "transform",
@@ -303,7 +303,7 @@ context("Working with visibility, changing positions and continuity", () => {
     cy.get(`#1-extended`).should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, 651.062)"
+      "matrix(1, 0, 0, 1, 0, 591.875)"
     );
   });
 

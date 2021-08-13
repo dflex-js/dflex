@@ -16,7 +16,7 @@ context(
   "Moving A Complete Restricted Element - Dragged is not released - Bottom/right/left",
   () => {
     before(() => {
-      cy.visit("http://localhost:3001/restricted");
+      cy.visit("http://localhost:3001/restricted-container-all");
     });
 
     it("Getting the first element (#item-rest-1)", () => {
@@ -167,11 +167,11 @@ context(
       stepsY += 50;
     });
 
-    it("Dragged still inside the definition area", () => {
+    it("Dragged still inside the definition area - attempt 1", () => {
       cy.get("#item-rest-1").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 376.75)"
+        "matrix(1, 0, 0, 1, 0, 376.344)"
       );
     });
 
@@ -188,11 +188,11 @@ context(
       stepsX += 50;
     });
 
-    it("Dragged still inside the definition area", () => {
+    it("Dragged still inside the definition area - attempt 2", () => {
       cy.get("#item-rest-1").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 376.75)"
+        "matrix(1, 0, 0, 1, 0, 376)"
       );
     });
 
@@ -209,11 +209,11 @@ context(
       stepsX = 0;
     });
 
-    it("Dragged still inside the definition area", () => {
+    it("Dragged still inside the definition area - attempt 3", () => {
       cy.get("#item-rest-1").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 376.75)"
+        "matrix(1, 0, 0, 1, 0, 376)"
       );
     });
 

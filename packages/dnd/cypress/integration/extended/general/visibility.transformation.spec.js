@@ -18,7 +18,7 @@ context("Visible elements have transformation", () => {
   });
 
   it("Checking first 10 elements all have index dataset", () => {
-    for (let i = 1; i < 10; i += 10) {
+    for (let i = 1; i < 10; i += 1) {
       cy.get(`#${i}-extended`).then((elm) => {
         const { index } = elm[0].dataset;
 
@@ -52,7 +52,7 @@ context("Visible elements have transformation", () => {
   });
 
   it("Visible Siblings are lifted up", () => {
-    for (let i = 2; i < 14; i += 10) {
+    for (let i = 2; i < 14; i += 1) {
       cy.get(`#${i}-extended`).should(
         "have.css",
         "transform",
@@ -66,7 +66,7 @@ context("Visible elements have transformation", () => {
   });
 
   it("Siblings return to the old positions", () => {
-    for (let i = 1; i < 14; i += 10) {
+    for (let i = 1; i < 14; i += 1) {
       cy.get(`#${i}-extended`).should(
         "have.css",
         "transform",
@@ -76,7 +76,7 @@ context("Visible elements have transformation", () => {
   });
 
   it("Non-visible elements don't have any transformation", () => {
-    for (let i = 14; i < 100; i += 10) {
+    for (let i = 14; i < 100; i += 1) {
       cy.get(`#${i}-extended`).should("have.css", "transform", "none");
     }
   });
@@ -86,13 +86,13 @@ context("Visible elements have transformation", () => {
   // });
 
   it("Rest of non-visible and not effected elements have no transformation", () => {
-    for (let i = 24; i < 100; i += 10) {
+    for (let i = 24; i < 100; i += 1) {
       cy.get(`#${i}-extended`).should("have.css", "transform", "none");
     }
   });
 
   it("Checking dataset index stays the same", () => {
-    for (let i = 1; i < 10; i += 10) {
+    for (let i = 1; i < 10; i += 1) {
       cy.get(`#${i}-extended`).then((elm) => {
         const { index } = elm[0].dataset;
 
