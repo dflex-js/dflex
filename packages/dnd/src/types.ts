@@ -26,14 +26,23 @@ export interface FinalScrollOpt {
   threshold: ThresholdPercentages;
 }
 
+export interface RestrictionsStatus {
+  isContainerRestricted: boolean;
+  isSelfRestricted: boolean;
+}
+
 export interface FinalDndOpts {
   threshold: ThresholdPercentages;
   restrictions: Restrictions;
+  restrictionsStatus: RestrictionsStatus;
   scroll: ScrollOptWithThreshold;
 }
 
 export interface DndOpts {
   threshold?: Partial<ThresholdPercentages>;
-  restrictions?: Partial<Restrictions>;
+  restrictions?: {
+    self?: Partial<Restrictions["self"]>;
+    container?: Partial<Restrictions["container"]>;
+  };
   scroll?: Partial<ScrollOptWithPartialThreshold>;
 }
