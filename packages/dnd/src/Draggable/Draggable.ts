@@ -19,7 +19,7 @@ import type {
   Restrictions,
 } from "./types";
 
-import type { FinalDndOpts } from "../types";
+import type { FinalDndOpts, RestrictionsStatus } from "../types";
 
 class Draggable extends Base implements DraggableDnDInterface {
   private innerOffsetX: number;
@@ -44,28 +44,30 @@ class Draggable extends Base implements DraggableDnDInterface {
 
   private axesFilterNeeded: boolean;
 
-  private containerRestricted: boolean;
-
   private restrictions: Restrictions;
+
+  private restrictionsStatus: RestrictionsStatus;
+
+  private marginX: number;
 
   constructor(
     id: string,
     initCoordinates: MouseCoordinates,
     opts: FinalDndOpts
   ) {
-    const { restrictions: $, ...rest } = opts;
-
-    super(id, initCoordinates, rest);
+    super(id, initCoordinates, opts);
 
     const { x, y } = initCoordinates;
 
     this.innerOffsetX = Math.round(x - this.draggedElm.currentLeft!);
     this.innerOffsetY = Math.round(y - this.draggedElm.currentTop!);
 
-    // this.nextTempOffset = {
-    //   currentLeft = x - this.innerOffsetX;
-    //   currentRight = currentLeft + this.draggedElm.offset!.width;
-    // };
+    const style = window.getComputedStyle(this.draggedElm.ref!);
+
+    // get element margin
+    const rm = Math.round(parseFloat(style.marginRight));
+    const lm = Math.round(parseFloat(style.marginLeft));
+    this.marginX = rm + lm;
 
     this.tempOffset = {
       currentLeft: this.draggedElm.currentLeft!,
@@ -98,25 +100,67 @@ class Draggable extends Base implements DraggableDnDInterface {
     this.isOutPositionHorizontally = false;
     this.isOutSiblingsHorizontally = false;
 
-    this.restrictions = $;
+    this.restrictions = opts.restrictions;
+
+    this.restrictionsStatus = opts.restrictionsStatus;
 
     const siblings = store.getElmSiblingsListById(this.draggedElm.id);
 
     this.axesFilterNeeded =
       siblings !== null &&
-      !(
-        $.allowLeavingFromLeft &&
-        $.allowLeavingFromRight &&
-        $.allowLeavingFromTop &&
-        $.allowLeavingFromBottom
-      );
+      (opts.restrictionsStatus.isContainerRestricted ||
+        opts.restrictionsStatus.isSelfRestricted);
+  }
 
-    this.containerRestricted = this.axesFilterNeeded
-      ? !$.allowLeavingFromLeft &&
-        !$.allowLeavingFromRight &&
-        !$.allowLeavingFromTop &&
-        !$.allowLeavingFromBottom
-      : false;
+  private axesYFilter(
+    y: number,
+    topThreshold: number,
+    bottomThreshold: number,
+    restrictToThreshold: boolean // if not. Then to self.
+  ) {
+    const currentTop = y - this.innerOffsetY;
+    const currentBottom = currentTop + this.draggedElm.offset!.height;
+
+    if (currentTop <= topThreshold) {
+      return restrictToThreshold
+        ? topThreshold + this.innerOffsetY
+        : -this.outerOffsetY;
+    }
+
+    if (currentBottom >= bottomThreshold) {
+      return restrictToThreshold
+        ? bottomThreshold + this.innerOffsetY - this.draggedElm.offset!.height
+        : -this.outerOffsetY;
+    }
+
+    return y;
+  }
+
+  private axesXFilter(
+    x: number,
+    leftThreshold: number,
+    rightThreshold: number,
+    restrictToThreshold: boolean // if not. Then to self.
+  ) {
+    const currentLeft = x - this.innerOffsetX;
+    const currentRight = currentLeft + this.draggedElm.offset!.width;
+
+    if (currentLeft <= leftThreshold) {
+      return restrictToThreshold
+        ? leftThreshold + this.innerOffsetX
+        : -this.outerOffsetX;
+    }
+
+    if (currentRight + this.marginX >= rightThreshold) {
+      return restrictToThreshold
+        ? rightThreshold +
+            this.innerOffsetX -
+            this.draggedElm.offset!.width -
+            this.marginX
+        : -this.outerOffsetX;
+    }
+
+    return x;
   }
 
   private getLastElmIndex() {
@@ -133,68 +177,6 @@ class Draggable extends Base implements DraggableDnDInterface {
 
   private isLastELm() {
     return this.tempIndex === this.getLastElmIndex();
-  }
-
-  private axesYContainerFilter(
-    y: number,
-    topThreshold: number,
-    bottomThreshold: number
-  ) {
-    const currentTop = y - this.innerOffsetY;
-    const currentBottom = currentTop + this.draggedElm.offset!.height;
-
-    if (currentTop <= topThreshold) {
-      return topThreshold + this.innerOffsetY;
-    }
-
-    if (currentBottom >= bottomThreshold) {
-      return (
-        bottomThreshold + this.innerOffsetY - this.draggedElm.offset!.height
-      );
-    }
-
-    return y;
-  }
-
-  private axesXContainerFilter(
-    x: number,
-    leftThreshold: number,
-    rightThreshold: number
-  ) {
-    const currentLeft = x - this.innerOffsetX;
-    const currentRight = currentLeft + this.draggedElm.offset!.width;
-
-    if (currentLeft <= leftThreshold) {
-      return leftThreshold + this.innerOffsetX;
-    }
-
-    if (currentRight + 20 >= rightThreshold) {
-      // TODO: fix this with http://localhost:3001/extended
-      return (
-        rightThreshold + this.innerOffsetX - this.draggedElm.offset!.width - 20
-      );
-    }
-
-    return x;
-  }
-
-  private axesXSelfFilter(
-    x: number,
-    leftThreshold: number,
-    rightThreshold: number
-  ) {
-    const currentLeft = x - this.innerOffsetX;
-    const currentRight = currentLeft + this.draggedElm.offset!.width;
-
-    if (currentLeft <= leftThreshold) {
-      return -this.outerOffsetX;
-    }
-
-    if (currentRight >= rightThreshold) {
-      return -this.outerOffsetX;
-    }
-
-    return x;
   }
 
   /**
@@ -215,16 +197,32 @@ class Draggable extends Base implements DraggableDnDInterface {
     let filteredX = x;
 
     if (this.axesFilterNeeded) {
-      if (this.containerRestricted) {
+      if (this.restrictionsStatus.isContainerRestricted) {
         const { top, bottom, maxLeft, minRight } =
           store.siblingsBoundaries[store.registry[this.draggedElm.id].keys.sK];
 
-        filteredY = this.axesYContainerFilter(y, top, bottom);
-        filteredX = this.axesXSelfFilter(x, maxLeft, minRight);
+        filteredX = this.axesXFilter(x, maxLeft, minRight, false);
+        filteredY = this.axesYFilter(y, top, bottom, true);
       }
+
+      // if (this.containerRestricted) {
+      //   filteredY = this.axesYContainerFilter(y, top, bottom);
+      //   filteredX = this.axesXSelfFilter(x, maxLeft, minRight);
+      // } else {
+      // if (!this.restrictions.allowLeavingFromTop) {
+      // }
+      // const fy = this.restrictions.allowLeavingFromTop
+      //   ? this.restrictions.allowLeavingFromBottom
+      //     ? y
+      //     : this.axesBottomFilter(y, bottom)
+      //   : this.axesTopFilter(y, top);
+      // return this.restrictions.allowLeavingFromBottom
+      //   ? fy
+      //   : this.axesBottomFilter(fy, bottom);
+      // }
     } else {
-      filteredX = this.axesXContainerFilter(x, 0, store.viewportWidth);
-      filteredY = this.axesYContainerFilter(y, 0, store.viewportHeight);
+      filteredX = this.axesXFilter(x, 0, store.viewportWidth, true);
+      filteredY = this.axesYFilter(y, 0, store.viewportHeight, true);
     }
 
     this.translate(filteredX, filteredY);
