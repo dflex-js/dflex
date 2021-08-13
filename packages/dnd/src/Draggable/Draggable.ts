@@ -149,13 +149,13 @@ class Draggable extends Base implements DraggableDnDInterface {
     const currentLeft = x - this.innerOffsetX;
     const currentRight = currentLeft + this.draggedElm.offset!.width;
 
-    if (currentLeft <= leftThreshold) {
+    if (!allowLeft && currentLeft <= leftThreshold) {
       return restrictToThreshold
         ? leftThreshold + this.innerOffsetX
         : -this.outerOffsetX;
     }
 
-    if (currentRight + this.marginX >= rightThreshold) {
+    if (!allowRight && currentRight + this.marginX >= rightThreshold) {
       return restrictToThreshold
         ? rightThreshold +
             this.innerOffsetX -
