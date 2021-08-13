@@ -128,7 +128,7 @@ context(
       //     "transform",
       //     "matrix(1, 0, 0, 1, -9, 320.156)"
       //   );
-      });
+      // });
 
       it("Triggers mouseup", () => {
         cy.get("#item-rest-container-top").trigger("mouseup", {
