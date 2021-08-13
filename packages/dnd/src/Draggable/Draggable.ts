@@ -116,19 +116,21 @@ class Draggable extends Base implements DraggableDnDInterface {
     y: number,
     topThreshold: number,
     bottomThreshold: number,
-    restrictToThreshold: boolean // if not. Then to self.
+    allowTop: boolean,
+    allowBottom: boolean,
+    isRestrictedToThreshold: boolean // if not. Then to self.
   ) {
     const currentTop = y - this.innerOffsetY;
     const currentBottom = currentTop + this.draggedElm.offset!.height;
 
-    if (currentTop <= topThreshold) {
-      return restrictToThreshold
+    if (!allowTop && currentTop <= topThreshold) {
+      return isRestrictedToThreshold
         ? topThreshold + this.innerOffsetY
         : -this.outerOffsetY;
     }
 
-    if (currentBottom >= bottomThreshold) {
-      return restrictToThreshold
+    if (!allowBottom && currentBottom >= bottomThreshold) {
+      return isRestrictedToThreshold
         ? bottomThreshold + this.innerOffsetY - this.draggedElm.offset!.height
         : -this.outerOffsetY;
     }
@@ -140,6 +142,8 @@ class Draggable extends Base implements DraggableDnDInterface {
     x: number,
     leftThreshold: number,
     rightThreshold: number,
+    allowLeft: boolean,
+    allowRight: boolean,
     restrictToThreshold: boolean // if not. Then to self.
   ) {
     const currentLeft = x - this.innerOffsetX;
@@ -197,32 +201,62 @@ class Draggable extends Base implements DraggableDnDInterface {
     let filteredX = x;
 
     if (this.axesFilterNeeded) {
+      const { top, bottom, maxLeft, minRight } =
+        store.siblingsBoundaries[store.registry[this.draggedElm.id].keys.sK];
+
       if (this.restrictionsStatus.isContainerRestricted) {
-        const { top, bottom, maxLeft, minRight } =
-          store.siblingsBoundaries[store.registry[this.draggedElm.id].keys.sK];
+        filteredX = this.axesXFilter(
+          x,
+          maxLeft,
+          minRight,
+          this.restrictions.container.allowLeavingFromLeft,
+          this.restrictions.container.allowLeavingFromRight,
 
-        filteredX = this.axesXFilter(x, maxLeft, minRight, false);
-        filteredY = this.axesYFilter(y, top, bottom, true);
+          false
+        );
+        filteredY = this.axesYFilter(
+          y,
+          top,
+          bottom,
+          this.restrictions.container.allowLeavingFromTop,
+          this.restrictions.container.allowLeavingFromBottom,
+          true
+        );
+      } else if (this.restrictionsStatus.isSelfRestricted) {
+        filteredX = this.axesXFilter(
+          x,
+          maxLeft,
+          minRight,
+          this.restrictions.self.allowLeavingFromLeft,
+          this.restrictions.self.allowLeavingFromRight,
+          false
+        );
+        filteredY = this.axesYFilter(
+          y,
+          top,
+          bottom,
+          this.restrictions.self.allowLeavingFromTop,
+          this.restrictions.self.allowLeavingFromBottom,
+          false
+        );
       }
-
-      // if (this.containerRestricted) {
-      //   filteredY = this.axesYContainerFilter(y, top, bottom);
-      //   filteredX = this.axesXSelfFilter(x, maxLeft, minRight);
-      // } else {
-      // if (!this.restrictions.allowLeavingFromTop) {
-      // }
-      // const fy = this.restrictions.allowLeavingFromTop
-      //   ? this.restrictions.allowLeavingFromBottom
-      //     ? y
-      //     : this.axesBottomFilter(y, bottom)
-      //   : this.axesTopFilter(y, top);
-      // return this.restrictions.allowLeavingFromBottom
-      //   ? fy
-      //   : this.axesBottomFilter(fy, bottom);
-      // }
     } else {
-      filteredX = this.axesXFilter(x, 0, store.viewportWidth, true);
-      filteredY = this.axesYFilter(y, 0, store.viewportHeight, true);
+      filteredX = this.axesXFilter(
+        x,
+        0,
+        store.viewportWidth,
+        false,
+        false,
+        true
+      );
+      filteredY = this.axesYFilter(
+        y,
+        0,
+        store.viewportHeight,
+        false,
+        false,
+        true
+      );
     }
 
     this.translate(filteredX, filteredY);
