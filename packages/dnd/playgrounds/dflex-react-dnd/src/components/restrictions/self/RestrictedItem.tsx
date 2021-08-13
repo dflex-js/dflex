@@ -15,10 +15,14 @@ interface Props {
   style?: React.CSSProperties;
   title: string;
   depth?: number;
-  allowLeavingFromTop: boolean;
-  allowLeavingFromBottom: boolean;
-  allowLeavingFromLeft: boolean;
-  allowLeavingFromRight: boolean;
+  restrictions: {
+    self: {
+      allowLeavingFromTop: boolean;
+      allowLeavingFromBottom: boolean;
+      allowLeavingFromLeft: boolean;
+      allowLeavingFromRight: boolean;
+    };
+  };
 }
 
 const RestrictedItem = ({
@@ -26,10 +30,7 @@ const RestrictedItem = ({
   title,
   style,
   depth = 0,
-  allowLeavingFromTop,
-  allowLeavingFromBottom,
-  allowLeavingFromLeft,
-  allowLeavingFromRight,
+  restrictions,
 }: Props) => {
   const ref = React.useRef() as React.MutableRefObject<HTMLLIElement>;
 
@@ -64,12 +65,7 @@ const RestrictedItem = ({
           id,
           { x: clientX, y: clientY },
           {
-            restrictions: {
-              allowLeavingFromTop,
-              allowLeavingFromBottom,
-              allowLeavingFromLeft,
-              allowLeavingFromRight,
-            },
+            restrictions: { self: restrictions.self },
           }
         );
 
@@ -106,12 +102,7 @@ const RestrictedItem = ({
         id,
         { x: clientX, y: clientY },
         {
-          restrictions: {
-            allowLeavingFromTop,
-            allowLeavingFromBottom,
-            allowLeavingFromLeft,
-            allowLeavingFromRight,
-          },
+          restrictions: { self: restrictions.self },
         }
       );
 

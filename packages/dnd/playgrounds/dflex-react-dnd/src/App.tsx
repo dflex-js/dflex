@@ -11,8 +11,8 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { store } from "@dflex/dnd";
 
 import {
-  Restricted,
-  RestrictedDifferent,
+  RestrictedContainer,
+  RestrictedSelf,
   TodoList,
   TodoListCase1,
   ExtendedList,
@@ -34,11 +34,11 @@ function App() {
         <Route path="/extended">
           <ExtendedList />
         </Route>
-        <Route path="/restricted">
-          <Restricted />
+        <Route path="/restricted-container">
+          <RestrictedContainer />
         </Route>
-        <Route path="/restricted-diff">
-          <RestrictedDifferent />
+        <Route path="/restricted-self">
+          <RestrictedSelf />
         </Route>
         <Route path="/todo">
           <TodoList />

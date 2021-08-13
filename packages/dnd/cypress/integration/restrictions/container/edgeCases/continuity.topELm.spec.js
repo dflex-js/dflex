@@ -13,7 +13,7 @@ let stepsY = 0;
 
 context("Checking restrictions continuity for the first element", () => {
   before(() => {
-    cy.visit("http://localhost:3001/restricted");
+    cy.visit("http://localhost:3001/restricted-container");
   });
 
   context("First element", () => {

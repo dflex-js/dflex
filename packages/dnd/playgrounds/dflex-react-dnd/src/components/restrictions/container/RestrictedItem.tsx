@@ -52,10 +52,12 @@ const RestrictedItem = ({ id, title, style, depth = 0 }: Props) => {
           { x: clientX, y: clientY },
           {
             restrictions: {
-              allowLeavingFromTop: false,
-              allowLeavingFromBottom: false,
-              allowLeavingFromLeft: false,
-              allowLeavingFromRight: false,
+              container: {
+                allowLeavingFromTop: false,
+                allowLeavingFromBottom: false,
+                allowLeavingFromLeft: false,
+                allowLeavingFromRight: false,
+              },
             },
           }
         );
@@ -94,10 +96,12 @@ const RestrictedItem = ({ id, title, style, depth = 0 }: Props) => {
         { x: clientX, y: clientY },
         {
           restrictions: {
-            allowLeavingFromTop: false,
-            allowLeavingFromBottom: false,
-            allowLeavingFromLeft: false,
-            allowLeavingFromRight: false,
+            container: {
+              allowLeavingFromTop: false,
+              allowLeavingFromBottom: false,
+              allowLeavingFromLeft: false,
+              allowLeavingFromRight: false,
+            },
           },
         }
       );
