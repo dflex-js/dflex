@@ -7,7 +7,7 @@
 
 import React from "react";
 import s from "../../Demo.module.css";
-import RestrictedItem from "./RestrictedItem";
+import RestrictedItem from "../RestrictedItem";
 
 const Restricted = () => {
   const items = [
@@ -43,7 +43,20 @@ const Restricted = () => {
       <div className={s.todo}>
         <ul>
           {items.map(({ id, style, item }) => (
-            <RestrictedItem key={id} id={id} style={style} title={item} />
+            <RestrictedItem
+              key={id}
+              id={id}
+              style={style}
+              title={item}
+              restrictions={{
+                container: {
+                  allowLeavingFromBottom: false,
+                  allowLeavingFromTop: false,
+                  allowLeavingFromLeft: false,
+                  allowLeavingFromRight: false,
+                },
+              }}
+            />
           ))}
         </ul>
       </div>

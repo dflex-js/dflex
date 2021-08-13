@@ -8,16 +8,23 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 import React from "react";
-import { store, DnD } from "@dflex/dnd";
+import { store, DnD, DndOpts } from "@dflex/dnd";
 
 interface Props {
   id: string;
   style?: React.CSSProperties;
   title: string;
   depth?: number;
+  restrictions: DndOpts["restrictions"];
 }
 
-const RestrictedItem = ({ id, title, style, depth = 0 }: Props) => {
+const RestrictedItem = ({
+  id,
+  title,
+  style,
+  depth = 0,
+  restrictions,
+}: Props) => {
   const ref = React.useRef() as React.MutableRefObject<HTMLLIElement>;
 
   let draggedEvent: DnD | null;
@@ -51,14 +58,7 @@ const RestrictedItem = ({ id, title, style, depth = 0 }: Props) => {
           id,
           { x: clientX, y: clientY },
           {
-            restrictions: {
-              container: {
-                allowLeavingFromTop: false,
-                allowLeavingFromBottom: false,
-                allowLeavingFromLeft: false,
-                allowLeavingFromRight: false,
-              },
-            },
+            restrictions,
           }
         );
 
@@ -95,14 +95,7 @@ const RestrictedItem = ({ id, title, style, depth = 0 }: Props) => {
         id,
         { x: clientX, y: clientY },
         {
-          restrictions: {
-            container: {
-              allowLeavingFromTop: false,
-              allowLeavingFromBottom: false,
-              allowLeavingFromLeft: false,
-              allowLeavingFromRight: false,
-            },
-          },
+          restrictions,
         }
       );
 

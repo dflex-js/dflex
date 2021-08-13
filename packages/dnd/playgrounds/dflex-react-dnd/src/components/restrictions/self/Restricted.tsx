@@ -7,7 +7,7 @@
 
 import React from "react";
 import s from "../../Demo.module.css";
-import RestrictedItem from "./RestrictedItem";
+import RestrictedItem from "../RestrictedItem";
 
 const Restricted = () => {
   const items = [
