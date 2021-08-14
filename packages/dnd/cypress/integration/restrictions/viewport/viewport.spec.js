@@ -33,7 +33,7 @@ context("Elements can't be dragged outside the list", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(0);
+      // cy.wait(0);
     }
   });
 
@@ -52,7 +52,7 @@ context("Elements can't be dragged outside the list", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(0);
+      // cy.wait(0);
     }
   });
 
@@ -71,7 +71,7 @@ context("Elements can't be dragged outside the list", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(0);
+      // cy.wait(0);
     }
   });
 
@@ -90,7 +90,7 @@ context("Elements can't be dragged outside the list", () => {
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(0);
+      // cy.wait(0);
     }
   });
 
