@@ -184,14 +184,14 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     };
   }
 
-  private isElementVisibleInHorizontalViewport(currentLeft: number): boolean {
+  private isElementVisibleViewportX(currentLeft: number): boolean {
     return (
       currentLeft >= this.scrollX &&
       currentLeft <= this.viewportWidth + this.scrollX
     );
   }
 
-  private isElementVisibleInVerticalViewport(currentTop: number): boolean {
+  private isElementVisibleViewportY(currentTop: number): boolean {
     return (
       currentTop >= this.scrollY &&
       currentTop <= this.viewportHeight + this.scrollY
@@ -213,12 +213,10 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
             }
 
             let isVisible =
-              this.isElementVisibleInVerticalViewport(
+              this.isElementVisibleViewportY(
                 this.registry[elmID].currentTop!
               ) &&
-              this.isElementVisibleInHorizontalViewport(
-                this.registry[elmID].currentLeft!
-              );
+              this.isElementVisibleViewportX(this.registry[elmID].currentLeft!);
 
             if (
               !isVisible &&
@@ -360,13 +358,15 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     this.assignSiblingsBoundaries(sK, offset!);
 
-    const isVisibleY = this.isElementVisibleInVerticalViewport(currentTop!);
-    const isVisibleX = this.isElementVisibleInHorizontalViewport(currentLeft!);
+    const isVisibleY = this.isElementVisibleViewportY(currentTop!);
+    const isVisibleX = this.isElementVisibleViewportX(currentLeft!);
 
     // same branch
     this.elmIndicator.currentKy = `${sK}${pK}`;
 
     if (isVisibleY && isVisibleX) {
+      this.hasVisibleElements = true;
+
       if (!this.siblingsOverflow[this.registry[id].keys.sK]) {
         // If we don't do this, and the list is not overflowing, then the object
         // will be undefined.
