@@ -233,8 +233,8 @@ class Draggable extends Base implements DraggableDnDInterface {
         );
         filteredY = this.axesYFilter(
           y,
-          top,
-          bottom,
+          this.draggedElm.currentTop!,
+          this.draggedElm.currentTop! + this.draggedElm.offset!.height,
           this.restrictions.self.allowLeavingFromTop,
           this.restrictions.self.allowLeavingFromBottom,
           false
