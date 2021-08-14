@@ -68,33 +68,6 @@ export function extractOpts(opts: DndOpts) {
             ...options[props][subProp],
           };
 
-          if (props === "restrictions") {
-            const restrictionsKeys = Object.keys(options.restrictions.self);
-
-            let isSelfRestricted = false;
-
-            for (let i = 0; i < restrictionsKeys.length; i += 1) {
-              if (!options[props].self[restrictionsKeys[i]]) {
-                isSelfRestricted = true;
-
-                break;
-              }
-            }
-
-            let isContainerRestricted = false;
-
-            for (let i = 0; i < restrictionsKeys.length; i += 1) {
-              if (!options[props].container[restrictionsKeys[i]]) {
-                isContainerRestricted = true;
-
-                break;
-              }
-            }
-
-            options.restrictionsStatus.isSelfRestricted = isSelfRestricted;
-            options.restrictionsStatus.isContainerRestricted =
-              isContainerRestricted;
-          }
           return;
         }
 
@@ -107,6 +80,33 @@ export function extractOpts(opts: DndOpts) {
         options[props][subProp] = defaultOpts[props][subProp];
       }
     });
+
+    if (props === "restrictions") {
+      const restrictionsKeys = Object.keys(options.restrictions.self);
+
+      let isSelfRestricted = false;
+
+      for (let i = 0; i < restrictionsKeys.length; i += 1) {
+        if (!options[props].self[restrictionsKeys[i]]) {
+          isSelfRestricted = true;
+
+          break;
+        }
+      }
+
+      let isContainerRestricted = false;
+
+      for (let i = 0; i < restrictionsKeys.length; i += 1) {
+        if (!options[props].container[restrictionsKeys[i]]) {
+          isContainerRestricted = true;
+
+          break;
+        }
+      }
+
+      options.restrictionsStatus.isSelfRestricted = isSelfRestricted;
+      options.restrictionsStatus.isContainerRestricted = isContainerRestricted;
+    }
   });
 
   return options as FinalDndOpts;

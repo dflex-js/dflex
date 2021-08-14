@@ -33,6 +33,24 @@ describe("extractOpts", () => {
     expect(opts.scroll.enable).toEqual(false);
   });
 
+  it("Returns the default options with self restrictions/allowLeavingFromLeft+right", () => {
+    const opts = extractOpts({
+      restrictions: {
+        self: {
+          allowLeavingFromTop: true,
+          allowLeavingFromBottom: true,
+          allowLeavingFromLeft: false,
+          allowLeavingFromRight: false,
+        },
+      },
+    });
+
+    expect(opts).toMatchSnapshot();
+
+    expect(opts.restrictions.self.allowLeavingFromLeft).toEqual(false);
+    expect(opts.restrictions.self.allowLeavingFromRight).toEqual(false);
+  });
+
   it("Returns the default options with input restrictions/allowLeavingFromBottom", () => {
     const opts = extractOpts({
       restrictions: {

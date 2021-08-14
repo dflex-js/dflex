@@ -174,3 +174,38 @@ Object {
   },
 }
 `;
+
+exports[`extractOpts Returns the default options with self restrictions/allowLeavingFromLeft+right 1`] = `
+Object {
+  "restrictions": Object {
+    "container": Object {
+      "allowLeavingFromBottom": true,
+      "allowLeavingFromLeft": true,
+      "allowLeavingFromRight": true,
+      "allowLeavingFromTop": true,
+    },
+    "self": Object {
+      "allowLeavingFromBottom": true,
+      "allowLeavingFromLeft": false,
+      "allowLeavingFromRight": false,
+      "allowLeavingFromTop": true,
+    },
+  },
+  "restrictionsStatus": Object {
+    "isContainerRestricted": false,
+    "isSelfRestricted": true,
+  },
+  "scroll": Object {
+    "enable": false,
+    "speed": 10,
+    "threshold": Object {
+      "horizontal": 75,
+      "vertical": 75,
+    },
+  },
+  "threshold": Object {
+    "horizontal": 60,
+    "vertical": 60,
+  },
+}
+`;

@@ -50,6 +50,10 @@ class Draggable extends Base implements DraggableDnDInterface {
 
   private marginX: number;
 
+  private initY: number;
+
+  private initX: number;
+
   constructor(
     id: string,
     initCoordinates: MouseCoordinates,
@@ -58,6 +62,9 @@ class Draggable extends Base implements DraggableDnDInterface {
     super(id, initCoordinates, opts);
 
     const { x, y } = initCoordinates;
+
+    this.initY = y;
+    this.initX = x;
 
     this.innerOffsetX = Math.round(x - this.draggedElm.currentLeft!);
     this.innerOffsetY = Math.round(y - this.draggedElm.currentTop!);
@@ -126,13 +133,13 @@ class Draggable extends Base implements DraggableDnDInterface {
     if (!allowTop && currentTop <= topThreshold) {
       return isRestrictedToThreshold
         ? topThreshold + this.innerOffsetY
-        : -this.outerOffsetY;
+        : this.initY;
     }
 
     if (!allowBottom && currentBottom >= bottomThreshold) {
       return isRestrictedToThreshold
         ? bottomThreshold + this.innerOffsetY - this.draggedElm.offset!.height
-        : -this.outerOffsetY;
+        : this.initY;
     }
 
     return y;
@@ -144,7 +151,7 @@ class Draggable extends Base implements DraggableDnDInterface {
     rightThreshold: number,
     allowLeft: boolean,
     allowRight: boolean,
-    restrictToThreshold: boolean // if not. Then to self.
+    restrictToThreshold: boolean // if not. Then to self.,
   ) {
     const currentLeft = x - this.innerOffsetX;
     const currentRight = currentLeft + this.draggedElm.offset!.width;
@@ -152,7 +159,7 @@ class Draggable extends Base implements DraggableDnDInterface {
     if (!allowLeft && currentLeft <= leftThreshold) {
       return restrictToThreshold
         ? leftThreshold + this.innerOffsetX
-        : -this.outerOffsetX;
+        : this.initX;
     }
 
     if (!allowRight && currentRight + this.marginX >= rightThreshold) {
@@ -161,7 +168,7 @@ class Draggable extends Base implements DraggableDnDInterface {
             this.innerOffsetX -
             this.draggedElm.offset!.width -
             this.marginX
-        : -this.outerOffsetX;
+        : this.initX;
     }
 
     return x;
@@ -233,8 +240,8 @@ class Draggable extends Base implements DraggableDnDInterface {
         );
         filteredY = this.axesYFilter(
           y,
-          top,
-          bottom,
+          this.draggedElm.currentTop!,
+          this.draggedElm.currentTop! + this.draggedElm.offset!.height,
           this.restrictions.self.allowLeavingFromTop,
           this.restrictions.self.allowLeavingFromBottom,
           false
