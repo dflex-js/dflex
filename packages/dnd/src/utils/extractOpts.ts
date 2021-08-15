@@ -35,9 +35,9 @@ export const defaultOpts: DndOpts = Object.freeze({
   },
 
   scroll: {
-    enable: false,
+    enable: true,
     initialSpeed: 10,
-    accelerateDuration: 5, // accelerate each 5 ms.
+    accelerateDuration: 8, // accelerate each 5 ms.
     thresholdPercentage: {
       vertical: 75, // 75% of the window height
       horizontal: 75,

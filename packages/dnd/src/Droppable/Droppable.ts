@@ -536,12 +536,8 @@ class Droppable extends Scroll {
    * @param y- mouse Y coordinate
    */
   dragAt(x: number, y: number) {
-    if (
-      this.draggable.scroll.enable &&
-      !store.hasThrottledFrame &&
-      this.scrollAnimatedFrame === null
-    ) {
-      this.scroll(x, y);
+    if (this.scrollAnimatedFrame !== null) {
+      return;
     }
 
     if (this.isScrollOffsetInitiated) {
@@ -555,14 +551,21 @@ class Droppable extends Scroll {
 
     const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
 
-    if (siblings === null || this.scrollAnimatedFrame !== null) return;
+    if (siblings === null || store.hasThrottledFrame === null) {
+      return;
+    }
 
     let isOutSiblingsContainer = false;
+
     const { sK } = store.registry[this.draggable.draggedElm.id].keys;
 
     this.draggable.setDraggedMovingDown(y);
 
     if (this.draggable.isOutThreshold()) {
+      if (this.draggable.scroll.enable && !store.hasThrottledFrame) {
+        this.scrollIfEligible(x, y);
+      }
+
       if (!this.isListLocked) {
         this.draggedOutPosition();
 

@@ -8,7 +8,6 @@
 import type { DraggableDnDInterface } from "../Draggable";
 
 import store from "../DnDStore";
-import Interval from "./utils/Interval";
 
 class Scroll {
   protected draggable: DraggableDnDInterface;
@@ -23,40 +22,23 @@ class Scroll {
 
   private scrollSpeed: number;
 
-  private interval: Interval;
-
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
 
     this.scrollAnimatedFrame = null;
 
     this.isScrollOffsetInitiated = false;
-    this.scrollYOffset = 0;
-    this.scrollXOffset = 0;
-    this.scrollSpeed = 0;
 
-    this.interval = new Interval();
-  }
-
-  private initScrollOffset() {
-    this.scrollSpeed = 0;
     this.scrollYOffset = store.scrollY;
     this.scrollXOffset = store.scrollX;
-  }
 
-  scrollEnd() {
-    // Reset animation flags
-    this.scrollAnimatedFrame = null;
-    store.hasThrottledFrame = null;
-    this.draggable.isViewportRestricted = true;
-
-    if (this.interval.intervalID !== null) {
-      this.interval.clear();
-    }
+    this.scrollSpeed = this.draggable.scroll.initialSpeed;
   }
 
   private scrollElementOnY(x: number, y: number, direction: 1 | -1) {
     store.documentScrollingElement.scrollTop += direction * this.scrollSpeed;
+
+    console.log("yes?");
 
     this.draggable.dragAt(
       x,
@@ -79,11 +61,14 @@ class Scroll {
     direction: 1 | -1,
     on: "scrollElementOnX" | "scrollElementOnY"
   ) {
-    if (this.interval.intervalID === null) {
-      this.interval.set(() => {
-        this.scrollSpeed += this.draggable.scroll.initialSpeed;
-      }, this.draggable.scroll.accelerateDuration);
-    }
+    console.log(
+      "file: AScroll.ts ~ line 84 ~ this.scrollSpeed ",
+      this.scrollSpeed
+    );
+
+    // if (this.interval.intervalID === null) {
+    //   this.interval.set(() => {}, this.draggable.scroll.accelerateDuration);
+    // }
 
     // Prevent store from implementing any animation response.
     store.hasThrottledFrame = 1;
@@ -91,18 +76,20 @@ class Scroll {
 
     this.scrollAnimatedFrame = requestAnimationFrame(() => {
       if (!this.isScrollOffsetInitiated) {
-        this.initScrollOffset();
         this.isScrollOffsetInitiated = true;
       }
 
       this[on](x, y, direction);
 
       // Reset animation flags
-      this.scrollEnd();
+      this.scrollAnimatedFrame = null;
+      store.hasThrottledFrame = null;
+
+      this.scrollSpeed += this.draggable.scroll.initialSpeed;
     });
   }
 
-  scroll(x: number, y: number) {
+  scrollIfEligible(x: number, y: number) {
     const { sK } = store.registry[this.draggable.draggedElm.id].keys;
 
     if (store.siblingsOverflow[sK].y) {
