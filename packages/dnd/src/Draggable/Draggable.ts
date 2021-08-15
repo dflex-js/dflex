@@ -48,6 +48,8 @@ class Draggable extends Base implements DraggableDnDInterface {
 
   private restrictionsStatus: RestrictionsStatus;
 
+  isViewportRestricted: boolean;
+
   private marginX: number;
 
   private initY: number;
@@ -65,6 +67,8 @@ class Draggable extends Base implements DraggableDnDInterface {
 
     this.initY = y;
     this.initX = x;
+
+    this.isViewportRestricted = true;
 
     this.innerOffsetX = Math.round(x - this.draggedElm.currentLeft!);
     this.innerOffsetY = Math.round(y - this.draggedElm.currentTop!);
@@ -247,7 +251,7 @@ class Draggable extends Base implements DraggableDnDInterface {
           false
         );
       }
-    } else {
+    } else if (this.isViewportRestricted) {
       filteredX = this.axesXFilter(
         x,
         0,

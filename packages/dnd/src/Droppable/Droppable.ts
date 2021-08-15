@@ -575,6 +575,7 @@ class Droppable {
   ) {
     // Prevent store from implementing any animation response.
     store.hasThrottledFrame = 1;
+    this.draggable.isViewportRestricted = false;
 
     this.scrollAnimatedFrame = requestAnimationFrame(() => {
       if (!this.isScrollOffsetInitiated) {
@@ -587,6 +588,7 @@ class Droppable {
       // Reset animation flags
       this.scrollAnimatedFrame = null;
       store.hasThrottledFrame = null;
+      this.draggable.isViewportRestricted = true;
     });
   }
 
