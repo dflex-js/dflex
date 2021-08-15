@@ -83,7 +83,7 @@ class Base
 
     this.scroll = opts.scroll;
 
-    this.draggedThresholdInputOpt = opts.threshold;
+    this.draggedThresholdInputOpt = opts.thresholdPercentage;
 
     const siblings = store.getElmSiblingsListById(this.draggedElm.id);
 
@@ -97,7 +97,7 @@ class Base
     }
 
     if (this.scroll.enable) {
-      store.seScrollViewportThreshold(this.scroll.threshold);
+      store.seScrollViewportThreshold(this.scroll.thresholdPercentage);
     }
 
     /**

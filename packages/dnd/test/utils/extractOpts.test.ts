@@ -14,22 +14,24 @@ describe("extractOpts", () => {
     expect(opts).toMatchSnapshot();
   });
 
-  it("Returns the default options with input scroll/threshold", () => {
-    const opts = extractOpts({ scroll: { threshold: { horizontal: 1000 } } });
-
-    expect(opts).toMatchSnapshot();
-
-    expect(opts.scroll.threshold.horizontal).toEqual(1000);
-  });
-
-  it("Returns the default options with input scroll/threshold/enable", () => {
+  it("Returns the default options with input scroll/thresholdPercentage", () => {
     const opts = extractOpts({
-      scroll: { enable: false, threshold: { horizontal: 1000 } },
+      scroll: { thresholdPercentage: { horizontal: 1000 } },
     });
 
     expect(opts).toMatchSnapshot();
 
-    expect(opts.scroll.threshold.horizontal).toEqual(1000);
+    expect(opts.scroll.thresholdPercentage.horizontal).toEqual(1000);
+  });
+
+  it("Returns the default options with input scroll/thresholdPercentage/enable", () => {
+    const opts = extractOpts({
+      scroll: { enable: false, thresholdPercentage: { horizontal: 1000 } },
+    });
+
+    expect(opts).toMatchSnapshot();
+
+    expect(opts.scroll.thresholdPercentage.horizontal).toEqual(1000);
     expect(opts.scroll.enable).toEqual(false);
   });
 
@@ -66,7 +68,7 @@ describe("extractOpts", () => {
   });
 });
 
-it("Returns the default options with input restrictions/threshold/scroll", () => {
+it("Returns the default options with input restrictions/thresholdPercentage/scroll", () => {
   const opts = extractOpts({
     restrictions: {
       container: {
@@ -76,11 +78,11 @@ it("Returns the default options with input restrictions/threshold/scroll", () =>
         allowLeavingFromTop: false,
       },
     },
-    threshold: {
+    thresholdPercentage: {
       horizontal: 9000,
     },
     scroll: {
-      threshold: {
+      thresholdPercentage: {
         horizontal: 9000,
       },
     },
@@ -94,6 +96,6 @@ it("Returns the default options with input restrictions/threshold/scroll", () =>
   expect(opts.restrictionsStatus.isContainerRestricted).toEqual(true);
   expect(opts.restrictionsStatus.isSelfRestricted).toEqual(true);
 
-  expect(opts.threshold.horizontal).toEqual(9000);
-  expect(opts.scroll.threshold.horizontal).toEqual(9000);
+  expect(opts.thresholdPercentage.horizontal).toEqual(9000);
+  expect(opts.scroll.thresholdPercentage.horizontal).toEqual(9000);
 });

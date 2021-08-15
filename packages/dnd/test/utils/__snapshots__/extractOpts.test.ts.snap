@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Returns the default options with input restrictions/threshold/scroll 1`] = `
+exports[`Returns the default options with input restrictions/thresholdPercentage/scroll 1`] = `
 Object {
   "restrictions": Object {
     "container": Object {
@@ -21,14 +21,15 @@ Object {
     "isSelfRestricted": true,
   },
   "scroll": Object {
-    "enable": false,
-    "speed": 10,
-    "threshold": Object {
+    "accelerateDuration": 5,
+    "enable": true,
+    "initialSpeed": 10,
+    "thresholdPercentage": Object {
       "horizontal": 9000,
       "vertical": 75,
     },
   },
-  "threshold": Object {
+  "thresholdPercentage": Object {
     "horizontal": 9000,
     "vertical": 60,
   },
@@ -56,14 +57,15 @@ Object {
     "isSelfRestricted": false,
   },
   "scroll": Object {
-    "enable": false,
-    "speed": 10,
-    "threshold": Object {
+    "accelerateDuration": 5,
+    "enable": true,
+    "initialSpeed": 10,
+    "thresholdPercentage": Object {
       "horizontal": 75,
       "vertical": 75,
     },
   },
-  "threshold": Object {
+  "thresholdPercentage": Object {
     "horizontal": 60,
     "vertical": 60,
   },
@@ -91,21 +93,22 @@ Object {
     "isSelfRestricted": false,
   },
   "scroll": Object {
-    "enable": false,
-    "speed": 10,
-    "threshold": Object {
+    "accelerateDuration": 5,
+    "enable": true,
+    "initialSpeed": 10,
+    "thresholdPercentage": Object {
       "horizontal": 75,
       "vertical": 75,
     },
   },
-  "threshold": Object {
+  "thresholdPercentage": Object {
     "horizontal": 60,
     "vertical": 60,
   },
 }
 `;
 
-exports[`extractOpts Returns the default options with input scroll/threshold 1`] = `
+exports[`extractOpts Returns the default options with input scroll/thresholdPercentage 1`] = `
 Object {
   "restrictions": Object {
     "container": Object {
@@ -126,21 +129,22 @@ Object {
     "isSelfRestricted": false,
   },
   "scroll": Object {
-    "enable": false,
-    "speed": 10,
-    "threshold": Object {
+    "accelerateDuration": 5,
+    "enable": true,
+    "initialSpeed": 10,
+    "thresholdPercentage": Object {
       "horizontal": 1000,
       "vertical": 75,
     },
   },
-  "threshold": Object {
+  "thresholdPercentage": Object {
     "horizontal": 60,
     "vertical": 60,
   },
 }
 `;
 
-exports[`extractOpts Returns the default options with input scroll/threshold/enable 1`] = `
+exports[`extractOpts Returns the default options with input scroll/thresholdPercentage/enable 1`] = `
 Object {
   "restrictions": Object {
     "container": Object {
@@ -161,14 +165,15 @@ Object {
     "isSelfRestricted": false,
   },
   "scroll": Object {
+    "accelerateDuration": 5,
     "enable": false,
-    "speed": 10,
-    "threshold": Object {
+    "initialSpeed": 10,
+    "thresholdPercentage": Object {
       "horizontal": 1000,
       "vertical": 75,
     },
   },
-  "threshold": Object {
+  "thresholdPercentage": Object {
     "horizontal": 60,
     "vertical": 60,
   },
@@ -196,14 +201,15 @@ Object {
     "isSelfRestricted": true,
   },
   "scroll": Object {
-    "enable": false,
-    "speed": 10,
-    "threshold": Object {
+    "accelerateDuration": 5,
+    "enable": true,
+    "initialSpeed": 10,
+    "thresholdPercentage": Object {
       "horizontal": 75,
       "vertical": 75,
     },
   },
-  "threshold": Object {
+  "thresholdPercentage": Object {
     "horizontal": 60,
     "vertical": 60,
   },

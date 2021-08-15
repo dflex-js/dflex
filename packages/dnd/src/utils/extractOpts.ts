@@ -13,11 +13,12 @@
 import type { DndOpts, FinalDndOpts } from "../types";
 
 export const defaultOpts: DndOpts = Object.freeze({
-  threshold: {
-    vertical: 60,
+  thresholdPercentage: {
+    vertical: 60, // 60% of the element height
     horizontal: 60,
   },
 
+  // Dragged accelerate. Not the interactive element
   restrictions: {
     self: {
       allowLeavingFromTop: true,
@@ -34,10 +35,11 @@ export const defaultOpts: DndOpts = Object.freeze({
   },
 
   scroll: {
-    enable: false,
-    speed: 10,
-    threshold: {
-      vertical: 75,
+    enable: true,
+    initialSpeed: 10,
+    accelerateDuration: 5, // accelerate each 5 ms.
+    thresholdPercentage: {
+      vertical: 75, // 75% of the window height
       horizontal: 75,
     },
   },
