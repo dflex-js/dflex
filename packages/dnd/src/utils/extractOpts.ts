@@ -34,8 +34,8 @@ export const defaultOpts: DndOpts = Object.freeze({
   },
 
   scroll: {
-    enable: false,
-    speed: 10,
+    enable: true,
+    initialSpeed: 10,
     threshold: {
       vertical: 75,
       horizontal: 75,

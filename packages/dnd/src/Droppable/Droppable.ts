@@ -14,8 +14,6 @@ import type { TempOffset, DraggableDnDInterface } from "../Draggable";
  * Class includes all transformation methods related to droppable.
  */
 class Droppable {
-  protected draggable: DraggableDnDInterface;
-
   private elmTransitionY: number;
 
   private draggedAccumulatedTransitionY: number;
@@ -34,13 +32,15 @@ class Droppable {
 
   private siblingsEmptyElmIndex: number;
 
+  protected draggable: DraggableDnDInterface;
+
   private scrollAnimatedFrame: number | null;
 
-  private isScrollOffsetInitiated: boolean;
+  private initialScrollY: number;
 
-  private scrollYOffset: number;
+  private initialScrollX: number;
 
-  private scrollXOffset: number;
+  private scrollSpeed: number;
 
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
@@ -67,9 +67,10 @@ class Droppable {
 
     this.scrollAnimatedFrame = null;
 
-    this.isScrollOffsetInitiated = false;
-    this.scrollYOffset = 0;
-    this.scrollXOffset = 0;
+    this.initialScrollY = store.scrollY;
+    this.initialScrollX = store.scrollX;
+
+    this.scrollSpeed = this.draggable.scroll.initialSpeed;
   }
 
   /**
@@ -542,27 +543,20 @@ class Droppable {
     this.leftAtIndex = -1;
   }
 
-  private initScrollOffset() {
-    this.scrollYOffset = store.scrollY;
-    this.scrollXOffset = store.scrollX;
-  }
-
   private scrollElementOnY(x: number, y: number, direction: 1 | -1) {
-    store.documentScrollingElement.scrollTop +=
-      direction * this.draggable.scroll.speed;
+    store.documentScrollingElement.scrollTop += direction * this.scrollSpeed;
 
     this.draggable.dragAt(
       x,
-      y + store.documentScrollingElement.scrollTop - this.scrollYOffset!
+      y + store.documentScrollingElement.scrollTop - this.initialScrollY
     );
   }
 
   private scrollElementOnX(x: number, y: number, direction: 1 | -1) {
-    store.documentScrollingElement.scrollLeft +=
-      direction * this.draggable.scroll.speed;
+    store.documentScrollingElement.scrollLeft += direction * this.scrollSpeed;
 
     this.draggable.dragAt(
-      x + store.documentScrollingElement.scrollLeft - this.scrollXOffset!,
+      x + store.documentScrollingElement.scrollLeft - this.initialScrollX,
       y
     );
   }
@@ -576,17 +570,16 @@ class Droppable {
     // Prevent store from implementing any animation response.
     store.hasThrottledFrame = 1;
 
-    this.scrollAnimatedFrame = requestAnimationFrame(() => {
-      if (!this.isScrollOffsetInitiated) {
-        this.initScrollOffset();
-        this.isScrollOffsetInitiated = true;
-      }
+    this.draggable.isViewportRestricted = false;
 
+    this.scrollAnimatedFrame = requestAnimationFrame(() => {
       this[on](x, y, direction);
 
       // Reset animation flags
       this.scrollAnimatedFrame = null;
       store.hasThrottledFrame = null;
+
+      this.scrollSpeed += this.draggable.scroll.initialSpeed;
     });
   }
 
@@ -599,64 +592,22 @@ class Droppable {
    * @param y- mouse Y coordinate
    */
   dragAt(x: number, y: number) {
+    this.draggable.dragAt(
+      x + store.scrollX - this.initialScrollX,
+      y + store.documentScrollingElement.scrollTop - this.initialScrollY
+    );
+
+    // this.draggable.dragAt(
+    //   x + store.scrollX - this.initialScrollX,
+    //   y + store.scrollY - this.initialScrollY
+    // );
+
     const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
-
-    if (
-      this.draggable.scroll.enable &&
-      this.scrollAnimatedFrame === null &&
-      !store.hasThrottledFrame
-    ) {
-      const { sK } = store.registry[this.draggable.draggedElm.id].keys;
-
-      if (store.siblingsOverflow[sK].y) {
-        if (
-          y + store.documentScrollingElement.scrollTop - this.scrollYOffset <
-            store.siblingsBoundaries[sK].bottom &&
-          y >= store.scrollThreshold.maxY
-        ) {
-          this.scrollElement(x, y, 1, "scrollElementOnY");
-
-          return;
-        }
-
-        if (y <= store.scrollThreshold.minY) {
-          this.scrollElement(x, y, -1, "scrollElementOnY");
-
-          return;
-        }
-      }
-
-      if (store.siblingsOverflow[sK].x) {
-        if (
-          x + store.documentScrollingElement.scrollLeft - this.scrollXOffset <
-            store.siblingsBoundaries[sK].minRight &&
-          x >= store.scrollThreshold.maxX
-        ) {
-          this.scrollElement(x, y, 1, "scrollElementOnX");
-
-          return;
-        }
-
-        if (x <= store.scrollThreshold.minX) {
-          this.scrollElement(x, y, -1, "scrollElementOnX");
-
-          return;
-        }
-      }
-    }
-
-    if (this.isScrollOffsetInitiated) {
-      this.draggable.dragAt(
-        x + store.scrollX - this.scrollXOffset,
-        y + store.scrollY - this.scrollYOffset
-      );
-    } else {
-      this.draggable.dragAt(x, y);
-    }
 
     if (siblings === null) return;
 
     let isOutSiblingsContainer = false;
+
     const { sK } = store.registry[this.draggable.draggedElm.id].keys;
 
     this.draggable.setDraggedMovingDown(y);
@@ -666,6 +617,55 @@ class Droppable {
         this.draggedOutPosition();
 
         return;
+      }
+
+      /**
+       * Manage scrolling.
+       */
+      if (
+        this.draggable.scroll.enable &&
+        this.scrollAnimatedFrame === null &&
+        store.hasThrottledFrame === null
+      ) {
+        this.draggable.isViewportRestricted = false;
+
+        if (store.siblingsOverflow[sK].y) {
+          if (
+            y + store.documentScrollingElement.scrollTop - this.initialScrollY <
+              store.siblingsBoundaries[sK].bottom &&
+            y >= store.scrollThreshold.maxY
+          ) {
+            this.scrollElement(x, y, 1, "scrollElementOnY");
+
+            return;
+          }
+
+          if (y <= store.scrollThreshold.minY) {
+            this.scrollElement(x, y, -1, "scrollElementOnY");
+
+            return;
+          }
+        }
+
+        if (store.siblingsOverflow[sK].x) {
+          if (
+            x +
+              store.documentScrollingElement.scrollLeft -
+              this.initialScrollX <
+              store.siblingsBoundaries[sK].minRight &&
+            x >= store.scrollThreshold.maxX
+          ) {
+            this.scrollElement(x, y, 1, "scrollElementOnX");
+
+            return;
+          }
+
+          if (x <= store.scrollThreshold.minX) {
+            this.scrollElement(x, y, -1, "scrollElementOnX");
+
+            return;
+          }
+        }
       }
 
       isOutSiblingsContainer = this.draggable.isOutThreshold(sK);
