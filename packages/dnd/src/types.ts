@@ -7,8 +7,8 @@
 import type { ThresholdPercentages, Restrictions } from "./Draggable";
 
 export interface ScrollOptWithoutThreshold {
-  speed: number;
   enable: boolean;
+  initialSpeed: number;
 }
 
 export interface ScrollOptWithPartialThreshold
@@ -17,12 +17,6 @@ export interface ScrollOptWithPartialThreshold
 }
 
 export interface ScrollOptWithThreshold extends ScrollOptWithoutThreshold {
-  threshold: ThresholdPercentages;
-}
-
-export interface FinalScrollOpt {
-  speed: number;
-  enable: boolean;
   threshold: ThresholdPercentages;
 }
 
