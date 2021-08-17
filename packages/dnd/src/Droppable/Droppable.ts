@@ -42,6 +42,10 @@ class Droppable {
 
   private scrollSpeed: number;
 
+  private scrollTop: number;
+
+  private scrollLeft: number;
+
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
 
@@ -71,6 +75,18 @@ class Droppable {
     this.initialScrollX = store.scrollX;
 
     this.scrollSpeed = this.draggable.scroll.initialSpeed;
+
+    /*
+     * The reason for using this instance instead of calling the store
+     * instance/listeners:
+     * - There's a delay. Change of scrollY/X is not updated immediately. You
+     *   have to wait for the next frame, as it's throttled and then get the value.
+     * - The store instance is not available if there's no overflow.
+     * - Guarantee same position for dragging. In scrolling/overflow case, or
+     *   regular scrolling.
+     */
+    this.scrollTop = store.scrollY;
+    this.scrollLeft = store.scrollX;
   }
 
   /**
@@ -544,21 +560,19 @@ class Droppable {
   }
 
   private scrollElementOnY(x: number, y: number, direction: 1 | -1) {
-    store.documentScrollingElement.scrollTop += direction * this.scrollSpeed;
+    this.scrollTop += direction * this.scrollSpeed;
 
-    this.draggable.dragAt(
-      x,
-      y + store.documentScrollingElement.scrollTop - this.initialScrollY
-    );
+    store.documentScrollingElement.scrollTop = this.scrollTop;
+
+    this.draggable.dragAt(x, y + this.scrollTop - this.initialScrollY);
   }
 
   private scrollElementOnX(x: number, y: number, direction: 1 | -1) {
-    store.documentScrollingElement.scrollLeft += direction * this.scrollSpeed;
+    this.scrollLeft += direction * this.scrollSpeed;
 
-    this.draggable.dragAt(
-      x + store.documentScrollingElement.scrollLeft - this.initialScrollX,
-      y
-    );
+    store.documentScrollingElement.scrollLeft = this.scrollLeft;
+
+    this.draggable.dragAt(x + this.scrollLeft - this.initialScrollX, y);
   }
 
   private scrollElement(
@@ -593,12 +607,12 @@ class Droppable {
    */
   dragAt(x: number, y: number) {
     this.draggable.dragAt(
-      x + store.scrollX - this.initialScrollX,
-      y + store.documentScrollingElement.scrollTop - this.initialScrollY
+      x + this.scrollLeft - this.initialScrollX,
+      y + this.scrollTop - this.initialScrollY
     );
 
     // this.draggable.dragAt(
-    //   x + store.scrollX - this.initialScrollX,
+    //   x + store.documentScrollingElement.scrollLeft - this.initialScrollX,
     //   y + store.scrollY - this.initialScrollY
     // );
 
