@@ -511,11 +511,6 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   destroy() {
     this.dispose();
 
-    // @ts-expect-error
-    this.documentScrollingElement = null;
-    // @ts-expect-error
-    this.scrollThreshold = null;
-
     // Destroys all registered instances.
     super.destroy();
   }
