@@ -72,8 +72,14 @@ export interface DnDStoreInterface {
   scrollThreshold: ScrollThreshold;
   siblingsBoundaries: { [siblingKey: string]: BoundariesOffset };
   siblingsOverflow: { [siblingKey: string]: Overflow };
+  viewportHeight: Number;
+  viewportWidth: Number;
+  scrollY: Number;
+  scrollX: Number;
+  documentScrollingElement: Element;
+  scrollHeight: Number;
   register(element: ElmInstance, x?: boolean): void;
-  seScrollViewportThreshold(
+  initScrollViewportThreshold(
     scrollThresholdInputOpt: ThresholdPercentages
   ): void;
   getELmOffsetById(id: string): Offset | undefined;
