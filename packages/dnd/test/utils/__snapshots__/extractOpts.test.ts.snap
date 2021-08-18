@@ -21,8 +21,8 @@ Object {
     "isSelfRestricted": true,
   },
   "scroll": Object {
-    "enable": false,
-    "speed": 10,
+    "enable": true,
+    "initialSpeed": 10,
     "threshold": Object {
       "horizontal": 9000,
       "vertical": 75,
@@ -56,8 +56,8 @@ Object {
     "isSelfRestricted": false,
   },
   "scroll": Object {
-    "enable": false,
-    "speed": 10,
+    "enable": true,
+    "initialSpeed": 10,
     "threshold": Object {
       "horizontal": 75,
       "vertical": 75,
@@ -91,8 +91,8 @@ Object {
     "isSelfRestricted": false,
   },
   "scroll": Object {
-    "enable": false,
-    "speed": 10,
+    "enable": true,
+    "initialSpeed": 10,
     "threshold": Object {
       "horizontal": 75,
       "vertical": 75,
@@ -126,8 +126,8 @@ Object {
     "isSelfRestricted": false,
   },
   "scroll": Object {
-    "enable": false,
-    "speed": 10,
+    "enable": true,
+    "initialSpeed": 10,
     "threshold": Object {
       "horizontal": 1000,
       "vertical": 75,
@@ -162,7 +162,7 @@ Object {
   },
   "scroll": Object {
     "enable": false,
-    "speed": 10,
+    "initialSpeed": 10,
     "threshold": Object {
       "horizontal": 1000,
       "vertical": 75,
@@ -196,8 +196,8 @@ Object {
     "isSelfRestricted": true,
   },
   "scroll": Object {
-    "enable": false,
-    "speed": 10,
+    "enable": true,
+    "initialSpeed": 10,
     "threshold": Object {
       "horizontal": 75,
       "vertical": 75,
