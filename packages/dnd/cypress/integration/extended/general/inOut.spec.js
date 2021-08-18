@@ -34,37 +34,37 @@ context("Working with visibility, changing positions and continuity", () => {
   it("Transforms element (1) - outside the list", () => {
     stepsX = 240;
 
-    for (let i = 0; i < stepsX; i += 10) {
+    for (let i = 0; i <= stepsX; i += 10) {
       cy.get("#1-extended").trigger("mousemove", {
         clientX: startingPointX - i,
         force: true,
       });
 
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      // cy.wait(0);
+      cy.wait(0);
     }
 
-    stepsY = 70;
-    for (let i = 0; i < stepsY; i += 10) {
+    stepsY = 110;
+    for (let i = 0; i <= stepsY; i += 10) {
       cy.get("#1-extended").trigger("mousemove", {
         clientY: startingPointY + i,
         force: true,
       });
 
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      // cy.wait(0);
+      cy.wait(0);
     }
   });
 
   it("Insert element (1) inside the list", () => {
-    for (let i = stepsX; i > 0; i -= 10) {
+    for (let i = stepsX; i >= 0; i -= 10) {
       cy.get("#1-extended").trigger("mousemove", {
         clientX: startingPointX - i,
         force: true,
       });
 
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      // cy.wait(0);
+      cy.wait(0);
     }
     stepsX = 0;
   });
@@ -83,7 +83,7 @@ context("Working with visibility, changing positions and continuity", () => {
     );
   });
 
-  it("The Splitting changing the index dataset", () => {
+  it("The Splitting changes the index dataset", () => {
     cy.get(`#2-extended`).then((elm) => {
       const { index } = elm[0].dataset;
       expect(index).to.be.eq(`0`);
@@ -215,35 +215,35 @@ context("Working with visibility, changing positions and continuity", () => {
   it("Transforms element (1) - outside the list", () => {
     stepsX = 240;
 
-    for (let i = 0; i < stepsX; i += 10) {
+    for (let i = 0; i <= stepsX; i += 10) {
       cy.get("#1-extended").trigger("mousemove", {
         clientX: startingPointX - i,
         force: true,
       });
 
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      // cy.wait(0);
+      cy.wait(0);
     }
 
-    stepsY = 120;
-    for (let i = 0; i < stepsY; i += 10) {
+    stepsY = 260;
+    for (let i = 0; i <= stepsY; i += 10) {
       cy.get("#1-extended").trigger("mousemove", {
         clientY: startingPointY + i,
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      // cy.wait(0);
+      cy.wait(0);
     }
   });
 
   it("Insert element (1) inside the list", () => {
-    for (let i = stepsX; i > 0; i -= 10) {
+    for (let i = stepsX; i >= 0; i -= 10) {
       cy.get("#1-extended").trigger("mousemove", {
         clientX: startingPointX - i,
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      // cy.wait(0);
+      cy.wait(0);
     }
     stepsX = 0;
   });
@@ -259,16 +259,16 @@ context("Working with visibility, changing positions and continuity", () => {
   });
 
   it("Transom element down", () => {
-    stepsY = 520;
+    stepsY = 620;
 
-    for (let i = 112; i < stepsY; i += 10) {
+    for (let i = 260; i <= stepsY; i += 10) {
       cy.get("#1-extended").trigger("mousemove", {
         clientY: startingPointY + i,
         force: true,
       });
 
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      // cy.wait(0);
+      cy.wait(0);
     }
 
     stepsX = 0;
