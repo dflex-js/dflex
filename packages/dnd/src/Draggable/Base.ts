@@ -97,7 +97,7 @@ class Base
     }
 
     if (this.scroll.enable) {
-      store.seScrollViewportThreshold(this.scroll.threshold);
+      store.initScrollViewportThreshold(this.scroll.threshold);
     }
 
     /**
