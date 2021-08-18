@@ -59,6 +59,7 @@ export interface DraggableBaseInterface
   isOutActiveParent: boolean;
   draggedThreshold: ThresholdPercentages;
   scroll: ScrollOptWithThreshold;
+  isViewportRestricted: boolean;
   seDraggedThreshold(relativeTo: CoreInstanceInterface): void;
   setThreshold(
     top: number,
@@ -69,6 +70,8 @@ export interface DraggableBaseInterface
 }
 
 export interface DraggableDnDInterface extends DraggableBaseInterface {
+  innerOffsetX: number;
+  innerOffsetY: number;
   tempOffset: TempOffset;
   occupiedOffset: TempOffset;
   occupiedTranslate: TempTranslate;
@@ -77,7 +80,6 @@ export interface DraggableDnDInterface extends DraggableBaseInterface {
   isMovingDown: boolean;
   isOutPositionHorizontally: boolean;
   isOutSiblingsHorizontally: boolean;
-  isViewportRestricted: boolean;
   dragAt(x: number, y: number): void;
   incNumOfElementsTransformed(effectedElemDirection: number): void;
   setDraggedMovingDown(y: number): void;
