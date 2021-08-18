@@ -46,6 +46,8 @@ class Droppable {
 
   private scrollLeft: number;
 
+  private regularDragging: boolean;
+
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
 
@@ -87,6 +89,12 @@ class Droppable {
      */
     this.scrollTop = store.scrollY;
     this.scrollLeft = store.scrollX;
+
+    /**
+     * This is true until there's a scrolling. Then, the scroll will handle the
+     * scroll with dragging to ensure both are executed in the same frame.
+     */
+    this.regularDragging = true;
   }
 
   /**
@@ -560,19 +568,65 @@ class Droppable {
   }
 
   private scrollElementOnY(x: number, y: number, direction: 1 | -1) {
-    this.scrollTop += direction * this.scrollSpeed;
+    let nextScrollTop = this.scrollTop;
+
+    nextScrollTop += direction * this.scrollSpeed;
+
+    const draggedYShift = y + nextScrollTop - this.initialScrollY;
+
+    const currentTop = draggedYShift - this.draggable.innerOffsetY;
+
+    const currentBottom = currentTop + this.draggable.draggedElm.offset!.height;
+
+    if (direction === 1) {
+      if (currentBottom <= store.scrollHeight) {
+        this.scrollTop = nextScrollTop;
+      } else {
+        this.scrollTop = store.scrollHeight - store.viewportHeight;
+      }
+    } else if (currentTop >= 0) {
+      this.scrollTop = nextScrollTop;
+    } else {
+      this.scrollTop = 0;
+    }
 
     store.documentScrollingElement.scrollTop = this.scrollTop;
 
-    this.draggable.dragAt(x, y + this.scrollTop - this.initialScrollY);
+    this.draggable.dragAt(
+      x + this.scrollLeft - this.initialScrollX,
+      y + this.scrollTop - this.initialScrollY
+    );
   }
 
   private scrollElementOnX(x: number, y: number, direction: 1 | -1) {
-    this.scrollLeft += direction * this.scrollSpeed;
+    let nextScrollLeft = this.scrollLeft;
+
+    nextScrollLeft += direction * this.scrollSpeed;
+
+    const draggedXShift = x + nextScrollLeft - this.initialScrollX;
+
+    const currentLeft = draggedXShift - this.draggable.innerOffsetX;
+
+    const currentRight = currentLeft + this.draggable.draggedElm.offset!.width;
+
+    if (direction === 1) {
+      if (currentRight <= store.scrollHeight) {
+        this.scrollLeft = nextScrollLeft;
+      } else {
+        this.scrollLeft = store.scrollHeight - store.viewportWidth;
+      }
+    } else if (currentRight >= 0) {
+      this.scrollLeft = currentRight;
+    } else {
+      this.scrollLeft = 0;
+    }
 
     store.documentScrollingElement.scrollLeft = this.scrollLeft;
 
-    this.draggable.dragAt(x + this.scrollLeft - this.initialScrollX, y);
+    this.draggable.dragAt(
+      x + this.scrollLeft - this.initialScrollX,
+      y + this.scrollTop - this.initialScrollY
+    );
   }
 
   private scrollElement(
@@ -585,6 +639,8 @@ class Droppable {
     store.hasThrottledFrame = 1;
 
     this.draggable.isViewportRestricted = false;
+
+    this.regularDragging = false;
 
     this.scrollAnimatedFrame = requestAnimationFrame(() => {
       this[on](x, y, direction);
@@ -606,15 +662,12 @@ class Droppable {
    * @param y- mouse Y coordinate
    */
   dragAt(x: number, y: number) {
-    this.draggable.dragAt(
-      x + this.scrollLeft - this.initialScrollX,
-      y + this.scrollTop - this.initialScrollY
-    );
-
-    // this.draggable.dragAt(
-    //   x + store.documentScrollingElement.scrollLeft - this.initialScrollX,
-    //   y + store.scrollY - this.initialScrollY
-    // );
+    if (this.regularDragging) {
+      this.draggable.dragAt(
+        x + this.scrollLeft - this.initialScrollX,
+        y + this.scrollTop - this.initialScrollY
+      );
+    }
 
     const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
 
@@ -641,20 +694,18 @@ class Droppable {
         this.scrollAnimatedFrame === null &&
         store.hasThrottledFrame === null
       ) {
-        this.draggable.isViewportRestricted = false;
-
         if (store.siblingsOverflow[sK].y) {
           if (
-            y + store.documentScrollingElement.scrollTop - this.initialScrollY <
-              store.siblingsBoundaries[sK].bottom &&
-            y >= store.scrollThreshold.maxY
+            this.draggable.isMovingDown &&
+            y >= store.scrollThreshold.maxY &&
+            this.scrollTop + store.viewportHeight < store.scrollHeight
           ) {
             this.scrollElement(x, y, 1, "scrollElementOnY");
 
             return;
           }
 
-          if (y <= store.scrollThreshold.minY) {
+          if (y <= store.scrollThreshold.minY && this.scrollTop > 0) {
             this.scrollElement(x, y, -1, "scrollElementOnY");
 
             return;
@@ -663,28 +714,36 @@ class Droppable {
 
         if (store.siblingsOverflow[sK].x) {
           if (
-            x +
-              store.documentScrollingElement.scrollLeft -
-              this.initialScrollX <
-              store.siblingsBoundaries[sK].minRight &&
-            x >= store.scrollThreshold.maxX
+            x >= store.scrollThreshold.maxX &&
+            this.scrollLeft + store.viewportWidth < store.scrollHeight
           ) {
             this.scrollElement(x, y, 1, "scrollElementOnX");
 
             return;
           }
 
-          if (x <= store.scrollThreshold.minX) {
+          if (x <= store.scrollThreshold.minX && this.scrollLeft > 0) {
             this.scrollElement(x, y, -1, "scrollElementOnX");
 
             return;
           }
         }
+
+        /**
+         * Scroll turns the flag off. But regular dragging will be resumed
+         * when the drag is outside the auto scrolling area.
+         */
+        this.regularDragging = true;
+
+        /**
+         * Reset scrollSpeed.
+         */
+        this.scrollSpeed = this.draggable.scroll.initialSpeed;
       }
 
       isOutSiblingsContainer = this.draggable.isOutThreshold(sK);
 
-      // // when it's out, and on of theses is true then it's happening.
+      // when it's out, and on of theses is true then it's happening.
       if (!isOutSiblingsContainer) {
         this.draggedIsComingIn(y);
 
