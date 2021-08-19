@@ -12,12 +12,16 @@ import type { MouseCoordinates } from "@dflex/draggable";
 
 import store from "../DnDStore";
 
-import type {
-  DraggableBaseInterface,
+import type { DraggableBaseInterface, LayoutThresholds } from "./types";
+
+import {
+  ThresholdInPixels,
+  FinalDndOpts,
+  ScrollOptWithThreshold,
   ThresholdPercentages,
-  LayoutThresholds,
-} from "./types";
-import { FinalDndOpts, ScrollOptWithThreshold } from "../types";
+} from "../types";
+
+import getThreshold from "../utils/getThreshold";
 
 /**
  * Base element.
@@ -42,7 +46,7 @@ class Base
 
   private draggedThresholdInputOpt: ThresholdPercentages;
 
-  draggedThreshold!: ThresholdPercentages;
+  draggedThreshold!: ThresholdInPixels;
 
   scroll: ScrollOptWithThreshold;
 
@@ -165,19 +169,14 @@ class Base
    * multiple height and widths, threshold now related to the occupied element
    * offset. The initial state is assigned to dragged element.
    *
-   * @param relativeTo - The occupied element.
+   * @param relativeToOffset - The occupied element offset.
    */
-  seDraggedThreshold(relativeTo = this.draggedElm) {
-    this.draggedThreshold = {
-      vertical: Math.round(
-        (this.draggedThresholdInputOpt.vertical * relativeTo.offset!.height) /
-          100
-      ),
-      horizontal: Math.round(
-        (this.draggedThresholdInputOpt.horizontal * relativeTo.offset!.width) /
-          100
-      ),
-    };
+  seDraggedThreshold(relativeToOffset = this.draggedElm.offset!) {
+    this.draggedThreshold = getThreshold(
+      this.draggedThresholdInputOpt,
+      relativeToOffset.width,
+      relativeToOffset.height
+    );
   }
 
   /**
@@ -190,7 +189,7 @@ class Base
    * @param siblingsK -
    */
   setThreshold(top: number, left: number, height?: number, siblingsK?: string) {
-    const { vertical, horizontal } = this.draggedThreshold;
+    const { y, x } = this.draggedThreshold;
 
     let $;
 
@@ -206,7 +205,7 @@ class Base
 
       $ = this.thresholds.siblings[siblingsK];
 
-      $.maxBottom = height - vertical;
+      $.maxBottom = height - y;
     } else {
       $ = this.thresholds.dragged;
 
@@ -214,7 +213,7 @@ class Base
        * When going down, currentTop increases (+vertical) with droppable
        * taking into considerations (+ vertical).
        */
-      $.maxBottom = top + vertical;
+      $.maxBottom = top + y;
     }
 
     /**
@@ -224,18 +223,18 @@ class Base
     /**
      * When going up, currentTop decreases (-vertical).
      */
-    $.maxTop = top - vertical;
+    $.maxTop = top - y;
 
     /**
      * When going left, currentLeft decreases (-horizontal).
      */
-    $.maxLeft = left - horizontal;
+    $.maxLeft = left - x;
 
     /**
      * When going right, currentLeft increases (+horizontal) with droppable
      * taking into considerations (+ horizontal).
      */
-    $.maxRight = left + horizontal;
+    $.maxRight = left + x;
   }
 
   /**

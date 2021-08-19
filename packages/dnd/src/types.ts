@@ -4,7 +4,17 @@
  * This source code is licensed under the AGPL3.0 license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import type { ThresholdPercentages, Restrictions } from "./Draggable";
+import type { Restrictions } from "./Draggable";
+
+export interface ThresholdPercentages {
+  vertical: number;
+  horizontal: number;
+}
+
+export interface ThresholdInPixels {
+  x: number;
+  y: number;
+}
 
 export interface ScrollOptWithoutThreshold {
   enable: boolean;

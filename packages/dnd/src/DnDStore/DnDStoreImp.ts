@@ -19,7 +19,7 @@ import type {
   Overflow,
 } from "./types";
 
-import type { ThresholdPercentages } from "../Draggable";
+import type { ThresholdPercentages } from "../types";
 
 import Tracker from "./Tracker";
 

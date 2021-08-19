@@ -8,7 +8,8 @@
 import type { CoreInstanceInterface, Offset } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
 import type { ElmInstance } from "@dflex/store";
-import type { ThresholdPercentages } from "../Draggable";
+
+import type { ThresholdPercentages } from "../types";
 
 export interface BoundariesOffset {
   top: number;
