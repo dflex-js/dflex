@@ -58,6 +58,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   scrollX!: number;
 
+  scrollHeight!: number;
+
   hasThrottledFrame: number | null;
 
   private elmIndicator!: {
@@ -165,7 +167,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     return isUpdated;
   }
 
-  seScrollViewportThreshold(scrollThresholdInputOpt: ThresholdPercentages) {
+  initScrollViewportThreshold(scrollThresholdInputOpt: ThresholdPercentages) {
     this.scrollThresholdInputOpt = scrollThresholdInputOpt;
 
     this.scrollThreshold = { minX: 0, maxX: 0, maxY: 0, minY: 0 };
@@ -174,6 +176,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     this.documentScrollingElement =
       document.scrollingElement || document.documentElement;
+
+    this.scrollHeight = this.documentScrollingElement.scrollHeight;
   }
 
   private initELmIndicator() {
@@ -506,6 +510,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   destroy() {
     this.dispose();
+
+    // Destroys all registered instances.
     super.destroy();
   }
 }

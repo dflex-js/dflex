@@ -22,9 +22,9 @@ import type {
 import type { FinalDndOpts, RestrictionsStatus } from "../types";
 
 class Draggable extends Base implements DraggableDnDInterface {
-  private innerOffsetX: number;
+  innerOffsetX: number;
 
-  private innerOffsetY: number;
+  innerOffsetY: number;
 
   tempOffset: TempOffset;
 
@@ -247,7 +247,8 @@ class Draggable extends Base implements DraggableDnDInterface {
           false
         );
       }
-    } else {
+    } else if (this.isViewportRestricted) {
+      // TODO: Fix this when scroll is implemented.
       filteredX = this.axesXFilter(
         x,
         0,

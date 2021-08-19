@@ -46,6 +46,8 @@ class Base
 
   scroll: ScrollOptWithThreshold;
 
+  isViewportRestricted: boolean;
+
   constructor(
     id: string,
     initCoordinates: MouseCoordinates,
@@ -97,7 +99,11 @@ class Base
     }
 
     if (this.scroll.enable) {
-      store.seScrollViewportThreshold(this.scroll.threshold);
+      this.isViewportRestricted = false;
+
+      store.initScrollViewportThreshold(this.scroll.threshold);
+    } else {
+      this.isViewportRestricted = true;
     }
 
     /**
