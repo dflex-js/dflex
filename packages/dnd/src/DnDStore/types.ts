@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { CoreInstanceInterface, Offset } from "@dflex/core-instance";
+import type { CoreInstanceInterface, Rect } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
 import type { ElmInstance } from "@dflex/store";
 
@@ -83,7 +83,7 @@ export interface DnDStoreInterface {
   initScrollViewportThreshold(
     scrollThresholdInputOpt: ThresholdPercentages
   ): void;
-  getELmOffsetById(id: string): Offset | undefined;
+  getELmOffsetById(id: string): Rect | undefined;
   getELmTranslateById(id: string): Translate;
   getElmTreeById(id: string): ElmTree;
   getElmSiblingsById(id: string): ELmBranch | null;

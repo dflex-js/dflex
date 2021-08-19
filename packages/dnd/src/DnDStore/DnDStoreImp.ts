@@ -8,7 +8,7 @@
 import Store from "@dflex/store";
 import CoreInstance from "@dflex/core-instance";
 
-import type { Offset } from "@dflex/core-instance";
+import type { Rect } from "@dflex/core-instance";
 
 import type {
   ElmTree,
@@ -261,7 +261,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     });
   }
 
-  private assignSiblingsBoundaries(siblingsK: string, elemOffset: Offset) {
+  private assignSiblingsBoundaries(siblingsK: string, elemOffset: Rect) {
     const elmRight = elemOffset.left + elemOffset.width;
 
     if (!this.siblingsBoundaries[siblingsK]) {

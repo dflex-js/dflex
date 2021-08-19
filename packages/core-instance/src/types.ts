@@ -76,7 +76,7 @@ export interface CoreEssential {
 
 export type CoreInput = CoreEssential & AbstractCoreInput;
 
-export interface Offset {
+export interface Rect {
   height: number;
   width: number;
   left: number;
@@ -89,7 +89,7 @@ export type TransitionHistory = {
 }[];
 
 export interface CoreInstanceInterface extends AbstractCoreInterface {
-  offset?: Offset;
+  offset?: Rect;
   prevTranslateY?: TransitionHistory;
   currentTop?: number;
   currentLeft?: number;

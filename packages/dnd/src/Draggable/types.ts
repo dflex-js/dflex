@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { CoreInstanceInterface, Offset } from "@dflex/core-instance";
+import type { CoreInstanceInterface, Rect } from "@dflex/core-instance";
 import type { AbstractDraggableInterface } from "@dflex/draggable";
 import type { ThresholdInPixels, ScrollOptWithThreshold } from "../types";
 
@@ -55,7 +55,7 @@ export interface DraggableBaseInterface
   draggedThreshold: ThresholdInPixels;
   scroll: ScrollOptWithThreshold;
   isViewportRestricted: boolean;
-  seDraggedThreshold(relativeTo: Offset): void;
+  seDraggedThreshold(relativeTo: Rect): void;
   setThreshold(
     top: number,
     left: number,
