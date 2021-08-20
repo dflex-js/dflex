@@ -87,8 +87,8 @@ class Generator {
    *
    * @param  sk - Siblings Key- siblings key
    */
-  private isElmSingleton(sK: string) {
-    return this.branches[sK].constructor !== Array;
+  private isElmSingleton(SK: string) {
+    return this.branches[SK].constructor !== Array;
   }
 
   /**
@@ -97,28 +97,28 @@ class Generator {
    * @param id - element id
    * @param  sk - Siblings Key- siblings key
    */
-  private addToSiblings(id: string, sK: string) {
+  private addToSiblings(id: string, SK: string) {
     let selfIndex = 0;
 
     /**
      * Don't create array for only one child.
      */
-    if (this.branches[sK] === undefined) {
-      this.branches[sK] = id;
+    if (this.branches[SK] === undefined) {
+      this.branches[SK] = id;
     } else {
       /**
        * So here we have multiple children, we better create an array now.
        */
-      if (this.isElmSingleton(sK)) {
-        const prevId = this.branches[sK];
+      if (this.isElmSingleton(SK)) {
+        const prevId = this.branches[SK];
 
-        this.branches[sK] = [];
+        this.branches[SK] = [];
         // @ts-ignore
-        this.branches[sK].push(prevId);
+        this.branches[SK].push(prevId);
       }
 
       // @ts-ignore
-      selfIndex = this.branches[sK].push(id) - 1;
+      selfIndex = this.branches[SK].push(id) - 1;
     }
 
     return selfIndex;
@@ -127,10 +127,10 @@ class Generator {
   /**
    * Gets all element IDs Siblings in given node represented by sk.
    *
-   * @param  sk - Siblings Key
+   * @param  SK - Siblings Key
    */
-  getElmBranch(sk: string): ELmBranch {
-    return this.branches[sk];
+  getElmBranch(SK: string): ELmBranch {
+    return this.branches[SK];
   }
 
   /**
@@ -139,8 +139,8 @@ class Generator {
    * @param  sk - Siblings Key- sibling key
    * @param branch - new branch
    */
-  setElmBranch(sK: string, branch: ELmBranch) {
-    this.branches[sK] = branch;
+  setElmBranch(SK: string, branch: ELmBranch) {
+    this.branches[SK] = branch;
   }
 
   /**

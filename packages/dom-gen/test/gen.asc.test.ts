@@ -28,7 +28,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
     it("Adds new element starting at depth zero(0)", () => {
       // DOM-root
       // │
-      // │───id-0  => (order:{parent: 0, self: 0 }) || (keys: {chK: null,pK: "1-0",sK: "0-0"})
+      // │───id-0  => (order:{parent: 0, self: 0 }) || (keys: {CHK: null,PK: "1-0",SK: "0-0"})
 
       pointerChild0D0 = domGen.getElmPointer("id-0", 0);
 
@@ -40,7 +40,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
         },
       });
 
-      const branch = domGen.getElmBranch(pointerChild0D0.keys.sK);
+      const branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
 
       expect(branch).toBe("id-0");
     });
@@ -48,9 +48,9 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
     it("Preserves keys and parent index for element with same level", () => {
       // DOM-root
       // │
-      // │───id-0  => (order:{parent: 0, self: 0 }) || (keys: {chK: null,pK: "1-0",sK: "0-0"})
+      // │───id-0  => (order:{parent: 0, self: 0 }) || (keys: {CHK: null,PK: "1-0",SK: "0-0"})
       // │
-      // │───id-1  => (order:{parent: 0, self: 1 }) || (keys: {chK: null,pK: "1-0",sK: "0-0"})
+      // │───id-1  => (order:{parent: 0, self: 1 }) || (keys: {CHK: null,PK: "1-0",SK: "0-0"})
 
       pointerChild1D0 = domGen.getElmPointer("id-1", 0);
 
@@ -62,17 +62,17 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
         },
       });
 
-      let branch = domGen.getElmBranch(pointerChild0D0.keys.sK);
+      let branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
 
       expect(branch).toStrictEqual(["id-0", "id-1"]);
 
       // DOM-root
       // │
-      // │───id-0  => (order:{parent: 0, self: 0 }) || (keys: {chK: null,pK: "1-0",sK: "0-0"})
+      // │───id-0  => (order:{parent: 0, self: 0 }) || (keys: {CHK: null,PK: "1-0",SK: "0-0"})
       // │
-      // │───id-1  => (order:{parent: 0, self: 1 }) || (keys: {chK: null,pK: "1-0",sK: "0-0"})
+      // │───id-1  => (order:{parent: 0, self: 1 }) || (keys: {CHK: null,PK: "1-0",SK: "0-0"})
       // │
-      // │───id-2  => (order:{parent: 0, self: 2 }) || (keys: {chK: null,pK: "1-0",sK: "0-0"})
+      // │───id-2  => (order:{parent: 0, self: 2 }) || (keys: {CHK: null,PK: "1-0",SK: "0-0"})
 
       pointerChild2D0 = domGen.getElmPointer("id-2", 0);
 
@@ -84,7 +84,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
         },
       });
 
-      branch = domGen.getElmBranch(pointerChild2D0.keys.sK);
+      branch = domGen.getElmBranch(pointerChild2D0.keys.SK);
 
       expect(branch).toStrictEqual(["id-0", "id-1", "id-2"]);
     });
@@ -93,9 +93,9 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
   describe("Works on parents in higher depth", () => {
     it("Identifies parent connects it with right node children with sk/pk", () => {
       // DOM-root
-      // ├───id-parent-1 (order:{parent: 0, self: 0 })   || (keys: {chK: "0-0",pK: "2-0",sK: "1-0"})
+      // ├───id-parent-1 (order:{parent: 0, self: 0 })   || (keys: {CHK: "0-0",PK: "2-0",SK: "1-0"})
       //     |
-      //     │───id-0  => (order:{parent: 0, self: 0 })  || (keys: {chK: null,pK: "1-0",sK: "0-0"})
+      //     │───id-0  => (order:{parent: 0, self: 0 })  || (keys: {CHK: null,PK: "1-0",SK: "0-0"})
       //     │
       //     │───id-1 => ..
       //     │
@@ -103,15 +103,15 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
 
       pointerParent0D1 = domGen.getElmPointer("id-parent-1", 1);
 
-      expect(pointerChild0D0.keys.pK).toBe(pointerParent0D1.keys.sK);
-      expect(pointerChild1D0.keys.pK).toBe(pointerParent0D1.keys.sK);
-      expect(pointerChild2D0.keys.pK).toBe(pointerParent0D1.keys.sK);
+      expect(pointerChild0D0.keys.PK).toBe(pointerParent0D1.keys.SK);
+      expect(pointerChild1D0.keys.PK).toBe(pointerParent0D1.keys.SK);
+      expect(pointerChild2D0.keys.PK).toBe(pointerParent0D1.keys.SK);
 
       expect(pointerParent0D1).toStrictEqual({
         keys: {
-          chK: "0-0",
-          pK: "2-0",
-          sK: "1-0",
+          CHK: "0-0",
+          PK: "2-0",
+          SK: "1-0",
         },
         order: {
           parent: 0,
@@ -119,18 +119,18 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
         },
       });
 
-      const branch = domGen.getElmBranch(pointerParent0D1.keys.sK);
+      const branch = domGen.getElmBranch(pointerParent0D1.keys.SK);
 
       expect(branch).toBe("id-parent-1");
     });
 
     it("Identifies grand parent connects its branch", () => {
       // DOM-root
-      // ├───id-grand-parent-1  (order:{parent: 0, self: 0 }) ||  (keys: {chK: "1-0",pK: "3-0",sK: "2-0"})
+      // ├───id-grand-parent-1  (order:{parent: 0, self: 0 }) ||  (keys: {CHK: "1-0",PK: "3-0",SK: "2-0"})
       //     |
-      //     ├───id-parent-1 => (order:{parent: 0, self: 0 }) || (keys: {chK: "0-0",pK: "2-0",sK: "1-0"})
+      //     ├───id-parent-1 => (order:{parent: 0, self: 0 }) || (keys: {CHK: "0-0",PK: "2-0",SK: "1-0"})
       //         |
-      //         │───id-0  => (order:{parent: 0, self: 0 })  || (keys: {chK: null,pK: "1-0",sK: "0-0"})
+      //         │───id-0  => (order:{parent: 0, self: 0 })  || (keys: {CHK: null,PK: "1-0",SK: "0-0"})
       //         │
       //         │───id-1 => ..
       //         │
@@ -138,13 +138,13 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
 
       pointerGrandParent0D2 = domGen.getElmPointer("id-grand-parent-1", 2);
 
-      expect(pointerParent0D1.keys.pK).toBe(pointerGrandParent0D2.keys.sK);
+      expect(pointerParent0D1.keys.PK).toBe(pointerGrandParent0D2.keys.SK);
 
       expect(pointerGrandParent0D2).toStrictEqual({
         keys: {
-          chK: "1-0",
-          pK: "3-0",
-          sK: "2-0",
+          CHK: "1-0",
+          PK: "3-0",
+          SK: "2-0",
         },
         order: {
           parent: 0,
@@ -152,7 +152,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
         },
       });
 
-      const branch = domGen.getElmBranch(pointerGrandParent0D2.keys.sK);
+      const branch = domGen.getElmBranch(pointerGrandParent0D2.keys.SK);
 
       expect(branch).toBe("id-grand-parent-1");
     });
@@ -161,17 +161,17 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
   describe("Add new node starting from zero again", () => {
     it("Connects the child with its parent matching index and key", () => {
       // DOM-root
-      // ├───id-grand-parent-1  (order:{parent: 0, self: 0 }) ||  (keys: {chK: "1-0",pK: "3-0",sK: "2-0"})
+      // ├───id-grand-parent-1  (order:{parent: 0, self: 0 }) ||  (keys: {CHK: "1-0",PK: "3-0",SK: "2-0"})
       //     |
-      //     ├───id-parent-1 => (order:{parent: 0, self: 0 }) || (keys: {chK: "0-0",pK: "2-0",sK: "1-0"})
+      //     ├───id-parent-1 => (order:{parent: 0, self: 0 }) || (keys: {CHK: "0-0",PK: "2-0",SK: "1-0"})
       //         |
-      //         │───id-0  => (order:{parent: 0, self: 0 })  || (keys: {chK: null,pK: "1-0",sK: "0-0"})
+      //         │───id-0  => (order:{parent: 0, self: 0 })  || (keys: {CHK: null,PK: "1-0",SK: "0-0"})
       //         │
       //         │───id-1 => ..
       //         │
       //         │───id-2 => ..
       //
-      // ├───id-00  (order:{parent: 1, self: 0 }) ||  (keys: {chK: null,pK: "1-1",sK: "0-1"})
+      // ├───id-00  (order:{parent: 1, self: 0 }) ||  (keys: {CHK: null,PK: "1-1",SK: "0-1"})
 
       pointerChild3D0 = domGen.getElmPointer("id-00", 0);
 
@@ -183,9 +183,9 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
 
       expect(pointerChild3D0).toStrictEqual({
         keys: {
-          chK: null,
-          pK: "1-1",
-          sK: "0-1",
+          CHK: null,
+          PK: "1-1",
+          SK: "0-1",
         },
         order: {
           parent: 1,
@@ -193,7 +193,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
         },
       });
 
-      const branch = domGen.getElmBranch(pointerChild3D0.keys.sK);
+      const branch = domGen.getElmBranch(pointerChild3D0.keys.SK);
 
       expect(branch).toBe("id-00");
     });
