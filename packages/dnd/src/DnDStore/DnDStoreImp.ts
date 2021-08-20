@@ -359,16 +359,16 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       currentTop,
       currentLeft,
       offset,
-      keys: { SK: sK, PK: pK },
+      keys: { SK, PK },
     } = this.registry[id];
 
-    this.assignSiblingsBoundaries(sK, offset!);
+    this.assignSiblingsBoundaries(SK, offset!);
 
     const isVisibleY = this.isElementVisibleViewportY(currentTop!);
     const isVisibleX = this.isElementVisibleViewportX(currentLeft!);
 
     // same branch
-    this.elmIndicator.currentKy = `${sK}${pK}`;
+    this.elmIndicator.currentKy = `${SK}${PK}`;
 
     if (isVisibleY && isVisibleX) {
       this.hasVisibleElements = true;
@@ -418,10 +418,10 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     if (!element) return null;
 
     const {
-      keys: { SK: sK },
+      keys: { SK },
     } = element;
 
-    const siblings = this.getElmBranchByKey(sK);
+    const siblings = this.getElmBranchByKey(SK);
 
     return siblings;
   }
@@ -441,15 +441,15 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     const element = this.registry[id];
 
     const {
-      keys: { SK: sK, PK: pK },
+      keys: { SK, PK },
       order: { parent: pi },
     } = element;
 
     /**
      * getting connected branches
      */
-    const siblings = this.getElmBranchByKey(sK);
-    const parents = this.getElmBranchByKey(pK);
+    const siblings = this.getElmBranchByKey(SK);
+    const parents = this.getElmBranchByKey(PK);
 
     /**
      * getting parent instance

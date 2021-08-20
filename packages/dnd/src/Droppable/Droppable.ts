@@ -687,7 +687,7 @@ class Droppable {
 
     let isOutSiblingsContainer = false;
 
-    const { SK: sK } = store.registry[this.draggable.draggedElm.id].keys;
+    const { SK } = store.registry[this.draggable.draggedElm.id].keys;
 
     this.draggable.setDraggedMovingDown(y);
 
@@ -706,7 +706,7 @@ class Droppable {
         this.scrollAnimatedFrame === null &&
         store.hasThrottledFrame === null
       ) {
-        if (store.siblingsOverflow[sK].y) {
+        if (store.siblingsOverflow[SK].y) {
           if (
             this.draggable.isMovingDown &&
             y >= store.scrollThreshold.maxY &&
@@ -724,7 +724,7 @@ class Droppable {
           }
         }
 
-        if (store.siblingsOverflow[sK].x) {
+        if (store.siblingsOverflow[SK].x) {
           if (
             x >= store.scrollThreshold.maxX &&
             this.scrollLeft + store.viewportWidth < store.scrollHeight
@@ -753,7 +753,7 @@ class Droppable {
         this.scrollSpeed = this.draggable.scroll.initialSpeed;
       }
 
-      isOutSiblingsContainer = this.draggable.isOutThreshold(sK);
+      isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
       // when it's out, and on of theses is true then it's happening.
       if (!isOutSiblingsContainer) {
@@ -769,7 +769,7 @@ class Droppable {
      * When dragged is out parent and returning to it.
      */
     if (this.isListLocked) {
-      isOutSiblingsContainer = this.draggable.isOutThreshold(sK);
+      isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
       if (!isOutSiblingsContainer) {
         this.draggedIsComingIn(y);

@@ -98,11 +98,11 @@ class Draggable
 
     const siblings = store.getElmSiblingsListById(this.draggedElm.id);
 
-    const { SK: sK } = store.registry[this.draggedElm.id].keys;
+    const { SK } = store.registry[this.draggedElm.id].keys;
 
     if (
       siblings === null ||
-      (!store.siblingsOverflow[sK].x && !store.siblingsOverflow[sK].y)
+      (!store.siblingsOverflow[SK].x && !store.siblingsOverflow[SK].y)
     ) {
       this.scroll.enable = false;
     }
@@ -115,7 +115,7 @@ class Draggable
       this.isViewportRestricted = true;
     }
 
-    const siblingsBoundaries = store.siblingsBoundaries[sK];
+    const siblingsBoundaries = store.siblingsBoundaries[SK];
 
     this.threshold = new Threshold(opts.threshold);
 
@@ -138,7 +138,7 @@ class Draggable
      * ids as keys.
      */
     this.layoutThresholds = {
-      [sK]: this.threshold.getThresholdMatrix(
+      [SK]: this.threshold.getThresholdMatrix(
         siblingsBoundaries.top,
         siblingsBoundaries.maxLeft,
         siblingsBoundaries.bottom
@@ -490,21 +490,21 @@ class Draggable
    * Checks if dragged is the last child and going down.
    */
   isLeavingFromBottom() {
-    const { SK: sK } = store.registry[this.draggedElm.id].keys;
+    const { SK } = store.registry[this.draggedElm.id].keys;
 
     return (
       this.isLastELm() &&
       this.isMovingDown &&
-      this.isOutContainerV(this.layoutThresholds[sK])
+      this.isOutContainerV(this.layoutThresholds[SK])
     );
   }
 
   isNotSettled() {
-    const { SK: sK } = store.registry[this.draggedElm.id].keys;
+    const { SK } = store.registry[this.draggedElm.id].keys;
 
     return (
       !this.isLeavingFromBottom() &&
-      (this.isOutThreshold() || this.isOutThreshold(sK))
+      (this.isOutThreshold() || this.isOutThreshold(SK))
     );
   }
 
