@@ -19,7 +19,7 @@ import type {
   Overflow,
 } from "./types";
 
-import Tracker from "./Tracker";
+import Tracker, { TrackerInterface } from "../utils/Tracker";
 
 import type { ThresholdInterface } from "../utils/Threshold";
 
@@ -36,7 +36,7 @@ function canUseDOM() {
 }
 
 class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
-  tracker: Tracker;
+  tracker: TrackerInterface;
 
   siblingsBoundaries: { [siblingKey: string]: BoundariesOffset };
 

@@ -8,7 +8,9 @@
 import type { CoreInstanceInterface, Rect } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
 import type { ElmInstance } from "@dflex/store";
+
 import type { ThresholdInterface } from "../utils/Threshold";
+import type { TrackerInterface } from "../utils/Tracker";
 
 export interface BoundariesOffset {
   top: number;
@@ -68,6 +70,7 @@ export interface Overflow {
 }
 
 export interface DnDStoreInterface {
+  tracker: TrackerInterface;
   hasThrottledFrame: number | null;
   scrollThreshold: ScrollThreshold;
   siblingsBoundaries: { [siblingKey: string]: BoundariesOffset };
