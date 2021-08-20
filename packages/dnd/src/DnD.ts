@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { MouseCoordinates } from "@dflex/draggable";
+import type { Coordinates } from "@dflex/draggable";
 
 import Draggable from "./Draggable";
 import Droppable from "./Droppable";
@@ -22,7 +22,7 @@ class DnD extends Droppable {
    */
   constructor(
     id: string,
-    initCoordinates: MouseCoordinates,
+    initCoordinates: Coordinates,
     opts: DndOpts = defaultOpts
   ) {
     const options = extractOpts(opts);

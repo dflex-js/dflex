@@ -39,7 +39,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
 
       stepsY = 115;
@@ -49,7 +49,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
     });
 
@@ -76,7 +76,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
 
       stepsX = 0;
@@ -106,17 +106,17 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
 
-      stepsY = 115;
-      for (let i = stepsY; i < stepsY + 155; i += 10) {
+      stepsY = 140;
+      for (let i = stepsY; i <= stepsY + 140; i += 10) {
         cy.get("#org").trigger("mousemove", {
           clientY: startingPointY + i,
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
     });
 
@@ -127,7 +127,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
 
       stepsX = 0;

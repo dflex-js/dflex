@@ -5,23 +5,46 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { MouseCoordinates } from "@dflex/draggable";
+import { AbstractDraggable } from "@dflex/draggable";
+import type { Coordinates } from "@dflex/draggable";
+
+import type { CoreInstanceInterface } from "@dflex/core-instance";
 
 import store from "../DnDStore";
 
-import Base from "./Base";
+import type { DraggableDnDInterface, Restrictions, TempOffset } from "./types";
 
 import type {
-  DraggableDnDInterface,
-  TempOffset,
-  Threshold,
-  TempTranslate,
-  Restrictions,
-} from "./types";
+  ScrollOptWithThreshold,
+  FinalDndOpts,
+  RestrictionsStatus,
+} from "../types";
 
-import type { FinalDndOpts, RestrictionsStatus } from "../types";
+import Threshold, { ThresholdMatrix } from "../utils/Threshold";
 
-class Draggable extends Base implements DraggableDnDInterface {
+class Draggable
+  extends AbstractDraggable<CoreInstanceInterface>
+  implements DraggableDnDInterface
+{
+  tempIndex: number;
+
+  operationID: string;
+
+  // To Be removed.
+  private activeParent!: CoreInstanceInterface | null;
+
+  private isOutActiveParent!: boolean;
+
+  private setOfTransformedIds!: Set<string>;
+
+  threshold: DraggableDnDInterface["threshold"];
+
+  layoutThresholds!: DraggableDnDInterface["layoutThresholds"];
+
+  scroll: ScrollOptWithThreshold;
+
+  isViewportRestricted: boolean;
+
   innerOffsetX: number;
 
   innerOffsetY: number;
@@ -30,7 +53,7 @@ class Draggable extends Base implements DraggableDnDInterface {
 
   occupiedOffset: TempOffset;
 
-  occupiedTranslate: TempTranslate;
+  occupiedTranslate: Coordinates;
 
   prevY: number;
 
@@ -54,12 +77,77 @@ class Draggable extends Base implements DraggableDnDInterface {
 
   private initX: number;
 
-  constructor(
-    id: string,
-    initCoordinates: MouseCoordinates,
-    opts: FinalDndOpts
-  ) {
-    super(id, initCoordinates, opts);
+  constructor(id: string, initCoordinates: Coordinates, opts: FinalDndOpts) {
+    const { element, parent } = store.getElmTreeById(id);
+
+    if (element.isPaused) {
+      element.resume(store.scrollX, store.scrollY);
+    }
+
+    super(element, initCoordinates);
+
+    const { order } = element;
+
+    /**
+     * Initialize temp index that refers to element new position after
+     * transformation happened.
+     */
+    this.tempIndex = order.self;
+
+    this.scroll = opts.scroll;
+
+    const siblings = store.getElmSiblingsListById(this.draggedElm.id);
+
+    const { SK } = store.registry[this.draggedElm.id].keys;
+
+    if (
+      siblings === null ||
+      (!store.siblingsOverflow[SK].x && !store.siblingsOverflow[SK].y)
+    ) {
+      this.scroll.enable = false;
+    }
+
+    if (this.scroll.enable) {
+      this.isViewportRestricted = false;
+
+      store.initScrollViewportThreshold(this.scroll.threshold);
+    } else {
+      this.isViewportRestricted = true;
+    }
+
+    const siblingsBoundaries = store.siblingsBoundaries[SK];
+
+    this.threshold = new Threshold(opts.threshold);
+
+    const {
+      // @ts-expect-error
+      offset: { width, height },
+      currentLeft,
+      currentTop,
+    } = this.draggedElm;
+
+    this.threshold.updateElementThresholdMatrix(
+      width,
+      height,
+      currentLeft!,
+      currentTop!
+    );
+
+    /**
+     * Thresholds store, contains max value for each parent and for dragged. Depending on
+     * ids as keys.
+     */
+    this.layoutThresholds = {
+      [SK]: this.threshold.getThresholdMatrix(
+        siblingsBoundaries.top,
+        siblingsBoundaries.maxLeft,
+        siblingsBoundaries.bottom
+      ),
+    };
+
+    this.setIsOrphan(parent);
+
+    this.operationID = store.tracker.newTravel();
 
     const { x, y } = initCoordinates;
 
@@ -87,8 +175,8 @@ class Draggable extends Base implements DraggableDnDInterface {
     };
 
     this.occupiedTranslate = {
-      translateX: this.draggedElm.translateX!,
-      translateY: this.draggedElm.translateY!,
+      x: this.draggedElm.translateX!,
+      y: this.draggedElm.translateY!,
     };
 
     /**
@@ -111,12 +199,56 @@ class Draggable extends Base implements DraggableDnDInterface {
 
     this.restrictionsStatus = opts.restrictionsStatus;
 
-    const siblings = store.getElmSiblingsListById(this.draggedElm.id);
-
     this.axesFilterNeeded =
       siblings !== null &&
       (opts.restrictionsStatus.isContainerRestricted ||
         opts.restrictionsStatus.isSelfRestricted);
+  }
+
+  /**
+   * Check if dragged has no parent and then set the related operations
+   * accordingly.
+   *
+   * @param parent -
+   */
+  private setIsOrphan(parent: CoreInstanceInterface | null) {
+    /**
+     * Not all elements have parents.
+     */
+    if (parent) {
+      /**
+       * Indicator to parents that have changed. This facilitates looping in
+       * affected parents only.
+       */
+      this.setOfTransformedIds = new Set([]);
+      this.assignActiveParent(parent);
+
+      this.isOutActiveParent = false;
+    } else {
+      /**
+       * Dragged has no parent.
+       */
+      this.activeParent = null;
+    }
+  }
+
+  /**
+   * Assigns new ACTIVE_PARENT: parent who contains dragged
+   *
+   * @param element -
+   */
+  private assignActiveParent(element: CoreInstanceInterface) {
+    /**
+     * Assign instance ACTIVE_PARENT which represents droppable. Then
+     * assign owner parent so we have from/to.
+     */
+    this.activeParent = element;
+
+    /**
+     * Add flag for undo method so we can check which  parent is being
+     * transformed and which is not.
+     */
+    this.isOutActiveParent = false;
   }
 
   private axesYFilter(
@@ -209,7 +341,7 @@ class Draggable extends Base implements DraggableDnDInterface {
 
     if (this.axesFilterNeeded) {
       const { top, bottom, maxLeft, minRight } =
-        store.siblingsBoundaries[store.registry[this.draggedElm.id].keys.sK];
+        store.siblingsBoundaries[store.registry[this.draggedElm.id].keys.SK];
 
       if (this.restrictionsStatus.isContainerRestricted) {
         filteredX = this.axesXFilter(
@@ -276,20 +408,20 @@ class Draggable extends Base implements DraggableDnDInterface {
     this.tempOffset.currentTop = filteredY - this.innerOffsetY;
   }
 
-  private isOutThresholdH($: Threshold) {
+  private isOutThresholdH($: ThresholdMatrix) {
     return (
       this.tempOffset.currentLeft < $.maxLeft ||
       this.tempOffset.currentLeft > $.maxRight
     );
   }
 
-  private isOutPositionV($: Threshold) {
+  private isOutPositionV($: ThresholdMatrix) {
     return this.isMovingDown
       ? this.tempOffset.currentTop > $.maxBottom
       : this.tempOffset.currentTop < $.maxTop;
   }
 
-  private isOutContainerV($: Threshold) {
+  private isOutContainerV($: ThresholdMatrix) {
     /**
      * Are you last element and outside the container? Or are you coming from top
      * and outside the container?
@@ -300,7 +432,7 @@ class Draggable extends Base implements DraggableDnDInterface {
     );
   }
 
-  private isOutPosition($: Threshold) {
+  private isOutPosition($: ThresholdMatrix) {
     this.isOutPositionHorizontally = false;
 
     if (this.isOutThresholdH($)) {
@@ -316,7 +448,7 @@ class Draggable extends Base implements DraggableDnDInterface {
     return false;
   }
 
-  private isOutContainer($: Threshold) {
+  private isOutContainer($: ThresholdMatrix) {
     this.isOutSiblingsHorizontally = false;
 
     if (this.isOutContainerV($)) {
@@ -338,11 +470,9 @@ class Draggable extends Base implements DraggableDnDInterface {
    * @param siblingsK -
    */
   isOutThreshold(siblingsK?: string) {
-    const { siblings, dragged } = this.thresholds;
-
     return siblingsK
-      ? this.isOutContainer(siblings[siblingsK])
-      : this.isOutPosition(dragged);
+      ? this.isOutContainer(this.layoutThresholds[siblingsK])
+      : this.isOutPosition(this.threshold.thresholdMatrix);
   }
 
   /**
@@ -360,21 +490,21 @@ class Draggable extends Base implements DraggableDnDInterface {
    * Checks if dragged is the last child and going down.
    */
   isLeavingFromBottom() {
-    const { sK } = store.registry[this.draggedElm.id].keys;
+    const { SK } = store.registry[this.draggedElm.id].keys;
 
     return (
       this.isLastELm() &&
       this.isMovingDown &&
-      this.isOutContainerV(this.thresholds.siblings[sK])
+      this.isOutContainerV(this.layoutThresholds[SK])
     );
   }
 
   isNotSettled() {
-    const { sK } = store.registry[this.draggedElm.id].keys;
+    const { SK } = store.registry[this.draggedElm.id].keys;
 
     return (
       !this.isLeavingFromBottom() &&
-      (this.isOutThreshold() || this.isOutThreshold(sK))
+      (this.isOutThreshold() || this.isOutThreshold(SK))
     );
   }
 
@@ -449,8 +579,8 @@ class Draggable extends Base implements DraggableDnDInterface {
     this.draggedElm.currentTop = this.occupiedOffset.currentTop;
     this.draggedElm.currentLeft = this.occupiedOffset.currentLeft;
 
-    this.draggedElm.translateX = this.occupiedTranslate.translateX;
-    this.draggedElm.translateY = this.occupiedTranslate.translateY;
+    this.draggedElm.translateX = this.occupiedTranslate.x;
+    this.draggedElm.translateY = this.occupiedTranslate.y;
 
     this.draggedElm.transformElm();
 

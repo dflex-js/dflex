@@ -46,9 +46,9 @@ export type ELmBranch = string | string[];
  * Element unique keys in DOM tree.
  */
 export interface Keys {
-  sK: string;
-  pK: string;
-  chK: string | null;
+  SK: string;
+  PK: string;
+  CHK: string | null;
 }
 
 /**
@@ -76,7 +76,7 @@ export interface CoreEssential {
 
 export type CoreInput = CoreEssential & AbstractCoreInput;
 
-export interface Offset {
+export interface Rect {
   height: number;
   width: number;
   left: number;
@@ -89,7 +89,7 @@ export type TransitionHistory = {
 }[];
 
 export interface CoreInstanceInterface extends AbstractCoreInterface {
-  offset?: Offset;
+  offset?: Rect;
   prevTranslateY?: TransitionHistory;
   currentTop?: number;
   currentLeft?: number;

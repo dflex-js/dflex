@@ -6,7 +6,7 @@
  */
 export type {
   AbstractCoreInterface,
-  Offset,
+  Rect,
   TransitionHistory,
   CoreInstanceInterface,
 } from "./types";

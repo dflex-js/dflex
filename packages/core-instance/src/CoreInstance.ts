@@ -13,7 +13,7 @@ import type {
   Keys,
   Order,
   CoreInstanceInterface,
-  Offset,
+  Rect,
   TransitionHistory,
   CoreInput,
 } from "./types";
@@ -22,7 +22,7 @@ class CoreInstance
   extends AbstractCoreInstance
   implements CoreInstanceInterface
 {
-  offset?: Offset;
+  offset?: Rect;
 
   /** Store history of Y-transition according to unique ID. */
   prevTranslateY?: TransitionHistory;

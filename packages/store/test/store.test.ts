@@ -66,9 +66,9 @@ describe("Testing Store Package", () => {
     expect(elemInstance).toStrictEqual({
       id: "id-0",
       keys: {
-        chK: null,
-        pK: "1-0",
-        sK: "0-0",
+        CHK: null,
+        PK: "1-0",
+        SK: "0-0",
       },
       order: {
         parent: 0,
@@ -81,7 +81,7 @@ describe("Testing Store Package", () => {
   it("Returns element branch", () => {
     const elemInstance = store.registry[elm0D0.id];
 
-    const elemBranch = store.getElmBranchByKey(elemInstance.keys.sK);
+    const elemBranch = store.getElmBranchByKey(elemInstance.keys.SK);
 
     expect(elemBranch).toStrictEqual(["id-0", "id-1", "id-2"]);
   });

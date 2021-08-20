@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-export type { DraggableDnDInterface, TempOffset, Restrictions } from "./types";
-
-export { default } from "./Draggable";
+export interface TrackerInterface {
+  travelID: number;
+  newTravel(): string;
+}

@@ -146,10 +146,10 @@ class Droppable {
   }
 
   private updateOccupiedTranslate(direction: 1 | -1) {
-    this.draggable.occupiedTranslate.translateY +=
+    this.draggable.occupiedTranslate.y +=
       direction * this.draggedAccumulatedTransitionY;
 
-    this.draggable.occupiedTranslate.translateX += 0;
+    this.draggable.occupiedTranslate.x += 0;
   }
 
   private calculateYDistance(element: CoreInstanceInterface) {
@@ -243,9 +243,20 @@ class Droppable {
        * And we have new translate only once. The first element matched the
        * condition is the breaking point element.
        */
-      this.draggable.seDraggedThreshold(element);
 
-      this.draggable.setThreshold(element.currentTop!, element.currentLeft!);
+      const {
+        // @ts-expect-error
+        offset: { width, height },
+        currentLeft,
+        currentTop,
+      } = element;
+
+      this.draggable.threshold.updateElementThresholdMatrix(
+        width,
+        height,
+        currentLeft!,
+        currentTop!
+      );
     }
 
     // element.onDragOver();
@@ -298,10 +309,11 @@ class Droppable {
           /**
            * Update threshold from here since there's no calling to updateElement.
            */
-          this.draggable.setThreshold(
-            this.preserveLastElmOffset.currentTop,
+          this.draggable.threshold.updateElementThresholdMatrix(
+            this.draggable.draggedElm.offset!.width,
+            this.draggable.draggedElm.offset!.height,
             this.preserveLastElmOffset.currentLeft,
-            element.offset!.height
+            this.preserveLastElmOffset.currentTop
           );
 
           this.updateOccupiedOffset(
@@ -675,7 +687,7 @@ class Droppable {
 
     let isOutSiblingsContainer = false;
 
-    const { sK } = store.registry[this.draggable.draggedElm.id].keys;
+    const { SK } = store.registry[this.draggable.draggedElm.id].keys;
 
     this.draggable.setDraggedMovingDown(y);
 
@@ -694,7 +706,7 @@ class Droppable {
         this.scrollAnimatedFrame === null &&
         store.hasThrottledFrame === null
       ) {
-        if (store.siblingsOverflow[sK].y) {
+        if (store.siblingsOverflow[SK].y) {
           if (
             this.draggable.isMovingDown &&
             y >= store.scrollThreshold.maxY &&
@@ -712,7 +724,7 @@ class Droppable {
           }
         }
 
-        if (store.siblingsOverflow[sK].x) {
+        if (store.siblingsOverflow[SK].x) {
           if (
             x >= store.scrollThreshold.maxX &&
             this.scrollLeft + store.viewportWidth < store.scrollHeight
@@ -741,7 +753,7 @@ class Droppable {
         this.scrollSpeed = this.draggable.scroll.initialSpeed;
       }
 
-      isOutSiblingsContainer = this.draggable.isOutThreshold(sK);
+      isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
       // when it's out, and on of theses is true then it's happening.
       if (!isOutSiblingsContainer) {
@@ -757,7 +769,7 @@ class Droppable {
      * When dragged is out parent and returning to it.
      */
     if (this.isListLocked) {
-      isOutSiblingsContainer = this.draggable.isOutThreshold(sK);
+      isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
       if (!isOutSiblingsContainer) {
         this.draggedIsComingIn(y);

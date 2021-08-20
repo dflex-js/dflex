@@ -9,8 +9,7 @@ export { default as store } from "./DraggableStoreImp";
 export { default as AbstractDraggable } from "./AbstractDraggable";
 
 export type {
-  TempTranslate,
   DraggedStyle,
   AbstractDraggableInterface,
-  MouseCoordinates,
+  Coordinates,
 } from "./types";

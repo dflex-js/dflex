@@ -8,7 +8,7 @@
 import Store from "@dflex/store";
 import CoreInstance from "@dflex/core-instance";
 
-import type { Offset } from "@dflex/core-instance";
+import type { Rect } from "@dflex/core-instance";
 
 import type {
   ElmTree,
@@ -19,9 +19,9 @@ import type {
   Overflow,
 } from "./types";
 
-import type { ThresholdPercentages } from "../Draggable";
+import Tracker, { TrackerInterface } from "../utils/Tracker";
 
-import Tracker from "./Tracker";
+import type { ThresholdInterface } from "../utils/Threshold";
 
 // function noop() {}
 
@@ -36,7 +36,7 @@ function canUseDOM() {
 }
 
 class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
-  tracker: Tracker;
+  tracker: TrackerInterface;
 
   siblingsBoundaries: { [siblingKey: string]: BoundariesOffset };
 
@@ -68,7 +68,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     exceptionToNextElm: boolean;
   };
 
-  private scrollThresholdInputOpt!: ThresholdPercentages;
+  private scrollThresholdInputOpt!: ThresholdInterface["thresholdPercentages"];
 
   scrollThreshold!: ScrollThreshold;
 
@@ -167,7 +167,9 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     return isUpdated;
   }
 
-  initScrollViewportThreshold(scrollThresholdInputOpt: ThresholdPercentages) {
+  initScrollViewportThreshold(
+    scrollThresholdInputOpt: ThresholdInterface["thresholdPercentages"]
+  ) {
     this.scrollThresholdInputOpt = scrollThresholdInputOpt;
 
     this.scrollThreshold = { minX: 0, maxX: 0, maxY: 0, minY: 0 };
@@ -233,12 +235,12 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
               isVisible = true;
 
               this.assignSiblingsBoundaries(
-                this.registry[elmID].keys.sK,
+                this.registry[elmID].keys.SK,
                 this.registry[elmID].offset!
               );
             } else if (isVisible) {
               this.assignSiblingsBoundaries(
-                this.registry[elmID].keys.sK,
+                this.registry[elmID].keys.SK,
                 this.registry[elmID].offset!
               );
 
@@ -261,7 +263,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     });
   }
 
-  private assignSiblingsBoundaries(siblingsK: string, elemOffset: Offset) {
+  private assignSiblingsBoundaries(siblingsK: string, elemOffset: Rect) {
     const elmRight = elemOffset.left + elemOffset.width;
 
     if (!this.siblingsBoundaries[siblingsK]) {
@@ -357,24 +359,24 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       currentTop,
       currentLeft,
       offset,
-      keys: { sK, pK },
+      keys: { SK, PK },
     } = this.registry[id];
 
-    this.assignSiblingsBoundaries(sK, offset!);
+    this.assignSiblingsBoundaries(SK, offset!);
 
     const isVisibleY = this.isElementVisibleViewportY(currentTop!);
     const isVisibleX = this.isElementVisibleViewportX(currentLeft!);
 
     // same branch
-    this.elmIndicator.currentKy = `${sK}${pK}`;
+    this.elmIndicator.currentKy = `${SK}${PK}`;
 
     if (isVisibleY && isVisibleX) {
       this.hasVisibleElements = true;
 
-      if (!this.siblingsOverflow[this.registry[id].keys.sK]) {
+      if (!this.siblingsOverflow[this.registry[id].keys.SK]) {
         // If we don't do this, and the list is not overflowing, then the object
         // will be undefined.
-        this.siblingsOverflow[this.registry[id].keys.sK] = {
+        this.siblingsOverflow[this.registry[id].keys.SK] = {
           x: false,
           y: false,
         };
@@ -391,7 +393,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       // Override the actual value.
       this.registry[id].changeVisibility(true);
 
-      this.siblingsOverflow[this.registry[id].keys.sK] = {
+      this.siblingsOverflow[this.registry[id].keys.SK] = {
         x: !isVisibleX,
         y: !isVisibleY,
       };
@@ -416,10 +418,10 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     if (!element) return null;
 
     const {
-      keys: { sK },
+      keys: { SK },
     } = element;
 
-    const siblings = this.getElmBranchByKey(sK);
+    const siblings = this.getElmBranchByKey(SK);
 
     return siblings;
   }
@@ -439,15 +441,15 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     const element = this.registry[id];
 
     const {
-      keys: { sK, pK },
+      keys: { SK, PK },
       order: { parent: pi },
     } = element;
 
     /**
      * getting connected branches
      */
-    const siblings = this.getElmBranchByKey(sK);
-    const parents = this.getElmBranchByKey(pK);
+    const siblings = this.getElmBranchByKey(SK);
+    const parents = this.getElmBranchByKey(PK);
 
     /**
      * getting parent instance

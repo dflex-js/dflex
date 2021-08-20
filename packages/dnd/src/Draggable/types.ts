@@ -6,34 +6,19 @@
  */
 
 import type { CoreInstanceInterface } from "@dflex/core-instance";
-import type { AbstractDraggableInterface } from "@dflex/draggable";
+import type { AbstractDraggableInterface, Coordinates } from "@dflex/draggable";
+
 import type { ScrollOptWithThreshold } from "../types";
 
-export interface ThresholdPercentages {
-  vertical: number;
-  horizontal: number;
-}
+import type { ThresholdInterface, ThresholdMatrix } from "../utils/Threshold";
 
-export interface Threshold {
-  maxBottom: number;
-  maxTop: number;
-  maxLeft: number;
-  maxRight: number;
-}
-
-export interface LayoutThresholds {
-  siblings: { [sk: string]: Threshold };
-  dragged: Threshold;
+export interface SiblingsThresholdMatrix {
+  [sk: string]: ThresholdMatrix;
 }
 
 export interface TempOffset {
   currentLeft: number;
   currentTop: number;
-}
-
-export interface TempTranslate {
-  translateX: number;
-  translateY: number;
 }
 
 export interface Restrictions {
@@ -51,30 +36,19 @@ export interface Restrictions {
   };
 }
 
-export interface DraggableBaseInterface
+export interface DraggableDnDInterface
   extends AbstractDraggableInterface<CoreInstanceInterface> {
   tempIndex: number;
   operationID: string;
-  thresholds: LayoutThresholds;
-  isOutActiveParent: boolean;
-  draggedThreshold: ThresholdPercentages;
   scroll: ScrollOptWithThreshold;
   isViewportRestricted: boolean;
-  seDraggedThreshold(relativeTo: CoreInstanceInterface): void;
-  setThreshold(
-    top: number,
-    left: number,
-    height?: number,
-    siblingsK?: string
-  ): void;
-}
-
-export interface DraggableDnDInterface extends DraggableBaseInterface {
+  threshold: ThresholdInterface;
+  layoutThresholds: SiblingsThresholdMatrix;
   innerOffsetX: number;
   innerOffsetY: number;
   tempOffset: TempOffset;
   occupiedOffset: TempOffset;
-  occupiedTranslate: TempTranslate;
+  occupiedTranslate: Coordinates;
   prevY: number;
   numberOfElementsTransformed: number;
   isMovingDown: boolean;

@@ -5,10 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { CoreInstanceInterface, Offset } from "@dflex/core-instance";
+import type { CoreInstanceInterface, Rect } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
 import type { ElmInstance } from "@dflex/store";
-import type { ThresholdPercentages } from "../Draggable";
+
+import type { ThresholdInterface } from "../utils/Threshold";
+import type { TrackerInterface } from "../utils/Tracker";
 
 export interface BoundariesOffset {
   top: number;
@@ -68,6 +70,7 @@ export interface Overflow {
 }
 
 export interface DnDStoreInterface {
+  tracker: TrackerInterface;
   hasThrottledFrame: number | null;
   scrollThreshold: ScrollThreshold;
   siblingsBoundaries: { [siblingKey: string]: BoundariesOffset };
@@ -80,9 +83,9 @@ export interface DnDStoreInterface {
   scrollHeight: Number;
   register(element: ElmInstance, x?: boolean): void;
   initScrollViewportThreshold(
-    scrollThresholdInputOpt: ThresholdPercentages
+    scrollThresholdInputOpt: ThresholdInterface["thresholdPercentages"]
   ): void;
-  getELmOffsetById(id: string): Offset | undefined;
+  getELmOffsetById(id: string): Rect | undefined;
   getELmTranslateById(id: string): Translate;
   getElmTreeById(id: string): ElmTree;
   getElmSiblingsById(id: string): ELmBranch | null;

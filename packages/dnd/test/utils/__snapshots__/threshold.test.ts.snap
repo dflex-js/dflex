@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Threshold Has the right instance 1`] = `
+Threshold {
+  "thresholdPercentages": Object {
+    "horizontal": 60,
+    "vertical": 60,
+  },
+}
+`;
