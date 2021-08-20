@@ -14,7 +14,6 @@ import type { ThresholdInterface, ThresholdMatrix } from "../utils/Threshold";
 
 export interface LayoutThresholdMatrix {
   siblings: { [sk: string]: ThresholdMatrix };
-  dragged: ThresholdMatrix;
 }
 
 export interface TempOffset {

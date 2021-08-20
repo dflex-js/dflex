@@ -117,10 +117,20 @@ class Draggable
 
     const siblingsBoundaries = store.siblingsBoundaries[sK];
 
-    this.threshold = new Threshold(
-      opts.threshold,
-      element.offset!.width,
-      element.offset!.height
+    this.threshold = new Threshold(opts.threshold);
+
+    const {
+      // @ts-expect-error
+      offset: { width, height },
+      currentLeft,
+      currentTop,
+    } = this.draggedElm;
+
+    this.threshold.updateElementThresholdMatrix(
+      width,
+      height,
+      currentLeft!,
+      currentTop!
     );
 
     /**
@@ -135,13 +145,6 @@ class Draggable
           siblingsBoundaries.bottom
         ),
       },
-      /**
-       * Init max direction for position
-       */
-      dragged: this.threshold.getThresholdMatrix(
-        this.draggedElm.currentTop!,
-        this.draggedElm.currentLeft!
-      ),
     };
 
     this.setIsOrphan(parent);
@@ -469,11 +472,11 @@ class Draggable
    * @param siblingsK -
    */
   isOutThreshold(siblingsK?: string) {
-    const { siblings, dragged } = this.layoutThresholds;
+    const { siblings } = this.layoutThresholds;
 
     return siblingsK
       ? this.isOutContainer(siblings[siblingsK])
-      : this.isOutPosition(dragged);
+      : this.isOutPosition(this.threshold.thresholdMatrix);
   }
 
   /**

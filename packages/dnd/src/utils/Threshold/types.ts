@@ -31,7 +31,13 @@ export interface ThresholdMatrix {
 export interface ThresholdInterface {
   thresholdPercentages: ThresholdPercentages;
   thresholdPixels: ThresholdInPixels;
-  setThresholdPixels(width: number, height: number): void;
+  thresholdMatrix: ThresholdMatrix;
+  updateElementThresholdMatrix(
+    width: number,
+    height: number,
+    left: number,
+    top: number
+  ): void;
   getThresholdMatrix(
     top: number,
     left: number,

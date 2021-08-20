@@ -12,22 +12,10 @@ class Threshold implements ThresholdInterface {
 
   thresholdPixels!: ThresholdInterface["thresholdPixels"];
 
-  constructor(
-    thresholdInput: ThresholdInterface["thresholdPercentages"],
-    width: number,
-    height: number
-  ) {
+  thresholdMatrix!: ThresholdInterface["thresholdMatrix"];
+
+  constructor(thresholdInput: ThresholdInterface["thresholdPercentages"]) {
     this.thresholdPercentages = thresholdInput;
-
-    this.setThresholdPixels(width, height);
-  }
-
-  setThresholdPixels(width: number, height: number) {
-    const x = Math.round((this.thresholdPercentages.horizontal * width) / 100);
-
-    const y = Math.round((this.thresholdPercentages.vertical * height) / 100);
-
-    this.thresholdPixels = { x, y };
   }
 
   getThresholdMatrix(
@@ -65,6 +53,21 @@ class Threshold implements ThresholdInterface {
       maxLeft,
       maxRight,
     };
+  }
+
+  updateElementThresholdMatrix(
+    width: number,
+    height: number,
+    left: number,
+    top: number
+  ) {
+    const x = Math.round((this.thresholdPercentages.horizontal * width) / 100);
+
+    const y = Math.round((this.thresholdPercentages.vertical * height) / 100);
+
+    this.thresholdPixels = { x, y };
+
+    this.thresholdMatrix = this.getThresholdMatrix(top, left);
   }
 }
 
