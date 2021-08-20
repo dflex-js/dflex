@@ -6,7 +6,7 @@
  */
 
 import type { CoreInstanceInterface } from "@dflex/core-instance";
-import type { AbstractDraggableInterface } from "@dflex/draggable";
+import type { AbstractDraggableInterface, Coordinates } from "@dflex/draggable";
 
 import type { ScrollOptWithThreshold } from "../types";
 
@@ -20,11 +20,6 @@ export interface LayoutThresholdMatrix {
 export interface TempOffset {
   currentLeft: number;
   currentTop: number;
-}
-
-export interface TempTranslate {
-  translateX: number;
-  translateY: number;
 }
 
 export interface Restrictions {
@@ -42,23 +37,19 @@ export interface Restrictions {
   };
 }
 
-export interface DraggableBaseInterface
+export interface DraggableDnDInterface
   extends AbstractDraggableInterface<CoreInstanceInterface> {
   tempIndex: number;
   operationID: string;
-  isOutActiveParent: boolean;
   scroll: ScrollOptWithThreshold;
   isViewportRestricted: boolean;
   threshold: ThresholdInterface;
   layoutThresholds: LayoutThresholdMatrix;
-}
-
-export interface DraggableDnDInterface extends DraggableBaseInterface {
   innerOffsetX: number;
   innerOffsetY: number;
   tempOffset: TempOffset;
   occupiedOffset: TempOffset;
-  occupiedTranslate: TempTranslate;
+  occupiedTranslate: Coordinates;
   prevY: number;
   numberOfElementsTransformed: number;
   isMovingDown: boolean;

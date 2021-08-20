@@ -6,7 +6,7 @@
  */
 import type { AbstractCoreInterface } from "@dflex/core-instance";
 
-export interface TempTranslate {
+export interface Coordinates {
   x: number;
   y: number;
 }
@@ -53,10 +53,5 @@ export interface AbstractDraggableInterface<T extends AbstractCoreInterface> {
   outerOffsetX: number;
   outerOffsetY: number;
 
-  tempTranslate: TempTranslate;
-}
-
-export interface MouseCoordinates {
-  x: number;
-  y: number;
+  tempTranslate: Coordinates;
 }

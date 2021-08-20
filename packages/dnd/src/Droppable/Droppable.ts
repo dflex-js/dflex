@@ -146,10 +146,10 @@ class Droppable {
   }
 
   private updateOccupiedTranslate(direction: 1 | -1) {
-    this.draggable.occupiedTranslate.translateY +=
+    this.draggable.occupiedTranslate.y +=
       direction * this.draggedAccumulatedTransitionY;
 
-    this.draggable.occupiedTranslate.translateX += 0;
+    this.draggable.occupiedTranslate.x += 0;
   }
 
   private calculateYDistance(element: CoreInstanceInterface) {

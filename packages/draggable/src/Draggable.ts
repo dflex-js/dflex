@@ -7,7 +7,7 @@
 import { AbstractCoreInterface } from "@dflex/core-instance";
 import store from "./DraggableStoreImp";
 import AbstractDraggable from "./AbstractDraggable";
-import type { MouseCoordinates } from "./types";
+import type { Coordinates } from "./types";
 
 class Draggable extends AbstractDraggable<AbstractCoreInterface> {
   /**
@@ -18,7 +18,7 @@ class Draggable extends AbstractDraggable<AbstractCoreInterface> {
    * @param id - elementId
    * @param clickCoordinates -
    */
-  constructor(id: string, clickCoordinates: MouseCoordinates) {
+  constructor(id: string, clickCoordinates: Coordinates) {
     const element = store.registry[id];
 
     super(element, clickCoordinates);

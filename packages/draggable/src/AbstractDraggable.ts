@@ -9,8 +9,7 @@ import type { AbstractCoreInterface } from "@dflex/core-instance";
 import type {
   AbstractDraggableInterface,
   DraggedStyle,
-  MouseCoordinates,
-  TempTranslate,
+  Coordinates,
 } from "./types";
 
 class AbstractDraggable<T extends AbstractCoreInterface>
@@ -32,7 +31,7 @@ class AbstractDraggable<T extends AbstractCoreInterface>
 
   outerOffsetY: number;
 
-  tempTranslate: TempTranslate;
+  tempTranslate: Coordinates;
 
   static draggedStyleProps: DraggedStyle = [
     {
@@ -59,7 +58,7 @@ class AbstractDraggable<T extends AbstractCoreInterface>
    * @param abstractCoreElm -
    * @param initCoordinates -
    */
-  constructor(abstractCoreElm: T, { x: initX, y: initY }: MouseCoordinates) {
+  constructor(abstractCoreElm: T, { x: initX, y: initY }: Coordinates) {
     /**
      * Assign instance for dragged.
      */
