@@ -8,8 +8,7 @@
 import type { CoreInstanceInterface, Rect } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
 import type { ElmInstance } from "@dflex/store";
-
-import type { ThresholdPercentages } from "../types";
+import type { ThresholdInterface } from "../utils/Threshold";
 
 export interface BoundariesOffset {
   top: number;
@@ -81,7 +80,7 @@ export interface DnDStoreInterface {
   scrollHeight: Number;
   register(element: ElmInstance, x?: boolean): void;
   initScrollViewportThreshold(
-    scrollThresholdInputOpt: ThresholdPercentages
+    scrollThresholdInputOpt: ThresholdInterface["thresholdPercentages"]
   ): void;
   getELmOffsetById(id: string): Rect | undefined;
   getELmTranslateById(id: string): Translate;

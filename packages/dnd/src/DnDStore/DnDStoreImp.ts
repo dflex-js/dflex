@@ -19,9 +19,9 @@ import type {
   Overflow,
 } from "./types";
 
-import type { ThresholdPercentages } from "../types";
-
 import Tracker from "./Tracker";
+
+import type { ThresholdInterface } from "../utils/Threshold";
 
 // function noop() {}
 
@@ -68,7 +68,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     exceptionToNextElm: boolean;
   };
 
-  private scrollThresholdInputOpt!: ThresholdPercentages;
+  private scrollThresholdInputOpt!: ThresholdInterface["thresholdPercentages"];
 
   scrollThreshold!: ScrollThreshold;
 
@@ -167,7 +167,9 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     return isUpdated;
   }
 
-  initScrollViewportThreshold(scrollThresholdInputOpt: ThresholdPercentages) {
+  initScrollViewportThreshold(
+    scrollThresholdInputOpt: ThresholdInterface["thresholdPercentages"]
+  ) {
     this.scrollThresholdInputOpt = scrollThresholdInputOpt;
 
     this.scrollThreshold = { minX: 0, maxX: 0, maxY: 0, minY: 0 };

@@ -243,9 +243,16 @@ class Droppable {
        * And we have new translate only once. The first element matched the
        * condition is the breaking point element.
        */
-      this.draggable.seDraggedThreshold(element.offset!);
+      this.draggable.threshold.setThresholdPixels(
+        element.offset!.width,
+        element.offset!.height
+      );
 
-      this.draggable.setThreshold(element.currentTop!, element.currentLeft!);
+      this.draggable.layoutThresholds.dragged =
+        this.draggable.threshold.getThresholdMatrix(
+          element.currentTop!,
+          element.currentLeft!
+        );
     }
 
     // element.onDragOver();
@@ -298,10 +305,9 @@ class Droppable {
           /**
            * Update threshold from here since there's no calling to updateElement.
            */
-          this.draggable.setThreshold(
+          this.draggable.threshold.setThresholdPixels(
             this.preserveLastElmOffset.currentTop,
-            this.preserveLastElmOffset.currentLeft,
-            element.offset!.height
+            this.preserveLastElmOffset.currentLeft
           );
 
           this.updateOccupiedOffset(

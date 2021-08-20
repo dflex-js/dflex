@@ -5,20 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { CoreInstanceInterface, Rect } from "@dflex/core-instance";
+import type { CoreInstanceInterface } from "@dflex/core-instance";
 import type { AbstractDraggableInterface } from "@dflex/draggable";
-import type { ThresholdInPixels, ScrollOptWithThreshold } from "../types";
 
-export interface Threshold {
-  maxBottom: number;
-  maxTop: number;
-  maxLeft: number;
-  maxRight: number;
-}
+import type { ScrollOptWithThreshold } from "../types";
 
-export interface LayoutThresholds {
-  siblings: { [sk: string]: Threshold };
-  dragged: Threshold;
+import type { ThresholdInterface, ThresholdMatrix } from "../utils/Threshold";
+
+export interface LayoutThresholdMatrix {
+  siblings: { [sk: string]: ThresholdMatrix };
+  dragged: ThresholdMatrix;
 }
 
 export interface TempOffset {
@@ -50,18 +46,11 @@ export interface DraggableBaseInterface
   extends AbstractDraggableInterface<CoreInstanceInterface> {
   tempIndex: number;
   operationID: string;
-  thresholds: LayoutThresholds;
   isOutActiveParent: boolean;
-  draggedThreshold: ThresholdInPixels;
   scroll: ScrollOptWithThreshold;
   isViewportRestricted: boolean;
-  seDraggedThreshold(relativeTo: Rect): void;
-  setThreshold(
-    top: number,
-    left: number,
-    height?: number,
-    siblingsK?: string
-  ): void;
+  threshold: ThresholdInterface;
+  layoutThresholds: LayoutThresholdMatrix;
 }
 
 export interface DraggableDnDInterface extends DraggableBaseInterface {

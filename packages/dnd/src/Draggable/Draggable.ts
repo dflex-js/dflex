@@ -14,12 +14,12 @@ import Base from "./Base";
 import type {
   DraggableDnDInterface,
   TempOffset,
-  Threshold,
   TempTranslate,
   Restrictions,
 } from "./types";
 
 import type { FinalDndOpts, RestrictionsStatus } from "../types";
+import type { ThresholdMatrix } from "../utils/Threshold";
 
 class Draggable extends Base implements DraggableDnDInterface {
   innerOffsetX: number;
@@ -276,20 +276,20 @@ class Draggable extends Base implements DraggableDnDInterface {
     this.tempOffset.currentTop = filteredY - this.innerOffsetY;
   }
 
-  private isOutThresholdH($: Threshold) {
+  private isOutThresholdH($: ThresholdMatrix) {
     return (
       this.tempOffset.currentLeft < $.maxLeft ||
       this.tempOffset.currentLeft > $.maxRight
     );
   }
 
-  private isOutPositionV($: Threshold) {
+  private isOutPositionV($: ThresholdMatrix) {
     return this.isMovingDown
       ? this.tempOffset.currentTop > $.maxBottom
       : this.tempOffset.currentTop < $.maxTop;
   }
 
-  private isOutContainerV($: Threshold) {
+  private isOutContainerV($: ThresholdMatrix) {
     /**
      * Are you last element and outside the container? Or are you coming from top
      * and outside the container?
@@ -300,7 +300,7 @@ class Draggable extends Base implements DraggableDnDInterface {
     );
   }
 
-  private isOutPosition($: Threshold) {
+  private isOutPosition($: ThresholdMatrix) {
     this.isOutPositionHorizontally = false;
 
     if (this.isOutThresholdH($)) {
@@ -316,7 +316,7 @@ class Draggable extends Base implements DraggableDnDInterface {
     return false;
   }
 
-  private isOutContainer($: Threshold) {
+  private isOutContainer($: ThresholdMatrix) {
     this.isOutSiblingsHorizontally = false;
 
     if (this.isOutContainerV($)) {
@@ -338,7 +338,7 @@ class Draggable extends Base implements DraggableDnDInterface {
    * @param siblingsK -
    */
   isOutThreshold(siblingsK?: string) {
-    const { siblings, dragged } = this.thresholds;
+    const { siblings, dragged } = this.layoutThresholds;
 
     return siblingsK
       ? this.isOutContainer(siblings[siblingsK])
@@ -365,7 +365,7 @@ class Draggable extends Base implements DraggableDnDInterface {
     return (
       this.isLastELm() &&
       this.isMovingDown &&
-      this.isOutContainerV(this.thresholds.siblings[sK])
+      this.isOutContainerV(this.layoutThresholds.siblings[sK])
     );
   }
 
