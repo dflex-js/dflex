@@ -7,5 +7,5 @@
 
 export interface TrackerInterface {
   travelID: number;
-  newTravel(): void;
+  newTravel(): string;
 }
