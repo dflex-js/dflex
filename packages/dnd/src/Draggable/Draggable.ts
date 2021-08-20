@@ -138,13 +138,11 @@ class Draggable
      * ids as keys.
      */
     this.layoutThresholds = {
-      siblings: {
-        [sK]: this.threshold.getThresholdMatrix(
-          siblingsBoundaries.top,
-          siblingsBoundaries.maxLeft,
-          siblingsBoundaries.bottom
-        ),
-      },
+      [sK]: this.threshold.getThresholdMatrix(
+        siblingsBoundaries.top,
+        siblingsBoundaries.maxLeft,
+        siblingsBoundaries.bottom
+      ),
     };
 
     this.setIsOrphan(parent);
@@ -472,10 +470,8 @@ class Draggable
    * @param siblingsK -
    */
   isOutThreshold(siblingsK?: string) {
-    const { siblings } = this.layoutThresholds;
-
     return siblingsK
-      ? this.isOutContainer(siblings[siblingsK])
+      ? this.isOutContainer(this.layoutThresholds[siblingsK])
       : this.isOutPosition(this.threshold.thresholdMatrix);
   }
 
@@ -499,7 +495,7 @@ class Draggable
     return (
       this.isLastELm() &&
       this.isMovingDown &&
-      this.isOutContainerV(this.layoutThresholds.siblings[sK])
+      this.isOutContainerV(this.layoutThresholds[sK])
     );
   }
 

@@ -12,8 +12,8 @@ import type { ScrollOptWithThreshold } from "../types";
 
 import type { ThresholdInterface, ThresholdMatrix } from "../utils/Threshold";
 
-export interface LayoutThresholdMatrix {
-  siblings: { [sk: string]: ThresholdMatrix };
+export interface SiblingsThresholdMatrix {
+  [sk: string]: ThresholdMatrix;
 }
 
 export interface TempOffset {
@@ -43,7 +43,7 @@ export interface DraggableDnDInterface
   scroll: ScrollOptWithThreshold;
   isViewportRestricted: boolean;
   threshold: ThresholdInterface;
-  layoutThresholds: LayoutThresholdMatrix;
+  layoutThresholds: SiblingsThresholdMatrix;
   innerOffsetX: number;
   innerOffsetY: number;
   tempOffset: TempOffset;
