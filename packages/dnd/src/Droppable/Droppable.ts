@@ -687,7 +687,7 @@ class Droppable {
 
     let isOutSiblingsContainer = false;
 
-    const { sK } = store.registry[this.draggable.draggedElm.id].keys;
+    const { SK: sK } = store.registry[this.draggable.draggedElm.id].keys;
 
     this.draggable.setDraggedMovingDown(y);
 

@@ -184,9 +184,9 @@ class Generator {
     this.indicator[depth] += 1;
 
     const keys: Keys = {
-      sK: siblingsKey,
-      pK: parentKey,
-      chK: depth === 0 ? null : childrenKey,
+      SK: siblingsKey,
+      PK: parentKey,
+      CHK: depth === 0 ? null : childrenKey,
     };
 
     const order: Order = {

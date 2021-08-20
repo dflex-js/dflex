@@ -149,7 +149,7 @@ class EndDroppable extends Droppable {
   private verify(lst: string[]) {
     const siblingsBoundaries =
       store.siblingsBoundaries[
-        store.registry[this.draggable.draggedElm.id].keys.sK
+        store.registry[this.draggable.draggedElm.id].keys.SK
       ];
 
     const id = lst[0];

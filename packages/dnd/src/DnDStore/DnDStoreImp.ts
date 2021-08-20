@@ -235,12 +235,12 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
               isVisible = true;
 
               this.assignSiblingsBoundaries(
-                this.registry[elmID].keys.sK,
+                this.registry[elmID].keys.SK,
                 this.registry[elmID].offset!
               );
             } else if (isVisible) {
               this.assignSiblingsBoundaries(
-                this.registry[elmID].keys.sK,
+                this.registry[elmID].keys.SK,
                 this.registry[elmID].offset!
               );
 
@@ -359,7 +359,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       currentTop,
       currentLeft,
       offset,
-      keys: { sK, pK },
+      keys: { SK: sK, PK: pK },
     } = this.registry[id];
 
     this.assignSiblingsBoundaries(sK, offset!);
@@ -373,10 +373,10 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     if (isVisibleY && isVisibleX) {
       this.hasVisibleElements = true;
 
-      if (!this.siblingsOverflow[this.registry[id].keys.sK]) {
+      if (!this.siblingsOverflow[this.registry[id].keys.SK]) {
         // If we don't do this, and the list is not overflowing, then the object
         // will be undefined.
-        this.siblingsOverflow[this.registry[id].keys.sK] = {
+        this.siblingsOverflow[this.registry[id].keys.SK] = {
           x: false,
           y: false,
         };
@@ -393,7 +393,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       // Override the actual value.
       this.registry[id].changeVisibility(true);
 
-      this.siblingsOverflow[this.registry[id].keys.sK] = {
+      this.siblingsOverflow[this.registry[id].keys.SK] = {
         x: !isVisibleX,
         y: !isVisibleY,
       };
@@ -418,7 +418,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     if (!element) return null;
 
     const {
-      keys: { sK },
+      keys: { SK: sK },
     } = element;
 
     const siblings = this.getElmBranchByKey(sK);
@@ -441,7 +441,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     const element = this.registry[id];
 
     const {
-      keys: { sK, pK },
+      keys: { SK: sK, PK: pK },
       order: { parent: pi },
     } = element;
 

@@ -46,9 +46,9 @@ export type ELmBranch = string | string[];
  * Element unique keys in DOM tree.
  */
 export interface Keys {
-  sK: string;
-  pK: string;
-  chK: string | null;
+  SK: string;
+  PK: string;
+  CHK: string | null;
 }
 
 /**

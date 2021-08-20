@@ -98,7 +98,7 @@ class Draggable
 
     const siblings = store.getElmSiblingsListById(this.draggedElm.id);
 
-    const { sK } = store.registry[this.draggedElm.id].keys;
+    const { SK: sK } = store.registry[this.draggedElm.id].keys;
 
     if (
       siblings === null ||
@@ -343,7 +343,7 @@ class Draggable
 
     if (this.axesFilterNeeded) {
       const { top, bottom, maxLeft, minRight } =
-        store.siblingsBoundaries[store.registry[this.draggedElm.id].keys.sK];
+        store.siblingsBoundaries[store.registry[this.draggedElm.id].keys.SK];
 
       if (this.restrictionsStatus.isContainerRestricted) {
         filteredX = this.axesXFilter(
@@ -494,7 +494,7 @@ class Draggable
    * Checks if dragged is the last child and going down.
    */
   isLeavingFromBottom() {
-    const { sK } = store.registry[this.draggedElm.id].keys;
+    const { SK: sK } = store.registry[this.draggedElm.id].keys;
 
     return (
       this.isLastELm() &&
@@ -504,7 +504,7 @@ class Draggable
   }
 
   isNotSettled() {
-    const { sK } = store.registry[this.draggedElm.id].keys;
+    const { SK: sK } = store.registry[this.draggedElm.id].keys;
 
     return (
       !this.isLeavingFromBottom() &&
