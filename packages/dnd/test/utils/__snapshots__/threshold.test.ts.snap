@@ -6,9 +6,5 @@ Threshold {
     "horizontal": 60,
     "vertical": 60,
   },
-  "thresholdPixels": Object {
-    "x": 120,
-    "y": 60,
-  },
 }
 `;

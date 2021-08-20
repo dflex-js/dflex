@@ -13,9 +13,9 @@ let pointerChild1D0;
 let pointerChild2D0;
 
 const KEYS_CHILDREN_D0 = {
-  chK: null,
-  pK: "1-0",
-  sK: "0-0",
+  CHK: null,
+  PK: "1-0",
+  SK: "0-0",
 };
 
 let pointerParent0D1;

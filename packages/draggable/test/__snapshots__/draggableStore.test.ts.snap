@@ -12,9 +12,9 @@ Object {
     "isPaused": false,
     "isVisible": undefined,
     "keys": Object {
-      "chK": null,
-      "pK": "1-0",
-      "sK": "0-0",
+      "CHK": null,
+      "PK": "1-0",
+      "SK": "0-0",
     },
     "offset": Object {
       "height": 0,
