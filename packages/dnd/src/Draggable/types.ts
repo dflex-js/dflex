@@ -10,7 +10,7 @@ import type { AbstractDraggableInterface, Coordinates } from "@dflex/draggable";
 
 import type { ScrollOptWithThreshold } from "../types";
 
-import type { ThresholdInterface, ThresholdMatrix } from "../utils/Threshold";
+import type { ThresholdInterface, ThresholdMatrix } from "../Plugins/Threshold";
 
 export interface SiblingsThresholdMatrix {
   [sk: string]: ThresholdMatrix;

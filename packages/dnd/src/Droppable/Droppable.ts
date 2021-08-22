@@ -73,8 +73,8 @@ class Droppable {
 
     this.scrollAnimatedFrame = null;
 
-    this.initialScrollY = store.scrollY;
-    this.initialScrollX = store.scrollX;
+    this.initialScrollY = store.scroll.scrollY;
+    this.initialScrollX = store.scroll.scrollX;
 
     this.scrollSpeed = this.draggable.scroll.initialSpeed;
 
@@ -87,8 +87,8 @@ class Droppable {
      * - Guarantee same position for dragging. In scrolling/overflow case, or
      *   regular scrolling.
      */
-    this.scrollTop = store.scrollY;
-    this.scrollLeft = store.scrollX;
+    this.scrollTop = store.scroll.scrollY;
+    this.scrollLeft = store.scroll.scrollX;
 
     /**
      * This is true until there's a scrolling. Then, the scroll will handle the
@@ -252,10 +252,13 @@ class Droppable {
       } = element;
 
       this.draggable.threshold.updateElementThresholdMatrix(
-        width,
-        height,
-        currentLeft!,
-        currentTop!
+        {
+          width,
+          height,
+          left: currentLeft!,
+          top: currentTop!,
+        },
+        false
       );
     }
 
@@ -310,10 +313,13 @@ class Droppable {
            * Update threshold from here since there's no calling to updateElement.
            */
           this.draggable.threshold.updateElementThresholdMatrix(
-            this.draggable.draggedElm.offset!.width,
-            this.draggable.draggedElm.offset!.height,
-            this.preserveLastElmOffset.currentLeft,
-            this.preserveLastElmOffset.currentTop
+            {
+              width: this.draggable.draggedElm.offset!.width,
+              height: this.draggable.draggedElm.offset!.height,
+              left: this.preserveLastElmOffset.currentLeft,
+              top: this.preserveLastElmOffset.currentTop,
+            },
+            false
           );
 
           this.updateOccupiedOffset(
@@ -391,7 +397,7 @@ class Droppable {
     // Won't trigger any resume if auto-scroll is disabled.
     if (store.registry[id].isPaused) {
       if (this.draggable.scroll.enable) {
-        store.registry[id].resume(store.scrollX, store.scrollY);
+        store.registry[id].resume(store.scroll.scrollX, store.scroll.scrollY);
 
         return true;
       }
@@ -591,10 +597,11 @@ class Droppable {
     const currentBottom = currentTop + this.draggable.draggedElm.offset!.height;
 
     if (direction === 1) {
-      if (currentBottom <= store.scrollHeight) {
+      if (currentBottom <= store.scroll.scrollHeight) {
         this.scrollTop = nextScrollTop;
       } else {
-        this.scrollTop = store.scrollHeight - store.viewportHeight;
+        this.scrollTop =
+          store.scroll.scrollHeight - store.scroll.viewportHeight;
       }
     } else if (currentTop >= 0) {
       this.scrollTop = nextScrollTop;
@@ -602,7 +609,7 @@ class Droppable {
       this.scrollTop = 0;
     }
 
-    store.documentScrollingElement.scrollTop = this.scrollTop;
+    store.scroll.scrollContainer.scrollTop = this.scrollTop;
 
     this.draggable.dragAt(
       x + this.scrollLeft - this.initialScrollX,
@@ -622,10 +629,11 @@ class Droppable {
     const currentRight = currentLeft + this.draggable.draggedElm.offset!.width;
 
     if (direction === 1) {
-      if (currentRight <= store.scrollHeight) {
+      if (currentRight <= store.scroll.scrollHeight) {
         this.scrollLeft = nextScrollLeft;
       } else {
-        this.scrollLeft = store.scrollHeight - store.viewportWidth;
+        this.scrollLeft =
+          store.scroll.scrollHeight - store.scroll.viewportWidth;
       }
     } else if (currentRight >= 0) {
       this.scrollLeft = currentRight;
@@ -633,7 +641,7 @@ class Droppable {
       this.scrollLeft = 0;
     }
 
-    store.documentScrollingElement.scrollLeft = this.scrollLeft;
+    store.scroll.scrollContainer.scrollLeft = this.scrollLeft;
 
     this.draggable.dragAt(
       x + this.scrollLeft - this.initialScrollX,
@@ -648,7 +656,7 @@ class Droppable {
     on: "scrollElementOnX" | "scrollElementOnY"
   ) {
     // Prevent store from implementing any animation response.
-    store.hasThrottledFrame = 1;
+    store.scroll.hasThrottledFrame = 1;
 
     this.draggable.isViewportRestricted = false;
 
@@ -659,7 +667,7 @@ class Droppable {
 
       // Reset animation flags
       this.scrollAnimatedFrame = null;
-      store.hasThrottledFrame = null;
+      store.scroll.hasThrottledFrame = null;
 
       this.scrollSpeed += this.draggable.scroll.initialSpeed;
     });
@@ -704,20 +712,24 @@ class Droppable {
       if (
         this.draggable.scroll.enable &&
         this.scrollAnimatedFrame === null &&
-        store.hasThrottledFrame === null
+        store.scroll.hasThrottledFrame === null
       ) {
         if (store.siblingsOverflow[SK].y) {
           if (
             this.draggable.isMovingDown &&
-            y >= store.scrollThreshold.maxY &&
-            this.scrollTop + store.viewportHeight < store.scrollHeight
+            y >= store.scroll.threshold!.thresholdMatrix.maxBottom &&
+            this.scrollTop + store.scroll.viewportHeight <
+              store.scroll.scrollHeight
           ) {
             this.scrollElement(x, y, 1, "scrollElementOnY");
 
             return;
           }
 
-          if (y <= store.scrollThreshold.minY && this.scrollTop > 0) {
+          if (
+            y <= store.scroll.threshold!.thresholdMatrix.maxTop &&
+            this.scrollTop > 0
+          ) {
             this.scrollElement(x, y, -1, "scrollElementOnY");
 
             return;
@@ -726,15 +738,19 @@ class Droppable {
 
         if (store.siblingsOverflow[SK].x) {
           if (
-            x >= store.scrollThreshold.maxX &&
-            this.scrollLeft + store.viewportWidth < store.scrollHeight
+            x >= store.scroll.threshold!.thresholdMatrix.maxLeft &&
+            this.scrollLeft + store.scroll.viewportWidth <
+              store.scroll.scrollHeight
           ) {
             this.scrollElement(x, y, 1, "scrollElementOnX");
 
             return;
           }
 
-          if (x <= store.scrollThreshold.minX && this.scrollLeft > 0) {
+          if (
+            x <= store.scroll.threshold!.thresholdMatrix.maxRight &&
+            this.scrollLeft > 0
+          ) {
             this.scrollElement(x, y, -1, "scrollElementOnX");
 
             return;

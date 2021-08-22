@@ -20,7 +20,7 @@ import type {
   RestrictionsStatus,
 } from "../types";
 
-import Threshold, { ThresholdMatrix } from "../utils/Threshold";
+import Threshold, { ThresholdMatrix } from "../Plugins/Threshold";
 
 class Draggable
   extends AbstractDraggable<CoreInstanceInterface>
@@ -81,7 +81,7 @@ class Draggable
     const { element, parent } = store.getElmTreeById(id);
 
     if (element.isPaused) {
-      element.resume(store.scrollX, store.scrollY);
+      element.resume(store.scroll.scrollX, store.scroll.scrollY);
     }
 
     super(element, initCoordinates);
@@ -110,7 +110,7 @@ class Draggable
     if (this.scroll.enable) {
       this.isViewportRestricted = false;
 
-      store.initScrollViewportThreshold(this.scroll.threshold);
+      store.initScrollContainer(this.scroll.threshold);
     } else {
       this.isViewportRestricted = true;
     }
@@ -127,10 +127,8 @@ class Draggable
     } = this.draggedElm;
 
     this.threshold.updateElementThresholdMatrix(
-      width,
-      height,
-      currentLeft!,
-      currentTop!
+      { width, height, left: currentLeft!, top: currentTop! },
+      false
     );
 
     /**
@@ -384,7 +382,7 @@ class Draggable
       filteredX = this.axesXFilter(
         x,
         0,
-        store.viewportWidth,
+        store.scroll.viewportWidth,
         false,
         false,
         true
@@ -392,7 +390,7 @@ class Draggable
       filteredY = this.axesYFilter(
         y,
         0,
-        store.viewportHeight,
+        store.scroll.viewportHeight,
         false,
         false,
         true
