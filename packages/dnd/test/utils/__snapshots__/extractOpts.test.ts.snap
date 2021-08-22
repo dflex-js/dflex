@@ -25,7 +25,7 @@ Object {
     "initialSpeed": 10,
     "threshold": Object {
       "horizontal": 9000,
-      "vertical": 75,
+      "vertical": 15,
     },
   },
   "threshold": Object {
@@ -59,8 +59,8 @@ Object {
     "enable": true,
     "initialSpeed": 10,
     "threshold": Object {
-      "horizontal": 75,
-      "vertical": 75,
+      "horizontal": 15,
+      "vertical": 15,
     },
   },
   "threshold": Object {
@@ -94,8 +94,8 @@ Object {
     "enable": true,
     "initialSpeed": 10,
     "threshold": Object {
-      "horizontal": 75,
-      "vertical": 75,
+      "horizontal": 15,
+      "vertical": 15,
     },
   },
   "threshold": Object {
@@ -130,7 +130,7 @@ Object {
     "initialSpeed": 10,
     "threshold": Object {
       "horizontal": 1000,
-      "vertical": 75,
+      "vertical": 15,
     },
   },
   "threshold": Object {
@@ -165,7 +165,7 @@ Object {
     "initialSpeed": 10,
     "threshold": Object {
       "horizontal": 1000,
-      "vertical": 75,
+      "vertical": 15,
     },
   },
   "threshold": Object {
@@ -199,8 +199,8 @@ Object {
     "enable": true,
     "initialSpeed": 10,
     "threshold": Object {
-      "horizontal": 75,
-      "vertical": 75,
+      "horizontal": 15,
+      "vertical": 15,
     },
   },
   "threshold": Object {
