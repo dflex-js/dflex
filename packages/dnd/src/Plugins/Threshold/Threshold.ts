@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { Rect } from "packages/core-instance/src/types";
 import type { ThresholdInterface, ThresholdMatrix } from "./types";
 
 class Threshold implements ThresholdInterface {
@@ -21,19 +22,20 @@ class Threshold implements ThresholdInterface {
   getThresholdMatrix(
     top: number,
     left: number,
-    height?: number
+    height?: number,
+    relativeToViewport?: boolean
   ): ThresholdMatrix {
     const { x, y } = this.thresholdPixels;
 
     /**
      * When going up, currentTop decreases (-vertical).
      */
-    const maxTop = top - y;
+    let maxTop = top - y;
 
     /**
      * When going left, currentLeft decreases (-horizontal).
      */
-    const maxLeft = left - x;
+    let maxLeft = left - x;
 
     /**
      * When going right, currentLeft increases (+horizontal) with droppable
@@ -45,7 +47,16 @@ class Threshold implements ThresholdInterface {
      * If height, the threshold is relative to the container. Otherwise, it's
      * relative to the element.
      */
-    const maxBottom = height ? height - y : top + y;
+    let maxBottom = height ? height - y : top + y;
+
+    if (relativeToViewport) {
+      /**
+       * Values should always be positive. This is true for scrolling threshold.
+       */
+      maxTop = Math.abs(maxTop);
+      maxLeft = Math.abs(maxLeft);
+      maxBottom = Math.abs(maxBottom);
+    }
 
     return {
       maxBottom,
@@ -56,18 +67,24 @@ class Threshold implements ThresholdInterface {
   }
 
   updateElementThresholdMatrix(
-    width: number,
-    height: number,
-    left: number,
-    top: number
+    elementRect: Rect,
+    relativeToContainer: boolean,
+    relativeToViewport?: boolean
   ) {
+    const { width, height, top, left } = elementRect;
+
     const x = Math.round((this.thresholdPercentages.horizontal * width) / 100);
 
     const y = Math.round((this.thresholdPercentages.vertical * height) / 100);
 
     this.thresholdPixels = { x, y };
 
-    this.thresholdMatrix = this.getThresholdMatrix(top, left);
+    this.thresholdMatrix = this.getThresholdMatrix(
+      top,
+      left,
+      relativeToContainer ? height : undefined,
+      relativeToViewport
+    );
   }
 }
 

@@ -5,7 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 import type { Restrictions } from "./Draggable";
-import { ThresholdInterface } from "./utils/Threshold";
+
+import type { ThresholdInterface } from "./Plugins/Threshold";
 
 export interface ScrollOptWithoutThreshold {
   enable: boolean;

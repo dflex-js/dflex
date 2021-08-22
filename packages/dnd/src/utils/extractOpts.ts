@@ -37,8 +37,8 @@ export const defaultOpts: DndOpts = Object.freeze({
     enable: true,
     initialSpeed: 10,
     threshold: {
-      vertical: 75,
-      horizontal: 75,
+      vertical: 15,
+      horizontal: 15,
     },
   },
 });

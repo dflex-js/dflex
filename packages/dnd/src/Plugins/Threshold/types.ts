@@ -5,6 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { Rect } from "packages/core-instance/src/types";
+
 export interface ThresholdPercentages {
   vertical: number;
   horizontal: number;
@@ -32,15 +34,15 @@ export interface ThresholdInterface {
   thresholdPercentages: ThresholdPercentages;
   thresholdPixels: ThresholdInPixels;
   thresholdMatrix: ThresholdMatrix;
-  updateElementThresholdMatrix(
-    width: number,
-    height: number,
-    left: number,
-    top: number
-  ): void;
   getThresholdMatrix(
     top: number,
     left: number,
-    height?: number
+    height?: number,
+    relativeToViewport?: boolean
   ): ThresholdMatrix;
+  updateElementThresholdMatrix(
+    elementRect: Rect,
+    relativeToContainer: boolean,
+    relativeToViewport?: boolean
+  ): void;
 }
