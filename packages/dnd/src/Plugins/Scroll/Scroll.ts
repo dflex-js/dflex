@@ -5,10 +5,53 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import loopInDOM from "../../utils/loopInDOM";
+
 import { ScrollInterface } from "./types";
 
 function getScrollFromDocument() {
   return document.scrollingElement || document.documentElement;
+}
+
+function hasOverflow(element: Element) {
+  const overflowRegex = /(auto|scroll|overlay)/;
+  const computedStyle = getComputedStyle(element);
+
+  const overflow =
+    computedStyle.getPropertyValue("overflow") +
+    computedStyle.getPropertyValue("overflow-y") +
+    computedStyle.getPropertyValue("overflow-x");
+
+  return overflowRegex.test(overflow);
+}
+
+function isStaticallyPositioned(element: Element) {
+  const computedStyle = getComputedStyle(element);
+  const position = computedStyle.getPropertyValue("position");
+  return position === "static";
+}
+
+function getScrollContainer(element: Element | null) {
+  if (!element) return getScrollFromDocument();
+
+  const computedStyle = getComputedStyle(element);
+
+  const position = computedStyle.getPropertyValue("position");
+
+  const excludeStaticParents = position === "absolute";
+
+  const scrollContainer = loopInDOM(element, (parent) => {
+    if (excludeStaticParents && isStaticallyPositioned(parent)) {
+      return false;
+    }
+    return hasOverflow(parent);
+  });
+
+  if (position === "fixed" || !scrollContainer) {
+    return getScrollFromDocument();
+  }
+
+  return scrollContainer;
 }
 
 class Scroll implements ScrollInterface {
@@ -21,7 +64,7 @@ class Scroll implements ScrollInterface {
 
   viewportWidth!: number;
 
-  resizeEventCallback: Function | null;
+  scrollEventCallback: Function | null;
 
   scrollX!: number;
 
@@ -33,11 +76,7 @@ class Scroll implements ScrollInterface {
 
   hasThrottledFrame: number | null;
 
-  constructor({
-    resizeEventCallback,
-  }: {
-    resizeEventCallback: Function | null;
-  }) {
+  constructor(scrollEventCallback: Function | null) {
     this.threshold = null;
     this.hasThrottledFrame = null;
 
@@ -52,11 +91,11 @@ class Scroll implements ScrollInterface {
     window.addEventListener("resize", this.animatedResizeListener);
     window.addEventListener("scroll", this.animatedScrollListener);
 
-    this.resizeEventCallback = resizeEventCallback;
+    this.scrollEventCallback = scrollEventCallback;
   }
 
   setScrollContainer() {
-    this.scrollContainer = getScrollFromDocument();
+    this.scrollContainer = getScrollContainer(null);
     this.scrollHeight = this.scrollContainer.scrollHeight;
   }
 
@@ -116,6 +155,20 @@ class Scroll implements ScrollInterface {
     return isUpdated;
   }
 
+  isElementVisibleViewportX(currentLeft: number): boolean {
+    return (
+      currentLeft >= this.scrollX &&
+      currentLeft <= this.viewportWidth + this.scrollX
+    );
+  }
+
+  isElementVisibleViewportY(currentTop: number): boolean {
+    return (
+      currentTop >= this.scrollY &&
+      currentTop <= this.viewportHeight + this.scrollY
+    );
+  }
+
   private animatedListener(
     setter: "setViewportAndUpdateScrollContainer" | "setScrollCoordinates",
     cb: Function | null
@@ -136,7 +189,7 @@ class Scroll implements ScrollInterface {
     this.animatedListener.call(
       this,
       "setScrollCoordinates",
-      this.resizeEventCallback
+      this.scrollEventCallback
     );
   }
 

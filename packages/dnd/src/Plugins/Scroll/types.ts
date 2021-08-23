@@ -7,16 +7,22 @@
 
 import type { ThresholdInterface } from "../Threshold";
 
+export interface ScrollInput {
+  scrollEventCallback: Function | null;
+}
+
 export interface ScrollInterface {
   threshold: ThresholdInterface | null;
   viewportHeight: number;
   viewportWidth: number;
-  resizeEventCallback: Function | null;
+  scrollEventCallback: Function | null;
   scrollX: number;
   scrollY: number;
   scrollHeight: number;
   scrollContainer: Element;
   hasThrottledFrame: number | null;
+  isElementVisibleViewportX(currentLeft: number): boolean;
+  isElementVisibleViewportY(currentTop: number): boolean;
   setThresholdMatrix(): void;
   setScrollContainer(): void;
   destroy(): void;
