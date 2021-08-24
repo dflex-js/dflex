@@ -105,8 +105,8 @@ class Draggable
     const siblings = store.getElmSiblingsListById(this.draggedElm.id);
 
     if (
-      siblings === null
-      // || (!store.siblingsOverflow[SK].x && !store.siblingsOverflow[SK].y)
+      siblings === null ||
+      (!store.siblingsOverflow[SK].x && !store.siblingsOverflow[SK].y)
     ) {
       this.scroll.enable = false;
     }
