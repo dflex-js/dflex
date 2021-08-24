@@ -117,6 +117,11 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
               this.registry[elmID].resume(scroll.scrollX, scroll.scrollY);
             }
 
+            this.assignSiblingsBoundaries(
+              this.registry[elmID].keys.SK,
+              this.registry[elmID].offset!
+            );
+
             const isVisibleY = scroll.isElementVisibleViewportY(
               this.registry[elmID].currentTop!
             );
@@ -142,17 +147,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
               // Override the result.
               isVisible = true;
-
-              this.assignSiblingsBoundaries(
-                this.registry[elmID].keys.SK,
-                this.registry[elmID].offset!
-              );
             } else if (isVisible) {
-              this.assignSiblingsBoundaries(
-                this.registry[elmID].keys.SK,
-                this.registry[elmID].offset!
-              );
-
               if (this.elmIndicator.exceptionToNextElm) {
                 // In this case, we are moving from hidden to visible.
                 // Eg: 1, 2 are hidden the rest of the list is visible.
