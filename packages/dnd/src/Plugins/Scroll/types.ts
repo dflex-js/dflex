@@ -23,7 +23,9 @@ export interface ScrollInterface {
   hasThrottledFrame: number | null;
   isElementVisibleViewportX(currentLeft: number): boolean;
   isElementVisibleViewportY(currentTop: number): boolean;
-  setThresholdMatrix(): void;
-  setScrollContainer(): void;
+  setThresholdMatrix(
+    threshold: ThresholdInterface["thresholdPercentages"]
+  ): void;
+  setScrollContainer(element: Element): void;
   destroy(): void;
 }

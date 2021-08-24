@@ -80,8 +80,14 @@ class Draggable
   constructor(id: string, initCoordinates: Coordinates, opts: FinalDndOpts) {
     const { element, parent } = store.getElmTreeById(id);
 
-    if (element.isPaused) {
-      element.resume(store.scroll.scrollX, store.scroll.scrollY);
+    const { SK } = store.registry[id].keys;
+
+    /**
+     * In case it is not already initiated in the store. We do it here guarantee
+     * all the branch is updated.
+     */
+    if (!store.siblingsScrollElement[SK]) {
+      store.loadElementsFormKeyBranch(SK);
     }
 
     super(element, initCoordinates);
@@ -98,11 +104,9 @@ class Draggable
 
     const siblings = store.getElmSiblingsListById(this.draggedElm.id);
 
-    const { SK } = store.registry[this.draggedElm.id].keys;
-
     if (
-      siblings === null ||
-      (!store.siblingsOverflow[SK].x && !store.siblingsOverflow[SK].y)
+      siblings === null
+      // || (!store.siblingsOverflow[SK].x && !store.siblingsOverflow[SK].y)
     ) {
       this.scroll.enable = false;
     }
@@ -110,7 +114,7 @@ class Draggable
     if (this.scroll.enable) {
       this.isViewportRestricted = false;
 
-      store.initScrollContainer(this.scroll.threshold);
+      store.siblingsScrollElement[SK].setThresholdMatrix(this.scroll.threshold);
     } else {
       this.isViewportRestricted = true;
     }
@@ -131,17 +135,19 @@ class Draggable
       false
     );
 
-    /**
-     * Thresholds store, contains max value for each parent and for dragged. Depending on
-     * ids as keys.
-     */
-    this.layoutThresholds = {
-      [SK]: this.threshold.getThresholdMatrix(
-        siblingsBoundaries.top,
-        siblingsBoundaries.maxLeft,
-        siblingsBoundaries.bottom
-      ),
-    };
+    if (siblings !== null) {
+      /**
+       * Thresholds store, contains max value for each parent and for dragged. Depending on
+       * ids as keys.
+       */
+      this.layoutThresholds = {
+        [SK]: this.threshold.getThresholdMatrix(
+          siblingsBoundaries.top,
+          siblingsBoundaries.maxLeft,
+          siblingsBoundaries.bottom
+        ),
+      };
+    }
 
     this.setIsOrphan(parent);
 
@@ -338,8 +344,9 @@ class Draggable
     let filteredX = x;
 
     if (this.axesFilterNeeded) {
-      const { top, bottom, maxLeft, minRight } =
-        store.siblingsBoundaries[store.registry[this.draggedElm.id].keys.SK];
+      const { SK } = store.registry[this.draggedElm.id].keys;
+
+      const { top, bottom, maxLeft, minRight } = store.siblingsBoundaries[SK];
 
       if (this.restrictionsStatus.isContainerRestricted) {
         filteredX = this.axesXFilter(
@@ -378,23 +385,13 @@ class Draggable
         );
       }
     } else if (this.isViewportRestricted) {
+      const { SK } = store.registry[this.draggedElm.id].keys;
+
+      const { viewportHeight, viewportWidth } = store.siblingsScrollElement[SK];
+
       // TODO: Fix this when scroll is implemented.
-      filteredX = this.axesXFilter(
-        x,
-        0,
-        store.scroll.viewportWidth,
-        false,
-        false,
-        true
-      );
-      filteredY = this.axesYFilter(
-        y,
-        0,
-        store.scroll.viewportHeight,
-        false,
-        false,
-        true
-      );
+      filteredX = this.axesXFilter(x, 0, viewportWidth, false, false, true);
+      filteredY = this.axesYFilter(y, 0, viewportHeight, false, false, true);
     }
 
     this.translate(filteredX, filteredY);

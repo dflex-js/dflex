@@ -74,16 +74,12 @@ export interface DnDStoreInterface {
   tracker: TrackerInterface;
   siblingsBoundaries: { [siblingKey: string]: BoundariesOffset };
   siblingsOverflow: { [siblingKey: string]: Overflow };
-  siblingsScrollElement: { [siblingKey: string]: HTMLElement };
-  scroll: ScrollInterface | null;
+  siblingsScrollElement: { [siblingKey: string]: ScrollInterface };
   register(element: ElmInstance, x?: boolean): void;
-  initScrollContainer(
-    scrollThresholdPercentages: ThresholdInterface["thresholdPercentages"]
-  ): void;
   getELmOffsetById(id: string): Rect | undefined;
   getELmTranslateById(id: string): Translate;
   getElmTreeById(id: string): ElmTree;
   getElmSiblingsById(id: string): ELmBranch | null;
   getElmSiblingsListById(id: string): string[] | null;
-  destroy(): null;
+  destroy(): void;
 }

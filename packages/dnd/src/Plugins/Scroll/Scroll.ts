@@ -6,6 +6,8 @@
  */
 
 import loopInDOM from "../../utils/loopInDOM";
+import Threshold from "../Threshold";
+import { ThresholdPercentages } from "../Threshold/types";
 
 import { ScrollInterface } from "./types";
 
@@ -60,6 +62,8 @@ class Scroll implements ScrollInterface {
    */
   threshold: ScrollInterface["threshold"] | null;
 
+  siblingKey: string;
+
   viewportHeight!: number;
 
   viewportWidth!: number;
@@ -76,11 +80,21 @@ class Scroll implements ScrollInterface {
 
   hasThrottledFrame: number | null;
 
-  constructor(scrollEventCallback: Function | null) {
+  constructor({
+    element,
+    requiredBranchKey,
+    scrollEventCallback,
+  }: {
+    element: Element;
+    requiredBranchKey: string;
+    scrollEventCallback: Function | null;
+  }) {
     this.threshold = null;
     this.hasThrottledFrame = null;
 
-    this.setScrollContainer();
+    this.siblingKey = requiredBranchKey;
+
+    this.setScrollContainer(element);
 
     this.animatedScrollListener = this.animatedScrollListener.bind(this);
     this.animatedResizeListener = this.animatedResizeListener.bind(this);
@@ -94,12 +108,14 @@ class Scroll implements ScrollInterface {
     this.scrollEventCallback = scrollEventCallback;
   }
 
-  setScrollContainer() {
-    this.scrollContainer = getScrollContainer(null);
+  setScrollContainer(element: Element) {
+    this.scrollContainer = getScrollContainer(element);
     this.scrollHeight = this.scrollContainer.scrollHeight;
   }
 
-  setThresholdMatrix() {
+  setThresholdMatrix(threshold?: ThresholdPercentages) {
+    if (threshold) this.threshold = new Threshold(threshold);
+
     this.threshold!.updateElementThresholdMatrix(
       {
         width: this.viewportWidth,
@@ -179,7 +195,7 @@ class Scroll implements ScrollInterface {
       const isUpdated = this[setter]();
 
       if (isUpdated && cb) {
-        cb();
+        cb(this.siblingKey);
       }
       this.hasThrottledFrame = null;
     });
