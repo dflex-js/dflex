@@ -9,6 +9,7 @@ import type { CoreInstanceInterface, Rect } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
 import type { ElmInstance } from "@dflex/store";
 
+import type { ScrollInterface } from "../Plugins/Scroll";
 import type { ThresholdInterface } from "../Plugins/Threshold";
 import type { TrackerInterface } from "../Plugins/Tracker";
 
@@ -73,14 +74,12 @@ export interface DnDStoreInterface {
   tracker: TrackerInterface;
   siblingsBoundaries: { [siblingKey: string]: BoundariesOffset };
   siblingsOverflow: { [siblingKey: string]: Overflow };
+  siblingsScrollElement: { [siblingKey: string]: ScrollInterface };
   register(element: ElmInstance, x?: boolean): void;
-  initScrollContainer(
-    scrollThresholdPercentages: ThresholdInterface["thresholdPercentages"]
-  ): void;
   getELmOffsetById(id: string): Rect | undefined;
   getELmTranslateById(id: string): Translate;
   getElmTreeById(id: string): ElmTree;
   getElmSiblingsById(id: string): ELmBranch | null;
   getElmSiblingsListById(id: string): string[] | null;
-  destroy(): null;
+  destroy(): void;
 }

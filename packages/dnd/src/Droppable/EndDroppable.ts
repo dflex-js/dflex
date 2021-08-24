@@ -147,7 +147,7 @@ class EndDroppable extends Droppable {
   }
 
   private verify(lst: string[]) {
-    const siblingsBoundaries =
+    const { top } =
       store.siblingsBoundaries[
         store.registry[this.draggable.draggedElm.id].keys.SK
       ];
@@ -156,16 +156,13 @@ class EndDroppable extends Droppable {
 
     if (id.length === 0 || this.draggable.draggedElm.id === id) {
       return (
-        Math.floor(siblingsBoundaries.top) ===
-        Math.floor(this.draggable.occupiedOffset.currentTop)
+        Math.floor(top) === Math.floor(this.draggable.occupiedOffset.currentTop)
       );
     }
 
     const element = store.registry[id];
 
-    return (
-      Math.floor(siblingsBoundaries.top) === Math.floor(element.currentTop!)
-    );
+    return Math.floor(top) === Math.floor(element.currentTop!);
   }
 
   endDragging() {

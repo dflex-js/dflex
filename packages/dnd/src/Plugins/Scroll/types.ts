@@ -7,17 +7,25 @@
 
 import type { ThresholdInterface } from "../Threshold";
 
+export interface ScrollInput {
+  scrollEventCallback: Function | null;
+}
+
 export interface ScrollInterface {
   threshold: ThresholdInterface | null;
   viewportHeight: number;
   viewportWidth: number;
-  resizeEventCallback: Function | null;
+  scrollEventCallback: Function | null;
   scrollX: number;
   scrollY: number;
   scrollHeight: number;
   scrollContainer: Element;
   hasThrottledFrame: number | null;
-  setThresholdMatrix(): void;
-  setScrollContainer(): void;
+  isElementVisibleViewportX(currentLeft: number): boolean;
+  isElementVisibleViewportY(currentTop: number): boolean;
+  setThresholdMatrix(
+    threshold: ThresholdInterface["thresholdPercentages"]
+  ): void;
+  setScrollContainer(element: Element): void;
   destroy(): void;
 }

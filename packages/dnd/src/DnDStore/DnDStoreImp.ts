@@ -8,36 +8,25 @@
 import Store from "@dflex/store";
 import CoreInstance, { Rect } from "@dflex/core-instance";
 
-import type {
-  ElmTree,
-  BoundariesOffset,
-  DnDStoreInterface,
-  RegisterInput,
-  Overflow,
-} from "./types";
+import type { ElmTree, DnDStoreInterface, RegisterInput } from "./types";
 
-import Scroll, { ScrollInterface } from "../Plugins/Scroll";
-import Tracker, { TrackerInterface } from "../Plugins/Tracker";
-import Threshold, { ThresholdInterface } from "../Plugins/Threshold";
+import Scroll from "../Plugins/Scroll";
+import Tracker from "../Plugins/Tracker";
 
 import canUseDOM from "../utils/canUseDOM";
 
 class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
-  tracker: TrackerInterface;
+  tracker: DnDStoreInterface["tracker"];
 
-  siblingsBoundaries: { [siblingKey: string]: BoundariesOffset };
+  siblingsBoundaries: DnDStoreInterface["siblingsBoundaries"];
 
-  siblingsOverflow: { [siblingKey: string]: Overflow };
+  siblingsOverflow: DnDStoreInterface["siblingsOverflow"];
+
+  siblingsScrollElement: DnDStoreInterface["siblingsScrollElement"];
 
   private isDOM: boolean;
 
   private isInitialized: boolean;
-
-  private isPauseRegistration: boolean;
-
-  private hasVisibleElements: boolean;
-
-  scroll!: ScrollInterface;
 
   private elmIndicator!: {
     currentKy: string;
@@ -50,6 +39,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     this.siblingsBoundaries = {};
     this.siblingsOverflow = {};
+    this.siblingsScrollElement = {};
 
     this.tracker = new Tracker();
 
@@ -57,25 +47,42 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     this.isInitialized = false;
     this.isDOM = false;
-    this.hasVisibleElements = false;
-    this.isPauseRegistration = false;
+
+    this.onLoadListeners = this.onLoadListeners.bind(this);
+    this.updateBranchVisibility = this.updateBranchVisibility.bind(this);
   }
 
   private init() {
-    this.scroll = new Scroll({
-      resizeEventCallback: this.updateRegisteredLayoutIndicators.bind(this),
-    });
+    window.addEventListener("load", this.onLoadListeners);
 
-    window.onbeforeunload = this.destroy();
-
-    this.isInitialized = true;
+    window.onbeforeunload = this.dispose();
   }
 
-  initScrollContainer(
-    scrollThreshold: ThresholdInterface["thresholdPercentages"]
-  ) {
-    this.scroll.threshold = new Threshold(scrollThreshold);
-    this.scroll.setThresholdMatrix();
+  loadElementsFormKeyBranch(key: string) {
+    const hasSiblings = Array.isArray(this.DOMGen.branches[key]);
+
+    const firstElemID = hasSiblings
+      ? this.DOMGen.branches[key][0]
+      : (this.DOMGen.branches[key] as string);
+
+    this.registry[firstElemID].resume(0, 0);
+    this.registry[firstElemID].isPaused = true;
+
+    const scroll = new Scroll({
+      element: this.registry[firstElemID].ref!,
+      requiredBranchKey: key,
+      scrollEventCallback: hasSiblings ? this.updateBranchVisibility : null,
+    });
+
+    this.siblingsScrollElement[key] = scroll;
+
+    if (hasSiblings) this.updateBranchVisibility(key);
+  }
+
+  onLoadListeners() {
+    Object.keys(this.DOMGen.branches).forEach((branchKey) => {
+      this.loadElementsFormKeyBranch(branchKey);
+    });
   }
 
   private initELmIndicator() {
@@ -86,63 +93,61 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     };
   }
 
-  private isElementVisibleViewportX(currentLeft: number): boolean {
-    return (
-      currentLeft >= this.scroll.scrollX &&
-      currentLeft <= this.scroll.viewportWidth + this.scroll.scrollX
-    );
-  }
-
-  private isElementVisibleViewportY(currentTop: number): boolean {
-    return (
-      currentTop >= this.scroll.scrollY &&
-      currentTop <= this.scroll.viewportHeight + this.scroll.scrollY
-    );
-  }
-
-  private updateRegisteredLayoutIndicators() {
+  private updateBranchVisibility(requiredBranchKey: string) {
     this.initELmIndicator();
 
     Object.keys(this.DOMGen.branches).forEach((branchKey) => {
-      // Ignore non array branches.
-      if (Array.isArray(this.DOMGen.branches[branchKey])) {
+      // Just the targeted branch.
+      if (requiredBranchKey === branchKey) {
+        // Init overflow state with no-overflow.
+        if (!this.siblingsOverflow[requiredBranchKey]) {
+          this.siblingsOverflow[requiredBranchKey] = {
+            x: false,
+            y: false,
+          };
+        }
+
         let prevIndex = 0;
+
+        const scroll = this.siblingsScrollElement[branchKey];
 
         (this.DOMGen.branches[branchKey] as string[]).forEach((elmID, i) => {
           if (elmID.length > 0) {
             if (this.registry[elmID].isPaused) {
-              this.registry[elmID].resume(
-                this.scroll.scrollX,
-                this.scroll.scrollY
-              );
+              this.registry[elmID].resume(scroll.scrollX, scroll.scrollY);
             }
 
-            let isVisible =
-              this.isElementVisibleViewportY(
-                this.registry[elmID].currentTop!
-              ) &&
-              this.isElementVisibleViewportX(this.registry[elmID].currentLeft!);
+            this.assignSiblingsBoundaries(
+              this.registry[elmID].keys.SK,
+              this.registry[elmID].offset!
+            );
+
+            const isVisibleY = scroll.isElementVisibleViewportY(
+              this.registry[elmID].currentTop!
+            );
+
+            const isVisibleX = scroll.isElementVisibleViewportX(
+              this.registry[elmID].currentLeft!
+            );
+
+            let isVisible = isVisibleY && isVisibleX;
 
             if (
               !isVisible &&
               !this.elmIndicator.exceptionToNextElm &&
               i > prevIndex
             ) {
+              // Detect overflow
+              this.siblingsOverflow[branchKey] = {
+                x: !isVisibleX,
+                y: !isVisibleY,
+              };
+
               this.elmIndicator.exceptionToNextElm = true;
 
               // Override the result.
               isVisible = true;
-
-              this.assignSiblingsBoundaries(
-                this.registry[elmID].keys.SK,
-                this.registry[elmID].offset!
-              );
             } else if (isVisible) {
-              this.assignSiblingsBoundaries(
-                this.registry[elmID].keys.SK,
-                this.registry[elmID].offset!
-              );
-
               if (this.elmIndicator.exceptionToNextElm) {
                 // In this case, we are moving from hidden to visible.
                 // Eg: 1, 2 are hidden the rest of the list is visible.
@@ -199,7 +204,9 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
    * @param element -
    */
   register(element: RegisterInput) {
-    if (!element.ref && !element.id) {
+    const hasRef = !!element.ref;
+
+    if (!hasRef && !element.id) {
       throw new Error(
         `DFlex: A valid unique id Or/and HTML element is required.`
       );
@@ -208,7 +215,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     /**
      * If element already exist in the store, then the reattach the reference.
      */
-    const id = element.id || element.ref?.id;
+    const id = element.id || element.ref!.id;
 
     if (!id) {
       throw new Error(`DFlex: A valid and unique id is required.`);
@@ -222,7 +229,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     if (!this.isInitialized) {
       this.init();
-      this.isPauseRegistration = false;
+      this.isInitialized = true;
     }
 
     if (this.registry[id]) {
@@ -238,67 +245,15 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       return;
     }
 
-    const isPaused = this.isPauseRegistration && this.hasVisibleElements;
-
     const coreInput = {
       id,
       depth: element.depth || 0,
       ref: element.ref || null,
-      scrollX: this.scroll.scrollX,
-      scrollY: this.scroll.scrollY,
-      isInitialized: true,
-      isPaused,
+      isInitialized: hasRef,
+      isPaused: true,
     };
 
     super.register(coreInput, CoreInstance);
-
-    if (isPaused) return;
-
-    const {
-      currentTop,
-      currentLeft,
-      offset,
-      keys: { SK, PK },
-    } = this.registry[id];
-
-    this.assignSiblingsBoundaries(SK, offset!);
-
-    const isVisibleY = this.isElementVisibleViewportY(currentTop!);
-    const isVisibleX = this.isElementVisibleViewportX(currentLeft!);
-
-    // same branch
-    this.elmIndicator.currentKy = `${SK}${PK}`;
-
-    if (isVisibleY && isVisibleX) {
-      this.hasVisibleElements = true;
-
-      if (!this.siblingsOverflow[this.registry[id].keys.SK]) {
-        // If we don't do this, and the list is not overflowing, then the object
-        // will be undefined.
-        this.siblingsOverflow[this.registry[id].keys.SK] = {
-          x: false,
-          y: false,
-        };
-      }
-    } else if (
-      !this.elmIndicator.exceptionToNextElm &&
-      this.elmIndicator.currentKy === this.elmIndicator.prevKy
-    ) {
-      this.elmIndicator.exceptionToNextElm = true;
-
-      // Stop registering the element process.
-      this.isPauseRegistration = true;
-
-      // Override the actual value.
-      this.registry[id].changeVisibility(true);
-
-      this.siblingsOverflow[this.registry[id].keys.SK] = {
-        x: !isVisibleX,
-        y: !isVisibleY,
-      };
-    }
-
-    this.elmIndicator.prevKy = this.elmIndicator.currentKy;
   }
 
   getELmOffsetById(id: string) {
@@ -370,17 +325,21 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     };
   }
 
-  destroy() {
+  dispose() {
     if (!this.isInitialized) return null;
-
-    this.scroll.destroy();
 
     this.isInitialized = false;
 
-    // Destroys all registered instances.
-    super.destroy();
+    window.removeEventListener("load", this.onLoadListeners);
 
     return null;
+  }
+
+  destroy() {
+    this.dispose();
+
+    // Destroys all registered instances.
+    super.destroy();
   }
 }
 
