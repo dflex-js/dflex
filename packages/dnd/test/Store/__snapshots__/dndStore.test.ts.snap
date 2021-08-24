@@ -4,127 +4,79 @@ exports[`DnD Store Element is initiated 1`] = `
 Object {
   "id-1": CoreInstance {
     "animatedFrame": null,
-    "currentLeft": 450,
-    "currentTop": 114,
-    "hasToTransform": false,
     "id": "id-1",
     "isInitialized": true,
-    "isPaused": false,
-    "isVisible": true,
+    "isPaused": true,
+    "isVisible": false,
     "keys": Object {
       "CHK": null,
       "PK": "1-0",
       "SK": "0-0",
-    },
-    "offset": Object {
-      "height": 50,
-      "left": 450,
-      "top": 114,
-      "width": 170,
     },
     "order": Object {
       "parent": 0,
       "self": 0,
     },
-    "prevTranslateY": Array [],
     "ref": <div
       data-index="0"
     />,
-    "translateX": 0,
-    "translateY": 0,
   },
   "id-2": CoreInstance {
     "animatedFrame": null,
-    "currentLeft": 450,
-    "currentTop": 172,
-    "hasToTransform": false,
     "id": "id-2",
     "isInitialized": true,
-    "isPaused": false,
-    "isVisible": true,
+    "isPaused": true,
+    "isVisible": false,
     "keys": Object {
       "CHK": null,
       "PK": "1-0",
       "SK": "0-0",
-    },
-    "offset": Object {
-      "height": 50,
-      "left": 450,
-      "top": 172,
-      "width": 170,
     },
     "order": Object {
       "parent": 0,
       "self": 1,
     },
-    "prevTranslateY": Array [],
     "ref": <div
       data-index="1"
     />,
-    "translateX": 0,
-    "translateY": 0,
   },
   "id-3": CoreInstance {
     "animatedFrame": null,
-    "currentLeft": 450,
-    "currentTop": 230,
-    "hasToTransform": false,
     "id": "id-3",
     "isInitialized": true,
-    "isPaused": false,
-    "isVisible": true,
+    "isPaused": true,
+    "isVisible": false,
     "keys": Object {
       "CHK": null,
       "PK": "1-0",
       "SK": "0-0",
-    },
-    "offset": Object {
-      "height": 50,
-      "left": 450,
-      "top": 230,
-      "width": 170,
     },
     "order": Object {
       "parent": 0,
       "self": 2,
     },
-    "prevTranslateY": Array [],
     "ref": <div
       data-index="2"
     />,
-    "translateX": 0,
-    "translateY": 0,
   },
   "id-4": CoreInstance {
     "animatedFrame": null,
-    "currentLeft": 450,
-    "currentTop": 288,
-    "hasToTransform": false,
     "id": "id-4",
     "isInitialized": true,
-    "isPaused": false,
-    "isVisible": true,
+    "isPaused": true,
+    "isVisible": false,
     "keys": Object {
       "CHK": null,
       "PK": "1-0",
       "SK": "0-0",
     },
-    "offset": Object {
-      "height": 50,
-      "left": 450,
-      "top": 288,
-      "width": 170,
-    },
     "order": Object {
       "parent": 0,
       "self": 3,
     },
-    "prevTranslateY": Array [],
     "ref": <div
       data-index="3"
     />,
-    "translateX": 0,
-    "translateY": 0,
   },
 }
 `;
@@ -142,34 +94,22 @@ Object {
   },
   "element": CoreInstance {
     "animatedFrame": null,
-    "currentLeft": 450,
-    "currentTop": 114,
-    "hasToTransform": false,
     "id": "id-1",
     "isInitialized": true,
-    "isPaused": false,
-    "isVisible": true,
+    "isPaused": true,
+    "isVisible": false,
     "keys": Object {
       "CHK": null,
       "PK": "1-0",
       "SK": "0-0",
     },
-    "offset": Object {
-      "height": 50,
-      "left": 450,
-      "top": 114,
-      "width": 170,
-    },
     "order": Object {
       "parent": 0,
       "self": 0,
     },
-    "prevTranslateY": Array [],
     "ref": <div
       data-index="0"
     />,
-    "translateX": 0,
-    "translateY": 0,
   },
   "parent": null,
 }
