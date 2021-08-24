@@ -1,19 +1,29 @@
 .list-container {
   margin-top: 88px;
   display: flex;
-  width: 41.53rem;
+  width: fit-content;
   background: #07718f;
 }
 
+.list-height-limited ul {
+  height: 10rem;
+  overflow-x: auto;
+}
+
+.list-height-fit ul {
+  width: 41.53rem;
+  height: fit-content;
+}
+
 .list-container ul {
-  /* display: flex; */
+  display: flex;
+  width: fit-content;
   flex-direction: column;
   list-style: none;
   margin: 10px;
   padding: 8px;
   border: 4px #bac5c7 solid;
   background: #cecece;
-  height: fit-content;
 }
 
 .list-container li {

@@ -20,6 +20,8 @@ import {
   Depth1,
   ComponentBasedEvent,
   ContainerBasedEvent,
+  ScrollMulti,
+  ScrollEssential,
 } from "./components";
 
 function App() {
@@ -32,6 +34,12 @@ function App() {
   return (
     <Router>
       <Switch>
+        <Route path="/scroll-multi">
+          <ScrollMulti />
+        </Route>
+        <Route path="/scroll">
+          <ScrollEssential />
+        </Route>
         <Route path="/extended">
           <ExtendedList />
         </Route>
