@@ -49,6 +49,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.isDOM = false;
 
     this.onLoadListeners = this.onLoadListeners.bind(this);
+    this.updateBranchVisibility = this.updateBranchVisibility.bind(this);
   }
 
   private init() {
@@ -70,15 +71,12 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     const scroll = new Scroll({
       element: this.registry[firstElemID].ref!,
       requiredBranchKey: key,
-      scrollEventCallback: hasSiblings
-        ? this.updateRegisteredLayoutIndicators
-        : null,
+      scrollEventCallback: hasSiblings ? this.updateBranchVisibility : null,
     });
-    console.log("file: DnDStoreImp.ts ~ line 77 ~ scroll", scroll);
 
     this.siblingsScrollElement[key] = scroll;
 
-    if (hasSiblings) this.updateRegisteredLayoutIndicators(key);
+    if (hasSiblings) this.updateBranchVisibility(key);
   }
 
   onLoadListeners() {
@@ -95,7 +93,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     };
   }
 
-  private updateRegisteredLayoutIndicators(requiredBranchKey: string) {
+  private updateBranchVisibility(requiredBranchKey: string) {
     this.initELmIndicator();
 
     Object.keys(this.DOMGen.branches).forEach((branchKey) => {
