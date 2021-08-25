@@ -33,29 +33,6 @@ function isStaticallyPositioned(element: Element) {
   return position === "static";
 }
 
-function getScrollContainer(element: Element | null) {
-  if (!element) return getScrollFromDocument();
-
-  const computedStyle = getComputedStyle(element);
-
-  const position = computedStyle.getPropertyValue("position");
-
-  const excludeStaticParents = position === "absolute";
-
-  const scrollContainer = loopInDOM(element, (parent) => {
-    if (excludeStaticParents && isStaticallyPositioned(parent)) {
-      return false;
-    }
-    return hasOverflow(parent);
-  });
-
-  if (position === "fixed" || !scrollContainer) {
-    return getScrollFromDocument();
-  }
-
-  return scrollContainer;
-}
-
 class Scroll implements ScrollInterface {
   /**
    * Is set by controller when needed. Maybe is not provided, or not enabled.
@@ -68,17 +45,25 @@ class Scroll implements ScrollInterface {
 
   viewportWidth!: number;
 
+  offsetHeight?: number;
+
+  offsetWidth?: number;
+
   scrollEventCallback: Function | null;
 
   scrollX!: number;
 
   scrollY!: number;
 
+  scrollRect: ScrollInterface["scrollRect"];
+
   scrollHeight!: number;
 
   scrollContainer!: Element;
 
   hasThrottledFrame: number | null;
+
+  hasDocumentAsContainer: boolean;
 
   constructor({
     element,
@@ -92,40 +77,102 @@ class Scroll implements ScrollInterface {
     this.threshold = null;
     this.hasThrottledFrame = null;
 
+    this.scrollRect = {
+      height: 0,
+      width: 0,
+      left: 0,
+      top: 0,
+    };
+
     this.siblingKey = requiredBranchKey;
 
     this.setScrollContainer(element);
 
-    this.animatedScrollListener = this.animatedScrollListener.bind(this);
-    this.animatedResizeListener = this.animatedResizeListener.bind(this);
-
     this.setScrollCoordinates();
     this.setViewportAndUpdateScrollContainer();
 
-    window.addEventListener("resize", this.animatedResizeListener);
-    window.addEventListener("scroll", this.animatedScrollListener);
-
     this.scrollEventCallback = scrollEventCallback;
+    this.hasDocumentAsContainer = false;
+  }
+
+  private getScrollContainer(element: Element | null) {
+    this.hasDocumentAsContainer = false;
+
+    if (!element) {
+      this.hasDocumentAsContainer = true;
+      return getScrollFromDocument();
+    }
+
+    const computedStyle = getComputedStyle(element);
+
+    const position = computedStyle.getPropertyValue("position");
+
+    const excludeStaticParents = position === "absolute";
+
+    const scrollContainer = loopInDOM(element, (parent) => {
+      if (excludeStaticParents && isStaticallyPositioned(parent)) {
+        return false;
+      }
+      return hasOverflow(parent);
+    });
+
+    if (position === "fixed" || !scrollContainer) {
+      this.hasDocumentAsContainer = true;
+      return getScrollFromDocument();
+    }
+
+    return scrollContainer;
+  }
+
+  private setScrollRect() {
+    const { scrollHeight } = this.scrollContainer;
+
+    this.scrollHeight = scrollHeight;
+
+    if (this.hasDocumentAsContainer) {
+      this.scrollRect = {
+        height: this.viewportHeight,
+        width: this.viewportWidth,
+        left: 0,
+        top: 0,
+      };
+
+      return;
+    }
+
+    const { height, width, left, top } =
+      this.scrollContainer.getBoundingClientRect();
+
+    this.scrollRect = { height, width, left, top };
+  }
+
+  private setScrollListener(attach = true) {
+    const type = attach ? "addEventListener" : "removeEventListener";
+
+    const opts = { passive: true };
+
+    if (this.hasDocumentAsContainer) {
+      window[type]("scroll", this.animatedScrollListener, opts);
+      window[type]("resize", this.animatedResizeListener, opts);
+
+      return;
+    }
+
+    this.scrollContainer[type]("scroll", this.animatedScrollListener, opts);
+    this.scrollContainer[type]("resize", this.animatedResizeListener, opts);
   }
 
   setScrollContainer(element: Element) {
-    this.scrollContainer = getScrollContainer(element);
-    this.scrollHeight = this.scrollContainer.scrollHeight;
+    this.scrollContainer = this.getScrollContainer(element);
+    this.setScrollRect();
+    this.setScrollListener();
   }
 
   setThresholdMatrix(threshold?: ThresholdPercentages) {
     if (threshold) this.threshold = new Threshold(threshold);
 
-    this.threshold!.updateElementThresholdMatrix(
-      {
-        width: this.viewportWidth,
-        height: this.viewportHeight,
-        top: 0,
-        left: 0,
-      },
-      true,
-      true
-    );
+    // @ts-expect-error
+    this.threshold!.updateElementThresholdMatrix(this.offset, true, true);
   }
 
   private setScrollCoordinates() {
@@ -201,26 +248,24 @@ class Scroll implements ScrollInterface {
     });
   }
 
-  private animatedScrollListener() {
+  private animatedScrollListener = () => {
     this.animatedListener.call(
       this,
       "setScrollCoordinates",
       this.scrollEventCallback
     );
-  }
+  };
 
-  private animatedResizeListener() {
+  private animatedResizeListener = () => {
     this.animatedListener.call(
       this,
       "setViewportAndUpdateScrollContainer",
       null
     );
-  }
+  };
 
   destroy() {
-    window.removeEventListener("resize", this.animatedResizeListener);
-    window.removeEventListener("scroll", this.animatedScrollListener);
-
+    this.setScrollListener(false);
     // @ts-expect-error
     this.scrollContainer = null;
   }

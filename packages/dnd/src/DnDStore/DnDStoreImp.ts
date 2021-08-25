@@ -96,6 +96,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   private updateBranchVisibility(requiredBranchKey: string) {
     this.initELmIndicator();
 
+    console.log("updateBranchVisibility", requiredBranchKey);
+
     Object.keys(this.DOMGen.branches).forEach((branchKey) => {
       // Just the targeted branch.
       if (requiredBranchKey === branchKey) {

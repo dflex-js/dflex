@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { Rect } from "packages/core-instance/src/types";
 import type { ThresholdInterface } from "../Threshold";
 
 export interface ScrollInput {
@@ -13,6 +14,7 @@ export interface ScrollInput {
 
 export interface ScrollInterface {
   threshold: ThresholdInterface | null;
+  scrollRect: Rect;
   viewportHeight: number;
   viewportWidth: number;
   scrollEventCallback: Function | null;
@@ -21,6 +23,7 @@ export interface ScrollInterface {
   scrollHeight: number;
   scrollContainer: Element;
   hasThrottledFrame: number | null;
+  hasDocumentAsContainer: boolean;
   isElementVisibleViewportX(currentLeft: number): boolean;
   isElementVisibleViewportY(currentTop: number): boolean;
   setThresholdMatrix(
