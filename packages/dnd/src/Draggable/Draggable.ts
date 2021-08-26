@@ -6,7 +6,7 @@
  */
 
 import { AbstractDraggable } from "@dflex/draggable";
-import type { Coordinates } from "@dflex/draggable";
+import type { DraggedStyle, Coordinates } from "@dflex/draggable";
 
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
@@ -77,6 +77,10 @@ class Draggable
 
   private initX: number;
 
+  private isDraggedPositionFixed: boolean;
+
+  private changeToFixedStyleProps: DraggedStyle;
+
   constructor(id: string, initCoordinates: Coordinates, opts: FinalDndOpts) {
     const { element, parent } = store.getElmTreeById(id);
 
@@ -107,6 +111,25 @@ class Draggable
     const siblings = store.getElmSiblingsListById(this.draggedElm.id);
 
     this.isViewportRestricted = true;
+    this.isDraggedPositionFixed = false;
+
+    this.changeToFixedStyleProps = [
+      {
+        prop: "top",
+        dragValue: `${this.draggedElm.currentTop}px`,
+        afterDragValue: "",
+      },
+      {
+        prop: "left",
+        dragValue: `${this.draggedElm.currentLeft}px`,
+        afterDragValue: "",
+      },
+      {
+        prop: "position",
+        dragValue: "fixed",
+        afterDragValue: "",
+      },
+    ];
 
     if (siblings === null || (!hasOverflowY && !hasOverflowX)) {
       // Override the default options. (FYI, this is the only privilege I have.)
@@ -119,12 +142,14 @@ class Draggable
       store.siblingsScrollElement[SK].setThresholdMatrix(this.scroll.threshold);
 
       if (!store.siblingsScrollElement[SK].hasDocumentAsContainer) {
+        this.isDraggedPositionFixed = true;
+
         /**
          * When the scroll is the document it's good. The restriction is to the
          * document which guarantees the free movement. Otherwise, let's do it.
          * Change the position and transform siblings.
          */
-        this.setDraggedPositionToFixed();
+        this.changeStyle(this.changeToFixedStyleProps, true);
       }
     }
 
@@ -216,12 +241,6 @@ class Draggable
       siblings !== null &&
       (opts.restrictionsStatus.isContainerRestricted ||
         opts.restrictionsStatus.isSelfRestricted);
-  }
-
-  private setDraggedPositionToFixed() {
-    this.draggedElm.ref!.style.top = `${this.draggedElm.currentTop}px`;
-    this.draggedElm.ref!.style.left = `${this.draggedElm.currentLeft}px`;
-    this.draggedElm.ref!.style.position = "fixed";
   }
 
   /**
@@ -540,7 +559,7 @@ class Draggable
     );
   }
 
-  setDraggedPosition(isFallback: boolean) {
+  setDraggedTransformPosition(isFallback: boolean) {
     const siblings = store.getElmSiblingsListById(this.draggedElm.id);
 
     /**
@@ -603,8 +622,11 @@ class Draggable
 
   endDragging(isFallback: boolean) {
     this.setDragged(false);
+    this.setDraggedTransformPosition(isFallback);
 
-    this.setDraggedPosition(isFallback);
+    if (this.isDraggedPositionFixed) {
+      this.changeStyle(this.changeToFixedStyleProps, false);
+    }
   }
 }
 

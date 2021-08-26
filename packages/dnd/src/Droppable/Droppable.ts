@@ -730,13 +730,6 @@ class Droppable {
         return;
       }
 
-      console.log(
-        "fuck no",
-        this.draggable.scroll.enable &&
-          this.scrollAnimatedFrame === null &&
-          store.siblingsScrollElement[SK].hasThrottledFrame === null
-      );
-
       /**
        * Manage scrolling.
        */
