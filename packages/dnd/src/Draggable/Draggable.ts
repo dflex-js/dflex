@@ -102,13 +102,14 @@ class Draggable
 
     this.scroll = opts.scroll;
 
+    const { hasOverflowX, hasOverflowY } = store.siblingsScrollElement[SK];
+
     const siblings = store.getElmSiblingsListById(this.draggedElm.id);
 
-    if (
-      siblings === null ||
-      (!store.siblingsScrollElement[SK].hasOverflowY &&
-        !store.siblingsScrollElement[SK].hasOverflowY)
-    ) {
+    this.isViewportRestricted = true;
+
+    if (siblings === null || (!hasOverflowY && !hasOverflowX)) {
+      // Override the default options. (FYI, this is the only privilege I have.)
       this.scroll.enable = false;
     }
 
@@ -116,8 +117,15 @@ class Draggable
       this.isViewportRestricted = false;
 
       store.siblingsScrollElement[SK].setThresholdMatrix(this.scroll.threshold);
-    } else {
-      this.isViewportRestricted = true;
+
+      if (!store.siblingsScrollElement[SK].hasDocumentAsContainer) {
+        /**
+         * When the scroll is the document it's good. The restriction is to the
+         * document which guarantees the free movement. Otherwise, let's do it.
+         * Change the position and transform siblings.
+         */
+        this.setDraggedPositionToFixed();
+      }
     }
 
     const siblingsBoundaries = store.siblingsBoundaries[SK];
@@ -208,6 +216,12 @@ class Draggable
       siblings !== null &&
       (opts.restrictionsStatus.isContainerRestricted ||
         opts.restrictionsStatus.isSelfRestricted);
+  }
+
+  private setDraggedPositionToFixed() {
+    this.draggedElm.ref!.style.top = `${this.draggedElm.currentTop}px`;
+    this.draggedElm.ref!.style.left = `${this.draggedElm.currentLeft}px`;
+    this.draggedElm.ref!.style.position = "fixed";
   }
 
   /**

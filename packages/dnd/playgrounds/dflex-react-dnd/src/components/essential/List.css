@@ -7,7 +7,7 @@
 
 .list-height-limited ul {
   height: 10rem;
-  overflow-x: auto;
+  overflow-y: scroll;
 }
 
 .list-height-fit ul {
@@ -27,7 +27,6 @@
 }
 
 .list-container li {
-  position: relative;
   width: 150px;
   height: 30px;
   box-shadow: none;

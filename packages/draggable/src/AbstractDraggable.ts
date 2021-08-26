@@ -92,7 +92,9 @@ class AbstractDraggable<T extends AbstractCoreInterface>
         this.draggedElm.ref!.style[prop] = dragValue;
       });
 
-      getSelection()?.removeAllRanges();
+      if (getSelection()) {
+        getSelection()!.removeAllRanges();
+      }
 
       this.draggedElm.ref!.setAttribute("dragged", "true");
 

@@ -206,12 +206,10 @@ class Scroll implements ScrollInterface {
     this.scrollContainer[type]("resize", this.animatedResizeListener, opts);
   }
 
-  setThresholdMatrix(threshold?: ThresholdPercentages) {
-    if (threshold) this.threshold = new Threshold(threshold);
+  setThresholdMatrix(threshold: ThresholdPercentages) {
+    this.threshold = new Threshold(threshold);
 
-    if (this.threshold) {
-      this.threshold.updateElementThresholdMatrix(this.scrollRect, true, true);
-    }
+    this.threshold.updateElementThresholdMatrix(this.scrollRect, true, true);
   }
 
   private setScrollCoordinates() {
