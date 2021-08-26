@@ -62,6 +62,14 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       ? this.DOMGen.branches[key][0]
       : (this.DOMGen.branches[key] as string);
 
+    if (
+      !this.registry[firstElemID].isPaused &&
+      this.siblingsScrollElement[key]
+    ) {
+      // Avoid multiple calls that runs function multiple times.
+      return;
+    }
+
     this.registry[firstElemID].resume(0, 0);
     this.registry[firstElemID].isPaused = true;
 

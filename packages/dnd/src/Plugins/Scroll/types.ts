@@ -31,6 +31,5 @@ export interface ScrollInterface {
   setThresholdMatrix(
     threshold: ThresholdInterface["thresholdPercentages"]
   ): void;
-  setScrollContainer(element: Element): void;
   destroy(): void;
 }

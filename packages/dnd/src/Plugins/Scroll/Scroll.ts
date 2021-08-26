@@ -71,7 +71,7 @@ class Scroll implements ScrollInterface {
 
   hasThrottledFrame: number | null;
 
-  hasDocumentAsContainer: boolean;
+  hasDocumentAsContainer!: boolean;
 
   constructor({
     element,
@@ -94,13 +94,14 @@ class Scroll implements ScrollInterface {
 
     this.siblingKey = requiredBranchKey;
 
-    this.setScrollContainer(element);
+    this.scrollContainer = this.getScrollContainer(element);
 
+    this.setScrollRect();
     this.setScrollCoordinates();
-    this.setScrollRectAndThresholdMatrix();
+
+    this.setScrollListener();
 
     this.scrollEventCallback = scrollEventCallback;
-    this.hasDocumentAsContainer = false;
   }
 
   private getScrollContainer(element: Element | null) {
@@ -132,7 +133,7 @@ class Scroll implements ScrollInterface {
     return scrollContainer;
   }
 
-  private setScrollRectAndThresholdMatrix() {
+  private setScrollRect() {
     const { scrollHeight, scrollWidth } = this.scrollContainer;
 
     this.scrollHeight = scrollHeight;
@@ -173,13 +174,13 @@ class Scroll implements ScrollInterface {
      */
     this.allowDynamicVisibility = false;
 
-    if (this.hasOverflowY && scrollHeight <= this.scrollRect.height / 2) {
+    if (this.hasOverflowY && scrollHeight / 2 >= this.scrollRect.height) {
       this.allowDynamicVisibility = true;
 
       return;
     }
 
-    if (this.hasOverflowX && scrollWidth <= this.scrollRect.width / 2) {
+    if (this.hasOverflowX && scrollWidth / 2 >= this.scrollRect.width) {
       this.allowDynamicVisibility = true;
     }
   }
@@ -203,12 +204,6 @@ class Scroll implements ScrollInterface {
 
     this.scrollContainer[type]("scroll", this.animatedScrollListener, opts);
     this.scrollContainer[type]("resize", this.animatedResizeListener, opts);
-  }
-
-  setScrollContainer(element: Element) {
-    this.scrollContainer = this.getScrollContainer(element);
-    this.setScrollRectAndThresholdMatrix();
-    this.setScrollListener();
   }
 
   setThresholdMatrix(threshold?: ThresholdPercentages) {
@@ -251,7 +246,7 @@ class Scroll implements ScrollInterface {
   }
 
   private animatedListener(
-    setter: "setScrollRectAndThresholdMatrix" | "setScrollCoordinates",
+    setter: "setScrollRect" | "setScrollCoordinates",
     cb: Function | null
   ) {
     if (this.hasThrottledFrame !== null) return;
@@ -275,7 +270,7 @@ class Scroll implements ScrollInterface {
   };
 
   private animatedResizeListener = () => {
-    this.animatedListener.call(this, "setScrollRectAndThresholdMatrix", null);
+    this.animatedListener.call(this, "setScrollRect", null);
   };
 
   destroy() {
