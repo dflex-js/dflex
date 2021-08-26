@@ -15,15 +15,17 @@ export interface ScrollInput {
 export interface ScrollInterface {
   threshold: ThresholdInterface | null;
   scrollRect: Rect;
-  viewportHeight: number;
-  viewportWidth: number;
-  scrollEventCallback: Function | null;
   scrollX: number;
   scrollY: number;
   scrollHeight: number;
+  scrollWidth: number;
+  hasOverflowX: boolean;
+  hasOverflowY: boolean;
+  allowDynamicVisibility: boolean;
   scrollContainer: Element;
-  hasThrottledFrame: number | null;
   hasDocumentAsContainer: boolean;
+  scrollEventCallback: Function | null;
+  hasThrottledFrame: number | null;
   isElementVisibleViewportX(currentLeft: number): boolean;
   isElementVisibleViewportY(currentTop: number): boolean;
   setThresholdMatrix(

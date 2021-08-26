@@ -59,6 +59,14 @@ class Scroll implements ScrollInterface {
 
   scrollHeight!: number;
 
+  scrollWidth!: number;
+
+  hasOverflowX!: boolean;
+
+  hasOverflowY!: boolean;
+
+  allowDynamicVisibility!: boolean;
+
   scrollContainer!: Element;
 
   hasThrottledFrame: number | null;
@@ -89,7 +97,7 @@ class Scroll implements ScrollInterface {
     this.setScrollContainer(element);
 
     this.setScrollCoordinates();
-    this.setViewportAndUpdateScrollContainer();
+    this.setScrollRectAndThresholdMatrix();
 
     this.scrollEventCallback = scrollEventCallback;
     this.hasDocumentAsContainer = false;
@@ -124,29 +132,64 @@ class Scroll implements ScrollInterface {
     return scrollContainer;
   }
 
-  private setScrollRect() {
-    const { scrollHeight } = this.scrollContainer;
+  private setScrollRectAndThresholdMatrix() {
+    const { scrollHeight, scrollWidth } = this.scrollContainer;
 
     this.scrollHeight = scrollHeight;
+    this.scrollWidth = scrollWidth;
 
     if (this.hasDocumentAsContainer) {
+      const viewportHeight = Math.max(
+        this.scrollContainer.clientHeight || 0,
+        window.innerHeight || 0
+      );
+
+      const viewportWidth = Math.max(
+        this.scrollContainer.clientWidth || 0,
+        window.innerWidth || 0
+      );
+
       this.scrollRect = {
-        height: this.viewportHeight,
-        width: this.viewportWidth,
+        height: viewportHeight,
+        width: viewportWidth,
         left: 0,
         top: 0,
       };
+    } else {
+      const { height, width, left, top } =
+        this.scrollContainer.getBoundingClientRect();
+
+      this.scrollRect = { height, width, left, top };
+    }
+
+    this.hasOverflowY = this.scrollRect.height < scrollHeight;
+
+    this.hasOverflowX = this.scrollRect.width < scrollWidth;
+
+    /**
+     * Deciding when to active visibility and pausing for element branch. We
+     * don't want to active a method with a listeners because just two elements
+     * are not visible.
+     */
+    this.allowDynamicVisibility = false;
+
+    if (this.hasOverflowY && scrollHeight <= this.scrollRect.height / 2) {
+      this.allowDynamicVisibility = true;
 
       return;
     }
 
-    const { height, width, left, top } =
-      this.scrollContainer.getBoundingClientRect();
-
-    this.scrollRect = { height, width, left, top };
+    if (this.hasOverflowX && scrollWidth <= this.scrollRect.width / 2) {
+      this.allowDynamicVisibility = true;
+    }
   }
 
   private setScrollListener(attach = true) {
+    /**
+     * No need to set scroll listener if there is no scroll.
+     */
+    if (!this.hasOverflowX && !this.hasOverflowY) return;
+
     const type = attach ? "addEventListener" : "removeEventListener";
 
     const opts = { passive: true };
@@ -164,15 +207,16 @@ class Scroll implements ScrollInterface {
 
   setScrollContainer(element: Element) {
     this.scrollContainer = this.getScrollContainer(element);
-    this.setScrollRect();
+    this.setScrollRectAndThresholdMatrix();
     this.setScrollListener();
   }
 
   setThresholdMatrix(threshold?: ThresholdPercentages) {
     if (threshold) this.threshold = new Threshold(threshold);
 
-    // @ts-expect-error
-    this.threshold!.updateElementThresholdMatrix(this.offset, true, true);
+    if (this.threshold) {
+      this.threshold.updateElementThresholdMatrix(this.scrollRect, true, true);
+    }
   }
 
   private setScrollCoordinates() {
@@ -192,48 +236,22 @@ class Scroll implements ScrollInterface {
     return isUpdated;
   }
 
-  private setViewportAndUpdateScrollContainer() {
-    const viewportHeight = Math.max(
-      this.scrollContainer.clientHeight || 0,
-      window.innerHeight || 0
-    );
-
-    const viewportWidth = Math.max(
-      this.scrollContainer.clientWidth || 0,
-      window.innerWidth || 0
-    );
-
-    const isUpdated =
-      viewportHeight !== this.viewportHeight ||
-      viewportWidth !== this.viewportWidth;
-
-    this.viewportHeight = viewportHeight;
-    this.viewportWidth = viewportWidth;
-
-    // Don't update if it's not initialized.
-    if (isUpdated && this.scrollContainer && this.threshold) {
-      this.setThresholdMatrix();
-    }
-
-    return isUpdated;
-  }
-
   isElementVisibleViewportX(currentLeft: number): boolean {
     return (
       currentLeft >= this.scrollX &&
-      currentLeft <= this.viewportWidth + this.scrollX
+      currentLeft <= this.scrollRect.width + this.scrollX
     );
   }
 
   isElementVisibleViewportY(currentTop: number): boolean {
     return (
       currentTop >= this.scrollY &&
-      currentTop <= this.viewportHeight + this.scrollY
+      currentTop <= this.scrollRect.height + this.scrollY
     );
   }
 
   private animatedListener(
-    setter: "setViewportAndUpdateScrollContainer" | "setScrollCoordinates",
+    setter: "setScrollRectAndThresholdMatrix" | "setScrollCoordinates",
     cb: Function | null
   ) {
     if (this.hasThrottledFrame !== null) return;
@@ -257,11 +275,7 @@ class Scroll implements ScrollInterface {
   };
 
   private animatedResizeListener = () => {
-    this.animatedListener.call(
-      this,
-      "setViewportAndUpdateScrollContainer",
-      null
-    );
+    this.animatedListener.call(this, "setScrollRectAndThresholdMatrix", null);
   };
 
   destroy() {

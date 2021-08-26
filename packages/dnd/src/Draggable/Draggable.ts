@@ -106,7 +106,8 @@ class Draggable
 
     if (
       siblings === null ||
-      (!store.siblingsOverflow[SK].x && !store.siblingsOverflow[SK].y)
+      (!store.siblingsScrollElement[SK].hasOverflowY &&
+        !store.siblingsScrollElement[SK].hasOverflowY)
     ) {
       this.scroll.enable = false;
     }
@@ -340,59 +341,59 @@ class Draggable
    * @param y -
    */
   dragAt(x: number, y: number) {
-    let filteredY = y;
-    let filteredX = x;
+    const filteredY = y;
+    const filteredX = x;
 
-    if (this.axesFilterNeeded) {
-      const { SK } = store.registry[this.draggedElm.id].keys;
+    // if (this.axesFilterNeeded) {
+    //   const { SK } = store.registry[this.draggedElm.id].keys;
 
-      const { top, bottom, maxLeft, minRight } = store.siblingsBoundaries[SK];
+    //   const { top, bottom, maxLeft, minRight } = store.siblingsBoundaries[SK];
 
-      if (this.restrictionsStatus.isContainerRestricted) {
-        filteredX = this.axesXFilter(
-          x,
-          maxLeft,
-          minRight,
-          this.restrictions.container.allowLeavingFromLeft,
-          this.restrictions.container.allowLeavingFromRight,
+    //   if (this.restrictionsStatus.isContainerRestricted) {
+    //     filteredX = this.axesXFilter(
+    //       x,
+    //       maxLeft,
+    //       minRight,
+    //       this.restrictions.container.allowLeavingFromLeft,
+    //       this.restrictions.container.allowLeavingFromRight,
 
-          false
-        );
-        filteredY = this.axesYFilter(
-          y,
-          top,
-          bottom,
-          this.restrictions.container.allowLeavingFromTop,
-          this.restrictions.container.allowLeavingFromBottom,
-          true
-        );
-      } else if (this.restrictionsStatus.isSelfRestricted) {
-        filteredX = this.axesXFilter(
-          x,
-          maxLeft,
-          minRight,
-          this.restrictions.self.allowLeavingFromLeft,
-          this.restrictions.self.allowLeavingFromRight,
-          false
-        );
-        filteredY = this.axesYFilter(
-          y,
-          this.draggedElm.currentTop!,
-          this.draggedElm.currentTop! + this.draggedElm.offset!.height,
-          this.restrictions.self.allowLeavingFromTop,
-          this.restrictions.self.allowLeavingFromBottom,
-          false
-        );
-      }
-    } else if (this.isViewportRestricted) {
-      const { SK } = store.registry[this.draggedElm.id].keys;
+    //       false
+    //     );
+    //     filteredY = this.axesYFilter(
+    //       y,
+    //       top,
+    //       bottom,
+    //       this.restrictions.container.allowLeavingFromTop,
+    //       this.restrictions.container.allowLeavingFromBottom,
+    //       true
+    //     );
+    //   } else if (this.restrictionsStatus.isSelfRestricted) {
+    //     filteredX = this.axesXFilter(
+    //       x,
+    //       maxLeft,
+    //       minRight,
+    //       this.restrictions.self.allowLeavingFromLeft,
+    //       this.restrictions.self.allowLeavingFromRight,
+    //       false
+    //     );
+    //     filteredY = this.axesYFilter(
+    //       y,
+    //       this.draggedElm.currentTop!,
+    //       this.draggedElm.currentTop! + this.draggedElm.offset!.height,
+    //       this.restrictions.self.allowLeavingFromTop,
+    //       this.restrictions.self.allowLeavingFromBottom,
+    //       false
+    //     );
+    //   }
+    // } else if (this.isViewportRestricted) {
+    //   const { SK } = store.registry[this.draggedElm.id].keys;
 
-      const { viewportHeight, viewportWidth } = store.siblingsScrollElement[SK];
+    //   const { height, width } = store.siblingsScrollElement[SK].scrollRect;
 
-      // TODO: Fix this when scroll is implemented.
-      filteredX = this.axesXFilter(x, 0, viewportWidth, false, false, true);
-      filteredY = this.axesYFilter(y, 0, viewportHeight, false, false, true);
-    }
+    //   // TODO: Fix this when scroll is implemented.
+    //   filteredX = this.axesXFilter(x, 0, width, false, false, true);
+    //   filteredY = this.axesYFilter(y, 0, height, false, false, true);
+    // }
 
     this.translate(filteredX, filteredY);
 
