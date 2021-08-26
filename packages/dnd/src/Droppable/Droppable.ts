@@ -99,6 +99,12 @@ class Droppable {
      * scroll with dragging to ensure both are executed in the same frame.
      */
     this.regularDragging = true;
+
+    if (this.draggable.isDraggedPositionFixed) {
+      // @ts-expect-error
+      this.draggable.changeStyle(this.draggable.changeToFixedStyleProps, true);
+      this.moveDown(1);
+    }
   }
 
   /**
@@ -716,12 +722,6 @@ class Droppable {
     const { SK } = store.registry[this.draggable.draggedElm.id].keys;
 
     this.draggable.setDraggedMovingDown(y);
-
-    console.log(
-      "fuck yeah",
-      this.draggable.scroll.enable,
-      this.draggable.isOutThreshold()
-    );
 
     if (this.draggable.isOutThreshold()) {
       if (!this.isListLocked) {

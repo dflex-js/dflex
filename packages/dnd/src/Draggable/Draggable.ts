@@ -77,7 +77,7 @@ class Draggable
 
   private initX: number;
 
-  private isDraggedPositionFixed: boolean;
+  isDraggedPositionFixed: boolean;
 
   private changeToFixedStyleProps: DraggedStyle;
 
@@ -142,14 +142,12 @@ class Draggable
       store.siblingsScrollElement[SK].setThresholdMatrix(this.scroll.threshold);
 
       if (!store.siblingsScrollElement[SK].hasDocumentAsContainer) {
-        this.isDraggedPositionFixed = true;
-
         /**
          * When the scroll is the document it's good. The restriction is to the
          * document which guarantees the free movement. Otherwise, let's do it.
          * Change the position and transform siblings.
          */
-        this.changeStyle(this.changeToFixedStyleProps, true);
+        // this.isDraggedPositionFixed = true;
       }
     }
 
