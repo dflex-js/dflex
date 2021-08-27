@@ -189,21 +189,21 @@ class Scroll implements ScrollInterface {
     /**
      * No need to set scroll listener if there is no scroll.
      */
-    if (!this.hasOverflowX && !this.hasOverflowY) return;
+    const hasScrollListener = this.hasOverflowX || this.hasOverflowY;
 
     const type = attach ? "addEventListener" : "removeEventListener";
 
+    const container = this.hasDocumentAsContainer
+      ? window
+      : this.scrollContainer;
+
     const opts = { passive: true };
 
-    if (this.hasDocumentAsContainer) {
-      window[type]("scroll", this.animatedScrollListener, opts);
-      window[type]("resize", this.animatedResizeListener, opts);
-
-      return;
+    if (hasScrollListener) {
+      container[type]("scroll", this.animatedScrollListener, opts);
     }
 
-    this.scrollContainer[type]("scroll", this.animatedScrollListener, opts);
-    this.scrollContainer[type]("resize", this.animatedResizeListener, opts);
+    container[type]("resize", this.animatedResizeListener, opts);
   }
 
   setThresholdMatrix(threshold: ThresholdPercentages) {

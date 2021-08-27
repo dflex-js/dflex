@@ -109,7 +109,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     requiredBranchKey: string,
     isAllVisible = false
   ) {
-    console.log("updateBranchVisibility", requiredBranchKey);
+    // console.log("updateBranchVisibility", requiredBranchKey);
 
     Object.keys(this.DOMGen.branches).forEach((branchKey) => {
       // Just the targeted branch.

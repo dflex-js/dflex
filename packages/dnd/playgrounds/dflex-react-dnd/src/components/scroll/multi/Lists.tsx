@@ -34,7 +34,7 @@ const ID_PARENT_2 = "scroll-p2";
 const ID_PARENT_3 = "scroll-p3";
 
 const Lists = () => (
-  <Container className="list-container list-height-limited">
+  <Container className="list-container list-container-scroll list-height-limited">
     <Core id={ID_PARENT_1} component="ul" depth={1}>
       {firstContainer.map(({ label, id }) => (
         <Core depth={0} id={id} key={`k${id}`} component="li">
