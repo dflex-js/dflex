@@ -91,7 +91,7 @@ class Draggable
      * all the branch is updated.
      */
     if (!store.siblingsScrollElement[SK]) {
-      store.loadElementsFormKeyBranch(SK);
+      store.initSiblingsScrollAndVisibility(SK);
     }
 
     super(element, initCoordinates);

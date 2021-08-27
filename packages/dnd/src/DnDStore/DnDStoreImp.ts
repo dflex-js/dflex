@@ -55,7 +55,93 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     window.onbeforeunload = this.dispose();
   }
 
-  loadElementsFormKeyBranch(key: string) {
+  private initELmIndicator() {
+    this.elmIndicator = {
+      currentKy: "",
+      prevKy: "",
+      exceptionToNextElm: false,
+    };
+  }
+
+  private updateBranchVisibility(
+    requiredBranchKey: string,
+    allowDynamicVisibility: boolean
+  ) {
+    const requiredBranch = this.DOMGen.branches[requiredBranchKey];
+
+    const scroll = this.siblingsScrollElement[requiredBranchKey];
+
+    if (!scroll || !requiredBranch) {
+      if (process.env.NODE_ENV === "development") {
+        // eslint-disable-next-line no-console
+        console.error(`Scroll and/or Sibling branch is not found`);
+      }
+      return;
+    }
+
+    this.initELmIndicator();
+    let prevIndex = 0;
+
+    // Should always have an array but just in case.
+    const branch = Array.isArray(requiredBranch)
+      ? requiredBranch
+      : [requiredBranch];
+
+    branch.forEach((elmID, i) => {
+      if (elmID.length > 0) {
+        if (this.registry[elmID].isPaused) {
+          this.registry[elmID].resume(scroll.scrollX, scroll.scrollY);
+        }
+
+        this.assignSiblingsBoundaries(
+          this.registry[elmID].keys.SK,
+          this.registry[elmID].offset!
+        );
+
+        let isVisible = true;
+        let isVisibleY = true;
+        let isVisibleX = true;
+
+        if (allowDynamicVisibility) {
+          isVisibleY = scroll.isElementVisibleViewportY(
+            this.registry[elmID].currentTop!
+          );
+
+          isVisibleX = scroll.isElementVisibleViewportX(
+            this.registry[elmID].currentLeft!
+          );
+
+          isVisible = isVisibleY && isVisibleX;
+
+          if (
+            !isVisible &&
+            !this.elmIndicator.exceptionToNextElm &&
+            i > prevIndex
+          ) {
+            this.elmIndicator.exceptionToNextElm = true;
+
+            // Override the result.
+            isVisible = true;
+          } else if (isVisible) {
+            if (this.elmIndicator.exceptionToNextElm) {
+              // In this case, we are moving from hidden to visible.
+              // Eg: 1, 2 are hidden the rest of the list is visible.
+              // But, there's a possibility that the rest of the branch elements
+              // are hidden.
+              // Eg: 1, 2: hidden 3, 4, 5, 6, 7:visible 8, 9, 10: hidden.
+              this.initELmIndicator();
+            }
+          }
+        }
+
+        this.registry[elmID].changeVisibility(isVisible);
+
+        prevIndex = i;
+      }
+    });
+  }
+
+  initSiblingsScrollAndVisibility(key: string) {
     const hasSiblings = Array.isArray(this.DOMGen.branches[key]);
 
     const firstElemID = hasSiblings
@@ -76,103 +162,22 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     const scroll = new Scroll({
       element: this.registry[firstElemID].ref!,
       requiredBranchKey: key,
-      scrollEventCallback: hasSiblings ? this.updateBranchVisibility : null,
+      scrollEventCallback: null,
     });
 
     this.siblingsScrollElement[key] = scroll;
 
-    if (hasSiblings) {
-      if (scroll.allowDynamicVisibility) {
-        this.updateBranchVisibility(key);
-      } else {
-        this.updateBranchVisibility(key, true);
-        scroll.scrollEventCallback = null;
-      }
+    if (scroll.allowDynamicVisibility) {
+      this.updateBranchVisibility(key, true);
+      scroll.scrollEventCallback = this.updateBranchVisibility;
+    } else {
+      this.updateBranchVisibility(key, false);
     }
   }
 
   onLoadListeners() {
     Object.keys(this.DOMGen.branches).forEach((branchKey) => {
-      this.loadElementsFormKeyBranch(branchKey);
-    });
-  }
-
-  private initELmIndicator() {
-    this.elmIndicator = {
-      currentKy: "",
-      prevKy: "",
-      exceptionToNextElm: false,
-    };
-  }
-
-  private updateBranchVisibility(
-    requiredBranchKey: string,
-    isAllVisible = false
-  ) {
-    // console.log("updateBranchVisibility", requiredBranchKey);
-
-    Object.keys(this.DOMGen.branches).forEach((branchKey) => {
-      // Just the targeted branch.
-      if (requiredBranchKey === branchKey) {
-        this.initELmIndicator();
-
-        let prevIndex = 0;
-
-        const scroll = this.siblingsScrollElement[branchKey];
-
-        (this.DOMGen.branches[branchKey] as string[]).forEach((elmID, i) => {
-          if (elmID.length > 0) {
-            if (this.registry[elmID].isPaused) {
-              this.registry[elmID].resume(scroll.scrollX, scroll.scrollY);
-            }
-
-            this.assignSiblingsBoundaries(
-              this.registry[elmID].keys.SK,
-              this.registry[elmID].offset!
-            );
-
-            let isVisible = true;
-            let isVisibleY = true;
-            let isVisibleX = true;
-
-            if (!isAllVisible) {
-              isVisibleY = scroll.isElementVisibleViewportY(
-                this.registry[elmID].currentTop!
-              );
-
-              isVisibleX = scroll.isElementVisibleViewportX(
-                this.registry[elmID].currentLeft!
-              );
-
-              isVisible = isVisibleY && isVisibleX;
-
-              if (
-                !isVisible &&
-                !this.elmIndicator.exceptionToNextElm &&
-                i > prevIndex
-              ) {
-                this.elmIndicator.exceptionToNextElm = true;
-
-                // Override the result.
-                isVisible = true;
-              } else if (isVisible) {
-                if (this.elmIndicator.exceptionToNextElm) {
-                  // In this case, we are moving from hidden to visible.
-                  // Eg: 1, 2 are hidden the rest of the list is visible.
-                  // But, there's a possibility that the rest of the branch elements
-                  // are hidden.
-                  // Eg: 1, 2: hidden 3, 4, 5, 6, 7:visible 8, 9, 10: hidden.
-                  this.initELmIndicator();
-                }
-              }
-            }
-
-            this.registry[elmID].changeVisibility(isVisible);
-
-            prevIndex = i;
-          }
-        });
-      }
+      this.initSiblingsScrollAndVisibility(branchKey);
     });
   }
 
