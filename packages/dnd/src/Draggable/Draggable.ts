@@ -108,6 +108,11 @@ class Draggable
 
     const { hasOverflowX, hasOverflowY } = store.siblingsScrollElement[SK];
 
+    console.log(
+      "file: Draggable.ts ~ line 110 ~ store.siblingsScrollElement[SK];",
+      store.siblingsScrollElement[SK]
+    );
+
     const siblings = store.getElmSiblingsListById(this.draggedElm.id);
 
     this.isViewportRestricted = true;
@@ -135,6 +140,10 @@ class Draggable
       // Override the default options. (FYI, this is the only privilege I have.)
       this.scroll.enable = false;
     }
+    console.log(
+      "file: Draggable.ts ~ line 137 ~  this.scroll.enable",
+      this.scroll.enable
+    );
 
     if (this.scroll.enable) {
       this.isViewportRestricted = false;
@@ -419,11 +428,29 @@ class Draggable
     } else if (this.isViewportRestricted) {
       const { SK } = store.registry[this.draggedElm.id].keys;
 
-      const { height, width } = store.siblingsScrollElement[SK].scrollRect;
+      const {
+        scrollX,
+        scrollY,
+        scrollRect: { height, width, left, top },
+      } = store.siblingsScrollElement[SK];
 
-      // TODO: Fix this when scroll is implemented.
-      filteredX = this.axesXFilter(x, 0, width, false, false, true);
-      filteredY = this.axesYFilter(y, 0, height, false, false, true);
+      // TODO: Test the fix this when scroll is implemented.
+      filteredX = this.axesXFilter(
+        x,
+        0,
+        left + width + scrollX,
+        false,
+        false,
+        true
+      );
+      filteredY = this.axesYFilter(
+        y,
+        0,
+        top + height + scrollY,
+        false,
+        false,
+        true
+      );
     }
 
     this.translate(filteredX, filteredY);
