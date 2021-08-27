@@ -106,6 +106,11 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
           isVisibleY = scroll.isElementVisibleViewportY(
             this.registry[elmID].currentTop!
           );
+          console.log(
+            "file: DnDStoreImp.ts ~ line 109 ~ isVisibleY",
+            isVisibleY,
+            elmID
+          );
 
           isVisibleX = scroll.isElementVisibleViewportX(
             this.registry[elmID].currentLeft!
@@ -152,7 +157,9 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       !this.registry[firstElemID].isPaused &&
       this.siblingsScrollElement[key]
     ) {
-      // Avoid multiple calls that runs function multiple times.
+      // Avoid multiple calls that runs function multiple times. This happens
+      // when there's a delay in firing load event and clicking on the element.
+      // It's fine.
       return;
     }
 

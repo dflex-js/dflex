@@ -230,16 +230,18 @@ class Scroll implements ScrollInterface {
   }
 
   isElementVisibleViewportX(currentLeft: number): boolean {
+    const { left, width } = this.scrollRect;
+
     return (
-      currentLeft >= this.scrollX &&
-      currentLeft <= this.scrollRect.width + this.scrollX
+      currentLeft >= this.scrollX && currentLeft <= left + width - this.scrollX
     );
   }
 
   isElementVisibleViewportY(currentTop: number): boolean {
+    const { top, height } = this.scrollRect;
+
     return (
-      currentTop >= this.scrollY &&
-      currentTop <= this.scrollRect.height + this.scrollY
+      currentTop >= this.scrollY && currentTop <= top + height - this.scrollY
     );
   }
 
