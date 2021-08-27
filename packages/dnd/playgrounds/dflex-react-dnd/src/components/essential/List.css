@@ -1,8 +1,22 @@
+.list-container-scroll {
+  width: 700px !important;
+}
+
 .list-container {
   margin-top: 88px;
   display: flex;
   width: 41.53rem;
   background: #07718f;
+}
+
+.list-height-limited ul {
+  height: 10rem;
+  width: 40rem;
+  overflow-y: scroll;
+}
+
+.list-height-fit ul {
+  height: fit-content;
 }
 
 .list-container ul {
@@ -13,7 +27,7 @@
   padding: 8px;
   border: 4px #bac5c7 solid;
   background: #cecece;
-  height: fit-content;
+  /* height: fit-content; */
 }
 
 .list-container li {

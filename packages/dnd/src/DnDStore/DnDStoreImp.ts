@@ -20,8 +20,6 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   siblingsBoundaries: DnDStoreInterface["siblingsBoundaries"];
 
-  siblingsOverflow: DnDStoreInterface["siblingsOverflow"];
-
   siblingsScrollElement: DnDStoreInterface["siblingsScrollElement"];
 
   private isDOM: boolean;
@@ -38,7 +36,6 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     super();
 
     this.siblingsBoundaries = {};
-    this.siblingsOverflow = {};
     this.siblingsScrollElement = {};
 
     this.tracker = new Tracker();
@@ -65,6 +62,14 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       ? this.DOMGen.branches[key][0]
       : (this.DOMGen.branches[key] as string);
 
+    if (
+      !this.registry[firstElemID].isPaused &&
+      this.siblingsScrollElement[key]
+    ) {
+      // Avoid multiple calls that runs function multiple times.
+      return;
+    }
+
     this.registry[firstElemID].resume(0, 0);
     this.registry[firstElemID].isPaused = true;
 
@@ -76,7 +81,14 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     this.siblingsScrollElement[key] = scroll;
 
-    if (hasSiblings) this.updateBranchVisibility(key);
+    if (hasSiblings) {
+      if (scroll.allowDynamicVisibility) {
+        this.updateBranchVisibility(key);
+      } else {
+        this.updateBranchVisibility(key, true);
+        scroll.scrollEventCallback = null;
+      }
+    }
   }
 
   onLoadListeners() {
@@ -93,19 +105,16 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     };
   }
 
-  private updateBranchVisibility(requiredBranchKey: string) {
-    this.initELmIndicator();
+  private updateBranchVisibility(
+    requiredBranchKey: string,
+    isAllVisible = false
+  ) {
+    // console.log("updateBranchVisibility", requiredBranchKey);
 
     Object.keys(this.DOMGen.branches).forEach((branchKey) => {
       // Just the targeted branch.
       if (requiredBranchKey === branchKey) {
-        // Init overflow state with no-overflow.
-        if (!this.siblingsOverflow[requiredBranchKey]) {
-          this.siblingsOverflow[requiredBranchKey] = {
-            x: false,
-            y: false,
-          };
-        }
+        this.initELmIndicator();
 
         let prevIndex = 0;
 
@@ -122,39 +131,39 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
               this.registry[elmID].offset!
             );
 
-            const isVisibleY = scroll.isElementVisibleViewportY(
-              this.registry[elmID].currentTop!
-            );
+            let isVisible = true;
+            let isVisibleY = true;
+            let isVisibleX = true;
 
-            const isVisibleX = scroll.isElementVisibleViewportX(
-              this.registry[elmID].currentLeft!
-            );
+            if (!isAllVisible) {
+              isVisibleY = scroll.isElementVisibleViewportY(
+                this.registry[elmID].currentTop!
+              );
 
-            let isVisible = isVisibleY && isVisibleX;
+              isVisibleX = scroll.isElementVisibleViewportX(
+                this.registry[elmID].currentLeft!
+              );
 
-            if (
-              !isVisible &&
-              !this.elmIndicator.exceptionToNextElm &&
-              i > prevIndex
-            ) {
-              // Detect overflow
-              this.siblingsOverflow[branchKey] = {
-                x: !isVisibleX,
-                y: !isVisibleY,
-              };
+              isVisible = isVisibleY && isVisibleX;
 
-              this.elmIndicator.exceptionToNextElm = true;
+              if (
+                !isVisible &&
+                !this.elmIndicator.exceptionToNextElm &&
+                i > prevIndex
+              ) {
+                this.elmIndicator.exceptionToNextElm = true;
 
-              // Override the result.
-              isVisible = true;
-            } else if (isVisible) {
-              if (this.elmIndicator.exceptionToNextElm) {
-                // In this case, we are moving from hidden to visible.
-                // Eg: 1, 2 are hidden the rest of the list is visible.
-                // But, there's a possibility that the rest of the branch elements
-                // are hidden.
-                // Eg: 1, 2: hidden 3, 4, 5, 6, 7:visible 8, 9, 10: hidden.
-                this.initELmIndicator();
+                // Override the result.
+                isVisible = true;
+              } else if (isVisible) {
+                if (this.elmIndicator.exceptionToNextElm) {
+                  // In this case, we are moving from hidden to visible.
+                  // Eg: 1, 2 are hidden the rest of the list is visible.
+                  // But, there's a possibility that the rest of the branch elements
+                  // are hidden.
+                  // Eg: 1, 2: hidden 3, 4, 5, 6, 7:visible 8, 9, 10: hidden.
+                  this.initELmIndicator();
+                }
               }
             }
 

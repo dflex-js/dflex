@@ -73,7 +73,6 @@ export interface Overflow {
 export interface DnDStoreInterface {
   tracker: TrackerInterface;
   siblingsBoundaries: { [siblingKey: string]: BoundariesOffset };
-  siblingsOverflow: { [siblingKey: string]: Overflow };
   siblingsScrollElement: { [siblingKey: string]: ScrollInterface };
   register(element: ElmInstance, x?: boolean): void;
   getELmOffsetById(id: string): Rect | undefined;

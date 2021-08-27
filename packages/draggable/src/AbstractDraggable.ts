@@ -37,17 +37,17 @@ class AbstractDraggable<T extends AbstractCoreInterface>
     {
       prop: "position",
       dragValue: "relative",
-      afterDragValue: null,
+      afterDragValue: "",
     },
     {
       prop: "zIndex",
       dragValue: "99",
-      afterDragValue: null,
+      afterDragValue: "",
     },
     {
       prop: "user-select",
       dragValue: "none",
-      afterDragValue: null,
+      afterDragValue: "",
     },
   ];
 
@@ -78,6 +78,24 @@ class AbstractDraggable<T extends AbstractCoreInterface>
     this.setDragged(true);
   }
 
+  changeStyle(style: DraggedStyle, shouldAddPosition: boolean) {
+    if (shouldAddPosition) {
+      style.forEach(({ prop, dragValue }) => {
+        // TODO: Fix TS error.
+        // @ts-expect-error.
+        this.draggedElm.ref!.style[prop] = dragValue;
+      });
+
+      return;
+    }
+
+    style.forEach(({ prop, afterDragValue }) => {
+      // TODO: Fix TS error.
+      // @ts-expect-error.
+      this.draggedElm.ref!.style[prop] = afterDragValue;
+    });
+  }
+
   /**
    * Triggers twice. Once when constructor is initiated, the other when drag is
    * ended. It adds/removes style.
@@ -86,13 +104,11 @@ class AbstractDraggable<T extends AbstractCoreInterface>
    */
   protected setDragged(isActive: boolean) {
     if (isActive) {
-      AbstractDraggable.draggedStyleProps.forEach(({ prop, dragValue }) => {
-        // TODO: Fix TS error.
-        // @ts-expect-error.
-        this.draggedElm.ref!.style[prop] = dragValue;
-      });
+      this.changeStyle(AbstractDraggable.draggedStyleProps, true);
 
-      getSelection()?.removeAllRanges();
+      if (getSelection()) {
+        getSelection()!.removeAllRanges();
+      }
 
       this.draggedElm.ref!.setAttribute("dragged", "true");
 
@@ -101,11 +117,7 @@ class AbstractDraggable<T extends AbstractCoreInterface>
     /**
      * Not active: end of dragging.
      */
-    AbstractDraggable.draggedStyleProps.forEach(({ prop, afterDragValue }) => {
-      // TODO: Fix TS error.
-      // @ts-expect-error.
-      this.draggedElm.ref!.style[prop] = afterDragValue;
-    });
+    this.changeStyle(AbstractDraggable.draggedStyleProps, false);
 
     this.draggedElm.ref!.removeAttribute("dragged");
   }

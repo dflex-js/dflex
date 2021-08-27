@@ -6,7 +6,7 @@
  */
 
 import { AbstractDraggable } from "@dflex/draggable";
-import type { Coordinates } from "@dflex/draggable";
+import type { DraggedStyle, Coordinates } from "@dflex/draggable";
 
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
@@ -77,6 +77,10 @@ class Draggable
 
   private initX: number;
 
+  isDraggedPositionFixed: boolean;
+
+  private changeToFixedStyleProps: DraggedStyle;
+
   constructor(id: string, initCoordinates: Coordinates, opts: FinalDndOpts) {
     const { element, parent } = store.getElmTreeById(id);
 
@@ -102,12 +106,33 @@ class Draggable
 
     this.scroll = opts.scroll;
 
+    const { hasOverflowX, hasOverflowY } = store.siblingsScrollElement[SK];
+
     const siblings = store.getElmSiblingsListById(this.draggedElm.id);
 
-    if (
-      siblings === null ||
-      (!store.siblingsOverflow[SK].x && !store.siblingsOverflow[SK].y)
-    ) {
+    this.isViewportRestricted = true;
+    this.isDraggedPositionFixed = false;
+
+    this.changeToFixedStyleProps = [
+      {
+        prop: "top",
+        dragValue: `${this.draggedElm.currentTop}px`,
+        afterDragValue: "",
+      },
+      {
+        prop: "left",
+        dragValue: `${this.draggedElm.currentLeft}px`,
+        afterDragValue: "",
+      },
+      {
+        prop: "position",
+        dragValue: "fixed",
+        afterDragValue: "",
+      },
+    ];
+
+    if (siblings === null || (!hasOverflowY && !hasOverflowX)) {
+      // Override the default options. (FYI, this is the only privilege I have.)
       this.scroll.enable = false;
     }
 
@@ -115,8 +140,15 @@ class Draggable
       this.isViewportRestricted = false;
 
       store.siblingsScrollElement[SK].setThresholdMatrix(this.scroll.threshold);
-    } else {
-      this.isViewportRestricted = true;
+
+      if (!store.siblingsScrollElement[SK].hasDocumentAsContainer) {
+        /**
+         * When the scroll is the document it's good. The restriction is to the
+         * document which guarantees the free movement. Otherwise, let's do it.
+         * Change the position and transform siblings.
+         */
+        // this.isDraggedPositionFixed = true;
+      }
     }
 
     const siblingsBoundaries = store.siblingsBoundaries[SK];
@@ -387,11 +419,11 @@ class Draggable
     } else if (this.isViewportRestricted) {
       const { SK } = store.registry[this.draggedElm.id].keys;
 
-      const { viewportHeight, viewportWidth } = store.siblingsScrollElement[SK];
+      const { height, width } = store.siblingsScrollElement[SK].scrollRect;
 
       // TODO: Fix this when scroll is implemented.
-      filteredX = this.axesXFilter(x, 0, viewportWidth, false, false, true);
-      filteredY = this.axesYFilter(y, 0, viewportHeight, false, false, true);
+      filteredX = this.axesXFilter(x, 0, width, false, false, true);
+      filteredY = this.axesYFilter(y, 0, height, false, false, true);
     }
 
     this.translate(filteredX, filteredY);
@@ -525,7 +557,7 @@ class Draggable
     );
   }
 
-  setDraggedPosition(isFallback: boolean) {
+  setDraggedTransformPosition(isFallback: boolean) {
     const siblings = store.getElmSiblingsListById(this.draggedElm.id);
 
     /**
@@ -588,8 +620,11 @@ class Draggable
 
   endDragging(isFallback: boolean) {
     this.setDragged(false);
+    this.setDraggedTransformPosition(isFallback);
 
-    this.setDraggedPosition(isFallback);
+    if (this.isDraggedPositionFixed) {
+      this.changeStyle(this.changeToFixedStyleProps, false);
+    }
   }
 }
 

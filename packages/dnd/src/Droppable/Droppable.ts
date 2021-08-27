@@ -99,6 +99,12 @@ class Droppable {
      * scroll with dragging to ensure both are executed in the same frame.
      */
     this.regularDragging = true;
+
+    if (this.draggable.isDraggedPositionFixed) {
+      // @ts-expect-error
+      this.draggable.changeStyle(this.draggable.changeToFixedStyleProps, true);
+      this.moveDown(1);
+    }
   }
 
   /**
@@ -606,14 +612,14 @@ class Droppable {
 
     const { SK } = store.registry[this.draggable.draggedElm.id].keys;
 
-    const { scrollHeight, viewportHeight, scrollContainer } =
+    const { scrollHeight, scrollContainer, scrollRect } =
       store.siblingsScrollElement[SK];
 
     if (direction === 1) {
       if (currentBottom <= scrollHeight) {
         this.scrollTop = nextScrollTop;
       } else {
-        this.scrollTop = scrollHeight - viewportHeight;
+        this.scrollTop = scrollHeight - scrollRect.height;
       }
     } else if (currentTop >= 0) {
       this.scrollTop = nextScrollTop;
@@ -642,14 +648,14 @@ class Droppable {
 
     const { SK } = store.registry[this.draggable.draggedElm.id].keys;
 
-    const { scrollHeight, viewportWidth, scrollContainer } =
+    const { scrollHeight, scrollContainer, scrollRect } =
       store.siblingsScrollElement[SK];
 
     if (direction === 1) {
       if (currentRight <= scrollHeight) {
         this.scrollLeft = nextScrollLeft;
       } else {
-        this.scrollLeft = scrollHeight - viewportWidth;
+        this.scrollLeft = scrollHeight - scrollRect.width;
       }
     } else if (currentRight >= 0) {
       this.scrollLeft = currentRight;
@@ -724,24 +730,22 @@ class Droppable {
         return;
       }
 
-      const { hasThrottledFrame } = store.siblingsScrollElement[SK];
-
       /**
        * Manage scrolling.
        */
       if (
         this.draggable.scroll.enable &&
         this.scrollAnimatedFrame === null &&
-        hasThrottledFrame === null
+        store.siblingsScrollElement[SK].hasThrottledFrame === null
       ) {
-        if (store.siblingsOverflow[SK].y) {
-          const { viewportHeight, scrollHeight, threshold } =
+        if (store.siblingsScrollElement[SK].hasOverflowY) {
+          const { scrollRect, scrollHeight, threshold } =
             store.siblingsScrollElement[SK];
 
           if (
             this.draggable.isMovingDown &&
             y >= threshold!.thresholdMatrix.maxBottom &&
-            this.scrollTop + viewportHeight < scrollHeight
+            this.scrollTop + scrollRect.height < scrollHeight
           ) {
             this.scrollElement(x, y, 1, "scrollElementOnY");
 
@@ -755,13 +759,13 @@ class Droppable {
           }
         }
 
-        if (store.siblingsOverflow[SK].x) {
-          const { viewportWidth, scrollHeight, threshold } =
+        if (store.siblingsScrollElement[SK].hasOverflowX) {
+          const { scrollRect, scrollHeight, threshold } =
             store.siblingsScrollElement[SK];
 
           if (
             x >= threshold!.thresholdMatrix.maxLeft &&
-            this.scrollLeft + viewportWidth < scrollHeight
+            this.scrollLeft + scrollRect.width < scrollHeight
           ) {
             this.scrollElement(x, y, 1, "scrollElementOnX");
 

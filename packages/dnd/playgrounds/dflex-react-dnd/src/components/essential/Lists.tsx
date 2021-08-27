@@ -51,7 +51,7 @@ interface props {
 }
 
 const BaseApp = ({ Container, Core }: props) => (
-  <Container className="list-container">
+  <Container className="list-container list-height-fit">
     <Core id={`id-${ID_PARENT_1}`} component="ul" depth={1}>
       {firstContainer.map(({ label, id }) => (
         <Core depth={0} id={`id-${id}`} key={`k${id}`} component="li">

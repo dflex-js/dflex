@@ -33,29 +33,6 @@ function isStaticallyPositioned(element: Element) {
   return position === "static";
 }
 
-function getScrollContainer(element: Element | null) {
-  if (!element) return getScrollFromDocument();
-
-  const computedStyle = getComputedStyle(element);
-
-  const position = computedStyle.getPropertyValue("position");
-
-  const excludeStaticParents = position === "absolute";
-
-  const scrollContainer = loopInDOM(element, (parent) => {
-    if (excludeStaticParents && isStaticallyPositioned(parent)) {
-      return false;
-    }
-    return hasOverflow(parent);
-  });
-
-  if (position === "fixed" || !scrollContainer) {
-    return getScrollFromDocument();
-  }
-
-  return scrollContainer;
-}
-
 class Scroll implements ScrollInterface {
   /**
    * Is set by controller when needed. Maybe is not provided, or not enabled.
@@ -68,17 +45,33 @@ class Scroll implements ScrollInterface {
 
   viewportWidth!: number;
 
+  offsetHeight?: number;
+
+  offsetWidth?: number;
+
   scrollEventCallback: Function | null;
 
   scrollX!: number;
 
   scrollY!: number;
 
+  scrollRect: ScrollInterface["scrollRect"];
+
   scrollHeight!: number;
+
+  scrollWidth!: number;
+
+  hasOverflowX!: boolean;
+
+  hasOverflowY!: boolean;
+
+  allowDynamicVisibility!: boolean;
 
   scrollContainer!: Element;
 
   hasThrottledFrame: number | null;
+
+  hasDocumentAsContainer!: boolean;
 
   constructor({
     element,
@@ -92,40 +85,131 @@ class Scroll implements ScrollInterface {
     this.threshold = null;
     this.hasThrottledFrame = null;
 
+    this.scrollRect = {
+      height: 0,
+      width: 0,
+      left: 0,
+      top: 0,
+    };
+
     this.siblingKey = requiredBranchKey;
 
-    this.setScrollContainer(element);
+    this.scrollContainer = this.getScrollContainer(element);
 
-    this.animatedScrollListener = this.animatedScrollListener.bind(this);
-    this.animatedResizeListener = this.animatedResizeListener.bind(this);
-
+    this.setScrollRect();
     this.setScrollCoordinates();
-    this.setViewportAndUpdateScrollContainer();
 
-    window.addEventListener("resize", this.animatedResizeListener);
-    window.addEventListener("scroll", this.animatedScrollListener);
+    this.setScrollListener();
 
     this.scrollEventCallback = scrollEventCallback;
   }
 
-  setScrollContainer(element: Element) {
-    this.scrollContainer = getScrollContainer(element);
-    this.scrollHeight = this.scrollContainer.scrollHeight;
+  private getScrollContainer(element: Element | null) {
+    this.hasDocumentAsContainer = false;
+
+    if (!element) {
+      this.hasDocumentAsContainer = true;
+      return getScrollFromDocument();
+    }
+
+    const computedStyle = getComputedStyle(element);
+
+    const position = computedStyle.getPropertyValue("position");
+
+    const excludeStaticParents = position === "absolute";
+
+    const scrollContainer = loopInDOM(element, (parent) => {
+      if (excludeStaticParents && isStaticallyPositioned(parent)) {
+        return false;
+      }
+      return hasOverflow(parent);
+    });
+
+    if (position === "fixed" || !scrollContainer) {
+      this.hasDocumentAsContainer = true;
+      return getScrollFromDocument();
+    }
+
+    return scrollContainer;
   }
 
-  setThresholdMatrix(threshold?: ThresholdPercentages) {
-    if (threshold) this.threshold = new Threshold(threshold);
+  private setScrollRect() {
+    const { scrollHeight, scrollWidth } = this.scrollContainer;
 
-    this.threshold!.updateElementThresholdMatrix(
-      {
-        width: this.viewportWidth,
-        height: this.viewportHeight,
-        top: 0,
+    this.scrollHeight = scrollHeight;
+    this.scrollWidth = scrollWidth;
+
+    if (this.hasDocumentAsContainer) {
+      const viewportHeight = Math.max(
+        this.scrollContainer.clientHeight || 0,
+        window.innerHeight || 0
+      );
+
+      const viewportWidth = Math.max(
+        this.scrollContainer.clientWidth || 0,
+        window.innerWidth || 0
+      );
+
+      this.scrollRect = {
+        height: viewportHeight,
+        width: viewportWidth,
         left: 0,
-      },
-      true,
-      true
-    );
+        top: 0,
+      };
+    } else {
+      const { height, width, left, top } =
+        this.scrollContainer.getBoundingClientRect();
+
+      this.scrollRect = { height, width, left, top };
+    }
+
+    this.hasOverflowY = this.scrollRect.height < scrollHeight;
+
+    this.hasOverflowX = this.scrollRect.width < scrollWidth;
+
+    /**
+     * Deciding when to active visibility and pausing for element branch. We
+     * don't want to active a method with a listeners because just two elements
+     * are not visible.
+     */
+    this.allowDynamicVisibility = false;
+
+    if (this.hasOverflowY && scrollHeight / 2 >= this.scrollRect.height) {
+      this.allowDynamicVisibility = true;
+
+      return;
+    }
+
+    if (this.hasOverflowX && scrollWidth / 2 >= this.scrollRect.width) {
+      this.allowDynamicVisibility = true;
+    }
+  }
+
+  private setScrollListener(attach = true) {
+    /**
+     * No need to set scroll listener if there is no scroll.
+     */
+    const hasScrollListener = this.hasOverflowX || this.hasOverflowY;
+
+    const type = attach ? "addEventListener" : "removeEventListener";
+
+    const container = this.hasDocumentAsContainer
+      ? window
+      : this.scrollContainer;
+
+    const opts = { passive: true };
+
+    if (hasScrollListener) {
+      container[type]("scroll", this.animatedScrollListener, opts);
+    }
+
+    container[type]("resize", this.animatedResizeListener, opts);
+  }
+
+  setThresholdMatrix(threshold: ThresholdPercentages) {
+    this.threshold = new Threshold(threshold);
+
+    this.threshold.updateElementThresholdMatrix(this.scrollRect, true, true);
   }
 
   private setScrollCoordinates() {
@@ -145,48 +229,22 @@ class Scroll implements ScrollInterface {
     return isUpdated;
   }
 
-  private setViewportAndUpdateScrollContainer() {
-    const viewportHeight = Math.max(
-      this.scrollContainer.clientHeight || 0,
-      window.innerHeight || 0
-    );
-
-    const viewportWidth = Math.max(
-      this.scrollContainer.clientWidth || 0,
-      window.innerWidth || 0
-    );
-
-    const isUpdated =
-      viewportHeight !== this.viewportHeight ||
-      viewportWidth !== this.viewportWidth;
-
-    this.viewportHeight = viewportHeight;
-    this.viewportWidth = viewportWidth;
-
-    // Don't update if it's not initialized.
-    if (isUpdated && this.scrollContainer && this.threshold) {
-      this.setThresholdMatrix();
-    }
-
-    return isUpdated;
-  }
-
   isElementVisibleViewportX(currentLeft: number): boolean {
     return (
       currentLeft >= this.scrollX &&
-      currentLeft <= this.viewportWidth + this.scrollX
+      currentLeft <= this.scrollRect.width + this.scrollX
     );
   }
 
   isElementVisibleViewportY(currentTop: number): boolean {
     return (
       currentTop >= this.scrollY &&
-      currentTop <= this.viewportHeight + this.scrollY
+      currentTop <= this.scrollRect.height + this.scrollY
     );
   }
 
   private animatedListener(
-    setter: "setViewportAndUpdateScrollContainer" | "setScrollCoordinates",
+    setter: "setScrollRect" | "setScrollCoordinates",
     cb: Function | null
   ) {
     if (this.hasThrottledFrame !== null) return;
@@ -201,26 +259,20 @@ class Scroll implements ScrollInterface {
     });
   }
 
-  private animatedScrollListener() {
+  private animatedScrollListener = () => {
     this.animatedListener.call(
       this,
       "setScrollCoordinates",
       this.scrollEventCallback
     );
-  }
+  };
 
-  private animatedResizeListener() {
-    this.animatedListener.call(
-      this,
-      "setViewportAndUpdateScrollContainer",
-      null
-    );
-  }
+  private animatedResizeListener = () => {
+    this.animatedListener.call(this, "setScrollRect", null);
+  };
 
   destroy() {
-    window.removeEventListener("resize", this.animatedResizeListener);
-    window.removeEventListener("scroll", this.animatedScrollListener);
-
+    this.setScrollListener(false);
     // @ts-expect-error
     this.scrollContainer = null;
   }

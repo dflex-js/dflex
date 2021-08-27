@@ -52,6 +52,6 @@ export interface AbstractDraggableInterface<T extends AbstractCoreInterface> {
    */
   outerOffsetX: number;
   outerOffsetY: number;
-
   tempTranslate: Coordinates;
+  changeStyle(style: DraggedStyle, shouldAddPosition: boolean): void;
 }
