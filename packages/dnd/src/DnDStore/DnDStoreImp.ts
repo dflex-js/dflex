@@ -67,6 +67,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     requiredBranchKey: string,
     allowDynamicVisibility: boolean
   ) {
+    console.log("file: DnDStoreImp.ts ~ line 70 ~ updateBranchVisibility");
     const requiredBranch = this.DOMGen.branches[requiredBranchKey];
 
     const scroll = this.siblingsScrollElement[requiredBranchKey];

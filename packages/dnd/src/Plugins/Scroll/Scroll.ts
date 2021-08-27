@@ -255,7 +255,7 @@ class Scroll implements ScrollInterface {
       const isUpdated = this[setter]();
 
       if (isUpdated && cb) {
-        cb(this.siblingKey);
+        cb(this.siblingKey, true);
       }
       this.hasThrottledFrame = null;
     });
