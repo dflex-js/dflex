@@ -12,9 +12,7 @@
     "test:unit": "jest",
     "test:e2e": "yarn workspace @dflex/dnd test",
     "test": "yarn test:unit && yarn test:e2e",
-    "build": "lerna run build",
-    "publish": "lerna publish --no-git-tag-version --no-push",
-    "changelog": "lerna-changelog"
+    "build": "lerna run build"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.9.6",
