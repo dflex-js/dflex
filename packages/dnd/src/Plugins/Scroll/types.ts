@@ -26,6 +26,8 @@ export interface ScrollInterface {
   hasDocumentAsContainer: boolean;
   scrollEventCallback: Function | null;
   hasThrottledFrame: number | null;
+  getMaximumScrollContainerLeft(): number;
+  getMaximumScrollContainerTop(): number;
   isElementVisibleViewportX(currentLeft: number): boolean;
   isElementVisibleViewportY(currentTop: number): boolean;
   setThresholdMatrix(

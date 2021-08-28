@@ -104,14 +104,10 @@ class Draggable
      */
     this.tempIndex = order.self;
 
-    this.scroll = opts.scroll;
+    // This tiny bug caused an override  options despite it's actually freezed!
+    this.scroll = { ...opts.scroll };
 
     const { hasOverflowX, hasOverflowY } = store.siblingsScrollElement[SK];
-
-    console.log(
-      "file: Draggable.ts ~ line 110 ~ store.siblingsScrollElement[SK];",
-      store.siblingsScrollElement[SK]
-    );
 
     const siblings = store.getElmSiblingsListById(this.draggedElm.id);
 
@@ -140,10 +136,6 @@ class Draggable
       // Override the default options. (FYI, this is the only privilege I have.)
       this.scroll.enable = false;
     }
-    console.log(
-      "file: Draggable.ts ~ line 137 ~  this.scroll.enable",
-      this.scroll.enable
-    );
 
     if (this.scroll.enable) {
       this.isViewportRestricted = false;
@@ -384,9 +376,9 @@ class Draggable
     let filteredY = y;
     let filteredX = x;
 
-    if (this.axesFilterNeeded) {
-      const { SK } = store.registry[this.draggedElm.id].keys;
+    const { SK } = store.registry[this.draggedElm.id].keys;
 
+    if (this.axesFilterNeeded) {
       const { top, bottom, maxLeft, minRight } = store.siblingsBoundaries[SK];
 
       if (this.restrictionsStatus.isContainerRestricted) {
@@ -426,19 +418,11 @@ class Draggable
         );
       }
     } else if (this.isViewportRestricted) {
-      const { SK } = store.registry[this.draggedElm.id].keys;
-
-      const {
-        scrollX,
-        scrollY,
-        scrollRect: { height, width, left, top },
-      } = store.siblingsScrollElement[SK];
-
       // TODO: Test the fix this when scroll is implemented.
       filteredX = this.axesXFilter(
         x,
         0,
-        left + width + scrollX,
+        store.siblingsScrollElement[SK].getMaximumScrollContainerLeft(),
         false,
         false,
         true
@@ -446,7 +430,7 @@ class Draggable
       filteredY = this.axesYFilter(
         y,
         0,
-        top + height + scrollY,
+        store.siblingsScrollElement[SK].getMaximumScrollContainerTop(),
         false,
         false,
         true
