@@ -1,6 +1,6 @@
 {
   "name": "@dflex/dom-gen",
-  "version": "2.11.0",
+  "version": "2.12.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
@@ -35,6 +35,5 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
-  },
-  "gitHead": "95c74c26416dbf0e79fbc258d1af301632c178c1"
+  }
 }
