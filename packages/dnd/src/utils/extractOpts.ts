@@ -54,13 +54,14 @@ export function extractOpts(opts: DndOpts) {
       };
     }
 
-    if (!options[props]) {
+    if (options[props] === undefined) {
       options[props] = { ...defaultOpts[props] };
 
       return;
     }
 
     Object.keys(defaultOpts[props]).forEach((subProp) => {
+      // for sub options with objects values, like restrictions.
       if (typeof defaultOpts[props][subProp] === "object") {
         if (options[props][subProp] !== undefined) {
           options[props][subProp] = {

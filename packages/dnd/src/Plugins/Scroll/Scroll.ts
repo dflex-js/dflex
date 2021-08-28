@@ -229,23 +229,35 @@ class Scroll implements ScrollInterface {
     return isUpdated;
   }
 
+  getMaximumScrollContainerLeft() {
+    const { left, width } = this.scrollRect;
+
+    return left + width + this.scrollX;
+  }
+
+  getMaximumScrollContainerTop() {
+    const { top, height } = this.scrollRect;
+
+    return top + height + this.scrollY;
+  }
+
   isElementVisibleViewportX(currentLeft: number): boolean {
     return (
       currentLeft >= this.scrollX &&
-      currentLeft <= this.scrollRect.width + this.scrollX
+      currentLeft <= this.getMaximumScrollContainerLeft()
     );
   }
 
   isElementVisibleViewportY(currentTop: number): boolean {
     return (
       currentTop >= this.scrollY &&
-      currentTop <= this.scrollRect.height + this.scrollY
+      currentTop <= this.getMaximumScrollContainerTop()
     );
   }
 
   private animatedListener(
     setter: "setScrollRect" | "setScrollCoordinates",
-    cb: Function | null
+    cb: Function | null // Can we improve the type here. This going to be a bug in the future.
   ) {
     if (this.hasThrottledFrame !== null) return;
 
@@ -253,7 +265,7 @@ class Scroll implements ScrollInterface {
       const isUpdated = this[setter]();
 
       if (isUpdated && cb) {
-        cb(this.siblingKey);
+        cb(this.siblingKey, true);
       }
       this.hasThrottledFrame = null;
     });

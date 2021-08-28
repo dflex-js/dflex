@@ -91,7 +91,7 @@ class Draggable
      * all the branch is updated.
      */
     if (!store.siblingsScrollElement[SK]) {
-      store.loadElementsFormKeyBranch(SK);
+      store.initSiblingsScrollAndVisibility(SK);
     }
 
     super(element, initCoordinates);
@@ -104,7 +104,8 @@ class Draggable
      */
     this.tempIndex = order.self;
 
-    this.scroll = opts.scroll;
+    // This tiny bug caused an override  options despite it's actually freezed!
+    this.scroll = { ...opts.scroll };
 
     const { hasOverflowX, hasOverflowY } = store.siblingsScrollElement[SK];
 
@@ -375,9 +376,9 @@ class Draggable
     let filteredY = y;
     let filteredX = x;
 
-    if (this.axesFilterNeeded) {
-      const { SK } = store.registry[this.draggedElm.id].keys;
+    const { SK } = store.registry[this.draggedElm.id].keys;
 
+    if (this.axesFilterNeeded) {
       const { top, bottom, maxLeft, minRight } = store.siblingsBoundaries[SK];
 
       if (this.restrictionsStatus.isContainerRestricted) {
@@ -417,13 +418,23 @@ class Draggable
         );
       }
     } else if (this.isViewportRestricted) {
-      const { SK } = store.registry[this.draggedElm.id].keys;
-
-      const { height, width } = store.siblingsScrollElement[SK].scrollRect;
-
-      // TODO: Fix this when scroll is implemented.
-      filteredX = this.axesXFilter(x, 0, width, false, false, true);
-      filteredY = this.axesYFilter(y, 0, height, false, false, true);
+      // TODO: Test the fix this when scroll is implemented.
+      filteredX = this.axesXFilter(
+        x,
+        0,
+        store.siblingsScrollElement[SK].getMaximumScrollContainerLeft(),
+        false,
+        false,
+        true
+      );
+      filteredY = this.axesYFilter(
+        y,
+        0,
+        store.siblingsScrollElement[SK].getMaximumScrollContainerTop(),
+        false,
+        false,
+        true
+      );
     }
 
     this.translate(filteredX, filteredY);
