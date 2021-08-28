@@ -233,7 +233,7 @@ class Scroll implements ScrollInterface {
     const { left, width } = this.scrollRect;
 
     return (
-      currentLeft >= this.scrollX && currentLeft <= left + width - this.scrollX
+      currentLeft >= this.scrollX && currentLeft <= left + width + this.scrollX
     );
   }
 
@@ -241,7 +241,7 @@ class Scroll implements ScrollInterface {
     const { top, height } = this.scrollRect;
 
     return (
-      currentTop >= this.scrollY && currentTop <= top + height - this.scrollY
+      currentTop >= this.scrollY && currentTop <= top + height + this.scrollY
     );
   }
 
