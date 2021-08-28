@@ -72,7 +72,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     const scroll = this.siblingsScrollElement[requiredBranchKey];
 
     if (!scroll || !requiredBranch) {
-      if (process.env.NODE_ENV === "development") {
+      if (process.env.NODE_ENV !== "production") {
         // eslint-disable-next-line no-console
         console.error(`Scroll and/or Sibling branch is not found`);
       }

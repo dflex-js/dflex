@@ -166,7 +166,7 @@ class CoreInstance
     siblingsEmptyElmIndex = -1
   ) {
     if (newIndex < 0 || newIndex > branchIDsOrder.length - 1) {
-      if (process.env.NODE_ENV === "development") {
+      if (process.env.NODE_ENV !== "production") {
         // eslint-disable-next-line no-console
         console.error(
           `Illegal Attempt: Received an index:${newIndex} on siblings list:${
@@ -180,7 +180,7 @@ class CoreInstance
 
     if (oldIndex > -1) {
       if (siblingsEmptyElmIndex >= 0 && siblingsEmptyElmIndex !== newIndex) {
-        if (process.env.NODE_ENV === "development") {
+        if (process.env.NODE_ENV !== "production") {
           // eslint-disable-next-line no-console
           console.error(
             "Illegal Attempt: More than one element have left the siblings list"
@@ -192,7 +192,7 @@ class CoreInstance
 
       branchIDsOrder[oldIndex] = "";
     } else if (branchIDsOrder[newIndex].length > 0) {
-      if (process.env.NODE_ENV === "development") {
+      if (process.env.NODE_ENV !== "production") {
         // eslint-disable-next-line no-console
         console.error("Illegal Attempt: Colliding in positions");
       }
