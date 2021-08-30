@@ -4,19 +4,25 @@
  * This source code is licensed under the AGPL3.0 license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import type { ELmBranch, Keys, Order, Pointer } from "./types";
+import type {
+  ELmBranch,
+  GeneratorInterface,
+  Keys,
+  Order,
+  Pointer,
+} from "./types";
 import genKey from "./utils";
 
 /**
  * Generate keys to connect relations between DOM-elements depending on tree
  * depth.
  */
-class Generator {
+class Generator implements GeneratorInterface {
   /**
    * Counter store. Each depth has it's own indicator. Allowing us to go
    * for endless layers (levels).
    */
-  indicator: {
+  private indicator: {
     [keys: number]: number;
   };
 
@@ -32,9 +38,9 @@ class Generator {
     [keys: string]: ELmBranch;
   };
 
-  prevDepth: number;
+  private prevDepth: number;
 
-  prevKey: string;
+  private prevKey: string;
 
   constructor() {
     this.indicator = {};
@@ -86,9 +92,9 @@ class Generator {
    * Adds elements to its siblings.
    *
    * @param id - element id
-   * @param  sk - Siblings Key- siblings key
+   * @param  SK - Siblings Key- siblings key
    */
-  private addToSiblings(id: string, SK: string) {
+  private addElementIDToSiblingsBranch(id: string, SK: string) {
     let selfIndex = 0;
 
     /**
@@ -106,7 +112,7 @@ class Generator {
         this.branches[SK] = [];
 
         // @ts-expect-error
-        this.branches[SK].push(prevId);
+        (this.branches[SK] as []).push(prevId);
       }
 
       // @ts-ignore
@@ -114,6 +120,52 @@ class Generator {
     }
 
     return selfIndex;
+  }
+
+  removeElementIDFromBranch(SK: string, index: number) {
+    let deletedElmID: string;
+
+    if (
+      Array.isArray(this.branches[SK]) &&
+      this.branches[SK]![index] !== undefined
+    ) {
+      [deletedElmID] = (this.branches[SK] as []).splice(index, 1);
+
+      return deletedElmID;
+    }
+
+    if (this.branches[SK] !== undefined) {
+      deletedElmID = this.branches[SK] as string;
+
+      this.branches[SK] = null;
+
+      return deletedElmID;
+    }
+
+    return null;
+  }
+
+  // eslint-disable-next-line no-unused-vars
+  destroyBranch(SK: string, cb: (elmID: string) => unknown) {
+    if (Array.isArray(this.branches[SK]) && this.branches[SK]!.length > 0) {
+      const elmID = (this.branches[SK] as string[]).pop();
+
+      if (elmID !== null) {
+        cb(elmID as string);
+
+        this.destroyBranch(SK, cb);
+      }
+
+      return;
+    }
+
+    if (this.branches[SK] !== undefined) {
+      const elmID = this.branches[SK] as string;
+
+      this.branches[SK] = null;
+
+      cb(elmID);
+    }
   }
 
   /**
@@ -159,7 +211,7 @@ class Generator {
     const siblingsKey = genKey(depth, parentIndex);
     const parentKey = genKey(depth + 1, this.indicator[depth + 2]);
 
-    const selfIndex = this.addToSiblings(id, siblingsKey);
+    const selfIndex = this.addElementIDToSiblingsBranch(id, siblingsKey);
 
     if (depth < this.prevDepth) {
       /**
@@ -187,6 +239,11 @@ class Generator {
     };
 
     return { order, keys };
+  }
+
+  clearBranchesAndIndicator() {
+    this.branches = {};
+    this.indicator = {};
   }
 }
 
