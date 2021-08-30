@@ -122,52 +122,6 @@ class Generator implements GeneratorInterface {
     return selfIndex;
   }
 
-  removeElementIDFromBranch(SK: string, index: number) {
-    let deletedElmID: string;
-
-    if (
-      Array.isArray(this.branches[SK]) &&
-      this.branches[SK]![index] !== undefined
-    ) {
-      [deletedElmID] = (this.branches[SK] as []).splice(index, 1);
-
-      return deletedElmID;
-    }
-
-    if (this.branches[SK] !== undefined) {
-      deletedElmID = this.branches[SK] as string;
-
-      this.branches[SK] = null;
-
-      return deletedElmID;
-    }
-
-    return null;
-  }
-
-  // eslint-disable-next-line no-unused-vars
-  destroyBranch(SK: string, cb: (elmID: string) => unknown) {
-    if (Array.isArray(this.branches[SK]) && this.branches[SK]!.length > 0) {
-      const elmID = (this.branches[SK] as string[]).pop();
-
-      if (elmID !== null) {
-        cb(elmID as string);
-
-        this.destroyBranch(SK, cb);
-      }
-
-      return;
-    }
-
-    if (this.branches[SK] !== undefined) {
-      const elmID = this.branches[SK] as string;
-
-      this.branches[SK] = null;
-
-      cb(elmID);
-    }
-  }
-
   /**
    * Gets all element IDs Siblings in given node represented by sk.
    *
@@ -239,6 +193,52 @@ class Generator implements GeneratorInterface {
     };
 
     return { order, keys };
+  }
+
+  removeElementIDFromBranch(SK: string, index: number) {
+    let deletedElmID: string;
+
+    if (
+      Array.isArray(this.branches[SK]) &&
+      this.branches[SK]![index] !== undefined
+    ) {
+      [deletedElmID] = (this.branches[SK] as []).splice(index, 1);
+
+      return deletedElmID;
+    }
+
+    if (this.branches[SK] !== undefined) {
+      deletedElmID = this.branches[SK] as string;
+
+      this.branches[SK] = null;
+
+      return deletedElmID;
+    }
+
+    return null;
+  }
+
+  // eslint-disable-next-line no-unused-vars
+  destroyBranch(SK: string, cb: (elmID: string) => unknown) {
+    if (Array.isArray(this.branches[SK]) && this.branches[SK]!.length > 0) {
+      const elmID = (this.branches[SK] as string[]).pop();
+
+      if (elmID !== null) {
+        cb(elmID as string);
+
+        this.destroyBranch(SK, cb);
+      }
+
+      return;
+    }
+
+    if (this.branches[SK] !== undefined) {
+      const elmID = this.branches[SK] as string;
+
+      this.branches[SK] = null;
+
+      cb(elmID);
+    }
   }
 
   clearBranchesAndIndicator() {
