@@ -65,7 +65,7 @@ class Store<T extends ElmWithPointerWithProps> implements StoreInterface<T> {
 
   destroyBranch(branchKey: string) {
     this.DOMGen.destroyBranch(branchKey, (id) => {
-      this.unregister(id);
+      delete this.registry[id];
     });
   }
 
