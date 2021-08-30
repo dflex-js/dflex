@@ -341,6 +341,16 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     };
   }
 
+  private clearBranchesScroll() {
+    Object.keys(this.DOMGen.branches).forEach((key) => {
+      if (this.siblingsScrollElement[key]) {
+        this.siblingsScrollElement[key].destroy();
+      }
+    });
+
+    this.siblingsScrollElement = {};
+  }
+
   dispose() {
     if (!this.isInitialized) return null;
 
@@ -353,6 +363,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   destroy() {
     this.dispose();
+
+    this.clearBranchesScroll();
 
     // Destroys all registered instances.
     super.destroy();
