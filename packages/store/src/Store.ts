@@ -13,7 +13,7 @@ import type {
   StoreInterface,
 } from "./types";
 
-class Store<T = ElmWithPointerWithProps> implements StoreInterface<T> {
+class Store<T extends ElmWithPointerWithProps> implements StoreInterface<T> {
   registry: {
     [id: string]: T;
   };
@@ -53,6 +53,13 @@ class Store<T = ElmWithPointerWithProps> implements StoreInterface<T> {
   }
 
   unregister(id: string) {
+    const {
+      keys: { SK },
+      order: { self },
+    } = this.registry[id];
+
+    this.DOMGen.removeElementIDFromBranch(SK, self);
+
     delete this.registry[id];
   }
 
