@@ -83,15 +83,6 @@ class Generator {
   }
 
   /**
-   *  Checks if element has no siblings in the branch
-   *
-   * @param  sk - Siblings Key- siblings key
-   */
-  private isElmSingleton(SK: string) {
-    return this.branches[SK].constructor !== Array;
-  }
-
-  /**
    * Adds elements to its siblings.
    *
    * @param id - element id
@@ -109,11 +100,12 @@ class Generator {
       /**
        * So here we have multiple children, we better create an array now.
        */
-      if (this.isElmSingleton(SK)) {
+      if (!Array.isArray(this.branches[SK])) {
         const prevId = this.branches[SK];
 
         this.branches[SK] = [];
-        // @ts-ignore
+
+        // @ts-expect-error
         this.branches[SK].push(prevId);
       }
 
