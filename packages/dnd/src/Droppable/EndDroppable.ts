@@ -30,7 +30,7 @@ class EndDroppable extends Droppable {
    * @param i -
    */
   private undoElmTranslate(
-    lst: ELmBranch,
+    lst: Exclude<ELmBranch, null>,
     i: number,
     prevVisibility: boolean,
     listVisibility: boolean
