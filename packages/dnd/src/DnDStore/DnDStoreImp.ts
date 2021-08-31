@@ -360,6 +360,19 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.DOMGen.removeElementIDFromBranch(SK, self);
 
     super.unregister(id);
+
+    // Nothing left?
+    // Reset the branch instances.
+    if (this.DOMGen.branches[SK] === null) {
+      this.clearBranchesScroll();
+
+      this.siblingsBoundaries[SK] = {
+        top: 0,
+        maxLeft: 0,
+        minRight: 0,
+        bottom: 0,
+      };
+    }
   }
 
   dispose() {
