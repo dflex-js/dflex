@@ -366,12 +366,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     if (this.DOMGen.branches[SK] === null) {
       this.clearBranchesScroll();
 
-      this.siblingsBoundaries[SK] = {
-        top: 0,
-        maxLeft: 0,
-        minRight: 0,
-        bottom: 0,
-      };
+      // @ts-expect-error It will be initiated again on the next register.
+      this.siblingsBoundaries[SK] = null;
     }
   }
 
