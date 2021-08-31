@@ -35,7 +35,6 @@ export interface GeneratorInterface {
   branches: {
     [keys: string]: ELmBranch;
   };
-  setElmBranch(SK: string, branch: ELmBranch): void;
   getElmBranch(SK: string): ELmBranch;
   getElmPointer(id: string, depth: number): Pointer;
   removeElementIDFromBranch(SK: string, index: number): string | null;

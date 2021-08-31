@@ -100,7 +100,7 @@ class Generator implements GeneratorInterface {
     /**
      * Don't create array for only one child.
      */
-    if (this.branches[SK] === undefined) {
+    if (!this.branches[SK]) {
       this.branches[SK] = id;
     } else {
       /**
@@ -129,16 +129,6 @@ class Generator implements GeneratorInterface {
    */
   getElmBranch(SK: string): ELmBranch {
     return this.branches[SK];
-  }
-
-  /**
-   * Sets new branch for given key.
-   *
-   * @param  sk - Siblings Key- sibling key
-   * @param branch - new branch
-   */
-  setElmBranch(SK: string, branch: ELmBranch) {
-    this.branches[SK] = branch;
   }
 
   /**
@@ -204,6 +194,12 @@ class Generator implements GeneratorInterface {
     ) {
       [deletedElmID] = (this.branches[SK] as []).splice(index, 1);
 
+      // When it has only one child, use string instead of array.
+      if (this.branches[SK]!.length === 1) {
+        const elm = this.branches[SK]![0];
+        this.branches[SK] = elm;
+      }
+
       return deletedElmID;
     }
 
@@ -220,16 +216,18 @@ class Generator implements GeneratorInterface {
 
   // eslint-disable-next-line no-unused-vars
   destroyBranch(SK: string, cb: (elmID: string) => unknown) {
-    if (Array.isArray(this.branches[SK]) && this.branches[SK]!.length > 0) {
+    if (Array.isArray(this.branches[SK])) {
       const elmID = (this.branches[SK] as string[]).pop();
 
-      if (elmID !== null) {
-        cb(elmID as string);
+      cb(elmID as string);
 
+      if (this.branches[SK]!.length > 0) {
         this.destroyBranch(SK, cb);
-      }
+      } else {
+        this.branches[SK] = null;
 
-      return;
+        return;
+      }
     }
 
     if (this.branches[SK] !== undefined) {
