@@ -4,7 +4,7 @@
  * This source code is licensed under the AGPL3.0 license found in the
  * LICENSE file in the root directory of this source tree.
  */
-export type ELmBranch = string | string[];
+export type ELmBranch = string | Array<string> | null;
 
 /**
  * Element unique keys in DOM tree.
@@ -29,4 +29,15 @@ export interface Order {
 export interface Pointer {
   keys: Keys;
   order: Order;
+}
+
+export interface GeneratorInterface {
+  branches: {
+    [keys: string]: ELmBranch;
+  };
+  getElmBranch(SK: string): ELmBranch;
+  getElmPointer(id: string, depth: number): Pointer;
+  removeElementIDFromBranch(SK: string, index: number): string | null;
+  destroyBranch(SK: string, cb: (elmID: string) => unknown): void;
+  clearBranchesAndIndicator(): void;
 }

@@ -57,28 +57,19 @@ class Store<T = ElmWithPointerWithProps> implements StoreInterface<T> {
   }
 
   destroyBranch(branchKey: string) {
-    if (this.DOMGen.branches[branchKey].length === 0) return;
-
-    const elmID = (this.DOMGen.branches[branchKey] as string[]).pop();
-
-    this.unregister(elmID!);
-
-    this.destroyBranch(branchKey);
+    this.DOMGen.destroyBranch(branchKey, (id) => {
+      this.unregister(id);
+    });
   }
 
   destroy() {
     Object.keys(this.DOMGen.branches).forEach((branchKey) => {
-      // Ignore non array branches.
-      if (Array.isArray(this.DOMGen.branches[branchKey])) {
-        this.destroyBranch(branchKey);
-      } else {
-        this.unregister(this.DOMGen.branches[branchKey] as string);
-      }
+      this.DOMGen.destroyBranch(branchKey, (id) => {
+        delete this.registry[id];
+      });
     });
 
-    // TODO: Add reset method to DOM Gen.
-    this.DOMGen.branches = {};
-    this.DOMGen.indicator = {};
+    this.DOMGen.clearBranchesAndIndicator();
   }
 
   /**

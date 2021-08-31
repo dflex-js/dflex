@@ -145,7 +145,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     const hasSiblings = Array.isArray(this.DOMGen.branches[key]);
 
     const firstElemID = hasSiblings
-      ? this.DOMGen.branches[key][0]
+      ? this.DOMGen.branches[key]![0]
       : (this.DOMGen.branches[key] as string);
 
     if (
@@ -327,7 +327,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     let parent = null;
     if (parents !== undefined) {
       const parentsID = Array.isArray(parents) ? parents[pi] : parents;
-      parent = this.registry[parentsID];
+      parent = this.registry[parentsID as string];
     }
 
     return {
@@ -339,6 +339,27 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
         parents,
       },
     };
+  }
+
+  private clearBranchesScroll() {
+    Object.keys(this.DOMGen.branches).forEach((key) => {
+      if (this.siblingsScrollElement[key]) {
+        this.siblingsScrollElement[key].destroy();
+      }
+    });
+
+    this.siblingsScrollElement = {};
+  }
+
+  unregister(id: string) {
+    const {
+      keys: { SK },
+      order: { self },
+    } = this.registry[id];
+
+    this.DOMGen.removeElementIDFromBranch(SK, self);
+
+    super.unregister(id);
   }
 
   dispose() {
@@ -353,6 +374,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   destroy() {
     this.dispose();
+
+    this.clearBranchesScroll();
 
     // Destroys all registered instances.
     super.destroy();

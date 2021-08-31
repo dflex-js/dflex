@@ -9,7 +9,11 @@ import { Rect } from "packages/core-instance/src/types";
 import type { ThresholdInterface } from "../Threshold";
 
 export interface ScrollInput {
-  scrollEventCallback: Function | null;
+  element: Element;
+  requiredBranchKey: string;
+  scrollEventCallback:
+    | ((SK: string, isCalledFromScroll: true) => unknown)
+    | null;
 }
 
 export interface ScrollInterface {
@@ -24,7 +28,7 @@ export interface ScrollInterface {
   allowDynamicVisibility: boolean;
   scrollContainer: Element;
   hasDocumentAsContainer: boolean;
-  scrollEventCallback: Function | null;
+  scrollEventCallback: ScrollInput["scrollEventCallback"];
   hasThrottledFrame: number | null;
   getMaximumScrollContainerLeft(): number;
   getMaximumScrollContainerTop(): number;

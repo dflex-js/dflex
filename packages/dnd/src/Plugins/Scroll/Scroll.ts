@@ -9,7 +9,7 @@ import loopInDOM from "../../utils/loopInDOM";
 import Threshold from "../Threshold";
 import { ThresholdPercentages } from "../Threshold/types";
 
-import { ScrollInterface } from "./types";
+import { ScrollInput, ScrollInterface } from "./types";
 
 function getScrollFromDocument() {
   return document.scrollingElement || document.documentElement;
@@ -49,7 +49,7 @@ class Scroll implements ScrollInterface {
 
   offsetWidth?: number;
 
-  scrollEventCallback: Function | null;
+  scrollEventCallback: ScrollInterface["scrollEventCallback"];
 
   scrollX!: number;
 
@@ -77,11 +77,7 @@ class Scroll implements ScrollInterface {
     element,
     requiredBranchKey,
     scrollEventCallback,
-  }: {
-    element: Element;
-    requiredBranchKey: string;
-    scrollEventCallback: Function | null;
-  }) {
+  }: ScrollInput) {
     this.threshold = null;
     this.hasThrottledFrame = null;
 
@@ -257,7 +253,7 @@ class Scroll implements ScrollInterface {
 
   private animatedListener(
     setter: "setScrollRect" | "setScrollCoordinates",
-    cb: Function | null // Can we improve the type here. This going to be a bug in the future.
+    cb: ScrollInput["scrollEventCallback"]
   ) {
     if (this.hasThrottledFrame !== null) return;
 

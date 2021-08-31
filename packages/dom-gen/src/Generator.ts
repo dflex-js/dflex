@@ -4,19 +4,25 @@
  * This source code is licensed under the AGPL3.0 license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import type { ELmBranch, Keys, Order, Pointer } from "./types";
+import type {
+  ELmBranch,
+  GeneratorInterface,
+  Keys,
+  Order,
+  Pointer,
+} from "./types";
 import genKey from "./utils";
 
 /**
  * Generate keys to connect relations between DOM-elements depending on tree
  * depth.
  */
-class Generator {
+class Generator implements GeneratorInterface {
   /**
    * Counter store. Each depth has it's own indicator. Allowing us to go
    * for endless layers (levels).
    */
-  indicator: {
+  private indicator: {
     [keys: number]: number;
   };
 
@@ -32,9 +38,9 @@ class Generator {
     [keys: string]: ELmBranch;
   };
 
-  prevDepth: number;
+  private prevDepth: number;
 
-  prevKey: string;
+  private prevKey: string;
 
   constructor() {
     this.indicator = {};
@@ -83,38 +89,30 @@ class Generator {
   }
 
   /**
-   *  Checks if element has no siblings in the branch
-   *
-   * @param  sk - Siblings Key- siblings key
-   */
-  private isElmSingleton(SK: string) {
-    return this.branches[SK].constructor !== Array;
-  }
-
-  /**
    * Adds elements to its siblings.
    *
    * @param id - element id
-   * @param  sk - Siblings Key- siblings key
+   * @param  SK - Siblings Key- siblings key
    */
-  private addToSiblings(id: string, SK: string) {
+  private addElementIDToSiblingsBranch(id: string, SK: string) {
     let selfIndex = 0;
 
     /**
      * Don't create array for only one child.
      */
-    if (this.branches[SK] === undefined) {
+    if (!this.branches[SK]) {
       this.branches[SK] = id;
     } else {
       /**
        * So here we have multiple children, we better create an array now.
        */
-      if (this.isElmSingleton(SK)) {
+      if (!Array.isArray(this.branches[SK])) {
         const prevId = this.branches[SK];
 
         this.branches[SK] = [];
-        // @ts-ignore
-        this.branches[SK].push(prevId);
+
+        // @ts-expect-error
+        (this.branches[SK] as []).push(prevId);
       }
 
       // @ts-ignore
@@ -131,16 +129,6 @@ class Generator {
    */
   getElmBranch(SK: string): ELmBranch {
     return this.branches[SK];
-  }
-
-  /**
-   * Sets new branch for given key.
-   *
-   * @param  sk - Siblings Key- sibling key
-   * @param branch - new branch
-   */
-  setElmBranch(SK: string, branch: ELmBranch) {
-    this.branches[SK] = branch;
   }
 
   /**
@@ -167,7 +155,7 @@ class Generator {
     const siblingsKey = genKey(depth, parentIndex);
     const parentKey = genKey(depth + 1, this.indicator[depth + 2]);
 
-    const selfIndex = this.addToSiblings(id, siblingsKey);
+    const selfIndex = this.addElementIDToSiblingsBranch(id, siblingsKey);
 
     if (depth < this.prevDepth) {
       /**
@@ -195,6 +183,65 @@ class Generator {
     };
 
     return { order, keys };
+  }
+
+  removeElementIDFromBranch(SK: string, index: number) {
+    let deletedElmID: string;
+
+    if (
+      Array.isArray(this.branches[SK]) &&
+      this.branches[SK]![index] !== undefined
+    ) {
+      [deletedElmID] = (this.branches[SK] as []).splice(index, 1);
+
+      // When it has only one child, use string instead of array.
+      if (this.branches[SK]!.length === 1) {
+        const elm = this.branches[SK]![0];
+        this.branches[SK] = elm;
+      }
+
+      return deletedElmID;
+    }
+
+    if (this.branches[SK] !== undefined) {
+      deletedElmID = this.branches[SK] as string;
+
+      this.branches[SK] = null;
+
+      return deletedElmID;
+    }
+
+    return null;
+  }
+
+  // eslint-disable-next-line no-unused-vars
+  destroyBranch(SK: string, cb: (elmID: string) => unknown) {
+    if (Array.isArray(this.branches[SK])) {
+      const elmID = (this.branches[SK] as string[]).pop();
+
+      cb(elmID as string);
+
+      if (this.branches[SK]!.length > 0) {
+        this.destroyBranch(SK, cb);
+      } else {
+        this.branches[SK] = null;
+
+        return;
+      }
+    }
+
+    if (this.branches[SK] !== undefined) {
+      const elmID = this.branches[SK] as string;
+
+      this.branches[SK] = null;
+
+      cb(elmID);
+    }
+  }
+
+  clearBranchesAndIndicator() {
+    this.branches = {};
+    this.indicator = {};
   }
 }
 
