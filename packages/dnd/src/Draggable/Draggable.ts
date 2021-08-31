@@ -84,16 +84,6 @@ class Draggable
   constructor(id: string, initCoordinates: Coordinates, opts: FinalDndOpts) {
     const { element, parent } = store.getElmTreeById(id);
 
-    const { SK } = store.registry[id].keys;
-
-    /**
-     * In case it is not already initiated in the store. We do it here guarantee
-     * all the branch is updated.
-     */
-    if (!store.siblingsScrollElement[SK]) {
-      store.initSiblingsScrollAndVisibility(SK);
-    }
-
     super(element, initCoordinates);
 
     const { order } = element;
@@ -106,6 +96,8 @@ class Draggable
 
     // This tiny bug caused an override  options despite it's actually freezed!
     this.scroll = { ...opts.scroll };
+
+    const { SK } = store.registry[id].keys;
 
     const { hasOverflowX, hasOverflowY } = store.siblingsScrollElement[SK];
 
