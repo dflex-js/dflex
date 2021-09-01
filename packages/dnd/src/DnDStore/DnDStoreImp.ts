@@ -183,11 +183,11 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     });
   }
 
-  private assignSiblingsBoundaries(siblingsK: string, elemOffset: Rect) {
+  private assignSiblingsBoundaries(SK: string, elemOffset: Rect) {
     const elmRight = elemOffset.left + elemOffset.width;
 
-    if (!this.siblingsBoundaries[siblingsK]) {
-      this.siblingsBoundaries[siblingsK] = {
+    if (!this.siblingsBoundaries[SK]) {
+      this.siblingsBoundaries[SK] = {
         top: elemOffset.top,
         maxLeft: elemOffset.left,
         minRight: elmRight,
@@ -197,7 +197,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       return;
     }
 
-    const $ = this.siblingsBoundaries[siblingsK];
+    const $ = this.siblingsBoundaries[SK];
 
     if ($.maxLeft < elemOffset.left) {
       $.maxLeft = elemOffset.left;
