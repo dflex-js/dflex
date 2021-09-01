@@ -15,17 +15,18 @@ function getScrollFromDocument() {
   return document.scrollingElement || document.documentElement;
 }
 
-function hasOverflow(element: Element) {
-  const overflowRegex = /(auto|scroll|overlay)/;
-  const computedStyle = getComputedStyle(element);
+const overflowRegex = /(auto|scroll|overlay)/;
 
-  const overflow =
-    computedStyle.getPropertyValue("overflow") +
-    computedStyle.getPropertyValue("overflow-y") +
-    computedStyle.getPropertyValue("overflow-x");
+// function hasOverflow(element: Element) {
+//   const computedStyle = getComputedStyle(element);
 
-  return overflowRegex.test(overflow);
-}
+//   const overflow =
+//     computedStyle.getPropertyValue("overflow") +
+//     computedStyle.getPropertyValue("overflow-y") +
+//     computedStyle.getPropertyValue("overflow-x");
+
+//   return overflowRegex.test(overflow);
+// }
 
 function isStaticallyPositioned(element: Element) {
   const computedStyle = getComputedStyle(element);
@@ -105,6 +106,7 @@ class Scroll implements ScrollInterface {
 
     if (!element) {
       this.hasDocumentAsContainer = true;
+
       return getScrollFromDocument();
     }
 
@@ -118,11 +120,39 @@ class Scroll implements ScrollInterface {
       if (excludeStaticParents && isStaticallyPositioned(parent)) {
         return false;
       }
-      return hasOverflow(parent);
+
+      const parentComputedStyle = getComputedStyle(parent);
+
+      const parentRect = parent.getBoundingClientRect();
+
+      const overflowY = parentComputedStyle.getPropertyValue("overflow-y");
+
+      if (overflowRegex.test(overflowY)) {
+        if (parent.scrollHeight === Math.round(parentRect.height)) {
+          this.hasDocumentAsContainer = true;
+        }
+
+        return true;
+      }
+
+      const overflowX = parentComputedStyle.getPropertyValue("overflow-x");
+
+      if (overflowRegex.test(overflowX)) {
+        if (parent.scrollWidth === Math.round(parentRect.width)) {
+          this.hasDocumentAsContainer = true;
+        }
+
+        return true;
+      }
+
+      return false;
     });
 
-    if (position === "fixed" || !scrollContainer) {
-      this.hasDocumentAsContainer = true;
+    if (
+      this.hasDocumentAsContainer ||
+      position === "fixed" ||
+      !scrollContainer
+    ) {
       return getScrollFromDocument();
     }
 
