@@ -1,6 +1,6 @@
 {
   "npmClient": "yarn",
-  "version": "2.12.0",
+  "version": "2.13.0",
   "packages": [
     "packages/core-instance",
     "packages/dom-gen",
