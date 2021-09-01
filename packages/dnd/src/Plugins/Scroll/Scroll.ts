@@ -11,21 +11,23 @@ import { ThresholdPercentages } from "../Threshold/types";
 
 import { ScrollInput, ScrollInterface } from "./types";
 
+const OVERFLOW_REGEX = /(auto|scroll|overlay)/;
+const MAX_LOOP_ELEMENTS_TO_WARN = 16;
+
 function getScrollFromDocument() {
   return document.scrollingElement || document.documentElement;
 }
 
-function hasOverflow(element: Element) {
-  const overflowRegex = /(auto|scroll|overlay)/;
-  const computedStyle = getComputedStyle(element);
+// function hasOverflow(element: Element) {
+//   const computedStyle = getComputedStyle(element);
 
-  const overflow =
-    computedStyle.getPropertyValue("overflow") +
-    computedStyle.getPropertyValue("overflow-y") +
-    computedStyle.getPropertyValue("overflow-x");
+//   const overflow =
+//     computedStyle.getPropertyValue("overflow") +
+//     computedStyle.getPropertyValue("overflow-y") +
+//     computedStyle.getPropertyValue("overflow-x");
 
-  return overflowRegex.test(overflow);
-}
+//   return overflowRegex.test(overflow);
+// }
 
 function isStaticallyPositioned(element: Element) {
   const computedStyle = getComputedStyle(element);
@@ -101,10 +103,13 @@ class Scroll implements ScrollInterface {
   }
 
   private getScrollContainer(element: Element | null) {
+    let i = 0;
+
     this.hasDocumentAsContainer = false;
 
     if (!element) {
       this.hasDocumentAsContainer = true;
+
       return getScrollFromDocument();
     }
 
@@ -115,14 +120,57 @@ class Scroll implements ScrollInterface {
     const excludeStaticParents = position === "absolute";
 
     const scrollContainer = loopInDOM(element, (parent) => {
+      i += 1;
+
+      if (
+        i === MAX_LOOP_ELEMENTS_TO_WARN &&
+        process.env.NODE_ENV !== "production"
+      ) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `DFlex detects performance issues during defining a scroll container.
+Please provide scroll container by ref/id when registering the element or turn off auto-scroll from the options.`
+        );
+      }
+
       if (excludeStaticParents && isStaticallyPositioned(parent)) {
         return false;
       }
-      return hasOverflow(parent);
+
+      const parentComputedStyle = getComputedStyle(parent);
+
+      const parentRect = parent.getBoundingClientRect();
+
+      const overflowY = parentComputedStyle.getPropertyValue("overflow-y");
+
+      if (OVERFLOW_REGEX.test(overflowY)) {
+        if (parent.scrollHeight === Math.round(parentRect.height)) {
+          this.hasDocumentAsContainer = true;
+        }
+
+        return true;
+      }
+
+      const overflowX = parentComputedStyle.getPropertyValue("overflow-x");
+
+      if (OVERFLOW_REGEX.test(overflowX)) {
+        if (parent.scrollWidth === Math.round(parentRect.width)) {
+          this.hasDocumentAsContainer = true;
+        }
+
+        return true;
+      }
+
+      return false;
     });
 
-    if (position === "fixed" || !scrollContainer) {
+    if (
+      this.hasDocumentAsContainer ||
+      position === "fixed" ||
+      !scrollContainer
+    ) {
       this.hasDocumentAsContainer = true;
+
       return getScrollFromDocument();
     }
 
