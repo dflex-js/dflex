@@ -12,7 +12,7 @@ import { ThresholdPercentages } from "../Threshold/types";
 import { ScrollInput, ScrollInterface } from "./types";
 
 const OVERFLOW_REGEX = /(auto|scroll|overlay)/;
-const MAX_LOOP_ELEMENTS_TO_WARN = 12;
+const MAX_LOOP_ELEMENTS_TO_WARN = 16;
 
 function getScrollFromDocument() {
   return document.scrollingElement || document.documentElement;
