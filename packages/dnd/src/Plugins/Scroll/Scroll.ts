@@ -153,6 +153,8 @@ class Scroll implements ScrollInterface {
       position === "fixed" ||
       !scrollContainer
     ) {
+      this.hasDocumentAsContainer = true;
+
       return getScrollFromDocument();
     }
 
