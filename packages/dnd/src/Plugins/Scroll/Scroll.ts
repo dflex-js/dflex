@@ -11,11 +11,12 @@ import { ThresholdPercentages } from "../Threshold/types";
 
 import { ScrollInput, ScrollInterface } from "./types";
 
+const OVERFLOW_REGEX = /(auto|scroll|overlay)/;
+const MAX_LOOP_ELEMENTS_TO_WARN = 12;
+
 function getScrollFromDocument() {
   return document.scrollingElement || document.documentElement;
 }
-
-const overflowRegex = /(auto|scroll|overlay)/;
 
 // function hasOverflow(element: Element) {
 //   const computedStyle = getComputedStyle(element);
@@ -102,6 +103,8 @@ class Scroll implements ScrollInterface {
   }
 
   private getScrollContainer(element: Element | null) {
+    let i = 0;
+
     this.hasDocumentAsContainer = false;
 
     if (!element) {
@@ -117,6 +120,19 @@ class Scroll implements ScrollInterface {
     const excludeStaticParents = position === "absolute";
 
     const scrollContainer = loopInDOM(element, (parent) => {
+      i += 1;
+
+      if (
+        i === MAX_LOOP_ELEMENTS_TO_WARN &&
+        process.env.NODE_ENV !== "production"
+      ) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `DFlex detects performance issues during defining a scroll container.
+Please provide scroll container by ref/id when registering the element or turn off auto-scroll from the options.`
+        );
+      }
+
       if (excludeStaticParents && isStaticallyPositioned(parent)) {
         return false;
       }
@@ -127,7 +143,7 @@ class Scroll implements ScrollInterface {
 
       const overflowY = parentComputedStyle.getPropertyValue("overflow-y");
 
-      if (overflowRegex.test(overflowY)) {
+      if (OVERFLOW_REGEX.test(overflowY)) {
         if (parent.scrollHeight === Math.round(parentRect.height)) {
           this.hasDocumentAsContainer = true;
         }
@@ -137,7 +153,7 @@ class Scroll implements ScrollInterface {
 
       const overflowX = parentComputedStyle.getPropertyValue("overflow-x");
 
-      if (overflowRegex.test(overflowX)) {
+      if (OVERFLOW_REGEX.test(overflowX)) {
         if (parent.scrollWidth === Math.round(parentRect.width)) {
           this.hasDocumentAsContainer = true;
         }
