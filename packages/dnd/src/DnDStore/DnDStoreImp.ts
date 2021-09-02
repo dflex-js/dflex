@@ -15,6 +15,15 @@ import Tracker from "../Plugins/Tracker";
 
 import canUseDOM from "../utils/canUseDOM";
 
+function throwIfElementIsNotConnected(elm: Element, id: string) {
+  if (!elm.isConnected) {
+    throw new Error(
+      `DFlex: elements in the branch is not valid. Trying to validate ${id} but failed.
+Did you forget to call store.unregister(${id})?`
+    );
+  }
+}
+
 class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   tracker: DnDStoreInterface["tracker"];
 
@@ -141,24 +150,48 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     });
   }
 
-  initSiblingsScrollAndVisibility(key: string) {
+  initSiblingsScrollAndVisibilityIfNecessary(key: string) {
+    // Avoid multiple calls that runs function multiple times. This happens
+    // when there's a delay in firing load event and clicking on the element.
+    // It's fine.
+    if (this.siblingsScrollElement[key]) {
+      /**
+       * When does it happen?
+       * When the branch is cleared but the scroll element is still there.
+       * (bug/fixed but could it appear in the future?)
+       *
+       * When there's a duplication.
+       * Meaning: You register the branch, continue with another one but DOM Gen
+       * still thinking you are working on the same branch. This issue generates
+       * key. To work around this, we need to clear the scroll element if it's
+       * not live.
+       *
+       * When the developer forgets to unregister the branch.
+       *
+       * All these cases are not considered a bug. A problem, but not a bug.
+       */
+      if (this.siblingsScrollElement[key].scrollContainer.isConnected) {
+        delete this.siblingsScrollElement[key];
+      }
+
+      return;
+    }
+
     const hasSiblings = Array.isArray(this.DOMGen.branches[key]);
 
     const firstElemID = hasSiblings
       ? this.DOMGen.branches[key]![0]
       : (this.DOMGen.branches[key] as string);
 
-    if (
-      !this.registry[firstElemID].isPaused &&
-      this.siblingsScrollElement[key]
-    ) {
-      // Avoid multiple calls that runs function multiple times. This happens
-      // when there's a delay in firing load event and clicking on the element.
-      // It's fine.
-      return;
+    if (!this.registry[firstElemID].isPaused) {
+      throwIfElementIsNotConnected(
+        this.registry[firstElemID].ref!,
+        firstElemID
+      );
     }
 
     this.registry[firstElemID].resume(0, 0);
+    throwIfElementIsNotConnected(this.registry[firstElemID].ref!, firstElemID);
     this.registry[firstElemID].isPaused = true;
 
     const scroll = new Scroll({
@@ -179,7 +212,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   onLoadListeners() {
     Object.keys(this.DOMGen.branches).forEach((branchKey) => {
-      this.initSiblingsScrollAndVisibility(branchKey);
+      this.initSiblingsScrollAndVisibilityIfNecessary(branchKey);
     });
   }
 
