@@ -157,11 +157,11 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       ? requiredBranch
       : [requiredBranch];
 
-    branch.forEach((elmID) => {
+    branch.forEach((elmID, i) => {
       if (elmID) {
         if (this.registry[elmID].ref) {
           if (!this.registry[elmID].ref!.isConnected) {
-            this.unregister(elmID);
+            this.DOMGen.removeElementIDFromBranch(branchKey, i);
           }
         }
       }
@@ -421,6 +421,18 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.siblingsScrollElement = {};
   }
 
+  /**
+   * Unregister DnD element.
+   *
+   * Note: This will remove the element registry and the branch array. But,
+   * in case all the branches will be removed.
+   * This means, if, in rare cases when the user removes one element and keeps
+   * the rest this methods going to generate a bug. It's going to remove an
+   * element without updating the indexes inside registry instances.
+   *
+   * @param id -
+   *
+   */
   unregister(id: string) {
     const {
       keys: { SK },
