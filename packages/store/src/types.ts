@@ -12,9 +12,14 @@ export type Class<classInstance> = new (...args: any[]) => classInstance;
 export interface ElmInstance {
   id: string;
   depth: number;
+  parentId?: string;
 }
 
-export interface ElmInstanceWithProps extends Required<ElmInstance> {
+export interface ElmInstanceWithProps
+  extends Required<Omit<ElmInstance, "parentId">> {
+  // This seems wrong, but without omitting parentID, TS enforced string value
+  // and ignored undefined.
+  parentId?: string;
   [key: string]: any;
 }
 
