@@ -150,6 +150,24 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     });
   }
 
+  private cleanupUnconnectedElements(branchKey: string) {
+    const requiredBranch = this.DOMGen.branches[branchKey];
+
+    const branch = Array.isArray(requiredBranch)
+      ? requiredBranch
+      : [requiredBranch];
+
+    branch.forEach((elmID) => {
+      if (elmID) {
+        if (this.registry[elmID].ref) {
+          if (!this.registry[elmID].ref!.isConnected) {
+            this.unregister(elmID);
+          }
+        }
+      }
+    });
+  }
+
   initSiblingsScrollAndVisibilityIfNecessary(key: string) {
     const hasSiblings = Array.isArray(this.DOMGen.branches[key]);
 
@@ -161,11 +179,17 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     // when there's a delay in firing load event and clicking on the element.
     // It's fine.
     if (this.siblingsScrollElement[key]) {
-      if (!this.registry[firstElemID].isPaused) {
-        throwIfElementIsNotConnected(
-          this.registry[firstElemID].ref!,
-          firstElemID
-        );
+      if (process.env.NODE_ENV !== "production") {
+        if (!this.registry[firstElemID].isPaused) {
+          throwIfElementIsNotConnected(
+            this.registry[firstElemID].ref!,
+            firstElemID
+          );
+        }
+      }
+
+      if (!this.registry[firstElemID].ref!.isConnected) {
+        this.cleanupUnconnectedElements(key);
       }
 
       /**
@@ -190,16 +214,21 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       delete this.siblingsScrollElement[key];
     }
 
-    if (!this.registry[firstElemID].isPaused) {
-      throwIfElementIsNotConnected(
-        this.registry[firstElemID].ref!,
-        firstElemID
-      );
+    this.registry[firstElemID].resume(0, 0);
+    this.registry[firstElemID].isPaused = true;
+
+    if (process.env.NODE_ENV !== "production") {
+      if (!this.registry[firstElemID].isPaused) {
+        throwIfElementIsNotConnected(
+          this.registry[firstElemID].ref!,
+          firstElemID
+        );
+      }
     }
 
-    this.registry[firstElemID].resume(0, 0);
-    throwIfElementIsNotConnected(this.registry[firstElemID].ref!, firstElemID);
-    this.registry[firstElemID].isPaused = true;
+    if (!this.registry[firstElemID].ref!.isConnected) {
+      this.cleanupUnconnectedElements(key);
+    }
 
     const scroll = new Scroll({
       element: this.registry[firstElemID].ref!,
@@ -303,6 +332,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     const coreInput = {
       id,
+      parenID: element.parenID,
       depth: element.depth || 0,
       ref: element.ref || null,
       isInitialized: hasRef,
