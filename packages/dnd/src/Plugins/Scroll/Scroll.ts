@@ -14,7 +14,7 @@ import { ScrollInput, ScrollInterface } from "./types";
 const OVERFLOW_REGEX = /(auto|scroll|overlay)/;
 const MAX_LOOP_ELEMENTS_TO_WARN = 16;
 
-function getScrollFromDocument() {
+function getScrollFromDocument(): Element | HTMLElement {
   return document.scrollingElement || document.documentElement;
 }
 
@@ -69,7 +69,7 @@ class Scroll implements ScrollInterface {
 
   allowDynamicVisibility!: boolean;
 
-  scrollContainer!: Element;
+  scrollContainerRef!: HTMLElement;
 
   hasThrottledFrame: number | null;
 
@@ -92,7 +92,8 @@ class Scroll implements ScrollInterface {
 
     this.siblingKey = requiredBranchKey;
 
-    this.scrollContainer = this.getScrollContainer(element);
+    // @ts-expect-error
+    this.scrollContainerRef = this.getScrollContainer(element);
 
     this.setScrollRect();
     this.setScrollCoordinates();
@@ -102,7 +103,7 @@ class Scroll implements ScrollInterface {
     this.scrollEventCallback = scrollEventCallback;
   }
 
-  private getScrollContainer(element: Element | null) {
+  private getScrollContainer(element: HTMLElement | null) {
     let i = 0;
 
     this.hasDocumentAsContainer = false;
@@ -178,19 +179,19 @@ Please provide scroll container by ref/id when registering the element or turn o
   }
 
   private setScrollRect() {
-    const { scrollHeight, scrollWidth } = this.scrollContainer;
+    const { scrollHeight, scrollWidth } = this.scrollContainerRef;
 
     this.scrollHeight = scrollHeight;
     this.scrollWidth = scrollWidth;
 
     if (this.hasDocumentAsContainer) {
       const viewportHeight = Math.max(
-        this.scrollContainer.clientHeight || 0,
+        this.scrollContainerRef.clientHeight || 0,
         window.innerHeight || 0
       );
 
       const viewportWidth = Math.max(
-        this.scrollContainer.clientWidth || 0,
+        this.scrollContainerRef.clientWidth || 0,
         window.innerWidth || 0
       );
 
@@ -202,7 +203,7 @@ Please provide scroll container by ref/id when registering the element or turn o
       };
     } else {
       const { height, width, left, top } =
-        this.scrollContainer.getBoundingClientRect();
+        this.scrollContainerRef.getBoundingClientRect();
 
       this.scrollRect = { height, width, left, top };
     }
@@ -239,15 +240,25 @@ Please provide scroll container by ref/id when registering the element or turn o
 
     const container = this.hasDocumentAsContainer
       ? window
-      : this.scrollContainer;
+      : this.scrollContainerRef;
 
     const opts = { passive: true };
 
+    container[type]("resize", this.animatedResizeListener, opts);
+
     if (hasScrollListener) {
       container[type]("scroll", this.animatedScrollListener, opts);
-    }
 
-    container[type]("resize", this.animatedResizeListener, opts);
+      if (!this.hasDocumentAsContainer) {
+        if (attach) {
+          this.scrollContainerRef.dataset.dflexScrollListener = this.siblingKey;
+
+          return;
+        }
+
+        delete this.scrollContainerRef.dataset.dflexScrollListener;
+      }
+    }
   }
 
   setThresholdMatrix(threshold: ThresholdPercentages) {
@@ -258,11 +269,11 @@ Please provide scroll container by ref/id when registering the element or turn o
 
   private setScrollCoordinates() {
     const scrollY = Math.round(
-      this.scrollContainer.scrollTop || window.pageYOffset
+      this.scrollContainerRef.scrollTop || window.pageYOffset
     );
 
     const scrollX = Math.round(
-      this.scrollContainer.scrollLeft || window.pageXOffset
+      this.scrollContainerRef.scrollLeft || window.pageXOffset
     );
 
     const isUpdated = scrollY !== this.scrollY || scrollX !== this.scrollX;
@@ -330,7 +341,7 @@ Please provide scroll container by ref/id when registering the element or turn o
   destroy() {
     this.setScrollListener(false);
     // @ts-expect-error
-    this.scrollContainer = null;
+    this.scrollContainerRef = null;
   }
 }
 

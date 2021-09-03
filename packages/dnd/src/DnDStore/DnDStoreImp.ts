@@ -183,7 +183,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
        *
        * All these cases are not considered a bug. A problem, but not a bug.
        */
-      if (this.siblingsScrollElement[key].scrollContainer.isConnected) {
+      if (this.siblingsScrollElement[key].scrollContainerRef.isConnected) {
         return;
       }
 
