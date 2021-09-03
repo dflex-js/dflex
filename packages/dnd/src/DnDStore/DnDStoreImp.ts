@@ -151,10 +151,23 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   }
 
   initSiblingsScrollAndVisibilityIfNecessary(key: string) {
+    const hasSiblings = Array.isArray(this.DOMGen.branches[key]);
+
+    const firstElemID = hasSiblings
+      ? this.DOMGen.branches[key]![0]
+      : (this.DOMGen.branches[key] as string);
+
     // Avoid multiple calls that runs function multiple times. This happens
     // when there's a delay in firing load event and clicking on the element.
     // It's fine.
     if (this.siblingsScrollElement[key]) {
+      if (!this.registry[firstElemID].isPaused) {
+        throwIfElementIsNotConnected(
+          this.registry[firstElemID].ref!,
+          firstElemID
+        );
+      }
+
       /**
        * When does it happen?
        * When the branch is cleared but the scroll element is still there.
@@ -170,18 +183,12 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
        *
        * All these cases are not considered a bug. A problem, but not a bug.
        */
-      if (!this.siblingsScrollElement[key].scrollContainer.isConnected) {
-        delete this.siblingsScrollElement[key];
+      if (this.siblingsScrollElement[key].scrollContainer.isConnected) {
+        return;
       }
 
-      return;
+      delete this.siblingsScrollElement[key];
     }
-
-    const hasSiblings = Array.isArray(this.DOMGen.branches[key]);
-
-    const firstElemID = hasSiblings
-      ? this.DOMGen.branches[key]![0]
-      : (this.DOMGen.branches[key] as string);
 
     if (!this.registry[firstElemID].isPaused) {
       throwIfElementIsNotConnected(
