@@ -18,7 +18,7 @@ import canUseDOM from "../utils/canUseDOM";
 function throwIfElementIsNotConnected(elm: Element, id: string) {
   if (!elm.isConnected) {
     throw new Error(
-      `DFlex: elements in the branch is not valid. Trying to validate ${id} but failed.
+      `DFlex: elements in the branch are not valid. Trying to validate element with an id:${id} but failed.
 Did you forget to call store.unregister(${id})?`
     );
   }
