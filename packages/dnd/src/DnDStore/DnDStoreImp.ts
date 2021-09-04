@@ -157,27 +157,40 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       ? requiredBranch
       : [requiredBranch];
 
-    const newBranch: string[] = [];
+    const extractedOldBranch: string[] = [];
 
     for (let i = 0; i < branch.length; i += 1) {
       const elmID = branch[i];
 
       if (elmID && this.registry[elmID].ref) {
         if (!this.registry[elmID].ref!.isConnected) {
-          newBranch.push(elmID);
+          extractedOldBranch.push(elmID);
         }
       }
     }
 
-    const shiftedIndexes = newBranch.length;
+    this.DOMGen.getElmPointer(`${Date.now()}`, 1);
+
+    const { SK } = this.DOMGen.accumulateIndicators(0);
+
+    // Swap branches
+    this.DOMGen.branches[SK] = this.DOMGen.branches[branchKey];
+    this.DOMGen.branches[branchKey] = extractedOldBranch;
+
+    const shiftedIndexes = extractedOldBranch.length;
 
     for (let i = shiftedIndexes; i < branch.length; i += 1) {
       const elmID = branch[i];
 
-      if (elmID) this.registry[elmID].order.self -= shiftedIndexes;
+      if (elmID) {
+        this.registry[elmID].order.self -= shiftedIndexes;
+        this.registry[elmID].keys.SK = SK;
+      }
     }
 
     branch.splice(0, shiftedIndexes);
+
+    return SK;
   }
 
   initSiblingsScrollAndVisibilityIfNecessary(key: string) {
@@ -191,19 +204,6 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     // when there's a delay in firing load event and clicking on the element.
     // It's fine.
     if (this.siblingsScrollElement[key]) {
-      if (process.env.NODE_ENV !== "production") {
-        if (!this.registry[firstElemID].isPaused) {
-          throwIfElementIsNotConnected(
-            this.registry[firstElemID].ref!,
-            firstElemID
-          );
-        }
-      }
-
-      if (!this.registry[firstElemID].ref!.isConnected) {
-        this.cleanupUnconnectedElements(key);
-      }
-
       /**
        * When does it happen?
        * When the branch is cleared but the scroll element is still there.
@@ -220,7 +220,22 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
        * All these cases are not considered a bug. A problem, but not a bug.
        */
       if (this.siblingsScrollElement[key].scrollContainerRef.isConnected) {
-        return;
+        if (this.registry[firstElemID].ref!.isConnected) {
+          return;
+        }
+
+        if (process.env.NODE_ENV !== "production") {
+          if (!this.registry[firstElemID].isPaused) {
+            throwIfElementIsNotConnected(
+              this.registry[firstElemID].ref!,
+              firstElemID
+            );
+          }
+        }
+
+        const newKey = this.cleanupUnconnectedElements(key);
+
+        this.initSiblingsScrollAndVisibilityIfNecessary(newKey);
       }
 
       delete this.siblingsScrollElement[key];
@@ -239,7 +254,9 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     }
 
     if (!this.registry[firstElemID].ref!.isConnected) {
-      this.cleanupUnconnectedElements(key);
+      const newKey = this.cleanupUnconnectedElements(key);
+
+      this.initSiblingsScrollAndVisibilityIfNecessary(newKey);
     }
 
     const scroll = new Scroll({
