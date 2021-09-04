@@ -159,19 +159,22 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     const extractedOldBranch: string[] = [];
 
+    let depth: null | number = null;
+
     for (let i = 0; i < branch.length; i += 1) {
       const elmID = branch[i];
 
       if (elmID && this.registry[elmID].ref) {
         if (!this.registry[elmID].ref!.isConnected) {
+          if (depth === null) depth = this.registry[elmID].depth;
           extractedOldBranch.push(elmID);
         }
       }
     }
 
-    this.DOMGen.getElmPointer(`${Date.now()}`, 1);
+    this.DOMGen.getElmPointer(`${Date.now()}`, depth as number);
 
-    const { SK } = this.DOMGen.accumulateIndicators(0);
+    const { SK } = this.DOMGen.accumulateIndicators(depth as number);
 
     // Swap branches
     this.DOMGen.branches[SK] = this.DOMGen.branches[branchKey];
@@ -234,7 +237,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
         }
 
         const newKey = this.cleanupUnconnectedElements(key);
-
+        delete this.siblingsScrollElement[key];
         this.initSiblingsScrollAndVisibilityIfNecessary(newKey);
       }
 
