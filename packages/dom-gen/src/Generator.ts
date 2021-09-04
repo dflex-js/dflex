@@ -131,7 +131,7 @@ class Generator implements GeneratorInterface {
     return this.branches[SK];
   }
 
-  private accumulateIndicators(depth: number) {
+  accumulateIndicators(depth: number) {
     if (depth !== this.prevDepth) {
       this.initIndicators(depth);
     }
