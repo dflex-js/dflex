@@ -157,15 +157,23 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       ? requiredBranch
       : [requiredBranch];
 
-    branch.forEach((elmID, i) => {
-      if (elmID) {
-        if (this.registry[elmID].ref) {
-          if (!this.registry[elmID].ref!.isConnected) {
-            this.DOMGen.removeElementIDFromBranch(branchKey, i);
-          }
+    let shiftedIndexes = 0;
+
+    for (let i = 0; i < branch.length; i += 1) {
+      const elmID = branch[i];
+
+      if (elmID && this.registry[elmID].ref) {
+        if (!this.registry[elmID].ref!.isConnected) {
+          shiftedIndexes += 1;
         }
       }
-    });
+    }
+
+    for (let i = shiftedIndexes; i < branch.length; i += 1) {
+      this.registry[branch[i]!].order.self -= shiftedIndexes;
+    }
+
+    branch.splice(0, shiftedIndexes);
   }
 
   initSiblingsScrollAndVisibilityIfNecessary(key: string) {
