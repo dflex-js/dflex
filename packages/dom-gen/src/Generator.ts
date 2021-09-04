@@ -131,15 +131,7 @@ class Generator implements GeneratorInterface {
     return this.branches[SK];
   }
 
-  /**
-   * Main method.
-   *
-   * Add element to branches.
-   *
-   * @param id - element id
-   * @param depth - element depth
-   */
-  getElmPointer(id: string, depth: number): Pointer {
+  private accumulateIndicators(depth: number) {
     if (depth !== this.prevDepth) {
       this.initIndicators(depth);
     }
@@ -152,10 +144,13 @@ class Generator implements GeneratorInterface {
     /**
      * get siblings unique key (sK) and parents key (pK)
      */
-    const siblingsKey = genKey(depth, parentIndex);
-    const parentKey = genKey(depth + 1, this.indicator[depth + 2]);
+    const SK = genKey(depth, parentIndex);
+    const PK = genKey(depth + 1, this.indicator[depth + 2]);
 
-    const selfIndex = this.addElementIDToSiblingsBranch(id, siblingsKey);
+    const CHK = depth === 0 ? null : this.prevKey;
+    this.prevKey = SK;
+
+    this.indicator[depth] += 1;
 
     if (depth < this.prevDepth) {
       /**
@@ -166,15 +161,31 @@ class Generator implements GeneratorInterface {
 
     this.prevDepth = depth;
 
-    const childrenKey = this.prevKey;
-    this.prevKey = siblingsKey;
+    return {
+      CHK,
+      SK,
+      PK,
+      parentIndex,
+    };
+  }
 
-    this.indicator[depth] += 1;
+  /**
+   * Main method.
+   *
+   * Add element to branches.
+   *
+   * @param id - element id
+   * @param depth - element depth
+   */
+  getElmPointer(id: string, depth: number): Pointer {
+    const { CHK, SK, PK, parentIndex } = this.accumulateIndicators(depth);
+
+    const selfIndex = this.addElementIDToSiblingsBranch(id, SK);
 
     const keys: Keys = {
-      SK: siblingsKey,
-      PK: parentKey,
-      CHK: depth === 0 ? null : childrenKey,
+      SK,
+      PK,
+      CHK,
     };
 
     const order: Order = {
