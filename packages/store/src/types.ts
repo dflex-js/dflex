@@ -23,8 +23,7 @@ export interface ElmInstanceWithProps
   [key: string]: any;
 }
 
-export interface ElmWithPointerWithProps
-  extends Omit<ElmInstanceWithProps, "depth"> {
+export interface ElmPointerWithProps extends ElmInstanceWithProps {
   order: Order;
   keys: Keys;
 }

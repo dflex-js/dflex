@@ -9,11 +9,11 @@ import type { ELmBranch } from "@dflex/dom-gen";
 import type {
   Class,
   ElmInstanceWithProps,
-  ElmWithPointerWithProps,
+  ElmPointerWithProps,
   StoreInterface,
 } from "./types";
 
-class Store<T = ElmWithPointerWithProps> implements StoreInterface<T> {
+class Store<T = ElmPointerWithProps> implements StoreInterface<T> {
   registry: {
     [id: string]: T;
   };
@@ -46,10 +46,11 @@ class Store<T = ElmWithPointerWithProps> implements StoreInterface<T> {
 
     const { order, keys } = this.DOMGen.getElmPointer(id, depth);
 
-    const coreElement: ElmWithPointerWithProps = {
+    const coreElement: ElmPointerWithProps = {
       id,
       order,
       keys,
+      depth,
       ...rest,
     };
 
