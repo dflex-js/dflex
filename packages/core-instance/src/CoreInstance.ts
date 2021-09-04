@@ -35,6 +35,8 @@ class CoreInstance
 
   keys: Keys;
 
+  depth: number;
+
   isVisible: boolean;
 
   hasToTransform!: boolean;
@@ -42,12 +44,14 @@ class CoreInstance
   animatedFrame: number | null;
 
   constructor(elementWithPointer: CoreInput) {
-    const { order, keys, scrollX, scrollY, ...element } = elementWithPointer;
+    const { order, keys, depth, scrollX, scrollY, ...element } =
+      elementWithPointer;
 
     super(element);
 
     this.order = order;
     this.keys = keys;
+    this.depth = depth;
 
     this.isVisible = element.isInitialized && !element.isPaused;
 
