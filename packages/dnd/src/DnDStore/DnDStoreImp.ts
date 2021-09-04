@@ -170,7 +170,9 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     }
 
     for (let i = shiftedIndexes; i < branch.length; i += 1) {
-      this.registry[branch[i]!].order.self -= shiftedIndexes;
+      const elmID = branch[i];
+
+      if (elmID) this.registry[elmID].order.self -= shiftedIndexes;
     }
 
     branch.splice(0, shiftedIndexes);
