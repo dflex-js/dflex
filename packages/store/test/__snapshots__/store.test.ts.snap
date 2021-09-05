@@ -3,6 +3,7 @@
 exports[`Testing Store Package Snaps shot registry 1`] = `
 Object {
   "id-0": Object {
+    "depth": 0,
     "id": "id-0",
     "keys": Object {
       "CHK": null,
@@ -16,6 +17,7 @@ Object {
     "ref": <div />,
   },
   "id-1": Object {
+    "depth": 0,
     "id": "id-1",
     "keys": Object {
       "CHK": null,
@@ -29,6 +31,7 @@ Object {
     "ref": <div />,
   },
   "id-2": Object {
+    "depth": 0,
     "id": "id-2",
     "keys": Object {
       "CHK": null,
@@ -42,6 +45,7 @@ Object {
     "ref": <div />,
   },
   "p-id-0": Object {
+    "depth": 1,
     "id": "p-id-0",
     "keys": Object {
       "CHK": "0-0",
@@ -60,6 +64,7 @@ Object {
 exports[`Testing Store Package Snaps shot registry after delete 1`] = `
 Object {
   "id-0": Object {
+    "depth": 0,
     "id": "id-0",
     "keys": Object {
       "CHK": null,
@@ -73,6 +78,7 @@ Object {
     "ref": <div />,
   },
   "id-1": Object {
+    "depth": 0,
     "id": "id-1",
     "keys": Object {
       "CHK": null,
@@ -86,6 +92,7 @@ Object {
     "ref": <div />,
   },
   "id-2": Object {
+    "depth": 0,
     "id": "id-2",
     "keys": Object {
       "CHK": null,
@@ -99,6 +106,7 @@ Object {
     "ref": <div />,
   },
   "p-id-0": Object {
+    "depth": 1,
     "id": "p-id-0",
     "keys": Object {
       "CHK": "0-0",

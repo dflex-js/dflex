@@ -6,6 +6,7 @@ Object {
     "animatedFrame": null,
     "currentLeft": NaN,
     "currentTop": NaN,
+    "depth": 0,
     "hasToTransform": false,
     "id": "id-0",
     "isInitialized": true,
