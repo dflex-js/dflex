@@ -4,6 +4,7 @@ exports[`DnD Store Element is initiated 1`] = `
 Object {
   "id-1": CoreInstance {
     "animatedFrame": null,
+    "depth": 0,
     "id": "id-1",
     "isInitialized": true,
     "isPaused": true,
@@ -23,6 +24,7 @@ Object {
   },
   "id-2": CoreInstance {
     "animatedFrame": null,
+    "depth": 0,
     "id": "id-2",
     "isInitialized": true,
     "isPaused": true,
@@ -42,6 +44,7 @@ Object {
   },
   "id-3": CoreInstance {
     "animatedFrame": null,
+    "depth": 0,
     "id": "id-3",
     "isInitialized": true,
     "isPaused": true,
@@ -61,6 +64,7 @@ Object {
   },
   "id-4": CoreInstance {
     "animatedFrame": null,
+    "depth": 0,
     "id": "id-4",
     "isInitialized": true,
     "isPaused": true,
@@ -94,6 +98,7 @@ Object {
   },
   "element": CoreInstance {
     "animatedFrame": null,
+    "depth": 0,
     "id": "id-1",
     "isInitialized": true,
     "isPaused": true,

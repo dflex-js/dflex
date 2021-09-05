@@ -37,6 +37,9 @@ export interface GeneratorInterface {
   };
   getElmBranch(SK: string): ELmBranch;
   getElmPointer(id: string, depth: number): Pointer;
+  accumulateIndicators(depth: number): Keys & {
+    parentIndex: number;
+  };
   removeElementIDFromBranch(SK: string, index: number): string | null;
   destroyBranch(SK: string, cb: (elmID: string) => unknown): void;
   clearBranchesAndIndicator(): void;

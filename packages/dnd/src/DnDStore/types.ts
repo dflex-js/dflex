@@ -34,8 +34,11 @@ export interface Translate {
   translateY: number;
 }
 
-interface RegisterInputDepth {
+interface RegisterInputEssential {
+  /** provide a depth if you want to drag the parent container  */
   depth?: number;
+  /** Unique key to connect elements with the same parent together */
+  parenID?: string;
 }
 
 interface RegisterInputID {
@@ -54,9 +57,9 @@ interface RegisterInputAll {
 }
 
 export type RegisterInput =
-  | (RegisterInputDepth & RegisterInputAll)
-  | (RegisterInputDepth & RegisterInputID)
-  | (RegisterInputDepth & RegisterInputRef);
+  | (RegisterInputEssential & RegisterInputAll)
+  | (RegisterInputEssential & RegisterInputID)
+  | (RegisterInputEssential & RegisterInputRef);
 
 export interface ScrollThreshold {
   maxX: number;

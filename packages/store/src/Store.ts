@@ -9,21 +9,57 @@ import type { ELmBranch } from "@dflex/dom-gen";
 import type {
   Class,
   ElmInstanceWithProps,
-  ElmWithPointerWithProps,
+  ElmPointerWithProps,
   StoreInterface,
 } from "./types";
 
-class Store<T = ElmWithPointerWithProps> implements StoreInterface<T> {
+class Store<T = ElmPointerWithProps> implements StoreInterface<T> {
   registry: {
     [id: string]: T;
   };
 
   DOMGen: Generator;
 
+  private lastKeyIdentifier: string | null;
+
   constructor() {
+    this.lastKeyIdentifier = null;
+
     this.registry = {};
 
     this.DOMGen = new Generator();
+  }
+
+  /**
+   * Create element and add it to registry.
+   *
+   * @param element - Element to be added to registry.
+   * @param CustomInstance - Custom class to be used for element.
+   * @param opts - Options to be passed to CustomInstance.
+   */
+  private submitElementToRegistry(
+    element: ElmInstanceWithProps,
+    CustomInstance?: Class<T>,
+    opts?: {}
+  ) {
+    const { id, depth, ...rest } = element;
+
+    const { order, keys } = this.DOMGen.getElmPointer(id, depth);
+
+    const coreElement: ElmPointerWithProps = {
+      id,
+      order,
+      keys,
+      depth,
+      ...rest,
+    };
+
+    // TODO: fix TS error here.
+    // @ts-ignore
+    this.registry[id] =
+      CustomInstance && typeof CustomInstance.constructor === "function"
+        ? new CustomInstance(coreElement, opts)
+        : coreElement;
   }
 
   /**
@@ -38,18 +74,32 @@ class Store<T = ElmWithPointerWithProps> implements StoreInterface<T> {
     CustomInstance?: Class<T>,
     opts?: {}
   ) {
-    const { id, depth, ...rest } = element;
+    // Why using parentID?
+    // Because it's impossible to know if this element belongs to the same
+    // branch or not. Unless the input is strict and ask to register the parent
+    // node which can't be done. To solve this, we use parentID to identify
+    // elements belong to the same branch.
+    // Another thing could be: but why not call the parent node from the DOM?
+    // Well, it solves the issue temporarily. But it breaks the rule of DFlex:
+    // Extensibility.
+    if (element.parentId) {
+      // This is the first element in the branch then.
+      if (!this.lastKeyIdentifier) {
+        this.lastKeyIdentifier = element.parentId;
+        // Change means new branch.
+      } else if (element.parentId !== this.lastKeyIdentifier) {
+        // Create parent node to close the branch.
+        this.submitElementToRegistry(
+          {
+            id: element.parentId,
+            depth: element.depth + 1,
+          },
+          CustomInstance
+        );
+      }
+    }
 
-    const { order, keys } = this.DOMGen.getElmPointer(id, depth);
-
-    const coreElement: ElmWithPointerWithProps = { id, order, keys, ...rest };
-
-    // TODO: fix TS error here.
-    // @ts-ignore
-    this.registry[id] =
-      CustomInstance && typeof CustomInstance.constructor === "function"
-        ? new CustomInstance(coreElement, opts)
-        : coreElement;
+    this.submitElementToRegistry(element, CustomInstance, opts);
   }
 
   unregister(id: string) {

@@ -612,8 +612,11 @@ class Droppable {
 
     const { SK } = store.registry[this.draggable.draggedElm.id].keys;
 
-    const { scrollHeight, scrollContainer, scrollRect } =
-      store.siblingsScrollElement[SK];
+    const {
+      scrollHeight,
+      scrollContainerRef: scrollContainer,
+      scrollRect,
+    } = store.siblingsScrollElement[SK];
 
     if (direction === 1) {
       if (currentBottom <= scrollHeight) {
@@ -648,8 +651,11 @@ class Droppable {
 
     const { SK } = store.registry[this.draggable.draggedElm.id].keys;
 
-    const { scrollHeight, scrollContainer, scrollRect } =
-      store.siblingsScrollElement[SK];
+    const {
+      scrollHeight,
+      scrollContainerRef: scrollContainer,
+      scrollRect,
+    } = store.siblingsScrollElement[SK];
 
     if (direction === 1) {
       if (currentRight <= scrollHeight) {

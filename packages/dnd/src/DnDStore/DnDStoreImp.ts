@@ -15,6 +15,16 @@ import Tracker from "../Plugins/Tracker";
 
 import canUseDOM from "../utils/canUseDOM";
 
+function throwIfElementIsNotConnected(elm: Element, id: string) {
+  if (!elm.isConnected) {
+    // eslint-disable-next-line no-console
+    console.error(
+      `DFlex: elements in the branch are not valid. Trying to validate element with an id:${id} but failed.
+Did you forget to call store.unregister(${id})?`
+    );
+  }
+}
+
 class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   tracker: DnDStoreInterface["tracker"];
 
@@ -141,25 +151,108 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     });
   }
 
-  initSiblingsScrollAndVisibility(key: string) {
+  private cleanupUnconnectedElements(branchKey: string) {
+    const requiredBranch = this.DOMGen.branches[branchKey];
+
+    const branch = Array.isArray(requiredBranch)
+      ? requiredBranch
+      : [requiredBranch];
+
+    const extractedOldBranch: string[] = [];
+
+    let depth: null | number = null;
+
+    for (let i = 0; i < branch.length; i += 1) {
+      const elmID = branch[i];
+
+      if (elmID && this.registry[elmID].ref) {
+        if (!this.registry[elmID].ref!.isConnected) {
+          if (depth === null) depth = this.registry[elmID].depth;
+          extractedOldBranch.push(elmID);
+        }
+      }
+    }
+
+    // Can we get the parent ID?
+    this.DOMGen.getElmPointer(`${Date.now()}`, depth as number);
+
+    const { SK } = this.DOMGen.accumulateIndicators(depth as number);
+
+    // Swap branches
+    this.DOMGen.branches[SK] = this.DOMGen.branches[branchKey];
+    this.DOMGen.branches[branchKey] = extractedOldBranch;
+
+    const shiftedIndexes = extractedOldBranch.length;
+
+    for (let i = shiftedIndexes; i < branch.length; i += 1) {
+      const elmID = branch[i];
+
+      if (elmID) {
+        this.registry[elmID].order.self -= shiftedIndexes;
+        this.registry[elmID].keys.SK = SK;
+      }
+    }
+
+    branch.splice(0, shiftedIndexes);
+
+    return SK;
+  }
+
+  initSiblingsScrollAndVisibilityIfNecessary(key: string) {
     const hasSiblings = Array.isArray(this.DOMGen.branches[key]);
 
     const firstElemID = hasSiblings
       ? this.DOMGen.branches[key]![0]
       : (this.DOMGen.branches[key] as string);
 
-    if (
-      !this.registry[firstElemID].isPaused &&
-      this.siblingsScrollElement[key]
-    ) {
-      // Avoid multiple calls that runs function multiple times. This happens
-      // when there's a delay in firing load event and clicking on the element.
-      // It's fine.
+    // Avoid multiple calls that runs function multiple times. This happens
+    // when there's a delay in firing load event and clicking on the element.
+    // It's fine.
+    if (this.siblingsScrollElement[key]) {
+      if (
+        this.siblingsScrollElement[key].scrollContainerRef.isConnected &&
+        this.registry[firstElemID].ref!.isConnected
+      ) {
+        return;
+      }
+
+      if (process.env.NODE_ENV !== "production") {
+        if (!this.registry[firstElemID].isPaused) {
+          throwIfElementIsNotConnected(
+            this.registry[firstElemID].ref!,
+            firstElemID
+          );
+        }
+      }
+
+      this.siblingsScrollElement[key].destroy();
+      delete this.siblingsScrollElement[key];
+
+      const newKey = this.cleanupUnconnectedElements(key);
+
+      this.initSiblingsScrollAndVisibilityIfNecessary(newKey);
+
       return;
     }
 
     this.registry[firstElemID].resume(0, 0);
     this.registry[firstElemID].isPaused = true;
+
+    if (process.env.NODE_ENV !== "production") {
+      if (!this.registry[firstElemID].isPaused) {
+        throwIfElementIsNotConnected(
+          this.registry[firstElemID].ref!,
+          firstElemID
+        );
+      }
+    }
+    if (!this.registry[firstElemID].ref!.isConnected) {
+      const newKey = this.cleanupUnconnectedElements(key);
+
+      this.initSiblingsScrollAndVisibilityIfNecessary(newKey);
+
+      return;
+    }
 
     const scroll = new Scroll({
       element: this.registry[firstElemID].ref!,
@@ -179,7 +272,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   onLoadListeners() {
     Object.keys(this.DOMGen.branches).forEach((branchKey) => {
-      this.initSiblingsScrollAndVisibility(branchKey);
+      this.initSiblingsScrollAndVisibilityIfNecessary(branchKey);
     });
   }
 
@@ -263,6 +356,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     const coreInput = {
       id,
+      parenID: element.parenID,
       depth: element.depth || 0,
       ref: element.ref || null,
       isInitialized: hasRef,
@@ -351,6 +445,18 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.siblingsScrollElement = {};
   }
 
+  /**
+   * Unregister DnD element.
+   *
+   * Note: This will remove the element registry and the branch array. But,
+   * in case all the branches will be removed.
+   * This means, if, in rare cases when the user removes one element and keeps
+   * the rest this methods going to generate a bug. It's going to remove an
+   * element without updating the indexes inside registry instances.
+   *
+   * @param id -
+   *
+   */
   unregister(id: string) {
     const {
       keys: { SK },

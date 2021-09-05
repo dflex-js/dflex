@@ -65,6 +65,7 @@ describe("Testing Store Package", () => {
 
     expect(elemInstance).toStrictEqual({
       id: "id-0",
+      depth: 0,
       keys: {
         CHK: null,
         PK: "1-0",
