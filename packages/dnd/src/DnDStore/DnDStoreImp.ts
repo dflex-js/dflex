@@ -172,6 +172,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       }
     }
 
+    // Can we get the parent ID?
     this.DOMGen.getElmPointer(`${Date.now()}`, depth as number);
 
     const { SK } = this.DOMGen.accumulateIndicators(depth as number);
@@ -207,41 +208,30 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     // when there's a delay in firing load event and clicking on the element.
     // It's fine.
     if (this.siblingsScrollElement[key]) {
-      /**
-       * When does it happen?
-       * When the branch is cleared but the scroll element is still there.
-       * (bug/fixed but could it appear in the future?)
-       *
-       * When there's a duplication.
-       * Meaning: You register the branch, continue with another one but DOM Gen
-       * still thinking you are working on the same branch. This issue generates
-       * key. To work around this, we need to clear the scroll element if it's
-       * not live.
-       *
-       * When the developer forgets to unregister the branch.
-       *
-       * All these cases are not considered a bug. A problem, but not a bug.
-       */
-      if (this.siblingsScrollElement[key].scrollContainerRef.isConnected) {
-        if (this.registry[firstElemID].ref!.isConnected) {
-          return;
-        }
-
-        if (process.env.NODE_ENV !== "production") {
-          if (!this.registry[firstElemID].isPaused) {
-            throwIfElementIsNotConnected(
-              this.registry[firstElemID].ref!,
-              firstElemID
-            );
-          }
-        }
-
-        const newKey = this.cleanupUnconnectedElements(key);
-        delete this.siblingsScrollElement[key];
-        this.initSiblingsScrollAndVisibilityIfNecessary(newKey);
+      if (
+        this.siblingsScrollElement[key].scrollContainerRef.isConnected &&
+        this.registry[firstElemID].ref!.isConnected
+      ) {
+        return;
       }
 
+      if (process.env.NODE_ENV !== "production") {
+        if (!this.registry[firstElemID].isPaused) {
+          throwIfElementIsNotConnected(
+            this.registry[firstElemID].ref!,
+            firstElemID
+          );
+        }
+      }
+
+      this.siblingsScrollElement[key].destroy();
       delete this.siblingsScrollElement[key];
+
+      const newKey = this.cleanupUnconnectedElements(key);
+
+      this.initSiblingsScrollAndVisibilityIfNecessary(newKey);
+
+      return;
     }
 
     this.registry[firstElemID].resume(0, 0);
@@ -255,11 +245,12 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
         );
       }
     }
-
     if (!this.registry[firstElemID].ref!.isConnected) {
       const newKey = this.cleanupUnconnectedElements(key);
 
       this.initSiblingsScrollAndVisibilityIfNecessary(newKey);
+
+      return;
     }
 
     const scroll = new Scroll({
