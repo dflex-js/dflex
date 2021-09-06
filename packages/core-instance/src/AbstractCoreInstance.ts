@@ -62,24 +62,28 @@ class AbstractCoreInstance implements AbstractCoreInterface {
     }
 
     this.ref = incomingRef;
+    this.isInitialized = true;
   }
 
   detach() {
+    this.isInitialized = false;
+    this.isPaused = true;
     this.ref = null;
-  }
-
-  initialize(ref: HTMLElement | null) {
-    this.attach(ref);
-    this.isInitialized = true;
   }
 
   initTranslate() {
     /**
      * Since element render once and being transformed later we keep the data
      * stored to navigate correctly.
+     *
+     * If it's already initiated we don't need to do it again.
+     * Reason: You may detach ref set flag to false and then attach it again. Do
+     * you want to start from zero or maintain the last position.
+     *
+     * Continuity is fundamental in DFlex, please keep that in your mind.
      */
-    this.translateY = 0;
-    this.translateX = 0;
+    if (typeof this.translateY !== "number") this.translateY = 0;
+    if (typeof this.translateX !== "number") this.translateX = 0;
 
     this.isPaused = false;
   }
