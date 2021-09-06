@@ -209,6 +209,11 @@ Please provide scroll container by ref/id when registering the element or turn o
     }
 
     this.hasOverflowY = this.scrollRect.height < scrollHeight;
+    console.log(
+      "file: Scroll.ts ~ line 212 ~ this.scrollRect.height",
+      this.scrollRect.height,
+      scrollHeight
+    );
 
     this.hasOverflowX = this.scrollRect.width < scrollWidth;
 
@@ -268,7 +273,9 @@ Please provide scroll container by ref/id when registering the element or turn o
 
       if (elm) {
         if (attach) {
-          elm.dataset.dflexScrollListener = this.siblingKey;
+          elm.dataset[
+            `dflexScrollListener-${this.siblingKey}`
+          ] = `${this.allowDynamicVisibility}`;
 
           return;
         }
