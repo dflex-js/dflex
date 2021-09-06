@@ -15,14 +15,12 @@ import Tracker from "../Plugins/Tracker";
 
 import canUseDOM from "../utils/canUseDOM";
 
-function throwIfElementIsNotConnected(elm: Element, id: string) {
-  if (!elm.isConnected) {
-    // eslint-disable-next-line no-console
-    console.error(
-      `DFlex: elements in the branch are not valid. Trying to validate element with an id:${id} but failed.
+function throwElementIsNotConnected(id: string) {
+  // eslint-disable-next-line no-console
+  console.error(
+    `DFlex: elements in the branch are not valid. Trying to validate element with an id:${id} but failed.
 Did you forget to call store.unregister(${id})?`
-    );
-  }
+  );
 }
 
 class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
@@ -173,8 +171,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       }
     }
 
-    // Can we get the parent ID?
-    this.DOMGen.getElmPointer(`${Date.now()}`, depth as number);
+    // Can we get the parent ID, later?
+    this.DOMGen.getElmPointer(`${Date.now()}`, (depth as number) + 1);
 
     const { SK } = this.DOMGen.accumulateIndicators(depth as number);
 
@@ -217,12 +215,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       }
 
       if (process.env.NODE_ENV !== "production") {
-        if (!this.registry[firstElemID].isPaused) {
-          throwIfElementIsNotConnected(
-            this.registry[firstElemID].ref!,
-            firstElemID
-          );
-        }
+        throwElementIsNotConnected(firstElemID);
       }
 
       this.siblingsScrollElement[key].destroy();
@@ -238,15 +231,11 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     this.registry[firstElemID].resume(0, 0);
     this.registry[firstElemID].isPaused = true;
 
-    if (process.env.NODE_ENV !== "production") {
-      if (!this.registry[firstElemID].isPaused) {
-        throwIfElementIsNotConnected(
-          this.registry[firstElemID].ref!,
-          firstElemID
-        );
-      }
-    }
     if (!this.registry[firstElemID].ref!.isConnected) {
+      if (process.env.NODE_ENV !== "production") {
+        throwElementIsNotConnected(firstElemID);
+      }
+
       const newKey = this.cleanupUnconnectedElements(key);
 
       this.initSiblingsScrollAndVisibilityIfNecessary(newKey);
