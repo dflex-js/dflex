@@ -176,10 +176,6 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     const { SK } = this.DOMGen.accumulateIndicators(depth as number);
 
-    // Swap branches
-    this.DOMGen.branches[SK] = this.DOMGen.branches[branchKey];
-    this.DOMGen.branches[branchKey] = extractedOldBranch;
-
     const shiftedIndexes = extractedOldBranch.length;
 
     for (let i = shiftedIndexes; i < branch.length; i += 1) {
@@ -191,7 +187,11 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       }
     }
 
-    branch.splice(0, shiftedIndexes);
+    (this.DOMGen.branches[branchKey] as string[]).splice(0, shiftedIndexes);
+
+    // Swap branches
+    this.DOMGen.branches[SK] = this.DOMGen.branches[branchKey];
+    this.DOMGen.branches[branchKey] = extractedOldBranch;
 
     return SK;
   }
