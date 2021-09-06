@@ -254,7 +254,10 @@ Please provide scroll container by ref/id when registering the element or turn o
       if (this.hasDocumentAsContainer) {
         // Find the first div in the document body.
         for (let i = 0; i < document.body.childNodes.length; i += 1) {
-          if (document.body.childNodes[i].nodeName === "DIV") {
+          if (
+            document.body.childNodes[i].ELEMENT_NODE === 1 &&
+            document.body.childNodes[i].nodeName === "DIV"
+          ) {
             // @ts-expect-error
             elm = document.body.childNodes[i];
 
