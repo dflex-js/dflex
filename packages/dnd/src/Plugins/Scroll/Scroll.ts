@@ -208,8 +208,7 @@ Please provide scroll container by ref/id when registering the element or turn o
       this.scrollRect = { height, width, left, top };
     }
 
-    this.hasOverflowY = this.scrollRect.height < scrollHeight;
-
+    this.hasOverflowY = this.scrollHeight > this.scrollRect.height;
     this.hasOverflowX = this.scrollRect.width < scrollWidth;
 
     /**
@@ -249,14 +248,33 @@ Please provide scroll container by ref/id when registering the element or turn o
     if (hasScrollListener) {
       container[type]("scroll", this.animatedScrollListener, opts);
 
-      if (!this.hasDocumentAsContainer) {
+      let elm: HTMLElement = this.scrollContainerRef;
+
+      if (this.hasDocumentAsContainer) {
+        // Find the first div in the document body.
+        for (let i = 0; i < document.body.childNodes.length; i += 1) {
+          if (
+            document.body.childNodes[i].ELEMENT_NODE === 1 &&
+            document.body.childNodes[i].nodeName === "DIV"
+          ) {
+            // @ts-expect-error
+            elm = document.body.childNodes[i];
+
+            break;
+          }
+        }
+      }
+
+      if (elm) {
         if (attach) {
-          this.scrollContainerRef.dataset.dflexScrollListener = this.siblingKey;
+          elm.dataset[
+            `dflexScrollListener-${this.siblingKey}`
+          ] = `${this.allowDynamicVisibility}`;
 
           return;
         }
 
-        delete this.scrollContainerRef.dataset.dflexScrollListener;
+        delete elm.dataset.dflexScrollListener;
       }
     }
   }

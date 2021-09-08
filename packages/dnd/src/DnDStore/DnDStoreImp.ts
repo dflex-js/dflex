@@ -19,7 +19,7 @@ function throwElementIsNotConnected(id: string) {
   // eslint-disable-next-line no-console
   console.error(
     `DFlex: elements in the branch are not valid. Trying to validate element with an id:${id} but failed.
-Did you forget to call store.unregister(${id})?`
+Did you forget to call store.unregister(${id}) or add parenID when register the element?`
   );
 }
 
@@ -184,6 +184,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       if (elmID) {
         this.registry[elmID].order.self -= shiftedIndexes;
         this.registry[elmID].keys.SK = SK;
+        // TODO: Add detach and test it.
+        // this.registry[elmID].detach();
       }
     }
 
@@ -334,7 +336,6 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       if (this.registry[id].isInitialized) {
         this.registry[id].attach(element.ref || null);
       }
-
       if (this.registry[id].isVisible) {
         // Preserves last changes.
         this.registry[id].transformElm();

@@ -74,7 +74,9 @@ class CoreInstance
    * So, basically any working element in DnD should be initiated first.
    */
   private initIndicators(scrollX: number, scrollY: number) {
-    this.prevTranslateY = [];
+    if (!Array.isArray(this.prevTranslateY)) {
+      this.prevTranslateY = [];
+    }
 
     const { height, width, left, top } = this.ref!.getBoundingClientRect();
 
@@ -98,12 +100,11 @@ class CoreInstance
   }
 
   resume(scrollX: number, scrollY: number) {
-    if (!this.isInitialized) this.initialize(null);
+    if (!this.isInitialized) this.attach(null);
 
     this.initTranslate();
-    this.initIndicators(scrollX, scrollY);
 
-    this.isPaused = false;
+    this.initIndicators(scrollX, scrollY);
   }
 
   changeVisibility(isVisible: boolean) {
