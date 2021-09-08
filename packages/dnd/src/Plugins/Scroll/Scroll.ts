@@ -208,13 +208,7 @@ Please provide scroll container by ref/id when registering the element or turn o
       this.scrollRect = { height, width, left, top };
     }
 
-    this.hasOverflowY = this.scrollRect.height < scrollHeight;
-    console.log(
-      "file: Scroll.ts ~ line 212 ~ this.scrollRect.height",
-      this.scrollRect.height,
-      scrollHeight
-    );
-
+    this.hasOverflowY = this.scrollHeight > this.scrollRect.height;
     this.hasOverflowX = this.scrollRect.width < scrollWidth;
 
     /**
