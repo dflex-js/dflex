@@ -18,7 +18,7 @@ import canUseDOM from "../utils/canUseDOM";
 function throwElementIsNotConnected(id: string) {
   // eslint-disable-next-line no-console
   console.error(
-    `DFlex: elements in the branch are not valid. Trying to validate element with an id:${id} but failed.
+    `DFlex: elements in the branch are not valid. Trying to validate element with id:${id} but failed.
 Did you forget to call store.unregister(${id}) or add parenID when register the element?`
   );
 }
@@ -39,6 +39,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     prevKy: string;
     exceptionToNextElm: boolean;
   };
+
+  static MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
 
   constructor() {
     super();
@@ -166,6 +168,10 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       if (elmID && this.registry[elmID].ref) {
         if (!this.registry[elmID].ref!.isConnected) {
           if (depth === null) depth = this.registry[elmID].depth;
+
+          // We don't know if element will be used in the future or not. So,
+          // reference to prevent memory leak.
+          this.registry[elmID].detach();
           extractedOldBranch.push(elmID);
         }
       }
@@ -184,8 +190,6 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       if (elmID) {
         this.registry[elmID].order.self -= shiftedIndexes;
         this.registry[elmID].keys.SK = SK;
-        // TODO: Add detach and test it.
-        // this.registry[elmID].detach();
       }
     }
 
@@ -250,6 +254,17 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       requiredBranchKey: key,
       scrollEventCallback: null,
     });
+
+    // Override allowDynamicVisibility taking into consideration the length of
+    // the branch itself. Iterate for a limited number of elements won't be a problem.
+    if (
+      hasSiblings &&
+      scroll.allowDynamicVisibility &&
+      this.DOMGen.branches[key]!.length <=
+        DnDStoreImp.MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY
+    ) {
+      scroll.allowDynamicVisibility = false;
+    }
 
     this.siblingsScrollElement[key] = scroll;
 
@@ -333,12 +348,13 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     }
 
     if (this.registry[id]) {
-      if (this.registry[id].isInitialized) {
-        this.registry[id].attach(element.ref || null);
-      }
-      if (this.registry[id].isVisible) {
-        // Preserves last changes.
-        this.registry[id].transformElm();
+      if (hasRef || this.registry[id].isInitialized) {
+        this.registry[id].attach(hasRef ? element.ref : null);
+
+        if (this.registry[id].isVisible) {
+          // Preserves last changes.
+          this.registry[id].transformElm();
+        }
       }
 
       return;
