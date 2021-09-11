@@ -159,47 +159,47 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       : [requiredBranch];
 
     const extractedOldBranch: string[] = [];
+    const connectedNodesID: string[] = [];
 
     let depth: null | number = null;
+    let newSK = "";
 
     for (let i = 0; i < branch.length; i += 1) {
       const elmID = branch[i];
 
-      if (elmID && this.registry[elmID].ref) {
-        if (!this.registry[elmID].ref!.isConnected) {
-          if (depth === null) depth = this.registry[elmID].depth;
+      if (elmID) {
+        if (depth === null) {
+          depth = this.registry[elmID].depth;
+
+          // Can we get the parent ID, later?
+          this.DOMGen.getElmPointer(`${Date.now()}`, (depth as number) + 1);
+
+          newSK = this.DOMGen.accumulateIndicators(depth as number).SK;
+        }
+
+        if (
+          this.registry[elmID].ref &&
+          !this.registry[elmID].ref!.isConnected
+        ) {
+          this.registry[elmID].order.self = extractedOldBranch.push(elmID) - 1;
 
           // We don't know if element will be used in the future or not. So,
           // reference to prevent memory leak.
           this.registry[elmID].detach();
-          extractedOldBranch.push(elmID);
+        } else {
+          this.registry[elmID].order.self = connectedNodesID.push(elmID) - 1;
+
+          // New key goes to the new branch.
+          this.registry[elmID].keys.SK = newSK;
         }
       }
     }
 
-    // Can we get the parent ID, later?
-    this.DOMGen.getElmPointer(`${Date.now()}`, (depth as number) + 1);
-
-    const { SK } = this.DOMGen.accumulateIndicators(depth as number);
-
-    const shiftedIndexes = extractedOldBranch.length;
-
-    for (let i = shiftedIndexes; i < branch.length; i += 1) {
-      const elmID = branch[i];
-
-      if (elmID) {
-        this.registry[elmID].order.self -= shiftedIndexes;
-        this.registry[elmID].keys.SK = SK;
-      }
-    }
-
-    (this.DOMGen.branches[branchKey] as string[]).splice(0, shiftedIndexes);
-
-    // Swap branches
-    this.DOMGen.branches[SK] = this.DOMGen.branches[branchKey];
+    // Assign new branches
+    this.DOMGen.branches[newSK] = connectedNodesID;
     this.DOMGen.branches[branchKey] = extractedOldBranch;
 
-    return SK;
+    return newSK;
   }
 
   initSiblingsScrollAndVisibilityIfNecessary(key: string) {
@@ -225,10 +225,10 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
         this.registry[lastElemID].isPaused = true;
       }
 
-      if (
-        !this.registry[firstElemID].ref!.isConnected ||
-        !this.registry[lastElemID!].ref!.isConnected
-      ) {
+      const isHeadNotConnected = !this.registry[firstElemID].ref!.isConnected;
+      const isTailNotConnected = !this.registry[lastElemID!].ref!.isConnected;
+
+      if (isHeadNotConnected || isTailNotConnected) {
         if (process.env.NODE_ENV !== "production") {
           throwElementIsNotConnected(firstElemID);
         }
