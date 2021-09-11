@@ -205,48 +205,54 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   initSiblingsScrollAndVisibilityIfNecessary(key: string) {
     const hasSiblings = Array.isArray(this.DOMGen.branches[key]);
 
-    const firstElemID = hasSiblings
-      ? this.DOMGen.branches[key]![0]
-      : (this.DOMGen.branches[key] as string);
+    let firstElemID = "";
 
-    // Avoid multiple calls that runs function multiple times. This happens
-    // when there's a delay in firing load event and clicking on the element.
-    // It's fine.
-    if (this.siblingsScrollElement[key]) {
+    if (!hasSiblings) {
+      firstElemID = this.DOMGen.branches[key] as string;
+    } else {
+      [firstElemID] = this.DOMGen.branches[key]! as string[];
+
+      const lastElemID =
+        this.DOMGen.branches[key]![this.DOMGen.branches[key]!.length - 1];
+
+      if (!this.registry[firstElemID].isInitialized) {
+        this.registry[firstElemID].resume(0, 0);
+        this.registry[firstElemID].isPaused = true;
+      }
+
+      if (!this.registry[lastElemID].isInitialized) {
+        this.registry[lastElemID].resume(0, 0);
+        this.registry[lastElemID].isPaused = true;
+      }
+
       if (
-        this.siblingsScrollElement[key].scrollContainerRef.isConnected &&
-        this.registry[firstElemID].ref!.isConnected
+        !this.registry[firstElemID].ref!.isConnected ||
+        !this.registry[lastElemID!].ref!.isConnected
       ) {
+        if (process.env.NODE_ENV !== "production") {
+          throwElementIsNotConnected(firstElemID);
+        }
+
+        if (this.siblingsScrollElement[key]) {
+          this.siblingsScrollElement[key].destroy();
+          delete this.siblingsScrollElement[key];
+        }
+
+        const newKey = this.cleanupUnconnectedElements(key);
+
+        this.initSiblingsScrollAndVisibilityIfNecessary(newKey);
+
         return;
       }
+    }
 
-      if (process.env.NODE_ENV !== "production") {
-        throwElementIsNotConnected(firstElemID);
-      }
-
-      this.siblingsScrollElement[key].destroy();
-      delete this.siblingsScrollElement[key];
-
-      const newKey = this.cleanupUnconnectedElements(key);
-
-      this.initSiblingsScrollAndVisibilityIfNecessary(newKey);
-
+    if (this.siblingsScrollElement[key]) {
       return;
     }
 
-    this.registry[firstElemID].resume(0, 0);
-    this.registry[firstElemID].isPaused = true;
-
-    if (!this.registry[firstElemID].ref!.isConnected) {
-      if (process.env.NODE_ENV !== "production") {
-        throwElementIsNotConnected(firstElemID);
-      }
-
-      const newKey = this.cleanupUnconnectedElements(key);
-
-      this.initSiblingsScrollAndVisibilityIfNecessary(newKey);
-
-      return;
+    if (!this.registry[firstElemID].isInitialized) {
+      this.registry[firstElemID].resume(0, 0);
+      this.registry[firstElemID].isPaused = true;
     }
 
     const scroll = new Scroll({
