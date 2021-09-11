@@ -50,7 +50,11 @@ class AbstractCoreInstance implements AbstractCoreInterface {
   }
 
   attach(incomingRef: HTMLElement | null) {
+    // Cleanup.
+    this.ref = null;
+
     if (!incomingRef) {
+      // TODO: Is this always running when document is valid? Or it's buggy?
       const ref = document.getElementById(this.id);
       if (!ref) {
         throw new Error(`DFlex: Element with ID: ${this.id} is not found.`);

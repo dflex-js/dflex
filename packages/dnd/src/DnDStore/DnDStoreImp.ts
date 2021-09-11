@@ -18,7 +18,7 @@ import canUseDOM from "../utils/canUseDOM";
 function throwElementIsNotConnected(id: string) {
   // eslint-disable-next-line no-console
   console.error(
-    `DFlex: elements in the branch are not valid. Trying to validate element with an id:${id} but failed.
+    `DFlex: elements in the branch are not valid. Trying to validate element with id:${id} but failed.
 Did you forget to call store.unregister(${id}) or add parenID when register the element?`
   );
 }
@@ -39,6 +39,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     prevKy: string;
     exceptionToNextElm: boolean;
   };
+
+  static MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
 
   constructor() {
     super();
@@ -157,92 +159,100 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       : [requiredBranch];
 
     const extractedOldBranch: string[] = [];
+    const connectedNodesID: string[] = [];
 
     let depth: null | number = null;
+    let newSK = "";
 
     for (let i = 0; i < branch.length; i += 1) {
       const elmID = branch[i];
 
-      if (elmID && this.registry[elmID].ref) {
-        if (!this.registry[elmID].ref!.isConnected) {
-          if (depth === null) depth = this.registry[elmID].depth;
-          extractedOldBranch.push(elmID);
+      if (elmID) {
+        if (depth === null) {
+          depth = this.registry[elmID].depth;
+
+          // Can we get the parent ID, later?
+          this.DOMGen.getElmPointer(`${Date.now()}`, (depth as number) + 1);
+
+          newSK = this.DOMGen.accumulateIndicators(depth as number).SK;
+        }
+
+        if (
+          this.registry[elmID].ref &&
+          !this.registry[elmID].ref!.isConnected
+        ) {
+          this.registry[elmID].order.self = extractedOldBranch.push(elmID) - 1;
+
+          // We don't know if element will be used in the future or not. So,
+          // reference to prevent memory leak.
+          this.registry[elmID].detach();
+        } else {
+          this.registry[elmID].order.self = connectedNodesID.push(elmID) - 1;
+
+          // New key goes to the new branch.
+          this.registry[elmID].keys.SK = newSK;
         }
       }
     }
 
-    // Can we get the parent ID, later?
-    this.DOMGen.getElmPointer(`${Date.now()}`, (depth as number) + 1);
-
-    const { SK } = this.DOMGen.accumulateIndicators(depth as number);
-
-    const shiftedIndexes = extractedOldBranch.length;
-
-    for (let i = shiftedIndexes; i < branch.length; i += 1) {
-      const elmID = branch[i];
-
-      if (elmID) {
-        this.registry[elmID].order.self -= shiftedIndexes;
-        this.registry[elmID].keys.SK = SK;
-        // TODO: Add detach and test it.
-        // this.registry[elmID].detach();
-      }
-    }
-
-    (this.DOMGen.branches[branchKey] as string[]).splice(0, shiftedIndexes);
-
-    // Swap branches
-    this.DOMGen.branches[SK] = this.DOMGen.branches[branchKey];
+    // Assign new branches
+    this.DOMGen.branches[newSK] = connectedNodesID;
     this.DOMGen.branches[branchKey] = extractedOldBranch;
 
-    return SK;
+    return newSK;
   }
 
   initSiblingsScrollAndVisibilityIfNecessary(key: string) {
     const hasSiblings = Array.isArray(this.DOMGen.branches[key]);
 
-    const firstElemID = hasSiblings
-      ? this.DOMGen.branches[key]![0]
-      : (this.DOMGen.branches[key] as string);
+    let firstElemID = "";
 
-    // Avoid multiple calls that runs function multiple times. This happens
-    // when there's a delay in firing load event and clicking on the element.
-    // It's fine.
-    if (this.siblingsScrollElement[key]) {
-      if (
-        this.siblingsScrollElement[key].scrollContainerRef.isConnected &&
-        this.registry[firstElemID].ref!.isConnected
-      ) {
+    if (!hasSiblings) {
+      firstElemID = this.DOMGen.branches[key] as string;
+    } else {
+      [firstElemID] = this.DOMGen.branches[key]! as string[];
+
+      const lastElemID =
+        this.DOMGen.branches[key]![this.DOMGen.branches[key]!.length - 1];
+
+      if (!this.registry[firstElemID].isInitialized) {
+        this.registry[firstElemID].resume(0, 0);
+        this.registry[firstElemID].isPaused = true;
+      }
+
+      if (!this.registry[lastElemID].isInitialized) {
+        this.registry[lastElemID].resume(0, 0);
+        this.registry[lastElemID].isPaused = true;
+      }
+
+      const isHeadNotConnected = !this.registry[firstElemID].ref!.isConnected;
+      const isTailNotConnected = !this.registry[lastElemID!].ref!.isConnected;
+
+      if (isHeadNotConnected || isTailNotConnected) {
+        if (process.env.NODE_ENV !== "production") {
+          throwElementIsNotConnected(firstElemID);
+        }
+
+        if (this.siblingsScrollElement[key]) {
+          this.siblingsScrollElement[key].destroy();
+          delete this.siblingsScrollElement[key];
+        }
+
+        const newKey = this.cleanupUnconnectedElements(key);
+
+        this.initSiblingsScrollAndVisibilityIfNecessary(newKey);
+
         return;
       }
+    }
 
-      if (process.env.NODE_ENV !== "production") {
-        throwElementIsNotConnected(firstElemID);
-      }
-
-      this.siblingsScrollElement[key].destroy();
-      delete this.siblingsScrollElement[key];
-
-      const newKey = this.cleanupUnconnectedElements(key);
-
-      this.initSiblingsScrollAndVisibilityIfNecessary(newKey);
-
+    if (this.siblingsScrollElement[key]) {
       return;
     }
 
-    this.registry[firstElemID].resume(0, 0);
-    this.registry[firstElemID].isPaused = true;
-
-    if (!this.registry[firstElemID].ref!.isConnected) {
-      if (process.env.NODE_ENV !== "production") {
-        throwElementIsNotConnected(firstElemID);
-      }
-
-      const newKey = this.cleanupUnconnectedElements(key);
-
-      this.initSiblingsScrollAndVisibilityIfNecessary(newKey);
-
-      return;
+    if (!this.registry[firstElemID].isInitialized) {
+      this.registry[firstElemID].resume(0, 0);
+      this.registry[firstElemID].isPaused = true;
     }
 
     const scroll = new Scroll({
@@ -250,6 +260,17 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       requiredBranchKey: key,
       scrollEventCallback: null,
     });
+
+    // Override allowDynamicVisibility taking into consideration the length of
+    // the branch itself. Iterate for a limited number of elements won't be a problem.
+    if (
+      hasSiblings &&
+      scroll.allowDynamicVisibility &&
+      this.DOMGen.branches[key]!.length <=
+        DnDStoreImp.MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY
+    ) {
+      scroll.allowDynamicVisibility = false;
+    }
 
     this.siblingsScrollElement[key] = scroll;
 
@@ -333,12 +354,13 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     }
 
     if (this.registry[id]) {
-      if (this.registry[id].isInitialized) {
-        this.registry[id].attach(element.ref || null);
-      }
-      if (this.registry[id].isVisible) {
-        // Preserves last changes.
-        this.registry[id].transformElm();
+      if (hasRef || this.registry[id].isInitialized) {
+        this.registry[id].attach(hasRef ? element.ref : null);
+
+        if (this.registry[id].isVisible) {
+          // Preserves last changes.
+          this.registry[id].transformElm();
+        }
       }
 
       return;

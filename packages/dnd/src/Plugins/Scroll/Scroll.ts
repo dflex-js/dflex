@@ -275,6 +275,15 @@ Please provide scroll container by ref/id when registering the element or turn o
         }
 
         delete elm.dataset.dflexScrollListener;
+
+        return;
+      }
+
+      if (process.env.NODE_ENV !== "production") {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `DFlex: Failed to add scroll listener dataset. Unable to detect the first valid div inside document.body`
+        );
       }
     }
   }
