@@ -1,6 +1,6 @@
 {
   "name": "@dflex/draggable",
-  "version": "2.13.0",
+  "version": "2.14.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Modern Draggable package for all JavaScript frameworks",
