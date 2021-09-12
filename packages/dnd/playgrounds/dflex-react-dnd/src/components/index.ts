@@ -15,6 +15,8 @@ export {
 
 export { TodoList, TodoListCase1 } from "./todo";
 
+export { default as UnRegisteredLists } from "./mixedRegisteredElements";
+
 export { ComponentBasedEvent, ContainerBasedEvent } from "./essential";
 
 export { ScrollMulti, ScrollEssential } from "./scroll";

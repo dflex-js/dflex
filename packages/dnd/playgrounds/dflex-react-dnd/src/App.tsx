@@ -22,6 +22,7 @@ import {
   ContainerBasedEvent,
   ScrollMulti,
   ScrollEssential,
+  UnRegisteredLists,
 } from "./components";
 
 function App() {
@@ -60,6 +61,9 @@ function App() {
         </Route>
         <Route path="/depth-1">
           <Depth1 />
+        </Route>
+        <Route path="/unregistered">
+          <UnRegisteredLists />
         </Route>
         <Route path="/component-based-event">
           <ComponentBasedEvent />
