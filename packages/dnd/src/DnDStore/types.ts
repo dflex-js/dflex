@@ -38,7 +38,7 @@ interface RegisterInputEssential {
   /** provide a depth if you want to drag the parent container  */
   depth?: number;
   /** Unique key to connect elements with the same parent together */
-  parenID?: string;
+  parentID?: string;
 }
 
 interface RegisterInputID {
@@ -78,10 +78,10 @@ export interface DnDStoreInterface {
   siblingsBoundaries: { [siblingKey: string]: BoundariesOffset };
   siblingsScrollElement: { [siblingKey: string]: ScrollInterface };
   register(element: ElmInstance, x?: boolean): void;
-  getELmOffsetById(id: string): Rect | undefined;
+  getInitialELmRectById(id: string): Rect | undefined;
   getELmTranslateById(id: string): Translate;
   getElmTreeById(id: string): ElmTree;
-  getElmSiblingsById(id: string): ELmBranch | null;
+  getElmSiblingsById(id: string): ELmBranch;
   getElmSiblingsListById(id: string): string[] | null;
   destroy(): void;
 }
