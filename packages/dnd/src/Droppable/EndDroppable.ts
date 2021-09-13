@@ -67,7 +67,7 @@ class EndDroppable extends Droppable {
     return { prevVisibility, listVisibility };
   }
 
-  insertDragged(from: number, lst: string[]) {
+  private insertDragged(from: number, lst: string[]) {
     lst.splice(this.spliceAt, 1);
     lst.splice(from, 0, this.draggable.draggedElm.id);
   }

@@ -366,9 +366,11 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       return;
     }
 
+    // TODO: Can we add a type for this? This is the second time I find a bug
+    // caused by wrong input.
     const coreInput = {
       id,
-      parenID: element.parenID,
+      parentID: element.parentID,
       depth: element.depth || 0,
       ref: element.ref || null,
       isInitialized: hasRef,
@@ -378,7 +380,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     super.register(coreInput, CoreInstance);
   }
 
-  getELmOffsetById(id: string) {
+  getInitialELmRectById(id: string) {
     return this.registry[id].offset;
   }
 

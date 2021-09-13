@@ -33,7 +33,7 @@ class AbstractDraggable<T extends AbstractCoreInterface>
 
   tempTranslate: Coordinates;
 
-  static draggedStyleProps: DraggedStyle = [
+  static draggedStyle: DraggedStyle = [
     {
       prop: "position",
       dragValue: "relative",
@@ -104,7 +104,7 @@ class AbstractDraggable<T extends AbstractCoreInterface>
    */
   protected setDragged(isActive: boolean) {
     if (isActive) {
-      this.changeStyle(AbstractDraggable.draggedStyleProps, true);
+      this.changeStyle(AbstractDraggable.draggedStyle, true);
 
       if (getSelection()) {
         getSelection()!.removeAllRanges();
@@ -117,7 +117,7 @@ class AbstractDraggable<T extends AbstractCoreInterface>
     /**
      * Not active: end of dragging.
      */
-    this.changeStyle(AbstractDraggable.draggedStyleProps, false);
+    this.changeStyle(AbstractDraggable.draggedStyle, false);
 
     this.draggedElm.ref!.removeAttribute("dragged");
   }

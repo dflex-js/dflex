@@ -8,7 +8,10 @@
 import { Rect } from "packages/core-instance/src/types";
 
 export interface ThresholdPercentages {
+  /** vertical threshold in percentage from 0-100 */
   vertical: number;
+
+  /** horizontal threshold in percentage from 0-100 */
   horizontal: number;
 }
 
