@@ -703,6 +703,69 @@ class Droppable {
     });
   }
 
+  private scrollManager(x: number, y: number) {
+    const { SK } = store.registry[this.draggable.draggedElm.id].keys;
+
+    /**
+     * Manage scrolling.
+     */
+    if (
+      this.draggable.scroll.enable &&
+      this.scrollAnimatedFrame === null &&
+      store.siblingsScrollElement[SK].hasThrottledFrame === null
+    ) {
+      if (store.siblingsScrollElement[SK].hasOverflowY) {
+        const { scrollRect, scrollHeight, threshold } =
+          store.siblingsScrollElement[SK];
+
+        if (
+          this.draggable.isMovingDown &&
+          y >= threshold!.thresholdMatrix.maxBottom &&
+          this.scrollTop + scrollRect.height < scrollHeight
+        ) {
+          this.scrollElement(x, y, 1, "scrollElementOnY");
+
+          return;
+        }
+
+        if (y <= threshold!.thresholdMatrix.maxTop && this.scrollTop > 0) {
+          this.scrollElement(x, y, -1, "scrollElementOnY");
+
+          return;
+        }
+      }
+
+      if (store.siblingsScrollElement[SK].hasOverflowX) {
+        const { scrollRect, scrollHeight, threshold } =
+          store.siblingsScrollElement[SK];
+
+        if (
+          x >= threshold!.thresholdMatrix.maxLeft &&
+          this.scrollLeft + scrollRect.width < scrollHeight
+        ) {
+          this.scrollElement(x, y, 1, "scrollElementOnX");
+
+          return;
+        }
+
+        if (x <= threshold!.thresholdMatrix.maxRight && this.scrollLeft > 0) {
+          this.scrollElement(x, y, -1, "scrollElementOnX");
+        }
+      }
+
+      /**
+       * Scroll turns the flag off. But regular dragging will be resumed
+       * when the drag is outside the auto scrolling area.
+       */
+      this.regularDragging = true;
+
+      /**
+       * Reset scrollSpeed.
+       */
+      this.scrollSpeed = this.draggable.scroll.initialSpeed;
+    }
+  }
+
   /**
    * Invokes draggable method responsible of transform.
    * Monitors dragged translate and called related methods. Which controls the
@@ -730,71 +793,12 @@ class Droppable {
     this.draggable.setDraggedMovingDown(y);
 
     if (this.draggable.isOutThreshold()) {
+      this.scrollManager(x, y);
+
       if (!this.isListLocked) {
         this.draggedOutPosition();
 
         return;
-      }
-
-      /**
-       * Manage scrolling.
-       */
-      if (
-        this.draggable.scroll.enable &&
-        this.scrollAnimatedFrame === null &&
-        store.siblingsScrollElement[SK].hasThrottledFrame === null
-      ) {
-        if (store.siblingsScrollElement[SK].hasOverflowY) {
-          const { scrollRect, scrollHeight, threshold } =
-            store.siblingsScrollElement[SK];
-
-          if (
-            this.draggable.isMovingDown &&
-            y >= threshold!.thresholdMatrix.maxBottom &&
-            this.scrollTop + scrollRect.height < scrollHeight
-          ) {
-            this.scrollElement(x, y, 1, "scrollElementOnY");
-
-            return;
-          }
-
-          if (y <= threshold!.thresholdMatrix.maxTop && this.scrollTop > 0) {
-            this.scrollElement(x, y, -1, "scrollElementOnY");
-
-            return;
-          }
-        }
-
-        if (store.siblingsScrollElement[SK].hasOverflowX) {
-          const { scrollRect, scrollHeight, threshold } =
-            store.siblingsScrollElement[SK];
-
-          if (
-            x >= threshold!.thresholdMatrix.maxLeft &&
-            this.scrollLeft + scrollRect.width < scrollHeight
-          ) {
-            this.scrollElement(x, y, 1, "scrollElementOnX");
-
-            return;
-          }
-
-          if (x <= threshold!.thresholdMatrix.maxRight && this.scrollLeft > 0) {
-            this.scrollElement(x, y, -1, "scrollElementOnX");
-
-            return;
-          }
-        }
-
-        /**
-         * Scroll turns the flag off. But regular dragging will be resumed
-         * when the drag is outside the auto scrolling area.
-         */
-        this.regularDragging = true;
-
-        /**
-         * Reset scrollSpeed.
-         */
-        this.scrollSpeed = this.draggable.scroll.initialSpeed;
       }
 
       isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
