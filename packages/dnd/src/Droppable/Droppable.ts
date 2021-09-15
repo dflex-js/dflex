@@ -280,7 +280,7 @@ class Droppable {
       );
     }
 
-    this.eventHandlers.onDragOver(element.id, element.order.self);
+    this.eventHandlers.onDragOver.call(this, element.id, element.order.self);
 
     const { currentLeft: elmLeft, currentTop: elmTop } = element;
 
@@ -302,7 +302,7 @@ class Droppable {
       this.siblingsEmptyElmIndex
     );
 
-    this.eventHandlers.onDragOver(element.id, element.order.self);
+    this.eventHandlers.onDragOver.call(this, element.id, element.order.self);
   }
 
   private isElemAboveDragged(elmCurrentOffsetTop: number) {

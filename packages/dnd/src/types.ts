@@ -27,9 +27,17 @@ export interface RestrictionsStatus {
   isSelfRestricted: boolean;
 }
 
-interface events {
+export type LayoutState =
+  | "pending"
+  | "ready"
+  | "dragging"
+  | "dragEnd"
+  | "dragCancel";
+
+export interface Events {
   onDragOver: (elementID: string, index: number) => unknown;
   onDragLeave: (elementID: string, index: number) => unknown;
+  onStateChange: () => LayoutState;
 }
 
 export interface FinalDndOpts {
@@ -37,7 +45,7 @@ export interface FinalDndOpts {
   restrictions: Restrictions;
   restrictionsStatus: RestrictionsStatus;
   scroll: ScrollOptWithThreshold;
-  events: events;
+  events: Events;
 }
 
 export interface DndOpts {
@@ -47,5 +55,5 @@ export interface DndOpts {
     container?: Partial<Restrictions["container"]>;
   };
   scroll?: Partial<ScrollOptWithPartialThreshold>;
-  events?: Partial<events>;
+  events?: Partial<Events>;
 }

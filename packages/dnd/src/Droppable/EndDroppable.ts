@@ -179,9 +179,9 @@ class EndDroppable extends Droppable {
         isFallback = true;
 
         this.undoList(siblings);
-        store.layoutState = "dragCancel";
+        store.onStateChange("dragCancel");
       }
-      store.layoutState = "dragEnd";
+      store.onStateChange("dragEnd");
     }
 
     this.draggable.endDragging(isFallback);

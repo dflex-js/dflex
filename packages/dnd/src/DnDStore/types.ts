@@ -8,9 +8,9 @@
 import type { CoreInstanceInterface, Rect } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
 import type { ElmInstance } from "@dflex/store";
+import type { LayoutState } from "../types";
 
 import type { ScrollInterface } from "../Plugins/Scroll";
-import type { ThresholdInterface } from "../Plugins/Threshold";
 import type { TrackerInterface } from "../Plugins/Tracker";
 
 export interface BoundariesOffset {
@@ -77,7 +77,8 @@ export interface DnDStoreInterface {
   tracker: TrackerInterface;
   siblingsBoundaries: { [siblingKey: string]: BoundariesOffset };
   siblingsScrollElement: { [siblingKey: string]: ScrollInterface };
-  layoutState: "pending" | "ready" | "dragging" | "dragEnd" | "dragCancel";
+  layoutState: LayoutState;
+  onStateChange: (state: LayoutState) => void;
   register(element: ElmInstance, x?: boolean): void;
   getInitialELmRectById(id: string): Rect | undefined;
   getELmTranslateById(id: string): Translate;

@@ -371,7 +371,7 @@ class Draggable
   dragAt(x: number, y: number) {
     if (!this.isLayoutStateUpdated) {
       this.isLayoutStateUpdated = true;
-      store.layoutState = "dragging";
+      store.onStateChange("dragging");
     }
 
     let filteredY = y;

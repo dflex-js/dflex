@@ -14,6 +14,7 @@ import Scroll from "../Plugins/Scroll";
 import Tracker from "../Plugins/Tracker";
 
 import canUseDOM from "../utils/canUseDOM";
+import type { LayoutState, Events } from "../types";
 
 function throwElementIsNotConnected(id: string) {
   // eslint-disable-next-line no-console
@@ -31,6 +32,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   siblingsScrollElement: DnDStoreInterface["siblingsScrollElement"];
 
   layoutState: DnDStoreInterface["layoutState"];
+
+  private stateChangeHandler: Events["onStateChange"];
 
   private isDOM: boolean;
 
@@ -52,6 +55,9 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     this.layoutState = "pending";
 
+    // @ts-expect-error Should be initialized when calling DnD instance.
+    this.stateChangeHandler = null;
+
     this.tracker = new Tracker();
 
     this.initELmIndicator();
@@ -61,6 +67,12 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     this.onLoadListeners = this.onLoadListeners.bind(this);
     this.updateBranchVisibility = this.updateBranchVisibility.bind(this);
+  }
+
+  onStateChange(state: LayoutState) {
+    this.layoutState = state;
+
+    this.stateChangeHandler.call(state);
   }
 
   private init() {
