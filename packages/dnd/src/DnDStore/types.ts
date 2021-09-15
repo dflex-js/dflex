@@ -77,6 +77,7 @@ export interface DnDStoreInterface {
   tracker: TrackerInterface;
   siblingsBoundaries: { [siblingKey: string]: BoundariesOffset };
   siblingsScrollElement: { [siblingKey: string]: ScrollInterface };
+  layoutState: "pending" | "ready" | "dragging" | "dragEnd" | "dragCancel";
   register(element: ElmInstance, x?: boolean): void;
   getInitialELmRectById(id: string): Rect | undefined;
   getELmTranslateById(id: string): Translate;

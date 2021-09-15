@@ -26,6 +26,8 @@ class Draggable
   extends AbstractDraggable<CoreInstanceInterface>
   implements DraggableDnDInterface
 {
+  private isLayoutStateUpdated: boolean;
+
   tempIndex: number;
 
   operationID: string;
@@ -85,6 +87,8 @@ class Draggable
     const { element, parent } = store.getElmTreeById(id);
 
     super(element, initCoordinates);
+
+    this.isLayoutStateUpdated = false;
 
     const { order } = element;
 
@@ -365,6 +369,11 @@ class Draggable
    * @param y -
    */
   dragAt(x: number, y: number) {
+    if (!this.isLayoutStateUpdated) {
+      this.isLayoutStateUpdated = true;
+      store.layoutState = "dragging";
+    }
+
     let filteredY = y;
     let filteredX = x;
 

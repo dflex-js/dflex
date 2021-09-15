@@ -12,6 +12,8 @@
 
 import type { DndOpts, FinalDndOpts } from "../types";
 
+function noop() {}
+
 export const defaultOpts: DndOpts = Object.freeze({
   threshold: {
     vertical: 60,
@@ -40,6 +42,11 @@ export const defaultOpts: DndOpts = Object.freeze({
       vertical: 15,
       horizontal: 15,
     },
+  },
+
+  events: {
+    onDragOver: noop,
+    onDragLeave: noop,
   },
 });
 
@@ -107,6 +114,12 @@ export function extractOpts(opts: DndOpts) {
 
       options.restrictionsStatus.isSelfRestricted = isSelfRestricted;
       options.restrictionsStatus.isContainerRestricted = isContainerRestricted;
+    } else if (props === "events") {
+      Object.keys(options.events).forEach((event) => {
+        if (typeof options.events[event] !== "function") {
+          options.events[event] = noop;
+        }
+      });
     }
   });
 

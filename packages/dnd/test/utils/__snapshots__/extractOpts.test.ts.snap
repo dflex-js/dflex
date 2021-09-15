@@ -1,10 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Returns the default options with input restrictions/threshold/scroll 1`] = `
+exports[`extractOpts Returns default options when empty object is passed 1`] = `
 Object {
+  "events": Object {
+    "onDragLeave": [Function],
+    "onDragOver": [Function],
+  },
   "restrictions": Object {
     "container": Object {
-      "allowLeavingFromBottom": false,
+      "allowLeavingFromBottom": true,
       "allowLeavingFromLeft": true,
       "allowLeavingFromRight": true,
       "allowLeavingFromTop": true,
@@ -13,30 +17,34 @@ Object {
       "allowLeavingFromBottom": true,
       "allowLeavingFromLeft": true,
       "allowLeavingFromRight": true,
-      "allowLeavingFromTop": false,
+      "allowLeavingFromTop": true,
     },
   },
   "restrictionsStatus": Object {
-    "isContainerRestricted": true,
-    "isSelfRestricted": true,
+    "isContainerRestricted": false,
+    "isSelfRestricted": false,
   },
   "scroll": Object {
     "enable": true,
     "initialSpeed": 10,
     "threshold": Object {
-      "horizontal": 9000,
+      "horizontal": 15,
       "vertical": 15,
     },
   },
   "threshold": Object {
-    "horizontal": 9000,
+    "horizontal": 60,
     "vertical": 60,
   },
 }
 `;
 
-exports[`extractOpts Returns default options when empty object is passed 1`] = `
+exports[`extractOpts Returns the correct event handler function 1`] = `
 Object {
+  "events": Object {
+    "onDragLeave": [Function],
+    "onDragOver": [Function],
+  },
   "restrictions": Object {
     "container": Object {
       "allowLeavingFromBottom": true,
@@ -72,6 +80,10 @@ Object {
 
 exports[`extractOpts Returns the default options with input restrictions/allowLeavingFromBottom 1`] = `
 Object {
+  "events": Object {
+    "onDragLeave": [Function],
+    "onDragOver": [Function],
+  },
   "restrictions": Object {
     "container": Object {
       "allowLeavingFromBottom": false,
@@ -105,8 +117,51 @@ Object {
 }
 `;
 
+exports[`extractOpts Returns the default options with input restrictions/threshold/scroll 1`] = `
+Object {
+  "events": Object {
+    "onDragLeave": [Function],
+    "onDragOver": [Function],
+  },
+  "restrictions": Object {
+    "container": Object {
+      "allowLeavingFromBottom": false,
+      "allowLeavingFromLeft": true,
+      "allowLeavingFromRight": true,
+      "allowLeavingFromTop": true,
+    },
+    "self": Object {
+      "allowLeavingFromBottom": true,
+      "allowLeavingFromLeft": true,
+      "allowLeavingFromRight": true,
+      "allowLeavingFromTop": false,
+    },
+  },
+  "restrictionsStatus": Object {
+    "isContainerRestricted": true,
+    "isSelfRestricted": true,
+  },
+  "scroll": Object {
+    "enable": true,
+    "initialSpeed": 10,
+    "threshold": Object {
+      "horizontal": 9000,
+      "vertical": 15,
+    },
+  },
+  "threshold": Object {
+    "horizontal": 9000,
+    "vertical": 60,
+  },
+}
+`;
+
 exports[`extractOpts Returns the default options with input scroll/threshold 1`] = `
 Object {
+  "events": Object {
+    "onDragLeave": [Function],
+    "onDragOver": [Function],
+  },
   "restrictions": Object {
     "container": Object {
       "allowLeavingFromBottom": true,
@@ -142,6 +197,10 @@ Object {
 
 exports[`extractOpts Returns the default options with input scroll/threshold/enable 1`] = `
 Object {
+  "events": Object {
+    "onDragLeave": [Function],
+    "onDragOver": [Function],
+  },
   "restrictions": Object {
     "container": Object {
       "allowLeavingFromBottom": true,
@@ -177,6 +236,10 @@ Object {
 
 exports[`extractOpts Returns the default options with self restrictions/allowLeavingFromLeft+right 1`] = `
 Object {
+  "events": Object {
+    "onDragLeave": [Function],
+    "onDragOver": [Function],
+  },
   "restrictions": Object {
     "container": Object {
       "allowLeavingFromBottom": true,

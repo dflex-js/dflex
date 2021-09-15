@@ -27,11 +27,17 @@ export interface RestrictionsStatus {
   isSelfRestricted: boolean;
 }
 
+interface events {
+  onDragOver: (elementID: string, index: number) => unknown;
+  onDragLeave: (elementID: string, index: number) => unknown;
+}
+
 export interface FinalDndOpts {
   threshold: ThresholdInterface["thresholdPercentages"];
   restrictions: Restrictions;
   restrictionsStatus: RestrictionsStatus;
   scroll: ScrollOptWithThreshold;
+  events: events;
 }
 
 export interface DndOpts {
@@ -41,4 +47,5 @@ export interface DndOpts {
     container?: Partial<Restrictions["container"]>;
   };
   scroll?: Partial<ScrollOptWithPartialThreshold>;
+  events?: Partial<events>;
 }

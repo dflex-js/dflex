@@ -8,15 +8,19 @@
 import type { ELmBranch } from "@dflex/dom-gen";
 
 import store from "../DnDStore";
-import type { DraggableDnDInterface } from "../Draggable";
-
 import Droppable from "./Droppable";
+
+import type { DraggableDnDInterface } from "../Draggable";
+import type { FinalDndOpts } from "../types";
 
 class EndDroppable extends Droppable {
   private spliceAt: number;
 
-  constructor(draggable: DraggableDnDInterface) {
-    super(draggable);
+  constructor(
+    draggable: DraggableDnDInterface,
+    eventHandlers: FinalDndOpts["events"]
+  ) {
+    super(draggable, eventHandlers);
     this.spliceAt = -1;
   }
 
@@ -175,7 +179,9 @@ class EndDroppable extends Droppable {
         isFallback = true;
 
         this.undoList(siblings);
+        store.layoutState = "dragCancel";
       }
+      store.layoutState = "dragEnd";
     }
 
     this.draggable.endDragging(isFallback);

@@ -64,36 +64,51 @@ describe("extractOpts", () => {
 
     expect(opts.restrictions.container.allowLeavingFromBottom).toEqual(false);
   });
-});
 
-it("Returns the default options with input restrictions/threshold/scroll", () => {
-  const opts = extractOpts({
-    restrictions: {
-      container: {
-        allowLeavingFromBottom: false,
+  it("Returns the default options with input restrictions/threshold/scroll", () => {
+    const opts = extractOpts({
+      restrictions: {
+        container: {
+          allowLeavingFromBottom: false,
+        },
+        self: {
+          allowLeavingFromTop: false,
+        },
       },
-      self: {
-        allowLeavingFromTop: false,
-      },
-    },
-    threshold: {
-      horizontal: 9000,
-    },
-    scroll: {
       threshold: {
         horizontal: 9000,
       },
-    },
+      scroll: {
+        threshold: {
+          horizontal: 9000,
+        },
+      },
+    });
+
+    expect(opts).toMatchSnapshot();
+
+    expect(opts.restrictions.container.allowLeavingFromBottom).toEqual(false);
+    expect(opts.restrictions.self.allowLeavingFromTop).toEqual(false);
+
+    expect(opts.restrictionsStatus.isContainerRestricted).toEqual(true);
+    expect(opts.restrictionsStatus.isSelfRestricted).toEqual(true);
+
+    expect(opts.threshold.horizontal).toEqual(9000);
+    expect(opts.scroll.threshold.horizontal).toEqual(9000);
   });
 
-  expect(opts).toMatchSnapshot();
+  it("Returns the correct event handler function", () => {
+    function onDragLeave(index, id) {
+      // eslint-disable-next-line no-console
+      console.log(index, id);
+    }
 
-  expect(opts.restrictions.container.allowLeavingFromBottom).toEqual(false);
-  expect(opts.restrictions.self.allowLeavingFromTop).toEqual(false);
+    const opts = extractOpts({
+      events: {
+        onDragLeave,
+      },
+    });
 
-  expect(opts.restrictionsStatus.isContainerRestricted).toEqual(true);
-  expect(opts.restrictionsStatus.isSelfRestricted).toEqual(true);
-
-  expect(opts.threshold.horizontal).toEqual(9000);
-  expect(opts.scroll.threshold.horizontal).toEqual(9000);
+    expect(opts).toMatchSnapshot();
+  });
 });

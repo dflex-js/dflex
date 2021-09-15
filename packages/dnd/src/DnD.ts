@@ -21,11 +21,25 @@ class DnD extends Droppable {
    * @param initCoordinates -
    * @param opts -
    */
+  // eslint-disable-next-line constructor-super
   constructor(
     id: string,
     initCoordinates: Coordinates,
     opts: DndOpts = defaultOpts
   ) {
+    const isLayoutAvailable = ["pending", "dragEnd", "dragCancel"].includes(
+      store.layoutState
+    );
+
+    if (!isLayoutAvailable) {
+      if (process.env.NODE_ENV !== "production") {
+        // eslint-disable-next-line no-console
+        console.error(
+          `DFlex: received multiple dragging request while layout is still occupied`
+        );
+      }
+    }
+
     if (!store.registry[id]) {
       throw new Error(`DFlex: ${id} is not registered in the Store.`);
     }
@@ -50,7 +64,9 @@ class DnD extends Droppable {
       options as FinalDndOpts
     );
 
-    super(draggable);
+    super(draggable, options.events);
+
+    store.layoutState = "ready";
   }
 }
 

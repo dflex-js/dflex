@@ -30,6 +30,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   siblingsScrollElement: DnDStoreInterface["siblingsScrollElement"];
 
+  layoutState: DnDStoreInterface["layoutState"];
+
   private isDOM: boolean;
 
   private isInitialized: boolean;
@@ -47,6 +49,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     this.siblingsBoundaries = {};
     this.siblingsScrollElement = {};
+
+    this.layoutState = "pending";
 
     this.tracker = new Tracker();
 

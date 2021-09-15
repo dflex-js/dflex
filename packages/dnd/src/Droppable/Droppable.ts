@@ -9,6 +9,7 @@ import type { CoreInstanceInterface } from "@dflex/core-instance";
 import store from "../DnDStore";
 
 import type { TempOffset, DraggableDnDInterface } from "../Draggable";
+import type { FinalDndOpts } from "../types";
 
 /**
  * Class includes all transformation methods related to droppable.
@@ -48,8 +49,15 @@ class Droppable {
 
   private regularDragging: boolean;
 
-  constructor(draggable: DraggableDnDInterface) {
+  protected eventHandlers: FinalDndOpts["events"];
+
+  constructor(
+    draggable: DraggableDnDInterface,
+    eventHandlers: FinalDndOpts["events"]
+  ) {
     this.draggable = draggable;
+
+    this.eventHandlers = eventHandlers;
 
     this.elmTransitionY = 0;
 
@@ -272,7 +280,7 @@ class Droppable {
       );
     }
 
-    // element.onDragOver();
+    this.eventHandlers.onDragOver(element.id, element.order.self);
 
     const { currentLeft: elmLeft, currentTop: elmTop } = element;
 
@@ -294,7 +302,7 @@ class Droppable {
       this.siblingsEmptyElmIndex
     );
 
-    // element.onDragLeave();
+    this.eventHandlers.onDragOver(element.id, element.order.self);
   }
 
   private isElemAboveDragged(elmCurrentOffsetTop: number) {
