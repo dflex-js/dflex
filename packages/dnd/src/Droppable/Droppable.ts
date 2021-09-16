@@ -52,6 +52,8 @@ class Droppable {
 
   private isOnDragOutContainerEvtEmitted: boolean;
 
+  private isOnDragOutThresholdEvtEmitted: boolean;
+
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
 
@@ -111,6 +113,7 @@ class Droppable {
     }
 
     this.isOnDragOutContainerEvtEmitted = false;
+    this.isOnDragOutThresholdEvtEmitted = false;
   }
 
   /**
@@ -831,12 +834,16 @@ class Droppable {
     this.draggable.setDraggedMovingDown(y);
 
     if (this.draggable.isOutThreshold()) {
-      store.emitEvent({
-        id: this.draggable.draggedElm.id,
-        index: this.getDraggedTempIndex(),
-        timeStamp: Date.now(),
-        type: "onDragOutThreshold",
-      } as DraggedEvent);
+      if (!this.isOnDragOutThresholdEvtEmitted) {
+        store.emitEvent({
+          id: this.draggable.draggedElm.id,
+          index: this.getDraggedTempIndex(),
+          timeStamp: Date.now(),
+          type: "onDragOutThreshold",
+        } as DraggedEvent);
+
+        this.isOnDragOutThresholdEvtEmitted = true;
+      }
 
       this.scrollManager(x, y);
 
@@ -867,6 +874,10 @@ class Droppable {
       }
 
       return;
+    }
+
+    if (this.isOnDragOutThresholdEvtEmitted) {
+      this.isOnDragOutThresholdEvtEmitted = false;
     }
 
     /**
