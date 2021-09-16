@@ -6,10 +6,11 @@
  */
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
+import type { InteractivityEvent, DraggedEvent, SiblingsEvent } from "../types";
+
 import store from "../DnDStore";
 
 import type { TempOffset, DraggableDnDInterface } from "../Draggable";
-import type { FinalDndOpts } from "../types";
 
 /**
  * Class includes all transformation methods related to droppable.
@@ -49,15 +50,10 @@ class Droppable {
 
   private regularDragging: boolean;
 
-  protected eventHandlers: FinalDndOpts["events"];
+  private isOnDragOutContainerEvtEmitted: boolean;
 
-  constructor(
-    draggable: DraggableDnDInterface,
-    eventHandlers: FinalDndOpts["events"]
-  ) {
+  constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
-
-    this.eventHandlers = eventHandlers;
 
     this.elmTransitionY = 0;
 
@@ -113,6 +109,8 @@ class Droppable {
       this.draggable.changeStyle(this.draggable.changeToFixedStyleProps, true);
       this.moveDown(1);
     }
+
+    this.isOnDragOutContainerEvtEmitted = false;
   }
 
   /**
@@ -280,7 +278,13 @@ class Droppable {
       );
     }
 
-    this.eventHandlers.onDragOver.call(this, element.id, element.order.self);
+    store.emitEvent({
+      id,
+      index: element.order.self,
+      target: element.ref!,
+      timeStamp: Date.now(),
+      type: "onDragOver",
+    } as InteractivityEvent);
 
     const { currentLeft: elmLeft, currentTop: elmTop } = element;
 
@@ -302,7 +306,13 @@ class Droppable {
       this.siblingsEmptyElmIndex
     );
 
-    this.eventHandlers.onDragOver.call(this, element.id, element.order.self);
+    store.emitEvent({
+      id,
+      index: element.order.self,
+      target: element.ref!,
+      timeStamp: Date.now(),
+      type: "onDragLeave",
+    } as InteractivityEvent);
   }
 
   private isElemAboveDragged(elmCurrentOffsetTop: number) {
@@ -444,14 +454,24 @@ class Droppable {
   }
 
   private liftUp() {
-    const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
+    const siblings = store.getElmSiblingsListById(
+      this.draggable.draggedElm.id
+    ) as string[];
 
     const from = this.draggable.tempIndex + 1;
-
     this.leftAtIndex = this.draggable.tempIndex;
+
+    store.emitEvent({
+      siblings,
+      from,
+      to: siblings!.length,
+      timeStamp: Date.now(),
+      type: "onLiftUpSiblings",
+    } as SiblingsEvent);
+
     this.setDraggedTempIndex(-1);
 
-    for (let i = from; i < siblings!.length; i += 1) {
+    for (let i = from; i < siblings.length; i += 1) {
       /**
        * Don't update translate because it's not permanent. Releasing dragged
        * means undoing last position.
@@ -469,10 +489,20 @@ class Droppable {
    * @param to - index
    */
   private moveDown(to: number) {
-    const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
+    const siblings = store.getElmSiblingsListById(
+      this.draggable.draggedElm.id
+    ) as string[];
 
-    for (let i = siblings!.length - 1; i >= to; i -= 1) {
-      const id = siblings![i];
+    store.emitEvent({
+      siblings,
+      from: siblings!.length - 1,
+      to,
+      timeStamp: Date.now(),
+      type: "onMoveDownSiblings",
+    } as SiblingsEvent);
+
+    for (let i = siblings.length - 1; i >= to; i -= 1) {
+      const id = siblings[i];
 
       if (this.isIDEligible2Move(id)) {
         this.updateElement(id, true, -1);
@@ -801,6 +831,13 @@ class Droppable {
     this.draggable.setDraggedMovingDown(y);
 
     if (this.draggable.isOutThreshold()) {
+      store.emitEvent({
+        id: this.draggable.draggedElm.id,
+        index: this.getDraggedTempIndex(),
+        timeStamp: Date.now(),
+        type: "onDragOutThreshold",
+      } as DraggedEvent);
+
       this.scrollManager(x, y);
 
       if (!this.isListLocked) {
@@ -818,6 +855,17 @@ class Droppable {
         return;
       }
 
+      if (!this.isOnDragOutContainerEvtEmitted) {
+        store.emitEvent({
+          id: this.draggable.draggedElm.id,
+          index: this.getDraggedTempIndex(),
+          timeStamp: Date.now(),
+          type: "onDragOutContainer",
+        } as DraggedEvent);
+
+        this.isOnDragOutContainerEvtEmitted = true;
+      }
+
       return;
     }
 
@@ -828,6 +876,8 @@ class Droppable {
       isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
       if (!isOutSiblingsContainer) {
+        this.isOnDragOutContainerEvtEmitted = false;
+
         this.draggedIsComingIn(y);
       }
     }

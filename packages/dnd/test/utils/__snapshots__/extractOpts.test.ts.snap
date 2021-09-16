@@ -4,7 +4,11 @@ exports[`extractOpts Returns default options when empty object is passed 1`] = `
 Object {
   "events": Object {
     "onDragLeave": [Function],
+    "onDragOutContainer": [Function],
+    "onDragOutThreshold": [Function],
     "onDragOver": [Function],
+    "onLiftUpSiblings": [Function],
+    "onMoveDownSiblings": [Function],
     "onStateChange": [Function],
   },
   "restrictions": Object {
@@ -44,7 +48,11 @@ exports[`extractOpts Returns the correct event handler function 1`] = `
 Object {
   "events": Object {
     "onDragLeave": [Function],
+    "onDragOutContainer": [Function],
+    "onDragOutThreshold": [Function],
     "onDragOver": [Function],
+    "onLiftUpSiblings": [Function],
+    "onMoveDownSiblings": [Function],
     "onStateChange": [Function],
   },
   "restrictions": Object {
@@ -84,7 +92,11 @@ exports[`extractOpts Returns the default options with input restrictions/allowLe
 Object {
   "events": Object {
     "onDragLeave": [Function],
+    "onDragOutContainer": [Function],
+    "onDragOutThreshold": [Function],
     "onDragOver": [Function],
+    "onLiftUpSiblings": [Function],
+    "onMoveDownSiblings": [Function],
     "onStateChange": [Function],
   },
   "restrictions": Object {
@@ -124,7 +136,11 @@ exports[`extractOpts Returns the default options with input restrictions/thresho
 Object {
   "events": Object {
     "onDragLeave": [Function],
+    "onDragOutContainer": [Function],
+    "onDragOutThreshold": [Function],
     "onDragOver": [Function],
+    "onLiftUpSiblings": [Function],
+    "onMoveDownSiblings": [Function],
     "onStateChange": [Function],
   },
   "restrictions": Object {
@@ -164,7 +180,11 @@ exports[`extractOpts Returns the default options with input scroll/threshold 1`]
 Object {
   "events": Object {
     "onDragLeave": [Function],
+    "onDragOutContainer": [Function],
+    "onDragOutThreshold": [Function],
     "onDragOver": [Function],
+    "onLiftUpSiblings": [Function],
+    "onMoveDownSiblings": [Function],
     "onStateChange": [Function],
   },
   "restrictions": Object {
@@ -204,7 +224,11 @@ exports[`extractOpts Returns the default options with input scroll/threshold/ena
 Object {
   "events": Object {
     "onDragLeave": [Function],
+    "onDragOutContainer": [Function],
+    "onDragOutThreshold": [Function],
     "onDragOver": [Function],
+    "onLiftUpSiblings": [Function],
+    "onMoveDownSiblings": [Function],
     "onStateChange": [Function],
   },
   "restrictions": Object {
@@ -244,7 +268,11 @@ exports[`extractOpts Returns the default options with self restrictions/allowLea
 Object {
   "events": Object {
     "onDragLeave": [Function],
+    "onDragOutContainer": [Function],
+    "onDragOutThreshold": [Function],
     "onDragOver": [Function],
+    "onLiftUpSiblings": [Function],
+    "onMoveDownSiblings": [Function],
     "onStateChange": [Function],
   },
   "restrictions": Object {

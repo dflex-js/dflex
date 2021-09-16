@@ -11,16 +11,12 @@ import store from "../DnDStore";
 import Droppable from "./Droppable";
 
 import type { DraggableDnDInterface } from "../Draggable";
-import type { FinalDndOpts } from "../types";
 
 class EndDroppable extends Droppable {
   private spliceAt: number;
 
-  constructor(
-    draggable: DraggableDnDInterface,
-    eventHandlers: FinalDndOpts["events"]
-  ) {
-    super(draggable, eventHandlers);
+  constructor(draggable: DraggableDnDInterface) {
+    super(draggable);
     this.spliceAt = -1;
   }
 

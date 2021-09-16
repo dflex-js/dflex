@@ -64,10 +64,10 @@ class DnD extends Droppable {
       options as FinalDndOpts
     );
 
-    super(draggable, options.events);
+    super(draggable);
 
-    // @ts-expect-error It's there. I don't want expose it to the user.
-    store.stateChangeHandler = options.events.onStateChange;
+    // @ts-expect-error
+    store.events = options.events;
 
     store.onStateChange("ready");
   }

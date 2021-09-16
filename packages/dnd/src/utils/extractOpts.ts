@@ -47,6 +47,10 @@ export const defaultOpts: FinalDndOpts = Object.freeze({
   events: {
     onDragOver: noop,
     onDragLeave: noop,
+    onDragOutContainer: noop,
+    onDragOutThreshold: noop,
+    onLiftUpSiblings: noop,
+    onMoveDownSiblings: noop,
     onStateChange: noop,
   },
 });
