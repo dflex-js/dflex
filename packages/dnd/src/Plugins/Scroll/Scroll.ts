@@ -14,21 +14,6 @@ import { ScrollInput, ScrollInterface } from "./types";
 const OVERFLOW_REGEX = /(auto|scroll|overlay)/;
 const MAX_LOOP_ELEMENTS_TO_WARN = 16;
 
-function getScrollFromDocument(): Element | HTMLElement {
-  return document.scrollingElement || document.documentElement;
-}
-
-// function hasOverflow(element: Element) {
-//   const computedStyle = getComputedStyle(element);
-
-//   const overflow =
-//     computedStyle.getPropertyValue("overflow") +
-//     computedStyle.getPropertyValue("overflow-y") +
-//     computedStyle.getPropertyValue("overflow-x");
-
-//   return overflowRegex.test(overflow);
-// }
-
 function isStaticallyPositioned(element: Element) {
   const computedStyle = getComputedStyle(element);
   const position = computedStyle.getPropertyValue("position");
@@ -42,14 +27,6 @@ class Scroll implements ScrollInterface {
   threshold: ScrollInterface["threshold"] | null;
 
   siblingKey: string;
-
-  viewportHeight!: number;
-
-  viewportWidth!: number;
-
-  offsetHeight?: number;
-
-  offsetWidth?: number;
 
   scrollEventCallback: ScrollInterface["scrollEventCallback"];
 
@@ -92,7 +69,6 @@ class Scroll implements ScrollInterface {
 
     this.siblingKey = requiredBranchKey;
 
-    // @ts-expect-error
     this.scrollContainerRef = this.getScrollContainer(element);
 
     this.setScrollRect();
@@ -111,7 +87,7 @@ class Scroll implements ScrollInterface {
     if (!element) {
       this.hasDocumentAsContainer = true;
 
-      return getScrollFromDocument();
+      return document.documentElement;
     }
 
     const computedStyle = getComputedStyle(element);
@@ -172,7 +148,7 @@ Please provide scroll container by ref/id when registering the element or turn o
     ) {
       this.hasDocumentAsContainer = true;
 
-      return getScrollFromDocument();
+      return document.documentElement;
     }
 
     return scrollContainer;

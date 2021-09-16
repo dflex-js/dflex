@@ -8,9 +8,9 @@
 import type { ELmBranch } from "@dflex/dom-gen";
 
 import store from "../DnDStore";
-import type { DraggableDnDInterface } from "../Draggable";
-
 import Droppable from "./Droppable";
+
+import type { DraggableDnDInterface } from "../Draggable";
 
 class EndDroppable extends Droppable {
   private spliceAt: number;
@@ -176,6 +176,8 @@ class EndDroppable extends Droppable {
 
         this.undoList(siblings);
       }
+
+      store.onStateChange(isFallback ? "dragCancel" : "dragEnd");
     }
 
     this.draggable.endDragging(isFallback);

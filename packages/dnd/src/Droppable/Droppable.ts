@@ -6,6 +6,8 @@
  */
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
+import type { InteractivityEvent, DraggedEvent, SiblingsEvent } from "../types";
+
 import store from "../DnDStore";
 
 import type { TempOffset, DraggableDnDInterface } from "../Draggable";
@@ -47,6 +49,10 @@ class Droppable {
   private scrollLeft: number;
 
   private regularDragging: boolean;
+
+  private isOnDragOutContainerEvtEmitted: boolean;
+
+  private isOnDragOutThresholdEvtEmitted: boolean;
 
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
@@ -105,6 +111,9 @@ class Droppable {
       this.draggable.changeStyle(this.draggable.changeToFixedStyleProps, true);
       this.moveDown(1);
     }
+
+    this.isOnDragOutContainerEvtEmitted = false;
+    this.isOnDragOutThresholdEvtEmitted = false;
   }
 
   /**
@@ -272,7 +281,13 @@ class Droppable {
       );
     }
 
-    // element.onDragOver();
+    store.emitEvent({
+      id,
+      index: element.order.self,
+      target: element.ref!,
+      timeStamp: Date.now(),
+      type: "onDragOver",
+    } as InteractivityEvent);
 
     const { currentLeft: elmLeft, currentTop: elmTop } = element;
 
@@ -294,7 +309,13 @@ class Droppable {
       this.siblingsEmptyElmIndex
     );
 
-    // element.onDragLeave();
+    store.emitEvent({
+      id,
+      index: element.order.self,
+      target: element.ref!,
+      timeStamp: Date.now(),
+      type: "onDragLeave",
+    } as InteractivityEvent);
   }
 
   private isElemAboveDragged(elmCurrentOffsetTop: number) {
@@ -436,14 +457,24 @@ class Droppable {
   }
 
   private liftUp() {
-    const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
+    const siblings = store.getElmSiblingsListById(
+      this.draggable.draggedElm.id
+    ) as string[];
 
     const from = this.draggable.tempIndex + 1;
-
     this.leftAtIndex = this.draggable.tempIndex;
+
+    store.emitEvent({
+      siblings,
+      from,
+      to: siblings!.length,
+      timeStamp: Date.now(),
+      type: "onLiftUpSiblings",
+    } as SiblingsEvent);
+
     this.setDraggedTempIndex(-1);
 
-    for (let i = from; i < siblings!.length; i += 1) {
+    for (let i = from; i < siblings.length; i += 1) {
       /**
        * Don't update translate because it's not permanent. Releasing dragged
        * means undoing last position.
@@ -461,10 +492,20 @@ class Droppable {
    * @param to - index
    */
   private moveDown(to: number) {
-    const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
+    const siblings = store.getElmSiblingsListById(
+      this.draggable.draggedElm.id
+    ) as string[];
 
-    for (let i = siblings!.length - 1; i >= to; i -= 1) {
-      const id = siblings![i];
+    store.emitEvent({
+      siblings,
+      from: siblings!.length - 1,
+      to,
+      timeStamp: Date.now(),
+      type: "onMoveDownSiblings",
+    } as SiblingsEvent);
+
+    for (let i = siblings.length - 1; i >= to; i -= 1) {
+      const id = siblings[i];
 
       if (this.isIDEligible2Move(id)) {
         this.updateElement(id, true, -1);
@@ -703,6 +744,69 @@ class Droppable {
     });
   }
 
+  private scrollManager(x: number, y: number) {
+    const { SK } = store.registry[this.draggable.draggedElm.id].keys;
+
+    /**
+     * Manage scrolling.
+     */
+    if (
+      this.draggable.scroll.enable &&
+      this.scrollAnimatedFrame === null &&
+      store.siblingsScrollElement[SK].hasThrottledFrame === null
+    ) {
+      if (store.siblingsScrollElement[SK].hasOverflowY) {
+        const { scrollRect, scrollHeight, threshold } =
+          store.siblingsScrollElement[SK];
+
+        if (
+          this.draggable.isMovingDown &&
+          y >= threshold!.thresholdMatrix.maxBottom &&
+          this.scrollTop + scrollRect.height < scrollHeight
+        ) {
+          this.scrollElement(x, y, 1, "scrollElementOnY");
+
+          return;
+        }
+
+        if (y <= threshold!.thresholdMatrix.maxTop && this.scrollTop > 0) {
+          this.scrollElement(x, y, -1, "scrollElementOnY");
+
+          return;
+        }
+      }
+
+      if (store.siblingsScrollElement[SK].hasOverflowX) {
+        const { scrollRect, scrollHeight, threshold } =
+          store.siblingsScrollElement[SK];
+
+        if (
+          x >= threshold!.thresholdMatrix.maxLeft &&
+          this.scrollLeft + scrollRect.width < scrollHeight
+        ) {
+          this.scrollElement(x, y, 1, "scrollElementOnX");
+
+          return;
+        }
+
+        if (x <= threshold!.thresholdMatrix.maxRight && this.scrollLeft > 0) {
+          this.scrollElement(x, y, -1, "scrollElementOnX");
+        }
+      }
+
+      /**
+       * Scroll turns the flag off. But regular dragging will be resumed
+       * when the drag is outside the auto scrolling area.
+       */
+      this.regularDragging = true;
+
+      /**
+       * Reset scrollSpeed.
+       */
+      this.scrollSpeed = this.draggable.scroll.initialSpeed;
+    }
+  }
+
   /**
    * Invokes draggable method responsible of transform.
    * Monitors dragged translate and called related methods. Which controls the
@@ -730,71 +834,23 @@ class Droppable {
     this.draggable.setDraggedMovingDown(y);
 
     if (this.draggable.isOutThreshold()) {
+      if (!this.isOnDragOutThresholdEvtEmitted) {
+        store.emitEvent({
+          id: this.draggable.draggedElm.id,
+          index: this.getDraggedTempIndex(),
+          timeStamp: Date.now(),
+          type: "onDragOutThreshold",
+        } as DraggedEvent);
+
+        this.isOnDragOutThresholdEvtEmitted = true;
+      }
+
+      this.scrollManager(x, y);
+
       if (!this.isListLocked) {
         this.draggedOutPosition();
 
         return;
-      }
-
-      /**
-       * Manage scrolling.
-       */
-      if (
-        this.draggable.scroll.enable &&
-        this.scrollAnimatedFrame === null &&
-        store.siblingsScrollElement[SK].hasThrottledFrame === null
-      ) {
-        if (store.siblingsScrollElement[SK].hasOverflowY) {
-          const { scrollRect, scrollHeight, threshold } =
-            store.siblingsScrollElement[SK];
-
-          if (
-            this.draggable.isMovingDown &&
-            y >= threshold!.thresholdMatrix.maxBottom &&
-            this.scrollTop + scrollRect.height < scrollHeight
-          ) {
-            this.scrollElement(x, y, 1, "scrollElementOnY");
-
-            return;
-          }
-
-          if (y <= threshold!.thresholdMatrix.maxTop && this.scrollTop > 0) {
-            this.scrollElement(x, y, -1, "scrollElementOnY");
-
-            return;
-          }
-        }
-
-        if (store.siblingsScrollElement[SK].hasOverflowX) {
-          const { scrollRect, scrollHeight, threshold } =
-            store.siblingsScrollElement[SK];
-
-          if (
-            x >= threshold!.thresholdMatrix.maxLeft &&
-            this.scrollLeft + scrollRect.width < scrollHeight
-          ) {
-            this.scrollElement(x, y, 1, "scrollElementOnX");
-
-            return;
-          }
-
-          if (x <= threshold!.thresholdMatrix.maxRight && this.scrollLeft > 0) {
-            this.scrollElement(x, y, -1, "scrollElementOnX");
-
-            return;
-          }
-        }
-
-        /**
-         * Scroll turns the flag off. But regular dragging will be resumed
-         * when the drag is outside the auto scrolling area.
-         */
-        this.regularDragging = true;
-
-        /**
-         * Reset scrollSpeed.
-         */
-        this.scrollSpeed = this.draggable.scroll.initialSpeed;
       }
 
       isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
@@ -806,7 +862,22 @@ class Droppable {
         return;
       }
 
+      if (!this.isOnDragOutContainerEvtEmitted) {
+        store.emitEvent({
+          id: this.draggable.draggedElm.id,
+          index: this.getDraggedTempIndex(),
+          timeStamp: Date.now(),
+          type: "onDragOutContainer",
+        } as DraggedEvent);
+
+        this.isOnDragOutContainerEvtEmitted = true;
+      }
+
       return;
+    }
+
+    if (this.isOnDragOutThresholdEvtEmitted) {
+      this.isOnDragOutThresholdEvtEmitted = false;
     }
 
     /**
@@ -816,6 +887,8 @@ class Droppable {
       isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
       if (!isOutSiblingsContainer) {
+        this.isOnDragOutContainerEvtEmitted = false;
+
         this.draggedIsComingIn(y);
       }
     }
