@@ -97,6 +97,14 @@ describe("extractOpts", () => {
     expect(opts.scroll.threshold.horizontal).toEqual(9000);
   });
 
+  it("All three events handlers are defined", () => {
+    const opts = extractOpts({});
+
+    expect(opts.events.onDragLeave).toBeDefined();
+    expect(opts.events.onDragOver).toBeDefined();
+    expect(opts.events.onStateChange).toBeDefined();
+  });
+
   it("Returns the correct event handler function", () => {
     function onDragLeave(index, id) {
       // eslint-disable-next-line no-console
