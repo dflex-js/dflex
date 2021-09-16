@@ -5,6 +5,7 @@ Object {
   "events": Object {
     "onDragLeave": [Function],
     "onDragOver": [Function],
+    "onStateChange": [Function],
   },
   "restrictions": Object {
     "container": Object {
@@ -44,6 +45,7 @@ Object {
   "events": Object {
     "onDragLeave": [Function],
     "onDragOver": [Function],
+    "onStateChange": [Function],
   },
   "restrictions": Object {
     "container": Object {
@@ -83,6 +85,7 @@ Object {
   "events": Object {
     "onDragLeave": [Function],
     "onDragOver": [Function],
+    "onStateChange": [Function],
   },
   "restrictions": Object {
     "container": Object {
@@ -122,6 +125,7 @@ Object {
   "events": Object {
     "onDragLeave": [Function],
     "onDragOver": [Function],
+    "onStateChange": [Function],
   },
   "restrictions": Object {
     "container": Object {
@@ -161,6 +165,7 @@ Object {
   "events": Object {
     "onDragLeave": [Function],
     "onDragOver": [Function],
+    "onStateChange": [Function],
   },
   "restrictions": Object {
     "container": Object {
@@ -200,6 +205,7 @@ Object {
   "events": Object {
     "onDragLeave": [Function],
     "onDragOver": [Function],
+    "onStateChange": [Function],
   },
   "restrictions": Object {
     "container": Object {
@@ -239,6 +245,7 @@ Object {
   "events": Object {
     "onDragLeave": [Function],
     "onDragOver": [Function],
+    "onStateChange": [Function],
   },
   "restrictions": Object {
     "container": Object {
