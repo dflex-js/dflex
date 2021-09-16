@@ -14,7 +14,7 @@ import type { DndOpts, FinalDndOpts } from "../types";
 
 function noop() {}
 
-export const defaultOpts: DndOpts = Object.freeze({
+export const defaultOpts: FinalDndOpts = Object.freeze({
   threshold: {
     vertical: 60,
     horizontal: 60,
@@ -47,6 +47,7 @@ export const defaultOpts: DndOpts = Object.freeze({
   events: {
     onDragOver: noop,
     onDragLeave: noop,
+    onStateChange: noop,
   },
 });
 
