@@ -175,9 +175,9 @@ class EndDroppable extends Droppable {
         isFallback = true;
 
         this.undoList(siblings);
-        store.onStateChange("dragCancel");
       }
-      store.onStateChange("dragEnd");
+
+      store.onStateChange(isFallback ? "dragCancel" : "dragEnd");
     }
 
     this.draggable.endDragging(isFallback);
