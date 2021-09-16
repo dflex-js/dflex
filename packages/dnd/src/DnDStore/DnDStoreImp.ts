@@ -77,6 +77,10 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   }
 
   onStateChange(state: LayoutState) {
+    // Prevent emit a state change event if the state is not changing.
+    // May change this behaviour later.
+    if (state === this.layoutState) return;
+
     this.layoutState = state;
 
     this.emitEvent({
