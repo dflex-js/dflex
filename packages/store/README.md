@@ -1,7 +1,9 @@
 <h1 align="center">
-  <img
-  src="https://raw.githubusercontent.com/jalal246/dflex/master/DFlex-readme.png"
-  alt="Dflex logo" />
+  <a href="https://www.dflex.dev/" target="_blank">
+    <img
+    src="https://raw.githubusercontent.com/jalal246/dflex/master/DFlex-readme.png"
+    alt="Dflex logo" />
+  </a>
 </h1>
 
 <h1 align="center">DOM store allows you to traverse through the DOM tree with element-id</h1>
