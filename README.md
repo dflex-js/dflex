@@ -1,7 +1,9 @@
 <h1 align="center">
-  <img
-  src="https://raw.githubusercontent.com/jalal246/dflex/master/DFlex-readme.png"
-  alt="Dflex logo" />
+  <a href="https://www.dflex.dev/" target="_blank">
+    <img
+    src="https://raw.githubusercontent.com/jalal246/dflex/master/DFlex-readme.png"
+    alt="Dflex logo" />
+  </a>
 </h1>
 
 <h1 align="center">JavaScript Project to Manipulate DOM Elements</h1>
@@ -86,10 +88,6 @@ DFlex is free software: you can redistribute it and/or modify it under
 the terms of the GNU Affero General Public License as published by the Free
 Software Foundation, either version 3 of the License, or (at your option) any
 later version.
-
-Buying a license is mandatory if you develop commercial activities using
-DFlex inside your product or deploying it on a network without disclosing the
-source code of your own applications under the AGPL license.
 
 ## Contribution 🌎
 
