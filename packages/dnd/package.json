@@ -1,6 +1,6 @@
 {
   "name": "@dflex/dnd",
-  "version": "2.14.0",
+  "version": "2.15.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Modern drag and drop package for all JavaScript frameworks",
