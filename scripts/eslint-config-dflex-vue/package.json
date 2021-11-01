@@ -4,6 +4,6 @@
   "main": "index.js",
   "license": "AGPL-3.0",
   "dependencies": {
-    "eslint-plugin-vue": "^7.5.0"
+    "eslint-plugin-vue": "^8.0.3"
   }
 }
