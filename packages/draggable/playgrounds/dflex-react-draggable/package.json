@@ -2,7 +2,7 @@
   "name": "dflex-react-draggable",
   "version": "0.1.0",
   "main": "index.js",
-  "license": "MIT",,
+  "license": "MIT",
   "dependencies": {
     "@folo/utils": "^0.1.3",
     "react": "^17.0.2",
