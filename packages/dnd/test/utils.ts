@@ -1,9 +1,3 @@
-/**
- * Copyright (c) Jalal Maskoun.
- *
- * This source code is licensed under the AGPL3.0 license found in the
- * LICENSE file in the root directory of this source tree.
- */
 function elm1Offset() {
   return { height: 50, left: 450, top: 114, width: 170 };
 }
