@@ -1,10 +1,3 @@
-/**
- * Copyright (c) Jalal Maskoun.
- *
- * This source code is licensed under the AGPL3.0 license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
 // @ts-nocheck
 
 // TODO: Do you love typescript? Here we go buddy. It's your chance. Start your

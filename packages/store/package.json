@@ -11,7 +11,7 @@
   },
   "homepage": "https://github.com/dflex-js/dflex/tree/master/packages/store",
   "repository": "https://github.com/dflex-js/dflex",
-  "license": "AGPL-3.0",
+  "license": "MIT",
   "files": [
     "dist",
     "LICENSE"

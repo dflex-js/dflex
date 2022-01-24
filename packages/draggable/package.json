@@ -12,7 +12,7 @@
   },
   "homepage": "https://github.com/dflex-js/dflex/tree/master/packages/draggable",
   "repository": "https://github.com/dflex-js/dflex",
-  "license": "AGPL-3.0",
+  "license": "MIT",
   "files": [
     "dist",
     "LICENSE"
