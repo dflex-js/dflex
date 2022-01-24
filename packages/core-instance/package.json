@@ -1,6 +1,6 @@
 {
   "name": "@dflex/core-instance",
-  "version": "2.15.0",
+  "version": "3.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Jalal Maskoun <jimmy002020@gmail.com>",
