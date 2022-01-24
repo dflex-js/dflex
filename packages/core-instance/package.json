@@ -10,7 +10,7 @@
   },
   "repository": "https://github.com/dflex-js/dflex",
   "homepage": "https://github.com/dflex-js/dflex/tree/master/packages/core-instance",
-  "license": "’MIT",
+  "license": "MIT",
   "files": [
     "dist",
     "LICENSE"

@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/dflex-js/dflex/tree/master/packages/dnd",
   "repository": "https://github.com/dflex-js/dflex",
-  "license": "’MIT",
+  "license": "MIT",
   "files": [
     "dist",
     "LICENSE"
