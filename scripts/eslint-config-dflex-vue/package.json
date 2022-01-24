@@ -1,9 +1,0 @@
-{
-  "name": "eslint-config-dflex-vue",
-  "version": "0.1.0",
-  "main": "index.js",
-  "license": "AGPL-3.0",
-  "dependencies": {
-    "eslint-plugin-vue": "^7.5.0"
-  }
-}
