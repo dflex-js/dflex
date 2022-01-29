@@ -1,12 +1,12 @@
-let startingPointX;
-let startingPointY;
-let elmBox;
-
-let steps = 0;
-
 context(
   "Moves the element above the container Testing threshold for coming back",
   () => {
+    let startingPointX: number;
+    let startingPointY: number;
+    let elmBox: DOMRect;
+
+    let steps = 0;
+
     before(() => {
       cy.visit("http://localhost:3001/");
     });

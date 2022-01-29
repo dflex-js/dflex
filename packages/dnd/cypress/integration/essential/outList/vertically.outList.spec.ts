@@ -1,10 +1,10 @@
-let startingPointX;
-let startingPointY;
-let elmBox;
+function myContextH() {
+  let startingPointX: number;
+  let startingPointY: number;
+  let elmBox: DOMRect;
 
-let step;
+  let step = 0;
 
-function myContext() {
   context("Moving first element down outside the list", () => {
     it("Transforms (container3 |> elm-1) out, one position", () => {
       cy.get("#id-9").then((elm) => {
@@ -229,7 +229,7 @@ context("DnD/Testing is out the list vertically: out down/in/out up", () => {
         cy.visit(url);
       });
 
-      myContext();
+      myContextH();
     });
   });
 });

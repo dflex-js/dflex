@@ -1,10 +1,10 @@
-let elmBox;
-let startingPointX;
-let startingPointY;
-
-let steps;
-
 context("Swinging - Confusion starts form bottom/up", () => {
+  let elmBox: DOMRect;
+  let startingPointX: number;
+  let startingPointY: number;
+
+  let steps: number;
+
   before(() => {
     cy.visit("http://localhost:3001");
   });

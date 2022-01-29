@@ -1,10 +1,10 @@
-let elmBox;
-let startingPointX;
-let startingPointY;
-
-let steps;
-
 context("Moving and returning from the same position", () => {
+  let elmBox: DOMRect;
+  let startingPointX: number;
+  let startingPointY: number;
+
+  // let steps: number;
+
   before(() => {
     cy.visit("http://localhost:3001");
   });
@@ -77,6 +77,12 @@ context("Moving and returning from the same position", () => {
 });
 
 context("Swinging - Confusion starts from up/down", () => {
+  let elmBox: DOMRect;
+  let startingPointX: number;
+  let startingPointY: number;
+
+  let steps: number;
+
   before(() => {
     cy.visit("http://localhost:3001");
   });
@@ -214,6 +220,12 @@ context("Swinging - Confusion starts from up/down", () => {
 });
 
 context("Testing continuity", () => {
+  let elmBox: DOMRect;
+  let startingPointX: number;
+  let startingPointY: number;
+
+  // let steps: number;
+
   it("Initiates location", () => {
     cy.get("#id-9").then((elm) => {
       elmBox = elm[0].getBoundingClientRect();

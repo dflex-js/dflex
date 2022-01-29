@@ -1,12 +1,12 @@
-let startingPointX;
-let startingPointY;
-let elmBox;
-
-let steps = 0;
-
 context(
   "Moves out, goes back to the same position, settles in, moves another element",
   () => {
+    let startingPointX: number;
+    let startingPointY: number;
+    let elmBox: DOMRect;
+
+    let steps = 0;
+
     before(() => {
       cy.visit("http://localhost:3001/");
     });

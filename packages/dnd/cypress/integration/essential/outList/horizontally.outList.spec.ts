@@ -1,14 +1,14 @@
-let startingPointX;
-let startingPointY;
-let elmBox;
-
-let stepX;
-let stepY;
-
-let newPositionY;
-let newPositionX;
-
 function myContext() {
+  let startingPointX: number;
+  let startingPointY: number;
+  let elmBox: DOMRect;
+
+  let stepX: number;
+  let stepY: number;
+
+  let newPositionY: number;
+  let newPositionX: number;
+
   const AllUP = () => {
     cy.get("#id-10").should(
       "have.css",

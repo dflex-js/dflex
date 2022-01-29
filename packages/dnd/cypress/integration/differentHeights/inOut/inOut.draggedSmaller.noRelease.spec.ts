@@ -1,13 +1,13 @@
-let elmBox;
-let startingPointX;
-let startingPointY;
-
-let stepsX = 0;
-let stepsY = 0;
-
 context(
   "Moving Elements In/Out (Insertion) - Dragged is smaller - No Release",
   () => {
+    let elmBox: DOMRect;
+    let startingPointX: number;
+    let startingPointY: number;
+
+    let stepsX = 0;
+    let stepsY = 0;
+
     before(() => {
       cy.visit("http://localhost:3001/todo");
     });

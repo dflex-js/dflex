@@ -1,11 +1,11 @@
-let elmBox;
-// let startingPointX;
-let startingPointY;
-
-// let stepsX;
-let stepsY;
-
 context("Moving Elements Strict - Dragged is bigger - No Release", () => {
+  let elmBox: DOMRect;
+  // let startingPointX;
+  let startingPointY: number;
+
+  // let stepsX;
+  let stepsY: number;
+
   before(() => {
     cy.visit("http://localhost:3001/todo");
   });
