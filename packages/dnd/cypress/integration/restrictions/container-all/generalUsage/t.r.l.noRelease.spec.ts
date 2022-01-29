@@ -1,10 +1,10 @@
-let elmBox;
-let startingPointX;
-let startingPointY;
-
 context(
   "Moving A Complete Restricted Element - Dragged is not released - top/right/left",
   () => {
+    let elmBox: DOMRect;
+    let startingPointX: number;
+    let startingPointY: number;
+
     before(() => {
       cy.visit("http://localhost:3001/restricted-container-all");
     });

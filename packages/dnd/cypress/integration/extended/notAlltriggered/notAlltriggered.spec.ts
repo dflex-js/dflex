@@ -1,13 +1,9 @@
-let elmBox;
-let startingPointX;
-// let startingPointY;
-
-// const stepsX = 0;
-// const stepsY = 0;
-
 context(
   "Testing not all elements transformed when dragging still inside viewport",
   () => {
+    let elmBox: DOMRect;
+    let startingPointX: number;
+
     before(() => {
       cy.visit("http://localhost:3001/extended");
     });

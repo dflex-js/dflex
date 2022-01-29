@@ -1,10 +1,10 @@
-let elmBox;
-let startingPointX;
-let startingPointY;
-
 context(
   "Testing a list has different types of self restrictions - Horizontally",
   () => {
+    let elmBox: DOMRect;
+    let startingPointX: number;
+    let startingPointY: number;
+
     before(() => {
       cy.visit("http://localhost:3001/restricted-self");
     });

@@ -1,11 +1,11 @@
-let elmBox;
-let startingPointX;
-let startingPointY;
-
-let stepsX = 0;
-let stepsY = 0;
-
 context("Checking restrictions continuity for the first element", () => {
+  let elmBox: DOMRect;
+  let startingPointX: number;
+  let startingPointY: number;
+
+  let stepsX = 0;
+  let stepsY = 0;
+
   before(() => {
     cy.visit("http://localhost:3001/restricted-container-all");
   });

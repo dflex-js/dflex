@@ -1,12 +1,12 @@
-let elmBox;
-let startingPointX;
-// eslint-disable-next-line no-unused-vars
-let startingPointY;
-
-let stepsX = 0;
-let stepsY = 0;
-
 context("Working with visibility, changing positions and continuity", () => {
+  let elmBox: DOMRect;
+  let startingPointX: number;
+  // eslint-disable-next-line no-unused-vars
+  let startingPointY: number;
+
+  let stepsX = 0;
+  let stepsY = 0;
+
   before(() => {
     cy.visit("http://localhost:3001/extended");
   });
