@@ -1,1 +1,3 @@
-export { default } from "./EssentialList";
+import EssentialList from "./EssentialList";
+
+export default EssentialList;

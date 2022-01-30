@@ -1,1 +1,3 @@
-export { default } from "./UnRegisteredLists";
+import UnRegisteredLists from "./UnRegisteredLists";
+
+export default UnRegisteredLists;

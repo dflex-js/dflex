@@ -12,7 +12,7 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: "module",
   },
-  plugins: ["@typescript-eslint", "eslint-plugin-tsdoc", "header"],
+  plugins: ["@typescript-eslint"],
   ignorePatterns: ["node_modules", "dist", "lib", "coverage", "**/*.d.ts"],
   rules: {
     "no-nested-ternary": OFF,
@@ -48,12 +48,6 @@ module.exports = {
       files: ["*.test.js", "*.test.ts"],
       env: {
         jest: true,
-      },
-    },
-    {
-      files: ["*.ts"],
-      rules: {
-        "tsdoc/syntax": "error",
       },
     },
     {

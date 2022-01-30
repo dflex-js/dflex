@@ -1,3 +1,5 @@
+import DnDStoreImp from "./DnDStoreImp";
+
 export type { ElmTree } from "./types";
 
-export { default } from "./DnDStoreImp";
+export default DnDStoreImp;

@@ -1,3 +1,5 @@
+import Tracker from "./Tracker";
+
 export type { TrackerInterface } from "./types";
 
-export { default } from "./Tracker";
+export default Tracker;

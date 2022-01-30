@@ -1,1 +1,3 @@
-export { default } from "./DraggableHandler";
+import DraggableHandler from "./DraggableHandler";
+
+export default DraggableHandler;
