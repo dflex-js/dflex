@@ -36,7 +36,7 @@ jobs:
         run: yarn install
 
       - name: Run lint
-        run: yarn eslint .
+        run: yarn eslint . --ext .js,.jsx,.ts,.tsx --fix
 
   types:
     name: Check Types
