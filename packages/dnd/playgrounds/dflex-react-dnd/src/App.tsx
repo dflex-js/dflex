@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { store } from "@dflex/dnd";
 
 import {
@@ -26,46 +26,31 @@ function App() {
   }, []);
 
   return (
-    <Router>
+    <BrowserRouter>
       <Routes>
-        <Route path="/scroll-multi">
-          <ScrollMulti />
-        </Route>
-        <Route path="/scroll">
-          <ScrollEssential />
-        </Route>
-        <Route path="/extended">
-          <ExtendedList />
-        </Route>
-        <Route path="/restricted-container-all">
-          <RestrictedContainerAll />
-        </Route>
-        <Route path="/restricted-container-diff">
-          <RestrictedContainerDiff />
-        </Route>
-        <Route path="/restricted-self">
-          <RestrictedSelf />
-        </Route>
-        <Route path="/todo">
-          <TodoList />
-        </Route>
-        <Route path="/todo-case-1">
-          <TodoListCase1 />
-        </Route>
-        <Route path="/depth-1">
-          <Depth1 />
-        </Route>
-        <Route path="/unregistered">
-          <UnRegisteredLists />
-        </Route>
-        <Route path="/component-based-event">
-          <ComponentBasedEvent />
-        </Route>
-        <Route path="/">
-          <ContainerBasedEvent />
-        </Route>
+        <Route path="/scroll-multi" element={<ScrollMulti />} />
+        <Route path="/scroll" element={<ScrollEssential />} />
+        <Route path="/extended" element={<ExtendedList />} />
+        <Route
+          path="/restricted-container-all"
+          element={<RestrictedContainerAll />}
+        />
+        <Route
+          path="/restricted-container-diff"
+          element={<RestrictedContainerDiff />}
+        />
+        <Route path="/restricted-self" element={<RestrictedSelf />} />
+        <Route path="/todo" element={<TodoList />} />
+        <Route path="/todo-case-1" element={<TodoListCase1 />} />
+        <Route path="/depth-1" element={<Depth1 />} />
+        <Route path="/unregistered" element={<UnRegisteredLists />} />
+        <Route
+          path="/component-based-event"
+          element={<ComponentBasedEvent />}
+        />
+        <Route path="/" element={<ContainerBasedEvent />}></Route>
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
 }
 
