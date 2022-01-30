@@ -1,1 +1,3 @@
-export { default } from "./ExtendedList";
+import ExtendedList from "./ExtendedList";
+
+export default ExtendedList;

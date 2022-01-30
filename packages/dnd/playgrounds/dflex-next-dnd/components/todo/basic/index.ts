@@ -1,1 +1,3 @@
-export { default } from "./Todo";
+import Todo from "./Todo";
+
+export default Todo;
