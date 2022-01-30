@@ -1,3 +1,5 @@
+import CoreInstance from "./CoreInstance";
+
 export type {
   AbstractCoreInterface,
   Rect,
@@ -5,4 +7,4 @@ export type {
   CoreInstanceInterface,
 } from "./types";
 
-export { default } from "./CoreInstance";
+export default CoreInstance;

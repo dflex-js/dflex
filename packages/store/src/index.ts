@@ -1,3 +1,5 @@
+import Store from "./Store";
+
 export type { ElmInstance, ElmInstanceWithProps } from "./types";
 
-export { default } from "./Store";
+export default Store;

@@ -1,1 +1,3 @@
-export { default } from "./EndDroppable";
+import EndDroppable from "./EndDroppable";
+
+export default EndDroppable;
