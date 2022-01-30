@@ -17,8 +17,9 @@
   "devDependencies": {
     "@babel/preset-env": "^7.9.6",
     "@babel/preset-typescript": "^7.14.5",
-    "@types/jest": "^26.0.20",
+    "@types/jest": "^27.4.0",
     "babel-jest": "^27.0.5",
+    "istanbul-lib-instrument": "^5.1.0",
     "jest": "^27.0.5",
     "lerna": "^4.0.0",
     "prettier": "^2.0.5",

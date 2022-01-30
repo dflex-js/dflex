@@ -35,10 +35,10 @@
     "v8-to-istanbul": "^8.0.0"
   },
   "dependencies": {
-    "@dflex/core-instance": "^2.12.0",
-    "@dflex/dom-gen": "^2.12.0",
-    "@dflex/draggable": "^2.12.0",
-    "@dflex/store": "^2.12.0"
+    "@dflex/core-instance": "^3.0.0",
+    "@dflex/dom-gen": "^3.0.0",
+    "@dflex/draggable": "^3.0.0",
+    "@dflex/store": "^3.0.0"
   },
   "keywords": [
     "drag-drop",
