@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { store } from "@dflex/dnd";
 
 import {
@@ -27,7 +27,7 @@ function App() {
 
   return (
     <Router>
-      <Switch>
+      <Routes>
         <Route path="/scroll-multi">
           <ScrollMulti />
         </Route>
@@ -64,7 +64,7 @@ function App() {
         <Route path="/">
           <ContainerBasedEvent />
         </Route>
-      </Switch>
+      </Routes>
     </Router>
   );
 }
