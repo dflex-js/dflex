@@ -1,5 +1,3 @@
-
-
 import React from "react";
 import s from "../../Demo.module.css";
 import RestrictedItem from "../RestrictedItem";

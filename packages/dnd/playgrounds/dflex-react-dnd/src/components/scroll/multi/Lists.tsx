@@ -1,5 +1,3 @@
-
-
 import React from "react";
 
 import { Container, Core } from "../../essential/component-based-event";
