@@ -1,8 +1,8 @@
-let elmBox;
-let startingPointX;
-let startingPointY;
-
 context("Elements can't be dragged outside the list", () => {
+  let elmBox: DOMRect;
+  let startingPointX: number;
+  let startingPointY: number;
+
   before(() => {
     cy.visit("http://localhost:3001");
   });
