@@ -20,8 +20,6 @@ class Droppable {
 
   private effectedElemDirection: 1 | -1;
 
-  protected isListLocked: boolean;
-
   private leftAtIndex: number;
 
   private preserveLastElmOffset!: TempOffset;
@@ -62,8 +60,6 @@ class Droppable {
      * Elements effected by dragged direction.
      */
     this.effectedElemDirection = 1;
-
-    this.isListLocked = false;
 
     this.leftAtIndex = -1;
 
@@ -244,7 +240,7 @@ class Droppable {
     this.draggable.incNumOfElementsTransformed(this.effectedElemDirection);
 
     // TODO: always true for the first element
-    if (!this.isListLocked) {
+    if (!this.draggable.isOutActiveSiblingsContainer) {
       /**
        * By updating the dragged translate, we guarantee that dragged
        * transformation will not triggered until dragged is over threshold
@@ -517,7 +513,7 @@ class Droppable {
       this.setEffectedElemDirection(true);
 
       // lock the parent
-      this.unlockParent(true);
+      this.lockActiveList(true);
 
       this.liftUp();
 
@@ -525,12 +521,12 @@ class Droppable {
     }
 
     if (this.draggable.isLeavingFromBottom()) {
-      this.unlockParent(true);
+      this.lockActiveList(true);
 
       return;
     }
 
-    if (!this.isListLocked) {
+    if (!this.draggable.isOutActiveSiblingsContainer) {
       /**
        * normal movement inside the parent
        */
@@ -545,7 +541,7 @@ class Droppable {
         this.setEffectedElemDirection(true);
 
         // lock the parent
-        this.unlockParent(true);
+        this.lockActiveList(true);
 
         this.liftUp();
 
@@ -563,8 +559,10 @@ class Droppable {
     }
   }
 
-  private unlockParent(isLock: boolean) {
-    this.isListLocked = isLock;
+  private lockActiveList(isLock: boolean) {
+    if (isLock === this.draggable.isOutActiveSiblingsContainer) {
+      return;
+    }
 
     this.draggable.isOutActiveSiblingsContainer = isLock;
   }
@@ -610,7 +608,7 @@ class Droppable {
       this.draggable.prevY = y;
     }
 
-    this.unlockParent(false);
+    this.lockActiveList(false);
 
     /**
      * Moving element down by setting is up to false
@@ -843,7 +841,7 @@ class Droppable {
 
       this.scrollManager(x, y);
 
-      if (!this.isListLocked) {
+      if (!this.draggable.isOutActiveSiblingsContainer) {
         this.draggedOutPosition();
 
         return;
@@ -881,7 +879,7 @@ class Droppable {
     /**
      * When dragged is out parent and returning to it.
      */
-    if (this.isListLocked) {
+    if (this.draggable.isOutActiveSiblingsContainer) {
       isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
       if (!isOutSiblingsContainer) {
