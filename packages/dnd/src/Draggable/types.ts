@@ -48,6 +48,7 @@ export interface DraggableDnDInterface
   isOutPositionHorizontally: boolean;
   isOutSiblingsHorizontally: boolean;
   isDraggedPositionFixed: boolean;
+  isOutActiveSiblingsContainer: boolean;
   dragAt(x: number, y: number): void;
   incNumOfElementsTransformed(effectedElemDirection: number): void;
   setDraggedMovingDown(y: number): void;

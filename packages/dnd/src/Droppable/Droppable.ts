@@ -517,7 +517,7 @@ class Droppable {
       this.setEffectedElemDirection(true);
 
       // lock the parent
-      this.isListLocked = true;
+      this.unlockParent(true);
 
       this.liftUp();
 
@@ -525,7 +525,7 @@ class Droppable {
     }
 
     if (this.draggable.isLeavingFromBottom()) {
-      this.isListLocked = true;
+      this.unlockParent(true);
 
       return;
     }
@@ -545,7 +545,7 @@ class Droppable {
         this.setEffectedElemDirection(true);
 
         // lock the parent
-        this.isListLocked = true;
+        this.unlockParent(true);
 
         this.liftUp();
 
@@ -563,8 +563,10 @@ class Droppable {
     }
   }
 
-  private unlockParent() {
-    this.isListLocked = false;
+  private unlockParent(isLock: boolean) {
+    this.isListLocked = isLock;
+
+    this.draggable.isOutActiveSiblingsContainer = isLock;
   }
 
   /**
@@ -608,7 +610,7 @@ class Droppable {
       this.draggable.prevY = y;
     }
 
-    this.unlockParent();
+    this.unlockParent(false);
 
     /**
      * Moving element down by setting is up to false
@@ -866,6 +868,8 @@ class Droppable {
 
         this.isOnDragOutContainerEvtEmitted = true;
       }
+
+      this.draggable.isOutActiveSiblingsContainer = true;
 
       return;
     }
