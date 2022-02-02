@@ -25,12 +25,11 @@ class Draggable
 
   operationID: string;
 
-  // To Be removed.
-  private activeParent!: CoreInstanceInterface | null;
+  private siblingsContainer: CoreInstanceInterface | null;
 
-  private isOutActiveParent!: boolean;
+  isOutActiveSiblingsContainer: boolean;
 
-  private setOfTransformedIds!: Set<string>;
+  private setOfTransformedIds?: Set<string>;
 
   threshold: DraggableDnDInterface["threshold"];
 
@@ -171,7 +170,19 @@ class Draggable
       };
     }
 
-    this.setIsOrphan(parent);
+    this.siblingsContainer = null;
+    this.isOutActiveSiblingsContainer = false;
+
+    if (parent) {
+      /**
+       * Indicator to parents that have changed. This facilitates looping in
+       * affected parents only.
+       */
+      this.setOfTransformedIds = new Set([]);
+      this.assignActiveParent(parent);
+
+      this.isOutActiveSiblingsContainer = false;
+    }
 
     this.operationID = store.tracker.newTravel();
 
@@ -232,49 +243,22 @@ class Draggable
   }
 
   /**
-   * Check if dragged has no parent and then set the related operations
-   * accordingly.
-   *
-   * @param parent -
-   */
-  private setIsOrphan(parent: CoreInstanceInterface | null) {
-    /**
-     * Not all elements have parents.
-     */
-    if (parent) {
-      /**
-       * Indicator to parents that have changed. This facilitates looping in
-       * affected parents only.
-       */
-      this.setOfTransformedIds = new Set([]);
-      this.assignActiveParent(parent);
-
-      this.isOutActiveParent = false;
-    } else {
-      /**
-       * Dragged has no parent.
-       */
-      this.activeParent = null;
-    }
-  }
-
-  /**
-   * Assigns new ACTIVE_PARENT: parent who contains dragged
+   * Assigns new container parent to the dragged.
    *
    * @param element -
    */
   private assignActiveParent(element: CoreInstanceInterface) {
     /**
-     * Assign instance ACTIVE_PARENT which represents droppable. Then
+     * Assign a new instance which represents droppable. Then
      * assign owner parent so we have from/to.
      */
-    this.activeParent = element;
+    this.siblingsContainer = element;
 
     /**
      * Add flag for undo method so we can check which  parent is being
      * transformed and which is not.
      */
-    this.isOutActiveParent = false;
+    this.isOutActiveSiblingsContainer = false;
   }
 
   private axesYFilter(
@@ -555,7 +539,7 @@ class Draggable
     this.numberOfElementsTransformed += -1 * effectedElemDirection;
   }
 
-  hasMoved() {
+  private hasMoved() {
     return (
       this.draggedElm.translateX !== this.tempTranslate.x ||
       this.draggedElm.translateY !== this.tempTranslate.y

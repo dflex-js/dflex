@@ -6,6 +6,34 @@ import store from "../DnDStore";
 
 import type { TempOffset, DraggableDnDInterface } from "../Draggable";
 
+function emitInteractiveEvent(
+  type: InteractivityEvent["type"],
+  element: CoreInstanceInterface
+) {
+  const evt: InteractivityEvent = {
+    id: element.id,
+    index: element.order.self,
+    target: element.ref!,
+    timeStamp: Date.now(),
+    type,
+  };
+
+  store.emitEvent(evt);
+}
+
+function emitSiblingsEvent(
+  type: SiblingsEvent["type"],
+  payload: Omit<SiblingsEvent, "type" | "timeStamp">
+) {
+  const evt: SiblingsEvent = {
+    ...payload,
+    timeStamp: Date.now(),
+    type,
+  };
+
+  store.emitEvent(evt);
+}
+
 /**
  * Class includes all transformation methods related to droppable.
  */
@@ -19,8 +47,6 @@ class Droppable {
   private leftDifference: number;
 
   private effectedElemDirection: 1 | -1;
-
-  protected isListLocked: boolean;
 
   private leftAtIndex: number;
 
@@ -62,8 +88,6 @@ class Droppable {
      * Elements effected by dragged direction.
      */
     this.effectedElemDirection = 1;
-
-    this.isListLocked = false;
 
     this.leftAtIndex = -1;
 
@@ -108,6 +132,33 @@ class Droppable {
 
     this.isOnDragOutContainerEvtEmitted = false;
     this.isOnDragOutThresholdEvtEmitted = false;
+  }
+
+  draggedEventGenerator(type: DraggedEvent["type"]): DraggedEvent {
+    return {
+      id: this.draggable.draggedElm.id,
+      index: this.getDraggedTempIndex(),
+      timeStamp: Date.now(),
+      type,
+    };
+  }
+
+  emitDraggedEvent(type: DraggedEvent["type"]) {
+    if (type === "onDragOutThreshold") {
+      if (!this.isOnDragOutThresholdEvtEmitted) {
+        store.emitEvent(this.draggedEventGenerator(type));
+
+        this.isOnDragOutThresholdEvtEmitted = true;
+      }
+
+      return;
+    }
+
+    if (type === "onDragOutContainer" && !this.isOnDragOutContainerEvtEmitted) {
+      store.emitEvent(this.draggedEventGenerator(type));
+
+      this.isOnDragOutContainerEvtEmitted = true;
+    }
   }
 
   /**
@@ -244,7 +295,7 @@ class Droppable {
     this.draggable.incNumOfElementsTransformed(this.effectedElemDirection);
 
     // TODO: always true for the first element
-    if (!this.isListLocked) {
+    if (!this.draggable.isOutActiveSiblingsContainer) {
       /**
        * By updating the dragged translate, we guarantee that dragged
        * transformation will not triggered until dragged is over threshold
@@ -275,13 +326,7 @@ class Droppable {
       );
     }
 
-    store.emitEvent({
-      id,
-      index: element.order.self,
-      target: element.ref!,
-      timeStamp: Date.now(),
-      type: "onDragOver",
-    } as InteractivityEvent);
+    emitInteractiveEvent("onDragOver", element);
 
     const { currentLeft: elmLeft, currentTop: elmTop } = element;
 
@@ -303,13 +348,7 @@ class Droppable {
       this.siblingsEmptyElmIndex
     );
 
-    store.emitEvent({
-      id,
-      index: element.order.self,
-      target: element.ref!,
-      timeStamp: Date.now(),
-      type: "onDragLeave",
-    } as InteractivityEvent);
+    emitInteractiveEvent("onDragLeave", element);
   }
 
   private isElemAboveDragged(elmCurrentOffsetTop: number) {
@@ -458,13 +497,11 @@ class Droppable {
     const from = this.draggable.tempIndex + 1;
     this.leftAtIndex = this.draggable.tempIndex;
 
-    store.emitEvent({
+    emitSiblingsEvent("onLiftUpSiblings", {
       siblings,
       from,
       to: siblings!.length,
-      timeStamp: Date.now(),
-      type: "onLiftUpSiblings",
-    } as SiblingsEvent);
+    });
 
     this.setDraggedTempIndex(-1);
 
@@ -490,13 +527,11 @@ class Droppable {
       this.draggable.draggedElm.id
     ) as string[];
 
-    store.emitEvent({
+    emitSiblingsEvent("onMoveDownSiblings", {
       siblings,
       from: siblings!.length - 1,
       to,
-      timeStamp: Date.now(),
-      type: "onMoveDownSiblings",
-    } as SiblingsEvent);
+    });
 
     for (let i = siblings.length - 1; i >= to; i -= 1) {
       const id = siblings[i];
@@ -517,7 +552,7 @@ class Droppable {
       this.setEffectedElemDirection(true);
 
       // lock the parent
-      this.isListLocked = true;
+      this.setDraggedPositionFlagInSiblingsContainer(true);
 
       this.liftUp();
 
@@ -525,12 +560,12 @@ class Droppable {
     }
 
     if (this.draggable.isLeavingFromBottom()) {
-      this.isListLocked = true;
+      this.setDraggedPositionFlagInSiblingsContainer(true);
 
       return;
     }
 
-    if (!this.isListLocked) {
+    if (!this.draggable.isOutActiveSiblingsContainer) {
       /**
        * normal movement inside the parent
        */
@@ -545,7 +580,7 @@ class Droppable {
         this.setEffectedElemDirection(true);
 
         // lock the parent
-        this.isListLocked = true;
+        this.setDraggedPositionFlagInSiblingsContainer(true);
 
         this.liftUp();
 
@@ -563,8 +598,12 @@ class Droppable {
     }
   }
 
-  private unlockParent() {
-    this.isListLocked = false;
+  private setDraggedPositionFlagInSiblingsContainer(isOut: boolean) {
+    if (isOut === this.draggable.isOutActiveSiblingsContainer) {
+      return;
+    }
+
+    this.draggable.isOutActiveSiblingsContainer = isOut;
   }
 
   /**
@@ -608,7 +647,7 @@ class Droppable {
       this.draggable.prevY = y;
     }
 
-    this.unlockParent();
+    this.setDraggedPositionFlagInSiblingsContainer(false);
 
     /**
      * Moving element down by setting is up to false
@@ -828,20 +867,11 @@ class Droppable {
     this.draggable.setDraggedMovingDown(y);
 
     if (this.draggable.isOutThreshold()) {
-      if (!this.isOnDragOutThresholdEvtEmitted) {
-        store.emitEvent({
-          id: this.draggable.draggedElm.id,
-          index: this.getDraggedTempIndex(),
-          timeStamp: Date.now(),
-          type: "onDragOutThreshold",
-        } as DraggedEvent);
-
-        this.isOnDragOutThresholdEvtEmitted = true;
-      }
+      this.emitDraggedEvent("onDragOutThreshold");
 
       this.scrollManager(x, y);
 
-      if (!this.isListLocked) {
+      if (!this.draggable.isOutActiveSiblingsContainer) {
         this.draggedOutPosition();
 
         return;
@@ -856,16 +886,9 @@ class Droppable {
         return;
       }
 
-      if (!this.isOnDragOutContainerEvtEmitted) {
-        store.emitEvent({
-          id: this.draggable.draggedElm.id,
-          index: this.getDraggedTempIndex(),
-          timeStamp: Date.now(),
-          type: "onDragOutContainer",
-        } as DraggedEvent);
+      this.emitDraggedEvent("onDragOutContainer");
 
-        this.isOnDragOutContainerEvtEmitted = true;
-      }
+      this.draggable.isOutActiveSiblingsContainer = true;
 
       return;
     }
@@ -877,14 +900,16 @@ class Droppable {
     /**
      * When dragged is out parent and returning to it.
      */
-    if (this.isListLocked) {
+    if (this.draggable.isOutActiveSiblingsContainer) {
       isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
-      if (!isOutSiblingsContainer) {
-        this.isOnDragOutContainerEvtEmitted = false;
-
-        this.draggedIsComingIn(y);
+      if (isOutSiblingsContainer) {
+        return;
       }
+
+      this.isOnDragOutContainerEvtEmitted = false;
+
+      this.draggedIsComingIn(y);
     }
   }
 }
