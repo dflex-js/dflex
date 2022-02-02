@@ -19,14 +19,14 @@ export type LayoutState =
   | "dragCancel";
 
 interface DnDEvent {
-  /** Returns the element that is being dragged */
-  type: DnDEventTypes;
-
   /** Returns the time at which the event was created  */
   timeStamp: number;
 }
 
 export interface DraggedEvent extends DnDEvent {
+  /** Returns the event type */
+  type: "onDragOutContainer" | "onDragOutThreshold";
+
   /** Returns element id in the registry  */
   id: string;
 
@@ -35,6 +35,9 @@ export interface DraggedEvent extends DnDEvent {
 }
 
 export interface InteractivityEvent extends DnDEvent {
+  /** Returns the event type */
+  type: "onDragOver" | "onDragLeave";
+
   /** Returns element id in the registry  */
   id: string;
 
@@ -46,6 +49,9 @@ export interface InteractivityEvent extends DnDEvent {
 }
 
 export interface SiblingsEvent extends DnDEvent {
+  /** Returns the event type */
+  type: "onLiftUpSiblings" | "onMoveDownSiblings";
+
   /** Returns the index where the dragged left  */
   from: number;
 

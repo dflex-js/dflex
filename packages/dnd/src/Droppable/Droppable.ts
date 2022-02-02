@@ -6,6 +6,34 @@ import store from "../DnDStore";
 
 import type { TempOffset, DraggableDnDInterface } from "../Draggable";
 
+function emitInteractiveEvent(
+  type: InteractivityEvent["type"],
+  element: CoreInstanceInterface
+) {
+  const evt: InteractivityEvent = {
+    id: element.id,
+    index: element.order.self,
+    target: element.ref!,
+    timeStamp: Date.now(),
+    type,
+  };
+
+  store.emitEvent(evt);
+}
+
+function emitSiblingsEvent(
+  type: SiblingsEvent["type"],
+  payload: Omit<SiblingsEvent, "type" | "timeStamp">
+) {
+  const evt: SiblingsEvent = {
+    ...payload,
+    timeStamp: Date.now(),
+    type,
+  };
+
+  store.emitEvent(evt);
+}
+
 /**
  * Class includes all transformation methods related to droppable.
  */
@@ -104,6 +132,29 @@ class Droppable {
 
     this.isOnDragOutContainerEvtEmitted = false;
     this.isOnDragOutThresholdEvtEmitted = false;
+  }
+
+  draggedEventGenerator(type: DraggedEvent["type"]): DraggedEvent {
+    return {
+      id: this.draggable.draggedElm.id,
+      index: this.getDraggedTempIndex(),
+      timeStamp: Date.now(),
+      type,
+    };
+  }
+
+  emitDraggedEvent(type: DraggedEvent["type"]) {
+    if (type === "onDragOutThreshold" && !this.isOnDragOutThresholdEvtEmitted) {
+      store.emitEvent(this.draggedEventGenerator(type));
+
+      this.isOnDragOutThresholdEvtEmitted = true;
+    }
+
+    if (type === "onDragOutContainer" && !this.isOnDragOutContainerEvtEmitted) {
+      store.emitEvent(this.draggedEventGenerator(type));
+
+      this.isOnDragOutContainerEvtEmitted = true;
+    }
   }
 
   /**
@@ -271,13 +322,7 @@ class Droppable {
       );
     }
 
-    store.emitEvent({
-      id,
-      index: element.order.self,
-      target: element.ref!,
-      timeStamp: Date.now(),
-      type: "onDragOver",
-    } as InteractivityEvent);
+    emitInteractiveEvent("onDragOver", element);
 
     const { currentLeft: elmLeft, currentTop: elmTop } = element;
 
@@ -299,13 +344,7 @@ class Droppable {
       this.siblingsEmptyElmIndex
     );
 
-    store.emitEvent({
-      id,
-      index: element.order.self,
-      target: element.ref!,
-      timeStamp: Date.now(),
-      type: "onDragLeave",
-    } as InteractivityEvent);
+    emitInteractiveEvent("onDragLeave", element);
   }
 
   private isElemAboveDragged(elmCurrentOffsetTop: number) {
@@ -454,13 +493,11 @@ class Droppable {
     const from = this.draggable.tempIndex + 1;
     this.leftAtIndex = this.draggable.tempIndex;
 
-    store.emitEvent({
+    emitSiblingsEvent("onLiftUpSiblings", {
       siblings,
       from,
       to: siblings!.length,
-      timeStamp: Date.now(),
-      type: "onLiftUpSiblings",
-    } as SiblingsEvent);
+    });
 
     this.setDraggedTempIndex(-1);
 
@@ -486,13 +523,11 @@ class Droppable {
       this.draggable.draggedElm.id
     ) as string[];
 
-    store.emitEvent({
+    emitSiblingsEvent("onMoveDownSiblings", {
       siblings,
       from: siblings!.length - 1,
       to,
-      timeStamp: Date.now(),
-      type: "onMoveDownSiblings",
-    } as SiblingsEvent);
+    });
 
     for (let i = siblings.length - 1; i >= to; i -= 1) {
       const id = siblings[i];
@@ -827,21 +862,8 @@ class Droppable {
 
     this.draggable.setDraggedMovingDown(y);
 
-    console.log(
-      "file: Droppable.ts ~ line 831 ~ this.draggable.isOutThreshold()",
-      this.draggable.isOutThreshold()
-    );
     if (this.draggable.isOutThreshold()) {
-      if (!this.isOnDragOutThresholdEvtEmitted) {
-        store.emitEvent({
-          id: this.draggable.draggedElm.id,
-          index: this.getDraggedTempIndex(),
-          timeStamp: Date.now(),
-          type: "onDragOutThreshold",
-        } as DraggedEvent);
-
-        this.isOnDragOutThresholdEvtEmitted = true;
-      }
+      this.emitDraggedEvent("onDragOutThreshold");
 
       this.scrollManager(x, y);
 
@@ -860,16 +882,7 @@ class Droppable {
         return;
       }
 
-      if (!this.isOnDragOutContainerEvtEmitted) {
-        store.emitEvent({
-          id: this.draggable.draggedElm.id,
-          index: this.getDraggedTempIndex(),
-          timeStamp: Date.now(),
-          type: "onDragOutContainer",
-        } as DraggedEvent);
-
-        this.isOnDragOutContainerEvtEmitted = true;
-      }
+      this.emitDraggedEvent("onDragOutContainer");
 
       this.draggable.isOutActiveSiblingsContainer = true;
 
@@ -886,11 +899,13 @@ class Droppable {
     if (this.draggable.isOutActiveSiblingsContainer) {
       isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
-      if (!isOutSiblingsContainer) {
-        this.isOnDragOutContainerEvtEmitted = false;
-
-        this.draggedIsComingIn(y);
+      if (isOutSiblingsContainer) {
+        return;
       }
+
+      this.isOnDragOutContainerEvtEmitted = false;
+
+      this.draggedIsComingIn(y);
     }
   }
 }
