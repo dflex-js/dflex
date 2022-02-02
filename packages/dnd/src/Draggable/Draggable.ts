@@ -466,7 +466,6 @@ class Draggable
   }
 
   private isOutContainer($: ThresholdMatrix) {
-    console.log("file: Draggable.ts ~ line 468 ~");
     this.isOutSiblingsHorizontally = false;
 
     if (this.isOutContainerV($)) {
@@ -475,10 +474,6 @@ class Draggable
       return true;
     }
 
-    console.log(
-      "file: Draggable.ts ~ line 478 ~ this.isOutThresholdH($)",
-      this.isOutThresholdH($)
-    );
     if (this.isOutThresholdH($)) {
       return true;
     }
