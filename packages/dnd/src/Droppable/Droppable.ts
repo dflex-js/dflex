@@ -144,10 +144,14 @@ class Droppable {
   }
 
   emitDraggedEvent(type: DraggedEvent["type"]) {
-    if (type === "onDragOutThreshold" && !this.isOnDragOutThresholdEvtEmitted) {
-      store.emitEvent(this.draggedEventGenerator(type));
+    if (type === "onDragOutThreshold") {
+      if (!this.isOnDragOutThresholdEvtEmitted) {
+        store.emitEvent(this.draggedEventGenerator(type));
 
-      this.isOnDragOutThresholdEvtEmitted = true;
+        this.isOnDragOutThresholdEvtEmitted = true;
+      }
+
+      return;
     }
 
     if (type === "onDragOutContainer" && !this.isOnDragOutContainerEvtEmitted) {
