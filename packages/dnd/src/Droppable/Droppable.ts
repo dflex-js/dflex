@@ -513,7 +513,7 @@ class Droppable {
       this.setEffectedElemDirection(true);
 
       // lock the parent
-      this.lockActiveList(true);
+      this.setDraggedPositionFlagInSiblingsContainer(true);
 
       this.liftUp();
 
@@ -521,7 +521,7 @@ class Droppable {
     }
 
     if (this.draggable.isLeavingFromBottom()) {
-      this.lockActiveList(true);
+      this.setDraggedPositionFlagInSiblingsContainer(true);
 
       return;
     }
@@ -541,7 +541,7 @@ class Droppable {
         this.setEffectedElemDirection(true);
 
         // lock the parent
-        this.lockActiveList(true);
+        this.setDraggedPositionFlagInSiblingsContainer(true);
 
         this.liftUp();
 
@@ -559,12 +559,12 @@ class Droppable {
     }
   }
 
-  private lockActiveList(isLock: boolean) {
-    if (isLock === this.draggable.isOutActiveSiblingsContainer) {
+  private setDraggedPositionFlagInSiblingsContainer(isOut: boolean) {
+    if (isOut === this.draggable.isOutActiveSiblingsContainer) {
       return;
     }
 
-    this.draggable.isOutActiveSiblingsContainer = isLock;
+    this.draggable.isOutActiveSiblingsContainer = isOut;
   }
 
   /**
@@ -608,7 +608,7 @@ class Droppable {
       this.draggable.prevY = y;
     }
 
-    this.lockActiveList(false);
+    this.setDraggedPositionFlagInSiblingsContainer(false);
 
     /**
      * Moving element down by setting is up to false
@@ -827,6 +827,10 @@ class Droppable {
 
     this.draggable.setDraggedMovingDown(y);
 
+    console.log(
+      "file: Droppable.ts ~ line 831 ~ this.draggable.isOutThreshold()",
+      this.draggable.isOutThreshold()
+    );
     if (this.draggable.isOutThreshold()) {
       if (!this.isOnDragOutThresholdEvtEmitted) {
         store.emitEvent({
