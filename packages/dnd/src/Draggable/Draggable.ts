@@ -432,10 +432,9 @@ class Draggable
   }
 
   private isOutPositionV($: ThresholdMatrix) {
-    return (
-      this.tempOffset.currentTop > $.maxBottom ||
-      this.tempOffset.currentTop < $.maxTop
-    );
+    return this.isMovingDown
+      ? this.tempOffset.currentTop > $.maxBottom
+      : this.tempOffset.currentTop < $.maxTop;
   }
 
   private isOutContainerV($: ThresholdMatrix) {
