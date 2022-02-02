@@ -2,22 +2,6 @@ import type { Restrictions } from "./Draggable";
 
 import type { ThresholdInterface } from "./Plugins/Threshold";
 
-export type DnDEventTypes =
-  | "onDragOver"
-  | "onDragLeave"
-  | "onDragOutContainer"
-  | "onDragOutThreshold"
-  | "onLiftUpSiblings"
-  | "onMoveDownSiblings"
-  | "onStateChange";
-
-export type LayoutState =
-  | "pending"
-  | "ready"
-  | "dragging"
-  | "dragEnd"
-  | "dragCancel";
-
 interface DnDEvent {
   /** Returns the time at which the event was created  */
   timeStamp: number;
@@ -62,7 +46,17 @@ export interface SiblingsEvent extends DnDEvent {
   siblings: Array<string>;
 }
 
+export type LayoutState =
+  | "pending"
+  | "ready"
+  | "dragging"
+  | "dragEnd"
+  | "dragCancel";
+
 export interface LayoutStateEvent extends DnDEvent {
+  /** Returns the event type */
+  type: "onStateChange";
+
   layoutState: LayoutState;
 }
 

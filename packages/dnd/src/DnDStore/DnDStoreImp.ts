@@ -76,11 +76,13 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     this.layoutState = state;
 
-    this.emitEvent({
+    const evt: LayoutStateEvent = {
       layoutState: state,
       timeStamp: Date.now(),
       type: "onStateChange",
-    } as LayoutStateEvent);
+    };
+
+    this.emitEvent(evt);
   }
 
   emitEvent(
