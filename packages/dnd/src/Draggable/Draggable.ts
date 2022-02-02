@@ -432,9 +432,10 @@ class Draggable
   }
 
   private isOutPositionV($: ThresholdMatrix) {
-    return this.isMovingDown
-      ? this.tempOffset.currentTop > $.maxBottom
-      : this.tempOffset.currentTop < $.maxTop;
+    return (
+      this.tempOffset.currentTop > $.maxBottom ||
+      this.tempOffset.currentTop < $.maxTop
+    );
   }
 
   private isOutContainerV($: ThresholdMatrix) {
@@ -465,6 +466,7 @@ class Draggable
   }
 
   private isOutContainer($: ThresholdMatrix) {
+    console.log("file: Draggable.ts ~ line 468 ~");
     this.isOutSiblingsHorizontally = false;
 
     if (this.isOutContainerV($)) {
@@ -473,6 +475,10 @@ class Draggable
       return true;
     }
 
+    console.log(
+      "file: Draggable.ts ~ line 478 ~ this.isOutThresholdH($)",
+      this.isOutThresholdH($)
+    );
     if (this.isOutThresholdH($)) {
       return true;
     }
