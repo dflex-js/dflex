@@ -25,11 +25,11 @@ class Draggable
 
   operationID: string;
 
-  private siblingsContainer: CoreInstanceInterface | null;
+  siblingsContainer: CoreInstanceInterface | null;
 
   isOutActiveSiblingsContainer: boolean;
 
-  private setOfTransformedIds?: Set<string>;
+  setOfTransformedIds?: Set<string>;
 
   threshold: DraggableDnDInterface["threshold"];
 

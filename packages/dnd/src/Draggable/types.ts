@@ -33,6 +33,8 @@ export interface DraggableDnDInterface
   extends AbstractDraggableInterface<CoreInstanceInterface> {
   tempIndex: number;
   operationID: string;
+  setOfTransformedIds?: Set<string>;
+  siblingsContainer: CoreInstanceInterface | null;
   scroll: ScrollOptWithThreshold;
   isViewportRestricted: boolean;
   threshold: ThresholdInterface;
