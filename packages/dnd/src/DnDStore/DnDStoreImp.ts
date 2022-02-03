@@ -184,7 +184,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     });
   }
 
-  private cleanupUnconnectedElements(branchKey: string) {
+  private cleanupDisconnectedElements(branchKey: string) {
     const requiredBranch = this.DOMGen.branches[branchKey];
 
     const branch = Array.isArray(requiredBranch)
@@ -271,7 +271,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
           delete this.siblingsScrollElement[key];
         }
 
-        const newKey = this.cleanupUnconnectedElements(key);
+        const newKey = this.cleanupDisconnectedElements(key);
 
         this.initSiblingsScrollAndVisibilityIfNecessary(newKey);
 
