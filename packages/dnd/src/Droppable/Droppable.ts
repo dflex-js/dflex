@@ -852,7 +852,22 @@ class Droppable {
 
       // No parent assigned by registry and the hightest one is document.
       if (hasDocumentAsContainer) return;
+
+      // Handle this case later.
+      return;
     }
+
+    // At this point, the element has a parent.
+    const parentsID = store.getElmSiblingsById(parent.id);
+
+    if (!parentsID || !Array.isArray(parentsID)) return;
+
+    // Initialize parents branch.
+    store.initSiblingsScrollAndVisibilityIfNecessary(parent.keys.SK);
+
+    parentsID.forEach((parentID) => {
+      const parentContainer = store.registry[parentID];
+    });
   }
 
   /**
