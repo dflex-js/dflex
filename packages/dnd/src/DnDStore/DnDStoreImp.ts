@@ -236,15 +236,14 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   }
 
   initSiblingsScrollAndVisibilityIfNecessary(key: string) {
-    const hasSiblings = Array.isArray(this.DOMGen.branches[key]);
+    const hasSiblings =
+      this.DOMGen.branches[key] && Array.isArray(this.DOMGen.branches[key]);
 
-    let firstElemID = "";
+    const firstElemID = (
+      hasSiblings ? this.DOMGen.branches[key]![0] : this.DOMGen.branches[key]
+    ) as string;
 
-    if (!hasSiblings) {
-      firstElemID = this.DOMGen.branches[key] as string;
-    } else {
-      [firstElemID] = this.DOMGen.branches[key]! as string[];
-
+    if (hasSiblings) {
       const lastElemID =
         this.DOMGen.branches[key]![this.DOMGen.branches[key]!.length - 1];
 

@@ -840,6 +840,21 @@ class Droppable {
     }
   }
 
+  private detectNearestContainer() {
+    const { id } = this.draggable.draggedElm;
+
+    const { parent } = store.getElmTreeById(id);
+
+    if (!parent) {
+      const { SK } = store.registry[id].keys;
+
+      const { hasDocumentAsContainer } = store.siblingsScrollElement[SK];
+
+      // No parent assigned by registry and the hightest one is document.
+      if (hasDocumentAsContainer) return;
+    }
+  }
+
   /**
    * Invokes draggable method responsible of transform.
    * Monitors dragged translate and called related methods. Which controls the
@@ -889,6 +904,8 @@ class Droppable {
       this.emitDraggedEvent("onDragOutContainer");
 
       this.draggable.isOutActiveSiblingsContainer = true;
+
+      this.detectNearestContainer();
 
       return;
     }
