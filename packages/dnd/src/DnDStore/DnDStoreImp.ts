@@ -6,7 +6,10 @@ import type { ElmTree, DnDStoreInterface, RegisterInput } from "./types";
 import Scroll from "../Plugins/Scroll";
 import Tracker from "../Plugins/Tracker";
 
+import type { ScrollInterface } from "../Plugins/Scroll";
+
 import canUseDOM from "../utils/canUseDOM";
+
 import type {
   LayoutState,
   Events,
@@ -106,6 +109,60 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     };
   }
 
+  updateElementVisibility(
+    elmID: string,
+    scroll: ScrollInterface,
+    allowDynamicVisibility: boolean,
+    permitExceptionToOverride: boolean
+  ) {
+    if (this.registry[elmID].isPaused) {
+      this.registry[elmID].resume(scroll.scrollX, scroll.scrollY);
+    }
+
+    this.assignSiblingsBoundaries(
+      this.registry[elmID].keys.SK,
+      this.registry[elmID].offset!
+    );
+
+    let isVisible = true;
+    let isVisibleY = true;
+    let isVisibleX = true;
+
+    if (allowDynamicVisibility) {
+      isVisibleY = scroll.isElementVisibleViewportY(
+        this.registry[elmID].currentTop!
+      );
+
+      isVisibleX = scroll.isElementVisibleViewportX(
+        this.registry[elmID].currentLeft!
+      );
+
+      isVisible = isVisibleY && isVisibleX;
+
+      if (
+        !isVisible &&
+        !this.elmIndicator.exceptionToNextElm &&
+        permitExceptionToOverride
+      ) {
+        this.elmIndicator.exceptionToNextElm = true;
+
+        // Override the result.
+        isVisible = true;
+      } else if (isVisible) {
+        if (this.elmIndicator.exceptionToNextElm) {
+          // In this case, we are moving from hidden to visible.
+          // Eg: 1, 2 are hidden the rest of the list is visible.
+          // But, there's a possibility that the rest of the branch elements
+          // are hidden.
+          // Eg: 1, 2: hidden 3, 4, 5, 6, 7:visible 8, 9, 10: hidden.
+          this.initELmIndicator();
+        }
+      }
+    }
+
+    this.registry[elmID].changeVisibility(isVisible);
+  }
+
   private updateBranchVisibility(
     requiredBranchKey: string,
     allowDynamicVisibility: boolean
@@ -123,6 +180,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     }
 
     this.initELmIndicator();
+
     let prevIndex = 0;
 
     // Should always have an array but just in case.
@@ -132,52 +190,14 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     branch.forEach((elmID, i) => {
       if (elmID.length > 0) {
-        if (this.registry[elmID].isPaused) {
-          this.registry[elmID].resume(scroll.scrollX, scroll.scrollY);
-        }
+        const permitExceptionToOverride = i > prevIndex;
 
-        this.assignSiblingsBoundaries(
-          this.registry[elmID].keys.SK,
-          this.registry[elmID].offset!
+        this.updateElementVisibility(
+          elmID,
+          scroll,
+          allowDynamicVisibility,
+          permitExceptionToOverride
         );
-
-        let isVisible = true;
-        let isVisibleY = true;
-        let isVisibleX = true;
-
-        if (allowDynamicVisibility) {
-          isVisibleY = scroll.isElementVisibleViewportY(
-            this.registry[elmID].currentTop!
-          );
-
-          isVisibleX = scroll.isElementVisibleViewportX(
-            this.registry[elmID].currentLeft!
-          );
-
-          isVisible = isVisibleY && isVisibleX;
-
-          if (
-            !isVisible &&
-            !this.elmIndicator.exceptionToNextElm &&
-            i > prevIndex
-          ) {
-            this.elmIndicator.exceptionToNextElm = true;
-
-            // Override the result.
-            isVisible = true;
-          } else if (isVisible) {
-            if (this.elmIndicator.exceptionToNextElm) {
-              // In this case, we are moving from hidden to visible.
-              // Eg: 1, 2 are hidden the rest of the list is visible.
-              // But, there's a possibility that the rest of the branch elements
-              // are hidden.
-              // Eg: 1, 2: hidden 3, 4, 5, 6, 7:visible 8, 9, 10: hidden.
-              this.initELmIndicator();
-            }
-          }
-        }
-
-        this.registry[elmID].changeVisibility(isVisible);
 
         prevIndex = i;
       }
