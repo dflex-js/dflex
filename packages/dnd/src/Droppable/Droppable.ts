@@ -866,7 +866,9 @@ class Droppable {
     store.initSiblingsScrollAndVisibilityIfNecessary(parent.keys.SK);
 
     parentsID.forEach((parentID) => {
-      const parentContainer = store.registry[parentID];
+      // TODO: Handle this case later.
+      // eslint-disable-next-line no-unused-vars
+      const parentContainerInstance = store.registry[parentID];
     });
   }
 
