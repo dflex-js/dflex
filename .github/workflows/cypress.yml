@@ -5,6 +5,11 @@ on:
     branches:
       - master
   pull_request:
+    paths-ignore:
+      - "**.md"
+      - scripts/**
+      - .github/**
+      - "!.github/workflows/ci.yml"
 
 jobs:
   cypress-dnd:
