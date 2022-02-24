@@ -140,6 +140,9 @@ context("DnD/Testing is out the list vertically: out down/in/out up", () => {
           force: true,
         });
 
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(0);
+
         cy.get("#id-9").trigger("mousemove", {
           clientX: startingPointX,
           clientY: startingPointY,

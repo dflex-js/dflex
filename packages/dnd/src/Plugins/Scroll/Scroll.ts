@@ -198,13 +198,13 @@ Please provide scroll container by ref/id when registering the element or turn o
     }
   }
 
-  private setScrollListener(attach = true) {
+  private setScrollListener(isAttachListener = true) {
     /**
      * No need to set scroll listener if there is no scroll.
      */
     const hasScrollListener = this.hasOverflowX || this.hasOverflowY;
 
-    const type = attach ? "addEventListener" : "removeEventListener";
+    const type = isAttachListener ? "addEventListener" : "removeEventListener";
 
     const container = this.hasDocumentAsContainer
       ? window
@@ -235,7 +235,7 @@ Please provide scroll container by ref/id when registering the element or turn o
       }
 
       if (elm) {
-        if (attach) {
+        if (isAttachListener) {
           elm.dataset[
             `dflexScrollListener-${this.siblingKey}`
           ] = `${this.allowDynamicVisibility}`;

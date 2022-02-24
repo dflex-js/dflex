@@ -5,6 +5,16 @@ on:
     branches:
       - master
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths-ignore:
+      - "**.md"
+      - scripts/**
+      - .github/**
+      - "!.github/workflows/ci.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   cypress-dnd:
