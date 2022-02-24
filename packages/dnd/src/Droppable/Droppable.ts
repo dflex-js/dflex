@@ -114,6 +114,8 @@ class Droppable {
 
   private isOnDragOutThresholdEvtEmitted: boolean;
 
+  private animatedDraggedInsertionFrame: number | null;
+
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
 
@@ -172,6 +174,7 @@ class Droppable {
 
     this.isOnDragOutContainerEvtEmitted = false;
     this.isOnDragOutThresholdEvtEmitted = false;
+    this.animatedDraggedInsertionFrame = null;
   }
 
   draggedEventGenerator(type: DraggedEvent["type"]): DraggedEvent {
@@ -945,8 +948,17 @@ class Droppable {
       isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
       // when it's out, and on of theses is true then it's happening.
-      if (!isOutSiblingsContainer) {
-        this.draggedIsComingIn(y);
+      if (
+        !isOutSiblingsContainer &&
+        this.animatedDraggedInsertionFrame === null
+      ) {
+        this.animatedDraggedInsertionFrame = window.requestAnimationFrame(
+          () => {
+            this.draggedIsComingIn(y);
+
+            this.animatedDraggedInsertionFrame = null;
+          }
+        );
 
         return;
       }
@@ -976,7 +988,15 @@ class Droppable {
 
       this.isOnDragOutContainerEvtEmitted = false;
 
-      this.draggedIsComingIn(y);
+      if (this.animatedDraggedInsertionFrame === null) {
+        this.animatedDraggedInsertionFrame = window.requestAnimationFrame(
+          () => {
+            this.draggedIsComingIn(y);
+
+            this.animatedDraggedInsertionFrame = null;
+          }
+        );
+      }
     }
   }
 }
