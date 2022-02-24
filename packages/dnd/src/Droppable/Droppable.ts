@@ -950,17 +950,16 @@ class Droppable {
       isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
       // when it's out, and on of theses is true then it's happening.
-      if (
-        !isOutSiblingsContainer &&
-        this.animatedDraggedInsertionFrame === null
-      ) {
-        this.animatedDraggedInsertionFrame = window.requestAnimationFrame(
-          () => {
-            this.draggedIsComingIn(y);
+      if (!isOutSiblingsContainer) {
+        if (this.animatedDraggedInsertionFrame === null) {
+          this.animatedDraggedInsertionFrame = window.requestAnimationFrame(
+            () => {
+              this.draggedIsComingIn(y);
 
-            this.animatedDraggedInsertionFrame = null;
-          }
-        );
+              this.animatedDraggedInsertionFrame = null;
+            }
+          );
+        }
 
         return;
       }
