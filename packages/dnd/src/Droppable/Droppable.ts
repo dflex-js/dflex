@@ -114,6 +114,8 @@ class Droppable {
 
   private isOnDragOutThresholdEvtEmitted: boolean;
 
+  /** This is only related to insert method as the each element has it's own for
+   * transformation. */
   private animatedDraggedInsertionFrame: number | null;
 
   constructor(draggable: DraggableDnDInterface) {
