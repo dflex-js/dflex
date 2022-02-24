@@ -133,7 +133,7 @@ context("DnD/Testing a collections new positions", () => {
               force: true,
             });
             // eslint-disable-next-line cypress/no-unnecessary-waiting
-            // cy.wait(10);
+            cy.wait(0);
           }
 
           cy.get("#id-12").should(
