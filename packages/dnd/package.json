@@ -30,7 +30,7 @@
   ],
   "devDependencies": {
     "cross-env": "^7.0.2",
-    "cypress": "9.3.1",
+    "cypress": "9.5.0",
     "eslint-plugin-cypress": "^2.11.1",
     "start-server-and-test": "^1.11.2",
     "v8-to-istanbul": "^8.0.0"
