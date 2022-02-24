@@ -34,6 +34,46 @@ function emitSiblingsEvent(
   store.emitEvent(evt);
 }
 
+export function isIDEligible(
+  destinationElmID: string,
+  currentDraggedID: string
+) {
+  return (
+    destinationElmID &&
+    destinationElmID.length > 0 &&
+    destinationElmID !== currentDraggedID &&
+    store.registry[destinationElmID] &&
+    store.registry[destinationElmID].ref !== null
+  );
+}
+
+function isIDEligible2Move(
+  destinationElmID: string,
+  currentDraggedID: string,
+  isScrollEnabled: boolean
+) {
+  if (!isIDEligible(destinationElmID, currentDraggedID)) {
+    return false;
+  }
+
+  // Won't trigger any resume if auto-scroll is disabled.
+  if (store.registry[destinationElmID].isPaused) {
+    if (isScrollEnabled) {
+      const { SK } = store.registry[currentDraggedID].keys;
+
+      const { scrollX, scrollY } = store.siblingsScrollElement[SK];
+
+      store.registry[destinationElmID].resume(scrollX, scrollY);
+
+      return true;
+    }
+
+    return false;
+  }
+
+  return true;
+}
+
 /**
  * Class includes all transformation methods related to droppable.
  */
@@ -363,7 +403,13 @@ class Droppable {
     for (let i = siblings!.length - 1; i >= 0; i -= 1) {
       const id = siblings![i];
 
-      if (this.isIDEligible2Move(id)) {
+      if (
+        isIDEligible2Move(
+          id,
+          this.draggable.draggedElm.id,
+          this.draggable.scroll.enable
+        )
+      ) {
         const element = store.registry[id];
 
         const { currentTop } = element;
@@ -421,7 +467,13 @@ class Droppable {
     for (let i = 0; i < siblings!.length; i += 1) {
       const id = siblings![i];
 
-      if (this.isIDEligible2Move(id)) {
+      if (
+        isIDEligible2Move(
+          id,
+          this.draggable.draggedElm.id,
+          this.draggable.scroll.enable
+        )
+      ) {
         const element = store.registry[id];
 
         const { currentTop } = element;
@@ -439,50 +491,19 @@ class Droppable {
     return droppableIndex;
   }
 
-  protected isIDEligible(id: string) {
-    return (
-      id &&
-      id.length > 0 &&
-      id !== this.draggable.draggedElm.id &&
-      store.registry[id] &&
-      store.registry[id].ref !== null
-    );
-  }
-
-  /**
-   *
-   * @param id -
-   */
-  private isIDEligible2Move(id: string) {
-    if (!this.isIDEligible(id)) {
-      return false;
-    }
-
-    // Won't trigger any resume if auto-scroll is disabled.
-    if (store.registry[id].isPaused) {
-      if (this.draggable.scroll.enable) {
-        const { SK } = store.registry[this.draggable.draggedElm.id].keys;
-
-        const { scrollX, scrollY } = store.siblingsScrollElement[SK];
-
-        store.registry[id].resume(scrollX, scrollY);
-
-        return true;
-      }
-
-      return false;
-    }
-
-    return true;
-  }
-
   private switchElement() {
     const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
 
     const elmIndex = this.draggable.tempIndex + -1 * this.effectedElemDirection;
     const id = siblings![elmIndex];
 
-    if (this.isIDEligible2Move(id)) {
+    if (
+      isIDEligible2Move(
+        id,
+        this.draggable.draggedElm.id,
+        this.draggable.scroll.enable
+      )
+    ) {
       this.setDraggedTempIndex(elmIndex);
 
       this.updateElement(id, true, this.effectedElemDirection === -1 ? 1 : -1);
@@ -512,7 +533,13 @@ class Droppable {
        */
       const id = siblings![i];
 
-      if (this.isIDEligible2Move(id)) {
+      if (
+        isIDEligible2Move(
+          id,
+          this.draggable.draggedElm.id,
+          this.draggable.scroll.enable
+        )
+      ) {
         this.updateElement(id, true, 1);
       }
     }
@@ -536,7 +563,13 @@ class Droppable {
     for (let i = siblings.length - 1; i >= to; i -= 1) {
       const id = siblings[i];
 
-      if (this.isIDEligible2Move(id)) {
+      if (
+        isIDEligible2Move(
+          id,
+          this.draggable.draggedElm.id,
+          this.draggable.scroll.enable
+        )
+      ) {
         this.updateElement(id, true, -1);
       }
     }

@@ -2,7 +2,7 @@
 import type { ELmBranch } from "@dflex/dom-gen";
 
 import store from "../DnDStore";
-import Droppable from "./Droppable";
+import Droppable, { isIDEligible } from "./Droppable";
 
 import type { DraggableDnDInterface } from "../Draggable";
 
@@ -15,7 +15,10 @@ class EndDroppable extends Droppable {
   }
 
   private isIDEligible2Undo(id: string) {
-    return this.isIDEligible(id) && !store.registry[id].isPaused;
+    return (
+      isIDEligible(id, this.draggable.draggedElm.id) &&
+      !store.registry[id].isPaused
+    );
   }
 
   /**
