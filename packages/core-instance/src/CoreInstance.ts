@@ -127,6 +127,10 @@ class CoreInstance
     if (!this.isVisible) this.hasToTransform = true;
   }
 
+  isPositionedUnder(elmCurrentOffsetTop: number) {
+    return elmCurrentOffsetTop < this.currentTop!;
+  }
+
   transformElm() {
     if (this.animatedFrame !== null) {
       window.cancelAnimationFrame(this.animatedFrame);

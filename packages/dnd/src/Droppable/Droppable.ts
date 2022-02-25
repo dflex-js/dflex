@@ -417,9 +417,9 @@ class Droppable {
       ) {
         const element = store.registry[id];
 
-        const { currentTop } = element;
-
-        const isQualified = this.isElemAboveDragged(currentTop!);
+        const isQualified = !element.isPositionedUnder(
+          this.draggable.tempOffset.currentTop
+        );
 
         if (isQualified) {
           isLast = true;
@@ -452,19 +452,6 @@ class Droppable {
     return isLast;
   }
 
-  /**
-   * Compares the dragged offset with element offset and returns
-   * true if element is matched.
-   *
-   * @param elmCurrentOffsetTop -
-   */
-  private isElemUnderDragged(elmCurrentOffsetTop: number) {
-    /**
-     * Element is Switchable when it's under dragged.
-     */
-    return elmCurrentOffsetTop > this.draggable.tempOffset.currentTop;
-  }
-
   private detectDroppableIndex() {
     let droppableIndex = null;
     const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
@@ -481,9 +468,9 @@ class Droppable {
       ) {
         const element = store.registry[id];
 
-        const { currentTop } = element;
-
-        const isQualified = this.isElemUnderDragged(currentTop!);
+        const isQualified = element.isPositionedUnder(
+          this.draggable.tempOffset.currentTop
+        );
 
         if (isQualified) {
           droppableIndex = i;
@@ -907,6 +894,10 @@ class Droppable {
       // TODO: Handle this case later.
       // eslint-disable-next-line no-unused-vars
       const parentContainerInstance = store.registry[parentID];
+      console.log(
+        "file: Droppable.ts ~ line 910 ~ parentContainerInstance",
+        parentContainerInstance
+      );
     });
   }
 
