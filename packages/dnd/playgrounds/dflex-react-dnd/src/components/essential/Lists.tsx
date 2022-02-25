@@ -41,10 +41,15 @@ interface props {
     | typeof ContainerInContainerBasedEvent;
 
   Core: typeof CoreInComponentBasedEvent | typeof CoreInContainerBasedEvent;
+  className?: string;
 }
 
-const BaseApp = ({ Container, Core }: props) => (
-  <Container className="list-container list-height-fit">
+const BaseApp = ({
+  Container,
+  Core,
+  className = "list-container list-height-fit",
+}: props) => (
+  <Container className={className}>
     <Core id={`id-${ID_PARENT_1}`} component="ul" depth={1}>
       {firstContainer.map(({ label, id }) => (
         <Core depth={0} id={`id-${id}`} key={`k${id}`} component="li">
@@ -69,18 +74,20 @@ const BaseApp = ({ Container, Core }: props) => (
   </Container>
 );
 
-function ComponentBasedEvent() {
+function ComponentBasedEvent({ className }: { className?: string }) {
   return (
     <BaseApp
+      className={className}
       Core={CoreInComponentBasedEvent}
       Container={ContainerInComponentBasedEvent}
     />
   );
 }
 
-function ContainerBasedEvent() {
+function ContainerBasedEvent({ isHorizontal }: { isHorizontal?: boolean }) {
   return (
     <BaseApp
+      className={isHorizontal ? "list-container-horizontal" : undefined}
       Core={CoreInContainerBasedEvent}
       Container={ContainerInContainerBasedEvent}
     />

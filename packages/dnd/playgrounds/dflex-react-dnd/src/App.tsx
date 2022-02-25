@@ -48,6 +48,10 @@ function App() {
           path="/component-based-event"
           element={<ComponentBasedEvent />}
         />
+        <Route
+          path="/horizontal"
+          element={<ContainerBasedEvent isHorizontal />}
+        ></Route>
         <Route path="/" element={<ContainerBasedEvent />}></Route>
       </Routes>
     </BrowserRouter>
