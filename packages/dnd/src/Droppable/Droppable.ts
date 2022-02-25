@@ -894,10 +894,6 @@ class Droppable {
       // TODO: Handle this case later.
       // eslint-disable-next-line no-unused-vars
       const parentContainerInstance = store.registry[parentID];
-      console.log(
-        "file: Droppable.ts ~ line 910 ~ parentContainerInstance",
-        parentContainerInstance
-      );
     });
   }
 
