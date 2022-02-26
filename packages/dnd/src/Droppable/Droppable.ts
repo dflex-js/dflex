@@ -567,19 +567,21 @@ class Droppable {
     }
   }
 
-  private draggedOutPosition() {
+  private draggedOutPosition(branchKey: string) {
     if (this.draggable.isLeavingFromTop()) {
       /**
        * If leaving and parent locked, do nothing.
        */
 
-      // move element up
-      this.setEffectedElemDirection(true);
+      if (store.siblingsAlignment[branchKey] === "Vertical") {
+        // move element up
+        this.setEffectedElemDirection(true);
 
-      // lock the parent
-      this.setDraggedPositionFlagInSiblingsContainer(true);
+        // lock the parent
+        this.setDraggedPositionFlagInSiblingsContainer(true);
 
-      this.liftUp();
+        this.liftUp();
+      }
 
       return;
     }
@@ -929,7 +931,7 @@ class Droppable {
       this.scrollManager(x, y);
 
       if (!this.draggable.isOutActiveSiblingsContainer) {
-        this.draggedOutPosition();
+        this.draggedOutPosition(SK);
 
         return;
       }
