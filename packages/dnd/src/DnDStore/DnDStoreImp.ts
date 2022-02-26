@@ -120,15 +120,14 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     let lastElemID = "";
 
     if (branch) {
-      hasSiblings = Array.isArray(branch);
-
-      if (hasSiblings) {
+      if (Array.isArray(branch)) {
+        hasSiblings = true;
         [firstElemID] = branch as string[];
 
         lastElemID = branch[branch.length - 1];
+      } else {
+        firstElemID = branch!;
       }
-    } else {
-      firstElemID = branch!;
     }
 
     return {
@@ -148,7 +147,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       this.registry[elmID].resume(scroll.scrollX, scroll.scrollY);
     }
 
-    this.assignSiblingsBoundaries(
+    this.assignSiblingsBoundariesAndAlignment(
       this.registry[elmID].keys.SK,
       this.registry[elmID].offset!
     );
@@ -356,20 +355,13 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     }
   }
 
-  private setBranchDirection(key: string) {
-    // DO something here.
-  }
-
   onLoadListeners() {
     Object.keys(this.DOMGen.branches).forEach((branchKey) => {
       this.initSiblingsScrollAndVisibilityIfNecessary(branchKey);
-
-      // set branch elements direction.
-      this.setBranchDirection(branchKey);
     });
   }
 
-  private assignSiblingsBoundaries(SK: string, elemOffset: Rect) {
+  private assignSiblingsBoundariesAndAlignment(SK: string, elemOffset: Rect) {
     const elmRight = elemOffset.left + elemOffset.width;
 
     if (!this.siblingsBoundaries[SK]) {
@@ -385,8 +377,13 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     const $ = this.siblingsBoundaries[SK];
 
+    let isHorizontal = false;
+
     if ($.maxLeft < elemOffset.left) {
       $.maxLeft = elemOffset.left;
+
+      isHorizontal = true;
+      this.siblingsAlignment[SK] = "Horizontal";
     }
 
     if ($.minRight > elmRight) {
@@ -397,6 +394,10 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       $.top = elemOffset.top;
     } else {
       $.bottom = elemOffset.top + elemOffset.height;
+    }
+
+    if (!isHorizontal) {
+      this.siblingsAlignment[SK] = "Vertical";
     }
   }
 
