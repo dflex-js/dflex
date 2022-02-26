@@ -131,6 +131,10 @@ class CoreInstance
     return elmCurrentOffsetTop < this.currentTop!;
   }
 
+  isPositionedLeft(elmCurrentOffsetLeft: number) {
+    return elmCurrentOffsetLeft < this.currentLeft!;
+  }
+
   transformElm() {
     if (this.animatedFrame !== null) {
       window.cancelAnimationFrame(this.animatedFrame);
