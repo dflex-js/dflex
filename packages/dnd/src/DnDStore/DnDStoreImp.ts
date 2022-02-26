@@ -34,6 +34,8 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
   siblingsScrollElement: DnDStoreInterface["siblingsScrollElement"];
 
+  siblingsAlignment: DnDStoreInterface["siblingsAlignment"];
+
   layoutState: DnDStoreInterface["layoutState"];
 
   private events: Events;
@@ -55,6 +57,7 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
 
     this.siblingsBoundaries = {};
     this.siblingsScrollElement = {};
+    this.siblingsAlignment = {};
 
     this.layoutState = "pending";
 
@@ -106,6 +109,32 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       currentKy: "",
       prevKy: "",
       exceptionToNextElm: false,
+    };
+  }
+
+  private getBranchHeadAndTail(key: string) {
+    const branch = this.DOMGen.branches[key];
+
+    let hasSiblings = false;
+    let firstElemID = "";
+    let lastElemID = "";
+
+    if (branch) {
+      hasSiblings = Array.isArray(branch);
+
+      if (hasSiblings) {
+        [firstElemID] = branch as string[];
+
+        lastElemID = branch[branch.length - 1];
+      }
+    } else {
+      firstElemID = branch!;
+    }
+
+    return {
+      hasSiblings,
+      firstElemID,
+      lastElemID,
     };
   }
 
@@ -256,55 +285,48 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   }
 
   initSiblingsScrollAndVisibilityIfNecessary(key: string) {
-    const hasSiblings =
-      this.DOMGen.branches[key] && Array.isArray(this.DOMGen.branches[key]);
+    const { hasSiblings, firstElemID, lastElemID } =
+      this.getBranchHeadAndTail(key);
 
-    const firstElemID = (
-      hasSiblings ? this.DOMGen.branches[key]![0] : this.DOMGen.branches[key]
-    ) as string;
+    if (!this.registry[firstElemID].isInitialized) {
+      this.registry[firstElemID].resume(0, 0);
+      this.registry[firstElemID].isPaused = true;
+    }
+
+    const isHeadNotConnected = !this.registry[firstElemID].ref!.isConnected;
+
+    let isNotConnected = isHeadNotConnected;
 
     if (hasSiblings) {
-      const lastElemID =
-        this.DOMGen.branches[key]![this.DOMGen.branches[key]!.length - 1];
-
-      if (!this.registry[firstElemID].isInitialized) {
-        this.registry[firstElemID].resume(0, 0);
-        this.registry[firstElemID].isPaused = true;
-      }
-
       if (!this.registry[lastElemID].isInitialized) {
         this.registry[lastElemID].resume(0, 0);
         this.registry[lastElemID].isPaused = true;
       }
 
-      const isHeadNotConnected = !this.registry[firstElemID].ref!.isConnected;
       const isTailNotConnected = !this.registry[lastElemID!].ref!.isConnected;
 
-      if (isHeadNotConnected || isTailNotConnected) {
-        if (process.env.NODE_ENV !== "production") {
-          throwElementIsNotConnected(firstElemID);
-        }
+      isNotConnected = isTailNotConnected || isHeadNotConnected;
+    }
 
-        if (this.siblingsScrollElement[key]) {
-          this.siblingsScrollElement[key].destroy();
-          delete this.siblingsScrollElement[key];
-        }
-
-        const newKey = this.cleanupDisconnectedElements(key);
-
-        this.initSiblingsScrollAndVisibilityIfNecessary(newKey);
-
-        return;
+    if (isNotConnected) {
+      if (process.env.NODE_ENV !== "production") {
+        throwElementIsNotConnected(firstElemID);
       }
+
+      if (this.siblingsScrollElement[key]) {
+        this.siblingsScrollElement[key].destroy();
+        delete this.siblingsScrollElement[key];
+      }
+
+      const newKey = this.cleanupDisconnectedElements(key);
+
+      this.initSiblingsScrollAndVisibilityIfNecessary(newKey);
+
+      return;
     }
 
     if (this.siblingsScrollElement[key]) {
       return;
-    }
-
-    if (!this.registry[firstElemID].isInitialized) {
-      this.registry[firstElemID].resume(0, 0);
-      this.registry[firstElemID].isPaused = true;
     }
 
     const scroll = new Scroll({
@@ -334,9 +356,16 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
     }
   }
 
+  private setBranchDirection(key: string) {
+    // DO something here.
+  }
+
   onLoadListeners() {
     Object.keys(this.DOMGen.branches).forEach((branchKey) => {
       this.initSiblingsScrollAndVisibilityIfNecessary(branchKey);
+
+      // set branch elements direction.
+      this.setBranchDirection(branchKey);
     });
   }
 

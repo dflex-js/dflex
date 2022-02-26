@@ -71,6 +71,7 @@ export interface DnDStoreInterface {
   tracker: TrackerInterface;
   siblingsBoundaries: { [siblingKey: string]: BoundariesOffset };
   siblingsScrollElement: { [siblingKey: string]: ScrollInterface };
+  siblingsAlignment: { [siblingKey: string]: "Horizontal" | "Vertical" | null };
   layoutState: LayoutState;
   onStateChange(state: LayoutState): void;
   emitEvent(event: DraggedEvent): void;
