@@ -1,4 +1,5 @@
 import type { CoreInstanceInterface } from "@dflex/core-instance";
+import type { Coordinates } from "@dflex/draggable";
 
 import type { InteractivityEvent } from "../types";
 import type { DraggableDnDInterface } from "../Draggable";
@@ -33,9 +34,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
   protected effectedElemDirection: EffectedElemDirection;
 
-  private elmTransitionY: number;
-
-  private elmTransitionX: number;
+  private elmTransition: Coordinates;
 
   private draggedAccumulatedTransitionY: number;
 
@@ -50,16 +49,22 @@ class DistanceCalculator implements DistanceCalculatorInterface {
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
 
-    this.elmTransitionY = 0;
-    this.elmTransitionX = 0;
-
     this.draggedAccumulatedTransitionY = 0;
     this.draggedAccumulatedTransitionX = 0;
     this.draggedYOffset = 0;
     this.draggedXOffset = 0;
 
     /**
+     * Next element calculated transition space.
+     */
+    this.elmTransition = {
+      x: 0,
+      y: 0,
+    };
+
+    /**
      * Elements effected by dragged direction.
+     * Positive for up and right.
      */
     this.effectedElemDirection = {
       x: 1,
@@ -71,6 +76,13 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
   protected setEffectedElemDirectionV(isUp: boolean) {
     this.effectedElemDirection.y = isUp ? -1 : 1;
+  }
+
+  private resetIndicators() {
+    this.elmTransition = {
+      x: 0,
+      y: 0,
+    };
   }
 
   private calculateYDistance(element: CoreInstanceInterface) {
@@ -92,8 +104,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     this.draggedYOffset = 0;
     this.draggedXOffset = 0;
 
-    this.elmTransitionY = 0;
-    this.elmTransitionX = 0;
+    this.resetIndicators();
 
     // eslint-disable-next-line no-unused-vars
     const leftDifference = Math.abs(elmLeft! - draggedLeft);
@@ -101,7 +112,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     const topDifference = Math.abs(elmTop! - draggedTop);
 
     this.draggedAccumulatedTransitionY = topDifference;
-    this.elmTransitionY = topDifference;
+    this.elmTransition.y = topDifference;
 
     const heightOffset = Math.abs(draggedHight - elmHight);
 
@@ -110,7 +121,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     if (draggedHight < elmHight) {
       // console.log("elmHight is bigger");
 
-      if (this.effectedElemDirection.x === -1) {
+      if (this.effectedElemDirection.y === -1) {
         // console.log("elm going up");
 
         this.draggedAccumulatedTransitionY += heightOffset;
@@ -118,7 +129,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
       } else {
         // console.log("elm going down");
 
-        this.elmTransitionY -= heightOffset;
+        this.elmTransition.y -= heightOffset;
       }
 
       return;
@@ -126,7 +137,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
     // console.log("elmHight is smaller");
 
-    if (this.effectedElemDirection.x === -1) {
+    if (this.effectedElemDirection.y === -1) {
       // console.log("elm going up");
 
       this.draggedAccumulatedTransitionY -= heightOffset;
@@ -134,7 +145,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     } else {
       // console.log("elm going down");
 
-      this.elmTransitionY += heightOffset;
+      this.elmTransition.y += heightOffset;
     }
   }
 
@@ -215,7 +226,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     this.siblingsEmptyElmIndex = element.setYPosition(
       store.getElmSiblingsListById(this.draggable.draggedElm.id)!,
       this.effectedElemDirection.y,
-      this.elmTransitionY,
+      this.elmTransition.y,
 
       this.draggable.operationID,
       this.siblingsEmptyElmIndex
