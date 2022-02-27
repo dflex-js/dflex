@@ -88,6 +88,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
    *
    * @param draggedSpace - Hight if the working axes is Y. Otherwise, it's width.
    * @param elmSpace - Hight if the working axes is Y. Otherwise, it's width.
+   * @param axes - Axes(x or y).
    * @returns
    */
   private setDistanceIndicators(
@@ -130,45 +131,38 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     }
   }
 
-  // eslint-disable-next-line no-unused-vars
   private calculateDistance(element: CoreInstanceInterface, axes: Axes) {
-    this.draggedOffset.setAxes(0, 0);
-
     const {
       currentLeft: elmLeft,
       currentTop: elmTop,
       // @ts-expect-error
-      offset: { height: elmHight },
+      offset: { height: elmHight, width: elmWidth },
     } = element;
 
     const {
       occupiedOffset: { currentLeft: draggedLeft, currentTop: draggedTop },
       draggedElm: {
         // @ts-expect-error
-        offset: { height: draggedHight },
+        offset: { height: draggedHight, width: draggedWidth },
       },
     } = this.draggable;
 
-    // const leftDifference = Math.abs(elmLeft! - draggedLeft);
-    // const topDifference = Math.abs(elmTop! - draggedTop);
-
-    // this.draggedAccumulatedTransition.setAxes(leftDifference, topDifference);
-    // this.elmTransition.setAxes(leftDifference, topDifference);
-
-    // this.setDistanceIndicators(draggedHight, elmHight, "y");
-
-    this.elmTransition.setAxes(0, 0);
+    // Reset dragged offset.
     this.draggedOffset.setAxes(0, 0);
 
-    // eslint-disable-next-line no-unused-vars
     const leftDifference = Math.abs(elmLeft! - draggedLeft);
-
     const topDifference = Math.abs(elmTop! - draggedTop);
 
-    this.draggedAccumulatedTransition.y = topDifference;
-    this.elmTransition.y = topDifference;
+    this.draggedAccumulatedTransition.setAxes(leftDifference, topDifference);
+    this.elmTransition.setAxes(leftDifference, topDifference);
 
-    this.setDistanceIndicators(draggedHight, elmHight, "y");
+    if (axes === "y") {
+      this.setDistanceIndicators(draggedHight, elmHight, "y");
+
+      return;
+    }
+
+    this.setDistanceIndicators(draggedWidth, elmWidth, "x");
   }
 
   private updateOccupiedTranslate(direction: 1 | -1) {
@@ -239,13 +233,12 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     /**
      * Start transforming process
      */
-    this.siblingsEmptyElmIndex.y = element.setYPosition(
+    this.siblingsEmptyElmIndex[axes] = element.setYPosition(
       store.getElmSiblingsListById(this.draggable.draggedElm.id)!,
-      this.effectedElemDirection.y,
-      this.elmTransition.y,
-
+      this.effectedElemDirection[axes],
+      this.elmTransition[axes],
       this.draggable.operationID,
-      this.siblingsEmptyElmIndex.y
+      this.siblingsEmptyElmIndex[axes]
     );
 
     emitInteractiveEvent("onDragLeave", element);
