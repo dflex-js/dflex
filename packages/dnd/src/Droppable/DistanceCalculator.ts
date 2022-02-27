@@ -90,11 +90,6 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     this.effectedElemDirection.y = isUp ? -1 : 1;
   }
 
-  private resetIndicators() {
-    this.elmTransition.set(0, 0);
-    this.draggedOffset.set(0, 0);
-  }
-
   private calculateYDistance(element: CoreInstanceInterface) {
     const {
       currentLeft: elmLeft,
@@ -111,7 +106,8 @@ class DistanceCalculator implements DistanceCalculatorInterface {
       },
     } = this.draggable;
 
-    this.resetIndicators();
+    this.elmTransition.set(0, 0);
+    this.draggedOffset.set(0, 0);
 
     // eslint-disable-next-line no-unused-vars
     const leftDifference = Math.abs(elmLeft! - draggedLeft);
