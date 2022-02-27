@@ -84,7 +84,8 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     this.draggable.occupiedOffset.currentLeft = elmLeft + this.draggedOffset.x;
   }
 
-  private calculateYDistance(element: CoreInstanceInterface) {
+  // eslint-disable-next-line no-unused-vars
+  private calculateYDistance(element: CoreInstanceInterface, axes: Axes) {
     const {
       currentLeft: elmLeft,
       currentTop: elmTop,
@@ -167,7 +168,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
   ) {
     const element = store.registry[id];
 
-    this.calculateYDistance(element);
+    this.calculateYDistance(element, axes);
 
     this.draggable.incNumOfElementsTransformed(this.effectedElemDirection.x);
 
