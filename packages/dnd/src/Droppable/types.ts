@@ -1,8 +1,11 @@
-type UP_DOWN = 1 | -1;
+/** Negative for up and right */
+export type Direction = 1 | -1;
+
+export type Axes = "x" | "y";
 
 export interface EffectedElemDirection {
-  x: UP_DOWN;
-  y: UP_DOWN;
+  x: Direction;
+  y: Direction;
 }
 
 export interface DistanceCalculatorInterface {}

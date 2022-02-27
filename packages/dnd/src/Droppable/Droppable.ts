@@ -300,11 +300,7 @@ class Droppable extends DistanceCalculator {
     ) {
       this.setDraggedTempIndex(elmIndex);
 
-      this.updateElement(
-        id,
-        true,
-        this.effectedElemDirection.y === -1 ? 1 : -1
-      );
+      this.updateElement(id, "y", this.effectedElemDirection.y === -1 ? 1 : -1);
     }
   }
 
@@ -338,7 +334,7 @@ class Droppable extends DistanceCalculator {
           this.draggable.scroll.enable
         )
       ) {
-        this.updateElement(id, true, 1);
+        this.updateElement(id, "y", 1);
       }
     }
   }
@@ -368,7 +364,7 @@ class Droppable extends DistanceCalculator {
           this.draggable.scroll.enable
         )
       ) {
-        this.updateElement(id, true, -1);
+        this.updateElement(id, "y", -1);
       }
     }
   }

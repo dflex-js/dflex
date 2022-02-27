@@ -9,6 +9,8 @@ import store from "../DnDStore";
 import type {
   DistanceCalculatorInterface,
   EffectedElemDirection,
+  Direction,
+  Axes,
 } from "./types";
 
 import AxesCoordinates from "./AxesCoordinates";
@@ -77,6 +79,11 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     this.effectedElemDirection.x = isRight ? -1 : 1;
   }
 
+  protected updateOccupiedOffset(elmTop: number, elmLeft: number) {
+    this.draggable.occupiedOffset.currentTop = elmTop + this.draggedOffset.y;
+    this.draggable.occupiedOffset.currentLeft = elmLeft + this.draggedOffset.x;
+  }
+
   private calculateYDistance(element: CoreInstanceInterface) {
     const {
       currentLeft: elmLeft,
@@ -139,16 +146,12 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     }
   }
 
-  protected updateOccupiedOffset(elmTop: number, elmLeft: number) {
-    this.draggable.occupiedOffset.currentTop = elmTop + this.draggedOffset.y;
-    this.draggable.occupiedOffset.currentLeft = elmLeft;
-  }
-
   private updateOccupiedTranslate(direction: 1 | -1) {
     this.draggable.occupiedTranslate.y +=
       direction * this.draggedAccumulatedTransition.y;
 
-    this.draggable.occupiedTranslate.x += 0;
+    this.draggable.occupiedTranslate.x +=
+      direction * this.draggedAccumulatedTransition.x;
   }
 
   /**
@@ -159,8 +162,8 @@ class DistanceCalculator implements DistanceCalculatorInterface {
    */
   protected updateElement(
     id: string,
-    isUpdateDraggedTranslate: boolean,
-    draggedDirection?: 1 | -1
+    axes: Axes,
+    enforceDraggedDirection: Direction
   ) {
     const element = store.registry[id];
 
@@ -206,9 +209,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
     this.updateOccupiedOffset(elmTop!, elmLeft!);
 
-    if (isUpdateDraggedTranslate) {
-      this.updateOccupiedTranslate(draggedDirection!);
-    }
+    this.updateOccupiedTranslate(enforceDraggedDirection);
 
     /**
      * Start transforming process
