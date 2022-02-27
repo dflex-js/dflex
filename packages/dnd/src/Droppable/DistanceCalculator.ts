@@ -5,6 +5,11 @@ import type { DraggableDnDInterface } from "../Draggable";
 
 import store from "../DnDStore";
 
+import type {
+  DistanceCalculatorInterface,
+  EffectedElemDirection,
+} from "./types";
+
 function emitInteractiveEvent(
   type: InteractivityEvent["type"],
   element: CoreInstanceInterface
@@ -23,10 +28,10 @@ function emitInteractiveEvent(
  * Calculates the distance between two elements and update the targeted element
  * accordingly.
  */
-class DistanceCalculator {
+class DistanceCalculator implements DistanceCalculatorInterface {
   protected draggable: DraggableDnDInterface;
 
-  protected effectedElemDirection: 1 | -1;
+  protected effectedElemDirection: EffectedElemDirection;
 
   private elmTransitionY: number;
 
@@ -56,13 +61,16 @@ class DistanceCalculator {
     /**
      * Elements effected by dragged direction.
      */
-    this.effectedElemDirection = 1;
+    this.effectedElemDirection = {
+      x: 1,
+      y: 1,
+    };
 
     this.siblingsEmptyElmIndex = -1;
   }
 
-  protected setEffectedElemDirection(isUp: boolean) {
-    this.effectedElemDirection = isUp ? -1 : 1;
+  protected setEffectedElemDirectionV(isUp: boolean) {
+    this.effectedElemDirection.y = isUp ? -1 : 1;
   }
 
   private calculateYDistance(element: CoreInstanceInterface) {
@@ -102,7 +110,7 @@ class DistanceCalculator {
     if (draggedHight < elmHight) {
       // console.log("elmHight is bigger");
 
-      if (this.effectedElemDirection === -1) {
+      if (this.effectedElemDirection.x === -1) {
         // console.log("elm going up");
 
         this.draggedAccumulatedTransitionY += heightOffset;
@@ -118,7 +126,7 @@ class DistanceCalculator {
 
     // console.log("elmHight is smaller");
 
-    if (this.effectedElemDirection === -1) {
+    if (this.effectedElemDirection.x === -1) {
       // console.log("elm going up");
 
       this.draggedAccumulatedTransitionY -= heightOffset;
@@ -157,7 +165,7 @@ class DistanceCalculator {
 
     this.calculateYDistance(element);
 
-    this.draggable.incNumOfElementsTransformed(this.effectedElemDirection);
+    this.draggable.incNumOfElementsTransformed(this.effectedElemDirection.x);
 
     // TODO: always true for the first element
     if (!this.draggable.isOutActiveSiblingsContainer) {
@@ -206,7 +214,7 @@ class DistanceCalculator {
      */
     this.siblingsEmptyElmIndex = element.setYPosition(
       store.getElmSiblingsListById(this.draggable.draggedElm.id)!,
-      this.effectedElemDirection,
+      this.effectedElemDirection.y,
       this.elmTransitionY,
 
       this.draggable.operationID,
