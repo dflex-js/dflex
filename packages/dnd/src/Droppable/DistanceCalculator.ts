@@ -11,6 +11,8 @@ import type {
   EffectedElemDirection,
 } from "./types";
 
+import AxesCoordinates from "./AxesCoordinates";
+
 function emitInteractiveEvent(
   type: InteractivityEvent["type"],
   element: CoreInstanceInterface
@@ -24,22 +26,6 @@ function emitInteractiveEvent(
   };
 
   store.emitEvent(evt);
-}
-
-class AxesCoordinates {
-  x: number;
-
-  y: number;
-
-  constructor(x = 0, y = 0) {
-    this.x = x;
-    this.y = y;
-  }
-
-  setAxes(x: number, y: number) {
-    this.x = x;
-    this.y = y;
-  }
 }
 
 /**
@@ -78,7 +64,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
     /**
      * Elements effected by dragged direction.
-     * Positive for up and right.
+     * Negative for up and right.
      */
     this.effectedElemDirection = {
       x: 1,
@@ -86,8 +72,9 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     };
   }
 
-  protected setEffectedElemDirectionV(isUp: boolean) {
+  protected setEffectedElemDirection(isUp: boolean, isRight: boolean) {
     this.effectedElemDirection.y = isUp ? -1 : 1;
+    this.effectedElemDirection.x = isRight ? -1 : 1;
   }
 
   private calculateYDistance(element: CoreInstanceInterface) {

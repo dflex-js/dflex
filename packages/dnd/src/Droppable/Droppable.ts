@@ -380,7 +380,7 @@ class Droppable extends DistanceCalculator {
        */
 
       // move element up if it's vertical or fill when it's horizontal.
-      this.setEffectedElemDirectionV(true);
+      this.setEffectedElemDirection(true, false);
 
       // lock the parent
       this.setDraggedPositionFlagInSiblingsContainer(true);
@@ -408,7 +408,7 @@ class Droppable extends DistanceCalculator {
         // Is is out parent?
 
         // move element up
-        this.setEffectedElemDirectionV(true);
+        this.setEffectedElemDirection(true, false);
 
         // lock the parent
         this.setDraggedPositionFlagInSiblingsContainer(true);
@@ -423,7 +423,7 @@ class Droppable extends DistanceCalculator {
        */
 
       // inside the list, effected should be related to mouse movement
-      this.setEffectedElemDirectionV(this.draggable.isMovingDown);
+      this.setEffectedElemDirection(this.draggable.isMovingDown, false);
 
       this.switchElement();
     }
@@ -483,7 +483,7 @@ class Droppable extends DistanceCalculator {
     /**
      * Moving element down by setting is up to false
      */
-    this.setEffectedElemDirectionV(false);
+    this.setEffectedElemDirection(false, false);
 
     if (hasToMoveSiblingsDown) {
       this.moveDown(to);
@@ -493,9 +493,9 @@ class Droppable extends DistanceCalculator {
        */
       const isElmUp = this.leftAtIndex > this.draggable.tempIndex;
 
-      this.setEffectedElemDirectionV(isElmUp);
+      this.setEffectedElemDirection(isElmUp, false);
     } else {
-      this.setEffectedElemDirectionV(true);
+      this.setEffectedElemDirection(true, false);
     }
 
     /**
