@@ -1,25 +1,9 @@
-import type { CoreInstanceInterface } from "@dflex/core-instance";
-
-import type { InteractivityEvent, DraggedEvent, SiblingsEvent } from "../types";
+import type { DraggedEvent, SiblingsEvent } from "../types";
 
 import store from "../DnDStore";
 
 import type { TempOffset, DraggableDnDInterface } from "../Draggable";
-
-function emitInteractiveEvent(
-  type: InteractivityEvent["type"],
-  element: CoreInstanceInterface
-) {
-  const evt: InteractivityEvent = {
-    id: element.id,
-    index: element.order.self,
-    target: element.ref!,
-    timeStamp: Date.now(),
-    type,
-  };
-
-  store.emitEvent(evt);
-}
+import DistanceCalculator from "./DistanceCalculator";
 
 function emitSiblingsEvent(
   type: SiblingsEvent["type"],
@@ -77,24 +61,10 @@ function isIDEligible2Move(
 /**
  * Class includes all transformation methods related to droppable.
  */
-class Droppable {
-  private elmTransitionY: number;
-
-  private draggedAccumulatedTransitionY: number;
-
-  private draggedYOffset: number;
-
-  private leftDifference: number;
-
-  private effectedElemDirection: 1 | -1;
-
+class Droppable extends DistanceCalculator {
   private leftAtIndex: number;
 
   private preserveLastElmOffset!: TempOffset;
-
-  private siblingsEmptyElmIndex: number;
-
-  protected draggable: DraggableDnDInterface;
 
   private scrollAnimatedFrame: number | null;
 
@@ -119,25 +89,11 @@ class Droppable {
   private animatedDraggedInsertionFrame: number | null;
 
   constructor(draggable: DraggableDnDInterface) {
-    this.draggable = draggable;
-
-    this.elmTransitionY = 0;
-
-    this.draggedAccumulatedTransitionY = 0;
-    this.draggedYOffset = 0;
-
-    this.leftDifference = 0;
-
-    /**
-     * Elements effected by dragged direction.
-     */
-    this.effectedElemDirection = 1;
+    super(draggable);
 
     this.leftAtIndex = -1;
 
     this.updateLastElmOffset();
-
-    this.siblingsEmptyElmIndex = -1;
 
     this.scrollAnimatedFrame = null;
 
@@ -218,10 +174,6 @@ class Droppable {
     this.draggable.draggedElm.updateDataset(tempIndex);
   }
 
-  private setEffectedElemDirection(isUp: boolean) {
-    this.effectedElemDirection = isUp ? -1 : 1;
-  }
-
   private updateLastElmOffset() {
     let currentTop = 0;
     let currentLeft = 0;
@@ -249,157 +201,6 @@ class Droppable {
     };
   }
 
-  private updateOccupiedOffset(elmTop: number, elmLeft: number) {
-    this.draggable.occupiedOffset.currentTop = elmTop + this.draggedYOffset;
-    this.draggable.occupiedOffset.currentLeft = elmLeft;
-  }
-
-  private updateOccupiedTranslate(direction: 1 | -1) {
-    this.draggable.occupiedTranslate.y +=
-      direction * this.draggedAccumulatedTransitionY;
-
-    this.draggable.occupiedTranslate.x += 0;
-  }
-
-  private calculateYDistance(element: CoreInstanceInterface) {
-    const {
-      currentLeft: elmLeft,
-      currentTop: elmTop,
-      // @ts-expect-error
-      offset: { height: elmHight },
-    } = element;
-
-    const {
-      occupiedOffset: { currentLeft: draggedLeft, currentTop: draggedTop },
-      draggedElm: {
-        // @ts-expect-error
-        offset: { height: draggedHight },
-      },
-    } = this.draggable;
-
-    this.draggedYOffset = 0;
-    this.elmTransitionY = 0;
-
-    this.leftDifference = Math.abs(elmLeft! - draggedLeft);
-
-    const topDifference = Math.abs(elmTop! - draggedTop);
-
-    this.draggedAccumulatedTransitionY = topDifference;
-    this.elmTransitionY = topDifference;
-
-    const heightOffset = Math.abs(draggedHight - elmHight);
-
-    if (heightOffset === 0) return;
-
-    if (draggedHight < elmHight) {
-      // console.log("elmHight is bigger");
-
-      if (this.effectedElemDirection === -1) {
-        // console.log("elm going up");
-
-        this.draggedAccumulatedTransitionY += heightOffset;
-        this.draggedYOffset = heightOffset;
-      } else {
-        // console.log("elm going down");
-
-        this.elmTransitionY -= heightOffset;
-      }
-
-      return;
-    }
-
-    // console.log("elmHight is smaller");
-
-    if (this.effectedElemDirection === -1) {
-      // console.log("elm going up");
-
-      this.draggedAccumulatedTransitionY -= heightOffset;
-      this.draggedYOffset = -heightOffset;
-    } else {
-      // console.log("elm going down");
-
-      this.elmTransitionY += heightOffset;
-    }
-  }
-
-  /**
-   * Updates element instance and calculates the required transform distance. It
-   * invokes for each eligible element in the parent container.
-   *
-   * @param id -
-   */
-  private updateElement(
-    id: string,
-    isUpdateDraggedTranslate: boolean,
-    draggedDirection?: 1 | -1
-  ) {
-    const element = store.registry[id];
-
-    this.calculateYDistance(element);
-
-    this.draggable.incNumOfElementsTransformed(this.effectedElemDirection);
-
-    // TODO: always true for the first element
-    if (!this.draggable.isOutActiveSiblingsContainer) {
-      /**
-       * By updating the dragged translate, we guarantee that dragged
-       * transformation will not triggered until dragged is over threshold
-       * which will be detected by isDraggedOutPosition.
-       *
-       * However, this is only effective when dragged is fit in its new
-       * translate.
-       *
-       * And we have new translate only once. The first element matched the
-       * condition is the breaking point element.
-       */
-
-      const {
-        // @ts-expect-error
-        offset: { width, height },
-        currentLeft,
-        currentTop,
-      } = element;
-
-      this.draggable.threshold.updateElementThresholdMatrix(
-        {
-          width,
-          height,
-          left: currentLeft!,
-          top: currentTop!,
-        },
-        false
-      );
-    }
-
-    emitInteractiveEvent("onDragOver", element);
-
-    const { currentLeft: elmLeft, currentTop: elmTop } = element;
-
-    this.updateOccupiedOffset(elmTop!, elmLeft!);
-
-    if (isUpdateDraggedTranslate) {
-      this.updateOccupiedTranslate(draggedDirection!);
-    }
-
-    /**
-     * Start transforming process
-     */
-    this.siblingsEmptyElmIndex = element.setYPosition(
-      store.getElmSiblingsListById(this.draggable.draggedElm.id)!,
-      this.effectedElemDirection,
-      this.elmTransitionY,
-
-      this.draggable.operationID,
-      this.siblingsEmptyElmIndex
-    );
-
-    emitInteractiveEvent("onDragLeave", element);
-  }
-
-  private isElemAboveDragged(elmCurrentOffsetTop: number) {
-    return elmCurrentOffsetTop < this.draggable.tempOffset.currentTop;
-  }
-
   private checkIfDraggedIsLastElm() {
     const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
 
@@ -417,9 +218,9 @@ class Droppable {
       ) {
         const element = store.registry[id];
 
-        const { currentTop } = element;
-
-        const isQualified = this.isElemAboveDragged(currentTop!);
+        const isQualified = !element.isPositionedUnder(
+          this.draggable.tempOffset.currentTop
+        );
 
         if (isQualified) {
           isLast = true;
@@ -452,19 +253,6 @@ class Droppable {
     return isLast;
   }
 
-  /**
-   * Compares the dragged offset with element offset and returns
-   * true if element is matched.
-   *
-   * @param elmCurrentOffsetTop -
-   */
-  private isElemUnderDragged(elmCurrentOffsetTop: number) {
-    /**
-     * Element is Switchable when it's under dragged.
-     */
-    return elmCurrentOffsetTop > this.draggable.tempOffset.currentTop;
-  }
-
   private detectDroppableIndex() {
     let droppableIndex = null;
     const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
@@ -481,9 +269,9 @@ class Droppable {
       ) {
         const element = store.registry[id];
 
-        const { currentTop } = element;
-
-        const isQualified = this.isElemUnderDragged(currentTop!);
+        const isQualified = element.isPositionedUnder(
+          this.draggable.tempOffset.currentTop
+        );
 
         if (isQualified) {
           droppableIndex = i;
@@ -499,7 +287,8 @@ class Droppable {
   private switchElement() {
     const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
 
-    const elmIndex = this.draggable.tempIndex + -1 * this.effectedElemDirection;
+    const elmIndex =
+      this.draggable.tempIndex + -1 * this.effectedElemDirection.y;
     const id = siblings![elmIndex];
 
     if (
@@ -511,11 +300,15 @@ class Droppable {
     ) {
       this.setDraggedTempIndex(elmIndex);
 
-      this.updateElement(id, true, this.effectedElemDirection === -1 ? 1 : -1);
+      this.updateElement(
+        id,
+        true,
+        this.effectedElemDirection.y === -1 ? 1 : -1
+      );
     }
   }
 
-  private liftUp() {
+  private fillUp() {
     const siblings = store.getElmSiblingsListById(
       this.draggable.draggedElm.id
     ) as string[];
@@ -526,7 +319,7 @@ class Droppable {
     emitSiblingsEvent("onLiftUpSiblings", {
       siblings,
       from,
-      to: siblings!.length,
+      to: siblings.length,
     });
 
     this.setDraggedTempIndex(-1);
@@ -536,7 +329,7 @@ class Droppable {
        * Don't update translate because it's not permanent. Releasing dragged
        * means undoing last position.
        */
-      const id = siblings![i];
+      const id = siblings[i];
 
       if (
         isIDEligible2Move(
@@ -586,13 +379,13 @@ class Droppable {
        * If leaving and parent locked, do nothing.
        */
 
-      // move element up
-      this.setEffectedElemDirection(true);
+      // move element up if it's vertical or fill when it's horizontal.
+      this.setEffectedElemDirectionV(true);
 
       // lock the parent
       this.setDraggedPositionFlagInSiblingsContainer(true);
 
-      this.liftUp();
+      this.fillUp();
 
       return;
     }
@@ -615,12 +408,12 @@ class Droppable {
         // Is is out parent?
 
         // move element up
-        this.setEffectedElemDirection(true);
+        this.setEffectedElemDirectionV(true);
 
         // lock the parent
         this.setDraggedPositionFlagInSiblingsContainer(true);
 
-        this.liftUp();
+        this.fillUp();
 
         return;
       }
@@ -630,7 +423,7 @@ class Droppable {
        */
 
       // inside the list, effected should be related to mouse movement
-      this.setEffectedElemDirection(this.draggable.isMovingDown);
+      this.setEffectedElemDirectionV(this.draggable.isMovingDown);
 
       this.switchElement();
     }
@@ -690,7 +483,7 @@ class Droppable {
     /**
      * Moving element down by setting is up to false
      */
-    this.setEffectedElemDirection(false);
+    this.setEffectedElemDirectionV(false);
 
     if (hasToMoveSiblingsDown) {
       this.moveDown(to);
@@ -700,9 +493,9 @@ class Droppable {
        */
       const isElmUp = this.leftAtIndex > this.draggable.tempIndex;
 
-      this.setEffectedElemDirection(isElmUp);
+      this.setEffectedElemDirectionV(isElmUp);
     } else {
-      this.setEffectedElemDirection(true);
+      this.setEffectedElemDirectionV(true);
     }
 
     /**
