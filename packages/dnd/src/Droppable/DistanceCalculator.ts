@@ -36,7 +36,7 @@ class AxesCoordinates {
     this.y = y;
   }
 
-  set(x: number, y: number) {
+  setAxes(x: number, y: number) {
     this.x = x;
     this.y = y;
   }
@@ -106,8 +106,8 @@ class DistanceCalculator implements DistanceCalculatorInterface {
       },
     } = this.draggable;
 
-    this.elmTransition.set(0, 0);
-    this.draggedOffset.set(0, 0);
+    this.elmTransition.setAxes(0, 0);
+    this.draggedOffset.setAxes(0, 0);
 
     // eslint-disable-next-line no-unused-vars
     const leftDifference = Math.abs(elmLeft! - draggedLeft);
