@@ -57,7 +57,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
   private draggedAccumulatedTransition: AxesCoordinates;
 
-  private siblingsEmptyElmIndex: number;
+  private siblingsEmptyElmIndex: AxesCoordinates;
 
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
@@ -74,6 +74,8 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
     this.draggedAccumulatedTransition = new AxesCoordinates();
 
+    this.siblingsEmptyElmIndex = new AxesCoordinates(-1, -1);
+
     /**
      * Elements effected by dragged direction.
      * Positive for up and right.
@@ -82,8 +84,6 @@ class DistanceCalculator implements DistanceCalculatorInterface {
       x: 1,
       y: 1,
     };
-
-    this.siblingsEmptyElmIndex = -1;
   }
 
   protected setEffectedElemDirectionV(isUp: boolean) {
@@ -230,13 +230,13 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     /**
      * Start transforming process
      */
-    this.siblingsEmptyElmIndex = element.setYPosition(
+    this.siblingsEmptyElmIndex.y = element.setYPosition(
       store.getElmSiblingsListById(this.draggable.draggedElm.id)!,
       this.effectedElemDirection.y,
       this.elmTransition.y,
 
       this.draggable.operationID,
-      this.siblingsEmptyElmIndex
+      this.siblingsEmptyElmIndex.y
     );
 
     emitInteractiveEvent("onDragLeave", element);
