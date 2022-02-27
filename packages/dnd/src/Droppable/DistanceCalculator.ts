@@ -84,8 +84,56 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     this.draggable.occupiedOffset.currentLeft = elmLeft + this.draggedOffset.x;
   }
 
+  /**
+   *
+   * @param draggedSpace - Hight if the working axes is Y. Otherwise, it's width.
+   * @param elmSpace - Hight if the working axes is Y. Otherwise, it's width.
+   * @returns
+   */
+  private setDistanceIndicators(
+    draggedSpace: number,
+    elmSpace: number,
+    axes: Axes
+  ) {
+    const offsetDiff = Math.abs(draggedSpace - elmSpace);
+
+    if (offsetDiff === 0) return;
+
+    if (draggedSpace < elmSpace) {
+      // console.log("elmHight is bigger");
+
+      if (this.effectedElemDirection[axes] === -1) {
+        // console.log("elm going up");
+
+        this.draggedAccumulatedTransition[axes] += offsetDiff;
+        this.draggedOffset[axes] = offsetDiff;
+      } else {
+        // console.log("elm going down");
+
+        this.elmTransition[axes] -= offsetDiff;
+      }
+
+      return;
+    }
+
+    // console.log("elmHight is smaller");
+
+    if (this.effectedElemDirection[axes] === -1) {
+      // console.log("elm going up");
+
+      this.draggedAccumulatedTransition[axes] -= offsetDiff;
+      this.draggedOffset[axes] = -offsetDiff;
+    } else {
+      // console.log("elm going down");
+
+      this.elmTransition[axes] += offsetDiff;
+    }
+  }
+
   // eslint-disable-next-line no-unused-vars
-  private calculateYDistance(element: CoreInstanceInterface, axes: Axes) {
+  private calculateDistance(element: CoreInstanceInterface, axes: Axes) {
+    this.draggedOffset.setAxes(0, 0);
+
     const {
       currentLeft: elmLeft,
       currentTop: elmTop,
@@ -101,6 +149,14 @@ class DistanceCalculator implements DistanceCalculatorInterface {
       },
     } = this.draggable;
 
+    // const leftDifference = Math.abs(elmLeft! - draggedLeft);
+    // const topDifference = Math.abs(elmTop! - draggedTop);
+
+    // this.draggedAccumulatedTransition.setAxes(leftDifference, topDifference);
+    // this.elmTransition.setAxes(leftDifference, topDifference);
+
+    // this.setDistanceIndicators(draggedHight, elmHight, "y");
+
     this.elmTransition.setAxes(0, 0);
     this.draggedOffset.setAxes(0, 0);
 
@@ -112,39 +168,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     this.draggedAccumulatedTransition.y = topDifference;
     this.elmTransition.y = topDifference;
 
-    const heightOffset = Math.abs(draggedHight - elmHight);
-
-    if (heightOffset === 0) return;
-
-    if (draggedHight < elmHight) {
-      // console.log("elmHight is bigger");
-
-      if (this.effectedElemDirection.y === -1) {
-        // console.log("elm going up");
-
-        this.draggedAccumulatedTransition.y += heightOffset;
-        this.draggedOffset.y = heightOffset;
-      } else {
-        // console.log("elm going down");
-
-        this.elmTransition.y -= heightOffset;
-      }
-
-      return;
-    }
-
-    // console.log("elmHight is smaller");
-
-    if (this.effectedElemDirection.y === -1) {
-      // console.log("elm going up");
-
-      this.draggedAccumulatedTransition.y -= heightOffset;
-      this.draggedOffset.y = -heightOffset;
-    } else {
-      // console.log("elm going down");
-
-      this.elmTransition.y += heightOffset;
-    }
+    this.setDistanceIndicators(draggedHight, elmHight, "y");
   }
 
   private updateOccupiedTranslate(direction: 1 | -1) {
@@ -168,7 +192,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
   ) {
     const element = store.registry[id];
 
-    this.calculateYDistance(element, axes);
+    this.calculateDistance(element, axes);
 
     this.draggable.incNumOfElementsTransformed(this.effectedElemDirection.x);
 
