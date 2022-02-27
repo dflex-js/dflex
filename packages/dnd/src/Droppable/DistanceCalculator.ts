@@ -15,6 +15,11 @@ import type {
 
 import AxesCoordinates from "./AxesCoordinates";
 
+interface Difference {
+  dragged: number;
+  element: number;
+}
+
 function emitInteractiveEvent(
   type: InteractivityEvent["type"],
   element: CoreInstanceInterface
@@ -85,21 +90,26 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
   /**
    *
-   * @param draggedSpace - Hight if the working axes is Y. Otherwise, it's width.
-   * @param elmSpace - Hight if the working axes is Y. Otherwise, it's width.
+   * @param position - Hight if the working axes is Y. Otherwise, it's width.
+   * @param space - Hight if the working axes is Y. Otherwise, it's width.
    * @param axes - Axes(x or y).
    * @returns
    */
   private setDistanceIndicators(
-    draggedSpace: number,
-    elmSpace: number,
+    position: Difference,
+    space: Difference,
     axes: Axes
   ) {
-    const offsetDiff = Math.abs(draggedSpace - elmSpace);
+    const positionDifference = Math.abs(position.dragged - position.element);
+
+    this.draggedAccumulatedTransition[axes] = positionDifference;
+    this.elmTransition[axes] = positionDifference;
+
+    const offsetDiff = Math.abs(space.dragged - space.element);
 
     if (offsetDiff === 0) return;
 
-    if (draggedSpace < elmSpace) {
+    if (space.dragged < space.element) {
       // console.log("elmHight is bigger");
 
       if (this.effectedElemDirection[axes] === -1) {
@@ -151,22 +161,32 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     this.elmTransition.setAxes(0, 0);
 
     if (axes === "y") {
-      const topDifference = Math.abs(elmTop! - draggedTop);
-
-      this.draggedAccumulatedTransition.setAxes(0, topDifference);
-      this.elmTransition.setAxes(0, topDifference);
-
-      this.setDistanceIndicators(draggedHight, elmHight, "y");
+      this.setDistanceIndicators(
+        {
+          dragged: draggedTop,
+          element: elmTop!,
+        },
+        {
+          dragged: draggedHight,
+          element: elmHight,
+        },
+        "y"
+      );
 
       return;
     }
 
-    const leftDifference = Math.abs(elmLeft! - draggedLeft);
-
-    this.draggedAccumulatedTransition.setAxes(leftDifference, 0);
-    this.elmTransition.setAxes(leftDifference, 0);
-
-    this.setDistanceIndicators(draggedWidth, elmWidth, "x");
+    this.setDistanceIndicators(
+      {
+        dragged: draggedLeft,
+        element: elmLeft!,
+      },
+      {
+        dragged: draggedWidth,
+        element: elmWidth,
+      },
+      "x"
+    );
   }
 
   private updateOccupiedTranslate(direction: 1 | -1) {
