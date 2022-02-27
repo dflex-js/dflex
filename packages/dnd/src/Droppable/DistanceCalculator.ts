@@ -55,17 +55,12 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
   private draggedOffset: AxesCoordinates;
 
-  private draggedAccumulatedTransitionY: number;
-
-  private draggedAccumulatedTransitionX: number;
+  private draggedAccumulatedTransition: AxesCoordinates;
 
   private siblingsEmptyElmIndex: number;
 
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
-
-    this.draggedAccumulatedTransitionY = 0;
-    this.draggedAccumulatedTransitionX = 0;
 
     /**
      * Next element calculated transition space.
@@ -76,6 +71,8 @@ class DistanceCalculator implements DistanceCalculatorInterface {
      * Same as elmTransition but for dragged.
      */
     this.draggedOffset = new AxesCoordinates();
+
+    this.draggedAccumulatedTransition = new AxesCoordinates();
 
     /**
      * Elements effected by dragged direction.
@@ -121,7 +118,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
     const topDifference = Math.abs(elmTop! - draggedTop);
 
-    this.draggedAccumulatedTransitionY = topDifference;
+    this.draggedAccumulatedTransition.y = topDifference;
     this.elmTransition.y = topDifference;
 
     const heightOffset = Math.abs(draggedHight - elmHight);
@@ -134,7 +131,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
       if (this.effectedElemDirection.y === -1) {
         // console.log("elm going up");
 
-        this.draggedAccumulatedTransitionY += heightOffset;
+        this.draggedAccumulatedTransition.y += heightOffset;
         this.draggedOffset.y = heightOffset;
       } else {
         // console.log("elm going down");
@@ -150,7 +147,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     if (this.effectedElemDirection.y === -1) {
       // console.log("elm going up");
 
-      this.draggedAccumulatedTransitionY -= heightOffset;
+      this.draggedAccumulatedTransition.y -= heightOffset;
       this.draggedOffset.y = -heightOffset;
     } else {
       // console.log("elm going down");
@@ -166,7 +163,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
   private updateOccupiedTranslate(direction: 1 | -1) {
     this.draggable.occupiedTranslate.y +=
-      direction * this.draggedAccumulatedTransitionY;
+      direction * this.draggedAccumulatedTransition.y;
 
     this.draggable.occupiedTranslate.x += 0;
   }
