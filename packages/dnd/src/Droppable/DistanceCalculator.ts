@@ -74,9 +74,8 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     };
   }
 
-  protected setEffectedElemDirection(isUp: boolean, isRight: boolean) {
-    this.effectedElemDirection.y = isUp ? -1 : 1;
-    this.effectedElemDirection.x = isRight ? -1 : 1;
+  protected setEffectedElemDirection(isIncrease: boolean, axes: Axes) {
+    this.effectedElemDirection[axes] = isIncrease ? -1 : 1;
   }
 
   protected updateOccupiedOffset(elmTop: number, elmLeft: number) {
@@ -149,18 +148,23 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
     // Reset dragged offset.
     this.draggedOffset.setAxes(0, 0);
-
-    const leftDifference = Math.abs(elmLeft! - draggedLeft);
-    const topDifference = Math.abs(elmTop! - draggedTop);
-
-    this.draggedAccumulatedTransition.setAxes(leftDifference, topDifference);
-    this.elmTransition.setAxes(leftDifference, topDifference);
+    this.elmTransition.setAxes(0, 0);
 
     if (axes === "y") {
+      const topDifference = Math.abs(elmTop! - draggedTop);
+
+      this.draggedAccumulatedTransition.setAxes(0, topDifference);
+      this.elmTransition.setAxes(0, topDifference);
+
       this.setDistanceIndicators(draggedHight, elmHight, "y");
 
       return;
     }
+
+    const leftDifference = Math.abs(elmLeft! - draggedLeft);
+
+    this.draggedAccumulatedTransition.setAxes(leftDifference, 0);
+    this.elmTransition.setAxes(leftDifference, 0);
 
     this.setDistanceIndicators(draggedWidth, elmWidth, "x");
   }
