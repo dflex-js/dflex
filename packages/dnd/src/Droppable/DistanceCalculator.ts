@@ -1,5 +1,5 @@
+/* eslint-disable max-classes-per-file */
 import type { CoreInstanceInterface } from "@dflex/core-instance";
-import type { Coordinates } from "@dflex/draggable";
 
 import type { InteractivityEvent } from "../types";
 import type { DraggableDnDInterface } from "../Draggable";
@@ -25,6 +25,23 @@ function emitInteractiveEvent(
 
   store.emitEvent(evt);
 }
+
+class AxesCoordinates {
+  x: number;
+
+  y: number;
+
+  constructor(x = 0, y = 0) {
+    this.x = x;
+    this.y = y;
+  }
+
+  set(x: number, y: number) {
+    this.x = x;
+    this.y = y;
+  }
+}
+
 /**
  * Calculates the distance between two elements and update the targeted element
  * accordingly.
@@ -34,15 +51,13 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
   protected effectedElemDirection: EffectedElemDirection;
 
-  private elmTransition: Coordinates;
+  private elmTransition: AxesCoordinates;
+
+  private draggedOffset: AxesCoordinates;
 
   private draggedAccumulatedTransitionY: number;
 
   private draggedAccumulatedTransitionX: number;
-
-  private draggedYOffset: number;
-
-  private draggedXOffset: number;
 
   private siblingsEmptyElmIndex: number;
 
@@ -51,16 +66,16 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
     this.draggedAccumulatedTransitionY = 0;
     this.draggedAccumulatedTransitionX = 0;
-    this.draggedYOffset = 0;
-    this.draggedXOffset = 0;
 
     /**
      * Next element calculated transition space.
      */
-    this.elmTransition = {
-      x: 0,
-      y: 0,
-    };
+    this.elmTransition = new AxesCoordinates();
+
+    /**
+     * Same as elmTransition but for dragged.
+     */
+    this.draggedOffset = new AxesCoordinates();
 
     /**
      * Elements effected by dragged direction.
@@ -79,10 +94,8 @@ class DistanceCalculator implements DistanceCalculatorInterface {
   }
 
   private resetIndicators() {
-    this.elmTransition = {
-      x: 0,
-      y: 0,
-    };
+    this.elmTransition.set(0, 0);
+    this.draggedOffset.set(0, 0);
   }
 
   private calculateYDistance(element: CoreInstanceInterface) {
@@ -100,9 +113,6 @@ class DistanceCalculator implements DistanceCalculatorInterface {
         offset: { height: draggedHight },
       },
     } = this.draggable;
-
-    this.draggedYOffset = 0;
-    this.draggedXOffset = 0;
 
     this.resetIndicators();
 
@@ -125,7 +135,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
         // console.log("elm going up");
 
         this.draggedAccumulatedTransitionY += heightOffset;
-        this.draggedYOffset = heightOffset;
+        this.draggedOffset.y = heightOffset;
       } else {
         // console.log("elm going down");
 
@@ -141,7 +151,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
       // console.log("elm going up");
 
       this.draggedAccumulatedTransitionY -= heightOffset;
-      this.draggedYOffset = -heightOffset;
+      this.draggedOffset.y = -heightOffset;
     } else {
       // console.log("elm going down");
 
@@ -150,7 +160,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
   }
 
   protected updateOccupiedOffset(elmTop: number, elmLeft: number) {
-    this.draggable.occupiedOffset.currentTop = elmTop + this.draggedYOffset;
+    this.draggable.occupiedOffset.currentTop = elmTop + this.draggedOffset.y;
     this.draggable.occupiedOffset.currentLeft = elmLeft;
   }
 
