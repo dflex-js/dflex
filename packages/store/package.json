@@ -3,7 +3,7 @@
   "version": "3.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "author": "Jalal Maskoun <jimmy002020@gmail.com>",
+  "author": "Jalal Maskoun",
   "description": "DOM store allows you to traverse through the DOM tree with element-id",
   "scripts": {
     "compile": "yarn rimraf ./dist tsconfig.tsbuildinfo && yarn tsc -b",

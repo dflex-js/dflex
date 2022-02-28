@@ -1,5 +1,5 @@
-/* eslint-disable max-classes-per-file */
 import type { CoreInstanceInterface } from "@dflex/core-instance";
+import { AxesCoordinates } from "@dflex/utils";
 
 import type { InteractivityEvent } from "../types";
 import type { DraggableDnDInterface } from "../Draggable";
@@ -12,8 +12,6 @@ import type {
   Direction,
   Axes,
 } from "./types";
-
-import AxesCoordinates from "./AxesCoordinates";
 
 interface Difference {
   dragged: number;
