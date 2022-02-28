@@ -1,5 +1,7 @@
 /* eslint-disable no-unused-vars */
 
+import { AxesCoordinates } from "@dflex/utils";
+
 interface AbsCoreEssential {
   id: string;
   isPaused?: boolean;
@@ -24,8 +26,7 @@ export interface AbstractCoreInterface {
   id: string;
   isPaused: boolean;
   isInitialized: boolean;
-  translateY?: number;
-  translateX?: number;
+  translate?: AxesCoordinates;
   initTranslate(): void;
   attach(ref: HTMLElement | null): void;
   detach(): void;

@@ -467,9 +467,9 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
   }
 
   getELmTranslateById(id: string) {
-    const { translateX, translateY } = this.registry[id];
+    const { translate } = this.registry[id];
 
-    return { translateX: translateX || 0, translateY: translateY || 0 };
+    return { translateX: translate!.x || 0, translateY: translate!.y || 0 };
   }
 
   getElmSiblingsById(id: string) {

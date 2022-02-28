@@ -212,8 +212,8 @@ class Draggable
     };
 
     this.occupiedTranslate = {
-      x: this.draggedElm.translateX!,
-      y: this.draggedElm.translateY!,
+      x: this.draggedElm.translate!.x,
+      y: this.draggedElm.translate!.y,
     };
 
     /**
@@ -541,8 +541,8 @@ class Draggable
 
   private hasMoved() {
     return (
-      this.draggedElm.translateX !== this.tempTranslate.x ||
-      this.draggedElm.translateY !== this.tempTranslate.y
+      this.draggedElm.translate!.x !== this.tempTranslate.x ||
+      this.draggedElm.translate!.y !== this.tempTranslate.y
     );
   }
 
@@ -595,8 +595,8 @@ class Draggable
     this.draggedElm.currentTop = this.occupiedOffset.currentTop;
     this.draggedElm.currentLeft = this.occupiedOffset.currentLeft;
 
-    this.draggedElm.translateX = this.occupiedTranslate.x;
-    this.draggedElm.translateY = this.occupiedTranslate.y;
+    this.draggedElm.translate!.x = this.occupiedTranslate.x;
+    this.draggedElm.translate!.y = this.occupiedTranslate.y;
 
     this.draggedElm.transformElm();
 

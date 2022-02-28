@@ -59,10 +59,10 @@ class AbstractDraggable<T extends AbstractCoreInterface>
 
     this.draggedElm = abstractCoreElm;
 
-    const { translateX, translateY } = this.draggedElm;
+    const { translate } = this.draggedElm;
 
-    this.outerOffsetX = -initX + translateX!;
-    this.outerOffsetY = -initY + translateY!;
+    this.outerOffsetX = -initX + translate!.x;
+    this.outerOffsetY = -initY + translate!.y;
 
     this.tempTranslate = {
       x: 0,

@@ -112,8 +112,8 @@ class CoreInstance
   }
 
   private updateCurrentIndicators(topSpace: number, leftSpace: number) {
-    this.translateY! += topSpace;
-    this.translateX! += leftSpace;
+    this.translate!.y += topSpace;
+    this.translate!.x += leftSpace;
 
     const { left, top } = this.offset!;
 
@@ -121,8 +121,8 @@ class CoreInstance
      * This offset related directly to translate Y and Y. It's isolated from
      * element current offset and effects only top and left.
      */
-    this.currentTop = top + this.translateY!;
-    this.currentLeft = left + this.translateX!;
+    this.currentTop = top + this.translate!.y;
+    this.currentLeft = left + this.translate!.x;
 
     if (!this.isVisible) this.hasToTransform = true;
   }
@@ -141,7 +141,9 @@ class CoreInstance
     }
 
     this.animatedFrame = window.requestAnimationFrame(() => {
-      this.ref!.style.transform = `translate3d(${this.translateX}px,${this.translateY}px, 0)`;
+      this.ref!.style.transform = `translate3d(${this.translate!.x}px,${
+        this.translate!.y
+      }px, 0)`;
       this.animatedFrame = null;
     });
   }
@@ -227,7 +229,7 @@ class CoreInstance
     if (operationID) {
       this.prevTranslateY!.push({
         ID: operationID,
-        translateY: this.translateY!,
+        translateY: this.translate!.y,
       });
     }
 
@@ -302,7 +304,7 @@ class CoreInstance
 
     const { translateY } = (this.prevTranslateY as TransitionHistory).pop()!;
 
-    const topSpace = translateY - this.translateY!;
+    const topSpace = translateY - this.translate!.y;
 
     const increment = topSpace > 0 ? 1 : -1;
 

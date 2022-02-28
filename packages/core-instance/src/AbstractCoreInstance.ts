@@ -1,3 +1,5 @@
+import { AxesCoordinates } from "@dflex/utils";
+
 import type { AbstractCoreInterface, AbstractCoreInput } from "./types";
 
 class AbstractCoreInstance implements AbstractCoreInterface {
@@ -5,9 +7,7 @@ class AbstractCoreInstance implements AbstractCoreInterface {
 
   id: string;
 
-  translateY?: number;
-
-  translateX?: number;
+  translate?: AxesCoordinates;
 
   isInitialized: boolean;
 
@@ -79,8 +79,9 @@ class AbstractCoreInstance implements AbstractCoreInterface {
      *
      * Continuity is fundamental in DFlex, please keep that in your mind.
      */
-    if (typeof this.translateY !== "number") this.translateY = 0;
-    if (typeof this.translateX !== "number") this.translateX = 0;
+    if (!this.translate) {
+      this.translate = new AxesCoordinates(0, 0);
+    }
 
     this.isPaused = false;
   }
