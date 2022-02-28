@@ -1,14 +1,14 @@
-class AxesCoordinates {
-  x: number;
+class AxesCoordinates<T = number> {
+  x: T;
 
-  y: number;
+  y: T;
 
-  constructor(x = 0, y = 0) {
+  constructor(x: T, y: T) {
     this.x = x;
     this.y = y;
   }
 
-  setAxes(x: number, y: number) {
+  setAxes(x: T, y: T) {
     this.x = x;
     this.y = y;
   }

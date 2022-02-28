@@ -58,14 +58,14 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     /**
      * Next element calculated transition space.
      */
-    this.elmTransition = new AxesCoordinates();
+    this.elmTransition = new AxesCoordinates(0, 0);
 
     /**
      * Same as elmTransition but for dragged.
      */
-    this.draggedOffset = new AxesCoordinates();
+    this.draggedOffset = new AxesCoordinates(0, 0);
 
-    this.draggedAccumulatedTransition = new AxesCoordinates();
+    this.draggedAccumulatedTransition = new AxesCoordinates(0, 0);
 
     this.siblingsEmptyElmIndex = new AxesCoordinates(-1, -1);
 
