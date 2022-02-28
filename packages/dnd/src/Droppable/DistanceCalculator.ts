@@ -1,5 +1,5 @@
-/* eslint-disable max-classes-per-file */
 import type { CoreInstanceInterface } from "@dflex/core-instance";
+import { AxesCoordinates } from "@dflex/utils";
 
 import type { InteractivityEvent } from "../types";
 import type { DraggableDnDInterface } from "../Draggable";
@@ -12,8 +12,6 @@ import type {
   Direction,
   Axes,
 } from "./types";
-
-import AxesCoordinates from "./AxesCoordinates";
 
 interface Difference {
   dragged: number;
@@ -58,14 +56,14 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     /**
      * Next element calculated transition space.
      */
-    this.elmTransition = new AxesCoordinates();
+    this.elmTransition = new AxesCoordinates(0, 0);
 
     /**
      * Same as elmTransition but for dragged.
      */
-    this.draggedOffset = new AxesCoordinates();
+    this.draggedOffset = new AxesCoordinates(0, 0);
 
-    this.draggedAccumulatedTransition = new AxesCoordinates();
+    this.draggedAccumulatedTransition = new AxesCoordinates(0, 0);
 
     this.siblingsEmptyElmIndex = new AxesCoordinates(-1, -1);
 

@@ -4,6 +4,7 @@ import store from "../DnDStore";
 
 import type { TempOffset, DraggableDnDInterface } from "../Draggable";
 import DistanceCalculator from "./DistanceCalculator";
+import type { Axes } from "./types";
 
 function emitSiblingsEvent(
   type: SiblingsEvent["type"],
@@ -88,6 +89,8 @@ class Droppable extends DistanceCalculator {
    * transformation. */
   private animatedDraggedInsertionFrame: number | null;
 
+  private axes: Axes;
+
   constructor(draggable: DraggableDnDInterface) {
     super(draggable);
 
@@ -133,6 +136,8 @@ class Droppable extends DistanceCalculator {
     this.isOnDragOutContainerEvtEmitted = false;
     this.isOnDragOutThresholdEvtEmitted = false;
     this.animatedDraggedInsertionFrame = null;
+
+    this.axes = store.siblingsAlignment[SK] === "Horizontal" ? "x" : "y";
   }
 
   draggedEventGenerator(type: DraggedEvent["type"]): DraggedEvent {
@@ -300,11 +305,18 @@ class Droppable extends DistanceCalculator {
     ) {
       this.setDraggedTempIndex(elmIndex);
 
-      this.updateElement(id, "y", this.effectedElemDirection.y === -1 ? 1 : -1);
+      this.updateElement(
+        id,
+        this.axes,
+        this.effectedElemDirection.y === -1 ? 1 : -1
+      );
     }
   }
 
-  private fillUp() {
+  /**
+   * Filling the space when the head of the list is leaving the list.
+   */
+  private fillHeadUp() {
     const siblings = store.getElmSiblingsListById(
       this.draggable.draggedElm.id
     ) as string[];
@@ -334,7 +346,7 @@ class Droppable extends DistanceCalculator {
           this.draggable.scroll.enable
         )
       ) {
-        this.updateElement(id, "y", 1);
+        this.updateElement(id, this.axes, 1);
       }
     }
   }
@@ -364,7 +376,7 @@ class Droppable extends DistanceCalculator {
           this.draggable.scroll.enable
         )
       ) {
-        this.updateElement(id, "y", -1);
+        this.updateElement(id, this.axes, -1);
       }
     }
   }
@@ -381,7 +393,7 @@ class Droppable extends DistanceCalculator {
       // lock the parent
       this.setDraggedPositionFlagInSiblingsContainer(true);
 
-      this.fillUp();
+      this.fillHeadUp();
 
       return;
     }
@@ -409,7 +421,7 @@ class Droppable extends DistanceCalculator {
         // lock the parent
         this.setDraggedPositionFlagInSiblingsContainer(true);
 
-        this.fillUp();
+        this.fillHeadUp();
 
         return;
       }

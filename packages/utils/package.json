@@ -1,6 +1,6 @@
 {
-  "name": "@dflex/core-instance",
-  "version": "3.0.0",
+  "name": "@dflex/utils",
+  "version": "0.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Jalal Maskoun",
@@ -9,7 +9,7 @@
     "build": "yarn compile"
   },
   "repository": "https://github.com/dflex-js/dflex",
-  "homepage": "https://github.com/dflex-js/dflex/tree/master/packages/core-instance",
+  "homepage": "https://github.com/dflex-js/dflex/tree/master/packages/utils",
   "license": "MIT",
   "files": [
     "dist",
