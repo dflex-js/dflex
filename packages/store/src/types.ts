@@ -28,7 +28,7 @@ export type RegisterInputMeta =
   | (RegisterInputMetaBase & RegisterInputID)
   | (RegisterInputMetaBase & RegisterInputRef);
 
-type RegisterInputBase = {
+export type RegisterInput = {
   /** Unique key to connect elements with the same parent together */
   parentID?: string;
   id: string;
@@ -39,8 +39,6 @@ type RegisterInputBase = {
   scrollX: number;
   scrollY: number;
 };
-
-export type RegisterInput = RegisterInputBase;
 
 export type ElmPointerWithProps = RegisterInput & {
   order: Order;

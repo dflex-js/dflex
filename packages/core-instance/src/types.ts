@@ -73,6 +73,7 @@ export interface Coordinates {
 
 export interface CoreInstanceInterface extends AbstractInterface {
   isPaused: boolean;
+  isVisible: boolean;
   offset: Rect;
   translateHistory?: AxesCoordinates<TransitionHistory>;
   currentPosition?: AxesCoordinates;
@@ -82,6 +83,8 @@ export interface CoreInstanceInterface extends AbstractInterface {
   keys: Keys;
   depth: number;
   animatedFrame: number | null;
+  isPositionedUnder(elmY: number): boolean;
+  isPositionedLeft(elmX: number): boolean;
   initTranslate(): void;
   resume(scrollX: number, scrollY: number): void;
   changeVisibility(isVisible: boolean): void;
@@ -93,7 +96,7 @@ export interface CoreInstanceInterface extends AbstractInterface {
     siblingsHasEmptyElm?: number,
     vIncrement?: number,
     isShuffle?: boolean
-  ): void;
+  ): number;
   transformElm(): void;
   assignNewPosition(
     branchIDsOrder: string[],
@@ -102,4 +105,5 @@ export interface CoreInstanceInterface extends AbstractInterface {
     siblingsHasEmptyElm?: number
   ): number;
   updateDataset(index: number): void;
+  rollYBack(operationID: string, isForceTransform: boolean): void;
 }

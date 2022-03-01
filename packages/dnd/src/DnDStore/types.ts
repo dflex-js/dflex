@@ -1,6 +1,6 @@
 import type { CoreInstanceInterface, Rect } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
-import type { ElmInstance } from "@dflex/store";
+import type { RegisterInputMeta } from "@dflex/store";
 
 import type { DraggedEvent, LayoutState } from "../types";
 
@@ -70,7 +70,7 @@ export interface DnDStoreInterface {
   layoutState: LayoutState;
   onStateChange(state: LayoutState): void;
   emitEvent(event: DraggedEvent): void;
-  register(element: ElmInstance, x?: boolean): void;
+  register(element: RegisterInputMeta, x?: boolean): void;
   getInitialELmRectById(id: string): Rect | undefined;
   getELmTranslateById(id: string): Translate;
   getElmTreeById(id: string): ElmTree;

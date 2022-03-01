@@ -1,5 +1,5 @@
 import Store from "@dflex/store";
-import CoreInstance, { Rect } from "@dflex/core-instance";
+import type { Rect } from "@dflex/core-instance";
 
 import type { ElmTree, DnDStoreInterface, RegisterInput } from "./types";
 
