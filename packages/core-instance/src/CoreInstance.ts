@@ -10,7 +10,6 @@ import type {
   Rect,
   TransitionHistory,
   CoreInput,
-  Coordinates,
 } from "./types";
 
 class CoreInstance
@@ -345,21 +344,6 @@ class CoreInstance
     this.updateDataset(newIndex);
 
     this.rollYBack(operationID, isForceTransform);
-  }
-
-  /**
-   * This is as rollYBack but for dragged element which is excluded form
-   * update/rollback mechanism.
-   * @param position
-   * @param translate
-   */
-  resetIndicators(position: Coordinates, translate: Coordinates) {
-    this.currentTop = position.y;
-    this.currentLeft = position.x;
-
-    this.translate!.setAxes(translate!.x, translate!.y);
-
-    this.currentPosition!.setAxes(position.x, position.y);
   }
 }
 

@@ -592,24 +592,29 @@ class Draggable
       return;
     }
 
-    this.draggedElm.resetIndicators(
-      {
-        x: this.occupiedOffset.currentLeft,
-        y: this.occupiedOffset.currentTop,
-      },
-      {
-        x: this.occupiedTranslate.x,
-        y: this.occupiedTranslate.y,
-      }
+    // this.draggedElm.resetIndicators(
+    //   {
+    //     x: this.occupiedOffset.currentLeft,
+    //     y: this.occupiedOffset.currentTop,
+    //   },
+    //   {
+    //     x: this.occupiedTranslate.x,
+    //     y: this.occupiedTranslate.y,
+    //   }
+    // );
+
+    // @ts-expect-error
+    this.draggedElm.currentTop = this.occupiedOffset.currentTop;
+    // @ts-expect-error
+    this.draggedElm.currentLeft = this.occupiedOffset.currentLeft;
+
+    this.draggedElm.currentPosition!.setAxes(
+      this.occupiedOffset.currentLeft,
+      this.occupiedOffset.currentTop
     );
 
-    // // @ts-expect-error
-    // this.draggedElm.currentTop = this.offsetBeforeCurrentOperation.currentTop;
-    // // @ts-expect-error
-    // this.draggedElm.currentLeft = this.offsetBeforeCurrentOperation.currentLeft;
-
-    // this.draggedElm.translate!.x = this.occupiedTranslate.x;
-    // this.draggedElm.translate!.y = this.occupiedTranslate.y;
+    this.draggedElm.translate!.x = this.occupiedTranslate.x;
+    this.draggedElm.translate!.y = this.occupiedTranslate.y;
 
     this.draggedElm.transformElm();
 

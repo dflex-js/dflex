@@ -90,6 +90,7 @@ export interface Coordinates {
 export interface CoreInstanceInterface extends AbstractCoreInterface {
   offset?: Rect;
   translateHistory?: AxesCoordinates<TransitionHistory>;
+  currentPosition?: AxesCoordinates;
   readonly currentTop?: number;
   readonly currentLeft?: number;
   order: Order;
@@ -115,5 +116,4 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
     siblingsHasEmptyElm?: number
   ): number;
   updateDataset(index: number): void;
-  resetIndicators(position: Coordinates, translate: Coordinates): void;
 }
