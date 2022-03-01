@@ -2,32 +2,31 @@
 
 import { AxesCoordinates } from "@dflex/utils";
 
-interface AbsCoreEssential {
+// interface AbsCoreEssential {
+//   id: string;
+// }
+
+// interface AbsCoreWithRef {
+//   isInitialized: boolean;
+//   ref: HTMLElement;
+// }
+
+// interface AbsCoreWithoutRef {
+//   isInitialized: false;
+//   ref: undefined;
+// }
+
+export type AbstractCoreInput = {
   id: string;
-  isPaused?: boolean;
-}
+  isInitialized: boolean;
+  ref?: HTMLElement;
+};
 
-interface AbsCoreWithRef {
-  isInitialized: true;
-  ref: HTMLElement;
-}
-
-interface AbsCoreWithoutRef {
-  isInitialized: false;
-  ref: null;
-}
-
-export type AbstractCoreInput =
-  | (AbsCoreEssential & AbsCoreWithoutRef)
-  | (AbsCoreEssential & AbsCoreWithRef);
-
-export interface AbstractCoreInterface {
+export interface AbstractInterface {
   ref: HTMLElement | null;
   id: string;
-  isPaused: boolean;
   isInitialized: boolean;
   translate: AxesCoordinates;
-  initTranslate(): void;
   attach(ref: HTMLElement | null): void;
   detach(): void;
 }
@@ -86,7 +85,8 @@ export interface Coordinates {
   y: number;
 }
 
-export interface CoreInstanceInterface extends AbstractCoreInterface {
+export interface CoreInstanceInterface extends AbstractInterface {
+  isPaused: boolean;
   offset: Rect;
   translateHistory?: AxesCoordinates<TransitionHistory>;
   currentPosition?: AxesCoordinates;
@@ -96,6 +96,7 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
   keys: Keys;
   depth: number;
   animatedFrame: number | null;
+  initTranslate(): void;
   resume(scrollX: number, scrollY: number): void;
   changeVisibility(isVisible: boolean): void;
   setYPosition(

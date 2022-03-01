@@ -1,8 +1,9 @@
 import CoreInstance from "./CoreInstance";
 
 export type {
-  AbstractCoreInterface,
+  AbstractInterface as AbstractCoreInterface,
   Rect,
+  CoreInput,
   TransitionHistory,
   CoreInstanceInterface,
 } from "./types";

@@ -27,7 +27,7 @@ Did you forget to call store.unregister(${id}) or add parenID when register the 
   );
 }
 
-class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
+class DnDStoreImp extends Store implements DnDStoreInterface {
   tracker: DnDStoreInterface["tracker"];
 
   siblingsBoundaries: DnDStoreInterface["siblingsBoundaries"];
@@ -448,18 +448,18 @@ class DnDStoreImp extends Store<CoreInstance> implements DnDStoreInterface {
       return;
     }
 
-    // TODO: Can we add a type for this? This is the second time I find a bug
-    // caused by wrong input.
     const coreInput = {
       id,
       parentID: element.parentID,
       depth: element.depth || 0,
-      ref: element.ref || null,
+      ref: element.ref,
       isInitialized: hasRef,
       isPaused: true,
+      scrollX: 0,
+      scrollY: 0,
     };
 
-    super.register(coreInput, CoreInstance);
+    super.register(coreInput);
   }
 
   getInitialELmRectById(id: string) {

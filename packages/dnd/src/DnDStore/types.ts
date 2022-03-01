@@ -23,11 +23,6 @@ export interface ElmTree {
   };
 }
 
-export interface Translate {
-  translateX: number;
-  translateY: number;
-}
-
 interface RegisterInputEssential {
   /** provide a depth if you want to drag the parent container  */
   depth?: number;
@@ -62,9 +57,9 @@ export interface ScrollThreshold {
   minY: number;
 }
 
-export interface Overflow {
-  x: boolean;
-  y: boolean;
+interface Translate {
+  translateX: number;
+  translateY: number;
 }
 
 export interface DnDStoreInterface {

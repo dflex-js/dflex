@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { AxesCoordinates } from "@dflex/utils";
 
-import AbstractCoreInstance from "./AbstractCoreInstance";
+import AbstractInstance from "./AbstractInstance";
 
 import type {
   Keys,
@@ -12,10 +12,9 @@ import type {
   CoreInput,
 } from "./types";
 
-class CoreInstance
-  extends AbstractCoreInstance
-  implements CoreInstanceInterface
-{
+class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
+  isPaused: boolean;
+
   offset!: Rect;
 
   /** Store history of Y-transition according to unique ID. */
@@ -39,23 +38,27 @@ class CoreInstance
 
   animatedFrame: number | null;
 
-  constructor(elementWithPointer: CoreInput) {
+  constructor(
+    elementWithPointer: CoreInput,
+    { isPaused }: { isPaused: boolean }
+  ) {
     const { order, keys, depth, scrollX, scrollY, ...element } =
       elementWithPointer;
 
     super(element);
 
+    this.isPaused = isPaused;
     this.order = order;
     this.keys = keys;
     this.depth = depth;
 
-    this.isVisible = element.isInitialized && !element.isPaused;
+    this.isVisible = element.isInitialized && !this.isPaused;
 
     if (element.isInitialized) {
       this.updateDataset(this.order.self);
     }
 
-    if (!element.isPaused) {
+    if (!this.isPaused) {
       this.initIndicators(scrollX, scrollY);
     }
 
@@ -90,14 +93,25 @@ class CoreInstance
     this.currentTop = this.offset.top;
     this.currentLeft = this.offset.left;
 
-    // if (this.currentPosition!.x !== this.currentLeft) {
-    //   throw new Error("currentPosition.x !== currentLeft");
-    // }
-
-    // if (this.currentPosition!.y !== this.currentTop) {
-    //   throw new Error("currentPosition.y !== currentTop");
-    // }
     this.hasToTransform = false;
+  }
+
+  initTranslate() {
+    /**
+     * Since element render once and being transformed later we keep the data
+     * stored to navigate correctly.
+     *
+     * If it's already initiated we don't need to do it again.
+     * Reason: You may detach ref set flag to false and then attach it again. Do
+     * you want to start from zero or maintain the last position.
+     *
+     * Continuity is fundamental in DFlex, please keep that in your mind.
+     */
+    if (!this.translate) {
+      this.translate = new AxesCoordinates(0, 0);
+    }
+
+    this.isPaused = false;
   }
 
   resume(scrollX: number, scrollY: number) {

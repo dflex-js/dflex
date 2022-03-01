@@ -6,9 +6,5 @@
     "outDir": "./dist",
     "rootDir": "./src"
   },
-  "references": [
-    {
-      "path": "../dom-gen"
-    }
-  ]
+  "references": [{ "path": "../dom-gen" }, { "path": "../core-instance" }]
 }
