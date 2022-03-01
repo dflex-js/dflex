@@ -82,10 +82,8 @@ class DistanceCalculator implements DistanceCalculatorInterface {
   }
 
   protected updateOccupiedOffset(elmTop: number, elmLeft: number) {
-    this.draggable.offsetBeforeCurrentOperation.currentTop =
-      elmTop + this.draggedOffset.y;
-    this.draggable.offsetBeforeCurrentOperation.currentLeft =
-      elmLeft + this.draggedOffset.x;
+    this.draggable.occupiedOffset.currentTop = elmTop + this.draggedOffset.y;
+    this.draggable.occupiedOffset.currentLeft = elmLeft + this.draggedOffset.x;
   }
 
   /**
@@ -149,10 +147,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     } = element;
 
     const {
-      offsetBeforeCurrentOperation: {
-        currentLeft: draggedLeft,
-        currentTop: draggedTop,
-      },
+      occupiedOffset: { currentLeft: draggedLeft, currentTop: draggedTop },
       draggedElm: {
         // @ts-expect-error
         offset: { height: draggedHight, width: draggedWidth },
@@ -193,10 +188,10 @@ class DistanceCalculator implements DistanceCalculatorInterface {
   }
 
   private updateOccupiedTranslate(direction: 1 | -1) {
-    this.draggable.translateBeforeCurrentOperation.y +=
+    this.draggable.occupiedTranslate.y +=
       direction * this.draggedAccumulatedTransition.y;
 
-    this.draggable.translateBeforeCurrentOperation.x +=
+    this.draggable.occupiedTranslate.x +=
       direction * this.draggedAccumulatedTransition.x;
   }
 

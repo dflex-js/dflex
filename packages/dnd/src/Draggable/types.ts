@@ -42,8 +42,8 @@ export interface DraggableDnDInterface
   innerOffsetX: number;
   innerOffsetY: number;
   tempOffset: TempOffset;
-  readonly offsetBeforeCurrentOperation: TempOffset;
-  readonly translateBeforeCurrentOperation: Coordinates;
+  readonly occupiedOffset: TempOffset;
+  readonly occupiedTranslate: Coordinates;
   prevY: number;
   numberOfElementsTransformed: number;
   isMovingDown: boolean;

@@ -45,9 +45,9 @@ class Draggable
 
   tempOffset: TempOffset;
 
-  readonly offsetBeforeCurrentOperation: TempOffset;
+  readonly occupiedOffset: TempOffset;
 
-  readonly translateBeforeCurrentOperation: Coordinates;
+  readonly occupiedTranslate: Coordinates;
 
   prevY: number;
 
@@ -206,12 +206,12 @@ class Draggable
       currentTop: this.draggedElm.currentTop!,
     };
 
-    this.offsetBeforeCurrentOperation = {
+    this.occupiedOffset = {
       currentLeft: this.draggedElm.currentLeft!,
       currentTop: this.draggedElm.currentTop!,
     };
 
-    this.translateBeforeCurrentOperation = {
+    this.occupiedTranslate = {
       x: this.draggedElm.translate!.x,
       y: this.draggedElm.translate!.y,
     };
@@ -594,12 +594,12 @@ class Draggable
 
     this.draggedElm.resetIndicators(
       {
-        x: this.offsetBeforeCurrentOperation.currentLeft,
-        y: this.offsetBeforeCurrentOperation.currentTop,
+        x: this.occupiedOffset.currentLeft,
+        y: this.occupiedOffset.currentTop,
       },
       {
-        x: this.translateBeforeCurrentOperation.x,
-        y: this.translateBeforeCurrentOperation.y,
+        x: this.occupiedTranslate.x,
+        y: this.occupiedTranslate.y,
       }
     );
 
