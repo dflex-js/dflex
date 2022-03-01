@@ -8,31 +8,39 @@ const elm0D0 = {
   id: "id-0",
   depth: 0,
   ref,
-  // moreInfo: "I am the first child",
+  isInitialized: true,
+  isPaused: false,
+  scrollX: 0,
+  scrollY: 0,
 };
 const elm1D0 = {
   id: "id-1",
   depth: 0,
   ref,
-  // moreInfo: "I am the first child",
+  isInitialized: true,
+  isPaused: false,
+  scrollX: 0,
+  scrollY: 0,
 };
 const elm2D0 = {
   id: "id-2",
   depth: 0,
   ref,
-  // moreInfo: "I am the first child",
+  isInitialized: true,
+  isPaused: false,
+  scrollX: 0,
+  scrollY: 0,
 };
 
 const elm0D1 = {
   id: "p-id-0",
   depth: 1,
   ref,
-  // moreInfo: "I am parent",
+  isInitialized: true,
+  isPaused: false,
+  scrollX: 0,
+  scrollY: 0,
 };
-
-// TODO:
-// Add tests to cover passing custom element instance with class?
-// If you are interested open PR!
 
 describe("Testing Store Package", () => {
   beforeAll(() => {
@@ -57,20 +65,7 @@ describe("Testing Store Package", () => {
   it("Returns element instance by element id", () => {
     const elemInstance = store.registry[elm0D0.id];
 
-    expect(elemInstance).toStrictEqual({
-      id: "id-0",
-      depth: 0,
-      keys: {
-        CHK: null,
-        PK: "1-0",
-        SK: "0-0",
-      },
-      order: {
-        parent: 0,
-        self: 0,
-      },
-      ref,
-    });
+    expect(elemInstance).toMatchSnapshot();
   });
 
   it("Returns element branch", () => {
