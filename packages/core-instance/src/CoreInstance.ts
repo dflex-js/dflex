@@ -111,9 +111,11 @@ class CoreInstance
     }
   }
 
-  private updateCurrentIndicators(topSpace: number, leftSpace: number) {
-    this.translate!.y += topSpace;
-    this.translate!.x += leftSpace;
+  private updateCurrentIndicators(leftSpace: number, topSpace: number) {
+    this.translate!.setAxes(
+      this.translate!.x + leftSpace,
+      this.translate!.y + topSpace
+    );
 
     const { left, top } = this.offset!;
 
@@ -233,7 +235,7 @@ class CoreInstance
       });
     }
 
-    this.updateCurrentIndicators(topSpace, 0);
+    this.updateCurrentIndicators(0, topSpace);
 
     if (!isForceTransform && !this.isVisible) {
       this.hasToTransform = true;
