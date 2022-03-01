@@ -156,8 +156,7 @@ class EndDroppable extends Droppable {
 
     if (id.length === 0 || this.draggable.draggedElm.id === id) {
       return (
-        Math.floor(top) ===
-        Math.floor(this.draggable.offsetBeforeCurrentOperation.currentTop)
+        Math.floor(top) === Math.floor(this.draggable.occupiedOffset.currentTop)
       );
     }
 
