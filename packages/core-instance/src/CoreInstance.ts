@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
+import { AxesCoordinates } from "@dflex/utils";
 
-import AbstractCoreInstance from "./AbstractCoreInstance";
+import AbstractInstance from "./AbstractInstance";
 
 import type {
   Keys,
@@ -11,14 +12,15 @@ import type {
   CoreInput,
 } from "./types";
 
-class CoreInstance
-  extends AbstractCoreInstance
-  implements CoreInstanceInterface
-{
-  offset?: Rect;
+class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
+  isPaused: boolean;
+
+  offset!: Rect;
 
   /** Store history of Y-transition according to unique ID. */
-  prevTranslateY?: TransitionHistory;
+  translateHistory?: AxesCoordinates<TransitionHistory>;
+
+  currentPosition?: AxesCoordinates;
 
   currentTop?: number;
 
@@ -36,23 +38,28 @@ class CoreInstance
 
   animatedFrame: number | null;
 
-  constructor(elementWithPointer: CoreInput) {
+  constructor(
+    elementWithPointer: CoreInput,
+    { isPaused }: { isPaused: boolean }
+  ) {
     const { order, keys, depth, scrollX, scrollY, ...element } =
       elementWithPointer;
 
     super(element);
 
+    this.isPaused = isPaused;
     this.order = order;
     this.keys = keys;
     this.depth = depth;
 
-    this.isVisible = element.isInitialized && !element.isPaused;
+    this.isVisible = element.isInitialized && !this.isPaused;
 
     if (element.isInitialized) {
       this.updateDataset(this.order.self);
     }
 
-    if (!element.isPaused) {
+    if (!this.isPaused) {
+      this.initTranslate();
       this.initIndicators(scrollX, scrollY);
     }
 
@@ -67,10 +74,6 @@ class CoreInstance
    * So, basically any working element in DnD should be initiated first.
    */
   private initIndicators(scrollX: number, scrollY: number) {
-    if (!Array.isArray(this.prevTranslateY)) {
-      this.prevTranslateY = [];
-    }
-
     const { height, width, left, top } = this.ref!.getBoundingClientRect();
 
     /**
@@ -86,10 +89,30 @@ class CoreInstance
       top: top + scrollY,
     };
 
+    this.currentPosition = new AxesCoordinates(left, top);
+
     this.currentTop = this.offset.top;
     this.currentLeft = this.offset.left;
 
     this.hasToTransform = false;
+  }
+
+  initTranslate() {
+    /**
+     * Since element render once and being transformed later we keep the data
+     * stored to navigate correctly.
+     *
+     * If it's already initiated we don't need to do it again.
+     * Reason: You may detach ref set flag to false and then attach it again. Do
+     * you want to start from zero or maintain the last position.
+     *
+     * Continuity is fundamental in DFlex, please keep that in your mind.
+     */
+    if (!this.translate) {
+      this.translate = new AxesCoordinates(0, 0);
+    }
+
+    this.isPaused = false;
   }
 
   resume(scrollX: number, scrollY: number) {
@@ -111,9 +134,11 @@ class CoreInstance
     }
   }
 
-  private updateCurrentIndicators(topSpace: number, leftSpace: number) {
-    this.translateY! += topSpace;
-    this.translateX! += leftSpace;
+  private updateCurrentIndicators(leftSpace: number, topSpace: number) {
+    this.translate.setAxes(
+      this.translate.x + leftSpace,
+      this.translate.y + topSpace
+    );
 
     const { left, top } = this.offset!;
 
@@ -121,18 +146,23 @@ class CoreInstance
      * This offset related directly to translate Y and Y. It's isolated from
      * element current offset and effects only top and left.
      */
-    this.currentTop = top + this.translateY!;
-    this.currentLeft = left + this.translateX!;
+    this.currentPosition!.setAxes(
+      left + this.translate.x,
+      top + this.translate.y
+    );
+
+    this.currentTop = top + this.translate.y;
+    this.currentLeft = left + this.translate.x;
 
     if (!this.isVisible) this.hasToTransform = true;
   }
 
-  isPositionedUnder(elmCurrentOffsetTop: number) {
-    return elmCurrentOffsetTop < this.currentTop!;
+  isPositionedUnder(elmY: number) {
+    return elmY < this.currentTop!;
   }
 
-  isPositionedLeft(elmCurrentOffsetLeft: number) {
-    return elmCurrentOffsetLeft < this.currentLeft!;
+  isPositionedLeft(elmX: number) {
+    return elmX < this.currentLeft!;
   }
 
   transformElm() {
@@ -141,7 +171,7 @@ class CoreInstance
     }
 
     this.animatedFrame = window.requestAnimationFrame(() => {
-      this.ref!.style.transform = `translate3d(${this.translateX}px,${this.translateY}px, 0)`;
+      this.ref!.style.transform = `translate3d(${this.translate.x}px,${this.translate.y}px, 0)`;
       this.animatedFrame = null;
     });
   }
@@ -225,13 +255,24 @@ class CoreInstance
     isForceTransform = false
   ) {
     if (operationID) {
-      this.prevTranslateY!.push({
+      const historyY = {
         ID: operationID,
-        translateY: this.translateY!,
-      });
+        pre: this.translate.y,
+      };
+
+      if (!this.translateHistory) {
+        const historyX = {
+          ID: operationID,
+          pre: this.translate.x,
+        };
+
+        this.translateHistory = new AxesCoordinates([historyX], [historyY]);
+      } else {
+        this.translateHistory.y.push(historyY);
+      }
     }
 
-    this.updateCurrentIndicators(topSpace, 0);
+    this.updateCurrentIndicators(0, topSpace);
 
     if (!isForceTransform && !this.isVisible) {
       this.hasToTransform = true;
@@ -294,15 +335,16 @@ class CoreInstance
    */
   rollYBack(operationID: string, isForceTransform: boolean) {
     if (
-      this.prevTranslateY!.length === 0 ||
-      this.prevTranslateY![this.prevTranslateY!.length - 1].ID !== operationID
+      this.translateHistory!.y.length === 0 ||
+      this.translateHistory!.y[this.translateHistory!.y.length - 1].ID !==
+        operationID
     ) {
       return;
     }
 
-    const { translateY } = (this.prevTranslateY as TransitionHistory).pop()!;
+    const { pre } = this.translateHistory!.y.pop()!;
 
-    const topSpace = translateY - this.translateY!;
+    const topSpace = pre - this.translate.y;
 
     const increment = topSpace > 0 ? 1 : -1;
 

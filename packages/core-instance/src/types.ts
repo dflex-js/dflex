@@ -1,35 +1,20 @@
 /* eslint-disable no-unused-vars */
 
-interface AbsCoreEssential {
+import { AxesCoordinates } from "@dflex/utils";
+
+export type AbstractCoreInput = {
   id: string;
-  isPaused?: boolean;
-}
+  isInitialized: boolean;
+  ref?: HTMLElement;
+};
 
-interface AbsCoreWithRef {
-  isInitialized: true;
-  ref: HTMLElement;
-}
-
-interface AbsCoreWithoutRef {
-  isInitialized: false;
-  ref: null;
-}
-
-export type AbstractCoreInput =
-  | (AbsCoreEssential & AbsCoreWithoutRef)
-  | (AbsCoreEssential & AbsCoreWithRef);
-
-export interface AbstractCoreInterface {
+export interface AbstractInterface {
   ref: HTMLElement | null;
   id: string;
-  isPaused: boolean;
   isInitialized: boolean;
-  translateY?: number;
-  translateX?: number;
-  initTranslate(): void;
+  translate: AxesCoordinates;
   attach(ref: HTMLElement | null): void;
   detach(): void;
-  hasValidRef(): void;
 }
 
 export type ELmBranch = string | string[];
@@ -78,18 +63,29 @@ export interface Rect {
 
 export type TransitionHistory = {
   ID: string;
-  translateY: number;
+  pre: number;
 }[];
 
-export interface CoreInstanceInterface extends AbstractCoreInterface {
-  offset?: Rect;
-  prevTranslateY?: TransitionHistory;
-  currentTop?: number;
-  currentLeft?: number;
+export interface Coordinates {
+  x: number;
+  y: number;
+}
+
+export interface CoreInstanceInterface extends AbstractInterface {
+  isPaused: boolean;
+  isVisible: boolean;
+  offset: Rect;
+  translateHistory?: AxesCoordinates<TransitionHistory>;
+  currentPosition?: AxesCoordinates;
+  readonly currentTop?: number;
+  readonly currentLeft?: number;
   order: Order;
   keys: Keys;
   depth: number;
   animatedFrame: number | null;
+  isPositionedUnder(elmY: number): boolean;
+  isPositionedLeft(elmX: number): boolean;
+  initTranslate(): void;
   resume(scrollX: number, scrollY: number): void;
   changeVisibility(isVisible: boolean): void;
   setYPosition(
@@ -100,7 +96,7 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
     siblingsHasEmptyElm?: number,
     vIncrement?: number,
     isShuffle?: boolean
-  ): void;
+  ): number;
   transformElm(): void;
   assignNewPosition(
     branchIDsOrder: string[],
@@ -109,4 +105,5 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
     siblingsHasEmptyElm?: number
   ): number;
   updateDataset(index: number): void;
+  rollYBack(operationID: string, isForceTransform: boolean): void;
 }

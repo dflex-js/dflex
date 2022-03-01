@@ -235,8 +235,8 @@ class Droppable extends DistanceCalculator {
            */
           this.draggable.threshold.updateElementThresholdMatrix(
             {
-              width: this.draggable.draggedElm.offset!.width,
-              height: this.draggable.draggedElm.offset!.height,
+              width: this.draggable.draggedElm.offset.width,
+              height: this.draggable.draggedElm.offset.height,
               left: this.preserveLastElmOffset.currentLeft,
               top: this.preserveLastElmOffset.currentTop,
             },
@@ -521,7 +521,7 @@ class Droppable extends DistanceCalculator {
 
     const currentTop = draggedYShift - this.draggable.innerOffsetY;
 
-    const currentBottom = currentTop + this.draggable.draggedElm.offset!.height;
+    const currentBottom = currentTop + this.draggable.draggedElm.offset.height;
 
     const { SK } = store.registry[this.draggable.draggedElm.id].keys;
 
@@ -560,7 +560,7 @@ class Droppable extends DistanceCalculator {
 
     const currentLeft = draggedXShift - this.draggable.innerOffsetX;
 
-    const currentRight = currentLeft + this.draggable.draggedElm.offset!.width;
+    const currentRight = currentLeft + this.draggable.draggedElm.offset.width;
 
     const { SK } = store.registry[this.draggable.draggedElm.id].keys;
 

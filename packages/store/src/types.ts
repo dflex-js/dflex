@@ -1,32 +1,52 @@
 import type { Keys, Order, ELmBranch } from "@dflex/dom-gen";
 
-export type Class<classInstance> = new (...args: any[]) => classInstance;
+interface RegisterInputMetaBase {
+  /** provide a depth if you want to drag the parent container  */
+  depth?: number;
+  /** Unique key to connect elements with the same parent together */
+  parentID?: string;
+}
 
-export interface ElmInstance {
+interface RegisterInputID {
   id: string;
+  ref?: never;
+}
+
+interface RegisterInputRef {
+  id?: never;
+  ref: HTMLElement;
+}
+
+interface RegisterInputAll {
+  id: string;
+  ref: HTMLElement;
+}
+
+/** Element before entering Registry abstract */
+export type RegisterInputMeta =
+  | (RegisterInputMetaBase & RegisterInputAll)
+  | (RegisterInputMetaBase & RegisterInputID)
+  | (RegisterInputMetaBase & RegisterInputRef);
+
+export type RegisterInput = {
+  /** Unique key to connect elements with the same parent together */
+  parentID?: string;
+  id: string;
+  ref?: HTMLElement;
   depth: number;
-  parentId?: string;
-}
+  isInitialized: boolean;
+  isPaused: boolean;
+  scrollX: number;
+  scrollY: number;
+};
 
-export interface ElmInstanceWithProps
-  extends Required<Omit<ElmInstance, "parentId">> {
-  // This seems wrong, but without omitting parentID, TS enforced string value
-  // and ignored undefined.
-  parentId?: string;
-  [key: string]: any;
-}
-
-export interface ElmPointerWithProps extends ElmInstanceWithProps {
+export type ElmPointerWithProps = RegisterInput & {
   order: Order;
   keys: Keys;
-}
+};
 
 export interface StoreInterface<T> {
-  register(
-    element: ElmInstanceWithProps,
-    CustomInstance?: Class<T>,
-    opts?: {}
-  ): void;
+  register(element: RegisterInput): void;
   unregister(id: string): void;
   destroy(): void;
   getElmBranchByKey(siblingsKy: string): ELmBranch;

@@ -15,6 +15,9 @@
     "dist",
     "LICENSE"
   ],
+  "dependencies": {
+    "@dflex/utils": "^0.0.0"
+  },
   "keywords": [
     "drag-drop",
     "dnd",

@@ -17,6 +17,7 @@
     "LICENSE"
   ],
   "dependencies": {
+    "@dflex/core-instance": "^3.0.0",
     "@dflex/dom-gen": "^3.0.0"
   },
   "keywords": [

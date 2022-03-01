@@ -1,15 +1,13 @@
 import Generator from "@dflex/dom-gen";
-import type { ELmBranch } from "@dflex/dom-gen";
-import type {
-  Class,
-  ElmInstanceWithProps,
-  ElmPointerWithProps,
-  StoreInterface,
-} from "./types";
 
-class Store<T = ElmPointerWithProps> implements StoreInterface<T> {
+import CoreInstance from "@dflex/core-instance";
+import type { CoreInstanceInterface, CoreInput } from "@dflex/core-instance";
+
+import type { RegisterInput } from "./types";
+
+class Store {
   registry: {
-    [id: string]: T;
+    [id: string]: CoreInstanceInterface;
   };
 
   DOMGen: Generator;
@@ -24,23 +22,12 @@ class Store<T = ElmPointerWithProps> implements StoreInterface<T> {
     this.DOMGen = new Generator();
   }
 
-  /**
-   * Create element and add it to registry.
-   *
-   * @param element - Element to be added to registry.
-   * @param CustomInstance - Custom class to be used for element.
-   * @param opts - Options to be passed to CustomInstance.
-   */
-  private submitElementToRegistry(
-    element: ElmInstanceWithProps,
-    CustomInstance?: Class<T>,
-    opts?: {}
-  ) {
-    const { id, depth, ...rest } = element;
+  private submitElementToRegistry(element: RegisterInput) {
+    const { id, depth, isPaused, ...rest } = element;
 
     const { order, keys } = this.DOMGen.getElmPointer(id, depth);
 
-    const coreElement: ElmPointerWithProps = {
+    const coreElement: CoreInput = {
       id,
       order,
       keys,
@@ -48,52 +35,42 @@ class Store<T = ElmPointerWithProps> implements StoreInterface<T> {
       ...rest,
     };
 
-    // TODO: fix TS error here.
-    // @ts-ignore
-    this.registry[id] =
-      CustomInstance && typeof CustomInstance.constructor === "function"
-        ? new CustomInstance(coreElement, opts)
-        : coreElement;
+    this.registry[id] = new CoreInstance(coreElement, {
+      isPaused,
+    });
   }
 
-  /**
-   * Mutate elmInstance into CustomInstance then add the new object to registry
-   * by id.
-   *
-   * @param element -
-   * @param CustomInstance -
-   */
-  register(
-    element: ElmInstanceWithProps,
-    CustomInstance?: Class<T>,
-    opts?: {}
-  ) {
-    // Why using parentID?
-    // Because it's impossible to know if this element belongs to the same
-    // branch or not. Unless the input is strict and ask to register the parent
-    // node which can't be done. To solve this, we use parentID to identify
-    // elements belong to the same branch.
-    // Another thing could be: but why not call the parent node from the DOM?
-    // Well, it solves the issue temporarily. But it breaks the rule of DFlex:
-    // Extensibility.
-    if (element.parentId) {
+  register(element: RegisterInput) {
+    /**
+     * Using parentID, because it's impossible to know if this element belongs
+     * to the same branch or not.
+     */
+    if (element.parentID) {
       // This is the first element in the branch then.
       if (!this.lastKeyIdentifier) {
-        this.lastKeyIdentifier = element.parentId;
+        this.lastKeyIdentifier = element.parentID;
         // Change means new branch.
-      } else if (element.parentId !== this.lastKeyIdentifier) {
-        // Create parent node to close the branch.
-        this.submitElementToRegistry(
-          {
-            id: element.parentId,
-            depth: element.depth + 1,
-          },
-          CustomInstance
-        );
+      } else if (element.parentID !== this.lastKeyIdentifier) {
+        const { id, depth, ...rest } = element;
+        // Create a fake parent node to close the branch.
+        this.submitElementToRegistry({
+          id: element.parentID,
+          depth: depth + 1,
+          ...rest,
+        });
       }
     }
 
-    this.submitElementToRegistry(element, CustomInstance, opts);
+    this.submitElementToRegistry(element);
+  }
+
+  /**
+   * Gets all element IDs Siblings in given node represented by sibling key.
+   *
+   * @param siblingsKy -
+   */
+  getElmBranchByKey(siblingsKy: string) {
+    return this.DOMGen.getElmBranch(siblingsKy);
   }
 
   unregister(id: string) {
@@ -114,15 +91,6 @@ class Store<T = ElmPointerWithProps> implements StoreInterface<T> {
     });
 
     this.DOMGen.clearBranchesAndIndicator();
-  }
-
-  /**
-   * Gets all element IDs Siblings in given node represented by sibling key.
-   *
-   * @param siblingsKy -
-   */
-  getElmBranchByKey(siblingsKy: string): ELmBranch {
-    return this.DOMGen.getElmBranch(siblingsKy);
   }
 }
 

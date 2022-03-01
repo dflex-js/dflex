@@ -1,12 +1,8 @@
 import Store from "@dflex/store";
 
-import AbstractCoreInstance, {
-  AbstractCoreInterface,
-} from "@dflex/core-instance";
-
 import type { RegisterInput } from "./types";
 
-class DraggableStoreImp extends Store<AbstractCoreInterface> {
+class DraggableStoreImp extends Store {
   /**
    * Register element for Draggable store
    *
@@ -28,13 +24,15 @@ class DraggableStoreImp extends Store<AbstractCoreInterface> {
       throw new Error(`DFlex: A valid and unique id is required.`);
     }
 
-    const elm = {
-      ...element,
+    super.register({
       id,
       depth: 0,
-    };
-
-    super.register(elm, AbstractCoreInstance);
+      isInitialized: true,
+      isPaused: false,
+      scrollX: 0,
+      scrollY: 0,
+      ...element,
+    });
   }
 }
 

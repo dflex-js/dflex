@@ -1,123 +1,347 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Testing Store Package Returns element instance by element id 1`] = `
+CoreInstance {
+  "animatedFrame": null,
+  "currentLeft": 0,
+  "currentPosition": AxesCoordinates {
+    "x": 0,
+    "y": 0,
+  },
+  "currentTop": 0,
+  "depth": 0,
+  "hasToTransform": false,
+  "id": "id-0",
+  "isInitialized": true,
+  "isPaused": false,
+  "isVisible": true,
+  "keys": Object {
+    "CHK": null,
+    "PK": "1-0",
+    "SK": "0-0",
+  },
+  "offset": Object {
+    "height": 0,
+    "left": 0,
+    "top": 0,
+    "width": 0,
+  },
+  "order": Object {
+    "parent": 0,
+    "self": 0,
+  },
+  "ref": <div
+    data-index="0"
+  />,
+  "translate": AxesCoordinates {
+    "x": 0,
+    "y": 0,
+  },
+}
+`;
+
 exports[`Testing Store Package Snaps shot registry 1`] = `
 Object {
-  "id-0": Object {
+  "id-0": CoreInstance {
+    "animatedFrame": null,
+    "currentLeft": 0,
+    "currentPosition": AxesCoordinates {
+      "x": 0,
+      "y": 0,
+    },
+    "currentTop": 0,
     "depth": 0,
+    "hasToTransform": false,
     "id": "id-0",
+    "isInitialized": true,
+    "isPaused": false,
+    "isVisible": true,
     "keys": Object {
       "CHK": null,
       "PK": "1-0",
       "SK": "0-0",
+    },
+    "offset": Object {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
     },
     "order": Object {
       "parent": 0,
       "self": 0,
     },
-    "ref": <div />,
+    "ref": <div
+      data-index="0"
+    />,
+    "translate": AxesCoordinates {
+      "x": 0,
+      "y": 0,
+    },
   },
-  "id-1": Object {
+  "id-1": CoreInstance {
+    "animatedFrame": null,
+    "currentLeft": 0,
+    "currentPosition": AxesCoordinates {
+      "x": 0,
+      "y": 0,
+    },
+    "currentTop": 0,
     "depth": 0,
+    "hasToTransform": false,
     "id": "id-1",
+    "isInitialized": true,
+    "isPaused": false,
+    "isVisible": true,
     "keys": Object {
       "CHK": null,
       "PK": "1-0",
       "SK": "0-0",
+    },
+    "offset": Object {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
     },
     "order": Object {
       "parent": 0,
       "self": 1,
     },
-    "ref": <div />,
+    "ref": <div
+      data-index="0"
+    />,
+    "translate": AxesCoordinates {
+      "x": 0,
+      "y": 0,
+    },
   },
-  "id-2": Object {
+  "id-2": CoreInstance {
+    "animatedFrame": null,
+    "currentLeft": 0,
+    "currentPosition": AxesCoordinates {
+      "x": 0,
+      "y": 0,
+    },
+    "currentTop": 0,
     "depth": 0,
+    "hasToTransform": false,
     "id": "id-2",
+    "isInitialized": true,
+    "isPaused": false,
+    "isVisible": true,
     "keys": Object {
       "CHK": null,
       "PK": "1-0",
       "SK": "0-0",
     },
+    "offset": Object {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
+    },
     "order": Object {
       "parent": 0,
       "self": 2,
     },
-    "ref": <div />,
+    "ref": <div
+      data-index="0"
+    />,
+    "translate": AxesCoordinates {
+      "x": 0,
+      "y": 0,
+    },
   },
-  "p-id-0": Object {
+  "p-id-0": CoreInstance {
+    "animatedFrame": null,
+    "currentLeft": 0,
+    "currentPosition": AxesCoordinates {
+      "x": 0,
+      "y": 0,
+    },
+    "currentTop": 0,
     "depth": 1,
+    "hasToTransform": false,
     "id": "p-id-0",
+    "isInitialized": true,
+    "isPaused": false,
+    "isVisible": true,
     "keys": Object {
       "CHK": "0-0",
       "PK": "2-0",
       "SK": "1-0",
     },
+    "offset": Object {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
+    },
     "order": Object {
       "parent": 0,
       "self": 0,
     },
-    "ref": <div />,
+    "ref": <div
+      data-index="0"
+    />,
+    "translate": AxesCoordinates {
+      "x": 0,
+      "y": 0,
+    },
   },
 }
 `;
 
 exports[`Testing Store Package Snaps shot registry after delete 1`] = `
 Object {
-  "id-0": Object {
+  "id-0": CoreInstance {
+    "animatedFrame": null,
+    "currentLeft": 0,
+    "currentPosition": AxesCoordinates {
+      "x": 0,
+      "y": 0,
+    },
+    "currentTop": 0,
     "depth": 0,
+    "hasToTransform": false,
     "id": "id-0",
+    "isInitialized": true,
+    "isPaused": false,
+    "isVisible": true,
     "keys": Object {
       "CHK": null,
       "PK": "1-0",
       "SK": "0-0",
+    },
+    "offset": Object {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
     },
     "order": Object {
       "parent": 0,
       "self": 0,
     },
-    "ref": <div />,
+    "ref": <div
+      data-index="0"
+    />,
+    "translate": AxesCoordinates {
+      "x": 0,
+      "y": 0,
+    },
   },
-  "id-1": Object {
+  "id-1": CoreInstance {
+    "animatedFrame": null,
+    "currentLeft": 0,
+    "currentPosition": AxesCoordinates {
+      "x": 0,
+      "y": 0,
+    },
+    "currentTop": 0,
     "depth": 0,
+    "hasToTransform": false,
     "id": "id-1",
+    "isInitialized": true,
+    "isPaused": false,
+    "isVisible": true,
     "keys": Object {
       "CHK": null,
       "PK": "1-0",
       "SK": "0-0",
+    },
+    "offset": Object {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
     },
     "order": Object {
       "parent": 0,
       "self": 1,
     },
-    "ref": <div />,
+    "ref": <div
+      data-index="0"
+    />,
+    "translate": AxesCoordinates {
+      "x": 0,
+      "y": 0,
+    },
   },
-  "id-2": Object {
+  "id-2": CoreInstance {
+    "animatedFrame": null,
+    "currentLeft": 0,
+    "currentPosition": AxesCoordinates {
+      "x": 0,
+      "y": 0,
+    },
+    "currentTop": 0,
     "depth": 0,
+    "hasToTransform": false,
     "id": "id-2",
+    "isInitialized": true,
+    "isPaused": false,
+    "isVisible": true,
     "keys": Object {
       "CHK": null,
       "PK": "1-0",
       "SK": "0-0",
     },
+    "offset": Object {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
+    },
     "order": Object {
       "parent": 0,
       "self": 2,
     },
-    "ref": <div />,
+    "ref": <div
+      data-index="0"
+    />,
+    "translate": AxesCoordinates {
+      "x": 0,
+      "y": 0,
+    },
   },
-  "p-id-0": Object {
+  "p-id-0": CoreInstance {
+    "animatedFrame": null,
+    "currentLeft": 0,
+    "currentPosition": AxesCoordinates {
+      "x": 0,
+      "y": 0,
+    },
+    "currentTop": 0,
     "depth": 1,
+    "hasToTransform": false,
     "id": "p-id-0",
+    "isInitialized": true,
+    "isPaused": false,
+    "isVisible": true,
     "keys": Object {
       "CHK": "0-0",
       "PK": "2-0",
       "SK": "1-0",
     },
+    "offset": Object {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
+    },
     "order": Object {
       "parent": 0,
       "self": 0,
     },
-    "ref": <div />,
+    "ref": <div
+      data-index="0"
+    />,
+    "translate": AxesCoordinates {
+      "x": 0,
+      "y": 0,
+    },
   },
 }
 `;
