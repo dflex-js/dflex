@@ -29,8 +29,10 @@ Object {
     },
     "prevTranslateY": Array [],
     "ref": <div />,
-    "translateX": 0,
-    "translateY": 0,
+    "translate": AxesCoordinates {
+      "x": 0,
+      "y": 0,
+    },
   },
 }
 `;

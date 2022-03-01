@@ -11,23 +11,23 @@ const elmInstance1 = {
 store.register(elmInstance1);
 
 describe("Draggable Only Package", () => {
-  let EXPECTED_TRANSLATE_X_R1;
-  let EXPECTED_TRANSLATE_Y_R1;
+  let EXPECTED_TRANSLATE_X_R1: number;
+  let EXPECTED_TRANSLATE_Y_R1: number;
 
   describe("FIRST ROUND", () => {
     const START_CLIENT_X_R1 = 10;
     const START_CLIENT_Y_R1 = 20;
 
-    let EXPECTED_OFFSET_X_R1;
-    let EXPECTED_OFFSET_Y_R1;
+    let EXPECTED_OFFSET_X_R1: number;
+    let EXPECTED_OFFSET_Y_R1: number;
 
     const MOVING_PIXELS_R1 = 50;
 
-    let draggable;
+    let draggable: Draggable;
 
     beforeAll(() => {
-      EXPECTED_TRANSLATE_X_R1 = store.registry[elmInstance1.id].translateX;
-      EXPECTED_TRANSLATE_Y_R1 = store.registry[elmInstance1.id].translateY;
+      EXPECTED_TRANSLATE_X_R1 = store.registry[elmInstance1.id].translate!.x;
+      EXPECTED_TRANSLATE_Y_R1 = store.registry[elmInstance1.id].translate!.y;
 
       EXPECTED_OFFSET_X_R1 = -START_CLIENT_X_R1 + EXPECTED_TRANSLATE_X_R1;
       EXPECTED_OFFSET_Y_R1 = -START_CLIENT_Y_R1 + EXPECTED_TRANSLATE_Y_R1;
@@ -45,10 +45,10 @@ describe("Draggable Only Package", () => {
       });
 
       it("matches values in draggable with those in store", () => {
-        expect(draggable.draggedElm.translateX).toEqual(
+        expect(draggable.draggedElm.translate.x).toEqual(
           EXPECTED_TRANSLATE_X_R1
         );
-        expect(draggable.draggedElm.translateY).toEqual(
+        expect(draggable.draggedElm.translate.y).toEqual(
           EXPECTED_TRANSLATE_Y_R1
         );
       });
@@ -77,10 +77,10 @@ describe("Draggable Only Package", () => {
       });
 
       it("Draggable updates translateX/Y in store", () => {
-        expect(draggable.draggedElm.translateX).toEqual(
+        expect(draggable.draggedElm.translate.x).toEqual(
           EXPECTED_TRANSLATE_X_R1
         );
-        expect(draggable.draggedElm.translateY).toEqual(
+        expect(draggable.draggedElm.translate.y).toEqual(
           EXPECTED_TRANSLATE_Y_R1
         );
 
@@ -90,22 +90,22 @@ describe("Draggable Only Package", () => {
   });
 
   describe("SECOND ROUND", () => {
-    let EXPECTED_TRANSLATE_X_R2;
-    let EXPECTED_TRANSLATE_Y_R2;
+    let EXPECTED_TRANSLATE_X_R2: number;
+    let EXPECTED_TRANSLATE_Y_R2: number;
 
     const START_CLIENT_X_R2 = 100;
     const START_CLIENT_Y_R2 = 80;
 
-    let EXPECTED_OFFSET_X_R2;
-    let EXPECTED_OFFSET_Y_R2;
+    let EXPECTED_OFFSET_X_R2: number;
+    let EXPECTED_OFFSET_Y_R2: number;
 
     const MOVING_PIXELS_R2 = 18;
 
-    let draggable;
+    let draggable: Draggable;
 
     beforeAll(() => {
-      EXPECTED_TRANSLATE_X_R2 = store.registry[elmInstance1.id].translateX;
-      EXPECTED_TRANSLATE_Y_R2 = store.registry[elmInstance1.id].translateY;
+      EXPECTED_TRANSLATE_X_R2 = store.registry[elmInstance1.id].translate.x;
+      EXPECTED_TRANSLATE_Y_R2 = store.registry[elmInstance1.id].translate.y;
 
       EXPECTED_OFFSET_X_R2 = -START_CLIENT_X_R2 + EXPECTED_TRANSLATE_X_R2;
       EXPECTED_OFFSET_Y_R2 = -START_CLIENT_Y_R2 + EXPECTED_TRANSLATE_Y_R2;
@@ -151,10 +151,10 @@ describe("Draggable Only Package", () => {
       });
 
       it("Draggable updates translateX/Y in store", () => {
-        expect(draggable.draggedElm.translateX).toEqual(
+        expect(draggable.draggedElm.translate.x).toEqual(
           EXPECTED_TRANSLATE_X_R2
         );
-        expect(draggable.draggedElm.translateY).toEqual(
+        expect(draggable.draggedElm.translate.y).toEqual(
           EXPECTED_TRANSLATE_Y_R2
         );
         draggable.endDragging();
