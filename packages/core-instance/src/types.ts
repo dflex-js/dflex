@@ -79,12 +79,12 @@ export interface Rect {
 
 export type TransitionHistory = {
   ID: string;
-  translateY: number;
+  pre: number;
 }[];
 
 export interface CoreInstanceInterface extends AbstractCoreInterface {
   offset?: Rect;
-  prevTranslateY?: TransitionHistory;
+  translateHistory?: AxesCoordinates<TransitionHistory>;
   currentTop?: number;
   currentLeft?: number;
   order: Order;

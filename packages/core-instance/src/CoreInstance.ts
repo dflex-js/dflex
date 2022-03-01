@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import { AxesCoordinates } from "@dflex/utils";
 
 import AbstractCoreInstance from "./AbstractCoreInstance";
 
@@ -18,7 +19,7 @@ class CoreInstance
   offset?: Rect;
 
   /** Store history of Y-transition according to unique ID. */
-  prevTranslateY?: TransitionHistory;
+  translateHistory?: AxesCoordinates<TransitionHistory>;
 
   currentTop?: number;
 
@@ -67,10 +68,6 @@ class CoreInstance
    * So, basically any working element in DnD should be initiated first.
    */
   private initIndicators(scrollX: number, scrollY: number) {
-    if (!Array.isArray(this.prevTranslateY)) {
-      this.prevTranslateY = [];
-    }
-
     const { height, width, left, top } = this.ref!.getBoundingClientRect();
 
     /**
@@ -229,10 +226,21 @@ class CoreInstance
     isForceTransform = false
   ) {
     if (operationID) {
-      this.prevTranslateY!.push({
+      const historyY = {
         ID: operationID,
-        translateY: this.translate!.y,
-      });
+        pre: this.translate!.y,
+      };
+
+      if (!this.translateHistory) {
+        const historyX = {
+          ID: operationID,
+          pre: this.translate!.x,
+        };
+
+        this.translateHistory = new AxesCoordinates([historyX], [historyY]);
+      } else {
+        this.translateHistory.y.push(historyY);
+      }
     }
 
     this.updateCurrentIndicators(0, topSpace);
@@ -298,15 +306,16 @@ class CoreInstance
    */
   rollYBack(operationID: string, isForceTransform: boolean) {
     if (
-      this.prevTranslateY!.length === 0 ||
-      this.prevTranslateY![this.prevTranslateY!.length - 1].ID !== operationID
+      this.translateHistory!.y.length === 0 ||
+      this.translateHistory!.y[this.translateHistory!.y.length - 1].ID !==
+        operationID
     ) {
       return;
     }
 
-    const { translateY } = (this.prevTranslateY as TransitionHistory).pop()!;
+    const { pre } = this.translateHistory!.y.pop()!;
 
-    const topSpace = translateY - this.translate!.y;
+    const topSpace = pre - this.translate!.y;
 
     const increment = topSpace > 0 ? 1 : -1;
 
