@@ -87,7 +87,7 @@ export interface Coordinates {
 }
 
 export interface CoreInstanceInterface extends AbstractCoreInterface {
-  offset?: Rect;
+  offset: Rect;
   translateHistory?: AxesCoordinates<TransitionHistory>;
   currentPosition?: AxesCoordinates;
   readonly currentTop?: number;

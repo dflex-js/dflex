@@ -142,14 +142,12 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     const {
       currentLeft: elmLeft,
       currentTop: elmTop,
-      // @ts-expect-error
       offset: { height: elmHight, width: elmWidth },
     } = element;
 
     const {
       occupiedOffset: { currentLeft: draggedLeft, currentTop: draggedTop },
       draggedElm: {
-        // @ts-expect-error
         offset: { height: draggedHight, width: draggedWidth },
       },
     } = this.draggable;
@@ -227,7 +225,6 @@ class DistanceCalculator implements DistanceCalculatorInterface {
        */
 
       const {
-        // @ts-expect-error
         offset: { width, height },
         currentLeft,
         currentTop,

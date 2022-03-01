@@ -145,7 +145,6 @@ class Draggable
     this.threshold = new Threshold(opts.threshold);
 
     const {
-      // @ts-expect-error
       offset: { width, height },
       currentLeft,
       currentTop,
@@ -270,7 +269,7 @@ class Draggable
     isRestrictedToThreshold: boolean // if not. Then to self.
   ) {
     const currentTop = y - this.innerOffsetY;
-    const currentBottom = currentTop + this.draggedElm.offset!.height;
+    const currentBottom = currentTop + this.draggedElm.offset.height;
 
     if (!allowTop && currentTop <= topThreshold) {
       return isRestrictedToThreshold
@@ -280,7 +279,7 @@ class Draggable
 
     if (!allowBottom && currentBottom >= bottomThreshold) {
       return isRestrictedToThreshold
-        ? bottomThreshold + this.innerOffsetY - this.draggedElm.offset!.height
+        ? bottomThreshold + this.innerOffsetY - this.draggedElm.offset.height
         : this.initY;
     }
 
@@ -296,7 +295,7 @@ class Draggable
     restrictToThreshold: boolean // if not. Then to self.,
   ) {
     const currentLeft = x - this.innerOffsetX;
-    const currentRight = currentLeft + this.draggedElm.offset!.width;
+    const currentRight = currentLeft + this.draggedElm.offset.width;
 
     if (!allowLeft && currentLeft <= leftThreshold) {
       return restrictToThreshold
@@ -308,7 +307,7 @@ class Draggable
       return restrictToThreshold
         ? rightThreshold +
             this.innerOffsetX -
-            this.draggedElm.offset!.width -
+            this.draggedElm.offset.width -
             this.marginX
         : this.initX;
     }
@@ -389,7 +388,7 @@ class Draggable
         filteredY = this.axesYFilter(
           y,
           this.draggedElm.currentTop!,
-          this.draggedElm.currentTop! + this.draggedElm.offset!.height,
+          this.draggedElm.currentTop! + this.draggedElm.offset.height,
           this.restrictions.self.allowLeavingFromTop,
           this.restrictions.self.allowLeavingFromBottom,
           false

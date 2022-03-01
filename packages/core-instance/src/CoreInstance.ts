@@ -16,7 +16,7 @@ class CoreInstance
   extends AbstractCoreInstance
   implements CoreInstanceInterface
 {
-  offset?: Rect;
+  offset!: Rect;
 
   /** Store history of Y-transition according to unique ID. */
   translateHistory?: AxesCoordinates<TransitionHistory>;
