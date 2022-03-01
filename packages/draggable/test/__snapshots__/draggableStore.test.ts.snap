@@ -27,7 +27,6 @@ Object {
       "parent": 0,
       "self": 0,
     },
-    "prevTranslateY": Array [],
     "ref": <div />,
     "translate": AxesCoordinates {
       "x": 0,
