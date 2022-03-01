@@ -45,9 +45,9 @@ class Draggable
 
   tempOffset: TempOffset;
 
-  occupiedOffset: TempOffset;
+  readonly offsetBeforeCurrentOperation: TempOffset;
 
-  occupiedTranslate: Coordinates;
+  readonly translateBeforeCurrentOperation: Coordinates;
 
   prevY: number;
 
@@ -206,12 +206,12 @@ class Draggable
       currentTop: this.draggedElm.currentTop!,
     };
 
-    this.occupiedOffset = {
+    this.offsetBeforeCurrentOperation = {
       currentLeft: this.draggedElm.currentLeft!,
       currentTop: this.draggedElm.currentTop!,
     };
 
-    this.occupiedTranslate = {
+    this.translateBeforeCurrentOperation = {
       x: this.draggedElm.translate!.x,
       y: this.draggedElm.translate!.y,
     };
@@ -592,11 +592,24 @@ class Draggable
       return;
     }
 
-    this.draggedElm.currentTop = this.occupiedOffset.currentTop;
-    this.draggedElm.currentLeft = this.occupiedOffset.currentLeft;
+    this.draggedElm.resetIndicators(
+      {
+        x: this.offsetBeforeCurrentOperation.currentLeft,
+        y: this.offsetBeforeCurrentOperation.currentTop,
+      },
+      {
+        x: this.translateBeforeCurrentOperation.x,
+        y: this.translateBeforeCurrentOperation.y,
+      }
+    );
 
-    this.draggedElm.translate!.x = this.occupiedTranslate.x;
-    this.draggedElm.translate!.y = this.occupiedTranslate.y;
+    // // @ts-expect-error
+    // this.draggedElm.currentTop = this.offsetBeforeCurrentOperation.currentTop;
+    // // @ts-expect-error
+    // this.draggedElm.currentLeft = this.offsetBeforeCurrentOperation.currentLeft;
+
+    // this.draggedElm.translate!.x = this.occupiedTranslate.x;
+    // this.draggedElm.translate!.y = this.occupiedTranslate.y;
 
     this.draggedElm.transformElm();
 

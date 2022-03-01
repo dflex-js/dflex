@@ -10,6 +10,7 @@ import type {
   Rect,
   TransitionHistory,
   CoreInput,
+  Coordinates,
 } from "./types";
 
 class CoreInstance
@@ -20,6 +21,8 @@ class CoreInstance
 
   /** Store history of Y-transition according to unique ID. */
   translateHistory?: AxesCoordinates<TransitionHistory>;
+
+  currentPosition?: AxesCoordinates;
 
   currentTop?: number;
 
@@ -83,8 +86,18 @@ class CoreInstance
       top: top + scrollY,
     };
 
+    this.currentPosition = new AxesCoordinates(left, top);
+
     this.currentTop = this.offset.top;
     this.currentLeft = this.offset.left;
+
+    // if (this.currentPosition!.x !== this.currentLeft) {
+    //   throw new Error("currentPosition.x !== currentLeft");
+    // }
+
+    // if (this.currentPosition!.y !== this.currentTop) {
+    //   throw new Error("currentPosition.y !== currentTop");
+    // }
 
     this.hasToTransform = false;
   }
@@ -120,18 +133,23 @@ class CoreInstance
      * This offset related directly to translate Y and Y. It's isolated from
      * element current offset and effects only top and left.
      */
+    this.currentPosition!.setAxes(
+      left + this.translate!.x,
+      top + this.translate!.y
+    );
+
     this.currentTop = top + this.translate!.y;
     this.currentLeft = left + this.translate!.x;
 
     if (!this.isVisible) this.hasToTransform = true;
   }
 
-  isPositionedUnder(elmCurrentOffsetTop: number) {
-    return elmCurrentOffsetTop < this.currentTop!;
+  isPositionedUnder(elmY: number) {
+    return elmY < this.currentTop!;
   }
 
-  isPositionedLeft(elmCurrentOffsetLeft: number) {
-    return elmCurrentOffsetLeft < this.currentLeft!;
+  isPositionedLeft(elmX: number) {
+    return elmX < this.currentLeft!;
   }
 
   transformElm() {
@@ -327,6 +345,21 @@ class CoreInstance
     this.updateDataset(newIndex);
 
     this.rollYBack(operationID, isForceTransform);
+  }
+
+  /**
+   * This is as rollYBack but for dragged element which is excluded form
+   * update/rollback mechanism.
+   * @param position
+   * @param translate
+   */
+  resetIndicators(position: Coordinates, translate: Coordinates) {
+    this.currentTop = position.y;
+    this.currentLeft = position.x;
+
+    this.translate!.setAxes(translate!.x, translate!.y);
+
+    this.currentPosition!.setAxes(position.x, position.y);
   }
 }
 

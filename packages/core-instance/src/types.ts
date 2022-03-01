@@ -82,11 +82,16 @@ export type TransitionHistory = {
   pre: number;
 }[];
 
+export interface Coordinates {
+  x: number;
+  y: number;
+}
+
 export interface CoreInstanceInterface extends AbstractCoreInterface {
   offset?: Rect;
   translateHistory?: AxesCoordinates<TransitionHistory>;
-  currentTop?: number;
-  currentLeft?: number;
+  readonly currentTop?: number;
+  readonly currentLeft?: number;
   order: Order;
   keys: Keys;
   depth: number;
@@ -110,4 +115,5 @@ export interface CoreInstanceInterface extends AbstractCoreInterface {
     siblingsHasEmptyElm?: number
   ): number;
   updateDataset(index: number): void;
+  resetIndicators(position: Coordinates, translate: Coordinates): void;
 }
