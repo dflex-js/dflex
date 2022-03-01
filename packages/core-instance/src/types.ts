@@ -2,20 +2,6 @@
 
 import { AxesCoordinates } from "@dflex/utils";
 
-// interface AbsCoreEssential {
-//   id: string;
-// }
-
-// interface AbsCoreWithRef {
-//   isInitialized: boolean;
-//   ref: HTMLElement;
-// }
-
-// interface AbsCoreWithoutRef {
-//   isInitialized: false;
-//   ref: undefined;
-// }
-
 export type AbstractCoreInput = {
   id: string;
   isInitialized: boolean;
