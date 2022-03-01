@@ -212,8 +212,8 @@ class Draggable
     };
 
     this.occupiedTranslate = {
-      x: this.draggedElm.translate!.x,
-      y: this.draggedElm.translate!.y,
+      x: this.draggedElm.translate.x,
+      y: this.draggedElm.translate.y,
     };
 
     /**
@@ -541,8 +541,8 @@ class Draggable
 
   private hasMoved() {
     return (
-      this.draggedElm.translate!.x !== this.tempTranslate.x ||
-      this.draggedElm.translate!.y !== this.tempTranslate.y
+      this.draggedElm.translate.x !== this.tempTranslate.x ||
+      this.draggedElm.translate.y !== this.tempTranslate.y
     );
   }
 
@@ -613,8 +613,8 @@ class Draggable
       this.occupiedOffset.currentTop
     );
 
-    this.draggedElm.translate!.x = this.occupiedTranslate.x;
-    this.draggedElm.translate!.y = this.occupiedTranslate.y;
+    this.draggedElm.translate.x = this.occupiedTranslate.x;
+    this.draggedElm.translate.y = this.occupiedTranslate.y;
 
     this.draggedElm.transformElm();
 

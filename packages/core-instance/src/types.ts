@@ -26,11 +26,10 @@ export interface AbstractCoreInterface {
   id: string;
   isPaused: boolean;
   isInitialized: boolean;
-  translate?: AxesCoordinates;
+  translate: AxesCoordinates;
   initTranslate(): void;
   attach(ref: HTMLElement | null): void;
   detach(): void;
-  hasValidRef(): void;
 }
 
 export type ELmBranch = string | string[];

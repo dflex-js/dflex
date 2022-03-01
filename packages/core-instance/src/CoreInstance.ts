@@ -120,9 +120,9 @@ class CoreInstance
   }
 
   private updateCurrentIndicators(leftSpace: number, topSpace: number) {
-    this.translate!.setAxes(
-      this.translate!.x + leftSpace,
-      this.translate!.y + topSpace
+    this.translate.setAxes(
+      this.translate.x + leftSpace,
+      this.translate.y + topSpace
     );
 
     const { left, top } = this.offset!;
@@ -132,12 +132,12 @@ class CoreInstance
      * element current offset and effects only top and left.
      */
     this.currentPosition!.setAxes(
-      left + this.translate!.x,
-      top + this.translate!.y
+      left + this.translate.x,
+      top + this.translate.y
     );
 
-    this.currentTop = top + this.translate!.y;
-    this.currentLeft = left + this.translate!.x;
+    this.currentTop = top + this.translate.y;
+    this.currentLeft = left + this.translate.x;
 
     if (!this.isVisible) this.hasToTransform = true;
   }
@@ -156,9 +156,7 @@ class CoreInstance
     }
 
     this.animatedFrame = window.requestAnimationFrame(() => {
-      this.ref!.style.transform = `translate3d(${this.translate!.x}px,${
-        this.translate!.y
-      }px, 0)`;
+      this.ref!.style.transform = `translate3d(${this.translate.x}px,${this.translate.y}px, 0)`;
       this.animatedFrame = null;
     });
   }
@@ -244,13 +242,13 @@ class CoreInstance
     if (operationID) {
       const historyY = {
         ID: operationID,
-        pre: this.translate!.y,
+        pre: this.translate.y,
       };
 
       if (!this.translateHistory) {
         const historyX = {
           ID: operationID,
-          pre: this.translate!.x,
+          pre: this.translate.x,
         };
 
         this.translateHistory = new AxesCoordinates([historyX], [historyY]);
@@ -331,7 +329,7 @@ class CoreInstance
 
     const { pre } = this.translateHistory!.y.pop()!;
 
-    const topSpace = pre - this.translate!.y;
+    const topSpace = pre - this.translate.y;
 
     const increment = topSpace > 0 ? 1 : -1;
 

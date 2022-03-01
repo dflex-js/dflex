@@ -7,7 +7,7 @@ class AbstractCoreInstance implements AbstractCoreInterface {
 
   id: string;
 
-  translate?: AxesCoordinates;
+  translate!: AxesCoordinates;
 
   isInitialized: boolean;
 
@@ -36,10 +36,6 @@ class AbstractCoreInstance implements AbstractCoreInterface {
     if (!this.isPaused) {
       this.initTranslate();
     }
-  }
-
-  hasValidRef() {
-    return this.isInitialized && this.ref !== null && this.ref.isConnected;
   }
 
   attach(incomingRef: HTMLElement | null) {

@@ -26,8 +26,8 @@ describe("Draggable Only Package", () => {
     let draggable: Draggable;
 
     beforeAll(() => {
-      EXPECTED_TRANSLATE_X_R1 = store.registry[elmInstance1.id].translate!.x;
-      EXPECTED_TRANSLATE_Y_R1 = store.registry[elmInstance1.id].translate!.y;
+      EXPECTED_TRANSLATE_X_R1 = store.registry[elmInstance1.id].translate.x;
+      EXPECTED_TRANSLATE_Y_R1 = store.registry[elmInstance1.id].translate.y;
 
       EXPECTED_OFFSET_X_R1 = -START_CLIENT_X_R1 + EXPECTED_TRANSLATE_X_R1;
       EXPECTED_OFFSET_Y_R1 = -START_CLIENT_Y_R1 + EXPECTED_TRANSLATE_Y_R1;
