@@ -97,7 +97,6 @@ class CoreInstance
     // if (this.currentPosition!.y !== this.currentTop) {
     //   throw new Error("currentPosition.y !== currentTop");
     // }
-
     this.hasToTransform = false;
   }
 
