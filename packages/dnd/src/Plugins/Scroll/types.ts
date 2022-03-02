@@ -1,4 +1,4 @@
-import { Rect } from "packages/core-instance/src/types";
+import type { Rect } from "@dflex/utils";
 import type { ThresholdInterface } from "../Threshold";
 
 export interface ScrollInput {

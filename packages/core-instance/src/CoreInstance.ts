@@ -1,16 +1,16 @@
 /* eslint-disable no-param-reassign */
 import { AxesCoordinates } from "@dflex/utils";
 
+import type { Rect } from "@dflex/utils";
 import AbstractInstance from "./AbstractInstance";
 
 import type {
   Keys,
   Order,
-  CoreInstanceInterface,
-  Rect,
   TransitionHistory,
   CoreInput,
   AbstractOpts,
+  CoreInstanceInterface,
 } from "./types";
 
 class CoreInstance extends AbstractInstance implements CoreInstanceInterface {

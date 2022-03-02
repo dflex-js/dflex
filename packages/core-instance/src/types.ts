@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
-
 import { AxesCoordinates } from "@dflex/utils";
+import type { Rect } from "@dflex/utils";
 
 export interface AbstractOpts {
   isInitialized: boolean;
@@ -50,7 +49,7 @@ export interface Pointer {
   order: Order;
 }
 
-interface CoreEssential {
+export interface CoreInput extends AbstractInput {
   order: Order;
   keys: Keys;
   depth: number;
@@ -58,24 +57,10 @@ interface CoreEssential {
   scrollY: number;
 }
 
-export type CoreInput = CoreEssential & AbstractInput;
-
-export interface Rect {
-  height: number;
-  width: number;
-  left: number;
-  top: number;
-}
-
 export type TransitionHistory = {
   ID: string;
   pre: number;
 }[];
-
-export interface Coordinates {
-  x: number;
-  y: number;
-}
 
 export interface CoreInstanceInterface extends AbstractInterface {
   isVisible: boolean;
