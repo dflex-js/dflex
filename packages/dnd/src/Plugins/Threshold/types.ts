@@ -1,4 +1,4 @@
-import { Rect } from "packages/core-instance/src/types";
+import type { Rect } from "@dflex/utils";
 
 export interface ThresholdPercentages {
   /** vertical threshold in percentage from 0-100 */

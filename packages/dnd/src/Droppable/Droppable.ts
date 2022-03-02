@@ -194,7 +194,6 @@ class Droppable extends DistanceCalculator {
         const element = store.registry[id];
 
         if (element && element.offset) {
-          // @ts-expect-error Checking for offset availability means current is valid
           if (element) ({ currentTop, currentLeft } = element);
         }
       }

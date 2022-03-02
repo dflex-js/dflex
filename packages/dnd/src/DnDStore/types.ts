@@ -1,4 +1,5 @@
-import type { CoreInstanceInterface, Rect } from "@dflex/core-instance";
+import type { Rect } from "@dflex/utils";
+import type { CoreInstanceInterface } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
 import type { RegisterInputMeta } from "@dflex/store";
 
