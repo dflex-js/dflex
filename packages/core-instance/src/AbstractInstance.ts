@@ -16,8 +16,8 @@ class AbstractInstance implements AbstractInterface {
   constructor({ ref, id }: AbstractInput, opts: AbstractOpts) {
     this.id = id;
 
-    if (opts.isInitialized && ref) {
-      this.attach(ref);
+    if (opts.isInitialized) {
+      this.attach(ref || null);
 
       this.isPaused = opts.isPaused;
 
