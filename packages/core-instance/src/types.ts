@@ -22,8 +22,6 @@ export interface AbstractInterface {
   initTranslate(): void;
 }
 
-type ELmBranch = string | string[];
-
 /**
  * Element unique keys in DOM tree.
  */
@@ -78,7 +76,7 @@ export interface CoreInstanceInterface extends AbstractInterface {
   resume(scrollX: number, scrollY: number): void;
   changeVisibility(isVisible: boolean): void;
   setYPosition(
-    iDsInOrder: ELmBranch,
+    iDsInOrder: string[],
     sign: 1 | -1,
     topSpace: number,
     operationID: string,
