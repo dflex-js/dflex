@@ -10,11 +10,10 @@ import type {
   Rect,
   TransitionHistory,
   CoreInput,
+  AbstractOpts,
 } from "./types";
 
 class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
-  isPaused: boolean;
-
   offset!: Rect;
 
   /** Store history of Y-transition according to unique ID. */
@@ -38,23 +37,19 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
   animatedFrame: number | null;
 
-  constructor(
-    elementWithPointer: CoreInput,
-    { isPaused }: { isPaused: boolean }
-  ) {
+  constructor(elementWithPointer: CoreInput, opts: AbstractOpts) {
     const { order, keys, depth, scrollX, scrollY, ...element } =
       elementWithPointer;
 
-    super(element);
+    super(element, opts);
 
-    this.isPaused = isPaused;
     this.order = order;
     this.keys = keys;
     this.depth = depth;
 
-    this.isVisible = element.isInitialized && !this.isPaused;
+    this.isVisible = this.isInitialized && !this.isPaused;
 
-    if (element.isInitialized) {
+    if (this.isInitialized) {
       this.updateDataset(this.order.self);
     }
 
@@ -95,24 +90,6 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     this.currentLeft = this.offset.left;
 
     this.hasToTransform = false;
-  }
-
-  initTranslate() {
-    /**
-     * Since element render once and being transformed later we keep the data
-     * stored to navigate correctly.
-     *
-     * If it's already initiated we don't need to do it again.
-     * Reason: You may detach ref set flag to false and then attach it again. Do
-     * you want to start from zero or maintain the last position.
-     *
-     * Continuity is fundamental in DFlex, please keep that in your mind.
-     */
-    if (!this.translate) {
-      this.translate = new AxesCoordinates(0, 0);
-    }
-
-    this.isPaused = false;
   }
 
   resume(scrollX: number, scrollY: number) {

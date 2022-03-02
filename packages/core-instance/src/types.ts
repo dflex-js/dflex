@@ -2,19 +2,25 @@
 
 import { AxesCoordinates } from "@dflex/utils";
 
-export type AbstractCoreInput = {
-  id: string;
+export interface AbstractOpts {
   isInitialized: boolean;
+  isPaused: boolean;
+}
+
+export type AbstractInput = {
+  id: string;
   ref?: HTMLElement;
 };
 
 export interface AbstractInterface {
+  isInitialized: boolean;
+  isPaused: boolean;
   ref: HTMLElement | null;
   id: string;
-  isInitialized: boolean;
   translate: AxesCoordinates;
   attach(ref: HTMLElement | null): void;
   detach(): void;
+  initTranslate(): void;
 }
 
 export type ELmBranch = string | string[];
@@ -52,7 +58,7 @@ export interface CoreEssential {
   scrollY: number;
 }
 
-export type CoreInput = CoreEssential & AbstractCoreInput;
+export type CoreInput = CoreEssential & AbstractInput;
 
 export interface Rect {
   height: number;
@@ -72,7 +78,6 @@ export interface Coordinates {
 }
 
 export interface CoreInstanceInterface extends AbstractInterface {
-  isPaused: boolean;
   isVisible: boolean;
   offset: Rect;
   translateHistory?: AxesCoordinates<TransitionHistory>;
@@ -85,7 +90,6 @@ export interface CoreInstanceInterface extends AbstractInterface {
   animatedFrame: number | null;
   isPositionedUnder(elmY: number): boolean;
   isPositionedLeft(elmX: number): boolean;
-  initTranslate(): void;
   resume(scrollX: number, scrollY: number): void;
   changeVisibility(isVisible: boolean): void;
   setYPosition(

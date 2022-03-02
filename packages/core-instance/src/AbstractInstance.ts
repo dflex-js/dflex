@@ -1,6 +1,6 @@
 import { AxesCoordinates } from "@dflex/utils";
 
-import type { AbstractInterface, AbstractCoreInput } from "./types";
+import type { AbstractInterface, AbstractInput, AbstractOpts } from "./types";
 
 class AbstractInstance implements AbstractInterface {
   ref!: HTMLElement | null;
@@ -9,24 +9,29 @@ class AbstractInstance implements AbstractInterface {
 
   translate!: AxesCoordinates;
 
-  isInitialized: boolean;
+  isInitialized!: boolean;
 
-  /**
-   * Creates an instance of AbstractCoreInstance.
-   */
-  constructor({ ref, id, isInitialized }: AbstractCoreInput) {
+  isPaused!: boolean;
+
+  constructor({ ref, id }: AbstractInput, opts: AbstractOpts) {
     this.id = id;
 
-    this.isInitialized = isInitialized;
-
-    if (this.isInitialized && ref) {
+    if (opts.isInitialized && ref) {
       this.attach(ref);
+
+      if (!opts.isPaused) {
+        this.initTranslate();
+
+        return;
+      }
 
       return;
     }
 
+    // Initialize the instance to nullish values.
     this.ref = null;
     this.isInitialized = false;
+    this.isPaused = true;
   }
 
   attach(incomingRef: HTMLElement | null) {
@@ -52,6 +57,14 @@ class AbstractInstance implements AbstractInterface {
   detach() {
     this.isInitialized = false;
     this.ref = null;
+  }
+
+  initTranslate() {
+    if (!this.translate) {
+      this.translate = new AxesCoordinates(0, 0);
+    }
+
+    this.isPaused = false;
   }
 }
 
