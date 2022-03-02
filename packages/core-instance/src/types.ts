@@ -23,7 +23,7 @@ export interface AbstractInterface {
   initTranslate(): void;
 }
 
-export type ELmBranch = string | string[];
+type ELmBranch = string | string[];
 
 /**
  * Element unique keys in DOM tree.
@@ -50,7 +50,7 @@ export interface Pointer {
   order: Order;
 }
 
-export interface CoreEssential {
+interface CoreEssential {
   order: Order;
   keys: Keys;
   depth: number;
@@ -82,8 +82,8 @@ export interface CoreInstanceInterface extends AbstractInterface {
   offset: Rect;
   translateHistory?: AxesCoordinates<TransitionHistory>;
   currentPosition?: AxesCoordinates;
-  readonly currentTop?: number;
-  readonly currentLeft?: number;
+  readonly currentTop: number;
+  readonly currentLeft: number;
   order: Order;
   keys: Keys;
   depth: number;

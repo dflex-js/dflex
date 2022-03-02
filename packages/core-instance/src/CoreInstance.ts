@@ -21,9 +21,9 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
   currentPosition?: AxesCoordinates;
 
-  currentTop?: number;
+  currentTop!: number;
 
-  currentLeft?: number;
+  currentLeft!: number;
 
   order: Order;
 
