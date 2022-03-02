@@ -54,7 +54,6 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     }
 
     if (!this.isPaused) {
-      this.initTranslate();
       this.initIndicators(scrollX, scrollY);
     }
 
