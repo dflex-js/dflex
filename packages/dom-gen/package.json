@@ -1,6 +1,6 @@
 {
   "name": "@dflex/dom-gen",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Jalal Maskoun",
