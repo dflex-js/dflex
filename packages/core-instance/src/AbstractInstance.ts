@@ -1,13 +1,9 @@
-import { AxesCoordinates } from "@dflex/utils";
-
 import type { AbstractInterface, AbstractCoreInput } from "./types";
 
 class AbstractInstance implements AbstractInterface {
   ref!: HTMLElement | null;
 
   id: string;
-
-  translate!: AxesCoordinates;
 
   isInitialized: boolean;
 

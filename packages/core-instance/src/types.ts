@@ -12,7 +12,6 @@ export interface AbstractInterface {
   ref: HTMLElement | null;
   id: string;
   isInitialized: boolean;
-  translate: AxesCoordinates;
   attach(ref: HTMLElement | null): void;
   detach(): void;
 }
