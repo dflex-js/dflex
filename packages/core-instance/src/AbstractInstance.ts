@@ -15,15 +15,16 @@ class AbstractInstance implements AbstractInterface {
 
   constructor({ ref, id }: AbstractInput, opts: AbstractOpts) {
     this.id = id;
+    this.isPaused = opts.isPaused;
 
     if (opts.isInitialized && ref) {
       this.attach(ref);
 
-      if (!opts.isPaused) {
-        this.initTranslate();
+      return;
+    }
 
-        return;
-      }
+    if (!this.isPaused) {
+      this.initTranslate();
 
       return;
     }
@@ -31,7 +32,6 @@ class AbstractInstance implements AbstractInterface {
     // Initialize the instance to nullish values.
     this.ref = null;
     this.isInitialized = false;
-    this.isPaused = true;
   }
 
   attach(incomingRef: HTMLElement | null) {
