@@ -17,6 +17,8 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
   offset!: Rect;
 
+  translate!: AxesCoordinates;
+
   /** Store history of Y-transition according to unique ID. */
   translateHistory?: AxesCoordinates<TransitionHistory>;
 
@@ -38,16 +40,13 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
   animatedFrame: number | null;
 
-  constructor(
-    elementWithPointer: CoreInput,
-    { isPaused }: { isPaused: boolean }
-  ) {
+  constructor(elementWithPointer: CoreInput, opts: { isPaused: boolean }) {
     const { order, keys, depth, scrollX, scrollY, ...element } =
       elementWithPointer;
 
     super(element);
 
-    this.isPaused = isPaused;
+    this.isPaused = opts.isPaused;
     this.order = order;
     this.keys = keys;
     this.depth = depth;
