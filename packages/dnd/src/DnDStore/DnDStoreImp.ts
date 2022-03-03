@@ -158,11 +158,11 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
     if (allowDynamicVisibility) {
       isVisibleY = scroll.isElementVisibleViewportY(
-        this.registry[elmID].currentTop!
+        this.registry[elmID].currentPosition.y
       );
 
       isVisibleX = scroll.isElementVisibleViewportX(
-        this.registry[elmID].currentLeft!
+        this.registry[elmID].currentPosition.x
       );
 
       isVisible = isVisibleY && isVisibleX;

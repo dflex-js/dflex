@@ -140,8 +140,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
   private calculateDistance(element: CoreInstanceInterface, axes: Axes) {
     const {
-      currentLeft: elmLeft,
-      currentTop: elmTop,
+      currentPosition: elmPosition,
       offset: { height: elmHight, width: elmWidth },
     } = element;
 
@@ -160,7 +159,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
       this.setDistanceIndicators(
         {
           dragged: draggedTop,
-          element: elmTop!,
+          element: elmPosition.y,
         },
         {
           dragged: draggedHight,
@@ -175,7 +174,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     this.setDistanceIndicators(
       {
         dragged: draggedLeft,
-        element: elmLeft!,
+        element: elmPosition.x,
       },
       {
         dragged: draggedWidth,
@@ -226,16 +225,15 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
       const {
         offset: { width, height },
-        currentLeft,
-        currentTop,
+        currentPosition: { x, y },
       } = element;
 
       this.draggable.threshold.updateElementThresholdMatrix(
         {
           width,
           height,
-          left: currentLeft!,
-          top: currentTop!,
+          left: x,
+          top: y,
         },
         false
       );
@@ -243,9 +241,9 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
     emitInteractiveEvent("onDragOver", element);
 
-    const { currentLeft: elmLeft, currentTop: elmTop } = element;
+    const { currentPosition } = element;
 
-    this.updateOccupiedOffset(elmTop!, elmLeft!);
+    this.updateOccupiedOffset(currentPosition.y, currentPosition.x);
 
     this.updateOccupiedTranslate(enforceDraggedDirection);
 
