@@ -33,6 +33,11 @@ class AbstractInstance implements AbstractInterface {
     this.isPaused = true;
   }
 
+  /**
+   * Attach element DOM node to the instance.
+   *
+   * @param incomingRef
+   */
   attach(incomingRef: HTMLElement | null) {
     // Cleanup.
     this.ref = null;
@@ -53,11 +58,18 @@ class AbstractInstance implements AbstractInterface {
     this.isInitialized = true;
   }
 
+  /**
+   * Detach element DOM node from the instance.
+   */
   detach() {
     this.isInitialized = false;
     this.ref = null;
   }
 
+  /**
+   * Initialize the translate AxesCoordinates as part of abstract instance and
+   * necessary for darg only movement.
+   */
   initTranslate() {
     if (!this.translate) {
       this.translate = new AxesCoordinates(0, 0);

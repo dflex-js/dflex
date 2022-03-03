@@ -4,3 +4,11 @@ export interface Rect {
   readonly left: number;
   readonly top: number;
 }
+
+export type Direction = 1 | -1;
+
+/** How the element movement effects the siblings direction */
+export interface EffectedElemDirection {
+  x: Direction;
+  y: Direction;
+}

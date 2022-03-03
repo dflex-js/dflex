@@ -1,5 +1,5 @@
 import { AxesCoordinates } from "@dflex/utils";
-import type { Rect } from "@dflex/utils";
+import type { Rect, Direction, EffectedElemDirection } from "@dflex/utils";
 
 export interface AbstractOpts {
   isInitialized: boolean;
@@ -73,12 +73,12 @@ export interface CoreInstanceInterface extends AbstractInterface {
   isPositionedLeft(elmX: number): boolean;
   resume(scrollX: number, scrollY: number): void;
   changeVisibility(isVisible: boolean): void;
-  setYPosition(
+  setPosition(
     iDsInOrder: string[],
-    sign: 1 | -1,
-    topSpace: number,
+    effectedElemDirection: EffectedElemDirection,
+    elmSpace: AxesCoordinates,
     operationID: string,
-    siblingsHasEmptyElm?: number,
+    siblingsEmptyElmIndex: AxesCoordinates,
     vIncrement?: number,
     isShuffle?: boolean
   ): number;
@@ -90,5 +90,5 @@ export interface CoreInstanceInterface extends AbstractInterface {
     siblingsHasEmptyElm?: number
   ): number;
   updateDataset(index: number): void;
-  rollYBack(operationID: string, isForceTransform: boolean): void;
+  rollBack(operationID: string, isForceTransform: boolean): void;
 }

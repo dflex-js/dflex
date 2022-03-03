@@ -1,11 +1,10 @@
 class AxesCoordinates<T = number> {
-  x: T;
+  x!: T;
 
-  y: T;
+  y!: T;
 
   constructor(x: T, y: T) {
-    this.x = x;
-    this.y = y;
+    this.setAxes(x, y);
   }
 
   setAxes(x: T, y: T) {
