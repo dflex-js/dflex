@@ -194,7 +194,8 @@ class Droppable extends DistanceCalculator {
         const element = store.registry[id];
 
         if (element && element.offset) {
-          if (element) ({ currentTop, currentLeft } = element);
+          currentTop = element.currentPosition.y;
+          currentLeft = element.currentPosition.x;
         }
       }
     }

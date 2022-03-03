@@ -64,9 +64,7 @@ export interface CoreInstanceInterface extends AbstractInterface {
   isVisible: boolean;
   offset: Rect;
   translateHistory?: AxesCoordinates<TransitionHistory>;
-  currentPosition?: AxesCoordinates;
-  readonly currentTop: number;
-  readonly currentLeft: number;
+  currentPosition: AxesCoordinates;
   order: Order;
   keys: Keys;
   depth: number;

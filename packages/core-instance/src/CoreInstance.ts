@@ -19,11 +19,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
   /** Store history of Y-transition according to unique ID. */
   translateHistory?: AxesCoordinates<TransitionHistory>;
 
-  currentPosition?: AxesCoordinates;
-
-  currentTop!: number;
-
-  currentLeft!: number;
+  currentPosition!: AxesCoordinates;
 
   order: Order;
 
@@ -83,10 +79,10 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
       top: top + scrollY,
     };
 
-    this.currentPosition = new AxesCoordinates(left, top);
-
-    this.currentTop = this.offset.top;
-    this.currentLeft = this.offset.left;
+    this.currentPosition = new AxesCoordinates(
+      this.offset.left,
+      this.offset.top
+    );
 
     this.hasToTransform = false;
   }
@@ -127,18 +123,15 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
       top + this.translate.y
     );
 
-    this.currentTop = top + this.translate.y;
-    this.currentLeft = left + this.translate.x;
-
     if (!this.isVisible) this.hasToTransform = true;
   }
 
   isPositionedUnder(elmY: number) {
-    return elmY < this.currentTop!;
+    return elmY < this.currentPosition.y;
   }
 
   isPositionedLeft(elmX: number) {
-    return elmX < this.currentLeft!;
+    return elmX < this.currentPosition.x;
   }
 
   transformElm() {

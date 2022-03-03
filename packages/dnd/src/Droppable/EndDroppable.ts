@@ -162,7 +162,7 @@ class EndDroppable extends Droppable {
 
     const element = store.registry[id];
 
-    return Math.floor(top) === Math.floor(element.currentTop!);
+    return Math.floor(top) === Math.floor(element.currentPosition.y);
   }
 
   endDragging() {

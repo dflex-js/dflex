@@ -105,12 +105,12 @@ class Draggable
     this.changeToFixedStyleProps = [
       {
         prop: "top",
-        dragValue: `${this.draggedElm.currentTop}px`,
+        dragValue: `${this.draggedElm.currentPosition.y}px`,
         afterDragValue: "",
       },
       {
         prop: "left",
-        dragValue: `${this.draggedElm.currentLeft}px`,
+        dragValue: `${this.draggedElm.currentPosition.x}px`,
         afterDragValue: "",
       },
       {
@@ -146,12 +146,11 @@ class Draggable
 
     const {
       offset: { width, height },
-      currentLeft,
-      currentTop,
+      currentPosition,
     } = this.draggedElm;
 
     this.threshold.updateElementThresholdMatrix(
-      { width, height, left: currentLeft!, top: currentTop! },
+      { width, height, left: currentPosition.x, top: currentPosition.y },
       false
     );
 
@@ -190,8 +189,8 @@ class Draggable
     this.initY = y;
     this.initX = x;
 
-    this.innerOffsetX = Math.round(x - this.draggedElm.currentLeft!);
-    this.innerOffsetY = Math.round(y - this.draggedElm.currentTop!);
+    this.innerOffsetX = Math.round(x - this.draggedElm.currentPosition.x);
+    this.innerOffsetY = Math.round(y - this.draggedElm.currentPosition.y);
 
     const style = window.getComputedStyle(this.draggedElm.ref!);
 
@@ -201,13 +200,13 @@ class Draggable
     this.marginX = rm + lm;
 
     this.tempOffset = {
-      currentLeft: this.draggedElm.currentLeft!,
-      currentTop: this.draggedElm.currentTop!,
+      currentLeft: this.draggedElm.currentPosition.x,
+      currentTop: this.draggedElm.currentPosition.y,
     };
 
     this.occupiedOffset = {
-      currentLeft: this.draggedElm.currentLeft!,
-      currentTop: this.draggedElm.currentTop!,
+      currentLeft: this.draggedElm.currentPosition.x,
+      currentTop: this.draggedElm.currentPosition.y,
     };
 
     this.occupiedTranslate = {
@@ -387,8 +386,8 @@ class Draggable
         );
         filteredY = this.axesYFilter(
           y,
-          this.draggedElm.currentTop!,
-          this.draggedElm.currentTop! + this.draggedElm.offset.height,
+          this.draggedElm.currentPosition.y,
+          this.draggedElm.currentPosition.y + this.draggedElm.offset.height,
           this.restrictions.self.allowLeavingFromTop,
           this.restrictions.self.allowLeavingFromBottom,
           false
