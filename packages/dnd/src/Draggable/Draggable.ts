@@ -414,8 +414,10 @@ class Draggable
     /**
      * Every time we got new translate, offset should be updated
      */
-    this.tempOffset.x = filteredX - this.innerOffset.x;
-    this.tempOffset.y = filteredY - this.innerOffset.y;
+    this.tempOffset.setAxes(
+      filteredX - this.innerOffset.x,
+      filteredY - this.innerOffset.y
+    );
   }
 
   private isOutThresholdH($: ThresholdMatrix) {
