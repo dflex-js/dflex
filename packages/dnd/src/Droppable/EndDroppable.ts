@@ -1,11 +1,10 @@
-/* eslint-disable  */
+/* eslint-disable no-param-reassign */
 import type { ELmBranch } from "@dflex/dom-gen";
 
 import store from "../DnDStore";
 import Droppable, { isIDEligible } from "./Droppable";
 
 import type { DraggableDnDInterface } from "../Draggable";
-import { Axes } from "@dflex/utils";
 
 class EndDroppable extends Droppable {
   private spliceAt: number;

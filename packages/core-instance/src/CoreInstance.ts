@@ -302,20 +302,24 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
   }
 
   /**
-   * Roll back element position vertically(y).
+   * Roll back element position.
    *
-   * @param operationID -
+   * @param operationID
+   * @param isForceTransform
+   * @param axes
    */
   rollBack(operationID: string, isForceTransform: boolean, axes: Axes) {
     if (
-      this.translateHistory![axes].length === 0 ||
-      this.translateHistory![axes][this.translateHistory![axes].length - 1]
-        .ID !== operationID
+      !this.translateHistory ||
+      !this.translateHistory[axes] ||
+      this.translateHistory[axes].length === 0 ||
+      this.translateHistory[axes][this.translateHistory[axes].length - 1].ID !==
+        operationID
     ) {
       return;
     }
 
-    const lastMovement = this.translateHistory![axes].pop();
+    const lastMovement = this.translateHistory[axes].pop();
 
     if (!lastMovement) return;
 
