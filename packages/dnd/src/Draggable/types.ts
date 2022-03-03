@@ -1,3 +1,4 @@
+import { AxesCoordinates } from "@dflex/utils";
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 import type { AbstractDraggableInterface, Coordinates } from "@dflex/draggable";
 
@@ -44,7 +45,7 @@ export interface DraggableDnDInterface
   tempOffset: TempOffset;
   occupiedOffset: TempOffset;
   occupiedTranslate: Coordinates;
-  prevY: number;
+  mousePoints: AxesCoordinates;
   numberOfElementsTransformed: number;
   isMovingDown: boolean;
   isOutPositionHorizontally: boolean;

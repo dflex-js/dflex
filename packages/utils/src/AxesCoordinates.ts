@@ -11,6 +11,10 @@ class AxesCoordinates<T = number> {
     this.x = x;
     this.y = y;
   }
+
+  clone(target: AxesCoordinates<T>) {
+    this.setAxes(target.x, target.y);
+  }
 }
 
 export default AxesCoordinates;

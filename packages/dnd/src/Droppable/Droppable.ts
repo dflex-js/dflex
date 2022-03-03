@@ -484,7 +484,7 @@ class Droppable extends DistanceCalculator {
        * coming element inside we need new value so we can assign isMoveDown
        * correctly.
        */
-      this.draggable.prevY = y;
+      this.draggable.mousePoints.y = y;
     }
 
     this.setDraggedPositionFlagInSiblingsContainer(false);

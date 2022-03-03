@@ -3,6 +3,7 @@ import type { DraggedStyle, Coordinates } from "@dflex/draggable";
 
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
+import { AxesCoordinates } from "@dflex/utils";
 import store from "../DnDStore";
 
 import type { DraggableDnDInterface, Restrictions, TempOffset } from "./types";
@@ -49,7 +50,7 @@ class Draggable
 
   readonly occupiedTranslate: Coordinates;
 
-  prevY: number;
+  mousePoints: AxesCoordinates;
 
   numberOfElementsTransformed: number;
 
@@ -217,7 +218,7 @@ class Draggable
     /**
      * previous X and Y are used to calculate mouse directions.
      */
-    this.prevY = y;
+    this.mousePoints = new AxesCoordinates(x, y);
 
     /**
      * It counts number of element that dragged has passed. This counter is
@@ -522,15 +523,12 @@ class Draggable
     );
   }
 
-  /**
-   * @param y -
-   */
   setDraggedMovingDown(y: number) {
-    if (this.prevY === y) return;
+    if (this.mousePoints.y === y) return;
 
-    this.isMovingDown = y > this.prevY;
+    this.isMovingDown = y > this.mousePoints.y;
 
-    this.prevY = y;
+    this.mousePoints.y = y;
   }
 
   incNumOfElementsTransformed(effectedElemDirection: number) {
