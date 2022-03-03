@@ -580,15 +580,8 @@ class Draggable
       return;
     }
 
-    this.draggedElm.currentPosition.setAxes(
-      this.occupiedOffset.x,
-      this.occupiedOffset.y
-    );
-
-    this.draggedElm.translate.setAxes(
-      this.occupiedTranslate.x,
-      this.occupiedTranslate.y
-    );
+    this.draggedElm.currentPosition.clone(this.occupiedOffset);
+    this.draggedElm.translate.clone(this.occupiedTranslate);
 
     this.draggedElm.transformElm();
 
