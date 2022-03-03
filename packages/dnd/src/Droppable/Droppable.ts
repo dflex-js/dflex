@@ -385,7 +385,7 @@ class Droppable extends DistanceCalculator {
        */
 
       // move element up if it's vertical or fill when it's horizontal.
-      this.setEffectedElemDirection(true, "y");
+      this.setEffectedElemDirection(true, this.axes);
 
       // lock the parent
       this.setDraggedPositionFlagInSiblingsContainer(true);
@@ -413,7 +413,7 @@ class Droppable extends DistanceCalculator {
         // Is is out parent?
 
         // move element up
-        this.setEffectedElemDirection(true, "y");
+        this.setEffectedElemDirection(true, this.axes);
 
         // lock the parent
         this.setDraggedPositionFlagInSiblingsContainer(true);
@@ -428,7 +428,7 @@ class Droppable extends DistanceCalculator {
        */
 
       // inside the list, effected should be related to mouse movement
-      this.setEffectedElemDirection(this.draggable.isMovingDown, "y");
+      this.setEffectedElemDirection(this.draggable.isMovingDown, this.axes);
 
       this.switchElement();
     }
