@@ -3,12 +3,10 @@
 exports[`Testing Store Package Returns element instance by element id 1`] = `
 CoreInstance {
   "animatedFrame": null,
-  "currentLeft": 0,
   "currentPosition": AxesCoordinates {
     "x": 0,
     "y": 0,
   },
-  "currentTop": 0,
   "depth": 0,
   "hasToTransform": false,
   "id": "id-0",
@@ -44,12 +42,10 @@ exports[`Testing Store Package Snaps shot registry 1`] = `
 Object {
   "id-0": CoreInstance {
     "animatedFrame": null,
-    "currentLeft": 0,
     "currentPosition": AxesCoordinates {
       "x": 0,
       "y": 0,
     },
-    "currentTop": 0,
     "depth": 0,
     "hasToTransform": false,
     "id": "id-0",
@@ -81,12 +77,10 @@ Object {
   },
   "id-1": CoreInstance {
     "animatedFrame": null,
-    "currentLeft": 0,
     "currentPosition": AxesCoordinates {
       "x": 0,
       "y": 0,
     },
-    "currentTop": 0,
     "depth": 0,
     "hasToTransform": false,
     "id": "id-1",
@@ -118,12 +112,10 @@ Object {
   },
   "id-2": CoreInstance {
     "animatedFrame": null,
-    "currentLeft": 0,
     "currentPosition": AxesCoordinates {
       "x": 0,
       "y": 0,
     },
-    "currentTop": 0,
     "depth": 0,
     "hasToTransform": false,
     "id": "id-2",
@@ -155,12 +147,10 @@ Object {
   },
   "p-id-0": CoreInstance {
     "animatedFrame": null,
-    "currentLeft": 0,
     "currentPosition": AxesCoordinates {
       "x": 0,
       "y": 0,
     },
-    "currentTop": 0,
     "depth": 1,
     "hasToTransform": false,
     "id": "p-id-0",
@@ -197,12 +187,10 @@ exports[`Testing Store Package Snaps shot registry after delete 1`] = `
 Object {
   "id-0": CoreInstance {
     "animatedFrame": null,
-    "currentLeft": 0,
     "currentPosition": AxesCoordinates {
       "x": 0,
       "y": 0,
     },
-    "currentTop": 0,
     "depth": 0,
     "hasToTransform": false,
     "id": "id-0",
@@ -234,12 +222,10 @@ Object {
   },
   "id-1": CoreInstance {
     "animatedFrame": null,
-    "currentLeft": 0,
     "currentPosition": AxesCoordinates {
       "x": 0,
       "y": 0,
     },
-    "currentTop": 0,
     "depth": 0,
     "hasToTransform": false,
     "id": "id-1",
@@ -271,12 +257,10 @@ Object {
   },
   "id-2": CoreInstance {
     "animatedFrame": null,
-    "currentLeft": 0,
     "currentPosition": AxesCoordinates {
       "x": 0,
       "y": 0,
     },
-    "currentTop": 0,
     "depth": 0,
     "hasToTransform": false,
     "id": "id-2",
@@ -308,12 +292,10 @@ Object {
   },
   "p-id-0": CoreInstance {
     "animatedFrame": null,
-    "currentLeft": 0,
     "currentPosition": AxesCoordinates {
       "x": 0,
       "y": 0,
     },
-    "currentTop": 0,
     "depth": 1,
     "hasToTransform": false,
     "id": "p-id-0",
