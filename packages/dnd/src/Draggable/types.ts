@@ -40,8 +40,7 @@ export interface DraggableDnDInterface
   isViewportRestricted: boolean;
   threshold: ThresholdInterface;
   layoutThresholds: SiblingsThresholdMatrix;
-  innerOffsetX: number;
-  innerOffsetY: number;
+  innerOffset: Coordinates;
   tempOffset: TempOffset;
   occupiedOffset: TempOffset;
   occupiedTranslate: Coordinates;

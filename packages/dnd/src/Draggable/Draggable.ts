@@ -40,9 +40,7 @@ class Draggable
 
   isViewportRestricted: boolean;
 
-  innerOffsetX: number;
-
-  innerOffsetY: number;
+  innerOffset: Coordinates;
 
   tempOffset: TempOffset;
 
@@ -52,9 +50,9 @@ class Draggable
 
   mousePoints: AxesCoordinates;
 
-  numberOfElementsTransformed: number;
-
   isMovingDown: boolean;
+
+  numberOfElementsTransformed: number;
 
   isOutPositionHorizontally: boolean;
 
@@ -190,8 +188,10 @@ class Draggable
     this.initY = y;
     this.initX = x;
 
-    this.innerOffsetX = Math.round(x - this.draggedElm.currentPosition.x);
-    this.innerOffsetY = Math.round(y - this.draggedElm.currentPosition.y);
+    this.innerOffset = new AxesCoordinates(
+      Math.round(x - this.draggedElm.currentPosition.x),
+      Math.round(y - this.draggedElm.currentPosition.y)
+    );
 
     const style = window.getComputedStyle(this.draggedElm.ref!);
 
@@ -268,18 +268,18 @@ class Draggable
     allowBottom: boolean,
     isRestrictedToThreshold: boolean // if not. Then to self.
   ) {
-    const currentTop = y - this.innerOffsetY;
+    const currentTop = y - this.innerOffset.y;
     const currentBottom = currentTop + this.draggedElm.offset.height;
 
     if (!allowTop && currentTop <= topThreshold) {
       return isRestrictedToThreshold
-        ? topThreshold + this.innerOffsetY
+        ? topThreshold + this.innerOffset.y
         : this.initY;
     }
 
     if (!allowBottom && currentBottom >= bottomThreshold) {
       return isRestrictedToThreshold
-        ? bottomThreshold + this.innerOffsetY - this.draggedElm.offset.height
+        ? bottomThreshold + this.innerOffset.y - this.draggedElm.offset.height
         : this.initY;
     }
 
@@ -294,19 +294,19 @@ class Draggable
     allowRight: boolean,
     restrictToThreshold: boolean // if not. Then to self.,
   ) {
-    const currentLeft = x - this.innerOffsetX;
+    const currentLeft = x - this.innerOffset.x;
     const currentRight = currentLeft + this.draggedElm.offset.width;
 
     if (!allowLeft && currentLeft <= leftThreshold) {
       return restrictToThreshold
-        ? leftThreshold + this.innerOffsetX
+        ? leftThreshold + this.innerOffset.x
         : this.initX;
     }
 
     if (!allowRight && currentRight + this.marginX >= rightThreshold) {
       return restrictToThreshold
         ? rightThreshold +
-            this.innerOffsetX -
+            this.innerOffset.x -
             this.draggedElm.offset.width -
             this.marginX
         : this.initX;
@@ -419,8 +419,8 @@ class Draggable
     /**
      * Every time we got new translate, offset should be updated
      */
-    this.tempOffset.currentLeft = filteredX - this.innerOffsetX;
-    this.tempOffset.currentTop = filteredY - this.innerOffsetY;
+    this.tempOffset.currentLeft = filteredX - this.innerOffset.x;
+    this.tempOffset.currentTop = filteredY - this.innerOffset.y;
   }
 
   private isOutThresholdH($: ThresholdMatrix) {

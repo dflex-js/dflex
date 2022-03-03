@@ -520,7 +520,7 @@ class Droppable extends DistanceCalculator {
 
     const draggedYShift = y + nextScrollTop - this.initialScrollY;
 
-    const currentTop = draggedYShift - this.draggable.innerOffsetY;
+    const currentTop = draggedYShift - this.draggable.innerOffset.y;
 
     const currentBottom = currentTop + this.draggable.draggedElm.offset.height;
 
@@ -559,7 +559,7 @@ class Droppable extends DistanceCalculator {
 
     const draggedXShift = x + nextScrollLeft - this.initialScrollX;
 
-    const currentLeft = draggedXShift - this.draggable.innerOffsetX;
+    const currentLeft = draggedXShift - this.draggable.innerOffset.x;
 
     const currentRight = currentLeft + this.draggable.draggedElm.offset.width;
 
