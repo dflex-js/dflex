@@ -3,9 +3,10 @@ import type { DraggedStyle, Coordinates } from "@dflex/draggable";
 
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
+import { AxesCoordinates } from "@dflex/utils";
 import store from "../DnDStore";
 
-import type { DraggableDnDInterface, Restrictions, TempOffset } from "./types";
+import type { DraggableDnDInterface, Restrictions } from "./types";
 
 import type {
   ScrollOptWithThreshold,
@@ -39,21 +40,19 @@ class Draggable
 
   isViewportRestricted: boolean;
 
-  innerOffsetX: number;
+  innerOffset: AxesCoordinates;
 
-  innerOffsetY: number;
+  tempOffset: AxesCoordinates;
 
-  tempOffset: TempOffset;
+  occupiedOffset: AxesCoordinates;
 
-  readonly occupiedOffset: TempOffset;
+  occupiedTranslate: AxesCoordinates;
 
-  readonly occupiedTranslate: Coordinates;
-
-  prevY: number;
-
-  numberOfElementsTransformed: number;
+  mousePoints: AxesCoordinates;
 
   isMovingDown: boolean;
+
+  numberOfElementsTransformed: number;
 
   isOutPositionHorizontally: boolean;
 
@@ -147,6 +146,7 @@ class Draggable
     const {
       offset: { width, height },
       currentPosition,
+      translate,
     } = this.draggedElm;
 
     this.threshold.updateElementThresholdMatrix(
@@ -189,8 +189,10 @@ class Draggable
     this.initY = y;
     this.initX = x;
 
-    this.innerOffsetX = Math.round(x - this.draggedElm.currentPosition.x);
-    this.innerOffsetY = Math.round(y - this.draggedElm.currentPosition.y);
+    this.innerOffset = new AxesCoordinates(
+      Math.round(x - this.draggedElm.currentPosition.x),
+      Math.round(y - this.draggedElm.currentPosition.y)
+    );
 
     const style = window.getComputedStyle(this.draggedElm.ref!);
 
@@ -199,25 +201,19 @@ class Draggable
     const lm = Math.round(parseFloat(style.marginLeft));
     this.marginX = rm + lm;
 
-    this.tempOffset = {
-      currentLeft: this.draggedElm.currentPosition.x,
-      currentTop: this.draggedElm.currentPosition.y,
-    };
+    this.tempOffset = new AxesCoordinates(currentPosition.x, currentPosition.y);
 
-    this.occupiedOffset = {
-      currentLeft: this.draggedElm.currentPosition.x,
-      currentTop: this.draggedElm.currentPosition.y,
-    };
+    this.occupiedOffset = new AxesCoordinates(
+      currentPosition.x,
+      currentPosition.y
+    );
 
-    this.occupiedTranslate = {
-      x: this.draggedElm.translate.x,
-      y: this.draggedElm.translate.y,
-    };
+    this.occupiedTranslate = new AxesCoordinates(translate.x, translate.y);
 
     /**
      * previous X and Y are used to calculate mouse directions.
      */
-    this.prevY = y;
+    this.mousePoints = new AxesCoordinates(x, y);
 
     /**
      * It counts number of element that dragged has passed. This counter is
@@ -267,18 +263,18 @@ class Draggable
     allowBottom: boolean,
     isRestrictedToThreshold: boolean // if not. Then to self.
   ) {
-    const currentTop = y - this.innerOffsetY;
+    const currentTop = y - this.innerOffset.y;
     const currentBottom = currentTop + this.draggedElm.offset.height;
 
     if (!allowTop && currentTop <= topThreshold) {
       return isRestrictedToThreshold
-        ? topThreshold + this.innerOffsetY
+        ? topThreshold + this.innerOffset.y
         : this.initY;
     }
 
     if (!allowBottom && currentBottom >= bottomThreshold) {
       return isRestrictedToThreshold
-        ? bottomThreshold + this.innerOffsetY - this.draggedElm.offset.height
+        ? bottomThreshold + this.innerOffset.y - this.draggedElm.offset.height
         : this.initY;
     }
 
@@ -293,19 +289,19 @@ class Draggable
     allowRight: boolean,
     restrictToThreshold: boolean // if not. Then to self.,
   ) {
-    const currentLeft = x - this.innerOffsetX;
+    const currentLeft = x - this.innerOffset.x;
     const currentRight = currentLeft + this.draggedElm.offset.width;
 
     if (!allowLeft && currentLeft <= leftThreshold) {
       return restrictToThreshold
-        ? leftThreshold + this.innerOffsetX
+        ? leftThreshold + this.innerOffset.x
         : this.initX;
     }
 
     if (!allowRight && currentRight + this.marginX >= rightThreshold) {
       return restrictToThreshold
         ? rightThreshold +
-            this.innerOffsetX -
+            this.innerOffset.x -
             this.draggedElm.offset.width -
             this.marginX
         : this.initX;
@@ -418,21 +414,18 @@ class Draggable
     /**
      * Every time we got new translate, offset should be updated
      */
-    this.tempOffset.currentLeft = filteredX - this.innerOffsetX;
-    this.tempOffset.currentTop = filteredY - this.innerOffsetY;
+    this.tempOffset.x = filteredX - this.innerOffset.x;
+    this.tempOffset.y = filteredY - this.innerOffset.y;
   }
 
   private isOutThresholdH($: ThresholdMatrix) {
-    return (
-      this.tempOffset.currentLeft < $.maxLeft ||
-      this.tempOffset.currentLeft > $.maxRight
-    );
+    return this.tempOffset.x < $.maxLeft || this.tempOffset.x > $.maxRight;
   }
 
   private isOutPositionV($: ThresholdMatrix) {
     return this.isMovingDown
-      ? this.tempOffset.currentTop > $.maxBottom
-      : this.tempOffset.currentTop < $.maxTop;
+      ? this.tempOffset.y > $.maxBottom
+      : this.tempOffset.y < $.maxTop;
   }
 
   private isOutContainerV($: ThresholdMatrix) {
@@ -441,8 +434,8 @@ class Draggable
      * and outside the container?
      */
     return (
-      (this.isLastELm() && this.tempOffset.currentTop > $.maxBottom) ||
-      (this.tempIndex < 0 && this.tempOffset.currentTop < $.maxTop)
+      (this.isLastELm() && this.tempOffset.y > $.maxBottom) ||
+      (this.tempIndex < 0 && this.tempOffset.y < $.maxTop)
     );
   }
 
@@ -522,15 +515,12 @@ class Draggable
     );
   }
 
-  /**
-   * @param y -
-   */
   setDraggedMovingDown(y: number) {
-    if (this.prevY === y) return;
+    if (this.mousePoints.y === y) return;
 
-    this.isMovingDown = y > this.prevY;
+    this.isMovingDown = y > this.mousePoints.y;
 
-    this.prevY = y;
+    this.mousePoints.y = y;
   }
 
   incNumOfElementsTransformed(effectedElemDirection: number) {
@@ -590,29 +580,8 @@ class Draggable
       return;
     }
 
-    // this.draggedElm.resetIndicators(
-    //   {
-    //     x: this.occupiedOffset.currentLeft,
-    //     y: this.occupiedOffset.currentTop,
-    //   },
-    //   {
-    //     x: this.occupiedTranslate.x,
-    //     y: this.occupiedTranslate.y,
-    //   }
-    // );
-
-    // @ts-expect-error
-    this.draggedElm.currentTop = this.occupiedOffset.currentTop;
-    // @ts-expect-error
-    this.draggedElm.currentLeft = this.occupiedOffset.currentLeft;
-
-    this.draggedElm.currentPosition!.setAxes(
-      this.occupiedOffset.currentLeft,
-      this.occupiedOffset.currentTop
-    );
-
-    this.draggedElm.translate.x = this.occupiedTranslate.x;
-    this.draggedElm.translate.y = this.occupiedTranslate.y;
+    this.draggedElm.currentPosition.clone(this.occupiedOffset);
+    this.draggedElm.translate.clone(this.occupiedTranslate);
 
     this.draggedElm.transformElm();
 

@@ -1,10 +1,10 @@
+import { Axes, AxesCoordinates } from "@dflex/utils";
 import type { DraggedEvent, SiblingsEvent } from "../types";
 
 import store from "../DnDStore";
 
-import type { TempOffset, DraggableDnDInterface } from "../Draggable";
+import type { DraggableDnDInterface } from "../Draggable";
 import DistanceCalculator from "./DistanceCalculator";
-import type { Axes } from "./types";
 
 function emitSiblingsEvent(
   type: SiblingsEvent["type"],
@@ -65,7 +65,7 @@ function isIDEligible2Move(
 class Droppable extends DistanceCalculator {
   private leftAtIndex: number;
 
-  private preserveLastElmOffset!: TempOffset;
+  private preserveLastElmOffset?: AxesCoordinates;
 
   private scrollAnimatedFrame: number | null;
 
@@ -89,7 +89,7 @@ class Droppable extends DistanceCalculator {
    * transformation. */
   private animatedDraggedInsertionFrame: number | null;
 
-  private axes: Axes;
+  protected axes: Axes;
 
   constructor(draggable: DraggableDnDInterface) {
     super(draggable);
@@ -200,10 +200,7 @@ class Droppable extends DistanceCalculator {
       }
     }
 
-    this.preserveLastElmOffset = {
-      currentLeft,
-      currentTop,
-    };
+    this.preserveLastElmOffset = new AxesCoordinates(currentLeft, currentTop);
   }
 
   private checkIfDraggedIsLastElm() {
@@ -224,7 +221,7 @@ class Droppable extends DistanceCalculator {
         const element = store.registry[id];
 
         const isQualified = !element.isPositionedUnder(
-          this.draggable.tempOffset.currentTop
+          this.draggable.tempOffset.y
         );
 
         if (isQualified) {
@@ -237,15 +234,15 @@ class Droppable extends DistanceCalculator {
             {
               width: this.draggable.draggedElm.offset.width,
               height: this.draggable.draggedElm.offset.height,
-              left: this.preserveLastElmOffset.currentLeft,
-              top: this.preserveLastElmOffset.currentTop,
+              left: this.preserveLastElmOffset!.x,
+              top: this.preserveLastElmOffset!.y,
             },
             false
           );
 
           this.updateOccupiedOffset(
-            this.preserveLastElmOffset.currentTop,
-            this.preserveLastElmOffset.currentLeft
+            this.preserveLastElmOffset!.y,
+            this.preserveLastElmOffset!.x
           );
 
           break;
@@ -275,7 +272,7 @@ class Droppable extends DistanceCalculator {
         const element = store.registry[id];
 
         const isQualified = element.isPositionedUnder(
-          this.draggable.tempOffset.currentTop
+          this.draggable.tempOffset.y
         );
 
         if (isQualified) {
@@ -483,7 +480,7 @@ class Droppable extends DistanceCalculator {
        * coming element inside we need new value so we can assign isMoveDown
        * correctly.
        */
-      this.draggable.prevY = y;
+      this.draggable.mousePoints.y = y;
     }
 
     this.setDraggedPositionFlagInSiblingsContainer(false);
@@ -519,7 +516,7 @@ class Droppable extends DistanceCalculator {
 
     const draggedYShift = y + nextScrollTop - this.initialScrollY;
 
-    const currentTop = draggedYShift - this.draggable.innerOffsetY;
+    const currentTop = draggedYShift - this.draggable.innerOffset.y;
 
     const currentBottom = currentTop + this.draggable.draggedElm.offset.height;
 
@@ -558,7 +555,7 @@ class Droppable extends DistanceCalculator {
 
     const draggedXShift = x + nextScrollLeft - this.initialScrollX;
 
-    const currentLeft = draggedXShift - this.draggable.innerOffsetX;
+    const currentLeft = draggedXShift - this.draggable.innerOffset.x;
 
     const currentRight = currentLeft + this.draggable.draggedElm.offset.width;
 

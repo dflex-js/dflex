@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
-import { AxesCoordinates } from "@dflex/utils";
+import { Axes, AxesCoordinates } from "@dflex/utils";
 
-import type { Rect } from "@dflex/utils";
+import type { Rect, EffectedElemDirection } from "@dflex/utils";
 import AbstractInstance from "./AbstractInstance";
 
 import type {
@@ -14,11 +14,13 @@ import type {
 } from "./types";
 
 class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
+  /** Initial read-only element offset */
   offset!: Rect;
 
   /** Store history of Y-transition according to unique ID. */
   translateHistory?: AxesCoordinates<TransitionHistory>;
 
+  /** Current element offset (x-left, y-top) */
   currentPosition!: AxesCoordinates;
 
   order: Order;
@@ -57,11 +59,12 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
   }
 
   /**
-   * Initializes the element offset only when it's called. Since it is sorting
+   * Initializes the element offset only when it's called. Since it is storing
    * different numbers related to transformation we don't need to invoke for
    * idle element because it's costly.
    *
-   * So, basically any working element in DnD should be initiated first.
+   * @param scrollX
+   * @param scrollY
    */
   private initIndicators(scrollX: number, scrollY: number) {
     const { height, width, left, top } = this.ref!.getBoundingClientRect();
@@ -150,7 +153,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
   }
 
   /**
-   *  Update element index in order  branch
+   *  Update element index in siblings branch
    *
    * @param i - index
    */
@@ -215,33 +218,36 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
   /**
    *  Set a new translate position and store the old one.
    *
-   * @param topSpace -
+   * @param elmSpace -
    * @param operationID  - Only if moving to a new position.
    */
   private seTranslate(
-    topSpace: number,
+    elmSpace: number,
+    axes: Axes,
     operationID?: string,
     isForceTransform = false
   ) {
     if (operationID) {
-      const historyY = {
+      const elmAxesHistory = {
         ID: operationID,
-        pre: this.translate.y,
+        pre: this.translate[axes],
       };
 
       if (!this.translateHistory) {
-        const historyX = {
-          ID: operationID,
-          pre: this.translate.x,
-        };
-
-        this.translateHistory = new AxesCoordinates([historyX], [historyY]);
+        this.translateHistory =
+          axes === "x"
+            ? new AxesCoordinates([elmAxesHistory], [])
+            : new AxesCoordinates([], [elmAxesHistory]);
       } else {
-        this.translateHistory.y.push(historyY);
+        this.translateHistory[axes].push(elmAxesHistory);
       }
     }
 
-    this.updateCurrentIndicators(0, topSpace);
+    if (axes === "x") {
+      this.updateCurrentIndicators(elmSpace, 0);
+    } else {
+      this.updateCurrentIndicators(0, elmSpace);
+    }
 
     if (!isForceTransform && !this.isVisible) {
       this.hasToTransform = true;
@@ -255,76 +261,82 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
   }
 
   /**
-   * Sets new vertical position. Which includes, TranslateY and OffsetTop. By assigning the
-   * new calculated value by +/- new difference.
-   *
-   * Note: Why we don't need setXPosition?
-   * Because, elements always move in the same list container, the only one who's migrated to
-   * another is dragged.
-   *
-   * Note: isShuffle is flag made for updating last element in array
-   * which is dragged. Normally, update element position and clear its previous
-   * position but when updating last element the array is ready and done we need
-   * to update one position only so don't clear previous.
    *
    * @param iDsInOrder -
-   * @param sign - (+1/-1)
-   * @param topSpace - space between dragged and the immediate next element.
+   * @param effectedElemDirection - (+1/-1)
+   * @param elmSpace - space between dragged and the immediate next element.
    * @param operationID - A unique ID used to store translate history
-   * @param vIncrement - the number of passed elements.
+   * @param numberOfPassedElm - the number of passed elements.
    * @param isShuffle -
    */
-  setYPosition(
+  setPosition(
     iDsInOrder: string[],
-    sign: 1 | -1,
-    topSpace: number,
+    effectedElemDirection: EffectedElemDirection,
+    elmSpace: AxesCoordinates,
     operationID: string,
-    siblingsEmptyElmIndex = -1,
-    vIncrement = 1,
+    siblingsEmptyElmIndex: AxesCoordinates,
+    axes: Axes,
+    numberOfPassedElm = 1,
     isShuffle = true
   ) {
-    this.seTranslate(sign * topSpace, operationID);
+    /**
+     * effectedElemDirection decides the direction of the element, negative or positive.
+     * If the element is dragged to the left, the effectedElemDirection is -1.
+     */
+    elmSpace[axes] *= effectedElemDirection[axes];
 
-    const { oldIndex, newIndex } = this.updateOrderIndexing(sign * vIncrement);
+    this.seTranslate(elmSpace[axes], axes, operationID);
+
+    const { oldIndex, newIndex } = this.updateOrderIndexing(
+      effectedElemDirection[axes] * numberOfPassedElm
+    );
 
     const newStatusSiblingsHasEmptyElm = this.assignNewPosition(
       iDsInOrder,
       newIndex,
       isShuffle ? oldIndex : undefined,
-      siblingsEmptyElmIndex
+      siblingsEmptyElmIndex[axes]
     );
 
     return newStatusSiblingsHasEmptyElm;
   }
 
   /**
-   * Roll back element position vertically(y).
+   * Roll back element position.
    *
-   * @param operationID -
+   * @param operationID
+   * @param isForceTransform
+   * @param axes
    */
-  rollYBack(operationID: string, isForceTransform: boolean) {
+  rollBack(operationID: string, isForceTransform: boolean, axes: Axes) {
     if (
-      this.translateHistory!.y.length === 0 ||
-      this.translateHistory!.y[this.translateHistory!.y.length - 1].ID !==
+      !this.translateHistory ||
+      !this.translateHistory[axes] ||
+      this.translateHistory[axes].length === 0 ||
+      this.translateHistory[axes][this.translateHistory[axes].length - 1].ID !==
         operationID
     ) {
       return;
     }
 
-    const { pre } = this.translateHistory!.y.pop()!;
+    const lastMovement = this.translateHistory[axes].pop();
 
-    const topSpace = pre - this.translate.y;
+    if (!lastMovement) return;
 
-    const increment = topSpace > 0 ? 1 : -1;
+    const { pre } = lastMovement;
+
+    const elmSpace = pre - this.translate[axes];
+
+    const increment = elmSpace > 0 ? 1 : -1;
 
     // Don't update UI if it's zero and wasn't transformed.
-    this.seTranslate(topSpace, undefined, isForceTransform);
+    this.seTranslate(elmSpace, axes, undefined, isForceTransform);
 
     const { newIndex } = this.updateOrderIndexing(increment);
 
     this.updateDataset(newIndex);
 
-    this.rollYBack(operationID, isForceTransform);
+    this.rollBack(operationID, isForceTransform, axes);
   }
 }
 

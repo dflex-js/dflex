@@ -1,4 +1,4 @@
-/* eslint-disable  */
+/* eslint-disable no-param-reassign */
 import type { ELmBranch } from "@dflex/dom-gen";
 
 import store from "../DnDStore";
@@ -52,7 +52,7 @@ class EndDroppable extends Droppable {
        * Note: rolling back won't affect order array. It only deals with element
        * itself and totally ignore any instance related to store.
        */
-      element.rollYBack(this.draggable.operationID, listVisibility);
+      element.rollBack(this.draggable.operationID, listVisibility, this.axes);
 
       this.draggable.numberOfElementsTransformed -= 1;
 
@@ -155,9 +155,7 @@ class EndDroppable extends Droppable {
     const id = lst[0];
 
     if (id.length === 0 || this.draggable.draggedElm.id === id) {
-      return (
-        Math.floor(top) === Math.floor(this.draggable.occupiedOffset.currentTop)
-      );
+      return Math.floor(top) === Math.floor(this.draggable.occupiedOffset.y);
     }
 
     const element = store.registry[id];
