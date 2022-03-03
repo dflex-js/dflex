@@ -79,8 +79,8 @@ class DistanceCalculator implements DistanceCalculatorInterface {
   }
 
   protected updateOccupiedOffset(elmTop: number, elmLeft: number) {
-    this.draggable.occupiedOffset.currentTop = elmTop + this.draggedOffset.y;
-    this.draggable.occupiedOffset.currentLeft = elmLeft + this.draggedOffset.x;
+    this.draggable.occupiedOffset.y = elmTop + this.draggedOffset.y;
+    this.draggable.occupiedOffset.x = elmLeft + this.draggedOffset.x;
   }
 
   /**
@@ -142,7 +142,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     } = element;
 
     const {
-      occupiedOffset: { currentLeft: draggedLeft, currentTop: draggedTop },
+      occupiedOffset: { x: draggedLeft, y: draggedTop },
       draggedElm: {
         offset: { height: draggedHight, width: draggedWidth },
       },

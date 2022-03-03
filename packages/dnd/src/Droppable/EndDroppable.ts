@@ -155,9 +155,7 @@ class EndDroppable extends Droppable {
     const id = lst[0];
 
     if (id.length === 0 || this.draggable.draggedElm.id === id) {
-      return (
-        Math.floor(top) === Math.floor(this.draggable.occupiedOffset.currentTop)
-      );
+      return Math.floor(top) === Math.floor(this.draggable.occupiedOffset.y);
     }
 
     const element = store.registry[id];

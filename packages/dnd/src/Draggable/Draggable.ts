@@ -6,7 +6,7 @@ import type { CoreInstanceInterface } from "@dflex/core-instance";
 import { AxesCoordinates } from "@dflex/utils";
 import store from "../DnDStore";
 
-import type { DraggableDnDInterface, Restrictions, TempOffset } from "./types";
+import type { DraggableDnDInterface, Restrictions } from "./types";
 
 import type {
   ScrollOptWithThreshold,
@@ -40,13 +40,13 @@ class Draggable
 
   isViewportRestricted: boolean;
 
-  innerOffset: Coordinates;
+  innerOffset: AxesCoordinates;
 
-  tempOffset: TempOffset;
+  tempOffset: AxesCoordinates;
 
-  readonly occupiedOffset: TempOffset;
+  occupiedOffset: AxesCoordinates;
 
-  readonly occupiedTranslate: Coordinates;
+  occupiedTranslate: AxesCoordinates;
 
   mousePoints: AxesCoordinates;
 
@@ -146,6 +146,7 @@ class Draggable
     const {
       offset: { width, height },
       currentPosition,
+      translate,
     } = this.draggedElm;
 
     this.threshold.updateElementThresholdMatrix(
@@ -200,20 +201,14 @@ class Draggable
     const lm = Math.round(parseFloat(style.marginLeft));
     this.marginX = rm + lm;
 
-    this.tempOffset = {
-      currentLeft: this.draggedElm.currentPosition.x,
-      currentTop: this.draggedElm.currentPosition.y,
-    };
+    this.tempOffset = new AxesCoordinates(currentPosition.x, currentPosition.y);
 
-    this.occupiedOffset = {
-      currentLeft: this.draggedElm.currentPosition.x,
-      currentTop: this.draggedElm.currentPosition.y,
-    };
+    this.occupiedOffset = new AxesCoordinates(
+      currentPosition.x,
+      currentPosition.y
+    );
 
-    this.occupiedTranslate = {
-      x: this.draggedElm.translate.x,
-      y: this.draggedElm.translate.y,
-    };
+    this.occupiedTranslate = new AxesCoordinates(translate.x, translate.y);
 
     /**
      * previous X and Y are used to calculate mouse directions.
@@ -419,21 +414,18 @@ class Draggable
     /**
      * Every time we got new translate, offset should be updated
      */
-    this.tempOffset.currentLeft = filteredX - this.innerOffset.x;
-    this.tempOffset.currentTop = filteredY - this.innerOffset.y;
+    this.tempOffset.x = filteredX - this.innerOffset.x;
+    this.tempOffset.y = filteredY - this.innerOffset.y;
   }
 
   private isOutThresholdH($: ThresholdMatrix) {
-    return (
-      this.tempOffset.currentLeft < $.maxLeft ||
-      this.tempOffset.currentLeft > $.maxRight
-    );
+    return this.tempOffset.x < $.maxLeft || this.tempOffset.x > $.maxRight;
   }
 
   private isOutPositionV($: ThresholdMatrix) {
     return this.isMovingDown
-      ? this.tempOffset.currentTop > $.maxBottom
-      : this.tempOffset.currentTop < $.maxTop;
+      ? this.tempOffset.y > $.maxBottom
+      : this.tempOffset.y < $.maxTop;
   }
 
   private isOutContainerV($: ThresholdMatrix) {
@@ -442,8 +434,8 @@ class Draggable
      * and outside the container?
      */
     return (
-      (this.isLastELm() && this.tempOffset.currentTop > $.maxBottom) ||
-      (this.tempIndex < 0 && this.tempOffset.currentTop < $.maxTop)
+      (this.isLastELm() && this.tempOffset.y > $.maxBottom) ||
+      (this.tempIndex < 0 && this.tempOffset.y < $.maxTop)
     );
   }
 
@@ -589,8 +581,8 @@ class Draggable
     }
 
     this.draggedElm.currentPosition.setAxes(
-      this.occupiedOffset.currentLeft,
-      this.occupiedOffset.currentTop
+      this.occupiedOffset.x,
+      this.occupiedOffset.y
     );
 
     this.draggedElm.translate.setAxes(

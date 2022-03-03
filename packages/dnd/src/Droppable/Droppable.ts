@@ -1,10 +1,9 @@
-import type { Axes } from "@dflex/utils";
-
+import { Axes, AxesCoordinates } from "@dflex/utils";
 import type { DraggedEvent, SiblingsEvent } from "../types";
 
 import store from "../DnDStore";
 
-import type { TempOffset, DraggableDnDInterface } from "../Draggable";
+import type { DraggableDnDInterface } from "../Draggable";
 import DistanceCalculator from "./DistanceCalculator";
 
 function emitSiblingsEvent(
@@ -66,7 +65,7 @@ function isIDEligible2Move(
 class Droppable extends DistanceCalculator {
   private leftAtIndex: number;
 
-  private preserveLastElmOffset!: TempOffset;
+  private preserveLastElmOffset?: AxesCoordinates;
 
   private scrollAnimatedFrame: number | null;
 
@@ -201,10 +200,7 @@ class Droppable extends DistanceCalculator {
       }
     }
 
-    this.preserveLastElmOffset = {
-      currentLeft,
-      currentTop,
-    };
+    this.preserveLastElmOffset = new AxesCoordinates(currentLeft, currentTop);
   }
 
   private checkIfDraggedIsLastElm() {
@@ -225,7 +221,7 @@ class Droppable extends DistanceCalculator {
         const element = store.registry[id];
 
         const isQualified = !element.isPositionedUnder(
-          this.draggable.tempOffset.currentTop
+          this.draggable.tempOffset.y
         );
 
         if (isQualified) {
@@ -238,15 +234,15 @@ class Droppable extends DistanceCalculator {
             {
               width: this.draggable.draggedElm.offset.width,
               height: this.draggable.draggedElm.offset.height,
-              left: this.preserveLastElmOffset.currentLeft,
-              top: this.preserveLastElmOffset.currentTop,
+              left: this.preserveLastElmOffset!.x,
+              top: this.preserveLastElmOffset!.y,
             },
             false
           );
 
           this.updateOccupiedOffset(
-            this.preserveLastElmOffset.currentTop,
-            this.preserveLastElmOffset.currentLeft
+            this.preserveLastElmOffset!.y,
+            this.preserveLastElmOffset!.x
           );
 
           break;
@@ -276,7 +272,7 @@ class Droppable extends DistanceCalculator {
         const element = store.registry[id];
 
         const isQualified = element.isPositionedUnder(
-          this.draggable.tempOffset.currentTop
+          this.draggable.tempOffset.y
         );
 
         if (isQualified) {
