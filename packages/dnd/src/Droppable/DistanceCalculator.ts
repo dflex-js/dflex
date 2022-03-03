@@ -1,14 +1,14 @@
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
 import { AxesCoordinates } from "@dflex/utils";
-import type { Direction, EffectedElemDirection } from "@dflex/utils";
+import type { Direction, EffectedElemDirection, Axes } from "@dflex/utils";
 
 import type { InteractivityEvent } from "../types";
 import type { DraggableDnDInterface } from "../Draggable";
 
 import store from "../DnDStore";
 
-import type { DistanceCalculatorInterface, Axes } from "./types";
+import type { DistanceCalculatorInterface } from "./types";
 
 interface Difference {
   dragged: number;
@@ -252,7 +252,8 @@ class DistanceCalculator implements DistanceCalculatorInterface {
       this.effectedElemDirection,
       this.elmTransition,
       this.draggable.operationID,
-      this.siblingsEmptyElmIndex
+      this.siblingsEmptyElmIndex,
+      axes
     );
 
     emitInteractiveEvent("onDragLeave", element);

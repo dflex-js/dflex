@@ -12,3 +12,5 @@ export interface EffectedElemDirection {
   x: Direction;
   y: Direction;
 }
+
+export type Axes = "x" | "y";

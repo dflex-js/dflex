@@ -5,6 +5,7 @@ import store from "../DnDStore";
 import Droppable, { isIDEligible } from "./Droppable";
 
 import type { DraggableDnDInterface } from "../Draggable";
+import { Axes } from "@dflex/utils";
 
 class EndDroppable extends Droppable {
   private spliceAt: number;
@@ -52,7 +53,7 @@ class EndDroppable extends Droppable {
        * Note: rolling back won't affect order array. It only deals with element
        * itself and totally ignore any instance related to store.
        */
-      element.rollBack(this.draggable.operationID, listVisibility);
+      element.rollBack(this.draggable.operationID, listVisibility, this.axes);
 
       this.draggable.numberOfElementsTransformed -= 1;
 

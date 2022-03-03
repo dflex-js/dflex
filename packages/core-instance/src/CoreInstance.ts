@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { AxesCoordinates } from "@dflex/utils";
+import { Axes, AxesCoordinates } from "@dflex/utils";
 
 import type { Rect, EffectedElemDirection } from "@dflex/utils";
 import AbstractInstance from "./AbstractInstance";
@@ -222,29 +222,32 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
    * @param operationID  - Only if moving to a new position.
    */
   private seTranslate(
-    elmSpace: AxesCoordinates,
+    elmSpace: number,
+    axes: Axes,
     operationID?: string,
     isForceTransform = false
   ) {
     if (operationID) {
-      const historyY = {
+      const elmAxesHistory = {
         ID: operationID,
-        pre: this.translate.y,
+        pre: this.translate[axes],
       };
 
       if (!this.translateHistory) {
-        const historyX = {
-          ID: operationID,
-          pre: this.translate.x,
-        };
-
-        this.translateHistory = new AxesCoordinates([historyX], [historyY]);
+        this.translateHistory =
+          axes === "x"
+            ? new AxesCoordinates([elmAxesHistory], [])
+            : new AxesCoordinates([], [elmAxesHistory]);
       } else {
-        this.translateHistory.y.push(historyY);
+        this.translateHistory[axes].push(elmAxesHistory);
       }
     }
 
-    this.updateCurrentIndicators(elmSpace.x, elmSpace.y);
+    if (axes === "x") {
+      this.updateCurrentIndicators(elmSpace, 0);
+    } else {
+      this.updateCurrentIndicators(0, elmSpace);
+    }
 
     if (!isForceTransform && !this.isVisible) {
       this.hasToTransform = true;
@@ -272,23 +275,27 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     elmSpace: AxesCoordinates,
     operationID: string,
     siblingsEmptyElmIndex: AxesCoordinates,
+    axes: Axes,
     numberOfPassedElm = 1,
     isShuffle = true
   ) {
-    elmSpace.x *= effectedElemDirection.x;
-    elmSpace.y *= effectedElemDirection.y;
+    /**
+     * effectedElemDirection decides the direction of the element, negative or positive.
+     * If the element is dragged to the left, the effectedElemDirection is -1.
+     */
+    elmSpace[axes] *= effectedElemDirection[axes];
 
-    this.seTranslate(elmSpace, operationID);
+    this.seTranslate(elmSpace[axes], axes, operationID);
 
     const { oldIndex, newIndex } = this.updateOrderIndexing(
-      effectedElemDirection.y * numberOfPassedElm
+      effectedElemDirection[axes] * numberOfPassedElm
     );
 
     const newStatusSiblingsHasEmptyElm = this.assignNewPosition(
       iDsInOrder,
       newIndex,
       isShuffle ? oldIndex : undefined,
-      siblingsEmptyElmIndex.y
+      siblingsEmptyElmIndex[axes]
     );
 
     return newStatusSiblingsHasEmptyElm;
@@ -299,29 +306,33 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
    *
    * @param operationID -
    */
-  rollBack(operationID: string, isForceTransform: boolean) {
+  rollBack(operationID: string, isForceTransform: boolean, axes: Axes) {
     if (
-      this.translateHistory!.y.length === 0 ||
-      this.translateHistory!.y[this.translateHistory!.y.length - 1].ID !==
-        operationID
+      this.translateHistory![axes].length === 0 ||
+      this.translateHistory![axes][this.translateHistory![axes].length - 1]
+        .ID !== operationID
     ) {
       return;
     }
 
-    const { pre } = this.translateHistory!.y.pop()!;
+    const lastMovement = this.translateHistory![axes].pop();
 
-    const topSpace = pre - this.translate.y;
+    if (!lastMovement) return;
 
-    const increment = topSpace > 0 ? 1 : -1;
+    const { pre } = lastMovement;
+
+    const elmSpace = pre - this.translate[axes];
+
+    const increment = elmSpace > 0 ? 1 : -1;
 
     // Don't update UI if it's zero and wasn't transformed.
-    // this.seTranslate(topSpace, undefined, isForceTransform);
+    this.seTranslate(elmSpace, axes, undefined, isForceTransform);
 
     const { newIndex } = this.updateOrderIndexing(increment);
 
     this.updateDataset(newIndex);
 
-    this.rollBack(operationID, isForceTransform);
+    this.rollBack(operationID, isForceTransform, axes);
   }
 }
 

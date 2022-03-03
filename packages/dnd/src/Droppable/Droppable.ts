@@ -1,10 +1,11 @@
+import type { Axes } from "@dflex/utils";
+
 import type { DraggedEvent, SiblingsEvent } from "../types";
 
 import store from "../DnDStore";
 
 import type { TempOffset, DraggableDnDInterface } from "../Draggable";
 import DistanceCalculator from "./DistanceCalculator";
-import type { Axes } from "./types";
 
 function emitSiblingsEvent(
   type: SiblingsEvent["type"],
@@ -89,7 +90,7 @@ class Droppable extends DistanceCalculator {
    * transformation. */
   private animatedDraggedInsertionFrame: number | null;
 
-  private axes: Axes;
+  protected axes: Axes;
 
   constructor(draggable: DraggableDnDInterface) {
     super(draggable);
