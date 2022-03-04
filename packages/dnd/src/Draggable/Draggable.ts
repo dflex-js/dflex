@@ -3,7 +3,7 @@ import type { DraggedStyle, Coordinates } from "@dflex/draggable";
 
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
-import { AxesCoordinates } from "@dflex/utils";
+import { Axes, AxesCoordinates } from "@dflex/utils";
 import store from "../DnDStore";
 
 import type { DraggableDnDInterface, Restrictions } from "./types";
@@ -51,6 +51,8 @@ class Draggable
   mousePoints: AxesCoordinates;
 
   isMovingDown: boolean;
+
+  isMovingLeft: boolean;
 
   numberOfElementsTransformed: number;
 
@@ -222,6 +224,7 @@ class Draggable
     this.numberOfElementsTransformed = 0;
 
     this.isMovingDown = false;
+    this.isMovingLeft = false;
 
     this.isOutPositionHorizontally = false;
     this.isOutSiblingsHorizontally = false;
@@ -517,12 +520,13 @@ class Draggable
     );
   }
 
-  setDraggedMovingDown(y: number) {
-    if (this.mousePoints.y === y) return;
+  setDraggedMovementDirection(coordinate: number, axes: Axes) {
+    if (this.mousePoints[axes] === coordinate) return;
 
-    this.isMovingDown = y > this.mousePoints.y;
+    this[axes === "y" ? `isMovingDown` : `isMovingLeft`] =
+      coordinate > this.mousePoints[axes];
 
-    this.mousePoints.y = y;
+    this.mousePoints[axes] = coordinate;
   }
 
   incNumOfElementsTransformed(effectedElemDirection: number) {
