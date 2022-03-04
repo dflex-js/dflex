@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import { AxesCoordinates } from "@dflex/utils";
 
 import type {
@@ -17,6 +18,11 @@ class AbstractInstance implements AbstractInterface {
   isInitialized!: boolean;
 
   isPaused!: boolean;
+
+  hasAttribute!: {
+    // eslint-disable-next-line no-unused-vars
+    [key in AllowedAttributes]: boolean;
+  };
 
   constructor({ ref, id }: AbstractInput, opts: AbstractOpts) {
     this.id = id;
@@ -82,6 +88,9 @@ class AbstractInstance implements AbstractInterface {
   initTranslate() {
     if (!this.translate) {
       this.translate = new AxesCoordinates(0, 0);
+
+      // @ts-expect-error - Just for initialization.
+      this.hasAttribute = {};
     }
 
     this.isPaused = false;
@@ -92,11 +101,21 @@ class AbstractInstance implements AbstractInterface {
   }
 
   setAttribute(key: AllowedAttributes, value: string) {
+    if (this.hasAttribute[key] === true) {
+      // console.log(`DFlex: Attribute ${key} is already set.`);
+
+      return;
+    }
+
     this.ref!.setAttribute(key, value);
+    this.hasAttribute[key] = true;
   }
 
   removeAttribute(key: AllowedAttributes) {
-    this.ref!.removeAttribute(key);
+    if (this.hasAttribute[key] === true) {
+      this.ref!.removeAttribute(key);
+      this.hasAttribute[key] = false;
+    }
   }
 }
 
