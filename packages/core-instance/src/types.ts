@@ -11,6 +11,8 @@ export type AbstractInput = {
   ref?: HTMLElement;
 };
 
+export type AllowedAttributes = "dragged" | "out-position" | "out-container";
+
 export interface AbstractInterface {
   isInitialized: boolean;
   isPaused: boolean;
@@ -20,6 +22,9 @@ export interface AbstractInterface {
   attach(ref: HTMLElement | null): void;
   detach(): void;
   initTranslate(): void;
+  updateDataset(index: number): void;
+  setAttribute(key: AllowedAttributes, value: string): void;
+  removeAttribute(key: AllowedAttributes): void;
 }
 
 /**
@@ -90,6 +95,5 @@ export interface CoreInstanceInterface extends AbstractInterface {
     oldIndex?: number,
     siblingsHasEmptyElm?: number
   ): number;
-  updateDataset(index: number): void;
   rollBack(operationID: string, isForceTransform: boolean, axes: Axes): void;
 }

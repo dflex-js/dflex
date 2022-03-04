@@ -148,10 +148,6 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     });
   }
 
-  updateDataset(i: number) {
-    this.ref!.dataset.index = `${i}`;
-  }
-
   /**
    *  Update element index in siblings branch
    *

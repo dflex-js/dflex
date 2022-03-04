@@ -1,6 +1,11 @@
 import { AxesCoordinates } from "@dflex/utils";
 
-import type { AbstractInterface, AbstractInput, AbstractOpts } from "./types";
+import type {
+  AbstractInterface,
+  AbstractInput,
+  AbstractOpts,
+  AllowedAttributes,
+} from "./types";
 
 class AbstractInstance implements AbstractInterface {
   ref!: HTMLElement | null;
@@ -64,6 +69,18 @@ class AbstractInstance implements AbstractInterface {
   detach() {
     this.isInitialized = false;
     this.ref = null;
+  }
+
+  updateDataset(i: number) {
+    this.ref!.dataset.index = `${i}`;
+  }
+
+  setAttribute(key: AllowedAttributes, value: string) {
+    this.ref!.setAttribute(key, value);
+  }
+
+  removeAttribute(key: AllowedAttributes) {
+    this.ref!.removeAttribute(key);
   }
 
   /**

@@ -605,6 +605,8 @@ class Draggable
     if (this.isDraggedPositionFixed) {
       this.changeStyle(this.changeToFixedStyleProps, false);
     }
+
+    this.draggedElm.removeAttribute("out-position");
   }
 }
 

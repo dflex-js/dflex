@@ -290,7 +290,8 @@ class Droppable extends DistanceCalculator {
     const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
 
     const elmIndex =
-      this.draggable.tempIndex + -1 * this.effectedElemDirection.y;
+      this.draggable.tempIndex + -1 * this.effectedElemDirection[this.axes];
+
     const id = siblings![elmIndex];
 
     if (
@@ -319,6 +320,7 @@ class Droppable extends DistanceCalculator {
     ) as string[];
 
     const from = this.draggable.tempIndex + 1;
+
     this.leftAtIndex = this.draggable.tempIndex;
 
     emitSiblingsEvent("onLiftUpSiblings", {
@@ -493,7 +495,7 @@ class Droppable extends DistanceCalculator {
     /**
      * Moving element down by setting is up to false
      */
-    this.setEffectedElemDirection(false, "y");
+    this.setEffectedElemDirection(false, this.axes);
 
     if (hasToMoveSiblingsDown) {
       this.moveDown(to);
@@ -503,15 +505,17 @@ class Droppable extends DistanceCalculator {
        */
       const isElmUp = this.leftAtIndex > this.draggable.tempIndex;
 
-      this.setEffectedElemDirection(isElmUp, "y");
+      this.setEffectedElemDirection(isElmUp, this.axes);
     } else {
-      this.setEffectedElemDirection(true, "y");
+      this.setEffectedElemDirection(true, this.axes);
     }
 
     /**
      * Reset index.
      */
     this.leftAtIndex = -1;
+
+    this.draggable.draggedElm.removeAttribute("out-container");
   }
 
   private scrollElementOnY(x: number, y: number, direction: 1 | -1) {
@@ -745,10 +749,15 @@ class Droppable extends DistanceCalculator {
       this.scrollManager(x, y);
 
       if (!this.draggable.isOutActiveSiblingsContainer) {
+        this.draggable.draggedElm.setAttribute("out-position", "true");
+
         this.draggedOutPosition();
 
         return;
       }
+
+      this.draggable.draggedElm.removeAttribute("out-position");
+      this.draggable.draggedElm.setAttribute("out-container", "true");
 
       isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
