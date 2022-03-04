@@ -135,7 +135,7 @@ class AbstractDraggable<T extends AbstractCoreInterface>
     this.tempTranslate.x = x + this.outerOffsetX;
     this.tempTranslate.y = y + this.outerOffsetY;
 
-    this.draggedElm.ref!.style.transform = `translate3d(${this.tempTranslate.x}px,${this.tempTranslate.y}px, 0)`;
+    this.draggedElm.transform(this.tempTranslate.x, this.tempTranslate.y);
   }
 }
 

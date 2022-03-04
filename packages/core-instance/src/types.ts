@@ -22,6 +22,7 @@ export interface AbstractInterface {
   attach(ref: HTMLElement | null): void;
   detach(): void;
   initTranslate(): void;
+  transform(x: number, y: number): void;
   updateDataset(index: number): void;
   setAttribute(key: AllowedAttributes, value: string): void;
   removeAttribute(key: AllowedAttributes): void;

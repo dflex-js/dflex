@@ -71,16 +71,8 @@ class AbstractInstance implements AbstractInterface {
     this.ref = null;
   }
 
-  updateDataset(i: number) {
-    this.ref!.dataset.index = `${i}`;
-  }
-
-  setAttribute(key: AllowedAttributes, value: string) {
-    this.ref!.setAttribute(key, value);
-  }
-
-  removeAttribute(key: AllowedAttributes) {
-    this.ref!.removeAttribute(key);
+  transform(x: number, y: number) {
+    this.ref!.style.transform = `translate3d(${x}px,${y}px, 0)`;
   }
 
   /**
@@ -93,6 +85,18 @@ class AbstractInstance implements AbstractInterface {
     }
 
     this.isPaused = false;
+  }
+
+  updateDataset(i: number) {
+    this.ref!.dataset.index = `${i}`;
+  }
+
+  setAttribute(key: AllowedAttributes, value: string) {
+    this.ref!.setAttribute(key, value);
+  }
+
+  removeAttribute(key: AllowedAttributes) {
+    this.ref!.removeAttribute(key);
   }
 }
 
