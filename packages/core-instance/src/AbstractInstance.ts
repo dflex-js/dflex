@@ -117,6 +117,17 @@ class AbstractInstance implements AbstractInterface {
       this.hasAttribute[key] = false;
     }
   }
+
+  clearAttributes() {
+    (Object.keys(this.hasAttribute) as AllowedAttributes[]).forEach((key) => {
+      if (this.hasAttribute[key]) {
+        this.removeAttribute(key);
+      }
+    });
+
+    // @ts-expect-error.
+    this.hasAttribute = {};
+  }
 }
 
 export default AbstractInstance;

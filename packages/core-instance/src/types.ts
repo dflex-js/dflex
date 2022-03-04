@@ -26,6 +26,7 @@ export interface AbstractInterface {
   updateDataset(index: number): void;
   setAttribute(key: AllowedAttributes, value: string): void;
   removeAttribute(key: AllowedAttributes): void;
+  clearAttributes(): void;
 }
 
 /**

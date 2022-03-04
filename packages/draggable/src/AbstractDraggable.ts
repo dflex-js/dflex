@@ -113,7 +113,7 @@ class AbstractDraggable<T extends AbstractCoreInterface>
      */
     this.changeStyle(AbstractDraggable.draggedStyle, false);
 
-    this.draggedElm.removeAttribute("dragged");
+    this.draggedElm.clearAttributes();
   }
 
   /**

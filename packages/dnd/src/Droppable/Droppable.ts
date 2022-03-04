@@ -757,7 +757,6 @@ class Droppable extends DistanceCalculator {
       }
 
       this.draggable.draggedElm.removeAttribute("out-position");
-      this.draggable.draggedElm.setAttribute("out-container", "true");
 
       isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
@@ -775,6 +774,8 @@ class Droppable extends DistanceCalculator {
 
         return;
       }
+
+      this.draggable.draggedElm.setAttribute("out-container", "true");
 
       this.emitDraggedEvent("onDragOutContainer");
 
