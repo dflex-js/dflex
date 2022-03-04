@@ -1,4 +1,4 @@
-import { AxesCoordinates } from "@dflex/utils";
+import { AxesCoordinates, Axes } from "@dflex/utils";
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 import type { AbstractDraggableInterface } from "@dflex/draggable";
 
@@ -32,7 +32,6 @@ export interface DraggableDnDInterface
   setOfTransformedIds?: Set<string>;
   siblingsContainer: CoreInstanceInterface | null;
   scroll: ScrollOptWithThreshold;
-  isViewportRestricted: boolean;
   threshold: ThresholdInterface;
   layoutThresholds: SiblingsThresholdMatrix;
   innerOffset: AxesCoordinates;
@@ -41,14 +40,16 @@ export interface DraggableDnDInterface
   occupiedTranslate: AxesCoordinates;
   mousePoints: AxesCoordinates;
   numberOfElementsTransformed: number;
+  isViewportRestricted: boolean;
   isMovingDown: boolean;
+  isMovingLeft: boolean;
   isOutPositionHorizontally: boolean;
   isOutSiblingsHorizontally: boolean;
   isDraggedPositionFixed: boolean;
   isOutActiveSiblingsContainer: boolean;
   dragAt(x: number, y: number): void;
   incNumOfElementsTransformed(effectedElemDirection: number): void;
-  setDraggedMovingDown(y: number): void;
+  setDraggedMovementDirection(coordinate: number, axes: Axes): void;
   isOutThreshold(siblingsK?: string): boolean;
   isLeavingFromTop(): boolean;
   isLeavingFromBottom(): boolean;

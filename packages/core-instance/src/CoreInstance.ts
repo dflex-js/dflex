@@ -143,13 +143,9 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     }
 
     this.animatedFrame = window.requestAnimationFrame(() => {
-      this.ref!.style.transform = `translate3d(${this.translate.x}px,${this.translate.y}px, 0)`;
+      this.transform(this.translate.x, this.translate.y);
       this.animatedFrame = null;
     });
-  }
-
-  updateDataset(i: number) {
-    this.ref!.dataset.index = `${i}`;
   }
 
   /**

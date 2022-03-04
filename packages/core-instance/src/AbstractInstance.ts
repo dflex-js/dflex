@@ -1,6 +1,12 @@
+/* eslint-disable max-classes-per-file */
 import { AxesCoordinates } from "@dflex/utils";
 
-import type { AbstractInterface, AbstractInput, AbstractOpts } from "./types";
+import type {
+  AbstractInterface,
+  AbstractInput,
+  AbstractOpts,
+  AllowedAttributes,
+} from "./types";
 
 class AbstractInstance implements AbstractInterface {
   ref!: HTMLElement | null;
@@ -12,6 +18,11 @@ class AbstractInstance implements AbstractInterface {
   isInitialized!: boolean;
 
   isPaused!: boolean;
+
+  hasAttribute!: {
+    // eslint-disable-next-line no-unused-vars
+    [key in AllowedAttributes]: boolean;
+  };
 
   constructor({ ref, id }: AbstractInput, opts: AbstractOpts) {
     this.id = id;
@@ -66,6 +77,10 @@ class AbstractInstance implements AbstractInterface {
     this.ref = null;
   }
 
+  transform(x: number, y: number) {
+    this.ref!.style.transform = `translate3d(${x}px,${y}px, 0)`;
+  }
+
   /**
    * Initialize the translate AxesCoordinates as part of abstract instance and
    * necessary for darg only movement.
@@ -73,9 +88,45 @@ class AbstractInstance implements AbstractInterface {
   initTranslate() {
     if (!this.translate) {
       this.translate = new AxesCoordinates(0, 0);
+
+      // @ts-expect-error - Just for initialization.
+      this.hasAttribute = {};
     }
 
     this.isPaused = false;
+  }
+
+  updateDataset(i: number) {
+    this.ref!.dataset.index = `${i}`;
+  }
+
+  setAttribute(key: AllowedAttributes, value: string) {
+    if (this.hasAttribute[key] === true) {
+      // console.log(`DFlex: Attribute ${key} is already set.`);
+
+      return;
+    }
+
+    this.ref!.setAttribute(key, value);
+    this.hasAttribute[key] = true;
+  }
+
+  removeAttribute(key: AllowedAttributes) {
+    if (this.hasAttribute[key] === true) {
+      this.ref!.removeAttribute(key);
+      this.hasAttribute[key] = false;
+    }
+  }
+
+  clearAttributes() {
+    (Object.keys(this.hasAttribute) as AllowedAttributes[]).forEach((key) => {
+      if (this.hasAttribute[key]) {
+        this.removeAttribute(key);
+      }
+    });
+
+    // @ts-expect-error.
+    this.hasAttribute = {};
   }
 }
 

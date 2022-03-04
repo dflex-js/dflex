@@ -104,7 +104,7 @@ class AbstractDraggable<T extends AbstractCoreInterface>
         getSelection()!.removeAllRanges();
       }
 
-      this.draggedElm.ref!.setAttribute("dragged", "true");
+      this.draggedElm.setAttribute("dragged", "true");
 
       return;
     }
@@ -113,7 +113,7 @@ class AbstractDraggable<T extends AbstractCoreInterface>
      */
     this.changeStyle(AbstractDraggable.draggedStyle, false);
 
-    this.draggedElm.ref!.removeAttribute("dragged");
+    this.draggedElm.clearAttributes();
   }
 
   /**
@@ -135,7 +135,7 @@ class AbstractDraggable<T extends AbstractCoreInterface>
     this.tempTranslate.x = x + this.outerOffsetX;
     this.tempTranslate.y = y + this.outerOffsetY;
 
-    this.draggedElm.ref!.style.transform = `translate3d(${this.tempTranslate.x}px,${this.tempTranslate.y}px, 0)`;
+    this.draggedElm.transform(this.tempTranslate.x, this.tempTranslate.y);
   }
 }
 
