@@ -9,6 +9,7 @@ Object {
       "y": 0,
     },
     "depth": 0,
+    "hasAttribute": Object {},
     "hasToTransform": false,
     "id": "id-0",
     "isInitialized": true,
