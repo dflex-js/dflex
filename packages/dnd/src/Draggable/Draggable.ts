@@ -606,7 +606,9 @@ class Draggable
       this.changeStyle(this.changeToFixedStyleProps, false);
     }
 
-    this.draggedElm.removeAttribute("out-position");
+    if (this.isOutActiveSiblingsContainer) {
+      this.draggedElm.removeAttribute("out-container");
+    }
   }
 }
 
