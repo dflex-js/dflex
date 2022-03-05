@@ -54,8 +54,8 @@ describe("Draggable Only Package", () => {
       });
 
       it("Calculates offset", () => {
-        expect(draggable.outerOffsetX).toEqual(EXPECTED_OFFSET_X_R1);
-        expect(draggable.outerOffsetY).toEqual(EXPECTED_OFFSET_Y_R1);
+        expect(draggable.outerOffset.x).toEqual(EXPECTED_OFFSET_X_R1);
+        expect(draggable.outerOffset.y).toEqual(EXPECTED_OFFSET_Y_R1);
       });
     });
 
@@ -72,8 +72,8 @@ describe("Draggable Only Package", () => {
       });
 
       it("Offset never change", () => {
-        expect(draggable.outerOffsetX).toEqual(EXPECTED_OFFSET_X_R1);
-        expect(draggable.outerOffsetY).toEqual(EXPECTED_OFFSET_Y_R1);
+        expect(draggable.outerOffset.x).toEqual(EXPECTED_OFFSET_X_R1);
+        expect(draggable.outerOffset.y).toEqual(EXPECTED_OFFSET_Y_R1);
       });
 
       it("Draggable updates translateX/Y in store", () => {
@@ -128,8 +128,8 @@ describe("Draggable Only Package", () => {
       });
 
       it("Calculates offset", () => {
-        expect(draggable.outerOffsetX).toEqual(EXPECTED_OFFSET_X_R2);
-        expect(draggable.outerOffsetY).toEqual(EXPECTED_OFFSET_Y_R2);
+        expect(draggable.outerOffset.x).toEqual(EXPECTED_OFFSET_X_R2);
+        expect(draggable.outerOffset.y).toEqual(EXPECTED_OFFSET_Y_R2);
       });
     });
 
@@ -146,8 +146,8 @@ describe("Draggable Only Package", () => {
       });
 
       it("Offset never change", () => {
-        expect(draggable.outerOffsetX).toEqual(EXPECTED_OFFSET_X_R2);
-        expect(draggable.outerOffsetY).toEqual(EXPECTED_OFFSET_Y_R2);
+        expect(draggable.outerOffset.x).toEqual(EXPECTED_OFFSET_X_R2);
+        expect(draggable.outerOffset.y).toEqual(EXPECTED_OFFSET_Y_R2);
       });
 
       it("Draggable updates translateX/Y in store", () => {

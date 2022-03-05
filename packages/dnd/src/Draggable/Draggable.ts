@@ -535,8 +535,8 @@ class Draggable
 
   private hasMoved() {
     return (
-      this.draggedElm.translate.x !== this.tempTranslate.x ||
-      this.draggedElm.translate.y !== this.tempTranslate.y
+      this.draggedElm.translate.x !== this.translatePlaceholder.x ||
+      this.draggedElm.translate.y !== this.translatePlaceholder.y
     );
   }
 
