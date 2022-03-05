@@ -48,7 +48,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     this.isVisible = this.isInitialized && !this.isPaused;
 
     if (this.isInitialized) {
-      this.updateDataset(this.order.self);
+      this.updateDatasetIndex(this.order.self);
     }
 
     if (!this.isPaused) {
@@ -206,7 +206,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
     branchIDsOrder[newIndex] = this.id;
 
-    this.updateDataset(newIndex);
+    this.updateDatasetIndex(newIndex);
 
     return oldIndex;
   }
@@ -330,7 +330,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
     const { newIndex } = this.updateOrderIndexing(increment);
 
-    this.updateDataset(newIndex);
+    this.updateDatasetIndex(newIndex);
 
     this.rollBack(operationID, isForceTransform, axes);
   }

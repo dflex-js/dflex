@@ -176,7 +176,7 @@ class Droppable extends DistanceCalculator {
 
   private setDraggedTempIndex(tempIndex: number) {
     this.draggable.tempIndex = tempIndex;
-    this.draggable.draggedElm.updateDataset(tempIndex);
+    this.draggable.draggedElm.updateDatasetIndex(tempIndex);
   }
 
   private updateLastElmOffset() {
@@ -515,7 +515,7 @@ class Droppable extends DistanceCalculator {
      */
     this.leftAtIndex = -1;
 
-    this.draggable.draggedElm.removeAttribute("out-container");
+    this.draggable.draggedElm.removeAttribute("dragged-out-container");
   }
 
   private scrollElementOnY(x: number, y: number, direction: 1 | -1) {
@@ -749,14 +749,14 @@ class Droppable extends DistanceCalculator {
       this.scrollManager(x, y);
 
       if (!this.draggable.isOutActiveSiblingsContainer) {
-        this.draggable.draggedElm.setAttribute("out-position", "true");
+        this.draggable.draggedElm.setAttribute("dragged-out-position", "true");
 
         this.draggedOutPosition();
 
         return;
       }
 
-      this.draggable.draggedElm.removeAttribute("out-position");
+      this.draggable.draggedElm.removeAttribute("dragged-out-position");
 
       isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
@@ -775,7 +775,7 @@ class Droppable extends DistanceCalculator {
         return;
       }
 
-      this.draggable.draggedElm.setAttribute("out-container", "true");
+      this.draggable.draggedElm.setAttribute("dragged-out-container", "true");
 
       this.emitDraggedEvent("onDragOutContainer");
 

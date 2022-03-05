@@ -96,7 +96,7 @@ class AbstractInstance implements AbstractInterface {
     this.isPaused = false;
   }
 
-  updateDataset(i: number) {
+  updateDatasetIndex(i: number) {
     this.ref!.dataset.index = `${i}`;
   }
 
