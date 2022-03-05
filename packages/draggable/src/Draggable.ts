@@ -25,8 +25,7 @@ class Draggable extends AbstractDraggable<AbstractCoreInterface> {
   dragAt(x: number, y: number) {
     this.translate(x, y);
 
-    this.draggedElm.translate.x = this.tempTranslate.x;
-    this.draggedElm.translate.y = this.tempTranslate.y;
+    this.draggedElm.translate.clone(this.tempTranslate);
   }
 
   endDragging() {

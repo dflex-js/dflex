@@ -1,4 +1,5 @@
 import type { AbstractCoreInterface } from "@dflex/core-instance";
+import { AxesCoordinates } from "@dflex/utils";
 
 import type {
   AbstractDraggableInterface,
@@ -21,11 +22,9 @@ class AbstractDraggable<T extends AbstractCoreInterface>
    * equating: initX = X. Taking into considerations translate value.
    *
    */
-  outerOffsetX: number;
+  outerOffset: AxesCoordinates;
 
-  outerOffsetY: number;
-
-  tempTranslate: Coordinates;
+  tempTranslate: AxesCoordinates;
 
   static draggedStyle: DraggedStyle = [
     {
@@ -61,13 +60,12 @@ class AbstractDraggable<T extends AbstractCoreInterface>
 
     const { translate } = this.draggedElm;
 
-    this.outerOffsetX = -initX + translate!.x;
-    this.outerOffsetY = -initY + translate!.y;
+    this.outerOffset = new AxesCoordinates(
+      -initX + translate.x,
+      -initY + translate.y
+    );
 
-    this.tempTranslate = {
-      x: 0,
-      y: 0,
-    };
+    this.tempTranslate = new AxesCoordinates(0, 0);
 
     this.setDragged(true);
   }
@@ -132,8 +130,7 @@ class AbstractDraggable<T extends AbstractCoreInterface>
      * dropping process. Updating Y immediately will effect calculations in
      * transform, that's why it is updated when dragging is done.
      */
-    this.tempTranslate.x = x + this.outerOffsetX;
-    this.tempTranslate.y = y + this.outerOffsetY;
+    this.tempTranslate.setAxes(x + this.outerOffset.x, y + this.outerOffset.y);
 
     this.draggedElm.transform(this.tempTranslate.x, this.tempTranslate.y);
   }
