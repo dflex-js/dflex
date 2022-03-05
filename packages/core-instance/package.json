@@ -1,6 +1,6 @@
 {
   "name": "@dflex/core-instance",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Jalal Maskoun",
@@ -16,7 +16,7 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@dflex/utils": "^3.1.0"
+    "@dflex/utils": "^3.2.0"
   },
   "keywords": [
     "drag-drop",
