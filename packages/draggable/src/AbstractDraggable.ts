@@ -24,7 +24,7 @@ class AbstractDraggable<T extends AbstractCoreInterface>
    */
   outerOffset: AxesCoordinates;
 
-  tempTranslate: AxesCoordinates;
+  translatePlaceholder: AxesCoordinates;
 
   static draggedStyle: DraggedStyle = [
     {
@@ -65,7 +65,7 @@ class AbstractDraggable<T extends AbstractCoreInterface>
       -initY + translate.y
     );
 
-    this.tempTranslate = new AxesCoordinates(0, 0);
+    this.translatePlaceholder = new AxesCoordinates(0, 0);
 
     this.setDragged(true);
   }
@@ -130,9 +130,15 @@ class AbstractDraggable<T extends AbstractCoreInterface>
      * dropping process. Updating Y immediately will effect calculations in
      * transform, that's why it is updated when dragging is done.
      */
-    this.tempTranslate.setAxes(x + this.outerOffset.x, y + this.outerOffset.y);
+    this.translatePlaceholder.setAxes(
+      x + this.outerOffset.x,
+      y + this.outerOffset.y
+    );
 
-    this.draggedElm.transform(this.tempTranslate.x, this.tempTranslate.y);
+    this.draggedElm.transform(
+      this.translatePlaceholder.x,
+      this.translatePlaceholder.y
+    );
   }
 }
 

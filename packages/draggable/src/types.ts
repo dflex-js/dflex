@@ -46,6 +46,6 @@ export interface AbstractDraggableInterface<T extends AbstractCoreInterface> {
    *
    */
   outerOffset: AxesCoordinates;
-  tempTranslate: AxesCoordinates;
+  translatePlaceholder: AxesCoordinates;
   changeStyle(style: DraggedStyle, shouldAddPosition: boolean): void;
 }
