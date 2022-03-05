@@ -11,10 +11,16 @@ export type AbstractInput = {
   ref?: HTMLElement;
 };
 
-export type AllowedAttributes =
-  | "dragged"
-  | "dragged-out-position"
-  | "dragged-out-container";
+export type AllowedDataset =
+  | "index"
+  | "draggedOutPosition"
+  | "draggedOutContainer";
+
+export type AllowedAttributes = "dragged";
+
+export type AttributesIndicators =
+  | Exclude<AllowedDataset, "index">
+  | AllowedAttributes;
 
 export interface AbstractInterface {
   isInitialized: boolean;
@@ -26,7 +32,8 @@ export interface AbstractInterface {
   detach(): void;
   initTranslate(): void;
   transform(x: number, y: number): void;
-  updateDatasetIndex(index: number): void;
+  setDataset(key: AllowedDataset, value: number | boolean): void;
+  rmDateset(key: Exclude<AllowedDataset, "index">): void;
   setAttribute(key: AllowedAttributes, value: string): void;
   removeAttribute(key: AllowedAttributes): void;
   clearAttributes(): void;

@@ -564,7 +564,7 @@ class Draggable
 
       if (this.hasMoved()) {
         this.draggedElm.transformElm();
-        this.draggedElm.updateDatasetIndex(this.draggedElm.order.self);
+        this.draggedElm.setDataset("index", this.draggedElm.order.self);
 
         /**
          * There's a rare case where dragged leaves and returns to the same
