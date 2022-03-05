@@ -533,13 +533,6 @@ class Draggable
     this.numberOfElementsTransformed += -1 * effectedElemDirection;
   }
 
-  private hasMoved() {
-    return (
-      this.draggedElm.translate.x !== this.translatePlaceholder.x ||
-      this.draggedElm.translate.y !== this.translatePlaceholder.y
-    );
-  }
-
   setDraggedTransformPosition(isFallback: boolean) {
     const siblings = store.getElmSiblingsListById(this.draggedElm.id);
 
@@ -561,8 +554,7 @@ class Draggable
        * dragged depends on extra instance to float in layout that is not related to element
        * instance.
        */
-
-      if (this.hasMoved()) {
+      if (!this.draggedElm.translate.isEqual(this.translatePlaceholder)) {
         this.draggedElm.transformElm();
         this.draggedElm.setDataset("index", this.draggedElm.order.self);
 
