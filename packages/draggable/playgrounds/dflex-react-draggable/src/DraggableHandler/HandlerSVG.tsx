@@ -1,7 +1,8 @@
 import React from "react";
 import "./draggableHandler.css";
 
-const HandlerSVG = (props) => (
+// eslint-disable-next-line no-unused-vars
+const HandlerSVG = (props: { onMouseDown: (e: React.MouseEvent) => void }) => (
   <svg
     className="handler"
     width="10"

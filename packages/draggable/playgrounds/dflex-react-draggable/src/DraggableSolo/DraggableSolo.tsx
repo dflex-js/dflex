@@ -3,28 +3,26 @@
 import React from "react";
 
 import { store, Draggable } from "@dflex/draggable";
-import "./draggableHandler.css";
-import HandlerSVG from "./HandlerSVG";
+import "./button.css";
 
 // shared dragged event
-let draggedEvent;
+let draggedEvent: Draggable;
 
-const DraggableHandler = ({ id = "draggableSolo", depth = 0 }) => {
+const DraggableSolo = ({ id = "draggableSolo" }) => {
   // This reference enable DFlex to move the element when required
-  const ref = React.createRef();
-  //   const [isDragged, setIsDragged] = React.useState(false);
+  const ref = React.createRef() as React.MutableRefObject<HTMLButtonElement>;
 
   React.useEffect(() => {
     setTimeout(
       // eslint-disable-next-line func-names
       () => {
-        store.register({ id, ref: ref.current, depth });
+        store.register({ id, ref: ref.current! });
       },
       0
     );
   }, []);
 
-  const onMouseMove = (e) => {
+  const onMouseMove = (e: MouseEvent) => {
     if (draggedEvent) {
       const { clientX, clientY } = e;
 
@@ -36,14 +34,13 @@ const DraggableHandler = ({ id = "draggableSolo", depth = 0 }) => {
   const onMouseUp = () => {
     if (draggedEvent) {
       draggedEvent.endDragging();
-      draggedEvent = null;
 
       document.removeEventListener("mouseup", onMouseUp);
       document.removeEventListener("mousemove", onMouseMove);
     }
   };
 
-  const onMouseDown = (e) => {
+  const onMouseDown = (e: React.MouseEvent) => {
     const { button, clientX, clientY } = e;
 
     // avoid right mouse click and ensure id
@@ -58,11 +55,17 @@ const DraggableHandler = ({ id = "draggableSolo", depth = 0 }) => {
   };
 
   return (
-    <div className="draggable" ref={ref} key={id} id={id}>
-      <span className="text"> Drag me</span>
-      <HandlerSVG onMouseDown={onMouseDown} />
-    </div>
+    <button
+      className="button-solo"
+      type="button"
+      ref={ref}
+      key={id}
+      id={id}
+      onMouseDown={onMouseDown}
+    >
+      Drag me!
+    </button>
   );
 };
 
-export default DraggableHandler;
+export default DraggableSolo;
