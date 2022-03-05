@@ -1,9 +1,11 @@
 import { AbstractDraggable } from "@dflex/draggable";
 import type { DraggedStyle, Coordinates } from "@dflex/draggable";
 
+import { AxesCoordinates } from "@dflex/utils";
+import type { Axes, AxesCoordinatesInterface } from "@dflex/utils";
+
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
-import { Axes, AxesCoordinates } from "@dflex/utils";
 import store from "../DnDStore";
 
 import type { DraggableDnDInterface, Restrictions } from "./types";
@@ -40,15 +42,15 @@ class Draggable
 
   isViewportRestricted: boolean;
 
-  innerOffset: AxesCoordinates;
+  innerOffset: AxesCoordinatesInterface;
 
-  tempOffset: AxesCoordinates;
+  tempOffset: AxesCoordinatesInterface;
 
-  occupiedOffset: AxesCoordinates;
+  occupiedOffset: AxesCoordinatesInterface;
 
-  occupiedTranslate: AxesCoordinates;
+  occupiedTranslate: AxesCoordinatesInterface;
 
-  mousePoints: AxesCoordinates;
+  mousePoints: AxesCoordinatesInterface;
 
   isMovingDown: boolean;
 

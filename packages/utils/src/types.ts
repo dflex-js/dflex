@@ -14,3 +14,11 @@ export interface EffectedElemDirection {
 }
 
 export type Axes = "x" | "y";
+
+export interface AxesCoordinatesInterface<T = number> {
+  x: T;
+  y: T;
+  setAxes(x: T, y: T): void;
+  clone(target: AxesCoordinatesInterface<T>): void;
+  isEqual(target: AxesCoordinatesInterface<T>): boolean;
+}

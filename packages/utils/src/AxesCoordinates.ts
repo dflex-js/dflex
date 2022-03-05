@@ -1,4 +1,6 @@
-class AxesCoordinates<T = number> {
+import type { AxesCoordinatesInterface } from "./types";
+
+class AxesCoordinates<T = number> implements AxesCoordinatesInterface<T> {
   x!: T;
 
   y!: T;
@@ -12,11 +14,11 @@ class AxesCoordinates<T = number> {
     this.y = y;
   }
 
-  clone(target: AxesCoordinates<T>) {
+  clone(target: AxesCoordinatesInterface<T>) {
     this.setAxes(target.x, target.y);
   }
 
-  isEqual(target: AxesCoordinates<T>) {
+  isEqual(target: AxesCoordinatesInterface<T>) {
     return this.x === target.x && this.y === target.y;
   }
 }

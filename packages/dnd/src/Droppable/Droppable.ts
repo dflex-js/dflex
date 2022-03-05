@@ -1,4 +1,5 @@
-import { Axes, AxesCoordinates } from "@dflex/utils";
+import { AxesCoordinates } from "@dflex/utils";
+import type { Axes, AxesCoordinatesInterface } from "@dflex/utils";
 import type { DraggedEvent, SiblingsEvent } from "../types";
 
 import store from "../DnDStore";
@@ -65,7 +66,7 @@ function isIDEligible2Move(
 class Droppable extends DistanceCalculator {
   private leftAtIndex: number;
 
-  private preserveLastElmOffset?: AxesCoordinates;
+  private preserveLastElmOffset?: AxesCoordinatesInterface;
 
   private scrollAnimatedFrame: number | null;
 

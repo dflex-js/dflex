@@ -1,5 +1,6 @@
 import type { AbstractCoreInterface } from "@dflex/core-instance";
 import { AxesCoordinates } from "@dflex/utils";
+import type { AxesCoordinatesInterface } from "@dflex/utils";
 
 import type {
   AbstractDraggableInterface,
@@ -22,9 +23,9 @@ class AbstractDraggable<T extends AbstractCoreInterface>
    * equating: initX = X. Taking into considerations translate value.
    *
    */
-  outerOffset: AxesCoordinates;
+  outerOffset: AxesCoordinatesInterface;
 
-  translatePlaceholder: AxesCoordinates;
+  translatePlaceholder: AxesCoordinatesInterface;
 
   static draggedStyle: DraggedStyle = [
     {

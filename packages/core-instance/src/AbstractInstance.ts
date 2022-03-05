@@ -1,5 +1,5 @@
-/* eslint-disable max-classes-per-file */
 import { AxesCoordinates } from "@dflex/utils";
+import type { AxesCoordinatesInterface } from "@dflex/utils";
 
 import type {
   AbstractInterface,
@@ -15,7 +15,7 @@ class AbstractInstance implements AbstractInterface {
 
   id: string;
 
-  translate!: AxesCoordinates;
+  translate!: AxesCoordinatesInterface;
 
   isInitialized!: boolean;
 

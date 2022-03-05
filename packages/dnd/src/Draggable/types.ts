@@ -1,4 +1,4 @@
-import { AxesCoordinates, Axes } from "@dflex/utils";
+import type { AxesCoordinatesInterface, Axes } from "@dflex/utils";
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 import type { AbstractDraggableInterface } from "@dflex/draggable";
 
@@ -34,11 +34,11 @@ export interface DraggableDnDInterface
   scroll: ScrollOptWithThreshold;
   threshold: ThresholdInterface;
   layoutThresholds: SiblingsThresholdMatrix;
-  innerOffset: AxesCoordinates;
-  tempOffset: AxesCoordinates;
-  occupiedOffset: AxesCoordinates;
-  occupiedTranslate: AxesCoordinates;
-  mousePoints: AxesCoordinates;
+  innerOffset: AxesCoordinatesInterface;
+  tempOffset: AxesCoordinatesInterface;
+  occupiedOffset: AxesCoordinatesInterface;
+  occupiedTranslate: AxesCoordinatesInterface;
+  mousePoints: AxesCoordinatesInterface;
   numberOfElementsTransformed: number;
   isViewportRestricted: boolean;
   isMovingDown: boolean;
