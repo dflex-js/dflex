@@ -6,6 +6,8 @@ import type {
   AbstractInput,
   AbstractOpts,
   AllowedAttributes,
+  AllowedDataset,
+  AttributesIndicators,
 } from "./types";
 
 class AbstractInstance implements AbstractInterface {
@@ -19,9 +21,9 @@ class AbstractInstance implements AbstractInterface {
 
   isPaused!: boolean;
 
-  hasAttribute!: {
+  private hasAttribute!: {
     // eslint-disable-next-line no-unused-vars
-    [key in AllowedAttributes]: boolean;
+    [key in AttributesIndicators]: boolean;
   };
 
   constructor({ ref, id }: AbstractInput, opts: AbstractOpts) {
@@ -96,34 +98,49 @@ class AbstractInstance implements AbstractInterface {
     this.isPaused = false;
   }
 
-  updateDataset(i: number) {
-    this.ref!.dataset.index = `${i}`;
-  }
-
-  setAttribute(key: AllowedAttributes, value: string) {
-    if (this.hasAttribute[key] === true) {
-      // console.log(`DFlex: Attribute ${key} is already set.`);
+  setDataset(key: AllowedDataset, value: number | boolean) {
+    if (key === "index") {
+      this.ref!.dataset[key] = `${value}`;
 
       return;
     }
+
+    if (this.hasAttribute[key]) return;
+
+    this.ref!.dataset[key] = `${value}`;
+
+    this.hasAttribute[key] = true;
+  }
+
+  rmDateset(key: Exclude<AllowedDataset, "index">) {
+    delete this.ref!.dataset[key];
+
+    if (this.hasAttribute[key]) {
+      this.hasAttribute[key] = false;
+    }
+  }
+
+  setAttribute(key: AllowedAttributes, value: string) {
+    if (this.hasAttribute[key]) return;
 
     this.ref!.setAttribute(key, value);
     this.hasAttribute[key] = true;
   }
 
   removeAttribute(key: AllowedAttributes) {
-    if (this.hasAttribute[key] === true) {
-      this.ref!.removeAttribute(key);
-      this.hasAttribute[key] = false;
-    }
+    if (!this.hasAttribute[key]) return;
+
+    this.ref!.removeAttribute(key);
+    this.hasAttribute[key] = false;
   }
 
   clearAttributes() {
-    (Object.keys(this.hasAttribute) as AllowedAttributes[]).forEach((key) => {
-      if (this.hasAttribute[key]) {
-        this.removeAttribute(key);
+    (Object.keys(this.hasAttribute) as AttributesIndicators[]).forEach(
+      (key) => {
+        if (key === "dragged") this.removeAttribute(key);
+        else this.rmDateset(key);
       }
-    });
+    );
 
     // @ts-expect-error.
     this.hasAttribute = {};

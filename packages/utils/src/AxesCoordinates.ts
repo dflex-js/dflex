@@ -15,6 +15,10 @@ class AxesCoordinates<T = number> {
   clone(target: AxesCoordinates<T>) {
     this.setAxes(target.x, target.y);
   }
+
+  isEqual(target: AxesCoordinates<T>) {
+    return this.x === target.x && this.y === target.y;
+  }
 }
 
 export default AxesCoordinates;
