@@ -6,8 +6,11 @@
   "description": "Modern Draggable package for all JavaScript frameworks",
   "author": "Jalal Maskoun",
   "scripts": {
-    "compile": "yarn rimraf ./dist tsconfig.tsbuildinfo && yarn tsc -b",
-    "build": "yarn compile",
+    "clean": "yarn rimraf ./dist *.tsbuildinfo",
+    "compile": "yarn tsc -b",
+    "compile:w": "yarn tsc -b -w",
+    "build": "yarn clean && yarn compile",
+    "dev": "yarn workspace dflex-react-draggable start",
     "test": "jest"
   },
   "homepage": "https://github.com/dflex-js/dflex/tree/master/packages/draggable",
