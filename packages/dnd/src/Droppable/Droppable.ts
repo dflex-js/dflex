@@ -172,11 +172,11 @@ class Droppable extends DistanceCalculator {
    * Gets the temporary index of dragged before it occupies new position.
    */
   getDraggedTempIndex() {
-    return this.draggable.tempIndex;
+    return this.draggable.indexPlaceholder;
   }
 
   private setDraggedTempIndex(tempIndex: number) {
-    this.draggable.tempIndex = tempIndex;
+    this.draggable.indexPlaceholder = tempIndex;
     this.draggable.draggedElm.setDataset("index", tempIndex);
   }
 
@@ -222,7 +222,7 @@ class Droppable extends DistanceCalculator {
         const element = store.registry[id];
 
         const isQualified = !element.isPositionedUnder(
-          this.draggable.tempOffset.y
+          this.draggable.offsetPlaceholder.y
         );
 
         if (isQualified) {
@@ -273,7 +273,7 @@ class Droppable extends DistanceCalculator {
         const element = store.registry[id];
 
         const isQualified = element.isPositionedUnder(
-          this.draggable.tempOffset.y
+          this.draggable.offsetPlaceholder.y
         );
 
         if (isQualified) {
@@ -291,7 +291,8 @@ class Droppable extends DistanceCalculator {
     const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
 
     const elmIndex =
-      this.draggable.tempIndex + -1 * this.effectedElemDirection[this.axes];
+      this.draggable.indexPlaceholder +
+      -1 * this.effectedElemDirection[this.axes];
 
     const id = siblings![elmIndex];
 
@@ -320,9 +321,9 @@ class Droppable extends DistanceCalculator {
       this.draggable.draggedElm.id
     ) as string[];
 
-    const from = this.draggable.tempIndex + 1;
+    const from = this.draggable.indexPlaceholder + 1;
 
-    this.leftAtIndex = this.draggable.tempIndex;
+    this.leftAtIndex = this.draggable.indexPlaceholder;
 
     emitSiblingsEvent("onLiftUpSiblings", {
       siblings,
@@ -468,7 +469,7 @@ class Droppable extends DistanceCalculator {
      * Otherwise, detect where it coming from and update tempIndex
      * accordingly.
      */
-    if (this.draggable.tempIndex !== 0) {
+    if (this.draggable.indexPlaceholder !== 0) {
       to = this.detectDroppableIndex();
 
       if (typeof to !== "number") {
@@ -504,7 +505,7 @@ class Droppable extends DistanceCalculator {
       /**
        * Now, resitting direction by figuring out if dragged settled up/dwn.
        */
-      const isElmUp = this.leftAtIndex > this.draggable.tempIndex;
+      const isElmUp = this.leftAtIndex > this.draggable.indexPlaceholder;
 
       this.setEffectedElemDirection(isElmUp, this.axes);
     } else {

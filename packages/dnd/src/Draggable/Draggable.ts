@@ -24,7 +24,7 @@ class Draggable
 {
   private isLayoutStateUpdated: boolean;
 
-  tempIndex: number;
+  indexPlaceholder: number;
 
   operationID: string;
 
@@ -44,7 +44,7 @@ class Draggable
 
   innerOffset: AxesCoordinatesInterface;
 
-  tempOffset: AxesCoordinatesInterface;
+  offsetPlaceholder: AxesCoordinatesInterface;
 
   occupiedOffset: AxesCoordinatesInterface;
 
@@ -91,7 +91,7 @@ class Draggable
      * Initialize temp index that refers to element new position after
      * transformation happened.
      */
-    this.tempIndex = order.self;
+    this.indexPlaceholder = order.self;
 
     // This tiny bug caused an override  options despite it's actually freezed!
     this.scroll = { ...opts.scroll };
@@ -205,7 +205,10 @@ class Draggable
     const lm = Math.round(parseFloat(style.marginLeft));
     this.marginX = rm + lm;
 
-    this.tempOffset = new AxesCoordinates(currentPosition.x, currentPosition.y);
+    this.offsetPlaceholder = new AxesCoordinates(
+      currentPosition.x,
+      currentPosition.y
+    );
 
     this.occupiedOffset = new AxesCoordinates(
       currentPosition.x,
@@ -324,11 +327,11 @@ class Draggable
   private isFirstOrOutside() {
     const siblings = store.getElmSiblingsListById(this.draggedElm.id);
 
-    return siblings !== null && this.tempIndex <= 0;
+    return siblings !== null && this.indexPlaceholder <= 0;
   }
 
   private isLastELm() {
-    return this.tempIndex === this.getLastElmIndex();
+    return this.indexPlaceholder === this.getLastElmIndex();
   }
 
   /**
@@ -419,20 +422,23 @@ class Draggable
     /**
      * Every time we got new translate, offset should be updated
      */
-    this.tempOffset.setAxes(
+    this.offsetPlaceholder.setAxes(
       filteredX - this.innerOffset.x,
       filteredY - this.innerOffset.y
     );
   }
 
   private isOutThresholdH($: ThresholdMatrix) {
-    return this.tempOffset.x < $.maxLeft || this.tempOffset.x > $.maxRight;
+    return (
+      this.offsetPlaceholder.x < $.maxLeft ||
+      this.offsetPlaceholder.x > $.maxRight
+    );
   }
 
   private isOutPositionV($: ThresholdMatrix) {
     return this.isMovingDown
-      ? this.tempOffset.y > $.maxBottom
-      : this.tempOffset.y < $.maxTop;
+      ? this.offsetPlaceholder.y > $.maxBottom
+      : this.offsetPlaceholder.y < $.maxTop;
   }
 
   private isOutContainerV($: ThresholdMatrix) {
@@ -441,8 +447,8 @@ class Draggable
      * and outside the container?
      */
     return (
-      (this.isLastELm() && this.tempOffset.y > $.maxBottom) ||
-      (this.tempIndex < 0 && this.tempOffset.y < $.maxTop)
+      (this.isLastELm() && this.offsetPlaceholder.y > $.maxBottom) ||
+      (this.indexPlaceholder < 0 && this.offsetPlaceholder.y < $.maxTop)
     );
   }
 
@@ -586,10 +592,10 @@ class Draggable
     this.draggedElm.transformElm();
 
     if (siblings) {
-      this.draggedElm.assignNewPosition(siblings, this.tempIndex);
+      this.draggedElm.assignNewPosition(siblings, this.indexPlaceholder);
     }
 
-    this.draggedElm.order.self = this.tempIndex;
+    this.draggedElm.order.self = this.indexPlaceholder;
   }
 
   endDragging(isFallback: boolean) {

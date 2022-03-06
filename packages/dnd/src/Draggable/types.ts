@@ -27,7 +27,7 @@ export interface Restrictions {
 
 export interface DraggableDnDInterface
   extends AbstractDraggableInterface<CoreInstanceInterface> {
-  tempIndex: number;
+  indexPlaceholder: number;
   operationID: string;
   setOfTransformedIds?: Set<string>;
   siblingsContainer: CoreInstanceInterface | null;
@@ -35,7 +35,7 @@ export interface DraggableDnDInterface
   threshold: ThresholdInterface;
   layoutThresholds: SiblingsThresholdMatrix;
   innerOffset: AxesCoordinatesInterface;
-  tempOffset: AxesCoordinatesInterface;
+  offsetPlaceholder: AxesCoordinatesInterface;
   occupiedOffset: AxesCoordinatesInterface;
   occupiedTranslate: AxesCoordinatesInterface;
   mousePoints: AxesCoordinatesInterface;
