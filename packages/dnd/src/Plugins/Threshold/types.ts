@@ -9,14 +9,6 @@ export interface ThresholdPercentages {
 }
 
 /**
- * Threshold in pixel relevant to input percentages.
- */
-export interface ThresholdInPixels {
-  x: number;
-  y: number;
-}
-
-/**
  * Four directions threshold.
  */
 export interface ThresholdMatrix {
@@ -26,10 +18,21 @@ export interface ThresholdMatrix {
   maxRight: number;
 }
 
+export interface ThresholdPointInterface {
+  max: number;
+  min: number;
+}
+
+export interface IMain {
+  top: ThresholdPointInterface;
+  left: ThresholdPointInterface;
+}
+
 export interface ThresholdInterface {
-  thresholdPercentages: ThresholdPercentages;
-  thresholdPixels: ThresholdInPixels;
+  percentages: ThresholdPercentages;
   thresholdMatrix: ThresholdMatrix;
+  main: IMain;
+  setMainThreshold(rect: Rect, isContainer: boolean): void;
   getThresholdMatrix(
     top: number,
     left: number,

@@ -1,15 +1,68 @@
-import type { Rect } from "@dflex/utils";
-import type { ThresholdInterface, ThresholdMatrix } from "./types";
+/* eslint-disable max-classes-per-file */
+import { AxesCoordinates, AxesCoordinatesInterface, Rect } from "@dflex/utils";
+import type {
+  ThresholdInterface,
+  ThresholdMatrix,
+  ThresholdPointInterface,
+  IMain,
+  ThresholdPercentages,
+} from "./types";
+
+class ThresholdPoint implements ThresholdPointInterface {
+  max: number;
+
+  min: number;
+
+  constructor(max: number, min: number) {
+    this.max = max;
+    this.min = min;
+  }
+}
 
 class Threshold implements ThresholdInterface {
-  thresholdPercentages: ThresholdInterface["thresholdPercentages"];
+  percentages: ThresholdInterface["percentages"];
 
-  thresholdPixels!: ThresholdInterface["thresholdPixels"];
+  private pixels!: AxesCoordinatesInterface;
 
   thresholdMatrix!: ThresholdInterface["thresholdMatrix"];
 
-  constructor(thresholdInput: ThresholdInterface["thresholdPercentages"]) {
-    this.thresholdPercentages = thresholdInput;
+  main!: IMain;
+
+  constructor(
+    percentages: ThresholdPercentages,
+    rect: Rect,
+    { isContainer }: { isContainer: boolean }
+  ) {
+    this.percentages = percentages;
+
+    this.setPixels(rect);
+    this.setMainThreshold(rect, isContainer);
+  }
+
+  private setPixels({ width, height }: Rect) {
+    const x = Math.round((this.percentages.horizontal * width) / 100);
+
+    const y = Math.round((this.percentages.vertical * height) / 100);
+
+    this.pixels = new AxesCoordinates(x, y);
+  }
+
+  setMainThreshold(rect: Rect, isContainer: boolean) {
+    const { top, left, height } = rect;
+
+    const { x, y } = this.pixels;
+
+    const leftThresholdPoint = new ThresholdPoint(
+      left - x,
+      isContainer ? Math.abs(height - y) : left + x
+    );
+
+    const topThresholdPoint = new ThresholdPoint(top - y, top + y);
+
+    this.main = {
+      left: leftThresholdPoint,
+      top: topThresholdPoint,
+    };
   }
 
   getThresholdMatrix(
@@ -18,7 +71,7 @@ class Threshold implements ThresholdInterface {
     height?: number,
     relativeToViewport?: boolean
   ): ThresholdMatrix {
-    const { x, y } = this.thresholdPixels;
+    const { x, y } = this.pixels;
 
     /**
      * When going up, currentTop decreases (-vertical).
@@ -62,15 +115,11 @@ class Threshold implements ThresholdInterface {
   updateElementThresholdMatrix(
     elementRect: Rect,
     relativeToContainer: boolean,
-    relativeToViewport?: boolean
+    relativeToViewport: boolean
   ) {
-    const { width, height, top, left } = elementRect;
+    const { height, top, left } = elementRect;
 
-    const x = Math.round((this.thresholdPercentages.horizontal * width) / 100);
-
-    const y = Math.round((this.thresholdPercentages.vertical * height) / 100);
-
-    this.thresholdPixels = { x, y };
+    this.setPixels(elementRect);
 
     this.thresholdMatrix = this.getThresholdMatrix(
       top,

@@ -84,11 +84,11 @@ export interface ScrollOptWithoutThreshold {
 
 export interface ScrollOptWithPartialThreshold
   extends ScrollOptWithoutThreshold {
-  threshold: Partial<ThresholdInterface["thresholdPercentages"]>;
+  threshold: Partial<ThresholdInterface["percentages"]>;
 }
 
 export interface ScrollOptWithThreshold extends ScrollOptWithoutThreshold {
-  threshold: ThresholdInterface["thresholdPercentages"];
+  threshold: ThresholdInterface["percentages"];
 }
 
 export interface RestrictionsStatus {
@@ -97,7 +97,7 @@ export interface RestrictionsStatus {
 }
 
 export interface FinalDndOpts {
-  threshold: ThresholdInterface["thresholdPercentages"];
+  threshold: ThresholdInterface["percentages"];
   restrictions: Restrictions;
   restrictionsStatus: RestrictionsStatus;
   scroll: ScrollOptWithThreshold;
@@ -105,7 +105,7 @@ export interface FinalDndOpts {
 }
 
 export interface DndOpts {
-  threshold?: Partial<ThresholdInterface["thresholdPercentages"]>;
+  threshold?: Partial<ThresholdInterface["percentages"]>;
   restrictions?: {
     self?: Partial<Restrictions["self"]>;
     container?: Partial<Restrictions["container"]>;

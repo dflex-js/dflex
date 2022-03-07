@@ -145,13 +145,22 @@ class Draggable
 
     const siblingsBoundaries = store.siblingsBoundaries[SK];
 
-    this.threshold = new Threshold(opts.threshold);
-
     const {
       offset: { width, height },
       currentPosition,
       translate,
     } = this.draggedElm;
+
+    this.threshold = new Threshold(
+      opts.threshold,
+      {
+        width,
+        height,
+        left: currentPosition.x,
+        top: currentPosition.y,
+      },
+      { isContainer: false }
+    );
 
     this.threshold.updateElementThresholdMatrix(
       { width, height, left: currentPosition.x, top: currentPosition.y },
@@ -435,10 +444,20 @@ class Draggable
     );
   }
 
-  private isOutPositionV($: ThresholdMatrix) {
-    return this.isMovingDown
-      ? this.offsetPlaceholder.y > $.maxBottom
-      : this.offsetPlaceholder.y < $.maxTop;
+  private isOutPositionV() {
+    const { top } = this.threshold.main;
+
+    const { y } = this.offsetPlaceholder;
+
+    return this.isMovingDown ? y > top.min : y < top.max;
+  }
+
+  private isOutPositionH() {
+    const { left } = this.threshold.main;
+
+    const { x } = this.offsetPlaceholder;
+
+    return this.isMovingLeft ? x > left.min : x < left.max;
   }
 
   private isOutContainerV($: ThresholdMatrix) {
@@ -461,7 +480,7 @@ class Draggable
       return true;
     }
 
-    if (this.isOutPositionV($)) {
+    if (this.isOutPositionV() || this.isOutPositionH()) {
       return true;
     }
 

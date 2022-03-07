@@ -241,6 +241,16 @@ class Droppable extends DistanceCalculator {
             false
           );
 
+          this.draggable.threshold.setMainThreshold(
+            {
+              width: this.draggable.draggedElm.offset.width,
+              height: this.draggable.draggedElm.offset.height,
+              left: this.preserveLastElmOffset!.x,
+              top: this.preserveLastElmOffset!.y,
+            },
+            false
+          );
+
           this.updateOccupiedOffset(
             this.preserveLastElmOffset!.y,
             this.preserveLastElmOffset!.x
