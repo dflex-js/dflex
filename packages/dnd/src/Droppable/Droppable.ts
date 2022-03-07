@@ -405,42 +405,40 @@ class Droppable extends DistanceCalculator {
       return;
     }
 
-    if (!this.draggable.isOutActiveSiblingsContainer) {
-      /**
-       * normal movement inside the parent
-       */
+    /**
+     * normal movement inside the parent
+     */
 
-      /**
-       * Going out from the list: Right/left.
-       */
-      if (this.draggable.isOutPositionHorizontally) {
-        // Is is out parent?
+    /**
+     * Going out from the list: Right/left.
+     */
+    if (this.draggable.isOutPositionHorizontally) {
+      // Is is out parent?
 
-        // move element up
-        this.setEffectedElemDirection(true, this.axes);
+      // move element up
+      this.setEffectedElemDirection(true, this.axes);
 
-        // lock the parent
-        this.setDraggedPositionFlagInSiblingsContainer(true);
+      // lock the parent
+      this.setDraggedPositionFlagInSiblingsContainer(true);
 
-        this.fillHeadUp();
+      this.fillHeadUp();
 
-        return;
-      }
-
-      /**
-       * Normal state, switch.
-       */
-
-      // inside the list, effected should be related to mouse movement
-      this.setEffectedElemDirection(
-        this.axes === "y"
-          ? this.draggable.isMovingDown
-          : this.draggable.isMovingLeft,
-        this.axes
-      );
-
-      this.switchElement();
+      return;
     }
+
+    /**
+     * Normal state, switch.
+     */
+
+    // inside the list, effected should be related to mouse movement
+    this.setEffectedElemDirection(
+      this.axes === "y"
+        ? this.draggable.isMovingDown
+        : this.draggable.isMovingLeft,
+      this.axes
+    );
+
+    this.switchElement();
   }
 
   private setDraggedPositionFlagInSiblingsContainer(isOut: boolean) {
