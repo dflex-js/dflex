@@ -1,5 +1,5 @@
 import Threshold from "./Threshold";
 
-export type { ThresholdInterface, ThresholdMatrix } from "./types";
+export type { ThresholdInterface, ThresholdCoordinate } from "./types";
 
 export default Threshold;

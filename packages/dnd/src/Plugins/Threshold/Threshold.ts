@@ -2,9 +2,8 @@
 import { AxesCoordinates, AxesCoordinatesInterface, Rect } from "@dflex/utils";
 import type {
   ThresholdInterface,
-  ThresholdMatrix,
   ThresholdPointInterface,
-  IMain,
+  ThresholdCoordinate,
   ThresholdPercentages,
 } from "./types";
 
@@ -24,9 +23,7 @@ class Threshold implements ThresholdInterface {
 
   private pixels!: AxesCoordinatesInterface;
 
-  thresholdMatrix!: ThresholdInterface["thresholdMatrix"];
-
-  main!: IMain;
+  main!: ThresholdCoordinate;
 
   constructor(
     percentages: ThresholdPercentages,
@@ -35,7 +32,6 @@ class Threshold implements ThresholdInterface {
   ) {
     this.percentages = percentages;
 
-    this.setPixels(rect);
     this.setMainThreshold(rect, isContainer);
   }
 
@@ -47,86 +43,28 @@ class Threshold implements ThresholdInterface {
     this.pixels = new AxesCoordinates(x, y);
   }
 
-  setMainThreshold(rect: Rect, isContainer: boolean) {
+  getThreshold(rect: Rect, isContainer: boolean) {
     const { top, left, height } = rect;
 
     const { x, y } = this.pixels;
 
-    const leftThresholdPoint = new ThresholdPoint(
-      left - x,
-      isContainer ? Math.abs(height - y) : left + x
+    const leftThresholdPoint = new ThresholdPoint(left - x, left + x);
+
+    const topThresholdPoint = new ThresholdPoint(
+      top - y,
+      isContainer ? Math.abs(height - y) : top + y
     );
 
-    const topThresholdPoint = new ThresholdPoint(top - y, top + y);
-
-    this.main = {
+    return {
       left: leftThresholdPoint,
       top: topThresholdPoint,
     };
   }
 
-  getThresholdMatrix(
-    top: number,
-    left: number,
-    height?: number,
-    relativeToViewport?: boolean
-  ): ThresholdMatrix {
-    const { x, y } = this.pixels;
+  setMainThreshold(rect: Rect, isContainer: boolean) {
+    this.setPixels(rect);
 
-    /**
-     * When going up, currentTop decreases (-vertical).
-     */
-    let maxTop = top - y;
-
-    /**
-     * When going left, currentLeft decreases (-horizontal).
-     */
-    let maxLeft = left - x;
-
-    /**
-     * When going right, currentLeft increases (+horizontal) with droppable
-     * taking into considerations (+ horizontal).
-     */
-    const maxRight = left + x;
-
-    /**
-     * If height, the threshold is relative to the container. Otherwise, it's
-     * relative to the element.
-     */
-    let maxBottom = height ? height - y : top + y;
-
-    if (relativeToViewport) {
-      /**
-       * Values should always be positive. This is true for scrolling threshold.
-       */
-      maxTop = Math.abs(maxTop);
-      maxLeft = Math.abs(maxLeft);
-      maxBottom = Math.abs(maxBottom);
-    }
-
-    return {
-      maxBottom,
-      maxTop,
-      maxLeft,
-      maxRight,
-    };
-  }
-
-  updateElementThresholdMatrix(
-    elementRect: Rect,
-    relativeToContainer: boolean,
-    relativeToViewport: boolean
-  ) {
-    const { height, top, left } = elementRect;
-
-    this.setPixels(elementRect);
-
-    this.thresholdMatrix = this.getThresholdMatrix(
-      top,
-      left,
-      relativeToContainer ? height : undefined,
-      relativeToViewport
-    );
+    this.main = this.getThreshold(rect, isContainer);
   }
 }
 

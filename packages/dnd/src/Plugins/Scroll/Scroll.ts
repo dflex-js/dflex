@@ -261,8 +261,6 @@ Please provide scroll container by ref/id when registering the element or turn o
     this.threshold = new Threshold(threshold, this.scrollRect, {
       isContainer: true,
     });
-
-    this.threshold.updateElementThresholdMatrix(this.scrollRect, true, true);
   }
 
   private setScrollCoordinates() {

@@ -16,7 +16,7 @@ import type {
   RestrictionsStatus,
 } from "../types";
 
-import Threshold, { ThresholdMatrix } from "../Plugins/Threshold";
+import Threshold, { ThresholdCoordinate } from "../Plugins/Threshold";
 
 class Draggable
   extends AbstractDraggable<CoreInstanceInterface>
@@ -162,21 +162,20 @@ class Draggable
       { isContainer: false }
     );
 
-    this.threshold.updateElementThresholdMatrix(
-      { width, height, left: currentPosition.x, top: currentPosition.y },
-      false
-    );
-
     if (siblings !== null) {
       /**
        * Thresholds store, contains max value for each parent and for dragged. Depending on
        * ids as keys.
        */
       this.layoutThresholds = {
-        [SK]: this.threshold.getThresholdMatrix(
-          siblingsBoundaries.top,
-          siblingsBoundaries.maxLeft,
-          siblingsBoundaries.bottom
+        [SK]: this.threshold.getThreshold(
+          {
+            top: siblingsBoundaries.top,
+            left: siblingsBoundaries.maxLeft,
+            height: siblingsBoundaries.bottom,
+            width: 0,
+          },
+          true
         ),
       };
     }
@@ -437,11 +436,12 @@ class Draggable
     );
   }
 
-  private isOutThresholdH($: ThresholdMatrix) {
-    return (
-      this.offsetPlaceholder.x < $.maxLeft ||
-      this.offsetPlaceholder.x > $.maxRight
-    );
+  private isOutThresholdH($: ThresholdCoordinate) {
+    const { x } = this.offsetPlaceholder;
+
+    const { left } = $;
+
+    return x < left.max || x > left.min;
   }
 
   private isOutPositionV() {
@@ -460,18 +460,22 @@ class Draggable
     return this.isMovingLeft ? x > left.min : x < left.max;
   }
 
-  private isOutContainerV($: ThresholdMatrix) {
+  private isOutContainerV($: ThresholdCoordinate) {
+    const { y } = this.offsetPlaceholder;
+
+    const { top } = $;
+
     /**
      * Are you last element and outside the container? Or are you coming from top
      * and outside the container?
      */
     return (
-      (this.isLastELm() && this.offsetPlaceholder.y > $.maxBottom) ||
-      (this.indexPlaceholder < 0 && this.offsetPlaceholder.y < $.maxTop)
+      (this.isLastELm() && y > top.min) ||
+      (this.indexPlaceholder < 0 && y < top.max)
     );
   }
 
-  private isOutPosition($: ThresholdMatrix) {
+  private isOutPosition($: ThresholdCoordinate) {
     this.isOutPositionHorizontally = false;
 
     if (this.isOutThresholdH($)) {
@@ -487,7 +491,7 @@ class Draggable
     return false;
   }
 
-  private isOutContainer($: ThresholdMatrix) {
+  private isOutContainer($: ThresholdCoordinate) {
     this.isOutSiblingsHorizontally = false;
 
     if (this.isOutContainerV($)) {
@@ -511,7 +515,7 @@ class Draggable
   isOutThreshold(siblingsK?: string) {
     return siblingsK
       ? this.isOutContainer(this.layoutThresholds[siblingsK])
-      : this.isOutPosition(this.threshold.thresholdMatrix);
+      : this.isOutPosition(this.threshold.main);
   }
 
   /**

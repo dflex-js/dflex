@@ -231,16 +231,6 @@ class Droppable extends DistanceCalculator {
           /**
            * Update threshold from here since there's no calling to updateElement.
            */
-          this.draggable.threshold.updateElementThresholdMatrix(
-            {
-              width: this.draggable.draggedElm.offset.width,
-              height: this.draggable.draggedElm.offset.height,
-              left: this.preserveLastElmOffset!.x,
-              top: this.preserveLastElmOffset!.y,
-            },
-            false
-          );
-
           this.draggable.threshold.setMainThreshold(
             {
               width: this.draggable.draggedElm.offset.width,
@@ -649,7 +639,7 @@ class Droppable extends DistanceCalculator {
 
         if (
           this.draggable.isMovingDown &&
-          y >= threshold!.thresholdMatrix.maxBottom &&
+          y >= threshold!.main.top.min &&
           this.scrollTop + scrollRect.height < scrollHeight
         ) {
           this.scrollElement(x, y, 1, "scrollElementOnY");
@@ -657,7 +647,7 @@ class Droppable extends DistanceCalculator {
           return;
         }
 
-        if (y <= threshold!.thresholdMatrix.maxTop && this.scrollTop > 0) {
+        if (y <= threshold!.main.top.max && this.scrollTop > 0) {
           this.scrollElement(x, y, -1, "scrollElementOnY");
 
           return;
@@ -669,7 +659,7 @@ class Droppable extends DistanceCalculator {
           store.siblingsScrollElement[SK];
 
         if (
-          x >= threshold!.thresholdMatrix.maxLeft &&
+          x >= threshold!.main.left.max &&
           this.scrollLeft + scrollRect.width < scrollHeight
         ) {
           this.scrollElement(x, y, 1, "scrollElementOnX");
@@ -677,7 +667,7 @@ class Droppable extends DistanceCalculator {
           return;
         }
 
-        if (x <= threshold!.thresholdMatrix.maxRight && this.scrollLeft > 0) {
+        if (x <= threshold!.main.left.min && this.scrollLeft > 0) {
           this.scrollElement(x, y, -1, "scrollElementOnX");
         }
       }
