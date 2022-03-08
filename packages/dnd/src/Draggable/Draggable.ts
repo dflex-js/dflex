@@ -171,8 +171,8 @@ class Draggable
         [SK]: this.threshold.getThreshold(
           {
             top: siblingsBoundaries.top,
-            left: siblingsBoundaries.maxLeft,
-            height: siblingsBoundaries.bottom,
+            left: siblingsBoundaries.left,
+            height: siblingsBoundaries.height,
             width: 0,
           },
           true
@@ -367,7 +367,12 @@ class Draggable
     const { SK } = store.registry[this.draggedElm.id].keys;
 
     if (this.axesFilterNeeded) {
-      const { top, bottom, maxLeft, minRight } = store.siblingsBoundaries[SK];
+      const {
+        top,
+        height: bottom,
+        left: maxLeft,
+        width: minRight,
+      } = store.siblingsBoundaries[SK];
 
       if (this.restrictionsStatus.isContainerRestricted) {
         filteredX = this.axesXFilter(

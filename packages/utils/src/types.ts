@@ -1,8 +1,8 @@
 export interface Rect {
-  readonly height: number;
-  readonly width: number;
-  readonly left: number;
-  readonly top: number;
+  height: number;
+  width: number;
+  left: number;
+  top: number;
 }
 
 export type Direction = 1 | -1;
