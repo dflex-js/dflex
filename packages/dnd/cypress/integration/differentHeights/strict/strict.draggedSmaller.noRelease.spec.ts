@@ -1,3 +1,4 @@
+// @ts-nocheck
 let elmBox;
 // let startingPointX;
 let startingPointY;
