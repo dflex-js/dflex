@@ -1,7 +1,14 @@
 /* eslint-disable no-param-reassign */
-import { Axes, AxesCoordinates } from "@dflex/utils";
 
-import type { Rect, EffectedElemDirection } from "@dflex/utils";
+import { AxesCoordinates } from "@dflex/utils";
+
+import type {
+  Rect,
+  EffectedElemDirection,
+  Axes,
+  AxesCoordinatesInterface,
+} from "@dflex/utils";
+
 import AbstractInstance from "./AbstractInstance";
 
 import type {
@@ -18,10 +25,10 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
   offset!: Rect;
 
   /** Store history of Y-transition according to unique ID. */
-  translateHistory?: AxesCoordinates<TransitionHistory>;
+  translateHistory?: AxesCoordinatesInterface<TransitionHistory>;
 
   /** Current element offset (x-left, y-top) */
-  currentPosition!: AxesCoordinates;
+  currentPosition!: AxesCoordinatesInterface;
 
   order: Order;
 

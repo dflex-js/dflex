@@ -1,7 +1,12 @@
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
 import { AxesCoordinates } from "@dflex/utils";
-import type { Direction, EffectedElemDirection, Axes } from "@dflex/utils";
+import type {
+  AxesCoordinatesInterface,
+  Direction,
+  EffectedElemDirection,
+  Axes,
+} from "@dflex/utils";
 
 import type { InteractivityEvent } from "../types";
 import type { DraggableDnDInterface } from "../Draggable";
@@ -39,13 +44,13 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
   protected effectedElemDirection: EffectedElemDirection;
 
-  private elmTransition: AxesCoordinates;
+  private elmTransition: AxesCoordinatesInterface;
 
-  private draggedOffset: AxesCoordinates;
+  private draggedOffset: AxesCoordinatesInterface;
 
-  private draggedAccumulatedTransition: AxesCoordinates;
+  private draggedAccumulatedTransition: AxesCoordinatesInterface;
 
-  private siblingsEmptyElmIndex: AxesCoordinates;
+  private siblingsEmptyElmIndex: AxesCoordinatesInterface;
 
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
@@ -225,7 +230,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
         currentPosition: { x, y },
       } = element;
 
-      this.draggable.threshold.updateElementThresholdMatrix(
+      this.draggable.threshold.setMainThreshold(
         {
           width,
           height,

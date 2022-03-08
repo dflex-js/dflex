@@ -1,13 +1,16 @@
-import { AxesCoordinates, Axes } from "@dflex/utils";
+import type { AxesCoordinatesInterface, Axes } from "@dflex/utils";
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 import type { AbstractDraggableInterface } from "@dflex/draggable";
 
 import type { ScrollOptWithThreshold } from "../types";
 
-import type { ThresholdInterface, ThresholdMatrix } from "../Plugins/Threshold";
+import type {
+  ThresholdInterface,
+  ThresholdCoordinate,
+} from "../Plugins/Threshold";
 
 export interface SiblingsThresholdMatrix {
-  [sk: string]: ThresholdMatrix;
+  [sk: string]: ThresholdCoordinate;
 }
 
 export interface Restrictions {
@@ -27,18 +30,18 @@ export interface Restrictions {
 
 export interface DraggableDnDInterface
   extends AbstractDraggableInterface<CoreInstanceInterface> {
-  tempIndex: number;
+  indexPlaceholder: number;
   operationID: string;
   setOfTransformedIds?: Set<string>;
   siblingsContainer: CoreInstanceInterface | null;
   scroll: ScrollOptWithThreshold;
   threshold: ThresholdInterface;
   layoutThresholds: SiblingsThresholdMatrix;
-  innerOffset: AxesCoordinates;
-  tempOffset: AxesCoordinates;
-  occupiedOffset: AxesCoordinates;
-  occupiedTranslate: AxesCoordinates;
-  mousePoints: AxesCoordinates;
+  innerOffset: AxesCoordinatesInterface;
+  offsetPlaceholder: AxesCoordinatesInterface;
+  occupiedOffset: AxesCoordinatesInterface;
+  occupiedTranslate: AxesCoordinatesInterface;
+  mousePoints: AxesCoordinatesInterface;
   numberOfElementsTransformed: number;
   isViewportRestricted: boolean;
   isMovingDown: boolean;

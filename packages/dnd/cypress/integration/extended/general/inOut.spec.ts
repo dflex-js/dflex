@@ -37,7 +37,7 @@ context("Working with visibility, changing positions and continuity", () => {
       cy.wait(0);
     }
 
-    stepsY = 110;
+    stepsY = 80;
     for (let i = 0; i <= stepsY; i += 10) {
       cy.get("#1-extended").trigger("mousemove", {
         clientY: startingPointY + i,
@@ -218,7 +218,7 @@ context("Working with visibility, changing positions and continuity", () => {
       cy.wait(0);
     }
 
-    stepsY = 260;
+    stepsY = 230;
     for (let i = 0; i <= stepsY; i += 10) {
       cy.get("#1-extended").trigger("mousemove", {
         clientY: startingPointY + i,
@@ -252,7 +252,7 @@ context("Working with visibility, changing positions and continuity", () => {
   });
 
   it("Transom element down", () => {
-    stepsY = 620;
+    stepsY = 470;
 
     for (let i = 260; i <= stepsY; i += 10) {
       cy.get("#1-extended").trigger("mousemove", {

@@ -1,4 +1,5 @@
-import { Axes, AxesCoordinates } from "@dflex/utils";
+import { AxesCoordinates } from "@dflex/utils";
+import type { Axes, AxesCoordinatesInterface } from "@dflex/utils";
 import type { DraggedEvent, SiblingsEvent } from "../types";
 
 import store from "../DnDStore";
@@ -65,7 +66,7 @@ function isIDEligible2Move(
 class Droppable extends DistanceCalculator {
   private leftAtIndex: number;
 
-  private preserveLastElmOffset?: AxesCoordinates;
+  private preserveLastElmOffset?: AxesCoordinatesInterface;
 
   private scrollAnimatedFrame: number | null;
 
@@ -171,11 +172,11 @@ class Droppable extends DistanceCalculator {
    * Gets the temporary index of dragged before it occupies new position.
    */
   getDraggedTempIndex() {
-    return this.draggable.tempIndex;
+    return this.draggable.indexPlaceholder;
   }
 
   private setDraggedTempIndex(tempIndex: number) {
-    this.draggable.tempIndex = tempIndex;
+    this.draggable.indexPlaceholder = tempIndex;
     this.draggable.draggedElm.setDataset("index", tempIndex);
   }
 
@@ -221,7 +222,7 @@ class Droppable extends DistanceCalculator {
         const element = store.registry[id];
 
         const isQualified = !element.isPositionedUnder(
-          this.draggable.tempOffset.y
+          this.draggable.offsetPlaceholder.y
         );
 
         if (isQualified) {
@@ -230,7 +231,7 @@ class Droppable extends DistanceCalculator {
           /**
            * Update threshold from here since there's no calling to updateElement.
            */
-          this.draggable.threshold.updateElementThresholdMatrix(
+          this.draggable.threshold.setMainThreshold(
             {
               width: this.draggable.draggedElm.offset.width,
               height: this.draggable.draggedElm.offset.height,
@@ -272,7 +273,7 @@ class Droppable extends DistanceCalculator {
         const element = store.registry[id];
 
         const isQualified = element.isPositionedUnder(
-          this.draggable.tempOffset.y
+          this.draggable.offsetPlaceholder.y
         );
 
         if (isQualified) {
@@ -290,7 +291,8 @@ class Droppable extends DistanceCalculator {
     const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
 
     const elmIndex =
-      this.draggable.tempIndex + -1 * this.effectedElemDirection[this.axes];
+      this.draggable.indexPlaceholder +
+      -1 * this.effectedElemDirection[this.axes];
 
     const id = siblings![elmIndex];
 
@@ -319,9 +321,9 @@ class Droppable extends DistanceCalculator {
       this.draggable.draggedElm.id
     ) as string[];
 
-    const from = this.draggable.tempIndex + 1;
+    const from = this.draggable.indexPlaceholder + 1;
 
-    this.leftAtIndex = this.draggable.tempIndex;
+    this.leftAtIndex = this.draggable.indexPlaceholder;
 
     emitSiblingsEvent("onLiftUpSiblings", {
       siblings,
@@ -403,42 +405,40 @@ class Droppable extends DistanceCalculator {
       return;
     }
 
-    if (!this.draggable.isOutActiveSiblingsContainer) {
-      /**
-       * normal movement inside the parent
-       */
+    /**
+     * normal movement inside the parent
+     */
 
-      /**
-       * Going out from the list: Right/left.
-       */
-      if (this.draggable.isOutPositionHorizontally) {
-        // Is is out parent?
+    /**
+     * Going out from the list: Right/left.
+     */
+    if (this.draggable.isOutPositionHorizontally) {
+      // Is is out parent?
 
-        // move element up
-        this.setEffectedElemDirection(true, this.axes);
+      // move element up
+      this.setEffectedElemDirection(true, this.axes);
 
-        // lock the parent
-        this.setDraggedPositionFlagInSiblingsContainer(true);
+      // lock the parent
+      this.setDraggedPositionFlagInSiblingsContainer(true);
 
-        this.fillHeadUp();
+      this.fillHeadUp();
 
-        return;
-      }
-
-      /**
-       * Normal state, switch.
-       */
-
-      // inside the list, effected should be related to mouse movement
-      this.setEffectedElemDirection(
-        this.axes === "y"
-          ? this.draggable.isMovingDown
-          : this.draggable.isMovingLeft,
-        this.axes
-      );
-
-      this.switchElement();
+      return;
     }
+
+    /**
+     * Normal state, switch.
+     */
+
+    // inside the list, effected should be related to mouse movement
+    this.setEffectedElemDirection(
+      this.axes === "y"
+        ? this.draggable.isMovingDown
+        : this.draggable.isMovingLeft,
+      this.axes
+    );
+
+    this.switchElement();
   }
 
   private setDraggedPositionFlagInSiblingsContainer(isOut: boolean) {
@@ -467,7 +467,7 @@ class Droppable extends DistanceCalculator {
      * Otherwise, detect where it coming from and update tempIndex
      * accordingly.
      */
-    if (this.draggable.tempIndex !== 0) {
+    if (this.draggable.indexPlaceholder !== 0) {
       to = this.detectDroppableIndex();
 
       if (typeof to !== "number") {
@@ -503,7 +503,7 @@ class Droppable extends DistanceCalculator {
       /**
        * Now, resitting direction by figuring out if dragged settled up/dwn.
        */
-      const isElmUp = this.leftAtIndex > this.draggable.tempIndex;
+      const isElmUp = this.leftAtIndex > this.draggable.indexPlaceholder;
 
       this.setEffectedElemDirection(isElmUp, this.axes);
     } else {
@@ -639,7 +639,7 @@ class Droppable extends DistanceCalculator {
 
         if (
           this.draggable.isMovingDown &&
-          y >= threshold!.thresholdMatrix.maxBottom &&
+          y >= threshold!.main.top.min &&
           this.scrollTop + scrollRect.height < scrollHeight
         ) {
           this.scrollElement(x, y, 1, "scrollElementOnY");
@@ -647,7 +647,7 @@ class Droppable extends DistanceCalculator {
           return;
         }
 
-        if (y <= threshold!.thresholdMatrix.maxTop && this.scrollTop > 0) {
+        if (y <= threshold!.main.top.max && this.scrollTop > 0) {
           this.scrollElement(x, y, -1, "scrollElementOnY");
 
           return;
@@ -659,7 +659,7 @@ class Droppable extends DistanceCalculator {
           store.siblingsScrollElement[SK];
 
         if (
-          x >= threshold!.thresholdMatrix.maxLeft &&
+          x >= threshold!.main.left.max &&
           this.scrollLeft + scrollRect.width < scrollHeight
         ) {
           this.scrollElement(x, y, 1, "scrollElementOnX");
@@ -667,7 +667,7 @@ class Droppable extends DistanceCalculator {
           return;
         }
 
-        if (x <= threshold!.thresholdMatrix.maxRight && this.scrollLeft > 0) {
+        if (x <= threshold!.main.left.min && this.scrollLeft > 0) {
           this.scrollElement(x, y, -1, "scrollElementOnX");
         }
       }

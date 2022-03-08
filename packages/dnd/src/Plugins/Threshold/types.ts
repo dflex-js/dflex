@@ -8,37 +8,19 @@ export interface ThresholdPercentages {
   horizontal: number;
 }
 
-/**
- * Threshold in pixel relevant to input percentages.
- */
-export interface ThresholdInPixels {
-  x: number;
-  y: number;
+export interface ThresholdPointInterface {
+  max: number;
+  min: number;
 }
 
-/**
- * Four directions threshold.
- */
-export interface ThresholdMatrix {
-  maxBottom: number;
-  maxTop: number;
-  maxLeft: number;
-  maxRight: number;
+export interface ThresholdCoordinate {
+  top: ThresholdPointInterface;
+  left: ThresholdPointInterface;
 }
 
 export interface ThresholdInterface {
-  thresholdPercentages: ThresholdPercentages;
-  thresholdPixels: ThresholdInPixels;
-  thresholdMatrix: ThresholdMatrix;
-  getThresholdMatrix(
-    top: number,
-    left: number,
-    height?: number,
-    relativeToViewport?: boolean
-  ): ThresholdMatrix;
-  updateElementThresholdMatrix(
-    elementRect: Rect,
-    relativeToContainer: boolean,
-    relativeToViewport?: boolean
-  ): void;
+  percentages: ThresholdPercentages;
+  main: ThresholdCoordinate;
+  getThreshold(rect: Rect, isContainer: boolean): ThresholdCoordinate;
+  setMainThreshold(rect: Rect, isContainer: boolean): void;
 }

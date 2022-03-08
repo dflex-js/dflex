@@ -27,8 +27,6 @@ export interface ScrollInterface {
   getMaximumScrollContainerTop(): number;
   isElementVisibleViewportX(currentLeft: number): boolean;
   isElementVisibleViewportY(currentTop: number): boolean;
-  setThresholdMatrix(
-    threshold: ThresholdInterface["thresholdPercentages"]
-  ): void;
+  setThresholdMatrix(threshold: ThresholdInterface["percentages"]): void;
   destroy(): void;
 }

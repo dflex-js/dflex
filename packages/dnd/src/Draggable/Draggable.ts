@@ -1,9 +1,11 @@
 import { AbstractDraggable } from "@dflex/draggable";
 import type { DraggedStyle, Coordinates } from "@dflex/draggable";
 
+import { AxesCoordinates } from "@dflex/utils";
+import type { Axes, AxesCoordinatesInterface } from "@dflex/utils";
+
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
-import { Axes, AxesCoordinates } from "@dflex/utils";
 import store from "../DnDStore";
 
 import type { DraggableDnDInterface, Restrictions } from "./types";
@@ -14,7 +16,7 @@ import type {
   RestrictionsStatus,
 } from "../types";
 
-import Threshold, { ThresholdMatrix } from "../Plugins/Threshold";
+import Threshold, { ThresholdCoordinate } from "../Plugins/Threshold";
 
 class Draggable
   extends AbstractDraggable<CoreInstanceInterface>
@@ -22,7 +24,7 @@ class Draggable
 {
   private isLayoutStateUpdated: boolean;
 
-  tempIndex: number;
+  indexPlaceholder: number;
 
   operationID: string;
 
@@ -40,15 +42,15 @@ class Draggable
 
   isViewportRestricted: boolean;
 
-  innerOffset: AxesCoordinates;
+  innerOffset: AxesCoordinatesInterface;
 
-  tempOffset: AxesCoordinates;
+  offsetPlaceholder: AxesCoordinatesInterface;
 
-  occupiedOffset: AxesCoordinates;
+  occupiedOffset: AxesCoordinatesInterface;
 
-  occupiedTranslate: AxesCoordinates;
+  occupiedTranslate: AxesCoordinatesInterface;
 
-  mousePoints: AxesCoordinates;
+  mousePoints: AxesCoordinatesInterface;
 
   isMovingDown: boolean;
 
@@ -89,7 +91,7 @@ class Draggable
      * Initialize temp index that refers to element new position after
      * transformation happened.
      */
-    this.tempIndex = order.self;
+    this.indexPlaceholder = order.self;
 
     // This tiny bug caused an override  options despite it's actually freezed!
     this.scroll = { ...opts.scroll };
@@ -143,17 +145,21 @@ class Draggable
 
     const siblingsBoundaries = store.siblingsBoundaries[SK];
 
-    this.threshold = new Threshold(opts.threshold);
-
     const {
       offset: { width, height },
       currentPosition,
       translate,
     } = this.draggedElm;
 
-    this.threshold.updateElementThresholdMatrix(
-      { width, height, left: currentPosition.x, top: currentPosition.y },
-      false
+    this.threshold = new Threshold(
+      opts.threshold,
+      {
+        width,
+        height,
+        left: currentPosition.x,
+        top: currentPosition.y,
+      },
+      { isContainer: false }
     );
 
     if (siblings !== null) {
@@ -162,10 +168,14 @@ class Draggable
        * ids as keys.
        */
       this.layoutThresholds = {
-        [SK]: this.threshold.getThresholdMatrix(
-          siblingsBoundaries.top,
-          siblingsBoundaries.maxLeft,
-          siblingsBoundaries.bottom
+        [SK]: this.threshold.getThreshold(
+          {
+            top: siblingsBoundaries.top,
+            left: siblingsBoundaries.maxLeft,
+            height: siblingsBoundaries.bottom,
+            width: 0,
+          },
+          true
         ),
       };
     }
@@ -203,7 +213,10 @@ class Draggable
     const lm = Math.round(parseFloat(style.marginLeft));
     this.marginX = rm + lm;
 
-    this.tempOffset = new AxesCoordinates(currentPosition.x, currentPosition.y);
+    this.offsetPlaceholder = new AxesCoordinates(
+      currentPosition.x,
+      currentPosition.y
+    );
 
     this.occupiedOffset = new AxesCoordinates(
       currentPosition.x,
@@ -322,11 +335,11 @@ class Draggable
   private isFirstOrOutside() {
     const siblings = store.getElmSiblingsListById(this.draggedElm.id);
 
-    return siblings !== null && this.tempIndex <= 0;
+    return siblings !== null && this.indexPlaceholder <= 0;
   }
 
   private isLastELm() {
-    return this.tempIndex === this.getLastElmIndex();
+    return this.indexPlaceholder === this.getLastElmIndex();
   }
 
   /**
@@ -417,34 +430,52 @@ class Draggable
     /**
      * Every time we got new translate, offset should be updated
      */
-    this.tempOffset.setAxes(
+    this.offsetPlaceholder.setAxes(
       filteredX - this.innerOffset.x,
       filteredY - this.innerOffset.y
     );
   }
 
-  private isOutThresholdH($: ThresholdMatrix) {
-    return this.tempOffset.x < $.maxLeft || this.tempOffset.x > $.maxRight;
+  private isOutThresholdH($: ThresholdCoordinate) {
+    const { x } = this.offsetPlaceholder;
+
+    const { left } = $;
+
+    return x < left.max || x > left.min;
   }
 
-  private isOutPositionV($: ThresholdMatrix) {
-    return this.isMovingDown
-      ? this.tempOffset.y > $.maxBottom
-      : this.tempOffset.y < $.maxTop;
+  private isOutPositionV() {
+    const { top } = this.threshold.main;
+
+    const { y } = this.offsetPlaceholder;
+
+    return this.isMovingDown ? y > top.min : y < top.max;
   }
 
-  private isOutContainerV($: ThresholdMatrix) {
+  private isOutPositionH() {
+    const { left } = this.threshold.main;
+
+    const { x } = this.offsetPlaceholder;
+
+    return this.isMovingLeft ? x > left.min : x < left.max;
+  }
+
+  private isOutContainerV($: ThresholdCoordinate) {
+    const { y } = this.offsetPlaceholder;
+
+    const { top } = $;
+
     /**
      * Are you last element and outside the container? Or are you coming from top
      * and outside the container?
      */
     return (
-      (this.isLastELm() && this.tempOffset.y > $.maxBottom) ||
-      (this.tempIndex < 0 && this.tempOffset.y < $.maxTop)
+      (this.isLastELm() && y > top.min) ||
+      (this.indexPlaceholder < 0 && y < top.max)
     );
   }
 
-  private isOutPosition($: ThresholdMatrix) {
+  private isOutPosition($: ThresholdCoordinate) {
     this.isOutPositionHorizontally = false;
 
     if (this.isOutThresholdH($)) {
@@ -453,14 +484,14 @@ class Draggable
       return true;
     }
 
-    if (this.isOutPositionV($)) {
+    if (this.isOutPositionV() || this.isOutPositionH()) {
       return true;
     }
 
     return false;
   }
 
-  private isOutContainer($: ThresholdMatrix) {
+  private isOutContainer($: ThresholdCoordinate) {
     this.isOutSiblingsHorizontally = false;
 
     if (this.isOutContainerV($)) {
@@ -484,7 +515,7 @@ class Draggable
   isOutThreshold(siblingsK?: string) {
     return siblingsK
       ? this.isOutContainer(this.layoutThresholds[siblingsK])
-      : this.isOutPosition(this.threshold.thresholdMatrix);
+      : this.isOutPosition(this.threshold.main);
   }
 
   /**
@@ -584,10 +615,10 @@ class Draggable
     this.draggedElm.transformElm();
 
     if (siblings) {
-      this.draggedElm.assignNewPosition(siblings, this.tempIndex);
+      this.draggedElm.assignNewPosition(siblings, this.indexPlaceholder);
     }
 
-    this.draggedElm.order.self = this.tempIndex;
+    this.draggedElm.order.self = this.indexPlaceholder;
   }
 
   endDragging(isFallback: boolean) {
