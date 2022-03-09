@@ -52,7 +52,7 @@ export interface DraggableDnDInterface
   isOutActiveSiblingsContainer: boolean;
   setDraggedTempIndex(i: number): void;
   dragAt(x: number, y: number): void;
-  incNumOfElementsTransformed(effectedElemDirection: number): void;
+  updateNumOfElementsTransformed(effectedElemDirection: number): void;
   setDraggedMovementDirection(coordinate: number, axes: Axes): void;
   isOutThreshold(siblingsK?: string): boolean;
   isLeavingFromTop(): boolean;

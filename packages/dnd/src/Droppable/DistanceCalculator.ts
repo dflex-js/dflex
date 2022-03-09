@@ -209,7 +209,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
     this.calculateDistance(element, axes);
 
-    this.draggable.incNumOfElementsTransformed(this.effectedElemDirection.x);
+    this.draggable.updateNumOfElementsTransformed(this.effectedElemDirection.x);
 
     // TODO: always true for the first element
     if (!this.draggable.isOutActiveSiblingsContainer) {

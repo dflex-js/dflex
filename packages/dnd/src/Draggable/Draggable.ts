@@ -570,7 +570,7 @@ class Draggable
     this.mousePoints[axes] = coordinate;
   }
 
-  incNumOfElementsTransformed(effectedElemDirection: number) {
+  updateNumOfElementsTransformed(effectedElemDirection: number) {
     this.numberOfElementsTransformed += -1 * effectedElemDirection;
   }
 
