@@ -37,7 +37,7 @@ export interface DraggableDnDInterface
   scroll: ScrollOptWithThreshold;
   threshold: ThresholdInterface;
   layoutThresholds: SiblingsThresholdMatrix;
-  innerOffset: AxesCoordinatesInterface;
+  readonly innerOffset: AxesCoordinatesInterface;
   offsetPlaceholder: AxesCoordinatesInterface;
   occupiedOffset: AxesCoordinatesInterface;
   occupiedTranslate: AxesCoordinatesInterface;
@@ -46,9 +46,9 @@ export interface DraggableDnDInterface
   isViewportRestricted: boolean;
   isMovingDown: boolean;
   isMovingLeft: boolean;
-  isOutPositionHorizontally: boolean;
-  isOutSiblingsHorizontally: boolean;
-  isDraggedPositionFixed: boolean;
+  readonly isOutPositionHorizontally: boolean;
+  readonly isOutSiblingsHorizontally: boolean;
+  readonly isDraggedPositionFixed: boolean;
   isOutActiveSiblingsContainer: boolean;
   dragAt(x: number, y: number): void;
   incNumOfElementsTransformed(effectedElemDirection: number): void;
