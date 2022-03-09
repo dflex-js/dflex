@@ -52,6 +52,8 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
   private siblingsEmptyElmIndex: AxesCoordinatesInterface;
 
+  protected isOutActiveSiblingsContainer: boolean;
+
   constructor(draggable: DraggableDnDInterface) {
     this.draggable = draggable;
 
@@ -77,6 +79,8 @@ class DistanceCalculator implements DistanceCalculatorInterface {
       x: 1,
       y: 1,
     };
+
+    this.isOutActiveSiblingsContainer = false;
   }
 
   protected setEffectedElemDirection(isIncrease: boolean, axes: Axes) {
@@ -212,7 +216,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     this.draggable.updateNumOfElementsTransformed(this.effectedElemDirection.x);
 
     // TODO: always true for the first element
-    if (!this.draggable.isOutActiveSiblingsContainer) {
+    if (!this.isOutActiveSiblingsContainer) {
       /**
        * By updating the dragged translate, we guarantee that dragged
        * transformation will not triggered until dragged is over threshold

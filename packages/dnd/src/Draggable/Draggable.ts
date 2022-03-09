@@ -34,8 +34,6 @@ class Draggable
 
   siblingsContainer: CoreInstanceInterface | null;
 
-  isOutActiveSiblingsContainer: boolean;
-
   setOfTransformedIds?: Set<string>;
 
   threshold: DraggableDnDInterface["threshold"];
@@ -185,7 +183,9 @@ class Draggable
     }
 
     this.siblingsContainer = null;
-    this.isOutActiveSiblingsContainer = false;
+
+    this.isDraggedOutPosition = new AxesCoordinatesBool(false, false);
+    this.isDraggedOutContainer = new AxesCoordinatesBool(false, false);
 
     if (parent) {
       /**
@@ -194,8 +194,6 @@ class Draggable
        */
       this.setOfTransformedIds = new Set([]);
       this.assignActiveParent(parent);
-
-      this.isOutActiveSiblingsContainer = false;
     }
 
     this.operationID = store.tracker.newTravel();
@@ -243,9 +241,6 @@ class Draggable
     this.isMovingDown = false;
     this.isMovingLeft = false;
 
-    this.isDraggedOutPosition = new AxesCoordinatesBool(false, false);
-    this.isDraggedOutContainer = new AxesCoordinatesBool(false, false);
-
     this.restrictions = opts.restrictions;
 
     this.restrictionsStatus = opts.restrictionsStatus;
@@ -272,7 +267,7 @@ class Draggable
      * Add flag for undo method so we can check which  parent is being
      * transformed and which is not.
      */
-    this.isOutActiveSiblingsContainer = false;
+    this.isDraggedOutContainer.setAllFalse();
   }
 
   private axesYFilter(
@@ -502,7 +497,7 @@ class Draggable
       return true;
     }
 
-    this.isDraggedOutPosition.setAxes(false, false);
+    this.isDraggedOutPosition.setAllFalse();
 
     return false;
   }
@@ -520,7 +515,7 @@ class Draggable
       return true;
     }
 
-    this.isDraggedOutContainer.setAxes(false, false);
+    this.isDraggedOutContainer.setAllFalse();
 
     return false;
   }

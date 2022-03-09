@@ -1,1 +1,3 @@
-export interface DistanceCalculatorInterface {}
+export interface DistanceCalculatorInterface {
+  //   isOutActiveSiblingsContainer: boolean;
+}

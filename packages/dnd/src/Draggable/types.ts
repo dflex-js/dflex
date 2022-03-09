@@ -53,7 +53,6 @@ export interface DraggableDnDInterface
   readonly isDraggedOutPosition: AxesCoordinatesBoolInterface;
   readonly isDraggedOutContainer: AxesCoordinatesBoolInterface;
   readonly isDraggedPositionFixed: boolean;
-  isOutActiveSiblingsContainer: boolean;
   setDraggedTempIndex(i: number): void;
   dragAt(x: number, y: number): void;
   updateNumOfElementsTransformed(effectedElemDirection: number): void;
