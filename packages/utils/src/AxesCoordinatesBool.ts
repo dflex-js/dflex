@@ -8,6 +8,10 @@ class AxesCoordinatesBool
   isOneTruthy() {
     return this.x || this.y;
   }
+
+  isAllFalsy() {
+    return !this.x && !this.y;
+  }
 }
 
 export default AxesCoordinatesBool;

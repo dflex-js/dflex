@@ -27,4 +27,6 @@ export interface AxesCoordinatesBoolInterface
   extends AxesCoordinatesInterface<boolean> {
   /** True when one of the axes is true. */
   isOneTruthy(): boolean;
+  /** Both axes are false. */
+  isAllFalsy(): boolean;
 }
