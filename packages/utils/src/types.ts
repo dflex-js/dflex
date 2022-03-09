@@ -22,3 +22,9 @@ export interface AxesCoordinatesInterface<T = number> {
   clone(target: AxesCoordinatesInterface<T>): void;
   isEqual(target: AxesCoordinatesInterface<T>): boolean;
 }
+
+export interface AxesCoordinatesBoolInterface
+  extends AxesCoordinatesInterface<boolean> {
+  /** True when one of the axes is true. */
+  isOneTruthy(): boolean;
+}
