@@ -12,6 +12,11 @@ class AxesCoordinatesBool
   isAllFalsy() {
     return !this.x && !this.y;
   }
+
+  setAllFalse() {
+    this.x = false;
+    this.y = false;
+  }
 }
 
 export default AxesCoordinatesBool;
