@@ -325,22 +325,6 @@ class Draggable
     return x;
   }
 
-  private getLastElmIndex() {
-    const siblings = store.getElmSiblingsListById(this.draggedElm.id);
-
-    return siblings!.length - 1;
-  }
-
-  private isFirstOrOutside() {
-    const siblings = store.getElmSiblingsListById(this.draggedElm.id);
-
-    return siblings !== null && this.indexPlaceholder <= 0;
-  }
-
-  private isLastELm() {
-    return this.indexPlaceholder === this.getLastElmIndex();
-  }
-
   setDraggedTempIndex(i: number) {
     this.indexPlaceholder = i;
     this.draggedElm.setDataset("index", i);
@@ -461,74 +445,52 @@ class Draggable
     return y < top.max || y > top.min;
   }
 
-  private isOutPosition($: ThresholdCoordinate) {
+  private checkAndSetPosition(
+    $: ThresholdCoordinate,
+    flag: "isDraggedOutPosition" | "isDraggedOutContainer"
+  ) {
     if (this.isOutThresholdH($)) {
-      this.isDraggedOutPosition.setAxes(true, false);
+      this[flag].setAxes(true, false);
 
       return true;
     }
 
     if (this.isOutThresholdV($)) {
-      this.isDraggedOutPosition.setAxes(false, true);
+      this[flag].setAxes(false, true);
 
       return true;
     }
 
-    this.isDraggedOutPosition.setFalsy();
+    this[flag].setFalsy();
 
     return false;
   }
 
-  private isOutContainer($: ThresholdCoordinate) {
-    if (this.isOutThresholdV($)) {
-      this.isDraggedOutContainer.setAxes(false, true);
-
-      return true;
-    }
-
-    if (this.isOutThresholdH($)) {
-      this.isDraggedOutContainer.setAxes(true, false);
-
-      return true;
-    }
-
-    this.isDraggedOutContainer.setFalsy();
-
-    return false;
-  }
-
-  /**
-   * Checks if dragged it out of its position or parent.
-   *
-   * @param siblingsK -
-   */
   isOutThreshold(siblingsK?: string) {
     return siblingsK
-      ? this.isOutContainer(this.layoutThresholds[siblingsK])
-      : this.isOutPosition(this.threshold.main);
+      ? this.checkAndSetPosition(
+          this.layoutThresholds[siblingsK],
+          "isDraggedOutContainer"
+        )
+      : this.checkAndSetPosition(this.threshold.main, "isDraggedOutPosition");
   }
 
-  /**
-   * Checks if dragged is the first child and going up.
-   */
   isLeavingFromTop() {
     return (
-      this.isFirstOrOutside() &&
+      this.indexPlaceholder <= 0 && // first our outside.
       !this.isDraggedOutContainer.x &&
       !this.isMovingDown
     );
   }
 
-  /**
-   * Checks if dragged is the last child and going down.
-   */
   isLeavingFromBottom() {
-    const { SK } = store.registry[this.draggedElm.id].keys;
+    const lastElm =
+      (store.getElmSiblingsListById(this.draggedElm.id) as string[]).length - 1;
 
     return (
-      this.isLastELm() &&
-      this.isMovingDown &&
-      this.isOutThresholdV(this.layoutThresholds[SK])
+      this.indexPlaceholder === lastElm &&
+      !this.isDraggedOutContainer.x &&
+      this.isMovingDown
     );
   }
 

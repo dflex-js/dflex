@@ -57,8 +57,14 @@ export interface DraggableDnDInterface
   dragAt(x: number, y: number): void;
   updateNumOfElementsTransformed(effectedElemDirection: number): void;
   setDraggedMovementDirection(coordinate: number, axes: Axes): void;
+  /**
+   * Check if the dragged out self position or parent container and set the
+   * necessary flags.
+   */
   isOutThreshold(siblingsK?: string): boolean;
+  /** Checks if dragged is the first child and going up. */
   isLeavingFromTop(): boolean;
+  /** Checks if dragged is the last child and going down. */
   isLeavingFromBottom(): boolean;
   isNotSettled(): boolean;
   endDragging(isFallback: boolean): void;
