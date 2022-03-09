@@ -30,26 +30,27 @@ export interface Restrictions {
 
 export interface DraggableDnDInterface
   extends AbstractDraggableInterface<CoreInstanceInterface> {
-  indexPlaceholder: number;
-  operationID: string;
+  readonly operationID: string;
+  readonly threshold: ThresholdInterface;
+  readonly layoutThresholds: SiblingsThresholdMatrix;
+  readonly innerOffset: AxesCoordinatesInterface;
+  readonly offsetPlaceholder: AxesCoordinatesInterface;
+  readonly indexPlaceholder: number;
   setOfTransformedIds?: Set<string>;
   siblingsContainer: CoreInstanceInterface | null;
   scroll: ScrollOptWithThreshold;
-  threshold: ThresholdInterface;
-  layoutThresholds: SiblingsThresholdMatrix;
-  readonly innerOffset: AxesCoordinatesInterface;
-  offsetPlaceholder: AxesCoordinatesInterface;
-  occupiedOffset: AxesCoordinatesInterface;
-  occupiedTranslate: AxesCoordinatesInterface;
-  mousePoints: AxesCoordinatesInterface;
-  numberOfElementsTransformed: number;
+  readonly occupiedOffset: AxesCoordinatesInterface;
+  readonly occupiedTranslate: AxesCoordinatesInterface;
+  readonly mousePoints: AxesCoordinatesInterface;
+  readonly numberOfElementsTransformed: number;
   isViewportRestricted: boolean;
-  isMovingDown: boolean;
-  isMovingLeft: boolean;
+  readonly isMovingDown: boolean;
+  readonly isMovingLeft: boolean;
   readonly isOutPositionHorizontally: boolean;
   readonly isOutSiblingsHorizontally: boolean;
   readonly isDraggedPositionFixed: boolean;
   isOutActiveSiblingsContainer: boolean;
+  setDraggedTempIndex(i: number): void;
   dragAt(x: number, y: number): void;
   incNumOfElementsTransformed(effectedElemDirection: number): void;
   setDraggedMovementDirection(coordinate: number, axes: Axes): void;

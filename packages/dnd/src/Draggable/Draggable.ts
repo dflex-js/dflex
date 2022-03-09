@@ -342,6 +342,11 @@ class Draggable
     return this.indexPlaceholder === this.getLastElmIndex();
   }
 
+  setDraggedTempIndex(i: number) {
+    this.indexPlaceholder = i;
+    this.draggedElm.setDataset("index", i);
+  }
+
   /**
    * Dragged current-offset is essential to determine dragged position in
    * layout and parent.

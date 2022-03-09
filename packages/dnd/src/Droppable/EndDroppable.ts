@@ -54,7 +54,8 @@ class EndDroppable extends Droppable {
        */
       element.rollBack(this.draggable.operationID, listVisibility, this.axes);
 
-      this.draggable.numberOfElementsTransformed -= 1;
+      // This will decrease the number by 1.
+      this.draggable.incNumOfElementsTransformed(1);
 
       prevVisibility = isVisible;
     } else {
