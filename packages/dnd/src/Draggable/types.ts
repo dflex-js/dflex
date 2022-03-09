@@ -46,7 +46,7 @@ export interface DraggableDnDInterface
   readonly isViewportRestricted: boolean;
   readonly isMovingDown: boolean;
   readonly isMovingLeft: boolean;
-  readonly isOutPositionHorizontally: boolean;
+  readonly isDraggedOutPosition: AxesCoordinatesInterface<boolean>;
   readonly isOutSiblingsHorizontally: boolean;
   readonly isDraggedPositionFixed: boolean;
   isOutActiveSiblingsContainer: boolean;

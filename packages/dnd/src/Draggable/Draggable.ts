@@ -58,7 +58,7 @@ class Draggable
 
   numberOfElementsTransformed: number;
 
-  isOutPositionHorizontally: boolean;
+  isDraggedOutPosition: AxesCoordinatesInterface<boolean>;
 
   isOutSiblingsHorizontally: boolean;
 
@@ -239,7 +239,7 @@ class Draggable
     this.isMovingDown = false;
     this.isMovingLeft = false;
 
-    this.isOutPositionHorizontally = false;
+    this.isDraggedOutPosition = new AxesCoordinates(false, false);
     this.isOutSiblingsHorizontally = false;
 
     this.restrictions = opts.restrictions;
@@ -486,15 +486,15 @@ class Draggable
   }
 
   private isOutPosition($: ThresholdCoordinate) {
-    this.isOutPositionHorizontally = false;
-
     if (this.isOutThresholdH($)) {
-      this.isOutPositionHorizontally = true;
+      this.isDraggedOutPosition.setAxes(true, false);
 
       return true;
     }
 
     if (this.isOutPositionV() || this.isOutPositionH()) {
+      this.isDraggedOutPosition.setAxes(false, true);
+
       return true;
     }
 
