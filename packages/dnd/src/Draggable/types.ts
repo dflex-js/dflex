@@ -1,4 +1,8 @@
-import type { AxesCoordinatesInterface, Axes } from "@dflex/utils";
+import type {
+  AxesCoordinatesInterface,
+  AxesCoordinatesBoolInterface,
+  Axes,
+} from "@dflex/utils";
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 import type { AbstractDraggableInterface } from "@dflex/draggable";
 
@@ -30,28 +34,28 @@ export interface Restrictions {
 
 export interface DraggableDnDInterface
   extends AbstractDraggableInterface<CoreInstanceInterface> {
-  indexPlaceholder: number;
-  operationID: string;
+  readonly operationID: string;
+  readonly threshold: ThresholdInterface;
+  readonly layoutThresholds: SiblingsThresholdMatrix;
+  readonly innerOffset: AxesCoordinatesInterface;
+  readonly offsetPlaceholder: AxesCoordinatesInterface;
+  readonly indexPlaceholder: number;
   setOfTransformedIds?: Set<string>;
   siblingsContainer: CoreInstanceInterface | null;
   scroll: ScrollOptWithThreshold;
-  threshold: ThresholdInterface;
-  layoutThresholds: SiblingsThresholdMatrix;
-  innerOffset: AxesCoordinatesInterface;
-  offsetPlaceholder: AxesCoordinatesInterface;
-  occupiedOffset: AxesCoordinatesInterface;
-  occupiedTranslate: AxesCoordinatesInterface;
-  mousePoints: AxesCoordinatesInterface;
-  numberOfElementsTransformed: number;
-  isViewportRestricted: boolean;
-  isMovingDown: boolean;
-  isMovingLeft: boolean;
-  isOutPositionHorizontally: boolean;
-  isOutSiblingsHorizontally: boolean;
-  isDraggedPositionFixed: boolean;
-  isOutActiveSiblingsContainer: boolean;
+  readonly occupiedOffset: AxesCoordinatesInterface;
+  readonly occupiedTranslate: AxesCoordinatesInterface;
+  readonly mousePoints: AxesCoordinatesInterface;
+  readonly numberOfElementsTransformed: number;
+  readonly isViewportRestricted: boolean;
+  readonly isMovingDown: boolean;
+  readonly isMovingLeft: boolean;
+  readonly isDraggedOutPosition: AxesCoordinatesBoolInterface;
+  readonly isDraggedOutContainer: AxesCoordinatesBoolInterface;
+  readonly isDraggedPositionFixed: boolean;
+  setDraggedTempIndex(i: number): void;
   dragAt(x: number, y: number): void;
-  incNumOfElementsTransformed(effectedElemDirection: number): void;
+  updateNumOfElementsTransformed(effectedElemDirection: number): void;
   setDraggedMovementDirection(coordinate: number, axes: Axes): void;
   isOutThreshold(siblingsK?: string): boolean;
   isLeavingFromTop(): boolean;

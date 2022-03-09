@@ -8,13 +8,6 @@ import type { DraggedEvent, LayoutState } from "../types";
 import type { ScrollInterface } from "../Plugins/Scroll";
 import type { TrackerInterface } from "../Plugins/Tracker";
 
-export interface BoundariesOffset {
-  top: number;
-  maxLeft: number;
-  minRight: number;
-  bottom: number;
-}
-
 export interface ElmTree {
   element: CoreInstanceInterface;
   parent: CoreInstanceInterface | null;
@@ -65,7 +58,7 @@ interface Translate {
 
 export interface DnDStoreInterface {
   tracker: TrackerInterface;
-  siblingsBoundaries: { [siblingKey: string]: BoundariesOffset };
+  siblingsBoundaries: { [siblingKey: string]: Rect };
   siblingsScrollElement: { [siblingKey: string]: ScrollInterface };
   siblingsAlignment: { [siblingKey: string]: "Horizontal" | "Vertical" };
   layoutState: LayoutState;

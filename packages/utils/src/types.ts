@@ -1,8 +1,8 @@
 export interface Rect {
-  readonly height: number;
-  readonly width: number;
-  readonly left: number;
-  readonly top: number;
+  height: number;
+  width: number;
+  left: number;
+  top: number;
 }
 
 export type Direction = 1 | -1;
@@ -21,4 +21,14 @@ export interface AxesCoordinatesInterface<T = number> {
   setAxes(x: T, y: T): void;
   clone(target: AxesCoordinatesInterface<T>): void;
   isEqual(target: AxesCoordinatesInterface<T>): boolean;
+}
+
+export interface AxesCoordinatesBoolInterface
+  extends AxesCoordinatesInterface<boolean> {
+  /** True when one of the axes is true. */
+  isOneTruthy(): boolean;
+  /** True if both axes are false. */
+  isAllFalsy(): boolean;
+  /** Set both axes to false. */
+  setAllFalse(): void;
 }

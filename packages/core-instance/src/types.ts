@@ -79,7 +79,7 @@ export type TransitionHistory = {
 
 export interface CoreInstanceInterface extends AbstractInterface {
   isVisible: boolean;
-  offset: Rect;
+  readonly offset: Rect;
   translateHistory?: AxesCoordinates<TransitionHistory>;
   currentPosition: AxesCoordinates;
   order: Order;

@@ -138,6 +138,8 @@ class Droppable extends DistanceCalculator {
     this.isOnDragOutThresholdEvtEmitted = false;
     this.animatedDraggedInsertionFrame = null;
 
+    this.isOutActiveSiblingsContainer = false;
+
     this.axes = store.siblingsAlignment[SK] === "Horizontal" ? "x" : "y";
   }
 
@@ -173,11 +175,6 @@ class Droppable extends DistanceCalculator {
    */
   getDraggedTempIndex() {
     return this.draggable.indexPlaceholder;
-  }
-
-  private setDraggedTempIndex(tempIndex: number) {
-    this.draggable.indexPlaceholder = tempIndex;
-    this.draggable.draggedElm.setDataset("index", tempIndex);
   }
 
   private updateLastElmOffset() {
@@ -303,7 +300,7 @@ class Droppable extends DistanceCalculator {
         this.draggable.scroll.enable
       )
     ) {
-      this.setDraggedTempIndex(elmIndex);
+      this.draggable.setDraggedTempIndex(elmIndex);
 
       this.updateElement(
         id,
@@ -331,7 +328,7 @@ class Droppable extends DistanceCalculator {
       to: siblings.length,
     });
 
-    this.setDraggedTempIndex(-1);
+    this.draggable.setDraggedTempIndex(-1);
 
     for (let i = from; i < siblings.length; i += 1) {
       /**
@@ -412,7 +409,7 @@ class Droppable extends DistanceCalculator {
     /**
      * Going out from the list: Right/left.
      */
-    if (this.draggable.isOutPositionHorizontally) {
+    if (this.draggable.isDraggedOutPosition.x) {
       // Is is out parent?
 
       // move element up
@@ -442,11 +439,11 @@ class Droppable extends DistanceCalculator {
   }
 
   private setDraggedPositionFlagInSiblingsContainer(isOut: boolean) {
-    if (isOut === this.draggable.isOutActiveSiblingsContainer) {
+    if (isOut === this.isOutActiveSiblingsContainer) {
       return;
     }
 
-    this.draggable.isOutActiveSiblingsContainer = isOut;
+    this.isOutActiveSiblingsContainer = isOut;
   }
 
   /**
@@ -480,7 +477,7 @@ class Droppable extends DistanceCalculator {
         hasToMoveSiblingsDown = false;
       }
 
-      this.setDraggedTempIndex(to);
+      this.draggable.setDraggedTempIndex(to);
 
       /**
        * Last prevY update when leaving the parent container. When we have
@@ -607,6 +604,7 @@ class Droppable extends DistanceCalculator {
     // Prevent store from implementing any animation response.
     store.siblingsScrollElement[SK].hasThrottledFrame = 1;
 
+    // @ts-expect-error - TODO: fix this
     this.draggable.isViewportRestricted = false;
 
     this.regularDragging = false;
@@ -748,7 +746,7 @@ class Droppable extends DistanceCalculator {
 
       this.scrollManager(x, y);
 
-      if (!this.draggable.isOutActiveSiblingsContainer) {
+      if (!this.isOutActiveSiblingsContainer) {
         this.draggable.draggedElm.setDataset("draggedOutPosition", true);
 
         this.draggedOutPosition();
@@ -779,7 +777,7 @@ class Droppable extends DistanceCalculator {
 
       this.emitDraggedEvent("onDragOutContainer");
 
-      this.draggable.isOutActiveSiblingsContainer = true;
+      this.isOutActiveSiblingsContainer = true;
 
       this.detectNearestContainer();
 
@@ -793,7 +791,7 @@ class Droppable extends DistanceCalculator {
     /**
      * When dragged is out parent and returning to it.
      */
-    if (this.draggable.isOutActiveSiblingsContainer) {
+    if (this.isOutActiveSiblingsContainer) {
       isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
       if (isOutSiblingsContainer) {

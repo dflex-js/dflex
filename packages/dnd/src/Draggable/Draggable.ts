@@ -1,8 +1,12 @@
 import { AbstractDraggable } from "@dflex/draggable";
 import type { DraggedStyle, Coordinates } from "@dflex/draggable";
 
-import { AxesCoordinates } from "@dflex/utils";
-import type { Axes, AxesCoordinatesInterface } from "@dflex/utils";
+import { AxesCoordinates, AxesCoordinatesBool } from "@dflex/utils";
+import type {
+  Axes,
+  AxesCoordinatesInterface,
+  AxesCoordinatesBoolInterface,
+} from "@dflex/utils";
 
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
@@ -30,8 +34,6 @@ class Draggable
 
   siblingsContainer: CoreInstanceInterface | null;
 
-  isOutActiveSiblingsContainer: boolean;
-
   setOfTransformedIds?: Set<string>;
 
   threshold: DraggableDnDInterface["threshold"];
@@ -58,9 +60,9 @@ class Draggable
 
   numberOfElementsTransformed: number;
 
-  isOutPositionHorizontally: boolean;
+  isDraggedOutPosition: AxesCoordinatesBoolInterface;
 
-  isOutSiblingsHorizontally: boolean;
+  isDraggedOutContainer: AxesCoordinatesBoolInterface;
 
   private axesFilterNeeded: boolean;
 
@@ -171,8 +173,8 @@ class Draggable
         [SK]: this.threshold.getThreshold(
           {
             top: siblingsBoundaries.top,
-            left: siblingsBoundaries.maxLeft,
-            height: siblingsBoundaries.bottom,
+            left: siblingsBoundaries.left,
+            height: siblingsBoundaries.height,
             width: 0,
           },
           true
@@ -181,7 +183,9 @@ class Draggable
     }
 
     this.siblingsContainer = null;
-    this.isOutActiveSiblingsContainer = false;
+
+    this.isDraggedOutPosition = new AxesCoordinatesBool(false, false);
+    this.isDraggedOutContainer = new AxesCoordinatesBool(false, false);
 
     if (parent) {
       /**
@@ -190,8 +194,6 @@ class Draggable
        */
       this.setOfTransformedIds = new Set([]);
       this.assignActiveParent(parent);
-
-      this.isOutActiveSiblingsContainer = false;
     }
 
     this.operationID = store.tracker.newTravel();
@@ -239,9 +241,6 @@ class Draggable
     this.isMovingDown = false;
     this.isMovingLeft = false;
 
-    this.isOutPositionHorizontally = false;
-    this.isOutSiblingsHorizontally = false;
-
     this.restrictions = opts.restrictions;
 
     this.restrictionsStatus = opts.restrictionsStatus;
@@ -268,7 +267,7 @@ class Draggable
      * Add flag for undo method so we can check which  parent is being
      * transformed and which is not.
      */
-    this.isOutActiveSiblingsContainer = false;
+    this.isDraggedOutContainer.setAllFalse();
   }
 
   private axesYFilter(
@@ -342,6 +341,11 @@ class Draggable
     return this.indexPlaceholder === this.getLastElmIndex();
   }
 
+  setDraggedTempIndex(i: number) {
+    this.indexPlaceholder = i;
+    this.draggedElm.setDataset("index", i);
+  }
+
   /**
    * Dragged current-offset is essential to determine dragged position in
    * layout and parent.
@@ -367,7 +371,12 @@ class Draggable
     const { SK } = store.registry[this.draggedElm.id].keys;
 
     if (this.axesFilterNeeded) {
-      const { top, bottom, maxLeft, minRight } = store.siblingsBoundaries[SK];
+      const {
+        top,
+        height: bottom,
+        left: maxLeft,
+        width: minRight,
+      } = store.siblingsBoundaries[SK];
 
       if (this.restrictionsStatus.isContainerRestricted) {
         filteredX = this.axesXFilter(
@@ -476,33 +485,37 @@ class Draggable
   }
 
   private isOutPosition($: ThresholdCoordinate) {
-    this.isOutPositionHorizontally = false;
-
     if (this.isOutThresholdH($)) {
-      this.isOutPositionHorizontally = true;
+      this.isDraggedOutPosition.setAxes(true, false);
 
       return true;
     }
 
     if (this.isOutPositionV() || this.isOutPositionH()) {
+      this.isDraggedOutPosition.setAxes(false, true);
+
       return true;
     }
+
+    this.isDraggedOutPosition.setAllFalse();
 
     return false;
   }
 
   private isOutContainer($: ThresholdCoordinate) {
-    this.isOutSiblingsHorizontally = false;
-
     if (this.isOutContainerV($)) {
-      this.isOutSiblingsHorizontally = true;
+      this.isDraggedOutContainer.setAxes(false, true);
 
       return true;
     }
 
     if (this.isOutThresholdH($)) {
+      this.isDraggedOutContainer.setAxes(true, false);
+
       return true;
     }
+
+    this.isDraggedOutContainer.setAllFalse();
 
     return false;
   }
@@ -524,7 +537,7 @@ class Draggable
   isLeavingFromTop() {
     return (
       this.isFirstOrOutside() &&
-      !this.isOutSiblingsHorizontally &&
+      !this.isDraggedOutContainer.x &&
       !this.isMovingDown
     );
   }
@@ -560,7 +573,7 @@ class Draggable
     this.mousePoints[axes] = coordinate;
   }
 
-  incNumOfElementsTransformed(effectedElemDirection: number) {
+  updateNumOfElementsTransformed(effectedElemDirection: number) {
     this.numberOfElementsTransformed += -1 * effectedElemDirection;
   }
 

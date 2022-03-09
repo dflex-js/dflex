@@ -367,9 +367,9 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     if (!this.siblingsBoundaries[SK]) {
       this.siblingsBoundaries[SK] = {
         top: elemOffset.top,
-        maxLeft: elemOffset.left,
-        minRight: elmRight,
-        bottom: elemOffset.height,
+        left: elemOffset.left,
+        width: elmRight,
+        height: elemOffset.height,
       };
 
       return;
@@ -379,21 +379,21 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
     let isHorizontal = false;
 
-    if ($.maxLeft < elemOffset.left) {
-      $.maxLeft = elemOffset.left;
+    if ($.left < elemOffset.left) {
+      $.left = elemOffset.left;
 
       isHorizontal = true;
       this.siblingsAlignment[SK] = "Horizontal";
     }
 
-    if ($.minRight > elmRight) {
-      $.minRight = elmRight;
+    if ($.width > elmRight) {
+      $.width = elmRight;
     }
 
     if ($.top > elemOffset.top) {
       $.top = elemOffset.top;
     } else {
-      $.bottom = elemOffset.top + elemOffset.height;
+      $.height = elemOffset.top + elemOffset.height;
     }
 
     if (!isHorizontal) {
