@@ -43,7 +43,7 @@ export interface DraggableDnDInterface
   readonly occupiedTranslate: AxesCoordinatesInterface;
   readonly mousePoints: AxesCoordinatesInterface;
   readonly numberOfElementsTransformed: number;
-  isViewportRestricted: boolean;
+  readonly isViewportRestricted: boolean;
   readonly isMovingDown: boolean;
   readonly isMovingLeft: boolean;
   readonly isOutPositionHorizontally: boolean;

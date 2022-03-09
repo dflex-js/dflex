@@ -602,6 +602,7 @@ class Droppable extends DistanceCalculator {
     // Prevent store from implementing any animation response.
     store.siblingsScrollElement[SK].hasThrottledFrame = 1;
 
+    // @ts-expect-error - TODO: fix this
     this.draggable.isViewportRestricted = false;
 
     this.regularDragging = false;
