@@ -64,7 +64,7 @@ class Draggable
 
   isDraggedOutPosition: AxesCoordinatesBoolInterface;
 
-  isOutSiblingsHorizontally: boolean;
+  isDraggedOutContainer: AxesCoordinatesBoolInterface;
 
   private axesFilterNeeded: boolean;
 
@@ -244,7 +244,7 @@ class Draggable
     this.isMovingLeft = false;
 
     this.isDraggedOutPosition = new AxesCoordinatesBool(false, false);
-    this.isOutSiblingsHorizontally = false;
+    this.isDraggedOutContainer = new AxesCoordinatesBool(false, false);
 
     this.restrictions = opts.restrictions;
 
@@ -502,21 +502,25 @@ class Draggable
       return true;
     }
 
+    this.isDraggedOutPosition.setAxes(false, false);
+
     return false;
   }
 
   private isOutContainer($: ThresholdCoordinate) {
-    this.isOutSiblingsHorizontally = false;
-
     if (this.isOutContainerV($)) {
-      this.isOutSiblingsHorizontally = true;
+      this.isDraggedOutContainer.setAxes(false, true);
 
       return true;
     }
 
     if (this.isOutThresholdH($)) {
+      this.isDraggedOutContainer.setAxes(true, false);
+
       return true;
     }
+
+    this.isDraggedOutContainer.setAxes(false, false);
 
     return false;
   }
@@ -538,7 +542,7 @@ class Draggable
   isLeavingFromTop() {
     return (
       this.isFirstOrOutside() &&
-      !this.isOutSiblingsHorizontally &&
+      !this.isDraggedOutContainer.x &&
       !this.isMovingDown
     );
   }
