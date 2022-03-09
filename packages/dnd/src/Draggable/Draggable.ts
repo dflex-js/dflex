@@ -1,8 +1,12 @@
 import { AbstractDraggable } from "@dflex/draggable";
 import type { DraggedStyle, Coordinates } from "@dflex/draggable";
 
-import { AxesCoordinates } from "@dflex/utils";
-import type { Axes, AxesCoordinatesInterface } from "@dflex/utils";
+import { AxesCoordinates, AxesCoordinatesBool } from "@dflex/utils";
+import type {
+  Axes,
+  AxesCoordinatesInterface,
+  AxesCoordinatesBoolInterface,
+} from "@dflex/utils";
 
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
@@ -58,7 +62,7 @@ class Draggable
 
   numberOfElementsTransformed: number;
 
-  isDraggedOutPosition: AxesCoordinatesInterface<boolean>;
+  isDraggedOutPosition: AxesCoordinatesBoolInterface;
 
   isOutSiblingsHorizontally: boolean;
 
@@ -239,7 +243,7 @@ class Draggable
     this.isMovingDown = false;
     this.isMovingLeft = false;
 
-    this.isDraggedOutPosition = new AxesCoordinates(false, false);
+    this.isDraggedOutPosition = new AxesCoordinatesBool(false, false);
     this.isOutSiblingsHorizontally = false;
 
     this.restrictions = opts.restrictions;

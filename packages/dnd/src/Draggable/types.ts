@@ -1,4 +1,8 @@
-import type { AxesCoordinatesInterface, Axes } from "@dflex/utils";
+import type {
+  AxesCoordinatesInterface,
+  AxesCoordinatesBoolInterface,
+  Axes,
+} from "@dflex/utils";
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 import type { AbstractDraggableInterface } from "@dflex/draggable";
 
@@ -46,7 +50,7 @@ export interface DraggableDnDInterface
   readonly isViewportRestricted: boolean;
   readonly isMovingDown: boolean;
   readonly isMovingLeft: boolean;
-  readonly isDraggedOutPosition: AxesCoordinatesInterface<boolean>;
+  readonly isDraggedOutPosition: AxesCoordinatesBoolInterface;
   readonly isOutSiblingsHorizontally: boolean;
   readonly isDraggedPositionFixed: boolean;
   isOutActiveSiblingsContainer: boolean;
