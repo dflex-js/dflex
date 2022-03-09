@@ -267,7 +267,7 @@ class Draggable
      * Add flag for undo method so we can check which  parent is being
      * transformed and which is not.
      */
-    this.isDraggedOutContainer.setAllFalse();
+    this.isDraggedOutContainer.setFalsy();
   }
 
   private axesYFilter(
@@ -453,35 +453,12 @@ class Draggable
     return x < left.max || x > left.min;
   }
 
-  private isOutPositionV() {
-    const { top } = this.threshold.main;
-
-    const { y } = this.offsetPlaceholder;
-
-    return this.isMovingDown ? y > top.min : y < top.max;
-  }
-
-  private isOutPositionH() {
-    const { left } = this.threshold.main;
-
-    const { x } = this.offsetPlaceholder;
-
-    return this.isMovingLeft ? x > left.min : x < left.max;
-  }
-
-  private isOutContainerV($: ThresholdCoordinate) {
+  private isOutThresholdV($: ThresholdCoordinate) {
     const { y } = this.offsetPlaceholder;
 
     const { top } = $;
 
-    /**
-     * Are you last element and outside the container? Or are you coming from top
-     * and outside the container?
-     */
-    return (
-      (this.isLastELm() && y > top.min) ||
-      (this.indexPlaceholder < 0 && y < top.max)
-    );
+    return y < top.max || y > top.min;
   }
 
   private isOutPosition($: ThresholdCoordinate) {
@@ -491,19 +468,19 @@ class Draggable
       return true;
     }
 
-    if (this.isOutPositionV() || this.isOutPositionH()) {
+    if (this.isOutThresholdV($)) {
       this.isDraggedOutPosition.setAxes(false, true);
 
       return true;
     }
 
-    this.isDraggedOutPosition.setAllFalse();
+    this.isDraggedOutPosition.setFalsy();
 
     return false;
   }
 
   private isOutContainer($: ThresholdCoordinate) {
-    if (this.isOutContainerV($)) {
+    if (this.isOutThresholdV($)) {
       this.isDraggedOutContainer.setAxes(false, true);
 
       return true;
@@ -515,7 +492,7 @@ class Draggable
       return true;
     }
 
-    this.isDraggedOutContainer.setAllFalse();
+    this.isDraggedOutContainer.setFalsy();
 
     return false;
   }
@@ -551,7 +528,7 @@ class Draggable
     return (
       this.isLastELm() &&
       this.isMovingDown &&
-      this.isOutContainerV(this.layoutThresholds[SK])
+      this.isOutThresholdV(this.layoutThresholds[SK])
     );
   }
 

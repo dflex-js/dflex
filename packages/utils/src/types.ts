@@ -30,5 +30,5 @@ export interface AxesCoordinatesBoolInterface
   /** True if both axes are false. */
   isAllFalsy(): boolean;
   /** Set both axes to false. */
-  setAllFalse(): void;
+  setFalsy(): void;
 }
