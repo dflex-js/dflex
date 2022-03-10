@@ -531,35 +531,24 @@ class Draggable
       : this.isOutPosition(this.threshold.main);
   }
 
-  /**
-   * Checks if dragged is the first child and going up.
-   */
-  isLeavingFromTop() {
+  isLeavingFromHead() {
     return (
-      this.isFirstOrOutside() &&
-      !this.isDraggedOutContainer.x &&
-      !this.isMovingDown
+      !this.isMovingDown && this.indexPlaceholder <= 0 // first our outside.
     );
   }
 
-  /**
-   * Checks if dragged is the last child and going down.
-   */
-  isLeavingFromBottom() {
-    const { SK } = store.registry[this.draggedElm.id].keys;
+  isLeavingFromTail() {
+    const lastElm =
+      (store.getElmSiblingsListById(this.draggedElm.id) as string[]).length - 1;
 
-    return (
-      this.isLastELm() &&
-      this.isMovingDown &&
-      this.isOutContainerV(this.layoutThresholds[SK])
-    );
+    return this.isMovingDown && this.indexPlaceholder === lastElm;
   }
 
   isNotSettled() {
     const { SK } = store.registry[this.draggedElm.id].keys;
 
     return (
-      !this.isLeavingFromBottom() &&
+      !this.isLeavingFromTail() &&
       (this.isOutThreshold() || this.isOutThreshold(SK))
     );
   }

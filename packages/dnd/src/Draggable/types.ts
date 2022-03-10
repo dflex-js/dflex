@@ -58,8 +58,8 @@ export interface DraggableDnDInterface
   updateNumOfElementsTransformed(effectedElemDirection: number): void;
   setDraggedMovementDirection(coordinate: number, axes: Axes): void;
   isOutThreshold(siblingsK?: string): boolean;
-  isLeavingFromTop(): boolean;
-  isLeavingFromBottom(): boolean;
+  isLeavingFromHead(): boolean;
+  isLeavingFromTail(): boolean;
   isNotSettled(): boolean;
   endDragging(isFallback: boolean): void;
 }
