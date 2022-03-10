@@ -312,7 +312,7 @@ class DraggableAxes
 
     const { left } = $;
 
-    return x < left.max || x > left.min;
+    return this.isMovingAwayFrom.x ? x > left.min : x < left.max;
   }
 
   private isOutPositionV() {
