@@ -315,21 +315,21 @@ class DraggableAxes
     return this.isMovingAwayFrom.x ? x > left.min : x < left.max;
   }
 
-  private isOutPositionV() {
-    const { top } = this.threshold.main;
-
+  private isOutPositionV($: ThresholdCoordinate) {
     const { y } = this.positionPlaceholder;
+
+    const { top } = $;
 
     return this.isMovingAwayFrom.y ? y > top.min : y < top.max;
   }
 
-  private isOutPositionH() {
-    const { left } = this.threshold.main;
+  // private isOutPositionH() {
+  //   const { left } = this.threshold.main;
 
-    const { x } = this.positionPlaceholder;
+  //   const { x } = this.positionPlaceholder;
 
-    return this.isMovingAwayFrom.x ? x > left.min : x < left.max;
-  }
+  //   return this.isMovingAwayFrom.x ? x > left.min : x < left.max;
+  // }
 
   private getLastElmIndex() {
     const siblings = store.getElmSiblingsListById(this.draggedElm.id);
@@ -363,7 +363,7 @@ class DraggableAxes
       return true;
     }
 
-    if (this.isOutPositionV() || this.isOutPositionH()) {
+    if (this.isOutPositionV($)) {
       this.isDraggedOutPosition.setAxes(false, true);
 
       return true;
