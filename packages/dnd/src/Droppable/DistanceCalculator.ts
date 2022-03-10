@@ -9,7 +9,7 @@ import type {
 } from "@dflex/utils";
 
 import type { InteractivityEvent } from "../types";
-import type { DraggableDnDInterface } from "../Draggable";
+import type { DraggableInteractiveInterface } from "../Draggable";
 
 import store from "../DnDStore";
 
@@ -40,7 +40,7 @@ function emitInteractiveEvent(
  * accordingly.
  */
 class DistanceCalculator implements DistanceCalculatorInterface {
-  protected draggable: DraggableDnDInterface;
+  protected draggable: DraggableInteractiveInterface;
 
   protected effectedElemDirection: EffectedElemDirection;
 
@@ -54,7 +54,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
   protected isOutActiveSiblingsContainer: boolean;
 
-  constructor(draggable: DraggableDnDInterface) {
+  constructor(draggable: DraggableInteractiveInterface) {
     this.draggable = draggable;
 
     /**

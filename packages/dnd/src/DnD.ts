@@ -1,6 +1,6 @@
 import type { Coordinates } from "@dflex/draggable";
 
-import Draggable from "./Draggable";
+import DraggableInteractive from "./Draggable";
 import Droppable from "./Droppable";
 import store from "./DnDStore";
 
@@ -51,7 +51,7 @@ class DnD extends Droppable {
      */
     store.initSiblingsScrollAndVisibilityIfNecessary(SK);
 
-    const draggable = new Draggable(
+    const draggable = new DraggableInteractive(
       id,
       initCoordinates,
       options as FinalDndOpts

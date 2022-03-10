@@ -12,7 +12,7 @@ import type { CoreInstanceInterface } from "@dflex/core-instance";
 
 import store from "../DnDStore";
 
-import type { DraggableDnDInterface, Restrictions } from "./types";
+import type { DraggableInteractiveInterface, Restrictions } from "./types";
 
 import type {
   ScrollOptWithThreshold,
@@ -22,9 +22,9 @@ import type {
 
 import Threshold, { ThresholdCoordinate } from "../Plugins/Threshold";
 
-class Draggable
+class DraggableInteractive
   extends AbstractDraggable<CoreInstanceInterface>
-  implements DraggableDnDInterface
+  implements DraggableInteractiveInterface
 {
   private isLayoutStateUpdated: boolean;
 
@@ -36,9 +36,9 @@ class Draggable
 
   setOfTransformedIds?: Set<string>;
 
-  threshold: DraggableDnDInterface["threshold"];
+  threshold: DraggableInteractiveInterface["threshold"];
 
-  layoutThresholds!: DraggableDnDInterface["layoutThresholds"];
+  layoutThresholds!: DraggableInteractiveInterface["layoutThresholds"];
 
   scroll: ScrollOptWithThreshold;
 
@@ -633,4 +633,4 @@ class Draggable
   }
 }
 
-export default Draggable;
+export default DraggableInteractive;

@@ -32,7 +32,7 @@ export interface Restrictions {
   };
 }
 
-export interface DraggableDnDInterface
+export interface DraggableInteractiveInterface
   extends AbstractDraggableInterface<CoreInstanceInterface> {
   readonly operationID: string;
   readonly threshold: ThresholdInterface;
