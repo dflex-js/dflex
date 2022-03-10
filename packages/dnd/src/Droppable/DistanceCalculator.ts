@@ -9,7 +9,7 @@ import type {
 } from "@dflex/utils";
 
 import type { InteractivityEvent } from "../types";
-import type { DraggableDnDInterface } from "../Draggable";
+import type { DraggableInteractiveInterface } from "../Draggable";
 
 import store from "../DnDStore";
 
@@ -40,7 +40,7 @@ function emitInteractiveEvent(
  * accordingly.
  */
 class DistanceCalculator implements DistanceCalculatorInterface {
-  protected draggable: DraggableDnDInterface;
+  protected draggable: DraggableInteractiveInterface;
 
   protected effectedElemDirection: EffectedElemDirection;
 
@@ -52,9 +52,10 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
   private siblingsEmptyElmIndex: AxesCoordinatesInterface;
 
-  protected isOutActiveSiblingsContainer: boolean;
+  /** Isolated form the threshold and predict is-out based on the controllers */
+  protected isDraggedOutContainerEarlyDetection: boolean;
 
-  constructor(draggable: DraggableDnDInterface) {
+  constructor(draggable: DraggableInteractiveInterface) {
     this.draggable = draggable;
 
     /**
@@ -80,7 +81,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
       y: 1,
     };
 
-    this.isOutActiveSiblingsContainer = false;
+    this.isDraggedOutContainerEarlyDetection = false;
   }
 
   protected setEffectedElemDirection(isIncrease: boolean, axes: Axes) {
@@ -216,7 +217,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     this.draggable.updateNumOfElementsTransformed(this.effectedElemDirection.x);
 
     // TODO: always true for the first element
-    if (!this.isOutActiveSiblingsContainer) {
+    if (!this.isDraggedOutContainerEarlyDetection) {
       /**
        * By updating the dragged translate, we guarantee that dragged
        * transformation will not triggered until dragged is over threshold

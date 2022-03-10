@@ -1,9 +1,8 @@
 import { AbstractDraggable } from "@dflex/draggable";
-import type { DraggedStyle, Coordinates } from "@dflex/draggable";
+import type { Coordinates } from "@dflex/draggable";
 
 import { AxesCoordinates, AxesCoordinatesBool } from "@dflex/utils";
 import type {
-  Axes,
   AxesCoordinatesInterface,
   AxesCoordinatesBoolInterface,
 } from "@dflex/utils";
@@ -12,53 +11,41 @@ import type { CoreInstanceInterface } from "@dflex/core-instance";
 
 import store from "../DnDStore";
 
-import type { DraggableDnDInterface, Restrictions } from "./types";
-
 import type {
-  ScrollOptWithThreshold,
-  FinalDndOpts,
-  RestrictionsStatus,
-} from "../types";
+  DraggableAxesInterface,
+  SiblingsThreshold,
+  Restrictions,
+} from "./types";
 
-import Threshold, { ThresholdCoordinate } from "../Plugins/Threshold";
+import type { FinalDndOpts, RestrictionsStatus } from "../types";
 
-class Draggable
+import Threshold from "../Plugins/Threshold";
+import type {
+  ThresholdInterface,
+  ThresholdCoordinate,
+} from "../Plugins/Threshold";
+
+class DraggableAxes
   extends AbstractDraggable<CoreInstanceInterface>
-  implements DraggableDnDInterface
+  implements DraggableAxesInterface
 {
   private isLayoutStateUpdated: boolean;
 
   indexPlaceholder: number;
 
-  operationID: string;
+  positionPlaceholder: AxesCoordinatesInterface;
 
-  siblingsContainer: CoreInstanceInterface | null;
+  threshold: ThresholdInterface;
 
-  setOfTransformedIds?: Set<string>;
-
-  threshold: DraggableDnDInterface["threshold"];
-
-  layoutThresholds!: DraggableDnDInterface["layoutThresholds"];
-
-  scroll: ScrollOptWithThreshold;
+  layoutThresholds: SiblingsThreshold;
 
   isViewportRestricted: boolean;
 
   innerOffset: AxesCoordinatesInterface;
 
-  offsetPlaceholder: AxesCoordinatesInterface;
-
-  occupiedOffset: AxesCoordinatesInterface;
-
-  occupiedTranslate: AxesCoordinatesInterface;
-
   mousePoints: AxesCoordinatesInterface;
 
-  isMovingDown: boolean;
-
-  isMovingLeft: boolean;
-
-  numberOfElementsTransformed: number;
+  isMovingAwayFrom: AxesCoordinatesBoolInterface;
 
   isDraggedOutPosition: AxesCoordinatesBoolInterface;
 
@@ -76,12 +63,8 @@ class Draggable
 
   private initX: number;
 
-  isDraggedPositionFixed: boolean;
-
-  private changeToFixedStyleProps: DraggedStyle;
-
   constructor(id: string, initCoordinates: Coordinates, opts: FinalDndOpts) {
-    const { element, parent } = store.getElmTreeById(id);
+    const { element } = store.getElmTreeById(id);
 
     super(element, initCoordinates);
 
@@ -89,68 +72,19 @@ class Draggable
 
     const { order } = element;
 
-    /**
-     * Initialize temp index that refers to element new position after
-     * transformation happened.
-     */
     this.indexPlaceholder = order.self;
 
-    // This tiny bug caused an override  options despite it's actually freezed!
-    this.scroll = { ...opts.scroll };
-
     const { SK } = store.registry[id].keys;
-
-    const { hasOverflowX, hasOverflowY } = store.siblingsScrollElement[SK];
 
     const siblings = store.getElmSiblingsListById(this.draggedElm.id);
 
     this.isViewportRestricted = true;
-    this.isDraggedPositionFixed = false;
-
-    this.changeToFixedStyleProps = [
-      {
-        prop: "top",
-        dragValue: `${this.draggedElm.currentPosition.y}px`,
-        afterDragValue: "",
-      },
-      {
-        prop: "left",
-        dragValue: `${this.draggedElm.currentPosition.x}px`,
-        afterDragValue: "",
-      },
-      {
-        prop: "position",
-        dragValue: "fixed",
-        afterDragValue: "",
-      },
-    ];
-
-    if (siblings === null || (!hasOverflowY && !hasOverflowX)) {
-      // Override the default options. (FYI, this is the only privilege I have.)
-      this.scroll.enable = false;
-    }
-
-    if (this.scroll.enable) {
-      this.isViewportRestricted = false;
-
-      store.siblingsScrollElement[SK].setThresholdMatrix(this.scroll.threshold);
-
-      if (!store.siblingsScrollElement[SK].hasDocumentAsContainer) {
-        /**
-         * When the scroll is the document it's good. The restriction is to the
-         * document which guarantees the free movement. Otherwise, let's do it.
-         * Change the position and transform siblings.
-         */
-        // this.isDraggedPositionFixed = true;
-      }
-    }
 
     const siblingsBoundaries = store.siblingsBoundaries[SK];
 
     const {
       offset: { width, height },
       currentPosition,
-      translate,
     } = this.draggedElm;
 
     this.threshold = new Threshold(
@@ -180,23 +114,13 @@ class Draggable
           true
         ),
       };
+    } else {
+      this.layoutThresholds = {};
     }
-
-    this.siblingsContainer = null;
 
     this.isDraggedOutPosition = new AxesCoordinatesBool(false, false);
     this.isDraggedOutContainer = new AxesCoordinatesBool(false, false);
-
-    if (parent) {
-      /**
-       * Indicator to parents that have changed. This facilitates looping in
-       * affected parents only.
-       */
-      this.setOfTransformedIds = new Set([]);
-      this.assignActiveParent(parent);
-    }
-
-    this.operationID = store.tracker.newTravel();
+    this.isMovingAwayFrom = new AxesCoordinatesBool(false, false);
 
     const { x, y } = initCoordinates;
 
@@ -215,31 +139,12 @@ class Draggable
     const lm = Math.round(parseFloat(style.marginLeft));
     this.marginX = rm + lm;
 
-    this.offsetPlaceholder = new AxesCoordinates(
+    this.positionPlaceholder = new AxesCoordinates(
       currentPosition.x,
       currentPosition.y
     );
 
-    this.occupiedOffset = new AxesCoordinates(
-      currentPosition.x,
-      currentPosition.y
-    );
-
-    this.occupiedTranslate = new AxesCoordinates(translate.x, translate.y);
-
-    /**
-     * previous X and Y are used to calculate mouse directions.
-     */
     this.mousePoints = new AxesCoordinates(x, y);
-
-    /**
-     * It counts number of element that dragged has passed. This counter is
-     * crucial to calculate drag's translate and index
-     */
-    this.numberOfElementsTransformed = 0;
-
-    this.isMovingDown = false;
-    this.isMovingLeft = false;
 
     this.restrictions = opts.restrictions;
 
@@ -249,25 +154,6 @@ class Draggable
       siblings !== null &&
       (opts.restrictionsStatus.isContainerRestricted ||
         opts.restrictionsStatus.isSelfRestricted);
-  }
-
-  /**
-   * Assigns new container parent to the dragged.
-   *
-   * @param element -
-   */
-  private assignActiveParent(element: CoreInstanceInterface) {
-    /**
-     * Assign a new instance which represents droppable. Then
-     * assign owner parent so we have from/to.
-     */
-    this.siblingsContainer = element;
-
-    /**
-     * Add flag for undo method so we can check which  parent is being
-     * transformed and which is not.
-     */
-    this.isDraggedOutContainer.setAllFalse();
   }
 
   private axesYFilter(
@@ -325,45 +211,22 @@ class Draggable
     return x;
   }
 
-  private getLastElmIndex() {
-    const siblings = store.getElmSiblingsListById(this.draggedElm.id);
+  private setDraggedMouseMovement(x: number, y: number) {
+    this.isMovingAwayFrom.setAxes(
+      x > this.mousePoints.x,
+      y > this.mousePoints.y
+    );
 
-    return siblings!.length - 1;
+    this.mousePoints.setAxes(x, y);
   }
 
-  private isFirstOrOutside() {
-    const siblings = store.getElmSiblingsListById(this.draggedElm.id);
-
-    return siblings !== null && this.indexPlaceholder <= 0;
-  }
-
-  private isLastELm() {
-    return this.indexPlaceholder === this.getLastElmIndex();
-  }
-
-  setDraggedTempIndex(i: number) {
-    this.indexPlaceholder = i;
-    this.draggedElm.setDataset("index", i);
-  }
-
-  /**
-   * Dragged current-offset is essential to determine dragged position in
-   * layout and parent.
-   *
-   * Is it moved form its translate? Is it out the parent or in
-   * another parent? The answer is related to currentOffset.
-   *
-   * Note: these are the current offset related only to the dragging. When the
-   * operation is done, different calculation will be set.
-   *
-   * @param x -
-   * @param y -
-   */
   dragAt(x: number, y: number) {
     if (!this.isLayoutStateUpdated) {
       this.isLayoutStateUpdated = true;
       store.onStateChange("dragging");
     }
+
+    this.setDraggedMouseMovement(x, y);
 
     let filteredY = y;
     let filteredX = x;
@@ -385,7 +248,6 @@ class Draggable
           minRight,
           this.restrictions.container.allowLeavingFromLeft,
           this.restrictions.container.allowLeavingFromRight,
-
           false
         );
         filteredY = this.axesYFilter(
@@ -439,14 +301,14 @@ class Draggable
     /**
      * Every time we got new translate, offset should be updated
      */
-    this.offsetPlaceholder.setAxes(
+    this.positionPlaceholder.setAxes(
       filteredX - this.innerOffset.x,
       filteredY - this.innerOffset.y
     );
   }
 
   private isOutThresholdH($: ThresholdCoordinate) {
-    const { x } = this.offsetPlaceholder;
+    const { x } = this.positionPlaceholder;
 
     const { left } = $;
 
@@ -456,21 +318,31 @@ class Draggable
   private isOutPositionV() {
     const { top } = this.threshold.main;
 
-    const { y } = this.offsetPlaceholder;
+    const { y } = this.positionPlaceholder;
 
-    return this.isMovingDown ? y > top.min : y < top.max;
+    return this.isMovingAwayFrom.y ? y > top.min : y < top.max;
   }
 
   private isOutPositionH() {
     const { left } = this.threshold.main;
 
-    const { x } = this.offsetPlaceholder;
+    const { x } = this.positionPlaceholder;
 
-    return this.isMovingLeft ? x > left.min : x < left.max;
+    return this.isMovingAwayFrom.x ? x > left.min : x < left.max;
+  }
+
+  private getLastElmIndex() {
+    const siblings = store.getElmSiblingsListById(this.draggedElm.id);
+
+    return siblings!.length - 1;
+  }
+
+  private isLastELm() {
+    return this.indexPlaceholder === this.getLastElmIndex();
   }
 
   private isOutContainerV($: ThresholdCoordinate) {
-    const { y } = this.offsetPlaceholder;
+    const { y } = this.positionPlaceholder;
 
     const { top } = $;
 
@@ -497,7 +369,7 @@ class Draggable
       return true;
     }
 
-    this.isDraggedOutPosition.setAllFalse();
+    this.isDraggedOutPosition.setFalsy();
 
     return false;
   }
@@ -515,7 +387,7 @@ class Draggable
       return true;
     }
 
-    this.isDraggedOutContainer.setAllFalse();
+    this.isDraggedOutContainer.setFalsy();
 
     return false;
   }
@@ -531,26 +403,20 @@ class Draggable
       : this.isOutPosition(this.threshold.main);
   }
 
-  /**
-   * Checks if dragged is the first child and going up.
-   */
-  isLeavingFromTop() {
+  isLeavingFromHead() {
     return (
-      this.isFirstOrOutside() &&
-      !this.isDraggedOutContainer.x &&
-      !this.isMovingDown
+      !this.isMovingAwayFrom.y && this.indexPlaceholder <= 0 // first our outside.
     );
   }
 
-  /**
-   * Checks if dragged is the last child and going down.
-   */
-  isLeavingFromBottom() {
+  isLeavingFromTail() {
     const { SK } = store.registry[this.draggedElm.id].keys;
 
+    const lastElm =
+      (store.getElmSiblingsListById(this.draggedElm.id) as string[]).length - 1;
+
     return (
-      this.isLastELm() &&
-      this.isMovingDown &&
+      this.indexPlaceholder === lastElm &&
       this.isOutContainerV(this.layoutThresholds[SK])
     );
   }
@@ -559,89 +425,10 @@ class Draggable
     const { SK } = store.registry[this.draggedElm.id].keys;
 
     return (
-      !this.isLeavingFromBottom() &&
+      !this.isLeavingFromTail() &&
       (this.isOutThreshold() || this.isOutThreshold(SK))
     );
   }
-
-  setDraggedMovementDirection(coordinate: number, axes: Axes) {
-    if (this.mousePoints[axes] === coordinate) return;
-
-    this[axes === "y" ? `isMovingDown` : `isMovingLeft`] =
-      coordinate > this.mousePoints[axes];
-
-    this.mousePoints[axes] = coordinate;
-  }
-
-  updateNumOfElementsTransformed(effectedElemDirection: number) {
-    this.numberOfElementsTransformed += -1 * effectedElemDirection;
-  }
-
-  setDraggedTransformPosition(isFallback: boolean) {
-    const siblings = store.getElmSiblingsListById(this.draggedElm.id);
-
-    /**
-     * In this case, the use clicked without making any move.
-     */
-    if (
-      isFallback ||
-      siblings === null ||
-      this.numberOfElementsTransformed === 0
-    ) {
-      /**
-       * If not isDraggedOutPosition, it means dragged is out its position, inside
-       * list but didn't reach another element to replace.
-       *
-       * List's elements is in their position, just undo dragged.
-       *
-       * Restore dragged position (translateX, translateY) directly. Why? Because,
-       * dragged depends on extra instance to float in layout that is not related to element
-       * instance.
-       */
-      if (!this.draggedElm.translate.isEqual(this.translatePlaceholder)) {
-        this.draggedElm.transformElm();
-        this.draggedElm.setDataset("index", this.draggedElm.order.self);
-
-        /**
-         * There's a rare case where dragged leaves and returns to the same
-         * position. In this case, undo won't be triggered so that we have to do
-         * it manually here. Otherwise, undoing will handle repositioning. I
-         * don't like it but it is what it is.
-         */
-        if (
-          siblings &&
-          siblings[this.draggedElm.order.self] !== this.draggedElm.id
-        ) {
-          this.draggedElm.assignNewPosition(
-            siblings,
-            this.draggedElm.order.self
-          );
-        }
-      }
-
-      return;
-    }
-
-    this.draggedElm.currentPosition.clone(this.occupiedOffset);
-    this.draggedElm.translate.clone(this.occupiedTranslate);
-
-    this.draggedElm.transformElm();
-
-    if (siblings) {
-      this.draggedElm.assignNewPosition(siblings, this.indexPlaceholder);
-    }
-
-    this.draggedElm.order.self = this.indexPlaceholder;
-  }
-
-  endDragging(isFallback: boolean) {
-    this.setDragged(false);
-    this.setDraggedTransformPosition(isFallback);
-
-    if (this.isDraggedPositionFixed) {
-      this.changeStyle(this.changeToFixedStyleProps, false);
-    }
-  }
 }
 
-export default Draggable;
+export default DraggableAxes;

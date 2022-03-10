@@ -13,7 +13,7 @@ class AxesCoordinatesBool
     return !this.x && !this.y;
   }
 
-  setAllFalse() {
+  setFalsy() {
     this.x = false;
     this.y = false;
   }
