@@ -410,10 +410,15 @@ class DraggableAxes
   }
 
   isLeavingFromTail() {
+    const { SK } = store.registry[this.draggedElm.id].keys;
+
     const lastElm =
       (store.getElmSiblingsListById(this.draggedElm.id) as string[]).length - 1;
 
-    return this.isMovingAwayFrom.y && this.indexPlaceholder === lastElm;
+    return (
+      this.indexPlaceholder === lastElm &&
+      this.isOutContainerV(this.layoutThresholds[SK])
+    );
   }
 
   isNotSettled() {
