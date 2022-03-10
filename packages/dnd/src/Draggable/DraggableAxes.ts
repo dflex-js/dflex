@@ -312,45 +312,95 @@ class DraggableAxes
 
     const { left } = $;
 
-    return this.isMovingAwayFrom.x ? x > left.min : x < left.max;
+    return x < left.max || x > left.min;
   }
 
-  private isOutThresholdV($: ThresholdCoordinate) {
-    const { y } = this.positionPlaceholder;
+  private isOutPositionV() {
+    const { top } = this.threshold.main;
 
-    const { top } = $;
+    const { y } = this.positionPlaceholder;
 
     return this.isMovingAwayFrom.y ? y > top.min : y < top.max;
   }
 
-  private checkAndSetPosition(
-    $: ThresholdCoordinate,
-    flag: "isDraggedOutPosition" | "isDraggedOutContainer"
-  ) {
+  private isOutPositionH() {
+    const { left } = this.threshold.main;
+
+    const { x } = this.positionPlaceholder;
+
+    return this.isMovingAwayFrom.x ? x > left.min : x < left.max;
+  }
+
+  private getLastElmIndex() {
+    const siblings = store.getElmSiblingsListById(this.draggedElm.id);
+
+    return siblings!.length - 1;
+  }
+
+  private isLastELm() {
+    return this.indexPlaceholder === this.getLastElmIndex();
+  }
+
+  private isOutContainerV($: ThresholdCoordinate) {
+    const { y } = this.positionPlaceholder;
+
+    const { top } = $;
+
+    /**
+     * Are you last element and outside the container? Or are you coming from top
+     * and outside the container?
+     */
+    return (
+      (this.isLastELm() && y > top.min) ||
+      (this.indexPlaceholder < 0 && y < top.max)
+    );
+  }
+
+  private isOutPosition($: ThresholdCoordinate) {
     if (this.isOutThresholdH($)) {
-      this[flag].setAxes(true, false);
+      this.isDraggedOutPosition.setAxes(true, false);
 
       return true;
     }
 
-    if (this.isOutThresholdV($)) {
-      this[flag].setAxes(false, true);
+    if (this.isOutPositionV() || this.isOutPositionH()) {
+      this.isDraggedOutPosition.setAxes(false, true);
 
       return true;
     }
 
-    this[flag].setFalsy();
+    this.isDraggedOutPosition.setFalsy();
 
     return false;
   }
 
+  private isOutContainer($: ThresholdCoordinate) {
+    if (this.isOutContainerV($)) {
+      this.isDraggedOutContainer.setAxes(false, true);
+
+      return true;
+    }
+
+    if (this.isOutThresholdH($)) {
+      this.isDraggedOutContainer.setAxes(true, false);
+
+      return true;
+    }
+
+    this.isDraggedOutContainer.setFalsy();
+
+    return false;
+  }
+
+  /**
+   * Checks if dragged it out of its position or parent.
+   *
+   * @param siblingsK -
+   */
   isOutThreshold(siblingsK?: string) {
     return siblingsK
-      ? this.checkAndSetPosition(
-          this.layoutThresholds[siblingsK],
-          "isDraggedOutContainer"
-        )
-      : this.checkAndSetPosition(this.threshold.main, "isDraggedOutPosition");
+      ? this.isOutContainer(this.layoutThresholds[siblingsK])
+      : this.isOutPosition(this.threshold.main);
   }
 
   isLeavingFromHead() {
