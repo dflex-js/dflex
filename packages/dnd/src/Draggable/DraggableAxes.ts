@@ -220,19 +220,6 @@ class DraggableAxes
     this.mousePoints.setAxes(x, y);
   }
 
-  /**
-   * Dragged current-offset is essential to determine dragged position in
-   * layout and parent.
-   *
-   * Is it moved form its translate? Is it out the parent or in
-   * another parent? The answer is related to currentOffset.
-   *
-   * Note: these are the current offset related only to the dragging. When the
-   * operation is done, different calculation will be set.
-   *
-   * @param x -
-   * @param y -
-   */
   dragAt(x: number, y: number) {
     if (!this.isLayoutStateUpdated) {
       this.isLayoutStateUpdated = true;
@@ -368,7 +355,7 @@ class DraggableAxes
 
   isLeavingFromHead() {
     return (
-      this.isMovingAwayFrom.y && this.indexPlaceholder <= 0 // first our outside.
+      !this.isMovingAwayFrom.y && this.indexPlaceholder <= 0 // first our outside.
     );
   }
 
@@ -376,7 +363,7 @@ class DraggableAxes
     const lastElm =
       (store.getElmSiblingsListById(this.draggedElm.id) as string[]).length - 1;
 
-    return !this.isMovingAwayFrom.y && this.indexPlaceholder === lastElm;
+    return this.isMovingAwayFrom.y && this.indexPlaceholder === lastElm;
   }
 
   isNotSettled() {
