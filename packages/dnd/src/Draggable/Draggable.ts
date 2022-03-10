@@ -434,7 +434,7 @@ class Draggable
 
     const { left } = $;
 
-    return x < left.max || x > left.min;
+    return this.isMovingLeft ? x > left.min : x < left.max;
   }
 
   private isOutThresholdV($: ThresholdCoordinate) {
@@ -442,7 +442,7 @@ class Draggable
 
     const { top } = $;
 
-    return y < top.max || y > top.min;
+    return this.isMovingDown ? y > top.min : y < top.max;
   }
 
   private checkAndSetPosition(
@@ -475,30 +475,24 @@ class Draggable
       : this.checkAndSetPosition(this.threshold.main, "isDraggedOutPosition");
   }
 
-  isLeavingFromTop() {
+  isLeavingFromHead() {
     return (
-      this.indexPlaceholder <= 0 && // first our outside.
-      !this.isDraggedOutContainer.x &&
-      !this.isMovingDown
+      !this.isMovingDown && this.indexPlaceholder <= 0 // first our outside.
     );
   }
 
-  isLeavingFromBottom() {
+  isLeavingFromTail() {
     const lastElm =
       (store.getElmSiblingsListById(this.draggedElm.id) as string[]).length - 1;
 
-    return (
-      this.indexPlaceholder === lastElm &&
-      !this.isDraggedOutContainer.x &&
-      this.isMovingDown
-    );
+    return this.isMovingDown && this.indexPlaceholder === lastElm;
   }
 
   isNotSettled() {
     const { SK } = store.registry[this.draggedElm.id].keys;
 
     return (
-      !this.isLeavingFromBottom() &&
+      !this.isLeavingFromTail() &&
       (this.isOutThreshold() || this.isOutThreshold(SK))
     );
   }

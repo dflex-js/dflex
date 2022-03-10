@@ -380,7 +380,7 @@ class Droppable extends DistanceCalculator {
   }
 
   private draggedOutPosition() {
-    if (this.draggable.isLeavingFromTop()) {
+    if (this.draggable.isLeavingFromHead()) {
       /**
        * If leaving and parent locked, do nothing.
        */
@@ -396,7 +396,7 @@ class Droppable extends DistanceCalculator {
       return;
     }
 
-    if (this.draggable.isLeavingFromBottom()) {
+    if (this.draggable.isLeavingFromTail()) {
       this.setDraggedPositionFlagInSiblingsContainer(true);
 
       return;

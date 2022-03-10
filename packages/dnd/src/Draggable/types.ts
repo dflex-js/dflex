@@ -62,10 +62,16 @@ export interface DraggableDnDInterface
    * necessary flags.
    */
   isOutThreshold(siblingsK?: string): boolean;
-  /** Checks if dragged is the first child and going up. */
-  isLeavingFromTop(): boolean;
-  /** Checks if dragged is the last child and going down. */
-  isLeavingFromBottom(): boolean;
+
+  /** Checks if dragged index is first the mouse going up. Valid only if dragged
+   * is out self threshold.
+   */
+  isLeavingFromHead(): boolean;
+
+  /** Checks if dragged index is last the mouse going down. Valid only if dragged
+   * is out self threshold.
+   */
+  isLeavingFromTail(): boolean;
   isNotSettled(): boolean;
   endDragging(isFallback: boolean): void;
 }
