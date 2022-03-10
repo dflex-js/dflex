@@ -13,7 +13,7 @@ import type {
   ThresholdCoordinate,
 } from "../Plugins/Threshold";
 
-export interface SiblingsThresholdMatrix {
+export interface SiblingsThreshold {
   [sk: string]: ThresholdCoordinate;
 }
 
@@ -32,23 +32,16 @@ export interface Restrictions {
   };
 }
 
-export interface DraggableDnDInterface
+export interface DraggableAxesInterface
   extends AbstractDraggableInterface<CoreInstanceInterface> {
-  readonly operationID: string;
   readonly threshold: ThresholdInterface;
-  readonly layoutThresholds: SiblingsThresholdMatrix;
+  readonly layoutThresholds: SiblingsThreshold;
   readonly innerOffset: AxesCoordinatesInterface;
   readonly offsetPlaceholder: AxesCoordinatesInterface;
   readonly indexPlaceholder: number;
-  setOfTransformedIds?: Set<string>;
-  siblingsContainer: CoreInstanceInterface | null;
-  scroll: ScrollOptWithThreshold;
-  readonly occupiedOffset: AxesCoordinatesInterface;
-  readonly occupiedTranslate: AxesCoordinatesInterface;
 
   /** Previous X and Y are used to calculate mouse directions. */
   readonly mousePoints: AxesCoordinatesInterface;
-  readonly numberOfElementsTransformed: number;
   readonly isViewportRestricted: boolean;
 
   /**
@@ -59,11 +52,7 @@ export interface DraggableDnDInterface
   readonly isMovingAwayFrom: AxesCoordinatesBoolInterface;
   readonly isDraggedOutPosition: AxesCoordinatesBoolInterface;
   readonly isDraggedOutContainer: AxesCoordinatesBoolInterface;
-  readonly isDraggedPositionFixed: boolean;
-  setDraggedTempIndex(i: number): void;
   dragAt(x: number, y: number): void;
-  updateNumOfElementsTransformed(effectedElemDirection: number): void;
-  setDraggedMouseMovement(x: number, y: number): void;
   /**
    * Check if the dragged out self position or parent container and set the
    * necessary flags.
@@ -82,5 +71,18 @@ export interface DraggableDnDInterface
    */
   isLeavingFromTail(): boolean;
   isNotSettled(): boolean;
+}
+
+export interface DraggableInteractiveInterface extends DraggableAxesInterface {
+  readonly operationID: string;
+  setOfTransformedIds?: Set<string>;
+  siblingsContainer: CoreInstanceInterface | null;
+  scroll: ScrollOptWithThreshold;
+  readonly occupiedOffset: AxesCoordinatesInterface;
+  readonly occupiedTranslate: AxesCoordinatesInterface;
+  readonly numberOfElementsTransformed: number;
+  readonly isDraggedPositionFixed: boolean;
+  setDraggedTempIndex(i: number): void;
+  updateNumOfElementsTransformed(effectedElemDirection: number): void;
   endDragging(isFallback: boolean): void;
 }

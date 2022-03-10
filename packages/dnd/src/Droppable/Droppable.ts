@@ -4,7 +4,7 @@ import type { DraggedEvent, SiblingsEvent } from "../types";
 
 import store from "../DnDStore";
 
-import type { DraggableDnDInterface } from "../Draggable";
+import type { DraggableInteractiveInterface } from "../Draggable";
 import DistanceCalculator from "./DistanceCalculator";
 
 function emitSiblingsEvent(
@@ -92,7 +92,7 @@ class Droppable extends DistanceCalculator {
 
   protected axes: Axes;
 
-  constructor(draggable: DraggableDnDInterface) {
+  constructor(draggable: DraggableInteractiveInterface) {
     super(draggable);
 
     this.leftAtIndex = -1;
@@ -380,6 +380,10 @@ class Droppable extends DistanceCalculator {
   }
 
   private draggedOutPosition() {
+    console.log(
+      "file: Droppable.ts ~ line 384 ~ this.draggable.isLeavingFromHead()",
+      this.draggable.isLeavingFromHead()
+    );
     if (this.draggable.isLeavingFromHead()) {
       /**
        * If leaving and parent locked, do nothing.
@@ -738,8 +742,6 @@ class Droppable extends DistanceCalculator {
     let isOutSiblingsContainer = false;
 
     const { SK } = store.registry[this.draggable.draggedElm.id].keys;
-
-    this.draggable.setDraggedMouseMovement(x, y);
 
     if (this.draggable.isOutThreshold()) {
       this.emitDraggedEvent("onDragOutThreshold");

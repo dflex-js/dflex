@@ -1,5 +1,5 @@
-import Draggable from "./Draggable";
+import DraggableInteractive from "./DraggableInteractive";
 
-export type { DraggableDnDInterface, Restrictions } from "./types";
+export type { DraggableInteractiveInterface, Restrictions } from "./types";
 
-export default Draggable;
+export default DraggableInteractive;
