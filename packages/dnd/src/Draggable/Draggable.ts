@@ -3,7 +3,6 @@ import type { DraggedStyle, Coordinates } from "@dflex/draggable";
 
 import { AxesCoordinates, AxesCoordinatesBool } from "@dflex/utils";
 import type {
-  Axes,
   AxesCoordinatesInterface,
   AxesCoordinatesBoolInterface,
 } from "@dflex/utils";
@@ -54,9 +53,7 @@ class Draggable
 
   mousePoints: AxesCoordinatesInterface;
 
-  isMovingDown: boolean;
-
-  isMovingLeft: boolean;
+  isMovingAwayFrom: AxesCoordinatesBoolInterface;
 
   numberOfElementsTransformed: number;
 
@@ -186,6 +183,7 @@ class Draggable
 
     this.isDraggedOutPosition = new AxesCoordinatesBool(false, false);
     this.isDraggedOutContainer = new AxesCoordinatesBool(false, false);
+    this.isMovingAwayFrom = new AxesCoordinatesBool(false, false);
 
     if (parent) {
       /**
@@ -227,9 +225,6 @@ class Draggable
 
     this.occupiedTranslate = new AxesCoordinates(translate.x, translate.y);
 
-    /**
-     * previous X and Y are used to calculate mouse directions.
-     */
     this.mousePoints = new AxesCoordinates(x, y);
 
     /**
@@ -237,9 +232,6 @@ class Draggable
      * crucial to calculate drag's translate and index
      */
     this.numberOfElementsTransformed = 0;
-
-    this.isMovingDown = false;
-    this.isMovingLeft = false;
 
     this.restrictions = opts.restrictions;
 
@@ -434,7 +426,7 @@ class Draggable
 
     const { left } = $;
 
-    return this.isMovingLeft ? x > left.min : x < left.max;
+    return this.isMovingAwayFrom.x ? x > left.min : x < left.max;
   }
 
   private isOutThresholdV($: ThresholdCoordinate) {
@@ -442,7 +434,7 @@ class Draggable
 
     const { top } = $;
 
-    return this.isMovingDown ? y > top.min : y < top.max;
+    return this.isMovingAwayFrom.y ? y > top.min : y < top.max;
   }
 
   private checkAndSetPosition(
@@ -477,7 +469,7 @@ class Draggable
 
   isLeavingFromHead() {
     return (
-      !this.isMovingDown && this.indexPlaceholder <= 0 // first our outside.
+      this.isMovingAwayFrom.x && this.indexPlaceholder <= 0 // first our outside.
     );
   }
 
@@ -485,7 +477,7 @@ class Draggable
     const lastElm =
       (store.getElmSiblingsListById(this.draggedElm.id) as string[]).length - 1;
 
-    return this.isMovingDown && this.indexPlaceholder === lastElm;
+    return this.isMovingAwayFrom.y && this.indexPlaceholder === lastElm;
   }
 
   isNotSettled() {
@@ -497,13 +489,13 @@ class Draggable
     );
   }
 
-  setDraggedMovementDirection(coordinate: number, axes: Axes) {
-    if (this.mousePoints[axes] === coordinate) return;
+  setDraggedMouseMovement(x: number, y: number) {
+    this.isMovingAwayFrom.setAxes(
+      x > this.mousePoints.x,
+      y > this.mousePoints.y
+    );
 
-    this[axes === "y" ? `isMovingDown` : `isMovingLeft`] =
-      coordinate > this.mousePoints[axes];
-
-    this.mousePoints[axes] = coordinate;
+    this.mousePoints.setAxes(x, y);
   }
 
   updateNumOfElementsTransformed(effectedElemDirection: number) {

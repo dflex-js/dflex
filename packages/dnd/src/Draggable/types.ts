@@ -45,30 +45,39 @@ export interface DraggableDnDInterface
   scroll: ScrollOptWithThreshold;
   readonly occupiedOffset: AxesCoordinatesInterface;
   readonly occupiedTranslate: AxesCoordinatesInterface;
+
+  /** Previous X and Y are used to calculate mouse directions. */
   readonly mousePoints: AxesCoordinatesInterface;
   readonly numberOfElementsTransformed: number;
   readonly isViewportRestricted: boolean;
-  readonly isMovingDown: boolean;
-  readonly isMovingLeft: boolean;
+
+  /**
+   * If the dragged is moving opposite to the center X/Y.
+   * Far from Y, is moving down.
+   * Far from X, is moving right.
+   */
+  readonly isMovingAwayFrom: AxesCoordinatesBoolInterface;
   readonly isDraggedOutPosition: AxesCoordinatesBoolInterface;
   readonly isDraggedOutContainer: AxesCoordinatesBoolInterface;
   readonly isDraggedPositionFixed: boolean;
   setDraggedTempIndex(i: number): void;
   dragAt(x: number, y: number): void;
   updateNumOfElementsTransformed(effectedElemDirection: number): void;
-  setDraggedMovementDirection(coordinate: number, axes: Axes): void;
+  setDraggedMouseMovement(x: number, y: number): void;
   /**
    * Check if the dragged out self position or parent container and set the
    * necessary flags.
    */
   isOutThreshold(siblingsK?: string): boolean;
 
-  /** Checks if dragged index is first the mouse going up. Valid only if dragged
+  /**
+   * Checks if dragged index is first the mouse going up. Valid only if dragged
    * is out self threshold.
    */
   isLeavingFromHead(): boolean;
 
-  /** Checks if dragged index is last the mouse going down. Valid only if dragged
+  /**
+   * Checks if dragged index is last the mouse going down. Valid only if dragged
    * is out self threshold.
    */
   isLeavingFromTail(): boolean;

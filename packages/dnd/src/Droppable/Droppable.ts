@@ -430,8 +430,8 @@ class Droppable extends DistanceCalculator {
     // inside the list, effected should be related to mouse movement
     this.setEffectedElemDirection(
       this.axes === "y"
-        ? this.draggable.isMovingDown
-        : this.draggable.isMovingLeft,
+        ? this.draggable.isMovingAwayFrom.y
+        : this.draggable.isMovingAwayFrom.x,
       this.axes
     );
 
@@ -636,7 +636,7 @@ class Droppable extends DistanceCalculator {
           store.siblingsScrollElement[SK];
 
         if (
-          this.draggable.isMovingDown &&
+          this.draggable.isMovingAwayFrom.y &&
           y >= threshold!.main.top.min &&
           this.scrollTop + scrollRect.height < scrollHeight
         ) {
@@ -739,7 +739,7 @@ class Droppable extends DistanceCalculator {
 
     const { SK } = store.registry[this.draggable.draggedElm.id].keys;
 
-    this.draggable.setDraggedMovementDirection(y, this.axes);
+    this.draggable.setDraggedMouseMovement(x, y);
 
     if (this.draggable.isOutThreshold()) {
       this.emitDraggedEvent("onDragOutThreshold");

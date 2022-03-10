@@ -133,7 +133,10 @@ class EndDroppable extends Droppable {
       order: { self: from },
     } = this.draggable.draggedElm;
 
-    if (this.isOutActiveSiblingsContainer || this.draggable.isMovingDown) {
+    if (
+      this.isOutActiveSiblingsContainer ||
+      this.draggable.isMovingAwayFrom.y
+    ) {
       this.loopAscWithAnimationFrame(from, lst);
     } else {
       /**
