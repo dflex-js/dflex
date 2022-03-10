@@ -33,6 +33,8 @@ class DraggableAxes
 
   indexPlaceholder: number;
 
+  positionPlaceholder: AxesCoordinatesInterface;
+
   threshold: ThresholdInterface;
 
   layoutThresholds: SiblingsThreshold;
@@ -40,8 +42,6 @@ class DraggableAxes
   isViewportRestricted: boolean;
 
   innerOffset: AxesCoordinatesInterface;
-
-  offsetPlaceholder: AxesCoordinatesInterface;
 
   mousePoints: AxesCoordinatesInterface;
 
@@ -72,10 +72,6 @@ class DraggableAxes
 
     const { order } = element;
 
-    /**
-     * Initialize temp index that refers to element new position after
-     * transformation happened.
-     */
     this.indexPlaceholder = order.self;
 
     const { SK } = store.registry[id].keys;
@@ -143,7 +139,7 @@ class DraggableAxes
     const lm = Math.round(parseFloat(style.marginLeft));
     this.marginX = rm + lm;
 
-    this.offsetPlaceholder = new AxesCoordinates(
+    this.positionPlaceholder = new AxesCoordinates(
       currentPosition.x,
       currentPosition.y
     );
@@ -265,7 +261,6 @@ class DraggableAxes
           minRight,
           this.restrictions.container.allowLeavingFromLeft,
           this.restrictions.container.allowLeavingFromRight,
-
           false
         );
         filteredY = this.axesYFilter(
@@ -319,14 +314,14 @@ class DraggableAxes
     /**
      * Every time we got new translate, offset should be updated
      */
-    this.offsetPlaceholder.setAxes(
+    this.positionPlaceholder.setAxes(
       filteredX - this.innerOffset.x,
       filteredY - this.innerOffset.y
     );
   }
 
   private isOutThresholdH($: ThresholdCoordinate) {
-    const { x } = this.offsetPlaceholder;
+    const { x } = this.positionPlaceholder;
 
     const { left } = $;
 
@@ -334,7 +329,7 @@ class DraggableAxes
   }
 
   private isOutThresholdV($: ThresholdCoordinate) {
-    const { y } = this.offsetPlaceholder;
+    const { y } = this.positionPlaceholder;
 
     const { top } = $;
 

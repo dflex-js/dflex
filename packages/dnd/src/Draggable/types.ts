@@ -34,25 +34,38 @@ export interface Restrictions {
 
 export interface DraggableAxesInterface
   extends AbstractDraggableInterface<CoreInstanceInterface> {
+  /** Dragged threshold  */
   readonly threshold: ThresholdInterface;
+
+  /** Dragged parent containers threshold  */
   readonly layoutThresholds: SiblingsThreshold;
+
   readonly innerOffset: AxesCoordinatesInterface;
-  readonly offsetPlaceholder: AxesCoordinatesInterface;
+
+  /** Dragged position for both X and Y.  */
+  readonly positionPlaceholder: AxesCoordinatesInterface;
+
+  /** Temporary index for dragged  */
   readonly indexPlaceholder: number;
 
   /** Previous X and Y are used to calculate mouse directions. */
   readonly mousePoints: AxesCoordinatesInterface;
+
+  /** Restrict dragged movement inside viewport.  */
   readonly isViewportRestricted: boolean;
 
   /**
-   * If the dragged is moving opposite to the center X/Y.
+   * If the dragged is moving opposite to the center X/Y point(0.0).
    * Far from Y, is moving down.
    * Far from X, is moving right.
    */
   readonly isMovingAwayFrom: AxesCoordinatesBoolInterface;
+
   readonly isDraggedOutPosition: AxesCoordinatesBoolInterface;
   readonly isDraggedOutContainer: AxesCoordinatesBoolInterface;
+
   dragAt(x: number, y: number): void;
+
   /**
    * Check if the dragged out self position or parent container and set the
    * necessary flags.
@@ -70,6 +83,8 @@ export interface DraggableAxesInterface
    * is out self threshold.
    */
   isLeavingFromTail(): boolean;
+
+  /** Has moved without settling inside new position. */
   isNotSettled(): boolean;
 }
 

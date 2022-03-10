@@ -219,7 +219,7 @@ class Droppable extends DistanceCalculator {
         const element = store.registry[id];
 
         const isQualified = !element.isPositionedUnder(
-          this.draggable.offsetPlaceholder.y
+          this.draggable.positionPlaceholder.y
         );
 
         if (isQualified) {
@@ -270,7 +270,7 @@ class Droppable extends DistanceCalculator {
         const element = store.registry[id];
 
         const isQualified = element.isPositionedUnder(
-          this.draggable.offsetPlaceholder.y
+          this.draggable.positionPlaceholder.y
         );
 
         if (isQualified) {
