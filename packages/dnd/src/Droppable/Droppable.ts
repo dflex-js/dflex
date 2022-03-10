@@ -138,7 +138,7 @@ class Droppable extends DistanceCalculator {
     this.isOnDragOutThresholdEvtEmitted = false;
     this.animatedDraggedInsertionFrame = null;
 
-    this.isOutActiveSiblingsContainer = false;
+    this.isDraggedOutContainerEarlyDetection = false;
 
     this.axes = store.siblingsAlignment[SK] === "Horizontal" ? "x" : "y";
   }
@@ -443,11 +443,11 @@ class Droppable extends DistanceCalculator {
   }
 
   private setDraggedPositionFlagInSiblingsContainer(isOut: boolean) {
-    if (isOut === this.isOutActiveSiblingsContainer) {
+    if (isOut === this.isDraggedOutContainerEarlyDetection) {
       return;
     }
 
-    this.isOutActiveSiblingsContainer = isOut;
+    this.isDraggedOutContainerEarlyDetection = isOut;
   }
 
   /**
@@ -748,7 +748,7 @@ class Droppable extends DistanceCalculator {
 
       this.scrollManager(x, y);
 
-      if (!this.isOutActiveSiblingsContainer) {
+      if (!this.isDraggedOutContainerEarlyDetection) {
         this.draggable.draggedElm.setDataset("draggedOutPosition", true);
 
         this.draggedOutPosition();
@@ -779,7 +779,7 @@ class Droppable extends DistanceCalculator {
 
       this.emitDraggedEvent("onDragOutContainer");
 
-      this.isOutActiveSiblingsContainer = true;
+      this.isDraggedOutContainerEarlyDetection = true;
 
       this.detectNearestContainer();
 
@@ -793,7 +793,7 @@ class Droppable extends DistanceCalculator {
     /**
      * When dragged is out parent and returning to it.
      */
-    if (this.isOutActiveSiblingsContainer) {
+    if (this.isDraggedOutContainerEarlyDetection) {
       isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
       if (isOutSiblingsContainer) {
