@@ -1,5 +1,7 @@
-import Threshold from "./Threshold";
+export { default as Threshold } from "./Threshold";
 
-export type { ThresholdInterface, ThresholdCoordinate } from "./types";
-
-export default Threshold;
+export type {
+  ThresholdPercentages,
+  ThresholdInterface,
+  ThresholdCoordinate,
+} from "./types";

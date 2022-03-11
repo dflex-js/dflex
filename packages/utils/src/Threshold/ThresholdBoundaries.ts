@@ -1,11 +1,8 @@
 import { Rect } from "@dflex/utils";
 import Threshold from "./Threshold";
-import { ThresholdPercentages, ThresholdBoundariesInterface } from "./types";
+import { ThresholdPercentages } from "./types";
 
-class ThresholdBoundaries
-  extends Threshold
-  implements ThresholdBoundariesInterface
-{
+class ThresholdBoundaries extends Threshold {
   constructor(
     percentages: ThresholdPercentages,
     rect: Rect,
