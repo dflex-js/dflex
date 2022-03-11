@@ -1,5 +1,4 @@
-export { default as AxesCoordinates } from "./AxesCoordinates";
-export { default as AxesCoordinatesBool } from "./AxesCoordinatesBool";
+export { AxesCoordinates, AxesCoordinatesBool } from "./AxesCoordinates";
 
 export type {
   Rect,
@@ -8,4 +7,4 @@ export type {
   EffectedElemDirection,
   AxesCoordinatesInterface,
   AxesCoordinatesBoolInterface,
-} from "./types";
+} from "./AxesCoordinates";
