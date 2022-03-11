@@ -1,5 +1,6 @@
 /* eslint-disable max-classes-per-file */
-import { AxesCoordinates, AxesCoordinatesInterface, Rect } from "@dflex/utils";
+import { AxesCoordinates, AxesCoordinatesInterface } from "../AxesCoordinates";
+import { Rect } from "../types";
 import type {
   ThresholdInterface,
   ThresholdPointInterface,

@@ -1,6 +1,5 @@
+import type { ThresholdInterface } from "@dflex/utils";
 import type { Restrictions } from "./Draggable";
-
-import type { ThresholdInterface } from "./Plugins/Threshold";
 
 interface DnDEvent {
   /** Returns the time at which the event was created  */
