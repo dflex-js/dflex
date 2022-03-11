@@ -2,14 +2,14 @@ import { AbstractDraggable } from "@dflex/draggable";
 import type { Coordinates } from "@dflex/draggable";
 
 import {
-  ThresholdBoundaries,
+  ThresholdLayout,
   AxesCoordinates,
   AxesCoordinatesBool,
 } from "@dflex/utils";
 import type {
   AxesCoordinatesInterface,
   AxesCoordinatesBoolInterface,
-  ThresholdBoundariesInterface,
+  ThresholdLayoutInterface,
 } from "@dflex/utils";
 
 import type { CoreInstanceInterface } from "@dflex/core-instance";
@@ -30,7 +30,7 @@ class DraggableAxes
 
   positionPlaceholder: AxesCoordinatesInterface;
 
-  threshold: ThresholdBoundariesInterface;
+  threshold: ThresholdLayoutInterface;
 
   isViewportRestricted: boolean;
 
@@ -39,10 +39,6 @@ class DraggableAxes
   mousePoints: AxesCoordinatesInterface;
 
   isMovingAwayFrom: AxesCoordinatesBoolInterface;
-
-  isDraggedOutPosition: AxesCoordinatesBoolInterface;
-
-  isDraggedOutContainer: AxesCoordinatesBoolInterface;
 
   private axesFilterNeeded: boolean;
 
@@ -80,7 +76,7 @@ class DraggableAxes
       currentPosition,
     } = this.draggedElm;
 
-    this.threshold = new ThresholdBoundaries(
+    this.threshold = new ThresholdLayout(
       opts.threshold,
       {
         width,
@@ -100,8 +96,6 @@ class DraggableAxes
       });
     }
 
-    this.isDraggedOutPosition = new AxesCoordinatesBool(false, false);
-    this.isDraggedOutContainer = new AxesCoordinatesBool(false, false);
     this.isMovingAwayFrom = new AxesCoordinatesBool(false, false);
 
     const { x, y } = initCoordinates;
@@ -289,22 +283,12 @@ class DraggableAxes
     );
   }
 
-  private checkPosition(
-    flag: "isDraggedOutPosition" | "isDraggedOutContainer",
-    Sk?: string
-  ) {
-    this[flag].setAxes(
-      !this.threshold.isInsideYThreshold(this.positionPlaceholder.x, Sk),
-      !this.threshold.isInsideYThreshold(this.positionPlaceholder.y, Sk)
-    );
+  isInThreshold(SK?: string) {
+    const { x, y } = this.positionPlaceholder;
 
-    return this[flag].isOneTruthy();
-  }
-
-  isOutThreshold(siblingsK?: string) {
-    return siblingsK
-      ? this.checkPosition("isDraggedOutContainer", siblingsK)
-      : this.checkPosition("isDraggedOutPosition");
+    return SK
+      ? this.threshold.layout[SK].isInsideThreshold(x, y)
+      : this.threshold.indicators.isInsideThreshold(x, y);
   }
 
   isLeavingFromHead() {
@@ -323,7 +307,7 @@ class DraggableAxes
   isNotSettled() {
     const { SK } = store.registry[this.draggedElm.id].keys;
 
-    return this.isOutThreshold() || this.isOutThreshold(SK);
+    return !this.isInThreshold() || !this.isInThreshold(SK);
   }
 }
 

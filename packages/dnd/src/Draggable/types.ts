@@ -1,7 +1,7 @@
 import type {
   AxesCoordinatesInterface,
   AxesCoordinatesBoolInterface,
-  ThresholdBoundariesInterface,
+  ThresholdLayoutInterface,
 } from "@dflex/utils";
 
 import type { CoreInstanceInterface } from "@dflex/core-instance";
@@ -9,10 +9,6 @@ import type { CoreInstanceInterface } from "@dflex/core-instance";
 import type { AbstractDraggableInterface } from "@dflex/draggable";
 
 import type { ScrollOptWithThreshold } from "../types";
-
-// export interface SiblingsThreshold {
-//   [sk: string]: ThresholdCoordinate;
-// }
 
 export interface Restrictions {
   self: {
@@ -32,7 +28,7 @@ export interface Restrictions {
 export interface DraggableAxesInterface
   extends AbstractDraggableInterface<CoreInstanceInterface> {
   /** Dragged threshold  */
-  readonly threshold: ThresholdBoundariesInterface;
+  readonly threshold: ThresholdLayoutInterface;
 
   readonly innerOffset: AxesCoordinatesInterface;
 
@@ -55,16 +51,13 @@ export interface DraggableAxesInterface
    */
   readonly isMovingAwayFrom: AxesCoordinatesBoolInterface;
 
-  readonly isDraggedOutPosition: AxesCoordinatesBoolInterface;
-  readonly isDraggedOutContainer: AxesCoordinatesBoolInterface;
-
   dragAt(x: number, y: number): void;
 
   /**
    * Check if the dragged coordinates are out of self position or parent
    * container and set the necessary flags.
    */
-  isOutThreshold(siblingsK?: string): boolean;
+  isInThreshold(siblingsK?: string): boolean;
 
   /**
    * Checks if dragged index is first the mouse going up. Valid only if dragged
