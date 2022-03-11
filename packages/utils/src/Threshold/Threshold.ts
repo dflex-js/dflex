@@ -47,7 +47,7 @@ class Threshold implements ThresholdInterface {
     this.pixels = new AxesCoordinates(x, y);
   }
 
-  getThreshold(rect: Rect, isContainer: boolean) {
+  protected getThreshold(rect: Rect, isContainer: boolean) {
     const { top, left, height } = rect;
 
     const { x, y } = this.pixels;

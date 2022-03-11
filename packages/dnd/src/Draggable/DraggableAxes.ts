@@ -1,29 +1,25 @@
 import { AbstractDraggable } from "@dflex/draggable";
 import type { Coordinates } from "@dflex/draggable";
 
-import { AxesCoordinates, AxesCoordinatesBool } from "@dflex/utils";
+import {
+  ThresholdBoundaries,
+  AxesCoordinates,
+  AxesCoordinatesBool,
+} from "@dflex/utils";
 import type {
   AxesCoordinatesInterface,
   AxesCoordinatesBoolInterface,
+  ThresholdBoundariesInterface,
+  ThresholdCoordinate,
 } from "@dflex/utils";
 
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
 import store from "../DnDStore";
 
-import type {
-  DraggableAxesInterface,
-  SiblingsThreshold,
-  Restrictions,
-} from "./types";
+import type { DraggableAxesInterface, Restrictions } from "./types";
 
 import type { FinalDndOpts, RestrictionsStatus } from "../types";
-
-import Threshold from "../Plugins/Threshold";
-import type {
-  ThresholdInterface,
-  ThresholdCoordinate,
-} from "../Plugins/Threshold";
 
 class DraggableAxes
   extends AbstractDraggable<CoreInstanceInterface>
@@ -35,9 +31,7 @@ class DraggableAxes
 
   positionPlaceholder: AxesCoordinatesInterface;
 
-  threshold: ThresholdInterface;
-
-  layoutThresholds: SiblingsThreshold;
+  threshold: ThresholdBoundariesInterface;
 
   isViewportRestricted: boolean;
 
@@ -87,7 +81,7 @@ class DraggableAxes
       currentPosition,
     } = this.draggedElm;
 
-    this.threshold = new Threshold(
+    this.threshold = new ThresholdBoundaries(
       opts.threshold,
       {
         width,
@@ -99,23 +93,12 @@ class DraggableAxes
     );
 
     if (siblings !== null) {
-      /**
-       * Thresholds store, contains max value for each parent and for dragged. Depending on
-       * ids as keys.
-       */
-      this.layoutThresholds = {
-        [SK]: this.threshold.getThreshold(
-          {
-            top: siblingsBoundaries.top,
-            left: siblingsBoundaries.left,
-            height: siblingsBoundaries.height,
-            width: 0,
-          },
-          true
-        ),
-      };
-    } else {
-      this.layoutThresholds = {};
+      this.threshold.addNewLayout(SK, {
+        top: siblingsBoundaries.top,
+        left: siblingsBoundaries.left,
+        height: siblingsBoundaries.height,
+        width: 0,
+      });
     }
 
     this.isDraggedOutPosition = new AxesCoordinatesBool(false, false);
@@ -338,7 +321,7 @@ class DraggableAxes
   isOutThreshold(siblingsK?: string) {
     return siblingsK
       ? this.checkPosition(
-          this.layoutThresholds[siblingsK],
+          this.threshold.layout[siblingsK],
           "isDraggedOutContainer"
         )
       : this.checkPosition(this.threshold.main, "isDraggedOutPosition");
@@ -360,10 +343,7 @@ class DraggableAxes
   isNotSettled() {
     const { SK } = store.registry[this.draggedElm.id].keys;
 
-    return (
-      !this.isLeavingFromTail() &&
-      (this.isOutThreshold() || this.isOutThreshold(SK))
-    );
+    return this.isOutThreshold() || this.isOutThreshold(SK);
   }
 }
 

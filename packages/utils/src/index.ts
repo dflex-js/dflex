@@ -5,11 +5,12 @@ export type {
   AxesCoordinatesBoolInterface,
 } from "./AxesCoordinates";
 
-export { Threshold } from "./Threshold";
+export { Threshold, ThresholdBoundaries } from "./Threshold";
 
 export type {
   ThresholdPercentages,
   ThresholdInterface,
+  ThresholdBoundariesInterface,
   ThresholdCoordinate,
 } from "./Threshold";
 

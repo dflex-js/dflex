@@ -1,21 +1,18 @@
 import type {
   AxesCoordinatesInterface,
   AxesCoordinatesBoolInterface,
-  Axes,
+  ThresholdBoundariesInterface,
 } from "@dflex/utils";
+
 import type { CoreInstanceInterface } from "@dflex/core-instance";
+
 import type { AbstractDraggableInterface } from "@dflex/draggable";
 
 import type { ScrollOptWithThreshold } from "../types";
 
-import type {
-  ThresholdInterface,
-  ThresholdCoordinate,
-} from "../Plugins/Threshold";
-
-export interface SiblingsThreshold {
-  [sk: string]: ThresholdCoordinate;
-}
+// export interface SiblingsThreshold {
+//   [sk: string]: ThresholdCoordinate;
+// }
 
 export interface Restrictions {
   self: {
@@ -35,10 +32,7 @@ export interface Restrictions {
 export interface DraggableAxesInterface
   extends AbstractDraggableInterface<CoreInstanceInterface> {
   /** Dragged threshold  */
-  readonly threshold: ThresholdInterface;
-
-  /** Dragged parent containers threshold  */
-  readonly layoutThresholds: SiblingsThreshold;
+  readonly threshold: ThresholdBoundariesInterface;
 
   readonly innerOffset: AxesCoordinatesInterface;
 
@@ -84,7 +78,10 @@ export interface DraggableAxesInterface
    */
   isLeavingFromTail(): boolean;
 
-  /** Has moved without settling inside new position. */
+  /**
+   * Has moved without settling inside new position.
+   * Note: The tail element is currently excluded.
+   */
   isNotSettled(): boolean;
 }
 

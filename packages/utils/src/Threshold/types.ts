@@ -19,8 +19,19 @@ export interface ThresholdCoordinate {
 }
 
 export interface ThresholdInterface {
-  percentages: ThresholdPercentages;
   main: ThresholdCoordinate;
-  getThreshold(rect: Rect, isContainer: boolean): ThresholdCoordinate;
+  // getThreshold(rect: Rect, isContainer: boolean): ThresholdCoordinate;
   setMainThreshold(rect: Rect, isContainer: boolean): void;
+}
+
+export interface LayoutThresholdInterface {
+  [key: string]: ThresholdCoordinate;
+}
+
+export interface ThresholdBoundariesInterface extends ThresholdInterface {
+  /** Store for layout threshold. */
+  layout: LayoutThresholdInterface;
+
+  /** Calculate and store the threshold for layout. */
+  addNewLayout(key: string, rect: Rect): void;
 }
