@@ -307,41 +307,32 @@ class DraggableAxes
     );
   }
 
-  private isOutThresholdH($: ThresholdCoordinate) {
+  private isInsideXThreshold($: ThresholdCoordinate) {
     const { x } = this.positionPlaceholder;
 
     const { left } = $;
 
-    return x > left.min || x < left.max;
+    return x < left.min && x > left.max;
   }
 
-  private isOutPositionV($: ThresholdCoordinate) {
+  private isInsideYThreshold($: ThresholdCoordinate) {
     const { y } = this.positionPlaceholder;
 
     const { top } = $;
 
-    return this.isMovingAwayFrom.y ? y > top.min : y < top.max;
+    return y < top.min && y > top.max;
   }
 
   private checkPosition(
     $: ThresholdCoordinate,
     flag: "isDraggedOutPosition" | "isDraggedOutContainer"
   ) {
-    if (this.isOutThresholdH($)) {
-      this[flag].setAxes(true, false);
+    this[flag].setAxes(
+      !this.isInsideXThreshold($),
+      !this.isInsideYThreshold($)
+    );
 
-      return true;
-    }
-
-    if (this.isOutPositionV($)) {
-      this[flag].setAxes(false, true);
-
-      return true;
-    }
-
-    this[flag].setFalsy();
-
-    return false;
+    return this[flag].isOneTruthy();
   }
 
   isOutThreshold(siblingsK?: string) {
@@ -353,31 +344,6 @@ class DraggableAxes
       : this.checkPosition(this.threshold.main, "isDraggedOutPosition");
   }
 
-  private getLastElmIndex() {
-    const siblings = store.getElmSiblingsListById(this.draggedElm.id);
-
-    return siblings!.length - 1;
-  }
-
-  private isLastELm() {
-    return this.indexPlaceholder === this.getLastElmIndex();
-  }
-
-  private isOutContainerV($: ThresholdCoordinate) {
-    const { y } = this.positionPlaceholder;
-
-    const { top } = $;
-
-    /**
-     * Are you last element and outside the container? Or are you coming from top
-     * and outside the container?
-     */
-    return (
-      (this.isLastELm() && y > top.min) ||
-      (this.indexPlaceholder < 0 && y < top.max)
-    );
-  }
-
   isLeavingFromHead() {
     return (
       !this.isMovingAwayFrom.y && this.indexPlaceholder <= 0 // first our outside.
@@ -385,15 +351,10 @@ class DraggableAxes
   }
 
   isLeavingFromTail() {
-    const { SK } = store.registry[this.draggedElm.id].keys;
-
     const lastElm =
       (store.getElmSiblingsListById(this.draggedElm.id) as string[]).length - 1;
 
-    return (
-      this.indexPlaceholder === lastElm &&
-      this.isOutContainerV(this.layoutThresholds[SK])
-    );
+    return this.isMovingAwayFrom.y && this.indexPlaceholder === lastElm;
   }
 
   isNotSettled() {

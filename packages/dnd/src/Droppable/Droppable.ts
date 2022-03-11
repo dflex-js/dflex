@@ -401,6 +401,10 @@ class Droppable extends DistanceCalculator {
     }
 
     if (this.draggable.isLeavingFromTail()) {
+      console.log(
+        "file: Droppable.ts ~ line 404 ~ this.draggable.isLeavingFromTail()",
+        this.draggable.isLeavingFromTail()
+      );
       this.setDraggedPositionFlagInSiblingsContainer(true);
 
       return;

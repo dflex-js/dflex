@@ -19,16 +19,16 @@ export interface SiblingsThreshold {
 
 export interface Restrictions {
   self: {
-    allowLeavingFromTop: boolean;
-    allowLeavingFromBottom: boolean;
-    allowLeavingFromLeft: boolean;
-    allowLeavingFromRight: boolean;
+    readonly allowLeavingFromTop: boolean;
+    readonly allowLeavingFromBottom: boolean;
+    readonly allowLeavingFromLeft: boolean;
+    readonly allowLeavingFromRight: boolean;
   };
   container: {
-    allowLeavingFromTop: boolean;
-    allowLeavingFromBottom: boolean;
-    allowLeavingFromLeft: boolean;
-    allowLeavingFromRight: boolean;
+    readonly allowLeavingFromTop: boolean;
+    readonly allowLeavingFromBottom: boolean;
+    readonly allowLeavingFromLeft: boolean;
+    readonly allowLeavingFromRight: boolean;
   };
 }
 
@@ -67,8 +67,8 @@ export interface DraggableAxesInterface
   dragAt(x: number, y: number): void;
 
   /**
-   * Check if the dragged out self position or parent container and set the
-   * necessary flags.
+   * Check if the dragged coordinates are out of self position or parent
+   * container and set the necessary flags.
    */
   isOutThreshold(siblingsK?: string): boolean;
 
