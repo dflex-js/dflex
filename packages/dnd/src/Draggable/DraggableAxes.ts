@@ -1,8 +1,10 @@
 import { AbstractDraggable } from "@dflex/draggable";
 import type { Coordinates } from "@dflex/draggable";
 
-import { AxesCoordinates, AxesCoordinatesBool } from "@dflex/utils";
+import { Threshold, AxesCoordinates, AxesCoordinatesBool } from "@dflex/utils";
 import type {
+  ThresholdInterface,
+  ThresholdCoordinate,
   AxesCoordinatesInterface,
   AxesCoordinatesBoolInterface,
 } from "@dflex/utils";
@@ -18,12 +20,6 @@ import type {
 } from "./types";
 
 import type { FinalDndOpts, RestrictionsStatus } from "../types";
-
-import Threshold from "../Plugins/Threshold";
-import type {
-  ThresholdInterface,
-  ThresholdCoordinate,
-} from "../Plugins/Threshold";
 
 class DraggableAxes
   extends AbstractDraggable<CoreInstanceInterface>

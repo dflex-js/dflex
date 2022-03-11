@@ -1,17 +1,13 @@
 import type {
   AxesCoordinatesInterface,
   AxesCoordinatesBoolInterface,
-  Axes,
+  ThresholdInterface,
+  ThresholdCoordinate,
 } from "@dflex/utils";
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 import type { AbstractDraggableInterface } from "@dflex/draggable";
 
 import type { ScrollOptWithThreshold } from "../types";
-
-import type {
-  ThresholdInterface,
-  ThresholdCoordinate,
-} from "../Plugins/Threshold";
 
 export interface SiblingsThreshold {
   [sk: string]: ThresholdCoordinate;
@@ -19,16 +15,16 @@ export interface SiblingsThreshold {
 
 export interface Restrictions {
   self: {
-    allowLeavingFromTop: boolean;
-    allowLeavingFromBottom: boolean;
-    allowLeavingFromLeft: boolean;
-    allowLeavingFromRight: boolean;
+    readonly allowLeavingFromTop: boolean;
+    readonly allowLeavingFromBottom: boolean;
+    readonly allowLeavingFromLeft: boolean;
+    readonly allowLeavingFromRight: boolean;
   };
   container: {
-    allowLeavingFromTop: boolean;
-    allowLeavingFromBottom: boolean;
-    allowLeavingFromLeft: boolean;
-    allowLeavingFromRight: boolean;
+    readonly allowLeavingFromTop: boolean;
+    readonly allowLeavingFromBottom: boolean;
+    readonly allowLeavingFromLeft: boolean;
+    readonly allowLeavingFromRight: boolean;
   };
 }
 

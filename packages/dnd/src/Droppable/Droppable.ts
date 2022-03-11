@@ -380,10 +380,6 @@ class Droppable extends DistanceCalculator {
   }
 
   private draggedOutPosition() {
-    console.log(
-      "file: Droppable.ts ~ line 384 ~ this.draggable.isLeavingFromHead()",
-      this.draggable.isLeavingFromHead()
-    );
     if (this.draggable.isLeavingFromHead()) {
       /**
        * If leaving and parent locked, do nothing.

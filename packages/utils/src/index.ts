@@ -1,11 +1,14 @@
-export { default as AxesCoordinates } from "./AxesCoordinates";
-export { default as AxesCoordinatesBool } from "./AxesCoordinatesBool";
-
+export { AxesCoordinates, AxesCoordinatesBool } from "./AxesCoordinates";
 export type {
-  Rect,
-  Axes,
-  Direction,
-  EffectedElemDirection,
   AxesCoordinatesInterface,
   AxesCoordinatesBoolInterface,
-} from "./types";
+} from "./AxesCoordinates";
+
+export { Threshold } from "./Threshold";
+export type {
+  ThresholdInterface,
+  ThresholdCoordinate,
+  ThresholdPercentages,
+} from "./Threshold";
+
+export type { Rect, Axes, Direction, EffectedElemDirection } from "./types";

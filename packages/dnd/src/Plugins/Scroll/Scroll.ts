@@ -1,6 +1,7 @@
+import { Threshold } from "@dflex/utils";
+import type { ThresholdPercentages } from "@dflex/utils";
+
 import loopInDOM from "../../utils/loopInDOM";
-import Threshold from "../Threshold";
-import { ThresholdPercentages } from "../Threshold/types";
 
 import { ScrollInput, ScrollInterface } from "./types";
 

@@ -1,5 +1,4 @@
-import type { Rect } from "@dflex/utils";
-import type { ThresholdInterface } from "../Threshold";
+import type { ThresholdInterface, Rect } from "@dflex/utils";
 
 export interface ScrollInput {
   element: HTMLElement;
