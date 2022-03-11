@@ -10,7 +10,6 @@ import type {
   AxesCoordinatesInterface,
   AxesCoordinatesBoolInterface,
   ThresholdBoundariesInterface,
-  ThresholdCoordinate,
 } from "@dflex/utils";
 
 import type { CoreInstanceInterface } from "@dflex/core-instance";
@@ -290,29 +289,13 @@ class DraggableAxes
     );
   }
 
-  private isInsideXThreshold($: ThresholdCoordinate) {
-    const { x } = this.positionPlaceholder;
-
-    const { left } = $;
-
-    return x < left.min && x > left.max;
-  }
-
-  private isInsideYThreshold($: ThresholdCoordinate) {
-    const { y } = this.positionPlaceholder;
-
-    const { top } = $;
-
-    return y < top.min && y > top.max;
-  }
-
   private checkPosition(
-    $: ThresholdCoordinate,
-    flag: "isDraggedOutPosition" | "isDraggedOutContainer"
+    flag: "isDraggedOutPosition" | "isDraggedOutContainer",
+    Sk?: string
   ) {
     this[flag].setAxes(
-      !this.isInsideXThreshold($),
-      !this.isInsideYThreshold($)
+      !this.threshold.isInsideYThreshold(this.positionPlaceholder.x, Sk),
+      !this.threshold.isInsideYThreshold(this.positionPlaceholder.y, Sk)
     );
 
     return this[flag].isOneTruthy();
@@ -320,11 +303,8 @@ class DraggableAxes
 
   isOutThreshold(siblingsK?: string) {
     return siblingsK
-      ? this.checkPosition(
-          this.threshold.layout[siblingsK],
-          "isDraggedOutContainer"
-        )
-      : this.checkPosition(this.threshold.main, "isDraggedOutPosition");
+      ? this.checkPosition("isDraggedOutContainer", siblingsK)
+      : this.checkPosition("isDraggedOutPosition");
   }
 
   isLeavingFromHead() {

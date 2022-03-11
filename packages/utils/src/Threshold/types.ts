@@ -32,6 +32,21 @@ export interface ThresholdBoundariesInterface extends ThresholdInterface {
   /** Store for layout threshold. */
   layout: LayoutThresholdInterface;
 
+  isInsideFromTop: boolean;
+
+  isInsideFromBottom: boolean;
+
+  isInsideFromLeft: boolean;
+
+  isInsideFromRight: boolean;
+
   /** Calculate and store the threshold for layout. */
   addNewLayout(key: string, rect: Rect): void;
+
+  isInsideTop(y: number, sk?: string): boolean;
+  isInsideBottom(y: number, sk?: string): boolean;
+  isInsideYThreshold(y: number, sk?: string): boolean;
+  isInsideLeft(x: number, sk?: string): boolean;
+  isInsideRight(x: number, sk?: string): boolean;
+  isInsideXThreshold(x: number, sk?: string): boolean;
 }
