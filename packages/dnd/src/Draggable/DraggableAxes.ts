@@ -323,6 +323,36 @@ class DraggableAxes
     return this.isMovingAwayFrom.y ? y > top.min : y < top.max;
   }
 
+  private checkPosition(
+    $: ThresholdCoordinate,
+    flag: "isDraggedOutPosition" | "isDraggedOutContainer"
+  ) {
+    if (this.isOutThresholdH($)) {
+      this[flag].setAxes(true, false);
+
+      return true;
+    }
+
+    if (this.isOutPositionV($)) {
+      this[flag].setAxes(false, true);
+
+      return true;
+    }
+
+    this[flag].setFalsy();
+
+    return false;
+  }
+
+  isOutThreshold(siblingsK?: string) {
+    return siblingsK
+      ? this.checkPosition(
+          this.layoutThresholds[siblingsK],
+          "isDraggedOutContainer"
+        )
+      : this.checkPosition(this.threshold.main, "isDraggedOutPosition");
+  }
+
   private getLastElmIndex() {
     const siblings = store.getElmSiblingsListById(this.draggedElm.id);
 
@@ -346,56 +376,6 @@ class DraggableAxes
       (this.isLastELm() && y > top.min) ||
       (this.indexPlaceholder < 0 && y < top.max)
     );
-  }
-
-  private checkPosition(
-    $: ThresholdCoordinate,
-    flag: "isDraggedOutPosition" | "isDraggedOutContainer"
-  ) {
-    if (this.isOutThresholdH($)) {
-      this[flag].setAxes(true, false);
-
-      return true;
-    }
-
-    if (this.isOutPositionV($)) {
-      this[flag].setAxes(false, true);
-
-      return true;
-    }
-
-    this[flag].setFalsy();
-
-    return false;
-  }
-
-  private isOutContainer($: ThresholdCoordinate) {
-    if (this.isOutContainerV($)) {
-      this.isDraggedOutContainer.setAxes(false, true);
-
-      return true;
-    }
-
-    if (this.isOutThresholdH($)) {
-      this.isDraggedOutContainer.setAxes(true, false);
-
-      return true;
-    }
-
-    this.isDraggedOutContainer.setFalsy();
-
-    return false;
-  }
-
-  /**
-   * Checks if dragged it out of its position or parent.
-   *
-   * @param siblingsK -
-   */
-  isOutThreshold(siblingsK?: string) {
-    return siblingsK
-      ? this.isOutContainer(this.layoutThresholds[siblingsK])
-      : this.checkPosition(this.threshold.main, "isDraggedOutPosition");
   }
 
   isLeavingFromHead() {
