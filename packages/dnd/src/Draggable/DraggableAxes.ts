@@ -312,7 +312,7 @@ class DraggableAxes
 
     const { left } = $;
 
-    return this.isMovingAwayFrom.x ? x > left.min : x < left.max;
+    return x > left.min || x < left.max;
   }
 
   private isOutPositionV($: ThresholdCoordinate) {
@@ -365,24 +365,6 @@ class DraggableAxes
     }
 
     this[flag].setFalsy();
-
-    return false;
-  }
-
-  private isOutPosition($: ThresholdCoordinate) {
-    if (this.isOutThresholdH($)) {
-      this.isDraggedOutPosition.setAxes(true, false);
-
-      return true;
-    }
-
-    if (this.isOutPositionV($)) {
-      this.isDraggedOutPosition.setAxes(false, true);
-
-      return true;
-    }
-
-    this.isDraggedOutPosition.setFalsy();
 
     return false;
   }
