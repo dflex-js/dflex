@@ -5,13 +5,13 @@ export type {
   AxesCoordinatesBoolInterface,
 } from "./AxesCoordinates";
 
-export { Threshold, ThresholdBoundaries } from "./Threshold";
+export { Threshold, ThresholdLayout } from "./Threshold";
 
 export type {
   ThresholdPercentages,
-  ThresholdInterface,
-  ThresholdBoundariesInterface,
   ThresholdCoordinate,
+  ThresholdInterface,
+  ThresholdLayoutInterface,
 } from "./Threshold";
 
 export type { Rect, Axes, Direction, EffectedElemDirection } from "./types";

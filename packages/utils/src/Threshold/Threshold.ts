@@ -7,9 +7,12 @@ import type {
   ThresholdPointInterface,
   ThresholdCoordinate,
   ThresholdPercentages,
+  IndicatorsInterface,
 } from "./types";
 
 import type { Rect } from "../types";
+
+import ThresholdLayout from "./Indicators";
 
 class ThresholdPoint implements ThresholdPointInterface {
   max: number;
@@ -23,11 +26,13 @@ class ThresholdPoint implements ThresholdPointInterface {
 }
 
 class Threshold implements ThresholdInterface {
-  percentages: ThresholdPercentages;
+  private percentages: ThresholdPercentages;
 
   private pixels!: AxesCoordinatesInterface;
 
-  main!: ThresholdCoordinate;
+  private main!: ThresholdCoordinate;
+
+  indicators: IndicatorsInterface;
 
   constructor(
     percentages: ThresholdPercentages,
@@ -35,7 +40,7 @@ class Threshold implements ThresholdInterface {
     { isContainer }: { isContainer: boolean }
   ) {
     this.percentages = percentages;
-
+    this.indicators = new ThresholdLayout(this.main);
     this.setMainThreshold(rect, isContainer);
   }
 
@@ -67,8 +72,8 @@ class Threshold implements ThresholdInterface {
 
   setMainThreshold(rect: Rect, isContainer: boolean) {
     this.setPixels(rect);
-
     this.main = this.getThreshold(rect, isContainer);
+    this.indicators.set(this.main);
   }
 }
 

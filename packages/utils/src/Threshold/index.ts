@@ -1,9 +1,9 @@
 export { default as Threshold } from "./Threshold";
-export { default as ThresholdBoundaries } from "./ThresholdBoundaries";
+export { default as ThresholdLayout } from "./ThresholdLayout";
 
 export type {
   ThresholdInterface,
-  ThresholdBoundariesInterface,
+  ThresholdLayoutInterface,
   ThresholdPercentages,
   ThresholdCoordinate,
 } from "./types";

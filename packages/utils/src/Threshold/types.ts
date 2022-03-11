@@ -18,35 +18,33 @@ export interface ThresholdCoordinate {
   left: ThresholdPointInterface;
 }
 
+export interface IndicatorsInterface {
+  isInTop: boolean;
+  isInBottom: boolean;
+  isInLeft: boolean;
+  isInRight: boolean;
+  isInsideTop(y: number): boolean;
+  isInsideBottom(y: number): boolean;
+  isInsideYThreshold(y: number): boolean;
+  isInsideLeft(x: number): boolean;
+  isInsideRight(x: number): boolean;
+  isInsideXThreshold(x: number): boolean;
+  isInsideThreshold(x: number, y: number): boolean;
+  set($: ThresholdCoordinate): void;
+}
+
 export interface ThresholdInterface {
-  main: ThresholdCoordinate;
-  // getThreshold(rect: Rect, isContainer: boolean): ThresholdCoordinate;
+  indicators: IndicatorsInterface;
   setMainThreshold(rect: Rect, isContainer: boolean): void;
 }
 
 export interface LayoutThresholdInterface {
-  [key: string]: ThresholdCoordinate;
+  [key: string]: IndicatorsInterface;
 }
 
-export interface ThresholdBoundariesInterface extends ThresholdInterface {
-  /** Store for layout threshold. */
+export interface ThresholdLayoutInterface extends ThresholdInterface {
   layout: LayoutThresholdInterface;
-
-  isInsideFromTop: boolean;
-
-  isInsideFromBottom: boolean;
-
-  isInsideFromLeft: boolean;
-
-  isInsideFromRight: boolean;
 
   /** Calculate and store the threshold for layout. */
   addNewLayout(key: string, rect: Rect): void;
-
-  isInsideTop(y: number, sk?: string): boolean;
-  isInsideBottom(y: number, sk?: string): boolean;
-  isInsideYThreshold(y: number, sk?: string): boolean;
-  isInsideLeft(x: number, sk?: string): boolean;
-  isInsideRight(x: number, sk?: string): boolean;
-  isInsideXThreshold(x: number, sk?: string): boolean;
 }
