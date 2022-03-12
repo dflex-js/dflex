@@ -59,6 +59,14 @@ class DraggableAxes
 
   private initX: number;
 
+  isLeftFromTop: boolean;
+
+  isLeftFromBottom: boolean;
+
+  isLeftFromLeft: boolean;
+
+  isLeftFromRight: boolean;
+
   constructor(id: string, initCoordinates: Coordinates, opts: FinalDndOpts) {
     const { element } = store.getElmTreeById(id);
 
@@ -117,6 +125,11 @@ class DraggableAxes
     this.isDraggedOutPosition = new AxesCoordinatesBool(false, false);
     this.isDraggedOutContainer = new AxesCoordinatesBool(false, false);
     this.isMovingAwayFrom = new AxesCoordinatesBool(false, false);
+
+    this.isLeftFromTop = false;
+    this.isLeftFromBottom = false;
+    this.isLeftFromLeft = false;
+    this.isLeftFromRight = false;
 
     const { x, y } = initCoordinates;
 
@@ -308,113 +321,63 @@ class DraggableAxes
 
     const { left } = $;
 
-    return x < left.max || x > left.min;
+    this.isLeftFromLeft = x < left.max;
+    this.isLeftFromRight = x > left.min;
+
+    return this.isLeftFromLeft || this.isLeftFromRight;
   }
 
-  private isOutPositionV() {
-    const { top } = this.threshold.main;
-
-    const { y } = this.positionPlaceholder;
-
-    return this.isMovingAwayFrom.y ? y > top.min : y < top.max;
-  }
-
-  private isOutPositionH() {
-    const { left } = this.threshold.main;
-
-    const { x } = this.positionPlaceholder;
-
-    return this.isMovingAwayFrom.x ? x > left.min : x < left.max;
-  }
-
-  private getLastElmIndex() {
-    const siblings = store.getElmSiblingsListById(this.draggedElm.id);
-
-    return siblings!.length - 1;
-  }
-
-  private isLastELm() {
-    return this.indexPlaceholder === this.getLastElmIndex();
-  }
-
-  private isOutContainerV($: ThresholdCoordinate) {
-    const { y } = this.positionPlaceholder;
-
+  private isOutThresholdV($: ThresholdCoordinate) {
     const { top } = $;
 
-    /**
-     * Are you last element and outside the container? Or are you coming from top
-     * and outside the container?
-     */
-    return (
-      (this.isLastELm() && y > top.min) ||
-      (this.indexPlaceholder < 0 && y < top.max)
-    );
+    const { y } = this.positionPlaceholder;
+
+    this.isLeftFromTop = y < top.max;
+    this.isLeftFromBottom = y > top.min;
+
+    return this.isLeftFromTop || this.isLeftFromBottom;
   }
 
-  private isOutPosition($: ThresholdCoordinate) {
-    if (this.isOutThresholdH($)) {
-      this.isDraggedOutPosition.setAxes(true, false);
+  isOutThreshold(SK?: string) {
+    let $;
+    let flag;
 
-      return true;
+    if (SK) {
+      $ = this.layoutThresholds[SK];
+      flag = this.isDraggedOutContainer;
+    } else {
+      $ = this.threshold.main;
+      flag = this.isDraggedOutPosition;
     }
 
-    if (this.isOutPositionV() || this.isOutPositionH()) {
-      this.isDraggedOutPosition.setAxes(false, true);
-
-      return true;
-    }
-
-    this.isDraggedOutPosition.setFalsy();
-
-    return false;
-  }
-
-  private isOutContainer($: ThresholdCoordinate) {
-    if (this.isOutContainerV($)) {
-      this.isDraggedOutContainer.setAxes(false, true);
+    if (this.isOutThresholdV($)) {
+      flag.setAxes(false, true);
 
       return true;
     }
 
     if (this.isOutThresholdH($)) {
-      this.isDraggedOutContainer.setAxes(true, false);
+      flag.setAxes(true, false);
 
       return true;
     }
 
-    this.isDraggedOutContainer.setFalsy();
+    flag.setFalsy();
 
     return false;
-  }
-
-  /**
-   * Checks if dragged it out of its position or parent.
-   *
-   * @param siblingsK -
-   */
-  isOutThreshold(siblingsK?: string) {
-    return siblingsK
-      ? this.isOutContainer(this.layoutThresholds[siblingsK])
-      : this.isOutPosition(this.threshold.main);
   }
 
   isLeavingFromHead() {
     return (
-      !this.isMovingAwayFrom.y && this.indexPlaceholder <= 0 // first our outside.
+      this.isLeftFromTop && this.indexPlaceholder <= 0 // first our outside.
     );
   }
 
   isLeavingFromTail() {
-    const { SK } = store.registry[this.draggedElm.id].keys;
-
     const lastElm =
       (store.getElmSiblingsListById(this.draggedElm.id) as string[]).length - 1;
 
-    return (
-      this.indexPlaceholder === lastElm &&
-      this.isOutContainerV(this.layoutThresholds[SK])
-    );
+    return this.isLeftFromBottom && this.indexPlaceholder === lastElm;
   }
 
   isNotSettled() {

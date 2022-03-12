@@ -82,6 +82,14 @@ export interface DraggableAxesInterface
 
   /** Has moved without settling inside new position. */
   isNotSettled(): boolean;
+
+  isLeftFromTop: boolean;
+
+  isLeftFromBottom: boolean;
+
+  isLeftFromLeft: boolean;
+
+  isLeftFromRight: boolean;
 }
 
 export interface DraggableInteractiveInterface extends DraggableAxesInterface {
