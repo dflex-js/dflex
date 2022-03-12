@@ -20,7 +20,7 @@ class ThresholdPoint implements ThresholdPointInterface {
 }
 
 class Threshold implements ThresholdInterface {
-  percentages: ThresholdInterface["percentages"];
+  private percentages: ThresholdPercentages;
 
   private pixels!: AxesCoordinatesInterface;
 

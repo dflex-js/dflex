@@ -1,4 +1,8 @@
-import type { ThresholdInterface, Rect } from "@dflex/utils";
+import type {
+  ThresholdPercentages,
+  ThresholdInterface,
+  Rect,
+} from "@dflex/utils";
 
 export interface ScrollInput {
   element: HTMLElement;
@@ -26,6 +30,6 @@ export interface ScrollInterface {
   getMaximumScrollContainerTop(): number;
   isElementVisibleViewportX(currentLeft: number): boolean;
   isElementVisibleViewportY(currentTop: number): boolean;
-  setThresholdMatrix(threshold: ThresholdInterface["percentages"]): void;
+  setThresholdMatrix(threshold: ThresholdPercentages): void;
   destroy(): void;
 }

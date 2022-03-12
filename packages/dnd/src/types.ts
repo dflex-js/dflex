@@ -1,4 +1,4 @@
-import type { ThresholdInterface } from "@dflex/utils";
+import type { ThresholdInterface, ThresholdPercentages } from "@dflex/utils";
 import type { Restrictions } from "./Draggable";
 
 interface DnDEvent {
@@ -83,11 +83,11 @@ export interface ScrollOptWithoutThreshold {
 
 export interface ScrollOptWithPartialThreshold
   extends ScrollOptWithoutThreshold {
-  threshold: Partial<ThresholdInterface["percentages"]>;
+  threshold: Partial<ThresholdPercentages>;
 }
 
 export interface ScrollOptWithThreshold extends ScrollOptWithoutThreshold {
-  threshold: ThresholdInterface["percentages"];
+  threshold: ThresholdPercentages;
 }
 
 export interface RestrictionsStatus {
@@ -96,7 +96,7 @@ export interface RestrictionsStatus {
 }
 
 export interface FinalDndOpts {
-  threshold: ThresholdInterface["percentages"];
+  threshold: ThresholdPercentages;
   restrictions: Restrictions;
   restrictionsStatus: RestrictionsStatus;
   scroll: ScrollOptWithThreshold;
@@ -104,7 +104,7 @@ export interface FinalDndOpts {
 }
 
 export interface DndOpts {
-  threshold?: Partial<ThresholdInterface["percentages"]>;
+  threshold?: Partial<ThresholdPercentages>;
   restrictions?: {
     self?: Partial<Restrictions["self"]>;
     container?: Partial<Restrictions["container"]>;

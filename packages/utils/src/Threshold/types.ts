@@ -19,7 +19,6 @@ export interface ThresholdCoordinate {
 }
 
 export interface ThresholdInterface {
-  percentages: ThresholdPercentages;
   main: ThresholdCoordinate;
   getThreshold(rect: Rect, isContainer: boolean): ThresholdCoordinate;
   setMainThreshold(rect: Rect, isContainer: boolean): void;
