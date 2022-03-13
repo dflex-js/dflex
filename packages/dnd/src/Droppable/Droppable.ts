@@ -382,10 +382,6 @@ class Droppable extends DistanceCalculator {
 
   private draggedOutPosition() {
     if (this.draggable.isLeavingFromHead()) {
-      console.log(
-        "file: Droppable.ts ~ line 385 ~ this.draggable.isLeavingFromHead()",
-        this.draggable.isLeavingFromHead()
-      );
       /**
        * If leaving and parent locked, do nothing.
        */
@@ -402,10 +398,6 @@ class Droppable extends DistanceCalculator {
     }
 
     if (this.draggable.isLeavingFromTail()) {
-      console.log(
-        "file: Droppable.ts ~ line 405 ~ this.draggable.isLeavingFromTail",
-        this.draggable.isLeavingFromTail
-      );
       this.setDraggedPositionFlagInSiblingsContainer(true);
 
       return;
@@ -419,10 +411,6 @@ class Droppable extends DistanceCalculator {
      * Going out from the list: Right/left.
      */
     if (this.draggable.isDraggedOutPosition.x) {
-      console.log(
-        "file: Droppable.ts ~ line 422 ~ this.draggable.isDraggedOutPosition.x",
-        this.draggable.isDraggedOutPosition.x
-      );
       // Is is out parent?
 
       // move element up
