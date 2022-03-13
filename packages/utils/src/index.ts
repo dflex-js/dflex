@@ -1,4 +1,8 @@
-export { AxesCoordinates, AxesCoordinatesBool } from "./AxesCoordinates";
+export {
+  AxesCoordinates,
+  AxesCoordinatesBool,
+  AxesFourCoordinatesBool,
+} from "./AxesCoordinates";
 export type {
   AxesCoordinatesInterface,
   AxesCoordinatesBoolInterface,
