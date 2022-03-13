@@ -1,7 +1,12 @@
 import { AbstractDraggable } from "@dflex/draggable";
 import type { Coordinates } from "@dflex/draggable";
 
-import { Threshold, AxesCoordinates, AxesCoordinatesBool } from "@dflex/utils";
+import {
+  Threshold,
+  AxesCoordinates,
+  AxesCoordinatesBool,
+  AxesFourCoordinatesBool,
+} from "@dflex/utils";
 import type {
   ThresholdInterface,
   ThresholdCoordinate,
@@ -59,13 +64,15 @@ class DraggableAxes
 
   private initX: number;
 
-  isLeftFromTop: boolean;
+  // isLeftFromTop: boolean;
 
-  isLeftFromBottom: boolean;
+  // isLeftFromBottom: boolean;
 
-  isLeftFromLeft: boolean;
+  // isLeftFromLeft: boolean;
 
-  isLeftFromRight: boolean;
+  // isLeftFromRight: boolean;
+
+  isOut: AxesFourCoordinatesBool;
 
   constructor(id: string, initCoordinates: Coordinates, opts: FinalDndOpts) {
     const { element } = store.getElmTreeById(id);
@@ -126,10 +133,12 @@ class DraggableAxes
     this.isDraggedOutContainer = new AxesCoordinatesBool(false, false);
     this.isMovingAwayFrom = new AxesCoordinatesBool(false, false);
 
-    this.isLeftFromTop = false;
-    this.isLeftFromBottom = false;
-    this.isLeftFromLeft = false;
-    this.isLeftFromRight = false;
+    // this.isLeftFromTop = false;
+    // this.isLeftFromBottom = false;
+    // this.isLeftFromLeft = false;
+    // this.isLeftFromRight = false;
+
+    this.isOut = new AxesFourCoordinatesBool();
 
     const { x, y } = initCoordinates;
 
@@ -321,10 +330,15 @@ class DraggableAxes
 
     const { left } = $;
 
-    this.isLeftFromLeft = x < left.max;
-    this.isLeftFromRight = x > left.min;
+    this.isOut.setOutX({
+      left: x < left.max,
+      right: x > left.min,
+    });
 
-    return this.isLeftFromLeft || this.isLeftFromRight;
+    // this.isLeftFromLeft = x < left.max;
+    // this.isLeftFromRight = x > left.min;
+
+    return this.isOut.isOutX();
   }
 
   private isOutThresholdV($: ThresholdCoordinate) {
@@ -332,10 +346,15 @@ class DraggableAxes
 
     const { y } = this.positionPlaceholder;
 
-    this.isLeftFromTop = y < top.max;
-    this.isLeftFromBottom = y > top.min;
+    this.isOut.setOutY({
+      up: y < top.max,
+      down: y > top.min,
+    });
 
-    return this.isLeftFromTop || this.isLeftFromBottom;
+    // this.isLeftFromTop = y < top.max;
+    // this.isLeftFromBottom = y > top.min;
+
+    return this.isOut.isOutY();
   }
 
   isOutThreshold(SK?: string) {
@@ -369,7 +388,7 @@ class DraggableAxes
 
   isLeavingFromHead() {
     return (
-      this.isLeftFromTop && this.indexPlaceholder <= 0 // first our outside.
+      this.isOut.isLeftFromTop && this.indexPlaceholder <= 0 // first our outside.
     );
   }
 
@@ -377,7 +396,7 @@ class DraggableAxes
     const lastElm =
       (store.getElmSiblingsListById(this.draggedElm.id) as string[]).length - 1;
 
-    return this.isLeftFromBottom && this.indexPlaceholder === lastElm;
+    return this.isOut.isLeftFromBottom && this.indexPlaceholder === lastElm;
   }
 
   isNotSettled() {
