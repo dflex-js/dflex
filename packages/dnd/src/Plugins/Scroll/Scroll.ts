@@ -259,9 +259,9 @@ Please provide scroll container by ref/id when registering the element or turn o
   }
 
   setThresholdMatrix(threshold: ThresholdPercentages) {
-    this.threshold = new Threshold(threshold, this.scrollRect, {
-      isContainer: true,
-    });
+    this.threshold = new Threshold(threshold);
+
+    this.threshold.setThreshold(this.siblingKey, this.scrollRect, true, true);
   }
 
   private setScrollCoordinates() {

@@ -3,7 +3,6 @@ import type {
   AxesCoordinatesBoolInterface,
   ThresholdInterface,
   ThresholdCoordinate,
-  AxesFourCoordinatesBool,
 } from "@dflex/utils";
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 import type { AbstractDraggableInterface } from "@dflex/draggable";
@@ -33,9 +32,6 @@ export interface DraggableAxesInterface
   extends AbstractDraggableInterface<CoreInstanceInterface> {
   /** Dragged threshold  */
   readonly threshold: ThresholdInterface;
-
-  /** Dragged parent containers threshold  */
-  readonly layoutThresholds: SiblingsThreshold;
 
   readonly innerOffset: AxesCoordinatesInterface;
 
@@ -83,15 +79,6 @@ export interface DraggableAxesInterface
 
   /** Has moved without settling inside new position. */
   isNotSettled(): boolean;
-
-  // isLeftFromTop: boolean;
-
-  // isLeftFromBottom: boolean;
-
-  // isLeftFromLeft: boolean;
-
-  // isLeftFromRight: boolean;
-  isOut: AxesFourCoordinatesBool;
 }
 
 export interface DraggableInteractiveInterface extends DraggableAxesInterface {

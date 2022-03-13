@@ -228,7 +228,8 @@ class Droppable extends DistanceCalculator {
           /**
            * Update threshold from here since there's no calling to updateElement.
            */
-          this.draggable.threshold.setMainThreshold(
+          this.draggable.threshold.setThreshold(
+            this.draggable.draggedElm.id,
             {
               width: this.draggable.draggedElm.offset.width,
               height: this.draggable.draggedElm.offset.height,
@@ -381,6 +382,10 @@ class Droppable extends DistanceCalculator {
 
   private draggedOutPosition() {
     if (this.draggable.isLeavingFromHead()) {
+      console.log(
+        "file: Droppable.ts ~ line 385 ~ this.draggable.isLeavingFromHead()",
+        this.draggable.isLeavingFromHead()
+      );
       /**
        * If leaving and parent locked, do nothing.
        */
@@ -397,6 +402,10 @@ class Droppable extends DistanceCalculator {
     }
 
     if (this.draggable.isLeavingFromTail()) {
+      console.log(
+        "file: Droppable.ts ~ line 405 ~ this.draggable.isLeavingFromTail",
+        this.draggable.isLeavingFromTail
+      );
       this.setDraggedPositionFlagInSiblingsContainer(true);
 
       return;
@@ -410,6 +419,10 @@ class Droppable extends DistanceCalculator {
      * Going out from the list: Right/left.
      */
     if (this.draggable.isDraggedOutPosition.x) {
+      console.log(
+        "file: Droppable.ts ~ line 422 ~ this.draggable.isDraggedOutPosition.x",
+        this.draggable.isDraggedOutPosition.x
+      );
       // Is is out parent?
 
       // move element up
@@ -427,10 +440,13 @@ class Droppable extends DistanceCalculator {
      * Normal state, switch.
      */
 
-    const isLeftUp =
-      this.draggable.isOut.isLeftFromBottom ||
-      (!this.draggable.isOut.isLeftFromTop &&
-        !this.draggable.isOut.isLeftFromBottom);
+    const isLeftUp: boolean =
+      this.draggable.threshold.isOut[this.draggable.draggedElm.id]
+        .isLeftFromBottom ||
+      (!this.draggable.threshold.isOut[this.draggable.draggedElm.id]
+        .isLeftFromTop &&
+        !this.draggable.threshold.isOut[this.draggable.draggedElm.id]
+          .isLeftFromBottom);
 
     // inside the list, effected should be related to mouse movement
     this.setEffectedElemDirection(
@@ -637,20 +653,16 @@ class Droppable extends DistanceCalculator {
       if (store.siblingsScrollElement[SK].hasOverflowY) {
         const { scrollRect, scrollHeight, threshold } =
           store.siblingsScrollElement[SK];
-
         if (
           this.draggable.isMovingAwayFrom.y &&
-          y >= threshold!.main.top.min &&
+          y >= threshold!.thresholds[SK].top.min &&
           this.scrollTop + scrollRect.height < scrollHeight
         ) {
           this.scrollElement(x, y, 1, "scrollElementOnY");
-
           return;
         }
-
-        if (y <= threshold!.main.top.max && this.scrollTop > 0) {
+        if (y <= threshold!.thresholds[SK].top.max && this.scrollTop > 0) {
           this.scrollElement(x, y, -1, "scrollElementOnY");
-
           return;
         }
       }
@@ -658,17 +670,14 @@ class Droppable extends DistanceCalculator {
       if (store.siblingsScrollElement[SK].hasOverflowX) {
         const { scrollRect, scrollHeight, threshold } =
           store.siblingsScrollElement[SK];
-
         if (
-          x >= threshold!.main.left.max &&
+          x >= threshold!.thresholds[SK].left.max &&
           this.scrollLeft + scrollRect.width < scrollHeight
         ) {
           this.scrollElement(x, y, 1, "scrollElementOnX");
-
           return;
         }
-
-        if (x <= threshold!.main.left.min && this.scrollLeft > 0) {
+        if (x <= threshold!.thresholds[SK].left.min && this.scrollLeft > 0) {
           this.scrollElement(x, y, -1, "scrollElementOnX");
         }
       }
@@ -718,14 +727,6 @@ class Droppable extends DistanceCalculator {
     });
   }
 
-  /**
-   * Invokes draggable method responsible of transform.
-   * Monitors dragged translate and called related methods. Which controls the
-   * active and droppable method.
-   *
-   * @param x- mouse X coordinate
-   * @param y- mouse Y coordinate
-   */
   dragAt(x: number, y: number) {
     if (this.regularDragging) {
       this.draggable.dragAt(

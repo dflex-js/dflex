@@ -15,6 +15,14 @@ class AxesFourCoordinatesBool {
     this.isLeftFromRight = false;
   }
 
+  reset() {
+    this.isLeftFromTop = false;
+    this.isLeftFromBottom = false;
+
+    this.isLeftFromLeft = false;
+    this.isLeftFromRight = false;
+  }
+
   isOutY() {
     return this.isLeftFromTop || this.isLeftFromBottom;
   }
