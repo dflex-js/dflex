@@ -448,7 +448,7 @@ context(
           button: 0,
         });
 
-        for (let i = 0; i <= 600; i += 10) {
+        for (let i = 0; i <= 610; i += 10) {
           cy.get("#item-rest-container-left-right").trigger("mousemove", {
             clientY: startingPointY + i,
             force: true,
@@ -462,7 +462,7 @@ context(
         cy.get("#item-rest-container-left-right").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 426.219)"
+          "matrix(1, 0, 0, 1, 0, 436.219)"
         );
       });
 
