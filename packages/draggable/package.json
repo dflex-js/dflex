@@ -1,6 +1,6 @@
 {
   "name": "@dflex/draggable",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Modern Draggable package for all JavaScript frameworks",
@@ -21,9 +21,9 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@dflex/utils": "^3.2.0",
-    "@dflex/core-instance": "^3.2.0",
-    "@dflex/store": "^3.2.0"
+    "@dflex/utils": "^3.3.0",
+    "@dflex/core-instance": "^3.3.0",
+    "@dflex/store": "^3.3.0"
   },
   "keywords": [
     "drag-drop",

@@ -1,6 +1,6 @@
 {
   "name": "@dflex/dnd",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Modern drag and drop package for all JavaScript frameworks",
@@ -36,11 +36,11 @@
     "v8-to-istanbul": "^8.0.0"
   },
   "dependencies": {
-    "@dflex/utils": "^3.2.0",
-    "@dflex/core-instance": "^3.2.0",
-    "@dflex/dom-gen": "^3.2.0",
-    "@dflex/draggable": "^3.2.0",
-    "@dflex/store": "^3.2.0"
+    "@dflex/utils": "^3.3.0",
+    "@dflex/core-instance": "^3.3.0",
+    "@dflex/dom-gen": "^3.3.0",
+    "@dflex/draggable": "^3.3.0",
+    "@dflex/store": "^3.3.0"
   },
   "keywords": [
     "drag-drop",
