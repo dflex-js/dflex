@@ -228,7 +228,8 @@ class Droppable extends DistanceCalculator {
           /**
            * Update threshold from here since there's no calling to updateElement.
            */
-          this.draggable.threshold.setMainThreshold(
+          this.draggable.threshold.setThreshold(
+            this.draggable.draggedElm.id,
             {
               width: this.draggable.draggedElm.offset.width,
               height: this.draggable.draggedElm.offset.height,
@@ -427,9 +428,13 @@ class Droppable extends DistanceCalculator {
      * Normal state, switch.
      */
 
-    const isLeftUp =
-      this.draggable.isLeftFromBottom ||
-      (!this.draggable.isLeftFromTop && !this.draggable.isLeftFromBottom);
+    const isLeftUp: boolean =
+      this.draggable.threshold.isOut[this.draggable.draggedElm.id]
+        .isLeftFromBottom ||
+      (!this.draggable.threshold.isOut[this.draggable.draggedElm.id]
+        .isLeftFromTop &&
+        !this.draggable.threshold.isOut[this.draggable.draggedElm.id]
+          .isLeftFromBottom);
 
     // inside the list, effected should be related to mouse movement
     this.setEffectedElemDirection(
@@ -636,20 +641,16 @@ class Droppable extends DistanceCalculator {
       if (store.siblingsScrollElement[SK].hasOverflowY) {
         const { scrollRect, scrollHeight, threshold } =
           store.siblingsScrollElement[SK];
-
         if (
           this.draggable.isMovingAwayFrom.y &&
-          y >= threshold!.main.top.min &&
+          y >= threshold!.thresholds[SK].top.min &&
           this.scrollTop + scrollRect.height < scrollHeight
         ) {
           this.scrollElement(x, y, 1, "scrollElementOnY");
-
           return;
         }
-
-        if (y <= threshold!.main.top.max && this.scrollTop > 0) {
+        if (y <= threshold!.thresholds[SK].top.max && this.scrollTop > 0) {
           this.scrollElement(x, y, -1, "scrollElementOnY");
-
           return;
         }
       }
@@ -657,17 +658,14 @@ class Droppable extends DistanceCalculator {
       if (store.siblingsScrollElement[SK].hasOverflowX) {
         const { scrollRect, scrollHeight, threshold } =
           store.siblingsScrollElement[SK];
-
         if (
-          x >= threshold!.main.left.max &&
+          x >= threshold!.thresholds[SK].left.max &&
           this.scrollLeft + scrollRect.width < scrollHeight
         ) {
           this.scrollElement(x, y, 1, "scrollElementOnX");
-
           return;
         }
-
-        if (x <= threshold!.main.left.min && this.scrollLeft > 0) {
+        if (x <= threshold!.thresholds[SK].left.min && this.scrollLeft > 0) {
           this.scrollElement(x, y, -1, "scrollElementOnX");
         }
       }
@@ -717,14 +715,6 @@ class Droppable extends DistanceCalculator {
     });
   }
 
-  /**
-   * Invokes draggable method responsible of transform.
-   * Monitors dragged translate and called related methods. Which controls the
-   * active and droppable method.
-   *
-   * @param x- mouse X coordinate
-   * @param y- mouse Y coordinate
-   */
   dragAt(x: number, y: number) {
     if (this.regularDragging) {
       this.draggable.dragAt(

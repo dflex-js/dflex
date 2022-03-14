@@ -33,9 +33,6 @@ export interface DraggableAxesInterface
   /** Dragged threshold  */
   readonly threshold: ThresholdInterface;
 
-  /** Dragged parent containers threshold  */
-  readonly layoutThresholds: SiblingsThreshold;
-
   readonly innerOffset: AxesCoordinatesInterface;
 
   /** Dragged position for both X and Y.  */
@@ -82,14 +79,6 @@ export interface DraggableAxesInterface
 
   /** Has moved without settling inside new position. */
   isNotSettled(): boolean;
-
-  isLeftFromTop: boolean;
-
-  isLeftFromBottom: boolean;
-
-  isLeftFromLeft: boolean;
-
-  isLeftFromRight: boolean;
 }
 
 export interface DraggableInteractiveInterface extends DraggableAxesInterface {
