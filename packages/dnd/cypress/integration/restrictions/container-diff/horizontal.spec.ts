@@ -267,12 +267,11 @@ context(
       });
 
       it("All siblings are lifted up", () => {
-        // TODO: Turning this off cause it fails on CI. Figure out why.
-        // cy.get("#item-rest-container-left").should(
-        //   "have.css",
-        //   "transform",
-        //   "matrix(1, 0, 0, 1, 0, 423.938)"
-        // );
+        cy.get("#item-rest-container-left").should(
+          "have.css",
+          "transform",
+          "matrix(1, 0, 0, 1, 0, 423.938)"
+        );
 
         cy.get("#item-rest-container-left-right").should(
           "have.css",
@@ -449,7 +448,7 @@ context(
           button: 0,
         });
 
-        for (let i = 0; i <= 610; i += 10) {
+        for (let i = 0; i <= 620; i += 10) {
           cy.get("#item-rest-container-left-right").trigger("mousemove", {
             clientY: startingPointY + i,
             force: true,
@@ -463,7 +462,7 @@ context(
         cy.get("#item-rest-container-left-right").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 436.219)"
+          "matrix(1, 0, 0, 1, 0, 446.219)"
         );
       });
 
