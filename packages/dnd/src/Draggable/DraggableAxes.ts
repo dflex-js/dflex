@@ -36,10 +36,6 @@ class DraggableAxes
 
   isMovingAwayFrom: AxesCoordinatesBoolInterface;
 
-  isDraggedOutPosition: AxesCoordinatesBoolInterface;
-
-  isDraggedOutContainer: AxesCoordinatesBoolInterface;
-
   private axesFilterNeeded: boolean;
 
   private restrictions: Restrictions;
@@ -102,8 +98,6 @@ class DraggableAxes
       );
     }
 
-    this.isDraggedOutPosition = new AxesCoordinatesBool(false, false);
-    this.isDraggedOutContainer = new AxesCoordinatesBool(false, false);
     this.isMovingAwayFrom = new AxesCoordinatesBool(false, false);
 
     const { x, y } = initCoordinates;
@@ -292,31 +286,17 @@ class DraggableAxes
   }
 
   isOutThreshold(SK?: string) {
-    let key;
-    let flag;
+    const key = SK || this.draggedElm.id;
 
     const { x, y } = this.positionPlaceholder;
 
-    if (SK) {
-      key = SK;
-      flag = this.isDraggedOutContainer;
-    } else {
-      key = this.draggedElm.id;
-      flag = this.isDraggedOutPosition;
-    }
     if (this.threshold.isOutThresholdV(key, y)) {
-      flag.setAxes(false, true);
-
       return true;
     }
 
     if (this.threshold.isOutThresholdH(key, x)) {
-      flag.setAxes(true, false);
-
       return true;
     }
-
-    flag.setFalsy();
 
     return false;
   }

@@ -129,12 +129,6 @@ class DraggableInteractive
      * assign owner parent so we have from/to.
      */
     this.siblingsContainer = element;
-
-    /**
-     * Add flag for undo method so we can check which  parent is being
-     * transformed and which is not.
-     */
-    this.isDraggedOutContainer.setFalsy();
   }
 
   setDraggedTempIndex(i: number) {

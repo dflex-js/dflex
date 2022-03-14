@@ -54,9 +54,6 @@ export interface DraggableAxesInterface
    */
   readonly isMovingAwayFrom: AxesCoordinatesBoolInterface;
 
-  readonly isDraggedOutPosition: AxesCoordinatesBoolInterface;
-  readonly isDraggedOutContainer: AxesCoordinatesBoolInterface;
-
   dragAt(x: number, y: number): void;
 
   /**

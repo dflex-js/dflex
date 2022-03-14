@@ -1,18 +1,14 @@
 class AxesFourCoordinatesBool {
-  isLeftFromTop: boolean;
+  isLeftFromTop!: boolean;
 
-  isLeftFromBottom: boolean;
+  isLeftFromBottom!: boolean;
 
-  isLeftFromLeft: boolean;
+  isLeftFromLeft!: boolean;
 
-  isLeftFromRight: boolean;
+  isLeftFromRight!: boolean;
 
   constructor() {
-    this.isLeftFromTop = false;
-    this.isLeftFromBottom = false;
-
-    this.isLeftFromLeft = false;
-    this.isLeftFromRight = false;
+    this.reset();
   }
 
   reset() {

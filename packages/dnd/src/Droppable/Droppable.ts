@@ -410,7 +410,7 @@ class Droppable extends DistanceCalculator {
     /**
      * Going out from the list: Right/left.
      */
-    if (this.draggable.isDraggedOutPosition.x) {
+    if (this.draggable.threshold.isOut[this.draggable.draggedElm.id].isOutX()) {
       // Is is out parent?
 
       // move element up
