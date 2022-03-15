@@ -53,12 +53,18 @@ class Threshold implements ThresholdInterface {
 
     const { x, y } = this.pixels;
 
-    const leftThresholdPoint = new ThresholdPoint(left - x, left + x);
+    const minX = left + x;
+    let minY;
+    if (isContainer) {
+      minY = height + y;
+      // minX = width + x;
+    } else {
+      // minX = left + x;
+      minY = top + y;
+    }
 
-    const topThresholdPoint = new ThresholdPoint(
-      top - y,
-      isContainer ? Math.abs(height + y) : top + y
-    );
+    const leftThresholdPoint = new ThresholdPoint(left - x, minX);
+    const topThresholdPoint = new ThresholdPoint(top - y, minY);
 
     return {
       left: leftThresholdPoint,
