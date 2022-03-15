@@ -361,44 +361,34 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     });
   }
 
-  private assignSiblingsBoundariesAndAlignment(SK: string, elemOffset: Rect) {
-    const elmRight = elemOffset.left + elemOffset.width;
-
+  private assignSiblingsBoundariesAndAlignment(SK: string, rect: Rect) {
     if (!this.siblingsBoundaries[SK]) {
-      this.siblingsBoundaries[SK] = {
-        top: elemOffset.top,
-        left: elemOffset.left,
-        width: elmRight,
-        height: elemOffset.height,
-      };
+      this.siblingsBoundaries[SK] = { ...rect };
 
       return;
     }
 
     const $ = this.siblingsBoundaries[SK];
 
+    const { height, left, top, width } = rect;
+
     let isHorizontal = false;
 
-    if ($.left < elemOffset.left) {
-      $.left = elemOffset.left;
-
+    if (left <= $.left) {
+      $.left = left;
+    } else if (left + width > $.width) {
       isHorizontal = true;
-      this.siblingsAlignment[SK] = "Horizontal";
+      $.width = left + width;
     }
 
-    if ($.width > elmRight) {
-      $.width = elmRight;
+    if (top <= $.top) {
+      $.top = top;
+    } else if (top + height > $.height) {
+      isHorizontal = false;
+      $.height = top + height;
     }
 
-    if ($.top > elemOffset.top) {
-      $.top = elemOffset.top;
-    } else {
-      $.height = elemOffset.top + elemOffset.height;
-    }
-
-    if (!isHorizontal) {
-      this.siblingsAlignment[SK] = "Vertical";
-    }
+    this.siblingsAlignment[SK] = isHorizontal ? "Horizontal" : "Vertical";
   }
 
   /**
