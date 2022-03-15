@@ -361,15 +361,13 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     });
   }
 
-  private assignSiblingsBoundariesAndAlignment(SK: string, elemOffset: Rect) {
-    const elmRight = elemOffset.left + elemOffset.width;
-
+  private assignSiblingsBoundariesAndAlignment(SK: string, rect: Rect) {
     if (!this.siblingsBoundaries[SK]) {
       this.siblingsBoundaries[SK] = {
-        top: elemOffset.top,
-        left: elemOffset.left,
-        width: elmRight,
-        height: elemOffset.height,
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
       };
 
       return;
@@ -379,21 +377,21 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
     let isHorizontal = false;
 
-    if ($.left < elemOffset.left) {
-      $.left = elemOffset.left;
+    if ($.left < rect.left) {
+      $.left = rect.left;
 
       isHorizontal = true;
       this.siblingsAlignment[SK] = "Horizontal";
     }
 
-    if ($.width > elmRight) {
-      $.width = elmRight;
+    if ($.width > rect.width) {
+      $.width = rect.width;
     }
 
-    if ($.top > elemOffset.top) {
-      $.top = elemOffset.top;
+    if ($.top > rect.top) {
+      $.top = rect.top;
     } else {
-      $.height = elemOffset.top + elemOffset.height;
+      $.height = rect.top + rect.height;
     }
 
     if (!isHorizontal) {
