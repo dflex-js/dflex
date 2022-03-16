@@ -71,9 +71,9 @@ class Threshold implements ThresholdInterface {
     const { x, y } = this.pixels;
 
     return {
-      left: Math.abs(left - x),
+      left: left - x,
       right: isContainer ? left - x + width : left + x,
-      top: Math.abs(top - y),
+      top: top - y,
       bottom: isContainer ? y + height : top + y,
     };
   }
@@ -115,6 +115,15 @@ class Threshold implements ThresholdInterface {
       up: y < top,
       down: y > bottom,
     });
+
+    console.log(
+      "file: Threshold.ts ~ line 113 ~  top, bottom ",
+      key,
+      y,
+      top,
+      bottom,
+      this.isOut[key].isOutY()
+    );
 
     return this.isOut[key].isOutY();
   }
