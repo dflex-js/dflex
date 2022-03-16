@@ -641,33 +641,34 @@ class Droppable extends DistanceCalculator {
       if (store.siblingsScrollElement[SK].hasOverflowY) {
         const { scrollRect, scrollHeight, threshold } =
           store.siblingsScrollElement[SK];
+        console.log("file: Droppable.ts ~ line 644 ~ threshold", y, threshold);
         if (
           this.draggable.isMovingAwayFrom.y &&
-          y >= threshold!.thresholds[SK].top.min &&
+          y <= threshold!.thresholds[SK].top &&
           this.scrollTop + scrollRect.height < scrollHeight
         ) {
           this.scrollElement(x, y, 1, "scrollElementOnY");
           return;
         }
-        if (y <= threshold!.thresholds[SK].top.max && this.scrollTop > 0) {
-          this.scrollElement(x, y, -1, "scrollElementOnY");
-          return;
-        }
+        // if (y <= threshold!.thresholds[SK].bottom && this.scrollTop > 0) {
+        //   this.scrollElement(x, y, -1, "scrollElementOnY");
+        //   return;
+        // }
       }
 
       if (store.siblingsScrollElement[SK].hasOverflowX) {
-        const { scrollRect, scrollHeight, threshold } =
-          store.siblingsScrollElement[SK];
-        if (
-          x >= threshold!.thresholds[SK].left.max &&
-          this.scrollLeft + scrollRect.width < scrollHeight
-        ) {
-          this.scrollElement(x, y, 1, "scrollElementOnX");
-          return;
-        }
-        if (x <= threshold!.thresholds[SK].left.min && this.scrollLeft > 0) {
-          this.scrollElement(x, y, -1, "scrollElementOnX");
-        }
+        // const { scrollRect, scrollHeight, threshold } =
+        //   store.siblingsScrollElement[SK];
+        // if (
+        //   x >= threshold!.thresholds[SK].left &&
+        //   this.scrollLeft + scrollRect.width < scrollHeight
+        // ) {
+        //   this.scrollElement(x, y, 1, "scrollElementOnX");
+        //   return;
+        // }
+        // if (x <= threshold!.thresholds[SK].right && this.scrollLeft > 0) {
+        //   this.scrollElement(x, y, -1, "scrollElementOnX");
+        // }
       }
 
       /**

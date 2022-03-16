@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import {
   AxesCoordinates,
   AxesCoordinatesInterface,
@@ -7,22 +6,10 @@ import {
 import { Rect } from "../types";
 import type {
   ThresholdInterface,
-  ThresholdPointInterface,
   ThresholdPercentages,
   ThresholdsStore,
   LayoutPositionStatus,
 } from "./types";
-
-class ThresholdPoint implements ThresholdPointInterface {
-  max: number;
-
-  min: number;
-
-  constructor(max: number, min: number) {
-    this.max = max;
-    this.min = min;
-  }
-}
 
 class Threshold implements ThresholdInterface {
   private pixels!: AxesCoordinatesInterface;
@@ -42,33 +29,52 @@ class Threshold implements ThresholdInterface {
 
   private setPixels({ width, height }: Rect) {
     const x = Math.round((this.percentages.horizontal * width) / 100);
-
     const y = Math.round((this.percentages.vertical * height) / 100);
 
     this.pixels = new AxesCoordinates(x, y);
   }
 
-  private getThreshold(rect: Rect, isContainer: boolean) {
-    const { top, left, height } = rect;
+  private getScrollThreshold(rect: Rect) {
+    /**
+     * Note: Height for container represent the lowest element bottom.
+     */
+    const { top, left, height, width } = rect;
 
     const { x, y } = this.pixels;
 
-    const minX = left + x;
-    let minY;
-    if (isContainer) {
-      minY = height + y;
-      // minX = width + x;
-    } else {
-      // minX = left + x;
-      minY = top + y;
-    }
+    return {
+      left: Math.abs(left - x),
+      right: left - x + width,
+      top: Math.abs(top - y),
+      bottom: height - y,
+    };
+  }
 
-    const leftThresholdPoint = new ThresholdPoint(left - x, minX);
-    const topThresholdPoint = new ThresholdPoint(top - y, minY);
+  setScrollThreshold(key: string, rect: Rect) {
+    this.setPixels(rect);
+
+    this.thresholds[key] = this.getScrollThreshold(rect);
+
+    if (!this.isOut[key]) {
+      this.isOut[key] = new AxesFourCoordinatesBool();
+    } else {
+      this.isOut[key].reset();
+    }
+  }
+
+  private getThreshold(rect: Rect, isContainer: boolean) {
+    /**
+     * Note: Height for container represent the lowest element bottom.
+     */
+    const { top, left, height, width } = rect;
+
+    const { x, y } = this.pixels;
 
     return {
-      left: leftThresholdPoint,
-      top: topThresholdPoint,
+      left: Math.abs(left - x),
+      right: isContainer ? left - x + width : left + x,
+      top: Math.abs(top - y),
+      bottom: isContainer ? y + height : top + y,
     };
   }
 
@@ -92,22 +98,22 @@ class Threshold implements ThresholdInterface {
   }
 
   isOutThresholdH(key: string, x: number) {
-    const { left } = this.thresholds[key];
+    const { left, right } = this.thresholds[key];
 
     this.isOut[key].setOutX({
-      left: x < left.max,
-      right: x > left.min,
+      left: x < left,
+      right: x > right,
     });
 
     return this.isOut[key].isOutX();
   }
 
   isOutThresholdV(key: string, y: number) {
-    const { top } = this.thresholds[key];
+    const { top, bottom } = this.thresholds[key];
 
     this.isOut[key].setOutY({
-      up: y < top.max,
-      down: y > top.min,
+      up: y < top,
+      down: y > bottom,
     });
 
     return this.isOut[key].isOutY();

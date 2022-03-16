@@ -261,7 +261,11 @@ Please provide scroll container by ref/id when registering the element or turn o
   setThresholdMatrix(threshold: ThresholdPercentages) {
     this.threshold = new Threshold(threshold);
 
-    this.threshold.setThreshold(this.siblingKey, this.scrollRect, true, true);
+    this.threshold.setScrollThreshold(this.siblingKey, this.scrollRect);
+    console.log(
+      "file: Scroll.ts ~ line 269 ~  this.threshold.",
+      this.threshold
+    );
   }
 
   private setScrollCoordinates() {

@@ -15,8 +15,10 @@ export interface ThresholdPointInterface {
 }
 
 export interface ThresholdCoordinate {
-  top: ThresholdPointInterface;
-  left: ThresholdPointInterface;
+  top: number;
+  left: number;
+  right: number;
+  bottom: number;
 }
 
 export interface ThresholdsStore {
@@ -36,6 +38,7 @@ export interface ThresholdInterface {
     isContainer: boolean,
     isUpdatePixels?: boolean
   ): void;
+  setScrollThreshold(key: string, rect: Rect): void;
   isOutThresholdH(key: string, x: number): boolean;
   isOutThresholdV(key: string, y: number): boolean;
 }

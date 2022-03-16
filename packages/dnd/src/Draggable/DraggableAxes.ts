@@ -286,25 +286,21 @@ class DraggableAxes
   }
 
   isOutThreshold(SK?: string) {
+    // if (!SK) return false;
     const key = SK || this.draggedElm.id;
 
     const { x, y } = this.positionPlaceholder;
 
-    if (this.threshold.isOutThresholdV(key, y)) {
-      return true;
-    }
-
-    if (this.threshold.isOutThresholdH(key, x)) {
-      return true;
-    }
-
-    return false;
+    return (
+      this.threshold.isOutThresholdV(key, y) ||
+      this.threshold.isOutThresholdH(key, x)
+    );
   }
 
   isLeavingFromHead() {
     return (
       this.threshold.isOut[this.draggedElm.id].isLeftFromTop &&
-      this.indexPlaceholder <= 0 // first our outside.
+      this.indexPlaceholder === 0
     );
   }
 
