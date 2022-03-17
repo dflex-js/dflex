@@ -381,15 +381,11 @@ class Droppable extends DistanceCalculator {
 
   private draggedOutPosition() {
     if (this.draggable.isLeavingFromHead()) {
-      /**
-       * If leaving and parent locked, do nothing.
-       */
-
       // move element up if it's vertical or fill when it's horizontal.
       this.setEffectedElemDirection(true, this.axes);
 
       // lock the parent
-      this.setDraggedPositionFlagInSiblingsContainer(true);
+      this.lockParent(true);
 
       this.fillHeadUp();
 
@@ -397,15 +393,14 @@ class Droppable extends DistanceCalculator {
     }
 
     if (this.draggable.isLeavingFromTail()) {
-      this.setDraggedPositionFlagInSiblingsContainer(true);
+      this.lockParent(true);
 
       return;
     }
 
     /**
-     * normal movement inside the parent
+     * Normal movement inside the parent
      */
-
     const {
       draggedElm: { id },
       threshold: { isOut },
@@ -415,13 +410,11 @@ class Droppable extends DistanceCalculator {
      * Going out from the list: Right/left.
      */
     if (isOut[id].isOutX()) {
-      // Is is out parent?
-
       // move element up
       this.setEffectedElemDirection(true, this.axes);
 
       // lock the parent
-      this.setDraggedPositionFlagInSiblingsContainer(true);
+      this.lockParent(true);
 
       this.fillHeadUp();
 
@@ -429,7 +422,7 @@ class Droppable extends DistanceCalculator {
     }
 
     /**
-     * Normal state, switch.
+     * Going up/down, switch.
      */
 
     const { isLeftFromTop, isLeftFromBottom } = isOut[id];
@@ -446,7 +439,7 @@ class Droppable extends DistanceCalculator {
     this.switchElement();
   }
 
-  private setDraggedPositionFlagInSiblingsContainer(isOut: boolean) {
+  private lockParent(isOut: boolean) {
     if (isOut === this.isDraggedOutContainerEarlyDetection) {
       return;
     }
@@ -495,7 +488,7 @@ class Droppable extends DistanceCalculator {
       this.draggable.mousePoints.y = y;
     }
 
-    this.setDraggedPositionFlagInSiblingsContainer(false);
+    this.lockParent(false);
 
     /**
      * Moving element down by setting is up to false
