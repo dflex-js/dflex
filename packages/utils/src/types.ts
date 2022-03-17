@@ -1,8 +1,15 @@
-export interface Rect {
+export interface RectDimensions {
+  top: number;
+  left: number;
   height: number;
   width: number;
-  left: number;
+}
+
+export interface RectBoundaries {
   top: number;
+  left: number;
+  bottom: number;
+  right: number;
 }
 
 export type Direction = 1 | -1;

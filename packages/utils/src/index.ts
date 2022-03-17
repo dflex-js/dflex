@@ -15,4 +15,10 @@ export type {
   ThresholdPercentages,
 } from "./Threshold";
 
-export type { Rect, Axes, Direction, EffectedElemDirection } from "./types";
+export type {
+  RectDimensions,
+  RectBoundaries,
+  Axes,
+  Direction,
+  EffectedElemDirection,
+} from "./types";

@@ -228,15 +228,14 @@ class Droppable extends DistanceCalculator {
           /**
            * Update threshold from here since there's no calling to updateElement.
            */
-          this.draggable.threshold.setThreshold(
+          this.draggable.threshold.setMainThreshold(
             this.draggable.draggedElm.id,
             {
               width: this.draggable.draggedElm.offset.width,
               height: this.draggable.draggedElm.offset.height,
               left: this.preserveLastElmOffset!.x,
               top: this.preserveLastElmOffset!.y,
-            },
-            false
+            }
           );
 
           this.updateOccupiedOffset(
@@ -643,13 +642,14 @@ class Droppable extends DistanceCalculator {
           store.siblingsScrollElement[SK];
         if (
           this.draggable.isMovingAwayFrom.y &&
-          y >= threshold!.thresholds[SK].top.min &&
+          y >= threshold!.thresholds[SK].bottom &&
           this.scrollTop + scrollRect.height < scrollHeight
         ) {
           this.scrollElement(x, y, 1, "scrollElementOnY");
           return;
         }
-        if (y <= threshold!.thresholds[SK].top.max && this.scrollTop > 0) {
+
+        if (y <= threshold!.thresholds[SK].top && this.scrollTop > 0) {
           this.scrollElement(x, y, -1, "scrollElementOnY");
           return;
         }
@@ -659,13 +659,15 @@ class Droppable extends DistanceCalculator {
         const { scrollRect, scrollHeight, threshold } =
           store.siblingsScrollElement[SK];
         if (
-          x >= threshold!.thresholds[SK].left.max &&
+          this.draggable.isMovingAwayFrom.x &&
+          x >= threshold!.thresholds[SK].right &&
           this.scrollLeft + scrollRect.width < scrollHeight
         ) {
           this.scrollElement(x, y, 1, "scrollElementOnX");
           return;
         }
-        if (x <= threshold!.thresholds[SK].left.min && this.scrollLeft > 0) {
+
+        if (x <= threshold!.thresholds[SK].left && this.scrollLeft > 0) {
           this.scrollElement(x, y, -1, "scrollElementOnX");
         }
       }

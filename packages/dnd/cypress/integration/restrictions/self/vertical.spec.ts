@@ -23,13 +23,13 @@ context(
       });
 
       it("Transforms (#item-rest-top) to the left", () => {
-        for (let i = 0; i <= 350; i += 10) {
+        for (let i = 0; i <= 230; i += 10) {
           cy.get("#item-rest-top").trigger("mousemove", {
             clientX: startingPointX - i,
             force: true,
           });
           // eslint-disable-next-line cypress/no-unnecessary-waiting
-          // cy.wait(0);
+          cy.wait(0);
         }
       });
 
@@ -104,7 +104,7 @@ context(
             force: true,
           });
           // eslint-disable-next-line cypress/no-unnecessary-waiting
-          // cy.wait(0);
+          cy.wait(0);
         }
       });
 
@@ -313,7 +313,7 @@ context(
             force: true,
           });
           // eslint-disable-next-line cypress/no-unnecessary-waiting
-          // cy.wait(0);
+          cy.wait(0);
         }
       });
 

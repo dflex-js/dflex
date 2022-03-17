@@ -1,5 +1,5 @@
 import Store from "@dflex/store";
-import type { Rect } from "@dflex/utils";
+import type { RectDimensions } from "@dflex/utils";
 
 import type { ElmTree, DnDStoreInterface, RegisterInput } from "./types";
 
@@ -361,15 +361,18 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     });
   }
 
-  private assignSiblingsBoundariesAndAlignment(SK: string, elemOffset: Rect) {
-    const elmRight = elemOffset.left + elemOffset.width;
+  private assignSiblingsBoundariesAndAlignment(
+    SK: string,
+    rect: RectDimensions
+  ) {
+    const { height, left, top, width } = rect;
 
     if (!this.siblingsBoundaries[SK]) {
       this.siblingsBoundaries[SK] = {
-        top: elemOffset.top,
-        left: elemOffset.left,
-        width: elmRight,
-        height: elemOffset.height,
+        top,
+        left,
+        right: left + width,
+        bottom: top + height,
       };
 
       return;
@@ -379,26 +382,25 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
     let isHorizontal = false;
 
-    if ($.left < elemOffset.left) {
-      $.left = elemOffset.left;
+    if (left < $.left) {
+      $.left = left;
+    }
 
+    if (left + width > $.right) {
       isHorizontal = true;
-      this.siblingsAlignment[SK] = "Horizontal";
+      $.right = left + width;
     }
 
-    if ($.width > elmRight) {
-      $.width = elmRight;
+    if (top < $.top) {
+      $.top = top;
     }
 
-    if ($.top > elemOffset.top) {
-      $.top = elemOffset.top;
-    } else {
-      $.height = elemOffset.top + elemOffset.height;
+    if (top + height > $.bottom) {
+      isHorizontal = false;
+      $.bottom = top + height;
     }
 
-    if (!isHorizontal) {
-      this.siblingsAlignment[SK] = "Vertical";
-    }
+    this.siblingsAlignment[SK] = isHorizontal ? "Horizontal" : "Vertical";
   }
 
   /**

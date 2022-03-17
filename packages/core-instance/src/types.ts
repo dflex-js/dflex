@@ -1,5 +1,5 @@
 import { AxesCoordinates } from "@dflex/utils";
-import type { Rect, Axes, EffectedElemDirection } from "@dflex/utils";
+import type { RectDimensions, Axes, EffectedElemDirection } from "@dflex/utils";
 
 export interface AbstractOpts {
   isInitialized: boolean;
@@ -79,7 +79,7 @@ export type TransitionHistory = {
 
 export interface CoreInstanceInterface extends AbstractInterface {
   isVisible: boolean;
-  readonly offset: Rect;
+  readonly offset: RectDimensions;
   translateHistory?: AxesCoordinates<TransitionHistory>;
   currentPosition: AxesCoordinates;
   order: Order;

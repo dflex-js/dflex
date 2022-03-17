@@ -74,28 +74,15 @@ class DraggableAxes
 
     this.threshold = new Threshold(opts.threshold);
 
-    this.threshold.setThreshold(
-      id,
-      {
-        width,
-        height,
-        left: currentPosition.x,
-        top: currentPosition.y,
-      },
-      false
-    );
+    this.threshold.setMainThreshold(id, {
+      width,
+      height,
+      left: currentPosition.x,
+      top: currentPosition.y,
+    });
 
     if (siblings !== null) {
-      this.threshold.setThreshold(
-        SK,
-        {
-          top: siblingsBoundaries.top,
-          left: siblingsBoundaries.left,
-          height: siblingsBoundaries.height,
-          width: siblingsBoundaries.width,
-        },
-        true
-      );
+      this.threshold.setContainerThreshold(SK, siblingsBoundaries);
     }
 
     this.isMovingAwayFrom = new AxesCoordinatesBool(false, false);
@@ -214,9 +201,9 @@ class DraggableAxes
     if (this.axesFilterNeeded) {
       const {
         top,
-        height: bottom,
+        bottom,
         left: maxLeft,
-        width: minRight,
+        right: minRight,
       } = store.siblingsBoundaries[SK];
 
       if (this.restrictionsStatus.isContainerRestricted) {
@@ -286,25 +273,22 @@ class DraggableAxes
   }
 
   isOutThreshold(SK?: string) {
+    // if (!SK) return false;
     const key = SK || this.draggedElm.id;
 
     const { x, y } = this.positionPlaceholder;
+    const { height, width } = this.draggedElm.offset;
 
-    if (this.threshold.isOutThresholdV(key, y)) {
-      return true;
-    }
-
-    if (this.threshold.isOutThresholdH(key, x)) {
-      return true;
-    }
-
-    return false;
+    return (
+      this.threshold.isOutThresholdV(key, y, y + height) ||
+      this.threshold.isOutThresholdH(key, x, x + width)
+    );
   }
 
   isLeavingFromHead() {
     return (
       this.threshold.isOut[this.draggedElm.id].isLeftFromTop &&
-      this.indexPlaceholder <= 0 // first our outside.
+      this.indexPlaceholder === 0
     );
   }
 

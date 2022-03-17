@@ -1,4 +1,4 @@
-import type { Rect } from "@dflex/utils";
+import type { RectDimensions, RectBoundaries } from "@dflex/utils";
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
 import type { RegisterInputMeta } from "@dflex/store";
@@ -58,14 +58,14 @@ interface Translate {
 
 export interface DnDStoreInterface {
   tracker: TrackerInterface;
-  siblingsBoundaries: { [siblingKey: string]: Rect };
+  siblingsBoundaries: { [siblingKey: string]: RectBoundaries };
   siblingsScrollElement: { [siblingKey: string]: ScrollInterface };
   siblingsAlignment: { [siblingKey: string]: "Horizontal" | "Vertical" };
   layoutState: LayoutState;
   onStateChange(state: LayoutState): void;
   emitEvent(event: DraggedEvent): void;
   register(element: RegisterInputMeta, x?: boolean): void;
-  getInitialELmRectById(id: string): Rect | undefined;
+  getInitialELmRectById(id: string): RectDimensions | undefined;
   getELmTranslateById(id: string): Translate;
   getElmTreeById(id: string): ElmTree;
   getElmSiblingsById(id: string): ELmBranch;
