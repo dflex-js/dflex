@@ -64,17 +64,21 @@ class Threshold implements ThresholdInterface {
 
   private getThreshold(rect: Rect, isContainer: boolean) {
     /**
-     * Note: Height for container represent the lowest element bottom.
+     * Note:
+     * Height = Bottom, for container represent the lowest element bottom.
+     * width = Right, for container represent the rightest element right.
      */
     const { top, left, height, width } = rect;
+    console.log("file: Threshold.ts ~ line 72 ~ height", height, height + top);
 
     const { x, y } = this.pixels;
+    console.log("file: Threshold.ts ~ line 72 ~ x", x);
 
     return {
       left: left - x,
-      right: isContainer ? left - x + width : left + x,
+      right: isContainer ? left + width + x : width + left + x,
       top: top - y,
-      bottom: isContainer ? y + height : top + y,
+      bottom: isContainer ? height + y : height + top + y,
     };
   }
 
@@ -102,7 +106,7 @@ class Threshold implements ThresholdInterface {
 
     this.isOut[key].setOutX({
       left: x < left,
-      right: x > right,
+      right: x + 170 > right,
     });
 
     return this.isOut[key].isOutX();
@@ -113,7 +117,7 @@ class Threshold implements ThresholdInterface {
 
     this.isOut[key].setOutY({
       up: y < top,
-      down: y > bottom,
+      down: y + 50 > bottom,
     });
 
     console.log(
