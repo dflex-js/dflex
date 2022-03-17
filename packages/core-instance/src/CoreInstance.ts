@@ -3,7 +3,7 @@
 import { AxesCoordinates } from "@dflex/utils";
 
 import type {
-  Rect,
+  RectDimensions,
   EffectedElemDirection,
   Axes,
   AxesCoordinatesInterface,
@@ -22,7 +22,7 @@ import type {
 
 class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
   /** Initial read-only element offset */
-  readonly offset!: Rect;
+  readonly offset!: RectDimensions;
 
   /** Store history of Y-transition according to unique ID. */
   translateHistory?: AxesCoordinatesInterface<TransitionHistory>;

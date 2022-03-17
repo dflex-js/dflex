@@ -750,6 +750,10 @@ class Droppable extends DistanceCalculator {
       this.draggable.draggedElm.rmDateset("draggedOutPosition");
 
       isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
+      console.log(
+        "file: Droppable.ts ~ line 753 ~ isOutSiblingsContainer",
+        isOutSiblingsContainer
+      );
 
       // when it's out, and on of theses is true then it's happening.
       if (!isOutSiblingsContainer) {

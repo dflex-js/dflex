@@ -66,6 +66,10 @@ class DraggableAxes
     this.isViewportRestricted = true;
 
     const siblingsBoundaries = store.siblingsBoundaries[SK];
+    console.log(
+      "file: DraggableAxes.ts ~ line 69 ~ siblingsBoundaries",
+      siblingsBoundaries
+    );
 
     const {
       offset: { width, height },
@@ -73,6 +77,10 @@ class DraggableAxes
     } = this.draggedElm;
 
     this.threshold = new Threshold(opts.threshold);
+    console.log(
+      "file: DraggableAxes.ts ~ line 76 ~ this.threshold ",
+      this.threshold
+    );
 
     this.threshold.setThreshold(
       id,

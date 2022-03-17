@@ -1,5 +1,5 @@
 import { AxesFourCoordinatesBool } from "../AxesCoordinates";
-import type { Rect } from "../types";
+import type { RectDimensions } from "../types";
 
 export interface ThresholdPercentages {
   /** vertical threshold in percentage from 0-100 */
@@ -34,11 +34,11 @@ export interface ThresholdInterface {
   isOut: LayoutPositionStatus;
   setThreshold(
     key: string,
-    rect: Rect,
+    rect: RectDimensions,
     isContainer: boolean,
     isUpdatePixels?: boolean
   ): void;
-  setScrollThreshold(key: string, rect: Rect): void;
+  setScrollThreshold(key: string, rect: RectDimensions): void;
   isOutThresholdH(key: string, XLeft: number, XRight: number): boolean;
   isOutThresholdV(key: string, YTop: number, YBottom: number): boolean;
 }

@@ -3,7 +3,7 @@ import {
   AxesCoordinatesInterface,
   AxesFourCoordinatesBool,
 } from "../AxesCoordinates";
-import { Rect } from "../types";
+import { RectDimensions, RectBoundaries } from "../types";
 import type {
   ThresholdInterface,
   ThresholdPercentages,
@@ -27,14 +27,14 @@ class Threshold implements ThresholdInterface {
     this.isOut = {};
   }
 
-  private setPixels({ width, height }: Rect) {
+  private setPixels({ width, height }: RectDimensions) {
     const x = Math.round((this.percentages.horizontal * width) / 100);
     const y = Math.round((this.percentages.vertical * height) / 100);
 
     this.pixels = new AxesCoordinates(x, y);
   }
 
-  private getScrollThreshold(rect: Rect) {
+  private getScrollThreshold(rect: RectDimensions) {
     /**
      * Note: Height for container represent the lowest element bottom.
      */
@@ -50,7 +50,7 @@ class Threshold implements ThresholdInterface {
     };
   }
 
-  setScrollThreshold(key: string, rect: Rect) {
+  setScrollThreshold(key: string, rect: RectDimensions) {
     this.setPixels(rect);
 
     this.thresholds[key] = this.getScrollThreshold(rect);
@@ -62,29 +62,24 @@ class Threshold implements ThresholdInterface {
     }
   }
 
-  private getThreshold(rect: Rect, isContainer: boolean) {
-    /**
-     * Note:
-     * Height = Bottom, for container represent the lowest element bottom.
-     * width = Right, for container represent the rightest element right.
-     */
-    const { top, left, height, width } = rect;
-    console.log("file: Threshold.ts ~ line 72 ~ height", height, height + top);
+  private getThreshold(rect: RectBoundaries) {
+    const { top, left, bottom, right } = rect;
+    console.log("file: Threshold.ts ~ line 72 ~ height", bottom);
 
     const { x, y } = this.pixels;
     console.log("file: Threshold.ts ~ line 72 ~ x", x);
 
     return {
       left: left - x,
-      right: isContainer ? left + width + x : width + left + x,
+      right: right + x,
       top: top - y,
-      bottom: isContainer ? height + y : height + top + y,
+      bottom: bottom + y,
     };
   }
 
   setThreshold(
     key: string,
-    rect: Rect,
+    rect: RectBoundaries | RectDimensions,
     isContainer: boolean,
     isUpdatePixels: boolean = false
   ) {
@@ -104,6 +99,7 @@ class Threshold implements ThresholdInterface {
   isOutThresholdH(key: string, XLeft: number, XRight: number) {
     const { left, right } = this.thresholds[key];
 
+    console.log("file: Threshold.ts ~ line 105 ~ XRight", key, right, XRight);
     this.isOut[key].setOutX({
       left: XLeft < left,
       right: XRight > right,
