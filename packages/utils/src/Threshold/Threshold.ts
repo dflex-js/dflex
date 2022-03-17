@@ -34,6 +34,14 @@ class Threshold implements ThresholdInterface {
     this.pixels = new AxesCoordinates(x, y);
   }
 
+  private initIndicators(key: string) {
+    if (!this.isOut[key]) {
+      this.isOut[key] = new AxesFourCoordinatesBool();
+    } else {
+      this.isOut[key].reset();
+    }
+  }
+
   private getScrollThreshold(rect: RectDimensions) {
     /**
      * Note: Height for container represent the lowest element bottom.
@@ -89,11 +97,12 @@ class Threshold implements ThresholdInterface {
       right: left + width,
     });
 
-    if (!this.isOut[key]) {
-      this.isOut[key] = new AxesFourCoordinatesBool();
-    } else {
-      this.isOut[key].reset();
-    }
+    this.initIndicators(key);
+  }
+
+  setContainerThreshold(key: string, rect: RectBoundaries) {
+    this.thresholds[key] = this.getThreshold(rect);
+    this.initIndicators(key);
   }
 
   isOutThresholdH(key: string, XLeft: number, XRight: number) {

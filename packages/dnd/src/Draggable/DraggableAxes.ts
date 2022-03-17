@@ -90,16 +90,7 @@ class DraggableAxes
     });
 
     if (siblings !== null) {
-      this.threshold.setMainThreshold(
-        SK,
-        {
-          top: siblingsBoundaries.top,
-          left: siblingsBoundaries.left,
-          height: siblingsBoundaries.height,
-          width: siblingsBoundaries.width,
-        },
-        true
-      );
+      this.threshold.setContainerThreshold(SK, siblingsBoundaries);
     }
 
     this.isMovingAwayFrom = new AxesCoordinatesBool(false, false);
@@ -218,9 +209,9 @@ class DraggableAxes
     if (this.axesFilterNeeded) {
       const {
         top,
-        height: bottom,
+        bottom,
         left: maxLeft,
-        width: minRight,
+        right: minRight,
       } = store.siblingsBoundaries[SK];
 
       if (this.restrictionsStatus.isContainerRestricted) {
