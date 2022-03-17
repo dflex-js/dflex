@@ -39,6 +39,6 @@ export interface ThresholdInterface {
     isUpdatePixels?: boolean
   ): void;
   setScrollThreshold(key: string, rect: Rect): void;
-  isOutThresholdH(key: string, x: number): boolean;
-  isOutThresholdV(key: string, y: number): boolean;
+  isOutThresholdH(key: string, XLeft: number, XRight: number): boolean;
+  isOutThresholdV(key: string, YTop: number, YBottom: number): boolean;
 }

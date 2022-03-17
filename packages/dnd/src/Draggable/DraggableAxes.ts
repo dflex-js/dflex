@@ -290,10 +290,11 @@ class DraggableAxes
     const key = SK || this.draggedElm.id;
 
     const { x, y } = this.positionPlaceholder;
+    const { height, width } = this.draggedElm.offset;
 
     return (
-      this.threshold.isOutThresholdV(key, y) ||
-      this.threshold.isOutThresholdH(key, x)
+      this.threshold.isOutThresholdV(key, y, y + height) ||
+      this.threshold.isOutThresholdH(key, x, x + width)
     );
   }
 
