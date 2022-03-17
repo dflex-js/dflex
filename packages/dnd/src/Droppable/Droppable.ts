@@ -406,10 +406,15 @@ class Droppable extends DistanceCalculator {
      * normal movement inside the parent
      */
 
+    const {
+      draggedElm: { id },
+      threshold: { isOut },
+    } = this.draggable;
+
     /**
      * Going out from the list: Right/left.
      */
-    if (this.draggable.threshold.isOut[this.draggable.draggedElm.id].isOutX()) {
+    if (isOut[id].isOutX()) {
       // Is is out parent?
 
       // move element up
@@ -427,13 +432,10 @@ class Droppable extends DistanceCalculator {
      * Normal state, switch.
      */
 
+    const { isLeftFromTop, isLeftFromBottom } = isOut[id];
+
     const isLeftUp: boolean =
-      this.draggable.threshold.isOut[this.draggable.draggedElm.id]
-        .isLeftFromBottom ||
-      (!this.draggable.threshold.isOut[this.draggable.draggedElm.id]
-        .isLeftFromTop &&
-        !this.draggable.threshold.isOut[this.draggable.draggedElm.id]
-          .isLeftFromBottom);
+      isLeftFromBottom || (!isLeftFromTop && !isLeftFromBottom);
 
     // inside the list, effected should be related to mouse movement
     this.setEffectedElemDirection(
