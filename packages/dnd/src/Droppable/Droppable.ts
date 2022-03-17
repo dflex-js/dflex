@@ -376,11 +376,21 @@ class Droppable extends DistanceCalculator {
   }
 
   private draggedOutPosition() {
+    const {
+      draggedElm: { id },
+      threshold: { isOut },
+    } = this.draggable;
+
+    const { SK } = store.registry[id].keys;
+
     /**
      * Leaving from head or tail are enhancement mechanism. Both do move the
      * siblings and lock the container.
      */
-    if (this.draggable.isLeavingFromHead()) {
+    if (
+      this.draggable.isLeavingFromHead() ||
+      this.draggable.isOutThreshold(SK)
+    ) {
       // move element up if it's vertical or fill when it's horizontal.
       this.setEffectedElemDirection(true, this.axes);
 
@@ -401,25 +411,21 @@ class Droppable extends DistanceCalculator {
     /**
      * Normal movement inside the container.
      */
-    const {
-      draggedElm: { id },
-      threshold: { isOut },
-    } = this.draggable;
 
     /**
      * Going out from the list: Right/left.
      */
-    if (isOut[id].isOutX()) {
-      // move element up
-      this.setEffectedElemDirection(true, this.axes);
+    // if (isOut[id].isOutX()) {
+    //   // move element up
+    //   this.setEffectedElemDirection(true, this.axes);
 
-      // lock the parent
-      this.lockParent(true);
+    //   // lock the parent
+    //   this.lockParent(true);
 
-      this.fillHeadUp();
+    //   this.fillHeadUp();
 
-      return;
-    }
+    //   return;
+    // }
 
     /**
      * Going up/down, switch.
