@@ -349,10 +349,6 @@ class Droppable extends DistanceCalculator {
     }
   }
 
-  /**
-   *
-   * @param to - index
-   */
   private moveDown(to: number) {
     const siblings = store.getElmSiblingsListById(
       this.draggable.draggedElm.id
@@ -380,6 +376,10 @@ class Droppable extends DistanceCalculator {
   }
 
   private draggedOutPosition() {
+    /**
+     * Leaving from head or tail are enhancement mechanism. Both do move the
+     * siblings and lock the container.
+     */
     if (this.draggable.isLeavingFromHead()) {
       // move element up if it's vertical or fill when it's horizontal.
       this.setEffectedElemDirection(true, this.axes);
@@ -399,7 +399,7 @@ class Droppable extends DistanceCalculator {
     }
 
     /**
-     * Normal movement inside the parent
+     * Normal movement inside the container.
      */
     const {
       draggedElm: { id },
@@ -424,10 +424,11 @@ class Droppable extends DistanceCalculator {
     /**
      * Going up/down, switch.
      */
-    const { isLeftFromTop, isLeftFromBottom, isLeftFromRight } = isOut[id];
+    const { isLeftFromTop, isLeftFromBottom, isLeftFromRight, isLeftFromLeft } =
+      isOut[id];
 
     const isIncreaseY: boolean =
-      isLeftFromBottom || (!isLeftFromTop && !isLeftFromBottom);
+      !isLeftFromTop && (isLeftFromBottom || isLeftFromLeft || isLeftFromRight);
 
     // eslint-disable-next-line no-unused-vars
     const isIncreaseX: boolean =
@@ -440,6 +441,7 @@ class Droppable extends DistanceCalculator {
     );
 
     this.switchElement();
+    console.log("file: Droppable.ts ~ line 444 ~ switchElement");
   }
 
   private lockParent(isOut: boolean) {
