@@ -1,3 +1,4 @@
+// TODO: Fix the test and make it pass.
 context("Working with visibility, changing positions and continuity", () => {
   let elmBox: DOMRect;
   let startingPointX: number;
@@ -37,7 +38,7 @@ context("Working with visibility, changing positions and continuity", () => {
       cy.wait(0);
     }
 
-    stepsY = 80;
+    stepsY = 120;
     for (let i = 0; i <= stepsY; i += 10) {
       cy.get("#1-extended").trigger("mousemove", {
         clientY: startingPointY + i,
@@ -218,7 +219,7 @@ context("Working with visibility, changing positions and continuity", () => {
       cy.wait(0);
     }
 
-    stepsY = 230;
+    stepsY = 270;
     for (let i = 0; i <= stepsY; i += 10) {
       cy.get("#1-extended").trigger("mousemove", {
         clientY: startingPointY + i,
