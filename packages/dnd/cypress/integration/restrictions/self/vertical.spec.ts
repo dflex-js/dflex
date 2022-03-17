@@ -313,7 +313,7 @@ context(
             force: true,
           });
           // eslint-disable-next-line cypress/no-unnecessary-waiting
-          // cy.wait(0);
+          cy.wait(0);
         }
       });
 
