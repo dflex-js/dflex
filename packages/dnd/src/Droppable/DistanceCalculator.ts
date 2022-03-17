@@ -1,12 +1,7 @@
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
 import { AxesCoordinates } from "@dflex/utils";
-import type {
-  AxesCoordinatesInterface,
-  Direction,
-  EffectedElemDirection,
-  Axes,
-} from "@dflex/utils";
+import type { AxesCoordinatesInterface, Direction, Axes } from "@dflex/utils";
 
 import type { InteractivityEvent } from "../types";
 import type { DraggableInteractiveInterface } from "../Draggable";
@@ -42,7 +37,7 @@ function emitInteractiveEvent(
 class DistanceCalculator implements DistanceCalculatorInterface {
   protected draggable: DraggableInteractiveInterface;
 
-  protected effectedElemDirection: EffectedElemDirection;
+  protected effectedElemDirection: AxesCoordinatesInterface<Direction>;
 
   private elmTransition: AxesCoordinatesInterface;
 
@@ -76,16 +71,13 @@ class DistanceCalculator implements DistanceCalculatorInterface {
      * Elements effected by dragged direction.
      * Negative for up and right.
      */
-    this.effectedElemDirection = {
-      x: 1,
-      y: 1,
-    };
+    this.effectedElemDirection = new AxesCoordinates(1, 1);
 
     this.isDraggedOutContainerEarlyDetection = false;
   }
 
-  protected setEffectedElemDirection(isIncrease: boolean, axes: Axes) {
-    this.effectedElemDirection[axes] = isIncrease ? -1 : 1;
+  protected setEffectedElemDirection(isIncreaseX: boolean, axes: Axes) {
+    this.effectedElemDirection[axes] = isIncreaseX ? -1 : 1;
   }
 
   protected updateOccupiedOffset(elmTop: number, elmLeft: number) {

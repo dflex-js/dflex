@@ -4,7 +4,7 @@ import { AxesCoordinates } from "@dflex/utils";
 
 import type {
   RectDimensions,
-  EffectedElemDirection,
+  Direction,
   Axes,
   AxesCoordinatesInterface,
 } from "@dflex/utils";
@@ -274,7 +274,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
    */
   setPosition(
     iDsInOrder: string[],
-    effectedElemDirection: EffectedElemDirection,
+    effectedElemDirection: AxesCoordinatesInterface<Direction>,
     elmSpace: AxesCoordinates,
     operationID: string,
     siblingsEmptyElmIndex: AxesCoordinates,

@@ -424,15 +424,18 @@ class Droppable extends DistanceCalculator {
     /**
      * Going up/down, switch.
      */
+    const { isLeftFromTop, isLeftFromBottom, isLeftFromRight } = isOut[id];
 
-    const { isLeftFromTop, isLeftFromBottom } = isOut[id];
-
-    const isLeftUp: boolean =
+    const isIncreaseY: boolean =
       isLeftFromBottom || (!isLeftFromTop && !isLeftFromBottom);
+
+    // eslint-disable-next-line no-unused-vars
+    const isIncreaseX: boolean =
+      isLeftFromRight || (!isLeftFromRight && !isLeftFromRight);
 
     // inside the list, effected should be related to mouse movement
     this.setEffectedElemDirection(
-      this.axes === "y" ? isLeftUp : this.draggable.isMovingAwayFrom.x,
+      this.axes === "y" ? isIncreaseY : this.draggable.isMovingAwayFrom.x,
       this.axes
     );
 
