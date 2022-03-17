@@ -23,7 +23,7 @@ class AxesFourCoordinatesBool {
     return this.isLeftFromTop || this.isLeftFromBottom;
   }
 
-  setOutY({ up, down }: { up: boolean; down: boolean }) {
+  setOutY(up: boolean, down: boolean) {
     this.isLeftFromTop = up;
     this.isLeftFromBottom = down;
   }
@@ -37,7 +37,7 @@ class AxesFourCoordinatesBool {
     return this.isLeftFromLeft || this.isLeftFromRight;
   }
 
-  setOutX({ left, right }: { left: boolean; right: boolean }) {
+  setOutX(left: boolean, right: boolean) {
     this.isLeftFromLeft = left;
     this.isLeftFromRight = right;
   }

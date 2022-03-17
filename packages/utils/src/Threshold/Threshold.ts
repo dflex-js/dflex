@@ -109,10 +109,7 @@ class Threshold implements ThresholdInterface {
     const { left, right } = this.thresholds[key];
 
     console.log("file: Threshold.ts ~ line 105 ~ XRight", key, right, XRight);
-    this.isOut[key].setOutX({
-      left: XLeft < left,
-      right: XRight > right,
-    });
+    this.isOut[key].setOutX(XLeft < left, XRight > right);
 
     return this.isOut[key].isOutX();
   }
@@ -120,10 +117,7 @@ class Threshold implements ThresholdInterface {
   isOutThresholdV(key: string, YTop: number, YBottom: number) {
     const { top, bottom } = this.thresholds[key];
 
-    this.isOut[key].setOutY({
-      up: YTop < top,
-      down: YBottom > bottom,
-    });
+    this.isOut[key].setOutY(YTop < top, YBottom > bottom);
 
     console.log(
       "file: Threshold.ts ~ line 113 ~  top, bottom ",
