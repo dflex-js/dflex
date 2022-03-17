@@ -273,11 +273,12 @@ class DraggableAxes
   }
 
   isOutThreshold(SK?: string) {
-    // if (!SK) return false;
-    const key = SK || this.draggedElm.id;
-
+    const { id, offset } = this.draggedElm;
     const { x, y } = this.positionPlaceholder;
-    const { height, width } = this.draggedElm.offset;
+
+    const key = SK || id;
+
+    const { height, width } = offset;
 
     return (
       this.threshold.isOutThresholdV(key, y, y + height) ||
