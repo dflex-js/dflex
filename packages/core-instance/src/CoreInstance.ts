@@ -22,7 +22,7 @@ import type {
 
 class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
   /** Initial read-only element offset */
-  readonly offset!: RectDimensions;
+  offset!: RectDimensions;
 
   /** Store history of Y-transition according to unique ID. */
   translateHistory?: AxesCoordinatesInterface<TransitionHistory>;
@@ -81,7 +81,6 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
      * Instead, using currentOffset object as indicator to current
      * offset/position. This offset, is the init-offset.
      */
-    // @ts-expect-error
     this.offset = {
       height,
       width,

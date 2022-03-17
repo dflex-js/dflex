@@ -32,12 +32,7 @@ export interface LayoutPositionStatus {
 export interface ThresholdInterface {
   thresholds: ThresholdsStore;
   isOut: LayoutPositionStatus;
-  setThreshold(
-    key: string,
-    rect: RectDimensions,
-    isContainer: boolean,
-    isUpdatePixels?: boolean
-  ): void;
+  setMainThreshold(id: string, rect: RectDimensions): void;
   setScrollThreshold(key: string, rect: RectDimensions): void;
   isOutThresholdH(key: string, XLeft: number, XRight: number): boolean;
   isOutThresholdV(key: string, YTop: number, YBottom: number): boolean;

@@ -82,19 +82,15 @@ class DraggableAxes
       this.threshold
     );
 
-    this.threshold.setThreshold(
-      id,
-      {
-        width,
-        height,
-        left: currentPosition.x,
-        top: currentPosition.y,
-      },
-      false
-    );
+    this.threshold.setMainThreshold(id, {
+      width,
+      height,
+      left: currentPosition.x,
+      top: currentPosition.y,
+    });
 
     if (siblings !== null) {
-      this.threshold.setThreshold(
+      this.threshold.setMainThreshold(
         SK,
         {
           top: siblingsBoundaries.top,

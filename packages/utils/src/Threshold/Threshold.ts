@@ -77,17 +77,17 @@ class Threshold implements ThresholdInterface {
     };
   }
 
-  setThreshold(
-    key: string,
-    rect: RectBoundaries | RectDimensions,
-    isContainer: boolean,
-    isUpdatePixels: boolean = false
-  ) {
-    if (!isContainer || isUpdatePixels) {
-      this.setPixels(rect);
-    }
+  setMainThreshold(key: string, rect: RectDimensions) {
+    this.setPixels(rect);
 
-    this.thresholds[key] = this.getThreshold(rect, isContainer);
+    const { top, left, height, width } = rect;
+
+    this.thresholds[key] = this.getThreshold({
+      top,
+      left,
+      bottom: top + height,
+      right: left + width,
+    });
 
     if (!this.isOut[key]) {
       this.isOut[key] = new AxesFourCoordinatesBool();

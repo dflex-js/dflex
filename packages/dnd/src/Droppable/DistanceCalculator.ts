@@ -235,16 +235,12 @@ class DistanceCalculator implements DistanceCalculatorInterface {
         currentPosition: { x, y },
       } = element;
 
-      this.draggable.threshold.setThreshold(
-        this.draggable.draggedElm.id,
-        {
-          width,
-          height,
-          left: x,
-          top: y,
-        },
-        false
-      );
+      this.draggable.threshold.setMainThreshold(this.draggable.draggedElm.id, {
+        width,
+        height,
+        left: x,
+        top: y,
+      });
     }
 
     emitInteractiveEvent("onDragOver", element);
