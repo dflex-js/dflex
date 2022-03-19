@@ -6,7 +6,7 @@
     "noImplicitReturns": true,
     "strictFunctionTypes": true,
     "strictNullChecks": true,
-    "target": "ES5",
+    "target": "ESNext",
     "module": "CommonJS",
     "sourceMap": false,
     "lib": ["dom", "ESNext"],
