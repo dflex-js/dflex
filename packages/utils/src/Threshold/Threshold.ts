@@ -3,6 +3,7 @@ import {
   AxesCoordinatesInterface,
   AxesFourCoordinatesBool,
 } from "../AxesCoordinates";
+
 import { RectDimensions, RectBoundaries } from "../types";
 import type {
   ThresholdInterface,

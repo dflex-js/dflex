@@ -15,8 +15,8 @@ export type {
   ThresholdPercentages,
 } from "./Threshold";
 
-// export { GridPoint } from "./GridPoint";
-// export type { GridPointInterface } from "./GridPoint";
+export { GridPoint } from "./GridPoint";
+export type { GridPointInterface } from "./GridPoint";
 
 export type {
   RectDimensions,
