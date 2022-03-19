@@ -82,14 +82,27 @@ export type TransitionHistory = {
 }[];
 
 export interface CoreInstanceInterface extends AbstractInterface {
-  isVisible: boolean;
+  /** Initial read-only element offset */
   readonly offset: RectDimensions;
+
+  /** Store history of Y-transition according to unique ID. */
   translateHistory?: AxesCoordinatesInterface<TransitionHistory>;
+
+  /** Current element offset (x-left, y-top) */
   currentPosition: AxesCoordinatesInterface;
+
+  /** Element position in the grid container. */
+  grid: AxesCoordinatesInterface;
+
+  /** Element visibility in the scroll container. */
+  isVisible: boolean;
+
+  /** Animated frame if the element is transforming  */
+  animatedFrame: number | null;
+
   order: Order;
   keys: Keys;
   depth: number;
-  animatedFrame: number | null;
   isPositionedUnder(elmY: number): boolean;
   isPositionedLeft(elmX: number): boolean;
   resume(scrollX: number, scrollY: number): void;
