@@ -391,6 +391,12 @@ class Droppable extends DistanceCalculator {
      * siblings and lock the container.
      */
     if (this.draggable.isLeavingFromHead()) {
+      // move element up
+      this.setEffectedElemDirection(true, this.axes);
+
+      // lock the parent
+      this.lockParent(true);
+
       this.fillHeadUp();
 
       return;
