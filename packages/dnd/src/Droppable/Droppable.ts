@@ -379,18 +379,14 @@ class Droppable extends DistanceCalculator {
     const {
       draggedElm: { id },
       threshold: { isOut },
+      indexPlaceholder,
     } = this.draggable;
-
-    const { SK } = store.registry[id].keys;
 
     /**
      * Leaving from head or tail are enhancement mechanism. Both do move the
      * siblings and lock the container.
      */
-    if (
-      this.draggable.isLeavingFromHead() ||
-      this.draggable.isOutThreshold(SK)
-    ) {
+    if (this.draggable.isLeavingFromHead()) {
       // move element up if it's vertical or fill when it's horizontal.
       this.setEffectedElemDirection(true, this.axes);
 
@@ -415,39 +411,58 @@ class Droppable extends DistanceCalculator {
     /**
      * Going out from the list: Right/left.
      */
-    // if (isOut[id].isOutX()) {
-    //   // move element up
-    //   this.setEffectedElemDirection(true, this.axes);
+    if (isOut[id].isOutX()) {
+      // move element up
+      this.setEffectedElemDirection(true, this.axes);
 
-    //   // lock the parent
-    //   this.lockParent(true);
+      // lock the parent
+      this.lockParent(true);
 
-    //   this.fillHeadUp();
+      this.fillHeadUp();
 
-    //   return;
-    // }
+      return;
+    }
 
     /**
      * Going up/down, switch.
      */
-    const { isLeftFromTop, isLeftFromBottom, isLeftFromRight, isLeftFromLeft } =
-      isOut[id];
+    // const { SK } = store.registry[id].keys;
+    // const siblings = store.getElmSiblingsListById(id) as string[];
+    // const siblingsGrid = store.siblingsGrid[SK];
+    // console.log("file: Droppable.ts ~ line 432 ~ siblingsGrid", siblingsGrid);
 
-    const isIncreaseY: boolean =
-      !isLeftFromTop && (isLeftFromBottom || isLeftFromLeft || isLeftFromRight);
+    // if (isOut[id].isOutY()) {
+    //   this.axes = "y";
+    //   this.setEffectedElemDirection(isOut[id].isLeftFromBottom, "y");
+    // } else {
+    //   this.axes = "x";
+    //   this.setEffectedElemDirection(isOut[id].isLeftFromRight, "x");
 
-    // eslint-disable-next-line no-unused-vars
-    const isIncreaseX: boolean =
-      isLeftFromRight || (!isLeftFromRight && !isLeftFromRight);
+    //   const elmIndex =
+    //     indexPlaceholder + -1 * this.effectedElemDirection[this.axes];
+    //   const elmID = siblings[elmIndex];
+    //   const element = store.registry[elmID];
+    //   console.log(
+    //     "file: Droppable.ts ~ line 445 ~ element",
+    //     element.grid,
+    //     siblingsGrid.column === element.grid.column
+    //   );
 
-    // inside the list, effected should be related to mouse movement
-    this.setEffectedElemDirection(
-      this.axes === "y" ? isIncreaseY : this.draggable.isMovingAwayFrom.x,
-      this.axes
-    );
+    //   if (siblingsGrid.column === element.grid.column) {
+    //     // move element up
+    //     this.setEffectedElemDirection(true, this.axes);
+
+    //     // lock the parent
+    //     this.lockParent(true);
+
+    //     this.fillHeadUp();
+
+    //     console.log("file: Droppable.ts ~ line 445 ~ elements uppppppppppppp");
+    //     return;
+    //   }
+    // }
 
     this.switchElement();
-    console.log("file: Droppable.ts ~ line 444 ~ switchElement");
   }
 
   private lockParent(isOut: boolean) {
