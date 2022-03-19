@@ -1,25 +1,20 @@
+/* eslint-disable max-classes-per-file */
+import { AbstractAxesCoordinates } from "./AbstractAxesCoordinates";
 import type { AxesCoordinatesInterface } from "./types";
 
-class AxesCoordinates<T = number> implements AxesCoordinatesInterface<T> {
+class AxesCoordinates<T = number>
+  extends AbstractAxesCoordinates<T>
+  implements AxesCoordinatesInterface<T>
+{
   x!: T;
 
   y!: T;
 
   constructor(x: T, y: T) {
-    this.setAxes(x, y);
-  }
+    super(x, y);
 
-  setAxes(x: T, y: T) {
-    this.x = x;
-    this.y = y;
-  }
-
-  clone(target: AxesCoordinatesInterface<T>) {
-    this.setAxes(target.x, target.y);
-  }
-
-  isEqual(target: AxesCoordinatesInterface<T>) {
-    return this.x === target.x && this.y === target.y;
+    this.x = this.prop1;
+    this.y = this.prop2;
   }
 }
 
