@@ -380,16 +380,22 @@ class Droppable extends DistanceCalculator {
   }
 
   private draggedOutPosition() {
-    if (this.draggable.isLeavingFromHead()) {
-      /**
-       * If leaving and parent locked, do nothing.
-       */
+    const {
+      draggedElm: { id },
+      threshold: { isOut },
+      // indexPlaceholder,
+    } = this.draggable;
 
-      // move element up if it's vertical or fill when it's horizontal.
+    /**
+     * Leaving from head or tail are enhancement mechanism. Both do move the
+     * siblings and lock the container.
+     */
+    if (this.draggable.isLeavingFromHead()) {
+      // move element up
       this.setEffectedElemDirection(true, this.axes);
 
       // lock the parent
-      this.setDraggedPositionFlagInSiblingsContainer(true);
+      this.lockParent(true);
 
       this.fillHeadUp();
 
@@ -397,11 +403,10 @@ class Droppable extends DistanceCalculator {
     }
 
     if (this.draggable.isLeavingFromTail()) {
-      this.setDraggedPositionFlagInSiblingsContainer(true);
+      this.lockParent(true);
 
       return;
     }
-
     /**
      * normal movement inside the parent
      */
@@ -409,14 +414,14 @@ class Droppable extends DistanceCalculator {
     /**
      * Going out from the list: Right/left.
      */
-    if (this.draggable.threshold.isOut[this.draggable.draggedElm.id].isOutX()) {
+    if (isOut[id].isOutX()) {
       // Is is out parent?
 
       // move element up
       this.setEffectedElemDirection(true, this.axes);
 
       // lock the parent
-      this.setDraggedPositionFlagInSiblingsContainer(true);
+      this.lockParent(true);
 
       this.fillHeadUp();
 
@@ -444,11 +449,7 @@ class Droppable extends DistanceCalculator {
     this.switchElement();
   }
 
-  private setDraggedPositionFlagInSiblingsContainer(isOut: boolean) {
-    if (isOut === this.isDraggedOutContainerEarlyDetection) {
-      return;
-    }
-
+  private lockParent(isOut: boolean) {
     this.isDraggedOutContainerEarlyDetection = isOut;
   }
 
@@ -493,7 +494,7 @@ class Droppable extends DistanceCalculator {
       this.draggable.mousePoints.y = y;
     }
 
-    this.setDraggedPositionFlagInSiblingsContainer(false);
+    this.lockParent(false);
 
     /**
      * Moving element down by setting is up to false

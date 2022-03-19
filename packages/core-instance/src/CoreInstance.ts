@@ -21,14 +21,13 @@ import type {
 } from "./types";
 
 class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
-  /** Initial read-only element offset */
   offset!: RectDimensions;
 
-  /** Store history of Y-transition according to unique ID. */
   translateHistory?: AxesCoordinatesInterface<TransitionHistory>;
 
-  /** Current element offset (x-left, y-top) */
   currentPosition!: AxesCoordinatesInterface;
+
+  grid!: AxesCoordinatesInterface;
 
   order: Order;
 
@@ -93,6 +92,8 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
       this.offset.left,
       this.offset.top
     );
+
+    this.grid = new AxesCoordinates(0, 0);
 
     this.hasToTransform = false;
   }

@@ -1,5 +1,9 @@
-import { AxesCoordinates } from "@dflex/utils";
-import type { RectDimensions, Axes, EffectedElemDirection } from "@dflex/utils";
+import type {
+  AxesCoordinatesInterface,
+  RectDimensions,
+  Axes,
+  EffectedElemDirection,
+} from "@dflex/utils";
 
 export interface AbstractOpts {
   isInitialized: boolean;
@@ -27,7 +31,7 @@ export interface AbstractInterface {
   isPaused: boolean;
   ref: HTMLElement | null;
   id: string;
-  translate: AxesCoordinates;
+  translate: AxesCoordinatesInterface;
   attach(ref: HTMLElement | null): void;
   detach(): void;
   initTranslate(): void;
@@ -78,14 +82,27 @@ export type TransitionHistory = {
 }[];
 
 export interface CoreInstanceInterface extends AbstractInterface {
-  isVisible: boolean;
+  /** Initial read-only element offset */
   readonly offset: RectDimensions;
-  translateHistory?: AxesCoordinates<TransitionHistory>;
-  currentPosition: AxesCoordinates;
+
+  /** Store history of Y-transition according to unique ID. */
+  translateHistory?: AxesCoordinatesInterface<TransitionHistory>;
+
+  /** Current element offset (x-left, y-top) */
+  currentPosition: AxesCoordinatesInterface;
+
+  /** Element position in the grid container. */
+  grid: AxesCoordinatesInterface;
+
+  /** Element visibility in the scroll container. */
+  isVisible: boolean;
+
+  /** Animated frame if the element is transforming  */
+  animatedFrame: number | null;
+
   order: Order;
   keys: Keys;
   depth: number;
-  animatedFrame: number | null;
   isPositionedUnder(elmY: number): boolean;
   isPositionedLeft(elmX: number): boolean;
   resume(scrollX: number, scrollY: number): void;
@@ -93,9 +110,9 @@ export interface CoreInstanceInterface extends AbstractInterface {
   setPosition(
     iDsInOrder: string[],
     effectedElemDirection: EffectedElemDirection,
-    elmSpace: AxesCoordinates,
+    elmSpace: AxesCoordinatesInterface,
     operationID: string,
-    siblingsEmptyElmIndex: AxesCoordinates,
+    siblingsEmptyElmIndex: AxesCoordinatesInterface,
     axes: Axes,
     vIncrement?: number,
     isShuffle?: boolean
