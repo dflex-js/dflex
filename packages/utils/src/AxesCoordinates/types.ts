@@ -1,9 +1,13 @@
-export interface AxesCoordinatesInterface<T = number> {
-  x: T;
-  y: T;
+export interface AbstractCoordinatesInterface<T> {
   setAxes(x: T, y: T): void;
   clone(target: AxesCoordinatesInterface<T>): void;
   isEqual(target: AxesCoordinatesInterface<T>): boolean;
+}
+
+export interface AxesCoordinatesInterface<T = number>
+  extends AbstractCoordinatesInterface<T> {
+  x: T;
+  y: T;
 }
 
 export interface AxesCoordinatesBoolInterface

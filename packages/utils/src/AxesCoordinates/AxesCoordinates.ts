@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import { AbstractAxesCoordinates } from "./AbstractAxesCoordinates";
+import { AbstractAxesCoordinates } from "./AbstractCoordinates";
 import type { AxesCoordinatesInterface } from "./types";
 
 class AxesCoordinates<T = number>

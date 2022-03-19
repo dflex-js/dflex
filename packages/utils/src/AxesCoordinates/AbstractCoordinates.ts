@@ -1,6 +1,11 @@
-import { AxesCoordinatesInterface } from "./types";
+import type {
+  AbstractCoordinatesInterface,
+  AxesCoordinatesInterface,
+} from "./types";
 
-export class AbstractAxesCoordinates<T> {
+export class AbstractAxesCoordinates<T>
+  implements AbstractCoordinatesInterface<T>
+{
   protected prop1!: T;
 
   protected prop2!: T;
