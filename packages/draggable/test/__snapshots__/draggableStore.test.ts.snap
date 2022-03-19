@@ -9,6 +9,10 @@ Object {
       "y": 0,
     },
     "depth": 0,
+    "grid": AxesCoordinates {
+      "x": 0,
+      "y": 0,
+    },
     "hasAttribute": Object {},
     "hasToTransform": false,
     "id": "id-0",
