@@ -1,6 +1,6 @@
 {
   "name": "@dflex/store",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Jalal Maskoun",
@@ -17,8 +17,8 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@dflex/core-instance": "^3.3.0",
-    "@dflex/dom-gen": "^3.3.0"
+    "@dflex/core-instance": "^3.3.1",
+    "@dflex/dom-gen": "^3.3.1"
   },
   "keywords": [
     "drag-drop",
