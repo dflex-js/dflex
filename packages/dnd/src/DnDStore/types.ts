@@ -1,4 +1,8 @@
-import type { RectDimensions, RectBoundaries } from "@dflex/utils";
+import type {
+  RectDimensions,
+  RectBoundaries,
+  AxesCoordinatesInterface,
+} from "@dflex/utils";
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
 import type { RegisterInputMeta } from "@dflex/store";
@@ -57,10 +61,19 @@ interface Translate {
 }
 
 export interface DnDStoreInterface {
-  tracker: TrackerInterface;
+  /** Strict Rect for siblings containers. */
   siblingsBoundaries: { [siblingKey: string]: RectBoundaries };
+
+  /** Numbers of total columns and rows each container has.  */
+  siblingsGrid: { [siblingKey: string]: AxesCoordinatesInterface };
+
+  /** Container scroll instance.  */
   siblingsScrollElement: { [siblingKey: string]: ScrollInterface };
+
+  /** Should be deprecated soon. */
   siblingsAlignment: { [siblingKey: string]: "Horizontal" | "Vertical" };
+
+  tracker: TrackerInterface;
   layoutState: LayoutState;
   onStateChange(state: LayoutState): void;
   emitEvent(event: DraggedEvent): void;
