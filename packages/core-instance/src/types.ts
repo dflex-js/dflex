@@ -91,6 +91,10 @@ export interface CoreInstanceInterface extends AbstractInterface {
   keys: Keys;
   depth: number;
   animatedFrame: number | null;
+  grid: {
+    row: number;
+    column: number;
+  };
   isPositionedUnder(elmY: number): boolean;
   isPositionedLeft(elmX: number): boolean;
   resume(scrollX: number, scrollY: number): void;

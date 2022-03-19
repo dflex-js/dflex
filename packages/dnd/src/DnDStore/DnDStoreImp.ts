@@ -32,6 +32,8 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
   siblingsBoundaries: DnDStoreInterface["siblingsBoundaries"];
 
+  siblingsGrid: DnDStoreInterface["siblingsGrid"];
+
   siblingsScrollElement: DnDStoreInterface["siblingsScrollElement"];
 
   siblingsAlignment: DnDStoreInterface["siblingsAlignment"];
@@ -58,6 +60,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     this.siblingsBoundaries = {};
     this.siblingsScrollElement = {};
     this.siblingsAlignment = {};
+    this.siblingsGrid = {};
 
     this.layoutState = "pending";
 
@@ -148,6 +151,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     }
 
     this.assignSiblingsBoundariesAndAlignment(
+      elmID,
       this.registry[elmID].keys.SK,
       this.registry[elmID].offset!
     );
@@ -362,17 +366,30 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
   }
 
   private assignSiblingsBoundariesAndAlignment(
+    id: string,
     SK: string,
     rect: RectDimensions
   ) {
     const { height, left, top, width } = rect;
 
+    const right = left + width;
+    const bottom = top + height;
+
     if (!this.siblingsBoundaries[SK]) {
       this.siblingsBoundaries[SK] = {
         top,
         left,
-        right: left + width,
-        bottom: top + height,
+        right,
+        bottom,
+      };
+
+      this.siblingsGrid[SK] = {
+        row: 1,
+        column: 1,
+      };
+
+      this.registry[id].grid = {
+        ...this.siblingsGrid[SK],
       };
 
       return;
@@ -382,22 +399,36 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
     let isHorizontal = false;
 
-    if (left < $.left) {
-      $.left = left;
+    // Defining elements in different row.
+    if (bottom > $.bottom || top < $.top) {
+      this.siblingsGrid[SK].row += 1;
     }
 
-    if (left + width > $.right) {
-      isHorizontal = true;
-      $.right = left + width;
+    // Defining elements in different column.
+    if (left > $.right || right < $.left) {
+      this.siblingsGrid[SK].column += 1;
+    }
+
+    this.registry[id].grid = {
+      ...this.siblingsGrid[SK],
+    };
+
+    if (left < $.left) {
+      $.left = left;
     }
 
     if (top < $.top) {
       $.top = top;
     }
 
-    if (top + height > $.bottom) {
+    if (right > $.right) {
+      isHorizontal = true;
+      $.right = right;
+    }
+
+    if (bottom > $.bottom) {
       isHorizontal = false;
-      $.bottom = top + height;
+      $.bottom = bottom;
     }
 
     this.siblingsAlignment[SK] = isHorizontal ? "Horizontal" : "Vertical";

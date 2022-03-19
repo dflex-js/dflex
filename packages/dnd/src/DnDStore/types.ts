@@ -56,10 +56,16 @@ interface Translate {
   translateY: number;
 }
 
+interface GridInterface {
+  row: number;
+  column: number;
+}
+
 export interface DnDStoreInterface {
   tracker: TrackerInterface;
   siblingsBoundaries: { [siblingKey: string]: RectBoundaries };
   siblingsScrollElement: { [siblingKey: string]: ScrollInterface };
+  siblingsGrid: { [siblingKey: string]: GridInterface };
   siblingsAlignment: { [siblingKey: string]: "Horizontal" | "Vertical" };
   layoutState: LayoutState;
   onStateChange(state: LayoutState): void;

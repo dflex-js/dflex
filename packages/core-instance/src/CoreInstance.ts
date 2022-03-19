@@ -30,6 +30,11 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
   /** Current element offset (x-left, y-top) */
   currentPosition!: AxesCoordinatesInterface;
 
+  grid!: {
+    row: number;
+    column: number;
+  };
+
   order: Order;
 
   keys: Keys;
@@ -93,6 +98,11 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
       this.offset.left,
       this.offset.top
     );
+
+    this.grid = {
+      row: 0,
+      column: 0,
+    };
 
     this.hasToTransform = false;
   }
