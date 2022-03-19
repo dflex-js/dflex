@@ -1,4 +1,8 @@
-import type { RectDimensions, RectBoundaries } from "@dflex/utils";
+import type {
+  RectDimensions,
+  RectBoundaries,
+  AxesCoordinatesInterface,
+} from "@dflex/utils";
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
 import type { RegisterInputMeta } from "@dflex/store";
@@ -59,6 +63,7 @@ interface Translate {
 export interface DnDStoreInterface {
   tracker: TrackerInterface;
   siblingsBoundaries: { [siblingKey: string]: RectBoundaries };
+  siblingsGrid: { [siblingKey: string]: AxesCoordinatesInterface };
   siblingsScrollElement: { [siblingKey: string]: ScrollInterface };
   siblingsAlignment: { [siblingKey: string]: "Horizontal" | "Vertical" };
   layoutState: LayoutState;

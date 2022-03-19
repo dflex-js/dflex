@@ -32,6 +32,8 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
   order: Order;
 
+  grid!: AxesCoordinatesInterface;
+
   keys: Keys;
 
   depth: number;
@@ -93,6 +95,8 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
       this.offset.left,
       this.offset.top
     );
+
+    this.grid = new AxesCoordinates(0, 0);
 
     this.hasToTransform = false;
   }

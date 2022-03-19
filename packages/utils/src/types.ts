@@ -26,3 +26,8 @@ export interface Coordinates {
   x: number;
   y: number;
 }
+
+export interface GridPointInterface {
+  row: number;
+  column: number;
+}

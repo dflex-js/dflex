@@ -1,6 +1,7 @@
 import Store from "@dflex/store";
 import type { RectDimensions } from "@dflex/utils";
 
+import { AbstractCoordinates } from "packages/utils/src/AxesCoordinates";
 import type { ElmTree, DnDStoreInterface, RegisterInput } from "./types";
 
 import Scroll from "../Plugins/Scroll";
@@ -34,6 +35,8 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
   siblingsScrollElement: DnDStoreInterface["siblingsScrollElement"];
 
+  siblingsGrid: DnDStoreInterface["siblingsGrid"];
+
   siblingsAlignment: DnDStoreInterface["siblingsAlignment"];
 
   layoutState: DnDStoreInterface["layoutState"];
@@ -58,6 +61,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     this.siblingsBoundaries = {};
     this.siblingsScrollElement = {};
     this.siblingsAlignment = {};
+    this.siblingsGrid = {};
 
     this.layoutState = "pending";
 
@@ -148,6 +152,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     }
 
     this.assignSiblingsBoundariesAndAlignment(
+      elmID,
       this.registry[elmID].keys.SK,
       this.registry[elmID].offset!
     );
@@ -362,17 +367,27 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
   }
 
   private assignSiblingsBoundariesAndAlignment(
+    id: string,
     SK: string,
     rect: RectDimensions
   ) {
     const { height, left, top, width } = rect;
 
+    const right = left + width;
+    const bottom = top + height;
+
     if (!this.siblingsBoundaries[SK]) {
       this.siblingsBoundaries[SK] = {
         top,
         left,
-        right: left + width,
-        bottom: top + height,
+        right,
+        bottom,
+      };
+
+      this.siblingsGrid[SK] = new AbstractCoordinates(1, 1);
+
+      this.registry[id].grid = {
+        ...this.siblingsGrid[SK],
       };
 
       return;
@@ -382,22 +397,36 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
     let isHorizontal = false;
 
-    if (left < $.left) {
-      $.left = left;
+    // Defining elements in different row.
+    if (bottom > $.bottom || top < $.top) {
+      this.siblingsGrid[SK].y += 1;
     }
 
-    if (left + width > $.right) {
-      isHorizontal = true;
-      $.right = left + width;
+    // Defining elements in different column.
+    if (left > $.right || right < $.left) {
+      this.siblingsGrid[SK].x += 1;
+    }
+
+    this.registry[id].grid = {
+      ...this.siblingsGrid[SK],
+    };
+
+    if (left < $.left) {
+      $.left = left;
     }
 
     if (top < $.top) {
       $.top = top;
     }
 
-    if (top + height > $.bottom) {
+    if (right > $.right) {
+      isHorizontal = true;
+      $.right = right;
+    }
+
+    if (bottom > $.bottom) {
       isHorizontal = false;
-      $.bottom = top + height;
+      $.bottom = bottom;
     }
 
     this.siblingsAlignment[SK] = isHorizontal ? "Horizontal" : "Vertical";

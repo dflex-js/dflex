@@ -87,6 +87,7 @@ export interface CoreInstanceInterface extends AbstractInterface {
   translateHistory?: AxesCoordinatesInterface<TransitionHistory>;
   currentPosition: AxesCoordinatesInterface;
   order: Order;
+  grid: AxesCoordinatesInterface;
   keys: Keys;
   depth: number;
   animatedFrame: number | null;
