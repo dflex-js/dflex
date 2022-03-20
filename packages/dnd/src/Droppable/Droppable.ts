@@ -383,7 +383,7 @@ class Droppable extends DistanceCalculator {
     const {
       draggedElm: { id },
       threshold: { isOut },
-      // indexPlaceholder,
+      gridPlaceholder,
     } = this.draggable;
 
     /**
@@ -407,46 +407,71 @@ class Droppable extends DistanceCalculator {
 
       return;
     }
+
     /**
-     * normal movement inside the parent
+     * Normal movement inside the container.
      */
 
     /**
-     * Going out from the list: Right/left.
+     * Going up/down, switch.
      */
-    if (isOut[id].isOutX()) {
-      // Is is out parent?
+    const { SK } = store.registry[id].keys;
+    const siblingsGrid = store.siblingsGrid[SK];
 
-      // move element up
-      this.setEffectedElemDirection(true, this.axes);
+    if (isOut[id].isOutY()) {
+      const newCol = isOut[id].isLeftFromBottom
+        ? gridPlaceholder.y + 1
+        : gridPlaceholder.y - 1;
 
-      // lock the parent
-      this.lockParent(true);
+      console.log(
+        "file: Droppable.ts ~ line 436 ~ newRow < 0 || newRow > siblingsGrid.x",
+        newCol,
+        siblingsGrid.y
+      );
+      if (newCol < 0 || newCol > siblingsGrid.y) {
+        this.axes = "x";
 
-      this.fillHeadUp();
+        // lock the parent
+        this.lockParent(true);
 
-      return;
+        return;
+      }
+
+      this.axes = "y";
+
+      this.setEffectedElemDirection(isOut[id].isLeftFromBottom, this.axes);
+
+      this.switchElement();
+    } else {
+      const newRow = isOut[id].isLeftFromRight
+        ? gridPlaceholder.x + 1
+        : gridPlaceholder.x - 1;
+
+      console.log(
+        "file: Droppable.ts ~ line 436 ~ newRow < 0 || newRow > siblingsGrid.x",
+        newRow,
+        siblingsGrid.x
+      );
+      if (newRow < 0 || newRow > siblingsGrid.x) {
+        this.axes = "y";
+
+        // move element up
+        this.setEffectedElemDirection(true, this.axes);
+
+        // lock the parent
+        this.lockParent(true);
+
+        this.fillHeadUp();
+
+        return;
+      }
+
+      this.axes = "x";
+
+      this.setEffectedElemDirection(isOut[id].isLeftFromRight, this.axes);
+
+      this.switchElement();
     }
-
-    /**
-     * Normal state, switch.
-     */
-
-    const isLeftUp: boolean =
-      this.draggable.threshold.isOut[this.draggable.draggedElm.id]
-        .isLeftFromBottom ||
-      (!this.draggable.threshold.isOut[this.draggable.draggedElm.id]
-        .isLeftFromTop &&
-        !this.draggable.threshold.isOut[this.draggable.draggedElm.id]
-          .isLeftFromBottom);
-
-    // inside the list, effected should be related to mouse movement
-    this.setEffectedElemDirection(
-      this.axes === "y" ? isLeftUp : this.draggable.isMovingAwayFrom.x,
-      this.axes
-    );
-
-    this.switchElement();
   }
 
   private lockParent(isOut: boolean) {

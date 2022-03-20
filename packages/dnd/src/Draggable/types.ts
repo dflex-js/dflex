@@ -41,6 +41,8 @@ export interface DraggableAxesInterface
   /** Temporary index for dragged  */
   readonly indexPlaceholder: number;
 
+  gridPlaceholder: AxesCoordinatesInterface;
+
   /** Previous X and Y are used to calculate mouse directions. */
   readonly mousePoints: AxesCoordinatesInterface;
 

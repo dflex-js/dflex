@@ -24,6 +24,8 @@ class DraggableAxes
 
   indexPlaceholder: number;
 
+  gridPlaceholder: AxesCoordinatesInterface;
+
   positionPlaceholder: AxesCoordinatesInterface;
 
   threshold: ThresholdInterface;
@@ -107,6 +109,11 @@ class DraggableAxes
     this.positionPlaceholder = new AxesCoordinates(
       currentPosition.x,
       currentPosition.y
+    );
+
+    this.gridPlaceholder = new AxesCoordinates(
+      this.draggedElm.grid.x,
+      this.draggedElm.grid.y
     );
 
     this.mousePoints = new AxesCoordinates(x, y);
