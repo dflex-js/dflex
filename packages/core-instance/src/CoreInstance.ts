@@ -273,6 +273,8 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
       effectedElemDirection[axes] * numberOfPassedElm
     );
 
+    this.grid[axes] += effectedElemDirection[axes] * numberOfPassedElm;
+
     const newStatusSiblingsHasEmptyElm = this.assignNewPosition(
       iDsInOrder,
       newIndex,
