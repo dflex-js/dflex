@@ -88,16 +88,18 @@ export interface CoreInstanceInterface extends AbstractInterface {
   /** Current element offset (x-left, y-top) */
   currentPosition: IPointNum;
 
-  /** Element position in the grid container. */
-  grid: IPointNum;
-
   /** Element visibility in the scroll container. */
   isVisible: boolean;
 
   /** Animated frame if the element is transforming  */
   animatedFrame: number | null;
 
+  /** Element position in the grid container. */
+  grid: IPointNum;
+
+  /** Order in the container pipe with two reference to self/parent. */
   readonly order: Order;
+
   readonly keys: Keys;
   readonly depth: number;
 
