@@ -1,8 +1,4 @@
-import type {
-  RectDimensions,
-  RectBoundaries,
-  AxesCoordinatesInterface,
-} from "@dflex/utils";
+import type { RectDimensions, RectBoundaries, IPointNum } from "@dflex/utils";
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
 import type { RegisterInputMeta } from "@dflex/store";
@@ -65,7 +61,7 @@ export interface DnDStoreInterface {
   siblingsBoundaries: { [siblingKey: string]: RectBoundaries };
 
   /** Numbers of total columns and rows each container has.  */
-  siblingsGrid: { [siblingKey: string]: AxesCoordinatesInterface };
+  siblingsGrid: { [siblingKey: string]: IPointNum };
 
   /** Container scroll instance.  */
   siblingsScrollElement: { [siblingKey: string]: ScrollInterface };

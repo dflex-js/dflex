@@ -1,5 +1,5 @@
 import type { AbstractCoreInterface } from "@dflex/core-instance";
-import type { AxesCoordinatesInterface } from "@dflex/utils";
+import type { IPointNum } from "@dflex/utils";
 
 export interface Coordinates {
   x: number;
@@ -45,7 +45,7 @@ export interface AbstractDraggableInterface<T extends AbstractCoreInterface> {
    * equating: initX = X. Taking into considerations translate value.
    *
    */
-  outerOffset: AxesCoordinatesInterface;
-  translatePlaceholder: AxesCoordinatesInterface;
+  outerOffset: IPointNum;
+  translatePlaceholder: IPointNum;
   changeStyle(style: DraggedStyle, shouldAddPosition: boolean): void;
 }

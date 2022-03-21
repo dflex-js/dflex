@@ -1,6 +1,6 @@
 import type { AbstractCoreInterface } from "@dflex/core-instance";
-import { AxesCoordinates } from "@dflex/utils";
-import type { AxesCoordinatesInterface } from "@dflex/utils";
+import { PointNum } from "@dflex/utils";
+import type { IPointNum } from "@dflex/utils";
 
 import type {
   AbstractDraggableInterface,
@@ -23,9 +23,9 @@ class AbstractDraggable<T extends AbstractCoreInterface>
    * equating: initX = X. Taking into considerations translate value.
    *
    */
-  outerOffset: AxesCoordinatesInterface;
+  outerOffset: IPointNum;
 
-  translatePlaceholder: AxesCoordinatesInterface;
+  translatePlaceholder: IPointNum;
 
   static draggedStyle: DraggedStyle = [
     {
@@ -61,12 +61,9 @@ class AbstractDraggable<T extends AbstractCoreInterface>
 
     const { translate } = this.draggedElm;
 
-    this.outerOffset = new AxesCoordinates(
-      -initX + translate.x,
-      -initY + translate.y
-    );
+    this.outerOffset = new PointNum(-initX + translate.x, -initY + translate.y);
 
-    this.translatePlaceholder = new AxesCoordinates(0, 0);
+    this.translatePlaceholder = new PointNum(0, 0);
 
     this.setDragged(true);
   }

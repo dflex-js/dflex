@@ -1,6 +1,6 @@
 import Store from "@dflex/store";
 
-import { AxesCoordinates } from "@dflex/utils";
+import { PointNum } from "@dflex/utils";
 import type { RectDimensions } from "@dflex/utils";
 
 import type { ElmTree, DnDStoreInterface, RegisterInput } from "./types";
@@ -385,7 +385,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
         bottom,
       };
 
-      this.siblingsGrid[SK] = new AxesCoordinates(1, 1);
+      this.siblingsGrid[SK] = new PointNum(1, 1);
 
       this.registry[id].grid.clone(this.siblingsGrid[SK]);
 

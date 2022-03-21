@@ -1,12 +1,8 @@
 import { AbstractDraggable } from "@dflex/draggable";
 import type { Coordinates } from "@dflex/draggable";
 
-import { Threshold, AxesCoordinates, AxesCoordinatesBool } from "@dflex/utils";
-import type {
-  ThresholdInterface,
-  AxesCoordinatesInterface,
-  AxesCoordinatesBoolInterface,
-} from "@dflex/utils";
+import { Threshold, PointNum, PointBool } from "@dflex/utils";
+import type { ThresholdInterface, IPointNum, IPointBool } from "@dflex/utils";
 
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
@@ -24,17 +20,17 @@ class DraggableAxes
 
   indexPlaceholder: number;
 
-  positionPlaceholder: AxesCoordinatesInterface;
+  positionPlaceholder: IPointNum;
 
   threshold: ThresholdInterface;
 
   isViewportRestricted: boolean;
 
-  innerOffset: AxesCoordinatesInterface;
+  innerOffset: IPointNum;
 
-  mousePoints: AxesCoordinatesInterface;
+  mousePoints: IPointNum;
 
-  isMovingAwayFrom: AxesCoordinatesBoolInterface;
+  isMovingAwayFrom: IPointBool;
 
   private axesFilterNeeded: boolean;
 
@@ -85,14 +81,14 @@ class DraggableAxes
       this.threshold.setContainerThreshold(SK, siblingsBoundaries);
     }
 
-    this.isMovingAwayFrom = new AxesCoordinatesBool(false, false);
+    this.isMovingAwayFrom = new PointBool(false, false);
 
     const { x, y } = initCoordinates;
 
     this.initY = y;
     this.initX = x;
 
-    this.innerOffset = new AxesCoordinates(
+    this.innerOffset = new PointNum(
       Math.round(x - this.draggedElm.currentPosition.x),
       Math.round(y - this.draggedElm.currentPosition.y)
     );
@@ -104,12 +100,12 @@ class DraggableAxes
     const lm = Math.round(parseFloat(style.marginLeft));
     this.marginX = rm + lm;
 
-    this.positionPlaceholder = new AxesCoordinates(
+    this.positionPlaceholder = new PointNum(
       currentPosition.x,
       currentPosition.y
     );
 
-    this.mousePoints = new AxesCoordinates(x, y);
+    this.mousePoints = new PointNum(x, y);
 
     this.restrictions = opts.restrictions;
 

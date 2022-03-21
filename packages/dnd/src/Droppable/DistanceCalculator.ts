@@ -1,8 +1,8 @@
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
-import { AxesCoordinates } from "@dflex/utils";
+import { PointNum } from "@dflex/utils";
 import type {
-  AxesCoordinatesInterface,
+  IPointNum,
   Direction,
   EffectedElemDirection,
   Axes,
@@ -44,13 +44,13 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
   protected effectedElemDirection: EffectedElemDirection;
 
-  private elmTransition: AxesCoordinatesInterface;
+  private elmTransition: IPointNum;
 
-  private draggedOffset: AxesCoordinatesInterface;
+  private draggedOffset: IPointNum;
 
-  private draggedAccumulatedTransition: AxesCoordinatesInterface;
+  private draggedAccumulatedTransition: IPointNum;
 
-  private siblingsEmptyElmIndex: AxesCoordinatesInterface;
+  private siblingsEmptyElmIndex: IPointNum;
 
   /** Isolated form the threshold and predict is-out based on the controllers */
   protected isDraggedOutContainerEarlyDetection: boolean;
@@ -61,16 +61,16 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     /**
      * Next element calculated transition space.
      */
-    this.elmTransition = new AxesCoordinates(0, 0);
+    this.elmTransition = new PointNum(0, 0);
 
     /**
      * Same as elmTransition but for dragged.
      */
-    this.draggedOffset = new AxesCoordinates(0, 0);
+    this.draggedOffset = new PointNum(0, 0);
 
-    this.draggedAccumulatedTransition = new AxesCoordinates(0, 0);
+    this.draggedAccumulatedTransition = new PointNum(0, 0);
 
-    this.siblingsEmptyElmIndex = new AxesCoordinates(-1, -1);
+    this.siblingsEmptyElmIndex = new PointNum(-1, -1);
 
     /**
      * Elements effected by dragged direction.

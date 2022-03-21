@@ -1,12 +1,13 @@
 /* eslint-disable no-param-reassign */
 
-import { AxesCoordinates } from "@dflex/utils";
+import { Point, PointNum } from "@dflex/utils";
 
 import type {
   RectDimensions,
   EffectedElemDirection,
   Axes,
-  AxesCoordinatesInterface,
+  IPoint,
+  IPointNum,
 } from "@dflex/utils";
 
 import AbstractInstance from "./AbstractInstance";
@@ -23,9 +24,9 @@ import type {
 class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
   offset!: RectDimensions;
 
-  currentPosition!: AxesCoordinatesInterface;
+  currentPosition!: IPointNum;
 
-  grid!: AxesCoordinatesInterface;
+  grid!: IPointNum;
 
   order: Order;
 
@@ -39,7 +40,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
   animatedFrame: number | null;
 
-  #translateHistory?: AxesCoordinatesInterface<TransitionHistory>;
+  #translateHistory?: IPoint<TransitionHistory>;
 
   constructor(eleWithPointer: CoreInput, opts: AbstractOpts) {
     const { order, keys, depth, scrollX, scrollY, ...element } = eleWithPointer;
@@ -79,12 +80,9 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
       top: top + scrollY,
     };
 
-    this.currentPosition = new AxesCoordinates(
-      this.offset.left,
-      this.offset.top
-    );
+    this.currentPosition = new PointNum(this.offset.left, this.offset.top);
 
-    this.grid = new AxesCoordinates(0, 0);
+    this.grid = new PointNum(0, 0);
 
     this.hasToTransform = false;
   }
@@ -223,8 +221,8 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
       if (!this.#translateHistory) {
         this.#translateHistory =
           axes === "x"
-            ? new AxesCoordinates([elmAxesHistory], [])
-            : new AxesCoordinates([], [elmAxesHistory]);
+            ? new Point([elmAxesHistory], [])
+            : new Point([], [elmAxesHistory]);
       } else {
         this.#translateHistory[axes].push(elmAxesHistory);
       }
@@ -259,9 +257,9 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
   setPosition(
     iDsInOrder: string[],
     effectedElemDirection: EffectedElemDirection,
-    elmSpace: AxesCoordinates,
+    elmSpace: PointNum,
     operationID: string,
-    siblingsEmptyElmIndex: AxesCoordinates,
+    siblingsEmptyElmIndex: PointNum,
     axes: Axes,
     numberOfPassedElm = 1,
     isShuffle = true

@@ -1,8 +1,8 @@
 import type {
-  AxesCoordinatesInterface,
   RectDimensions,
   Axes,
   EffectedElemDirection,
+  IPointNum,
 } from "@dflex/utils";
 
 export interface AbstractOpts {
@@ -31,7 +31,7 @@ export interface AbstractInterface {
   isPaused: boolean;
   ref: HTMLElement | null;
   id: string;
-  translate: AxesCoordinatesInterface;
+  translate: IPointNum;
   attach(ref: HTMLElement | null): void;
   detach(): void;
   initTranslate(): void;
@@ -86,10 +86,10 @@ export interface CoreInstanceInterface extends AbstractInterface {
   readonly offset: RectDimensions;
 
   /** Current element offset (x-left, y-top) */
-  currentPosition: AxesCoordinatesInterface;
+  currentPosition: IPointNum;
 
   /** Element position in the grid container. */
-  grid: AxesCoordinatesInterface;
+  grid: IPointNum;
 
   /** Element visibility in the scroll container. */
   isVisible: boolean;
@@ -107,9 +107,9 @@ export interface CoreInstanceInterface extends AbstractInterface {
   setPosition(
     iDsInOrder: string[],
     effectedElemDirection: EffectedElemDirection,
-    elmSpace: AxesCoordinatesInterface,
+    elmSpace: IPointNum,
     operationID: string,
-    siblingsEmptyElmIndex: AxesCoordinatesInterface,
+    siblingsEmptyElmIndex: IPointNum,
     axes: Axes,
     vIncrement?: number,
     isShuffle?: boolean

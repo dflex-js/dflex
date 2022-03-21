@@ -1,5 +1,5 @@
-import { AxesCoordinates } from "@dflex/utils";
-import type { AxesCoordinatesInterface } from "@dflex/utils";
+import { PointNum } from "@dflex/utils";
+import type { IPointNum } from "@dflex/utils";
 
 import type {
   AbstractInterface,
@@ -15,7 +15,7 @@ class AbstractInstance implements AbstractInterface {
 
   id: string;
 
-  translate!: AxesCoordinatesInterface;
+  translate!: IPointNum;
 
   isInitialized!: boolean;
 
@@ -89,7 +89,7 @@ class AbstractInstance implements AbstractInterface {
    */
   initTranslate() {
     if (!this.translate) {
-      this.translate = new AxesCoordinates(0, 0);
+      this.translate = new PointNum(0, 0);
 
       // @ts-expect-error - Just for initialization.
       this.hasAttribute = {};

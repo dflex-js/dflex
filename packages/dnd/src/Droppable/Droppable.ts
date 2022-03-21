@@ -1,5 +1,5 @@
-import { AxesCoordinates } from "@dflex/utils";
-import type { Axes, AxesCoordinatesInterface } from "@dflex/utils";
+import { PointNum } from "@dflex/utils";
+import type { Axes, IPointNum } from "@dflex/utils";
 import type { DraggedEvent, SiblingsEvent } from "../types";
 
 import store from "../DnDStore";
@@ -66,7 +66,7 @@ function isIDEligible2Move(
 class Droppable extends DistanceCalculator {
   private leftAtIndex: number;
 
-  private preserveLastElmOffset?: AxesCoordinatesInterface;
+  private preserveLastElmOffset?: IPointNum;
 
   private scrollAnimatedFrame: number | null;
 
@@ -198,7 +198,7 @@ class Droppable extends DistanceCalculator {
       }
     }
 
-    this.preserveLastElmOffset = new AxesCoordinates(currentLeft, currentTop);
+    this.preserveLastElmOffset = new PointNum(currentLeft, currentTop);
   }
 
   private checkIfDraggedIsLastElm() {

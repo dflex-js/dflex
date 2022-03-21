@@ -1,8 +1,6 @@
-import {
-  AxesCoordinates,
-  AxesCoordinatesInterface,
-  AxesFourCoordinatesBool,
-} from "../AxesCoordinates";
+import { PointNum, AxesFourCoordinatesBool } from "../AxesCoordinates";
+import type { IPointNum } from "../AxesCoordinates/types";
+
 import { RectDimensions, RectBoundaries } from "../types";
 import type {
   ThresholdInterface,
@@ -14,7 +12,7 @@ import type {
 class Threshold implements ThresholdInterface {
   thresholds: ThresholdsStore;
 
-  #pixels!: AxesCoordinatesInterface;
+  #pixels!: IPointNum;
 
   #percentages: ThresholdPercentages;
 
@@ -31,7 +29,7 @@ class Threshold implements ThresholdInterface {
     const x = Math.round((this.#percentages.horizontal * width) / 100);
     const y = Math.round((this.#percentages.vertical * height) / 100);
 
-    this.#pixels = new AxesCoordinates(x, y);
+    this.#pixels = new PointNum(x, y);
   }
 
   #initIndicators(key: string) {
