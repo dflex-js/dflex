@@ -275,7 +275,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
     this.grid[axes] += effectedElemDirection[axes] * numberOfPassedElm;
 
-    if (this.grid[axes] !== newIndex) {
+    if (this.grid[axes] !== newIndex + 1) {
       throw new Error(
         `Illegal Attempt in Grid: ${this.grid[axes]} !== ${newIndex}`
       );
@@ -324,7 +324,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
     this.grid[axes] += newIndex * increment;
 
-    if (this.grid[axes] !== newIndex) {
+    if (this.grid[axes] !== newIndex + 1) {
       throw new Error(
         `Illegal Attempt in Grid: ${this.grid[axes]} !== ${newIndex}`
       );
