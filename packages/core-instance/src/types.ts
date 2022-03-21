@@ -85,9 +85,6 @@ export interface CoreInstanceInterface extends AbstractInterface {
   /** Initial read-only element offset */
   readonly offset: RectDimensions;
 
-  /** Store history of Y-transition according to unique ID. */
-  translateHistory?: AxesCoordinatesInterface<TransitionHistory>;
-
   /** Current element offset (x-left, y-top) */
   currentPosition: AxesCoordinatesInterface;
 

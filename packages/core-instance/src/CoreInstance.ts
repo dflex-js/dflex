@@ -23,8 +23,6 @@ import type {
 class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
   offset!: RectDimensions;
 
-  translateHistory?: AxesCoordinatesInterface<TransitionHistory>;
-
   currentPosition!: AxesCoordinatesInterface;
 
   grid!: AxesCoordinatesInterface;
@@ -41,9 +39,10 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
   animatedFrame: number | null;
 
-  constructor(elementWithPointer: CoreInput, opts: AbstractOpts) {
-    const { order, keys, depth, scrollX, scrollY, ...element } =
-      elementWithPointer;
+  #translateHistory?: AxesCoordinatesInterface<TransitionHistory>;
+
+  constructor(eleWithPointer: CoreInput, opts: AbstractOpts) {
+    const { order, keys, depth, scrollX, scrollY, ...element } = eleWithPointer;
 
     super(element, opts);
 
@@ -221,13 +220,13 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
         pre: this.translate[axes],
       };
 
-      if (!this.translateHistory) {
-        this.translateHistory =
+      if (!this.#translateHistory) {
+        this.#translateHistory =
           axes === "x"
             ? new AxesCoordinates([elmAxesHistory], [])
             : new AxesCoordinates([], [elmAxesHistory]);
       } else {
-        this.translateHistory[axes].push(elmAxesHistory);
+        this.#translateHistory[axes].push(elmAxesHistory);
       }
     }
 
@@ -298,16 +297,16 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
    */
   rollBack(operationID: string, isForceTransform: boolean, axes: Axes) {
     if (
-      !this.translateHistory ||
-      !this.translateHistory[axes] ||
-      this.translateHistory[axes].length === 0 ||
-      this.translateHistory[axes][this.translateHistory[axes].length - 1].ID !==
-        operationID
+      !this.#translateHistory ||
+      !this.#translateHistory[axes] ||
+      this.#translateHistory[axes].length === 0 ||
+      this.#translateHistory[axes][this.#translateHistory[axes].length - 1]
+        .ID !== operationID
     ) {
       return;
     }
 
-    const lastMovement = this.translateHistory[axes].pop();
+    const lastMovement = this.#translateHistory[axes].pop();
 
     if (!lastMovement) return;
 
