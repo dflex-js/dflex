@@ -97,9 +97,10 @@ export interface CoreInstanceInterface extends AbstractInterface {
   /** Animated frame if the element is transforming  */
   animatedFrame: number | null;
 
-  order: Order;
-  keys: Keys;
-  depth: number;
+  readonly order: Order;
+  readonly keys: Keys;
+  readonly depth: number;
+
   isPositionedUnder(elmY: number): boolean;
   isPositionedLeft(elmX: number): boolean;
   resume(scrollX: number, scrollY: number): void;
