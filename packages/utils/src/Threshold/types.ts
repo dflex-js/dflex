@@ -1,4 +1,4 @@
-import { AxesFourCoordinatesBool } from "../AxesCoordinates";
+import { AxesFourCoordinatesBool } from "../Point";
 import type { RectBoundaries, RectDimensions } from "../types";
 
 export interface ThresholdPercentages {

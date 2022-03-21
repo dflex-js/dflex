@@ -1,5 +1,5 @@
-import { PointNum, AxesFourCoordinatesBool } from "../AxesCoordinates";
-import type { IPointNum } from "../AxesCoordinates/types";
+import { PointNum, AxesFourCoordinatesBool } from "../Point";
+import type { IPointNum } from "../Point/types";
 
 import { RectDimensions, RectBoundaries } from "../types";
 import type {
