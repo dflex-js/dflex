@@ -1,4 +1,4 @@
-import Point from "./AxesCoordinates";
+import Point from "./Point";
 
 class PointNum extends Point<number> {
   increase(x: number, y: number) {

@@ -1,4 +1,4 @@
-import Point from "./AxesCoordinates";
+import Point from "./Point";
 import type { IPointBool } from "./types";
 
 class PointBool extends Point<boolean> implements IPointBool {
