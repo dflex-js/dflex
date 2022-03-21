@@ -1,10 +1,7 @@
-import AxesCoordinates from "./AxesCoordinates";
-import type { AxesCoordinatesBoolInterface } from "./types";
+import Point from "./AxesCoordinates";
+import type { IPointBool } from "./types";
 
-class AxesCoordinatesBool
-  extends AxesCoordinates<boolean>
-  implements AxesCoordinatesBoolInterface
-{
+class PointBool extends Point<boolean> implements IPointBool {
   isOneTruthy() {
     return this.x || this.y;
   }
@@ -19,4 +16,4 @@ class AxesCoordinatesBool
   }
 }
 
-export default AxesCoordinatesBool;
+export default PointBool;

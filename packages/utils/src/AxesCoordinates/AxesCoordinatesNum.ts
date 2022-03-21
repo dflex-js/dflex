@@ -1,6 +1,6 @@
-import AxesCoordinates from "./AxesCoordinates";
+import Point from "./AxesCoordinates";
 
-class AxesCoordinatesNum extends AxesCoordinates<number> {
+class PointNum extends Point<number> {
   increase(x: number, y: number) {
     this.x += x;
     this.y += y;
@@ -12,4 +12,4 @@ class AxesCoordinatesNum extends AxesCoordinates<number> {
   }
 }
 
-export default AxesCoordinatesNum;
+export default PointNum;

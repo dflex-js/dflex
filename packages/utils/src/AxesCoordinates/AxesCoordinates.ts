@@ -1,6 +1,6 @@
-import type { AxesCoordinatesInterface } from "./types";
+import type { IPoint } from "./types";
 
-class AxesCoordinates<T = number> implements AxesCoordinatesInterface<T> {
+class Point<T = number> implements IPoint<T> {
   x!: T;
 
   y!: T;
@@ -14,13 +14,13 @@ class AxesCoordinates<T = number> implements AxesCoordinatesInterface<T> {
     this.y = y;
   }
 
-  clone(target: AxesCoordinatesInterface<T>) {
+  clone(target: IPoint<T>) {
     this.setAxes(target.x, target.y);
   }
 
-  isEqual(target: AxesCoordinatesInterface<T>) {
+  isEqual(target: IPoint<T>) {
     return this.x === target.x && this.y === target.y;
   }
 }
 
-export default AxesCoordinates;
+export default Point;

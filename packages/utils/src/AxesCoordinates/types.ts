@@ -1,19 +1,17 @@
-export interface AxesCoordinatesInterface<T = number> {
+export interface IPoint<T = number> {
   x: T;
   y: T;
   setAxes(x: T, y: T): void;
-  clone(target: AxesCoordinatesInterface<T>): void;
-  isEqual(target: AxesCoordinatesInterface<T>): boolean;
+  clone(target: IPoint<T>): void;
+  isEqual(target: IPoint<T>): boolean;
 }
 
-export interface AxesCoordinatesNumInterface
-  extends AxesCoordinatesInterface<number> {
+export interface IPointNum extends IPoint<number> {
   increase(x: number, y: number): void;
   decrease(x: number, y: number): void;
 }
 
-export interface AxesCoordinatesBoolInterface
-  extends AxesCoordinatesInterface<boolean> {
+export interface IPointBool extends IPoint<boolean> {
   /** True when one of the axes is true. */
   isOneTruthy(): boolean;
   /** True if both axes are false. */
