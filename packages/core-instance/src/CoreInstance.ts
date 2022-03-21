@@ -275,6 +275,12 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
     this.grid[axes] += effectedElemDirection[axes] * numberOfPassedElm;
 
+    if (this.grid[axes] !== newIndex) {
+      throw new Error(
+        `Illegal Attempt in Grid: ${this.grid[axes]} !== ${newIndex}`
+      );
+    }
+
     const newStatusSiblingsHasEmptyElm = this.assignNewPosition(
       iDsInOrder,
       newIndex,
@@ -317,6 +323,12 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     const { newIndex } = this.#updateOrderIndexing(increment);
 
     this.grid[axes] += newIndex * increment;
+
+    if (this.grid[axes] !== newIndex) {
+      throw new Error(
+        `Illegal Attempt in Grid: ${this.grid[axes]} !== ${newIndex}`
+      );
+    }
 
     this.setDataset("index", newIndex);
 

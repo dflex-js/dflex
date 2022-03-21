@@ -38,6 +38,8 @@ export interface DraggableAxesInterface
   /** Dragged position for both X and Y.  */
   readonly positionPlaceholder: IPointNum;
 
+  readonly gridPlaceholder: IPointNum;
+
   /** Temporary index for dragged  */
   readonly indexPlaceholder: number;
 

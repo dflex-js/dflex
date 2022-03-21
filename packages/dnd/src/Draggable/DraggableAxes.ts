@@ -20,6 +20,8 @@ class DraggableAxes
 
   indexPlaceholder: number;
 
+  gridPlaceholder: IPointNum;
+
   positionPlaceholder: IPointNum;
 
   threshold: ThresholdInterface;
@@ -51,9 +53,10 @@ class DraggableAxes
 
     this.isLayoutStateUpdated = false;
 
-    const { order } = element;
+    const { order, grid } = element;
 
     this.indexPlaceholder = order.self;
+    this.gridPlaceholder = new PointNum(grid.x, grid.y);
 
     const { SK } = store.registry[id].keys;
 
