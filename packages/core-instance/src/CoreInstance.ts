@@ -88,10 +88,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
   }
 
   #updateCurrentIndicators(leftSpace: number, topSpace: number) {
-    this.translate.setAxes(
-      this.translate.x + leftSpace,
-      this.translate.y + topSpace
-    );
+    this.translate.increase(leftSpace, topSpace);
 
     const { left, top } = this.offset!;
 
@@ -295,16 +292,14 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
    */
   rollBack(operationID: string, isForceTransform: boolean, axes: Axes) {
     if (
-      !this.#translateHistory ||
-      !this.#translateHistory[axes] ||
-      this.#translateHistory[axes].length === 0 ||
-      this.#translateHistory[axes][this.#translateHistory[axes].length - 1]
+      this.#translateHistory![axes].length === 0 ||
+      this.#translateHistory![axes][this.#translateHistory![axes].length - 1]
         .ID !== operationID
     ) {
       return;
     }
 
-    const lastMovement = this.#translateHistory[axes].pop();
+    const lastMovement = this.#translateHistory![axes].pop();
 
     if (!lastMovement) return;
 
