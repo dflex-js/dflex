@@ -487,9 +487,7 @@ class Droppable extends DistanceCalculator {
       }
 
       this.draggable.updateDraggedIndexPlaceholder(to);
-      this.draggable.positionPlaceholder.clone(
-        store.registry[siblings![to]].grid
-      );
+      this.draggable.gridPlaceholder.clone(store.registry[siblings![to]].grid);
 
       /**
        * Last prevY update when leaving the parent container. When we have
