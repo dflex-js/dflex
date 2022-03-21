@@ -1186,13 +1186,6 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
-"@dflex/core-instance@^3.3.1":
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/@dflex/core-instance/-/core-instance-3.3.1.tgz#eefa810b1a8fba52786d62fc3e6547b154beb4f1"
-  integrity sha512-GBJC9LAgHEfAp4h7ipEYnHA3PbXDK+eDa0wjzgscwUan21Vu4pwOS9kzrhGzkf3ReTsvd6qkF7wzGexBXOlJHQ==
-  dependencies:
-    "@dflex/utils" "^3.3.1"
-
 "@eslint/eslintrc@^1.0.5", "@eslint/eslintrc@^1.2.1":
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-1.2.1.tgz#8b5e1c49f4077235516bc9ec7d41378c0f69b8c6"
