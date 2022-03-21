@@ -316,6 +316,8 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
     const { newIndex } = this.#updateOrderIndexing(increment);
 
+    this.grid[axes] += newIndex * increment;
+
     this.setDataset("index", newIndex);
 
     this.rollBack(operationID, isForceTransform, axes);
