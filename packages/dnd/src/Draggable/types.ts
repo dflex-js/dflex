@@ -38,10 +38,11 @@ export interface DraggableAxesInterface
   /** Dragged position for both X and Y.  */
   readonly positionPlaceholder: IPointNum;
 
-  readonly gridPlaceholder: IPointNum;
-
-  /** Temporary index for dragged  */
+  /** Index placeholder for dragged index inside the order pipe. */
   readonly indexPlaceholder: number;
+
+  /** grid placeholder for dragged grid position. */
+  readonly gridPlaceholder: IPointNum;
 
   /** Previous X and Y are used to calculate mouse directions. */
   readonly mousePoints: IPointNum;
@@ -89,7 +90,7 @@ export interface DraggableInteractiveInterface extends DraggableAxesInterface {
   readonly occupiedTranslate: IPointNum;
   readonly numberOfElementsTransformed: number;
   readonly isDraggedPositionFixed: boolean;
-  setDraggedTempIndex(i: number): void;
+  updateDraggedIndexPlaceholders(i: number): void;
   updateNumOfElementsTransformed(effectedElemDirection: number): void;
   endDragging(isFallback: boolean): void;
 }

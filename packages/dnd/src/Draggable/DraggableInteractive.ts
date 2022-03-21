@@ -127,7 +127,7 @@ class DraggableInteractive
     this.siblingsContainer = element;
   }
 
-  setDraggedTempIndex(i: number) {
+  updateDraggedIndexPlaceholders(i: number) {
     this.indexPlaceholder = i;
     this.draggedElm.setDataset("index", i);
   }
