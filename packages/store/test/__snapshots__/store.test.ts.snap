@@ -3,12 +3,12 @@
 exports[`Testing Store Package Returns element instance by element id 1`] = `
 CoreInstance {
   "animatedFrame": null,
-  "currentPosition": AxesCoordinates {
+  "currentPosition": PointNum {
     "x": 0,
     "y": 0,
   },
   "depth": 0,
-  "grid": AxesCoordinates {
+  "grid": PointNum {
     "x": 0,
     "y": 0,
   },
@@ -36,7 +36,7 @@ CoreInstance {
   "ref": <div
     data-index="0"
   />,
-  "translate": AxesCoordinates {
+  "translate": PointNum {
     "x": 0,
     "y": 0,
   },
@@ -47,12 +47,12 @@ exports[`Testing Store Package Snaps shot registry 1`] = `
 Object {
   "id-0": CoreInstance {
     "animatedFrame": null,
-    "currentPosition": AxesCoordinates {
+    "currentPosition": PointNum {
       "x": 0,
       "y": 0,
     },
     "depth": 0,
-    "grid": AxesCoordinates {
+    "grid": PointNum {
       "x": 0,
       "y": 0,
     },
@@ -80,19 +80,19 @@ Object {
     "ref": <div
       data-index="0"
     />,
-    "translate": AxesCoordinates {
+    "translate": PointNum {
       "x": 0,
       "y": 0,
     },
   },
   "id-1": CoreInstance {
     "animatedFrame": null,
-    "currentPosition": AxesCoordinates {
+    "currentPosition": PointNum {
       "x": 0,
       "y": 0,
     },
     "depth": 0,
-    "grid": AxesCoordinates {
+    "grid": PointNum {
       "x": 0,
       "y": 0,
     },
@@ -120,19 +120,19 @@ Object {
     "ref": <div
       data-index="0"
     />,
-    "translate": AxesCoordinates {
+    "translate": PointNum {
       "x": 0,
       "y": 0,
     },
   },
   "id-2": CoreInstance {
     "animatedFrame": null,
-    "currentPosition": AxesCoordinates {
+    "currentPosition": PointNum {
       "x": 0,
       "y": 0,
     },
     "depth": 0,
-    "grid": AxesCoordinates {
+    "grid": PointNum {
       "x": 0,
       "y": 0,
     },
@@ -160,19 +160,19 @@ Object {
     "ref": <div
       data-index="0"
     />,
-    "translate": AxesCoordinates {
+    "translate": PointNum {
       "x": 0,
       "y": 0,
     },
   },
   "p-id-0": CoreInstance {
     "animatedFrame": null,
-    "currentPosition": AxesCoordinates {
+    "currentPosition": PointNum {
       "x": 0,
       "y": 0,
     },
     "depth": 1,
-    "grid": AxesCoordinates {
+    "grid": PointNum {
       "x": 0,
       "y": 0,
     },
@@ -200,7 +200,7 @@ Object {
     "ref": <div
       data-index="0"
     />,
-    "translate": AxesCoordinates {
+    "translate": PointNum {
       "x": 0,
       "y": 0,
     },
@@ -212,12 +212,12 @@ exports[`Testing Store Package Snaps shot registry after delete 1`] = `
 Object {
   "id-0": CoreInstance {
     "animatedFrame": null,
-    "currentPosition": AxesCoordinates {
+    "currentPosition": PointNum {
       "x": 0,
       "y": 0,
     },
     "depth": 0,
-    "grid": AxesCoordinates {
+    "grid": PointNum {
       "x": 0,
       "y": 0,
     },
@@ -245,19 +245,19 @@ Object {
     "ref": <div
       data-index="0"
     />,
-    "translate": AxesCoordinates {
+    "translate": PointNum {
       "x": 0,
       "y": 0,
     },
   },
   "id-1": CoreInstance {
     "animatedFrame": null,
-    "currentPosition": AxesCoordinates {
+    "currentPosition": PointNum {
       "x": 0,
       "y": 0,
     },
     "depth": 0,
-    "grid": AxesCoordinates {
+    "grid": PointNum {
       "x": 0,
       "y": 0,
     },
@@ -285,19 +285,19 @@ Object {
     "ref": <div
       data-index="0"
     />,
-    "translate": AxesCoordinates {
+    "translate": PointNum {
       "x": 0,
       "y": 0,
     },
   },
   "id-2": CoreInstance {
     "animatedFrame": null,
-    "currentPosition": AxesCoordinates {
+    "currentPosition": PointNum {
       "x": 0,
       "y": 0,
     },
     "depth": 0,
-    "grid": AxesCoordinates {
+    "grid": PointNum {
       "x": 0,
       "y": 0,
     },
@@ -325,19 +325,19 @@ Object {
     "ref": <div
       data-index="0"
     />,
-    "translate": AxesCoordinates {
+    "translate": PointNum {
       "x": 0,
       "y": 0,
     },
   },
   "p-id-0": CoreInstance {
     "animatedFrame": null,
-    "currentPosition": AxesCoordinates {
+    "currentPosition": PointNum {
       "x": 0,
       "y": 0,
     },
     "depth": 1,
-    "grid": AxesCoordinates {
+    "grid": PointNum {
       "x": 0,
       "y": 0,
     },
@@ -365,7 +365,7 @@ Object {
     "ref": <div
       data-index="0"
     />,
-    "translate": AxesCoordinates {
+    "translate": PointNum {
       "x": 0,
       "y": 0,
     },

@@ -4,12 +4,12 @@ exports[`Draggable Store Registers element and initiates translateX,Y 1`] = `
 Object {
   "id-0": CoreInstance {
     "animatedFrame": null,
-    "currentPosition": AxesCoordinates {
+    "currentPosition": PointNum {
       "x": 0,
       "y": 0,
     },
     "depth": 0,
-    "grid": AxesCoordinates {
+    "grid": PointNum {
       "x": 0,
       "y": 0,
     },
@@ -37,7 +37,7 @@ Object {
     "ref": <div
       data-index="0"
     />,
-    "translate": AxesCoordinates {
+    "translate": PointNum {
       "x": 0,
       "y": 0,
     },
