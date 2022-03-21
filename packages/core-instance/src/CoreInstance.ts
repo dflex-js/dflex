@@ -1,12 +1,13 @@
 /* eslint-disable no-param-reassign */
 
-import { AxesCoordinates } from "@dflex/utils";
+import { Point, PointNum } from "@dflex/utils";
 
 import type {
   RectDimensions,
   EffectedElemDirection,
   Axes,
-  AxesCoordinatesInterface,
+  IPoint,
+  IPointNum,
 } from "@dflex/utils";
 
 import AbstractInstance from "./AbstractInstance";
@@ -23,11 +24,9 @@ import type {
 class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
   offset!: RectDimensions;
 
-  translateHistory?: AxesCoordinatesInterface<TransitionHistory>;
+  currentPosition!: IPointNum;
 
-  currentPosition!: AxesCoordinatesInterface;
-
-  grid!: AxesCoordinatesInterface;
+  grid!: IPointNum;
 
   order: Order;
 
@@ -41,9 +40,10 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
   animatedFrame: number | null;
 
-  constructor(elementWithPointer: CoreInput, opts: AbstractOpts) {
-    const { order, keys, depth, scrollX, scrollY, ...element } =
-      elementWithPointer;
+  #translateHistory?: IPoint<TransitionHistory>;
+
+  constructor(eleWithPointer: CoreInput, opts: AbstractOpts) {
+    const { order, keys, depth, scrollX, scrollY, ...element } = eleWithPointer;
 
     super(element, opts);
 
@@ -58,21 +58,13 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     }
 
     if (!this.isPaused) {
-      this.initIndicators(scrollX, scrollY);
+      this.#initIndicators(scrollX, scrollY);
     }
 
     this.animatedFrame = null;
   }
 
-  /**
-   * Initializes the element offset only when it's called. Since it is storing
-   * different numbers related to transformation we don't need to invoke for
-   * idle element because it's costly.
-   *
-   * @param scrollX
-   * @param scrollY
-   */
-  private initIndicators(scrollX: number, scrollY: number) {
+  #initIndicators(scrollX: number, scrollY: number) {
     const { height, width, left, top } = this.ref!.getBoundingClientRect();
 
     /**
@@ -88,40 +80,15 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
       top: top + scrollY,
     };
 
-    this.currentPosition = new AxesCoordinates(
-      this.offset.left,
-      this.offset.top
-    );
+    this.currentPosition = new PointNum(this.offset.left, this.offset.top);
 
-    this.grid = new AxesCoordinates(0, 0);
+    this.grid = new PointNum(0, 0);
 
     this.hasToTransform = false;
   }
 
-  resume(scrollX: number, scrollY: number) {
-    if (!this.isInitialized) this.attach(null);
-
-    this.initTranslate();
-
-    this.initIndicators(scrollX, scrollY);
-  }
-
-  changeVisibility(isVisible: boolean) {
-    if (isVisible === this.isVisible) return;
-
-    this.isVisible = isVisible;
-
-    if (this.hasToTransform && this.isVisible) {
-      this.transformElm();
-      this.hasToTransform = false;
-    }
-  }
-
-  private updateCurrentIndicators(leftSpace: number, topSpace: number) {
-    this.translate.setAxes(
-      this.translate.x + leftSpace,
-      this.translate.y + topSpace
-    );
+  #updateCurrentIndicators(leftSpace: number, topSpace: number) {
+    this.translate.increase(leftSpace, topSpace);
 
     const { left, top } = this.offset!;
 
@@ -135,6 +102,25 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     );
 
     if (!this.isVisible) this.hasToTransform = true;
+  }
+
+  resume(scrollX: number, scrollY: number) {
+    if (!this.isInitialized) this.attach(null);
+
+    this.initTranslate();
+
+    this.#initIndicators(scrollX, scrollY);
+  }
+
+  changeVisibility(isVisible: boolean) {
+    if (isVisible === this.isVisible) return;
+
+    this.isVisible = isVisible;
+
+    if (this.hasToTransform && this.isVisible) {
+      this.transformElm();
+      this.hasToTransform = false;
+    }
   }
 
   isPositionedUnder(elmY: number) {
@@ -156,12 +142,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     });
   }
 
-  /**
-   *  Update element index in siblings branch
-   *
-   * @param i - index
-   */
-  private updateOrderIndexing(i: number) {
+  #updateOrderIndexing(i: number) {
     const { self: oldIndex } = this.order;
 
     const newIndex = oldIndex + i;
@@ -221,11 +202,8 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
   /**
    *  Set a new translate position and store the old one.
-   *
-   * @param elmSpace -
-   * @param operationID  - Only if moving to a new position.
    */
-  private seTranslate(
+  #seTranslate(
     elmSpace: number,
     axes: Axes,
     operationID?: string,
@@ -237,20 +215,20 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
         pre: this.translate[axes],
       };
 
-      if (!this.translateHistory) {
-        this.translateHistory =
+      if (!this.#translateHistory) {
+        this.#translateHistory =
           axes === "x"
-            ? new AxesCoordinates([elmAxesHistory], [])
-            : new AxesCoordinates([], [elmAxesHistory]);
+            ? new Point([elmAxesHistory], [])
+            : new Point([], [elmAxesHistory]);
       } else {
-        this.translateHistory[axes].push(elmAxesHistory);
+        this.#translateHistory[axes].push(elmAxesHistory);
       }
     }
 
     if (axes === "x") {
-      this.updateCurrentIndicators(elmSpace, 0);
+      this.#updateCurrentIndicators(elmSpace, 0);
     } else {
-      this.updateCurrentIndicators(0, elmSpace);
+      this.#updateCurrentIndicators(0, elmSpace);
     }
 
     if (!isForceTransform && !this.isVisible) {
@@ -276,9 +254,9 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
   setPosition(
     iDsInOrder: string[],
     effectedElemDirection: EffectedElemDirection,
-    elmSpace: AxesCoordinates,
+    elmSpace: PointNum,
     operationID: string,
-    siblingsEmptyElmIndex: AxesCoordinates,
+    siblingsEmptyElmIndex: PointNum,
     axes: Axes,
     numberOfPassedElm = 1,
     isShuffle = true
@@ -289,9 +267,9 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
      */
     elmSpace[axes] *= effectedElemDirection[axes];
 
-    this.seTranslate(elmSpace[axes], axes, operationID);
+    this.#seTranslate(elmSpace[axes], axes, operationID);
 
-    const { oldIndex, newIndex } = this.updateOrderIndexing(
+    const { oldIndex, newIndex } = this.#updateOrderIndexing(
       effectedElemDirection[axes] * numberOfPassedElm
     );
 
@@ -314,16 +292,14 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
    */
   rollBack(operationID: string, isForceTransform: boolean, axes: Axes) {
     if (
-      !this.translateHistory ||
-      !this.translateHistory[axes] ||
-      this.translateHistory[axes].length === 0 ||
-      this.translateHistory[axes][this.translateHistory[axes].length - 1].ID !==
-        operationID
+      this.#translateHistory![axes].length === 0 ||
+      this.#translateHistory![axes][this.#translateHistory![axes].length - 1]
+        .ID !== operationID
     ) {
       return;
     }
 
-    const lastMovement = this.translateHistory[axes].pop();
+    const lastMovement = this.#translateHistory![axes].pop();
 
     if (!lastMovement) return;
 
@@ -334,9 +310,9 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     const increment = elmSpace > 0 ? 1 : -1;
 
     // Don't update UI if it's zero and wasn't transformed.
-    this.seTranslate(elmSpace, axes, undefined, isForceTransform);
+    this.#seTranslate(elmSpace, axes, undefined, isForceTransform);
 
-    const { newIndex } = this.updateOrderIndexing(increment);
+    const { newIndex } = this.#updateOrderIndexing(increment);
 
     this.setDataset("index", newIndex);
 

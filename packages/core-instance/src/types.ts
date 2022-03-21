@@ -1,8 +1,8 @@
 import type {
-  AxesCoordinatesInterface,
   RectDimensions,
   Axes,
   EffectedElemDirection,
+  IPointNum,
 } from "@dflex/utils";
 
 export interface AbstractOpts {
@@ -31,7 +31,7 @@ export interface AbstractInterface {
   isPaused: boolean;
   ref: HTMLElement | null;
   id: string;
-  translate: AxesCoordinatesInterface;
+  translate: IPointNum;
   attach(ref: HTMLElement | null): void;
   detach(): void;
   initTranslate(): void;
@@ -85,14 +85,11 @@ export interface CoreInstanceInterface extends AbstractInterface {
   /** Initial read-only element offset */
   readonly offset: RectDimensions;
 
-  /** Store history of Y-transition according to unique ID. */
-  translateHistory?: AxesCoordinatesInterface<TransitionHistory>;
-
   /** Current element offset (x-left, y-top) */
-  currentPosition: AxesCoordinatesInterface;
+  currentPosition: IPointNum;
 
   /** Element position in the grid container. */
-  grid: AxesCoordinatesInterface;
+  grid: IPointNum;
 
   /** Element visibility in the scroll container. */
   isVisible: boolean;
@@ -100,9 +97,10 @@ export interface CoreInstanceInterface extends AbstractInterface {
   /** Animated frame if the element is transforming  */
   animatedFrame: number | null;
 
-  order: Order;
-  keys: Keys;
-  depth: number;
+  readonly order: Order;
+  readonly keys: Keys;
+  readonly depth: number;
+
   isPositionedUnder(elmY: number): boolean;
   isPositionedLeft(elmX: number): boolean;
   resume(scrollX: number, scrollY: number): void;
@@ -110,9 +108,9 @@ export interface CoreInstanceInterface extends AbstractInterface {
   setPosition(
     iDsInOrder: string[],
     effectedElemDirection: EffectedElemDirection,
-    elmSpace: AxesCoordinatesInterface,
+    elmSpace: IPointNum,
     operationID: string,
-    siblingsEmptyElmIndex: AxesCoordinatesInterface,
+    siblingsEmptyElmIndex: IPointNum,
     axes: Axes,
     vIncrement?: number,
     isShuffle?: boolean

@@ -1,4 +1,4 @@
-class AxesFourCoordinatesBool {
+class FourDirectionsBool {
   isLeftFromTop!: boolean;
 
   isLeftFromBottom!: boolean;
@@ -48,4 +48,4 @@ class AxesFourCoordinatesBool {
   }
 }
 
-export default AxesFourCoordinatesBool;
+export default FourDirectionsBool;

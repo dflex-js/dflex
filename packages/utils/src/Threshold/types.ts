@@ -1,5 +1,5 @@
-import { AxesFourCoordinatesBool } from "../AxesCoordinates";
 import type { RectBoundaries, RectDimensions } from "../types";
+import FourDirectionsBool from "./FourDirectionsBool";
 
 export interface ThresholdPercentages {
   /** vertical threshold in percentage from 0-100 */
@@ -26,7 +26,7 @@ export interface ThresholdsStore {
 }
 
 export interface LayoutPositionStatus {
-  [key: string]: AxesFourCoordinatesBool;
+  [key: string]: FourDirectionsBool;
 }
 
 export interface ThresholdInterface {

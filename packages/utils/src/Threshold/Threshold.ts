@@ -1,9 +1,9 @@
-import {
-  AxesCoordinates,
-  AxesCoordinatesInterface,
-  AxesFourCoordinatesBool,
-} from "../AxesCoordinates";
+import { PointNum } from "../Point";
+import type { IPointNum } from "../Point";
+
 import { RectDimensions, RectBoundaries } from "../types";
+
+import FourDirectionsBool from "./FourDirectionsBool";
 import type {
   ThresholdInterface,
   ThresholdPercentages,
@@ -14,7 +14,7 @@ import type {
 class Threshold implements ThresholdInterface {
   thresholds: ThresholdsStore;
 
-  #pixels!: AxesCoordinatesInterface;
+  #pixels!: IPointNum;
 
   #percentages: ThresholdPercentages;
 
@@ -31,12 +31,12 @@ class Threshold implements ThresholdInterface {
     const x = Math.round((this.#percentages.horizontal * width) / 100);
     const y = Math.round((this.#percentages.vertical * height) / 100);
 
-    this.#pixels = new AxesCoordinates(x, y);
+    this.#pixels = new PointNum(x, y);
   }
 
   #initIndicators(key: string) {
     if (!this.isOut[key]) {
-      this.isOut[key] = new AxesFourCoordinatesBool();
+      this.isOut[key] = new FourDirectionsBool();
     } else {
       this.isOut[key].reset();
     }
@@ -61,7 +61,7 @@ class Threshold implements ThresholdInterface {
     this.thresholds[key] = this.#getScrollThreshold(rect);
 
     if (!this.isOut[key]) {
-      this.isOut[key] = new AxesFourCoordinatesBool();
+      this.isOut[key] = new FourDirectionsBool();
     } else {
       this.isOut[key].reset();
     }

@@ -1,6 +1,6 @@
 import type {
-  AxesCoordinatesInterface,
-  AxesCoordinatesBoolInterface,
+  IPointNum,
+  IPointBool,
   ThresholdInterface,
   ThresholdCoordinate,
 } from "@dflex/utils";
@@ -33,16 +33,16 @@ export interface DraggableAxesInterface
   /** Dragged threshold  */
   readonly threshold: ThresholdInterface;
 
-  readonly innerOffset: AxesCoordinatesInterface;
+  readonly innerOffset: IPointNum;
 
   /** Dragged position for both X and Y.  */
-  readonly positionPlaceholder: AxesCoordinatesInterface;
+  readonly positionPlaceholder: IPointNum;
 
   /** Temporary index for dragged  */
   readonly indexPlaceholder: number;
 
   /** Previous X and Y are used to calculate mouse directions. */
-  readonly mousePoints: AxesCoordinatesInterface;
+  readonly mousePoints: IPointNum;
 
   /** Restrict dragged movement inside viewport.  */
   readonly isViewportRestricted: boolean;
@@ -52,7 +52,7 @@ export interface DraggableAxesInterface
    * Far from Y, is moving down.
    * Far from X, is moving right.
    */
-  readonly isMovingAwayFrom: AxesCoordinatesBoolInterface;
+  readonly isMovingAwayFrom: IPointBool;
 
   dragAt(x: number, y: number): void;
 
@@ -83,8 +83,8 @@ export interface DraggableInteractiveInterface extends DraggableAxesInterface {
   setOfTransformedIds?: Set<string>;
   siblingsContainer: CoreInstanceInterface | null;
   scroll: ScrollOptWithThreshold;
-  readonly occupiedOffset: AxesCoordinatesInterface;
-  readonly occupiedTranslate: AxesCoordinatesInterface;
+  readonly occupiedOffset: IPointNum;
+  readonly occupiedTranslate: IPointNum;
   readonly numberOfElementsTransformed: number;
   readonly isDraggedPositionFixed: boolean;
   setDraggedTempIndex(i: number): void;

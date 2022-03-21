@@ -1,7 +1,7 @@
 import type { DraggedStyle, Coordinates } from "@dflex/draggable";
 
-import { AxesCoordinates } from "@dflex/utils";
-import type { AxesCoordinatesInterface } from "@dflex/utils";
+import { PointNum } from "@dflex/utils";
+import type { IPointNum } from "@dflex/utils";
 
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
@@ -25,9 +25,9 @@ class DraggableInteractive
 
   scroll: ScrollOptWithThreshold;
 
-  occupiedOffset: AxesCoordinatesInterface;
+  occupiedOffset: IPointNum;
 
-  occupiedTranslate: AxesCoordinatesInterface;
+  occupiedTranslate: IPointNum;
 
   numberOfElementsTransformed: number;
 
@@ -104,12 +104,8 @@ class DraggableInteractive
 
     this.operationID = store.tracker.newTravel();
 
-    this.occupiedOffset = new AxesCoordinates(
-      currentPosition.x,
-      currentPosition.y
-    );
-
-    this.occupiedTranslate = new AxesCoordinates(translate.x, translate.y);
+    this.occupiedOffset = new PointNum(currentPosition.x, currentPosition.y);
+    this.occupiedTranslate = new PointNum(translate.x, translate.y);
 
     /**
      * It counts number of element that dragged has passed. This counter is

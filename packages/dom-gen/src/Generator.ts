@@ -16,7 +16,7 @@ class Generator implements GeneratorInterface {
    * Counter store. Each depth has it's own indicator. Allowing us to go
    * for endless layers (levels).
    */
-  private indicator: {
+  #indicator: {
     [keys: number]: number;
   };
 
@@ -37,7 +37,7 @@ class Generator implements GeneratorInterface {
   private prevKey: string;
 
   constructor() {
-    this.indicator = {};
+    this.#indicator = {};
 
     this.branches = {};
 
@@ -51,34 +51,34 @@ class Generator implements GeneratorInterface {
    *
    * @param dp - element depth
    */
-  private initIndicators(dp: number) {
+  #initIndicators(dp: number) {
     /**
      * initiate self from -1 since self is incremented after the id is added so
      * it's children won't be confused about their parent indicator.
      *
      * if start from /dp = 1/
-     * - this.indicator[1] = -1
+     * - this.#indicator[1] = -1
      * - element added
-     * -  this.indicator[1] + 1
+     * -  this.#indicator[1] + 1
      * Now, If we get /dp = 0/
-     * - this.indicator[dp+1] = 0 which is what we want.
+     * - this.#indicator[dp+1] = 0 which is what we want.
      *
      * By adding this, we can deal with parents coming first before children.
      */
-    if (this.indicator[dp] === undefined) {
-      this.indicator[dp] = -1;
+    if (this.#indicator[dp] === undefined) {
+      this.#indicator[dp] = -1;
     }
 
     /**
      * initiate parents from zero.
-     * this.indicator[dp+1] = 0
+     * this.#indicator[dp+1] = 0
      */
-    if (this.indicator[dp + 1] === undefined) {
-      this.indicator[dp + 1] = 0;
+    if (this.#indicator[dp + 1] === undefined) {
+      this.#indicator[dp + 1] = 0;
     }
 
-    if (this.indicator[dp + 2] === undefined) {
-      this.indicator[dp + 2] = 0;
+    if (this.#indicator[dp + 2] === undefined) {
+      this.#indicator[dp + 2] = 0;
     }
   }
 
@@ -88,7 +88,7 @@ class Generator implements GeneratorInterface {
    * @param id - element id
    * @param  SK - Siblings Key- siblings key
    */
-  private addElementIDToSiblingsBranch(id: string, SK: string) {
+  #addElementIDToSiblingsBranch(id: string, SK: string) {
     let selfIndex = 0;
 
     /**
@@ -127,30 +127,30 @@ class Generator implements GeneratorInterface {
 
   accumulateIndicators(depth: number) {
     if (depth !== this.prevDepth) {
-      this.initIndicators(depth);
+      this.#initIndicators(depth);
     }
 
     /**
      * Get parent index.
      */
-    const parentIndex = this.indicator[depth + 1];
+    const parentIndex = this.#indicator[depth + 1];
 
     /**
      * get siblings unique key (sK) and parents key (pK)
      */
     const SK = genKey(depth, parentIndex);
-    const PK = genKey(depth + 1, this.indicator[depth + 2]);
+    const PK = genKey(depth + 1, this.#indicator[depth + 2]);
 
     const CHK = depth === 0 ? null : this.prevKey;
     this.prevKey = SK;
 
-    this.indicator[depth] += 1;
+    this.#indicator[depth] += 1;
 
     if (depth < this.prevDepth) {
       /**
        * Start new branch.
        */
-      this.indicator[0] = 0;
+      this.#indicator[0] = 0;
     }
 
     this.prevDepth = depth;
@@ -174,7 +174,7 @@ class Generator implements GeneratorInterface {
   getElmPointer(id: string, depth: number): Pointer {
     const { CHK, SK, PK, parentIndex } = this.accumulateIndicators(depth);
 
-    const selfIndex = this.addElementIDToSiblingsBranch(id, SK);
+    const selfIndex = this.#addElementIDToSiblingsBranch(id, SK);
 
     const keys: Keys = {
       SK,
@@ -246,7 +246,7 @@ class Generator implements GeneratorInterface {
 
   clearBranchesAndIndicator() {
     this.branches = {};
-    this.indicator = {};
+    this.#indicator = {};
   }
 }
 

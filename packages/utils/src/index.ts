@@ -1,12 +1,5 @@
-export {
-  AxesCoordinates,
-  AxesCoordinatesBool,
-  AxesFourCoordinatesBool,
-} from "./AxesCoordinates";
-export type {
-  AxesCoordinatesInterface,
-  AxesCoordinatesBoolInterface,
-} from "./AxesCoordinates";
+export { Point, PointNum, PointBool } from "./Point";
+export type { IPoint, IPointNum, IPointBool } from "./Point";
 
 export { Threshold } from "./Threshold";
 export type {

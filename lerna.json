@@ -8,17 +8,5 @@
     "packages/store",
     "packages/draggable",
     "packages/dnd"
-  ],
-  "changelog": {
-    "repo": "dflex-js/dflex",
-    "labels": {
-      "documentation": ":memo: Documentation",
-      "patch": ":nail_care: Patch",
-      "enhancement": ":running_woman: Enhancement",
-      "bug": ":bug: Bug Fix",
-      "feature": ":rocket: New Feature",
-      "test": ":wrench: Improve Test"
-    },
-    "cacheDir": ".changelog"
-  }
+  ]
 }
