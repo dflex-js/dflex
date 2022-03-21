@@ -1,7 +1,9 @@
-import { PointNum, AxesFourCoordinatesBool } from "../Point";
-import type { IPointNum } from "../Point/types";
+import { PointNum } from "../Point";
+import type { IPointNum } from "../Point";
 
 import { RectDimensions, RectBoundaries } from "../types";
+
+import FourDirectionsBool from "./FourDirectionsBool";
 import type {
   ThresholdInterface,
   ThresholdPercentages,
@@ -34,7 +36,7 @@ class Threshold implements ThresholdInterface {
 
   #initIndicators(key: string) {
     if (!this.isOut[key]) {
-      this.isOut[key] = new AxesFourCoordinatesBool();
+      this.isOut[key] = new FourDirectionsBool();
     } else {
       this.isOut[key].reset();
     }
@@ -59,7 +61,7 @@ class Threshold implements ThresholdInterface {
     this.thresholds[key] = this.#getScrollThreshold(rect);
 
     if (!this.isOut[key]) {
-      this.isOut[key] = new AxesFourCoordinatesBool();
+      this.isOut[key] = new FourDirectionsBool();
     } else {
       this.isOut[key].reset();
     }
