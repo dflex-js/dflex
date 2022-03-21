@@ -127,7 +127,7 @@ class DraggableInteractive
     this.siblingsContainer = element;
   }
 
-  updateDraggedIndexPlaceholders(i: number) {
+  updateDraggedIndexPlaceholder(i: number) {
     this.indexPlaceholder = i;
     this.draggedElm.setDataset("index", i);
   }
@@ -191,6 +191,7 @@ class DraggableInteractive
     }
 
     this.draggedElm.order.self = this.indexPlaceholder;
+    this.draggedElm.grid.clone(this.gridPlaceholder);
   }
 
   endDragging(isFallback: boolean) {

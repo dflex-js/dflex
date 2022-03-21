@@ -90,7 +90,7 @@ export interface DraggableInteractiveInterface extends DraggableAxesInterface {
   readonly occupiedTranslate: IPointNum;
   readonly numberOfElementsTransformed: number;
   readonly isDraggedPositionFixed: boolean;
-  updateDraggedIndexPlaceholders(i: number): void;
+  updateDraggedIndexPlaceholder(i: number): void;
   updateNumOfElementsTransformed(effectedElemDirection: number): void;
   endDragging(isFallback: boolean): void;
 }

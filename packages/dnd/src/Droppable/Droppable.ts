@@ -300,7 +300,8 @@ class Droppable extends DistanceCalculator {
         this.draggable.scroll.enable
       )
     ) {
-      this.draggable.updateDraggedIndexPlaceholders(elmIndex);
+      this.draggable.updateDraggedIndexPlaceholder(elmIndex);
+      this.draggable.gridPlaceholder.clone(store.registry[id].grid);
 
       this.updateElement(
         id,
@@ -328,7 +329,8 @@ class Droppable extends DistanceCalculator {
       to: siblings.length,
     });
 
-    this.draggable.updateDraggedIndexPlaceholders(-1);
+    this.draggable.updateDraggedIndexPlaceholder(-1);
+    this.draggable.gridPlaceholder.setAxes(-1, -1);
 
     for (let i = from; i < siblings.length; i += 1) {
       /**
@@ -484,7 +486,10 @@ class Droppable extends DistanceCalculator {
         hasToMoveSiblingsDown = false;
       }
 
-      this.draggable.updateDraggedIndexPlaceholders(to);
+      this.draggable.updateDraggedIndexPlaceholder(to);
+      this.draggable.positionPlaceholder.clone(
+        store.registry[siblings![to]].grid
+      );
 
       /**
        * Last prevY update when leaving the parent container. When we have
