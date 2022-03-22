@@ -40,7 +40,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
   animatedFrame: number | null;
 
-  #translateHistory?: IPoint<TransitionHistory>;
+  #translateHistory?: IPoint<TransitionHistory[]>;
 
   constructor(eleWithPointer: CoreInput, opts: AbstractOpts) {
     const { order, keys, depth, scrollX, scrollY, ...element } = eleWithPointer;
@@ -210,9 +210,9 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     isForceTransform = false
   ) {
     if (operationID) {
-      const elmAxesHistory = {
+      const elmAxesHistory: TransitionHistory = {
         ID: operationID,
-        pre: this.translate[axes],
+        translate: this.translate[axes],
       };
 
       if (!this.#translateHistory) {
@@ -303,9 +303,9 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
     if (!lastMovement) return;
 
-    const { pre } = lastMovement;
+    const { translate: preTranslate } = lastMovement;
 
-    const elmSpace = pre - this.translate[axes];
+    const elmSpace = preTranslate - this.translate[axes];
 
     const increment = elmSpace > 0 ? 1 : -1;
 

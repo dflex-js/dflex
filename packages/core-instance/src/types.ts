@@ -78,8 +78,8 @@ export interface CoreInput extends AbstractInput {
 
 export type TransitionHistory = {
   ID: string;
-  pre: number;
-}[];
+  translate: number;
+};
 
 export interface CoreInstanceInterface extends AbstractInterface {
   /** Initial read-only element offset */
