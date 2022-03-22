@@ -3,7 +3,7 @@ import CoreInstance from "./CoreInstance";
 export type {
   AbstractInterface as AbstractCoreInterface,
   CoreInput,
-  TransitionHistory,
+  MovementHistoryPerAxis as TransitionHistory,
   CoreInstanceInterface,
 } from "./types";
 

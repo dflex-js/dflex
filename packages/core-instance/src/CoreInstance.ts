@@ -15,7 +15,7 @@ import AbstractInstance from "./AbstractInstance";
 import type {
   Keys,
   Order,
-  TransitionHistory,
+  MovementHistoryPerAxis,
   CoreInput,
   AbstractOpts,
   CoreInstanceInterface,
@@ -40,7 +40,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
   animatedFrame: number | null;
 
-  #translateHistory?: IPoint<TransitionHistory>;
+  #translateHistory?: IPoint<MovementHistoryPerAxis[]>;
 
   constructor(eleWithPointer: CoreInput, opts: AbstractOpts) {
     const { order, keys, depth, scrollX, scrollY, ...element } = eleWithPointer;
@@ -210,18 +210,18 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     isForceTransform = false
   ) {
     if (operationID) {
-      const elmAxesHistory = {
+      const cellHistory: MovementHistoryPerAxis = {
         ID: operationID,
-        pre: this.translate[axes],
+        translate: this.translate[axes],
       };
 
       if (!this.#translateHistory) {
         this.#translateHistory =
           axes === "x"
-            ? new Point([elmAxesHistory], [])
-            : new Point([], [elmAxesHistory]);
+            ? new Point([cellHistory], [])
+            : new Point([], [cellHistory]);
       } else {
-        this.#translateHistory[axes].push(elmAxesHistory);
+        this.#translateHistory[axes].push(cellHistory);
       }
     }
 
@@ -307,13 +307,13 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
       return;
     }
 
-    const lastMovement = this.#translateHistory![axes].pop();
+    const lastMovementProp = this.#translateHistory![axes].pop();
 
-    if (!lastMovement) return;
+    if (!lastMovementProp) return;
 
-    const { pre } = lastMovement;
+    const { translate: preTranslate } = lastMovementProp;
 
-    const elmSpace = pre - this.translate[axes];
+    const elmSpace = preTranslate - this.translate[axes];
 
     const increment = elmSpace > 0 ? 1 : -1;
 
@@ -322,7 +322,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
     const { newIndex } = this.#updateOrderIndexing(increment);
 
-    this.grid[axes] += newIndex * increment;
+    this.grid[axes] += increment;
 
     if (this.grid[axes] !== newIndex + 1) {
       throw new Error(

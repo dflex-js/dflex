@@ -76,10 +76,10 @@ export interface CoreInput extends AbstractInput {
   scrollY: number;
 }
 
-export type TransitionHistory = {
+export type MovementHistoryPerAxis = {
   ID: string;
-  pre: number;
-}[];
+  translate: number;
+};
 
 export interface CoreInstanceInterface extends AbstractInterface {
   /** Initial read-only element offset */
