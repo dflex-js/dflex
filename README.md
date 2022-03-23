@@ -50,7 +50,7 @@ library on internet that manipulates the DOM instead of reconstructing it.
 - Targeting each DOM node individually.
 - Extensible using JSON tree instead of flat recursion.
 
-## Project Content 🔥
+## Project Content 🚀
 
 ### [**@dflex/dom-gen**](https://github.com/dflex-js/dflex/tree/master/packages/dom-gen)
 
