@@ -6,7 +6,7 @@
   </a>
 </h1>
 
-<h1 align="center">Modern Draggable package for all JavaScript frameworks</h1>
+<h1 align="center">DFlex Draggable</h1>
 
 <p align="center">
   <a href="https://github.com/dflex-js/dflex">
@@ -33,7 +33,7 @@
 
 # @dflex/draggable
 
-Light weight draggable component without extra functionalities that is
+Light weight draggable element without extra functionalities that is
 responsible for interacting with the DOM and moving the affected element(s).
 
 ## DFlex Features ✅

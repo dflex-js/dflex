@@ -80,7 +80,7 @@ initial release was generic but it only has the Core of the library since ^V3.
 
 ### [**@dflex/draggable**](https://github.com/dflex-js/dflex/tree/master/packages/draggable)
 
-Light weight draggable component without extra functionalities that is
+Light weight draggable element without extra functionalities that is
 responsible for interacting with the DOM and moving the affected element(s).
 
 ### [**@dflex/dnd**](https://github.com/dflex-js/dflex/tree/master/packages/dnd)

@@ -6,7 +6,7 @@
   </a>
 </h1>
 
-<h1 align="center">DFlex DOM store</h1>
+<h1 align="center">DFlex DOM Store</h1>
 
 <p align="center">
   <a href="https://github.com/dflex-js/dflex">
@@ -79,7 +79,7 @@ the project.
 
 ### [**@dflex/draggable**](https://github.com/dflex-js/dflex/tree/master/packages/draggable)
 
-Light weight draggable component without extra functionalities that is
+Light weight draggable element without extra functionalities that is
 responsible for interacting with the DOM and moving the affected element(s).
 
 ### [**@dflex/dnd**](https://github.com/dflex-js/dflex/tree/master/packages/dnd)
