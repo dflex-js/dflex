@@ -1,12 +1,7 @@
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
 import { PointNum } from "@dflex/utils";
-import type {
-  IPointNum,
-  Direction,
-  EffectedElemDirection,
-  Axis,
-} from "@dflex/utils";
+import type { IPointNum, EffectedElemDirection, Axis } from "@dflex/utils";
 
 import type { InteractivityEvent } from "../types";
 import type { DraggableInteractiveInterface } from "../Draggable";
@@ -192,7 +187,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
    *
    * @param id -
    */
-  protected updateElement(id: string, axis: Axis, direction: Direction) {
+  protected updateElement(id: string, axis: Axis) {
     const element = store.registry[id];
 
     this.calculateDistance(element, axis);
@@ -235,9 +230,11 @@ class DistanceCalculator implements DistanceCalculatorInterface {
       currentPosition.y + this.draggedOffset.y
     );
 
+    const draggedDirection = -1 * this.effectedElemDirection[axis];
+
     this.draggable.occupiedTranslate.increase(
-      direction * this.draggedAccumulatedTransition.x,
-      direction * this.draggedAccumulatedTransition.y
+      draggedDirection * this.draggedAccumulatedTransition.x,
+      draggedDirection * this.draggedAccumulatedTransition.y
     );
 
     this.draggable.gridPlaceholder.clone(grid);
