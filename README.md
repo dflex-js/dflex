@@ -51,25 +51,37 @@ transformation mechanism to manipulate DOM elements.
 
 ## Project Content 🔥
 
+### [**@dflex/dom-gen**](https://github.com/dflex-js/dflex/tree/master/packages/dom-gen)
+
+DFlex DOM relations generator algorithm. It Generated relations between DOM elements based
+on element depth so all the registered DOM can be called inside registry without
+the need to call browser API. Read once, implement everywhere.
+
+### [**@dflex/core-instance**](https://github.com/dflex-js/dflex/tree/master/packages/core-instance)
+
+Core instance is the mirror of the DOM element. It is the core interactive
+element. Has all the properties and methods to manipulate the DOM element.
+
+### [**@dflex/utils**](https://github.com/dflex-js/dflex/tree/master/packages/utils)
+
+A collection of shared functions. Mostly classes, and types.
+
+### [**@dflex/store**](https://github.com/dflex-js/dflex/tree/master/packages/store)
+
+DFex Store has main registry for all DOM elements that will be manipulated. It
+is a singleton object that is accessible from anywhere in the application. The
+initial release was generic but it only has the Core of the library since ^V3.
+
+### [**@dflex/draggable**](https://github.com/dflex-js/dflex/tree/master/packages/draggable)
+
+Light weight draggable component without extra functionalities that is
+responsible for interacting with the DOM and moving the affected element(s).
+
 ### [**Drag & Drop**](https://github.com/dflex-js/dflex/tree/master/packages/dnd)
 
 A Simple, lightweight Solution for a Drag & Drop App based on enhanced DOM store
 algorithm. You can achieve a drag and drop with three steps only with
 mouse/touch event.
-
-### [**Draggable**](https://github.com/dflex-js/dflex/tree/master/packages/draggable)
-
-High-performance draggable elements written in pure JS works for Web and Mobile.
-
-### [**Utils/DOM Generator**](https://github.com/dflex-js/dflex/tree/master/packages/dom-gen)
-
-DOM relations generator algorithm. Generate relations between DOM elements based
-on element depth without a browser.
-
-[@dflex/store](https://github.com/dflex-js/dflex/tree/master/packages/store) -
-DFex Store has main registry for all DOM elements that will be manipulated. It
-is a singleton object that is accessible from anywhere in the application. The
-initial release was generic but it only has the Core of the library since ^V3.
 
 ## Documentation 📖
 
