@@ -82,7 +82,7 @@ responsible for interacting with the DOM and moving the affected element(s).
 ### [**@dflex/dnd**](https://github.com/dflex-js/dflex/tree/master/packages/dnd)
 
 The main package that depends on the other packages. It is responsible for the
-main magical logic of the library to introduce the drag and drop interactive
+magical logic of the library to introduce the drag and drop interactive
 functionality.
 
 ## Documentation 📖
