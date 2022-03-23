@@ -66,7 +66,7 @@ High-performance draggable elements written in pure JS works for Web and Mobile.
 DOM relations generator algorithm. Generate relations between DOM elements based
 on element depth without a browser.
 
-[**@dflex/store**](https://github.com/dflex-js/dflex/tree/master/packages/store):
+[@dflex/store](https://github.com/dflex-js/dflex/tree/master/packages/store) -
 DFex Store has main registry for all DOM elements that will be manipulated. It
 is a singleton object that is accessible from anywhere in the application. The
 initial release was generic but it only has the Core of the library since ^V3.
