@@ -134,7 +134,7 @@ yarn workspace @dflex/dnd dev:cy:extended
 ## Contribution 🌎
 
 PRs are welcome, please make sure to read the
-[**Contributing**](/CONTRIBUTING.md) before submitting a PR.
+[**Contributing guide**](/CONTRIBUTING.md) before submitting a PR.
 
 To submit a PR:
 
