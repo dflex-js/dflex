@@ -53,18 +53,20 @@ transformation mechanism to manipulate DOM elements.
 
 ### [**@dflex/dom-gen**](https://github.com/dflex-js/dflex/tree/master/packages/dom-gen)
 
-DFlex DOM relations generator algorithm. It Generated relations between DOM elements based
+DFlex DOM relations generator algorithm. It Generates relations between DOM elements based
 on element depth so all the registered DOM can be called inside registry without
 the need to call browser API. Read once, implement everywhere.
 
 ### [**@dflex/core-instance**](https://github.com/dflex-js/dflex/tree/master/packages/core-instance)
 
-Core instance is the mirror of the DOM element. It is the core interactive
-element. Has all the properties and methods to manipulate the DOM element.
+Core instance is the mirror of the DOM element. It is the core of every
+interactive element. Has all the properties and methods to manipulate the DOM
+element.
 
 ### [**@dflex/utils**](https://github.com/dflex-js/dflex/tree/master/packages/utils)
 
-A collection of shared functions. Mostly classes, and types.
+A collection of shared functions. Mostly classes, and types that are used across
+the project.
 
 ### [**@dflex/store**](https://github.com/dflex-js/dflex/tree/master/packages/store)
 
