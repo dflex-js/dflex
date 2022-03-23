@@ -6,7 +6,7 @@
   </a>
 </h1>
 
-<h1 align="center">DFlex interactive Drag and Drop Element(s)</h1>
+<h1 align="center">DFlex Interactive Drag and Drop Element(s)</h1>
 
 <p align="center">
   <a href="https://github.com/dflex-js/dflex">
