@@ -383,70 +383,105 @@ class Droppable extends DistanceCalculator {
     const {
       draggedElm: { id },
       threshold: { isOut },
+      gridPlaceholder,
       // indexPlaceholder,
     } = this.draggable;
-
     /**
      * Leaving from head or tail are enhancement mechanism. Both do move the
      * siblings and lock the container.
      */
-    if (this.draggable.isLeavingFromHead()) {
-      // move element up
-      this.setEffectedElemDirection(true, this.axes);
+    // if (this.draggable.isLeavingFromHead()) {
+    //   // move element up
+    //   this.setEffectedElemDirection(true, this.axes);
 
-      // lock the parent
-      this.lockParent(true);
+    //   // lock the parent
+    //   this.lockParent(true);
 
-      this.fillHeadUp();
+    //   this.fillHeadUp();
 
-      return;
-    }
+    //   return;
+    // }
 
-    if (this.draggable.isLeavingFromTail()) {
-      this.lockParent(true);
+    // if (this.draggable.isLeavingFromTail()) {
+    //   this.lockParent(true);
 
-      return;
-    }
+    //   return;
+    // }
+
     /**
-     * normal movement inside the parent
+     * Normal movement inside the container.
      */
 
     /**
-     * Going out from the list: Right/left.
+     * Going up/down, switch.
      */
-    if (isOut[id].isOutX()) {
-      // Is is out parent?
+    const { SK } = store.registry[id].keys;
+    const siblingsGrid = store.siblingsGrid[SK];
 
-      // move element up
-      this.setEffectedElemDirection(true, this.axes);
+    if (isOut[id].isOutY()) {
+      this.axes = "y";
 
-      // lock the parent
-      this.lockParent(true);
+      const newRow = isOut[id].isLeftFromBottom
+        ? gridPlaceholder.y + 1
+        : gridPlaceholder.y - 1;
 
-      this.fillHeadUp();
+      // Leaving from top.
+      if (newRow === 0) {
+        // move element up
+        this.setEffectedElemDirection(true, this.axes);
 
-      return;
+        // lock the parent
+        this.lockParent(true);
+
+        this.fillHeadUp();
+
+        return;
+      }
+
+      // Leaving from bottom.
+      if (newRow > siblingsGrid.y) {
+        // lock the parent
+        this.lockParent(true);
+
+        return;
+      }
+
+      // Inside the continer.
+      this.setEffectedElemDirection(isOut[id].isLeftFromBottom, this.axes);
+
+      this.switchElement();
     }
 
-    /**
-     * Normal state, switch.
-     */
+    // else {
+    //   const newRow = isOut[id].isLeftFromRight
+    //     ? gridPlaceholder.x + 1
+    //     : gridPlaceholder.x - 1;
 
-    const isLeftUp: boolean =
-      this.draggable.threshold.isOut[this.draggable.draggedElm.id]
-        .isLeftFromBottom ||
-      (!this.draggable.threshold.isOut[this.draggable.draggedElm.id]
-        .isLeftFromTop &&
-        !this.draggable.threshold.isOut[this.draggable.draggedElm.id]
-          .isLeftFromBottom);
+    //   console.log(
+    //     "file: Droppable.ts ~ line 436 ~ newRow < 0 || newRow > siblingsGrid.x",
+    //     newRow,
+    //     siblingsGrid.x
+    //   );
+    //   if (newRow < 0 || newRow > siblingsGrid.x) {
+    //     this.axes = "y";
 
-    // inside the list, effected should be related to mouse movement
-    this.setEffectedElemDirection(
-      this.axes === "y" ? isLeftUp : this.draggable.isMovingAwayFrom.x,
-      this.axes
-    );
+    //     // move element up
+    //     this.setEffectedElemDirection(true, this.axes);
 
-    this.switchElement();
+    //     // lock the parent
+    //     this.lockParent(true);
+
+    //     this.fillHeadUp();
+
+    //     return;
+    //   }
+
+    //   this.axes = "x";
+
+    //   this.setEffectedElemDirection(isOut[id].isLeftFromRight, this.axes);
+
+    //   this.switchElement();
+    // }
   }
 
   private lockParent(isOut: boolean) {
