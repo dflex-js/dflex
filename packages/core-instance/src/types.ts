@@ -29,11 +29,11 @@ export type AttributesIndicators =
   | AllowedAttributes;
 
 export interface AbstractInterface {
-  isInitialized: boolean;
+  readonly isInitialized: boolean;
   isPaused: boolean;
-  ref: HTMLElement | null;
-  id: string;
-  translate: IPointNum;
+  readonly ref: HTMLElement | null;
+  readonly id: string;
+  readonly translate: IPointNum;
   attach(ref: HTMLElement | null): void;
   detach(): void;
   initTranslate(): void;
