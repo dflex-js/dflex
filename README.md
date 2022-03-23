@@ -81,9 +81,9 @@ responsible for interacting with the DOM and moving the affected element(s).
 
 ### [**@dflex/dnd**](https://github.com/dflex-js/dflex/tree/master/packages/dnd)
 
-A Simple, lightweight Solution for a Drag & Drop App based on enhanced DOM store
-algorithm. You can achieve a drag and drop with three steps only with
-mouse/touch event.
+The main package that depends on the other packages. It is responsible for the
+main magical logic of the library to introduce the drag and drop interactive
+functionality.
 
 ## Documentation 📖
 
