@@ -41,6 +41,9 @@ export interface DraggableAxesInterface
   /** Temporary index for dragged  */
   readonly indexPlaceholder: number;
 
+  /** grid placeholder for dragged grid position. */
+  readonly gridPlaceholder: IPointNum;
+
   /** Previous X and Y are used to calculate mouse directions. */
   readonly mousePoints: IPointNum;
 

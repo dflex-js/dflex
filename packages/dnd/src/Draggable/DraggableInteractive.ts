@@ -183,6 +183,8 @@ class DraggableInteractive
 
     this.draggedElm.currentPosition.clone(this.occupiedOffset);
     this.draggedElm.translate.clone(this.occupiedTranslate);
+    this.draggedElm.grid.clone(this.gridPlaceholder);
+    this.draggedElm.setDataset("gridY", this.draggedElm.grid.y);
 
     this.draggedElm.transformElm();
 
