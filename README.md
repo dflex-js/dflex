@@ -109,8 +109,11 @@ To start development you can use the following command:
 yarn workspace @dflex/dnd dev
 ```
 
-This will run the development playground for the dnd package. Open the browser
-[http://localhost:3001](http://localhost:3001) to see the playground.
+This will run the development playground for the DnD package. Open the browser
+[http://localhost:3001](http://localhost:3001) to see the playground. You can
+check the code in the
+[**packages/dnd/playgrounds**](https://github.com/dflex-js/dflex/blob/dev/update_main_page/packages/dnd/playgrounds/dflex-react-dnd/src/App.tsx)
+to see the available routing.
 
 If you want to change the codebase and live edit the playground you have to
 compile while running the playground. You can use the following command:
