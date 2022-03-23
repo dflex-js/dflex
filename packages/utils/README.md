@@ -6,7 +6,7 @@
   </a>
 </h1>
 
-<h1 align="center">DFlex Utilities package</h1>
+<h1 align="center">DFlex Utilities</h1>
 
 <p align="center">
   <a href="https://github.com/dflex-js/dflex">
