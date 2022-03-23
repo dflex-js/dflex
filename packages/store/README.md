@@ -6,7 +6,7 @@
   </a>
 </h1>
 
-<h1 align="center">DOM store allows you to traverse through the DOM tree with element-id</h1>
+<h1 align="center">DFlex DOM store</h1>
 
 <p align="center">
   <a href="https://github.com/dflex-js/dflex">
