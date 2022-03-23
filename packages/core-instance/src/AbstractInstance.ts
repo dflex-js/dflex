@@ -99,7 +99,7 @@ class AbstractInstance implements AbstractInterface {
   }
 
   setDataset(key: AllowedDataset, value: number | boolean) {
-    if (key === "index") {
+    if (key === "index" || key === "gridX" || key === "gridY") {
       this.ref!.dataset[key] = `${value}`;
 
       return;
