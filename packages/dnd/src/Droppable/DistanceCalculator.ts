@@ -88,11 +88,6 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     this.effectedElemDirection[axis] = isIncrease ? -1 : 1;
   }
 
-  protected updateOccupiedOffset(elmTop: number, elmLeft: number) {
-    this.draggable.occupiedOffset.y = elmTop + this.draggedOffset.y;
-    this.draggable.occupiedOffset.x = elmLeft + this.draggedOffset.x;
-  }
-
   /**
    *
    * @param position - Hight if the working axes is Y. Otherwise, it's width.
@@ -191,14 +186,6 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     );
   }
 
-  private updateOccupiedTranslate(direction: 1 | -1) {
-    this.draggable.occupiedTranslate.y +=
-      direction * this.draggedAccumulatedTransition.y;
-
-    this.draggable.occupiedTranslate.x +=
-      direction * this.draggedAccumulatedTransition.x;
-  }
-
   /**
    * Updates element instance and calculates the required transform distance. It
    * invokes for each eligible element in the parent container.
@@ -247,9 +234,15 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
     const { currentPosition, grid } = element;
 
-    this.updateOccupiedOffset(currentPosition.y, currentPosition.x);
+    this.draggable.occupiedOffset.setAxes(
+      currentPosition.x + this.draggedOffset.x,
+      currentPosition.y + this.draggedOffset.y
+    );
 
-    this.updateOccupiedTranslate(enforceDraggedDirection);
+    this.draggable.occupiedTranslate.increase(
+      enforceDraggedDirection * this.draggedAccumulatedTransition.x,
+      enforceDraggedDirection * this.draggedAccumulatedTransition.y
+    );
 
     this.draggable.gridPlaceholder.clone(grid);
 

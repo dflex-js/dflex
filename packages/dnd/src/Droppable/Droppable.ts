@@ -238,10 +238,7 @@ class Droppable extends DistanceCalculator {
             }
           );
 
-          this.updateOccupiedOffset(
-            this.preserveLastElmOffset!.y,
-            this.preserveLastElmOffset!.x
-          );
+          this.draggable.occupiedOffset.clone(this.preserveLastElmOffset!);
 
           break;
         }
@@ -384,55 +381,7 @@ class Droppable extends DistanceCalculator {
       draggedElm: { id },
       threshold: { isOut },
       gridPlaceholder,
-      // indexPlaceholder,
     } = this.draggable;
-
-    /**
-     * Leaving from head or tail are enhancement mechanism. Both do move the
-     * siblings and lock the container.
-     */
-    // if (this.draggable.isLeavingFromHead()) {
-    //   // move element up
-    //   this.setEffectedElemDirection(true, this.axes);
-
-    //   // lock the parent
-    //   this.lockParent(true);
-
-    //   this.fillHeadUp();
-
-    //   return;
-    // }
-
-    // if (this.draggable.isLeavingFromTail()) {
-    //   this.lockParent(true);
-
-    //   return;
-    // }
-
-    /**
-     * Normal movement inside the container.
-     */
-
-    /**
-     * Going out from the list: Right/left.
-     */
-    // if (isOut[id].isOutX()) {
-    //   // Is is out parent?
-
-    //   // move element up
-    //   this.setEffectedElemDirection(true, this.axes);
-
-    //   // lock the parent
-    //   this.lockParent(true);
-
-    //   this.fillHeadUp();
-
-    //   return;
-    // }
-
-    /**
-     * Going up/down, switch.
-     */
 
     const { SK } = store.registry[id].keys;
     const siblingsGrid = store.siblingsGrid[SK];
