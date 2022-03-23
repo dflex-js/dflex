@@ -6,7 +6,7 @@
   </a>
 </h1>
 
-<h1 align="center">Modern drag and drop package for all JavaScript frameworks</h1>
+<h1 align="center">DFlex interactive Drag and Drop Element(s)</h1>
 
 <p align="center">
   <a href="https://github.com/dflex-js/dflex">
@@ -33,12 +33,9 @@
 
 # @dflex/dnd
 
-DFlex Drag and Drop is a modern drag and drop package for all JavaScript
-frameworks written in pure JavaScript and can be used with different frameworks
-whether it is React, Vue, Angular, etc.
-
-It depends on animation, tracks each droppable area which makes the whole
-process runs smoothly as much as possible.
+DFlex Drag and Drop is the main package that depends on the other packages. It
+is responsible for the magical logic of the library to introduce the drag and
+drop interactive functionality.
 
 ## DFlex Features ✅
 
