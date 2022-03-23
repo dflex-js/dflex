@@ -84,11 +84,6 @@ DFex Store has main registry for all DOM elements that will be manipulated. It
 is a singleton object that is accessible from anywhere in the application. The
 initial release was generic but it only has the Core of the library since ^V3.
 
-### [**@dflex/draggable**](https://github.com/dflex-js/dflex/tree/master/packages/draggable)
-
-Light weight draggable component without extra functionalities that is
-responsible for interacting with the DOM and moving the affected element(s).
-
 ### [**@dflex/dnd**](https://github.com/dflex-js/dflex/tree/master/packages/dnd)
 
 The main package that depends on the other packages. It is responsible for the
