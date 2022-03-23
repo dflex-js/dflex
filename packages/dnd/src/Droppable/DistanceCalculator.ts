@@ -192,11 +192,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
    *
    * @param id -
    */
-  protected updateElement(
-    id: string,
-    axis: Axis,
-    enforceDraggedDirection: Direction
-  ) {
+  protected updateElement(id: string, axis: Axis, direction: Direction) {
     const element = store.registry[id];
 
     this.calculateDistance(element, axis);
@@ -240,8 +236,8 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     );
 
     this.draggable.occupiedTranslate.increase(
-      enforceDraggedDirection * this.draggedAccumulatedTransition.x,
-      enforceDraggedDirection * this.draggedAccumulatedTransition.y
+      direction * this.draggedAccumulatedTransition.x,
+      direction * this.draggedAccumulatedTransition.y
     );
 
     this.draggable.gridPlaceholder.clone(grid);
