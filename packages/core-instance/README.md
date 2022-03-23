@@ -33,9 +33,8 @@
 
 # @dflex/core-instance
 
-Core instance is the mirror of the DOM element. It is the core of every
-interactive element. Has all the properties and methods to manipulate the DOM
-element.
+Core instance is the mirror of interactive element that includes all the
+properties and methods to manipulate the DOM.
 
 ## DFlex Features ✅
 
