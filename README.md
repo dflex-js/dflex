@@ -77,7 +77,7 @@ initial release was generic but it only has the Core of the library since ^V3.
 Light weight draggable component without extra functionalities that is
 responsible for interacting with the DOM and moving the affected element(s).
 
-### [**Drag & Drop**](https://github.com/dflex-js/dflex/tree/master/packages/dnd)
+### [**@dflex/dnd**](https://github.com/dflex-js/dflex/tree/master/packages/dnd)
 
 A Simple, lightweight Solution for a Drag & Drop App based on enhanced DOM store
 algorithm. You can achieve a drag and drop with three steps only with
