@@ -131,16 +131,22 @@ Cypress do the job:
 yarn workspace @dflex/dnd dev:cy:extended
 ```
 
+## Contribution 🌎
+
+PRs are welcome, please make sure to read the
+[**Contributing**](/CONTRIBUTING.md) before submitting a PR.
+
+To submit a PR:
+
+1- [Fork DFlex](https://github.com/dflex-js/dflex/fork) then clone the
+repository.
+
+2- Create a new branch: git checkout -b my-branch-name.
+
+3- Make your change.
+
+4- Push to your fork and submit a pull request when ready.
+
 ## License 🤝
 
 DFlex is [MIT License](LICENSE) since version 3.0.0 and above.
-
-## Contribution 🌎
-
-PRs are welcome, Please make sure to read the
-[**Contributing**](/CONTRIBUTING.md) before submitting a PR. To submit a PR:
-
-1- [Fork DFlex](https://github.com/dflex-js/dflex/fork) then clone the repository.
-2- Create a new branch: git checkout -b my-branch-name
-3- Make your change
-4- Push to your fork and submit a pull request when ready.
