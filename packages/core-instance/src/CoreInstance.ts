@@ -5,7 +5,7 @@ import { Point, PointNum } from "@dflex/utils";
 import type {
   RectDimensions,
   EffectedElemDirection,
-  Axes,
+  Axis,
   IPoint,
   IPointNum,
 } from "@dflex/utils";
@@ -209,27 +209,27 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
    */
   #seTranslate(
     elmSpace: number,
-    axes: Axes,
+    axis: Axis,
     operationID?: string,
     isForceTransform = false
   ) {
     if (operationID) {
       const elmAxesHistory: TransitionHistory = {
         ID: operationID,
-        translate: this.translate[axes],
+        translate: this.translate[axis],
       };
 
       if (!this.#translateHistory) {
         this.#translateHistory =
-          axes === "x"
+          axis === "x"
             ? new Point([elmAxesHistory], [])
             : new Point([], [elmAxesHistory]);
       } else {
-        this.#translateHistory[axes].push(elmAxesHistory);
+        this.#translateHistory[axis].push(elmAxesHistory);
       }
     }
 
-    if (axes === "x") {
+    if (axis === "x") {
       this.#updateCurrentIndicators(elmSpace, 0);
     } else {
       this.#updateCurrentIndicators(0, elmSpace);
@@ -261,7 +261,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     elmSpace: PointNum,
     operationID: string,
     siblingsEmptyElmIndex: PointNum,
-    axes: Axes,
+    axis: Axis,
     numberOfPassedElm = 1,
     isShuffle = true
   ) {
@@ -269,26 +269,26 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
      * effectedElemDirection decides the direction of the element, negative or positive.
      * If the element is dragged to the left, the effectedElemDirection is -1.
      */
-    elmSpace[axes] *= effectedElemDirection[axes];
+    elmSpace[axis] *= effectedElemDirection[axis];
 
-    this.#seTranslate(elmSpace[axes], axes, operationID);
+    this.#seTranslate(elmSpace[axis], axis, operationID);
 
     const { oldIndex, newIndex } = this.#updateOrderIndexing(
-      effectedElemDirection[axes] * numberOfPassedElm
+      effectedElemDirection[axis] * numberOfPassedElm
     );
 
-    this.grid[axes] += effectedElemDirection[axes] * numberOfPassedElm;
+    this.grid[axis] += effectedElemDirection[axis] * numberOfPassedElm;
 
     if (process.env.NODE_ENV !== "production") {
-      if (this.grid[axes] !== newIndex + 1) {
+      if (this.grid[axis] !== newIndex + 1) {
         throw new Error(
-          `Grid:  is ${this.grid[axes]} while the new index is ${newIndex}`
+          `Grid:  is ${this.grid[axis]} while the new index is ${newIndex}`
         );
       }
 
       this.setDataset(
-        `grid${axes.toUpperCase() as "X" | "Y"}`,
-        this.grid[axes]
+        `grid${axis.toUpperCase() as "X" | "Y"}`,
+        this.grid[axis]
       );
     }
 
@@ -296,7 +296,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
       iDsInOrder,
       newIndex,
       isShuffle ? oldIndex : undefined,
-      siblingsEmptyElmIndex[axes]
+      siblingsEmptyElmIndex[axis]
     );
 
     return newStatusSiblingsHasEmptyElm;
@@ -307,48 +307,48 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
    *
    * @param operationID
    * @param isForceTransform
-   * @param axes
+   * @param axis
    */
-  rollBack(operationID: string, isForceTransform: boolean, axes: Axes) {
+  rollBack(operationID: string, isForceTransform: boolean, axis: Axis) {
     if (
-      this.#translateHistory![axes].length === 0 ||
-      this.#translateHistory![axes][this.#translateHistory![axes].length - 1]
+      this.#translateHistory![axis].length === 0 ||
+      this.#translateHistory![axis][this.#translateHistory![axis].length - 1]
         .ID !== operationID
     ) {
       return;
     }
 
-    const lastMovement = this.#translateHistory![axes].pop();
+    const lastMovement = this.#translateHistory![axis].pop();
 
     if (!lastMovement) return;
 
     const { translate: preTranslate } = lastMovement;
 
-    const elmSpace = preTranslate - this.translate[axes];
+    const elmSpace = preTranslate - this.translate[axis];
 
     const increment = elmSpace > 0 ? 1 : -1;
 
     // Don't update UI if it's zero and wasn't transformed.
-    this.#seTranslate(elmSpace, axes, undefined, isForceTransform);
+    this.#seTranslate(elmSpace, axis, undefined, isForceTransform);
 
     const { newIndex } = this.#updateOrderIndexing(increment);
 
-    this.grid[axes] += increment;
+    this.grid[axis] += increment;
 
     if (process.env.NODE_ENV !== "production") {
-      if (this.grid[axes] !== newIndex + 1) {
+      if (this.grid[axis] !== newIndex + 1) {
         throw new Error(
-          `Grid:  is ${this.grid[axes]} while the new index is ${newIndex}`
+          `Grid:  is ${this.grid[axis]} while the new index is ${newIndex}`
         );
       }
 
       this.setDataset(
-        `grid${axes.toUpperCase() as "X" | "Y"}`,
-        this.grid[axes]
+        `grid${axis.toUpperCase() as "X" | "Y"}`,
+        this.grid[axis]
       );
     }
 
-    this.rollBack(operationID, isForceTransform, axes);
+    this.rollBack(operationID, isForceTransform, axis);
   }
 }
 

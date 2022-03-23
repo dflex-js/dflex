@@ -20,7 +20,7 @@ export interface EffectedElemDirection {
   y: Direction;
 }
 
-export type Axes = "x" | "y";
+export type Axis = "x" | "y";
 
 export interface Coordinates {
   x: number;

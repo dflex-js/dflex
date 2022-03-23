@@ -1,6 +1,6 @@
 import type {
   RectDimensions,
-  Axes,
+  Axis,
   EffectedElemDirection,
   IPointNum,
 } from "@dflex/utils";
@@ -113,7 +113,7 @@ export interface CoreInstanceInterface extends AbstractInterface {
     elmSpace: IPointNum,
     operationID: string,
     siblingsEmptyElmIndex: IPointNum,
-    axes: Axes,
+    axis: Axis,
     vIncrement?: number,
     isShuffle?: boolean
   ): number;
@@ -124,5 +124,5 @@ export interface CoreInstanceInterface extends AbstractInterface {
     oldIndex?: number,
     siblingsHasEmptyElm?: number
   ): number;
-  rollBack(operationID: string, isForceTransform: boolean, axes: Axes): void;
+  rollBack(operationID: string, isForceTransform: boolean, axis: Axis): void;
 }

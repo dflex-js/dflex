@@ -1,5 +1,5 @@
 import { PointNum } from "@dflex/utils";
-import type { Axes, IPointNum } from "@dflex/utils";
+import type { Axis, IPointNum } from "@dflex/utils";
 import type { DraggedEvent, SiblingsEvent } from "../types";
 
 import store from "../DnDStore";
@@ -90,7 +90,7 @@ class Droppable extends DistanceCalculator {
    * transformation. */
   private animatedDraggedInsertionFrame: number | null;
 
-  protected axes: Axes;
+  protected axes: Axis;
 
   constructor(draggable: DraggableInteractiveInterface) {
     super(draggable);

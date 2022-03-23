@@ -11,7 +11,7 @@ export type {
 export type {
   RectDimensions,
   RectBoundaries,
-  Axes,
+  Axis,
   Direction,
   EffectedElemDirection,
 } from "./types";
