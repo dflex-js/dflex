@@ -141,7 +141,7 @@ To submit a PR:
 1- [Fork DFlex](https://github.com/dflex-js/dflex/fork) then clone the
 repository.
 
-2- Create a new branch: git checkout -b my-branch-name.
+2- Create a new branch: `git checkout -b my-branch-name`.
 
 3- Make your change.
 
