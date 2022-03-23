@@ -84,7 +84,7 @@ and playground or at lease this is the initial plan.
 DFlex is written entirely in plain JavaScript/TypeScript and doesn't depend on
 any specific framework. However, it's using the
 [**React**](https://reactjs.org/) for playground and
-[**Cypress.io**](https://www.cypress.io/) for end to end testing. It's also
+[**Cypress**](https://www.cypress.io/) for end to end testing. It's also
 using [**Jest**](https://jestjs.io/) for unit testing and
 [**Lerna**](https://lerna.js.org/) to manage the packages.
 
