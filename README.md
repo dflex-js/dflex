@@ -34,8 +34,8 @@
 # DFlex
 
 A Drag-and-Drop library for all JavaScript frameworks implementing an enhanced
-transformation mechanism to manipulate DOM elements. It's the only library that
-manipulate the DOM instead of reconstructing it.
+transformation mechanism to manipulate DOM elements. It is so far the only
+library on internet that manipulates the DOM instead of reconstructing it.
 
 ## Features ✅
 
