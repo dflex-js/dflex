@@ -245,11 +245,13 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
     emitInteractiveEvent("onDragOver", element);
 
-    const { currentPosition } = element;
+    const { currentPosition, grid } = element;
 
     this.updateOccupiedOffset(currentPosition.y, currentPosition.x);
 
     this.updateOccupiedTranslate(enforceDraggedDirection);
+
+    this.draggable.gridPlaceholder.clone(grid);
 
     /**
      * Start transforming process
