@@ -69,9 +69,7 @@ the need to call browser API. Read once, implement everywhere.
 
 ### [**@dflex/core-instance**](https://github.com/dflex-js/dflex/tree/master/packages/core-instance)
 
-Core instance is the mirror of the DOM element. It is the core of every
-interactive element. Has all the properties and methods to manipulate the DOM
-element.
+Core instance is the mirror of interactive element that includes all the properties and methods to manipulate the node.
 
 ### [**@dflex/utils**](https://github.com/dflex-js/dflex/tree/master/packages/utils)
 
