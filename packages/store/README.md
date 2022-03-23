@@ -33,9 +33,9 @@
 
 # @dflex/store
 
-DFlex store works on connecting all registered elements and organizes the
-relations between them using the DOM relations generator algorithm. Allowing
-each element to be reached recursively using its id.
+DFex Store has main registry for all DOM elements that will be manipulated. It
+is a singleton object that is accessible from anywhere in the application. The
+initial release was generic but it only has the Core of the library since ^V3.
 
 ## DFlex Features ✅
 
@@ -62,17 +62,34 @@ Visit DFlex site for docs <https://www.dflex.dev/> and live demo.
 
 ## Related Content 🏋️‍
 
-### [**Drag & Drop**](https://github.com/dflex-js/dflex/tree/master/packages/dnd)
+### [**@dflex/dom-gen**](https://github.com/dflex-js/dflex/tree/master/packages/dom-gen)
 
-A Drag-and-Drop package for all JavaScript frameworks implementing an enhanced
-transformation mechanism to manipulate DOM elements. You can achieve a drag and
-drop with three steps only with mouse/touch event.
+DFlex DOM relations generator algorithm. It Generates relations between DOM elements based
+on element depth so all the registered DOM can be called inside registry without
+the need to call browser API. Read once, implement everywhere.
 
-### [**Draggable**](https://github.com/dflex-js/dflex/tree/master/packages/dnd)
+### [**@dflex/core-instance**](https://github.com/dflex-js/dflex/tree/master/packages/core-instance)
 
-DFlex Draggable is the simplest solution to create JavaScript draggable only elements.
+Core instance is the mirror of the DOM element. It is the core of every
+interactive element. Has all the properties and methods to manipulate the DOM
+element.
 
-### [**Utils/DOM Generator**](https://github.com/dflex-js/dflex/tree/master/packages/dom-gen)
+### [**@dflex/utils**](https://github.com/dflex-js/dflex/tree/master/packages/utils)
 
-DOM relations generator algorithm. Generate relations between DOM elements based
-on element depth without a browser.
+A collection of shared functions. Mostly classes, and types that are used across
+the project.
+
+### [**@dflex/draggable**](https://github.com/dflex-js/dflex/tree/master/packages/draggable)
+
+Light weight draggable component without extra functionalities that is
+responsible for interacting with the DOM and moving the affected element(s).
+
+### [**@dflex/dnd**](https://github.com/dflex-js/dflex/tree/master/packages/dnd)
+
+The main package that depends on the other packages. It is responsible for the
+magical logic of the library to introduce the drag and drop interactive
+functionality.
+
+## License 🤝
+
+DFlex is [MIT License](LICENSE) since version 3.0.0 and above.

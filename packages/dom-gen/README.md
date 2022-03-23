@@ -54,17 +54,34 @@ Visit DFlex site for docs <https://www.dflex.dev/> and live demo.
 
 ## Related Content 🏋️‍
 
-### [**Drag & Drop**](https://github.com/dflex-js/dflex/tree/master/packages/dnd)
+### [**@dflex/core-instance**](https://github.com/dflex-js/dflex/tree/master/packages/core-instance)
 
-A Drag-and-Drop package for all JavaScript frameworks implementing an enhanced
-transformation mechanism to manipulate DOM elements. You can achieve a drag and
-drop with three steps only with mouse/touch event.
+Core instance is the mirror of the DOM element. It is the core of every
+interactive element. Has all the properties and methods to manipulate the DOM
+element.
 
-### [**Draggable**](https://github.com/dflex-js/dflex/tree/master/packages/dnd)
+### [**@dflex/utils**](https://github.com/dflex-js/dflex/tree/master/packages/utils)
 
-DFlex Draggable is the simplest solution to create JavaScript draggable only elements.
+A collection of shared functions. Mostly classes, and types that are used across
+the project.
 
-### [**Utils/DOM Store**](https://github.com/dflex-js/dflex/tree/master/packages/store)
+### [**@dflex/store**](https://github.com/dflex-js/dflex/tree/master/packages/store)
 
-The only Store that allows you to traverse through the DOM tree using element id
-without reading from the browser.
+DFex Store has main registry for all DOM elements that will be manipulated. It
+is a singleton object that is accessible from anywhere in the application. The
+initial release was generic but it only has the Core of the library since ^V3.
+
+### [**@dflex/draggable**](https://github.com/dflex-js/dflex/tree/master/packages/draggable)
+
+Light weight draggable component without extra functionalities that is
+responsible for interacting with the DOM and moving the affected element(s).
+
+### [**@dflex/dnd**](https://github.com/dflex-js/dflex/tree/master/packages/dnd)
+
+The main package that depends on the other packages. It is responsible for the
+magical logic of the library to introduce the drag and drop interactive
+functionality.
+
+## License 🤝
+
+DFlex is [MIT License](LICENSE) since version 3.0.0 and above.

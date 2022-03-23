@@ -89,3 +89,7 @@ initial release was generic but it only has the Core of the library since ^V3.
 The main package that depends on the other packages. It is responsible for the
 magical logic of the library to introduce the drag and drop interactive
 functionality.
+
+## License 🤝
+
+DFlex is [MIT License](LICENSE) since version 3.0.0 and above.

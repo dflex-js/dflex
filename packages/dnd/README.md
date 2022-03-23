@@ -65,16 +65,34 @@ Visit DFlex site for docs <https://www.dflex.dev/> and live demo.
 
 ## Related Content 🏋️‍
 
-### [**Draggable**](https://github.com/dflex-js/dflex/tree/master/packages/dnd)
+### [**@dflex/dom-gen**](https://github.com/dflex-js/dflex/tree/master/packages/dom-gen)
 
-DFlex Draggable is the simplest solution to create JavaScript draggable only elements.
+DFlex DOM relations generator algorithm. It Generates relations between DOM elements based
+on element depth so all the registered DOM can be called inside registry without
+the need to call browser API. Read once, implement everywhere.
 
-### [**Utils/DOM Generator**](https://github.com/dflex-js/dflex/tree/master/packages/dom-gen)
+### [**@dflex/core-instance**](https://github.com/dflex-js/dflex/tree/master/packages/core-instance)
 
-DOM relations generator algorithm. Generate relations between DOM elements based
-on element depth without a browser.
+Core instance is the mirror of the DOM element. It is the core of every
+interactive element. Has all the properties and methods to manipulate the DOM
+element.
 
-### [**Utils/DOM Store**](https://github.com/dflex-js/dflex/tree/master/packages/store)
+### [**@dflex/utils**](https://github.com/dflex-js/dflex/tree/master/packages/utils)
 
-The only Store that allows you to traverse through the DOM tree using element id
-without reading from the browser.
+A collection of shared functions. Mostly classes, and types that are used across
+the project.
+
+### [**@dflex/store**](https://github.com/dflex-js/dflex/tree/master/packages/store)
+
+DFex Store has main registry for all DOM elements that will be manipulated. It
+is a singleton object that is accessible from anywhere in the application. The
+initial release was generic but it only has the Core of the library since ^V3.
+
+### [**@dflex/draggable**](https://github.com/dflex-js/dflex/tree/master/packages/draggable)
+
+Light weight draggable component without extra functionalities that is
+responsible for interacting with the DOM and moving the affected element(s).
+
+## License 🤝
+
+DFlex is [MIT License](LICENSE) since version 3.0.0 and above.
