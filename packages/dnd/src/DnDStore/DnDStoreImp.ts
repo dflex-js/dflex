@@ -150,13 +150,15 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
   ) {
     if (this.registry[elmID].isPaused) {
       this.registry[elmID].resume(scroll.scrollX, scroll.scrollY);
-    }
 
-    this.#assignSiblingsBoundariesAndAlignment(
-      elmID,
-      this.registry[elmID].keys.SK,
-      this.registry[elmID].offset!
-    );
+      if (this.registry[elmID].grid.x === 0) {
+        this.#assignSiblingsBoundariesAndAlignment(
+          elmID,
+          this.registry[elmID].keys.SK,
+          this.registry[elmID].offset!
+        );
+      }
+    }
 
     let isVisible = true;
     let isVisibleY = true;
@@ -389,6 +391,11 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
       this.registry[id].grid.clone(this.siblingsGrid[SK]);
 
+      if (process.env.NODE_ENV !== "production") {
+        this.registry[id].setDataset(`gridX`, this.registry[id].grid.x);
+        this.registry[id].setDataset(`gridY`, this.registry[id].grid.y);
+      }
+
       return;
     }
 
@@ -427,6 +434,11 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     }
 
     this.siblingsAlignment[SK] = isHorizontal ? "Horizontal" : "Vertical";
+
+    if (process.env.NODE_ENV !== "production") {
+      this.registry[id].setDataset(`gridX`, this.registry[id].grid.x);
+      this.registry[id].setDataset(`gridY`, this.registry[id].grid.y);
+    }
   }
 
   /**
