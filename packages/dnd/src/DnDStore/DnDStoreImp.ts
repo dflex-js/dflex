@@ -71,7 +71,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
     this.tracker = new Tracker();
 
-    this.initELmIndicator();
+    this.#initELmIndicator();
 
     this.isInitialized = false;
     this.isDOM = false;
@@ -103,13 +103,13 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     this.events[event.type](event);
   }
 
-  private init() {
+  #init() {
     window.addEventListener("load", this.onLoadListeners);
 
     window.onbeforeunload = this.dispose();
   }
 
-  private initELmIndicator() {
+  #initELmIndicator() {
     this.elmIndicator = {
       currentKy: "",
       prevKy: "",
@@ -117,7 +117,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     };
   }
 
-  private getBranchHeadAndTail(key: string) {
+  #getBranchHeadAndTail(key: string) {
     const branch = this.DOMGen.branches[key];
 
     let hasSiblings = false;
@@ -152,7 +152,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
       this.registry[elmID].resume(scroll.scrollX, scroll.scrollY);
     }
 
-    this.assignSiblingsBoundariesAndAlignment(
+    this.#assignSiblingsBoundariesAndAlignment(
       elmID,
       this.registry[elmID].keys.SK,
       this.registry[elmID].offset!
@@ -189,7 +189,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
           // But, there's a possibility that the rest of the branch elements
           // are hidden.
           // Eg: 1, 2: hidden 3, 4, 5, 6, 7:visible 8, 9, 10: hidden.
-          this.initELmIndicator();
+          this.#initELmIndicator();
         }
       }
     }
@@ -213,7 +213,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
       return;
     }
 
-    this.initELmIndicator();
+    this.#initELmIndicator();
 
     let prevIndex = 0;
 
@@ -291,7 +291,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
   initSiblingsScrollAndVisibilityIfNecessary(key: string) {
     const { hasSiblings, firstElemID, lastElemID } =
-      this.getBranchHeadAndTail(key);
+      this.#getBranchHeadAndTail(key);
 
     if (!this.registry[firstElemID].isInitialized) {
       this.registry[firstElemID].resume(0, 0);
@@ -367,7 +367,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     });
   }
 
-  private assignSiblingsBoundariesAndAlignment(
+  #assignSiblingsBoundariesAndAlignment(
     id: string,
     SK: string,
     rect: RectDimensions
@@ -406,9 +406,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
       this.siblingsGrid[SK].x += 1;
     }
 
-    this.registry[id].grid = {
-      ...this.siblingsGrid[SK],
-    };
+    this.registry[id].grid.clone(this.siblingsGrid[SK]);
 
     if (left < $.left) {
       $.left = left;
@@ -461,7 +459,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     }
 
     if (!this.isInitialized) {
-      this.init();
+      this.#init();
       this.isInitialized = true;
     }
 
