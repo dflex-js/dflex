@@ -82,6 +82,10 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
     this.currentPosition = new PointNum(this.offset.left, this.offset.top);
 
+    /**
+     * Initializing grid comes later when the siblings boundaries are
+     * initialized and the element is visible.
+     */
     this.grid = new PointNum(0, 0);
 
     this.hasToTransform = false;
@@ -149,6 +153,8 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
     this.order.self = newIndex;
 
+    this.setDataset("index", newIndex);
+
     return { oldIndex, newIndex };
   }
 
@@ -194,8 +200,6 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     }
 
     branchIDsOrder[newIndex] = this.id;
-
-    this.setDataset("index", newIndex);
 
     return oldIndex;
   }
@@ -273,6 +277,21 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
       effectedElemDirection[axes] * numberOfPassedElm
     );
 
+    this.grid[axes] += effectedElemDirection[axes] * numberOfPassedElm;
+
+    if (process.env.NODE_ENV !== "production") {
+      if (this.grid[axes] !== newIndex + 1) {
+        throw new Error(
+          `Grid:  is ${this.grid[axes]} while the new index is ${newIndex}`
+        );
+      }
+
+      this.setDataset(
+        `grid${axes.toUpperCase() as "X" | "Y"}`,
+        this.grid[axes]
+      );
+    }
+
     const newStatusSiblingsHasEmptyElm = this.assignNewPosition(
       iDsInOrder,
       newIndex,
@@ -314,7 +333,20 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
     const { newIndex } = this.#updateOrderIndexing(increment);
 
-    this.setDataset("index", newIndex);
+    this.grid[axes] += increment;
+
+    if (process.env.NODE_ENV !== "production") {
+      if (this.grid[axes] !== newIndex + 1) {
+        throw new Error(
+          `Grid:  is ${this.grid[axes]} while the new index is ${newIndex}`
+        );
+      }
+
+      this.setDataset(
+        `grid${axes.toUpperCase() as "X" | "Y"}`,
+        this.grid[axes]
+      );
+    }
 
     this.rollBack(operationID, isForceTransform, axes);
   }

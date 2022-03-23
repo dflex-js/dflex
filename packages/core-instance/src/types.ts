@@ -16,6 +16,8 @@ export type AbstractInput = {
 };
 
 export type AllowedDataset =
+  | "gridX"
+  | "gridY"
   | "index"
   | "draggedOutPosition"
   | "draggedOutContainer";
