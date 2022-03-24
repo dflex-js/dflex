@@ -35,28 +35,42 @@ const ID_PARENT_1 = "p1";
 const ID_PARENT_2 = "p2";
 const ID_PARENT_3 = "p3";
 
-interface props {
+interface PropsBase {
   Container:
     | typeof ContainerInComponentBasedEvent
     | typeof ContainerInContainerBasedEvent;
 
   Core: typeof CoreInComponentBasedEvent | typeof CoreInContainerBasedEvent;
-  className?: string;
+  isIncludeOneContainer: boolean;
+  isHorizontal: boolean;
+  grid?: boolean;
 }
 
 const BaseApp = ({
   Container,
   Core,
-  className = "list-container list-height-fit",
-}: props) => (
-  <Container className={className}>
-    <Core id={`id-${ID_PARENT_1}`} component="ul" depth={1}>
-      {firstContainer.map(({ label, id }) => (
-        <Core depth={0} id={`id-${id}`} key={`k${id}`} component="li">
-          {label}
-        </Core>
-      ))}
-    </Core>
+  isHorizontal,
+  isIncludeOneContainer,
+  grid,
+}: PropsBase) => (
+  <Container
+    className={
+      isHorizontal
+        ? grid
+          ? "list-container-grid list-container-horizontal"
+          : "list-container-horizontal"
+        : "list-container list-height-fit"
+    }
+  >
+    {!isIncludeOneContainer && (
+      <Core id={`id-${ID_PARENT_1}`} component="ul" depth={1}>
+        {firstContainer.map(({ label, id }) => (
+          <Core depth={0} id={`id-${id}`} key={`k${id}`} component="li">
+            {label}
+          </Core>
+        ))}
+      </Core>
+    )}
     <Core id={`id-${ID_PARENT_2}`} component="ul" depth={1}>
       {secondContainer.map(({ label, id }) => (
         <Core depth={0} id={`id-${id}`} key={`k-${id}`} component="li">
@@ -64,30 +78,38 @@ const BaseApp = ({
         </Core>
       ))}
     </Core>
-    <Core id={`id-${ID_PARENT_3}`} component="ul" depth={1}>
-      {thirdContainer.map(({ label, id }) => (
-        <Core depth={0} id={`id-${id}`} key={`k-${id}`} component="li">
-          {label}
-        </Core>
-      ))}
-    </Core>
+    {!isIncludeOneContainer && (
+      <Core id={`id-${ID_PARENT_3}`} component="ul" depth={1}>
+        {thirdContainer.map(({ label, id }) => (
+          <Core depth={0} id={`id-${id}`} key={`k-${id}`} component="li">
+            {label}
+          </Core>
+        ))}
+      </Core>
+    )}
   </Container>
 );
 
-function ComponentBasedEvent({ className }: { className?: string }) {
+interface IProps {
+  isHorizontal: boolean;
+  grid?: boolean;
+  isIncludeOneContainer: boolean;
+}
+
+function ComponentBasedEvent(props: IProps) {
   return (
     <BaseApp
-      className={className}
+      {...props}
       Core={CoreInComponentBasedEvent}
       Container={ContainerInComponentBasedEvent}
     />
   );
 }
 
-function ContainerBasedEvent({ isHorizontal }: { isHorizontal?: boolean }) {
+function ContainerBasedEvent(props: IProps) {
   return (
     <BaseApp
-      className={isHorizontal ? "list-container-horizontal" : undefined}
+      {...props}
       Core={CoreInContainerBasedEvent}
       Container={ContainerInContainerBasedEvent}
     />
