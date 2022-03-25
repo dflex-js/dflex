@@ -386,12 +386,12 @@ class Droppable extends DistanceCalculator {
     console.log("file: Droppable.ts ~ line 386 ~ siblingsGrid", siblingsGrid);
 
     if (isOut[id].isOutY()) {
-      const newCol = isOut[id].isLeftFromBottom
+      const newRow = isOut[id].isLeftFromBottom
         ? gridPlaceholder.y + 1
         : gridPlaceholder.y - 1;
 
       // Leaving from top.
-      if (newCol === 0) {
+      if (newRow === 0) {
         // move element up
         this.setEffectedElemDirection(true, this.axes);
 
@@ -404,7 +404,7 @@ class Droppable extends DistanceCalculator {
       }
 
       // Leaving from bottom.
-      if (newCol > siblingsGrid.y) {
+      if (newRow > siblingsGrid.y) {
         // lock the parent
         this.lockParent(true);
 
@@ -419,11 +419,11 @@ class Droppable extends DistanceCalculator {
       return;
     }
 
-    const newRow = isOut[id].isLeftFromRight
+    const newCol = isOut[id].isLeftFromRight
       ? gridPlaceholder.x + 1
       : gridPlaceholder.x - 1;
 
-    if (newRow <= 0 || newRow > siblingsGrid.x) {
+    if (newCol <= 0 || newCol > siblingsGrid.x) {
       // move element up
       this.setEffectedElemDirection(true, this.axes);
 
