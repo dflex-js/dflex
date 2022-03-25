@@ -383,6 +383,7 @@ class Droppable extends DistanceCalculator {
 
     const { SK } = store.registry[id].keys;
     const siblingsGrid = store.siblingsGrid[SK];
+    console.log("file: Droppable.ts ~ line 386 ~ siblingsGrid", siblingsGrid);
 
     if (isOut[id].isOutY()) {
       const newCol = isOut[id].isLeftFromBottom

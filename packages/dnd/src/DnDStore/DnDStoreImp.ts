@@ -56,7 +56,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     exceptionToNextElm: boolean;
   };
 
-  private gridSiblingsHasNewCol: boolean;
+  private gridSiblingsHasNewRow: boolean;
 
   static MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
 
@@ -81,7 +81,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
     this.isInitialized = false;
     this.isDOM = false;
-    this.gridSiblingsHasNewCol = false;
+    this.gridSiblingsHasNewRow = false;
 
     this.onLoadListeners = this.onLoadListeners.bind(this);
     this.updateBranchVisibility = this.updateBranchVisibility.bind(this);
@@ -425,7 +425,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     if (bottom > rowRect.bottom || top < rowRect.top) {
       this.siblingsGrid[SK].y += 1;
 
-      this.gridSiblingsHasNewCol = true;
+      this.gridSiblingsHasNewRow = true;
 
       rowRect.left = 0;
       rowRect.right = 0;
@@ -433,10 +433,10 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
     // Defining elements in different column.
     if (left > rowRect.right || right < rowRect.left) {
-      if (this.gridSiblingsHasNewCol) {
+      if (this.gridSiblingsHasNewRow) {
         this.siblingsGrid[SK].x = 1;
 
-        this.gridSiblingsHasNewCol = false;
+        this.gridSiblingsHasNewRow = false;
       } else {
         this.siblingsGrid[SK].x += 1;
       }
