@@ -34,6 +34,8 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
   siblingsBoundaries: DnDStoreInterface["siblingsBoundaries"];
 
+  siblingsBoundariesForGrid!: DnDStoreInterface["siblingsBoundariesForGrid"];
+
   siblingsScrollElement: DnDStoreInterface["siblingsScrollElement"];
 
   siblingsGrid: DnDStoreInterface["siblingsGrid"];
@@ -60,6 +62,8 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     super();
 
     this.siblingsBoundaries = {};
+    this.siblingsBoundariesForGrid = {};
+
     this.siblingsScrollElement = {};
     this.siblingsAlignment = {};
     this.siblingsGrid = {};
@@ -152,6 +156,12 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
       this.registry[elmID].resume(scroll.scrollX, scroll.scrollY);
 
       if (this.registry[elmID].grid.x === 0) {
+        this.#assignSiblingsGrid(
+          elmID,
+          this.registry[elmID].keys.SK,
+          this.registry[elmID].offset!
+        );
+
         this.#assignSiblingsBoundariesAndAlignment(
           elmID,
           this.registry[elmID].keys.SK,
@@ -369,6 +379,84 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     });
   }
 
+  #assignSiblingsGrid(id: string, SK: string, rect: RectDimensions) {
+    const { height, left, top, width } = rect;
+
+    const right = left + width;
+    const bottom = top + height;
+
+    if (!this.siblingsBoundariesForGrid[SK]) {
+      this.siblingsBoundariesForGrid[SK] = {};
+    }
+
+    const $ = this.siblingsBoundariesForGrid[SK];
+
+    const row = this.registry[id].grid.x || 1;
+
+    const rowRect = $[row];
+
+    if (!rowRect) {
+      this.siblingsGrid[SK] = new PointNum(1, 1);
+
+      this.registry[id].grid.clone(this.siblingsGrid[SK]);
+
+      if (process.env.NODE_ENV !== "production") {
+        this.registry[id].setDataset(`gridX`, this.registry[id].grid.x);
+        this.registry[id].setDataset(`gridY`, this.registry[id].grid.y);
+      }
+
+      this.siblingsBoundariesForGrid[SK] = {
+        [row]: {
+          top,
+          left,
+          right,
+          bottom,
+        },
+      };
+
+      return;
+    }
+
+    let isHorizontal = false;
+
+    // Defining elements in different row.
+    if (bottom > rowRect.bottom || top < rowRect.top) {
+      this.siblingsGrid[SK].y += 1;
+    }
+
+    // Defining elements in different column.
+    if (left > rowRect.right || right < rowRect.left) {
+      this.siblingsGrid[SK].x += 1;
+    }
+
+    this.registry[id].grid.clone(this.siblingsGrid[SK]);
+
+    if (left < rowRect.left) {
+      rowRect.left = left;
+    }
+
+    if (top < rowRect.top) {
+      rowRect.top = top;
+    }
+
+    if (right > rowRect.right) {
+      isHorizontal = true;
+      rowRect.right = right;
+    }
+
+    if (bottom > rowRect.bottom) {
+      isHorizontal = false;
+      rowRect.bottom = bottom;
+    }
+
+    this.siblingsAlignment[SK] = isHorizontal ? "Horizontal" : "Vertical";
+
+    if (process.env.NODE_ENV !== "production") {
+      this.registry[id].setDataset(`gridX`, this.registry[id].grid.x);
+      this.registry[id].setDataset(`gridY`, this.registry[id].grid.y);
+    }
+  }
+
   #assignSiblingsBoundariesAndAlignment(
     id: string,
     SK: string,
@@ -387,33 +475,12 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
         bottom,
       };
 
-      this.siblingsGrid[SK] = new PointNum(1, 1);
-
-      this.registry[id].grid.clone(this.siblingsGrid[SK]);
-
-      if (process.env.NODE_ENV !== "production") {
-        this.registry[id].setDataset(`gridX`, this.registry[id].grid.x);
-        this.registry[id].setDataset(`gridY`, this.registry[id].grid.y);
-      }
-
       return;
     }
 
     const $ = this.siblingsBoundaries[SK];
 
     let isHorizontal = false;
-
-    // Defining elements in different row.
-    if (bottom > $.bottom || top < $.top) {
-      this.siblingsGrid[SK].y += 1;
-    }
-
-    // Defining elements in different column.
-    if (left > $.right || right < $.left) {
-      this.siblingsGrid[SK].x += 1;
-    }
-
-    this.registry[id].grid.clone(this.siblingsGrid[SK]);
 
     if (left < $.left) {
       $.left = left;
@@ -434,11 +501,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     }
 
     this.siblingsAlignment[SK] = isHorizontal ? "Horizontal" : "Vertical";
-
-    if (process.env.NODE_ENV !== "production") {
-      this.registry[id].setDataset(`gridX`, this.registry[id].grid.x);
-      this.registry[id].setDataset(`gridY`, this.registry[id].grid.y);
-    }
   }
 
   /**
