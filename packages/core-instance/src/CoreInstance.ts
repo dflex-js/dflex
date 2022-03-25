@@ -280,11 +280,11 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     this.grid[axis] += effectedElemDirection[axis] * numberOfPassedElm;
 
     if (process.env.NODE_ENV !== "production") {
-      if (this.grid[axis] !== newIndex + 1) {
-        throw new Error(
-          `Grid:  is ${this.grid[axis]} while the new index is ${newIndex}`
-        );
-      }
+      // if (this.grid[axis] !== newIndex + 1) {
+      //   throw new Error(
+      //     `Grid:  is ${this.grid[axis]} while the new index is ${newIndex}`
+      //   );
+      // }
 
       this.setDataset(
         `grid${axis.toUpperCase() as "X" | "Y"}`,
@@ -331,16 +331,16 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     // Don't update UI if it's zero and wasn't transformed.
     this.#seTranslate(elmSpace, axis, undefined, isForceTransform);
 
-    const { newIndex } = this.#updateOrderIndexing(increment);
+    this.#updateOrderIndexing(increment);
 
     this.grid[axis] += increment;
 
     if (process.env.NODE_ENV !== "production") {
-      if (this.grid[axis] !== newIndex + 1) {
-        throw new Error(
-          `Grid:  is ${this.grid[axis]} while the new index is ${newIndex}`
-        );
-      }
+      // if (this.grid[axis] !== newIndex + 1) {
+      //   throw new Error(
+      //     `Grid:  is ${this.grid[axis]} while the new index is ${newIndex}`
+      //   );
+      // }
 
       this.setDataset(
         `grid${axis.toUpperCase() as "X" | "Y"}`,
