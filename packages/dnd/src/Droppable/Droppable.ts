@@ -324,13 +324,11 @@ class Droppable extends DistanceCalculator {
     this.draggable.setDraggedTempIndex(-1);
 
     for (let i = from; i < siblings.length; i += 1) {
-      console.log("file: Droppable.ts ~ line 327 ~ from", from);
       /**
        * Don't update translate because it's not permanent. Releasing dragged
        * means undoing last position.
        */
       const id = siblings[i];
-      console.log("file: Droppable.ts ~ line 332 ~ id", id);
 
       if (
         isIDEligible2Move(
@@ -391,9 +389,7 @@ class Droppable extends DistanceCalculator {
 
       const isContainerHasCol = gridPlaceholder.x + 1 <= siblingsGrid.x;
 
-      if (isContainerHasCol) {
-        this.axes = "x";
-      }
+      this.axes = isContainerHasCol ? "x" : "y";
 
       // Leaving from top.
       if (newRow === 0) {
