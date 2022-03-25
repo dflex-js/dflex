@@ -70,6 +70,8 @@ export interface DnDStoreInterface {
   /** Numbers of total columns and rows each container has.  */
   siblingsGrid: { [siblingKey: string]: IPointNum };
 
+  siblingsGridContainer: { [siblingKey: string]: IPointNum };
+
   /** Container scroll instance.  */
   siblingsScrollElement: { [siblingKey: string]: ScrollInterface };
 

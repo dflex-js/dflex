@@ -40,6 +40,8 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
   siblingsGrid: DnDStoreInterface["siblingsGrid"];
 
+  siblingsGridContainer: DnDStoreInterface["siblingsGrid"];
+
   siblingsAlignment: DnDStoreInterface["siblingsAlignment"];
 
   layoutState: DnDStoreInterface["layoutState"];
@@ -69,6 +71,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     this.siblingsScrollElement = {};
     this.siblingsAlignment = {};
     this.siblingsGrid = {};
+    this.siblingsGridContainer = {};
 
     this.layoutState = "pending";
 
@@ -419,8 +422,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
       return;
     }
 
-    let isHorizontal = false;
-
     // Defining elements in different row.
     if (bottom > rowRect.bottom || top < rowRect.top) {
       this.siblingsGrid[SK].y += 1;
@@ -453,16 +454,12 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     }
 
     if (right > rowRect.right) {
-      isHorizontal = true;
       rowRect.right = right;
     }
 
     if (bottom > rowRect.bottom) {
-      isHorizontal = false;
       rowRect.bottom = bottom;
     }
-
-    this.siblingsAlignment[SK] = isHorizontal ? "Horizontal" : "Vertical";
 
     if (process.env.NODE_ENV !== "production") {
       this.registry[id].setDataset(`gridX`, this.registry[id].grid.x);
@@ -484,10 +481,22 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
         bottom,
       };
 
+      this.siblingsGridContainer[SK] = new PointNum(1, 1);
+
       return;
     }
 
     const $ = this.siblingsBoundaries[SK];
+
+    // Defining elements in different row.
+    if (bottom > $.bottom || top < $.top) {
+      this.siblingsGridContainer[SK].y += 1;
+    }
+
+    // Defining elements in different column.
+    if (left > $.right || right < $.left) {
+      this.siblingsGridContainer[SK].x += 1;
+    }
 
     let isHorizontal = false;
 
