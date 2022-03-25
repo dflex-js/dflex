@@ -138,7 +138,7 @@ class Droppable extends DistanceCalculator {
     this.isOnDragOutThresholdEvtEmitted = false;
     this.animatedDraggedInsertionFrame = null;
 
-    this.isDraggedOutContainerEarlyDetection = false;
+    this.isParentLocked = false;
 
     this.axes = store.siblingsAlignment[SK] === "Horizontal" ? "x" : "y";
   }
@@ -324,11 +324,13 @@ class Droppable extends DistanceCalculator {
     this.draggable.setDraggedTempIndex(-1);
 
     for (let i = from; i < siblings.length; i += 1) {
+      console.log("file: Droppable.ts ~ line 327 ~ from", from);
       /**
        * Don't update translate because it's not permanent. Releasing dragged
        * means undoing last position.
        */
       const id = siblings[i];
+      console.log("file: Droppable.ts ~ line 332 ~ id", id);
 
       if (
         isIDEligible2Move(
@@ -383,12 +385,12 @@ class Droppable extends DistanceCalculator {
     const siblingsGrid = store.siblingsGrid[SK];
 
     if (isOut[id].isOutY()) {
-      const newRow = isOut[id].isLeftFromBottom
+      const newCol = isOut[id].isLeftFromBottom
         ? gridPlaceholder.y + 1
         : gridPlaceholder.y - 1;
 
       // Leaving from top.
-      if (newRow === 0) {
+      if (newCol === 0) {
         // move element up
         this.setEffectedElemDirection(true, this.axes);
 
@@ -401,7 +403,7 @@ class Droppable extends DistanceCalculator {
       }
 
       // Leaving from bottom.
-      if (newRow > siblingsGrid.y) {
+      if (newCol > siblingsGrid.y) {
         // lock the parent
         this.lockParent(true);
 
@@ -438,7 +440,7 @@ class Droppable extends DistanceCalculator {
   }
 
   private lockParent(isOut: boolean) {
-    this.isDraggedOutContainerEarlyDetection = isOut;
+    this.isParentLocked = isOut;
   }
 
   /**
@@ -727,7 +729,7 @@ class Droppable extends DistanceCalculator {
 
       this.scrollManager(x, y);
 
-      if (!this.isDraggedOutContainerEarlyDetection) {
+      if (!this.isParentLocked) {
         this.draggable.draggedElm.setDataset("draggedOutPosition", true);
 
         this.draggedOutPosition();
@@ -758,7 +760,7 @@ class Droppable extends DistanceCalculator {
 
       this.emitDraggedEvent("onDragOutContainer");
 
-      this.isDraggedOutContainerEarlyDetection = true;
+      this.isParentLocked = true;
 
       this.detectNearestContainer();
 
@@ -772,7 +774,7 @@ class Droppable extends DistanceCalculator {
     /**
      * When dragged is out parent and returning to it.
      */
-    if (this.isDraggedOutContainerEarlyDetection) {
+    if (this.isParentLocked) {
       isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
       if (isOutSiblingsContainer) {
