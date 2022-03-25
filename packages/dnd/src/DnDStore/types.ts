@@ -63,6 +63,7 @@ export interface DnDStoreInterface {
   siblingsBoundariesForGrid: {
     [siblingKey: string]: {
       [row: number]: RectBoundaries;
+      // grid: IPointNum;
     };
   };
 

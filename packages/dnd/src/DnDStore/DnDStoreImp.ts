@@ -56,6 +56,8 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     exceptionToNextElm: boolean;
   };
 
+  private gridSiblingsHasNewCol: boolean;
+
   static MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
 
   constructor() {
@@ -79,6 +81,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
     this.isInitialized = false;
     this.isDOM = false;
+    this.gridSiblingsHasNewCol = false;
 
     this.onLoadListeners = this.onLoadListeners.bind(this);
     this.updateBranchVisibility = this.updateBranchVisibility.bind(this);
@@ -163,7 +166,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
         );
 
         this.#assignSiblingsBoundariesAndAlignment(
-          elmID,
           this.registry[elmID].keys.SK,
           this.registry[elmID].offset!
         );
@@ -422,11 +424,22 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     // Defining elements in different row.
     if (bottom > rowRect.bottom || top < rowRect.top) {
       this.siblingsGrid[SK].y += 1;
+
+      this.gridSiblingsHasNewCol = true;
+
+      rowRect.left = 0;
+      rowRect.right = 0;
     }
 
     // Defining elements in different column.
     if (left > rowRect.right || right < rowRect.left) {
-      this.siblingsGrid[SK].x += 1;
+      if (this.gridSiblingsHasNewCol) {
+        this.siblingsGrid[SK].x = 1;
+
+        this.gridSiblingsHasNewCol = false;
+      } else {
+        this.siblingsGrid[SK].x += 1;
+      }
     }
 
     this.registry[id].grid.clone(this.siblingsGrid[SK]);
@@ -457,11 +470,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     }
   }
 
-  #assignSiblingsBoundariesAndAlignment(
-    id: string,
-    SK: string,
-    rect: RectDimensions
-  ) {
+  #assignSiblingsBoundariesAndAlignment(SK: string, rect: RectDimensions) {
     const { height, left, top, width } = rect;
 
     const right = left + width;
