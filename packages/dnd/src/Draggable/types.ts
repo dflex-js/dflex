@@ -44,9 +44,6 @@ export interface DraggableAxesInterface
   /** grid placeholder for dragged grid position. */
   readonly gridPlaceholder: IPointNum;
 
-  /** Previous X and Y are used to calculate mouse directions. */
-  readonly mousePoints: IPointNum;
-
   /** Restrict dragged movement inside viewport.  */
   readonly isViewportRestricted: boolean;
 

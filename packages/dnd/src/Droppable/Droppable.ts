@@ -445,11 +445,7 @@ class Droppable extends DistanceCalculator {
     this.isParentLocked = isOut;
   }
 
-  /**
-   *
-   * @param y -
-   */
-  private draggedIsComingIn(y: number) {
+  private draggedIsComingIn() {
     const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
 
     /**
@@ -477,13 +473,6 @@ class Droppable extends DistanceCalculator {
       }
 
       this.draggable.setDraggedTempIndex(to);
-
-      /**
-       * Last prevY update when leaving the parent container. When we have
-       * coming element inside we need new value so we can assign isMoveDown
-       * correctly.
-       */
-      this.draggable.mousePoints.y = y;
     }
 
     this.lockParent(false);
@@ -748,7 +737,7 @@ class Droppable extends DistanceCalculator {
         if (this.animatedDraggedInsertionFrame === null) {
           this.animatedDraggedInsertionFrame = window.requestAnimationFrame(
             () => {
-              this.draggedIsComingIn(y);
+              this.draggedIsComingIn();
 
               this.animatedDraggedInsertionFrame = null;
             }
@@ -788,7 +777,7 @@ class Droppable extends DistanceCalculator {
       if (this.animatedDraggedInsertionFrame === null) {
         this.animatedDraggedInsertionFrame = window.requestAnimationFrame(
           () => {
-            this.draggedIsComingIn(y);
+            this.draggedIsComingIn();
 
             this.animatedDraggedInsertionFrame = null;
           }
