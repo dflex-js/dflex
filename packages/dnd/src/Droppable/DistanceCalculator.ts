@@ -187,7 +187,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
    *
    * @param id -
    */
-  protected updateElement(id: string, axis: Axis) {
+  protected updateElement(id: string, isIncrease: boolean, axis: Axis) {
     const element = store.registry[id];
 
     // const { SK } = store.registry[id].keys;
@@ -197,13 +197,11 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     //   this.draggable.gridPlaceholder.x + 1 <= siblingsGrid.x;
 
     // const axis = isContainerHasCol ? "x" : "y";
-    // const elmDirection = isIncrease ? -1 : 1;
+    const elmDirection = isIncrease ? -1 : 1;
 
     this.calculateDistance(element, axis);
 
-    this.draggable.updateNumOfElementsTransformed(
-      this.effectedElemDirection[axis]
-    );
+    this.draggable.updateNumOfElementsTransformed(elmDirection);
 
     // TODO: always true for the first element
     if (!this.isParentLocked) {
@@ -241,7 +239,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
       currentPosition.y + this.draggedOffset.y
     );
 
-    const draggedDirection = -1 * this.effectedElemDirection[axis];
+    const draggedDirection = -1 * elmDirection;
 
     this.draggable.occupiedTranslate.increase(
       draggedDirection * this.draggedAccumulatedTransition.x,

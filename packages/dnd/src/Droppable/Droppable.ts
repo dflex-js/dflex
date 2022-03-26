@@ -281,7 +281,7 @@ class Droppable extends DistanceCalculator {
     return droppableIndex;
   }
 
-  private switchElement() {
+  private switchElement(isIncrease: boolean) {
     const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
 
     const elmIndex =
@@ -299,7 +299,7 @@ class Droppable extends DistanceCalculator {
     ) {
       this.draggable.setDraggedTempIndex(elmIndex);
 
-      this.updateElement(id, this.axes);
+      this.updateElement(id, isIncrease, this.axes);
     }
   }
 
@@ -337,7 +337,7 @@ class Droppable extends DistanceCalculator {
           this.draggable.scroll.enable
         )
       ) {
-        this.updateElement(id, this.axes);
+        this.updateElement(id, true, this.axes);
       }
     }
   }
@@ -367,7 +367,7 @@ class Droppable extends DistanceCalculator {
           this.draggable.scroll.enable
         )
       ) {
-        this.updateElement(id, this.axes);
+        this.updateElement(id, false, this.axes);
       }
     }
   }
@@ -415,7 +415,7 @@ class Droppable extends DistanceCalculator {
       // Inside the container.
       this.setEffectedElemDirection(isOut[id].isLeftFromBottom, this.axes);
 
-      this.switchElement();
+      this.switchElement(isOut[id].isLeftFromBottom);
 
       return;
     }
@@ -438,7 +438,7 @@ class Droppable extends DistanceCalculator {
 
     this.setEffectedElemDirection(isOut[id].isLeftFromRight, this.axes);
 
-    this.switchElement();
+    this.switchElement(isOut[id].isLeftFromRight);
   }
 
   private lockParent(isOut: boolean) {
