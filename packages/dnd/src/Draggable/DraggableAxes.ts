@@ -287,14 +287,7 @@ class DraggableAxes
     );
   }
 
-  isLeavingFromHead() {
-    return (
-      this.threshold.isOut[this.draggedElm.id].isLeftFromTop &&
-      this.indexPlaceholder === 0
-    );
-  }
-
-  isLeavingFromTail() {
+  #isLeavingFromTail() {
     const lastElm =
       (store.getElmSiblingsListById(this.draggedElm.id) as string[]).length - 1;
 
@@ -308,7 +301,7 @@ class DraggableAxes
     const { SK } = store.registry[this.draggedElm.id].keys;
 
     return (
-      !this.isLeavingFromTail() &&
+      !this.#isLeavingFromTail() &&
       (this.isOutThreshold() || this.isOutThreshold(SK))
     );
   }
