@@ -1,7 +1,7 @@
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
 import { Direction, PointNum } from "@dflex/utils";
-import type { IPointNum, EffectedElemDirection, Axis } from "@dflex/utils";
+import type { IPointNum, Axis } from "@dflex/utils";
 
 import type { InteractivityEvent } from "../types";
 import type { DraggableInteractiveInterface } from "../Draggable";
@@ -37,8 +37,6 @@ function emitInteractiveEvent(
 class DistanceCalculator implements DistanceCalculatorInterface {
   protected draggable: DraggableInteractiveInterface;
 
-  protected effectedElemDirection: EffectedElemDirection;
-
   private elmTransition: IPointNum;
 
   private draggedOffset: IPointNum;
@@ -66,15 +64,6 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     this.draggedAccumulatedTransition = new PointNum(0, 0);
 
     this.siblingsEmptyElmIndex = new PointNum(-1, -1);
-
-    /**
-     * Elements effected by dragged direction.
-     * Negative for up and right.
-     */
-    this.effectedElemDirection = {
-      x: 1,
-      y: 1,
-    };
 
     this.isParentLocked = false;
   }
