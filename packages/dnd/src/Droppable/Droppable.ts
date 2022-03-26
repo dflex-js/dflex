@@ -392,9 +392,6 @@ class Droppable extends DistanceCalculator {
 
       // Leaving from top.
       if (newRow === 0) {
-        // move element up
-        this.setEffectedElemDirection(true, this.axes);
-
         // lock the parent
         this.lockParent(true);
 
@@ -411,9 +408,6 @@ class Droppable extends DistanceCalculator {
         return;
       }
 
-      // Inside the container.
-      this.setEffectedElemDirection(isOut[id].isLeftFromBottom, this.axes);
-
       this.switchElement(isOut[id].isLeftFromBottom);
 
       return;
@@ -424,9 +418,6 @@ class Droppable extends DistanceCalculator {
       : gridPlaceholder.x - 1;
 
     if (newCol <= 0 || newCol > siblingsGrid.x) {
-      // move element up
-      this.setEffectedElemDirection(true, this.axes);
-
       // lock the parent
       this.lockParent(true);
 
@@ -434,8 +425,6 @@ class Droppable extends DistanceCalculator {
 
       return;
     }
-
-    this.setEffectedElemDirection(isOut[id].isLeftFromRight, this.axes);
 
     this.switchElement(isOut[id].isLeftFromRight);
   }
@@ -476,22 +465,8 @@ class Droppable extends DistanceCalculator {
 
     this.lockParent(false);
 
-    /**
-     * Moving element down by setting is up to false
-     */
-    this.setEffectedElemDirection(false, this.axes);
-
     if (hasToMoveSiblingsDown) {
       this.moveDown(to);
-
-      /**
-       * Now, resitting direction by figuring out if dragged settled up/dwn.
-       */
-      const isElmUp = this.leftAtIndex > this.draggable.indexPlaceholder;
-
-      this.setEffectedElemDirection(isElmUp, this.axes);
-    } else {
-      this.setEffectedElemDirection(true, this.axes);
     }
 
     /**

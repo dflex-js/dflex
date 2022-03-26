@@ -79,10 +79,6 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     this.isParentLocked = false;
   }
 
-  protected setEffectedElemDirection(isIncrease: boolean, axis: Axis) {
-    this.effectedElemDirection[axis] = isIncrease ? -1 : 1;
-  }
-
   /**
    *
    * @param position - Hight if the working axes is Y. Otherwise, it's width.
