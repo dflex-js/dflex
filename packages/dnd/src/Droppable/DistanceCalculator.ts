@@ -1,6 +1,6 @@
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
-import { PointNum } from "@dflex/utils";
+import { Direction, PointNum } from "@dflex/utils";
 import type { IPointNum, EffectedElemDirection, Axis } from "@dflex/utils";
 
 import type { InteractivityEvent } from "../types";
@@ -93,7 +93,8 @@ class DistanceCalculator implements DistanceCalculatorInterface {
   private setDistanceIndicators(
     position: Difference,
     space: Difference,
-    axis: Axis
+    axis: Axis,
+    direction: Direction
   ) {
     const positionDifference = Math.abs(position.dragged - position.element);
 
@@ -107,7 +108,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     if (space.dragged < space.element) {
       // console.log("elmHight is bigger");
 
-      if (this.effectedElemDirection[axis] === -1) {
+      if (direction === -1) {
         // console.log("elm going up");
 
         this.draggedAccumulatedTransition[axis] += offsetDiff;
@@ -123,7 +124,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
     // console.log("elmHight is smaller");
 
-    if (this.effectedElemDirection[axis] === -1) {
+    if (direction === -1) {
       // console.log("elm going up");
 
       this.draggedAccumulatedTransition[axis] -= offsetDiff;
@@ -135,7 +136,11 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     }
   }
 
-  private calculateDistance(element: CoreInstanceInterface, axis: Axis) {
+  private calculateDistance(
+    element: CoreInstanceInterface,
+    axis: Axis,
+    direction: Direction
+  ) {
     const {
       currentPosition: elmPosition,
       offset: { height: elmHight, width: elmWidth },
@@ -162,7 +167,8 @@ class DistanceCalculator implements DistanceCalculatorInterface {
           dragged: draggedHight,
           element: elmHight,
         },
-        "y"
+        "y",
+        direction
       );
 
       return;
@@ -177,7 +183,8 @@ class DistanceCalculator implements DistanceCalculatorInterface {
         dragged: draggedWidth,
         element: elmWidth,
       },
-      "x"
+      "x",
+      direction
     );
   }
 
@@ -199,9 +206,9 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
     const axis = isContainerHasCol ? "x" : "y";
 
-    const elmDirection = isIncrease ? -1 : 1;
+    const elmDirection: Direction = isIncrease ? -1 : 1;
 
-    this.calculateDistance(element, axis);
+    this.calculateDistance(element, axis, elmDirection);
 
     this.draggable.updateNumOfElementsTransformed(elmDirection);
 

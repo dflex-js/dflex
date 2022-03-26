@@ -285,8 +285,7 @@ class Droppable extends DistanceCalculator {
     const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
 
     const elmIndex =
-      this.draggable.indexPlaceholder +
-      -1 * this.effectedElemDirection[this.axes];
+      this.draggable.indexPlaceholder + -1 * (isIncrease ? -1 : 1);
 
     const id = siblings![elmIndex];
 
