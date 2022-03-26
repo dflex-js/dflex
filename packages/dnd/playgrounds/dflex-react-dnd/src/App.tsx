@@ -46,13 +46,34 @@ function App() {
         <Route path="/unregistered" element={<UnRegisteredLists />} />
         <Route
           path="/component-based-event"
-          element={<ComponentBasedEvent />}
+          element={
+            <ComponentBasedEvent
+              isHorizontal={false}
+              isIncludeOneContainer={false}
+            />
+          }
         />
         <Route
           path="/horizontal"
-          element={<ContainerBasedEvent isHorizontal />}
+          element={
+            <ContainerBasedEvent isHorizontal isIncludeOneContainer={false} />
+          }
         ></Route>
-        <Route path="/" element={<ContainerBasedEvent />}></Route>
+        <Route
+          path="/grid"
+          element={
+            <ContainerBasedEvent isHorizontal isIncludeOneContainer grid />
+          }
+        ></Route>
+        <Route
+          path="/"
+          element={
+            <ContainerBasedEvent
+              isHorizontal={false}
+              isIncludeOneContainer={false}
+            />
+          }
+        ></Route>
       </Routes>
     </BrowserRouter>
   );

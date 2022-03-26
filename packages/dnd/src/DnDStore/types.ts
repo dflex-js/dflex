@@ -60,8 +60,17 @@ export interface DnDStoreInterface {
   /** Strict Rect for siblings containers. */
   siblingsBoundaries: { [siblingKey: string]: RectBoundaries };
 
+  siblingsBoundariesForGrid: {
+    [siblingKey: string]: {
+      [row: number]: RectBoundaries;
+      // grid: IPointNum;
+    };
+  };
+
   /** Numbers of total columns and rows each container has.  */
   siblingsGrid: { [siblingKey: string]: IPointNum };
+
+  siblingsGridContainer: { [siblingKey: string]: IPointNum };
 
   /** Container scroll instance.  */
   siblingsScrollElement: { [siblingKey: string]: ScrollInterface };

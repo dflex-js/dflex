@@ -48,7 +48,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
   private siblingsEmptyElmIndex: IPointNum;
 
   /** Isolated form the threshold and predict is-out based on the controllers */
-  protected isDraggedOutContainerEarlyDetection: boolean;
+  protected isParentLocked: boolean;
 
   constructor(draggable: DraggableInteractiveInterface) {
     this.draggable = draggable;
@@ -76,7 +76,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
       y: 1,
     };
 
-    this.isDraggedOutContainerEarlyDetection = false;
+    this.isParentLocked = false;
   }
 
   protected setEffectedElemDirection(isIncrease: boolean, axis: Axis) {
@@ -190,12 +190,23 @@ class DistanceCalculator implements DistanceCalculatorInterface {
   protected updateElement(id: string, axis: Axis) {
     const element = store.registry[id];
 
+    // const { SK } = store.registry[id].keys;
+    // const siblingsGrid = store.siblingsGridContainer[SK];
+
+    // const isContainerHasCol =
+    //   this.draggable.gridPlaceholder.x + 1 <= siblingsGrid.x;
+
+    // const axis = isContainerHasCol ? "x" : "y";
+    // const elmDirection = isIncrease ? -1 : 1;
+
     this.calculateDistance(element, axis);
 
-    this.draggable.updateNumOfElementsTransformed(this.effectedElemDirection.x);
+    this.draggable.updateNumOfElementsTransformed(
+      this.effectedElemDirection[axis]
+    );
 
     // TODO: always true for the first element
-    if (!this.isDraggedOutContainerEarlyDetection) {
+    if (!this.isParentLocked) {
       /**
        * By updating the dragged translate, we guarantee that dragged
        * transformation will not triggered until dragged is over threshold
