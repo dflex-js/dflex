@@ -187,7 +187,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
    *
    * @param id -
    */
-  protected updateElement(id: string, isIncrease: boolean, initAxis: Axis) {
+  protected updateElement(id: string, isIncrease: boolean) {
     const element = store.registry[id];
 
     const { SK } = store.registry[id].keys;
@@ -198,12 +198,6 @@ class DistanceCalculator implements DistanceCalculatorInterface {
       this.draggable.gridPlaceholder.x + 1 <= siblingsGrid.x;
 
     const axis = isContainerHasCol ? "x" : "y";
-
-    if (initAxis !== axis) {
-      throw new Error(
-        `Axis is not the same as initAxis is ${initAxis} and axis is ${axis}`
-      );
-    }
 
     const elmDirection = isIncrease ? -1 : 1;
 
