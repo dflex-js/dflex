@@ -44,9 +44,6 @@ export interface DraggableAxesInterface
   /** grid placeholder for dragged grid position. */
   readonly gridPlaceholder: IPointNum;
 
-  /** Previous X and Y are used to calculate mouse directions. */
-  readonly mousePoints: IPointNum;
-
   /** Restrict dragged movement inside viewport.  */
   readonly isViewportRestricted: boolean;
 
@@ -64,18 +61,6 @@ export interface DraggableAxesInterface
    * necessary flags.
    */
   isOutThreshold(siblingsK?: string): boolean;
-
-  /**
-   * Checks if dragged index is first the mouse going up. Valid only if dragged
-   * is out self threshold.
-   */
-  isLeavingFromHead(): boolean;
-
-  /**
-   * Checks if dragged index is last the mouse going down. Valid only if dragged
-   * is out self threshold.
-   */
-  isLeavingFromTail(): boolean;
 
   /** Has moved without settling inside new position. */
   isNotSettled(): boolean;

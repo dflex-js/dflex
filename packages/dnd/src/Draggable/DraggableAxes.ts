@@ -30,8 +30,6 @@ class DraggableAxes
 
   innerOffset: IPointNum;
 
-  mousePoints: IPointNum;
-
   isMovingAwayFrom: IPointBool;
 
   private axesFilterNeeded: boolean;
@@ -108,8 +106,6 @@ class DraggableAxes
       currentPosition.y
     );
 
-    this.mousePoints = new PointNum(x, y);
-
     this.restrictions = opts.restrictions;
 
     this.restrictionsStatus = opts.restrictionsStatus;
@@ -175,22 +171,11 @@ class DraggableAxes
     return x;
   }
 
-  private setDraggedMouseMovement(x: number, y: number) {
-    this.isMovingAwayFrom.setAxes(
-      x > this.mousePoints.x,
-      y > this.mousePoints.y
-    );
-
-    this.mousePoints.setAxes(x, y);
-  }
-
   dragAt(x: number, y: number) {
     if (!this.isLayoutStateUpdated) {
       this.isLayoutStateUpdated = true;
       store.onStateChange("dragging");
     }
-
-    this.setDraggedMouseMovement(x, y);
 
     let filteredY = y;
     let filteredX = x;
@@ -287,14 +272,7 @@ class DraggableAxes
     );
   }
 
-  isLeavingFromHead() {
-    return (
-      this.threshold.isOut[this.draggedElm.id].isLeftFromTop &&
-      this.indexPlaceholder === 0
-    );
-  }
-
-  isLeavingFromTail() {
+  #isLeavingFromTail() {
     const lastElm =
       (store.getElmSiblingsListById(this.draggedElm.id) as string[]).length - 1;
 
@@ -308,7 +286,7 @@ class DraggableAxes
     const { SK } = store.registry[this.draggedElm.id].keys;
 
     return (
-      !this.isLeavingFromTail() &&
+      !this.#isLeavingFromTail() &&
       (this.isOutThreshold() || this.isOutThreshold(SK))
     );
   }
