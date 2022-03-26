@@ -4,7 +4,7 @@ import { Point, PointNum } from "@dflex/utils";
 
 import type {
   RectDimensions,
-  EffectedElemDirection,
+  Direction,
   Axis,
   IPoint,
   IPointNum,
@@ -249,7 +249,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
   /**
    *
    * @param iDsInOrder -
-   * @param effectedElemDirection - (+1/-1)
+   * @param direction - (+1/-1)
    * @param elmSpace - space between dragged and the immediate next element.
    * @param operationID - A unique ID used to store translate history
    * @param numberOfPassedElm - the number of passed elements.
@@ -257,7 +257,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
    */
   setPosition(
     iDsInOrder: string[],
-    effectedElemDirection: EffectedElemDirection,
+    direction: Direction,
     elmSpace: PointNum,
     operationID: string,
     siblingsEmptyElmIndex: PointNum,
@@ -269,15 +269,15 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
      * effectedElemDirection decides the direction of the element, negative or positive.
      * If the element is dragged to the left, the effectedElemDirection is -1.
      */
-    elmSpace[axis] *= effectedElemDirection[axis];
+    elmSpace[axis] *= direction;
 
     this.#seTranslate(elmSpace[axis], axis, operationID);
 
     const { oldIndex, newIndex } = this.#updateOrderIndexing(
-      effectedElemDirection[axis] * numberOfPassedElm
+      direction * numberOfPassedElm
     );
 
-    this.grid[axis] += effectedElemDirection[axis] * numberOfPassedElm;
+    this.grid[axis] += direction * numberOfPassedElm;
 
     if (process.env.NODE_ENV !== "production") {
       // if (this.grid[axis] !== newIndex + 1) {

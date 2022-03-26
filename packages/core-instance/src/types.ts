@@ -1,9 +1,4 @@
-import type {
-  RectDimensions,
-  Axis,
-  EffectedElemDirection,
-  IPointNum,
-} from "@dflex/utils";
+import type { RectDimensions, Axis, IPointNum, Direction } from "@dflex/utils";
 
 export interface AbstractOpts {
   isInitialized: boolean;
@@ -109,7 +104,7 @@ export interface CoreInstanceInterface extends AbstractInterface {
   changeVisibility(isVisible: boolean): void;
   setPosition(
     iDsInOrder: string[],
-    effectedElemDirection: EffectedElemDirection,
+    direction: Direction,
     elmSpace: IPointNum,
     operationID: string,
     siblingsEmptyElmIndex: IPointNum,
