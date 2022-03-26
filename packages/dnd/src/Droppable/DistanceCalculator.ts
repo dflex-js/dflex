@@ -190,6 +190,15 @@ class DistanceCalculator implements DistanceCalculatorInterface {
   protected updateElement(id: string, axis: Axis) {
     const element = store.registry[id];
 
+    // const { SK } = store.registry[id].keys;
+    // const siblingsGrid = store.siblingsGridContainer[SK];
+
+    // const isContainerHasCol =
+    //   this.draggable.gridPlaceholder.x + 1 <= siblingsGrid.x;
+
+    // const axis = isContainerHasCol ? "x" : "y";
+    // const elmDirection = isIncrease ? -1 : 1;
+
     this.calculateDistance(element, axis);
 
     this.draggable.updateNumOfElementsTransformed(
