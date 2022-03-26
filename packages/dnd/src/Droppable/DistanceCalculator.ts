@@ -187,16 +187,24 @@ class DistanceCalculator implements DistanceCalculatorInterface {
    *
    * @param id -
    */
-  protected updateElement(id: string, isIncrease: boolean, axis: Axis) {
+  protected updateElement(id: string, isIncrease: boolean, initAxis: Axis) {
     const element = store.registry[id];
 
-    // const { SK } = store.registry[id].keys;
-    // const siblingsGrid = store.siblingsGridContainer[SK];
+    const { SK } = store.registry[id].keys;
 
-    // const isContainerHasCol =
-    //   this.draggable.gridPlaceholder.x + 1 <= siblingsGrid.x;
+    const siblingsGrid = store.siblingsGridContainer[SK];
 
-    // const axis = isContainerHasCol ? "x" : "y";
+    const isContainerHasCol =
+      this.draggable.gridPlaceholder.x + 1 <= siblingsGrid.x;
+
+    const axis = isContainerHasCol ? "x" : "y";
+
+    if (initAxis !== axis) {
+      throw new Error(
+        `Axis is not the same as initAxis is ${initAxis} and axis is ${axis}`
+      );
+    }
+
     const elmDirection = isIncrease ? -1 : 1;
 
     this.calculateDistance(element, axis);
