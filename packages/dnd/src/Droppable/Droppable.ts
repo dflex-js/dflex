@@ -281,12 +281,11 @@ class Droppable extends DistanceCalculator {
     return droppableIndex;
   }
 
-  private switchElement() {
+  private switchElement(isIncrease: boolean) {
     const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
 
     const elmIndex =
-      this.draggable.indexPlaceholder +
-      -1 * this.effectedElemDirection[this.axes];
+      this.draggable.indexPlaceholder + -1 * (isIncrease ? -1 : 1);
 
     const id = siblings![elmIndex];
 
@@ -299,7 +298,7 @@ class Droppable extends DistanceCalculator {
     ) {
       this.draggable.setDraggedTempIndex(elmIndex);
 
-      this.updateElement(id, this.axes);
+      this.updateElement(id, isIncrease);
     }
   }
 
@@ -337,7 +336,7 @@ class Droppable extends DistanceCalculator {
           this.draggable.scroll.enable
         )
       ) {
-        this.updateElement(id, this.axes);
+        this.updateElement(id, true);
       }
     }
   }
@@ -367,7 +366,7 @@ class Droppable extends DistanceCalculator {
           this.draggable.scroll.enable
         )
       ) {
-        this.updateElement(id, this.axes);
+        this.updateElement(id, false);
       }
     }
   }
@@ -393,9 +392,6 @@ class Droppable extends DistanceCalculator {
 
       // Leaving from top.
       if (newRow === 0) {
-        // move element up
-        this.setEffectedElemDirection(true, this.axes);
-
         // lock the parent
         this.lockParent(true);
 
@@ -412,10 +408,7 @@ class Droppable extends DistanceCalculator {
         return;
       }
 
-      // Inside the container.
-      this.setEffectedElemDirection(isOut[id].isLeftFromBottom, this.axes);
-
-      this.switchElement();
+      this.switchElement(isOut[id].isLeftFromBottom);
 
       return;
     }
@@ -425,9 +418,6 @@ class Droppable extends DistanceCalculator {
       : gridPlaceholder.x - 1;
 
     if (newCol <= 0 || newCol > siblingsGrid.x) {
-      // move element up
-      this.setEffectedElemDirection(true, this.axes);
-
       // lock the parent
       this.lockParent(true);
 
@@ -436,9 +426,7 @@ class Droppable extends DistanceCalculator {
       return;
     }
 
-    this.setEffectedElemDirection(isOut[id].isLeftFromRight, this.axes);
-
-    this.switchElement();
+    this.switchElement(isOut[id].isLeftFromRight);
   }
 
   private lockParent(isOut: boolean) {
@@ -477,22 +465,8 @@ class Droppable extends DistanceCalculator {
 
     this.lockParent(false);
 
-    /**
-     * Moving element down by setting is up to false
-     */
-    this.setEffectedElemDirection(false, this.axes);
-
     if (hasToMoveSiblingsDown) {
       this.moveDown(to);
-
-      /**
-       * Now, resitting direction by figuring out if dragged settled up/dwn.
-       */
-      const isElmUp = this.leftAtIndex > this.draggable.indexPlaceholder;
-
-      this.setEffectedElemDirection(isElmUp, this.axes);
-    } else {
-      this.setEffectedElemDirection(true, this.axes);
     }
 
     /**
