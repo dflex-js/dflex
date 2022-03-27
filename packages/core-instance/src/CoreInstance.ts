@@ -92,7 +92,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
   }
 
   #updateCurrentIndicators(space: IPointAxes) {
-    this.translate.increase(space.x, space.y);
+    this.translate.increase(space);
 
     const { left, top } = this.offset!;
 
