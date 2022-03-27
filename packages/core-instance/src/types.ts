@@ -75,7 +75,7 @@ export interface CoreInput extends AbstractInput {
 
 export type TransitionHistory = {
   ID: string;
-  translate: number;
+  point: IPointNum;
 };
 
 export interface CoreInstanceInterface extends AbstractInterface {
