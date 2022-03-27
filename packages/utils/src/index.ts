@@ -1,5 +1,5 @@
 export { Point, PointNum, PointBool } from "./Point";
-export type { IPoint, IPointNum, IPointBool } from "./Point";
+export type { IPointAxes, IPoint, IPointNum, IPointBool } from "./Point";
 
 export { Threshold } from "./Threshold";
 export type {
@@ -11,7 +11,7 @@ export type {
 export type {
   RectDimensions,
   RectBoundaries,
+  Axes,
   Axis,
   Direction,
-  EffectedElemDirection,
 } from "./types";

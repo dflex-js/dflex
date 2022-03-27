@@ -6,6 +6,12 @@ export interface IPoint<T = number> {
   isEqual(target: IPoint<T>): boolean;
 }
 
+/** X/Y object without the class instance. */
+export interface IPointAxes<T = number> {
+  x: T;
+  y: T;
+}
+
 export interface IPointNum extends IPoint<number> {
   increase(x: number, y: number): void;
   decrease(x: number, y: number): void;

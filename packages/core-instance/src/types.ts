@@ -1,4 +1,10 @@
-import type { RectDimensions, Axis, IPointNum, Direction } from "@dflex/utils";
+import type {
+  RectDimensions,
+  Axis,
+  IPointNum,
+  IPointAxes,
+  Direction,
+} from "@dflex/utils";
 
 export interface AbstractOpts {
   isInitialized: boolean;
@@ -75,7 +81,8 @@ export interface CoreInput extends AbstractInput {
 
 export type TransitionHistory = {
   ID: string;
-  translate: number;
+  axis: Axis;
+  translate: IPointAxes;
 };
 
 export interface CoreInstanceInterface extends AbstractInterface {

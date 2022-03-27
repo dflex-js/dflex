@@ -216,7 +216,8 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     if (operationID) {
       const elmAxesHistory: TransitionHistory = {
         ID: operationID,
-        translate: this.translate[axis],
+        axis,
+        translate: { x: this.translate.x, y: this.translate.y },
       };
 
       if (!this.#translateHistory) {
@@ -324,7 +325,9 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
     const { translate: preTranslate } = lastMovement;
 
-    const elmSpace = preTranslate - this.translate[axis];
+    console.log(preTranslate);
+
+    const elmSpace = preTranslate[axis] - this.translate[axis];
 
     const increment = elmSpace > 0 ? 1 : -1;
 
