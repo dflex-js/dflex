@@ -8,6 +8,7 @@ import type {
   Axis,
   IPoint,
   IPointNum,
+  IPointAxes,
 } from "@dflex/utils";
 
 import AbstractInstance from "./AbstractInstance";
@@ -91,8 +92,8 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     this.hasToTransform = false;
   }
 
-  #updateCurrentIndicators(leftSpace: number, topSpace: number) {
-    this.translate.increase(leftSpace, topSpace);
+  #updateCurrentIndicators(space: IPointAxes) {
+    this.translate.increase(space.x, space.y);
 
     const { left, top } = this.offset!;
 
@@ -208,7 +209,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
    *  Set a new translate position and store the old one.
    */
   #seTranslate(
-    elmSpace: number,
+    elmSpace: IPointAxes,
     axis: Axis,
     operationID?: string,
     isForceTransform = false
@@ -230,11 +231,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
       }
     }
 
-    if (axis === "x") {
-      this.#updateCurrentIndicators(elmSpace, 0);
-    } else {
-      this.#updateCurrentIndicators(0, elmSpace);
-    }
+    this.#updateCurrentIndicators(elmSpace);
 
     if (!isForceTransform && !this.isVisible) {
       this.hasToTransform = true;
@@ -272,7 +269,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
      */
     elmSpace[axis] *= direction;
 
-    this.#seTranslate(elmSpace[axis], axis, operationID);
+    this.#seTranslate(elmSpace, axis, operationID);
 
     const { oldIndex, newIndex } = this.#updateOrderIndexing(
       direction * numberOfPassedElm
@@ -325,14 +322,21 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
     const { translate: preTranslate } = lastMovement;
 
-    console.log(preTranslate);
+    const elmSpaceX = preTranslate.x - this.translate.x;
+    const elmSpaceY = preTranslate.y - this.translate.y;
 
-    const elmSpace = preTranslate[axis] - this.translate[axis];
-
-    const increment = elmSpace > 0 ? 1 : -1;
+    const increment = elmSpaceX > 0 || elmSpaceY > 0 ? 1 : -1;
 
     // Don't update UI if it's zero and wasn't transformed.
-    this.#seTranslate(elmSpace, axis, undefined, isForceTransform);
+    this.#seTranslate(
+      {
+        x: elmSpaceX,
+        y: elmSpaceY,
+      },
+      axis,
+      undefined,
+      isForceTransform
+    );
 
     this.#updateOrderIndexing(increment);
 
