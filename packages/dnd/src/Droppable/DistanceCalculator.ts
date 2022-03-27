@@ -189,7 +189,21 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     const isContainerHasCol =
       this.draggable.gridPlaceholder.x + 1 <= siblingsGrid.x;
 
-    const axis = isContainerHasCol ? "x" : "y";
+    let axis: Axis;
+
+    if (!isContainerHasCol) {
+      axis = "y";
+
+      // const isContainerHasRowAbove =
+      //   this.draggable.gridPlaceholder.y + 1 <= siblingsGrid.y;
+
+      // if (isContainerHasRowAbove) {
+      //   // Bi-directional
+      //   axis = "z";
+      // }
+    } else {
+      axis = "x";
+    }
 
     const elmDirection: Direction = isIncrease ? -1 : 1;
 
