@@ -1,12 +1,11 @@
 /* eslint-disable no-param-reassign */
 
-import { Point, PointNum } from "@dflex/utils";
+import { PointNum } from "@dflex/utils";
 
 import type {
   RectDimensions,
   Direction,
   Axis,
-  IPoint,
   IPointNum,
   IPointAxes,
 } from "@dflex/utils";
@@ -41,7 +40,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
   animatedFrame: number | null;
 
-  #translateHistory?: IPoint<TransitionHistory[]>;
+  #translateHistory?: TransitionHistory[];
 
   constructor(eleWithPointer: CoreInput, opts: AbstractOpts) {
     const { order, keys, depth, scrollX, scrollY, ...element } = eleWithPointer;
@@ -221,13 +220,10 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
         translate: { x: this.translate.x, y: this.translate.y },
       };
 
-      if (!this.#translateHistory) {
-        this.#translateHistory =
-          axis === "x"
-            ? new Point([elmAxesHistory], [])
-            : new Point([], [elmAxesHistory]);
+      if (!Array.isArray(this.#translateHistory)) {
+        this.#translateHistory = [elmAxesHistory];
       } else {
-        this.#translateHistory[axis].push(elmAxesHistory);
+        this.#translateHistory.push(elmAxesHistory);
       }
     }
 
@@ -305,22 +301,22 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
    *
    * @param operationID
    * @param isForceTransform
-   * @param axis
    */
-  rollBack(operationID: string, isForceTransform: boolean, axis: Axis) {
+  rollBack(operationID: string, isForceTransform: boolean) {
     if (
-      this.#translateHistory![axis].length === 0 ||
-      this.#translateHistory![axis][this.#translateHistory![axis].length - 1]
-        .ID !== operationID
+      !Array.isArray(this.#translateHistory) ||
+      this.#translateHistory.length === 0 ||
+      this.#translateHistory[this.#translateHistory.length - 1].ID !==
+        operationID
     ) {
       return;
     }
 
-    const lastMovement = this.#translateHistory![axis].pop();
+    const lastMovement = this.#translateHistory.pop();
 
     if (!lastMovement) return;
 
-    const { translate: preTranslate } = lastMovement;
+    const { translate: preTranslate, axis } = lastMovement;
 
     const elmSpaceX = preTranslate.x - this.translate.x;
     const elmSpaceY = preTranslate.y - this.translate.y;
@@ -355,7 +351,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
       );
     }
 
-    this.rollBack(operationID, isForceTransform, axis);
+    this.rollBack(operationID, isForceTransform);
   }
 }
 

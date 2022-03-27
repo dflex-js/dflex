@@ -126,5 +126,5 @@ export interface CoreInstanceInterface extends AbstractInterface {
     oldIndex?: number,
     siblingsHasEmptyElm?: number
   ): number;
-  rollBack(operationID: string, isForceTransform: boolean, axis: Axis): void;
+  rollBack(operationID: string, isForceTransform: boolean): void;
 }
