@@ -6,6 +6,7 @@ import type {
   RectDimensions,
   Direction,
   Axis,
+  Axes,
   IPointNum,
   IPointAxes,
 } from "@dflex/utils";
@@ -209,7 +210,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
    */
   #seTranslate(
     elmSpace: IPointAxes,
-    axis: Axis,
+    axis: Axes,
     operationID?: string,
     isForceTransform = false
   ) {
@@ -312,44 +313,38 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
       return;
     }
 
-    const lastMovement = this.#translateHistory.pop();
-
-    if (!lastMovement) return;
+    const lastMovement = this.#translateHistory.pop()!;
 
     const { translate: preTranslate, axis } = lastMovement;
 
-    const elmSpaceX = preTranslate.x - this.translate.x;
-    const elmSpaceY = preTranslate.y - this.translate.y;
+    const elmSpace = {
+      x: preTranslate.x - this.translate.x,
+      y: preTranslate.y - this.translate.y,
+    };
 
-    const increment = elmSpaceX > 0 || elmSpaceY > 0 ? 1 : -1;
+    let increment = 0;
+
+    if (axis === "z") {
+      increment = elmSpace.x > 0 || elmSpace.y > 0 ? 1 : -1;
+
+      this.grid.increase({ x: increment, y: increment });
+    } else {
+      increment = elmSpace[axis] > 0 ? 1 : -1;
+
+      this.grid[axis] += increment;
+
+      if (process.env.NODE_ENV !== "production") {
+        this.setDataset(
+          `grid${axis.toUpperCase() as "X" | "Y"}`,
+          this.grid[axis]
+        );
+      }
+    }
 
     // Don't update UI if it's zero and wasn't transformed.
-    this.#seTranslate(
-      {
-        x: elmSpaceX,
-        y: elmSpaceY,
-      },
-      axis,
-      undefined,
-      isForceTransform
-    );
+    this.#seTranslate(elmSpace, axis, undefined, isForceTransform);
 
     this.#updateOrderIndexing(increment);
-
-    this.grid[axis] += increment;
-
-    if (process.env.NODE_ENV !== "production") {
-      // if (this.grid[axis] !== newIndex + 1) {
-      //   throw new Error(
-      //     `Grid:  is ${this.grid[axis]} while the new index is ${newIndex}`
-      //   );
-      // }
-
-      this.setDataset(
-        `grid${axis.toUpperCase() as "X" | "Y"}`,
-        this.grid[axis]
-      );
-    }
 
     this.rollBack(operationID, isForceTransform);
   }
