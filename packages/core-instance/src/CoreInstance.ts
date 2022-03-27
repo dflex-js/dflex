@@ -1,14 +1,8 @@
 /* eslint-disable no-param-reassign */
 
-import { Point, PointNum } from "@dflex/utils";
+import { Axes, PointNum } from "@dflex/utils";
 
-import type {
-  RectDimensions,
-  Direction,
-  Axis,
-  IPoint,
-  IPointNum,
-} from "@dflex/utils";
+import type { RectDimensions, Direction, IPointNum } from "@dflex/utils";
 
 import AbstractInstance from "./AbstractInstance";
 
@@ -40,7 +34,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
   animatedFrame: number | null;
 
-  #translateHistory?: IPoint<TransitionHistory[]>;
+  #translateHistory?: TransitionHistory[];
 
   constructor(eleWithPointer: CoreInput, opts: AbstractOpts) {
     const { order, keys, depth, scrollX, scrollY, ...element } = eleWithPointer;
@@ -91,8 +85,8 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     this.hasToTransform = false;
   }
 
-  #updateCurrentIndicators(leftSpace: number, topSpace: number) {
-    this.translate.increase(leftSpace, topSpace);
+  #updateCurrentIndicators(elmSpace: PointNum) {
+    this.translate.increase(elmSpace.x, elmSpace.y);
 
     const { left, top } = this.offset!;
 
@@ -208,32 +202,26 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
    *  Set a new translate position and store the old one.
    */
   #seTranslate(
-    elmSpace: number,
-    axis: Axis,
+    elmSpace: PointNum,
+    axis: Axes,
     operationID?: string,
     isForceTransform = false
   ) {
     if (operationID) {
       const elmAxesHistory: TransitionHistory = {
         ID: operationID,
-        translate: this.translate[axis],
+        axis,
+        point: this.translate,
       };
 
       if (!this.#translateHistory) {
-        this.#translateHistory =
-          axis === "x"
-            ? new Point([elmAxesHistory], [])
-            : new Point([], [elmAxesHistory]);
+        this.#translateHistory = [elmAxesHistory];
       } else {
-        this.#translateHistory[axis].push(elmAxesHistory);
+        this.#translateHistory.push(elmAxesHistory);
       }
     }
 
-    if (axis === "x") {
-      this.#updateCurrentIndicators(elmSpace, 0);
-    } else {
-      this.#updateCurrentIndicators(0, elmSpace);
-    }
+    this.#updateCurrentIndicators(elmSpace);
 
     if (!isForceTransform && !this.isVisible) {
       this.hasToTransform = true;
@@ -261,7 +249,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     elmSpace: PointNum,
     operationID: string,
     siblingsEmptyElmIndex: PointNum,
-    axis: Axis,
+    axis: Axes,
     numberOfPassedElm = 1,
     isShuffle = true
   ) {
@@ -269,34 +257,35 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
      * effectedElemDirection decides the direction of the element, negative or positive.
      * If the element is dragged to the left, the effectedElemDirection is -1.
      */
-    elmSpace[axis] *= direction;
+    if (axis === "z") {
+      elmSpace.multiplyAll(direction);
+    } else {
+      elmSpace[axis] *= direction;
+    }
 
-    this.#seTranslate(elmSpace[axis], axis, operationID);
+    this.#seTranslate(elmSpace, axis, operationID);
 
     const { oldIndex, newIndex } = this.#updateOrderIndexing(
       direction * numberOfPassedElm
     );
 
-    this.grid[axis] += direction * numberOfPassedElm;
-
-    if (process.env.NODE_ENV !== "production") {
-      // if (this.grid[axis] !== newIndex + 1) {
-      //   throw new Error(
-      //     `Grid:  is ${this.grid[axis]} while the new index is ${newIndex}`
-      //   );
-      // }
-
-      this.setDataset(
-        `grid${axis.toUpperCase() as "X" | "Y"}`,
-        this.grid[axis]
-      );
+    if (axis === "z") {
+      const inc = direction * numberOfPassedElm;
+      this.grid.increase(inc, inc);
+    } else {
+      this.grid[axis] += direction * numberOfPassedElm;
+      if (process.env.NODE_ENV !== "production") {
+        this.setDataset(
+          `grid${axis.toUpperCase() as "X" | "Y"}`,
+          this.grid[axis]
+        );
+      }
     }
-
     const newStatusSiblingsHasEmptyElm = this.assignNewPosition(
       iDsInOrder,
       newIndex,
       isShuffle ? oldIndex : undefined,
-      siblingsEmptyElmIndex[axis]
+      axis === "z" ? siblingsEmptyElmIndex.y : siblingsEmptyElmIndex[axis]
     );
 
     return newStatusSiblingsHasEmptyElm;
@@ -307,48 +296,52 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
    *
    * @param operationID
    * @param isForceTransform
-   * @param axis
    */
-  rollBack(operationID: string, isForceTransform: boolean, axis: Axis) {
+  rollBack(operationID: string, isForceTransform: boolean) {
     if (
-      this.#translateHistory![axis].length === 0 ||
-      this.#translateHistory![axis][this.#translateHistory![axis].length - 1]
-        .ID !== operationID
+      this.#translateHistory!.length === 0 ||
+      this.#translateHistory![this.#translateHistory!.length - 1].ID !==
+        operationID
     ) {
       return;
     }
 
-    const lastMovement = this.#translateHistory![axis].pop();
+    const lastMovement = this.#translateHistory!.pop();
 
     if (!lastMovement) return;
 
-    const { translate: preTranslate } = lastMovement;
+    const { point: preTranslate, axis } = lastMovement;
 
-    const elmSpace = preTranslate - this.translate[axis];
+    const elmSpace = new PointNum(
+      preTranslate.x - this.translate.x,
+      preTranslate.y - this.translate.y
+    );
 
-    const increment = elmSpace > 0 ? 1 : -1;
+    const increment = (
+      axis === "z" ? elmSpace.x > 0 || elmSpace.y > 0 : elmSpace[axis] > 0
+    )
+      ? 1
+      : -1;
 
     // Don't update UI if it's zero and wasn't transformed.
     this.#seTranslate(elmSpace, axis, undefined, isForceTransform);
 
     this.#updateOrderIndexing(increment);
 
-    this.grid[axis] += increment;
+    if (axis === "z") {
+      this.grid.increase(increment, increment);
+    } else {
+      this.grid[axis] += increment;
 
-    if (process.env.NODE_ENV !== "production") {
-      // if (this.grid[axis] !== newIndex + 1) {
-      //   throw new Error(
-      //     `Grid:  is ${this.grid[axis]} while the new index is ${newIndex}`
-      //   );
-      // }
-
-      this.setDataset(
-        `grid${axis.toUpperCase() as "X" | "Y"}`,
-        this.grid[axis]
-      );
+      if (process.env.NODE_ENV !== "production") {
+        this.setDataset(
+          `grid${axis.toUpperCase() as "X" | "Y"}`,
+          this.grid[axis]
+        );
+      }
     }
 
-    this.rollBack(operationID, isForceTransform, axis);
+    this.rollBack(operationID, isForceTransform);
   }
 }
 

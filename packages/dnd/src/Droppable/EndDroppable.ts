@@ -52,7 +52,7 @@ class EndDroppable extends Droppable {
        * Note: rolling back won't affect order array. It only deals with element
        * itself and totally ignore any instance related to store.
        */
-      element.rollBack(this.draggable.operationID, listVisibility, this.axes);
+      element.rollBack(this.draggable.operationID, listVisibility);
 
       // This will decrease the number by 1.
       this.draggable.updateNumOfElementsTransformed(1);

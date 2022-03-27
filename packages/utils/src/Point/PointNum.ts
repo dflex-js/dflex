@@ -10,6 +10,11 @@ class PointNum extends Point<number> {
     this.x -= x;
     this.y -= y;
   }
+
+  multiplyAll(value: number) {
+    this.x *= value;
+    this.y *= value;
+  }
 }
 
 export default PointNum;

@@ -9,6 +9,7 @@ export interface IPoint<T = number> {
 export interface IPointNum extends IPoint<number> {
   increase(x: number, y: number): void;
   decrease(x: number, y: number): void;
+  multiplyAll(value: number): void;
 }
 
 export interface IPointBool extends IPoint<boolean> {

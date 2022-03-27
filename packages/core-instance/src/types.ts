@@ -1,4 +1,4 @@
-import type { RectDimensions, Axis, IPointNum, Direction } from "@dflex/utils";
+import type { RectDimensions, IPointNum, Direction, Axes } from "@dflex/utils";
 
 export interface AbstractOpts {
   isInitialized: boolean;
@@ -75,7 +75,8 @@ export interface CoreInput extends AbstractInput {
 
 export type TransitionHistory = {
   ID: string;
-  translate: number;
+  axis: Axes;
+  point: IPointNum;
 };
 
 export interface CoreInstanceInterface extends AbstractInterface {
@@ -108,7 +109,7 @@ export interface CoreInstanceInterface extends AbstractInterface {
     elmSpace: IPointNum,
     operationID: string,
     siblingsEmptyElmIndex: IPointNum,
-    axis: Axis,
+    axis: Axes,
     vIncrement?: number,
     isShuffle?: boolean
   ): number;
@@ -119,5 +120,5 @@ export interface CoreInstanceInterface extends AbstractInterface {
     oldIndex?: number,
     siblingsHasEmptyElm?: number
   ): number;
-  rollBack(operationID: string, isForceTransform: boolean, axis: Axis): void;
+  rollBack(operationID: string, isForceTransform: boolean): void;
 }
