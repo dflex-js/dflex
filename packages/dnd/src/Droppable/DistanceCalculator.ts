@@ -236,8 +236,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     const draggedDirection = -1 * elmDirection;
 
     this.draggable.occupiedTranslate.increase(
-      draggedDirection * this.draggedAccumulatedTransition.x,
-      draggedDirection * this.draggedAccumulatedTransition.y
+      this.draggedAccumulatedTransition.getMultiplied(draggedDirection)
     );
 
     this.draggable.gridPlaceholder.clone(grid);

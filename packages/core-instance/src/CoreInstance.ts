@@ -1,13 +1,13 @@
 /* eslint-disable no-param-reassign */
 
-import { Point, PointNum } from "@dflex/utils";
+import { PointNum } from "@dflex/utils";
 
 import type {
   RectDimensions,
   Direction,
   Axis,
-  IPoint,
   IPointNum,
+  IPointAxes,
 } from "@dflex/utils";
 
 import AbstractInstance from "./AbstractInstance";
@@ -40,7 +40,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
   animatedFrame: number | null;
 
-  #translateHistory?: IPoint<TransitionHistory[]>;
+  #translateHistory?: TransitionHistory[];
 
   constructor(eleWithPointer: CoreInput, opts: AbstractOpts) {
     const { order, keys, depth, scrollX, scrollY, ...element } = eleWithPointer;
@@ -91,8 +91,8 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     this.hasToTransform = false;
   }
 
-  #updateCurrentIndicators(leftSpace: number, topSpace: number) {
-    this.translate.increase(leftSpace, topSpace);
+  #updateCurrentIndicators(space: IPointAxes) {
+    this.translate.increase(space);
 
     const { left, top } = this.offset!;
 
@@ -208,7 +208,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
    *  Set a new translate position and store the old one.
    */
   #seTranslate(
-    elmSpace: number,
+    elmSpace: IPointAxes,
     axis: Axis,
     operationID?: string,
     isForceTransform = false
@@ -216,24 +216,18 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     if (operationID) {
       const elmAxesHistory: TransitionHistory = {
         ID: operationID,
-        translate: this.translate[axis],
+        axis,
+        translate: { x: this.translate.x, y: this.translate.y },
       };
 
-      if (!this.#translateHistory) {
-        this.#translateHistory =
-          axis === "x"
-            ? new Point([elmAxesHistory], [])
-            : new Point([], [elmAxesHistory]);
+      if (!Array.isArray(this.#translateHistory)) {
+        this.#translateHistory = [elmAxesHistory];
       } else {
-        this.#translateHistory[axis].push(elmAxesHistory);
+        this.#translateHistory.push(elmAxesHistory);
       }
     }
 
-    if (axis === "x") {
-      this.#updateCurrentIndicators(elmSpace, 0);
-    } else {
-      this.#updateCurrentIndicators(0, elmSpace);
-    }
+    this.#updateCurrentIndicators(elmSpace);
 
     if (!isForceTransform && !this.isVisible) {
       this.hasToTransform = true;
@@ -271,7 +265,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
      */
     elmSpace[axis] *= direction;
 
-    this.#seTranslate(elmSpace[axis], axis, operationID);
+    this.#seTranslate(elmSpace, axis, operationID);
 
     const { oldIndex, newIndex } = this.#updateOrderIndexing(
       direction * numberOfPassedElm
@@ -307,29 +301,38 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
    *
    * @param operationID
    * @param isForceTransform
-   * @param axis
    */
-  rollBack(operationID: string, isForceTransform: boolean, axis: Axis) {
+  rollBack(operationID: string, isForceTransform: boolean) {
     if (
-      this.#translateHistory![axis].length === 0 ||
-      this.#translateHistory![axis][this.#translateHistory![axis].length - 1]
-        .ID !== operationID
+      !Array.isArray(this.#translateHistory) ||
+      this.#translateHistory.length === 0 ||
+      this.#translateHistory[this.#translateHistory.length - 1].ID !==
+        operationID
     ) {
       return;
     }
 
-    const lastMovement = this.#translateHistory![axis].pop();
+    const lastMovement = this.#translateHistory.pop();
 
     if (!lastMovement) return;
 
-    const { translate: preTranslate } = lastMovement;
+    const { translate: preTranslate, axis } = lastMovement;
 
-    const elmSpace = preTranslate - this.translate[axis];
+    const elmSpaceX = preTranslate.x - this.translate.x;
+    const elmSpaceY = preTranslate.y - this.translate.y;
 
-    const increment = elmSpace > 0 ? 1 : -1;
+    const increment = elmSpaceX > 0 || elmSpaceY > 0 ? 1 : -1;
 
     // Don't update UI if it's zero and wasn't transformed.
-    this.#seTranslate(elmSpace, axis, undefined, isForceTransform);
+    this.#seTranslate(
+      {
+        x: elmSpaceX,
+        y: elmSpaceY,
+      },
+      axis,
+      undefined,
+      isForceTransform
+    );
 
     this.#updateOrderIndexing(increment);
 
@@ -348,7 +351,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
       );
     }
 
-    this.rollBack(operationID, isForceTransform, axis);
+    this.rollBack(operationID, isForceTransform);
   }
 }
 

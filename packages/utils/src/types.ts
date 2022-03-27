@@ -14,15 +14,8 @@ export interface RectBoundaries {
 
 export type Direction = 1 | -1;
 
-/** How the element movement effects the siblings direction */
-export interface EffectedElemDirection {
-  x: Direction;
-  y: Direction;
-}
-
+/** Single Axis. */
 export type Axis = "x" | "y";
 
-export interface Coordinates {
-  x: number;
-  y: number;
-}
+/** Bi-directional Axis. */
+export type Axes = Axis | "z";

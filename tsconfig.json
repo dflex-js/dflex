@@ -7,7 +7,7 @@
     "strictFunctionTypes": true,
     "strictNullChecks": true,
     "target": "ESNext",
-    "module": "CommonJS",
+    "module": "ES2022",
     "sourceMap": false,
     "lib": ["dom", "ESNext"],
     "moduleResolution": "Node",
