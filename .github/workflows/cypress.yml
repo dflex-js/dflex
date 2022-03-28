@@ -17,39 +17,87 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  ui-chrome-tests:
-    timeout-minutes: 15
+  cypress-dnd:
+    name: E2E Test For DnD React APP
     runs-on: ubuntu-latest
-    container: cypress/browsers:node14.17.0-chrome88-ff89
-    needs: install
-    strategy:
-      # when one test fails, DO NOT cancel the other
-      # containers, because this will kill Cypress processes
-      # leaving the Dashboard hanging ...
-      # https://github.com/cypress-io/github-action/issues/48
-      fail-fast: false
-      matrix:
-        # run copies of the current job in parallel
-        containers: [1, 2, 3, 4, 5]
+    if: github.event.pull_request.draft != true
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Check out repository
+        uses: actions/checkout@master
 
-      - name: Download the build folders
+      - name: Use latest version of Node.j
+        uses: actions/setup-node@master
+        with:
+          node-version: "*"
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: Cache yarn cache
+        uses: actions/cache@v2.1.7
+        id: yarn-cache #`steps.yarn-cache.outputs.cache-hit != 'true'
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Build packages
         run: yarn build
 
-      - name: "UI Tests - Chrome"
+      # - name: Essential Features Test for DnD React APP - Firefox
+      #   uses: cypress-io/github-action@v2
+      #   with:
+      #     project: ./packages/dnd
+      #     start: yarn workspace dflex-react-dnd start
+      #     wait-on: "http://localhost:3001/"
+      #     browser: firefox
+      #     headless: true
+      #     spec: "packages/dnd/cypress/integration/essential/**/*.spec.js"
+      #   env:
+      #     Cypress_isNextJS: false
+      #     Cypress_extended: true
+
+      # - name: SSR Test - Testing DnD work with NextJS
+      #   uses: cypress-io/github-action@v2
+      #   with:
+      #     project: ./packages/dnd
+      #     start: yarn workspace dflex-next-dnd dev
+      #     wait-on: "http://localhost:3000/"
+      #     browser: chrome
+      #     headless: true
+      #     spec: "packages/dnd/cypress/integration/nextjs/**/*.spec.js"
+      #   env:
+      #     Cypress_isNextJS: true
+      #     Cypress_extended: false
+
+      # - name: Extended Features Test for DnD React APP - Chrome
+      #   uses: cypress-io/github-action@v2
+      #   with:
+      #     project: ./packages/dnd
+      #     start: yarn workspace dflex-react-dnd start
+      #     wait-on: "http://localhost:3001/"
+      #     browser: chrome
+      #     headless: true
+      #     spec: |
+      #       packages/dnd/cypress/integration/differentHeights/**/*.spec.js
+      #       packages/dnd/cypress/integration/restrictions/**/*.spec.js
+      #       packages/dnd/cypress/integration/extended/**/*.spec.js
+      #   env:
+      #     Cypress_isNextJS: false
+      #     Cypress_extended: false
+
+      - name: Testing all features for DnD with React APP - Chrome
         uses: cypress-io/github-action@v2
         with:
           project: ./packages/dnd
           start: yarn workspace dflex-react-dnd start
-          wait-on-timeout: 120
           wait-on: "http://localhost:3001/"
           browser: chrome
           headless: true
-          # record: true
-          parallel: true
-          # group: "UI - Chrome"
-          # spec: cypress/tests/ui/*
         env:
           Cypress_extended: true
