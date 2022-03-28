@@ -5,7 +5,6 @@ import { PointNum } from "@dflex/utils";
 import type {
   RectDimensions,
   Direction,
-  Axis,
   Axes,
   IPointNum,
   IPointAxes,
@@ -253,10 +252,10 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
   setPosition(
     iDsInOrder: string[],
     direction: Direction,
-    elmSpace: PointNum,
+    elmSpace: IPointNum,
     operationID: string,
-    siblingsEmptyElmIndex: PointNum,
-    axis: Axis,
+    siblingsEmptyElmIndex: IPointAxes,
+    axis: Axes,
     numberOfPassedElm = 1,
     isShuffle = true
   ) {
@@ -264,7 +263,11 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
      * effectedElemDirection decides the direction of the element, negative or positive.
      * If the element is dragged to the left, the effectedElemDirection is -1.
      */
-    elmSpace[axis] *= direction;
+    if (axis === "z") {
+      elmSpace.multiplyAll(direction);
+    } else {
+      elmSpace[axis] *= direction;
+    }
 
     this.#seTranslate(elmSpace, axis, operationID);
 
@@ -272,26 +275,24 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
       direction * numberOfPassedElm
     );
 
-    this.grid[axis] += direction * numberOfPassedElm;
-
-    if (process.env.NODE_ENV !== "production") {
-      // if (this.grid[axis] !== newIndex + 1) {
-      //   throw new Error(
-      //     `Grid:  is ${this.grid[axis]} while the new index is ${newIndex}`
-      //   );
-      // }
-
-      this.setDataset(
-        `grid${axis.toUpperCase() as "X" | "Y"}`,
-        this.grid[axis]
-      );
+    if (axis === "z") {
+      const inc = direction * numberOfPassedElm;
+      this.grid.increase({ x: inc, y: inc });
+    } else {
+      this.grid[axis] += direction * numberOfPassedElm;
+      if (process.env.NODE_ENV !== "production") {
+        this.setDataset(
+          `grid${axis.toUpperCase() as "X" | "Y"}`,
+          this.grid[axis]
+        );
+      }
     }
 
     const newStatusSiblingsHasEmptyElm = this.assignNewPosition(
       iDsInOrder,
       newIndex,
       isShuffle ? oldIndex : undefined,
-      siblingsEmptyElmIndex[axis]
+      axis === "z" ? siblingsEmptyElmIndex.y : siblingsEmptyElmIndex[axis]
     );
 
     return newStatusSiblingsHasEmptyElm;

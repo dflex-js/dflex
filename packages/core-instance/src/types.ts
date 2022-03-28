@@ -1,6 +1,5 @@
 import type {
   RectDimensions,
-  Axis,
   IPointNum,
   IPointAxes,
   Direction,
@@ -115,8 +114,8 @@ export interface CoreInstanceInterface extends AbstractInterface {
     direction: Direction,
     elmSpace: IPointNum,
     operationID: string,
-    siblingsEmptyElmIndex: IPointNum,
-    axis: Axis,
+    siblingsEmptyElmIndex: IPointAxes,
+    axis: Axes,
     vIncrement?: number,
     isShuffle?: boolean
   ): number;
