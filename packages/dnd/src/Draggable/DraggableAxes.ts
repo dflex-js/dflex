@@ -56,31 +56,11 @@ class DraggableAxes
     this.indexPlaceholder = order.self;
     this.gridPlaceholder = new PointNum(grid.x, grid.y);
 
-    const { SK } = store.registry[id].keys;
-
-    const siblings = store.getElmSiblingsListById(this.draggedElm.id);
-
     this.isViewportRestricted = true;
 
-    const siblingsBoundaries = store.siblingsBoundaries[SK];
-
-    const {
-      offset: { width, height },
-      currentPosition,
-    } = this.draggedElm;
+    const { currentPosition } = this.draggedElm;
 
     this.threshold = new Threshold(opts.threshold);
-
-    this.threshold.setMainThreshold(id, {
-      width,
-      height,
-      left: currentPosition.x,
-      top: currentPosition.y,
-    });
-
-    if (siblings !== null) {
-      this.threshold.setContainerThreshold(SK, siblingsBoundaries);
-    }
 
     this.isMovingAwayFrom = new PointBool(false, false);
 
@@ -110,10 +90,57 @@ class DraggableAxes
 
     this.restrictionsStatus = opts.restrictionsStatus;
 
+    const siblingIDsArray = store.getElmSiblingsListById(id);
+
     this.axesFilterNeeded =
-      siblings !== null &&
+      siblingIDsArray !== null &&
       (opts.restrictionsStatus.isContainerRestricted ||
         opts.restrictionsStatus.isSelfRestricted);
+
+    this.#iniLayoutsThreshold();
+  }
+
+  #iniLayoutsThreshold() {
+    const {
+      offset: { width, height },
+      currentPosition,
+      id,
+    } = this.draggedElm;
+
+    this.threshold.setMainThreshold(id, {
+      width,
+      height,
+      left: currentPosition.x,
+      top: currentPosition.y,
+    });
+
+    const {
+      branches: { parents },
+    } = store.getElmTreeById(id);
+
+    if (!Array.isArray(parents)) {
+      const { SK } = store.registry[id].keys;
+
+      const siblingsBoundaries = store.siblingsBoundaries[SK];
+      this.threshold.setContainerThreshold(SK, siblingsBoundaries);
+
+      return;
+    }
+
+    parents.forEach((parentID) => {
+      const { CHK } = store.registry[parentID].keys;
+
+      if (!CHK) {
+        if (process.env.NODE_ENV === "production") {
+          // eslint-disable-next-line no-console
+          console.error(`Unable to find CHK key for parent ${parentID}`);
+        }
+        return;
+      }
+
+      const siblingsBoundaries = store.siblingsBoundaries[CHK];
+      this.threshold.setContainerThreshold(CHK, siblingsBoundaries);
+    });
   }
 
   private axesYFilter(

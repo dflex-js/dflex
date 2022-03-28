@@ -3,8 +3,6 @@ import type { DraggedStyle, Coordinates } from "@dflex/draggable";
 import { PointNum } from "@dflex/utils";
 import type { IPointNum } from "@dflex/utils";
 
-import type { CoreInstanceInterface } from "@dflex/core-instance";
-
 import store from "../DnDStore";
 
 import type { DraggableInteractiveInterface } from "./types";
@@ -19,10 +17,6 @@ class DraggableInteractive
 {
   operationID: string;
 
-  siblingsContainer: CoreInstanceInterface | null;
-
-  setOfTransformedIds?: Set<string>;
-
   scroll: ScrollOptWithThreshold;
 
   occupiedOffset: IPointNum;
@@ -36,11 +30,8 @@ class DraggableInteractive
   private changeToFixedStyleProps: DraggedStyle;
 
   constructor(id: string, initCoordinates: Coordinates, opts: FinalDndOpts) {
-    const { parent } = store.getElmTreeById(id);
-
     super(id, initCoordinates, opts);
 
-    // This tiny bug caused an override  options despite it's actually freezed!
     this.scroll = { ...opts.scroll };
 
     const { SK } = store.registry[id].keys;
@@ -91,17 +82,6 @@ class DraggableInteractive
 
     const { currentPosition, translate } = this.draggedElm;
 
-    this.siblingsContainer = null;
-
-    if (parent) {
-      /**
-       * Indicator to parents that have changed. This facilitates looping in
-       * affected parents only.
-       */
-      this.setOfTransformedIds = new Set([]);
-      this.assignActiveParent(parent);
-    }
-
     this.operationID = store.tracker.newTravel();
 
     this.occupiedOffset = new PointNum(currentPosition.x, currentPosition.y);
@@ -112,19 +92,6 @@ class DraggableInteractive
      * crucial to calculate drag's translate and index
      */
     this.numberOfElementsTransformed = 0;
-  }
-
-  /**
-   * Assigns new container parent to the dragged.
-   *
-   * @param element -
-   */
-  private assignActiveParent(element: CoreInstanceInterface) {
-    /**
-     * Assign a new instance which represents droppable. Then
-     * assign owner parent so we have from/to.
-     */
-    this.siblingsContainer = element;
   }
 
   setDraggedTempIndex(i: number) {
