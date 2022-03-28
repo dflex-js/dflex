@@ -22,13 +22,6 @@ jobs:
       - run: node -p 'os.cpus()'
       - run: yarn build
 
-      - name: Save build folder
-        uses: actions/upload-artifact@v3
-        with:
-          name: build
-          if-no-files-found: error
-          path: build
-
   install-windows:
     runs-on: windows-2019
     steps:
