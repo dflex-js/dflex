@@ -44,9 +44,10 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - name: Install Dependencies
+        id: install-dependencies
         run: |
-          yarn install
-        if: ${{ steps.yarn-cache.outputs.cache-hit != 'true' }}
+          yarn cache add --non-interactive --cache-folder ${{ steps.yarn-cache.outputs.dir }} ${{ steps.yarn-cache.outputs.dir }}/yarn.lock
+          yarn install --non-interactive --cache-folder ${{ steps.yarn-cache.outputs.dir }}
 
       - name: Build packages
         run: yarn build
