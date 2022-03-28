@@ -44,7 +44,8 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - name: Install Dependencies
-        run: yarn install
+        run: |
+          yarn install
         if: ${{ steps.yarn-cache.outputs.cache-hit != 'true' }}
 
       - name: Build packages
