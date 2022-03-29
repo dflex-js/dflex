@@ -1,6 +1,6 @@
 import Store from "@dflex/store";
 
-import { PointNum, Tracker } from "@dflex/utils";
+import { ITracker, PointNum, Tracker } from "@dflex/utils";
 import type { RectDimensions } from "@dflex/utils";
 
 import type { ElmTree, DnDStoreInterface, RegisterInput } from "./types";
@@ -29,7 +29,9 @@ Did you forget to call store.unregister(${id}) or add parenID when register the 
 }
 
 class DnDStoreImp extends Store implements DnDStoreInterface {
-  tracker: DnDStoreInterface["tracker"];
+  tracker: ITracker;
+
+  #genID: ITracker;
 
   siblingsBoundaries: DnDStoreInterface["siblingsBoundaries"];
 
@@ -59,6 +61,8 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
   static MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
 
+  static #PREFIX_ID = "dflex-id";
+
   constructor() {
     super();
 
@@ -75,6 +79,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     this.events = null;
 
     this.tracker = new Tracker();
+    this.#genID = new Tracker(DnDStoreImp.#PREFIX_ID);
 
     this.#initELmIndicator();
 
@@ -272,7 +277,10 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
           depth = this.registry[elmID].depth;
 
           // Can we get the parent ID, later?
-          this.DOMGen.getElmPointer(`${Date.now()}`, (depth as number) + 1);
+          this.DOMGen.getElmPointer(
+            this.#genID.newTravel(),
+            (depth as number) + 1
+          );
 
           newSK = this.DOMGen.accumulateIndicators(depth as number).SK;
         }
