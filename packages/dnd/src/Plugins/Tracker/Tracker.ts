@@ -3,11 +3,17 @@ import type { TrackerInterface } from "./types";
 class Tracker implements TrackerInterface {
   travelID: number;
 
+  #prefix?: string;
+
   /**
    * Creates an instance of Tracker.
    */
-  constructor() {
+  constructor(prefix?: string) {
     this.travelID = 0;
+
+    if (prefix) {
+      this.#prefix = prefix;
+    }
   }
 
   /**
@@ -16,7 +22,9 @@ class Tracker implements TrackerInterface {
   newTravel() {
     this.travelID += 1;
 
-    return `${this.travelID}`;
+    return this.#prefix
+      ? `${this.#prefix}-${this.travelID}`
+      : `${this.travelID}`;
   }
 }
 
