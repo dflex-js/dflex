@@ -155,6 +155,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
   updateElementVisibility(
     elmID: string,
+    parenID: string,
     scroll: ScrollInterface,
     allowDynamicVisibility: boolean,
     permitExceptionToOverride: boolean
@@ -240,12 +241,35 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
       ? requiredBranch
       : [requiredBranch];
 
+    const firstElemID = branch[0];
+
+    // Check the parent of first element.
+    const { parent } = this.getElmTreeById(firstElemID);
+
+    let parentID: string;
+
+    /**
+     * If parent is not registered, but children are then extract it and use it.
+     */
+    if (!parent) {
+      const childInstance = this.registry[firstElemID];
+      this.register({
+        ref: childInstance.getELmParentRef()!,
+        depth: childInstance.depth + 1,
+      });
+
+      ({ id: parentID } = this.getElmTreeById(firstElemID).parent!);
+    } else {
+      parentID = parent.id;
+    }
+
     branch.forEach((elmID, i) => {
       if (elmID.length > 0) {
         const permitExceptionToOverride = i > prevIndex;
 
         this.updateElementVisibility(
           elmID,
+          parentID,
           scroll,
           allowDynamicVisibility,
           permitExceptionToOverride
