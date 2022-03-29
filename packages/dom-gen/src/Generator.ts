@@ -32,18 +32,18 @@ class Generator implements GeneratorInterface {
     [keys: string]: ELmBranch;
   };
 
-  private prevDepth: number;
+  #prevDepth: number;
 
-  private prevKey: string;
+  #prevKey: string;
 
   constructor() {
     this.#indicator = {};
 
     this.branches = {};
 
-    this.prevDepth = -99;
+    this.#prevDepth = -99;
 
-    this.prevKey = genKey(0, 0);
+    this.#prevKey = genKey(0, 0);
   }
 
   /**
@@ -103,10 +103,8 @@ class Generator implements GeneratorInterface {
       if (!Array.isArray(this.branches[SK])) {
         const prevId = this.branches[SK];
 
-        this.branches[SK] = [];
-
         // @ts-expect-error
-        (this.branches[SK] as []).push(prevId);
+        this.branches[SK] = [prevId];
       }
 
       // @ts-ignore
@@ -126,7 +124,7 @@ class Generator implements GeneratorInterface {
   }
 
   accumulateIndicators(depth: number) {
-    if (depth !== this.prevDepth) {
+    if (depth !== this.#prevDepth) {
       this.#initIndicators(depth);
     }
 
@@ -141,19 +139,19 @@ class Generator implements GeneratorInterface {
     const SK = genKey(depth, parentIndex);
     const PK = genKey(depth + 1, this.#indicator[depth + 2]);
 
-    const CHK = depth === 0 ? null : this.prevKey;
-    this.prevKey = SK;
+    const CHK = depth === 0 ? null : this.#prevKey;
+    this.#prevKey = SK;
 
     this.#indicator[depth] += 1;
 
-    if (depth < this.prevDepth) {
+    if (depth < this.#prevDepth) {
       /**
        * Start new branch.
        */
       this.#indicator[0] = 0;
     }
 
-    this.prevDepth = depth;
+    this.#prevDepth = depth;
 
     return {
       CHK,
