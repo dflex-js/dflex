@@ -1,5 +1,5 @@
 import { PointNum } from "@dflex/utils";
-import type { Axis, IPointNum } from "@dflex/utils";
+import type { IPointNum } from "@dflex/utils";
 import type { DraggedEvent, SiblingsEvent } from "../types";
 
 import store from "../DnDStore";
@@ -90,8 +90,6 @@ class Droppable extends DistanceCalculator {
    * transformation. */
   private animatedDraggedInsertionFrame: number | null;
 
-  protected axes: Axis;
-
   constructor(draggable: DraggableInteractiveInterface) {
     super(draggable);
 
@@ -139,8 +137,6 @@ class Droppable extends DistanceCalculator {
     this.animatedDraggedInsertionFrame = null;
 
     this.isParentLocked = false;
-
-    this.axes = store.siblingsAlignment[SK] === "Horizontal" ? "x" : "y";
   }
 
   draggedEventGenerator(type: DraggedEvent["type"]): DraggedEvent {
@@ -386,9 +382,9 @@ class Droppable extends DistanceCalculator {
         ? gridPlaceholder.y + 1
         : gridPlaceholder.y - 1;
 
-      const isContainerHasCol = gridPlaceholder.x + 1 <= siblingsGrid.x;
+      // const isContainerHasCol = gridPlaceholder.x + 1 <= siblingsGrid.x;
 
-      this.axes = isContainerHasCol ? "x" : "y";
+      // const axes = isContainerHasCol ? "x" : "y";
 
       // Leaving from top.
       if (newRow === 0) {

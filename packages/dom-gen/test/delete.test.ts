@@ -1,9 +1,9 @@
-import Generator from "../src";
+import Generator, { Pointer } from "../src";
 
 const domGen = new Generator();
 
-let pointerChild0D0;
-let pointerChild1D0;
+let pointerChild0D0: Pointer;
+let pointerChild1D0: Pointer;
 
 const KEYS_CHILDREN_D0 = {
   CHK: null,
