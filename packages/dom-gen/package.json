@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Jalal Maskoun",
-  "description": "DOM relations generator algorithm",
+  "description": "DFlex DOM relations generator algorithm",
   "scripts": {
     "compile": "yarn rimraf ./dist tsconfig.tsbuildinfo && yarn tsc -b",
     "build": "yarn compile"
