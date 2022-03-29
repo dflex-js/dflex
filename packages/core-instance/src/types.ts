@@ -4,6 +4,7 @@ import type {
   IPointAxes,
   Direction,
   Axes,
+  RectBoundaries,
 } from "@dflex/utils";
 
 export interface AbstractOpts {
@@ -89,8 +90,11 @@ export interface CoreInstanceInterface extends AbstractInterface {
   /** Initial read-only element offset */
   readonly offset: RectDimensions;
 
+  /** Element boundaries for parent instance only. */
+  readonly boundaries?: RectBoundaries;
+
   /** Current element offset (x-left, y-top) */
-  currentPosition: IPointNum;
+  readonly currentPosition: IPointNum;
 
   /** Element position in the grid container. */
   grid: IPointNum;
@@ -99,12 +103,16 @@ export interface CoreInstanceInterface extends AbstractInterface {
   isVisible: boolean;
 
   /** Animated frame if the element is transforming  */
-  animatedFrame: number | null;
+  readonly animatedFrame: number | null;
 
   readonly order: Order;
   readonly keys: Keys;
   readonly depth: number;
 
+  /** Calculate Strict Rect for siblings containers */
+  assignBoundaries(childELmRect: RectDimensions): void;
+
+  getELmParentRef(): HTMLElement | null;
   isPositionedUnder(elmY: number): boolean;
   isPositionedLeft(elmX: number): boolean;
   resume(scrollX: number, scrollY: number): void;

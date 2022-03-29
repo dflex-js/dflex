@@ -3,6 +3,7 @@
 import { PointNum } from "@dflex/utils";
 
 import type {
+  RectBoundaries,
   RectDimensions,
   Direction,
   Axes,
@@ -23,6 +24,8 @@ import type {
 
 class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
   offset!: RectDimensions;
+
+  boundaries?: RectBoundaries;
 
   currentPosition!: IPointNum;
 
@@ -62,6 +65,60 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     }
 
     this.animatedFrame = null;
+  }
+
+  getELmParentRef() {
+    return this.ref!.parentElement;
+  }
+
+  assignBoundaries(childELmRect: RectDimensions) {
+    const { height, left, top, width } = childELmRect;
+
+    const right = left + width;
+    const bottom = top + height;
+
+    if (!this.boundaries) {
+      this.boundaries = {
+        top,
+        left,
+        right,
+        bottom,
+      };
+
+      if (!this.grid) {
+        this.grid = new PointNum(1, 1);
+      }
+
+      return;
+    }
+
+    const $ = this.boundaries;
+
+    // Defining elements in different row.
+    if (bottom > $.bottom || top < $.top) {
+      this.grid.y += 1;
+    }
+
+    // Defining elements in different column.
+    if (left > $.right || right < $.left) {
+      this.grid.x += 1;
+    }
+
+    if (left < $.left) {
+      $.left = left;
+    }
+
+    if (top < $.top) {
+      $.top = top;
+    }
+
+    if (right > $.right) {
+      $.right = right;
+    }
+
+    if (bottom > $.bottom) {
+      $.bottom = bottom;
+    }
   }
 
   #initIndicators(scrollX: number, scrollY: number) {
