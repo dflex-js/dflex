@@ -536,10 +536,13 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     /**
      * If element already exist in the store, then the reattach the reference.
      */
-    const id = element.id || element.ref!.id;
+    let { id } = element;
 
     if (!id) {
-      throw new Error(`DFlex: A valid and unique id is required.`);
+      id = `${this.#genID.newTravel()}`;
+
+      // eslint-disable-next-line no-param-reassign
+      element.ref!.id = id;
     }
 
     if (!this.isDOM) {
