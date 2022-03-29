@@ -14,7 +14,6 @@ class DnD extends Droppable {
    * @param initCoordinates -
    * @param opts -
    */
-  // eslint-disable-next-line constructor-super
   constructor(
     id: string,
     initCoordinates: Coordinates,
