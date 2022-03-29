@@ -1,4 +1,9 @@
-import type { RectDimensions, RectBoundaries, IPointNum } from "@dflex/utils";
+import type {
+  RectDimensions,
+  RectBoundaries,
+  IPointNum,
+  ITracker,
+} from "@dflex/utils";
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
 import type { RegisterInputMeta } from "@dflex/store";
@@ -6,7 +11,6 @@ import type { RegisterInputMeta } from "@dflex/store";
 import type { DraggedEvent, LayoutState } from "../types";
 
 import type { ScrollInterface } from "../Plugins/Scroll";
-import type { TrackerInterface } from "../Plugins/Tracker";
 
 export interface ElmTree {
   element: CoreInstanceInterface;
@@ -75,7 +79,7 @@ export interface DnDStoreInterface {
   /** Container scroll instance.  */
   siblingsScrollElement: { [siblingKey: string]: ScrollInterface };
 
-  tracker: TrackerInterface;
+  tracker: ITracker;
   layoutState: LayoutState;
   onStateChange(state: LayoutState): void;
   emitEvent(event: DraggedEvent): void;

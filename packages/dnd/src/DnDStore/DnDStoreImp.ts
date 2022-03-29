@@ -1,12 +1,11 @@
 import Store from "@dflex/store";
 
-import { PointNum } from "@dflex/utils";
+import { PointNum, Tracker } from "@dflex/utils";
 import type { RectDimensions } from "@dflex/utils";
 
 import type { ElmTree, DnDStoreInterface, RegisterInput } from "./types";
 
 import Scroll from "../Plugins/Scroll";
-import Tracker from "../Plugins/Tracker";
 
 import type { ScrollInterface } from "../Plugins/Scroll";
 
