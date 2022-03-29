@@ -8,6 +8,9 @@ export type {
   ThresholdPercentages,
 } from "./Threshold";
 
+export { Tracker } from "./Tracker";
+export type { ITracker } from "./Tracker";
+
 export type {
   RectDimensions,
   RectBoundaries,

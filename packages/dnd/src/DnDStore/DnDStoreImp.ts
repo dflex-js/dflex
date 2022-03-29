@@ -1,12 +1,11 @@
 import Store from "@dflex/store";
 
-import { PointNum } from "@dflex/utils";
+import { ITracker, PointNum, Tracker } from "@dflex/utils";
 import type { RectDimensions } from "@dflex/utils";
 
 import type { ElmTree, DnDStoreInterface, RegisterInput } from "./types";
 
 import Scroll from "../Plugins/Scroll";
-import Tracker from "../Plugins/Tracker";
 
 import type { ScrollInterface } from "../Plugins/Scroll";
 
@@ -30,7 +29,9 @@ Did you forget to call store.unregister(${id}) or add parenID when register the 
 }
 
 class DnDStoreImp extends Store implements DnDStoreInterface {
-  tracker: DnDStoreInterface["tracker"];
+  tracker: ITracker;
+
+  #genID: ITracker;
 
   siblingsBoundaries: DnDStoreInterface["siblingsBoundaries"];
 
@@ -60,6 +61,8 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
   static MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
 
+  static #PREFIX_ID = "dflex-id";
+
   constructor() {
     super();
 
@@ -76,6 +79,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     this.events = null;
 
     this.tracker = new Tracker();
+    this.#genID = new Tracker(DnDStoreImp.#PREFIX_ID);
 
     this.#initELmIndicator();
 
@@ -151,6 +155,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
   updateElementVisibility(
     elmID: string,
+    parenID: string,
     scroll: ScrollInterface,
     allowDynamicVisibility: boolean,
     permitExceptionToOverride: boolean
@@ -236,12 +241,35 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
       ? requiredBranch
       : [requiredBranch];
 
+    const firstElemID = branch[0];
+
+    // Check the parent of first element.
+    const { parent } = this.getElmTreeById(firstElemID);
+
+    let parentID: string;
+
+    /**
+     * If parent is not registered, but children are then extract it and use it.
+     */
+    if (!parent) {
+      const childInstance = this.registry[firstElemID];
+      this.register({
+        ref: childInstance.getELmParentRef()!,
+        depth: childInstance.depth + 1,
+      });
+
+      ({ id: parentID } = this.getElmTreeById(firstElemID).parent!);
+    } else {
+      parentID = parent.id;
+    }
+
     branch.forEach((elmID, i) => {
       if (elmID.length > 0) {
         const permitExceptionToOverride = i > prevIndex;
 
         this.updateElementVisibility(
           elmID,
+          parentID,
           scroll,
           allowDynamicVisibility,
           permitExceptionToOverride
@@ -273,7 +301,10 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
           depth = this.registry[elmID].depth;
 
           // Can we get the parent ID, later?
-          this.DOMGen.getElmPointer(`${Date.now()}`, (depth as number) + 1);
+          this.DOMGen.getElmPointer(
+            this.#genID.newTravel(),
+            (depth as number) + 1
+          );
 
           newSK = this.DOMGen.accumulateIndicators(depth as number).SK;
         }
@@ -529,10 +560,13 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     /**
      * If element already exist in the store, then the reattach the reference.
      */
-    const id = element.id || element.ref!.id;
+    let { id } = element;
 
     if (!id) {
-      throw new Error(`DFlex: A valid and unique id is required.`);
+      id = `${this.#genID.newTravel()}`;
+
+      // eslint-disable-next-line no-param-reassign
+      element.ref!.id = id;
     }
 
     if (!this.isDOM) {
