@@ -142,7 +142,7 @@ class DraggableAxes
       const { boundaries } = store.registry[parentID];
 
       if (!boundaries) {
-        if (process.env.NODE_ENV === "production") {
+        if (process.env.NODE_ENV !== "production") {
           // eslint-disable-next-line no-console
           throw new Error(
             `Unable to find boundaries Rect for parent ${parentID}`
