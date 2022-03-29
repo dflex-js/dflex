@@ -114,6 +114,46 @@ class DraggableAxes
       siblings !== null &&
       (opts.restrictionsStatus.isContainerRestricted ||
         opts.restrictionsStatus.isSelfRestricted);
+
+    this.#iniLayoutsThreshold();
+  }
+
+  #iniLayoutsThreshold() {
+    const {
+      offset: { width, height },
+      currentPosition,
+      id,
+    } = this.draggedElm;
+
+    this.threshold.setMainThreshold(id, {
+      width,
+      height,
+      left: currentPosition.x,
+      top: currentPosition.y,
+    });
+
+    const {
+      branches: { parents },
+    } = store.getElmTreeById(id);
+
+    (Array.isArray(parents) ? parents : [parents]).forEach((parentID) => {
+      if (!parentID) return;
+
+      const { boundaries } = store.registry[parentID];
+
+      if (!boundaries) {
+        if (process.env.NODE_ENV === "production") {
+          // eslint-disable-next-line no-console
+          throw new Error(
+            `Unable to find boundaries Rect for parent ${parentID}`
+          );
+        }
+
+        return;
+      }
+
+      this.threshold.setContainerThreshold(parentID, boundaries);
+    });
   }
 
   private axesYFilter(

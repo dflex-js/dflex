@@ -155,7 +155,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
   updateElementVisibility(
     elmID: string,
-    parenID: string,
+    parentID: string,
     scroll: ScrollInterface,
     allowDynamicVisibility: boolean,
     permitExceptionToOverride: boolean
@@ -174,6 +174,8 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
           this.registry[elmID].keys.SK,
           this.registry[elmID].offset!
         );
+
+        this.registry[parentID].assignBoundaries(this.registry[elmID].offset!);
       }
     }
 
