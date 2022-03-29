@@ -1,13 +1,13 @@
-import Generator from "../src";
+import Generator, { Pointer } from "../src";
 
 const domGen = new Generator();
 
-let pointerParent0D3;
-let pointerParent1D3;
+let pointerParent0D3: Pointer;
+let pointerParent1D3: Pointer;
 
-let pointerChild0D2;
+let pointerChild0D2: Pointer;
 
-let pointeGrandChild0D1;
+let pointeGrandChild0D1: Pointer;
 
 describe("DOM Relationship Generator: Descending-Simple", () => {
   describe("Working on same level: third(3) depth", () => {
