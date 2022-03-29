@@ -1,10 +1,10 @@
-import Generator from "../src";
+import Generator, { Pointer } from "../src";
 
 const domGen = new Generator();
 
-let pointerChild0D0;
-let pointerChild1D0;
-let pointerChild2D0;
+let pointerChild0D0: Pointer;
+let pointerChild1D0: Pointer;
+let pointerChild2D0: Pointer;
 
 const KEYS_CHILDREN_D0 = {
   CHK: null,
@@ -12,10 +12,10 @@ const KEYS_CHILDREN_D0 = {
   SK: "0-0",
 };
 
-let pointerParent0D1;
-let pointerGrandParent0D2;
+let pointerParent0D1: Pointer;
+let pointerGrandParent0D2: Pointer;
 
-let pointerChild3D0;
+let pointerChild3D0: Pointer;
 
 describe("DOM Relationship Generator: Ascending-Simple", () => {
   describe("Working on same level: zero(0) depth", () => {

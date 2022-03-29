@@ -42,8 +42,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
   siblingsGridContainer: DnDStoreInterface["siblingsGrid"];
 
-  siblingsAlignment: DnDStoreInterface["siblingsAlignment"];
-
   layoutState: DnDStoreInterface["layoutState"];
 
   private events: Events;
@@ -69,7 +67,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     this.siblingsBoundariesForGrid = {};
 
     this.siblingsScrollElement = {};
-    this.siblingsAlignment = {};
     this.siblingsGrid = {};
     this.siblingsGridContainer = {};
 
@@ -498,8 +495,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
       this.siblingsGridContainer[SK].x += 1;
     }
 
-    let isHorizontal = false;
-
     if (left < $.left) {
       $.left = left;
     }
@@ -509,16 +504,12 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     }
 
     if (right > $.right) {
-      isHorizontal = true;
       $.right = right;
     }
 
     if (bottom > $.bottom) {
-      isHorizontal = false;
       $.bottom = bottom;
     }
-
-    this.siblingsAlignment[SK] = isHorizontal ? "Horizontal" : "Vertical";
   }
 
   /**
