@@ -75,9 +75,6 @@ export interface DnDStoreInterface {
   /** Container scroll instance.  */
   siblingsScrollElement: { [siblingKey: string]: ScrollInterface };
 
-  /** Should be deprecated soon. */
-  siblingsAlignment: { [siblingKey: string]: "Horizontal" | "Vertical" };
-
   tracker: TrackerInterface;
   layoutState: LayoutState;
   onStateChange(state: LayoutState): void;
