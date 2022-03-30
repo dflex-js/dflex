@@ -382,10 +382,6 @@ class Droppable extends DistanceCalculator {
         ? gridPlaceholder.y + 1
         : gridPlaceholder.y - 1;
 
-      // const isContainerHasCol = gridPlaceholder.x + 1 <= siblingsGrid.x;
-
-      // const axes = isContainerHasCol ? "x" : "y";
-
       // Leaving from top.
       if (newRow === 0) {
         // lock the parent
@@ -638,35 +634,15 @@ class Droppable extends DistanceCalculator {
   }
 
   private detectNearestContainer() {
-    const { id } = this.draggable.draggedElm;
+    const SKs = Object.keys(store.siblingsBoundaries);
 
-    const { parent } = store.getElmTreeById(id);
+    for (let i = 0; i < SKs.length; i += 1) {
+      const isOut = this.draggable.isOutThreshold(SKs[i]);
 
-    if (!parent) {
-      const { SK } = store.registry[id].keys;
-
-      const { hasDocumentAsContainer } = store.siblingsScrollElement[SK];
-
-      // No parent assigned by registry and the hightest one is document.
-      if (hasDocumentAsContainer) return;
-
-      // Handle this case later.
-      return;
+      if (!isOut) {
+        break;
+      }
     }
-
-    // At this point, the element has a parent.
-    const parentsID = store.getElmSiblingsById(parent.id);
-
-    if (!parentsID || !Array.isArray(parentsID)) return;
-
-    // Initialize parents branch.
-    store.initSiblingsScrollAndVisibilityIfNecessary(parent.keys.SK);
-
-    parentsID.forEach((parentID) => {
-      // TODO: Handle this case later.
-      // eslint-disable-next-line no-unused-vars
-      const parentContainerInstance = store.registry[parentID];
-    });
   }
 
   dragAt(x: number, y: number) {
