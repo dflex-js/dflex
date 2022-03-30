@@ -30,19 +30,19 @@ class DraggableAxes
 
   isViewportRestricted: boolean;
 
-  innerOffset: IPointNum;
+  readonly innerOffset: IPointNum;
 
   isMovingAwayFrom: IPointBool;
 
-  private axesFilterNeeded: boolean;
+  private readonly axesFilterNeeded: boolean;
 
-  private restrictions: Restrictions;
+  private readonly restrictions: Restrictions;
 
-  private restrictionsStatus: RestrictionsStatus;
+  private readonly restrictionsStatus: RestrictionsStatus;
 
-  private marginX: number;
+  private readonly marginX: number;
 
-  #initCoordinates: IPointNum;
+  readonly #initCoordinates: IPointNum;
 
   constructor(id: string, initCoordinates: Coordinates, opts: FinalDndOpts) {
     const { element } = store.getElmTreeById(id);
