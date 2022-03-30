@@ -90,9 +90,6 @@ export interface CoreInstanceInterface extends AbstractInterface {
   /** Initial read-only element offset */
   readonly offset: RectDimensions;
 
-  /** Element boundaries for parent instance only. */
-  readonly boundaries?: RectBoundaries;
-
   /** Current element offset (x-left, y-top) */
   readonly currentPosition: IPointNum;
 
@@ -108,9 +105,6 @@ export interface CoreInstanceInterface extends AbstractInterface {
   readonly order: Order;
   readonly keys: Keys;
   readonly depth: number;
-
-  /** Calculate Strict Rect for siblings containers */
-  assignBoundaries(childELmRect: RectDimensions): void;
 
   getELmParentRef(): HTMLElement | null;
   isPositionedUnder(elmY: number): boolean;
