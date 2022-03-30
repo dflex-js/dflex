@@ -23,7 +23,7 @@ class Store {
   }
 
   private submitElementToRegistry(element: RegisterInput) {
-    const { id, depth, isPaused, isInitialized, ...rest } = element;
+    const { id, depth, isPaused, isInitialized, isInjected, ...rest } = element;
 
     const { order, keys } = this.DOMGen.getElmPointer(id, depth);
 
@@ -38,6 +38,7 @@ class Store {
     this.registry[id] = new CoreInstance(coreElement, {
       isInitialized,
       isPaused,
+      isInjected,
     });
   }
 

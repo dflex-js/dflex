@@ -45,6 +45,9 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
   layoutState: DnDStoreInterface["layoutState"];
 
+  /** has list of child-id that needs parent container. */
+  #nodesNeedParents: string[];
+
   private events: Events;
 
   private isDOM: boolean;
@@ -72,6 +75,8 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     this.siblingsScrollElement = {};
     this.siblingsGrid = {};
     this.siblingsGridContainer = {};
+
+    this.#nodesNeedParents = [];
 
     this.layoutState = "pending";
 
@@ -155,7 +160,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
   updateElementVisibility(
     elmID: string,
-    parenID: string,
+    parentID: string | null,
     scroll: ScrollInterface,
     allowDynamicVisibility: boolean,
     permitExceptionToOverride: boolean
@@ -174,6 +179,12 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
           this.registry[elmID].keys.SK,
           this.registry[elmID].offset!
         );
+
+        if (parentID) {
+          this.registry[parentID].assignBoundaries(
+            this.registry[elmID].offset!
+          );
+        }
       }
     }
 
@@ -244,24 +255,22 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     const firstElemID = branch[0];
 
     // Check the parent of first element.
-    const { parent } = this.getElmTreeById(firstElemID);
+    const { parent, element } = this.getElmTreeById(firstElemID);
 
-    let parentID: string;
+    let parentID: string | null = null;
 
     /**
-     * If parent is not registered, but children are then extract it and use it.
+     * If parent is not registered, and element not injected in the registry.
      */
-    if (!parent) {
-      const childInstance = this.registry[firstElemID];
-      this.register({
-        ref: childInstance.getELmParentRef()!,
-        depth: childInstance.depth + 1,
-      });
+    if (!parent && !element.isInjected) {
+      this.#nodesNeedParents.push(firstElemID);
 
-      ({ id: parentID } = this.getElmTreeById(firstElemID).parent!);
-    } else {
-      parentID = parent.id;
+      // No need to continue, because the parent is not registered and we cant
+      // detect the boundaries rect.
+      return;
     }
+
+    parentID = parent?.id || null;
 
     branch.forEach((elmID, i) => {
       if (elmID.length > 0) {
@@ -400,6 +409,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
     if (scroll.allowDynamicVisibility) {
       this.updateBranchVisibility(key, true);
+
       scroll.scrollEventCallback = this.updateBranchVisibility;
     } else {
       this.updateBranchVisibility(key, false);
@@ -410,6 +420,37 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     Object.keys(this.DOMGen.branches).forEach((branchKey) => {
       this.initSiblingsScrollAndVisibilityIfNecessary(branchKey);
     });
+
+    this.#nodesNeedParents.forEach((id) => {
+      const childInstance = this.registry[id];
+
+      const ref = childInstance.getELmParentRef();
+
+      if (ref) {
+        this.register(
+          {
+            ref,
+            depth: childInstance.depth + 1,
+          },
+          true
+        );
+      }
+    });
+
+    this.#nodesNeedParents.forEach((id) => {
+      const {
+        keys: { SK },
+      } = this.registry[id];
+
+      this.updateBranchVisibility(
+        SK,
+        this.siblingsScrollElement[SK].allowDynamicVisibility
+      );
+    });
+
+    if (this.#nodesNeedParents.length > 0) {
+      this.#nodesNeedParents = [];
+    }
   }
 
   #assignSiblingsGrid(id: string, SK: string, rect: RectDimensions) {
@@ -548,7 +589,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
    *
    * @param element -
    */
-  register(element: RegisterInput) {
+  register(element: RegisterInput, isInjected?: true) {
     const hasRef = !!element.ref;
 
     if (!hasRef && !element.id) {
@@ -599,6 +640,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
       depth: element.depth || 0,
       ref: element.ref,
       isInitialized: hasRef,
+      isInjected,
       isPaused: true,
       scrollX: 0,
       scrollY: 0,
@@ -647,7 +689,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
     const {
       keys: { SK, PK },
-      order: { parent: pi },
+      order,
     } = element;
 
     /**
@@ -661,7 +703,9 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
      */
     let parent = null;
     if (parents !== undefined) {
-      const parentsID = Array.isArray(parents) ? parents[pi] : parents;
+      const parentsID = Array.isArray(parents)
+        ? parents[order.parent]
+        : parents;
       parent = this.registry[parentsID as string];
     }
 

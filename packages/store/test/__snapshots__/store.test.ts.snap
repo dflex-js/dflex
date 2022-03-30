@@ -16,6 +16,7 @@ CoreInstance {
   "hasToTransform": false,
   "id": "id-0",
   "isInitialized": true,
+  "isInjected": undefined,
   "isPaused": false,
   "isVisible": true,
   "keys": Object {
@@ -60,6 +61,7 @@ Object {
     "hasToTransform": false,
     "id": "id-0",
     "isInitialized": true,
+    "isInjected": undefined,
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
@@ -100,6 +102,7 @@ Object {
     "hasToTransform": false,
     "id": "id-1",
     "isInitialized": true,
+    "isInjected": undefined,
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
@@ -140,6 +143,7 @@ Object {
     "hasToTransform": false,
     "id": "id-2",
     "isInitialized": true,
+    "isInjected": undefined,
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
@@ -180,6 +184,7 @@ Object {
     "hasToTransform": false,
     "id": "p-id-0",
     "isInitialized": true,
+    "isInjected": undefined,
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
@@ -225,6 +230,7 @@ Object {
     "hasToTransform": false,
     "id": "id-0",
     "isInitialized": true,
+    "isInjected": undefined,
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
@@ -265,6 +271,7 @@ Object {
     "hasToTransform": false,
     "id": "id-1",
     "isInitialized": true,
+    "isInjected": undefined,
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
@@ -305,6 +312,7 @@ Object {
     "hasToTransform": false,
     "id": "id-2",
     "isInitialized": true,
+    "isInjected": undefined,
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
@@ -345,6 +353,7 @@ Object {
     "hasToTransform": false,
     "id": "p-id-0",
     "isInitialized": true,
+    "isInjected": undefined,
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
