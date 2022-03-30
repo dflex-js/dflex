@@ -32,6 +32,9 @@ class Generator implements GeneratorInterface {
     [keys: string]: ELmBranch;
   };
 
+  /** Branches order */
+  branchesOrder: string[];
+
   #prevDepth: number;
 
   #prevKey: string;
@@ -40,6 +43,7 @@ class Generator implements GeneratorInterface {
     this.#indicator = {};
 
     this.branches = {};
+    this.branchesOrder = [];
 
     this.#prevDepth = -99;
 
@@ -80,6 +84,21 @@ class Generator implements GeneratorInterface {
     if (this.#indicator[dp + 2] === undefined) {
       this.#indicator[dp + 2] = 0;
     }
+  }
+
+  #updateOrder(k: string) {
+    const is = this.branchesOrder.find((key) => key === k);
+    if (!is) {
+      this.branchesOrder.push(k);
+    }
+  }
+
+  getBranchParentKey(SK: string) {
+    const keyOrder = this.branchesOrder.indexOf(SK);
+    if (keyOrder + 1 <= this.branchesOrder.length) {
+      return this.branchesOrder[keyOrder + 1];
+    }
+    return null;
   }
 
   /**
@@ -137,6 +156,12 @@ class Generator implements GeneratorInterface {
      * get siblings unique key (sK) and parents key (pK)
      */
     const SK = genKey(depth, parentIndex);
+
+    /**
+     * Add key to the order.
+     */
+    this.#updateOrder(SK);
+
     const PK = genKey(depth + 1, this.#indicator[depth + 2]);
 
     const CHK = depth === 0 ? null : this.#prevKey;
@@ -217,32 +242,33 @@ class Generator implements GeneratorInterface {
 
   // eslint-disable-next-line no-unused-vars
   destroyBranch(SK: string, cb: (elmID: string) => unknown) {
-    if (Array.isArray(this.branches[SK])) {
-      const elmID = (this.branches[SK] as string[]).pop();
+    if (!this.branches[SK]) return;
 
-      cb(elmID as string);
+    if (Array.isArray(this.branches[SK])) {
+      const elmID = (this.branches[SK] as string[]).pop()!;
+
+      cb(elmID);
 
       if (this.branches[SK]!.length > 0) {
         this.destroyBranch(SK, cb);
       } else {
         this.branches[SK] = null;
-
-        return;
       }
-    }
-
-    if (this.branches[SK] !== undefined) {
+    } else {
       const elmID = this.branches[SK] as string;
 
       this.branches[SK] = null;
 
       cb(elmID);
     }
+
+    this.branchesOrder = this.branchesOrder.filter((key) => key !== SK);
   }
 
   clearBranchesAndIndicator() {
     this.branches = {};
     this.#indicator = {};
+    this.branchesOrder = [];
   }
 }
 

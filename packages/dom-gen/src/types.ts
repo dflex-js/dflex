@@ -29,6 +29,9 @@ export interface GeneratorInterface {
   branches: {
     [keys: string]: ELmBranch;
   };
+  /** SK (branch keys) in order. */
+  branchesOrder: Array<string>;
+  getBranchParentKey(SK: string): string | null;
   getElmBranch(SK: string): ELmBranch;
   register(id: string, depth: number): Pointer;
   accumulateIndicators(depth: number): Keys & {

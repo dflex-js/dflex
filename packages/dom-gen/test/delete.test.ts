@@ -41,6 +41,12 @@ describe("Testing clear methods", () => {
     const branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
 
     expect(branch).toStrictEqual(["id-0", "id-1"]);
+
+    expect(domGen.branchesOrder).toMatchInlineSnapshot(`
+      Array [
+        "0-0",
+      ]
+    `);
   });
 
   it("Remove the first siblings", () => {
@@ -67,6 +73,12 @@ describe("Testing clear methods", () => {
     const branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
 
     expect(branch).toStrictEqual(["id-1", "id-0"]);
+
+    expect(domGen.branchesOrder).toMatchInlineSnapshot(`
+      Array [
+        "0-0",
+      ]
+    `);
   });
 
   it("Destroy branch", () => {
@@ -75,6 +87,8 @@ describe("Testing clear methods", () => {
     const branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
 
     expect(branch).toBeNull();
+
+    expect(domGen.branchesOrder).toMatchInlineSnapshot(`Array []`);
   });
 
   it("Adds two siblings again", () => {
@@ -106,5 +120,11 @@ describe("Testing clear methods", () => {
     const branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
 
     expect(branch).toStrictEqual(["id-0", "id-1"]);
+
+    expect(domGen.branchesOrder).toMatchInlineSnapshot(`
+      Array [
+        "0-0",
+      ]
+    `);
   });
 });
