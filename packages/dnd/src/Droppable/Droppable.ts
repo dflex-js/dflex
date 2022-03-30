@@ -640,6 +640,7 @@ class Droppable extends DistanceCalculator {
       const isOut = this.draggable.isOutThreshold(SKs[i]);
 
       if (!isOut) {
+        this.draggable.SKplaceholder = SKs[i];
         break;
       }
     }
@@ -659,8 +660,6 @@ class Droppable extends DistanceCalculator {
 
     let isOutSiblingsContainer = false;
 
-    const { SK } = store.registry[this.draggable.draggedElm.id].keys;
-
     if (this.draggable.isOutThreshold()) {
       this.emitDraggedEvent("onDragOutThreshold");
 
@@ -676,7 +675,9 @@ class Droppable extends DistanceCalculator {
 
       this.draggable.draggedElm.rmDateset("draggedOutPosition");
 
-      isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
+      isOutSiblingsContainer =
+        !this.draggable.SKplaceholder! ||
+        this.draggable.isOutThreshold(this.draggable.SKplaceholder);
 
       // when it's out, and on of theses is true then it's happening.
       if (!isOutSiblingsContainer) {
@@ -712,7 +713,9 @@ class Droppable extends DistanceCalculator {
      * When dragged is out parent and returning to it.
      */
     if (this.isParentLocked) {
-      isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
+      isOutSiblingsContainer =
+        this.draggable.SKplaceholder === null ||
+        this.draggable.isOutThreshold(this.draggable.SKplaceholder);
 
       if (isOutSiblingsContainer) {
         return;

@@ -24,6 +24,8 @@ class DraggableAxes
 
   gridPlaceholder: IPointNum;
 
+  SKplaceholder: string | null;
+
   threshold: ThresholdInterface;
 
   isViewportRestricted: boolean;
@@ -51,8 +53,13 @@ class DraggableAxes
 
     const { order, grid } = element;
 
+    const {
+      keys: { SK },
+    } = store.registry[id];
+
     this.indexPlaceholder = order.self;
     this.gridPlaceholder = new PointNum(grid.x, grid.y);
+    this.SKplaceholder = SK;
 
     this.isViewportRestricted = true;
 
@@ -70,10 +77,10 @@ class DraggableAxes
       top: currentPosition.y,
     });
 
-    Object.keys(store.siblingsBoundaries).forEach((SK) => {
-      const siblingsBoundaries = store.siblingsBoundaries[SK];
+    Object.keys(store.siblingsBoundaries).forEach((key) => {
+      const siblingsBoundaries = store.siblingsBoundaries[key];
 
-      this.threshold.setContainerThreshold(SK, siblingsBoundaries);
+      this.threshold.setContainerThreshold(key, siblingsBoundaries);
     });
 
     this.isMovingAwayFrom = new PointBool(false, false);
@@ -278,11 +285,11 @@ class DraggableAxes
   }
 
   isNotSettled() {
-    const { SK } = store.registry[this.draggedElm.id].keys;
-
     return (
       !this.#isLeavingFromTail() &&
-      (this.isOutThreshold() || this.isOutThreshold(SK))
+      (this.isOutThreshold() ||
+        this.SKplaceholder === null ||
+        this.isOutThreshold(this.SKplaceholder))
     );
   }
 }
