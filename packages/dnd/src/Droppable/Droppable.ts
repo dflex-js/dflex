@@ -64,15 +64,11 @@ function isIDEligible2Move(
  * Class includes all transformation methods related to droppable.
  */
 class Droppable extends DistanceCalculator {
-  private leftAtIndex: number;
-
   private preserveLastElmOffset?: IPointNum;
 
   private scrollAnimatedFrame: number | null;
 
-  private initialScrollY: number;
-
-  private initialScrollX: number;
+  readonly #initialScroll: IPointNum;
 
   private scrollSpeed: number;
 
@@ -93,18 +89,14 @@ class Droppable extends DistanceCalculator {
   constructor(draggable: DraggableInteractiveInterface) {
     super(draggable);
 
-    this.leftAtIndex = -1;
-
     this.updateLastElmOffset();
 
     this.scrollAnimatedFrame = null;
 
-    const { SK } = store.registry[this.draggable.draggedElm.id].keys;
+    const { scrollX, scrollY } =
+      store.siblingsScrollElement[this.draggable.SKplaceholder!];
 
-    const { scrollX, scrollY } = store.siblingsScrollElement[SK];
-
-    this.initialScrollY = scrollY;
-    this.initialScrollX = scrollX;
+    this.#initialScroll = new PointNum(scrollX, scrollY);
 
     this.scrollSpeed = this.draggable.scroll.initialSpeed;
 
@@ -117,8 +109,8 @@ class Droppable extends DistanceCalculator {
      * - Guarantee same position for dragging. In scrolling/overflow case, or
      *   regular scrolling.
      */
-    this.scrollTop = this.initialScrollY;
-    this.scrollLeft = this.initialScrollX;
+    this.scrollTop = this.#initialScroll.y;
+    this.scrollLeft = this.#initialScroll.x;
 
     /**
      * This is true until there's a scrolling. Then, the scroll will handle the
@@ -308,7 +300,7 @@ class Droppable extends DistanceCalculator {
 
     const from = this.draggable.indexPlaceholder + 1;
 
-    this.leftAtIndex = this.draggable.indexPlaceholder;
+    // this.leftAtIndex = this.draggable.indexPlaceholder;
 
     emitSiblingsEvent("onLiftUpSiblings", {
       siblings,
@@ -426,7 +418,7 @@ class Droppable extends DistanceCalculator {
   }
 
   private draggedIsComingIn() {
-    const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
+    const siblings = store.DOMGen.branches[this.draggable.SKplaceholder!];
 
     /**
      * If tempIndex is zero, the dragged is coming from the top. So, move them
@@ -461,11 +453,6 @@ class Droppable extends DistanceCalculator {
       this.moveDown(to);
     }
 
-    /**
-     * Reset index.
-     */
-    this.leftAtIndex = -1;
-
     this.draggable.draggedElm.rmDateset("draggedOutContainer");
   }
 
@@ -474,7 +461,7 @@ class Droppable extends DistanceCalculator {
 
     nextScrollTop += direction * this.scrollSpeed;
 
-    const draggedYShift = y + nextScrollTop - this.initialScrollY;
+    const draggedYShift = y + nextScrollTop - this.#initialScroll.y;
 
     const currentTop = draggedYShift - this.draggable.innerOffset.y;
 
@@ -503,8 +490,8 @@ class Droppable extends DistanceCalculator {
     scrollContainer.scrollTop = this.scrollTop;
 
     this.draggable.dragAt(
-      x + this.scrollLeft - this.initialScrollX,
-      y + this.scrollTop - this.initialScrollY
+      x + this.scrollLeft - this.#initialScroll.x,
+      y + this.scrollTop - this.#initialScroll.y
     );
   }
 
@@ -513,7 +500,7 @@ class Droppable extends DistanceCalculator {
 
     nextScrollLeft += direction * this.scrollSpeed;
 
-    const draggedXShift = x + nextScrollLeft - this.initialScrollX;
+    const draggedXShift = x + nextScrollLeft - this.#initialScroll.x;
 
     const currentLeft = draggedXShift - this.draggable.innerOffset.x;
 
@@ -542,8 +529,8 @@ class Droppable extends DistanceCalculator {
     scrollContainer.scrollLeft = this.scrollLeft;
 
     this.draggable.dragAt(
-      x + this.scrollLeft - this.initialScrollX,
-      y + this.scrollTop - this.initialScrollY
+      x + this.scrollLeft - this.#initialScroll.x,
+      y + this.scrollTop - this.#initialScroll.y
     );
   }
 
@@ -649,8 +636,8 @@ class Droppable extends DistanceCalculator {
   dragAt(x: number, y: number) {
     if (this.regularDragging) {
       this.draggable.dragAt(
-        x + this.scrollLeft - this.initialScrollX,
-        y + this.scrollTop - this.initialScrollY
+        x + this.scrollLeft - this.#initialScroll.x,
+        y + this.scrollTop - this.#initialScroll.y
       );
     }
 
