@@ -177,6 +177,18 @@ class EndDroppable extends Droppable {
     }
 
     this.draggable.endDragging(isFallback);
+
+    [
+      "elmTransition",
+      "draggedOffset",
+      "draggedAccumulatedTransition",
+      "siblingsEmptyElmIndex",
+      "#initialScroll",
+      "#scrollAxes",
+    ].forEach((instance) => {
+      // @ts-expect-error
+      this[instance] = null;
+    });
   }
 }
 

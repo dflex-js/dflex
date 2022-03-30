@@ -703,6 +703,11 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
     this.clearBranchesScroll();
 
+    // @ts-expect-error
+    this.tracker = null;
+    // @ts-expect-error
+    this.#genID = null;
+
     // Destroys all registered instances.
     super.destroy();
   }

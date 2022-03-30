@@ -202,6 +202,21 @@ class DraggableInteractive
     if (this.isDraggedPositionFixed) {
       this.changeStyle(this.changeToFixedStyleProps, false);
     }
+
+    this.threshold.destroy();
+
+    [
+      "threshold",
+      "gridPlaceholder",
+      "isMovingAwayFrom",
+      "positionPlaceholder",
+      "occupiedOffset",
+      "occupiedTranslate",
+      "#initCoordinates",
+    ].forEach((instance) => {
+      // @ts-expect-error
+      this[instance] = null;
+    });
   }
 }
 
