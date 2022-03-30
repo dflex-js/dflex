@@ -36,6 +36,7 @@ export type RegisterInput = {
   depth: number;
   isInitialized: boolean;
   isPaused: boolean;
+  isInjected?: true;
   scrollX: number;
   scrollY: number;
 };

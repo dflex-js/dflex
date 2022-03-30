@@ -39,6 +39,8 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
   isVisible: boolean;
 
+  isInjected?: true;
+
   hasToTransform!: boolean;
 
   animatedFrame: number | null;
@@ -50,6 +52,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
     super(element, opts);
 
+    this.isInjected = opts.isInjected;
     this.order = order;
     this.keys = keys;
     this.depth = depth;

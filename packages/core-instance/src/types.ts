@@ -10,6 +10,7 @@ import type {
 export interface AbstractOpts {
   isInitialized: boolean;
   isPaused: boolean;
+  isInjected?: true;
 }
 
 export type AbstractInput = {
@@ -101,6 +102,15 @@ export interface CoreInstanceInterface extends AbstractInterface {
 
   /** Element visibility in the scroll container. */
   isVisible: boolean;
+
+  /**
+   * True when element is injected in the registry.
+   * Represents the higher node element in the registered tree and prevents
+   * recursive fetching child/parent.
+   * So when the store reads `isInjected: true` it knows this is it and whe have
+   * to stop fetching higher nodes.
+   */
+  isInjected?: true;
 
   /** Animated frame if the element is transforming  */
   readonly animatedFrame: number | null;
