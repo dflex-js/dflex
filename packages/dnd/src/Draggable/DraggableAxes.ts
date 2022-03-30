@@ -220,7 +220,11 @@ class DraggableAxes
     let filteredY = y;
     let filteredX = x;
 
-    const { SK } = store.registry[this.draggedElm.id].keys;
+    const { id } = this.draggedElm;
+
+    const {
+      keys: { SK },
+    } = store.registry[id];
 
     if (this.axesFilterNeeded) {
       const {
@@ -228,7 +232,7 @@ class DraggableAxes
         bottom,
         left: maxLeft,
         right: minRight,
-      } = store.siblingsBoundaries[SK];
+      } = store.getElmTreeById(id).parent!.boundaries!;
 
       if (this.restrictionsStatus.isContainerRestricted) {
         filteredX = this.axesXFilter(
@@ -296,7 +300,7 @@ class DraggableAxes
     );
   }
 
-  isOutThreshold(SK?: string) {
+  isOutThreshold(parentID?: string) {
     const {
       id,
       offset: { height, width },
@@ -304,7 +308,7 @@ class DraggableAxes
 
     const { x, y } = this.positionPlaceholder;
 
-    const key = SK || id;
+    const key = parentID || id;
 
     return (
       this.threshold.isOutThresholdV(key, y, y + height) ||
@@ -323,11 +327,11 @@ class DraggableAxes
   }
 
   isNotSettled() {
-    const { SK } = store.registry[this.draggedElm.id].keys;
+    const { id } = store.getElmTreeById(this.draggedElm.id).parent!;
 
     return (
       !this.#isLeavingFromTail() &&
-      (this.isOutThreshold() || this.isOutThreshold(SK))
+      (this.isOutThreshold() || this.isOutThreshold(id))
     );
   }
 }
