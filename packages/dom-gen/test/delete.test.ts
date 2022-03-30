@@ -19,8 +19,8 @@ describe("Testing clear methods", () => {
     // │
     // │───id-1  => (order:{parent: 0, self: 1 }) || (keys: {CHK: null,PK: "1-0",SK: "0-0"})
 
-    pointerChild0D0 = domGen.getElmPointer("id-0", 0);
-    pointerChild1D0 = domGen.getElmPointer("id-1", 0);
+    pointerChild0D0 = domGen.register("id-0", 0);
+    pointerChild1D0 = domGen.register("id-1", 0);
 
     expect(pointerChild0D0).toStrictEqual({
       keys: KEYS_CHILDREN_D0,
@@ -54,7 +54,7 @@ describe("Testing clear methods", () => {
   });
 
   it("Add new element after deleting the old one to check indicators working correctly", () => {
-    pointerChild0D0 = domGen.getElmPointer("id-0", 0);
+    pointerChild0D0 = domGen.register("id-0", 0);
 
     expect(pointerChild0D0).toStrictEqual({
       keys: KEYS_CHILDREN_D0,
@@ -84,8 +84,8 @@ describe("Testing clear methods", () => {
     // │
     // │───id-1  => (order:{parent: 0, self: 1 }) || (keys: {CHK: null,PK: "1-0",SK: "0-0"})
 
-    pointerChild0D0 = domGen.getElmPointer("id-0", 0);
-    pointerChild1D0 = domGen.getElmPointer("id-1", 0);
+    pointerChild0D0 = domGen.register("id-0", 0);
+    pointerChild1D0 = domGen.register("id-1", 0);
 
     expect(pointerChild0D0).toStrictEqual({
       keys: KEYS_CHILDREN_D0,

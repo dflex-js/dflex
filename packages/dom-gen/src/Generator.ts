@@ -162,14 +162,12 @@ class Generator implements GeneratorInterface {
   }
 
   /**
-   * Main method.
-   *
-   * Add element to branches.
+   * register element to branches.
    *
    * @param id - element id
    * @param depth - element depth
    */
-  getElmPointer(id: string, depth: number): Pointer {
+  register(id: string, depth: number): Pointer {
     const { CHK, SK, PK, parentIndex } = this.accumulateIndicators(depth);
 
     const selfIndex = this.#addElementIDToSiblingsBranch(id, SK);

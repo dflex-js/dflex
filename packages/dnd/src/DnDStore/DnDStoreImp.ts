@@ -277,10 +277,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
           depth = this.registry[elmID].depth;
 
           // Can we get the parent ID, later?
-          this.DOMGen.getElmPointer(
-            this.#genID.newTravel(),
-            (depth as number) + 1
-          );
+          this.DOMGen.register(this.#genID.newTravel(), (depth as number) + 1);
 
           newSK = this.DOMGen.accumulateIndicators(depth as number).SK;
         }

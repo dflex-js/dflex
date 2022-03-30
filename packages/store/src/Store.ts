@@ -25,7 +25,7 @@ class Store {
   private submitElementToRegistry(element: RegisterInput) {
     const { id, depth, isPaused, isInitialized, ...rest } = element;
 
-    const { order, keys } = this.DOMGen.getElmPointer(id, depth);
+    const { order, keys } = this.DOMGen.register(id, depth);
 
     const coreElement: CoreInput = {
       id,

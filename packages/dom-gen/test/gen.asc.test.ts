@@ -24,7 +24,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
       // │
       // │───id-0  => (order:{parent: 0, self: 0 }) || (keys: {CHK: null,PK: "1-0",SK: "0-0"})
 
-      pointerChild0D0 = domGen.getElmPointer("id-0", 0);
+      pointerChild0D0 = domGen.register("id-0", 0);
 
       expect(pointerChild0D0).toStrictEqual({
         keys: KEYS_CHILDREN_D0,
@@ -46,7 +46,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
       // │
       // │───id-1  => (order:{parent: 0, self: 1 }) || (keys: {CHK: null,PK: "1-0",SK: "0-0"})
 
-      pointerChild1D0 = domGen.getElmPointer("id-1", 0);
+      pointerChild1D0 = domGen.register("id-1", 0);
 
       expect(pointerChild1D0).toStrictEqual({
         keys: KEYS_CHILDREN_D0,
@@ -68,7 +68,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
       // │
       // │───id-2  => (order:{parent: 0, self: 2 }) || (keys: {CHK: null,PK: "1-0",SK: "0-0"})
 
-      pointerChild2D0 = domGen.getElmPointer("id-2", 0);
+      pointerChild2D0 = domGen.register("id-2", 0);
 
       expect(pointerChild2D0).toStrictEqual({
         keys: KEYS_CHILDREN_D0,
@@ -95,7 +95,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
       //     │
       //     │───id-2 => ..
 
-      pointerParent0D1 = domGen.getElmPointer("id-parent-1", 1);
+      pointerParent0D1 = domGen.register("id-parent-1", 1);
 
       expect(pointerChild0D0.keys.PK).toBe(pointerParent0D1.keys.SK);
       expect(pointerChild1D0.keys.PK).toBe(pointerParent0D1.keys.SK);
@@ -130,7 +130,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
       //         │
       //         │───id-2 => ..
 
-      pointerGrandParent0D2 = domGen.getElmPointer("id-grand-parent-1", 2);
+      pointerGrandParent0D2 = domGen.register("id-grand-parent-1", 2);
 
       expect(pointerParent0D1.keys.PK).toBe(pointerGrandParent0D2.keys.SK);
 
@@ -167,7 +167,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
       //
       // ├───id-00  (order:{parent: 1, self: 0 }) ||  (keys: {CHK: null,PK: "1-1",SK: "0-1"})
 
-      pointerChild3D0 = domGen.getElmPointer("id-00", 0);
+      pointerChild3D0 = domGen.register("id-00", 0);
 
       expect(pointerChild3D0.keys).not.toBe(KEYS_CHILDREN_D0);
 

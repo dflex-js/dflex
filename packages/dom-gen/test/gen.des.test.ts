@@ -16,7 +16,7 @@ describe("DOM Relationship Generator: Descending-Simple", () => {
       // │
       // │───id-0  => (order:{parent: 0, self: 0 }) || (keys: {CHK: "0-0",PK: "4-0",SK: "3-0"})
 
-      pointerParent0D3 = domGen.getElmPointer("id-0", 3);
+      pointerParent0D3 = domGen.register("id-0", 3);
 
       // parents should always have children keys
       // @ts-expect-error
@@ -42,7 +42,7 @@ describe("DOM Relationship Generator: Descending-Simple", () => {
       // |
       // │───id-1  => (order:{parent: 0, self: 1 }) || (keys: {CHK: "3-0",PK: "4-0",SK: "3-0"})
 
-      pointerParent1D3 = domGen.getElmPointer("id-1", 3);
+      pointerParent1D3 = domGen.register("id-1", 3);
 
       // parents should always have children keys
       expect(pointerParent1D3.keys.CHK).not.toBe(null);
@@ -76,7 +76,7 @@ describe("DOM Relationship Generator: Descending-Simple", () => {
       //     |
       //     │───id-2  => (order:{parent: 1, self: 0 }) || (keys: {CHK: "3-0",PK: "3-0",SK: "2-0"})
 
-      pointerChild0D2 = domGen.getElmPointer("id-2", 2);
+      pointerChild0D2 = domGen.register("id-2", 2);
 
       expect(pointerChild0D2).toStrictEqual({
         keys: {
@@ -102,7 +102,7 @@ describe("DOM Relationship Generator: Descending-Simple", () => {
       //         |
       //         │───id-3  => (order:{parent: 1, self: 0 }) || (keys: {CHK: "2-1",PK: "3-0",SK: "2-1"})
 
-      pointeGrandChild0D1 = domGen.getElmPointer("id-3", 1);
+      pointeGrandChild0D1 = domGen.register("id-3", 1);
 
       expect(pointeGrandChild0D1).toStrictEqual({
         keys: {

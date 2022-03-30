@@ -30,7 +30,7 @@ export interface GeneratorInterface {
     [keys: string]: ELmBranch;
   };
   getElmBranch(SK: string): ELmBranch;
-  getElmPointer(id: string, depth: number): Pointer;
+  register(id: string, depth: number): Pointer;
   accumulateIndicators(depth: number): Keys & {
     parentIndex: number;
   };
