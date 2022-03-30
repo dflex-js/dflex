@@ -70,11 +70,9 @@ class Droppable extends DistanceCalculator {
 
   readonly #initialScroll: IPointNum;
 
+  readonly #scrollAxes: IPointNum;
+
   private scrollSpeed: number;
-
-  private scrollTop: number;
-
-  private scrollLeft: number;
 
   private regularDragging: boolean;
 
@@ -109,8 +107,10 @@ class Droppable extends DistanceCalculator {
      * - Guarantee same position for dragging. In scrolling/overflow case, or
      *   regular scrolling.
      */
-    this.scrollTop = this.#initialScroll.y;
-    this.scrollLeft = this.#initialScroll.x;
+    this.#scrollAxes = new PointNum(
+      this.#initialScroll.x,
+      this.#initialScroll.y
+    );
 
     /**
      * This is true until there's a scrolling. Then, the scroll will handle the
@@ -457,7 +457,7 @@ class Droppable extends DistanceCalculator {
   }
 
   private scrollElementOnY(x: number, y: number, direction: 1 | -1) {
-    let nextScrollTop = this.scrollTop;
+    let nextScrollTop = this.#scrollAxes.y;
 
     nextScrollTop += direction * this.scrollSpeed;
 
@@ -477,26 +477,26 @@ class Droppable extends DistanceCalculator {
 
     if (direction === 1) {
       if (currentBottom <= scrollHeight) {
-        this.scrollTop = nextScrollTop;
+        this.#scrollAxes.y = nextScrollTop;
       } else {
-        this.scrollTop = scrollHeight - scrollRect.height;
+        this.#scrollAxes.y = scrollHeight - scrollRect.height;
       }
     } else if (currentTop >= 0) {
-      this.scrollTop = nextScrollTop;
+      this.#scrollAxes.y = nextScrollTop;
     } else {
-      this.scrollTop = 0;
+      this.#scrollAxes.y = 0;
     }
 
-    scrollContainer.scrollTop = this.scrollTop;
+    scrollContainer.scrollTop = this.#scrollAxes.y;
 
     this.draggable.dragAt(
-      x + this.scrollLeft - this.#initialScroll.x,
-      y + this.scrollTop - this.#initialScroll.y
+      x + this.#scrollAxes.x - this.#initialScroll.x,
+      y + this.#scrollAxes.y - this.#initialScroll.y
     );
   }
 
   private scrollElementOnX(x: number, y: number, direction: 1 | -1) {
-    let nextScrollLeft = this.scrollLeft;
+    let nextScrollLeft = this.#scrollAxes.x;
 
     nextScrollLeft += direction * this.scrollSpeed;
 
@@ -516,21 +516,21 @@ class Droppable extends DistanceCalculator {
 
     if (direction === 1) {
       if (currentRight <= scrollHeight) {
-        this.scrollLeft = nextScrollLeft;
+        this.#scrollAxes.x = nextScrollLeft;
       } else {
-        this.scrollLeft = scrollHeight - scrollRect.width;
+        this.#scrollAxes.x = scrollHeight - scrollRect.width;
       }
     } else if (currentRight >= 0) {
-      this.scrollLeft = currentRight;
+      this.#scrollAxes.x = currentRight;
     } else {
-      this.scrollLeft = 0;
+      this.#scrollAxes.x = 0;
     }
 
-    scrollContainer.scrollLeft = this.scrollLeft;
+    scrollContainer.scrollLeft = this.#scrollAxes.x;
 
     this.draggable.dragAt(
-      x + this.scrollLeft - this.#initialScroll.x,
-      y + this.scrollTop - this.#initialScroll.y
+      x + this.#scrollAxes.x - this.#initialScroll.x,
+      y + this.#scrollAxes.y - this.#initialScroll.y
     );
   }
 
@@ -578,13 +578,13 @@ class Droppable extends DistanceCalculator {
         if (
           this.draggable.isMovingAwayFrom.y &&
           y >= threshold!.thresholds[SK].bottom &&
-          this.scrollTop + scrollRect.height < scrollHeight
+          this.#scrollAxes.y + scrollRect.height < scrollHeight
         ) {
           this.scrollElement(x, y, 1, "scrollElementOnY");
           return;
         }
 
-        if (y <= threshold!.thresholds[SK].top && this.scrollTop > 0) {
+        if (y <= threshold!.thresholds[SK].top && this.#scrollAxes.y > 0) {
           this.scrollElement(x, y, -1, "scrollElementOnY");
           return;
         }
@@ -596,13 +596,13 @@ class Droppable extends DistanceCalculator {
         if (
           this.draggable.isMovingAwayFrom.x &&
           x >= threshold!.thresholds[SK].right &&
-          this.scrollLeft + scrollRect.width < scrollHeight
+          this.#scrollAxes.x + scrollRect.width < scrollHeight
         ) {
           this.scrollElement(x, y, 1, "scrollElementOnX");
           return;
         }
 
-        if (x <= threshold!.thresholds[SK].left && this.scrollLeft > 0) {
+        if (x <= threshold!.thresholds[SK].left && this.#scrollAxes.x > 0) {
           this.scrollElement(x, y, -1, "scrollElementOnX");
         }
       }
@@ -636,8 +636,8 @@ class Droppable extends DistanceCalculator {
   dragAt(x: number, y: number) {
     if (this.regularDragging) {
       this.draggable.dragAt(
-        x + this.scrollLeft - this.#initialScroll.x,
-        y + this.scrollTop - this.#initialScroll.y
+        x + this.#scrollAxes.x - this.#initialScroll.x,
+        y + this.#scrollAxes.y - this.#initialScroll.y
       );
     }
 
