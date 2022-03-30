@@ -40,9 +40,7 @@ class DraggableAxes
 
   private marginX: number;
 
-  private initY: number;
-
-  private initX: number;
+  #initCoordinates: IPointNum;
 
   constructor(id: string, initCoordinates: Coordinates, opts: FinalDndOpts) {
     const { element } = store.getElmTreeById(id);
@@ -82,12 +80,11 @@ class DraggableAxes
 
     const { x, y } = initCoordinates;
 
-    this.initY = y;
-    this.initX = x;
+    this.#initCoordinates = new PointNum(x, y);
 
     this.innerOffset = new PointNum(
-      Math.round(x - this.draggedElm.currentPosition.x),
-      Math.round(y - this.draggedElm.currentPosition.y)
+      Math.round(x - currentPosition.x),
+      Math.round(y - currentPosition.y)
     );
 
     const style = window.getComputedStyle(this.draggedElm.ref!);
@@ -128,13 +125,13 @@ class DraggableAxes
     if (!allowTop && currentTop <= topThreshold) {
       return isRestrictedToThreshold
         ? topThreshold + this.innerOffset.y
-        : this.initY;
+        : this.#initCoordinates.y;
     }
 
     if (!allowBottom && currentBottom >= bottomThreshold) {
       return isRestrictedToThreshold
         ? bottomThreshold + this.innerOffset.y - this.draggedElm.offset.height
-        : this.initY;
+        : this.#initCoordinates.y;
     }
 
     return y;
@@ -154,7 +151,7 @@ class DraggableAxes
     if (!allowLeft && currentLeft <= leftThreshold) {
       return restrictToThreshold
         ? leftThreshold + this.innerOffset.x
-        : this.initX;
+        : this.#initCoordinates.x;
     }
 
     if (!allowRight && currentRight + this.marginX >= rightThreshold) {
@@ -163,7 +160,7 @@ class DraggableAxes
             this.innerOffset.x -
             this.draggedElm.offset.width -
             this.marginX
-        : this.initX;
+        : this.#initCoordinates.x;
     }
 
     return x;
