@@ -607,12 +607,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     return siblings;
   }
 
-  getElmSiblingsListById(id: string) {
-    const siblings = this.getElmSiblingsById(id);
-
-    return Array.isArray(siblings) && siblings.length > 0 ? siblings : null;
-  }
-
   /**
    * Gets element connections instance for a given id.
    *

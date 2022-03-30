@@ -47,7 +47,7 @@ class DraggableInteractive
 
     const { hasOverflowX, hasOverflowY } = store.siblingsScrollElement[SK];
 
-    const siblings = store.getElmSiblingsListById(this.draggedElm.id);
+    const siblings = store.getElmBranchByKey(this.SKplaceholder!);
 
     this.isDraggedPositionFixed = false;
 
@@ -137,7 +137,7 @@ class DraggableInteractive
   }
 
   setDraggedTransformPosition(isFallback: boolean) {
-    const siblings = store.getElmSiblingsListById(this.draggedElm.id);
+    const siblings = store.getElmBranchByKey(this.SKplaceholder!);
 
     /**
      * In this case, the use clicked without making any move.
@@ -168,7 +168,7 @@ class DraggableInteractive
          * don't like it but it is what it is.
          */
         if (
-          siblings &&
+          Array.isArray(siblings) &&
           siblings[this.draggedElm.order.self] !== this.draggedElm.id
         ) {
           this.draggedElm.assignNewPosition(
@@ -188,7 +188,7 @@ class DraggableInteractive
 
     this.draggedElm.transformElm();
 
-    if (siblings) {
+    if (Array.isArray(siblings)) {
       this.draggedElm.assignNewPosition(siblings, this.indexPlaceholder);
     }
 

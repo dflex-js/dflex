@@ -169,7 +169,7 @@ class Droppable extends DistanceCalculator {
     let currentTop = 0;
     let currentLeft = 0;
 
-    const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
+    const siblings = store.getElmBranchByKey(this.draggable.SKplaceholder!);
 
     if (siblings) {
       const lastIndex = siblings.length - 1;
@@ -190,7 +190,7 @@ class Droppable extends DistanceCalculator {
   }
 
   private checkIfDraggedIsLastElm() {
-    const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
+    const siblings = store.getElmBranchByKey(this.draggable.SKplaceholder!);
 
     let isLast = false;
 
@@ -240,7 +240,7 @@ class Droppable extends DistanceCalculator {
 
   private detectDroppableIndex() {
     let droppableIndex = null;
-    const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
+    const siblings = store.getElmBranchByKey(this.draggable.SKplaceholder!);
 
     for (let i = 0; i < siblings!.length; i += 1) {
       const id = siblings![i];
@@ -270,7 +270,7 @@ class Droppable extends DistanceCalculator {
   }
 
   private switchElement(isIncrease: boolean) {
-    const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
+    const siblings = store.getElmBranchByKey(this.draggable.SKplaceholder!);
 
     const elmIndex =
       this.draggable.indexPlaceholder + -1 * (isIncrease ? -1 : 1);
@@ -294,8 +294,8 @@ class Droppable extends DistanceCalculator {
    * Filling the space when the head of the list is leaving the list.
    */
   private fillHeadUp() {
-    const siblings = store.getElmSiblingsListById(
-      this.draggable.draggedElm.id
+    const siblings = store.getElmBranchByKey(
+      this.draggable.SKplaceholder!
     ) as string[];
 
     const from = this.draggable.indexPlaceholder + 1;
@@ -334,8 +334,8 @@ class Droppable extends DistanceCalculator {
    * @param to - index
    */
   private moveDown(to: number) {
-    const siblings = store.getElmSiblingsListById(
-      this.draggable.draggedElm.id
+    const siblings = store.getElmBranchByKey(
+      this.draggable.SKplaceholder!
     ) as string[];
 
     emitSiblingsEvent("onMoveDownSiblings", {
@@ -641,7 +641,9 @@ class Droppable extends DistanceCalculator {
       );
     }
 
-    const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
+    if (!this.draggable.SKplaceholder) return;
+
+    const siblings = store.DOMGen.branches[this.draggable.SKplaceholder];
 
     if (siblings === null) return;
 

@@ -110,7 +110,7 @@ class DraggableAxes
 
     this.restrictionsStatus = opts.restrictionsStatus;
 
-    const siblings = store.getElmSiblingsListById(id);
+    const siblings = store.getElmBranchByKey(this.SKplaceholder);
 
     this.axesFilterNeeded =
       siblings !== null &&
@@ -276,7 +276,7 @@ class DraggableAxes
 
   #isLeavingFromTail() {
     const lastElm =
-      (store.getElmSiblingsListById(this.draggedElm.id) as string[]).length - 1;
+      (store.getElmBranchByKey(this.SKplaceholder!) as string[]).length - 1;
 
     return (
       this.threshold.isOut[this.draggedElm.id].isLeftFromBottom &&
