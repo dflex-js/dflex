@@ -17,6 +17,7 @@ Object {
     "hasToTransform": false,
     "id": "id-0",
     "isInitialized": true,
+    "isInjected": undefined,
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
