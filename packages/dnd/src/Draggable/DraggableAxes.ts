@@ -56,13 +56,7 @@ class DraggableAxes
     this.indexPlaceholder = order.self;
     this.gridPlaceholder = new PointNum(grid.x, grid.y);
 
-    const { SK } = store.registry[id].keys;
-
-    const siblings = store.getElmSiblingsListById(this.draggedElm.id);
-
     this.isViewportRestricted = true;
-
-    const siblingsBoundaries = store.siblingsBoundaries[SK];
 
     const {
       offset: { width, height },
@@ -78,9 +72,11 @@ class DraggableAxes
       top: currentPosition.y,
     });
 
-    if (siblings !== null) {
+    Object.keys(store.siblingsBoundaries).forEach((SK) => {
+      const siblingsBoundaries = store.siblingsBoundaries[SK];
+
       this.threshold.setContainerThreshold(SK, siblingsBoundaries);
-    }
+    });
 
     this.isMovingAwayFrom = new PointBool(false, false);
 
@@ -109,6 +105,8 @@ class DraggableAxes
     this.restrictions = opts.restrictions;
 
     this.restrictionsStatus = opts.restrictionsStatus;
+
+    const siblings = store.getElmSiblingsListById(id);
 
     this.axesFilterNeeded =
       siblings !== null &&
