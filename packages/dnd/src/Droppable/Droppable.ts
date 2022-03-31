@@ -87,6 +87,8 @@ class Droppable extends DistanceCalculator {
   /** True when the element left the old container and found new one. */
   #hasMigrated: boolean;
 
+  static INDEX_OUT_CONTAINER = NaN;
+
   constructor(draggable: DraggableInteractiveInterface) {
     super(draggable);
 
@@ -214,28 +216,21 @@ class Droppable extends DistanceCalculator {
      * If tempIndex is zero, the dragged is coming from the top. So, move them
      * down all: to=0
      */
-    let to: number | null = 0;
     let hasToMoveSiblingsDown = true;
 
-    /**
-     * Otherwise, detect where it coming from and update tempIndex
-     * accordingly.
-     */
-    if (this.draggable.indexPlaceholder !== 0) {
-      to = this.#detectDroppableIndex();
+    let to = this.#detectDroppableIndex();
 
-      if (typeof to !== "number") {
-        // check if it's the last element
+    if (typeof to !== "number") {
+      // check if it's the last element
 
-        if (!this.#checkIfDraggedIsLastElm()) return;
+      if (!this.#checkIfDraggedIsLastElm()) return;
 
-        to = siblings!.length - 1;
+      to = siblings!.length - 1;
 
-        hasToMoveSiblingsDown = false;
-      }
-
-      this.draggable.setDraggedTempIndex(to);
+      hasToMoveSiblingsDown = false;
     }
+
+    this.draggable.setDraggedTempIndex(to);
 
     this.lockParent(false);
 
@@ -411,7 +406,7 @@ class Droppable extends DistanceCalculator {
       to: siblings.length,
     });
 
-    this.draggable.setDraggedTempIndex(-1);
+    this.draggable.setDraggedTempIndex(Droppable.INDEX_OUT_CONTAINER);
 
     for (let i = from; i < siblings.length; i += 1) {
       /**
@@ -520,6 +515,7 @@ class Droppable extends DistanceCalculator {
     this.isParentLocked = isOut;
   }
 
+  // TODO: Merge scrollElementOnY/scrollElementOnx with one method scrollElement.
   private scrollElementOnY(x: number, y: number, direction: 1 | -1) {
     let nextScrollTop = this.#scrollAxes.y;
 
