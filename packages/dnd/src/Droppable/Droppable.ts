@@ -97,7 +97,7 @@ class Droppable extends DistanceCalculator {
     this.#scrollAnimatedFrame = null;
 
     const { scrollX, scrollY } =
-      store.siblingsScrollElement[this.draggable.siblingsKeyPlaceholder];
+      store.siblingsScrollElement[this.draggable.migration.latest().key];
 
     this.#initialScroll = new PointNum(scrollX, scrollY);
 
@@ -171,14 +171,14 @@ class Droppable extends DistanceCalculator {
    * Gets the temporary index of dragged before it occupies new position.
    */
   getDraggedTempIndex() {
-    return this.draggable.indexPlaceholder;
+    return this.draggable.migration.latest().index;
   }
 
   #detectDroppableIndex() {
     let droppableIndex = null;
 
     const siblings = store.getElmBranchByKey(
-      this.draggable.siblingsKeyPlaceholder
+      this.draggable.migration.latest().key
     );
 
     for (let i = 0; i < siblings!.length; i += 1) {
@@ -208,9 +208,34 @@ class Droppable extends DistanceCalculator {
     return droppableIndex;
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  #migrateContainerIndicators() {
+    // const { oldSiblingsKey, oldIndex, newSiblingsKey } =
+    //   this.migrationPlaceholder;
+    // const originalSiblingList = store.getElmBranchByKey(
+    //   oldSiblingsKey
+    // ) as string[];
+    // Delete the element from old sibling list.
+    // originalSiblingList.splice(oldIndex, 1);
+    // const newSiblingList = store.getElmBranchByKey(
+    //   this.draggable.SKplaceholder!
+    // ) as string[];
+    // // insert element to new sibling list
+    // newSiblingList.splice(
+    //   this.draggable.draggedElm.order.self,
+    //   0,
+    //   this.draggable.draggedElm.id
+    // );
+    // console.log(
+    //   "file: Droppable.ts ~ line 660 ~ newSiblingList",
+    //   newSiblingList
+    // );
+    // this.draggable.SKplaceholder = newSK;
+  }
+
   #detectNearestElm() {
     const siblings =
-      store.DOMGen.branches[this.draggable.siblingsKeyPlaceholder];
+      store.DOMGen.branches[this.draggable.migration.latest().key];
 
     /**
      * If tempIndex is zero, the dragged is coming from the top. So, move them
@@ -255,37 +280,11 @@ class Droppable extends DistanceCalculator {
       if (!isOut) {
         newSK = SK;
 
-        this.#hasMigrated = true;
-
         break;
       }
     }
 
     return newSK;
-
-    // const oldSiblingList = store.getElmBranchByKey(
-    //   this.draggable.SKplaceholder!
-    // ) as string[];
-
-    // // Delete the element from old sibling list.
-    // oldSiblingList!.splice(oldSiblingList.length - 1, 1);
-
-    // const newSiblingList = store.getElmBranchByKey(
-    //   this.draggable.SKplaceholder!
-    // ) as string[];
-
-    // // insert element to new sibling list
-    // newSiblingList.splice(
-    //   this.draggable.draggedElm.order.self,
-    //   0,
-    //   this.draggable.draggedElm.id
-    // );
-    // console.log(
-    //   "file: Droppable.ts ~ line 660 ~ newSiblingList",
-    //   newSiblingList
-    // );
-
-    // this.draggable.SKplaceholder = newSK;
   }
 
   #updateLastElmOffset() {
@@ -293,7 +292,7 @@ class Droppable extends DistanceCalculator {
     let currentLeft = 0;
 
     const siblings = store.getElmBranchByKey(
-      this.draggable.siblingsKeyPlaceholder
+      this.draggable.migration.latest().key
     );
 
     if (siblings) {
@@ -316,7 +315,7 @@ class Droppable extends DistanceCalculator {
 
   #checkIfDraggedIsLastElm() {
     const siblings = store.getElmBranchByKey(
-      this.draggable.siblingsKeyPlaceholder
+      this.draggable.migration.latest().key
     );
 
     let isLast = false;
@@ -367,11 +366,11 @@ class Droppable extends DistanceCalculator {
 
   #switchElement(isIncrease: boolean) {
     const siblings = store.getElmBranchByKey(
-      this.draggable.siblingsKeyPlaceholder
+      this.draggable.migration.latest().key
     );
 
     const elmIndex =
-      this.draggable.indexPlaceholder + -1 * (isIncrease ? -1 : 1);
+      this.draggable.migration.latest().index + -1 * (isIncrease ? -1 : 1);
 
     const id = siblings![elmIndex];
 
@@ -393,10 +392,10 @@ class Droppable extends DistanceCalculator {
    */
   #fillHeadUp() {
     const siblings = store.getElmBranchByKey(
-      this.draggable.siblingsKeyPlaceholder
+      this.draggable.migration.latest().key
     ) as string[];
 
-    const from = this.draggable.indexPlaceholder + 1;
+    const from = this.draggable.migration.latest().index + 1;
 
     // this.leftAtIndex = this.draggable.indexPlaceholder;
 
@@ -433,7 +432,7 @@ class Droppable extends DistanceCalculator {
    */
   #moveDown(to: number) {
     const siblings = store.getElmBranchByKey(
-      this.draggable.siblingsKeyPlaceholder
+      this.draggable.migration.latest().key
     ) as string[];
 
     emitSiblingsEvent("onMoveDownSiblings", {
@@ -688,10 +687,10 @@ class Droppable extends DistanceCalculator {
       );
     }
 
-    if (!this.draggable.siblingsKeyPlaceholder) return;
+    if (!this.draggable.migration.latest().key) return;
 
     const siblings =
-      store.DOMGen.branches[this.draggable.siblingsKeyPlaceholder];
+      store.DOMGen.branches[this.draggable.migration.latest().key];
 
     if (siblings === null) return;
 
@@ -712,9 +711,9 @@ class Droppable extends DistanceCalculator {
 
       this.draggable.draggedElm.rmDateset("draggedOutPosition");
 
-      isOutSiblingsContainer =
-        !this.draggable.siblingsKeyPlaceholder ||
-        this.draggable.isOutThreshold(this.draggable.siblingsKeyPlaceholder);
+      isOutSiblingsContainer = this.draggable.isOutThreshold(
+        this.draggable.migration.latest().key
+      );
 
       // when it's out, and on of theses is true then it's happening.
       if (!isOutSiblingsContainer) {
@@ -750,9 +749,9 @@ class Droppable extends DistanceCalculator {
      * When dragged is out parent and returning to it.
      */
     if (this.isParentLocked) {
-      isOutSiblingsContainer =
-        this.draggable.siblingsKeyPlaceholder === null ||
-        this.draggable.isOutThreshold(this.draggable.siblingsKeyPlaceholder);
+      isOutSiblingsContainer = this.draggable.isOutThreshold(
+        this.draggable.migration.latest().key
+      );
 
       if (isOutSiblingsContainer) {
         return;

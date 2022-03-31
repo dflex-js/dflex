@@ -163,7 +163,7 @@ class EndDroppable extends Droppable {
 
   endDragging() {
     const siblings = store.getElmBranchByKey(
-      this.draggable.siblingsKeyPlaceholder
+      this.draggable.migration.latest().key
     );
 
     let isFallback = false;
