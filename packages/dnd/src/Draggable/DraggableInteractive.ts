@@ -47,7 +47,7 @@ class DraggableInteractive
 
     const { hasOverflowX, hasOverflowY } = store.siblingsScrollElement[SK];
 
-    const siblings = store.getElmBranchByKey(this.SKplaceholder!);
+    const siblings = store.getElmBranchByKey(this.siblingsKeyPlaceholder);
 
     this.isDraggedPositionFixed = false;
 
@@ -137,7 +137,7 @@ class DraggableInteractive
   }
 
   setDraggedTransformPosition(isFallback: boolean) {
-    const siblings = store.getElmBranchByKey(this.SKplaceholder!);
+    const siblings = store.getElmBranchByKey(this.siblingsKeyPlaceholder);
 
     /**
      * In this case, the use clicked without making any move.
@@ -205,7 +205,8 @@ class DraggableInteractive
 
     this.threshold.destroy();
 
-    [
+    // TODO: add type to this.
+    const properties = [
       "threshold",
       "gridPlaceholder",
       "isMovingAwayFrom",
@@ -213,9 +214,11 @@ class DraggableInteractive
       "occupiedOffset",
       "occupiedTranslate",
       "#initCoordinates",
-    ].forEach((instance) => {
+    ];
+
+    properties.forEach((property) => {
       // @ts-expect-error
-      this[instance] = null;
+      this[property] = null;
     });
   }
 }

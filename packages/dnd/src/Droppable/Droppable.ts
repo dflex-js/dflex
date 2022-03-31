@@ -64,39 +64,42 @@ function isIDEligible2Move(
  * Class includes all transformation methods related to droppable.
  */
 class Droppable extends DistanceCalculator {
-  private preserveLastElmOffset?: IPointNum;
+  #preserveLastElmOffset?: IPointNum;
 
-  private scrollAnimatedFrame: number | null;
+  #scrollAnimatedFrame: number | null;
 
   readonly #initialScroll: IPointNum;
 
   readonly #scrollAxes: IPointNum;
 
-  private scrollSpeed: number;
+  #scrollSpeed: number;
 
-  private regularDragging: boolean;
+  #regularDragging: boolean;
 
-  private isOnDragOutContainerEvtEmitted: boolean;
+  #isOnDragOutContainerEvtEmitted: boolean;
 
-  private isOnDragOutThresholdEvtEmitted: boolean;
+  #isOnDragOutThresholdEvtEmitted: boolean;
 
   /** This is only related to insert method as the each element has it's own for
    * transformation. */
-  private animatedDraggedInsertionFrame: number | null;
+  #animatedDraggedInsertionFrame: number | null;
+
+  /** True when the element left the old container and found new one. */
+  #hasMigrated: boolean;
 
   constructor(draggable: DraggableInteractiveInterface) {
     super(draggable);
 
-    this.updateLastElmOffset();
+    this.#updateLastElmOffset();
 
-    this.scrollAnimatedFrame = null;
+    this.#scrollAnimatedFrame = null;
 
     const { scrollX, scrollY } =
-      store.siblingsScrollElement[this.draggable.SKplaceholder!];
+      store.siblingsScrollElement[this.draggable.siblingsKeyPlaceholder];
 
     this.#initialScroll = new PointNum(scrollX, scrollY);
 
-    this.scrollSpeed = this.draggable.scroll.initialSpeed;
+    this.#scrollSpeed = this.draggable.scroll.initialSpeed;
 
     /*
      * The reason for using this instance instead of calling the store
@@ -116,22 +119,23 @@ class Droppable extends DistanceCalculator {
      * This is true until there's a scrolling. Then, the scroll will handle the
      * scroll with dragging to ensure both are executed in the same frame.
      */
-    this.regularDragging = true;
+    this.#regularDragging = true;
 
     if (this.draggable.isDraggedPositionFixed) {
       // @ts-expect-error
       this.draggable.changeStyle(this.draggable.changeToFixedStyleProps, true);
-      this.moveDown(1);
+      this.#moveDown(1);
     }
 
-    this.isOnDragOutContainerEvtEmitted = false;
-    this.isOnDragOutThresholdEvtEmitted = false;
-    this.animatedDraggedInsertionFrame = null;
+    this.#isOnDragOutContainerEvtEmitted = false;
+    this.#isOnDragOutThresholdEvtEmitted = false;
+    this.#animatedDraggedInsertionFrame = null;
 
     this.isParentLocked = false;
+    this.#hasMigrated = false;
   }
 
-  draggedEventGenerator(type: DraggedEvent["type"]): DraggedEvent {
+  #draggedEventGenerator(type: DraggedEvent["type"]): DraggedEvent {
     return {
       id: this.draggable.draggedElm.id,
       index: this.getDraggedTempIndex(),
@@ -140,21 +144,24 @@ class Droppable extends DistanceCalculator {
     };
   }
 
-  emitDraggedEvent(type: DraggedEvent["type"]) {
+  #emitDraggedEvent(type: DraggedEvent["type"]) {
     if (type === "onDragOutThreshold") {
-      if (!this.isOnDragOutThresholdEvtEmitted) {
-        store.emitEvent(this.draggedEventGenerator(type));
+      if (!this.#isOnDragOutThresholdEvtEmitted) {
+        store.emitEvent(this.#draggedEventGenerator(type));
 
-        this.isOnDragOutThresholdEvtEmitted = true;
+        this.#isOnDragOutThresholdEvtEmitted = true;
       }
 
       return;
     }
 
-    if (type === "onDragOutContainer" && !this.isOnDragOutContainerEvtEmitted) {
-      store.emitEvent(this.draggedEventGenerator(type));
+    if (
+      type === "onDragOutContainer" &&
+      !this.#isOnDragOutContainerEvtEmitted
+    ) {
+      store.emitEvent(this.#draggedEventGenerator(type));
 
-      this.isOnDragOutContainerEvtEmitted = true;
+      this.#isOnDragOutContainerEvtEmitted = true;
     }
   }
 
@@ -165,11 +172,134 @@ class Droppable extends DistanceCalculator {
     return this.draggable.indexPlaceholder;
   }
 
-  private updateLastElmOffset() {
+  #detectDroppableIndex() {
+    let droppableIndex = null;
+
+    const siblings = store.getElmBranchByKey(
+      this.draggable.siblingsKeyPlaceholder
+    );
+
+    for (let i = 0; i < siblings!.length; i += 1) {
+      const id = siblings![i];
+
+      if (
+        isIDEligible2Move(
+          id,
+          this.draggable.draggedElm.id,
+          this.draggable.scroll.enable
+        )
+      ) {
+        const element = store.registry[id];
+
+        const isQualified = element.isPositionedUnder(
+          this.draggable.positionPlaceholder.y
+        );
+
+        if (isQualified) {
+          droppableIndex = i;
+
+          break;
+        }
+      }
+    }
+
+    return droppableIndex;
+  }
+
+  #detectNearestElm() {
+    const siblings =
+      store.DOMGen.branches[this.draggable.siblingsKeyPlaceholder];
+
+    /**
+     * If tempIndex is zero, the dragged is coming from the top. So, move them
+     * down all: to=0
+     */
+    let to: number | null = 0;
+    let hasToMoveSiblingsDown = true;
+
+    /**
+     * Otherwise, detect where it coming from and update tempIndex
+     * accordingly.
+     */
+    if (this.draggable.indexPlaceholder !== 0) {
+      to = this.#detectDroppableIndex();
+
+      if (typeof to !== "number") {
+        // check if it's the last element
+
+        if (!this.#checkIfDraggedIsLastElm()) return;
+
+        to = siblings!.length - 1;
+
+        hasToMoveSiblingsDown = false;
+      }
+
+      this.draggable.setDraggedTempIndex(to);
+    }
+
+    this.lockParent(false);
+
+    if (hasToMoveSiblingsDown) {
+      this.#moveDown(to);
+    }
+
+    this.draggable.draggedElm.rmDateset("draggedOutContainer");
+  }
+
+  #detectNearestContainer() {
+    const {
+      draggedElm: { depth },
+    } = this.draggable;
+
+    let newSK;
+
+    for (let i = 0; i < store.siblingDepth[depth].length; i += 1) {
+      const SK = store.siblingDepth[depth][i];
+      const isOut = this.draggable.isOutThreshold(SK);
+
+      if (!isOut) {
+        newSK = SK;
+
+        this.#hasMigrated = true;
+
+        break;
+      }
+    }
+
+    return newSK;
+
+    // const oldSiblingList = store.getElmBranchByKey(
+    //   this.draggable.SKplaceholder!
+    // ) as string[];
+
+    // // Delete the element from old sibling list.
+    // oldSiblingList!.splice(oldSiblingList.length - 1, 1);
+
+    // const newSiblingList = store.getElmBranchByKey(
+    //   this.draggable.SKplaceholder!
+    // ) as string[];
+
+    // // insert element to new sibling list
+    // newSiblingList.splice(
+    //   this.draggable.draggedElm.order.self,
+    //   0,
+    //   this.draggable.draggedElm.id
+    // );
+    // console.log(
+    //   "file: Droppable.ts ~ line 660 ~ newSiblingList",
+    //   newSiblingList
+    // );
+
+    // this.draggable.SKplaceholder = newSK;
+  }
+
+  #updateLastElmOffset() {
     let currentTop = 0;
     let currentLeft = 0;
 
-    const siblings = store.getElmBranchByKey(this.draggable.SKplaceholder!);
+    const siblings = store.getElmBranchByKey(
+      this.draggable.siblingsKeyPlaceholder
+    );
 
     if (siblings) {
       const lastIndex = siblings.length - 1;
@@ -186,11 +316,13 @@ class Droppable extends DistanceCalculator {
       }
     }
 
-    this.preserveLastElmOffset = new PointNum(currentLeft, currentTop);
+    this.#preserveLastElmOffset = new PointNum(currentLeft, currentTop);
   }
 
-  private checkIfDraggedIsLastElm() {
-    const siblings = store.getElmBranchByKey(this.draggable.SKplaceholder!);
+  #checkIfDraggedIsLastElm() {
+    const siblings = store.getElmBranchByKey(
+      this.draggable.siblingsKeyPlaceholder
+    );
 
     let isLast = false;
 
@@ -221,12 +353,12 @@ class Droppable extends DistanceCalculator {
             {
               width: this.draggable.draggedElm.offset.width,
               height: this.draggable.draggedElm.offset.height,
-              left: this.preserveLastElmOffset!.x,
-              top: this.preserveLastElmOffset!.y,
+              left: this.#preserveLastElmOffset!.x,
+              top: this.#preserveLastElmOffset!.y,
             }
           );
 
-          this.draggable.occupiedOffset.clone(this.preserveLastElmOffset!);
+          this.draggable.occupiedOffset.clone(this.#preserveLastElmOffset!);
 
           break;
         }
@@ -238,39 +370,10 @@ class Droppable extends DistanceCalculator {
     return isLast;
   }
 
-  private detectDroppableIndex() {
-    let droppableIndex = null;
-    const siblings = store.getElmBranchByKey(this.draggable.SKplaceholder!);
-
-    for (let i = 0; i < siblings!.length; i += 1) {
-      const id = siblings![i];
-
-      if (
-        isIDEligible2Move(
-          id,
-          this.draggable.draggedElm.id,
-          this.draggable.scroll.enable
-        )
-      ) {
-        const element = store.registry[id];
-
-        const isQualified = element.isPositionedUnder(
-          this.draggable.positionPlaceholder.y
-        );
-
-        if (isQualified) {
-          droppableIndex = i;
-
-          break;
-        }
-      }
-    }
-
-    return droppableIndex;
-  }
-
-  private switchElement(isIncrease: boolean) {
-    const siblings = store.getElmBranchByKey(this.draggable.SKplaceholder!);
+  #switchElement(isIncrease: boolean) {
+    const siblings = store.getElmBranchByKey(
+      this.draggable.siblingsKeyPlaceholder
+    );
 
     const elmIndex =
       this.draggable.indexPlaceholder + -1 * (isIncrease ? -1 : 1);
@@ -293,9 +396,9 @@ class Droppable extends DistanceCalculator {
   /**
    * Filling the space when the head of the list is leaving the list.
    */
-  private fillHeadUp() {
+  #fillHeadUp() {
     const siblings = store.getElmBranchByKey(
-      this.draggable.SKplaceholder!
+      this.draggable.siblingsKeyPlaceholder
     ) as string[];
 
     const from = this.draggable.indexPlaceholder + 1;
@@ -333,9 +436,9 @@ class Droppable extends DistanceCalculator {
    *
    * @param to - index
    */
-  private moveDown(to: number) {
+  #moveDown(to: number) {
     const siblings = store.getElmBranchByKey(
-      this.draggable.SKplaceholder!
+      this.draggable.siblingsKeyPlaceholder
     ) as string[];
 
     emitSiblingsEvent("onMoveDownSiblings", {
@@ -359,7 +462,7 @@ class Droppable extends DistanceCalculator {
     }
   }
 
-  private draggedOutPosition() {
+  #draggedOutPosition() {
     const {
       draggedElm: { id },
       threshold: { isOut },
@@ -379,7 +482,7 @@ class Droppable extends DistanceCalculator {
         // lock the parent
         this.lockParent(true);
 
-        this.fillHeadUp();
+        this.#fillHeadUp();
 
         return;
       }
@@ -392,7 +495,7 @@ class Droppable extends DistanceCalculator {
         return;
       }
 
-      this.switchElement(isOut[id].isLeftFromBottom);
+      this.#switchElement(isOut[id].isLeftFromBottom);
 
       return;
     }
@@ -405,61 +508,22 @@ class Droppable extends DistanceCalculator {
       // lock the parent
       this.lockParent(true);
 
-      this.fillHeadUp();
+      this.#fillHeadUp();
 
       return;
     }
 
-    this.switchElement(isOut[id].isLeftFromRight);
+    this.#switchElement(isOut[id].isLeftFromRight);
   }
 
   private lockParent(isOut: boolean) {
     this.isParentLocked = isOut;
   }
 
-  private draggedIsComingIn() {
-    const siblings = store.DOMGen.branches[this.draggable.SKplaceholder!];
-
-    /**
-     * If tempIndex is zero, the dragged is coming from the top. So, move them
-     * down all: to=0
-     */
-    let to: number | null = 0;
-    let hasToMoveSiblingsDown = true;
-
-    /**
-     * Otherwise, detect where it coming from and update tempIndex
-     * accordingly.
-     */
-    if (this.draggable.indexPlaceholder !== 0) {
-      to = this.detectDroppableIndex();
-
-      if (typeof to !== "number") {
-        // check if it's the last element
-
-        if (!this.checkIfDraggedIsLastElm()) return;
-
-        to = siblings!.length - 1;
-
-        hasToMoveSiblingsDown = false;
-      }
-
-      this.draggable.setDraggedTempIndex(to);
-    }
-
-    this.lockParent(false);
-
-    if (hasToMoveSiblingsDown) {
-      this.moveDown(to);
-    }
-
-    this.draggable.draggedElm.rmDateset("draggedOutContainer");
-  }
-
   private scrollElementOnY(x: number, y: number, direction: 1 | -1) {
     let nextScrollTop = this.#scrollAxes.y;
 
-    nextScrollTop += direction * this.scrollSpeed;
+    nextScrollTop += direction * this.#scrollSpeed;
 
     const draggedYShift = y + nextScrollTop - this.#initialScroll.y;
 
@@ -498,7 +562,7 @@ class Droppable extends DistanceCalculator {
   private scrollElementOnX(x: number, y: number, direction: 1 | -1) {
     let nextScrollLeft = this.#scrollAxes.x;
 
-    nextScrollLeft += direction * this.scrollSpeed;
+    nextScrollLeft += direction * this.#scrollSpeed;
 
     const draggedXShift = x + nextScrollLeft - this.#initialScroll.x;
 
@@ -548,16 +612,16 @@ class Droppable extends DistanceCalculator {
     // @ts-expect-error - TODO: fix this
     this.draggable.isViewportRestricted = false;
 
-    this.regularDragging = false;
+    this.#regularDragging = false;
 
-    this.scrollAnimatedFrame = requestAnimationFrame(() => {
+    this.#scrollAnimatedFrame = requestAnimationFrame(() => {
       this[on](x, y, direction);
 
       // Reset animation flags
-      this.scrollAnimatedFrame = null;
+      this.#scrollAnimatedFrame = null;
       store.siblingsScrollElement[SK].hasThrottledFrame = null;
 
-      this.scrollSpeed += this.draggable.scroll.initialSpeed;
+      this.#scrollSpeed += this.draggable.scroll.initialSpeed;
     });
   }
 
@@ -569,7 +633,7 @@ class Droppable extends DistanceCalculator {
      */
     if (
       this.draggable.scroll.enable &&
-      this.scrollAnimatedFrame === null &&
+      this.#scrollAnimatedFrame === null &&
       store.siblingsScrollElement[SK].hasThrottledFrame === null
     ) {
       if (store.siblingsScrollElement[SK].hasOverflowY) {
@@ -611,57 +675,41 @@ class Droppable extends DistanceCalculator {
        * Scroll turns the flag off. But regular dragging will be resumed
        * when the drag is outside the auto scrolling area.
        */
-      this.regularDragging = true;
+      this.#regularDragging = true;
 
       /**
        * Reset scrollSpeed.
        */
-      this.scrollSpeed = this.draggable.scroll.initialSpeed;
-    }
-  }
-
-  private detectNearestContainer() {
-    const {
-      draggedElm: { depth },
-    } = this.draggable;
-
-    for (let i = 0; i < store.siblingDepth[depth].length; i += 1) {
-      const SK = store.siblingDepth[depth][i];
-      const isOut = this.draggable.isOutThreshold(SK);
-
-      if (!isOut) {
-        this.draggable.SKplaceholder = SK;
-
-        break;
-      }
+      this.#scrollSpeed = this.draggable.scroll.initialSpeed;
     }
   }
 
   dragAt(x: number, y: number) {
-    if (this.regularDragging) {
+    if (this.#regularDragging) {
       this.draggable.dragAt(
         x + this.#scrollAxes.x - this.#initialScroll.x,
         y + this.#scrollAxes.y - this.#initialScroll.y
       );
     }
 
-    if (!this.draggable.SKplaceholder) return;
+    if (!this.draggable.siblingsKeyPlaceholder) return;
 
-    const siblings = store.DOMGen.branches[this.draggable.SKplaceholder];
+    const siblings =
+      store.DOMGen.branches[this.draggable.siblingsKeyPlaceholder];
 
     if (siblings === null) return;
 
     let isOutSiblingsContainer = false;
 
     if (this.draggable.isOutThreshold()) {
-      this.emitDraggedEvent("onDragOutThreshold");
+      this.#emitDraggedEvent("onDragOutThreshold");
 
       this.scrollManager(x, y);
 
       if (!this.isParentLocked) {
         this.draggable.draggedElm.setDataset("draggedOutPosition", true);
 
-        this.draggedOutPosition();
+        this.#draggedOutPosition();
 
         return;
       }
@@ -669,17 +717,17 @@ class Droppable extends DistanceCalculator {
       this.draggable.draggedElm.rmDateset("draggedOutPosition");
 
       isOutSiblingsContainer =
-        !this.draggable.SKplaceholder! ||
-        this.draggable.isOutThreshold(this.draggable.SKplaceholder);
+        !this.draggable.siblingsKeyPlaceholder ||
+        this.draggable.isOutThreshold(this.draggable.siblingsKeyPlaceholder);
 
       // when it's out, and on of theses is true then it's happening.
       if (!isOutSiblingsContainer) {
-        if (this.animatedDraggedInsertionFrame === null) {
-          this.animatedDraggedInsertionFrame = window.requestAnimationFrame(
+        if (this.#animatedDraggedInsertionFrame === null) {
+          this.#animatedDraggedInsertionFrame = window.requestAnimationFrame(
             () => {
-              this.draggedIsComingIn();
+              this.#detectNearestElm();
 
-              this.animatedDraggedInsertionFrame = null;
+              this.#animatedDraggedInsertionFrame = null;
             }
           );
         }
@@ -689,17 +737,17 @@ class Droppable extends DistanceCalculator {
 
       this.draggable.draggedElm.setDataset("draggedOutContainer", true);
 
-      this.emitDraggedEvent("onDragOutContainer");
+      this.#emitDraggedEvent("onDragOutContainer");
 
       this.isParentLocked = true;
 
-      this.detectNearestContainer();
+      this.#detectNearestContainer();
 
       return;
     }
 
-    if (this.isOnDragOutThresholdEvtEmitted) {
-      this.isOnDragOutThresholdEvtEmitted = false;
+    if (this.#isOnDragOutThresholdEvtEmitted) {
+      this.#isOnDragOutThresholdEvtEmitted = false;
     }
 
     /**
@@ -707,21 +755,21 @@ class Droppable extends DistanceCalculator {
      */
     if (this.isParentLocked) {
       isOutSiblingsContainer =
-        this.draggable.SKplaceholder === null ||
-        this.draggable.isOutThreshold(this.draggable.SKplaceholder);
+        this.draggable.siblingsKeyPlaceholder === null ||
+        this.draggable.isOutThreshold(this.draggable.siblingsKeyPlaceholder);
 
       if (isOutSiblingsContainer) {
         return;
       }
 
-      this.isOnDragOutContainerEvtEmitted = false;
+      this.#isOnDragOutContainerEvtEmitted = false;
 
-      if (this.animatedDraggedInsertionFrame === null) {
-        this.animatedDraggedInsertionFrame = window.requestAnimationFrame(
+      if (this.#animatedDraggedInsertionFrame === null) {
+        this.#animatedDraggedInsertionFrame = window.requestAnimationFrame(
           () => {
-            this.draggedIsComingIn();
+            this.#detectNearestElm();
 
-            this.animatedDraggedInsertionFrame = null;
+            this.#animatedDraggedInsertionFrame = null;
           }
         );
       }

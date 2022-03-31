@@ -24,7 +24,7 @@ class DraggableAxes
 
   gridPlaceholder: IPointNum;
 
-  SKplaceholder: string | null;
+  siblingsKeyPlaceholder: string;
 
   threshold: ThresholdInterface;
 
@@ -59,7 +59,7 @@ class DraggableAxes
 
     this.indexPlaceholder = order.self;
     this.gridPlaceholder = new PointNum(grid.x, grid.y);
-    this.SKplaceholder = SK;
+    this.siblingsKeyPlaceholder = SK;
 
     this.isViewportRestricted = true;
 
@@ -117,7 +117,7 @@ class DraggableAxes
 
     this.restrictionsStatus = opts.restrictionsStatus;
 
-    const siblings = store.getElmBranchByKey(this.SKplaceholder);
+    const siblings = store.getElmBranchByKey(this.siblingsKeyPlaceholder);
 
     this.axesFilterNeeded =
       siblings !== null &&
@@ -283,7 +283,8 @@ class DraggableAxes
 
   #isLeavingFromTail() {
     const lastElm =
-      (store.getElmBranchByKey(this.SKplaceholder!) as string[]).length - 1;
+      (store.getElmBranchByKey(this.siblingsKeyPlaceholder) as string[])
+        .length - 1;
 
     return (
       this.threshold.isOut[this.draggedElm.id].isLeftFromBottom &&
@@ -295,8 +296,7 @@ class DraggableAxes
     return (
       !this.#isLeavingFromTail() &&
       (this.isOutThreshold() ||
-        this.SKplaceholder === null ||
-        this.isOutThreshold(this.SKplaceholder))
+        this.isOutThreshold(this.siblingsKeyPlaceholder))
     );
   }
 }

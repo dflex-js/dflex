@@ -41,8 +41,8 @@ export interface DraggableAxesInterface
   /** Temporary index for dragged  */
   readonly indexPlaceholder: number;
 
-  /** Siblings key holder. */
-  SKplaceholder: string | null;
+  /** Siblings key holder. Also, it's always defined until introducing actions. */
+  readonly siblingsKeyPlaceholder: string;
 
   /** grid placeholder for dragged grid position. */
   readonly gridPlaceholder: IPointNum;

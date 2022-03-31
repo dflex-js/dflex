@@ -259,7 +259,9 @@ class DistanceCalculator implements DistanceCalculatorInterface {
      * Start transforming process
      */
     this.siblingsEmptyElmIndex[axis] = element.setPosition(
-      store.getElmBranchByKey(this.draggable.SKplaceholder!) as string[],
+      store.getElmBranchByKey(
+        this.draggable.siblingsKeyPlaceholder
+      ) as string[],
       elmDirection,
       this.elmTransition,
       this.draggable.operationID,
