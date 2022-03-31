@@ -66,6 +66,7 @@ class DraggableAxes
     const {
       offset: { width, height },
       currentPosition,
+      depth,
     } = this.draggedElm;
 
     this.threshold = new Threshold(opts.threshold);
@@ -77,8 +78,14 @@ class DraggableAxes
       top: currentPosition.y,
     });
 
-    Object.keys(store.siblingsBoundaries).forEach((key) => {
+    store.siblingDepth[depth].forEach((key) => {
       const siblingsBoundaries = store.siblingsBoundaries[key];
+
+      if (process.env.NODE_ENV !== "production") {
+        if (!siblingsBoundaries) {
+          throw new Error(`Siblings boundaries for ${key} not found.`);
+        }
+      }
 
       this.threshold.setContainerThreshold(key, siblingsBoundaries);
     });

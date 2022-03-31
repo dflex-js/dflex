@@ -621,13 +621,17 @@ class Droppable extends DistanceCalculator {
   }
 
   private detectNearestContainer() {
-    const SKs = Object.keys(store.siblingsBoundaries);
+    const {
+      draggedElm: { depth },
+    } = this.draggable;
 
-    for (let i = 0; i < SKs.length; i += 1) {
-      const isOut = this.draggable.isOutThreshold(SKs[i]);
+    for (let i = 0; i < store.siblingDepth[depth].length; i += 1) {
+      const SK = store.siblingDepth[depth][i];
+      const isOut = this.draggable.isOutThreshold(SK);
 
       if (!isOut) {
-        this.draggable.SKplaceholder = SKs[i];
+        this.draggable.SKplaceholder = SK;
+
         break;
       }
     }

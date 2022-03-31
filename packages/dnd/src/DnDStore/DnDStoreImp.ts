@@ -35,6 +35,10 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
   siblingsBoundaries: DnDStoreInterface["siblingsBoundaries"];
 
+  siblingDepth: {
+    [depth: number]: string[];
+  };
+
   siblingsBoundariesForGrid!: DnDStoreInterface["siblingsBoundariesForGrid"];
 
   siblingsScrollElement: DnDStoreInterface["siblingsScrollElement"];
@@ -67,6 +71,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     super();
 
     this.siblingsBoundaries = {};
+    this.siblingDepth = {};
     this.siblingsBoundariesForGrid = {};
 
     this.siblingsScrollElement = {};
@@ -171,6 +176,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
         this.#assignSiblingsBoundariesAndAlignment(
           this.registry[elmID].keys.SK,
+          this.registry[elmID].depth,
           this.registry[elmID].offset!
         );
       }
@@ -468,7 +474,11 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     }
   }
 
-  #assignSiblingsBoundariesAndAlignment(SK: string, rect: RectDimensions) {
+  #assignSiblingsBoundariesAndAlignment(
+    SK: string,
+    depth: number,
+    rect: RectDimensions
+  ) {
     const { height, left, top, width } = rect;
 
     const right = left + width;
@@ -485,6 +495,16 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
       this.siblingsGridContainer[SK] = new PointNum(1, 1);
 
       return;
+    }
+
+    if (!Array.isArray(this.siblingDepth[depth])) {
+      this.siblingDepth[depth] = [SK];
+    } else {
+      const is = this.siblingDepth[depth].find((k) => k === SK);
+
+      if (!is) {
+        this.siblingDepth[depth].push(SK);
+      }
     }
 
     const $ = this.siblingsBoundaries[SK];
@@ -699,11 +719,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     this.dispose();
 
     this.clearBranchesScroll();
-
-    // @ts-expect-error
-    this.tracker = null;
-    // @ts-expect-error
-    this.#genID = null;
 
     // Destroys all registered instances.
     super.destroy();
