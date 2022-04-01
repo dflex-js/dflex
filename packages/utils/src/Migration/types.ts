@@ -10,8 +10,8 @@ export interface IMigration {
 
   /**
    * We only update indexes considering migration definition when it happens
-   * outside container not moving inside it. So just index not key. If we have
-   * new key then we use add.
+   * outside container but not moving inside it.
+   * So we update an index but we add key.
    */
   setIndex(index: number): void;
 
