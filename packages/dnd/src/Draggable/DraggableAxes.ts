@@ -1,8 +1,13 @@
 import { AbstractDraggable } from "@dflex/draggable";
 import type { Coordinates } from "@dflex/draggable";
 
-import { Threshold, PointNum, PointBool } from "@dflex/utils";
-import type { ThresholdInterface, IPointNum, IPointBool } from "@dflex/utils";
+import { Threshold, PointNum, PointBool, Migration } from "@dflex/utils";
+import type {
+  ThresholdInterface,
+  IPointNum,
+  IPointBool,
+  IMigration,
+} from "@dflex/utils";
 
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
@@ -16,31 +21,33 @@ class DraggableAxes
   extends AbstractDraggable<CoreInstanceInterface>
   implements DraggableAxesInterface
 {
-  private isLayoutStateUpdated: boolean;
-
-  indexPlaceholder: number;
+  // indexPlaceholder: number;
 
   positionPlaceholder: IPointNum;
 
   gridPlaceholder: IPointNum;
 
-  SKplaceholder: string | null;
+  // siblingsKeyPlaceholder: string;
+
+  migration: IMigration;
 
   threshold: ThresholdInterface;
 
   isViewportRestricted: boolean;
 
-  readonly innerOffset: IPointNum;
-
   isMovingAwayFrom: IPointBool;
 
-  private readonly axesFilterNeeded: boolean;
+  readonly innerOffset: IPointNum;
 
-  private readonly restrictions: Restrictions;
+  #isLayoutStateUpdated: boolean;
 
-  private readonly restrictionsStatus: RestrictionsStatus;
+  readonly #axesFilterNeeded: boolean;
 
-  private readonly marginX: number;
+  readonly #restrictions: Restrictions;
+
+  readonly #restrictionsStatus: RestrictionsStatus;
+
+  readonly #marginX: number;
 
   readonly #initCoordinates: IPointNum;
 
@@ -49,17 +56,17 @@ class DraggableAxes
 
     super(element, initCoordinates);
 
-    this.isLayoutStateUpdated = false;
-
-    const { order, grid } = element;
+    this.#isLayoutStateUpdated = false;
 
     const {
+      order,
+      grid,
       keys: { SK },
-    } = store.registry[id];
+    } = element;
 
-    this.indexPlaceholder = order.self;
     this.gridPlaceholder = new PointNum(grid.x, grid.y);
-    this.SKplaceholder = SK;
+
+    this.migration = new Migration(order.self, SK);
 
     this.isViewportRestricted = true;
 
@@ -106,20 +113,20 @@ class DraggableAxes
     // get element margin
     const rm = Math.round(parseFloat(style.marginRight));
     const lm = Math.round(parseFloat(style.marginLeft));
-    this.marginX = rm + lm;
+    this.#marginX = rm + lm;
 
     this.positionPlaceholder = new PointNum(
       currentPosition.x,
       currentPosition.y
     );
 
-    this.restrictions = opts.restrictions;
+    this.#restrictions = opts.restrictions;
 
-    this.restrictionsStatus = opts.restrictionsStatus;
+    this.#restrictionsStatus = opts.restrictionsStatus;
 
-    const siblings = store.getElmBranchByKey(this.SKplaceholder);
+    const siblings = store.getElmBranchByKey(this.migration.latest().key);
 
-    this.axesFilterNeeded =
+    this.#axesFilterNeeded =
       siblings !== null &&
       (opts.restrictionsStatus.isContainerRestricted ||
         opts.restrictionsStatus.isSelfRestricted);
@@ -168,12 +175,12 @@ class DraggableAxes
         : this.#initCoordinates.x;
     }
 
-    if (!allowRight && currentRight + this.marginX >= rightThreshold) {
+    if (!allowRight && currentRight + this.#marginX >= rightThreshold) {
       return restrictToThreshold
         ? rightThreshold +
             this.innerOffset.x -
             this.draggedElm.offset.width -
-            this.marginX
+            this.#marginX
         : this.#initCoordinates.x;
     }
 
@@ -181,8 +188,8 @@ class DraggableAxes
   }
 
   dragAt(x: number, y: number) {
-    if (!this.isLayoutStateUpdated) {
-      this.isLayoutStateUpdated = true;
+    if (!this.#isLayoutStateUpdated) {
+      this.#isLayoutStateUpdated = true;
       store.onStateChange("dragging");
     }
 
@@ -191,7 +198,7 @@ class DraggableAxes
 
     const { SK } = store.registry[this.draggedElm.id].keys;
 
-    if (this.axesFilterNeeded) {
+    if (this.#axesFilterNeeded) {
       const {
         top,
         bottom,
@@ -199,38 +206,38 @@ class DraggableAxes
         right: minRight,
       } = store.siblingsBoundaries[SK];
 
-      if (this.restrictionsStatus.isContainerRestricted) {
+      if (this.#restrictionsStatus.isContainerRestricted) {
         filteredX = this.axesXFilter(
           x,
           maxLeft,
           minRight,
-          this.restrictions.container.allowLeavingFromLeft,
-          this.restrictions.container.allowLeavingFromRight,
+          this.#restrictions.container.allowLeavingFromLeft,
+          this.#restrictions.container.allowLeavingFromRight,
           false
         );
         filteredY = this.axesYFilter(
           y,
           top,
           bottom,
-          this.restrictions.container.allowLeavingFromTop,
-          this.restrictions.container.allowLeavingFromBottom,
+          this.#restrictions.container.allowLeavingFromTop,
+          this.#restrictions.container.allowLeavingFromBottom,
           true
         );
-      } else if (this.restrictionsStatus.isSelfRestricted) {
+      } else if (this.#restrictionsStatus.isSelfRestricted) {
         filteredX = this.axesXFilter(
           x,
           maxLeft,
           minRight,
-          this.restrictions.self.allowLeavingFromLeft,
-          this.restrictions.self.allowLeavingFromRight,
+          this.#restrictions.self.allowLeavingFromLeft,
+          this.#restrictions.self.allowLeavingFromRight,
           false
         );
         filteredY = this.axesYFilter(
           y,
           this.draggedElm.currentPosition.y,
           this.draggedElm.currentPosition.y + this.draggedElm.offset.height,
-          this.restrictions.self.allowLeavingFromTop,
-          this.restrictions.self.allowLeavingFromBottom,
+          this.#restrictions.self.allowLeavingFromTop,
+          this.#restrictions.self.allowLeavingFromBottom,
           false
         );
       }
@@ -283,11 +290,12 @@ class DraggableAxes
 
   #isLeavingFromTail() {
     const lastElm =
-      (store.getElmBranchByKey(this.SKplaceholder!) as string[]).length - 1;
+      (store.getElmBranchByKey(this.migration.latest().key) as string[])
+        .length - 1;
 
     return (
       this.threshold.isOut[this.draggedElm.id].isLeftFromBottom &&
-      this.indexPlaceholder === lastElm
+      this.migration.latest().index === lastElm
     );
   }
 
@@ -295,8 +303,7 @@ class DraggableAxes
     return (
       !this.#isLeavingFromTail() &&
       (this.isOutThreshold() ||
-        this.SKplaceholder === null ||
-        this.isOutThreshold(this.SKplaceholder))
+        this.isOutThreshold(this.migration.latest().key))
     );
   }
 }
