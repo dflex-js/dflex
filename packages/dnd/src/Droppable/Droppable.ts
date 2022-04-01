@@ -84,9 +84,6 @@ class Droppable extends DistanceCalculator {
    * transformation. */
   #animatedDraggedInsertionFrame: number | null;
 
-  /** True when the element left the old container and found new one. */
-  #hasMigrated: boolean;
-
   static INDEX_OUT_CONTAINER = NaN;
 
   constructor(draggable: DraggableInteractiveInterface) {
@@ -134,7 +131,6 @@ class Droppable extends DistanceCalculator {
     this.#animatedDraggedInsertionFrame = null;
 
     this.isParentLocked = false;
-    this.#hasMigrated = false;
   }
 
   #draggedEventGenerator(type: DraggedEvent["type"]): DraggedEvent {

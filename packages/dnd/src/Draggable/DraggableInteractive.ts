@@ -128,7 +128,10 @@ class DraggableInteractive
   }
 
   setDraggedTempIndex(i: number) {
-    this.migration.setIndex(i);
+    if (!Number.isNaN(i)) {
+      this.migration.setIndex(i);
+    }
+
     this.draggedElm.setDataset("index", i);
   }
 
@@ -184,6 +187,8 @@ class DraggableInteractive
     this.draggedElm.currentPosition.clone(this.occupiedOffset);
     this.draggedElm.translate.clone(this.occupiedTranslate);
     this.draggedElm.grid.clone(this.gridPlaceholder);
+
+    // TODO: Fix this please, why it's just Y.
     this.draggedElm.setDataset("gridY", this.draggedElm.grid.y);
 
     this.draggedElm.transformElm();
