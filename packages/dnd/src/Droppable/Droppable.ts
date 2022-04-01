@@ -204,31 +204,6 @@ class Droppable extends DistanceCalculator {
     return droppableIndex;
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  #migrateContainerIndicators() {
-    // const { oldSiblingsKey, oldIndex, newSiblingsKey } =
-    //   this.migrationPlaceholder;
-    // const originalSiblingList = store.getElmBranchByKey(
-    //   oldSiblingsKey
-    // ) as string[];
-    // Delete the element from old sibling list.
-    // originalSiblingList.splice(oldIndex, 1);
-    // const newSiblingList = store.getElmBranchByKey(
-    //   this.draggable.SKplaceholder!
-    // ) as string[];
-    // // insert element to new sibling list
-    // newSiblingList.splice(
-    //   this.draggable.draggedElm.order.self,
-    //   0,
-    //   this.draggable.draggedElm.id
-    // );
-    // console.log(
-    //   "file: Droppable.ts ~ line 660 ~ newSiblingList",
-    //   newSiblingList
-    // );
-    // this.draggable.SKplaceholder = newSK;
-  }
-
   #detectNearestElm() {
     const siblings =
       store.DOMGen.branches[this.draggable.migration.latest().key];
