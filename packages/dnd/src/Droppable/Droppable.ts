@@ -276,11 +276,25 @@ class Droppable extends DistanceCalculator {
       if (!isOut) {
         newSK = SK;
 
+        const originalSiblingList = store.getElmBranchByKey(
+          this.draggable.migration.latest().key
+        ) as string[];
+
+        const newSiblingList = store.getElmBranchByKey(newSK) as string[];
+
+        // Remove the last element from the original list.
+        // when the dragged is out of the container, the last element is the
+        // placeholder as all the elements are stacked.
+        originalSiblingList.pop();
+
+        // Insert the element to the new list.
+        newSiblingList.push("");
+
+        this.draggable.migration.add(NaN, newSK);
+
         break;
       }
     }
-
-    return newSK;
   }
 
   #updateLastElmOffset() {
