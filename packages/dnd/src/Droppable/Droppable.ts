@@ -382,8 +382,6 @@ class Droppable extends DistanceCalculator {
 
     const from = this.draggable.migration.latest().index + 1;
 
-    // this.leftAtIndex = this.draggable.indexPlaceholder;
-
     emitSiblingsEvent("onLiftUpSiblings", {
       siblings,
       from,
