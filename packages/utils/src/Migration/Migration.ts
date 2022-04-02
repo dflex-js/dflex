@@ -29,6 +29,12 @@ class Migration implements IMigration {
   }
 
   add(index: number, key: string) {
+    // Check if the key is already the last element in the list.
+    if (this.#migrations[this.#migrations.length - 1].key === key) {
+      this.setIndex(index);
+      return;
+    }
+
     this.#migrations.push(new AbstractMigration(index, key));
   }
 }
