@@ -1,4 +1,4 @@
-import type { Coordinates } from "@dflex/draggable";
+import type { IPointAxes } from "@dflex/utils";
 
 import DraggableInteractive from "./Draggable";
 import Droppable from "./Droppable";
@@ -16,7 +16,7 @@ class DnD extends Droppable {
    */
   constructor(
     id: string,
-    initCoordinates: Coordinates,
+    initCoordinates: IPointAxes,
     opts: DndOpts = defaultOpts
   ) {
     const isLayoutAvailable = ["pending", "dragEnd", "dragCancel"].includes(
@@ -58,7 +58,6 @@ class DnD extends Droppable {
 
     super(draggable);
 
-    // @ts-expect-error
     store.events = options.events;
 
     store.onStateChange("ready");

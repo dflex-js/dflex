@@ -54,7 +54,7 @@ describe("Testing Store Package", () => {
   it("Registers new elements", () => {
     expect(store.DOMGen.branches).toStrictEqual({
       "0-0": ["id-0", "id-1", "id-2"],
-      "1-0": "p-id-0",
+      "1-0": ["p-id-0"],
     });
   });
 

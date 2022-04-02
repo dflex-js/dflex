@@ -5,7 +5,6 @@ import type {
   ITracker,
 } from "@dflex/utils";
 import type { CoreInstanceInterface } from "@dflex/core-instance";
-import type { ELmBranch } from "@dflex/dom-gen";
 import type { RegisterInputMeta } from "@dflex/store";
 
 import type { DraggedEvent, LayoutState } from "../types";
@@ -16,8 +15,8 @@ export interface ElmTree {
   element: CoreInstanceInterface;
   parent: CoreInstanceInterface | null;
   branches: {
-    siblings: ELmBranch;
-    parents: ELmBranch;
+    siblings: string[];
+    parents: string[];
   };
 }
 
@@ -92,6 +91,6 @@ export interface DnDStoreInterface {
   getInitialELmRectById(id: string): RectDimensions | undefined;
   getELmTranslateById(id: string): Translate;
   getElmTreeById(id: string): ElmTree;
-  getElmSiblingsById(id: string): ELmBranch;
+  getElmSiblingsById(id: string): string[] | null;
   destroy(): void;
 }

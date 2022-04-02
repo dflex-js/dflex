@@ -4,7 +4,6 @@ import type {
   IPointAxes,
   Direction,
   Axes,
-  RectBoundaries,
 } from "@dflex/utils";
 
 export interface AbstractOpts {

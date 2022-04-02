@@ -1,5 +1,4 @@
 import { AbstractDraggable } from "@dflex/draggable";
-import type { Coordinates } from "@dflex/draggable";
 
 import { Threshold, PointNum, PointBool, Migration } from "@dflex/utils";
 import type {
@@ -7,6 +6,7 @@ import type {
   IPointNum,
   IPointBool,
   IMigration,
+  IPointAxes,
 } from "@dflex/utils";
 
 import type { CoreInstanceInterface } from "@dflex/core-instance";
@@ -21,13 +21,9 @@ class DraggableAxes
   extends AbstractDraggable<CoreInstanceInterface>
   implements DraggableAxesInterface
 {
-  // indexPlaceholder: number;
-
   positionPlaceholder: IPointNum;
 
   gridPlaceholder: IPointNum;
-
-  // siblingsKeyPlaceholder: string;
 
   migration: IMigration;
 
@@ -51,7 +47,7 @@ class DraggableAxes
 
   readonly #initCoordinates: IPointNum;
 
-  constructor(id: string, initCoordinates: Coordinates, opts: FinalDndOpts) {
+  constructor(id: string, initCoordinates: IPointAxes, opts: FinalDndOpts) {
     const { element } = store.getElmTreeById(id);
 
     super(element, initCoordinates);

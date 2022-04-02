@@ -19,7 +19,7 @@ let pointerChild3D0: Pointer;
 
 describe("DOM Relationship Generator: Ascending-Simple", () => {
   describe("Working on same level: zero(0) depth", () => {
-    it("Adds new element starting at depth zero(0)", () => {
+    fit("Adds new element starting at depth zero(0)", () => {
       // DOM-root
       // │
       // │───id-0  => (order:{parent: 0, self: 0 }) || (keys: {CHK: null,PK: "1-0",SK: "0-0"})
@@ -37,7 +37,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
       const branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
       expect(domGen.branchesOrder).toStrictEqual([KEYS_CHILDREN_D0.SK]);
 
-      expect(branch).toBe("id-0");
+      expect(branch).toStrictEqual(["id-0"]);
     });
 
     it("Preserves keys and parent index for element with same level", () => {
@@ -122,7 +122,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
 
       const branch = domGen.getElmBranch(pointerParent0D1.keys.SK);
 
-      expect(branch).toBe("id-parent-1");
+      expect(branch).toBe(["id-parent-1"]);
     });
 
     it("Identifies grand parent connects its branch", () => {
@@ -161,7 +161,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
 
       const branch = domGen.getElmBranch(pointerGrandParent0D2.keys.SK);
 
-      expect(branch).toBe("id-grand-parent-1");
+      expect(branch).toBe(["id-grand-parent-1"]);
     });
   });
 
@@ -211,7 +211,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
 
       const branch = domGen.getElmBranch(pointerChild3D0.keys.SK);
 
-      expect(branch).toBe("id-00");
+      expect(branch).toBe(["id-00"]);
     });
   });
 
@@ -221,9 +221,9 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
 
       expect(branches).toStrictEqual({
         "0-0": ["id-0", "id-1", "id-2"],
-        "1-0": "id-parent-1",
-        "2-0": "id-grand-parent-1",
-        "0-1": "id-00",
+        "1-0": ["id-parent-1"],
+        "2-0": ["id-grand-parent-1"],
+        "0-1": ["id-00"],
       });
     });
   });

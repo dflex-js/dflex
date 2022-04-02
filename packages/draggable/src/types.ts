@@ -1,11 +1,6 @@
 import type { AbstractCoreInterface } from "@dflex/core-instance";
 import type { IPointNum } from "@dflex/utils";
 
-export interface Coordinates {
-  x: number;
-  y: number;
-}
-
 export type DraggedStyle = {
   prop: string;
   dragValue: string;
