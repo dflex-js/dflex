@@ -15,6 +15,9 @@ export interface IMigration {
    */
   setIndex(index: number): void;
 
-  /** When migration from one container to another. */
-  add(index: number, key: string): void;
+  /**
+   * True when migration from one container to another.Otherwise false when
+   * returning to the same container.
+   */
+  add(index: number, key: string): boolean;
 }
