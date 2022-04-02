@@ -1,7 +1,7 @@
-import type { DraggedStyle, Coordinates } from "@dflex/draggable";
+import type { DraggedStyle } from "@dflex/draggable";
 
 import { PointNum } from "@dflex/utils";
-import type { IPointNum } from "@dflex/utils";
+import type { IPointNum, IPointAxes } from "@dflex/utils";
 
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
@@ -35,7 +35,7 @@ class DraggableInteractive
 
   private changeToFixedStyleProps: DraggedStyle;
 
-  constructor(id: string, initCoordinates: Coordinates, opts: FinalDndOpts) {
+  constructor(id: string, initCoordinates: IPointAxes, opts: FinalDndOpts) {
     const { parent } = store.getElmTreeById(id);
 
     super(id, initCoordinates, opts);
@@ -47,7 +47,7 @@ class DraggableInteractive
 
     const { hasOverflowX, hasOverflowY } = store.siblingsScrollElement[SK];
 
-    const siblings = store.getElmSiblingsListById(this.draggedElm.id);
+    const siblings = store.getElmBranchByKey(this.migration.latest().key);
 
     this.isDraggedPositionFixed = false;
 
@@ -128,7 +128,10 @@ class DraggableInteractive
   }
 
   setDraggedTempIndex(i: number) {
-    this.indexPlaceholder = i;
+    if (!Number.isNaN(i)) {
+      this.migration.setIndex(i);
+    }
+
     this.draggedElm.setDataset("index", i);
   }
 
@@ -137,7 +140,7 @@ class DraggableInteractive
   }
 
   setDraggedTransformPosition(isFallback: boolean) {
-    const siblings = store.getElmSiblingsListById(this.draggedElm.id);
+    const siblings = store.getElmBranchByKey(this.migration.latest().key);
 
     /**
      * In this case, the use clicked without making any move.
@@ -167,10 +170,7 @@ class DraggableInteractive
          * it manually here. Otherwise, undoing will handle repositioning. I
          * don't like it but it is what it is.
          */
-        if (
-          siblings &&
-          siblings[this.draggedElm.order.self] !== this.draggedElm.id
-        ) {
+        if (siblings[this.draggedElm.order.self] !== this.draggedElm.id) {
           this.draggedElm.assignNewPosition(
             siblings,
             this.draggedElm.order.self
@@ -184,15 +184,15 @@ class DraggableInteractive
     this.draggedElm.currentPosition.clone(this.occupiedOffset);
     this.draggedElm.translate.clone(this.occupiedTranslate);
     this.draggedElm.grid.clone(this.gridPlaceholder);
+
+    // TODO: Fix this please, why it's just Y.
     this.draggedElm.setDataset("gridY", this.draggedElm.grid.y);
 
     this.draggedElm.transformElm();
 
-    if (siblings) {
-      this.draggedElm.assignNewPosition(siblings, this.indexPlaceholder);
-    }
+    this.draggedElm.assignNewPosition(siblings, this.migration.latest().index);
 
-    this.draggedElm.order.self = this.indexPlaceholder;
+    this.draggedElm.order.self = this.migration.latest().index;
   }
 
   endDragging(isFallback: boolean) {
@@ -202,6 +202,24 @@ class DraggableInteractive
     if (this.isDraggedPositionFixed) {
       this.changeStyle(this.changeToFixedStyleProps, false);
     }
+
+    this.threshold.destroy();
+
+    // TODO: add type to this.
+    const properties = [
+      "threshold",
+      "gridPlaceholder",
+      "isMovingAwayFrom",
+      "positionPlaceholder",
+      "occupiedOffset",
+      "occupiedTranslate",
+      "#initCoordinates",
+    ];
+
+    properties.forEach((property) => {
+      // @ts-expect-error
+      this[property] = null;
+    });
   }
 }
 

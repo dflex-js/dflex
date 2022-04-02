@@ -11,6 +11,9 @@ export type {
 export { Tracker } from "./Tracker";
 export type { ITracker } from "./Tracker";
 
+export { Migration } from "./Migration";
+export type { IAbstract, IMigration } from "./Migration";
+
 export type {
   RectDimensions,
   RectBoundaries,

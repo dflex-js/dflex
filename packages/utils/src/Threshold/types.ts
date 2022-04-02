@@ -37,4 +37,5 @@ export interface ThresholdInterface {
   setScrollThreshold(key: string, rect: RectDimensions): void;
   isOutThresholdH(key: string, XLeft: number, XRight: number): boolean;
   isOutThresholdV(key: string, YTop: number, YBottom: number): boolean;
+  destroy(): void;
 }

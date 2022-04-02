@@ -3,6 +3,7 @@ import type {
   IPointBool,
   ThresholdInterface,
   ThresholdCoordinate,
+  IMigration,
 } from "@dflex/utils";
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 import type { AbstractDraggableInterface } from "@dflex/draggable";
@@ -38,8 +39,7 @@ export interface DraggableAxesInterface
   /** Dragged position for both X and Y.  */
   readonly positionPlaceholder: IPointNum;
 
-  /** Temporary index for dragged  */
-  readonly indexPlaceholder: number;
+  readonly migration: IMigration;
 
   /** grid placeholder for dragged grid position. */
   readonly gridPlaceholder: IPointNum;

@@ -1,10 +1,4 @@
-import type {
-  ELmBranch,
-  GeneratorInterface,
-  Keys,
-  Order,
-  Pointer,
-} from "./types";
+import type { GeneratorInterface, Keys, Order, Pointer } from "./types";
 import genKey from "./utils";
 
 /**
@@ -29,8 +23,11 @@ class Generator implements GeneratorInterface {
    * accordingly.
    */
   branches: {
-    [keys: string]: ELmBranch;
+    [keys: string]: string[];
   };
+
+  /** Branches order */
+  branchesOrder: string[];
 
   #prevDepth: number;
 
@@ -40,6 +37,7 @@ class Generator implements GeneratorInterface {
     this.#indicator = {};
 
     this.branches = {};
+    this.branchesOrder = [];
 
     this.#prevDepth = -99;
 
@@ -82,6 +80,21 @@ class Generator implements GeneratorInterface {
     }
   }
 
+  #updateOrder(k: string) {
+    const is = this.branchesOrder.find((key) => key === k);
+    if (!is) {
+      this.branchesOrder.push(k);
+    }
+  }
+
+  getBranchParentKey(SK: string) {
+    const keyOrder = this.branchesOrder.indexOf(SK);
+    if (keyOrder + 1 <= this.branchesOrder.length) {
+      return this.branchesOrder[keyOrder + 1];
+    }
+    return null;
+  }
+
   /**
    * Adds elements to its siblings.
    *
@@ -89,27 +102,12 @@ class Generator implements GeneratorInterface {
    * @param  SK - Siblings Key- siblings key
    */
   #addElementIDToSiblingsBranch(id: string, SK: string) {
-    let selfIndex = 0;
-
-    /**
-     * Don't create array for only one child.
-     */
-    if (!this.branches[SK]) {
-      this.branches[SK] = id;
-    } else {
-      /**
-       * So here we have multiple children, we better create an array now.
-       */
-      if (!Array.isArray(this.branches[SK])) {
-        const prevId = this.branches[SK];
-
-        // @ts-expect-error
-        this.branches[SK] = [prevId];
-      }
-
-      // @ts-ignore
-      selfIndex = this.branches[SK].push(id) - 1;
+    if (!Array.isArray(this.branches[SK])) {
+      this.branches[SK] = [];
     }
+
+    // @ts-ignore
+    const selfIndex = this.branches[SK].push(id) - 1;
 
     return selfIndex;
   }
@@ -119,7 +117,7 @@ class Generator implements GeneratorInterface {
    *
    * @param  SK - Siblings Key
    */
-  getElmBranch(SK: string): ELmBranch {
+  getElmBranch(SK: string): string[] {
     return this.branches[SK];
   }
 
@@ -137,6 +135,12 @@ class Generator implements GeneratorInterface {
      * get siblings unique key (sK) and parents key (pK)
      */
     const SK = genKey(depth, parentIndex);
+
+    /**
+     * Add key to the order.
+     */
+    this.#updateOrder(SK);
+
     const PK = genKey(depth + 1, this.#indicator[depth + 2]);
 
     const CHK = depth === 0 ? null : this.#prevKey;
@@ -162,14 +166,12 @@ class Generator implements GeneratorInterface {
   }
 
   /**
-   * Main method.
-   *
-   * Add element to branches.
+   * register element to branches.
    *
    * @param id - element id
    * @param depth - element depth
    */
-  getElmPointer(id: string, depth: number): Pointer {
+  register(id: string, depth: number): Pointer {
     const { CHK, SK, PK, parentIndex } = this.accumulateIndicators(depth);
 
     const selfIndex = this.#addElementIDToSiblingsBranch(id, SK);
@@ -197,19 +199,9 @@ class Generator implements GeneratorInterface {
     ) {
       [deletedElmID] = (this.branches[SK] as []).splice(index, 1);
 
-      // When it has only one child, use string instead of array.
-      if (this.branches[SK]!.length === 1) {
-        const elm = this.branches[SK]![0];
-        this.branches[SK] = elm;
+      if (this.branches[SK]!.length === 0) {
+        delete this.branches[SK];
       }
-
-      return deletedElmID;
-    }
-
-    if (this.branches[SK] !== undefined) {
-      deletedElmID = this.branches[SK] as string;
-
-      this.branches[SK] = null;
 
       return deletedElmID;
     }
@@ -219,32 +211,25 @@ class Generator implements GeneratorInterface {
 
   // eslint-disable-next-line no-unused-vars
   destroyBranch(SK: string, cb: (elmID: string) => unknown) {
-    if (Array.isArray(this.branches[SK])) {
-      const elmID = (this.branches[SK] as string[]).pop();
+    if (!this.branches[SK]) return;
 
-      cb(elmID as string);
+    const elmID = (this.branches[SK] as string[]).pop()!;
 
-      if (this.branches[SK]!.length > 0) {
-        this.destroyBranch(SK, cb);
-      } else {
-        this.branches[SK] = null;
+    cb(elmID);
 
-        return;
-      }
+    if (this.branches[SK]!.length > 0) {
+      this.destroyBranch(SK, cb);
+    } else {
+      delete this.branches[SK];
     }
 
-    if (this.branches[SK] !== undefined) {
-      const elmID = this.branches[SK] as string;
-
-      this.branches[SK] = null;
-
-      cb(elmID);
-    }
+    this.branchesOrder = this.branchesOrder.filter((key) => key !== SK);
   }
 
   clearBranchesAndIndicator() {
     this.branches = {};
     this.#indicator = {};
+    this.branchesOrder = [];
   }
 }
 

@@ -5,7 +5,6 @@ import type {
   ITracker,
 } from "@dflex/utils";
 import type { CoreInstanceInterface } from "@dflex/core-instance";
-import type { ELmBranch } from "@dflex/dom-gen";
 import type { RegisterInputMeta } from "@dflex/store";
 
 import type { DraggedEvent, LayoutState } from "../types";
@@ -16,8 +15,8 @@ export interface ElmTree {
   element: CoreInstanceInterface;
   parent: CoreInstanceInterface | null;
   branches: {
-    siblings: ELmBranch;
-    parents: ELmBranch;
+    siblings: string[];
+    parents: string[];
   };
 }
 
@@ -62,9 +61,14 @@ interface Translate {
 
 export interface DnDStoreInterface {
   /** Strict Rect for siblings containers. */
-  siblingsBoundaries: { [siblingKey: string]: RectBoundaries };
+  readonly siblingsBoundaries: { [siblingKey: string]: RectBoundaries };
 
-  siblingsBoundariesForGrid: {
+  /** Grouping containers in the same level. */
+  readonly siblingDepth: {
+    [depth: number]: string[];
+  };
+
+  readonly siblingsBoundariesForGrid: {
     [siblingKey: string]: {
       [row: number]: RectBoundaries;
       // grid: IPointNum;
@@ -72,22 +76,21 @@ export interface DnDStoreInterface {
   };
 
   /** Numbers of total columns and rows each container has.  */
-  siblingsGrid: { [siblingKey: string]: IPointNum };
+  readonly siblingsGrid: { [siblingKey: string]: IPointNum };
 
-  siblingsGridContainer: { [siblingKey: string]: IPointNum };
+  readonly siblingsGridContainer: { [siblingKey: string]: IPointNum };
 
   /** Container scroll instance.  */
-  siblingsScrollElement: { [siblingKey: string]: ScrollInterface };
+  readonly siblingsScrollElement: { [siblingKey: string]: ScrollInterface };
 
-  tracker: ITracker;
-  layoutState: LayoutState;
+  readonly tracker: ITracker;
+  readonly layoutState: LayoutState;
   onStateChange(state: LayoutState): void;
   emitEvent(event: DraggedEvent): void;
   register(element: RegisterInputMeta, x?: boolean): void;
   getInitialELmRectById(id: string): RectDimensions | undefined;
   getELmTranslateById(id: string): Translate;
   getElmTreeById(id: string): ElmTree;
-  getElmSiblingsById(id: string): ELmBranch;
-  getElmSiblingsListById(id: string): string[] | null;
+  getElmSiblingsById(id: string): string[] | null;
   destroy(): void;
 }

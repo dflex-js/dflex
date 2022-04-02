@@ -1,8 +1,13 @@
 import { AbstractDraggable } from "@dflex/draggable";
-import type { Coordinates } from "@dflex/draggable";
 
-import { Threshold, PointNum, PointBool } from "@dflex/utils";
-import type { ThresholdInterface, IPointNum, IPointBool } from "@dflex/utils";
+import { Threshold, PointNum, PointBool, Migration } from "@dflex/utils";
+import type {
+  ThresholdInterface,
+  IPointNum,
+  IPointBool,
+  IMigration,
+  IPointAxes,
+} from "@dflex/utils";
 
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
@@ -16,57 +21,55 @@ class DraggableAxes
   extends AbstractDraggable<CoreInstanceInterface>
   implements DraggableAxesInterface
 {
-  private isLayoutStateUpdated: boolean;
-
-  indexPlaceholder: number;
-
   positionPlaceholder: IPointNum;
 
   gridPlaceholder: IPointNum;
+
+  migration: IMigration;
 
   threshold: ThresholdInterface;
 
   isViewportRestricted: boolean;
 
-  innerOffset: IPointNum;
-
   isMovingAwayFrom: IPointBool;
 
-  private axesFilterNeeded: boolean;
+  readonly innerOffset: IPointNum;
 
-  private restrictions: Restrictions;
+  #isLayoutStateUpdated: boolean;
 
-  private restrictionsStatus: RestrictionsStatus;
+  readonly #axesFilterNeeded: boolean;
 
-  private marginX: number;
+  readonly #restrictions: Restrictions;
 
-  private initY: number;
+  readonly #restrictionsStatus: RestrictionsStatus;
 
-  private initX: number;
+  readonly #marginX: number;
 
-  constructor(id: string, initCoordinates: Coordinates, opts: FinalDndOpts) {
+  readonly #initCoordinates: IPointNum;
+
+  constructor(id: string, initCoordinates: IPointAxes, opts: FinalDndOpts) {
     const { element } = store.getElmTreeById(id);
 
     super(element, initCoordinates);
 
-    this.isLayoutStateUpdated = false;
+    this.#isLayoutStateUpdated = false;
 
-    const { order, grid } = element;
+    const {
+      order,
+      grid,
+      keys: { SK },
+    } = element;
 
-    this.indexPlaceholder = order.self;
     this.gridPlaceholder = new PointNum(grid.x, grid.y);
 
-    const { SK } = store.registry[id].keys;
-
-    const siblings = store.getElmSiblingsListById(this.draggedElm.id);
+    this.migration = new Migration(order.self, SK);
 
     this.isViewportRestricted = true;
-
-    const siblingsBoundaries = store.siblingsBoundaries[SK];
 
     const {
       offset: { width, height },
       currentPosition,
+      depth,
     } = this.draggedElm;
 
     this.threshold = new Threshold(opts.threshold);
@@ -78,20 +81,27 @@ class DraggableAxes
       top: currentPosition.y,
     });
 
-    if (siblings !== null) {
-      this.threshold.setContainerThreshold(SK, siblingsBoundaries);
-    }
+    store.siblingDepth[depth].forEach((key) => {
+      const siblingsBoundaries = store.siblingsBoundaries[key];
+
+      if (process.env.NODE_ENV !== "production") {
+        if (!siblingsBoundaries) {
+          throw new Error(`Siblings boundaries for ${key} not found.`);
+        }
+      }
+
+      this.threshold.setContainerThreshold(key, siblingsBoundaries);
+    });
 
     this.isMovingAwayFrom = new PointBool(false, false);
 
     const { x, y } = initCoordinates;
 
-    this.initY = y;
-    this.initX = x;
+    this.#initCoordinates = new PointNum(x, y);
 
     this.innerOffset = new PointNum(
-      Math.round(x - this.draggedElm.currentPosition.x),
-      Math.round(y - this.draggedElm.currentPosition.y)
+      Math.round(x - currentPosition.x),
+      Math.round(y - currentPosition.y)
     );
 
     const style = window.getComputedStyle(this.draggedElm.ref!);
@@ -99,18 +109,20 @@ class DraggableAxes
     // get element margin
     const rm = Math.round(parseFloat(style.marginRight));
     const lm = Math.round(parseFloat(style.marginLeft));
-    this.marginX = rm + lm;
+    this.#marginX = rm + lm;
 
     this.positionPlaceholder = new PointNum(
       currentPosition.x,
       currentPosition.y
     );
 
-    this.restrictions = opts.restrictions;
+    this.#restrictions = opts.restrictions;
 
-    this.restrictionsStatus = opts.restrictionsStatus;
+    this.#restrictionsStatus = opts.restrictionsStatus;
 
-    this.axesFilterNeeded =
+    const siblings = store.getElmBranchByKey(this.migration.latest().key);
+
+    this.#axesFilterNeeded =
       siblings !== null &&
       (opts.restrictionsStatus.isContainerRestricted ||
         opts.restrictionsStatus.isSelfRestricted);
@@ -130,13 +142,13 @@ class DraggableAxes
     if (!allowTop && currentTop <= topThreshold) {
       return isRestrictedToThreshold
         ? topThreshold + this.innerOffset.y
-        : this.initY;
+        : this.#initCoordinates.y;
     }
 
     if (!allowBottom && currentBottom >= bottomThreshold) {
       return isRestrictedToThreshold
         ? bottomThreshold + this.innerOffset.y - this.draggedElm.offset.height
-        : this.initY;
+        : this.#initCoordinates.y;
     }
 
     return y;
@@ -156,24 +168,24 @@ class DraggableAxes
     if (!allowLeft && currentLeft <= leftThreshold) {
       return restrictToThreshold
         ? leftThreshold + this.innerOffset.x
-        : this.initX;
+        : this.#initCoordinates.x;
     }
 
-    if (!allowRight && currentRight + this.marginX >= rightThreshold) {
+    if (!allowRight && currentRight + this.#marginX >= rightThreshold) {
       return restrictToThreshold
         ? rightThreshold +
             this.innerOffset.x -
             this.draggedElm.offset.width -
-            this.marginX
-        : this.initX;
+            this.#marginX
+        : this.#initCoordinates.x;
     }
 
     return x;
   }
 
   dragAt(x: number, y: number) {
-    if (!this.isLayoutStateUpdated) {
-      this.isLayoutStateUpdated = true;
+    if (!this.#isLayoutStateUpdated) {
+      this.#isLayoutStateUpdated = true;
       store.onStateChange("dragging");
     }
 
@@ -182,7 +194,7 @@ class DraggableAxes
 
     const { SK } = store.registry[this.draggedElm.id].keys;
 
-    if (this.axesFilterNeeded) {
+    if (this.#axesFilterNeeded) {
       const {
         top,
         bottom,
@@ -190,38 +202,38 @@ class DraggableAxes
         right: minRight,
       } = store.siblingsBoundaries[SK];
 
-      if (this.restrictionsStatus.isContainerRestricted) {
+      if (this.#restrictionsStatus.isContainerRestricted) {
         filteredX = this.axesXFilter(
           x,
           maxLeft,
           minRight,
-          this.restrictions.container.allowLeavingFromLeft,
-          this.restrictions.container.allowLeavingFromRight,
+          this.#restrictions.container.allowLeavingFromLeft,
+          this.#restrictions.container.allowLeavingFromRight,
           false
         );
         filteredY = this.axesYFilter(
           y,
           top,
           bottom,
-          this.restrictions.container.allowLeavingFromTop,
-          this.restrictions.container.allowLeavingFromBottom,
+          this.#restrictions.container.allowLeavingFromTop,
+          this.#restrictions.container.allowLeavingFromBottom,
           true
         );
-      } else if (this.restrictionsStatus.isSelfRestricted) {
+      } else if (this.#restrictionsStatus.isSelfRestricted) {
         filteredX = this.axesXFilter(
           x,
           maxLeft,
           minRight,
-          this.restrictions.self.allowLeavingFromLeft,
-          this.restrictions.self.allowLeavingFromRight,
+          this.#restrictions.self.allowLeavingFromLeft,
+          this.#restrictions.self.allowLeavingFromRight,
           false
         );
         filteredY = this.axesYFilter(
           y,
           this.draggedElm.currentPosition.y,
           this.draggedElm.currentPosition.y + this.draggedElm.offset.height,
-          this.restrictions.self.allowLeavingFromTop,
-          this.restrictions.self.allowLeavingFromBottom,
+          this.#restrictions.self.allowLeavingFromTop,
+          this.#restrictions.self.allowLeavingFromBottom,
           false
         );
       }
@@ -274,20 +286,20 @@ class DraggableAxes
 
   #isLeavingFromTail() {
     const lastElm =
-      (store.getElmSiblingsListById(this.draggedElm.id) as string[]).length - 1;
+      (store.getElmBranchByKey(this.migration.latest().key) as string[])
+        .length - 1;
 
     return (
       this.threshold.isOut[this.draggedElm.id].isLeftFromBottom &&
-      this.indexPlaceholder === lastElm
+      this.migration.latest().index === lastElm
     );
   }
 
   isNotSettled() {
-    const { SK } = store.registry[this.draggedElm.id].keys;
-
     return (
       !this.#isLeavingFromTail() &&
-      (this.isOutThreshold() || this.isOutThreshold(SK))
+      (this.isOutThreshold() ||
+        this.isOutThreshold(this.migration.latest().key))
     );
   }
 }

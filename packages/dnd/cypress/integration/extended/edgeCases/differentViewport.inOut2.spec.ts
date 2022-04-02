@@ -54,7 +54,7 @@ context(
       it("Dataset index updated for dragged", () => {
         cy.get(`#${1}-extended`).then((elm) => {
           const { index } = elm[0].dataset;
-          expect(index).to.be.eq(`-1`);
+          expect(index).to.be.eq(`NaN`);
         });
       });
 

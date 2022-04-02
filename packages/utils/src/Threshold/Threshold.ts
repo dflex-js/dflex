@@ -115,6 +115,13 @@ class Threshold implements ThresholdInterface {
 
     return this.isOut[key].isOutY();
   }
+
+  destroy() {
+    // @ts-expect-error
+    this.thresholds = null;
+    // @ts-expect-error
+    this.isOut = null;
+  }
 }
 
 export default Threshold;

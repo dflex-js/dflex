@@ -12,20 +12,20 @@ class Store {
 
   DOMGen: Generator;
 
-  private lastKeyIdentifier: string | null;
+  #lastKeyIdentifier: string | null;
 
   constructor() {
-    this.lastKeyIdentifier = null;
+    this.#lastKeyIdentifier = null;
 
     this.registry = {};
 
     this.DOMGen = new Generator();
   }
 
-  private submitElementToRegistry(element: RegisterInput) {
+  #submitElementToRegistry(element: RegisterInput) {
     const { id, depth, isPaused, isInitialized, ...rest } = element;
 
-    const { order, keys } = this.DOMGen.getElmPointer(id, depth);
+    const { order, keys } = this.DOMGen.register(id, depth);
 
     const coreElement: CoreInput = {
       id,
@@ -48,13 +48,13 @@ class Store {
      */
     if (element.parentID) {
       // This is the first element in the branch then.
-      if (!this.lastKeyIdentifier) {
-        this.lastKeyIdentifier = element.parentID;
+      if (!this.#lastKeyIdentifier) {
+        this.#lastKeyIdentifier = element.parentID;
         // Change means new branch.
-      } else if (element.parentID !== this.lastKeyIdentifier) {
+      } else if (element.parentID !== this.#lastKeyIdentifier) {
         const { id, depth, ...rest } = element;
         // Create a fake parent node to close the branch.
-        this.submitElementToRegistry({
+        this.#submitElementToRegistry({
           id: element.parentID,
           depth: depth + 1,
           ...rest,
@@ -62,7 +62,7 @@ class Store {
       }
     }
 
-    this.submitElementToRegistry(element);
+    this.#submitElementToRegistry(element);
   }
 
   /**

@@ -1,6 +1,4 @@
 /* eslint-disable no-param-reassign */
-import type { ELmBranch } from "@dflex/dom-gen";
-
 import store from "../DnDStore";
 import Droppable, { isIDEligible } from "./Droppable";
 
@@ -27,7 +25,7 @@ class EndDroppable extends Droppable {
    * @param i -
    */
   private undoElmTranslate(
-    lst: Exclude<ELmBranch, null>,
+    lst: string[],
     i: number,
     prevVisibility: boolean,
     listVisibility: boolean
@@ -162,21 +160,33 @@ class EndDroppable extends Droppable {
   }
 
   endDragging() {
-    const siblings = store.getElmSiblingsListById(this.draggable.draggedElm.id);
+    const siblings = store.getElmBranchByKey(
+      this.draggable.migration.latest().key
+    );
 
     let isFallback = false;
 
-    if (siblings) {
-      if (this.draggable.isNotSettled() || !this.verify(siblings)) {
-        isFallback = true;
+    if (this.draggable.isNotSettled() || !this.verify(siblings)) {
+      isFallback = true;
 
-        this.undoList(siblings);
-      }
-
-      store.onStateChange(isFallback ? "dragCancel" : "dragEnd");
+      this.undoList(siblings);
     }
 
+    store.onStateChange(isFallback ? "dragCancel" : "dragEnd");
+
     this.draggable.endDragging(isFallback);
+
+    [
+      "elmTransition",
+      "draggedOffset",
+      "draggedAccumulatedTransition",
+      "siblingsEmptyElmIndex",
+      "#initialScroll",
+      "#scrollAxes",
+    ].forEach((instance) => {
+      // @ts-expect-error
+      this[instance] = null;
+    });
   }
 }
 

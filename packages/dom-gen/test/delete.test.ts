@@ -19,8 +19,8 @@ describe("Testing clear methods", () => {
     // │
     // │───id-1  => (order:{parent: 0, self: 1 }) || (keys: {CHK: null,PK: "1-0",SK: "0-0"})
 
-    pointerChild0D0 = domGen.getElmPointer("id-0", 0);
-    pointerChild1D0 = domGen.getElmPointer("id-1", 0);
+    pointerChild0D0 = domGen.register("id-0", 0);
+    pointerChild1D0 = domGen.register("id-1", 0);
 
     expect(pointerChild0D0).toStrictEqual({
       keys: KEYS_CHILDREN_D0,
@@ -41,6 +41,12 @@ describe("Testing clear methods", () => {
     const branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
 
     expect(branch).toStrictEqual(["id-0", "id-1"]);
+
+    expect(domGen.branchesOrder).toMatchInlineSnapshot(`
+      Array [
+        "0-0",
+      ]
+    `);
   });
 
   it("Remove the first siblings", () => {
@@ -50,11 +56,11 @@ describe("Testing clear methods", () => {
 
     const branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
 
-    expect(branch).toStrictEqual("id-1");
+    expect(branch).toStrictEqual(["id-1"]);
   });
 
   it("Add new element after deleting the old one to check indicators working correctly", () => {
-    pointerChild0D0 = domGen.getElmPointer("id-0", 0);
+    pointerChild0D0 = domGen.register("id-0", 0);
 
     expect(pointerChild0D0).toStrictEqual({
       keys: KEYS_CHILDREN_D0,
@@ -67,6 +73,12 @@ describe("Testing clear methods", () => {
     const branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
 
     expect(branch).toStrictEqual(["id-1", "id-0"]);
+
+    expect(domGen.branchesOrder).toMatchInlineSnapshot(`
+      Array [
+        "0-0",
+      ]
+    `);
   });
 
   it("Destroy branch", () => {
@@ -74,7 +86,9 @@ describe("Testing clear methods", () => {
 
     const branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
 
-    expect(branch).toBeNull();
+    expect(branch).toBeUndefined();
+
+    expect(domGen.branchesOrder).toMatchInlineSnapshot(`Array []`);
   });
 
   it("Adds two siblings again", () => {
@@ -84,8 +98,8 @@ describe("Testing clear methods", () => {
     // │
     // │───id-1  => (order:{parent: 0, self: 1 }) || (keys: {CHK: null,PK: "1-0",SK: "0-0"})
 
-    pointerChild0D0 = domGen.getElmPointer("id-0", 0);
-    pointerChild1D0 = domGen.getElmPointer("id-1", 0);
+    pointerChild0D0 = domGen.register("id-0", 0);
+    pointerChild1D0 = domGen.register("id-1", 0);
 
     expect(pointerChild0D0).toStrictEqual({
       keys: KEYS_CHILDREN_D0,
@@ -106,5 +120,11 @@ describe("Testing clear methods", () => {
     const branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
 
     expect(branch).toStrictEqual(["id-0", "id-1"]);
+
+    expect(domGen.branchesOrder).toMatchInlineSnapshot(`
+      Array [
+        "0-0",
+      ]
+    `);
   });
 });

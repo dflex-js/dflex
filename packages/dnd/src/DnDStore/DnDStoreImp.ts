@@ -35,6 +35,10 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
   siblingsBoundaries: DnDStoreInterface["siblingsBoundaries"];
 
+  siblingDepth: {
+    [depth: number]: string[];
+  };
+
   siblingsBoundariesForGrid!: DnDStoreInterface["siblingsBoundariesForGrid"];
 
   siblingsScrollElement: DnDStoreInterface["siblingsScrollElement"];
@@ -45,19 +49,19 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
   layoutState: DnDStoreInterface["layoutState"];
 
-  private events: Events;
+  events: Events;
 
-  private isDOM: boolean;
+  #isDOM: boolean;
 
-  private isInitialized: boolean;
+  #isInitialized: boolean;
 
-  private elmIndicator!: {
+  #elmIndicator!: {
     currentKy: string;
     prevKy: string;
     exceptionToNextElm: boolean;
   };
 
-  private gridSiblingsHasNewRow: boolean;
+  #gridSiblingsHasNewRow: boolean;
 
   static MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
 
@@ -67,6 +71,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     super();
 
     this.siblingsBoundaries = {};
+    this.siblingDepth = {};
     this.siblingsBoundariesForGrid = {};
 
     this.siblingsScrollElement = {};
@@ -83,9 +88,9 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
     this.#initELmIndicator();
 
-    this.isInitialized = false;
-    this.isDOM = false;
-    this.gridSiblingsHasNewRow = false;
+    this.#isInitialized = false;
+    this.#isDOM = false;
+    this.#gridSiblingsHasNewRow = false;
 
     this.onLoadListeners = this.onLoadListeners.bind(this);
     this.updateBranchVisibility = this.updateBranchVisibility.bind(this);
@@ -121,7 +126,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
   }
 
   #initELmIndicator() {
-    this.elmIndicator = {
+    this.#elmIndicator = {
       currentKy: "",
       prevKy: "",
       exceptionToNextElm: false,
@@ -135,16 +140,10 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     let firstElemID = "";
     let lastElemID = "";
 
-    if (branch) {
-      if (Array.isArray(branch)) {
-        hasSiblings = true;
-        [firstElemID] = branch as string[];
+    hasSiblings = true;
+    [firstElemID] = branch;
 
-        lastElemID = branch[branch.length - 1];
-      } else {
-        firstElemID = branch!;
-      }
-    }
+    lastElemID = branch[branch.length - 1];
 
     return {
       hasSiblings,
@@ -155,26 +154,26 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
   updateElementVisibility(
     elmID: string,
-    parenID: string,
     scroll: ScrollInterface,
     allowDynamicVisibility: boolean,
     permitExceptionToOverride: boolean
   ) {
     if (this.registry[elmID].isPaused) {
       this.registry[elmID].resume(scroll.scrollX, scroll.scrollY);
+    }
 
-      if (this.registry[elmID].grid.x === 0) {
-        this.#assignSiblingsGrid(
-          elmID,
-          this.registry[elmID].keys.SK,
-          this.registry[elmID].offset!
-        );
+    if (this.registry[elmID].grid.x === 0) {
+      const {
+        keys: { SK },
+        depth,
+        offset,
+      } = this.registry[elmID];
 
-        this.#assignSiblingsBoundariesAndAlignment(
-          this.registry[elmID].keys.SK,
-          this.registry[elmID].offset!
-        );
-      }
+      this.#assignSiblingsGrid(elmID, SK, offset);
+
+      this.#assignSiblingsBoundariesAndAlignment(SK, offset);
+
+      this.#groupSiblingsByDepth(SK, depth);
     }
 
     let isVisible = true;
@@ -194,15 +193,15 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
       if (
         !isVisible &&
-        !this.elmIndicator.exceptionToNextElm &&
+        !this.#elmIndicator.exceptionToNextElm &&
         permitExceptionToOverride
       ) {
-        this.elmIndicator.exceptionToNextElm = true;
+        this.#elmIndicator.exceptionToNextElm = true;
 
         // Override the result.
         isVisible = true;
       } else if (isVisible) {
-        if (this.elmIndicator.exceptionToNextElm) {
+        if (this.#elmIndicator.exceptionToNextElm) {
           // In this case, we are moving from hidden to visible.
           // Eg: 1, 2 are hidden the rest of the list is visible.
           // But, there's a possibility that the rest of the branch elements
@@ -217,14 +216,14 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
   }
 
   private updateBranchVisibility(
-    requiredBranchKey: string,
+    branchKey: string,
     allowDynamicVisibility: boolean
   ) {
-    const requiredBranch = this.DOMGen.branches[requiredBranchKey];
+    const branch = this.DOMGen.branches[branchKey];
 
-    const scroll = this.siblingsScrollElement[requiredBranchKey];
+    const scroll = this.siblingsScrollElement[branchKey];
 
-    if (!scroll || !requiredBranch) {
+    if (!scroll || !branch) {
       if (process.env.NODE_ENV !== "production") {
         // eslint-disable-next-line no-console
         console.error(`Scroll and/or Sibling branch is not found`);
@@ -236,40 +235,12 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
     let prevIndex = 0;
 
-    // Should always have an array but just in case.
-    const branch = Array.isArray(requiredBranch)
-      ? requiredBranch
-      : [requiredBranch];
-
-    const firstElemID = branch[0];
-
-    // Check the parent of first element.
-    const { parent } = this.getElmTreeById(firstElemID);
-
-    let parentID: string;
-
-    /**
-     * If parent is not registered, but children are then extract it and use it.
-     */
-    if (!parent) {
-      const childInstance = this.registry[firstElemID];
-      this.register({
-        ref: childInstance.getELmParentRef()!,
-        depth: childInstance.depth + 1,
-      });
-
-      ({ id: parentID } = this.getElmTreeById(firstElemID).parent!);
-    } else {
-      parentID = parent.id;
-    }
-
     branch.forEach((elmID, i) => {
       if (elmID.length > 0) {
         const permitExceptionToOverride = i > prevIndex;
 
         this.updateElementVisibility(
           elmID,
-          parentID,
           scroll,
           allowDynamicVisibility,
           permitExceptionToOverride
@@ -281,11 +252,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
   }
 
   private cleanupDisconnectedElements(branchKey: string) {
-    const requiredBranch = this.DOMGen.branches[branchKey];
-
-    const branch = Array.isArray(requiredBranch)
-      ? requiredBranch
-      : [requiredBranch];
+    const branch = this.DOMGen.branches[branchKey];
 
     const extractedOldBranch: string[] = [];
     const connectedNodesID: string[] = [];
@@ -301,10 +268,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
           depth = this.registry[elmID].depth;
 
           // Can we get the parent ID, later?
-          this.DOMGen.getElmPointer(
-            this.#genID.newTravel(),
-            (depth as number) + 1
-          );
+          this.DOMGen.register(this.#genID.newTravel(), (depth as number) + 1);
 
           newSK = this.DOMGen.accumulateIndicators(depth as number).SK;
         }
@@ -454,7 +418,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     if (bottom > rowRect.bottom || top < rowRect.top) {
       this.siblingsGrid[SK].y += 1;
 
-      this.gridSiblingsHasNewRow = true;
+      this.#gridSiblingsHasNewRow = true;
 
       rowRect.left = 0;
       rowRect.right = 0;
@@ -462,10 +426,10 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
     // Defining elements in different column.
     if (left > rowRect.right || right < rowRect.left) {
-      if (this.gridSiblingsHasNewRow) {
+      if (this.#gridSiblingsHasNewRow) {
         this.siblingsGrid[SK].x = 1;
 
-        this.gridSiblingsHasNewRow = false;
+        this.#gridSiblingsHasNewRow = false;
       } else {
         this.siblingsGrid[SK].x += 1;
       }
@@ -492,6 +456,18 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     if (process.env.NODE_ENV !== "production") {
       this.registry[id].setDataset(`gridX`, this.registry[id].grid.x);
       this.registry[id].setDataset(`gridY`, this.registry[id].grid.y);
+    }
+  }
+
+  #groupSiblingsByDepth(SK: string, depth: number) {
+    if (!Array.isArray(this.siblingDepth[depth])) {
+      this.siblingDepth[depth] = [SK];
+    } else {
+      const is = this.siblingDepth[depth].find((k) => k === SK);
+
+      if (!is) {
+        this.siblingDepth[depth].push(SK);
+      }
     }
   }
 
@@ -569,15 +545,15 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
       element.ref!.id = id;
     }
 
-    if (!this.isDOM) {
-      this.isDOM = canUseDOM();
+    if (!this.#isDOM) {
+      this.#isDOM = canUseDOM();
 
-      if (!this.isDOM) return;
+      if (!this.#isDOM) return;
     }
 
-    if (!this.isInitialized) {
+    if (!this.#isInitialized) {
       this.#init();
-      this.isInitialized = true;
+      this.#isInitialized = true;
     }
 
     if (this.registry[id]) {
@@ -631,12 +607,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     return siblings;
   }
 
-  getElmSiblingsListById(id: string) {
-    const siblings = this.getElmSiblingsById(id);
-
-    return Array.isArray(siblings) && siblings.length > 0 ? siblings : null;
-  }
-
   /**
    * Gets element connections instance for a given id.
    *
@@ -647,7 +617,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
     const {
       keys: { SK, PK },
-      order: { parent: pi },
+      order,
     } = element;
 
     /**
@@ -661,7 +631,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
      */
     let parent = null;
     if (parents !== undefined) {
-      const parentsID = Array.isArray(parents) ? parents[pi] : parents;
+      const parentsID = parents[order.parent];
       parent = this.registry[parentsID as string];
     }
 
@@ -719,9 +689,9 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
   }
 
   dispose() {
-    if (!this.isInitialized) return null;
+    if (!this.#isInitialized) return null;
 
-    this.isInitialized = false;
+    this.#isInitialized = false;
 
     window.removeEventListener("load", this.onLoadListeners);
 
