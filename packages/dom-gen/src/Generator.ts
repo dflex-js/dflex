@@ -108,27 +108,12 @@ class Generator implements GeneratorInterface {
    * @param  SK - Siblings Key- siblings key
    */
   #addElementIDToSiblingsBranch(id: string, SK: string) {
-    let selfIndex = 0;
-
-    /**
-     * Don't create array for only one child.
-     */
-    if (!this.branches[SK]) {
-      this.branches[SK] = id;
-    } else {
-      /**
-       * So here we have multiple children, we better create an array now.
-       */
-      if (!Array.isArray(this.branches[SK])) {
-        const prevId = this.branches[SK];
-
-        // @ts-expect-error
-        this.branches[SK] = [prevId];
-      }
-
-      // @ts-ignore
-      selfIndex = this.branches[SK].push(id) - 1;
+    if (!Array.isArray(this.branches[SK])) {
+      this.branches[SK] = [];
     }
+
+    // @ts-ignore
+    const selfIndex = this.branches[SK].push(id) - 1;
 
     return selfIndex;
   }
@@ -220,19 +205,9 @@ class Generator implements GeneratorInterface {
     ) {
       [deletedElmID] = (this.branches[SK] as []).splice(index, 1);
 
-      // When it has only one child, use string instead of array.
-      if (this.branches[SK]!.length === 1) {
-        const elm = this.branches[SK]![0];
-        this.branches[SK] = elm;
+      if (this.branches[SK]!.length === 0) {
+        delete this.branches[SK];
       }
-
-      return deletedElmID;
-    }
-
-    if (this.branches[SK] !== undefined) {
-      deletedElmID = this.branches[SK] as string;
-
-      this.branches[SK] = null;
 
       return deletedElmID;
     }
@@ -244,22 +219,14 @@ class Generator implements GeneratorInterface {
   destroyBranch(SK: string, cb: (elmID: string) => unknown) {
     if (!this.branches[SK]) return;
 
-    if (Array.isArray(this.branches[SK])) {
-      const elmID = (this.branches[SK] as string[]).pop()!;
+    const elmID = (this.branches[SK] as string[]).pop()!;
 
-      cb(elmID);
+    cb(elmID);
 
-      if (this.branches[SK]!.length > 0) {
-        this.destroyBranch(SK, cb);
-      } else {
-        this.branches[SK] = null;
-      }
+    if (this.branches[SK]!.length > 0) {
+      this.destroyBranch(SK, cb);
     } else {
-      const elmID = this.branches[SK] as string;
-
-      this.branches[SK] = null;
-
-      cb(elmID);
+      delete this.branches[SK];
     }
 
     this.branchesOrder = this.branchesOrder.filter((key) => key !== SK);

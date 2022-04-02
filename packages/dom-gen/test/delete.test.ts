@@ -56,7 +56,7 @@ describe("Testing clear methods", () => {
 
     const branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
 
-    expect(branch).toStrictEqual("id-1");
+    expect(branch).toStrictEqual(["id-1"]);
   });
 
   it("Add new element after deleting the old one to check indicators working correctly", () => {
@@ -86,7 +86,7 @@ describe("Testing clear methods", () => {
 
     const branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
 
-    expect(branch).toBeNull();
+    expect(branch).toBeUndefined();
 
     expect(domGen.branchesOrder).toMatchInlineSnapshot(`Array []`);
   });
