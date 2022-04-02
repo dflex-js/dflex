@@ -1,4 +1,4 @@
-export type ELmBranch = string | Array<string> | null;
+export type ELmBranch = Array<string>;
 
 /**
  * Element unique keys in DOM tree.
