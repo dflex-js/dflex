@@ -49,19 +49,19 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
   layoutState: DnDStoreInterface["layoutState"];
 
-  private events: Events;
+  #events: Events;
 
-  private isDOM: boolean;
+  #isDOM: boolean;
 
-  private isInitialized: boolean;
+  #isInitialized: boolean;
 
-  private elmIndicator!: {
+  #elmIndicator!: {
     currentKy: string;
     prevKy: string;
     exceptionToNextElm: boolean;
   };
 
-  private gridSiblingsHasNewRow: boolean;
+  #gridSiblingsHasNewRow: boolean;
 
   static MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
 
@@ -81,16 +81,16 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     this.layoutState = "pending";
 
     // @ts-expect-error Should be initialized when calling DnD instance.
-    this.events = null;
+    this.#events = null;
 
     this.tracker = new Tracker();
     this.#genID = new Tracker(DnDStoreImp.#PREFIX_ID);
 
     this.#initELmIndicator();
 
-    this.isInitialized = false;
-    this.isDOM = false;
-    this.gridSiblingsHasNewRow = false;
+    this.#isInitialized = false;
+    this.#isDOM = false;
+    this.#gridSiblingsHasNewRow = false;
 
     this.onLoadListeners = this.onLoadListeners.bind(this);
     this.updateBranchVisibility = this.updateBranchVisibility.bind(this);
@@ -116,7 +116,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     event: DraggedEvent | SiblingsEvent | InteractivityEvent | LayoutStateEvent
   ) {
     // @ts-expect-error
-    this.events[event.type](event);
+    this.#events[event.type](event);
   }
 
   #init() {
@@ -126,7 +126,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
   }
 
   #initELmIndicator() {
-    this.elmIndicator = {
+    this.#elmIndicator = {
       currentKy: "",
       prevKy: "",
       exceptionToNextElm: false,
@@ -140,16 +140,10 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     let firstElemID = "";
     let lastElemID = "";
 
-    if (branch) {
-      if (Array.isArray(branch)) {
-        hasSiblings = true;
-        [firstElemID] = branch as string[];
+    hasSiblings = true;
+    [firstElemID] = branch;
 
-        lastElemID = branch[branch.length - 1];
-      } else {
-        firstElemID = branch!;
-      }
-    }
+    lastElemID = branch[branch.length - 1];
 
     return {
       hasSiblings,
@@ -199,15 +193,15 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
       if (
         !isVisible &&
-        !this.elmIndicator.exceptionToNextElm &&
+        !this.#elmIndicator.exceptionToNextElm &&
         permitExceptionToOverride
       ) {
-        this.elmIndicator.exceptionToNextElm = true;
+        this.#elmIndicator.exceptionToNextElm = true;
 
         // Override the result.
         isVisible = true;
       } else if (isVisible) {
-        if (this.elmIndicator.exceptionToNextElm) {
+        if (this.#elmIndicator.exceptionToNextElm) {
           // In this case, we are moving from hidden to visible.
           // Eg: 1, 2 are hidden the rest of the list is visible.
           // But, there's a possibility that the rest of the branch elements
@@ -433,7 +427,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     if (bottom > rowRect.bottom || top < rowRect.top) {
       this.siblingsGrid[SK].y += 1;
 
-      this.gridSiblingsHasNewRow = true;
+      this.#gridSiblingsHasNewRow = true;
 
       rowRect.left = 0;
       rowRect.right = 0;
@@ -441,10 +435,10 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
     // Defining elements in different column.
     if (left > rowRect.right || right < rowRect.left) {
-      if (this.gridSiblingsHasNewRow) {
+      if (this.#gridSiblingsHasNewRow) {
         this.siblingsGrid[SK].x = 1;
 
-        this.gridSiblingsHasNewRow = false;
+        this.#gridSiblingsHasNewRow = false;
       } else {
         this.siblingsGrid[SK].x += 1;
       }
@@ -562,15 +556,15 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
       element.ref!.id = id;
     }
 
-    if (!this.isDOM) {
-      this.isDOM = canUseDOM();
+    if (!this.#isDOM) {
+      this.#isDOM = canUseDOM();
 
-      if (!this.isDOM) return;
+      if (!this.#isDOM) return;
     }
 
-    if (!this.isInitialized) {
+    if (!this.#isInitialized) {
       this.#init();
-      this.isInitialized = true;
+      this.#isInitialized = true;
     }
 
     if (this.registry[id]) {
@@ -706,9 +700,9 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
   }
 
   dispose() {
-    if (!this.isInitialized) return null;
+    if (!this.#isInitialized) return null;
 
-    this.isInitialized = false;
+    this.#isInitialized = false;
 
     window.removeEventListener("load", this.onLoadListeners);
 
