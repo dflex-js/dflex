@@ -1,7 +1,7 @@
-import type { DraggedStyle, Coordinates } from "@dflex/draggable";
+import type { DraggedStyle } from "@dflex/draggable";
 
 import { PointNum } from "@dflex/utils";
-import type { IPointNum } from "@dflex/utils";
+import type { IPointNum, IPointAxes } from "@dflex/utils";
 
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
@@ -35,7 +35,7 @@ class DraggableInteractive
 
   private changeToFixedStyleProps: DraggedStyle;
 
-  constructor(id: string, initCoordinates: Coordinates, opts: FinalDndOpts) {
+  constructor(id: string, initCoordinates: IPointAxes, opts: FinalDndOpts) {
     const { parent } = store.getElmTreeById(id);
 
     super(id, initCoordinates, opts);

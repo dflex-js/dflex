@@ -1,12 +1,8 @@
 import type { AbstractCoreInterface } from "@dflex/core-instance";
 import { PointNum } from "@dflex/utils";
-import type { IPointNum } from "@dflex/utils";
+import type { IPointNum, IPointAxes } from "@dflex/utils";
 
-import type {
-  AbstractDraggableInterface,
-  DraggedStyle,
-  Coordinates,
-} from "./types";
+import type { AbstractDraggableInterface, DraggedStyle } from "./types";
 
 class AbstractDraggable<T extends AbstractCoreInterface>
   implements AbstractDraggableInterface<T>
@@ -52,7 +48,7 @@ class AbstractDraggable<T extends AbstractCoreInterface>
    * @param abstractCoreElm -
    * @param initCoordinates -
    */
-  constructor(abstractCoreElm: T, { x: initX, y: initY }: Coordinates) {
+  constructor(abstractCoreElm: T, { x: initX, y: initY }: IPointAxes) {
     /**
      * Assign instance for dragged.
      */
