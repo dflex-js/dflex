@@ -257,11 +257,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
   }
 
   private cleanupDisconnectedElements(branchKey: string) {
-    const requiredBranch = this.DOMGen.branches[branchKey];
-
-    const branch = Array.isArray(requiredBranch)
-      ? requiredBranch
-      : [requiredBranch];
+    const branch = this.DOMGen.branches[branchKey];
 
     const extractedOldBranch: string[] = [];
     const connectedNodesID: string[] = [];
