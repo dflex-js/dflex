@@ -450,7 +450,6 @@ class Droppable extends DistanceCalculator {
         )
       ) {
         this.updateElement(id, false);
-        console.log("file: Droppable.ts ~ line 438 ~ id", id);
       }
     }
   }
