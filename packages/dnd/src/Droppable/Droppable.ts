@@ -251,6 +251,10 @@ class Droppable extends DistanceCalculator {
       if (!isOut) {
         newSK = SK;
 
+        const isNewContainer = this.draggable.migration.add(NaN, newSK);
+
+        if (!isNewContainer) return;
+
         const originalSiblingList = store.getElmBranchByKey(
           this.draggable.migration.latest().key
         ) as string[];
@@ -262,10 +266,21 @@ class Droppable extends DistanceCalculator {
         // placeholder as all the elements are stacked.
         originalSiblingList.pop();
 
-        // Insert the element to the new list.
-        newSiblingList.push("");
+        // Getting the last element of the new list.
+        const lastElm = newSiblingList[newSiblingList.length - 1];
 
-        this.draggable.migration.add(NaN, newSK);
+        const { currentPosition: lastElmPosition } = store.registry[lastElm];
+
+        // Update the offset accumulation. It has the old offset from the
+        // one but now it has migrated to the new container.
+        this.draggable.occupiedOffset.setAxes(
+          lastElmPosition.x - this.draggable.draggedElm.offset.left,
+          lastElmPosition.y - this.draggable.draggedElm.offset.top
+        );
+
+        // Insert the element to the new list. Empty string because when dragged
+        // is out the branch sets its index as "".
+        newSiblingList.push("");
 
         break;
       }
@@ -435,6 +450,7 @@ class Droppable extends DistanceCalculator {
         )
       ) {
         this.updateElement(id, false);
+        console.log("file: Droppable.ts ~ line 438 ~ id", id);
       }
     }
   }
