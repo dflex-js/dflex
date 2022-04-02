@@ -166,15 +166,13 @@ class EndDroppable extends Droppable {
 
     let isFallback = false;
 
-    if (Array.isArray(siblings)) {
-      if (this.draggable.isNotSettled() || !this.verify(siblings)) {
-        isFallback = true;
+    if (this.draggable.isNotSettled() || !this.verify(siblings)) {
+      isFallback = true;
 
-        this.undoList(siblings);
-      }
-
-      store.onStateChange(isFallback ? "dragCancel" : "dragEnd");
+      this.undoList(siblings);
     }
+
+    store.onStateChange(isFallback ? "dragCancel" : "dragEnd");
 
     this.draggable.endDragging(isFallback);
 
