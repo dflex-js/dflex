@@ -38,7 +38,6 @@
   "dependencies": {
     "@dflex/utils": "^3.3.2",
     "@dflex/core-instance": "^3.3.2",
-    "@dflex/dom-gen": "^3.3.2",
     "@dflex/draggable": "^3.3.2",
     "@dflex/store": "^3.3.2"
   },
