@@ -1,4 +1,4 @@
-import type { Keys, Order, ELmBranch } from "@dflex/dom-gen";
+import type { Keys, Order } from "@dflex/dom-gen";
 
 interface RegisterInputMetaBase {
   /** provide a depth if you want to drag the parent container  */
@@ -49,5 +49,5 @@ export interface StoreInterface<T> {
   register(element: RegisterInput): void;
   unregister(id: string): void;
   destroy(): void;
-  getElmBranchByKey(siblingsKy: string): ELmBranch;
+  getElmBranchByKey(siblingsKy: string): string[];
 }

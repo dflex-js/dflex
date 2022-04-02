@@ -1,10 +1,4 @@
-import type {
-  ELmBranch,
-  GeneratorInterface,
-  Keys,
-  Order,
-  Pointer,
-} from "./types";
+import type { GeneratorInterface, Keys, Order, Pointer } from "./types";
 import genKey from "./utils";
 
 /**
@@ -29,7 +23,7 @@ class Generator implements GeneratorInterface {
    * accordingly.
    */
   branches: {
-    [keys: string]: ELmBranch;
+    [keys: string]: string[];
   };
 
   /** Branches order */
@@ -123,7 +117,7 @@ class Generator implements GeneratorInterface {
    *
    * @param  SK - Siblings Key
    */
-  getElmBranch(SK: string): ELmBranch {
+  getElmBranch(SK: string): string[] {
     return this.branches[SK];
   }
 

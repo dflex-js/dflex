@@ -1,5 +1,3 @@
-export type ELmBranch = Array<string>;
-
 /**
  * Element unique keys in DOM tree.
  */
@@ -27,12 +25,12 @@ export interface Pointer {
 
 export interface GeneratorInterface {
   branches: {
-    [keys: string]: ELmBranch;
+    [keys: string]: string[];
   };
   /** SK (branch keys) in order. */
   branchesOrder: Array<string>;
   getBranchParentKey(SK: string): string | null;
-  getElmBranch(SK: string): ELmBranch;
+  getElmBranch(SK: string): string[];
   register(id: string, depth: number): Pointer;
   accumulateIndicators(depth: number): Keys & {
     parentIndex: number;

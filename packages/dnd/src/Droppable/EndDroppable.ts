@@ -1,6 +1,4 @@
 /* eslint-disable no-param-reassign */
-import type { ELmBranch } from "@dflex/dom-gen";
-
 import store from "../DnDStore";
 import Droppable, { isIDEligible } from "./Droppable";
 
@@ -27,7 +25,7 @@ class EndDroppable extends Droppable {
    * @param i -
    */
   private undoElmTranslate(
-    lst: Exclude<ELmBranch, null>,
+    lst: string[],
     i: number,
     prevVisibility: boolean,
     listVisibility: boolean
