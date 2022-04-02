@@ -734,7 +734,7 @@ class Droppable extends DistanceCalculator {
 
       this.isParentLocked = true;
 
-      this.#detectNearestContainer();
+      // this.#detectNearestContainer();
 
       return;
     }
