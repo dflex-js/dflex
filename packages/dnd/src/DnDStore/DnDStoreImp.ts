@@ -219,11 +219,11 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     requiredBranchKey: string,
     allowDynamicVisibility: boolean
   ) {
-    const requiredBranch = this.DOMGen.branches[requiredBranchKey];
+    const branch = this.DOMGen.branches[requiredBranchKey];
 
     const scroll = this.siblingsScrollElement[requiredBranchKey];
 
-    if (!scroll || !requiredBranch) {
+    if (!scroll || !branch) {
       if (process.env.NODE_ENV !== "production") {
         // eslint-disable-next-line no-console
         console.error(`Scroll and/or Sibling branch is not found`);
@@ -234,11 +234,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     this.#initELmIndicator();
 
     let prevIndex = 0;
-
-    // Should always have an array but just in case.
-    const branch = Array.isArray(requiredBranch)
-      ? requiredBranch
-      : [requiredBranch];
 
     branch.forEach((elmID, i) => {
       if (elmID.length > 0) {
@@ -624,7 +619,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
     const {
       keys: { SK, PK },
-      order: { parent: pi },
+      order,
     } = element;
 
     /**
@@ -638,7 +633,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
      */
     let parent = null;
     if (parents !== undefined) {
-      const parentsID = Array.isArray(parents) ? parents[pi] : parents;
+      const parentsID = parents[order.parent];
       parent = this.registry[parentsID as string];
     }
 
