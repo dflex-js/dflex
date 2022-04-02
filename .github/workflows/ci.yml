@@ -20,7 +20,7 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 3
     steps:
       - name: Check out repository
         uses: actions/checkout@master
@@ -52,7 +52,7 @@ jobs:
   types:
     name: Check Types
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 3
     steps:
       - name: Check out repository
         uses: actions/checkout@master
@@ -83,7 +83,7 @@ jobs:
 
   unit-test:
     name: Unit Test
-    timeout-minutes: 10
+    timeout-minutes: 3
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft != true
     steps:
