@@ -49,7 +49,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
   layoutState: DnDStoreInterface["layoutState"];
 
-  #events: Events;
+  events: Events;
 
   #isDOM: boolean;
 
@@ -81,7 +81,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     this.layoutState = "pending";
 
     // @ts-expect-error Should be initialized when calling DnD instance.
-    this.#events = null;
+    this.events = null;
 
     this.tracker = new Tracker();
     this.#genID = new Tracker(DnDStoreImp.#PREFIX_ID);
@@ -116,7 +116,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     event: DraggedEvent | SiblingsEvent | InteractivityEvent | LayoutStateEvent
   ) {
     // @ts-expect-error
-    this.#events[event.type](event);
+    this.events[event.type](event);
   }
 
   #init() {

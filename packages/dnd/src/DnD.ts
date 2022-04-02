@@ -58,7 +58,6 @@ class DnD extends Droppable {
 
     super(draggable);
 
-    // @ts-expect-error
     store.events = options.events;
 
     store.onStateChange("ready");
