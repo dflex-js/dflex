@@ -21,13 +21,9 @@ class DraggableAxes
   extends AbstractDraggable<CoreInstanceInterface>
   implements DraggableAxesInterface
 {
-  // indexPlaceholder: number;
-
   positionPlaceholder: IPointNum;
 
   gridPlaceholder: IPointNum;
-
-  // siblingsKeyPlaceholder: string;
 
   migration: IMigration;
 
