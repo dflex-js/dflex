@@ -160,20 +160,20 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
   ) {
     if (this.registry[elmID].isPaused) {
       this.registry[elmID].resume(scroll.scrollX, scroll.scrollY);
+    }
 
-      if (this.registry[elmID].grid.x === 0) {
-        this.#assignSiblingsGrid(
-          elmID,
-          this.registry[elmID].keys.SK,
-          this.registry[elmID].offset!
-        );
+    if (this.registry[elmID].grid.x === 0) {
+      const {
+        keys: { SK },
+        depth,
+        offset,
+      } = this.registry[elmID];
 
-        this.#assignSiblingsBoundariesAndAlignment(
-          this.registry[elmID].keys.SK,
-          this.registry[elmID].depth,
-          this.registry[elmID].offset!
-        );
-      }
+      this.#assignSiblingsGrid(elmID, SK, offset);
+
+      this.#assignSiblingsBoundariesAndAlignment(SK, offset);
+
+      this.#groupSiblingsByDepth(SK, depth);
     }
 
     let isVisible = true;
@@ -216,12 +216,12 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
   }
 
   private updateBranchVisibility(
-    requiredBranchKey: string,
+    branchKey: string,
     allowDynamicVisibility: boolean
   ) {
-    const branch = this.DOMGen.branches[requiredBranchKey];
+    const branch = this.DOMGen.branches[branchKey];
 
-    const scroll = this.siblingsScrollElement[requiredBranchKey];
+    const scroll = this.siblingsScrollElement[branchKey];
 
     if (!scroll || !branch) {
       if (process.env.NODE_ENV !== "production") {
@@ -459,11 +459,19 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     }
   }
 
-  #assignSiblingsBoundariesAndAlignment(
-    SK: string,
-    depth: number,
-    rect: RectDimensions
-  ) {
+  #groupSiblingsByDepth(SK: string, depth: number) {
+    if (!Array.isArray(this.siblingDepth[depth])) {
+      this.siblingDepth[depth] = [SK];
+    } else {
+      const is = this.siblingDepth[depth].find((k) => k === SK);
+
+      if (!is) {
+        this.siblingDepth[depth].push(SK);
+      }
+    }
+  }
+
+  #assignSiblingsBoundariesAndAlignment(SK: string, rect: RectDimensions) {
     const { height, left, top, width } = rect;
 
     const right = left + width;
@@ -480,16 +488,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
       this.siblingsGridContainer[SK] = new PointNum(1, 1);
 
       return;
-    }
-
-    if (!Array.isArray(this.siblingDepth[depth])) {
-      this.siblingDepth[depth] = [SK];
-    } else {
-      const is = this.siblingDepth[depth].find((k) => k === SK);
-
-      if (!is) {
-        this.siblingDepth[depth].push(SK);
-      }
     }
 
     const $ = this.siblingsBoundaries[SK];
