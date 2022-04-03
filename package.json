@@ -6,7 +6,7 @@
     "scripts/*"
   ],
   "repository": "https://github.com/dflex-js/dflex",
-  "author": "Jalal MK",
+  "author": "Jalal Maskoun",
   "scripts": {
     "cy:install:win": "cypress cache clear && .\\node_modules\\.bin\\cypress.cmd install --force",
     "test:unit": "jest",
