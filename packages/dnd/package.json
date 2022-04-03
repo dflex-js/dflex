@@ -16,12 +16,12 @@
   },
   "scripts": {
     "clean": "yarn rimraf ./dist tsconfig.tsbuildinfo",
-    "compile": "yarn clean && yarn tsc -b",
     "emit": "tsc --emitDeclarationOnly",
     "build:cjs": "esbuild src/index.ts --bundle --format=cjs --outfile=dist/dflex-dnd.js",
     "build:esm": "esbuild src/index.ts --bundle --format=esm --outfile=dist/dflex-dnd.mjs",
     "build:prod": "esbuild src/index.ts --bundle --format=cjs --minify --outfile=dist/dflex-dnd.min.js",
     "build": "yarn clean && yarn build:cjs && yarn build:esm && yarn build:prod && yarn emit",
+    "build:w": "yarn clean && yarn emit && yarn build:cjs --watch",
     "server:3001": "cross-env BROWSER=none yarn workspace dflex-react-dnd start",
     "cy:run": "cypress run",
     "cy:run:extended": "cypress run --env extended=true",
