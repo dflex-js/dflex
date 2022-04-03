@@ -6,18 +6,19 @@
     "scripts/*"
   ],
   "repository": "https://github.com/dflex-js/dflex",
-  "author": "Jalal MK",
+  "author": "Jalal Maskoun",
   "scripts": {
     "cy:install:win": "cypress cache clear && .\\node_modules\\.bin\\cypress.cmd install --force",
     "test:unit": "jest",
     "test:e2e": "yarn workspace @dflex/dnd test",
     "test": "yarn test:unit && yarn test:e2e",
+    "prebuild": "yarn workspace @dflex/utils compile && yarn workspace @dflex/dom-gen compile && yarn workspace @dflex/core-instance compile  && yarn workspace @dflex/store compile",
     "build": "lerna run build"
   },
   "devDependencies": {
-    "@swc/core": "^1.2.159",
-    "@swc/jest": "^0.2.20",
     "@types/jest": "^27.4.0",
+    "esbuild": "^0.14.30",
+    "esbuild-jest": "^0.5.0",
     "istanbul-lib-instrument": "^5.1.0",
     "jest": "^27.0.5",
     "lerna": "^4.0.0",

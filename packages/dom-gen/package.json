@@ -1,13 +1,15 @@
 {
   "name": "@dflex/dom-gen",
   "version": "3.3.2",
+  "description": "DFlex DOM relations generator algorithm",
+  "author": "Jalal Maskoun",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "author": "Jalal Maskoun",
-  "description": "DFlex DOM relations generator algorithm",
   "scripts": {
-    "compile": "yarn rimraf ./dist tsconfig.tsbuildinfo && yarn tsc -b",
-    "build": "yarn compile"
+    "clean": "yarn rimraf ./dist tsconfig.tsbuildinfo",
+    "compile": "yarn clean && yarn tsc -b",
+    "emit": "tsc --emitDeclarationOnly",
+    "test": "jest"
   },
   "homepage": "https://github.com/dflex-js/dflex/tree/master/packages/dom-gen",
   "repository": "https://github.com/dflex-js/dflex",

@@ -5,8 +5,9 @@
   "types": "dist/index.d.ts",
   "author": "Jalal Maskoun",
   "scripts": {
-    "compile": "yarn rimraf ./dist tsconfig.tsbuildinfo && yarn tsc -b",
-    "build": "yarn compile"
+    "clean": "yarn rimraf ./dist tsconfig.tsbuildinfo",
+    "compile": "yarn clean && yarn tsc -b",
+    "emit": "tsc --emitDeclarationOnly"
   },
   "repository": "https://github.com/dflex-js/dflex",
   "homepage": "https://github.com/dflex-js/dflex/tree/master/packages/utils",

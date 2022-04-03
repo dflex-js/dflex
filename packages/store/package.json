@@ -1,13 +1,15 @@
 {
   "name": "@dflex/store",
   "version": "3.3.2",
+  "description": "DOM store allows you to traverse through the DOM tree with element-id",
+  "author": "Jalal Maskoun",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "author": "Jalal Maskoun",
-  "description": "DOM store allows you to traverse through the DOM tree with element-id",
   "scripts": {
-    "compile": "yarn rimraf ./dist tsconfig.tsbuildinfo && yarn tsc -b",
-    "build": "yarn compile"
+    "clean": "yarn rimraf ./dist tsconfig.tsbuildinfo",
+    "compile": "yarn clean && yarn tsc -b",
+    "emit": "tsc --emitDeclarationOnly",
+    "test": "jest"
   },
   "homepage": "https://github.com/dflex-js/dflex/tree/master/packages/store",
   "repository": "https://github.com/dflex-js/dflex",
