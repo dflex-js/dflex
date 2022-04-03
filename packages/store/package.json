@@ -5,12 +5,12 @@
   "author": "Jalal Maskoun",
   "main": "./dist/dflex.js",
   "module": "./dist/dflex.mjs",
-  "types": "./dist/dflex.d.ts",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/dflex.js",
       "require": "./dist/dflex.mjs",
-      "types": "./dist/dflex.d.ts"
+      "types": "./dist/index.d.ts"
     },
     "./production": "./dist/dflex.min.js"
   },
