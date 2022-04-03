@@ -1,15 +1,22 @@
 {
   "name": "@dflex/dnd",
   "version": "3.3.2",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "description": "Modern drag and drop package for all JavaScript frameworks",
   "author": "Jalal Maskoun",
   "scripts": {
-    "clean": "yarn rimraf ./dist *.tsbuildinfo",
-    "compile": "yarn tsc -b",
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "build:w": "yarn build  --watch src",
     "compile:w": "yarn tsc -b -w",
-    "build": "yarn clean && yarn compile",
     "server:3001": "cross-env BROWSER=none yarn workspace dflex-react-dnd start",
     "cy:run": "cypress run",
     "cy:run:extended": "cypress run --env extended=true",

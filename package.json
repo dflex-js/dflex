@@ -18,12 +18,14 @@
     "@swc/core": "^1.2.159",
     "@swc/jest": "^0.2.20",
     "@types/jest": "^27.4.0",
+    "esbuild": "^0.14.30",
     "istanbul-lib-instrument": "^5.1.0",
     "jest": "^27.0.5",
     "lerna": "^4.0.0",
     "prettier": "^2.0.5",
     "rimraf": "^3.0.2",
     "ts-node": "^10.7.0",
+    "tsup": "^5.12.3",
     "typescript": "^4.5.5"
   }
 }
