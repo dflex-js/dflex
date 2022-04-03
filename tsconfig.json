@@ -11,8 +11,8 @@
     "sourceMap": false,
     "lib": ["dom", "ESNext"],
     "moduleResolution": "Node",
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {

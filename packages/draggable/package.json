@@ -1,15 +1,25 @@
 {
   "name": "@dflex/draggable",
   "version": "3.3.2",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
   "description": "Modern Draggable package for all JavaScript frameworks",
   "author": "Jalal Maskoun",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "scripts": {
-    "clean": "yarn rimraf ./dist *.tsbuildinfo",
-    "compile": "yarn tsc -b",
-    "compile:w": "yarn tsc -b -w",
-    "build": "yarn clean && yarn compile",
+    "clean": "yarn rimraf ./dist tsconfig.tsbuildinfo",
+    "compile": "yarn clean && yarn tsc -b",
+    "emit": "tsc --emitDeclarationOnly",
+    "build:cjs": "esbuild src/index.ts --bundle --format=cjs --outfile=dist/index.js",
+    "build:esm": "esbuild src/index.ts --bundle --format=esm --outfile=dist/index.mjs",
+    "build": "yarn clean && yarn build:cjs && yarn build:esm && yarn emit",
     "dev": "yarn workspace dflex-react-draggable start",
     "test": "jest"
   },
