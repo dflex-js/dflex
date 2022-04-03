@@ -1,5 +1,12 @@
 {
   "npmClient": "yarn",
   "version": "3.3.2",
-  "packages": ["packages/draggable", "packages/dnd"]
+  "packages": [
+    "packages/utils",
+    "packages/core-instance",
+    "packages/dom-gen",
+    "packages/store",
+    "packages/draggable",
+    "packages/dnd"
+  ]
 }

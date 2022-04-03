@@ -12,7 +12,6 @@
     "test:unit": "jest",
     "test:e2e": "yarn workspace @dflex/dnd test",
     "test": "yarn test:unit && yarn test:e2e",
-    "prebuild": "yarn workspace @dflex/utils compile && yarn workspace @dflex/dom-gen compile && yarn workspace @dflex/core-instance compile  && yarn workspace @dflex/store compile",
     "build": "lerna run build"
   },
   "devDependencies": {
