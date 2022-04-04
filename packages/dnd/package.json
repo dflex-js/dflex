@@ -21,6 +21,7 @@
     "build:esm": "esbuild src/index.ts --bundle --format=esm --outfile=dist/dflex-dnd.mjs",
     "build:prod": "esbuild src/index.ts --bundle --format=cjs --minify --outfile=dist/dflex-dnd.min.js",
     "build": "yarn clean && yarn build:cjs && yarn build:esm && yarn build:prod && yarn emit",
+    "compile:w": "tsc -b -w",
     "build:w": "yarn clean && yarn emit && yarn build:cjs --watch",
     "server:3001": "cross-env BROWSER=none yarn workspace dflex-react-dnd start",
     "cy:run": "cypress run",
