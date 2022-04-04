@@ -43,54 +43,13 @@ jobs:
       - name: Build packages
         run: pnpm build
 
-      # - name: Essential Features Test for DnD React APP - Firefox
-      #   uses: cypress-io/github-action@v2
-      #   with:
-      #     project: ./packages/dnd
-      #     start: yarn workspace dflex-react-dnd start
-      #     wait-on: "http://localhost:3001/"
-      #     browser: firefox
-      #     headless: true
-      #     spec: "packages/dnd/cypress/integration/essential/**/*.spec.js"
-      #   env:
-      #     Cypress_isNextJS: false
-      #     Cypress_extended: true
-
-      # - name: SSR Test - Testing DnD work with NextJS
-      #   uses: cypress-io/github-action@v2
-      #   with:
-      #     project: ./packages/dnd
-      #     start: yarn workspace dflex-next-dnd dev
-      #     wait-on: "http://localhost:3000/"
-      #     browser: chrome
-      #     headless: true
-      #     spec: "packages/dnd/cypress/integration/nextjs/**/*.spec.js"
-      #   env:
-      #     Cypress_isNextJS: true
-      #     Cypress_extended: false
-
-      # - name: Extended Features Test for DnD React APP - Chrome
-      #   uses: cypress-io/github-action@v2
-      #   with:
-      #     project: ./packages/dnd
-      #     start: yarn workspace dflex-react-dnd start
-      #     wait-on: "http://localhost:3001/"
-      #     browser: chrome
-      #     headless: true
-      #     spec: |
-      #       packages/dnd/cypress/integration/differentHeights/**/*.spec.js
-      #       packages/dnd/cypress/integration/restrictions/**/*.spec.js
-      #       packages/dnd/cypress/integration/extended/**/*.spec.js
-      #   env:
-      #     Cypress_isNextJS: false
-      #     Cypress_extended: false
-
       - name: Testing all features for DnD with React APP - Chrome
         uses: cypress-io/github-action@v2
         with:
-          project: ./packages/dnd
-          start: pnpm start -F dflex-react-dnd
+          install: false
+          start: pnpm --dir packages/dnd dev
           wait-on: "http://localhost:3001/"
+          wait-on-timeout: 120
           browser: chrome
           headless: true
         env:
