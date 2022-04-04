@@ -88,8 +88,8 @@ jobs:
       - name: Testing all features for DnD with React APP - Chrome
         uses: cypress-io/github-action@v2
         with:
-          start: pnpm start --filter dflex-react-dnd
-          install: false
+          project: ./packages/dnd
+          start: pnpm start -F dflex-react-dnd
           wait-on: "http://localhost:3001/"
           browser: chrome
           headless: true
