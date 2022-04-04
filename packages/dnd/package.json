@@ -6,7 +6,6 @@
   "main": "./dist/dflex-dnd.js",
   "module": "./dist/dflex-dnd.mjs",
   "types": "./dist/index.d.ts",
-  "type": "module",
   "exports": {
     ".": {
       "require": "./dist/dflex-dnd.js",
@@ -24,16 +23,12 @@
     "build": "pnpm clean && pnpm build:cjs && pnpm build:esm && pnpm build:prod && pnpm emit",
     "compile:w": "tsc -b -w",
     "build:w": "pnpm clean && pnpm emit && pnpm build:cjs --define:process.env.NODE_ENV=\\\"development\\\" --watch",
-    "server:3001": "cross-env BROWSER=none pnpm start --filter dflex-react-dnd",
-    "cy:run": "cypress run",
-    "cy:open": "cypress open",
-    "cy:run:extended": "cypress run --env extended=true",
-    "cy:open:extended": "cypress open --env extended=true",
-    "dev": "pnpm start --filter dflex-react-dnd",
-    "dev:cy": "start-server-and-test server:3001 http://localhost:3001 cy:open",
-    "dev:cy:extended": "start-server-and-test server:3001 http://localhost:3001 cy:open:extended",
-    "test": "cross-env NODE_ENV=e2e start-server-and-test server:3001 http://localhost:3001 cy:run",
-    "test:extended": "start-server-and-test server:3001 http://localhost:3001 cy:run:extended"
+    "server:3001": "cross-env BROWSER=none pnpm dev --filter dflex-react-dnd",
+    "dev:3001": "pnpm dev --filter dflex-react-dnd",
+    "cy:run": "cypress run --env extended=true",
+    "cy:open": "cypress open --env extended=true",
+    "cy:dev": "start-server-and-test server:3001 http://localhost:3001 cy:open",
+    "test": "start-server-and-test server:3001 http://localhost:3001 cy:run"
   },
   "homepage": "https://github.com/dflex-js/dflex/tree/master/packages/dnd",
   "repository": "https://github.com/dflex-js/dflex",

@@ -12,7 +12,7 @@
     "test:unit": "jest",
     "test:e2e": "pnpm -f @dflex/dnd test",
     "test": "pnpm test:unit && pnpm test:e2e",
-    "build": "lerna run build"
+    "build": "pnpm build -r"
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",

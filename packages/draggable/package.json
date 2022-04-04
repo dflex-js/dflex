@@ -8,8 +8,8 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/dflex-draggable.js",
-      "require": "./dist/dflex-draggable.mjs",
+      "require": "./dist/dflex-draggable.js",
+      "import": "./dist/dflex-draggable.mjs",
       "types": "./dist/index.d.ts"
     },
     "./production": "./dist/dflex-draggable.min.js"
