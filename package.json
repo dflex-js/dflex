@@ -19,13 +19,13 @@
     "esbuild": "^0.14.30",
     "esbuild-jest": "^0.5.0",
     "eslint-config-dflex": "*",
-    "eslint-config-dflex-react": "*",
     "istanbul-lib-instrument": "^5.1.0",
     "jest": "^27.5.1",
     "lerna": "^4.0.0",
     "prettier": "^2.6.2",
     "rimraf": "^3.0.2",
     "ts-node": "^10.7.0",
-    "typescript": "^4.6.3"
+    "typescript": "^4.6.3",
+    "vite": "^2.9.1"
   }
 }

@@ -6,10 +6,11 @@
   "main": "./dist/dflex-dnd.js",
   "module": "./dist/dflex-dnd.mjs",
   "types": "./dist/index.d.ts",
+  "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/dflex-dnd.js",
-      "require": "./dist/dflex-dnd.mjs",
+      "require": "./dist/dflex-dnd.js",
+      "import": "./dist/dflex-dnd.mjs",
       "types": "./dist/index.d.ts"
     },
     "./production": "./dist/dflex-dnd.min.js"
@@ -25,8 +26,8 @@
     "build:w": "pnpm clean && pnpm emit && pnpm build:cjs --define:process.env.NODE_ENV=\\\"development\\\" --watch",
     "server:3001": "cross-env BROWSER=none pnpm start --filter dflex-react-dnd",
     "cy:run": "cypress run",
-    "cy:run:extended": "cypress run --env extended=true",
     "cy:open": "cypress open",
+    "cy:run:extended": "cypress run --env extended=true",
     "cy:open:extended": "cypress open --env extended=true",
     "dev": "pnpm start --filter dflex-react-dnd",
     "dev:cy": "start-server-and-test server:3001 http://localhost:3001 cy:open",

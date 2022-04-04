@@ -33,6 +33,7 @@
     "LICENSE"
   ],
   "devDependencies": {
+    "eslint-config-dflex-react": "*",
     "@dflex/utils": "^3.3.2",
     "@dflex/core-instance": "^3.3.2",
     "@dflex/store": "^3.3.2"
