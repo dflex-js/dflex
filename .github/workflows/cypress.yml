@@ -44,7 +44,7 @@ jobs:
         run: pnpm build
 
       - name: Testing all features for DnD with React APP - Chrome
-        uses: ./
+        uses: cypress-io/github-action@v2
         with:
           install: false
           project: ./packages/dnd
