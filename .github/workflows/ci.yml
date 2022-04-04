@@ -104,8 +104,3 @@ jobs:
 
       - name: Run Test
         run: CI=true pnpm jest --coverage
-
-      - name: Upload coverage to Codecov
-        run: bash <(curl -s https://codecov.io/bash) -C $GITHUB_SHA -B ${GITHUB_REF#refs/heads/} -Z
-        env:
-          CODECOV_TOKEN: 98cfb3ef-e3ad-4ffc-aaa1-314731222d1b
