@@ -6,8 +6,6 @@
     "noImplicitReturns": true,
     "strictFunctionTypes": true,
     "strictNullChecks": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "target": "ESNext",
     "module": "ES2022",
     "sourceMap": false,
