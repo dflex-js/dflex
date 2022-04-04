@@ -45,7 +45,7 @@ export type ElmPointerWithProps = RegisterInput & {
   keys: Keys;
 };
 
-export interface StoreInterface<T> {
+export interface StoreInterface {
   register(element: RegisterInput): void;
   unregister(id: string): void;
   destroy(): void;
