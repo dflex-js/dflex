@@ -10,20 +10,21 @@
   "scripts": {
     "cy:install:win": "cypress cache clear && .\\node_modules\\.bin\\cypress.cmd install --force",
     "test:unit": "jest",
-    "test:e2e": "yarn workspace @dflex/dnd test",
-    "test": "yarn test:unit && yarn test:e2e",
+    "test:e2e": "pnpm -f @dflex/dnd test",
+    "test": "pnpm test:unit && pnpm test:e2e",
     "build": "lerna run build"
   },
   "devDependencies": {
-    "@types/jest": "^27.4.0",
+    "@types/jest": "^27.4.1",
     "esbuild": "^0.14.30",
     "esbuild-jest": "^0.5.0",
+    "eslint": "^8.8.0",
     "istanbul-lib-instrument": "^5.1.0",
-    "jest": "^27.0.5",
+    "jest": "^27.5.1",
     "lerna": "^4.0.0",
-    "prettier": "^2.0.5",
+    "prettier": "^2.6.2",
     "rimraf": "^3.0.2",
     "ts-node": "^10.7.0",
-    "typescript": "^4.5.5"
+    "typescript": "^4.6.3"
   }
 }

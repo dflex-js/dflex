@@ -30,24 +30,21 @@ jobs:
         with:
           node-version: "*"
 
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Cache yarn cache
+      - name: Cache pnpm modules
         uses: actions/cache@v3
-        id: yarn-cache #`steps.yarn-cache.outputs.cache-hit != 'true'
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
+            ${{ runner.os }}-
 
-      - name: Install Dependencies
-        run: yarn install
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: 6.32.4
+          run_install: true
 
       - name: Run lint
-        run: yarn eslint . --ext .js,.jsx,.ts,.tsx --fix
+        run: pnpm eslint . --ext .js,.jsx,.ts,.tsx --fix
 
   types:
     name: Check Types
@@ -62,24 +59,21 @@ jobs:
         with:
           node-version: "*"
 
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Cache yarn cache
+      - name: Cache pnpm modules
         uses: actions/cache@v3
-        id: yarn-cache #`steps.yarn-cache.outputs.cache-hit != 'true'
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
+            ${{ runner.os }}-
 
-      - name: Install Dependencies
-        run: yarn install
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: 6.32.4
+          run_install: true
 
       - name: check types
-        run: "yarn tsc --noEmit"
+        run: "pnpm tsc --noEmit"
 
   unit-test:
     name: Unit Test
@@ -95,24 +89,21 @@ jobs:
         with:
           node-version: "*"
 
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Cache yarn cache
+      - name: Cache pnpm modules
         uses: actions/cache@v3
-        id: yarn-cache #`steps.yarn-cache.outputs.cache-hit != 'true'
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
+            ${{ runner.os }}-
 
-      - name: Install Dependencies
-        run: yarn install
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: 6.32.4
+          run_install: true
 
       - name: Run Test
-        run: CI=true yarn jest --coverage
+        run: CI=true pnpm jest --coverage
 
       - name: Upload coverage to Codecov
         run: bash <(curl -s https://codecov.io/bash) -C $GITHUB_SHA -B ${GITHUB_REF#refs/heads/} -Z

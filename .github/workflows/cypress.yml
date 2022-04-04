@@ -27,24 +27,21 @@ jobs:
         with:
           node-version: "*"
 
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Cache yarn cache
+      - name: Cache pnpm modules
         uses: actions/cache@v3
-        id: yarn-cache #`steps.yarn-cache.outputs.cache-hit != 'true'
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
+            ${{ runner.os }}-
 
-      - name: Install Dependencies
-        run: yarn install
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: 6.32.4
+          run_install: true
 
       - name: Build packages
-        run: yarn build
+        run: pnpm build
 
       # - name: Essential Features Test for DnD React APP - Firefox
       #   uses: cypress-io/github-action@v2
@@ -91,8 +88,8 @@ jobs:
       - name: Testing all features for DnD with React APP - Chrome
         uses: cypress-io/github-action@v2
         with:
-          project: ./packages/dnd
-          start: yarn workspace dflex-react-dnd start
+          start: pnpm start --filter dflex-react-dnd
+          install: false
           wait-on: "http://localhost:3001/"
           browser: chrome
           headless: true
