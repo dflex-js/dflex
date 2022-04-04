@@ -23,12 +23,11 @@
     "build": "pnpm clean && pnpm build:cjs && pnpm build:esm && pnpm build:prod && pnpm emit",
     "compile:w": "tsc -b -w",
     "build:w": "pnpm clean && pnpm emit && pnpm build:cjs --define:process.env.NODE_ENV=\\\"development\\\" --watch",
-    "server:3001": "cross-env BROWSER=none pnpm dev --filter dflex-react-dnd",
-    "dev:3001": "pnpm dev --filter dflex-react-dnd",
+    "server": "pnpm dev --filter dflex-react-dnd",
     "cy:run": "cypress run --env extended=true",
     "cy:open": "cypress open --env extended=true",
-    "cy:dev": "start-server-and-test server:3001 http://localhost:3001 cy:open",
-    "test": "start-server-and-test server:3001 http://localhost:3001 cy:run"
+    "cy:dev": "start-server-and-test 'pnpm run server' http-get://localhost:3001 'pnpm cy:open'",
+    "test": "start-server-and-test 'pnpm run server' http-get://localhost:3001 'pnpm cy:run'"
   },
   "homepage": "https://github.com/dflex-js/dflex/tree/master/packages/dnd",
   "repository": "https://github.com/dflex-js/dflex",

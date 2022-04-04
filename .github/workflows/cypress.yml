@@ -48,7 +48,7 @@ jobs:
         with:
           install: false
           project: ./packages/dnd
-          start: pnpm --dir packages/dnd dev
+          start: pnpm run server -F @dflex/dnd
           wait-on: "http://localhost:3001/"
           wait-on-timeout: 120
           browser: chrome

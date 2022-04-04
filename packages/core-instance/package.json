@@ -8,8 +8,8 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/dflex-core.js",
-      "require": "./dist/dflex-core.mjs",
+      "require": "./dist/dflex-core.js",
+      "import": "./dist/dflex-core.mjs",
       "types": "./dist/index.d.ts"
     },
     "./production": "./dist/dflex-core.min.js"
