@@ -47,7 +47,7 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           install: false
-          project: ./packages/dnd
+          working-directory: packages/dnd
           start: pnpm run server -F @dflex/dnd
           wait-on: "http://localhost:3001/"
           wait-on-timeout: 120
