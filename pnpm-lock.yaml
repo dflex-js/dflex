@@ -8,6 +8,8 @@ importers:
       esbuild: ^0.14.30
       esbuild-jest: ^0.5.0
       eslint: ^8.8.0
+      eslint-config-dflex: '*'
+      eslint-config-dflex-react: '*'
       istanbul-lib-instrument: ^5.1.0
       jest: ^27.5.1
       lerna: ^4.0.0
@@ -20,6 +22,8 @@ importers:
       esbuild: 0.14.30
       esbuild-jest: 0.5.0_esbuild@0.14.30
       eslint: 8.12.0
+      eslint-config-dflex: link:scripts/eslint-config-dflex
+      eslint-config-dflex-react: link:scripts/eslint-config-dflex-react
       istanbul-lib-instrument: 5.1.0
       jest: 27.5.1_ts-node@10.7.0
       lerna: 4.0.0
