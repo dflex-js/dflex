@@ -47,6 +47,7 @@ jobs:
         uses: ./
         with:
           install: false
+          project: ./packages/dnd
           start: pnpm --dir packages/dnd dev
           wait-on: "http://localhost:3001/"
           wait-on-timeout: 120
