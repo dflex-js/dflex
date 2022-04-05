@@ -1,24 +1,24 @@
 # Prerequisites
 
-- [Node.js](https://nodejs.org/en/) >= v10 must be installed.
-- [Yarn](https://classic.yarnpkg.com/en/docs/install)
+- [Node.js](https://nodejs.org/en/) >= v16 must be installed.
+- [PNPM](https://pnpm.io/)
 
 ## Installation
 
-- Run `yarn` in the repository's root directory to install everything you need
+- Run `pnpm install` in the repository's root directory to install everything you need
   for development.
-- Run `yarn build` in the root directory to build the modules.
+- Run `pnpm build` in the root directory to build the modules.
 
 ## Running Tests
 
-- `yarn test` to run the tests in each package available in workspace.
+- `pnpm test` to run the tests in each package available in workspace.
 
 ## Dealing with packages
 
-- Use `yarn workspace` followed by DFlex package name in `package.json`.
+- Use `pnpm --filter` followed by DFlex package name in `package.json`.
   So, If you deal with `dflex/dnd` for example you can use:
 
-  `yarn workspace @dflex/dnd add -D dotenv`
+  `pnpm --filter @dflex/dnd add -D dotenv`
 
 ## Development
 
@@ -29,29 +29,29 @@ and playground or at lease this is the initial plan.
 DFlex is written entirely in plain JavaScript/TypeScript and doesn't depend on
 any specific framework. However, it's using the
 [**React**](https://reactjs.org/) for playground and
-[**Cypress**](https://www.cypress.io/) for end to end testing. It's also using
-[**Jest**](https://jestjs.io/) for unit testing and
-[**Lerna**](https://lerna.js.org/) to manage the packages.
+[**Cypress**](https://www.cypress.io/) for end to end testing. It's also
+using [**Jest**](https://jestjs.io/) for unit testing and
+[**PNPM**](https://pnpm.io/) to manage the packages.
 
 Clone the repository
 
 ```bash
 git clone https://github.com/dflex-js/dflex.git
 cd dflex
-yarn install
+pnpm install
 ```
 
 This will clone and install all development dependencies. If you are using
 windows you probably have to install cypress manually as following:
 
 ```bash
-yarn cy:install:win
+pnpm cy:install:win
 ```
 
 To start development you can use the following command:
 
 ```bash
-yarn workspace @dflex/dnd dev
+pnpm --filter @dflex/dnd server
 ```
 
 This will run the development playground for the DnD package. Open the browser
@@ -64,7 +64,7 @@ If you want to change the codebase and live edit the playground you have to
 compile while running the playground. You can use the following command:
 
 ```bash
-yarn workspace @dflex/dnd compile:w && yarn workspace @dflex/dnd dev
+pnpm --filter @dflex/dnd build:w && pnpm --filter @dflex/dnd server
 
 ```
 
@@ -73,7 +73,7 @@ break the code. You can do that by running the test and have some fun watching
 Cypress do the job:
 
 ```bash
-yarn workspace @dflex/dnd dev:cy:extended
+pnpm --filter @dflex/dnd test
 ```
 
 ## Submitting a PR

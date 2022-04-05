@@ -99,27 +99,27 @@ any specific framework. However, it's using the
 [**React**](https://reactjs.org/) for playground and
 [**Cypress**](https://www.cypress.io/) for end to end testing. It's also
 using [**Jest**](https://jestjs.io/) for unit testing and
-[**Lerna**](https://lerna.js.org/) to manage the packages.
+[**PNPM**](https://pnpm.io/) to manage the packages.
 
 Clone the repository
 
 ```bash
 git clone https://github.com/dflex-js/dflex.git
 cd dflex
-yarn install
+pnpm install
 ```
 
 This will clone and install all development dependencies. If you are using
 windows you probably have to install cypress manually as following:
 
 ```bash
-yarn cy:install:win
+pnpm cy:install:win
 ```
 
 To start development you can use the following command:
 
 ```bash
-yarn workspace @dflex/dnd dev
+pnpm --filter @dflex/dnd server
 ```
 
 This will run the development playground for the DnD package. Open the browser
@@ -132,7 +132,7 @@ If you want to change the codebase and live edit the playground you have to
 compile while running the playground. You can use the following command:
 
 ```bash
-yarn workspace @dflex/dnd compile:w && yarn workspace @dflex/dnd dev
+pnpm --filter @dflex/dnd build:w && pnpm --filter @dflex/dnd server
 
 ```
 
@@ -141,7 +141,7 @@ break the code. You can do that by running the test and have some fun watching
 Cypress do the job:
 
 ```bash
-yarn workspace @dflex/dnd dev:cy:extended
+pnpm --filter @dflex/dnd test
 ```
 
 ## Contribution 🌎

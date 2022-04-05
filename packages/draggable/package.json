@@ -8,21 +8,21 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/dflex-draggable.js",
-      "require": "./dist/dflex-draggable.mjs",
+      "require": "./dist/dflex-draggable.js",
+      "import": "./dist/dflex-draggable.mjs",
       "types": "./dist/index.d.ts"
     },
     "./production": "./dist/dflex-draggable.min.js"
   },
   "scripts": {
-    "clean": "yarn rimraf ./dist tsconfig.tsbuildinfo",
-    "compile": "yarn clean && yarn tsc -b",
+    "clean": "pnpm rimraf ./dist tsconfig.tsbuildinfo",
+    "compile": "pnpm clean && pnpm tsc -b",
     "emit": "tsc --emitDeclarationOnly",
     "build:cjs": "esbuild src/index.ts --bundle --format=cjs --outfile=dist/dflex-draggable.js",
     "build:esm": "esbuild src/index.ts --bundle --format=esm --outfile=dist/dflex-draggable.mjs",
     "build:prod": "esbuild src/index.ts --bundle --format=cjs --minify --outfile=dist/dflex-draggable.min.js",
-    "build": "yarn clean && yarn build:cjs && yarn build:esm && yarn build:prod && yarn emit",
-    "dev": "yarn workspace dflex-react-draggable start",
+    "build": "pnpm clean && pnpm build:cjs && pnpm build:esm && pnpm build:prod && pnpm emit",
+    "server": "pnpm start --filter dflex-react-draggable",
     "test": "jest"
   },
   "homepage": "https://github.com/dflex-js/dflex/tree/master/packages/draggable",
@@ -33,6 +33,7 @@
     "LICENSE"
   ],
   "devDependencies": {
+    "eslint-config-dflex-react": "*",
     "@dflex/utils": "^3.3.2",
     "@dflex/core-instance": "^3.3.2",
     "@dflex/store": "^3.3.2"
