@@ -64,7 +64,9 @@ If you want to change the codebase and live edit the playground you have to
 compile while running the playground. You can use the following command:
 
 ```bash
-pnpm --filter @dflex/dnd build:w && pnpm --filter @dflex/dnd server
+pnpm --filter @dflex/dnd compile:w
+pnpm --filter @dflex/dnd build:w
+pnpm --filter @dflex/dnd run server
 
 ```
 
