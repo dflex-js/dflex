@@ -32,16 +32,16 @@ importers:
 
   packages/core-instance:
     specifiers:
-      '@dflex/utils': ^3.3.0
+      '@dflex/utils': ^3.4.0
     devDependencies:
       '@dflex/utils': link:../utils
 
   packages/dnd:
     specifiers:
-      '@dflex/core-instance': ^3.3.2
-      '@dflex/draggable': ^3.3.2
-      '@dflex/store': ^3.3.2
-      '@dflex/utils': ^3.3.2
+      '@dflex/core-instance': ^3.4.0
+      '@dflex/draggable': ^3.4.0
+      '@dflex/store': ^3.4.0
+      '@dflex/utils': ^3.4.0
       cross-env: ^7.0.2
       cypress: ^9.5.0
       eslint-plugin-cypress: ^2.11.1
@@ -90,9 +90,9 @@ importers:
 
   packages/draggable:
     specifiers:
-      '@dflex/core-instance': ^3.3.2
-      '@dflex/store': ^3.3.2
-      '@dflex/utils': ^3.3.2
+      '@dflex/core-instance': ^3.4.0
+      '@dflex/store': ^3.4.0
+      '@dflex/utils': ^3.4.0
       eslint-config-dflex-react: '*'
     devDependencies:
       '@dflex/core-instance': link:../core-instance
@@ -121,8 +121,8 @@ importers:
 
   packages/store:
     specifiers:
-      '@dflex/core-instance': ^3.3.2
-      '@dflex/dom-gen': ^3.3.2
+      '@dflex/core-instance': ^3.4.0
+      '@dflex/dom-gen': ^3.4.0
     devDependencies:
       '@dflex/core-instance': link:../core-instance
       '@dflex/dom-gen': link:../dom-gen

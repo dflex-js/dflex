@@ -1,6 +1,6 @@
 {
   "name": "@dflex/draggable",
-  "version": "3.3.2",
+  "version": "3.4.0",
   "description": "Modern Draggable package for all JavaScript frameworks",
   "author": "Jalal Maskoun",
   "main": "./dist/dflex-draggable.js",
@@ -33,10 +33,10 @@
     "LICENSE"
   ],
   "devDependencies": {
-    "eslint-config-dflex-react": "*",
-    "@dflex/utils": "^3.3.2",
-    "@dflex/core-instance": "^3.3.2",
-    "@dflex/store": "^3.3.2"
+    "@dflex/core-instance": "^3.4.0",
+    "@dflex/store": "^3.4.0",
+    "@dflex/utils": "^3.4.0",
+    "eslint-config-dflex-react": "*"
   },
   "keywords": [
     "drag-drop",
