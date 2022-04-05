@@ -22,7 +22,7 @@
     "build:prod": "esbuild src/index.ts --bundle --format=cjs --minify --outfile=dist/dflex-dnd.min.js",
     "build": "pnpm clean && pnpm build:cjs && pnpm build:esm && pnpm build:prod && pnpm emit",
     "compile:w": "tsc -b -w",
-    "build:w": "pnpm clean && pnpm emit && pnpm build:cjs --define:process.env.NODE_ENV=\\\"development\\\" --watch",
+    "build:w": "pnpm build:cjs -- --define:process.env.NODE_ENV=\\\"development\\\" --watch",
     "server": "pnpm dev --filter dflex-react-dnd",
     "cy:run": "cypress run --env extended=true",
     "cy:open": "cypress open --env extended=true",
