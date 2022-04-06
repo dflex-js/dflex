@@ -37,13 +37,13 @@ function emitInteractiveEvent(
 class DistanceCalculator implements DistanceCalculatorInterface {
   protected draggable: DraggableInteractiveInterface;
 
-  private elmTransition: IPointNum;
+  #elmTransition: IPointNum;
 
-  private draggedOffset: IPointNum;
+  #draggedOffset: IPointNum;
 
-  private draggedAccumulatedTransition: IPointNum;
+  #draggedTransition: IPointNum;
 
-  private siblingsEmptyElmIndex: IPointNum;
+  #siblingsEmptyElmIndex: number;
 
   /** Isolated form the threshold and predict is-out based on the controllers */
   protected isParentLocked: boolean;
@@ -54,16 +54,16 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     /**
      * Next element calculated transition space.
      */
-    this.elmTransition = new PointNum(0, 0);
+    this.#elmTransition = new PointNum(0, 0);
 
     /**
      * Same as elmTransition but for dragged.
      */
-    this.draggedOffset = new PointNum(0, 0);
+    this.#draggedOffset = new PointNum(0, 0);
 
-    this.draggedAccumulatedTransition = new PointNum(0, 0);
+    this.#draggedTransition = new PointNum(0, 0);
 
-    this.siblingsEmptyElmIndex = new PointNum(-1, -1);
+    this.#siblingsEmptyElmIndex = NaN;
 
     this.isParentLocked = false;
   }
@@ -75,16 +75,23 @@ class DistanceCalculator implements DistanceCalculatorInterface {
    * @param axis - Axes(x or y).
    * @returns
    */
-  private setDistanceIndicators(
+  #setDistanceIndicators(
     position: Difference,
     space: Difference,
     axis: Axis,
     direction: Direction
   ) {
+    // At this point, it should be guaranteed that we have dragged position
+    // right. And it's isolated form how we get the position. In here we care
+    // about the calculation of the distance only between two points.
     const positionDifference = Math.abs(position.dragged - position.element);
+    console.log(
+      "file: DistanceCalculator.ts ~ line 88 ~ positionDifference",
+      positionDifference
+    );
 
-    this.draggedAccumulatedTransition[axis] = positionDifference;
-    this.elmTransition[axis] = positionDifference;
+    this.#draggedTransition[axis] = positionDifference;
+    this.#elmTransition[axis] = positionDifference;
 
     const offsetDiff = Math.abs(space.dragged - space.element);
 
@@ -96,12 +103,12 @@ class DistanceCalculator implements DistanceCalculatorInterface {
       if (direction === -1) {
         // console.log("elm going up");
 
-        this.draggedAccumulatedTransition[axis] += offsetDiff;
-        this.draggedOffset[axis] = offsetDiff;
+        this.#draggedTransition[axis] += offsetDiff;
+        this.#draggedOffset[axis] = offsetDiff;
       } else {
         // console.log("elm going down");
 
-        this.elmTransition[axis] -= offsetDiff;
+        this.#elmTransition[axis] -= offsetDiff;
       }
 
       return;
@@ -112,12 +119,12 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     if (direction === -1) {
       // console.log("elm going up");
 
-      this.draggedAccumulatedTransition[axis] -= offsetDiff;
-      this.draggedOffset[axis] = -offsetDiff;
+      this.#draggedTransition[axis] -= offsetDiff;
+      this.#draggedOffset[axis] = -offsetDiff;
     } else {
       // console.log("elm going down");
 
-      this.elmTransition[axis] += offsetDiff;
+      this.#elmTransition[axis] += offsetDiff;
     }
   }
 
@@ -130,6 +137,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
       currentPosition: elmPosition,
       offset: { height: elmHight, width: elmWidth },
     } = element;
+    console.log("file: DistanceCalculator.ts ~ line 140 ~ id", element.id);
 
     const {
       occupiedOffset: { x: draggedLeft, y: draggedTop },
@@ -139,11 +147,11 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     } = this.draggable;
 
     // Reset dragged offset.
-    this.draggedOffset.setAxes(0, 0);
-    this.elmTransition.setAxes(0, 0);
+    this.#draggedOffset.setAxes(0, 0);
+    this.#elmTransition.setAxes(0, 0);
 
     if (axis === "y") {
-      this.setDistanceIndicators(
+      this.#setDistanceIndicators(
         {
           dragged: draggedTop,
           element: elmPosition.y,
@@ -159,7 +167,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
       return;
     }
 
-    this.setDistanceIndicators(
+    this.#setDistanceIndicators(
       {
         dragged: draggedLeft,
         element: elmPosition.x,
@@ -182,7 +190,9 @@ class DistanceCalculator implements DistanceCalculatorInterface {
   protected updateElement(id: string, isIncrease: boolean) {
     const element = store.registry[id];
 
-    const { SK } = store.registry[id].keys;
+    const {
+      keys: { SK },
+    } = element;
 
     const siblingsGrid = store.siblingsGridContainer[SK];
 
@@ -243,14 +253,14 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     const { currentPosition, grid } = element;
 
     this.draggable.occupiedOffset.setAxes(
-      currentPosition.x + this.draggedOffset.x,
-      currentPosition.y + this.draggedOffset.y
+      currentPosition.x + this.#draggedOffset.x,
+      currentPosition.y + this.#draggedOffset.y
     );
 
     const draggedDirection = -1 * elmDirection;
 
     this.draggable.occupiedTranslate.increase(
-      this.draggedAccumulatedTransition.getMultiplied(draggedDirection)
+      this.#draggedTransition.getMultiplied(draggedDirection)
     );
 
     this.draggable.gridPlaceholder.clone(grid);
@@ -258,14 +268,12 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     /**
      * Start transforming process
      */
-    this.siblingsEmptyElmIndex[axis] = element.setPosition(
-      store.getElmBranchByKey(
-        this.draggable.migration.latest().key
-      ) as string[],
+    this.#siblingsEmptyElmIndex = element.setPosition(
+      store.getElmBranchByKey(this.draggable.migration.latest().key),
       elmDirection,
-      this.elmTransition,
+      this.#elmTransition,
       this.draggable.operationID,
-      this.siblingsEmptyElmIndex,
+      this.#siblingsEmptyElmIndex,
       axis
     );
 

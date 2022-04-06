@@ -258,7 +258,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     direction: Direction,
     elmSpace: IPointNum,
     operationID: string,
-    siblingsEmptyElmIndex: IPointAxes,
+    siblingsEmptyElmIndex: number,
     axis: Axes,
     numberOfPassedElm = 1,
     isShuffle = true
@@ -296,7 +296,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
       iDsInOrder,
       newIndex,
       isShuffle ? oldIndex : undefined,
-      axis === "z" ? siblingsEmptyElmIndex.y : siblingsEmptyElmIndex[axis]
+      siblingsEmptyElmIndex
     );
 
     return newStatusSiblingsHasEmptyElm;

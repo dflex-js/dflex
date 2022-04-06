@@ -115,7 +115,7 @@ export interface CoreInstanceInterface extends AbstractInterface {
     direction: Direction,
     elmSpace: IPointNum,
     operationID: string,
-    siblingsEmptyElmIndex: IPointAxes,
+    siblingsEmptyElmIndex: number,
     axis: Axes,
     vIncrement?: number,
     isShuffle?: boolean
