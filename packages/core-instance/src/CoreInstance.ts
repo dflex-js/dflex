@@ -169,7 +169,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
         console.error(
           `Illegal Attempt: Received an index:${newIndex} on siblings list:${
             branchIDsOrder.length - 1
-          }`
+          }.\n`
         );
       }
 
@@ -179,7 +179,11 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     if (branchIDsOrder[newIndex].length > 0) {
       if (process.env.NODE_ENV !== "production") {
         // eslint-disable-next-line no-console
-        console.error("Illegal Attempt: Colliding in positions");
+        console.error(
+          "Illegal Attempt: Colliding in positions.\n",
+          `Element id: ${this.id}\n`,
+          `Siblings list: ${branchIDsOrder}\n`
+        );
       }
 
       return;
@@ -198,7 +202,9 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
       if (process.env.NODE_ENV !== "production") {
         // eslint-disable-next-line no-console
         console.error(
-          "Illegal Attempt: More than one element have left the siblings list"
+          `Illegal Attempt: More than one element have left the siblings list.\n`,
+          `Element id: ${this.id} - index: ${oldIndex}\n`,
+          `Siblings list: ${branchIDsOrder}\n`
         );
       }
 
