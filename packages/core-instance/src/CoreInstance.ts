@@ -162,50 +162,60 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     return { oldIndex, newIndex };
   }
 
-  assignNewPosition(
-    branchIDsOrder: string[],
-    newIndex: number,
-    oldIndex = -1,
-    siblingsEmptyElmIndex = -1
-  ) {
+  assignNewPosition(branchIDsOrder: string[], newIndex: number) {
     if (newIndex < 0 || newIndex > branchIDsOrder.length - 1) {
       if (process.env.NODE_ENV !== "production") {
         // eslint-disable-next-line no-console
         console.error(
           `Illegal Attempt: Received an index:${newIndex} on siblings list:${
             branchIDsOrder.length - 1
-          }`
+          }.\n`
+        );
+      }
+
+      return;
+    }
+
+    if (branchIDsOrder[newIndex].length > 0) {
+      if (process.env.NODE_ENV !== "production") {
+        // eslint-disable-next-line no-console
+        console.error(
+          "Illegal Attempt: Colliding in positions.\n",
+          `Element id: ${this.id}\n`,
+          `Siblings list: ${branchIDsOrder}\n`
+        );
+      }
+
+      return;
+    }
+
+    branchIDsOrder[newIndex] = this.id;
+  }
+
+  #leaveToNewPosition(
+    branchIDsOrder: string[],
+    newIndex: number,
+    oldIndex: number,
+    siblingsEmptyElmIndex: number
+  ) {
+    if (siblingsEmptyElmIndex >= 0 && siblingsEmptyElmIndex !== newIndex) {
+      if (process.env.NODE_ENV !== "production") {
+        // eslint-disable-next-line no-console
+        console.error(
+          `Illegal Attempt: More than one element have left the siblings list.\n`,
+          `Element id: ${this.id} - index: ${oldIndex}\n`,
+          `Siblings list: ${branchIDsOrder}\n`
         );
       }
 
       return siblingsEmptyElmIndex;
     }
 
-    if (oldIndex > -1) {
-      if (siblingsEmptyElmIndex >= 0 && siblingsEmptyElmIndex !== newIndex) {
-        if (process.env.NODE_ENV !== "production") {
-          // eslint-disable-next-line no-console
-          console.error(
-            "Illegal Attempt: More than one element have left the siblings list"
-          );
-        }
-
-        return siblingsEmptyElmIndex;
-      }
-
-      branchIDsOrder[oldIndex] = "";
-    } else if (branchIDsOrder[newIndex].length > 0) {
-      if (process.env.NODE_ENV !== "production") {
-        // eslint-disable-next-line no-console
-        console.error("Illegal Attempt: Colliding in positions");
-      }
-
-      return siblingsEmptyElmIndex;
-    }
+    branchIDsOrder[oldIndex] = "";
 
     branchIDsOrder[newIndex] = this.id;
 
-    return oldIndex;
+    return siblingsEmptyElmIndex;
   }
 
   /**
@@ -250,19 +260,17 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
    * @param direction - (+1/-1)
    * @param elmSpace - space between dragged and the immediate next element.
    * @param operationID - A unique ID used to store translate history
-   * @param numberOfPassedElm - the number of passed elements.
-   * @param isShuffle -
    */
   setPosition(
     iDsInOrder: string[],
     direction: Direction,
     elmSpace: IPointNum,
     operationID: string,
-    siblingsEmptyElmIndex: IPointAxes,
-    axis: Axes,
-    numberOfPassedElm = 1,
-    isShuffle = true
+    siblingsEmptyElmIndex: number,
+    axis: Axes
   ) {
+    const numberOfPassedElm = 1;
+
     /**
      * effectedElemDirection decides the direction of the element, negative or positive.
      * If the element is dragged to the left, the effectedElemDirection is -1.
@@ -292,11 +300,11 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
       }
     }
 
-    const newStatusSiblingsHasEmptyElm = this.assignNewPosition(
+    const newStatusSiblingsHasEmptyElm = this.#leaveToNewPosition(
       iDsInOrder,
       newIndex,
-      isShuffle ? oldIndex : undefined,
-      axis === "z" ? siblingsEmptyElmIndex.y : siblingsEmptyElmIndex[axis]
+      oldIndex,
+      siblingsEmptyElmIndex
     );
 
     return newStatusSiblingsHasEmptyElm;

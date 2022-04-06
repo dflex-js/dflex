@@ -5,6 +5,9 @@ export interface IAbstract {
 }
 
 export interface IMigration {
+  /** False when migration transformation not completed yet. */
+  isMigrationCompleted: boolean;
+
   /** Get the latest migrations instance */
   latest(): IAbstract;
 

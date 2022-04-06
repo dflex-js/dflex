@@ -115,17 +115,11 @@ export interface CoreInstanceInterface extends AbstractInterface {
     direction: Direction,
     elmSpace: IPointNum,
     operationID: string,
-    siblingsEmptyElmIndex: IPointAxes,
-    axis: Axes,
-    vIncrement?: number,
-    isShuffle?: boolean
+    siblingsEmptyElmIndex: number,
+    axis: Axes
   ): number;
   transformElm(): void;
-  assignNewPosition(
-    branchIDsOrder: string[],
-    newIndex: number,
-    oldIndex?: number,
-    siblingsHasEmptyElm?: number
-  ): number;
+  /** Direct element assignment. Handle the case for settling the draggable element */
+  assignNewPosition(branchIDsOrder: string[], newIndex: number): void;
   rollBack(operationID: string, isForceTransform: boolean): void;
 }

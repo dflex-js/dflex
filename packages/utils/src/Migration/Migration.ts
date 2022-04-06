@@ -16,8 +16,11 @@ class AbstractMigration implements IAbstract {
 class Migration implements IMigration {
   #migrations: Array<IAbstract>;
 
+  isMigrationCompleted: boolean;
+
   constructor(index: number, key: string) {
     this.#migrations = [new AbstractMigration(index, key)];
+    this.isMigrationCompleted = true;
   }
 
   latest() {
@@ -36,6 +39,8 @@ class Migration implements IMigration {
     }
 
     this.#migrations.push(new AbstractMigration(index, key));
+
+    this.isMigrationCompleted = false;
 
     return true;
   }
