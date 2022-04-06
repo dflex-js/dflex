@@ -85,10 +85,6 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     // right. And it's isolated form how we get the position. In here we care
     // about the calculation of the distance only between two points.
     const positionDifference = Math.abs(position.dragged - position.element);
-    console.log(
-      "file: DistanceCalculator.ts ~ line 88 ~ positionDifference",
-      positionDifference
-    );
 
     this.#draggedTransition[axis] = positionDifference;
     this.#elmTransition[axis] = positionDifference;
@@ -137,7 +133,6 @@ class DistanceCalculator implements DistanceCalculatorInterface {
       currentPosition: elmPosition,
       offset: { height: elmHight, width: elmWidth },
     } = element;
-    console.log("file: DistanceCalculator.ts ~ line 140 ~ id", element.id);
 
     const {
       occupiedOffset: { x: draggedLeft, y: draggedTop },
