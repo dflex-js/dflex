@@ -162,12 +162,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     return { oldIndex, newIndex };
   }
 
-  assignNewPosition(
-    branchIDsOrder: string[],
-    newIndex: number,
-    oldIndex = -1,
-    siblingsEmptyElmIndex = -1
-  ) {
+  assignNewPosition(branchIDsOrder: string[], newIndex: number) {
     if (newIndex < 0 || newIndex > branchIDsOrder.length - 1) {
       if (process.env.NODE_ENV !== "production") {
         // eslint-disable-next-line no-console
@@ -178,34 +173,43 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
         );
       }
 
-      return siblingsEmptyElmIndex;
+      return;
     }
 
-    if (oldIndex > -1) {
-      if (siblingsEmptyElmIndex >= 0 && siblingsEmptyElmIndex !== newIndex) {
-        if (process.env.NODE_ENV !== "production") {
-          // eslint-disable-next-line no-console
-          console.error(
-            "Illegal Attempt: More than one element have left the siblings list"
-          );
-        }
-
-        return siblingsEmptyElmIndex;
-      }
-
-      branchIDsOrder[oldIndex] = "";
-    } else if (branchIDsOrder[newIndex].length > 0) {
+    if (branchIDsOrder[newIndex].length > 0) {
       if (process.env.NODE_ENV !== "production") {
         // eslint-disable-next-line no-console
         console.error("Illegal Attempt: Colliding in positions");
       }
 
-      return siblingsEmptyElmIndex;
+      return;
     }
 
     branchIDsOrder[newIndex] = this.id;
+  }
 
-    return oldIndex;
+  #leaveToNewPosition(
+    branchIDsOrder: string[],
+    newIndex: number,
+    oldIndex: number,
+    siblingsEmptyElmIndex: number
+  ) {
+    if (siblingsEmptyElmIndex >= 0 && siblingsEmptyElmIndex !== newIndex) {
+      if (process.env.NODE_ENV !== "production") {
+        // eslint-disable-next-line no-console
+        console.error(
+          "Illegal Attempt: More than one element have left the siblings list"
+        );
+      }
+
+      return siblingsEmptyElmIndex;
+    }
+
+    branchIDsOrder[oldIndex] = "";
+
+    branchIDsOrder[newIndex] = this.id;
+
+    return siblingsEmptyElmIndex;
   }
 
   /**
@@ -290,7 +294,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
       }
     }
 
-    const newStatusSiblingsHasEmptyElm = this.assignNewPosition(
+    const newStatusSiblingsHasEmptyElm = this.#leaveToNewPosition(
       iDsInOrder,
       newIndex,
       oldIndex,
