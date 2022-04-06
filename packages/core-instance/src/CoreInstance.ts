@@ -250,8 +250,6 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
    * @param direction - (+1/-1)
    * @param elmSpace - space between dragged and the immediate next element.
    * @param operationID - A unique ID used to store translate history
-   * @param numberOfPassedElm - the number of passed elements.
-   * @param isShuffle -
    */
   setPosition(
     iDsInOrder: string[],
@@ -259,10 +257,10 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     elmSpace: IPointNum,
     operationID: string,
     siblingsEmptyElmIndex: number,
-    axis: Axes,
-    numberOfPassedElm = 1,
-    isShuffle = true
+    axis: Axes
   ) {
+    const numberOfPassedElm = 1;
+
     /**
      * effectedElemDirection decides the direction of the element, negative or positive.
      * If the element is dragged to the left, the effectedElemDirection is -1.
@@ -295,7 +293,7 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     const newStatusSiblingsHasEmptyElm = this.assignNewPosition(
       iDsInOrder,
       newIndex,
-      isShuffle ? oldIndex : undefined,
+      oldIndex,
       siblingsEmptyElmIndex
     );
 

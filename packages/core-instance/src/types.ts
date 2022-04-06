@@ -116,9 +116,7 @@ export interface CoreInstanceInterface extends AbstractInterface {
     elmSpace: IPointNum,
     operationID: string,
     siblingsEmptyElmIndex: number,
-    axis: Axes,
-    vIncrement?: number,
-    isShuffle?: boolean
+    axis: Axes
   ): number;
   transformElm(): void;
   assignNewPosition(
