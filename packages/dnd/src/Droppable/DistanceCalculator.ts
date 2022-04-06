@@ -1,6 +1,6 @@
 import type { CoreInstanceInterface } from "@dflex/core-instance";
 
-import { Direction, PointNum } from "@dflex/utils";
+import { Direction, PointNum, RectDimensions } from "@dflex/utils";
 import type { IPointNum, Axis } from "@dflex/utils";
 
 import type { InteractivityEvent } from "../types";
@@ -75,6 +75,38 @@ class DistanceCalculator implements DistanceCalculatorInterface {
    * @param axis - Axes(x or y).
    * @returns
    */
+  #setDistanceIndicators2(
+    element: CoreInstanceInterface,
+    axis: Axis,
+    direction: Direction
+  ) {
+    const {
+      occupiedOffset,
+      draggedElm: { offset: draggedRect },
+    } = this.draggable;
+
+    const { currentPosition: elmPosition, offset: elmOffset } = element;
+
+    const positionDiffX = Math.abs(elmPosition.x - occupiedOffset.x);
+    const positionDiffY = Math.abs(elmPosition.y - occupiedOffset.y);
+
+    this.#draggedTransition.setAxes(positionDiffX, positionDiffY);
+    this.#elmTransition.setAxes(positionDiffX, positionDiffY);
+
+    const widthDiff = Math.abs(elmOffset.width - draggedRect.width);
+    const heightDiff = Math.abs(elmOffset.height - draggedRect.height);
+
+    // Then dragged and element transition already set.
+    if (widthDiff === 0 && heightDiff === 0) return;
+  }
+
+  /**
+   *
+   * @param position - Hight if the working axes is Y. Otherwise, it's width.
+   * @param space - Hight if the working axes is Y. Otherwise, it's width.
+   * @param axis - Axes(x or y).
+   * @returns
+   */
   #setDistanceIndicators(
     position: Difference,
     space: Difference,
@@ -93,35 +125,44 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
     if (offsetDiff === 0) return;
 
-    if (space.dragged < space.element) {
-      // console.log("elmHight is bigger");
-
-      if (direction === -1) {
-        // console.log("elm going up");
-
-        this.#draggedTransition[axis] += offsetDiff;
-        this.#draggedOffset[axis] = offsetDiff;
-      } else {
-        // console.log("elm going down");
-
-        this.#elmTransition[axis] -= offsetDiff;
-      }
-
-      return;
-    }
-
-    // console.log("elmHight is smaller");
+    const equalizer = space.dragged < space.element ? 1 : -1;
 
     if (direction === -1) {
-      // console.log("elm going up");
-
-      this.#draggedTransition[axis] -= offsetDiff;
-      this.#draggedOffset[axis] = -offsetDiff;
+      this.#draggedTransition[axis] += equalizer * offsetDiff;
+      this.#draggedOffset[axis] = equalizer * offsetDiff;
     } else {
-      // console.log("elm going down");
-
-      this.#elmTransition[axis] += offsetDiff;
+      this.#elmTransition[axis] += -1 * equalizer * offsetDiff;
     }
+
+    // if (space.dragged < space.element) {
+    //   // console.log("elmHight is bigger");
+
+    //   if (direction === -1) {
+    //     // console.log("elm going up");
+
+    //     this.#draggedTransition[axis] += offsetDiff;
+    //     this.#draggedOffset[axis] = offsetDiff;
+    //   } else {
+    //     // console.log("elm going down");
+
+    //     this.#elmTransition[axis] -= offsetDiff;
+    //   }
+
+    //   return;
+    // }
+
+    // // console.log("elmHight is smaller");
+
+    // if (direction === -1) {
+    //   // console.log("elm going up");
+
+    //   this.#draggedTransition[axis] -= offsetDiff;
+    //   this.#draggedOffset[axis] = -offsetDiff;
+    // } else {
+    //   // console.log("elm going down");
+
+    //   this.#elmTransition[axis] += offsetDiff;
+    // }
   }
 
   private calculateDistance(
