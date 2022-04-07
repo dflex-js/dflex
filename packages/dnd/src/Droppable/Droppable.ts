@@ -235,8 +235,7 @@ class Droppable extends DistanceCalculator {
   #detectNearestContainer() {
     const {
       migration,
-      // occupiedPosition: occupiedOffset,
-      draggedElm: { depth },
+      draggedElm: { depth, offset: draggedOffset },
     } = this.draggable;
 
     let newSK;
@@ -261,27 +260,20 @@ class Droppable extends DistanceCalculator {
         originalSiblingList.pop();
 
         // Getting the last element of the new list.
-        // const lastElm = newSiblingList[newSiblingList.length - 1];
+        const lastElm = newSiblingList[newSiblingList.length - 1];
 
-        // const { offset: lastElmOffset, currentPosition: elmPosition } =
-        // store.registry[lastElm];
-
-        // this.draggable.occupiedPosition.setAxes(
-        //   currentPosition.x + this.#draggedOffset.x,
-        //   currentPosition.y + this.#draggedOffset.y
-        // );
+        const { currentPosition: elmPosition } = store.registry[lastElm];
 
         // Update the offset accumulation. It has the old offset from the
         // one but now it has migrated to the new container.
-        // occupiedOffset.setAxes(
-        //   elmPosition.x + draggedOffset.width,
-        //   elmPosition.y + draggedOffset.height
-        // );
-
-        // this.draggable.occupiedPosition.setAxes(
-        //   currentPosition.x + this.#draggedOffset.x,
-        //   currentPosition.y + this.#draggedOffset.y
-        // );
+        this.draggable.occupiedPosition.setAxes(
+          elmPosition.x +
+            draggedOffset.width +
+            migration.firstElmSyntheticSpace.x,
+          elmPosition.y +
+            draggedOffset.height +
+            migration.firstElmSyntheticSpace.y
+        );
 
         // Insert the element to the new list. Empty string because when dragged
         // is out the branch sets its index as "".
@@ -320,20 +312,9 @@ class Droppable extends DistanceCalculator {
         if (isQualified) {
           isLast = true;
 
-          const { migration, threshold, occupiedPosition, draggedElm } =
-            this.draggable;
+          const { assignSyntheticPosition, migration } = this.draggable;
 
-          /**
-           * Update threshold from here since there's no calling to updateElement.
-           */
-          threshold.setMainThreshold(draggedElm.id, {
-            width: draggedElm.offset.width,
-            height: draggedElm.offset.height,
-            left: migration.lastElmPosition.x,
-            top: migration.lastElmPosition.y,
-          });
-
-          occupiedPosition.clone(migration.lastElmPosition);
+          assignSyntheticPosition(migration.lastElmPosition);
 
           break;
         }
