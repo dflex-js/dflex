@@ -25,7 +25,7 @@ class DraggableInteractive
 
   scroll: ScrollOptWithThreshold;
 
-  occupiedOffset: IPointNum;
+  occupiedPosition: IPointNum;
 
   occupiedTranslate: IPointNum;
 
@@ -104,7 +104,7 @@ class DraggableInteractive
 
     this.operationID = store.tracker.newTravel();
 
-    this.occupiedOffset = new PointNum(currentPosition.x, currentPosition.y);
+    this.occupiedPosition = new PointNum(currentPosition.x, currentPosition.y);
     this.occupiedTranslate = new PointNum(translate.x, translate.y);
 
     /**
@@ -181,7 +181,7 @@ class DraggableInteractive
       return;
     }
 
-    this.draggedElm.currentPosition.clone(this.occupiedOffset);
+    this.draggedElm.currentPosition.clone(this.occupiedPosition);
     this.draggedElm.translate.clone(this.occupiedTranslate);
     this.draggedElm.grid.clone(this.gridPlaceholder);
 

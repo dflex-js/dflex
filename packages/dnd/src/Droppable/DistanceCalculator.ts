@@ -63,25 +63,22 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     this.isParentLocked = false;
   }
 
-  #setDistanceIndicators(
+  setDistanceIndicators(
     element: CoreInstanceInterface,
     axis: Axis,
-    direction: Direction
+    elmDirection: Direction
   ) {
-    this.#draggedOffset.setAxes(0, 0);
-    this.#elmTransition.setAxes(0, 0);
-
     const {
-      occupiedOffset,
+      occupiedPosition: occupiedOffset,
       draggedElm: { offset: draggedRect },
     } = this.draggable;
 
     const { currentPosition: elmPosition, offset: elmOffset } = element;
 
-    const positionDiffX = Math.abs(elmPosition[axis] - occupiedOffset[axis]);
+    const positionDiff = Math.abs(elmPosition[axis] - occupiedOffset[axis]);
 
-    this.#draggedTransition[axis] = positionDiffX;
-    this.#elmTransition[axis] = positionDiffX;
+    this.#draggedTransition[axis] = positionDiff;
+    this.#elmTransition[axis] = positionDiff;
 
     const rectType = axis === "x" ? "width" : "height";
 
@@ -92,12 +89,29 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
     const equalizer = draggedRect[rectType] < elmOffset[rectType] ? 1 : -1;
 
-    if (direction === -1) {
+    if (elmDirection === -1) {
       this.#draggedTransition[axis] += equalizer * rectDiff;
       this.#draggedOffset[axis] = equalizer * rectDiff;
     } else {
       this.#elmTransition[axis] += -1 * equalizer * rectDiff;
     }
+  }
+
+  updateDraggable(element: CoreInstanceInterface, elmDirection: Direction) {
+    const { currentPosition, grid } = element;
+
+    this.draggable.occupiedPosition.setAxes(
+      currentPosition.x + this.#draggedOffset.x,
+      currentPosition.y + this.#draggedOffset.y
+    );
+
+    const draggedDirection = -1 * elmDirection;
+
+    this.draggable.occupiedTranslate.increase(
+      this.#draggedTransition.getMultiplied(draggedDirection)
+    );
+
+    this.draggable.gridPlaceholder.clone(grid);
   }
 
   /**
@@ -136,7 +150,12 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
     const elmDirection: Direction = isIncrease ? -1 : 1;
 
-    this.#setDistanceIndicators(element, axis, elmDirection);
+    this.#draggedOffset.setAxes(0, 0);
+    this.#elmTransition.setAxes(0, 0);
+
+    this.setDistanceIndicators(element, axis, elmDirection);
+
+    this.updateDraggable(element, elmDirection);
 
     this.draggable.updateNumOfElementsTransformed(elmDirection);
 
@@ -168,21 +187,6 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     }
 
     emitInteractiveEvent("onDragOver", element);
-
-    const { currentPosition, grid } = element;
-
-    this.draggable.occupiedOffset.setAxes(
-      currentPosition.x + this.#draggedOffset.x,
-      currentPosition.y + this.#draggedOffset.y
-    );
-
-    const draggedDirection = -1 * elmDirection;
-
-    this.draggable.occupiedTranslate.increase(
-      this.#draggedTransition.getMultiplied(draggedDirection)
-    );
-
-    this.draggable.gridPlaceholder.clone(grid);
 
     /**
      * Start transforming process
