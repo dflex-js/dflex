@@ -67,8 +67,9 @@ class DraggableAxes
 
     const siblings = store.getElmBranchByKey(SK);
 
-    const firstElmId = siblings[0];
-    const secondElmId = siblings[1];
+    const firstElmId = siblings[order.self];
+    const secondElmId = siblings[order.self + 1];
+
     const lastElmId = siblings[siblings.length - 1];
 
     this.migration = new Migration(
