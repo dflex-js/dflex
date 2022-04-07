@@ -312,9 +312,20 @@ class Droppable extends DistanceCalculator {
         if (isQualified) {
           isLast = true;
 
-          const { assignSyntheticPosition, migration } = this.draggable;
+          const { threshold, draggedElm, migration, occupiedPosition } =
+            this.draggable;
 
-          assignSyntheticPosition(migration.lastElmPosition);
+          /**
+           * Update threshold from here since there's no calling to updateElement.
+           */
+          threshold.setMainThreshold(draggedElm.id, {
+            width: draggedElm.offset.width,
+            height: draggedElm.offset.height,
+            left: migration.lastElmPosition.x,
+            top: migration.lastElmPosition.y,
+          });
+
+          occupiedPosition.clone(migration.lastElmPosition);
 
           break;
         }

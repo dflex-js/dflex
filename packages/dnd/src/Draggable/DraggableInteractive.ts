@@ -139,22 +139,6 @@ class DraggableInteractive
     this.numberOfElementsTransformed += -1 * effectedElemDirection;
   }
 
-  assignSyntheticPosition(position: IPointNum) {
-    const { threshold, occupiedPosition, draggedElm } = this;
-
-    /**
-     * Update threshold from here since there's no calling to updateElement.
-     */
-    threshold.setMainThreshold(draggedElm.id, {
-      width: draggedElm.offset.width,
-      height: draggedElm.offset.height,
-      left: position.x,
-      top: position.y,
-    });
-
-    occupiedPosition.clone(position);
-  }
-
   setDraggedTransformPosition(isFallback: boolean) {
     const siblings = store.getElmBranchByKey(this.migration.latest().key);
 

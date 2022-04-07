@@ -75,7 +75,6 @@ export interface DraggableInteractiveInterface extends DraggableAxesInterface {
   readonly occupiedTranslate: IPointNum;
   readonly numberOfElementsTransformed: number;
   readonly isDraggedPositionFixed: boolean;
-  assignSyntheticPosition(position: IPointNum): void;
   setDraggedTempIndex(i: number): void;
   updateNumOfElementsTransformed(effectedElemDirection: number): void;
   endDragging(isFallback: boolean): void;
