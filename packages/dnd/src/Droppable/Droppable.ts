@@ -64,8 +64,6 @@ function isIDEligible2Move(
  * Class includes all transformation methods related to droppable.
  */
 class Droppable extends DistanceCalculator {
-  #preserveLastElmPosition!: IPointNum;
-
   #scrollAnimatedFrame: number | null;
 
   readonly #initialScroll: IPointNum;
@@ -88,8 +86,6 @@ class Droppable extends DistanceCalculator {
 
   constructor(draggable: DraggableInteractiveInterface) {
     super(draggable);
-
-    this.#updateLastElmOffset();
 
     this.#scrollAnimatedFrame = null;
 
@@ -298,26 +294,6 @@ class Droppable extends DistanceCalculator {
     }
   }
 
-  #updateLastElmOffset() {
-    let currentTop = 0;
-    let currentLeft = 0;
-
-    const siblings = store.getElmBranchByKey(
-      this.draggable.migration.latest().key
-    );
-
-    const lastElmId = siblings[siblings.length - 1];
-
-    if (lastElmId) {
-      const { currentPosition } = store.registry[lastElmId];
-
-      currentTop = currentPosition.y;
-      currentLeft = currentPosition.x;
-    }
-
-    this.#preserveLastElmPosition = new PointNum(currentLeft, currentTop);
-  }
-
   #checkIfDraggedIsLastElm() {
     const siblings = store.getElmBranchByKey(
       this.draggable.migration.latest().key
@@ -344,20 +320,20 @@ class Droppable extends DistanceCalculator {
         if (isQualified) {
           isLast = true;
 
+          const { migration, threshold, occupiedPosition, draggedElm } =
+            this.draggable;
+
           /**
            * Update threshold from here since there's no calling to updateElement.
            */
-          this.draggable.threshold.setMainThreshold(
-            this.draggable.draggedElm.id,
-            {
-              width: this.draggable.draggedElm.offset.width,
-              height: this.draggable.draggedElm.offset.height,
-              left: this.#preserveLastElmPosition.x,
-              top: this.#preserveLastElmPosition.y,
-            }
-          );
+          threshold.setMainThreshold(draggedElm.id, {
+            width: draggedElm.offset.width,
+            height: draggedElm.offset.height,
+            left: migration.lastElmPosition.x,
+            top: migration.lastElmPosition.y,
+          });
 
-          this.draggable.occupiedPosition.clone(this.#preserveLastElmPosition);
+          occupiedPosition.clone(migration.lastElmPosition);
 
           break;
         }
@@ -398,7 +374,7 @@ class Droppable extends DistanceCalculator {
   #fillHeadUp() {
     const siblings = store.getElmBranchByKey(
       this.draggable.migration.latest().key
-    ) as string[];
+    );
 
     const from = this.draggable.migration.latest().index + 1;
 

@@ -1,3 +1,5 @@
+import { IPointNum } from "../Point";
+
 export interface IAbstract {
   index: number;
 
@@ -7,6 +9,9 @@ export interface IAbstract {
 export interface IMigration {
   /** False when migration transformation not completed yet. */
   isMigrationCompleted: boolean;
+
+  lastElmPosition: IPointNum;
+  firstElmPosition: IPointNum;
 
   /** Get the latest migrations instance */
   latest(): IAbstract;
@@ -23,4 +28,6 @@ export interface IMigration {
    * returning to the same container.
    */
   add(index: number, key: string): boolean;
+
+  complete(firstElmPosition: IPointNum, lastElmPosition: IPointNum): void;
 }

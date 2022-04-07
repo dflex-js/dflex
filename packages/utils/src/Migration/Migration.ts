@@ -1,5 +1,6 @@
 /* eslint-disable max-classes-per-file */
 
+import { IPointNum, PointNum } from "../Point";
 import type { IAbstract, IMigration } from "./types";
 
 class AbstractMigration implements IAbstract {
@@ -16,11 +17,24 @@ class AbstractMigration implements IAbstract {
 class Migration implements IMigration {
   #migrations: Array<IAbstract>;
 
-  isMigrationCompleted: boolean;
+  isMigrationCompleted!: boolean;
 
-  constructor(index: number, key: string) {
+  lastElmPosition: IPointNum;
+
+  firstElmPosition: IPointNum;
+
+  constructor(
+    index: number,
+    key: string,
+    firstElmPosition: IPointNum,
+    lastElmPosition: IPointNum
+  ) {
     this.#migrations = [new AbstractMigration(index, key)];
-    this.isMigrationCompleted = true;
+
+    this.lastElmPosition = new PointNum(0, 0);
+    this.firstElmPosition = new PointNum(0, 0);
+
+    this.complete(firstElmPosition, lastElmPosition);
   }
 
   latest() {
@@ -43,6 +57,12 @@ class Migration implements IMigration {
     this.isMigrationCompleted = false;
 
     return true;
+  }
+
+  complete(firstElmPosition: IPointNum, lastElmPosition: IPointNum) {
+    this.isMigrationCompleted = true;
+    this.firstElmPosition.clone(firstElmPosition);
+    this.lastElmPosition.clone(lastElmPosition);
   }
 }
 

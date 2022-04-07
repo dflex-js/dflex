@@ -62,7 +62,17 @@ class DraggableAxes
 
     this.gridPlaceholder = new PointNum(grid.x, grid.y);
 
-    this.migration = new Migration(order.self, SK);
+    const siblings = store.getElmBranchByKey(SK);
+
+    const firstElmId = siblings[siblings.length - 1];
+    const lastElmId = siblings[siblings.length - 1];
+
+    this.migration = new Migration(
+      order.self,
+      SK,
+      store.registry[firstElmId].currentPosition,
+      store.registry[lastElmId].currentPosition
+    );
 
     this.isViewportRestricted = true;
 
@@ -119,8 +129,6 @@ class DraggableAxes
     this.#restrictions = opts.restrictions;
 
     this.#restrictionsStatus = opts.restrictionsStatus;
-
-    const siblings = store.getElmBranchByKey(this.migration.latest().key);
 
     this.#axesFilterNeeded =
       siblings !== null &&
