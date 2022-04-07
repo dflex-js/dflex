@@ -262,18 +262,23 @@ class Droppable extends DistanceCalculator {
         // Getting the last element of the new list.
         const lastElm = newSiblingList[newSiblingList.length - 1];
 
-        const { currentPosition: elmPosition } = store.registry[lastElm];
+        const { currentPosition: elmPosition, grid } = store.registry[lastElm];
 
         // Update the offset accumulation. It has the old offset from the
         // one but now it has migrated to the new container.
         this.draggable.occupiedPosition.setAxes(
-          elmPosition.x +
-            draggedOffset.width +
-            migration.firstElmSyntheticSpace.x,
-          elmPosition.y +
-            draggedOffset.height +
-            migration.firstElmSyntheticSpace.y
+          elmPosition.x + draggedOffset.width + migration.elmSyntheticOffset.x,
+          elmPosition.y + draggedOffset.height + migration.elmSyntheticOffset.y
         );
+
+        this.draggable.occupiedTranslate.setAxes(0, 0);
+
+        this.draggable.gridPlaceholder.clone(grid);
+
+        // TODO:
+        // Update grid position.
+        // Update occupied translate
+        // Index will be updated when element is inserted into the new container.
 
         // Insert the element to the new list. Empty string because when dragged
         // is out the branch sets its index as "".

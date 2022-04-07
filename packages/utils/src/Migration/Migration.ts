@@ -21,7 +21,7 @@ class Migration implements IMigration {
 
   lastElmPosition: IPointNum;
 
-  firstElmSyntheticSpace!: IPointAxes;
+  elmSyntheticOffset!: IPointAxes;
 
   constructor(
     index: number,
@@ -60,7 +60,7 @@ class Migration implements IMigration {
 
   complete(firstElmPosition: IPointAxes, lastElmPosition: IPointNum) {
     this.isMigrationCompleted = true;
-    this.firstElmSyntheticSpace = { ...firstElmPosition };
+    this.elmSyntheticOffset = { ...firstElmPosition };
     this.lastElmPosition.clone(lastElmPosition);
   }
 }

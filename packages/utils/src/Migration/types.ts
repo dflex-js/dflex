@@ -11,11 +11,11 @@ export interface IMigration {
   isMigrationCompleted: boolean;
 
   /**
-   * The space between first element in the list and the second element.
+   * The space between the dragged element in the list and the second element.
    * Usage: This space equalizer used to create new element when migration is
    * completed.
    */
-  firstElmSyntheticSpace: IPointAxes;
+  elmSyntheticOffset: IPointAxes;
 
   /**
    * Preserve the last element position in the list .
