@@ -57,20 +57,43 @@ class DraggableAxes
     const {
       order,
       grid,
+      currentPosition,
       keys: { SK },
+      offset: { width, height },
+      depth,
     } = element;
 
     this.gridPlaceholder = new PointNum(grid.x, grid.y);
 
-    this.migration = new Migration(order.self, SK);
+    const siblings = store.getElmBranchByKey(SK);
+
+    const firstElmId = siblings[0];
+    const secondElmId = siblings[1];
+    const lastElmId = siblings[siblings.length - 1];
+
+    this.migration = new Migration(
+      order.self,
+      SK,
+      {
+        x: secondElmId
+          ? Math.abs(
+              store.registry[firstElmId].currentPosition.x -
+                store.registry[firstElmId].offset.width -
+                store.registry[secondElmId].currentPosition.x
+            )
+          : 0,
+        y: secondElmId
+          ? Math.abs(
+              store.registry[firstElmId].currentPosition.y +
+                store.registry[firstElmId].offset.height -
+                store.registry[secondElmId].currentPosition.y
+            )
+          : 0,
+      },
+      store.registry[lastElmId].currentPosition
+    );
 
     this.isViewportRestricted = true;
-
-    const {
-      offset: { width, height },
-      currentPosition,
-      depth,
-    } = this.draggedElm;
 
     this.threshold = new Threshold(opts.threshold);
 
@@ -119,8 +142,6 @@ class DraggableAxes
     this.#restrictions = opts.restrictions;
 
     this.#restrictionsStatus = opts.restrictionsStatus;
-
-    const siblings = store.getElmBranchByKey(this.migration.latest().key);
 
     this.#axesFilterNeeded =
       siblings !== null &&

@@ -71,7 +71,7 @@ export interface DraggableInteractiveInterface extends DraggableAxesInterface {
   setOfTransformedIds?: Set<string>;
   siblingsContainer: CoreInstanceInterface | null;
   scroll: ScrollOptWithThreshold;
-  readonly occupiedOffset: IPointNum;
+  readonly occupiedPosition: IPointNum;
   readonly occupiedTranslate: IPointNum;
   readonly numberOfElementsTransformed: number;
   readonly isDraggedPositionFixed: boolean;
