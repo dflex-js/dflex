@@ -64,10 +64,6 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     this.animatedFrame = null;
   }
 
-  getELmParentRef() {
-    return this.ref!.parentElement;
-  }
-
   #initIndicators(scrollX: number, scrollY: number) {
     const { height, width, left, top } = this.ref!.getBoundingClientRect();
 
@@ -137,6 +133,14 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
   isPositionedLeft(elmX: number) {
     return elmX < this.currentPosition.x;
+  }
+
+  getRectBottom() {
+    return this.currentPosition.y + this.offset.height;
+  }
+
+  getRectRight() {
+    return this.currentPosition.x + this.offset.width;
   }
 
   transformElm() {

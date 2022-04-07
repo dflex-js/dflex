@@ -105,9 +105,10 @@ export interface CoreInstanceInterface extends AbstractInterface {
   readonly keys: Keys;
   readonly depth: number;
 
-  getELmParentRef(): HTMLElement | null;
   isPositionedUnder(elmY: number): boolean;
   isPositionedLeft(elmX: number): boolean;
+  getRectBottom(): number;
+  getRectRight(): number;
   resume(scrollX: number, scrollY: number): void;
   changeVisibility(isVisible: boolean): void;
   setPosition(

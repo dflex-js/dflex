@@ -264,11 +264,13 @@ class Droppable extends DistanceCalculator {
 
         const { currentPosition: elmPosition, grid } = store.registry[lastElm];
 
+        const { elmSyntheticOffset } = migration;
+
         // Update the offset accumulation. It has the old offset from the
         // one but now it has migrated to the new container.
         this.draggable.occupiedPosition.setAxes(
-          elmPosition.x + draggedOffset.width + migration.elmSyntheticOffset.x,
-          elmPosition.y + draggedOffset.height + migration.elmSyntheticOffset.y
+          elmPosition.x + draggedOffset.width + elmSyntheticOffset.x,
+          elmPosition.y + draggedOffset.height + elmSyntheticOffset.y
         );
 
         this.draggable.occupiedTranslate.setAxes(0, 0);

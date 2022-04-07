@@ -67,7 +67,6 @@ class DraggableAxes
 
     const siblings = store.getElmBranchByKey(SK);
 
-    const firstElmId = siblings[order.self];
     const secondElmId = siblings[order.self + 1];
 
     const lastElmId = siblings[siblings.length - 1];
@@ -78,15 +77,13 @@ class DraggableAxes
       {
         x: secondElmId
           ? Math.abs(
-              store.registry[firstElmId].currentPosition.x -
-                store.registry[firstElmId].offset.width -
+              element.getRectRight() -
                 store.registry[secondElmId].currentPosition.x
             )
           : 0,
         y: secondElmId
           ? Math.abs(
-              store.registry[firstElmId].currentPosition.y +
-                store.registry[firstElmId].offset.height -
+              element.getRectBottom() -
                 store.registry[secondElmId].currentPosition.y
             )
           : 0,
