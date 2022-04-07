@@ -1,4 +1,4 @@
-import { IPointNum } from "../Point";
+import { IPointAxes, IPointNum } from "../Point";
 
 export interface IAbstract {
   index: number;
@@ -10,8 +10,18 @@ export interface IMigration {
   /** False when migration transformation not completed yet. */
   isMigrationCompleted: boolean;
 
+  /**
+   * The space between first element in the list and the second element.
+   * Usage: This space equalizer used to create new element when migration is
+   * completed.
+   */
+  firstElmSyntheticSpace: IPointAxes;
+
+  /**
+   * Preserve the last element position in the list .
+   * Usage: Getting this position when the dragged is going back from the tail.
+   */
   lastElmPosition: IPointNum;
-  firstElmPosition: IPointNum;
 
   /** Get the latest migrations instance */
   latest(): IAbstract;
@@ -29,5 +39,6 @@ export interface IMigration {
    */
   add(index: number, key: string): boolean;
 
+  /** Get the migration done  */
   complete(firstElmPosition: IPointNum, lastElmPosition: IPointNum): void;
 }
