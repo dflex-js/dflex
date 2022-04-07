@@ -75,16 +75,20 @@ class DraggableAxes
       order.self,
       SK,
       {
-        x: Math.abs(
-          store.registry[firstElmId].currentPosition.x -
-            store.registry[firstElmId].offset.width -
-            store.registry[secondElmId].currentPosition.x
-        ),
-        y: Math.abs(
-          store.registry[firstElmId].currentPosition.y +
-            store.registry[firstElmId].offset.height -
-            store.registry[secondElmId].currentPosition.y
-        ),
+        x: secondElmId
+          ? Math.abs(
+              store.registry[firstElmId].currentPosition.x -
+                store.registry[firstElmId].offset.width -
+                store.registry[secondElmId].currentPosition.x
+            )
+          : 0,
+        y: secondElmId
+          ? Math.abs(
+              store.registry[firstElmId].currentPosition.y +
+                store.registry[firstElmId].offset.height -
+                store.registry[secondElmId].currentPosition.y
+            )
+          : 0,
       },
       store.registry[lastElmId].currentPosition
     );
