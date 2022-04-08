@@ -1,13 +1,13 @@
 import Generator from "@dflex/dom-gen";
 
 import CoreInstance from "@dflex/core-instance";
-import type { CoreInstanceInterface, CoreInput } from "@dflex/core-instance";
+import type { ICore, CoreInput } from "@dflex/core-instance";
 
 import type { RegisterInput } from "./types";
 
 class Store {
   registry: {
-    [id: string]: CoreInstanceInterface;
+    [id: string]: ICore;
   };
 
   DOMGen: Generator;

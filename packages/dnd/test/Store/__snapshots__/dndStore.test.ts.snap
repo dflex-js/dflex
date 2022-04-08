@@ -2,7 +2,7 @@
 
 exports[`DnD Store Element is initiated 1`] = `
 Object {
-  "id-1": CoreInstance {
+  "id-1": CoreUtils {
     "animatedFrame": null,
     "depth": 0,
     "id": "id-1",
@@ -22,7 +22,7 @@ Object {
       data-index="0"
     />,
   },
-  "id-2": CoreInstance {
+  "id-2": CoreUtils {
     "animatedFrame": null,
     "depth": 0,
     "id": "id-2",
@@ -42,7 +42,7 @@ Object {
       data-index="1"
     />,
   },
-  "id-3": CoreInstance {
+  "id-3": CoreUtils {
     "animatedFrame": null,
     "depth": 0,
     "id": "id-3",
@@ -62,7 +62,7 @@ Object {
       data-index="2"
     />,
   },
-  "id-4": CoreInstance {
+  "id-4": CoreUtils {
     "animatedFrame": null,
     "depth": 0,
     "id": "id-4",
@@ -96,7 +96,7 @@ Object {
       "id-4",
     ],
   },
-  "element": CoreInstance {
+  "element": CoreUtils {
     "animatedFrame": null,
     "depth": 0,
     "id": "id-1",

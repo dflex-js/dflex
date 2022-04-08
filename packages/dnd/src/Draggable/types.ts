@@ -5,7 +5,7 @@ import type {
   ThresholdCoordinate,
   IMigration,
 } from "@dflex/utils";
-import type { CoreInstanceInterface } from "@dflex/core-instance";
+import type { ICore } from "@dflex/core-instance";
 import type { AbstractDraggableInterface } from "@dflex/draggable";
 
 import type { ScrollOptWithThreshold } from "../types";
@@ -30,7 +30,7 @@ export interface Restrictions {
 }
 
 export interface DraggableAxesInterface
-  extends AbstractDraggableInterface<CoreInstanceInterface> {
+  extends AbstractDraggableInterface<ICore> {
   /** Dragged threshold  */
   readonly threshold: ThresholdInterface;
 
@@ -69,7 +69,7 @@ export interface DraggableAxesInterface
 export interface DraggableInteractiveInterface extends DraggableAxesInterface {
   readonly operationID: string;
   setOfTransformedIds?: Set<string>;
-  siblingsContainer: CoreInstanceInterface | null;
+  siblingsContainer: ICore | null;
   scroll: ScrollOptWithThreshold;
   readonly occupiedPosition: IPointNum;
   readonly occupiedTranslate: IPointNum;
