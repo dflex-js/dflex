@@ -1,10 +1,10 @@
-import type { AbstractCoreInterface } from "@dflex/core-instance";
+import type { IAbstract } from "@dflex/core-instance";
 import { PointNum } from "@dflex/utils";
 import type { IPointNum, IPointAxes } from "@dflex/utils";
 
 import type { AbstractDraggableInterface, DraggedStyle } from "./types";
 
-class AbstractDraggable<T extends AbstractCoreInterface>
+class AbstractDraggable<T extends IAbstract>
   implements AbstractDraggableInterface<T>
 {
   draggedElm: T;

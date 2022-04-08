@@ -1,10 +1,10 @@
-import CoreInstance from "./CoreInstance";
+import CoreInstance from "./CoreUtils";
 
 export type {
-  AbstractInterface as AbstractCoreInterface,
+  IAbstract,
   CoreInput,
   TransitionHistory,
-  CoreInstanceInterface,
+  ICoreUtils as ICore,
 } from "./types";
 
 export default CoreInstance;

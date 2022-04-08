@@ -2,7 +2,7 @@ import { PointNum } from "@dflex/utils";
 import type { IPointNum } from "@dflex/utils";
 
 import type {
-  AbstractInterface,
+  IAbstract,
   AbstractInput,
   AbstractOpts,
   AllowedAttributes,
@@ -10,7 +10,7 @@ import type {
   AttributesIndicators,
 } from "./types";
 
-class AbstractInstance implements AbstractInterface {
+class Abstract implements IAbstract {
   ref!: HTMLElement | null;
 
   id: string;
@@ -147,4 +147,4 @@ class AbstractInstance implements AbstractInterface {
   }
 }
 
-export default AbstractInstance;
+export default Abstract;

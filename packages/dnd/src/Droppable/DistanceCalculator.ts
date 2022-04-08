@@ -1,4 +1,4 @@
-import type { CoreInstanceInterface } from "@dflex/core-instance";
+import type { ICore } from "@dflex/core-instance";
 
 import { Direction, PointNum } from "@dflex/utils";
 import type { IPointNum, Axis } from "@dflex/utils";
@@ -12,7 +12,7 @@ import type { DistanceCalculatorInterface } from "./types";
 
 function emitInteractiveEvent(
   type: InteractivityEvent["type"],
-  element: CoreInstanceInterface
+  element: ICore
 ) {
   const evt: InteractivityEvent = {
     id: element.id,
@@ -64,7 +64,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
   }
 
   protected getDiff(
-    element: CoreInstanceInterface,
+    element: ICore,
     axis: Axis,
     type: "offset" | "occupiedPosition" | "currentPosition"
   ) {
@@ -83,7 +83,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     let equalizer: Direction = 1;
 
     if (type === "currentPosition") {
-      diff = currentPosition[axis] - draggedPosition[axis] - +translate[axis];
+      diff = currentPosition[axis] - draggedPosition[axis] - translate[axis];
     } else if (type === "occupiedPosition") {
       diff = Math.abs(currentPosition[axis] - occupiedPosition[axis]);
     } else {
@@ -100,7 +100,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
   }
 
   #setDistanceBtwPositions(
-    element: CoreInstanceInterface,
+    element: ICore,
     axis: Axis,
     elmDirection: Direction
   ) {
@@ -122,7 +122,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     }
   }
 
-  #updateDraggable(element: CoreInstanceInterface, elmDirection: Direction) {
+  #updateDraggable(element: ICore, elmDirection: Direction) {
     const { currentPosition, grid } = element;
 
     this.draggable.occupiedPosition.setAxes(

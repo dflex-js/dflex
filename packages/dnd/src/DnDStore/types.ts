@@ -4,7 +4,7 @@ import type {
   IPointNum,
   ITracker,
 } from "@dflex/utils";
-import type { CoreInstanceInterface } from "@dflex/core-instance";
+import type { ICore } from "@dflex/core-instance";
 import type { RegisterInputMeta } from "@dflex/store";
 
 import type { DraggedEvent, LayoutState } from "../types";
@@ -12,8 +12,8 @@ import type { DraggedEvent, LayoutState } from "../types";
 import type { ScrollInterface } from "../Plugins/Scroll";
 
 export interface ElmTree {
-  element: CoreInstanceInterface;
-  parent: CoreInstanceInterface | null;
+  element: ICore;
+  parent: ICore | null;
   branches: {
     siblings: string[];
     parents: string[];
