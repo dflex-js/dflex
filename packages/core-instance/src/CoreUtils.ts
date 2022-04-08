@@ -1,5 +1,3 @@
-/* eslint-disable no-param-reassign */
-
 import type { Axis } from "@dflex/utils";
 import Core from "./Core";
 import type { ICoreUtils } from "./types";
