@@ -23,6 +23,8 @@ class Migration implements IMigration {
 
   elmSyntheticOffset!: IPointAxes;
 
+  insertionTransform!: IPointAxes;
+
   constructor(
     index: number,
     key: string,
@@ -44,23 +46,18 @@ class Migration implements IMigration {
     this.latest().index = index;
   }
 
-  add(index: number, key: string) {
-    // Check if the key is already the last element in the list.
-    if (this.#migrations[this.#migrations.length - 1].key === key) {
-      this.setIndex(index);
-      return false;
-    }
-
+  add(index: number, key: string, insertionTransform: IPointAxes) {
     this.#migrations.push(new AbstractMigration(index, key));
 
     this.isMigrationCompleted = false;
 
-    return true;
+    this.insertionTransform = { ...insertionTransform };
   }
 
   complete(firstElmPosition: IPointAxes, lastElmPosition: IPointNum) {
     this.isMigrationCompleted = true;
     this.elmSyntheticOffset = { ...firstElmPosition };
+
     this.lastElmPosition.clone(lastElmPosition);
   }
 }

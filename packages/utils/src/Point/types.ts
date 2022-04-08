@@ -1,15 +1,14 @@
-export interface IPoint<T = number> {
-  x: T;
-  y: T;
-  setAxes(x: T, y: T): void;
-  clone(target: IPoint<T>): void;
-  isEqual(target: IPoint<T>): boolean;
-}
-
 /** X/Y object without the class instance. */
 export interface IPointAxes<T = number> {
   x: T;
   y: T;
+}
+export interface IPoint<T = number> {
+  x: T;
+  y: T;
+  setAxes(x: T, y: T): void;
+  clone(target: IPointAxes<T>): void;
+  isEqual(target: IPointAxes<T>): boolean;
 }
 
 export interface IPointNum extends IPoint<number> {
