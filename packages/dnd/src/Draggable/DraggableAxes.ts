@@ -75,18 +75,22 @@ class DraggableAxes
       order.self,
       SK,
       {
-        x: secondElmId
-          ? Math.abs(
-              element.getRectRight() -
-                store.registry[secondElmId].currentPosition.x
-            )
-          : 0,
-        y: secondElmId
-          ? Math.abs(
-              element.getRectBottom() -
-                store.registry[secondElmId].currentPosition.y
-            )
-          : 0,
+        x:
+          secondElmId &&
+          !element.hasSamePosition(store.registry[secondElmId], "x")
+            ? Math.abs(
+                element.getRectRight() -
+                  store.registry[secondElmId].currentPosition.x
+              )
+            : 0,
+        y:
+          secondElmId &&
+          !element.hasSamePosition(store.registry[secondElmId], "y")
+            ? Math.abs(
+                element.getRectBottom() -
+                  store.registry[secondElmId].currentPosition.y
+              )
+            : 0,
       },
       store.registry[lastElmId].currentPosition
     );
