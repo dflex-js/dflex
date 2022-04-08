@@ -85,6 +85,7 @@ export interface DnDStoreInterface {
 
   readonly tracker: ITracker;
   readonly layoutState: LayoutState;
+  handleElmMigration(SK: string, elmID: string, offset: RectDimensions): void;
   onStateChange(state: LayoutState): void;
   emitEvent(event: DraggedEvent): void;
   register(element: RegisterInputMeta, x?: boolean): void;
