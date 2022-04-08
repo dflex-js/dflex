@@ -66,11 +66,15 @@ class DistanceCalculator implements DistanceCalculatorInterface {
   protected getDiff(
     element: CoreInstanceInterface,
     axis: Axis,
-    type: "position" | "offset"
+    type: "offset" | "occupiedPosition" | "currentPosition"
   ) {
     const {
       occupiedPosition,
-      draggedElm: { offset: draggedRect },
+      draggedElm: {
+        offset: draggedRect,
+        currentPosition: draggedPosition,
+        translate,
+      },
     } = this.draggable;
 
     const { currentPosition, offset: elmOffset } = element;
@@ -78,10 +82,10 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     let diff = 0;
     let equalizer: Direction = 1;
 
-    if (type === "position") {
+    if (type === "currentPosition") {
+      diff = currentPosition[axis] - draggedPosition[axis] - +translate[axis];
+    } else if (type === "occupiedPosition") {
       diff = Math.abs(currentPosition[axis] - occupiedPosition[axis]);
-
-      // equalizer = currentPosition[axis] < occupiedPosition[axis] ? 1 : -1;
     } else {
       const rectType = axis === "x" ? "width" : "height";
 
@@ -95,12 +99,12 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     return diff;
   }
 
-  setDistanceBtwPositions(
+  #setDistanceBtwPositions(
     element: CoreInstanceInterface,
     axis: Axis,
     elmDirection: Direction
   ) {
-    const positionDiff = this.getDiff(element, axis, "position");
+    const positionDiff = this.getDiff(element, axis, "occupiedPosition");
 
     this.#draggedTransition[axis] = positionDiff;
     this.#elmTransition[axis] = positionDiff;
@@ -118,7 +122,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     }
   }
 
-  updateDraggable(element: CoreInstanceInterface, elmDirection: Direction) {
+  #updateDraggable(element: CoreInstanceInterface, elmDirection: Direction) {
     const { currentPosition, grid } = element;
 
     this.draggable.occupiedPosition.setAxes(
@@ -138,8 +142,6 @@ class DistanceCalculator implements DistanceCalculatorInterface {
   /**
    * Updates element instance and calculates the required transform distance. It
    * invokes for each eligible element in the parent container.
-   *
-   * @param id -
    */
   protected updateElement(id: string, isIncrease: boolean) {
     const element = store.registry[id];
@@ -174,9 +176,9 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     this.#draggedOffset.setAxes(0, 0);
     this.#elmTransition.setAxes(0, 0);
 
-    this.setDistanceBtwPositions(element, axis, elmDirection);
+    this.#setDistanceBtwPositions(element, axis, elmDirection);
 
-    this.updateDraggable(element, elmDirection);
+    this.#updateDraggable(element, elmDirection);
 
     this.draggable.updateNumOfElementsTransformed(elmDirection);
 
