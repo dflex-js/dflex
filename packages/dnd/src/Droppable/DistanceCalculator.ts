@@ -63,37 +63,58 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     this.isParentLocked = false;
   }
 
-  setDistanceIndicators(
+  protected getDiff(
+    element: CoreInstanceInterface,
+    axis: Axis,
+    type: "position" | "offset"
+  ) {
+    const {
+      occupiedPosition,
+      draggedElm: { offset: draggedRect },
+    } = this.draggable;
+
+    const { currentPosition, offset: elmOffset } = element;
+
+    let diff = 0;
+    let equalizer: Direction = 1;
+
+    if (type === "position") {
+      diff = Math.abs(currentPosition[axis] - occupiedPosition[axis]);
+
+      // equalizer = currentPosition[axis] < occupiedPosition[axis] ? 1 : -1;
+    } else {
+      const rectType = axis === "x" ? "width" : "height";
+
+      diff = Math.abs(elmOffset[rectType] - draggedRect[rectType]);
+
+      equalizer = draggedRect[rectType] < elmOffset[rectType] ? 1 : -1;
+
+      diff *= equalizer;
+    }
+
+    return diff;
+  }
+
+  setDistanceBtwPositions(
     element: CoreInstanceInterface,
     axis: Axis,
     elmDirection: Direction
   ) {
-    const {
-      occupiedPosition: occupiedOffset,
-      draggedElm: { offset: draggedRect },
-    } = this.draggable;
-
-    const { currentPosition: elmPosition, offset: elmOffset } = element;
-
-    const positionDiff = Math.abs(elmPosition[axis] - occupiedOffset[axis]);
+    const positionDiff = this.getDiff(element, axis, "position");
 
     this.#draggedTransition[axis] = positionDiff;
     this.#elmTransition[axis] = positionDiff;
 
-    const rectType = axis === "x" ? "width" : "height";
-
-    const rectDiff = Math.abs(elmOffset[rectType] - draggedRect[rectType]);
+    const rectDiff = this.getDiff(element, axis, "offset");
 
     // Then dragged and element transition already set.
     if (rectDiff === 0) return;
 
-    const equalizer = draggedRect[rectType] < elmOffset[rectType] ? 1 : -1;
-
     if (elmDirection === -1) {
-      this.#draggedTransition[axis] += equalizer * rectDiff;
-      this.#draggedOffset[axis] = equalizer * rectDiff;
+      this.#draggedTransition[axis] += rectDiff;
+      this.#draggedOffset[axis] = rectDiff;
     } else {
-      this.#elmTransition[axis] += -1 * equalizer * rectDiff;
+      this.#elmTransition[axis] += -1 * rectDiff;
     }
   }
 
@@ -153,7 +174,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     this.#draggedOffset.setAxes(0, 0);
     this.#elmTransition.setAxes(0, 0);
 
-    this.setDistanceIndicators(element, axis, elmDirection);
+    this.setDistanceBtwPositions(element, axis, elmDirection);
 
     this.updateDraggable(element, elmDirection);
 
