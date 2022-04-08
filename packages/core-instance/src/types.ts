@@ -4,6 +4,7 @@ import type {
   IPointAxes,
   Direction,
   Axes,
+  Axis,
 } from "@dflex/utils";
 
 export interface AbstractOpts {
@@ -109,6 +110,7 @@ export interface CoreInstanceInterface extends AbstractInterface {
   isPositionedLeft(elmX: number): boolean;
   getRectBottom(): number;
   getRectRight(): number;
+  hasSamePosition(elm: this, axis: Axis): boolean;
   resume(scrollX: number, scrollY: number): void;
   changeVisibility(isVisible: boolean): void;
   setPosition(

@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
 
 import { PointNum } from "@dflex/utils";
-
 import type {
+  Axis,
   RectDimensions,
   Direction,
   Axes,
@@ -141,6 +141,10 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
 
   getRectRight() {
     return this.currentPosition.x + this.offset.width;
+  }
+
+  hasSamePosition(elm: this, axis: Axis) {
+    return this.currentPosition[axis] === elm.currentPosition[axis];
   }
 
   transformElm() {
