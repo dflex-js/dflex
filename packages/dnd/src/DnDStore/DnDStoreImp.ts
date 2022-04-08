@@ -376,6 +376,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     });
   }
 
+  // @ts-expect-error
   handleElmMigration(SK: string, elmID: string, offset: RectDimensions) {
     // this.#assignSiblingsGrid(elmID, SK, offset);
 
