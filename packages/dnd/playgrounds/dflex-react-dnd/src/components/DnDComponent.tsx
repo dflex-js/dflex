@@ -65,7 +65,8 @@ export const TodoItem = ({
 
     // Avoid right mouse click and ensure id
     if (typeof button === "number" && button === 0) {
-      if (id) {
+      // avoid dragging container (depth = 1)
+      if (id && depth === 0) {
         document.addEventListener("mouseup", onMouseUp);
         document.addEventListener("mousemove", onMouseMove);
         // document.addEventListener("scroll", onMouseScroll);
