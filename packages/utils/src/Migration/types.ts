@@ -42,5 +42,5 @@ export interface IMigration {
   add(index: number, key: string, insertionTransform: IPointAxes): void;
 
   /** Get the migration done  */
-  complete(firstElmPosition: IPointNum, lastElmPosition: IPointNum): void;
+  complete(lastElmPosition: IPointNum): void;
 }

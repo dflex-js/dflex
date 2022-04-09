@@ -127,5 +127,6 @@ export interface ICoreUtils extends ICore {
   isPositionedLeft(elmX: number): boolean;
   getRectBottom(): number;
   getRectRight(): number;
+  getOffset(): RectDimensions;
   hasSamePosition(elm: this, axis: Axis): boolean;
 }

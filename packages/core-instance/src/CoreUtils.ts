@@ -22,6 +22,15 @@ class CoreUtils extends Core implements ICoreUtils {
   getRectRight() {
     return this.currentPosition.x + this.offset.width;
   }
+
+  getOffset() {
+    return {
+      width: this.offset.width,
+      height: this.offset.height,
+      top: this.currentPosition.y,
+      left: this.currentPosition.x,
+    };
+  }
 }
 
 export default CoreUtils;

@@ -201,8 +201,9 @@ class Droppable extends DistanceCalculator {
   }
 
   #detectNearestElm() {
-    const siblings =
-      store.DOMGen.branches[this.draggable.migration.latest().key];
+    const { migration, draggedElm, occupiedTranslate } = this.draggable;
+
+    const siblings = store.DOMGen.branches[migration.latest().key];
 
     /**
      * If tempIndex is zero, the dragged is coming from the top. So, move them
@@ -229,15 +230,26 @@ class Droppable extends DistanceCalculator {
       this.#moveDown(insertAt);
     }
 
-    this.draggable.draggedElm.rmDateset("draggedOutContainer");
+    draggedElm.rmDateset("draggedOutContainer");
 
-    if (!this.draggable.migration.isMigrationCompleted) {
-      this.draggable.occupiedTranslate.clone(
-        this.draggable.migration.insertionTransform
+    if (!migration.isMigrationCompleted) {
+      occupiedTranslate.clone(migration.insertionTransform);
+      const activeList = store.getElmBranchByKey(migration.latest().key);
+
+      const lastElmId = activeList[activeList.length - 1];
+
+      migration.complete(store.registry[lastElmId].currentPosition);
+
+      store.handleElmMigration(
+        migration.latest().key,
+        store.registry[lastElm].id,
+        {
+          left: newElmOffset.x,
+          top: newElmOffset.y,
+          width: elmOffset.width,
+          height: elmOffset.height,
+        }
       );
-
-      // this.draggable.migration.isMigrationCompleted = true;
-      // this.draggable.migration.complete();
     }
   }
 
@@ -271,17 +283,19 @@ class Droppable extends DistanceCalculator {
         // Getting the last element of the new list.
         const lastElm = newSiblingList[newSiblingList.length - 1];
 
-        const {
-          grid,
-          currentPosition: elmPosition,
-          offset: elmOffset,
-        } = store.registry[lastElm];
+        const { grid, currentPosition: elmPosition } = store.registry[lastElm];
 
         const { elmSyntheticOffset } = migration;
 
         const newElmOffset = {
-          x: elmPosition.x,
-          y: elmPosition.y + draggedOffset.height + elmSyntheticOffset.y,
+          x:
+            elmSyntheticOffset.x > 0
+              ? elmPosition.x + draggedOffset.height + elmSyntheticOffset.x
+              : elmPosition.x,
+          y:
+            elmSyntheticOffset.y > 0
+              ? elmPosition.y + draggedOffset.height + elmSyntheticOffset.y
+              : elmPosition.y,
         };
 
         // Update the offset accumulation. It has the old offset from the
@@ -308,13 +322,6 @@ class Droppable extends DistanceCalculator {
         this.draggable.draggedElm.keys = {
           ...store.registry[firstElmNew].keys,
         };
-
-        store.handleElmMigration(newSK, store.registry[lastElm].id, {
-          left: newElmOffset.x,
-          top: newElmOffset.y,
-          width: elmOffset.width,
-          height: elmOffset.height,
-        });
 
         // Insert the element to the new list. Empty string because when dragged
         // is out the branch sets its index as "".

@@ -21,21 +21,22 @@ class Migration implements IMigration {
 
   lastElmPosition: IPointNum;
 
-  elmSyntheticOffset!: IPointAxes;
+  elmSyntheticOffset: IPointAxes;
 
   insertionTransform!: IPointAxes;
 
   constructor(
     index: number,
     key: string,
-    firstElmPosition: IPointAxes,
+    elmSyntheticOffset: IPointAxes,
     lastElmPosition: IPointNum
   ) {
     this.#migrations = [new AbstractMigration(index, key)];
 
+    this.elmSyntheticOffset = { ...elmSyntheticOffset };
     this.lastElmPosition = new PointNum(0, 0);
 
-    this.complete(firstElmPosition, lastElmPosition);
+    this.complete(lastElmPosition);
   }
 
   latest() {
@@ -54,9 +55,8 @@ class Migration implements IMigration {
     this.insertionTransform = { ...insertionTransform };
   }
 
-  complete(firstElmPosition: IPointAxes, lastElmPosition: IPointNum) {
+  complete(lastElmPosition: IPointNum) {
     this.isMigrationCompleted = true;
-    this.elmSyntheticOffset = { ...firstElmPosition };
 
     this.lastElmPosition.clone(lastElmPosition);
   }
