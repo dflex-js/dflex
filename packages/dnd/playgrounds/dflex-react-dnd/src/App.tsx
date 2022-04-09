@@ -16,6 +16,7 @@ import {
   ScrollMulti,
   ScrollEssential,
   UnRegisteredLists,
+  Trello,
 } from "./components";
 
 function App() {
@@ -42,6 +43,7 @@ function App() {
         <Route path="/restricted-self" element={<RestrictedSelf />} />
         <Route path="/todo" element={<TodoList />} />
         <Route path="/todo-case-1" element={<TodoListCase1 />} />
+        <Route path="/todo-trello" element={<Trello />} />
         <Route path="/depth-1" element={<Depth1 />} />
         <Route path="/unregistered" element={<UnRegisteredLists />} />
         <Route

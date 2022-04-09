@@ -9,7 +9,6 @@ import type {
   LayoutStateEvent,
 } from "@dflex/dnd";
 import s from "../../Demo.module.css";
-import { Button, Stack } from "@chakra-ui/react";
 import DnDComponent from "../../DnDComponent";
 
 const TodoList = () => {
@@ -62,9 +61,6 @@ const TodoList = () => {
   return (
     <div className={s.root}>
       <div className={s.todo}>
-        <Stack>
-          <Button variant="solid">Hi</Button>
-        </Stack>
         <ul>
           {tasks.map(({ msg, id, style }) => (
             <DnDComponent

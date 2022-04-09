@@ -7,7 +7,7 @@ export {
   RestrictedContainerDiff,
 } from "./restrictions";
 
-export { TodoList, TodoListCase1 } from "./todo";
+export { TodoList, TodoListCase1, Trello } from "./todo";
 
 export { default as UnRegisteredLists } from "./mixedRegisteredElements";
 
