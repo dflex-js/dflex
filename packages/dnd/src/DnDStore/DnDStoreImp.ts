@@ -376,10 +376,12 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     });
   }
 
-  handleElmMigration(newSK: string, oldSK: string, offset: RectDimensions) {
-    // this.#assignSiblingsGrid(elmID, SK, offset);
-
-    this.#assignSiblingsBoundariesAndAlignment(newSK, offset);
+  handleElmMigration(
+    newSK: string,
+    oldSK: string,
+    insertionOffset: RectDimensions
+  ) {
+    this.#assignSiblingsBoundariesAndAlignment(newSK, insertionOffset);
 
     this.DOMGen.branches[oldSK].forEach((elmID) => {
       if (elmID.length > 0) {
