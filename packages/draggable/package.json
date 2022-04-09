@@ -22,7 +22,7 @@
     "build:esm": "esbuild src/index.ts --bundle --format=esm --outfile=dist/dflex-draggable.mjs",
     "build:prod": "esbuild src/index.ts --bundle --format=cjs --minify --outfile=dist/dflex-draggable.min.js",
     "build": "pnpm clean && pnpm build:cjs && pnpm build:esm && pnpm build:prod && pnpm emit",
-    "server": "pnpm start --filter dflex-react-draggable",
+    "server": "pnpm --filter dflex-react-draggable dev",
     "test": "jest"
   },
   "homepage": "https://github.com/dflex-js/dflex/tree/master/packages/draggable",
