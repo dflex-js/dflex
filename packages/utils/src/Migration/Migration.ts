@@ -1,6 +1,8 @@
 /* eslint-disable max-classes-per-file */
 
 import { IPointAxes, IPointNum, PointNum } from "../Point";
+
+import type { RectDimensions } from "../types";
 import type { IAbstract, IMigration } from "./types";
 
 class AbstractMigration implements IAbstract {
@@ -23,7 +25,9 @@ class Migration implements IMigration {
 
   elmSyntheticOffset: IPointAxes;
 
-  insertionTransform!: IPointAxes;
+  insertionTransform!: IPointAxes | null;
+
+  insertionOffset!: RectDimensions | null;
 
   constructor(
     index: number,
@@ -43,22 +47,35 @@ class Migration implements IMigration {
     return this.#migrations[this.#migrations.length - 1];
   }
 
+  prev() {
+    return this.#migrations[this.#migrations.length - 2];
+  }
+
   setIndex(index: number) {
     this.latest().index = index;
   }
 
-  add(index: number, key: string, insertionTransform: IPointAxes) {
+  add(
+    index: number,
+    key: string,
+    insertionTransform: IPointAxes,
+    insertionOffset: RectDimensions
+  ) {
     this.#migrations.push(new AbstractMigration(index, key));
 
     this.isMigrationCompleted = false;
 
     this.insertionTransform = { ...insertionTransform };
+    this.insertionOffset = { ...insertionOffset };
   }
 
   complete(lastElmPosition: IPointNum) {
     this.isMigrationCompleted = true;
 
     this.lastElmPosition.clone(lastElmPosition);
+
+    this.insertionTransform = null;
+    this.insertionOffset = null;
   }
 }
 
