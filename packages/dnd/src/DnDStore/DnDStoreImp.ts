@@ -376,10 +376,21 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     });
   }
 
-  handleElmMigration(SK: string, _elmID: string, offset: RectDimensions) {
-    // this.#assignSiblingsGrid(elmID, SK, offset);
+  handleElmMigration(
+    newSK: string,
+    oldSK: string,
+    insertionOffset: RectDimensions
+  ) {
+    this.#assignSiblingsBoundariesAndAlignment(newSK, insertionOffset);
 
-    this.#assignSiblingsBoundariesAndAlignment(SK, offset);
+    this.DOMGen.branches[oldSK].forEach((elmID) => {
+      if (elmID.length > 0) {
+        this.#assignSiblingsBoundariesAndAlignment(
+          oldSK,
+          this.registry[elmID].getOffset()
+        );
+      }
+    });
   }
 
   #assignSiblingsGrid(id: string, SK: string, rect: RectDimensions) {

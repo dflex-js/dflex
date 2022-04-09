@@ -1,6 +1,8 @@
 /* eslint-disable max-classes-per-file */
 
 import { IPointAxes, IPointNum, PointNum } from "../Point";
+
+import type { RectDimensions } from "../types";
 import type { IAbstract, IMigration } from "./types";
 
 class AbstractMigration implements IAbstract {
@@ -21,44 +23,59 @@ class Migration implements IMigration {
 
   lastElmPosition: IPointNum;
 
-  elmSyntheticOffset!: IPointAxes;
+  elmSyntheticOffset: IPointAxes;
 
-  insertionTransform!: IPointAxes;
+  insertionTransform!: IPointAxes | null;
+
+  insertionOffset!: RectDimensions | null;
 
   constructor(
     index: number,
     key: string,
-    firstElmPosition: IPointAxes,
+    elmSyntheticOffset: IPointAxes,
     lastElmPosition: IPointNum
   ) {
     this.#migrations = [new AbstractMigration(index, key)];
 
+    this.elmSyntheticOffset = { ...elmSyntheticOffset };
     this.lastElmPosition = new PointNum(0, 0);
 
-    this.complete(firstElmPosition, lastElmPosition);
+    this.complete(lastElmPosition);
   }
 
   latest() {
     return this.#migrations[this.#migrations.length - 1];
   }
 
+  prev() {
+    return this.#migrations[this.#migrations.length - 2];
+  }
+
   setIndex(index: number) {
     this.latest().index = index;
   }
 
-  add(index: number, key: string, insertionTransform: IPointAxes) {
+  add(
+    index: number,
+    key: string,
+    insertionTransform: IPointAxes,
+    insertionOffset: RectDimensions
+  ) {
     this.#migrations.push(new AbstractMigration(index, key));
 
     this.isMigrationCompleted = false;
 
     this.insertionTransform = { ...insertionTransform };
+    this.insertionOffset = { ...insertionOffset };
   }
 
-  complete(firstElmPosition: IPointAxes, lastElmPosition: IPointNum) {
+  complete(lastElmPosition: IPointNum) {
     this.isMigrationCompleted = true;
-    this.elmSyntheticOffset = { ...firstElmPosition };
 
     this.lastElmPosition.clone(lastElmPosition);
+
+    this.insertionTransform = null;
+    this.insertionOffset = null;
   }
 }
 

@@ -1,4 +1,5 @@
-import { IPointAxes, IPointNum } from "../Point";
+import type { IPointAxes, IPointNum } from "../Point";
+import type { RectDimensions } from "../types";
 
 export interface IAbstract {
   index: number;
@@ -23,10 +24,15 @@ export interface IMigration {
    */
   lastElmPosition: IPointNum;
 
-  insertionTransform: IPointAxes;
+  insertionTransform: IPointAxes | null;
+
+  insertionOffset: RectDimensions | null;
 
   /** Get the latest migrations instance */
   latest(): IAbstract;
+
+  /** Get the previous migrations instance */
+  prev(): IAbstract;
 
   /**
    * We only update indexes considering migration definition when it happens
@@ -36,11 +42,15 @@ export interface IMigration {
   setIndex(index: number): void;
 
   /**
-   * True when migration from one container to another.Otherwise false when
-   * returning to the same container.
+   * Add new migration.
    */
-  add(index: number, key: string, insertionTransform: IPointAxes): void;
+  add(
+    index: number,
+    key: string,
+    insertionTransform: IPointAxes,
+    insertionOffset: RectDimensions
+  ): void;
 
   /** Get the migration done  */
-  complete(firstElmPosition: IPointNum, lastElmPosition: IPointNum): void;
+  complete(lastElmPosition: IPointNum): void;
 }
