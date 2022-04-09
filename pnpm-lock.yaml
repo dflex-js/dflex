@@ -5,6 +5,7 @@ importers:
   .:
     specifiers:
       '@types/jest': ^27.4.1
+      '@types/node': ^17.0.23
       esbuild: ^0.14.30
       esbuild-jest: ^0.5.0
       eslint-config-dflex: '*'
@@ -18,6 +19,7 @@ importers:
       vite: ^2.9.1
     devDependencies:
       '@types/jest': 27.4.1
+      '@types/node': 17.0.23
       esbuild: 0.14.30
       esbuild-jest: 0.5.0_esbuild@0.14.30
       eslint-config-dflex: link:scripts/eslint-config-dflex
@@ -26,7 +28,7 @@ importers:
       lerna: 4.0.0
       prettier: 2.6.2
       rimraf: 3.0.2
-      ts-node: 10.7.0_typescript@4.6.3
+      ts-node: 10.7.0_ee885bc7281b682b6adbed6ae09ee090
       typescript: 4.6.3
       vite: 2.9.1
 
@@ -5479,7 +5481,7 @@ packages:
       pretty-format: 27.5.1
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.7.0_typescript@4.6.3
+      ts-node: 10.7.0_ee885bc7281b682b6adbed6ae09ee090
     transitivePeerDependencies:
       - bufferutil
       - canvas
@@ -8546,7 +8548,7 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /ts-node/10.7.0_typescript@4.6.3:
+  /ts-node/10.7.0_ee885bc7281b682b6adbed6ae09ee090:
     resolution: {integrity: sha512-TbIGS4xgJoX2i3do417KSaep1uRAW/Lu+WAL2doDHC0D6ummjirVOXU5/7aiZotbQ5p1Zp9tP7U6cYhA0O7M8A==}
     hasBin: true
     peerDependencies:
@@ -8565,6 +8567,7 @@ packages:
       '@tsconfig/node12': 1.0.9
       '@tsconfig/node14': 1.0.1
       '@tsconfig/node16': 1.0.2
+      '@types/node': 17.0.23
       acorn: 8.7.0
       acorn-walk: 8.2.0
       arg: 4.1.3
