@@ -292,23 +292,33 @@ class Droppable extends DistanceCalculator {
 
         if (newSiblingList.length > 0) {
           // Getting the last element of the new list.
-          const lastElm = newSiblingList[newSiblingList.length - 1];
+          const lastElmId = newSiblingList[newSiblingList.length - 1];
+          const lastElm = store.registry[lastElmId];
 
-          ({ grid, currentPosition: elmPosition } = store.registry[lastElm]);
+          if (!lastElm || !lastElm.currentPosition) {
+            if (process.env.NODE_ENV !== "production") {
+              // eslint-disable-next-line no-console
+              console.error(
+                `Transforming the dragged element to the new container in interrupted.\n\n`,
+                `[${lastElmId}] is not fully registered in the store.\n`,
+                `Please check the following instance:\n`,
+                lastElm
+              );
+            }
 
-          const firstElmNew = newSiblingList[0];
+            return;
+          }
 
-          diffX = this.getDiff(
-            store.registry[firstElmNew],
-            "x",
-            "currentPosition"
-          );
+          ({ grid, currentPosition: elmPosition } = lastElm);
 
-          diffY = this.getDiff(
-            store.registry[firstElmNew],
-            "y",
-            "currentPosition"
-          );
+          // Getting the first from the new list.
+          const firstElmNewId = newSiblingList[0];
+          const firstElmNew = store.registry[firstElmNewId];
+
+          diffX = this.getDiff(firstElmNew, "x", "currentPosition");
+          console.log("file: Droppable.ts ~ line 317 ~ diffX", diffX);
+
+          diffY = this.getDiff(firstElmNew, "y", "currentPosition");
         }
 
         const { elmSyntheticOffset } = migration;
