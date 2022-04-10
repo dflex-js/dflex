@@ -1,9 +1,9 @@
 {
   "private": true,
   "scripts": {
-    "dev": "next",
-    "build": "next build",
-    "start": "next start"
+    "dev:app": "next",
+    "build:app": "next build",
+    "start:app": "next start"
   },
   "license": "MIT",
   "dependencies": {
