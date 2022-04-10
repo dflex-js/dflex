@@ -1,0 +1,27 @@
+{
+  "private": true,
+  "scripts": {
+    "dev:app": "next",
+    "build:app": "next build",
+    "start:app": "next start"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@chakra-ui/icons": "^1.0.5",
+    "@chakra-ui/react": "^1.4.2",
+    "@chakra-ui/theme-tools": "1.1.2",
+    "@dflex/dnd": "workspace:^3.3.2",
+    "@emotion/react": "11.1.5",
+    "@emotion/styled": "11.1.5",
+    "framer-motion": "^4.0.3",
+    "next": "latest",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^14.6.0",
+    "@types/react": "^17.0.3",
+    "@types/react-dom": "^17.0.3",
+    "typescript": "4.3.2"
+  }
+}

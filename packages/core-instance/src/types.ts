@@ -4,6 +4,7 @@ import type {
   IPointAxes,
   Direction,
   Axes,
+  Axis,
 } from "@dflex/utils";
 
 export interface AbstractOpts {
@@ -29,7 +30,7 @@ export type AttributesIndicators =
   | Exclude<AllowedDataset, "index">
   | AllowedAttributes;
 
-export interface AbstractInterface {
+export interface IAbstract {
   readonly isInitialized: boolean;
   isPaused: boolean;
   readonly ref: HTMLElement | null;
@@ -85,7 +86,7 @@ export type TransitionHistory = {
   translate: IPointAxes;
 };
 
-export interface CoreInstanceInterface extends AbstractInterface {
+export interface ICore extends IAbstract {
   /** Initial read-only element offset */
   readonly offset: RectDimensions;
 
@@ -105,9 +106,6 @@ export interface CoreInstanceInterface extends AbstractInterface {
   readonly keys: Keys;
   readonly depth: number;
 
-  getELmParentRef(): HTMLElement | null;
-  isPositionedUnder(elmY: number): boolean;
-  isPositionedLeft(elmX: number): boolean;
   resume(scrollX: number, scrollY: number): void;
   changeVisibility(isVisible: boolean): void;
   setPosition(
@@ -122,4 +120,13 @@ export interface CoreInstanceInterface extends AbstractInterface {
   /** Direct element assignment. Handle the case for settling the draggable element */
   assignNewPosition(branchIDsOrder: string[], newIndex: number): void;
   rollBack(operationID: string, isForceTransform: boolean): void;
+}
+
+export interface ICoreUtils extends ICore {
+  isPositionedUnder(elmY: number): boolean;
+  isPositionedLeft(elmX: number): boolean;
+  getRectBottom(): number;
+  getRectRight(): number;
+  getOffset(): RectDimensions;
+  hasSamePosition(elm: this, axis: Axis): boolean;
 }

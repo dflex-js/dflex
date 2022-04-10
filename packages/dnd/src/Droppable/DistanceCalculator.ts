@@ -1,4 +1,4 @@
-import type { CoreInstanceInterface } from "@dflex/core-instance";
+import type { ICore } from "@dflex/core-instance";
 
 import { Direction, PointNum } from "@dflex/utils";
 import type { IPointNum, Axis } from "@dflex/utils";
@@ -12,7 +12,7 @@ import type { DistanceCalculatorInterface } from "./types";
 
 function emitInteractiveEvent(
   type: InteractivityEvent["type"],
-  element: CoreInstanceInterface
+  element: ICore
 ) {
   const evt: InteractivityEvent = {
     id: element.id,
@@ -63,41 +63,78 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     this.isParentLocked = false;
   }
 
-  setDistanceIndicators(
-    element: CoreInstanceInterface,
+  protected getDiff(
+    element: ICore,
+    axis: Axis,
+    type: "offset" | "occupiedPosition" | "currentPosition"
+  ) {
+    const {
+      occupiedPosition,
+      draggedElm: {
+        offset: draggedRect,
+        currentPosition: draggedPosition,
+        translate,
+      },
+    } = this.draggable;
+
+    const { currentPosition, offset: elmOffset } = element;
+
+    let diff = 0;
+    let equalizer: Direction = 1;
+
+    if (type === "currentPosition") {
+      diff =
+        Math.abs(draggedPosition[axis] - currentPosition[axis]) -
+        translate[axis];
+
+      equalizer = draggedPosition[axis] < currentPosition[axis] ? 1 : -1;
+
+      diff *= equalizer;
+
+      return diff;
+    }
+
+    if (type === "occupiedPosition") {
+      diff = Math.abs(currentPosition[axis] - occupiedPosition[axis]);
+
+      return diff;
+    }
+
+    const rectType = axis === "x" ? "width" : "height";
+
+    diff = Math.abs(elmOffset[rectType] - draggedRect[rectType]);
+
+    equalizer = draggedRect[rectType] < elmOffset[rectType] ? 1 : -1;
+
+    diff *= equalizer;
+
+    return diff;
+  }
+
+  #setDistanceBtwPositions(
+    element: ICore,
     axis: Axis,
     elmDirection: Direction
   ) {
-    const {
-      occupiedPosition: occupiedOffset,
-      draggedElm: { offset: draggedRect },
-    } = this.draggable;
-
-    const { currentPosition: elmPosition, offset: elmOffset } = element;
-
-    const positionDiff = Math.abs(elmPosition[axis] - occupiedOffset[axis]);
+    const positionDiff = this.getDiff(element, axis, "occupiedPosition");
 
     this.#draggedTransition[axis] = positionDiff;
     this.#elmTransition[axis] = positionDiff;
 
-    const rectType = axis === "x" ? "width" : "height";
-
-    const rectDiff = Math.abs(elmOffset[rectType] - draggedRect[rectType]);
+    const rectDiff = this.getDiff(element, axis, "offset");
 
     // Then dragged and element transition already set.
     if (rectDiff === 0) return;
 
-    const equalizer = draggedRect[rectType] < elmOffset[rectType] ? 1 : -1;
-
     if (elmDirection === -1) {
-      this.#draggedTransition[axis] += equalizer * rectDiff;
-      this.#draggedOffset[axis] = equalizer * rectDiff;
+      this.#draggedTransition[axis] += rectDiff;
+      this.#draggedOffset[axis] = rectDiff;
     } else {
-      this.#elmTransition[axis] += -1 * equalizer * rectDiff;
+      this.#elmTransition[axis] += -1 * rectDiff;
     }
   }
 
-  updateDraggable(element: CoreInstanceInterface, elmDirection: Direction) {
+  #updateDraggable(element: ICore, elmDirection: Direction) {
     const { currentPosition, grid } = element;
 
     this.draggable.occupiedPosition.setAxes(
@@ -117,8 +154,6 @@ class DistanceCalculator implements DistanceCalculatorInterface {
   /**
    * Updates element instance and calculates the required transform distance. It
    * invokes for each eligible element in the parent container.
-   *
-   * @param id -
    */
   protected updateElement(id: string, isIncrease: boolean) {
     const element = store.registry[id];
@@ -153,9 +188,9 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     this.#draggedOffset.setAxes(0, 0);
     this.#elmTransition.setAxes(0, 0);
 
-    this.setDistanceIndicators(element, axis, elmDirection);
+    this.#setDistanceBtwPositions(element, axis, elmDirection);
 
-    this.updateDraggable(element, elmDirection);
+    this.#updateDraggable(element, elmDirection);
 
     this.draggable.updateNumOfElementsTransformed(elmDirection);
 

@@ -1,4 +1,4 @@
-import type { AbstractCoreInterface } from "@dflex/core-instance";
+import type { IAbstract } from "@dflex/core-instance";
 import type { IPointNum } from "@dflex/utils";
 
 export type DraggedStyle = {
@@ -27,7 +27,7 @@ export type RegisterInput =
   | RegisterInputID
   | RegisterInputRef;
 
-export interface AbstractDraggableInterface<T extends AbstractCoreInterface> {
+export interface AbstractDraggableInterface<T extends IAbstract> {
   draggedElm: T;
 
   /**

@@ -1,5 +1,6 @@
-import { PointNum } from "@dflex/utils";
+import { IPointAxes, PointNum } from "@dflex/utils";
 import type { IPointNum } from "@dflex/utils";
+
 import type { DraggedEvent, SiblingsEvent } from "../types";
 
 import store from "../DnDStore";
@@ -201,8 +202,9 @@ class Droppable extends DistanceCalculator {
   }
 
   #detectNearestElm() {
-    const siblings =
-      store.DOMGen.branches[this.draggable.migration.latest().key];
+    const { migration, draggedElm, occupiedTranslate } = this.draggable;
+
+    const siblings = store.DOMGen.branches[migration.latest().key];
 
     /**
      * If tempIndex is zero, the dragged is coming from the top. So, move them
@@ -229,7 +231,23 @@ class Droppable extends DistanceCalculator {
       this.#moveDown(insertAt);
     }
 
-    this.draggable.draggedElm.rmDateset("draggedOutContainer");
+    draggedElm.rmDateset("draggedOutContainer");
+
+    if (!migration.isMigrationCompleted) {
+      occupiedTranslate.clone(migration.insertionTransform!);
+
+      const activeList = store.getElmBranchByKey(migration.latest().key);
+
+      const lastElmId = activeList[activeList.length - 1];
+
+      store.handleElmMigration(
+        migration.latest().key,
+        migration.prev().key,
+        migration.insertionOffset!
+      );
+
+      migration.complete(store.registry[lastElmId].currentPosition);
+    }
   }
 
   #detectNearestContainer() {
@@ -259,27 +277,78 @@ class Droppable extends DistanceCalculator {
         // placeholder as all the elements are stacked.
         originalSiblingList.pop();
 
-        // Getting the last element of the new list.
-        const lastElm = newSiblingList[newSiblingList.length - 1];
+        let grid: IPointAxes = {
+          x: 1,
+          y: 1,
+        };
 
-        const { currentPosition: elmPosition } = store.registry[lastElm];
+        let elmPosition: IPointAxes = {
+          x: 0,
+          y: 0,
+        };
+
+        let diffX = 0;
+        let diffY = 0;
+
+        if (newSiblingList.length > 0) {
+          // Getting the last element of the new list.
+          const lastElm = newSiblingList[newSiblingList.length - 1];
+
+          ({ grid, currentPosition: elmPosition } = store.registry[lastElm]);
+
+          const firstElmNew = newSiblingList[0];
+
+          diffX = this.getDiff(
+            store.registry[firstElmNew],
+            "x",
+            "currentPosition"
+          );
+
+          diffY = this.getDiff(
+            store.registry[firstElmNew],
+            "y",
+            "currentPosition"
+          );
+        }
+
+        const { elmSyntheticOffset } = migration;
+
+        const newElmOffset = {
+          x:
+            elmSyntheticOffset.x > 0
+              ? elmPosition.x + draggedOffset.height + elmSyntheticOffset.x
+              : elmPosition.x,
+          y:
+            elmSyntheticOffset.y > 0
+              ? elmPosition.y + draggedOffset.height + elmSyntheticOffset.y
+              : elmPosition.y,
+        };
 
         // Update the offset accumulation. It has the old offset from the
         // one but now it has migrated to the new container.
-        this.draggable.occupiedPosition.setAxes(
-          elmPosition.x +
-            draggedOffset.width +
-            migration.firstElmSyntheticSpace.x,
-          elmPosition.y +
-            draggedOffset.height +
-            migration.firstElmSyntheticSpace.y
-        );
+        this.draggable.occupiedPosition.clone(newElmOffset);
+
+        this.draggable.gridPlaceholder.clone(grid);
+
+        this.draggable.draggedElm.keys.SK = newSK;
 
         // Insert the element to the new list. Empty string because when dragged
         // is out the branch sets its index as "".
         newSiblingList.push("");
 
-        migration.add(NaN, newSK);
+        const insertionTransform = {
+          x: diffX,
+          y: diffY,
+        };
+
+        const insertionOffset = {
+          left: newElmOffset.x,
+          top: newElmOffset.y,
+          width: draggedOffset.width,
+          height: draggedOffset.height,
+        };
+
+        migration.add(NaN, newSK, insertionTransform, insertionOffset);
 
         break;
       }
@@ -575,7 +644,7 @@ class Droppable extends DistanceCalculator {
     // Prevent store from implementing any animation response.
     store.siblingsScrollElement[SK].hasThrottledFrame = 1;
 
-    // @ts-expect-error - TODO: fix this
+    // @ts-expect-error
     this.draggable.isViewportRestricted = false;
 
     this.#regularDragging = false;

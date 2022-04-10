@@ -9,7 +9,7 @@ import type {
   IPointAxes,
 } from "@dflex/utils";
 
-import type { CoreInstanceInterface } from "@dflex/core-instance";
+import type { ICore } from "@dflex/core-instance";
 
 import store from "../DnDStore";
 
@@ -18,7 +18,7 @@ import type { DraggableAxesInterface, Restrictions } from "./types";
 import type { FinalDndOpts, RestrictionsStatus } from "../types";
 
 class DraggableAxes
-  extends AbstractDraggable<CoreInstanceInterface>
+  extends AbstractDraggable<ICore>
   implements DraggableAxesInterface
 {
   positionPlaceholder: IPointNum;
@@ -67,28 +67,30 @@ class DraggableAxes
 
     const siblings = store.getElmBranchByKey(SK);
 
-    const firstElmId = siblings[0];
-    const secondElmId = siblings[1];
+    const secondElmId = siblings[order.self + 1];
+
     const lastElmId = siblings[siblings.length - 1];
 
     this.migration = new Migration(
       order.self,
       SK,
       {
-        x: secondElmId
-          ? Math.abs(
-              store.registry[firstElmId].currentPosition.x -
-                store.registry[firstElmId].offset.width -
-                store.registry[secondElmId].currentPosition.x
-            )
-          : 0,
-        y: secondElmId
-          ? Math.abs(
-              store.registry[firstElmId].currentPosition.y +
-                store.registry[firstElmId].offset.height -
-                store.registry[secondElmId].currentPosition.y
-            )
-          : 0,
+        x:
+          secondElmId &&
+          !element.hasSamePosition(store.registry[secondElmId], "x")
+            ? Math.abs(
+                element.getRectRight() -
+                  store.registry[secondElmId].currentPosition.x
+              )
+            : 0,
+        y:
+          secondElmId &&
+          !element.hasSamePosition(store.registry[secondElmId], "y")
+            ? Math.abs(
+                element.getRectBottom() -
+                  store.registry[secondElmId].currentPosition.y
+              )
+            : 0,
       },
       store.registry[lastElmId].currentPosition
     );

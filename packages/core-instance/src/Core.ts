@@ -1,7 +1,6 @@
 /* eslint-disable no-param-reassign */
 
 import { PointNum } from "@dflex/utils";
-
 import type {
   RectDimensions,
   Direction,
@@ -10,7 +9,7 @@ import type {
   IPointAxes,
 } from "@dflex/utils";
 
-import AbstractInstance from "./AbstractInstance";
+import Abstract from "./Abstract";
 
 import type {
   Keys,
@@ -18,10 +17,10 @@ import type {
   TransitionHistory,
   CoreInput,
   AbstractOpts,
-  CoreInstanceInterface,
+  ICore,
 } from "./types";
 
-class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
+class Core extends Abstract implements ICore {
   offset!: RectDimensions;
 
   currentPosition!: IPointNum;
@@ -62,10 +61,6 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
     }
 
     this.animatedFrame = null;
-  }
-
-  getELmParentRef() {
-    return this.ref!.parentElement;
   }
 
   #initIndicators(scrollX: number, scrollY: number) {
@@ -129,14 +124,6 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
       this.transformElm();
       this.hasToTransform = false;
     }
-  }
-
-  isPositionedUnder(elmY: number) {
-    return elmY < this.currentPosition.y;
-  }
-
-  isPositionedLeft(elmX: number) {
-    return elmX < this.currentPosition.x;
   }
 
   transformElm() {
@@ -363,4 +350,4 @@ class CoreInstance extends AbstractInstance implements CoreInstanceInterface {
   }
 }
 
-export default CoreInstance;
+export default Core;
