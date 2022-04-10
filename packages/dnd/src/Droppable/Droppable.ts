@@ -290,8 +290,6 @@ class Droppable extends DistanceCalculator {
         let diffX = 0;
         let diffY = 0;
 
-        let keys;
-
         if (newSiblingList.length > 0) {
           // Getting the last element of the new list.
           const lastElm = newSiblingList[newSiblingList.length - 1];
@@ -311,8 +309,6 @@ class Droppable extends DistanceCalculator {
             "y",
             "currentPosition"
           );
-
-          ({ keys } = store.registry[firstElmNew]);
         }
 
         const { elmSyntheticOffset } = migration;
@@ -334,10 +330,7 @@ class Droppable extends DistanceCalculator {
 
         this.draggable.gridPlaceholder.clone(grid);
 
-        // @ts-expect-error - I don't know what else to do.
-        // Reason: Ideally, changing the key should be done inside `dom-gen`.
-        // Right now, there's not such method. Which is wrong.
-        this.draggable.draggedElm.keys = keys;
+        this.draggable.draggedElm.keys.SK = newSK;
 
         // Insert the element to the new list. Empty string because when dragged
         // is out the branch sets its index as "".
