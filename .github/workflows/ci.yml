@@ -44,7 +44,7 @@ jobs:
           run_install: true
 
       - name: Run lint
-        run: pnpm eslint . --ext .js,.jsx,.ts,.tsx --fix
+        run: pnpm eslint . --ext .js,.jsx,.ts,.tsx --fix --ignore-pattern !examples
 
   types:
     name: Check Types
