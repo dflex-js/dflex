@@ -16,9 +16,10 @@
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",
-    "esbuild": "^0.14.30",
+    "@types/node": "^17.0.23",
+    "esbuild": "^0.14.34",
     "esbuild-jest": "^0.5.0",
-    "eslint-config-dflex": "*",
+    "eslint-config-dflex": "workspace:*",
     "istanbul-lib-instrument": "^5.1.0",
     "jest": "^27.5.1",
     "lerna": "^4.0.0",
