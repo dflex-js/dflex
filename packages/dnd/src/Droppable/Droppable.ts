@@ -1,5 +1,6 @@
-import { PointNum } from "@dflex/utils";
+import { IPointAxes, PointNum } from "@dflex/utils";
 import type { IPointNum } from "@dflex/utils";
+
 import type { DraggedEvent, SiblingsEvent } from "../types";
 
 import store from "../DnDStore";
@@ -276,10 +277,43 @@ class Droppable extends DistanceCalculator {
         // placeholder as all the elements are stacked.
         originalSiblingList.pop();
 
-        // Getting the last element of the new list.
-        const lastElm = newSiblingList[newSiblingList.length - 1];
+        let grid: IPointAxes = {
+          x: 1,
+          y: 1,
+        };
 
-        const { grid, currentPosition: elmPosition } = store.registry[lastElm];
+        let elmPosition: IPointAxes = {
+          x: 0,
+          y: 0,
+        };
+
+        let diffX = 0;
+        let diffY = 0;
+
+        let keys;
+
+        if (newSiblingList.length > 0) {
+          // Getting the last element of the new list.
+          const lastElm = newSiblingList[newSiblingList.length - 1];
+
+          ({ grid, currentPosition: elmPosition } = store.registry[lastElm]);
+
+          const firstElmNew = newSiblingList[0];
+
+          diffX = this.getDiff(
+            store.registry[firstElmNew],
+            "x",
+            "currentPosition"
+          );
+
+          diffY = this.getDiff(
+            store.registry[firstElmNew],
+            "y",
+            "currentPosition"
+          );
+
+          ({ keys } = store.registry[firstElmNew]);
+        }
 
         const { elmSyntheticOffset } = migration;
 
@@ -298,28 +332,12 @@ class Droppable extends DistanceCalculator {
         // one but now it has migrated to the new container.
         this.draggable.occupiedPosition.clone(newElmOffset);
 
-        const firstElmNew = newSiblingList[0];
-
-        const diffX = this.getDiff(
-          store.registry[firstElmNew],
-          "x",
-          "currentPosition"
-        );
-
-        const diffY = this.getDiff(
-          store.registry[firstElmNew],
-          "y",
-          "currentPosition"
-        );
-
         this.draggable.gridPlaceholder.clone(grid);
 
         // @ts-expect-error - I don't know what else to do.
         // Reason: Ideally, changing the key should be done inside `dom-gen`.
         // Right now, there's not such method. Which is wrong.
-        this.draggable.draggedElm.keys = {
-          ...store.registry[firstElmNew].keys,
-        };
+        this.draggable.draggedElm.keys = keys;
 
         // Insert the element to the new list. Empty string because when dragged
         // is out the branch sets its index as "".
