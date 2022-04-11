@@ -1,8 +1,5 @@
-import type {
-  ThresholdInterface,
-  RectDimensions,
-  ThresholdPercentages,
-} from "@dflex/utils";
+import type { ThresholdInterface, ThresholdPercentages } from "../Threshold";
+import type { RectDimensions } from "../types";
 
 export interface ScrollInput {
   element: HTMLElement;
@@ -12,7 +9,7 @@ export interface ScrollInput {
     | null;
 }
 
-export interface ScrollInterface {
+export interface IScroll {
   threshold: ThresholdInterface | null;
   scrollRect: RectDimensions;
   scrollX: number;

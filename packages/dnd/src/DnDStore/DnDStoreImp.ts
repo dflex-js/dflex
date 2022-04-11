@@ -1,13 +1,9 @@
 import Store from "@dflex/store";
 
-import { ITracker, PointNum, Tracker } from "@dflex/utils";
-import type { RectDimensions } from "@dflex/utils";
+import { PointNum, Tracker, Scroll } from "@dflex/utils";
+import type { RectDimensions, ITracker, IScroll } from "@dflex/utils";
 
 import type { ElmTree, DnDStoreInterface, RegisterInput } from "./types";
-
-import Scroll from "../Plugins/Scroll";
-
-import type { ScrollInterface } from "../Plugins/Scroll";
 
 import canUseDOM from "../utils/canUseDOM";
 
@@ -154,7 +150,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
   updateElementVisibility(
     elmID: string,
-    scroll: ScrollInterface,
+    scroll: IScroll,
     allowDynamicVisibility: boolean,
     permitExceptionToOverride: boolean
   ) {

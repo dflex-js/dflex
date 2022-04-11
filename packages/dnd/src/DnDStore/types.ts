@@ -3,13 +3,12 @@ import type {
   RectBoundaries,
   IPointNum,
   ITracker,
+  IScroll,
 } from "@dflex/utils";
 import type { ICore } from "@dflex/core-instance";
 import type { RegisterInputMeta } from "@dflex/store";
 
 import type { DraggedEvent, LayoutState } from "../types";
-
-import type { ScrollInterface } from "../Plugins/Scroll";
 
 export interface ElmTree {
   element: ICore;
@@ -81,7 +80,7 @@ export interface DnDStoreInterface {
   readonly siblingsGridContainer: { [siblingKey: string]: IPointNum };
 
   /** Container scroll instance.  */
-  readonly siblingsScrollElement: { [siblingKey: string]: ScrollInterface };
+  readonly siblingsScrollElement: { [siblingKey: string]: IScroll };
 
   readonly tracker: ITracker;
   readonly layoutState: LayoutState;

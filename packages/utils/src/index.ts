@@ -21,3 +21,6 @@ export type {
   Axis,
   Direction,
 } from "./types";
+
+export { Scroll } from "./Scroll";
+export type { IScroll } from "./Scroll";

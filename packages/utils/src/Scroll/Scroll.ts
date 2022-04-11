@@ -1,12 +1,28 @@
-import { Threshold } from "@dflex/utils";
-import type { ThresholdPercentages } from "@dflex/utils";
+import { Threshold } from "../Threshold";
+import type { ThresholdPercentages } from "../Threshold";
 
-import loopInDOM from "../../utils/loopInDOM";
-
-import { ScrollInput, ScrollInterface } from "./types";
+import { ScrollInput, IScroll } from "./types";
 
 const OVERFLOW_REGEX = /(auto|scroll|overlay)/;
 const MAX_LOOP_ELEMENTS_TO_WARN = 16;
+
+function loopInDOM(
+  fromElement: HTMLElement,
+  // eslint-disable-next-line no-unused-vars
+  cb: (arg: HTMLElement) => boolean
+) {
+  let current: HTMLElement | null = fromElement;
+
+  do {
+    if (cb(current)) {
+      return current;
+    }
+
+    current = current.parentNode as HTMLElement;
+  } while (current && !current.isSameNode(document.body));
+
+  return null;
+}
 
 function isStaticallyPositioned(element: Element) {
   const computedStyle = getComputedStyle(element);
@@ -14,21 +30,21 @@ function isStaticallyPositioned(element: Element) {
   return position === "static";
 }
 
-class Scroll implements ScrollInterface {
+class Scroll implements IScroll {
   /**
    * Is set by controller when needed. Maybe is not provided, or not enabled.
    */
-  threshold: ScrollInterface["threshold"] | null;
+  threshold: IScroll["threshold"] | null;
 
   siblingKey: string;
 
-  scrollEventCallback: ScrollInterface["scrollEventCallback"];
+  scrollEventCallback: IScroll["scrollEventCallback"];
 
   scrollX!: number;
 
   scrollY!: number;
 
-  scrollRect: ScrollInterface["scrollRect"];
+  scrollRect: IScroll["scrollRect"];
 
   scrollHeight!: number;
 
