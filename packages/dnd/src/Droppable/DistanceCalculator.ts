@@ -83,9 +83,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     let equalizer: Direction = 1;
 
     if (type === "currentPosition") {
-      diff =
-        Math.abs(draggedPosition[axis] - currentPosition[axis]) -
-        translate[axis];
+      diff = currentPosition[axis] - draggedPosition[axis] - translate[axis];
 
       equalizer = draggedPosition[axis] < currentPosition[axis] ? 1 : -1;
 
@@ -102,11 +100,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
     const rectType = axis === "x" ? "width" : "height";
 
-    diff = Math.abs(elmOffset[rectType] - draggedRect[rectType]);
-
-    equalizer = draggedRect[rectType] < elmOffset[rectType] ? 1 : -1;
-
-    diff *= equalizer;
+    diff = elmOffset[rectType] - draggedRect[rectType];
 
     return diff;
   }
