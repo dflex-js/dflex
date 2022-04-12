@@ -1,7 +1,7 @@
 export type {
   INodeAbstract as IAbstract,
-  CoreInput,
-  TransitionHistory,
+  INodeInput,
+  ITransitionHistory as TransitionHistory,
   INode,
 } from "./node";
 

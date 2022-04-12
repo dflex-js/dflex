@@ -1,7 +1,7 @@
 import Generator from "@dflex/dom-gen";
 
 import { Node } from "@dflex/core-instance";
-import type { INode, CoreInput } from "@dflex/core-instance";
+import type { INode, INodeInput } from "@dflex/core-instance";
 
 import type { RegisterInput } from "./types";
 
@@ -27,7 +27,7 @@ class Store {
 
     const { order, keys } = this.DOMGen.register(id, depth);
 
-    const coreElement: CoreInput = {
+    const coreElement: INodeInput = {
       id,
       order,
       keys,

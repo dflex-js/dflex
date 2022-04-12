@@ -72,7 +72,7 @@ export interface Pointer {
   order: Order;
 }
 
-export interface CoreInput extends AbstractInput {
+export interface INodeInput extends AbstractInput {
   order: Order;
   keys: Keys;
   depth: number;
@@ -80,7 +80,7 @@ export interface CoreInput extends AbstractInput {
   scrollY: number;
 }
 
-export type TransitionHistory = {
+export type ITransitionHistory = {
   ID: string;
   axis: Axes;
   translate: IPointAxes;

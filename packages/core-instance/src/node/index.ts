@@ -1,8 +1,8 @@
 export type {
   IAbstract as INodeAbstract,
   INode,
-  CoreInput,
-  TransitionHistory,
+  INodeInput,
+  ITransitionHistory,
 } from "./types";
 
 export { default as Node } from "./CoreUtils";
