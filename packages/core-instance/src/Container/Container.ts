@@ -10,8 +10,6 @@ import type {
 import type { IContainer } from "./types";
 
 class Container implements IContainer {
-  isInitiated: boolean;
-
   #boundariesStorageForGrid: {
     [row: number]: RectBoundaries;
   };
@@ -20,18 +18,17 @@ class Container implements IContainer {
 
   grid: IPointNum;
 
-  gridContainer: IPointNum;
-
   scroll!: IScroll;
+
+  #gridContainer: IPointNum;
 
   #gridSiblingsHasNewRow: boolean;
 
   constructor() {
     this.#boundariesStorageForGrid = {};
     this.grid = new PointNum(1, 1);
-    this.gridContainer = new PointNum(1, 0);
+    this.#gridContainer = new PointNum(1, 0);
     this.#gridSiblingsHasNewRow = false;
-    this.isInitiated = false;
   }
 
   setGrid(grid: IPointNum, rect: RectDimensions) {
@@ -124,12 +121,12 @@ class Container implements IContainer {
 
     // Defining elements in different row.
     if (bottom > $.bottom || top < $.top) {
-      this.gridContainer.y += 1;
+      this.#gridContainer.y += 1;
     }
 
     // Defining elements in different column.
     if (left > $.right || right < $.left) {
-      this.gridContainer.x += 1;
+      this.#gridContainer.x += 1;
     }
 
     if (left < $.left) {
