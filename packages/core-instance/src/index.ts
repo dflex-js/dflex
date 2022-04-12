@@ -3,9 +3,9 @@ export type {
   INodeInput,
   ITransitionHistory as TransitionHistory,
   INode,
-} from "./NodeC";
+} from "./Node";
 
-export { Node } from "./NodeC";
+export { Node } from "./Node";
 
 export type { IContainer } from "./Container";
 
