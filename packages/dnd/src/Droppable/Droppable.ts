@@ -48,7 +48,7 @@ function isIDEligible2Move(
     if (isScrollEnabled) {
       const { SK } = store.registry[currentDraggedID].keys;
 
-      const { scrollX, scrollY } = store.siblingsScrollElement[SK];
+      const { scrollX, scrollY } = store.containers[SK].scroll;
 
       store.registry[destinationElmID].resume(scrollX, scrollY);
 
@@ -91,7 +91,7 @@ class Droppable extends DistanceCalculator {
     this.#scrollAnimatedFrame = null;
 
     const { scrollX, scrollY } =
-      store.siblingsScrollElement[this.draggable.migration.latest().key];
+      store.containers[this.draggable.migration.latest().key].scroll;
 
     this.#initialScroll = new PointNum(scrollX, scrollY);
 
@@ -258,8 +258,10 @@ class Droppable extends DistanceCalculator {
 
     let newSK;
 
-    for (let i = 0; i < store.siblingDepth[depth].length; i += 1) {
-      newSK = store.siblingDepth[depth][i];
+    const dp = store.depths.getByDepth(depth);
+
+    for (let i = 0; i < dp.length; i += 1) {
+      newSK = dp[i];
       const isOut = this.draggable.isOutThreshold(newSK);
 
       if (!isOut) {
@@ -504,7 +506,7 @@ class Droppable extends DistanceCalculator {
     } = this.draggable;
 
     const { SK } = store.registry[id].keys;
-    const siblingsGrid = store.siblingsGridContainer[SK];
+    const { grid: siblingsGrid } = store.containers[SK];
 
     if (isOut[id].isOutY()) {
       const newRow = isOut[id].isLeftFromBottom
@@ -572,7 +574,7 @@ class Droppable extends DistanceCalculator {
       scrollHeight,
       scrollContainerRef: scrollContainer,
       scrollRect,
-    } = store.siblingsScrollElement[SK];
+    } = store.containers[SK].scroll;
 
     if (direction === 1) {
       if (currentBottom <= scrollHeight) {
@@ -611,7 +613,7 @@ class Droppable extends DistanceCalculator {
       scrollHeight,
       scrollContainerRef: scrollContainer,
       scrollRect,
-    } = store.siblingsScrollElement[SK];
+    } = store.containers[SK].scroll;
 
     if (direction === 1) {
       if (currentRight <= scrollHeight) {
@@ -642,7 +644,7 @@ class Droppable extends DistanceCalculator {
     const { SK } = store.registry[this.draggable.draggedElm.id].keys;
 
     // Prevent store from implementing any animation response.
-    store.siblingsScrollElement[SK].hasThrottledFrame = 1;
+    store.containers[SK].scroll.hasThrottledFrame = 1;
 
     // @ts-expect-error
     this.draggable.isViewportRestricted = false;
@@ -654,7 +656,7 @@ class Droppable extends DistanceCalculator {
 
       // Reset animation flags
       this.#scrollAnimatedFrame = null;
-      store.siblingsScrollElement[SK].hasThrottledFrame = null;
+      store.containers[SK].scroll.hasThrottledFrame = null;
 
       this.#scrollSpeed += this.draggable.scroll.initialSpeed;
     });
@@ -669,11 +671,11 @@ class Droppable extends DistanceCalculator {
     if (
       this.draggable.scroll.enable &&
       this.#scrollAnimatedFrame === null &&
-      store.siblingsScrollElement[SK].hasThrottledFrame === null
+      store.containers[SK].scroll.hasThrottledFrame === null
     ) {
-      if (store.siblingsScrollElement[SK].hasOverflowY) {
+      if (store.containers[SK].scroll.hasOverflowY) {
         const { scrollRect, scrollHeight, threshold } =
-          store.siblingsScrollElement[SK];
+          store.containers[SK].scroll;
         if (
           this.draggable.isMovingAwayFrom.y &&
           y >= threshold!.thresholds[SK].bottom &&
@@ -689,9 +691,9 @@ class Droppable extends DistanceCalculator {
         }
       }
 
-      if (store.siblingsScrollElement[SK].hasOverflowX) {
+      if (store.containers[SK].scroll.hasOverflowX) {
         const { scrollRect, scrollHeight, threshold } =
-          store.siblingsScrollElement[SK];
+          store.containers[SK].scroll;
         if (
           this.draggable.isMovingAwayFrom.x &&
           x >= threshold!.thresholds[SK].right &&

@@ -3,7 +3,7 @@ import type { DraggedStyle } from "@dflex/draggable";
 import { PointNum } from "@dflex/utils";
 import type { IPointNum, IPointAxes } from "@dflex/utils";
 
-import type { ICore } from "@dflex/core-instance";
+import type { INode } from "@dflex/core-instance";
 
 import store from "../DnDStore";
 
@@ -19,7 +19,7 @@ class DraggableInteractive
 {
   operationID: string;
 
-  siblingsContainer: ICore | null;
+  siblingsContainer: INode | null;
 
   setOfTransformedIds?: Set<string>;
 
@@ -45,7 +45,7 @@ class DraggableInteractive
 
     const { SK } = store.registry[id].keys;
 
-    const { hasOverflowX, hasOverflowY } = store.siblingsScrollElement[SK];
+    const { hasOverflowX, hasOverflowY } = store.containers[SK].scroll;
 
     const siblings = store.getElmBranchByKey(this.migration.latest().key);
 
@@ -77,9 +77,9 @@ class DraggableInteractive
     if (this.scroll.enable) {
       this.isViewportRestricted = false;
 
-      store.siblingsScrollElement[SK].setThresholdMatrix(this.scroll.threshold);
+      store.containers[SK].scroll.setThresholdMatrix(this.scroll.threshold);
 
-      if (!store.siblingsScrollElement[SK].hasDocumentAsContainer) {
+      if (!store.containers[SK].scroll.hasDocumentAsContainer) {
         /**
          * When the scroll is the document it's good. The restriction is to the
          * document which guarantees the free movement. Otherwise, let's do it.
@@ -119,7 +119,7 @@ class DraggableInteractive
    *
    * @param element -
    */
-  private assignActiveParent(element: ICore) {
+  private assignActiveParent(element: INode) {
     /**
      * Assign a new instance which represents droppable. Then
      * assign owner parent so we have from/to.

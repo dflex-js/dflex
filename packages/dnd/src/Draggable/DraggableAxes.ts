@@ -9,7 +9,7 @@ import type {
   IPointAxes,
 } from "@dflex/utils";
 
-import type { ICore } from "@dflex/core-instance";
+import type { INode } from "@dflex/core-instance";
 
 import store from "../DnDStore";
 
@@ -18,7 +18,7 @@ import type { DraggableAxesInterface, Restrictions } from "./types";
 import type { FinalDndOpts, RestrictionsStatus } from "../types";
 
 class DraggableAxes
-  extends AbstractDraggable<ICore>
+  extends AbstractDraggable<INode>
   implements DraggableAxesInterface
 {
   positionPlaceholder: IPointNum;
@@ -106,16 +106,16 @@ class DraggableAxes
       top: currentPosition.y,
     });
 
-    store.siblingDepth[depth].forEach((key) => {
-      const siblingsBoundaries = store.siblingsBoundaries[key];
+    store.depths.getByDepth(depth).forEach((key) => {
+      const { boundaries } = store.containers[key];
 
       if (process.env.NODE_ENV !== "production") {
-        if (!siblingsBoundaries) {
+        if (!boundaries) {
           throw new Error(`Siblings boundaries for ${key} not found.`);
         }
       }
 
-      this.threshold.setContainerThreshold(key, siblingsBoundaries);
+      this.threshold.setContainerThreshold(key, boundaries);
     });
 
     this.isMovingAwayFrom = new PointBool(false, false);
@@ -218,12 +218,8 @@ class DraggableAxes
     const { SK } = store.registry[this.draggedElm.id].keys;
 
     if (this.#axesFilterNeeded) {
-      const {
-        top,
-        bottom,
-        left: maxLeft,
-        right: minRight,
-      } = store.siblingsBoundaries[SK];
+      const { boundaries } = store.containers[SK];
+      const { top, bottom, left: maxLeft, right: minRight } = boundaries;
 
       if (this.#restrictionsStatus.isContainerRestricted) {
         filteredX = this.axesXFilter(
@@ -265,7 +261,7 @@ class DraggableAxes
       filteredX = this.axesXFilter(
         x,
         0,
-        store.siblingsScrollElement[SK].getMaximumScrollContainerLeft(),
+        store.containers[SK].scroll.getMaximumScrollContainerLeft(),
         false,
         false,
         true
@@ -273,7 +269,7 @@ class DraggableAxes
       filteredY = this.axesYFilter(
         y,
         0,
-        store.siblingsScrollElement[SK].getMaximumScrollContainerTop(),
+        store.containers[SK].scroll.getMaximumScrollContainerTop(),
         false,
         false,
         true

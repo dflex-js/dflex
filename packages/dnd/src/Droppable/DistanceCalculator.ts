@@ -1,4 +1,4 @@
-import type { ICore } from "@dflex/core-instance";
+import type { INode } from "@dflex/core-instance";
 
 import { Direction, PointNum } from "@dflex/utils";
 import type { IPointNum, Axis } from "@dflex/utils";
@@ -12,7 +12,7 @@ import type { DistanceCalculatorInterface } from "./types";
 
 function emitInteractiveEvent(
   type: InteractivityEvent["type"],
-  element: ICore
+  element: INode
 ) {
   const evt: InteractivityEvent = {
     id: element.id,
@@ -64,7 +64,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
   }
 
   protected getDiff(
-    element: ICore,
+    element: INode,
     axis: Axis,
     type: "offset" | "occupiedPosition" | "currentPosition"
   ) {
@@ -112,7 +112,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
   }
 
   #setDistanceBtwPositions(
-    element: ICore,
+    element: INode,
     axis: Axis,
     elmDirection: Direction
   ) {
@@ -134,7 +134,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     }
   }
 
-  #updateDraggable(element: ICore, elmDirection: Direction) {
+  #updateDraggable(element: INode, elmDirection: Direction) {
     const { currentPosition, grid } = element;
 
     this.draggable.occupiedPosition.setAxes(
@@ -162,7 +162,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
       keys: { SK },
     } = element;
 
-    const siblingsGrid = store.siblingsGridContainer[SK];
+    const { grid: siblingsGrid } = store.containers[SK];
 
     const isContainerHasCol =
       this.draggable.gridPlaceholder.x + 1 <= siblingsGrid.x;

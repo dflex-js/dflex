@@ -14,13 +14,13 @@ import Abstract from "./Abstract";
 import type {
   Keys,
   Order,
-  TransitionHistory,
-  CoreInput,
+  ITransitionHistory,
+  INodeInput,
   AbstractOpts,
   ICore,
 } from "./types";
 
-class Core extends Abstract implements ICore {
+class NodeCore extends Abstract implements ICore {
   offset!: RectDimensions;
 
   currentPosition!: IPointNum;
@@ -39,9 +39,9 @@ class Core extends Abstract implements ICore {
 
   animatedFrame: number | null;
 
-  #translateHistory?: TransitionHistory[];
+  #translateHistory?: ITransitionHistory[];
 
-  constructor(eleWithPointer: CoreInput, opts: AbstractOpts) {
+  constructor(eleWithPointer: INodeInput, opts: AbstractOpts) {
     const { order, keys, depth, scrollX, scrollY, ...element } = eleWithPointer;
 
     super(element, opts);
@@ -215,7 +215,7 @@ class Core extends Abstract implements ICore {
     isForceTransform = false
   ) {
     if (operationID) {
-      const elmAxesHistory: TransitionHistory = {
+      const elmAxesHistory: ITransitionHistory = {
         ID: operationID,
         axis,
         translate: { x: this.translate.x, y: this.translate.y },
@@ -350,4 +350,4 @@ class Core extends Abstract implements ICore {
   }
 }
 
-export default Core;
+export default NodeCore;

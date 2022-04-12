@@ -1,19 +1,12 @@
-import type {
-  RectDimensions,
-  RectBoundaries,
-  IPointNum,
-  ITracker,
-} from "@dflex/utils";
-import type { ICore } from "@dflex/core-instance";
+import type { RectDimensions, ITracker } from "@dflex/utils";
+import type { INode, IContainer, IDepth } from "@dflex/core-instance";
 import type { RegisterInputMeta } from "@dflex/store";
 
 import type { DraggedEvent, LayoutState } from "../types";
 
-import type { ScrollInterface } from "../Plugins/Scroll";
-
 export interface ElmTree {
-  element: ICore;
-  parent: ICore | null;
+  element: INode;
+  parent: INode | null;
   branches: {
     siblings: string[];
     parents: string[];
@@ -60,29 +53,8 @@ interface Translate {
 }
 
 export interface DnDStoreInterface {
-  /** Strict Rect for siblings containers. */
-  readonly siblingsBoundaries: { [siblingKey: string]: RectBoundaries };
-
-  /** Grouping containers in the same level. */
-  readonly siblingDepth: {
-    [depth: number]: string[];
-  };
-
-  readonly siblingsBoundariesForGrid: {
-    [siblingKey: string]: {
-      [row: number]: RectBoundaries;
-      // grid: IPointNum;
-    };
-  };
-
-  /** Numbers of total columns and rows each container has.  */
-  readonly siblingsGrid: { [siblingKey: string]: IPointNum };
-
-  readonly siblingsGridContainer: { [siblingKey: string]: IPointNum };
-
-  /** Container scroll instance.  */
-  readonly siblingsScrollElement: { [siblingKey: string]: ScrollInterface };
-
+  readonly depths: IDepth;
+  readonly containers: { [siblingKey: string]: IContainer };
   readonly tracker: ITracker;
   readonly layoutState: LayoutState;
   handleElmMigration(SK: string, elmID: string, offset: RectDimensions): void;

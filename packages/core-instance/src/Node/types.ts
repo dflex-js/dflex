@@ -72,7 +72,7 @@ export interface Pointer {
   order: Order;
 }
 
-export interface CoreInput extends AbstractInput {
+export interface INodeInput extends AbstractInput {
   order: Order;
   keys: Keys;
   depth: number;
@@ -80,7 +80,7 @@ export interface CoreInput extends AbstractInput {
   scrollY: number;
 }
 
-export type TransitionHistory = {
+export type ITransitionHistory = {
   ID: string;
   axis: Axes;
   translate: IPointAxes;
@@ -122,7 +122,8 @@ export interface ICore extends IAbstract {
   rollBack(operationID: string, isForceTransform: boolean): void;
 }
 
-export interface ICoreUtils extends ICore {
+export interface INode extends ICore {
+  isConnected(): boolean;
   isPositionedUnder(elmY: number): boolean;
   isPositionedLeft(elmX: number): boolean;
   getRectBottom(): number;

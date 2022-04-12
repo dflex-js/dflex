@@ -3987,7 +3987,7 @@ packages:
       caniuse-lite: 1.0.30001327
       electron-to-chromium: 1.4.106
       escalade: 3.1.1
-      node-releases: 2.0.2
+      node-releases: 2.0.3
       picocolors: 1.0.0
     dev: true
 
@@ -8104,8 +8104,8 @@ packages:
     resolution: {integrity: sha1-h6kGXNs1XTGC2PlM4RGIuCXGijs=}
     dev: true
 
-  /node-releases/2.0.2:
-    resolution: {integrity: sha512-XxYDdcQ6eKqp/YjI+tb2C5WM2LgjnZrfYg4vgQt49EK268b6gYCHsBLrK2qvJo4FmCtqmKezb0WZFK4fkrZNsg==}
+  /node-releases/2.0.3:
+    resolution: {integrity: sha512-maHFz6OLqYxz+VQyCAtA3PTX4UP/53pa05fyDNc9CwjvJ0yEh6+xBwKsgCxMNhS8taUKBFYxfuiaD9U/55iFaw==}
     dev: true
 
   /nopt/4.0.3:
