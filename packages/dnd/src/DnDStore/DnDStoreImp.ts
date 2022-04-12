@@ -345,12 +345,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
   }
 
   onLoadListeners() {
-    console.log(
-      "file: DnDStoreImp.ts ~ line 349 ~ this.DOMGen.branches",
-      this.DOMGen.branches
-    );
     Object.keys(this.DOMGen.branches).forEach((branchKey) => {
-      console.log("file: DnDStoreImp.ts ~ line 350 ~ branchKey", branchKey);
       this.initSiblings(branchKey);
     });
   }
