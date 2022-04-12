@@ -1,5 +1,5 @@
 import type { RectDimensions, ITracker } from "@dflex/utils";
-import type { INode, IContainer } from "@dflex/core-instance";
+import type { INode, IContainer, IDepth } from "@dflex/core-instance";
 import type { RegisterInputMeta } from "@dflex/store";
 
 import type { DraggedEvent, LayoutState } from "../types";
@@ -53,13 +53,8 @@ interface Translate {
 }
 
 export interface DnDStoreInterface {
-  /** Grouping containers in the same level. */
-  readonly siblingDepth: {
-    [depth: number]: string[];
-  };
-
-  containers: { [siblingKey: string]: IContainer };
-
+  readonly depths: IDepth;
+  readonly containers: { [siblingKey: string]: IContainer };
   readonly tracker: ITracker;
   readonly layoutState: LayoutState;
   handleElmMigration(SK: string, elmID: string, offset: RectDimensions): void;

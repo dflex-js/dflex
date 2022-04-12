@@ -3,7 +3,9 @@ import Store from "@dflex/store";
 import { Tracker, Scroll } from "@dflex/utils";
 import type { RectDimensions, ITracker, IScroll } from "@dflex/utils";
 
-import { Container, IContainer } from "@dflex/core-instance";
+import { Container, Depth } from "@dflex/core-instance";
+import type { IContainer, IDepth } from "@dflex/core-instance";
+
 import type { ElmTree, DnDStoreInterface, RegisterInput } from "./types";
 
 import canUseDOM from "../utils/canUseDOM";
@@ -28,17 +30,15 @@ Did you forget to call store.unregister(${id}) or add parenID when register the 
 class DnDStoreImp extends Store implements DnDStoreInterface {
   containers: { [siblingKey: string]: IContainer };
 
+  depths: IDepth;
+
   tracker: ITracker;
-
-  #genID: ITracker;
-
-  siblingDepth: {
-    [depth: number]: string[];
-  };
 
   layoutState: DnDStoreInterface["layoutState"];
 
   events: Events;
+
+  #genID: ITracker;
 
   #isDOM: boolean;
 
@@ -59,7 +59,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
     this.containers = {};
 
-    this.siblingDepth = {};
+    this.depths = new Depth();
 
     this.layoutState = "pending";
 
@@ -197,7 +197,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
           this.containers[SK].setGrid(grid, offset);
           this.containers[SK].setBoundaries(offset);
 
-          this.#groupSiblingsByDepth(SK, depth);
+          this.depths.add(SK, depth);
         }
 
         this.updateElementVisibility(
@@ -357,18 +357,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
         this.containers[oldSK].setBoundaries(this.registry[elmID].getOffset());
       }
     });
-  }
-
-  #groupSiblingsByDepth(SK: string, depth: number) {
-    if (!Array.isArray(this.siblingDepth[depth])) {
-      this.siblingDepth[depth] = [SK];
-    } else {
-      const is = this.siblingDepth[depth].find((k) => k === SK);
-
-      if (!is) {
-        this.siblingDepth[depth].push(SK);
-      }
-    }
   }
 
   /**

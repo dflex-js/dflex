@@ -106,7 +106,7 @@ class DraggableAxes
       top: currentPosition.y,
     });
 
-    store.siblingDepth[depth].forEach((key) => {
+    store.depths.containers[depth].forEach((key) => {
       const { boundaries } = store.containers[key];
 
       if (process.env.NODE_ENV !== "production") {

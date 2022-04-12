@@ -258,8 +258,8 @@ class Droppable extends DistanceCalculator {
 
     let newSK;
 
-    for (let i = 0; i < store.siblingDepth[depth].length; i += 1) {
-      newSK = store.siblingDepth[depth][i];
+    for (let i = 0; i < store.depths.containers[depth].length; i += 1) {
+      newSK = store.depths.containers[depth][i];
       const isOut = this.draggable.isOutThreshold(newSK);
 
       if (!isOut) {
