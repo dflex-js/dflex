@@ -19,13 +19,15 @@ let pointerChild3D0: Pointer;
 
 describe("DOM Relationship Generator: Ascending-Simple", () => {
   describe("Working on same level: zero(0) depth", () => {
-    fit("Adds new element starting at depth zero(0)", () => {
+    beforeAll(() => {
       // DOM-root
       // │
       // │───id-0  => (order:{parent: 0, self: 0 }) || (keys: {CHK: null,PK: "1-0",SK: "0-0"})
 
       pointerChild0D0 = domGen.register("id-0", 0);
+    });
 
+    it("Adds the new element starting at depth zero(0) with the correct pointer", () => {
       expect(pointerChild0D0).toStrictEqual({
         keys: KEYS_CHILDREN_D0,
         order: {
@@ -33,11 +35,25 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
           self: 0,
         },
       });
+    });
 
+    it("Has a new branch contains the registered element-id", () => {
       const branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
-      expect(domGen.branchesOrder).toStrictEqual([KEYS_CHILDREN_D0.SK]);
-
       expect(branch).toStrictEqual(["id-0"]);
+    });
+
+    it("Initiates branch order array with the new generated branch key", () => {
+      expect(domGen.branchesOrder).toStrictEqual([KEYS_CHILDREN_D0.SK]);
+    });
+
+    it("Adds the new branch into its depth", () => {
+      expect(domGen.branchesByDepth).toMatchInlineSnapshot(`
+        Object {
+          "0": Array [
+            "0-0",
+          ],
+        }
+      `);
     });
 
     it("Preserves keys and parent index for element with same level", () => {
@@ -84,6 +100,16 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
 
       expect(branch).toStrictEqual(["id-0", "id-1", "id-2"]);
     });
+
+    it("Preserve the branch key grouped with its depth", () => {
+      expect(domGen.branchesByDepth).toMatchInlineSnapshot(`
+        Object {
+          "0": Array [
+            "0-0",
+          ],
+        }
+      `);
+    });
   });
 
   describe("Works on parents in higher depth", () => {
@@ -122,7 +148,20 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
 
       const branch = domGen.getElmBranch(pointerParent0D1.keys.SK);
 
-      expect(branch).toBe(["id-parent-1"]);
+      expect(branch).toStrictEqual(["id-parent-1"]);
+    });
+
+    it("Add the new branch key (parent branch) to its depth", () => {
+      expect(domGen.branchesByDepth).toMatchInlineSnapshot(`
+        Object {
+          "0": Array [
+            "0-0",
+          ],
+          "1": Array [
+            "1-0",
+          ],
+        }
+      `);
     });
 
     it("Identifies grand parent connects its branch", () => {
@@ -161,7 +200,23 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
 
       const branch = domGen.getElmBranch(pointerGrandParent0D2.keys.SK);
 
-      expect(branch).toBe(["id-grand-parent-1"]);
+      expect(branch).toStrictEqual(["id-grand-parent-1"]);
+    });
+
+    it("Add the new branch key (grand branch) to its depth", () => {
+      expect(domGen.branchesByDepth).toMatchInlineSnapshot(`
+        Object {
+          "0": Array [
+            "0-0",
+          ],
+          "1": Array [
+            "1-0",
+          ],
+          "2": Array [
+            "2-0",
+          ],
+        }
+      `);
     });
   });
 
@@ -211,7 +266,24 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
 
       const branch = domGen.getElmBranch(pointerChild3D0.keys.SK);
 
-      expect(branch).toBe(["id-00"]);
+      expect(branch).toStrictEqual(["id-00"]);
+    });
+
+    it("Add the new branch key to the existing depth array", () => {
+      expect(domGen.branchesByDepth).toMatchInlineSnapshot(`
+        Object {
+          "0": Array [
+            "0-0",
+            "0-1",
+          ],
+          "1": Array [
+            "1-0",
+          ],
+          "2": Array [
+            "2-0",
+          ],
+        }
+      `);
     });
   });
 

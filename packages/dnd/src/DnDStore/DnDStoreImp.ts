@@ -266,6 +266,11 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
     const branch = this.DOMGen.branches[SK];
 
+    if (process.env.NODE_ENV !== "production") {
+      // eslint-disable-next-line no-console
+      console.info(`Initializing Siblings: ${SK} - ${branch}\n`);
+    }
+
     const firstElemID = branch[0];
     const lastElemID = branch[branch.length - 1];
     const hasSiblings = branch.length > 1;
@@ -340,7 +345,12 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
   }
 
   onLoadListeners() {
+    console.log(
+      "file: DnDStoreImp.ts ~ line 349 ~ this.DOMGen.branches",
+      this.DOMGen.branches
+    );
     Object.keys(this.DOMGen.branches).forEach((branchKey) => {
+      console.log("file: DnDStoreImp.ts ~ line 350 ~ branchKey", branchKey);
       this.initSiblings(branchKey);
     });
   }
