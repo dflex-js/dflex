@@ -253,6 +253,10 @@ class Generator implements GeneratorInterface {
       this.branchesByDepth[dpNum] = this.branchesByDepth[dpNum].filter(
         (key) => key !== SK
       );
+
+      if (this.branchesByDepth[dpNum].length === 0) {
+        delete this.branchesByDepth[dpNum];
+      }
     });
   }
 

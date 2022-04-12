@@ -12,7 +12,7 @@ const KEYS_CHILDREN_D0 = {
 };
 
 describe("Testing clear methods", () => {
-  it("Adds two siblings to empty branch", () => {
+  beforeAll(() => {
     // DOM-root
     // │
     // │───id-0  => (order:{parent: 0, self: 0 }) || (keys: {CHK: null,PK: "1-0",SK: "0-0"})
@@ -21,7 +21,9 @@ describe("Testing clear methods", () => {
 
     pointerChild0D0 = domGen.register("id-0", 0);
     pointerChild1D0 = domGen.register("id-1", 0);
+  });
 
+  it("Generates two pointers correctly", () => {
     expect(pointerChild0D0).toStrictEqual({
       keys: KEYS_CHILDREN_D0,
       order: {
@@ -37,7 +39,9 @@ describe("Testing clear methods", () => {
         self: 1,
       },
     });
+  });
 
+  it("The new generated branch has correct registered ids", () => {
     const branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
 
     expect(branch).toStrictEqual(["id-0", "id-1"]);
@@ -49,14 +53,36 @@ describe("Testing clear methods", () => {
     `);
   });
 
+  it("The new generated branch has its key inside the branch depth array", () => {
+    expect(domGen.branchesByDepth).toMatchInlineSnapshot(`
+      Object {
+        "0": Array [
+          "0-0",
+        ],
+      }
+    `);
+  });
+
   it("Remove the first siblings", () => {
     const elmID = domGen.removeElementIDFromBranch(KEYS_CHILDREN_D0.SK, 0);
 
     expect(elmID).toBe("id-0");
+  });
 
+  it("Siblings branch removed the deleted element id", () => {
     const branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
 
     expect(branch).toStrictEqual(["id-1"]);
+  });
+
+  it("The branch depth array still has the branch key", () => {
+    expect(domGen.branchesByDepth).toMatchInlineSnapshot(`
+      Object {
+        "0": Array [
+          "0-0",
+        ],
+      }
+    `);
   });
 
   it("Add new element after deleting the old one to check indicators working correctly", () => {
@@ -79,6 +105,14 @@ describe("Testing clear methods", () => {
         "0-0",
       ]
     `);
+
+    expect(domGen.branchesByDepth).toMatchInlineSnapshot(`
+      Object {
+        "0": Array [
+          "0-0",
+        ],
+      }
+    `);
   });
 
   it("Destroy branch", () => {
@@ -87,8 +121,8 @@ describe("Testing clear methods", () => {
     const branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
 
     expect(branch).toBeUndefined();
-
     expect(domGen.branchesOrder).toMatchInlineSnapshot(`Array []`);
+    expect(domGen.branchesByDepth).toMatchInlineSnapshot(`Object {}`);
   });
 
   it("Adds two siblings again", () => {
@@ -125,6 +159,14 @@ describe("Testing clear methods", () => {
       Array [
         "0-0",
       ]
+    `);
+
+    expect(domGen.branchesByDepth).toMatchInlineSnapshot(`
+      Object {
+        "0": Array [
+          "0-0",
+        ],
+      }
     `);
   });
 });
