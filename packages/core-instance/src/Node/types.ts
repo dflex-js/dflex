@@ -123,6 +123,7 @@ export interface ICore extends IAbstract {
 }
 
 export interface INode extends ICore {
+  isConnected(): boolean;
   isPositionedUnder(elmY: number): boolean;
   isPositionedLeft(elmX: number): boolean;
   getRectBottom(): number;

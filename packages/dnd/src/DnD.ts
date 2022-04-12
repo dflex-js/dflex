@@ -48,7 +48,7 @@ class DnD extends Droppable {
      * In case it is not already initiated in the store. We do it here guarantee
      * all the branch is updated.
      */
-    store.initSiblingsScrollAndVisibilityIfNecessary(SK);
+    store.initSiblings(SK);
 
     const draggable = new DraggableInteractive(
       id,

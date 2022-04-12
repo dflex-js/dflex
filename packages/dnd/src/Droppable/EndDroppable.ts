@@ -144,9 +144,8 @@ class EndDroppable extends Droppable {
 
   private verify(lst: string[]) {
     const { top } =
-      store.siblingsBoundaries[
-        store.registry[this.draggable.draggedElm.id].keys.SK
-      ];
+      store.containers[store.registry[this.draggable.draggedElm.id].keys.SK]
+        .boundaries;
 
     const id = lst[0];
 

@@ -162,7 +162,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
       keys: { SK },
     } = element;
 
-    const siblingsGrid = store.siblingsGridContainer[SK];
+    const { grid: siblingsGrid } = store.containers[SK];
 
     const isContainerHasCol =
       this.draggable.gridPlaceholder.x + 1 <= siblingsGrid.x;

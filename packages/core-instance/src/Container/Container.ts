@@ -1,10 +1,17 @@
 import { PointNum } from "@dflex/utils";
 
-import type { IPointNum, RectBoundaries, RectDimensions } from "@dflex/utils";
+import type {
+  IScroll,
+  IPointNum,
+  RectBoundaries,
+  RectDimensions,
+} from "@dflex/utils";
 
 import type { IContainer } from "./types";
 
-class SiblingsStore implements IContainer {
+class Container implements IContainer {
+  isInitiated: boolean;
+
   #boundariesStorageForGrid: {
     [row: number]: RectBoundaries;
   };
@@ -15,6 +22,8 @@ class SiblingsStore implements IContainer {
 
   gridContainer: IPointNum;
 
+  scroll!: IScroll;
+
   #gridSiblingsHasNewRow: boolean;
 
   constructor() {
@@ -22,6 +31,7 @@ class SiblingsStore implements IContainer {
     this.grid = new PointNum(1, 1);
     this.gridContainer = new PointNum(1, 0);
     this.#gridSiblingsHasNewRow = false;
+    this.isInitiated = false;
   }
 
   setGrid(grid: IPointNum, rect: RectDimensions) {
@@ -140,4 +150,4 @@ class SiblingsStore implements IContainer {
   }
 }
 
-export default SiblingsStore;
+export default Container;

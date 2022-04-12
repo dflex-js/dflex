@@ -3,6 +3,10 @@ import NodeCore from "./Core";
 import type { INode } from "./types";
 
 class CoreUtils extends NodeCore implements INode {
+  isConnected() {
+    return this.ref!.isConnected;
+  }
+
   isPositionedUnder(elmY: number) {
     return elmY < this.currentPosition.y;
   }

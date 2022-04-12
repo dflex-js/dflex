@@ -1,8 +1,9 @@
 import Store from "@dflex/store";
 
-import { PointNum, Tracker, Scroll } from "@dflex/utils";
+import { Tracker, Scroll } from "@dflex/utils";
 import type { RectDimensions, ITracker, IScroll } from "@dflex/utils";
 
+import { Container, IContainer } from "@dflex/core-instance";
 import type { ElmTree, DnDStoreInterface, RegisterInput } from "./types";
 
 import canUseDOM from "../utils/canUseDOM";
@@ -25,23 +26,15 @@ Did you forget to call store.unregister(${id}) or add parenID when register the 
 }
 
 class DnDStoreImp extends Store implements DnDStoreInterface {
+  containers: { [siblingKey: string]: IContainer };
+
   tracker: ITracker;
 
   #genID: ITracker;
 
-  siblingsBoundaries: DnDStoreInterface["siblingsBoundaries"];
-
   siblingDepth: {
     [depth: number]: string[];
   };
-
-  siblingsBoundariesForGrid!: DnDStoreInterface["siblingsBoundariesForGrid"];
-
-  siblingsScrollElement: DnDStoreInterface["siblingsScrollElement"];
-
-  siblingsGrid: DnDStoreInterface["siblingsGrid"];
-
-  siblingsGridContainer: DnDStoreInterface["siblingsGrid"];
 
   layoutState: DnDStoreInterface["layoutState"];
 
@@ -57,8 +50,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     exceptionToNextElm: boolean;
   };
 
-  #gridSiblingsHasNewRow: boolean;
-
   static MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
 
   static #PREFIX_ID = "dflex-id";
@@ -66,13 +57,9 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
   constructor() {
     super();
 
-    this.siblingsBoundaries = {};
-    this.siblingDepth = {};
-    this.siblingsBoundariesForGrid = {};
+    this.containers = {};
 
-    this.siblingsScrollElement = {};
-    this.siblingsGrid = {};
-    this.siblingsGridContainer = {};
+    this.siblingDepth = {};
 
     this.layoutState = "pending";
 
@@ -86,10 +73,8 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
     this.#isInitialized = false;
     this.#isDOM = false;
-    this.#gridSiblingsHasNewRow = false;
 
     this.onLoadListeners = this.onLoadListeners.bind(this);
-    this.updateBranchVisibility = this.updateBranchVisibility.bind(this);
   }
 
   onStateChange(state: LayoutState) {
@@ -129,49 +114,12 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     };
   }
 
-  #getBranchHeadAndTail(key: string) {
-    const branch = this.DOMGen.branches[key];
-
-    let hasSiblings = false;
-    let firstElemID = "";
-    let lastElemID = "";
-
-    hasSiblings = true;
-    [firstElemID] = branch;
-
-    lastElemID = branch[branch.length - 1];
-
-    return {
-      hasSiblings,
-      firstElemID,
-      lastElemID,
-    };
-  }
-
   updateElementVisibility(
     elmID: string,
     scroll: IScroll,
     allowDynamicVisibility: boolean,
     permitExceptionToOverride: boolean
   ) {
-    if (this.registry[elmID].isPaused) {
-      this.registry[elmID].resume(scroll.scrollX, scroll.scrollY);
-    }
-
-    if (this.registry[elmID].grid.x === 0) {
-      const {
-        keys: { SK },
-        depth,
-        offset,
-      } = this.registry[elmID];
-
-      this.#assignSiblingsGrid(elmID, SK, offset);
-
-      this.#assignSiblingsBoundariesAndAlignment(SK, offset);
-
-      this.#groupSiblingsByDepth(SK, depth);
-    }
-
     let isVisible = true;
     let isVisibleY = true;
     let isVisibleX = true;
@@ -211,18 +159,19 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     this.registry[elmID].changeVisibility(isVisible);
   }
 
-  private updateBranchVisibility(
-    branchKey: string,
-    allowDynamicVisibility: boolean
-  ) {
-    const branch = this.DOMGen.branches[branchKey];
+  #updateBranchVisibility(SK: string, allowDynamicVisibility: boolean) {
+    const branch = this.DOMGen.branches[SK];
 
-    const scroll = this.siblingsScrollElement[branchKey];
+    const { scroll } = this.containers[SK];
 
     if (!scroll || !branch) {
       if (process.env.NODE_ENV !== "production") {
         // eslint-disable-next-line no-console
-        console.error(`Scroll and/or Sibling branch is not found`);
+        console.error(
+          `Scroll and/or Sibling branch is not found:\n\n`,
+          `In branch with key: ${SK}\n`,
+          `Branch: ${branch}\n`
+        );
       }
       return;
     }
@@ -234,6 +183,21 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     branch.forEach((elmID, i) => {
       if (elmID.length > 0) {
         const permitExceptionToOverride = i > prevIndex;
+
+        if (this.registry[elmID].isPaused) {
+          this.registry[elmID].resume(scroll.scrollX, scroll.scrollY);
+        }
+
+        // Using element grid zero to know if the element has been initiated inside
+        // container or not.
+        if (this.registry[elmID].grid.x === 0) {
+          const { depth, offset, grid } = this.registry[elmID];
+
+          this.containers[SK].setGrid(grid, offset);
+          this.containers[SK].setBoundaries(offset);
+
+          this.#groupSiblingsByDepth(SK, depth);
+        }
 
         this.updateElementVisibility(
           elmID,
@@ -294,16 +258,23 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     return newSK;
   }
 
-  initSiblingsScrollAndVisibilityIfNecessary(key: string) {
-    const { hasSiblings, firstElemID, lastElemID } =
-      this.#getBranchHeadAndTail(key);
+  initSiblings(SK: string) {
+    if (!this.containers[SK]) {
+      this.containers[SK] = new Container();
+    }
+
+    const branch = this.DOMGen.branches[SK];
+
+    const firstElemID = branch[0];
+    const lastElemID = branch[branch.length - 1];
+    const hasSiblings = branch.length > 1;
 
     if (!this.registry[firstElemID].isInitialized) {
       this.registry[firstElemID].resume(0, 0);
       this.registry[firstElemID].isPaused = true;
     }
 
-    const isHeadNotConnected = !this.registry[firstElemID].ref!.isConnected;
+    const isHeadNotConnected = !this.registry[firstElemID].isConnected();
 
     let isNotConnected = isHeadNotConnected;
 
@@ -313,7 +284,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
         this.registry[lastElemID].isPaused = true;
       }
 
-      const isTailNotConnected = !this.registry[lastElemID!].ref!.isConnected;
+      const isTailNotConnected = !this.registry[lastElemID!].isConnected();
 
       isNotConnected = isTailNotConnected || isHeadNotConnected;
     }
@@ -323,25 +294,26 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
         throwElementIsNotConnected(firstElemID);
       }
 
-      if (this.siblingsScrollElement[key]) {
-        this.siblingsScrollElement[key].destroy();
-        delete this.siblingsScrollElement[key];
+      if (this.containers[SK].scroll) {
+        this.containers[SK].scroll.destroy();
+        // @ts-expect-error
+        this.containers[SK].scroll = null;
       }
 
-      const newKey = this.cleanupDisconnectedElements(key);
+      const newKey = this.cleanupDisconnectedElements(SK);
 
-      this.initSiblingsScrollAndVisibilityIfNecessary(newKey);
+      this.initSiblings(newKey);
 
       return;
     }
 
-    if (this.siblingsScrollElement[key]) {
+    if (this.containers[SK].scroll) {
       return;
     }
 
     const scroll = new Scroll({
       element: this.registry[firstElemID].ref!,
-      requiredBranchKey: key,
+      requiredBranchKey: SK,
       scrollEventCallback: null,
     });
 
@@ -350,25 +322,25 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     if (
       hasSiblings &&
       scroll.allowDynamicVisibility &&
-      this.DOMGen.branches[key]!.length <=
+      this.DOMGen.branches[SK]!.length <=
         DnDStoreImp.MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY
     ) {
       scroll.allowDynamicVisibility = false;
     }
 
-    this.siblingsScrollElement[key] = scroll;
+    this.containers[SK].scroll = scroll;
 
     if (scroll.allowDynamicVisibility) {
-      this.updateBranchVisibility(key, true);
-      scroll.scrollEventCallback = this.updateBranchVisibility;
+      this.#updateBranchVisibility(SK, true);
+      scroll.scrollEventCallback = this.#updateBranchVisibility;
     } else {
-      this.updateBranchVisibility(key, false);
+      this.#updateBranchVisibility(SK, false);
     }
   }
 
   onLoadListeners() {
     Object.keys(this.DOMGen.branches).forEach((branchKey) => {
-      this.initSiblingsScrollAndVisibilityIfNecessary(branchKey);
+      this.initSiblings(branchKey);
     });
   }
 
@@ -377,99 +349,13 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     oldSK: string,
     insertionOffset: RectDimensions
   ) {
-    this.#assignSiblingsBoundariesAndAlignment(newSK, insertionOffset);
+    this.containers[newSK].setBoundaries(insertionOffset);
 
     this.DOMGen.branches[oldSK].forEach((elmID) => {
       if (elmID.length > 0) {
-        this.#assignSiblingsBoundariesAndAlignment(
-          oldSK,
-          this.registry[elmID].getOffset()
-        );
+        this.containers[oldSK].setBoundaries(this.registry[elmID].getOffset());
       }
     });
-  }
-
-  #assignSiblingsGrid(id: string, SK: string, rect: RectDimensions) {
-    const { height, left, top, width } = rect;
-
-    const right = left + width;
-    const bottom = top + height;
-
-    if (!this.siblingsBoundariesForGrid[SK]) {
-      this.siblingsBoundariesForGrid[SK] = {};
-    }
-
-    const $ = this.siblingsBoundariesForGrid[SK];
-
-    const row = this.registry[id].grid.x || 1;
-
-    const rowRect = $[row];
-
-    if (!rowRect) {
-      this.siblingsGrid[SK] = new PointNum(1, 1);
-
-      this.registry[id].grid.clone(this.siblingsGrid[SK]);
-
-      if (process.env.NODE_ENV !== "production") {
-        this.registry[id].setDataset(`gridX`, this.registry[id].grid.x);
-        this.registry[id].setDataset(`gridY`, this.registry[id].grid.y);
-      }
-
-      this.siblingsBoundariesForGrid[SK] = {
-        [row]: {
-          top,
-          left,
-          right,
-          bottom,
-        },
-      };
-
-      return;
-    }
-
-    // Defining elements in different row.
-    if (bottom > rowRect.bottom || top < rowRect.top) {
-      this.siblingsGrid[SK].y += 1;
-
-      this.#gridSiblingsHasNewRow = true;
-
-      rowRect.left = 0;
-      rowRect.right = 0;
-    }
-
-    // Defining elements in different column.
-    if (left > rowRect.right || right < rowRect.left) {
-      if (this.#gridSiblingsHasNewRow) {
-        this.siblingsGrid[SK].x = 1;
-
-        this.#gridSiblingsHasNewRow = false;
-      } else {
-        this.siblingsGrid[SK].x += 1;
-      }
-    }
-
-    this.registry[id].grid.clone(this.siblingsGrid[SK]);
-
-    if (left < rowRect.left) {
-      rowRect.left = left;
-    }
-
-    if (top < rowRect.top) {
-      rowRect.top = top;
-    }
-
-    if (right > rowRect.right) {
-      rowRect.right = right;
-    }
-
-    if (bottom > rowRect.bottom) {
-      rowRect.bottom = bottom;
-    }
-
-    if (process.env.NODE_ENV !== "production") {
-      this.registry[id].setDataset(`gridX`, this.registry[id].grid.x);
-      this.registry[id].setDataset(`gridY`, this.registry[id].grid.y);
-    }
   }
 
   #groupSiblingsByDepth(SK: string, depth: number) {
@@ -481,54 +367,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
       if (!is) {
         this.siblingDepth[depth].push(SK);
       }
-    }
-  }
-
-  #assignSiblingsBoundariesAndAlignment(SK: string, rect: RectDimensions) {
-    const { height, left, top, width } = rect;
-
-    const right = left + width;
-    const bottom = top + height;
-
-    if (!this.siblingsBoundaries[SK]) {
-      this.siblingsBoundaries[SK] = {
-        top,
-        left,
-        right,
-        bottom,
-      };
-
-      this.siblingsGridContainer[SK] = new PointNum(1, 1);
-
-      return;
-    }
-
-    const $ = this.siblingsBoundaries[SK];
-
-    // Defining elements in different row.
-    if (bottom > $.bottom || top < $.top) {
-      this.siblingsGridContainer[SK].y += 1;
-    }
-
-    // Defining elements in different column.
-    if (left > $.right || right < $.left) {
-      this.siblingsGridContainer[SK].x += 1;
-    }
-
-    if (left < $.left) {
-      $.left = left;
-    }
-
-    if (top < $.top) {
-      $.top = top;
-    }
-
-    if (right > $.right) {
-      $.right = right;
-    }
-
-    if (bottom > $.bottom) {
-      $.bottom = bottom;
     }
   }
 
@@ -660,13 +498,11 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
   }
 
   private clearBranchesScroll() {
-    Object.keys(this.DOMGen.branches).forEach((key) => {
-      if (this.siblingsScrollElement[key]) {
-        this.siblingsScrollElement[key].destroy();
+    Object.keys(this.DOMGen.branches).forEach((SK) => {
+      if (this.containers[SK].scroll) {
+        this.containers[SK].scroll.destroy();
       }
     });
-
-    this.siblingsScrollElement = {};
   }
 
   /**
