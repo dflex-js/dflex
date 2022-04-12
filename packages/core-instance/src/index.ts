@@ -7,6 +7,6 @@ export type {
 
 export { Node } from "./Node";
 
-export type { IContainer } from "./Container";
+export type { IContainer } from "./Containerx";
 
-export { Container } from "./Container";
+export { Container } from "./Containerx";
