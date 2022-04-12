@@ -258,7 +258,7 @@ class Droppable extends DistanceCalculator {
 
     let newSK;
 
-    const dp = store.depths.getByDepth(depth);
+    const dp = store.getBranchesByDepth(depth);
 
     for (let i = 0; i < dp.length; i += 1) {
       newSK = dp[i];

@@ -3,8 +3,8 @@ import Store from "@dflex/store";
 import { Tracker, Scroll } from "@dflex/utils";
 import type { RectDimensions, ITracker, IScroll } from "@dflex/utils";
 
-import { Container, Depth } from "@dflex/core-instance";
-import type { IContainer, IDepth } from "@dflex/core-instance";
+import { Container } from "@dflex/core-instance";
+import type { IContainer } from "@dflex/core-instance";
 
 import type { ElmTree, DnDStoreInterface, RegisterInput } from "./types";
 
@@ -29,8 +29,6 @@ Did you forget to call store.unregister(${id}) or add parenID when register the 
 
 class DnDStoreImp extends Store implements DnDStoreInterface {
   containers: { [siblingKey: string]: IContainer };
-
-  depths: IDepth;
 
   tracker: ITracker;
 
@@ -58,8 +56,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     super();
 
     this.containers = {};
-
-    this.depths = new Depth();
 
     this.layoutState = "pending";
 
@@ -192,12 +188,10 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
         // Using element grid zero to know if the element has been initiated inside
         // container or not.
         if (this.registry[elmID].grid.x === 0) {
-          const { depth, offset, grid } = this.registry[elmID];
+          const { offset, grid } = this.registry[elmID];
 
           this.containers[SK].setGrid(grid, offset);
           this.containers[SK].setBoundaries(offset);
-
-          this.depths.add(SK, depth);
         }
 
         this.updateElementVisibility(
@@ -426,6 +420,15 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     };
 
     super.register(coreInput);
+  }
+
+  getBranchesByDepth(dp: number) {
+    if (process.env.NODE_ENV !== "production") {
+      if (!Array.isArray(this.DOMGen.branchesByDepth[dp])) {
+        throw new Error(`DFlex: Depth ${dp} is not registered.`);
+      }
+    }
+    return this.DOMGen.branchesByDepth[dp] || [];
   }
 
   getInitialELmRectById(id: string) {

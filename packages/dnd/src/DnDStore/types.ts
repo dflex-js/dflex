@@ -1,5 +1,5 @@
 import type { RectDimensions, ITracker } from "@dflex/utils";
-import type { INode, IContainer, IDepth } from "@dflex/core-instance";
+import type { INode, IContainer } from "@dflex/core-instance";
 import type { RegisterInputMeta } from "@dflex/store";
 
 import type { DraggedEvent, LayoutState } from "../types";
@@ -53,7 +53,6 @@ interface Translate {
 }
 
 export interface DnDStoreInterface {
-  readonly depths: IDepth;
   readonly containers: { [siblingKey: string]: IContainer };
   readonly tracker: ITracker;
   readonly layoutState: LayoutState;
@@ -61,6 +60,7 @@ export interface DnDStoreInterface {
   onStateChange(state: LayoutState): void;
   emitEvent(event: DraggedEvent): void;
   register(element: RegisterInputMeta, x?: boolean): void;
+  getBranchesByDepth(dp: number): string[];
   getInitialELmRectById(id: string): RectDimensions | undefined;
   getELmTranslateById(id: string): Translate;
   getElmTreeById(id: string): ElmTree;
