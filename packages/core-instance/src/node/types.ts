@@ -122,7 +122,7 @@ export interface ICore extends IAbstract {
   rollBack(operationID: string, isForceTransform: boolean): void;
 }
 
-export interface ICoreUtils extends ICore {
+export interface INode extends ICore {
   isPositionedUnder(elmY: number): boolean;
   isPositionedLeft(elmX: number): boolean;
   getRectBottom(): number;

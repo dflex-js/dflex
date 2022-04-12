@@ -9,7 +9,7 @@ import type {
   IPointAxes,
 } from "@dflex/utils";
 
-import type { ICore } from "@dflex/core-instance";
+import type { INode } from "@dflex/core-instance";
 
 import store from "../DnDStore";
 
@@ -18,7 +18,7 @@ import type { DraggableAxesInterface, Restrictions } from "./types";
 import type { FinalDndOpts, RestrictionsStatus } from "../types";
 
 class DraggableAxes
-  extends AbstractDraggable<ICore>
+  extends AbstractDraggable<INode>
   implements DraggableAxesInterface
 {
   positionPlaceholder: IPointNum;

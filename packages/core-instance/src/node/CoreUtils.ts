@@ -1,8 +1,8 @@
 import type { Axis } from "@dflex/utils";
-import Core from "./Core";
-import type { ICoreUtils } from "./types";
+import NodeCore from "./Core";
+import type { INode } from "./types";
 
-class CoreUtils extends Core implements ICoreUtils {
+class CoreUtils extends NodeCore implements INode {
   isPositionedUnder(elmY: number) {
     return elmY < this.currentPosition.y;
   }

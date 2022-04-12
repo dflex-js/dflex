@@ -20,7 +20,7 @@ import type {
   ICore,
 } from "./types";
 
-class Core extends Abstract implements ICore {
+class NodeCore extends Abstract implements ICore {
   offset!: RectDimensions;
 
   currentPosition!: IPointNum;
@@ -350,4 +350,4 @@ class Core extends Abstract implements ICore {
   }
 }
 
-export default Core;
+export default NodeCore;

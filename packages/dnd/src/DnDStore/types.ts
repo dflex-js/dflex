@@ -5,14 +5,14 @@ import type {
   ITracker,
   IScroll,
 } from "@dflex/utils";
-import type { ICore } from "@dflex/core-instance";
+import type { INode } from "@dflex/core-instance";
 import type { RegisterInputMeta } from "@dflex/store";
 
 import type { DraggedEvent, LayoutState } from "../types";
 
 export interface ElmTree {
-  element: ICore;
-  parent: ICore | null;
+  element: INode;
+  parent: INode | null;
   branches: {
     siblings: string[];
     parents: string[];

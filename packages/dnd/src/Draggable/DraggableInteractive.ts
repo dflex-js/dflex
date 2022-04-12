@@ -3,7 +3,7 @@ import type { DraggedStyle } from "@dflex/draggable";
 import { PointNum } from "@dflex/utils";
 import type { IPointNum, IPointAxes } from "@dflex/utils";
 
-import type { ICore } from "@dflex/core-instance";
+import type { INode } from "@dflex/core-instance";
 
 import store from "../DnDStore";
 
@@ -19,7 +19,7 @@ class DraggableInteractive
 {
   operationID: string;
 
-  siblingsContainer: ICore | null;
+  siblingsContainer: INode | null;
 
   setOfTransformedIds?: Set<string>;
 
@@ -119,7 +119,7 @@ class DraggableInteractive
    *
    * @param element -
    */
-  private assignActiveParent(element: ICore) {
+  private assignActiveParent(element: INode) {
     /**
      * Assign a new instance which represents droppable. Then
      * assign owner parent so we have from/to.

@@ -1,10 +1,8 @@
-import CoreInstance from "./CoreUtils";
-
 export type {
-  IAbstract,
+  INodeAbstract as IAbstract,
   CoreInput,
   TransitionHistory,
-  ICoreUtils as ICore,
-} from "./types";
+  INode,
+} from "./node";
 
-export default CoreInstance;
+export { Node } from "./node";

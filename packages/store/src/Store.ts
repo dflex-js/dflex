@@ -1,13 +1,13 @@
 import Generator from "@dflex/dom-gen";
 
-import CoreInstance from "@dflex/core-instance";
-import type { ICore, CoreInput } from "@dflex/core-instance";
+import { Node } from "@dflex/core-instance";
+import type { INode, CoreInput } from "@dflex/core-instance";
 
 import type { RegisterInput } from "./types";
 
 class Store {
   registry: {
-    [id: string]: ICore;
+    [id: string]: INode;
   };
 
   DOMGen: Generator;
@@ -35,7 +35,7 @@ class Store {
       ...rest,
     };
 
-    this.registry[id] = new CoreInstance(coreElement, {
+    this.registry[id] = new Node(coreElement, {
       isInitialized,
       isPaused,
     });
