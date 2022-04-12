@@ -24,7 +24,7 @@ class Depth implements IDepth {
   }
 
   getByDepth(depth: number) {
-    return this.containers[depth];
+    return this.containers[depth] || [];
   }
 
   removeByDepth(depth: number) {
