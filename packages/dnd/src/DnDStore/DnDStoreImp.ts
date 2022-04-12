@@ -75,6 +75,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     this.#isDOM = false;
 
     this.onLoadListeners = this.onLoadListeners.bind(this);
+    this.updateBranchVisibility = this.updateBranchVisibility.bind(this);
   }
 
   onStateChange(state: LayoutState) {
@@ -159,7 +160,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     this.registry[elmID].changeVisibility(isVisible);
   }
 
-  #updateBranchVisibility(SK: string, allowDynamicVisibility: boolean) {
+  private updateBranchVisibility(SK: string, allowDynamicVisibility: boolean) {
     const branch = this.DOMGen.branches[SK];
 
     const { scroll } = this.containers[SK];
@@ -331,10 +332,10 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     this.containers[SK].scroll = scroll;
 
     if (scroll.allowDynamicVisibility) {
-      this.#updateBranchVisibility(SK, true);
-      scroll.scrollEventCallback = this.#updateBranchVisibility;
+      this.updateBranchVisibility(SK, true);
+      scroll.scrollEventCallback = this.updateBranchVisibility;
     } else {
-      this.#updateBranchVisibility(SK, false);
+      this.updateBranchVisibility(SK, false);
     }
   }
 
