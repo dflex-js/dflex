@@ -250,7 +250,7 @@ class Droppable extends DistanceCalculator {
     }
   }
 
-  // @ts-expect-error
+  // @ts-ignore
   #detectNearestContainer() {
     const {
       migration,
@@ -794,9 +794,7 @@ class Droppable extends DistanceCalculator {
 
       this.isParentLocked = true;
 
-      if (process.env.NODE_ENV === "development") {
-        // this.#detectNearestContainer();
-      }
+      // this.#detectNearestContainer();
 
       return;
     }
