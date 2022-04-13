@@ -793,7 +793,9 @@ class Droppable extends DistanceCalculator {
 
       this.isParentLocked = true;
 
-      this.#detectNearestContainer();
+      if (process.env.NODE_ENV === "development") {
+        this.#detectNearestContainer();
+      }
 
       return;
     }
