@@ -8,6 +8,3 @@ export { Node } from "./Node";
 
 export type { IContainer } from "./Container";
 export { Container } from "./Container";
-
-export type { IDepth } from "./Depth";
-export { Depth } from "./Depth";
