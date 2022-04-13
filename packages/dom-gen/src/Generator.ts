@@ -269,7 +269,7 @@ class Generator implements GeneratorInterface {
       "#indicator",
     ].forEach((key) => {
       // @ts-expect-error
-      delete this[key];
+      this[key] = null;
     });
   }
 }
