@@ -250,6 +250,7 @@ class Droppable extends DistanceCalculator {
     }
   }
 
+  // @ts-ignore
   #detectNearestContainer() {
     const {
       migration,
@@ -258,7 +259,7 @@ class Droppable extends DistanceCalculator {
 
     let newSK;
 
-    const dp = store.depths.getByDepth(depth);
+    const dp = store.getBranchesByDepth(depth);
 
     for (let i = 0; i < dp.length; i += 1) {
       newSK = dp[i];
@@ -294,9 +295,24 @@ class Droppable extends DistanceCalculator {
 
         if (newSiblingList.length > 0) {
           // Getting the last element of the new list.
-          const lastElm = newSiblingList[newSiblingList.length - 1];
+          const lastElmId = newSiblingList[newSiblingList.length - 1];
+          const lastElm = store.registry[lastElmId];
 
-          ({ grid, currentPosition: elmPosition } = store.registry[lastElm]);
+          if (!lastElm || !lastElm.currentPosition) {
+            if (process.env.NODE_ENV !== "production") {
+              // eslint-disable-next-line no-console
+              console.error(
+                `Transforming the dragged element to the new container in interrupted.\n\n`,
+                `[${lastElmId}] is not fully registered in the store.\n`,
+                `Please check the following instance:\n`,
+                lastElm
+              );
+            }
+
+            return;
+          }
+
+          ({ grid, currentPosition: elmPosition } = lastElm);
 
           const firstElmNew = newSiblingList[0];
 
@@ -778,7 +794,7 @@ class Droppable extends DistanceCalculator {
 
       this.isParentLocked = true;
 
-      this.#detectNearestContainer();
+      // this.#detectNearestContainer();
 
       return;
     }

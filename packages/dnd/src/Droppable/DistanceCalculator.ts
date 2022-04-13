@@ -102,11 +102,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
     const rectType = axis === "x" ? "width" : "height";
 
-    diff = Math.abs(elmOffset[rectType] - draggedRect[rectType]);
-
-    equalizer = draggedRect[rectType] < elmOffset[rectType] ? 1 : -1;
-
-    diff *= equalizer;
+    diff = elmOffset[rectType] - draggedRect[rectType];
 
     return diff;
   }

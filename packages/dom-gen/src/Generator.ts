@@ -29,6 +29,10 @@ class Generator implements GeneratorInterface {
   /** Branches order */
   branchesOrder: string[];
 
+  branchesByDepth: {
+    [depth: number]: string[];
+  };
+
   #prevDepth: number;
 
   #prevKey: string;
@@ -38,6 +42,7 @@ class Generator implements GeneratorInterface {
 
     this.branches = {};
     this.branchesOrder = [];
+    this.branchesByDepth = {};
 
     this.#prevDepth = -99;
 
@@ -93,6 +98,20 @@ class Generator implements GeneratorInterface {
       return this.branchesOrder[keyOrder + 1];
     }
     return null;
+  }
+
+  #addElementIDToDepthCollection(SK: string, depth: number) {
+    if (!Array.isArray(this.branchesByDepth[depth])) {
+      this.branchesByDepth[depth] = [SK];
+
+      return;
+    }
+
+    const is = this.branchesByDepth[depth].find((k) => k === SK);
+
+    if (!is) {
+      this.branchesByDepth[depth].push(SK);
+    }
   }
 
   /**
@@ -174,6 +193,8 @@ class Generator implements GeneratorInterface {
   register(id: string, depth: number): Pointer {
     const { CHK, SK, PK, parentIndex } = this.accumulateIndicators(depth);
 
+    this.#addElementIDToDepthCollection(SK, depth);
+
     const selfIndex = this.#addElementIDToSiblingsBranch(id, SK);
 
     const keys: Keys = {
@@ -213,7 +234,9 @@ class Generator implements GeneratorInterface {
   destroyBranch(SK: string, cb: (elmID: string) => unknown) {
     if (!this.branches[SK]) return;
 
-    const elmID = (this.branches[SK] as string[]).pop()!;
+    const elmID = this.branches[SK].pop();
+
+    if (!elmID) return;
 
     cb(elmID);
 
@@ -224,12 +247,30 @@ class Generator implements GeneratorInterface {
     }
 
     this.branchesOrder = this.branchesOrder.filter((key) => key !== SK);
+
+    Object.keys(this.branchesByDepth).forEach((dp) => {
+      const dpNum = Number(dp);
+      this.branchesByDepth[dpNum] = this.branchesByDepth[dpNum].filter(
+        (key) => key !== SK
+      );
+
+      if (this.branchesByDepth[dpNum].length === 0) {
+        delete this.branchesByDepth[dpNum];
+      }
+    });
   }
 
-  clearBranchesAndIndicator() {
-    this.branches = {};
-    this.#indicator = {};
-    this.branchesOrder = [];
+  destroy() {
+    [
+      "branches",
+      "branchesByDepth",
+      "branchesOrder",
+      "branchesByDepth",
+      "#indicator",
+    ].forEach((key) => {
+      // @ts-expect-error
+      this[key] = null;
+    });
   }
 }
 

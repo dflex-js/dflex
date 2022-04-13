@@ -27,8 +27,15 @@ export interface GeneratorInterface {
   branches: {
     [keys: string]: string[];
   };
+
   /** SK (branch keys) in order. */
-  branchesOrder: Array<string>;
+  branchesOrder: string[];
+
+  /** Branches grouped by the same depth. */
+  branchesByDepth: {
+    [depth: number]: string[];
+  };
+
   getBranchParentKey(SK: string): string | null;
   getElmBranch(SK: string): string[];
   register(id: string, depth: number): Pointer;
@@ -37,5 +44,5 @@ export interface GeneratorInterface {
   };
   removeElementIDFromBranch(SK: string, index: number): string | null;
   destroyBranch(SK: string, cb: (elmID: string) => unknown): void;
-  clearBranchesAndIndicator(): void;
+  destroy(): void;
 }

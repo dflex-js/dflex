@@ -91,7 +91,7 @@ class Store {
       });
     });
 
-    this.DOMGen.clearBranchesAndIndicator();
+    this.DOMGen.destroy();
   }
 }
 
