@@ -339,8 +339,10 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
   }
 
   onLoadListeners() {
-    Object.keys(this.DOMGen.branches).forEach((branchKey) => {
-      this.initSiblings(branchKey);
+    queueMicrotask(() => {
+      Object.keys(this.DOMGen.branches).forEach((branchKey) => {
+        this.initSiblings(branchKey);
+      });
     });
   }
 
