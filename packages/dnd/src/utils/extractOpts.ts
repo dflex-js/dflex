@@ -1,8 +1,5 @@
 // @ts-nocheck
 
-// TODO: Do you love typescript? Here we go buddy. It's your chance. Start your
-// PR. Don't be shy. I'll be waiting.
-
 import type { DndOpts, FinalDndOpts } from "../types";
 
 function noop() {}
