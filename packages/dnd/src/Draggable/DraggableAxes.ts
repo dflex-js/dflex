@@ -114,9 +114,11 @@ class DraggableAxes
             `Siblings containers for ${key} is not initialized yet.`
           );
         }
-      }
 
-      store.initSiblings(key);
+        store.initSiblings(key);
+      } else {
+        store.updateBranchVisibility(key, false);
+      }
 
       const { boundaries } = store.containers[key];
 

@@ -114,14 +114,13 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
   updateElementVisibility(
     elmID: string,
     scroll: IScroll,
-    allowDynamicVisibility: boolean,
     permitExceptionToOverride: boolean
   ) {
     let isVisible = true;
     let isVisibleY = true;
     let isVisibleX = true;
 
-    if (allowDynamicVisibility) {
+    if (scroll.allowDynamicVisibility) {
       isVisibleY = scroll.isElementVisibleViewportY(
         this.registry[elmID].currentPosition.y
       );
@@ -156,22 +155,10 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     this.registry[elmID].changeVisibility(isVisible);
   }
 
-  private updateBranchVisibility(SK: string, allowDynamicVisibility: boolean) {
+  updateBranchVisibility(SK: string, shouldCheckVisibility: boolean) {
     const branch = this.DOMGen.branches[SK];
 
     const { scroll } = this.containers[SK];
-
-    if (!scroll || !branch) {
-      if (process.env.NODE_ENV !== "production") {
-        // eslint-disable-next-line no-console
-        console.error(
-          `Scroll and/or Sibling branch is not found:\n\n`,
-          `In branch with key: ${SK}\n`,
-          `Branch: ${branch}\n`
-        );
-      }
-      return;
-    }
 
     this.#initELmIndicator();
 
@@ -194,12 +181,13 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
           this.containers[SK].setBoundaries(offset);
         }
 
-        this.updateElementVisibility(
-          elmID,
-          scroll,
-          allowDynamicVisibility,
-          permitExceptionToOverride
-        );
+        if (shouldCheckVisibility) {
+          this.updateElementVisibility(
+            elmID,
+            scroll,
+            permitExceptionToOverride
+          );
+        }
 
         prevIndex = i;
       }
@@ -334,7 +322,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
       this.updateBranchVisibility(SK, true);
       scroll.scrollEventCallback = this.updateBranchVisibility;
     } else {
-      this.updateBranchVisibility(SK, false);
+      this.updateBranchVisibility(SK, true);
     }
   }
 
