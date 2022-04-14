@@ -45,7 +45,7 @@ class DnD extends Droppable {
      * all the branch is updated.
      */
     store.getBranchesByDepth(depth).forEach((SK) => {
-      store.initSiblingContainer(SK);
+      store.initSiblingContainer(SK, true);
     });
 
     const draggable = new DraggableInteractive(

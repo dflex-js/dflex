@@ -217,7 +217,7 @@ class DnDStoreImp extends Store implements IDnDStore {
     return newSK;
   }
 
-  initSiblingContainer(SK: string) {
+  initSiblingContainer(SK: string, shouldValidate: boolean) {
     if (!this.containers[SK]) {
       this.containers[SK] = new Container();
     }
@@ -233,42 +233,32 @@ class DnDStoreImp extends Store implements IDnDStore {
     const lastElemID = branch[branch.length - 1];
     const hasSiblings = branch.length > 1;
 
-    if (!this.registry[firstElemID].isInitialized) {
-      this.registry[firstElemID].resume(0, 0);
-      this.registry[firstElemID].isPaused = true;
-    }
+    if (shouldValidate) {
+      const isHeadNotConnected = !this.registry[firstElemID].isConnected();
+      let isNotConnected = isHeadNotConnected;
 
-    const isHeadNotConnected = !this.registry[firstElemID].isConnected();
-
-    let isNotConnected = isHeadNotConnected;
-
-    if (hasSiblings) {
-      if (!this.registry[lastElemID].isInitialized) {
-        this.registry[lastElemID].resume(0, 0);
-        this.registry[lastElemID].isPaused = true;
+      if (hasSiblings) {
+        const isTailNotConnected = !this.registry[lastElemID!].isConnected();
+        isNotConnected = isTailNotConnected || isHeadNotConnected;
       }
 
-      const isTailNotConnected = !this.registry[lastElemID!].isConnected();
+      if (isNotConnected) {
+        if (process.env.NODE_ENV !== "production") {
+          throwElementIsNotConnected(firstElemID);
+        }
 
-      isNotConnected = isTailNotConnected || isHeadNotConnected;
-    }
+        if (this.containers[SK].scroll) {
+          this.containers[SK].scroll.destroy();
+          // @ts-expect-error
+          this.containers[SK].scroll = null;
+        }
 
-    if (isNotConnected) {
-      if (process.env.NODE_ENV !== "production") {
-        throwElementIsNotConnected(firstElemID);
+        const newKey = this.cleanupDisconnectedElements(SK);
+
+        this.initSiblingContainer(newKey, false);
+
+        return;
       }
-
-      if (this.containers[SK].scroll) {
-        this.containers[SK].scroll.destroy();
-        // @ts-expect-error
-        this.containers[SK].scroll = null;
-      }
-
-      const newKey = this.cleanupDisconnectedElements(SK);
-
-      this.initSiblingContainer(newKey);
-
-      return;
     }
 
     if (this.containers[SK].scroll) {
@@ -297,6 +287,30 @@ class DnDStoreImp extends Store implements IDnDStore {
     if (scroll.allowDynamicVisibility) {
       scroll.scrollEventCallback = this.updateBranchVisibility;
     }
+  }
+
+  initElmInstance(id: string) {
+    const {
+      keys: { SK },
+    } = this.registry[id];
+
+    if (this.registry[id].isPaused) {
+      this.registry[id].resume(
+        this.containers[SK].scroll.scrollX,
+        this.containers[SK].scroll.scrollY
+      );
+    }
+
+    // Using element grid zero to know if the element has been initiated inside
+    // container or not.
+    if (this.registry[id].grid.x === 0) {
+      const { offset, grid } = this.registry[id];
+
+      this.containers[SK].setGrid(grid, offset);
+      this.containers[SK].setBoundaries(offset);
+    }
+
+    this.updateElementVisibility(id, this.containers[SK].scroll, false);
   }
 
   handleElmMigration(
@@ -377,32 +391,12 @@ class DnDStoreImp extends Store implements IDnDStore {
       } = this.registry[id!];
 
       if (!this.containers[SK]) {
-        this.initSiblingContainer(SK);
-      }
-    });
-
-    queueMicrotask(() => {
-      const {
-        keys: { SK },
-      } = this.registry[id!];
-
-      if (this.registry[id!].isPaused) {
-        this.registry[id!].resume(
-          this.containers[SK].scroll.scrollX,
-          this.containers[SK].scroll.scrollY
-        );
+        this.initSiblingContainer(SK, false);
+        this.initElmInstance(id!);
+        return;
       }
 
-      // Using element grid zero to know if the element has been initiated inside
-      // container or not.
-      if (this.registry[id!].grid.x === 0) {
-        const { offset, grid } = this.registry[id!];
-
-        this.containers[SK].setGrid(grid, offset);
-        this.containers[SK].setBoundaries(offset);
-      }
-
-      this.updateElementVisibility(id!, this.containers[SK].scroll, false);
+      this.initElmInstance(id!);
     });
   }
 
