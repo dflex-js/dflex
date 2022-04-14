@@ -398,13 +398,17 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     super.register(coreInput);
 
     queueMicrotask(() => {
-      if (this.#lastSK === this.registry[id!].keys.SK) {
+      const {
+        keys: { SK },
+      } = this.registry[id!];
+
+      if (this.#lastSK === SK) {
         return;
       }
 
       if (this.#lastSK) this.initSiblings(this.#lastSK);
 
-      this.#lastSK = this.registry[id!].keys.SK;
+      this.#lastSK = SK;
     });
   }
 
