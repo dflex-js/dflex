@@ -1,14 +1,12 @@
 import Store from "@dflex/store";
 
-import { Tracker, Scroll } from "@dflex/utils";
+import { Tracker, Scroll, canUseDOM } from "@dflex/utils";
 import type { RectDimensions, ITracker, IScroll } from "@dflex/utils";
 
 import { Container } from "@dflex/core-instance";
 import type { IContainer } from "@dflex/core-instance";
 
-import type { ElmTree, DnDStoreInterface, RegisterInput } from "./types";
-
-import canUseDOM from "../utils/canUseDOM";
+import type { ElmTree, IDnDStore, RegisterInput } from "./types";
 
 import type {
   LayoutState,
@@ -27,12 +25,12 @@ Did you forget to call store.unregister(${id}) or add parenID when register the 
   );
 }
 
-class DnDStoreImp extends Store implements DnDStoreInterface {
+class DnDStoreImp extends Store implements IDnDStore {
   containers: { [siblingKey: string]: IContainer };
 
   tracker: ITracker;
 
-  layoutState: DnDStoreInterface["layoutState"];
+  layoutState: IDnDStore["layoutState"];
 
   events: Events;
 
@@ -70,7 +68,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     this.#isInitialized = false;
     this.#isDOM = false;
 
-    this.onLoadListeners = this.onLoadListeners.bind(this);
     this.updateBranchVisibility = this.updateBranchVisibility.bind(this);
   }
 
@@ -98,8 +95,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
   }
 
   #init() {
-    window.addEventListener("load", this.onLoadListeners);
-
     window.onbeforeunload = this.dispose();
   }
 
@@ -155,7 +150,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     this.registry[elmID].changeVisibility(isVisible);
   }
 
-  updateBranchVisibility(SK: string, shouldCheckVisibility: boolean) {
+  updateBranchVisibility(SK: string) {
     const branch = this.DOMGen.branches[SK];
 
     const { scroll } = this.containers[SK];
@@ -168,26 +163,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
       if (elmID.length > 0) {
         const permitExceptionToOverride = i > prevIndex;
 
-        if (this.registry[elmID].isPaused) {
-          this.registry[elmID].resume(scroll.scrollX, scroll.scrollY);
-        }
-
-        // Using element grid zero to know if the element has been initiated inside
-        // container or not.
-        if (this.registry[elmID].grid.x === 0) {
-          const { offset, grid } = this.registry[elmID];
-
-          this.containers[SK].setGrid(grid, offset);
-          this.containers[SK].setBoundaries(offset);
-        }
-
-        if (shouldCheckVisibility) {
-          this.updateElementVisibility(
-            elmID,
-            scroll,
-            permitExceptionToOverride
-          );
-        }
+        this.updateElementVisibility(elmID, scroll, permitExceptionToOverride);
 
         prevIndex = i;
       }
@@ -241,7 +217,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     return newSK;
   }
 
-  initSiblings(SK: string) {
+  initSiblingContainer(SK: string, shouldValidate: boolean) {
     if (!this.containers[SK]) {
       this.containers[SK] = new Container();
     }
@@ -257,42 +233,32 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     const lastElemID = branch[branch.length - 1];
     const hasSiblings = branch.length > 1;
 
-    if (!this.registry[firstElemID].isInitialized) {
-      this.registry[firstElemID].resume(0, 0);
-      this.registry[firstElemID].isPaused = true;
-    }
+    if (shouldValidate) {
+      const isHeadNotConnected = !this.registry[firstElemID].isConnected();
+      let isNotConnected = isHeadNotConnected;
 
-    const isHeadNotConnected = !this.registry[firstElemID].isConnected();
-
-    let isNotConnected = isHeadNotConnected;
-
-    if (hasSiblings) {
-      if (!this.registry[lastElemID].isInitialized) {
-        this.registry[lastElemID].resume(0, 0);
-        this.registry[lastElemID].isPaused = true;
+      if (hasSiblings) {
+        const isTailNotConnected = !this.registry[lastElemID!].isConnected();
+        isNotConnected = isTailNotConnected || isHeadNotConnected;
       }
 
-      const isTailNotConnected = !this.registry[lastElemID!].isConnected();
+      if (isNotConnected) {
+        if (process.env.NODE_ENV !== "production") {
+          throwElementIsNotConnected(firstElemID);
+        }
 
-      isNotConnected = isTailNotConnected || isHeadNotConnected;
-    }
+        if (this.containers[SK].scroll) {
+          this.containers[SK].scroll.destroy();
+          // @ts-expect-error
+          this.containers[SK].scroll = null;
+        }
 
-    if (isNotConnected) {
-      if (process.env.NODE_ENV !== "production") {
-        throwElementIsNotConnected(firstElemID);
+        const newKey = this.cleanupDisconnectedElements(SK);
+
+        this.initSiblingContainer(newKey, false);
+
+        return;
       }
-
-      if (this.containers[SK].scroll) {
-        this.containers[SK].scroll.destroy();
-        // @ts-expect-error
-        this.containers[SK].scroll = null;
-      }
-
-      const newKey = this.cleanupDisconnectedElements(SK);
-
-      this.initSiblings(newKey);
-
-      return;
     }
 
     if (this.containers[SK].scroll) {
@@ -319,19 +285,32 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     this.containers[SK].scroll = scroll;
 
     if (scroll.allowDynamicVisibility) {
-      this.updateBranchVisibility(SK, true);
       scroll.scrollEventCallback = this.updateBranchVisibility;
-    } else {
-      this.updateBranchVisibility(SK, true);
     }
   }
 
-  onLoadListeners() {
-    queueMicrotask(() => {
-      Object.keys(this.DOMGen.branches).forEach((branchKey) => {
-        this.initSiblings(branchKey);
-      });
-    });
+  initElmInstance(id: string) {
+    const {
+      keys: { SK },
+    } = this.registry[id];
+
+    if (this.registry[id].isPaused) {
+      this.registry[id].resume(
+        this.containers[SK].scroll.scrollX,
+        this.containers[SK].scroll.scrollY
+      );
+    }
+
+    // Using element grid zero to know if the element has been initiated inside
+    // container or not.
+    if (this.registry[id].grid.x === 0) {
+      const { offset, grid } = this.registry[id];
+
+      this.containers[SK].setGrid(grid, offset);
+      this.containers[SK].setBoundaries(offset);
+    }
+
+    this.updateElementVisibility(id, this.containers[SK].scroll, false);
   }
 
   handleElmMigration(
@@ -348,11 +327,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     });
   }
 
-  /**
-   *  Register DnD element.
-   *
-   * @param element -
-   */
   register(element: RegisterInput) {
     const hasRef = !!element.ref;
 
@@ -360,6 +334,12 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
       throw new Error(
         `DFlex: A valid unique id Or/and HTML element is required.`
       );
+    }
+
+    if (!this.#isDOM) {
+      this.#isDOM = canUseDOM();
+
+      if (!this.#isDOM) return;
     }
 
     /**
@@ -372,12 +352,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
       // eslint-disable-next-line no-param-reassign
       element.ref!.id = id;
-    }
-
-    if (!this.#isDOM) {
-      this.#isDOM = canUseDOM();
-
-      if (!this.#isDOM) return;
     }
 
     if (!this.#isInitialized) {
@@ -410,6 +384,18 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     };
 
     super.register(coreInput);
+
+    queueMicrotask(() => {
+      const {
+        keys: { SK },
+      } = this.registry[id!];
+
+      if (!this.containers[SK]) {
+        this.initSiblingContainer(SK, false);
+      }
+
+      this.initElmInstance(id!);
+    });
   }
 
   getBranchesByDepth(dp: number) {
@@ -528,8 +514,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     if (!this.#isInitialized) return null;
 
     this.#isInitialized = false;
-
-    window.removeEventListener("load", this.onLoadListeners);
 
     return null;
   }

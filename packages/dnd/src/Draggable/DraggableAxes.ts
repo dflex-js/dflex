@@ -107,19 +107,6 @@ class DraggableAxes
     });
 
     store.getBranchesByDepth(depth).forEach((key) => {
-      if (!store.containers[key]) {
-        if (process.env.NODE_ENV !== "production") {
-          // eslint-disable-next-line no-console
-          console.error(
-            `Siblings containers for ${key} is not initialized yet.`
-          );
-        }
-
-        store.initSiblings(key);
-      } else {
-        store.updateBranchVisibility(key, false);
-      }
-
       const { boundaries } = store.containers[key];
 
       if (process.env.NODE_ENV !== "production") {

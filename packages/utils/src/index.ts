@@ -24,3 +24,5 @@ export type {
 
 export { Scroll } from "./Scroll";
 export type { IScroll } from "./Scroll";
+
+export { canUseDOM } from "./collections";

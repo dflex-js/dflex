@@ -4,15 +4,31 @@ exports[`DnD Store Element is initiated 1`] = `
 Object {
   "id-1": CoreUtils {
     "animatedFrame": null,
+    "currentPosition": PointNum {
+      "x": 450,
+      "y": 114,
+    },
     "depth": 0,
+    "grid": PointNum {
+      "x": 1,
+      "y": 1,
+    },
+    "hasAttribute": Object {},
+    "hasToTransform": false,
     "id": "id-1",
     "isInitialized": true,
-    "isPaused": true,
-    "isVisible": false,
+    "isPaused": false,
+    "isVisible": true,
     "keys": Object {
       "CHK": null,
       "PK": "1-0",
       "SK": "0-0",
+    },
+    "offset": Object {
+      "height": 50,
+      "left": 450,
+      "top": 114,
+      "width": 170,
     },
     "order": Object {
       "parent": 0,
@@ -21,18 +37,38 @@ Object {
     "ref": <div
       data-index="0"
     />,
+    "translate": PointNum {
+      "x": 0,
+      "y": 0,
+    },
   },
   "id-2": CoreUtils {
     "animatedFrame": null,
+    "currentPosition": PointNum {
+      "x": 450,
+      "y": 172,
+    },
     "depth": 0,
+    "grid": PointNum {
+      "x": 1,
+      "y": 2,
+    },
+    "hasAttribute": Object {},
+    "hasToTransform": false,
     "id": "id-2",
     "isInitialized": true,
-    "isPaused": true,
-    "isVisible": false,
+    "isPaused": false,
+    "isVisible": true,
     "keys": Object {
       "CHK": null,
       "PK": "1-0",
       "SK": "0-0",
+    },
+    "offset": Object {
+      "height": 50,
+      "left": 450,
+      "top": 172,
+      "width": 170,
     },
     "order": Object {
       "parent": 0,
@@ -41,18 +77,38 @@ Object {
     "ref": <div
       data-index="1"
     />,
+    "translate": PointNum {
+      "x": 0,
+      "y": 0,
+    },
   },
   "id-3": CoreUtils {
     "animatedFrame": null,
+    "currentPosition": PointNum {
+      "x": 450,
+      "y": 230,
+    },
     "depth": 0,
+    "grid": PointNum {
+      "x": 1,
+      "y": 3,
+    },
+    "hasAttribute": Object {},
+    "hasToTransform": false,
     "id": "id-3",
     "isInitialized": true,
-    "isPaused": true,
-    "isVisible": false,
+    "isPaused": false,
+    "isVisible": true,
     "keys": Object {
       "CHK": null,
       "PK": "1-0",
       "SK": "0-0",
+    },
+    "offset": Object {
+      "height": 50,
+      "left": 450,
+      "top": 230,
+      "width": 170,
     },
     "order": Object {
       "parent": 0,
@@ -61,18 +117,38 @@ Object {
     "ref": <div
       data-index="2"
     />,
+    "translate": PointNum {
+      "x": 0,
+      "y": 0,
+    },
   },
   "id-4": CoreUtils {
     "animatedFrame": null,
+    "currentPosition": PointNum {
+      "x": 450,
+      "y": 288,
+    },
     "depth": 0,
+    "grid": PointNum {
+      "x": 1,
+      "y": 4,
+    },
+    "hasAttribute": Object {},
+    "hasToTransform": false,
     "id": "id-4",
     "isInitialized": true,
-    "isPaused": true,
-    "isVisible": false,
+    "isPaused": false,
+    "isVisible": true,
     "keys": Object {
       "CHK": null,
       "PK": "1-0",
       "SK": "0-0",
+    },
+    "offset": Object {
+      "height": 50,
+      "left": 450,
+      "top": 288,
+      "width": 170,
     },
     "order": Object {
       "parent": 0,
@@ -81,6 +157,10 @@ Object {
     "ref": <div
       data-index="3"
     />,
+    "translate": PointNum {
+      "x": 0,
+      "y": 0,
+    },
   },
 }
 `;
@@ -98,15 +178,31 @@ Object {
   },
   "element": CoreUtils {
     "animatedFrame": null,
+    "currentPosition": PointNum {
+      "x": 450,
+      "y": 114,
+    },
     "depth": 0,
+    "grid": PointNum {
+      "x": 1,
+      "y": 1,
+    },
+    "hasAttribute": Object {},
+    "hasToTransform": false,
     "id": "id-1",
     "isInitialized": true,
-    "isPaused": true,
-    "isVisible": false,
+    "isPaused": false,
+    "isVisible": true,
     "keys": Object {
       "CHK": null,
       "PK": "1-0",
       "SK": "0-0",
+    },
+    "offset": Object {
+      "height": 50,
+      "left": 450,
+      "top": 114,
+      "width": 170,
     },
     "order": Object {
       "parent": 0,
@@ -115,6 +211,10 @@ Object {
     "ref": <div
       data-index="0"
     />,
+    "translate": PointNum {
+      "x": 0,
+      "y": 0,
+    },
   },
   "parent": null,
 }
