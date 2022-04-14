@@ -6,7 +6,7 @@ import type { RectDimensions, ITracker, IScroll } from "@dflex/utils";
 import { Container } from "@dflex/core-instance";
 import type { IContainer } from "@dflex/core-instance";
 
-import type { ElmTree, DnDStoreInterface, RegisterInput } from "./types";
+import type { ElmTree, IDnDStore, RegisterInput } from "./types";
 
 import type {
   LayoutState,
@@ -25,12 +25,12 @@ Did you forget to call store.unregister(${id}) or add parenID when register the 
   );
 }
 
-class DnDStoreImp extends Store implements DnDStoreInterface {
+class DnDStoreImp extends Store implements IDnDStore {
   containers: { [siblingKey: string]: IContainer };
 
   tracker: ITracker;
 
-  layoutState: DnDStoreInterface["layoutState"];
+  layoutState: IDnDStore["layoutState"];
 
   events: Events;
 
@@ -39,11 +39,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
   #isDOM: boolean;
 
   #isInitialized: boolean;
-
-  /** Preserve the last registered branch key. */
-  #lastSK: string | null;
-
-  #hasToScheduleUpdate: boolean;
 
   #elmIndicator!: {
     currentKy: string;
@@ -72,8 +67,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
     this.#isInitialized = false;
     this.#isDOM = false;
-    this.#lastSK = null;
-    this.#hasToScheduleUpdate = false;
 
     this.updateBranchVisibility = this.updateBranchVisibility.bind(this);
   }
@@ -377,8 +370,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     };
 
     super.register(coreInput);
-
-    this.#hasToScheduleUpdate = true;
 
     queueMicrotask(() => {
       const {

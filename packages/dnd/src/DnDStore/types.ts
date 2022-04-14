@@ -52,10 +52,11 @@ interface Translate {
   translateY: number;
 }
 
-export interface DnDStoreInterface {
+export interface IDnDStore {
   readonly containers: { [siblingKey: string]: IContainer };
   readonly tracker: ITracker;
   readonly layoutState: LayoutState;
+  initSiblingContainer(SK: string): void;
   updateBranchVisibility(SK: string, shouldCheckVisibility: boolean): void;
   handleElmMigration(SK: string, elmID: string, offset: RectDimensions): void;
   onStateChange(state: LayoutState): void;
