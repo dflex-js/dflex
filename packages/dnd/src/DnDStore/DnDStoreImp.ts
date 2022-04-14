@@ -318,11 +318,10 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     this.containers[SK].scroll = scroll;
 
     if (scroll.allowDynamicVisibility) {
-      this.updateBranchVisibility(SK, true);
       scroll.scrollEventCallback = this.updateBranchVisibility;
-    } else {
-      this.updateBranchVisibility(SK, true);
     }
+
+    this.updateBranchVisibility(SK, true);
   }
 
   handleElmMigration(
