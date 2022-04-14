@@ -1,14 +1,12 @@
 import Store from "@dflex/store";
 
-import { Tracker, Scroll } from "@dflex/utils";
+import { Tracker, Scroll, canUseDOM } from "@dflex/utils";
 import type { RectDimensions, ITracker, IScroll } from "@dflex/utils";
 
 import { Container } from "@dflex/core-instance";
 import type { IContainer } from "@dflex/core-instance";
 
 import type { ElmTree, DnDStoreInterface, RegisterInput } from "./types";
-
-import canUseDOM from "../utils/canUseDOM";
 
 import type {
   LayoutState,
