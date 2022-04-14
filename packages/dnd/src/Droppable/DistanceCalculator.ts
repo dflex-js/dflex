@@ -80,16 +80,11 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     const { currentPosition, offset: elmOffset } = element;
 
     let diff = 0;
-    let equalizer: Direction = 1;
 
     if (type === "currentPosition") {
-      diff =
-        Math.abs(draggedPosition[axis] - currentPosition[axis]) -
-        translate[axis];
+      diff = currentPosition[axis] - draggedPosition[axis];
 
-      equalizer = draggedPosition[axis] < currentPosition[axis] ? 1 : -1;
-
-      diff *= equalizer;
+      diff += translate[axis];
 
       return diff;
     }
