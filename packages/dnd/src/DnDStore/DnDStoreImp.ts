@@ -40,6 +40,9 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
   #isInitialized: boolean;
 
+  /** Preserve the last registered branch key. */
+  #lastSK: string | null;
+
   #elmIndicator!: {
     currentKy: string;
     prevKy: string;
@@ -67,8 +70,8 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
     this.#isInitialized = false;
     this.#isDOM = false;
+    this.#lastSK = null;
 
-    this.onLoadListeners = this.onLoadListeners.bind(this);
     this.updateBranchVisibility = this.updateBranchVisibility.bind(this);
   }
 
@@ -96,8 +99,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
   }
 
   #init() {
-    window.addEventListener("load", this.onLoadListeners);
-
     window.onbeforeunload = this.dispose();
   }
 
@@ -324,14 +325,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     }
   }
 
-  onLoadListeners() {
-    queueMicrotask(() => {
-      Object.keys(this.DOMGen.branches).forEach((branchKey) => {
-        this.initSiblings(branchKey);
-      });
-    });
-  }
-
   handleElmMigration(
     newSK: string,
     oldSK: string,
@@ -346,11 +339,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     });
   }
 
-  /**
-   *  Register DnD element.
-   *
-   * @param element -
-   */
   register(element: RegisterInput) {
     const hasRef = !!element.ref;
 
@@ -408,6 +396,16 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     };
 
     super.register(coreInput);
+
+    queueMicrotask(() => {
+      if (this.#lastSK === this.registry[id!].keys.SK) {
+        return;
+      }
+
+      if (this.#lastSK) this.initSiblings(this.#lastSK);
+
+      this.#lastSK = this.registry[id!].keys.SK;
+    });
   }
 
   getBranchesByDepth(dp: number) {
@@ -526,8 +524,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     if (!this.#isInitialized) return null;
 
     this.#isInitialized = false;
-
-    window.removeEventListener("load", this.onLoadListeners);
 
     return null;
   }
