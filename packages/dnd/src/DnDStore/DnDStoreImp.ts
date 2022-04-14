@@ -360,6 +360,12 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
       );
     }
 
+    if (!this.#isDOM) {
+      this.#isDOM = canUseDOM();
+
+      if (!this.#isDOM) return;
+    }
+
     /**
      * If element already exist in the store, then the reattach the reference.
      */
@@ -370,12 +376,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
       // eslint-disable-next-line no-param-reassign
       element.ref!.id = id;
-    }
-
-    if (!this.#isDOM) {
-      this.#isDOM = canUseDOM();
-
-      if (!this.#isDOM) return;
     }
 
     if (!this.#isInitialized) {
