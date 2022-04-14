@@ -170,19 +170,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
       if (elmID.length > 0) {
         const permitExceptionToOverride = i > prevIndex;
 
-        if (this.registry[elmID].isPaused) {
-          this.registry[elmID].resume(scroll.scrollX, scroll.scrollY);
-        }
-
-        // Using element grid zero to know if the element has been initiated inside
-        // container or not.
-        if (this.registry[elmID].grid.x === 0) {
-          const { offset, grid } = this.registry[elmID];
-
-          this.containers[SK].setGrid(grid, offset);
-          this.containers[SK].setBoundaries(offset);
-        }
-
         this.updateElementVisibility(elmID, scroll, permitExceptionToOverride);
 
         prevIndex = i;
@@ -237,7 +224,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     return newSK;
   }
 
-  #initSiblings(SK: string) {
+  initSiblingContainer(SK: string) {
     if (!this.containers[SK]) {
       this.containers[SK] = new Container();
     }
@@ -286,7 +273,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
       const newKey = this.cleanupDisconnectedElements(SK);
 
-      this.#initSiblings(newKey);
+      this.initSiblingContainer(newKey);
 
       return;
     }
@@ -317,11 +304,6 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     if (scroll.allowDynamicVisibility) {
       scroll.scrollEventCallback = this.updateBranchVisibility;
     }
-  }
-
-  #createBranchContainer(SK: string) {
-    this.#initSiblings(SK);
-    this.updateBranchVisibility(SK);
   }
 
   handleElmMigration(
@@ -403,38 +385,33 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
         keys: { SK },
       } = this.registry[id!];
 
-      if (this.#lastSK === SK) {
-        return;
+      if (!this.containers[SK]) {
+        this.initSiblingContainer(SK);
       }
-
-      /**
-       * This only fires when there's a change in the branch. And this
-       * guarantees that the branch is fully mounted. But if there's one branch
-       * only, it won't fire. Which means `hasToScheduleUpdate` will be true as
-       * task.
-       */
-      if (this.#lastSK) {
-        this.#createBranchContainer(SK);
-      }
-
-      this.#lastSK = SK;
     });
 
-    setTimeout(() => {
+    queueMicrotask(() => {
       const {
         keys: { SK },
       } = this.registry[id!];
 
-      if (!this.containers[SK]) {
-        this.#createBranchContainer(SK);
-
-        return;
+      if (this.registry[id!].isPaused) {
+        this.registry[id!].resume(
+          this.containers[SK].scroll.scrollX,
+          this.containers[SK].scroll.scrollY
+        );
       }
 
-      if (process.env.NODE_ENV !== "production") {
-        // eslint-disable-next-line no-console
-        console.info("No need to schedule an update.");
+      // Using element grid zero to know if the element has been initiated inside
+      // container or not.
+      if (this.registry[id!].grid.x === 0) {
+        const { offset, grid } = this.registry[id!];
+
+        this.containers[SK].setGrid(grid, offset);
+        this.containers[SK].setBoundaries(offset);
       }
+
+      this.updateElementVisibility(id!, this.containers[SK].scroll, false);
     });
   }
 
