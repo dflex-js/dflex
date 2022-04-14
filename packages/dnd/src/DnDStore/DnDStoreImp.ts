@@ -43,6 +43,8 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
   /** Preserve the last registered branch key. */
   #lastSK: string | null;
 
+  #hasToScheduleUpdate: boolean;
+
   #elmIndicator!: {
     currentKy: string;
     prevKy: string;
@@ -71,6 +73,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     this.#isInitialized = false;
     this.#isDOM = false;
     this.#lastSK = null;
+    this.#hasToScheduleUpdate = false;
 
     this.updateBranchVisibility = this.updateBranchVisibility.bind(this);
   }
@@ -154,7 +157,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     this.registry[elmID].changeVisibility(isVisible);
   }
 
-  updateBranchVisibility(SK: string, shouldCheckVisibility: boolean) {
+  updateBranchVisibility(SK: string) {
     const branch = this.DOMGen.branches[SK];
 
     const { scroll } = this.containers[SK];
@@ -180,13 +183,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
           this.containers[SK].setBoundaries(offset);
         }
 
-        if (shouldCheckVisibility) {
-          this.updateElementVisibility(
-            elmID,
-            scroll,
-            permitExceptionToOverride
-          );
-        }
+        this.updateElementVisibility(elmID, scroll, permitExceptionToOverride);
 
         prevIndex = i;
       }
@@ -240,7 +237,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     return newSK;
   }
 
-  initSiblings(SK: string) {
+  #initSiblings(SK: string) {
     if (!this.containers[SK]) {
       this.containers[SK] = new Container();
     }
@@ -289,7 +286,7 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
       const newKey = this.cleanupDisconnectedElements(SK);
 
-      this.initSiblings(newKey);
+      this.#initSiblings(newKey);
 
       return;
     }
@@ -320,8 +317,11 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
     if (scroll.allowDynamicVisibility) {
       scroll.scrollEventCallback = this.updateBranchVisibility;
     }
+  }
 
-    this.updateBranchVisibility(SK, true);
+  #createBranchContainer(SK: string) {
+    this.#initSiblings(SK);
+    this.updateBranchVisibility(SK);
   }
 
   handleElmMigration(
@@ -396,6 +396,8 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
 
     super.register(coreInput);
 
+    this.#hasToScheduleUpdate = true;
+
     queueMicrotask(() => {
       const {
         keys: { SK },
@@ -405,9 +407,34 @@ class DnDStoreImp extends Store implements DnDStoreInterface {
         return;
       }
 
-      if (this.#lastSK) this.initSiblings(this.#lastSK);
+      /**
+       * This only fires when there's a change in the branch. And this
+       * guarantees that the branch is fully mounted. But if there's one branch
+       * only, it won't fire. Which means `hasToScheduleUpdate` will be true as
+       * task.
+       */
+      if (this.#lastSK) {
+        this.#createBranchContainer(SK);
+      }
 
       this.#lastSK = SK;
+    });
+
+    setTimeout(() => {
+      const {
+        keys: { SK },
+      } = this.registry[id!];
+
+      if (!this.containers[SK]) {
+        this.#createBranchContainer(SK);
+
+        return;
+      }
+
+      if (process.env.NODE_ENV !== "production") {
+        // eslint-disable-next-line no-console
+        console.info("No need to schedule an update.");
+      }
     });
   }
 

@@ -38,17 +38,15 @@ class DnD extends Droppable {
 
     const options = extractOpts(opts);
 
-    const { SK } = store.registry[id].keys;
-
-    if (!SK) {
-      throw new Error(`DFlex: unable to find element list key in the Store.`);
-    }
+    const { depth } = store.registry[id];
 
     /**
      * In case it is not already initiated in the store. We do it here guarantee
      * all the branch is updated.
      */
-    store.initSiblings(SK);
+    store.getBranchesByDepth(depth).forEach((SK) => {
+      store.updateBranchVisibility(SK);
+    });
 
     const draggable = new DraggableInteractive(
       id,
