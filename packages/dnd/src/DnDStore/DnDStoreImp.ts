@@ -392,11 +392,11 @@ class DnDStoreImp extends Store implements IDnDStore {
 
       if (!this.containers[SK]) {
         this.initSiblingContainer(SK, false);
-        this.initElmInstance(id!);
-        return;
       }
 
-      this.initElmInstance(id!);
+      queueMicrotask(() => {
+        this.initElmInstance(id!);
+      });
     });
   }
 
