@@ -34,7 +34,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
   #elmTransition: IPointNum;
 
-  #draggedOffset: IPointNum;
+  #draggedPositionOffset: IPointNum;
 
   #draggedTransition: IPointNum;
 
@@ -54,7 +54,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     /**
      * Same as elmTransition but for dragged.
      */
-    this.#draggedOffset = new PointNum(0, 0);
+    this.#draggedPositionOffset = new PointNum(0, 0);
 
     this.#draggedTransition = new PointNum(0, 0);
 
@@ -108,20 +108,18 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     elmDirection: Direction
   ) {
     const positionDiff = this.getDiff(element, axis, "occupiedPosition");
-
-    this.#draggedTransition[axis] = positionDiff;
-    this.#elmTransition[axis] = positionDiff;
-
     const rectDiff = this.getDiff(element, axis, "offset");
 
-    // Then dragged and element transition already set.
-    if (rectDiff === 0) return;
-
     if (elmDirection === -1) {
-      this.#draggedTransition[axis] += rectDiff;
-      this.#draggedOffset[axis] = rectDiff;
+      this.#draggedTransition[axis] = positionDiff + rectDiff;
+      this.#draggedPositionOffset[axis] = rectDiff;
+
+      this.#elmTransition[axis] = positionDiff;
     } else {
-      this.#elmTransition[axis] += -1 * rectDiff;
+      this.#draggedTransition[axis] = positionDiff;
+      this.#draggedPositionOffset[axis] = 0;
+
+      this.#elmTransition[axis] = positionDiff - rectDiff;
     }
   }
 
@@ -129,8 +127,8 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     const { currentPosition, grid } = element;
 
     this.draggable.occupiedPosition.setAxes(
-      currentPosition.x + this.#draggedOffset.x,
-      currentPosition.y + this.#draggedOffset.y
+      currentPosition.x + this.#draggedPositionOffset.x,
+      currentPosition.y + this.#draggedPositionOffset.y
     );
 
     const draggedDirection = -1 * elmDirection;
@@ -176,8 +174,9 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
     const elmDirection: Direction = isIncrease ? -1 : 1;
 
-    this.#draggedOffset.setAxes(0, 0);
     this.#elmTransition.setAxes(0, 0);
+    this.#draggedPositionOffset.setAxes(0, 0);
+    this.#draggedPositionOffset.setAxes(0, 0);
 
     this.#setDistanceBtwPositions(element, axis, elmDirection);
 
