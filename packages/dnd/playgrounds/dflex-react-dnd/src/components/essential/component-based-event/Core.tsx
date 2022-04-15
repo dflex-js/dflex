@@ -59,7 +59,13 @@ const Core = ({
     // avoid right mouse click and ensure id
     if (typeof button === "number" && button === 0) {
       if (id) {
-        draggedEvent = new DnD(id, { x: clientX, y: clientY });
+        draggedEvent = new DnD(
+          id,
+          { x: clientX, y: clientY },
+          {
+            enableContainersTransition: false,
+          }
+        );
 
         setIsDragged(true);
       }

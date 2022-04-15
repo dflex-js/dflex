@@ -66,6 +66,7 @@ export interface IDraggableAxes extends IAbstractDraggable<INode> {
 }
 
 export interface IDraggableInteractive extends IDraggableAxes {
+  readonly enableContainersTransition: boolean;
   readonly operationID: string;
   readonly scroll: ScrollOptWithThreshold;
   readonly occupiedPosition: IPointNum;
