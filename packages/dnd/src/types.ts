@@ -90,20 +90,25 @@ export interface ScrollOptWithThreshold extends ScrollOptWithoutThreshold {
   threshold: ThresholdPercentages;
 }
 
+export interface DefaultDndOpts {
+  threshold: ThresholdPercentages;
+  restrictions: Restrictions;
+  scroll: ScrollOptWithThreshold;
+  events: Events;
+  enableContainersTransition: boolean;
+}
+
 export interface RestrictionsStatus {
   isContainerRestricted: boolean;
   isSelfRestricted: boolean;
 }
 
-export interface FinalDndOpts {
-  threshold: ThresholdPercentages;
-  restrictions: Restrictions;
+export interface FinalDndOpts extends DefaultDndOpts {
   restrictionsStatus: RestrictionsStatus;
-  scroll: ScrollOptWithThreshold;
-  events: Events;
 }
 
 export interface DndOpts {
+  enableContainersTransition?: boolean;
   threshold?: Partial<ThresholdPercentages>;
   restrictions?: {
     self?: Partial<Restrictions["self"]>;
