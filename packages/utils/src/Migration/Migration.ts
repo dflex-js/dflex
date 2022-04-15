@@ -21,7 +21,7 @@ class Migration implements IMigration {
 
   readonly elmSyntheticOffset: IPointAxes;
 
-  isCompleted!: boolean;
+  isTransitioning!: boolean;
 
   lastElmPosition: IPointNum;
 
@@ -66,11 +66,11 @@ class Migration implements IMigration {
   }
 
   start() {
-    this.isCompleted = false;
+    this.isTransitioning = true;
   }
 
   complete(lastElmPosition: IPointNum) {
-    this.isCompleted = true;
+    this.isTransitioning = false;
 
     this.lastElmPosition.clone(lastElmPosition);
 

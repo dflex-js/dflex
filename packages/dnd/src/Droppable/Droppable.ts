@@ -233,18 +233,12 @@ class Droppable extends DistanceCalculator {
 
     draggedElm.rmDateset("draggedOutContainer");
 
-    if (!migration.isCompleted) {
+    if (migration.isTransitioning) {
       occupiedTranslate.clone(migration.insertionTransform!);
 
       const activeList = store.getElmBranchByKey(migration.latest().key);
 
       const lastElmId = activeList[activeList.length - 1];
-
-      store.handleElmMigration(
-        migration.latest().key,
-        migration.prev().key,
-        migration.insertionOffset!
-      );
 
       migration.complete(store.registry[lastElmId].currentPosition);
     }
@@ -262,6 +256,7 @@ class Droppable extends DistanceCalculator {
 
     for (let i = 0; i < dp.length; i += 1) {
       newSK = dp[i];
+
       const isOut = this.draggable.isOutThreshold(newSK);
 
       if (!isOut) {
@@ -352,6 +347,12 @@ class Droppable extends DistanceCalculator {
           width: draggedOffset.width,
           height: draggedOffset.height,
         };
+
+        store.handleElmMigration(
+          newSK,
+          migration.latest().key,
+          insertionOffset
+        );
 
         migration.add(NaN, newSK, insertionTransform, insertionOffset);
 
@@ -732,11 +733,6 @@ class Droppable extends DistanceCalculator {
       );
     }
 
-    const siblings =
-      store.DOMGen.branches[this.draggable.migration.latest().key];
-
-    if (siblings === null) return;
-
     let isOutSiblingsContainer = false;
 
     if (this.draggable.isOutThreshold()) {
@@ -780,6 +776,12 @@ class Droppable extends DistanceCalculator {
       this.isParentLocked = true;
 
       this.#detectNearestContainer();
+
+      if (this.draggable.migration.isTransitioning) {
+        this.#detectNearestElm();
+
+        return;
+      }
 
       return;
     }

@@ -9,7 +9,7 @@ export interface IAbstract {
 
 export interface IMigration {
   /** Only true when transitioning. */
-  readonly isCompleted: boolean;
+  readonly isTransitioning: boolean;
 
   /**
    * The space between the dragged element in the list and the second element.
