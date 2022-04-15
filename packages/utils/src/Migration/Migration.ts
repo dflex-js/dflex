@@ -19,11 +19,11 @@ class AbstractMigration implements IAbstract {
 class Migration implements IMigration {
   #migrations: Array<IAbstract>;
 
-  isMigrationCompleted!: boolean;
+  readonly elmSyntheticOffset: IPointAxes;
+
+  isCompleted!: boolean;
 
   lastElmPosition: IPointNum;
-
-  elmSyntheticOffset: IPointAxes;
 
   insertionTransform!: IPointAxes | null;
 
@@ -36,10 +36,8 @@ class Migration implements IMigration {
     lastElmPosition: IPointNum
   ) {
     this.#migrations = [new AbstractMigration(index, key)];
-
     this.elmSyntheticOffset = { ...elmSyntheticOffset };
     this.lastElmPosition = new PointNum(0, 0);
-
     this.complete(lastElmPosition);
   }
 
@@ -63,14 +61,16 @@ class Migration implements IMigration {
   ) {
     this.#migrations.push(new AbstractMigration(index, key));
 
-    this.isMigrationCompleted = false;
-
     this.insertionTransform = { ...insertionTransform };
     this.insertionOffset = { ...insertionOffset };
   }
 
+  start() {
+    this.isCompleted = false;
+  }
+
   complete(lastElmPosition: IPointNum) {
-    this.isMigrationCompleted = true;
+    this.isCompleted = true;
 
     this.lastElmPosition.clone(lastElmPosition);
 

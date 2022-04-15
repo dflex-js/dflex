@@ -153,7 +153,6 @@ class DraggableInteractive
     this.draggedElm.currentPosition.clone(this.occupiedPosition);
     this.draggedElm.translate.clone(this.occupiedTranslate);
 
-    // debugger;
     this.draggedElm.grid.clone(this.gridPlaceholder);
 
     // TODO: Fix this please, why it's just Y.

@@ -8,25 +8,33 @@ export interface IAbstract {
 }
 
 export interface IMigration {
-  /** False when migration transformation not completed yet. */
-  isMigrationCompleted: boolean;
+  /** Only true when transitioning. */
+  readonly isCompleted: boolean;
 
   /**
    * The space between the dragged element in the list and the second element.
    * Usage: This space equalizer used to create new element when migration is
    * completed.
    */
-  elmSyntheticOffset: IPointAxes;
+  readonly elmSyntheticOffset: IPointAxes;
 
   /**
    * Preserve the last element position in the list .
    * Usage: Getting this position when the dragged is going back from the tail.
    */
-  lastElmPosition: IPointNum;
+  readonly lastElmPosition: IPointNum;
 
-  insertionTransform: IPointAxes | null;
+  /**
+   * Temporary placeholder for transformation destination.
+   * Defined only when transitioning.
+   */
+  readonly insertionTransform: IPointAxes | null;
 
-  insertionOffset: RectDimensions | null;
+  /**
+   * Temporary placeholder for the new insertion offset destination.
+   * Defined only when transitioning.
+   */
+  readonly insertionOffset: RectDimensions | null;
 
   /** Get the latest migrations instance */
   latest(): IAbstract;
@@ -50,6 +58,9 @@ export interface IMigration {
     insertionTransform: IPointAxes,
     insertionOffset: RectDimensions
   ): void;
+
+  /** start transitioning. */
+  start(): void;
 
   /** Get the migration done  */
   complete(lastElmPosition: IPointNum): void;

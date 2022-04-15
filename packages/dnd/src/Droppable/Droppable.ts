@@ -233,7 +233,7 @@ class Droppable extends DistanceCalculator {
 
     draggedElm.rmDateset("draggedOutContainer");
 
-    if (!migration.isMigrationCompleted) {
+    if (!migration.isCompleted) {
       occupiedTranslate.clone(migration.insertionTransform!);
 
       const activeList = store.getElmBranchByKey(migration.latest().key);
@@ -267,6 +267,8 @@ class Droppable extends DistanceCalculator {
       if (!isOut) {
         // Coming back to the same container.
         if (newSK === migration.latest().key) return;
+
+        this.draggable.migration.start();
 
         const originalSiblingList = store.getElmBranchByKey(
           migration.latest().key
@@ -729,8 +731,6 @@ class Droppable extends DistanceCalculator {
         y + this.#scrollAxes.y - this.#initialScroll.y
       );
     }
-
-    if (!this.draggable.migration.latest().key) return;
 
     const siblings =
       store.DOMGen.branches[this.draggable.migration.latest().key];
