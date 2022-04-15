@@ -27,7 +27,7 @@ export type RegisterInput =
   | RegisterInputID
   | RegisterInputRef;
 
-export interface AbstractDraggableInterface<T extends IAbstract> {
+export interface IAbstractDraggable<T extends IAbstract> {
   draggedElm: T;
 
   /**

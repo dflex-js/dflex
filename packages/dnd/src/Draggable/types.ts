@@ -6,7 +6,7 @@ import type {
   IMigration,
 } from "@dflex/utils";
 import type { INode } from "@dflex/core-instance";
-import type { AbstractDraggableInterface } from "@dflex/draggable";
+import type { IAbstractDraggable } from "@dflex/draggable";
 
 import type { ScrollOptWithThreshold } from "../types";
 
@@ -29,8 +29,7 @@ export interface Restrictions {
   };
 }
 
-export interface DraggableAxesInterface
-  extends AbstractDraggableInterface<INode> {
+export interface IDraggableAxes extends IAbstractDraggable<INode> {
   /** Dragged threshold  */
   readonly threshold: ThresholdInterface;
 
@@ -66,11 +65,9 @@ export interface DraggableAxesInterface
   isNotSettled(): boolean;
 }
 
-export interface DraggableInteractiveInterface extends DraggableAxesInterface {
+export interface IDraggableInteractive extends IDraggableAxes {
   readonly operationID: string;
-  setOfTransformedIds?: Set<string>;
-  siblingsContainer: INode | null;
-  scroll: ScrollOptWithThreshold;
+  readonly scroll: ScrollOptWithThreshold;
   readonly occupiedPosition: IPointNum;
   readonly occupiedTranslate: IPointNum;
   readonly numberOfElementsTransformed: number;

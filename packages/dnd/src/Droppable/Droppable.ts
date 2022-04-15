@@ -5,7 +5,7 @@ import type { DraggedEvent, SiblingsEvent } from "../types";
 
 import store from "../DnDStore";
 
-import type { DraggableInteractiveInterface } from "../Draggable";
+import type { IDraggableInteractive } from "../Draggable";
 import DistanceCalculator from "./DistanceCalculator";
 
 function emitSiblingsEvent(
@@ -85,7 +85,7 @@ class Droppable extends DistanceCalculator {
 
   static INDEX_OUT_CONTAINER = NaN;
 
-  constructor(draggable: DraggableInteractiveInterface) {
+  constructor(draggable: IDraggableInteractive) {
     super(draggable);
 
     this.#scrollAnimatedFrame = null;
@@ -233,18 +233,12 @@ class Droppable extends DistanceCalculator {
 
     draggedElm.rmDateset("draggedOutContainer");
 
-    if (!migration.isMigrationCompleted) {
+    if (migration.isTransitioning) {
       occupiedTranslate.clone(migration.insertionTransform!);
 
       const activeList = store.getElmBranchByKey(migration.latest().key);
 
       const lastElmId = activeList[activeList.length - 1];
-
-      store.handleElmMigration(
-        migration.latest().key,
-        migration.prev().key,
-        migration.insertionOffset!
-      );
 
       migration.complete(store.registry[lastElmId].currentPosition);
     }
@@ -263,11 +257,14 @@ class Droppable extends DistanceCalculator {
 
     for (let i = 0; i < dp.length; i += 1) {
       newSK = dp[i];
+
       const isOut = this.draggable.isOutThreshold(newSK);
 
       if (!isOut) {
         // Coming back to the same container.
         if (newSK === migration.latest().key) return;
+
+        this.draggable.migration.start();
 
         const originalSiblingList = store.getElmBranchByKey(
           migration.latest().key
@@ -297,20 +294,6 @@ class Droppable extends DistanceCalculator {
           // Getting the last element of the new list.
           const lastElmId = newSiblingList[newSiblingList.length - 1];
           const lastElm = store.registry[lastElmId];
-
-          if (!lastElm || !lastElm.currentPosition) {
-            if (process.env.NODE_ENV !== "production") {
-              // eslint-disable-next-line no-console
-              console.error(
-                `Transforming the dragged element to the new container in interrupted.\n\n`,
-                `[${lastElmId}] is not fully registered in the store.\n`,
-                `Please check the following instance:\n`,
-                lastElm
-              );
-            }
-
-            return;
-          }
 
           ({ grid, currentPosition: elmPosition } = lastElm);
 
@@ -365,6 +348,12 @@ class Droppable extends DistanceCalculator {
           width: draggedOffset.width,
           height: draggedOffset.height,
         };
+
+        store.handleElmMigration(
+          newSK,
+          migration.latest().key,
+          insertionOffset
+        );
 
         migration.add(NaN, newSK, insertionTransform, insertionOffset);
 
@@ -745,13 +734,6 @@ class Droppable extends DistanceCalculator {
       );
     }
 
-    if (!this.draggable.migration.latest().key) return;
-
-    const siblings =
-      store.DOMGen.branches[this.draggable.migration.latest().key];
-
-    if (siblings === null) return;
-
     let isOutSiblingsContainer = false;
 
     if (this.draggable.isOutThreshold()) {
@@ -795,6 +777,12 @@ class Droppable extends DistanceCalculator {
       this.isParentLocked = true;
 
       // this.#detectNearestContainer();
+
+      if (this.draggable.migration.isTransitioning) {
+        this.#detectNearestElm();
+
+        return;
+      }
 
       return;
     }

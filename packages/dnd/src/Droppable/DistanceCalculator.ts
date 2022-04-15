@@ -4,7 +4,7 @@ import { Direction, PointNum } from "@dflex/utils";
 import type { IPointNum, Axis } from "@dflex/utils";
 
 import type { InteractivityEvent } from "../types";
-import type { DraggableInteractiveInterface } from "../Draggable";
+import type { IDraggableInteractive } from "../Draggable";
 
 import store from "../DnDStore";
 
@@ -30,7 +30,7 @@ function emitInteractiveEvent(
  * accordingly.
  */
 class DistanceCalculator implements DistanceCalculatorInterface {
-  protected draggable: DraggableInteractiveInterface;
+  protected draggable: IDraggableInteractive;
 
   #elmTransition: IPointNum;
 
@@ -43,7 +43,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
   /** Isolated form the threshold and predict is-out based on the controllers */
   protected isParentLocked: boolean;
 
-  constructor(draggable: DraggableInteractiveInterface) {
+  constructor(draggable: IDraggableInteractive) {
     this.draggable = draggable;
 
     /**
@@ -80,16 +80,11 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     const { currentPosition, offset: elmOffset } = element;
 
     let diff = 0;
-    let equalizer: Direction = 1;
 
     if (type === "currentPosition") {
-      diff =
-        Math.abs(draggedPosition[axis] - currentPosition[axis]) -
-        translate[axis];
+      diff = currentPosition[axis] - draggedPosition[axis];
 
-      equalizer = draggedPosition[axis] < currentPosition[axis] ? 1 : -1;
-
-      diff *= equalizer;
+      diff += translate[axis];
 
       return diff;
     }

@@ -3,11 +3,9 @@ import type { DraggedStyle } from "@dflex/draggable";
 import { PointNum } from "@dflex/utils";
 import type { IPointNum, IPointAxes } from "@dflex/utils";
 
-import type { INode } from "@dflex/core-instance";
-
 import store from "../DnDStore";
 
-import type { DraggableInteractiveInterface } from "./types";
+import type { IDraggableInteractive } from "./types";
 
 import type { ScrollOptWithThreshold, FinalDndOpts } from "../types";
 
@@ -15,11 +13,9 @@ import DraggableAxes from "./DraggableAxes";
 
 class DraggableInteractive
   extends DraggableAxes
-  implements DraggableInteractiveInterface
+  implements IDraggableInteractive
 {
   operationID: string;
-
-  siblingsContainer: INode | null;
 
   setOfTransformedIds?: Set<string>;
 
@@ -36,11 +32,8 @@ class DraggableInteractive
   private changeToFixedStyleProps: DraggedStyle;
 
   constructor(id: string, initCoordinates: IPointAxes, opts: FinalDndOpts) {
-    const { parent } = store.getElmTreeById(id);
-
     super(id, initCoordinates, opts);
 
-    // This tiny bug caused an override  options despite it's actually freezed!
     this.scroll = { ...opts.scroll };
 
     const { SK } = store.registry[id].keys;
@@ -91,17 +84,6 @@ class DraggableInteractive
 
     const { currentPosition, translate } = this.draggedElm;
 
-    this.siblingsContainer = null;
-
-    if (parent) {
-      /**
-       * Indicator to parents that have changed. This facilitates looping in
-       * affected parents only.
-       */
-      this.setOfTransformedIds = new Set([]);
-      this.assignActiveParent(parent);
-    }
-
     this.operationID = store.tracker.newTravel();
 
     this.occupiedPosition = new PointNum(currentPosition.x, currentPosition.y);
@@ -112,19 +94,6 @@ class DraggableInteractive
      * crucial to calculate drag's translate and index
      */
     this.numberOfElementsTransformed = 0;
-  }
-
-  /**
-   * Assigns new container parent to the dragged.
-   *
-   * @param element -
-   */
-  private assignActiveParent(element: INode) {
-    /**
-     * Assign a new instance which represents droppable. Then
-     * assign owner parent so we have from/to.
-     */
-    this.siblingsContainer = element;
   }
 
   setDraggedTempIndex(i: number) {
@@ -183,6 +152,7 @@ class DraggableInteractive
 
     this.draggedElm.currentPosition.clone(this.occupiedPosition);
     this.draggedElm.translate.clone(this.occupiedTranslate);
+
     this.draggedElm.grid.clone(this.gridPlaceholder);
 
     // TODO: Fix this please, why it's just Y.
