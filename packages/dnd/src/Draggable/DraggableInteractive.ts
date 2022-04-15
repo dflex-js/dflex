@@ -5,7 +5,7 @@ import type { IPointNum, IPointAxes } from "@dflex/utils";
 
 import store from "../DnDStore";
 
-import type { DraggableInteractiveInterface } from "./types";
+import type { IDraggableInteractive } from "./types";
 
 import type { ScrollOptWithThreshold, FinalDndOpts } from "../types";
 
@@ -13,7 +13,7 @@ import DraggableAxes from "./DraggableAxes";
 
 class DraggableInteractive
   extends DraggableAxes
-  implements DraggableInteractiveInterface
+  implements IDraggableInteractive
 {
   operationID: string;
 
@@ -34,7 +34,6 @@ class DraggableInteractive
   constructor(id: string, initCoordinates: IPointAxes, opts: FinalDndOpts) {
     super(id, initCoordinates, opts);
 
-    // This tiny bug caused an override  options despite it's actually freezed!
     this.scroll = { ...opts.scroll };
 
     const { SK } = store.registry[id].keys;
@@ -153,6 +152,8 @@ class DraggableInteractive
 
     this.draggedElm.currentPosition.clone(this.occupiedPosition);
     this.draggedElm.translate.clone(this.occupiedTranslate);
+
+    // debugger;
     this.draggedElm.grid.clone(this.gridPlaceholder);
 
     // TODO: Fix this please, why it's just Y.

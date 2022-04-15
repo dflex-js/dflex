@@ -5,7 +5,7 @@ import type { DraggedEvent, SiblingsEvent } from "../types";
 
 import store from "../DnDStore";
 
-import type { DraggableInteractiveInterface } from "../Draggable";
+import type { IDraggableInteractive } from "../Draggable";
 import DistanceCalculator from "./DistanceCalculator";
 
 function emitSiblingsEvent(
@@ -85,7 +85,7 @@ class Droppable extends DistanceCalculator {
 
   static INDEX_OUT_CONTAINER = NaN;
 
-  constructor(draggable: DraggableInteractiveInterface) {
+  constructor(draggable: IDraggableInteractive) {
     super(draggable);
 
     this.#scrollAnimatedFrame = null;

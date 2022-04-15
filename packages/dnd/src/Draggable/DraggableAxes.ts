@@ -13,14 +13,11 @@ import type { INode } from "@dflex/core-instance";
 
 import store from "../DnDStore";
 
-import type { DraggableAxesInterface, Restrictions } from "./types";
+import type { IDraggableAxes, Restrictions } from "./types";
 
 import type { FinalDndOpts, RestrictionsStatus } from "../types";
 
-class DraggableAxes
-  extends AbstractDraggable<INode>
-  implements DraggableAxesInterface
-{
+class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
   positionPlaceholder: IPointNum;
 
   gridPlaceholder: IPointNum;
