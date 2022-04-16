@@ -31,7 +31,9 @@ const thirdContainer = [
     id: "migrate-9",
   },
   {
-    style: {},
+    style: {
+      height: "80px",
+    },
     label: "container3 |> elm-2",
     id: "migrate-10",
   },
