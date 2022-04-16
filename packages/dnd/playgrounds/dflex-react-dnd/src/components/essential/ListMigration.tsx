@@ -10,16 +10,16 @@ const firstContainer = [
       height: "60px",
     },
     label: "container1 |> elm-1",
-    id: "migrate-1",
+    id: "c1-1",
   },
 ];
 
 const secondContainer = [
-  { style: {}, label: "container2 |> elm-1", id: "migrate-2" },
-  { style: {}, label: "container2 |> elm-2", id: "migrate-3" },
-  { style: {}, label: "container2 |> elm-3", id: "migrate-4" },
-  { style: {}, label: "container2 |> elm-4", id: "migrate-5" },
-  { style: {}, label: "container2 |> elm-5", id: "migrate-6" },
+  { style: {}, label: "container2 |> elm-1", id: "c2-1" },
+  { style: {}, label: "container2 |> elm-2", id: "c2-2" },
+  { style: {}, label: "container2 |> elm-3", id: "c2-3" },
+  { style: {}, label: "container2 |> elm-4", id: "c2-4" },
+  { style: {}, label: "container2 |> elm-5", id: "c2-5" },
 ];
 
 const thirdContainer = [
@@ -28,14 +28,14 @@ const thirdContainer = [
       height: "80px",
     },
     label: "container3 |> elm-1",
-    id: "migrate-9",
+    id: "c3-1",
   },
   {
     style: {
       height: "80px",
     },
     label: "container3 |> elm-2",
-    id: "migrate-10",
+    id: "c3-2",
   },
 ];
 
@@ -60,7 +60,7 @@ const ListMigration = () => (
         <Core
           enableContainersTransition
           depth={0}
-          id={`id-${id}`}
+          id={id}
           key={`k${id}`}
           component="li"
           style={style}
@@ -79,7 +79,7 @@ const ListMigration = () => (
         <Core
           enableContainersTransition
           depth={0}
-          id={`id-${id}`}
+          id={id}
           key={`k-${id}`}
           component="li"
           style={style}
@@ -98,7 +98,7 @@ const ListMigration = () => (
         <Core
           enableContainersTransition
           depth={0}
-          id={`id-${id}`}
+          id={id}
           key={`k-${id}`}
           component="li"
           style={style}
