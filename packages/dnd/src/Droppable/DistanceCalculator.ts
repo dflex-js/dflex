@@ -140,6 +140,19 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     this.draggable.gridPlaceholder.clone(grid);
   }
 
+  protected updateIndicators(
+    element: INode,
+    axis: Axis,
+    elmDirection: Direction
+  ) {
+    this.#elmTransition.setAxes(0, 0);
+    this.#draggedPositionOffset.setAxes(0, 0);
+    this.#draggedPositionOffset.setAxes(0, 0);
+
+    this.#setDistanceBtwPositions(element, axis, elmDirection);
+    this.#updateDraggable(element, elmDirection);
+  }
+
   /**
    * Updates element instance and calculates the required transform distance. It
    * invokes for each eligible element in the parent container.
@@ -174,13 +187,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
     const elmDirection: Direction = isIncrease ? -1 : 1;
 
-    this.#elmTransition.setAxes(0, 0);
-    this.#draggedPositionOffset.setAxes(0, 0);
-    this.#draggedPositionOffset.setAxes(0, 0);
-
-    this.#setDistanceBtwPositions(element, axis, elmDirection);
-
-    this.#updateDraggable(element, elmDirection);
+    this.updateIndicators(element, axis, elmDirection);
 
     this.draggable.updateNumOfElementsTransformed(elmDirection);
 

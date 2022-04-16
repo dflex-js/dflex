@@ -1,4 +1,4 @@
-import { IPointAxes, PointNum } from "@dflex/utils";
+import { PointNum } from "@dflex/utils";
 import type { IPointNum } from "@dflex/utils";
 
 import type { DraggedEvent, SiblingsEvent } from "../types";
@@ -234,22 +234,22 @@ class Droppable extends DistanceCalculator {
 
     draggedElm.rmDateset("draggedOutContainer");
 
-    if (migration.isTransitioning) {
-      occupiedTranslate.clone(migration.insertionTransform!);
+    // if (migration.isTransitioning) {
+    //   occupiedTranslate.clone(migration.insertionTransform!);
 
-      const activeList = store.getElmBranchByKey(migration.latest().key);
+    //   const activeList = store.getElmBranchByKey(migration.latest().key);
 
-      const lastElmId = activeList[activeList.length - 1];
+    //   const lastElmId = activeList[activeList.length - 1];
 
-      threshold.setMainThreshold(draggedElm.id, {
-        height: draggedElm.offset.height,
-        width: draggedElm.offset.width,
-        left: this.draggable.occupiedPosition.x,
-        top: this.draggable.occupiedPosition.y,
-      });
+    //   threshold.setMainThreshold(draggedElm.id, {
+    //     height: draggedElm.offset.height,
+    //     width: draggedElm.offset.width,
+    //     left: this.draggable.occupiedPosition.x,
+    //     top: this.draggable.occupiedPosition.y,
+    //   });
 
-      migration.complete(store.registry[lastElmId].currentPosition);
-    }
+    //   migration.complete(store.registry[lastElmId].currentPosition);
+    // }
   }
 
   #detectNearestContainer() {
@@ -284,59 +284,69 @@ class Droppable extends DistanceCalculator {
         // placeholder as all the elements are stacked.
         originalSiblingList.pop();
 
-        let grid: IPointAxes = {
-          x: 1,
-          y: 1,
-        };
+        // const grid: IPointAxes = {
+        //   x: 1,
+        //   y: 1,
+        // };
 
-        let elmPosition: IPointAxes = {
-          x: 0,
-          y: 0,
-        };
+        // let elmPosition: IPointAxes = {
+        //   x: 0,
+        //   y: 0,
+        // };
 
-        let diffX = 0;
-        let diffY = 0;
+        // let diffX = 0;
+        // let diffY = 0;
 
         if (newSiblingList.length > 0) {
-          // Getting the last element of the new list.
-          const lastElmId = newSiblingList[newSiblingList.length - 1];
-          const lastElm = store.registry[lastElmId];
+          const firstElm = store.registry[newSiblingList[0]];
 
-          ({ grid, currentPosition: elmPosition } = lastElm);
-
-          const firstElmNew = newSiblingList[0];
-
-          diffX = this.getDiff(
-            store.registry[firstElmNew],
-            "x",
-            "currentPosition"
+          this.draggable.occupiedPosition.setAxes(
+            firstElm.currentPosition.x,
+            firstElm.currentPosition.y
           );
 
-          diffY = this.getDiff(
-            store.registry[firstElmNew],
-            "y",
-            "currentPosition"
+          this.draggable.occupiedTranslate.setAxes(
+            firstElm.translate.x,
+            firstElm.translate.y
           );
+
+          for (let j = 0; j < newSiblingList.length; j += 1) {
+            const id = newSiblingList[j];
+
+            if (
+              isIDEligible2Move(
+                id,
+                this.draggable.draggedElm.id,
+                this.draggable.scroll.enable
+              )
+            ) {
+              this.updateIndicators(store.registry[id], "y", -1);
+            }
+          }
+
+          // this.draggable.occupiedTranslate.x +=
+          //   this.draggable.draggedElm.translate.x;
+          // this.draggable.occupiedTranslate.y +=
+          //   this.draggable.draggedElm.translate.y;
+
+          // this.draggable.occupiedTranslate.y *= -1;
+
+          // this.draggable.occupiedPosition.x +=
+          //   this.draggable.draggedElm.offset.width + 30;
+
+          // this.draggable.occupiedPosition.y -=
+          //   this.draggable.draggedElm.offset.height + 10;
         }
-
-        const { elmSyntheticOffset } = migration;
-
-        const newElmOffset = {
-          x:
-            elmSyntheticOffset.x > 0
-              ? elmPosition.x + draggedOffset.height + elmSyntheticOffset.x
-              : elmPosition.x,
-          y:
-            elmSyntheticOffset.y > 0
-              ? elmPosition.y + draggedOffset.height + elmSyntheticOffset.y
-              : elmPosition.y,
-        };
 
         // Update the offset accumulation. It has the old offset from the
         // one but now it has migrated to the new container.
-        this.draggable.occupiedPosition.clone(newElmOffset);
+        // this.draggable.occupiedPosition.clone(newElmOffset);
+        // console.log(
+        //   "file: Droppable.ts ~ line 338 ~ newElmOffset",
+        //   newElmOffset
+        // );
 
-        this.draggable.gridPlaceholder.clone(grid);
+        this.draggable.gridPlaceholder.clone({ x: 1, y: 1 });
 
         this.draggable.draggedElm.keys.SK = newSK;
 
@@ -344,25 +354,26 @@ class Droppable extends DistanceCalculator {
         // is out the branch sets its index as "".
         newSiblingList.push("");
 
-        const insertionTransform = {
-          x: diffX,
-          y: diffY,
-        };
+        // const insertionTransform = {
+        //   x: diffX,
+        //   y: diffY,
+        // };
 
-        const insertionOffset = {
-          left: newElmOffset.x,
-          top: newElmOffset.y,
-          width: draggedOffset.width,
-          height: draggedOffset.height,
-        };
+        // const insertionOffset = {
+        //   left: newElmOffset.x,
+        //   top: newElmOffset.y,
+        //   width: draggedOffset.width,
+        //   height: draggedOffset.height,
+        // };
 
-        store.handleElmMigration(
-          newSK,
-          migration.latest().key,
-          insertionOffset
-        );
+        // store.handleElmMigration(
+        //   newSK,
+        //   migration.latest().key,
+        //   insertionOffset
+        // );
 
-        migration.add(NaN, newSK, insertionTransform, insertionOffset);
+        // @ts-expect-error
+        migration.add(NaN, newSK, {}, {});
 
         break;
       }
@@ -488,6 +499,7 @@ class Droppable extends DistanceCalculator {
     const siblings = store.getElmBranchByKey(
       this.draggable.migration.latest().key
     );
+    console.log("file: Droppable.ts ~ line 491 ~ siblings", siblings);
 
     emitSiblingsEvent("onMoveDownSiblings", {
       siblings,
@@ -787,7 +799,7 @@ class Droppable extends DistanceCalculator {
         this.#detectNearestContainer();
 
         if (this.draggable.migration.isTransitioning) {
-          this.#detectNearestElm();
+          // this.#detectNearestElm();
 
           return;
         }
