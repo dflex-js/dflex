@@ -1,0 +1,34 @@
+[
+  {
+    "category": "Drag & Drop",
+    "id": "drag-drop",
+    "content": [
+      { "title": "API", "id": "api" },
+      { "title": "Example", "id": "examples" },
+      {
+        "title": "Implementations",
+        "id": "implementations"
+      }
+    ]
+  },
+  {
+    "category": "Draggable Only",
+    "id": "draggable",
+    "content": [
+      { "title": "API", "id": "api" },
+      { "title": "Example", "id": "examples" },
+      {
+        "title": "Implementations",
+        "id": "implementations"
+      }
+    ]
+  },
+  {
+    "category": "DOM Utilities",
+    "id": "utils",
+    "content": [
+      { "title": "DOM Generator", "id": "dom-gen" },
+      { "title": "DOM Store", "id": "dom-store" }
+    ]
+  }
+]
