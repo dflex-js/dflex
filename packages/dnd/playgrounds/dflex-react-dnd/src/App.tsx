@@ -43,10 +43,7 @@ function App() {
         <Route path="/todo" element={<TodoList />} />
         <Route path="/todo-case-1" element={<TodoListCase1 />} />
         <Route path="/unregistered" element={<UnRegisteredLists />} />
-        <Route
-          path="/migration"
-          element={<ListMigration isHorizontal={false} />}
-        />
+        <Route path="/migration" element={<ListMigration />} />
         <Route
           path="/component-based-event"
           element={
