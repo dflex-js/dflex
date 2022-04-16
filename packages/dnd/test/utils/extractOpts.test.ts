@@ -1,3 +1,4 @@
+import { InteractivityEvent } from "../../src/types";
 import { extractOpts } from "../../src/utils/extractOpts";
 
 describe("extractOpts", () => {
@@ -99,12 +100,13 @@ describe("extractOpts", () => {
   });
 
   it("Returns the correct event handler function", () => {
-    function onDragLeave(index, id) {
+    function onDragLeave(e: InteractivityEvent) {
       // eslint-disable-next-line no-console
-      console.log(index, id);
+      console.log(e);
     }
 
     const opts = extractOpts({
+      enableContainersTransition: false,
       events: {
         onDragLeave,
       },

@@ -26,7 +26,13 @@ const Container = ({
       const { id } = target as HTMLElement;
 
       if (id) {
-        dndEvent = new DnD(id, { x: clientX, y: clientY });
+        dndEvent = new DnD(
+          id,
+          { x: clientX, y: clientY },
+          {
+            enableContainersTransition: false,
+          }
+        );
 
         (target as HTMLElement).style.background = "pink";
         (target as HTMLElement).style.transition =

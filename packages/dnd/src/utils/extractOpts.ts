@@ -3,49 +3,7 @@
 // TODO: Add types for this.
 
 import type { DndOpts, FinalDndOpts } from "../types";
-
-function noop() {}
-
-export const defaultOpts: FinalDndOpts = Object.freeze({
-  threshold: {
-    vertical: 60,
-    horizontal: 60,
-  },
-
-  restrictions: {
-    self: {
-      allowLeavingFromTop: true,
-      allowLeavingFromBottom: true,
-      allowLeavingFromLeft: true,
-      allowLeavingFromRight: true,
-    },
-    container: {
-      allowLeavingFromTop: true,
-      allowLeavingFromBottom: true,
-      allowLeavingFromLeft: true,
-      allowLeavingFromRight: true,
-    },
-  },
-
-  scroll: {
-    enable: true,
-    initialSpeed: 10,
-    threshold: {
-      vertical: 15,
-      horizontal: 15,
-    },
-  },
-
-  events: {
-    onDragOver: noop,
-    onDragLeave: noop,
-    onDragOutContainer: noop,
-    onDragOutThreshold: noop,
-    onLiftUpSiblings: noop,
-    onMoveDownSiblings: noop,
-    onStateChange: noop,
-  },
-});
+import { defaultOpts, noop } from "./constants";
 
 export function extractOpts(opts: DndOpts) {
   const options = { ...opts };
@@ -59,7 +17,10 @@ export function extractOpts(opts: DndOpts) {
     }
 
     if (options[props] === undefined) {
-      options[props] = { ...defaultOpts[props] };
+      options[props] =
+        typeof options[props] === "object"
+          ? { ...defaultOpts[props] }
+          : defaultOpts[props];
 
       return;
     }

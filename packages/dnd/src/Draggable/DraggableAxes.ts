@@ -26,6 +26,8 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
 
   threshold: ThresholdInterface;
 
+  readonly enableContainersTransition: boolean;
+
   isViewportRestricted: boolean;
 
   isMovingAwayFrom: IPointBool;
@@ -93,6 +95,8 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
     );
 
     this.isViewportRestricted = true;
+
+    this.enableContainersTransition = opts.enableContainersTransition;
 
     this.threshold = new Threshold(opts.threshold);
 

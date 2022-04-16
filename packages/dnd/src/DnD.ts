@@ -5,7 +5,9 @@ import Droppable from "./Droppable";
 import store from "./DnDStore";
 
 import type { DndOpts, FinalDndOpts } from "./types";
-import { extractOpts, defaultOpts } from "./utils/extractOpts";
+
+import { extractOpts } from "./utils/extractOpts";
+import { defaultOpts } from "./utils/constants";
 
 class DnD extends Droppable {
   /**
@@ -26,7 +28,7 @@ class DnD extends Droppable {
     if (!isLayoutAvailable) {
       if (process.env.NODE_ENV !== "production") {
         // eslint-disable-next-line no-console
-        console.error(
+        throw new Error(
           `DFlex: received multiple dragging request while layout is still occupied`
         );
       }

@@ -244,7 +244,6 @@ class Droppable extends DistanceCalculator {
     }
   }
 
-  // @ts-ignore
   #detectNearestContainer() {
     const {
       migration,
@@ -776,12 +775,14 @@ class Droppable extends DistanceCalculator {
 
       this.isParentLocked = true;
 
-      // this.#detectNearestContainer();
+      if (this.draggable.enableContainersTransition) {
+        this.#detectNearestContainer();
 
-      if (this.draggable.migration.isTransitioning) {
-        this.#detectNearestElm();
+        if (this.draggable.migration.isTransitioning) {
+          this.#detectNearestElm();
 
-        return;
+          return;
+        }
       }
 
       return;
