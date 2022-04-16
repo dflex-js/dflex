@@ -12,6 +12,8 @@ interface Props {
   id: string;
   children: React.ReactNode;
   depth: number;
+  enableContainersTransition?: boolean;
+  style?: React.CSSProperties;
 }
 
 const Core = ({
@@ -19,7 +21,8 @@ const Core = ({
   id,
   children,
   depth,
-  ...rest
+  enableContainersTransition = false,
+  style,
 }: Props) => {
   const ref = React.useRef(null) as React.MutableRefObject<any>;
 
@@ -63,7 +66,7 @@ const Core = ({
           id,
           { x: clientX, y: clientY },
           {
-            enableContainersTransition: false,
+            enableContainersTransition,
           }
         );
 
@@ -80,15 +83,15 @@ const Core = ({
       onMouseDown={onMouseDown}
       onMouseMove={onMouseMove}
       onMouseUp={onMouseUp}
-      style={
-        isDragged
+      style={{
+        ...style,
+        ...(isDragged
           ? {
               background: "pink",
               transition: "opacity 0.2s cubic-bezier(0.2, 0, 0, 1) 0s",
             }
-          : {}
-      }
-      {...rest}
+          : {}),
+      }}
     >
       {children}
     </CoreComponent>

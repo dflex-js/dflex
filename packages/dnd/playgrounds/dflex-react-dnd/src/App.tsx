@@ -10,12 +10,12 @@ import {
   TodoList,
   TodoListCase1,
   ExtendedList,
-  Depth1,
   ComponentBasedEvent,
   ContainerBasedEvent,
   ScrollMulti,
   ScrollEssential,
   UnRegisteredLists,
+  ListMigration,
 } from "./components";
 
 function App() {
@@ -42,8 +42,11 @@ function App() {
         <Route path="/restricted-self" element={<RestrictedSelf />} />
         <Route path="/todo" element={<TodoList />} />
         <Route path="/todo-case-1" element={<TodoListCase1 />} />
-        <Route path="/depth-1" element={<Depth1 />} />
         <Route path="/unregistered" element={<UnRegisteredLists />} />
+        <Route
+          path="/migration"
+          element={<ListMigration isHorizontal={false} />}
+        />
         <Route
           path="/component-based-event"
           element={

@@ -233,11 +233,11 @@ class DnDStoreImp extends Store implements IDnDStore {
     const lastElemID = branch[branch.length - 1];
     const hasSiblings = branch.length > 1;
 
-    if (shouldValidate) {
+    if (shouldValidate && firstElemID) {
       const isHeadNotConnected = !this.registry[firstElemID].isConnected();
       let isNotConnected = isHeadNotConnected;
 
-      if (hasSiblings && firstElemID) {
+      if (hasSiblings) {
         const isTailNotConnected = !this.registry[lastElemID!].isConnected();
         isNotConnected = isTailNotConnected || isHeadNotConnected;
       }

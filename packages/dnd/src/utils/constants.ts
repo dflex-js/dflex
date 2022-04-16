@@ -3,7 +3,7 @@ import type { DefaultDndOpts } from "../types";
 export function noop() {}
 
 export const defaultOpts: DefaultDndOpts = Object.freeze({
-  enableContainersTransition: true,
+  enableContainersTransition: false,
 
   threshold: {
     vertical: 60,
