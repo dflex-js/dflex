@@ -202,7 +202,8 @@ class Droppable extends DistanceCalculator {
   }
 
   #detectNearestElm() {
-    const { migration, draggedElm, occupiedTranslate } = this.draggable;
+    const { migration, threshold, draggedElm, occupiedTranslate } =
+      this.draggable;
 
     const siblings = store.DOMGen.branches[migration.latest().key];
 
@@ -239,6 +240,13 @@ class Droppable extends DistanceCalculator {
       const activeList = store.getElmBranchByKey(migration.latest().key);
 
       const lastElmId = activeList[activeList.length - 1];
+
+      threshold.setMainThreshold(draggedElm.id, {
+        height: draggedElm.offset.height,
+        width: draggedElm.offset.width,
+        left: this.draggable.occupiedPosition.x,
+        top: this.draggable.occupiedPosition.y,
+      });
 
       migration.complete(store.registry[lastElmId].currentPosition);
     }
