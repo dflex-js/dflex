@@ -15,8 +15,25 @@ on:
       - "!.github/workflows/ci.yml"
 
 jobs:
-  cypress-dnd:
-    name: E2E Test For DnD React APP
+  # build-save:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Install dependencies
+  #       uses: actions/setup-node@v2
+  #     - name: Install Cypress
+  #       run: npm install -g cypress
+  #     - name: Build and save Cypress
+  #       run: cypress run --record --spec "cypress/integration/**/*.spec.js"
+  #     - name: Upload Cypress
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: cypress-report
+  #         path: cypress/reports/integration
+  #         mime-type: application/json
+
+  build:
+    name: Build and upload artifacts
     runs-on: ubuntu-latest
     timeout-minutes: 8
     if: github.event.pull_request.draft != true
@@ -44,6 +61,49 @@ jobs:
 
       - name: Build packages
         run: pnpm build
+
+      - name: Build DnD App
+        run: pnpm run build:app -F dflex-react-dnd
+
+      - name: Save build folder
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          if-no-files-found: error
+          path: packages/**/dist
+
+  cypress-dnd:
+    name: E2E Test For DnD React APP
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    if: github.event.pull_request.draft != true
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@master
+
+      - name: Use latest version of Node.j
+        uses: actions/setup-node@master
+        with:
+          node-version: "*"
+
+      - name: Cache pnpm modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
+
+      - uses: pnpm/action-setup@v2.2.1
+        with:
+          version: 6.32.4
+          run_install: true
+
+      - name: Download the build folders
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: packages/**/dist
 
       - name: Testing all features for DnD with React APP - Chrome
         uses: cypress-io/github-action@v2
