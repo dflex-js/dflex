@@ -28,7 +28,7 @@ class DnD extends Droppable {
     if (!isLayoutAvailable) {
       if (process.env.NODE_ENV !== "production") {
         // eslint-disable-next-line no-console
-        throw new Error(
+        console.error(
           `DFlex: received multiple dragging request while layout is still occupied`
         );
       }
@@ -38,8 +38,6 @@ class DnD extends Droppable {
       throw new Error(`DFlex: ${id} is not registered in the Store.`);
     }
 
-    console.log(store.registry);
-    console.log(store.DOMGen.branches);
     const options = extractOpts(opts);
 
     const { depth } = store.registry[id];
