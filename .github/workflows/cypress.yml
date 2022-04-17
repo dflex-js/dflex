@@ -9,6 +9,8 @@ on:
     paths-ignore:
       - "**.md"
       - scripts/**
+      - blog/**
+      - docs/**
       - .github/**
       - "!.github/workflows/ci.yml"
 
