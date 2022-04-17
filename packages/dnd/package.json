@@ -37,15 +37,15 @@
     "LICENSE"
   ],
   "devDependencies": {
-    "@dflex/core-instance": "^3.4.0",
-    "@dflex/draggable": "^3.4.0",
-    "@dflex/store": "^3.4.0",
-    "@dflex/utils": "^3.4.0",
-    "cross-env": "^7.0.2",
-    "cypress": "^9.5.0",
-    "eslint-plugin-cypress": "^2.11.1",
-    "start-server-and-test": "^1.11.2",
-    "v8-to-istanbul": "^8.0.0"
+    "@dflex/core-instance": "workspace:^3.4.0",
+    "@dflex/draggable": "workspace:^3.4.0",
+    "@dflex/store": "workspace:^3.4.0",
+    "@dflex/utils": "workspace:^3.4.0",
+    "cross-env": "^7.0.3",
+    "cypress": "^9.5.4",
+    "eslint-plugin-cypress": "^2.12.1",
+    "start-server-and-test": "^1.14.0",
+    "v8-to-istanbul": "^8.1.1"
   },
   "keywords": [
     "drag-drop",
