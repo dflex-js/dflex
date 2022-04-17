@@ -50,7 +50,8 @@ jobs:
         with:
           install: false
           working-directory: packages/dnd
-          start: pnpm run server -F @dflex/dnd
+          build: pnpm run build:app -F dflex-react-dnd
+          start: pnpm run preview -F dflex-react-dnd
           wait-on: "http://localhost:3001/"
           wait-on-timeout: 120
           browser: chrome
