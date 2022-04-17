@@ -1,5 +1,4 @@
 import type { IPointAxes, IPointNum } from "../Point";
-import type { RectDimensions } from "../types";
 
 export interface IAbstract {
   index: number;
