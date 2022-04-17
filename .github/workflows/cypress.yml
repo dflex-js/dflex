@@ -32,10 +32,9 @@ jobs:
   #         path: cypress/reports/integration
   #         mime-type: application/json
 
-  build:
+  install-build:
     name: Build and upload artifacts
     runs-on: ubuntu-latest
-    timeout-minutes: 8
     if: github.event.pull_request.draft != true
     steps:
       - name: Check out repository
@@ -62,10 +61,10 @@ jobs:
       - name: Build packages
         run: pnpm build
 
-      - name: Build DnD App
+      - name: Build DnD React App
         run: pnpm run build:app -F dflex-react-dnd
 
-      - name: Save build folder
+      - name: Save build folders
         uses: actions/upload-artifact@v3
         with:
           name: build
@@ -77,27 +76,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 8
     if: github.event.pull_request.draft != true
+    needs: install-build
     steps:
       - name: Check out repository
         uses: actions/checkout@master
-
-      - name: Use latest version of Node.j
-        uses: actions/setup-node@master
-        with:
-          node-version: "*"
-
-      - name: Cache pnpm modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-
-
-      - uses: pnpm/action-setup@v2.2.1
-        with:
-          version: 6.32.4
-          run_install: true
 
       - name: Download the build folders
         uses: actions/download-artifact@v3
