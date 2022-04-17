@@ -1,4 +1,4 @@
-import { PointNum } from "@dflex/utils";
+import { IPointAxes, PointNum } from "@dflex/utils";
 import type { IPointNum } from "@dflex/utils";
 
 import type { DraggedEvent, SiblingsEvent } from "../types";
@@ -234,33 +234,30 @@ class Droppable extends DistanceCalculator {
 
     draggedElm.rmDateset("draggedOutContainer");
 
-    // if (migration.isTransitioning) {
-    //   occupiedTranslate.clone(migration.insertionTransform!);
+    if (migration.isTransitioning) {
+      occupiedTranslate.clone(migration.insertionTransform!);
 
-    //   const activeList = store.getElmBranchByKey(migration.latest().key);
+      const activeList = store.getElmBranchByKey(migration.latest().key);
 
-    //   const lastElmId = activeList[activeList.length - 1];
+      const lastElmId = activeList[activeList.length - 1];
 
-    //   threshold.setMainThreshold(draggedElm.id, {
-    //     height: draggedElm.offset.height,
-    //     width: draggedElm.offset.width,
-    //     left: this.draggable.occupiedPosition.x,
-    //     top: this.draggable.occupiedPosition.y,
-    //   });
+      threshold.setMainThreshold(draggedElm.id, {
+        height: draggedElm.offset.height,
+        width: draggedElm.offset.width,
+        left: this.draggable.occupiedPosition.x,
+        top: this.draggable.occupiedPosition.y,
+      });
 
-    //   migration.complete(store.registry[lastElmId].currentPosition);
-    // }
+      migration.complete(store.registry[lastElmId].currentPosition);
+    }
   }
 
   #detectNearestContainer() {
-    const {
-      migration,
-      draggedElm: { depth, offset: draggedOffset },
-    } = this.draggable;
+    const { migration, draggedElm } = this.draggable;
 
     let newSK;
 
-    const dp = store.getBranchesByDepth(depth);
+    const dp = store.getBranchesByDepth(draggedElm.depth);
 
     for (let i = 0; i < dp.length; i += 1) {
       newSK = dp[i];
@@ -271,7 +268,7 @@ class Droppable extends DistanceCalculator {
         // Coming back to the same container.
         if (newSK === migration.latest().key) return;
 
-        this.draggable.migration.start();
+        migration.start();
 
         const originalSiblingList = store.getElmBranchByKey(
           migration.latest().key
@@ -284,71 +281,51 @@ class Droppable extends DistanceCalculator {
         // placeholder as all the elements are stacked.
         originalSiblingList.pop();
 
-        // const grid: IPointAxes = {
-        //   x: 1,
-        //   y: 1,
-        // };
-
-        // let elmPosition: IPointAxes = {
-        //   x: 0,
-        //   y: 0,
-        // };
-
-        // let diffX = 0;
-        // let diffY = 0;
+        const draggedTransition: IPointAxes = {
+          x: 0,
+          y: 0,
+        };
 
         if (newSiblingList.length > 0) {
-          const firstElm = store.registry[newSiblingList[0]];
+          const lastElm =
+            store.registry[newSiblingList[newSiblingList.length - 1]];
+          const prevLastElm =
+            store.registry[newSiblingList[newSiblingList.length - 2]];
+
+          const diffY = lastElm.currentPosition.y - prevLastElm.getRectBottom();
+
+          const offsetDiffY = Math.abs(
+            draggedElm.offset.height - lastElm.offset.height
+          );
 
           this.draggable.occupiedPosition.setAxes(
-            firstElm.currentPosition.x,
-            firstElm.currentPosition.y
+            lastElm.currentPosition.x + 0,
+            lastElm.currentPosition.y +
+              draggedElm.offset.height +
+              diffY -
+              offsetDiffY
           );
 
-          this.draggable.occupiedTranslate.setAxes(
-            firstElm.translate.x,
-            firstElm.translate.y
+          const firstElmNew = newSiblingList[0];
+
+          // Getting diff with `currentPosition` includes the element transition
+          // as well.
+          draggedTransition.x = this.getDiff(
+            store.registry[firstElmNew],
+            "x",
+            "currentPosition"
           );
 
-          for (let j = 0; j < newSiblingList.length; j += 1) {
-            const id = newSiblingList[j];
-
-            if (
-              isIDEligible2Move(
-                id,
-                this.draggable.draggedElm.id,
-                this.draggable.scroll.enable
-              )
-            ) {
-              this.updateIndicators(store.registry[id], "y", -1);
-            }
-          }
-
-          // this.draggable.occupiedTranslate.x +=
-          //   this.draggable.draggedElm.translate.x;
-          // this.draggable.occupiedTranslate.y +=
-          //   this.draggable.draggedElm.translate.y;
-
-          // this.draggable.occupiedTranslate.y *= -1;
-
-          // this.draggable.occupiedPosition.x +=
-          //   this.draggable.draggedElm.offset.width + 30;
-
-          // this.draggable.occupiedPosition.y -=
-          //   this.draggable.draggedElm.offset.height + 10;
+          draggedTransition.y = this.getDiff(
+            store.registry[firstElmNew],
+            "y",
+            "currentPosition"
+          );
         }
 
-        // Update the offset accumulation. It has the old offset from the
-        // one but now it has migrated to the new container.
-        // this.draggable.occupiedPosition.clone(newElmOffset);
-        // console.log(
-        //   "file: Droppable.ts ~ line 338 ~ newElmOffset",
-        //   newElmOffset
-        // );
+        this.draggable.gridPlaceholder.setAxes(1, 1);
 
-        this.draggable.gridPlaceholder.clone({ x: 1, y: 1 });
-
-        this.draggable.draggedElm.keys.SK = newSK;
+        draggedElm.keys.SK = newSK;
 
         // Insert the element to the new list. Empty string because when dragged
         // is out the branch sets its index as "".
@@ -373,7 +350,7 @@ class Droppable extends DistanceCalculator {
         // );
 
         // @ts-expect-error
-        migration.add(NaN, newSK, {}, {});
+        migration.add(NaN, newSK, draggedTransition, {});
 
         break;
       }
@@ -799,7 +776,7 @@ class Droppable extends DistanceCalculator {
         this.#detectNearestContainer();
 
         if (this.draggable.migration.isTransitioning) {
-          // this.#detectNearestElm();
+          this.#detectNearestElm();
 
           return;
         }
