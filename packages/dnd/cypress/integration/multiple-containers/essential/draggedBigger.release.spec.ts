@@ -94,10 +94,10 @@ context("Transforming into different container", () => {
       "matrix(1, 0, 0, 1, 0, 92)"
     );
 
-    // cy.get("#c2-5").should(
-    //   "have.css",
-    //   "transform",
-    //   "matrix(1, 0, 0, 1, 0, 92)"
-    // );
+    cy.get("#c2-5").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, 92)"
+    );
   });
 });

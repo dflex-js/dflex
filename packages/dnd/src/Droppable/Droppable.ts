@@ -219,7 +219,7 @@ class Droppable extends DistanceCalculator {
       // Check if it's the last element
       if (!this.#checkIfDraggedIsLastElm()) return;
 
-      insertAt = siblings!.length - 1;
+      insertAt = siblings.length - 1;
 
       hasToMoveSiblingsDown = false;
     }
@@ -239,7 +239,7 @@ class Droppable extends DistanceCalculator {
 
       const activeList = store.getElmBranchByKey(migration.latest().key);
 
-      const lastElmId = activeList[activeList.length - 1];
+      const lastElm = store.registry[activeList[activeList.length - 1]];
 
       threshold.setMainThreshold(draggedElm.id, {
         height: draggedElm.offset.height,
@@ -248,19 +248,30 @@ class Droppable extends DistanceCalculator {
         top: this.draggable.occupiedPosition.y,
       });
 
-      migration.complete(store.registry[lastElmId].currentPosition);
+      queueMicrotask(() => {
+        const offset = {
+          height: draggedElm.offset.height,
+          width: draggedElm.offset.width,
+          left: lastElm.currentPosition.x,
+          top: lastElm.currentPosition.y,
+        };
+
+        store.handleElmMigration(migration.latest().key, migration.prev().key, {
+          offset,
+          grid: lastElm.grid,
+        });
+      });
+
+      migration.complete(lastElm.currentPosition);
     }
   }
 
   #detectNearestContainer() {
-    const {
-      migration,
-      draggedElm: { depth, offset: draggedOffset },
-    } = this.draggable;
+    const { migration, draggedElm } = this.draggable;
 
     let newSK;
 
-    const dp = store.getBranchesByDepth(depth);
+    const dp = store.getBranchesByDepth(draggedElm.depth);
 
     for (let i = 0; i < dp.length; i += 1) {
       newSK = dp[i];
@@ -271,7 +282,7 @@ class Droppable extends DistanceCalculator {
         // Coming back to the same container.
         if (newSK === migration.latest().key) return;
 
-        this.draggable.migration.start();
+        migration.start();
 
         const originalSiblingList = store.getElmBranchByKey(
           migration.latest().key
@@ -284,85 +295,57 @@ class Droppable extends DistanceCalculator {
         // placeholder as all the elements are stacked.
         originalSiblingList.pop();
 
-        let grid: IPointAxes = {
-          x: 1,
-          y: 1,
-        };
-
-        let elmPosition: IPointAxes = {
+        const draggedTransition: IPointAxes = {
           x: 0,
           y: 0,
         };
 
-        let diffX = 0;
-        let diffY = 0;
-
         if (newSiblingList.length > 0) {
-          // Getting the last element of the new list.
-          const lastElmId = newSiblingList[newSiblingList.length - 1];
-          const lastElm = store.registry[lastElmId];
+          const lastElm =
+            store.registry[newSiblingList[newSiblingList.length - 1]];
+          const prevLastElm =
+            store.registry[newSiblingList[newSiblingList.length - 2]];
 
-          ({ grid, currentPosition: elmPosition } = lastElm);
+          const diffY = lastElm.currentPosition.y - prevLastElm.getRectBottom();
+
+          const offsetDiffY = Math.abs(
+            draggedElm.offset.height - lastElm.offset.height
+          );
+
+          this.draggable.occupiedPosition.setAxes(
+            lastElm.currentPosition.x + 0,
+            lastElm.currentPosition.y +
+              draggedElm.offset.height +
+              diffY -
+              offsetDiffY
+          );
 
           const firstElmNew = newSiblingList[0];
 
-          diffX = this.getDiff(
+          // Getting diff with `currentPosition` includes the element transition
+          // as well.
+          draggedTransition.x = this.getDiff(
             store.registry[firstElmNew],
             "x",
             "currentPosition"
           );
 
-          diffY = this.getDiff(
+          draggedTransition.y = this.getDiff(
             store.registry[firstElmNew],
             "y",
             "currentPosition"
           );
         }
 
-        const { elmSyntheticOffset } = migration;
+        this.draggable.gridPlaceholder.setAxes(1, 1);
 
-        const newElmOffset = {
-          x:
-            elmSyntheticOffset.x > 0
-              ? elmPosition.x + draggedOffset.height + elmSyntheticOffset.x
-              : elmPosition.x,
-          y:
-            elmSyntheticOffset.y > 0
-              ? elmPosition.y + draggedOffset.height + elmSyntheticOffset.y
-              : elmPosition.y,
-        };
-
-        // Update the offset accumulation. It has the old offset from the
-        // one but now it has migrated to the new container.
-        this.draggable.occupiedPosition.clone(newElmOffset);
-
-        this.draggable.gridPlaceholder.clone(grid);
-
-        this.draggable.draggedElm.keys.SK = newSK;
+        draggedElm.keys.SK = newSK;
 
         // Insert the element to the new list. Empty string because when dragged
         // is out the branch sets its index as "".
         newSiblingList.push("");
 
-        const insertionTransform = {
-          x: diffX,
-          y: diffY,
-        };
-
-        const insertionOffset = {
-          left: newElmOffset.x,
-          top: newElmOffset.y,
-          width: draggedOffset.width,
-          height: draggedOffset.height,
-        };
-
-        store.handleElmMigration(
-          newSK,
-          migration.latest().key,
-          insertionOffset
-        );
-
-        migration.add(NaN, newSK, insertionTransform, insertionOffset);
+        migration.add(NaN, newSK, draggedTransition);
 
         break;
       }
