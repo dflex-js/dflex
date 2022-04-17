@@ -12,13 +12,6 @@ export interface IMigration {
   readonly isTransitioning: boolean;
 
   /**
-   * The space between the dragged element in the list and the second element.
-   * Usage: This space equalizer used to create new element when migration is
-   * completed.
-   */
-  readonly elmSyntheticOffset: IPointAxes;
-
-  /**
    * Preserve the last element position in the list .
    * Usage: Getting this position when the dragged is going back from the tail.
    */
@@ -29,12 +22,6 @@ export interface IMigration {
    * Defined only when transitioning.
    */
   readonly insertionTransform: IPointAxes | null;
-
-  /**
-   * Temporary placeholder for the new insertion offset destination.
-   * Defined only when transitioning.
-   */
-  readonly insertionOffset: RectDimensions | null;
 
   /** Get the latest migrations instance */
   latest(): IAbstract;
@@ -52,12 +39,7 @@ export interface IMigration {
   /**
    * Add new migration.
    */
-  add(
-    index: number,
-    key: string,
-    insertionTransform: IPointAxes,
-    insertionOffset: RectDimensions
-  ): void;
+  add(index: number, key: string, draggedTransition: IPointAxes): void;
 
   /** start transitioning. */
   start(): void;

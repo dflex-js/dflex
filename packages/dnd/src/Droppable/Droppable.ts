@@ -345,8 +345,7 @@ class Droppable extends DistanceCalculator {
         // is out the branch sets its index as "".
         newSiblingList.push("");
 
-        // @ts-expect-error
-        migration.add(NaN, newSK, draggedTransition, {});
+        migration.add(NaN, newSK, draggedTransition);
 
         break;
       }
