@@ -29,14 +29,8 @@ const Core = ({
   const [isDragged, setIsDragged] = React.useState(false);
 
   React.useEffect(() => {
-    setTimeout(
-      // eslint-disable-next-line func-names
-      () => {
-        store.register({ id, ref: ref.current, depth });
-      },
-      0
-    );
-  }, []);
+    if (ref.current) store.register({ id, ref: ref.current, depth });
+  }, [ref]);
 
   const onMouseUp = () => {
     if (draggedEvent) {
