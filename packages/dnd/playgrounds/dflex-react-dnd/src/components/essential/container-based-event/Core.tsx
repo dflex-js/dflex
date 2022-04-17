@@ -44,14 +44,8 @@ const Core = ({
   // const handlers = { onDragOver, onDragLeave };
 
   React.useEffect(() => {
-    setTimeout(
-      // eslint-disable-next-line func-names
-      () => {
-        store.register({ id, ref: ref.current, depth });
-      },
-      0
-    );
-  }, []);
+    if (ref.current) store.register({ id, ref: ref.current, depth });
+  }, [ref]);
 
   return (
     <CoreComponent

@@ -33,10 +33,10 @@
     "LICENSE"
   ],
   "devDependencies": {
-    "@dflex/core-instance": "^3.4.0",
-    "@dflex/store": "^3.4.0",
-    "@dflex/utils": "^3.4.0",
-    "eslint-config-dflex-react": "*"
+    "@dflex/core-instance": "workspace:^3.4.0",
+    "@dflex/store": "workspace:^3.4.0",
+    "@dflex/utils": "workspace:^3.4.0",
+    "eslint-config-dflex-react": "workspace:*"
   },
   "keywords": [
     "drag-drop",
