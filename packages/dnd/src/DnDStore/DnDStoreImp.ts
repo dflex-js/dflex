@@ -1,6 +1,6 @@
 import Store from "@dflex/store";
 
-import { Tracker, Scroll, canUseDOM } from "@dflex/utils";
+import { Tracker, Scroll, canUseDOM, IPointNum } from "@dflex/utils";
 import type { RectDimensions, ITracker, IScroll } from "@dflex/utils";
 
 import { Container } from "@dflex/core-instance";
@@ -316,13 +316,20 @@ class DnDStoreImp extends Store implements IDnDStore {
   handleElmMigration(
     newSK: string,
     oldSK: string,
-    insertionOffset: RectDimensions
+    append: {
+      offset: RectDimensions;
+      grid: IPointNum;
+    }
   ) {
-    this.containers[newSK].setBoundaries(insertionOffset);
+    this.containers[newSK].setBoundaries(append.offset);
+    this.containers[newSK].setGrid(append.grid, append.offset);
 
     this.DOMGen.branches[oldSK].forEach((elmID) => {
       if (elmID.length > 0) {
-        this.containers[oldSK].setBoundaries(this.registry[elmID].getOffset());
+        const elm = this.registry[elmID];
+
+        this.containers[oldSK].setBoundaries(elm.getOffset());
+        this.containers[oldSK].setGrid(elm.grid, elm.getOffset());
       }
     });
   }

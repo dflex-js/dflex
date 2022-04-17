@@ -219,7 +219,7 @@ class Droppable extends DistanceCalculator {
       // Check if it's the last element
       if (!this.#checkIfDraggedIsLastElm()) return;
 
-      insertAt = siblings!.length - 1;
+      insertAt = siblings.length - 1;
 
       hasToMoveSiblingsDown = false;
     }
@@ -239,7 +239,7 @@ class Droppable extends DistanceCalculator {
 
       const activeList = store.getElmBranchByKey(migration.latest().key);
 
-      const lastElmId = activeList[activeList.length - 1];
+      const lastElm = store.registry[activeList[activeList.length - 1]];
 
       threshold.setMainThreshold(draggedElm.id, {
         height: draggedElm.offset.height,
@@ -248,7 +248,21 @@ class Droppable extends DistanceCalculator {
         top: this.draggable.occupiedPosition.y,
       });
 
-      migration.complete(store.registry[lastElmId].currentPosition);
+      queueMicrotask(() => {
+        const offset = {
+          height: draggedElm.offset.height,
+          width: draggedElm.offset.width,
+          left: lastElm.currentPosition.x,
+          top: lastElm.currentPosition.y,
+        };
+
+        store.handleElmMigration(migration.latest().key, migration.prev().key, {
+          offset,
+          grid: lastElm.grid,
+        });
+      });
+
+      migration.complete(lastElm.currentPosition);
     }
   }
 
@@ -330,24 +344,6 @@ class Droppable extends DistanceCalculator {
         // Insert the element to the new list. Empty string because when dragged
         // is out the branch sets its index as "".
         newSiblingList.push("");
-
-        // const insertionTransform = {
-        //   x: diffX,
-        //   y: diffY,
-        // };
-
-        // const insertionOffset = {
-        //   left: newElmOffset.x,
-        //   top: newElmOffset.y,
-        //   width: draggedOffset.width,
-        //   height: draggedOffset.height,
-        // };
-
-        // store.handleElmMigration(
-        //   newSK,
-        //   migration.latest().key,
-        //   insertionOffset
-        // );
 
         // @ts-expect-error
         migration.add(NaN, newSK, draggedTransition, {});
@@ -476,7 +472,6 @@ class Droppable extends DistanceCalculator {
     const siblings = store.getElmBranchByKey(
       this.draggable.migration.latest().key
     );
-    console.log("file: Droppable.ts ~ line 491 ~ siblings", siblings);
 
     emitSiblingsEvent("onMoveDownSiblings", {
       siblings,

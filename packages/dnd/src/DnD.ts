@@ -39,6 +39,7 @@ class DnD extends Droppable {
     }
 
     console.log(store.registry);
+    console.log(store.DOMGen.branches);
     const options = extractOpts(opts);
 
     const { depth } = store.registry[id];
