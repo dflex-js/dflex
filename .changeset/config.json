@@ -4,24 +4,15 @@
   "commit": false,
   "fixed": [
     [
-      "packages/utils",
-      "packages/core-instance",
-      "packages/dom-gen",
-      "packages/store",
-      "packages/draggable",
-      "packages/dnd"
+      "@dflex/utils",
+      "@dflex/core-instance",
+      "@dflex/dom-gen",
+      "@dflex/store",
+      "@dflex/draggable",
+      "@dflex/dnd"
     ]
   ],
-  "linked": [
-    [
-      "packages/utils",
-      "packages/core-instance",
-      "packages/dom-gen",
-      "packages/store",
-      "packages/draggable",
-      "packages/dnd"
-    ]
-  ],
+  "linked": [],
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
