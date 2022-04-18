@@ -104,10 +104,10 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           install: false
-          working-directory: packages/dnd
+          # working-directory: packages/dnd
           start: pnpm -F dflex-react-dnd preview
-          # wait-on: "http://localhost:3001/"
-          # wait-on-timeout: 120
+          wait-on: "http://localhost:3001/"
+          wait-on-timeout: 120
           browser: chrome
           headless: true
         env:
