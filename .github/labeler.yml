@@ -1,0 +1,26 @@
+"🚨 action":
+  - .github/workflows/**
+
+Test:
+  - packages/**/*.test.ts
+
+documentation:
+  - docs/**/*
+
+Core:
+  - packages/core-instance/**
+
+DnD:
+  - packages/dnd/**
+
+Dom-Gen:
+  - packages/dom-gen/**
+
+Draggable-only:
+  - packages/draggable/**
+
+Store:
+  - packages/store/**
+
+Utils:
+  - packages/utils/**

@@ -25,10 +25,10 @@ jobs:
     timeout-minutes: 3
     steps:
       - name: Check out repository
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
 
       - name: Use latest version of Node.j
-        uses: actions/setup-node@master
+        uses: actions/setup-node@v3
         with:
           node-version: "*"
 
@@ -54,10 +54,10 @@ jobs:
     timeout-minutes: 3
     steps:
       - name: Check out repository
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
 
       - name: Use latest version of Node.j
-        uses: actions/setup-node@master
+        uses: actions/setup-node@v3
         with:
           node-version: "*"
 
@@ -84,10 +84,10 @@ jobs:
     if: github.event.pull_request.draft != true
     steps:
       - name: Check out repository
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
 
       - name: Use latest version of Node.j
-        uses: actions/setup-node@master
+        uses: actions/setup-node@v3
         with:
           node-version: "*"
 
