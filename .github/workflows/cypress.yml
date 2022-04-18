@@ -22,7 +22,7 @@ jobs:
   #   if: github.event.pull_request.draft != true
   #   steps:
   #     - name: Check out repository
-  #       uses: actions/checkout@master
+  #       uses: actions/checkout@v3
 
   #     - name: Use latest version of Node.j
   #       uses: actions/setup-node@v3
@@ -63,10 +63,10 @@ jobs:
     # needs: install-build
     steps:
       - name: Check out repository
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
 
       - name: Check out repository
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
 
       - name: Use latest version of Node.j
         uses: actions/setup-node@v3
@@ -114,10 +114,10 @@ jobs:
     # needs: install-build
     steps:
       - name: Check out repository
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
 
       - name: Check out repository
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
 
       - name: Use latest version of Node.j
         uses: actions/setup-node@v3
@@ -165,10 +165,10 @@ jobs:
     # needs: install-build
     steps:
       - name: Check out repository
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
 
       - name: Check out repository
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
 
       - name: Use latest version of Node.j
         uses: actions/setup-node@v3
