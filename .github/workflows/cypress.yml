@@ -113,7 +113,7 @@ jobs:
         with:
           install: false
           working-directory: packages/dnd
-          # build: pnpm -F dflex-react-dnd build:app
+          spec: cypress/integration/same-container/**/*.spec.ts
           start: pnpm -F dflex-react-dnd preview
           wait-on: "http://localhost:3001/"
           wait-on-timeout: 120
