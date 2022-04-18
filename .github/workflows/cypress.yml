@@ -71,7 +71,7 @@ jobs:
           if-no-files-found: error
           path: packages/**/dist
 
-  cypress-dnd:
+  cypress-dnd-same-container:
     name: E2E Test For DnD React APP
     runs-on: ubuntu-latest
     timeout-minutes: 8
@@ -114,6 +114,57 @@ jobs:
           install: false
           working-directory: packages/dnd
           spec: cypress/integration/same-container/**/*.spec.ts
+          start: pnpm -F dflex-react-dnd preview
+          wait-on: "http://localhost:3001/"
+          wait-on-timeout: 120
+          browser: chrome
+          headless: true
+        env:
+          Cypress_extended: true
+
+  cypress-dnd-multi-containers:
+    name: E2E Test For DnD React APP
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    if: github.event.pull_request.draft != true
+    # needs: install-build
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@master
+
+      - name: Check out repository
+        uses: actions/checkout@master
+
+      - name: Use latest version of Node.j
+        uses: actions/setup-node@v3
+        with:
+          node-version: "*"
+
+      - name: Cache pnpm modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
+
+      - uses: pnpm/action-setup@v2.2.1
+        with:
+          version: 6.32.4
+          run_install: true
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Build DnD React App
+        run: pnpm -F dflex-react-dnd build:app
+
+      - name: Testing all features for DnD with React APP - Chrome
+        uses: cypress-io/github-action@v2
+        with:
+          install: false
+          working-directory: packages/dnd
+          spec: cypress/integration/multiple-containers/**/*.spec.ts
           start: pnpm -F dflex-react-dnd preview
           wait-on: "http://localhost:3001/"
           wait-on-timeout: 120
