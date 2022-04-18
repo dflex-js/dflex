@@ -41,10 +41,9 @@ jobs:
         uses: actions/checkout@master
 
       - name: Use latest version of Node.j
-        uses: actions/setup-node@master
+        uses: actions/setup-node@v3
         with:
           node-version: "*"
-          cache: "pnpm"
 
       - name: Cache pnpm modules
         uses: actions/cache@v3
@@ -77,29 +76,37 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 8
     if: github.event.pull_request.draft != true
-    needs: install-build
+    # needs: install-build
     steps:
       - name: Check out repository
         uses: actions/checkout@master
 
-      # - name: Cache pnpm modules
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: ~/.pnpm-store
-      #     key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-
+      - name: Check out repository
+        uses: actions/checkout@master
 
-      # - uses: pnpm/action-setup@v2.2.1
-      #   with:
-      #     version: 6.32.4
-      #     run_install: true
-
-      - name: Download the build folders
-        uses: actions/download-artifact@v3
+      - name: Use latest version of Node.j
+        uses: actions/setup-node@v3
         with:
-          name: build
-          path: packages/**/dist
+          node-version: "*"
+
+      - name: Cache pnpm modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
+
+      - uses: pnpm/action-setup@v2.2.1
+        with:
+          version: 6.32.4
+          run_install: true
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Build DnD React App
+        run: pnpm -F dflex-react-dnd build:app
 
       - name: Testing all features for DnD with React APP - Chrome
         uses: cypress-io/github-action@v2
