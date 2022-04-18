@@ -15,64 +15,48 @@ on:
       - "!.github/workflows/ci.yml"
 
 jobs:
-  # build-save:
+  # TODO: fix bulling artifacts
+  # install-build:
+  #   name: Build and upload artifacts
   #   runs-on: ubuntu-latest
+  #   if: github.event.pull_request.draft != true
   #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Install dependencies
-  #       uses: actions/setup-node@v2
-  #     - name: Install Cypress
-  #       run: npm install -g cypress
-  #     - name: Build and save Cypress
-  #       run: cypress run --record --spec "cypress/integration/**/*.spec.js"
-  #     - name: Upload Cypress
-  #       uses: actions/upload-artifact@v2
+  #     - name: Check out repository
+  #       uses: actions/checkout@master
+
+  #     - name: Use latest version of Node.j
+  #       uses: actions/setup-node@v3
   #       with:
-  #         name: cypress-report
-  #         path: cypress/reports/integration
-  #         mime-type: application/json
+  #         node-version: "*"
 
-  install-build:
-    name: Build and upload artifacts
-    runs-on: ubuntu-latest
-    if: github.event.pull_request.draft != true
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@master
+  #     - name: Cache pnpm modules
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: ~/.pnpm-store
+  #         key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-
 
-      - name: Use latest version of Node.j
-        uses: actions/setup-node@v3
-        with:
-          node-version: "*"
+  #     - uses: pnpm/action-setup@v2.2.1
+  #       with:
+  #         version: 6.32.4
+  #         run_install: true
 
-      - name: Cache pnpm modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-
+  #     - name: Build packages
+  #       run: pnpm build
 
-      - uses: pnpm/action-setup@v2.2.1
-        with:
-          version: 6.32.4
-          run_install: true
+  #     - name: Build DnD React App
+  #       run: pnpm -F dflex-react-dnd build:app
 
-      - name: Build packages
-        run: pnpm build
+  #     - name: Save build folders
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: build
+  #         if-no-files-found: error
+  #         path: packages/**/dist
 
-      - name: Build DnD React App
-        run: pnpm -F dflex-react-dnd build:app
-
-      - name: Save build folders
-        uses: actions/upload-artifact@v3
-        with:
-          name: build
-          if-no-files-found: error
-          path: packages/**/dist
-
-  cypress-dnd-same-container:
-    name: E2E Test For DnD React APP
+  cypress-same-container-vertical:
+    name: Transformation inside one container vertically
     runs-on: ubuntu-latest
     timeout-minutes: 8
     if: github.event.pull_request.draft != true
@@ -113,7 +97,7 @@ jobs:
         with:
           install: false
           working-directory: packages/dnd
-          spec: cypress/integration/same-container/**/*.spec.ts
+          spec: cypress/integration/same-container-vertical/**/*.spec.ts
           start: pnpm -F dflex-react-dnd preview
           wait-on: "http://localhost:3001/"
           wait-on-timeout: 120
@@ -122,8 +106,59 @@ jobs:
         env:
           Cypress_extended: true
 
-  cypress-dnd-multi-containers:
-    name: E2E Test For DnD React APP
+  cypress-same-container-horizontal:
+    name: Transformation inside one container horizontally
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    if: github.event.pull_request.draft != true
+    # needs: install-build
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@master
+
+      - name: Check out repository
+        uses: actions/checkout@master
+
+      - name: Use latest version of Node.j
+        uses: actions/setup-node@v3
+        with:
+          node-version: "*"
+
+      - name: Cache pnpm modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
+
+      - uses: pnpm/action-setup@v2.2.1
+        with:
+          version: 6.32.4
+          run_install: true
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Build DnD React App
+        run: pnpm -F dflex-react-dnd build:app
+
+      - name: Testing all features for DnD with React APP - Chrome
+        uses: cypress-io/github-action@v2
+        with:
+          install: false
+          working-directory: packages/dnd
+          spec: cypress/integration/same-container-horizontal/**/*.spec.ts
+          start: pnpm -F dflex-react-dnd preview
+          wait-on: "http://localhost:3001/"
+          wait-on-timeout: 120
+          browser: chrome
+          headless: true
+        env:
+          Cypress_extended: true
+
+  cypress-multi-containers:
+    name: Transformation with multi containers
     runs-on: ubuntu-latest
     timeout-minutes: 8
     if: github.event.pull_request.draft != true
@@ -170,5 +205,3 @@ jobs:
           wait-on-timeout: 120
           browser: chrome
           headless: true
-        env:
-          Cypress_extended: true
