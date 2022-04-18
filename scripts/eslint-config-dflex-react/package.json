@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "main": "index.js",
   "license": "MIT",
+  "private": true,
   "dependencies": {
     "eslint": "^8.13.0",
     "eslint-plugin-jsx-a11y": "^6.5.1",

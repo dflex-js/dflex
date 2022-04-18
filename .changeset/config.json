@@ -1,10 +1,28 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@2.0.0/schema.json",
-  "changelog": "@changesets/cli/changelog",
+  "changelog": false,
   "commit": false,
-  "fixed": [],
-  "linked": [],
-  "access": "restricted",
+  "fixed": [
+    [
+      "packages/utils",
+      "packages/core-instance",
+      "packages/dom-gen",
+      "packages/store",
+      "packages/draggable",
+      "packages/dnd"
+    ]
+  ],
+  "linked": [
+    [
+      "packages/utils",
+      "packages/core-instance",
+      "packages/dom-gen",
+      "packages/store",
+      "packages/draggable",
+      "packages/dnd"
+    ]
+  ],
+  "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": []
