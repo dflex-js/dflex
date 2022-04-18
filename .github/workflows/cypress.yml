@@ -62,7 +62,7 @@ jobs:
         run: pnpm build
 
       - name: Build DnD React App
-        run: pnpm run build:app -F dflex-react-dnd
+        run: pnpm -F dflex-react-dnd build:app
 
       - name: Save build folders
         uses: actions/upload-artifact@v3
@@ -104,7 +104,8 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           install: false
-          # working-directory: packages/dnd
+          working-directory: packages/dnd
+          # build: pnpm -F dflex-react-dnd build:app
           start: pnpm -F dflex-react-dnd preview
           wait-on: "http://localhost:3001/"
           wait-on-timeout: 120
