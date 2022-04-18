@@ -92,7 +92,7 @@ jobs:
       - uses: pnpm/action-setup@v2.2.1
         with:
           version: 6.32.4
-          run_install: false
+          run_install: true
 
       - name: Download the build folders
         uses: actions/download-artifact@v3
