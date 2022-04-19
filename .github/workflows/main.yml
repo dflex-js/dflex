@@ -98,6 +98,14 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build
+          path: |
+            packages/core-instance/dist
+            packages/utils/dist
+            packages/dom-gen/dist
+            packages/draggable/dist
+            packages/store/dist
+            packages/dnd/dist
+            packages/dnd/playgrounds/dflex-react-dnd/dist
 
       - name: Display structure of downloaded files
         run: ls
