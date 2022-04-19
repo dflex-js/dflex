@@ -16,10 +16,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": [
-    "eslint-config-dflex",
-    "eslint-config-dflex-react",
-    "dflex-react-draggable",
-    "dflex-react-dnd"
-  ]
+  "ignore": []
 }
