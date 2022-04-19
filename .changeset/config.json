@@ -1,0 +1,20 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@2.0.0/schema.json",
+  "changelog": false,
+  "commit": false,
+  "fixed": [
+    [
+      "@dflex/utils",
+      "@dflex/core-instance",
+      "@dflex/dom-gen",
+      "@dflex/store",
+      "@dflex/draggable",
+      "@dflex/dnd"
+    ]
+  ],
+  "linked": [],
+  "access": "public",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": []
+}

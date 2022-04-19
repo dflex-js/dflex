@@ -3,8 +3,7 @@
   "private": true,
   "workspaces": [
     "packages/**",
-    "scripts/*",
-    "examples/*"
+    "scripts/*"
   ],
   "repository": "https://github.com/dflex-js/dflex",
   "author": "Jalal Maskoun",
@@ -16,6 +15,7 @@
     "build": "pnpm build -r"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.22.0",
     "@swc/core": "^1.2.165",
     "@swc/jest": "^0.2.20",
     "@types/jest": "^27.4.1",
@@ -24,7 +24,6 @@
     "eslint-config-dflex": "workspace:*",
     "istanbul-lib-instrument": "^5.1.0",
     "jest": "^27.5.1",
-    "lerna": "^4.0.0",
     "prettier": "^2.6.2",
     "rimraf": "^3.0.2",
     "ts-node": "^10.7.0",
