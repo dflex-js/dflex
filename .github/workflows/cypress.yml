@@ -15,7 +15,7 @@ on:
       - "!.github/workflows/ci.yml"
 
 jobs:
-  build:
+  install-build:
     name: Build and upload artifacts
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft != true
@@ -61,7 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 8
     if: github.event.pull_request.draft != true
-    needs: build
+    needs: install-build
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
