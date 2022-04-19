@@ -106,7 +106,7 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           install: false
-          working-directory: packages/dnd
+          # working-directory: packages/dnd
           spec: cypress/integration/same-container-horizontal/**/*.spec.ts
           start: pnpm -F dflex-react-dnd preview
           wait-on: "http://localhost:3001/"
