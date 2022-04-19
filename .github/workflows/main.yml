@@ -108,7 +108,7 @@ jobs:
             packages/dnd/playgrounds/dflex-react-dnd/dist
 
       - name: Display structure of downloaded files
-        run: ls
+        run: cd packages/dnd/playgrounds/dflex-react-dnd/dist && ls -l
 
       - name: Testing all features for DnD with React APP - Chrome
         uses: cypress-io/github-action@v2
