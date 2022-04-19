@@ -62,7 +62,7 @@ jobs:
             packages/draggable/dist
             packages/store/dist
             packages/dnd/dist
-            packages/dnd/playground/dflex-react-dnd/dist
+            packages/dnd/playgrounds/dflex-react-dnd/dist
           if-no-files-found: error
 
   cypress-same-container-horizontal:
@@ -98,10 +98,9 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build
-          path: packages/**/dist
 
       - name: Display structure of downloaded files
-        run: ls -R
+        run: ls
 
       - name: Testing all features for DnD with React APP - Chrome
         uses: cypress-io/github-action@v2
@@ -111,7 +110,7 @@ jobs:
           spec: cypress/integration/same-container-horizontal/**/*.spec.ts
           start: pnpm -F dflex-react-dnd preview
           wait-on: "http://localhost:3001/"
-          wait-on-timeout: 120
+          wait-on-timeout: 30
           browser: chrome
           headless: true
         env:
