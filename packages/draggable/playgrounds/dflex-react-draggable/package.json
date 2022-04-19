@@ -1,6 +1,7 @@
 {
   "name": "dflex-react-draggable",
   "version": "0.0.0",
+  "private": true,
   "license": "MIT",
   "scripts": {
     "dev": "vite",
