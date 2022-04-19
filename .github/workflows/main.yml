@@ -64,13 +64,10 @@ jobs:
             packages/dnd/dist
             packages/dnd/playgrounds/dflex-react-dnd/dist
           if-no-files-found: error
-
-  cypress-same-container-horizontal:
-    name: test-e2e-horizontal
+  test:
+    name: Run tests
     runs-on: ubuntu-latest
-    timeout-minutes: 8
     if: github.event.pull_request.draft != true
-    needs: install-build
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -82,39 +79,3 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-
-
-      - uses: pnpm/action-setup@v2.2.1
-        with:
-          version: 6.32.4
-          run_install: true
-
-      - name: Use latest version of Node.j
-        uses: actions/setup-node@v3
-        with:
-          node-version: "*"
-          cache: "pnpm"
-
-      - name: Download Build Artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: build
-
-      - name: Display structure of downloaded files
-        run: ls -R
-
-      - name: Run App
-        uses: pnpm -F dflex-react-dnd preview
-
-      - name: Testing all features for DnD with React APP - Chrome
-        uses: cypress-io/github-action@v2
-        with:
-          install: false
-          # working-directory: packages/dnd
-          spec: cypress/integration/same-container-horizontal/**/*.spec.ts
-          # start: pnpm -F dflex-react-dnd preview
-          # wait-on: "http://localhost:3001/"
-          # wait-on-timeout: 10
-          browser: chrome
-          headless: true
-        env:
-          Cypress_extended: true
