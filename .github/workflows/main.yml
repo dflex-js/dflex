@@ -102,15 +102,18 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
 
+      - name: Run App
+        uses: pnpm -F dflex-react-dnd preview
+
       - name: Testing all features for DnD with React APP - Chrome
         uses: cypress-io/github-action@v2
         with:
           install: false
           # working-directory: packages/dnd
           spec: cypress/integration/same-container-horizontal/**/*.spec.ts
-          start: pnpm -F dflex-react-dnd preview
-          wait-on: "http://localhost:3001/"
-          wait-on-timeout: 30
+          # start: pnpm -F dflex-react-dnd preview
+          # wait-on: "http://localhost:3001/"
+          # wait-on-timeout: 10
           browser: chrome
           headless: true
         env:
