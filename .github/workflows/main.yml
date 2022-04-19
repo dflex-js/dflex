@@ -54,10 +54,8 @@ jobs:
       - name: Upload Package Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: artifacts
-          path: |
-            packages/*/dist/**
-            packages/*/*/dist/**
+          name: build
+          path: packages/**/dist
           if-no-files-found: error
 
   cypress-same-container-horizontal:
@@ -91,9 +89,12 @@ jobs:
 
       - name: Download Build Artifacts
         uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: packages/**/dist
 
-      - name: Extract Artifacts
-        run: ./.github/extract-artifacts.sh
+      - name: Display structure of downloaded files
+        run: ls -R
 
       - name: Testing all features for DnD with React APP - Chrome
         uses: cypress-io/github-action@v2
