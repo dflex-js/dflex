@@ -331,10 +331,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   release:
-    if: github.repository == 'dflex-js/dflex'
     name: Publish to NPM
     runs-on: ubuntu-latest
-    needs: [lint, types, unit-test, install-build]
+    needs: install-build
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
