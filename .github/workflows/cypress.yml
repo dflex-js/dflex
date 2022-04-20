@@ -123,7 +123,6 @@ jobs:
           spec: cypress/integration/same-container-vertical/**/*.spec.ts
           wait-on: "http://localhost:3001/"
           browser: chrome
-          headless: true
           parallel: true
           record: true
         env:
