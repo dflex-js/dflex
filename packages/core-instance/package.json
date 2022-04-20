@@ -1,6 +1,6 @@
 {
   "name": "@dflex/core-instance",
-  "version": "3.4.0",
+  "version": "3.4.1",
   "description": "Core instance is the mirror of interactive element that includes all the properties and methods to manipulate the node",
   "author": "Jalal Maskoun",
   "main": "./dist/dflex-core.js",
@@ -30,7 +30,7 @@
     "LICENSE"
   ],
   "devDependencies": {
-    "@dflex/utils": "workspace:^3.4.0"
+    "@dflex/utils": "workspace:^3.4.1"
   },
   "keywords": [
     "drag-drop",

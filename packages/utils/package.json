@@ -1,6 +1,6 @@
 {
   "name": "@dflex/utils",
-  "version": "3.4.0",
+  "version": "3.4.1",
   "author": "Jalal Maskoun",
   "main": "./dist/dflex-utils.js",
   "module": "./dist/dflex-utils.mjs",

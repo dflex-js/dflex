@@ -1,6 +1,6 @@
 {
   "name": "@dflex/dom-gen",
-  "version": "3.4.0",
+  "version": "3.4.1",
   "description": "DFlex DOM relations generator algorithm",
   "author": "Jalal Maskoun",
   "main": "./dist/dflex-dom.js",

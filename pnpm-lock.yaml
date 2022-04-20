@@ -38,16 +38,16 @@ importers:
 
   packages/core-instance:
     specifiers:
-      '@dflex/utils': workspace:^3.4.0
+      '@dflex/utils': workspace:^3.4.1
     devDependencies:
       '@dflex/utils': link:../utils
 
   packages/dnd:
     specifiers:
-      '@dflex/core-instance': workspace:^3.4.0
-      '@dflex/draggable': workspace:^3.4.0
-      '@dflex/store': workspace:^3.4.0
-      '@dflex/utils': workspace:^3.4.0
+      '@dflex/core-instance': workspace:^3.4.1
+      '@dflex/draggable': workspace:^3.4.1
+      '@dflex/store': workspace:^3.4.1
+      '@dflex/utils': workspace:^3.4.1
       cross-env: ^7.0.3
       cypress: ^9.5.4
       eslint: ^8.13.0
@@ -68,7 +68,7 @@ importers:
 
   packages/dnd/playgrounds/dflex-react-dnd:
     specifiers:
-      '@dflex/dnd': workspace:^3.4.0
+      '@dflex/dnd': workspace:^3.4.1
       '@folo/utils': ^0.1.5
       '@types/react': ^18.0.5
       '@types/react-dom': ^18.0.1
@@ -98,9 +98,9 @@ importers:
 
   packages/draggable:
     specifiers:
-      '@dflex/core-instance': workspace:^3.4.0
-      '@dflex/store': workspace:^3.4.0
-      '@dflex/utils': workspace:^3.4.0
+      '@dflex/core-instance': workspace:^3.4.1
+      '@dflex/store': workspace:^3.4.1
+      '@dflex/utils': workspace:^3.4.1
       eslint-config-dflex-react: workspace:*
     devDependencies:
       '@dflex/core-instance': link:../core-instance
@@ -110,7 +110,7 @@ importers:
 
   packages/draggable/playgrounds/dflex-react-draggable:
     specifiers:
-      '@dflex/draggable': workspace:^3.4.0
+      '@dflex/draggable': workspace:^3.4.1
       '@types/react': ^18.0.5
       '@types/react-dom': ^18.0.1
       '@vitejs/plugin-react': ^1.3.1
@@ -129,8 +129,8 @@ importers:
 
   packages/store:
     specifiers:
-      '@dflex/core-instance': workspace:^3.4.0
-      '@dflex/dom-gen': workspace:^3.4.0
+      '@dflex/core-instance': workspace:^3.4.1
+      '@dflex/dom-gen': workspace:^3.4.1
     devDependencies:
       '@dflex/core-instance': link:../core-instance
       '@dflex/dom-gen': link:../dom-gen
