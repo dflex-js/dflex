@@ -148,13 +148,7 @@ jobs:
         with:
           name: build
           path: |
-            packages/core-instance/dist
-            packages/utils/dist
-            packages/dom-gen/dist
-            packages/draggable/dist
-            packages/store/dist
-            packages/dnd/dist
-            packages/dnd/playgrounds/dflex-react-dnd/dist
+            packages/**/dist
           if-no-files-found: error
 
   e2e-same-container-vertical:
@@ -349,8 +343,11 @@ jobs:
           node-version: "*"
           cache: "pnpm"
 
-      - name: Build packages
-        run: pnpm build
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: ./packages
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
