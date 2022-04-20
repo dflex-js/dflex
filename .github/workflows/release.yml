@@ -13,24 +13,33 @@ jobs:
     name: Publish to NPM
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repo
+      - name: Check out repository
         uses: actions/checkout@v3
         with:
           # This makes Actions fetch all Git history so that Changesets can generate changelogs with the correct commits
           fetch-depth: 0
 
-      - uses: pnpm/action-setup@v2
+      - name: Cache pnpm modules
+        uses: actions/cache@v3
         with:
-          version: 6.23.2
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
 
-      - name: Setup Node.js
+      - uses: pnpm/action-setup@v2.2.1
+        with:
+          version: 6.32.4
+          run_install: true
+
+      - name: Use latest version of Node.j
         uses: actions/setup-node@v3
         with:
-          node-version: 16.x
-          cache: pnpm
+          node-version: "*"
+          cache: "pnpm"
 
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm build -r
+      - name: Build packages
+        run: pnpm build
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
