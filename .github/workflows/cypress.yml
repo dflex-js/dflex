@@ -12,7 +12,7 @@ on:
       - blog/**
       - docs/**
       - .github/**
-      - "!.github/workflows/ci.yml"
+      - "!.github/workflows/cypress.yml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
