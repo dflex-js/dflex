@@ -112,6 +112,8 @@ jobs:
           wait-on: "http://localhost:3001/"
           browser: chrome
           headless: true
+        env:
+          Cypress_extended: true
 
   same-container-horizontal:
     name: Transformation inside one container horizontally
@@ -155,7 +157,7 @@ jobs:
           install: false
           start: pnpm -F dflex-react-dnd preview
           wait-on-timeout: 30
-          spec: cypress/integration/same-container-vertical/**/*.spec.ts
+          spec: cypress/integration/same-container-horizontal/**/*.spec.ts
           wait-on: "http://localhost:3001/"
           browser: chrome
           headless: true
