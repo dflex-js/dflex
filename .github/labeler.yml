@@ -1,10 +1,10 @@
-"🚨 action":
+"Action 🚨":
   - .github/workflows/**
 
-Test:
+"Test 🧪":
   - packages/**/*.test.ts
 
-documentation:
+"documentation 📄":
   - docs/**/*
 
 Core:
