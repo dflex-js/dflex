@@ -331,6 +331,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   release:
+    if: ${{ (github.ref_name == 'main' ) && github.repository_owner == 'dflex-js' }}
     name: Publish to NPM
     runs-on: ubuntu-latest
     needs: [lint, unit-test, types, install-build]
