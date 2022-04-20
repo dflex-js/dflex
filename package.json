@@ -9,10 +9,10 @@
   "author": "Jalal Maskoun",
   "scripts": {
     "cy:install:win": "cypress cache clear && .\\node_modules\\.bin\\cypress.cmd install --force",
-    "test:unit": "jest",
-    "test:e2e": "pnpm -f @dflex/dnd test",
-    "test": "pnpm test:unit && pnpm test:e2e",
-    "build": "pnpm build -r"
+    "test:unit": "cross-env NODE_ENV=test && jest",
+    "test:e2e": "cross-env NODE_ENV=test && pnpm -F @dflex/dnd test",
+    "build": "cross-env NODE_ENV=production && pnpm build -r",
+    "bump": "pnpm changeset version && pnpm install"
   },
   "devDependencies": {
     "@changesets/cli": "^2.22.0",
@@ -20,6 +20,7 @@
     "@swc/jest": "^0.2.20",
     "@types/jest": "^27.4.1",
     "@types/node": "^17.0.24",
+    "cross-env": "^7.0.3",
     "esbuild": "^0.14.36",
     "eslint-config-dflex": "workspace:*",
     "istanbul-lib-instrument": "^5.1.0",

@@ -9,6 +9,7 @@ importers:
       '@swc/jest': ^0.2.20
       '@types/jest': ^27.4.1
       '@types/node': ^17.0.24
+      cross-env: ^7.0.3
       esbuild: ^0.14.36
       eslint-config-dflex: workspace:*
       istanbul-lib-instrument: ^5.1.0
@@ -24,6 +25,7 @@ importers:
       '@swc/jest': 0.2.20_@swc+core@1.2.165
       '@types/jest': 27.4.1
       '@types/node': 17.0.24
+      cross-env: 7.0.3
       esbuild: 0.14.36
       eslint-config-dflex: link:scripts/eslint-config-dflex
       istanbul-lib-instrument: 5.1.0
