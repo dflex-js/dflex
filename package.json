@@ -9,9 +9,9 @@
   "author": "Jalal Maskoun",
   "scripts": {
     "cy:install:win": "cypress cache clear && .\\node_modules\\.bin\\cypress.cmd install --force",
-    "test:unit": "cross-env NODE_ENV=test jest",
-    "test:e2e": "cross-env NODE_ENV=test pnpm -F @dflex/dnd test",
-    "build": "cross-env NODE_ENV=production build -r"
+    "test:unit": "cross-env NODE_ENV=test && jest",
+    "test:e2e": "cross-env NODE_ENV=test && pnpm -F @dflex/dnd test",
+    "build": "cross-env NODE_ENV=production && pnpm build -r"
   },
   "devDependencies": {
     "@changesets/cli": "^2.22.0",
