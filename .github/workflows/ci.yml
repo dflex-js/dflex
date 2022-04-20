@@ -27,11 +27,6 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
 
-      - name: Use latest version of Node.j
-        uses: actions/setup-node@v3
-        with:
-          node-version: "*"
-
       - name: Cache pnpm modules
         uses: actions/cache@v3
         with:
@@ -44,6 +39,12 @@ jobs:
         with:
           version: 6.32.4
           run_install: true
+
+      - name: Use latest version of Node.j
+        uses: actions/setup-node@v3
+        with:
+          node-version: "*"
+          cache: "pnpm"
 
       - name: Run lint
         run: pnpm eslint . --ext .js,.jsx,.ts,.tsx --fix
@@ -56,11 +57,6 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
 
-      - name: Use latest version of Node.j
-        uses: actions/setup-node@v3
-        with:
-          node-version: "*"
-
       - name: Cache pnpm modules
         uses: actions/cache@v3
         with:
@@ -73,6 +69,12 @@ jobs:
         with:
           version: 6.32.4
           run_install: true
+
+      - name: Use latest version of Node.j
+        uses: actions/setup-node@v3
+        with:
+          node-version: "*"
+          cache: "pnpm"
 
       - name: check types
         run: "pnpm tsc --noEmit"
@@ -86,11 +88,6 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
 
-      - name: Use latest version of Node.j
-        uses: actions/setup-node@v3
-        with:
-          node-version: "*"
-
       - name: Cache pnpm modules
         uses: actions/cache@v3
         with:
@@ -103,6 +100,12 @@ jobs:
         with:
           version: 6.32.4
           run_install: true
+
+      - name: Use latest version of Node.j
+        uses: actions/setup-node@v3
+        with:
+          node-version: "*"
+          cache: "pnpm"
 
       - name: Run Test
         run: CI=true pnpm jest --coverage
