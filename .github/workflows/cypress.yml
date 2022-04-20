@@ -14,64 +14,67 @@ on:
       - .github/**
       - "!.github/workflows/ci.yml"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
-  # TODO: fix bulling artifacts
-  # install-build:
-  #   name: Build and upload artifacts
-  #   runs-on: ubuntu-latest
-  #   if: github.event.pull_request.draft != true
-  #   steps:
-  #     - name: Check out repository
-  #       uses: actions/checkout@v3
+  install-build:
+    name: Build and upload artifacts
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft != true
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
 
-  #     - name: Use latest version of Node.j
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: "*"
+      - name: Cache pnpm modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
 
-  #     - name: Cache pnpm modules
-  #       uses: actions/cache@v3
-  #       with:
-  #         path: ~/.pnpm-store
-  #         key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-
+      - uses: pnpm/action-setup@v2.2.1
+        with:
+          version: 6.32.4
+          run_install: true
 
-  #     - uses: pnpm/action-setup@v2.2.1
-  #       with:
-  #         version: 6.32.4
-  #         run_install: true
+      - name: Use latest version of Node.j
+        uses: actions/setup-node@v3
+        with:
+          node-version: "*"
+          cache: "pnpm"
 
-  #     - name: Build packages
-  #       run: pnpm build
+      - name: Build packages
+        run: pnpm build
 
-  #     - name: Build DnD React App
-  #       run: pnpm -F dflex-react-dnd build:app
+      - name: Build DnD React App
+        run: pnpm -F dflex-react-dnd build:app
 
-  #     - name: Save build folders
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         name: build
-  #         if-no-files-found: error
-  #         path: packages/**/dist
+      - name: Upload Package Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: |
+            packages/core-instance/dist
+            packages/utils/dist
+            packages/dom-gen/dist
+            packages/draggable/dist
+            packages/store/dist
+            packages/dnd/dist
+            packages/dnd/playgrounds/dflex-react-dnd/dist
+          if-no-files-found: error
 
-  cypress-same-container-vertical:
+  same-container-vertical:
     name: Transformation inside one container vertically
     runs-on: ubuntu-latest
     timeout-minutes: 8
     if: github.event.pull_request.draft != true
-    # needs: install-build
+    needs: install-build
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
-
-      - name: Check out repository
-        uses: actions/checkout@v3
-
-      - name: Use latest version of Node.j
-        uses: actions/setup-node@v3
-        with:
-          node-version: "*"
 
       - name: Cache pnpm modules
         uses: actions/cache@v3
@@ -86,43 +89,39 @@ jobs:
           version: 6.32.4
           run_install: true
 
-      - name: Build packages
-        run: pnpm build
+      - name: Use latest version of Node.j
+        uses: actions/setup-node@v3
+        with:
+          node-version: "*"
+          cache: "pnpm"
 
-      - name: Build DnD React App
-        run: pnpm -F dflex-react-dnd build:app
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: ./packages
 
-      - name: Testing all features for DnD with React APP - Chrome
+      - name: Testing features for DnD with React APP - Chrome
         uses: cypress-io/github-action@v2
         with:
-          install: false
           working-directory: packages/dnd
-          spec: cypress/integration/same-container-vertical/**/*.spec.ts
+          install: false
           start: pnpm -F dflex-react-dnd preview
+          wait-on-timeout: 30
+          spec: cypress/integration/same-container-vertical/**/*.spec.ts
           wait-on: "http://localhost:3001/"
-          wait-on-timeout: 120
           browser: chrome
           headless: true
-        env:
-          Cypress_extended: true
 
-  cypress-same-container-horizontal:
+  same-container-horizontal:
     name: Transformation inside one container horizontally
     runs-on: ubuntu-latest
     timeout-minutes: 8
     if: github.event.pull_request.draft != true
-    # needs: install-build
+    needs: install-build
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
-
-      - name: Check out repository
-        uses: actions/checkout@v3
-
-      - name: Use latest version of Node.j
-        uses: actions/setup-node@v3
-        with:
-          node-version: "*"
 
       - name: Cache pnpm modules
         uses: actions/cache@v3
@@ -137,43 +136,39 @@ jobs:
           version: 6.32.4
           run_install: true
 
-      - name: Build packages
-        run: pnpm build
+      - name: Use latest version of Node.j
+        uses: actions/setup-node@v3
+        with:
+          node-version: "*"
+          cache: "pnpm"
 
-      - name: Build DnD React App
-        run: pnpm -F dflex-react-dnd build:app
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: ./packages
 
-      - name: Testing all features for DnD with React APP - Chrome
+      - name: Testing features for DnD with React APP - Chrome
         uses: cypress-io/github-action@v2
         with:
-          install: false
           working-directory: packages/dnd
-          spec: cypress/integration/same-container-horizontal/**/*.spec.ts
+          install: false
           start: pnpm -F dflex-react-dnd preview
+          wait-on-timeout: 30
+          spec: cypress/integration/same-container-vertical/**/*.spec.ts
           wait-on: "http://localhost:3001/"
-          wait-on-timeout: 120
           browser: chrome
           headless: true
-        env:
-          Cypress_extended: true
 
-  cypress-multi-containers:
-    name: Transformation with multi containers
+  multi-containers:
+    name: Transformation with multiple containers
     runs-on: ubuntu-latest
     timeout-minutes: 8
     if: github.event.pull_request.draft != true
-    # needs: install-build
+    needs: install-build
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
-
-      - name: Check out repository
-        uses: actions/checkout@v3
-
-      - name: Use latest version of Node.j
-        uses: actions/setup-node@v3
-        with:
-          node-version: "*"
 
       - name: Cache pnpm modules
         uses: actions/cache@v3
@@ -188,20 +183,26 @@ jobs:
           version: 6.32.4
           run_install: true
 
-      - name: Build packages
-        run: pnpm build
+      - name: Use latest version of Node.j
+        uses: actions/setup-node@v3
+        with:
+          node-version: "*"
+          cache: "pnpm"
 
-      - name: Build DnD React App
-        run: pnpm -F dflex-react-dnd build:app
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: ./packages
 
-      - name: Testing all features for DnD with React APP - Chrome
+      - name: Testing features for DnD with React APP - Chrome
         uses: cypress-io/github-action@v2
         with:
-          install: false
           working-directory: packages/dnd
-          spec: cypress/integration/multiple-containers/**/*.spec.ts
+          install: false
           start: pnpm -F dflex-react-dnd preview
+          wait-on-timeout: 30
+          spec: cypress/integration/multiple-containers/**/*.spec.ts
           wait-on: "http://localhost:3001/"
-          wait-on-timeout: 120
           browser: chrome
           headless: true
