@@ -333,7 +333,7 @@ jobs:
   release:
     name: Publish to NPM
     runs-on: ubuntu-latest
-    needs: install-build
+    needs: [lint, unit-test, types, install-build]
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
