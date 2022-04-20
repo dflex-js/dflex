@@ -172,8 +172,8 @@ jobs:
       fail-fast: false
       matrix:
         # run copies of the current job in parallel
-        containers: [1, 2, 3, 4, 5]
-    timeout-minutes: 8
+        containers: [1, 2, 3, 4]
+    timeout-minutes: 4
     if: github.event.pull_request.draft != true
     steps:
       - name: Check out repository
@@ -227,7 +227,7 @@ jobs:
   e2e-same-container-horizontal:
     name: Transformation inside one container horizontally
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 4
     if: github.event.pull_request.draft != true
     needs: install-build
     steps:
@@ -280,7 +280,7 @@ jobs:
   e2e-multi-containers:
     name: Transformation with multiple containers
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 4
     if: github.event.pull_request.draft != true
     needs: install-build
     steps:
@@ -331,8 +331,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   release:
-    if: ${{ (github.ref_name == 'main' ) && github.repository_owner == 'dflex-js' }}
     name: Publish to NPM
+    if: ${{ github.ref_name == 'main' && github.repository_owner == 'dflex-js' }}
     runs-on: ubuntu-latest
     needs: [lint, unit-test, types, install-build]
     steps:
