@@ -135,7 +135,9 @@ context("DnD/Testing a collections new positions", () => {
             // eslint-disable-next-line cypress/no-unnecessary-waiting
             cy.wait(0);
           }
+        });
 
+        it("Element  12 has new position", () => {
           cy.get("#id-12").should(
             "have.css",
             "transform",
