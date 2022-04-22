@@ -34,7 +34,7 @@ context(
             force: true,
           });
           // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(0);
+          // cy.wait(0);
         }
 
         stepsX = 231;
@@ -44,7 +44,7 @@ context(
             force: true,
           });
           // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(0);
+          // cy.wait(0);
         }
       });
 
@@ -56,7 +56,7 @@ context(
             force: true,
           });
           // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(0);
+          // cy.wait(0);
         }
       });
 
@@ -118,7 +118,7 @@ context(
             force: true,
           });
           // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(0);
+          // cy.wait(0);
         }
       });
 
@@ -170,7 +170,7 @@ context(
             force: true,
           });
           // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(0);
+          // cy.wait(0);
         }
       });
 
@@ -222,7 +222,7 @@ context(
             force: true,
           });
           // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(0);
+          // cy.wait(0);
         }
       });
 
@@ -293,7 +293,7 @@ context(
             force: true,
           });
           // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(0);
+          // cy.wait(0);
         }
       });
 
@@ -356,7 +356,7 @@ context(
             force: true,
           });
           // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(0);
+          // cy.wait(0);
         }
 
         stepsX = 231;
@@ -366,7 +366,7 @@ context(
             force: true,
           });
           // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(0);
+          // cy.wait(0);
         }
       });
 
@@ -378,7 +378,7 @@ context(
             force: true,
           });
           // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(0);
+          // cy.wait(0);
         }
       });
 
@@ -415,6 +415,74 @@ context(
           "have.css",
           "transform",
           "matrix(1, 0, 0, 1, 0, 112)"
+        );
+      });
+
+      it("Transforms element (#c3-1) - down inside the list", () => {
+        cy.get("#c3-1").trigger("mousedown", {
+          button: 0,
+        });
+
+        stepsY = 365;
+        for (let i = 0; i < stepsY; i += 10) {
+          cy.get("#c3-1").trigger("mousemove", {
+            clientY: startingPointY + i,
+            force: true,
+          });
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          // cy.wait(0);
+        }
+      });
+
+      it("Trigger mouseup event", () => {
+        cy.get("#c3-1").trigger("mouseup", {
+          button: 0,
+        });
+      });
+
+      it("Siblings transform into new positions", () => {
+        cy.get("#c2-1").should(
+          "have.css",
+          "transform",
+          "matrix(1, 0, 0, 1, 0, 0)"
+        );
+
+        cy.get("#c2-2").should(
+          "have.css",
+          "transform",
+          "matrix(1, 0, 0, 1, 0, 0)"
+        );
+
+        cy.get("#c2-3").should(
+          "have.css",
+          "transform",
+          "matrix(1, 0, 0, 1, 0, 0)"
+        );
+
+        cy.get("#c2-4").should(
+          "have.css",
+          "transform",
+          "matrix(1, 0, 0, 1, 0, 0)"
+        );
+
+        cy.get("#c2-5").should(
+          "have.css",
+          "transform",
+          "matrix(1, 0, 0, 1, 0, 0)"
+        );
+      });
+
+      it("Migrated elements positioned correctly", () => {
+        cy.get("#c1-1").should(
+          "have.css",
+          "transform",
+          "matrix(1, 0, 0, 1, 226, 422)"
+        );
+
+        cy.get("#c3-1").should(
+          "have.css",
+          "transform",
+          "matrix(1, 0, 0, 1, -226, 310)"
         );
       });
     });
