@@ -126,14 +126,14 @@ context("DnD/Testing a collections new positions", () => {
         });
 
         it("Moving (container3 |> elm-1) up, inside the list to replace 12", () => {
-          for (let i = 0; i < 20; i += 5) {
+          for (let i = 0; i < 20; i += 1) {
             cy.get("#id-9").trigger("mousemove", {
               clientX: startingPointX,
               clientY: startingPointY + (4 - i / 10) * stepY,
               force: true,
             });
             // eslint-disable-next-line cypress/no-unnecessary-waiting
-            cy.wait(0);
+            // cy.wait(0);
           }
         });
 
