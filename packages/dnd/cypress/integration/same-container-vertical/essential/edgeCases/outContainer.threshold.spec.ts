@@ -26,7 +26,7 @@ context(
     it("Moves the element up outside the container", () => {
       steps = 100;
 
-      for (let i = 0; i < steps; i += 1) {
+      for (let i = 0; i < steps; i += 10) {
         cy.get("#id-9").trigger("mousemove", {
           clientX: startingPointX,
           clientY: startingPointY - i,
@@ -40,7 +40,7 @@ context(
     it("The element is coming back, inside the threshold but outside position", () => {
       steps = 100;
 
-      for (let i = steps; i > 65; i -= 1) {
+      for (let i = steps; i > 65; i -= 10) {
         cy.get("#id-9").trigger("mousemove", {
           clientX: startingPointX,
           clientY: startingPointY - i,

@@ -26,14 +26,14 @@ context(
     it("Moves the element down to the bottom", () => {
       steps = 180;
 
-      for (let i = 0; i < steps; i += 1) {
+      for (let i = 0; i < steps; i += 10) {
         cy.get("#id-9").trigger("mousemove", {
           clientX: startingPointX,
           clientY: startingPointY + i,
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // // cy.wait(0);
+        // cy.wait(0);
       }
     });
 
@@ -58,7 +58,7 @@ context(
     });
 
     it("Returns to the same old position", () => {
-      for (let i = steps; i > 0; i -= 1) {
+      for (let i = steps; i > 0; i -= 10) {
         cy.get("#id-9").trigger("mousemove", {
           clientX: startingPointX,
           clientY: startingPointY + i,
@@ -116,7 +116,7 @@ context(
     it("Moves the element up ,outside", () => {
       steps = 150;
 
-      for (let i = 0; i < steps; i += 1) {
+      for (let i = 0; i < steps; i += 10) {
         cy.get("#id-10").trigger("mousemove", {
           clientX: startingPointX,
           clientY: startingPointY - i,
@@ -150,7 +150,7 @@ context(
     it("Moves it down to the top of the list", () => {
       steps = 120;
 
-      for (let i = steps; i > 75; i -= 1) {
+      for (let i = steps; i > 75; i -= 10) {
         cy.get("#id-10").trigger("mousemove", {
           clientX: startingPointX,
           clientY: startingPointY - i,
