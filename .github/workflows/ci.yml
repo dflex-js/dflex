@@ -316,12 +316,13 @@ jobs:
     name: Publish to NPM
     if: ${{ github.ref_name == 'main' && github.repository_owner == 'dflex-js' }}
     runs-on: ubuntu-latest
-    needs: [
+    needs:
+      [
         lint,
         unit-test,
         types,
         install-build,
-        # e2e-same-container-vertical,
+        e2e-same-container-vertical,
         e2e-same-container-horizontal,
         e2e-multi-containers,
       ]
