@@ -150,11 +150,6 @@ class NodeCore extends Abstract implements ICore {
   }
 
   assignNewPosition(branchIDsOrder: string[], newIndex: number) {
-    // The new one is the same as the old one.
-    if (newIndex === this.order.self) {
-      return;
-    }
-
     if (newIndex < 0 || newIndex > branchIDsOrder.length - 1) {
       if (process.env.NODE_ENV !== "production") {
         // eslint-disable-next-line no-console
