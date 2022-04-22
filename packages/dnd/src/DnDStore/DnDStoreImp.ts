@@ -289,7 +289,7 @@ class DnDStoreImp extends Store implements IDnDStore {
     }
   }
 
-  initElmInstance(id: string) {
+  #initElmInstance(id: string) {
     const {
       keys: { SK },
     } = this.registry[id];
@@ -401,7 +401,7 @@ class DnDStoreImp extends Store implements IDnDStore {
         this.initSiblingContainer(SK, false);
       }
 
-      this.initElmInstance(id!);
+      this.#initElmInstance(id!);
     });
   }
 
