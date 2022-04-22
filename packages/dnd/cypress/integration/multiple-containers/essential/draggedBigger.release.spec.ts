@@ -163,7 +163,7 @@ context(
           button: 0,
         });
 
-        stepsY = 260;
+        stepsY = 280;
         for (let i = 0; i < stepsY; i += 10) {
           cy.get("#c1-1").trigger("mousemove", {
             clientY: startingPointY + i,
@@ -271,6 +271,69 @@ context(
       });
     });
 
+    context("Check the elements inside the host container c2", () => {
+      it("Getting the first element c2-1", () => {
+        cy.get("#c2-1").then((elm) => {
+          elmBox = elm[0].getBoundingClientRect();
+          // eslint-disable-next-line no-unused-vars
+          startingPointX = elmBox.x + elmBox.width / 2;
+          startingPointY = elmBox.y + elmBox.height / 2;
+
+          cy.get("#c2-1").trigger("mousedown", {
+            button: 0,
+          });
+        });
+      });
+
+      it("Transforms element (#c2-1) - above outside the list", () => {
+        stepsY = 80;
+        for (let i = 0; i < stepsY; i += 10) {
+          cy.get("#c2-1").trigger("mousemove", {
+            clientY: startingPointY - i,
+            force: true,
+          });
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.wait(0);
+        }
+      });
+
+      it("Siblings are lifted up", () => {
+        cy.get("#c2-2").should(
+          "have.css",
+          "transform",
+          "matrix(1, 0, 0, 1, 0, -62)"
+        );
+
+        cy.get("#c2-3").should(
+          "have.css",
+          "transform",
+          "matrix(1, 0, 0, 1, 0, -62)"
+        );
+
+        cy.get("#c2-4").should(
+          "have.css",
+          "transform",
+          "matrix(1, 0, 0, 1, 0, -62)"
+        );
+
+        cy.get("#c2-5").should(
+          "have.css",
+          "transform",
+          "matrix(1, 0, 0, 1, 0, -62)"
+        );
+
+        cy.get("#c1-1").should(
+          "have.css",
+          "transform",
+          "matrix(1, 0, 0, 1, 226, 248)"
+        );
+      });
+
+      it("Triggers mouseup event", () => {
+        cy.get("#c2-1").trigger("mouseup", { force: true });
+      });
+    });
+
     context("Transform element from container 3 into container 2", () => {
       it("Getting the first element from container-3", () => {
         cy.get("#c3-1").then((elm) => {
@@ -348,7 +411,6 @@ context(
           "matrix(1, 0, 0, 1, 0, 112)"
         );
 
-        // BUG:
         cy.get("#c2-5").should(
           "have.css",
           "transform",
