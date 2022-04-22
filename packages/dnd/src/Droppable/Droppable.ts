@@ -280,7 +280,9 @@ class Droppable extends DistanceCalculator {
 
       if (!isOut) {
         // Coming back to the same container.
-        if (newSK === migration.latest().key) return;
+        if (newSK === migration.latest().key) {
+          return;
+        }
 
         migration.start();
 
@@ -300,6 +302,7 @@ class Droppable extends DistanceCalculator {
           y: 0,
         };
 
+        // TODO: Update axis instead of using Y as constant.
         if (newSiblingList.length > 0) {
           const lastElm =
             store.registry[newSiblingList[newSiblingList.length - 1]];
@@ -726,6 +729,10 @@ class Droppable extends DistanceCalculator {
 
     let isOutSiblingsContainer = false;
 
+    if (this.draggable.migration.isTransitioning) {
+      return;
+    }
+
     if (this.draggable.isOutThreshold()) {
       this.#emitDraggedEvent("onDragOutThreshold");
 
@@ -770,7 +777,9 @@ class Droppable extends DistanceCalculator {
         this.#detectNearestContainer();
 
         if (this.draggable.migration.isTransitioning) {
-          this.#detectNearestElm();
+          queueMicrotask(() => {
+            this.#detectNearestElm();
+          });
 
           return;
         }

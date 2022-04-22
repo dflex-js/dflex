@@ -28,7 +28,7 @@ context("Moving and returning from the same position", () => {
   });
 
   it("Transforms (container3 |> elm-1) in to the original Y-position", () => {
-    for (let i = 0; i < elmBox.height + 2; i += 1) {
+    for (let i = 0; i < elmBox.height + 2; i += 10) {
       cy.get("#id-9").trigger("mousemove", {
         clientY: startingPointY - (elmBox.height + 2) + i,
         force: true,
@@ -39,7 +39,7 @@ context("Moving and returning from the same position", () => {
   });
 
   it("Transforms (container3 |> elm-1) in to the original X-position", () => {
-    for (let i = 0; i < elmBox.width + 2; i += 1) {
+    for (let i = 0; i < elmBox.width + 2; i += 10) {
       cy.get("#id-9").trigger("mousemove", {
         clientX: startingPointX - (elmBox.width + 2) + i,
         force: true,
@@ -109,7 +109,7 @@ context("Swinging - Confusion starts from up/down", () => {
     // steps = elmBox.height + 2 + 180;
     steps = elmBox.height + 2 + 22;
 
-    for (let i = 0; i < steps; i += 1) {
+    for (let i = 0; i < steps; i += 10) {
       cy.get("#id-9").trigger("mousemove", {
         clientX: startingPointX - (elmBox.width - i),
         clientY: startingPointY - (elmBox.height + 2) + i,
@@ -141,7 +141,7 @@ context("Swinging - Confusion starts from up/down", () => {
   });
 
   it("Continue movement", () => {
-    for (let i = steps; i < steps + 120; i += 1) {
+    for (let i = steps; i < steps + 120; i += 10) {
       cy.get("#id-9").trigger("mousemove", {
         clientX: startingPointX - (elmBox.width - i),
         clientY: startingPointY - (elmBox.height + 2) + i,
@@ -175,7 +175,7 @@ context("Swinging - Confusion starts from up/down", () => {
   });
 
   it("Continue movement", () => {
-    for (let i = steps; i < steps + 20; i += 1) {
+    for (let i = steps; i < steps + 20; i += 5) {
       cy.get("#id-9").trigger("mousemove", {
         clientX: startingPointX - (elmBox.width - i),
         clientY: startingPointY - (elmBox.height + 2) + i,

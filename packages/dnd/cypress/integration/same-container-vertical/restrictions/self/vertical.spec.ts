@@ -498,7 +498,7 @@ context(
           button: 0,
         });
 
-        for (let i = 0; i <= 300; i += 10) {
+        for (let i = 0; i <= 310; i += 10) {
           cy.get("#item-rest-bottom").trigger("mousemove", {
             clientY: startingPointY - i,
             force: true,

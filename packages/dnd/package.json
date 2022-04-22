@@ -23,7 +23,7 @@
     "build": "pnpm clean && pnpm build:cjs && pnpm build:esm && pnpm build:prod && pnpm emit",
     "compile:w": "tsc -b -w",
     "build:w": "cross-env NODE_ENV=development pnpm build:esm -- --watch",
-    "server": "pnpm dev --filter dflex-react-dnd",
+    "server": "pnpm -F dflex-react-dnd dev",
     "cy:run": "cypress run --env extended=true",
     "cy:open": "cypress open --env extended=true",
     "cy:dev": "start-server-and-test 'pnpm run server' http-get://localhost:3001 'pnpm cy:open'",
@@ -46,7 +46,7 @@
     "eslint": "^8.13.0",
     "eslint-plugin-cypress": "^2.12.1",
     "start-server-and-test": "^1.14.0",
-    "v8-to-istanbul": "^8.1.1"
+    "v8-to-istanbul": "^9.0.0"
   },
   "keywords": [
     "drag-drop",

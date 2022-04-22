@@ -10,16 +10,6 @@ context("Visible elements have transformation", () => {
     cy.visit("http://localhost:3001/extended");
   });
 
-  it("Checking first 10 elements all have index dataset", () => {
-    for (let i = 1; i < 10; i += 1) {
-      cy.get(`#${i}-extended`).then((elm) => {
-        const { index } = elm[0].dataset;
-
-        expect(index).to.be.eq(`${i - 1}`);
-      });
-    }
-  });
-
   it("Getting the first element (1)", () => {
     cy.get("#1-extended").then((elm) => {
       elmBox = elm[0].getBoundingClientRect();
@@ -31,6 +21,16 @@ context("Visible elements have transformation", () => {
         button: 0,
       });
     });
+  });
+
+  it("Checking first 10 elements all have index dataset", () => {
+    for (let i = 1; i < 10; i += 1) {
+      cy.get(`#${i}-extended`).then((elm) => {
+        const { index } = elm[0].dataset;
+
+        expect(index).to.be.eq(`${i - 1}`);
+      });
+    }
   });
 
   it("Transforms element (1) - outside the list", () => {

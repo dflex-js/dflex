@@ -169,6 +169,7 @@ class NodeCore extends Abstract implements ICore {
         console.error(
           "Illegal Attempt: Colliding in positions.\n",
           `Element id: ${this.id}\n`,
+          `Collided at index: ${newIndex}\n`,
           `Siblings list: ${branchIDsOrder}\n`
         );
       }

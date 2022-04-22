@@ -206,13 +206,14 @@ class DistanceCalculator implements DistanceCalculatorInterface {
        */
 
       const {
-        offset: { width, height },
         currentPosition: { x, y },
       } = element;
 
-      this.draggable.threshold.setMainThreshold(this.draggable.draggedElm.id, {
-        width,
-        height,
+      const { draggedElm } = this.draggable;
+
+      this.draggable.threshold.setMainThreshold(draggedElm.id, {
+        width: draggedElm.offset.width,
+        height: draggedElm.offset.height,
         left: x,
         top: y,
       });

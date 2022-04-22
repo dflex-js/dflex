@@ -25,7 +25,7 @@ context("Swinging - Confusion starts form bottom/up", () => {
     // steps = elmBox.height + 2 + 180;
     steps = elmBox.height;
 
-    for (let i = 0; i < steps; i += 1) {
+    for (let i = 0; i < steps; i += 10) {
       cy.get("#id-12").trigger("mousemove", {
         clientX: startingPointX - i,
         clientY: startingPointY - i,
@@ -49,7 +49,7 @@ context("Swinging - Confusion starts form bottom/up", () => {
   });
 
   it("Continue movement - 1", () => {
-    for (let i = steps; i < steps + 45; i += 1) {
+    for (let i = steps; i < steps + 45; i += 10) {
       cy.get("#id-12").trigger("mousemove", {
         clientX: startingPointX - i,
         clientY: startingPointY - i,
@@ -79,7 +79,7 @@ context("Swinging - Confusion starts form bottom/up", () => {
   });
 
   it("Continue movement - 2", () => {
-    for (let i = steps; i < steps + 45; i += 1) {
+    for (let i = steps; i < steps + 45; i += 10) {
       cy.get("#id-12").trigger("mousemove", {
         clientX: startingPointX - i,
         clientY: startingPointY - i,
@@ -109,7 +109,7 @@ context("Swinging - Confusion starts form bottom/up", () => {
   });
 
   it("Continue movement - 3", () => {
-    for (let i = steps; i < steps + 45; i += 1) {
+    for (let i = steps; i < steps + 45; i += 10) {
       cy.get("#id-12").trigger("mousemove", {
         clientX: startingPointX - i,
         clientY: startingPointY - i,
@@ -123,7 +123,7 @@ context("Swinging - Confusion starts form bottom/up", () => {
   });
 
   it("Getting in", () => {
-    for (let i = steps; i > 0; i -= 1) {
+    for (let i = steps; i > 0; i -= 10) {
       cy.get("#id-12").trigger("mousemove", {
         clientX: startingPointX - i,
         force: true,
