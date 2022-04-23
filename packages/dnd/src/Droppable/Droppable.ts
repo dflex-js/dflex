@@ -316,11 +316,6 @@ class Droppable extends DistanceCalculator {
           y: 0,
         };
 
-        const draggedOccupiedPosition: IPointAxes = {
-          x: 0,
-          y: 0,
-        };
-
         const newSiblingList = store.getElmBranchByKey(newSK);
 
         // TODO: Update axis instead of using Y as constant.
@@ -376,8 +371,6 @@ class Droppable extends DistanceCalculator {
         this.draggable.gridPlaceholder.setAxes(1, 1);
 
         draggedElm.keys.SK = newSK;
-
-        this.draggable.occupiedPosition.clone(draggedOccupiedPosition);
 
         // Insert the element to the new list. Empty string because when dragged
         // is out the branch sets its index as "".
