@@ -1,7 +1,6 @@
-import { IPointAxes, PointNum } from "@dflex/utils";
+import { PointNum } from "@dflex/utils";
 import type { IPointNum } from "@dflex/utils";
 
-import { INode } from "@dflex/core-instance";
 import type { DraggedEvent, SiblingsEvent } from "../types";
 
 import store from "../DnDStore";
@@ -337,46 +336,13 @@ class Droppable extends DistanceCalculator {
         // placeholder as all the elements are stacked.
         originList.pop();
 
-        const draggedTransition: IPointAxes = {
-          x: 0,
-          y: 0,
-        };
-
         const newSiblingList = store.getElmBranchByKey(newSK);
 
-        // TODO: Update axis instead of using Y as constant.
-        if (newSiblingList.length > 0) {
-          const firstElm = store.registry[newSiblingList[0]];
+        this.draggable.occupiedPosition.clone(
+          this.getInsertionOccupiedPosition(newSK, "y")
+        );
 
-          // Getting diff with `currentPosition` includes the element transition
-          // as well.
-          draggedTransition.x = this.getDiff(firstElm, "x", "currentPosition");
-          draggedTransition.y = this.getDiff(firstElm, "y", "currentPosition");
-
-          this.draggable.occupiedPosition.clone(
-            this.getInsertionOccupiedPosition(newSiblingList, "y")
-          );
-        } else {
-          // Restore the last known current position.
-          const { preservedFirstElmPosition: currentPosition } =
-            store.containers[newSK];
-
-          draggedTransition.x = this.getDiff(
-            { currentPosition } as INode,
-            "x",
-            "currentPosition"
-          );
-
-          draggedTransition.y = this.getDiff(
-            { currentPosition } as INode,
-            "y",
-            "currentPosition"
-          );
-
-          this.draggable.occupiedPosition.clone(currentPosition!);
-
-          store.containers[newSK].preserveFirstElmPosition(null);
-        }
+        const draggedTransition = this.getInsertionOccupiedTranslate(newSK);
 
         this.draggable.gridPlaceholder.setAxes(1, 1);
 
@@ -387,6 +353,9 @@ class Droppable extends DistanceCalculator {
         newSiblingList.push(Droppable.APPEND_EMPTY_ELM_ID);
 
         migration.add(NaN, newSK, draggedTransition);
+
+        // Clear if any.
+        store.containers[newSK].preserveFirstElmPosition(null);
 
         break;
       }

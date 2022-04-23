@@ -144,7 +144,39 @@ class DistanceCalculator {
     this.#updateDraggable(element, elmDirection);
   }
 
-  protected getInsertionOccupiedPosition(lst: string[], axis: Axis) {
+  protected getInsertionOccupiedTranslate(SK: string) {
+    const lst = store.getElmBranchByKey(SK);
+
+    const firstElm =
+      lst.length > 0
+        ? store.registry[lst[0]]
+        : ({
+            currentPosition: store.containers[SK].preservedFirstElmPosition,
+          } as INode);
+
+    const draggedTransition = {
+      x: 0,
+      y: 0,
+    };
+
+    // Getting diff with `currentPosition` includes the element transition
+    // as well.
+    draggedTransition.x = this.getDiff(firstElm, "x", "currentPosition");
+    draggedTransition.y = this.getDiff(firstElm, "y", "currentPosition");
+
+    return draggedTransition;
+  }
+
+  protected getInsertionOccupiedPosition(SK: string, axis: Axis) {
+    const lst = store.getElmBranchByKey(SK);
+
+    if (lst.length === 0) {
+      // Restore the last known current position.
+      const { preservedFirstElmPosition } = store.containers[SK];
+
+      return preservedFirstElmPosition!;
+    }
+
     const { draggedElm } = this.draggable;
 
     const lastElm = store.registry[lst[lst.length - 1]];
