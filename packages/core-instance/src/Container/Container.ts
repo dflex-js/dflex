@@ -3,6 +3,7 @@ import { PointNum } from "@dflex/utils";
 import type {
   IScroll,
   IPointNum,
+  IPointAxes,
   RectBoundaries,
   RectDimensions,
 } from "@dflex/utils";
@@ -23,6 +24,8 @@ class Container implements IContainer {
   #gridContainer: IPointNum;
 
   #gridSiblingsHasNewRow: boolean;
+
+  preservedFirstElmPosition?: IPointNum;
 
   constructor() {
     this.#boundariesStorageForGrid = {};
@@ -144,6 +147,10 @@ class Container implements IContainer {
     if (bottom > $.bottom) {
       $.bottom = bottom;
     }
+  }
+
+  preserveFirstElmPosition(position: IPointAxes) {
+    this.preservedFirstElmPosition = new PointNum(position.x, position.y);
   }
 }
 

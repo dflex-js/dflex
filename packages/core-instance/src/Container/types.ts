@@ -2,10 +2,18 @@ import type {
   RectBoundaries,
   RectDimensions,
   IPointNum,
+  IPointAxes,
   IScroll,
 } from "@dflex/utils";
 
 export interface IContainer {
+  /**
+   * For restoring element position when necessary without knowing element id.
+   * E,g. when element is removed from branch and we need to know the position
+   * the element was in before it was removed.
+   */
+  readonly preservedFirstElmPosition?: IPointNum;
+
   /** Strict Rect for siblings containers. */
   readonly boundaries: RectBoundaries;
   /** Numbers of total columns and rows each container has.  */
@@ -15,4 +23,5 @@ export interface IContainer {
   scroll: IScroll;
   setGrid(grid: IPointNum, rect: RectDimensions): void;
   setBoundaries(rect: RectDimensions): void;
+  preserveFirstElmPosition(position: IPointAxes): void;
 }
