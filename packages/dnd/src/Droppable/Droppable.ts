@@ -247,12 +247,12 @@ class Droppable extends DistanceCalculator {
 
       const activeList = store.getElmBranchByKey(migration.latest().key);
 
-      threshold.setMainThreshold(draggedElm.id, {
-        height: draggedElm.offset.height,
-        width: draggedElm.offset.width,
-        left: this.draggable.occupiedPosition.x,
-        top: this.draggable.occupiedPosition.y,
-      });
+      // threshold.setMainThreshold(draggedElm.id, {
+      //   height: draggedElm.offset.height,
+      //   width: draggedElm.offset.width,
+      //   left: this.draggable.occupiedPosition.x,
+      //   top: this.draggable.occupiedPosition.y,
+      // });
 
       queueMicrotask(() => {
         if (hasEmptyElmID) return;
