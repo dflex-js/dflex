@@ -205,8 +205,7 @@ class Droppable extends DistanceCalculator {
   }
 
   #detectNearestElm() {
-    const { migration, threshold, draggedElm, occupiedTranslate } =
-      this.draggable;
+    const { migration, draggedElm, occupiedTranslate } = this.draggable;
 
     const siblings = store.DOMGen.branches[migration.latest().key];
 
