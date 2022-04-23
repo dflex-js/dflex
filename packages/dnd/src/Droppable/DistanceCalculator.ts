@@ -8,8 +8,6 @@ import type { IDraggableInteractive } from "../Draggable";
 
 import store from "../DnDStore";
 
-import type { DistanceCalculatorInterface } from "./types";
-
 function emitInteractiveEvent(
   type: InteractivityEvent["type"],
   element: INode
@@ -29,7 +27,7 @@ function emitInteractiveEvent(
  * Calculates the distance between two elements and update the targeted element
  * accordingly.
  */
-class DistanceCalculator implements DistanceCalculatorInterface {
+class DistanceCalculator {
   protected draggable: IDraggableInteractive;
 
   #elmTransition: IPointNum;
@@ -172,7 +170,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     insertionPosition[axis] -= rectDiff;
 
     if (axis === "y") {
-      // still we need a margin.
+      // We still need a margin.
       // The target is the last element and the append from above, so we check
       // the top.
       const prevLastElm = store.registry[lst[lst.length - 2]];
