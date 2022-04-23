@@ -25,7 +25,7 @@ class Container implements IContainer {
 
   #gridSiblingsHasNewRow: boolean;
 
-  preservedFirstElmPosition?: IPointNum;
+  preservedFirstElmPosition?: IPointNum | null;
 
   constructor() {
     this.#boundariesStorageForGrid = {};
@@ -156,7 +156,7 @@ class Container implements IContainer {
       return;
     }
 
-    delete this.preservedFirstElmPosition;
+    this.preservedFirstElmPosition = null;
   }
 }
 

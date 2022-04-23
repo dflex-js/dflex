@@ -12,7 +12,7 @@ export interface IContainer {
    * E,g. when element is removed from branch and we need to know the position
    * the element was in before it was removed.
    */
-  readonly preservedFirstElmPosition?: IPointNum;
+  readonly preservedFirstElmPosition?: IPointNum | null;
 
   /** Strict Rect for siblings containers. */
   readonly boundaries: RectBoundaries;
