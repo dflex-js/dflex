@@ -66,25 +66,18 @@ class DistanceCalculator implements DistanceCalculatorInterface {
   protected getDiff(
     element: INode,
     axis: Axis,
-    type: "offset" | "occupiedPosition" | "currentPosition"
+    type: keyof Pick<INode, "offset" | "currentPosition"> | "occupiedPosition"
   ) {
-    const {
-      occupiedPosition,
-      draggedElm: {
-        offset: draggedRect,
-        currentPosition: draggedPosition,
-        translate,
-      },
-    } = this.draggable;
+    const { occupiedPosition, draggedElm } = this.draggable;
 
     const { currentPosition, offset: elmOffset } = element;
 
     let diff = 0;
 
     if (type === "currentPosition") {
-      diff = currentPosition[axis] - draggedPosition[axis];
+      diff = currentPosition[axis] - draggedElm.currentPosition[axis];
 
-      diff += translate[axis];
+      diff += draggedElm.translate[axis];
 
       return diff;
     }
@@ -97,7 +90,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
 
     const rectType = axis === "x" ? "width" : "height";
 
-    diff = elmOffset[rectType] - draggedRect[rectType];
+    diff = elmOffset[rectType] - draggedElm.offset[rectType];
 
     return diff;
   }
