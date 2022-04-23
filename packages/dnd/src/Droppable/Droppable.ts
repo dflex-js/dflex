@@ -205,7 +205,14 @@ class Droppable extends DistanceCalculator {
   }
 
   #detectNearestElm() {
-    const { migration, draggedElm, occupiedTranslate } = this.draggable;
+    const {
+      migration,
+      draggedElm,
+      threshold,
+      occupiedTranslate,
+      occupiedPosition,
+      gridPlaceholder,
+    } = this.draggable;
 
     const siblings = store.DOMGen.branches[migration.latest().key];
 
@@ -246,15 +253,35 @@ class Droppable extends DistanceCalculator {
 
       const activeList = store.getElmBranchByKey(migration.latest().key);
 
-      // threshold.setMainThreshold(draggedElm.id, {
-      //   height: draggedElm.offset.height,
-      //   width: draggedElm.offset.width,
-      //   left: this.draggable.occupiedPosition.x,
-      //   top: this.draggable.occupiedPosition.y,
-      // });
+      threshold.setMainThreshold(draggedElm.id, {
+        height: draggedElm.offset.height,
+        width: draggedElm.offset.width,
+        left: this.draggable.occupiedPosition.x,
+        top: this.draggable.occupiedPosition.y,
+      });
 
       queueMicrotask(() => {
-        if (hasEmptyElmID) return;
+        if (hasEmptyElmID) {
+          const offset = {
+            height: draggedElm.offset.height,
+            width: draggedElm.offset.width,
+            left: occupiedPosition.x,
+            top: occupiedPosition.y,
+          };
+
+          store.handleElmMigration(
+            migration.latest().key,
+            migration.prev().key,
+            {
+              offset,
+              grid: gridPlaceholder,
+            }
+          );
+
+          migration.complete(occupiedPosition);
+
+          return;
+        }
 
         const lastElm = store.registry[activeList[activeList.length - 1]];
 
@@ -332,7 +359,9 @@ class Droppable extends DistanceCalculator {
           const prevLastElm =
             store.registry[newSiblingList[newSiblingList.length - 2]];
 
-          const diffY = lastElm.currentPosition.y - prevLastElm.getRectBottom();
+          const diffY =
+            lastElm.currentPosition.y -
+            (prevLastElm ? prevLastElm.getRectBottom() : 0);
 
           const offsetDiffY = Math.abs(
             draggedElm.offset.height - lastElm.offset.height
