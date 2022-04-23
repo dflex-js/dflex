@@ -214,8 +214,6 @@ class DistanceCalculator {
 
       if (prevLastElm) {
         marginTop = lastElm.currentPosition.y - prevLastElm.getRectBottom();
-
-        insertionPosition.y += marginTop;
       } else {
         const lstOrigin = store.getElmBranchByKey(originSK);
 
