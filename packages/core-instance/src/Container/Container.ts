@@ -149,8 +149,14 @@ class Container implements IContainer {
     }
   }
 
-  preserveFirstElmPosition(position: IPointAxes) {
-    this.preservedFirstElmPosition = new PointNum(position.x, position.y);
+  preserveFirstElmPosition(position: IPointAxes | null) {
+    if (position) {
+      this.preservedFirstElmPosition = new PointNum(position.x, position.y);
+
+      return;
+    }
+
+    delete this.preservedFirstElmPosition;
   }
 }
 

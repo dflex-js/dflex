@@ -244,10 +244,6 @@ class Droppable extends DistanceCalculator {
 
     if (migration.isTransitioning) {
       occupiedTranslate.clone(migration.insertionTransform!);
-      console.log(
-        "file: Droppable.ts ~ line 247 ~ occupiedTranslate",
-        occupiedTranslate
-      );
 
       const activeList = store.getElmBranchByKey(migration.latest().key);
 
@@ -348,12 +344,13 @@ class Droppable extends DistanceCalculator {
             draggedElm.offset.height - lastElm.offset.height
           );
 
-          draggedOccupiedPosition.x = lastElm.currentPosition.x + 0;
-          draggedOccupiedPosition.y =
+          this.draggable.occupiedPosition.setAxes(
+            lastElm.currentPosition.x + 0,
             lastElm.currentPosition.y +
-            draggedElm.offset.height +
-            diffY -
-            offsetDiffY;
+              draggedElm.offset.height +
+              diffY -
+              offsetDiffY
+          );
         } else {
           // Restore the last known current position.
           const { preservedFirstElmPosition: currentPosition } =
@@ -371,11 +368,9 @@ class Droppable extends DistanceCalculator {
             "currentPosition"
           );
 
-          draggedOccupiedPosition.x = currentPosition!.x;
-          draggedOccupiedPosition.y = currentPosition!.y;
+          this.draggable.occupiedPosition.clone(currentPosition!);
 
-          // TODO: Delete this.
-          // store.containers[newSK].preservedFirstElmPosition = undefined;
+          store.containers[newSK].preserveFirstElmPosition(null);
         }
 
         this.draggable.gridPlaceholder.setAxes(1, 1);

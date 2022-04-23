@@ -23,5 +23,5 @@ export interface IContainer {
   scroll: IScroll;
   setGrid(grid: IPointNum, rect: RectDimensions): void;
   setBoundaries(rect: RectDimensions): void;
-  preserveFirstElmPosition(position: IPointAxes): void;
+  preserveFirstElmPosition(position: IPointAxes | null): void;
 }
