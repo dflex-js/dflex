@@ -62,5 +62,45 @@ context(
     it("Triggers mouseup event", () => {
       cy.get("#c2-1").trigger("mouseup", { force: true });
     });
+
+    it("Siblings in the origin list have new positions", () => {
+      cy.get("#c2-2").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, -62)"
+      );
+
+      cy.get("#c2-3").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, -62)"
+      );
+
+      cy.get("#c2-4").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, -62)"
+      );
+
+      cy.get("#c2-5").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, -62)"
+      );
+    });
+
+    it("Siblings in the destination list have new positions", () => {
+      cy.get("#c1-1").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 62)"
+      );
+
+      cy.get("#c2-1").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, -226, 0)"
+      );
+    });
   }
 );
