@@ -139,7 +139,7 @@ class DistanceCalculator implements DistanceCalculatorInterface {
     elmDirection: Direction
   ) {
     this.#elmTransition.setAxes(0, 0);
-    this.#draggedPositionOffset.setAxes(0, 0);
+    this.#draggedTransition.setAxes(0, 0);
     this.#draggedPositionOffset.setAxes(0, 0);
 
     this.#setDistanceBtwPositions(element, axis, elmDirection);
