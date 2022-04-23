@@ -353,26 +353,8 @@ class Droppable extends DistanceCalculator {
           draggedTransition.x = this.getDiff(firstElm, "x", "currentPosition");
           draggedTransition.y = this.getDiff(firstElm, "y", "currentPosition");
 
-          // Calculate the new occupiedPosition
-          const lastElm =
-            store.registry[newSiblingList[newSiblingList.length - 1]];
-          const prevLastElm =
-            store.registry[newSiblingList[newSiblingList.length - 2]];
-
-          const diffY =
-            lastElm.currentPosition.y -
-            (prevLastElm ? prevLastElm.getRectBottom() : 0);
-
-          const offsetDiffY = Math.abs(
-            draggedElm.offset.height - lastElm.offset.height
-          );
-
-          this.draggable.occupiedPosition.setAxes(
-            lastElm.currentPosition.x + 0,
-            lastElm.currentPosition.y +
-              draggedElm.offset.height +
-              diffY -
-              offsetDiffY
+          this.draggable.occupiedPosition.clone(
+            this.getInsertionOccupiedPosition(newSiblingList, "y")
           );
         } else {
           // Restore the last known current position.
