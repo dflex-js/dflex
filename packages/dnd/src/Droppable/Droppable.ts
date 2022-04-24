@@ -21,44 +21,14 @@ function emitSiblingsEvent(
   store.emitEvent(evt);
 }
 
-export function isIDEligible(
-  destinationElmID: string,
-  currentDraggedID: string
-) {
+export function isIDEligible(elmID: string, draggedID: string) {
   return (
-    destinationElmID &&
-    destinationElmID.length > 0 &&
-    destinationElmID !== currentDraggedID &&
-    store.registry[destinationElmID] &&
-    store.registry[destinationElmID].ref !== null
+    elmID &&
+    elmID.length > 0 &&
+    elmID !== draggedID &&
+    store.registry[elmID] &&
+    store.registry[elmID].ref !== null
   );
-}
-
-function isIDEligible2Move(
-  destinationElmID: string,
-  currentDraggedID: string,
-  isScrollEnabled: boolean
-) {
-  if (!isIDEligible(destinationElmID, currentDraggedID)) {
-    return false;
-  }
-
-  // Won't trigger any resume if auto-scroll is disabled.
-  if (store.registry[destinationElmID].isPaused) {
-    if (isScrollEnabled) {
-      const { SK } = store.registry[currentDraggedID].keys;
-
-      const { scrollX, scrollY } = store.containers[SK].scroll;
-
-      store.registry[destinationElmID].resume(scrollX, scrollY);
-
-      return true;
-    }
-
-    return false;
-  }
-
-  return true;
 }
 
 /**
@@ -86,6 +56,50 @@ class Droppable extends DistanceCalculator {
   static INDEX_OUT_CONTAINER = NaN;
 
   static APPEND_EMPTY_ELM_ID = "";
+
+  static isIDEligible2Move(
+    elmID: string,
+    draggedID: string,
+    isScrollEnabled: boolean
+  ) {
+    if (!isIDEligible(elmID, draggedID)) {
+      return false;
+    }
+
+    // Won't trigger any resume if auto-scroll is disabled.
+    if (store.registry[elmID].isPaused) {
+      if (isScrollEnabled) {
+        const { SK } = store.registry[draggedID].keys;
+
+        const { scrollX, scrollY } = store.containers[SK].scroll;
+
+        store.registry[elmID].resume(scrollX, scrollY);
+
+        return true;
+      }
+
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Gets the last valid element from the list which sometime can be empty
+   * string if there's appending transition.
+   * ["valid-id", ""] => "valid-id"
+   * ["valid-id"] => "valid-id"
+   */
+  static getTheLastValidElm(lst: string[], draggedID: string) {
+    for (let i = lst.length - 1; i >= 0; i -= 1) {
+      const id = lst[i];
+      if (Droppable.isIDEligible2Move(id, draggedID, false)) {
+        return store.registry[id];
+      }
+    }
+
+    throw new Error(`No valid element found.${lst}\n`);
+  }
 
   constructor(draggable: IDraggableInteractive) {
     super(draggable);
@@ -180,7 +194,7 @@ class Droppable extends DistanceCalculator {
       const id = siblings[i];
 
       if (
-        isIDEligible2Move(
+        Droppable.isIDEligible2Move(
           id,
           this.draggable.draggedElm.id,
           this.draggable.scroll.enable
@@ -276,7 +290,10 @@ class Droppable extends DistanceCalculator {
         } else {
           const activeList = store.getElmBranchByKey(migration.latest().key);
 
-          const lastElm = store.registry[activeList[activeList.length - 1]];
+          const lastElm = Droppable.getTheLastValidElm(
+            activeList,
+            draggedElm.id
+          );
 
           offset.left = lastElm.currentPosition.x;
           offset.top = lastElm.currentPosition.y;
@@ -372,7 +389,7 @@ class Droppable extends DistanceCalculator {
       const id = siblings[i];
 
       if (
-        isIDEligible2Move(
+        Droppable.isIDEligible2Move(
           id,
           this.draggable.draggedElm.id,
           this.draggable.scroll.enable
@@ -423,7 +440,7 @@ class Droppable extends DistanceCalculator {
     const id = siblings![elmIndex];
 
     if (
-      isIDEligible2Move(
+      Droppable.isIDEligible2Move(
         id,
         this.draggable.draggedElm.id,
         this.draggable.scroll.enable
@@ -461,7 +478,7 @@ class Droppable extends DistanceCalculator {
       const id = siblings[i];
 
       if (
-        isIDEligible2Move(
+        Droppable.isIDEligible2Move(
           id,
           this.draggable.draggedElm.id,
           this.draggable.scroll.enable
@@ -491,7 +508,7 @@ class Droppable extends DistanceCalculator {
       const id = siblings[i];
 
       if (
-        isIDEligible2Move(
+        Droppable.isIDEligible2Move(
           id,
           this.draggable.draggedElm.id,
           this.draggable.scroll.enable
