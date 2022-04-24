@@ -116,7 +116,7 @@ class DraggableInteractive
      */
     if (
       isFallback ||
-      siblings === null ||
+      siblings.length === 0 ||
       this.numberOfElementsTransformed === 0
     ) {
       /**
@@ -152,6 +152,10 @@ class DraggableInteractive
 
     this.draggedElm.currentPosition.clone(this.occupiedPosition);
     this.draggedElm.translate.clone(this.occupiedTranslate);
+    console.log(
+      "file: DraggableInteractive.ts ~ line 155 ~ this.occupiedTranslate",
+      this.occupiedTranslate
+    );
 
     this.draggedElm.grid.clone(this.gridPlaceholder);
 
