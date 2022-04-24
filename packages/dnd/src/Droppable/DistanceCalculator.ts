@@ -67,7 +67,7 @@ class DistanceCalculator {
     this.isParentLocked = false;
   }
 
-  protected getDiff(
+  #getDiff(
     element: INode,
     axis: Axis,
     type: keyof Pick<INode, "offset" | "currentPosition"> | "occupiedPosition"
@@ -104,8 +104,8 @@ class DistanceCalculator {
     axis: Axis,
     elmDirection: Direction
   ) {
-    const positionDiff = this.getDiff(element, axis, "occupiedPosition");
-    const rectDiff = this.getDiff(element, axis, "offset");
+    const positionDiff = this.#getDiff(element, axis, "occupiedPosition");
+    const rectDiff = this.#getDiff(element, axis, "offset");
 
     if (elmDirection === -1) {
       this.#draggedTransition[axis] = positionDiff + rectDiff;
@@ -163,8 +163,8 @@ class DistanceCalculator {
 
     // Getting diff with `currentPosition` includes the element transition
     // as well.
-    draggedTransition.x = this.getDiff(firstElm, "x", "currentPosition");
-    draggedTransition.y = this.getDiff(firstElm, "y", "currentPosition");
+    draggedTransition.x = this.#getDiff(firstElm, "x", "currentPosition");
+    draggedTransition.y = this.#getDiff(firstElm, "y", "currentPosition");
 
     return draggedTransition;
   }
