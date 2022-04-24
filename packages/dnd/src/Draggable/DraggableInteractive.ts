@@ -145,10 +145,6 @@ class DraggableInteractive
 
     this.draggedElm.currentPosition.clone(this.occupiedPosition);
     this.draggedElm.translate.clone(this.occupiedTranslate);
-    console.log(
-      "file: DraggableInteractive.ts ~ line 155 ~ this.occupiedTranslate",
-      this.occupiedTranslate
-    );
 
     this.draggedElm.grid.clone(this.gridPlaceholder);
 
