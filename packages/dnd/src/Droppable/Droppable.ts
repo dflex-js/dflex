@@ -207,7 +207,6 @@ class Droppable extends DistanceCalculator {
     const {
       migration,
       draggedElm,
-      threshold,
       occupiedTranslate,
       occupiedPosition,
       gridPlaceholder,
@@ -248,55 +247,54 @@ class Droppable extends DistanceCalculator {
     draggedElm.rmDateset("draggedOutContainer");
 
     if (migration.isTransitioning) {
-      occupiedTranslate.clone(migration.insertionTransform!);
-
-      const activeList = store.getElmBranchByKey(migration.latest().key);
-
-      threshold.setMainThreshold(draggedElm.id, {
-        height: draggedElm.offset.height,
-        width: draggedElm.offset.width,
-        left: this.draggable.occupiedPosition.x,
-        top: this.draggable.occupiedPosition.y,
-      });
-
       queueMicrotask(() => {
-        if (hasEmptyElmID) {
-          const offset = {
-            height: draggedElm.offset.height,
-            width: draggedElm.offset.width,
-            left: occupiedPosition.x,
-            top: occupiedPosition.y,
-          };
-
-          store.handleElmMigration(
-            migration.latest().key,
-            migration.prev().key,
-            {
-              offset,
-              grid: gridPlaceholder,
-            }
-          );
-
-          migration.complete(occupiedPosition);
-
-          return;
-        }
-
-        const lastElm = store.registry[activeList[activeList.length - 1]];
-
+        // offset to append.
+        // It has to be the biggest element offset. The last element in the list.
         const offset = {
           height: draggedElm.offset.height,
           width: draggedElm.offset.width,
-          left: lastElm.currentPosition.x,
-          top: lastElm.currentPosition.y,
+          left: 0,
+          top: 0,
         };
+
+        // grid to append.
+        // Same as offset but with the element's grid.
+        let grid;
+
+        // We have one active list at one time.
+        // Each active list should preserve the position of the last element for
+        // the purpose of threshold out/in.
+        let preservedLastELmPosition;
+
+        if (hasEmptyElmID) {
+          offset.left = occupiedPosition.x;
+          offset.top = occupiedPosition.y;
+
+          grid = gridPlaceholder;
+
+          preservedLastELmPosition = occupiedPosition;
+        } else {
+          const activeList = store.getElmBranchByKey(migration.latest().key);
+
+          const lastElm = store.registry[activeList[activeList.length - 1]];
+
+          offset.left = lastElm.currentPosition.x;
+          offset.top = lastElm.currentPosition.y;
+
+          ({ grid } = lastElm);
+
+          ({ currentPosition: preservedLastELmPosition } = lastElm);
+        }
+
+        // Assign transition variables.
+        occupiedTranslate.clone(migration.insertionTransform!);
 
         store.handleElmMigration(migration.latest().key, migration.prev().key, {
           offset,
-          grid: lastElm.grid,
+          grid,
         });
 
-        migration.complete(lastElm.currentPosition);
+        migration.complete(preservedLastELmPosition);
       });
     }
   }
@@ -319,6 +317,7 @@ class Droppable extends DistanceCalculator {
           return;
         }
 
+        console.log("file: Droppable.ts ~ line 319 ~ newSK", newSK);
         migration.start();
 
         const originList = store.getElmBranchByKey(migration.latest().key);
@@ -737,6 +736,7 @@ class Droppable extends DistanceCalculator {
     let isOutSiblingsContainer = false;
 
     if (this.draggable.migration.isTransitioning) {
+      console.log("file: Droppable.ts ~ line 741 ~ isTransitioning");
       return;
     }
 
