@@ -60,4 +60,28 @@ context("Passing containers while transforming", () => {
   it("Triggers mouseup event", () => {
     cy.get("#c3-1").trigger("mouseup", { force: true });
   });
+
+  it("Siblings from the targets are having new positions", () => {
+    cy.get("#c3-2").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, -112)"
+    );
+  });
+
+  it("Siblings in origin takes new positions", () => {
+    cy.get("#c1-1").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, 106)"
+    );
+  });
+
+  it("Dragged has fully transformed", () => {
+    cy.get("#c3-1").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, -452, 0)"
+    );
+  });
 });
