@@ -334,7 +334,6 @@ class Droppable extends DistanceCalculator {
           return;
         }
 
-        console.log("file: Droppable.ts ~ line 319 ~ newSK", newSK);
         migration.start();
 
         const originList = store.getElmBranchByKey(migration.latest().key);
@@ -753,7 +752,6 @@ class Droppable extends DistanceCalculator {
     let isOutSiblingsContainer = false;
 
     if (this.draggable.migration.isTransitioning) {
-      console.log("file: Droppable.ts ~ line 741 ~ isTransitioning");
       return;
     }
 
