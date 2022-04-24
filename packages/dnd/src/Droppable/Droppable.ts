@@ -243,7 +243,9 @@ class Droppable extends DistanceCalculator {
       // Check if it's the last element
       if (!this.#checkIfDraggedIsLastElm()) return;
 
-      insertAt = siblings.length - 1;
+      ({
+        order: { self: insertAt },
+      } = Droppable.getTheLastValidElm(siblings, draggedElm.id));
 
       hasToMoveSiblingsDown = false;
     }
@@ -351,7 +353,7 @@ class Droppable extends DistanceCalculator {
         // placeholder as all the elements are stacked.
         originList.pop();
 
-        const newSiblingList = store.getElmBranchByKey(newSK);
+        const destinationList = store.getElmBranchByKey(newSK);
 
         this.draggable.occupiedPosition.clone(
           this.getInsertionOccupiedPosition(newSK, migration.latest().key, "y")
@@ -365,7 +367,7 @@ class Droppable extends DistanceCalculator {
 
         // Insert the element to the new list. Empty string because when dragged
         // is out the branch sets its index as "".
-        newSiblingList.push(Droppable.APPEND_EMPTY_ELM_ID);
+        destinationList.push(Droppable.APPEND_EMPTY_ELM_ID);
 
         migration.add(NaN, newSK, draggedTransition);
 
@@ -502,9 +504,11 @@ class Droppable extends DistanceCalculator {
       from: siblings!.length - 1,
       to,
     });
+    console.log("file: Droppable.ts ~ line 496 ~ to", to, siblings);
 
     for (let i = siblings.length - 1; i >= to; i -= 1) {
       const id = siblings[i];
+      console.log("file: Droppable.ts ~ line 509 ~ id", id);
 
       if (
         Droppable.isIDEligible2Move(
