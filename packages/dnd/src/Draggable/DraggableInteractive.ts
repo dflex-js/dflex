@@ -111,14 +111,7 @@ class DraggableInteractive
   setDraggedTransformPosition(isFallback: boolean) {
     const siblings = store.getElmBranchByKey(this.migration.latest().key);
 
-    /**
-     * In this case, the use clicked without making any move.
-     */
-    if (
-      isFallback ||
-      siblings === null ||
-      this.numberOfElementsTransformed === 0
-    ) {
+    if (isFallback) {
       /**
        * If not isDraggedOutPosition, it means dragged is out its position, inside
        * list but didn't reach another element to replace.
