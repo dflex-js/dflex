@@ -4,7 +4,7 @@ context("Split containers during transformation", () => {
   let startingPointY: number;
 
   let stepsX = 0;
-  const stepsY = 0;
+  let stepsY = 0;
 
   before(() => {
     cy.visit("http://localhost:3001/migration");
@@ -23,11 +23,21 @@ context("Split containers during transformation", () => {
     });
   });
 
-  it("Transforms element (#c3-1) - outside the horizontally", () => {
-    stepsX = 670;
+  it("Transforms element (#c3-1) - outside the horizontally into container-1", () => {
+    stepsX = 450;
     for (let i = 0; i < stepsX; i += 10) {
       cy.get("#c3-1").trigger("mousemove", {
         clientX: startingPointX - i,
+        force: true,
+      });
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(0);
+    }
+
+    stepsY = 10;
+    for (let i = stepsY; i >= 0; i -= 10) {
+      cy.get("#c3-1").trigger("mousemove", {
+        clientY: startingPointY + i,
         force: true,
       });
       // eslint-disable-next-line cypress/no-unnecessary-waiting
