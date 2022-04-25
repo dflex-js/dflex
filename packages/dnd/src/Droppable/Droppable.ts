@@ -386,58 +386,6 @@ class Droppable extends DistanceCalculator {
     }
   }
 
-  // @ts-ignore
-  #checkIfDraggedIsLastElm() {
-    const siblings = store.getElmBranchByKey(
-      this.draggable.migration.latest().key
-    );
-
-    let isLast = false;
-
-    for (let i = siblings.length - 1; i >= 0; i -= 1) {
-      const id = siblings[i];
-
-      if (
-        Droppable.isIDEligible2Move(
-          id,
-          this.draggable.draggedElm.id,
-          this.draggable.scroll.enable
-        )
-      ) {
-        const element = store.registry[id];
-
-        const isQualified = !element.isPositionedUnder(
-          this.draggable.positionPlaceholder.y
-        );
-
-        if (isQualified) {
-          isLast = true;
-
-          const { threshold, draggedElm, migration, occupiedPosition } =
-            this.draggable;
-
-          /**
-           * Update threshold from here since there's no calling to updateElement.
-           */
-          threshold.setMainThreshold(draggedElm.id, {
-            width: draggedElm.offset.width,
-            height: draggedElm.offset.height,
-            left: migration.lastElmPosition.x,
-            top: migration.lastElmPosition.y,
-          });
-
-          occupiedPosition.clone(migration.lastElmPosition);
-
-          break;
-        }
-
-        break;
-      }
-    }
-
-    return isLast;
-  }
-
   #switchElement(isIncrease: boolean) {
     const siblings = store.getElmBranchByKey(
       this.draggable.migration.latest().key
