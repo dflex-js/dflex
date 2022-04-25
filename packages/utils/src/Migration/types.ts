@@ -16,12 +16,6 @@ export interface IMigration {
    */
   readonly lastElmPosition: IPointNum;
 
-  /**
-   * Temporary placeholder for transformation destination.
-   * Defined only when transitioning.
-   */
-  readonly insertionTransform: IPointAxes | null;
-
   /** Get the latest migrations instance */
   latest(): IAbstract;
 
@@ -38,7 +32,7 @@ export interface IMigration {
   /**
    * Add new migration.
    */
-  add(index: number, key: string, draggedTransition: IPointAxes): void;
+  add(index: number, key: string): void;
 
   /** start transitioning. */
   start(): void;

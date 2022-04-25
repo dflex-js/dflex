@@ -366,8 +366,6 @@ class Droppable extends DistanceCalculator {
           this.getInsertionOccupiedPosition(newSK, migration.latest().key, "y")
         );
 
-        const draggedTransition = this.getInsertionOccupiedTranslate(0, newSK);
-
         this.draggable.gridPlaceholder.setAxes(1, 1);
 
         draggedElm.keys.SK = newSK;
@@ -376,7 +374,7 @@ class Droppable extends DistanceCalculator {
         // is out the branch sets its index as "".
         destinationList.push(Droppable.APPEND_EMPTY_ELM_ID);
 
-        migration.add(NaN, newSK, draggedTransition);
+        migration.add(NaN, newSK);
 
         // Clear if any.
         store.containers[newSK].preserveFirstElmPosition(null);
