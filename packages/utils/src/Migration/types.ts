@@ -1,4 +1,4 @@
-import type { IPointAxes, IPointNum } from "../Point";
+import type { IPointNum } from "../Point";
 
 export interface IAbstract {
   index: number;

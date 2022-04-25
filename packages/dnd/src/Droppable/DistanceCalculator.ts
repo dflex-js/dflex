@@ -146,26 +146,44 @@ class DistanceCalculator {
     this.#updateDraggable(element, elmDirection);
   }
 
+  #updateDraggedThresholdPosition(x: number, y: number) {
+    const {
+      threshold,
+      draggedElm: { id, offset },
+    } = this.draggable;
+
+    threshold.setMainThreshold(id, {
+      width: offset.width,
+      height: offset.height,
+      left: x,
+      top: y,
+    });
+  }
+
   protected getInsertionOccupiedTranslate(elmIndex: number, SK: string) {
     const lst = store.getElmBranchByKey(SK);
 
-    const targetElm =
-      store.registry[lst[elmIndex]] ||
-      ({
-        currentPosition: store.containers[SK].preservedFirstElmPosition,
-      } as INode);
+    let targetElm = store.registry[lst[elmIndex]];
 
-    const draggedTransition = {
-      x: 0,
-      y: 0,
-    };
+    // If element is not in the list, it means we have orphaned elements the
+    // list is empty se we restore the last known position.
+    if (!targetElm) {
+      targetElm = {
+        currentPosition: store.containers[SK].preservedFirstElmPosition,
+      } as INode;
+
+      // Clear.
+      store.containers[SK].preserveFirstElmPosition(null);
+    }
 
     // Getting diff with `currentPosition` includes the element transition
     // as well.
-    draggedTransition.x = this.#getDiff(targetElm, "x", "currentPosition");
-    draggedTransition.y = this.#getDiff(targetElm, "y", "currentPosition");
+    const x = this.#getDiff(targetElm, "x", "currentPosition");
+    const y = this.#getDiff(targetElm, "y", "currentPosition");
 
-    return draggedTransition;
+    this.#updateDraggedThresholdPosition(x, y);
+
+    return { x, y };
   }
 
   protected getInsertionOccupiedPosition(
@@ -291,14 +309,7 @@ class DistanceCalculator {
         currentPosition: { x, y },
       } = element;
 
-      const { draggedElm } = this.draggable;
-
-      this.draggable.threshold.setMainThreshold(draggedElm.id, {
-        width: draggedElm.offset.width,
-        height: draggedElm.offset.height,
-        left: x,
-        top: y,
-      });
+      this.#updateDraggedThresholdPosition(x, y);
     }
 
     emitInteractiveEvent("onDragOver", element);

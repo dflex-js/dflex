@@ -256,15 +256,16 @@ class Droppable extends DistanceCalculator {
 
     let draggedTransition: IPointAxes;
 
+    if (migration.isTransitioning) {
+      draggedTransition = this.getInsertionOccupiedTranslate(
+        insertAt!,
+        migration.latest().key
+      );
+    }
+
     // If it has solo empty id then there's no need to move down. Because it's
     // empty branch.
     if (hasToMoveSiblingsDown && !hasEmptyElmID) {
-      if (migration.isTransitioning) {
-        draggedTransition = this.getInsertionOccupiedTranslate(
-          insertAt!,
-          migration.latest().key
-        );
-      }
       this.#moveDown(insertAt);
     }
 
@@ -375,9 +376,6 @@ class Droppable extends DistanceCalculator {
         destinationList.push(Droppable.APPEND_EMPTY_ELM_ID);
 
         migration.add(NaN, newSK);
-
-        // Clear if any.
-        store.containers[newSK].preserveFirstElmPosition(null);
 
         break;
       }
