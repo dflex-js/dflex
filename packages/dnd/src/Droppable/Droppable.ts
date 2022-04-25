@@ -239,13 +239,13 @@ class Droppable extends DistanceCalculator {
 
     let insertAt = hasEmptyElmID ? 0 : this.#detectDroppableIndex();
 
+    // Enforce attaching it from the bottom since it's already inside the container.
     if (typeof insertAt !== "number") {
+      // Restore the last element position from the bottom.
       this.updateDraggedThresholdPosition(
         migration.lastElmPosition.x,
         migration.lastElmPosition.y
       );
-
-      occupiedPosition.clone(migration.lastElmPosition);
 
       ({
         order: { self: insertAt },
