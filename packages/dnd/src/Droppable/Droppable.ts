@@ -240,8 +240,12 @@ class Droppable extends DistanceCalculator {
     let insertAt = hasEmptyElmID ? 0 : this.#detectDroppableIndex();
 
     if (typeof insertAt !== "number") {
-      // Check if it's the last element
-      if (!this.#checkIfDraggedIsLastElm()) return;
+      this.updateDraggedThresholdPosition(
+        migration.lastElmPosition.x,
+        migration.lastElmPosition.y
+      );
+
+      occupiedPosition.clone(migration.lastElmPosition);
 
       ({
         order: { self: insertAt },
@@ -382,6 +386,7 @@ class Droppable extends DistanceCalculator {
     }
   }
 
+  // @ts-ignore
   #checkIfDraggedIsLastElm() {
     const siblings = store.getElmBranchByKey(
       this.draggable.migration.latest().key
