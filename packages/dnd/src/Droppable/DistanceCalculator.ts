@@ -289,8 +289,6 @@ class DistanceCalculator {
 
     this.#updateIndicators(element, axis, elmDirection);
 
-    this.draggable.updateNumOfElementsTransformed(elmDirection);
-
     // TODO: always true for the first element
     if (!this.isParentLocked) {
       /**
