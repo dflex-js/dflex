@@ -1,4 +1,4 @@
-import { PointNum } from "@dflex/utils";
+import { IPointAxes, PointNum } from "@dflex/utils";
 import type { IPointNum } from "@dflex/utils";
 
 import type { DraggedEvent, SiblingsEvent } from "../types";
@@ -226,7 +226,7 @@ class Droppable extends DistanceCalculator {
       gridPlaceholder,
     } = this.draggable;
 
-    const siblings = store.DOMGen.branches[migration.latest().key];
+    const siblings = store.getElmBranchByKey(migration.latest().key);
 
     /**
      * If tempIndex is zero, the dragged is coming from the top. So, move them
@@ -254,9 +254,17 @@ class Droppable extends DistanceCalculator {
 
     this.lockParent(false);
 
+    let draggedTransition: IPointAxes;
+
     // If it has solo empty id then there's no need to move down. Because it's
     // empty branch.
     if (hasToMoveSiblingsDown && !hasEmptyElmID) {
+      if (migration.isTransitioning) {
+        draggedTransition = this.getInsertionOccupiedTranslate(
+          insertAt!,
+          migration.latest().key
+        );
+      }
       this.#moveDown(insertAt);
     }
 
@@ -305,8 +313,7 @@ class Droppable extends DistanceCalculator {
           ({ currentPosition: preservedLastELmPosition } = lastElm);
         }
 
-        // Assign transition variables.
-        occupiedTranslate.clone(migration.insertionTransform!);
+        occupiedTranslate.clone(draggedTransition);
 
         store.handleElmMigration(migration.latest().key, migration.prev().key, {
           offset,
@@ -359,7 +366,7 @@ class Droppable extends DistanceCalculator {
           this.getInsertionOccupiedPosition(newSK, migration.latest().key, "y")
         );
 
-        const draggedTransition = this.getInsertionOccupiedTranslate(newSK);
+        const draggedTransition = this.getInsertionOccupiedTranslate(0, newSK);
 
         this.draggable.gridPlaceholder.setAxes(1, 1);
 
@@ -504,11 +511,9 @@ class Droppable extends DistanceCalculator {
       from: siblings!.length - 1,
       to,
     });
-    console.log("file: Droppable.ts ~ line 496 ~ to", to, siblings);
 
     for (let i = siblings.length - 1; i >= to; i -= 1) {
       const id = siblings[i];
-      console.log("file: Droppable.ts ~ line 509 ~ id", id);
 
       if (
         Droppable.isIDEligible2Move(
