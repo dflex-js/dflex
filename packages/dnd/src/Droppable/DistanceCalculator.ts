@@ -146,7 +146,7 @@ class DistanceCalculator {
     this.#updateDraggable(element, elmDirection);
   }
 
-  #updateDraggedThresholdPosition(x: number, y: number) {
+  protected updateDraggedThresholdPosition(x: number, y: number) {
     const {
       threshold,
       draggedElm: { id, offset },
@@ -181,7 +181,7 @@ class DistanceCalculator {
     const x = this.#getDiff(targetElm, "x", "currentPosition");
     const y = this.#getDiff(targetElm, "y", "currentPosition");
 
-    this.#updateDraggedThresholdPosition(x, y);
+    this.updateDraggedThresholdPosition(x, y);
 
     return { x, y };
   }
@@ -309,7 +309,7 @@ class DistanceCalculator {
         currentPosition: { x, y },
       } = element;
 
-      this.#updateDraggedThresholdPosition(x, y);
+      this.updateDraggedThresholdPosition(x, y);
     }
 
     emitInteractiveEvent("onDragOver", element);
