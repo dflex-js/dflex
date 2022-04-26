@@ -10,12 +10,6 @@ export interface IMigration {
   /** Only true when transitioning. */
   readonly isTransitioning: boolean;
 
-  /**
-   * Preserve the last element position in the list .
-   * Usage: Getting this position when the dragged is going back from the tail.
-   */
-  readonly lastElmPosition: IPointNum;
-
   /** Get the latest migrations instance */
   latest(): IAbstract;
 
