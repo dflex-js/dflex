@@ -74,9 +74,9 @@ class CoreUtils extends NodeCore implements INode {
 
   isWeakPositionContaining(elm: this) {
     return (
-      this.offset.width >= elm.offset.width &&
+      this.offset.width > elm.offset.width &&
       this.currentPosition.x <= elm.currentPosition.x &&
-      this.offset.height >= elm.offset.height &&
+      this.offset.height > elm.offset.height &&
       this.currentPosition.y <= elm.currentPosition.y
     );
   }
