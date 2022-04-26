@@ -63,7 +63,7 @@ context(
       cy.get("#c1-1").trigger("mouseup", { force: true });
     });
 
-    it("Transforms element (#c1-1) - outside the container-1/the origin list", () => {
+    it("Transforms element (#c1-1) - outside the origin list", () => {
       cy.get("#c1-1").trigger("mousedown", {
         button: 0,
       });
