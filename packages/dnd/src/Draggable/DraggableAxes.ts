@@ -68,7 +68,7 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
 
     this.migration = new Migration(order.self, SK);
 
-    if (store.containers[SK].lastElmPosition) {
+    if (!store.containers[SK].lastElmPosition) {
       store.containers[SK].setLastElmPosition(
         store.registry[siblings[siblings.length - 1]].currentPosition
       );
