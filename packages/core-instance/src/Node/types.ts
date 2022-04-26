@@ -126,12 +126,13 @@ export interface INode extends ICore {
   isConnected(): boolean;
   isPositionedUnder(elmY: number): boolean;
   isPositionedLeft(elmX: number): boolean;
+  isWeakPositionContaining(elm: INode): boolean;
   getRectBottom(): number;
   getRectRight(): number;
-  getRectDiff(elm: this, axis: Axis): number;
+  getRectDiff(elm: INode, axis: Axis): number;
   /** Getting the displacement between two points. Rect is excluded. */
-  getDisplacement(elm: this, axis: Axis): number;
-  getDistance(elm: this, axis: Axis): number;
+  getDisplacement(elm: INode, axis: Axis): number;
+  getDistance(elm: INode, axis: Axis): number;
   getOffset(): RectDimensions;
-  hasSamePosition(elm: this, axis: Axis): boolean;
+  hasSamePosition(elm: INode, axis: Axis): boolean;
 }

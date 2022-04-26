@@ -184,27 +184,28 @@ class Droppable extends DistanceCalculator {
   }
 
   #detectDroppableIndex() {
+    const { draggedElm, migration, scroll, positionPlaceholder } =
+      this.draggable;
+
+    const { key: SK } = migration.latest();
+
     let droppableIndex = null;
 
-    const siblings = store.getElmBranchByKey(
-      this.draggable.migration.latest().key
-    );
+    const siblings = store.getElmBranchByKey(SK);
 
     for (let i = 0; i < siblings.length; i += 1) {
       const id = siblings[i];
 
-      if (
-        Droppable.isIDEligible2Move(
-          id,
-          this.draggable.draggedElm.id,
-          this.draggable.scroll.enable
-        )
-      ) {
+      if (Droppable.isIDEligible2Move(id, draggedElm.id, scroll.enable)) {
         const element = store.registry[id];
 
-        const isQualified = element.isPositionedUnder(
-          this.draggable.positionPlaceholder.y
-        );
+        // This case works when dragged is equal or smaller than the element.
+        // Otherwise, if it's bigger than element it can overlap with the
+        // element without being a valid droppable that's why we check through
+        // `isWeakPositionContaining`.
+        const isQualified =
+          element.isPositionedUnder(positionPlaceholder.y) ||
+          draggedElm.isWeakPositionContaining(element);
 
         if (isQualified) {
           droppableIndex = i;

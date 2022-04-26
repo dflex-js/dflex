@@ -15,22 +15,6 @@ class CoreUtils extends NodeCore implements INode {
     return diff;
   }
 
-  isConnected() {
-    return this.ref!.isConnected;
-  }
-
-  isPositionedUnder(elmY: number) {
-    return elmY < this.currentPosition.y;
-  }
-
-  isPositionedLeft(elmX: number) {
-    return elmX < this.currentPosition.x;
-  }
-
-  hasSamePosition(elm: this, axis: Axis) {
-    return this.currentPosition[axis] === elm.currentPosition[axis];
-  }
-
   getRectBottom() {
     return this.currentPosition.y + this.offset.height;
   }
@@ -66,6 +50,39 @@ class CoreUtils extends NodeCore implements INode {
       top: this.currentPosition.y,
       left: this.currentPosition.x,
     };
+  }
+
+  getFullRect() {
+    return {
+      ...this.getOffset(),
+      bottom: this.getRectBottom(),
+      right: this.getRectRight(),
+    };
+  }
+
+  isConnected() {
+    return this.ref!.isConnected;
+  }
+
+  isPositionedUnder(elmY: number) {
+    return elmY < this.currentPosition.y;
+  }
+
+  isPositionedLeft(elmX: number) {
+    return elmX < this.currentPosition.x;
+  }
+
+  isWeakPositionContaining(elm: this) {
+    return (
+      this.offset.width >= elm.offset.width &&
+      this.currentPosition.x <= elm.currentPosition.x &&
+      this.offset.height >= elm.offset.height &&
+      this.currentPosition.y <= elm.currentPosition.y
+    );
+  }
+
+  hasSamePosition(elm: this, axis: Axis) {
+    return this.currentPosition[axis] === elm.currentPosition[axis];
   }
 }
 
