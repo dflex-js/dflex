@@ -146,7 +146,7 @@ class DistanceCalculator {
     this.#updateDraggable(element, elmDirection);
   }
 
-  #updateDraggedThresholdPosition(x: number, y: number) {
+  protected updateDraggedThresholdPosition(x: number, y: number) {
     const {
       threshold,
       draggedElm: { id, offset },
@@ -168,12 +168,20 @@ class DistanceCalculator {
     // If element is not in the list, it means we have orphaned elements the
     // list is empty se we restore the last known position.
     if (!targetElm) {
-      targetElm = {
-        currentPosition: store.containers[SK].preservedFirstElmPosition,
-      } as INode;
+      const { firstElmPosition, lastElmPosition } = store.containers[SK];
 
-      // Clear.
-      store.containers[SK].preserveFirstElmPosition(null);
+      if (lst.length === 0) {
+        targetElm = {
+          currentPosition: firstElmPosition,
+        } as INode;
+
+        // Clear.
+        store.containers[SK].setFirstElmPosition(null);
+      } else {
+        targetElm = {
+          currentPosition: lastElmPosition,
+        } as INode;
+      }
     }
 
     // Getting diff with `currentPosition` includes the element transition
@@ -181,7 +189,7 @@ class DistanceCalculator {
     const x = this.#getDiff(targetElm, "x", "currentPosition");
     const y = this.#getDiff(targetElm, "y", "currentPosition");
 
-    this.#updateDraggedThresholdPosition(x, y);
+    this.updateDraggedThresholdPosition(x, y);
 
     return { x, y };
   }
@@ -195,7 +203,8 @@ class DistanceCalculator {
 
     if (lst.length === 0) {
       // Restore the last known current position.
-      const { preservedFirstElmPosition } = store.containers[newSK];
+      const { firstElmPosition: preservedFirstElmPosition } =
+        store.containers[newSK];
 
       return preservedFirstElmPosition!;
     }
@@ -289,8 +298,6 @@ class DistanceCalculator {
 
     this.#updateIndicators(element, axis, elmDirection);
 
-    this.draggable.updateNumOfElementsTransformed(elmDirection);
-
     // TODO: always true for the first element
     if (!this.isParentLocked) {
       /**
@@ -309,7 +316,7 @@ class DistanceCalculator {
         currentPosition: { x, y },
       } = element;
 
-      this.#updateDraggedThresholdPosition(x, y);
+      this.updateDraggedThresholdPosition(x, y);
     }
 
     emitInteractiveEvent("onDragOver", element);

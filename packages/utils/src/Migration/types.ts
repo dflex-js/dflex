@@ -1,5 +1,3 @@
-import type { IPointNum } from "../Point";
-
 export interface IAbstract {
   index: number;
 
@@ -9,12 +7,6 @@ export interface IAbstract {
 export interface IMigration {
   /** Only true when transitioning. */
   readonly isTransitioning: boolean;
-
-  /**
-   * Preserve the last element position in the list .
-   * Usage: Getting this position when the dragged is going back from the tail.
-   */
-  readonly lastElmPosition: IPointNum;
 
   /** Get the latest migrations instance */
   latest(): IAbstract;
@@ -38,5 +30,5 @@ export interface IMigration {
   start(): void;
 
   /** Get the migration done  */
-  complete(lastElmPosition: IPointNum): void;
+  complete(): void;
 }

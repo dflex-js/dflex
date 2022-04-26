@@ -71,9 +71,7 @@ export interface IDraggableInteractive extends IDraggableAxes {
   readonly scroll: ScrollOptWithThreshold;
   readonly occupiedPosition: IPointNum;
   readonly occupiedTranslate: IPointNum;
-  readonly numberOfElementsTransformed: number;
   readonly isDraggedPositionFixed: boolean;
   setDraggedTempIndex(i: number): void;
-  updateNumOfElementsTransformed(effectedElemDirection: number): void;
   endDragging(isFallback: boolean): void;
 }

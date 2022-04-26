@@ -239,13 +239,14 @@ class Droppable extends DistanceCalculator {
 
     let insertAt = hasEmptyElmID ? 0 : this.#detectDroppableIndex();
 
+    // Enforce attaching it from the bottom since it's already inside the container.
     if (typeof insertAt !== "number") {
-      // Check if it's the last element
-      if (!this.#checkIfDraggedIsLastElm()) return;
+      // Restore the last element position from the bottom.
+      const { lastElmPosition } = store.containers[migration.latest().key];
 
-      ({
-        order: { self: insertAt },
-      } = Droppable.getTheLastValidElm(siblings, draggedElm.id));
+      this.updateDraggedThresholdPosition(lastElmPosition.x, lastElmPosition.y);
+
+      insertAt = siblings.length - 1;
 
       hasToMoveSiblingsDown = false;
     }
@@ -321,7 +322,11 @@ class Droppable extends DistanceCalculator {
           grid,
         });
 
-        migration.complete(preservedLastELmPosition);
+        store.containers[migration.latest().key].setLastElmPosition(
+          preservedLastELmPosition
+        );
+
+        migration.complete();
       });
     }
   }
@@ -351,7 +356,7 @@ class Droppable extends DistanceCalculator {
         if (originList.length === 1) {
           // Preserve the last known current position so we can restore it later if the
           // container has new insertion.
-          store.containers[migration.latest().key].preserveFirstElmPosition(
+          store.containers[migration.latest().key].setFirstElmPosition(
             store.registry[originList[0]].currentPosition
           );
         }
@@ -380,57 +385,6 @@ class Droppable extends DistanceCalculator {
         break;
       }
     }
-  }
-
-  #checkIfDraggedIsLastElm() {
-    const siblings = store.getElmBranchByKey(
-      this.draggable.migration.latest().key
-    );
-
-    let isLast = false;
-
-    for (let i = siblings.length - 1; i >= 0; i -= 1) {
-      const id = siblings[i];
-
-      if (
-        Droppable.isIDEligible2Move(
-          id,
-          this.draggable.draggedElm.id,
-          this.draggable.scroll.enable
-        )
-      ) {
-        const element = store.registry[id];
-
-        const isQualified = !element.isPositionedUnder(
-          this.draggable.positionPlaceholder.y
-        );
-
-        if (isQualified) {
-          isLast = true;
-
-          const { threshold, draggedElm, migration, occupiedPosition } =
-            this.draggable;
-
-          /**
-           * Update threshold from here since there's no calling to updateElement.
-           */
-          threshold.setMainThreshold(draggedElm.id, {
-            width: draggedElm.offset.width,
-            height: draggedElm.offset.height,
-            left: migration.lastElmPosition.x,
-            top: migration.lastElmPosition.y,
-          });
-
-          occupiedPosition.clone(migration.lastElmPosition);
-
-          break;
-        }
-
-        break;
-      }
-    }
-
-    return isLast;
   }
 
   #switchElement(isIncrease: boolean) {

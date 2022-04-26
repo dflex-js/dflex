@@ -25,8 +25,6 @@ class DraggableInteractive
 
   occupiedTranslate: IPointNum;
 
-  numberOfElementsTransformed: number;
-
   isDraggedPositionFixed: boolean;
 
   private changeToFixedStyleProps: DraggedStyle;
@@ -88,12 +86,6 @@ class DraggableInteractive
 
     this.occupiedPosition = new PointNum(currentPosition.x, currentPosition.y);
     this.occupiedTranslate = new PointNum(translate.x, translate.y);
-
-    /**
-     * It counts number of element that dragged has passed. This counter is
-     * crucial to calculate drag's translate and index
-     */
-    this.numberOfElementsTransformed = 0;
   }
 
   setDraggedTempIndex(i: number) {
@@ -104,14 +96,15 @@ class DraggableInteractive
     this.draggedElm.setDataset("index", i);
   }
 
-  updateNumOfElementsTransformed(effectedElemDirection: number) {
-    this.numberOfElementsTransformed += -1 * effectedElemDirection;
-  }
-
   setDraggedTransformPosition(isFallback: boolean) {
     const siblings = store.getElmBranchByKey(this.migration.latest().key);
 
-    if (isFallback) {
+    const hasToUndo =
+      isFallback ||
+      // dragged in position but has been clicked.
+      this.occupiedPosition.isEqual(this.draggedElm.currentPosition);
+
+    if (hasToUndo) {
       /**
        * If not isDraggedOutPosition, it means dragged is out its position, inside
        * list but didn't reach another element to replace.

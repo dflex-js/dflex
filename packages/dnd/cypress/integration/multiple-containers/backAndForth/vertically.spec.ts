@@ -1,5 +1,5 @@
 context(
-  "Transitioning from one container to another when dragged is smaller than the target",
+  "Transitioning from one container to another vertically - back and forth",
   () => {
     let elmBox: DOMRect;
     let startingPointX: number;

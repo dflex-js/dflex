@@ -9,10 +9,16 @@ import type {
 export interface IContainer {
   /**
    * For restoring element position when necessary without knowing element id.
-   * E,g. when element is removed from branch and we need to know the position
+   * E.g. when element is removed from branch and we need to know the position
    * the element was in before it was removed.
    */
-  readonly preservedFirstElmPosition?: IPointNum | null;
+  readonly firstElmPosition?: IPointNum | null;
+
+  /**
+   * Preserve the last element position in the list .
+   * Usage: Getting this position when the dragged is going back from the tail.
+   */
+  readonly lastElmPosition: IPointNum;
 
   /** Strict Rect for siblings containers. */
   readonly boundaries: RectBoundaries;
@@ -23,5 +29,6 @@ export interface IContainer {
   scroll: IScroll;
   setGrid(grid: IPointNum, rect: RectDimensions): void;
   setBoundaries(rect: RectDimensions): void;
-  preserveFirstElmPosition(position: IPointAxes | null): void;
+  setFirstElmPosition(position: IPointAxes | null): void;
+  setLastElmPosition(position: IPointAxes): void;
 }
