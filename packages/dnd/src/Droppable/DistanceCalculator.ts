@@ -161,14 +161,9 @@ class DistanceCalculator {
   }
 
   protected getInsertionOccupiedTranslate(elmIndex: number, SK: string) {
-    console.log("file: DistanceCalculator.ts ~ line 164 ~ elmIndex", elmIndex);
     const lst = store.getElmBranchByKey(SK);
 
     let targetElm = store.registry[lst[elmIndex]];
-    console.log(
-      "file: DistanceCalculator.ts ~ line 168 ~ targetElm",
-      targetElm
-    );
 
     // If element is not in the list, it means we have orphaned elements the
     // list is empty se we restore the last known position.

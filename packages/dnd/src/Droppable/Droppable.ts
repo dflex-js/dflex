@@ -262,10 +262,6 @@ class Droppable extends DistanceCalculator {
         insertAt!,
         migration.latest().key
       );
-      console.log(
-        "file: Droppable.ts ~ line 268 ~ draggedTransition",
-        draggedTransition
-      );
     }
 
     // If it has solo empty id then there's no need to move down. Because it's
