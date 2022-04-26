@@ -1,3 +1,4 @@
+import { Node } from "@dflex/core-instance";
 import type { INode } from "@dflex/core-instance";
 
 import { Direction, PointNum } from "@dflex/utils";
@@ -40,10 +41,6 @@ class DistanceCalculator {
 
   /** Isolated form the threshold and predict is-out based on the controllers */
   protected isParentLocked: boolean;
-
-  static getRectByAxis(axis: Axis) {
-    return axis === "x" ? "width" : "height";
-  }
 
   static DEFAULT_SYNTHETIC_MARGIN = 10;
 
@@ -136,33 +133,39 @@ class DistanceCalculator {
   protected getInsertionOccupiedTranslate(elmIndex: number, SK: string) {
     const lst = store.getElmBranchByKey(SK);
 
-    let targetElm = store.registry[lst[elmIndex]];
+    const targetElm = store.registry[lst[elmIndex]];
+
+    const { draggedElm } = this.draggable;
+
+    let x;
+    let y;
 
     // If element is not in the list, it means we have orphaned elements the
     // list is empty se we restore the last known position.
     if (!targetElm) {
       const { firstElmPosition, lastElmPosition } = store.containers[SK];
 
+      let position: IPointNum;
+
       if (lst.length === 0) {
-        targetElm = {
-          currentPosition: firstElmPosition,
-        } as INode;
+        position = firstElmPosition!;
 
-        // Clear.
-        store.containers[SK].setFirstElmPosition(null);
+        // // Clear.
+        // store.containers[SK].setFirstElmPosition(null);
       } else {
-        targetElm = {
-          currentPosition: lastElmPosition,
-        } as INode;
+        position = lastElmPosition;
       }
+
+      // Getting diff with `currentPosition` includes the element transition
+      // as well.
+      x = Node.getDistance(position, draggedElm, "x");
+      y = Node.getDistance(position, draggedElm, "y");
+    } else {
+      // Getting diff with `currentPosition` includes the element transition
+      // as well.
+      x = targetElm.getDistance(draggedElm, "x");
+      y = targetElm.getDistance(draggedElm, "y");
     }
-
-    const { draggedElm } = this.draggable;
-
-    // Getting diff with `currentPosition` includes the element transition
-    // as well.
-    const x = targetElm.getDistance(draggedElm, "x");
-    const y = targetElm.getDistance(draggedElm, "y");
 
     this.updateDraggedThresholdPosition(x, y);
 
@@ -224,7 +227,7 @@ class DistanceCalculator {
       y: lastElm.currentPosition.y,
     };
 
-    const rectType = DistanceCalculator.getRectByAxis(axis);
+    const rectType = Node.getRectByAxis(axis);
 
     const { draggedElm } = this.draggable;
 

@@ -1,10 +1,18 @@
-import type { Axis } from "@dflex/utils";
+import type { Axis, IPointAxes } from "@dflex/utils";
 import NodeCore from "./Core";
 import type { INode } from "./types";
 
 class CoreUtils extends NodeCore implements INode {
   static getRectByAxis(axis: Axis) {
     return axis === "x" ? "width" : "height";
+  }
+
+  static getDistance(currentPosition: IPointAxes, elm: INode, axis: Axis) {
+    let diff = currentPosition[axis] - elm.currentPosition[axis];
+
+    diff += elm.translate[axis];
+
+    return diff;
   }
 
   isConnected() {
