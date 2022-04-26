@@ -194,7 +194,7 @@ class DistanceCalculator {
     return { x, y };
   }
 
-  #getMarginBottom(distLst: string[], originLst: string[]) {
+  #getMarginBottom(distLst: string[], originLst: string[], axis: Axis) {
     const { length } = distLst;
 
     const last = store.registry[distLst[length - 1]];
@@ -203,7 +203,10 @@ class DistanceCalculator {
       const prevLast = store.registry[distLst[length - 2]];
 
       if (prevLast) {
-        return last.currentPosition.y - prevLast.getRectBottom();
+        return (
+          last.currentPosition[axis] -
+          (axis === "x" ? prevLast.getRectRight() : prevLast.getRectBottom())
+        );
       }
     }
 
@@ -217,7 +220,12 @@ class DistanceCalculator {
       if (nextElm) {
         // If the origin is not the first element, we need to add the margin
         // to the top.
-        return nextElm.currentPosition.y - draggedElm.getRectBottom();
+        return (
+          nextElm.currentPosition[axis] -
+          (axis === "x"
+            ? draggedElm.getRectRight()
+            : draggedElm.getRectBottom())
+        );
       }
     }
 
@@ -260,12 +268,11 @@ class DistanceCalculator {
 
     insertionPosition[axis] += rectDiff;
 
-    if (axis === "y") {
-      insertionPosition.y += this.#getMarginBottom(
-        distLst,
-        store.getElmBranchByKey(originSK)
-      );
-    }
+    insertionPosition[axis] += this.#getMarginBottom(
+      distLst,
+      store.getElmBranchByKey(originSK),
+      axis
+    );
 
     return insertionPosition;
   }
