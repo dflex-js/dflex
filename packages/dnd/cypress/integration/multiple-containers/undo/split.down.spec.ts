@@ -1,12 +1,13 @@
 context(
-  "Migrate without releasing, then positioning outside the container",
+  "Splitting container horizontally and transform down outside the destination then release causing undo",
+
   () => {
     let elmBox: DOMRect;
     let startingPointX: number;
     let startingPointY: number;
 
     let stepsX = 0;
-    let stepsY = 0;
+    const stepsY = 0;
 
     before(() => {
       cy.visit("http://localhost:3001/migration");
@@ -36,9 +37,8 @@ context(
       }
     });
 
-    it("Transforms element (#c3-2) - outside the container-2", () => {
-      stepsY = 200;
-      for (let i = 0; i < stepsY; i += 10) {
+    it("Transforms element (#c3-2) - back inside the container-2", () => {
+      for (let i = stepsY; i >= -250; i -= 10) {
         cy.get("#c3-2").trigger("mousemove", {
           clientY: startingPointY - i,
           force: true,
@@ -46,38 +46,6 @@ context(
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(0);
       }
-    });
-
-    it("Siblings in container-2 are lifted up", () => {
-      cy.get("#c2-1").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
-      );
-
-      cy.get("#c2-2").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
-      );
-
-      cy.get("#c2-3").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
-      );
-
-      cy.get("#c2-4").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
-      );
-
-      cy.get("#c2-5").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
-      );
     });
 
     it("Triggers mouseup event", () => {
@@ -95,17 +63,9 @@ context(
     });
 
     it("Undo the distention siblings", () => {
-      cy.get("#c2-1").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
-      );
+      cy.get("#c2-1").should("have.css", "transform", "none");
 
-      cy.get("#c2-2").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
-      );
+      cy.get("#c2-2").should("have.css", "transform", "none");
 
       cy.get("#c2-3").should(
         "have.css",
