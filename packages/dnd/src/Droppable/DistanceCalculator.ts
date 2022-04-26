@@ -161,19 +161,32 @@ class DistanceCalculator {
   }
 
   protected getInsertionOccupiedTranslate(elmIndex: number, SK: string) {
+    console.log("file: DistanceCalculator.ts ~ line 164 ~ elmIndex", elmIndex);
     const lst = store.getElmBranchByKey(SK);
 
     let targetElm = store.registry[lst[elmIndex]];
+    console.log(
+      "file: DistanceCalculator.ts ~ line 168 ~ targetElm",
+      targetElm
+    );
 
     // If element is not in the list, it means we have orphaned elements the
     // list is empty se we restore the last known position.
     if (!targetElm) {
-      targetElm = {
-        currentPosition: store.containers[SK].preservedFirstElmPosition,
-      } as INode;
+      const { firstElmPosition, lastElmPosition } = store.containers[SK];
 
-      // Clear.
-      store.containers[SK].preserveFirstElmPosition(null);
+      if (lst.length === 0) {
+        targetElm = {
+          currentPosition: firstElmPosition,
+        } as INode;
+
+        // Clear.
+        store.containers[SK].setFirstElmPosition(null);
+      } else {
+        targetElm = {
+          currentPosition: lastElmPosition,
+        } as INode;
+      }
     }
 
     // Getting diff with `currentPosition` includes the element transition
@@ -195,7 +208,8 @@ class DistanceCalculator {
 
     if (lst.length === 0) {
       // Restore the last known current position.
-      const { preservedFirstElmPosition } = store.containers[newSK];
+      const { firstElmPosition: preservedFirstElmPosition } =
+        store.containers[newSK];
 
       return preservedFirstElmPosition!;
     }

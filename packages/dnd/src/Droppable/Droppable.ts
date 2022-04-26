@@ -242,14 +242,11 @@ class Droppable extends DistanceCalculator {
     // Enforce attaching it from the bottom since it's already inside the container.
     if (typeof insertAt !== "number") {
       // Restore the last element position from the bottom.
-      this.updateDraggedThresholdPosition(
-        migration.lastElmPosition.x,
-        migration.lastElmPosition.y
-      );
+      const { lastElmPosition } = store.containers[migration.latest().key];
 
-      ({
-        order: { self: insertAt },
-      } = Droppable.getTheLastValidElm(siblings, draggedElm.id));
+      this.updateDraggedThresholdPosition(lastElmPosition.x, lastElmPosition.y);
+
+      insertAt = siblings.length - 1;
 
       hasToMoveSiblingsDown = false;
     }
@@ -264,6 +261,10 @@ class Droppable extends DistanceCalculator {
       draggedTransition = this.getInsertionOccupiedTranslate(
         insertAt!,
         migration.latest().key
+      );
+      console.log(
+        "file: Droppable.ts ~ line 268 ~ draggedTransition",
+        draggedTransition
       );
     }
 
@@ -325,7 +326,11 @@ class Droppable extends DistanceCalculator {
           grid,
         });
 
-        migration.complete(preservedLastELmPosition);
+        store.containers[migration.latest().key].setLastElmPosition(
+          preservedLastELmPosition
+        );
+
+        migration.complete();
       });
     }
   }
@@ -355,7 +360,7 @@ class Droppable extends DistanceCalculator {
         if (originList.length === 1) {
           // Preserve the last known current position so we can restore it later if the
           // container has new insertion.
-          store.containers[migration.latest().key].preserveFirstElmPosition(
+          store.containers[migration.latest().key].setFirstElmPosition(
             store.registry[originList[0]].currentPosition
           );
         }
