@@ -39,7 +39,7 @@ context(
       cy.get("#c3-2").trigger("mouseup", { force: true });
     });
 
-    it("Transforms element (#c3-2) - outside the destination", () => {
+    it("Transforms element (#c3-2) - back to the origin", () => {
       cy.get("#c3-2").trigger("mousedown", {
         button: 0,
       });
