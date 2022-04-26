@@ -1,7 +1,5 @@
 /* eslint-disable max-classes-per-file */
 
-import { IPointNum, PointNum } from "../Point";
-
 import type { IAbstract, IMigration } from "./types";
 
 class AbstractMigration implements IAbstract {
@@ -20,12 +18,9 @@ class Migration implements IMigration {
 
   isTransitioning!: boolean;
 
-  lastElmPosition: IPointNum;
-
-  constructor(index: number, key: string, lastElmPosition: IPointNum) {
+  constructor(index: number, key: string) {
     this.#migrations = [new AbstractMigration(index, key)];
-    this.lastElmPosition = new PointNum(0, 0);
-    this.complete(lastElmPosition);
+    this.complete();
   }
 
   latest() {
@@ -48,8 +43,7 @@ class Migration implements IMigration {
     this.isTransitioning = true;
   }
 
-  complete(lastElmPosition: IPointNum) {
-    this.lastElmPosition.clone(lastElmPosition);
+  complete() {
     this.isTransitioning = false;
   }
 }

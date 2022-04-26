@@ -32,5 +32,5 @@ export interface IMigration {
   start(): void;
 
   /** Get the migration done  */
-  complete(lastElmPosition: IPointNum): void;
+  complete(): void;
 }

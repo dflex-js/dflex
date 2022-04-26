@@ -66,13 +66,13 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
 
     const siblings = store.getElmBranchByKey(SK);
 
-    const lastElmId = siblings[siblings.length - 1];
+    this.migration = new Migration(order.self, SK);
 
-    this.migration = new Migration(
-      order.self,
-      SK,
-      store.registry[lastElmId].currentPosition
-    );
+    if (store.containers[SK].lastElmPosition) {
+      store.containers[SK].setLastElmPosition(
+        store.registry[siblings[siblings.length - 1]].currentPosition
+      );
+    }
 
     this.isViewportRestricted = true;
 
