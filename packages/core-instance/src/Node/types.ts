@@ -128,6 +128,7 @@ export interface INode extends ICore {
   isPositionedLeft(elmX: number): boolean;
   getRectBottom(): number;
   getRectRight(): number;
+  getDistance(elm: this, axis: Axis): number;
   getOffset(): RectDimensions;
   hasSamePosition(elm: this, axis: Axis): boolean;
 }

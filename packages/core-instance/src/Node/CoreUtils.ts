@@ -27,6 +27,12 @@ class CoreUtils extends NodeCore implements INode {
     return this.currentPosition.x + this.offset.width;
   }
 
+  getDistance(elm: this, axis: Axis) {
+    const diff = axis === "x" ? elm.getRectRight() : elm.getRectBottom();
+
+    return this.currentPosition[axis] - diff;
+  }
+
   getOffset() {
     return {
       width: this.offset.width,

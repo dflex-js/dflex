@@ -203,10 +203,7 @@ class DistanceCalculator {
       const prevLast = store.registry[distLst[length - 2]];
 
       if (prevLast) {
-        return (
-          last.currentPosition[axis] -
-          (axis === "x" ? prevLast.getRectRight() : prevLast.getRectBottom())
-        );
+        return last.getDistance(prevLast, axis);
       }
     }
 
@@ -220,12 +217,7 @@ class DistanceCalculator {
       if (nextElm) {
         // If the origin is not the first element, we need to add the margin
         // to the top.
-        return (
-          nextElm.currentPosition[axis] -
-          (axis === "x"
-            ? draggedElm.getRectRight()
-            : draggedElm.getRectBottom())
-        );
+        return nextElm.getDistance(draggedElm, axis);
       }
     }
 
