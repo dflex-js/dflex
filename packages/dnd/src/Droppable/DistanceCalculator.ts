@@ -194,24 +194,52 @@ class DistanceCalculator {
     return { x, y };
   }
 
+  #getMarginBottom(distLst: string[], originLst: string[]) {
+    const { length } = distLst;
+
+    const last = store.registry[distLst[length - 1]];
+
+    if (length > 1) {
+      const prevLast = store.registry[distLst[length - 2]];
+
+      if (prevLast) {
+        return last.currentPosition.y - prevLast.getRectBottom();
+      }
+    }
+
+    const { draggedElm } = this.draggable;
+
+    const nextElmIndex = draggedElm.order.self + 1;
+
+    if (nextElmIndex < originLst.length) {
+      const nextElm = store.registry[originLst[nextElmIndex]];
+
+      if (nextElm) {
+        // If the origin is not the first element, we need to add the margin
+        // to the top.
+        return nextElm.currentPosition.y - draggedElm.getRectBottom();
+      }
+    }
+
+    return DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
+  }
+
   protected getInsertionOccupiedPosition(
     newSK: string,
     originSK: string,
     axis: Axis
   ) {
-    const lst = store.getElmBranchByKey(newSK);
+    const distLst = store.getElmBranchByKey(newSK);
 
-    if (lst.length === 0) {
+    // Get the stored position if the branch is empty.
+    if (distLst.length === 0) {
       // Restore the last known current position.
-      const { firstElmPosition: preservedFirstElmPosition } =
-        store.containers[newSK];
+      const { firstElmPosition } = store.containers[newSK];
 
-      return preservedFirstElmPosition!;
+      return firstElmPosition!;
     }
 
-    const { draggedElm } = this.draggable;
-
-    const lastElm = store.registry[lst[lst.length - 1]];
+    const lastElm = store.registry[distLst[distLst.length - 1]];
 
     // The essential position should be stimulate to case where position is
     // to last element in the list. So when the dragged enters the list its
@@ -223,6 +251,8 @@ class DistanceCalculator {
 
     const rectType = DistanceCalculator.getRectByAxis(axis);
 
+    const { draggedElm } = this.draggable;
+
     // This initiation needs to append dragged rect based on targeted axis.
     insertionPosition[axis] += draggedElm.offset[rectType];
 
@@ -231,32 +261,10 @@ class DistanceCalculator {
     insertionPosition[axis] += rectDiff;
 
     if (axis === "y") {
-      // We still need a margin.
-      // The target is the last element and the append from above, so we check
-      // the top.
-      const prevLastElm = store.registry[lst[lst.length - 2]];
-
-      let marginTop = 0;
-
-      if (prevLastElm) {
-        marginTop = lastElm.currentPosition.y - prevLastElm.getRectBottom();
-      } else {
-        const lstOrigin = store.getElmBranchByKey(originSK);
-
-        const elmAfterDragged =
-          store.registry[lstOrigin[draggedElm.order.self + 1]];
-
-        if (elmAfterDragged) {
-          // If the origin is not the first element, we need to add the margin
-          // to the top.
-          marginTop =
-            elmAfterDragged.currentPosition.y - draggedElm.getRectBottom();
-        } else {
-          marginTop = DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
-        }
-      }
-
-      insertionPosition.y += marginTop;
+      insertionPosition.y += this.#getMarginBottom(
+        distLst,
+        store.getElmBranchByKey(originSK)
+      );
     }
 
     return insertionPosition;
