@@ -3,6 +3,10 @@ import NodeCore from "./Core";
 import type { INode } from "./types";
 
 class CoreUtils extends NodeCore implements INode {
+  static getRectByAxis(axis: Axis) {
+    return axis === "x" ? "width" : "height";
+  }
+
   isConnected() {
     return this.ref!.isConnected;
   }
@@ -27,10 +31,24 @@ class CoreUtils extends NodeCore implements INode {
     return this.currentPosition.x + this.offset.width;
   }
 
-  getDistance(elm: this, axis: Axis) {
+  getRectDiff(elm: this, axis: Axis) {
+    const rectType = CoreUtils.getRectByAxis(axis);
+
+    return this.offset[rectType] - elm.offset[rectType];
+  }
+
+  getDisplacement(elm: this, axis: Axis) {
     const diff = axis === "x" ? elm.getRectRight() : elm.getRectBottom();
 
     return this.currentPosition[axis] - diff;
+  }
+
+  getDistance(elm: this, axis: Axis) {
+    let diff = this.currentPosition[axis] - elm.currentPosition[axis];
+
+    diff += elm.translate[axis];
+
+    return diff;
   }
 
   getOffset() {

@@ -67,45 +67,18 @@ class DistanceCalculator {
     this.isParentLocked = false;
   }
 
-  #getDiff(
-    element: INode,
-    axis: Axis,
-    type: keyof Pick<INode, "offset" | "currentPosition"> | "occupiedPosition"
-  ) {
-    const { occupiedPosition, draggedElm } = this.draggable;
-
-    const { currentPosition, offset: elmOffset } = element;
-
-    let diff = 0;
-
-    if (type === "currentPosition") {
-      diff = currentPosition[axis] - draggedElm.currentPosition[axis];
-
-      diff += draggedElm.translate[axis];
-
-      return diff;
-    }
-
-    if (type === "occupiedPosition") {
-      diff = Math.abs(currentPosition[axis] - occupiedPosition[axis]);
-
-      return diff;
-    }
-
-    const rectType = DistanceCalculator.getRectByAxis(axis);
-
-    diff = elmOffset[rectType] - draggedElm.offset[rectType];
-
-    return diff;
-  }
-
   #setDistanceBtwPositions(
     element: INode,
     axis: Axis,
     elmDirection: Direction
   ) {
-    const positionDiff = this.#getDiff(element, axis, "occupiedPosition");
-    const rectDiff = this.#getDiff(element, axis, "offset");
+    const { occupiedPosition, draggedElm } = this.draggable;
+
+    const positionDiff = Math.abs(
+      element.currentPosition[axis] - occupiedPosition[axis]
+    );
+
+    const rectDiff = element.getRectDiff(draggedElm, axis);
 
     if (elmDirection === -1) {
       this.#draggedTransition[axis] = positionDiff + rectDiff;
@@ -184,10 +157,12 @@ class DistanceCalculator {
       }
     }
 
+    const { draggedElm } = this.draggable;
+
     // Getting diff with `currentPosition` includes the element transition
     // as well.
-    const x = this.#getDiff(targetElm, "x", "currentPosition");
-    const y = this.#getDiff(targetElm, "y", "currentPosition");
+    const x = targetElm.getDistance(draggedElm, "x");
+    const y = targetElm.getDistance(draggedElm, "y");
 
     this.updateDraggedThresholdPosition(x, y);
 
@@ -203,7 +178,7 @@ class DistanceCalculator {
       const prevLast = store.registry[distLst[length - 2]];
 
       if (prevLast) {
-        return last.getDistance(prevLast, axis);
+        return last.getDisplacement(prevLast, axis);
       }
     }
 
@@ -217,7 +192,7 @@ class DistanceCalculator {
       if (nextElm) {
         // If the origin is not the first element, we need to add the margin
         // to the top.
-        return nextElm.getDistance(draggedElm, axis);
+        return nextElm.getDisplacement(draggedElm, axis);
       }
     }
 
