@@ -58,5 +58,39 @@ context(
     it("Triggers mouseup event", () => {
       cy.get("#c3-2").trigger("mouseup", { force: true });
     });
+
+    it("Siblings from the destination are back in positions", () => {
+      cy.get("#c2-1").should("have.css", "transform", "none");
+
+      cy.get("#c2-2").should("have.css", "transform", "none");
+
+      cy.get("#c2-3").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+
+      cy.get("#c2-4").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+
+      cy.get("#c2-5").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+    });
+
+    it("Siblings in origin are back in positions", () => {
+      cy.get("#c3-1").should("have.css", "transform", "none");
+
+      cy.get("#c3-2").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+    });
   }
 );
