@@ -64,6 +64,13 @@ context(
         cy.get("#c1-1").trigger("mouseup", { force: true });
       });
 
+      it("Migrated element(#c1-2) replaces #c2-1 position", () => {
+        cy.get("#c1-1").then((elm) => {
+          const newElmBox = elm[0].getBoundingClientRect();
+          expect(newElmBox.top).to.equal(elmBox.top);
+        });
+      });
+
       it("Dragged takes new position in the new container-2", () => {
         cy.get("#c1-1").should(
           "have.css",

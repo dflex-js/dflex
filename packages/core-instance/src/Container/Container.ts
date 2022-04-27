@@ -25,8 +25,6 @@ class Container implements IContainer {
 
   #gridSiblingsHasNewRow: boolean;
 
-  firstElmPosition?: IPointNum | null;
-
   lastElmPosition!: IPointNum;
 
   constructor() {
@@ -151,17 +149,7 @@ class Container implements IContainer {
     }
   }
 
-  setFirstElmPosition(position: IPointAxes | null) {
-    if (position) {
-      this.firstElmPosition = new PointNum(position.x, position.y);
-
-      return;
-    }
-
-    this.firstElmPosition = null;
-  }
-
-  setLastElmPosition(position: IPointAxes) {
+  preservePosition(position: IPointAxes) {
     this.lastElmPosition = new PointNum(position.x, position.y);
   }
 }
