@@ -1,6 +1,9 @@
 context(
   "Moving Elements In/Out (Insertion) - Dragged is smaller - No Release",
   () => {
+    let firstElmRect: DOMRect;
+    let lastElmRect: DOMRect;
+
     let elmBox: DOMRect;
     let startingPointX: number;
     let startingPointY: number;
@@ -10,6 +13,16 @@ context(
 
     before(() => {
       cy.visit("http://localhost:3001/todo");
+    });
+
+    it("Getting first and last elements rect", () => {
+      cy.get("#mtg").then((elm) => {
+        firstElmRect = elm[0].getBoundingClientRect();
+      });
+
+      cy.get("#gym").then((elm) => {
+        lastElmRect = elm[0].getBoundingClientRect();
+      });
     });
 
     it("Getting the first element (mtg)", () => {
@@ -218,6 +231,22 @@ context(
         "transform",
         "matrix(1, 0, 0, 1, 0, -115.188)"
       );
+    });
+
+    it("No layout shift happens to the list", () => {
+      cy.get("#org").then((elm) => {
+        const elmRect1 = elm[0].getBoundingClientRect();
+
+        expect(elmRect1.x).to.equal(lastElmRect.x);
+        expect(elmRect1.y).to.equal(firstElmRect.y);
+      });
+
+      cy.get("#mtg").then((elm) => {
+        const elmRect2 = elm[0].getBoundingClientRect();
+
+        expect(elmRect2.x).to.equal(lastElmRect.x);
+        expect(elmRect2.bottom).to.equal(lastElmRect.bottom);
+      });
     });
   }
 );
