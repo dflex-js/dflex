@@ -8,13 +8,6 @@ import type {
 
 export interface IContainer {
   /**
-   * For restoring element position when necessary without knowing element id.
-   * E.g. when element is removed from branch and we need to know the position
-   * the element was in before it was removed.
-   */
-  // readonly firstElmPosition?: IPointNum | null;
-
-  /**
    * Preserve the last element position in the list .
    * Usage: Getting this position when the dragged is going back from the tail.
    */
@@ -29,8 +22,5 @@ export interface IContainer {
   scroll: IScroll;
   setGrid(grid: IPointNum, rect: RectDimensions): void;
   setBoundaries(rect: RectDimensions): void;
-  preservePosition(
-    position: IPointAxes | null,
-    type: "firstElmPosition" | "lastElmPosition"
-  ): void;
+  preservePosition(position: IPointAxes | null): void;
 }
