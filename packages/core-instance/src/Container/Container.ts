@@ -151,18 +151,17 @@ class Container implements IContainer {
     }
   }
 
-  setFirstElmPosition(position: IPointAxes | null) {
+  preservePosition(
+    position: IPointAxes | null,
+    type: "firstElmPosition" | "lastElmPosition"
+  ) {
     if (position) {
-      this.firstElmPosition = new PointNum(position.x, position.y);
+      this[type] = new PointNum(position.x, position.y);
 
       return;
     }
 
-    this.firstElmPosition = null;
-  }
-
-  setLastElmPosition(position: IPointAxes) {
-    this.lastElmPosition = new PointNum(position.x, position.y);
+    if (type === "firstElmPosition") this[type] = null;
   }
 }
 

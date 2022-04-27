@@ -322,8 +322,9 @@ class Droppable extends DistanceCalculator {
           grid,
         });
 
-        store.containers[migration.latest().key].setLastElmPosition(
-          preservedLastELmPosition
+        store.containers[migration.latest().key].preservePosition(
+          preservedLastELmPosition,
+          "lastElmPosition"
         );
 
         migration.complete();
@@ -352,14 +353,6 @@ class Droppable extends DistanceCalculator {
         migration.start();
 
         const originList = store.getElmBranchByKey(migration.latest().key);
-
-        if (originList.length === 1) {
-          // Preserve the last known current position so we can restore it later if the
-          // container has new insertion.
-          store.containers[migration.latest().key].setFirstElmPosition(
-            store.registry[originList[0]].currentPosition
-          );
-        }
 
         // Remove the last element from the original list.
         // when the dragged is out of the container, the last element is the

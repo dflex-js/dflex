@@ -143,23 +143,12 @@ class DistanceCalculator {
     // If element is not in the list, it means we have orphaned elements the
     // list is empty se we restore the last known position.
     if (!targetElm) {
-      const { firstElmPosition, lastElmPosition } = store.containers[SK];
-
-      let position: IPointNum;
-
-      if (lst.length === 0) {
-        position = firstElmPosition!;
-
-        // // Clear.
-        // store.containers[SK].setFirstElmPosition(null);
-      } else {
-        position = lastElmPosition;
-      }
+      const { lastElmPosition } = store.containers[SK];
 
       // Getting diff with `currentPosition` includes the element transition
       // as well.
-      x = Node.getDistance(position, draggedElm, "x");
-      y = Node.getDistance(position, draggedElm, "y");
+      x = Node.getDistance(lastElmPosition, draggedElm, "x");
+      y = Node.getDistance(lastElmPosition, draggedElm, "y");
     } else {
       // Getting diff with `currentPosition` includes the element transition
       // as well.
@@ -212,9 +201,9 @@ class DistanceCalculator {
     // Get the stored position if the branch is empty.
     if (distLst.length === 0) {
       // Restore the last known current position.
-      const { firstElmPosition } = store.containers[newSK];
+      const { lastElmPosition } = store.containers[newSK];
 
-      return firstElmPosition!;
+      return lastElmPosition;
     }
 
     const lastElm = store.registry[distLst[distLst.length - 1]];

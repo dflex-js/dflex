@@ -12,7 +12,7 @@ export interface IContainer {
    * E.g. when element is removed from branch and we need to know the position
    * the element was in before it was removed.
    */
-  readonly firstElmPosition?: IPointNum | null;
+  // readonly firstElmPosition?: IPointNum | null;
 
   /**
    * Preserve the last element position in the list .
@@ -29,6 +29,8 @@ export interface IContainer {
   scroll: IScroll;
   setGrid(grid: IPointNum, rect: RectDimensions): void;
   setBoundaries(rect: RectDimensions): void;
-  setFirstElmPosition(position: IPointAxes | null): void;
-  setLastElmPosition(position: IPointAxes): void;
+  preservePosition(
+    position: IPointAxes | null,
+    type: "firstElmPosition" | "lastElmPosition"
+  ): void;
 }
