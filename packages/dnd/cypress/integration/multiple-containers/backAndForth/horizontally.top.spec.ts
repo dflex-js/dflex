@@ -4,6 +4,8 @@ context.skip(
     let elmBoxC3Elm1: DOMRect;
     let elmBoxC2Elm1: DOMRect;
     let startingPointX: number;
+
+    // eslint-disable-next-line no-unused-vars
     let startingPointY: number;
 
     let stepsX = 0;
@@ -57,17 +59,9 @@ context.skip(
     it("Matching element rect in container-c2 after replacing #c3-2 with #c2-1", () => {
       cy.get("#c3-1").then((elm) => {
         const newElmBox = elm[0].getBoundingClientRect();
-        console.log(
-          "file: horizontally.top.spec.ts ~ line 60 ~ newElmBox",
-          newElmBox
-        );
 
-        console.log(
-          "file: horizontally.top.spec.ts ~ line 63 ~ elmBoxC2Elm1",
-          elmBoxC2Elm1
-        );
         expect(newElmBox.x).to.equal(elmBoxC2Elm1.x);
-        // expect(newElmBox.y).to.equal(elmBoxC2Elm1.y);
+        expect(newElmBox.y).to.equal(elmBoxC2Elm1.y);
       });
     });
 
