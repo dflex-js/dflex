@@ -1,4 +1,4 @@
-context.skip(
+context(
   "Transitioning from one container to another horizontally from the top - back and forth",
   () => {
     let elmBox: DOMRect;
@@ -39,6 +39,14 @@ context.skip(
       cy.get("#c3-1").trigger("mouseup", { force: true });
     });
 
+    it("Matching element rect after replacing #c3-2 with #c3-1", () => {
+      cy.get("#c3-2").then((elm) => {
+        const newElmBox = elm[0].getBoundingClientRect();
+
+        expect(newElmBox).to.deep.equal(elmBox);
+      });
+    });
+
     it("Transforms element (#c3-1) - back to the origin", () => {
       cy.get("#c3-1").trigger("mousedown", {
         button: 0,
@@ -55,41 +63,41 @@ context.skip(
       }
     });
 
-    // it("Triggers mouseup event", () => {
-    //   cy.get("#c3-1").trigger("mouseup", { force: true });
-    // });
+    it("Triggers mouseup event", () => {
+      cy.get("#c3-1").trigger("mouseup", { force: true });
+    });
 
-    // it("Siblings from the destination are back in positions", () => {
-    //   cy.get("#c2-1").should(
-    //     "have.css",
-    //     "transform",
-    //     "matrix(1, 0, 0, 1, 0, 0)"
-    //   );
+    it("Siblings from the destination are back in positions", () => {
+      cy.get("#c2-1").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
 
-    //   cy.get("#c2-2").should(
-    //     "have.css",
-    //     "transform",
-    //     "matrix(1, 0, 0, 1, 0, 0)"
-    //   );
+      cy.get("#c2-2").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
 
-    //   cy.get("#c2-3").should(
-    //     "have.css",
-    //     "transform",
-    //     "matrix(1, 0, 0, 1, 0, 0)"
-    //   );
+      cy.get("#c2-3").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
 
-    //   cy.get("#c2-4").should(
-    //     "have.css",
-    //     "transform",
-    //     "matrix(1, 0, 0, 1, 0, 0)"
-    //   );
+      cy.get("#c2-4").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
 
-    //   cy.get("#c2-5").should(
-    //     "have.css",
-    //     "transform",
-    //     "matrix(1, 0, 0, 1, 0, 0)"
-    //   );
-    // });
+      cy.get("#c2-5").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+    });
 
     // it("Siblings in origin are back in positions", () => {
     //   cy.get("#c3-1").should(
