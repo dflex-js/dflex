@@ -1,8 +1,11 @@
 context.skip(
   "Transitioning from one container to another horizontally from the top - back and forth",
   () => {
-    let elmBox: DOMRect;
+    let elmBoxC3Elm1: DOMRect;
+    let elmBoxC2Elm1: DOMRect;
     let startingPointX: number;
+
+    // eslint-disable-next-line no-unused-vars
     let startingPointY: number;
 
     let stepsX = 0;
@@ -11,11 +14,17 @@ context.skip(
       cy.visit("http://localhost:3001/migration");
     });
 
-    it("Getting the second element from container-3", () => {
+    it("Getting the first element rect from container-2", () => {
+      cy.get("#c2-1").then((elm) => {
+        elmBoxC2Elm1 = elm[0].getBoundingClientRect();
+      });
+    });
+
+    it("Getting the first element rect from container-3", () => {
       cy.get("#c3-1").then((elm) => {
-        elmBox = elm[0].getBoundingClientRect();
-        startingPointX = elmBox.x + elmBox.width / 2;
-        startingPointY = elmBox.y + elmBox.height / 2;
+        elmBoxC3Elm1 = elm[0].getBoundingClientRect();
+        startingPointX = elmBoxC3Elm1.x + elmBoxC3Elm1.width / 2;
+        startingPointY = elmBoxC3Elm1.y + elmBoxC3Elm1.height / 2;
 
         cy.get("#c3-1").trigger("mousedown", {
           button: 0,
@@ -39,21 +48,38 @@ context.skip(
       cy.get("#c3-1").trigger("mouseup", { force: true });
     });
 
-    it("Transforms element (#c3-1) - back to the origin", () => {
-      cy.get("#c3-1").trigger("mousedown", {
-        button: 0,
-      });
+    it("Matching element rect in container-c3 after replacing #c3-2 with #c3-1", () => {
+      cy.get("#c3-2").then((elm) => {
+        const newElmBox = elm[0].getBoundingClientRect();
 
-      for (let i = stepsX; i >= 0; i -= 10) {
-        cy.get("#c3-1").trigger("mousemove", {
-          clientX: startingPointX - i,
-          clientY: startingPointY,
-          force: true,
-        });
-        // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(0);
-      }
+        expect(newElmBox).to.deep.equal(elmBoxC3Elm1);
+      });
     });
+
+    it("Matching element rect in container-c2 after replacing #c3-2 with #c2-1", () => {
+      cy.get("#c3-1").then((elm) => {
+        const newElmBox = elm[0].getBoundingClientRect();
+
+        expect(newElmBox.x).to.equal(elmBoxC2Elm1.x);
+        expect(newElmBox.y).to.equal(elmBoxC2Elm1.y);
+      });
+    });
+
+    // it("Transforms element (#c3-1) - back to the origin", () => {
+    //   cy.get("#c3-1").trigger("mousedown", {
+    //     button: 0,
+    //   });
+
+    //   for (let i = stepsX; i >= 0; i -= 10) {
+    //     cy.get("#c3-1").trigger("mousemove", {
+    //       clientX: startingPointX - i,
+    //       clientY: startingPointY,
+    //       force: true,
+    //     });
+    //     // eslint-disable-next-line cypress/no-unnecessary-waiting
+    //     cy.wait(0);
+    //   }
+    // });
 
     // it("Triggers mouseup event", () => {
     //   cy.get("#c3-1").trigger("mouseup", { force: true });

@@ -20,11 +20,11 @@ class CoreUtils extends NodeCore implements INode {
   }
 
   isPositionedUnder(elmY: number) {
-    return elmY < this.currentPosition.y;
+    return elmY <= this.currentPosition.y;
   }
 
   isPositionedLeft(elmX: number) {
-    return elmX < this.currentPosition.x;
+    return elmX <= this.currentPosition.x;
   }
 
   hasSamePosition(elm: this, axis: Axis) {
