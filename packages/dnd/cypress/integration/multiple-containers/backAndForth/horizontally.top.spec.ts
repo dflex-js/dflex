@@ -46,14 +46,6 @@ context(
       cy.get("#c3-1").trigger("mouseup", { force: true });
     });
 
-    it("Matching first element rect in the origin container-c3 after replacing #c3-1 with #c3-2", () => {
-      cy.get("#c3-2").then((elm) => {
-        const newElmBox = elm[0].getBoundingClientRect();
-
-        expect(newElmBox).to.deep.equal(elmBoxC3Elm1);
-      });
-    });
-
     it("Transforms element (#c3-1) - back to the origin", () => {
       cy.get("#c3-1").trigger("mousedown", {
         button: 0,
@@ -113,11 +105,11 @@ context(
         "matrix(1, 0, 0, 1, 0, 0)"
       );
 
-      // cy.get("#c3-2").should(
-      //   "have.css",
-      //   "transform",
-      //   "matrix(1, 0, 0, 1, 0, 0)"
-      // );
+      cy.get("#c3-2").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
     });
 
     it("Element #c3-1 restores its position", () => {
