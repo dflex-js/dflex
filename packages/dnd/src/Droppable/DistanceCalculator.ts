@@ -238,10 +238,8 @@ class DistanceCalculator {
 
     insertionPosition[axis] += rectDiff;
 
-    insertionPosition[axis] += this.#getMarginBottom(
-      distLst,
-      store.getElmBranchByKey(originSK),
-      axis
+    insertionPosition[axis] += Math.abs(
+      this.#getMarginBottom(distLst, store.getElmBranchByKey(originSK), axis)
     );
 
     return insertionPosition;
