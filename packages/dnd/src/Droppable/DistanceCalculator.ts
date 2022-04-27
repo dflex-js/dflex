@@ -225,6 +225,9 @@ class DistanceCalculator {
 
       marginBottom = lastElm.getDisplacement(prevLast, axis);
     } else if (
+      // Check for the last element, not all the containers preserve it by
+      // default. It only preserve in the active list.
+      lastElmPosition &&
       !lastElmPosition.isEqual(store.registry[distLst[0]].currentPosition)
     ) {
       const diff =
