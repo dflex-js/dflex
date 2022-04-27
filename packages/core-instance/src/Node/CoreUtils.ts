@@ -51,12 +51,8 @@ class CoreUtils extends NodeCore implements INode {
     return this.currentPosition[axis] - diff;
   }
 
-  getDistance(elm: this, axis: Axis) {
-    let diff = this.currentPosition[axis] - elm.currentPosition[axis];
-
-    diff += elm.translate[axis];
-
-    return diff;
+  getDistance(elm: this, axis: Axis): number {
+    return CoreUtils.getDistance(this.currentPosition, elm, axis);
   }
 
   getOffset() {
