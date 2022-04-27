@@ -323,8 +323,7 @@ class Droppable extends DistanceCalculator {
         });
 
         store.containers[migration.latest().key].preservePosition(
-          preservedLastELmPosition,
-          "lastElmPosition"
+          preservedLastELmPosition
         );
 
         migration.complete();

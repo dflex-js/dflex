@@ -70,8 +70,7 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
 
     if (!store.containers[SK].lastElmPosition) {
       store.containers[SK].preservePosition(
-        store.registry[siblings[siblings.length - 1]].currentPosition,
-        "lastElmPosition"
+        store.registry[siblings[siblings.length - 1]].currentPosition
       );
     }
 
