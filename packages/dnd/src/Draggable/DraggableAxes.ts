@@ -284,19 +284,6 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
     return isLoose ? isV || isH : isV && isH;
   }
 
-  isInThreshold(SK: string) {
-    const {
-      offset: { height, width },
-    } = this.draggedElm;
-
-    const { x, y } = this.positionPlaceholder;
-
-    return (
-      !this.threshold.isOutThresholdV(SK, y, y + height) ||
-      !this.threshold.isOutThresholdH(SK, x, x + width)
-    );
-  }
-
   #isLeavingFromTail() {
     const lastElm =
       (store.getElmBranchByKey(this.migration.latest().key) as string[])
