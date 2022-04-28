@@ -96,7 +96,7 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
         }
       }
 
-      this.threshold.setContainerThreshold(key, boundaries);
+      this.threshold.setContainerThreshold(key, depth, boundaries);
     });
 
     this.isMovingAwayFrom = new PointBool(false, false);

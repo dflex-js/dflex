@@ -334,9 +334,11 @@ class Droppable extends DistanceCalculator {
   #detectNearestContainer() {
     const { migration, draggedElm } = this.draggable;
 
+    const { depth } = draggedElm;
+
     let newSK;
 
-    const dp = store.getBranchesByDepth(draggedElm.depth);
+    const dp = store.getBranchesByDepth(depth);
 
     for (let i = 0; i < dp.length; i += 1) {
       newSK = dp[i];
