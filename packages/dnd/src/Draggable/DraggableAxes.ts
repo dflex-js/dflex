@@ -268,7 +268,7 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
     );
   }
 
-  isOutThreshold(SK?: string) {
+  isOutThreshold(SK?: string, isLoose = true) {
     const {
       id,
       offset: { height, width },
@@ -278,9 +278,22 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
 
     const key = SK || id;
 
+    const isV = this.threshold.isOutThresholdV(key, y, y + height);
+    const isH = this.threshold.isOutThresholdH(key, x, x + width);
+
+    return isLoose ? isV || isH : isV && isH;
+  }
+
+  isInThreshold(SK: string) {
+    const {
+      offset: { height, width },
+    } = this.draggedElm;
+
+    const { x, y } = this.positionPlaceholder;
+
     return (
-      this.threshold.isOutThresholdV(key, y, y + height) ||
-      this.threshold.isOutThresholdH(key, x, x + width)
+      !this.threshold.isOutThresholdV(SK, y, y + height) ||
+      !this.threshold.isOutThresholdH(SK, x, x + width)
     );
   }
 

@@ -59,7 +59,8 @@ export interface IDraggableAxes extends IAbstractDraggable<INode> {
    * Check if the dragged out self position or parent container and set the
    * necessary flags.
    */
-  isOutThreshold(siblingsK?: string): boolean;
+  isOutThreshold(SK: string, isLoose: boolean): boolean;
+  isOutThreshold(SK?: never, isLoose?: never): boolean;
 
   /** Has moved without settling inside new position. */
   isNotSettled(): boolean;
