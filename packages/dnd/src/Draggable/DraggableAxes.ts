@@ -281,7 +281,7 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
     const isV = this.threshold.isOutThresholdV(key, y, y + height);
     const isH = this.threshold.isOutThresholdH(key, x, x + width);
 
-    return isLoose ? isV || isH : isV && isH;
+    return isLoose ? isV || isH : (isV && !isH) || (isH && !isV);
   }
 
   #isLeavingFromTail() {

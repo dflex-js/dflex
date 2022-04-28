@@ -345,12 +345,7 @@ class Droppable extends DistanceCalculator {
 
       const isOut = this.draggable.isOutThreshold(newSK, false);
 
-      if (!isOut) {
-        // Coming back to the same container.
-        if (newSK === migration.latest().key) {
-          return;
-        }
-
+      if (newSK !== migration.latest().key && !isOut) {
         migration.start();
 
         const originList = store.getElmBranchByKey(migration.latest().key);
