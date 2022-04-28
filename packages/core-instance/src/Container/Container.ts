@@ -1,4 +1,4 @@
-import { PointNum } from "@dflex/utils";
+import { PointNum, dirtyAssignBiggestRect } from "@dflex/utils";
 
 import type {
   IScroll,
@@ -109,13 +109,15 @@ class Container implements IContainer {
     const right = left + width;
     const bottom = top + height;
 
+    const elmRectBoundaries = {
+      top,
+      left,
+      right,
+      bottom,
+    };
+
     if (!this.boundaries) {
-      this.boundaries = {
-        top,
-        left,
-        right,
-        bottom,
-      };
+      this.boundaries = elmRectBoundaries;
 
       return;
     }
@@ -132,21 +134,7 @@ class Container implements IContainer {
       this.#gridContainer.x += 1;
     }
 
-    if (left < $.left) {
-      $.left = left;
-    }
-
-    if (top < $.top) {
-      $.top = top;
-    }
-
-    if (right > $.right) {
-      $.right = right;
-    }
-
-    if (bottom > $.bottom) {
-      $.bottom = bottom;
-    }
+    dirtyAssignBiggestRect($, elmRectBoundaries);
   }
 
   preservePosition(position: IPointAxes) {
