@@ -343,7 +343,7 @@ class Droppable extends DistanceCalculator {
     for (let i = 0; i < dp.length; i += 1) {
       newSK = dp[i];
 
-      const isOut = this.draggable.isOutThreshold(newSK);
+      const isOut = this.draggable.isOutThreshold(newSK, false);
 
       if (!isOut) {
         // Coming back to the same container.
@@ -724,7 +724,8 @@ class Droppable extends DistanceCalculator {
       this.draggable.draggedElm.rmDateset("draggedOutPosition");
 
       isOutSiblingsContainer = this.draggable.isOutThreshold(
-        this.draggable.migration.latest().key
+        this.draggable.migration.latest().key,
+        true
       );
 
       // when it's out, and on of theses is true then it's happening.
@@ -772,7 +773,8 @@ class Droppable extends DistanceCalculator {
      */
     if (this.isParentLocked) {
       isOutSiblingsContainer = this.draggable.isOutThreshold(
-        this.draggable.migration.latest().key
+        this.draggable.migration.latest().key,
+        true
       );
 
       if (isOutSiblingsContainer) {
