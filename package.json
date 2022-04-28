@@ -25,6 +25,7 @@
     "eslint-config-dflex": "workspace:*",
     "istanbul-lib-instrument": "^5.2.0",
     "jest": "^28.0.2",
+    "jest-environment-jsdom": "^28.0.2",
     "prettier": "^2.6.2",
     "rimraf": "^3.0.2",
     "ts-node": "^10.7.0",
