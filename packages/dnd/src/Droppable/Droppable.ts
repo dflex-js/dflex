@@ -343,9 +343,10 @@ class Droppable extends DistanceCalculator {
     for (let i = 0; i < dp.length; i += 1) {
       newSK = dp[i];
 
-      const isOut = this.draggable.isOutThreshold(newSK, false);
-
-      if (newSK !== migration.latest().key && !isOut) {
+      if (
+        newSK !== migration.latest().key &&
+        !this.draggable.isOutThreshold(newSK, false)
+      ) {
         migration.start();
 
         const originList = store.getElmBranchByKey(migration.latest().key);
