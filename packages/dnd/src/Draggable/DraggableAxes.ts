@@ -303,20 +303,12 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
 
     const { x, y } = this.positionPlaceholder;
 
-    const keys = [combineKeys(SK, "v"), combineKeys(SK, "h")];
-
-    for (let i = 0; i < keys.length; i += 1) {
-      const key = keys[i];
-
-      if (
-        !this.threshold.isOutThresholdV(key, y, y + height) &&
-        !this.threshold.isOutThresholdH(key, x, x + width)
-      ) {
-        return true;
-      }
-    }
-
-    return false;
+    return (
+      !this.threshold.isOutThresholdV(combineKeys(SK, "v"), y, y + height) &&
+      !this.threshold.isOutThresholdH(combineKeys(SK, "v"), x, x + width) &&
+      !this.threshold.isOutThresholdV(combineKeys(SK, "h"), y, y + height) &&
+      !this.threshold.isOutThresholdH(combineKeys(SK, "h"), x, x + width)
+    );
   }
 
   #isLeavingFromTail() {
