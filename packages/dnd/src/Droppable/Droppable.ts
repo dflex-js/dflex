@@ -340,9 +340,9 @@ class Droppable extends DistanceCalculator {
 
     const isOutInsertionArea = this.draggable.isOutThreshold(`${depth}`);
 
-    const dp = store.getBranchesByDepth(depth);
-
     if (isOutInsertionArea) return;
+
+    const dp = store.getBranchesByDepth(depth);
 
     for (let i = 0; i < dp.length; i += 1) {
       newSK = dp[i];
