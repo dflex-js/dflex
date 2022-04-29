@@ -10,6 +10,7 @@ import type {
   ThresholdsStore,
   LayoutPositionStatus,
 } from "./types";
+import { dirtyAssignBiggestRect } from "../collections";
 
 class Threshold implements ThresholdInterface {
   thresholds: ThresholdsStore;
@@ -95,9 +96,28 @@ class Threshold implements ThresholdInterface {
     this.#initIndicators(key);
   }
 
-  setContainerThreshold(key: string, rect: RectBoundaries) {
+  #addDepthThreshold(key: string, depth: number) {
+    const dp = `${depth}`;
+
+    if (!this.thresholds[dp]) {
+      this.thresholds[dp] = {
+        ...this.thresholds[key],
+      };
+
+      this.#initIndicators(dp);
+    }
+
+    const $ = this.thresholds[depth];
+
+    dirtyAssignBiggestRect($, this.thresholds[key]);
+  }
+
+  setContainerThreshold(key: string, depth: number, rect: RectBoundaries) {
     this.thresholds[key] = this.#getThreshold(rect);
+
     this.#initIndicators(key);
+
+    this.#addDepthThreshold(key, depth);
   }
 
   isOutThresholdH(key: string, XLeft: number, XRight: number) {

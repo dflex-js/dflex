@@ -334,24 +334,26 @@ class Droppable extends DistanceCalculator {
   #detectNearestContainer() {
     const { migration, draggedElm } = this.draggable;
 
+    const { depth } = draggedElm;
+
     let newSK;
 
-    const dp = store.getBranchesByDepth(draggedElm.depth);
+    const isOutInsertionArea = this.draggable.isOutThreshold(`${depth}`);
+
+    if (isOutInsertionArea) return;
+
+    const dp = store.getBranchesByDepth(depth);
+
+    const { key: originSK } = migration.latest();
 
     for (let i = 0; i < dp.length; i += 1) {
       newSK = dp[i];
 
-      const isOut = this.draggable.isOutThreshold(newSK);
-
-      if (!isOut) {
-        // Coming back to the same container.
-        if (newSK === migration.latest().key) {
-          return;
-        }
-
+      // Check if it is not the same list and if the dragged is inside new one.
+      if (newSK !== originSK && !this.draggable.isOutThreshold(newSK)) {
         migration.start();
 
-        const originList = store.getElmBranchByKey(migration.latest().key);
+        const originList = store.getElmBranchByKey(originSK);
 
         // Remove the last element from the original list.
         // when the dragged is out of the container, the last element is the
@@ -361,7 +363,7 @@ class Droppable extends DistanceCalculator {
         const destinationList = store.getElmBranchByKey(newSK);
 
         this.draggable.occupiedPosition.clone(
-          this.getInsertionOccupiedPosition(newSK, migration.latest().key, "y")
+          this.getInsertionOccupiedPosition(newSK, originSK, "y")
         );
 
         this.draggable.gridPlaceholder.setAxes(1, 1);

@@ -33,7 +33,7 @@ export interface ThresholdInterface {
   thresholds: ThresholdsStore;
   isOut: LayoutPositionStatus;
   setMainThreshold(id: string, rect: RectDimensions): void;
-  setContainerThreshold(key: string, rect: RectBoundaries): void;
+  setContainerThreshold(key: string, depth: number, rect: RectBoundaries): void;
   setScrollThreshold(key: string, rect: RectDimensions): void;
   isOutThresholdH(key: string, XLeft: number, XRight: number): boolean;
   isOutThresholdV(key: string, YTop: number, YBottom: number): boolean;
