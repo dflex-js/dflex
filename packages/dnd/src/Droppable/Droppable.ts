@@ -334,21 +334,24 @@ class Droppable extends DistanceCalculator {
   #detectNearestContainer() {
     const { migration, draggedElm } = this.draggable;
 
+    const { depth } = draggedElm;
+
     let newSK;
 
-    const dp = store.getBranchesByDepth(draggedElm.depth);
+    const isOutInsertionArea = this.draggable.isOutThreshold(`${depth}`);
+
+    const dp = store.getBranchesByDepth(depth);
+
+    if (isOutInsertionArea) return;
 
     for (let i = 0; i < dp.length; i += 1) {
       newSK = dp[i];
 
-      const isOut = this.draggable.isOutThreshold(newSK);
-
-      if (!isOut) {
-        // Coming back to the same container.
-        if (newSK === migration.latest().key) {
-          return;
-        }
-
+      // Check if it is not the same list and if the dragged is inside new one.
+      if (
+        newSK !== migration.latest().key &&
+        !this.draggable.isOutThreshold(newSK)
+      ) {
         migration.start();
 
         const originList = store.getElmBranchByKey(migration.latest().key);
