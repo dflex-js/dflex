@@ -61,6 +61,8 @@ export interface IDraggableAxes extends IAbstractDraggable<INode> {
    */
   isOutThreshold(siblingsK?: string): boolean;
 
+  isInContainerDirectionalThreshold(SK: string): boolean;
+
   /** Has moved without settling inside new position. */
   isNotSettled(): boolean;
 }

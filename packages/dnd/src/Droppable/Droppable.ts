@@ -350,7 +350,10 @@ class Droppable extends DistanceCalculator {
       newSK = dp[i];
 
       // Check if it is not the same list and if the dragged is inside new one.
-      if (newSK !== originSK && !this.draggable.isOutThreshold(newSK)) {
+      if (
+        newSK !== originSK &&
+        this.draggable.isInContainerDirectionalThreshold(newSK)
+      ) {
         migration.start();
 
         const originList = store.getElmBranchByKey(originSK);

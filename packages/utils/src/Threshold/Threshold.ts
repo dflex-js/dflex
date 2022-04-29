@@ -1,6 +1,6 @@
 import { PointNum } from "../Point";
 import type { IPointNum } from "../Point";
-
+import { combineKeys, dirtyAssignBiggestRect } from "../collections";
 import { RectDimensions, RectBoundaries } from "../types";
 
 import FourDirectionsBool from "./FourDirectionsBool";
@@ -10,7 +10,6 @@ import type {
   ThresholdsStore,
   LayoutPositionStatus,
 } from "./types";
-import { dirtyAssignBiggestRect } from "../collections";
 
 class Threshold implements ThresholdInterface {
   thresholds: ThresholdsStore;
@@ -99,17 +98,53 @@ class Threshold implements ThresholdInterface {
   #addDepthThreshold(key: string, depth: number) {
     const dp = `${depth}`;
 
-    if (!this.thresholds[dp]) {
-      this.thresholds[dp] = {
-        ...this.thresholds[key],
-      };
+    const $ = this.thresholds[key];
 
+    if (!this.thresholds[dp]) {
+      this.thresholds[dp] = { ...$ };
       this.#initIndicators(dp);
+
+      return;
     }
 
-    const $ = this.thresholds[depth];
+    dirtyAssignBiggestRect(this.thresholds[dp], $);
+  }
 
-    dirtyAssignBiggestRect($, this.thresholds[key]);
+  setContainerDirectionalThreshold(key: string, depth: number) {
+    const dp = `${depth}`;
+
+    // Create vertical and horizontal key thresholds for each container.
+    const keyV = combineKeys(key, "v");
+    const keyH = combineKeys(key, "h");
+
+    let $ = this.thresholds[key];
+
+    [keyV, keyH].forEach((k) => {
+      this.thresholds[k] = { ...$ };
+      this.#initIndicators(k);
+    });
+
+    const { top, left, right, bottom } = this.thresholds[dp];
+
+    $ = this.thresholds[keyV];
+
+    if (top < $.top) {
+      $.top = top;
+    }
+
+    if (bottom > $.bottom) {
+      $.bottom = bottom;
+    }
+
+    $ = this.thresholds[keyH];
+
+    if (left < $.left) {
+      $.left = left;
+    }
+
+    if (right > $.right) {
+      $.right = right;
+    }
   }
 
   setContainerThreshold(key: string, depth: number, rect: RectBoundaries) {

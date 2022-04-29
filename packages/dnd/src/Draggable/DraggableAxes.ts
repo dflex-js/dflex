@@ -1,6 +1,12 @@
 import { AbstractDraggable } from "@dflex/draggable";
 
-import { Threshold, PointNum, PointBool, Migration } from "@dflex/utils";
+import {
+  Threshold,
+  PointNum,
+  PointBool,
+  Migration,
+  combineKeys,
+} from "@dflex/utils";
 import type {
   ThresholdInterface,
   IPointNum,
@@ -97,6 +103,12 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
       }
 
       this.threshold.setContainerThreshold(key, depth, boundaries);
+    });
+
+    queueMicrotask(() => {
+      store.getBranchesByDepth(depth).forEach((key) => {
+        this.threshold.setContainerDirectionalThreshold(key, depth);
+      });
     });
 
     this.isMovingAwayFrom = new PointBool(false, false);
@@ -282,6 +294,29 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
       this.threshold.isOutThresholdV(key, y, y + height) ||
       this.threshold.isOutThresholdH(key, x, x + width)
     );
+  }
+
+  isInContainerDirectionalThreshold(SK: string) {
+    const {
+      offset: { height, width },
+    } = this.draggedElm;
+
+    const { x, y } = this.positionPlaceholder;
+
+    const keys = [combineKeys(SK, "v"), combineKeys(SK, "h")];
+
+    for (let i = 0; i < keys.length; i += 1) {
+      const key = keys[i];
+
+      if (
+        !this.threshold.isOutThresholdV(key, y, y + height) &&
+        !this.threshold.isOutThresholdH(key, x, x + width)
+      ) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   #isLeavingFromTail() {

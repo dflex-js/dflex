@@ -33,7 +33,10 @@ export interface ThresholdInterface {
   thresholds: ThresholdsStore;
   isOut: LayoutPositionStatus;
   setMainThreshold(id: string, rect: RectDimensions): void;
-  setContainerThreshold(key: string, depth: number, rect: RectBoundaries): void;
+  /** Creates container threshold and detection area threshold using depth as a key. */
+  setContainerThreshold(SK: string, depth: number, rect: RectBoundaries): void;
+  /** Should be called after initiating depth threshold. */
+  setContainerDirectionalThreshold(SK: string, depth: number): void;
   setScrollThreshold(key: string, rect: RectDimensions): void;
   isOutThresholdH(key: string, XLeft: number, XRight: number): boolean;
   isOutThresholdV(key: string, YTop: number, YBottom: number): boolean;
