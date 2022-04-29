@@ -1,5 +1,5 @@
+import { combineKeys } from "@dflex/utils";
 import type { GeneratorInterface, Keys, Order, Pointer } from "./types";
-import genKey from "./utils";
 
 /**
  * Generate keys to connect relations between DOM-elements depending on tree
@@ -46,7 +46,7 @@ class Generator implements GeneratorInterface {
 
     this.#prevDepth = -99;
 
-    this.#prevKey = genKey(0, 0);
+    this.#prevKey = combineKeys(0, 0);
   }
 
   /**
@@ -153,14 +153,14 @@ class Generator implements GeneratorInterface {
     /**
      * get siblings unique key (sK) and parents key (pK)
      */
-    const SK = genKey(depth, parentIndex);
+    const SK = combineKeys(depth, parentIndex);
 
     /**
      * Add key to the order.
      */
     this.#updateOrder(SK);
 
-    const PK = genKey(depth + 1, this.#indicator[depth + 2]);
+    const PK = combineKeys(depth + 1, this.#indicator[depth + 2]);
 
     const CHK = depth === 0 ? null : this.#prevKey;
     this.#prevKey = SK;
