@@ -46,6 +46,9 @@
     "@dflex/draggable",
     "@dflex/dnd"
   ],
+  "devDependencies": {
+    "@dflex/utils": "workspace:^3.4.1"
+  },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"

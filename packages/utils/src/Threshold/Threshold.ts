@@ -117,7 +117,9 @@ class Threshold implements ThresholdInterface {
 
     this.#initIndicators(key);
 
-    this.#addDepthThreshold(key, depth);
+    queueMicrotask(() => {
+      this.#addDepthThreshold(key, depth);
+    });
   }
 
   isOutThresholdH(key: string, XLeft: number, XRight: number) {

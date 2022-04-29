@@ -4,6 +4,9 @@
   "compilerOptions": {
     "composite": true,
     "outDir": "./dist",
-    "rootDir": "./src"
-  }
+    "rootDir": "./src",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  },
+  "references": [{ "path": "../utils" }]
 }
