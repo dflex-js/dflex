@@ -230,6 +230,8 @@ class Droppable extends DistanceCalculator {
 
     const siblings = store.getElmBranchByKey(SK);
 
+    const { length } = siblings;
+
     /**
      * If tempIndex is zero, the dragged is coming from the top. So, move them
      * down all: to=0
@@ -237,9 +239,11 @@ class Droppable extends DistanceCalculator {
     let hasToMoveSiblingsDown = true;
 
     const hasEmptyElmID =
-      siblings.length === 1 && siblings[0] === Droppable.APPEND_EMPTY_ELM_ID;
+      length === 0 || siblings[length - 1] === Droppable.APPEND_EMPTY_ELM_ID;
 
-    let insertAt = hasEmptyElmID ? 0 : this.#detectDroppableIndex();
+    let insertAt = hasEmptyElmID ? null : this.#detectDroppableIndex();
+
+    let lastValidIndex = NaN;
 
     // Enforce attaching it from the bottom since it's already inside the container.
     if (typeof insertAt !== "number") {
@@ -247,14 +251,20 @@ class Droppable extends DistanceCalculator {
       // If the list is not the active list then no backup for the last element.
       const { lastElmPosition } = store.containers[SK];
 
-      const { elm: LastElm, index: lastValidIndex } =
-        Droppable.getTheLastValidElm(siblings, draggedElm.id);
+      const { elm: LastElm, index } = Droppable.getTheLastValidElm(
+        siblings,
+        draggedElm.id
+      );
+
+      lastValidIndex = index;
 
       const pos = lastElmPosition || LastElm.currentPosition;
 
       this.updateDraggedThresholdPosition(pos.x, pos.y);
 
-      insertAt = lastValidIndex;
+      // We accept the last index even if it's empty. ["valid-id", ""] is okay
+      // because it should be inserted at the end replacing the empty string.
+      insertAt = siblings.length - 1;
 
       hasToMoveSiblingsDown = false;
     }
@@ -265,19 +275,23 @@ class Droppable extends DistanceCalculator {
 
     let draggedTransition: IPointAxes;
 
-    if (migration.isTransitioning) {
-      draggedTransition = this.getInsertionOccupiedTranslate(insertAt!, SK);
-    }
+    let occupiedTranslateIndex = lastValidIndex;
 
     // If it has solo empty id then there's no need to move down. Because it's
     // empty branch.
-    if (hasToMoveSiblingsDown && !hasEmptyElmID) {
-      this.#moveDown(insertAt);
+    if (hasToMoveSiblingsDown) {
+      occupiedTranslateIndex = insertAt!;
+      if (!hasEmptyElmID) this.#moveDown(insertAt);
     }
 
     draggedElm.rmDateset("draggedOutContainer");
 
     if (migration.isTransitioning) {
+      draggedTransition = this.getInsertionOccupiedTranslate(
+        occupiedTranslateIndex,
+        SK
+      );
+
       queueMicrotask(() => {
         // offset to append.
         // It has to be the biggest element offset. The last element in the list.
