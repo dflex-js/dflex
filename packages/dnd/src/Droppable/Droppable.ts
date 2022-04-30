@@ -94,7 +94,7 @@ class Droppable extends DistanceCalculator {
     for (let i = lst.length - 1; i >= 0; i -= 1) {
       const id = lst[i];
       if (Droppable.isIDEligible2Move(id, draggedID, false)) {
-        return store.registry[id];
+        return { elm: store.registry[id], index: i };
       }
     }
 
@@ -243,12 +243,18 @@ class Droppable extends DistanceCalculator {
 
     // Enforce attaching it from the bottom since it's already inside the container.
     if (typeof insertAt !== "number") {
-      // Restore the last element position from the bottom.
+      // Restore the last element position from the bottom. If there's any.
+      // If the list is not the active list then no backup for the last element.
       const { lastElmPosition } = store.containers[SK];
 
-      this.updateDraggedThresholdPosition(lastElmPosition.x, lastElmPosition.y);
+      const { elm: LastElm, index: lastValidIndex } =
+        Droppable.getTheLastValidElm(siblings, draggedElm.id);
 
-      insertAt = siblings.length - 1;
+      const pos = lastElmPosition || LastElm.currentPosition;
+
+      this.updateDraggedThresholdPosition(pos.x, pos.y);
+
+      insertAt = lastValidIndex;
 
       hasToMoveSiblingsDown = false;
     }
@@ -301,7 +307,7 @@ class Droppable extends DistanceCalculator {
         } else {
           const activeList = store.getElmBranchByKey(SK);
 
-          const lastElm = Droppable.getTheLastValidElm(
+          const { elm: lastElm } = Droppable.getTheLastValidElm(
             activeList,
             draggedElm.id
           );
