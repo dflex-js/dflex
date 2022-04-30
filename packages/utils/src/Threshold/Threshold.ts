@@ -1,7 +1,7 @@
 import { PointNum } from "../Point";
 import type { IPointNum } from "../Point";
 
-import { RectDimensions, RectBoundaries } from "../types";
+import { RectDimensions, RectBoundaries, Dimensions } from "../types";
 
 import FourDirectionsBool from "./FourDirectionsBool";
 import type {
@@ -10,7 +10,7 @@ import type {
   ThresholdsStore,
   LayoutPositionStatus,
 } from "./types";
-import { dirtyAssignBiggestRect } from "../collections";
+import { combineKeys, dirtyAssignBiggestRect } from "../collections";
 
 class Threshold implements ThresholdInterface {
   thresholds: ThresholdsStore;
@@ -112,12 +112,28 @@ class Threshold implements ThresholdInterface {
     dirtyAssignBiggestRect($, this.thresholds[key]);
   }
 
-  setContainerThreshold(key: string, depth: number, rect: RectBoundaries) {
+  setContainerThreshold(
+    key: string,
+    depth: number,
+    rect: RectBoundaries,
+    unifiedContainerDimensions: Dimensions
+  ) {
     this.thresholds[key] = this.#getThreshold(rect);
-
     this.#initIndicators(key);
 
     queueMicrotask(() => {
+      const { top, left } = rect;
+      const { height, width } = unifiedContainerDimensions;
+
+      const composedK = combineKeys(depth, key);
+      this.thresholds[composedK] = this.#getThreshold({
+        left,
+        top,
+        right: left + width,
+        bottom: top + height,
+      });
+      this.#initIndicators(composedK);
+
       this.#addDepthThreshold(key, depth);
     });
   }

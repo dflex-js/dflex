@@ -1,8 +1,11 @@
-export interface RectDimensions {
-  top: number;
-  left: number;
+export interface Dimensions {
   height: number;
   width: number;
+}
+
+export interface RectDimensions extends Dimensions {
+  top: number;
+  left: number;
 }
 
 export interface RectBoundaries {

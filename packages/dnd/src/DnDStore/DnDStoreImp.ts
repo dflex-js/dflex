@@ -1,7 +1,12 @@
 import Store from "@dflex/store";
 
 import { Tracker, Scroll, canUseDOM, IPointNum } from "@dflex/utils";
-import type { RectDimensions, ITracker, IScroll } from "@dflex/utils";
+import type {
+  Dimensions,
+  RectDimensions,
+  ITracker,
+  IScroll,
+} from "@dflex/utils";
 
 import { Container } from "@dflex/core-instance";
 import type { IContainer } from "@dflex/core-instance";
@@ -27,6 +32,10 @@ Did you forget to call store.unregister(${id}) or add parenID when register the 
 
 class DnDStoreImp extends Store implements IDnDStore {
   containers: { [siblingKey: string]: IContainer };
+
+  unifiedContainerDimensions: {
+    [depth: number]: Dimensions;
+  };
 
   tracker: ITracker;
 
@@ -54,6 +63,7 @@ class DnDStoreImp extends Store implements IDnDStore {
     super();
 
     this.containers = {};
+    this.unifiedContainerDimensions = {};
 
     this.layoutState = "pending";
 
@@ -291,6 +301,7 @@ class DnDStoreImp extends Store implements IDnDStore {
 
   #initElmInstance(id: string) {
     const {
+      depth,
       keys: { SK },
     } = this.registry[id];
 
@@ -307,7 +318,10 @@ class DnDStoreImp extends Store implements IDnDStore {
       const { offset, grid } = this.registry[id];
 
       this.containers[SK].setGrid(grid, offset);
-      this.containers[SK].setBoundaries(offset);
+      this.containers[SK].setBoundaries(
+        offset,
+        this.unifiedContainerDimensions[depth]
+      );
     }
 
     this.updateElementVisibility(id, this.containers[SK].scroll, false);
@@ -316,19 +330,26 @@ class DnDStoreImp extends Store implements IDnDStore {
   handleElmMigration(
     newSK: string,
     oldSK: string,
+    depth: number,
     append: {
       offset: RectDimensions;
       grid: IPointNum;
     }
   ) {
-    this.containers[newSK].setBoundaries(append.offset);
+    this.containers[newSK].setBoundaries(
+      append.offset,
+      this.unifiedContainerDimensions[depth]
+    );
     this.containers[newSK].setGrid(append.grid, append.offset);
 
     this.DOMGen.branches[oldSK].forEach((elmID) => {
       if (elmID.length > 0) {
         const elm = this.registry[elmID];
 
-        this.containers[oldSK].setBoundaries(elm.getOffset());
+        this.containers[oldSK].setBoundaries(
+          elm.getOffset(),
+          this.unifiedContainerDimensions[depth]
+        );
         this.containers[oldSK].setGrid(elm.grid, elm.getOffset());
       }
     });
@@ -394,11 +415,19 @@ class DnDStoreImp extends Store implements IDnDStore {
 
     queueMicrotask(() => {
       const {
+        depth,
         keys: { SK },
       } = this.registry[id!];
 
       if (!this.containers[SK]) {
         this.initSiblingContainer(SK, false);
+
+        if (!this.unifiedContainerDimensions[depth]) {
+          this.unifiedContainerDimensions[depth] = {
+            width: 0,
+            height: 0,
+          };
+        }
       }
 
       this.#initElmInstance(id!);

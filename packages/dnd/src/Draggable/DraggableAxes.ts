@@ -1,6 +1,12 @@
 import { AbstractDraggable } from "@dflex/draggable";
 
-import { Threshold, PointNum, PointBool, Migration } from "@dflex/utils";
+import {
+  Threshold,
+  PointNum,
+  PointBool,
+  Migration,
+  combineKeys,
+} from "@dflex/utils";
 import type {
   ThresholdInterface,
   IPointNum,
@@ -96,7 +102,12 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
         }
       }
 
-      this.threshold.setContainerThreshold(key, depth, boundaries);
+      this.threshold.setContainerThreshold(
+        key,
+        depth,
+        boundaries,
+        store.unifiedContainerDimensions[depth]
+      );
     });
 
     this.isMovingAwayFrom = new PointBool(false, false);
@@ -268,15 +279,21 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
     );
   }
 
-  isOutThreshold(SK?: string) {
+  isOutThreshold(SK?: string, useInsertionThreshold?: boolean) {
     const {
       id,
+      depth,
       offset: { height, width },
     } = this.draggedElm;
 
     const { x, y } = this.positionPlaceholder;
 
-    const key = SK || id;
+    let key = SK || id;
+
+    if (useInsertionThreshold) {
+      key = combineKeys(depth, key);
+      console.log("file: DraggableAxes.ts ~ line 295 ~ key", key);
+    }
 
     return (
       this.threshold.isOutThresholdV(key, y, y + height) ||

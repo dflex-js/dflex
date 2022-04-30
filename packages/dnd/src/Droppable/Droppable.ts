@@ -317,10 +317,15 @@ class Droppable extends DistanceCalculator {
 
         occupiedTranslate.clone(draggedTransition);
 
-        store.handleElmMigration(migration.latest().key, migration.prev().key, {
-          offset,
-          grid,
-        });
+        store.handleElmMigration(
+          migration.latest().key,
+          migration.prev().key,
+          0,
+          {
+            offset,
+            grid,
+          }
+        );
 
         store.containers[migration.latest().key].preservePosition(
           preservedLastELmPosition
@@ -347,10 +352,15 @@ class Droppable extends DistanceCalculator {
     const { key: originSK } = migration.latest();
 
     for (let i = 0; i < dp.length; i += 1) {
-      newSK = dp[i];
+      newSK = dp[0];
 
+      console.log(
+        "file: Droppable.ts ~ line 354 ~ this.draggable.isOutThreshold",
+        !this.draggable.isOutThreshold(newSK, true),
+        newSK
+      );
       // Check if it is not the same list and if the dragged is inside new one.
-      if (newSK !== originSK && !this.draggable.isOutThreshold(newSK)) {
+      if (newSK !== originSK && !this.draggable.isOutThreshold(newSK, true)) {
         migration.start();
 
         const originList = store.getElmBranchByKey(originSK);
