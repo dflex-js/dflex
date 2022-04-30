@@ -352,13 +352,8 @@ class Droppable extends DistanceCalculator {
     const { key: originSK } = migration.latest();
 
     for (let i = 0; i < dp.length; i += 1) {
-      newSK = dp[0];
+      newSK = dp[i];
 
-      console.log(
-        "file: Droppable.ts ~ line 354 ~ this.draggable.isOutThreshold",
-        !this.draggable.isOutThreshold(newSK, true),
-        newSK
-      );
       // Check if it is not the same list and if the dragged is inside new one.
       if (newSK !== originSK && !this.draggable.isOutThreshold(newSK, true)) {
         migration.start();
