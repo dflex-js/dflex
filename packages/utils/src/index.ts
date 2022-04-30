@@ -15,6 +15,7 @@ export { Migration } from "./Migration";
 export type { IAbstract, IMigration } from "./Migration";
 
 export type {
+  Dimensions,
   RectDimensions,
   RectBoundaries,
   Axes,

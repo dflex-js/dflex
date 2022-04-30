@@ -1,4 +1,5 @@
 import type {
+  Dimensions,
   RectBoundaries,
   RectDimensions,
   IPointNum,
@@ -21,6 +22,9 @@ export interface IContainer {
   /** Container scroll instance.  */
   scroll: IScroll;
   setGrid(grid: IPointNum, rect: RectDimensions): void;
-  setBoundaries(rect: RectDimensions): void;
+  setBoundaries(
+    rect: RectDimensions,
+    unifiedContainerDimensions: Dimensions
+  ): void;
   preservePosition(position: IPointAxes | null): void;
 }

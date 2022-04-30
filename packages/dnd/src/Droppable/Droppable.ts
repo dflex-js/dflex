@@ -226,7 +226,9 @@ class Droppable extends DistanceCalculator {
       gridPlaceholder,
     } = this.draggable;
 
-    const siblings = store.getElmBranchByKey(migration.latest().key);
+    const { key: SK } = migration.latest();
+
+    const siblings = store.getElmBranchByKey(SK);
 
     /**
      * If tempIndex is zero, the dragged is coming from the top. So, move them
@@ -242,7 +244,7 @@ class Droppable extends DistanceCalculator {
     // Enforce attaching it from the bottom since it's already inside the container.
     if (typeof insertAt !== "number") {
       // Restore the last element position from the bottom.
-      const { lastElmPosition } = store.containers[migration.latest().key];
+      const { lastElmPosition } = store.containers[SK];
 
       this.updateDraggedThresholdPosition(lastElmPosition.x, lastElmPosition.y);
 
@@ -258,10 +260,7 @@ class Droppable extends DistanceCalculator {
     let draggedTransition: IPointAxes;
 
     if (migration.isTransitioning) {
-      draggedTransition = this.getInsertionOccupiedTranslate(
-        insertAt!,
-        migration.latest().key
-      );
+      draggedTransition = this.getInsertionOccupiedTranslate(insertAt!, SK);
     }
 
     // If it has solo empty id then there's no need to move down. Because it's
@@ -300,7 +299,7 @@ class Droppable extends DistanceCalculator {
 
           preservedLastELmPosition = occupiedPosition;
         } else {
-          const activeList = store.getElmBranchByKey(migration.latest().key);
+          const activeList = store.getElmBranchByKey(SK);
 
           const lastElm = Droppable.getTheLastValidElm(
             activeList,
@@ -317,14 +316,12 @@ class Droppable extends DistanceCalculator {
 
         occupiedTranslate.clone(draggedTransition);
 
-        store.handleElmMigration(migration.latest().key, migration.prev().key, {
+        store.handleElmMigration(SK, migration.prev().key, draggedElm.depth, {
           offset,
           grid,
         });
 
-        store.containers[migration.latest().key].preservePosition(
-          preservedLastELmPosition
-        );
+        store.containers[SK].preservePosition(preservedLastELmPosition);
 
         migration.complete();
       });
@@ -350,7 +347,7 @@ class Droppable extends DistanceCalculator {
       newSK = dp[i];
 
       // Check if it is not the same list and if the dragged is inside new one.
-      if (newSK !== originSK && !this.draggable.isOutThreshold(newSK)) {
+      if (newSK !== originSK && !this.draggable.isOutThreshold(newSK, true)) {
         migration.start();
 
         const originList = store.getElmBranchByKey(originSK);

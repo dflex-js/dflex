@@ -1,6 +1,8 @@
+/* eslint-disable no-param-reassign */
 import { PointNum, dirtyAssignBiggestRect } from "@dflex/utils";
 
 import type {
+  Dimensions,
   IScroll,
   IPointNum,
   IPointAxes,
@@ -103,7 +105,7 @@ class Container implements IContainer {
     }
   }
 
-  setBoundaries(rect: RectDimensions) {
+  setBoundaries(rect: RectDimensions, unifiedContainerDimensions: Dimensions) {
     const { height, left, top, width } = rect;
 
     const right = left + width;
@@ -135,6 +137,19 @@ class Container implements IContainer {
     }
 
     dirtyAssignBiggestRect($, elmRectBoundaries);
+
+    const uni = unifiedContainerDimensions;
+
+    const $height = $.bottom - $.top;
+    const $width = $.right - $.left;
+
+    if (uni.height < $height) {
+      uni.height = $height;
+    }
+
+    if (uni.width < $width) {
+      uni.width = $height;
+    }
   }
 
   preservePosition(position: IPointAxes) {
