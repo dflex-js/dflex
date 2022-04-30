@@ -292,7 +292,6 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
 
     if (useInsertionThreshold) {
       key = combineKeys(depth, key);
-      console.log("file: DraggableAxes.ts ~ line 295 ~ key", key);
     }
 
     return (
