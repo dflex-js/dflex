@@ -275,12 +275,8 @@ class Droppable extends DistanceCalculator {
 
     let draggedTransition: IPointAxes;
 
-    let occupiedTranslateIndex = lastValidIndex;
-
-    // If it has solo empty id then there's no need to move down. Because it's
-    // empty branch.
     if (hasToMoveSiblingsDown) {
-      occupiedTranslateIndex = insertAt!;
+      lastValidIndex = insertAt!;
       if (!hasEmptyElmID) this.#moveDown(insertAt);
     }
 
@@ -288,7 +284,7 @@ class Droppable extends DistanceCalculator {
 
     if (migration.isTransitioning) {
       draggedTransition = this.getInsertionOccupiedTranslate(
-        occupiedTranslateIndex,
+        lastValidIndex,
         SK
       );
 
