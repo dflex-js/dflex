@@ -81,30 +81,34 @@ class Threshold implements ThresholdInterface {
     };
   }
 
+  /** Assign threshold property and create new instance for is out indicators */
+  #createThreshold(key: string, rect: RectBoundaries) {
+    this.thresholds[key] = this.#getThreshold(rect);
+    this.#initIndicators(key);
+  }
+
   setMainThreshold(key: string, rect: RectDimensions) {
     this.#setPixels(rect);
 
     const { top, left, height, width } = rect;
 
-    this.thresholds[key] = this.#getThreshold({
+    this.#createThreshold(key, {
       top,
       left,
       bottom: top + height,
       right: left + width,
     });
-
-    this.#initIndicators(key);
   }
 
   #addDepthThreshold(key: string, depth: number) {
     const dp = `${depth}`;
 
     if (!this.thresholds[dp]) {
-      this.thresholds[dp] = {
+      this.#createThreshold(dp, {
         ...this.thresholds[key],
-      };
+      });
 
-      this.#initIndicators(dp);
+      return;
     }
 
     const $ = this.thresholds[depth];
@@ -118,21 +122,20 @@ class Threshold implements ThresholdInterface {
     rect: RectBoundaries,
     unifiedContainerDimensions: Dimensions
   ) {
-    this.thresholds[key] = this.#getThreshold(rect);
-    this.#initIndicators(key);
+    this.#createThreshold(key, rect);
 
     queueMicrotask(() => {
       const { top, left } = rect;
       const { height, width } = unifiedContainerDimensions;
 
       const composedK = combineKeys(depth, key);
-      this.thresholds[composedK] = this.#getThreshold({
+
+      this.#createThreshold(composedK, {
         left,
         top,
         right: left + width,
         bottom: top + height,
       });
-      this.#initIndicators(composedK);
 
       this.#addDepthThreshold(key, depth);
     });
