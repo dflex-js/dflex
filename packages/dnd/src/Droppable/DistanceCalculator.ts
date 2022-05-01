@@ -131,39 +131,6 @@ class DistanceCalculator {
     });
   }
 
-  protected getInsertionOccupiedTranslate(elmIndex: number, SK: string) {
-    const lst = store.getElmBranchByKey(SK);
-
-    const targetElm = store.registry[lst[elmIndex]];
-
-    const { draggedElm } = this.draggable;
-
-    let x;
-    let y;
-
-    // If element is not in the list, it means we have orphaned elements the
-    // list is empty se we restore the last known position.
-    if (!targetElm) {
-      const pos =
-        store.containers[SK].lastElmPosition ||
-        Droppable.getTheLastValidElm(lst, draggedElm.id).currentPosition;
-
-      // Getting diff with `currentPosition` includes the element transition
-      // as well.
-      x = Node.getDistance(pos, draggedElm, "x");
-      y = Node.getDistance(pos, draggedElm, "y");
-    } else {
-      // Getting diff with `currentPosition` includes the element transition
-      // as well.
-      x = targetElm.getDistance(draggedElm, "x");
-      y = targetElm.getDistance(draggedElm, "y");
-    }
-
-    this.updateDraggedThresholdPosition(x, y);
-
-    return { x, y };
-  }
-
   #getMarginBottomFromOrigin(originLst: string[], axis: Axis) {
     const { draggedElm } = this.draggable;
 
@@ -182,17 +149,72 @@ class DistanceCalculator {
     return DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
   }
 
+  #getInsertionELm(insertAt: number, SK: string) {
+    const lst = store.getElmBranchByKey(SK);
+
+    const { length } = lst;
+
+    let isExtended = insertAt > length - 1;
+
+    const { draggedElm } = this.draggable;
+
+    // Restore the last known current position.
+    const { lastElmPosition } = store.containers[SK];
+
+    let position;
+
+    if (length === 0) {
+      position = lastElmPosition;
+    } else if (
+      insertAt === length - 1 &&
+      lst[insertAt] === Droppable.APPEND_EMPTY_ELM_ID
+    ) {
+      if (lastElmPosition) {
+        position = lastElmPosition;
+      } else {
+        isExtended = true;
+
+        position = Droppable.getTheLastValidElm(
+          lst,
+          draggedElm.id
+        ).currentPosition;
+      }
+    } else {
+      position = store.registry[lst[insertAt]].currentPosition;
+    }
+
+    return {
+      position,
+      isExtended,
+    };
+  }
+
+  protected getInsertionOccupiedTranslate(insertAt: number, SK: string) {
+    const { position, isExtended } = this.#getInsertionELm(insertAt, SK);
+
+    const { draggedElm } = this.draggable;
+
+    // Getting diff with `currentPosition` includes the element transition
+    // as well.
+    const x = Node.getDistance(position, draggedElm, "x");
+    const y = Node.getDistance(position, draggedElm, "y");
+
+    this.updateDraggedThresholdPosition(x, y);
+
+    return { x, y };
+  }
+
   protected getInsertionOccupiedPosition(
-    newSK: string,
+    SK: string,
     originSK: string,
     axis: Axis
   ) {
-    const distLst = store.getElmBranchByKey(newSK);
+    const distLst = store.getElmBranchByKey(SK);
 
     const { length } = distLst;
 
     // Restore the last known current position.
-    const { lastElmPosition } = store.containers[newSK];
+    const { lastElmPosition } = store.containers[SK];
 
     // Get the stored position if the branch is empty.
     if (length === 0) {
