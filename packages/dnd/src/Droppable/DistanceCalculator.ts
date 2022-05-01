@@ -190,7 +190,7 @@ class DistanceCalculator {
   }
 
   protected getInsertionOccupiedTranslate(insertAt: number, SK: string) {
-    const { position, isExtended } = this.#getInsertionELm(insertAt, SK);
+    const { position } = this.#getInsertionELm(insertAt, SK);
 
     const { draggedElm } = this.draggable;
 
