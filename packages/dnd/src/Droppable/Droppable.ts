@@ -230,26 +230,21 @@ class Droppable extends DistanceCalculator {
 
     const siblings = store.getElmBranchByKey(SK);
 
+    // When the list has only one empty string due to appending insertion.
+    const isOrphan =
+      siblings.length === 1 && siblings[0] === Droppable.APPEND_EMPTY_ELM_ID;
+
     /**
      * If tempIndex is zero, the dragged is coming from the top. So, move them
      * down all: to=0
      */
-    let hasToMoveSiblingsDown = true;
+    let hasToMoveSiblingsDown = !isOrphan;
 
-    const hasEmptyElmID =
-      siblings.length === 1 && siblings[0] === Droppable.APPEND_EMPTY_ELM_ID;
-
-    let insertAt = hasEmptyElmID ? 0 : this.#detectDroppableIndex();
+    let insertAt = isOrphan ? 0 : this.#detectDroppableIndex();
 
     // Enforce attaching it from the bottom since it's already inside the container.
     if (typeof insertAt !== "number") {
-      // Restore the last element position from the bottom.
-      const { lastElmPosition } = store.containers[SK];
-
-      this.updateDraggedThresholdPosition(lastElmPosition.x, lastElmPosition.y);
-
       insertAt = siblings.length - 1;
-
       hasToMoveSiblingsDown = false;
     }
 
@@ -260,12 +255,12 @@ class Droppable extends DistanceCalculator {
     let draggedTransition: IPointAxes;
 
     if (migration.isTransitioning) {
-      draggedTransition = this.getInsertionOccupiedTranslate(insertAt!, SK);
+      draggedTransition = this.getInsertionOccupiedTranslate(insertAt, SK);
     }
 
     // If it has solo empty id then there's no need to move down. Because it's
     // empty branch.
-    if (hasToMoveSiblingsDown && !hasEmptyElmID) {
+    if (hasToMoveSiblingsDown) {
       this.#moveDown(insertAt);
     }
 
@@ -291,7 +286,7 @@ class Droppable extends DistanceCalculator {
         // the purpose of threshold out/in.
         let preservedLastELmPosition;
 
-        if (hasEmptyElmID) {
+        if (isOrphan) {
           offset.left = occupiedPosition.x;
           offset.top = occupiedPosition.y;
 
