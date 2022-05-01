@@ -131,13 +131,15 @@ class DistanceCalculator {
     });
   }
 
-  #getMarginBottomFromOrigin(originLst: string[], axis: Axis) {
+  #getMarginBasedOnDragged(lst: string[], axis: Axis, isAfter: boolean) {
     const { draggedElm } = this.draggable;
 
-    const nextElmIndex = draggedElm.order.self + 1;
+    const elmIndex = isAfter
+      ? draggedElm.order.self + 1
+      : draggedElm.order.self - 1;
 
-    if (nextElmIndex < originLst.length) {
-      const nextElm = store.registry[originLst[nextElmIndex]];
+    if (elmIndex >= 0 && elmIndex < lst.length) {
+      const nextElm = store.registry[lst[elmIndex]];
 
       if (nextElm) {
         // If the origin is not the first element, we need to add the margin
@@ -149,12 +151,13 @@ class DistanceCalculator {
     return DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
   }
 
-  #getInsertionELm(insertAt: number, SK: string) {
+  #getInsertionELmMeta(insertAt: number, SK: string) {
     const lst = store.getElmBranchByKey(SK);
 
     const { length } = lst;
 
     let isExtended = insertAt > length - 1;
+    let elm;
 
     const { draggedElm } = this.draggable;
 
@@ -173,24 +176,23 @@ class DistanceCalculator {
         position = lastElmPosition;
       } else {
         isExtended = true;
-
-        position = Droppable.getTheLastValidElm(
-          lst,
-          draggedElm.id
-        ).currentPosition;
+        elm = Droppable.getTheLastValidElm(lst, draggedElm.id);
+        position = elm.currentPosition;
       }
     } else {
-      position = store.registry[lst[insertAt]].currentPosition;
+      elm = store.registry[lst[insertAt]];
+      position = elm.currentPosition;
     }
 
     return {
+      elm,
       position,
       isExtended,
     };
   }
 
   protected getInsertionOccupiedTranslate(insertAt: number, SK: string) {
-    const { position } = this.#getInsertionELm(insertAt, SK);
+    const { position, isExtended } = this.#getInsertionELmMeta(insertAt, SK);
 
     const { draggedElm } = this.draggable;
 
@@ -199,6 +201,13 @@ class DistanceCalculator {
     const x = Node.getDistance(position, draggedElm, "x");
     const y = Node.getDistance(position, draggedElm, "y");
 
+    if (isExtended) {
+      const r = this.#getMarginBasedOnDragged(
+        store.getElmBranchByKey(SK),
+        "y",
+        false
+      );
+    }
     this.updateDraggedThresholdPosition(x, y);
 
     return { x, y };
@@ -213,13 +222,13 @@ class DistanceCalculator {
 
     const { length } = distLst;
 
-    // Restore the last known current position.
-    const { lastElmPosition } = store.containers[SK];
+    const { position, elm, isExtended } = this.#getInsertionELmMeta(
+      length - 1,
+      SK
+    );
 
     // Get the stored position if the branch is empty.
-    if (length === 0) {
-      return lastElmPosition;
-    }
+    if (!elm) return position;
 
     const lastElm = store.registry[distLst[length - 1]];
 
@@ -227,8 +236,8 @@ class DistanceCalculator {
     // to last element in the list. So when the dragged enters the list its
     // element can go down based on this position.
     const insertionPosition = {
-      x: lastElm.currentPosition.x,
-      y: lastElm.currentPosition.y,
+      x: position.x,
+      y: position.y,
     };
 
     const rectType = Node.getRectByAxis(axis);
@@ -249,20 +258,16 @@ class DistanceCalculator {
       const prevLast = store.registry[distLst[length - 2]];
 
       marginBottom = lastElm.getDisplacement(prevLast, axis);
-    } else if (
-      // Check for the last element, not all the containers preserve it by
-      // default. It only preserve in the active list.
-      lastElmPosition &&
-      !lastElmPosition.isEqual(store.registry[distLst[0]].currentPosition)
-    ) {
+    } else if (!isExtended) {
       const diff =
         axis === "x" ? lastElm.getRectRight() : lastElm.getRectBottom();
 
-      marginBottom = lastElmPosition[axis] - diff;
+      marginBottom = position[axis] - diff;
     } else {
-      marginBottom = this.#getMarginBottomFromOrigin(
+      marginBottom = this.#getMarginBasedOnDragged(
         store.getElmBranchByKey(originSK),
-        axis
+        axis,
+        true
       );
     }
 
