@@ -8,6 +8,7 @@ import type { InteractivityEvent } from "../types";
 import type { IDraggableInteractive } from "../Draggable";
 
 import store from "../DnDStore";
+import Droppable from "./Droppable";
 
 function emitInteractiveEvent(
   type: InteractivityEvent["type"],
@@ -143,12 +144,14 @@ class DistanceCalculator {
     // If element is not in the list, it means we have orphaned elements the
     // list is empty se we restore the last known position.
     if (!targetElm) {
-      const { lastElmPosition } = store.containers[SK];
+      const pos =
+        store.containers[SK].lastElmPosition ||
+        Droppable.getTheLastValidElm(lst, draggedElm.id).currentPosition;
 
       // Getting diff with `currentPosition` includes the element transition
       // as well.
-      x = Node.getDistance(lastElmPosition, draggedElm, "x");
-      y = Node.getDistance(lastElmPosition, draggedElm, "y");
+      x = Node.getDistance(pos, draggedElm, "x");
+      y = Node.getDistance(pos, draggedElm, "y");
     } else {
       // Getting diff with `currentPosition` includes the element transition
       // as well.

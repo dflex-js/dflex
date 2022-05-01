@@ -294,12 +294,7 @@ class Droppable extends DistanceCalculator {
 
           preservedLastELmPosition = occupiedPosition;
         } else {
-          const activeList = store.getElmBranchByKey(SK);
-
-          const lastElm = Droppable.getTheLastValidElm(
-            activeList,
-            draggedElm.id
-          );
+          const lastElm = Droppable.getTheLastValidElm(siblings, draggedElm.id);
 
           offset.left = lastElm.currentPosition.x;
           offset.top = lastElm.currentPosition.y;
