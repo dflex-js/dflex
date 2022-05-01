@@ -225,7 +225,7 @@ class DistanceCalculator {
     // Restore the last known current position.
     const { lastElmPosition } = store.containers[SK];
 
-    const { position, elm, isExtended } = this.#getInsertionELm(length - 1, SK);
+    const { position, elm } = this.#getInsertionELm(length - 1, SK);
 
     if (!elm) return lastElmPosition;
 
