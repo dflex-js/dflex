@@ -130,7 +130,11 @@ class DistanceCalculator {
     });
   }
 
-  protected getInsertionOccupiedTranslate(elmIndex: number, SK: string) {
+  protected getInsertionOccupiedTranslate(
+    elmIndex: number,
+    SK: string,
+    lastElmPosition: IPointNum
+  ) {
     const lst = store.getElmBranchByKey(SK);
 
     const targetElm = store.registry[lst[elmIndex]];
@@ -143,12 +147,12 @@ class DistanceCalculator {
     // If element is not in the list, it means we have orphaned elements the
     // list is empty se we restore the last known position.
     if (!targetElm) {
-      const { lastElmPosition } = store.containers[SK];
+      const pos = lastElmPosition || store.containers[SK].lastElmPosition;
 
       // Getting diff with `currentPosition` includes the element transition
       // as well.
-      x = Node.getDistance(lastElmPosition, draggedElm, "x");
-      y = Node.getDistance(lastElmPosition, draggedElm, "y");
+      x = Node.getDistance(pos, draggedElm, "x");
+      y = Node.getDistance(pos, draggedElm, "y");
     } else {
       // Getting diff with `currentPosition` includes the element transition
       // as well.

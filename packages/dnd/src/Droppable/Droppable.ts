@@ -238,6 +238,7 @@ class Droppable extends DistanceCalculator {
 
     let migrationTranslateIndex = null;
     let draggedTransition: IPointAxes;
+    let lastElmPosition: IPointNum;
 
     // [""] - orphan and been inserted
     const orphanWithEmptyElmID =
@@ -250,23 +251,20 @@ class Droppable extends DistanceCalculator {
     // Enforce attaching it from the bottom since it's already inside the container.
     if (typeof insertAt !== "number") {
       // Restore the last element position from the bottom.
-      const { lastElmPosition } = store.containers[SK];
-
-      let pos = lastElmPosition;
+      ({ lastElmPosition } = store.containers[SK]);
 
       insertAt = siblings.length - 1;
 
       if (!lastElmPosition) {
         migrationTranslateIndex = insertAt - 1;
 
-        const lastValidElm = store.registry[siblings[migrationTranslateIndex]];
-
-        pos = lastValidElm.currentPosition;
+        ({ currentPosition: lastElmPosition } =
+          store.registry[siblings[migrationTranslateIndex]]);
       } else {
         migrationTranslateIndex = insertAt;
       }
 
-      this.updateDraggedThresholdPosition(pos.x, pos.y);
+      this.updateDraggedThresholdPosition(lastElmPosition.x, lastElmPosition.y);
 
       hasToMoveSiblingsDown = false;
     }
@@ -278,7 +276,9 @@ class Droppable extends DistanceCalculator {
     if (migration.isTransitioning) {
       draggedTransition = this.getInsertionOccupiedTranslate(
         migrationTranslateIndex!,
-        SK
+        SK,
+        // @ts-expect-error- TODO.
+        lastElmPosition
       );
     }
 

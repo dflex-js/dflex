@@ -1,4 +1,4 @@
-context.skip(
+context(
   "Transitioning from one container to another vertically from the bottom - back and forth",
   () => {
     let elmBox: DOMRect;
