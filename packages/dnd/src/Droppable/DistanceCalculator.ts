@@ -151,7 +151,7 @@ class DistanceCalculator {
     return DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
   }
 
-  #getInsertionELmMeta(insertAt: number, SK: string) {
+  #getInsertionELm(insertAt: number, SK: string) {
     const lst = store.getElmBranchByKey(SK);
 
     const { length } = lst;
@@ -192,7 +192,7 @@ class DistanceCalculator {
   }
 
   protected getInsertionOccupiedTranslate(insertAt: number, SK: string) {
-    const { position, isExtended } = this.#getInsertionELmMeta(insertAt, SK);
+    const { position } = this.#getInsertionELm(insertAt, SK);
 
     const { draggedElm } = this.draggable;
 
@@ -201,13 +201,13 @@ class DistanceCalculator {
     const x = Node.getDistance(position, draggedElm, "x");
     const y = Node.getDistance(position, draggedElm, "y");
 
-    if (isExtended) {
-      const r = this.#getMarginBasedOnDragged(
-        store.getElmBranchByKey(SK),
-        "y",
-        false
-      );
-    }
+    // if (isExtended) {
+    //   const r = this.#getMarginBasedOnDragged(
+    //     store.getElmBranchByKey(SK),
+    //     "y",
+    //     false
+    //   );
+    // }
     this.updateDraggedThresholdPosition(x, y);
 
     return { x, y };
@@ -222,13 +222,12 @@ class DistanceCalculator {
 
     const { length } = distLst;
 
-    const { position, elm, isExtended } = this.#getInsertionELmMeta(
-      length - 1,
-      SK
-    );
+    // Restore the last known current position.
+    const { lastElmPosition } = store.containers[SK];
 
-    // Get the stored position if the branch is empty.
-    if (!elm) return position;
+    const { position, elm, isExtended } = this.#getInsertionELm(length - 1, SK);
+
+    if (!elm) return lastElmPosition;
 
     const lastElm = store.registry[distLst[length - 1]];
 
@@ -258,11 +257,17 @@ class DistanceCalculator {
       const prevLast = store.registry[distLst[length - 2]];
 
       marginBottom = lastElm.getDisplacement(prevLast, axis);
-    } else if (!isExtended) {
+    } else if (
+      // !isExtended
+      // Check for the last element, not all the containers preserve it by
+      // default. It only preserve in the active list.
+      lastElmPosition &&
+      !lastElmPosition.isEqual(store.registry[distLst[0]].currentPosition)
+    ) {
       const diff =
         axis === "x" ? lastElm.getRectRight() : lastElm.getRectBottom();
 
-      marginBottom = position[axis] - diff;
+      marginBottom = lastElmPosition[axis] - diff;
     } else {
       marginBottom = this.#getMarginBasedOnDragged(
         store.getElmBranchByKey(originSK),
