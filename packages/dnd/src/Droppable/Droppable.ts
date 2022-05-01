@@ -257,14 +257,11 @@ class Droppable extends DistanceCalculator {
       insertAt = siblings.length - 1;
 
       if (!lastElmPosition) {
-        const lastValidElm = Droppable.getTheLastValidElm(
-          siblings,
-          draggedElm.id
-        );
+        migrationTranslateIndex = insertAt - 1;
+
+        const lastValidElm = store.registry[siblings[migrationTranslateIndex]];
 
         pos = lastValidElm.currentPosition;
-
-        migrationTranslateIndex = insertAt - 1;
       } else {
         migrationTranslateIndex = insertAt;
       }
