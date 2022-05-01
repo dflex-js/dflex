@@ -240,10 +240,10 @@ class Droppable extends DistanceCalculator {
     let draggedTransition: IPointAxes;
 
     // [""] - orphan and been inserted
-    const hasEmptyElmID =
+    const orphanWithEmptyElmID =
       siblings.length === 1 && siblings[0] === Droppable.APPEND_EMPTY_ELM_ID;
 
-    let insertAt = hasEmptyElmID ? 0 : this.#detectDroppableIndex();
+    let insertAt = orphanWithEmptyElmID ? 0 : this.#detectDroppableIndex();
 
     migrationTranslateIndex = insertAt;
 
@@ -288,7 +288,7 @@ class Droppable extends DistanceCalculator {
     // If it has solo empty id then there's no need to move down. Because it's
     // empty branch.
     if (hasToMoveSiblingsDown) {
-      if (!hasEmptyElmID) this.#moveDown(insertAt);
+      if (!orphanWithEmptyElmID) this.#moveDown(insertAt);
     }
 
     draggedElm.rmDateset("draggedOutContainer");
@@ -313,7 +313,7 @@ class Droppable extends DistanceCalculator {
         // the purpose of threshold out/in.
         let preservedLastELmPosition;
 
-        if (hasEmptyElmID) {
+        if (orphanWithEmptyElmID) {
           offset.left = occupiedPosition.x;
           offset.top = occupiedPosition.y;
 
