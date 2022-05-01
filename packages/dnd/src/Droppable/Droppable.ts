@@ -236,19 +236,40 @@ class Droppable extends DistanceCalculator {
      */
     let hasToMoveSiblingsDown = true;
 
+    let migrationTranslateIndex = null;
+    let draggedTransition: IPointAxes;
+
+    // [""] - orphan and been inserted
     const hasEmptyElmID =
       siblings.length === 1 && siblings[0] === Droppable.APPEND_EMPTY_ELM_ID;
 
     let insertAt = hasEmptyElmID ? 0 : this.#detectDroppableIndex();
+
+    migrationTranslateIndex = insertAt;
 
     // Enforce attaching it from the bottom since it's already inside the container.
     if (typeof insertAt !== "number") {
       // Restore the last element position from the bottom.
       const { lastElmPosition } = store.containers[SK];
 
-      this.updateDraggedThresholdPosition(lastElmPosition.x, lastElmPosition.y);
+      let pos = lastElmPosition;
 
       insertAt = siblings.length - 1;
+
+      if (!lastElmPosition) {
+        const lastValidElm = Droppable.getTheLastValidElm(
+          siblings,
+          draggedElm.id
+        );
+
+        pos = lastValidElm.currentPosition;
+
+        migrationTranslateIndex = insertAt - 1;
+      } else {
+        migrationTranslateIndex = insertAt;
+      }
+
+      this.updateDraggedThresholdPosition(pos.x, pos.y);
 
       hasToMoveSiblingsDown = false;
     }
@@ -257,16 +278,17 @@ class Droppable extends DistanceCalculator {
 
     this.lockParent(false);
 
-    let draggedTransition: IPointAxes;
-
     if (migration.isTransitioning) {
-      draggedTransition = this.getInsertionOccupiedTranslate(insertAt!, SK);
+      draggedTransition = this.getInsertionOccupiedTranslate(
+        migrationTranslateIndex!,
+        SK
+      );
     }
 
     // If it has solo empty id then there's no need to move down. Because it's
     // empty branch.
-    if (hasToMoveSiblingsDown && !hasEmptyElmID) {
-      this.#moveDown(insertAt);
+    if (hasToMoveSiblingsDown) {
+      if (!hasEmptyElmID) this.#moveDown(insertAt);
     }
 
     draggedElm.rmDateset("draggedOutContainer");
