@@ -132,7 +132,11 @@ class DistanceCalculator {
     });
   }
 
-  #getInsertionELmMeta(insertAt: number, SK: string): InsertionELmMeta {
+  #getInsertionELmMeta(
+    insertAt: number,
+    SK: string,
+    isRetrievePrevElm?: true | never
+  ): InsertionELmMeta {
     const lst = store.getElmBranchByKey(SK);
 
     const { length } = lst;
@@ -148,6 +152,9 @@ class DistanceCalculator {
     let isOrphan = false;
     let elm: null | INode = null;
 
+    let isRetrievePrevElmValid = false;
+    let prevIndex = NaN;
+
     if (
       length === 0 ||
       (length === 1 && lst[0] === Droppable.APPEND_EMPTY_ELM_ID)
@@ -157,6 +164,12 @@ class DistanceCalculator {
       isRestoredLastPosition = true;
     } else {
       const isInsertedLast = insertAt === length - 1;
+
+      prevIndex = insertAt - 1;
+
+      isRetrievePrevElmValid = isRetrievePrevElm
+        ? prevIndex >= 0 && prevIndex < length
+        : false;
 
       if (isInsertedLast) {
         elm = Droppable.getTheLastValidElm(lst, draggedElm.id);
@@ -179,6 +192,9 @@ class DistanceCalculator {
       isOrphan,
       isRestoredLastPosition,
       position,
+      ...(isRetrievePrevElmValid && {
+        prevElm: store.registry[lst[prevIndex]],
+      }),
     } as InsertionELmMeta;
   }
 
@@ -229,7 +245,8 @@ class DistanceCalculator {
       isOrphan,
       isRestoredLastPosition,
       elm: lastElm,
-    } = this.#getInsertionELmMeta(length - 1, newSK);
+      prevElm,
+    } = this.#getInsertionELmMeta(length - 1, newSK, true);
 
     // Restore the last known current position.
 
@@ -261,9 +278,7 @@ class DistanceCalculator {
 
     // Extract margin bottom.
     if (length > 1) {
-      const prevLast = store.registry[distLst[length - 2]];
-
-      marginBottom = lastElm.getDisplacement(prevLast, axis);
+      marginBottom = lastElm.getDisplacement(prevElm!, axis);
     } else if (isRestoredLastPosition) {
       const diff =
         axis === "x" ? lastElm.getRectRight() : lastElm.getRectBottom();
