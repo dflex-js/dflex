@@ -275,7 +275,11 @@ class Droppable extends DistanceCalculator {
     let draggedTransition: IPointAxes;
 
     if (migration.isTransitioning) {
-      draggedTransition = this.getInsertionOccupiedTranslate(insertAt!, SK);
+      draggedTransition = this.getInsertionOccupiedTranslate(
+        insertAt!,
+        SK,
+        hasToMoveSiblingsDown
+      );
     }
 
     // If it has solo empty id then there's no need to move down. Because it's

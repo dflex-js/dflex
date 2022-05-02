@@ -195,7 +195,11 @@ class DistanceCalculator {
     } as InsertionELmMeta;
   }
 
-  protected getInsertionOccupiedTranslate(insertAt: number, SK: string) {
+  protected getInsertionOccupiedTranslate(
+    insertAt: number,
+    SK: string,
+    insertFromAbove: boolean
+  ) {
     const { position } = this.#getInsertionELmMeta(insertAt, SK);
 
     const { draggedElm } = this.draggable;
@@ -204,6 +208,10 @@ class DistanceCalculator {
     // as well.
     const x = Node.getDistance(position, draggedElm, "x");
     const y = Node.getDistance(position, draggedElm, "y");
+
+    if (!insertFromAbove) {
+      // Add margin.
+    }
 
     this.updateDraggedThresholdPosition(x, y);
 
