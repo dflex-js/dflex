@@ -213,18 +213,16 @@ class DistanceCalculator {
     return { x, y };
   }
 
-  #getMarginBottomFromOrigin(originLst: string[], axis: Axis) {
+  #getMarginFromLst(lst: string[], insertAt: number, axis: Axis) {
     const { draggedElm } = this.draggable;
 
-    const nextElmIndex = draggedElm.order.self + 1;
+    if (insertAt >= 0 && insertAt < lst.length) {
+      const elm = store.registry[lst[insertAt]];
 
-    if (nextElmIndex < originLst.length) {
-      const nextElm = store.registry[originLst[nextElmIndex]];
-
-      if (nextElm) {
+      if (elm) {
         // If the origin is not the first element, we need to add the margin
         // to the top.
-        return nextElm.getDisplacement(draggedElm, axis);
+        return elm.getDisplacement(draggedElm, axis);
       }
     }
 
@@ -279,8 +277,10 @@ class DistanceCalculator {
         ? Node.getDisplacement(lastElm.currentPosition, prevElm!, axis)
         : isRestoredLastPosition
         ? Node.getDisplacement(position, lastElm, axis)
-        : this.#getMarginBottomFromOrigin(
+        : // Absolute orphan list, one element no restored available.
+          this.#getMarginFromLst(
             store.getElmBranchByKey(originSK),
+            draggedElm.order.self + 1,
             axis
           );
 
