@@ -213,7 +213,7 @@ class DistanceCalculator {
     return { x, y };
   }
 
-  #getMarginFromLst(lst: string[], insertAt: number, axis: Axis) {
+  #getMarginBtwElmAndDragged(lst: string[], insertAt: number, axis: Axis) {
     const { draggedElm } = this.draggable;
 
     if (insertAt >= 0 && insertAt < lst.length) {
@@ -278,7 +278,7 @@ class DistanceCalculator {
         : isRestoredLastPosition
         ? Node.getDisplacement(position, lastElm, axis)
         : // Absolute orphan list, one element no restored available.
-          this.#getMarginFromLst(
+          this.#getMarginBtwElmAndDragged(
             store.getElmBranchByKey(originSK),
             draggedElm.order.self + 1,
             axis
