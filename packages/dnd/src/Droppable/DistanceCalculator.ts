@@ -8,6 +8,8 @@ import type { InteractivityEvent } from "../types";
 import type { IDraggableInteractive } from "../Draggable";
 
 import store from "../DnDStore";
+import Droppable from "./Droppable";
+import type { InsertionELmMeta } from "./types";
 
 function emitInteractiveEvent(
   type: InteractivityEvent["type"],
@@ -130,31 +132,65 @@ class DistanceCalculator {
     });
   }
 
-  protected getInsertionOccupiedTranslate(elmIndex: number, SK: string) {
+  #getInsertionELmMeta(insertAt: number, SK: string): InsertionELmMeta {
     const lst = store.getElmBranchByKey(SK);
 
-    const targetElm = store.registry[lst[elmIndex]];
+    const { length } = lst;
 
     const { draggedElm } = this.draggable;
 
-    let x;
-    let y;
+    // Restore the last known current position.
+    const { lastElmPosition } = store.containers[SK];
 
-    // If element is not in the list, it means we have orphaned elements the
-    // list is empty se we restore the last known position.
-    if (!targetElm) {
-      const { lastElmPosition } = store.containers[SK];
+    const position = new PointNum(0, 0);
 
-      // Getting diff with `currentPosition` includes the element transition
-      // as well.
-      x = Node.getDistance(lastElmPosition, draggedElm, "x");
-      y = Node.getDistance(lastElmPosition, draggedElm, "y");
+    let isRestoredLastPosition = false;
+    let isOrphan = false;
+    let elm: null | INode = null;
+
+    if (
+      length === 0 ||
+      (length === 1 && lst[0] === Droppable.APPEND_EMPTY_ELM_ID)
+    ) {
+      position.clone(lastElmPosition);
+      isOrphan = true;
+      isRestoredLastPosition = true;
     } else {
-      // Getting diff with `currentPosition` includes the element transition
-      // as well.
-      x = targetElm.getDistance(draggedElm, "x");
-      y = targetElm.getDistance(draggedElm, "y");
+      const isInsertedLast = insertAt === length - 1;
+
+      if (isInsertedLast) {
+        elm = Droppable.getTheLastValidElm(lst, draggedElm.id);
+        const elmPos = elm.currentPosition;
+
+        if (lastElmPosition) {
+          position.clone(lastElmPosition);
+          isRestoredLastPosition = !lastElmPosition.isEqual(elmPos);
+        } else {
+          position.clone(elmPos);
+        }
+      } else {
+        elm = store.registry[lst[insertAt]];
+        position.clone(elm.currentPosition);
+      }
     }
+
+    return {
+      elm,
+      isOrphan,
+      isRestoredLastPosition,
+      position,
+    } as InsertionELmMeta;
+  }
+
+  protected getInsertionOccupiedTranslate(insertAt: number, SK: string) {
+    const { position } = this.#getInsertionELmMeta(insertAt, SK);
+
+    const { draggedElm } = this.draggable;
+
+    // Getting diff with `currentPosition` includes the element transition
+    // as well.
+    const x = Node.getDistance(position, draggedElm, "x");
+    const y = Node.getDistance(position, draggedElm, "y");
 
     this.updateDraggedThresholdPosition(x, y);
 
@@ -188,15 +224,19 @@ class DistanceCalculator {
 
     const { length } = distLst;
 
+    const {
+      position,
+      isOrphan,
+      isRestoredLastPosition,
+      elm: lastElm,
+    } = this.#getInsertionELmMeta(length - 1, newSK);
+
     // Restore the last known current position.
-    const { lastElmPosition } = store.containers[newSK];
 
     // Get the stored position if the branch is empty.
-    if (length === 0) {
-      return lastElmPosition;
+    if (isOrphan) {
+      return position;
     }
-
-    const lastElm = store.registry[distLst[length - 1]];
 
     // The essential position should be stimulate to case where position is
     // to last element in the list. So when the dragged enters the list its
@@ -224,16 +264,11 @@ class DistanceCalculator {
       const prevLast = store.registry[distLst[length - 2]];
 
       marginBottom = lastElm.getDisplacement(prevLast, axis);
-    } else if (
-      // Check for the last element, not all the containers preserve it by
-      // default. It only preserve in the active list.
-      lastElmPosition &&
-      !lastElmPosition.isEqual(store.registry[distLst[0]].currentPosition)
-    ) {
+    } else if (isRestoredLastPosition) {
       const diff =
         axis === "x" ? lastElm.getRectRight() : lastElm.getRectBottom();
 
-      marginBottom = lastElmPosition[axis] - diff;
+      marginBottom = position[axis] - diff;
     } else {
       marginBottom = this.#getMarginBottomFromOrigin(
         store.getElmBranchByKey(originSK),
