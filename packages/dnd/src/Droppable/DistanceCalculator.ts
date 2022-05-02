@@ -155,10 +155,7 @@ class DistanceCalculator {
     let isRetrievePrevElmValid = false;
     let prevIndex = NaN;
 
-    if (
-      length === 0 ||
-      (length === 1 && lst[0] === Droppable.APPEND_EMPTY_ELM_ID)
-    ) {
+    if (Droppable.isOrphan(lst)) {
       position.clone(lastElmPosition);
       isOrphan = true;
       isRestoredLastPosition = true;
