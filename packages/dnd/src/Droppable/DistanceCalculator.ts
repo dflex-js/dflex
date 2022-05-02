@@ -224,15 +224,19 @@ class DistanceCalculator {
 
     const { length } = distLst;
 
+    const {
+      position,
+      isOrphan,
+      isRestoredLastPosition,
+      elm: lastElm,
+    } = this.#getInsertionELmMeta(length - 1, newSK);
+
     // Restore the last known current position.
-    const { lastElmPosition } = store.containers[newSK];
 
     // Get the stored position if the branch is empty.
-    if (length === 0) {
-      return lastElmPosition;
+    if (isOrphan) {
+      return position;
     }
-
-    const lastElm = store.registry[distLst[length - 1]];
 
     // The essential position should be stimulate to case where position is
     // to last element in the list. So when the dragged enters the list its
@@ -260,16 +264,11 @@ class DistanceCalculator {
       const prevLast = store.registry[distLst[length - 2]];
 
       marginBottom = lastElm.getDisplacement(prevLast, axis);
-    } else if (
-      // Check for the last element, not all the containers preserve it by
-      // default. It only preserve in the active list.
-      lastElmPosition &&
-      !lastElmPosition.isEqual(store.registry[distLst[0]].currentPosition)
-    ) {
+    } else if (isRestoredLastPosition) {
       const diff =
         axis === "x" ? lastElm.getRectRight() : lastElm.getRectBottom();
 
-      marginBottom = lastElmPosition[axis] - diff;
+      marginBottom = position[axis] - diff;
     } else {
       marginBottom = this.#getMarginBottomFromOrigin(
         store.getElmBranchByKey(originSK),
