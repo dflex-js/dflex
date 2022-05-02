@@ -274,22 +274,15 @@ class DistanceCalculator {
 
     insertionPosition[axis] += rectDiff;
 
-    let marginBottom = 0;
-
-    // Extract margin bottom.
-    if (length > 1) {
-      marginBottom = lastElm.getDisplacement(prevElm!, axis);
-    } else if (isRestoredLastPosition) {
-      const diff =
-        axis === "x" ? lastElm.getRectRight() : lastElm.getRectBottom();
-
-      marginBottom = position[axis] - diff;
-    } else {
-      marginBottom = this.#getMarginBottomFromOrigin(
-        store.getElmBranchByKey(originSK),
-        axis
-      );
-    }
+    const marginBottom =
+      length > 1 && prevElm
+        ? Node.getDisplacement(lastElm.currentPosition, prevElm!, axis)
+        : isRestoredLastPosition
+        ? Node.getDisplacement(position, lastElm, axis)
+        : this.#getMarginBottomFromOrigin(
+            store.getElmBranchByKey(originSK),
+            axis
+          );
 
     insertionPosition[axis] += Math.abs(marginBottom);
 
