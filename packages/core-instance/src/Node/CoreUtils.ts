@@ -15,6 +15,12 @@ class CoreUtils extends NodeCore implements INode {
     return diff;
   }
 
+  static getDisplacement(currentPosition: IPointAxes, elm: INode, axis: Axis) {
+    const diff = axis === "x" ? elm.getRectRight() : elm.getRectBottom();
+
+    return currentPosition[axis] - diff;
+  }
+
   isConnected() {
     return this.ref!.isConnected;
   }
@@ -45,10 +51,8 @@ class CoreUtils extends NodeCore implements INode {
     return this.offset[rectType] - elm.offset[rectType];
   }
 
-  getDisplacement(elm: this, axis: Axis) {
-    const diff = axis === "x" ? elm.getRectRight() : elm.getRectBottom();
-
-    return this.currentPosition[axis] - diff;
+  getDisplacement(elm: this, axis: Axis): number {
+    return CoreUtils.getDisplacement(this.currentPosition, elm, axis);
   }
 
   getDistance(elm: this, axis: Axis): number {

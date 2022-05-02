@@ -9,12 +9,14 @@ export interface InsertionELmMeta1 extends InsertionBasic {
   isOrphan: false;
   elm: INode;
   isRestoredLastPosition: boolean;
+  prevElm?: INode;
 }
 
 export interface InsertionELmMeta2 extends InsertionBasic {
   isOrphan: true;
   isRestoredLastPosition: true;
   elm: null;
+  prevElm?: never;
 }
 
 export type InsertionELmMeta = InsertionELmMeta1 | InsertionELmMeta2;
