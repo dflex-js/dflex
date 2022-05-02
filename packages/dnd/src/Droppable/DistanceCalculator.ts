@@ -8,6 +8,8 @@ import type { InteractivityEvent } from "../types";
 import type { IDraggableInteractive } from "../Draggable";
 
 import store from "../DnDStore";
+import Droppable from "./Droppable";
+import type { InsertionELmMeta } from "./types";
 
 function emitInteractiveEvent(
   type: InteractivityEvent["type"],
@@ -130,31 +132,65 @@ class DistanceCalculator {
     });
   }
 
-  protected getInsertionOccupiedTranslate(elmIndex: number, SK: string) {
+  #getInsertionELmMeta(insertAt: number, SK: string): InsertionELmMeta {
     const lst = store.getElmBranchByKey(SK);
 
-    const targetElm = store.registry[lst[elmIndex]];
+    const { length } = lst;
 
     const { draggedElm } = this.draggable;
 
-    let x;
-    let y;
+    // Restore the last known current position.
+    const { lastElmPosition } = store.containers[SK];
 
-    // If element is not in the list, it means we have orphaned elements the
-    // list is empty se we restore the last known position.
-    if (!targetElm) {
-      const { lastElmPosition } = store.containers[SK];
+    const position = new PointNum(0, 0);
 
-      // Getting diff with `currentPosition` includes the element transition
-      // as well.
-      x = Node.getDistance(lastElmPosition, draggedElm, "x");
-      y = Node.getDistance(lastElmPosition, draggedElm, "y");
+    let isRestoredLastPosition = false;
+    let isOrphan = false;
+    let elm: null | INode = null;
+
+    if (
+      length === 0 ||
+      (length === 1 && lst[0] === Droppable.APPEND_EMPTY_ELM_ID)
+    ) {
+      position.clone(lastElmPosition);
+      isOrphan = true;
+      isRestoredLastPosition = true;
     } else {
-      // Getting diff with `currentPosition` includes the element transition
-      // as well.
-      x = targetElm.getDistance(draggedElm, "x");
-      y = targetElm.getDistance(draggedElm, "y");
+      const isInsertedLast = insertAt === length - 1;
+
+      if (isInsertedLast) {
+        elm = Droppable.getTheLastValidElm(lst, draggedElm.id);
+        const elmPos = elm.currentPosition;
+
+        if (lastElmPosition) {
+          position.clone(lastElmPosition);
+          isRestoredLastPosition = !lastElmPosition.isEqual(elmPos);
+        } else {
+          position.clone(elmPos);
+        }
+      } else {
+        elm = store.registry[lst[insertAt]];
+        position.clone(elm.currentPosition);
+      }
     }
+
+    return {
+      elm,
+      isOrphan,
+      isRestoredLastPosition,
+      position,
+    } as InsertionELmMeta;
+  }
+
+  protected getInsertionOccupiedTranslate(insertAt: number, SK: string) {
+    const { position } = this.#getInsertionELmMeta(insertAt, SK);
+
+    const { draggedElm } = this.draggable;
+
+    // Getting diff with `currentPosition` includes the element transition
+    // as well.
+    const x = Node.getDistance(position, draggedElm, "x");
+    const y = Node.getDistance(position, draggedElm, "y");
 
     this.updateDraggedThresholdPosition(x, y);
 
