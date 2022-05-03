@@ -248,11 +248,7 @@ class DistanceCalculator {
     position[axis] += rectDiff;
   }
 
-  protected getInsertionOccupiedPosition(
-    newSK: string,
-    originSK: string,
-    axis: Axis
-  ) {
+  protected getComposedPosition(newSK: string, originSK: string, axis: Axis) {
     const distLst = store.getElmBranchByKey(newSK);
 
     const { length } = distLst;
