@@ -1,7 +1,8 @@
+/* eslint-disable no-param-reassign */
 import { Node } from "@dflex/core-instance";
 import type { INode } from "@dflex/core-instance";
 
-import { Direction, PointNum } from "@dflex/utils";
+import { Direction, IPointAxes, PointNum } from "@dflex/utils";
 import type { IPointNum, Axis } from "@dflex/utils";
 
 import type { InteractivityEvent } from "../types";
@@ -155,10 +156,7 @@ class DistanceCalculator {
     let isRetrievePrevElmValid = false;
     let prevIndex = NaN;
 
-    if (
-      length === 0 ||
-      (length === 1 && lst[0] === Droppable.APPEND_EMPTY_ELM_ID)
-    ) {
+    if (Droppable.isOrphan(lst)) {
       position.clone(lastElmPosition);
       isOrphan = true;
       isRestoredLastPosition = true;
@@ -198,19 +196,19 @@ class DistanceCalculator {
     } as InsertionELmMeta;
   }
 
-  protected getInsertionOccupiedTranslate(insertAt: number, SK: string) {
-    const { position } = this.#getInsertionELmMeta(insertAt, SK);
+  #addDraggedOffsetToElm(position: IPointAxes, elm: INode | null, axis: Axis) {
+    const rectType = Node.getRectByAxis(axis);
 
     const { draggedElm } = this.draggable;
 
-    // Getting diff with `currentPosition` includes the element transition
-    // as well.
-    const x = Node.getDistance(position, draggedElm, "x");
-    const y = Node.getDistance(position, draggedElm, "y");
+    // This initiation needs to append dragged rect based on targeted axis.
+    position[axis] += draggedElm.offset[rectType];
 
-    this.updateDraggedThresholdPosition(x, y);
+    if (elm) {
+      const rectDiff = elm.offset[rectType] - draggedElm.offset[rectType];
 
-    return { x, y };
+      position[axis] += rectDiff;
+    }
   }
 
   #getMarginBtwElmAndDragged(lst: string[], insertAt: number, axis: Axis) {
@@ -229,7 +227,41 @@ class DistanceCalculator {
     return DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
   }
 
-  protected getInsertionOccupiedPosition(
+  protected getComposedOccupiedTranslate(
+    insertAt: number,
+    SK: string,
+    insertFromAbove: boolean,
+    axis: Axis
+  ) {
+    const { position, elm, isRestoredLastPosition } = this.#getInsertionELmMeta(
+      insertAt,
+      SK,
+      true
+    );
+
+    const { draggedElm } = this.draggable;
+
+    // Getting diff with `currentPosition` includes the element transition
+    // as well.
+    const composedTranslate = {
+      x: Node.getDistance(position, draggedElm, "x"),
+      y: Node.getDistance(position, draggedElm, "y"),
+    };
+
+    if (!isRestoredLastPosition && !insertFromAbove) {
+      this.#addDraggedOffsetToElm(composedTranslate, elm, axis);
+      // Add margin.
+    }
+
+    this.updateDraggedThresholdPosition(
+      composedTranslate.x,
+      composedTranslate.y
+    );
+
+    return composedTranslate;
+  }
+
+  protected getComposedOccupiedPosition(
     newSK: string,
     originSK: string,
     axis: Axis
@@ -253,24 +285,16 @@ class DistanceCalculator {
       return position;
     }
 
-    // The essential position should be stimulate to case where position is
-    // to last element in the list. So when the dragged enters the list its
-    // element can go down based on this position.
-    const insertionPosition = {
+    // The essential insertion position is the last element in the container
+    // but also on some cases it's different from retrieved position.
+    const composedPosition = {
       x: lastElm.currentPosition.x,
       y: lastElm.currentPosition.y,
     };
 
-    const rectType = Node.getRectByAxis(axis);
+    this.#addDraggedOffsetToElm(composedPosition, lastElm, axis);
 
     const { draggedElm } = this.draggable;
-
-    // This initiation needs to append dragged rect based on targeted axis.
-    insertionPosition[axis] += draggedElm.offset[rectType];
-
-    const rectDiff = lastElm.offset[rectType] - draggedElm.offset[rectType];
-
-    insertionPosition[axis] += rectDiff;
 
     const marginBottom =
       length > 1 && prevElm
@@ -284,9 +308,9 @@ class DistanceCalculator {
             axis
           );
 
-    insertionPosition[axis] += Math.abs(marginBottom);
+    composedPosition[axis] += Math.abs(marginBottom);
 
-    return insertionPosition;
+    return composedPosition;
   }
 
   /**
