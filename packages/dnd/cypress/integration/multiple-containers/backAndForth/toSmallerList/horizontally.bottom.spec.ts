@@ -42,5 +42,82 @@ context(
     it("Triggers mouseup event", () => {
       cy.get("#c2-5").trigger("mouseup", { force: true });
     });
+
+    it("Siblings from the origin list in the same positions", () => {
+      cy.get("#c2-1").should("have.css", "transform", "none");
+
+      cy.get("#c2-2").should("have.css", "transform", "none");
+
+      cy.get("#c2-3").should("have.css", "transform", "none");
+
+      cy.get("#c2-4").should("have.css", "transform", "none");
+    });
+
+    it("Siblings in destination list in the same positions", () => {
+      cy.get("#c3-1").should("have.css", "transform", "none");
+
+      cy.get("#c3-2").should("have.css", "transform", "none");
+    });
+
+    it("Dragged settled in the new list", () => {
+      cy.get("#c2-5").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 226, -24)"
+      );
+    });
+
+    it("Transforms element (#c2-5) - back to the origin", () => {
+      cy.get("#c2-5").trigger("mousedown", {
+        button: 0,
+      });
+
+      for (let i = stepsX; i >= 0; i -= 10) {
+        cy.get("#c2-5").trigger("mousemove", {
+          clientX: startingPointX + i,
+          clientY: startingPointY,
+
+          force: true,
+        });
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(0);
+      }
+    });
+
+    it("Triggers mouseup event", () => {
+      cy.get("#c2-5").trigger("mouseup", { force: true });
+    });
+
+    it("Siblings from the origin list in the same positions", () => {
+      cy.get("#c2-1").should("have.css", "transform", "none");
+
+      cy.get("#c2-2").should("have.css", "transform", "none");
+
+      cy.get("#c2-3").should("have.css", "transform", "none");
+
+      cy.get("#c2-4").should("have.css", "transform", "none");
+    });
+
+    it("Siblings in destination list in the same positions", () => {
+      cy.get("#c3-1").should("have.css", "transform", "none");
+
+      cy.get("#c3-2").should("have.css", "transform", "none");
+    });
+
+    it("Dragged is back to its origin", () => {
+      cy.get("#c2-5").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+    });
+
+    it("No layout shift happened to #c2-5", () => {
+      cy.get("#c2-5").then((elm) => {
+        const newElmBox = elm[0].getBoundingClientRect();
+
+        expect(newElmBox).to.deep.equal(elmBox);
+      });
+    });
   }
 );
