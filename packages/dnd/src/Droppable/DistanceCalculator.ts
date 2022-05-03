@@ -1,7 +1,8 @@
+/* eslint-disable no-param-reassign */
 import { Node } from "@dflex/core-instance";
 import type { INode } from "@dflex/core-instance";
 
-import { Direction, PointNum } from "@dflex/utils";
+import { Direction, IPointAxes, PointNum } from "@dflex/utils";
 import type { IPointNum, Axis } from "@dflex/utils";
 
 import type { InteractivityEvent } from "../types";
@@ -234,6 +235,19 @@ class DistanceCalculator {
     return DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
   }
 
+  #addDraggedOffsetToElm(position: IPointAxes, elm: INode, axis: Axis) {
+    const rectType = Node.getRectByAxis(axis);
+
+    const { draggedElm } = this.draggable;
+
+    // This initiation needs to append dragged rect based on targeted axis.
+    position[axis] += draggedElm.offset[rectType];
+
+    const rectDiff = elm.offset[rectType] - draggedElm.offset[rectType];
+
+    position[axis] += rectDiff;
+  }
+
   protected getInsertionOccupiedPosition(
     newSK: string,
     originSK: string,
@@ -258,24 +272,16 @@ class DistanceCalculator {
       return position;
     }
 
-    // The essential position should be stimulate to case where position is
-    // to last element in the list. So when the dragged enters the list its
-    // element can go down based on this position.
+    // The essential insertion position is the last element in the container
+    // but also on some cases it's different from retrieved position.
     const insertionPosition = {
       x: lastElm.currentPosition.x,
       y: lastElm.currentPosition.y,
     };
 
-    const rectType = Node.getRectByAxis(axis);
+    this.#addDraggedOffsetToElm(insertionPosition, lastElm, axis);
 
     const { draggedElm } = this.draggable;
-
-    // This initiation needs to append dragged rect based on targeted axis.
-    insertionPosition[axis] += draggedElm.offset[rectType];
-
-    const rectDiff = lastElm.offset[rectType] - draggedElm.offset[rectType];
-
-    insertionPosition[axis] += rectDiff;
 
     const marginBottom =
       length > 1 && prevElm
