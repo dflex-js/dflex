@@ -275,10 +275,11 @@ class Droppable extends DistanceCalculator {
     let draggedTransition: IPointAxes;
 
     if (migration.isTransitioning) {
-      draggedTransition = this.getInsertionOccupiedTranslate(
+      draggedTransition = this.getComposedOccupiedTranslate(
         insertAt!,
         SK,
-        hasToMoveSiblingsDown
+        hasToMoveSiblingsDown,
+        "y"
       );
     }
 
@@ -379,7 +380,7 @@ class Droppable extends DistanceCalculator {
         const destinationList = store.getElmBranchByKey(newSK);
 
         this.draggable.occupiedPosition.clone(
-          this.getComposedPosition(newSK, originSK, "y")
+          this.getComposedOccupiedPosition(newSK, originSK, "y")
         );
 
         this.draggable.gridPlaceholder.setAxes(1, 1);

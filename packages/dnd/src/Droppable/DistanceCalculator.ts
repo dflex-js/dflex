@@ -196,27 +196,19 @@ class DistanceCalculator {
     } as InsertionELmMeta;
   }
 
-  protected getInsertionOccupiedTranslate(
-    insertAt: number,
-    SK: string,
-    insertFromAbove: boolean
-  ) {
-    const { position } = this.#getInsertionELmMeta(insertAt, SK);
+  #addDraggedOffsetToElm(position: IPointAxes, elm: INode | null, axis: Axis) {
+    const rectType = Node.getRectByAxis(axis);
 
     const { draggedElm } = this.draggable;
 
-    // Getting diff with `currentPosition` includes the element transition
-    // as well.
-    const x = Node.getDistance(position, draggedElm, "x");
-    const y = Node.getDistance(position, draggedElm, "y");
+    // This initiation needs to append dragged rect based on targeted axis.
+    position[axis] += draggedElm.offset[rectType];
 
-    if (!insertFromAbove) {
-      // Add margin.
+    if (elm) {
+      const rectDiff = elm.offset[rectType] - draggedElm.offset[rectType];
+
+      position[axis] += rectDiff;
     }
-
-    this.updateDraggedThresholdPosition(x, y);
-
-    return { x, y };
   }
 
   #getMarginBtwElmAndDragged(lst: string[], insertAt: number, axis: Axis) {
@@ -235,20 +227,45 @@ class DistanceCalculator {
     return DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
   }
 
-  #addDraggedOffsetToElm(position: IPointAxes, elm: INode, axis: Axis) {
-    const rectType = Node.getRectByAxis(axis);
+  protected getComposedOccupiedTranslate(
+    insertAt: number,
+    SK: string,
+    insertFromAbove: boolean,
+    axis: Axis
+  ) {
+    const { position, elm, isRestoredLastPosition } = this.#getInsertionELmMeta(
+      insertAt,
+      SK,
+      true
+    );
 
     const { draggedElm } = this.draggable;
 
-    // This initiation needs to append dragged rect based on targeted axis.
-    position[axis] += draggedElm.offset[rectType];
+    // Getting diff with `currentPosition` includes the element transition
+    // as well.
+    const composedTranslate = {
+      x: Node.getDistance(position, draggedElm, "x"),
+      y: Node.getDistance(position, draggedElm, "y"),
+    };
 
-    const rectDiff = elm.offset[rectType] - draggedElm.offset[rectType];
+    if (!isRestoredLastPosition && !insertFromAbove) {
+      this.#addDraggedOffsetToElm(composedTranslate, elm, axis);
+      // Add margin.
+    }
 
-    position[axis] += rectDiff;
+    this.updateDraggedThresholdPosition(
+      composedTranslate.x,
+      composedTranslate.y
+    );
+
+    return composedTranslate;
   }
 
-  protected getComposedPosition(newSK: string, originSK: string, axis: Axis) {
+  protected getComposedOccupiedPosition(
+    newSK: string,
+    originSK: string,
+    axis: Axis
+  ) {
     const distLst = store.getElmBranchByKey(newSK);
 
     const { length } = distLst;
@@ -270,12 +287,12 @@ class DistanceCalculator {
 
     // The essential insertion position is the last element in the container
     // but also on some cases it's different from retrieved position.
-    const insertionPosition = {
+    const composedPosition = {
       x: lastElm.currentPosition.x,
       y: lastElm.currentPosition.y,
     };
 
-    this.#addDraggedOffsetToElm(insertionPosition, lastElm, axis);
+    this.#addDraggedOffsetToElm(composedPosition, lastElm, axis);
 
     const { draggedElm } = this.draggable;
 
@@ -291,9 +308,9 @@ class DistanceCalculator {
             axis
           );
 
-    insertionPosition[axis] += Math.abs(marginBottom);
+    composedPosition[axis] += Math.abs(marginBottom);
 
-    return insertionPosition;
+    return composedPosition;
   }
 
   /**
