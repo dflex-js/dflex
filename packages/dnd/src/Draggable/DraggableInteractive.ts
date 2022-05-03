@@ -17,8 +17,6 @@ class DraggableInteractive
 {
   operationID: string;
 
-  setOfTransformedIds?: Set<string>;
-
   scroll: ScrollOptWithThreshold;
 
   occupiedPosition: IPointNum;

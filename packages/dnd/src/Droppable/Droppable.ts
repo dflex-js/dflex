@@ -276,8 +276,9 @@ class Droppable extends DistanceCalculator {
 
     if (migration.isTransitioning) {
       draggedTransition = this.getComposedOccupiedTranslate(
-        insertAt!,
         SK,
+        insertAt,
+        migration.prev().key,
         hasToMoveSiblingsDown,
         "y"
       );
