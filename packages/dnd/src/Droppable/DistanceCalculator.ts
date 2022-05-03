@@ -209,7 +209,7 @@ class DistanceCalculator {
     position[axis] += rectDiff;
   }
 
-  #getMarginBtwElmAndDragged(
+  #getMarginBtwElmAndDraggedFromOrigin(
     originSK: string,
     isInsertedAfter: boolean,
     axis: Axis
@@ -261,7 +261,7 @@ class DistanceCalculator {
 
     if (!isRestoredLastPosition && !insertFromAbove) {
       this.#addDraggedOffsetToElm(composedTranslate, elm, axis);
-      composedTranslate[axis] += this.#getMarginBtwElmAndDragged(
+      composedTranslate[axis] += this.#getMarginBtwElmAndDraggedFromOrigin(
         originSK,
         false,
         axis
@@ -315,7 +315,7 @@ class DistanceCalculator {
         : isRestoredLastPosition
         ? Node.getDisplacement(position, lastElm, axis)
         : // a list with one element no restored available.
-          this.#getMarginBtwElmAndDragged(originSK, true, axis);
+          this.#getMarginBtwElmAndDraggedFromOrigin(originSK, true, axis);
 
     composedPosition[axis] += Math.abs(marginBottom);
 
