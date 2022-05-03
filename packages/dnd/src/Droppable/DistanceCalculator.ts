@@ -296,6 +296,7 @@ class DistanceCalculator {
 
     const { draggedElm } = this.draggable;
 
+    //
     const marginBottom =
       length > 1 && prevElm
         ? Node.getDisplacement(lastElm.currentPosition, prevElm!, axis)
