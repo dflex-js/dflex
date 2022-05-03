@@ -262,6 +262,7 @@ class DistanceCalculator {
       this.#addDraggedOffsetToElm(composedTranslate, elm, axis);
       composedTranslate[axis] += this.#getMarginBtwElmAndDragged(
         originSK,
+        // Called after migration during the transitions.
         migration.prev().index,
         false,
         axis
@@ -317,6 +318,7 @@ class DistanceCalculator {
         : // a list with one element no restored available.
           this.#getMarginBtwElmAndDragged(
             originSK,
+            // Called before the migration completed.
             this.draggable.migration.latest().index,
             true,
             axis
