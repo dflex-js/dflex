@@ -209,18 +209,17 @@ class DistanceCalculator {
     position[axis] += rectDiff;
   }
 
-  #getMarginBtwElmAndDraggedFromOrigin(
-    originSK: string,
+  #getMarginBtwElmAndDragged(
+    SK: string,
+    draggedIndex: number,
     isInsertedAfter: boolean,
     axis: Axis
   ) {
-    const { draggedElm, migration } = this.draggable;
+    const { draggedElm } = this.draggable;
 
-    const { index: draggedAt } = migration.prev();
+    const insertAt = isInsertedAfter ? draggedIndex + 1 : draggedIndex - 1;
 
-    const insertAt = isInsertedAfter ? draggedAt + 1 : draggedAt - 1;
-
-    const origin = store.getElmBranchByKey(originSK);
+    const origin = store.getElmBranchByKey(SK);
 
     if (insertAt >= 0 && insertAt < origin.length) {
       const elm = store.registry[origin[insertAt]];
@@ -250,7 +249,7 @@ class DistanceCalculator {
       true
     );
 
-    const { draggedElm } = this.draggable;
+    const { draggedElm, migration } = this.draggable;
 
     // Getting diff with `currentPosition` includes the element transition
     // as well.
@@ -261,8 +260,9 @@ class DistanceCalculator {
 
     if (!isRestoredLastPosition && !insertFromAbove) {
       this.#addDraggedOffsetToElm(composedTranslate, elm, axis);
-      composedTranslate[axis] += this.#getMarginBtwElmAndDraggedFromOrigin(
+      composedTranslate[axis] += this.#getMarginBtwElmAndDragged(
         originSK,
+        migration.prev().index,
         false,
         axis
       );
@@ -315,7 +315,12 @@ class DistanceCalculator {
         : isRestoredLastPosition
         ? Node.getDisplacement(position, lastElm, axis)
         : // a list with one element no restored available.
-          this.#getMarginBtwElmAndDraggedFromOrigin(originSK, true, axis);
+          this.#getMarginBtwElmAndDragged(
+            originSK,
+            this.draggable.migration.latest().index,
+            true,
+            axis
+          );
 
     composedPosition[axis] += Math.abs(marginBottom);
 
