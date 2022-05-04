@@ -196,7 +196,7 @@ class DistanceCalculator {
     } as InsertionELmMeta;
   }
 
-  #addDraggedOffsetToElm(position: IPointAxes, elm: INode | null, axis: Axis) {
+  #addDraggedOffsetToElm(position: IPointAxes, elm: INode, axis: Axis) {
     const rectType = Node.getRectByAxis(axis);
 
     const { draggedElm } = this.draggable;
@@ -204,23 +204,32 @@ class DistanceCalculator {
     // This initiation needs to append dragged rect based on targeted axis.
     position[axis] += draggedElm.offset[rectType];
 
-    if (elm) {
-      const rectDiff = elm.offset[rectType] - draggedElm.offset[rectType];
+    const rectDiff = elm.offset[rectType] - draggedElm.offset[rectType];
 
-      position[axis] += rectDiff;
-    }
+    position[axis] += rectDiff;
   }
 
-  #getMarginBtwElmAndDragged(lst: string[], insertAt: number, axis: Axis) {
+  #getMarginBtwElmAndDragged(
+    SK: string,
+    draggedIndex: number,
+    isInsertedAfter: boolean,
+    axis: Axis
+  ) {
     const { draggedElm } = this.draggable;
 
-    if (insertAt >= 0 && insertAt < lst.length) {
-      const elm = store.registry[lst[insertAt]];
+    const insertAt = isInsertedAfter ? draggedIndex + 1 : draggedIndex - 1;
+
+    const origin = store.getElmBranchByKey(SK);
+
+    if (insertAt >= 0 && insertAt < origin.length) {
+      const elm = store.registry[origin[insertAt]];
 
       if (elm) {
         // If the origin is not the first element, we need to add the margin
         // to the top.
-        return elm.getDisplacement(draggedElm, axis);
+        return isInsertedAfter
+          ? elm.getDisplacement(draggedElm, axis)
+          : draggedElm.getDisplacement(elm, axis);
       }
     }
 
@@ -228,8 +237,9 @@ class DistanceCalculator {
   }
 
   protected getComposedOccupiedTranslate(
-    insertAt: number,
     SK: string,
+    insertAt: number,
+    originSK: string,
     insertFromAbove: boolean,
     axis: Axis
   ) {
@@ -239,7 +249,7 @@ class DistanceCalculator {
       true
     );
 
-    const { draggedElm } = this.draggable;
+    const { draggedElm, migration } = this.draggable;
 
     // Getting diff with `currentPosition` includes the element transition
     // as well.
@@ -250,7 +260,13 @@ class DistanceCalculator {
 
     if (!isRestoredLastPosition && !insertFromAbove) {
       this.#addDraggedOffsetToElm(composedTranslate, elm, axis);
-      // Add margin.
+      composedTranslate[axis] += this.#getMarginBtwElmAndDragged(
+        originSK,
+        // Called after migration during the transitions.
+        migration.prev().index,
+        false,
+        axis
+      );
     }
 
     this.updateDraggedThresholdPosition(
@@ -262,11 +278,11 @@ class DistanceCalculator {
   }
 
   protected getComposedOccupiedPosition(
-    newSK: string,
+    SK: string,
     originSK: string,
     axis: Axis
   ) {
-    const distLst = store.getElmBranchByKey(newSK);
+    const distLst = store.getElmBranchByKey(SK);
 
     const { length } = distLst;
 
@@ -276,7 +292,7 @@ class DistanceCalculator {
       isRestoredLastPosition,
       elm: lastElm,
       prevElm,
-    } = this.#getInsertionELmMeta(length - 1, newSK, true);
+    } = this.#getInsertionELmMeta(length - 1, SK, true);
 
     // Restore the last known current position.
 
@@ -294,17 +310,17 @@ class DistanceCalculator {
 
     this.#addDraggedOffsetToElm(composedPosition, lastElm, axis);
 
-    const { draggedElm } = this.draggable;
-
     const marginBottom =
       length > 1 && prevElm
-        ? Node.getDisplacement(lastElm.currentPosition, prevElm!, axis)
+        ? Node.getDisplacement(lastElm.currentPosition, prevElm, axis)
         : isRestoredLastPosition
         ? Node.getDisplacement(position, lastElm, axis)
-        : // Absolute orphan list, one element no restored available.
+        : // a list with one element no restored available.
           this.#getMarginBtwElmAndDragged(
-            store.getElmBranchByKey(originSK),
-            draggedElm.order.self + 1,
+            originSK,
+            // Called before the migration completed.
+            this.draggable.migration.latest().index,
+            true,
             axis
           );
 
