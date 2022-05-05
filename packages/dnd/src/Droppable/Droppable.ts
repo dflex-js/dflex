@@ -273,15 +273,17 @@ class Droppable extends DistanceCalculator {
     this.lockParent(false);
 
     let draggedTransition: IPointAxes;
+    let draggedGrid: IPointAxes;
 
     if (migration.isTransitioning) {
-      draggedTransition = this.getComposedOccupiedTranslate(
-        SK,
-        insertAt,
-        migration.prev().key,
-        hasToMoveSiblingsDown,
-        "y"
-      );
+      ({ translate: draggedTransition, grid: draggedGrid } =
+        this.getComposedOccupiedTranslateAndGrid(
+          SK,
+          insertAt,
+          migration.prev().key,
+          hasToMoveSiblingsDown,
+          "y"
+        ));
     }
 
     // If it has solo empty id then there's no need to move down. Because it's
@@ -293,6 +295,7 @@ class Droppable extends DistanceCalculator {
     draggedElm.rmDateset("draggedOutContainer");
 
     if (migration.isTransitioning) {
+      // Compose container boundaries and refresh the store.
       queueMicrotask(() => {
         // offset to append.
         // It has to be the biggest element offset. The last element in the list.
@@ -336,6 +339,7 @@ class Droppable extends DistanceCalculator {
         }
 
         occupiedTranslate.clone(draggedTransition);
+        gridPlaceholder.clone(draggedGrid);
 
         store.handleElmMigration(SK, migration.prev().key, draggedElm.depth, {
           offset,
@@ -383,8 +387,6 @@ class Droppable extends DistanceCalculator {
         this.draggable.occupiedPosition.clone(
           this.getComposedOccupiedPosition(newSK, originSK, "y")
         );
-
-        this.draggable.gridPlaceholder.setAxes(1, 1);
 
         draggedElm.keys.SK = newSK;
 

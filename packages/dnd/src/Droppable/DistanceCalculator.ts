@@ -157,6 +157,10 @@ class DistanceCalculator {
     let prevIndex = NaN;
 
     if (Droppable.isOrphan(lst)) {
+      // TODO:
+      // This is a bug. Cause it should be treated same way as the last
+      // position. If we can restore, the we do it otherwise we do the
+      // calculations based on dragged.
       position.clone(lastElmPosition);
       isOrphan = true;
       isRestoredLastPosition = true;
@@ -236,18 +240,15 @@ class DistanceCalculator {
     return DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
   }
 
-  protected getComposedOccupiedTranslate(
+  protected getComposedOccupiedTranslateAndGrid(
     SK: string,
     insertAt: number,
     originSK: string,
     insertFromAbove: boolean,
     axis: Axis
   ) {
-    const { position, elm, isRestoredLastPosition } = this.#getInsertionELmMeta(
-      insertAt,
-      SK,
-      true
-    );
+    const { position, elm, isOrphan, isRestoredLastPosition } =
+      this.#getInsertionELmMeta(insertAt, SK, true);
 
     const { draggedElm, migration } = this.draggable;
 
@@ -258,15 +259,30 @@ class DistanceCalculator {
       y: Node.getDistance(position, draggedElm, "y"),
     };
 
-    if (!isRestoredLastPosition && !insertFromAbove) {
-      this.#addDraggedOffsetToElm(composedTranslate, elm, axis);
-      composedTranslate[axis] += this.#getMarginBtwElmAndDragged(
-        originSK,
-        // Called after migration during the transitions.
-        migration.prev().index,
-        false,
-        axis
-      );
+    const composedGrid = new PointNum(1, 1);
+
+    if (!isOrphan) {
+      const { grid } = elm;
+
+      composedGrid.clone(grid);
+    }
+
+    if (insertFromAbove) {
+      composedGrid.y -= 1;
+    } else {
+      composedGrid.y += 1;
+
+      // Is the list expanding?
+      if (!isRestoredLastPosition) {
+        this.#addDraggedOffsetToElm(composedTranslate, elm, axis);
+        composedTranslate[axis] += this.#getMarginBtwElmAndDragged(
+          originSK,
+          // Called after migration during the transitions.
+          migration.prev().index,
+          false,
+          axis
+        );
+      }
     }
 
     this.updateDraggedThresholdPosition(
@@ -274,7 +290,7 @@ class DistanceCalculator {
       composedTranslate.y
     );
 
-    return composedTranslate;
+    return { translate: composedTranslate, grid: composedGrid };
   }
 
   protected getComposedOccupiedPosition(
