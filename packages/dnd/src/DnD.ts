@@ -49,7 +49,6 @@ class DnD extends Droppable {
     store.getBranchesByDepth(depth).forEach((SK) => {
       store.initSiblingContainer(SK, true);
     });
-    console.log(store.registry);
 
     const draggable = new DraggableInteractive(
       id,

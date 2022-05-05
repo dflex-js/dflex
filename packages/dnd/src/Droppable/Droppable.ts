@@ -341,7 +341,7 @@ class Droppable extends DistanceCalculator {
         occupiedTranslate.clone(draggedTransition);
         gridPlaceholder.clone(draggedGrid);
 
-        store.handleElmMigration(SK, migration.prev().key, draggedElm.depth, {
+        store.handleElmMigration(SK, migration.prev().key, {
           offset,
           grid,
         });

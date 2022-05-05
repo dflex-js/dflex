@@ -330,29 +330,25 @@ class DnDStoreImp extends Store implements IDnDStore {
   handleElmMigration(
     SK: string,
     originSK: string,
-    depth: number,
     append: {
       offset: RectDimensions;
       grid: IPointNum;
     }
   ) {
-    this.containers[SK].addElmToContainer(
-      append.offset,
-      append.grid,
-      this.unifiedContainerDimensions[depth]
-    );
+    // Append the newest element to the end of the branch.
+    this.containers[SK].addElmToContainer(append.offset, append.grid);
+
+    const origin = this.DOMGen.branches[originSK];
 
     this.containers[originSK].resetBoundaries();
-    this.DOMGen.branches[originSK].forEach((elmID) => {
-      if (elmID.length > 0) {
-        const elm = this.registry[elmID];
-        this.containers[originSK].addElmToContainer(
-          elm.getOffset(),
-          elm.grid,
-          this.unifiedContainerDimensions[depth]
-        );
-      }
-    });
+
+    // TODO: Update the origin from where it's sliced.
+    for (let i = 0; i < origin.length; i += 1) {
+      const elmID = origin[i];
+      const elm = this.registry[elmID];
+
+      this.containers[originSK].addElmToContainer(elm.getOffset(), elm.grid);
+    }
   }
 
   register(element: RegisterInput) {

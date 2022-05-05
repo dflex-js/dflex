@@ -24,7 +24,7 @@ export interface IContainer {
   addElmToContainer(
     elmRect: RectDimensions,
     elmGrid: IPointNum,
-    unifiedContainerDimensions: Dimensions
+    unifiedContainerDimensions?: Dimensions
   ): void;
   resetBoundaries(): void;
   preservePosition(position: IPointAxes | null): void;

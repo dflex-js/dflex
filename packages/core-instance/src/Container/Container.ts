@@ -23,6 +23,7 @@ class Container implements IContainer {
 
   scroll!: IScroll;
 
+  /** Unused. Holds the total number of columns and rows for each container. */
   #gridContainer: IPointNum;
 
   #gridSiblingsHasNewRow: boolean;
@@ -105,7 +106,10 @@ class Container implements IContainer {
     }
   }
 
-  #setBoundaries(rect: RectDimensions, unifiedContainerDimensions: Dimensions) {
+  #setBoundaries(
+    rect: RectDimensions,
+    unifiedContainerDimensions?: Dimensions
+  ) {
     const { height, left, top, width } = rect;
 
     const right = left + width;
@@ -140,6 +144,8 @@ class Container implements IContainer {
 
     const uni = unifiedContainerDimensions;
 
+    if (!uni) return;
+
     const $height = $.bottom - $.top;
     const $width = $.right - $.left;
 
@@ -155,7 +161,7 @@ class Container implements IContainer {
   addElmToContainer(
     elmRect: RectDimensions,
     elmGrid: IPointNum,
-    unifiedContainerDimensions: Dimensions
+    unifiedContainerDimensions?: Dimensions
   ) {
     this.#setElmGrid(elmGrid, elmRect);
     this.#setBoundaries(elmRect, unifiedContainerDimensions);
@@ -166,6 +172,7 @@ class Container implements IContainer {
     this.boundaries = null;
     this.#gridContainer.setAxes(1, 1);
     this.#boundariesStorageForGrid = {};
+    this.#gridSiblingsHasNewRow = false;
   }
 
   preservePosition(position: IPointAxes) {
