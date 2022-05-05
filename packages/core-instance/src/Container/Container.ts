@@ -32,11 +32,11 @@ class Container implements IContainer {
   constructor() {
     this.#boundariesStorageForGrid = {};
     this.grid = new PointNum(1, 1);
-    this.#gridContainer = new PointNum(1, 0);
+    this.#gridContainer = new PointNum(1, 1);
     this.#gridSiblingsHasNewRow = false;
   }
 
-  setGrid(grid: IPointNum, rect: RectDimensions) {
+  #setElmGrid(grid: IPointNum, rect: RectDimensions) {
     const { height, left, top, width } = rect;
 
     const right = left + width;
@@ -105,7 +105,7 @@ class Container implements IContainer {
     }
   }
 
-  setBoundaries(rect: RectDimensions, unifiedContainerDimensions: Dimensions) {
+  #setBoundaries(rect: RectDimensions, unifiedContainerDimensions: Dimensions) {
     const { height, left, top, width } = rect;
 
     const right = left + width;
@@ -150,6 +150,22 @@ class Container implements IContainer {
     if (uni.width < $width) {
       uni.width = $height;
     }
+  }
+
+  addElmToContainer(
+    elmRect: RectDimensions,
+    elmGrid: IPointNum,
+    unifiedContainerDimensions: Dimensions
+  ) {
+    this.#setElmGrid(elmGrid, elmRect);
+    this.#setBoundaries(elmRect, unifiedContainerDimensions);
+  }
+
+  resetBoundaries() {
+    // @ts-expect-error - Just resetting the boundaries.
+    this.boundaries = null;
+    this.#gridContainer.setAxes(1, 1);
+    this.#boundariesStorageForGrid = {};
   }
 
   preservePosition(position: IPointAxes) {

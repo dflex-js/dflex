@@ -317,9 +317,9 @@ class DnDStoreImp extends Store implements IDnDStore {
     if (this.registry[id].grid.x === 0) {
       const { offset, grid } = this.registry[id];
 
-      this.containers[SK].setGrid(grid, offset);
-      this.containers[SK].setBoundaries(
+      this.containers[SK].addElmToContainer(
         offset,
+        grid,
         this.unifiedContainerDimensions[depth]
       );
     }
@@ -328,29 +328,29 @@ class DnDStoreImp extends Store implements IDnDStore {
   }
 
   handleElmMigration(
-    newSK: string,
-    oldSK: string,
+    SK: string,
+    originSK: string,
     depth: number,
     append: {
       offset: RectDimensions;
       grid: IPointNum;
     }
   ) {
-    this.containers[newSK].setBoundaries(
+    this.containers[SK].addElmToContainer(
       append.offset,
+      append.grid,
       this.unifiedContainerDimensions[depth]
     );
-    this.containers[newSK].setGrid(append.grid, append.offset);
 
-    this.DOMGen.branches[oldSK].forEach((elmID) => {
+    this.containers[originSK].resetBoundaries();
+    this.DOMGen.branches[originSK].forEach((elmID) => {
       if (elmID.length > 0) {
         const elm = this.registry[elmID];
-
-        this.containers[oldSK].setBoundaries(
+        this.containers[originSK].addElmToContainer(
           elm.getOffset(),
+          elm.grid,
           this.unifiedContainerDimensions[depth]
         );
-        this.containers[oldSK].setGrid(elm.grid, elm.getOffset());
       }
     });
   }
