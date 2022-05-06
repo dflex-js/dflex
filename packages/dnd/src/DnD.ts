@@ -50,6 +50,8 @@ class DnD extends Droppable {
       store.initSiblingContainer(SK, true);
     });
 
+    console.log("store", store.containers);
+
     const draggable = new DraggableInteractive(
       id,
       initCoordinates,

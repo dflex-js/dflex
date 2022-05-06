@@ -315,13 +315,14 @@ class DnDStoreImp extends Store implements IDnDStore {
     // Using element grid zero to know if the element has been initiated inside
     // container or not.
     if (this.registry[id].grid.x === 0) {
-      const { offset, grid } = this.registry[id];
+      const { offset } = this.registry[id];
 
-      this.containers[SK].setGrid(grid, offset);
-      this.containers[SK].setBoundaries(
+      const grid = this.containers[SK].assignNewElm(
         offset,
         this.unifiedContainerDimensions[depth]
       );
+
+      this.registry[id].grid.clone(grid);
     }
 
     this.updateElementVisibility(id, this.containers[SK].scroll, false);
@@ -336,23 +337,21 @@ class DnDStoreImp extends Store implements IDnDStore {
       grid: IPointNum;
     }
   ) {
-    this.containers[newSK].setBoundaries(
-      append.offset,
-      this.unifiedContainerDimensions[depth]
-    );
-    this.containers[newSK].setGrid(append.grid, append.offset);
-
-    this.DOMGen.branches[oldSK].forEach((elmID) => {
-      if (elmID.length > 0) {
-        const elm = this.registry[elmID];
-
-        this.containers[oldSK].setBoundaries(
-          elm.getOffset(),
-          this.unifiedContainerDimensions[depth]
-        );
-        this.containers[oldSK].setGrid(elm.grid, elm.getOffset());
-      }
-    });
+    // this.containers[newSK].setBoundaries(
+    //   append.offset,
+    //   this.unifiedContainerDimensions[depth]
+    // );
+    // this.containers[newSK].setGrid(append.grid, append.offset);
+    // this.DOMGen.branches[oldSK].forEach((elmID) => {
+    //   if (elmID.length > 0) {
+    //     const elm = this.registry[elmID];
+    //     this.containers[oldSK].setBoundaries(
+    //       elm.getOffset(),
+    //       this.unifiedContainerDimensions[depth]
+    //     );
+    //     this.containers[oldSK].setGrid(elm.grid, elm.getOffset());
+    //   }
+    // });
   }
 
   register(element: RegisterInput) {

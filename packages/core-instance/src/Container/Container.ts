@@ -17,7 +17,7 @@ class Container implements IContainer {
     [row: number]: RectBoundaries;
   };
 
-  boundaries!: RectBoundaries;
+  boundaries: RectBoundaries;
 
   grid: IPointNum;
 
@@ -29,25 +29,49 @@ class Container implements IContainer {
 
   lastElmPosition!: IPointNum;
 
+  static INITIAL_BOUNDARIES = {
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  };
+
   constructor() {
     this.#rectByRows = {
       1: {
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
+        ...Container.INITIAL_BOUNDARIES,
       },
     };
-    this.grid = new PointNum(1, 1);
-    this.#gridContainer = new PointNum(1, 0);
+    this.boundaries = { ...Container.INITIAL_BOUNDARIES };
+    this.grid = new PointNum(0, 0);
+    this.#gridContainer = new PointNum(0, 0);
     this.#gridSiblingsHasNewRow = false;
   }
 
-  #setGridContainer($: RectBoundaries, elmRect: RectBoundaries) {
-    const { left, right, top, bottom } = elmRect;
+  assignNewElm(rect: RectDimensions, unifiedContainerDimensions: Dimensions) {
+    const { height, left, top, width } = rect;
+
+    const right = left + width;
+    const bottom = top + height;
+
+    const elmRectBoundaries = {
+      top,
+      left,
+      right,
+      bottom,
+    };
+
+    if (!this.#rectByRows[this.#gridContainer.x]) {
+      this.#rectByRows[this.#gridContainer.x] = {
+        ...Container.INITIAL_BOUNDARIES,
+      };
+    }
+
+    let $ = this.#rectByRows[this.#gridContainer.x];
 
     // Defining elements in different row.
     if (bottom > $.bottom || top < $.top) {
+      this.#gridContainer.y += 1;
       this.grid.y += 1;
 
       this.#gridSiblingsHasNewRow = true;
@@ -58,6 +82,8 @@ class Container implements IContainer {
 
     // Defining elements in different column.
     if (left > $.right || right < $.left) {
+      this.#gridContainer.x += 1;
+
       if (this.#gridSiblingsHasNewRow) {
         this.grid.x = 1;
 
@@ -66,63 +92,11 @@ class Container implements IContainer {
         this.grid.x += 1;
       }
     }
-  }
-
-  setGrid(grid: IPointNum, rect: RectDimensions) {
-    const { height, left, top, width } = rect;
-
-    const right = left + width;
-    const bottom = top + height;
-
-    const elmRectBoundaries = {
-      top,
-      left,
-      right,
-      bottom,
-    };
-
-    const $ = this.#rectByRows;
-
-    const rowRect = $[grid.x];
-
-    this.#setGridContainer(rowRect, elmRectBoundaries);
-    dirtyAssignBiggestRect(rowRect, elmRectBoundaries);
-
-    grid.clone(this.grid);
-  }
-
-  setBoundaries(rect: RectDimensions, unifiedContainerDimensions: Dimensions) {
-    const { height, left, top, width } = rect;
-
-    const right = left + width;
-    const bottom = top + height;
-
-    const elmRectBoundaries = {
-      top,
-      left,
-      right,
-      bottom,
-    };
-
-    if (!this.boundaries) {
-      this.boundaries = elmRectBoundaries;
-
-      return;
-    }
-
-    const $ = this.boundaries;
-
-    // Defining elements in different row.
-    if (bottom > $.bottom || top < $.top) {
-      this.#gridContainer.y += 1;
-    }
-
-    // Defining elements in different column.
-    if (left > $.right || right < $.left) {
-      this.#gridContainer.x += 1;
-    }
 
     dirtyAssignBiggestRect($, elmRectBoundaries);
+    dirtyAssignBiggestRect(this.boundaries, elmRectBoundaries);
+
+    $ = this.boundaries;
 
     const uni = unifiedContainerDimensions;
 
@@ -136,6 +110,8 @@ class Container implements IContainer {
     if (uni.width < $width) {
       uni.width = $height;
     }
+
+    return this.grid;
   }
 
   preservePosition(position: IPointAxes) {
