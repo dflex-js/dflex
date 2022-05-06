@@ -53,6 +53,8 @@ class Droppable extends DistanceCalculator {
    * transformation. */
   #animatedDraggedInsertionFrame: number | null;
 
+  #listAppendPosition?: IPointAxes;
+
   static INDEX_OUT_CONTAINER = NaN;
 
   static APPEND_EMPTY_ELM_ID = "";
@@ -268,7 +270,7 @@ class Droppable extends DistanceCalculator {
     this.lockParent(false);
 
     let draggedTransition: IPointAxes;
-    let draggedGrid: IPointAxes;
+    let draggedGrid: IPointNum;
 
     if (migration.isTransitioning) {
       ({ translate: draggedTransition, grid: draggedGrid } =
@@ -297,22 +299,28 @@ class Droppable extends DistanceCalculator {
         const offset = {
           height: draggedElm.offset.height,
           width: draggedElm.offset.width,
-          left: this.appendElmMeta!.position.x,
-          top: this.appendElmMeta!.position.y,
+          left: this.#listAppendPosition!.x,
+          top: this.#listAppendPosition!.y,
         };
 
         occupiedTranslate.clone(draggedTransition);
         gridPlaceholder.clone(draggedGrid);
 
-        const grid =
-          store.registry[siblings[siblings.length - 1]]?.grid || draggedGrid;
+        let grid = draggedGrid;
 
-        store.handleElmMigration(SK, migration.prev().key, {
-          offset,
-          grid,
-        });
+        const lastElm = store.registry[siblings[siblings.length - 1]];
 
-        store.containers[SK].preservePosition(this.appendElmMeta!.position);
+        if (lastElm) {
+          ({ grid } = lastElm);
+
+          if (grid.y < draggedGrid.y) {
+            grid = draggedGrid;
+          }
+        }
+
+        store.handleElmMigration(SK, migration.prev().key, offset);
+
+        store.containers[SK].preservePosition(this.#listAppendPosition!);
 
         migration.complete();
       });
@@ -339,13 +347,6 @@ class Droppable extends DistanceCalculator {
 
       // Check if it is not the same list and if the dragged is inside new one.
       if (newSK !== originSK && !this.draggable.isOutThreshold(newSK, true)) {
-        const destinationList = store.getElmBranchByKey(newSK);
-
-        this.appendElmMeta = this.getInsertionELmMeta(
-          destinationList.length - 1,
-          newSK
-        );
-
         migration.start();
 
         const originList = store.getElmBranchByKey(originSK);
@@ -355,13 +356,15 @@ class Droppable extends DistanceCalculator {
         // placeholder as all the elements are stacked.
         originList.pop();
 
-        const occupiedPosition = this.getComposedOccupiedPosition(
-          this.appendElmMeta,
+        const destinationList = store.getElmBranchByKey(newSK);
+
+        this.#listAppendPosition = this.getComposedOccupiedPosition(
+          newSK,
           originSK,
           "y"
         );
 
-        this.draggable.occupiedPosition.clone(occupiedPosition);
+        this.draggable.occupiedPosition.clone(this.#listAppendPosition);
 
         this.draggable.gridPlaceholder.setAxes(1, 1);
 

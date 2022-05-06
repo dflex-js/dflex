@@ -3,7 +3,6 @@ import type { INode } from "@dflex/core-instance";
 
 interface InsertionBasic {
   position: IPointNum;
-  length: number;
 }
 
 export interface InsertionELmMeta1 extends InsertionBasic {

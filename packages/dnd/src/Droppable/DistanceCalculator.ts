@@ -34,8 +34,6 @@ function emitInteractiveEvent(
 class DistanceCalculator {
   protected draggable: IDraggableInteractive;
 
-  protected appendElmMeta?: InsertionELmMeta;
-
   #elmTransition: IPointNum;
 
   #draggedPositionOffset: IPointNum;
@@ -135,10 +133,7 @@ class DistanceCalculator {
     });
   }
 
-  protected getInsertionELmMeta(
-    insertAt: number,
-    SK: string
-  ): InsertionELmMeta {
+  #getInsertionELmMeta(insertAt: number, SK: string): InsertionELmMeta {
     const lst = store.getElmBranchByKey(SK);
 
     const { length } = lst;
@@ -189,7 +184,6 @@ class DistanceCalculator {
     }
 
     return {
-      length,
       elm,
       isOrphan,
       isRestoredLastPosition,
@@ -248,7 +242,7 @@ class DistanceCalculator {
     axis: Axis
   ) {
     const { position, elm, isRestoredLastPosition, isOrphan } =
-      this.getInsertionELmMeta(insertAt, SK);
+      this.#getInsertionELmMeta(insertAt, SK);
 
     const { draggedElm, migration } = this.draggable;
 
@@ -295,18 +289,21 @@ class DistanceCalculator {
   }
 
   protected getComposedOccupiedPosition(
-    meta: InsertionELmMeta,
+    SK: string,
     originSK: string,
     axis: Axis
   ) {
+    const distLst = store.getElmBranchByKey(SK);
+
+    const { length } = distLst;
+
     const {
-      length,
       position,
       isOrphan,
       isRestoredLastPosition,
       elm: lastElm,
       prevElm,
-    } = meta;
+    } = this.#getInsertionELmMeta(length - 1, SK);
 
     // Restore the last known current position.
 
