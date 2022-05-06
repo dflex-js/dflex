@@ -158,6 +158,10 @@ class DistanceCalculator {
     let prevIndex = NaN;
 
     if (Droppable.isOrphan(lst)) {
+      // TODO:
+      // This is a bug. Cause it should be treated same way as the last
+      // position. If we can restore, the we do it otherwise we do the
+      // calculations based on dragged.
       position.clone(lastElmPosition);
       isOrphan = true;
       isRestoredLastPosition = true;

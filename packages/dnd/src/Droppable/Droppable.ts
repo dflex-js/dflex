@@ -290,6 +290,7 @@ class Droppable extends DistanceCalculator {
     draggedElm.rmDateset("draggedOutContainer");
 
     if (migration.isTransitioning) {
+      // Compose container boundaries and refresh the store.
       queueMicrotask(() => {
         // offset to append.
         // It has to be the biggest element offset. The last element in the list.

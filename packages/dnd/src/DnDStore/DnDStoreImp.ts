@@ -33,7 +33,7 @@ Did you forget to call store.unregister(${id}) or add parenID when register the 
 class DnDStoreImp extends Store implements IDnDStore {
   containers: { [siblingKey: string]: IContainer };
 
-  unifiedContainerDimensions: {
+  readonly unifiedContainerDimensions: {
     [depth: number]: Dimensions;
   };
 
