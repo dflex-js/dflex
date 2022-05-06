@@ -8,12 +8,3 @@ Container {
   },
 }
 `;
-
-exports[`Container container is initiated 1`] = `
-Container {
-  "grid": PointNum {
-    "x": 1,
-    "y": 1,
-  },
-}
-`;
