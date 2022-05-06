@@ -240,7 +240,7 @@ class DistanceCalculator {
     SK: string,
     insertAt: number,
     originSK: string,
-    insertFromAbove: boolean,
+    insertFromTop: boolean,
     axis: Axis
   ) {
     const { position, elm, isRestoredLastPosition, isOrphan } =
@@ -263,10 +263,11 @@ class DistanceCalculator {
       composedGrid.clone(grid);
     }
 
-    if (insertFromAbove) {
-      composedGrid.y -= 1;
+    if (insertFromTop) {
+      // Don't decrease the first element.
+      if (composedGrid[axis] - 1 >= 1) composedGrid[axis] -= 1;
     } else {
-      composedGrid.y += 1;
+      composedGrid[axis] += 1;
 
       // Is the list expanding?
       if (!isRestoredLastPosition) {
