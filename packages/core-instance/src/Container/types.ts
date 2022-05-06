@@ -5,6 +5,7 @@ import type {
   IPointNum,
   IPointAxes,
   IScroll,
+  Axis,
 } from "@dflex/utils";
 
 export interface IContainer {
@@ -21,10 +22,11 @@ export interface IContainer {
 
   /** Container scroll instance.  */
   scroll: IScroll;
-  setGrid(grid: IPointNum, rect: RectDimensions): void;
-  setBoundaries(
-    rect: RectDimensions,
-    unifiedContainerDimensions: Dimensions
+  registerNewElm(
+    offset: RectDimensions,
+    unifiedContainerDimensions?: Dimensions
   ): void;
+  appendElmToContainer(offset: RectDimensions, axis: Axis): void;
+  resetIndicators(): void;
   preservePosition(position: IPointAxes | null): void;
 }

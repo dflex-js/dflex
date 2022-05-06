@@ -1,6 +1,6 @@
 import Store from "@dflex/store";
 
-import { Tracker, Scroll, canUseDOM, IPointNum } from "@dflex/utils";
+import { Tracker, Scroll, canUseDOM, Axis } from "@dflex/utils";
 import type {
   Dimensions,
   RectDimensions,
@@ -315,44 +315,44 @@ class DnDStoreImp extends Store implements IDnDStore {
     // Using element grid zero to know if the element has been initiated inside
     // container or not.
     if (this.registry[id].grid.x === 0) {
-      const { offset, grid } = this.registry[id];
+      const { offset } = this.registry[id];
 
-      this.containers[SK].setGrid(grid, offset);
-      this.containers[SK].setBoundaries(
+      this.containers[SK].registerNewElm(
         offset,
         this.unifiedContainerDimensions[depth]
       );
+
+      this.registry[id].grid.clone(this.containers[SK].grid);
     }
 
     this.updateElementVisibility(id, this.containers[SK].scroll, false);
   }
 
   handleElmMigration(
-    newSK: string,
-    oldSK: string,
-    depth: number,
-    append: {
-      offset: RectDimensions;
-      grid: IPointNum;
-    }
+    SK: string,
+    originSK: string,
+    appendOffset: RectDimensions,
+    axis: Axis
   ) {
-    this.containers[newSK].setBoundaries(
-      append.offset,
-      this.unifiedContainerDimensions[depth]
-    );
-    this.containers[newSK].setGrid(append.grid, append.offset);
+    // Append the newest element to the end of the branch.
+    this.containers[SK].appendElmToContainer(appendOffset, axis);
 
-    this.DOMGen.branches[oldSK].forEach((elmID) => {
-      if (elmID.length > 0) {
-        const elm = this.registry[elmID];
+    const origin = this.DOMGen.branches[originSK];
 
-        this.containers[oldSK].setBoundaries(
-          elm.getOffset(),
-          this.unifiedContainerDimensions[depth]
-        );
-        this.containers[oldSK].setGrid(elm.grid, elm.getOffset());
-      }
-    });
+    // Don't reset empty branch keep the boundaries.
+    if (origin.length === 0) return;
+
+    this.containers[originSK].resetIndicators();
+
+    // TODO: Update the origin from where it's sliced.
+    for (let i = 0; i < origin.length; i += 1) {
+      const elmID = origin[i];
+      const elm = this.registry[elmID];
+
+      this.containers[originSK].registerNewElm(elm.getOffset());
+
+      this.registry[originSK].grid.clone(this.containers[SK].grid);
+    }
   }
 
   register(element: RegisterInput) {

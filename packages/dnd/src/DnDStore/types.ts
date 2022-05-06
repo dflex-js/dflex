@@ -1,9 +1,4 @@
-import type {
-  Dimensions,
-  RectDimensions,
-  ITracker,
-  IPointNum,
-} from "@dflex/utils";
+import type { Dimensions, RectDimensions, ITracker, Axis } from "@dflex/utils";
 import type { INode, IContainer } from "@dflex/core-instance";
 import type { RegisterInputMeta } from "@dflex/store";
 
@@ -67,13 +62,10 @@ export interface IDnDStore {
   initSiblingContainer(SK: string, shouldValidate: boolean): void;
   updateBranchVisibility(SK: string, shouldCheckVisibility: boolean): void;
   handleElmMigration(
-    newSK: string,
-    oldSK: string,
-    depth: number,
-    append: {
-      offset: RectDimensions;
-      grid: IPointNum;
-    }
+    SK: string,
+    originSK: string,
+    appendOffset: RectDimensions,
+    axis: Axis
   ): void;
   onStateChange(state: LayoutState): void;
   emitEvent(event: DraggedEvent): void;

@@ -234,7 +234,7 @@ class Droppable extends DistanceCalculator {
       draggedElm,
       occupiedTranslate,
       occupiedPosition,
-      gridPlaceholder,
+      // gridPlaceholder,
     } = this.draggable;
 
     const { key: SK } = migration.latest();
@@ -305,7 +305,7 @@ class Droppable extends DistanceCalculator {
 
         // grid to append.
         // Same as offset but with the element's grid.
-        let grid;
+        // let grid;
 
         // We have one active list at one time.
         // Each active list should preserve the position of the last element for
@@ -316,7 +316,7 @@ class Droppable extends DistanceCalculator {
           offset.left = occupiedPosition.x;
           offset.top = occupiedPosition.y;
 
-          grid = gridPlaceholder;
+          // grid = gridPlaceholder;
 
           preservedLastELmPosition = occupiedPosition;
         } else {
@@ -330,17 +330,17 @@ class Droppable extends DistanceCalculator {
           offset.left = lastElm.currentPosition.x;
           offset.top = lastElm.currentPosition.y;
 
-          ({ grid } = lastElm);
+          // ({ grid } = lastElm);
 
           ({ currentPosition: preservedLastELmPosition } = lastElm);
         }
 
         occupiedTranslate.clone(draggedTransition);
 
-        store.handleElmMigration(SK, migration.prev().key, draggedElm.depth, {
-          offset,
-          grid,
-        });
+        // store.handleElmMigration(SK, migration.prev().key, draggedElm.depth, {
+        //   offset,
+        //   grid,
+        // });
 
         store.containers[SK].preservePosition(preservedLastELmPosition);
 
