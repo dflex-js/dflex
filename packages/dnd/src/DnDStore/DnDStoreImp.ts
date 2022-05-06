@@ -536,9 +536,6 @@ class DnDStoreImp extends Store implements IDnDStore {
     // Reset the branch instances.
     if (this.DOMGen.branches[SK] === null) {
       this.clearBranchesScroll();
-
-      // @ts-expect-error It will be initiated again on the next register.
-      this.siblingsBoundaries[SK] = null;
     }
   }
 
