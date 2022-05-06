@@ -1,5 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Container Container is initiated 1`] = `
+Container {
+  "grid": PointNum {
+    "x": 1,
+    "y": 1,
+  },
+}
+`;
+
 exports[`Container container is initiated 1`] = `
 Container {
   "grid": PointNum {

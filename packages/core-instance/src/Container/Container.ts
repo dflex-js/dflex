@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { PointNum, dirtyAssignBiggestRect, Axis } from "@dflex/utils";
+import { PointNum, dirtyAssignBiggestRect } from "@dflex/utils";
 
 import type {
   Dimensions,
@@ -108,24 +108,6 @@ class Container implements IContainer {
     if (uni.width < $width) {
       uni.width = $height;
     }
-  }
-
-  appendElmToContainer(offset: RectDimensions, axis: Axis) {
-    const { height, left, top, width } = offset;
-
-    const right = left + width;
-    const bottom = top + height;
-
-    const elmRectBoundaries = {
-      top,
-      left,
-      right,
-      bottom,
-    };
-
-    dirtyAssignBiggestRect(this.boundaries, elmRectBoundaries);
-
-    this.grid[axis] += 1;
   }
 
   resetIndicators() {

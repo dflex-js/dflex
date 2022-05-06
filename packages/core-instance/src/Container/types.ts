@@ -5,7 +5,6 @@ import type {
   IPointNum,
   IPointAxes,
   IScroll,
-  Axis,
 } from "@dflex/utils";
 
 export interface IContainer {
@@ -26,7 +25,6 @@ export interface IContainer {
     offset: RectDimensions,
     unifiedContainerDimensions?: Dimensions
   ): void;
-  appendElmToContainer(offset: RectDimensions, axis: Axis): void;
   resetIndicators(): void;
   preservePosition(position: IPointAxes | null): void;
 }
