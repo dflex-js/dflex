@@ -229,13 +229,7 @@ class Droppable extends DistanceCalculator {
   }
 
   #detectNearestElm() {
-    const {
-      migration,
-      draggedElm,
-      occupiedTranslate,
-      occupiedPosition,
-      gridPlaceholder,
-    } = this.draggable;
+    const { migration, draggedElm, occupiedTranslate } = this.draggable;
 
     const { key: SK } = migration.latest();
 
@@ -299,50 +293,18 @@ class Droppable extends DistanceCalculator {
         const offset = {
           height: draggedElm.offset.height,
           width: draggedElm.offset.width,
-          left: 0,
-          top: 0,
+          left: this.appendElmMeta!.position.x,
+          top: this.appendElmMeta!.position.y,
         };
-
-        // grid to append.
-        // Same as offset but with the element's grid.
-        let grid;
-
-        // We have one active list at one time.
-        // Each active list should preserve the position of the last element for
-        // the purpose of threshold out/in.
-        let preservedLastELmPosition;
-
-        if (isOrphan) {
-          offset.left = occupiedPosition.x;
-          offset.top = occupiedPosition.y;
-
-          grid = gridPlaceholder;
-
-          preservedLastELmPosition = occupiedPosition;
-        } else {
-          const activeList = store.getElmBranchByKey(SK);
-
-          const lastElm = Droppable.getTheLastValidElm(
-            activeList,
-            draggedElm.id
-          );
-
-          offset.left = lastElm.currentPosition.x;
-          offset.top = lastElm.currentPosition.y;
-
-          ({ grid } = lastElm);
-
-          ({ currentPosition: preservedLastELmPosition } = lastElm);
-        }
 
         occupiedTranslate.clone(draggedTransition);
 
         store.handleElmMigration(SK, migration.prev().key, draggedElm.depth, {
           offset,
-          grid,
+          grid: new PointNum(1, 1),
         });
 
-        store.containers[SK].preservePosition(preservedLastELmPosition);
+        store.containers[SK].preservePosition(this.appendElmMeta!.position);
 
         migration.complete();
       });
@@ -369,6 +331,13 @@ class Droppable extends DistanceCalculator {
 
       // Check if it is not the same list and if the dragged is inside new one.
       if (newSK !== originSK && !this.draggable.isOutThreshold(newSK, true)) {
+        const destinationList = store.getElmBranchByKey(newSK);
+
+        this.appendElmMeta = this.getInsertionELmMeta(
+          destinationList.length - 1,
+          newSK
+        );
+
         migration.start();
 
         const originList = store.getElmBranchByKey(originSK);
@@ -378,15 +347,8 @@ class Droppable extends DistanceCalculator {
         // placeholder as all the elements are stacked.
         originList.pop();
 
-        const destinationList = store.getElmBranchByKey(newSK);
-
-        const appendMeta = this.getInsertionELmMeta(
-          destinationList.length - 1,
-          newSK
-        );
-
         const occupiedPosition = this.getComposedOccupiedPosition(
-          appendMeta,
+          this.appendElmMeta,
           originSK,
           "y"
         );

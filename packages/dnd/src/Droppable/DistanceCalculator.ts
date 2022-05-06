@@ -34,6 +34,8 @@ function emitInteractiveEvent(
 class DistanceCalculator {
   protected draggable: IDraggableInteractive;
 
+  protected appendElmMeta?: InsertionELmMeta;
+
   #elmTransition: IPointNum;
 
   #draggedPositionOffset: IPointNum;
