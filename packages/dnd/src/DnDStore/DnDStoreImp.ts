@@ -340,6 +340,9 @@ class DnDStoreImp extends Store implements IDnDStore {
 
     const origin = this.DOMGen.branches[originSK];
 
+    // Don't reset empty branch keep the boundaries.
+    if (origin.length === 0) return;
+
     this.containers[originSK].resetBoundaries();
 
     // TODO: Update the origin from where it's sliced.
