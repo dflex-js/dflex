@@ -380,9 +380,18 @@ class Droppable extends DistanceCalculator {
 
         const destinationList = store.getElmBranchByKey(newSK);
 
-        this.draggable.occupiedPosition.clone(
-          this.getComposedOccupiedPosition(newSK, originSK, "y")
+        const appendMeta = this.getInsertionELmMeta(
+          destinationList.length - 1,
+          newSK
         );
+
+        const occupiedPosition = this.getComposedOccupiedPosition(
+          appendMeta,
+          originSK,
+          "y"
+        );
+
+        this.draggable.occupiedPosition.clone(occupiedPosition);
 
         this.draggable.gridPlaceholder.setAxes(1, 1);
 
