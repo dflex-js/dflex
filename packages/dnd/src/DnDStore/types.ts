@@ -69,10 +69,7 @@ export interface IDnDStore {
   handleElmMigration(
     SK: string,
     originSK: string,
-    append: {
-      offset: RectDimensions;
-      grid: IPointNum;
-    }
+    appendOffset: RectDimensions
   ): void;
   onStateChange(state: LayoutState): void;
   emitEvent(event: DraggedEvent): void;

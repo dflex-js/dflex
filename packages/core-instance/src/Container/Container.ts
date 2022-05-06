@@ -167,6 +167,10 @@ class Container implements IContainer {
     this.#setBoundaries(elmRect, unifiedContainerDimensions);
   }
 
+  appendElmToContainer(elmRect: RectDimensions) {
+    this.#setBoundaries(elmRect);
+  }
+
   resetBoundaries() {
     // @ts-expect-error - Just resetting the boundaries.
     this.boundaries = null;
