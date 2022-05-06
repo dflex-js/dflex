@@ -42,6 +42,13 @@ class Container implements IContainer {
     const right = left + width;
     const bottom = top + height;
 
+    const elmRectBoundaries = {
+      top,
+      left,
+      right,
+      bottom,
+    };
+
     const $ = this.#boundariesStorageForGrid;
 
     const row = grid.x || 1;
@@ -49,17 +56,10 @@ class Container implements IContainer {
     const rowRect = $[row];
 
     if (!rowRect) {
-      this.grid = new PointNum(1, 1);
-
       grid.clone(this.grid);
 
       this.#boundariesStorageForGrid = {
-        [row]: {
-          top,
-          left,
-          right,
-          bottom,
-        },
+        [row]: elmRectBoundaries,
       };
 
       return;
@@ -88,21 +88,7 @@ class Container implements IContainer {
 
     grid.clone(this.grid);
 
-    if (left < rowRect.left) {
-      rowRect.left = left;
-    }
-
-    if (top < rowRect.top) {
-      rowRect.top = top;
-    }
-
-    if (right > rowRect.right) {
-      rowRect.right = right;
-    }
-
-    if (bottom > rowRect.bottom) {
-      rowRect.bottom = bottom;
-    }
+    dirtyAssignBiggestRect(rowRect, elmRectBoundaries);
   }
 
   setBoundaries(rect: RectDimensions, unifiedContainerDimensions: Dimensions) {
