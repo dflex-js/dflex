@@ -317,9 +317,9 @@ class DnDStoreImp extends Store implements IDnDStore {
     if (this.registry[id].grid.x === 0) {
       const { offset, grid } = this.registry[id];
 
-      this.containers[SK].setGrid(grid, offset);
-      this.containers[SK].setBoundaries(
+      this.containers[SK].addElmToContainer(
         offset,
+        grid,
         this.unifiedContainerDimensions[depth]
       );
     }
@@ -328,31 +328,27 @@ class DnDStoreImp extends Store implements IDnDStore {
   }
 
   handleElmMigration(
-    newSK: string,
-    oldSK: string,
-    depth: number,
+    SK: string,
+    originSK: string,
     append: {
       offset: RectDimensions;
       grid: IPointNum;
     }
   ) {
-    this.containers[newSK].setBoundaries(
-      append.offset,
-      this.unifiedContainerDimensions[depth]
-    );
-    this.containers[newSK].setGrid(append.grid, append.offset);
+    // Append the newest element to the end of the branch.
+    this.containers[SK].addElmToContainer(append.offset, append.grid);
 
-    this.DOMGen.branches[oldSK].forEach((elmID) => {
-      if (elmID.length > 0) {
-        const elm = this.registry[elmID];
+    const origin = this.DOMGen.branches[originSK];
 
-        this.containers[oldSK].setBoundaries(
-          elm.getOffset(),
-          this.unifiedContainerDimensions[depth]
-        );
-        this.containers[oldSK].setGrid(elm.grid, elm.getOffset());
-      }
-    });
+    this.containers[originSK].resetBoundaries();
+
+    // TODO: Update the origin from where it's sliced.
+    for (let i = 0; i < origin.length; i += 1) {
+      const elmID = origin[i];
+      const elm = this.registry[elmID];
+
+      this.containers[originSK].addElmToContainer(elm.getOffset(), elm.grid);
+    }
   }
 
   register(element: RegisterInput) {

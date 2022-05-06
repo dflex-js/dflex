@@ -306,7 +306,7 @@ class Droppable extends DistanceCalculator {
         const grid =
           store.registry[siblings[siblings.length - 1]]?.grid || draggedGrid;
 
-        store.handleElmMigration(SK, migration.prev().key, draggedElm.depth, {
+        store.handleElmMigration(SK, migration.prev().key, {
           offset,
           grid,
         });

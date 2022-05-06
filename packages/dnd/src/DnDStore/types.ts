@@ -67,9 +67,8 @@ export interface IDnDStore {
   initSiblingContainer(SK: string, shouldValidate: boolean): void;
   updateBranchVisibility(SK: string, shouldCheckVisibility: boolean): void;
   handleElmMigration(
-    newSK: string,
-    oldSK: string,
-    depth: number,
+    SK: string,
+    originSK: string,
     append: {
       offset: RectDimensions;
       grid: IPointNum;
