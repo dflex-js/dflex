@@ -229,7 +229,8 @@ class Droppable extends DistanceCalculator {
   }
 
   #detectNearestElm() {
-    const { migration, draggedElm, occupiedTranslate } = this.draggable;
+    const { migration, draggedElm, occupiedTranslate, gridPlaceholder } =
+      this.draggable;
 
     const { key: SK } = migration.latest();
 
@@ -267,15 +268,17 @@ class Droppable extends DistanceCalculator {
     this.lockParent(false);
 
     let draggedTransition: IPointAxes;
+    let draggedGrid: IPointAxes;
 
     if (migration.isTransitioning) {
-      draggedTransition = this.getComposedOccupiedTranslate(
-        SK,
-        insertAt,
-        migration.prev().key,
-        hasToMoveSiblingsDown,
-        "y"
-      );
+      ({ translate: draggedTransition, grid: draggedGrid } =
+        this.getComposedOccupiedTranslateAndGrid(
+          SK,
+          insertAt,
+          migration.prev().key,
+          hasToMoveSiblingsDown,
+          "y"
+        ));
     }
 
     // If it has solo empty id then there's no need to move down. Because it's
@@ -298,10 +301,14 @@ class Droppable extends DistanceCalculator {
         };
 
         occupiedTranslate.clone(draggedTransition);
+        gridPlaceholder.clone(draggedGrid);
+
+        const grid =
+          store.registry[siblings[siblings.length - 1]]?.grid || draggedGrid;
 
         store.handleElmMigration(SK, migration.prev().key, draggedElm.depth, {
           offset,
-          grid: new PointNum(1, 1),
+          grid,
         });
 
         store.containers[SK].preservePosition(this.appendElmMeta!.position);

@@ -236,17 +236,15 @@ class DistanceCalculator {
     return DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
   }
 
-  protected getComposedOccupiedTranslate(
+  protected getComposedOccupiedTranslateAndGrid(
     SK: string,
     insertAt: number,
     originSK: string,
     insertFromAbove: boolean,
     axis: Axis
   ) {
-    const { position, elm, isRestoredLastPosition } = this.getInsertionELmMeta(
-      insertAt,
-      SK
-    );
+    const { position, elm, isRestoredLastPosition, isOrphan } =
+      this.getInsertionELmMeta(insertAt, SK);
 
     const { draggedElm, migration } = this.draggable;
 
@@ -257,15 +255,30 @@ class DistanceCalculator {
       y: Node.getDistance(position, draggedElm, "y"),
     };
 
-    if (!isRestoredLastPosition && !insertFromAbove) {
-      this.#addDraggedOffsetToElm(composedTranslate, elm, axis);
-      composedTranslate[axis] += this.#getMarginBtwElmAndDragged(
-        originSK,
-        // Called after migration during the transitions.
-        migration.prev().index,
-        false,
-        axis
-      );
+    const composedGrid = new PointNum(1, 1);
+
+    if (!isOrphan) {
+      const { grid } = elm;
+
+      composedGrid.clone(grid);
+    }
+
+    if (insertFromAbove) {
+      composedGrid.y -= 1;
+    } else {
+      composedGrid.y += 1;
+
+      // Is the list expanding?
+      if (!isRestoredLastPosition) {
+        this.#addDraggedOffsetToElm(composedTranslate, elm, axis);
+        composedTranslate[axis] += this.#getMarginBtwElmAndDragged(
+          originSK,
+          // Called after migration during the transitions.
+          migration.prev().index,
+          false,
+          axis
+        );
+      }
     }
 
     this.updateDraggedThresholdPosition(
@@ -273,7 +286,7 @@ class DistanceCalculator {
       composedTranslate.y
     );
 
-    return composedTranslate;
+    return { translate: composedTranslate, grid: composedGrid };
   }
 
   protected getComposedOccupiedPosition(
