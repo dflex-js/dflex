@@ -1,9 +1,4 @@
-import type {
-  Dimensions,
-  RectDimensions,
-  ITracker,
-  IPointNum,
-} from "@dflex/utils";
+import type { Dimensions, RectDimensions, ITracker } from "@dflex/utils";
 import type { INode, IContainer } from "@dflex/core-instance";
 import type { RegisterInputMeta } from "@dflex/store";
 
