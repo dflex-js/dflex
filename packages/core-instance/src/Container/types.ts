@@ -21,10 +21,11 @@ export interface IContainer {
 
   /** Container scroll instance.  */
   scroll: IScroll;
-  setGrid(grid: IPointNum, rect: RectDimensions): void;
-  setBoundaries(
-    rect: RectDimensions,
-    unifiedContainerDimensions: Dimensions
+  addElmToContainer(
+    elmRect: RectDimensions,
+    elmGrid: IPointNum,
+    unifiedContainerDimensions?: Dimensions
   ): void;
+  resetBoundaries(): void;
   preservePosition(position: IPointAxes | null): void;
 }
