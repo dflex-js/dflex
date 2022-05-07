@@ -319,7 +319,6 @@ class DnDStoreImp extends Store implements IDnDStore {
 
       this.containers[SK].registerNewElm(
         offset,
-        grid,
         this.unifiedContainerDimensions[depth]
       );
 
