@@ -50,16 +50,4 @@ describe("Container", () => {
     expect(container.grid.y).toBe(1);
     expect(container.boundaries).toBeNull();
   });
-
-  it("Registers two elements in the same row", () => {
-    container.registerNewElm(elmR1Col1);
-
-    expect(container.grid.x).toBe(1);
-    expect(container.grid.y).toBe(1);
-
-    container.registerNewElm(elmR1Col2);
-
-    expect(container.grid.x).toBe(2);
-    expect(container.grid.y).toBe(1);
-  });
 });

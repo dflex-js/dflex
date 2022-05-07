@@ -222,7 +222,7 @@ context(
           button: 0,
         });
 
-        stepsY = 260;
+        stepsY = 250;
         for (let i = stepsY; i < stepsY + 110; i += 10) {
           cy.get("#c1-1").trigger("mousemove", {
             clientY: startingPointY + i,
