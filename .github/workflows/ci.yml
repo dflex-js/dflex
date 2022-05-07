@@ -151,8 +151,8 @@ jobs:
             packages/**/dist
           if-no-files-found: error
 
-  e2e-same-container-vertical:
-    name: One Container vertically - Chrome
+  e2e-same-container-vertical-chrome:
+    name: One Container Vertically - Chrome
     runs-on: ubuntu-latest
     needs: install-build
     timeout-minutes: 8
@@ -305,7 +305,7 @@ jobs:
         unit-test,
         types,
         install-build,
-        e2e-same-container-vertical,
+        e2e-same-container-vertical-chrome,
         e2e-same-container-horizontal,
         e2e-multi-containers,
       ]
