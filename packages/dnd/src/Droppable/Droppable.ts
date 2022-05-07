@@ -53,6 +53,8 @@ class Droppable extends DistanceCalculator {
    * transformation. */
   #animatedDraggedInsertionFrame: number | null;
 
+  #listAppendPosition?: IPointAxes;
+
   static INDEX_OUT_CONTAINER = NaN;
 
   static APPEND_EMPTY_ELM_ID = "";
@@ -229,13 +231,8 @@ class Droppable extends DistanceCalculator {
   }
 
   #detectNearestElm() {
-    const {
-      migration,
-      draggedElm,
-      occupiedTranslate,
-      occupiedPosition,
-      gridPlaceholder,
-    } = this.draggable;
+    const { migration, draggedElm, occupiedTranslate, gridPlaceholder } =
+      this.draggable;
 
     const { key: SK } = migration.latest();
 
@@ -273,15 +270,17 @@ class Droppable extends DistanceCalculator {
     this.lockParent(false);
 
     let draggedTransition: IPointAxes;
+    let draggedGrid: IPointNum;
 
     if (migration.isTransitioning) {
-      draggedTransition = this.getComposedOccupiedTranslate(
-        SK,
-        insertAt,
-        migration.prev().key,
-        hasToMoveSiblingsDown,
-        "y"
-      );
+      ({ translate: draggedTransition, grid: draggedGrid } =
+        this.getComposedOccupiedTranslateAndGrid(
+          SK,
+          insertAt,
+          migration.prev().key,
+          hasToMoveSiblingsDown,
+          "y"
+        ));
     }
 
     // If it has solo empty id then there's no need to move down. Because it's
@@ -293,56 +292,35 @@ class Droppable extends DistanceCalculator {
     draggedElm.rmDateset("draggedOutContainer");
 
     if (migration.isTransitioning) {
+      // Compose container boundaries and refresh the store.
       queueMicrotask(() => {
         // offset to append.
         // It has to be the biggest element offset. The last element in the list.
         const offset = {
           height: draggedElm.offset.height,
           width: draggedElm.offset.width,
-          left: 0,
-          top: 0,
+          left: this.#listAppendPosition!.x,
+          top: this.#listAppendPosition!.y,
         };
 
-        // grid to append.
-        // Same as offset but with the element's grid.
-        let grid;
+        occupiedTranslate.clone(draggedTransition);
+        gridPlaceholder.clone(draggedGrid);
 
-        // We have one active list at one time.
-        // Each active list should preserve the position of the last element for
-        // the purpose of threshold out/in.
-        let preservedLastELmPosition;
+        let grid = draggedGrid;
 
-        if (isOrphan) {
-          offset.left = occupiedPosition.x;
-          offset.top = occupiedPosition.y;
+        const lastElm = store.registry[siblings[siblings.length - 1]];
 
-          grid = gridPlaceholder;
-
-          preservedLastELmPosition = occupiedPosition;
-        } else {
-          const activeList = store.getElmBranchByKey(SK);
-
-          const lastElm = Droppable.getTheLastValidElm(
-            activeList,
-            draggedElm.id
-          );
-
-          offset.left = lastElm.currentPosition.x;
-          offset.top = lastElm.currentPosition.y;
-
+        if (lastElm) {
           ({ grid } = lastElm);
 
-          ({ currentPosition: preservedLastELmPosition } = lastElm);
+          if (grid.y < draggedGrid.y) {
+            grid = draggedGrid;
+          }
         }
 
-        occupiedTranslate.clone(draggedTransition);
+        store.handleElmMigration(SK, migration.prev().key, offset);
 
-        store.handleElmMigration(SK, migration.prev().key, draggedElm.depth, {
-          offset,
-          grid,
-        });
-
-        store.containers[SK].preservePosition(preservedLastELmPosition);
+        store.containers[SK].preservePosition(this.#listAppendPosition!);
 
         migration.complete();
       });
@@ -380,9 +358,13 @@ class Droppable extends DistanceCalculator {
 
         const destinationList = store.getElmBranchByKey(newSK);
 
-        this.draggable.occupiedPosition.clone(
-          this.getComposedOccupiedPosition(newSK, originSK, "y")
+        this.#listAppendPosition = this.getComposedOccupiedPosition(
+          newSK,
+          originSK,
+          "y"
         );
+
+        this.draggable.occupiedPosition.clone(this.#listAppendPosition);
 
         this.draggable.gridPlaceholder.setAxes(1, 1);
 

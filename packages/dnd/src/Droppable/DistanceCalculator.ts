@@ -133,11 +133,7 @@ class DistanceCalculator {
     });
   }
 
-  #getInsertionELmMeta(
-    insertAt: number,
-    SK: string,
-    isRetrievePrevElm?: true | never
-  ): InsertionELmMeta {
+  #getInsertionELmMeta(insertAt: number, SK: string): InsertionELmMeta {
     const lst = store.getElmBranchByKey(SK);
 
     const { length } = lst;
@@ -157,6 +153,10 @@ class DistanceCalculator {
     let prevIndex = NaN;
 
     if (Droppable.isOrphan(lst)) {
+      // TODO:
+      // This is a bug. Cause it should be treated same way as the last
+      // position. If we can restore, the we do it otherwise we do the
+      // calculations based on dragged.
       position.clone(lastElmPosition);
       isOrphan = true;
       isRestoredLastPosition = true;
@@ -165,9 +165,7 @@ class DistanceCalculator {
 
       prevIndex = insertAt - 1;
 
-      isRetrievePrevElmValid = isRetrievePrevElm
-        ? prevIndex >= 0 && prevIndex < length
-        : false;
+      isRetrievePrevElmValid = prevIndex >= 0 && prevIndex < length;
 
       if (isInsertedLast) {
         elm = Droppable.getTheLastValidElm(lst, draggedElm.id);
@@ -236,18 +234,15 @@ class DistanceCalculator {
     return DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
   }
 
-  protected getComposedOccupiedTranslate(
+  protected getComposedOccupiedTranslateAndGrid(
     SK: string,
     insertAt: number,
     originSK: string,
-    insertFromAbove: boolean,
+    insertFromTop: boolean,
     axis: Axis
   ) {
-    const { position, elm, isRestoredLastPosition } = this.#getInsertionELmMeta(
-      insertAt,
-      SK,
-      true
-    );
+    const { position, elm, isRestoredLastPosition, isOrphan } =
+      this.#getInsertionELmMeta(insertAt, SK);
 
     const { draggedElm, migration } = this.draggable;
 
@@ -258,15 +253,31 @@ class DistanceCalculator {
       y: Node.getDistance(position, draggedElm, "y"),
     };
 
-    if (!isRestoredLastPosition && !insertFromAbove) {
-      this.#addDraggedOffsetToElm(composedTranslate, elm, axis);
-      composedTranslate[axis] += this.#getMarginBtwElmAndDragged(
-        originSK,
-        // Called after migration during the transitions.
-        migration.prev().index,
-        false,
-        axis
-      );
+    const composedGrid = new PointNum(1, 1);
+
+    if (!isOrphan) {
+      const { grid } = elm;
+
+      composedGrid.clone(grid);
+    }
+
+    if (insertFromTop) {
+      // Don't decrease the first element.
+      if (composedGrid[axis] - 1 >= 1) composedGrid[axis] -= 1;
+    } else {
+      composedGrid[axis] += 1;
+
+      // Is the list expanding?
+      if (!isRestoredLastPosition) {
+        this.#addDraggedOffsetToElm(composedTranslate, elm, axis);
+        composedTranslate[axis] += this.#getMarginBtwElmAndDragged(
+          originSK,
+          // Called after migration during the transitions.
+          migration.prev().index,
+          false,
+          axis
+        );
+      }
     }
 
     this.updateDraggedThresholdPosition(
@@ -274,7 +285,7 @@ class DistanceCalculator {
       composedTranslate.y
     );
 
-    return composedTranslate;
+    return { translate: composedTranslate, grid: composedGrid };
   }
 
   protected getComposedOccupiedPosition(
@@ -292,7 +303,7 @@ class DistanceCalculator {
       isRestoredLastPosition,
       elm: lastElm,
       prevElm,
-    } = this.#getInsertionELmMeta(length - 1, SK, true);
+    } = this.#getInsertionELmMeta(length - 1, SK);
 
     // Restore the last known current position.
 
