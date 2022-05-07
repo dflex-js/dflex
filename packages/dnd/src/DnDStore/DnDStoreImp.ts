@@ -33,7 +33,7 @@ Did you forget to call store.unregister(${id}) or add parenID when register the 
 class DnDStoreImp extends Store implements IDnDStore {
   containers: { [siblingKey: string]: IContainer };
 
-  unifiedContainerDimensions: {
+  readonly unifiedContainerDimensions: {
     [depth: number]: Dimensions;
   };
 
@@ -540,9 +540,6 @@ class DnDStoreImp extends Store implements IDnDStore {
     // Reset the branch instances.
     if (this.DOMGen.branches[SK] === null) {
       this.clearBranchesScroll();
-
-      // @ts-expect-error It will be initiated again on the next register.
-      this.siblingsBoundaries[SK] = null;
     }
   }
 
