@@ -1,5 +1,6 @@
 import { Container } from "../src";
 
+// TODO: Add more cases to cover the grid. This is just a shallow test.
 describe("Container", () => {
   let container: Container;
 
@@ -19,10 +20,6 @@ describe("Container", () => {
 
   beforeAll(() => {
     container = new Container();
-  });
-
-  it("Container is initiated", () => {
-    expect(container).toMatchSnapshot();
   });
 
   it("Registers two elements in the same row", () => {

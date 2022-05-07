@@ -68,6 +68,9 @@ class Container implements IContainer {
     dirtyAssignBiggestRect($, rect);
   }
 
+  // TODO: How to unregister element from the edge of the container? Currently
+  // we reset and accumulate, it's inefficient. removeElmFromEdge() is a better.
+
   registerNewElm(
     offset: RectDimensions,
     unifiedContainerDimensions?: Dimensions

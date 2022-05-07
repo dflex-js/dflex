@@ -16,6 +16,7 @@ export interface IContainer {
 
   /** Strict Rect for siblings containers. */
   readonly boundaries: RectBoundaries;
+
   /** Numbers of total columns and rows each container has.  */
   readonly grid: IPointNum;
 
