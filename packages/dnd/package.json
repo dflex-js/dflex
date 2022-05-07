@@ -29,7 +29,9 @@
     "cy:dev": "start-server-and-test 'pnpm run server' http-get://localhost:3001 'pnpm cy:open'",
     "test": "start-server-and-test 'pnpm run server' http-get://localhost:3001 'pnpm cy:run'",
     "cy:run:vertical:chrome": "cypress run --env extended=true --headless --spec cypress/integration/same-container-vertical/**/*.spec.ts --config-file cypress.json --browser chrome",
-    "test:vertical:chrome": "start-server-and-test 'pnpm run server' http-get://localhost:3001 'pnpm cy:run:vertical:chrome'"
+    "cy:run:vertical:firefox": "cypress run --env extended=true --headless --spec cypress/integration/same-container-vertical/**/*.spec.ts --config-file cypress.json --browser firefox",
+    "test:vertical:chrome": "start-server-and-test 'pnpm run server' http-get://localhost:3001 'pnpm cy:run:vertical:chrome'",
+    "test:vertical:firefox": "start-server-and-test 'pnpm run server' http-get://localhost:3001 'pnpm cy:run:vertical:firefox'"
   },
   "homepage": "https://github.com/dflex-js/dflex/tree/master/packages/dnd",
   "repository": "https://github.com/dflex-js/dflex",
