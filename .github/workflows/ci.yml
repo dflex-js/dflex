@@ -196,6 +196,7 @@ jobs:
           spec: cypress/integration/same-container-vertical/**/*.spec.ts
           wait-on: "http://localhost:3001/"
           browser: chrome
+          headless: false
           # parallel: true
           # record: true
         env:
@@ -251,7 +252,7 @@ jobs:
           spec: cypress/integration/same-container-horizontal/**/*.spec.ts
           wait-on: "http://localhost:3001/"
           browser: chrome
-          headless: true
+          headless: false
         env:
           #CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
           #CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
@@ -304,7 +305,7 @@ jobs:
           spec: cypress/integration/multiple-containers/**/*.spec.ts
           wait-on: "http://localhost:3001/"
           browser: chrome
-          headless: true
+          headless: false
         env:
           #CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
           #CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
