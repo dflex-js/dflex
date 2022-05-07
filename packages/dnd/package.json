@@ -45,7 +45,7 @@
     "@dflex/utils": "workspace:^3.4.1",
     "cross-env": "^7.0.3",
     "cypress": "^9.6.0",
-    "eslint": "^8.14.0",
+    "eslint": "^8.15.0",
     "eslint-plugin-cypress": "^2.12.1",
     "start-server-and-test": "^1.14.0",
     "v8-to-istanbul": "^9.0.0"
