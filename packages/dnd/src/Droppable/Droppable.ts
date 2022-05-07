@@ -275,13 +275,14 @@ class Droppable extends DistanceCalculator {
     let draggedTransition: IPointAxes;
 
     if (migration.isTransitioning) {
-      draggedTransition = this.getComposedOccupiedTranslate(
-        SK,
-        insertAt,
-        migration.prev().key,
-        hasToMoveSiblingsDown,
-        "y"
-      );
+      ({ translate: draggedTransition } =
+        this.getComposedOccupiedTranslateAndGrid(
+          SK,
+          insertAt,
+          migration.prev().key,
+          hasToMoveSiblingsDown,
+          "y"
+        ));
     }
 
     // If it has solo empty id then there's no need to move down. Because it's
