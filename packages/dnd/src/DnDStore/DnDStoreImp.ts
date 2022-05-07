@@ -343,15 +343,12 @@ class DnDStoreImp extends Store implements IDnDStore {
 
     this.containers[originSK].resetIndicators();
 
-    // TODO: Update the origin from where it's sliced.
-    for (let i = 0; i < origin.length; i += 1) {
-      const elmID = origin[i];
+    origin.forEach((elmID) => {
       const elm = this.registry[elmID];
 
       this.containers[originSK].registerNewElm(elm.getOffset());
-
-      elm.grid.clone(this.containers[SK].grid);
-    }
+      elm.grid.clone(this.containers[originSK].grid);
+    });
   }
 
   register(element: RegisterInput) {

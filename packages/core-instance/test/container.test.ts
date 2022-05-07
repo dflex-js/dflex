@@ -42,4 +42,24 @@ describe("Container", () => {
       bottom: 10,
     });
   });
+
+  it("Resets the boundaries and grid", () => {
+    container.resetIndicators();
+
+    expect(container.grid.x).toBe(1);
+    expect(container.grid.y).toBe(1);
+    expect(container.boundaries).toBeNull();
+  });
+
+  it("Registers two elements in the same row", () => {
+    container.registerNewElm(elmR1Col1);
+
+    expect(container.grid.x).toBe(1);
+    expect(container.grid.y).toBe(1);
+
+    container.registerNewElm(elmR1Col2);
+
+    expect(container.grid.x).toBe(2);
+    expect(container.grid.y).toBe(1);
+  });
 });
