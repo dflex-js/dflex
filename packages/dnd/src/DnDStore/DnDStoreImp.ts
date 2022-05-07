@@ -315,13 +315,15 @@ class DnDStoreImp extends Store implements IDnDStore {
     // Using element grid zero to know if the element has been initiated inside
     // container or not.
     if (this.registry[id].grid.x === 0) {
-      const { offset, grid } = this.registry[id];
+      const { offset } = this.registry[id];
 
-      this.containers[SK].addElmToContainer(
+      this.containers[SK].registerNewElm(
         offset,
         grid,
         this.unifiedContainerDimensions[depth]
       );
+
+      this.registry[id].grid.clone(this.containers[SK].grid);
     }
 
     this.updateElementVisibility(id, this.containers[SK].scroll, false);
@@ -333,21 +335,23 @@ class DnDStoreImp extends Store implements IDnDStore {
     appendOffset: RectDimensions
   ) {
     // Append the newest element to the end of the branch.
-    this.containers[SK].appendElmToContainer(appendOffset);
+    this.containers[SK].registerNewElm(appendOffset);
 
     const origin = this.DOMGen.branches[originSK];
 
     // Don't reset empty branch keep the boundaries.
     if (origin.length === 0) return;
 
-    this.containers[originSK].resetBoundaries();
+    this.containers[originSK].resetIndicators();
 
     // TODO: Update the origin from where it's sliced.
     for (let i = 0; i < origin.length; i += 1) {
       const elmID = origin[i];
       const elm = this.registry[elmID];
 
-      this.containers[originSK].addElmToContainer(elm.getOffset(), elm.grid);
+      this.containers[originSK].registerNewElm(elm.getOffset());
+
+      this.registry[originSK].grid.clone(this.containers[SK].grid);
     }
   }
 

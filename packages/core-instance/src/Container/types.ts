@@ -16,17 +16,16 @@ export interface IContainer {
 
   /** Strict Rect for siblings containers. */
   readonly boundaries: RectBoundaries;
+
   /** Numbers of total columns and rows each container has.  */
   readonly grid: IPointNum;
 
   /** Container scroll instance.  */
   scroll: IScroll;
-  addElmToContainer(
-    elmRect: RectDimensions,
-    elmGrid: IPointNum,
+  registerNewElm(
+    offset: RectDimensions,
     unifiedContainerDimensions?: Dimensions
   ): void;
-  appendElmToContainer(elmRect: RectDimensions): void;
-  resetBoundaries(): void;
+  resetIndicators(): void;
   preservePosition(position: IPointAxes | null): void;
 }
