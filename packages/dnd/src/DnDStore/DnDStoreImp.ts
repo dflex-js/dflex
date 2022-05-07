@@ -350,7 +350,7 @@ class DnDStoreImp extends Store implements IDnDStore {
 
       this.containers[originSK].registerNewElm(elm.getOffset());
 
-      this.registry[originSK].grid.clone(this.containers[SK].grid);
+      elm.grid.clone(this.containers[SK].grid);
     }
   }
 
