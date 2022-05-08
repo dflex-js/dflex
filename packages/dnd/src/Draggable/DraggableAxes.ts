@@ -72,7 +72,7 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
 
     const siblings = store.getElmBranchByKey(SK);
 
-    this.migration = new Migration(order.self, SK);
+    this.migration = new Migration(order.self, SK, store.tracker.newTravel());
 
     if (!store.containers[SK].lastElmPosition) {
       store.containers[SK].preservePosition(
@@ -302,8 +302,8 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
 
   #isLeavingFromTail() {
     const lastElm =
-      (store.getElmBranchByKey(this.migration.latest().key) as string[])
-        .length - 1;
+      (store.getElmBranchByKey(this.migration.latest().SK) as string[]).length -
+      1;
 
     return (
       this.threshold.isOut[this.draggedElm.id].isLeftFromBottom &&
@@ -314,8 +314,7 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
   isNotSettled() {
     return (
       !this.#isLeavingFromTail() &&
-      (this.isOutThreshold() ||
-        this.isOutThreshold(this.migration.latest().key))
+      (this.isOutThreshold() || this.isOutThreshold(this.migration.latest().SK))
     );
   }
 }

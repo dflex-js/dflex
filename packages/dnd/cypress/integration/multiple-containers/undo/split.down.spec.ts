@@ -1,6 +1,5 @@
 context(
   "Splitting container horizontally and transform down outside the destination then release causing undo",
-
   () => {
     let elmBox: DOMRect;
     let startingPointX: number;

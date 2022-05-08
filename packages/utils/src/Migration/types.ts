@@ -1,7 +1,10 @@
 export interface IAbstract {
+  /** Last known index for draggable before transitioning. */
   index: number;
-
-  key: string;
+  /** Transition siblings key. */
+  SK: string;
+  /** Transition unique id. */
+  id: string;
 }
 
 export interface IMigration {
@@ -14,6 +17,8 @@ export interface IMigration {
   /** Get the previous migrations instance */
   prev(): IAbstract;
 
+  getALlMigrations(): IAbstract[];
+
   /**
    * We only update indexes considering migration definition when it happens
    * outside container but not moving inside it.
@@ -24,11 +29,13 @@ export interface IMigration {
   /**
    * Add new migration.
    */
-  add(index: number, key: string): void;
+  add(index: number, key: string, id: string): void;
 
   /** start transitioning. */
   start(): void;
 
   /** Get the migration done  */
   complete(): void;
+
+  dispose(): void;
 }

@@ -15,8 +15,6 @@ class DraggableInteractive
   extends DraggableAxes
   implements IDraggableInteractive
 {
-  operationID: string;
-
   scroll: ScrollOptWithThreshold;
 
   occupiedPosition: IPointNum;
@@ -36,7 +34,7 @@ class DraggableInteractive
 
     const { hasOverflowX, hasOverflowY } = store.containers[SK].scroll;
 
-    const siblings = store.getElmBranchByKey(this.migration.latest().key);
+    const siblings = store.getElmBranchByKey(this.migration.latest().SK);
 
     this.isDraggedPositionFixed = false;
 
@@ -80,8 +78,6 @@ class DraggableInteractive
 
     const { currentPosition, translate } = this.draggedElm;
 
-    this.operationID = store.tracker.newTravel();
-
     this.occupiedPosition = new PointNum(currentPosition.x, currentPosition.y);
     this.occupiedTranslate = new PointNum(translate.x, translate.y);
   }
@@ -95,7 +91,7 @@ class DraggableInteractive
   }
 
   setDraggedTransformPosition(isFallback: boolean) {
-    const siblings = store.getElmBranchByKey(this.migration.latest().key);
+    const siblings = store.getElmBranchByKey(this.migration.latest().SK);
 
     const hasToUndo =
       isFallback ||
@@ -152,6 +148,8 @@ class DraggableInteractive
   endDragging(isFallback: boolean) {
     this.setDragged(false);
     this.setDraggedTransformPosition(isFallback);
+
+    if (isFallback) this.migration.dispose();
 
     if (this.isDraggedPositionFixed) {
       this.changeStyle(this.changeToFixedStyleProps, false);

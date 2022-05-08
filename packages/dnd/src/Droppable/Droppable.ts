@@ -120,7 +120,7 @@ class Droppable extends DistanceCalculator {
     this.#scrollAnimatedFrame = null;
 
     const { scrollX, scrollY } =
-      store.containers[this.draggable.migration.latest().key].scroll;
+      store.containers[this.draggable.migration.latest().SK].scroll;
 
     this.#initialScroll = new PointNum(scrollX, scrollY);
 
@@ -200,7 +200,7 @@ class Droppable extends DistanceCalculator {
     let droppableIndex = null;
 
     const siblings = store.getElmBranchByKey(
-      this.draggable.migration.latest().key
+      this.draggable.migration.latest().SK
     );
 
     for (let i = 0; i < siblings.length; i += 1) {
@@ -234,7 +234,7 @@ class Droppable extends DistanceCalculator {
     const { migration, draggedElm, occupiedTranslate, gridPlaceholder } =
       this.draggable;
 
-    const { key: SK } = migration.latest();
+    const { SK } = migration.latest();
 
     const siblings = store.getElmBranchByKey(SK);
 
@@ -277,7 +277,7 @@ class Droppable extends DistanceCalculator {
         this.getComposedOccupiedTranslateAndGrid(
           SK,
           insertAt,
-          migration.prev().key,
+          migration.prev().SK,
           hasToMoveSiblingsDown,
           "y"
         ));
@@ -318,7 +318,7 @@ class Droppable extends DistanceCalculator {
           }
         }
 
-        store.handleElmMigration(SK, migration.prev().key, offset);
+        store.handleElmMigration(SK, migration.prev().SK, offset);
 
         store.containers[SK].preservePosition(this.#listAppendPosition!);
 
@@ -340,7 +340,7 @@ class Droppable extends DistanceCalculator {
 
     const dp = store.getBranchesByDepth(depth);
 
-    const { key: originSK } = migration.latest();
+    const { SK: originSK } = migration.latest();
 
     for (let i = 0; i < dp.length; i += 1) {
       newSK = dp[i];
@@ -374,7 +374,7 @@ class Droppable extends DistanceCalculator {
         // is out the branch sets its index as "".
         destinationList.push(Droppable.APPEND_EMPTY_ELM_ID);
 
-        migration.add(NaN, newSK);
+        migration.add(NaN, newSK, store.tracker.newTravel());
 
         break;
       }
@@ -383,7 +383,7 @@ class Droppable extends DistanceCalculator {
 
   #switchElement(isIncrease: boolean) {
     const siblings = store.getElmBranchByKey(
-      this.draggable.migration.latest().key
+      this.draggable.migration.latest().SK
     );
 
     const elmIndex =
@@ -409,7 +409,7 @@ class Droppable extends DistanceCalculator {
    */
   #fillHeadUp() {
     const siblings = store.getElmBranchByKey(
-      this.draggable.migration.latest().key
+      this.draggable.migration.latest().SK
     );
 
     const from = this.draggable.migration.latest().index + 1;
@@ -447,7 +447,7 @@ class Droppable extends DistanceCalculator {
    */
   #moveDown(to: number) {
     const siblings = store.getElmBranchByKey(
-      this.draggable.migration.latest().key
+      this.draggable.migration.latest().SK
     );
 
     emitSiblingsEvent("onMoveDownSiblings", {
@@ -636,7 +636,9 @@ class Droppable extends DistanceCalculator {
   }
 
   private scrollManager(x: number, y: number) {
-    const { SK } = store.registry[this.draggable.draggedElm.id].keys;
+    const { draggedElm } = this.draggable;
+
+    const { SK } = store.registry[draggedElm.id].keys;
 
     /**
      * Manage scrolling.
@@ -650,7 +652,7 @@ class Droppable extends DistanceCalculator {
         const { scrollRect, scrollHeight, threshold } =
           store.containers[SK].scroll;
         if (
-          this.draggable.isMovingAwayFrom.y &&
+          this.draggable.threshold.isOut[draggedElm.id].isLeftFromBottom &&
           y >= threshold!.thresholds[SK].bottom &&
           this.#scrollAxes.y + scrollRect.height < scrollHeight
         ) {
@@ -668,7 +670,7 @@ class Droppable extends DistanceCalculator {
         const { scrollRect, scrollHeight, threshold } =
           store.containers[SK].scroll;
         if (
-          this.draggable.isMovingAwayFrom.x &&
+          this.draggable.threshold.isOut[draggedElm.id].isLeftFromRight &&
           x >= threshold!.thresholds[SK].right &&
           this.#scrollAxes.x + scrollRect.width < scrollHeight
         ) {
@@ -724,7 +726,7 @@ class Droppable extends DistanceCalculator {
       this.draggable.draggedElm.rmDateset("draggedOutPosition");
 
       isOutSiblingsContainer = this.draggable.isOutThreshold(
-        this.draggable.migration.latest().key
+        this.draggable.migration.latest().SK
       );
 
       // when it's out, and on of theses is true then it's happening.
@@ -772,7 +774,7 @@ class Droppable extends DistanceCalculator {
      */
     if (this.isParentLocked) {
       isOutSiblingsContainer = this.draggable.isOutThreshold(
-        this.draggable.migration.latest().key
+        this.draggable.migration.latest().SK
       );
 
       if (isOutSiblingsContainer) {

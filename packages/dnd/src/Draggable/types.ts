@@ -1,6 +1,5 @@
 import type {
   IPointNum,
-  IPointBool,
   ThresholdInterface,
   ThresholdCoordinate,
   IMigration,
@@ -46,13 +45,6 @@ export interface IDraggableAxes extends IAbstractDraggable<INode> {
   /** Restrict dragged movement inside viewport.  */
   readonly isViewportRestricted: boolean;
 
-  /**
-   * If the dragged is moving opposite to the center X/Y point(0.0).
-   * Far from Y, is moving down.
-   * Far from X, is moving right.
-   */
-  readonly isMovingAwayFrom: IPointBool;
-
   dragAt(x: number, y: number): void;
 
   /**
@@ -68,7 +60,6 @@ export interface IDraggableAxes extends IAbstractDraggable<INode> {
 
 export interface IDraggableInteractive extends IDraggableAxes {
   readonly enableContainersTransition: boolean;
-  readonly operationID: string;
   readonly scroll: ScrollOptWithThreshold;
   readonly occupiedPosition: IPointNum;
   readonly occupiedTranslate: IPointNum;

@@ -5,11 +5,14 @@ import type { IAbstract, IMigration } from "./types";
 class AbstractMigration implements IAbstract {
   index: number;
 
-  key: string;
+  SK: string;
 
-  constructor(index: number, key: string) {
+  id: string;
+
+  constructor(index: number, SK: string, id: string) {
     this.index = index;
-    this.key = key;
+    this.SK = SK;
+    this.id = id;
   }
 }
 
@@ -18,8 +21,8 @@ class Migration implements IMigration {
 
   isTransitioning!: boolean;
 
-  constructor(index: number, key: string) {
-    this.#migrations = [new AbstractMigration(index, key)];
+  constructor(index: number, SK: string, id: string) {
+    this.#migrations = [new AbstractMigration(index, SK, id)];
     this.complete();
   }
 
@@ -31,12 +34,16 @@ class Migration implements IMigration {
     return this.#migrations[this.#migrations.length - 2];
   }
 
+  getALlMigrations() {
+    return this.#migrations;
+  }
+
   setIndex(index: number) {
     this.latest().index = index;
   }
 
-  add(index: number, key: string) {
-    this.#migrations.push(new AbstractMigration(index, key));
+  add(index: number, key: string, id: string) {
+    this.#migrations.push(new AbstractMigration(index, key, id));
   }
 
   start() {
@@ -45,6 +52,10 @@ class Migration implements IMigration {
 
   complete() {
     this.isTransitioning = false;
+  }
+
+  dispose() {
+    this.#migrations = [];
   }
 }
 

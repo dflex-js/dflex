@@ -403,10 +403,10 @@ class DistanceCalculator {
      * Start transforming process
      */
     this.#siblingsEmptyElmIndex = element.setPosition(
-      store.getElmBranchByKey(this.draggable.migration.latest().key),
+      store.getElmBranchByKey(this.draggable.migration.latest().SK),
       elmDirection,
       this.#elmTransition,
-      this.draggable.operationID,
+      this.draggable.migration.latest().id,
       this.#siblingsEmptyElmIndex,
       axis
     );
