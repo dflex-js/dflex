@@ -288,11 +288,7 @@ class DistanceCalculator {
     return { translate: composedTranslate, grid: composedGrid };
   }
 
-  protected getComposedOccupiedPosition(
-    SK: string,
-    originSK: string,
-    axis: Axis
-  ) {
+  protected getComposedOccupiedPosition(SK: string, axis: Axis) {
     const distLst = store.getElmBranchByKey(SK);
 
     const { length } = distLst;
@@ -321,13 +317,15 @@ class DistanceCalculator {
 
     this.#addDraggedOffsetToElm(composedPosition, lastElm, axis);
 
+    const { marginBottom: mb } = this.draggable.migration.latest();
+
     const marginBottom =
       length > 1 && !!prevElm
         ? Node.getDisplacement(lastElm.currentPosition, prevElm, axis)
         : isRestoredLastPosition
         ? Node.getDisplacement(position, lastElm, axis)
-        : typeof this.draggable.migration.latest().marginBottom === "number"
-        ? this.draggable.migration.latest().marginBottom!
+        : typeof mb === "number"
+        ? mb
         : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
 
     composedPosition[axis] += Math.abs(marginBottom);
