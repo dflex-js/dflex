@@ -406,7 +406,7 @@ class DistanceCalculator {
       store.getElmBranchByKey(this.draggable.migration.latest().SK),
       elmDirection,
       this.#elmTransition,
-      this.draggable.operationID,
+      this.draggable.migration.latest().id,
       this.#siblingsEmptyElmIndex,
       axis
     );
