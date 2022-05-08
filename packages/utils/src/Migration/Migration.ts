@@ -9,10 +9,13 @@ class AbstractMigration implements IAbstract {
 
   id: string;
 
+  elmAfterPosition: number | null;
+
   constructor(index: number, SK: string, id: string) {
     this.index = index;
     this.SK = SK;
     this.id = id;
+    this.elmAfterPosition = null;
   }
 }
 
@@ -40,6 +43,10 @@ class Migration implements IMigration {
 
   setIndex(index: number) {
     this.latest().index = index;
+  }
+
+  preservePositionElmAfter(p: number | null) {
+    this.latest().elmAfterPosition = p;
   }
 
   add(index: number, key: string, id: string) {

@@ -292,6 +292,9 @@ class Droppable extends DistanceCalculator {
 
     draggedElm.rmDateset("draggedOutContainer");
 
+    // Clear it since it's used for insertion calculation.
+    migration.preservePositionElmAfter(null);
+
     if (migration.isTransitioning) {
       // Compose container boundaries and refresh the store.
       queueMicrotask(() => {
@@ -411,13 +414,18 @@ class Droppable extends DistanceCalculator {
    * Filling the space when the head of the list is leaving the list.
    */
   #fillHeadUp() {
-    const { migration } = this.draggable;
+    const { migration, draggedElm } = this.draggable;
 
     const siblings = store.getElmBranchByKey(migration.latest().SK);
 
     const from = migration.latest().index + 1;
 
     if (from === siblings.length) return;
+
+    // Store it before lost it when the index is changed to the next one.
+    migration.preservePositionElmAfter(
+      store.registry[siblings[from]].getDisplacement(draggedElm, "y")
+    );
 
     emitSiblingsEvent("onLiftUpSiblings", {
       siblings,

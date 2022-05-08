@@ -326,14 +326,9 @@ class DistanceCalculator {
         ? Node.getDisplacement(lastElm.currentPosition, prevElm, axis)
         : isRestoredLastPosition
         ? Node.getDisplacement(position, lastElm, axis)
-        : // a list with one element no restored available.
-          this.#getMarginBtwElmAndDragged(
-            originSK,
-            // Called before the migration completed.
-            this.draggable.migration.latest().index,
-            true,
-            axis
-          );
+        : typeof this.draggable.migration.latest().elmAfterPosition === "number"
+        ? this.draggable.migration.latest().elmAfterPosition!
+        : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
 
     composedPosition[axis] += Math.abs(marginBottom);
 
