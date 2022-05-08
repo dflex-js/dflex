@@ -1,7 +1,7 @@
 export interface IAbstract {
   index: number;
-
-  key: string;
+  SK: string;
+  id: string;
 }
 
 export interface IMigration {
@@ -14,6 +14,8 @@ export interface IMigration {
   /** Get the previous migrations instance */
   prev(): IAbstract;
 
+  getALlMigrations(): IAbstract[];
+
   /**
    * We only update indexes considering migration definition when it happens
    * outside container but not moving inside it.
@@ -24,7 +26,7 @@ export interface IMigration {
   /**
    * Add new migration.
    */
-  add(index: number, key: string): void;
+  add(index: number, key: string, id: string): void;
 
   /** start transitioning. */
   start(): void;

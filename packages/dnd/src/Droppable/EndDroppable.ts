@@ -21,6 +21,7 @@ class EndDroppable extends Droppable {
 
   #undoElmTranslate(
     lst: string[],
+    operationID: string,
     i: number,
     prevVisibility: boolean,
     listVisibility: boolean
@@ -45,7 +46,7 @@ class EndDroppable extends Droppable {
        * Note: rolling back won't affect order array. It only deals with element
        * itself and totally ignore any instance related to store.
        */
-      element.rollBack(this.draggable.operationID, listVisibility);
+      element.rollBack(operationID, listVisibility);
 
       prevVisibility = isVisible;
     } else {
@@ -60,7 +61,11 @@ class EndDroppable extends Droppable {
     lst.splice(from, 0, this.draggable.draggedElm.id);
   }
 
-  private loopAscWithAnimationFrame(from: number, lst: string[]) {
+  private loopAscWithAnimationFrame(
+    from: number,
+    lst: string[],
+    operationID: string
+  ) {
     let i = from;
 
     let prevVisibility = false;
@@ -69,6 +74,7 @@ class EndDroppable extends Droppable {
     const run = () => {
       ({ prevVisibility, listVisibility } = this.#undoElmTranslate(
         lst,
+        operationID,
         i,
         prevVisibility,
         listVisibility
@@ -87,7 +93,11 @@ class EndDroppable extends Droppable {
     this.insertDragged(from, lst);
   }
 
-  private loopDesWithAnimationFrame(from: number, lst: string[]) {
+  private loopDesWithAnimationFrame(
+    from: number,
+    lst: string[],
+    operationID: string
+  ) {
     let i = from;
 
     let prevVisibility = false;
@@ -96,6 +106,7 @@ class EndDroppable extends Droppable {
     const run = () => {
       ({ prevVisibility, listVisibility } = this.#undoElmTranslate(
         lst,
+        operationID,
         i,
         prevVisibility,
         listVisibility
@@ -118,7 +129,7 @@ class EndDroppable extends Droppable {
    * Undo list elements order and instances including translateX/Y and indexes
    * locally.
    */
-  #undoList(lst: string[]) {
+  #undoList(lst: string[], operationID: string) {
     const {
       threshold,
       draggedElm: {
@@ -128,13 +139,13 @@ class EndDroppable extends Droppable {
     } = this.draggable;
 
     if (this.isParentLocked || threshold.isOut[id].isLeftFromBottom) {
-      this.loopAscWithAnimationFrame(from, lst);
+      this.loopAscWithAnimationFrame(from, lst, operationID);
     } else {
       /**
        * If from is zero, means dragged left, and all siblings are lifted up.
        */
       const actualFrom = from === 0 ? lst.length - 1 : from;
-      this.loopDesWithAnimationFrame(actualFrom, lst);
+      this.loopDesWithAnimationFrame(actualFrom, lst, operationID);
     }
   }
 
@@ -156,7 +167,7 @@ class EndDroppable extends Droppable {
 
   endDragging() {
     const siblings = store.getElmBranchByKey(
-      this.draggable.migration.latest().key
+      this.draggable.migration.latest().SK
     );
 
     let isFallback = false;
@@ -164,7 +175,11 @@ class EndDroppable extends Droppable {
     if (this.draggable.isNotSettled() || !this.#verify(siblings)) {
       isFallback = true;
 
-      this.#undoList(siblings);
+      this.draggable.migration.getALlMigrations().forEach((migration) => {
+        const lst = store.getElmBranchByKey(migration.SK);
+
+        this.#undoList(lst, migration.id);
+      });
     }
 
     store.onStateChange(isFallback ? "dragCancel" : "dragEnd");

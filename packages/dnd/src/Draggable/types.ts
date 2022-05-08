@@ -29,6 +29,8 @@ export interface Restrictions {
 }
 
 export interface IDraggableAxes extends IAbstractDraggable<INode> {
+  operationID: string;
+
   /** Dragged threshold  */
   readonly threshold: ThresholdInterface;
 
@@ -60,7 +62,6 @@ export interface IDraggableAxes extends IAbstractDraggable<INode> {
 
 export interface IDraggableInteractive extends IDraggableAxes {
   readonly enableContainersTransition: boolean;
-  readonly operationID: string;
   readonly scroll: ScrollOptWithThreshold;
   readonly occupiedPosition: IPointNum;
   readonly occupiedTranslate: IPointNum;
