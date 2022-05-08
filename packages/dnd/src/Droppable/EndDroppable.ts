@@ -143,15 +143,15 @@ class EndDroppable extends Droppable {
     }
   }
 
-  private verify(lst: string[]) {
-    const { top } =
-      store.containers[store.registry[this.draggable.draggedElm.id].keys.SK]
-        .boundaries;
+  #verify(lst: string[]) {
+    const { occupiedPosition, draggedElm } = this.draggable;
+
+    const { top } = store.containers[draggedElm.keys.SK].boundaries;
 
     const id = lst[0];
 
-    if (id.length === 0 || this.draggable.draggedElm.id === id) {
-      return Math.floor(top) === Math.floor(this.draggable.occupiedPosition.y);
+    if (id.length === 0 || draggedElm.id === id) {
+      return Math.floor(top) === Math.floor(occupiedPosition.y);
     }
 
     const element = store.registry[id];
@@ -166,7 +166,7 @@ class EndDroppable extends Droppable {
 
     let isFallback = false;
 
-    if (this.draggable.isNotSettled() || !this.verify(siblings)) {
+    if (this.draggable.isNotSettled() || !this.#verify(siblings)) {
       isFallback = true;
 
       this.undoList(siblings);
