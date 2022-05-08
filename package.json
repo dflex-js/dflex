@@ -16,8 +16,8 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.22.0",
-    "@swc/core": "^1.2.178",
-    "@swc/jest": "^0.2.20",
+    "@swc/core": "^1.2.179",
+    "@swc/jest": "^0.2.21",
     "@types/jest": "^27.5.0",
     "@types/node": "^17.0.31",
     "cross-env": "^7.0.3",
