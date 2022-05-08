@@ -125,10 +125,14 @@ class EndDroppable extends Droppable {
    */
   private undoList(lst: string[]) {
     const {
-      order: { self: from },
-    } = this.draggable.draggedElm;
+      threshold,
+      draggedElm: {
+        id,
+        order: { self: from },
+      },
+    } = this.draggable;
 
-    if (this.isParentLocked || this.draggable.isMovingAwayFrom.y) {
+    if (this.isParentLocked || threshold.isOut[id].isLeftFromBottom) {
       this.loopAscWithAnimationFrame(from, lst);
     } else {
       /**

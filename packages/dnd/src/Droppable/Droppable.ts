@@ -636,7 +636,9 @@ class Droppable extends DistanceCalculator {
   }
 
   private scrollManager(x: number, y: number) {
-    const { SK } = store.registry[this.draggable.draggedElm.id].keys;
+    const { draggedElm } = this.draggable;
+
+    const { SK } = store.registry[draggedElm.id].keys;
 
     /**
      * Manage scrolling.
@@ -650,7 +652,7 @@ class Droppable extends DistanceCalculator {
         const { scrollRect, scrollHeight, threshold } =
           store.containers[SK].scroll;
         if (
-          this.draggable.isMovingAwayFrom.y &&
+          this.draggable.threshold.isOut[draggedElm.id].isLeftFromBottom &&
           y >= threshold!.thresholds[SK].bottom &&
           this.#scrollAxes.y + scrollRect.height < scrollHeight
         ) {
@@ -668,7 +670,7 @@ class Droppable extends DistanceCalculator {
         const { scrollRect, scrollHeight, threshold } =
           store.containers[SK].scroll;
         if (
-          this.draggable.isMovingAwayFrom.x &&
+          this.draggable.threshold.isOut[draggedElm.id].isLeftFromRight &&
           x >= threshold!.thresholds[SK].right &&
           this.#scrollAxes.x + scrollRect.width < scrollHeight
         ) {
