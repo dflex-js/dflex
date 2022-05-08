@@ -6,7 +6,7 @@ export interface IAbstract {
   /** Transition unique id. */
   id: string;
 
-  elmAfterPosition: number | null;
+  marginBottom: number | null;
 }
 
 export interface IMigration {
@@ -28,7 +28,7 @@ export interface IMigration {
    */
   setIndex(index: number): void;
 
-  preservePositionElmAfter(p: number | null): void;
+  preserveMarginBottom(mb: number | null): void;
 
   /**
    * Add new migration.

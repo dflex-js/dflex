@@ -293,7 +293,7 @@ class Droppable extends DistanceCalculator {
     draggedElm.rmDateset("draggedOutContainer");
 
     // Clear it since it's used for insertion calculation.
-    migration.preservePositionElmAfter(null);
+    migration.preserveMarginBottom(null);
 
     if (migration.isTransitioning) {
       // Compose container boundaries and refresh the store.
@@ -423,7 +423,7 @@ class Droppable extends DistanceCalculator {
     if (from === siblings.length) return;
 
     // Store it before lost it when the index is changed to the next one.
-    migration.preservePositionElmAfter(
+    migration.preserveMarginBottom(
       store.registry[siblings[from]].getDisplacement(draggedElm, "y")
     );
 
