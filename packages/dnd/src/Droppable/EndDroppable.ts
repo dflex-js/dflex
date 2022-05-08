@@ -12,19 +12,14 @@ class EndDroppable extends Droppable {
     this.spliceAt = -1;
   }
 
-  private isIDEligible2Undo(id: string) {
+  #isIDEligible2Undo(id: string) {
     return (
       isIDEligible(id, this.draggable.draggedElm.id) &&
       !store.registry[id].isPaused
     );
   }
 
-  /**
-   *
-   * @param lst -
-   * @param i -
-   */
-  private undoElmTranslate(
+  #undoElmTranslate(
     lst: string[],
     i: number,
     prevVisibility: boolean,
@@ -32,7 +27,7 @@ class EndDroppable extends Droppable {
   ) {
     const elmID = lst[i];
 
-    if (this.isIDEligible2Undo(elmID)) {
+    if (this.#isIDEligible2Undo(elmID)) {
       const element = store.registry[elmID];
 
       const { isVisible } = element;
@@ -72,7 +67,7 @@ class EndDroppable extends Droppable {
     let listVisibility = true;
 
     const run = () => {
-      ({ prevVisibility, listVisibility } = this.undoElmTranslate(
+      ({ prevVisibility, listVisibility } = this.#undoElmTranslate(
         lst,
         i,
         prevVisibility,
@@ -99,7 +94,7 @@ class EndDroppable extends Droppable {
     let listVisibility = true;
 
     const run = () => {
-      ({ prevVisibility, listVisibility } = this.undoElmTranslate(
+      ({ prevVisibility, listVisibility } = this.#undoElmTranslate(
         lst,
         i,
         prevVisibility,
@@ -123,7 +118,7 @@ class EndDroppable extends Droppable {
    * Undo list elements order and instances including translateX/Y and indexes
    * locally.
    */
-  private undoList(lst: string[]) {
+  #undoList(lst: string[]) {
     const {
       threshold,
       draggedElm: {
@@ -169,7 +164,7 @@ class EndDroppable extends Droppable {
     if (this.draggable.isNotSettled() || !this.#verify(siblings)) {
       isFallback = true;
 
-      this.undoList(siblings);
+      this.#undoList(siblings);
     }
 
     store.onStateChange(isFallback ? "dragCancel" : "dragEnd");
