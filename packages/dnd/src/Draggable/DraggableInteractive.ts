@@ -149,6 +149,8 @@ class DraggableInteractive
     this.setDragged(false);
     this.setDraggedTransformPosition(isFallback);
 
+    if (isFallback) this.migration.dispose();
+
     if (this.isDraggedPositionFixed) {
       this.changeStyle(this.changeToFixedStyleProps, false);
     }

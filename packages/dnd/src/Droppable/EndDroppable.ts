@@ -180,8 +180,6 @@ class EndDroppable extends Droppable {
 
         this.#undoList(lst, migration.id);
       });
-
-      this.draggable.migration.dispose();
     }
 
     store.onStateChange(isFallback ? "dragCancel" : "dragEnd");
