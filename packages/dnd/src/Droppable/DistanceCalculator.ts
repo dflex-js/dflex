@@ -234,6 +234,10 @@ class DistanceCalculator {
     return DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
   }
 
+  /**
+   * It calculates the new translate of the dragged element along with grid
+   * position inside the container.
+   */
   protected getComposedOccupiedTranslateAndGrid(
     SK: string,
     insertAt: number,
@@ -322,7 +326,7 @@ class DistanceCalculator {
     this.#addDraggedOffsetToElm(composedPosition, lastElm, axis);
 
     const marginBottom =
-      length > 1 && prevElm
+      length > 1 && !!prevElm
         ? Node.getDisplacement(lastElm.currentPosition, prevElm, axis)
         : isRestoredLastPosition
         ? Node.getDisplacement(position, lastElm, axis)

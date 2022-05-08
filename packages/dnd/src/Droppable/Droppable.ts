@@ -53,7 +53,7 @@ class Droppable extends DistanceCalculator {
    * transformation. */
   #animatedDraggedInsertionFrame: number | null;
 
-  #listAppendPosition?: IPointAxes;
+  #listAppendPosition: IPointAxes | null;
 
   static INDEX_OUT_CONTAINER = NaN;
 
@@ -155,6 +155,7 @@ class Droppable extends DistanceCalculator {
     this.#isOnDragOutContainerEvtEmitted = false;
     this.#isOnDragOutThresholdEvtEmitted = false;
     this.#animatedDraggedInsertionFrame = null;
+    this.#listAppendPosition = null;
 
     this.isParentLocked = false;
   }
@@ -323,6 +324,8 @@ class Droppable extends DistanceCalculator {
         store.containers[SK].preservePosition(this.#listAppendPosition!);
 
         migration.complete();
+
+        this.#listAppendPosition = null;
       });
     }
   }
