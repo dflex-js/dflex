@@ -417,6 +417,8 @@ class Droppable extends DistanceCalculator {
 
     const from = migration.latest().index + 1;
 
+    if (from === siblings.length) return;
+
     emitSiblingsEvent("onLiftUpSiblings", {
       siblings,
       from,
