@@ -14,7 +14,7 @@ context(
       cy.visit("http://localhost:3001/migration");
     });
 
-    it("Getting the first element rect from container-3", () => {
+    it("Getting the first element rect from containers (3) and (2)", () => {
       cy.get("#c2-1").then((elm) => {
         elmBoxC2Elm1 = elm[0].getBoundingClientRect();
       });
