@@ -53,6 +53,10 @@ class Migration implements IMigration {
   complete() {
     this.isTransitioning = false;
   }
+
+  dispose() {
+    this.#migrations = [];
+  }
 }
 
 export default Migration;

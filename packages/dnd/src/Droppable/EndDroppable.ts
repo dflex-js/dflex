@@ -175,14 +175,13 @@ class EndDroppable extends Droppable {
     if (this.draggable.isNotSettled() || !this.#verify(siblings)) {
       isFallback = true;
 
-      this.draggable.migration
-        .getALlMigrations()
-        .reverse()
-        .forEach((migration) => {
-          const lst = store.getElmBranchByKey(migration.SK);
+      this.draggable.migration.getALlMigrations().forEach((migration) => {
+        const lst = store.getElmBranchByKey(migration.SK);
 
-          this.#undoList(lst, migration.id);
-        });
+        this.#undoList(lst, migration.id);
+      });
+
+      this.draggable.migration.dispose();
     }
 
     store.onStateChange(isFallback ? "dragCancel" : "dragEnd");

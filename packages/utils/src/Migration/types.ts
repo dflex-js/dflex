@@ -36,4 +36,6 @@ export interface IMigration {
 
   /** Get the migration done  */
   complete(): void;
+
+  dispose(): void;
 }
