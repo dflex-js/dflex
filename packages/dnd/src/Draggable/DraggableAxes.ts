@@ -24,8 +24,6 @@ import type { IDraggableAxes, Restrictions } from "./types";
 import type { FinalDndOpts, RestrictionsStatus } from "../types";
 
 class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
-  operationID: string;
-
   positionPlaceholder: IPointNum;
 
   gridPlaceholder: IPointNum;
@@ -74,9 +72,7 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
 
     const siblings = store.getElmBranchByKey(SK);
 
-    this.operationID = store.tracker.newTravel();
-
-    this.migration = new Migration(order.self, SK, this.operationID);
+    this.migration = new Migration(order.self, SK, store.tracker.newTravel());
 
     if (!store.containers[SK].lastElmPosition) {
       store.containers[SK].preservePosition(

@@ -29,8 +29,6 @@ export interface Restrictions {
 }
 
 export interface IDraggableAxes extends IAbstractDraggable<INode> {
-  operationID: string;
-
   /** Dragged threshold  */
   readonly threshold: ThresholdInterface;
 

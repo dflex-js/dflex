@@ -374,9 +374,7 @@ class Droppable extends DistanceCalculator {
         // is out the branch sets its index as "".
         destinationList.push(Droppable.APPEND_EMPTY_ELM_ID);
 
-        this.draggable.operationID = store.tracker.newTravel();
-
-        migration.add(NaN, newSK, this.draggable.operationID);
+        migration.add(NaN, newSK, store.tracker.newTravel());
 
         break;
       }

@@ -1,6 +1,9 @@
 export interface IAbstract {
+  /** Last known index for draggable before transitioning. */
   index: number;
+  /** Transition siblings key. */
   SK: string;
+  /** Transition unique id. */
   id: string;
 }
 
