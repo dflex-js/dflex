@@ -6,7 +6,7 @@ context(
     let startingPointY: number;
 
     let stepsX = 0;
-    const stepsY = 0;
+    // const stepsY = 0;
 
     before(() => {
       cy.visit("http://localhost:3001/migration");
@@ -29,6 +29,7 @@ context(
       for (let i = 0; i < stepsX; i += 10) {
         cy.get("#c3-1").trigger("mousemove", {
           clientX: startingPointX - i,
+          clientY: startingPointY,
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -38,6 +39,52 @@ context(
 
     it("Triggers mouseup event", () => {
       cy.get("#c3-1").trigger("mouseup", { force: true });
+    });
+
+    it("Checks siblings in container-2", () => {
+      cy.get("#c2-1").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+
+      cy.get("#c2-2").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+
+      cy.get("#c2-3").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+
+      cy.get("#c2-4").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+
+      cy.get("#c2-5").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+    });
+
+    it("Checks siblings in container-3", () => {
+      cy.get("#c3-1").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+
+      cy.get("#c3-2").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
     });
   }
 );
