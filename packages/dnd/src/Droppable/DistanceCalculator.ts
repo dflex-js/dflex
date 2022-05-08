@@ -40,8 +40,6 @@ class DistanceCalculator {
 
   #draggedTransition: IPointNum;
 
-  #siblingsEmptyElmIndex: number;
-
   /** Isolated form the threshold and predict is-out based on the controllers */
   protected isParentLocked: boolean;
 
@@ -61,8 +59,6 @@ class DistanceCalculator {
     this.#draggedPositionOffset = new PointNum(0, 0);
 
     this.#draggedTransition = new PointNum(0, 0);
-
-    this.#siblingsEmptyElmIndex = NaN;
 
     this.isParentLocked = false;
   }
@@ -403,15 +399,16 @@ class DistanceCalculator {
 
     emitInteractiveEvent("onDragOver", element);
 
+    const { migration } = this.draggable;
+
     /**
      * Start transforming process
      */
-    this.#siblingsEmptyElmIndex = element.setPosition(
-      store.getElmBranchByKey(this.draggable.migration.latest().SK),
+    element.setPosition(
+      store.getElmBranchByKey(migration.latest().SK),
       elmDirection,
       this.#elmTransition,
-      this.draggable.migration.latest().id,
-      this.#siblingsEmptyElmIndex,
+      migration.latest().id,
       axis
     );
 

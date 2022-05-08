@@ -411,11 +411,11 @@ class Droppable extends DistanceCalculator {
    * Filling the space when the head of the list is leaving the list.
    */
   #fillHeadUp() {
-    const siblings = store.getElmBranchByKey(
-      this.draggable.migration.latest().SK
-    );
+    const { migration } = this.draggable;
 
-    const from = this.draggable.migration.latest().index + 1;
+    const siblings = store.getElmBranchByKey(migration.latest().SK);
+
+    const from = migration.latest().index + 1;
 
     emitSiblingsEvent("onLiftUpSiblings", {
       siblings,
