@@ -155,6 +155,8 @@ class DraggableInteractive
       this.changeStyle(this.changeToFixedStyleProps, false);
     }
 
+    this.appendDraggedToContainerDimensions(false);
+
     this.threshold.destroy();
 
     // TODO: add type to this.

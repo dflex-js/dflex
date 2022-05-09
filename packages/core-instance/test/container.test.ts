@@ -18,20 +18,32 @@ describe("Container", () => {
     height: 2,
   };
 
+  const unifiedContainerDimensions = {
+    height: 0,
+    width: 0,
+  };
+
   beforeAll(() => {
     container = new Container();
   });
 
   it("Registers two elements in the same row", () => {
-    container.registerNewElm(elmR1Col1);
+    container.registerNewElm(elmR1Col1, unifiedContainerDimensions);
 
     expect(container.grid.x).toBe(1);
     expect(container.grid.y).toBe(1);
 
-    container.registerNewElm(elmR1Col2);
+    container.registerNewElm(elmR1Col2, unifiedContainerDimensions);
 
     expect(container.grid.x).toBe(2);
     expect(container.grid.y).toBe(1);
+  });
+
+  it("Returns the correct dimensions", () => {
+    expect(unifiedContainerDimensions).toStrictEqual({
+      height: 10,
+      width: 10,
+    });
   });
 
   it("Container has the correct boundaries", () => {
@@ -49,5 +61,12 @@ describe("Container", () => {
     expect(container.grid.x).toBe(1);
     expect(container.grid.y).toBe(1);
     expect(container.boundaries).toBeNull();
+  });
+
+  it("Returns the correct dimensions", () => {
+    expect(unifiedContainerDimensions).toStrictEqual({
+      height: 10,
+      width: 10,
+    });
   });
 });

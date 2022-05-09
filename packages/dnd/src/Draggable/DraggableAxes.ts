@@ -93,6 +93,8 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
       top: currentPosition.y,
     });
 
+    this.appendDraggedToContainerDimensions(true);
+
     store.getBranchesByDepth(depth).forEach((key) => {
       const { boundaries } = store.containers[key];
 
@@ -141,6 +143,19 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
       siblings !== null &&
       (opts.restrictionsStatus.isContainerRestricted ||
         opts.restrictionsStatus.isSelfRestricted);
+  }
+
+  appendDraggedToContainerDimensions(isAppend: boolean) {
+    const {
+      depth,
+      offset: { height },
+    } = this.draggedElm;
+
+    const maneuverDistance = height;
+
+    store.unifiedContainerDimensions[depth].height += isAppend
+      ? maneuverDistance
+      : -1 * maneuverDistance;
   }
 
   private axesYFilter(
