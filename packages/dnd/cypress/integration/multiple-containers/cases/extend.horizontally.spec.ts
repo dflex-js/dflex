@@ -48,4 +48,20 @@ context("Extend the insertion area horizontally", () => {
   it("Triggers mouseup event", () => {
     cy.get("#c1-1").trigger("mouseup", { force: true });
   });
+
+  it("Siblings in the destination (c2) are untransformed", () => {
+    cy.get("#c2-1").should("have.css", "transform", "none");
+    cy.get("#c2-2").should("have.css", "transform", "none");
+    cy.get("#c2-3").should("have.css", "transform", "none");
+    cy.get("#c2-4").should("have.css", "transform", "none");
+    cy.get("#c2-4").should("have.css", "transform", "none");
+  });
+
+  it("Dragged is positioned correctly in the bottom of (c2)", () => {
+    cy.get("#c1-1").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 226, 304)"
+    );
+  });
 });
