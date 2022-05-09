@@ -137,7 +137,7 @@ class Threshold implements ThresholdInterface {
         bottom: top + height,
       });
 
-      this.#addDepthThreshold(key, depth);
+      this.#addDepthThreshold(composedK, depth);
     });
   }
 
