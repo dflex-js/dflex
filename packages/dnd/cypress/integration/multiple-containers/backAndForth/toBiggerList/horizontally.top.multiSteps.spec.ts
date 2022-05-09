@@ -66,6 +66,7 @@ context(
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(0);
       }
+      stepsX += 230;
     });
 
     it("Triggers mouseup event", () => {
@@ -126,6 +127,103 @@ context(
         "transform",
         "matrix(1, 0, 0, 1, -452, 0)"
       );
+    });
+
+    it("Transforms element (#c3-1) - back to its origin", () => {
+      cy.get("#c3-1").trigger("mousedown", {
+        button: 0,
+      });
+
+      for (let i = stepsX; i >= 0; i -= 10) {
+        cy.get("#c3-1").trigger("mousemove", {
+          clientX: startingPointX - i,
+          force: true,
+        });
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(0);
+      }
+    });
+
+    it("Triggers mouseup event", () => {
+      cy.get("#c3-1").trigger("mouseup", { force: true });
+    });
+
+    it("Siblings in origin (c3) are positioned correctly", () => {
+      cy.get("#c3-2").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+    });
+
+    it("Siblings in container (c2) are transformed to zero", () => {
+      cy.get("#c2-1").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+
+      cy.get("#c2-2").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+
+      cy.get("#c2-3").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+
+      cy.get("#c2-4").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+
+      cy.get("#c2-5").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+    });
+
+    it("Siblings in the final destination (c1) are transformed to zero", () => {
+      cy.get("#c1-1").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+
+      cy.get("#c3-1").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+    });
+
+    it("Element #c3-1 restores its position", () => {
+      cy.get("#c3-1").then((elm) => {
+        const newElmBox = elm[0].getBoundingClientRect();
+
+        expect(newElmBox).to.deep.equal(elmBoxC3Elm1);
+      });
+    });
+
+    it("Element #c2-1 restores its position", () => {
+      cy.get("#c2-1").then((elm) => {
+        const newElmBox = elm[0].getBoundingClientRect();
+
+        expect(newElmBox).to.deep.equal(elmBoxC2Elm1);
+      });
+    });
+
+    it("Element #c1-1 restores its position", () => {
+      cy.get("#c1-1").then((elm) => {
+        const newElmBox = elm[0].getBoundingClientRect();
+
+        expect(newElmBox).to.deep.equal(elmBoxC1Elm1);
+      });
     });
   }
 );
