@@ -113,9 +113,8 @@ export interface ICore extends IAbstract {
     direction: Direction,
     elmSpace: IPointNum,
     operationID: string,
-    siblingsEmptyElmIndex: number,
     axis: Axes
-  ): number;
+  ): void;
   transformElm(): void;
   /** Direct element assignment. Handle the case for settling the draggable element */
   assignNewPosition(branchIDsOrder: string[], newIndex: number): void;

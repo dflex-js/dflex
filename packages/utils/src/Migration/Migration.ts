@@ -9,10 +9,13 @@ class AbstractMigration implements IAbstract {
 
   id: string;
 
+  marginBottom: number | null;
+
   constructor(index: number, SK: string, id: string) {
     this.index = index;
     this.SK = SK;
     this.id = id;
+    this.marginBottom = null;
   }
 }
 
@@ -40,6 +43,10 @@ class Migration implements IMigration {
 
   setIndex(index: number) {
     this.latest().index = index;
+  }
+
+  preserveMarginBottom(mb: number | null) {
+    this.latest().marginBottom = mb;
   }
 
   add(index: number, key: string, id: string) {

@@ -53,7 +53,7 @@ class Droppable extends DistanceCalculator {
    * transformation. */
   #animatedDraggedInsertionFrame: number | null;
 
-  #listAppendPosition?: IPointAxes;
+  #listAppendPosition: IPointAxes | null;
 
   static INDEX_OUT_CONTAINER = NaN;
 
@@ -155,6 +155,7 @@ class Droppable extends DistanceCalculator {
     this.#isOnDragOutContainerEvtEmitted = false;
     this.#isOnDragOutThresholdEvtEmitted = false;
     this.#animatedDraggedInsertionFrame = null;
+    this.#listAppendPosition = null;
 
     this.isParentLocked = false;
   }
@@ -291,6 +292,9 @@ class Droppable extends DistanceCalculator {
 
     draggedElm.rmDateset("draggedOutContainer");
 
+    // Clear it since it's used for insertion calculation.
+    migration.preserveMarginBottom(null);
+
     if (migration.isTransitioning) {
       // Compose container boundaries and refresh the store.
       queueMicrotask(() => {
@@ -323,6 +327,8 @@ class Droppable extends DistanceCalculator {
         store.containers[SK].preservePosition(this.#listAppendPosition!);
 
         migration.complete();
+
+        this.#listAppendPosition = null;
       });
     }
   }
@@ -349,20 +355,16 @@ class Droppable extends DistanceCalculator {
       if (newSK !== originSK && !this.draggable.isOutThreshold(newSK, true)) {
         migration.start();
 
-        const originList = store.getElmBranchByKey(originSK);
+        const destination = store.getElmBranchByKey(newSK);
+
+        this.#listAppendPosition = this.getComposedOccupiedPosition(newSK, "y");
+
+        const origin = store.getElmBranchByKey(originSK);
 
         // Remove the last element from the original list.
         // when the dragged is out of the container, the last element is the
         // placeholder as all the elements are stacked.
-        originList.pop();
-
-        const destinationList = store.getElmBranchByKey(newSK);
-
-        this.#listAppendPosition = this.getComposedOccupiedPosition(
-          newSK,
-          originSK,
-          "y"
-        );
+        origin.pop();
 
         this.draggable.occupiedPosition.clone(this.#listAppendPosition);
 
@@ -372,7 +374,7 @@ class Droppable extends DistanceCalculator {
 
         // Insert the element to the new list. Empty string because when dragged
         // is out the branch sets its index as "".
-        destinationList.push(Droppable.APPEND_EMPTY_ELM_ID);
+        destination.push(Droppable.APPEND_EMPTY_ELM_ID);
 
         migration.add(NaN, newSK, store.tracker.newTravel());
 
@@ -408,11 +410,18 @@ class Droppable extends DistanceCalculator {
    * Filling the space when the head of the list is leaving the list.
    */
   #fillHeadUp() {
-    const siblings = store.getElmBranchByKey(
-      this.draggable.migration.latest().SK
-    );
+    const { migration, draggedElm } = this.draggable;
 
-    const from = this.draggable.migration.latest().index + 1;
+    const siblings = store.getElmBranchByKey(migration.latest().SK);
+
+    const from = migration.latest().index + 1;
+
+    if (from === siblings.length) return;
+
+    // Store it before lost it when the index is changed to the next one.
+    migration.preserveMarginBottom(
+      store.registry[siblings[from]].getDisplacement(draggedElm, "y")
+    );
 
     emitSiblingsEvent("onLiftUpSiblings", {
       siblings,

@@ -40,8 +40,6 @@ class DistanceCalculator {
 
   #draggedTransition: IPointNum;
 
-  #siblingsEmptyElmIndex: number;
-
   /** Isolated form the threshold and predict is-out based on the controllers */
   protected isParentLocked: boolean;
 
@@ -61,8 +59,6 @@ class DistanceCalculator {
     this.#draggedPositionOffset = new PointNum(0, 0);
 
     this.#draggedTransition = new PointNum(0, 0);
-
-    this.#siblingsEmptyElmIndex = NaN;
 
     this.isParentLocked = false;
   }
@@ -234,6 +230,10 @@ class DistanceCalculator {
     return DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
   }
 
+  /**
+   * It calculates the new translate of the dragged element along with grid
+   * position inside the container.
+   */
   protected getComposedOccupiedTranslateAndGrid(
     SK: string,
     insertAt: number,
@@ -288,11 +288,7 @@ class DistanceCalculator {
     return { translate: composedTranslate, grid: composedGrid };
   }
 
-  protected getComposedOccupiedPosition(
-    SK: string,
-    originSK: string,
-    axis: Axis
-  ) {
+  protected getComposedOccupiedPosition(SK: string, axis: Axis) {
     const distLst = store.getElmBranchByKey(SK);
 
     const { length } = distLst;
@@ -321,19 +317,16 @@ class DistanceCalculator {
 
     this.#addDraggedOffsetToElm(composedPosition, lastElm, axis);
 
+    const { marginBottom: mb } = this.draggable.migration.latest();
+
     const marginBottom =
-      length > 1 && prevElm
+      length > 1 && !!prevElm
         ? Node.getDisplacement(lastElm.currentPosition, prevElm, axis)
         : isRestoredLastPosition
         ? Node.getDisplacement(position, lastElm, axis)
-        : // a list with one element no restored available.
-          this.#getMarginBtwElmAndDragged(
-            originSK,
-            // Called before the migration completed.
-            this.draggable.migration.latest().index,
-            true,
-            axis
-          );
+        : typeof mb === "number"
+        ? mb
+        : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
 
     composedPosition[axis] += Math.abs(marginBottom);
 
@@ -399,15 +392,16 @@ class DistanceCalculator {
 
     emitInteractiveEvent("onDragOver", element);
 
+    const { migration } = this.draggable;
+
     /**
      * Start transforming process
      */
-    this.#siblingsEmptyElmIndex = element.setPosition(
-      store.getElmBranchByKey(this.draggable.migration.latest().SK),
+    element.setPosition(
+      store.getElmBranchByKey(migration.latest().SK),
       elmDirection,
       this.#elmTransition,
-      this.draggable.migration.latest().id,
-      this.#siblingsEmptyElmIndex,
+      migration.latest().id,
       axis
     );
 

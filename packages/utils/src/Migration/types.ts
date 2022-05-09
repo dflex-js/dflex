@@ -5,6 +5,8 @@ export interface IAbstract {
   SK: string;
   /** Transition unique id. */
   id: string;
+
+  marginBottom: number | null;
 }
 
 export interface IMigration {
@@ -25,6 +27,8 @@ export interface IMigration {
    * So we update an index but we add key.
    */
   setIndex(index: number): void;
+
+  preserveMarginBottom(mb: number | null): void;
 
   /**
    * Add new migration.
