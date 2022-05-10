@@ -25,7 +25,7 @@ context("Split one container form bottom up", () => {
 
   it("Transforms element (#c2-3) into containers-1", () => {
     stepsY = 130;
-    for (let i = 0; i < stepsY; i += 1) {
+    for (let i = 0; i < stepsY; i += 10) {
       cy.get("#c2-3").trigger("mousemove", {
         clientY: startingPointY - i,
         clientX: startingPointX - i,
