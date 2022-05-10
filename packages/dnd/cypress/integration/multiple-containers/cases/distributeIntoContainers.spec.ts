@@ -74,7 +74,7 @@ context("Distribute into different containers", () => {
       cy.get("#c1-1").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 106)"
+        "matrix(1, 0, 0, 1, 0, 112)"
       );
     });
 
@@ -143,7 +143,7 @@ context("Distribute into different containers", () => {
       cy.get("#c1-1").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 106)"
+        "matrix(1, 0, 0, 1, 0, 112)"
       );
     });
 

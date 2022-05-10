@@ -1,12 +1,16 @@
+/* eslint-disable no-param-reassign */
+import { Node } from "@dflex/core-instance";
 import type { INode } from "@dflex/core-instance";
 
-import { Direction, PointNum } from "@dflex/utils";
+import { Direction, IPointAxes, PointNum } from "@dflex/utils";
 import type { IPointNum, Axis } from "@dflex/utils";
 
 import type { InteractivityEvent } from "../types";
 import type { IDraggableInteractive } from "../Draggable";
 
 import store from "../DnDStore";
+import Droppable from "./Droppable";
+import type { InsertionELmMeta } from "./types";
 
 function emitInteractiveEvent(
   type: InteractivityEvent["type"],
@@ -36,14 +40,8 @@ class DistanceCalculator {
 
   #draggedTransition: IPointNum;
 
-  #siblingsEmptyElmIndex: number;
-
   /** Isolated form the threshold and predict is-out based on the controllers */
   protected isParentLocked: boolean;
-
-  static getRectByAxis(axis: Axis) {
-    return axis === "x" ? "width" : "height";
-  }
 
   static DEFAULT_SYNTHETIC_MARGIN = 10;
 
@@ -62,41 +60,7 @@ class DistanceCalculator {
 
     this.#draggedTransition = new PointNum(0, 0);
 
-    this.#siblingsEmptyElmIndex = NaN;
-
     this.isParentLocked = false;
-  }
-
-  #getDiff(
-    element: INode,
-    axis: Axis,
-    type: keyof Pick<INode, "offset" | "currentPosition"> | "occupiedPosition"
-  ) {
-    const { occupiedPosition, draggedElm } = this.draggable;
-
-    const { currentPosition, offset: elmOffset } = element;
-
-    let diff = 0;
-
-    if (type === "currentPosition") {
-      diff = currentPosition[axis] - draggedElm.currentPosition[axis];
-
-      diff += draggedElm.translate[axis];
-
-      return diff;
-    }
-
-    if (type === "occupiedPosition") {
-      diff = Math.abs(currentPosition[axis] - occupiedPosition[axis]);
-
-      return diff;
-    }
-
-    const rectType = DistanceCalculator.getRectByAxis(axis);
-
-    diff = elmOffset[rectType] - draggedElm.offset[rectType];
-
-    return diff;
   }
 
   #setDistanceBtwPositions(
@@ -104,8 +68,13 @@ class DistanceCalculator {
     axis: Axis,
     elmDirection: Direction
   ) {
-    const positionDiff = this.#getDiff(element, axis, "occupiedPosition");
-    const rectDiff = this.#getDiff(element, axis, "offset");
+    const { occupiedPosition, draggedElm } = this.draggable;
+
+    const positionDiff = Math.abs(
+      element.currentPosition[axis] - occupiedPosition[axis]
+    );
+
+    const rectDiff = element.getRectDiff(draggedElm, axis);
 
     if (elmDirection === -1) {
       this.#draggedTransition[axis] = positionDiff + rectDiff;
@@ -146,94 +115,222 @@ class DistanceCalculator {
     this.#updateDraggable(element, elmDirection);
   }
 
-  protected getInsertionOccupiedTranslate(SK: string) {
-    const lst = store.getElmBranchByKey(SK);
+  protected updateDraggedThresholdPosition(x: number, y: number) {
+    const {
+      threshold,
+      draggedElm: { id, offset },
+    } = this.draggable;
 
-    const firstElm =
-      lst.length > 0
-        ? store.registry[lst[0]]
-        : ({
-            currentPosition: store.containers[SK].preservedFirstElmPosition,
-          } as INode);
-
-    const draggedTransition = {
-      x: 0,
-      y: 0,
-    };
-
-    // Getting diff with `currentPosition` includes the element transition
-    // as well.
-    draggedTransition.x = this.#getDiff(firstElm, "x", "currentPosition");
-    draggedTransition.y = this.#getDiff(firstElm, "y", "currentPosition");
-
-    return draggedTransition;
+    threshold.setMainThreshold(id, {
+      width: offset.width,
+      height: offset.height,
+      left: x,
+      top: y,
+    });
   }
 
-  protected getInsertionOccupiedPosition(
-    newSK: string,
-    originSK: string,
-    axis: Axis
-  ) {
-    const lst = store.getElmBranchByKey(newSK);
+  #getInsertionELmMeta(insertAt: number, SK: string): InsertionELmMeta {
+    const lst = store.getElmBranchByKey(SK);
 
-    if (lst.length === 0) {
-      // Restore the last known current position.
-      const { preservedFirstElmPosition } = store.containers[newSK];
-
-      return preservedFirstElmPosition!;
-    }
+    const { length } = lst;
 
     const { draggedElm } = this.draggable;
 
-    const lastElm = store.registry[lst[lst.length - 1]];
+    // Restore the last known current position.
+    const { lastElmPosition } = store.containers[SK];
 
-    // The essential position should be stimulate to case where position is
-    // to last element in the list. So when the dragged enters the list its
-    // element can go down based on this position.
-    const insertionPosition = {
+    const position = new PointNum(0, 0);
+
+    let isRestoredLastPosition = false;
+    let isOrphan = false;
+    let elm: null | INode = null;
+
+    let isRetrievePrevElmValid = false;
+    let prevIndex = NaN;
+
+    if (Droppable.isOrphan(lst)) {
+      // TODO:
+      // This is a bug. Cause it should be treated same way as the last
+      // position. If we can restore, the we do it otherwise we do the
+      // calculations based on dragged.
+      position.clone(lastElmPosition);
+      isOrphan = true;
+      isRestoredLastPosition = true;
+    } else {
+      const isInsertedLast = insertAt === length - 1;
+
+      prevIndex = insertAt - 1;
+
+      isRetrievePrevElmValid = prevIndex >= 0 && prevIndex < length;
+
+      if (isInsertedLast) {
+        elm = Droppable.getTheLastValidElm(lst, draggedElm.id);
+        const elmPos = elm.currentPosition;
+
+        if (lastElmPosition) {
+          position.clone(lastElmPosition);
+          isRestoredLastPosition = !lastElmPosition.isEqual(elmPos);
+        } else {
+          position.clone(elmPos);
+        }
+      } else {
+        elm = store.registry[lst[insertAt]];
+        position.clone(elm.currentPosition);
+      }
+    }
+
+    return {
+      elm,
+      isOrphan,
+      isRestoredLastPosition,
+      position,
+      ...(isRetrievePrevElmValid && {
+        prevElm: store.registry[lst[prevIndex]],
+      }),
+    } as InsertionELmMeta;
+  }
+
+  #addDraggedOffsetToElm(position: IPointAxes, elm: INode, axis: Axis) {
+    const rectType = Node.getRectByAxis(axis);
+
+    const { draggedElm } = this.draggable;
+
+    // This initiation needs to append dragged rect based on targeted axis.
+    position[axis] += draggedElm.offset[rectType];
+
+    const rectDiff = elm.offset[rectType] - draggedElm.offset[rectType];
+
+    position[axis] += rectDiff;
+  }
+
+  #getMarginBtwElmAndDragged(
+    SK: string,
+    draggedIndex: number,
+    isInsertedAfter: boolean,
+    axis: Axis
+  ) {
+    const { draggedElm } = this.draggable;
+
+    const insertAt = isInsertedAfter ? draggedIndex + 1 : draggedIndex - 1;
+
+    const origin = store.getElmBranchByKey(SK);
+
+    if (insertAt >= 0 && insertAt < origin.length) {
+      const elm = store.registry[origin[insertAt]];
+
+      if (elm) {
+        // If the origin is not the first element, we need to add the margin
+        // to the top.
+        return isInsertedAfter
+          ? elm.getDisplacement(draggedElm, axis)
+          : draggedElm.getDisplacement(elm, axis);
+      }
+    }
+
+    return DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
+  }
+
+  /**
+   * It calculates the new translate of the dragged element along with grid
+   * position inside the container.
+   */
+  protected getComposedOccupiedTranslateAndGrid(
+    SK: string,
+    insertAt: number,
+    originSK: string,
+    insertFromTop: boolean,
+    axis: Axis
+  ) {
+    const { position, elm, isRestoredLastPosition, isOrphan } =
+      this.#getInsertionELmMeta(insertAt, SK);
+
+    const { draggedElm, migration } = this.draggable;
+
+    // Getting diff with `currentPosition` includes the element transition
+    // as well.
+    const composedTranslate = {
+      x: Node.getDistance(position, draggedElm, "x"),
+      y: Node.getDistance(position, draggedElm, "y"),
+    };
+
+    const composedGrid = new PointNum(1, 1);
+
+    if (!isOrphan) {
+      const { grid } = elm;
+
+      composedGrid.clone(grid);
+    }
+
+    if (insertFromTop) {
+      // Don't decrease the first element.
+      if (composedGrid[axis] - 1 >= 1) composedGrid[axis] -= 1;
+    } else {
+      composedGrid[axis] += 1;
+
+      // Is the list expanding?
+      if (!isRestoredLastPosition) {
+        this.#addDraggedOffsetToElm(composedTranslate, elm, axis);
+        composedTranslate[axis] += this.#getMarginBtwElmAndDragged(
+          originSK,
+          // Called after migration during the transitions.
+          migration.prev().index,
+          false,
+          axis
+        );
+      }
+    }
+
+    this.updateDraggedThresholdPosition(
+      composedTranslate.x,
+      composedTranslate.y
+    );
+
+    return { translate: composedTranslate, grid: composedGrid };
+  }
+
+  protected getComposedOccupiedPosition(SK: string, axis: Axis) {
+    const distLst = store.getElmBranchByKey(SK);
+
+    const { length } = distLst;
+
+    const {
+      position,
+      isOrphan,
+      isRestoredLastPosition,
+      elm: lastElm,
+      prevElm,
+    } = this.#getInsertionELmMeta(length - 1, SK);
+
+    // Restore the last known current position.
+
+    // Get the stored position if the branch is empty.
+    if (isOrphan) {
+      return position;
+    }
+
+    // The essential insertion position is the last element in the container
+    // but also on some cases it's different from retrieved position.
+    const composedPosition = {
       x: lastElm.currentPosition.x,
       y: lastElm.currentPosition.y,
     };
 
-    const rectType = DistanceCalculator.getRectByAxis(axis);
+    this.#addDraggedOffsetToElm(composedPosition, lastElm, axis);
 
-    // This initiation needs to append dragged rect based on targeted axis.
-    insertionPosition[axis] += draggedElm.offset[rectType];
+    const { marginBottom: mb } = this.draggable.migration.latest();
 
-    const rectDiff = lastElm.offset[rectType] - draggedElm.offset[rectType];
+    const marginBottom =
+      length > 1 && !!prevElm
+        ? Node.getDisplacement(lastElm.currentPosition, prevElm, axis)
+        : isRestoredLastPosition
+        ? Node.getDisplacement(position, lastElm, axis)
+        : typeof mb === "number"
+        ? mb
+        : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
 
-    insertionPosition[axis] += rectDiff;
+    composedPosition[axis] += Math.abs(marginBottom);
 
-    if (axis === "y") {
-      // We still need a margin.
-      // The target is the last element and the append from above, so we check
-      // the top.
-      const prevLastElm = store.registry[lst[lst.length - 2]];
-
-      let marginTop = 0;
-
-      if (prevLastElm) {
-        marginTop = lastElm.currentPosition.y - prevLastElm.getRectBottom();
-      } else {
-        const lstOrigin = store.getElmBranchByKey(originSK);
-
-        const elmAfterDragged =
-          store.registry[lstOrigin[draggedElm.order.self + 1]];
-
-        if (elmAfterDragged) {
-          // If the origin is not the first element, we need to add the margin
-          // to the top.
-          marginTop =
-            elmAfterDragged.currentPosition.y - draggedElm.getRectBottom();
-        } else {
-          marginTop = DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
-        }
-      }
-
-      insertionPosition.y += marginTop;
-    }
-
-    return insertionPosition;
+    return composedPosition;
   }
 
   /**
@@ -272,8 +369,6 @@ class DistanceCalculator {
 
     this.#updateIndicators(element, axis, elmDirection);
 
-    this.draggable.updateNumOfElementsTransformed(elmDirection);
-
     // TODO: always true for the first element
     if (!this.isParentLocked) {
       /**
@@ -292,27 +387,21 @@ class DistanceCalculator {
         currentPosition: { x, y },
       } = element;
 
-      const { draggedElm } = this.draggable;
-
-      this.draggable.threshold.setMainThreshold(draggedElm.id, {
-        width: draggedElm.offset.width,
-        height: draggedElm.offset.height,
-        left: x,
-        top: y,
-      });
+      this.updateDraggedThresholdPosition(x, y);
     }
 
     emitInteractiveEvent("onDragOver", element);
 
+    const { migration } = this.draggable;
+
     /**
      * Start transforming process
      */
-    this.#siblingsEmptyElmIndex = element.setPosition(
-      store.getElmBranchByKey(this.draggable.migration.latest().key),
+    element.setPosition(
+      store.getElmBranchByKey(migration.latest().SK),
       elmDirection,
       this.#elmTransition,
-      this.draggable.operationID,
-      this.#siblingsEmptyElmIndex,
+      migration.latest().id,
       axis
     );
 

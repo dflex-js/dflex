@@ -1,4 +1,5 @@
 import type {
+  Dimensions,
   RectBoundaries,
   RectDimensions,
   IPointNum,
@@ -8,20 +9,23 @@ import type {
 
 export interface IContainer {
   /**
-   * For restoring element position when necessary without knowing element id.
-   * E,g. when element is removed from branch and we need to know the position
-   * the element was in before it was removed.
+   * Preserve the last element position in the list .
+   * Usage: Getting this position when the dragged is going back from the tail.
    */
-  readonly preservedFirstElmPosition?: IPointNum | null;
+  readonly lastElmPosition: IPointNum;
 
   /** Strict Rect for siblings containers. */
   readonly boundaries: RectBoundaries;
+
   /** Numbers of total columns and rows each container has.  */
   readonly grid: IPointNum;
 
   /** Container scroll instance.  */
   scroll: IScroll;
-  setGrid(grid: IPointNum, rect: RectDimensions): void;
-  setBoundaries(rect: RectDimensions): void;
-  preserveFirstElmPosition(position: IPointAxes | null): void;
+  registerNewElm(
+    offset: RectDimensions,
+    unifiedContainerDimensions?: Dimensions
+  ): void;
+  resetIndicators(): void;
+  preservePosition(position: IPointAxes | null): void;
 }

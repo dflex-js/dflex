@@ -27,7 +27,9 @@
     "cy:run": "cypress run --env extended=true",
     "cy:open": "cypress open --env extended=true",
     "cy:dev": "start-server-and-test 'pnpm run server' http-get://localhost:3001 'pnpm cy:open'",
-    "test": "start-server-and-test 'pnpm run server' http-get://localhost:3001 'pnpm cy:run'"
+    "test": "start-server-and-test 'pnpm run server' http-get://localhost:3001 'pnpm cy:run'",
+    "cy:run:vertical:chrome": "cypress run --env extended=true --headless --spec cypress/integration/same-container-vertical/**/*.spec.ts --config-file cypress.json --browser chrome",
+    "test:vertical:chrome": "start-server-and-test 'pnpm run server' http-get://localhost:3001 'pnpm cy:run:vertical:chrome'"
   },
   "homepage": "https://github.com/dflex-js/dflex/tree/master/packages/dnd",
   "repository": "https://github.com/dflex-js/dflex",
@@ -42,8 +44,8 @@
     "@dflex/store": "workspace:^3.4.1",
     "@dflex/utils": "workspace:^3.4.1",
     "cross-env": "^7.0.3",
-    "cypress": "^9.5.4",
-    "eslint": "^8.14.0",
+    "cypress": "^9.6.1",
+    "eslint": "^8.15.0",
     "eslint-plugin-cypress": "^2.12.1",
     "start-server-and-test": "^1.14.0",
     "v8-to-istanbul": "^9.0.0"

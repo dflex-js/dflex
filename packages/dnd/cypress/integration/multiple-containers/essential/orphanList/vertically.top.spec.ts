@@ -1,5 +1,5 @@
 context(
-  "Transitioning from one container to another when dragged is smaller than the target",
+  "Transitioning from one container to another vertically from the top - back and forth",
   () => {
     let elmBox: DOMRect;
     let startingPointX: number;
@@ -63,7 +63,7 @@ context(
       cy.get("#c1-1").trigger("mouseup", { force: true });
     });
 
-    it("Transforms element (#c1-1) - outside the container-1/the origin list", () => {
+    it("Transforms element (#c1-1) - outside the origin list", () => {
       cy.get("#c1-1").trigger("mousedown", {
         button: 0,
       });

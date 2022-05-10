@@ -1,7 +1,7 @@
 import { PointNum } from "../Point";
 import type { IPointNum } from "../Point";
 
-import { RectDimensions, RectBoundaries } from "../types";
+import { RectDimensions, RectBoundaries, Dimensions } from "../types";
 
 import FourDirectionsBool from "./FourDirectionsBool";
 import type {
@@ -10,6 +10,7 @@ import type {
   ThresholdsStore,
   LayoutPositionStatus,
 } from "./types";
+import { combineKeys, dirtyAssignBiggestRect } from "../collections";
 
 class Threshold implements ThresholdInterface {
   thresholds: ThresholdsStore;
@@ -80,24 +81,64 @@ class Threshold implements ThresholdInterface {
     };
   }
 
+  /** Assign threshold property and create new instance for is out indicators */
+  #createThreshold(key: string, rect: RectBoundaries) {
+    this.thresholds[key] = this.#getThreshold(rect);
+    this.#initIndicators(key);
+  }
+
   setMainThreshold(key: string, rect: RectDimensions) {
     this.#setPixels(rect);
 
     const { top, left, height, width } = rect;
 
-    this.thresholds[key] = this.#getThreshold({
+    this.#createThreshold(key, {
       top,
       left,
       bottom: top + height,
       right: left + width,
     });
-
-    this.#initIndicators(key);
   }
 
-  setContainerThreshold(key: string, rect: RectBoundaries) {
-    this.thresholds[key] = this.#getThreshold(rect);
-    this.#initIndicators(key);
+  #addDepthThreshold(key: string, depth: number) {
+    const dp = `${depth}`;
+
+    if (!this.thresholds[dp]) {
+      this.#createThreshold(dp, {
+        ...this.thresholds[key],
+      });
+
+      return;
+    }
+
+    const $ = this.thresholds[depth];
+
+    dirtyAssignBiggestRect($, this.thresholds[key]);
+  }
+
+  setContainerThreshold(
+    key: string,
+    depth: number,
+    rect: RectBoundaries,
+    unifiedContainerDimensions: Dimensions
+  ) {
+    this.#createThreshold(key, rect);
+
+    queueMicrotask(() => {
+      const { top, left } = rect;
+      const { height, width } = unifiedContainerDimensions;
+
+      const composedK = combineKeys(depth, key);
+
+      this.#createThreshold(composedK, {
+        left,
+        top,
+        right: left + width,
+        bottom: top + height,
+      });
+
+      this.#addDepthThreshold(composedK, depth);
+    });
   }
 
   isOutThresholdH(key: string, XLeft: number, XRight: number) {

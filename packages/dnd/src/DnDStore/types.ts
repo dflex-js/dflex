@@ -1,4 +1,4 @@
-import type { RectDimensions, ITracker, IPointNum } from "@dflex/utils";
+import type { Dimensions, RectDimensions, ITracker } from "@dflex/utils";
 import type { INode, IContainer } from "@dflex/core-instance";
 import type { RegisterInputMeta } from "@dflex/store";
 
@@ -53,18 +53,18 @@ interface Translate {
 }
 
 export interface IDnDStore {
-  readonly containers: { [siblingKey: string]: IContainer };
+  readonly containers: { [SK: string]: IContainer };
+  readonly unifiedContainerDimensions: {
+    [depth: number]: Dimensions;
+  };
   readonly tracker: ITracker;
   readonly layoutState: LayoutState;
   initSiblingContainer(SK: string, shouldValidate: boolean): void;
   updateBranchVisibility(SK: string, shouldCheckVisibility: boolean): void;
   handleElmMigration(
-    newSK: string,
-    oldSK: string,
-    append: {
-      offset: RectDimensions;
-      grid: IPointNum;
-    }
+    SK: string,
+    originSK: string,
+    appendOffset: RectDimensions
   ): void;
   onStateChange(state: LayoutState): void;
   emitEvent(event: DraggedEvent): void;

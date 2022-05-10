@@ -1,6 +1,12 @@
 import { AbstractDraggable } from "@dflex/draggable";
 
-import { Threshold, PointNum, PointBool, Migration } from "@dflex/utils";
+import {
+  Threshold,
+  PointNum,
+  PointBool,
+  Migration,
+  combineKeys,
+} from "@dflex/utils";
 import type {
   ThresholdInterface,
   IPointNum,
@@ -66,13 +72,13 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
 
     const siblings = store.getElmBranchByKey(SK);
 
-    const lastElmId = siblings[siblings.length - 1];
+    this.migration = new Migration(order.self, SK, store.tracker.newTravel());
 
-    this.migration = new Migration(
-      order.self,
-      SK,
-      store.registry[lastElmId].currentPosition
-    );
+    if (!store.containers[SK].lastElmPosition) {
+      store.containers[SK].preservePosition(
+        store.registry[siblings[siblings.length - 1]].currentPosition
+      );
+    }
 
     this.isViewportRestricted = true;
 
@@ -87,6 +93,8 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
       top: currentPosition.y,
     });
 
+    this.appendDraggedToContainerDimensions(true);
+
     store.getBranchesByDepth(depth).forEach((key) => {
       const { boundaries } = store.containers[key];
 
@@ -96,7 +104,12 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
         }
       }
 
-      this.threshold.setContainerThreshold(key, boundaries);
+      this.threshold.setContainerThreshold(
+        key,
+        depth,
+        boundaries,
+        store.unifiedContainerDimensions[depth]
+      );
     });
 
     this.isMovingAwayFrom = new PointBool(false, false);
@@ -130,6 +143,19 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
       siblings !== null &&
       (opts.restrictionsStatus.isContainerRestricted ||
         opts.restrictionsStatus.isSelfRestricted);
+  }
+
+  appendDraggedToContainerDimensions(isAppend: boolean) {
+    const {
+      depth,
+      offset: { height },
+    } = this.draggedElm;
+
+    const maneuverDistance = height;
+
+    store.unifiedContainerDimensions[depth].height += isAppend
+      ? maneuverDistance
+      : -1 * maneuverDistance;
   }
 
   private axesYFilter(
@@ -268,15 +294,20 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
     );
   }
 
-  isOutThreshold(SK?: string) {
+  isOutThreshold(SK?: string, useInsertionThreshold?: boolean) {
     const {
       id,
+      depth,
       offset: { height, width },
     } = this.draggedElm;
 
     const { x, y } = this.positionPlaceholder;
 
-    const key = SK || id;
+    let key = SK || id;
+
+    if (useInsertionThreshold) {
+      key = combineKeys(depth, key);
+    }
 
     return (
       this.threshold.isOutThresholdV(key, y, y + height) ||
@@ -286,8 +317,8 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
 
   #isLeavingFromTail() {
     const lastElm =
-      (store.getElmBranchByKey(this.migration.latest().key) as string[])
-        .length - 1;
+      (store.getElmBranchByKey(this.migration.latest().SK) as string[]).length -
+      1;
 
     return (
       this.threshold.isOut[this.draggedElm.id].isLeftFromBottom &&
@@ -298,8 +329,7 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
   isNotSettled() {
     return (
       !this.#isLeavingFromTail() &&
-      (this.isOutThreshold() ||
-        this.isOutThreshold(this.migration.latest().key))
+      (this.isOutThreshold() || this.isOutThreshold(this.migration.latest().SK))
     );
   }
 }

@@ -1,4 +1,4 @@
-import type { RectBoundaries, RectDimensions } from "../types";
+import type { Dimensions, RectBoundaries, RectDimensions } from "../types";
 import FourDirectionsBool from "./FourDirectionsBool";
 
 export interface ThresholdPercentages {
@@ -33,7 +33,12 @@ export interface ThresholdInterface {
   thresholds: ThresholdsStore;
   isOut: LayoutPositionStatus;
   setMainThreshold(id: string, rect: RectDimensions): void;
-  setContainerThreshold(key: string, rect: RectBoundaries): void;
+  setContainerThreshold(
+    key: string,
+    depth: number,
+    rect: RectBoundaries,
+    unifiedContainerDimensions: Dimensions
+  ): void;
   setScrollThreshold(key: string, rect: RectDimensions): void;
   isOutThresholdH(key: string, XLeft: number, XRight: number): boolean;
   isOutThresholdV(key: string, YTop: number, YBottom: number): boolean;

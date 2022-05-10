@@ -15,17 +15,11 @@ class DraggableInteractive
   extends DraggableAxes
   implements IDraggableInteractive
 {
-  operationID: string;
-
-  setOfTransformedIds?: Set<string>;
-
   scroll: ScrollOptWithThreshold;
 
   occupiedPosition: IPointNum;
 
   occupiedTranslate: IPointNum;
-
-  numberOfElementsTransformed: number;
 
   isDraggedPositionFixed: boolean;
 
@@ -40,7 +34,7 @@ class DraggableInteractive
 
     const { hasOverflowX, hasOverflowY } = store.containers[SK].scroll;
 
-    const siblings = store.getElmBranchByKey(this.migration.latest().key);
+    const siblings = store.getElmBranchByKey(this.migration.latest().SK);
 
     this.isDraggedPositionFixed = false;
 
@@ -84,16 +78,8 @@ class DraggableInteractive
 
     const { currentPosition, translate } = this.draggedElm;
 
-    this.operationID = store.tracker.newTravel();
-
     this.occupiedPosition = new PointNum(currentPosition.x, currentPosition.y);
     this.occupiedTranslate = new PointNum(translate.x, translate.y);
-
-    /**
-     * It counts number of element that dragged has passed. This counter is
-     * crucial to calculate drag's translate and index
-     */
-    this.numberOfElementsTransformed = 0;
   }
 
   setDraggedTempIndex(i: number) {
@@ -104,14 +90,15 @@ class DraggableInteractive
     this.draggedElm.setDataset("index", i);
   }
 
-  updateNumOfElementsTransformed(effectedElemDirection: number) {
-    this.numberOfElementsTransformed += -1 * effectedElemDirection;
-  }
-
   setDraggedTransformPosition(isFallback: boolean) {
-    const siblings = store.getElmBranchByKey(this.migration.latest().key);
+    const siblings = store.getElmBranchByKey(this.migration.latest().SK);
 
-    if (isFallback) {
+    const hasToUndo =
+      isFallback ||
+      // dragged in position but has been clicked.
+      this.occupiedPosition.isEqual(this.draggedElm.currentPosition);
+
+    if (hasToUndo) {
       /**
        * If not isDraggedOutPosition, it means dragged is out its position, inside
        * list but didn't reach another element to replace.
@@ -162,9 +149,13 @@ class DraggableInteractive
     this.setDragged(false);
     this.setDraggedTransformPosition(isFallback);
 
+    if (isFallback) this.migration.dispose();
+
     if (this.isDraggedPositionFixed) {
       this.changeStyle(this.changeToFixedStyleProps, false);
     }
+
+    this.appendDraggedToContainerDimensions(false);
 
     this.threshold.destroy();
 

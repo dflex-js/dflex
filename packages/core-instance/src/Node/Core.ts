@@ -183,27 +183,11 @@ class NodeCore extends Abstract implements ICore {
   #leaveToNewPosition(
     branchIDsOrder: string[],
     newIndex: number,
-    oldIndex: number,
-    siblingsEmptyElmIndex: number
+    oldIndex: number
   ) {
-    if (siblingsEmptyElmIndex >= 0 && siblingsEmptyElmIndex !== newIndex) {
-      if (process.env.NODE_ENV !== "production") {
-        // eslint-disable-next-line no-console
-        console.error(
-          `Illegal Attempt: More than one element have left the siblings list.\n`,
-          `Element id: ${this.id} - index: ${oldIndex}\n`,
-          `Siblings list: ${branchIDsOrder}\n`
-        );
-      }
-
-      return siblingsEmptyElmIndex;
-    }
-
     branchIDsOrder[oldIndex] = "";
 
     branchIDsOrder[newIndex] = this.id;
-
-    return siblingsEmptyElmIndex;
   }
 
   /**
@@ -254,7 +238,6 @@ class NodeCore extends Abstract implements ICore {
     direction: Direction,
     elmSpace: IPointNum,
     operationID: string,
-    siblingsEmptyElmIndex: number,
     axis: Axes
   ) {
     const numberOfPassedElm = 1;
@@ -288,14 +271,7 @@ class NodeCore extends Abstract implements ICore {
       }
     }
 
-    const newStatusSiblingsHasEmptyElm = this.#leaveToNewPosition(
-      iDsInOrder,
-      newIndex,
-      oldIndex,
-      siblingsEmptyElmIndex
-    );
-
-    return newStatusSiblingsHasEmptyElm;
+    this.#leaveToNewPosition(iDsInOrder, newIndex, oldIndex);
   }
 
   /**

@@ -1,17 +1,21 @@
 /* eslint-disable max-classes-per-file */
 
-import { IPointAxes, IPointNum, PointNum } from "../Point";
-
 import type { IAbstract, IMigration } from "./types";
 
 class AbstractMigration implements IAbstract {
   index: number;
 
-  key: string;
+  SK: string;
 
-  constructor(index: number, key: string) {
+  id: string;
+
+  marginBottom: number | null;
+
+  constructor(index: number, SK: string, id: string) {
     this.index = index;
-    this.key = key;
+    this.SK = SK;
+    this.id = id;
+    this.marginBottom = null;
   }
 }
 
@@ -20,14 +24,9 @@ class Migration implements IMigration {
 
   isTransitioning!: boolean;
 
-  lastElmPosition: IPointNum;
-
-  insertionTransform!: IPointAxes | null;
-
-  constructor(index: number, key: string, lastElmPosition: IPointNum) {
-    this.#migrations = [new AbstractMigration(index, key)];
-    this.lastElmPosition = new PointNum(0, 0);
-    this.complete(lastElmPosition);
+  constructor(index: number, SK: string, id: string) {
+    this.#migrations = [new AbstractMigration(index, SK, id)];
+    this.complete();
   }
 
   latest() {
@@ -38,24 +37,32 @@ class Migration implements IMigration {
     return this.#migrations[this.#migrations.length - 2];
   }
 
+  getALlMigrations() {
+    return this.#migrations;
+  }
+
   setIndex(index: number) {
     this.latest().index = index;
   }
 
-  add(index: number, key: string, insertionTransform: IPointAxes) {
-    this.#migrations.push(new AbstractMigration(index, key));
+  preserveMarginBottom(mb: number | null) {
+    this.latest().marginBottom = mb;
+  }
 
-    this.insertionTransform = { ...insertionTransform };
+  add(index: number, key: string, id: string) {
+    this.#migrations.push(new AbstractMigration(index, key, id));
   }
 
   start() {
     this.isTransitioning = true;
   }
 
-  complete(lastElmPosition: IPointNum) {
-    this.lastElmPosition.clone(lastElmPosition);
+  complete() {
     this.isTransitioning = false;
-    this.insertionTransform = null;
+  }
+
+  dispose() {
+    this.#migrations = [];
   }
 }
 

@@ -15,6 +15,7 @@ export { Migration } from "./Migration";
 export type { IAbstract, IMigration } from "./Migration";
 
 export type {
+  Dimensions,
   RectDimensions,
   RectBoundaries,
   Axes,
@@ -25,4 +26,4 @@ export type {
 export { Scroll } from "./Scroll";
 export type { IScroll } from "./Scroll";
 
-export { canUseDOM } from "./collections";
+export { canUseDOM, combineKeys, dirtyAssignBiggestRect } from "./collections";

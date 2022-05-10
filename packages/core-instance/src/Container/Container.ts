@@ -1,6 +1,8 @@
-import { PointNum } from "@dflex/utils";
+/* eslint-disable no-param-reassign */
+import { PointNum, dirtyAssignBiggestRect } from "@dflex/utils";
 
 import type {
+  Dimensions,
   IScroll,
   IPointNum,
   IPointAxes,
@@ -11,7 +13,7 @@ import type {
 import type { IContainer } from "./types";
 
 class Container implements IContainer {
-  #boundariesStorageForGrid: {
+  #boundariesByRow: {
     [row: number]: RectBoundaries;
   };
 
@@ -21,60 +23,39 @@ class Container implements IContainer {
 
   scroll!: IScroll;
 
-  #gridContainer: IPointNum;
-
   #gridSiblingsHasNewRow: boolean;
 
-  preservedFirstElmPosition?: IPointNum | null;
+  lastElmPosition!: IPointNum;
 
   constructor() {
-    this.#boundariesStorageForGrid = {};
     this.grid = new PointNum(1, 1);
-    this.#gridContainer = new PointNum(1, 0);
+    this.#boundariesByRow = {};
     this.#gridSiblingsHasNewRow = false;
   }
 
-  setGrid(grid: IPointNum, rect: RectDimensions) {
-    const { height, left, top, width } = rect;
-
-    const right = left + width;
-    const bottom = top + height;
-
-    const $ = this.#boundariesStorageForGrid;
-
-    const row = grid.x || 1;
-
-    const rowRect = $[row];
-
-    if (!rowRect) {
-      this.grid = new PointNum(1, 1);
-
-      grid.clone(this.grid);
-
-      this.#boundariesStorageForGrid = {
-        [row]: {
-          top,
-          left,
-          right,
-          bottom,
-        },
+  #addNewElmToGridIndicator(rect: RectBoundaries) {
+    if (!this.#boundariesByRow[this.grid.x]) {
+      this.#boundariesByRow[this.grid.x] = {
+        ...rect,
       };
 
       return;
     }
 
+    const $ = this.#boundariesByRow[this.grid.x];
+
     // Defining elements in different row.
-    if (bottom > rowRect.bottom || top < rowRect.top) {
+    if (rect.bottom > $.bottom || rect.top < $.top) {
       this.grid.y += 1;
 
       this.#gridSiblingsHasNewRow = true;
 
-      rowRect.left = 0;
-      rowRect.right = 0;
+      $.left = 0;
+      $.right = 0;
     }
 
     // Defining elements in different column.
-    if (left > rowRect.right || right < rowRect.left) {
+    if (rect.left > $.right || rect.right < $.left) {
       if (this.#gridSiblingsHasNewRow) {
         this.grid.x = 1;
 
@@ -84,79 +65,64 @@ class Container implements IContainer {
       }
     }
 
-    grid.clone(this.grid);
-
-    if (left < rowRect.left) {
-      rowRect.left = left;
-    }
-
-    if (top < rowRect.top) {
-      rowRect.top = top;
-    }
-
-    if (right > rowRect.right) {
-      rowRect.right = right;
-    }
-
-    if (bottom > rowRect.bottom) {
-      rowRect.bottom = bottom;
-    }
+    dirtyAssignBiggestRect($, rect);
   }
 
-  setBoundaries(rect: RectDimensions) {
-    const { height, left, top, width } = rect;
+  // TODO: How to unregister element from the edge of the container? Currently
+  // we reset and accumulate, it's inefficient. removeElmFromEdge() is a better.
+
+  registerNewElm(
+    offset: RectDimensions,
+    unifiedContainerDimensions?: Dimensions
+  ) {
+    const { height, left, top, width } = offset;
 
     const right = left + width;
     const bottom = top + height;
 
-    if (!this.boundaries) {
-      this.boundaries = {
-        top,
-        left,
-        right,
-        bottom,
-      };
+    const elmRectBoundaries = {
+      top,
+      left,
+      right,
+      bottom,
+    };
 
-      return;
+    if (!this.boundaries) {
+      this.boundaries = elmRectBoundaries;
+    } else {
+      dirtyAssignBiggestRect(this.boundaries, elmRectBoundaries);
     }
+
+    this.#addNewElmToGridIndicator(elmRectBoundaries);
 
     const $ = this.boundaries;
 
-    // Defining elements in different row.
-    if (bottom > $.bottom || top < $.top) {
-      this.#gridContainer.y += 1;
+    const uni = unifiedContainerDimensions;
+
+    if (!uni) return;
+
+    const $height = $.bottom - $.top;
+    const $width = $.right - $.left;
+
+    if (uni.height < $height) {
+      uni.height = $height;
     }
 
-    // Defining elements in different column.
-    if (left > $.right || right < $.left) {
-      this.#gridContainer.x += 1;
-    }
-
-    if (left < $.left) {
-      $.left = left;
-    }
-
-    if (top < $.top) {
-      $.top = top;
-    }
-
-    if (right > $.right) {
-      $.right = right;
-    }
-
-    if (bottom > $.bottom) {
-      $.bottom = bottom;
+    if (uni.width < $width) {
+      uni.width = $height;
     }
   }
 
-  preserveFirstElmPosition(position: IPointAxes | null) {
-    if (position) {
-      this.preservedFirstElmPosition = new PointNum(position.x, position.y);
+  resetIndicators() {
+    // @ts-expect-error - Just resetting the boundaries.
+    this.boundaries = null;
+    this.grid.setAxes(1, 1);
+    this.#boundariesByRow = {};
+    this.#gridSiblingsHasNewRow = false;
+  }
 
-      return;
-    }
-
-    this.preservedFirstElmPosition = null;
+  preservePosition(position: IPointAxes) {
+    this.lastElmPosition = new PointNum(position.x, position.y);
   }
 }
 

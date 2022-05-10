@@ -3,24 +3,25 @@
 
 "Test 🧪":
   - packages/**/*.test.ts
+  - packages/**/*.spec.ts
 
 "documentation 📄":
   - docs/**/*
 
 Core:
-  - packages/core-instance/**
+  - any: ["packages/core-instance/**", "!packages/core-instance/package.json"]
 
 DnD:
-  - packages/dnd/**
+  - any: ["packages/dnd/**", "!packages/dnd/package.json"]
 
 Dom-Gen:
-  - packages/dom-gen/**
+  - any: ["packages/dom-gen/**", "!packages/dom-gen/package.json"]
 
 Draggable-only:
-  - packages/draggable/**
+  - any: ["packages/draggable/**", "!packages/draggable/package.json"]
 
 Store:
-  - packages/store/**
+  - any: ["packages/store/**", "!packages/store/package.json"]
 
 Utils:
-  - packages/utils/**
+  - any: ["packages/utils/**", "!packages/utils/package.json"]

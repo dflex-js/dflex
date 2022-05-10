@@ -1,2 +1,3 @@
-// eslint-disable-next-line import/prefer-default-export
 export { default as canUseDOM } from "./canUseDOM";
+export { default as dirtyAssignBiggestRect } from "./assignBiggestRect";
+export { default as combineKeys } from "./combineKeys";
