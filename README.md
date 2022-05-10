@@ -49,6 +49,28 @@ library on internet that manipulates the DOM instead of reconstructing it.
 - Event driven API.
 - Targeting each DOM node individually.
 - Extensible using JSON tree instead of flat recursion.
+- Support three different types of restrictions:<br/>
+  1 -Restricted area related to the parent container.<br/>
+  2- Restricted area related to the viewport.<br/>
+  3- Restricted area related to the position itself.
+- Support four types of custom events with custom layout state emitter.
+- Auto remove selection when starting dragging.
+
+## Implemented Transformation 💡
+
+- The original input order which appears when inspecting elements stays the
+  same. While the visual order happens after transformation and it's supported by the
+  `data-index` attribute to know the order of elements in the visual list.<br/><br/>
+  ![original and visual order](https://user-images.githubusercontent.com/19228730/126757232-0e72a153-7fba-4868-b881-d29f2439d510.gif)
+
+- To enable handling a large set of elements, the transformation is related
+  to the viewport. No matter how many elements are affected, DFlex only
+  transforms elements visible on the screen. Elements outside the viewport are
+  triggered to a new position when they are visible.<br/><br/>
+  ![Trigger elements visible on the screen](https://user-images.githubusercontent.com/19228730/126758576-e716787d-3ff7-44cb-883a-c6b7064e30e5.gif)
+
+- Support strict transformation between containers.<br/><br/>
+  ![Handle orphaned container](https://user-images.githubusercontent.com/19228730/165508982-c4d3b317-19bd-4a98-ba0f-febf772de44a.gif)
 
 ## Project Content 🚀
 
@@ -88,7 +110,7 @@ functionality.
 
 Visit DFlex site for more <https://www.dflex.dev/>
 
-## Installation 📦
+## Local Development 📦
 
 DFlex contains multiple packages that shapes the final product. All Packages are
 decoupled and work separately. Each package has it own universe including test
@@ -109,17 +131,10 @@ cd dflex
 pnpm install
 ```
 
-This will clone and install all development dependencies. If you are using
-windows you probably have to install cypress manually as following:
-
-```bash
-pnpm cy:install:win
-```
-
 To start development you can use the following command:
 
 ```bash
-pnpm --filter @dflex/dnd server
+pnpm -F @dflex/dnd server
 ```
 
 This will run the development playground for the DnD package. Open the browser
@@ -132,9 +147,9 @@ If you want to change the codebase and live edit the playground you have to
 compile while running the playground. You can use the following command:
 
 ```bash
-pnpm --filter @dflex/dnd compile:w
-pnpm --filter @dflex/dnd build:w
-pnpm --filter @dflex/dnd run server
+pnpm -F @dflex/dnd compile:w
+pnpm -F @dflex/dnd build:w
+pnpm -F @dflex/dnd run server
 
 ```
 
@@ -143,7 +158,7 @@ break the code. You can do that by running the test and have some fun watching
 Cypress do the job:
 
 ```bash
-pnpm --filter @dflex/dnd test
+pnpm -F @dflex/dnd test
 ```
 
 ## Contribution 🌎
@@ -162,6 +177,16 @@ repository.
 
 4- Push to your fork and submit a pull request when ready.
 
+## Work in progress 🔨
+
+DFlex is a work in progress. The transformation between containers is still in
+development. Yet, you can use the library in your project if you depend on
+transformation inside one container.
+
 ## License 🤝
 
 DFlex is [MIT License](LICENSE) since version 3.0.0 and above.
+
+## Author
+
+Jalal Maskoun ([@jalal246](https://github.com/jalal246))
