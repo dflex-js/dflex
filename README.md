@@ -66,11 +66,10 @@ library on internet that manipulates the DOM instead of reconstructing it.
 - [x] Auto remove selection when starting dragging.<br/><br/>
       ![auto remove selection](https://user-images.githubusercontent.com/19228730/126760772-6436c13b-141d-4312-a2eb-f52422d66bba.gif)
 
-- [x] Support three different types of restrictions:
-
-  1 -Restricted area related to the parent container.<br/>
-  2- Restricted area related to the viewport.<br/>
-  3- Restricted area related to the position itself.<br/><br/>
+- [x] Support three different types of restrictions:<br/>
+      1 -Restricted area related to the parent container.<br/>
+      2- Restricted area related to the viewport.<br/>
+      3- Restricted area related to the position itself.
 
 ## Project Content 🚀
 
