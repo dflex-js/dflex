@@ -58,11 +58,14 @@ library on internet that manipulates the DOM instead of reconstructing it.
       ![original and visual order](https://user-images.githubusercontent.com/19228730/126757232-0e72a153-7fba-4868-b881-d29f2439d510.gif)
 
 - [x] Transformation is related to the element visibility. To enable handling a
-      large set of elements, the transformation is related to the viewport. Now, no
+      large set of elements, the transformation is related to the viewport. No
       matter how many elements are affected, DFlex only transforms elements visible
       on the screen. Elements outside the viewport are triggered to a new position
       when they are visible.
       ![Trigger elements visible on the screen](https://user-images.githubusercontent.com/19228730/126758576-e716787d-3ff7-44cb-883a-c6b7064e30e5.gif)
+
+- [x] Auto remove selection when starting dragging
+      ![auto remove selection](https://user-images.githubusercontent.com/19228730/126760772-6436c13b-141d-4312-a2eb-f52422d66bba.gif)
 
 ## Project Content 🚀
 
