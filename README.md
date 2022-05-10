@@ -71,6 +71,8 @@ library on internet that manipulates the DOM instead of reconstructing it.
       2- Restricted area related to the viewport.<br/>
       3- Restricted area related to the position itself.
 
+- [x] Support 4 categories of custom events with custom layout state emitter.
+
 ## Project Content 🚀
 
 ### [**@dflex/dom-gen**](https://github.com/dflex-js/dflex/tree/master/packages/dom-gen)
