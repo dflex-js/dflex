@@ -8,7 +8,6 @@
   "repository": "https://github.com/dflex-js/dflex",
   "author": "Jalal Maskoun",
   "scripts": {
-    "cy:install:win": "cypress cache clear && .\\node_modules\\.bin\\cypress.cmd install --force",
     "test:unit": "cross-env NODE_ENV=test && jest",
     "test:e2e": "cross-env NODE_ENV=test && pnpm -F @dflex/dnd test",
     "build": "cross-env NODE_ENV=production && pnpm build -r",
@@ -16,7 +15,7 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.22.0",
-    "@swc/core": "^1.2.179",
+    "@swc/core": "^1.2.181",
     "@swc/jest": "^0.2.21",
     "@types/jest": "^27.5.0",
     "@types/node": "^17.0.31",
