@@ -50,7 +50,7 @@ library on internet that manipulates the DOM instead of reconstructing it.
 - Targeting each DOM node individually.
 - Extensible using JSON tree instead of flat recursion.
 
-## Implemented Features 🔍
+## Implemented Features 💡
 
 - [x] Support three different types of restrictions:<br/>
       1 -Restricted area related to the parent container.<br/>
@@ -183,6 +183,12 @@ repository.
 3- Make your change.
 
 4- Push to your fork and submit a pull request when ready.
+
+## Work in progress 🔨
+
+DFlex is a work in progress. The transformation between containers is still in
+development. Yet, you can use the library in your project if you depend on
+transformation inside one container.
 
 ## License 🤝
 
