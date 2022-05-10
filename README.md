@@ -69,7 +69,7 @@ library on internet that manipulates the DOM instead of reconstructing it.
       triggered to a new position when they are visible.<br/><br/>
       ![Trigger elements visible on the screen](https://user-images.githubusercontent.com/19228730/126758576-e716787d-3ff7-44cb-883a-c6b7064e30e5.gif)
 
-- [x] Support strict transformation between containers.
+- [x] Support strict transformation between containers.<br/><br/>
       ![Handle orphaned container](https://user-images.githubusercontent.com/19228730/165508982-c4d3b317-19bd-4a98-ba0f-febf772de44a.gif)
 
 ## Project Content 🚀
@@ -110,7 +110,7 @@ functionality.
 
 Visit DFlex site for more <https://www.dflex.dev/>
 
-## Installation 📦
+## Local Development 📦
 
 DFlex contains multiple packages that shapes the final product. All Packages are
 decoupled and work separately. Each package has it own universe including test
@@ -187,3 +187,7 @@ repository.
 ## License 🤝
 
 DFlex is [MIT License](LICENSE) since version 3.0.0 and above.
+
+## Author
+
+Jalal Maskoun ([@jalal246](https://github.com/jalal246))
