@@ -37,7 +37,7 @@ A Drag-and-Drop library for all JavaScript frameworks implementing an enhanced
 transformation mechanism to manipulate DOM elements. It is so far the only
 library on internet that manipulates the DOM instead of reconstructing it.
 
-## Features ✅
+## Abstract Features ✅
 
 - Dynamic architecture.
 - Traverse DOM without calling browser API.
@@ -49,6 +49,10 @@ library on internet that manipulates the DOM instead of reconstructing it.
 - Event driven API.
 - Targeting each DOM node individually.
 - Extensible using JSON tree instead of flat recursion.
+
+## Implemented Features 🔍
+
+- [x] Original and Visual of order of elements
 
 ## Project Content 🚀
 
