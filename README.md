@@ -52,7 +52,10 @@ library on internet that manipulates the DOM instead of reconstructing it.
 
 ## Implemented Features 🔍
 
-- [x] Original and Visual of order of elements
+- [x] The original input order which appears when inspecting elements stays the
+      same. While the visual order happens after transformation supported by the
+      `data-index` attribute to know the order of elements in the visual list.
+      ![original and visual order](https://user-images.githubusercontent.com/19228730/126757232-0e72a153-7fba-4868-b881-d29f2439d510.gif)
 
 ## Project Content 🚀
 
