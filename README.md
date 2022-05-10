@@ -56,7 +56,8 @@ library on internet that manipulates the DOM instead of reconstructing it.
       1 -Restricted area related to the parent container.<br/>
       2- Restricted area related to the viewport.<br/>
       3- Restricted area related to the position itself.
-
+- [x] Support 4 categories of custom events with custom layout state emitter.
+- [x] Auto remove selection when starting dragging.
 - [x] The original input order which appears when inspecting elements stays the
       same. While the visual order happens after transformation and it's supported by the
       `data-index` attribute to know the order of elements in the visual list.<br/><br/>
@@ -67,9 +68,6 @@ library on internet that manipulates the DOM instead of reconstructing it.
       transforms elements visible on the screen. Elements outside the viewport are
       triggered to a new position when they are visible.<br/><br/>
       ![Trigger elements visible on the screen](https://user-images.githubusercontent.com/19228730/126758576-e716787d-3ff7-44cb-883a-c6b7064e30e5.gif)
-
-- [x] Auto remove selection when starting dragging.<br/><br/>
-      ![Auto remove selection](https://user-images.githubusercontent.com/19228730/126760772-6436c13b-141d-4312-a2eb-f52422d66bba.gif)
 
 - [x] Support stick transformation between containers.
       ![Handle orphaned container](https://user-images.githubusercontent.com/19228730/165508982-c4d3b317-19bd-4a98-ba0f-febf772de44a.gif)
