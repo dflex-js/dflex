@@ -69,7 +69,7 @@ library on internet that manipulates the DOM instead of reconstructing it.
       triggered to a new position when they are visible.<br/><br/>
       ![Trigger elements visible on the screen](https://user-images.githubusercontent.com/19228730/126758576-e716787d-3ff7-44cb-883a-c6b7064e30e5.gif)
 
-- [x] Support stick transformation between containers.
+- [x] Support strict transformation between containers.
       ![Handle orphaned container](https://user-images.githubusercontent.com/19228730/165508982-c4d3b317-19bd-4a98-ba0f-febf772de44a.gif)
 
 ## Project Content 🚀
