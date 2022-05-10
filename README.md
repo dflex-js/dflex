@@ -64,7 +64,19 @@ library on internet that manipulates the DOM instead of reconstructing it.
       ![Trigger elements visible on the screen](https://user-images.githubusercontent.com/19228730/126758576-e716787d-3ff7-44cb-883a-c6b7064e30e5.gif)
 
 - [x] Auto remove selection when starting dragging.<br/><br/>
-      ![auto remove selection](https://user-images.githubusercontent.com/19228730/126760772-6436c13b-141d-4312-a2eb-f52422d66bba.gif)
+      ![Auto remove selection](https://user-images.githubusercontent.com/19228730/126760772-6436c13b-141d-4312-a2eb-f52422d66bba.gif)
+
+- [x] Handle transformation To absent bottom, prevent any insertion could cause layout shift.<br/><br/>
+      ![Handle absent bottom](https://user-images.githubusercontent.com/19228730/165229355-689d7b93-d148-4558-944a-51afeaac7336.gif)
+
+- [x] Handle transformation for containers orphaned by migration.<br/><br/>
+      ![Handle orphaned container](https://user-images.githubusercontent.com/19228730/165508982-c4d3b317-19bd-4a98-ba0f-febf772de44a.gif)
+
+- [x] Enable transformation from origin higher than destination.<br/><br/>
+      ![Handle origin higher than destination](https://user-images.githubusercontent.com/19228730/166482515-b418b21e-7a74-4fcd-9d0c-ec654b2206b0.gif)
+
+-[x] Add the ability to extend the transformation area between containers.<br/><br/>
+![Extend the transformation area](https://user-images.githubusercontent.com/19228730/167448510-e8a68ee2-cc8c-46b2-93ce-c1f20700eab6.gif)
 
 - [x] Support three different types of restrictions:<br/>
       1 -Restricted area related to the parent container.<br/>
