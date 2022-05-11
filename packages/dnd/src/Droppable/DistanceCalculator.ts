@@ -181,7 +181,7 @@ class DistanceCalculator {
 
     return {
       elm,
-      isOrphan,
+      isEmpty: isOrphan,
       isRestoredLastPosition,
       position,
       ...(isRetrievePrevElmValid && {
@@ -241,8 +241,12 @@ class DistanceCalculator {
     insertFromTop: boolean,
     axis: Axis
   ) {
-    const { position, elm, isRestoredLastPosition, isOrphan } =
-      this.#getInsertionELmMeta(insertAt, SK);
+    const {
+      position,
+      elm,
+      isRestoredLastPosition,
+      isEmpty: isOrphan,
+    } = this.#getInsertionELmMeta(insertAt, SK);
 
     const { draggedElm, migration } = this.draggable;
 
@@ -295,7 +299,7 @@ class DistanceCalculator {
 
     const {
       position,
-      isOrphan,
+      isEmpty,
       isRestoredLastPosition,
       elm: lastElm,
       prevElm,
@@ -304,7 +308,7 @@ class DistanceCalculator {
     // Restore the last known current position.
 
     // Get the stored position if the branch is empty.
-    if (isOrphan) {
+    if (isEmpty) {
       return position;
     }
 

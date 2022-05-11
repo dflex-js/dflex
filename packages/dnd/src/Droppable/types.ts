@@ -6,14 +6,14 @@ interface InsertionBasic {
 }
 
 export interface InsertionELmMeta1 extends InsertionBasic {
-  isOrphan: false;
+  isEmpty: false;
   elm: INode;
   isRestoredLastPosition: boolean;
   prevElm?: INode;
 }
 
 export interface InsertionELmMeta2 extends InsertionBasic {
-  isOrphan: true;
+  isEmpty: true;
   isRestoredLastPosition: true;
   elm: null;
   prevElm?: never;
