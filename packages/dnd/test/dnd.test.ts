@@ -20,7 +20,7 @@ describe.skip("Checks Store Instance", () => {
   });
 
   it("Checks offset of element-1", () => {
-    const offsetElm1 = store.getELmOffsetById(elm1.id);
+    const offsetElm1 = store.registry[elm1.id].offset;
     expect(offsetElm1).toStrictEqual({
       height: 50,
       left: 450,
@@ -30,7 +30,7 @@ describe.skip("Checks Store Instance", () => {
   });
 
   it("Checks offset of element-2", () => {
-    const offsetElm2 = store.getELmOffsetById(elm2.id);
+    const offsetElm2 = store.registry[elm2.id].offset;
     expect(offsetElm2).toStrictEqual({
       height: 50,
       left: 450,
@@ -40,7 +40,7 @@ describe.skip("Checks Store Instance", () => {
   });
 
   it("Checks offset of element-3", () => {
-    const offsetElm3 = store.getELmOffsetById(elm3.id);
+    const offsetElm3 = store.registry[elm3.id].offset;
     expect(offsetElm3).toStrictEqual({
       height: 50,
       left: 450,
@@ -50,7 +50,7 @@ describe.skip("Checks Store Instance", () => {
   });
 
   it("Checks offset of element-4", () => {
-    const offsetElm4 = store.getELmOffsetById(elm4.id);
+    const offsetElm4 = store.registry[elm4.id].offset;
     expect(offsetElm4).toStrictEqual({
       height: 50,
       left: 450,
@@ -96,22 +96,22 @@ describe.skip("Checks Store Instance", () => {
   });
 
   it("Restore offset of element-1", () => {
-    const offsetElm1 = store.getELmOffsetById(elm1.id);
+    const offsetElm1 = store.registry[elm1.id].offset;
     expect(offsetElm1).toStrictEqual(elm1.ref.getBoundingClientRect());
   });
 
   it("Restore offset of element-4", () => {
-    const offsetElm4 = store.getELmOffsetById(elm4.id);
+    const offsetElm4 = store.registry[elm4.id].offset;
     expect(offsetElm4).toStrictEqual(elm4.ref.getBoundingClientRect());
   });
 
   it("Restore offset of element-3", () => {
-    const offsetElm3 = store.getELmOffsetById(elm3.id);
+    const offsetElm3 = store.registry[elm3.id].offset;
     expect(offsetElm3).toStrictEqual(elm3.ref.getBoundingClientRect());
   });
 
   it("Restore offset of element-4", () => {
-    const offsetElm4 = store.getELmOffsetById(elm4.id);
+    const offsetElm4 = store.registry[elm4.id].offset;
     expect(offsetElm4).toStrictEqual(elm4.ref.getBoundingClientRect());
   });
 
