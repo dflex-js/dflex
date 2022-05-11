@@ -148,7 +148,7 @@ class DistanceCalculator {
     let isRetrievePrevElmValid = false;
     let prevIndex = NaN;
 
-    if (Droppable.isOrphan(lst)) {
+    if (Droppable.isEmpty(lst)) {
       // TODO:
       // This is a bug. Cause it should be treated same way as the last
       // position. If we can restore, the we do it otherwise we do the

@@ -103,10 +103,7 @@ class Droppable extends DistanceCalculator {
     throw new Error(`No valid element found.${lst}\n`);
   }
 
-  /**
-   * Orphan when it's empty or has one empty string.
-   */
-  static isOrphan(lst: string[]) {
+  static isEmpty(lst: string[]) {
     const { length } = lst;
 
     return (
@@ -245,7 +242,7 @@ class Droppable extends DistanceCalculator {
      */
     let hasToMoveSiblingsDown = true;
 
-    const isOrphan = Droppable.isOrphan(siblings);
+    const isOrphan = Droppable.isEmpty(siblings);
 
     let insertAt = isOrphan ? 0 : this.#detectDroppableIndex();
 
