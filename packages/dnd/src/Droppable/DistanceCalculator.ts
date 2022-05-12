@@ -140,38 +140,40 @@ class DistanceCalculator {
     const { lastElmPosition } = store.containers[SK];
 
     const position = new PointNum(0, 0);
-
+    const isEmpty = Droppable.isEmpty(lst);
+    const isOrphan = !isEmpty && length === 1;
     let isRestoredLastPosition = false;
-    let isOrphan = false;
+
     let elm: null | INode = null;
+    let prevElm: null | INode = null;
 
-    let isRetrievePrevElmValid = false;
-    let prevIndex = NaN;
-
-    if (Droppable.isEmpty(lst)) {
-      // TODO:
-      // This is a bug. Cause it should be treated same way as the last
-      // position. If we can restore, the we do it otherwise we do the
-      // calculations based on dragged.
+    if (lastElmPosition) {
+      // If empty then restore.
       position.clone(lastElmPosition);
-      isOrphan = true;
       isRestoredLastPosition = true;
-    } else {
+    }
+
+    if (!isEmpty) {
+      // Assign the previous element if not orphan.
+      if (!isOrphan) {
+        const prevIndex = insertAt - 1;
+        prevElm = store.registry[lst[prevIndex]];
+      }
+
       const isInsertedLast = insertAt === length - 1;
 
-      prevIndex = insertAt - 1;
-
-      isRetrievePrevElmValid = prevIndex >= 0 && prevIndex < length;
-
+      // Then the priority is to restore the last position.
       if (isInsertedLast) {
         elm = Droppable.getTheLastValidElm(lst, draggedElm.id);
-        const elmPos = elm.currentPosition;
 
         if (lastElmPosition) {
           position.clone(lastElmPosition);
-          isRestoredLastPosition = !lastElmPosition.isEqual(elmPos);
+          // Did we retorted the same element?
+          isRestoredLastPosition = !lastElmPosition.isEqual(
+            elm.currentPosition
+          );
         } else {
-          position.clone(elmPos);
+          position.clone(elm.currentPosition);
         }
       } else {
         elm = store.registry[lst[insertAt]];
@@ -180,14 +182,13 @@ class DistanceCalculator {
     }
 
     return {
-      elm,
-      isEmpty: isOrphan,
+      isEmpty,
+      isOrphan,
       isRestoredLastPosition,
       position,
-      ...(isRetrievePrevElmValid && {
-        prevElm: store.registry[lst[prevIndex]],
-      }),
-    } as InsertionELmMeta;
+      elm,
+      prevElm,
+    };
   }
 
   #addDraggedOffsetToElm(position: IPointAxes, elm: INode, axis: Axis) {
@@ -241,12 +242,8 @@ class DistanceCalculator {
     insertFromTop: boolean,
     axis: Axis
   ) {
-    const {
-      position,
-      elm,
-      isRestoredLastPosition,
-      isEmpty: isOrphan,
-    } = this.#getInsertionELmMeta(insertAt, SK);
+    const { isEmpty, isOrphan, position, isRestoredLastPosition, elm } =
+      this.#getInsertionELmMeta(insertAt, SK);
 
     const { draggedElm, migration } = this.draggable;
 
@@ -259,8 +256,17 @@ class DistanceCalculator {
 
     const composedGrid = new PointNum(1, 1);
 
-    if (!isOrphan) {
-      const { grid } = elm;
+    // Get the stored position if the branch is empty.
+    if (isEmpty) {
+      if (!isRestoredLastPosition) {
+        throw new Error(
+          "Transformation into an empty container in not supported yet."
+        );
+      }
+    }
+
+    if (!isEmpty && !isOrphan) {
+      const { grid } = elm!;
 
       composedGrid.clone(grid);
     }
@@ -273,7 +279,7 @@ class DistanceCalculator {
 
       // Is the list expanding?
       if (!isRestoredLastPosition) {
-        this.#addDraggedOffsetToElm(composedTranslate, elm, axis);
+        this.#addDraggedOffsetToElm(composedTranslate, elm!, axis);
         composedTranslate[axis] += this.#getMarginBtwElmAndDragged(
           originSK,
           // Called after migration during the transitions.
@@ -298,39 +304,40 @@ class DistanceCalculator {
     const { length } = distLst;
 
     const {
-      position,
       isEmpty,
+      isOrphan,
+      position,
       isRestoredLastPosition,
-      elm: lastElm,
+      elm,
       prevElm,
     } = this.#getInsertionELmMeta(length - 1, SK);
 
-    // Restore the last known current position.
-
     // Get the stored position if the branch is empty.
     if (isEmpty) {
+      if (!isRestoredLastPosition) {
+        throw new Error(
+          "Transformation into an empty container in not supported yet."
+        );
+      }
       return position;
     }
 
     // The essential insertion position is the last element in the container
     // but also on some cases it's different from retrieved position.
-    const composedPosition = {
-      x: lastElm.currentPosition.x,
-      y: lastElm.currentPosition.y,
-    };
+    const composedPosition = elm!.currentPosition.getInstance();
 
-    this.#addDraggedOffsetToElm(composedPosition, lastElm, axis);
+    this.#addDraggedOffsetToElm(composedPosition, elm!, axis);
 
     const { marginBottom: mb } = this.draggable.migration.latest();
 
-    const marginBottom =
-      length > 1 && !!prevElm
-        ? Node.getDisplacement(lastElm.currentPosition, prevElm, axis)
-        : isRestoredLastPosition
-        ? Node.getDisplacement(position, lastElm, axis)
-        : typeof mb === "number"
+    // Give the priority to the destination first then check the origin.
+    const marginBottom = isRestoredLastPosition
+      ? Node.getDisplacement(position, elm!, axis)
+      : isOrphan
+      ? typeof mb === "number"
         ? mb
-        : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
+        : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN
+      : Node.getDisplacement(position, prevElm!, axis);
 
     composedPosition[axis] += Math.abs(marginBottom);
 
