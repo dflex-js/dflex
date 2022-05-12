@@ -10,7 +10,7 @@
   "scripts": {
     "test:unit": "cross-env NODE_ENV=test && jest",
     "test:e2e": "cross-env NODE_ENV=test && pnpm -F @dflex/dnd test",
-    "build": "cross-env NODE_ENV=production && pnpm build -r",
+    "build": "cross-env NODE_ENV=production && pnpm -r build",
     "bump": "pnpm changeset version && pnpm install"
   },
   "devDependencies": {
