@@ -129,19 +129,24 @@ class DistanceCalculator {
     });
   }
 
+  // eslint-disable-next-line class-methods-use-this
   #getInsertionELmMeta(insertAt: number, SK: string): InsertionELmMeta {
     const lst = store.getElmBranchByKey(SK);
 
     const { length } = lst;
-
-    const { draggedElm } = this.draggable;
 
     // Restore the last known current position.
     const { lastElmPosition } = store.containers[SK];
 
     const position = new PointNum(0, 0);
     const isEmpty = Droppable.isEmpty(lst);
-    const isOrphan = !isEmpty && length === 1;
+
+    const isLastEmpty = lst[length - 1] === Droppable.APPEND_EMPTY_ELM_ID;
+
+    // ["id"] || ["id", ""]
+    const isOrphan =
+      !isEmpty && (length === 1 || (length === 2 && isLastEmpty));
+
     let isRestoredLastPosition = false;
 
     let elm: null | INode = null;
@@ -154,17 +159,18 @@ class DistanceCalculator {
     }
 
     if (!isEmpty) {
+      const isInsertedLast = insertAt === length - 1;
+
       // Assign the previous element if not orphan.
       if (!isOrphan) {
-        const prevIndex = insertAt - 1;
+        const prevIndex = isLastEmpty ? insertAt - 2 : insertAt - 1;
         prevElm = store.registry[lst[prevIndex]];
       }
 
-      const isInsertedLast = insertAt === length - 1;
-
       // Then the priority is to restore the last position.
       if (isInsertedLast) {
-        elm = Droppable.getTheLastValidElm(lst, draggedElm.id);
+        const id = isLastEmpty ? lst[insertAt - 1] : lst[insertAt];
+        elm = store.registry[id];
 
         if (lastElmPosition) {
           position.clone(lastElmPosition);
