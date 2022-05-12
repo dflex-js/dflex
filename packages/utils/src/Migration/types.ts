@@ -6,6 +6,7 @@ export interface IAbstract {
   /** Transition unique id. */
   id: string;
 
+  marginTop: number | null;
   marginBottom: number | null;
 }
 
@@ -28,7 +29,9 @@ export interface IMigration {
    */
   setIndex(index: number): void;
 
-  preserveMarginBottom(mb: number | null): void;
+  preserveVerticalMargin(type: "top" | "bottom", mb: number | null): void;
+
+  clearMargins(): void;
 
   /**
    * Add new migration.

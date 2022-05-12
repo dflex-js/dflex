@@ -11,11 +11,14 @@ class AbstractMigration implements IAbstract {
 
   marginBottom: number | null;
 
+  marginTop: number | null;
+
   constructor(index: number, SK: string, id: string) {
     this.index = index;
     this.SK = SK;
     this.id = id;
     this.marginBottom = null;
+    this.marginTop = null;
   }
 }
 
@@ -45,8 +48,13 @@ class Migration implements IMigration {
     this.latest().index = index;
   }
 
-  preserveMarginBottom(mb: number | null) {
-    this.latest().marginBottom = mb;
+  preserveVerticalMargin(type: "top" | "bottom", mb: number | null) {
+    this.latest()[type === "bottom" ? "marginBottom" : "marginTop"] = mb;
+  }
+
+  clearMargins() {
+    this.latest().marginBottom = null;
+    this.latest().marginTop = null;
   }
 
   add(index: number, key: string, id: string) {
