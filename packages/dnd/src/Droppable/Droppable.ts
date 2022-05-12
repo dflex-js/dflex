@@ -407,7 +407,7 @@ class Droppable extends DistanceCalculator {
    * Filling the space when the head of the list is leaving the list.
    */
   #fillHeadUp() {
-    const { migration, draggedElm } = this.draggable;
+    const { migration, occupiedPosition } = this.draggable;
 
     const siblings = store.getElmBranchByKey(migration.latest().SK);
 
@@ -418,7 +418,11 @@ class Droppable extends DistanceCalculator {
     // Store it before lost it when the index is changed to the next one.
     migration.preserveVerticalMargin(
       "bottom",
-      store.registry[siblings[from]].getDisplacement(draggedElm, "y")
+      Math.abs(
+        occupiedPosition.y -
+          store.registry[siblings[from]].currentPosition.y +
+          store.registry[siblings[from]].offset.height
+      )
     );
 
     emitSiblingsEvent("onLiftUpSiblings", {
