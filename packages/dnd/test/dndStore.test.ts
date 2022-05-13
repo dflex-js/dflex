@@ -1,6 +1,6 @@
-import store from "../../src/DnDStore";
+import store from "../src/DnDStore";
 
-import { elm1 } from "../__mocks__/DOMElements";
+import { elm1 } from "./__mocks__/DOMElements";
 
 describe("DnD Store", () => {
   beforeAll(() => {
