@@ -26,10 +26,4 @@ describe("DnD Store", () => {
 
     expect(parent).toMatchInlineSnapshot(`null`);
   });
-
-  // it("Registers more elements in the store all in the same level (depth=0)", () => {
-  //   store.register(elm2);
-  //   store.register(elm3);
-  //   store.register(elm4);
-  // });
 });
