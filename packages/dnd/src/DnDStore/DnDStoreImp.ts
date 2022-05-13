@@ -387,18 +387,18 @@ class DnDStoreImp extends Store implements IDnDStore {
 
     if (!isEmpty) {
       const isInsertedLast = insertAt === length - 1;
-
-      // Assign the previous element if not orphan.
-      if (!isOrphan) {
-        const prevIndex = isLastEmpty ? insertAt - 2 : insertAt - 1;
-
-        if (prevIndex >= 0) prevElm = this.registry[lst[prevIndex]];
-      }
+      let prevIndex = insertAt - 1;
 
       // Then the priority is to restore the last position.
       if (isInsertedLast) {
-        const id = isLastEmpty ? lst[insertAt - 1] : lst[insertAt];
-        elm = this.registry[id];
+        let at = insertAt;
+
+        if (isLastEmpty) {
+          prevIndex -= 1;
+          at -= 1;
+        }
+
+        elm = this.registry[lst[at]];
 
         if (lastElmPosition) {
           position.clone(lastElmPosition);
@@ -412,6 +412,11 @@ class DnDStoreImp extends Store implements IDnDStore {
       } else {
         elm = this.registry[lst[insertAt]];
         position.clone(elm.currentPosition);
+      }
+
+      // Assign the previous element if not orphan.
+      if (!isOrphan && prevIndex >= 0) {
+        prevElm = this.registry[lst[prevIndex]];
       }
     }
 
