@@ -174,7 +174,7 @@ describe("DnD Store", () => {
       });
     });
 
-    describe("Injected branch with empty branch", () => {
+    describe("Injected branch with empty string", () => {
       it("Inject empty string", () => {
         store.DOMGen.branches[SK].push("");
 
