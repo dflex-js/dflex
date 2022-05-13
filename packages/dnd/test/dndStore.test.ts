@@ -223,15 +223,40 @@ describe("DnD Store", () => {
                   }
               `);
 
-        // const pos = elm4.ref.getBoundingClientRect();
+        const pos = elm4.ref.getBoundingClientRect();
 
-        // expect(position.getInstance()).toStrictEqual({
-        //   x: pos.left,
-        //   y: pos.top,
-        // });
+        expect(position.getInstance()).toStrictEqual({
+          x: pos.left,
+          y: pos.top,
+        });
 
         expect(elm.id).toBe(elm4.id);
         expect(prevElm.id).toBe(elm3.id);
+      });
+
+      it("Restores the position for the first element with correct flags", () => {
+        const { elm, prevElm, position, ...rest } = store.getInsertionELmMeta(
+          0,
+          SK
+        );
+
+        expect(rest).toMatchInlineSnapshot(`
+                  Object {
+                    "isEmpty": false,
+                    "isOrphan": false,
+                    "isRestoredLastPosition": true,
+                  }
+              `);
+
+        const pos = elm1.ref.getBoundingClientRect();
+
+        expect(position.getInstance()).toStrictEqual({
+          x: pos.left,
+          y: pos.top,
+        });
+
+        expect(elm.id).toBe(elm1.id);
+        expect(prevElm).toBeNull();
       });
     });
   });
