@@ -28,6 +28,11 @@ describe("DnD Store", () => {
   });
 
   describe("getInsertionELmMeta", () => {
+    const preservePosition = {
+      x: 1000,
+      y: 1000,
+    };
+
     it("Checks orphan branch", () => {
       const {
         element: {
@@ -86,6 +91,104 @@ describe("DnD Store", () => {
 
       expect(elm.id).toBe(elm4.id);
       expect(prevElm.id).toBe(elm3.id);
+    });
+
+    it("Preserve the last element", () => {
+      const {
+        element: {
+          keys: { SK },
+        },
+      } = store.getElmTreeById(elm1.id);
+
+      store.containers[SK].preservePosition(preservePosition);
+    });
+
+    it("Restores the preserved position when calling for last element", () => {
+      const {
+        element: {
+          keys: { SK },
+        },
+      } = store.getElmTreeById(elm1.id);
+
+      const { elm, prevElm, position, ...rest } = store.getInsertionELmMeta(
+        3,
+        SK
+      );
+
+      expect(rest).toMatchInlineSnapshot(`
+        Object {
+          "isEmpty": false,
+          "isOrphan": false,
+          "isRestoredLastPosition": true,
+        }
+      `);
+
+      expect(position.getInstance()).toStrictEqual(preservePosition);
+
+      expect(elm.id).toBe(elm4.id);
+      expect(prevElm.id).toBe(elm3.id);
+    });
+
+    it("Restores the position even preserved is defined because it's not the last element", () => {
+      const {
+        element: {
+          keys: { SK },
+        },
+      } = store.getElmTreeById(elm1.id);
+
+      const { elm, prevElm, position, ...rest } = store.getInsertionELmMeta(
+        2,
+        SK
+      );
+
+      expect(rest).toMatchInlineSnapshot(`
+        Object {
+          "isEmpty": false,
+          "isOrphan": false,
+          "isRestoredLastPosition": true,
+        }
+      `);
+
+      const pos = elm3.ref.getBoundingClientRect();
+
+      expect(position.getInstance()).toStrictEqual({
+        x: pos.left,
+        y: pos.top,
+      });
+
+      expect(elm.id).toBe(elm3.id);
+      expect(prevElm.id).toBe(elm2.id);
+    });
+
+    it("Restores the position for the first element with correct flags", () => {
+      const {
+        element: {
+          keys: { SK },
+        },
+      } = store.getElmTreeById(elm1.id);
+
+      const { elm, prevElm, position, ...rest } = store.getInsertionELmMeta(
+        0,
+        SK
+      );
+
+      expect(rest).toMatchInlineSnapshot(`
+        Object {
+          "isEmpty": false,
+          "isOrphan": false,
+          "isRestoredLastPosition": true,
+        }
+      `);
+
+      const pos = elm1.ref.getBoundingClientRect();
+
+      expect(position.getInstance()).toStrictEqual({
+        x: pos.left,
+        y: pos.top,
+      });
+
+      expect(elm.id).toBe(elm1.id);
+      expect(prevElm).toBeNull();
     });
   });
 });

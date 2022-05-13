@@ -391,7 +391,8 @@ class DnDStoreImp extends Store implements IDnDStore {
       // Assign the previous element if not orphan.
       if (!isOrphan) {
         const prevIndex = isLastEmpty ? insertAt - 2 : insertAt - 1;
-        prevElm = this.registry[lst[prevIndex]];
+
+        if (prevIndex >= 0) prevElm = this.registry[lst[prevIndex]];
       }
 
       // Then the priority is to restore the last position.
