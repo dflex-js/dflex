@@ -6,6 +6,7 @@ module.exports = {
   env: {
     browser: true,
     es2021: true,
+    jest: true,
   },
   extends: ["airbnb-base", "plugin:prettier/recommended"],
   parserOptions: {
@@ -44,12 +45,6 @@ module.exports = {
     },
   },
   overrides: [
-    {
-      files: ["*.test.js", "*.test.ts"],
-      env: {
-        jest: true,
-      },
-    },
     {
       files: ["types.ts"],
       rules: {

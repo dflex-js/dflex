@@ -1,5 +1,10 @@
-import type { Dimensions, RectDimensions, ITracker } from "@dflex/utils";
-import type { INode, IContainer } from "@dflex/core-instance";
+import type {
+  Dimensions,
+  RectDimensions,
+  ITracker,
+  IPointNum,
+} from "@dflex/utils";
+import type { IContainer, INode } from "@dflex/core-instance";
 import type { RegisterInputMeta } from "@dflex/store";
 
 import type { DraggedEvent, LayoutState } from "../types";
@@ -52,6 +57,15 @@ interface Translate {
   translateY: number;
 }
 
+export type InsertionELmMeta = {
+  isRestoredLastPosition: boolean;
+  position: IPointNum;
+  isEmpty: boolean;
+  isOrphan: boolean;
+  elm: INode | null;
+  prevElm: INode | null;
+};
+
 export interface IDnDStore {
   readonly containers: { [SK: string]: IContainer };
   readonly unifiedContainerDimensions: {
@@ -66,6 +80,7 @@ export interface IDnDStore {
     originSK: string,
     appendOffset: RectDimensions
   ): void;
+  getInsertionELmMeta(insertAt: number, SK: string): InsertionELmMeta;
   onStateChange(state: LayoutState): void;
   emitEvent(event: DraggedEvent): void;
   register(element: RegisterInputMeta, x?: boolean): void;

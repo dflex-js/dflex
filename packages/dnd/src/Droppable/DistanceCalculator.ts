@@ -9,8 +9,6 @@ import type { InteractivityEvent } from "../types";
 import type { IDraggableInteractive } from "../Draggable";
 
 import store from "../DnDStore";
-import Droppable from "./Droppable";
-import type { InsertionELmMeta } from "./types";
 
 function emitInteractiveEvent(
   type: InteractivityEvent["type"],
@@ -129,74 +127,6 @@ class DistanceCalculator {
     });
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  #getInsertionELmMeta(insertAt: number, SK: string): InsertionELmMeta {
-    const lst = store.getElmBranchByKey(SK);
-
-    const { length } = lst;
-
-    // Restore the last known current position.
-    const { lastElmPosition } = store.containers[SK];
-
-    const position = new PointNum(0, 0);
-    const isEmpty = Droppable.isEmpty(lst);
-
-    const isLastEmpty = lst[length - 1] === Droppable.APPEND_EMPTY_ELM_ID;
-
-    // ["id"] || ["id", ""]
-    const isOrphan =
-      !isEmpty && (length === 1 || (length === 2 && isLastEmpty));
-
-    let isRestoredLastPosition = false;
-
-    let elm: null | INode = null;
-    let prevElm: null | INode = null;
-
-    if (lastElmPosition) {
-      // If empty then restore.
-      position.clone(lastElmPosition);
-      isRestoredLastPosition = true;
-    }
-
-    if (!isEmpty) {
-      const isInsertedLast = insertAt === length - 1;
-
-      // Assign the previous element if not orphan.
-      if (!isOrphan) {
-        const prevIndex = isLastEmpty ? insertAt - 2 : insertAt - 1;
-        prevElm = store.registry[lst[prevIndex]];
-      }
-
-      // Then the priority is to restore the last position.
-      if (isInsertedLast) {
-        const id = isLastEmpty ? lst[insertAt - 1] : lst[insertAt];
-        elm = store.registry[id];
-
-        if (lastElmPosition) {
-          position.clone(lastElmPosition);
-          // Did we retorted the same element?
-          isRestoredLastPosition = !lastElmPosition.isEqual(
-            elm.currentPosition
-          );
-        } else {
-          position.clone(elm.currentPosition);
-        }
-      } else {
-        elm = store.registry[lst[insertAt]];
-        position.clone(elm.currentPosition);
-      }
-    }
-
-    return {
-      isEmpty,
-      isOrphan,
-      isRestoredLastPosition,
-      position,
-      elm,
-      prevElm,
-    };
-  }
-
   #addDraggedOffsetToElm(position: IPointAxes, elm: INode, axis: Axis) {
     const rectType = Node.getRectByAxis(axis);
 
@@ -249,7 +179,7 @@ class DistanceCalculator {
     axis: Axis
   ) {
     const { isEmpty, isOrphan, position, isRestoredLastPosition, elm } =
-      this.#getInsertionELmMeta(insertAt, SK);
+      store.getInsertionELmMeta(insertAt, SK);
 
     const { draggedElm, migration } = this.draggable;
 
@@ -316,7 +246,7 @@ class DistanceCalculator {
       isRestoredLastPosition,
       elm,
       prevElm,
-    } = this.#getInsertionELmMeta(length - 1, SK);
+    } = store.getInsertionELmMeta(length - 1, SK);
 
     // Get the stored position if the branch is empty.
     if (isEmpty) {
