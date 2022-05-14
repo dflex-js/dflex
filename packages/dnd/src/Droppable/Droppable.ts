@@ -275,7 +275,6 @@ class Droppable extends DistanceCalculator {
         this.getComposedOccupiedTranslateAndGrid(
           SK,
           insertAt,
-          migration.prev().SK,
           hasToMoveSiblingsDown,
           "y"
         ));

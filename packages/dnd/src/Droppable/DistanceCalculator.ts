@@ -140,33 +140,6 @@ class DistanceCalculator {
     position[axis] += rectDiff;
   }
 
-  #getMarginBtwElmAndDragged(
-    SK: string,
-    draggedIndex: number,
-    isInsertedAfter: boolean,
-    axis: Axis
-  ) {
-    const { draggedElm } = this.draggable;
-
-    const insertAt = isInsertedAfter ? draggedIndex + 1 : draggedIndex - 1;
-
-    const origin = store.getElmBranchByKey(SK);
-
-    if (insertAt >= 0 && insertAt < origin.length) {
-      const elm = store.registry[origin[insertAt]];
-
-      if (elm) {
-        // If the origin is not the first element, we need to add the margin
-        // to the top.
-        return isInsertedAfter
-          ? elm.getDisplacement(draggedElm, axis)
-          : draggedElm.getDisplacement(elm, axis);
-      }
-    }
-
-    return DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
-  }
-
   /**
    * It calculates the new translate of the dragged element along with grid
    * position inside the container.
@@ -174,7 +147,6 @@ class DistanceCalculator {
   protected getComposedOccupiedTranslateAndGrid(
     SK: string,
     insertAt: number,
-    originSK: string,
     insertFromTop: boolean,
     axis: Axis
   ) {
@@ -187,7 +159,7 @@ class DistanceCalculator {
       prevElm,
     } = store.getInsertionELmMeta(insertAt, SK);
 
-    const { draggedElm, migration } = this.draggable;
+    const { draggedElm } = this.draggable;
 
     // Getting diff with `currentPosition` includes the element transition
     // as well.
