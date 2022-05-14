@@ -71,5 +71,54 @@ context(
         "matrix(1, 0, 0, 1, 226, 304)"
       );
     });
+
+    it("Transforms element (#c1-1) - to the bottom of container(2)", () => {
+      cy.get("#c1-1").trigger("mousedown", {
+        button: 0,
+      });
+
+      for (let i = stepsX; i >= 0; i -= 10) {
+        cy.get("#c1-1").trigger("mousemove", {
+          clientX: startingPointX + i,
+          clientY: startingPointY + stepsY,
+          force: true,
+        });
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        // cy.wait(0);
+      }
+
+      for (let i = stepsY; i >= 0; i -= 10) {
+        cy.get("#c1-1").trigger("mousemove", {
+          clientY: startingPointY + i,
+          force: true,
+        });
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        // cy.wait(0);
+      }
+    });
+
+    it("Triggers mouseup event", () => {
+      cy.get("#c1-1").trigger("mouseup", { force: true });
+    });
+
+    it("Siblings in the target are in positions", () => {
+      cy.get("#c2-1").should("have.css", "transform", "none");
+
+      cy.get("#c2-2").should("have.css", "transform", "none");
+
+      cy.get("#c2-3").should("have.css", "transform", "none");
+
+      cy.get("#c2-4").should("have.css", "transform", "none");
+
+      cy.get("#c2-5").should("have.css", "transform", "none");
+    });
+
+    it("Dragged is back to its original position", () => {
+      cy.get("#c1-1").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+    });
   }
 );
