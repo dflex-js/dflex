@@ -178,8 +178,14 @@ class DistanceCalculator {
     insertFromTop: boolean,
     axis: Axis
   ) {
-    const { isEmpty, isOrphan, position, isRestoredLastPosition, elm } =
-      store.getInsertionELmMeta(insertAt, SK);
+    const {
+      isEmpty,
+      isOrphan,
+      position,
+      isRestoredLastPosition,
+      elm,
+      prevElm,
+    } = store.getInsertionELmMeta(insertAt, SK);
 
     const { draggedElm, migration } = this.draggable;
 
@@ -199,9 +205,7 @@ class DistanceCalculator {
           "Transformation into an empty container in not supported yet."
         );
       }
-    }
-
-    if (!isEmpty && !isOrphan) {
+    } else if (!isOrphan) {
       const { grid } = elm!;
 
       composedGrid.clone(grid);
@@ -213,16 +217,16 @@ class DistanceCalculator {
     } else {
       composedGrid[axis] += 1;
 
+      const { marginBottom: mb } = this.draggable.migration.latest();
+
       // Is the list expanding?
       if (!isRestoredLastPosition) {
         this.#addDraggedOffsetToElm(composedTranslate, elm!, axis);
-        composedTranslate[axis] += this.#getMarginBtwElmAndDragged(
-          originSK,
-          // Called after migration during the transitions.
-          migration.prev().index,
-          false,
-          axis
-        );
+        composedTranslate[axis] += isOrphan
+          ? typeof mb === "number"
+            ? mb
+            : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN
+          : Node.getDisplacement(position, prevElm!, axis);
       }
     }
 
@@ -255,6 +259,7 @@ class DistanceCalculator {
           "Transformation into an empty container in not supported yet."
         );
       }
+
       return position;
     }
 
