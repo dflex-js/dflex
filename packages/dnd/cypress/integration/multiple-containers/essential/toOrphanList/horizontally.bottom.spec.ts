@@ -33,7 +33,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
 
       stepsX = 180;
@@ -44,7 +44,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
     });
 
@@ -84,7 +84,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
 
       for (let i = stepsY; i >= 0; i -= 10) {
@@ -93,7 +93,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
     });
 
