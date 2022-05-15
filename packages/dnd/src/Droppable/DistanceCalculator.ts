@@ -140,33 +140,6 @@ class DistanceCalculator {
     position[axis] += rectDiff;
   }
 
-  #getMarginBtwElmAndDragged(
-    SK: string,
-    draggedIndex: number,
-    isInsertedAfter: boolean,
-    axis: Axis
-  ) {
-    const { draggedElm } = this.draggable;
-
-    const insertAt = isInsertedAfter ? draggedIndex + 1 : draggedIndex - 1;
-
-    const origin = store.getElmBranchByKey(SK);
-
-    if (insertAt >= 0 && insertAt < origin.length) {
-      const elm = store.registry[origin[insertAt]];
-
-      if (elm) {
-        // If the origin is not the first element, we need to add the margin
-        // to the top.
-        return isInsertedAfter
-          ? elm.getDisplacement(draggedElm, axis)
-          : draggedElm.getDisplacement(elm, axis);
-      }
-    }
-
-    return DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
-  }
-
   /**
    * It calculates the new translate of the dragged element along with grid
    * position inside the container.
@@ -174,14 +147,19 @@ class DistanceCalculator {
   protected getComposedOccupiedTranslateAndGrid(
     SK: string,
     insertAt: number,
-    originSK: string,
     insertFromTop: boolean,
     axis: Axis
   ) {
-    const { isEmpty, isOrphan, position, isRestoredLastPosition, elm } =
-      store.getInsertionELmMeta(insertAt, SK);
+    const {
+      isEmpty,
+      isOrphan,
+      position,
+      isRestoredLastPosition,
+      elm,
+      prevElm,
+    } = store.getInsertionELmMeta(insertAt, SK);
 
-    const { draggedElm, migration } = this.draggable;
+    const { draggedElm } = this.draggable;
 
     // Getting diff with `currentPosition` includes the element transition
     // as well.
@@ -199,9 +177,7 @@ class DistanceCalculator {
           "Transformation into an empty container in not supported yet."
         );
       }
-    }
-
-    if (!isEmpty && !isOrphan) {
+    } else if (!isOrphan) {
       const { grid } = elm!;
 
       composedGrid.clone(grid);
@@ -213,16 +189,16 @@ class DistanceCalculator {
     } else {
       composedGrid[axis] += 1;
 
+      const { marginBottom: mb } = this.draggable.migration.latest();
+
       // Is the list expanding?
       if (!isRestoredLastPosition) {
         this.#addDraggedOffsetToElm(composedTranslate, elm!, axis);
-        composedTranslate[axis] += this.#getMarginBtwElmAndDragged(
-          originSK,
-          // Called after migration during the transitions.
-          migration.prev().index,
-          false,
-          axis
-        );
+        composedTranslate[axis] += isOrphan
+          ? typeof mb === "number"
+            ? mb
+            : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN
+          : Node.getDisplacement(position, prevElm!, axis);
       }
     }
 
@@ -255,6 +231,7 @@ class DistanceCalculator {
           "Transformation into an empty container in not supported yet."
         );
       }
+
       return position;
     }
 

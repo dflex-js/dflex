@@ -33,7 +33,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
 
       stepsX = 180;
@@ -44,7 +44,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
     });
 
@@ -68,7 +68,7 @@ context(
       cy.get("#c1-1").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 226, 304)"
+        "matrix(1, 0, 0, 1, 226, 310)"
       );
     });
 
@@ -84,7 +84,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
 
       for (let i = stepsY; i >= 0; i -= 10) {
@@ -93,7 +93,7 @@ context(
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
     });
 
