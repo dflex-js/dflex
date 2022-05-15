@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`DnD Store Element is initiated 1`] = `
+exports[`DnD Store Shallow test the store Element is initiated 1`] = `
 Object {
   "id-1": CoreUtils {
     "animatedFrame": 1,

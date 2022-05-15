@@ -1,5 +1,5 @@
 context(
-  "Transitioning from one container to another horizontally from the top - back and forth",
+  "Transitioning the first element from one container to another to the top",
   () => {
     let elmBoxC3Elm1: DOMRect;
     let elmBoxC2Elm1: DOMRect;

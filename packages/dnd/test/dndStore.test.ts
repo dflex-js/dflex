@@ -1,4 +1,7 @@
 import store from "../src/DnDStore";
+// import DraggableInteractive from "../src/Draggable";
+// import DistanceCalculator from "../src/Droppable/DistanceCalculator";
+// import extractOpts from "../src/utils/extractOpts";
 
 import { elm1, elm2, elm3, elm4 } from "./__mocks__/DOMElements";
 
@@ -7,15 +10,16 @@ describe("DnD Store", () => {
     store.register(elm1);
   });
 
-  it("Element is initiated", () => {
-    store.register(elm1);
-    expect(store.registry).toMatchSnapshot();
-  });
+  describe("Shallow test the store", () => {
+    it("Element is initiated", () => {
+      store.register(elm1);
+      expect(store.registry).toMatchSnapshot();
+    });
 
-  it("Returns element branch and parent", () => {
-    const { branches, parent } = store.getElmTreeById(elm1.id);
+    it("Returns element branch and parent", () => {
+      const { branches, parent } = store.getElmTreeById(elm1.id);
 
-    expect(branches).toMatchInlineSnapshot(`
+      expect(branches).toMatchInlineSnapshot(`
       Object {
         "parents": undefined,
         "siblings": Array [
@@ -24,7 +28,8 @@ describe("DnD Store", () => {
       }
     `);
 
-    expect(parent).toMatchInlineSnapshot(`null`);
+      expect(parent).toMatchInlineSnapshot(`null`);
+    });
   });
 
   describe("getInsertionELmMeta", () => {
