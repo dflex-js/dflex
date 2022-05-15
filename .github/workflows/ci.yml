@@ -278,22 +278,7 @@ jobs:
           path: ./packages
 
       - name: Testing features for DnD with React APP - Chrome
-        uses: cypress-io/github-action@v2
-        with:
-          working-directory: packages/dnd
-          install: false
-          start: pnpm -F dflex-react-dnd preview
-          wait-on-timeout: 30
-          spec: cypress/integration/multiple-containers/**/*.spec.ts
-          wait-on: "http://localhost:3001/"
-          browser: chrome
-          headless: false
-        env:
-          #CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
-          #CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          # Recommended: pass the GitHub token lets this action correctly
-          # determine the unique run id necessary to re-run the checks
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm -F @dflex/dnd test:multi:chrome
 
   release:
     name: Publish to NPM
