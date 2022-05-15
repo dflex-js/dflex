@@ -1,5 +1,5 @@
-import { InteractivityEvent } from "../../src/types";
-import { extractOpts } from "../../src/utils/extractOpts";
+import { InteractivityEvent } from "../src/types";
+import { extractOpts } from "../src/utils/extractOpts";
 
 describe("extractOpts", () => {
   it("Returns default options when empty object is passed", () => {

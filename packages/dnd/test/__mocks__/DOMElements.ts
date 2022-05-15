@@ -25,6 +25,7 @@ function elm4Offset() {
 }
 
 const ref1 = document.createElement("div");
+
 // @ts-expect-error
 ref1.getBoundingClientRect = elm1Offset;
 const elm1 = {

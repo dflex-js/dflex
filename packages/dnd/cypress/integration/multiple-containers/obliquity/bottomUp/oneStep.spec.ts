@@ -24,7 +24,7 @@ context("Split one container form bottom up", () => {
   });
 
   it("Transforms element (#c2-3) into containers-1", () => {
-    stepsY = 130;
+    stepsY = 132;
     for (let i = 0; i < stepsY; i += 10) {
       cy.get("#c2-3").trigger("mousemove", {
         clientY: startingPointY - i,
@@ -38,5 +38,39 @@ context("Split one container form bottom up", () => {
 
   it("Triggers mouseup event", () => {
     cy.get("#c2-3").trigger("mouseup", { force: true });
+  });
+
+  it("Siblings in the origin have the correct position", () => {
+    cy.get("#c2-1").should("have.css", "transform", "matrix(1, 0, 0, 1, 0, 0)");
+
+    cy.get("#c2-2").should("have.css", "transform", "matrix(1, 0, 0, 1, 0, 0)");
+
+    cy.get("#c2-4").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, -62)"
+    );
+
+    cy.get("#c2-5").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, -62)"
+    );
+  });
+
+  it("Siblings in the destination have correct position", () => {
+    cy.get("#c1-1").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, 62)"
+    );
+  });
+
+  it("Dragged is settled correctly", () => {
+    cy.get("#c2-3").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, -226, -124)"
+    );
   });
 });

@@ -75,9 +75,9 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
     this.migration = new Migration(order.self, SK, store.tracker.newTravel());
 
     if (!store.containers[SK].lastElmPosition) {
-      store.containers[SK].preservePosition(
-        store.registry[siblings[siblings.length - 1]].currentPosition
-      );
+      const lastElm = store.registry[siblings[siblings.length - 1]];
+
+      store.containers[SK].preservePosition(lastElm.currentPosition);
     }
 
     this.isViewportRestricted = true;
