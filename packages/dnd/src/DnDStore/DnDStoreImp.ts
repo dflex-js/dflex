@@ -1,6 +1,6 @@
 import Store from "@dflex/store";
 
-import { Tracker, Scroll, canUseDOM } from "@dflex/utils";
+import { Tracker, Scroll, canUseDOM, PointNum } from "@dflex/utils";
 import type {
   Dimensions,
   RectDimensions,
@@ -8,10 +8,15 @@ import type {
   IScroll,
 } from "@dflex/utils";
 
-import { Container } from "@dflex/core-instance";
+import { Container, INode } from "@dflex/core-instance";
 import type { IContainer } from "@dflex/core-instance";
 
-import type { ElmTree, IDnDStore, RegisterInput } from "./types";
+import type {
+  ElmTree,
+  IDnDStore,
+  InsertionELmMeta,
+  RegisterInput,
+} from "./types";
 
 import type {
   LayoutState,
@@ -21,6 +26,7 @@ import type {
   SiblingsEvent,
   LayoutStateEvent,
 } from "../types";
+import Droppable from "../Droppable/Droppable";
 
 function throwElementIsNotConnected(id: string) {
   // eslint-disable-next-line no-console
@@ -349,6 +355,79 @@ class DnDStoreImp extends Store implements IDnDStore {
       this.containers[originSK].registerNewElm(elm.getOffset());
       elm.grid.clone(this.containers[originSK].grid);
     });
+  }
+
+  getInsertionELmMeta(insertAt: number, SK: string): InsertionELmMeta {
+    const lst = this.getElmBranchByKey(SK);
+
+    const { length } = lst;
+
+    // Restore the last known current position.
+    const { lastElmPosition } = this.containers[SK];
+
+    const position = new PointNum(0, 0);
+    const isEmpty = Droppable.isEmpty(lst);
+
+    const isLastEmpty = lst[length - 1] === Droppable.APPEND_EMPTY_ELM_ID;
+
+    // ["id"] || ["id", ""]
+    const isOrphan =
+      !isEmpty && (length === 1 || (length === 2 && isLastEmpty));
+
+    let isRestoredLastPosition = false;
+
+    let elm: null | INode = null;
+    let prevElm: null | INode = null;
+
+    if (lastElmPosition) {
+      // If empty then restore it.
+      position.clone(lastElmPosition);
+      isRestoredLastPosition = true;
+    }
+
+    if (!isEmpty) {
+      const isInsertedLast = insertAt === length - 1;
+      let prevIndex = insertAt - 1;
+
+      // Then the priority is to restore the last position.
+      if (isInsertedLast) {
+        let at = insertAt;
+
+        if (isLastEmpty) {
+          prevIndex -= 1;
+          at -= 1;
+        }
+
+        elm = this.registry[lst[at]];
+
+        if (lastElmPosition) {
+          position.clone(lastElmPosition);
+          // Did we retorted the same element?
+          isRestoredLastPosition = !lastElmPosition.isEqual(
+            elm.currentPosition
+          );
+        } else {
+          position.clone(elm.currentPosition);
+        }
+      } else {
+        elm = this.registry[lst[insertAt]];
+        position.clone(elm.currentPosition);
+      }
+
+      // Assign the previous element if not orphan.
+      if (!isOrphan && prevIndex >= 0) {
+        prevElm = this.registry[lst[prevIndex]];
+      }
+    }
+
+    return {
+      isEmpty,
+      isOrphan,
+      isRestoredLastPosition,
+      position,
+      elm,
+      prevElm,
+    };
   }
 
   register(element: RegisterInput) {

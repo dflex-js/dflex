@@ -1,5 +1,5 @@
 context(
-  "Transitioning from one container to another horizontally from the bottom - back and forth",
+  "Transitioning the last element into the bottom of a smaller container horizontally",
   () => {
     let elmBox: DOMRect;
     let startingPointX: number;

@@ -8,6 +8,7 @@ export interface IPoint<T = number> {
   y: T;
   setAxes(x: T, y: T): void;
   clone(target: IPointAxes<T>): void;
+  getInstance(): IPointAxes<T>;
   isEqual(target: IPointAxes<T>): boolean;
 }
 

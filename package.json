@@ -10,7 +10,7 @@
   "scripts": {
     "test:unit": "cross-env NODE_ENV=test && jest",
     "test:e2e": "cross-env NODE_ENV=test && pnpm -F @dflex/dnd test",
-    "build": "cross-env NODE_ENV=production && pnpm build -r",
+    "build": "cross-env NODE_ENV=production && pnpm -r build",
     "bump": "pnpm changeset version && pnpm install"
   },
   "devDependencies": {
@@ -18,7 +18,7 @@
     "@swc/core": "^1.2.181",
     "@swc/jest": "^0.2.21",
     "@types/jest": "^27.5.0",
-    "@types/node": "^17.0.31",
+    "@types/node": "^17.0.32",
     "cross-env": "^7.0.3",
     "esbuild": "^0.14.38",
     "eslint-config-dflex": "workspace:*",

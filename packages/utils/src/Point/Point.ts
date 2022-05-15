@@ -18,6 +18,13 @@ class Point<T = number> implements IPoint<T> {
     this.setAxes(target.x, target.y);
   }
 
+  getInstance() {
+    return {
+      x: this.x,
+      y: this.y,
+    };
+  }
+
   isEqual(target: IPoint<T>) {
     return this.x === target.x && this.y === target.y;
   }

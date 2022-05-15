@@ -9,8 +9,6 @@ import type { InteractivityEvent } from "../types";
 import type { IDraggableInteractive } from "../Draggable";
 
 import store from "../DnDStore";
-import Droppable from "./Droppable";
-import type { InsertionELmMeta } from "./types";
 
 function emitInteractiveEvent(
   type: InteractivityEvent["type"],
@@ -129,67 +127,6 @@ class DistanceCalculator {
     });
   }
 
-  #getInsertionELmMeta(insertAt: number, SK: string): InsertionELmMeta {
-    const lst = store.getElmBranchByKey(SK);
-
-    const { length } = lst;
-
-    const { draggedElm } = this.draggable;
-
-    // Restore the last known current position.
-    const { lastElmPosition } = store.containers[SK];
-
-    const position = new PointNum(0, 0);
-
-    let isRestoredLastPosition = false;
-    let isOrphan = false;
-    let elm: null | INode = null;
-
-    let isRetrievePrevElmValid = false;
-    let prevIndex = NaN;
-
-    if (Droppable.isOrphan(lst)) {
-      // TODO:
-      // This is a bug. Cause it should be treated same way as the last
-      // position. If we can restore, the we do it otherwise we do the
-      // calculations based on dragged.
-      position.clone(lastElmPosition);
-      isOrphan = true;
-      isRestoredLastPosition = true;
-    } else {
-      const isInsertedLast = insertAt === length - 1;
-
-      prevIndex = insertAt - 1;
-
-      isRetrievePrevElmValid = prevIndex >= 0 && prevIndex < length;
-
-      if (isInsertedLast) {
-        elm = Droppable.getTheLastValidElm(lst, draggedElm.id);
-        const elmPos = elm.currentPosition;
-
-        if (lastElmPosition) {
-          position.clone(lastElmPosition);
-          isRestoredLastPosition = !lastElmPosition.isEqual(elmPos);
-        } else {
-          position.clone(elmPos);
-        }
-      } else {
-        elm = store.registry[lst[insertAt]];
-        position.clone(elm.currentPosition);
-      }
-    }
-
-    return {
-      elm,
-      isOrphan,
-      isRestoredLastPosition,
-      position,
-      ...(isRetrievePrevElmValid && {
-        prevElm: store.registry[lst[prevIndex]],
-      }),
-    } as InsertionELmMeta;
-  }
-
   #addDraggedOffsetToElm(position: IPointAxes, elm: INode, axis: Axis) {
     const rectType = Node.getRectByAxis(axis);
 
@@ -203,33 +140,6 @@ class DistanceCalculator {
     position[axis] += rectDiff;
   }
 
-  #getMarginBtwElmAndDragged(
-    SK: string,
-    draggedIndex: number,
-    isInsertedAfter: boolean,
-    axis: Axis
-  ) {
-    const { draggedElm } = this.draggable;
-
-    const insertAt = isInsertedAfter ? draggedIndex + 1 : draggedIndex - 1;
-
-    const origin = store.getElmBranchByKey(SK);
-
-    if (insertAt >= 0 && insertAt < origin.length) {
-      const elm = store.registry[origin[insertAt]];
-
-      if (elm) {
-        // If the origin is not the first element, we need to add the margin
-        // to the top.
-        return isInsertedAfter
-          ? elm.getDisplacement(draggedElm, axis)
-          : draggedElm.getDisplacement(elm, axis);
-      }
-    }
-
-    return DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
-  }
-
   /**
    * It calculates the new translate of the dragged element along with grid
    * position inside the container.
@@ -237,14 +147,19 @@ class DistanceCalculator {
   protected getComposedOccupiedTranslateAndGrid(
     SK: string,
     insertAt: number,
-    originSK: string,
     insertFromTop: boolean,
     axis: Axis
   ) {
-    const { position, elm, isRestoredLastPosition, isOrphan } =
-      this.#getInsertionELmMeta(insertAt, SK);
+    const {
+      isEmpty,
+      isOrphan,
+      position,
+      isRestoredLastPosition,
+      elm,
+      prevElm,
+    } = store.getInsertionELmMeta(insertAt, SK);
 
-    const { draggedElm, migration } = this.draggable;
+    const { draggedElm } = this.draggable;
 
     // Getting diff with `currentPosition` includes the element transition
     // as well.
@@ -255,8 +170,15 @@ class DistanceCalculator {
 
     const composedGrid = new PointNum(1, 1);
 
-    if (!isOrphan) {
-      const { grid } = elm;
+    // Get the stored position if the branch is empty.
+    if (isEmpty) {
+      if (!isRestoredLastPosition) {
+        throw new Error(
+          "Transformation into an empty container in not supported yet."
+        );
+      }
+    } else if (!isOrphan) {
+      const { grid } = elm!;
 
       composedGrid.clone(grid);
     }
@@ -267,16 +189,16 @@ class DistanceCalculator {
     } else {
       composedGrid[axis] += 1;
 
+      const { marginBottom: mb } = this.draggable.migration.latest();
+
       // Is the list expanding?
       if (!isRestoredLastPosition) {
-        this.#addDraggedOffsetToElm(composedTranslate, elm, axis);
-        composedTranslate[axis] += this.#getMarginBtwElmAndDragged(
-          originSK,
-          // Called after migration during the transitions.
-          migration.prev().index,
-          false,
-          axis
-        );
+        this.#addDraggedOffsetToElm(composedTranslate, elm!, axis);
+        composedTranslate[axis] += isOrphan
+          ? typeof mb === "number"
+            ? mb
+            : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN
+          : Node.getDisplacement(position, prevElm!, axis);
       }
     }
 
@@ -294,39 +216,41 @@ class DistanceCalculator {
     const { length } = distLst;
 
     const {
-      position,
+      isEmpty,
       isOrphan,
+      position,
       isRestoredLastPosition,
-      elm: lastElm,
+      elm,
       prevElm,
-    } = this.#getInsertionELmMeta(length - 1, SK);
-
-    // Restore the last known current position.
+    } = store.getInsertionELmMeta(length - 1, SK);
 
     // Get the stored position if the branch is empty.
-    if (isOrphan) {
+    if (isEmpty) {
+      if (!isRestoredLastPosition) {
+        throw new Error(
+          "Transformation into an empty container in not supported yet."
+        );
+      }
+
       return position;
     }
 
     // The essential insertion position is the last element in the container
     // but also on some cases it's different from retrieved position.
-    const composedPosition = {
-      x: lastElm.currentPosition.x,
-      y: lastElm.currentPosition.y,
-    };
+    const composedPosition = elm!.currentPosition.getInstance();
 
-    this.#addDraggedOffsetToElm(composedPosition, lastElm, axis);
+    this.#addDraggedOffsetToElm(composedPosition, elm!, axis);
 
     const { marginBottom: mb } = this.draggable.migration.latest();
 
-    const marginBottom =
-      length > 1 && !!prevElm
-        ? Node.getDisplacement(lastElm.currentPosition, prevElm, axis)
-        : isRestoredLastPosition
-        ? Node.getDisplacement(position, lastElm, axis)
-        : typeof mb === "number"
+    // Give the priority to the destination first then check the origin.
+    const marginBottom = isRestoredLastPosition
+      ? Node.getDisplacement(position, elm!, axis)
+      : isOrphan
+      ? typeof mb === "number"
         ? mb
-        : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
+        : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN
+      : Node.getDisplacement(position, prevElm!, axis);
 
     composedPosition[axis] += Math.abs(marginBottom);
 

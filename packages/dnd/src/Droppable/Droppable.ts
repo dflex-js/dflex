@@ -103,10 +103,7 @@ class Droppable extends DistanceCalculator {
     throw new Error(`No valid element found.${lst}\n`);
   }
 
-  /**
-   * Orphan when it's empty or has one empty string.
-   */
-  static isOrphan(lst: string[]) {
+  static isEmpty(lst: string[]) {
     const { length } = lst;
 
     return (
@@ -245,7 +242,7 @@ class Droppable extends DistanceCalculator {
      */
     let hasToMoveSiblingsDown = true;
 
-    const isOrphan = Droppable.isOrphan(siblings);
+    const isOrphan = Droppable.isEmpty(siblings);
 
     let insertAt = isOrphan ? 0 : this.#detectDroppableIndex();
 
@@ -278,7 +275,6 @@ class Droppable extends DistanceCalculator {
         this.getComposedOccupiedTranslateAndGrid(
           SK,
           insertAt,
-          migration.prev().SK,
           hasToMoveSiblingsDown,
           "y"
         ));
@@ -293,7 +289,7 @@ class Droppable extends DistanceCalculator {
     draggedElm.rmDateset("draggedOutContainer");
 
     // Clear it since it's used for insertion calculation.
-    migration.preserveMarginBottom(null);
+    migration.clearMargins();
 
     if (migration.isTransitioning) {
       // Compose container boundaries and refresh the store.
@@ -410,7 +406,7 @@ class Droppable extends DistanceCalculator {
    * Filling the space when the head of the list is leaving the list.
    */
   #fillHeadUp() {
-    const { migration, draggedElm } = this.draggable;
+    const { migration, occupiedPosition, draggedElm } = this.draggable;
 
     const siblings = store.getElmBranchByKey(migration.latest().SK);
 
@@ -419,8 +415,10 @@ class Droppable extends DistanceCalculator {
     if (from === siblings.length) return;
 
     // Store it before lost it when the index is changed to the next one.
-    migration.preserveMarginBottom(
-      store.registry[siblings[from]].getDisplacement(draggedElm, "y")
+    migration.preserveVerticalMargin(
+      "bottom",
+      store.registry[siblings[from]].currentPosition.y -
+        (occupiedPosition.y + draggedElm.offset.height)
     );
 
     emitSiblingsEvent("onLiftUpSiblings", {
