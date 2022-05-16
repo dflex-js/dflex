@@ -195,5 +195,46 @@ context(
         );
       });
     });
+
+    context("Transform the last element in container-2 to container-3", () => {
+      it("Getting the last element from container-2", () => {
+        cy.get("#c2-5").then((elm) => {
+          elmBox = elm[0].getBoundingClientRect();
+          // eslint-disable-next-line no-unused-vars
+          startingPointX = elmBox.x + elmBox.width / 2;
+          startingPointY = elmBox.y + elmBox.height / 2;
+
+          cy.get("#c2-5").trigger("mousedown", {
+            button: 0,
+          });
+        });
+      });
+
+      it("Transforms element (#c2-5) to container-3", () => {
+        stepsX = 231;
+        for (let i = 0; i < stepsX; i += 10) {
+          cy.get("#c2-5").trigger("mousemove", {
+            clientX: startingPointX + i,
+            force: true,
+          });
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.wait(0);
+        }
+
+        stepsY = 315;
+        for (let i = 0; i < stepsY; i += 10) {
+          cy.get("#c2-5").trigger("mousemove", {
+            clientY: startingPointY - i,
+            force: true,
+          });
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.wait(0);
+        }
+      });
+
+      it("Triggers mouseup event", () => {
+        cy.get("#c2-5").trigger("mouseup", { force: true });
+      });
+    });
   }
 );
