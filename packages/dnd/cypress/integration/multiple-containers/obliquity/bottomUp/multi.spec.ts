@@ -49,4 +49,36 @@ context("Split multiple containers form bottom up", () => {
   it("Triggers mouseup event", () => {
     cy.get("#c3-2").trigger("mouseup", { force: true });
   });
+
+  it("Siblings in the origin have the right positions", () => {
+    cy.get("#c3-1").should("have.css", "transform", "none");
+  });
+
+  it("Siblings in the c2 container have the right positions", () => {
+    cy.get("#c2-1").should("have.css", "transform", "none");
+
+    cy.get("#c2-2").should("have.css", "transform", "matrix(1, 0, 0, 1, 0, 0)");
+
+    cy.get("#c2-3").should("have.css", "transform", "matrix(1, 0, 0, 1, 0, 0)");
+
+    cy.get("#c2-4").should("have.css", "transform", "matrix(1, 0, 0, 1, 0, 0)");
+
+    cy.get("#c2-5").should("have.css", "transform", "matrix(1, 0, 0, 1, 0, 0)");
+  });
+
+  it("Siblings in the destination have the right positions", () => {
+    cy.get("#c1-1").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, 0, 112)"
+    );
+  });
+
+  it("Dragged is correctly settled", () => {
+    cy.get("#c3-2").should(
+      "have.css",
+      "transform",
+      "matrix(1, 0, 0, 1, -452, -118)"
+    );
+  });
 });
