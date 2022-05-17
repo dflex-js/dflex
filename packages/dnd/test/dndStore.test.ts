@@ -197,7 +197,7 @@ describe("DnD Store", () => {
         `);
       });
 
-      it("Restores the preserved position when calling for last element", () => {
+      it("Restores the the last element when the branch is extended", () => {
         const { elm, prevElm, position, ...rest } = store.getInsertionELmMeta(
           4,
           SK
@@ -211,7 +211,10 @@ describe("DnD Store", () => {
                   }
               `);
 
-        expect(position.getInstance()).toStrictEqual(preservePosition);
+        expect(position.getInstance()).toStrictEqual({
+          x: elm4.ref.getBoundingClientRect().left,
+          y: elm4.ref.getBoundingClientRect().top,
+        });
 
         expect(elm.id).toBe(elm4.id);
         expect(prevElm.id).toBe(elm3.id);
