@@ -126,9 +126,13 @@ context(
       cy.get("#c2-5").should("have.css", "transform", "none");
     });
 
-    // it("Siblings in destination have the correct position", () => {
-    //   cy.get("#c1-1").should("have.css", "transform", "none");
-    // });
+    it("Siblings in destination have the correct position", () => {
+      cy.get("#c1-1").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 224)"
+      );
+    });
 
     it("Dragged elements have the correct position", () => {
       cy.get("#c3-1").should(
