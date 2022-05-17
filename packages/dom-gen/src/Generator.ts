@@ -30,10 +30,6 @@ class Generator implements GeneratorInterface {
     [depth: number]: string[];
   };
 
-  branchesLength: {
-    [SK: string]: number;
-  };
-
   #prevDepth: number;
 
   #prevKey: string;
@@ -43,7 +39,6 @@ class Generator implements GeneratorInterface {
 
     this.branches = {};
     this.branchesByDepth = {};
-    this.branchesLength = {};
 
     this.#prevDepth = -99;
 
@@ -144,6 +139,7 @@ class Generator implements GeneratorInterface {
     const PK = combineKeys(depth + 1, this.#indicator[depth + 2]);
 
     const CHK = depth === 0 ? null : this.#prevKey;
+
     this.#prevKey = SK;
 
     this.#indicator[depth] += 1;

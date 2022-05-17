@@ -33,11 +33,6 @@ export interface GeneratorInterface {
     [depth: number]: string[];
   };
 
-  /** Origin length for each branch */
-  readonly branchesLength: {
-    [key: string]: number;
-  };
-
   getElmBranch(SK: string): string[];
   register(id: string, depth: number): Pointer;
   accumulateIndicators(depth: number): Keys & {
