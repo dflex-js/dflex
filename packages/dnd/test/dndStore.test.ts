@@ -38,6 +38,8 @@ describe("DnD Store", () => {
       y: 1000,
     };
 
+    const originLength = 4;
+
     let SK: string;
 
     describe("Normal branch without injection", () => {
@@ -106,6 +108,7 @@ describe("DnD Store", () => {
 
       it("Preserve the last element", () => {
         store.containers[SK].preservePosition(preservePosition);
+        store.containers[SK].originLength = originLength;
       });
 
       it("Restores the preserved position when calling for last element", () => {
@@ -204,7 +207,7 @@ describe("DnD Store", () => {
                   Object {
                     "isEmpty": false,
                     "isOrphan": false,
-                    "isRestoredLastPosition": true,
+                    "isRestoredLastPosition": false,
                   }
               `);
 
