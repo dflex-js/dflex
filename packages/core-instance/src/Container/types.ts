@@ -20,6 +20,8 @@ export interface IContainer {
   /** Numbers of total columns and rows each container has.  */
   readonly grid: IPointNum;
 
+  originLength: number;
+
   /** Container scroll instance.  */
   scroll: IScroll;
   registerNewElm(
