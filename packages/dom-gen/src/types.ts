@@ -24,19 +24,20 @@ export interface Pointer {
 }
 
 export interface GeneratorInterface {
-  branches: {
-    [keys: string]: string[];
+  readonly branches: {
+    [key: string]: string[];
   };
 
-  /** SK (branch keys) in order. */
-  branchesOrder: string[];
-
   /** Branches grouped by the same depth. */
-  branchesByDepth: {
+  readonly branchesByDepth: {
     [depth: number]: string[];
   };
 
-  getBranchParentKey(SK: string): string | null;
+  /** Origin length for each branch */
+  readonly branchesLength: {
+    [key: string]: number;
+  };
+
   getElmBranch(SK: string): string[];
   register(id: string, depth: number): Pointer;
   accumulateIndicators(depth: number): Keys & {
