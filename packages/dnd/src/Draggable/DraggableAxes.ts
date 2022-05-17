@@ -65,7 +65,6 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
       currentPosition,
       keys: { SK },
       offset: { width, height },
-      depth,
     } = element;
 
     this.gridPlaceholder = new PointNum(grid.x, grid.y);
@@ -88,7 +87,7 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
     });
 
     this.appendDraggedToContainerDimensions(true);
-    this.#initBranchesInteractivity(depth);
+    this.#initBranchesInteractivity();
 
     this.isMovingAwayFrom = new PointBool(false, false);
 
@@ -123,7 +122,9 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
         opts.restrictionsStatus.isSelfRestricted);
   }
 
-  #initBranchesInteractivity(depth: number) {
+  #initBranchesInteractivity() {
+    const { depth } = this.draggedElm;
+
     store.getBranchesByDepth(depth).forEach((key) => {
       const { boundaries } = store.containers[key];
 

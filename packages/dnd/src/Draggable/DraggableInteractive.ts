@@ -159,6 +159,15 @@ class DraggableInteractive
 
     this.threshold.destroy();
 
+    const { depth } = this.draggedElm;
+
+    store.getBranchesByDepth(depth).forEach((key) => {
+      // @ts-expect-error
+      store.containers[key].lastElmPosition = null;
+      // @ts-expect-error
+      store.containers[key].originLength = null;
+    });
+
     // TODO: add type to this.
     const properties = [
       "threshold",
