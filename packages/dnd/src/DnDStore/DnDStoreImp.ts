@@ -404,9 +404,9 @@ class DnDStoreImp extends Store implements IDnDStore {
           if (length <= originLength) {
             position.clone(lastElmPosition);
             // Did we retorted the same element?
-            isRestoredLastPosition =
-              length <= originLength &&
-              !lastElmPosition.isEqual(elm.currentPosition);
+            isRestoredLastPosition = !lastElmPosition.isEqual(
+              elm.currentPosition
+            );
           } else {
             isRestoredLastPosition = false;
             position.clone(elm.currentPosition);
