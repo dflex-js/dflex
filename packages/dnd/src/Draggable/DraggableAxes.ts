@@ -74,10 +74,6 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
 
     this.migration = new Migration(order.self, SK, store.tracker.newTravel());
 
-    const lastElm = store.registry[siblings[siblings.length - 1]];
-
-    store.containers[SK].preservePosition(lastElm.currentPosition);
-
     this.isViewportRestricted = true;
 
     this.enableContainersTransition = opts.enableContainersTransition;
@@ -92,26 +88,7 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
     });
 
     this.appendDraggedToContainerDimensions(true);
-
-    store.getBranchesByDepth(depth).forEach((key) => {
-      const { boundaries } = store.containers[key];
-
-      if (process.env.NODE_ENV !== "production") {
-        if (!boundaries) {
-          throw new Error(`Siblings boundaries for ${key} not found.`);
-        }
-      }
-
-      this.threshold.setContainerThreshold(
-        key,
-        depth,
-        boundaries,
-        store.unifiedContainerDimensions[depth]
-      );
-
-      const { length } = store.getElmBranchByKey(key);
-      store.containers[key].originLength = length;
-    });
+    this.#initBranchesInteractivity(depth);
 
     this.isMovingAwayFrom = new PointBool(false, false);
 
@@ -144,6 +121,29 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
       siblings !== null &&
       (opts.restrictionsStatus.isContainerRestricted ||
         opts.restrictionsStatus.isSelfRestricted);
+  }
+
+  #initBranchesInteractivity(depth: number) {
+    store.getBranchesByDepth(depth).forEach((key) => {
+      const { boundaries } = store.containers[key];
+
+      const branch = store.getElmBranchByKey(key);
+
+      const { length } = branch;
+
+      const lastElm = store.registry[branch[length - 1]];
+
+      store.containers[key].preservePosition(lastElm.currentPosition);
+
+      store.containers[key].originLength = length;
+
+      this.threshold.setContainerThreshold(
+        key,
+        depth,
+        boundaries,
+        store.unifiedContainerDimensions[depth]
+      );
+    });
   }
 
   appendDraggedToContainerDimensions(isAppend: boolean) {
