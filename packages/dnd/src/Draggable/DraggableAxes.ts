@@ -111,10 +111,8 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
         store.unifiedContainerDimensions[depth]
       );
 
-      if (store.containers[key].originLength === Container.OUT_OF_RANGE) {
-        const { length } = store.getElmBranchByKey(key);
-        store.containers[key].originLength = length;
-      }
+      const { length } = store.getElmBranchByKey(key);
+      store.containers[key].originLength = length;
     });
 
     this.isMovingAwayFrom = new PointBool(false, false);
