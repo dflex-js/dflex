@@ -15,7 +15,7 @@ import type {
   IPointAxes,
 } from "@dflex/utils";
 
-import { Container, INode } from "@dflex/core-instance";
+import { INode } from "@dflex/core-instance";
 
 import store from "../DnDStore";
 
@@ -74,11 +74,9 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
 
     this.migration = new Migration(order.self, SK, store.tracker.newTravel());
 
-    if (!store.containers[SK].lastElmPosition) {
-      const lastElm = store.registry[siblings[siblings.length - 1]];
+    const lastElm = store.registry[siblings[siblings.length - 1]];
 
-      store.containers[SK].preservePosition(lastElm.currentPosition);
-    }
+    store.containers[SK].preservePosition(lastElm.currentPosition);
 
     this.isViewportRestricted = true;
 
@@ -111,10 +109,8 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
         store.unifiedContainerDimensions[depth]
       );
 
-      if (store.containers[key].originLength === Container.OUT_OF_RANGE) {
-        const { length } = store.getElmBranchByKey(key);
-        store.containers[key].originLength = length;
-      }
+      const { length } = store.getElmBranchByKey(key);
+      store.containers[key].originLength = length;
     });
 
     this.isMovingAwayFrom = new PointBool(false, false);
