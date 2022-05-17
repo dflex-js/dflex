@@ -26,9 +26,6 @@ class Generator implements GeneratorInterface {
     [keys: string]: string[];
   };
 
-  /** Branches order */
-  branchesOrder: string[];
-
   branchesByDepth: {
     [depth: number]: string[];
   };
@@ -41,7 +38,6 @@ class Generator implements GeneratorInterface {
     this.#indicator = {};
 
     this.branches = {};
-    this.branchesOrder = [];
     this.branchesByDepth = {};
 
     this.#prevDepth = -99;
@@ -83,21 +79,6 @@ class Generator implements GeneratorInterface {
     if (this.#indicator[dp + 2] === undefined) {
       this.#indicator[dp + 2] = 0;
     }
-  }
-
-  #updateOrder(k: string) {
-    const is = this.branchesOrder.find((key) => key === k);
-    if (!is) {
-      this.branchesOrder.push(k);
-    }
-  }
-
-  getBranchParentKey(SK: string) {
-    const keyOrder = this.branchesOrder.indexOf(SK);
-    if (keyOrder + 1 <= this.branchesOrder.length) {
-      return this.branchesOrder[keyOrder + 1];
-    }
-    return null;
   }
 
   #addElementIDToDepthCollection(SK: string, depth: number) {
@@ -155,14 +136,10 @@ class Generator implements GeneratorInterface {
      */
     const SK = combineKeys(depth, parentIndex);
 
-    /**
-     * Add key to the order.
-     */
-    this.#updateOrder(SK);
-
     const PK = combineKeys(depth + 1, this.#indicator[depth + 2]);
 
     const CHK = depth === 0 ? null : this.#prevKey;
+
     this.#prevKey = SK;
 
     this.#indicator[depth] += 1;
@@ -245,8 +222,6 @@ class Generator implements GeneratorInterface {
     } else {
       delete this.branches[SK];
     }
-
-    this.branchesOrder = this.branchesOrder.filter((key) => key !== SK);
 
     Object.keys(this.branchesByDepth).forEach((dp) => {
       const dpNum = Number(dp);

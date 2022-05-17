@@ -363,7 +363,7 @@ class DnDStoreImp extends Store implements IDnDStore {
     const { length } = lst;
 
     // Restore the last known current position.
-    const { lastElmPosition } = this.containers[SK];
+    const { lastElmPosition, originLength } = this.containers[SK];
 
     const position = new PointNum(0, 0);
     const isEmpty = Droppable.isEmpty(lst);
@@ -401,11 +401,16 @@ class DnDStoreImp extends Store implements IDnDStore {
         elm = this.registry[lst[at]];
 
         if (lastElmPosition) {
-          position.clone(lastElmPosition);
-          // Did we retorted the same element?
-          isRestoredLastPosition = !lastElmPosition.isEqual(
-            elm.currentPosition
-          );
+          if (length <= originLength) {
+            position.clone(lastElmPosition);
+            // Did we retorted the same element?
+            isRestoredLastPosition = !lastElmPosition.isEqual(
+              elm.currentPosition
+            );
+          } else {
+            isRestoredLastPosition = false;
+            position.clone(elm.currentPosition);
+          }
         } else {
           position.clone(elm.currentPosition);
         }

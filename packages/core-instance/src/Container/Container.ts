@@ -21,14 +21,19 @@ class Container implements IContainer {
 
   grid: IPointNum;
 
+  originLength: number;
+
   scroll!: IScroll;
 
   #gridSiblingsHasNewRow: boolean;
 
   lastElmPosition!: IPointNum;
 
+  static OUT_OF_RANGE = -1;
+
   constructor() {
     this.grid = new PointNum(1, 1);
+    this.originLength = Container.OUT_OF_RANGE;
     this.#boundariesByRow = {};
     this.#gridSiblingsHasNewRow = false;
   }

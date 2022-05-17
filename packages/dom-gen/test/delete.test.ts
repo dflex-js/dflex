@@ -45,12 +45,6 @@ describe("Testing clear methods", () => {
     const branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
 
     expect(branch).toStrictEqual(["id-0", "id-1"]);
-
-    expect(domGen.branchesOrder).toMatchInlineSnapshot(`
-      Array [
-        "0-0",
-      ]
-    `);
   });
 
   it("The new generated branch has its key inside the branch depth array", () => {
@@ -100,12 +94,6 @@ describe("Testing clear methods", () => {
 
     expect(branch).toStrictEqual(["id-1", "id-0"]);
 
-    expect(domGen.branchesOrder).toMatchInlineSnapshot(`
-      Array [
-        "0-0",
-      ]
-    `);
-
     expect(domGen.branchesByDepth).toMatchInlineSnapshot(`
       Object {
         "0": Array [
@@ -121,7 +109,6 @@ describe("Testing clear methods", () => {
     const branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
 
     expect(branch).toBeUndefined();
-    expect(domGen.branchesOrder).toMatchInlineSnapshot(`Array []`);
     expect(domGen.branchesByDepth).toMatchInlineSnapshot(`Object {}`);
   });
 
@@ -154,12 +141,6 @@ describe("Testing clear methods", () => {
     const branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
 
     expect(branch).toStrictEqual(["id-0", "id-1"]);
-
-    expect(domGen.branchesOrder).toMatchInlineSnapshot(`
-      Array [
-        "0-0",
-      ]
-    `);
 
     expect(domGen.branchesByDepth).toMatchInlineSnapshot(`
       Object {
