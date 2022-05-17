@@ -401,11 +401,16 @@ class DnDStoreImp extends Store implements IDnDStore {
         elm = this.registry[lst[at]];
 
         if (lastElmPosition) {
-          position.clone(lastElmPosition);
-          // Did we retorted the same element?
-          isRestoredLastPosition =
-            length <= originLength &&
-            !lastElmPosition.isEqual(elm.currentPosition);
+          if (length <= originLength) {
+            position.clone(lastElmPosition);
+            // Did we retorted the same element?
+            isRestoredLastPosition =
+              length <= originLength &&
+              !lastElmPosition.isEqual(elm.currentPosition);
+          } else {
+            isRestoredLastPosition = false;
+            position.clone(elm.currentPosition);
+          }
         } else {
           position.clone(elm.currentPosition);
         }
