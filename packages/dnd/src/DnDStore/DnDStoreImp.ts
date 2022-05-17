@@ -364,7 +364,6 @@ class DnDStoreImp extends Store implements IDnDStore {
 
     // Restore the last known current position.
     const { lastElmPosition, originLength } = this.containers[SK];
-    console.log("file: DnDStoreImp.ts ~ line 367 ~ originLength", originLength);
 
     const position = new PointNum(0, 0);
     const isEmpty = Droppable.isEmpty(lst);
