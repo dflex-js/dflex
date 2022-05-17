@@ -15,7 +15,7 @@ import type {
   IPointAxes,
 } from "@dflex/utils";
 
-import { Container, INode } from "@dflex/core-instance";
+import { INode } from "@dflex/core-instance";
 
 import store from "../DnDStore";
 
