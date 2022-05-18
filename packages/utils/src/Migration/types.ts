@@ -6,7 +6,10 @@ export interface IAbstract {
   /** Transition unique id. */
   id: string;
 
+  /** Defined during the transition. */
   marginTop: number | null;
+
+  /** Defined during the transition. */
   marginBottom: number | null;
 }
 

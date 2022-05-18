@@ -408,14 +408,28 @@ class Droppable extends DistanceCalculator {
 
     const siblings = store.getElmBranchByKey(migration.latest().SK);
 
-    const from = migration.latest().index + 1;
+    const { index } = migration.latest();
+
+    const from = index + 1;
+
+    if (index > 0) {
+      const prevElm = store.registry[siblings[migration.latest().index - 1]];
+
+      // Store it before lost it when the index is changed to the next one.
+      migration.preserveVerticalMargin(
+        "top",
+        occupiedPosition.y - prevElm.getRectBottom()
+      );
+    }
 
     if (from === siblings.length) return;
+
+    const nextElm = store.registry[siblings[from]];
 
     // Store it before lost it when the index is changed to the next one.
     migration.preserveVerticalMargin(
       "bottom",
-      store.registry[siblings[from]].currentPosition.y -
+      nextElm.currentPosition.y -
         (occupiedPosition.y + draggedElm.offset.height)
     );
 

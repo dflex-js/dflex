@@ -48,8 +48,8 @@ class Migration implements IMigration {
     this.latest().index = index;
   }
 
-  preserveVerticalMargin(type: "top" | "bottom", mb: number | null) {
-    this.latest()[type === "bottom" ? "marginBottom" : "marginTop"] = mb;
+  preserveVerticalMargin(type: "top" | "bottom", m: number | null) {
+    this.latest()[type === "bottom" ? "marginBottom" : "marginTop"] = m;
   }
 
   clearMargins() {
@@ -67,6 +67,8 @@ class Migration implements IMigration {
 
   complete() {
     this.isTransitioning = false;
+    this.preserveVerticalMargin("top", null);
+    this.preserveVerticalMargin("bottom", null);
   }
 
   dispose() {

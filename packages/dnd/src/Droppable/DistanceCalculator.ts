@@ -237,16 +237,19 @@ class DistanceCalculator {
 
     this.#addDraggedOffsetToElm(composedPosition, elm!, axis);
 
-    const { marginBottom: mb } = this.draggable.migration.latest();
+    const { marginBottom: mb, marginTop: mt } =
+      this.draggable.migration.latest();
 
     // Give the priority to the destination first then check the origin.
     const marginBottom = isRestoredLastPosition
       ? Node.getDisplacement(position, elm!, axis)
-      : isOrphan
-      ? typeof mb === "number"
-        ? mb
-        : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN
-      : Node.getDisplacement(position, prevElm!, axis);
+      : !isOrphan
+      ? Node.getDisplacement(position, prevElm!, axis)
+      : typeof mt === "number"
+      ? mt
+      : typeof mb === "number"
+      ? mb
+      : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
 
     composedPosition[axis] += Math.abs(marginBottom);
 
