@@ -342,12 +342,6 @@ class DnDStoreImp extends Store implements IDnDStore {
     // Append the newest element to the end of the branch.
     this.containers[SK].registerNewElm(appendOffset);
 
-    // Update preserved last element's position.
-    this.containers[SK].preservePosition({
-      x: appendOffset.left,
-      y: appendOffset.top,
-    });
-
     const origin = this.DOMGen.branches[originSK];
 
     // Don't reset empty branch keep the boundaries.
