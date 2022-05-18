@@ -236,5 +236,65 @@ context(
         cy.get("#c2-5").trigger("mouseup", { force: true });
       });
     });
+
+    context("No shifting happened during the transformation", () => {
+      it("Dragged #c3-1 settled in container-1 correctly", () => {
+        cy.get("#c3-1").should(
+          "have.css",
+          "transform",
+          "matrix(1, 0, 0, 1, -452, 0)"
+        );
+      });
+
+      it("Dragged #c3-2 settled in container-2 correctly", () => {
+        cy.get("#c3-2").should(
+          "have.css",
+          "transform",
+          "matrix(1, 0, 0, 1, -226, -112)"
+        );
+      });
+
+      it("Dragged #c2-5 settled in container-3 correctly", () => {
+        cy.get("#c2-5").should(
+          "have.css",
+          "transform",
+          "matrix(1, 0, 0, 1, 226, -248)"
+        );
+      });
+
+      it("Siblings in container 2 positioned correctly", () => {
+        cy.get("#c2-1").should(
+          "have.css",
+          "transform",
+          "matrix(1, 0, 0, 1, 0, 112)"
+        );
+
+        cy.get("#c2-2").should(
+          "have.css",
+          "transform",
+          "matrix(1, 0, 0, 1, 0, 112)"
+        );
+
+        cy.get("#c2-3").should(
+          "have.css",
+          "transform",
+          "matrix(1, 0, 0, 1, 0, 112)"
+        );
+
+        cy.get("#c2-4").should(
+          "have.css",
+          "transform",
+          "matrix(1, 0, 0, 1, 0, 112)"
+        );
+      });
+
+      it("Siblings in container 1 positioned correctly", () => {
+        cy.get("#c1-1").should(
+          "have.css",
+          "transform",
+          "matrix(1, 0, 0, 1, 0, 112)"
+        );
+      });
+    });
   }
 );
