@@ -412,7 +412,6 @@ class Droppable extends DistanceCalculator {
     const from = index + 1;
 
     if (index > 0) {
-      console.log("file: Droppable.ts ~ line 415 ~ index", index);
       const prevElm = store.registry[siblings[migration.latest().index - 1]];
 
       // Store it before lost it when the index is changed to the next one.

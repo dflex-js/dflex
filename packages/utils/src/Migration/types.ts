@@ -32,7 +32,7 @@ export interface IMigration {
    */
   setIndex(index: number): void;
 
-  preserveVerticalMargin(type: "top" | "bottom", mb: number | null): void;
+  preserveVerticalMargin(type: "top" | "bottom", m: number | null): void;
 
   clearMargins(): void;
 

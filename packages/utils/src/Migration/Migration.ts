@@ -49,7 +49,6 @@ class Migration implements IMigration {
   }
 
   preserveVerticalMargin(type: "top" | "bottom", m: number | null) {
-    console.log("file: Migration.ts ~ line 52 ~ m", m);
     this.latest()[type === "bottom" ? "marginBottom" : "marginTop"] = m;
   }
 
