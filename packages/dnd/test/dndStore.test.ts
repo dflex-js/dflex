@@ -38,6 +38,8 @@ describe("DnD Store", () => {
       y: 1000,
     };
 
+    const originLength = 4;
+
     let SK: string;
 
     describe("Normal branch without injection", () => {
@@ -106,6 +108,7 @@ describe("DnD Store", () => {
 
       it("Preserve the last element", () => {
         store.containers[SK].preservePosition(preservePosition);
+        store.containers[SK].originLength = originLength;
       });
 
       it("Restores the preserved position when calling for last element", () => {
@@ -194,7 +197,7 @@ describe("DnD Store", () => {
         `);
       });
 
-      it("Restores the preserved position when calling for last element", () => {
+      it("Restores the the last element when the branch is extended", () => {
         const { elm, prevElm, position, ...rest } = store.getInsertionELmMeta(
           4,
           SK
@@ -204,11 +207,14 @@ describe("DnD Store", () => {
                   Object {
                     "isEmpty": false,
                     "isOrphan": false,
-                    "isRestoredLastPosition": true,
+                    "isRestoredLastPosition": false,
                   }
               `);
 
-        expect(position.getInstance()).toStrictEqual(preservePosition);
+        expect(position.getInstance()).toStrictEqual({
+          x: elm4.ref.getBoundingClientRect().left,
+          y: elm4.ref.getBoundingClientRect().top,
+        });
 
         expect(elm.id).toBe(elm4.id);
         expect(prevElm.id).toBe(elm3.id);

@@ -42,10 +42,6 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
       expect(branch).toStrictEqual(["id-0"]);
     });
 
-    it("Initiates branch order array with the new generated branch key", () => {
-      expect(domGen.branchesOrder).toStrictEqual([KEYS_CHILDREN_D0.SK]);
-    });
-
     it("Adds the new branch into its depth", () => {
       expect(domGen.branchesByDepth).toMatchInlineSnapshot(`
         Object {
@@ -76,7 +72,6 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
       let branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
 
       expect(branch).toStrictEqual(["id-0", "id-1"]);
-      expect(domGen.branchesOrder).toStrictEqual([KEYS_CHILDREN_D0.SK]);
 
       // DOM-root
       // │
@@ -129,11 +124,6 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
       expect(pointerChild1D0.keys.PK).toBe(pointerParent0D1.keys.SK);
       expect(pointerChild2D0.keys.PK).toBe(pointerParent0D1.keys.SK);
 
-      expect(domGen.branchesOrder).toStrictEqual([
-        KEYS_CHILDREN_D0.SK,
-        pointerParent0D1.keys.SK,
-      ]);
-
       expect(pointerParent0D1).toStrictEqual({
         keys: {
           CHK: "0-0",
@@ -179,12 +169,6 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
       pointerGrandParent0D2 = domGen.register("id-grand-parent-1", 2);
 
       expect(pointerParent0D1.keys.PK).toBe(pointerGrandParent0D2.keys.SK);
-
-      expect(domGen.branchesOrder).toStrictEqual([
-        KEYS_CHILDREN_D0.SK,
-        pointerParent0D1.keys.SK,
-        pointerGrandParent0D2.keys.SK,
-      ]);
 
       expect(pointerGrandParent0D2).toStrictEqual({
         keys: {
@@ -242,15 +226,6 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
       expect(pointerChild3D0.order.parent).not.toBe(
         pointerChild0D0.order.parent
       );
-
-      expect(domGen.branchesOrder).toMatchInlineSnapshot(`
-        Array [
-          "0-0",
-          "1-0",
-          "2-0",
-          "0-1",
-        ]
-      `);
 
       expect(pointerChild3D0).toStrictEqual({
         keys: {
