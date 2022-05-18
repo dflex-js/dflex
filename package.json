@@ -15,10 +15,10 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.22.0",
-    "@swc/core": "^1.2.185",
+    "@swc/core": "^1.2.186",
     "@swc/jest": "^0.2.21",
     "@types/jest": "^27.5.1",
-    "@types/node": "^17.0.33",
+    "@types/node": "^17.0.34",
     "cross-env": "^7.0.3",
     "esbuild": "^0.14.39",
     "eslint-config-dflex": "workspace:*",
