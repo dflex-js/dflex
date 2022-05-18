@@ -355,6 +355,10 @@ class DnDStoreImp extends Store implements IDnDStore {
       this.containers[originSK].registerNewElm(elm.getOffset());
       elm.grid.clone(this.containers[originSK].grid);
     });
+
+    const lastInOrigin = this.registry[origin[origin.length - 1]];
+
+    this.containers[originSK].preservePosition(lastInOrigin.currentPosition);
   }
 
   getInsertionELmMeta(insertAt: number, SK: string): InsertionELmMeta {
