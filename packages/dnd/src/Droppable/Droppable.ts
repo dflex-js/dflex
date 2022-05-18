@@ -248,10 +248,9 @@ class Droppable extends DistanceCalculator {
 
     // Enforce attaching it from the bottom since it's already inside the container.
     if (typeof insertAt !== "number") {
-      if (!migration.isTransitioning) {
-        // Restore the last element position from the bottom.
-        const { lastElmPosition } = store.containers[SK];
-
+      // Restore the last element position from the bottom.
+      const { lastElmPosition } = store.containers[SK];
+      if (!migration.isTransitioning && lastElmPosition) {
         this.updateDraggedThresholdPosition(
           lastElmPosition.x,
           lastElmPosition.y
@@ -320,9 +319,9 @@ class Droppable extends DistanceCalculator {
 
         store.handleElmMigration(SK, migration.prev().SK, offset);
 
-        migration.complete();
-
         this.#listAppendPosition = null;
+
+        migration.complete();
       });
     }
   }
@@ -413,6 +412,7 @@ class Droppable extends DistanceCalculator {
     const from = index + 1;
 
     if (index > 0) {
+      console.log("file: Droppable.ts ~ line 415 ~ index", index);
       const prevElm = store.registry[siblings[migration.latest().index - 1]];
 
       // Store it before lost it when the index is changed to the next one.

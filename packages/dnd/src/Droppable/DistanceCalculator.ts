@@ -184,16 +184,19 @@ class DistanceCalculator {
       } else {
         composedGrid[axis] += 1;
 
-        const { marginBottom: mb } = this.draggable.migration.latest();
+        const { marginBottom: mb, marginTop: mt } =
+          this.draggable.migration.prev();
 
         // Is the list expanding?
         if (!isRestoredLastPosition) {
           this.#addDraggedOffsetToElm(composedTranslate, elm!, axis);
-          composedTranslate[axis] += isOrphan
-            ? typeof mb === "number"
-              ? mb
-              : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN
-            : Node.getDisplacement(position, prevElm!, axis);
+          composedTranslate[axis] += !isOrphan
+            ? Node.getDisplacement(position, prevElm!, axis)
+            : typeof mt === "number"
+            ? mt
+            : typeof mb === "number"
+            ? mb
+            : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
         }
       }
     }
@@ -249,7 +252,7 @@ class DistanceCalculator {
       ? mt
       : typeof mb === "number"
       ? mb
-      : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
+      : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN; // orphan to orphan.
 
     composedPosition[axis] += Math.abs(marginBottom);
 
