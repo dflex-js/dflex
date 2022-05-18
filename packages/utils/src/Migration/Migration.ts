@@ -67,8 +67,9 @@ class Migration implements IMigration {
 
   complete() {
     this.isTransitioning = false;
-    // this.preserveVerticalMargin("top", null);
-    // this.preserveVerticalMargin("bottom", null);
+
+    this.preserveVerticalMargin("top", null);
+    this.preserveVerticalMargin("bottom", null);
   }
 
   dispose() {
