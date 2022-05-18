@@ -320,8 +320,6 @@ class Droppable extends DistanceCalculator {
 
         store.handleElmMigration(SK, migration.prev().SK, offset);
 
-        store.containers[SK].preservePosition(this.#listAppendPosition!);
-
         migration.complete();
 
         this.#listAppendPosition = null;
