@@ -242,9 +242,9 @@ class Droppable extends DistanceCalculator {
      */
     let hasToMoveSiblingsDown = true;
 
-    const isOrphan = Droppable.isEmpty(siblings);
+    const isEmpty = Droppable.isEmpty(siblings);
 
-    let insertAt = isOrphan ? 0 : this.#detectDroppableIndex();
+    let insertAt = isEmpty ? 0 : this.#detectDroppableIndex();
 
     // Enforce attaching it from the bottom since it's already inside the container.
     if (typeof insertAt !== "number") {
@@ -282,7 +282,7 @@ class Droppable extends DistanceCalculator {
 
     // If it has solo empty id then there's no need to move down. Because it's
     // empty branch.
-    if (hasToMoveSiblingsDown && !isOrphan) {
+    if (hasToMoveSiblingsDown && !isEmpty) {
       this.#moveDown(insertAt);
     }
 
