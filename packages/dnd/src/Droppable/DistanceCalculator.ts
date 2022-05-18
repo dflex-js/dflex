@@ -171,34 +171,30 @@ class DistanceCalculator {
     const composedGrid = new PointNum(1, 1);
 
     // Get the stored position if the branch is empty.
-    if (isEmpty) {
-      if (!isRestoredLastPosition) {
-        throw new Error(
-          "Transformation into an empty container in not supported yet."
-        );
+    if (!isEmpty) {
+      if (!isOrphan) {
+        const { grid } = elm!;
+
+        composedGrid.clone(grid);
       }
-    } else if (!isOrphan) {
-      const { grid } = elm!;
 
-      composedGrid.clone(grid);
-    }
+      if (insertFromTop) {
+        // Don't decrease the first element.
+        if (composedGrid[axis] - 1 >= 1) composedGrid[axis] -= 1;
+      } else {
+        composedGrid[axis] += 1;
 
-    if (insertFromTop) {
-      // Don't decrease the first element.
-      if (composedGrid[axis] - 1 >= 1) composedGrid[axis] -= 1;
-    } else {
-      composedGrid[axis] += 1;
+        const { marginBottom: mb } = this.draggable.migration.latest();
 
-      const { marginBottom: mb } = this.draggable.migration.latest();
-
-      // Is the list expanding?
-      if (!isRestoredLastPosition) {
-        this.#addDraggedOffsetToElm(composedTranslate, elm!, axis);
-        composedTranslate[axis] += isOrphan
-          ? typeof mb === "number"
-            ? mb
-            : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN
-          : Node.getDisplacement(position, prevElm!, axis);
+        // Is the list expanding?
+        if (!isRestoredLastPosition) {
+          this.#addDraggedOffsetToElm(composedTranslate, elm!, axis);
+          composedTranslate[axis] += isOrphan
+            ? typeof mb === "number"
+              ? mb
+              : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN
+            : Node.getDisplacement(position, prevElm!, axis);
+        }
       }
     }
 
