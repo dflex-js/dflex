@@ -150,14 +150,8 @@ class DistanceCalculator {
     insertFromTop: boolean,
     axis: Axis
   ) {
-    const {
-      isEmpty,
-      isOrphan,
-      position,
-      isRestoredLastPosition,
-      elm,
-      prevElm,
-    } = store.getInsertionELmMeta(insertAt, SK);
+    const { isEmpty, isOrphan, position, elm, prevElm } =
+      store.getInsertionELmMeta(insertAt, SK);
 
     const { draggedElm } = this.draggable;
 
@@ -187,17 +181,14 @@ class DistanceCalculator {
         const { marginBottom: mb, marginTop: mt } =
           this.draggable.migration.prev();
 
-        // Is the list expanding?
-        if (!isRestoredLastPosition) {
-          this.#addDraggedOffsetToElm(composedTranslate, elm!, axis);
-          composedTranslate[axis] += !isOrphan
-            ? Node.getDisplacement(position, prevElm!, axis)
-            : typeof mt === "number"
-            ? mt
-            : typeof mb === "number"
-            ? mb
-            : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
-        }
+        this.#addDraggedOffsetToElm(composedTranslate, elm!, axis);
+        composedTranslate[axis] += !isOrphan
+          ? Node.getDisplacement(position, prevElm!, axis)
+          : typeof mt === "number"
+          ? mt
+          : typeof mb === "number"
+          ? mb
+          : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
       }
     }
 
