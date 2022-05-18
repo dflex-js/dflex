@@ -78,7 +78,7 @@ context("Split multiple containers from bottom up", () => {
     cy.get("#c3-2").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, -452, -118)"
+      "matrix(1, 0, 0, 1, -452, -112)"
     );
   });
 });
