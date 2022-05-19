@@ -242,16 +242,15 @@ class Droppable extends DistanceCalculator {
      */
     let hasToMoveSiblingsDown = true;
 
-    const isOrphan = Droppable.isEmpty(siblings);
+    const isEmpty = Droppable.isEmpty(siblings);
 
-    let insertAt = isOrphan ? 0 : this.#detectDroppableIndex();
+    let insertAt = isEmpty ? 0 : this.#detectDroppableIndex();
 
     // Enforce attaching it from the bottom since it's already inside the container.
     if (typeof insertAt !== "number") {
-      if (!migration.isTransitioning) {
-        // Restore the last element position from the bottom.
-        const { lastElmPosition } = store.containers[SK];
-
+      // Restore the last element position from the bottom.
+      const { lastElmPosition } = store.containers[SK];
+      if (!migration.isTransitioning && lastElmPosition) {
         this.updateDraggedThresholdPosition(
           lastElmPosition.x,
           lastElmPosition.y
@@ -282,7 +281,7 @@ class Droppable extends DistanceCalculator {
 
     // If it has solo empty id then there's no need to move down. Because it's
     // empty branch.
-    if (hasToMoveSiblingsDown && !isOrphan) {
+    if (hasToMoveSiblingsDown && !isEmpty) {
       this.#moveDown(insertAt);
     }
 
@@ -320,11 +319,9 @@ class Droppable extends DistanceCalculator {
 
         store.handleElmMigration(SK, migration.prev().SK, offset);
 
-        store.containers[SK].preservePosition(this.#listAppendPosition!);
+        this.#listAppendPosition = null;
 
         migration.complete();
-
-        this.#listAppendPosition = null;
       });
     }
   }
@@ -410,14 +407,28 @@ class Droppable extends DistanceCalculator {
 
     const siblings = store.getElmBranchByKey(migration.latest().SK);
 
-    const from = migration.latest().index + 1;
+    const { index } = migration.latest();
+
+    const from = index + 1;
+
+    if (index > 0) {
+      const prevElm = store.registry[siblings[migration.latest().index - 1]];
+
+      // Store it before lost it when the index is changed to the next one.
+      migration.preserveVerticalMargin(
+        "top",
+        occupiedPosition.y - prevElm.getRectBottom()
+      );
+    }
 
     if (from === siblings.length) return;
+
+    const nextElm = store.registry[siblings[from]];
 
     // Store it before lost it when the index is changed to the next one.
     migration.preserveVerticalMargin(
       "bottom",
-      store.registry[siblings[from]].currentPosition.y -
+      nextElm.currentPosition.y -
         (occupiedPosition.y + draggedElm.offset.height)
     );
 

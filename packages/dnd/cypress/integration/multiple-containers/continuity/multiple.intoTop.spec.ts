@@ -1,16 +1,17 @@
-context("Distribute into different containers", () => {
-  let elmBox: DOMRect;
-  let startingPointX: number;
-  let startingPointY: number;
+context(
+  "Distribute into different containers then transform into empty one",
+  () => {
+    let elmBox: DOMRect;
+    let startingPointX: number;
+    let startingPointY: number;
 
-  let stepsX = 0;
-  let stepsY = 0;
+    let stepsX = 0;
+    let stepsY = 0;
 
-  before(() => {
-    cy.visit("http://localhost:3001/migration");
-  });
+    before(() => {
+      cy.visit("http://localhost:3001/migration");
+    });
 
-  context("Transform from to container-1", () => {
     it("Getting the first element from container-1", () => {
       cy.get("#c3-1").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
@@ -32,7 +33,7 @@ context("Distribute into different containers", () => {
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
 
       stepsX = 470;
@@ -42,7 +43,7 @@ context("Distribute into different containers", () => {
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
     });
 
@@ -62,33 +63,7 @@ context("Distribute into different containers", () => {
       cy.get("#c3-1").trigger("mouseup", { force: true });
     });
 
-    it("Siblings from the targets are having new positions", () => {
-      cy.get("#c3-2").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, -112)"
-      );
-    });
-
-    it("Siblings in origin takes new positions", () => {
-      cy.get("#c1-1").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 112)"
-      );
-    });
-
-    it("Dragged has fully transformed", () => {
-      cy.get("#c3-1").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, -452, 0)"
-      );
-    });
-  });
-
-  context("Transform from to container-2", () => {
-    it("Getting the second element from container-1", () => {
+    it("Getting the first element from container-1", () => {
       cy.get("#c3-2").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
         // eslint-disable-next-line no-unused-vars
@@ -109,21 +84,21 @@ context("Distribute into different containers", () => {
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
 
-      stepsX = 235;
+      stepsX = 470;
       for (let i = 0; i < stepsX; i += 10) {
         cy.get("#c3-2").trigger("mousemove", {
           clientX: startingPointX - i,
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
     });
 
-    it("Transforms element (#c3-2) - inside container-2", () => {
+    it("Transforms element (#c3-2) - inside container-1", () => {
       // stepsY = 110;
       for (let i = stepsY; i >= 0; i -= 10) {
         cy.get("#c3-2").trigger("mousemove", {
@@ -139,58 +114,38 @@ context("Distribute into different containers", () => {
       cy.get("#c3-2").trigger("mouseup", { force: true });
     });
 
-    it("Siblings from the container-1 preserve their positions", () => {
+    it("Siblings in container 2 stay the same", () => {
+      cy.get("#c2-1").should("have.css", "transform", "none");
+
+      cy.get("#c2-2").should("have.css", "transform", "none");
+
+      cy.get("#c2-3").should("have.css", "transform", "none");
+
+      cy.get("#c2-4").should("have.css", "transform", "none");
+
+      cy.get("#c2-5").should("have.css", "transform", "none");
+    });
+
+    it("Siblings in destination have the correct position", () => {
       cy.get("#c1-1").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 112)"
+        "matrix(1, 0, 0, 1, 0, 224)"
       );
     });
 
-    it("Siblings from the container-2 transformed into new positions", () => {
-      cy.get("#c2-1").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 112)"
-      );
-
-      cy.get("#c2-2").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 112)"
-      );
-
-      cy.get("#c2-3").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 112)"
-      );
-
-      cy.get("#c2-4").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 112)"
-      );
-
-      cy.get("#c2-5").should(
-        "have.css",
-        "transform",
-        "matrix(1, 0, 0, 1, 0, 112)"
-      );
-    });
-
-    it("Siblings from container-3 are distributed into two containers", () => {
+    it("Dragged elements have the correct position", () => {
       cy.get("#c3-1").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, -452, 0)"
+        "matrix(1, 0, 0, 1, -452, 112)"
       );
 
       cy.get("#c3-2").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, -226, -112)"
+        "matrix(1, 0, 0, 1, -452, -112)"
       );
     });
-  });
-});
+  }
+);

@@ -1,4 +1,4 @@
-context("Split one container form bottom up", () => {
+context("Split one container from bottom up", () => {
   before(() => {
     cy.visit("http://localhost:3001/migration");
   });

@@ -6,7 +6,10 @@ export interface IAbstract {
   /** Transition unique id. */
   id: string;
 
+  /** Defined during the transition. */
   marginTop: number | null;
+
+  /** Defined during the transition. */
   marginBottom: number | null;
 }
 
@@ -29,7 +32,7 @@ export interface IMigration {
    */
   setIndex(index: number): void;
 
-  preserveVerticalMargin(type: "top" | "bottom", mb: number | null): void;
+  preserveVerticalMargin(type: "top" | "bottom", m: number | null): void;
 
   clearMargins(): void;
 
