@@ -176,7 +176,8 @@ class DistanceCalculator {
       } else {
         composedGrid[axis] += 1;
 
-        const { marginBottom: mb, marginTop: mt } = migration.prev();
+        const { marginBottom: mb, marginTop: mt } =
+          this.draggable.migration.prev();
 
         this.#addDraggedOffsetToElm(composedTranslate, elm!, axis);
         composedTranslate[axis] += !isOrphan
@@ -185,7 +186,7 @@ class DistanceCalculator {
           ? mt
           : typeof mb === "number"
           ? mb
-          : containersTransition.margin;
+          : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
       }
     }
 
@@ -228,9 +229,8 @@ class DistanceCalculator {
 
     this.#addDraggedOffsetToElm(composedPosition, elm!, axis);
 
-    const { migration, containersTransition } = this.draggable;
-
-    const { marginBottom: mb, marginTop: mt } = migration.latest();
+    const { marginBottom: mb, marginTop: mt } =
+      this.draggable.migration.latest();
 
     // Give the priority to the destination first then check the origin.
     const marginBottom = isRestoredLastPosition
@@ -241,7 +241,7 @@ class DistanceCalculator {
       ? mt
       : typeof mb === "number"
       ? mb
-      : containersTransition.margin; // orphan to orphan.
+      : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN; // orphan to orphan.
 
     composedPosition[axis] += Math.abs(marginBottom);
 
