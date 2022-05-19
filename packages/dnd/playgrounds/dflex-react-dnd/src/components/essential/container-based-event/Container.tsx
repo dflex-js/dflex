@@ -30,7 +30,9 @@ const Container = ({
           id,
           { x: clientX, y: clientY },
           {
-            enableContainersTransition: false,
+            containersTransition: {
+              enable: false,
+            },
           }
         );
 

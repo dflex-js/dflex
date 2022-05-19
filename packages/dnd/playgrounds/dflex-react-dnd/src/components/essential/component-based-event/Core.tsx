@@ -60,7 +60,9 @@ const Core = ({
           id,
           { x: clientX, y: clientY },
           {
-            enableContainersTransition,
+            containersTransition: {
+              enable: enableContainersTransition,
+            },
           }
         );
 
