@@ -151,7 +151,7 @@ class DistanceCalculator {
     const { isEmpty, isOrphan, position, elm, prevElm } =
       store.getInsertionELmMeta(insertAt, SK);
 
-    const { draggedElm, migration, containersTransition } = this.draggable;
+    const { draggedElm, containersTransition } = this.draggable;
 
     // Getting diff with `currentPosition` includes the element transition
     // as well.
@@ -186,7 +186,7 @@ class DistanceCalculator {
           ? mt
           : typeof mb === "number"
           ? mb
-          : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
+          : containersTransition.margin;
       }
     }
 
@@ -229,8 +229,9 @@ class DistanceCalculator {
 
     this.#addDraggedOffsetToElm(composedPosition, elm!, axis);
 
-    const { marginBottom: mb, marginTop: mt } =
-      this.draggable.migration.latest();
+    const { migration, containersTransition } = this.draggable;
+
+    const { marginBottom: mb, marginTop: mt } = migration.latest();
 
     // Give the priority to the destination first then check the origin.
     const marginBottom = isRestoredLastPosition
@@ -241,7 +242,7 @@ class DistanceCalculator {
       ? mt
       : typeof mb === "number"
       ? mb
-      : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN; // orphan to orphan.
+      : containersTransition.margin; // orphan to orphan.
 
     composedPosition[axis] += Math.abs(marginBottom);
 
