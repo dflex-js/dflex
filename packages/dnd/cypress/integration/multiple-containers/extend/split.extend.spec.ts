@@ -1,5 +1,5 @@
 context(
-  "Extend the insertion area horizontally without splitting the container",
+  "Extend the insertion area after splitting the container from top",
   () => {
     before(() => {
       cy.visit("http://localhost:3001/migration");
