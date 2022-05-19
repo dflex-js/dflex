@@ -48,7 +48,7 @@ context(
     });
 
     it("Triggers mouseup event", () => {
-      cy.get("#c1-1").trigger("mouseup", { force: true });
+      cy.get("#c3-1").trigger("mouseup", { force: true });
     });
 
     it("Siblings in the destination (c2) are transformed to zero", () => {
