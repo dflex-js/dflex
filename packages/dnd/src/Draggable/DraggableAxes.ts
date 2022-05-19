@@ -19,9 +19,9 @@ import { Container, INode } from "@dflex/core-instance";
 
 import store from "../DnDStore";
 
-import type { IDraggableAxes, Restrictions } from "./types";
+import type { IDraggableAxes } from "./types";
 
-import type { FinalDndOpts, RestrictionsStatus } from "../types";
+import type { FinalDndOpts, Restrictions, RestrictionsStatus } from "../types";
 
 class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
   positionPlaceholder: IPointNum;

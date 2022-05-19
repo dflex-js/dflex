@@ -1,5 +1,4 @@
 import type { ThresholdPercentages } from "@dflex/utils";
-import type { Restrictions } from "./Draggable";
 
 interface DnDEvent {
   /** Returns the time at which the event was created  */
@@ -76,26 +75,32 @@ export interface Events {
   onStateChange: (layoutState: LayoutStateEvent) => unknown;
 }
 
-export interface ScrollOptWithoutThreshold {
-  enable: boolean;
-  initialSpeed: number;
+interface RestrictionsMeta {
+  readonly allowLeavingFromTop: boolean;
+  readonly allowLeavingFromBottom: boolean;
+  readonly allowLeavingFromLeft: boolean;
+  readonly allowLeavingFromRight: boolean;
 }
 
-export interface ScrollOptWithPartialThreshold
-  extends ScrollOptWithoutThreshold {
+export interface Restrictions {
+  self: RestrictionsMeta;
+  container: RestrictionsMeta;
+}
+
+export interface ScrollOptPartial {
+  enable: boolean;
+  initialSpeed: number;
   threshold: Partial<ThresholdPercentages>;
 }
 
-export interface ScrollOptWithThreshold extends ScrollOptWithoutThreshold {
-  threshold: ThresholdPercentages;
-}
+interface ContainersTransition {}
 
 export interface DefaultDndOpts {
+  containersTransition: ContainersTransition;
   threshold: ThresholdPercentages;
   restrictions: Restrictions;
-  scroll: ScrollOptWithThreshold;
+  scroll: Required<ScrollOptPartial>;
   events: Events;
-  enableContainersTransition: boolean;
 }
 
 export interface RestrictionsStatus {
@@ -114,6 +119,6 @@ export interface DndOpts {
     self?: Partial<Restrictions["self"]>;
     container?: Partial<Restrictions["container"]>;
   };
-  scroll?: Partial<ScrollOptWithPartialThreshold>;
-  events?: Partial<Events>;
+  scroll?: Partial<ScrollOptPartial>;
+  //   events?: Partial<Events>;
 }
