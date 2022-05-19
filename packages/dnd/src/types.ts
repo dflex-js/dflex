@@ -93,7 +93,10 @@ export interface ScrollOptPartial {
   threshold: Partial<ThresholdPercentages>;
 }
 
-interface ContainersTransition {}
+interface ContainersTransition {
+  enable: boolean;
+  margin: number;
+}
 
 export interface DefaultDndOpts {
   containersTransition: ContainersTransition;
@@ -109,16 +112,16 @@ export interface RestrictionsStatus {
 }
 
 export interface FinalDndOpts extends DefaultDndOpts {
-  restrictionsStatus: RestrictionsStatus;
+  // restrictionsStatus: RestrictionsStatus;
 }
 
 export interface DndOpts {
-  enableContainersTransition?: boolean;
+  containersTransition?: Partial<ContainersTransition>;
   threshold?: Partial<ThresholdPercentages>;
   restrictions?: {
     self?: Partial<Restrictions["self"]>;
     container?: Partial<Restrictions["container"]>;
   };
   scroll?: Partial<ScrollOptPartial>;
-  //   events?: Partial<Events>;
+  events?: Partial<Events>;
 }

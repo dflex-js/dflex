@@ -61,6 +61,9 @@ describe("extractOpts", () => {
 
   it("Returns the default options with input restrictions/threshold/scroll", () => {
     const opts = extractOpts({
+      containersTransition: {
+        enable: false,
+      },
       restrictions: {
         container: {
           allowLeavingFromBottom: false,
@@ -84,8 +87,12 @@ describe("extractOpts", () => {
     expect(opts.restrictions.container.allowLeavingFromBottom).toEqual(false);
     expect(opts.restrictions.self.allowLeavingFromTop).toEqual(false);
 
-    expect(opts.restrictionsStatus.isContainerRestricted).toEqual(true);
-    expect(opts.restrictionsStatus.isSelfRestricted).toEqual(true);
+    expect(opts.containersTransition).toMatchInlineSnapshot(`
+      Object {
+        "enable": false,
+        "margin": 10,
+      }
+    `);
 
     expect(opts.threshold.horizontal).toEqual(9000);
     expect(opts.scroll.threshold.horizontal).toEqual(9000);
@@ -106,7 +113,6 @@ describe("extractOpts", () => {
     }
 
     const opts = extractOpts({
-      enableContainersTransition: false,
       events: {
         onDragLeave,
       },
