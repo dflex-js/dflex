@@ -50,5 +50,49 @@ context(
     it("Triggers mouseup event", () => {
       cy.get("#c1-1").trigger("mouseup", { force: true });
     });
+
+    it("Siblings in the destination (c2) are transformed to zero", () => {
+      cy.get("#c2-1").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+      cy.get("#c2-2").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+      cy.get("#c2-3").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+      cy.get("#c2-4").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+      cy.get("#c2-4").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      );
+    });
+
+    it("Siblings in the origin (c3) are transformed correctly", () => {
+      cy.get("#c3-2").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, 0, -112)"
+      );
+    });
+
+    it("Dragged is transformed correctly", () => {
+      cy.get("#c3-1").should(
+        "have.css",
+        "transform",
+        "matrix(1, 0, 0, 1, -226, 310)"
+      );
+    });
   }
 );
