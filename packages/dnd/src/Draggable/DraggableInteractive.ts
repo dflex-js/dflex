@@ -7,7 +7,7 @@ import store from "../DnDStore";
 
 import type { IDraggableInteractive } from "./types";
 
-import type { ScrollOptWithThreshold, FinalDndOpts } from "../types";
+import type { ScrollOpts, FinalDndOpts } from "../types";
 
 import DraggableAxes from "./DraggableAxes";
 
@@ -15,7 +15,7 @@ class DraggableInteractive
   extends DraggableAxes
   implements IDraggableInteractive
 {
-  scroll: ScrollOptWithThreshold;
+  scroll: ScrollOpts;
 
   occupiedPosition: IPointNum;
 

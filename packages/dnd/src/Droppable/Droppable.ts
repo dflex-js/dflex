@@ -768,7 +768,7 @@ class Droppable extends DistanceCalculator {
 
       this.isParentLocked = true;
 
-      if (this.draggable.enableContainersTransition) {
+      if (this.draggable.containersTransition) {
         this.#detectNearestContainer();
 
         if (this.draggable.migration.isTransitioning) {

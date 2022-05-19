@@ -21,7 +21,12 @@ import store from "../DnDStore";
 
 import type { IDraggableAxes } from "./types";
 
-import type { FinalDndOpts, Restrictions, RestrictionsStatus } from "../types";
+import type {
+  ContainersTransition,
+  FinalDndOpts,
+  Restrictions,
+  RestrictionsStatus,
+} from "../types";
 
 class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
   positionPlaceholder: IPointNum;
@@ -32,8 +37,6 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
 
   threshold: ThresholdInterface;
 
-  readonly enableContainersTransition: boolean;
-
   isViewportRestricted: boolean;
 
   isMovingAwayFrom: IPointBool;
@@ -43,6 +46,8 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
   #isLayoutStateUpdated: boolean;
 
   readonly #axesFilterNeeded: boolean;
+
+  readonly containersTransition: ContainersTransition;
 
   readonly #restrictions: Restrictions;
 
@@ -82,7 +87,7 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
 
     this.isViewportRestricted = true;
 
-    this.enableContainersTransition = opts.enableContainersTransition;
+    this.containersTransition = opts.containersTransition;
 
     this.threshold = new Threshold(opts.threshold);
 
