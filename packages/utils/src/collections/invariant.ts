@@ -2,7 +2,7 @@ const isProd = process.env.NODE_ENV === "production";
 
 const prefix = "Internal DFlex error.";
 
-function invariant(message = prefix, condition = false): asserts condition {
+function invariant(message = prefix, condition = false) {
   if (condition) return;
 
   if (isProd) {
