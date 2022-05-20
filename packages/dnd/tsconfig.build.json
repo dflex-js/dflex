@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": ["src/**/*"],
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "./types",
+    "rootDir": "./src"
+  },
+  "references": [
+    { "path": "../utils" },
+    { "path": "../store" },
+    { "path": "../core-instance" },
+    { "path": "../draggable" }
+  ]
+}

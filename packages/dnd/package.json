@@ -5,7 +5,7 @@
   "author": "Jalal Maskoun",
   "main": "./dist/dflex-dnd.js",
   "module": "./dist/dflex-dnd.mjs",
-  "types": "./dist/index.d.ts",
+  "types": "types/index.d.ts",
   "exports": {
     ".": {
       "require": "./dist/dflex-dnd.js",
@@ -16,7 +16,7 @@
   },
   "scripts": {
     "clean": "pnpm rimraf ./dist tsconfig.tsbuildinfo",
-    "emit": "tsc --emitDeclarationOnly",
+    "emit": "tsc --project ./tsconfig.build.json --emitDeclarationOnly",
     "build:cjs": "esbuild src/index.ts --bundle --format=cjs --outfile=dist/dflex-dnd.js",
     "build:esm": "esbuild src/index.ts  --sourcemap --bundle --format=esm --outfile=dist/dflex-dnd.mjs",
     "build:prod": "esbuild src/index.ts --bundle --format=cjs --minify --outfile=dist/dflex-dnd.min.js",
@@ -38,6 +38,7 @@
   "license": "MIT",
   "files": [
     "dist",
+    "types",
     "LICENSE"
   ],
   "devDependencies": {

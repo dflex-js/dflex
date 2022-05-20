@@ -149,6 +149,7 @@ jobs:
           name: build
           path: |
             packages/**/dist
+            packages/**/types
           if-no-files-found: error
 
   e2e-same-container-vertical:
