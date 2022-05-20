@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 
-import { PointNum } from "@dflex/utils";
+import { PointNum, invariant } from "@dflex/utils";
 import type {
   RectDimensions,
   Direction,
@@ -151,30 +151,20 @@ class NodeCore extends Abstract implements ICore {
 
   assignNewPosition(branchIDsOrder: string[], newIndex: number) {
     if (newIndex < 0 || newIndex > branchIDsOrder.length - 1) {
-      if (process.env.NODE_ENV !== "production") {
-        // eslint-disable-next-line no-console
-        console.error(
-          `Illegal Attempt: Received an index:${newIndex} on siblings list:${
-            branchIDsOrder.length - 1
-          }.\n`
-        );
-      }
-
-      return;
+      invariant(
+        `Illegal Attempt: Received an index:${newIndex} on siblings list:${
+          branchIDsOrder.length - 1
+        }.\n`
+      );
     }
 
     if (branchIDsOrder[newIndex].length > 0) {
-      if (process.env.NODE_ENV !== "production") {
-        // eslint-disable-next-line no-console
-        console.error(
-          "Illegal Attempt: Colliding in positions.\n",
-          `Element id: ${this.id}\n`,
-          `Collided at index: ${newIndex}\n`,
+      invariant(
+        "Illegal Attempt: Colliding in positions.\n" +
+          `Element id: ${this.id}\n` +
+          `Collided at index: ${newIndex}\n` +
           `Siblings list: ${branchIDsOrder}\n`
-        );
-      }
-
-      return;
+      );
     }
 
     branchIDsOrder[newIndex] = this.id;
@@ -263,6 +253,7 @@ class NodeCore extends Abstract implements ICore {
       this.grid.increase({ x: inc, y: inc });
     } else {
       this.grid[axis] += direction * numberOfPassedElm;
+
       if (process.env.NODE_ENV !== "production") {
         this.setDataset(
           `grid${axis.toUpperCase() as "X" | "Y"}`,

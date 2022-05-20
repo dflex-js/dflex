@@ -1,6 +1,6 @@
 import Store from "@dflex/store";
 
-import { Tracker, Scroll, canUseDOM, PointNum } from "@dflex/utils";
+import { Tracker, Scroll, canUseDOM, PointNum, invariant } from "@dflex/utils";
 import type {
   Dimensions,
   RectDimensions,
@@ -29,11 +29,8 @@ import type {
 import Droppable from "../Droppable/Droppable";
 
 function throwElementIsNotConnected(id: string) {
-  // eslint-disable-next-line no-console
-  console.error(
-    `DFlex: elements in the branch are not valid. Trying to validate element with id:${id} but failed.
-Did you forget to call store.unregister(${id}) or add parenID when register the element?`
-  );
+  return `Elements in the branch are not valid. Trying to validate element with id:${id} but failed.\n
+Did you forget to call store.unregister(${id}) or add parenID when register the element?`;
 }
 
 class DnDStoreImp extends Store implements IDnDStore {
@@ -259,9 +256,7 @@ class DnDStoreImp extends Store implements IDnDStore {
       }
 
       if (isNotConnected) {
-        if (process.env.NODE_ENV !== "production") {
-          throwElementIsNotConnected(firstElemID);
-        }
+        invariant(throwElementIsNotConnected(firstElemID));
 
         if (this.containers[SK].scroll) {
           this.containers[SK].scroll.destroy();
@@ -519,11 +514,11 @@ class DnDStoreImp extends Store implements IDnDStore {
   }
 
   getBranchesByDepth(dp: number) {
-    if (process.env.NODE_ENV !== "production") {
-      if (!Array.isArray(this.DOMGen.branchesByDepth[dp])) {
-        throw new Error(`DFlex: Depth ${dp} is not registered.`);
-      }
-    }
+    invariant(
+      `Element with depth ${dp} is not registered.`,
+      !Array.isArray(this.DOMGen.branchesByDepth[dp])
+    );
+
     return this.DOMGen.branchesByDepth[dp] || [];
   }
 

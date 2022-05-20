@@ -1,3 +1,4 @@
+import { invariant } from "@dflex/utils";
 import { Threshold } from "../Threshold";
 import type { ThresholdPercentages } from "../Threshold";
 
@@ -109,15 +110,9 @@ class Scroll implements IScroll {
     const scrollContainer = loopInDOM(element, (parent) => {
       i += 1;
 
-      if (
-        i === MAX_LOOP_ELEMENTS_TO_WARN &&
-        process.env.NODE_ENV !== "production"
-      ) {
-        // eslint-disable-next-line no-console
-        console.warn(
-          `DFlex detects performance issues during defining a scroll container.
-Please provide scroll container by ref/id when registering the element or turn off auto-scroll from the options.`
-        );
+      if (i === MAX_LOOP_ELEMENTS_TO_WARN) {
+        invariant(`DFlex detects performance issues during defining a scroll container.\n
+Please provide scroll container by ref/id when registering the element or turn off auto-scroll from the options.`);
       }
 
       if (excludeStaticParents && isStaticallyPositioned(parent)) {
@@ -265,12 +260,9 @@ Please provide scroll container by ref/id when registering the element or turn o
         return;
       }
 
-      if (process.env.NODE_ENV !== "production") {
-        // eslint-disable-next-line no-console
-        console.warn(
-          `DFlex: Failed to add scroll listener dataset. Unable to detect the first valid div inside document.body`
-        );
-      }
+      invariant(
+        `Failed to add scroll listener dataset.\n Unable to detect the first valid div inside document.body`
+      );
     }
   }
 

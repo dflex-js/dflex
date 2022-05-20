@@ -1,3 +1,4 @@
+import { invariant } from "@dflex/utils";
 import type { IPointAxes } from "@dflex/utils";
 
 import DraggableInteractive from "./Draggable";
@@ -26,16 +27,13 @@ class DnD extends Droppable {
     );
 
     if (!isLayoutAvailable) {
-      if (process.env.NODE_ENV !== "production") {
-        // eslint-disable-next-line no-console
-        console.error(
-          `DFlex: received multiple dragging request while layout is still occupied`
-        );
-      }
+      invariant(
+        `DFlex: received multiple dragging request while layout is still occupied.`
+      );
     }
 
     if (!store.registry[id]) {
-      throw new Error(`DFlex: ${id} is not registered in the Store.`);
+      invariant(`DFlex: ${id} is not registered in the Store.`);
     }
 
     const options = extractOpts(opts);

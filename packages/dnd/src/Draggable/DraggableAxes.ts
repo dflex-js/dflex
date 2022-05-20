@@ -6,6 +6,7 @@ import {
   PointBool,
   Migration,
   combineKeys,
+  invariant,
 } from "@dflex/utils";
 import type {
   ThresholdInterface,
@@ -103,11 +104,7 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
     store.getBranchesByDepth(depth).forEach((key) => {
       const { boundaries } = store.containers[key];
 
-      if (process.env.NODE_ENV !== "production") {
-        if (!boundaries) {
-          throw new Error(`Siblings boundaries for ${key} not found.`);
-        }
-      }
+      invariant(`Siblings boundaries for ${key} not found.`, !boundaries);
 
       this.threshold.setContainerThreshold(
         key,
