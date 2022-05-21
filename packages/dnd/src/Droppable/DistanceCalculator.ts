@@ -151,7 +151,7 @@ class DistanceCalculator {
     const { isEmpty, isOrphan, position, elm, prevElm } =
       store.getInsertionELmMeta(insertAt, SK);
 
-    const { draggedElm, containersTransition } = this.draggable;
+    const { draggedElm, migration, containersTransition } = this.draggable;
 
     // Getting diff with `currentPosition` includes the element transition
     // as well.
@@ -176,8 +176,7 @@ class DistanceCalculator {
       } else {
         composedGrid[axis] += 1;
 
-        const { marginBottom: mb, marginTop: mt } =
-          this.draggable.migration.prev();
+        const { marginBottom: mb, marginTop: mt } = migration.prev();
 
         this.#addDraggedOffsetToElm(composedTranslate, elm!, axis);
         composedTranslate[axis] += !isOrphan
