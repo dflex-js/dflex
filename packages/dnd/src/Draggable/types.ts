@@ -7,25 +7,10 @@ import type {
 import type { INode } from "@dflex/core-instance";
 import type { IAbstractDraggable } from "@dflex/draggable";
 
-import type { ScrollOptWithThreshold } from "../types";
+import type { ContainersTransition, ScrollOpts } from "../types";
 
 export interface SiblingsThreshold {
   [sk: string]: ThresholdCoordinate;
-}
-
-export interface Restrictions {
-  self: {
-    readonly allowLeavingFromTop: boolean;
-    readonly allowLeavingFromBottom: boolean;
-    readonly allowLeavingFromLeft: boolean;
-    readonly allowLeavingFromRight: boolean;
-  };
-  container: {
-    readonly allowLeavingFromTop: boolean;
-    readonly allowLeavingFromBottom: boolean;
-    readonly allowLeavingFromLeft: boolean;
-    readonly allowLeavingFromRight: boolean;
-  };
 }
 
 export interface IDraggableAxes extends IAbstractDraggable<INode> {
@@ -59,8 +44,8 @@ export interface IDraggableAxes extends IAbstractDraggable<INode> {
 }
 
 export interface IDraggableInteractive extends IDraggableAxes {
-  readonly enableContainersTransition: boolean;
-  readonly scroll: ScrollOptWithThreshold;
+  readonly containersTransition: ContainersTransition;
+  readonly scroll: ScrollOpts;
   readonly occupiedPosition: IPointNum;
   readonly occupiedTranslate: IPointNum;
   readonly isDraggedPositionFixed: boolean;

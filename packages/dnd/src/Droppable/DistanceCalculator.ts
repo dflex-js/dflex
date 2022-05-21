@@ -41,8 +41,6 @@ class DistanceCalculator {
   /** Isolated form the threshold and predict is-out based on the controllers */
   protected isParentLocked: boolean;
 
-  static DEFAULT_SYNTHETIC_MARGIN = 10;
-
   constructor(draggable: IDraggableInteractive) {
     this.draggable = draggable;
 
@@ -153,7 +151,7 @@ class DistanceCalculator {
     const { isEmpty, isOrphan, position, elm, prevElm } =
       store.getInsertionELmMeta(insertAt, SK);
 
-    const { draggedElm } = this.draggable;
+    const { draggedElm, migration, containersTransition } = this.draggable;
 
     // Getting diff with `currentPosition` includes the element transition
     // as well.
@@ -178,8 +176,7 @@ class DistanceCalculator {
       } else {
         composedGrid[axis] += 1;
 
-        const { marginBottom: mb, marginTop: mt } =
-          this.draggable.migration.prev();
+        const { marginBottom: mb, marginTop: mt } = migration.prev();
 
         this.#addDraggedOffsetToElm(composedTranslate, elm!, axis);
         composedTranslate[axis] += !isOrphan
@@ -188,7 +185,7 @@ class DistanceCalculator {
           ? mt
           : typeof mb === "number"
           ? mb
-          : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN;
+          : containersTransition.margin;
       }
     }
 
@@ -231,8 +228,9 @@ class DistanceCalculator {
 
     this.#addDraggedOffsetToElm(composedPosition, elm!, axis);
 
-    const { marginBottom: mb, marginTop: mt } =
-      this.draggable.migration.latest();
+    const { migration, containersTransition } = this.draggable;
+
+    const { marginBottom: mb, marginTop: mt } = migration.latest();
 
     // Give the priority to the destination first then check the origin.
     const marginBottom = isRestoredLastPosition
@@ -243,7 +241,7 @@ class DistanceCalculator {
       ? mt
       : typeof mb === "number"
       ? mb
-      : DistanceCalculator.DEFAULT_SYNTHETIC_MARGIN; // orphan to orphan.
+      : containersTransition.margin; // orphan to orphan.
 
     composedPosition[axis] += Math.abs(marginBottom);
 

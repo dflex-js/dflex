@@ -6,6 +6,7 @@ node_modules
 .docusaurus
 .DS_Store
 dist
+types
 tsconfig.tsbuildinfo
 tsconfig.build.tsbuildinfo
 cypress/screenshots

@@ -1,5 +1,4 @@
 import type { ThresholdPercentages } from "@dflex/utils";
-import type { Restrictions } from "./Draggable";
 
 interface DnDEvent {
   /** Returns the time at which the event was created  */
@@ -76,26 +75,53 @@ export interface Events {
   onStateChange: (layoutState: LayoutStateEvent) => unknown;
 }
 
-export interface ScrollOptWithoutThreshold {
+interface RestrictionsMeta {
+  readonly allowLeavingFromTop: boolean;
+  readonly allowLeavingFromBottom: boolean;
+  readonly allowLeavingFromLeft: boolean;
+  readonly allowLeavingFromRight: boolean;
+}
+
+export interface Restrictions {
+  self: RestrictionsMeta;
+  container: RestrictionsMeta;
+}
+
+export interface RestrictionsPartial {
+  self?: Partial<RestrictionsMeta>;
+  container?: Partial<RestrictionsMeta>;
+}
+
+export interface ScrollOptsBase {
   enable: boolean;
   initialSpeed: number;
 }
 
-export interface ScrollOptWithPartialThreshold
-  extends ScrollOptWithoutThreshold {
+export interface ScrollOptPartialThreshold extends ScrollOptsBase {
   threshold: Partial<ThresholdPercentages>;
 }
 
-export interface ScrollOptWithThreshold extends ScrollOptWithoutThreshold {
+export interface ScrollOpts extends ScrollOptsBase {
   threshold: ThresholdPercentages;
 }
 
+export interface ContainersTransition {
+  /** Default=true */
+  enable: boolean;
+
+  /**
+   * Support orphan to orphan transformation.
+   * Default=10px
+   * */
+  margin: number;
+}
+
 export interface DefaultDndOpts {
+  containersTransition: ContainersTransition;
   threshold: ThresholdPercentages;
   restrictions: Restrictions;
-  scroll: ScrollOptWithThreshold;
+  scroll: ScrollOpts;
   events: Events;
-  enableContainersTransition: boolean;
 }
 
 export interface RestrictionsStatus {
@@ -108,12 +134,9 @@ export interface FinalDndOpts extends DefaultDndOpts {
 }
 
 export interface DndOpts {
-  enableContainersTransition?: boolean;
+  containersTransition?: Partial<ContainersTransition>;
   threshold?: Partial<ThresholdPercentages>;
-  restrictions?: {
-    self?: Partial<Restrictions["self"]>;
-    container?: Partial<Restrictions["container"]>;
-  };
-  scroll?: Partial<ScrollOptWithPartialThreshold>;
+  restrictions?: RestrictionsPartial;
+  scroll?: Partial<ScrollOptPartialThreshold>;
   events?: Partial<Events>;
 }

@@ -762,16 +762,18 @@ class Droppable extends DistanceCalculator {
         return;
       }
 
-      this.draggable.draggedElm.setDataset("draggedOutContainer", true);
+      const { draggedElm, containersTransition, migration } = this.draggable;
+
+      draggedElm.setDataset("draggedOutContainer", true);
 
       this.#emitDraggedEvent("onDragOutContainer");
 
       this.isParentLocked = true;
 
-      if (this.draggable.enableContainersTransition) {
+      if (containersTransition.enable) {
         this.#detectNearestContainer();
 
-        if (this.draggable.migration.isTransitioning) {
+        if (migration.isTransitioning) {
           queueMicrotask(() => {
             this.#detectNearestElm();
           });

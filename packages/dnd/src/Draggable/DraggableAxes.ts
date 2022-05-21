@@ -19,9 +19,14 @@ import { Container, INode } from "@dflex/core-instance";
 
 import store from "../DnDStore";
 
-import type { IDraggableAxes, Restrictions } from "./types";
+import type { IDraggableAxes } from "./types";
 
-import type { FinalDndOpts, RestrictionsStatus } from "../types";
+import type {
+  ContainersTransition,
+  FinalDndOpts,
+  Restrictions,
+  RestrictionsStatus,
+} from "../types";
 
 class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
   positionPlaceholder: IPointNum;
@@ -32,8 +37,6 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
 
   threshold: ThresholdInterface;
 
-  readonly enableContainersTransition: boolean;
-
   isViewportRestricted: boolean;
 
   isMovingAwayFrom: IPointBool;
@@ -43,6 +46,8 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
   #isLayoutStateUpdated: boolean;
 
   readonly #axesFilterNeeded: boolean;
+
+  readonly containersTransition: ContainersTransition;
 
   readonly #restrictions: Restrictions;
 
@@ -82,7 +87,7 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
 
     this.isViewportRestricted = true;
 
-    this.enableContainersTransition = opts.enableContainersTransition;
+    this.containersTransition = opts.containersTransition;
 
     this.threshold = new Threshold(opts.threshold);
 
@@ -320,20 +325,16 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
     );
   }
 
-  #isLeavingFromTail() {
+  #isLeavingFromBottom() {
     const lastElm =
-      (store.getElmBranchByKey(this.migration.latest().SK) as string[]).length -
-      1;
+      store.getElmBranchByKey(this.migration.latest().SK).length - 1;
 
-    return (
-      this.threshold.isOut[this.draggedElm.id].isLeftFromBottom &&
-      this.migration.latest().index === lastElm
-    );
+    return this.migration.latest().index === lastElm;
   }
 
   isNotSettled() {
     return (
-      !this.#isLeavingFromTail() &&
+      !this.#isLeavingFromBottom() &&
       (this.isOutThreshold() || this.isOutThreshold(this.migration.latest().SK))
     );
   }
