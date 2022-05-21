@@ -6,7 +6,7 @@
   </a>
 </h1>
 
-<h1 align="center">DOM relations generator algorithm</h1>
+<h1 align="center">DFlex DOM relations generator algorithm</h1>
 
 <p align="center">
   <a href="https://github.com/dflex-js/dflex">
@@ -51,34 +51,6 @@ npm install @dflex/dom-gen
 ## Documentation 📖
 
 Visit DFlex site for docs <https://www.dflex.dev/> and live demo.
-
-## Related Content 🏋️‍
-
-### [**@dflex/core-instance**](https://github.com/dflex-js/dflex/tree/master/packages/core-instance)
-
-Core instance is the mirror of interactive element that includes all the properties and methods to manipulate the node.
-
-### [**@dflex/utils**](https://github.com/dflex-js/dflex/tree/master/packages/utils)
-
-A collection of shared functions. Mostly classes, and types that are used across
-the project.
-
-### [**@dflex/store**](https://github.com/dflex-js/dflex/tree/master/packages/store)
-
-DFex Store has main registry for all DOM elements that will be manipulated. It
-is a singleton object that is accessible from anywhere in the application. The
-initial release was generic but it only has the Core of the library since ^V3.
-
-### [**@dflex/draggable**](https://github.com/dflex-js/dflex/tree/master/packages/draggable)
-
-Light weight draggable element without extra functionalities that is
-responsible for interacting with the DOM and moving the affected element(s).
-
-### [**@dflex/dnd**](https://github.com/dflex-js/dflex/tree/master/packages/dnd)
-
-The main package that depends on the other packages. It is responsible for the
-magical logic of the library to introduce the drag and drop interactive
-functionality.
 
 ## License 🤝
 

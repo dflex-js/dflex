@@ -325,20 +325,16 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
     );
   }
 
-  #isLeavingFromTail() {
+  #isLeavingFromBottom() {
     const lastElm =
-      (store.getElmBranchByKey(this.migration.latest().SK) as string[]).length -
-      1;
+      store.getElmBranchByKey(this.migration.latest().SK).length - 1;
 
-    return (
-      this.threshold.isOut[this.draggedElm.id].isLeftFromBottom &&
-      this.migration.latest().index === lastElm
-    );
+    return this.migration.latest().index === lastElm;
   }
 
   isNotSettled() {
     return (
-      !this.#isLeavingFromTail() &&
+      !this.#isLeavingFromBottom() &&
       (this.isOutThreshold() || this.isOutThreshold(this.migration.latest().SK))
     );
   }

@@ -6,12 +6,12 @@
     "noImplicitReturns": true,
     "strictFunctionTypes": true,
     "strictNullChecks": true,
-    "target": "ESNext",
+    "downlevelIteration": true,
+    "target": "ES2019",
     "module": "ESNext",
     "sourceMap": false,
     "lib": ["dom", "ESNext"],
     "moduleResolution": "Node",
-    "rootDir": ".",
     "baseUrl": ".",
     "paths": {
       "@dflex/*": ["packages/*/src"]

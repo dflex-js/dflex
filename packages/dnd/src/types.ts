@@ -106,7 +106,13 @@ export interface ScrollOpts extends ScrollOptsBase {
 }
 
 export interface ContainersTransition {
+  /** Default=true */
   enable: boolean;
+
+  /**
+   * Support orphan to orphan transformation.
+   * Default=10px
+   * */
   margin: number;
 }
 

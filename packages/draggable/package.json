@@ -1,35 +1,32 @@
 {
   "name": "@dflex/draggable",
   "version": "3.5.0",
-  "description": "Modern Draggable package for all JavaScript frameworks",
+  "description": "Draggable only package for all JavaScript frameworks",
   "author": "Jalal Maskoun",
   "main": "./dist/dflex-draggable.js",
   "module": "./dist/dflex-draggable.mjs",
-  "types": "./dist/index.d.ts",
+  "types": "./types/index.d.ts",
   "exports": {
     ".": {
       "require": "./dist/dflex-draggable.js",
-      "import": "./dist/dflex-draggable.mjs",
-      "types": "./dist/index.d.ts"
-    },
-    "./production": "./dist/dflex-draggable.min.js"
+      "import": "./dist/dflex-draggable.mjs"
+    }
   },
   "scripts": {
-    "clean": "pnpm rimraf ./dist tsconfig.tsbuildinfo",
+    "clean": "rimraf ./dist ./types tsconfig.tsbuildinfo",
     "compile": "pnpm clean && pnpm tsc -b",
     "emit": "tsc --emitDeclarationOnly",
     "build:cjs": "esbuild src/index.ts --bundle --format=cjs --outfile=dist/dflex-draggable.js",
     "build:esm": "esbuild src/index.ts --bundle --format=esm --outfile=dist/dflex-draggable.mjs",
-    "build:prod": "esbuild src/index.ts --bundle --format=cjs --minify --outfile=dist/dflex-draggable.min.js",
-    "build": "pnpm clean && pnpm build:cjs && pnpm build:esm && pnpm build:prod && pnpm emit",
-    "server": "pnpm start --filter dflex-react-draggable",
-    "test": "jest"
+    "build": "pnpm clean && pnpm build:cjs && pnpm build:esm && pnpm emit",
+    "server": "pnpm start --filter dflex-react-draggable"
   },
   "homepage": "https://github.com/dflex-js/dflex/tree/master/packages/draggable",
   "repository": "https://github.com/dflex-js/dflex",
   "license": "MIT",
   "files": [
     "dist",
+    "types",
     "LICENSE"
   ],
   "devDependencies": {
