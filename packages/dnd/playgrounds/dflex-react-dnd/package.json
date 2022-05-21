@@ -1,6 +1,6 @@
 {
   "name": "dflex-react-dnd",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@dflex/dnd": "workspace:^3.5.0",
+    "@dflex/dnd": "workspace:^3.5.1",
     "@folo/utils": "^0.1.5",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
