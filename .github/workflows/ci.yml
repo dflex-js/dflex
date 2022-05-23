@@ -140,9 +140,6 @@ jobs:
       - name: Build packages
         run: pnpm build
 
-      - name: Build DnD React App
-        run: pnpm -F dflex-react-dnd build:app
-
       - name: Upload Package Artifacts
         uses: actions/upload-artifact@v3
         with:
