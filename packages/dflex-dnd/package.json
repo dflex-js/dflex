@@ -22,7 +22,7 @@
     "build": "pnpm clean && pnpm build:cjs && pnpm build:esm && pnpm build:prod && pnpm emit",
     "compile:w": "tsc -b -w",
     "build:w": "cross-env NODE_ENV=development pnpm build:esm -- --watch",
-    "server": "pnpm -F dflex-react-dnd dev",
+    "server": "pnpm -F dflex-dnd-playground dev",
     "cy:run": "cypress run --env extended=true",
     "cy:open": "cypress open --env extended=true",
     "cy:dev": "start-server-and-test 'pnpm run server' http-get://localhost:3001 'pnpm cy:open'",
