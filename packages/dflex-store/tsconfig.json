@@ -8,5 +8,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
-  "references": [{ "path": "../dom-gen" }, { "path": "../core-instance" }]
+  "references": [
+    { "path": "../dflex-dom-gen" },
+    { "path": "../dflex-core-instance" }
+  ]
 }

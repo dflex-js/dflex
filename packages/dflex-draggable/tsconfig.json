@@ -8,5 +8,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
-  "references": [{ "path": "../store" }, { "path": "../core-instance" }]
+  "references": [
+    { "path": "../dflex-store" },
+    { "path": "../dflex-core-instance" }
+  ]
 }

@@ -8,5 +8,5 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
-  "references": [{ "path": "../utils" }]
+  "references": [{ "path": "../dflex-utils" }]
 }
