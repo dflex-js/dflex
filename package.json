@@ -1,6 +1,8 @@
 {
-  "name": "dflex",
+  "name": "dflex-monorepo",
+  "description": "DFlex is a JavaScript Project to Manipulate DOM Elements.",
   "private": true,
+  "license": "MIT",
   "workspaces": [
     "packages/**",
     "scripts/*"
@@ -8,8 +10,10 @@
   "repository": "https://github.com/dflex-js/dflex",
   "author": "Jalal Maskoun",
   "scripts": {
-    "test:unit": "cross-env NODE_ENV=test && jest",
-    "test:e2e": "cross-env NODE_ENV=test && pnpm -F @dflex/dnd test",
+    "start": "cross-env NODE_ENV=development pnpm -F dflex-dnd-playground dev",
+    "cy:dev": "cross-env NODE_ENV=development && pnpm start-server-and-test 'pnpm run start' http-get://localhost:3001 'cypress open --env extended=true --project packages/dflex-dnd'",
+    "test:unit": "jest",
+    "test:e2e": "pnpm start-server-and-test 'pnpm run server' http-get://localhost:3001 'cypress run --env extended=true --project packages/dflex-dnd'",
     "build": "cross-env NODE_ENV=production && pnpm -r build",
     "bump": "pnpm changeset version && pnpm install"
   },
@@ -29,6 +33,8 @@
     "rimraf": "^3.0.2",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.4",
-    "vite": "^2.9.9"
+    "vite": "^2.9.9",
+    "cypress": "^9.6.1",
+    "start-server-and-test": "^1.14.0"
   }
 }

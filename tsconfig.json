@@ -14,7 +14,12 @@
     "moduleResolution": "Node",
     "baseUrl": ".",
     "paths": {
-      "@dflex/*": ["packages/*/src"]
+      "@dflex/utils": ["./packages/dflex-utils/src/index.ts"],
+      "@dflex/dom-gen": ["./packages/dflex-dom-gen/src/index.ts"],
+      "@dflex/core-instance": ["./packages/dflex-core-instance/src/index.ts"],
+      "@dflex/store": ["./packages/dflex-store/src/index.ts"],
+      "@dflex/draggable": ["./packages/dflex-draggable/src/index.ts"],
+      "@dflex/dnd": ["./packages/dflex-dnd/src/index.ts"]
     },
     "skipLibCheck": true,
     "declaration": true,

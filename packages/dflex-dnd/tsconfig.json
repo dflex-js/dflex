@@ -9,9 +9,9 @@
     "noUnusedParameters": true
   },
   "references": [
-    { "path": "../utils" },
-    { "path": "../store" },
-    { "path": "../core-instance" },
-    { "path": "../draggable" }
+    { "path": "../dflex-utils" },
+    { "path": "../dflex-store" },
+    { "path": "../dflex-core-instance" },
+    { "path": "../dflex-draggable" }
   ]
 }

@@ -9,19 +9,24 @@
   - docs/**/*
 
 Core:
-  - any: ["packages/core-instance/**", "!packages/core-instance/package.json"]
+  - any:
+      [
+        "packages/dflex-core-instance/**",
+        "!packages/dflex-core-instance/package.json",
+      ]
 
 DnD:
-  - any: ["packages/dnd/**", "!packages/dnd/package.json"]
+  - any: ["packages/dflex-dnd/**", "!packages/dflex-dnd/package.json"]
 
 Dom-Gen:
-  - any: ["packages/dom-gen/**", "!packages/dom-gen/package.json"]
+  - any: ["packages/dflex-dom-gen/**", "!packages/dflex-dom-gen/package.json"]
 
 Draggable-only:
-  - any: ["packages/draggable/**", "!packages/draggable/package.json"]
+  - any:
+      ["packages/dflex-draggable/**", "!packages/dflex-draggable/package.json"]
 
 Store:
-  - any: ["packages/store/**", "!packages/store/package.json"]
+  - any: ["packages/dflex-store/**", "!packages/dflex-store/package.json"]
 
 Utils:
-  - any: ["packages/utils/**", "!packages/utils/package.json"]
+  - any: ["packages/dflex-utils/**", "!packages/dflex-utils/package.json"]
