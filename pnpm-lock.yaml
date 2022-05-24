@@ -10,6 +10,7 @@ importers:
       '@types/jest': ^27.5.1
       '@types/node': ^17.0.34
       cross-env: ^7.0.3
+      cypress: ^9.6.1
       esbuild: ^0.14.39
       eslint-config-dflex: workspace:*
       istanbul-lib-instrument: ^5.2.0
@@ -17,6 +18,7 @@ importers:
       jest-environment-jsdom: ^28.1.0
       prettier: ^2.6.2
       rimraf: ^3.0.2
+      start-server-and-test: ^1.14.0
       ts-node: ^10.7.0
       typescript: ^4.6.4
       vite: ^2.9.9
@@ -27,6 +29,7 @@ importers:
       '@types/jest': 27.5.1
       '@types/node': 17.0.35
       cross-env: 7.0.3
+      cypress: 9.6.1
       esbuild: 0.14.39
       eslint-config-dflex: link:scripts/eslint-config-dflex
       istanbul-lib-instrument: 5.2.0
@@ -34,6 +37,7 @@ importers:
       jest-environment-jsdom: 28.1.0
       prettier: 2.6.2
       rimraf: 3.0.2
+      start-server-and-test: 1.14.0
       ts-node: 10.8.0_d91e54c385556527e7af27fc424cb1a2
       typescript: 4.6.4
       vite: 2.9.9
@@ -119,6 +123,7 @@ importers:
       '@types/react': ^18.0.9
       '@types/react-dom': ^18.0.4
       '@vitejs/plugin-react': ^1.3.2
+      eslint-config-dflex-react: workspace:*
       react: ^18.1.0
       react-dom: ^18.1.0
       react-router-dom: ^6.3.0
@@ -131,6 +136,7 @@ importers:
       '@types/react': 18.0.9
       '@types/react-dom': 18.0.4
       '@vitejs/plugin-react': 1.3.2
+      eslint-config-dflex-react: link:../../scripts/eslint-config-dflex-react
 
   packages/dflex-store:
     specifiers:
@@ -1570,7 +1576,7 @@ packages:
     resolution: {integrity: sha512-Cn6WYCm0tXv8p6k+A8PvbDG763EDpBoTzHdA+Q/MF6H3sapGjCm9NzoaJncJS9tUKSuCoDs9XHxYYsQDgxR6kw==}
     requiresBuild: true
     dependencies:
-      '@types/node': 14.18.18
+      '@types/node': 17.0.35
     dev: true
     optional: true
 

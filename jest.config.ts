@@ -75,7 +75,13 @@ export default {
 
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
   moduleNameMapper: {
-    "@dflex/(.+)$": "<rootDir>packages/$1/src",
+    "@dflex/utils": "<rootDir>/packages/dflex-utils/src/index.ts",
+    "@dflex/dom-gen": "<rootDir>/packages/dflex-dom-gen/src/index.ts",
+    "@dflex/core-instance":
+      "<rootDir>/packages/dflex-core-instance/src/index.ts",
+    "@dflex/store": "<rootDir>/packages/dflex-store/src/index.ts",
+    "@dflex/draggable": "<rootDir>/packages/dflex-draggable/src/index.ts",
+    "@dflex/dnd": "<rootDir>/packages/dflex-dnd/src/index.ts",
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
