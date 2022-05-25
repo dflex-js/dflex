@@ -11,11 +11,20 @@
   "author": "Jalal Maskoun",
   "scripts": {
     "start": "cross-env NODE_ENV=development pnpm -F dflex-dnd-playground dev",
-    "cy:dev": "cross-env NODE_ENV=development && pnpm start-server-and-test 'pnpm run start' http-get://localhost:3001 'cypress open --env extended=true --project packages/dflex-dnd'",
+    "cy:dev": "cross-env NODE_ENV=development && pnpm start-server-and-test 'pnpm run start' http-get://localhost:3001 'cypress open --env extended=true --project packages/dflex-dnd-playground'",
     "test:unit": "jest",
-    "test:e2e": "pnpm start-server-and-test 'pnpm run server' http-get://localhost:3001 'cypress run --env extended=true --project packages/dflex-dnd'",
-    "build": "cross-env NODE_ENV=production && pnpm -r build",
-    "bump": "pnpm changeset version && pnpm install"
+    "test:e2e": "pnpm start-server-and-test 'pnpm run server' http-get://localhost:3001 'cypress run --env extended=true --project packages/dflex-dnd-playground'",
+    "cy:run:vertical:chrome": "cypress run --env extended=true --project packages/dflex-dnd-playground --headless --spec 'packages/dflex-dnd-playground/cypress/integration/same-container-vertical/**/*.spec.ts' --config-file cypress.json --browser chrome",
+    "cy:run:multi:chrome": "cypress run --project packages/dflex-dnd-playground --headless --spec 'packages/dflex-dnd-playground/cypress/integration/multiple-containers/**/*.spec.ts' --config-file cypress.json --browser chrome",
+    "test:vertical:chrome": "start-server-and-test 'pnpm -F dflex-dnd-playground dev' http-get://localhost:3001 'pnpm cy:run:vertical:chrome'",
+    "test:multi:chrome": "start-server-and-test 'pnpm -F dflex-dnd-playground dev' http-get://localhost:3001 'pnpm cy:run:multi:chrome'",
+    "clean": "pnpm -r --parallel clean",
+    "build": "cross-env NODE_ENV=production && pnpm clean && pnpm -r build",
+    "check-types": "tsc --noEmit",
+    "emit-types": "pnpm -r emit",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "prepare-release": "changeset",
+    "update-version": "pnpm changeset version && pnpm install"
   },
   "devDependencies": {
     "@changesets/cli": "^2.22.0",
