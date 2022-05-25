@@ -1,5 +1,5 @@
 const OFF = 0;
-// const ERROR = 2;
+const ERROR = 2;
 
 module.exports = {
   parser: "@typescript-eslint/parser",
@@ -16,16 +16,16 @@ module.exports = {
   ignorePatterns: ["node_modules", "dist", "lib", "coverage", "**/*.d.ts"],
   rules: {
     "no-nested-ternary": OFF,
-    "no-use-before-define": "off",
-    "@typescript-eslint/no-use-before-define": ["error"],
+    "no-use-before-define": OFF,
+    "@typescript-eslint/no-use-before-define": [ERROR],
     "prettier/prettier": [
-      "error",
+      ERROR,
       {
         endOfLine: "auto",
       },
     ],
     "import/extensions": [
-      "error",
+      ERROR,
       "ignorePackages",
       {
         js: "never",
