@@ -39,7 +39,7 @@ class NodeCore extends Abstract implements ICore {
 
   animatedFrame: number | null;
 
-  #translateHistory?: ITransitionHistory[];
+  private translateHistory?: ITransitionHistory[];
 
   constructor(eleWithPointer: INodeInput, opts: AbstractOpts) {
     const { order, keys, depth, scrollX, scrollY, ...element } = eleWithPointer;
@@ -57,13 +57,13 @@ class NodeCore extends Abstract implements ICore {
     }
 
     if (!this.isPaused) {
-      this.#initIndicators(scrollX, scrollY);
+      this.initIndicators(scrollX, scrollY);
     }
 
     this.animatedFrame = null;
   }
 
-  #initIndicators(scrollX: number, scrollY: number) {
+  private initIndicators(scrollX: number, scrollY: number) {
     const { height, width, left, top } = this.ref!.getBoundingClientRect();
 
     /**
@@ -90,7 +90,7 @@ class NodeCore extends Abstract implements ICore {
     this.hasToTransform = false;
   }
 
-  #updateCurrentIndicators(space: IPointAxes) {
+  private updateCurrentIndicators(space: IPointAxes) {
     this.translate.increase(space);
 
     const { left, top } = this.offset!;
@@ -112,7 +112,7 @@ class NodeCore extends Abstract implements ICore {
 
     this.initTranslate();
 
-    this.#initIndicators(scrollX, scrollY);
+    this.initIndicators(scrollX, scrollY);
   }
 
   changeVisibility(isVisible: boolean) {
@@ -137,7 +137,7 @@ class NodeCore extends Abstract implements ICore {
     });
   }
 
-  #updateOrderIndexing(i: number) {
+  private updateOrderIndexing(i: number) {
     const { self: oldIndex } = this.order;
 
     const newIndex = oldIndex + i;
@@ -151,7 +151,7 @@ class NodeCore extends Abstract implements ICore {
 
   assignNewPosition(branchIDsOrder: string[], newIndex: number) {
     if (newIndex < 0 || newIndex > branchIDsOrder.length - 1) {
-      if (process.env.NODE_ENV !== "production") {
+      if (__DEV__) {
         // eslint-disable-next-line no-console
         console.error(
           `Illegal Attempt: Received an index:${newIndex} on siblings list:${
@@ -164,7 +164,7 @@ class NodeCore extends Abstract implements ICore {
     }
 
     if (branchIDsOrder[newIndex].length > 0) {
-      if (process.env.NODE_ENV !== "production") {
+      if (__DEV__) {
         // eslint-disable-next-line no-console
         console.error(
           "Illegal Attempt: Colliding in positions.\n",
@@ -180,7 +180,7 @@ class NodeCore extends Abstract implements ICore {
     branchIDsOrder[newIndex] = this.id;
   }
 
-  #leaveToNewPosition(
+  private leaveToNewPosition(
     branchIDsOrder: string[],
     newIndex: number,
     oldIndex: number
@@ -193,7 +193,7 @@ class NodeCore extends Abstract implements ICore {
   /**
    *  Set a new translate position and store the old one.
    */
-  #seTranslate(
+  private seTranslate(
     elmSpace: IPointAxes,
     axis: Axes,
     operationID?: string,
@@ -206,14 +206,14 @@ class NodeCore extends Abstract implements ICore {
         translate: { x: this.translate.x, y: this.translate.y },
       };
 
-      if (!Array.isArray(this.#translateHistory)) {
-        this.#translateHistory = [elmAxesHistory];
+      if (!Array.isArray(this.translateHistory)) {
+        this.translateHistory = [elmAxesHistory];
       } else {
-        this.#translateHistory.push(elmAxesHistory);
+        this.translateHistory.push(elmAxesHistory);
       }
     }
 
-    this.#updateCurrentIndicators(elmSpace);
+    this.updateCurrentIndicators(elmSpace);
 
     if (!isForceTransform && !this.isVisible) {
       this.hasToTransform = true;
@@ -252,9 +252,9 @@ class NodeCore extends Abstract implements ICore {
       elmSpace[axis] *= direction;
     }
 
-    this.#seTranslate(elmSpace, axis, operationID);
+    this.seTranslate(elmSpace, axis, operationID);
 
-    const { oldIndex, newIndex } = this.#updateOrderIndexing(
+    const { oldIndex, newIndex } = this.updateOrderIndexing(
       direction * numberOfPassedElm
     );
 
@@ -263,7 +263,7 @@ class NodeCore extends Abstract implements ICore {
       this.grid.increase({ x: inc, y: inc });
     } else {
       this.grid[axis] += direction * numberOfPassedElm;
-      if (process.env.NODE_ENV !== "production") {
+      if (__DEV__) {
         this.setDataset(
           `grid${axis.toUpperCase() as "X" | "Y"}`,
           this.grid[axis]
@@ -271,7 +271,7 @@ class NodeCore extends Abstract implements ICore {
       }
     }
 
-    this.#leaveToNewPosition(iDsInOrder, newIndex, oldIndex);
+    this.leaveToNewPosition(iDsInOrder, newIndex, oldIndex);
   }
 
   /**
@@ -282,15 +282,14 @@ class NodeCore extends Abstract implements ICore {
    */
   rollBack(operationID: string, isForceTransform: boolean) {
     if (
-      !Array.isArray(this.#translateHistory) ||
-      this.#translateHistory.length === 0 ||
-      this.#translateHistory[this.#translateHistory.length - 1].ID !==
-        operationID
+      !Array.isArray(this.translateHistory) ||
+      this.translateHistory.length === 0 ||
+      this.translateHistory[this.translateHistory.length - 1].ID !== operationID
     ) {
       return;
     }
 
-    const lastMovement = this.#translateHistory.pop()!;
+    const lastMovement = this.translateHistory.pop()!;
 
     const { translate: preTranslate, axis } = lastMovement;
 
@@ -310,7 +309,7 @@ class NodeCore extends Abstract implements ICore {
 
       this.grid[axis] += increment;
 
-      if (process.env.NODE_ENV !== "production") {
+      if (__DEV__) {
         this.setDataset(
           `grid${axis.toUpperCase() as "X" | "Y"}`,
           this.grid[axis]
@@ -319,9 +318,9 @@ class NodeCore extends Abstract implements ICore {
     }
 
     // Don't update UI if it's zero and wasn't transformed.
-    this.#seTranslate(elmSpace, axis, undefined, isForceTransform);
+    this.seTranslate(elmSpace, axis, undefined, isForceTransform);
 
-    this.#updateOrderIndexing(increment);
+    this.updateOrderIndexing(increment);
 
     this.rollBack(operationID, isForceTransform);
   }

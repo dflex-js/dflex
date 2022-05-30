@@ -7,6 +7,9 @@ module.exports = {
     browser: true,
     es2021: true,
   },
+  globals: {
+    __DEV__: "readonly",
+  },
   extends: ["airbnb-base", "plugin:prettier/recommended"],
   parserOptions: {
     ecmaVersion: "latest",

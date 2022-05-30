@@ -43,26 +43,26 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
 
   readonly innerOffset: IPointNum;
 
-  #isLayoutStateUpdated: boolean;
+  private isLayoutStateUpdated: boolean;
 
-  readonly #axesFilterNeeded: boolean;
+  private readonly axesFilterNeeded: boolean;
 
   readonly containersTransition: ContainersTransition;
 
-  readonly #restrictions: Restrictions;
+  private readonly restrictions: Restrictions;
 
-  readonly #restrictionsStatus: RestrictionsStatus;
+  private readonly restrictionsStatus: RestrictionsStatus;
 
-  readonly #marginX: number;
+  private readonly marginX: number;
 
-  readonly #initCoordinates: IPointNum;
+  private readonly initCoordinates: IPointNum;
 
   constructor(id: string, initCoordinates: IPointAxes, opts: FinalDndOpts) {
     const { element } = store.getElmTreeById(id);
 
     super(element, initCoordinates);
 
-    this.#isLayoutStateUpdated = false;
+    this.isLayoutStateUpdated = false;
 
     const {
       order,
@@ -103,7 +103,7 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
     store.getBranchesByDepth(depth).forEach((key) => {
       const { boundaries } = store.containers[key];
 
-      if (process.env.NODE_ENV !== "production") {
+      if (__DEV__) {
         if (!boundaries) {
           throw new Error(`Siblings boundaries for ${key} not found.`);
         }
@@ -126,7 +126,7 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
 
     const { x, y } = initCoordinates;
 
-    this.#initCoordinates = new PointNum(x, y);
+    this.initCoordinates = new PointNum(x, y);
 
     this.innerOffset = new PointNum(
       Math.round(x - currentPosition.x),
@@ -138,18 +138,18 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
     // get element margin
     const rm = Math.round(parseFloat(style.marginRight));
     const lm = Math.round(parseFloat(style.marginLeft));
-    this.#marginX = rm + lm;
+    this.marginX = rm + lm;
 
     this.positionPlaceholder = new PointNum(
       currentPosition.x,
       currentPosition.y
     );
 
-    this.#restrictions = opts.restrictions;
+    this.restrictions = opts.restrictions;
 
-    this.#restrictionsStatus = opts.restrictionsStatus;
+    this.restrictionsStatus = opts.restrictionsStatus;
 
-    this.#axesFilterNeeded =
+    this.axesFilterNeeded =
       siblings !== null &&
       (opts.restrictionsStatus.isContainerRestricted ||
         opts.restrictionsStatus.isSelfRestricted);
@@ -182,13 +182,13 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
     if (!allowTop && currentTop <= topThreshold) {
       return isRestrictedToThreshold
         ? topThreshold + this.innerOffset.y
-        : this.#initCoordinates.y;
+        : this.initCoordinates.y;
     }
 
     if (!allowBottom && currentBottom >= bottomThreshold) {
       return isRestrictedToThreshold
         ? bottomThreshold + this.innerOffset.y - this.draggedElm.offset.height
-        : this.#initCoordinates.y;
+        : this.initCoordinates.y;
     }
 
     return y;
@@ -208,24 +208,24 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
     if (!allowLeft && currentLeft <= leftThreshold) {
       return restrictToThreshold
         ? leftThreshold + this.innerOffset.x
-        : this.#initCoordinates.x;
+        : this.initCoordinates.x;
     }
 
-    if (!allowRight && currentRight + this.#marginX >= rightThreshold) {
+    if (!allowRight && currentRight + this.marginX >= rightThreshold) {
       return restrictToThreshold
         ? rightThreshold +
             this.innerOffset.x -
             this.draggedElm.offset.width -
-            this.#marginX
-        : this.#initCoordinates.x;
+            this.marginX
+        : this.initCoordinates.x;
     }
 
     return x;
   }
 
   dragAt(x: number, y: number) {
-    if (!this.#isLayoutStateUpdated) {
-      this.#isLayoutStateUpdated = true;
+    if (!this.isLayoutStateUpdated) {
+      this.isLayoutStateUpdated = true;
       store.onStateChange("dragging");
     }
 
@@ -234,42 +234,42 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
 
     const { SK } = store.registry[this.draggedElm.id].keys;
 
-    if (this.#axesFilterNeeded) {
+    if (this.axesFilterNeeded) {
       const { boundaries } = store.containers[SK];
       const { top, bottom, left: maxLeft, right: minRight } = boundaries;
 
-      if (this.#restrictionsStatus.isContainerRestricted) {
+      if (this.restrictionsStatus.isContainerRestricted) {
         filteredX = this.axesXFilter(
           x,
           maxLeft,
           minRight,
-          this.#restrictions.container.allowLeavingFromLeft,
-          this.#restrictions.container.allowLeavingFromRight,
+          this.restrictions.container.allowLeavingFromLeft,
+          this.restrictions.container.allowLeavingFromRight,
           false
         );
         filteredY = this.axesYFilter(
           y,
           top,
           bottom,
-          this.#restrictions.container.allowLeavingFromTop,
-          this.#restrictions.container.allowLeavingFromBottom,
+          this.restrictions.container.allowLeavingFromTop,
+          this.restrictions.container.allowLeavingFromBottom,
           true
         );
-      } else if (this.#restrictionsStatus.isSelfRestricted) {
+      } else if (this.restrictionsStatus.isSelfRestricted) {
         filteredX = this.axesXFilter(
           x,
           maxLeft,
           minRight,
-          this.#restrictions.self.allowLeavingFromLeft,
-          this.#restrictions.self.allowLeavingFromRight,
+          this.restrictions.self.allowLeavingFromLeft,
+          this.restrictions.self.allowLeavingFromRight,
           false
         );
         filteredY = this.axesYFilter(
           y,
           this.draggedElm.currentPosition.y,
           this.draggedElm.currentPosition.y + this.draggedElm.offset.height,
-          this.#restrictions.self.allowLeavingFromTop,
-          this.#restrictions.self.allowLeavingFromBottom,
+          this.restrictions.self.allowLeavingFromTop,
+          this.restrictions.self.allowLeavingFromBottom,
           false
         );
       }
@@ -325,7 +325,7 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
     );
   }
 
-  #isLeavingFromBottom() {
+  private isLeavingFromBottom() {
     const lastElm =
       store.getElmBranchByKey(this.migration.latest().SK).length - 1;
 
@@ -334,7 +334,7 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
 
   isNotSettled() {
     return (
-      !this.#isLeavingFromBottom() &&
+      !this.isLeavingFromBottom() &&
       (this.isOutThreshold() || this.isOutThreshold(this.migration.latest().SK))
     );
   }

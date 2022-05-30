@@ -13,7 +13,7 @@ import type {
 import type { IContainer } from "./types";
 
 class Container implements IContainer {
-  #boundariesByRow: {
+  private boundariesByRow: {
     [row: number]: RectBoundaries;
   };
 
@@ -25,7 +25,7 @@ class Container implements IContainer {
 
   scroll!: IScroll;
 
-  #gridSiblingsHasNewRow: boolean;
+  private gridSiblingsHasNewRow: boolean;
 
   lastElmPosition!: IPointNum;
 
@@ -34,26 +34,26 @@ class Container implements IContainer {
   constructor() {
     this.grid = new PointNum(1, 1);
     this.originLength = Container.OUT_OF_RANGE;
-    this.#boundariesByRow = {};
-    this.#gridSiblingsHasNewRow = false;
+    this.boundariesByRow = {};
+    this.gridSiblingsHasNewRow = false;
   }
 
-  #addNewElmToGridIndicator(rect: RectBoundaries) {
-    if (!this.#boundariesByRow[this.grid.x]) {
-      this.#boundariesByRow[this.grid.x] = {
+  private addNewElmToGridIndicator(rect: RectBoundaries) {
+    if (!this.boundariesByRow[this.grid.x]) {
+      this.boundariesByRow[this.grid.x] = {
         ...rect,
       };
 
       return;
     }
 
-    const $ = this.#boundariesByRow[this.grid.x];
+    const $ = this.boundariesByRow[this.grid.x];
 
     // Defining elements in different row.
     if (rect.bottom > $.bottom || rect.top < $.top) {
       this.grid.y += 1;
 
-      this.#gridSiblingsHasNewRow = true;
+      this.gridSiblingsHasNewRow = true;
 
       $.left = 0;
       $.right = 0;
@@ -61,10 +61,10 @@ class Container implements IContainer {
 
     // Defining elements in different column.
     if (rect.left > $.right || rect.right < $.left) {
-      if (this.#gridSiblingsHasNewRow) {
+      if (this.gridSiblingsHasNewRow) {
         this.grid.x = 1;
 
-        this.#gridSiblingsHasNewRow = false;
+        this.gridSiblingsHasNewRow = false;
       } else {
         this.grid.x += 1;
       }
@@ -98,7 +98,7 @@ class Container implements IContainer {
       dirtyAssignBiggestRect(this.boundaries, elmRectBoundaries);
     }
 
-    this.#addNewElmToGridIndicator(elmRectBoundaries);
+    this.addNewElmToGridIndicator(elmRectBoundaries);
 
     const $ = this.boundaries;
 
@@ -122,8 +122,8 @@ class Container implements IContainer {
     // @ts-expect-error - Just resetting the boundaries.
     this.boundaries = null;
     this.grid.setAxes(1, 1);
-    this.#boundariesByRow = {};
-    this.#gridSiblingsHasNewRow = false;
+    this.boundariesByRow = {};
+    this.gridSiblingsHasNewRow = false;
   }
 
   preservePosition(position: IPointAxes) {

@@ -32,11 +32,11 @@ function emitInteractiveEvent(
 class DistanceCalculator {
   protected draggable: IDraggableInteractive;
 
-  #elmTransition: IPointNum;
+  private elmTransition: IPointNum;
 
-  #draggedPositionOffset: IPointNum;
+  private draggedPositionOffset: IPointNum;
 
-  #draggedTransition: IPointNum;
+  private draggedTransition: IPointNum;
 
   /** Isolated form the threshold and predict is-out based on the controllers */
   protected isParentLocked: boolean;
@@ -47,19 +47,19 @@ class DistanceCalculator {
     /**
      * Next element calculated transition space.
      */
-    this.#elmTransition = new PointNum(0, 0);
+    this.elmTransition = new PointNum(0, 0);
 
     /**
      * Same as elmTransition but for dragged.
      */
-    this.#draggedPositionOffset = new PointNum(0, 0);
+    this.draggedPositionOffset = new PointNum(0, 0);
 
-    this.#draggedTransition = new PointNum(0, 0);
+    this.draggedTransition = new PointNum(0, 0);
 
     this.isParentLocked = false;
   }
 
-  #setDistanceBtwPositions(
+  private setDistanceBtwPositions(
     element: INode,
     axis: Axis,
     elmDirection: Direction
@@ -73,42 +73,46 @@ class DistanceCalculator {
     const rectDiff = element.getRectDiff(draggedElm, axis);
 
     if (elmDirection === -1) {
-      this.#draggedTransition[axis] = positionDiff + rectDiff;
-      this.#draggedPositionOffset[axis] = rectDiff;
+      this.draggedTransition[axis] = positionDiff + rectDiff;
+      this.draggedPositionOffset[axis] = rectDiff;
 
-      this.#elmTransition[axis] = positionDiff;
+      this.elmTransition[axis] = positionDiff;
     } else {
-      this.#draggedTransition[axis] = positionDiff;
-      this.#draggedPositionOffset[axis] = 0;
+      this.draggedTransition[axis] = positionDiff;
+      this.draggedPositionOffset[axis] = 0;
 
-      this.#elmTransition[axis] = positionDiff - rectDiff;
+      this.elmTransition[axis] = positionDiff - rectDiff;
     }
   }
 
-  #updateDraggable(element: INode, elmDirection: Direction) {
+  private updateDraggable(element: INode, elmDirection: Direction) {
     const { currentPosition, grid } = element;
 
     this.draggable.occupiedPosition.setAxes(
-      currentPosition.x + this.#draggedPositionOffset.x,
-      currentPosition.y + this.#draggedPositionOffset.y
+      currentPosition.x + this.draggedPositionOffset.x,
+      currentPosition.y + this.draggedPositionOffset.y
     );
 
     const draggedDirection = -1 * elmDirection;
 
     this.draggable.occupiedTranslate.increase(
-      this.#draggedTransition.getMultiplied(draggedDirection)
+      this.draggedTransition.getMultiplied(draggedDirection)
     );
 
     this.draggable.gridPlaceholder.clone(grid);
   }
 
-  #updateIndicators(element: INode, axis: Axis, elmDirection: Direction) {
-    this.#elmTransition.setAxes(0, 0);
-    this.#draggedTransition.setAxes(0, 0);
-    this.#draggedPositionOffset.setAxes(0, 0);
+  private updateIndicators(
+    element: INode,
+    axis: Axis,
+    elmDirection: Direction
+  ) {
+    this.elmTransition.setAxes(0, 0);
+    this.draggedTransition.setAxes(0, 0);
+    this.draggedPositionOffset.setAxes(0, 0);
 
-    this.#setDistanceBtwPositions(element, axis, elmDirection);
-    this.#updateDraggable(element, elmDirection);
+    this.setDistanceBtwPositions(element, axis, elmDirection);
+    this.updateDraggable(element, elmDirection);
   }
 
   protected updateDraggedThresholdPosition(x: number, y: number) {
@@ -125,7 +129,7 @@ class DistanceCalculator {
     });
   }
 
-  #addDraggedOffsetToElm(position: IPointAxes, elm: INode, axis: Axis) {
+  private addDraggedOffsetToElm(position: IPointAxes, elm: INode, axis: Axis) {
     const rectType = Node.getRectByAxis(axis);
 
     const { draggedElm } = this.draggable;
@@ -178,7 +182,7 @@ class DistanceCalculator {
 
         const { marginBottom: mb, marginTop: mt } = migration.prev();
 
-        this.#addDraggedOffsetToElm(composedTranslate, elm!, axis);
+        this.addDraggedOffsetToElm(composedTranslate, elm!, axis);
         composedTranslate[axis] += !isOrphan
           ? Node.getDisplacement(position, prevElm!, axis)
           : typeof mt === "number"
@@ -226,7 +230,7 @@ class DistanceCalculator {
     // but also on some cases it's different from retrieved position.
     const composedPosition = elm!.currentPosition.getInstance();
 
-    this.#addDraggedOffsetToElm(composedPosition, elm!, axis);
+    this.addDraggedOffsetToElm(composedPosition, elm!, axis);
 
     const { migration, containersTransition } = this.draggable;
 
@@ -282,7 +286,7 @@ class DistanceCalculator {
 
     const elmDirection: Direction = isIncrease ? -1 : 1;
 
-    this.#updateIndicators(element, axis, elmDirection);
+    this.updateIndicators(element, axis, elmDirection);
 
     // TODO: always true for the first element
     if (!this.isParentLocked) {
@@ -315,7 +319,7 @@ class DistanceCalculator {
     element.setPosition(
       store.getElmBranchByKey(migration.latest().SK),
       elmDirection,
-      this.#elmTransition,
+      this.elmTransition,
       migration.latest().id,
       axis
     );

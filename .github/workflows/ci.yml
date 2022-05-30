@@ -35,9 +35,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-
 
-      - uses: pnpm/action-setup@v2.2.1
+      - uses: pnpm/action-setup@v2.2.2
         with:
-          version: 7.0.0
+          version: ^7.0.0
           run_install: true
 
       - name: Use latest version of Node.j
@@ -65,9 +65,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-
 
-      - uses: pnpm/action-setup@v2.2.1
+      - uses: pnpm/action-setup@v2.2.2
         with:
-          version: 7.0.0
+          version: ^7.0.0
           run_install: true
 
       - name: Use latest version of Node.j
@@ -77,7 +77,7 @@ jobs:
           cache: "pnpm"
 
       - name: check types
-        run: "pnpm check-types"
+        run: pnpm check-types
 
   unit-test:
     name: Unit Test
@@ -96,9 +96,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-
 
-      - uses: pnpm/action-setup@v2.2.1
+      - uses: pnpm/action-setup@v2.2.2
         with:
-          version: 7.0.0
+          version: ^7.0.0
           run_install: true
 
       - name: Use latest version of Node.j
@@ -126,9 +126,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-
 
-      - uses: pnpm/action-setup@v2.2.1
+      - uses: pnpm/action-setup@v2.2.2
         with:
-          version: 7.0.0
+          version: ^7.0.0
           run_install: true
 
       - name: Use latest version of Node.j
@@ -138,10 +138,10 @@ jobs:
           cache: "pnpm"
 
       - name: Build packages
-        run: pnpm build
+        run: pnpm build-prod
 
       - name: Build DnD React App
-        run: pnpm -F dflex-react-dnd build:app
+        run: pnpm -F dflex-dnd-playground build
 
       - name: Upload Package Artifacts
         uses: actions/upload-artifact@v3
@@ -170,9 +170,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-
 
-      - uses: pnpm/action-setup@v2.2.1
+      - uses: pnpm/action-setup@v2.2.2
         with:
-          version: 7.0.0
+          version: ^7.0.0
           run_install: true
 
       - name: Use latest version of Node.j
@@ -188,7 +188,7 @@ jobs:
           path: ./packages
 
       - name: Testing features for DnD with React APP - Chrome
-        run: pnpm test:vertical:chrome
+        run: pnpm test-e2e-vertical:chrome
 
   # e2e-same-container-horizontal:
   #   name: One Container Horizontally - Chrome
@@ -208,9 +208,9 @@ jobs:
   #         restore-keys: |
   #           ${{ runner.os }}-
 
-  #     - uses: pnpm/action-setup@v2.2.1
+  #     - uses: pnpm/action-setup@v2.2.2
   #       with:
-  #         version: 7.0.0
+  #         version: ^7.0.0
   #         run_install: true
 
   #     - name: Use latest version of Node.j
@@ -261,9 +261,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-
 
-      - uses: pnpm/action-setup@v2.2.1
+      - uses: pnpm/action-setup@v2.2.2
         with:
-          version: 7.0.0
+          version: ^7.0.0
           run_install: true
 
       - name: Use latest version of Node.j
@@ -279,7 +279,7 @@ jobs:
           path: ./packages
 
       - name: Testing features for DnD with React APP - Chrome
-        run: pnpm test:multi:chrome
+        run: pnpm test-e2e-multi:chrome
 
   release:
     name: Publish to NPM
@@ -309,9 +309,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-
 
-      - uses: pnpm/action-setup@v2.2.1
+      - uses: pnpm/action-setup@v2.2.2
         with:
-          version: 7.0.0
+          version: ^7.0.0
           run_install: true
 
       - name: Use latest version of Node.j

@@ -2,6 +2,7 @@
 import { UserConfigExport, defineConfig } from "vite";
 import path from "path";
 import react from "@vitejs/plugin-react";
+import { replaceCodePlugin } from "vite-plugin-replace";
 
 const PORT = 3001;
 
@@ -32,8 +33,6 @@ const moduleResolution = [
   },
 ];
 
-process.env.NODE_ENV = "development";
-
 const config: UserConfigExport = {
   plugins: [react()],
   server: {
@@ -47,6 +46,17 @@ const config: UserConfigExport = {
 
 if (process.env.NODE_ENV === "development") {
   Object.assign(config, { resolve: { alias: moduleResolution } });
+
+  config.plugins!.push(
+    replaceCodePlugin({
+      replacements: [
+        {
+          from: /__DEV__/g,
+          to: "true",
+        },
+      ],
+    })
+  );
 }
 
 // https://vitejs.dev/config/
