@@ -138,7 +138,7 @@ jobs:
           cache: "pnpm"
 
       - name: Build packages
-        run: pnpm build-prod
+        run: "pnpm clean && pnpm -r emit && pnpm build -- --production --release --minify"
 
       - name: Build DnD React App
         run: pnpm -F dflex-dnd-playground build
