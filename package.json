@@ -21,7 +21,7 @@
     "clean": "pnpm -r --parallel clean",
     "build": "node scripts/build/index.js",
     "build-app": "pnpm -F dflex-dnd-playground build",
-    "build-prod": "pnpm clean && pnpm -r emit && pnpm build --  --production --release --minify",
+    "build-prod": "pnpm clean && pnpm -r emit && pnpm build -- --production --release --minify",
     "check-types": "tsc --noEmit",
     "emit-types": "pnpm -r emit",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
