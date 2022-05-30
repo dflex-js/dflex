@@ -24,8 +24,6 @@ const $isRelease = argv.release;
 /** @type boolean */
 const $isMinify = argv.minify;
 
-console.log("Building...", $isMinify, $isRelease);
-
 const externals = [];
 
 const moduleResolution = packages.map((pkg) => ({
