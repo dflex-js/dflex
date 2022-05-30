@@ -8,16 +8,18 @@
   "types": "./types/index.d.ts",
   "exports": {
     ".": {
+      "development": {
+        "import": "./dist/dev.mjs",
+        "require": "./dist/dev.js"
+      },
       "require": "./dist/dflex-store.js",
       "import": "./dist/dflex-store.mjs"
-    }
+    },
+    "./dist/*": "./dist/*"
   },
   "scripts": {
     "clean": "rimraf ./dist ./types tsconfig.tsbuildinfo",
-    "emit": "tsc --emitDeclarationOnly",
-    "build:cjs": "esbuild src/index.ts --bundle --format=cjs --outfile=dist/dflex-store.js",
-    "build:esm": "esbuild src/index.ts --bundle --format=esm --outfile=dist/dflex-store.mjs",
-    "build": "pnpm build:cjs && pnpm build:esm && pnpm emit"
+    "emit": "tsc --emitDeclarationOnly"
   },
   "homepage": "https://github.com/dflex-js/dflex/tree/master/packages/store",
   "repository": "https://github.com/dflex-js/dflex",

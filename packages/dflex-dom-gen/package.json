@@ -8,16 +8,18 @@
   "types": "./types/index.d.ts",
   "exports": {
     ".": {
+      "development": {
+        "import": "./dist/dev.mjs",
+        "require": "./dist/dev.js"
+      },
       "require": "./dist/dflex-dom.js",
       "import": "./dist/dflex-dom.mjs"
-    }
+    },
+    "./dist/*": "./dist/*"
   },
   "scripts": {
     "clean": "rimraf ./dist ./types tsconfig.tsbuildinfo",
-    "emit": "tsc --emitDeclarationOnly",
-    "build:cjs": "esbuild src/index.ts --bundle --format=cjs --outfile=dist/dflex-dom.js",
-    "build:esm": "esbuild src/index.ts --bundle --format=esm --outfile=dist/dflex-dom.mjs",
-    "build": "pnpm build:cjs && pnpm build:esm && pnpm emit"
+    "emit": "tsc --emitDeclarationOnly"
   },
   "homepage": "https://github.com/dflex-js/dflex/tree/master/packages/dom-gen",
   "repository": "https://github.com/dflex-js/dflex",

@@ -8,16 +8,18 @@
   "types": "./types/index.d.ts",
   "exports": {
     ".": {
+      "development": {
+        "import": "./dist/dev.mjs",
+        "require": "./dist/dev.js"
+      },
       "require": "./dist/dflex-core.js",
       "import": "./dist/dflex-core.mjs"
-    }
+    },
+    "./dist/*": "./dist/*"
   },
   "scripts": {
     "clean": "rimraf ./dist ./types tsconfig.tsbuildinfo",
-    "emit": "tsc --emitDeclarationOnly",
-    "build:cjs": "esbuild src/index.ts --bundle --format=cjs --outfile=dist/dflex-core.js",
-    "build:esm": "esbuild src/index.ts --bundle --format=esm --outfile=dist/dflex-core.mjs",
-    "build": "pnpm build:cjs && pnpm build:esm && pnpm emit"
+    "emit": "tsc --emitDeclarationOnly"
   },
   "repository": "https://github.com/dflex-js/dflex",
   "homepage": "https://github.com/dflex-js/dflex/tree/master/packages/core-instance",

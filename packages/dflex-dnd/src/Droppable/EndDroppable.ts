@@ -12,14 +12,14 @@ class EndDroppable extends Droppable {
     this.spliceAt = -1;
   }
 
-  #isIDEligible2Undo(id: string) {
+  private isIDEligible2Undo(id: string) {
     return (
       isIDEligible(id, this.draggable.draggedElm.id) &&
       !store.registry[id].isPaused
     );
   }
 
-  #undoElmTranslate(
+  private undoElmTranslate(
     lst: string[],
     operationID: string,
     i: number,
@@ -28,7 +28,7 @@ class EndDroppable extends Droppable {
   ) {
     const elmID = lst[i];
 
-    if (this.#isIDEligible2Undo(elmID)) {
+    if (this.isIDEligible2Undo(elmID)) {
       const element = store.registry[elmID];
 
       const { isVisible } = element;
@@ -72,7 +72,7 @@ class EndDroppable extends Droppable {
     let listVisibility = true;
 
     const run = () => {
-      ({ prevVisibility, listVisibility } = this.#undoElmTranslate(
+      ({ prevVisibility, listVisibility } = this.undoElmTranslate(
         lst,
         operationID,
         i,
@@ -104,7 +104,7 @@ class EndDroppable extends Droppable {
     let listVisibility = true;
 
     const run = () => {
-      ({ prevVisibility, listVisibility } = this.#undoElmTranslate(
+      ({ prevVisibility, listVisibility } = this.undoElmTranslate(
         lst,
         operationID,
         i,
@@ -129,7 +129,7 @@ class EndDroppable extends Droppable {
    * Undo list elements order and instances including translateX/Y and indexes
    * locally.
    */
-  #undoList(lst: string[], operationID: string) {
+  private undoList(lst: string[], operationID: string) {
     const {
       threshold,
       draggedElm: {
@@ -149,7 +149,7 @@ class EndDroppable extends Droppable {
     }
   }
 
-  #verify(lst: string[]) {
+  private verify(lst: string[]) {
     const { occupiedPosition, draggedElm } = this.draggable;
 
     const { top } = store.containers[draggedElm.keys.SK].boundaries;
@@ -172,13 +172,13 @@ class EndDroppable extends Droppable {
 
     let isFallback = false;
 
-    if (this.draggable.isNotSettled() || !this.#verify(siblings)) {
+    if (this.draggable.isNotSettled() || !this.verify(siblings)) {
       isFallback = true;
 
       this.draggable.migration.getALlMigrations().forEach((migration) => {
         const lst = store.getElmBranchByKey(migration.SK);
 
-        this.#undoList(lst, migration.id);
+        this.undoList(lst, migration.id);
       });
     }
 
@@ -191,8 +191,8 @@ class EndDroppable extends Droppable {
       "draggedOffset",
       "draggedAccumulatedTransition",
       "siblingsEmptyElmIndex",
-      "#initialScroll",
-      "#scrollAxes",
+      "initialScroll",
+      "scrollAxes",
     ].forEach((instance) => {
       // @ts-expect-error
       this[instance] = null;

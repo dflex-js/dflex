@@ -8,19 +8,18 @@
   "types": "./types/index.d.ts",
   "exports": {
     ".": {
+      "development": {
+        "import": "./dist/dev.mjs",
+        "require": "./dist/dev.js"
+      },
       "require": "./dist/dflex-dnd.js",
       "import": "./dist/dflex-dnd.mjs"
     },
-    "./production": "./dist/dflex-dnd.min.js"
+    "./dist/*": "./dist/*"
   },
   "scripts": {
     "clean": "rimraf ./dist ./types tsconfig.tsbuildinfo",
     "emit": "tsc --emitDeclarationOnly",
-    "build:cjs": "esbuild src/index.ts --bundle --format=cjs --outfile=dist/dflex-dnd.js",
-    "build:esm": "esbuild src/index.ts  --sourcemap --bundle --format=esm --outfile=dist/dflex-dnd.mjs",
-    "build:prod": "esbuild src/index.ts --bundle --format=cjs --minify --outfile=dist/dflex-dnd.min.js",
-    "build": "pnpm build:cjs && pnpm build:esm && pnpm build:prod && pnpm emit",
-    "build:w": "cross-env NODE_ENV=development pnpm build:esm -- --watch",
     "compile:w": "tsc -b -w"
   },
   "homepage": "https://github.com/dflex-js/dflex/tree/master/packages/dnd",

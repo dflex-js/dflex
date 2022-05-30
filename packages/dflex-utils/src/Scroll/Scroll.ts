@@ -109,10 +109,7 @@ class Scroll implements IScroll {
     const scrollContainer = loopInDOM(element, (parent) => {
       i += 1;
 
-      if (
-        i === MAX_LOOP_ELEMENTS_TO_WARN &&
-        process.env.NODE_ENV !== "production"
-      ) {
+      if (i === MAX_LOOP_ELEMENTS_TO_WARN && __DEV__) {
         // eslint-disable-next-line no-console
         console.warn(
           `DFlex detects performance issues during defining a scroll container.
@@ -265,7 +262,7 @@ Please provide scroll container by ref/id when registering the element or turn o
         return;
       }
 
-      if (process.env.NODE_ENV !== "production") {
+      if (__DEV__) {
         // eslint-disable-next-line no-console
         console.warn(
           `DFlex: Failed to add scroll listener dataset. Unable to detect the first valid div inside document.body`

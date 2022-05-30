@@ -10,7 +10,8 @@
     "target": "ES2019",
     "module": "ESNext",
     "sourceMap": false,
-    "lib": ["dom", "ESNext"],
+    "outDir": "./types",
+    "lib": ["esnext", "dom"],
     "moduleResolution": "Node",
     "baseUrl": ".",
     "paths": {
@@ -27,6 +28,6 @@
     "isolatedModules": true,
     "esModuleInterop": true
   },
-  "include": ["packages"],
+  "include": ["packages", "dflex-env.d.ts"],
   "exclude": ["node_modules", "dist", "**/*.test*", "**/*.spec*"]
 }

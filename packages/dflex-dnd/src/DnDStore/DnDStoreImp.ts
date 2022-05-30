@@ -49,13 +49,13 @@ class DnDStoreImp extends Store implements IDnDStore {
 
   events: Events;
 
-  #genID: ITracker;
+  private genID: ITracker;
 
-  #isDOM: boolean;
+  private isDOM: boolean;
 
-  #isInitialized: boolean;
+  private isInitialized: boolean;
 
-  #elmIndicator!: {
+  private elmIndicator!: {
     currentKy: string;
     prevKy: string;
     exceptionToNextElm: boolean;
@@ -63,7 +63,7 @@ class DnDStoreImp extends Store implements IDnDStore {
 
   static MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
 
-  static #PREFIX_ID = "dflex-id";
+  private static PREFIX_ID = "dflex-id";
 
   constructor() {
     super();
@@ -77,12 +77,12 @@ class DnDStoreImp extends Store implements IDnDStore {
     this.events = null;
 
     this.tracker = new Tracker();
-    this.#genID = new Tracker(DnDStoreImp.#PREFIX_ID);
+    this.genID = new Tracker(DnDStoreImp.PREFIX_ID);
 
-    this.#initELmIndicator();
+    this.initELmIndicator();
 
-    this.#isInitialized = false;
-    this.#isDOM = false;
+    this.isInitialized = false;
+    this.isDOM = false;
 
     this.updateBranchVisibility = this.updateBranchVisibility.bind(this);
   }
@@ -110,12 +110,12 @@ class DnDStoreImp extends Store implements IDnDStore {
     this.events[event.type](event);
   }
 
-  #init() {
+  private init() {
     window.onbeforeunload = this.dispose();
   }
 
-  #initELmIndicator() {
-    this.#elmIndicator = {
+  private initELmIndicator() {
+    this.elmIndicator = {
       currentKy: "",
       prevKy: "",
       exceptionToNextElm: false,
@@ -144,21 +144,21 @@ class DnDStoreImp extends Store implements IDnDStore {
 
       if (
         !isVisible &&
-        !this.#elmIndicator.exceptionToNextElm &&
+        !this.elmIndicator.exceptionToNextElm &&
         permitExceptionToOverride
       ) {
-        this.#elmIndicator.exceptionToNextElm = true;
+        this.elmIndicator.exceptionToNextElm = true;
 
         // Override the result.
         isVisible = true;
       } else if (isVisible) {
-        if (this.#elmIndicator.exceptionToNextElm) {
+        if (this.elmIndicator.exceptionToNextElm) {
           // In this case, we are moving from hidden to visible.
           // Eg: 1, 2 are hidden the rest of the list is visible.
           // But, there's a possibility that the rest of the branch elements
           // are hidden.
           // Eg: 1, 2: hidden 3, 4, 5, 6, 7:visible 8, 9, 10: hidden.
-          this.#initELmIndicator();
+          this.initELmIndicator();
         }
       }
     }
@@ -171,7 +171,7 @@ class DnDStoreImp extends Store implements IDnDStore {
 
     const { scroll } = this.containers[SK];
 
-    this.#initELmIndicator();
+    this.initELmIndicator();
 
     let prevIndex = 0;
 
@@ -203,7 +203,7 @@ class DnDStoreImp extends Store implements IDnDStore {
           depth = this.registry[elmID].depth;
 
           // Can we get the parent ID, later?
-          this.DOMGen.register(this.#genID.newTravel(), (depth as number) + 1);
+          this.DOMGen.register(this.genID.newTravel(), (depth as number) + 1);
 
           newSK = this.DOMGen.accumulateIndicators(depth as number).SK;
         }
@@ -240,7 +240,7 @@ class DnDStoreImp extends Store implements IDnDStore {
 
     const branch = this.DOMGen.branches[SK];
 
-    if (process.env.NODE_ENV !== "production") {
+    if (__DEV__) {
       // eslint-disable-next-line no-console
       console.info(`Initializing Siblings: ${SK} - ${branch}\n`);
     }
@@ -259,7 +259,7 @@ class DnDStoreImp extends Store implements IDnDStore {
       }
 
       if (isNotConnected) {
-        if (process.env.NODE_ENV !== "production") {
+        if (__DEV__) {
           throwElementIsNotConnected(firstElemID);
         }
 
@@ -305,7 +305,7 @@ class DnDStoreImp extends Store implements IDnDStore {
     }
   }
 
-  #initElmInstance(id: string) {
+  private initElmInstance(id: string) {
     const {
       depth,
       keys: { SK },
@@ -448,10 +448,10 @@ class DnDStoreImp extends Store implements IDnDStore {
       );
     }
 
-    if (!this.#isDOM) {
-      this.#isDOM = canUseDOM();
+    if (!this.isDOM) {
+      this.isDOM = canUseDOM();
 
-      if (!this.#isDOM) return;
+      if (!this.isDOM) return;
     }
 
     /**
@@ -460,15 +460,15 @@ class DnDStoreImp extends Store implements IDnDStore {
     let { id } = element;
 
     if (!id) {
-      id = `${this.#genID.newTravel()}`;
+      id = `${this.genID.newTravel()}`;
 
       // eslint-disable-next-line no-param-reassign
       element.ref!.id = id;
     }
 
-    if (!this.#isInitialized) {
-      this.#init();
-      this.#isInitialized = true;
+    if (!this.isInitialized) {
+      this.init();
+      this.isInitialized = true;
     }
 
     if (this.registry[id]) {
@@ -514,12 +514,12 @@ class DnDStoreImp extends Store implements IDnDStore {
         }
       }
 
-      this.#initElmInstance(id!);
+      this.initElmInstance(id!);
     });
   }
 
   getBranchesByDepth(dp: number) {
-    if (process.env.NODE_ENV !== "production") {
+    if (__DEV__) {
       if (!Array.isArray(this.DOMGen.branchesByDepth[dp])) {
         throw new Error(`DFlex: Depth ${dp} is not registered.`);
       }
@@ -628,9 +628,9 @@ class DnDStoreImp extends Store implements IDnDStore {
   }
 
   dispose() {
-    if (!this.#isInitialized) return null;
+    if (!this.isInitialized) return null;
 
-    this.#isInitialized = false;
+    this.isInitialized = false;
 
     return null;
   }

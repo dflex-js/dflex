@@ -3,7 +3,7 @@ import type { ITracker, Prefix } from "./types";
 class Tracker implements ITracker {
   travelID: number;
 
-  #prefix?: Prefix;
+  private prefix?: Prefix;
 
   /**
    * Creates an instance of Tracker.
@@ -12,7 +12,7 @@ class Tracker implements ITracker {
     this.travelID = 0;
 
     if (prefix) {
-      this.#prefix = prefix;
+      this.prefix = prefix;
     }
   }
 
@@ -20,7 +20,7 @@ class Tracker implements ITracker {
    * Increment travels and return the last one.
    */
   newTravel(prefix?: Prefix) {
-    const pre = prefix || this.#prefix;
+    const pre = prefix || this.prefix;
 
     this.travelID += 1;
 

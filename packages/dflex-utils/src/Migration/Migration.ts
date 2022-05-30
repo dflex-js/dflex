@@ -23,25 +23,25 @@ class AbstractMigration implements IAbstract {
 }
 
 class Migration implements IMigration {
-  #migrations: Array<IAbstract>;
+  private migrations: Array<IAbstract>;
 
   isTransitioning!: boolean;
 
   constructor(index: number, SK: string, id: string) {
-    this.#migrations = [new AbstractMigration(index, SK, id)];
+    this.migrations = [new AbstractMigration(index, SK, id)];
     this.complete();
   }
 
   latest() {
-    return this.#migrations[this.#migrations.length - 1];
+    return this.migrations[this.migrations.length - 1];
   }
 
   prev() {
-    return this.#migrations[this.#migrations.length - 2];
+    return this.migrations[this.migrations.length - 2];
   }
 
   getALlMigrations() {
-    return this.#migrations;
+    return this.migrations;
   }
 
   setIndex(index: number) {
@@ -58,7 +58,7 @@ class Migration implements IMigration {
   }
 
   add(index: number, key: string, id: string) {
-    this.#migrations.push(new AbstractMigration(index, key, id));
+    this.migrations.push(new AbstractMigration(index, key, id));
   }
 
   start() {
@@ -73,7 +73,7 @@ class Migration implements IMigration {
   }
 
   dispose() {
-    this.#migrations = [];
+    this.migrations = [];
   }
 }
 

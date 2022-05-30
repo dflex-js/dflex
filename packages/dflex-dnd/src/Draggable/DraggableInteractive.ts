@@ -167,7 +167,7 @@ class DraggableInteractive
       "positionPlaceholder",
       "occupiedOffset",
       "occupiedTranslate",
-      "#initCoordinates",
+      "initCoordinates",
     ];
 
     properties.forEach((property) => {
