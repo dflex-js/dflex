@@ -42,16 +42,16 @@ importers:
 
   packages/dflex-core-instance:
     specifiers:
-      '@dflex/utils': workspace:^3.5.2
+      '@dflex/utils': workspace:^3.5.3
     devDependencies:
       '@dflex/utils': link:../dflex-utils
 
   packages/dflex-dnd:
     specifiers:
-      '@dflex/core-instance': workspace:^3.5.2
-      '@dflex/draggable': workspace:^3.5.2
-      '@dflex/store': workspace:^3.5.2
-      '@dflex/utils': workspace:^3.5.2
+      '@dflex/core-instance': workspace:^3.5.3
+      '@dflex/draggable': workspace:^3.5.3
+      '@dflex/store': workspace:^3.5.3
+      '@dflex/utils': workspace:^3.5.3
       cross-env: ^7.0.3
     devDependencies:
       '@dflex/core-instance': link:../dflex-core-instance
@@ -99,15 +99,15 @@ importers:
 
   packages/dflex-dom-gen:
     specifiers:
-      '@dflex/utils': workspace:^3.5.2
+      '@dflex/utils': workspace:^3.5.3
     devDependencies:
       '@dflex/utils': link:../dflex-utils
 
   packages/dflex-draggable:
     specifiers:
-      '@dflex/core-instance': workspace:^3.5.2
-      '@dflex/store': workspace:^3.5.2
-      '@dflex/utils': workspace:^3.5.2
+      '@dflex/core-instance': workspace:^3.5.3
+      '@dflex/store': workspace:^3.5.3
+      '@dflex/utils': workspace:^3.5.3
       eslint-config-dflex-react: workspace:*
     devDependencies:
       '@dflex/core-instance': link:../dflex-core-instance
@@ -138,8 +138,8 @@ importers:
 
   packages/dflex-store:
     specifiers:
-      '@dflex/core-instance': workspace:^3.5.2
-      '@dflex/dom-gen': workspace:^3.5.2
+      '@dflex/core-instance': workspace:^3.5.3
+      '@dflex/dom-gen': workspace:^3.5.3
     devDependencies:
       '@dflex/core-instance': link:../dflex-core-instance
       '@dflex/dom-gen': link:../dflex-dom-gen
