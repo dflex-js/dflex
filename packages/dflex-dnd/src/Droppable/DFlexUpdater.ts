@@ -29,7 +29,7 @@ function emitInteractiveEvent(
  * Calculates the distance between two elements and update the targeted element
  * accordingly.
  */
-class DistanceCalculator {
+class DFlexUpdater {
   protected draggable: IDraggableInteractive;
 
   private elmTransition: IPointNum;
@@ -37,6 +37,8 @@ class DistanceCalculator {
   private draggedPositionOffset: IPointNum;
 
   private draggedTransition: IPointNum;
+
+  private infiniteTransformCount: number;
 
   /** Isolated form the threshold and predict is-out based on the controllers */
   protected isParentLocked: boolean;
@@ -57,6 +59,19 @@ class DistanceCalculator {
     this.draggedTransition = new PointNum(0, 0);
 
     this.isParentLocked = false;
+    this.infiniteTransformCount = 0;
+  }
+
+  resetTransformCount() {
+    if (this.infiniteTransformCount > 0) this.infiniteTransformCount = 0;
+  }
+
+  private throwOnInfiniteTransformation(id: string) {
+    if (this.infiniteTransformCount > 99) {
+      throw new Error(
+        `Element ${id} is being transformed endlessly. This is causing infinite recursion affecting the element updater.`
+      );
+    }
   }
 
   private setDistanceBtwPositions(
@@ -257,6 +272,10 @@ class DistanceCalculator {
    * invokes for each eligible element in the parent container.
    */
   protected updateElement(id: string, isIncrease: boolean) {
+    this.infiniteTransformCount += 1;
+
+    this.throwOnInfiniteTransformation(id);
+
     const element = store.registry[id];
 
     const {
@@ -328,4 +347,4 @@ class DistanceCalculator {
   }
 }
 
-export default DistanceCalculator;
+export default DFlexUpdater;

@@ -6,7 +6,7 @@ import type { DraggedEvent, SiblingsEvent } from "../types";
 import store from "../DnDStore";
 
 import type { IDraggableInteractive } from "../Draggable";
-import DistanceCalculator from "./DistanceCalculator";
+import DFlexUpdater from "./DFlexUpdater";
 
 function emitSiblingsEvent(
   type: SiblingsEvent["type"],
@@ -34,7 +34,7 @@ export function isIDEligible(elmID: string, draggedID: string) {
 /**
  * Class includes all transformation methods related to droppable.
  */
-class Droppable extends DistanceCalculator {
+class Droppable extends DFlexUpdater {
   private scrollAnimatedFrame: number | null;
 
   private readonly initialScroll: IPointNum;
@@ -778,6 +778,9 @@ class Droppable extends DistanceCalculator {
 
       return;
     }
+
+    // Dragged element is inside the threshold.
+    this.resetTransformCount();
 
     if (this.isOnDragOutThresholdEvtEmitted) {
       this.isOnDragOutThresholdEvtEmitted = false;
