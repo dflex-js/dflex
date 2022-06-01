@@ -779,9 +779,6 @@ class Droppable extends DFlexUpdater {
       return;
     }
 
-    // Dragged element is inside the threshold.
-    this.resetTransformCount();
-
     if (this.isOnDragOutThresholdEvtEmitted) {
       this.isOnDragOutThresholdEvtEmitted = false;
     }

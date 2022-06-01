@@ -40,8 +40,14 @@ class DFlexUpdater {
 
   private infiniteTransformCount: number;
 
+  private elmInActiveArea: string | null;
+
+  private prevElmInActiveArea: string | null;
+
   /** Isolated form the threshold and predict is-out based on the controllers */
   protected isParentLocked: boolean;
+
+  static MAX_TRANSFORM_COUNT = 99 /** Infinite transform count */;
 
   constructor(draggable: IDraggableInteractive) {
     this.draggable = draggable;
@@ -59,17 +65,26 @@ class DFlexUpdater {
     this.draggedTransition = new PointNum(0, 0);
 
     this.isParentLocked = false;
-    this.infiniteTransformCount = 0;
-  }
 
-  resetTransformCount() {
-    if (this.infiniteTransformCount > 0) this.infiniteTransformCount = 0;
+    this.infiniteTransformCount = 0;
+    this.elmInActiveArea = null;
+    this.prevElmInActiveArea = null;
   }
 
   private throwOnInfiniteTransformation(id: string) {
-    if (this.infiniteTransformCount > 99) {
+    this.elmInActiveArea = id;
+
+    if (this.prevElmInActiveArea !== this.elmInActiveArea) {
+      this.infiniteTransformCount = 0;
+      this.prevElmInActiveArea = this.elmInActiveArea;
+    }
+
+    this.infiniteTransformCount += 1;
+
+    if (this.infiniteTransformCount > DFlexUpdater.MAX_TRANSFORM_COUNT) {
       throw new Error(
-        `Element ${id} is being transformed endlessly. This is causing infinite recursion affecting the element updater.`
+        `Element ${id} is being transformed endlessly. This is causing infinite recursion affecting the element updater.` +
+          `This is most likely caused by a wrong threshold calculations.`
       );
     }
   }

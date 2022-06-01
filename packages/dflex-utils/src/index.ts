@@ -26,6 +26,6 @@ export type {
 export { Scroll } from "./Scroll";
 export type { IScroll } from "./Scroll";
 
-export { combineKeys, dirtyAssignBiggestRect, invariant } from "./collections";
+export { combineKeys, dirtyAssignBiggestRect } from "./collections";
 
 export { canUseDOM, getSelection } from "./dom";
