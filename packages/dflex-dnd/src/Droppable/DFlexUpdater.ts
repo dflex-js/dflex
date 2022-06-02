@@ -282,7 +282,7 @@ class DFlexUpdater {
    */
   protected updateElement(id: string, isIncrease: boolean) {
     if (__DEV__) {
-      // DFLex doesn't have error msg transformer yet.
+      // DFLex doesn't have error msg transformer yet for production.
       throwOnInfiniteTransformation(id);
     }
 
