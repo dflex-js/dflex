@@ -10,6 +10,30 @@ import type { IDraggableInteractive } from "../Draggable";
 
 import store from "../DnDStore";
 
+const MAX_TRANSFORM_COUNT = 99; /** Infinite transform count */
+
+let infiniteTransformCount: number = 0;
+let elmInActiveArea: string | null = null;
+let prevElmInActiveArea: string | null = null;
+
+function throwOnInfiniteTransformation(id: string) {
+  elmInActiveArea = id;
+
+  if (prevElmInActiveArea !== elmInActiveArea) {
+    infiniteTransformCount = 0;
+    prevElmInActiveArea = elmInActiveArea;
+  }
+
+  infiniteTransformCount += 1;
+
+  if (infiniteTransformCount > MAX_TRANSFORM_COUNT) {
+    throw new Error(
+      `Element ${id} is being transformed endlessly. This is causing infinite recursion affecting the element updater.` +
+        `This is most likely caused by a wrong threshold calculations.`
+    );
+  }
+}
+
 function emitInteractiveEvent(
   type: InteractivityEvent["type"],
   element: INode
@@ -38,16 +62,8 @@ class DFlexUpdater {
 
   private draggedTransition: IPointNum;
 
-  private infiniteTransformCount: number;
-
-  private elmInActiveArea: string | null;
-
-  private prevElmInActiveArea: string | null;
-
   /** Isolated form the threshold and predict is-out based on the controllers */
   protected isParentLocked: boolean;
-
-  static MAX_TRANSFORM_COUNT = 99 /** Infinite transform count */;
 
   constructor(draggable: IDraggableInteractive) {
     this.draggable = draggable;
@@ -65,28 +81,6 @@ class DFlexUpdater {
     this.draggedTransition = new PointNum(0, 0);
 
     this.isParentLocked = false;
-
-    this.infiniteTransformCount = 0;
-    this.elmInActiveArea = null;
-    this.prevElmInActiveArea = null;
-  }
-
-  private throwOnInfiniteTransformation(id: string) {
-    this.elmInActiveArea = id;
-
-    if (this.prevElmInActiveArea !== this.elmInActiveArea) {
-      this.infiniteTransformCount = 0;
-      this.prevElmInActiveArea = this.elmInActiveArea;
-    }
-
-    this.infiniteTransformCount += 1;
-
-    if (this.infiniteTransformCount > DFlexUpdater.MAX_TRANSFORM_COUNT) {
-      throw new Error(
-        `Element ${id} is being transformed endlessly. This is causing infinite recursion affecting the element updater.` +
-          `This is most likely caused by a wrong threshold calculations.`
-      );
-    }
   }
 
   private setDistanceBtwPositions(
@@ -287,9 +281,10 @@ class DFlexUpdater {
    * invokes for each eligible element in the parent container.
    */
   protected updateElement(id: string, isIncrease: boolean) {
-    this.infiniteTransformCount += 1;
-
-    this.throwOnInfiniteTransformation(id);
+    if (__DEV__) {
+      // DFLex doesn't have error msg transformer yet.
+      throwOnInfiniteTransformation(id);
+    }
 
     const element = store.registry[id];
 
