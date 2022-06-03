@@ -15,7 +15,7 @@ import type {
   ElmTree,
   IDnDStore,
   InsertionELmMeta,
-  RegisterInput,
+  RegisterInputOpts,
 } from "./types";
 
 import type {
@@ -438,7 +438,7 @@ class DnDStoreImp extends Store implements IDnDStore {
     };
   }
 
-  register(element: RegisterInput) {
+  register(element: RegisterInputOpts) {
     const hasRef = !!element.ref;
 
     if (!hasRef && !element.id) {

@@ -3,6 +3,7 @@ export { default as DnD } from "./DnD";
 
 export type {
   DndOpts,
+  RegisterInputOpts,
   LayoutState,
   DraggedEvent,
   InteractivityEvent,

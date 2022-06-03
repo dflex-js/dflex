@@ -8,6 +8,7 @@ import {
   RestrictedContainerDiff,
   RestrictedSelf,
   TodoList,
+  TodoListWithReadonly,
   ExtendedList,
   ComponentBasedEvent,
   ContainerBasedEvent,
@@ -51,16 +52,7 @@ function App() {
             />
           }
         />
-        {/* <Route
-          path="/readonly"
-          element={
-            <ComponentBasedEvent
-              readonly={true}
-              isHorizontal={false}
-              isIncludeOneContainer={false}
-            />
-          }
-        /> */}
+        <Route path="/readonly" element={<TodoListWithReadonly />} />
         <Route
           path="/horizontal"
           element={

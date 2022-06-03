@@ -65,7 +65,7 @@ const TodoList = () => {
         <ul>
           {tasks.map(({ msg, id, style }) => (
             <DnDComponent
-              id={id}
+              registerInput={{ id }}
               key={id}
               style={style}
               opts={{

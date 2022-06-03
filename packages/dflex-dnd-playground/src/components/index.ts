@@ -8,6 +8,7 @@ export {
 } from "./restrictions";
 
 export { TodoList } from "./todo";
+export { TodoListWithReadonly } from "./readonly";
 
 export { default as UnRegisteredLists } from "./mixedRegisteredElements";
 
