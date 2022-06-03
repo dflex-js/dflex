@@ -252,7 +252,7 @@ class DnDStoreImp extends Store implements IDnDStore {
       const isHeadNotConnected = !this.registry[firstElemID].isConnected();
       let isNotConnected = isHeadNotConnected;
 
-      if (hasSiblings) {
+      if (hasSiblings && lastElemID.length > 0) {
         const isTailNotConnected = !this.registry[lastElemID!].isConnected();
         isNotConnected = isTailNotConnected || isHeadNotConnected;
       }
