@@ -8,7 +8,6 @@ import {
   RestrictedContainerDiff,
   RestrictedSelf,
   TodoList,
-  TodoListCase1,
   ExtendedList,
   ComponentBasedEvent,
   ContainerBasedEvent,
@@ -41,7 +40,6 @@ function App() {
         />
         <Route path="/restricted-self" element={<RestrictedSelf />} />
         <Route path="/todo" element={<TodoList />} />
-        <Route path="/todo-case-1" element={<TodoListCase1 />} />
         <Route path="/unregistered" element={<UnRegisteredLists />} />
         <Route path="/migration" element={<ListMigration />} />
         <Route

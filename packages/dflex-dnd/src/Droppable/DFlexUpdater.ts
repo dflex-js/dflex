@@ -49,10 +49,6 @@ function emitInteractiveEvent(
   store.emitEvent(evt);
 }
 
-/**
- * Calculates the distance between two elements and update the targeted element
- * accordingly.
- */
 class DFlexUpdater {
   protected draggable: IDraggableInteractive;
 

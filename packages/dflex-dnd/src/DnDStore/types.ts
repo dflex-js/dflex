@@ -19,10 +19,12 @@ export interface ElmTree {
 }
 
 interface RegisterInputEssential {
-  /** provide a depth if you want to drag the parent container  */
+  /** provide a depth if you want to drag the parent container.  */
   depth?: number;
-  /** Unique key to connect elements with the same parent together */
+  /** Unique key to connect elements with the same parent together. */
   parentID?: string;
+  /** True for elements that won't be transformed.  */
+  readonly?: boolean;
 }
 
 interface RegisterInputID {

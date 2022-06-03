@@ -37,18 +37,22 @@ class NodeCore extends Abstract implements ICore {
 
   hasToTransform!: boolean;
 
+  readonly: boolean;
+
   animatedFrame: number | null;
 
   private translateHistory?: ITransitionHistory[];
 
   constructor(eleWithPointer: INodeInput, opts: AbstractOpts) {
-    const { order, keys, depth, scrollX, scrollY, ...element } = eleWithPointer;
+    const { order, keys, depth, scrollX, scrollY, readonly, ...element } =
+      eleWithPointer;
 
     super(element, opts);
 
     this.order = order;
     this.keys = keys;
     this.depth = depth;
+    this.readonly = readonly;
 
     this.isVisible = this.isInitialized && !this.isPaused;
 

@@ -31,6 +31,7 @@ class DraggableStoreImp extends Store {
       isPaused: false,
       scrollX: 0,
       scrollY: 0,
+      readonly: false,
       ...element,
     });
   }
