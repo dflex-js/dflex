@@ -56,18 +56,19 @@ class Abstract implements IAbstract {
     this.ref = null;
 
     if (!incomingRef) {
-      const ref = document.getElementById(this.id);
+      this.ref = document.getElementById(this.id);
 
-      if (!ref) {
-        throw new Error(`DFlex: Element with ID: ${this.id} is not found.`);
+      if (!this.ref) {
+        throw new Error(`Attach: Element with ID: ${this.id} is not found.`);
       }
     } else if (incomingRef.nodeType !== Node.ELEMENT_NODE) {
       throw new Error(
-        `DFlex: Invalid HTMLElement: ${incomingRef} is passed to registry.`
+        `Attach: Invalid HTMLElement: ${incomingRef} is passed to registry.`
       );
+    } else {
+      this.ref = incomingRef;
     }
 
-    this.ref = incomingRef;
     this.isInitialized = true;
   }
 
