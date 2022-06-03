@@ -54,14 +54,7 @@ const plugins = (isProd, isMinify) => [
     delimiters: ["", ""],
     preventAssignment: true,
   }),
-  isMinify &&
-    terser({
-      mangle: {
-        properties: true,
-        keep_classnames: false,
-        toplevel: true,
-      },
-    }),
+  isMinify && terser(),
 ];
 
 /**
