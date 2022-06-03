@@ -107,6 +107,8 @@ export interface ICore extends IAbstract {
   readonly keys: Keys;
   readonly depth: number;
 
+  readonly readonly: boolean;
+
   resume(scrollX: number, scrollY: number): void;
   changeVisibility(isVisible: boolean): void;
   setPosition(

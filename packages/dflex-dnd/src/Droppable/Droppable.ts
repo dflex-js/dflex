@@ -23,11 +23,11 @@ function emitSiblingsEvent(
 
 export function isIDEligible(elmID: string, draggedID: string) {
   return (
-    elmID &&
     elmID.length > 0 &&
     elmID !== draggedID &&
     store.registry[elmID] &&
-    store.registry[elmID].ref !== null
+    store.registry[elmID].ref !== null &&
+    store.registry[elmID].readonly !== true
   );
 }
 
