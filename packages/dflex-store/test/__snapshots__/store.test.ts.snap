@@ -33,6 +33,7 @@ CoreUtils {
     "parent": 0,
     "self": 0,
   },
+  "readonly": undefined,
   "ref": <div
     data-index="0"
   />,
@@ -77,6 +78,7 @@ Object {
       "parent": 0,
       "self": 0,
     },
+    "readonly": undefined,
     "ref": <div
       data-index="0"
     />,
@@ -117,6 +119,7 @@ Object {
       "parent": 0,
       "self": 1,
     },
+    "readonly": undefined,
     "ref": <div
       data-index="0"
     />,
@@ -157,6 +160,7 @@ Object {
       "parent": 0,
       "self": 2,
     },
+    "readonly": undefined,
     "ref": <div
       data-index="0"
     />,
@@ -197,6 +201,7 @@ Object {
       "parent": 0,
       "self": 0,
     },
+    "readonly": undefined,
     "ref": <div
       data-index="0"
     />,
@@ -242,6 +247,7 @@ Object {
       "parent": 0,
       "self": 0,
     },
+    "readonly": undefined,
     "ref": <div
       data-index="0"
     />,
@@ -282,6 +288,7 @@ Object {
       "parent": 0,
       "self": 1,
     },
+    "readonly": undefined,
     "ref": <div
       data-index="0"
     />,
@@ -322,6 +329,7 @@ Object {
       "parent": 0,
       "self": 2,
     },
+    "readonly": undefined,
     "ref": <div
       data-index="0"
     />,
@@ -362,6 +370,7 @@ Object {
       "parent": 0,
       "self": 0,
     },
+    "readonly": undefined,
     "ref": <div
       data-index="0"
     />,
