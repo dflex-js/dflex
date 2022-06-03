@@ -73,11 +73,12 @@ export interface Pointer {
 }
 
 export interface INodeInput extends AbstractInput {
-  order: Order;
-  keys: Keys;
-  depth: number;
-  scrollX: number;
-  scrollY: number;
+  readonly order: Order;
+  readonly keys: Keys;
+  readonly depth: number;
+  readonly readonly: boolean;
+  readonly scrollX: number;
+  readonly scrollY: number;
 }
 
 export type ITransitionHistory = {
@@ -105,6 +106,8 @@ export interface ICore extends IAbstract {
   readonly order: Order;
   readonly keys: Keys;
   readonly depth: number;
+
+  readonly readonly: boolean;
 
   resume(scrollX: number, scrollY: number): void;
   changeVisibility(isVisible: boolean): void;

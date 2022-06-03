@@ -8,9 +8,9 @@ import type {
   SiblingsEvent,
   LayoutStateEvent,
 } from "@dflex/dnd";
-import s from "../../Demo.module.css";
+import s from "../Demo.module.css";
 
-import DnDComponent from "../../DnDComponent";
+import DnDComponent from "../DnDComponent";
 
 const TodoList = () => {
   const tasks = [
@@ -65,7 +65,7 @@ const TodoList = () => {
         <ul>
           {tasks.map(({ msg, id, style }) => (
             <DnDComponent
-              id={id}
+              registerInput={{ id }}
               key={id}
               style={style}
               opts={{

@@ -15,7 +15,7 @@ import type {
   ElmTree,
   IDnDStore,
   InsertionELmMeta,
-  RegisterInput,
+  RegisterInputOpts,
 } from "./types";
 
 import type {
@@ -29,10 +29,9 @@ import type {
 import Droppable from "../Droppable/Droppable";
 
 function throwElementIsNotConnected(id: string) {
-  // eslint-disable-next-line no-console
-  console.error(
-    `DFlex: elements in the branch are not valid. Trying to validate element with id:${id} but failed.
-Did you forget to call store.unregister(${id}) or add parenID when register the element?`
+  throw new Error(
+    `Elements in the branch are not valid. Trying to validate element with id:${id} but failed.\n` +
+      `Did you forget to call store.unregister(${id}) or add parenID when register the element?`
   );
 }
 
@@ -253,7 +252,7 @@ class DnDStoreImp extends Store implements IDnDStore {
       const isHeadNotConnected = !this.registry[firstElemID].isConnected();
       let isNotConnected = isHeadNotConnected;
 
-      if (hasSiblings) {
+      if (hasSiblings && lastElemID.length > 0) {
         const isTailNotConnected = !this.registry[lastElemID!].isConnected();
         isNotConnected = isTailNotConnected || isHeadNotConnected;
       }
@@ -439,7 +438,7 @@ class DnDStoreImp extends Store implements IDnDStore {
     };
   }
 
-  register(element: RegisterInput) {
+  register(element: RegisterInputOpts) {
     const hasRef = !!element.ref;
 
     if (!hasRef && !element.id) {
@@ -490,6 +489,7 @@ class DnDStoreImp extends Store implements IDnDStore {
       depth: element.depth || 0,
       ref: element.ref,
       isInitialized: hasRef,
+      readonly: element.readonly || false,
       isPaused: true,
       scrollX: 0,
       scrollY: 0,
@@ -521,7 +521,7 @@ class DnDStoreImp extends Store implements IDnDStore {
   getBranchesByDepth(dp: number) {
     if (__DEV__) {
       if (!Array.isArray(this.DOMGen.branchesByDepth[dp])) {
-        throw new Error(`DFlex: Depth ${dp} is not registered.`);
+        throw new Error(`Depth ${dp} is not registered.`);
       }
     }
     return this.DOMGen.branchesByDepth[dp] || [];

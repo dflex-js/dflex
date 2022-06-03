@@ -19,7 +19,7 @@ const ExtendedList = () => {
         <ul>
           {tasks.map(({ task, id, key }) => (
             <DnDComponent
-              id={id}
+              registerInput={{ id }}
               key={key}
               // opts={{ scroll: { enable: false } }}
             >

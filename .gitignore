@@ -1,16 +1,19 @@
 coverage
 node_modules
 *.log
-.cache
-.changelog
-.docusaurus
 .DS_Store
+
+# build
 dist
 types
+
+# TS composed
 tsconfig.tsbuildinfo
 tsconfig.build.tsbuildinfo
-cypress/screenshots
-cypress/videos
+
+# Cypress
+screenshots
+videos
 
 # next.js
 .next/

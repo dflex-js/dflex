@@ -18,7 +18,7 @@ const EssentialList = () => {
       <div className={s.extended}>
         <ul>
           {tasks.map(({ task, id, key }) => (
-            <DnDComponent id={id} key={key}>
+            <DnDComponent registerInput={{ id }} key={key}>
               {task}
             </DnDComponent>
           ))}

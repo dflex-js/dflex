@@ -10,28 +10,32 @@ let dndEvent: DnD | null;
 
 interface Props {
   Component?: string | React.JSXElementConstructor<any>;
-  id: string;
   style?: { [key: string]: string };
   className?: string;
-  depth?: number;
   children: React.ReactNode;
+  registerInput: {
+    id: string;
+    depth?: number;
+    readonly?: boolean;
+  };
   opts?: DndOpts;
 }
 
 export const TodoItem = ({
   Component = "li",
-  id,
+  registerInput,
   style,
   className,
   children,
   opts,
-  depth = 0,
 }: Props) => {
   const taskRef = React.useRef() as React.MutableRefObject<HTMLLIElement>;
 
+  const { depth, readonly, id } = registerInput;
+
   React.useEffect(() => {
     if (taskRef.current) {
-      store.register({ id, ref: taskRef.current!, depth });
+      store.register({ id, depth, readonly });
     }
 
     return () => {

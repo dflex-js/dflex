@@ -6,7 +6,7 @@ import type { DraggedEvent, SiblingsEvent } from "../types";
 import store from "../DnDStore";
 
 import type { IDraggableInteractive } from "../Draggable";
-import DistanceCalculator from "./DistanceCalculator";
+import DFlexUpdater from "./DFlexUpdater";
 
 function emitSiblingsEvent(
   type: SiblingsEvent["type"],
@@ -27,14 +27,15 @@ export function isIDEligible(elmID: string, draggedID: string) {
     elmID.length > 0 &&
     elmID !== draggedID &&
     store.registry[elmID] &&
-    store.registry[elmID].ref !== null
+    store.registry[elmID].ref !== null &&
+    store.registry[elmID].readonly !== true
   );
 }
 
 /**
  * Class includes all transformation methods related to droppable.
  */
-class Droppable extends DistanceCalculator {
+class Droppable extends DFlexUpdater {
   private scrollAnimatedFrame: number | null;
 
   private readonly initialScroll: IPointNum;

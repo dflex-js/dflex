@@ -33,6 +33,7 @@ export type RegisterInput = {
   parentID?: string;
   id: string;
   ref?: HTMLElement;
+  readonly: boolean;
   depth: number;
   isInitialized: boolean;
   isPaused: boolean;

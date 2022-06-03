@@ -34,6 +34,7 @@ Object {
       "parent": 0,
       "self": 0,
     },
+    "readonly": false,
     "ref": <div
       data-index="0"
     />,

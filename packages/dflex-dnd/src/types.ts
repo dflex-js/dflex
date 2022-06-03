@@ -140,3 +140,5 @@ export interface DndOpts {
   scroll?: Partial<ScrollOptPartialThreshold>;
   events?: Partial<Events>;
 }
+
+export type { RegisterInputOpts } from "./DnDStore/types";

@@ -1,5 +1,5 @@
 import type { IAbstract } from "@dflex/core-instance";
-import { PointNum } from "@dflex/utils";
+import { PointNum, getSelection } from "@dflex/utils";
 import type { IPointNum, IPointAxes } from "@dflex/utils";
 
 import type { IAbstractDraggable, DraggedStyle } from "./types";
@@ -90,8 +90,10 @@ class AbstractDraggable<T extends IAbstract> implements IAbstractDraggable<T> {
     if (isActive) {
       this.changeStyle(AbstractDraggable.draggedStyle, true);
 
-      if (getSelection()) {
-        getSelection()!.removeAllRanges();
+      const domSelection = getSelection();
+
+      if (domSelection) {
+        domSelection.removeAllRanges();
       }
 
       this.draggedElm.setAttribute("dragged", "true");
