@@ -29,29 +29,27 @@ const NestedList = () => {
       <div className={`${s.todo} ${s.nested}`}>
         <DnDComponent
           Component="div"
-          id={tasksWork.id}
-          depth={1}
+          registerInput={{ id: tasksWork.id, depth: tasksWork.depth }}
           className={s.todo}
         >
           <p>{tasksWork.category}</p>
           <ul>
-            {tasksWork.todo.map(({ task, id }) => (
-              <DnDComponent id={id} key={id}>
+            {tasksWork.todo.map(({ task, id, depth }) => (
+              <DnDComponent registerInput={{ id, depth }} key={id}>
                 {task}
               </DnDComponent>
             ))}
           </ul>
         </DnDComponent>
         <DnDComponent
+          registerInput={{ id: taskLife.id, depth: taskLife.depth }}
           Component="div"
-          id={taskLife.id}
-          depth={1}
           className={s.todo}
         >
           <p>{taskLife.category}</p>
           <ul>
-            {taskLife.todo.map(({ task, id }) => (
-              <DnDComponent id={id} key={id}>
+            {taskLife.todo.map(({ task, id, depth }) => (
+              <DnDComponent registerInput={{ id, depth }} key={id}>
                 {task}
               </DnDComponent>
             ))}

@@ -7,8 +7,7 @@ export {
   RestrictedContainerDiff,
 } from "./restrictions";
 
-export { TodoList } from "./todo";
-export { TodoListWithReadonly } from "./readonly";
+export { TodoList, TodoListWithReadonly } from "./todo";
 
 export { default as UnRegisteredLists } from "./mixedRegisteredElements";
 

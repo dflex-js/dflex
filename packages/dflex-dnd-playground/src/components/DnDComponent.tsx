@@ -39,7 +39,7 @@ export const TodoItem = ({
     }
 
     return () => {
-      store.unregister(id!);
+      store.unregister(id);
     };
   }, [taskRef.current]);
 

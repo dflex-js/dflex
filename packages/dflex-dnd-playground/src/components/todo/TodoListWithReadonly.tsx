@@ -17,25 +17,25 @@ const TodoListWithReadonly = () => {
     {
       readonly: true,
       id: "readonly-1",
-      msg: "Read",
+      msg: "Readonly task 1",
       style: { height: "3rem" },
     },
     {
       readonly: false,
-      id: "org",
-      msg: "Organize weekly meetup",
+      id: "interactive-1",
+      msg: "Interactive task 2",
       style: { height: "6.5rem" },
     },
     {
-      readonly: true,
-      id: "readonly-2",
-      msg: "Continue working on the project",
+      readonly: false,
+      id: "interactive-2",
+      msg: "Interactive task 2",
       style: { height: "5rem" },
     },
     {
       readonly: true,
       id: "readonly-3",
-      msg: "Hit the gym",
+      msg: "Readonly task 3",
       style: { height: "4.5rem" },
     },
   ];

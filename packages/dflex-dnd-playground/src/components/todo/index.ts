@@ -1,2 +1,2 @@
-/* eslint-disable import/prefer-default-export */
-export { default as TodoList } from "./Todo";
+export { default as TodoList } from "./SimpleTodo";
+export { default as TodoListWithReadonly } from "./TodoListWithReadonly";
