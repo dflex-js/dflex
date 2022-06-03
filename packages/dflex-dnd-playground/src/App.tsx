@@ -51,6 +51,16 @@ function App() {
             />
           }
         />
+        {/* <Route
+          path="/readonly"
+          element={
+            <ComponentBasedEvent
+              readonly={true}
+              isHorizontal={false}
+              isIncludeOneContainer={false}
+            />
+          }
+        /> */}
         <Route
           path="/horizontal"
           element={
