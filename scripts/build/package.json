@@ -3,6 +3,7 @@
   "version": "1.0.1",
   "main": "index.js",
   "license": "MIT",
+  "private": true,
   "type": "module",
   "dependencies": {
     "@rollup/plugin-alias": "^3.1.9",
