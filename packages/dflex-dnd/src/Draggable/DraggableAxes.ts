@@ -6,6 +6,7 @@ import {
   PointBool,
   Migration,
   combineKeys,
+  getParentElm,
 } from "@dflex/utils";
 import type {
   ThresholdInterface,
@@ -120,6 +121,18 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
         const { length } = store.getElmBranchByKey(key);
         store.containers[key].originLength = length;
       }
+
+      if (!store.containers[key].ref) {
+        setTimeout(() => {
+          const childDOM = store.registry[store.getElmBranchByKey(key)[0]].ref!;
+
+          getParentElm(childDOM, (parent) => {
+            store.containers[key].ref = parent;
+
+            return true;
+          });
+        }, 0);
+      }
     });
 
     this.isMovingAwayFrom = new PointBool(false, false);
@@ -155,7 +168,7 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
         opts.restrictionsStatus.isSelfRestricted);
   }
 
-  appendDraggedToContainerDimensions(isAppend: boolean) {
+  protected appendDraggedToContainerDimensions(isAppend: boolean) {
     const {
       depth,
       offset: { height },

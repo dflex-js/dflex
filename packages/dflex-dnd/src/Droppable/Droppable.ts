@@ -28,7 +28,7 @@ export function isIDEligible(elmID: string, draggedID: string) {
     elmID !== draggedID &&
     store.registry[elmID] &&
     store.registry[elmID].ref !== null &&
-    store.registry[elmID].readonly !== true
+    !store.registry[elmID].readonly
   );
 }
 
