@@ -12,8 +12,8 @@
   "scripts": {
     "start": "cross-env NODE_ENV=development pnpm -F dflex-dnd-playground dev",
     "dev-cypress": "cross-env NODE_ENV=development && pnpm start-server-and-test 'pnpm run start' http-get://localhost:3001 'cypress open --env extended=true --project packages/dflex-dnd-playground'",
-    "cy:run:vertical:chrome": "cypress run --env extended=true --project packages/dflex-dnd-playground --headless --spec 'packages/dflex-dnd-playground/cypress/integration/same-container-vertical/**/*.spec.ts' --config-file cypress.json --browser chrome",
-    "cy:run:multi:chrome": "cypress run --project packages/dflex-dnd-playground --headless --spec 'packages/dflex-dnd-playground/cypress/integration/multiple-containers/**/*.spec.ts' --config-file cypress.json --browser chrome",
+    "cy:run:vertical:chrome": "cypress run --env extended=true --project packages/dflex-dnd-playground --headless --spec 'packages/dflex-dnd-playground/cypress/integration/same-container-vertical/**/*.spec.ts' --config-file cypress.config.ts --browser chrome",
+    "cy:run:multi:chrome": "cypress run --project packages/dflex-dnd-playground --headless --spec 'packages/dflex-dnd-playground/cypress/integration/multiple-containers/**/*.spec.ts' --config-file cypress.config.ts --browser chrome",
     "test-e2e-vertical:chrome": "start-server-and-test 'pnpm -F dflex-dnd-playground dev' http-get://localhost:3001 'pnpm cy:run:vertical:chrome'",
     "test-e2e-multi:chrome": "start-server-and-test 'pnpm -F dflex-dnd-playground preview' http-get://localhost:3001 'pnpm cy:run:multi:chrome'",
     "test-e2e-all": "pnpm build && pnpm -F dflex-dnd-playground build:app && start-server-and-test 'pnpm -F dflex-dnd-playground preview' http-get://localhost:3001 'cypress run --env extended=true --project packages/dflex-dnd-playground'",
