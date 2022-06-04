@@ -29,5 +29,5 @@
     "esModuleInterop": true
   },
   "include": ["packages", "dflex-env.d.ts"],
-  "exclude": ["node_modules", "dist", "**/*.test*", "**/*.spec*"]
+  "exclude": ["node_modules", "dist", "**/*.test*", "**/*.cy*"]
 }
