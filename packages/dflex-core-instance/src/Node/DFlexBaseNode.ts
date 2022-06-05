@@ -2,15 +2,15 @@ import { PointNum } from "@dflex/utils";
 import type { IPointNum } from "@dflex/utils";
 
 import type {
-  IAbstract,
-  AbstractInput,
-  AbstractOpts,
+  IDFlexBaseNode,
+  DFlexBaseNodeInput,
+  DFlexBaseNodeOpts,
   AllowedAttributes,
   AllowedDataset,
   AttributesIndicators,
 } from "./types";
 
-class DFlexBaseNode implements IAbstract {
+class DFlexBaseNode implements IDFlexBaseNode {
   ref!: HTMLElement | null;
 
   id: string;
@@ -26,7 +26,7 @@ class DFlexBaseNode implements IAbstract {
     [key in AttributesIndicators]: boolean;
   };
 
-  constructor({ ref, id }: AbstractInput, opts: AbstractOpts) {
+  constructor({ ref, id }: DFlexBaseNodeInput, opts: DFlexBaseNodeOpts) {
     this.id = id;
 
     if (opts.isInitialized) {

@@ -7,12 +7,12 @@ import type {
   Axis,
 } from "@dflex/utils";
 
-export interface AbstractOpts {
+export interface DFlexBaseNodeOpts {
   isInitialized: boolean;
   isPaused: boolean;
 }
 
-export type AbstractInput = {
+export type DFlexBaseNodeInput = {
   id: string;
   ref?: HTMLElement;
 };
@@ -30,7 +30,7 @@ export type AttributesIndicators =
   | Exclude<AllowedDataset, "index">
   | AllowedAttributes;
 
-export interface IAbstract {
+export interface IDFlexBaseNode {
   readonly isInitialized: boolean;
   isPaused: boolean;
   readonly ref: HTMLElement | null;
@@ -72,7 +72,7 @@ export interface Pointer {
   order: Order;
 }
 
-export interface INodeInput extends AbstractInput {
+export interface INodeInput extends DFlexBaseNodeInput {
   readonly order: Order;
   readonly keys: Keys;
   readonly depth: number;
@@ -87,7 +87,7 @@ export type ITransitionHistory = {
   translate: IPointAxes;
 };
 
-export interface ICore extends IAbstract {
+export interface IDFlexCoreNode extends IDFlexBaseNode {
   /** Initial read-only element offset */
   readonly offset: RectDimensions;
 
@@ -124,7 +124,7 @@ export interface ICore extends IAbstract {
   rollBack(operationID: string, isForceTransform: boolean): void;
 }
 
-export interface IDFlexNode extends ICore {
+export interface IDFlexNode extends IDFlexCoreNode {
   isConnected(): boolean;
   isPositionedUnder(elmY: number): boolean;
   isPositionedLeft(elmX: number): boolean;

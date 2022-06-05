@@ -1,4 +1,4 @@
-import type { IAbstract } from "@dflex/core-instance";
+import type { INodeAbstract } from "@dflex/core-instance";
 import type { IPointNum } from "@dflex/utils";
 
 export type DraggedStyle = {
@@ -27,7 +27,7 @@ export type RegisterInput =
   | RegisterInputID
   | RegisterInputRef;
 
-export interface IAbstractDraggable<T extends IAbstract> {
+export interface IAbstractDraggable<T extends INodeAbstract> {
   draggedElm: T;
 
   /**

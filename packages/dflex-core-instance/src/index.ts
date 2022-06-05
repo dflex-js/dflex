@@ -1,5 +1,5 @@
 export type {
-  INodeAbstract as IAbstract,
+  INodeAbstract,
   INodeInput,
   ITransitionHistory as TransitionHistory,
   IDFlexNode,
