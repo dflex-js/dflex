@@ -4,14 +4,14 @@ import type {
   ITracker,
   IPointNum,
 } from "@dflex/utils";
-import type { IContainer, INode } from "@dflex/core-instance";
+import type { IContainer, IDFlexNode } from "@dflex/core-instance";
 import type { RegisterInputMeta } from "@dflex/store";
 
 import type { DraggedEvent, LayoutState } from "../types";
 
 export interface ElmTree {
-  element: INode;
-  parent: INode | null;
+  element: IDFlexNode;
+  parent: IDFlexNode | null;
   branches: {
     siblings: string[];
     parents: string[];
@@ -58,8 +58,8 @@ export type InsertionELmMeta = {
   position: IPointNum;
   isEmpty: boolean;
   isOrphan: boolean;
-  elm: INode | null;
-  prevElm: INode | null;
+  elm: IDFlexNode | null;
+  prevElm: IDFlexNode | null;
 };
 
 export interface IDnDStore {

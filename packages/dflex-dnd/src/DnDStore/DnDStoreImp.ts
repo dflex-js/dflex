@@ -8,7 +8,7 @@ import type {
   IScroll,
 } from "@dflex/utils";
 
-import { Container, INode } from "@dflex/core-instance";
+import { Container, IDFlexNode } from "@dflex/core-instance";
 import type { IContainer } from "@dflex/core-instance";
 
 import type {
@@ -379,8 +379,8 @@ class DnDStoreImp extends Store implements IDnDStore {
 
     let isRestoredLastPosition = false;
 
-    let elm: null | INode = null;
-    let prevElm: null | INode = null;
+    let elm: null | IDFlexNode = null;
+    let prevElm: null | IDFlexNode = null;
 
     if (lastElmPosition) {
       // If empty then restore it.

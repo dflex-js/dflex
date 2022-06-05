@@ -1,13 +1,13 @@
 import type { Axis, IPointAxes } from "@dflex/utils";
 import DFlexCoreNode from "./DFlexCoreNode";
-import type { INode } from "./types";
+import type { IDFlexNode } from "./types";
 
-class DFlexNode extends DFlexCoreNode implements INode {
+class DFlexNode extends DFlexCoreNode implements IDFlexNode {
   static getRectByAxis(axis: Axis) {
     return axis === "x" ? "width" : "height";
   }
 
-  static getDistance(currentPosition: IPointAxes, elm: INode, axis: Axis) {
+  static getDistance(currentPosition: IPointAxes, elm: IDFlexNode, axis: Axis) {
     let diff = currentPosition[axis] - elm.currentPosition[axis];
 
     diff += elm.translate[axis];
@@ -15,7 +15,11 @@ class DFlexNode extends DFlexCoreNode implements INode {
     return diff;
   }
 
-  static getDisplacement(currentPosition: IPointAxes, elm: INode, axis: Axis) {
+  static getDisplacement(
+    currentPosition: IPointAxes,
+    elm: IDFlexNode,
+    axis: Axis
+  ) {
     const diff = axis === "x" ? elm.getRectRight() : elm.getRectBottom();
 
     return currentPosition[axis] - diff;

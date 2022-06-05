@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
-import { Node } from "@dflex/core-instance";
-import type { INode } from "@dflex/core-instance";
+import { DFlexNode } from "@dflex/core-instance";
+import type { IDFlexNode } from "@dflex/core-instance";
 
 import { Direction, IPointAxes, PointNum } from "@dflex/utils";
 import type { IPointNum, Axis } from "@dflex/utils";
@@ -36,7 +36,7 @@ function throwOnInfiniteTransformation(id: string) {
 
 function emitInteractiveEvent(
   type: InteractivityEvent["type"],
-  element: INode
+  element: IDFlexNode
 ) {
   const evt: InteractivityEvent = {
     id: element.id,
@@ -80,7 +80,7 @@ class DFlexUpdater {
   }
 
   private setDistanceBtwPositions(
-    element: INode,
+    element: IDFlexNode,
     axis: Axis,
     elmDirection: Direction
   ) {
@@ -105,7 +105,7 @@ class DFlexUpdater {
     }
   }
 
-  private updateDraggable(element: INode, elmDirection: Direction) {
+  private updateDraggable(element: IDFlexNode, elmDirection: Direction) {
     const { currentPosition, grid } = element;
 
     this.draggable.occupiedPosition.setAxes(
@@ -123,7 +123,7 @@ class DFlexUpdater {
   }
 
   private updateIndicators(
-    element: INode,
+    element: IDFlexNode,
     axis: Axis,
     elmDirection: Direction
   ) {
@@ -149,8 +149,12 @@ class DFlexUpdater {
     });
   }
 
-  private addDraggedOffsetToElm(position: IPointAxes, elm: INode, axis: Axis) {
-    const rectType = Node.getRectByAxis(axis);
+  private addDraggedOffsetToElm(
+    position: IPointAxes,
+    elm: IDFlexNode,
+    axis: Axis
+  ) {
+    const rectType = DFlexNode.getRectByAxis(axis);
 
     const { draggedElm } = this.draggable;
 
@@ -180,8 +184,8 @@ class DFlexUpdater {
     // Getting diff with `currentPosition` includes the element transition
     // as well.
     const composedTranslate = {
-      x: Node.getDistance(position, draggedElm, "x"),
-      y: Node.getDistance(position, draggedElm, "y"),
+      x: DFlexNode.getDistance(position, draggedElm, "x"),
+      y: DFlexNode.getDistance(position, draggedElm, "y"),
     };
 
     const composedGrid = new PointNum(1, 1);
@@ -204,7 +208,7 @@ class DFlexUpdater {
 
         this.addDraggedOffsetToElm(composedTranslate, elm!, axis);
         composedTranslate[axis] += !isOrphan
-          ? Node.getDisplacement(position, prevElm!, axis)
+          ? DFlexNode.getDisplacement(position, prevElm!, axis)
           : typeof mt === "number"
           ? mt
           : typeof mb === "number"
@@ -258,9 +262,9 @@ class DFlexUpdater {
 
     // Give the priority to the destination first then check the origin.
     const marginBottom = isRestoredLastPosition
-      ? Node.getDisplacement(position, elm!, axis)
+      ? DFlexNode.getDisplacement(position, elm!, axis)
       : !isOrphan
-      ? Node.getDisplacement(position, prevElm!, axis)
+      ? DFlexNode.getDisplacement(position, prevElm!, axis)
       : typeof mt === "number"
       ? mt
       : typeof mb === "number"

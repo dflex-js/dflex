@@ -16,7 +16,7 @@ import type {
   IPointAxes,
 } from "@dflex/utils";
 
-import { Container, INode } from "@dflex/core-instance";
+import { Container, IDFlexNode } from "@dflex/core-instance";
 
 import store from "../DnDStore";
 
@@ -29,7 +29,10 @@ import type {
   RestrictionsStatus,
 } from "../types";
 
-class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
+class DraggableAxes
+  extends AbstractDraggable<IDFlexNode>
+  implements IDraggableAxes
+{
   positionPlaceholder: IPointNum;
 
   gridPlaceholder: IPointNum;
