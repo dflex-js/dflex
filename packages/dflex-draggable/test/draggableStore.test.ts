@@ -1,11 +1,8 @@
 import { store } from "../src";
 
-const ref = document.createElement("div");
-
 const elm0D0 = {
   id: "id-0",
   depth: 0,
-  ref,
 };
 
 describe("Draggable Store", () => {

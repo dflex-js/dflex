@@ -12,11 +12,6 @@ export interface DFlexBaseNodeOpts {
   isPaused: boolean;
 }
 
-export type DFlexBaseNodeInput = {
-  id: string;
-  ref?: HTMLElement;
-};
-
 export type AllowedDataset =
   | "gridX"
   | "gridY"
@@ -36,7 +31,7 @@ export interface IDFlexBaseNode {
   readonly ref: HTMLElement | null;
   readonly id: string;
   readonly translate: IPointNum;
-  attach(ref: HTMLElement | null): void;
+  attach(): void;
   detach(): void;
   initTranslate(): void;
   transform(x: number, y: number): void;
@@ -72,7 +67,8 @@ export interface Pointer {
   order: Order;
 }
 
-export interface INodeInput extends DFlexBaseNodeInput {
+export interface DFlexBaseNodeInput {
+  readonly id: string;
   readonly order: Order;
   readonly keys: Keys;
   readonly depth: number;

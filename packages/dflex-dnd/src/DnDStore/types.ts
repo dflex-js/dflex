@@ -5,8 +5,8 @@ import type {
   IPointNum,
 } from "@dflex/utils";
 import type { IDFlexContainer, IDFlexNode } from "@dflex/core-instance";
-import type { RegisterInputMeta } from "@dflex/store";
 
+import type { RegisterInputOpts } from "@dflex/store";
 import type { DraggedEvent, LayoutState } from "../types";
 
 export interface ElmTree {
@@ -17,29 +17,6 @@ export interface ElmTree {
     parents: string[];
   };
 }
-
-export type RegisterInputOpts =
-  | {
-      /** provide a depth if you want to drag the parent container.  */
-      depth?: number;
-      /** Unique key to connect elements with the same parent together. */
-      parentID?: string;
-      /** True for elements that won't be transformed.  */
-      readonly?: boolean;
-    } & (
-      | {
-          id: string;
-          ref: HTMLElement;
-        }
-      | {
-          id: string;
-          ref?: never;
-        }
-      | {
-          id?: never;
-          ref: HTMLElement;
-        }
-    );
 
 export interface ScrollThreshold {
   maxX: number;
@@ -79,7 +56,7 @@ export interface IDnDStore {
   getInsertionELmMeta(insertAt: number, SK: string): InsertionELmMeta;
   onStateChange(state: LayoutState): void;
   emitEvent(event: DraggedEvent): void;
-  register(element: RegisterInputMeta, x?: boolean): void;
+  register(element: RegisterInputOpts): void;
   getBranchesByDepth(dp: number): string[];
   getInitialELmRectById(id: string): RectDimensions | undefined;
   getELmTranslateById(id: string): Translate;

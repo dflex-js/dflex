@@ -3,7 +3,7 @@ import Generator from "@dflex/dom-gen";
 import { DFlexNode } from "@dflex/core-instance";
 import type { IDFlexNode, INodeInput } from "@dflex/core-instance";
 
-import type { RegisterInput } from "./types";
+import type { RegisterInputSuper } from "./types";
 
 class Store {
   registry: {
@@ -12,18 +12,18 @@ class Store {
 
   DOMGen: Generator;
 
-  lastKeyIdentifier: string | null;
+  private _lastKeyIdentifier: string | null;
 
   constructor() {
-    this.lastKeyIdentifier = null;
+    this._lastKeyIdentifier = null;
 
     this.registry = {};
 
     this.DOMGen = new Generator();
   }
 
-  private submitElementToRegistry(element: RegisterInput) {
-    const { id, depth, isPaused, isInitialized, ...rest } = element;
+  private _submitElementToRegistry(element: RegisterInputSuper) {
+    const { id, depth, isPaused, isInitialized, readonly, ...rest } = element;
 
     const { order, keys } = this.DOMGen.register(id, depth);
 
@@ -32,6 +32,7 @@ class Store {
       order,
       keys,
       depth,
+      readonly: !!readonly,
       ...rest,
     };
 
@@ -41,20 +42,20 @@ class Store {
     });
   }
 
-  register(element: RegisterInput) {
+  register(element: RegisterInputSuper) {
     /**
      * Using parentID, because it's impossible to know if this element belongs
      * to the same branch or not.
      */
     if (element.parentID) {
       // This is the first element in the branch then.
-      if (!this.lastKeyIdentifier) {
-        this.lastKeyIdentifier = element.parentID;
+      if (!this._lastKeyIdentifier) {
+        this._lastKeyIdentifier = element.parentID;
         // Change means new branch.
-      } else if (element.parentID !== this.lastKeyIdentifier) {
+      } else if (element.parentID !== this._lastKeyIdentifier) {
         const { id, depth, ...rest } = element;
         // Create a fake parent node to close the branch.
-        this.submitElementToRegistry({
+        this._submitElementToRegistry({
           id: element.parentID,
           depth: depth + 1,
           ...rest,
@@ -62,7 +63,7 @@ class Store {
       }
     }
 
-    this.submitElementToRegistry(element);
+    this._submitElementToRegistry(element);
   }
 
   /**

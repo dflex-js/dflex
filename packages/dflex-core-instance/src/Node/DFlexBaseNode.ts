@@ -3,7 +3,6 @@ import type { IPointNum } from "@dflex/utils";
 
 import type {
   IDFlexBaseNode,
-  DFlexBaseNodeInput,
   DFlexBaseNodeOpts,
   AllowedAttributes,
   AllowedDataset,
@@ -26,11 +25,11 @@ class DFlexBaseNode implements IDFlexBaseNode {
     [key in AttributesIndicators]: boolean;
   };
 
-  constructor({ ref, id }: DFlexBaseNodeInput, opts: DFlexBaseNodeOpts) {
+  constructor(id: string, opts: DFlexBaseNodeOpts) {
     this.id = id;
 
     if (opts.isInitialized) {
-      this.attach(ref || null);
+      this.attach();
 
       this.isPaused = opts.isPaused;
 
@@ -48,25 +47,20 @@ class DFlexBaseNode implements IDFlexBaseNode {
 
   /**
    * Attach element DOM node to the instance.
-   *
-   * @param incomingRef
    */
-  attach(incomingRef: HTMLElement | null) {
-    // Cleanup.
-    this.ref = null;
+  attach() {
+    this.ref = document.getElementById(this.id);
 
-    if (!incomingRef) {
-      this.ref = document.getElementById(this.id);
-
+    if (__DEV__) {
       if (!this.ref) {
         throw new Error(`Attach: Element with ID: ${this.id} is not found.`);
       }
-    } else if (incomingRef.nodeType !== Node.ELEMENT_NODE) {
-      throw new Error(
-        `Attach: Invalid HTMLElement: ${incomingRef} is passed to registry.`
-      );
-    } else {
-      this.ref = incomingRef;
+
+      if (this.ref.nodeType !== Node.ELEMENT_NODE) {
+        throw new Error(
+          `Attach: Invalid HTMLElement ${this.ref} is passed to registry.`
+        );
+      }
     }
 
     this.isInitialized = true;

@@ -15,7 +15,7 @@ import type {
   Keys,
   Order,
   ITransitionHistory,
-  INodeInput as DFlexBaseNodeInput,
+  DFlexBaseNodeInput,
   DFlexBaseNodeOpts,
   IDFlexCoreNode,
 } from "./types";
@@ -44,10 +44,10 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
   private _translateHistory?: ITransitionHistory[];
 
   constructor(eleWithPointer: DFlexBaseNodeInput, opts: DFlexBaseNodeOpts) {
-    const { order, keys, depth, scrollX, scrollY, readonly, ...element } =
+    const { order, keys, depth, scrollX, scrollY, readonly, id } =
       eleWithPointer;
 
-    super(element, opts);
+    super(id, opts);
 
     this.order = order;
     this.keys = keys;
@@ -112,7 +112,7 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
   }
 
   resume(scrollX: number, scrollY: number) {
-    if (!this.isInitialized) this.attach(null);
+    if (!this.isInitialized) this.attach();
 
     this.initTranslate();
 

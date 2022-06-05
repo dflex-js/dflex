@@ -1,4 +1,5 @@
 import Store from "@dflex/store";
+import type { RegisterInputOpts } from "@dflex/store";
 
 import { Tracker, Scroll, canUseDOM, PointNum } from "@dflex/utils";
 import type {
@@ -11,12 +12,7 @@ import type {
 import { DFlexContainer, IDFlexNode } from "@dflex/core-instance";
 import type { IDFlexContainer } from "@dflex/core-instance";
 
-import type {
-  ElmTree,
-  IDnDStore,
-  InsertionELmMeta,
-  RegisterInputOpts,
-} from "./types";
+import type { ElmTree, IDnDStore, InsertionELmMeta } from "./types";
 
 import type {
   LayoutState,
@@ -48,13 +44,13 @@ class DnDStoreImp extends Store implements IDnDStore {
 
   events: Events;
 
-  private genID: ITracker;
+  private _genID: ITracker;
 
-  private isDOM: boolean;
+  private _isDOM: boolean;
 
-  private isInitialized: boolean;
+  private _isInitialized: boolean;
 
-  private elmIndicator!: {
+  private _elmIndicator!: {
     currentKy: string;
     prevKy: string;
     exceptionToNextElm: boolean;
@@ -76,12 +72,12 @@ class DnDStoreImp extends Store implements IDnDStore {
     this.events = null;
 
     this.tracker = new Tracker();
-    this.genID = new Tracker(DnDStoreImp.PREFIX_ID);
+    this._genID = new Tracker(DnDStoreImp.PREFIX_ID);
 
-    this.initELmIndicator();
+    this._initELmIndicator();
 
-    this.isInitialized = false;
-    this.isDOM = false;
+    this._isInitialized = false;
+    this._isDOM = false;
 
     this.updateBranchVisibility = this.updateBranchVisibility.bind(this);
   }
@@ -109,12 +105,12 @@ class DnDStoreImp extends Store implements IDnDStore {
     this.events[event.type](event);
   }
 
-  private init() {
+  private _init() {
     window.onbeforeunload = this.dispose();
   }
 
-  private initELmIndicator() {
-    this.elmIndicator = {
+  private _initELmIndicator() {
+    this._elmIndicator = {
       currentKy: "",
       prevKy: "",
       exceptionToNextElm: false,
@@ -143,21 +139,21 @@ class DnDStoreImp extends Store implements IDnDStore {
 
       if (
         !isVisible &&
-        !this.elmIndicator.exceptionToNextElm &&
+        !this._elmIndicator.exceptionToNextElm &&
         permitExceptionToOverride
       ) {
-        this.elmIndicator.exceptionToNextElm = true;
+        this._elmIndicator.exceptionToNextElm = true;
 
         // Override the result.
         isVisible = true;
       } else if (isVisible) {
-        if (this.elmIndicator.exceptionToNextElm) {
+        if (this._elmIndicator.exceptionToNextElm) {
           // In this case, we are moving from hidden to visible.
           // Eg: 1, 2 are hidden the rest of the list is visible.
           // But, there's a possibility that the rest of the branch elements
           // are hidden.
           // Eg: 1, 2: hidden 3, 4, 5, 6, 7:visible 8, 9, 10: hidden.
-          this.initELmIndicator();
+          this._initELmIndicator();
         }
       }
     }
@@ -170,7 +166,7 @@ class DnDStoreImp extends Store implements IDnDStore {
 
     const { scroll } = this.containers[SK];
 
-    this.initELmIndicator();
+    this._initELmIndicator();
 
     let prevIndex = 0;
 
@@ -185,7 +181,7 @@ class DnDStoreImp extends Store implements IDnDStore {
     });
   }
 
-  private cleanupDisconnectedElements(branchKey: string) {
+  private _cleanupDisconnectedElements(branchKey: string) {
     const branch = this.DOMGen.branches[branchKey];
 
     const extractedOldBranch: string[] = [];
@@ -202,7 +198,7 @@ class DnDStoreImp extends Store implements IDnDStore {
           depth = this.registry[elmID].depth;
 
           // Can we get the parent ID, later?
-          this.DOMGen.register(this.genID.newTravel(), (depth as number) + 1);
+          this.DOMGen.register(this._genID.newTravel(), (depth as number) + 1);
 
           newSK = this.DOMGen.accumulateIndicators(depth as number).SK;
         }
@@ -268,7 +264,7 @@ class DnDStoreImp extends Store implements IDnDStore {
           this.containers[SK].scroll = null;
         }
 
-        const newKey = this.cleanupDisconnectedElements(SK);
+        const newKey = this._cleanupDisconnectedElements(SK);
 
         this.initSiblingContainer(newKey, false);
 
@@ -304,7 +300,7 @@ class DnDStoreImp extends Store implements IDnDStore {
     }
   }
 
-  private initElmInstance(id: string) {
+  private _initElmInstance(id: string) {
     const {
       depth,
       keys: { SK },
@@ -439,40 +435,26 @@ class DnDStoreImp extends Store implements IDnDStore {
   }
 
   register(element: RegisterInputOpts) {
-    const hasRef = !!element.ref;
+    if (!this._isDOM) {
+      this._isDOM = canUseDOM();
 
-    if (!hasRef && !element.id) {
-      throw new Error(
-        `DFlex: A valid unique id Or/and HTML element is required.`
-      );
-    }
-
-    if (!this.isDOM) {
-      this.isDOM = canUseDOM();
-
-      if (!this.isDOM) return;
+      if (!this._isDOM) return;
     }
 
     /**
      * If element already exist in the store, then the reattach the reference.
      */
-    let { id } = element;
 
-    if (!id) {
-      id = `${this.genID.newTravel()}`;
-
-      // eslint-disable-next-line no-param-reassign
-      element.ref!.id = id;
+    if (!this._isInitialized) {
+      this._init();
+      this._isInitialized = true;
     }
 
-    if (!this.isInitialized) {
-      this.init();
-      this.isInitialized = true;
-    }
+    const { id } = element;
 
     if (this.registry[id]) {
-      if (hasRef || this.registry[id].isInitialized) {
-        this.registry[id].attach(hasRef ? element.ref : null);
+      if (this.registry[id].isInitialized) {
+        this.registry[id].attach();
 
         if (this.registry[id].isVisible) {
           // Preserves last changes.
@@ -487,9 +469,8 @@ class DnDStoreImp extends Store implements IDnDStore {
       id,
       parentID: element.parentID,
       depth: element.depth || 0,
-      ref: element.ref,
-      isInitialized: hasRef,
-      readonly: element.readonly || false,
+      isInitialized: false,
+      readonly: element.readonly,
       isPaused: true,
       scrollX: 0,
       scrollY: 0,
@@ -514,7 +495,7 @@ class DnDStoreImp extends Store implements IDnDStore {
         }
       }
 
-      this.initElmInstance(id!);
+      this._initElmInstance(id!);
     });
   }
 
@@ -590,7 +571,7 @@ class DnDStoreImp extends Store implements IDnDStore {
     };
   }
 
-  private clearBranchesScroll() {
+  private _clearBranchesScroll() {
     Object.keys(this.DOMGen.branches).forEach((SK) => {
       if (this.containers[SK].scroll) {
         this.containers[SK].scroll.destroy();
@@ -623,14 +604,14 @@ class DnDStoreImp extends Store implements IDnDStore {
     // Nothing left?
     // Reset the branch instances.
     if (this.DOMGen.branches[SK] === null) {
-      this.clearBranchesScroll();
+      this._clearBranchesScroll();
     }
   }
 
   dispose() {
-    if (!this.isInitialized) return null;
+    if (!this._isInitialized) return null;
 
-    this.isInitialized = false;
+    this._isInitialized = false;
 
     return null;
   }
@@ -638,7 +619,7 @@ class DnDStoreImp extends Store implements IDnDStore {
   destroy() {
     this.dispose();
 
-    this.clearBranchesScroll();
+    this._clearBranchesScroll();
 
     // Destroys all registered instances.
     super.destroy();

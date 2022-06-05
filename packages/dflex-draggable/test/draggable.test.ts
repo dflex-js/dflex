@@ -1,16 +1,13 @@
 import { Draggable, store } from "../src";
 
-const ref = document.createElement("div");
-
 const elmInstance1 = {
   id: "id-0",
   depth: 0,
-  ref,
 };
 
 store.register(elmInstance1);
 
-describe("Draggable Only Package", () => {
+describe.skip("Draggable Only Package", () => {
   let EXPECTED_TRANSLATE_X_R1: number;
   let EXPECTED_TRANSLATE_Y_R1: number;
 

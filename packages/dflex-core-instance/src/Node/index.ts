@@ -1,7 +1,7 @@
 export type {
   IDFlexBaseNode as INodeAbstract,
   IDFlexNode,
-  INodeInput,
+  DFlexBaseNodeInput as INodeInput,
   ITransitionHistory,
 } from "./types";
 

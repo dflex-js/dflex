@@ -98,7 +98,7 @@ const RestrictedItem = ({
   };
 
   React.useEffect(() => {
-    store.register({ id, ref: ref.current, depth });
+    store.register({ id, depth });
   }, []);
 
   return (
