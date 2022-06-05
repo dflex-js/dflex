@@ -10,7 +10,7 @@ import type {
   AttributesIndicators,
 } from "./types";
 
-class Abstract implements IAbstract {
+class DFlexBaseNode implements IAbstract {
   ref!: HTMLElement | null;
 
   id: string;
@@ -148,4 +148,4 @@ class Abstract implements IAbstract {
   }
 }
 
-export default Abstract;
+export default DFlexBaseNode;

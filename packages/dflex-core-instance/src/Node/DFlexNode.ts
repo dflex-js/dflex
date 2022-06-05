@@ -1,8 +1,8 @@
 import type { Axis, IPointAxes } from "@dflex/utils";
-import NodeCore from "./Core";
+import DFlexCoreNode from "./DFlexCoreNode";
 import type { INode } from "./types";
 
-class CoreUtils extends NodeCore implements INode {
+class DFlexNode extends DFlexCoreNode implements INode {
   static getRectByAxis(axis: Axis) {
     return axis === "x" ? "width" : "height";
   }
@@ -46,17 +46,17 @@ class CoreUtils extends NodeCore implements INode {
   }
 
   getRectDiff(elm: this, axis: Axis) {
-    const rectType = CoreUtils.getRectByAxis(axis);
+    const rectType = DFlexNode.getRectByAxis(axis);
 
     return this.offset[rectType] - elm.offset[rectType];
   }
 
   getDisplacement(elm: this, axis: Axis): number {
-    return CoreUtils.getDisplacement(this.currentPosition, elm, axis);
+    return DFlexNode.getDisplacement(this.currentPosition, elm, axis);
   }
 
   getDistance(elm: this, axis: Axis): number {
-    return CoreUtils.getDistance(this.currentPosition, elm, axis);
+    return DFlexNode.getDistance(this.currentPosition, elm, axis);
   }
 
   getOffset() {
@@ -69,4 +69,4 @@ class CoreUtils extends NodeCore implements INode {
   }
 }
 
-export default CoreUtils;
+export default DFlexNode;

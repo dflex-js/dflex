@@ -9,7 +9,7 @@ import type {
   IPointAxes,
 } from "@dflex/utils";
 
-import Abstract from "./Abstract";
+import DFlexBaseNode from "./DFlexBaseNode";
 
 import type {
   Keys,
@@ -20,7 +20,7 @@ import type {
   ICore,
 } from "./types";
 
-class NodeCore extends Abstract implements ICore {
+class DFlexCoreNode extends DFlexBaseNode implements ICore {
   offset!: RectDimensions;
 
   currentPosition!: IPointNum;
@@ -330,4 +330,4 @@ class NodeCore extends Abstract implements ICore {
   }
 }
 
-export default NodeCore;
+export default DFlexCoreNode;

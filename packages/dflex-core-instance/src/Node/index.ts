@@ -5,4 +5,4 @@ export type {
   ITransitionHistory,
 } from "./types";
 
-export { default as Node } from "./CoreUtils";
+export { default as Node } from "./DFlexNode";
