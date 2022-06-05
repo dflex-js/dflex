@@ -2,7 +2,7 @@
 
 exports[`DnD Store Shallow test the store Element is initiated 1`] = `
 Object {
-  "id-1": CoreUtils {
+  "id-1": DFlexNode {
     "animatedFrame": 1,
     "currentPosition": PointNum {
       "x": 450,
