@@ -22,11 +22,11 @@ export interface IContainer {
 
   /**
    * Origin length for container before being transformed used to prevent
-   * layout shift
+   * layout shift.
    * */
   originLength: number;
 
-  /** Direct reference to interactive element */
+  /** Direct reference to interactive element. */
   ref?: HTMLElement | null;
 
   /** Container scroll instance.  */
