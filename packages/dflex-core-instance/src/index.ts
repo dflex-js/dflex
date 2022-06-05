@@ -7,5 +7,5 @@ export type {
 
 export { DFlexNode } from "./Node";
 
-export type { IContainer } from "./Container";
-export { Container } from "./Container";
+export type { IDFlexContainer } from "./Container";
+export { DFlexContainer } from "./Container";

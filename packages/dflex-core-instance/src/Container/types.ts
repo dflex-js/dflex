@@ -7,7 +7,7 @@ import type {
   IScroll,
 } from "@dflex/utils";
 
-export interface IContainer {
+export interface IDFlexContainer {
   /**
    * Preserve the last element position in the list .
    * Usage: Getting this position when the dragged is going back from the tail.

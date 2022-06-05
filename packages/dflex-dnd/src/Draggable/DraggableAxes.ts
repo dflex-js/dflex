@@ -16,7 +16,7 @@ import type {
   IPointAxes,
 } from "@dflex/utils";
 
-import { Container, IDFlexNode } from "@dflex/core-instance";
+import { DFlexContainer, IDFlexNode } from "@dflex/core-instance";
 
 import store from "../DnDStore";
 
@@ -120,7 +120,7 @@ class DraggableAxes
         store.unifiedContainerDimensions[depth]
       );
 
-      if (store.containers[key].originLength === Container.OUT_OF_RANGE) {
+      if (store.containers[key].originLength === DFlexContainer.OUT_OF_RANGE) {
         const { length } = store.getElmBranchByKey(key);
         store.containers[key].originLength = length;
       }

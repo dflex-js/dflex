@@ -21,7 +21,7 @@ class DFlexBaseNode implements IDFlexBaseNode {
 
   isPaused!: boolean;
 
-  private hasAttribute!: {
+  private _hasAttribute!: {
     // eslint-disable-next-line no-unused-vars
     [key in AttributesIndicators]: boolean;
   };
@@ -93,7 +93,7 @@ class DFlexBaseNode implements IDFlexBaseNode {
       this.translate = new PointNum(0, 0);
 
       // @ts-expect-error - Just for initialization.
-      this.hasAttribute = {};
+      this._hasAttribute = {};
     }
 
     this.isPaused = false;
@@ -106,37 +106,37 @@ class DFlexBaseNode implements IDFlexBaseNode {
       return;
     }
 
-    if (this.hasAttribute[key]) return;
+    if (this._hasAttribute[key]) return;
 
     this.ref!.dataset[key] = `${value}`;
 
-    this.hasAttribute[key] = true;
+    this._hasAttribute[key] = true;
   }
 
   rmDateset(key: Exclude<AllowedDataset, "index">) {
     delete this.ref!.dataset[key];
 
-    if (this.hasAttribute[key]) {
-      this.hasAttribute[key] = false;
+    if (this._hasAttribute[key]) {
+      this._hasAttribute[key] = false;
     }
   }
 
   setAttribute(key: AllowedAttributes, value: string) {
-    if (this.hasAttribute[key]) return;
+    if (this._hasAttribute[key]) return;
 
     this.ref!.setAttribute(key, value);
-    this.hasAttribute[key] = true;
+    this._hasAttribute[key] = true;
   }
 
   removeAttribute(key: AllowedAttributes) {
-    if (!this.hasAttribute[key]) return;
+    if (!this._hasAttribute[key]) return;
 
     this.ref!.removeAttribute(key);
-    this.hasAttribute[key] = false;
+    this._hasAttribute[key] = false;
   }
 
   clearAttributes() {
-    (Object.keys(this.hasAttribute) as AttributesIndicators[]).forEach(
+    (Object.keys(this._hasAttribute) as AttributesIndicators[]).forEach(
       (key) => {
         if (key === "dragged") this.removeAttribute(key);
         else this.rmDateset(key);
@@ -144,7 +144,7 @@ class DFlexBaseNode implements IDFlexBaseNode {
     );
 
     // @ts-expect-error.
-    this.hasAttribute = {};
+    this._hasAttribute = {};
   }
 }
 

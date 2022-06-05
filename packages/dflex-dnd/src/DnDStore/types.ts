@@ -4,7 +4,7 @@ import type {
   ITracker,
   IPointNum,
 } from "@dflex/utils";
-import type { IContainer, IDFlexNode } from "@dflex/core-instance";
+import type { IDFlexContainer, IDFlexNode } from "@dflex/core-instance";
 import type { RegisterInputMeta } from "@dflex/store";
 
 import type { DraggedEvent, LayoutState } from "../types";
@@ -63,7 +63,7 @@ export type InsertionELmMeta = {
 };
 
 export interface IDnDStore {
-  readonly containers: { [SK: string]: IContainer };
+  readonly containers: { [SK: string]: IDFlexContainer };
   readonly unifiedContainerDimensions: {
     [depth: number]: Dimensions;
   };

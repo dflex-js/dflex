@@ -8,8 +8,8 @@ import type {
   IScroll,
 } from "@dflex/utils";
 
-import { Container, IDFlexNode } from "@dflex/core-instance";
-import type { IContainer } from "@dflex/core-instance";
+import { DFlexContainer, IDFlexNode } from "@dflex/core-instance";
+import type { IDFlexContainer } from "@dflex/core-instance";
 
 import type {
   ElmTree,
@@ -36,7 +36,7 @@ function throwElementIsNotConnected(id: string) {
 }
 
 class DnDStoreImp extends Store implements IDnDStore {
-  containers: { [siblingKey: string]: IContainer };
+  containers: { [siblingKey: string]: IDFlexContainer };
 
   readonly unifiedContainerDimensions: {
     [depth: number]: Dimensions;
@@ -234,7 +234,7 @@ class DnDStoreImp extends Store implements IDnDStore {
 
   initSiblingContainer(SK: string, shouldValidate: boolean) {
     if (!this.containers[SK]) {
-      this.containers[SK] = new Container();
+      this.containers[SK] = new DFlexContainer();
     }
 
     const branch = this.DOMGen.branches[SK];
