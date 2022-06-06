@@ -12,7 +12,8 @@
     "@dflex/draggable": "workspace:^3.5.3",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
-    "react-router-dom": "^6.3.0"
+    "react-router-dom": "^6.3.0",
+    "vite-plugin-replace": "^0.1.1"
   },
   "devDependencies": {
     "@types/react": "^18.0.10",

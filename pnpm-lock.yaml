@@ -125,11 +125,13 @@ importers:
       react: ^18.1.0
       react-dom: ^18.1.0
       react-router-dom: ^6.3.0
+      vite-plugin-replace: ^0.1.1
     dependencies:
       '@dflex/draggable': link:../dflex-draggable
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0
       react-router-dom: 6.3.0_react-dom@18.1.0+react@18.1.0
+      vite-plugin-replace: 0.1.1_vite@2.9.9
     devDependencies:
       '@types/react': 18.0.10
       '@types/react-dom': 18.0.5

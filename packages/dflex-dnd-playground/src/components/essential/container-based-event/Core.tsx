@@ -44,7 +44,7 @@ const Core = ({
   // const handlers = { onDragOver, onDragLeave };
 
   React.useEffect(() => {
-    if (ref.current) store.register({ id, depth });
+    if (ref.current) store.register({ id, depth, parentID: "" });
   }, [ref]);
 
   return (
