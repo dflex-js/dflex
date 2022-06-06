@@ -1,15 +1,13 @@
-export { default as Depth1 } from "./depth-1";
+export { default as Depth1 } from "./depth";
 export { default as ExtendedList } from "./extended";
 
 export {
-  RestrictedSelf,
-  RestrictedContainerAll,
-  RestrictedContainerDiff,
+  AllRestrictedContainer,
+  SomeRestrictedContainer,
+  SelRestricted,
 } from "./restrictions";
 
-export { TodoList, TodoListWithReadonly } from "./todo";
-
-export { default as UnRegisteredLists } from "./mixedRegisteredElements";
+export { TodoListWithEvents, TodoListWithReadonly } from "./todo";
 
 export {
   ComponentBasedEvent,
@@ -17,4 +15,4 @@ export {
   ListMigration,
 } from "./essential";
 
-export { ScrollMulti, ScrollEssential } from "./scroll";
+export { ScrollEssential } from "./scroll";

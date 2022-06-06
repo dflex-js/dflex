@@ -1,6 +1,6 @@
 export type {
   INodeAbstract,
-  INodeInput,
+  DFlexBaseNodeInput,
   ITransitionHistory as TransitionHistory,
   IDFlexNode,
 } from "./Node";

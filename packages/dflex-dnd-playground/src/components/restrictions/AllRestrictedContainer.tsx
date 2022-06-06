@@ -1,8 +1,8 @@
 import React from "react";
-import s from "../../Demo.module.css";
-import RestrictedItem from "../RestrictedItem";
+import s from "../Demo.module.css";
+import DFlexDnDComponent from "../DFlexDnDComponent";
 
-const Restricted = () => {
+const AllRestrictedContainer = () => {
   const items = [
     {
       id: "item-rest-1",
@@ -31,25 +31,31 @@ const Restricted = () => {
     },
   ];
 
+  const parentID = "DFlex-all-container-restriction";
+
   return (
     <div className={s.root}>
       <div className={s.todo}>
-        <ul>
+        <ul id={parentID}>
           {items.map(({ id, style, item }) => (
-            <RestrictedItem
+            <DFlexDnDComponent
               key={id}
-              id={id}
+              Component={"li"}
+              registerInput={{ id, parentID }}
               style={style}
-              title={item}
-              restrictions={{
-                container: {
-                  allowLeavingFromBottom: false,
-                  allowLeavingFromTop: false,
-                  allowLeavingFromLeft: false,
-                  allowLeavingFromRight: false,
+              opts={{
+                restrictions: {
+                  container: {
+                    allowLeavingFromBottom: false,
+                    allowLeavingFromTop: false,
+                    allowLeavingFromLeft: false,
+                    allowLeavingFromRight: false,
+                  },
                 },
               }}
-            />
+            >
+              {item}
+            </DFlexDnDComponent>
           ))}
         </ul>
       </div>
@@ -57,4 +63,4 @@ const Restricted = () => {
   );
 };
 
-export default Restricted;
+export default AllRestrictedContainer;

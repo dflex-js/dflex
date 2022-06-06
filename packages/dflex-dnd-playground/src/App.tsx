@@ -4,17 +4,15 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { store } from "@dflex/dnd";
 
 import {
-  RestrictedContainerAll,
-  RestrictedContainerDiff,
-  RestrictedSelf,
-  TodoList,
+  AllRestrictedContainer,
+  SomeRestrictedContainer,
+  SelRestricted,
+  TodoListWithEvents,
   TodoListWithReadonly,
   ExtendedList,
   ComponentBasedEvent,
   ContainerBasedEvent,
-  ScrollMulti,
   ScrollEssential,
-  UnRegisteredLists,
   ListMigration,
 } from "./components";
 
@@ -28,20 +26,18 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/scroll-multi" element={<ScrollMulti />} />
         <Route path="/scroll" element={<ScrollEssential />} />
         <Route path="/extended" element={<ExtendedList />} />
         <Route
           path="/restricted-container-all"
-          element={<RestrictedContainerAll />}
+          element={<AllRestrictedContainer />}
         />
         <Route
           path="/restricted-container-diff"
-          element={<RestrictedContainerDiff />}
+          element={<SomeRestrictedContainer />}
         />
-        <Route path="/restricted-self" element={<RestrictedSelf />} />
-        <Route path="/todo" element={<TodoList />} />
-        <Route path="/unregistered" element={<UnRegisteredLists />} />
+        <Route path="/restricted-self" element={<SelRestricted />} />
+        <Route path="/todo" element={<TodoListWithEvents />} />
         <Route path="/migration" element={<ListMigration />} />
         <Route
           path="/component-based-event"

@@ -1,24 +1,31 @@
+// https://github.com/microsoft/TypeScript/issues/28374#issuecomment-536521051
+type DeepNonNullable<T> = {
+  [P in keyof T]-?: NonNullable<T[P]>;
+};
+
 export type RegisterInputOpts = {
-  /** Element Id. */
+  /** Targeted element Id. */
   id: string;
-  /** provide a depth if you want to drag the parent container.  */
+  /** Targeted element parent-id. Pass empty string if there's none. */
+  parentID: string;
+  /** The depth of targeted element starting from zero (The default value is Zero).  */
   depth?: number;
-  /** Unique key to connect elements with the same parent together. */
-  parentID?: string;
-  /** True for elements that won't be transformed.  */
+  /**
+   * True for elements that won't be transformed during DnD but belongs to the
+   * same interactive container.
+   * */
   readonly?: boolean;
 };
 
-export type RegisterInputSuper = RegisterInputOpts & {
-  depth: number;
+export type RegisterInputBase = DeepNonNullable<RegisterInputOpts> & {
   isInitialized: boolean;
   isPaused: boolean;
   scrollX: number;
   scrollY: number;
 };
 
-export interface IStore {
-  register(element: RegisterInputSuper): void;
+export interface IDFlexBaseStore {
+  register(element: RegisterInputBase): void;
   unregister(id: string): void;
   destroy(): void;
   getElmBranchByKey(siblingsKy: string): string[];

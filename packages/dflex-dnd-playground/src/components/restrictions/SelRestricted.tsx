@@ -1,15 +1,15 @@
 import React from "react";
-import s from "../../Demo.module.css";
-import RestrictedItem from "../RestrictedItem";
+import s from "../Demo.module.css";
+import DFlexDnDComponent from "../DFlexDnDComponent";
 
-const Restricted = () => {
+const SelRestricted = () => {
   const items = [
     {
-      id: "item-rest-container-left",
+      id: "item-rest-left",
       item: "restricted left only",
       style: { width: "10rem", height: "1rem", marginLeft: "92px" },
       restrictions: {
-        container: {
+        self: {
           allowLeavingFromTop: true,
           allowLeavingFromBottom: true,
           allowLeavingFromLeft: false,
@@ -18,11 +18,11 @@ const Restricted = () => {
       },
     },
     {
-      id: "item-rest-container-right",
+      id: "item-rest-right",
       item: "restricted right only",
       style: { width: "12rem", height: "1.5rem", marginLeft: "22px" },
       restrictions: {
-        container: {
+        self: {
           allowLeavingFromTop: true,
           allowLeavingFromBottom: true,
           allowLeavingFromLeft: true,
@@ -31,11 +31,11 @@ const Restricted = () => {
       },
     },
     {
-      id: "item-rest-container-left-right",
+      id: "item-rest-left-right",
       item: "restricted left & right only",
       style: { width: "16rem", height: "1rem", marginLeft: "32px" },
       restrictions: {
-        container: {
+        self: {
           allowLeavingFromTop: true,
           allowLeavingFromBottom: true,
           allowLeavingFromLeft: false,
@@ -44,11 +44,11 @@ const Restricted = () => {
       },
     },
     {
-      id: "item-rest-container-top",
+      id: "item-rest-top",
       item: "restricted top only",
       style: { width: "10rem", height: "1rem", marginLeft: "92px" },
       restrictions: {
-        container: {
+        self: {
           allowLeavingFromTop: false,
           allowLeavingFromBottom: true,
           allowLeavingFromLeft: true,
@@ -57,11 +57,11 @@ const Restricted = () => {
       },
     },
     {
-      id: "item-rest-container-bottom",
+      id: "item-rest-bottom",
       item: "restricted bottom only",
       style: { width: "12rem", height: "1.5rem", marginLeft: "22px" },
       restrictions: {
-        container: {
+        self: {
           allowLeavingFromTop: true,
           allowLeavingFromBottom: false,
           allowLeavingFromLeft: true,
@@ -70,11 +70,11 @@ const Restricted = () => {
       },
     },
     {
-      id: "item-rest-container-top-bottom",
+      id: "item-rest-top-bottom",
       item: "restricted top & bottom only",
       style: { width: "16rem", height: "1rem", marginLeft: "32px" },
       restrictions: {
-        container: {
+        self: {
           allowLeavingFromTop: false,
           allowLeavingFromBottom: false,
           allowLeavingFromLeft: true,
@@ -83,11 +83,11 @@ const Restricted = () => {
       },
     },
     {
-      id: "item-rest-container-all",
+      id: "item-rest-all",
       item: "restricted all",
       style: { width: "16rem", height: "1rem", marginLeft: "32px" },
       restrictions: {
-        container: {
+        self: {
           allowLeavingFromTop: false,
           allowLeavingFromBottom: false,
           allowLeavingFromLeft: false,
@@ -97,18 +97,24 @@ const Restricted = () => {
     },
   ];
 
+  const parentID = "DFlex-self-position-restriction";
+
   return (
     <div className={s.root}>
       <div className={s.todo}>
-        <ul>
-          {items.map(({ id, style, item, ...rest }) => (
-            <RestrictedItem
+        <ul id={parentID}>
+          {items.map(({ id, style, item, restrictions }) => (
+            <DFlexDnDComponent
               key={id}
-              id={id}
+              Component={"li"}
+              registerInput={{ id, parentID }}
               style={style}
-              title={item}
-              {...rest}
-            />
+              opts={{
+                restrictions,
+              }}
+            >
+              {item}
+            </DFlexDnDComponent>
           ))}
         </ul>
       </div>
@@ -116,4 +122,4 @@ const Restricted = () => {
   );
 };
 
-export default Restricted;
+export default SelRestricted;

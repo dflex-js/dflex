@@ -9,20 +9,21 @@ import type { DndOpts } from "@dflex/dnd";
 let dndEvent: DnD | null;
 
 interface Props {
-  Component?: string | React.JSXElementConstructor<any>;
-  style?: { [key: string]: string };
+  Component: string | React.JSXElementConstructor<any>;
+  style?: React.CSSProperties;
   className?: string;
   children: React.ReactNode;
   registerInput: {
     id: string;
+    parentID: string;
     depth?: number;
     readonly?: boolean;
   };
   opts?: DndOpts;
 }
 
-export const TodoItem = ({
-  Component = "li",
+export const DFlexDnDComponent = ({
+  Component,
   registerInput,
   style,
   className,
@@ -31,11 +32,11 @@ export const TodoItem = ({
 }: Props) => {
   const taskRef = React.useRef() as React.MutableRefObject<HTMLLIElement>;
 
-  const { depth, readonly, id } = registerInput;
+  const { id, parentID, depth, readonly } = registerInput;
 
   React.useEffect(() => {
     if (taskRef.current) {
-      store.register({ id, depth, readonly });
+      store.register({ id, parentID, depth, readonly });
     }
 
     return () => {
@@ -44,8 +45,6 @@ export const TodoItem = ({
   }, [taskRef.current]);
 
   const onMouseMove = (e: MouseEvent) => {
-    // e.stopPropagation();
-
     if (dndEvent) {
       const { clientX, clientY } = e;
 
@@ -72,40 +71,8 @@ export const TodoItem = ({
       if (id) {
         document.addEventListener("mouseup", onMouseUp);
         document.addEventListener("mousemove", onMouseMove);
-        // document.addEventListener("scroll", onMouseScroll);
-
         dndEvent = new DnD(id, { x: clientX, y: clientY }, opts);
       }
-    }
-  };
-
-  const onTouchMove = (e: TouchEvent) => {
-    if (dndEvent) {
-      const { clientX, clientY } = e.touches[0];
-
-      dndEvent.dragAt(clientX, clientY);
-    }
-  };
-
-  const onTouchEnd = () => {
-    if (dndEvent) {
-      dndEvent.endDragging();
-
-      dndEvent = null;
-
-      document.removeEventListener("touchend", onTouchEnd);
-      document.removeEventListener("touchmove", onTouchMove);
-    }
-  };
-
-  const onTouchStart = (e: React.TouchEvent) => {
-    const { clientX, clientY } = e.touches[0];
-
-    if (id) {
-      dndEvent = new DnD(id, { x: clientX, y: clientY }, opts);
-
-      document.addEventListener("touchend", onTouchEnd);
-      document.addEventListener("touchmove", onTouchMove);
     }
   };
 
@@ -113,7 +80,6 @@ export const TodoItem = ({
     <Component
       ref={taskRef}
       id={id}
-      onTouchStart={onTouchStart}
       onMouseDown={onMouseDown}
       className={className}
       style={style}
@@ -123,4 +89,4 @@ export const TodoItem = ({
   );
 };
 
-export default TodoItem;
+export default DFlexDnDComponent;

@@ -1,8 +1,8 @@
-import Store from "@dflex/store";
+import DFlexBaseStore from "@dflex/store";
 
 import type { RegisterInput } from "./types";
 
-class DraggableStoreImp extends Store {
+class DraggableStoreImp extends DFlexBaseStore {
   /**
    * Register element for Draggable store
    *
