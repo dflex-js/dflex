@@ -8,19 +8,20 @@ import "./button.css";
 // shared dragged event
 let draggedEvent: Draggable;
 
-const DraggableSolo = ({ id = "draggableSolo" }) => {
-  // This reference enable DFlex to move the element when required
+const DraggableSolo = () => {
   const ref = React.createRef() as React.MutableRefObject<HTMLButtonElement>;
 
+  const id = "DFlex-draggable-solo";
+
   React.useEffect(() => {
-    setTimeout(
-      // eslint-disable-next-line func-names
-      () => {
-        store.register({ id, ref: ref.current! });
-      },
-      0
-    );
-  }, []);
+    if (ref.current) {
+      store.register(id);
+    }
+
+    return () => {
+      store.unregister(id);
+    };
+  }, [ref]);
 
   const onMouseMove = (e: MouseEvent) => {
     if (draggedEvent) {
@@ -43,7 +44,7 @@ const DraggableSolo = ({ id = "draggableSolo" }) => {
   const onMouseDown = (e: React.MouseEvent) => {
     const { button, clientX, clientY } = e;
 
-    // avoid right mouse click and ensure id
+    // Avoid right mouse click and ensure id
     if (typeof button === "number" && button === 0) {
       if (id) {
         draggedEvent = new Draggable(id, { x: clientX, y: clientY });

@@ -1,9 +1,9 @@
-import { INodeAbstract } from "@dflex/core-instance";
+import { IDFlexBaseNode } from "@dflex/core-instance";
 import type { IPointAxes } from "@dflex/utils";
 import store from "./DraggableStoreImp";
 import AbstractDraggable from "./AbstractDraggable";
 
-class Draggable extends AbstractDraggable<INodeAbstract> {
+class Draggable extends AbstractDraggable<IDFlexBaseNode> {
   /**
    * Creates an instance of Draggable.
    * Works Only on dragged element level.
@@ -18,10 +18,6 @@ class Draggable extends AbstractDraggable<INodeAbstract> {
     super(element, clickCoordinates);
   }
 
-  /**
-   * @param x -
-   * @param y -
-   */
   dragAt(x: number, y: number) {
     this.translate(x, y);
 

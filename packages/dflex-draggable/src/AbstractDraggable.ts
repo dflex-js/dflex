@@ -1,10 +1,10 @@
-import type { INodeAbstract } from "@dflex/core-instance";
+import type { IDFlexBaseNode } from "@dflex/core-instance";
 import { PointNum, getSelection } from "@dflex/utils";
 import type { IPointNum, IPointAxes } from "@dflex/utils";
 
 import type { IAbstractDraggable, DraggedStyle } from "./types";
 
-class AbstractDraggable<T extends INodeAbstract>
+class AbstractDraggable<T extends IDFlexBaseNode>
   implements IAbstractDraggable<T>
 {
   draggedElm: T;

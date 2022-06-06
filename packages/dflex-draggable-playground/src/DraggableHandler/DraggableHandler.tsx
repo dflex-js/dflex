@@ -9,18 +9,20 @@ import HandlerSVG from "./HandlerSVG";
 // shared dragged event
 let draggedEvent: Draggable;
 
-const DraggableHandler = ({ id = "draggableSolo" }) => {
+const DraggableHandler = () => {
   const ref = React.createRef() as React.MutableRefObject<HTMLDivElement>;
 
+  const id = "DFlex-draggable-with-handler";
+
   React.useEffect(() => {
-    setTimeout(
-      // eslint-disable-next-line func-names
-      () => {
-        store.register({ id, ref: ref.current });
-      },
-      0
-    );
-  }, []);
+    if (ref.current) {
+      store.register(id);
+    }
+
+    return () => {
+      store.unregister(id);
+    };
+  }, [ref]);
 
   const onMouseMove = (e: MouseEvent) => {
     if (draggedEvent) {
