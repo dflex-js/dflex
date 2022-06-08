@@ -5,6 +5,8 @@ import { Root, createRoot } from "react-dom/client";
 
 import Store from "../src";
 
+// TODO: Add more testing cases to cover all store methods.
+
 describe("Testing Store Package", () => {
   const store = new Store();
 
@@ -43,6 +45,17 @@ describe("Testing Store Package", () => {
 
   const elm0D1 = {
     id: "p-id-0",
+    depth: 1,
+    parentID: "",
+    readonly: false,
+    isInitialized: true,
+    isPaused: false,
+    scrollX: 0,
+    scrollY: 0,
+  };
+
+  const elmThrows = {
+    id: "id-not-attached",
     depth: 1,
     parentID: "",
     readonly: false,
@@ -139,5 +152,9 @@ describe("Testing Store Package", () => {
 
   it("Snaps shot registry after delete", () => {
     expect(store.registry).toMatchSnapshot();
+  });
+
+  it("Throws because it can't find the reference", () => {
+    expect(() => store.register(elmThrows)).toThrow();
   });
 });
