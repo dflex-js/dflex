@@ -4,7 +4,7 @@ import type {
   ThresholdCoordinate,
   IMigration,
 } from "@dflex/utils";
-import type { INode } from "@dflex/core-instance";
+import type { IDFlexNode } from "@dflex/core-instance";
 import type { IAbstractDraggable } from "@dflex/draggable";
 
 import type { ContainersTransition, ScrollOpts } from "../types";
@@ -13,7 +13,7 @@ export interface SiblingsThreshold {
   [sk: string]: ThresholdCoordinate;
 }
 
-export interface IDraggableAxes extends IAbstractDraggable<INode> {
+export interface IDraggableAxes extends IAbstractDraggable<IDFlexNode> {
   /** Dragged threshold  */
   readonly threshold: ThresholdInterface;
 

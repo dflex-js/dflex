@@ -1,38 +1,20 @@
-import Store from "@dflex/store";
+import DFlexBaseStore from "@dflex/store";
 
-import type { RegisterInput } from "./types";
-
-class DraggableStoreImp extends Store {
+class DraggableStoreImp extends DFlexBaseStore {
   /**
    * Register element for Draggable store
-   *
-   * @param element -
    */
-  register(element: RegisterInput) {
-    if (!element.ref && !element.id) {
-      throw new Error(
-        `DFlex: A valid unique id Or/and HTML element is required.`
-      );
-    }
-
-    /**
-     * If element already exist in the store, then the reattach the reference.
-     */
-    const id = element.id || element.ref?.id;
-
-    if (!id) {
-      throw new Error(`DFlex: A valid and unique id is required.`);
-    }
-
+  // @ts-expect-error
+  register(id: string) {
     super.register({
       id,
       depth: 0,
+      parentID: "",
       isInitialized: true,
       isPaused: false,
       scrollX: 0,
       scrollY: 0,
       readonly: false,
-      ...element,
     });
   }
 }

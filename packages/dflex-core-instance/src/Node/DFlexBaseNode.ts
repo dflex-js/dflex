@@ -2,15 +2,14 @@ import { PointNum } from "@dflex/utils";
 import type { IPointNum } from "@dflex/utils";
 
 import type {
-  IAbstract,
-  AbstractInput,
-  AbstractOpts,
+  IDFlexBaseNode,
+  DFlexBaseNodeOpts,
   AllowedAttributes,
   AllowedDataset,
   AttributesIndicators,
 } from "./types";
 
-class Abstract implements IAbstract {
+class DFlexBaseNode implements IDFlexBaseNode {
   ref!: HTMLElement | null;
 
   id: string;
@@ -21,16 +20,16 @@ class Abstract implements IAbstract {
 
   isPaused!: boolean;
 
-  private hasAttribute!: {
+  private _hasAttribute!: {
     // eslint-disable-next-line no-unused-vars
     [key in AttributesIndicators]: boolean;
   };
 
-  constructor({ ref, id }: AbstractInput, opts: AbstractOpts) {
+  constructor(id: string, opts: DFlexBaseNodeOpts) {
     this.id = id;
 
     if (opts.isInitialized) {
-      this.attach(ref || null);
+      this.attach();
 
       this.isPaused = opts.isPaused;
 
@@ -48,25 +47,20 @@ class Abstract implements IAbstract {
 
   /**
    * Attach element DOM node to the instance.
-   *
-   * @param incomingRef
    */
-  attach(incomingRef: HTMLElement | null) {
-    // Cleanup.
-    this.ref = null;
+  attach() {
+    this.ref = document.getElementById(this.id);
 
-    if (!incomingRef) {
-      this.ref = document.getElementById(this.id);
-
+    if (__DEV__) {
       if (!this.ref) {
         throw new Error(`Attach: Element with ID: ${this.id} is not found.`);
       }
-    } else if (incomingRef.nodeType !== Node.ELEMENT_NODE) {
-      throw new Error(
-        `Attach: Invalid HTMLElement: ${incomingRef} is passed to registry.`
-      );
-    } else {
-      this.ref = incomingRef;
+
+      if (this.ref.nodeType !== Node.ELEMENT_NODE) {
+        throw new Error(
+          `Attach: Invalid HTMLElement ${this.ref} is passed to registry.`
+        );
+      }
     }
 
     this.isInitialized = true;
@@ -93,7 +87,7 @@ class Abstract implements IAbstract {
       this.translate = new PointNum(0, 0);
 
       // @ts-expect-error - Just for initialization.
-      this.hasAttribute = {};
+      this._hasAttribute = {};
     }
 
     this.isPaused = false;
@@ -106,37 +100,37 @@ class Abstract implements IAbstract {
       return;
     }
 
-    if (this.hasAttribute[key]) return;
+    if (this._hasAttribute[key]) return;
 
     this.ref!.dataset[key] = `${value}`;
 
-    this.hasAttribute[key] = true;
+    this._hasAttribute[key] = true;
   }
 
   rmDateset(key: Exclude<AllowedDataset, "index">) {
     delete this.ref!.dataset[key];
 
-    if (this.hasAttribute[key]) {
-      this.hasAttribute[key] = false;
+    if (this._hasAttribute[key]) {
+      this._hasAttribute[key] = false;
     }
   }
 
   setAttribute(key: AllowedAttributes, value: string) {
-    if (this.hasAttribute[key]) return;
+    if (this._hasAttribute[key]) return;
 
     this.ref!.setAttribute(key, value);
-    this.hasAttribute[key] = true;
+    this._hasAttribute[key] = true;
   }
 
   removeAttribute(key: AllowedAttributes) {
-    if (!this.hasAttribute[key]) return;
+    if (!this._hasAttribute[key]) return;
 
     this.ref!.removeAttribute(key);
-    this.hasAttribute[key] = false;
+    this._hasAttribute[key] = false;
   }
 
   clearAttributes() {
-    (Object.keys(this.hasAttribute) as AttributesIndicators[]).forEach(
+    (Object.keys(this._hasAttribute) as AttributesIndicators[]).forEach(
       (key) => {
         if (key === "dragged") this.removeAttribute(key);
         else this.rmDateset(key);
@@ -144,8 +138,8 @@ class Abstract implements IAbstract {
     );
 
     // @ts-expect-error.
-    this.hasAttribute = {};
+    this._hasAttribute = {};
   }
 }
 
-export default Abstract;
+export default DFlexBaseNode;

@@ -1,5 +1,5 @@
-import Store from "./Store";
+import DFlexBaseStore from "./DFlexBaseStore";
 
-export type { RegisterInput, RegisterInputMeta } from "./types";
+export type { RegisterInputOpts } from "./types";
 
-export default Store;
+export default DFlexBaseStore;

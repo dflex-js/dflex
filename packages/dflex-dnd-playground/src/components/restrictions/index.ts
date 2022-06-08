@@ -1,3 +1,3 @@
-export { default as RestrictedContainerAll } from "./container-all";
-export { default as RestrictedContainerDiff } from "./container-different";
-export { default as RestrictedSelf } from "./self";
+export { default as AllRestrictedContainer } from "./AllRestrictedContainer";
+export { default as SomeRestrictedContainer } from "./SomeRestrictedContainer";
+export { default as SelRestricted } from "./SelRestricted";

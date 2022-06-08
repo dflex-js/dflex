@@ -2,7 +2,8 @@
 
 exports[`Draggable Store Registers element and initiates translateX,Y 1`] = `
 Object {
-  "id-0": CoreUtils {
+  "id-0": DFlexNode {
+    "_hasAttribute": Object {},
     "animatedFrame": null,
     "currentPosition": PointNum {
       "x": 0,
@@ -13,7 +14,6 @@ Object {
       "x": 0,
       "y": 0,
     },
-    "hasAttribute": Object {},
     "hasToTransform": false,
     "id": "id-0",
     "isInitialized": true,
@@ -37,6 +37,7 @@ Object {
     "readonly": false,
     "ref": <div
       data-index="0"
+      id="id-0"
     />,
     "translate": PointNum {
       "x": 0,

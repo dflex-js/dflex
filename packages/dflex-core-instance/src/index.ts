@@ -1,10 +1,11 @@
 export type {
-  INodeAbstract as IAbstract,
-  INodeInput,
+  IDFlexBaseNode,
+  DFlexBaseNodeInput,
   ITransitionHistory as TransitionHistory,
-  INode,
+  IDFlexNode,
 } from "./Node";
-export { Node } from "./Node";
 
-export type { IContainer } from "./Container";
-export { Container } from "./Container";
+export { DFlexNode } from "./Node";
+
+export type { IDFlexContainer } from "./Container";
+export { DFlexContainer } from "./Container";

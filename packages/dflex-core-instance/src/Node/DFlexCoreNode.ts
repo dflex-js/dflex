@@ -9,18 +9,18 @@ import type {
   IPointAxes,
 } from "@dflex/utils";
 
-import Abstract from "./Abstract";
+import DFlexBaseNode from "./DFlexBaseNode";
 
 import type {
   Keys,
   Order,
   ITransitionHistory,
-  INodeInput,
-  AbstractOpts,
-  ICore,
+  DFlexBaseNodeInput,
+  DFlexBaseNodeOpts,
+  IDFlexCoreNode,
 } from "./types";
 
-class NodeCore extends Abstract implements ICore {
+class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
   offset!: RectDimensions;
 
   currentPosition!: IPointNum;
@@ -41,13 +41,13 @@ class NodeCore extends Abstract implements ICore {
 
   animatedFrame: number | null;
 
-  private translateHistory?: ITransitionHistory[];
+  private _translateHistory?: ITransitionHistory[];
 
-  constructor(eleWithPointer: INodeInput, opts: AbstractOpts) {
-    const { order, keys, depth, scrollX, scrollY, readonly, ...element } =
+  constructor(eleWithPointer: DFlexBaseNodeInput, opts: DFlexBaseNodeOpts) {
+    const { order, keys, depth, scrollX, scrollY, readonly, id } =
       eleWithPointer;
 
-    super(element, opts);
+    super(id, opts);
 
     this.order = order;
     this.keys = keys;
@@ -61,13 +61,13 @@ class NodeCore extends Abstract implements ICore {
     }
 
     if (!this.isPaused) {
-      this.initIndicators(scrollX, scrollY);
+      this._initIndicators(scrollX, scrollY);
     }
 
     this.animatedFrame = null;
   }
 
-  private initIndicators(scrollX: number, scrollY: number) {
+  private _initIndicators(scrollX: number, scrollY: number) {
     const { height, width, left, top } = this.ref!.getBoundingClientRect();
 
     /**
@@ -94,7 +94,7 @@ class NodeCore extends Abstract implements ICore {
     this.hasToTransform = false;
   }
 
-  private updateCurrentIndicators(space: IPointAxes) {
+  private _updateCurrentIndicators(space: IPointAxes) {
     this.translate.increase(space);
 
     const { left, top } = this.offset!;
@@ -112,11 +112,11 @@ class NodeCore extends Abstract implements ICore {
   }
 
   resume(scrollX: number, scrollY: number) {
-    if (!this.isInitialized) this.attach(null);
+    if (!this.isInitialized) this.attach();
 
     this.initTranslate();
 
-    this.initIndicators(scrollX, scrollY);
+    this._initIndicators(scrollX, scrollY);
   }
 
   changeVisibility(isVisible: boolean) {
@@ -141,7 +141,7 @@ class NodeCore extends Abstract implements ICore {
     });
   }
 
-  private updateOrderIndexing(i: number) {
+  private _updateOrderIndexing(i: number) {
     const { self: oldIndex } = this.order;
 
     const newIndex = oldIndex + i;
@@ -184,7 +184,7 @@ class NodeCore extends Abstract implements ICore {
     branchIDsOrder[newIndex] = this.id;
   }
 
-  private leaveToNewPosition(
+  private _leaveToNewPosition(
     branchIDsOrder: string[],
     newIndex: number,
     oldIndex: number
@@ -197,7 +197,7 @@ class NodeCore extends Abstract implements ICore {
   /**
    *  Set a new translate position and store the old one.
    */
-  private seTranslate(
+  private _seTranslate(
     elmSpace: IPointAxes,
     axis: Axes,
     operationID?: string,
@@ -210,14 +210,14 @@ class NodeCore extends Abstract implements ICore {
         translate: { x: this.translate.x, y: this.translate.y },
       };
 
-      if (!Array.isArray(this.translateHistory)) {
-        this.translateHistory = [elmAxesHistory];
+      if (!Array.isArray(this._translateHistory)) {
+        this._translateHistory = [elmAxesHistory];
       } else {
-        this.translateHistory.push(elmAxesHistory);
+        this._translateHistory.push(elmAxesHistory);
       }
     }
 
-    this.updateCurrentIndicators(elmSpace);
+    this._updateCurrentIndicators(elmSpace);
 
     if (!isForceTransform && !this.isVisible) {
       this.hasToTransform = true;
@@ -256,9 +256,9 @@ class NodeCore extends Abstract implements ICore {
       elmSpace[axis] *= direction;
     }
 
-    this.seTranslate(elmSpace, axis, operationID);
+    this._seTranslate(elmSpace, axis, operationID);
 
-    const { oldIndex, newIndex } = this.updateOrderIndexing(
+    const { oldIndex, newIndex } = this._updateOrderIndexing(
       direction * numberOfPassedElm
     );
 
@@ -275,7 +275,7 @@ class NodeCore extends Abstract implements ICore {
       }
     }
 
-    this.leaveToNewPosition(iDsInOrder, newIndex, oldIndex);
+    this._leaveToNewPosition(iDsInOrder, newIndex, oldIndex);
   }
 
   /**
@@ -286,14 +286,15 @@ class NodeCore extends Abstract implements ICore {
    */
   rollBack(operationID: string, isForceTransform: boolean) {
     if (
-      !Array.isArray(this.translateHistory) ||
-      this.translateHistory.length === 0 ||
-      this.translateHistory[this.translateHistory.length - 1].ID !== operationID
+      !Array.isArray(this._translateHistory) ||
+      this._translateHistory.length === 0 ||
+      this._translateHistory[this._translateHistory.length - 1].ID !==
+        operationID
     ) {
       return;
     }
 
-    const lastMovement = this.translateHistory.pop()!;
+    const lastMovement = this._translateHistory.pop()!;
 
     const { translate: preTranslate, axis } = lastMovement;
 
@@ -322,12 +323,12 @@ class NodeCore extends Abstract implements ICore {
     }
 
     // Don't update UI if it's zero and wasn't transformed.
-    this.seTranslate(elmSpace, axis, undefined, isForceTransform);
+    this._seTranslate(elmSpace, axis, undefined, isForceTransform);
 
-    this.updateOrderIndexing(increment);
+    this._updateOrderIndexing(increment);
 
     this.rollBack(operationID, isForceTransform);
   }
 }
 
-export default NodeCore;
+export default DFlexCoreNode;

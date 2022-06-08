@@ -7,15 +7,10 @@ import type {
   Axis,
 } from "@dflex/utils";
 
-export interface AbstractOpts {
+export interface DFlexBaseNodeOpts {
   isInitialized: boolean;
   isPaused: boolean;
 }
-
-export type AbstractInput = {
-  id: string;
-  ref?: HTMLElement;
-};
 
 export type AllowedDataset =
   | "gridX"
@@ -30,13 +25,13 @@ export type AttributesIndicators =
   | Exclude<AllowedDataset, "index">
   | AllowedAttributes;
 
-export interface IAbstract {
+export interface IDFlexBaseNode {
   readonly isInitialized: boolean;
   isPaused: boolean;
   readonly ref: HTMLElement | null;
   readonly id: string;
   readonly translate: IPointNum;
-  attach(ref: HTMLElement | null): void;
+  attach(): void;
   detach(): void;
   initTranslate(): void;
   transform(x: number, y: number): void;
@@ -72,7 +67,8 @@ export interface Pointer {
   order: Order;
 }
 
-export interface INodeInput extends AbstractInput {
+export interface DFlexBaseNodeInput {
+  readonly id: string;
   readonly order: Order;
   readonly keys: Keys;
   readonly depth: number;
@@ -87,7 +83,7 @@ export type ITransitionHistory = {
   translate: IPointAxes;
 };
 
-export interface ICore extends IAbstract {
+export interface IDFlexCoreNode extends IDFlexBaseNode {
   /** Initial read-only element offset */
   readonly offset: RectDimensions;
 
@@ -124,7 +120,7 @@ export interface ICore extends IAbstract {
   rollBack(operationID: string, isForceTransform: boolean): void;
 }
 
-export interface INode extends ICore {
+export interface IDFlexNode extends IDFlexCoreNode {
   isConnected(): boolean;
   isPositionedUnder(elmY: number): boolean;
   isPositionedLeft(elmX: number): boolean;

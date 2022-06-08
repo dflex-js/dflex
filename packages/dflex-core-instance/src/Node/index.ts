@@ -1,8 +1,8 @@
 export type {
-  IAbstract as INodeAbstract,
-  INode,
-  INodeInput,
+  IDFlexBaseNode,
+  IDFlexNode,
+  DFlexBaseNodeInput,
   ITransitionHistory,
 } from "./types";
 
-export { default as Node } from "./CoreUtils";
+export { default as DFlexNode } from "./DFlexNode";

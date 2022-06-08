@@ -4,42 +4,19 @@ import type {
   ITracker,
   IPointNum,
 } from "@dflex/utils";
-import type { IContainer, INode } from "@dflex/core-instance";
-import type { RegisterInputMeta } from "@dflex/store";
+import type { IDFlexContainer, IDFlexNode } from "@dflex/core-instance";
 
+import type { RegisterInputOpts } from "@dflex/store";
 import type { DraggedEvent, LayoutState } from "../types";
 
 export interface ElmTree {
-  element: INode;
-  parent: INode | null;
+  element: IDFlexNode;
+  parent: IDFlexNode | null;
   branches: {
     siblings: string[];
     parents: string[];
   };
 }
-
-export type RegisterInputOpts =
-  | {
-      /** provide a depth if you want to drag the parent container.  */
-      depth?: number;
-      /** Unique key to connect elements with the same parent together. */
-      parentID?: string;
-      /** True for elements that won't be transformed.  */
-      readonly?: boolean;
-    } & (
-      | {
-          id: string;
-          ref: HTMLElement;
-        }
-      | {
-          id: string;
-          ref?: never;
-        }
-      | {
-          id?: never;
-          ref: HTMLElement;
-        }
-    );
 
 export interface ScrollThreshold {
   maxX: number;
@@ -58,12 +35,12 @@ export type InsertionELmMeta = {
   position: IPointNum;
   isEmpty: boolean;
   isOrphan: boolean;
-  elm: INode | null;
-  prevElm: INode | null;
+  elm: IDFlexNode | null;
+  prevElm: IDFlexNode | null;
 };
 
 export interface IDnDStore {
-  readonly containers: { [SK: string]: IContainer };
+  readonly containers: { [SK: string]: IDFlexContainer };
   readonly unifiedContainerDimensions: {
     [depth: number]: Dimensions;
   };
@@ -79,7 +56,7 @@ export interface IDnDStore {
   getInsertionELmMeta(insertAt: number, SK: string): InsertionELmMeta;
   onStateChange(state: LayoutState): void;
   emitEvent(event: DraggedEvent): void;
-  register(element: RegisterInputMeta, x?: boolean): void;
+  register(element: RegisterInputOpts): void;
   getBranchesByDepth(dp: number): string[];
   getInitialELmRectById(id: string): RectDimensions | undefined;
   getELmTranslateById(id: string): Translate;

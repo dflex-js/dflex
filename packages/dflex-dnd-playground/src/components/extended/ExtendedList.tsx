@@ -2,7 +2,7 @@
 import React from "react";
 import s from "../Demo.module.css";
 
-import DnDComponent from "../DnDComponent";
+import DFlexDnDComponent from "../DFlexDnDComponent";
 
 const ExtendedList = () => {
   const tasks = [];
@@ -13,18 +13,20 @@ const ExtendedList = () => {
     tasks.push({ id: uni, key: uni, task: `${i}` });
   }
 
+  const parentID = "DFlex-1k-elements";
+
   return (
     <div className={s.root}>
       <div className={s.extended}>
-        <ul>
+        <ul id={parentID}>
           {tasks.map(({ task, id, key }) => (
-            <DnDComponent
-              registerInput={{ id }}
+            <DFlexDnDComponent
+              Component="li"
+              registerInput={{ id, parentID }}
               key={key}
-              // opts={{ scroll: { enable: false } }}
             >
               {task}
-            </DnDComponent>
+            </DFlexDnDComponent>
           ))}
         </ul>
       </div>

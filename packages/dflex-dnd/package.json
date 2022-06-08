@@ -34,8 +34,7 @@
     "@dflex/core-instance": "workspace:^3.5.3",
     "@dflex/draggable": "workspace:^3.5.3",
     "@dflex/store": "workspace:^3.5.3",
-    "@dflex/utils": "workspace:^3.5.3",
-    "cross-env": "^7.0.3"
+    "@dflex/utils": "workspace:^3.5.3"
   },
   "keywords": [
     "drag-drop",

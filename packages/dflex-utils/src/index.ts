@@ -28,4 +28,4 @@ export type { IScroll } from "./Scroll";
 
 export { combineKeys, dirtyAssignBiggestRect } from "./collections";
 
-export { canUseDOM, getSelection } from "./dom";
+export { canUseDOM, getSelection, getParentElm } from "./dom";

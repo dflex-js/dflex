@@ -54,7 +54,14 @@ const plugins = (isProd, isMinify) => [
     delimiters: ["", ""],
     preventAssignment: true,
   }),
-  isMinify && terser(),
+  isMinify &&
+    terser({
+      mangle: {
+        properties: {
+          regex: /^_/,
+        },
+      },
+    }),
 ];
 
 /**

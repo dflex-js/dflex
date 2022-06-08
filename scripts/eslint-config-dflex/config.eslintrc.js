@@ -18,6 +18,7 @@ module.exports = {
   plugins: ["@typescript-eslint"],
   ignorePatterns: ["node_modules", "dist", "lib", "coverage", "**/*.d.ts"],
   rules: {
+    "no-underscore-dangle": [ERROR, { allowAfterThis: true }],
     "no-nested-ternary": OFF,
     "no-use-before-define": OFF,
     "@typescript-eslint/no-use-before-define": [ERROR],
@@ -48,7 +49,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ["*.test.js", "*.test.ts"],
+      files: ["*.test.js", "*.test.ts", "*.test.tsx"],
       env: {
         jest: true,
       },

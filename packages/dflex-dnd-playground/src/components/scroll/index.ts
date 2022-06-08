@@ -1,2 +1,2 @@
-export { default as ScrollMulti } from "./multi";
-export { default as ScrollEssential } from "./essential";
+/* eslint-disable import/prefer-default-export */
+export { default as ScrollEssential } from "./EssentialList";

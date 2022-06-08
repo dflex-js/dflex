@@ -1,16 +1,8 @@
-/* eslint-disable react/no-array-index-key */
-/* eslint-disable import/no-extraneous-dependencies */
-
 import React from "react";
-// import type {
-//   DraggedEvent,
-//   InteractivityEvent,
-//   SiblingsEvent,
-//   LayoutStateEvent,
-// } from "@dflex/dnd";
+
 import s from "../Demo.module.css";
 
-import DnDComponent from "../DnDComponent";
+import DFlexDnDComponent from "../DFlexDnDComponent";
 
 const TodoListWithReadonly = () => {
   const tasks = [
@@ -40,18 +32,21 @@ const TodoListWithReadonly = () => {
     },
   ];
 
+  const parentID = "DFlex-todo-list-with-readonly";
+
   return (
     <div className={s.root}>
       <div className={s.todo}>
-        <ul>
+        <ul id={parentID}>
           {tasks.map(({ msg, id, readonly, style }) => (
-            <DnDComponent
-              registerInput={{ id, readonly }}
+            <DFlexDnDComponent
+              Component={"li"}
+              registerInput={{ id, readonly, parentID }}
               key={id}
               style={style}
             >
               {msg}
-            </DnDComponent>
+            </DFlexDnDComponent>
           ))}
         </ul>
       </div>

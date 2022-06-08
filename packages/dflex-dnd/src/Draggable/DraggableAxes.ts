@@ -6,6 +6,7 @@ import {
   PointBool,
   Migration,
   combineKeys,
+  getParentElm,
 } from "@dflex/utils";
 import type {
   ThresholdInterface,
@@ -15,7 +16,7 @@ import type {
   IPointAxes,
 } from "@dflex/utils";
 
-import { Container, INode } from "@dflex/core-instance";
+import { DFlexContainer, IDFlexNode } from "@dflex/core-instance";
 
 import store from "../DnDStore";
 
@@ -28,7 +29,10 @@ import type {
   RestrictionsStatus,
 } from "../types";
 
-class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
+class DraggableAxes
+  extends AbstractDraggable<IDFlexNode>
+  implements IDraggableAxes
+{
   positionPlaceholder: IPointNum;
 
   gridPlaceholder: IPointNum;
@@ -116,9 +120,21 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
         store.unifiedContainerDimensions[depth]
       );
 
-      if (store.containers[key].originLength === Container.OUT_OF_RANGE) {
+      if (store.containers[key].originLength === DFlexContainer.OUT_OF_RANGE) {
         const { length } = store.getElmBranchByKey(key);
         store.containers[key].originLength = length;
+      }
+
+      if (!store.containers[key].ref) {
+        setTimeout(() => {
+          const childDOM = store.registry[store.getElmBranchByKey(key)[0]].ref!;
+
+          getParentElm(childDOM, (parent) => {
+            store.containers[key].ref = parent;
+
+            return true;
+          });
+        }, 0);
       }
     });
 
@@ -155,7 +171,7 @@ class DraggableAxes extends AbstractDraggable<INode> implements IDraggableAxes {
         opts.restrictionsStatus.isSelfRestricted);
   }
 
-  appendDraggedToContainerDimensions(isAppend: boolean) {
+  protected appendDraggedToContainerDimensions(isAppend: boolean) {
     const {
       depth,
       offset: { height },

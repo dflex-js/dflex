@@ -37,7 +37,6 @@
     "drag",
     "drop",
     "DOM",
-    "front-end",
     "@dflex",
     "@dflex/dom-gen",
     "@dflex/store",

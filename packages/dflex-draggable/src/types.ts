@@ -1,4 +1,4 @@
-import type { IAbstract } from "@dflex/core-instance";
+import type { IDFlexBaseNode } from "@dflex/core-instance";
 import type { IPointNum } from "@dflex/utils";
 
 export type DraggedStyle = {
@@ -7,27 +7,7 @@ export type DraggedStyle = {
   afterDragValue: string | null;
 }[];
 
-interface RegisterInputID {
-  id: string;
-  ref?: never;
-}
-
-interface RegisterInputRef {
-  id?: never;
-  ref: HTMLElement;
-}
-
-interface RegisterInputIDWithRef {
-  id: string;
-  ref: HTMLElement;
-}
-
-export type RegisterInput =
-  | RegisterInputIDWithRef
-  | RegisterInputID
-  | RegisterInputRef;
-
-export interface IAbstractDraggable<T extends IAbstract> {
+export interface IAbstractDraggable<T extends IDFlexBaseNode> {
   draggedElm: T;
 
   /**

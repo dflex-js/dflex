@@ -9,7 +9,7 @@
     "downlevelIteration": true,
     "target": "ES2019",
     "module": "ESNext",
-    "sourceMap": false,
+    "sourceMap": true,
     "outDir": "./types",
     "lib": ["esnext", "dom"],
     "moduleResolution": "Node",
@@ -28,6 +28,6 @@
     "isolatedModules": true,
     "esModuleInterop": true
   },
-  "include": ["packages", "dflex-env.d.ts"],
+  "include": ["dflex-env.d.ts"],
   "exclude": ["node_modules", "dist", "**/*.test*", "**/*.cy*"]
 }

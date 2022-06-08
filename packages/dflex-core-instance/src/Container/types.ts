@@ -7,7 +7,7 @@ import type {
   IScroll,
 } from "@dflex/utils";
 
-export interface IContainer {
+export interface IDFlexContainer {
   /**
    * Preserve the last element position in the list .
    * Usage: Getting this position when the dragged is going back from the tail.
@@ -20,7 +20,14 @@ export interface IContainer {
   /** Numbers of total columns and rows each container has.  */
   readonly grid: IPointNum;
 
+  /**
+   * Origin length for container before being transformed used to prevent
+   * layout shift.
+   * */
   originLength: number;
+
+  /** Direct reference to interactive element. */
+  ref?: HTMLElement | null;
 
   /** Container scroll instance.  */
   scroll: IScroll;

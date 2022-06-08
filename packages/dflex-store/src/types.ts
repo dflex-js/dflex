@@ -1,53 +1,31 @@
-import type { Keys, Order } from "@dflex/dom-gen";
+// https://github.com/microsoft/TypeScript/issues/28374#issuecomment-536521051
+type DeepNonNullable<T> = {
+  [P in keyof T]-?: NonNullable<T[P]>;
+};
 
-interface RegisterInputMetaBase {
-  /** provide a depth if you want to drag the parent container  */
+export type RegisterInputOpts = {
+  /** Targeted element Id. */
+  id: string;
+  /** Targeted element parent-id. Pass empty string if there's none. */
+  parentID: string;
+  /** The depth of targeted element starting from zero (The default value is Zero).  */
   depth?: number;
-  /** Unique key to connect elements with the same parent together */
-  parentID?: string;
-}
+  /**
+   * True for elements that won't be transformed during DnD but belongs to the
+   * same interactive container.
+   * */
+  readonly?: boolean;
+};
 
-interface RegisterInputID {
-  id: string;
-  ref?: never;
-}
-
-interface RegisterInputRef {
-  id?: never;
-  ref: HTMLElement;
-}
-
-interface RegisterInputAll {
-  id: string;
-  ref: HTMLElement;
-}
-
-/** Element before entering Registry abstract */
-export type RegisterInputMeta =
-  | (RegisterInputMetaBase & RegisterInputAll)
-  | (RegisterInputMetaBase & RegisterInputID)
-  | (RegisterInputMetaBase & RegisterInputRef);
-
-export type RegisterInput = {
-  /** Unique key to connect elements with the same parent together */
-  parentID?: string;
-  id: string;
-  ref?: HTMLElement;
-  readonly: boolean;
-  depth: number;
+export type RegisterInputBase = DeepNonNullable<RegisterInputOpts> & {
   isInitialized: boolean;
   isPaused: boolean;
   scrollX: number;
   scrollY: number;
 };
 
-export type ElmPointerWithProps = RegisterInput & {
-  order: Order;
-  keys: Keys;
-};
-
-export interface StoreInterface {
-  register(element: RegisterInput): void;
+export interface IDFlexBaseStore {
+  register(element: RegisterInputBase): void;
   unregister(id: string): void;
   destroy(): void;
   getElmBranchByKey(siblingsKy: string): string[];

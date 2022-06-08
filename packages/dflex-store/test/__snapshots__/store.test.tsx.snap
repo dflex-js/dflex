@@ -1,7 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Testing Store Package Returns element instance by element id 1`] = `
-CoreUtils {
+DFlexNode {
+  "_hasAttribute": Object {},
   "animatedFrame": null,
   "currentPosition": PointNum {
     "x": 0,
@@ -12,7 +13,6 @@ CoreUtils {
     "x": 0,
     "y": 0,
   },
-  "hasAttribute": Object {},
   "hasToTransform": false,
   "id": "id-0",
   "isInitialized": true,
@@ -33,9 +33,10 @@ CoreUtils {
     "parent": 0,
     "self": 0,
   },
-  "readonly": undefined,
+  "readonly": false,
   "ref": <div
     data-index="0"
+    id="id-0"
   />,
   "translate": PointNum {
     "x": 0,
@@ -46,7 +47,8 @@ CoreUtils {
 
 exports[`Testing Store Package Snaps shot registry 1`] = `
 Object {
-  "id-0": CoreUtils {
+  "id-0": DFlexNode {
+    "_hasAttribute": Object {},
     "animatedFrame": null,
     "currentPosition": PointNum {
       "x": 0,
@@ -57,7 +59,6 @@ Object {
       "x": 0,
       "y": 0,
     },
-    "hasAttribute": Object {},
     "hasToTransform": false,
     "id": "id-0",
     "isInitialized": true,
@@ -78,16 +79,18 @@ Object {
       "parent": 0,
       "self": 0,
     },
-    "readonly": undefined,
+    "readonly": false,
     "ref": <div
       data-index="0"
+      id="id-0"
     />,
     "translate": PointNum {
       "x": 0,
       "y": 0,
     },
   },
-  "id-1": CoreUtils {
+  "id-1": DFlexNode {
+    "_hasAttribute": Object {},
     "animatedFrame": null,
     "currentPosition": PointNum {
       "x": 0,
@@ -98,7 +101,6 @@ Object {
       "x": 0,
       "y": 0,
     },
-    "hasAttribute": Object {},
     "hasToTransform": false,
     "id": "id-1",
     "isInitialized": true,
@@ -119,16 +121,18 @@ Object {
       "parent": 0,
       "self": 1,
     },
-    "readonly": undefined,
+    "readonly": false,
     "ref": <div
-      data-index="0"
+      data-index="1"
+      id="id-1"
     />,
     "translate": PointNum {
       "x": 0,
       "y": 0,
     },
   },
-  "id-2": CoreUtils {
+  "id-2": DFlexNode {
+    "_hasAttribute": Object {},
     "animatedFrame": null,
     "currentPosition": PointNum {
       "x": 0,
@@ -139,7 +143,6 @@ Object {
       "x": 0,
       "y": 0,
     },
-    "hasAttribute": Object {},
     "hasToTransform": false,
     "id": "id-2",
     "isInitialized": true,
@@ -160,16 +163,18 @@ Object {
       "parent": 0,
       "self": 2,
     },
-    "readonly": undefined,
+    "readonly": false,
     "ref": <div
-      data-index="0"
+      data-index="2"
+      id="id-2"
     />,
     "translate": PointNum {
       "x": 0,
       "y": 0,
     },
   },
-  "p-id-0": CoreUtils {
+  "p-id-0": DFlexNode {
+    "_hasAttribute": Object {},
     "animatedFrame": null,
     "currentPosition": PointNum {
       "x": 0,
@@ -180,16 +185,15 @@ Object {
       "x": 0,
       "y": 0,
     },
-    "hasAttribute": Object {},
     "hasToTransform": false,
     "id": "p-id-0",
     "isInitialized": true,
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
-      "CHK": "0-0",
+      "CHK": "2-0",
       "PK": "2-0",
-      "SK": "1-0",
+      "SK": "1-1",
     },
     "offset": Object {
       "height": 0,
@@ -198,13 +202,27 @@ Object {
       "width": 0,
     },
     "order": Object {
-      "parent": 0,
+      "parent": 1,
       "self": 0,
     },
-    "readonly": undefined,
+    "readonly": false,
     "ref": <div
       data-index="0"
-    />,
+      id="p-id-0"
+    >
+      <div
+        data-index="0"
+        id="id-0"
+      />
+      <div
+        data-index="1"
+        id="id-1"
+      />
+      <div
+        data-index="2"
+        id="id-2"
+      />
+    </div>,
     "translate": PointNum {
       "x": 0,
       "y": 0,
@@ -215,7 +233,8 @@ Object {
 
 exports[`Testing Store Package Snaps shot registry after delete 1`] = `
 Object {
-  "id-0": CoreUtils {
+  "id-0": DFlexNode {
+    "_hasAttribute": Object {},
     "animatedFrame": null,
     "currentPosition": PointNum {
       "x": 0,
@@ -226,7 +245,6 @@ Object {
       "x": 0,
       "y": 0,
     },
-    "hasAttribute": Object {},
     "hasToTransform": false,
     "id": "id-0",
     "isInitialized": true,
@@ -247,16 +265,18 @@ Object {
       "parent": 0,
       "self": 0,
     },
-    "readonly": undefined,
+    "readonly": false,
     "ref": <div
       data-index="0"
+      id="id-0"
     />,
     "translate": PointNum {
       "x": 0,
       "y": 0,
     },
   },
-  "id-1": CoreUtils {
+  "id-1": DFlexNode {
+    "_hasAttribute": Object {},
     "animatedFrame": null,
     "currentPosition": PointNum {
       "x": 0,
@@ -267,7 +287,6 @@ Object {
       "x": 0,
       "y": 0,
     },
-    "hasAttribute": Object {},
     "hasToTransform": false,
     "id": "id-1",
     "isInitialized": true,
@@ -288,16 +307,18 @@ Object {
       "parent": 0,
       "self": 1,
     },
-    "readonly": undefined,
+    "readonly": false,
     "ref": <div
-      data-index="0"
+      data-index="1"
+      id="id-1"
     />,
     "translate": PointNum {
       "x": 0,
       "y": 0,
     },
   },
-  "id-2": CoreUtils {
+  "id-2": DFlexNode {
+    "_hasAttribute": Object {},
     "animatedFrame": null,
     "currentPosition": PointNum {
       "x": 0,
@@ -308,7 +329,6 @@ Object {
       "x": 0,
       "y": 0,
     },
-    "hasAttribute": Object {},
     "hasToTransform": false,
     "id": "id-2",
     "isInitialized": true,
@@ -329,16 +349,18 @@ Object {
       "parent": 0,
       "self": 2,
     },
-    "readonly": undefined,
+    "readonly": false,
     "ref": <div
-      data-index="0"
+      data-index="2"
+      id="id-2"
     />,
     "translate": PointNum {
       "x": 0,
       "y": 0,
     },
   },
-  "p-id-0": CoreUtils {
+  "p-id-0": DFlexNode {
+    "_hasAttribute": Object {},
     "animatedFrame": null,
     "currentPosition": PointNum {
       "x": 0,
@@ -349,16 +371,15 @@ Object {
       "x": 0,
       "y": 0,
     },
-    "hasAttribute": Object {},
     "hasToTransform": false,
     "id": "p-id-0",
     "isInitialized": true,
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
-      "CHK": "0-0",
+      "CHK": "2-0",
       "PK": "2-0",
-      "SK": "1-0",
+      "SK": "1-1",
     },
     "offset": Object {
       "height": 0,
@@ -367,13 +388,27 @@ Object {
       "width": 0,
     },
     "order": Object {
-      "parent": 0,
+      "parent": 1,
       "self": 0,
     },
-    "readonly": undefined,
+    "readonly": false,
     "ref": <div
       data-index="0"
-    />,
+      id="p-id-0"
+    >
+      <div
+        data-index="0"
+        id="id-0"
+      />
+      <div
+        data-index="1"
+        id="id-1"
+      />
+      <div
+        data-index="2"
+        id="id-2"
+      />
+    </div>,
     "translate": PointNum {
       "x": 0,
       "y": 0,

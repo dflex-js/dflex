@@ -1,6 +1,3 @@
-/* eslint-disable react/no-array-index-key */
-/* eslint-disable import/no-extraneous-dependencies */
-
 import React from "react";
 import type {
   DraggedEvent,
@@ -10,9 +7,9 @@ import type {
 } from "@dflex/dnd";
 import s from "../Demo.module.css";
 
-import DnDComponent from "../DnDComponent";
+import DFlexDnDComponent from "../DFlexDnDComponent";
 
-const TodoList = () => {
+const TodoListWithEvents = () => {
   const tasks = [
     { id: "mtg", msg: "Meet with Laura", style: { height: "3rem" } },
     { id: "org", msg: "Organize weekly meetup", style: { height: "6.5rem" } },
@@ -59,13 +56,16 @@ const TodoList = () => {
     console.log("onMoveDownSiblings", e);
   };
 
+  const parentID = "DFlex-todo-list-with-events";
+
   return (
     <div className={s.root}>
       <div className={s.todo}>
-        <ul>
+        <ul id={parentID}>
           {tasks.map(({ msg, id, style }) => (
-            <DnDComponent
-              registerInput={{ id }}
+            <DFlexDnDComponent
+              Component={"li"}
+              registerInput={{ id, parentID }}
               key={id}
               style={style}
               opts={{
@@ -81,11 +81,12 @@ const TodoList = () => {
               }}
             >
               {msg}
-            </DnDComponent>
+            </DFlexDnDComponent>
           ))}
         </ul>
       </div>
     </div>
   );
 };
-export default TodoList;
+
+export default TodoListWithEvents;

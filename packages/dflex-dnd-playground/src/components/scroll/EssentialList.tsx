@@ -1,8 +1,8 @@
 /* eslint-disable react/no-array-index-key */
 import React from "react";
-import s from "../../Demo.module.css";
+import s from "../Demo.module.css";
 
-import DnDComponent from "../../DnDComponent";
+import DFlexDnDComponent from "../DFlexDnDComponent";
 
 const EssentialList = () => {
   const tasks = [];
@@ -13,14 +13,20 @@ const EssentialList = () => {
     tasks.push({ id: uni, key: uni, task: `${i}` });
   }
 
+  const parentID = "DFlex-scroll-essential";
+
   return (
     <div className={s.root}>
       <div className={s.extended}>
-        <ul>
+        <ul id={parentID}>
           {tasks.map(({ task, id, key }) => (
-            <DnDComponent registerInput={{ id }} key={key}>
+            <DFlexDnDComponent
+              Component={"li"}
+              registerInput={{ parentID, id }}
+              key={key}
+            >
               {task}
-            </DnDComponent>
+            </DFlexDnDComponent>
           ))}
         </ul>
       </div>

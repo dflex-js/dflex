@@ -11,6 +11,7 @@
   "author": "Jalal Maskoun",
   "scripts": {
     "start": "cross-env NODE_ENV=development pnpm -F dflex-dnd-playground dev",
+    "start:draggable-only": "cross-env NODE_ENV=development pnpm -F dflex-draggable-playground dev",
     "dev-cypress": "cross-env NODE_ENV=development && pnpm start-server-and-test 'pnpm run start' http-get://localhost:3001 'cypress open --env extended=true --project packages/dflex-dnd-playground'",
     "cy:run:vertical:chrome": "cypress run --env extended=true --project packages/dflex-dnd-playground --headless --spec 'packages/dflex-dnd-playground/cypress/e2e/same-container-vertical/**/*.cy.ts' --config-file cypress.config.ts --browser chrome",
     "cy:run:multi:chrome": "cypress run --project packages/dflex-dnd-playground --headless --spec 'packages/dflex-dnd-playground/cypress/e2e/multiple-containers/**/*.cy.ts' --config-file cypress.config.ts --browser chrome",
@@ -29,11 +30,16 @@
     "update-version": "pnpm changeset version && pnpm install"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.22.0",
-    "@swc/core": "^1.2.196",
-    "@swc/jest": "^0.2.21",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "react-router-dom": "^6.3.0",
+    "@types/react": "^18.0.10",
+    "@types/react-dom": "^18.0.5",
+    "@types/react-router-dom": "^5.3.3",
     "@types/jest": "^28.1.0",
     "@types/node": "^17.0.39",
+    "ts-jest": "^28.0.4",
+    "@changesets/cli": "^2.22.0",
     "cross-env": "^7.0.3",
     "cypress": "^10.0.2",
     "eslint-config-dflex": "workspace:*",
@@ -45,6 +51,8 @@
     "start-server-and-test": "^1.14.0",
     "ts-node": "^10.8.1",
     "typescript": "^4.7.3",
+    "@vitejs/plugin-react": "^1.3.2",
+    "vite-plugin-replace": "^0.1.1",
     "vite": "^2.9.9"
   }
 }
