@@ -111,7 +111,6 @@ describe("Testing Store Package", () => {
   afterAll(() => {
     document.body.removeChild(container!);
     container = null;
-    jest.restoreAllMocks();
   });
 
   it("Registers new elements", () => {
