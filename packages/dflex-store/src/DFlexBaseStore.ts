@@ -56,12 +56,8 @@ class DFlexBaseStore {
 
     // A new branch.
     // Create a fake parent node to close the branch.
-    const { id, depth, ...rest } = element;
-    this._submitElementToRegistry({
-      id: element.parentID,
-      depth: depth + 1,
-      ...rest,
-    });
+    const { parentID, depth } = element;
+    this.DOMGen.register(parentID, depth + 1);
 
     this._submitElementToRegistry(element);
   }
