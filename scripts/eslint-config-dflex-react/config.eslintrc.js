@@ -9,6 +9,7 @@ module.exports = {
   },
   plugins: ["react"],
   rules: {
+    "import/no-extraneous-dependencies": OFF,
     "react/prop-types": OFF,
   },
   settings: {
