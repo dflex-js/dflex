@@ -5,6 +5,7 @@ importers:
   .:
     specifiers:
       '@changesets/cli': ^2.22.0
+      '@playwright/test': ^1.22.2
       '@types/jest': ^28.1.1
       '@types/node': ^17.0.41
       '@types/react': ^18.0.12
@@ -30,6 +31,7 @@ importers:
       vite-plugin-replace: ^0.1.1
     devDependencies:
       '@changesets/cli': 2.22.0
+      '@playwright/test': 1.22.2
       '@types/jest': 28.1.1
       '@types/node': 17.0.41
       '@types/react': 18.0.12
@@ -1166,6 +1168,15 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.13.0
 
+  /@playwright/test/1.22.2:
+    resolution: {integrity: sha512-cCl96BEBGPtptFz7C2FOSN3PrTnJ3rPpENe+gYCMx4GNNDlN4tmo2D89y13feGKTMMAIVrXfSQ/UmaQKLy1XLA==}
+    engines: {node: '>=14'}
+    hasBin: true
+    dependencies:
+      '@types/node': 17.0.41
+      playwright-core: 1.22.2
+    dev: true
+
   /@rollup/plugin-alias/3.1.9_rollup@2.75.6:
     resolution: {integrity: sha512-QI5fsEvm9bDzt32k39wpOwZhVzRcL5ydcffUHMyLVaVaLeC70I8TJZ17F1z1eMoLu4E/UOcH9BWVkKpIKdrfiw==}
     engines: {node: '>=8.0.0'}
@@ -1483,7 +1494,7 @@ packages:
     resolution: {integrity: sha512-Cn6WYCm0tXv8p6k+A8PvbDG763EDpBoTzHdA+Q/MF6H3sapGjCm9NzoaJncJS9tUKSuCoDs9XHxYYsQDgxR6kw==}
     requiresBuild: true
     dependencies:
-      '@types/node': 14.18.21
+      '@types/node': 17.0.41
     dev: true
     optional: true
 
@@ -5134,6 +5145,12 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       find-up: 4.1.0
+    dev: true
+
+  /playwright-core/1.22.2:
+    resolution: {integrity: sha512-w/hc/Ld0RM4pmsNeE6aL/fPNWw8BWit2tg+TfqJ3+p59c6s3B6C8mXvXrIPmfQEobkcFDc+4KirNzOQ+uBSP1Q==}
+    engines: {node: '>=14'}
+    hasBin: true
     dev: true
 
   /postcss/8.4.14:
