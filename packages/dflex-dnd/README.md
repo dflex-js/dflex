@@ -31,13 +31,13 @@
   </a>
 </p>
 
-# @dflex/dnd
+# DFlex
 
-DFlex Drag and Drop is the main package that depends on the other packages. It
-is responsible for the magical logic of the library to introduce the drag and
-drop interactive functionality.
+A Drag-and-Drop library for all JavaScript frameworks implementing an enhanced
+transformation mechanism to manipulate DOM elements. It is so far the only
+library on internet that manipulates the DOM instead of reconstructing it.
 
-## DFlex Features ✅
+## Features ✅
 
 - Dynamic architecture.
 - Traverse DOM without calling browser API.
@@ -49,6 +49,28 @@ drop interactive functionality.
 - Event driven API.
 - Targeting each DOM node individually.
 - Extensible using JSON tree instead of flat recursion.
+- Support three different types of restrictions:<br/>
+  1 -Restricted area related to the parent container.<br/>
+  2- Restricted area related to the viewport.<br/>
+  3- Restricted area related to the position itself.
+- Support four types of custom events with custom layout state emitter.
+- Auto remove selection when starting dragging.
+
+## Implemented Transformation 💡
+
+- The original input order which appears when inspecting elements stays the
+  same. While the visual order happens after transformation and it's supported by the
+  `data-index` attribute to know the order of elements in the visual list.<br/><br/>
+  ![original and visual order](https://user-images.githubusercontent.com/19228730/126757232-0e72a153-7fba-4868-b881-d29f2439d510.gif)
+
+- To enable handling a large set of elements, the transformation is related
+  to the viewport. No matter how many elements are affected, DFlex only
+  transforms elements visible on the screen. Elements outside the viewport are
+  triggered to a new position when they are visible.<br/><br/>
+  ![Trigger elements visible on the screen](https://user-images.githubusercontent.com/19228730/126758576-e716787d-3ff7-44cb-883a-c6b7064e30e5.gif)
+
+- Support strict transformation between containers.<br/><br/>
+  ![Handle orphaned container](https://user-images.githubusercontent.com/19228730/165508982-c4d3b317-19bd-4a98-ba0f-febf772de44a.gif)
 
 ## Installation 📦
 

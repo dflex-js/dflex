@@ -1,9 +1,7 @@
 ---
-title: Drag and Drop API
-description: "DFlex drag and drop installation and API."
+title: DFlex Drag and Drop API
+description: "DFlex Drag and Drop API."
 ---
-
-> A Simple, lightweight Solution for a Drag & Drop interactive App.
 
 ## Installation
 
@@ -13,7 +11,7 @@ npm install @dflex/dnd
 
 ## API
 
-You can achieve a drag and drop with three steps only:
+DFlex depends on three principles to achieve DOM interactivity:
 
 - Register element in the store.
 - Start dragging when mouse is down.
@@ -25,29 +23,25 @@ import { store, DnD } from "@dflex/dnd";
 
 ### Register element
 
-Each element should be registered in DnD store in order to be active for Drag
+Each element should be registered in DnD store in order to be active for drag
 and drop later.
 
 ```ts
-store.register(RegisterInput);
+store.register(RegisterInputOpts);
 ```
 
-Where `RegisterInput` is an object with the following properties:
+Where `RegisterInputOpts` is an object with the following properties:
 
-- `id?: string` is a unique identifier for an element in the registry. Duplicate
-  ids will cause confusion and prevent DnD from working properly.
-- `parentID?: string` is the parent element id. If you have multiple lists in
-  the same layout you should provide the parent id so the registry can
-  distinguish between elements.
-- `ref?: HTMLElement` targeted DOM element. Should be provided if you haven't
-  provided the id.
-- `depth?: number` Element depth in tree. Start from bottom up. So the child is `0`
-  by default. Depth is necessary for nested elements.
+- `id: string` Targeted element-id.
+- `parentID: string` Parent element-id. Pass empty string if there's none.
+- `depth?: number` The depth of targeted element starting from zero (The default value is zero).
+- `readonly?: boolean` True for elements that won't be transformed during DnD
+  but belongs to the same interactive container.
 
 ### Create responsive DnD event
 
-The responsive drag and drop event should be created when `onmousedown` is fired. So you
-initialized the element and its siblings before start dragging.
+The responsive drag and drop event should be created when `onmousedown` is
+fired. So it can initialize the element and its siblings before start dragging.
 
 ```ts
 const dndEvent = new DnD(id, clickCoordinates, opts);
@@ -56,7 +50,7 @@ const dndEvent = new DnD(id, clickCoordinates, opts);
 - `id: string` registered element-id in the store.
 - `clickCoordinates` is an object with `{x: number, y: number}` contains the coordinates of the
   mouse/touch click.
-- `opts` is DnD options object. You can see [options full documentation by
+- `opts?` is DnD options object. You can see [options full documentation by
   clicking here.](/docs/drag-drop/api/#options)
 
 ### Start responsive dragging
@@ -87,7 +81,8 @@ store.unregister(id);
 
 ## Options
 
-You can pass options when creating DnD event that controls each element individually.
+You can pass options when creating DnD event that controls each element
+individually. So your options can be different for each element.
 
 ### Dragging Threshold
 

@@ -4,11 +4,11 @@ type DeepNonNullable<T> = {
 };
 
 export type RegisterInputOpts = {
-  /** Targeted element Id. */
+  /** Targeted element-id. */
   id: string;
-  /** Targeted element parent-id. Pass empty string if there's none. */
+  /** Parent element-id. Pass empty string if there's none. */
   parentID: string;
-  /** The depth of targeted element starting from zero (The default value is Zero).  */
+  /** The depth of targeted element starting from zero (The default value is zero).  */
   depth?: number;
   /**
    * True for elements that won't be transformed during DnD but belongs to the
