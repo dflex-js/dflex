@@ -288,7 +288,7 @@ jobs:
     strategy:
       matrix:
         node-version: [16.8]
-        browser: ["chromium", "firefox", "webkit"]
+        browser: ["chromium", "firefox"]
     env:
       CI: true
     steps:
@@ -342,7 +342,7 @@ jobs:
     strategy:
       matrix:
         node-version: [16.8]
-        browser: ["chromium", "firefox", "webkit"]
+        browser: ["chromium", "firefox"]
     env:
       CI: true
     steps:
