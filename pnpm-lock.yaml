@@ -58,16 +58,16 @@ importers:
 
   packages/dflex-core-instance:
     specifiers:
-      '@dflex/utils': workspace:^3.5.3
+      '@dflex/utils': workspace:^3.5.4
     devDependencies:
       '@dflex/utils': link:../dflex-utils
 
   packages/dflex-dnd:
     specifiers:
-      '@dflex/core-instance': workspace:^3.5.3
-      '@dflex/draggable': workspace:^3.5.3
-      '@dflex/store': workspace:^3.5.3
-      '@dflex/utils': workspace:^3.5.3
+      '@dflex/core-instance': workspace:^3.5.4
+      '@dflex/draggable': workspace:^3.5.4
+      '@dflex/store': workspace:^3.5.4
+      '@dflex/utils': workspace:^3.5.4
     devDependencies:
       '@dflex/core-instance': link:../dflex-core-instance
       '@dflex/draggable': link:../dflex-draggable
@@ -76,7 +76,7 @@ importers:
 
   packages/dflex-dnd-playground:
     specifiers:
-      '@dflex/dnd': workspace:^3.5.3
+      '@dflex/dnd': workspace:^3.5.4
       '@folo/utils': ^0.1.5
       cypress: ^10.0.2
       eslint: ^8.16.0
@@ -93,15 +93,15 @@ importers:
 
   packages/dflex-dom-gen:
     specifiers:
-      '@dflex/utils': workspace:^3.5.3
+      '@dflex/utils': workspace:^3.5.4
     devDependencies:
       '@dflex/utils': link:../dflex-utils
 
   packages/dflex-draggable:
     specifiers:
-      '@dflex/core-instance': workspace:^3.5.3
-      '@dflex/store': workspace:^3.5.3
-      '@dflex/utils': workspace:^3.5.3
+      '@dflex/core-instance': workspace:^3.5.4
+      '@dflex/store': workspace:^3.5.4
+      '@dflex/utils': workspace:^3.5.4
       eslint-config-dflex-react: workspace:*
     devDependencies:
       '@dflex/core-instance': link:../dflex-core-instance
@@ -111,7 +111,7 @@ importers:
 
   packages/dflex-draggable-playground:
     specifiers:
-      '@dflex/draggable': workspace:^3.5.3
+      '@dflex/draggable': workspace:^3.5.4
       eslint-config-dflex-react: workspace:*
     dependencies:
       '@dflex/draggable': link:../dflex-draggable
@@ -120,8 +120,8 @@ importers:
 
   packages/dflex-store:
     specifiers:
-      '@dflex/core-instance': workspace:^3.5.3
-      '@dflex/dom-gen': workspace:^3.5.3
+      '@dflex/core-instance': workspace:^3.5.4
+      '@dflex/dom-gen': workspace:^3.5.4
     devDependencies:
       '@dflex/core-instance': link:../dflex-core-instance
       '@dflex/dom-gen': link:../dflex-dom-gen
