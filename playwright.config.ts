@@ -1,18 +1,24 @@
 /* eslint-disable import/no-extraneous-dependencies */
-// playwright.config.ts
+
 import { PlaywrightTestConfig, devices } from "@playwright/test";
 
 const { CI } = process.env;
 const IS_CI = CI === "true";
 
 const testDir = "./packages/dflex-dnd-playground/tests/";
+const baseURL = "http://localhost:3001";
 
 const config: PlaywrightTestConfig = {
   forbidOnly: IS_CI,
-  retries: IS_CI ? 2 : 0,
+  retries: IS_CI ? 4 : 0,
   use: {
     trace: "on-first-retry",
     navigationTimeout: 30000,
+    baseURL,
+    viewport: {
+      height: 1080,
+      width: 1920,
+    },
   },
   projects: [
     {

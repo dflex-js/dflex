@@ -34,20 +34,8 @@ const moduleResolution = [
 ];
 
 const config: UserConfigExport = {
-  plugins: [react()],
-  server: {
-    port: PORT,
-  },
-  preview: {
-    port: PORT,
-  },
-  resolve: {},
-};
-
-if (process.env.NODE_ENV === "development") {
-  Object.assign(config, { resolve: { alias: moduleResolution } });
-
-  config.plugins!.push(
+  plugins: [
+    react(),
     replaceCodePlugin({
       replacements: [
         {
@@ -55,9 +43,18 @@ if (process.env.NODE_ENV === "development") {
           to: "true",
         },
       ],
-    })
-  );
-}
+    }),
+  ],
+  server: {
+    port: PORT,
+  },
+  preview: {
+    port: PORT,
+  },
+  resolve: {
+    alias: moduleResolution,
+  },
+};
 
 // https://vitejs.dev/config/
 export default defineConfig(config);

@@ -1,337 +1,502 @@
-# name: CI
+name: CI
 
-# on:
-#   push:
-#     branches:
-#       - main
-#   pull_request:
-#     types: [opened, synchronize, reopened, ready_for_review]
-#     paths-ignore:
-#       - "**.md"
-#       - scripts/**
-#       - blog/**
-#       - docs/**
-#       - .github/**
-#       - "!.github/workflows/ci.yml"
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths-ignore:
+      - "**.md"
+      - scripts/**
+      - blog/**
+      - docs/**
+      - .github/**
+      - "!.github/workflows/ci.yml"
 
-# concurrency:
-#   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
-#   cancel-in-progress: true
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
-# jobs:
-#   lint:
-#     name: Lint
-#     runs-on: ubuntu-latest
-#     timeout-minutes: 3
-#     steps:
-#       - name: Check out repository
-#         uses: actions/checkout@v3
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
 
-#       - name: Cache pnpm modules
-#         uses: actions/cache@v3
-#         with:
-#           path: ~/.pnpm-store
-#           key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-#           restore-keys: |
-#             ${{ runner.os }}-
+      - name: Cache pnpm modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
 
-#       - uses: pnpm/action-setup@v2.2.2
-#         with:
-#           version: ^7.0.0
-#           run_install: true
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: ^7.0.0
+          run_install: true
 
-#       - name: Use latest version of Node.j
-#         uses: actions/setup-node@v3
-#         with:
-#           node-version: "*"
-#           cache: "pnpm"
+      - name: Use latest version of Node.j
+        uses: actions/setup-node@v3
+        with:
+          node-version: "*"
+          cache: "pnpm"
 
-#       - name: Run lint
-#         run: "pnpm lint"
+      - name: Run lint
+        run: "pnpm lint"
 
-#   types:
-#     name: Check Types
-#     runs-on: ubuntu-latest
-#     timeout-minutes: 3
-#     steps:
-#       - name: Check out repository
-#         uses: actions/checkout@v3
+  types:
+    name: Check Types
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
 
-#       - name: Cache pnpm modules
-#         uses: actions/cache@v3
-#         with:
-#           path: ~/.pnpm-store
-#           key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-#           restore-keys: |
-#             ${{ runner.os }}-
+      - name: Cache pnpm modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
 
-#       - uses: pnpm/action-setup@v2.2.2
-#         with:
-#           version: ^7.0.0
-#           run_install: true
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: ^7.0.0
+          run_install: true
 
-#       - name: Use latest version of Node.j
-#         uses: actions/setup-node@v3
-#         with:
-#           node-version: "*"
-#           cache: "pnpm"
+      - name: Use latest version of Node.j
+        uses: actions/setup-node@v3
+        with:
+          node-version: "*"
+          cache: "pnpm"
 
-#       - name: check types
-#         run: pnpm check-types
+      - name: check types
+        run: pnpm check-types
 
-#   unit-test:
-#     name: Unit Test
-#     timeout-minutes: 3
-#     runs-on: ubuntu-latest
-#     if: github.event.pull_request.draft != true
-#     steps:
-#       - name: Check out repository
-#         uses: actions/checkout@v3
+  unit-test:
+    name: Unit Test
+    timeout-minutes: 3
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft != true
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
 
-#       - name: Cache pnpm modules
-#         uses: actions/cache@v3
-#         with:
-#           path: ~/.pnpm-store
-#           key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-#           restore-keys: |
-#             ${{ runner.os }}-
+      - name: Cache pnpm modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
 
-#       - uses: pnpm/action-setup@v2.2.2
-#         with:
-#           version: ^7.0.0
-#           run_install: true
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: ^7.0.0
+          run_install: true
 
-#       - name: Use latest version of Node.j
-#         uses: actions/setup-node@v3
-#         with:
-#           node-version: "*"
-#           cache: "pnpm"
+      - name: Use latest version of Node.j
+        uses: actions/setup-node@v3
+        with:
+          node-version: "*"
+          cache: "pnpm"
 
-#       - name: Run Test
-#         run: CI=true pnpm jest --coverage
+      - name: Run Test
+        run: CI=true pnpm jest --coverage
 
-#   install-build:
-#     name: Build and upload artifacts
-#     runs-on: ubuntu-latest
-#     if: github.event.pull_request.draft != true
-#     steps:
-#       - name: Check out repository
-#         uses: actions/checkout@v3
+  install-build:
+    name: Build and upload artifacts
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft != true
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
 
-#       - name: Cache pnpm modules
-#         uses: actions/cache@v3
-#         with:
-#           path: ~/.pnpm-store
-#           key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-#           restore-keys: |
-#             ${{ runner.os }}-
+      - name: Cache pnpm modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
 
-#       - uses: pnpm/action-setup@v2.2.2
-#         with:
-#           version: ^7.0.0
-#           run_install: true
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: ^7.0.0
+          run_install: true
 
-#       - name: Use latest version of Node.j
-#         uses: actions/setup-node@v3
-#         with:
-#           node-version: "*"
-#           cache: "pnpm"
+      - name: Use latest version of Node.j
+        uses: actions/setup-node@v3
+        with:
+          node-version: "*"
+          cache: "pnpm"
 
-#       - name: Build packages
-#         run: "pnpm clean && pnpm -r emit && pnpm build --production --release --minify"
+      - name: Build packages
+        run: "pnpm clean && pnpm -r emit && pnpm build --production --release --minify"
 
-#       - name: Build DnD React App
-#         run: pnpm -F dflex-dnd-playground build
+      - name: Build DnD React App
+        run: pnpm -F dflex-dnd-playground build
 
-#       - name: Upload Package Artifacts
-#         uses: actions/upload-artifact@v3
-#         with:
-#           name: build
-#           path: |
-#             packages/**/dist
-#             packages/**/types
-#           if-no-files-found: error
+      - name: Upload Package Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: |
+            packages/**/dist
+            packages/**/types
+          if-no-files-found: error
 
-#   e2e-same-container-vertical:
-#     name: One Container Vertically - Chrome
-#     runs-on: ubuntu-latest
-#     needs: install-build
-#     timeout-minutes: 12
-#     if: github.event.pull_request.draft != true
-#     steps:
-#       - name: Check out repository
-#         uses: actions/checkout@v3
+  e2e-same-container-vertical:
+    name: One Container Vertically - Chrome
+    runs-on: ubuntu-latest
+    needs: install-build
+    timeout-minutes: 12
+    if: github.event.pull_request.draft != true
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
 
-#       - name: Cache pnpm modules
-#         uses: actions/cache@v3
-#         with:
-#           path: ~/.pnpm-store
-#           key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-#           restore-keys: |
-#             ${{ runner.os }}-
+      - name: Cache pnpm modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
 
-#       - uses: pnpm/action-setup@v2.2.2
-#         with:
-#           version: ^7.0.0
-#           run_install: true
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: ^7.0.0
+          run_install: true
 
-#       - name: Use latest version of Node.j
-#         uses: actions/setup-node@v3
-#         with:
-#           node-version: "*"
-#           cache: "pnpm"
+      - name: Use latest version of Node.j
+        uses: actions/setup-node@v3
+        with:
+          node-version: "*"
+          cache: "pnpm"
 
-#       - name: Download Build Artifacts
-#         uses: actions/download-artifact@v3
-#         with:
-#           name: build
-#           path: ./packages
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: ./packages
 
-#       - name: Testing features for DnD with React APP - Chrome
-#         run: pnpm test-e2e-vertical:chrome
+      - name: Testing features for DnD with React APP - Chrome
+        run: pnpm test-e2e-vertical:chrome
 
-#   # e2e-same-container-horizontal:
-#   #   name: One Container Horizontally - Chrome
-#   #   runs-on: ubuntu-latest
-#   #   timeout-minutes: 12
-#   #   if: github.event.pull_request.draft != true
-#   #   needs: install-build
-#   #   steps:
-#   #     - name: Check out repository
-#   #       uses: actions/checkout@v3
+  # e2e-same-container-horizontal:
+  #   name: One Container Horizontally - Chrome
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 12
+  #   if: github.event.pull_request.draft != true
+  #   needs: install-build
+  #   steps:
+  #     - name: Check out repository
+  #       uses: actions/checkout@v3
 
-#   #     - name: Cache pnpm modules
-#   #       uses: actions/cache@v3
-#   #       with:
-#   #         path: ~/.pnpm-store
-#   #         key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-#   #         restore-keys: |
-#   #           ${{ runner.os }}-
+  #     - name: Cache pnpm modules
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: ~/.pnpm-store
+  #         key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-
 
-#   #     - uses: pnpm/action-setup@v2.2.2
-#   #       with:
-#   #         version: ^7.0.0
-#   #         run_install: true
+  #     - uses: pnpm/action-setup@v2.2.2
+  #       with:
+  #         version: ^7.0.0
+  #         run_install: true
 
-#   #     - name: Use latest version of Node.j
-#   #       uses: actions/setup-node@v3
-#   #       with:
-#   #         node-version: "*"
-#   #         cache: "pnpm"
+  #     - name: Use latest version of Node.j
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: "*"
+  #         cache: "pnpm"
 
-#   #     - name: Download Build Artifacts
-#   #       uses: actions/download-artifact@v3
-#   #       with:
-#   #         name: build
-#   #         path: ./packages
+  #     - name: Download Build Artifacts
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         name: build
+  #         path: ./packages
 
-#   #     - name: Testing features for DnD with React APP - Chrome
-#   #       uses: cypress-io/github-action@v2
-#   #       with:
-#   #         working-directory: packages/dnd
-#   #         install: false
-#   #         start: pnpm -F dflex-react-dnd preview
-#   #         wait-on-timeout: 30
-#   #         spec: cypress/integration/same-container-horizontal/**/*.spec.ts
-#   #         wait-on: "http://localhost:3001/"
-#   #         browser: chrome
-#   #         headless: false
-#   #       env:
-#   #         #CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
-#   #         #CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-#   #         # Recommended: pass the GitHub token lets this action correctly
-#   #         # determine the unique run id necessary to re-run the checks
-#   #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Testing features for DnD with React APP - Chrome
+  #       uses: cypress-io/github-action@v2
+  #       with:
+  #         working-directory: packages/dnd
+  #         install: false
+  #         start: pnpm -F dflex-react-dnd preview
+  #         wait-on-timeout: 30
+  #         spec: cypress/integration/same-container-horizontal/**/*.spec.ts
+  #         wait-on: "http://localhost:3001/"
+  #         browser: chrome
+  #         headless: false
+  #       env:
+  #         #CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
+  #         #CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+  #         # Recommended: pass the GitHub token lets this action correctly
+  #         # determine the unique run id necessary to re-run the checks
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-#   e2e-multi-containers:
-#     name: Multiple Containers - Chrome
-#     runs-on: ubuntu-latest
-#     timeout-minutes: 12
-#     if: github.event.pull_request.draft != true
-#     needs: install-build
-#     steps:
-#       - name: Check out repository
-#         uses: actions/checkout@v3
+  e2e-multi-containers:
+    name: Multiple Containers - Chrome
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    if: github.event.pull_request.draft != true
+    needs: install-build
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
 
-#       - name: Cache pnpm modules
-#         uses: actions/cache@v3
-#         with:
-#           path: ~/.pnpm-store
-#           key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-#           restore-keys: |
-#             ${{ runner.os }}-
+      - name: Cache pnpm modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
 
-#       - uses: pnpm/action-setup@v2.2.2
-#         with:
-#           version: ^7.0.0
-#           run_install: true
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: ^7.0.0
+          run_install: true
 
-#       - name: Use latest version of Node.j
-#         uses: actions/setup-node@v3
-#         with:
-#           node-version: "*"
-#           cache: "pnpm"
+      - name: Use latest version of Node.j
+        uses: actions/setup-node@v3
+        with:
+          node-version: "*"
+          cache: "pnpm"
 
-#       - name: Download Build Artifacts
-#         uses: actions/download-artifact@v3
-#         with:
-#           name: build
-#           path: ./packages
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: ./packages
 
-#       - name: Testing features for DnD with React APP - Chrome
-#         run: pnpm test-e2e-multi:chrome
+      - name: Testing features for DnD with React APP - Chrome
+        run: pnpm test-e2e-multi:chrome
 
-#   release:
-#     name: Publish to NPM
-#     if: ${{ github.ref_name == 'main' && github.repository_owner == 'dflex-js' }}
-#     runs-on: ubuntu-latest
-#     needs: [
-#         lint,
-#         unit-test,
-#         types,
-#         install-build,
-#         e2e-same-container-vertical,
-#         # e2e-same-container-horizontal,
-#         e2e-multi-containers,
-#       ]
-#     steps:
-#       - name: Check out repository
-#         uses: actions/checkout@v3
-#         with:
-#           # This makes Actions fetch all Git history so that Changesets can generate changelogs with the correct commits
-#           fetch-depth: 0
+  e2e-linux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    if: github.event.pull_request.draft != true
+    strategy:
+      matrix:
+        node-version: [16.8]
+        browser: ["chromium", "firefox", "webkit"]
+    env:
+      CI: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-#       - name: Cache pnpm modules
-#         uses: actions/cache@v3
-#         with:
-#           path: ~/.pnpm-store
-#           key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-#           restore-keys: |
-#             ${{ runner.os }}-
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
 
-#       - uses: pnpm/action-setup@v2.2.2
-#         with:
-#           version: ^7.0.0
-#           run_install: true
+      - uses: pnpm/action-setup@v2.0.1
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: ^7.0.0
+          run_install: false
 
-#       - name: Use latest version of Node.j
-#         uses: actions/setup-node@v3
-#         with:
-#           node-version: "*"
-#           cache: "pnpm"
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
 
-#       - name: Download Build Artifacts
-#         uses: actions/download-artifact@v3
-#         with:
-#           name: build
-#           path: ./packages
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
-#       - name: Create Release Pull Request or Publish to npm
-#         id: changesets
-#         uses: changesets/action@v1
-#         with:
-#           # This expects you to have a script called release which does a build for your packages and calls changeset publish
-#           publish: pnpm -r publish
-#         env:
-#           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build packages
+        run: "pnpm clean && pnpm -r emit && pnpm build --production --release --minify"
+
+      - name: Build DnD React App
+        run: pnpm -F dflex-dnd-playground build
+
+      - name: Install Playwright
+        run: pnpm dlx playwright install --with-deps
+
+      - name: Test Playwright
+        run: pnpm run test-e2e-core-ci:${{ matrix.browser }}
+
+  e2e-windows:
+    runs-on: windows-latest
+    timeout-minutes: 12
+    if: github.event.pull_request.draft != true
+    strategy:
+      matrix:
+        node-version: [16.8]
+        browser: ["chromium", "firefox", "webkit"]
+    env:
+      CI: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - uses: pnpm/action-setup@v2.0.1
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: ^7.0.0
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build packages
+        run: "pnpm clean && pnpm -r emit && pnpm build --production --release --minify"
+
+      - name: Build DnD React App
+        run: pnpm -F dflex-dnd-playground build
+
+      - name: Install Playwright
+        run: pnpm dlx playwright install --with-deps
+
+      - name: Test Playwright
+        run: pnpm run test-e2e-core-ci:${{ matrix.browser }}
+
+  e2e-mac:
+    runs-on: macos-latest
+    timeout-minutes: 12
+    if: github.event.pull_request.draft != true
+    strategy:
+      matrix:
+        node-version: [16.8]
+        browser: ["chromium", "firefox", "webkit"]
+    env:
+      CI: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - uses: pnpm/action-setup@v2.0.1
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: ^7.0.0
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build packages
+        run: "pnpm clean && pnpm -r emit && pnpm build --production --release --minify"
+
+      - name: Build DnD React App
+        run: pnpm -F dflex-dnd-playground build
+
+      - name: Install Playwright
+        run: pnpm dlx playwright install --with-deps
+
+      - name: Test Playwright
+        run: pnpm run test-e2e-core-ci:${{ matrix.browser }}
+
+  release:
+    name: Publish to NPM
+    if: ${{ github.ref_name == 'main' && github.repository_owner == 'dflex-js' }}
+    runs-on: ubuntu-latest
+    needs:
+      [
+        lint,
+        unit-test,
+        types,
+        install-build,
+        e2e-same-container-vertical,
+        e2e-multi-containers,
+        e2e-mac,
+        e2e-windows,
+        e2e-linux,
+      ]
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          # This makes Actions fetch all Git history so that Changesets can generate changelogs with the correct commits
+          fetch-depth: 0
+
+      - name: Cache pnpm modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
+
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: ^7.0.0
+          run_install: true
+
+      - name: Use latest version of Node.j
+        uses: actions/setup-node@v3
+        with:
+          node-version: "*"
+          cache: "pnpm"
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: ./packages
+
+      - name: Create Release Pull Request or Publish to npm
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          # This expects you to have a script called release which does a build for your packages and calls changeset publish
+          publish: pnpm -r publish
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
