@@ -28,7 +28,7 @@ test.describe.serial("Dragged is out position horizontally", async () => {
         const context = await browser.newContext();
 
         page = await context.newPage();
-        initialize(page, 3);
+        initialize(page, 5);
         await page.goto(testCase.url);
 
         [elm09, elm10, elm11, elm12] = await Promise.all([
