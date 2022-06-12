@@ -91,7 +91,7 @@ test.describe.serial("Dragged is out position horizontally", async () => {
               startingPointX + ((2 / 3) * draggedRect.width + 2),
               startingPointY,
               {
-                steps: 5,
+                steps: 3,
               }
             );
           });
@@ -109,7 +109,7 @@ test.describe.serial("Dragged is out position horizontally", async () => {
               startingPointX - ((2 / 3) * draggedRect.width + 2),
               startingPointY,
               {
-                steps: 5,
+                steps: 3,
               }
             );
           });
@@ -127,7 +127,7 @@ test.describe.serial("Dragged is out position horizontally", async () => {
               startingPointX + ((2 / 3) * draggedRect.width + 2),
               startingPointY + 10,
               {
-                steps: 5,
+                steps: 3,
               }
             );
           });
@@ -145,7 +145,7 @@ test.describe.serial("Dragged is out position horizontally", async () => {
               startingPointX - ((2 / 3) * draggedRect.width + 2),
               startingPointY + 10,
               {
-                steps: 5,
+                steps: 3,
               }
             );
           });
@@ -163,7 +163,7 @@ test.describe.serial("Dragged is out position horizontally", async () => {
               startingPointX + ((2 / 3) * draggedRect.width + 2),
               startingPointY - 10,
               {
-                steps: 5,
+                steps: 3,
               }
             );
           });
@@ -181,7 +181,7 @@ test.describe.serial("Dragged is out position horizontally", async () => {
               startingPointX - ((2 / 3) * draggedRect.width + 2),
               startingPointY - 10,
               {
-                steps: 5,
+                steps: 3,
               }
             );
           });
