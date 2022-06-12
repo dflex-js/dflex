@@ -4,6 +4,11 @@ test.describe.serial("Dragged is out position vertically", async () => {
   let page: Page;
 
   let draggedID = "#id-10";
+  const steps = 5;
+
+  const stepsX = 0;
+  let stepsY = 0;
+
   let draggedRect: { x: number; y: number; width: number; height: number };
 
   let elm10: Locator;
@@ -53,18 +58,23 @@ test.describe.serial("Dragged is out position vertically", async () => {
         await page.mouse.down({ button: "left", clickCount: 1 });
       }
 
+      async function moveDragged() {
+        await page.mouse.move(
+          startingPointX + stepsX,
+          startingPointY + stepsY,
+          {
+            steps,
+          }
+        );
+      }
+
       test.describe(`Moving vertically container3`, () => {
         test.describe("Strictly out form the bottom", async () => {
           test("Moving dragged element to the bottom", async () => {
             await getDraggedRect(elm10);
             await moveMouseToDragged();
-            await page.mouse.move(
-              startingPointX,
-              startingPointY + ((2 / 3) * draggedRect.height + 2),
-              {
-                steps: 5,
-              }
-            );
+            stepsY = (2 / 3) * draggedRect.height + 2;
+            await moveDragged();
           });
 
           test("Siblings have the correct position", async () => {
@@ -104,13 +114,8 @@ test.describe.serial("Dragged is out position vertically", async () => {
           test("Moving dragged element to the top", async () => {
             await getDraggedRect(elm10);
             await moveMouseToDragged();
-            await page.mouse.move(
-              startingPointX,
-              startingPointY - ((2 / 3) * draggedRect.height + 2),
-              {
-                steps: 5,
-              }
-            );
+            stepsY = -1 * (2 / 3) * draggedRect.height + 2;
+            await moveDragged();
           });
 
           test("Siblings have the correct position", async () => {
@@ -150,13 +155,8 @@ test.describe.serial("Dragged is out position vertically", async () => {
           test("Moving dragged element down", async () => {
             await getDraggedRect(elm10);
             await moveMouseToDragged();
-            await page.mouse.move(
-              startingPointX,
-              startingPointY + 2 * draggedRect.height,
-              {
-                steps: 10,
-              }
-            );
+            stepsY = 2 * draggedRect.height;
+            await moveDragged();
           });
 
           test("Siblings have the correct position", async () => {
@@ -172,13 +172,8 @@ test.describe.serial("Dragged is out position vertically", async () => {
           });
 
           test("Moving dragged out the container, preservers the last transformation", async () => {
-            await page.mouse.move(
-              startingPointX,
-              startingPointY + 4 * draggedRect.height,
-              {
-                steps: 5,
-              }
-            );
+            stepsY = 4 * draggedRect.height;
+            await moveDragged();
           });
 
           test("Siblings preserve their positions", async () => {
@@ -221,13 +216,8 @@ test.describe.serial("Dragged is out position vertically", async () => {
             draggedID = "#id-11";
             await getDraggedRect(elm11);
             await moveMouseToDragged();
-            await page.mouse.move(
-              startingPointX,
-              startingPointY - 3 * draggedRect.height,
-              {
-                steps: 5,
-              }
-            );
+            stepsY = -3 * draggedRect.height;
+            await moveDragged();
           });
 
           test("Makes sure all siblings are lifted up to fill the gap", async () => {

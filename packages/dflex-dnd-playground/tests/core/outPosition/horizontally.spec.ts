@@ -4,6 +4,11 @@ test.describe.serial("Dragged is out position horizontally", async () => {
   let page: Page;
 
   const draggedID = "#id-10";
+  const steps = 3;
+
+  let stepsX = 0;
+  let stepsY = 0;
+
   let draggedRect: { x: number; y: number; width: number; height: number };
 
   let elm10: Locator;
@@ -53,6 +58,16 @@ test.describe.serial("Dragged is out position horizontally", async () => {
         await page.mouse.down({ button: "left", clickCount: 1 });
       }
 
+      async function moveDragged() {
+        await page.mouse.move(
+          startingPointX + stepsX,
+          startingPointY + stepsY,
+          {
+            steps,
+          }
+        );
+      }
+
       async function expectSiblingsPositions() {
         test("Siblings have the correct position", async () => {
           await expect(elm09).toHaveCSS("transform", "none");
@@ -95,13 +110,8 @@ test.describe.serial("Dragged is out position horizontally", async () => {
           test("Moving dragged element to the right", async () => {
             await getDraggedRect(elm10);
             await moveMouseToDragged();
-            await page.mouse.move(
-              startingPointX + ((2 / 3) * draggedRect.width + 2),
-              startingPointY,
-              {
-                steps: 3,
-              }
-            );
+            stepsX = (2 / 3) * draggedRect.width + 2;
+            await moveDragged();
           });
 
           await expectSiblingsPositions();
@@ -110,13 +120,8 @@ test.describe.serial("Dragged is out position horizontally", async () => {
         test.describe("Strictly out form the left", async () => {
           test("Moving dragged element to the left", async () => {
             await moveMouseToDragged();
-            await page.mouse.move(
-              startingPointX - ((2 / 3) * draggedRect.width + 2),
-              startingPointY,
-              {
-                steps: 3,
-              }
-            );
+            stepsX = -1 * (2 / 3) * draggedRect.width + 2;
+            await moveDragged();
           });
 
           await expectSiblingsPositions();
@@ -125,13 +130,9 @@ test.describe.serial("Dragged is out position horizontally", async () => {
         test.describe("Slightly down, out form the right", async () => {
           test("Moving dragged element to the right", async () => {
             await moveMouseToDragged();
-            await page.mouse.move(
-              startingPointX + ((2 / 3) * draggedRect.width + 2),
-              startingPointY + 10,
-              {
-                steps: 3,
-              }
-            );
+            stepsX = (2 / 3) * draggedRect.width + 2;
+            stepsY = 10;
+            await moveDragged();
           });
 
           await expectSiblingsPositions();
@@ -140,13 +141,9 @@ test.describe.serial("Dragged is out position horizontally", async () => {
         test.describe("Slightly down, out form the left", async () => {
           test("Moving dragged element to the left", async () => {
             await moveMouseToDragged();
-            await page.mouse.move(
-              startingPointX - ((2 / 3) * draggedRect.width + 2),
-              startingPointY + 10,
-              {
-                steps: 3,
-              }
-            );
+            stepsX = -1 * (2 / 3) * draggedRect.width + 2;
+            stepsY = 10;
+            await moveDragged();
           });
 
           await expectSiblingsPositions();
@@ -155,13 +152,9 @@ test.describe.serial("Dragged is out position horizontally", async () => {
         test.describe("Slightly up, out form the right", async () => {
           test("Moving dragged element to the right", async () => {
             await moveMouseToDragged();
-            await page.mouse.move(
-              startingPointX + ((2 / 3) * draggedRect.width + 2),
-              startingPointY - 10,
-              {
-                steps: 3,
-              }
-            );
+            stepsX = (2 / 3) * draggedRect.width + 2;
+            stepsY = -10;
+            await moveDragged();
           });
 
           await expectSiblingsPositions();
@@ -170,13 +163,9 @@ test.describe.serial("Dragged is out position horizontally", async () => {
         test.describe("Slightly up, out form the left", async () => {
           test("Moving dragged element to the left", async () => {
             await moveMouseToDragged();
-            await page.mouse.move(
-              startingPointX - ((2 / 3) * draggedRect.width + 2),
-              startingPointY - 10,
-              {
-                steps: 3,
-              }
-            );
+            stepsX = -1 * (2 / 3) * draggedRect.width + 2;
+            stepsY = -10;
+            await moveDragged();
           });
 
           await expectSiblingsPositions();
