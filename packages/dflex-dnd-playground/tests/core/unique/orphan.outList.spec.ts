@@ -1,7 +1,7 @@
 import { test, expect, Page, Locator } from "@playwright/test";
 import { DraggedRect, getDraggedRect, initialize, moveDragged } from "../utils";
 
-test.describe.serial.only("Orphan dragged won't break", async () => {
+test.describe.serial("Orphan dragged won't break", async () => {
   let page: Page;
 
   const draggedID = "#id-1";
