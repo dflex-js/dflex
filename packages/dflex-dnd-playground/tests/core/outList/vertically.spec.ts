@@ -1,4 +1,5 @@
 import { test, expect, Page, Locator } from "@playwright/test";
+import { DraggedRect, getDraggedRect, initialize, moveDragged } from "../utils";
 
 test.describe.serial(
   "Dragged is strictly out container list vertically",
@@ -6,20 +7,13 @@ test.describe.serial(
     let page: Page;
 
     const draggedID = "#id-9";
-    const steps = 50;
 
-    const stepsX = 0;
-    let stepsY = 0;
-
-    let draggedRect: { x: number; y: number; width: number; height: number };
+    let draggedRect: DraggedRect;
 
     let elm10: Locator;
     let elm09: Locator;
     let elm11: Locator;
     let elm12: Locator;
-
-    let startingPointX: number;
-    let startingPointY: number;
 
     [
       {
@@ -36,45 +30,35 @@ test.describe.serial(
           const context = await browser.newContext();
 
           page = await context.newPage();
+          initialize(page, 5);
           await page.goto(testCase.url);
 
-          elm09 = page.locator("#id-9");
-          elm10 = page.locator("#id-10");
-          elm11 = page.locator("#id-11");
-          elm12 = page.locator("#id-12");
+          [elm09, elm10, elm11, elm12] = await Promise.all([
+            page.locator("#id-9"),
+            page.locator("#id-10"),
+            page.locator("#id-11"),
+            page.locator("#id-12"),
+          ]);
         });
 
-        async function getDraggedRect(dragged: Locator) {
-          // @ts-ignore
-          draggedRect = await dragged.boundingBox();
-
-          startingPointX = draggedRect.x + draggedRect.width / 2;
-          startingPointY = draggedRect.y + draggedRect.height / 2;
-        }
-
-        async function moveMouseToDragged() {
-          await page.mouse.move(startingPointX, startingPointY, {
-            steps: 1,
-          });
-
-          await page.mouse.down({ button: "left", clickCount: 1 });
-        }
-
-        async function moveDragged() {
-          await page.mouse.move(
-            startingPointX + stepsX,
-            startingPointY + stepsY,
-            {
-              steps,
-            }
+        async function siblingsBack() {
+          await expect(elm10).toHaveCSS(
+            "transform",
+            "matrix(1, 0, 0, 1, 0, 0)"
+          );
+          await expect(elm11).toHaveCSS(
+            "transform",
+            "matrix(1, 0, 0, 1, 0, 0)"
+          );
+          await expect(elm12).toHaveCSS(
+            "transform",
+            "matrix(1, 0, 0, 1, 0, 0)"
           );
         }
 
         test("Moving dragged element to the bottom of the list", async () => {
-          await getDraggedRect(elm09);
-          await moveMouseToDragged();
-          stepsY = 4 * draggedRect.height;
-          await moveDragged();
+          draggedRect = await getDraggedRect(elm09);
+          await moveDragged(0, 4 * draggedRect.height);
         });
 
         test("All siblings are lifted up", async () => {
@@ -93,23 +77,11 @@ test.describe.serial(
         });
 
         test("Moving dragged element to the top again", async () => {
-          stepsY = 0;
-          await moveDragged();
+          await moveDragged(0, 0);
         });
 
         test("All siblings are back to their positions", async () => {
-          await expect(elm10).toHaveCSS(
-            "transform",
-            "matrix(1, 0, 0, 1, 0, 0)"
-          );
-          await expect(elm11).toHaveCSS(
-            "transform",
-            "matrix(1, 0, 0, 1, 0, 0)"
-          );
-          await expect(elm12).toHaveCSS(
-            "transform",
-            "matrix(1, 0, 0, 1, 0, 0)"
-          );
+          await siblingsBack();
         });
 
         test("Triggers mouseup", async () => {
@@ -120,18 +92,7 @@ test.describe.serial(
         });
 
         test("All siblings are back to their positions again", async () => {
-          await expect(elm10).toHaveCSS(
-            "transform",
-            "matrix(1, 0, 0, 1, 0, 0)"
-          );
-          await expect(elm11).toHaveCSS(
-            "transform",
-            "matrix(1, 0, 0, 1, 0, 0)"
-          );
-          await expect(elm12).toHaveCSS(
-            "transform",
-            "matrix(1, 0, 0, 1, 0, 0)"
-          );
+          await siblingsBack();
         });
       });
     });
