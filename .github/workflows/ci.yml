@@ -83,7 +83,6 @@ jobs:
     name: Unit Test
     timeout-minutes: 3
     runs-on: ubuntu-latest
-    if: github.event.pull_request.draft != true
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -392,7 +391,6 @@ jobs:
   e2e-mac:
     runs-on: macos-latest
     timeout-minutes: 12
-    if: github.event.pull_request.draft != true
     strategy:
       matrix:
         node-version: [16.8]
