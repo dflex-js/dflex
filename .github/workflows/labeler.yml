@@ -9,7 +9,6 @@ jobs:
       contents: read
       pull-requests: write
     runs-on: ubuntu-latest
-    if: github.event.pull_request.draft != true
     steps:
       - uses: actions/labeler@v4
         with:
