@@ -1,7 +1,7 @@
 import { test, expect, Page, Locator } from "@playwright/test";
 import { getDraggedRect, initialize, moveDragged } from "../utils";
 
-test.describe.serial.only("Dragging from bottom up", async () => {
+test.describe.serial("Dragging from bottom up", async () => {
   let page: Page;
 
   const draggedID = "#id-12";
