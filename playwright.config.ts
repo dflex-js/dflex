@@ -13,6 +13,7 @@ const config: PlaywrightTestConfig = {
   retries: IS_CI ? 4 : 0,
   use: {
     trace: "on-first-retry",
+    video: "retain-on-failure",
     navigationTimeout: 30000,
     baseURL,
     viewport: {
