@@ -35,7 +35,7 @@ test.describe.serial(
     });
 
     test("Moving dragged element up outside the container", async () => {
-      draggedRect = await getDraggedRect(elm09);
+      await getDraggedRect(elm09);
       await moveDragged(-1, -80);
     });
 

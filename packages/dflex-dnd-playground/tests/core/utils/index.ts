@@ -21,8 +21,12 @@ let accStepsY = 0;
 export async function getDraggedRect(dragged: Locator) {
   const draggedRect = await dragged.boundingBox()!;
 
-  startingPointX = draggedRect!.x + draggedRect!.width / 2;
-  startingPointY = draggedRect!.y + draggedRect!.height / 2;
+  if (!draggedRect) {
+    throw new Error("Dragged element is not found");
+  }
+
+  startingPointX = draggedRect.x + draggedRect.width / 2;
+  startingPointY = draggedRect.y + draggedRect.height / 2;
 
   accStepsX = 0;
   accStepsY = 0;
@@ -33,7 +37,7 @@ export async function getDraggedRect(dragged: Locator) {
 
   await page.mouse.down({ button: "left", clickCount: 1 });
 
-  return draggedRect!;
+  return draggedRect;
 }
 
 export async function moveDragged(stepsX: number, stepsY: number) {
