@@ -1,10 +1,11 @@
-import { test, expect, Page, Locator } from "@playwright/test";
+import { test, expect, Page, Locator, BrowserContext } from "@playwright/test";
 import { DraggedRect, getDraggedRect, initialize, moveDragged } from "../utils";
 
 test.describe.serial(
   "Dragged is strictly out container list vertically",
   async () => {
     let page: Page;
+    let context: BrowserContext;
 
     const draggedID = "#id-9";
 
@@ -14,6 +15,25 @@ test.describe.serial(
     let elm09: Locator;
     let elm11: Locator;
     let elm12: Locator;
+
+    test.beforeAll(async ({ browser }) => {
+      context = await browser.newContext();
+
+      page = await context.newPage();
+      initialize(page, 5);
+
+      [elm09, elm10, elm11, elm12] = await Promise.all([
+        page.locator("#id-9"),
+        page.locator("#id-10"),
+        page.locator("#id-11"),
+        page.locator("#id-12"),
+      ]);
+    });
+
+    test.afterAll(async () => {
+      await page.close();
+      await context.close();
+    });
 
     [
       {
@@ -26,19 +46,8 @@ test.describe.serial(
       },
     ].forEach(async (testCase) => {
       test.describe(testCase.desc, async () => {
-        test.beforeAll(async ({ browser }) => {
-          const context = await browser.newContext();
-
-          page = await context.newPage();
-          initialize(page, 5);
+        test.beforeAll(async () => {
           await page.goto(testCase.url);
-
-          [elm09, elm10, elm11, elm12] = await Promise.all([
-            page.locator("#id-9"),
-            page.locator("#id-10"),
-            page.locator("#id-11"),
-            page.locator("#id-12"),
-          ]);
         });
 
         async function siblingsBack() {
