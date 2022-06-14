@@ -14,11 +14,11 @@ test.describe.serial("Moving out then insert - Up/Down - Release", async () => {
   let elm7: Locator;
   let elm8: Locator;
 
-  test.beforeAll(async ({ browser, baseURL, browserName }) => {
+  test.beforeAll(async ({ browser, baseURL }) => {
     const context = await browser.newContext();
 
     page = await context.newPage();
-    initialize(page, browserName === "webkit" ? 20 : 10);
+    initialize(page, 20);
     await page.goto(baseURL!);
 
     [elm2, elm3, elm4, elm5, elm6, elm7, elm8] = await Promise.all([

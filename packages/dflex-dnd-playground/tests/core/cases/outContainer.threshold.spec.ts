@@ -40,9 +40,11 @@ test.describe.serial(
     });
 
     test("All siblings are lifted up", async () => {
-      await expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)");
-      await expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)");
-      await expect(elm12).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)");
+      await Promise.all([
+        expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)"),
+        expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)"),
+        expect(elm12).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)"),
+      ]);
     });
 
     test("Transform dragged back inside the threshold but outside position", async () => {
@@ -50,9 +52,11 @@ test.describe.serial(
     });
 
     test("Sibling must hold their positions", async () => {
-      await expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)");
-      await expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)");
-      await expect(elm12).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)");
+      await Promise.all([
+        expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)"),
+        expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)"),
+        expect(elm12).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)"),
+      ]);
     });
 
     test("Triggers mouseup", async () => {
