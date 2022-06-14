@@ -17,7 +17,7 @@ test.describe.serial(
     test.beforeAll(async ({ browser, baseURL }) => {
       context = await browser.newContext();
       page = await context.newPage();
-      initialize(page, 10);
+      initialize(page, 20);
       await page.goto(baseURL!);
 
       [elm09, elm10, elm11, elm12] = await Promise.all([
@@ -39,9 +39,11 @@ test.describe.serial(
     });
 
     test("All siblings are lifted up", async () => {
-      await expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)");
-      await expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)");
-      await expect(elm12).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)");
+      await Promise.all([
+        expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)"),
+        expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)"),
+        expect(elm12).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)"),
+      ]);
     });
 
     test("Returns to the same old position", async () => {
@@ -57,10 +59,12 @@ test.describe.serial(
     });
 
     test("Siblings are back to their positions", async () => {
-      await expect(elm09).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)");
-      await expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)");
-      await expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)");
-      await expect(elm12).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)");
+      await Promise.all([
+        expect(elm09).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+        expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+        expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+        expect(elm12).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+      ]);
     });
 
     test("Dragging the second element elm#10 to the top outside the container", async () => {
@@ -70,9 +74,11 @@ test.describe.serial(
     });
 
     test("Sibling must hold their positions", async () => {
-      await expect(elm09).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)");
-      await expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)");
-      await expect(elm12).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)");
+      await Promise.all([
+        expect(elm09).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+        expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)"),
+        expect(elm12).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)"),
+      ]);
     });
 
     test("Moves Drag down to settle at the top of the list container", async () => {
@@ -87,10 +93,12 @@ test.describe.serial(
     });
 
     test("Siblings have new positions", async () => {
-      await expect(elm09).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 58)");
-      await expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)");
-      await expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)");
-      await expect(elm12).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)");
+      Promise.all([
+        expect(elm09).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 58)"),
+        expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)"),
+        expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+        expect(elm12).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+      ]);
     });
   }
 );

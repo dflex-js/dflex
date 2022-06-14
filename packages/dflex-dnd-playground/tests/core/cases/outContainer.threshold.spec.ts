@@ -63,10 +63,12 @@ test.describe.serial(
     });
 
     test("Siblings are back to their positions", async () => {
-      await expect(elm09).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)");
-      await expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)");
-      await expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)");
-      await expect(elm12).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)");
+      await Promise.all([
+        expect(elm09).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+        expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+        expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+        expect(elm12).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+      ]);
     });
   }
 );
