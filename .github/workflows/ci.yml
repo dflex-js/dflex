@@ -83,7 +83,6 @@ jobs:
     name: Unit Test
     timeout-minutes: 3
     runs-on: ubuntu-latest
-    if: github.event.pull_request.draft != true
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -392,7 +391,6 @@ jobs:
   e2e-mac:
     runs-on: macos-latest
     timeout-minutes: 12
-    if: github.event.pull_request.draft != true
     strategy:
       matrix:
         node-version: [16.8]
@@ -442,6 +440,14 @@ jobs:
 
       - name: Test Playwright
         run: pnpm run test-e2e-core-ci:${{ matrix.browser }}
+
+      - name: Upload Artifacts
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: Test Results
+          path: test-results/
+          retention-days: 7
 
   release:
     name: Publish to NPM
