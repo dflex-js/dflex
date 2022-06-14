@@ -1,5 +1,5 @@
 import { test, expect, Page, Locator, BrowserContext } from "@playwright/test";
-import { getDraggedRect, initialize, moveDragged } from "../utils";
+import { getDraggedRect, initialize, moveDragged } from "../../utils";
 
 test.describe.serial(
   "Moves out, goes back to the same position, settles in, moves another element",

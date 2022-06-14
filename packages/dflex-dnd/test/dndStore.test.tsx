@@ -91,7 +91,7 @@ describe("DnD Store", () => {
 
       expect(branches).toMatchInlineSnapshot(`
         Object {
-          "parents": undefined,
+          "parents": Array [],
           "siblings": Array [
             "id-1",
             "id-2",
@@ -101,7 +101,7 @@ describe("DnD Store", () => {
         }
       `);
 
-      expect(parent).toMatchInlineSnapshot(`null`);
+      expect(parent).toMatchInlineSnapshot(`undefined`);
     });
   });
 
@@ -144,14 +144,13 @@ describe("DnD Store", () => {
         store.register(elm3);
         store.register(elm4);
 
-        expect(store.DOMGen.branches[SK]).toMatchInlineSnapshot(`
-          Array [
-            "id-1",
-            "id-2",
-            "id-3",
-            "id-4",
-          ]
-        `);
+        // @ts-ignore - this is a test
+        expect(store.DOMGen.getElmBranchByKey(SK)).toStrictEqual([
+          "id-1",
+          "id-2",
+          "id-3",
+          "id-4",
+        ]);
       });
 
       it("Checks the last element", () => {
@@ -257,17 +256,17 @@ describe("DnD Store", () => {
 
     describe("Injected branch with empty string", () => {
       it("Inject empty string", () => {
-        store.DOMGen.branches[SK].push("");
+        // @ts-ignore - this is a test
+        store.DOMGen.addElmIDToBranch(SK, "");
 
-        expect(store.DOMGen.branches[SK]).toMatchInlineSnapshot(`
-          Array [
-            "id-1",
-            "id-2",
-            "id-3",
-            "id-4",
-            "",
-          ]
-        `);
+        // @ts-ignore - this is a test
+        expect(store.DOMGen.getElmBranchByKey(SK)).toStrictEqual([
+          "id-1",
+          "id-2",
+          "id-3",
+          "id-4",
+          "",
+        ]);
       });
 
       it("Restores the the last element when the branch is extended", () => {

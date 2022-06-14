@@ -1,24 +1,23 @@
 import Generator from "@dflex/dom-gen";
+import type { IGenerator } from "@dflex/dom-gen";
 
 import { DFlexNode } from "@dflex/core-instance";
 import type { IDFlexNode, DFlexBaseNodeInput } from "@dflex/core-instance";
 
-import type { RegisterInputBase } from "./types";
+import type { RegisterInputBase, IDFlexBaseStore } from "./types";
 
-class DFlexBaseStore {
+class DFlexBaseStore implements IDFlexBaseStore {
   registry: {
     [id: string]: IDFlexNode;
   };
 
-  DOMGen: Generator;
+  protected DOMGen: IGenerator;
 
   private _lastKeyIdentifier: string | null;
 
   constructor() {
     this._lastKeyIdentifier = null;
-
     this.registry = {};
-
     this.DOMGen = new Generator();
   }
 
@@ -62,11 +61,8 @@ class DFlexBaseStore {
     this._submitElementToRegistry(element);
   }
 
-  /**
-   * Gets all element IDs Siblings in given node represented by sibling key.
-   */
   getElmBranchByKey(SK: string) {
-    return this.DOMGen.getElmBranch(SK);
+    return this.DOMGen.getElmBranchByKey(SK);
   }
 
   unregister(id: string) {
@@ -80,13 +76,11 @@ class DFlexBaseStore {
   }
 
   destroy() {
-    Object.keys(this.DOMGen.branches).forEach((SK) => {
+    this.DOMGen.forEachBranch((SK) => {
       this.DOMGen.destroyBranch(SK, (id) => {
         delete this.registry[id];
       });
     });
-
-    this.DOMGen.destroy();
   }
 }
 

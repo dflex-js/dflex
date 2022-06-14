@@ -31,6 +31,8 @@ function throwElementIsNotConnected(id: string) {
   );
 }
 
+const MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
+
 class DnDStoreImp extends Store implements IDnDStore {
   containers: { [siblingKey: string]: IDFlexContainer };
 
@@ -55,8 +57,6 @@ class DnDStoreImp extends Store implements IDnDStore {
     prevKy: string;
     exceptionToNextElm: boolean;
   };
-
-  static MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
 
   private static PREFIX_ID = "dflex-id";
 
@@ -162,7 +162,7 @@ class DnDStoreImp extends Store implements IDnDStore {
   }
 
   updateBranchVisibility(SK: string) {
-    const branch = this.DOMGen.branches[SK];
+    const branch = this.DOMGen.getElmBranchByKey(SK);
 
     const { scroll } = this.containers[SK];
 
@@ -182,7 +182,7 @@ class DnDStoreImp extends Store implements IDnDStore {
   }
 
   private _cleanupDisconnectedElements(branchKey: string) {
-    const branch = this.DOMGen.branches[branchKey];
+    const branch = this.DOMGen.getElmBranchByKey(branchKey);
 
     const extractedOldBranch: string[] = [];
     const connectedNodesID: string[] = [];
@@ -222,8 +222,8 @@ class DnDStoreImp extends Store implements IDnDStore {
     }
 
     // Assign new branches
-    this.DOMGen.branches[newSK] = connectedNodesID;
-    this.DOMGen.branches[branchKey] = extractedOldBranch;
+    this.DOMGen.updateBranch(newSK, connectedNodesID);
+    this.DOMGen.updateBranch(branchKey, extractedOldBranch);
 
     return newSK;
   }
@@ -233,7 +233,7 @@ class DnDStoreImp extends Store implements IDnDStore {
       this.containers[SK] = new DFlexContainer();
     }
 
-    const branch = this.DOMGen.branches[SK];
+    const branch = this.DOMGen.getElmBranchByKey(SK);
 
     if (__DEV__) {
       // eslint-disable-next-line no-console
@@ -287,8 +287,8 @@ class DnDStoreImp extends Store implements IDnDStore {
     if (
       hasSiblings &&
       scroll.allowDynamicVisibility &&
-      this.DOMGen.branches[SK]!.length <=
-        DnDStoreImp.MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY
+      this.DOMGen.getElmBranchByKey(SK).length <=
+        MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY
     ) {
       scroll.allowDynamicVisibility = false;
     }
@@ -337,7 +337,7 @@ class DnDStoreImp extends Store implements IDnDStore {
     // Append the newest element to the end of the branch.
     this.containers[SK].registerNewElm(appendOffset);
 
-    const origin = this.DOMGen.branches[originSK];
+    const origin = this.DOMGen.getElmBranchByKey(originSK);
 
     // Don't reset empty branch keep the boundaries.
     if (origin.length === 0) return;
@@ -476,8 +476,6 @@ class DnDStoreImp extends Store implements IDnDStore {
       scrollY: 0,
     };
 
-    super.register(coreInput);
-
     queueMicrotask(() => {
       const {
         depth,
@@ -497,15 +495,12 @@ class DnDStoreImp extends Store implements IDnDStore {
 
       this._initElmInstance(id!);
     });
+
+    super.register(coreInput);
   }
 
   getBranchesByDepth(dp: number) {
-    if (__DEV__) {
-      if (!Array.isArray(this.DOMGen.branchesByDepth[dp])) {
-        throw new Error(`Depth ${dp} is not registered.`);
-      }
-    }
-    return this.DOMGen.branchesByDepth[dp] || [];
+    return this.DOMGen.getBranchesByDepth(dp);
   }
 
   getInitialELmRectById(id: string) {
@@ -572,7 +567,7 @@ class DnDStoreImp extends Store implements IDnDStore {
   }
 
   private _clearBranchesScroll() {
-    Object.keys(this.DOMGen.branches).forEach((SK) => {
+    this.DOMGen.forEachBranch((SK) => {
       if (this.containers[SK].scroll) {
         this.containers[SK].scroll.destroy();
       }
@@ -597,13 +592,13 @@ class DnDStoreImp extends Store implements IDnDStore {
       order: { self },
     } = this.registry[id];
 
-    this.DOMGen.removeElementIDFromBranch(SK, self);
+    this.DOMGen.removeElmIDFromBranch(SK, self);
 
     super.unregister(id);
 
     // Nothing left?
     // Reset the branch instances.
-    if (this.DOMGen.branches[SK] === null) {
+    if (this.DOMGen.getElmBranchByKey(SK).length === 0) {
       this._clearBranchesScroll();
     }
   }

@@ -1,48 +1,42 @@
+/* eslint-disable no-unused-vars */
 import { combineKeys } from "@dflex/utils";
-import type { GeneratorInterface, Keys, Order, Pointer } from "./types";
+import type { IGenerator, Keys, Order, Pointer, ELmBranch } from "./types";
 
 /**
  * Generate keys to connect relations between DOM-elements depending on tree
  * depth.
  */
-class Generator implements GeneratorInterface {
+class Generator implements IGenerator {
   /**
    * Counter store. Each depth has it's own indicator. Allowing us to go
    * for endless layers (levels).
    */
-  private indicator: {
+  private _indicator: {
     [keys: number]: number;
   };
 
   /**
-   * Store elements ids in order.
-   * For example, by default, id-0 stored in iDsInOrder[0]=id-0, but after
-   * transformed id-0, it is in iDsInOrder[3].
-   *
-   * This is an easy solution, to know elements order and update it
-   * accordingly.
+   * A collection of registered elements stored in arrays represents each
+   * branch.
    */
-  branches: {
-    [keys: string]: string[];
+  private _branches: {
+    [keys: string]: ELmBranch;
   };
 
-  branchesByDepth: {
-    [depth: number]: string[];
+  private _branchesByDepth: {
+    [depth: number]: ELmBranch;
   };
 
-  private prevDepth: number;
+  private _prevDepth: number;
 
-  private prevKey: string;
+  private _prevKey: string;
 
   constructor() {
-    this.indicator = {};
-
-    this.branches = {};
-    this.branchesByDepth = {};
-
-    this.prevDepth = -99;
-
-    this.prevKey = combineKeys(0, 0);
+    this._indicator = {};
+    this._branches = {};
+    this._branchesByDepth = {};
+    this._prevDepth = -99;
+    this._prevKey = combineKeys(0, 0);
   }
 
   /**
@@ -50,7 +44,7 @@ class Generator implements GeneratorInterface {
    *
    * @param dp - element depth
    */
-  private initIndicators(dp: number) {
+  private _initIndicators(dp: number) {
     /**
      * initiate self from -1 since self is incremented after the id is added so
      * it's children won't be confused about their parent indicator.
@@ -64,94 +58,85 @@ class Generator implements GeneratorInterface {
      *
      * By adding this, we can deal with parents coming first before children.
      */
-    if (this.indicator[dp] === undefined) {
-      this.indicator[dp] = -1;
+    if (this._indicator[dp] === undefined) {
+      this._indicator[dp] = -1;
     }
 
     /**
      * initiate parents from zero.
      * this.#indicator[dp+1] = 0
      */
-    if (this.indicator[dp + 1] === undefined) {
-      this.indicator[dp + 1] = 0;
+    if (this._indicator[dp + 1] === undefined) {
+      this._indicator[dp + 1] = 0;
     }
 
-    if (this.indicator[dp + 2] === undefined) {
-      this.indicator[dp + 2] = 0;
+    if (this._indicator[dp + 2] === undefined) {
+      this._indicator[dp + 2] = 0;
     }
   }
 
-  private addElementIDToDepthCollection(SK: string, depth: number) {
-    if (!Array.isArray(this.branchesByDepth[depth])) {
-      this.branchesByDepth[depth] = [SK];
+  private _addElementIDToDepthCollection(SK: string, depth: number) {
+    if (!Array.isArray(this._branchesByDepth[depth])) {
+      this._branchesByDepth[depth] = [SK];
 
       return;
     }
 
-    const is = this.branchesByDepth[depth].find((k) => k === SK);
+    const is = this._branchesByDepth[depth].find((k) => k === SK);
 
     if (!is) {
-      this.branchesByDepth[depth].push(SK);
+      this._branchesByDepth[depth].push(SK);
     }
   }
 
   /**
    * Adds elements to its siblings.
    *
-   * @param id - element id
-   * @param  SK - Siblings Key- siblings key
+   * @param id - element id.
+   * @param  SK - Siblings Key.
    */
-  private addElementIDToSiblingsBranch(id: string, SK: string) {
-    if (!Array.isArray(this.branches[SK])) {
-      this.branches[SK] = [];
+  private _addElementIDToSiblingsBranch(id: string, SK: string) {
+    if (!(SK in this._branches)) {
+      this._branches[SK] = [];
     }
 
     // @ts-ignore
-    const selfIndex = this.branches[SK].push(id) - 1;
+    const selfIndex = this._branches[SK].push(id) - 1;
 
     return selfIndex;
   }
 
-  /**
-   * Gets all element IDs Siblings in given node represented by sk.
-   *
-   * @param  SK - Siblings Key
-   */
-  getElmBranch(SK: string): string[] {
-    return this.branches[SK];
-  }
-
   accumulateIndicators(depth: number) {
-    if (depth !== this.prevDepth) {
-      this.initIndicators(depth);
+    if (depth !== this._prevDepth) {
+      this._initIndicators(depth);
     }
 
     /**
      * Get parent index.
      */
-    const parentIndex = this.indicator[depth + 1];
+    const parentIndex = this._indicator[depth + 1];
 
     /**
      * get siblings unique key (sK) and parents key (pK)
      */
     const SK = combineKeys(depth, parentIndex);
 
-    const PK = combineKeys(depth + 1, this.indicator[depth + 2]);
+    const PK = combineKeys(depth + 1, this._indicator[depth + 2]);
 
-    const CHK = depth === 0 ? null : this.prevKey;
+    const CHK = depth === 0 ? null : this._prevKey;
 
-    this.prevKey = SK;
+    this._prevKey = SK;
 
-    this.indicator[depth] += 1;
+    this._indicator[depth] += 1;
 
-    if (depth < this.prevDepth) {
+    if (depth < this._prevDepth) {
       /**
        * Start new branch.
        */
-      this.indicator[0] = 0;
+      this._indicator[0] = 0;
     }
 
-    this.prevDepth = depth;
+    this._prevDepth = depth;
 
     return {
       CHK,
@@ -161,18 +146,28 @@ class Generator implements GeneratorInterface {
     };
   }
 
-  /**
-   * register element to branches.
-   *
-   * @param id - element id
-   * @param depth - element depth
-   */
+  updateBranch(SK: string, branch: ELmBranch) {
+    if (SK in this._branches) {
+      Object.assign(this._branches, { [SK]: branch });
+    } else if (__DEV__) {
+      throw new Error(
+        `updateELmBranch: Branch with key:${SK} is not registered.`
+      );
+    }
+  }
+
+  forEachBranch(cb: (SK: string, branch: ELmBranch) => void) {
+    Object.keys(this._branches).forEach((SK) => {
+      cb(SK, this._branches[SK]);
+    });
+  }
+
   register(id: string, depth: number): Pointer {
     const { CHK, SK, PK, parentIndex } = this.accumulateIndicators(depth);
 
-    this.addElementIDToDepthCollection(SK, depth);
+    this._addElementIDToDepthCollection(SK, depth);
 
-    const selfIndex = this.addElementIDToSiblingsBranch(id, SK);
+    const selfIndex = this._addElementIDToSiblingsBranch(id, SK);
 
     const keys: Keys = {
       SK,
@@ -188,17 +183,17 @@ class Generator implements GeneratorInterface {
     return { order, keys };
   }
 
-  removeElementIDFromBranch(SK: string, index: number) {
+  removeElmIDFromBranch(SK: string, index: number) {
     let deletedElmID: string;
 
     if (
-      Array.isArray(this.branches[SK]) &&
-      this.branches[SK]![index] !== undefined
+      Array.isArray(this._branches[SK]) &&
+      this._branches[SK]![index] !== undefined
     ) {
-      [deletedElmID] = (this.branches[SK] as []).splice(index, 1);
+      [deletedElmID] = this._branches[SK]!.splice(index, 1);
 
-      if (this.branches[SK]!.length === 0) {
-        delete this.branches[SK];
+      if (this._branches[SK]!.length === 0) {
+        delete this._branches[SK];
       }
 
       return deletedElmID;
@@ -207,44 +202,60 @@ class Generator implements GeneratorInterface {
     return null;
   }
 
-  // eslint-disable-next-line no-unused-vars
-  destroyBranch(SK: string, cb: (elmID: string) => unknown) {
-    if (!this.branches[SK]) return;
+  addElmIDToBranch(SK: string, id: string) {
+    if (!Array.isArray(this._branches[SK])) {
+      if (__DEV__) {
+        throw new Error(
+          `addElmIDToBranch: You are trying to add an element to the branch with key:${SK} that is not registered at all.` +
+            `You can call this method with existing branch. If you want to create a new branch, use register method.`
+        );
+      }
 
-    const elmID = this.branches[SK].pop();
+      return;
+    }
+
+    this._branches[SK].push(id);
+  }
+
+  getBranchesByDepth(dp: number): ELmBranch {
+    if (__DEV__) {
+      if (!Array.isArray(this._branchesByDepth[dp])) {
+        throw new Error(
+          `getBranchesByDepth: Depth ${dp} does not exist in the registry. Check your elements depth that was passed to the registry.`
+        );
+      }
+    }
+    return this._branchesByDepth[dp] || [];
+  }
+
+  getElmBranchByKey(SK: string): ELmBranch {
+    return this._branches[SK] || [];
+  }
+
+  destroyBranch(SK: string, cb: (elmID: string) => void) {
+    if (!this._branches[SK]) return;
+
+    const elmID = this._branches[SK].pop();
 
     if (!elmID) return;
 
     cb(elmID);
 
-    if (this.branches[SK]!.length > 0) {
+    if (this._branches[SK]!.length > 0) {
       this.destroyBranch(SK, cb);
     } else {
-      delete this.branches[SK];
+      delete this._branches[SK];
     }
 
-    Object.keys(this.branchesByDepth).forEach((dp) => {
+    Object.keys(this._branchesByDepth).forEach((dp) => {
       const dpNum = Number(dp);
-      this.branchesByDepth[dpNum] = this.branchesByDepth[dpNum].filter(
+      this._branchesByDepth[dpNum] = this._branchesByDepth[dpNum].filter(
         (key) => key !== SK
       );
 
-      if (this.branchesByDepth[dpNum].length === 0) {
-        delete this.branchesByDepth[dpNum];
+      if (this._branchesByDepth[dpNum].length === 0) {
+        delete this._branchesByDepth[dpNum];
       }
-    });
-  }
-
-  destroy() {
-    [
-      "branches",
-      "branchesByDepth",
-      "branchesOrder",
-      "branchesByDepth",
-      "indicator",
-    ].forEach((key) => {
-      // @ts-expect-error
-      this[key] = null;
     });
   }
 }

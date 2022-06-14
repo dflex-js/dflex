@@ -1,3 +1,5 @@
+import type { ELmBranch } from "@dflex/dom-gen";
+
 // https://github.com/microsoft/TypeScript/issues/28374#issuecomment-536521051
 type DeepNonNullable<T> = {
   [P in keyof T]-?: NonNullable<T[P]>;
@@ -24,9 +26,44 @@ export type RegisterInputBase = DeepNonNullable<RegisterInputOpts> & {
   scrollY: number;
 };
 
+/**
+ * DFlex Base Store class interface.
+ */
 export interface IDFlexBaseStore {
+  /**
+   * Registers an element to the store.
+   *
+   * @param element - element to register
+   * @returns
+   */
   register(element: RegisterInputBase): void;
+
+  /**
+   * Gets all element IDs Siblings in given node represented by sibling key.
+   *
+   * @param SK - Siblings Key.
+   * @returns
+   */
+  getElmBranchByKey(SK: string): ELmBranch;
+
+  /**
+   * Removes an element from the store.
+   *
+   * @param id - element id.
+   */
   unregister(id: string): void;
+
+  /**
+   * Destroys branch and all its related instances in the store. This method is
+   * automatically `unregister(id)`.
+   *
+   * @param SK - Siblings Key.
+   */
+  destroyBranch(SK: string): void;
+
+  /**
+   * Destroys all branches and all their related instances in the store. This
+   * method should be called when the app will no longer use the store.
+   */
   destroy(): void;
-  getElmBranchByKey(siblingsKy: string): string[];
 }

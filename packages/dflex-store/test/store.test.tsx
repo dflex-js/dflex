@@ -114,21 +114,18 @@ describe("Testing Store Package", () => {
   });
 
   it("Registers new elements", () => {
-    expect(store.DOMGen.branches).toMatchInlineSnapshot(`
-      Object {
-        "0-0": Array [
-          "id-0",
-          "id-1",
-          "id-2",
-        ],
-        "1-1": Array [
-          "p-id-0",
-        ],
-        "2-0": Array [
-          "",
-        ],
-      }
-    `);
+    // @ts-ignore - Just for testing purposes.
+    expect(store.DOMGen.getElmBranchByKey("0-0")).toStrictEqual([
+      "id-0",
+      "id-1",
+      "id-2",
+    ]);
+
+    // @ts-ignore - Just for testing purposes.
+    expect(store.DOMGen.getElmBranchByKey("1-1")).toStrictEqual(["p-id-0"]);
+
+    // @ts-ignore - Just for testing purposes.
+    expect(store.DOMGen.getElmBranchByKey("2-0")).toStrictEqual([""]);
   });
 
   it("Snaps shot registry", () => {

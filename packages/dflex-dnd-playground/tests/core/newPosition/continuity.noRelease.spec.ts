@@ -1,5 +1,5 @@
 import { test, expect, Page, Locator } from "@playwright/test";
-import { getDraggedRect, initialize, moveDragged } from "../utils";
+import { getDraggedRect, initialize, moveDragged } from "../../utils";
 
 test.describe.serial(
   "Moving out then insert - Up/Down - No release",

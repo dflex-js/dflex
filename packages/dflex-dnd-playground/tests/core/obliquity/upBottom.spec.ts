@@ -1,5 +1,10 @@
 import { test, expect, Page, Locator } from "@playwright/test";
-import { DraggedRect, getDraggedRect, initialize, moveDragged } from "../utils";
+import {
+  DraggedRect,
+  getDraggedRect,
+  initialize,
+  moveDragged,
+} from "../../utils";
 
 test.describe.serial("Dragging from bottom up", async () => {
   let page: Page;
