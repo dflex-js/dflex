@@ -1,7 +1,7 @@
 import { test, expect, Page, Locator, BrowserContext } from "@playwright/test";
 import { DraggedRect, getDraggedRect, initialize, moveDragged } from "../utils";
 
-test.describe.serial.only("Drag and release multiples positions", async () => {
+test.describe.serial("Drag and release multiples positions", async () => {
   let page: Page;
   let context: BrowserContext;
 
