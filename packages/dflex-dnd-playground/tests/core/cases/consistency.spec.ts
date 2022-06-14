@@ -93,7 +93,7 @@ test.describe.serial(
     });
 
     test("Siblings have new positions", async () => {
-      Promise.all([
+      await Promise.all([
         expect(elm09).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 58)"),
         expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)"),
         expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
