@@ -56,12 +56,14 @@ test.describe.serial("Dragged is out position vertically", async () => {
           });
 
           test("Siblings have the correct position", async () => {
-            await expect(elm09).toHaveCSS("transform", "none");
-            await expect(elm11).toHaveCSS(
-              "transform",
-              "matrix(1, 0, 0, 1, 0, -58)"
-            );
-            await expect(elm12).toHaveCSS("transform", "none");
+            await Promise.all([
+              expect(elm09).toHaveCSS("transform", "none"),
+              expect(elm11).toHaveCSS(
+                "transform",
+                "matrix(1, 0, 0, 1, 0, -58)"
+              ),
+              expect(elm12).toHaveCSS("transform", "none"),
+            ]);
           });
 
           test("Triggers mouseup", async () => {
@@ -72,19 +74,20 @@ test.describe.serial("Dragged is out position vertically", async () => {
           });
 
           test("Untransformed siblings not being effected", async () => {
-            await expect(elm09).toHaveCSS("transform", "none");
-            await expect(elm12).toHaveCSS("transform", "none");
+            await Promise.all([
+              expect(elm09).toHaveCSS("transform", "none"),
+              expect(elm12).toHaveCSS("transform", "none"),
+            ]);
           });
 
           test("affected siblings switched their positions", async () => {
-            await expect(elm10).toHaveCSS(
-              "transform",
-              "matrix(1, 0, 0, 1, 0, 58)"
-            );
-            await expect(elm11).toHaveCSS(
-              "transform",
-              "matrix(1, 0, 0, 1, 0, -58)"
-            );
+            await Promise.all([
+              expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 58)"),
+              expect(elm11).toHaveCSS(
+                "transform",
+                "matrix(1, 0, 0, 1, 0, -58)"
+              ),
+            ]);
           });
         });
 
@@ -95,12 +98,11 @@ test.describe.serial("Dragged is out position vertically", async () => {
           });
 
           test("Siblings have the correct position", async () => {
-            await expect(elm09).toHaveCSS("transform", "none");
-            await expect(elm11).toHaveCSS(
-              "transform",
-              "matrix(1, 0, 0, 1, 0, 0)"
-            );
-            await expect(elm12).toHaveCSS("transform", "none");
+            await Promise.all([
+              expect(elm09).toHaveCSS("transform", "none"),
+              expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+              expect(elm12).toHaveCSS("transform", "none"),
+            ]);
           });
 
           test("Triggers mouseup", async () => {
@@ -111,19 +113,17 @@ test.describe.serial("Dragged is out position vertically", async () => {
           });
 
           test("Untransformed siblings not being effected", async () => {
-            await expect(elm09).toHaveCSS("transform", "none");
-            await expect(elm12).toHaveCSS("transform", "none");
+            await Promise.all([
+              expect(elm09).toHaveCSS("transform", "none"),
+              expect(elm12).toHaveCSS("transform", "none"),
+            ]);
           });
 
           test("affected siblings switched their positions", async () => {
-            await expect(elm10).toHaveCSS(
-              "transform",
-              "matrix(1, 0, 0, 1, 0, 0)"
-            );
-            await expect(elm11).toHaveCSS(
-              "transform",
-              "matrix(1, 0, 0, 1, 0, 0)"
-            );
+            await Promise.all([
+              expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+              expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+            ]);
           });
         });
 
@@ -134,15 +134,17 @@ test.describe.serial("Dragged is out position vertically", async () => {
           });
 
           test("Siblings have the correct position", async () => {
-            await expect(elm09).toHaveCSS("transform", "none");
-            await expect(elm11).toHaveCSS(
-              "transform",
-              "matrix(1, 0, 0, 1, 0, -58)"
-            );
-            await expect(elm12).toHaveCSS(
-              "transform",
-              "matrix(1, 0, 0, 1, 0, -58)"
-            );
+            await Promise.all([
+              expect(elm09).toHaveCSS("transform", "none"),
+              expect(elm11).toHaveCSS(
+                "transform",
+                "matrix(1, 0, 0, 1, 0, -58)"
+              ),
+              expect(elm12).toHaveCSS(
+                "transform",
+                "matrix(1, 0, 0, 1, 0, -58)"
+              ),
+            ]);
           });
 
           test("Moving dragged out the container, preservers the last transformation", async () => {
@@ -150,15 +152,17 @@ test.describe.serial("Dragged is out position vertically", async () => {
           });
 
           test("Siblings preserve their positions", async () => {
-            await expect(elm09).toHaveCSS("transform", "none");
-            await expect(elm11).toHaveCSS(
-              "transform",
-              "matrix(1, 0, 0, 1, 0, -58)"
-            );
-            await expect(elm12).toHaveCSS(
-              "transform",
-              "matrix(1, 0, 0, 1, 0, -58)"
-            );
+            await Promise.all([
+              expect(elm09).toHaveCSS("transform", "none"),
+              expect(elm11).toHaveCSS(
+                "transform",
+                "matrix(1, 0, 0, 1, 0, -58)"
+              ),
+              expect(elm12).toHaveCSS(
+                "transform",
+                "matrix(1, 0, 0, 1, 0, -58)"
+              ),
+            ]);
           });
 
           test("Triggers mouseup", async () => {
@@ -173,14 +177,16 @@ test.describe.serial("Dragged is out position vertically", async () => {
           });
 
           test("affected siblings switched their positions", async () => {
-            await expect(elm12).toHaveCSS(
-              "transform",
-              "matrix(1, 0, 0, 1, 0, -58)"
-            );
-            await expect(elm11).toHaveCSS(
-              "transform",
-              "matrix(1, 0, 0, 1, 0, -58)"
-            );
+            await Promise.all([
+              expect(elm12).toHaveCSS(
+                "transform",
+                "matrix(1, 0, 0, 1, 0, -58)"
+              ),
+              expect(elm11).toHaveCSS(
+                "transform",
+                "matrix(1, 0, 0, 1, 0, -58)"
+              ),
+            ]);
           });
         });
 
@@ -192,18 +198,14 @@ test.describe.serial("Dragged is out position vertically", async () => {
           });
 
           test("Makes sure all siblings are lifted up to fill the gap", async () => {
-            await expect(elm09).toHaveCSS(
-              "transform",
-              "matrix(1, 0, 0, 1, 0, 0)"
-            );
-            await expect(elm10).toHaveCSS(
-              "transform",
-              "matrix(1, 0, 0, 1, 0, 58)"
-            );
-            await expect(elm12).toHaveCSS(
-              "transform",
-              "matrix(1, 0, 0, 1, 0, -116)"
-            );
+            await Promise.all([
+              expect(elm09).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+              expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 58)"),
+              expect(elm12).toHaveCSS(
+                "transform",
+                "matrix(1, 0, 0, 1, 0, -116)"
+              ),
+            ]);
           });
 
           test("Triggers mouseup", async () => {
@@ -214,22 +216,21 @@ test.describe.serial("Dragged is out position vertically", async () => {
           });
 
           test("Resets all positions considering leaving from above is not suitable", async () => {
-            await expect(elm09).toHaveCSS(
-              "transform",
-              "matrix(1, 0, 0, 1, 0, 0)"
-            );
-            await expect(elm10).toHaveCSS(
-              "transform",
-              "matrix(1, 0, 0, 1, 0, 116)"
-            );
-            await expect(elm11).toHaveCSS(
-              "transform",
-              "matrix(1, 0, 0, 1, 0, -58)"
-            );
-            await expect(elm12).toHaveCSS(
-              "transform",
-              "matrix(1, 0, 0, 1, 0, -58)"
-            );
+            await Promise.all([
+              expect(elm09).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+              expect(elm10).toHaveCSS(
+                "transform",
+                "matrix(1, 0, 0, 1, 0, 116)"
+              ),
+              expect(elm11).toHaveCSS(
+                "transform",
+                "matrix(1, 0, 0, 1, 0, -58)"
+              ),
+              expect(elm12).toHaveCSS(
+                "transform",
+                "matrix(1, 0, 0, 1, 0, -58)"
+              ),
+            ]);
           });
         });
       });

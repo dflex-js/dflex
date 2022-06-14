@@ -51,18 +51,11 @@ test.describe.serial(
         });
 
         async function siblingsBack() {
-          await expect(elm10).toHaveCSS(
-            "transform",
-            "matrix(1, 0, 0, 1, 0, 0)"
-          );
-          await expect(elm11).toHaveCSS(
-            "transform",
-            "matrix(1, 0, 0, 1, 0, 0)"
-          );
-          await expect(elm12).toHaveCSS(
-            "transform",
-            "matrix(1, 0, 0, 1, 0, 0)"
-          );
+          await Promise.all([
+            expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+            expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+            expect(elm12).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+          ]);
         }
 
         test("Moving dragged element to the bottom of the list", async () => {
@@ -71,18 +64,11 @@ test.describe.serial(
         });
 
         test("All siblings are lifted up", async () => {
-          await expect(elm10).toHaveCSS(
-            "transform",
-            "matrix(1, 0, 0, 1, 0, -58)"
-          );
-          await expect(elm11).toHaveCSS(
-            "transform",
-            "matrix(1, 0, 0, 1, 0, -58)"
-          );
-          await expect(elm12).toHaveCSS(
-            "transform",
-            "matrix(1, 0, 0, 1, 0, -58)"
-          );
+          await Promise.all([
+            expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)"),
+            expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)"),
+            expect(elm12).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)"),
+          ]);
         });
 
         test("Moving dragged element to the top again", async () => {

@@ -32,9 +32,11 @@ test.describe.serial("Dragging from bottom up", async () => {
   });
 
   test("Checking the stability of the new positions", async () => {
-    await expect(elm09).toHaveCSS("transform", "none");
-    await expect(elm10).toHaveCSS("transform", "none");
-    await expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 58)");
+    await Promise.all([
+      expect(elm09).toHaveCSS("transform", "none"),
+      expect(elm10).toHaveCSS("transform", "none"),
+      expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 58)"),
+    ]);
   });
 
   test("Continue transformation to the top below #9", async () => {
@@ -42,9 +44,11 @@ test.describe.serial("Dragging from bottom up", async () => {
   });
 
   test("Transform elm#10 and elm#11 once it's entering the threshold", async () => {
-    await expect(elm09).toHaveCSS("transform", "none");
-    await expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 58)");
-    await expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 58)");
+    await Promise.all([
+      expect(elm09).toHaveCSS("transform", "none"),
+      expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 58)"),
+      expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 58)"),
+    ]);
   });
 
   test("Continue transformation to the top outside the container", async () => {
@@ -52,9 +56,11 @@ test.describe.serial("Dragging from bottom up", async () => {
   });
 
   test("Transform elm#10 and elm#11 back to their positions", async () => {
-    await expect(elm09).toHaveCSS("transform", "none");
-    await expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)");
-    await expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)");
+    await Promise.all([
+      expect(elm09).toHaveCSS("transform", "none"),
+      expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+      expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+    ]);
   });
 
   test("Insert dragged into elm#9 breaking point", async () => {
@@ -69,9 +75,11 @@ test.describe.serial("Dragging from bottom up", async () => {
   });
 
   test("Siblings positioned correctly", async () => {
-    await expect(elm09).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 58)");
-    await expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 58)");
-    await expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 58)");
-    await expect(elm12).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -174)");
+    await Promise.all([
+      expect(elm09).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 58)"),
+      expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 58)"),
+      expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 58)"),
+      expect(elm12).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -174)"),
+    ]);
   });
 });

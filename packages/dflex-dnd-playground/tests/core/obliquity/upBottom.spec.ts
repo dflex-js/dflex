@@ -34,9 +34,11 @@ test.describe.serial("Dragging from bottom up", async () => {
   });
 
   test("Only lifts elm#10 up", async () => {
-    await expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)");
-    await expect(elm11).toHaveCSS("transform", "none");
-    await expect(elm12).toHaveCSS("transform", "none");
+    await Promise.all([
+      expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)"),
+      expect(elm11).toHaveCSS("transform", "none"),
+      expect(elm12).toHaveCSS("transform", "none"),
+    ]);
   });
 
   test("Continue transformation to the bottom outside the container", async () => {
@@ -44,9 +46,11 @@ test.describe.serial("Dragging from bottom up", async () => {
   });
 
   test("Transforms all elements up", async () => {
-    await expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)");
-    await expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)");
-    await expect(elm12).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)");
+    await Promise.all([
+      expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)"),
+      expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)"),
+      expect(elm12).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)"),
+    ]);
   });
 
   test("Insert dragged into elm#12 breaking point", async () => {
@@ -61,9 +65,11 @@ test.describe.serial("Dragging from bottom up", async () => {
   });
 
   test("Siblings positioned correctly", async () => {
-    await expect(elm09).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 174)");
-    await expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)");
-    await expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)");
-    await expect(elm12).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)");
+    await Promise.all([
+      expect(elm09).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 174)"),
+      expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)"),
+      expect(elm11).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)"),
+      expect(elm12).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -58)"),
+    ]);
   });
 });
