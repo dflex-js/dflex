@@ -20,7 +20,7 @@ test.describe.serial(
       const context = await browser.newContext();
 
       page = await context.newPage();
-      initialize(page, browserName === "webkit" ? 20 : 10);
+      initialize(page, browserName === "webkit" ? 30 : 10);
       await page.goto(baseURL!);
 
       [elm2, elm3, elm4, elm5, elm6, elm7, elm8] = await Promise.all([
