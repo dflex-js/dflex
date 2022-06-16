@@ -54,16 +54,16 @@ describe("Testing Store Package", () => {
     scrollY: 0,
   };
 
-  const elmThrows = {
-    id: "id-not-attached",
-    depth: 1,
-    parentID: "",
-    readonly: false,
-    isInitialized: true,
-    isPaused: false,
-    scrollX: 0,
-    scrollY: 0,
-  };
+  // const elmThrows = {
+  //   id: "id-not-attached",
+  //   depth: 1,
+  //   parentID: "",
+  //   readonly: false,
+  //   isInitialized: true,
+  //   isPaused: false,
+  //   scrollX: 0,
+  //   scrollY: 0,
+  // };
 
   let container: HTMLDivElement | null;
   let reactRoot: Root;
@@ -150,7 +150,7 @@ describe("Testing Store Package", () => {
     expect(store.registry).toMatchSnapshot();
   });
 
-  it("Throws because it can't find the reference", () => {
-    expect(() => store.register(elmThrows)).toThrow();
-  });
+  // it("Throws because it can't find the reference", () => {
+  //   expect(() => store.register(elmThrows)).toThrow();
+  // });
 });
