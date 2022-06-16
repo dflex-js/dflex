@@ -9,6 +9,8 @@ import type { IDFlexContainer, IDFlexNode } from "@dflex/core-instance";
 import type { RegisterInputOpts } from "@dflex/store";
 import type { DraggedEvent, LayoutState } from "../types";
 
+export type ELmKey = string;
+
 export interface ElmTree {
   element: IDFlexNode;
   parent: IDFlexNode | null;
@@ -46,6 +48,7 @@ export interface IDnDStore {
   };
   readonly tracker: ITracker;
   readonly layoutState: LayoutState;
+  // readonly interactiveDOM: Map<ELmKey, HTMLElement>;
   initSiblingContainer(SK: string, shouldValidate: boolean): void;
   updateBranchVisibility(SK: string, shouldCheckVisibility: boolean): void;
   handleElmMigration(
@@ -57,8 +60,6 @@ export interface IDnDStore {
   onStateChange(state: LayoutState): void;
   emitEvent(event: DraggedEvent): void;
   register(element: RegisterInputOpts): void;
-  getBranchesByDepth(dp: number): string[];
-  getInitialELmRectById(id: string): RectDimensions | undefined;
   getELmTranslateById(id: string): Translate;
   getElmTreeById(id: string): ElmTree;
   getElmSiblingsById(id: string): string[] | null;

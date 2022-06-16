@@ -43,7 +43,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
     });
 
     it("Adds the new branch into its depth", () => {
-      expect(domGen.getBranchesByDepth(0)).toStrictEqual(["0-0"]);
+      expect(domGen.getBranchByDepth(0)).toStrictEqual(["0-0"]);
     });
 
     it("Preserves keys and parent index for element with same level", () => {
@@ -91,7 +91,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
     });
 
     it("Preserve the branch key grouped with its depth", () => {
-      expect(domGen.getBranchesByDepth(0)).toMatchInlineSnapshot(`
+      expect(domGen.getBranchByDepth(0)).toMatchInlineSnapshot(`
         Array [
           "0-0",
         ]
@@ -134,8 +134,8 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
     });
 
     it("Add the new branch key (parent branch) to its depth", () => {
-      expect(domGen.getBranchesByDepth(0)).toStrictEqual(["0-0"]);
-      expect(domGen.getBranchesByDepth(1)).toStrictEqual(["1-0"]);
+      expect(domGen.getBranchByDepth(0)).toStrictEqual(["0-0"]);
+      expect(domGen.getBranchByDepth(1)).toStrictEqual(["1-0"]);
     });
 
     it("Identifies grand parent connects its branch", () => {
@@ -172,9 +172,9 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
     });
 
     it("Add the new branch key (grand branch) to its depth", () => {
-      expect(domGen.getBranchesByDepth(0)).toStrictEqual(["0-0"]);
-      expect(domGen.getBranchesByDepth(1)).toStrictEqual(["1-0"]);
-      expect(domGen.getBranchesByDepth(2)).toStrictEqual(["2-0"]);
+      expect(domGen.getBranchByDepth(0)).toStrictEqual(["0-0"]);
+      expect(domGen.getBranchByDepth(1)).toStrictEqual(["1-0"]);
+      expect(domGen.getBranchByDepth(2)).toStrictEqual(["2-0"]);
     });
   });
 
@@ -219,9 +219,9 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
     });
 
     it("Add the new branch key to the existing depth array", () => {
-      expect(domGen.getBranchesByDepth(0)).toStrictEqual(["0-0", "0-1"]);
-      expect(domGen.getBranchesByDepth(1)).toStrictEqual(["1-0"]);
-      expect(domGen.getBranchesByDepth(2)).toStrictEqual(["2-0"]);
+      expect(domGen.getBranchByDepth(0)).toStrictEqual(["0-0", "0-1"]);
+      expect(domGen.getBranchByDepth(1)).toStrictEqual(["1-0"]);
+      expect(domGen.getBranchByDepth(2)).toStrictEqual(["2-0"]);
     });
 
     it("Throws when updating non-existing branch", () => {

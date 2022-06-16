@@ -85,7 +85,7 @@ export interface IGenerator {
    * @param dp
    * @returns
    */
-  getBranchesByDepth(dp: number): ELmBranch;
+  getBranchByDepth(dp: number): ELmBranch;
 
   /**
    * Gets all element IDs in given node represented by sk.

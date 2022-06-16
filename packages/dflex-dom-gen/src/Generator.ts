@@ -217,7 +217,7 @@ class Generator implements IGenerator {
     this._branches[SK].push(id);
   }
 
-  getBranchesByDepth(dp: number): ELmBranch {
+  getBranchByDepth(dp: number): ELmBranch {
     if (__DEV__) {
       if (!Array.isArray(this._branchesByDepth[dp])) {
         throw new Error(

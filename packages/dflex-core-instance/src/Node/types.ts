@@ -7,11 +7,6 @@ import type {
   Axis,
 } from "@dflex/utils";
 
-export interface DFlexBaseNodeOpts {
-  isInitialized: boolean;
-  isPaused: boolean;
-}
-
 export type AllowedDataset =
   | "gridX"
   | "gridY"
@@ -73,8 +68,6 @@ export interface DFlexBaseNodeInput {
   readonly keys: Keys;
   readonly depth: number;
   readonly readonly: boolean;
-  readonly scrollX: number;
-  readonly scrollY: number;
 }
 
 export type ITransitionHistory = {

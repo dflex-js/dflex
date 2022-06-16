@@ -2,9 +2,13 @@ import Generator from "@dflex/dom-gen";
 import type { IGenerator } from "@dflex/dom-gen";
 
 import { DFlexNode } from "@dflex/core-instance";
-import type { IDFlexNode, DFlexBaseNodeInput } from "@dflex/core-instance";
+import type { IDFlexNode } from "@dflex/core-instance";
 
-import type { RegisterInputBase, IDFlexBaseStore } from "./types";
+import type {
+  RegisterInputBase,
+  IDFlexBaseStore,
+  DFlexNodeInput,
+} from "./types";
 
 class DFlexBaseStore implements IDFlexBaseStore {
   registry: {
@@ -22,11 +26,11 @@ class DFlexBaseStore implements IDFlexBaseStore {
   }
 
   private _submitElementToRegistry(element: RegisterInputBase) {
-    const { id, depth, isPaused, isInitialized, ...rest } = element;
+    const { id, depth, ...rest } = element;
 
     const { order, keys } = this.DOMGen.register(id, depth);
 
-    const coreElement: DFlexBaseNodeInput = {
+    const coreElement: DFlexNodeInput = {
       id,
       order,
       keys,
@@ -34,10 +38,7 @@ class DFlexBaseStore implements IDFlexBaseStore {
       ...rest,
     };
 
-    this.registry[id] = new DFlexNode(coreElement, {
-      isInitialized,
-      isPaused,
-    });
+    this.registry[id] = new DFlexNode(coreElement);
   }
 
   register(element: RegisterInputBase) {
@@ -63,6 +64,10 @@ class DFlexBaseStore implements IDFlexBaseStore {
 
   getElmBranchByKey(SK: string) {
     return this.DOMGen.getElmBranchByKey(SK);
+  }
+
+  getBranchesByDepth(dp: number) {
+    return this.DOMGen.getBranchByDepth(dp);
   }
 
   unregister(id: string) {

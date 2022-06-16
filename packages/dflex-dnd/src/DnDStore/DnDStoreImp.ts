@@ -34,7 +34,7 @@ function throwElementIsNotConnected(id: string) {
 const MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
 
 class DnDStoreImp extends Store implements IDnDStore {
-  containers: { [siblingKey: string]: IDFlexContainer };
+  containers: { [SK: string]: IDFlexContainer };
 
   readonly unifiedContainerDimensions: {
     [depth: number]: Dimensions;
@@ -62,6 +62,8 @@ class DnDStoreImp extends Store implements IDnDStore {
 
   constructor() {
     super();
+
+    // this.interactiveDOM = new Map();
 
     this.containers = {};
     this.unifiedContainerDimensions = {};
@@ -470,10 +472,6 @@ class DnDStoreImp extends Store implements IDnDStore {
       parentID: element.parentID,
       depth: element.depth || 0,
       readonly: !!element.readonly,
-      isInitialized: false,
-      isPaused: true,
-      scrollX: 0,
-      scrollY: 0,
     };
 
     queueMicrotask(() => {
@@ -497,14 +495,6 @@ class DnDStoreImp extends Store implements IDnDStore {
     });
 
     super.register(coreInput);
-  }
-
-  getBranchesByDepth(dp: number) {
-    return this.DOMGen.getBranchesByDepth(dp);
-  }
-
-  getInitialELmRectById(id: string) {
-    return this.registry[id].offset;
   }
 
   getELmTranslateById(id: string) {
@@ -620,9 +610,22 @@ class DnDStoreImp extends Store implements IDnDStore {
     super.destroy();
   }
 }
-
+declare global {
+  // eslint-disable-next-line
+  var $DFlex: DnDStoreImp;
+}
 export default (function createStoreInstance() {
   const store = new DnDStoreImp();
+
+  if (__DEV__) {
+    if (canUseDOM()) {
+      if (!globalThis.$DFlex) {
+        globalThis.$DFlex = store;
+      } else {
+        throw new Error("DFlex store instances is already defined.");
+      }
+    }
+  }
 
   return store;
 })();

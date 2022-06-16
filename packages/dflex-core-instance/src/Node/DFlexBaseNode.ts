@@ -3,7 +3,6 @@ import type { IPointNum } from "@dflex/utils";
 
 import type {
   IDFlexBaseNode,
-  DFlexBaseNodeOpts,
   AllowedAttributes,
   AllowedDataset,
   AttributesIndicators,
@@ -25,21 +24,8 @@ class DFlexBaseNode implements IDFlexBaseNode {
     [key in AttributesIndicators]: boolean;
   };
 
-  constructor(id: string, opts: DFlexBaseNodeOpts) {
+  constructor(id: string) {
     this.id = id;
-
-    if (opts.isInitialized) {
-      this.attach();
-
-      this.isPaused = opts.isPaused;
-
-      if (!this.isPaused) {
-        this.initTranslate();
-      }
-
-      return;
-    }
-
     this.isInitialized = false;
     this.ref = null;
     this.isPaused = true;
