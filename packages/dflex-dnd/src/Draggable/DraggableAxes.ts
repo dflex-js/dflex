@@ -83,10 +83,12 @@ class DraggableAxes
 
     this.migration = new Migration(order.self, SK, store.tracker.newTravel());
 
-    if (!store.containers[SK].lastElmPosition) {
-      const lastElm = store.registry[siblings[siblings.length - 1]];
+    const container = store.containers.get(SK)!;
 
-      store.containers[SK].preservePosition(lastElm.currentPosition);
+    if (!container.lastElmPosition) {
+      const lastElm = store.registry.get(siblings[siblings.length - 1])!;
+
+      container.preservePosition(lastElm.currentPosition);
     }
 
     this.isViewportRestricted = true;
@@ -105,7 +107,9 @@ class DraggableAxes
     this.appendDraggedToContainerDimensions(true);
 
     store.getBranchesByDepth(depth).forEach((key) => {
-      const { boundaries } = store.containers[key];
+      const elmContainer = store.containers.get(key)!;
+
+      const { boundaries } = elmContainer;
 
       if (__DEV__) {
         if (!boundaries) {
@@ -120,17 +124,18 @@ class DraggableAxes
         store.unifiedContainerDimensions[depth]
       );
 
-      if (store.containers[key].originLength === DFlexContainer.OUT_OF_RANGE) {
+      if (elmContainer.originLength === DFlexContainer.OUT_OF_RANGE) {
         const { length } = store.getElmBranchByKey(key);
-        store.containers[key].originLength = length;
+        elmContainer.originLength = length;
       }
 
-      if (!store.containers[key].ref) {
+      if (!elmContainer.ref) {
         setTimeout(() => {
-          const childDOM = store.registry[store.getElmBranchByKey(key)[0]].ref!;
+          const childDOM = store.registry.get(store.getElmBranchByKey(key)[0])!
+            .ref!;
 
           getParentElm(childDOM, (parent) => {
-            store.containers[key].ref = parent;
+            elmContainer.ref = parent;
 
             return true;
           });
@@ -248,10 +253,11 @@ class DraggableAxes
     let filteredY = y;
     let filteredX = x;
 
-    const { SK } = store.registry[this.draggedElm.id].keys;
+    const { SK } = store.registry.get(this.draggedElm.id)!.keys;
+    const container = store.containers.get(SK)!;
 
     if (this.axesFilterNeeded) {
-      const { boundaries } = store.containers[SK];
+      const { boundaries } = container;
       const { top, bottom, left: maxLeft, right: minRight } = boundaries;
 
       if (this.restrictionsStatus.isContainerRestricted) {
@@ -294,7 +300,7 @@ class DraggableAxes
       filteredX = this.axesXFilter(
         x,
         0,
-        store.containers[SK].scroll.getMaximumScrollContainerLeft(),
+        container.scroll.getMaximumScrollContainerLeft(),
         false,
         false,
         true
@@ -302,7 +308,7 @@ class DraggableAxes
       filteredY = this.axesYFilter(
         y,
         0,
-        store.containers[SK].scroll.getMaximumScrollContainerTop(),
+        container.scroll.getMaximumScrollContainerTop(),
         false,
         false,
         true

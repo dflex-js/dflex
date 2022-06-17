@@ -11,9 +11,7 @@ import type {
 } from "./types";
 
 class DFlexBaseStore implements IDFlexBaseStore {
-  registry: {
-    [id: string]: IDFlexNode;
-  };
+  registry: Map<string, IDFlexNode>;
 
   protected DOMGen: IGenerator;
 
@@ -21,7 +19,7 @@ class DFlexBaseStore implements IDFlexBaseStore {
 
   constructor() {
     this._lastKeyIdentifier = null;
-    this.registry = {};
+    this.registry = new Map();
     this.DOMGen = new Generator();
   }
 
@@ -38,7 +36,7 @@ class DFlexBaseStore implements IDFlexBaseStore {
       ...rest,
     };
 
-    this.registry[id] = new DFlexNode(coreElement);
+    this.registry.set(id, new DFlexNode(coreElement));
   }
 
   register(element: RegisterInputBase) {
@@ -71,7 +69,7 @@ class DFlexBaseStore implements IDFlexBaseStore {
   }
 
   unregister(id: string) {
-    delete this.registry[id];
+    this.registry.delete(id);
   }
 
   destroyBranch(SK: string) {
@@ -83,7 +81,7 @@ class DFlexBaseStore implements IDFlexBaseStore {
   destroy() {
     this.DOMGen.forEachBranch((SK) => {
       this.DOMGen.destroyBranch(SK, (id) => {
-        delete this.registry[id];
+        this.unregister(id);
       });
     });
   }

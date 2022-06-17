@@ -23,8 +23,8 @@ DFlexNode {
 `;
 
 exports[`Testing Store Package Snaps shot registry 1`] = `
-Object {
-  "id-0": DFlexNode {
+Map {
+  "id-0" => DFlexNode {
     "animatedFrame": null,
     "depth": 0,
     "id": "id-0",
@@ -43,7 +43,7 @@ Object {
     "readonly": false,
     "ref": null,
   },
-  "id-1": DFlexNode {
+  "id-1" => DFlexNode {
     "animatedFrame": null,
     "depth": 0,
     "id": "id-1",
@@ -62,7 +62,7 @@ Object {
     "readonly": false,
     "ref": null,
   },
-  "id-2": DFlexNode {
+  "id-2" => DFlexNode {
     "animatedFrame": null,
     "depth": 0,
     "id": "id-2",
@@ -81,7 +81,7 @@ Object {
     "readonly": false,
     "ref": null,
   },
-  "p-id-0": DFlexNode {
+  "p-id-0" => DFlexNode {
     "animatedFrame": null,
     "depth": 1,
     "id": "p-id-0",
@@ -104,8 +104,8 @@ Object {
 `;
 
 exports[`Testing Store Package Snaps shot registry after delete 1`] = `
-Object {
-  "id-0": DFlexNode {
+Map {
+  "id-0" => DFlexNode {
     "animatedFrame": null,
     "depth": 0,
     "id": "id-0",
@@ -124,7 +124,7 @@ Object {
     "readonly": false,
     "ref": null,
   },
-  "id-1": DFlexNode {
+  "id-1" => DFlexNode {
     "animatedFrame": null,
     "depth": 0,
     "id": "id-1",
@@ -143,7 +143,7 @@ Object {
     "readonly": false,
     "ref": null,
   },
-  "id-2": DFlexNode {
+  "id-2" => DFlexNode {
     "animatedFrame": null,
     "depth": 0,
     "id": "id-2",
@@ -162,7 +162,7 @@ Object {
     "readonly": false,
     "ref": null,
   },
-  "p-id-0": DFlexNode {
+  "p-id-0" => DFlexNode {
     "animatedFrame": null,
     "depth": 1,
     "id": "p-id-0",

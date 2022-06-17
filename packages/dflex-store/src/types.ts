@@ -1,3 +1,4 @@
+import type { IDFlexNode } from "@dflex/core-instance";
 import type { ELmBranch, Pointer } from "@dflex/dom-gen";
 
 // https://github.com/microsoft/TypeScript/issues/28374#issuecomment-536521051
@@ -33,6 +34,8 @@ export type DFlexNodeInput = RegisterInputBase & Pointer;
  * DFlex Base Store class interface.
  */
 export interface IDFlexBaseStore {
+  registry: Map<string, IDFlexNode>;
+
   /**
    * Registers an element to the store.
    *

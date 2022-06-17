@@ -26,9 +26,9 @@ export function isIDEligible(elmID: string, draggedID: string) {
     elmID &&
     elmID.length > 0 &&
     elmID !== draggedID &&
-    store.registry[elmID] &&
-    store.registry[elmID].ref !== null &&
-    !store.registry[elmID].readonly
+    store.registry.has(elmID) &&
+    store.registry.get(elmID)!.ref !== null &&
+    !store.registry.get(elmID)!.readonly
   );
 }
 
@@ -70,13 +70,13 @@ class Droppable extends DFlexUpdater {
     }
 
     // Won't trigger any resume if auto-scroll is disabled.
-    if (store.registry[elmID].isPaused) {
+    if (store.registry.get(elmID)!.isPaused) {
       if (isScrollEnabled) {
-        const { SK } = store.registry[draggedID].keys;
+        const { SK } = store.registry.get(draggedID)!.keys;
 
-        const { scrollX, scrollY } = store.containers[SK].scroll;
+        const { scrollX, scrollY } = store.containers.get(SK)!.scroll;
 
-        store.registry[elmID].resume(scrollX, scrollY);
+        store.registry.get(elmID)!.resume(scrollX, scrollY);
 
         return true;
       }
@@ -97,7 +97,7 @@ class Droppable extends DFlexUpdater {
     for (let i = lst.length - 1; i >= 0; i -= 1) {
       const id = lst[i];
       if (Droppable.isIDEligible2Move(id, draggedID, false)) {
-        return store.registry[id];
+        return store.registry.get(id)!;
       }
     }
 
@@ -117,8 +117,9 @@ class Droppable extends DFlexUpdater {
 
     this.scrollAnimatedFrame = null;
 
-    const { scrollX, scrollY } =
-      store.containers[this.draggable.migration.latest().SK].scroll;
+    const { scrollX, scrollY } = store.containers.get(
+      this.draggable.migration.latest().SK
+    )!.scroll;
 
     this.initialScroll = new PointNum(scrollX, scrollY);
 
@@ -206,7 +207,7 @@ class Droppable extends DFlexUpdater {
           this.draggable.scroll.enable
         )
       ) {
-        const element = store.registry[id];
+        const element = store.registry.get(id)!;
 
         const isQualified = element.isPositionedUnder(
           this.draggable.positionPlaceholder.y
@@ -230,6 +231,7 @@ class Droppable extends DFlexUpdater {
     const { SK } = migration.latest();
 
     const siblings = store.getElmBranchByKey(SK);
+    const container = store.containers.get(SK)!;
 
     /**
      * If tempIndex is zero, the dragged is coming from the top. So, move them
@@ -244,7 +246,7 @@ class Droppable extends DFlexUpdater {
     // Enforce attaching it from the bottom since it's already inside the container.
     if (typeof insertAt !== "number") {
       // Restore the last element position from the bottom.
-      const { lastElmPosition } = store.containers[SK];
+      const { lastElmPosition } = container;
       if (!migration.isTransitioning && lastElmPosition) {
         this.updateDraggedThresholdPosition(
           lastElmPosition.x,
@@ -302,7 +304,7 @@ class Droppable extends DFlexUpdater {
 
         let grid = draggedGrid;
 
-        const lastElm = store.registry[siblings[siblings.length - 1]];
+        const lastElm = store.registry.get(siblings[siblings.length - 1])!;
 
         if (lastElm) {
           ({ grid } = lastElm);
@@ -407,7 +409,9 @@ class Droppable extends DFlexUpdater {
     const from = index + 1;
 
     if (index > 0) {
-      const prevElm = store.registry[siblings[migration.latest().index - 1]];
+      const prevElm = store.registry.get(
+        siblings[migration.latest().index - 1]
+      )!;
 
       // Store it before lost it when the index is changed to the next one.
       migration.preserveVerticalMargin(
@@ -418,7 +422,7 @@ class Droppable extends DFlexUpdater {
 
     if (from === siblings.length) return;
 
-    const nextElm = store.registry[siblings[from]];
+    const nextElm = store.registry.get(siblings[from])!;
 
     // Store it before lost it when the index is changed to the next one.
     migration.preserveVerticalMargin(
@@ -491,8 +495,8 @@ class Droppable extends DFlexUpdater {
       gridPlaceholder,
     } = this.draggable;
 
-    const { SK } = store.registry[id].keys;
-    const { grid: siblingsGrid } = store.containers[SK];
+    const { SK } = store.registry.get(id)!.keys;
+    const { grid: siblingsGrid } = store.containers.get(SK)!;
 
     if (isOut[id].isOutY()) {
       const newRow = isOut[id].isLeftFromBottom
@@ -554,13 +558,13 @@ class Droppable extends DFlexUpdater {
 
     const currentBottom = currentTop + this.draggable.draggedElm.offset.height;
 
-    const { SK } = store.registry[this.draggable.draggedElm.id].keys;
+    const { SK } = store.registry.get(this.draggable.draggedElm.id)!.keys;
 
     const {
       scrollHeight,
       scrollContainerRef: scrollContainer,
       scrollRect,
-    } = store.containers[SK].scroll;
+    } = store.containers.get(SK)!.scroll;
 
     if (direction === 1) {
       if (currentBottom <= scrollHeight) {
@@ -593,13 +597,13 @@ class Droppable extends DFlexUpdater {
 
     const currentRight = currentLeft + this.draggable.draggedElm.offset.width;
 
-    const { SK } = store.registry[this.draggable.draggedElm.id].keys;
+    const { SK } = store.registry.get(this.draggable.draggedElm.id)!.keys;
 
     const {
       scrollHeight,
       scrollContainerRef: scrollContainer,
       scrollRect,
-    } = store.containers[SK].scroll;
+    } = store.containers.get(SK)!.scroll;
 
     if (direction === 1) {
       if (currentRight <= scrollHeight) {
@@ -627,10 +631,11 @@ class Droppable extends DFlexUpdater {
     direction: 1 | -1,
     on: "scrollElementOnX" | "scrollElementOnY"
   ) {
-    const { SK } = store.registry[this.draggable.draggedElm.id].keys;
+    const { SK } = store.registry.get(this.draggable.draggedElm.id)!.keys;
+    const container = store.containers.get(SK)!;
 
     // Prevent store from implementing any animation response.
-    store.containers[SK].scroll.hasThrottledFrame = 1;
+    container.scroll.hasThrottledFrame = 1;
 
     // @ts-expect-error
     this.draggable.isViewportRestricted = false;
@@ -642,7 +647,7 @@ class Droppable extends DFlexUpdater {
 
       // Reset animation flags
       this.scrollAnimatedFrame = null;
-      store.containers[SK].scroll.hasThrottledFrame = null;
+      container.scroll.hasThrottledFrame = null;
 
       this.scrollSpeed += this.draggable.scroll.initialSpeed;
     });
@@ -651,7 +656,8 @@ class Droppable extends DFlexUpdater {
   private scrollManager(x: number, y: number) {
     const { draggedElm } = this.draggable;
 
-    const { SK } = store.registry[draggedElm.id].keys;
+    const { SK } = store.registry.get(draggedElm.id)!.keys;
+    const container = store.containers.get(SK)!;
 
     /**
      * Manage scrolling.
@@ -659,11 +665,10 @@ class Droppable extends DFlexUpdater {
     if (
       this.draggable.scroll.enable &&
       this.scrollAnimatedFrame === null &&
-      store.containers[SK].scroll.hasThrottledFrame === null
+      container.scroll.hasThrottledFrame === null
     ) {
-      if (store.containers[SK].scroll.hasOverflowY) {
-        const { scrollRect, scrollHeight, threshold } =
-          store.containers[SK].scroll;
+      if (container.scroll.hasOverflowY) {
+        const { scrollRect, scrollHeight, threshold } = container.scroll;
         if (
           this.draggable.threshold.isOut[draggedElm.id].isLeftFromBottom &&
           y >= threshold!.thresholds[SK].bottom &&
@@ -679,9 +684,8 @@ class Droppable extends DFlexUpdater {
         }
       }
 
-      if (store.containers[SK].scroll.hasOverflowX) {
-        const { scrollRect, scrollHeight, threshold } =
-          store.containers[SK].scroll;
+      if (container.scroll.hasOverflowX) {
+        const { scrollRect, scrollHeight, threshold } = container.scroll;
         if (
           this.draggable.threshold.isOut[draggedElm.id].isLeftFromRight &&
           x >= threshold!.thresholds[SK].right &&
@@ -812,19 +816,21 @@ class Droppable extends DFlexUpdater {
 
   commit() {
     store.getBranchesByDepth(this.draggable.draggedElm.depth).forEach((key) => {
+      const container = store.containers.get(key)!;
+
       if (__DEV__) {
-        if (!store.containers[key].ref) {
+        if (!container.ref) {
           throw new Error(`Container ${key} ref not found.`);
         }
       }
 
-      if (store.containers[key].ref) {
-        const { ref } = store.containers[key];
+      if (container.ref) {
+        const { ref } = container;
 
         ref!.replaceWith(
           ...store
             .getElmBranchByKey(key)
-            .map((elmId) => store.registry[elmId].ref!)
+            .map((elmId) => store.registry.get(elmId)!.ref!)
         );
       }
     });

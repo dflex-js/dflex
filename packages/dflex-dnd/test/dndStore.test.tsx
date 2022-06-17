@@ -179,8 +179,10 @@ describe("DnD Store", () => {
       });
 
       it("Preserve the last element", () => {
-        store.containers[SK].preservePosition(preservePosition);
-        store.containers[SK].originLength = originLength;
+        const elmContainer = store.containers.get(SK)!;
+
+        elmContainer.preservePosition(preservePosition);
+        elmContainer.originLength = originLength;
       });
 
       it("Restores the preserved position when calling for last element", () => {

@@ -34,13 +34,13 @@ class DnD extends Droppable {
       }
     }
 
-    if (!store.registry[id]) {
+    if (!store.registry.has(id)) {
       throw new Error(`DFlex: ${id} is not registered in the Store.`);
     }
 
     const options = extractOpts(opts);
 
-    const { depth } = store.registry[id];
+    const { depth } = store.registry.get(id)!;
 
     /**
      * In case it is not already initiated in the store. We do it here guarantee

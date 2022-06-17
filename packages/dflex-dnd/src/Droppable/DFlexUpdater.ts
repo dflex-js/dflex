@@ -286,13 +286,13 @@ class DFlexUpdater {
       throwOnInfiniteTransformation(id);
     }
 
-    const element = store.registry[id];
+    const element = store.registry.get(id)!;
 
     const {
       keys: { SK },
     } = element;
 
-    const { grid: siblingsGrid } = store.containers[SK];
+    const { grid: siblingsGrid } = store.containers.get(SK)!;
 
     const isContainerHasCol =
       this.draggable.gridPlaceholder.x + 1 <= siblingsGrid.x;

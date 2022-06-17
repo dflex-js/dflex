@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DnD Store Shallow test the store Element is initiated 1`] = `
-Object {
-  "id-1": DFlexNode {
+Map {
+  "id-1" => DFlexNode {
     "_hasAttribute": Object {},
     "animatedFrame": 1,
     "currentPosition": PointNum {
@@ -43,7 +43,7 @@ Object {
       "y": 0,
     },
   },
-  "id-2": DFlexNode {
+  "id-2" => DFlexNode {
     "_hasAttribute": Object {},
     "animatedFrame": null,
     "currentPosition": PointNum {
@@ -84,7 +84,7 @@ Object {
       "y": 0,
     },
   },
-  "id-3": DFlexNode {
+  "id-3" => DFlexNode {
     "_hasAttribute": Object {},
     "animatedFrame": null,
     "currentPosition": PointNum {
@@ -125,7 +125,7 @@ Object {
       "y": 0,
     },
   },
-  "id-4": DFlexNode {
+  "id-4" => DFlexNode {
     "_hasAttribute": Object {},
     "animatedFrame": null,
     "currentPosition": PointNum {

@@ -15,7 +15,7 @@ class EndDroppable extends Droppable {
   private isIDEligible2Undo(id: string) {
     return (
       isIDEligible(id, this.draggable.draggedElm.id) &&
-      !store.registry[id].isPaused
+      !store.registry.get(id)!.isPaused
     );
   }
 
@@ -29,7 +29,7 @@ class EndDroppable extends Droppable {
     const elmID = lst[i];
 
     if (this.isIDEligible2Undo(elmID)) {
-      const element = store.registry[elmID];
+      const element = store.registry.get(elmID)!;
 
       const { isVisible } = element;
 
@@ -152,7 +152,7 @@ class EndDroppable extends Droppable {
   private verify(lst: string[]) {
     const { occupiedPosition, draggedElm } = this.draggable;
 
-    const { top } = store.containers[draggedElm.keys.SK].boundaries;
+    const { top } = store.containers.get(draggedElm.keys.SK)!.boundaries;
 
     const id = lst[0];
 
@@ -160,7 +160,7 @@ class EndDroppable extends Droppable {
       return Math.floor(top) === Math.floor(occupiedPosition.y);
     }
 
-    const element = store.registry[id];
+    const element = store.registry.get(id)!;
 
     return Math.floor(top) === Math.floor(element.currentPosition.y);
   }

@@ -30,9 +30,10 @@ class DraggableInteractive
 
     this.scroll = { ...opts.scroll };
 
-    const { SK } = store.registry[id].keys;
+    const { SK } = store.registry.get(id)!.keys;
+    const container = store.containers.get(SK)!;
 
-    const { hasOverflowX, hasOverflowY } = store.containers[SK].scroll;
+    const { hasOverflowX, hasOverflowY } = container.scroll;
 
     const siblings = store.getElmBranchByKey(this.migration.latest().SK);
 
@@ -64,9 +65,9 @@ class DraggableInteractive
     if (this.scroll.enable) {
       this.isViewportRestricted = false;
 
-      store.containers[SK].scroll.setThresholdMatrix(this.scroll.threshold);
+      container.scroll.setThresholdMatrix(this.scroll.threshold);
 
-      if (!store.containers[SK].scroll.hasDocumentAsContainer) {
+      if (!container.scroll.hasDocumentAsContainer) {
         /**
          * When the scroll is the document it's good. The restriction is to the
          * document which guarantees the free movement. Otherwise, let's do it.

@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Draggable Store Registers element and initiates translateX,Y 1`] = `
-Object {
-  "id-0": DFlexNode {
+Map {
+  "id-0" => DFlexNode {
     "animatedFrame": null,
     "depth": 0,
     "id": "id-0",

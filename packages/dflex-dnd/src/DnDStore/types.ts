@@ -42,7 +42,7 @@ export type InsertionELmMeta = {
 };
 
 export interface IDnDStore {
-  readonly containers: { [SK: string]: IDFlexContainer };
+  readonly containers: Map<string, IDFlexContainer>;
   readonly unifiedContainerDimensions: {
     [depth: number]: Dimensions;
   };

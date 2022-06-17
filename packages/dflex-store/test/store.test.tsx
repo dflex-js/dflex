@@ -133,13 +133,13 @@ describe("Testing Store Package", () => {
   });
 
   it("Returns element instance by element id", () => {
-    const elemInstance = store.registry[elm0D0.id];
+    const elemInstance = store.registry.get(elm0D0.id);
 
     expect(elemInstance).toMatchSnapshot();
   });
 
   it("Returns element branch", () => {
-    const elemInstance = store.registry[elm0D0.id];
+    const elemInstance = store.registry.get(elm0D0.id)!;
 
     const elemBranch = store.getElmBranchByKey(elemInstance.keys.SK);
 

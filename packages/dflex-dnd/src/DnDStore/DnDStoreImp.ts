@@ -34,7 +34,7 @@ function throwElementIsNotConnected(id: string) {
 const MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
 
 class DnDStoreImp extends Store implements IDnDStore {
-  containers: { [SK: string]: IDFlexContainer };
+  containers: Map<string, IDFlexContainer>;
 
   readonly unifiedContainerDimensions: {
     [depth: number]: Dimensions;
@@ -65,7 +65,7 @@ class DnDStoreImp extends Store implements IDnDStore {
 
     // this.interactiveDOM = new Map();
 
-    this.containers = {};
+    this.containers = new Map();
     this.unifiedContainerDimensions = {};
 
     this.layoutState = "pending";
@@ -128,14 +128,12 @@ class DnDStoreImp extends Store implements IDnDStore {
     let isVisibleY = true;
     let isVisibleX = true;
 
-    if (scroll.allowDynamicVisibility) {
-      isVisibleY = scroll.isElementVisibleViewportY(
-        this.registry[elmID].currentPosition.y
-      );
+    const elm = this.registry.get(elmID)!;
 
-      isVisibleX = scroll.isElementVisibleViewportX(
-        this.registry[elmID].currentPosition.x
-      );
+    if (scroll.allowDynamicVisibility) {
+      isVisibleY = scroll.isElementVisibleViewportY(elm.currentPosition.y);
+
+      isVisibleX = scroll.isElementVisibleViewportX(elm.currentPosition.x);
 
       isVisible = isVisibleY && isVisibleX;
 
@@ -160,13 +158,13 @@ class DnDStoreImp extends Store implements IDnDStore {
       }
     }
 
-    this.registry[elmID].changeVisibility(isVisible);
+    elm.changeVisibility(isVisible);
   }
 
   updateBranchVisibility(SK: string) {
     const branch = this.DOMGen.getElmBranchByKey(SK);
 
-    const { scroll } = this.containers[SK];
+    const { scroll } = this.containers.get(SK)!;
 
     this._initELmIndicator();
 
@@ -194,10 +192,11 @@ class DnDStoreImp extends Store implements IDnDStore {
 
     for (let i = 0; i < branch.length; i += 1) {
       const elmID = branch[i];
+      const elm = this.registry.get(elmID)!;
 
       if (elmID) {
         if (depth === null) {
-          depth = this.registry[elmID].depth;
+          depth = elm.depth;
 
           // Can we get the parent ID, later?
           this.DOMGen.register(this._genID.newTravel(), (depth as number) + 1);
@@ -205,20 +204,17 @@ class DnDStoreImp extends Store implements IDnDStore {
           newSK = this.DOMGen.accumulateIndicators(depth as number).SK;
         }
 
-        if (
-          this.registry[elmID].ref &&
-          !this.registry[elmID].ref!.isConnected
-        ) {
-          this.registry[elmID].order.self = extractedOldBranch.push(elmID) - 1;
+        if (elm.ref && !elm.ref!.isConnected) {
+          elm.order.self = extractedOldBranch.push(elmID) - 1;
 
           // We don't know if element will be used in the future or not. So,
           // reference to prevent memory leak.
-          this.registry[elmID].detach();
+          elm.detach();
         } else {
-          this.registry[elmID].order.self = connectedNodesID.push(elmID) - 1;
+          elm.order.self = connectedNodesID.push(elmID) - 1;
 
           // New key goes to the new branch.
-          this.registry[elmID].keys.SK = newSK;
+          elm.keys.SK = newSK;
         }
       }
     }
@@ -231,8 +227,8 @@ class DnDStoreImp extends Store implements IDnDStore {
   }
 
   initSiblingContainer(SK: string, shouldValidate: boolean) {
-    if (!this.containers[SK]) {
-      this.containers[SK] = new DFlexContainer();
+    if (!this.containers.has(SK)) {
+      this.containers.set(SK, new DFlexContainer());
     }
 
     const branch = this.DOMGen.getElmBranchByKey(SK);
@@ -247,11 +243,13 @@ class DnDStoreImp extends Store implements IDnDStore {
     const hasSiblings = branch.length > 1;
 
     if (shouldValidate && firstElemID) {
-      const isHeadNotConnected = !this.registry[firstElemID].isConnected();
+      const isHeadNotConnected = !this.registry.get(firstElemID)!.isConnected();
       let isNotConnected = isHeadNotConnected;
 
       if (hasSiblings && lastElemID.length > 0) {
-        const isTailNotConnected = !this.registry[lastElemID!].isConnected();
+        const isTailNotConnected = !this.registry
+          .get(lastElemID!)!
+          .isConnected();
         isNotConnected = isTailNotConnected || isHeadNotConnected;
       }
 
@@ -260,10 +258,12 @@ class DnDStoreImp extends Store implements IDnDStore {
           throwElementIsNotConnected(firstElemID);
         }
 
-        if (this.containers[SK].scroll) {
-          this.containers[SK].scroll.destroy();
+        const container = this.containers.get(SK)!;
+
+        if (container.scroll) {
+          container.scroll.destroy();
           // @ts-expect-error
-          this.containers[SK].scroll = null;
+          container.scroll = null;
         }
 
         const newKey = this._cleanupDisconnectedElements(SK);
@@ -274,12 +274,12 @@ class DnDStoreImp extends Store implements IDnDStore {
       }
     }
 
-    if (this.containers[SK].scroll) {
+    if (this.containers.get(SK)!.scroll) {
       return;
     }
 
     const scroll = new Scroll({
-      element: this.registry[firstElemID].ref!,
+      element: this.registry.get(firstElemID)!.ref!,
       requiredBranchKey: SK,
       scrollEventCallback: null,
     });
@@ -295,7 +295,9 @@ class DnDStoreImp extends Store implements IDnDStore {
       scroll.allowDynamicVisibility = false;
     }
 
-    this.containers[SK].scroll = scroll;
+    const container = this.containers.get(SK)!;
+
+    container.scroll = scroll;
 
     if (scroll.allowDynamicVisibility) {
       scroll.scrollEventCallback = this.updateBranchVisibility;
@@ -303,32 +305,30 @@ class DnDStoreImp extends Store implements IDnDStore {
   }
 
   private _initElmInstance(id: string) {
-    const {
-      depth,
-      keys: { SK },
-    } = this.registry[id];
+    const elm = this.registry.get(id)!;
 
-    if (this.registry[id].isPaused) {
-      this.registry[id].resume(
-        this.containers[SK].scroll.scrollX,
-        this.containers[SK].scroll.scrollY
-      );
+    const {
+      keys: { SK },
+      depth,
+    } = elm;
+
+    const container = this.containers.get(SK)!;
+
+    if (elm.isPaused) {
+      elm.resume(container.scroll.scrollX, container.scroll.scrollY);
     }
 
     // Using element grid zero to know if the element has been initiated inside
     // container or not.
-    if (this.registry[id].grid.x === 0) {
-      const { offset } = this.registry[id];
+    if (elm.grid.x === 0) {
+      const { offset } = elm;
 
-      this.containers[SK].registerNewElm(
-        offset,
-        this.unifiedContainerDimensions[depth]
-      );
+      container.registerNewElm(offset, this.unifiedContainerDimensions[depth]);
 
-      this.registry[id].grid.clone(this.containers[SK].grid);
+      elm.grid.clone(container.grid);
     }
 
-    this.updateElementVisibility(id, this.containers[SK].scroll, false);
+    this.updateElementVisibility(id, container.scroll, false);
   }
 
   handleElmMigration(
@@ -336,26 +336,29 @@ class DnDStoreImp extends Store implements IDnDStore {
     originSK: string,
     appendOffset: RectDimensions
   ) {
+    const containerDist = this.containers.get(SK)!;
+
     // Append the newest element to the end of the branch.
-    this.containers[SK].registerNewElm(appendOffset);
+    containerDist.registerNewElm(appendOffset);
 
     const origin = this.DOMGen.getElmBranchByKey(originSK);
 
     // Don't reset empty branch keep the boundaries.
     if (origin.length === 0) return;
+    const containerOrigin = this.containers.get(originSK)!;
 
-    this.containers[originSK].resetIndicators();
+    containerOrigin.resetIndicators();
 
     origin.forEach((elmID) => {
-      const elm = this.registry[elmID];
+      const elm = this.registry.get(elmID)!;
 
-      this.containers[originSK].registerNewElm(elm.getOffset());
-      elm.grid.clone(this.containers[originSK].grid);
+      containerOrigin.registerNewElm(elm.getOffset());
+      elm.grid.clone(containerOrigin.grid);
     });
 
-    const lastInOrigin = this.registry[origin[origin.length - 1]];
+    const lastInOrigin = this.registry.get(origin[origin.length - 1])!;
 
-    this.containers[originSK].preservePosition(lastInOrigin.currentPosition);
+    containerOrigin.preservePosition(lastInOrigin.currentPosition);
   }
 
   getInsertionELmMeta(insertAt: number, SK: string): InsertionELmMeta {
@@ -364,7 +367,7 @@ class DnDStoreImp extends Store implements IDnDStore {
     const { length } = lst;
 
     // Restore the last known current position.
-    const { lastElmPosition, originLength } = this.containers[SK];
+    const { lastElmPosition, originLength } = this.containers.get(SK)!;
 
     const position = new PointNum(0, 0);
     const isEmpty = Droppable.isEmpty(lst);
@@ -399,7 +402,7 @@ class DnDStoreImp extends Store implements IDnDStore {
           at -= 1;
         }
 
-        elm = this.registry[lst[at]];
+        elm = this.registry.get(lst[at])!;
 
         if (lastElmPosition) {
           if (length <= originLength) {
@@ -416,13 +419,13 @@ class DnDStoreImp extends Store implements IDnDStore {
           position.clone(elm.currentPosition);
         }
       } else {
-        elm = this.registry[lst[insertAt]];
+        elm = this.registry.get(lst[insertAt])!;
         position.clone(elm.currentPosition);
       }
 
       // Assign the previous element if not orphan.
       if (!isOrphan && prevIndex >= 0) {
-        prevElm = this.registry[lst[prevIndex]];
+        prevElm = this.registry.get(lst[prevIndex])!;
       }
     }
 
@@ -454,13 +457,14 @@ class DnDStoreImp extends Store implements IDnDStore {
 
     const { id } = element;
 
-    if (this.registry[id]) {
-      if (this.registry[id].isInitialized) {
-        this.registry[id].attach();
+    if (this.registry.has(id)) {
+      const elm = this.registry.get(id)!;
+      if (elm.isInitialized) {
+        elm.attach();
 
-        if (this.registry[id].isVisible) {
+        if (elm.isVisible) {
           // Preserves last changes.
-          this.registry[id].transformElm();
+          elm.transformElm();
         }
       }
 
@@ -478,9 +482,9 @@ class DnDStoreImp extends Store implements IDnDStore {
       const {
         depth,
         keys: { SK },
-      } = this.registry[id!];
+      } = this.registry.get(id)!;
 
-      if (!this.containers[SK]) {
+      if (!this.containers.has(SK)) {
         this.initSiblingContainer(SK, false);
 
         if (!this.unifiedContainerDimensions[depth]) {
@@ -498,13 +502,13 @@ class DnDStoreImp extends Store implements IDnDStore {
   }
 
   getELmTranslateById(id: string) {
-    const { translate } = this.registry[id];
+    const { translate } = this.registry.get(id)!;
 
     return { translateX: translate!.x || 0, translateY: translate!.y || 0 };
   }
 
   getElmSiblingsById(id: string) {
-    const element = this.registry[id];
+    const element = this.registry.get(id)!;
 
     if (!element) return null;
 
@@ -523,7 +527,7 @@ class DnDStoreImp extends Store implements IDnDStore {
    * @param id -
    */
   getElmTreeById(id: string): ElmTree {
-    const element = this.registry[id];
+    const element = this.registry.get(id)!;
 
     const {
       keys: { SK, PK },
@@ -542,7 +546,7 @@ class DnDStoreImp extends Store implements IDnDStore {
     let parent = null;
     if (parents !== undefined) {
       const parentsID = parents[order.parent];
-      parent = this.registry[parentsID as string];
+      parent = this.registry.get(parentsID)!;
     }
 
     return {
@@ -558,8 +562,9 @@ class DnDStoreImp extends Store implements IDnDStore {
 
   private _clearBranchesScroll() {
     this.DOMGen.forEachBranch((SK) => {
-      if (this.containers[SK].scroll) {
-        this.containers[SK].scroll.destroy();
+      const container = this.containers.get(SK)!;
+      if (container.scroll) {
+        container.scroll.destroy();
       }
     });
   }
@@ -580,7 +585,7 @@ class DnDStoreImp extends Store implements IDnDStore {
     const {
       keys: { SK },
       order: { self },
-    } = this.registry[id];
+    } = this.registry.get(id)!;
 
     this.DOMGen.removeElmIDFromBranch(SK, self);
 
