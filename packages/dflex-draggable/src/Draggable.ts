@@ -13,7 +13,7 @@ class Draggable extends AbstractDraggable<IDFlexBaseNode> {
    * @param clickCoordinates -
    */
   constructor(id: string, clickCoordinates: IPointAxes) {
-    const element = store.registry[id];
+    const element = store.registry.get(id)!;
 
     super(element, clickCoordinates);
   }
