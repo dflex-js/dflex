@@ -68,9 +68,11 @@ function checkMutations(mutations: MutationRecord[]) {
     if (target instanceof HTMLElement) {
       if (type === "childList") {
         if (addedNodes.length > 0) {
-          throw new Error(
-            `Insertion of DOM elements is not supported outside the registry.`
-          );
+          if (__DEV__) {
+            throw new Error(
+              `Insertion of DOM elements is not supported outside the registry.`
+            );
+          }
         }
 
         removedNodes.forEach((node) => {
