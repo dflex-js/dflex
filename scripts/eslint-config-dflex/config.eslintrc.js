@@ -18,6 +18,7 @@ module.exports = {
   plugins: ["@typescript-eslint"],
   ignorePatterns: ["node_modules", "dist", "lib", "coverage", "**/*.d.ts"],
   rules: {
+    "no-param-reassign": OFF,
     "no-underscore-dangle": [ERROR, { allowAfterThis: true }],
     "no-nested-ternary": OFF,
     "no-use-before-define": OFF,

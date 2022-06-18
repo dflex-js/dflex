@@ -49,6 +49,8 @@ export interface IDnDStore {
   readonly tracker: ITracker;
   readonly layoutState: LayoutState;
   // readonly interactiveDOM: Map<ELmKey, HTMLElement>;
+  observer: MutationObserver | null;
+
   initSiblingContainer(SK: string, shouldValidate: boolean): void;
   updateBranchVisibility(SK: string, shouldCheckVisibility: boolean): void;
   handleElmMigration(

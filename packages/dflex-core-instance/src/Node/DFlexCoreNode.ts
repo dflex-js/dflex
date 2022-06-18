@@ -110,7 +110,12 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
   }
 
   resume(scrollX: number, scrollY: number) {
-    if (!this.isInitialized) this.attach();
+    if (!this.isInitialized) {
+      this.attach();
+
+      // It throws in the development and stop executing in the production.
+      if (!this.isInitialized) return;
+    }
 
     this.initTranslate();
 

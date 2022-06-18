@@ -39,7 +39,10 @@ class DFlexBaseNode implements IDFlexBaseNode {
 
     if (__DEV__) {
       if (!this.ref) {
-        throw new Error(`Attach: Element with ID: ${this.id} is not found.`);
+        throw new Error(
+          `Attach: Element with ID: ${this.id} is not found.` +
+            `This could be due wrong ID or missing DOM element.`
+        );
       }
 
       if (this.ref.nodeType !== Node.ELEMENT_NODE) {

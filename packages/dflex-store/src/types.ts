@@ -61,6 +61,14 @@ export interface IDFlexBaseStore {
   getBranchesByDepth(dp: number): string[];
 
   /**
+   * Mutates branch in the generated DOM tree.
+   *
+   * @param SK - Siblings Key.
+   * @param newOrder
+   */
+  updateBranch(SK: string, newOrder: string[]): void;
+
+  /**
    * Removes an element from the store.
    *
    * @param id - element id.

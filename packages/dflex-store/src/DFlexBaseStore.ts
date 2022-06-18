@@ -68,6 +68,10 @@ class DFlexBaseStore implements IDFlexBaseStore {
     return this.DOMGen.getBranchByDepth(dp);
   }
 
+  updateBranch(SK: string, newOrder: string[]) {
+    return this.DOMGen.updateBranch(SK, newOrder);
+  }
+
   unregister(id: string) {
     this.registry.delete(id);
   }

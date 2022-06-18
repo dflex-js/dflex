@@ -46,6 +46,8 @@ class DnDStoreImp extends Store implements IDnDStore {
 
   events: Events;
 
+  observer: MutationObserver | null;
+
   private _genID: ITracker;
 
   private _isDOM: boolean;
@@ -80,6 +82,7 @@ class DnDStoreImp extends Store implements IDnDStore {
 
     this._isInitialized = false;
     this._isDOM = false;
+    this.observer = null;
 
     this.updateBranchVisibility = this.updateBranchVisibility.bind(this);
   }
@@ -233,11 +236,6 @@ class DnDStoreImp extends Store implements IDnDStore {
 
     const branch = this.DOMGen.getElmBranchByKey(SK);
 
-    if (__DEV__) {
-      // eslint-disable-next-line no-console
-      console.info(`Initializing Siblings: ${SK} - ${branch}\n`);
-    }
-
     const firstElemID = branch[0];
     const lastElemID = branch[branch.length - 1];
     const hasSiblings = branch.length > 1;
@@ -316,6 +314,10 @@ class DnDStoreImp extends Store implements IDnDStore {
 
     if (elm.isPaused) {
       elm.resume(container.scroll.scrollX, container.scroll.scrollY);
+
+      if (!elm.isInitialized) {
+        return;
+      }
     }
 
     // Using element grid zero to know if the element has been initiated inside
@@ -613,6 +615,10 @@ class DnDStoreImp extends Store implements IDnDStore {
 
     // Destroys all registered instances.
     super.destroy();
+
+    if (this.observer) {
+      this.observer.disconnect();
+    }
   }
 }
 declare global {

@@ -28,6 +28,7 @@ import type {
   Restrictions,
   RestrictionsStatus,
 } from "../types";
+import { initMutationObserver } from "../DnDStore/DFlexMutations";
 
 class DraggableAxes
   extends AbstractDraggable<IDFlexNode>
@@ -134,9 +135,9 @@ class DraggableAxes
           const childDOM = store.registry.get(store.getElmBranchByKey(key)[0])!
             .ref!;
 
-          getParentElm(childDOM, (parent) => {
-            elmContainer.ref = parent;
-
+          getParentElm(childDOM, (parentDOM) => {
+            elmContainer.ref = parentDOM;
+            initMutationObserver(store, parentDOM);
             return true;
           });
         }, 0);
