@@ -475,9 +475,7 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
 
     const coreInput = {
       id,
-      isInitialized: !(
-        element.priority === undefined || element.priority === "neutral"
-      ),
+      isInitialized: element.priority === "high",
       parentID: element.parentID,
       depth: element.depth || 0,
       readonly: !!element.readonly,
