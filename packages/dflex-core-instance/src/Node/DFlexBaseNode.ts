@@ -29,6 +29,7 @@ function getElmDOMOrThrow(id: string): HTMLElement | null {
 }
 
 type AttributeSet = Set<Exclude<AllowedAttributes, "INDEX">>;
+
 class DFlexBaseNode implements IDFlexBaseNode {
   ref!: HTMLElement | null;
 

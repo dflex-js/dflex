@@ -1,9 +1,9 @@
 import { IDFlexBaseNode } from "@dflex/core-instance";
 import type { IPointAxes } from "@dflex/utils";
-import store from "./DraggableStoreImp";
-import AbstractDraggable from "./AbstractDraggable";
+import store from "./DFlexDraggableStore";
+import DFlexBaseDraggable from "./DFlexBaseDraggable";
 
-class Draggable extends AbstractDraggable<IDFlexBaseNode> {
+class DFlexDraggable extends DFlexBaseDraggable<IDFlexBaseNode> {
   /**
    * Creates an instance of Draggable.
    * Works Only on dragged element level.
@@ -29,4 +29,4 @@ class Draggable extends AbstractDraggable<IDFlexBaseNode> {
   }
 }
 
-export default Draggable;
+export default DFlexDraggable;

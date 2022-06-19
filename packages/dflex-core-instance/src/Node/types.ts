@@ -57,6 +57,7 @@ export interface DFlexBaseNodeInput {
   readonly keys: Keys;
   readonly depth: number;
   readonly readonly: boolean;
+  readonly isInitialized: boolean;
 }
 
 export type ITransitionHistory = {

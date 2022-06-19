@@ -1,4 +1,4 @@
-import { AbstractDraggable } from "@dflex/draggable";
+import { DFlexBaseDraggable } from "@dflex/draggable";
 
 import {
   Threshold,
@@ -31,7 +31,7 @@ import type {
 import { initMutationObserver } from "../DnDStore/DFlexMutations";
 
 class DraggableAxes
-  extends AbstractDraggable<IDFlexNode>
+  extends DFlexBaseDraggable<IDFlexNode>
   implements IDraggableAxes
 {
   positionPlaceholder: IPointNum;

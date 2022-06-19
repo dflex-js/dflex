@@ -2,10 +2,10 @@ import type { IDFlexBaseNode } from "@dflex/core-instance";
 import { PointNum, getSelection } from "@dflex/utils";
 import type { IPointNum, IPointAxes } from "@dflex/utils";
 
-import type { IAbstractDraggable, DraggedStyle } from "./types";
+import type { IDFlexBaseDraggable, DraggedStyle } from "./types";
 
-class AbstractDraggable<T extends IDFlexBaseNode>
-  implements IAbstractDraggable<T>
+class DFlexBaseDraggable<T extends IDFlexBaseNode>
+  implements IDFlexBaseDraggable<T>
 {
   draggedElm: T;
 
@@ -90,7 +90,7 @@ class AbstractDraggable<T extends IDFlexBaseNode>
    */
   protected setDragged(isActive: boolean) {
     if (isActive) {
-      this.changeStyle(AbstractDraggable.draggedStyle, true);
+      this.changeStyle(DFlexBaseDraggable.draggedStyle, true);
 
       const domSelection = getSelection();
 
@@ -105,7 +105,7 @@ class AbstractDraggable<T extends IDFlexBaseNode>
     /**
      * Not active: end of dragging.
      */
-    this.changeStyle(AbstractDraggable.draggedStyle, false);
+    this.changeStyle(DFlexBaseDraggable.draggedStyle, false);
 
     this.draggedElm.clearAttributes();
   }
@@ -138,4 +138,4 @@ class AbstractDraggable<T extends IDFlexBaseNode>
   }
 }
 
-export default AbstractDraggable;
+export default DFlexBaseDraggable;

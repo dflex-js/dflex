@@ -1,5 +1,5 @@
-export { default as Draggable } from "./Draggable";
-export { default as store } from "./DraggableStoreImp";
-export { default as AbstractDraggable } from "./AbstractDraggable";
+export { default as DFlexDraggable } from "./DFlexDraggable";
+export { default as store } from "./DFlexDraggableStore";
+export { default as DFlexBaseDraggable } from "./DFlexBaseDraggable";
 
-export type { DraggedStyle, IAbstractDraggable } from "./types";
+export type { DraggedStyle, IDFlexBaseDraggable } from "./types";

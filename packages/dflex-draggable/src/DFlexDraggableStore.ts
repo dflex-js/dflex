@@ -1,6 +1,6 @@
 import DFlexBaseStore from "@dflex/store";
 
-class DraggableStoreImp extends DFlexBaseStore {
+class DFlexDraggableStore extends DFlexBaseStore {
   /**
    * Register element for Draggable store
    */
@@ -11,12 +11,13 @@ class DraggableStoreImp extends DFlexBaseStore {
       depth: 0,
       parentID: "",
       readonly: false,
+      isInitialized: false,
     });
   }
 }
 
 export default (function createStoreInstance() {
-  const store = new DraggableStoreImp();
+  const store = new DFlexDraggableStore();
 
   return store;
 })();

@@ -24,9 +24,19 @@ export type RegisterInputOpts = {
    * same interactive container.
    * */
   readonly?: boolean;
+
+  /**
+   * The priority of initializing the element. If the element is expected to be
+   * interacted immediately by the user it's recommended to be `high`.
+   */
+  priority?: "neutral" | "high";
 };
 
-export type RegisterInputBase = DeepNonNullable<RegisterInputOpts>;
+export type RegisterInputBase = DeepNonNullable<
+  Omit<RegisterInputOpts, "priority"> & {
+    isInitialized: boolean;
+  }
+>;
 
 export type DFlexNodeInput = RegisterInputBase & Pointer;
 

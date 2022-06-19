@@ -7,7 +7,7 @@ export type DraggedStyle = {
   afterDragValue: string | null;
 }[];
 
-export interface IAbstractDraggable<T extends IDFlexBaseNode> {
+export interface IDFlexBaseDraggable<T extends IDFlexBaseNode> {
   draggedElm: T;
 
   /**
