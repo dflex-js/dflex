@@ -13,6 +13,8 @@ import type {
 class DFlexBaseStore implements IDFlexBaseStore {
   registry: Map<string, IDFlexNode>;
 
+  interactiveDOM: Map<string, HTMLElement>;
+
   protected DOMGen: IGenerator;
 
   private _lastKeyIdentifier: string | null;
@@ -20,6 +22,7 @@ class DFlexBaseStore implements IDFlexBaseStore {
   constructor() {
     this._lastKeyIdentifier = null;
     this.registry = new Map();
+    this.interactiveDOM = new Map();
     this.DOMGen = new Generator();
   }
 

@@ -23,8 +23,6 @@ class DFlexContainer implements IDFlexContainer {
 
   originLength: number;
 
-  ref?: HTMLElement | null;
-
   scroll!: IScroll;
 
   private _gridSiblingsHasNewRow: boolean;

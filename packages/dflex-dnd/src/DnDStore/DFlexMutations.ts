@@ -1,5 +1,5 @@
-import store from "./DnDStoreImp";
-import type { IDnDStore } from "./types";
+// import store from "./DnDStoreImp";
+import type { IDFlexDnDStore } from "./types";
 
 type ChangedIds = Set<{ oldId: string; newId: string }>;
 
@@ -12,7 +12,7 @@ export function getIsProcessingMutations(): boolean {
   return isProcessingMutations;
 }
 
-function cleanupBranchElements() {
+function cleanupBranchElements(store: IDFlexDnDStore) {
   const keys = new Set<string>();
   const connectedNodesID: string[] = [];
 
@@ -39,7 +39,7 @@ function cleanupBranchElements() {
   });
 }
 
-function mutateIDs() {
+function mutateIDs(store: IDFlexDnDStore) {
   changedIds.forEach((idSet) => {
     if (store.registry.has(idSet.oldId)) {
       const elm = store.registry.get(idSet.oldId)!;
@@ -59,7 +59,7 @@ function mutateIDs() {
   });
 }
 
-function checkMutations(mutations: MutationRecord[]) {
+function checkMutations(store: IDFlexDnDStore, mutations: MutationRecord[]) {
   for (let i = 0; i < mutations.length; i += 1) {
     const mutation = mutations[i];
     const { type, target, addedNodes, removedNodes, attributeName, oldValue } =
@@ -95,28 +95,29 @@ function checkMutations(mutations: MutationRecord[]) {
 }
 
 function DOMmutationHandler(
+  store: IDFlexDnDStore,
   mutations: MutationRecord[],
   observer: MutationObserver
 ) {
   try {
     isProcessingMutations = true;
 
-    checkMutations(mutations);
+    checkMutations(store, mutations);
 
     // fetch all pending mutations and clear the queue.
     const records = observer.takeRecords();
 
     if (records.length > 0) {
-      checkMutations(records);
+      checkMutations(store, records);
     }
 
     if (changedIds.size > 0) {
-      mutateIDs();
+      mutateIDs(store);
       changedIds.clear();
     }
 
     if (terminatedDOMiDs.size > 0) {
-      cleanupBranchElements();
+      cleanupBranchElements(store);
       terminatedDOMiDs.clear();
     }
   } finally {
@@ -132,14 +133,14 @@ const observerConfig = Object.freeze({
 });
 
 export function initMutationObserver(
-  storeInstance: IDnDStore,
+  store: IDFlexDnDStore,
   DOMTarget: HTMLElement
 ) {
-  storeInstance.observer = new MutationObserver(
+  store.observer = new MutationObserver(
     (mutations: Array<MutationRecord>, observer: MutationObserver) => {
-      DOMmutationHandler(mutations, observer);
+      DOMmutationHandler(store, mutations, observer);
     }
   );
 
-  storeInstance.observer.observe(DOMTarget, observerConfig);
+  store.observer.observe(DOMTarget, observerConfig);
 }

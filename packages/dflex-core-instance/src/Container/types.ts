@@ -26,9 +26,6 @@ export interface IDFlexContainer {
    * */
   originLength: number;
 
-  /** Direct reference to interactive element. */
-  ref?: HTMLElement | null;
-
   /** Container scroll instance.  */
   scroll: IScroll;
   registerNewElm(

@@ -1,5 +1,5 @@
 import DFlexBaseStore from "./DFlexBaseStore";
 
-export type { RegisterInputOpts } from "./types";
+export type { RegisterInputOpts, IDFlexBaseStore } from "./types";
 
 export default DFlexBaseStore;

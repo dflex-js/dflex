@@ -12,7 +12,7 @@ import type {
 import { DFlexContainer, IDFlexNode } from "@dflex/core-instance";
 import type { IDFlexContainer } from "@dflex/core-instance";
 
-import type { ElmTree, IDnDStore, InsertionELmMeta } from "./types";
+import type { ElmTree, IDFlexDnDStore, InsertionELmMeta } from "./types";
 
 import type {
   LayoutState,
@@ -33,7 +33,7 @@ function throwElementIsNotConnected(id: string) {
 
 const MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
 
-class DnDStoreImp extends Store implements IDnDStore {
+class DnDStoreImp extends Store implements IDFlexDnDStore {
   containers: Map<string, IDFlexContainer>;
 
   readonly unifiedContainerDimensions: {
@@ -42,7 +42,7 @@ class DnDStoreImp extends Store implements IDnDStore {
 
   tracker: ITracker;
 
-  layoutState: IDnDStore["layoutState"];
+  layoutState: IDFlexDnDStore["layoutState"];
 
   events: Events;
 

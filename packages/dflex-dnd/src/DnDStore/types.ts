@@ -6,7 +6,7 @@ import type {
 } from "@dflex/utils";
 import type { IDFlexContainer, IDFlexNode } from "@dflex/core-instance";
 
-import type { RegisterInputOpts } from "@dflex/store";
+import type { RegisterInputOpts, IDFlexBaseStore } from "@dflex/store";
 import type { DraggedEvent, LayoutState } from "../types";
 
 export type ELmKey = string;
@@ -41,16 +41,14 @@ export type InsertionELmMeta = {
   prevElm: IDFlexNode | null;
 };
 
-export interface IDnDStore {
+export interface IDFlexDnDStore extends IDFlexBaseStore {
   readonly containers: Map<string, IDFlexContainer>;
   readonly unifiedContainerDimensions: {
     [depth: number]: Dimensions;
   };
   readonly tracker: ITracker;
   readonly layoutState: LayoutState;
-  // readonly interactiveDOM: Map<ELmKey, HTMLElement>;
   observer: MutationObserver | null;
-
   initSiblingContainer(SK: string, shouldValidate: boolean): void;
   updateBranchVisibility(SK: string, shouldCheckVisibility: boolean): void;
   handleElmMigration(

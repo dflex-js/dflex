@@ -130,13 +130,13 @@ class DraggableAxes
         elmContainer.originLength = length;
       }
 
-      if (!elmContainer.ref) {
+      if (!store.interactiveDOM.has(key)) {
         setTimeout(() => {
           const childDOM = store.registry.get(store.getElmBranchByKey(key)[0])!
             .ref!;
 
           getParentElm(childDOM, (parentDOM) => {
-            elmContainer.ref = parentDOM;
+            store.interactiveDOM.set(key, parentDOM);
             initMutationObserver(store, parentDOM);
             return true;
           });

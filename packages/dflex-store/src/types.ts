@@ -35,6 +35,7 @@ export type DFlexNodeInput = RegisterInputBase & Pointer;
  */
 export interface IDFlexBaseStore {
   registry: Map<string, IDFlexNode>;
+  readonly interactiveDOM: Map<string, HTMLElement>;
 
   /**
    * Registers an element to the store.
