@@ -98,7 +98,7 @@ class AbstractDraggable<T extends IDFlexBaseNode>
         domSelection.removeAllRanges();
       }
 
-      this.draggedElm.setAttribute("dragged", "true");
+      this.draggedElm.setAttribute("DRAGGED", "true");
 
       return;
     }

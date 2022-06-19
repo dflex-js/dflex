@@ -282,7 +282,7 @@ class Droppable extends DFlexUpdater {
       this.moveDown(insertAt);
     }
 
-    draggedElm.rmDateset("draggedOutContainer");
+    draggedElm.removeAttribute("OUT_CONTAINER");
 
     // Clear it since it's used for insertion calculation.
     migration.clearMargins();
@@ -733,14 +733,14 @@ class Droppable extends DFlexUpdater {
       this.scrollManager(x, y);
 
       if (!this.isParentLocked) {
-        this.draggable.draggedElm.setDataset("draggedOutPosition", true);
+        this.draggable.draggedElm.setAttribute("OUT_POS", "true");
 
         this.draggedOutPosition();
 
         return;
       }
 
-      this.draggable.draggedElm.rmDateset("draggedOutPosition");
+      this.draggable.draggedElm.removeAttribute("OUT_POS");
 
       isOutSiblingsContainer = this.draggable.isOutThreshold(
         this.draggable.migration.latest().SK
@@ -763,7 +763,7 @@ class Droppable extends DFlexUpdater {
 
       const { draggedElm, containersTransition, migration } = this.draggable;
 
-      draggedElm.setDataset("draggedOutContainer", true);
+      draggedElm.setAttribute("OUT_CONTAINER", "true");
 
       this.emitDraggedEvent("onDragOutContainer");
 

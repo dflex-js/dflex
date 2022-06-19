@@ -51,17 +51,15 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
     this.keys = keys;
     this.depth = depth;
     this.readonly = readonly;
-
     this.isVisible = this.isInitialized && !this.isPaused;
 
     if (this.isInitialized) {
-      this.setDataset("index", this.order.self);
+      this.setAttribute("INDEX", this.order.self);
     }
 
     if (!this.isPaused) {
       this._initIndicators(0, 0);
     }
-
     this.animatedFrame = null;
   }
 
@@ -151,7 +149,7 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
 
     this.order.self = newIndex;
 
-    this.setDataset("index", newIndex);
+    this.setAttribute("INDEX", newIndex);
 
     return { oldIndex, newIndex };
   }
@@ -271,10 +269,7 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
     } else {
       this.grid[axis] += direction * numberOfPassedElm;
       if (__DEV__) {
-        this.setDataset(
-          `grid${axis.toUpperCase() as "X" | "Y"}`,
-          this.grid[axis]
-        );
+        this.setAttribute(axis === "x" ? "GRID_X" : "GRID_Y", this.grid[axis]);
       }
     }
 
@@ -318,10 +313,7 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
       this.grid[axis] += increment;
 
       if (__DEV__) {
-        this.setDataset(
-          `grid${axis.toUpperCase() as "X" | "Y"}`,
-          this.grid[axis]
-        );
+        this.setAttribute(axis === "x" ? "GRID_X" : "GRID_Y", this.grid[axis]);
       }
     }
 

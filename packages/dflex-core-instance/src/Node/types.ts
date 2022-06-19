@@ -7,18 +7,9 @@ import type {
   Axis,
 } from "@dflex/utils";
 
-export type AllowedDataset =
-  | "gridX"
-  | "gridY"
-  | "index"
-  | "draggedOutPosition"
-  | "draggedOutContainer";
+import { DFLEX_ATTRIBUTES } from "./constants";
 
-export type AllowedAttributes = "dragged";
-
-export type AttributesIndicators =
-  | Exclude<AllowedDataset, "index">
-  | AllowedAttributes;
+export type AllowedAttributes = keyof typeof DFLEX_ATTRIBUTES;
 
 export interface IDFlexBaseNode {
   readonly isInitialized: boolean;
@@ -30,9 +21,7 @@ export interface IDFlexBaseNode {
   detach(): void;
   initTranslate(): void;
   transform(x: number, y: number): void;
-  setDataset(key: AllowedDataset, value: number | boolean): void;
-  rmDateset(key: Exclude<AllowedDataset, "index">): void;
-  setAttribute(key: AllowedAttributes, value: string): void;
+  setAttribute(key: AllowedAttributes, value: string | number): void;
   removeAttribute(key: AllowedAttributes): void;
   clearAttributes(): void;
 }

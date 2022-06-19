@@ -1,13 +1,34 @@
 import { PointNum } from "@dflex/utils";
 import type { IPointNum } from "@dflex/utils";
 
-import type {
-  IDFlexBaseNode,
-  AllowedAttributes,
-  AllowedDataset,
-  AttributesIndicators,
-} from "./types";
+import { DFLEX_ATTRIBUTES } from "./constants";
+import type { IDFlexBaseNode, AllowedAttributes } from "./types";
 
+function getElmDOMOrThrow(id: string): HTMLElement | null {
+  let DOM = document.getElementById(id);
+
+  if (!DOM) {
+    if (__DEV__) {
+      throw new Error(
+        `Attach: Element with ID: ${id} is not found.` +
+          `This could be due wrong ID or missing DOM element.`
+      );
+    }
+  }
+
+  if (DOM!.nodeType !== Node.ELEMENT_NODE) {
+    if (__DEV__) {
+      throw new Error(
+        `Attach: Invalid HTMLElement ${DOM} is passed to registry.`
+      );
+    }
+    DOM = null;
+  }
+
+  return DOM;
+}
+
+type AttributeSet = Set<Exclude<AllowedAttributes, "INDEX">>;
 class DFlexBaseNode implements IDFlexBaseNode {
   ref!: HTMLElement | null;
 
@@ -19,10 +40,7 @@ class DFlexBaseNode implements IDFlexBaseNode {
 
   isPaused!: boolean;
 
-  private _hasAttribute!: {
-    // eslint-disable-next-line no-unused-vars
-    [key in AttributesIndicators]: boolean;
-  };
+  private _hasAttribute?: AttributeSet;
 
   constructor(id: string) {
     this.id = id;
@@ -35,24 +53,8 @@ class DFlexBaseNode implements IDFlexBaseNode {
    * Attach element DOM node to the instance.
    */
   attach() {
-    this.ref = document.getElementById(this.id);
-
-    if (__DEV__) {
-      if (!this.ref) {
-        throw new Error(
-          `Attach: Element with ID: ${this.id} is not found.` +
-            `This could be due wrong ID or missing DOM element.`
-        );
-      }
-
-      if (this.ref.nodeType !== Node.ELEMENT_NODE) {
-        throw new Error(
-          `Attach: Invalid HTMLElement ${this.ref} is passed to registry.`
-        );
-      }
-    }
-
-    this.isInitialized = true;
+    this.ref = getElmDOMOrThrow(this.id);
+    this.isInitialized = !!this.ref;
   }
 
   /**
@@ -74,60 +76,34 @@ class DFlexBaseNode implements IDFlexBaseNode {
   initTranslate() {
     if (!this.translate) {
       this.translate = new PointNum(0, 0);
-
-      // @ts-expect-error - Just for initialization.
-      this._hasAttribute = {};
     }
-
+    this._hasAttribute = new Set();
     this.isPaused = false;
   }
 
-  setDataset(key: AllowedDataset, value: number | boolean) {
-    if (key === "index" || key === "gridX" || key === "gridY") {
-      this.ref!.dataset[key] = `${value}`;
+  setAttribute(key: AllowedAttributes, value: string | number) {
+    if (key === "INDEX") {
+      this.ref!.setAttribute(DFLEX_ATTRIBUTES[key], `${value}`);
 
       return;
     }
 
-    if (this._hasAttribute[key]) return;
-
-    this.ref!.dataset[key] = `${value}`;
-
-    this._hasAttribute[key] = true;
-  }
-
-  rmDateset(key: Exclude<AllowedDataset, "index">) {
-    delete this.ref!.dataset[key];
-
-    if (this._hasAttribute[key]) {
-      this._hasAttribute[key] = false;
-    }
-  }
-
-  setAttribute(key: AllowedAttributes, value: string) {
-    if (this._hasAttribute[key]) return;
-
-    this.ref!.setAttribute(key, value);
-    this._hasAttribute[key] = true;
+    if (this._hasAttribute!.has(key)) return;
+    this.ref!.setAttribute(DFLEX_ATTRIBUTES[key], `${value}`);
+    this._hasAttribute!.add(key);
   }
 
   removeAttribute(key: AllowedAttributes) {
-    if (!this._hasAttribute[key]) return;
-
-    this.ref!.removeAttribute(key);
-    this._hasAttribute[key] = false;
+    if (key === "INDEX" || !this._hasAttribute!.has(key)) return;
+    this.ref!.removeAttribute(DFLEX_ATTRIBUTES[key]);
+    this._hasAttribute!.delete(key);
   }
 
   clearAttributes() {
-    (Object.keys(this._hasAttribute) as AttributesIndicators[]).forEach(
-      (key) => {
-        if (key === "dragged") this.removeAttribute(key);
-        else this.rmDateset(key);
-      }
-    );
-
-    // @ts-expect-error.
-    this._hasAttribute = {};
+    this._hasAttribute!.forEach((key) => {
+      this.removeAttribute(key);
+    });
+    this._hasAttribute!.clear();
   }
 }
 

@@ -88,7 +88,7 @@ class DraggableInteractive
       this.migration.setIndex(i);
     }
 
-    this.draggedElm.setDataset("index", i);
+    this.draggedElm.setAttribute("INDEX", i);
   }
 
   setDraggedTransformPosition(isFallback: boolean) {
@@ -112,7 +112,7 @@ class DraggableInteractive
        */
       if (!this.draggedElm.translate.isEqual(this.translatePlaceholder)) {
         this.draggedElm.transformElm();
-        this.draggedElm.setDataset("index", this.draggedElm.order.self);
+        this.draggedElm.setAttribute("INDEX", this.draggedElm.order.self);
 
         /**
          * There's a rare case where dragged leaves and returns to the same
@@ -137,7 +137,7 @@ class DraggableInteractive
     this.draggedElm.grid.clone(this.gridPlaceholder);
 
     // TODO: Fix this please, why it's just Y.
-    this.draggedElm.setDataset("gridY", this.draggedElm.grid.y);
+    this.draggedElm.setAttribute("GRID_Y", this.draggedElm.grid.y);
 
     this.draggedElm.transformElm();
 
