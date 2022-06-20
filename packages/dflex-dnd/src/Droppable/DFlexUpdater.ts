@@ -3,7 +3,7 @@ import { DFlexNode } from "@dflex/core-instance";
 import type { IDFlexNode } from "@dflex/core-instance";
 
 import { Direction, IPointAxes, PointNum } from "@dflex/utils";
-import type { IPointNum, Axis } from "@dflex/utils";
+import type { IPointNum, Axis, RectDimensions } from "@dflex/utils";
 
 import type { InteractivityEvent } from "../types";
 import type { IDraggableInteractive } from "../Draggable";
@@ -47,6 +47,133 @@ function emitInteractiveEvent(
   };
 
   store.emitEvent(evt);
+}
+
+type InsertionELmMeta = {
+  isRestoredLastPosition: boolean;
+  position: IPointNum;
+  isEmpty: boolean;
+  isOrphan: boolean;
+  elm: IDFlexNode | null;
+  prevElm: IDFlexNode | null;
+};
+
+export const APPEND_EMPTY_ELM_ID = "";
+
+export function isEmptyBranch(lst: string[]) {
+  const { length } = lst;
+
+  return length === 0 || (length === 1 && lst[0] === APPEND_EMPTY_ELM_ID);
+}
+
+export function getInsertionELmMeta(
+  insertAt: number,
+  SK: string
+): InsertionELmMeta {
+  const lst = store.getElmBranchByKey(SK);
+
+  const { length } = lst;
+
+  // Restore the last known current position.
+  const { lastElmPosition, originLength } = store.containers.get(SK)!;
+
+  const position = new PointNum(0, 0);
+  const isEmpty = isEmptyBranch(lst);
+
+  const isLastEmpty = lst[length - 1] === APPEND_EMPTY_ELM_ID;
+
+  // ["id"] || ["id", ""]
+  const isOrphan = !isEmpty && (length === 1 || (length === 2 && isLastEmpty));
+
+  let isRestoredLastPosition = false;
+
+  let elm: null | IDFlexNode = null;
+  let prevElm: null | IDFlexNode = null;
+
+  if (lastElmPosition) {
+    // If empty then restore it.
+    position.clone(lastElmPosition);
+    isRestoredLastPosition = true;
+  }
+
+  if (!isEmpty) {
+    const isInsertedLast = insertAt === length - 1;
+    let prevIndex = insertAt - 1;
+
+    // Then the priority is to restore the last position.
+    if (isInsertedLast) {
+      let at = insertAt;
+
+      if (isLastEmpty) {
+        prevIndex -= 1;
+        at -= 1;
+      }
+
+      elm = store.registry.get(lst[at])!;
+
+      if (lastElmPosition) {
+        if (length <= originLength) {
+          position.clone(lastElmPosition);
+          // Did we retorted the same element?
+          isRestoredLastPosition = !lastElmPosition.isEqual(
+            elm.currentPosition
+          );
+        } else {
+          isRestoredLastPosition = false;
+          position.clone(elm.currentPosition);
+        }
+      } else {
+        position.clone(elm.currentPosition);
+      }
+    } else {
+      elm = store.registry.get(lst[insertAt])!;
+      position.clone(elm.currentPosition);
+    }
+
+    // Assign the previous element if not orphan.
+    if (!isOrphan && prevIndex >= 0) {
+      prevElm = store.registry.get(lst[prevIndex])!;
+    }
+  }
+
+  return {
+    isEmpty,
+    isOrphan,
+    isRestoredLastPosition,
+    position,
+    elm,
+    prevElm,
+  };
+}
+
+export function handleElmMigration(
+  SK: string,
+  originSK: string,
+  appendOffset: RectDimensions
+) {
+  const containerDist = store.containers.get(SK)!;
+
+  // Append the newest element to the end of the branch.
+  containerDist.registerNewElm(appendOffset);
+
+  const origin = store.getElmBranchByKey(originSK);
+
+  // Don't reset empty branch keep the boundaries.
+  if (origin.length === 0) return;
+  const containerOrigin = store.containers.get(originSK)!;
+
+  containerOrigin.resetIndicators();
+
+  origin.forEach((elmID) => {
+    const elm = store.registry.get(elmID)!;
+
+    containerOrigin.registerNewElm(elm.getOffset());
+    elm.grid.clone(containerOrigin.grid);
+  });
+
+  const lastInOrigin = store.registry.get(origin[origin.length - 1])!;
+
+  containerOrigin.preservePosition(lastInOrigin.currentPosition);
 }
 
 class DFlexUpdater {
@@ -176,8 +303,10 @@ class DFlexUpdater {
     insertFromTop: boolean,
     axis: Axis
   ) {
-    const { isEmpty, isOrphan, position, elm, prevElm } =
-      store.getInsertionELmMeta(insertAt, SK);
+    const { isEmpty, isOrphan, position, elm, prevElm } = getInsertionELmMeta(
+      insertAt,
+      SK
+    );
 
     const { draggedElm, migration, containersTransition } = this.draggable;
 
@@ -237,7 +366,7 @@ class DFlexUpdater {
       isRestoredLastPosition,
       elm,
       prevElm,
-    } = store.getInsertionELmMeta(length - 1, SK);
+    } = getInsertionELmMeta(length - 1, SK);
 
     // Get the stored position if the branch is empty.
     if (isEmpty) {

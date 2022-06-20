@@ -1,18 +1,12 @@
 import Store from "@dflex/store";
 import type { RegisterInputOpts } from "@dflex/store";
 
-import { Tracker, Scroll, canUseDOM, PointNum } from "@dflex/utils";
-import type {
-  Dimensions,
-  RectDimensions,
-  ITracker,
-  IScroll,
-} from "@dflex/utils";
+import { Tracker, Scroll, canUseDOM } from "@dflex/utils";
+import type { Dimensions, ITracker, IScroll } from "@dflex/utils";
 
-import { DFlexContainer, IDFlexNode } from "@dflex/core-instance";
+import { DFlexContainer } from "@dflex/core-instance";
 import type { IDFlexContainer } from "@dflex/core-instance";
-
-import type { ElmTree, IDFlexDnDStore, InsertionELmMeta } from "./types";
+import type { ElmTree, IDFlexDnDStore } from "./types";
 
 import type {
   LayoutState,
@@ -22,7 +16,6 @@ import type {
   SiblingsEvent,
   LayoutStateEvent,
 } from "../types";
-import Droppable from "../Droppable/Droppable";
 
 function throwElementIsNotConnected(id: string) {
   throw new Error(
@@ -331,114 +324,6 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
     }
 
     this.updateElementVisibility(id, container.scroll, false);
-  }
-
-  handleElmMigration(
-    SK: string,
-    originSK: string,
-    appendOffset: RectDimensions
-  ) {
-    const containerDist = this.containers.get(SK)!;
-
-    // Append the newest element to the end of the branch.
-    containerDist.registerNewElm(appendOffset);
-
-    const origin = this.DOMGen.getElmBranchByKey(originSK);
-
-    // Don't reset empty branch keep the boundaries.
-    if (origin.length === 0) return;
-    const containerOrigin = this.containers.get(originSK)!;
-
-    containerOrigin.resetIndicators();
-
-    origin.forEach((elmID) => {
-      const elm = this.registry.get(elmID)!;
-
-      containerOrigin.registerNewElm(elm.getOffset());
-      elm.grid.clone(containerOrigin.grid);
-    });
-
-    const lastInOrigin = this.registry.get(origin[origin.length - 1])!;
-
-    containerOrigin.preservePosition(lastInOrigin.currentPosition);
-  }
-
-  getInsertionELmMeta(insertAt: number, SK: string): InsertionELmMeta {
-    const lst = this.getElmBranchByKey(SK);
-
-    const { length } = lst;
-
-    // Restore the last known current position.
-    const { lastElmPosition, originLength } = this.containers.get(SK)!;
-
-    const position = new PointNum(0, 0);
-    const isEmpty = Droppable.isEmpty(lst);
-
-    const isLastEmpty = lst[length - 1] === Droppable.APPEND_EMPTY_ELM_ID;
-
-    // ["id"] || ["id", ""]
-    const isOrphan =
-      !isEmpty && (length === 1 || (length === 2 && isLastEmpty));
-
-    let isRestoredLastPosition = false;
-
-    let elm: null | IDFlexNode = null;
-    let prevElm: null | IDFlexNode = null;
-
-    if (lastElmPosition) {
-      // If empty then restore it.
-      position.clone(lastElmPosition);
-      isRestoredLastPosition = true;
-    }
-
-    if (!isEmpty) {
-      const isInsertedLast = insertAt === length - 1;
-      let prevIndex = insertAt - 1;
-
-      // Then the priority is to restore the last position.
-      if (isInsertedLast) {
-        let at = insertAt;
-
-        if (isLastEmpty) {
-          prevIndex -= 1;
-          at -= 1;
-        }
-
-        elm = this.registry.get(lst[at])!;
-
-        if (lastElmPosition) {
-          if (length <= originLength) {
-            position.clone(lastElmPosition);
-            // Did we retorted the same element?
-            isRestoredLastPosition = !lastElmPosition.isEqual(
-              elm.currentPosition
-            );
-          } else {
-            isRestoredLastPosition = false;
-            position.clone(elm.currentPosition);
-          }
-        } else {
-          position.clone(elm.currentPosition);
-        }
-      } else {
-        elm = this.registry.get(lst[insertAt])!;
-        position.clone(elm.currentPosition);
-      }
-
-      // Assign the previous element if not orphan.
-      if (!isOrphan && prevIndex >= 0) {
-        prevElm = this.registry.get(lst[prevIndex])!;
-      }
-    }
-
-    return {
-      isEmpty,
-      isOrphan,
-      isRestoredLastPosition,
-      position,
-      elm,
-      prevElm,
-    };
   }
 
   register(element: RegisterInputOpts) {

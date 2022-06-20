@@ -1,9 +1,4 @@
-import type {
-  Dimensions,
-  RectDimensions,
-  ITracker,
-  IPointNum,
-} from "@dflex/utils";
+import type { Dimensions, ITracker } from "@dflex/utils";
 import type { IDFlexContainer, IDFlexNode } from "@dflex/core-instance";
 
 import type { RegisterInputOpts, IDFlexBaseStore } from "@dflex/store";
@@ -32,15 +27,6 @@ interface Translate {
   translateY: number;
 }
 
-export type InsertionELmMeta = {
-  isRestoredLastPosition: boolean;
-  position: IPointNum;
-  isEmpty: boolean;
-  isOrphan: boolean;
-  elm: IDFlexNode | null;
-  prevElm: IDFlexNode | null;
-};
-
 export interface IDFlexDnDStore extends IDFlexBaseStore {
   readonly containers: Map<string, IDFlexContainer>;
   readonly unifiedContainerDimensions: {
@@ -51,12 +37,6 @@ export interface IDFlexDnDStore extends IDFlexBaseStore {
   observer: MutationObserver | null;
   initSiblingContainer(SK: string, shouldValidate: boolean): void;
   updateBranchVisibility(SK: string, shouldCheckVisibility: boolean): void;
-  handleElmMigration(
-    SK: string,
-    originSK: string,
-    appendOffset: RectDimensions
-  ): void;
-  getInsertionELmMeta(insertAt: number, SK: string): InsertionELmMeta;
   onStateChange(state: LayoutState): void;
   emitEvent(event: DraggedEvent): void;
   register(element: RegisterInputOpts): void;

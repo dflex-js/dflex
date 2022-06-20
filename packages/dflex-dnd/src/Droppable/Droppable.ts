@@ -6,7 +6,12 @@ import type { DraggedEvent, SiblingsEvent } from "../types";
 import store from "../DnDStore";
 
 import type { IDraggableInteractive } from "../Draggable";
-import DFlexUpdater from "./DFlexUpdater";
+
+import DFlexUpdater, {
+  APPEND_EMPTY_ELM_ID,
+  handleElmMigration,
+  isEmptyBranch,
+} from "./DFlexUpdater";
 
 function emitSiblingsEvent(
   type: SiblingsEvent["type"],
@@ -58,8 +63,6 @@ class Droppable extends DFlexUpdater {
 
   static INDEX_OUT_CONTAINER = NaN;
 
-  static APPEND_EMPTY_ELM_ID = "";
-
   static isIDEligible2Move(
     elmID: string,
     draggedID: string,
@@ -102,14 +105,6 @@ class Droppable extends DFlexUpdater {
     }
 
     throw new Error(`No valid element found.${lst}\n`);
-  }
-
-  static isEmpty(lst: string[]) {
-    const { length } = lst;
-
-    return (
-      length === 0 || (length === 1 && lst[0] === Droppable.APPEND_EMPTY_ELM_ID)
-    );
   }
 
   constructor(draggable: IDraggableInteractive) {
@@ -239,7 +234,7 @@ class Droppable extends DFlexUpdater {
      */
     let hasToMoveSiblingsDown = true;
 
-    const isEmpty = Droppable.isEmpty(siblings);
+    const isEmpty = isEmptyBranch(siblings);
 
     let insertAt = isEmpty ? 0 : this.detectDroppableIndex();
 
@@ -314,7 +309,7 @@ class Droppable extends DFlexUpdater {
           }
         }
 
-        store.handleElmMigration(SK, migration.prev().SK, offset);
+        handleElmMigration(SK, migration.prev().SK, offset);
 
         this.listAppendPosition = null;
 
@@ -364,7 +359,7 @@ class Droppable extends DFlexUpdater {
 
         // Insert the element to the new list. Empty string because when dragged
         // is out the branch sets its index as "".
-        destination.push(Droppable.APPEND_EMPTY_ELM_ID);
+        destination.push(APPEND_EMPTY_ELM_ID);
 
         migration.add(NaN, newSK, store.tracker.newTravel());
 

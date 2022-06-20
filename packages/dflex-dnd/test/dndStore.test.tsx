@@ -4,6 +4,7 @@ import * as ReactTestUtils from "react-dom/test-utils";
 import { Root, createRoot } from "react-dom/client";
 
 import store from "../src/DnDStore";
+import { getInsertionELmMeta } from "../src/Droppable/DFlexUpdater";
 
 describe("DnD Store", () => {
   const elm1 = {
@@ -123,7 +124,7 @@ describe("DnD Store", () => {
           },
         } = store.getElmTreeById(elm1.id));
 
-        const { elm, ...rest } = store.getInsertionELmMeta(0, SK);
+        const { elm, ...rest } = getInsertionELmMeta(0, SK);
 
         expect(rest).toMatchInlineSnapshot(`
           Object {
@@ -154,10 +155,7 @@ describe("DnD Store", () => {
       });
 
       it("Checks the last element", () => {
-        const { elm, prevElm, position, ...rest } = store.getInsertionELmMeta(
-          3,
-          SK
-        );
+        const { elm, prevElm, position, ...rest } = getInsertionELmMeta(3, SK);
 
         expect(rest).toMatchInlineSnapshot(`
                   Object {
@@ -186,10 +184,7 @@ describe("DnD Store", () => {
       });
 
       it("Restores the preserved position when calling for last element", () => {
-        const { elm, prevElm, position, ...rest } = store.getInsertionELmMeta(
-          3,
-          SK
-        );
+        const { elm, prevElm, position, ...rest } = getInsertionELmMeta(3, SK);
 
         expect(rest).toMatchInlineSnapshot(`
                   Object {
@@ -206,10 +201,7 @@ describe("DnD Store", () => {
       });
 
       it("Restores the position even preserved is defined because it's not the last element", () => {
-        const { elm, prevElm, position, ...rest } = store.getInsertionELmMeta(
-          2,
-          SK
-        );
+        const { elm, prevElm, position, ...rest } = getInsertionELmMeta(2, SK);
 
         expect(rest).toMatchInlineSnapshot(`
                   Object {
@@ -231,10 +223,7 @@ describe("DnD Store", () => {
       });
 
       it("Restores the position for the first element with correct flags", () => {
-        const { elm, prevElm, position, ...rest } = store.getInsertionELmMeta(
-          0,
-          SK
-        );
+        const { elm, prevElm, position, ...rest } = getInsertionELmMeta(0, SK);
 
         expect(rest).toMatchInlineSnapshot(`
                   Object {
@@ -272,10 +261,7 @@ describe("DnD Store", () => {
       });
 
       it("Restores the the last element when the branch is extended", () => {
-        const { elm, prevElm, position, ...rest } = store.getInsertionELmMeta(
-          4,
-          SK
-        );
+        const { elm, prevElm, position, ...rest } = getInsertionELmMeta(4, SK);
 
         expect(rest).toMatchInlineSnapshot(`
                   Object {
@@ -297,10 +283,7 @@ describe("DnD Store", () => {
       });
 
       it("Restores the position even preserved is defined because it's not the last element", () => {
-        const { elm, prevElm, position, ...rest } = store.getInsertionELmMeta(
-          3,
-          SK
-        );
+        const { elm, prevElm, position, ...rest } = getInsertionELmMeta(3, SK);
 
         expect(rest).toMatchInlineSnapshot(`
                   Object {
@@ -322,10 +305,7 @@ describe("DnD Store", () => {
       });
 
       it("Restores the position for the first element with correct flags", () => {
-        const { elm, prevElm, position, ...rest } = store.getInsertionELmMeta(
-          0,
-          SK
-        );
+        const { elm, prevElm, position, ...rest } = getInsertionELmMeta(0, SK);
 
         expect(rest).toMatchInlineSnapshot(`
                   Object {
