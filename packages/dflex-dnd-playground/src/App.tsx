@@ -39,6 +39,7 @@ function App() {
         <Route path="/restricted-self" element={<SelRestricted />} />
         <Route path="/todo" element={<TodoListWithEvents />} />
         <Route path="/migration" element={<ListMigration />} />
+        <Route path="/commit" element={<ListMigration withCommitBtn />} />
         <Route
           path="/component-based-event"
           element={

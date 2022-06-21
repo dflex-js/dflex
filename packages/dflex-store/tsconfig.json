@@ -1,8 +1,9 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src/**/*", "../../dflex-env.d.ts", "test"],
+  "include": ["src/**/*", "../../dflex-env.d.ts"],
   "compilerOptions": {
     "composite": true,
+    "rootDir": "./src",
     "outDir": "./types",
     "noUnusedLocals": true,
     "noUnusedParameters": true

@@ -1,6 +1,5 @@
 /* eslint-disable react/no-array-index-key */
 import React from "react";
-import s from "../Demo.module.css";
 
 import DFlexDnDComponent from "../DFlexDnDComponent";
 
@@ -16,8 +15,8 @@ const EssentialList = () => {
   const parentID = "DFlex-scroll-essential";
 
   return (
-    <div className={s.root}>
-      <div className={s.extended}>
+    <div className="root">
+      <div className="extended">
         <ul id={parentID}>
           {tasks.map(({ task, id, key }) => (
             <DFlexDnDComponent

@@ -28,6 +28,6 @@
     "isolatedModules": true,
     "esModuleInterop": true
   },
-  "include": ["dflex-env.d.ts"],
-  "exclude": ["node_modules", "dist", "**/*.cy*"]
+  "include": ["packages", "dflex-env.d.ts"],
+  "exclude": ["node_modules", "dist", "**/*.cy*", "**/*.test*"]
 }

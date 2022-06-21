@@ -1,5 +1,4 @@
 import React from "react";
-import s from "../Demo.module.css";
 import DFlexDnDComponent from "../DFlexDnDComponent";
 
 const SelRestricted = () => {
@@ -100,8 +99,8 @@ const SelRestricted = () => {
   const parentID = "DFlex-self-position-restriction";
 
   return (
-    <div className={s.root}>
-      <div className={s.todo}>
+    <div className="root">
+      <div className="todo">
         <ul id={parentID}>
           {items.map(({ id, style, item, restrictions }) => (
             <DFlexDnDComponent
