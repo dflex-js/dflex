@@ -1,5 +1,12 @@
-import DFlexDnDStore from "./DFlexDnDStore";
+export { default as store } from "./DFlexDnDStore";
+export { default as dispatchDFlexEvent } from "./DFlexEvents";
 
 export type { ElmTree } from "./types";
 
-export default DFlexDnDStore;
+export type {
+  DFlexDraggedEvent,
+  DFlexInteractivityEvent,
+  DFlexSiblingsEvent,
+  DFlexEvents,
+  DFlexEventsTypes,
+} from "./DFlexEvents";

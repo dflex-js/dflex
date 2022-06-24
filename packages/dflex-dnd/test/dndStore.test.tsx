@@ -3,7 +3,7 @@ import * as React from "react";
 import * as ReactTestUtils from "react-dom/test-utils";
 import { Root, createRoot } from "react-dom/client";
 
-import store from "../src/DnDStore";
+import { store } from "../src/DnDStore";
 import { getInsertionELmMeta } from "../src/Droppable/DFlexUpdater";
 
 describe("DnD Store", () => {

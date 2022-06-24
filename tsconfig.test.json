@@ -1,4 +1,4 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["**/*.test*", "dflex-env.d.ts"]
+  "include": ["**/*.test*", "./libdef/globals.d.ts"]
 }

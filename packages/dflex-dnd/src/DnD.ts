@@ -2,7 +2,7 @@ import type { IPointAxes } from "@dflex/utils";
 
 import DraggableInteractive from "./Draggable";
 import Droppable from "./Droppable";
-import store from "./DnDStore";
+import { store } from "./DnDStore";
 
 import type { DndOpts, FinalDndOpts } from "./types";
 

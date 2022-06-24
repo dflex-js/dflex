@@ -1,10 +1,5 @@
 import React from "react";
-import type {
-  DraggedEvent,
-  InteractivityEvent,
-  SiblingsEvent,
-  LayoutStateEvent,
-} from "@dflex/dnd";
+import type { LayoutStateEvent } from "@dflex/dnd";
 
 import DFlexDnDComponent from "../DFlexDnDComponent";
 
@@ -20,39 +15,9 @@ const TodoListWithEvents = () => {
     { id: "gym", msg: "Hit the gym", style: { height: "4.5rem" } },
   ];
 
-  const onDragOver = (e: InteractivityEvent) => {
-    // eslint-disable-next-line no-console
-    console.log("onDragOver", e);
-  };
-
-  const onDragLeave = (e: InteractivityEvent) => {
-    // eslint-disable-next-line no-console
-    console.log("onDragLeave", e);
-  };
-
   const onStateChange = (e: LayoutStateEvent) => {
     // eslint-disable-next-line no-console
     console.log("onStateChange", e);
-  };
-
-  const onDragOutContainer = (e: DraggedEvent) => {
-    // eslint-disable-next-line no-console
-    console.log("onDragOutContainer", e);
-  };
-
-  const onDragOutThreshold = (e: DraggedEvent) => {
-    // eslint-disable-next-line no-console
-    console.log("onDragOutThreshold", e);
-  };
-
-  const onLiftUpSiblings = (e: SiblingsEvent) => {
-    // eslint-disable-next-line no-console
-    console.log("onLiftUpSiblings", e);
-  };
-
-  const onMoveDownSiblings = (e: SiblingsEvent) => {
-    // eslint-disable-next-line no-console
-    console.log("onMoveDownSiblings", e);
   };
 
   const parentID = "DFlex-todo-list-with-events";
@@ -69,13 +34,7 @@ const TodoListWithEvents = () => {
               style={style}
               opts={{
                 events: {
-                  onDragLeave,
-                  onDragOver,
                   onStateChange,
-                  onDragOutContainer,
-                  onDragOutThreshold,
-                  onLiftUpSiblings,
-                  onMoveDownSiblings,
                 },
               }}
             >

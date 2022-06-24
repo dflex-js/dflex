@@ -58,13 +58,10 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
   constructor() {
     super();
 
-    // this.interactiveDOM = new Map();
-
     this.containers = new Map();
     this.unifiedContainerDimensions = {};
 
     this.layoutState = "pending";
-
     // @ts-expect-error Should be initialized when calling DnD instance.
     this.events = null;
 

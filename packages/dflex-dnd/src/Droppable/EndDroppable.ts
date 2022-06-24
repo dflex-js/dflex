@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import store from "../DnDStore";
+import { store } from "../DnDStore";
 import Droppable, { isIDEligible } from "./Droppable";
 
 import type { IDraggableInteractive } from "../Draggable";

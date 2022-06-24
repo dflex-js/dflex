@@ -5,10 +5,9 @@ import type { IDFlexNode } from "@dflex/core-instance";
 import { Direction, IPointAxes, PointNum } from "@dflex/utils";
 import type { IPointNum, Axis, RectDimensions } from "@dflex/utils";
 
-import type { InteractivityEvent } from "../types";
 import type { IDraggableInteractive } from "../Draggable";
 
-import store from "../DnDStore";
+import { store } from "../DnDStore";
 
 const MAX_TRANSFORM_COUNT = 99; /** Infinite transform count */
 
@@ -34,19 +33,12 @@ function throwOnInfiniteTransformation(id: string) {
   }
 }
 
-function emitInteractiveEvent(
-  type: InteractivityEvent["type"],
-  element: IDFlexNode
-) {
-  const evt: InteractivityEvent = {
+function composeElmMeta(element: IDFlexNode) {
+  return {
     id: element.id,
     index: element.order.self,
     target: element.ref!,
-    timeStamp: Date.now(),
-    type,
   };
-
-  store.emitEvent(evt);
 }
 
 type InsertionELmMeta = {
@@ -467,7 +459,7 @@ class DFlexUpdater {
       this.updateDraggedThresholdPosition(x, y);
     }
 
-    emitInteractiveEvent("onDragOver", element);
+    this.draggable.events.dispatch("ON_DRAG_OVER", composeElmMeta(element));
 
     const { migration } = this.draggable;
 
@@ -482,7 +474,7 @@ class DFlexUpdater {
       axis
     );
 
-    emitInteractiveEvent("onDragLeave", element);
+    this.draggable.events.dispatch("ON_DRAG_LEAVE", composeElmMeta(element));
   }
 }
 

@@ -1,4 +1,4 @@
-// import store from "./DnDStoreImp";
+// import { store } from "./DnDStoreImp";
 import type { IDFlexDnDStore } from "./types";
 
 type ChangedIds = Set<{ oldId: string; newId: string }>;

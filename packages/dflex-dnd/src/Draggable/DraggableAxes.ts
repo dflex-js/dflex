@@ -18,7 +18,7 @@ import type {
 
 import { DFlexContainer, IDFlexNode } from "@dflex/core-instance";
 
-import store from "../DnDStore";
+import { dispatchDFlexEvent, store } from "../DnDStore";
 
 import type { IDraggableAxes } from "./types";
 
@@ -61,6 +61,8 @@ class DraggableAxes
   private readonly marginX: number;
 
   private readonly initCoordinates: IPointNum;
+
+  events: ReturnType<typeof dispatchDFlexEvent>;
 
   constructor(id: string, initCoordinates: IPointAxes, opts: FinalDndOpts) {
     const { element } = store.getElmTreeById(id);
@@ -170,6 +172,8 @@ class DraggableAxes
     this.restrictions = opts.restrictions;
 
     this.restrictionsStatus = opts.restrictionsStatus;
+
+    this.events = dispatchDFlexEvent(this.draggedElm.ref!);
 
     this.axesFilterNeeded =
       siblings !== null &&

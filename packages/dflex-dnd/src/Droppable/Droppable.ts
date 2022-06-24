@@ -1,9 +1,7 @@
 import { IPointAxes, PointNum } from "@dflex/utils";
 import type { IPointNum } from "@dflex/utils";
 
-import type { DraggedEvent, SiblingsEvent } from "../types";
-
-import store from "../DnDStore";
+import { store } from "../DnDStore";
 
 import type { IDraggableInteractive } from "../Draggable";
 
@@ -12,19 +10,6 @@ import DFlexUpdater, {
   handleElmMigration,
   isEmptyBranch,
 } from "./DFlexUpdater";
-
-function emitSiblingsEvent(
-  type: SiblingsEvent["type"],
-  payload: Omit<SiblingsEvent, "type" | "timeStamp">
-) {
-  const evt: SiblingsEvent = {
-    ...payload,
-    timeStamp: Date.now(),
-    type,
-  };
-
-  store.emitEvent(evt);
-}
 
 export function isIDEligible(elmID: string, draggedID: string) {
   return (
@@ -50,8 +35,6 @@ class Droppable extends DFlexUpdater {
   private scrollSpeed: number;
 
   private regularDragging: boolean;
-
-  private isOnDragOutContainerEvtEmitted: boolean;
 
   private isOnDragOutThresholdEvtEmitted: boolean;
 
@@ -143,39 +126,11 @@ class Droppable extends DFlexUpdater {
       this.moveDown(1);
     }
 
-    this.isOnDragOutContainerEvtEmitted = false;
     this.isOnDragOutThresholdEvtEmitted = false;
     this.animatedDraggedInsertionFrame = null;
     this.listAppendPosition = null;
 
     this.isParentLocked = false;
-  }
-
-  private draggedEventGenerator(type: DraggedEvent["type"]): DraggedEvent {
-    return {
-      id: this.draggable.draggedElm.id,
-      index: this.getDraggedTempIndex(),
-      timeStamp: Date.now(),
-      type,
-    };
-  }
-
-  private emitDraggedEvent(type: DraggedEvent["type"]) {
-    if (type === "onDragOutThreshold") {
-      if (!this.isOnDragOutThresholdEvtEmitted) {
-        store.emitEvent(this.draggedEventGenerator(type));
-
-        this.isOnDragOutThresholdEvtEmitted = true;
-      }
-
-      return;
-    }
-
-    if (type === "onDragOutContainer" && !this.isOnDragOutContainerEvtEmitted) {
-      store.emitEvent(this.draggedEventGenerator(type));
-
-      this.isOnDragOutContainerEvtEmitted = true;
-    }
   }
 
   /**
@@ -426,7 +381,7 @@ class Droppable extends DFlexUpdater {
         (occupiedPosition.y + draggedElm.offset.height)
     );
 
-    emitSiblingsEvent("onLiftUpSiblings", {
+    this.draggable.events.dispatch("ON_LIFT_UP", {
       siblings,
       from,
       to: siblings.length,
@@ -462,10 +417,10 @@ class Droppable extends DFlexUpdater {
       this.draggable.migration.latest().SK
     );
 
-    emitSiblingsEvent("onMoveDownSiblings", {
+    this.draggable.events.dispatch("ON_MOVE_DOWN", {
       siblings,
       from: siblings!.length - 1,
-      to,
+      to: siblings.length,
     });
 
     for (let i = siblings.length - 1; i >= to; i -= 1) {
@@ -723,7 +678,10 @@ class Droppable extends DFlexUpdater {
     }
 
     if (this.draggable.isOutThreshold()) {
-      this.emitDraggedEvent("onDragOutThreshold");
+      this.draggable.events.dispatch("ON_OUT_THRESHOLD", {
+        id: this.draggable.draggedElm.id,
+        index: this.getDraggedTempIndex(),
+      });
 
       this.scrollManager(x, y);
 
@@ -760,7 +718,10 @@ class Droppable extends DFlexUpdater {
 
       draggedElm.setAttribute("OUT_CONTAINER", "true");
 
-      this.emitDraggedEvent("onDragOutContainer");
+      this.draggable.events.dispatch("ON_OUT_CONTAINER", {
+        id: this.draggable.draggedElm.id,
+        index: this.getDraggedTempIndex(),
+      });
 
       this.isParentLocked = true;
 
@@ -794,8 +755,6 @@ class Droppable extends DFlexUpdater {
       if (isOutSiblingsContainer) {
         return;
       }
-
-      this.isOnDragOutContainerEvtEmitted = false;
 
       if (this.animatedDraggedInsertionFrame === null) {
         this.animatedDraggedInsertionFrame = window.requestAnimationFrame(

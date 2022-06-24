@@ -1,6 +1,6 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src/**/*", "../../dflex-env.d.ts"],
+  "include": ["src/**/*", "../../libdef/globals.d.ts"],
   "compilerOptions": {
     "composite": true,
     "outDir": "./types",

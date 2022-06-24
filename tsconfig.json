@@ -26,8 +26,9 @@
     "declaration": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "typeRoots": ["libdef/globals.d.ts", "node_modules/@types"]
   },
-  "include": ["packages", "dflex-env.d.ts"],
+  "include": ["packages", "libdef"],
   "exclude": ["node_modules", "dist", "**/*.cy*", "**/*.test*"]
 }
