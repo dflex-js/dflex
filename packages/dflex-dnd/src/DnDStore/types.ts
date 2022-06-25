@@ -29,9 +29,7 @@ interface Translate {
 
 export interface IDFlexDnDStore extends IDFlexBaseStore {
   readonly containers: Map<string, IDFlexContainer>;
-  readonly unifiedContainerDimensions: {
-    [depth: number]: Dimensions;
-  };
+  readonly unifiedContainerDimensions: Map<number, Dimensions>;
   readonly tracker: ITracker;
   observer: MutationObserver | null;
   listeners: ReturnType<typeof initDFlexListeners>;

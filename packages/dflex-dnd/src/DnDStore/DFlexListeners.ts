@@ -15,11 +15,12 @@ const LAYOUT_STATE = 0;
 type ListenersTypes = typeof LAYOUT_STATE;
 type ListenerFunction = (event: DFlexLayoutStateEvent) => void;
 type ListenersMap = Map<ListenersTypes, Set<ListenerFunction>>;
+type CleanupFunction = () => void;
 
 function subscribeLayoutState(
   listenersMap: ListenersMap,
   listener: ListenerFunction
-): () => void {
+): CleanupFunction {
   if (!listenersMap.has(LAYOUT_STATE)) {
     listenersMap.set(LAYOUT_STATE, new Set());
   }
@@ -54,7 +55,7 @@ function clear(listeners: ListenersMap): void {
 }
 
 function initDFlexListeners(): {
-  subscribe: (listener: ListenerFunction) => () => void;
+  subscribe: (listener: ListenerFunction) => CleanupFunction;
   notify: (event: DFlexLayoutStateEvent) => void;
   clear: () => void;
 } {

@@ -124,7 +124,7 @@ class DraggableAxes
         key,
         depth,
         boundaries,
-        store.unifiedContainerDimensions[depth]
+        store.unifiedContainerDimensions.get(depth)!
       );
 
       if (elmContainer.originLength === DFlexContainer.OUT_OF_RANGE) {
@@ -189,7 +189,7 @@ class DraggableAxes
 
     const maneuverDistance = height;
 
-    store.unifiedContainerDimensions[depth].height += isAppend
+    store.unifiedContainerDimensions.get(depth)!.height += isAppend
       ? maneuverDistance
       : -1 * maneuverDistance;
   }

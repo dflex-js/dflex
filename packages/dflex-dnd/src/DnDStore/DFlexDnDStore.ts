@@ -22,9 +22,7 @@ const MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
 class DnDStoreImp extends Store implements IDFlexDnDStore {
   containers: Map<string, IDFlexContainer>;
 
-  readonly unifiedContainerDimensions: {
-    [depth: number]: Dimensions;
-  };
+  unifiedContainerDimensions: Map<number, Dimensions>;
 
   tracker: ITracker;
 
@@ -49,10 +47,9 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
   constructor() {
     super();
     this.containers = new Map();
-    this.unifiedContainerDimensions = {};
+    this.unifiedContainerDimensions = new Map();
     this.tracker = new Tracker();
     this._genID = new Tracker(DnDStoreImp.PREFIX_ID);
-    this._initELmIndicator();
     this._isInitialized = false;
     this._isDOM = false;
     this.observer = null;
@@ -63,6 +60,7 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
 
   private _initWhenRegister() {
     window.onbeforeunload = this.dispose();
+    this._initELmIndicator();
   }
 
   private _initELmIndicator() {
@@ -276,7 +274,10 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
     if (elm.grid.x === 0) {
       const { offset } = elm;
 
-      container.registerNewElm(offset, this.unifiedContainerDimensions[depth]);
+      container.registerNewElm(
+        offset,
+        this.unifiedContainerDimensions.get(depth)!
+      );
 
       elm.grid.clone(container.grid);
     }
@@ -333,11 +334,11 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
       if (!this.containers.has(SK)) {
         this.initSiblingContainer(SK, false);
 
-        if (!this.unifiedContainerDimensions[depth]) {
-          this.unifiedContainerDimensions[depth] = {
+        if (!this.unifiedContainerDimensions.has(depth)) {
+          this.unifiedContainerDimensions.set(depth, {
             width: 0,
             height: 0,
-          };
+          });
         }
       }
 
