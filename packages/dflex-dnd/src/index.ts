@@ -1,7 +1,7 @@
 export { store } from "./DnDStore";
 export { default as DnD } from "./DnD";
 
-export type { DndOpts, LayoutState, LayoutStateEvent } from "./types";
+export type { DFlexDnDOpts } from "./types";
 
 export type {
   DFlexDraggedEvent,
@@ -9,4 +9,6 @@ export type {
   DFlexSiblingsEvent,
   DFlexEvents,
   DFlexEventsTypes,
+  DFlexLayoutState as LayoutState,
+  DFlexLayoutStateEvent as LayoutStateEvent,
 } from "./DnDStore";

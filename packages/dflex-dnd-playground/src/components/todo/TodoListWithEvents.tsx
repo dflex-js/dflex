@@ -1,5 +1,5 @@
 import React from "react";
-import type { LayoutStateEvent } from "@dflex/dnd";
+// import type { LayoutStateEvent } from "@dflex/dnd";
 
 import DFlexDnDComponent from "../DFlexDnDComponent";
 
@@ -15,11 +15,6 @@ const TodoListWithEvents = () => {
     { id: "gym", msg: "Hit the gym", style: { height: "4.5rem" } },
   ];
 
-  const onStateChange = (e: LayoutStateEvent) => {
-    // eslint-disable-next-line no-console
-    console.log("onStateChange", e);
-  };
-
   const parentID = "DFlex-todo-list-with-events";
 
   return (
@@ -32,11 +27,6 @@ const TodoListWithEvents = () => {
               registerInput={{ id, parentID }}
               key={id}
               style={style}
-              opts={{
-                events: {
-                  onStateChange,
-                },
-              }}
             >
               {msg}
             </DFlexDnDComponent>

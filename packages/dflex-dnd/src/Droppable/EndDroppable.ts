@@ -182,7 +182,9 @@ class EndDroppable extends Droppable {
       });
     }
 
-    store.onStateChange(isFallback ? "dragCancel" : "dragEnd");
+    store.listeners.notify({
+      layoutState: isFallback ? "dragCancel" : "dragEnd",
+    });
 
     this.draggable.endDragging(isFallback);
 

@@ -6,16 +6,9 @@ import type { Dimensions, ITracker, IScroll } from "@dflex/utils";
 
 import { DFlexContainer } from "@dflex/core-instance";
 import type { IDFlexContainer } from "@dflex/core-instance";
-import type { ElmTree, IDFlexDnDStore } from "./types";
 
-import type {
-  LayoutState,
-  Events,
-  InteractivityEvent,
-  DraggedEvent,
-  SiblingsEvent,
-  LayoutStateEvent,
-} from "../types";
+import type { ElmTree, IDFlexDnDStore } from "./types";
+import initDFlexListeners from "./DFlexListeners";
 
 function throwElementIsNotConnected(id: string) {
   throw new Error(
@@ -35,11 +28,9 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
 
   tracker: ITracker;
 
-  layoutState: IDFlexDnDStore["layoutState"];
-
-  events: Events;
-
   observer: MutationObserver | null;
+
+  listeners: ReturnType<typeof initDFlexListeners>;
 
   private _genID: ITracker;
 
@@ -57,50 +48,20 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
 
   constructor() {
     super();
-
     this.containers = new Map();
     this.unifiedContainerDimensions = {};
-
-    this.layoutState = "pending";
-    // @ts-expect-error Should be initialized when calling DnD instance.
-    this.events = null;
-
     this.tracker = new Tracker();
     this._genID = new Tracker(DnDStoreImp.PREFIX_ID);
-
     this._initELmIndicator();
-
     this._isInitialized = false;
     this._isDOM = false;
     this.observer = null;
-
     this.updateBranchVisibility = this.updateBranchVisibility.bind(this);
+    this.listeners = initDFlexListeners();
+    this.listeners.notify({ layoutState: "pending" });
   }
 
-  onStateChange(state: LayoutState) {
-    // Prevent emit a state change event if the state is not changing.
-    // May change this behavior later.
-    if (state === this.layoutState) return;
-
-    this.layoutState = state;
-
-    const evt: LayoutStateEvent = {
-      layoutState: state,
-      timeStamp: Date.now(),
-      type: "onStateChange",
-    };
-
-    this.emitEvent(evt);
-  }
-
-  emitEvent(
-    event: DraggedEvent | SiblingsEvent | InteractivityEvent | LayoutStateEvent
-  ) {
-    // @ts-expect-error
-    this.events[event.type](event);
-  }
-
-  private _init() {
+  private _initWhenRegister() {
     window.onbeforeunload = this.dispose();
   }
 
@@ -335,7 +296,7 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
      */
 
     if (!this._isInitialized) {
-      this._init();
+      this._initWhenRegister();
       this._isInitialized = true;
     }
 

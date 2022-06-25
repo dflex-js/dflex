@@ -1,9 +1,13 @@
 {
   "compilerOptions": {
-    "jsx": "react-jsx",
+    "jsx": "react",
     "strict": true,
-    "noImplicitAny": true,
+    "stripInternal": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
     "strictFunctionTypes": true,
     "strictNullChecks": true,
     "downlevelIteration": true,
@@ -27,8 +31,8 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "esModuleInterop": true,
-    "typeRoots": ["libdef/globals.d.ts", "node_modules/@types"]
+    "typeRoots": ["dflex-env.d.ts", "node_modules/@types"]
   },
-  "include": ["packages", "libdef"],
+  "include": ["packages", "dflex-env.d.ts"],
   "exclude": ["node_modules", "dist", "**/*.cy*", "**/*.test*"]
 }

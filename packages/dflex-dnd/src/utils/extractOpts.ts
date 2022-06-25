@@ -2,10 +2,10 @@
 
 // TODO: Add types for this.
 
-import type { DndOpts, FinalDndOpts } from "../types";
-import { defaultOpts, noop } from "./constants";
+import type { DFlexDnDOpts, FinalDndOpts } from "../types";
+import { defaultOpts } from "./constants";
 
-export function extractOpts(opts: DndOpts) {
+export function extractOpts(opts: DFlexDnDOpts) {
   const options = { ...opts };
 
   (Object.keys(defaultOpts) as Array<keyof FinalDndOpts>).forEach((props) => {
@@ -72,12 +72,6 @@ export function extractOpts(opts: DndOpts) {
 
       options.restrictionsStatus.isSelfRestricted = isSelfRestricted;
       options.restrictionsStatus.isContainerRestricted = isContainerRestricted;
-    } else if (props === "events") {
-      Object.keys(options.events).forEach((event) => {
-        if (typeof options.events[event] !== "function") {
-          options.events[event] = noop;
-        }
-      });
     }
   });
 

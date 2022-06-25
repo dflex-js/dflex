@@ -1,12 +1,10 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src/**/*", "../../libdef/globals.d.ts"],
+  "include": ["src/**/*", "../../dflex-env.d.ts"],
   "compilerOptions": {
     "composite": true,
     "rootDir": "./src",
-    "outDir": "./types",
-    "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "outDir": "./types"
   },
   "references": [
     { "path": "../dflex-dom-gen" },

@@ -3,7 +3,7 @@
 import React from "react";
 
 import { store, DnD } from "@dflex/dnd";
-import type { DndOpts, DFlexEvents } from "@dflex/dnd";
+import type { DFlexDnDOpts, DFlexEvents } from "@dflex/dnd";
 
 // const evts = new Set([
 //   "$onDragOutContainer",
@@ -28,7 +28,7 @@ interface Props {
     depth?: number;
     readonly?: boolean;
   };
-  opts?: DndOpts;
+  opts?: DFlexDnDOpts;
 }
 
 export const DFlexDnDComponent = ({

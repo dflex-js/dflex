@@ -6,63 +6,6 @@ Object {
     "enable": true,
     "margin": 10,
   },
-  "events": Object {
-    "onDragLeave": [Function],
-    "onDragOutContainer": [Function],
-    "onDragOutThreshold": [Function],
-    "onDragOver": [Function],
-    "onLiftUpSiblings": [Function],
-    "onMoveDownSiblings": [Function],
-    "onStateChange": [Function],
-  },
-  "restrictions": Object {
-    "container": Object {
-      "allowLeavingFromBottom": true,
-      "allowLeavingFromLeft": true,
-      "allowLeavingFromRight": true,
-      "allowLeavingFromTop": true,
-    },
-    "self": Object {
-      "allowLeavingFromBottom": true,
-      "allowLeavingFromLeft": true,
-      "allowLeavingFromRight": true,
-      "allowLeavingFromTop": true,
-    },
-  },
-  "restrictionsStatus": Object {
-    "isContainerRestricted": false,
-    "isSelfRestricted": false,
-  },
-  "scroll": Object {
-    "enable": true,
-    "initialSpeed": 10,
-    "threshold": Object {
-      "horizontal": 15,
-      "vertical": 15,
-    },
-  },
-  "threshold": Object {
-    "horizontal": 60,
-    "vertical": 60,
-  },
-}
-`;
-
-exports[`extractOpts Returns the correct event handler function 1`] = `
-Object {
-  "containersTransition": Object {
-    "enable": true,
-    "margin": 10,
-  },
-  "events": Object {
-    "onDragLeave": [Function],
-    "onDragOutContainer": [Function],
-    "onDragOutThreshold": [Function],
-    "onDragOver": [Function],
-    "onLiftUpSiblings": [Function],
-    "onMoveDownSiblings": [Function],
-    "onStateChange": [Function],
-  },
   "restrictions": Object {
     "container": Object {
       "allowLeavingFromBottom": true,
@@ -101,15 +44,6 @@ Object {
   "containersTransition": Object {
     "enable": true,
     "margin": 10,
-  },
-  "events": Object {
-    "onDragLeave": [Function],
-    "onDragOutContainer": [Function],
-    "onDragOutThreshold": [Function],
-    "onDragOver": [Function],
-    "onLiftUpSiblings": [Function],
-    "onMoveDownSiblings": [Function],
-    "onStateChange": [Function],
   },
   "restrictions": Object {
     "container": Object {
@@ -150,15 +84,6 @@ Object {
     "enable": false,
     "margin": 10,
   },
-  "events": Object {
-    "onDragLeave": [Function],
-    "onDragOutContainer": [Function],
-    "onDragOutThreshold": [Function],
-    "onDragOver": [Function],
-    "onLiftUpSiblings": [Function],
-    "onMoveDownSiblings": [Function],
-    "onStateChange": [Function],
-  },
   "restrictions": Object {
     "container": Object {
       "allowLeavingFromBottom": false,
@@ -197,15 +122,6 @@ Object {
   "containersTransition": Object {
     "enable": true,
     "margin": 10,
-  },
-  "events": Object {
-    "onDragLeave": [Function],
-    "onDragOutContainer": [Function],
-    "onDragOutThreshold": [Function],
-    "onDragOver": [Function],
-    "onLiftUpSiblings": [Function],
-    "onMoveDownSiblings": [Function],
-    "onStateChange": [Function],
   },
   "restrictions": Object {
     "container": Object {
@@ -246,15 +162,6 @@ Object {
     "enable": true,
     "margin": 10,
   },
-  "events": Object {
-    "onDragLeave": [Function],
-    "onDragOutContainer": [Function],
-    "onDragOutThreshold": [Function],
-    "onDragOver": [Function],
-    "onLiftUpSiblings": [Function],
-    "onMoveDownSiblings": [Function],
-    "onStateChange": [Function],
-  },
   "restrictions": Object {
     "container": Object {
       "allowLeavingFromBottom": true,
@@ -293,15 +200,6 @@ Object {
   "containersTransition": Object {
     "enable": true,
     "margin": 10,
-  },
-  "events": Object {
-    "onDragLeave": [Function],
-    "onDragOutContainer": [Function],
-    "onDragOutThreshold": [Function],
-    "onDragOver": [Function],
-    "onLiftUpSiblings": [Function],
-    "onMoveDownSiblings": [Function],
-    "onStateChange": [Function],
   },
   "restrictions": Object {
     "container": Object {

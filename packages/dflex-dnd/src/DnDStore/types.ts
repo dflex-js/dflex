@@ -2,7 +2,7 @@ import type { Dimensions, ITracker } from "@dflex/utils";
 import type { IDFlexContainer, IDFlexNode } from "@dflex/core-instance";
 
 import type { RegisterInputOpts, IDFlexBaseStore } from "@dflex/store";
-import type { DraggedEvent, LayoutState } from "../types";
+import initDFlexListeners from "./DFlexListeners";
 
 export type ELmKey = string;
 
@@ -33,12 +33,10 @@ export interface IDFlexDnDStore extends IDFlexBaseStore {
     [depth: number]: Dimensions;
   };
   readonly tracker: ITracker;
-  readonly layoutState: LayoutState;
   observer: MutationObserver | null;
+  listeners: ReturnType<typeof initDFlexListeners>;
   initSiblingContainer(SK: string, shouldValidate: boolean): void;
   updateBranchVisibility(SK: string, shouldCheckVisibility: boolean): void;
-  onStateChange(state: LayoutState): void;
-  emitEvent(event: DraggedEvent): void;
   register(element: RegisterInputOpts): void;
   getELmTranslateById(id: string): Translate;
   getElmTreeById(id: string): ElmTree;

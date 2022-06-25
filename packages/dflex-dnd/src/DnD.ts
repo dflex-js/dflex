@@ -4,7 +4,7 @@ import DraggableInteractive from "./Draggable";
 import Droppable from "./Droppable";
 import { store } from "./DnDStore";
 
-import type { DndOpts, FinalDndOpts } from "./types";
+import type { DFlexDnDOpts, FinalDndOpts } from "./types";
 
 import { extractOpts } from "./utils/extractOpts";
 import { defaultOpts } from "./utils/constants";
@@ -19,21 +19,8 @@ class DnD extends Droppable {
   constructor(
     id: string,
     initCoordinates: IPointAxes,
-    opts: DndOpts = defaultOpts
+    opts: DFlexDnDOpts = defaultOpts
   ) {
-    const isLayoutAvailable = ["pending", "dragEnd", "dragCancel"].includes(
-      store.layoutState
-    );
-
-    if (!isLayoutAvailable) {
-      if (__DEV__) {
-        // eslint-disable-next-line no-console
-        console.error(
-          `DFlex: received multiple dragging request while layout is still occupied`
-        );
-      }
-    }
-
     if (!store.registry.has(id)) {
       throw new Error(`DFlex: ${id} is not registered in the Store.`);
     }
@@ -58,9 +45,7 @@ class DnD extends Droppable {
 
     super(draggable);
 
-    store.events = options.events;
-
-    store.onStateChange("ready");
+    store.listeners.notify({ layoutState: "ready" });
   }
 }
 

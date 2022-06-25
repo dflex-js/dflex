@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import {
   DFLEX_EVENTS,
   DRAG_EVT,
@@ -56,6 +55,11 @@ export type DFlexEvents =
   | DFlexInteractivityEvent
   | DFlexSiblingsEvent;
 
+export type DFlexEventsMap = {
+  // eslint-disable-next-line no-unused-vars
+  [K in DFlexEventsTypes]: CustomEvent<any>;
+};
+
 type DFlexEventsMeta = typeof DRAG_EVT &
   typeof INTERACTIVITY_EVT &
   typeof SIBLINGS_EVT;
@@ -66,36 +70,37 @@ export type DFlexEventsTypes =
   | typeof INTERACTIVITY_EVT[keyof typeof INTERACTIVITY_EVT]
   | typeof SIBLINGS_EVT[keyof typeof SIBLINGS_EVT];
 
-const CONFIG = {
+const EVT_CONFIG = {
   bubbles: true,
   cancelable: true,
   composed: true,
 };
 
-function getConfig(payload: DFlexEventPayload) {
-  return Object.assign(CONFIG, { detail: payload });
+function getEvtConfig(payload: DFlexEventPayload) {
+  return Object.assign(EVT_CONFIG, { detail: payload });
 }
 
-const dispatched = new Set<keyof DFlexEventsMeta>();
+type DispatchedSet = Set<keyof DFlexEventsMeta>;
 
 function dispatchDFlexEvent(
   dispatcher: HTMLElement,
+  dispatchedSet: DispatchedSet,
   evt: keyof DFlexEventsMeta,
   payload: DFlexEventPayload
-) {
+): void {
   // Throttle the dispatched event
-  if (dispatched.has(evt)) return;
+  if (dispatchedSet.has(evt)) return;
 
-  const event = new CustomEvent(DFLEX_EVENTS[evt], getConfig(payload));
+  const event = new CustomEvent(DFLEX_EVENTS[evt], getEvtConfig(payload));
   dispatcher.dispatchEvent(event);
 
-  dispatched.add(evt);
-  setTimeout(() => dispatched.delete(evt), 0);
+  dispatchedSet.add(evt);
+  setTimeout(() => dispatchedSet.delete(evt), 0);
 }
 
-function clean() {
-  if (dispatched.size > 0) {
-    dispatched.clear();
+function clear(dispatchedSet: DispatchedSet): void {
+  if (dispatchedSet.size > 0) {
+    dispatchedSet.clear();
   }
 }
 
@@ -104,9 +109,11 @@ function initDFlexEvent(dispatcher: HTMLElement): {
   dispatch: (evt: keyof DFlexEventsMeta, payload: DFlexEventPayload) => void;
   clean: () => void;
 } {
+  const dispatchedSet: DispatchedSet = new Set();
+
   return {
-    dispatch: dispatchDFlexEvent.bind(null, dispatcher),
-    clean,
+    dispatch: dispatchDFlexEvent.bind(null, dispatcher, dispatchedSet),
+    clean: clear.bind(null, dispatchedSet),
   };
 }
 
