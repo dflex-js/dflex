@@ -2,7 +2,8 @@ import { PointNum } from "@dflex/utils";
 import type { IPointNum } from "@dflex/utils";
 
 import { DFLEX_ATTRIBUTES } from "./constants";
-import type { IDFlexBaseNode, AllowedAttributes } from "./types";
+import type { AllowedAttributes } from "./constants";
+import type { IDFlexBaseNode } from "./types";
 
 function getElmDOMOrThrow(id: string): HTMLElement | null {
   let DOM = document.getElementById(id);

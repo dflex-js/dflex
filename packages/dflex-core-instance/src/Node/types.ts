@@ -7,9 +7,7 @@ import type {
   Axis,
 } from "@dflex/utils";
 
-import { DFLEX_ATTRIBUTES } from "./constants";
-
-export type AllowedAttributes = keyof typeof DFLEX_ATTRIBUTES;
+import type { AllowedAttributes } from "./constants";
 
 export interface IDFlexBaseNode {
   readonly isInitialized: boolean;

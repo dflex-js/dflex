@@ -1,4 +1,4 @@
-import { Page, Locator } from "@playwright/test";
+import type { Page, Locator } from "@playwright/test";
 
 let page: Page;
 let steps = 0;

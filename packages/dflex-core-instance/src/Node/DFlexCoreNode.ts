@@ -1,5 +1,3 @@
-/* eslint-disable no-param-reassign */
-
 import { PointNum } from "@dflex/utils";
 import type {
   RectDimensions,

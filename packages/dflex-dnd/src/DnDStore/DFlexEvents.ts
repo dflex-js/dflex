@@ -117,4 +117,6 @@ function initDFlexEvent(dispatcher: HTMLElement): {
   };
 }
 
+export type DFlexEventInitializer = ReturnType<typeof initDFlexEvent>;
+
 export default initDFlexEvent;

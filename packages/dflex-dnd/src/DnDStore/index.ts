@@ -11,6 +11,7 @@ export type {
   DFlexEvents,
   DFlexEventsTypes,
   DFlexEventsMap,
+  DFlexEventInitializer,
 } from "./DFlexEvents";
 
 export type { DFlexLayoutState, DFlexLayoutStateEvent } from "./DFlexListeners";

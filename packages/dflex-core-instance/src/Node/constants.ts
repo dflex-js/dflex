@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 const OUT_POS = "data-dragged-out-position";
 const OUT_CONTAINER = "data-dragged-out-container";
 const INDEX = "data-index";
@@ -14,3 +13,5 @@ export const DFLEX_ATTRIBUTES = Object.freeze({
   OUT_POS,
   OUT_CONTAINER,
 });
+
+export type AllowedAttributes = keyof typeof DFLEX_ATTRIBUTES;

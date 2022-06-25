@@ -68,4 +68,6 @@ function initDFlexListeners(): {
   };
 }
 
+export type DFlexListenersInitializer = ReturnType<typeof initDFlexListeners>;
+
 export default initDFlexListeners;

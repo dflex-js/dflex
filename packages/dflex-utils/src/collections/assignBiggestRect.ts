@@ -1,5 +1,4 @@
-/* eslint-disable no-param-reassign */
-import { RectBoundaries } from "../types";
+import type { RectBoundaries } from "../types";
 
 /**
  * Mutate the rect boundaries object to biggest rectangle if it is bigger than

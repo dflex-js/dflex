@@ -1,4 +1,5 @@
 import type { Dimensions, RectBoundaries, RectDimensions } from "../types";
+// @ts-ignore - TODO: Add interface for this class.
 import FourDirectionsBool from "./FourDirectionsBool";
 
 export interface ThresholdPercentages {

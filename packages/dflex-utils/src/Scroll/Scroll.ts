@@ -1,7 +1,6 @@
 import { Threshold } from "../Threshold";
 import type { ThresholdPercentages } from "../Threshold";
-
-import { ScrollInput, IScroll } from "./types";
+import type { ScrollInput, IScroll } from "./types";
 
 const OVERFLOW_REGEX = /(auto|scroll|overlay)/;
 const MAX_LOOP_ELEMENTS_TO_WARN = 16;

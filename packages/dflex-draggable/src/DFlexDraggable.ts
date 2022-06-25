@@ -1,5 +1,6 @@
-import { IDFlexBaseNode } from "@dflex/core-instance";
+import type { IDFlexBaseNode } from "@dflex/core-instance";
 import type { IPointAxes } from "@dflex/utils";
+
 import store from "./DFlexDraggableStore";
 import DFlexBaseDraggable from "./DFlexBaseDraggable";
 
