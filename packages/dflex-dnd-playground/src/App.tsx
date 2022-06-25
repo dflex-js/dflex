@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable import/no-extraneous-dependencies */
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -18,8 +19,13 @@ import {
 
 function App() {
   React.useEffect(() => {
+    const unsubscribe = store.listeners.subscribe((e) => {
+      console.info("new layout state", e);
+    });
+
     return () => {
       store.destroy();
+      unsubscribe();
     };
   }, []);
 

@@ -76,7 +76,6 @@ export const DFlexDnDComponent = ({
       document.removeEventListener("mousemove", onMouseMove);
 
       document.removeEventListener("$onDragLeave", onDFlexEvent);
-      // evts.forEach((evt) => {});
     }
   };
 
@@ -91,8 +90,6 @@ export const DFlexDnDComponent = ({
         dndEvent = new DnD(id, { x: clientX, y: clientY }, opts);
 
         document.addEventListener("$onDragLeave", onDFlexEvent);
-        // .forEach((evt) => {
-        // });
       }
     }
   };
