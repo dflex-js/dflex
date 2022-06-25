@@ -22,11 +22,6 @@ export interface ScrollThreshold {
   minY: number;
 }
 
-interface Translate {
-  translateX: number;
-  translateY: number;
-}
-
 export interface IDFlexDnDStore extends IDFlexBaseStore {
   readonly containers: Map<string, IDFlexContainer>;
   readonly unifiedContainerDimensions: Map<number, Dimensions>;
@@ -34,9 +29,7 @@ export interface IDFlexDnDStore extends IDFlexBaseStore {
   observer: MutationObserver | null;
   listeners: DFlexListenersInitializer;
   initSiblingContainer(SK: string, shouldValidate: boolean): void;
-  updateBranchVisibility(SK: string, shouldCheckVisibility: boolean): void;
   register(element: RegisterInputOpts): void;
-  getELmTranslateById(id: string): Translate;
   getElmTreeById(id: string): ElmTree;
   getElmSiblingsById(id: string): string[] | null;
   destroy(): void;

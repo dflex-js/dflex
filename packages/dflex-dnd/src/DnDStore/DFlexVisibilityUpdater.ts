@@ -73,4 +73,4 @@ function updateBranchVisibility(store: IDFlexDnDStore, SK: string) {
   });
 }
 
-export default updateBranchVisibility;
+export { updateBranchVisibility, updateElementVisibility };

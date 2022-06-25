@@ -4,9 +4,7 @@ import type { RectDimensions } from "../types";
 export interface ScrollInput {
   element: HTMLElement;
   requiredBranchKey: string;
-  scrollEventCallback:
-    | ((SK: string, isCalledFromScroll: true) => unknown)
-    | null;
+  scrollEventCallback: Function | null;
 }
 
 export interface IScroll {

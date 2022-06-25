@@ -2,13 +2,21 @@ import Store from "@dflex/store";
 import type { RegisterInputOpts } from "@dflex/store";
 
 import { Tracker, Scroll, canUseDOM } from "@dflex/utils";
-import type { Dimensions, ITracker, IScroll } from "@dflex/utils";
+import type { Dimensions, ITracker } from "@dflex/utils";
 
 import { DFlexContainer } from "@dflex/core-instance";
 import type { IDFlexContainer } from "@dflex/core-instance";
 
 import type { ElmTree, IDFlexDnDStore } from "./types";
+
 import initDFlexListeners from "./DFlexListeners";
+
+import {
+  updateBranchVisibility,
+  updateElementVisibility,
+} from "./DFlexVisibilityUpdater";
+
+import { MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY } from "./constants";
 
 function throwElementIsNotConnected(id: string) {
   throw new Error(
@@ -16,8 +24,6 @@ function throwElementIsNotConnected(id: string) {
       `Did you forget to call store.unregister(${id}) or add parenID when register the element?`
   );
 }
-
-const MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
 
 class DnDStoreImp extends Store implements IDFlexDnDStore {
   containers: Map<string, IDFlexContainer>;
@@ -30,155 +36,27 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
 
   listeners: ReturnType<typeof initDFlexListeners>;
 
-  private _genID: ITracker;
-
   private _isDOM: boolean;
 
   private _isInitialized: boolean;
-
-  private _elmIndicator!: {
-    currentKy: string;
-    prevKy: string;
-    exceptionToNextElm: boolean;
-  };
-
-  private static PREFIX_ID = "dflex-id";
 
   constructor() {
     super();
     this.containers = new Map();
     this.unifiedContainerDimensions = new Map();
     this.tracker = new Tracker();
-    this._genID = new Tracker(DnDStoreImp.PREFIX_ID);
     this._isInitialized = false;
     this._isDOM = false;
     this.observer = null;
-    this.updateBranchVisibility = this.updateBranchVisibility.bind(this);
     this.listeners = initDFlexListeners();
     this.listeners.notify({ layoutState: "pending" });
   }
 
   private _initWhenRegister() {
     window.onbeforeunload = this.dispose();
-    this._initELmIndicator();
   }
 
-  private _initELmIndicator() {
-    this._elmIndicator = {
-      currentKy: "",
-      prevKy: "",
-      exceptionToNextElm: false,
-    };
-  }
-
-  updateElementVisibility(
-    elmID: string,
-    scroll: IScroll,
-    permitExceptionToOverride: boolean
-  ) {
-    let isVisible = true;
-    let isVisibleY = true;
-    let isVisibleX = true;
-
-    const elm = this.registry.get(elmID)!;
-
-    if (scroll.allowDynamicVisibility) {
-      isVisibleY = scroll.isElementVisibleViewportY(elm.currentPosition.y);
-
-      isVisibleX = scroll.isElementVisibleViewportX(elm.currentPosition.x);
-
-      isVisible = isVisibleY && isVisibleX;
-
-      if (
-        !isVisible &&
-        !this._elmIndicator.exceptionToNextElm &&
-        permitExceptionToOverride
-      ) {
-        this._elmIndicator.exceptionToNextElm = true;
-
-        // Override the result.
-        isVisible = true;
-      } else if (isVisible) {
-        if (this._elmIndicator.exceptionToNextElm) {
-          // In this case, we are moving from hidden to visible.
-          // Eg: 1, 2 are hidden the rest of the list is visible.
-          // But, there's a possibility that the rest of the branch elements
-          // are hidden.
-          // Eg: 1, 2: hidden 3, 4, 5, 6, 7:visible 8, 9, 10: hidden.
-          this._initELmIndicator();
-        }
-      }
-    }
-
-    elm.changeVisibility(isVisible);
-  }
-
-  updateBranchVisibility(SK: string) {
-    const branch = this.DOMGen.getElmBranchByKey(SK);
-
-    const { scroll } = this.containers.get(SK)!;
-
-    this._initELmIndicator();
-
-    let prevIndex = 0;
-
-    branch.forEach((elmID, i) => {
-      if (elmID.length > 0) {
-        const permitExceptionToOverride = i > prevIndex;
-
-        this.updateElementVisibility(elmID, scroll, permitExceptionToOverride);
-
-        prevIndex = i;
-      }
-    });
-  }
-
-  private _cleanupDisconnectedElements(branchKey: string) {
-    const branch = this.DOMGen.getElmBranchByKey(branchKey);
-
-    const extractedOldBranch: string[] = [];
-    const connectedNodesID: string[] = [];
-
-    let depth: null | number = null;
-    let newSK = "";
-
-    for (let i = 0; i < branch.length; i += 1) {
-      const elmID = branch[i];
-      const elm = this.registry.get(elmID)!;
-
-      if (elmID) {
-        if (depth === null) {
-          depth = elm.depth;
-
-          // Can we get the parent ID, later?
-          this.DOMGen.register(this._genID.newTravel(), (depth as number) + 1);
-
-          newSK = this.DOMGen.accumulateIndicators(depth as number).SK;
-        }
-
-        if (elm.ref && !elm.ref!.isConnected) {
-          elm.order.self = extractedOldBranch.push(elmID) - 1;
-
-          // We don't know if element will be used in the future or not. So,
-          // reference to prevent memory leak.
-          elm.detach();
-        } else {
-          elm.order.self = connectedNodesID.push(elmID) - 1;
-
-          // New key goes to the new branch.
-          elm.keys.SK = newSK;
-        }
-      }
-    }
-
-    // Assign new branches
-    this.DOMGen.updateBranch(newSK, connectedNodesID);
-    this.DOMGen.updateBranch(branchKey, extractedOldBranch);
-
-    return newSK;
-  }
-
-  initSiblingContainer(SK: string, shouldValidate: boolean) {
+  initSiblingContainer(SK: string) {
     if (!this.containers.has(SK)) {
       this.containers.set(SK, new DFlexContainer());
     }
@@ -189,7 +67,11 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
     const lastElemID = branch[branch.length - 1];
     const hasSiblings = branch.length > 1;
 
-    if (shouldValidate && firstElemID) {
+    if (
+      __DEV__ &&
+      firstElemID &&
+      this.registry.get(firstElemID)!.isInitialized
+    ) {
       const isHeadNotConnected = !this.registry.get(firstElemID)!.isConnected();
       let isNotConnected = isHeadNotConnected;
 
@@ -201,10 +83,6 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
       }
 
       if (isNotConnected) {
-        if (__DEV__) {
-          throwElementIsNotConnected(firstElemID);
-        }
-
         const container = this.containers.get(SK)!;
 
         if (container.scroll) {
@@ -213,9 +91,7 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
           container.scroll = null;
         }
 
-        const newKey = this._cleanupDisconnectedElements(SK);
-
-        this.initSiblingContainer(newKey, false);
+        throwElementIsNotConnected(firstElemID);
 
         return;
       }
@@ -247,7 +123,7 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
     container.scroll = scroll;
 
     if (scroll.allowDynamicVisibility) {
-      scroll.scrollEventCallback = this.updateBranchVisibility;
+      scroll.scrollEventCallback = updateBranchVisibility.bind(null, this);
     }
   }
 
@@ -282,7 +158,7 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
       elm.grid.clone(container.grid);
     }
 
-    this.updateElementVisibility(id, container.scroll, false);
+    updateElementVisibility(elm, container.scroll, false);
   }
 
   register(element: RegisterInputOpts) {
@@ -332,7 +208,7 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
       } = this.registry.get(id)!;
 
       if (!this.containers.has(SK)) {
-        this.initSiblingContainer(SK, false);
+        this.initSiblingContainer(SK);
 
         if (!this.unifiedContainerDimensions.has(depth)) {
           this.unifiedContainerDimensions.set(depth, {
@@ -346,12 +222,6 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
     });
 
     super.register(coreInput);
-  }
-
-  getELmTranslateById(id: string) {
-    const { translate } = this.registry.get(id)!;
-
-    return { translateX: translate!.x || 0, translateY: translate!.y || 0 };
   }
 
   getElmSiblingsById(id: string) {

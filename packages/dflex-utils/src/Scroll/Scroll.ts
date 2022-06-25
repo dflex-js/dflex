@@ -37,7 +37,7 @@ class Scroll implements IScroll {
 
   siblingKey: string;
 
-  scrollEventCallback: IScroll["scrollEventCallback"];
+  scrollEventCallback: Function | null;
 
   scrollX!: number;
 
@@ -328,7 +328,7 @@ Please provide scroll container by ref/id when registering the element or turn o
       const isUpdated = this[setter]();
 
       if (isUpdated && cb) {
-        cb(this.siblingKey, true);
+        cb(this.siblingKey);
       }
       this.hasThrottledFrame = null;
     });
