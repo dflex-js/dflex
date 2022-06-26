@@ -1,18 +1,18 @@
-// import { store } from "./DnDStoreImp";
 import type { IDFlexDnDStore } from "./types";
 
 type ChangedIds = Set<{ oldId: string; newId: string }>;
+type TerminatedDOMiDs = Set<string>;
 
 let isProcessingMutations = false;
 
-const terminatedDOMiDs = new Set<string>();
-const changedIds: ChangedIds = new Set();
-
-export function getIsProcessingMutations(): boolean {
+function getIsProcessingMutations(): boolean {
   return isProcessingMutations;
 }
 
-function cleanupBranchElements(store: IDFlexDnDStore) {
+function cleanupBranchElements(
+  store: IDFlexDnDStore,
+  terminatedDOMiDs: TerminatedDOMiDs
+) {
   const keys = new Set<string>();
   const connectedNodesID: string[] = [];
 
@@ -39,7 +39,7 @@ function cleanupBranchElements(store: IDFlexDnDStore) {
   });
 }
 
-function mutateIDs(store: IDFlexDnDStore) {
+function mutateIDs(store: IDFlexDnDStore, changedIds: ChangedIds) {
   changedIds.forEach((idSet) => {
     if (store.registry.has(idSet.oldId)) {
       const elm = store.registry.get(idSet.oldId)!;
@@ -59,7 +59,12 @@ function mutateIDs(store: IDFlexDnDStore) {
   });
 }
 
-function checkMutations(store: IDFlexDnDStore, mutations: MutationRecord[]) {
+function checkMutations(
+  store: IDFlexDnDStore,
+  mutations: MutationRecord[],
+  changedIds: ChangedIds,
+  terminatedDOMiDs: TerminatedDOMiDs
+) {
   for (let i = 0; i < mutations.length; i += 1) {
     const mutation = mutations[i];
     const { type, target, addedNodes, removedNodes, attributeName, oldValue } =
@@ -97,27 +102,29 @@ function checkMutations(store: IDFlexDnDStore, mutations: MutationRecord[]) {
 function DOMmutationHandler(
   store: IDFlexDnDStore,
   mutations: MutationRecord[],
-  observer: MutationObserver
+  observer: MutationObserver,
+  changedIds: ChangedIds,
+  terminatedDOMiDs: TerminatedDOMiDs
 ) {
   try {
     isProcessingMutations = true;
 
-    checkMutations(store, mutations);
+    checkMutations(store, mutations, changedIds, terminatedDOMiDs);
 
     // fetch all pending mutations and clear the queue.
     const records = observer.takeRecords();
 
     if (records.length > 0) {
-      checkMutations(store, records);
+      checkMutations(store, records, changedIds, terminatedDOMiDs);
     }
 
     if (changedIds.size > 0) {
-      mutateIDs(store);
+      mutateIDs(store, changedIds);
       changedIds.clear();
     }
 
     if (terminatedDOMiDs.size > 0) {
-      cleanupBranchElements(store);
+      cleanupBranchElements(store, terminatedDOMiDs);
       terminatedDOMiDs.clear();
     }
   } finally {
@@ -132,15 +139,25 @@ const observerConfig = Object.freeze({
   attributeOldValue: true,
 });
 
-export function initMutationObserver(
-  store: IDFlexDnDStore,
-  DOMTarget: HTMLElement
-) {
+function initMutationObserver(store: IDFlexDnDStore, DOMTarget: HTMLElement) {
+  const terminatedDOMiDs: TerminatedDOMiDs = new Set();
+  const changedIds: ChangedIds = new Set();
+
   store.observer = new MutationObserver(
     (mutations: Array<MutationRecord>, observer: MutationObserver) => {
-      DOMmutationHandler(store, mutations, observer);
+      DOMmutationHandler(
+        store,
+        mutations,
+        observer,
+        changedIds,
+        terminatedDOMiDs
+      );
     }
   );
 
   store.observer.observe(DOMTarget, observerConfig);
 }
+
+export { getIsProcessingMutations, initMutationObserver };
+
+export type DFlexLMutationPlugin = ReturnType<typeof initMutationObserver>;

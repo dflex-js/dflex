@@ -8,7 +8,7 @@ import type { IDFlexNode } from "@dflex/core-instance";
 import type { IDFlexBaseDraggable } from "@dflex/draggable";
 
 import type { ContainersTransition, ScrollOpts } from "../types";
-import type { DFlexEventInitializer } from "../DnDStore";
+import type { DFlexEventPlugin } from "../DnDStore";
 
 export interface SiblingsThreshold {
   [sk: string]: ThresholdCoordinate;
@@ -31,7 +31,7 @@ export interface IDraggableAxes extends IDFlexBaseDraggable<IDFlexNode> {
   /** Restrict dragged movement inside viewport.  */
   readonly isViewportRestricted: boolean;
 
-  readonly events: DFlexEventInitializer;
+  readonly events: DFlexEventPlugin;
 
   dragAt(x: number, y: number): void;
 

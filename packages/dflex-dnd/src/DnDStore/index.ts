@@ -1,6 +1,7 @@
 export { default as store } from "./DFlexDnDStore";
 export { default as initDFlexEvent } from "./DFlexEvents";
 export { default as initDFlexListeners } from "./DFlexListeners";
+export { initMutationObserver } from "./DFlexMutations";
 
 export type { ElmTree } from "./types";
 
@@ -11,10 +12,7 @@ export type {
   DFlexEvents,
   DFlexEventsTypes,
   DFlexEventsMap,
-  DFlexEventPlugin as DFlexEventInitializer,
+  DFlexEventPlugin,
 } from "./DFlexEvents";
 
-export type {
-  LayoutState as DFlexLayoutState,
-  DFlexLayoutStateEvent,
-} from "./DFlexListeners";
+export type { DFlexLayoutStateEvent } from "./DFlexListeners";

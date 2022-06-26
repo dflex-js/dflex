@@ -18,7 +18,7 @@ import type {
 
 import { DFlexContainer, IDFlexNode } from "@dflex/core-instance";
 
-import { initDFlexEvent, store } from "../DnDStore";
+import { initDFlexEvent, initMutationObserver, store } from "../DnDStore";
 
 import type { IDraggableAxes } from "./types";
 
@@ -28,7 +28,6 @@ import type {
   Restrictions,
   RestrictionsStatus,
 } from "../types";
-import { initMutationObserver } from "../DnDStore/DFlexMutations";
 
 class DraggableAxes
   extends DFlexBaseDraggable<IDFlexNode>
