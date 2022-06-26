@@ -67,33 +67,33 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
     const lastElemID = branch[branch.length - 1];
     const hasSiblings = branch.length > 1;
 
-    if (
-      __DEV__ &&
-      firstElemID &&
-      this.registry.get(firstElemID)!.isInitialized
-    ) {
-      const isHeadNotConnected = !this.registry.get(firstElemID)!.isConnected();
-      let isNotConnected = isHeadNotConnected;
-
-      if (hasSiblings && lastElemID.length > 0) {
-        const isTailNotConnected = !this.registry
-          .get(lastElemID!)!
+    if (__DEV__) {
+      if (firstElemID && this.registry.get(firstElemID)!.isInitialized) {
+        const isHeadNotConnected = !this.registry
+          .get(firstElemID)!
           .isConnected();
-        isNotConnected = isTailNotConnected || isHeadNotConnected;
-      }
+        let isNotConnected = isHeadNotConnected;
 
-      if (isNotConnected) {
-        const container = this.containers.get(SK)!;
-
-        if (container.scroll) {
-          container.scroll.destroy();
-          // @ts-expect-error
-          container.scroll = null;
+        if (hasSiblings && lastElemID.length > 0) {
+          const isTailNotConnected = !this.registry
+            .get(lastElemID!)!
+            .isConnected();
+          isNotConnected = isTailNotConnected || isHeadNotConnected;
         }
 
-        throwElementIsNotConnected(firstElemID);
+        if (isNotConnected) {
+          const container = this.containers.get(SK)!;
 
-        return;
+          if (container.scroll) {
+            container.scroll.destroy();
+            // @ts-expect-error
+            container.scroll = null;
+          }
+
+          throwElementIsNotConnected(firstElemID);
+
+          return;
+        }
       }
     }
 

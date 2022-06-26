@@ -1,6 +1,6 @@
 import { Threshold } from "../Threshold";
 import type { ThresholdPercentages } from "../Threshold";
-import type { ScrollInput, IScroll } from "./types";
+import type { ScrollInput, IScroll, ScrollEventCallback } from "./types";
 
 const OVERFLOW_REGEX = /(auto|scroll|overlay)/;
 const MAX_LOOP_ELEMENTS_TO_WARN = 16;
@@ -37,7 +37,7 @@ class Scroll implements IScroll {
 
   siblingKey: string;
 
-  scrollEventCallback: Function | null;
+  scrollEventCallback: ScrollEventCallback | null;
 
   scrollX!: number;
 
