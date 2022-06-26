@@ -6,7 +6,7 @@ import type {
 } from "@dflex/core-instance";
 
 import type { RegisterInputOpts, IDFlexBaseStore } from "@dflex/store";
-import type { DFlexListenersInitializer } from "./DFlexListeners";
+import type { DFlexListenerPlugin } from "./DFlexListeners";
 
 export type ELmKey = string;
 
@@ -31,7 +31,7 @@ export interface IDFlexDnDStore extends IDFlexBaseStore {
   readonly unifiedContainerDimensions: Map<number, Dimensions>;
   readonly tracker: ITracker;
   observer: MutationObserver | null;
-  listeners: DFlexListenersInitializer;
+  listeners: DFlexListenerPlugin;
   initSiblingContainer(SK: string, shouldValidate: boolean): void;
   register(element: RegisterInputOpts): void;
   getElmTreeById(id: string): ElmTree;

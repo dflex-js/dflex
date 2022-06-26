@@ -252,7 +252,7 @@ class DraggableAxes
   dragAt(x: number, y: number) {
     if (!this.isLayoutStateUpdated) {
       this.isLayoutStateUpdated = true;
-      store.listeners.notify({ layoutState: "dragging" });
+      store.listeners.notify({ layoutState: "dragging", type: "layoutState" });
     }
 
     let filteredY = y;

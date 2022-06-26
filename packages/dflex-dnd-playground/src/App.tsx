@@ -21,7 +21,7 @@ function App() {
   React.useEffect(() => {
     const unsubscribe = store.listeners.subscribe((e) => {
       console.info("new layout state", e);
-    });
+    }, "layoutState");
 
     return () => {
       store.destroy();

@@ -45,7 +45,7 @@ class DnD extends Droppable {
 
     super(draggable);
 
-    store.listeners.notify({ layoutState: "ready" });
+    store.listeners.notify({ layoutState: "ready", type: "layoutState" });
   }
 }
 

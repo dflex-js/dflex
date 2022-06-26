@@ -49,7 +49,7 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
     this._isDOM = false;
     this.observer = null;
     this.listeners = initDFlexListeners();
-    this.listeners.notify({ layoutState: "pending" });
+    this.listeners.notify({ layoutState: "pending", type: "layoutState" });
   }
 
   private _initWhenRegister() {

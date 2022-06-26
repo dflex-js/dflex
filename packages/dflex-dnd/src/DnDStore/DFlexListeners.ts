@@ -1,31 +1,61 @@
+import type { SerializedDFlexCoreNode } from "@dflex/core-instance";
+
 /* eslint-disable no-unused-vars */
-export type DFlexLayoutState =
+export type LayoutState =
   | "pending"
   | "ready"
   | "dragging"
   | "dragEnd"
   | "dragCancel";
 
+type ElmMutationType = "destroyed" | "updated";
+
+type ElmTransformationType = "translated" | "reordered" | "visible" | "hidden";
+
+const layoutState = "layoutState";
+const mutation = "mutation";
+const transformation = "transformation";
+
 export interface DFlexLayoutStateEvent {
-  layoutState: DFlexLayoutState;
+  type: typeof layoutState;
+  layoutState: LayoutState;
 }
 
-const LAYOUT_STATE = 0;
+export interface DFlexElmMutationEvent {
+  type: typeof mutation;
+  mutation: ElmMutationType;
+  element: SerializedDFlexCoreNode;
+}
 
-type ListenersTypes = typeof LAYOUT_STATE;
-type ListenerFunction = (event: DFlexLayoutStateEvent) => void;
-type ListenersMap = Map<ListenersTypes, Set<ListenerFunction>>;
+export interface DFlexElmTransformationEvent {
+  type: typeof transformation;
+  transformation: ElmTransformationType;
+  element: SerializedDFlexCoreNode;
+}
+
+type ListenerEvents =
+  | DFlexLayoutStateEvent
+  | DFlexElmMutationEvent
+  | DFlexElmTransformationEvent;
+
+type ListenerTypes = ListenerEvents[keyof ListenerEvents];
+
+type ListenerFunction = (event: ListenerEvents) => void;
+
+type ListenersMap = Map<ListenerTypes, Set<ListenerFunction>>;
+
 type CleanupFunction = () => void;
 
 function subscribeLayoutState(
   listenersMap: ListenersMap,
-  listener: ListenerFunction
+  listener: ListenerFunction,
+  type: ListenerTypes
 ): CleanupFunction {
-  if (!listenersMap.has(LAYOUT_STATE)) {
-    listenersMap.set(LAYOUT_STATE, new Set());
+  if (!listenersMap.has(type)) {
+    listenersMap.set(type, new Set());
   }
 
-  const listenersStateSet = listenersMap.get(LAYOUT_STATE)!;
+  const listenersStateSet = listenersMap.get(type)!;
 
   listenersStateSet.add(listener);
 
@@ -33,19 +63,19 @@ function subscribeLayoutState(
     listenersStateSet.delete(listener);
 
     if (listenersStateSet.size === 0) {
-      listenersMap.delete(LAYOUT_STATE);
+      listenersMap.delete(type);
     }
   };
 }
 
 function notifyLayoutState(
   listenersMap: ListenersMap,
-  event: DFlexLayoutStateEvent
+  event: ListenerEvents
 ): void {
-  if (!listenersMap.has(LAYOUT_STATE)) {
+  if (!listenersMap.has(event.type)) {
     return;
   }
-  const listenersStateSet = listenersMap.get(LAYOUT_STATE)!;
+  const listenersStateSet = listenersMap.get(event.type)!;
   listenersStateSet.forEach((listener) => listener(event));
 }
 
@@ -55,9 +85,12 @@ function clear(listeners: ListenersMap): void {
 }
 
 function initDFlexListeners(): {
-  subscribe: (listener: ListenerFunction) => CleanupFunction;
-  notify: (event: DFlexLayoutStateEvent) => void;
-  clear: () => void;
+  subscribe: (
+    listener: ListenerFunction,
+    type: ListenerTypes
+  ) => CleanupFunction;
+  notify: (event: ListenerEvents) => void;
+  clear: (type: ListenerTypes) => void;
 } {
   const listeners: ListenersMap = new Map();
 
@@ -68,6 +101,6 @@ function initDFlexListeners(): {
   };
 }
 
-export type DFlexListenersInitializer = ReturnType<typeof initDFlexListeners>;
+export type DFlexListenerPlugin = ReturnType<typeof initDFlexListeners>;
 
 export default initDFlexListeners;

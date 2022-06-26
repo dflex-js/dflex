@@ -184,6 +184,7 @@ class EndDroppable extends Droppable {
 
     store.listeners.notify({
       layoutState: isFallback ? "dragCancel" : "dragEnd",
+      type: "layoutState",
     });
 
     this.draggable.endDragging(isFallback);
