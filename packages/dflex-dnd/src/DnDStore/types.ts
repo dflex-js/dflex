@@ -1,5 +1,9 @@
 import type { Dimensions, ITracker } from "@dflex/utils";
-import type { IDFlexContainer, IDFlexNode } from "@dflex/core-instance";
+import type {
+  IDFlexContainer,
+  IDFlexNode,
+  SerializedDFlexCoreNode,
+} from "@dflex/core-instance";
 
 import type { RegisterInputOpts, IDFlexBaseStore } from "@dflex/store";
 import type { DFlexListenersInitializer } from "./DFlexListeners";
@@ -32,5 +36,6 @@ export interface IDFlexDnDStore extends IDFlexBaseStore {
   register(element: RegisterInputOpts): void;
   getElmTreeById(id: string): ElmTree;
   getElmSiblingsById(id: string): string[] | null;
+  getSerializedElm(id: string): SerializedDFlexCoreNode | null;
   destroy(): void;
 }

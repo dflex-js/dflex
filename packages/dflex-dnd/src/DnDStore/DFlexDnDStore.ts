@@ -277,6 +277,18 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
     };
   }
 
+  getSerializedElm(id: string) {
+    if (__DEV__) {
+      if (!this.registry.has(id)) {
+        throw new Error(
+          `getSerializedElm: Element with id ${id} does not exist in the registry.`
+        );
+      }
+    }
+
+    return this.registry.has(id) ? this.registry.get(id)!.exportJSON() : null;
+  }
+
   private _clearBranchesScroll() {
     this.DOMGen.forEachBranch((SK) => {
       const container = this.containers.get(SK)!;

@@ -3,6 +3,7 @@ export type {
   DFlexBaseNodeInput,
   ITransitionHistory as TransitionHistory,
   IDFlexNode,
+  SerializedDFlexCoreNode,
 } from "./Node";
 
 export { DFlexNode } from "./Node";

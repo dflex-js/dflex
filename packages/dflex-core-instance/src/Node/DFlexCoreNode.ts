@@ -15,6 +15,7 @@ import type {
   ITransitionHistory,
   IDFlexCoreNode,
   DFlexBaseNodeInput,
+  SerializedDFlexCoreNode,
 } from "./types";
 
 class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
@@ -61,7 +62,7 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
     this.animatedFrame = null;
   }
 
-  private _initIndicators(scrollX: number, scrollY: number) {
+  private _initIndicators(scrollX: number, scrollY: number): void {
     const { height, width, left, top } = this.ref!.getBoundingClientRect();
 
     /**
@@ -88,7 +89,7 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
     this.hasToTransform = false;
   }
 
-  private _updateCurrentIndicators(space: IPointAxes) {
+  private _updateCurrentIndicators(space: IPointAxes): void {
     this.translate.increase(space);
 
     const { left, top } = this.offset!;
@@ -105,7 +106,7 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
     if (!this.isVisible) this.hasToTransform = true;
   }
 
-  resume(scrollX: number, scrollY: number) {
+  resume(scrollX: number, scrollY: number): void {
     if (!this.isInitialized) {
       this.attach();
 
@@ -118,7 +119,7 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
     this._initIndicators(scrollX, scrollY);
   }
 
-  changeVisibility(isVisible: boolean) {
+  changeVisibility(isVisible: boolean): void {
     if (isVisible === this.isVisible) return;
 
     this.isVisible = isVisible;
@@ -129,7 +130,7 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
     }
   }
 
-  transformElm() {
+  transformElm(): void {
     if (this.animatedFrame !== null) {
       window.cancelAnimationFrame(this.animatedFrame);
     }
@@ -321,6 +322,30 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
     this._updateOrderIndexing(increment);
 
     this.rollBack(operationID, isForceTransform);
+  }
+
+  getOffset() {
+    return {
+      width: this.offset.width,
+      height: this.offset.height,
+      top: this.currentPosition.y,
+      left: this.currentPosition.x,
+    };
+  }
+
+  exportJSON(): SerializedDFlexCoreNode {
+    return {
+      type: "core:node",
+      version: 3,
+      id: this.id,
+      order: this.order,
+      grid: this.grid,
+      translate: this.translate,
+      isVisible: this.isVisible,
+      hasToTransform: this.hasToTransform,
+      initialOffset: this.offset,
+      currentOffset: this.getOffset(),
+    };
   }
 }
 

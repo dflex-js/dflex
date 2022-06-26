@@ -9,6 +9,19 @@ import type {
 
 import type { AllowedAttributes } from "./constants";
 
+export type SerializedDFlexCoreNode = {
+  type: string;
+  version: number;
+  id: string;
+  translate: IPointNum;
+  order: Order;
+  grid: IPointNum;
+  isVisible: boolean;
+  hasToTransform: boolean;
+  initialOffset: RectDimensions;
+  currentOffset: RectDimensions;
+};
+
 export interface IDFlexBaseNode {
   readonly isInitialized: boolean;
   isPaused: boolean;
@@ -99,6 +112,8 @@ export interface IDFlexCoreNode extends IDFlexBaseNode {
   /** Direct element assignment. Handle the case for settling the draggable element */
   assignNewPosition(branchIDsOrder: string[], newIndex: number): void;
   rollBack(operationID: string, isForceTransform: boolean): void;
+  getOffset(): RectDimensions;
+  exportJSON(): SerializedDFlexCoreNode;
 }
 
 export interface IDFlexNode extends IDFlexCoreNode {
@@ -111,6 +126,5 @@ export interface IDFlexNode extends IDFlexCoreNode {
   /** Getting the displacement between two points. Rect is excluded. */
   getDisplacement(elm: this, axis: Axis): number;
   getDistance(elm: this, axis: Axis): number;
-  getOffset(): RectDimensions;
   hasSamePosition(elm: this, axis: Axis): boolean;
 }
