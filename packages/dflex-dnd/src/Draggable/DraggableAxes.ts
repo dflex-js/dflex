@@ -134,7 +134,7 @@ class DraggableAxes
       if (!store.interactiveDOM.has(key)) {
         setTimeout(() => {
           const childDOM = store.registry.get(store.getElmBranchByKey(key)[0])!
-            .ref!;
+            .DOM!;
 
           getParentElm(childDOM, (parentDOM) => {
             store.interactiveDOM.set(key, parentDOM);
@@ -156,7 +156,7 @@ class DraggableAxes
       Math.round(y - currentPosition.y)
     );
 
-    const style = window.getComputedStyle(this.draggedElm.ref!);
+    const style = window.getComputedStyle(this.draggedElm.DOM!);
 
     // get element margin
     const rm = Math.round(parseFloat(style.marginRight));
@@ -172,7 +172,7 @@ class DraggableAxes
 
     this.restrictionsStatus = opts.restrictionsStatus;
 
-    this.events = initDFlexEvent(this.draggedElm.ref!);
+    this.events = initDFlexEvent(this.draggedElm.DOM!);
 
     this.axesFilterNeeded =
       siblings !== null &&

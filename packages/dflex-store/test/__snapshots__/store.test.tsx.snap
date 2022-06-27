@@ -2,6 +2,7 @@
 
 exports[`Testing Store Package Returns element instance by element id 1`] = `
 DFlexNode {
+  "DOM": null,
   "animatedFrame": null,
   "depth": 0,
   "id": "id-0",
@@ -18,13 +19,13 @@ DFlexNode {
     "self": 0,
   },
   "readonly": false,
-  "ref": null,
 }
 `;
 
 exports[`Testing Store Package Snaps shot registry 1`] = `
 Map {
   "id-0" => DFlexNode {
+    "DOM": null,
     "animatedFrame": null,
     "depth": 0,
     "id": "id-0",
@@ -41,9 +42,9 @@ Map {
       "self": 0,
     },
     "readonly": false,
-    "ref": null,
   },
   "id-1" => DFlexNode {
+    "DOM": null,
     "animatedFrame": null,
     "depth": 0,
     "id": "id-1",
@@ -60,9 +61,9 @@ Map {
       "self": 1,
     },
     "readonly": false,
-    "ref": null,
   },
   "id-2" => DFlexNode {
+    "DOM": null,
     "animatedFrame": null,
     "depth": 0,
     "id": "id-2",
@@ -79,9 +80,9 @@ Map {
       "self": 2,
     },
     "readonly": false,
-    "ref": null,
   },
   "p-id-0" => DFlexNode {
+    "DOM": null,
     "animatedFrame": null,
     "depth": 1,
     "id": "p-id-0",
@@ -98,7 +99,6 @@ Map {
       "self": 0,
     },
     "readonly": false,
-    "ref": null,
   },
 }
 `;
@@ -106,6 +106,7 @@ Map {
 exports[`Testing Store Package Snaps shot registry after delete 1`] = `
 Map {
   "id-0" => DFlexNode {
+    "DOM": null,
     "animatedFrame": null,
     "depth": 0,
     "id": "id-0",
@@ -122,9 +123,9 @@ Map {
       "self": 0,
     },
     "readonly": false,
-    "ref": null,
   },
   "id-1" => DFlexNode {
+    "DOM": null,
     "animatedFrame": null,
     "depth": 0,
     "id": "id-1",
@@ -141,9 +142,9 @@ Map {
       "self": 1,
     },
     "readonly": false,
-    "ref": null,
   },
   "id-2" => DFlexNode {
+    "DOM": null,
     "animatedFrame": null,
     "depth": 0,
     "id": "id-2",
@@ -160,9 +161,9 @@ Map {
       "self": 2,
     },
     "readonly": false,
-    "ref": null,
   },
   "p-id-0" => DFlexNode {
+    "DOM": null,
     "animatedFrame": null,
     "depth": 1,
     "id": "p-id-0",
@@ -179,7 +180,6 @@ Map {
       "self": 0,
     },
     "readonly": false,
-    "ref": null,
   },
 }
 `;

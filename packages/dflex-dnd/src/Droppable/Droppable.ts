@@ -17,7 +17,7 @@ export function isIDEligible(elmID: string, draggedID: string) {
     elmID.length > 0 &&
     elmID !== draggedID &&
     store.registry.has(elmID) &&
-    store.registry.get(elmID)!.ref !== null &&
+    store.registry.get(elmID)!.DOM !== null &&
     !store.registry.get(elmID)!.readonly
   );
 }
@@ -781,7 +781,7 @@ class Droppable extends DFlexUpdater {
       parentDOM.replaceWith(
         ...store
           .getElmBranchByKey(key)
-          .map((elmId) => store.registry.get(elmId)!.ref!)
+          .map((elmId) => store.registry.get(elmId)!.DOM!)
       );
     });
   }

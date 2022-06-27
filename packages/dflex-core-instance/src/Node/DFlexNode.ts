@@ -26,7 +26,7 @@ class DFlexNode extends DFlexCoreNode implements IDFlexNode {
   }
 
   isConnected() {
-    return this.ref!.isConnected;
+    return this.DOM!.isConnected;
   }
 
   isPositionedUnder(elmY: number) {

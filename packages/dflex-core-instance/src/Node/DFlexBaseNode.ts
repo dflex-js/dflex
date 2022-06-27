@@ -32,7 +32,7 @@ function getElmDOMOrThrow(id: string): HTMLElement | null {
 type AttributeSet = Set<Exclude<AllowedAttributes, "INDEX">>;
 
 class DFlexBaseNode implements IDFlexBaseNode {
-  ref!: HTMLElement | null;
+  DOM!: HTMLElement | null;
 
   id: string;
 
@@ -47,7 +47,7 @@ class DFlexBaseNode implements IDFlexBaseNode {
   constructor(id: string) {
     this.id = id;
     this.isInitialized = false;
-    this.ref = null;
+    this.DOM = null;
     this.isPaused = true;
   }
 
@@ -55,8 +55,8 @@ class DFlexBaseNode implements IDFlexBaseNode {
    * Attach element DOM node to the instance.
    */
   attach() {
-    this.ref = getElmDOMOrThrow(this.id);
-    this.isInitialized = !!this.ref;
+    this.DOM = getElmDOMOrThrow(this.id);
+    this.isInitialized = !!this.DOM;
   }
 
   /**
@@ -64,11 +64,11 @@ class DFlexBaseNode implements IDFlexBaseNode {
    */
   detach() {
     this.isInitialized = false;
-    this.ref = null;
+    this.DOM = null;
   }
 
   transform(x: number, y: number) {
-    this.ref!.style.transform = `translate3d(${x}px,${y}px, 0)`;
+    this.DOM!.style.transform = `translate3d(${x}px,${y}px, 0)`;
   }
 
   /**
@@ -85,19 +85,19 @@ class DFlexBaseNode implements IDFlexBaseNode {
 
   setAttribute(key: AllowedAttributes, value: string | number) {
     if (key === "INDEX") {
-      this.ref!.setAttribute(DFLEX_ATTRIBUTES[key], `${value}`);
+      this.DOM!.setAttribute(DFLEX_ATTRIBUTES[key], `${value}`);
 
       return;
     }
 
     if (this._hasAttribute!.has(key)) return;
-    this.ref!.setAttribute(DFLEX_ATTRIBUTES[key], `${value}`);
+    this.DOM!.setAttribute(DFLEX_ATTRIBUTES[key], `${value}`);
     this._hasAttribute!.add(key);
   }
 
   removeAttribute(key: AllowedAttributes) {
     if (key === "INDEX" || !this._hasAttribute!.has(key)) return;
-    this.ref!.removeAttribute(DFLEX_ATTRIBUTES[key]);
+    this.DOM!.removeAttribute(DFLEX_ATTRIBUTES[key]);
     this._hasAttribute!.delete(key);
   }
 

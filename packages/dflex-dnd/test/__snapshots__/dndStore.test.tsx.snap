@@ -3,6 +3,9 @@
 exports[`DnD Store Shallow test the store Element is initiated 1`] = `
 Map {
   "id-1" => DFlexNode {
+    "DOM": <div
+      id="id-1"
+    />,
     "_hasAttribute": Set {},
     "animatedFrame": 1,
     "currentPosition": PointNum {
@@ -35,15 +38,15 @@ Map {
       "self": 0,
     },
     "readonly": false,
-    "ref": <div
-      id="id-1"
-    />,
     "translate": PointNum {
       "x": 0,
       "y": 0,
     },
   },
   "id-2" => DFlexNode {
+    "DOM": <div
+      id="id-2"
+    />,
     "_hasAttribute": Set {},
     "animatedFrame": null,
     "currentPosition": PointNum {
@@ -76,15 +79,15 @@ Map {
       "self": 1,
     },
     "readonly": false,
-    "ref": <div
-      id="id-2"
-    />,
     "translate": PointNum {
       "x": 0,
       "y": 0,
     },
   },
   "id-3" => DFlexNode {
+    "DOM": <div
+      id="id-3"
+    />,
     "_hasAttribute": Set {},
     "animatedFrame": null,
     "currentPosition": PointNum {
@@ -117,15 +120,15 @@ Map {
       "self": 2,
     },
     "readonly": false,
-    "ref": <div
-      id="id-3"
-    />,
     "translate": PointNum {
       "x": 0,
       "y": 0,
     },
   },
   "id-4" => DFlexNode {
+    "DOM": <div
+      id="id-4"
+    />,
     "_hasAttribute": Set {},
     "animatedFrame": null,
     "currentPosition": PointNum {
@@ -158,9 +161,6 @@ Map {
       "self": 3,
     },
     "readonly": false,
-    "ref": <div
-      id="id-4"
-    />,
     "translate": PointNum {
       "x": 0,
       "y": 0,

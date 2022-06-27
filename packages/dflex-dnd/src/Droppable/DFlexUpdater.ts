@@ -37,7 +37,7 @@ function composeElmMeta(element: IDFlexNode) {
   return {
     id: element.id,
     index: element.order.self,
-    target: element.ref!,
+    target: element.DOM!,
   };
 }
 

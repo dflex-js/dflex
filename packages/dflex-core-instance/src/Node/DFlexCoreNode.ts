@@ -63,7 +63,7 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
   }
 
   private _initIndicators(scrollX: number, scrollY: number): void {
-    const { height, width, left, top } = this.ref!.getBoundingClientRect();
+    const { height, width, left, top } = this.DOM!.getBoundingClientRect();
 
     /**
      * Element offset stored once without being triggered to re-calculate.

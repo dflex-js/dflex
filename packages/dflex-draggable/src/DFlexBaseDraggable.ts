@@ -69,7 +69,7 @@ class DFlexBaseDraggable<T extends IDFlexBaseNode>
       style.forEach(({ prop, dragValue }) => {
         // TODO: Fix TS error.
         // @ts-expect-error.
-        this.draggedElm.ref!.style[prop] = dragValue;
+        this.draggedElm.DOM!.style[prop] = dragValue;
       });
 
       return;
@@ -78,7 +78,7 @@ class DFlexBaseDraggable<T extends IDFlexBaseNode>
     style.forEach(({ prop, afterDragValue }) => {
       // TODO: Fix TS error.
       // @ts-expect-error.
-      this.draggedElm.ref!.style[prop] = afterDragValue;
+      this.draggedElm.DOM!.style[prop] = afterDragValue;
     });
   }
 

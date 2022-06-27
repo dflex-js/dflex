@@ -102,7 +102,7 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
     }
 
     const scroll = new Scroll({
-      element: this.registry.get(firstElemID)!.ref!,
+      element: this.registry.get(firstElemID)!.DOM!,
       requiredBranchKey: SK,
       scrollEventCallback: null,
     });

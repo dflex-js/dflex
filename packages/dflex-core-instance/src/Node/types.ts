@@ -25,7 +25,7 @@ export type SerializedDFlexCoreNode = {
 export interface IDFlexBaseNode {
   readonly isInitialized: boolean;
   isPaused: boolean;
-  readonly ref: HTMLElement | null;
+  readonly DOM: HTMLElement | null;
   readonly id: string;
   readonly translate: IPointNum;
   attach(): void;
