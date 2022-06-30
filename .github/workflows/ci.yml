@@ -322,14 +322,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build packages
-        run: "pnpm clean && pnpm -r emit && pnpm build --production --release --minify"
-
       - name: Build DnD React App
         run: pnpm -F dflex-dnd-playground build
 
       - name: Install Playwright
-        run: pnpm dlx playwright install --with-deps
+        run: npx playwright install --with-deps
 
       - name: Test Playwright
         run: pnpm run test-e2e-core-ci:${{ matrix.browser }}
@@ -376,14 +373,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build packages
-        run: "pnpm clean && pnpm -r emit && pnpm build --production --release --minify"
-
       - name: Build DnD React App
         run: pnpm -F dflex-dnd-playground build
 
       - name: Install Playwright
-        run: pnpm dlx playwright install --with-deps
+        run: npx playwright install --with-deps
 
       - name: Test Playwright
         run: pnpm run test-e2e-core-ci:${{ matrix.browser }}
@@ -429,14 +423,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build packages
-        run: "pnpm clean && pnpm -r emit && pnpm build --production --release --minify"
-
       - name: Build DnD React App
         run: pnpm -F dflex-dnd-playground build
 
       - name: Install Playwright
-        run: pnpm dlx playwright install --with-deps
+        run: npx playwright install --with-deps
 
       - name: Test Playwright
         run: pnpm run test-e2e-core-ci:${{ matrix.browser }}

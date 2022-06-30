@@ -86,24 +86,6 @@ describe("DnD Store", () => {
       store.register(elm1);
       expect(store.registry).toMatchSnapshot();
     });
-
-    it("Returns element branch and parent", () => {
-      const { branches, parent } = store.getElmTreeById(elm1.id);
-
-      expect(branches).toMatchInlineSnapshot(`
-        Object {
-          "parents": Array [],
-          "siblings": Array [
-            "id-1",
-            "id-2",
-            "id-3",
-            "id-4",
-          ],
-        }
-      `);
-
-      expect(parent).toMatchInlineSnapshot(`undefined`);
-    });
   });
 
   describe("getInsertionELmMeta", () => {
@@ -119,10 +101,8 @@ describe("DnD Store", () => {
     describe("Normal branch without injection", () => {
       it("Checks orphan branch", () => {
         ({
-          element: {
-            keys: { SK },
-          },
-        } = store.getElmTreeById(elm1.id));
+          keys: { SK },
+        } = store.registry.get(elm1.id)!);
 
         const { elm, ...rest } = getInsertionELmMeta(0, SK);
 
