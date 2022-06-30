@@ -1,15 +1,21 @@
 import Store from "@dflex/store";
 import type { RegisterInputOpts } from "@dflex/store";
 
-import { Tracker, Scroll, canUseDOM } from "@dflex/utils";
-import type { Dimensions, ITracker } from "@dflex/utils";
+import { Tracker, Scroll, canUseDOM, Dimensions } from "@dflex/utils";
+import type { ITracker } from "@dflex/utils";
 
-import { DFlexContainer } from "@dflex/core-instance";
-import type { IDFlexContainer } from "@dflex/core-instance";
+import { DFlexContainer, IDFlexContainer } from "@dflex/core-instance";
 
-import type { ElmTree, IDFlexDnDStore } from "./types";
+import initDFlexListeners, {
+  DFlexListenerPlugin,
+  ListenerEvents,
+} from "./DFlexListeners";
 
-import initDFlexListeners from "./DFlexListeners";
+import scheduler, {
+  Scheduler,
+  SchedulerOptions,
+  UpdateFn,
+} from "./DFlexScheduler";
 
 import {
   updateBranchVisibility,
@@ -18,23 +24,36 @@ import {
 
 import { MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY } from "./constants";
 
-function throwElementIsNotConnected(id: string) {
-  throw new Error(
-    `Elements in the branch are not valid. Trying to validate element with id:${id} but failed.\n` +
-      `Did you forget to call store.unregister(${id}) or add parenID when register the element?`
-  );
-}
+type Containers = Map<string, IDFlexContainer>;
 
-class DnDStoreImp extends Store implements IDFlexDnDStore {
-  containers: Map<string, IDFlexContainer>;
+type UnifiedContainerDimensions = Map<number, Dimensions>;
 
-  unifiedContainerDimensions: Map<number, Dimensions>;
+type Observer = MutationObserver | null;
+
+type UpdatesQueue = Array<
+  [UpdateFn | null, SchedulerOptions | null, ListenerEvents | undefined]
+>;
+
+type Deferred = Array<() => void>;
+
+class DnDStoreImp extends Store {
+  containers: Containers;
+
+  unifiedContainerDimensions: UnifiedContainerDimensions;
 
   tracker: ITracker;
 
-  observer: MutationObserver | null;
+  observer: Observer;
 
-  listeners: ReturnType<typeof initDFlexListeners>;
+  listeners: DFlexListenerPlugin;
+
+  updatesQueue: UpdatesQueue;
+
+  isUpdating: boolean;
+
+  deferred: Deferred;
+
+  update: Scheduler;
 
   private _isDOM: boolean;
 
@@ -48,64 +67,36 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
     this._isInitialized = false;
     this._isDOM = false;
     this.observer = null;
+    this.isUpdating = false;
+    this.deferred = [];
+    this.updatesQueue = [];
     this.listeners = initDFlexListeners();
-    this.listeners.notify({ layoutState: "pending", type: "layoutState" });
+    this.update = scheduler;
   }
 
   private _initWhenRegister() {
-    window.onbeforeunload = this.dispose();
+    scheduler(this, null, null, {
+      layoutState: "pending",
+      type: "layoutState",
+    });
   }
 
   initSiblingContainer(SK: string) {
-    if (!this.containers.has(SK)) {
-      this.containers.set(SK, new DFlexContainer());
-    }
-
-    const branch = this.DOMGen.getElmBranchByKey(SK);
-
-    const firstElemID = branch[0];
-    const lastElemID = branch[branch.length - 1];
-    const hasSiblings = branch.length > 1;
-
-    if (__DEV__) {
-      if (firstElemID && this.registry.get(firstElemID)!.isInitialized) {
-        const isHeadNotConnected = !this.registry
-          .get(firstElemID)!
-          .isConnected();
-        let isNotConnected = isHeadNotConnected;
-
-        if (hasSiblings && lastElemID.length > 0) {
-          const isTailNotConnected = !this.registry
-            .get(lastElemID!)!
-            .isConnected();
-          isNotConnected = isTailNotConnected || isHeadNotConnected;
-        }
-
-        if (isNotConnected) {
-          const container = this.containers.get(SK)!;
-
-          if (container.scroll) {
-            container.scroll.destroy();
-            // @ts-expect-error
-            container.scroll = null;
-          }
-
-          throwElementIsNotConnected(firstElemID);
-
-          return;
-        }
-      }
-    }
-
-    if (this.containers.get(SK)!.scroll) {
+    if (this.containers.has(SK)) {
       return;
     }
 
+    this.containers.set(SK, new DFlexContainer());
+
+    const branch = this.DOMGen.getElmBranchByKey(SK);
+
     const scroll = new Scroll({
-      element: this.registry.get(firstElemID)!.DOM!,
+      element: this.registry.get(branch[0])!.DOM!,
       requiredBranchKey: SK,
       scrollEventCallback: null,
     });
+
+    const hasSiblings = branch.length > 1;
 
     // Override allowDynamicVisibility taking into consideration the length of
     // the branch itself. Iterate for a limited number of elements won't be a problem.
@@ -127,7 +118,7 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
     }
   }
 
-  private _initElmInstance(id: string) {
+  private _initElmDOMInstance(id: string) {
     const elm = this.registry.get(id)!;
 
     const {
@@ -168,10 +159,6 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
       if (!this._isDOM) return;
     }
 
-    /**
-     * If element already exist in the store, then the reattach the reference.
-     */
-
     if (!this._isInitialized) {
       this._initWhenRegister();
       this._isInitialized = true;
@@ -193,35 +180,59 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
       return;
     }
 
-    const coreInput = {
-      id,
-      isInitialized: element.priority === "high",
-      parentID: element.parentID,
-      depth: element.depth || 0,
-      readonly: !!element.readonly,
-    };
+    scheduler(
+      this,
+      () => {
+        const coreInput = {
+          id,
+          isInitialized: element.priority === "high",
+          parentID: element.parentID,
+          depth: element.depth || 0,
+          readonly: !!element.readonly,
+        };
 
-    queueMicrotask(() => {
-      const {
-        depth,
-        keys: { SK },
-      } = this.registry.get(id)!;
+        super.register(coreInput);
+      },
+      {
+        onUpdate: () => {
+          const {
+            depth,
+            keys: { SK },
+          } = this.registry.get(id)!;
 
-      if (!this.containers.has(SK)) {
-        this.initSiblingContainer(SK);
+          if (!this.containers.has(SK)) {
+            this.initSiblingContainer(SK);
 
-        if (!this.unifiedContainerDimensions.has(depth)) {
-          this.unifiedContainerDimensions.set(depth, {
-            width: 0,
-            height: 0,
-          });
+            if (!this.unifiedContainerDimensions.has(depth)) {
+              this.unifiedContainerDimensions.set(depth, {
+                width: 0,
+                height: 0,
+              });
+            }
+          }
+
+          this._initElmDOMInstance(id);
+        },
+      }
+    );
+  }
+
+  commit() {
+    this.getBranchesByDepth(0).forEach((key) => {
+      if (!this.interactiveDOM.has(key)) {
+        if (__DEV__) {
+          throw new Error(`Container ${key} ref not found.`);
         }
       }
 
-      this._initElmInstance(id!);
-    });
+      const parentDOM = this.interactiveDOM.get(key)!;
 
-    super.register(coreInput);
+      parentDOM.replaceWith(
+        ...this.getElmBranchByKey(key).map(
+          (elmId) => this.registry.get(elmId)!.DOM!
+        )
+      );
+    });
   }
 
   getElmSiblingsById(id: string) {
@@ -238,45 +249,6 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
     return siblings;
   }
 
-  /**
-   * Gets element connections instance for a given id.
-   *
-   * @param id -
-   */
-  getElmTreeById(id: string): ElmTree {
-    const element = this.registry.get(id)!;
-
-    const {
-      keys: { SK, PK },
-      order,
-    } = element;
-
-    /**
-     * getting connected branches
-     */
-    const siblings = this.getElmBranchByKey(SK);
-    const parents = this.getElmBranchByKey(PK);
-
-    /**
-     * getting parent instance
-     */
-    let parent = null;
-    if (parents !== undefined) {
-      const parentsID = parents[order.parent];
-      parent = this.registry.get(parentsID)!;
-    }
-
-    return {
-      element,
-      parent,
-
-      branches: {
-        siblings,
-        parents,
-      },
-    };
-  }
-
   getSerializedElm(id: string) {
     if (__DEV__) {
       if (!this.registry.has(id)) {
@@ -286,7 +258,9 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
       }
     }
 
-    return this.registry.has(id) ? this.registry.get(id)!.exportJSON() : null;
+    return this.registry.has(id)
+      ? this.registry.get(id)!.getSerializedElm()
+      : null;
   }
 
   private _clearBranchesScroll() {
@@ -327,17 +301,7 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
     }
   }
 
-  dispose() {
-    if (!this._isInitialized) return null;
-
-    this._isInitialized = false;
-
-    return null;
-  }
-
   destroy() {
-    this.dispose();
-
     this._clearBranchesScroll();
 
     // Destroys all registered instances.
@@ -348,22 +312,5 @@ class DnDStoreImp extends Store implements IDFlexDnDStore {
     }
   }
 }
-declare global {
-  // eslint-disable-next-line
-  var $DFlex: DnDStoreImp;
-}
-export default (function createStoreInstance() {
-  const store = new DnDStoreImp();
 
-  if (__DEV__) {
-    if (canUseDOM()) {
-      if (!globalThis.$DFlex) {
-        globalThis.$DFlex = store;
-      } else {
-        throw new Error("DFlex store instances is already defined.");
-      }
-    }
-  }
-
-  return store;
-})();
+export default DnDStoreImp;

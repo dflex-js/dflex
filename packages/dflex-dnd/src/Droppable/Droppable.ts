@@ -767,24 +767,6 @@ class Droppable extends DFlexUpdater {
       }
     }
   }
-
-  commit() {
-    store.getBranchesByDepth(this.draggable.draggedElm.depth).forEach((key) => {
-      if (!store.interactiveDOM.has(key)) {
-        if (__DEV__) {
-          throw new Error(`Container ${key} ref not found.`);
-        }
-      }
-
-      const parentDOM = store.interactiveDOM.get(key)!;
-
-      parentDOM.replaceWith(
-        ...store
-          .getElmBranchByKey(key)
-          .map((elmId) => store.registry.get(elmId)!.DOM!)
-      );
-    });
-  }
 }
 
 export default Droppable;

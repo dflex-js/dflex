@@ -27,6 +27,7 @@ class DnD extends Droppable {
 
     const options = extractOpts(opts);
 
+    // Could happen if it's render in the server.
     const { depth } = store.registry.get(id)!;
 
     /**
@@ -34,7 +35,9 @@ class DnD extends Droppable {
      * all the branch is updated.
      */
     store.getBranchesByDepth(depth).forEach((SK) => {
-      store.initSiblingContainer(SK);
+      if (!store.containers.has(SK)) {
+        store.initSiblingContainer(SK);
+      }
     });
 
     const draggable = new DraggableInteractive(

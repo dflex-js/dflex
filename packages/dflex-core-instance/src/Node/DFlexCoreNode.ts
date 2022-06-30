@@ -153,7 +153,7 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
     return { oldIndex, newIndex };
   }
 
-  assignNewPosition(branchIDsOrder: string[], newIndex: number) {
+  assignNewPosition(branchIDsOrder: string[], newIndex: number): void {
     if (newIndex < 0 || newIndex > branchIDsOrder.length - 1) {
       if (__DEV__) {
         // eslint-disable-next-line no-console
@@ -188,7 +188,7 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
     branchIDsOrder: string[],
     newIndex: number,
     oldIndex: number
-  ) {
+  ): void {
     branchIDsOrder[oldIndex] = "";
 
     branchIDsOrder[newIndex] = this.id;
@@ -202,7 +202,7 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
     axis: Axes,
     operationID?: string,
     isForceTransform = false
-  ) {
+  ): void {
     if (operationID) {
       const elmAxesHistory: ITransitionHistory = {
         ID: operationID,
@@ -243,7 +243,7 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
     elmSpace: IPointNum,
     operationID: string,
     axis: Axes
-  ) {
+  ): void {
     const numberOfPassedElm = 1;
 
     /**
@@ -281,7 +281,7 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
    * @param operationID
    * @param isForceTransform
    */
-  rollBack(operationID: string, isForceTransform: boolean) {
+  rollBack(operationID: string, isForceTransform: boolean): void {
     if (
       !Array.isArray(this._translateHistory) ||
       this._translateHistory.length === 0 ||
@@ -324,7 +324,7 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
     this.rollBack(operationID, isForceTransform);
   }
 
-  getOffset() {
+  getOffset(): RectDimensions {
     return {
       width: this.offset.width,
       height: this.offset.height,
@@ -333,7 +333,7 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
     };
   }
 
-  exportJSON(): SerializedDFlexCoreNode {
+  getSerializedElm(): SerializedDFlexCoreNode {
     return {
       type: "core:node",
       version: 3,

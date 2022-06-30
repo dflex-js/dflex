@@ -1,12 +1,8 @@
 import type { SerializedDFlexCoreNode } from "@dflex/core-instance";
 
 /* eslint-disable no-unused-vars */
-export type LayoutState =
-  | "pending"
-  | "ready"
-  | "dragging"
-  | "dragEnd"
-  | "dragCancel";
+
+type LayoutState = "pending" | "ready" | "dragging" | "dragEnd" | "dragCancel";
 
 type ElmMutationType = "destroyed" | "updated";
 
@@ -15,28 +11,35 @@ type ElmTransformationType = "translated" | "reordered" | "visible" | "hidden";
 const layoutState = "layoutState";
 const mutation = "mutation";
 const transformation = "transformation";
+const error = "error";
 
-export interface DFlexLayoutStateEvent {
+interface DFlexLayoutStateEvent {
   type: typeof layoutState;
   layoutState: LayoutState;
 }
 
-export interface DFlexElmMutationEvent {
+interface DFlexElmMutationEvent {
   type: typeof mutation;
   mutation: ElmMutationType;
   element: SerializedDFlexCoreNode;
 }
 
-export interface DFlexElmTransformationEvent {
+interface DFlexElmTransformationEvent {
   type: typeof transformation;
   transformation: ElmTransformationType;
   element: SerializedDFlexCoreNode;
 }
 
+interface DFlexErrorEvent {
+  type: typeof error;
+  error: Error;
+}
+
 type ListenerEvents =
   | DFlexLayoutStateEvent
   | DFlexElmMutationEvent
-  | DFlexElmTransformationEvent;
+  | DFlexElmTransformationEvent
+  | DFlexErrorEvent;
 
 type ListenerTypes = ListenerEvents[keyof ListenerEvents];
 
@@ -101,6 +104,14 @@ function initDFlexListeners(): {
   };
 }
 
-export type DFlexListenerPlugin = ReturnType<typeof initDFlexListeners>;
+type DFlexListenerPlugin = ReturnType<typeof initDFlexListeners>;
+
+export type {
+  ListenerEvents,
+  DFlexLayoutStateEvent,
+  DFlexElmMutationEvent,
+  DFlexElmTransformationEvent,
+  DFlexListenerPlugin,
+};
 
 export default initDFlexListeners;

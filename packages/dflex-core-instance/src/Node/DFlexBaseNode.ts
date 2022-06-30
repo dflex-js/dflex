@@ -54,7 +54,7 @@ class DFlexBaseNode implements IDFlexBaseNode {
   /**
    * Attach element DOM node to the instance.
    */
-  attach() {
+  attach(): void {
     this.DOM = getElmDOMOrThrow(this.id);
     this.isInitialized = !!this.DOM;
   }
@@ -62,12 +62,12 @@ class DFlexBaseNode implements IDFlexBaseNode {
   /**
    * Detach element DOM node from the instance.
    */
-  detach() {
+  detach(): void {
     this.isInitialized = false;
     this.DOM = null;
   }
 
-  transform(x: number, y: number) {
+  transform(x: number, y: number): void {
     this.DOM!.style.transform = `translate3d(${x}px,${y}px, 0)`;
   }
 
@@ -75,7 +75,7 @@ class DFlexBaseNode implements IDFlexBaseNode {
    * Initialize the translate AxesCoordinates as part of abstract instance and
    * necessary for darg only movement.
    */
-  initTranslate() {
+  initTranslate(): void {
     if (!this.translate) {
       this.translate = new PointNum(0, 0);
     }
@@ -83,7 +83,7 @@ class DFlexBaseNode implements IDFlexBaseNode {
     this.isPaused = false;
   }
 
-  setAttribute(key: AllowedAttributes, value: string | number) {
+  setAttribute(key: AllowedAttributes, value: string | number): void {
     if (key === "INDEX") {
       this.DOM!.setAttribute(DFLEX_ATTRIBUTES[key], `${value}`);
 
@@ -95,13 +95,13 @@ class DFlexBaseNode implements IDFlexBaseNode {
     this._hasAttribute!.add(key);
   }
 
-  removeAttribute(key: AllowedAttributes) {
+  removeAttribute(key: AllowedAttributes): void {
     if (key === "INDEX" || !this._hasAttribute!.has(key)) return;
     this.DOM!.removeAttribute(DFLEX_ATTRIBUTES[key]);
     this._hasAttribute!.delete(key);
   }
 
-  clearAttributes() {
+  clearAttributes(): void {
     this._hasAttribute!.forEach((key) => {
       this.removeAttribute(key);
     });

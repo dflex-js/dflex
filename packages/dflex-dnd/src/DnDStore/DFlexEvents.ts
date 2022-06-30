@@ -41,31 +41,26 @@ type DFlexEventPayload =
   | SiblingsEventPayload;
 
 /** For dragged out of threshold or container event. */
-export type DFlexDraggedEvent = CustomEvent<DraggedEventPayload>;
+type DFlexDraggedEvent = CustomEvent<DraggedEventPayload>;
 
 /** For dragged over an element or leaving an element. */
-export type DFlexInteractivityEvent = CustomEvent<InteractivityEventPayload>;
+type DFlexInteractivityEvent = CustomEvent<InteractivityEventPayload>;
 
 /** When dragged movement triggers the siblings up/down. */
-export type DFlexSiblingsEvent = CustomEvent<SiblingsEventPayload>;
+type DFlexSiblingsEvent = CustomEvent<SiblingsEventPayload>;
 
 /** All available DFlex events combined. */
-export type DFlexEvents =
+type DFlexEvents =
   | DFlexDraggedEvent
   | DFlexInteractivityEvent
   | DFlexSiblingsEvent;
-
-export type DFlexEventsMap = {
-  // eslint-disable-next-line no-unused-vars
-  [K in DFlexEventsTypes]: CustomEvent<any>;
-};
 
 type DFlexEventsMeta = typeof DRAG_EVT &
   typeof INTERACTIVITY_EVT &
   typeof SIBLINGS_EVT;
 
 /** Types of DFlex events. */
-export type DFlexEventsTypes =
+type DFlexEventsTypes =
   | typeof DRAG_EVT[keyof typeof DRAG_EVT]
   | typeof INTERACTIVITY_EVT[keyof typeof INTERACTIVITY_EVT]
   | typeof SIBLINGS_EVT[keyof typeof SIBLINGS_EVT];
@@ -117,6 +112,15 @@ function initDFlexEvent(dispatcher: HTMLElement): {
   };
 }
 
-export type DFlexEventPlugin = ReturnType<typeof initDFlexEvent>;
+type DFlexEventPlugin = ReturnType<typeof initDFlexEvent>;
+
+export type {
+  DFlexDraggedEvent,
+  DFlexInteractivityEvent,
+  DFlexSiblingsEvent,
+  DFlexEvents,
+  DFlexEventsTypes,
+  DFlexEventPlugin,
+};
 
 export default initDFlexEvent;

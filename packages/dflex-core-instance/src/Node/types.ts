@@ -10,8 +10,8 @@ import type {
 import type { AllowedAttributes } from "./constants";
 
 export type SerializedDFlexCoreNode = {
-  type: string;
-  version: number;
+  type: "core:node";
+  version: 3;
   id: string;
   translate: IPointNum;
   order: Order;
@@ -113,7 +113,7 @@ export interface IDFlexCoreNode extends IDFlexBaseNode {
   assignNewPosition(branchIDsOrder: string[], newIndex: number): void;
   rollBack(operationID: string, isForceTransform: boolean): void;
   getOffset(): RectDimensions;
-  exportJSON(): SerializedDFlexCoreNode;
+  getSerializedElm(): SerializedDFlexCoreNode;
 }
 
 export interface IDFlexNode extends IDFlexCoreNode {

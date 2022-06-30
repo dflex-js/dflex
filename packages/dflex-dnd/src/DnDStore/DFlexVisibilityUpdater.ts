@@ -1,6 +1,6 @@
 import type { IDFlexNode } from "@dflex/core-instance";
 import type { IScroll } from "@dflex/utils";
-import type { IDFlexDnDStore } from "./types";
+import type DFlexDnDStore from "./DFlexDnDStore";
 
 const elmIndicator = Object.seal({
   currentKy: "",
@@ -54,7 +54,7 @@ function updateElementVisibility(
   elm.changeVisibility(isVisible);
 }
 
-function updateBranchVisibility(store: IDFlexDnDStore, SK: string) {
+function updateBranchVisibility(store: DFlexDnDStore, SK: string) {
   const branch = store.getElmBranchByKey(SK);
   const { scroll } = store.containers.get(SK)!;
 

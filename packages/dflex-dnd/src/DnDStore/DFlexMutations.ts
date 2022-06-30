@@ -1,4 +1,4 @@
-import type { IDFlexDnDStore } from "./types";
+import type DFlexDnDStore from "./DFlexDnDStore";
 
 type ChangedIds = Set<{ oldId: string; newId: string }>;
 type TerminatedDOMiDs = Set<string>;
@@ -10,7 +10,7 @@ function getIsProcessingMutations(): boolean {
 }
 
 function cleanupBranchElements(
-  store: IDFlexDnDStore,
+  store: DFlexDnDStore,
   terminatedDOMiDs: TerminatedDOMiDs
 ) {
   const keys = new Set<string>();
@@ -39,7 +39,7 @@ function cleanupBranchElements(
   });
 }
 
-function mutateIDs(store: IDFlexDnDStore, changedIds: ChangedIds) {
+function mutateIDs(store: DFlexDnDStore, changedIds: ChangedIds) {
   changedIds.forEach((idSet) => {
     if (store.registry.has(idSet.oldId)) {
       const elm = store.registry.get(idSet.oldId)!;
@@ -60,7 +60,7 @@ function mutateIDs(store: IDFlexDnDStore, changedIds: ChangedIds) {
 }
 
 function checkMutations(
-  store: IDFlexDnDStore,
+  store: DFlexDnDStore,
   mutations: MutationRecord[],
   changedIds: ChangedIds,
   terminatedDOMiDs: TerminatedDOMiDs
@@ -100,7 +100,7 @@ function checkMutations(
 }
 
 function DOMmutationHandler(
-  store: IDFlexDnDStore,
+  store: DFlexDnDStore,
   mutations: MutationRecord[],
   observer: MutationObserver,
   changedIds: ChangedIds,
@@ -139,7 +139,7 @@ const observerConfig = Object.freeze({
   attributeOldValue: true,
 });
 
-function initMutationObserver(store: IDFlexDnDStore, DOMTarget: HTMLElement) {
+function initMutationObserver(store: DFlexDnDStore, DOMTarget: HTMLElement) {
   const terminatedDOMiDs: TerminatedDOMiDs = new Set();
   const changedIds: ChangedIds = new Set();
 
@@ -158,6 +158,8 @@ function initMutationObserver(store: IDFlexDnDStore, DOMTarget: HTMLElement) {
   store.observer.observe(DOMTarget, observerConfig);
 }
 
-export { getIsProcessingMutations, initMutationObserver };
+type DFlexLMutationPlugin = ReturnType<typeof initMutationObserver>;
 
-export type DFlexLMutationPlugin = ReturnType<typeof initMutationObserver>;
+export type { DFlexLMutationPlugin };
+
+export { getIsProcessingMutations, initMutationObserver };

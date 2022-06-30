@@ -1,5 +1,9 @@
 import type { ThresholdPercentages } from "@dflex/utils";
-import type { DFlexEventsMap } from "./DnDStore";
+import type { DFlexEventsTypes } from "./DnDStore";
+
+type DFlexEventsMap = {
+  [K in DFlexEventsTypes]: CustomEvent<any>;
+};
 
 declare global {
   interface Document {

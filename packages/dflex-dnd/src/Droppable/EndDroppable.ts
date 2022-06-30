@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { store } from "../DnDStore";
+import { scheduler, store } from "../DnDStore";
 import Droppable, { isIDEligible } from "./Droppable";
 
 import type { IDraggableInteractive } from "../Draggable";
@@ -182,7 +182,7 @@ class EndDroppable extends Droppable {
       });
     }
 
-    store.listeners.notify({
+    scheduler(store, null, null, {
       layoutState: isFallback ? "dragCancel" : "dragEnd",
       type: "layoutState",
     });

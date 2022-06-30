@@ -18,7 +18,12 @@ import type {
 
 import { DFlexContainer, IDFlexNode } from "@dflex/core-instance";
 
-import { initDFlexEvent, initMutationObserver, store } from "../DnDStore";
+import {
+  initDFlexEvent,
+  initMutationObserver,
+  scheduler,
+  store,
+} from "../DnDStore";
 
 import type { IDraggableAxes } from "./types";
 
@@ -64,7 +69,7 @@ class DraggableAxes
   events: ReturnType<typeof initDFlexEvent>;
 
   constructor(id: string, initCoordinates: IPointAxes, opts: FinalDndOpts) {
-    const { element } = store.getElmTreeById(id);
+    const element = store.registry.get(id)!;
 
     super(element, initCoordinates);
 
@@ -251,7 +256,10 @@ class DraggableAxes
   dragAt(x: number, y: number) {
     if (!this.isLayoutStateUpdated) {
       this.isLayoutStateUpdated = true;
-      store.listeners.notify({ layoutState: "dragging", type: "layoutState" });
+      scheduler(store, null, null, {
+        layoutState: "dragging",
+        type: "layoutState",
+      });
     }
 
     let filteredY = y;
