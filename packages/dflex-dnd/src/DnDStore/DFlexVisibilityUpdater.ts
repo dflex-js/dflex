@@ -1,4 +1,4 @@
-import type { IDFlexNode } from "@dflex/core-instance";
+import type { DFlexNode } from "@dflex/core-instance";
 import type { IScroll } from "@dflex/utils";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
@@ -15,7 +15,8 @@ function initELmIndicator() {
 }
 
 function updateElementVisibility(
-  elm: IDFlexNode,
+  DOM: HTMLElement,
+  elm: DFlexNode,
   scroll: IScroll,
   permitExceptionToOverride: boolean
 ) {
@@ -51,7 +52,7 @@ function updateElementVisibility(
     }
   }
 
-  elm.changeVisibility(isVisible);
+  elm.changeVisibility(DOM, isVisible);
 }
 
 function updateBranchVisibility(store: DFlexDnDStore, SK: string) {
@@ -64,9 +65,9 @@ function updateBranchVisibility(store: DFlexDnDStore, SK: string) {
     if (elmID.length > 0) {
       const permitExceptionToOverride = i > prevIndex;
 
-      const elm = store.registry.get(elmID)!;
+      const [elm, DOM] = store.getElmWithDOM(elmID);
 
-      updateElementVisibility(elm, scroll, permitExceptionToOverride);
+      updateElementVisibility(DOM, elm, scroll, permitExceptionToOverride);
 
       prevIndex = i;
     }

@@ -3,7 +3,6 @@ import type { IPointNum } from "@dflex/utils";
 
 import { DFLEX_ATTRIBUTES } from "./constants";
 import type { AllowedAttributes } from "./constants";
-import type { IDFlexBaseNode } from "./types";
 
 function getElmDOMOrThrow(id: string): HTMLElement | null {
   let DOM = document.getElementById(id);
@@ -17,12 +16,13 @@ function getElmDOMOrThrow(id: string): HTMLElement | null {
     }
   }
 
-  if (DOM!.nodeType !== Node.ELEMENT_NODE) {
+  if (!DOM || DOM.nodeType !== Node.ELEMENT_NODE) {
     if (__DEV__) {
       throw new Error(
         `Attach: Invalid HTMLElement ${DOM} is passed to registry.`
       );
     }
+
     DOM = null;
   }
 
@@ -31,44 +31,33 @@ function getElmDOMOrThrow(id: string): HTMLElement | null {
 
 type AttributeSet = Set<Exclude<AllowedAttributes, "INDEX">>;
 
-class DFlexBaseNode implements IDFlexBaseNode {
-  DOM!: HTMLElement | null;
-
+class DFlexBaseNode {
   id: string;
 
   translate!: IPointNum;
-
-  isInitialized!: boolean;
 
   isPaused!: boolean;
 
   private _hasAttribute?: AttributeSet;
 
+  static getType(): string {
+    return "base:node";
+  }
+
+  static transform(DOM: HTMLElement, x: number, y: number): void {
+    DOM.style.transform = `translate3d(${x}px,${y}px, 0)`;
+  }
+
   constructor(id: string) {
     this.id = id;
-    this.isInitialized = false;
-    this.DOM = null;
     this.isPaused = true;
   }
 
   /**
    * Attach element DOM node to the instance.
    */
-  attach(): void {
-    this.DOM = getElmDOMOrThrow(this.id);
-    this.isInitialized = !!this.DOM;
-  }
-
-  /**
-   * Detach element DOM node from the instance.
-   */
-  detach(): void {
-    this.isInitialized = false;
-    this.DOM = null;
-  }
-
-  transform(x: number, y: number): void {
-    this.DOM!.style.transform = `translate3d(${x}px,${y}px, 0)`;
+  attach(): HTMLElement | null {
+    return getElmDOMOrThrow(this.id);
   }
 
   /**
@@ -83,27 +72,31 @@ class DFlexBaseNode implements IDFlexBaseNode {
     this.isPaused = false;
   }
 
-  setAttribute(key: AllowedAttributes, value: string | number): void {
+  setAttribute(
+    DOM: HTMLElement,
+    key: AllowedAttributes,
+    value: string | number
+  ): void {
     if (key === "INDEX") {
-      this.DOM!.setAttribute(DFLEX_ATTRIBUTES[key], `${value}`);
+      DOM.setAttribute(DFLEX_ATTRIBUTES[key], `${value}`);
 
       return;
     }
 
     if (this._hasAttribute!.has(key)) return;
-    this.DOM!.setAttribute(DFLEX_ATTRIBUTES[key], `${value}`);
+    DOM.setAttribute(DFLEX_ATTRIBUTES[key], `${value}`);
     this._hasAttribute!.add(key);
   }
 
-  removeAttribute(key: AllowedAttributes): void {
+  removeAttribute(DOM: HTMLElement, key: AllowedAttributes): void {
     if (key === "INDEX" || !this._hasAttribute!.has(key)) return;
-    this.DOM!.removeAttribute(DFLEX_ATTRIBUTES[key]);
+    DOM.removeAttribute(DFLEX_ATTRIBUTES[key]);
     this._hasAttribute!.delete(key);
   }
 
-  clearAttributes(): void {
+  clearAttributes(DOM: HTMLElement): void {
     this._hasAttribute!.forEach((key) => {
-      this.removeAttribute(key);
+      this.removeAttribute(DOM, key);
     });
     this._hasAttribute!.clear();
   }

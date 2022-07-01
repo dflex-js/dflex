@@ -2,7 +2,7 @@ import type { IPointAxes } from "@dflex/utils";
 
 import DraggableInteractive from "./Draggable";
 import Droppable from "./Droppable";
-import { store } from "./DnDStore";
+import { scheduler, store } from "./DnDStore";
 
 import type { DFlexDnDOpts, FinalDndOpts } from "./types";
 
@@ -21,18 +21,19 @@ class DnD extends Droppable {
     initCoordinates: IPointAxes,
     opts: DFlexDnDOpts = defaultOpts
   ) {
-    if (!store.registry.has(id)) {
-      throw new Error(`DFlex: ${id} is not registered in the Store.`);
+    if (__DEV__) {
+      if (!store.registry.has(id)) {
+        throw new Error(`DFlex: ${id} is not registered in the Store.`);
+      }
     }
 
     const options = extractOpts(opts);
 
-    // Could happen if it's render in the server.
     const { depth } = store.registry.get(id)!;
 
     /**
      * In case it is not already initiated in the store. We do it here guarantee
-     * all the branch is updated.
+     * all the branch is updated. Could happen if it's render in the server.
      */
     store.getBranchesByDepth(depth).forEach((SK) => {
       if (!store.containers.has(SK)) {
@@ -48,7 +49,7 @@ class DnD extends Droppable {
 
     super(draggable);
 
-    store.listeners.notify({ layoutState: "ready", type: "layoutState" });
+    scheduler(store, null, null, { layoutState: "ready", type: "layoutState" });
   }
 }
 

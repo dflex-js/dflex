@@ -9,23 +9,60 @@ import type {
 
 import DFlexBaseNode from "./DFlexBaseNode";
 
-import type {
-  Keys,
-  Order,
-  ITransitionHistory,
-  IDFlexCoreNode,
-  DFlexBaseNodeInput,
-  SerializedDFlexCoreNode,
-} from "./types";
+export type SerializedDFlexCoreNode = {
+  type: string;
+  version: 3;
+  id: string;
+  translate: IPointNum | null;
+  order: DOMGenOrder;
+  grid: IPointNum;
+  initialOffset: RectDimensions;
+  currentOffset: RectDimensions;
+  isTransformed: boolean;
+  hasToTransform: boolean;
+  isVisible: boolean;
+};
 
-class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
-  offset!: RectDimensions;
+type TransitionHistory = {
+  ID: string;
+  axis: Axes;
+  translate: IPointAxes;
+};
+
+/**
+ * Element unique keys in DOM tree.
+ */
+export interface Keys {
+  SK: string;
+  PK: string;
+  CHK: string | null;
+}
+
+/**
+ * Element order in its branch & higher branch
+ */
+export interface DOMGenOrder {
+  self: number;
+  parent: number;
+}
+
+export interface DFlexNodeInput {
+  id: string;
+  order: DOMGenOrder;
+  keys: Keys;
+  depth: number;
+  readonly: boolean;
+  isInitialized: boolean;
+}
+
+class DFlexCoreNode extends DFlexBaseNode {
+  initialOffset!: RectDimensions;
 
   currentPosition!: IPointNum;
 
   grid!: IPointNum;
 
-  order: Order;
+  order: DOMGenOrder;
 
   keys: Keys;
 
@@ -39,10 +76,18 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
 
   animatedFrame: number | null;
 
-  private _translateHistory?: ITransitionHistory[];
+  private _translateHistory?: TransitionHistory[];
 
-  constructor(eleWithPointer: DFlexBaseNodeInput) {
-    const { order, keys, depth, readonly, id } = eleWithPointer;
+  static getType(): string {
+    return "core:node";
+  }
+
+  static transform(DOM: HTMLElement, x: number, y: number): void {
+    DOM.style.transform = `translate3d(${x}px,${y}px, 0)`;
+  }
+
+  constructor(eleWithPointer: DFlexNodeInput) {
+    const { order, keys, depth, readonly, id, isInitialized } = eleWithPointer;
 
     super(id);
 
@@ -50,27 +95,24 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
     this.keys = keys;
     this.depth = depth;
     this.readonly = readonly;
-    this.isVisible = this.isInitialized && !this.isPaused;
-
-    if (this.isInitialized) {
-      this.setAttribute("INDEX", this.order.self);
-    }
-
-    if (!this.isPaused) {
-      this._initIndicators(0, 0);
-    }
+    this.isPaused = isInitialized;
+    this.isVisible = !this.isPaused;
     this.animatedFrame = null;
   }
 
-  private _initIndicators(scrollX: number, scrollY: number): void {
-    const { height, width, left, top } = this.DOM!.getBoundingClientRect();
+  private _initIndicators(
+    DOM: HTMLElement,
+    scrollX: number,
+    scrollY: number
+  ): void {
+    const { height, width, left, top } = DOM.getBoundingClientRect();
 
     /**
      * Element offset stored once without being triggered to re-calculate.
      * Instead, using currentOffset object as indicator to current
      * offset/position. This offset, is the init-offset.
      */
-    this.offset = {
+    this.initialOffset = {
       height,
       width,
 
@@ -78,7 +120,10 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
       top: top + scrollY,
     };
 
-    this.currentPosition = new PointNum(this.offset.left, this.offset.top);
+    this.currentPosition = new PointNum(
+      this.initialOffset.left,
+      this.initialOffset.top
+    );
 
     /**
      * Initializing grid comes later when the siblings boundaries are
@@ -90,65 +135,57 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
   }
 
   private _updateCurrentIndicators(space: IPointAxes): void {
-    this.translate.increase(space);
+    this.translate!.increase(space);
 
-    const { left, top } = this.offset!;
+    const { left, top } = this.initialOffset!;
 
     /**
      * This offset related directly to translate Y and Y. It's isolated from
      * element current offset and effects only top and left.
      */
     this.currentPosition!.setAxes(
-      left + this.translate.x,
-      top + this.translate.y
+      left + this.translate!.x,
+      top + this.translate!.y
     );
 
     if (!this.isVisible) this.hasToTransform = true;
   }
 
-  resume(scrollX: number, scrollY: number): void {
-    if (!this.isInitialized) {
-      this.attach();
-
-      // It throws in the development and stop executing in the production.
-      if (!this.isInitialized) return;
-    }
-
+  resume(DOM: HTMLElement, scrollX: number, scrollY: number): void {
     this.initTranslate();
-
-    this._initIndicators(scrollX, scrollY);
+    this._initIndicators(DOM, scrollX, scrollY);
   }
 
-  changeVisibility(isVisible: boolean): void {
+  changeVisibility(DOM: HTMLElement, isVisible: boolean): void {
     if (isVisible === this.isVisible) return;
 
     this.isVisible = isVisible;
 
     if (this.hasToTransform && this.isVisible) {
-      this.transformElm();
+      this.transform(DOM);
       this.hasToTransform = false;
     }
   }
 
-  transformElm(): void {
+  transform(DOM: HTMLElement): void {
     if (this.animatedFrame !== null) {
       window.cancelAnimationFrame(this.animatedFrame);
     }
 
     this.animatedFrame = window.requestAnimationFrame(() => {
-      this.transform(this.translate.x, this.translate.y);
+      DFlexCoreNode.transform(DOM, this.translate!.x, this.translate!.y);
       this.animatedFrame = null;
     });
   }
 
-  private _updateOrderIndexing(i: number) {
+  private _updateOrderIndexing(DOM: HTMLElement, i: number) {
     const { self: oldIndex } = this.order;
 
     const newIndex = oldIndex + i;
 
     this.order.self = newIndex;
 
-    this.setAttribute("INDEX", newIndex);
+    this.setAttribute(DOM, "INDEX", newIndex);
 
     return { oldIndex, newIndex };
   }
@@ -198,16 +235,17 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
    *  Set a new translate position and store the old one.
    */
   private _seTranslate(
+    DOM: HTMLElement,
     elmSpace: IPointAxes,
     axis: Axes,
     operationID?: string,
     isForceTransform = false
   ): void {
     if (operationID) {
-      const elmAxesHistory: ITransitionHistory = {
+      const elmAxesHistory: TransitionHistory = {
         ID: operationID,
         axis,
-        translate: { x: this.translate.x, y: this.translate.y },
+        translate: { x: this.translate!.x, y: this.translate!.y },
       };
 
       if (!Array.isArray(this._translateHistory)) {
@@ -225,7 +263,7 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
       return;
     }
 
-    this.transformElm();
+    this.transform(DOM);
 
     this.hasToTransform = false;
   }
@@ -238,6 +276,7 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
    * @param operationID - A unique ID used to store translate history
    */
   setPosition(
+    DOM: HTMLElement,
     iDsInOrder: string[],
     direction: Direction,
     elmSpace: IPointNum,
@@ -256,9 +295,10 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
       elmSpace[axis] *= direction;
     }
 
-    this._seTranslate(elmSpace, axis, operationID);
+    this._seTranslate(DOM, elmSpace, axis, operationID);
 
     const { oldIndex, newIndex } = this._updateOrderIndexing(
+      DOM,
       direction * numberOfPassedElm
     );
 
@@ -267,9 +307,6 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
       this.grid.increase({ x: inc, y: inc });
     } else {
       this.grid[axis] += direction * numberOfPassedElm;
-      if (__DEV__) {
-        this.setAttribute(axis === "x" ? "GRID_X" : "GRID_Y", this.grid[axis]);
-      }
     }
 
     this._leaveToNewPosition(iDsInOrder, newIndex, oldIndex);
@@ -281,7 +318,11 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
    * @param operationID
    * @param isForceTransform
    */
-  rollBack(operationID: string, isForceTransform: boolean): void {
+  rollBack(
+    DOM: HTMLElement,
+    operationID: string,
+    isForceTransform: boolean
+  ): void {
     if (
       !Array.isArray(this._translateHistory) ||
       this._translateHistory.length === 0 ||
@@ -296,8 +337,8 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
     const { translate: preTranslate, axis } = lastMovement;
 
     const elmSpace = {
-      x: preTranslate.x - this.translate.x,
-      y: preTranslate.y - this.translate.y,
+      x: preTranslate.x - this.translate!.x,
+      y: preTranslate.y - this.translate!.y,
     };
 
     let increment = 0;
@@ -310,24 +351,27 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
       increment = elmSpace[axis] > 0 ? 1 : -1;
 
       this.grid[axis] += increment;
-
-      if (__DEV__) {
-        this.setAttribute(axis === "x" ? "GRID_X" : "GRID_Y", this.grid[axis]);
-      }
     }
 
     // Don't update UI if it's zero and wasn't transformed.
-    this._seTranslate(elmSpace, axis, undefined, isForceTransform);
+    this._seTranslate(DOM, elmSpace, axis, undefined, isForceTransform);
 
-    this._updateOrderIndexing(increment);
+    this._updateOrderIndexing(DOM, increment);
 
-    this.rollBack(operationID, isForceTransform);
+    this.rollBack(DOM, operationID, isForceTransform);
+  }
+
+  isTransformed(): boolean {
+    return (
+      this.translate instanceof PointNum &&
+      (this.translate.x !== 0 || this.translate.y !== 0)
+    );
   }
 
   getOffset(): RectDimensions {
     return {
-      width: this.offset.width,
-      height: this.offset.height,
+      width: this.initialOffset.width,
+      height: this.initialOffset.height,
       top: this.currentPosition.y,
       left: this.currentPosition.x,
     };
@@ -335,16 +379,17 @@ class DFlexCoreNode extends DFlexBaseNode implements IDFlexCoreNode {
 
   getSerializedElm(): SerializedDFlexCoreNode {
     return {
-      type: "core:node",
+      type: DFlexCoreNode.getType(),
       version: 3,
       id: this.id,
       order: this.order,
       grid: this.grid,
       translate: this.translate,
+      initialOffset: this.initialOffset,
+      currentOffset: this.getOffset(),
+      isTransformed: this.isTransformed(),
       isVisible: this.isVisible,
       hasToTransform: this.hasToTransform,
-      initialOffset: this.offset,
-      currentOffset: this.getOffset(),
     };
   }
 }

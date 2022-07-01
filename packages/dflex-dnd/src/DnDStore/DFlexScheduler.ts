@@ -23,13 +23,13 @@ function execTask(
     store.deferred.push(store.listeners.notify.bind(null, evt));
   }
 
-  if (updateFn === null) return;
-
   if (options) {
     if (options.onUpdate) {
       store.deferred.push(options.onUpdate);
     }
   }
+
+  if (updateFn === null) return;
 
   try {
     updateFn();
@@ -65,13 +65,14 @@ function scheduler(
     execTask(store, updateFn, options, evt);
   } finally {
     queueMicrotask(() => {
+      execDeferredFn(store, store.deferred);
+
       if (store.updatesQueue.length) {
         const [_updateFn, _options, _evt] = store.updatesQueue.shift()!;
         store.isUpdating = initialIsUpdating;
         scheduler(store, _updateFn, _options, _evt);
       }
 
-      execDeferredFn(store, store.deferred);
       store.isUpdating = initialIsUpdating;
     });
   }

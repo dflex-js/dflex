@@ -2,11 +2,9 @@
 
 exports[`Testing Store Package Returns element instance by element id 1`] = `
 DFlexNode {
-  "DOM": null,
   "animatedFrame": null,
   "depth": 0,
   "id": "id-0",
-  "isInitialized": false,
   "isPaused": true,
   "isVisible": false,
   "keys": Object {
@@ -25,11 +23,9 @@ DFlexNode {
 exports[`Testing Store Package Snaps shot registry 1`] = `
 Map {
   "id-0" => DFlexNode {
-    "DOM": null,
     "animatedFrame": null,
     "depth": 0,
     "id": "id-0",
-    "isInitialized": false,
     "isPaused": true,
     "isVisible": false,
     "keys": Object {
@@ -44,11 +40,9 @@ Map {
     "readonly": false,
   },
   "id-1" => DFlexNode {
-    "DOM": null,
     "animatedFrame": null,
     "depth": 0,
     "id": "id-1",
-    "isInitialized": false,
     "isPaused": true,
     "isVisible": false,
     "keys": Object {
@@ -63,11 +57,9 @@ Map {
     "readonly": false,
   },
   "id-2" => DFlexNode {
-    "DOM": null,
     "animatedFrame": null,
     "depth": 0,
     "id": "id-2",
-    "isInitialized": false,
     "isPaused": true,
     "isVisible": false,
     "keys": Object {
@@ -82,11 +74,9 @@ Map {
     "readonly": false,
   },
   "p-id-0" => DFlexNode {
-    "DOM": null,
     "animatedFrame": null,
     "depth": 1,
     "id": "p-id-0",
-    "isInitialized": false,
     "isPaused": true,
     "isVisible": false,
     "keys": Object {
@@ -106,11 +96,9 @@ Map {
 exports[`Testing Store Package Snaps shot registry after delete 1`] = `
 Map {
   "id-0" => DFlexNode {
-    "DOM": null,
     "animatedFrame": null,
     "depth": 0,
     "id": "id-0",
-    "isInitialized": false,
     "isPaused": true,
     "isVisible": false,
     "keys": Object {
@@ -125,11 +113,9 @@ Map {
     "readonly": false,
   },
   "id-1" => DFlexNode {
-    "DOM": null,
     "animatedFrame": null,
     "depth": 0,
     "id": "id-1",
-    "isInitialized": false,
     "isPaused": true,
     "isVisible": false,
     "keys": Object {
@@ -144,11 +130,9 @@ Map {
     "readonly": false,
   },
   "id-2" => DFlexNode {
-    "DOM": null,
     "animatedFrame": null,
     "depth": 0,
     "id": "id-2",
-    "isInitialized": false,
     "isPaused": true,
     "isVisible": false,
     "keys": Object {
@@ -163,11 +147,9 @@ Map {
     "readonly": false,
   },
   "p-id-0" => DFlexNode {
-    "DOM": null,
     "animatedFrame": null,
     "depth": 1,
     "id": "p-id-0",
-    "isInitialized": false,
     "isPaused": true,
     "isVisible": false,
     "keys": Object {

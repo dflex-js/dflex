@@ -1,4 +1,4 @@
-import { test, expect, Page, Locator } from "@playwright/test";
+import { test, expect, Page, Locator, BrowserContext } from "@playwright/test";
 import {
   DraggedRect,
   getDraggedRect,
@@ -18,8 +18,10 @@ test.describe.serial("Dragging from bottom up", async () => {
   let elm11: Locator;
   let elm12: Locator;
 
+  let context: BrowserContext;
+
   test.beforeAll(async ({ browser, baseURL }) => {
-    const context = await browser.newContext();
+    context = await browser.newContext();
 
     page = await context.newPage();
     initialize(page, 10);
@@ -31,6 +33,11 @@ test.describe.serial("Dragging from bottom up", async () => {
       page.locator("#id-11"),
       page.locator("#id-12"),
     ]);
+  });
+
+  test.afterAll(async () => {
+    await page.close();
+    await context.close();
   });
 
   test("Moving dragged element outside its position", async () => {

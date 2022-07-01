@@ -5,16 +5,11 @@ import type { IPointNum, IPointAxes } from "@dflex/utils";
 
 import { store } from "../DnDStore";
 
-import type { IDraggableInteractive } from "./types";
-
 import type { ScrollOpts, FinalDndOpts } from "../types";
 
 import DraggableAxes from "./DraggableAxes";
 
-class DraggableInteractive
-  extends DraggableAxes
-  implements IDraggableInteractive
-{
+class DraggableInteractive extends DraggableAxes {
   scroll: ScrollOpts;
 
   occupiedPosition: IPointNum;
@@ -88,7 +83,7 @@ class DraggableInteractive
       this.migration.setIndex(i);
     }
 
-    this.draggedElm.setAttribute("INDEX", i);
+    this.draggedElm.setAttribute(this.draggedDOM, "INDEX", i);
   }
 
   setDraggedTransformPosition(isFallback: boolean) {
@@ -111,8 +106,12 @@ class DraggableInteractive
        * instance.
        */
       if (!this.draggedElm.translate.isEqual(this.translatePlaceholder)) {
-        this.draggedElm.transformElm();
-        this.draggedElm.setAttribute("INDEX", this.draggedElm.order.self);
+        this.draggedElm.transform(this.draggedDOM);
+        this.draggedElm.setAttribute(
+          this.draggedDOM,
+          "INDEX",
+          this.draggedElm.order.self
+        );
 
         /**
          * There's a rare case where dragged leaves and returns to the same
@@ -136,10 +135,7 @@ class DraggableInteractive
 
     this.draggedElm.grid.clone(this.gridPlaceholder);
 
-    // TODO: Fix this please, why it's just Y.
-    this.draggedElm.setAttribute("GRID_Y", this.draggedElm.grid.y);
-
-    this.draggedElm.transformElm();
+    this.draggedElm.transform(this.draggedDOM);
 
     this.draggedElm.assignNewPosition(siblings, this.migration.latest().index);
 

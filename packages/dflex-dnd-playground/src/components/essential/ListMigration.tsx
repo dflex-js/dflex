@@ -2,6 +2,7 @@ import React from "react";
 
 import "./List.css";
 
+import { store } from "@dflex/dnd";
 import { Core, Container } from "./component-based-event";
 
 const firstContainer = [
@@ -112,7 +113,7 @@ const ListMigration = ({ withCommitBtn }: Props) => {
           <button
             className="button-solo"
             onClick={() => {
-              console.log("commit?");
+              store.commit();
             }}
           >
             Commit

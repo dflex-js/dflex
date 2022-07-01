@@ -1,13 +1,17 @@
-import type { IDFlexBaseNode } from "@dflex/core-instance";
+import { DFlexBaseNode } from "@dflex/core-instance";
 import { PointNum, getSelection } from "@dflex/utils";
 import type { IPointNum, IPointAxes } from "@dflex/utils";
 
-import type { IDFlexBaseDraggable, DraggedStyle } from "./types";
+export type DraggedStyle = Array<{
+  prop: string;
+  dragValue: string;
+  afterDragValue: string | null;
+}>;
 
-class DFlexBaseDraggable<T extends IDFlexBaseNode>
-  implements IDFlexBaseDraggable<T>
-{
+class DFlexBaseDraggable<T extends DFlexBaseNode> {
   draggedElm: T;
+
+  draggedDOM: HTMLElement;
 
   /**
    * When dragging start, element shouldn't jump from its translate. So, we
@@ -30,7 +34,7 @@ class DFlexBaseDraggable<T extends IDFlexBaseNode>
       afterDragValue: "",
     },
     {
-      prop: "zIndex",
+      prop: "z-index",
       dragValue: "99",
       afterDragValue: "",
     },
@@ -46,14 +50,16 @@ class DFlexBaseDraggable<T extends IDFlexBaseNode>
    * Works Only on dragged element level.
    *
    * @param abstractCoreElm -
+   * @param DOM -
    * @param initCoordinates -
    */
-  constructor(abstractCoreElm: T, { x: initX, y: initY }: IPointAxes) {
-    /**
-     * Assign instance for dragged.
-     */
-
+  constructor(
+    abstractCoreElm: T,
+    DOM: HTMLElement,
+    { x: initX, y: initY }: IPointAxes
+  ) {
     this.draggedElm = abstractCoreElm;
+    this.draggedDOM = DOM;
 
     const { translate } = this.draggedElm;
 
@@ -67,18 +73,14 @@ class DFlexBaseDraggable<T extends IDFlexBaseNode>
   changeStyle(style: DraggedStyle, shouldAddPosition: boolean) {
     if (shouldAddPosition) {
       style.forEach(({ prop, dragValue }) => {
-        // TODO: Fix TS error.
-        // @ts-expect-error.
-        this.draggedElm.DOM!.style[prop] = dragValue;
+        this.draggedDOM.style.setProperty(prop, dragValue);
       });
 
       return;
     }
 
     style.forEach(({ prop, afterDragValue }) => {
-      // TODO: Fix TS error.
-      // @ts-expect-error.
-      this.draggedElm.DOM!.style[prop] = afterDragValue;
+      this.draggedDOM.style.setProperty(prop, afterDragValue);
     });
   }
 
@@ -98,7 +100,7 @@ class DFlexBaseDraggable<T extends IDFlexBaseNode>
         domSelection.removeAllRanges();
       }
 
-      this.draggedElm.setAttribute("DRAGGED", "true");
+      this.draggedElm.setAttribute(this.draggedDOM, "DRAGGED", "true");
 
       return;
     }
@@ -107,7 +109,7 @@ class DFlexBaseDraggable<T extends IDFlexBaseNode>
      */
     this.changeStyle(DFlexBaseDraggable.draggedStyle, false);
 
-    this.draggedElm.clearAttributes();
+    this.draggedElm.clearAttributes(this.draggedDOM);
   }
 
   /**
@@ -131,7 +133,8 @@ class DFlexBaseDraggable<T extends IDFlexBaseNode>
       y + this.outerOffset.y
     );
 
-    this.draggedElm.transform(
+    DFlexBaseNode.transform(
+      this.draggedDOM,
       this.translatePlaceholder.x,
       this.translatePlaceholder.y
     );

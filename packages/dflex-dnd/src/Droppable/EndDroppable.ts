@@ -2,12 +2,12 @@
 import { scheduler, store } from "../DnDStore";
 import Droppable, { isIDEligible } from "./Droppable";
 
-import type { IDraggableInteractive } from "../Draggable";
+import type DraggableInteractive from "../Draggable";
 
 class EndDroppable extends Droppable {
   private spliceAt: number;
 
-  constructor(draggable: IDraggableInteractive) {
+  constructor(draggable: DraggableInteractive) {
     super(draggable);
     this.spliceAt = -1;
   }
@@ -29,7 +29,7 @@ class EndDroppable extends Droppable {
     const elmID = lst[i];
 
     if (this.isIDEligible2Undo(elmID)) {
-      const element = store.registry.get(elmID)!;
+      const [element, DOM] = store.getElmWithDOM(elmID);
 
       const { isVisible } = element;
 
@@ -46,7 +46,7 @@ class EndDroppable extends Droppable {
        * Note: rolling back won't affect order array. It only deals with element
        * itself and totally ignore any instance related to store.
        */
-      element.rollBack(operationID, listVisibility);
+      element.rollBack(DOM, operationID, listVisibility);
 
       prevVisibility = isVisible;
     } else {
@@ -182,12 +182,17 @@ class EndDroppable extends Droppable {
       });
     }
 
-    scheduler(store, null, null, {
-      layoutState: isFallback ? "dragCancel" : "dragEnd",
-      type: "layoutState",
-    });
-
-    this.draggable.endDragging(isFallback);
+    scheduler(
+      store,
+      () => {
+        this.draggable.endDragging(isFallback);
+      },
+      null,
+      {
+        layoutState: isFallback ? "dragCancel" : "dragEnd",
+        type: "layoutState",
+      }
+    );
 
     [
       "elmTransition",

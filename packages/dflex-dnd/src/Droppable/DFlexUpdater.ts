@@ -1,11 +1,10 @@
 /* eslint-disable no-param-reassign */
 import { DFlexNode } from "@dflex/core-instance";
-import type { IDFlexNode } from "@dflex/core-instance";
 
 import { Direction, IPointAxes, PointNum } from "@dflex/utils";
 import type { IPointNum, Axis, RectDimensions } from "@dflex/utils";
 
-import type { IDraggableInteractive } from "../Draggable";
+import type DraggableInteractive from "../Draggable";
 
 import { store } from "../DnDStore";
 
@@ -33,11 +32,11 @@ function throwOnInfiniteTransformation(id: string) {
   }
 }
 
-function composeElmMeta(element: IDFlexNode) {
+function composeElmMeta(element: DFlexNode) {
   return {
     id: element.id,
     index: element.order.self,
-    target: element.DOM!,
+    target: store.interactiveDOM.get(element.id),
   };
 }
 
@@ -46,8 +45,8 @@ type InsertionELmMeta = {
   position: IPointNum;
   isEmpty: boolean;
   isOrphan: boolean;
-  elm: IDFlexNode | null;
-  prevElm: IDFlexNode | null;
+  elm: DFlexNode | null;
+  prevElm: DFlexNode | null;
 };
 
 export const APPEND_EMPTY_ELM_ID = "";
@@ -79,8 +78,8 @@ export function getInsertionELmMeta(
 
   let isRestoredLastPosition = false;
 
-  let elm: null | IDFlexNode = null;
-  let prevElm: null | IDFlexNode = null;
+  let elm: null | DFlexNode = null;
+  let prevElm: null | DFlexNode = null;
 
   if (lastElmPosition) {
     // If empty then restore it.
@@ -169,7 +168,7 @@ export function handleElmMigration(
 }
 
 class DFlexUpdater {
-  protected draggable: IDraggableInteractive;
+  protected draggable: DraggableInteractive;
 
   private elmTransition: IPointNum;
 
@@ -180,7 +179,7 @@ class DFlexUpdater {
   /** Isolated form the threshold and predict is-out based on the controllers */
   protected isParentLocked: boolean;
 
-  constructor(draggable: IDraggableInteractive) {
+  constructor(draggable: DraggableInteractive) {
     this.draggable = draggable;
 
     /**
@@ -199,7 +198,7 @@ class DFlexUpdater {
   }
 
   private setDistanceBtwPositions(
-    element: IDFlexNode,
+    element: DFlexNode,
     axis: Axis,
     elmDirection: Direction
   ) {
@@ -224,7 +223,7 @@ class DFlexUpdater {
     }
   }
 
-  private updateDraggable(element: IDFlexNode, elmDirection: Direction) {
+  private updateDraggable(element: DFlexNode, elmDirection: Direction) {
     const { currentPosition, grid } = element;
 
     this.draggable.occupiedPosition.setAxes(
@@ -242,7 +241,7 @@ class DFlexUpdater {
   }
 
   private updateIndicators(
-    element: IDFlexNode,
+    element: DFlexNode,
     axis: Axis,
     elmDirection: Direction
   ) {
@@ -257,12 +256,12 @@ class DFlexUpdater {
   protected updateDraggedThresholdPosition(x: number, y: number) {
     const {
       threshold,
-      draggedElm: { id, offset },
+      draggedElm: { id, initialOffset },
     } = this.draggable;
 
     threshold.setMainThreshold(id, {
-      width: offset.width,
-      height: offset.height,
+      width: initialOffset.width,
+      height: initialOffset.height,
       left: x,
       top: y,
     });
@@ -270,7 +269,7 @@ class DFlexUpdater {
 
   private addDraggedOffsetToElm(
     position: IPointAxes,
-    elm: IDFlexNode,
+    elm: DFlexNode,
     axis: Axis
   ) {
     const rectType = DFlexNode.getRectByAxis(axis);
@@ -278,9 +277,10 @@ class DFlexUpdater {
     const { draggedElm } = this.draggable;
 
     // This initiation needs to append dragged rect based on targeted axis.
-    position[axis] += draggedElm.offset[rectType];
+    position[axis] += draggedElm.initialOffset[rectType];
 
-    const rectDiff = elm.offset[rectType] - draggedElm.offset[rectType];
+    const rectDiff =
+      elm.initialOffset[rectType] - draggedElm.initialOffset[rectType];
 
     position[axis] += rectDiff;
   }
@@ -407,7 +407,7 @@ class DFlexUpdater {
       throwOnInfiniteTransformation(id);
     }
 
-    const element = store.registry.get(id)!;
+    const [element, DOM] = store.getElmWithDOM(id);
 
     const {
       keys: { SK },
@@ -463,10 +463,8 @@ class DFlexUpdater {
 
     const { migration } = this.draggable;
 
-    /**
-     * Start transforming process
-     */
     element.setPosition(
+      DOM,
       store.getElmBranchByKey(migration.latest().SK),
       elmDirection,
       this.elmTransition,

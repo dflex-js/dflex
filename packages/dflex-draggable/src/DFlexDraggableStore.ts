@@ -2,9 +2,10 @@ import DFlexBaseStore from "@dflex/store";
 
 class DFlexDraggableStore extends DFlexBaseStore {
   /**
-   * Register element for Draggable store
+   * Register element for Draggable store.
+   * @param id
    */
-  // @ts-expect-error
+  // @ts-ignore
   register(id: string) {
     super.register({
       id,

@@ -3,13 +3,11 @@
 exports[`Draggable Store Registers element and initiates translateX,Y 1`] = `
 Map {
   "id-0" => DFlexNode {
-    "DOM": null,
     "animatedFrame": null,
     "depth": 0,
     "id": "id-0",
-    "isInitialized": false,
-    "isPaused": true,
-    "isVisible": false,
+    "isPaused": false,
+    "isVisible": true,
     "keys": Object {
       "CHK": null,
       "PK": "1-0",

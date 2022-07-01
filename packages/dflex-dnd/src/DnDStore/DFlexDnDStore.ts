@@ -91,7 +91,7 @@ class DnDStoreImp extends Store {
     const branch = this.DOMGen.getElmBranchByKey(SK);
 
     const scroll = new Scroll({
-      element: this.registry.get(branch[0])!.DOM!,
+      element: this.interactiveDOM.get(branch[0])!,
       requiredBranchKey: SK,
       scrollEventCallback: null,
     });
@@ -128,28 +128,37 @@ class DnDStoreImp extends Store {
 
     const container = this.containers.get(SK)!;
 
-    if (elm.isPaused) {
-      elm.resume(container.scroll.scrollX, container.scroll.scrollY);
+    if (!this.interactiveDOM.has(id)) {
+      const DOM = elm.attach();
 
-      if (!elm.isInitialized) {
+      if (DOM === null) {
         return;
       }
+
+      this.interactiveDOM.set(id, DOM);
+
+      elm.resume(DOM, container.scroll.scrollX, container.scroll.scrollY);
     }
 
     // Using element grid zero to know if the element has been initiated inside
     // container or not.
     if (elm.grid.x === 0) {
-      const { offset } = elm;
+      const { initialOffset } = elm;
 
       container.registerNewElm(
-        offset,
+        initialOffset,
         this.unifiedContainerDimensions.get(depth)!
       );
 
       elm.grid.clone(container.grid);
     }
 
-    updateElementVisibility(elm, container.scroll, false);
+    updateElementVisibility(
+      this.interactiveDOM.get(id)!,
+      elm,
+      container.scroll,
+      false
+    );
   }
 
   register(element: RegisterInputOpts) {
@@ -166,15 +175,12 @@ class DnDStoreImp extends Store {
 
     const { id } = element;
 
-    if (this.registry.has(id)) {
-      const elm = this.registry.get(id)!;
-      if (elm.isInitialized) {
-        elm.attach();
+    if (this.has(id)) {
+      const [elm, DOM] = this.getElmWithDOM(id);
 
-        if (elm.isVisible) {
-          // Preserves last changes.
-          elm.transformElm();
-        }
+      if (elm.isVisible) {
+        // Preserves last changes.
+        elm.transform(DOM);
       }
 
       return;
@@ -221,32 +227,24 @@ class DnDStoreImp extends Store {
     this.getBranchesByDepth(0).forEach((key) => {
       if (!this.interactiveDOM.has(key)) {
         if (__DEV__) {
-          throw new Error(`Container ${key} ref not found.`);
+          // eslint-disable-next-line no-console
+          console.info(
+            `Nothing to commit: Container with key-${key} is not initiated yet.`
+          );
         }
       }
 
-      const parentDOM = this.interactiveDOM.get(key)!;
+      // const parentDOM = this.interactiveDOM.get(key)!;
 
-      parentDOM.replaceWith(
-        ...this.getElmBranchByKey(key).map(
-          (elmId) => this.registry.get(elmId)!.DOM!
-        )
-      );
+      // const branch = this.getElmBranchByKey(key);
+
+      // branch.forEach((elmId) => {
+      //   const elm = this.registry.get(elmId)!;
+
+      //   if (elm.isTransformed()) {
+      //   }
+      // });
     });
-  }
-
-  getElmSiblingsById(id: string) {
-    const element = this.registry.get(id)!;
-
-    if (!element) return null;
-
-    const {
-      keys: { SK },
-    } = element;
-
-    const siblings = this.getElmBranchByKey(SK);
-
-    return siblings;
   }
 
   getSerializedElm(id: string) {

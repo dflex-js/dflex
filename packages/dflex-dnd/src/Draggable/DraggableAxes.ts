@@ -16,7 +16,7 @@ import type {
   IPointAxes,
 } from "@dflex/utils";
 
-import { DFlexContainer, IDFlexNode } from "@dflex/core-instance";
+import { DFlexContainer, DFlexNode } from "@dflex/core-instance";
 
 import {
   initDFlexEvent,
@@ -25,8 +25,6 @@ import {
   store,
 } from "../DnDStore";
 
-import type { IDraggableAxes } from "./types";
-
 import type {
   ContainersTransition,
   FinalDndOpts,
@@ -34,10 +32,7 @@ import type {
   RestrictionsStatus,
 } from "../types";
 
-class DraggableAxes
-  extends DFlexBaseDraggable<IDFlexNode>
-  implements IDraggableAxes
-{
+class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
   positionPlaceholder: IPointNum;
 
   gridPlaceholder: IPointNum;
@@ -69,9 +64,9 @@ class DraggableAxes
   events: ReturnType<typeof initDFlexEvent>;
 
   constructor(id: string, initCoordinates: IPointAxes, opts: FinalDndOpts) {
-    const element = store.registry.get(id)!;
+    const [element, DOM] = store.getElmWithDOM(id);
 
-    super(element, initCoordinates);
+    super(element, DOM, initCoordinates);
 
     this.isLayoutStateUpdated = false;
 
@@ -80,7 +75,7 @@ class DraggableAxes
       grid,
       currentPosition,
       keys: { SK },
-      offset: { width, height },
+      initialOffset: { width, height },
       depth,
     } = element;
 
@@ -138,8 +133,9 @@ class DraggableAxes
 
       if (!store.interactiveDOM.has(key)) {
         setTimeout(() => {
-          const childDOM = store.registry.get(store.getElmBranchByKey(key)[0])!
-            .DOM!;
+          const childDOM = store.interactiveDOM.get(
+            store.getElmBranchByKey(key)[0]
+          )!;
 
           getParentElm(childDOM, (parentDOM) => {
             store.interactiveDOM.set(key, parentDOM);
@@ -161,7 +157,7 @@ class DraggableAxes
       Math.round(y - currentPosition.y)
     );
 
-    const style = window.getComputedStyle(this.draggedElm.DOM!);
+    const style = window.getComputedStyle(DOM);
 
     // get element margin
     const rm = Math.round(parseFloat(style.marginRight));
@@ -177,7 +173,7 @@ class DraggableAxes
 
     this.restrictionsStatus = opts.restrictionsStatus;
 
-    this.events = initDFlexEvent(this.draggedElm.DOM!);
+    this.events = initDFlexEvent(DOM);
 
     this.axesFilterNeeded =
       siblings !== null &&
@@ -188,7 +184,7 @@ class DraggableAxes
   protected appendDraggedToContainerDimensions(isAppend: boolean) {
     const {
       depth,
-      offset: { height },
+      initialOffset: { height },
     } = this.draggedElm;
 
     const maneuverDistance = height;
@@ -207,7 +203,7 @@ class DraggableAxes
     isRestrictedToThreshold: boolean // if not. Then to self.
   ) {
     const currentTop = y - this.innerOffset.y;
-    const currentBottom = currentTop + this.draggedElm.offset.height;
+    const currentBottom = currentTop + this.draggedElm.initialOffset.height;
 
     if (!allowTop && currentTop <= topThreshold) {
       return isRestrictedToThreshold
@@ -217,7 +213,9 @@ class DraggableAxes
 
     if (!allowBottom && currentBottom >= bottomThreshold) {
       return isRestrictedToThreshold
-        ? bottomThreshold + this.innerOffset.y - this.draggedElm.offset.height
+        ? bottomThreshold +
+            this.innerOffset.y -
+            this.draggedElm.initialOffset.height
         : this.initCoordinates.y;
     }
 
@@ -233,7 +231,7 @@ class DraggableAxes
     restrictToThreshold: boolean // if not. Then to self.,
   ) {
     const currentLeft = x - this.innerOffset.x;
-    const currentRight = currentLeft + this.draggedElm.offset.width;
+    const currentRight = currentLeft + this.draggedElm.initialOffset.width;
 
     if (!allowLeft && currentLeft <= leftThreshold) {
       return restrictToThreshold
@@ -245,7 +243,7 @@ class DraggableAxes
       return restrictToThreshold
         ? rightThreshold +
             this.innerOffset.x -
-            this.draggedElm.offset.width -
+            this.draggedElm.initialOffset.width -
             this.marginX
         : this.initCoordinates.x;
     }
@@ -301,7 +299,8 @@ class DraggableAxes
         filteredY = this.axesYFilter(
           y,
           this.draggedElm.currentPosition.y,
-          this.draggedElm.currentPosition.y + this.draggedElm.offset.height,
+          this.draggedElm.currentPosition.y +
+            this.draggedElm.initialOffset.height,
           this.restrictions.self.allowLeavingFromTop,
           this.restrictions.self.allowLeavingFromBottom,
           false
@@ -342,7 +341,7 @@ class DraggableAxes
     const {
       id,
       depth,
-      offset: { height, width },
+      initialOffset: { height, width },
     } = this.draggedElm;
 
     const { x, y } = this.positionPlaceholder;
