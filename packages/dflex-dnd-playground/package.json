@@ -13,8 +13,8 @@
     "@folo/utils": "^0.1.5"
   },
   "devDependencies": {
-    "cypress": "^10.1.0",
-    "eslint": "^8.17.0",
+    "cypress": "^10.3.0",
+    "eslint": "^8.18.0",
     "eslint-config-dflex-react": "workspace:*",
     "eslint-plugin-cypress": "^2.12.1"
   }
