@@ -76,7 +76,9 @@ class DFlexBaseStore {
     this.registry.set(id, elm);
 
     if (isInitialized) {
-      this.interactiveDOM.set(id, elm.attach()!);
+      const DOM = elm.getElmDOMOrThrow()!;
+
+      this.interactiveDOM.set(id, DOM);
     }
   }
 

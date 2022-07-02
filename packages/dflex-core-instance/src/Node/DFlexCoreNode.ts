@@ -14,12 +14,12 @@ export type SerializedDFlexCoreNode = {
   version: 3;
   id: string;
   translate: IPointNum | null;
-  order: DOMGenOrder;
   grid: IPointNum;
+  order: DOMGenOrder;
   initialOffset: RectDimensions;
   currentOffset: RectDimensions;
-  isTransformed: boolean;
-  hasToTransform: boolean;
+  hasTransformed: boolean;
+  pendingTransform: boolean;
   isVisible: boolean;
 };
 
@@ -56,11 +56,9 @@ export interface DFlexNodeInput {
 }
 
 class DFlexCoreNode extends DFlexBaseNode {
-  initialOffset!: RectDimensions;
+  readonly initialOffset!: RectDimensions;
 
   currentPosition!: IPointNum;
-
-  grid!: IPointNum;
 
   order: DOMGenOrder;
 
@@ -68,9 +66,11 @@ class DFlexCoreNode extends DFlexBaseNode {
 
   depth: number;
 
+  grid!: IPointNum;
+
   isVisible: boolean;
 
-  hasToTransform!: boolean;
+  hasPendingTransform!: boolean;
 
   readonly: boolean;
 
@@ -82,9 +82,7 @@ class DFlexCoreNode extends DFlexBaseNode {
     return "core:node";
   }
 
-  static transform(DOM: HTMLElement, x: number, y: number): void {
-    DOM.style.transform = `translate3d(${x}px,${y}px, 0)`;
-  }
+  static transform = DFlexBaseNode.transform;
 
   constructor(eleWithPointer: DFlexNodeInput) {
     const { order, keys, depth, readonly, id, isInitialized } = eleWithPointer;
@@ -112,13 +110,13 @@ class DFlexCoreNode extends DFlexBaseNode {
      * Instead, using currentOffset object as indicator to current
      * offset/position. This offset, is the init-offset.
      */
-    this.initialOffset = {
+    // @ts-ignore - Initial.
+    this.initialOffset = Object.freeze({
       height,
       width,
-
       left: left + scrollX,
       top: top + scrollY,
-    };
+    });
 
     this.currentPosition = new PointNum(
       this.initialOffset.left,
@@ -131,7 +129,7 @@ class DFlexCoreNode extends DFlexBaseNode {
      */
     this.grid = new PointNum(0, 0);
 
-    this.hasToTransform = false;
+    this.hasPendingTransform = false;
   }
 
   private _updateCurrentIndicators(space: IPointAxes): void {
@@ -148,7 +146,7 @@ class DFlexCoreNode extends DFlexBaseNode {
       top + this.translate!.y
     );
 
-    if (!this.isVisible) this.hasToTransform = true;
+    if (!this.isVisible) this.hasPendingTransform = true;
   }
 
   resume(DOM: HTMLElement, scrollX: number, scrollY: number): void {
@@ -161,9 +159,9 @@ class DFlexCoreNode extends DFlexBaseNode {
 
     this.isVisible = isVisible;
 
-    if (this.hasToTransform && this.isVisible) {
+    if (this.hasPendingTransform && this.isVisible) {
       this.transform(DOM);
-      this.hasToTransform = false;
+      this.hasPendingTransform = false;
     }
   }
 
@@ -258,14 +256,14 @@ class DFlexCoreNode extends DFlexBaseNode {
     this._updateCurrentIndicators(elmSpace);
 
     if (!isForceTransform && !this.isVisible) {
-      this.hasToTransform = true;
+      this.hasPendingTransform = true;
 
       return;
     }
 
     this.transform(DOM);
 
-    this.hasToTransform = false;
+    this.hasPendingTransform = false;
   }
 
   /**
@@ -361,7 +359,19 @@ class DFlexCoreNode extends DFlexBaseNode {
     this.rollBack(DOM, operationID, isForceTransform);
   }
 
-  isTransformed(): boolean {
+  flushIndicators(DOM: HTMLElement): void {
+    if (Array.isArray(this._translateHistory)) {
+      this._translateHistory = [];
+    }
+
+    if (this.translate instanceof PointNum) {
+      this.translate.setAxes(0, 0);
+    }
+
+    this._initIndicators(DOM, 0, 0);
+  }
+
+  hasTransformed(): boolean {
     return (
       this.translate instanceof PointNum &&
       (this.translate.x !== 0 || this.translate.y !== 0)
@@ -382,14 +392,14 @@ class DFlexCoreNode extends DFlexBaseNode {
       type: DFlexCoreNode.getType(),
       version: 3,
       id: this.id,
-      order: this.order,
       grid: this.grid,
-      translate: this.translate,
+      translate: this.translate instanceof PointNum ? this.translate : null,
+      order: this.order,
       initialOffset: this.initialOffset,
       currentOffset: this.getOffset(),
-      isTransformed: this.isTransformed(),
+      hasTransformed: this.hasTransformed(),
       isVisible: this.isVisible,
-      hasToTransform: this.hasToTransform,
+      pendingTransform: this.hasPendingTransform,
     };
   }
 }

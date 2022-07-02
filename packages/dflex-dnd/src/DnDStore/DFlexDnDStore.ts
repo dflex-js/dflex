@@ -1,10 +1,10 @@
 import Store from "@dflex/store";
 import type { RegisterInputOpts } from "@dflex/store";
 
-import { Tracker, Scroll, canUseDOM, Dimensions } from "@dflex/utils";
+import { Tracker, Scroll, canUseDOM, Dimensions, IScroll } from "@dflex/utils";
 import type { ITracker } from "@dflex/utils";
 
-import { DFlexContainer, IDFlexContainer } from "@dflex/core-instance";
+import { DFlexContainer } from "@dflex/core-instance";
 
 import initDFlexListeners, {
   DFlexListenerPlugin,
@@ -24,7 +24,9 @@ import {
 
 import { MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY } from "./constants";
 
-type Containers = Map<string, IDFlexContainer>;
+type Containers = Map<string, DFlexContainer>;
+
+type Scrolls = Map<string, IScroll>;
 
 type UnifiedContainerDimensions = Map<number, Dimensions>;
 
@@ -38,6 +40,8 @@ type Deferred = Array<() => void>;
 
 class DnDStoreImp extends Store {
   containers: Containers;
+
+  scrolls: Scrolls;
 
   unifiedContainerDimensions: UnifiedContainerDimensions;
 
@@ -62,6 +66,7 @@ class DnDStoreImp extends Store {
   constructor() {
     super();
     this.containers = new Map();
+    this.scrolls = new Map();
     this.unifiedContainerDimensions = new Map();
     this.tracker = new Tracker();
     this._isInitialized = false;
@@ -82,11 +87,13 @@ class DnDStoreImp extends Store {
   }
 
   initSiblingContainer(SK: string) {
-    if (this.containers.has(SK)) {
-      return;
+    if (!this.containers.has(SK)) {
+      this.containers.set(SK, new DFlexContainer());
     }
 
-    this.containers.set(SK, new DFlexContainer());
+    if (this.scrolls.has(SK)) {
+      return;
+    }
 
     const branch = this.DOMGen.getElmBranchByKey(SK);
 
@@ -103,15 +110,12 @@ class DnDStoreImp extends Store {
     if (
       hasSiblings &&
       scroll.allowDynamicVisibility &&
-      this.DOMGen.getElmBranchByKey(SK).length <=
-        MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY
+      branch.length <= MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY
     ) {
       scroll.allowDynamicVisibility = false;
     }
 
-    const container = this.containers.get(SK)!;
-
-    container.scroll = scroll;
+    this.scrolls.set(SK, scroll);
 
     if (scroll.allowDynamicVisibility) {
       scroll.scrollEventCallback = updateBranchVisibility.bind(null, this);
@@ -126,10 +130,10 @@ class DnDStoreImp extends Store {
       depth,
     } = elm;
 
-    const container = this.containers.get(SK)!;
+    const scroll = this.scrolls.get(SK)!;
 
     if (!this.interactiveDOM.has(id)) {
-      const DOM = elm.attach();
+      const DOM = elm.getElmDOMOrThrow();
 
       if (DOM === null) {
         return;
@@ -137,12 +141,14 @@ class DnDStoreImp extends Store {
 
       this.interactiveDOM.set(id, DOM);
 
-      elm.resume(DOM, container.scroll.scrollX, container.scroll.scrollY);
+      elm.resume(DOM, scroll.scrollX, scroll.scrollY);
     }
 
     // Using element grid zero to know if the element has been initiated inside
     // container or not.
     if (elm.grid.x === 0) {
+      const container = this.containers.get(SK)!;
+
       const { initialOffset } = elm;
 
       container.registerNewElm(
@@ -153,12 +159,7 @@ class DnDStoreImp extends Store {
       elm.grid.clone(container.grid);
     }
 
-    updateElementVisibility(
-      this.interactiveDOM.get(id)!,
-      elm,
-      container.scroll,
-      false
-    );
+    updateElementVisibility(this.interactiveDOM.get(id)!, elm, scroll, false);
   }
 
   register(element: RegisterInputOpts) {
@@ -224,27 +225,56 @@ class DnDStoreImp extends Store {
   }
 
   commit() {
-    this.getBranchesByDepth(0).forEach((key) => {
-      if (!this.interactiveDOM.has(key)) {
-        if (__DEV__) {
-          // eslint-disable-next-line no-console
-          console.info(
-            `Nothing to commit: Container with key-${key} is not initiated yet.`
-          );
-        }
+    scheduler(
+      this,
+      () => {
+        this.getBranchesByDepth(0).forEach((key) => {
+          if (!this.interactiveDOM.has(key)) {
+            if (__DEV__) {
+              // eslint-disable-next-line no-console
+              console.info(
+                `Nothing to commit: Container with key-${key} is not initiated yet.`
+              );
+            }
+
+            return;
+          }
+
+          const parentDOM = this.interactiveDOM.get(key)!;
+          const branch = this.getElmBranchByKey(key);
+
+          const DOMS = branch.map((elmId) => {
+            const DOM = this.interactiveDOM.get(elmId)!;
+            DOM.style.removeProperty("transform");
+            return DOM;
+          });
+
+          parentDOM.replaceChildren(...DOMS);
+        });
+      },
+      {
+        onUpdate: () => {
+          this.getBranchesByDepth(0).forEach((SK) => {
+            const container = this.containers.get(SK)!;
+
+            container.resetIndicators();
+
+            const branch = this.getElmBranchByKey(SK);
+
+            branch.forEach((elmId) => {
+              const DOM = this.interactiveDOM.get(elmId)!;
+              const elm = this.registry.get(elmId)!;
+
+              elm.flushIndicators(DOM);
+
+              // TODO: Find a unified call. This is duplicated from `handleElmMigration`.
+              container.registerNewElm(elm.getOffset());
+              elm.grid.clone(container.grid);
+            });
+          });
+        },
       }
-
-      // const parentDOM = this.interactiveDOM.get(key)!;
-
-      // const branch = this.getElmBranchByKey(key);
-
-      // branch.forEach((elmId) => {
-      //   const elm = this.registry.get(elmId)!;
-
-      //   if (elm.isTransformed()) {
-      //   }
-      // });
-    });
+    );
   }
 
   getSerializedElm(id: string) {
@@ -262,12 +292,10 @@ class DnDStoreImp extends Store {
   }
 
   private _clearBranchesScroll() {
-    this.DOMGen.forEachBranch((SK) => {
-      const container = this.containers.get(SK)!;
-      if (container.scroll) {
-        container.scroll.destroy();
-      }
+    this.scrolls.forEach((scroll) => {
+      scroll.destroy();
     });
+    this.scrolls.clear();
   }
 
   /**

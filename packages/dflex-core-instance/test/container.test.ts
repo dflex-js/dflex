@@ -1,8 +1,8 @@
-import { DFlexContainer, IDFlexContainer } from "../src";
+import { DFlexContainer } from "../src";
 
 // TODO: Add more cases to cover the grid. This is just a shallow test.
 describe("Container", () => {
-  let container: IDFlexContainer;
+  let container: DFlexContainer;
 
   const elmR1Col1 = {
     top: 0,

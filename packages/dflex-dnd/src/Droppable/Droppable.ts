@@ -61,7 +61,7 @@ class Droppable extends DFlexUpdater {
       if (isScrollEnabled) {
         const { SK } = store.registry.get(draggedID)!.keys;
 
-        const { scrollX, scrollY } = store.containers.get(SK)!.scroll;
+        const { scrollX, scrollY } = store.scrolls.get(SK)!;
 
         elm.resume(DOM, scrollX, scrollY);
 
@@ -96,9 +96,9 @@ class Droppable extends DFlexUpdater {
 
     this.scrollAnimatedFrame = null;
 
-    const { scrollX, scrollY } = store.containers.get(
+    const { scrollX, scrollY } = store.scrolls.get(
       this.draggable.migration.latest().SK
-    )!.scroll;
+    )!;
 
     this.initialScroll = new PointNum(scrollX, scrollY);
 
@@ -516,7 +516,7 @@ class Droppable extends DFlexUpdater {
       scrollHeight,
       scrollContainerRef: scrollContainer,
       scrollRect,
-    } = store.containers.get(SK)!.scroll;
+    } = store.scrolls.get(SK)!;
 
     if (direction === 1) {
       if (currentBottom <= scrollHeight) {
@@ -556,7 +556,7 @@ class Droppable extends DFlexUpdater {
       scrollHeight,
       scrollContainerRef: scrollContainer,
       scrollRect,
-    } = store.containers.get(SK)!.scroll;
+    } = store.scrolls.get(SK)!;
 
     if (direction === 1) {
       if (currentRight <= scrollHeight) {
@@ -585,10 +585,10 @@ class Droppable extends DFlexUpdater {
     on: "scrollElementOnX" | "scrollElementOnY"
   ) {
     const { SK } = store.registry.get(this.draggable.draggedElm.id)!.keys;
-    const container = store.containers.get(SK)!;
+    const scroll = store.scrolls.get(SK)!;
 
     // Prevent store from implementing any animation response.
-    container.scroll.hasThrottledFrame = 1;
+    scroll.hasThrottledFrame = 1;
 
     this.draggable.isViewportRestricted = false;
 
@@ -599,7 +599,7 @@ class Droppable extends DFlexUpdater {
 
       // Reset animation flags
       this.scrollAnimatedFrame = null;
-      container.scroll.hasThrottledFrame = null;
+      scroll.hasThrottledFrame = null;
 
       this.scrollSpeed += this.draggable.scroll.initialSpeed;
     });
@@ -609,7 +609,7 @@ class Droppable extends DFlexUpdater {
     const { draggedElm } = this.draggable;
 
     const { SK } = store.registry.get(draggedElm.id)!.keys;
-    const container = store.containers.get(SK)!;
+    const scroll = store.scrolls.get(SK)!;
 
     /**
      * Manage scrolling.
@@ -617,10 +617,10 @@ class Droppable extends DFlexUpdater {
     if (
       this.draggable.scroll.enable &&
       this.scrollAnimatedFrame === null &&
-      container.scroll.hasThrottledFrame === null
+      scroll.hasThrottledFrame === null
     ) {
-      if (container.scroll.hasOverflowY) {
-        const { scrollRect, scrollHeight, threshold } = container.scroll;
+      if (scroll.hasOverflowY) {
+        const { scrollRect, scrollHeight, threshold } = scroll;
         if (
           this.draggable.threshold.isOut[draggedElm.id].isLeftFromBottom &&
           y >= threshold!.thresholds[SK].bottom &&
@@ -636,8 +636,8 @@ class Droppable extends DFlexUpdater {
         }
       }
 
-      if (container.scroll.hasOverflowX) {
-        const { scrollRect, scrollHeight, threshold } = container.scroll;
+      if (scroll.hasOverflowX) {
+        const { scrollRect, scrollHeight, threshold } = scroll;
         if (
           this.draggable.threshold.isOut[draggedElm.id].isLeftFromRight &&
           x >= threshold!.thresholds[SK].right &&

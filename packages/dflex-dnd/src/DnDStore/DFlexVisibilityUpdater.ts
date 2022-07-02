@@ -57,7 +57,7 @@ function updateElementVisibility(
 
 function updateBranchVisibility(store: DFlexDnDStore, SK: string) {
   const branch = store.getElmBranchByKey(SK);
-  const { scroll } = store.containers.get(SK)!;
+  const scroll = store.scrolls.get(SK)!;
 
   let prevIndex = 0;
 

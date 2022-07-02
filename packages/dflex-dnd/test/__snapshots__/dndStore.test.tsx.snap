@@ -14,7 +14,7 @@ Map {
       "x": 1,
       "y": 1,
     },
-    "hasToTransform": false,
+    "hasPendingTransform": false,
     "id": "id-1",
     "initialOffset": Object {
       "height": 0,
@@ -51,7 +51,7 @@ Map {
       "x": 1,
       "y": 1,
     },
-    "hasToTransform": false,
+    "hasPendingTransform": false,
     "id": "id-2",
     "initialOffset": Object {
       "height": 0,
@@ -88,7 +88,7 @@ Map {
       "x": 1,
       "y": 1,
     },
-    "hasToTransform": false,
+    "hasPendingTransform": false,
     "id": "id-3",
     "initialOffset": Object {
       "height": 0,
@@ -125,7 +125,7 @@ Map {
       "x": 1,
       "y": 1,
     },
-    "hasToTransform": false,
+    "hasPendingTransform": false,
     "id": "id-4",
     "initialOffset": Object {
       "height": 0,

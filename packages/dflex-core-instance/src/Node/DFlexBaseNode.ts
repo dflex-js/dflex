@@ -53,10 +53,7 @@ class DFlexBaseNode {
     this.isPaused = true;
   }
 
-  /**
-   * Attach element DOM node to the instance.
-   */
-  attach(): HTMLElement | null {
+  getElmDOMOrThrow(): HTMLElement | null {
     return getElmDOMOrThrow(this.id);
   }
 

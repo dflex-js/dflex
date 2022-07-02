@@ -10,23 +10,31 @@ import type {
   RectDimensions,
 } from "@dflex/utils";
 
-import type { IDFlexContainer } from "./types";
-
-class DFlexContainer implements IDFlexContainer {
+class DFlexContainer {
   private _boundariesByRow: {
     [row: number]: RectBoundaries;
   };
 
+  /** Strict Rect for siblings containers. */
   boundaries!: RectBoundaries;
 
+  /** Numbers of total columns and rows each container has.  */
   grid: IPointNum;
 
+  /**
+   * Origin length for container before being transformed used to prevent
+   * layout shift.
+   * */
   originLength: number;
 
   scroll!: IScroll;
 
   private _gridSiblingsHasNewRow: boolean;
 
+  /**
+   * Preserve the last element position in the list .
+   * Usage: Getting this position when the dragged is going back from the tail.
+   */
   lastElmPosition!: IPointNum;
 
   static OUT_OF_RANGE = -1;

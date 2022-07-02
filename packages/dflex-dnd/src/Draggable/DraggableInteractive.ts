@@ -26,9 +26,9 @@ class DraggableInteractive extends DraggableAxes {
     this.scroll = { ...opts.scroll };
 
     const { SK } = store.registry.get(id)!.keys;
-    const container = store.containers.get(SK)!;
+    const scroll = store.scrolls.get(SK)!;
 
-    const { hasOverflowX, hasOverflowY } = container.scroll;
+    const { hasOverflowX, hasOverflowY } = scroll;
 
     const siblings = store.getElmBranchByKey(this.migration.latest().SK);
 
@@ -60,9 +60,9 @@ class DraggableInteractive extends DraggableAxes {
     if (this.scroll.enable) {
       this.isViewportRestricted = false;
 
-      container.scroll.setThresholdMatrix(this.scroll.threshold);
+      scroll.setThresholdMatrix(this.scroll.threshold);
 
-      if (!container.scroll.hasDocumentAsContainer) {
+      if (!scroll.hasDocumentAsContainer) {
         /**
          * When the scroll is the document it's good. The restriction is to the
          * document which guarantees the free movement. Otherwise, let's do it.

@@ -132,17 +132,22 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
       }
 
       if (!store.interactiveDOM.has(key)) {
-        setTimeout(() => {
-          const childDOM = store.interactiveDOM.get(
-            store.getElmBranchByKey(key)[0]
-          )!;
+        scheduler(
+          store,
+          () => {
+            const childDOM = store.interactiveDOM.get(
+              store.getElmBranchByKey(key)[0]
+            )!;
 
-          getParentElm(childDOM, (parentDOM) => {
-            store.interactiveDOM.set(key, parentDOM);
-            initMutationObserver(store, parentDOM);
-            return true;
-          });
-        }, 0);
+            getParentElm(childDOM, (parentDOM) => {
+              parentDOM.dataset.dflexKey = key;
+              store.interactiveDOM.set(key, parentDOM);
+              initMutationObserver(store, parentDOM);
+              return true;
+            });
+          },
+          null
+        );
       }
     });
 
@@ -307,11 +312,13 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
         );
       }
     } else if (this.isViewportRestricted) {
+      const scroll = store.scrolls.get(SK)!;
+
       // TODO: Test the fix this when scroll is implemented.
       filteredX = this.axesXFilter(
         x,
         0,
-        container.scroll.getMaximumScrollContainerLeft(),
+        scroll.getMaximumScrollContainerLeft(),
         false,
         false,
         true
@@ -319,7 +326,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
       filteredY = this.axesYFilter(
         y,
         0,
-        container.scroll.getMaximumScrollContainerTop(),
+        scroll.getMaximumScrollContainerTop(),
         false,
         false,
         true
