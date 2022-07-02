@@ -13,6 +13,7 @@ import DFlexUpdater, {
 
 export function isIDEligible(elmID: string, draggedID: string): boolean {
   return (
+    !!elmID &&
     elmID.length > 0 &&
     elmID !== draggedID &&
     store.has(elmID) &&

@@ -3,9 +3,62 @@
 exports[`DnD Store Shallow test the store Element is initiated 1`] = `
 Map {
   "id-1" => DFlexNode {
-    "animatedFrame": null,
+    "_hasAttribute": Set {},
+    "animatedFrame": 1,
+    "currentPosition": PointNum {
+      "x": 0,
+      "y": 0,
+    },
     "depth": 0,
+    "grid": PointNum {
+      "x": 1,
+      "y": 1,
+    },
+    "hasToTransform": false,
     "id": "id-1",
+    "initialOffset": Object {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
+    },
+    "isPaused": false,
+    "isVisible": true,
+    "keys": Object {
+      "CHK": null,
+      "PK": "1-0",
+      "SK": "0-0",
+    },
+    "order": Object {
+      "parent": 0,
+      "self": 0,
+    },
+    "readonly": false,
+    "translate": PointNum {
+      "x": 0,
+      "y": 0,
+    },
+  },
+  "id-2" => DFlexNode {
+    "_hasAttribute": Set {},
+    "animatedFrame": null,
+    "currentPosition": PointNum {
+      "x": 0,
+      "y": 0,
+    },
+    "depth": 0,
+    "grid": PointNum {
+      "x": 1,
+      "y": 1,
+    },
+    "hasToTransform": false,
+    "id": "id-2",
+    "initialOffset": Object {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
+    },
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
@@ -18,6 +71,84 @@ Map {
       "self": 1,
     },
     "readonly": false,
+    "translate": PointNum {
+      "x": 0,
+      "y": 0,
+    },
+  },
+  "id-3" => DFlexNode {
+    "_hasAttribute": Set {},
+    "animatedFrame": null,
+    "currentPosition": PointNum {
+      "x": 0,
+      "y": 0,
+    },
+    "depth": 0,
+    "grid": PointNum {
+      "x": 1,
+      "y": 1,
+    },
+    "hasToTransform": false,
+    "id": "id-3",
+    "initialOffset": Object {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
+    },
+    "isPaused": false,
+    "isVisible": true,
+    "keys": Object {
+      "CHK": null,
+      "PK": "1-0",
+      "SK": "0-0",
+    },
+    "order": Object {
+      "parent": 0,
+      "self": 2,
+    },
+    "readonly": false,
+    "translate": PointNum {
+      "x": 0,
+      "y": 0,
+    },
+  },
+  "id-4" => DFlexNode {
+    "_hasAttribute": Set {},
+    "animatedFrame": null,
+    "currentPosition": PointNum {
+      "x": 0,
+      "y": 0,
+    },
+    "depth": 0,
+    "grid": PointNum {
+      "x": 1,
+      "y": 1,
+    },
+    "hasToTransform": false,
+    "id": "id-4",
+    "initialOffset": Object {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
+    },
+    "isPaused": false,
+    "isVisible": true,
+    "keys": Object {
+      "CHK": null,
+      "PK": "1-0",
+      "SK": "0-0",
+    },
+    "order": Object {
+      "parent": 0,
+      "self": 3,
+    },
+    "readonly": false,
+    "translate": PointNum {
+      "x": 0,
+      "y": 0,
+    },
   },
 }
 `;
