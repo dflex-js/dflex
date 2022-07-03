@@ -52,7 +52,6 @@ export interface DFlexNodeInput {
   keys: Keys;
   depth: number;
   readonly: boolean;
-  isInitialized: boolean;
 }
 
 class DFlexCoreNode extends DFlexBaseNode {
@@ -85,7 +84,7 @@ class DFlexCoreNode extends DFlexBaseNode {
   static transform = DFlexBaseNode.transform;
 
   constructor(eleWithPointer: DFlexNodeInput) {
-    const { order, keys, depth, readonly, id, isInitialized } = eleWithPointer;
+    const { order, keys, depth, readonly, id } = eleWithPointer;
 
     super(id);
 
@@ -93,7 +92,7 @@ class DFlexCoreNode extends DFlexBaseNode {
     this.keys = keys;
     this.depth = depth;
     this.readonly = readonly;
-    this.isPaused = isInitialized;
+    this.isPaused = false;
     this.isVisible = !this.isPaused;
     this.animatedFrame = null;
   }

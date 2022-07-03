@@ -1,7 +1,7 @@
 import Store from "@dflex/store";
 import type { RegisterInputOpts } from "@dflex/store";
 
-import { Tracker, Scroll, canUseDOM, Dimensions, IScroll } from "@dflex/utils";
+import { Tracker, Scroll, canUseDOM, Dimensions } from "@dflex/utils";
 import type { ITracker } from "@dflex/utils";
 
 import { DFlexContainer } from "@dflex/core-instance";
@@ -26,7 +26,7 @@ import { MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY } from "./constants";
 
 type Containers = Map<string, DFlexContainer>;
 
-type Scrolls = Map<string, IScroll>;
+type Scrolls = Map<string, Scroll>;
 
 type UnifiedContainerDimensions = Map<number, Dimensions>;
 
@@ -97,11 +97,7 @@ class DnDStoreImp extends Store {
 
     const branch = this.DOMGen.getElmBranchByKey(SK);
 
-    const scroll = new Scroll({
-      element: this.interactiveDOM.get(branch[0])!,
-      requiredBranchKey: SK,
-      scrollEventCallback: null,
-    });
+    const scroll = new Scroll(this.interactiveDOM.get(branch[0])!, SK);
 
     const hasSiblings = branch.length > 1;
 
@@ -122,6 +118,15 @@ class DnDStoreImp extends Store {
     }
   }
 
+  /**
+   * Complete initializing the task:
+   * 1- Gets element DOM rect.
+   * 2- Check visibility.
+   * 2- Update the element grid.
+   * 3- Update the container grid.
+   *
+   * @param id
+   */
   private _initElmDOMInstance(id: string) {
     const elm = this.registry.get(id)!;
 
@@ -132,17 +137,7 @@ class DnDStoreImp extends Store {
 
     const scroll = this.scrolls.get(SK)!;
 
-    if (!this.interactiveDOM.has(id)) {
-      const DOM = elm.getElmDOMOrThrow();
-
-      if (DOM === null) {
-        return;
-      }
-
-      this.interactiveDOM.set(id, DOM);
-
-      elm.resume(DOM, scroll.scrollX, scroll.scrollY);
-    }
+    elm.resume(this.interactiveDOM.get(id)!, scroll.scrollX, scroll.scrollY);
 
     // Using element grid zero to know if the element has been initiated inside
     // container or not.
@@ -192,12 +187,12 @@ class DnDStoreImp extends Store {
       () => {
         const coreInput = {
           id,
-          isInitialized: element.priority === "high",
           parentID: element.parentID,
           depth: element.depth || 0,
           readonly: !!element.readonly,
         };
 
+        // Create an instance of DFlexCoreNode and gets the DOM element into the store.
         super.register(coreInput);
       },
       {

@@ -13,7 +13,7 @@ import {
   ExtendedList,
   ComponentBasedEvent,
   ContainerBasedEvent,
-  ScrollEssential,
+  ScrollMultiLists,
   ListMigration,
 } from "./components";
 
@@ -47,7 +47,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/scroll" element={<ScrollEssential />} />
+        <Route path="/scroll" element={<ScrollMultiLists />} />
         <Route path="/extended" element={<ExtendedList />} />
         <Route
           path="/restricted-container-all"

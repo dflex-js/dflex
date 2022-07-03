@@ -7,7 +7,7 @@ function getParentElm(
   fromElement: HTMLElement,
   // eslint-disable-next-line no-unused-vars
   cb: (arg: HTMLElement) => boolean
-) {
+): void {
   let current: HTMLElement | null = fromElement;
 
   do {

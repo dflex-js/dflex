@@ -1,5 +1,5 @@
 import type { DFlexNode } from "@dflex/core-instance";
-import type { IScroll } from "@dflex/utils";
+import type { Scroll } from "@dflex/utils";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
 const elmIndicator = Object.seal({
@@ -17,7 +17,7 @@ function initELmIndicator() {
 function updateElementVisibility(
   DOM: HTMLElement,
   elm: DFlexNode,
-  scroll: IScroll,
+  scroll: Scroll,
   permitExceptionToOverride: boolean
 ) {
   let isVisible = true;

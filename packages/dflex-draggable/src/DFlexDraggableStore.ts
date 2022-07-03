@@ -12,7 +12,6 @@ class DFlexDraggableStore extends DFlexBaseStore {
       depth: 0,
       parentID: "",
       readonly: false,
-      isInitialized: false,
     });
   }
 }

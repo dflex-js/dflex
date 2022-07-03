@@ -25,19 +25,9 @@ export type RegisterInputOpts = {
    * same interactive container.
    * */
   readonly?: boolean;
-
-  /**
-   * The priority of initializing the element. If the element is expected to be
-   * interacted immediately by the user it's recommended to be `high`.
-   */
-  priority?: "neutral" | "high";
 };
 
-export type RegisterInputBase = DeepNonNullable<
-  Omit<RegisterInputOpts, "priority"> & {
-    isInitialized: boolean;
-  }
->;
+export type RegisterInputBase = DeepNonNullable<RegisterInputOpts>;
 
 type GetElmWithDOMOutput = [DFlexNode, HTMLElement];
 
@@ -58,7 +48,7 @@ class DFlexBaseStore {
   }
 
   private _submitElementToRegistry(element: RegisterInputBase) {
-    const { id, depth, readonly, isInitialized } = element;
+    const { id, depth, readonly } = element;
 
     const { order, keys } = this.DOMGen.register(id, depth);
 
@@ -68,18 +58,17 @@ class DFlexBaseStore {
       keys,
       depth,
       readonly,
-      isInitialized,
     };
 
     const elm = new DFlexNode(coreElement);
 
     this.registry.set(id, elm);
 
-    if (isInitialized) {
-      const DOM = elm.getElmDOMOrThrow()!;
+    const DOM = elm.getElmDOMOrThrow()!;
 
-      this.interactiveDOM.set(id, DOM);
-    }
+    this.interactiveDOM.set(id, DOM);
+
+    elm.setAttribute(DOM, "INDEX", elm.order.self);
   }
 
   /**

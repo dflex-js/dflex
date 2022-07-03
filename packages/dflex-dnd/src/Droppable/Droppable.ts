@@ -514,7 +514,7 @@ class Droppable extends DFlexUpdater {
 
     const {
       scrollHeight,
-      scrollContainerRef: scrollContainer,
+      DOM: scrollContainer,
       scrollRect,
     } = store.scrolls.get(SK)!;
 
@@ -554,7 +554,7 @@ class Droppable extends DFlexUpdater {
 
     const {
       scrollHeight,
-      scrollContainerRef: scrollContainer,
+      DOM: scrollContainer,
       scrollRect,
     } = store.scrolls.get(SK)!;
 
