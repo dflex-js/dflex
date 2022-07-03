@@ -4,9 +4,9 @@ import type { SerializedDFlexCoreNode } from "@dflex/core-instance";
 
 type LayoutState = "pending" | "ready" | "dragging" | "dragEnd" | "dragCancel";
 
-type ElmMutationType = "destroyed" | "updated";
+type ElmMutationType = "committed";
 
-type ElmTransformationType = "translated" | "reordered" | "visible" | "hidden";
+type ElmTransformationType = "transformed" | "reordered" | "visible" | "hidden";
 
 const layoutState = "layoutState";
 const mutation = "mutation";
@@ -21,7 +21,7 @@ interface DFlexLayoutStateEvent {
 interface DFlexElmMutationEvent {
   type: typeof mutation;
   mutation: ElmMutationType;
-  element: SerializedDFlexCoreNode;
+  targets: Array<HTMLElement>;
 }
 
 interface DFlexElmTransformationEvent {
@@ -35,15 +35,15 @@ interface DFlexErrorEvent {
   error: Error;
 }
 
-type ListenerEvents =
+type DFlexListenerEvents =
   | DFlexLayoutStateEvent
   | DFlexElmMutationEvent
   | DFlexElmTransformationEvent
   | DFlexErrorEvent;
 
-type ListenerTypes = ListenerEvents[keyof ListenerEvents];
+type ListenerTypes = DFlexListenerEvents[keyof DFlexListenerEvents];
 
-type ListenerFunction = (event: ListenerEvents) => void;
+type ListenerFunction = (event: DFlexListenerEvents) => void;
 
 type ListenersMap = Map<ListenerTypes, Set<ListenerFunction>>;
 
@@ -73,7 +73,7 @@ function subscribeLayoutState(
 
 function notifyLayoutState(
   listenersMap: ListenersMap,
-  event: ListenerEvents
+  event: DFlexListenerEvents
 ): void {
   if (!listenersMap.has(event.type)) {
     return;
@@ -92,7 +92,7 @@ function initDFlexListeners(): {
     listener: ListenerFunction,
     type: ListenerTypes
   ) => CleanupFunction;
-  notify: (event: ListenerEvents) => void;
+  notify: (event: DFlexListenerEvents) => void;
   clear: (type: ListenerTypes) => void;
 } {
   const listeners: ListenersMap = new Map();
@@ -107,7 +107,7 @@ function initDFlexListeners(): {
 type DFlexListenerPlugin = ReturnType<typeof initDFlexListeners>;
 
 export type {
-  ListenerEvents,
+  DFlexListenerEvents,
   DFlexLayoutStateEvent,
   DFlexElmMutationEvent,
   DFlexElmTransformationEvent,

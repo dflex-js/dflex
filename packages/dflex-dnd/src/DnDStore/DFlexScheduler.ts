@@ -1,4 +1,4 @@
-import type { ListenerEvents } from "./DFlexListeners";
+import type { DFlexListenerEvents } from "./DFlexListeners";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
 type UpdateFn = () => void;
@@ -17,7 +17,7 @@ function execTask(
   store: DFlexDnDStore,
   updateFn: UpdateFn | null,
   options: SchedulerOptions | null,
-  evt?: ListenerEvents
+  evt?: DFlexListenerEvents
 ) {
   if (evt) {
     store.deferred.push(store.listeners.notify.bind(null, evt));
@@ -49,7 +49,7 @@ function scheduler(
   store: DFlexDnDStore,
   updateFn: UpdateFn | null,
   options: SchedulerOptions | null,
-  evt?: ListenerEvents
+  evt?: DFlexListenerEvents
 ) {
   if (store.isUpdating) {
     store.updatesQueue.push([updateFn, options, evt]);
@@ -86,7 +86,7 @@ type Scheduler = (
   // eslint-disable-next-line no-unused-vars
   options: SchedulerOptions | null,
   // eslint-disable-next-line no-unused-vars
-  evt?: ListenerEvents
+  evt?: DFlexListenerEvents
 ) => void;
 
 export type { Scheduler, SchedulerOptions, UpdateFn };

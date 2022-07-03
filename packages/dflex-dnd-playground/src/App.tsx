@@ -19,13 +19,28 @@ import {
 
 function App() {
   React.useEffect(() => {
-    const unsubscribe = store.listeners.subscribe((e) => {
+    const unsubscribeLayout = store.listeners.subscribe((e) => {
       console.info("new layout state", e);
     }, "layoutState");
 
     return () => {
+      unsubscribeLayout();
+    };
+  }, []);
+
+  React.useEffect(() => {
+    const unsubscribeMutation = store.listeners.subscribe((e) => {
+      console.info("new mutation state", e);
+    }, "mutation");
+
+    return () => {
+      unsubscribeMutation();
+    };
+  }, []);
+
+  React.useEffect(() => {
+    return () => {
       store.destroy();
-      unsubscribe();
     };
   }, []);
 

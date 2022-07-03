@@ -13,4 +13,4 @@ export type {
   DFlexEventPlugin,
 } from "./DFlexEvents";
 
-export type { DFlexLayoutStateEvent } from "./DFlexListeners";
+export type { DFlexListenerEvents } from "./DFlexListeners";

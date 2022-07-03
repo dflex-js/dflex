@@ -74,8 +74,9 @@ function checkMutations(
       if (type === "childList") {
         if (addedNodes.length > 0) {
           if (__DEV__) {
-            console.error(
-              `Insertion of DOM elements is not supported outside the registry.`
+            // eslint-disable-next-line no-console
+            console.warn(
+              `Insertion of DOM elements is not supported outside the registry. Ignore this message if you are using commit().`
             );
           }
 

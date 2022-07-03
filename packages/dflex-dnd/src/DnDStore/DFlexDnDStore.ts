@@ -8,7 +8,7 @@ import { DFlexContainer } from "@dflex/core-instance";
 
 import initDFlexListeners, {
   DFlexListenerPlugin,
-  ListenerEvents,
+  DFlexListenerEvents,
 } from "./DFlexListeners";
 
 import scheduler, {
@@ -33,7 +33,7 @@ type UnifiedContainerDimensions = Map<number, Dimensions>;
 type Observer = MutationObserver | null;
 
 type UpdatesQueue = Array<
-  [UpdateFn | null, SchedulerOptions | null, ListenerEvents | undefined]
+  [UpdateFn | null, SchedulerOptions | null, DFlexListenerEvents | undefined]
 >;
 
 type Deferred = Array<() => void>;
@@ -257,9 +257,11 @@ class DnDStoreImp extends Store {
           this.getBranchesByDepth(0).forEach((SK) => {
             const container = this.containers.get(SK)!;
 
+            const branch = this.getElmBranchByKey(SK);
+
             container.resetIndicators();
 
-            const branch = this.getElmBranchByKey(SK);
+            container.originLength = branch.length;
 
             branch.forEach((elmId) => {
               const DOM = this.interactiveDOM.get(elmId)!;
@@ -273,6 +275,13 @@ class DnDStoreImp extends Store {
             });
           });
         },
+      },
+      {
+        type: "mutation",
+        mutation: "committed",
+        targets: this.getBranchesByDepth(0).map((SK) => {
+          return this.interactiveDOM.get(SK)!;
+        }),
       }
     );
   }

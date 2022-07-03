@@ -9,5 +9,5 @@ export type {
   DFlexSiblingsEvent,
   DFlexEvents,
   DFlexEventsTypes,
-  DFlexLayoutStateEvent,
+  DFlexListenerEvents,
 } from "./DnDStore";

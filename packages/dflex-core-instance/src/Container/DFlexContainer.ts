@@ -3,7 +3,6 @@ import { PointNum, dirtyAssignBiggestRect } from "@dflex/utils";
 
 import type {
   Dimensions,
-  IScroll,
   IPointNum,
   IPointAxes,
   RectBoundaries,
@@ -27,8 +26,6 @@ class DFlexContainer {
    * */
   originLength: number;
 
-  scroll!: IScroll;
-
   private _gridSiblingsHasNewRow: boolean;
 
   /**
@@ -46,7 +43,7 @@ class DFlexContainer {
     this._gridSiblingsHasNewRow = false;
   }
 
-  private _addNewElmToGridIndicator(rect: RectBoundaries) {
+  private _addNewElmToGridIndicator(rect: RectBoundaries): void {
     if (!this._boundariesByRow[this.grid.x]) {
       this._boundariesByRow[this.grid.x] = {
         ...rect,
@@ -87,7 +84,7 @@ class DFlexContainer {
   registerNewElm(
     offset: RectDimensions,
     unifiedContainerDimensions?: Dimensions
-  ) {
+  ): void {
     const { height, left, top, width } = offset;
 
     const right = left + width;
@@ -126,7 +123,7 @@ class DFlexContainer {
     }
   }
 
-  resetIndicators() {
+  resetIndicators(): void {
     // @ts-expect-error - Just resetting the boundaries.
     this.boundaries = null;
     this.grid.setAxes(1, 1);
@@ -134,7 +131,7 @@ class DFlexContainer {
     this._gridSiblingsHasNewRow = false;
   }
 
-  preservePosition(position: IPointAxes) {
+  preservePosition(position: IPointAxes): void {
     this.lastElmPosition = new PointNum(position.x, position.y);
   }
 }
