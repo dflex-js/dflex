@@ -6,7 +6,7 @@ import type { IPointNum, Axis, RectDimensions } from "@dflex/utils";
 
 import type DraggableInteractive from "../Draggable";
 
-import { store } from "../DnDStore";
+import { store } from "../LayoutManager";
 
 const MAX_TRANSFORM_COUNT = 99; /** Infinite transform count */
 

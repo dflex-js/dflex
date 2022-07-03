@@ -3,7 +3,7 @@ import type { DraggedStyle } from "@dflex/draggable";
 import { PointNum } from "@dflex/utils";
 import type { IPointNum, IPointAxes } from "@dflex/utils";
 
-import { store } from "../DnDStore";
+import { store } from "../LayoutManager";
 
 import type { ScrollOpts, FinalDndOpts } from "../types";
 

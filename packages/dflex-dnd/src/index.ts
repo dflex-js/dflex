@@ -1,4 +1,4 @@
-export { store } from "./DnDStore";
+export { store } from "./LayoutManager";
 export { default as DnD } from "./DnD";
 
 export type { DFlexDnDOpts } from "./types";
@@ -10,4 +10,4 @@ export type {
   DFlexEvents,
   DFlexEventsTypes,
   DFlexListenerEvents,
-} from "./DnDStore";
+} from "./LayoutManager";

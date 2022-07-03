@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { scheduler, store } from "../DnDStore";
+import { scheduler, store } from "../LayoutManager";
 import Droppable, { isIDEligible } from "./Droppable";
 
 import type DraggableInteractive from "../Draggable";

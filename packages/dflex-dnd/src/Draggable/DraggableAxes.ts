@@ -23,7 +23,7 @@ import {
   initMutationObserver,
   scheduler,
   store,
-} from "../DnDStore";
+} from "../LayoutManager";
 
 import type {
   ContainersTransition,

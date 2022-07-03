@@ -1,5 +1,5 @@
 import type { ThresholdPercentages } from "@dflex/utils";
-import type { DFlexEventsTypes } from "./DnDStore";
+import type { DFlexEventsTypes } from "./LayoutManager";
 
 type DFlexEventsMap = {
   [K in DFlexEventsTypes]: CustomEvent<any>;

@@ -1,7 +1,7 @@
 import { IPointAxes, PointNum } from "@dflex/utils";
 import type { IPointNum } from "@dflex/utils";
 
-import { store } from "../DnDStore";
+import { store } from "../LayoutManager";
 
 import type DraggableInteractive from "../Draggable";
 
