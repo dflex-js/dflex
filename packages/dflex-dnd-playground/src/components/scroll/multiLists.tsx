@@ -9,18 +9,18 @@ const MultiLists = () => {
   const tasks3 = [];
 
   for (let i = 1; i <= 20; i += 1) {
-    const uni = `scroll-c1-${i}`;
-    tasks1.push({ id: uni, key: uni, task: `${i}` });
+    const id = `scroll-c1-${i}`;
+    tasks1.push({ id, key: id, task: `c1-${i}` });
   }
 
   for (let i = 1; i <= 100; i += 1) {
-    const uni = `scroll-c2-${i}`;
-    tasks2.push({ id: uni, key: uni, task: `${i}` });
+    const id = `scroll-c2-${i}`;
+    tasks2.push({ id, key: id, task: `c2-${i}` });
   }
 
   for (let i = 1; i <= 10; i += 1) {
-    const uni = `scroll-c3-${i}`;
-    tasks3.push({ id: uni, key: uni, task: `${i}` });
+    const id = `scroll-c3-${i}`;
+    tasks3.push({ id, key: id, task: `c3-${i}` });
   }
 
   const ID_PARENT_1 = "multi-p1";
@@ -38,7 +38,7 @@ const MultiLists = () => {
           {tasks.map(({ task, id, key }) => (
             <DFlexDnDComponent
               Component={"li"}
-              registerInput={{ parentID: ID_PARENT_1, id }}
+              registerInput={{ parentID, id }}
               key={key}
             >
               {task}

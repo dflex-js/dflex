@@ -48,7 +48,9 @@ class DFlexBaseStore {
   }
 
   private _submitElementToRegistry(element: RegisterInputBase) {
-    const { id, depth, readonly } = element;
+    const { id, depth, readonly, parentID } = element;
+
+    this._lastKeyIdentifier = parentID;
 
     const { order, keys } = this.DOMGen.register(id, depth);
 
@@ -78,13 +80,13 @@ class DFlexBaseStore {
    * @returns
    */
   register(element: RegisterInputBase) {
-    // If it's a new element or same branch.
-    if (
-      !this._lastKeyIdentifier ||
-      element.parentID === this._lastKeyIdentifier
-    ) {
-      this._lastKeyIdentifier = element.parentID;
+    const { parentID, depth } = element;
 
+    // If it's still inside the same branch.
+    if (
+      this._lastKeyIdentifier === null ||
+      parentID === this._lastKeyIdentifier
+    ) {
       this._submitElementToRegistry(element);
 
       return;
@@ -92,7 +94,6 @@ class DFlexBaseStore {
 
     // A new branch.
     // Create a fake parent node to close the branch.
-    const { parentID, depth } = element;
     this.DOMGen.register(parentID, depth + 1);
 
     this._submitElementToRegistry(element);
