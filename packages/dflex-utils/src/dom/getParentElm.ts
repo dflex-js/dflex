@@ -7,7 +7,7 @@ function getParentElm(
   fromElement: HTMLElement,
   // eslint-disable-next-line no-unused-vars
   cb: (arg: HTMLElement) => boolean
-): void {
+): null | HTMLElement {
   let current: HTMLElement | null = fromElement;
 
   do {
@@ -27,12 +27,14 @@ function getParentElm(
       // If the callback returns true, then we have found the parent element.
       if (cb(current)) {
         iterationCounter = 0;
-        break;
+        return current;
       }
     }
 
     current = current.parentElement;
-  } while (current && !current.isSameNode(document.body));
+  } while (current !== null && !current.isSameNode(document.body));
+
+  return null;
 }
 
 export default getParentElm;

@@ -21,14 +21,10 @@ function getScrollContainer(baseDOMElm: HTMLElement): [HTMLElement, boolean] {
   const baseELmPosition = baseComputedStyle.getPropertyValue("position");
   const excludeStaticParents = baseELmPosition === "absolute";
 
-  let scrollDOM: HTMLElement | null = null;
-
-  getParentElm(baseDOMElm, (parentDOM) => {
+  const scrollContainerDOM = getParentElm(baseDOMElm, (parentDOM) => {
     if (excludeStaticParents && isStaticallyPositioned(parentDOM)) {
       return false;
     }
-
-    scrollDOM = parentDOM;
 
     const parentComputedStyle = getComputedStyle(parentDOM);
 
@@ -57,13 +53,17 @@ function getScrollContainer(baseDOMElm: HTMLElement): [HTMLElement, boolean] {
     return false;
   });
 
-  if (hasDocumentAsContainer || baseELmPosition === "fixed" || !scrollDOM) {
+  if (
+    hasDocumentAsContainer ||
+    baseELmPosition === "fixed" ||
+    !scrollContainerDOM
+  ) {
     hasDocumentAsContainer = true;
 
     return [document.documentElement, true];
   }
 
-  return [scrollDOM, hasDocumentAsContainer];
+  return [scrollContainerDOM, hasDocumentAsContainer];
 }
 
 function widthOrHeight(direction: "x" | "y") {
