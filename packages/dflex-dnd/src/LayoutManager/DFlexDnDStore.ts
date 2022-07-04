@@ -137,7 +137,11 @@ class DnDStoreImp extends Store {
 
     const scroll = this.scrolls.get(SK)!;
 
-    elm.resume(this.interactiveDOM.get(id)!, scroll.scrollX, scroll.scrollY);
+    const {
+      scrollRect: { left, top },
+    } = scroll;
+
+    elm.resume(this.interactiveDOM.get(id)!, left, top);
 
     // Using element grid zero to know if the element has been initiated inside
     // container or not.

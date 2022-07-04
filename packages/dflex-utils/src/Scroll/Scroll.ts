@@ -1,34 +1,93 @@
 import { Threshold } from "../Threshold";
 import type { ThresholdPercentages } from "../Threshold";
 import type { RectDimensions } from "../types";
+import { getParentElm } from "../dom";
 
 // eslint-disable-next-line no-unused-vars
 type ScrollEventCallback = (SK: string) => void;
 
 const OVERFLOW_REGEX = /(auto|scroll|overlay)/;
 
-function loopInDOM(
-  fromElement: HTMLElement,
-  // eslint-disable-next-line no-unused-vars
-  cb: (arg: HTMLElement) => boolean
-) {
-  let current: HTMLElement | null = fromElement;
-
-  do {
-    if (cb(current)) {
-      return current;
-    }
-
-    current = current.parentNode as HTMLElement;
-  } while (current && !current.isSameNode(document.body));
-
-  return null;
-}
-
-function isStaticallyPositioned(element: Element) {
-  const computedStyle = getComputedStyle(element);
+function isStaticallyPositioned(DOM: Element) {
+  const computedStyle = getComputedStyle(DOM);
   const position = computedStyle.getPropertyValue("position");
   return position === "static";
+}
+
+function getScrollContainer(baseDOMElm: HTMLElement): [HTMLElement, boolean] {
+  let hasDocumentAsContainer = false;
+
+  const baseComputedStyle = getComputedStyle(baseDOMElm);
+  const baseELmPosition = baseComputedStyle.getPropertyValue("position");
+  const excludeStaticParents = baseELmPosition === "absolute";
+
+  let scrollDOM: HTMLElement | null = null;
+
+  getParentElm(baseDOMElm, (parentDOM) => {
+    if (excludeStaticParents && isStaticallyPositioned(parentDOM)) {
+      return false;
+    }
+
+    scrollDOM = parentDOM;
+
+    const parentComputedStyle = getComputedStyle(parentDOM);
+
+    const parentRect = parentDOM.getBoundingClientRect();
+
+    const overflowY = parentComputedStyle.getPropertyValue("overflow-y");
+
+    if (OVERFLOW_REGEX.test(overflowY)) {
+      if (parentDOM.scrollHeight === Math.round(parentRect.height)) {
+        hasDocumentAsContainer = true;
+      }
+
+      return true;
+    }
+
+    const overflowX = parentComputedStyle.getPropertyValue("overflow-x");
+
+    if (OVERFLOW_REGEX.test(overflowX)) {
+      if (parentDOM.scrollWidth === Math.round(parentRect.width)) {
+        hasDocumentAsContainer = true;
+      }
+
+      return true;
+    }
+
+    return false;
+  });
+
+  if (hasDocumentAsContainer || baseELmPosition === "fixed" || !scrollDOM) {
+    hasDocumentAsContainer = true;
+
+    return [document.documentElement, true];
+  }
+
+  return [scrollDOM, hasDocumentAsContainer];
+}
+
+function widthOrHeight(direction: "x" | "y") {
+  return direction === "x" ? "width" : "height";
+}
+
+function hasOverFlow(
+  scrollRect: RectDimensions,
+  scrollContainerRect: RectDimensions,
+  direction: "x" | "y"
+) {
+  const dir = widthOrHeight(direction);
+
+  return scrollRect[dir] > scrollContainerRect[dir];
+}
+
+function hasMoreThanHalfOverFlow(
+  scrollRect: RectDimensions,
+  scrollContainerRect: RectDimensions,
+  direction: "x" | "y"
+) {
+  const dir = widthOrHeight(direction);
+
+  return scrollRect[dir] / 2 > scrollContainerRect[dir];
 }
 
 class Scroll {
@@ -38,15 +97,9 @@ class Scroll {
 
   scrollEventCallback: ScrollEventCallback | null;
 
-  scrollX!: number;
+  scrollContainerRect!: RectDimensions;
 
-  scrollY!: number;
-
-  scrollRect: RectDimensions;
-
-  scrollHeight!: number;
-
-  scrollWidth!: number;
+  scrollRect!: RectDimensions;
 
   hasOverflowX!: boolean;
 
@@ -54,7 +107,7 @@ class Scroll {
 
   allowDynamicVisibility!: boolean;
 
-  DOM!: HTMLElement;
+  scrollContainerDOM!: HTMLElement;
 
   hasThrottledFrame: number | null;
 
@@ -63,107 +116,69 @@ class Scroll {
   constructor(element: HTMLElement, SK: string) {
     this.threshold = null;
     this.hasThrottledFrame = null;
-
-    this.scrollRect = {
-      height: 0,
-      width: 0,
-      left: 0,
-      top: 0,
-    };
-
     this.SK = SK;
 
-    this.DOM = this.getScrollContainer(element);
+    [this.scrollContainerDOM, this.hasDocumentAsContainer] =
+      getScrollContainer(element);
 
-    this.setScrollRect();
-    this.setScrollCoordinates();
+    this._setRectsWithOverflow();
+
     this.setScrollListener();
     this.scrollEventCallback = null;
   }
 
-  private getScrollContainer(baseDOMElm: HTMLElement) {
-    this.hasDocumentAsContainer = false;
+  private _setRectsWithOverflow(): void {
+    const { scrollHeight, scrollWidth, scrollLeft, scrollTop } =
+      this.scrollContainerDOM;
 
-    const baseComputedStyle = getComputedStyle(baseDOMElm);
-    const baseELmPosition = baseComputedStyle.getPropertyValue("position");
-    const excludeStaticParents = baseELmPosition === "absolute";
+    this.scrollRect = {
+      left: Math.round(scrollLeft),
+      top: Math.round(scrollTop),
+      width: scrollWidth,
+      height: scrollHeight,
+    };
 
-    const scrollContainer = loopInDOM(baseDOMElm, (parentDOM) => {
-      if (excludeStaticParents && isStaticallyPositioned(parentDOM)) {
-        return false;
-      }
+    if (!this.hasDocumentAsContainer) {
+      const { height, width, left, top } =
+        this.scrollContainerDOM.getBoundingClientRect();
 
-      const parentComputedStyle = getComputedStyle(parentDOM);
-
-      const parentRect = parentDOM.getBoundingClientRect();
-
-      const overflowY = parentComputedStyle.getPropertyValue("overflow-y");
-
-      if (OVERFLOW_REGEX.test(overflowY)) {
-        if (parentDOM.scrollHeight === Math.round(parentRect.height)) {
-          this.hasDocumentAsContainer = true;
-        }
-
-        return true;
-      }
-
-      const overflowX = parentComputedStyle.getPropertyValue("overflow-x");
-
-      if (OVERFLOW_REGEX.test(overflowX)) {
-        if (parentDOM.scrollWidth === Math.round(parentRect.width)) {
-          this.hasDocumentAsContainer = true;
-        }
-
-        return true;
-      }
-
-      return false;
-    });
-
-    if (
-      this.hasDocumentAsContainer ||
-      baseELmPosition === "fixed" ||
-      !scrollContainer
-    ) {
-      this.hasDocumentAsContainer = true;
-
-      return document.documentElement;
-    }
-
-    return scrollContainer;
-  }
-
-  private setScrollRect() {
-    const { scrollHeight, scrollWidth } = this.DOM;
-
-    this.scrollHeight = scrollHeight;
-    this.scrollWidth = scrollWidth;
-
-    if (this.hasDocumentAsContainer) {
+      // @ts-ignore
+      this.scrollContainerRect = { height, width, left, top };
+    } else {
       const viewportHeight = Math.max(
-        this.DOM.clientHeight || 0,
+        this.scrollContainerDOM.clientHeight || 0,
         window.innerHeight || 0
       );
 
       const viewportWidth = Math.max(
-        this.DOM.clientWidth || 0,
+        this.scrollContainerDOM.clientWidth || 0,
         window.innerWidth || 0
       );
 
-      this.scrollRect = {
+      // @ts-ignore
+      this.scrollContainerRect = {
         height: viewportHeight,
         width: viewportWidth,
         left: 0,
         top: 0,
       };
-    } else {
-      const { height, width, left, top } = this.DOM.getBoundingClientRect();
-
-      this.scrollRect = { height, width, left, top };
     }
 
-    this.hasOverflowY = this.scrollHeight > this.scrollRect.height;
-    this.hasOverflowX = this.scrollRect.width < scrollWidth;
+    this._setOverflow();
+  }
+
+  private _setOverflow(): void {
+    this.hasOverflowY = hasOverFlow(
+      this.scrollRect,
+      this.scrollContainerRect,
+      "y"
+    );
+
+    this.hasOverflowX = hasOverFlow(
+      this.scrollRect,
+      this.scrollContainerRect,
+      "x"
+    );
 
     /**
      * Deciding when to active visibility and pausing for element branch. We
@@ -172,15 +187,34 @@ class Scroll {
      */
     this.allowDynamicVisibility = false;
 
-    if (this.hasOverflowY && scrollHeight / 2 >= this.scrollRect.height) {
+    if (
+      this.hasOverflowY &&
+      hasMoreThanHalfOverFlow(this.scrollRect, this.scrollContainerRect, "y")
+    ) {
       this.allowDynamicVisibility = true;
 
       return;
     }
 
-    if (this.hasOverflowX && scrollWidth / 2 >= this.scrollRect.width) {
+    if (
+      this.hasOverflowX &&
+      hasMoreThanHalfOverFlow(this.scrollRect, this.scrollContainerRect, "x")
+    ) {
       this.allowDynamicVisibility = true;
     }
+  }
+
+  private _updateScrollCoordinates(): boolean {
+    const scrollY = Math.round(this.scrollContainerDOM.scrollTop);
+    const scrollX = Math.round(this.scrollContainerDOM.scrollLeft);
+
+    const isUpdated =
+      scrollY !== this.scrollRect.height || scrollX !== this.scrollRect.left;
+
+    this.scrollRect.height = scrollY;
+    this.scrollRect.width = scrollX;
+
+    return isUpdated;
   }
 
   private setScrollListener(isAttachListener = true) {
@@ -191,7 +225,9 @@ class Scroll {
 
     const type = isAttachListener ? "addEventListener" : "removeEventListener";
 
-    const container = this.hasDocumentAsContainer ? window : this.DOM;
+    const container = this.hasDocumentAsContainer
+      ? window
+      : this.scrollContainerDOM;
 
     const opts = { passive: true };
 
@@ -200,7 +236,7 @@ class Scroll {
     if (hasScrollListener) {
       container[type]("scroll", this.animatedScrollListener, opts);
 
-      let elm: HTMLElement = this.DOM;
+      let elm: HTMLElement = this.scrollContainerDOM;
 
       if (this.hasDocumentAsContainer) {
         // Find the first div in the document body.
@@ -242,50 +278,37 @@ class Scroll {
 
   setThresholdMatrix(threshold: ThresholdPercentages) {
     this.threshold = new Threshold(threshold);
-    this.threshold.setScrollThreshold(this.SK, this.scrollRect);
-  }
-
-  private setScrollCoordinates() {
-    const scrollY = Math.round(this.DOM.scrollTop || window.pageYOffset);
-
-    const scrollX = Math.round(this.DOM.scrollLeft || window.pageXOffset);
-
-    const isUpdated = scrollY !== this.scrollY || scrollX !== this.scrollX;
-
-    this.scrollY = scrollY;
-    this.scrollX = scrollX;
-
-    return isUpdated;
+    this.threshold.setScrollThreshold(this.SK, this.scrollContainerRect);
   }
 
   getMaximumScrollContainerLeft() {
-    const { left, width } = this.scrollRect;
+    const { left, width } = this.scrollContainerRect;
 
-    return left + width + this.scrollX;
+    return left + width + this.scrollRect.left;
   }
 
   getMaximumScrollContainerTop() {
-    const { top, height } = this.scrollRect;
+    const { top, height } = this.scrollContainerRect;
 
-    return top + height + this.scrollY;
+    return top + height + this.scrollRect.top;
   }
 
   isElementVisibleViewportX(currentLeft: number): boolean {
     return (
-      currentLeft >= this.scrollX &&
+      currentLeft >= this.scrollRect.left &&
       currentLeft <= this.getMaximumScrollContainerLeft()
     );
   }
 
   isElementVisibleViewportY(currentTop: number): boolean {
     return (
-      currentTop >= this.scrollY &&
+      currentTop >= this.scrollRect.top &&
       currentTop <= this.getMaximumScrollContainerTop()
     );
   }
 
   private animatedListener(
-    setter: "setScrollRect" | "setScrollCoordinates",
+    setter: "_setRectsWithOverflow" | "_updateScrollCoordinates",
     cb: ScrollEventCallback | null
   ) {
     if (this.hasThrottledFrame !== null) return;
@@ -303,19 +326,19 @@ class Scroll {
   private animatedScrollListener = () => {
     this.animatedListener.call(
       this,
-      "setScrollCoordinates",
+      "_updateScrollCoordinates",
       this.scrollEventCallback
     );
   };
 
   private animatedResizeListener = () => {
-    this.animatedListener.call(this, "setScrollRect", null);
+    this.animatedListener.call(this, "_setRectsWithOverflow", null);
   };
 
   destroy() {
     this.setScrollListener(false);
     // @ts-expect-error
-    this.DOM = null;
+    this.scrollContainerDOM = null;
   }
 }
 
