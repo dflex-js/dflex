@@ -616,50 +616,31 @@ class Droppable extends DFlexUpdater {
     /**
      * Manage scrolling.
      */
-    if (
-      this.draggable.scroll.enable &&
-      this.scrollAnimatedFrame === null &&
-      scroll.hasThrottledFrame === null
-    ) {
-      if (scroll.hasOverflowY) {
-        const {
-          scrollContainerRect: scrollRect,
-          scrollRect: { height: scrollHeight },
-          threshold,
-        } = scroll;
-        if (
-          this.draggable.threshold.isOut[draggedElm.id].isLeftFromBottom &&
-          y >= threshold!.thresholds[SK].bottom &&
-          this.scrollAxes.y + scrollRect.height < scrollHeight
-        ) {
-          this.scrollElement(x, y, 1, "scrollElementOnY");
-          return;
-        }
+    if (this.draggable.scroll.enable && this.scrollAnimatedFrame === null) {
+      if (scroll.isOutThresholdV(y)) {
+        this.scrollElement(
+          x,
+          y,
+          this.draggable.threshold.isOut[draggedElm.id].isLeftFromBottom
+            ? 1
+            : -1,
+          "scrollElementOnY"
+        );
 
-        if (y <= threshold!.thresholds[SK].top && this.scrollAxes.y > 0) {
-          this.scrollElement(x, y, -1, "scrollElementOnY");
-          return;
-        }
+        return;
       }
 
-      if (scroll.hasOverflowX) {
-        const {
-          scrollContainerRect: scrollRect,
-          scrollRect: { height: scrollHeight },
-          threshold,
-        } = scroll;
-        if (
-          this.draggable.threshold.isOut[draggedElm.id].isLeftFromRight &&
-          x >= threshold!.thresholds[SK].right &&
-          this.scrollAxes.x + scrollRect.width < scrollHeight
-        ) {
-          this.scrollElement(x, y, 1, "scrollElementOnX");
-          return;
-        }
+      if (scroll.isOutThresholdH(x)) {
+        this.scrollElement(
+          x,
+          y,
+          this.draggable.threshold.isOut[draggedElm.id].isLeftFromRight
+            ? 1
+            : -1,
+          "scrollElementOnX"
+        );
 
-        if (x <= threshold!.thresholds[SK].left && this.scrollAxes.x > 0) {
-          this.scrollElement(x, y, -1, "scrollElementOnX");
-        }
+        return;
       }
 
       /**

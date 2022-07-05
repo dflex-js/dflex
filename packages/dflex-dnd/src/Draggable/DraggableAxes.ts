@@ -9,7 +9,6 @@ import {
   getParentElm,
 } from "@dflex/utils";
 import type {
-  ThresholdInterface,
   IPointNum,
   IPointBool,
   IMigration,
@@ -39,7 +38,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
 
   migration: IMigration;
 
-  threshold: ThresholdInterface;
+  threshold: Threshold;
 
   isViewportRestricted: boolean;
 

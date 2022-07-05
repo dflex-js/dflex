@@ -1,3 +1,3 @@
-export type { IScroll } from "./types";
+import Scroll from "./Scroll";
 
-export { default as Scroll } from "./Scroll";
+export default Scroll;
