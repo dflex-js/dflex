@@ -49,7 +49,7 @@ export const DFlexDnDComponent = ({
     }
 
     return () => {
-      store.unregister(id);
+      // store.unregister(id);
     };
   }, [taskRef.current]);
 

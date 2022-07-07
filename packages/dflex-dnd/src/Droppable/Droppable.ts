@@ -590,7 +590,7 @@ class Droppable extends DFlexUpdater {
     const scroll = store.scrolls.get(SK)!;
 
     // Prevent store from implementing any animation response.
-    scroll.hasThrottledFrame = 1;
+    scroll.pauseListeners(true);
 
     this.draggable.isViewportRestricted = false;
 
@@ -601,7 +601,7 @@ class Droppable extends DFlexUpdater {
 
       // Reset animation flags
       this.scrollAnimatedFrame = null;
-      scroll.hasThrottledFrame = null;
+      scroll.pauseListeners(false);
 
       this.scrollSpeed += this.draggable.scroll.initialSpeed;
     });
@@ -617,18 +617,30 @@ class Droppable extends DFlexUpdater {
      * Manage scrolling.
      */
     if (this.draggable.scroll.enable && this.scrollAnimatedFrame === null) {
+      const { isLeftFromTop, isLeftFromBottom } =
+        this.draggable.threshold.isOut[draggedElm.id];
+      console.log(
+        "file: Droppable.ts ~ line 621 ~ isOutThresholdV",
+        "ok",
+        scroll.isAtBottom()
+      );
+
+      // ((isLeftFromTop && scroll.scrollRect.top !== 0) || isLeftFromBottom) &&
+
       if (scroll.isOutThresholdV(y)) {
-        this.scrollElement(
-          x,
-          y,
-          this.draggable.threshold.isOut[draggedElm.id].isLeftFromBottom
-            ? 1
-            : -1,
-          "scrollElementOnY"
-        );
+        // this.scrollElement(
+        //   x,
+        //   y,
+        //   this.draggable.threshold.isOut[draggedElm.id].isLeftFromBottom
+        //     ? 1
+        //     : -1,
+        //   "scrollElementOnY"
+        // );
 
         return;
       }
+
+      console.log("file: Droppable.ts ~ line 621 ~ isOutThresholdV", "not ok");
 
       if (scroll.isOutThresholdH(x)) {
         this.scrollElement(

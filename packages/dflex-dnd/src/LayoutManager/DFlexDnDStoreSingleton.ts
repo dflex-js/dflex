@@ -13,8 +13,6 @@ export default (function createStoreInstance() {
     if (canUseDOM()) {
       if (!globalThis.$DFlex) {
         globalThis.$DFlex = store;
-      } else {
-        throw new Error("DFlex store instances is already defined.");
       }
     }
   }

@@ -135,7 +135,9 @@ class DnDStoreImp extends Store {
       depth,
     } = elm;
 
-    const scroll = this.scrolls.get(SK)!;
+    const scroll = this.scrolls.get(SK);
+
+    if (!scroll) return;
 
     const {
       scrollRect: { left, top },
@@ -319,6 +321,10 @@ class DnDStoreImp extends Store {
    *
    */
   unregister(id: string) {
+    if (!this.registry.has(id)) {
+      return;
+    }
+
     const {
       keys: { SK },
       order: { self },

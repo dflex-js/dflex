@@ -97,10 +97,6 @@ class Scroll {
 
   scrollEventCallback: ScrollEventCallback | null;
 
-  private _animatedScrollListener: () => void;
-
-  private _animatedResizeListener: () => void;
-
   scrollContainerRect!: RectDimensions;
 
   scrollRect!: RectDimensions;
@@ -113,13 +109,13 @@ class Scroll {
 
   scrollContainerDOM!: HTMLElement;
 
-  hasThrottledFrame: number | null;
+  private _hasThrottledFrame: number | null;
 
   hasDocumentAsContainer!: boolean;
 
   constructor(element: HTMLElement, SK: string) {
     this._threshold = null;
-    this.hasThrottledFrame = null;
+    this._hasThrottledFrame = null;
     this.SK = SK;
 
     [this.scrollContainerDOM, this.hasDocumentAsContainer] =
@@ -129,18 +125,6 @@ class Scroll {
 
     this._setResizeAndScrollListeners();
     this.scrollEventCallback = null;
-
-    this._animatedScrollListener = this._animatedListener.bind(
-      this,
-      this._updateScrollCoordinates,
-      this.scrollEventCallback
-    );
-
-    this._animatedResizeListener = this._animatedListener.bind(
-      this,
-      this._setRectsWithOverflow,
-      null
-    );
   }
 
   private _setRectsWithOverflow(): void {
@@ -148,8 +132,8 @@ class Scroll {
       this.scrollContainerDOM;
 
     this.scrollRect = {
-      left: Math.round(scrollLeft),
-      top: Math.round(scrollTop),
+      left: scrollLeft,
+      top: scrollTop,
       width: scrollWidth,
       height: scrollHeight,
     };
@@ -221,16 +205,19 @@ class Scroll {
   }
 
   private _updateScrollCoordinates(): boolean {
-    const scrollY = Math.round(this.scrollContainerDOM.scrollTop);
-    const scrollX = Math.round(this.scrollContainerDOM.scrollLeft);
+    const { scrollLeft, scrollTop } = this.scrollContainerDOM;
 
     const isUpdated =
-      scrollY !== this.scrollRect.height || scrollX !== this.scrollRect.left;
+      scrollTop !== this.scrollRect.top || scrollLeft !== this.scrollRect.left;
 
-    this.scrollRect.height = scrollY;
-    this.scrollRect.width = scrollX;
+    if (isUpdated) {
+      this.scrollRect.top = scrollTop;
+      this.scrollRect.left = scrollLeft;
 
-    return isUpdated;
+      return true;
+    }
+
+    return false;
   }
 
   private _setResizeAndScrollListeners(isAttachListener = true): void {
@@ -264,22 +251,31 @@ class Scroll {
     delete this.scrollContainerDOM.dataset.dflexScrollListener;
   }
 
-  private _animatedListener(
-    setter:
-      | typeof Scroll.prototype._setRectsWithOverflow
-      | typeof Scroll.prototype._updateScrollCoordinates,
-    cb: ScrollEventCallback | null
-  ): void {
-    if (this.hasThrottledFrame !== null) return;
+  private _animatedScrollListener = () => {
+    if (this._hasThrottledFrame !== null) return;
 
-    this.hasThrottledFrame = window.requestAnimationFrame(() => {
-      const isUpdated = setter();
+    this._hasThrottledFrame = window.requestAnimationFrame(() => {
+      const isUpdated = this._updateScrollCoordinates();
 
-      if (isUpdated && cb) {
-        cb(this.SK);
+      if (isUpdated && this.scrollEventCallback) {
+        this.scrollEventCallback(this.SK);
       }
-      this.hasThrottledFrame = null;
+
+      this._hasThrottledFrame = null;
     });
+  };
+
+  private _animatedResizeListener = () => {
+    if (this._hasThrottledFrame !== null) return;
+
+    this._hasThrottledFrame = window.requestAnimationFrame(() => {
+      this._setRectsWithOverflow();
+      this._hasThrottledFrame = null;
+    });
+  };
+
+  pauseListeners(pausePlease: boolean): void {
+    this._hasThrottledFrame = pausePlease ? 1 : null;
   }
 
   setThreshold(threshold: ThresholdPercentages): void {
@@ -291,24 +287,28 @@ class Scroll {
     );
   }
 
-  isScrollAvailable(isVertical: boolean): boolean {
+  private _isScrollAvailable(isVertical: boolean): boolean {
     return this._threshold !== null &&
-      this.hasThrottledFrame === null &&
+      this._hasThrottledFrame === null &&
       isVertical
       ? this.hasOverflowY
       : this.hasOverflowX;
   }
 
+  isAtBottom(): boolean {
+    return this.scrollRect.top === this.scrollRect.height;
+  }
+
   isOutThresholdV(y: number): boolean {
     return (
-      this.isScrollAvailable(true) &&
+      this._isScrollAvailable(true) &&
       this._threshold!.isOutThresholdV(`scroll-${this.SK}`, y, y)
     );
   }
 
   isOutThresholdH(x: number): boolean {
     return (
-      this.isScrollAvailable(false) &&
+      this._isScrollAvailable(false) &&
       this._threshold!.isOutThresholdV(`scroll-${this.SK}`, x, x)
     );
   }
