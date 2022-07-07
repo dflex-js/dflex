@@ -1,4 +1,4 @@
-import type { ThresholdInterface, ThresholdPercentages } from "../Threshold";
+import type { Threshold, ThresholdPercentages } from "../Threshold";
 import type { RectDimensions } from "../types";
 
 export type ScrollEventCallback = (SK: string) => void;
@@ -10,7 +10,7 @@ export interface ScrollInput {
 }
 
 export interface IScroll {
-  threshold: ThresholdInterface | null;
+  threshold: Threshold | null;
   scrollRect: RectDimensions;
   scrollX: number;
   scrollY: number;

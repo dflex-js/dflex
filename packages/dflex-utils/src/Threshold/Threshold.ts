@@ -4,107 +4,80 @@ import type { IPointNum } from "../Point";
 import type { RectDimensions, RectBoundaries, Dimensions } from "../types";
 
 import FourDirectionsBool from "./FourDirectionsBool";
-import type {
-  ThresholdInterface,
-  ThresholdPercentages,
-  ThresholdsStore,
-  LayoutPositionStatus,
-} from "./types";
+
 import { combineKeys, dirtyAssignBiggestRect } from "../collections";
 
-class Threshold implements ThresholdInterface {
-  thresholds: ThresholdsStore;
+type ThresholdCoordinate = {
+  top: number;
+  left: number;
+  right: number;
+  bottom: number;
+};
 
-  private pixels!: IPointNum;
+export interface ThresholdPercentages {
+  /** vertical threshold in percentage from 0-100 */
+  vertical: number;
 
-  private percentages: ThresholdPercentages;
+  /** horizontal threshold in percentage from 0-100 */
+  horizontal: number;
+}
 
-  isOut: LayoutPositionStatus;
+class Threshold {
+  readonly thresholds: Record<string, ThresholdCoordinate>;
+
+  private _pixels!: IPointNum;
+
+  private _percentages: ThresholdPercentages;
+
+  isOut: Record<string, FourDirectionsBool>;
 
   constructor(percentages: ThresholdPercentages) {
-    this.percentages = percentages;
-
+    this._percentages = percentages;
     this.thresholds = {};
     this.isOut = {};
   }
 
-  private setPixels({ width, height }: RectDimensions) {
-    const x = Math.round((this.percentages.horizontal * width) / 100);
-    const y = Math.round((this.percentages.vertical * height) / 100);
+  private _setPixels({ width, height }: RectDimensions): void {
+    const x = Math.round((this._percentages.horizontal * width) / 100);
+    const y = Math.round((this._percentages.vertical * height) / 100);
 
-    this.pixels = new PointNum(x, y);
-  }
-
-  private initIndicators(key: string) {
-    if (!this.isOut[key]) {
-      this.isOut[key] = new FourDirectionsBool();
-    } else {
-      this.isOut[key].reset();
-    }
-  }
-
-  private getScrollThreshold(rect: RectDimensions) {
-    const { top, left, height, width } = rect;
-
-    const { x, y } = this.pixels;
-
-    return {
-      left: Math.abs(left - x),
-      right: left - x + width,
-      top: Math.abs(top - y),
-      bottom: height - y,
-    };
-  }
-
-  setScrollThreshold(key: string, rect: RectDimensions) {
-    this.setPixels(rect);
-
-    this.thresholds[key] = this.getScrollThreshold(rect);
-
-    if (!this.isOut[key]) {
-      this.isOut[key] = new FourDirectionsBool();
-    } else {
-      this.isOut[key].reset();
-    }
-  }
-
-  private getThreshold(rect: RectBoundaries) {
-    const { top, left, bottom, right } = rect;
-
-    const { x, y } = this.pixels;
-
-    return {
-      left: left - x,
-      right: right + x,
-      top: top - y,
-      bottom: bottom + y,
-    };
+    this._pixels = new PointNum(x, y);
   }
 
   /** Assign threshold property and create new instance for is out indicators */
-  private createThreshold(key: string, rect: RectBoundaries) {
-    this.thresholds[key] = this.getThreshold(rect);
-    this.initIndicators(key);
+  private _createThreshold(
+    key: string,
+    rect: RectBoundaries,
+    isInner?: true
+  ): void {
+    const { top, left, bottom, right } = rect;
+
+    const { x, y } = this._pixels;
+
+    const threshold = isInner
+      ? {
+          left: left + x,
+          right: right - x,
+          top: top + y,
+          bottom: bottom - y,
+        }
+      : {
+          left: left - x,
+          right: right + x,
+          top: top - y,
+          bottom: bottom + y,
+        };
+
+    this.thresholds[key] = Object.seal(threshold);
+
+    this.isOut[key] = new FourDirectionsBool();
   }
 
-  setMainThreshold(key: string, rect: RectDimensions) {
-    this.setPixels(rect);
-
-    const { top, left, height, width } = rect;
-
-    this.createThreshold(key, {
-      top,
-      left,
-      bottom: top + height,
-      right: left + width,
-    });
-  }
-
-  private addDepthThreshold(key: string, depth: number) {
+  private _addDepthThreshold(key: string, depth: number): void {
     const dp = `${depth}`;
 
     if (!this.thresholds[dp]) {
-      this.createThreshold(dp, {
+      this._createThreshold(dp, {
         ...this.thresholds[key],
       });
 
@@ -116,32 +89,45 @@ class Threshold implements ThresholdInterface {
     dirtyAssignBiggestRect($, this.thresholds[key]);
   }
 
+  setMainThreshold(key: string, rect: RectDimensions, isInner?: true): void {
+    this._setPixels(rect);
+
+    const { top, left, height, width } = rect;
+
+    const rectBoundaries = {
+      top,
+      left,
+      right: left + width,
+      bottom: top + height,
+    };
+
+    this._createThreshold(key, rectBoundaries, isInner);
+  }
+
   setContainerThreshold(
     key: string,
     depth: number,
     rect: RectBoundaries,
     unifiedContainerDimensions: Dimensions
-  ) {
-    this.createThreshold(key, rect);
+  ): void {
+    this._createThreshold(key, rect);
 
-    queueMicrotask(() => {
-      const { top, left } = rect;
-      const { height, width } = unifiedContainerDimensions;
+    const { top, left } = rect;
+    const { height, width } = unifiedContainerDimensions;
 
-      const composedK = combineKeys(depth, key);
+    const composedK = combineKeys(depth, key);
 
-      this.createThreshold(composedK, {
-        left,
-        top,
-        right: left + width,
-        bottom: top + height,
-      });
-
-      this.addDepthThreshold(composedK, depth);
+    this._createThreshold(composedK, {
+      left,
+      top,
+      right: left + width,
+      bottom: top + height,
     });
+
+    this._addDepthThreshold(composedK, depth);
   }
 
-  isOutThresholdH(key: string, XLeft: number, XRight: number) {
+  isOutThresholdH(key: string, XLeft: number, XRight: number): boolean {
     const { left, right } = this.thresholds[key];
 
     this.isOut[key].setOutX(XLeft < left, XRight > right);
@@ -149,7 +135,7 @@ class Threshold implements ThresholdInterface {
     return this.isOut[key].isOutX();
   }
 
-  isOutThresholdV(key: string, YTop: number, YBottom: number) {
+  isOutThresholdV(key: string, YTop: number, YBottom: number): boolean {
     const { top, bottom } = this.thresholds[key];
 
     this.isOut[key].setOutY(YTop < top, YBottom > bottom);
@@ -157,7 +143,7 @@ class Threshold implements ThresholdInterface {
     return this.isOut[key].isOutY();
   }
 
-  destroy() {
+  destroy(): void {
     // @ts-expect-error
     this.thresholds = null;
     // @ts-expect-error

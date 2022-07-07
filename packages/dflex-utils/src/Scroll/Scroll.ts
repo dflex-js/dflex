@@ -242,7 +242,7 @@ class Scroll {
 
   setThresholdMatrix(threshold: ThresholdPercentages) {
     this.threshold = new Threshold(threshold);
-    this.threshold.setScrollThreshold(this.SK, this.scrollRect);
+    this.threshold.setMainThreshold(this.SK, this.scrollRect, true);
   }
 
   private setScrollCoordinates() {
