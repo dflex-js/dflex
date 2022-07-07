@@ -1,7 +1,7 @@
 import { PointNum } from "../Point";
 import type { IPointNum } from "../Point";
 
-import { RectDimensions, RectBoundaries, Dimensions } from "../types";
+import type { RectDimensions, RectBoundaries, Dimensions } from "../types";
 
 import FourDirectionsBool from "./FourDirectionsBool";
 import type {

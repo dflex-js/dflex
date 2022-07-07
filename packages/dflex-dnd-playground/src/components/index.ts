@@ -15,4 +15,4 @@ export {
   ListMigration,
 } from "./essential";
 
-export { ScrollEssential } from "./scroll";
+export { ScrollMultiLists } from "./scroll";

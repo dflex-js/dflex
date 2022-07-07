@@ -3,30 +3,35 @@ import { PointNum, dirtyAssignBiggestRect } from "@dflex/utils";
 
 import type {
   Dimensions,
-  IScroll,
   IPointNum,
   IPointAxes,
   RectBoundaries,
   RectDimensions,
 } from "@dflex/utils";
 
-import type { IDFlexContainer } from "./types";
-
-class DFlexContainer implements IDFlexContainer {
+class DFlexContainer {
   private _boundariesByRow: {
     [row: number]: RectBoundaries;
   };
 
+  /** Strict Rect for siblings containers. */
   boundaries!: RectBoundaries;
 
+  /** Numbers of total columns and rows each container has.  */
   grid: IPointNum;
 
+  /**
+   * Origin length for container before being transformed used to prevent
+   * layout shift.
+   * */
   originLength: number;
-
-  scroll!: IScroll;
 
   private _gridSiblingsHasNewRow: boolean;
 
+  /**
+   * Preserve the last element position in the list .
+   * Usage: Getting this position when the dragged is going back from the tail.
+   */
   lastElmPosition!: IPointNum;
 
   static OUT_OF_RANGE = -1;
@@ -38,7 +43,7 @@ class DFlexContainer implements IDFlexContainer {
     this._gridSiblingsHasNewRow = false;
   }
 
-  private _addNewElmToGridIndicator(rect: RectBoundaries) {
+  private _addNewElmToGridIndicator(rect: RectBoundaries): void {
     if (!this._boundariesByRow[this.grid.x]) {
       this._boundariesByRow[this.grid.x] = {
         ...rect,
@@ -79,7 +84,7 @@ class DFlexContainer implements IDFlexContainer {
   registerNewElm(
     offset: RectDimensions,
     unifiedContainerDimensions?: Dimensions
-  ) {
+  ): void {
     const { height, left, top, width } = offset;
 
     const right = left + width;
@@ -118,7 +123,7 @@ class DFlexContainer implements IDFlexContainer {
     }
   }
 
-  resetIndicators() {
+  resetIndicators(): void {
     // @ts-expect-error - Just resetting the boundaries.
     this.boundaries = null;
     this.grid.setAxes(1, 1);
@@ -126,7 +131,7 @@ class DFlexContainer implements IDFlexContainer {
     this._gridSiblingsHasNewRow = false;
   }
 
-  preservePosition(position: IPointAxes) {
+  preservePosition(position: IPointAxes): void {
     this.lastElmPosition = new PointNum(position.x, position.y);
   }
 }

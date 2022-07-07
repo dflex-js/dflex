@@ -2,6 +2,7 @@ import React from "react";
 
 import "./List.css";
 
+import { store } from "@dflex/dnd";
 import { Core, Container } from "./component-based-event";
 
 const firstContainer = [
@@ -43,71 +44,84 @@ const ID_PARENT_1 = "p1";
 const ID_PARENT_2 = "p2";
 const ID_PARENT_3 = "p3";
 
-// interface PropsBase {
-//   isHorizontal: boolean;
-//   grid?: boolean;
-// }
+interface Props {
+  withCommitBtn?: boolean;
+}
 
-const ListMigration = () => (
-  <Container className={"list-migration"}>
-    <Core
-      enableContainersTransition
-      id={`id-${ID_PARENT_1}`}
-      component="ul"
-      depth={1}
-    >
-      {firstContainer.map(({ label, id, style }) => (
+const ListMigration = ({ withCommitBtn }: Props) => {
+  return (
+    <>
+      <Container className="list-migration">
         <Core
           enableContainersTransition
-          depth={0}
-          id={id}
-          key={`k${id}`}
-          component="li"
-          style={style}
+          id={`id-${ID_PARENT_1}`}
+          component="ul"
+          depth={1}
         >
-          {label}
+          {firstContainer.map(({ label, id, style }) => (
+            <Core
+              enableContainersTransition
+              depth={0}
+              id={id}
+              key={`k${id}`}
+              component="li"
+              style={style}
+            >
+              {label}
+            </Core>
+          ))}
         </Core>
-      ))}
-    </Core>
-    <Core
-      enableContainersTransition
-      id={`id-${ID_PARENT_2}`}
-      component="ul"
-      depth={1}
-    >
-      {secondContainer.map(({ label, id, style }) => (
         <Core
           enableContainersTransition
-          depth={0}
-          id={id}
-          key={`k-${id}`}
-          component="li"
-          style={style}
+          id={`id-${ID_PARENT_2}`}
+          component="ul"
+          depth={1}
         >
-          {label}
+          {secondContainer.map(({ label, id, style }) => (
+            <Core
+              enableContainersTransition
+              depth={0}
+              id={id}
+              key={`k-${id}`}
+              component="li"
+              style={style}
+            >
+              {label}
+            </Core>
+          ))}
         </Core>
-      ))}
-    </Core>
-    <Core
-      enableContainersTransition
-      id={`id-${ID_PARENT_3}`}
-      component="ul"
-      depth={1}
-    >
-      {thirdContainer.map(({ label, id, style }) => (
         <Core
           enableContainersTransition
-          depth={0}
-          id={id}
-          key={`k-${id}`}
-          component="li"
-          style={style}
+          id={`id-${ID_PARENT_3}`}
+          component="ul"
+          depth={1}
         >
-          {label}
+          {thirdContainer.map(({ label, id, style }) => (
+            <Core
+              enableContainersTransition
+              depth={0}
+              id={id}
+              key={`k-${id}`}
+              component="li"
+              style={style}
+            >
+              {label}
+            </Core>
+          ))}
         </Core>
-      ))}
-    </Core>
-  </Container>
-);
+        {withCommitBtn && (
+          <button
+            className="button-solo"
+            onClick={() => {
+              store.commit();
+            }}
+          >
+            Commit
+          </button>
+        )}
+      </Container>
+    </>
+  );
+};
 
 export default ListMigration;

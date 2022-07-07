@@ -3,18 +3,13 @@ import type { DraggedStyle } from "@dflex/draggable";
 import { PointNum } from "@dflex/utils";
 import type { IPointNum, IPointAxes } from "@dflex/utils";
 
-import store from "../DnDStore";
-
-import type { IDraggableInteractive } from "./types";
+import { store } from "../LayoutManager";
 
 import type { ScrollOpts, FinalDndOpts } from "../types";
 
 import DraggableAxes from "./DraggableAxes";
 
-class DraggableInteractive
-  extends DraggableAxes
-  implements IDraggableInteractive
-{
+class DraggableInteractive extends DraggableAxes {
   scroll: ScrollOpts;
 
   occupiedPosition: IPointNum;
@@ -30,9 +25,10 @@ class DraggableInteractive
 
     this.scroll = { ...opts.scroll };
 
-    const { SK } = store.registry[id].keys;
+    const { SK } = store.registry.get(id)!.keys;
+    const scroll = store.scrolls.get(SK)!;
 
-    const { hasOverflowX, hasOverflowY } = store.containers[SK].scroll;
+    const { hasOverflowX, hasOverflowY } = scroll;
 
     const siblings = store.getElmBranchByKey(this.migration.latest().SK);
 
@@ -64,9 +60,9 @@ class DraggableInteractive
     if (this.scroll.enable) {
       this.isViewportRestricted = false;
 
-      store.containers[SK].scroll.setThresholdMatrix(this.scroll.threshold);
+      scroll.setThresholdMatrix(this.scroll.threshold);
 
-      if (!store.containers[SK].scroll.hasDocumentAsContainer) {
+      if (!scroll.hasDocumentAsContainer) {
         /**
          * When the scroll is the document it's good. The restriction is to the
          * document which guarantees the free movement. Otherwise, let's do it.
@@ -87,7 +83,7 @@ class DraggableInteractive
       this.migration.setIndex(i);
     }
 
-    this.draggedElm.setDataset("index", i);
+    this.draggedElm.setAttribute(this.draggedDOM, "INDEX", i);
   }
 
   setDraggedTransformPosition(isFallback: boolean) {
@@ -110,8 +106,12 @@ class DraggableInteractive
        * instance.
        */
       if (!this.draggedElm.translate.isEqual(this.translatePlaceholder)) {
-        this.draggedElm.transformElm();
-        this.draggedElm.setDataset("index", this.draggedElm.order.self);
+        this.draggedElm.transform(this.draggedDOM);
+        this.draggedElm.setAttribute(
+          this.draggedDOM,
+          "INDEX",
+          this.draggedElm.order.self
+        );
 
         /**
          * There's a rare case where dragged leaves and returns to the same
@@ -135,10 +135,7 @@ class DraggableInteractive
 
     this.draggedElm.grid.clone(this.gridPlaceholder);
 
-    // TODO: Fix this please, why it's just Y.
-    this.draggedElm.setDataset("gridY", this.draggedElm.grid.y);
-
-    this.draggedElm.transformElm();
+    this.draggedElm.transform(this.draggedDOM);
 
     this.draggedElm.assignNewPosition(siblings, this.migration.latest().index);
 

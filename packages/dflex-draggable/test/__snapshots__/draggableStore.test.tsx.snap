@@ -1,22 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Draggable Store Registers element and initiates translateX,Y 1`] = `
-Object {
-  "id-0": DFlexNode {
-    "_hasAttribute": Object {},
+Map {
+  "id-0" => DFlexNode {
     "animatedFrame": null,
-    "currentPosition": PointNum {
-      "x": 0,
-      "y": 0,
-    },
     "depth": 0,
-    "grid": PointNum {
-      "x": 0,
-      "y": 0,
-    },
-    "hasToTransform": false,
     "id": "id-0",
-    "isInitialized": true,
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
@@ -24,25 +13,11 @@ Object {
       "PK": "1-0",
       "SK": "0-0",
     },
-    "offset": Object {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
     "order": Object {
       "parent": 0,
       "self": 0,
     },
     "readonly": false,
-    "ref": <div
-      data-index="0"
-      id="id-0"
-    />,
-    "translate": PointNum {
-      "x": 0,
-      "y": 0,
-    },
   },
 }
 `;

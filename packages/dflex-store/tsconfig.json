@@ -3,10 +3,8 @@
   "include": ["src/**/*", "../../dflex-env.d.ts"],
   "compilerOptions": {
     "composite": true,
-    "outDir": "./types",
     "rootDir": "./src",
-    "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "outDir": "./types"
   },
   "references": [
     { "path": "../dflex-dom-gen" },

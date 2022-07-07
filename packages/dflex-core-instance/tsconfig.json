@@ -4,9 +4,7 @@
   "compilerOptions": {
     "composite": true,
     "outDir": "./types",
-    "rootDir": "src/",
-    "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "rootDir": "src/"
   },
   "references": [{ "path": "../dflex-utils" }]
 }

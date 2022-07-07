@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DnD Store Shallow test the store Element is initiated 1`] = `
-Object {
-  "id-1": DFlexNode {
-    "_hasAttribute": Object {},
+Map {
+  "id-1" => DFlexNode {
+    "_hasAttribute": Set {},
     "animatedFrame": 1,
     "currentPosition": PointNum {
       "x": 0,
@@ -14,37 +14,33 @@ Object {
       "x": 1,
       "y": 1,
     },
-    "hasToTransform": false,
+    "hasPendingTransform": false,
     "id": "id-1",
-    "isInitialized": true,
+    "initialOffset": Object {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
+    },
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
       "CHK": null,
       "PK": "1-0",
       "SK": "0-0",
-    },
-    "offset": Object {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
     },
     "order": Object {
       "parent": 0,
       "self": 0,
     },
     "readonly": false,
-    "ref": <div
-      id="id-1"
-    />,
     "translate": PointNum {
       "x": 0,
       "y": 0,
     },
   },
-  "id-2": DFlexNode {
-    "_hasAttribute": Object {},
+  "id-2" => DFlexNode {
+    "_hasAttribute": Set {},
     "animatedFrame": null,
     "currentPosition": PointNum {
       "x": 0,
@@ -55,37 +51,33 @@ Object {
       "x": 1,
       "y": 1,
     },
-    "hasToTransform": false,
+    "hasPendingTransform": false,
     "id": "id-2",
-    "isInitialized": true,
+    "initialOffset": Object {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
+    },
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
       "CHK": null,
       "PK": "1-0",
       "SK": "0-0",
-    },
-    "offset": Object {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
     },
     "order": Object {
       "parent": 0,
       "self": 1,
     },
     "readonly": false,
-    "ref": <div
-      id="id-2"
-    />,
     "translate": PointNum {
       "x": 0,
       "y": 0,
     },
   },
-  "id-3": DFlexNode {
-    "_hasAttribute": Object {},
+  "id-3" => DFlexNode {
+    "_hasAttribute": Set {},
     "animatedFrame": null,
     "currentPosition": PointNum {
       "x": 0,
@@ -96,37 +88,33 @@ Object {
       "x": 1,
       "y": 1,
     },
-    "hasToTransform": false,
+    "hasPendingTransform": false,
     "id": "id-3",
-    "isInitialized": true,
+    "initialOffset": Object {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
+    },
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
       "CHK": null,
       "PK": "1-0",
       "SK": "0-0",
-    },
-    "offset": Object {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
     },
     "order": Object {
       "parent": 0,
       "self": 2,
     },
     "readonly": false,
-    "ref": <div
-      id="id-3"
-    />,
     "translate": PointNum {
       "x": 0,
       "y": 0,
     },
   },
-  "id-4": DFlexNode {
-    "_hasAttribute": Object {},
+  "id-4" => DFlexNode {
+    "_hasAttribute": Set {},
     "animatedFrame": null,
     "currentPosition": PointNum {
       "x": 0,
@@ -137,9 +125,14 @@ Object {
       "x": 1,
       "y": 1,
     },
-    "hasToTransform": false,
+    "hasPendingTransform": false,
     "id": "id-4",
-    "isInitialized": true,
+    "initialOffset": Object {
+      "height": 0,
+      "left": 0,
+      "top": 0,
+      "width": 0,
+    },
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
@@ -147,20 +140,11 @@ Object {
       "PK": "1-0",
       "SK": "0-0",
     },
-    "offset": Object {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
     "order": Object {
       "parent": 0,
       "self": 3,
     },
     "readonly": false,
-    "ref": <div
-      id="id-4"
-    />,
     "translate": PointNum {
       "x": 0,
       "y": 0,

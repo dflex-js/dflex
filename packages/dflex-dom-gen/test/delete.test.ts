@@ -42,41 +42,29 @@ describe("Testing clear methods", () => {
   });
 
   it("The new generated branch has correct registered ids", () => {
-    const branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
+    const branch = domGen.getElmBranchByKey(pointerChild0D0.keys.SK);
 
     expect(branch).toStrictEqual(["id-0", "id-1"]);
   });
 
   it("The new generated branch has its key inside the branch depth array", () => {
-    expect(domGen.branchesByDepth).toMatchInlineSnapshot(`
-      Object {
-        "0": Array [
-          "0-0",
-        ],
-      }
-    `);
+    expect(domGen.getBranchByDepth(0)).toStrictEqual(["0-0"]);
   });
 
   it("Remove the first siblings", () => {
-    const elmID = domGen.removeElementIDFromBranch(KEYS_CHILDREN_D0.SK, 0);
+    const elmID = domGen.removeElmIDFromBranch(KEYS_CHILDREN_D0.SK, 0);
 
     expect(elmID).toBe("id-0");
   });
 
   it("Siblings branch removed the deleted element id", () => {
-    const branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
+    const branch = domGen.getElmBranchByKey(pointerChild0D0.keys.SK);
 
     expect(branch).toStrictEqual(["id-1"]);
   });
 
   it("The branch depth array still has the branch key", () => {
-    expect(domGen.branchesByDepth).toMatchInlineSnapshot(`
-      Object {
-        "0": Array [
-          "0-0",
-        ],
-      }
-    `);
+    expect(domGen.getBranchByDepth(0)).toStrictEqual(["0-0"]);
   });
 
   it("Add new element after deleting the old one to check indicators working correctly", () => {
@@ -90,26 +78,19 @@ describe("Testing clear methods", () => {
       },
     });
 
-    const branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
+    const branch = domGen.getElmBranchByKey(pointerChild0D0.keys.SK);
 
     expect(branch).toStrictEqual(["id-1", "id-0"]);
-
-    expect(domGen.branchesByDepth).toMatchInlineSnapshot(`
-      Object {
-        "0": Array [
-          "0-0",
-        ],
-      }
-    `);
+    expect(domGen.getBranchByDepth(0)).toStrictEqual(["0-0"]);
   });
 
   it("Destroy branch", () => {
     domGen.destroyBranch(KEYS_CHILDREN_D0.SK, () => {});
 
-    const branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
+    const branch = domGen.getElmBranchByKey(pointerChild0D0.keys.SK);
 
-    expect(branch).toBeUndefined();
-    expect(domGen.branchesByDepth).toMatchInlineSnapshot(`Object {}`);
+    expect(branch).toStrictEqual([]);
+    expect(() => domGen.getBranchByDepth(0)).toThrow();
   });
 
   it("Adds two siblings again", () => {
@@ -138,16 +119,9 @@ describe("Testing clear methods", () => {
       },
     });
 
-    const branch = domGen.getElmBranch(pointerChild0D0.keys.SK);
+    const branch = domGen.getElmBranchByKey(pointerChild0D0.keys.SK);
 
     expect(branch).toStrictEqual(["id-0", "id-1"]);
-
-    expect(domGen.branchesByDepth).toMatchInlineSnapshot(`
-      Object {
-        "0": Array [
-          "0-0",
-        ],
-      }
-    `);
+    expect(domGen.getBranchByDepth(0)).toStrictEqual(["0-0"]);
   });
 });

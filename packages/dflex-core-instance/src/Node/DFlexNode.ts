@@ -1,32 +1,27 @@
 import type { Axis, IPointAxes } from "@dflex/utils";
 import DFlexCoreNode from "./DFlexCoreNode";
-import type { IDFlexNode } from "./types";
 
-class DFlexNode extends DFlexCoreNode implements IDFlexNode {
+class DFlexNode extends DFlexCoreNode {
   static getRectByAxis(axis: Axis) {
     return axis === "x" ? "width" : "height";
   }
 
-  static getDistance(currentPosition: IPointAxes, elm: IDFlexNode, axis: Axis) {
+  static getDistance(currentPosition: IPointAxes, elm: DFlexNode, axis: Axis) {
     let diff = currentPosition[axis] - elm.currentPosition[axis];
 
-    diff += elm.translate[axis];
+    diff += elm.translate![axis];
 
     return diff;
   }
 
   static getDisplacement(
     currentPosition: IPointAxes,
-    elm: IDFlexNode,
+    elm: DFlexNode,
     axis: Axis
   ) {
     const diff = axis === "x" ? elm.getRectRight() : elm.getRectBottom();
 
     return currentPosition[axis] - diff;
-  }
-
-  isConnected() {
-    return this.ref!.isConnected;
   }
 
   isPositionedUnder(elmY: number) {
@@ -42,17 +37,17 @@ class DFlexNode extends DFlexCoreNode implements IDFlexNode {
   }
 
   getRectBottom() {
-    return this.currentPosition.y + this.offset.height;
+    return this.currentPosition.y + this.initialOffset.height;
   }
 
   getRectRight() {
-    return this.currentPosition.x + this.offset.width;
+    return this.currentPosition.x + this.initialOffset.width;
   }
 
   getRectDiff(elm: this, axis: Axis) {
     const rectType = DFlexNode.getRectByAxis(axis);
 
-    return this.offset[rectType] - elm.offset[rectType];
+    return this.initialOffset[rectType] - elm.initialOffset[rectType];
   }
 
   getDisplacement(elm: this, axis: Axis): number {
@@ -61,15 +56,6 @@ class DFlexNode extends DFlexCoreNode implements IDFlexNode {
 
   getDistance(elm: this, axis: Axis): number {
     return DFlexNode.getDistance(this.currentPosition, elm, axis);
-  }
-
-  getOffset() {
-    return {
-      width: this.offset.width,
-      height: this.offset.height,
-      top: this.currentPosition.y,
-      left: this.currentPosition.x,
-    };
   }
 }
 

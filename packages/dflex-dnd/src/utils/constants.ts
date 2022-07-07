@@ -1,6 +1,5 @@
+/* eslint-disable import/prefer-default-export */
 import type { DefaultDndOpts } from "../types";
-
-export function noop() {}
 
 export const defaultOpts: DefaultDndOpts = Object.freeze({
   containersTransition: {
@@ -35,15 +34,5 @@ export const defaultOpts: DefaultDndOpts = Object.freeze({
       vertical: 15,
       horizontal: 15,
     },
-  },
-
-  events: {
-    onDragOver: noop,
-    onDragLeave: noop,
-    onDragOutContainer: noop,
-    onDragOutThreshold: noop,
-    onLiftUpSiblings: noop,
-    onMoveDownSiblings: noop,
-    onStateChange: noop,
   },
 });

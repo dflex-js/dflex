@@ -1,12 +1,12 @@
 import type { ThresholdInterface, ThresholdPercentages } from "../Threshold";
 import type { RectDimensions } from "../types";
 
+export type ScrollEventCallback = (SK: string) => void;
+
 export interface ScrollInput {
   element: HTMLElement;
   requiredBranchKey: string;
-  scrollEventCallback:
-    | ((SK: string, isCalledFromScroll: true) => unknown)
-    | null;
+  scrollEventCallback: ScrollEventCallback | null;
 }
 
 export interface IScroll {
@@ -21,7 +21,7 @@ export interface IScroll {
   allowDynamicVisibility: boolean;
   scrollContainerRef: HTMLElement;
   hasDocumentAsContainer: boolean;
-  scrollEventCallback: ScrollInput["scrollEventCallback"];
+  scrollEventCallback: ScrollEventCallback | null;
   hasThrottledFrame: number | null;
   getMaximumScrollContainerLeft(): number;
   getMaximumScrollContainerTop(): number;

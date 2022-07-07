@@ -1,7 +1,5 @@
 import React from "react";
 
-import s from "../Demo.module.css";
-
 import DFlexDnDComponent from "../DFlexDnDComponent";
 
 const TodoListWithReadonly = () => {
@@ -35,8 +33,8 @@ const TodoListWithReadonly = () => {
   const parentID = "DFlex-todo-list-with-readonly";
 
   return (
-    <div className={s.root}>
-      <div className={s.todo}>
+    <div className="root">
+      <div className="todo">
         <ul id={parentID}>
           {tasks.map(({ msg, id, readonly, style }) => (
             <DFlexDnDComponent

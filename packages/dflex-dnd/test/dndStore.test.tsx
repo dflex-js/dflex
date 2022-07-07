@@ -3,7 +3,8 @@ import * as React from "react";
 import * as ReactTestUtils from "react-dom/test-utils";
 import { Root, createRoot } from "react-dom/client";
 
-import store from "../src/DnDStore";
+import { store } from "../src/LayoutManager";
+import { getInsertionELmMeta } from "../src/Droppable/DFlexUpdater";
 
 describe("DnD Store", () => {
   const elm1 = {
@@ -85,24 +86,6 @@ describe("DnD Store", () => {
       store.register(elm1);
       expect(store.registry).toMatchSnapshot();
     });
-
-    it("Returns element branch and parent", () => {
-      const { branches, parent } = store.getElmTreeById(elm1.id);
-
-      expect(branches).toMatchInlineSnapshot(`
-        Object {
-          "parents": undefined,
-          "siblings": Array [
-            "id-1",
-            "id-2",
-            "id-3",
-            "id-4",
-          ],
-        }
-      `);
-
-      expect(parent).toMatchInlineSnapshot(`null`);
-    });
   });
 
   describe("getInsertionELmMeta", () => {
@@ -118,12 +101,10 @@ describe("DnD Store", () => {
     describe("Normal branch without injection", () => {
       it("Checks orphan branch", () => {
         ({
-          element: {
-            keys: { SK },
-          },
-        } = store.getElmTreeById(elm1.id));
+          keys: { SK },
+        } = store.registry.get(elm1.id)!);
 
-        const { elm, ...rest } = store.getInsertionELmMeta(0, SK);
+        const { elm, ...rest } = getInsertionELmMeta(0, SK);
 
         expect(rest).toMatchInlineSnapshot(`
           Object {
@@ -144,21 +125,17 @@ describe("DnD Store", () => {
         store.register(elm3);
         store.register(elm4);
 
-        expect(store.DOMGen.branches[SK]).toMatchInlineSnapshot(`
-          Array [
-            "id-1",
-            "id-2",
-            "id-3",
-            "id-4",
-          ]
-        `);
+        // @ts-ignore - this is a test
+        expect(store.DOMGen.getElmBranchByKey(SK)).toStrictEqual([
+          "id-1",
+          "id-2",
+          "id-3",
+          "id-4",
+        ]);
       });
 
       it("Checks the last element", () => {
-        const { elm, prevElm, position, ...rest } = store.getInsertionELmMeta(
-          3,
-          SK
-        );
+        const { elm, prevElm, position, ...rest } = getInsertionELmMeta(3, SK);
 
         expect(rest).toMatchInlineSnapshot(`
                   Object {
@@ -180,15 +157,14 @@ describe("DnD Store", () => {
       });
 
       it("Preserve the last element", () => {
-        store.containers[SK].preservePosition(preservePosition);
-        store.containers[SK].originLength = originLength;
+        const elmContainer = store.containers.get(SK)!;
+
+        elmContainer.preservePosition(preservePosition);
+        elmContainer.originLength = originLength;
       });
 
       it("Restores the preserved position when calling for last element", () => {
-        const { elm, prevElm, position, ...rest } = store.getInsertionELmMeta(
-          3,
-          SK
-        );
+        const { elm, prevElm, position, ...rest } = getInsertionELmMeta(3, SK);
 
         expect(rest).toMatchInlineSnapshot(`
                   Object {
@@ -205,10 +181,7 @@ describe("DnD Store", () => {
       });
 
       it("Restores the position even preserved is defined because it's not the last element", () => {
-        const { elm, prevElm, position, ...rest } = store.getInsertionELmMeta(
-          2,
-          SK
-        );
+        const { elm, prevElm, position, ...rest } = getInsertionELmMeta(2, SK);
 
         expect(rest).toMatchInlineSnapshot(`
                   Object {
@@ -230,10 +203,7 @@ describe("DnD Store", () => {
       });
 
       it("Restores the position for the first element with correct flags", () => {
-        const { elm, prevElm, position, ...rest } = store.getInsertionELmMeta(
-          0,
-          SK
-        );
+        const { elm, prevElm, position, ...rest } = getInsertionELmMeta(0, SK);
 
         expect(rest).toMatchInlineSnapshot(`
                   Object {
@@ -257,24 +227,21 @@ describe("DnD Store", () => {
 
     describe("Injected branch with empty string", () => {
       it("Inject empty string", () => {
-        store.DOMGen.branches[SK].push("");
+        // @ts-ignore - this is a test
+        store.DOMGen.addElmIDToBranch(SK, "");
 
-        expect(store.DOMGen.branches[SK]).toMatchInlineSnapshot(`
-          Array [
-            "id-1",
-            "id-2",
-            "id-3",
-            "id-4",
-            "",
-          ]
-        `);
+        // @ts-ignore - this is a test
+        expect(store.DOMGen.getElmBranchByKey(SK)).toStrictEqual([
+          "id-1",
+          "id-2",
+          "id-3",
+          "id-4",
+          "",
+        ]);
       });
 
       it("Restores the the last element when the branch is extended", () => {
-        const { elm, prevElm, position, ...rest } = store.getInsertionELmMeta(
-          4,
-          SK
-        );
+        const { elm, prevElm, position, ...rest } = getInsertionELmMeta(4, SK);
 
         expect(rest).toMatchInlineSnapshot(`
                   Object {
@@ -296,10 +263,7 @@ describe("DnD Store", () => {
       });
 
       it("Restores the position even preserved is defined because it's not the last element", () => {
-        const { elm, prevElm, position, ...rest } = store.getInsertionELmMeta(
-          3,
-          SK
-        );
+        const { elm, prevElm, position, ...rest } = getInsertionELmMeta(3, SK);
 
         expect(rest).toMatchInlineSnapshot(`
                   Object {
@@ -321,10 +285,7 @@ describe("DnD Store", () => {
       });
 
       it("Restores the position for the first element with correct flags", () => {
-        const { elm, prevElm, position, ...rest } = store.getInsertionELmMeta(
-          0,
-          SK
-        );
+        const { elm, prevElm, position, ...rest } = getInsertionELmMeta(0, SK);
 
         expect(rest).toMatchInlineSnapshot(`
                   Object {

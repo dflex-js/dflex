@@ -3,7 +3,16 @@
 import React from "react";
 
 import { store, DnD } from "@dflex/dnd";
-import type { DndOpts } from "@dflex/dnd";
+import type { DFlexDnDOpts, DFlexEvents } from "@dflex/dnd";
+
+// const evts = new Set([
+//   "$onDragOutContainer",
+//   "$onDragOutThreshold",
+//   "$onDragOver",
+//   "$onDragLeave",
+//   "$onLiftUpSiblings",
+//   "$onMoveDownSiblings",
+// ]);
 
 // shared dragged event
 let dndEvent: DnD | null;
@@ -19,7 +28,7 @@ interface Props {
     depth?: number;
     readonly?: boolean;
   };
-  opts?: DndOpts;
+  opts?: DFlexDnDOpts;
 }
 
 export const DFlexDnDComponent = ({
@@ -44,6 +53,11 @@ export const DFlexDnDComponent = ({
     };
   }, [taskRef.current]);
 
+  const onDFlexEvent = (e: DFlexEvents) => {
+    // eslint-disable-next-line no-console
+    console.log("onDFlexEvent", e.detail);
+  };
+
   const onMouseMove = (e: MouseEvent) => {
     if (dndEvent) {
       const { clientX, clientY } = e;
@@ -60,6 +74,8 @@ export const DFlexDnDComponent = ({
 
       document.removeEventListener("mouseup", onMouseUp);
       document.removeEventListener("mousemove", onMouseMove);
+
+      document.removeEventListener("$onDragLeave", onDFlexEvent);
     }
   };
 
@@ -72,6 +88,8 @@ export const DFlexDnDComponent = ({
         document.addEventListener("mouseup", onMouseUp);
         document.addEventListener("mousemove", onMouseMove);
         dndEvent = new DnD(id, { x: clientX, y: clientY }, opts);
+
+        document.addEventListener("$onDragLeave", onDFlexEvent);
       }
     }
   };

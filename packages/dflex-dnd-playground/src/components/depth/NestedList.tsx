@@ -1,6 +1,5 @@
 import React from "react";
 
-import s from "../Demo.module.css";
 import DFlexDnDComponent from "../DFlexDnDComponent";
 
 const NestedList = () => {
@@ -27,8 +26,8 @@ const NestedList = () => {
   };
 
   return (
-    <div className={s.root}>
-      <div className={`${s.todo} ${s.nested}`}>
+    <div className="root">
+      <div className="todo nested">
         <DFlexDnDComponent
           Component="div"
           registerInput={{
@@ -36,7 +35,7 @@ const NestedList = () => {
             parentID: "",
             depth: tasksWork.depth,
           }}
-          className={s.todo}
+          className="todo"
         >
           <p>{tasksWork.category}</p>
           <ul id={tasksWork.id}>
@@ -58,7 +57,7 @@ const NestedList = () => {
             parentID: "",
           }}
           Component="div"
-          className={s.todo}
+          className="todo"
         >
           <p>{taskLife.category}</p>
           <ul id={taskLife.id}>

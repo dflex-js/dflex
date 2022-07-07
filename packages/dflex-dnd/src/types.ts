@@ -1,78 +1,21 @@
 import type { ThresholdPercentages } from "@dflex/utils";
+import type { DFlexEventsTypes } from "./LayoutManager";
 
-interface DnDEvent {
-  /** Returns the time at which the event was created  */
-  timeStamp: number;
-}
+type DFlexEventsMap = {
+  [K in DFlexEventsTypes]: CustomEvent<any>;
+};
 
-export interface DraggedEvent extends DnDEvent {
-  /** Returns the event type */
-  type: "onDragOutContainer" | "onDragOutThreshold";
-
-  /** Returns element id in the registry  */
-  id: string;
-
-  /** Returns dragged temp index */
-  index: number;
-}
-
-export interface InteractivityEvent extends DnDEvent {
-  /** Returns the event type */
-  type: "onDragOver" | "onDragLeave";
-
-  /** Returns element id in the registry  */
-  id: string;
-
-  /** Returns element current index */
-  index: number;
-
-  /** Returns the element that triggered the event  */
-  target: HTMLElement;
-}
-
-export interface SiblingsEvent extends DnDEvent {
-  /** Returns the event type */
-  type: "onLiftUpSiblings" | "onMoveDownSiblings";
-
-  /** Returns the index where the dragged left  */
-  from: number;
-
-  /** Returns the last index effected of the dragged leaving/entering  */
-  to: number;
-
-  /** Returns an array of sibling ids in order  */
-  siblings: Array<string>;
-}
-
-export type LayoutState =
-  | "pending"
-  | "ready"
-  | "dragging"
-  | "dragEnd"
-  | "dragCancel";
-
-export interface LayoutStateEvent extends DnDEvent {
-  /** Returns the event type */
-  type: "onStateChange";
-
-  layoutState: LayoutState;
-}
-
-export interface Events {
-  /** Drag events  */
-  onDragOutContainer: (event: DraggedEvent) => unknown;
-  onDragOutThreshold: (event: DraggedEvent) => unknown;
-
-  /** Interactivity events  */
-  onDragOver: (event: InteractivityEvent) => unknown;
-  onDragLeave: (event: InteractivityEvent) => unknown;
-
-  /** Sibling events  */
-  onLiftUpSiblings: (event: SiblingsEvent) => unknown;
-  onMoveDownSiblings: (event: SiblingsEvent) => unknown;
-
-  /** Layout events  */
-  onStateChange: (layoutState: LayoutStateEvent) => unknown;
+declare global {
+  interface Document {
+    addEventListener<key extends keyof DFlexEventsMap>(
+      DFlexEventType: key,
+      listener: (this: Document, evt: DFlexEventsMap[key]) => void
+    ): void;
+    removeEventListener<K extends keyof DFlexEventsMap>(
+      DFlexEventType: K,
+      listener: (this: Document, evt: DFlexEventsMap[K]) => void
+    ): void;
+  }
 }
 
 interface RestrictionsMeta {
@@ -121,7 +64,6 @@ export interface DefaultDndOpts {
   threshold: ThresholdPercentages;
   restrictions: Restrictions;
   scroll: ScrollOpts;
-  events: Events;
 }
 
 export interface RestrictionsStatus {
@@ -133,10 +75,9 @@ export interface FinalDndOpts extends DefaultDndOpts {
   restrictionsStatus: RestrictionsStatus;
 }
 
-export interface DndOpts {
+export interface DFlexDnDOpts {
   containersTransition?: Partial<ContainersTransition>;
   threshold?: Partial<ThresholdPercentages>;
   restrictions?: RestrictionsPartial;
   scroll?: Partial<ScrollOptPartialThreshold>;
-  events?: Partial<Events>;
 }

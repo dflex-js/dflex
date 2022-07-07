@@ -2,20 +2,9 @@
 
 exports[`Testing Store Package Returns element instance by element id 1`] = `
 DFlexNode {
-  "_hasAttribute": Object {},
   "animatedFrame": null,
-  "currentPosition": PointNum {
-    "x": 0,
-    "y": 0,
-  },
   "depth": 0,
-  "grid": PointNum {
-    "x": 0,
-    "y": 0,
-  },
-  "hasToTransform": false,
   "id": "id-0",
-  "isInitialized": true,
   "isPaused": false,
   "isVisible": true,
   "keys": Object {
@@ -23,129 +12,54 @@ DFlexNode {
     "PK": "1-0",
     "SK": "0-0",
   },
-  "offset": Object {
-    "height": 0,
-    "left": 0,
-    "top": 0,
-    "width": 0,
-  },
   "order": Object {
     "parent": 0,
     "self": 0,
   },
   "readonly": false,
-  "ref": <div
-    data-index="0"
-    id="id-0"
-  />,
-  "translate": PointNum {
-    "x": 0,
-    "y": 0,
-  },
 }
 `;
 
 exports[`Testing Store Package Snaps shot registry 1`] = `
-Object {
-  "id-0": DFlexNode {
-    "_hasAttribute": Object {},
+Map {
+  "id-0" => DFlexNode {
     "animatedFrame": null,
-    "currentPosition": PointNum {
-      "x": 0,
-      "y": 0,
-    },
     "depth": 0,
-    "grid": PointNum {
-      "x": 0,
-      "y": 0,
-    },
-    "hasToTransform": false,
     "id": "id-0",
-    "isInitialized": true,
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
       "CHK": null,
       "PK": "1-0",
       "SK": "0-0",
-    },
-    "offset": Object {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
     },
     "order": Object {
       "parent": 0,
       "self": 0,
     },
     "readonly": false,
-    "ref": <div
-      data-index="0"
-      id="id-0"
-    />,
-    "translate": PointNum {
-      "x": 0,
-      "y": 0,
-    },
   },
-  "id-1": DFlexNode {
-    "_hasAttribute": Object {},
+  "id-1" => DFlexNode {
     "animatedFrame": null,
-    "currentPosition": PointNum {
-      "x": 0,
-      "y": 0,
-    },
     "depth": 0,
-    "grid": PointNum {
-      "x": 0,
-      "y": 0,
-    },
-    "hasToTransform": false,
     "id": "id-1",
-    "isInitialized": true,
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
       "CHK": null,
       "PK": "1-0",
       "SK": "0-0",
-    },
-    "offset": Object {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
     },
     "order": Object {
       "parent": 0,
       "self": 1,
     },
     "readonly": false,
-    "ref": <div
-      data-index="1"
-      id="id-1"
-    />,
-    "translate": PointNum {
-      "x": 0,
-      "y": 0,
-    },
   },
-  "id-2": DFlexNode {
-    "_hasAttribute": Object {},
+  "id-2" => DFlexNode {
     "animatedFrame": null,
-    "currentPosition": PointNum {
-      "x": 0,
-      "y": 0,
-    },
     "depth": 0,
-    "grid": PointNum {
-      "x": 0,
-      "y": 0,
-    },
-    "hasToTransform": false,
     "id": "id-2",
-    "isInitialized": true,
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
@@ -153,41 +67,16 @@ Object {
       "PK": "1-0",
       "SK": "0-0",
     },
-    "offset": Object {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
     "order": Object {
       "parent": 0,
       "self": 2,
     },
     "readonly": false,
-    "ref": <div
-      data-index="2"
-      id="id-2"
-    />,
-    "translate": PointNum {
-      "x": 0,
-      "y": 0,
-    },
   },
-  "p-id-0": DFlexNode {
-    "_hasAttribute": Object {},
+  "p-id-0" => DFlexNode {
     "animatedFrame": null,
-    "currentPosition": PointNum {
-      "x": 0,
-      "y": 0,
-    },
     "depth": 1,
-    "grid": PointNum {
-      "x": 0,
-      "y": 0,
-    },
-    "hasToTransform": false,
     "id": "p-id-0",
-    "isInitialized": true,
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
@@ -195,143 +84,55 @@ Object {
       "PK": "2-0",
       "SK": "1-1",
     },
-    "offset": Object {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
     "order": Object {
       "parent": 1,
       "self": 0,
     },
     "readonly": false,
-    "ref": <div
-      data-index="0"
-      id="p-id-0"
-    >
-      <div
-        data-index="0"
-        id="id-0"
-      />
-      <div
-        data-index="1"
-        id="id-1"
-      />
-      <div
-        data-index="2"
-        id="id-2"
-      />
-    </div>,
-    "translate": PointNum {
-      "x": 0,
-      "y": 0,
-    },
   },
 }
 `;
 
 exports[`Testing Store Package Snaps shot registry after delete 1`] = `
-Object {
-  "id-0": DFlexNode {
-    "_hasAttribute": Object {},
+Map {
+  "id-0" => DFlexNode {
     "animatedFrame": null,
-    "currentPosition": PointNum {
-      "x": 0,
-      "y": 0,
-    },
     "depth": 0,
-    "grid": PointNum {
-      "x": 0,
-      "y": 0,
-    },
-    "hasToTransform": false,
     "id": "id-0",
-    "isInitialized": true,
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
       "CHK": null,
       "PK": "1-0",
       "SK": "0-0",
-    },
-    "offset": Object {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
     },
     "order": Object {
       "parent": 0,
       "self": 0,
     },
     "readonly": false,
-    "ref": <div
-      data-index="0"
-      id="id-0"
-    />,
-    "translate": PointNum {
-      "x": 0,
-      "y": 0,
-    },
   },
-  "id-1": DFlexNode {
-    "_hasAttribute": Object {},
+  "id-1" => DFlexNode {
     "animatedFrame": null,
-    "currentPosition": PointNum {
-      "x": 0,
-      "y": 0,
-    },
     "depth": 0,
-    "grid": PointNum {
-      "x": 0,
-      "y": 0,
-    },
-    "hasToTransform": false,
     "id": "id-1",
-    "isInitialized": true,
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
       "CHK": null,
       "PK": "1-0",
       "SK": "0-0",
-    },
-    "offset": Object {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
     },
     "order": Object {
       "parent": 0,
       "self": 1,
     },
     "readonly": false,
-    "ref": <div
-      data-index="1"
-      id="id-1"
-    />,
-    "translate": PointNum {
-      "x": 0,
-      "y": 0,
-    },
   },
-  "id-2": DFlexNode {
-    "_hasAttribute": Object {},
+  "id-2" => DFlexNode {
     "animatedFrame": null,
-    "currentPosition": PointNum {
-      "x": 0,
-      "y": 0,
-    },
     "depth": 0,
-    "grid": PointNum {
-      "x": 0,
-      "y": 0,
-    },
-    "hasToTransform": false,
     "id": "id-2",
-    "isInitialized": true,
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
@@ -339,41 +140,16 @@ Object {
       "PK": "1-0",
       "SK": "0-0",
     },
-    "offset": Object {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
     "order": Object {
       "parent": 0,
       "self": 2,
     },
     "readonly": false,
-    "ref": <div
-      data-index="2"
-      id="id-2"
-    />,
-    "translate": PointNum {
-      "x": 0,
-      "y": 0,
-    },
   },
-  "p-id-0": DFlexNode {
-    "_hasAttribute": Object {},
+  "p-id-0" => DFlexNode {
     "animatedFrame": null,
-    "currentPosition": PointNum {
-      "x": 0,
-      "y": 0,
-    },
     "depth": 1,
-    "grid": PointNum {
-      "x": 0,
-      "y": 0,
-    },
-    "hasToTransform": false,
     "id": "p-id-0",
-    "isInitialized": true,
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
@@ -381,38 +157,11 @@ Object {
       "PK": "2-0",
       "SK": "1-1",
     },
-    "offset": Object {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
     "order": Object {
       "parent": 1,
       "self": 0,
     },
     "readonly": false,
-    "ref": <div
-      data-index="0"
-      id="p-id-0"
-    >
-      <div
-        data-index="0"
-        id="id-0"
-      />
-      <div
-        data-index="1"
-        id="id-1"
-      />
-      <div
-        data-index="2"
-        id="id-2"
-      />
-    </div>,
-    "translate": PointNum {
-      "x": 0,
-      "y": 0,
-    },
   },
 }
 `;

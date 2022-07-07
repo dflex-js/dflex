@@ -1,10 +1,11 @@
 import { Threshold } from "../Threshold";
 import type { ThresholdPercentages } from "../Threshold";
+import type { RectDimensions } from "../types";
 
-import { ScrollInput, IScroll } from "./types";
+// eslint-disable-next-line no-unused-vars
+type ScrollEventCallback = (SK: string) => void;
 
 const OVERFLOW_REGEX = /(auto|scroll|overlay)/;
-const MAX_LOOP_ELEMENTS_TO_WARN = 16;
 
 function loopInDOM(
   fromElement: HTMLElement,
@@ -30,21 +31,18 @@ function isStaticallyPositioned(element: Element) {
   return position === "static";
 }
 
-class Scroll implements IScroll {
-  /**
-   * Is set by controller when needed. Maybe is not provided, or not enabled.
-   */
-  threshold: IScroll["threshold"] | null;
+class Scroll {
+  threshold: Threshold | null;
 
-  siblingKey: string;
+  SK: string;
 
-  scrollEventCallback: IScroll["scrollEventCallback"];
+  scrollEventCallback: ScrollEventCallback | null;
 
   scrollX!: number;
 
   scrollY!: number;
 
-  scrollRect: IScroll["scrollRect"];
+  scrollRect: RectDimensions;
 
   scrollHeight!: number;
 
@@ -56,17 +54,13 @@ class Scroll implements IScroll {
 
   allowDynamicVisibility!: boolean;
 
-  scrollContainerRef!: HTMLElement;
+  DOM!: HTMLElement;
 
   hasThrottledFrame: number | null;
 
   hasDocumentAsContainer!: boolean;
 
-  constructor({
-    element,
-    requiredBranchKey,
-    scrollEventCallback,
-  }: ScrollInput) {
+  constructor(element: HTMLElement, SK: string) {
     this.threshold = null;
     this.hasThrottledFrame = null;
 
@@ -77,58 +71,36 @@ class Scroll implements IScroll {
       top: 0,
     };
 
-    this.siblingKey = requiredBranchKey;
+    this.SK = SK;
 
-    this.scrollContainerRef = this.getScrollContainer(element);
+    this.DOM = this.getScrollContainer(element);
 
     this.setScrollRect();
     this.setScrollCoordinates();
-
     this.setScrollListener();
-
-    this.scrollEventCallback = scrollEventCallback;
+    this.scrollEventCallback = null;
   }
 
-  private getScrollContainer(element: HTMLElement | null) {
-    let i = 0;
-
+  private getScrollContainer(baseDOMElm: HTMLElement) {
     this.hasDocumentAsContainer = false;
 
-    if (!element) {
-      this.hasDocumentAsContainer = true;
+    const baseComputedStyle = getComputedStyle(baseDOMElm);
+    const baseELmPosition = baseComputedStyle.getPropertyValue("position");
+    const excludeStaticParents = baseELmPosition === "absolute";
 
-      return document.documentElement;
-    }
-
-    const computedStyle = getComputedStyle(element);
-
-    const position = computedStyle.getPropertyValue("position");
-
-    const excludeStaticParents = position === "absolute";
-
-    const scrollContainer = loopInDOM(element, (parent) => {
-      i += 1;
-
-      if (i === MAX_LOOP_ELEMENTS_TO_WARN && __DEV__) {
-        // eslint-disable-next-line no-console
-        console.warn(
-          `DFlex detects performance issues during defining a scroll container.
-Please provide scroll container by ref/id when registering the element or turn off auto-scroll from the options.`
-        );
-      }
-
-      if (excludeStaticParents && isStaticallyPositioned(parent)) {
+    const scrollContainer = loopInDOM(baseDOMElm, (parentDOM) => {
+      if (excludeStaticParents && isStaticallyPositioned(parentDOM)) {
         return false;
       }
 
-      const parentComputedStyle = getComputedStyle(parent);
+      const parentComputedStyle = getComputedStyle(parentDOM);
 
-      const parentRect = parent.getBoundingClientRect();
+      const parentRect = parentDOM.getBoundingClientRect();
 
       const overflowY = parentComputedStyle.getPropertyValue("overflow-y");
 
       if (OVERFLOW_REGEX.test(overflowY)) {
-        if (parent.scrollHeight === Math.round(parentRect.height)) {
+        if (parentDOM.scrollHeight === Math.round(parentRect.height)) {
           this.hasDocumentAsContainer = true;
         }
 
@@ -138,7 +110,7 @@ Please provide scroll container by ref/id when registering the element or turn o
       const overflowX = parentComputedStyle.getPropertyValue("overflow-x");
 
       if (OVERFLOW_REGEX.test(overflowX)) {
-        if (parent.scrollWidth === Math.round(parentRect.width)) {
+        if (parentDOM.scrollWidth === Math.round(parentRect.width)) {
           this.hasDocumentAsContainer = true;
         }
 
@@ -150,7 +122,7 @@ Please provide scroll container by ref/id when registering the element or turn o
 
     if (
       this.hasDocumentAsContainer ||
-      position === "fixed" ||
+      baseELmPosition === "fixed" ||
       !scrollContainer
     ) {
       this.hasDocumentAsContainer = true;
@@ -162,19 +134,19 @@ Please provide scroll container by ref/id when registering the element or turn o
   }
 
   private setScrollRect() {
-    const { scrollHeight, scrollWidth } = this.scrollContainerRef;
+    const { scrollHeight, scrollWidth } = this.DOM;
 
     this.scrollHeight = scrollHeight;
     this.scrollWidth = scrollWidth;
 
     if (this.hasDocumentAsContainer) {
       const viewportHeight = Math.max(
-        this.scrollContainerRef.clientHeight || 0,
+        this.DOM.clientHeight || 0,
         window.innerHeight || 0
       );
 
       const viewportWidth = Math.max(
-        this.scrollContainerRef.clientWidth || 0,
+        this.DOM.clientWidth || 0,
         window.innerWidth || 0
       );
 
@@ -185,8 +157,7 @@ Please provide scroll container by ref/id when registering the element or turn o
         top: 0,
       };
     } else {
-      const { height, width, left, top } =
-        this.scrollContainerRef.getBoundingClientRect();
+      const { height, width, left, top } = this.DOM.getBoundingClientRect();
 
       this.scrollRect = { height, width, left, top };
     }
@@ -220,9 +191,7 @@ Please provide scroll container by ref/id when registering the element or turn o
 
     const type = isAttachListener ? "addEventListener" : "removeEventListener";
 
-    const container = this.hasDocumentAsContainer
-      ? window
-      : this.scrollContainerRef;
+    const container = this.hasDocumentAsContainer ? window : this.DOM;
 
     const opts = { passive: true };
 
@@ -231,7 +200,7 @@ Please provide scroll container by ref/id when registering the element or turn o
     if (hasScrollListener) {
       container[type]("scroll", this.animatedScrollListener, opts);
 
-      let elm: HTMLElement = this.scrollContainerRef;
+      let elm: HTMLElement = this.DOM;
 
       if (this.hasDocumentAsContainer) {
         // Find the first div in the document body.
@@ -251,7 +220,7 @@ Please provide scroll container by ref/id when registering the element or turn o
       if (elm) {
         if (isAttachListener) {
           elm.dataset[
-            `dflexScrollListener-${this.siblingKey}`
+            `dflexScrollListener-${this.SK}`
           ] = `${this.allowDynamicVisibility}`;
 
           return;
@@ -273,17 +242,13 @@ Please provide scroll container by ref/id when registering the element or turn o
 
   setThresholdMatrix(threshold: ThresholdPercentages) {
     this.threshold = new Threshold(threshold);
-    this.threshold.setScrollThreshold(this.siblingKey, this.scrollRect);
+    this.threshold.setScrollThreshold(this.SK, this.scrollRect);
   }
 
   private setScrollCoordinates() {
-    const scrollY = Math.round(
-      this.scrollContainerRef.scrollTop || window.pageYOffset
-    );
+    const scrollY = Math.round(this.DOM.scrollTop || window.pageYOffset);
 
-    const scrollX = Math.round(
-      this.scrollContainerRef.scrollLeft || window.pageXOffset
-    );
+    const scrollX = Math.round(this.DOM.scrollLeft || window.pageXOffset);
 
     const isUpdated = scrollY !== this.scrollY || scrollX !== this.scrollX;
 
@@ -321,7 +286,7 @@ Please provide scroll container by ref/id when registering the element or turn o
 
   private animatedListener(
     setter: "setScrollRect" | "setScrollCoordinates",
-    cb: ScrollInput["scrollEventCallback"]
+    cb: ScrollEventCallback | null
   ) {
     if (this.hasThrottledFrame !== null) return;
 
@@ -329,7 +294,7 @@ Please provide scroll container by ref/id when registering the element or turn o
       const isUpdated = this[setter]();
 
       if (isUpdated && cb) {
-        cb(this.siblingKey, true);
+        cb(this.SK);
       }
       this.hasThrottledFrame = null;
     });
@@ -350,7 +315,7 @@ Please provide scroll container by ref/id when registering the element or turn o
   destroy() {
     this.setScrollListener(false);
     // @ts-expect-error
-    this.scrollContainerRef = null;
+    this.DOM = null;
   }
 }
 

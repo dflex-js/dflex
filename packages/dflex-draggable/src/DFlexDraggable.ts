@@ -1,21 +1,20 @@
-import { IDFlexBaseNode } from "@dflex/core-instance";
+import type { DFlexBaseNode } from "@dflex/core-instance";
 import type { IPointAxes } from "@dflex/utils";
-import store from "./DraggableStoreImp";
-import AbstractDraggable from "./AbstractDraggable";
 
-class Draggable extends AbstractDraggable<IDFlexBaseNode> {
+import store from "./DFlexDraggableStore";
+import DFlexBaseDraggable from "./DFlexBaseDraggable";
+
+class DFlexDraggable extends DFlexBaseDraggable<DFlexBaseNode> {
   /**
    * Creates an instance of Draggable.
    * Works Only on dragged element level.
-   *
    *
    * @param id - elementId
    * @param clickCoordinates -
    */
   constructor(id: string, clickCoordinates: IPointAxes) {
-    const element = store.registry[id];
-
-    super(element, clickCoordinates);
+    const [element, DOM] = store.getElmWithDOM(id);
+    super(element, DOM, clickCoordinates);
   }
 
   dragAt(x: number, y: number) {
@@ -29,4 +28,4 @@ class Draggable extends AbstractDraggable<IDFlexBaseNode> {
   }
 }
 
-export default Draggable;
+export default DFlexDraggable;

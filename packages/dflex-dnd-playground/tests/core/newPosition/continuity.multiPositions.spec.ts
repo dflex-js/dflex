@@ -1,5 +1,10 @@
 import { test, expect, Page, Locator, BrowserContext } from "@playwright/test";
-import { DraggedRect, getDraggedRect, initialize, moveDragged } from "../utils";
+import {
+  DraggedRect,
+  getDraggedRect,
+  initialize,
+  moveDragged,
+} from "../../utils";
 
 test.describe.serial("Drag and release multiples positions", async () => {
   let page: Page;

@@ -1,13 +1,13 @@
 /* eslint-disable no-param-reassign */
-import store from "../DnDStore";
+import { scheduler, store } from "../LayoutManager";
 import Droppable, { isIDEligible } from "./Droppable";
 
-import type { IDraggableInteractive } from "../Draggable";
+import type DraggableInteractive from "../Draggable";
 
 class EndDroppable extends Droppable {
   private spliceAt: number;
 
-  constructor(draggable: IDraggableInteractive) {
+  constructor(draggable: DraggableInteractive) {
     super(draggable);
     this.spliceAt = -1;
   }
@@ -15,7 +15,7 @@ class EndDroppable extends Droppable {
   private isIDEligible2Undo(id: string) {
     return (
       isIDEligible(id, this.draggable.draggedElm.id) &&
-      !store.registry[id].isPaused
+      !store.registry.get(id)!.isPaused
     );
   }
 
@@ -29,7 +29,7 @@ class EndDroppable extends Droppable {
     const elmID = lst[i];
 
     if (this.isIDEligible2Undo(elmID)) {
-      const element = store.registry[elmID];
+      const [element, DOM] = store.getElmWithDOM(elmID);
 
       const { isVisible } = element;
 
@@ -46,7 +46,7 @@ class EndDroppable extends Droppable {
        * Note: rolling back won't affect order array. It only deals with element
        * itself and totally ignore any instance related to store.
        */
-      element.rollBack(operationID, listVisibility);
+      element.rollBack(DOM, operationID, listVisibility);
 
       prevVisibility = isVisible;
     } else {
@@ -152,7 +152,7 @@ class EndDroppable extends Droppable {
   private verify(lst: string[]) {
     const { occupiedPosition, draggedElm } = this.draggable;
 
-    const { top } = store.containers[draggedElm.keys.SK].boundaries;
+    const { top } = store.containers.get(draggedElm.keys.SK)!.boundaries;
 
     const id = lst[0];
 
@@ -160,7 +160,7 @@ class EndDroppable extends Droppable {
       return Math.floor(top) === Math.floor(occupiedPosition.y);
     }
 
-    const element = store.registry[id];
+    const element = store.registry.get(id)!;
 
     return Math.floor(top) === Math.floor(element.currentPosition.y);
   }
@@ -182,9 +182,17 @@ class EndDroppable extends Droppable {
       });
     }
 
-    store.onStateChange(isFallback ? "dragCancel" : "dragEnd");
-
-    this.draggable.endDragging(isFallback);
+    scheduler(
+      store,
+      () => {
+        this.draggable.endDragging(isFallback);
+      },
+      null,
+      {
+        layoutState: isFallback ? "dragCancel" : "dragEnd",
+        type: "layoutState",
+      }
+    );
 
     [
       "elmTransition",

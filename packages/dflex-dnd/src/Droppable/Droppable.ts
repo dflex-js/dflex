@@ -1,34 +1,23 @@
 import { IPointAxes, PointNum } from "@dflex/utils";
 import type { IPointNum } from "@dflex/utils";
 
-import type { DraggedEvent, SiblingsEvent } from "../types";
+import { store } from "../LayoutManager";
 
-import store from "../DnDStore";
+import type DraggableInteractive from "../Draggable";
 
-import type { IDraggableInteractive } from "../Draggable";
-import DFlexUpdater from "./DFlexUpdater";
+import DFlexUpdater, {
+  APPEND_EMPTY_ELM_ID,
+  handleElmMigration,
+  isEmptyBranch,
+} from "./DFlexUpdater";
 
-function emitSiblingsEvent(
-  type: SiblingsEvent["type"],
-  payload: Omit<SiblingsEvent, "type" | "timeStamp">
-) {
-  const evt: SiblingsEvent = {
-    ...payload,
-    timeStamp: Date.now(),
-    type,
-  };
-
-  store.emitEvent(evt);
-}
-
-export function isIDEligible(elmID: string, draggedID: string) {
+export function isIDEligible(elmID: string, draggedID: string): boolean {
   return (
-    elmID &&
+    !!elmID &&
     elmID.length > 0 &&
     elmID !== draggedID &&
-    store.registry[elmID] &&
-    store.registry[elmID].ref !== null &&
-    !store.registry[elmID].readonly
+    store.has(elmID) &&
+    !store.registry.get(elmID)!.readonly
   );
 }
 
@@ -46,8 +35,6 @@ class Droppable extends DFlexUpdater {
 
   private regularDragging: boolean;
 
-  private isOnDragOutContainerEvtEmitted: boolean;
-
   private isOnDragOutThresholdEvtEmitted: boolean;
 
   /** This is only related to insert method as the each element has it's own for
@@ -58,8 +45,6 @@ class Droppable extends DFlexUpdater {
 
   static INDEX_OUT_CONTAINER = NaN;
 
-  static APPEND_EMPTY_ELM_ID = "";
-
   static isIDEligible2Move(
     elmID: string,
     draggedID: string,
@@ -69,14 +54,16 @@ class Droppable extends DFlexUpdater {
       return false;
     }
 
+    const [elm, DOM] = store.getElmWithDOM(elmID);
+
     // Won't trigger any resume if auto-scroll is disabled.
-    if (store.registry[elmID].isPaused) {
+    if (elm.isPaused) {
       if (isScrollEnabled) {
-        const { SK } = store.registry[draggedID].keys;
+        const { SK } = store.registry.get(draggedID)!.keys;
 
-        const { scrollX, scrollY } = store.containers[SK].scroll;
+        const { scrollX, scrollY } = store.scrolls.get(SK)!;
 
-        store.registry[elmID].resume(scrollX, scrollY);
+        elm.resume(DOM, scrollX, scrollY);
 
         return true;
       }
@@ -97,28 +84,21 @@ class Droppable extends DFlexUpdater {
     for (let i = lst.length - 1; i >= 0; i -= 1) {
       const id = lst[i];
       if (Droppable.isIDEligible2Move(id, draggedID, false)) {
-        return store.registry[id];
+        return store.registry.get(id)!;
       }
     }
 
     throw new Error(`No valid element found.${lst}\n`);
   }
 
-  static isEmpty(lst: string[]) {
-    const { length } = lst;
-
-    return (
-      length === 0 || (length === 1 && lst[0] === Droppable.APPEND_EMPTY_ELM_ID)
-    );
-  }
-
-  constructor(draggable: IDraggableInteractive) {
+  constructor(draggable: DraggableInteractive) {
     super(draggable);
 
     this.scrollAnimatedFrame = null;
 
-    const { scrollX, scrollY } =
-      store.containers[this.draggable.migration.latest().SK].scroll;
+    const { scrollX, scrollY } = store.scrolls.get(
+      this.draggable.migration.latest().SK
+    )!;
 
     this.initialScroll = new PointNum(scrollX, scrollY);
 
@@ -147,39 +127,11 @@ class Droppable extends DFlexUpdater {
       this.moveDown(1);
     }
 
-    this.isOnDragOutContainerEvtEmitted = false;
     this.isOnDragOutThresholdEvtEmitted = false;
     this.animatedDraggedInsertionFrame = null;
     this.listAppendPosition = null;
 
     this.isParentLocked = false;
-  }
-
-  private draggedEventGenerator(type: DraggedEvent["type"]): DraggedEvent {
-    return {
-      id: this.draggable.draggedElm.id,
-      index: this.getDraggedTempIndex(),
-      timeStamp: Date.now(),
-      type,
-    };
-  }
-
-  private emitDraggedEvent(type: DraggedEvent["type"]) {
-    if (type === "onDragOutThreshold") {
-      if (!this.isOnDragOutThresholdEvtEmitted) {
-        store.emitEvent(this.draggedEventGenerator(type));
-
-        this.isOnDragOutThresholdEvtEmitted = true;
-      }
-
-      return;
-    }
-
-    if (type === "onDragOutContainer" && !this.isOnDragOutContainerEvtEmitted) {
-      store.emitEvent(this.draggedEventGenerator(type));
-
-      this.isOnDragOutContainerEvtEmitted = true;
-    }
   }
 
   /**
@@ -206,7 +158,7 @@ class Droppable extends DFlexUpdater {
           this.draggable.scroll.enable
         )
       ) {
-        const element = store.registry[id];
+        const element = store.registry.get(id)!;
 
         const isQualified = element.isPositionedUnder(
           this.draggable.positionPlaceholder.y
@@ -230,6 +182,7 @@ class Droppable extends DFlexUpdater {
     const { SK } = migration.latest();
 
     const siblings = store.getElmBranchByKey(SK);
+    const container = store.containers.get(SK)!;
 
     /**
      * If tempIndex is zero, the dragged is coming from the top. So, move them
@@ -237,14 +190,14 @@ class Droppable extends DFlexUpdater {
      */
     let hasToMoveSiblingsDown = true;
 
-    const isEmpty = Droppable.isEmpty(siblings);
+    const isEmpty = isEmptyBranch(siblings);
 
     let insertAt = isEmpty ? 0 : this.detectDroppableIndex();
 
     // Enforce attaching it from the bottom since it's already inside the container.
     if (typeof insertAt !== "number") {
       // Restore the last element position from the bottom.
-      const { lastElmPosition } = store.containers[SK];
+      const { lastElmPosition } = container;
       if (!migration.isTransitioning && lastElmPosition) {
         this.updateDraggedThresholdPosition(
           lastElmPosition.x,
@@ -280,7 +233,7 @@ class Droppable extends DFlexUpdater {
       this.moveDown(insertAt);
     }
 
-    draggedElm.rmDateset("draggedOutContainer");
+    draggedElm.removeAttribute(this.draggable.draggedDOM, "OUT_CONTAINER");
 
     // Clear it since it's used for insertion calculation.
     migration.clearMargins();
@@ -291,8 +244,8 @@ class Droppable extends DFlexUpdater {
         // offset to append.
         // It has to be the biggest element offset. The last element in the list.
         const offset = {
-          height: draggedElm.offset.height,
-          width: draggedElm.offset.width,
+          height: draggedElm.initialOffset.height,
+          width: draggedElm.initialOffset.width,
           left: this.listAppendPosition!.x,
           top: this.listAppendPosition!.y,
         };
@@ -302,7 +255,7 @@ class Droppable extends DFlexUpdater {
 
         let grid = draggedGrid;
 
-        const lastElm = store.registry[siblings[siblings.length - 1]];
+        const lastElm = store.registry.get(siblings[siblings.length - 1])!;
 
         if (lastElm) {
           ({ grid } = lastElm);
@@ -312,7 +265,7 @@ class Droppable extends DFlexUpdater {
           }
         }
 
-        store.handleElmMigration(SK, migration.prev().SK, offset);
+        handleElmMigration(SK, migration.prev().SK, offset);
 
         this.listAppendPosition = null;
 
@@ -362,7 +315,7 @@ class Droppable extends DFlexUpdater {
 
         // Insert the element to the new list. Empty string because when dragged
         // is out the branch sets its index as "".
-        destination.push(Droppable.APPEND_EMPTY_ELM_ID);
+        destination.push(APPEND_EMPTY_ELM_ID);
 
         migration.add(NaN, newSK, store.tracker.newTravel());
 
@@ -407,7 +360,9 @@ class Droppable extends DFlexUpdater {
     const from = index + 1;
 
     if (index > 0) {
-      const prevElm = store.registry[siblings[migration.latest().index - 1]];
+      const prevElm = store.registry.get(
+        siblings[migration.latest().index - 1]
+      )!;
 
       // Store it before lost it when the index is changed to the next one.
       migration.preserveVerticalMargin(
@@ -418,16 +373,16 @@ class Droppable extends DFlexUpdater {
 
     if (from === siblings.length) return;
 
-    const nextElm = store.registry[siblings[from]];
+    const nextElm = store.registry.get(siblings[from])!;
 
     // Store it before lost it when the index is changed to the next one.
     migration.preserveVerticalMargin(
       "bottom",
       nextElm.currentPosition.y -
-        (occupiedPosition.y + draggedElm.offset.height)
+        (occupiedPosition.y + draggedElm.initialOffset.height)
     );
 
-    emitSiblingsEvent("onLiftUpSiblings", {
+    this.draggable.events.dispatch("ON_LIFT_UP", {
       siblings,
       from,
       to: siblings.length,
@@ -463,10 +418,10 @@ class Droppable extends DFlexUpdater {
       this.draggable.migration.latest().SK
     );
 
-    emitSiblingsEvent("onMoveDownSiblings", {
+    this.draggable.events.dispatch("ON_MOVE_DOWN", {
       siblings,
       from: siblings!.length - 1,
-      to,
+      to: siblings.length,
     });
 
     for (let i = siblings.length - 1; i >= to; i -= 1) {
@@ -491,8 +446,8 @@ class Droppable extends DFlexUpdater {
       gridPlaceholder,
     } = this.draggable;
 
-    const { SK } = store.registry[id].keys;
-    const { grid: siblingsGrid } = store.containers[SK];
+    const { SK } = store.registry.get(id)!.keys;
+    const { grid: siblingsGrid } = store.containers.get(SK)!;
 
     if (isOut[id].isOutY()) {
       const newRow = isOut[id].isLeftFromBottom
@@ -552,15 +507,16 @@ class Droppable extends DFlexUpdater {
 
     const currentTop = draggedYShift - this.draggable.innerOffset.y;
 
-    const currentBottom = currentTop + this.draggable.draggedElm.offset.height;
+    const currentBottom =
+      currentTop + this.draggable.draggedElm.initialOffset.height;
 
-    const { SK } = store.registry[this.draggable.draggedElm.id].keys;
+    const { SK } = store.registry.get(this.draggable.draggedElm.id)!.keys;
 
     const {
       scrollHeight,
-      scrollContainerRef: scrollContainer,
+      DOM: scrollContainer,
       scrollRect,
-    } = store.containers[SK].scroll;
+    } = store.scrolls.get(SK)!;
 
     if (direction === 1) {
       if (currentBottom <= scrollHeight) {
@@ -591,15 +547,16 @@ class Droppable extends DFlexUpdater {
 
     const currentLeft = draggedXShift - this.draggable.innerOffset.x;
 
-    const currentRight = currentLeft + this.draggable.draggedElm.offset.width;
+    const currentRight =
+      currentLeft + this.draggable.draggedElm.initialOffset.width;
 
-    const { SK } = store.registry[this.draggable.draggedElm.id].keys;
+    const { SK } = store.registry.get(this.draggable.draggedElm.id)!.keys;
 
     const {
       scrollHeight,
-      scrollContainerRef: scrollContainer,
+      DOM: scrollContainer,
       scrollRect,
-    } = store.containers[SK].scroll;
+    } = store.scrolls.get(SK)!;
 
     if (direction === 1) {
       if (currentRight <= scrollHeight) {
@@ -627,12 +584,12 @@ class Droppable extends DFlexUpdater {
     direction: 1 | -1,
     on: "scrollElementOnX" | "scrollElementOnY"
   ) {
-    const { SK } = store.registry[this.draggable.draggedElm.id].keys;
+    const { SK } = store.registry.get(this.draggable.draggedElm.id)!.keys;
+    const scroll = store.scrolls.get(SK)!;
 
     // Prevent store from implementing any animation response.
-    store.containers[SK].scroll.hasThrottledFrame = 1;
+    scroll.hasThrottledFrame = 1;
 
-    // @ts-expect-error
     this.draggable.isViewportRestricted = false;
 
     this.regularDragging = false;
@@ -642,7 +599,7 @@ class Droppable extends DFlexUpdater {
 
       // Reset animation flags
       this.scrollAnimatedFrame = null;
-      store.containers[SK].scroll.hasThrottledFrame = null;
+      scroll.hasThrottledFrame = null;
 
       this.scrollSpeed += this.draggable.scroll.initialSpeed;
     });
@@ -651,7 +608,8 @@ class Droppable extends DFlexUpdater {
   private scrollManager(x: number, y: number) {
     const { draggedElm } = this.draggable;
 
-    const { SK } = store.registry[draggedElm.id].keys;
+    const { SK } = store.registry.get(draggedElm.id)!.keys;
+    const scroll = store.scrolls.get(SK)!;
 
     /**
      * Manage scrolling.
@@ -659,11 +617,10 @@ class Droppable extends DFlexUpdater {
     if (
       this.draggable.scroll.enable &&
       this.scrollAnimatedFrame === null &&
-      store.containers[SK].scroll.hasThrottledFrame === null
+      scroll.hasThrottledFrame === null
     ) {
-      if (store.containers[SK].scroll.hasOverflowY) {
-        const { scrollRect, scrollHeight, threshold } =
-          store.containers[SK].scroll;
+      if (scroll.hasOverflowY) {
+        const { scrollRect, scrollHeight, threshold } = scroll;
         if (
           this.draggable.threshold.isOut[draggedElm.id].isLeftFromBottom &&
           y >= threshold!.thresholds[SK].bottom &&
@@ -679,9 +636,8 @@ class Droppable extends DFlexUpdater {
         }
       }
 
-      if (store.containers[SK].scroll.hasOverflowX) {
-        const { scrollRect, scrollHeight, threshold } =
-          store.containers[SK].scroll;
+      if (scroll.hasOverflowX) {
+        const { scrollRect, scrollHeight, threshold } = scroll;
         if (
           this.draggable.threshold.isOut[draggedElm.id].isLeftFromRight &&
           x >= threshold!.thresholds[SK].right &&
@@ -724,19 +680,29 @@ class Droppable extends DFlexUpdater {
     }
 
     if (this.draggable.isOutThreshold()) {
-      this.emitDraggedEvent("onDragOutThreshold");
+      this.draggable.events.dispatch("ON_OUT_THRESHOLD", {
+        id: this.draggable.draggedElm.id,
+        index: this.getDraggedTempIndex(),
+      });
 
       this.scrollManager(x, y);
 
       if (!this.isParentLocked) {
-        this.draggable.draggedElm.setDataset("draggedOutPosition", true);
+        this.draggable.draggedElm.setAttribute(
+          this.draggable.draggedDOM,
+          "OUT_POS",
+          "true"
+        );
 
         this.draggedOutPosition();
 
         return;
       }
 
-      this.draggable.draggedElm.rmDateset("draggedOutPosition");
+      this.draggable.draggedElm.removeAttribute(
+        this.draggable.draggedDOM,
+        "OUT_POS"
+      );
 
       isOutSiblingsContainer = this.draggable.isOutThreshold(
         this.draggable.migration.latest().SK
@@ -759,9 +725,16 @@ class Droppable extends DFlexUpdater {
 
       const { draggedElm, containersTransition, migration } = this.draggable;
 
-      draggedElm.setDataset("draggedOutContainer", true);
+      draggedElm.setAttribute(
+        this.draggable.draggedDOM,
+        "OUT_CONTAINER",
+        "true"
+      );
 
-      this.emitDraggedEvent("onDragOutContainer");
+      this.draggable.events.dispatch("ON_OUT_CONTAINER", {
+        id: this.draggable.draggedElm.id,
+        index: this.getDraggedTempIndex(),
+      });
 
       this.isParentLocked = true;
 
@@ -796,8 +769,6 @@ class Droppable extends DFlexUpdater {
         return;
       }
 
-      this.isOnDragOutContainerEvtEmitted = false;
-
       if (this.animatedDraggedInsertionFrame === null) {
         this.animatedDraggedInsertionFrame = window.requestAnimationFrame(
           () => {
@@ -808,26 +779,6 @@ class Droppable extends DFlexUpdater {
         );
       }
     }
-  }
-
-  commit() {
-    store.getBranchesByDepth(this.draggable.draggedElm.depth).forEach((key) => {
-      if (__DEV__) {
-        if (!store.containers[key].ref) {
-          throw new Error(`Container ${key} ref not found.`);
-        }
-      }
-
-      if (store.containers[key].ref) {
-        const { ref } = store.containers[key];
-
-        ref!.replaceWith(
-          ...store
-            .getElmBranchByKey(key)
-            .map((elmId) => store.registry[elmId].ref!)
-        );
-      }
-    });
   }
 }
 

@@ -1,144 +1,101 @@
 import { PointNum } from "@dflex/utils";
 import type { IPointNum } from "@dflex/utils";
 
-import type {
-  IDFlexBaseNode,
-  DFlexBaseNodeOpts,
-  AllowedAttributes,
-  AllowedDataset,
-  AttributesIndicators,
-} from "./types";
+import { DFLEX_ATTRIBUTES } from "./constants";
+import type { AllowedAttributes } from "./constants";
 
-class DFlexBaseNode implements IDFlexBaseNode {
-  ref!: HTMLElement | null;
+function getElmDOMOrThrow(id: string): HTMLElement | null {
+  let DOM = document.getElementById(id);
 
+  if (!DOM) {
+    if (__DEV__) {
+      throw new Error(
+        `Attach: Element with ID: ${id} is not found.` +
+          `This could be due wrong ID or missing DOM element.`
+      );
+    }
+  }
+
+  if (!DOM || DOM.nodeType !== Node.ELEMENT_NODE) {
+    if (__DEV__) {
+      throw new Error(
+        `Attach: Invalid HTMLElement ${DOM} is passed to registry.`
+      );
+    }
+
+    DOM = null;
+  }
+
+  return DOM;
+}
+
+type AttributeSet = Set<Exclude<AllowedAttributes, "INDEX">>;
+
+class DFlexBaseNode {
   id: string;
 
   translate!: IPointNum;
 
-  isInitialized!: boolean;
-
   isPaused!: boolean;
 
-  private _hasAttribute!: {
-    // eslint-disable-next-line no-unused-vars
-    [key in AttributesIndicators]: boolean;
-  };
+  private _hasAttribute?: AttributeSet;
 
-  constructor(id: string, opts: DFlexBaseNodeOpts) {
+  static getType(): string {
+    return "base:node";
+  }
+
+  static transform(DOM: HTMLElement, x: number, y: number): void {
+    DOM.style.transform = `translate3d(${x}px,${y}px, 0)`;
+  }
+
+  constructor(id: string) {
     this.id = id;
-
-    if (opts.isInitialized) {
-      this.attach();
-
-      this.isPaused = opts.isPaused;
-
-      if (!this.isPaused) {
-        this.initTranslate();
-      }
-
-      return;
-    }
-
-    this.isInitialized = false;
-    this.ref = null;
     this.isPaused = true;
   }
 
-  /**
-   * Attach element DOM node to the instance.
-   */
-  attach() {
-    this.ref = document.getElementById(this.id);
-
-    if (__DEV__) {
-      if (!this.ref) {
-        throw new Error(`Attach: Element with ID: ${this.id} is not found.`);
-      }
-
-      if (this.ref.nodeType !== Node.ELEMENT_NODE) {
-        throw new Error(
-          `Attach: Invalid HTMLElement ${this.ref} is passed to registry.`
-        );
-      }
-    }
-
-    this.isInitialized = true;
-  }
-
-  /**
-   * Detach element DOM node from the instance.
-   */
-  detach() {
-    this.isInitialized = false;
-    this.ref = null;
-  }
-
-  transform(x: number, y: number) {
-    this.ref!.style.transform = `translate3d(${x}px,${y}px, 0)`;
+  getElmDOMOrThrow(): HTMLElement | null {
+    return getElmDOMOrThrow(this.id);
   }
 
   /**
    * Initialize the translate AxesCoordinates as part of abstract instance and
    * necessary for darg only movement.
    */
-  initTranslate() {
+  initTranslate(): void {
     if (!this.translate) {
       this.translate = new PointNum(0, 0);
-
-      // @ts-expect-error - Just for initialization.
-      this._hasAttribute = {};
     }
-
+    this._hasAttribute = new Set();
     this.isPaused = false;
   }
 
-  setDataset(key: AllowedDataset, value: number | boolean) {
-    if (key === "index" || key === "gridX" || key === "gridY") {
-      this.ref!.dataset[key] = `${value}`;
+  setAttribute(
+    DOM: HTMLElement,
+    key: AllowedAttributes,
+    value: string | number
+  ): void {
+    if (key === "INDEX") {
+      DOM.setAttribute(DFLEX_ATTRIBUTES[key], `${value}`);
 
       return;
     }
 
-    if (this._hasAttribute[key]) return;
-
-    this.ref!.dataset[key] = `${value}`;
-
-    this._hasAttribute[key] = true;
+    if (this._hasAttribute!.has(key)) return;
+    DOM.setAttribute(DFLEX_ATTRIBUTES[key], `${value}`);
+    this._hasAttribute!.add(key);
   }
 
-  rmDateset(key: Exclude<AllowedDataset, "index">) {
-    delete this.ref!.dataset[key];
-
-    if (this._hasAttribute[key]) {
-      this._hasAttribute[key] = false;
-    }
+  removeAttribute(DOM: HTMLElement, key: AllowedAttributes): void {
+    if (key === "INDEX" || !this._hasAttribute!.has(key)) return;
+    DOM.removeAttribute(DFLEX_ATTRIBUTES[key]);
+    this._hasAttribute!.delete(key);
   }
 
-  setAttribute(key: AllowedAttributes, value: string) {
-    if (this._hasAttribute[key]) return;
-
-    this.ref!.setAttribute(key, value);
-    this._hasAttribute[key] = true;
-  }
-
-  removeAttribute(key: AllowedAttributes) {
-    if (!this._hasAttribute[key]) return;
-
-    this.ref!.removeAttribute(key);
-    this._hasAttribute[key] = false;
-  }
-
-  clearAttributes() {
-    (Object.keys(this._hasAttribute) as AttributesIndicators[]).forEach(
-      (key) => {
-        if (key === "dragged") this.removeAttribute(key);
-        else this.rmDateset(key);
-      }
-    );
-
-    // @ts-expect-error.
-    this._hasAttribute = {};
+  clearAttributes(DOM: HTMLElement): void {
+    this._hasAttribute!.forEach((key) => {
+      this.removeAttribute(DOM, key);
+    });
+    this._hasAttribute!.clear();
   }
 }
 

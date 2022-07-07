@@ -1,3 +1,3 @@
-export type { IDFlexContainer } from "./types";
+import DFlexContainer from "./DFlexContainer";
 
-export { default as DFlexContainer } from "./DFlexContainer";
+export default DFlexContainer;
