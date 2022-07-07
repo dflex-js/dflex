@@ -19,8 +19,7 @@ export type {
   Direction,
 } from "./types";
 
-export { Scroll } from "./Scroll";
-export type { IScroll } from "./Scroll";
+export { default as Scroll } from "./Scroll";
 
 export { combineKeys, dirtyAssignBiggestRect } from "./collections";
 

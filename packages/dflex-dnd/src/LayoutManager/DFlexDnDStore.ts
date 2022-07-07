@@ -114,7 +114,7 @@ class DnDStoreImp extends Store {
     this.scrolls.set(SK, scroll);
 
     if (scroll.allowDynamicVisibility) {
-      scroll.scrollEventCallback = updateBranchVisibility.bind(null, this);
+      scroll.setScrollEventCallback(updateBranchVisibility.bind(null, this));
     }
   }
 
@@ -137,7 +137,11 @@ class DnDStoreImp extends Store {
 
     const scroll = this.scrolls.get(SK)!;
 
-    elm.resume(this.interactiveDOM.get(id)!, scroll.scrollX, scroll.scrollY);
+    elm.resume(
+      this.interactiveDOM.get(id)!,
+      scroll.scrollRect.left,
+      scroll.scrollRect.top
+    );
 
     // Using element grid zero to know if the element has been initiated inside
     // container or not.

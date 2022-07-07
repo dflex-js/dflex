@@ -144,10 +144,13 @@ class Threshold {
   }
 
   destroy(): void {
-    // @ts-expect-error
-    this.thresholds = null;
-    // @ts-expect-error
-    this.isOut = null;
+    Object.keys(this.thresholds).forEach((key) => {
+      delete this.thresholds[key];
+    });
+
+    Object.keys(this.isOut).forEach((key) => {
+      delete this.isOut[key];
+    });
   }
 }
 
