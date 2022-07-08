@@ -1,7 +1,5 @@
-import { Threshold } from "../Threshold";
-import type { ThresholdPercentages } from "../Threshold";
-import type { RectDimensions } from "../types";
-import { getParentElm } from "../dom";
+import { getParentElm, Threshold } from "@dflex/utils";
+import type { ThresholdPercentages, RectDimensions } from "@dflex/utils";
 
 // eslint-disable-next-line no-unused-vars
 type ScrollEventCallback = (SK: string) => void;
@@ -90,7 +88,7 @@ function hasMoreThanHalfOverFlow(
   return scrollRect[dir] / 2 > scrollContainerRect[dir];
 }
 
-class Scroll {
+class DFlexScrollContainer {
   private _threshold: Threshold | null;
 
   private _SK: string;
@@ -357,4 +355,4 @@ class Scroll {
   }
 }
 
-export default Scroll;
+export default DFlexScrollContainer;

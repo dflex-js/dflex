@@ -1,10 +1,12 @@
 import Store from "@dflex/store";
 import type { RegisterInputOpts } from "@dflex/store";
 
-import { Tracker, Scroll, canUseDOM, Dimensions } from "@dflex/utils";
-import type { ITracker } from "@dflex/utils";
+import { Tracker, canUseDOM, Dimensions } from "@dflex/utils";
 
-import { DFlexContainer } from "@dflex/core-instance";
+import {
+  DFlexParentContainer,
+  DFlexScrollContainer,
+} from "@dflex/core-instance";
 
 import initDFlexListeners, {
   DFlexListenerPlugin,
@@ -24,9 +26,9 @@ import {
 
 import { MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY } from "./constants";
 
-type Containers = Map<string, DFlexContainer>;
+type Containers = Map<string, DFlexParentContainer>;
 
-type Scrolls = Map<string, Scroll>;
+type Scrolls = Map<string, DFlexScrollContainer>;
 
 type UnifiedContainerDimensions = Map<number, Dimensions>;
 
@@ -45,7 +47,7 @@ class DnDStoreImp extends Store {
 
   unifiedContainerDimensions: UnifiedContainerDimensions;
 
-  tracker: ITracker;
+  tracker: Tracker;
 
   observer: Observer;
 
@@ -88,7 +90,7 @@ class DnDStoreImp extends Store {
 
   initSiblingContainer(SK: string) {
     if (!this.containers.has(SK)) {
-      this.containers.set(SK, new DFlexContainer());
+      this.containers.set(SK, new DFlexParentContainer());
     }
 
     if (this.scrolls.has(SK)) {
@@ -97,7 +99,10 @@ class DnDStoreImp extends Store {
 
     const branch = this.DOMGen.getElmBranchByKey(SK);
 
-    const scroll = new Scroll(this.interactiveDOM.get(branch[0])!, SK);
+    const scroll = new DFlexScrollContainer(
+      this.interactiveDOM.get(branch[0])!,
+      SK
+    );
 
     const hasSiblings = branch.length > 1;
 

@@ -15,7 +15,7 @@ import type {
   IPointAxes,
 } from "@dflex/utils";
 
-import { DFlexContainer, DFlexNode } from "@dflex/core-instance";
+import { DFlexParentContainer, DFlexNode } from "@dflex/core-instance";
 
 import {
   initDFlexEvent,
@@ -125,7 +125,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
         store.unifiedContainerDimensions.get(depth)!
       );
 
-      if (elmContainer.originLength === DFlexContainer.OUT_OF_RANGE) {
+      if (elmContainer.originLength === DFlexParentContainer.OUT_OF_RANGE) {
         const { length } = store.getElmBranchByKey(key);
         elmContainer.originLength = length;
       }
