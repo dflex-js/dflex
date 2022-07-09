@@ -1,7 +1,7 @@
 import Store from "@dflex/store";
 import type { RegisterInputOpts } from "@dflex/store";
 
-import { Tracker, canUseDOM, Dimensions } from "@dflex/utils";
+import { canUseDOM, Dimensions } from "@dflex/utils";
 
 import {
   DFlexParentContainer,
@@ -47,8 +47,6 @@ class DnDStoreImp extends Store {
 
   unifiedContainerDimensions: UnifiedContainerDimensions;
 
-  tracker: Tracker;
-
   observer: Observer;
 
   listeners: DFlexListenerPlugin;
@@ -70,7 +68,6 @@ class DnDStoreImp extends Store {
     this.containers = new Map();
     this.scrolls = new Map();
     this.unifiedContainerDimensions = new Map();
-    this.tracker = new Tracker();
     this._isInitialized = false;
     this._isDOM = false;
     this.observer = null;
@@ -196,9 +193,8 @@ class DnDStoreImp extends Store {
       () => {
         const coreInput = {
           id,
-          parentID: element.parentID,
-          depth: element.depth || 0,
           readonly: !!element.readonly,
+          depth: element.depth || 0,
         };
 
         // Create an instance of DFlexCoreNode and gets the DOM element into the store.

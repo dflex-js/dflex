@@ -24,8 +24,6 @@ interface Props {
   children: React.ReactNode;
   registerInput: {
     id: string;
-    parentID: string;
-    depth?: number;
     readonly?: boolean;
   };
   opts?: DFlexDnDOpts;
@@ -41,11 +39,11 @@ export const DFlexDnDComponent = ({
 }: Props) => {
   const taskRef = React.useRef() as React.MutableRefObject<HTMLLIElement>;
 
-  const { id, parentID, depth, readonly } = registerInput;
+  const { id, readonly } = registerInput;
 
   React.useEffect(() => {
     if (taskRef.current) {
-      store.register({ id, parentID, depth, readonly });
+      store.register({ id, readonly });
     }
 
     return () => {
