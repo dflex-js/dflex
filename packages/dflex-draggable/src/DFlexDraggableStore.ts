@@ -10,7 +10,6 @@ class DFlexDraggableStore extends DFlexBaseStore {
     super.register({
       id,
       depth: 0,
-      parentID: "",
       readonly: false,
     });
   }

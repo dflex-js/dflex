@@ -24,7 +24,7 @@ const TodoListWithEvents = () => {
           {tasks.map(({ msg, id, style }) => (
             <DFlexDnDComponent
               Component={"li"}
-              registerInput={{ id, parentID }}
+              registerInput={{ id }}
               key={id}
               style={style}
             >

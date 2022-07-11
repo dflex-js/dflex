@@ -27,10 +27,6 @@ export type RegisterInputOpts = {
 
 export type RegisterInputBase = DeepNonNullable<RegisterInputOpts>;
 
-type RegisterInputBaseWithDepth = RegisterInputBase & {
-  depth: number;
-};
-
 type GetElmWithDOMOutput = [DFlexNode, HTMLElement];
 
 function getElmDOMOrThrow(id: string): HTMLElement | null {
@@ -77,10 +73,7 @@ class DFlexBaseStore {
     this.DOMGen = new Generator();
   }
 
-  private _submitElementToRegistry(
-    DOM: HTMLElement,
-    elm: RegisterInputBaseWithDepth
-  ) {
+  private _submitElementToRegistry(DOM: HTMLElement, elm: RegisterInputBase) {
     const { id, depth, readonly } = elm;
 
     if (this.registry.has(id)) {
@@ -114,6 +107,21 @@ class DFlexBaseStore {
     this.registry.set(id, dflexElm);
 
     dflexElm.setAttribute(DOM, "INDEX", dflexElm.order.self);
+
+    if (depth >= 1) {
+      if (keys.CHK === null) {
+        if (__DEV__) {
+          throw new Error(
+            `Attach: Invalid keys for element with ID: ${id}` +
+              `Elements over depth-1 must have a CHK key.`
+          );
+        }
+
+        return;
+      }
+
+      DOM.dataset.dflexKey = keys.CHK;
+    }
   }
 
   /**
@@ -122,49 +130,51 @@ class DFlexBaseStore {
    * @param element - element to register
    * @returns
    */
-  register(element: RegisterInputBase): void {
-    const { id, readonly, depth } = element;
+  register(element: RegisterInputBase, cb?: () => void): void {
+    const { id, depth } = element;
 
-    const DOM = getElmDOMOrThrow(id)!;
+    const DOM = this.interactiveDOM.has(id)
+      ? this.interactiveDOM.get(id)!
+      : getElmDOMOrThrow(id)!;
 
-    getParentElm(DOM, (parentDOM) => {
+    getParentElm(DOM, (_parentDOM) => {
       if (
         this._lastDOMParent === null ||
-        !this._lastDOMParent.isSameNode(parentDOM)
+        !this._lastDOMParent.isSameNode(_parentDOM)
       ) {
-        let { id: parentID } = parentDOM;
+        let { id: parentID } = _parentDOM;
 
         if (!parentID) {
           parentID = this.tracker.newTravel("DFlex-id");
-          parentDOM.id = parentID;
+          _parentDOM.id = parentID;
         }
+
+        this.interactiveDOM.set(parentID, _parentDOM);
 
         const parentDepth = depth + 1;
 
-        // Store last DOM parent. If not stored already.
-        if (!this.interactiveDOM.has(parentID)) {
-          this.interactiveDOM.set(parentID, parentDOM);
-        }
-
-        // keep the reference for comparison.
-        this._lastDOMParent = parentDOM;
+        this._submitElementToRegistry(DOM, element);
 
         // A new branch.
-        this._submitElementToRegistry(parentDOM, {
+        this._submitElementToRegistry(_parentDOM, {
           id: parentID,
           depth: parentDepth,
-          readonly,
+          // Default value for inserted parent element.
+          readonly: true,
         });
+
+        // keep the reference for comparison.
+        this._lastDOMParent = _parentDOM;
+      } else {
+        this._submitElementToRegistry(DOM, element);
+      }
+
+      if (typeof cb === "function") {
+        cb();
       }
 
       return true;
     });
-
-    if (!this.interactiveDOM.has(id)) {
-      this.interactiveDOM.set(id, DOM);
-    }
-
-    this._submitElementToRegistry(DOM, { id, depth, readonly });
   }
 
   getElmWithDOM(id: string): GetElmWithDOMOutput {

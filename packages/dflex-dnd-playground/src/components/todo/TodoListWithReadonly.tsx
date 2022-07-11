@@ -39,7 +39,7 @@ const TodoListWithReadonly = () => {
           {tasks.map(({ msg, id, readonly, style }) => (
             <DFlexDnDComponent
               Component={"li"}
-              registerInput={{ id, readonly, parentID }}
+              registerInput={{ id, readonly }}
               key={id}
               style={style}
             >
