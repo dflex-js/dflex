@@ -80,12 +80,12 @@ Map {
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
-      "CHK": "2-0",
+      "CHK": "0-0",
       "PK": "2-0",
-      "SK": "1-1",
+      "SK": "1-0",
     },
     "order": Object {
-      "parent": 1,
+      "parent": 0,
       "self": 0,
     },
     "readonly": false,
@@ -153,12 +153,12 @@ Map {
     "isPaused": false,
     "isVisible": true,
     "keys": Object {
-      "CHK": "2-0",
+      "CHK": "0-0",
       "PK": "2-0",
-      "SK": "1-1",
+      "SK": "1-0",
     },
     "order": Object {
-      "parent": 1,
+      "parent": 0,
       "self": 0,
     },
     "readonly": false,
