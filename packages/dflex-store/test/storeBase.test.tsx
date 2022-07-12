@@ -3,12 +3,10 @@ import * as React from "react";
 import * as ReactTestUtils from "react-dom/test-utils";
 import { Root, createRoot } from "react-dom/client";
 
-import Store from "../src";
+import BaseStore from "../src";
 
-// TODO: Add more testing cases to cover all store methods.
-
-describe("Testing Store Package", () => {
-  const store = new Store();
+describe("Testing DFlex BaseStore", () => {
+  const store = new BaseStore();
 
   const elm0DP0 = {
     id: "id-0",
