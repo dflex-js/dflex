@@ -122,9 +122,11 @@ importers:
     specifiers:
       '@dflex/core-instance': workspace:^3.5.4
       '@dflex/dom-gen': workspace:^3.5.4
+      '@dflex/utils': workspace:^3.5.4
     devDependencies:
       '@dflex/core-instance': link:../dflex-core-instance
       '@dflex/dom-gen': link:../dflex-dom-gen
+      '@dflex/utils': link:../dflex-utils
 
   packages/dflex-utils:
     specifiers: {}
