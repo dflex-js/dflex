@@ -33,7 +33,6 @@ store.register(RegisterInputOpts);
 Where `RegisterInputOpts` is an object with the following properties:
 
 - `id: string` Targeted element-id.
-- `parentID: string` Parent element-id. Pass empty string if there's none.
 - `depth?: number` The depth of targeted element starting from zero (The default value is zero).
 - `readonly?: boolean` True for elements that won't be transformed during DnD
   but belongs to the same interactive container.

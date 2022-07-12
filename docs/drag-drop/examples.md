@@ -1,6 +1,6 @@
 ---
 title: Drag and Drop Examples
-description: "DFlex drag and drop todo example built with React."
+description: "DFlex drag and drop component example built with React."
 ---
 
 ### Three principles
@@ -11,101 +11,100 @@ In all DFlex examples it's important to focus on three principles:
 - Create dag and drop instance.
 - Call `dragAt`/`endDragging` when needed.
 
-### Building Todo List
+### Building DnD Component
 
 ```jsx
 import { store, DnD } from "@dflex/dnd";
 
-const Task = ({ id, task }) => {
-  let dndEvent;
+// shared dragged event
+let dndEvent: DnD | null;
 
-  // This reference enable DFlex to move the element when required.
-  const ref = React.useRef();
+interface Props {
+  Component: string | React.JSXElementConstructor<any>;
+  style?: React.CSSProperties;
+  className?: string;
+  children: React.ReactNode;
+  registerInput: {
+    id: string;
+    depth?: number;
+    readonly?: boolean;
+  };
+  opts?: DFlexDnDOpts;
+}
+
+export const DFlexDnDComponent = ({
+  Component,
+  registerInput,
+  style,
+  className,
+  children,
+  opts,
+}: Props) => {
+  const ref = React.useRef() as React.MutableRefObject<HTMLLIElement>;
+
+  const { id, depth, readonly } = registerInput;
 
   React.useEffect(() => {
-    // Wait until component is mounted to get the reference
-    if (ref) {
-      store.register({ id, ref: ref.current });
-      // All the following inputs work fine:
-      // store.register({ ref: ref.current });
-      // store.register({ id });
-      // store.register({ id, ref: ref.current, depth: 0 });
-      // store.register({ id, ref: ref.current, parentID: "my-first-todo" });
+    if (ref.current) {
+      store.register({ id, depth, readonly });
     }
-  }, [ref]);
 
-  React.useEffect(() => {
     return () => {
-      // Clear element from the store when unmounted.
       store.unregister(id);
     };
-  }, []);
+  }, [ref.current]);
 
-  const onMouseMove = (e) => {
+  const onDFlexEvent = (e: DFlexEvents) => {
+    console.log("onDFlexEvent", e.detail);
+  };
+
+  const onMouseMove = (e: MouseEvent) => {
     if (dndEvent) {
       const { clientX, clientY } = e;
 
-      // Drag when mouse is moving!
       dndEvent.dragAt(clientX, clientY);
     }
   };
 
   const onMouseUp = () => {
     if (dndEvent) {
-      // This is the end of interactive experience.
       dndEvent.endDragging();
+
       dndEvent = null;
 
       document.removeEventListener("mouseup", onMouseUp);
       document.removeEventListener("mousemove", onMouseMove);
+
+      document.removeEventListener("$onDragLeave", onDFlexEvent);
     }
   };
 
-  const onMouseDown = (e) => {
+  const onMouseDown = (e: React.MouseEvent) => {
     const { button, clientX, clientY } = e;
 
     // Avoid right mouse click and ensure id
     if (typeof button === "number" && button === 0) {
       if (id) {
-        // Add event listeners to the entire document.
-        // Not just the button boundaries.
         document.addEventListener("mouseup", onMouseUp);
         document.addEventListener("mousemove", onMouseMove);
+        dndEvent = new DnD(id, { x: clientX, y: clientY }, opts);
 
-        // Create DnD instance with no custom options.
-        dndEvent = new DnD(id, { x: clientX, y: clientY });
+      // Passe the name of required DFlex event here.
+        document.addEventListener("$onDragLeave", onDFlexEvent);
       }
     }
   };
 
   return (
-    <li ref={ref} id={id} onMouseDown={onMouseDown}>
-      {task}
-    </li>
-  );
-};
-
-const TodoList = () => {
-  React.useEffect(() => {
-    return () => {
-      // Destroy all elements from the store when unmounted.
-      store.destroy();
-    };
-  }, []);
-
-  const tasks = [
-    { id: "mtg", msg: "Meet with Laura" },
-    { id: "meetup", msg: "Organize weekly meetup" },
-    { id: "gym", msg: "Hit the gym" },
-    { id: "proj", msg: "The Rosie Project" },
-  ];
-
-  return (
-    <ul id="my-first-todo">
-      {tasks.map(({ msg, id }) => (
-        <Task task={msg} key={id} id={id} />
-      ))}
-    </ul>
+    <Component
+      ref={ref}
+      id={id}
+      onMouseDown={onMouseDown}
+      className={className}
+      style={style}
+    >
+      {children}
+    </Component>
   );
 };
 ```
@@ -130,11 +129,3 @@ node is updated outside DFlex territory.
 > Minimal side effect
 
 Because DFlex operates on each DOM node individually it doesn't affect far siblings. Let's suppose you switch first element with the second in a container list contains 100 elements. In mot solutions all the siblings will be notified and manipulated even if they are not effected. With DFlex this is not the case, If you switch A with B then only A and B will be affected and manipulated.
-
-> No validation
-
-The API is established on the goodwill behavior. This means validation should be done outside DFlex API to avoid unnecessary complexity and doing the same steps multiple times.
-
-How about adding drag handler?
-
-Instead of adding an event to the entire element you can add it to the SVG-handler.

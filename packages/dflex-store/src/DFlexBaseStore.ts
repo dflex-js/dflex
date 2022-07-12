@@ -209,6 +209,12 @@ class DFlexBaseStore {
     });
   }
 
+  /**
+   * Gets DFlex element from the store along with its DOM element.
+   *
+   * @param id
+   * @returns
+   */
   getElmWithDOM(id: string): GetElmWithDOMOutput {
     const elm = this.registry.get(id)!;
     const DOM = this.interactiveDOM.get(id)!;
@@ -216,6 +222,12 @@ class DFlexBaseStore {
     return [elm, DOM];
   }
 
+  /**
+   * True when the element is registered.
+   *
+   * @param id
+   * @returns
+   */
   has(id: string): boolean {
     return this.interactiveDOM.has(id) && this.registry.has(id);
   }
