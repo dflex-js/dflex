@@ -106,7 +106,7 @@ const SomeRestrictedContainer = () => {
             <DFlexDnDComponent
               key={id}
               Component={"li"}
-              registerInput={{ id, parentID }}
+              registerInput={{ id }}
               style={style}
               opts={{
                 restrictions,

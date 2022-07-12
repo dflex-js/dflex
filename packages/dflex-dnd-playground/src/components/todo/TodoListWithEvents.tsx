@@ -15,16 +15,14 @@ const TodoListWithEvents = () => {
     { id: "gym", msg: "Hit the gym", style: { height: "4.5rem" } },
   ];
 
-  const parentID = "DFlex-todo-list-with-events";
-
   return (
     <div className="root">
       <div className="todo">
-        <ul id={parentID}>
+        <ul>
           {tasks.map(({ msg, id, style }) => (
             <DFlexDnDComponent
               Component={"li"}
-              registerInput={{ id, parentID }}
+              registerInput={{ id }}
               key={id}
               style={style}
             >

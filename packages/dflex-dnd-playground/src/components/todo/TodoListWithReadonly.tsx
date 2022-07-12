@@ -30,16 +30,14 @@ const TodoListWithReadonly = () => {
     },
   ];
 
-  const parentID = "DFlex-todo-list-with-readonly";
-
   return (
     <div className="root">
       <div className="todo">
-        <ul id={parentID}>
+        <ul>
           {tasks.map(({ msg, id, readonly, style }) => (
             <DFlexDnDComponent
               Component={"li"}
-              registerInput={{ id, readonly, parentID }}
+              registerInput={{ id, readonly }}
               key={id}
               style={style}
             >
