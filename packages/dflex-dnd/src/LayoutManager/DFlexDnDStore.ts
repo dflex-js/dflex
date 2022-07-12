@@ -2,7 +2,6 @@ import Store from "@dflex/store";
 import type { RegisterInputOpts } from "@dflex/store";
 
 import { Tracker, Scroll, canUseDOM, Dimensions } from "@dflex/utils";
-import type { ITracker } from "@dflex/utils";
 
 import { DFlexContainer } from "@dflex/core-instance";
 
@@ -44,8 +43,6 @@ class DnDStoreImp extends Store {
   scrolls: Scrolls;
 
   unifiedContainerDimensions: UnifiedContainerDimensions;
-
-  tracker: ITracker;
 
   observer: Observer;
 
