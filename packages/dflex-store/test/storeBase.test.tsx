@@ -121,4 +121,10 @@ describe("Testing Store Package", () => {
 
     expect(store.getElmBranchByKey(keys.SK)).toStrictEqual([elm0DP1.id]);
   });
+
+  it("Children have the correct dataset index", () => {
+    expect(store.interactiveDOM.get(elm0DP0.id)!.dataset.index).toBe("0");
+    expect(store.interactiveDOM.get(elm1DP0.id)!.dataset.index).toBe("1");
+    expect(store.interactiveDOM.get(elm2DP0.id)!.dataset.index).toBe("2");
+  });
 });
