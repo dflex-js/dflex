@@ -12,18 +12,12 @@ const ExtendedList = () => {
     tasks.push({ id: uni, key: uni, task: `${i}` });
   }
 
-  const parentID = "DFlex-1k-elements";
-
   return (
     <div className="root">
       <div className="extended">
-        <ul id={parentID}>
+        <ul>
           {tasks.map(({ task, id, key }) => (
-            <DFlexDnDComponent
-              Component="li"
-              registerInput={{ id, parentID }}
-              key={key}
-            >
+            <DFlexDnDComponent Component="li" registerInput={{ id }} key={key}>
               {task}
             </DFlexDnDComponent>
           ))}

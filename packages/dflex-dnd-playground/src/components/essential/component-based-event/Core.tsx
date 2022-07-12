@@ -29,7 +29,7 @@ const Core = ({
   const [isDragged, setIsDragged] = React.useState(false);
 
   React.useEffect(() => {
-    if (ref.current) store.register({ id, depth, parentID: "" });
+    if (ref.current) store.register({ id, depth });
   }, [ref]);
 
   const onMouseUp = () => {

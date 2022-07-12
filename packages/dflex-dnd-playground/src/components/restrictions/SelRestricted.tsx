@@ -96,17 +96,15 @@ const SelRestricted = () => {
     },
   ];
 
-  const parentID = "DFlex-self-position-restriction";
-
   return (
     <div className="root">
       <div className="todo">
-        <ul id={parentID}>
+        <ul>
           {items.map(({ id, style, item, restrictions }) => (
             <DFlexDnDComponent
               key={id}
               Component={"li"}
-              registerInput={{ id, parentID }}
+              registerInput={{ id }}
               style={style}
               opts={{
                 restrictions,

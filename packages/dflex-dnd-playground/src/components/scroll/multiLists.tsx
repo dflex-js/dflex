@@ -23,29 +23,23 @@ const MultiLists = () => {
     tasks3.push({ id, key: id, task: `c3-${i}` });
   }
 
-  const ID_PARENT_1 = "multi-p1";
-  const ID_PARENT_2 = "multi-p2";
-  const ID_PARENT_3 = "multi-p3";
-
   return (
     <div className="list-migration">
-      {[
-        { tasks: tasks1, parentID: ID_PARENT_1 },
-        { tasks: tasks2, parentID: ID_PARENT_2 },
-        { tasks: tasks3, parentID: ID_PARENT_3 },
-      ].map(({ tasks, parentID }) => (
-        <ul id={parentID} key={parentID} style={{ overflow: "auto" }}>
-          {tasks.map(({ task, id, key }) => (
-            <DFlexDnDComponent
-              Component={"li"}
-              registerInput={{ parentID, id }}
-              key={key}
-            >
-              {task}
-            </DFlexDnDComponent>
-          ))}
-        </ul>
-      ))}
+      {[{ tasks: tasks1 }, { tasks: tasks2 }, { tasks: tasks3 }].map(
+        ({ tasks }, i) => (
+          <ul key={i} style={{ overflow: "auto" }}>
+            {tasks.map(({ task, id, key }) => (
+              <DFlexDnDComponent
+                Component={"li"}
+                registerInput={{ id }}
+                key={key}
+              >
+                {task}
+              </DFlexDnDComponent>
+            ))}
+          </ul>
+        )
+      )}
     </div>
   );
 };

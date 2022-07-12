@@ -32,7 +32,6 @@ const NestedList = () => {
           Component="div"
           registerInput={{
             id: tasksWork.id,
-            parentID: "",
             depth: tasksWork.depth,
           }}
           className="todo"
@@ -42,7 +41,7 @@ const NestedList = () => {
             {tasksWork.todo.map(({ task, id, depth }) => (
               <DFlexDnDComponent
                 Component="li"
-                registerInput={{ id, depth, parentID: tasksWork.id }}
+                registerInput={{ id, depth }}
                 key={id}
               >
                 {task}
@@ -54,7 +53,6 @@ const NestedList = () => {
           registerInput={{
             id: taskLife.id,
             depth: taskLife.depth,
-            parentID: "",
           }}
           Component="div"
           className="todo"
@@ -64,7 +62,7 @@ const NestedList = () => {
             {taskLife.todo.map(({ task, id, depth }) => (
               <DFlexDnDComponent
                 Component="li"
-                registerInput={{ id, depth, parentID: taskLife.id }}
+                registerInput={{ id, depth }}
                 key={id}
               >
                 {task}
