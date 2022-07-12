@@ -187,16 +187,12 @@ class DnDStoreImp extends Store {
       () => {
         const coreInput = {
           id,
-          parentID: element.parentID,
-          depth: element.depth || 0,
           readonly: !!element.readonly,
+          depth: element.depth || 0,
         };
 
         // Create an instance of DFlexCoreNode and gets the DOM element into the store.
-        super.register(coreInput);
-      },
-      {
-        onUpdate: () => {
+        super.register(coreInput, () => {
           const {
             depth,
             keys: { SK },
@@ -204,7 +200,6 @@ class DnDStoreImp extends Store {
 
           if (!this.containers.has(SK)) {
             this.initSiblingContainer(SK);
-
             if (!this.unifiedContainerDimensions.has(depth)) {
               this.unifiedContainerDimensions.set(depth, {
                 width: 0,
@@ -214,8 +209,9 @@ class DnDStoreImp extends Store {
           }
 
           this._initElmDOMInstance(id);
-        },
-      }
+        });
+      },
+      null
     );
   }
 

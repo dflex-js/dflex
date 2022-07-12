@@ -1,6 +1,7 @@
 import Generator from "@dflex/dom-gen";
 
 import { DFlexNode, DFlexNodeInput } from "@dflex/core-instance";
+import { getParentElm, Tracker } from "@dflex/utils";
 
 // https://github.com/microsoft/TypeScript/issues/28374#issuecomment-536521051
 type DeepNonNullable<T> = {
@@ -13,9 +14,6 @@ type DeepNonNullable<T> = {
 export type RegisterInputOpts = {
   /** Targeted element-id. */
   id: string;
-
-  /** Parent element-id. Pass empty string if there's none. */
-  parentID: string;
 
   /** The depth of targeted element starting from zero (The default value is zero).  */
   depth?: number;
@@ -31,26 +29,91 @@ export type RegisterInputBase = DeepNonNullable<RegisterInputOpts>;
 
 type GetElmWithDOMOutput = [DFlexNode, HTMLElement];
 
+function getElmDOMOrThrow(id: string): HTMLElement | null {
+  let DOM = document.getElementById(id);
+
+  if (!DOM) {
+    if (__DEV__) {
+      throw new Error(
+        `Element with ID: ${id} is not found.` +
+          `This could be due wrong ID or missing DOM element.`
+      );
+    }
+  }
+
+  if (!DOM || DOM.nodeType !== Node.ELEMENT_NODE) {
+    if (__DEV__) {
+      throw new Error(`Invalid HTMLElement ${DOM} is passed to registry.`);
+    }
+
+    DOM = null;
+  }
+
+  return DOM;
+}
+
 class DFlexBaseStore {
   registry: Map<string, DFlexNode>;
 
   interactiveDOM: Map<string, HTMLElement>;
 
+  tracker: Tracker;
+
   protected DOMGen: Generator;
 
-  private _lastKeyIdentifier: string | null;
+  private _lastDOMParent: HTMLElement | null;
+
+  private _queue: Array<() => void>;
+
+  private queueTimeoutId?: ReturnType<typeof setTimeout>;
 
   constructor() {
-    this._lastKeyIdentifier = null;
+    this._lastDOMParent = null;
+    this._queue = [];
+    this.tracker = new Tracker();
     this.registry = new Map();
     this.interactiveDOM = new Map();
     this.DOMGen = new Generator();
   }
 
-  private _submitElementToRegistry(element: RegisterInputBase) {
-    const { id, depth, readonly, parentID } = element;
+  private _handleQueue() {
+    if (this._queue.length === 0) {
+      return;
+    }
 
-    this._lastKeyIdentifier = parentID;
+    const queue = this._queue;
+
+    this._queue = [];
+
+    queue.forEach((fn) => fn());
+
+    if (this.queueTimeoutId) {
+      clearTimeout(this.queueTimeoutId);
+    }
+  }
+
+  private _submitElementToRegistry(DOM: HTMLElement, elm: RegisterInputBase) {
+    const { id, depth, readonly } = elm;
+
+    if (!this.interactiveDOM.has(id)) {
+      this.interactiveDOM.set(id, DOM);
+    }
+
+    if (this.registry.has(id)) {
+      const elmInRegistry = this.registry.get(id);
+
+      // This is the only difference between register by default and register
+      // with a user only. In the future if there's new options then this should
+      // be updated.
+      elmInRegistry!.readonly = readonly;
+
+      if (__DEV__) {
+        // eslint-disable-next-line no-console
+        console.warn(`Element with ID: ${id} is already registered.`);
+      }
+
+      return;
+    }
 
     const { order, keys } = this.DOMGen.register(id, depth);
 
@@ -62,15 +125,26 @@ class DFlexBaseStore {
       readonly,
     };
 
-    const elm = new DFlexNode(coreElement);
+    const dflexElm = new DFlexNode(coreElement);
 
-    this.registry.set(id, elm);
+    this.registry.set(id, dflexElm);
 
-    const DOM = elm.getElmDOMOrThrow()!;
+    dflexElm.setAttribute(DOM, "INDEX", dflexElm.order.self);
 
-    this.interactiveDOM.set(id, DOM);
+    if (depth >= 1) {
+      if (keys.CHK === null) {
+        if (__DEV__) {
+          throw new Error(
+            `Invalid keys for element with ID: ${id}` +
+              `Elements over depth-1 must have a CHK key.`
+          );
+        }
 
-    elm.setAttribute(DOM, "INDEX", elm.order.self);
+        return;
+      }
+
+      DOM.dataset.dflexKey = keys.CHK;
+    }
   }
 
   /**
@@ -79,24 +153,60 @@ class DFlexBaseStore {
    * @param element - element to register
    * @returns
    */
-  register(element: RegisterInputBase) {
-    const { parentID, depth } = element;
+  register(element: RegisterInputBase, doneCallback?: () => void): void {
+    const { id, depth } = element;
 
-    // If it's still inside the same branch.
-    if (
-      this._lastKeyIdentifier === null ||
-      parentID === this._lastKeyIdentifier
-    ) {
-      this._submitElementToRegistry(element);
+    const DOM = this.interactiveDOM.has(id)
+      ? this.interactiveDOM.get(id)!
+      : getElmDOMOrThrow(id)!;
 
-      return;
-    }
+    getParentElm(DOM, (_parentDOM) => {
+      if (
+        this._lastDOMParent === null ||
+        !this._lastDOMParent.isSameNode(_parentDOM)
+      ) {
+        // Parent DOM changed empty the queue.
+        this._handleQueue();
 
-    // A new branch.
-    // Create a fake parent node to close the branch.
-    this.DOMGen.register(parentID, depth + 1);
+        let { id: parentID } = _parentDOM;
 
-    this._submitElementToRegistry(element);
+        if (!parentID) {
+          parentID = this.tracker.newTravel("DFlex-id");
+          _parentDOM.id = parentID;
+        }
+
+        this.interactiveDOM.set(parentID, _parentDOM);
+
+        const parentDepth = depth + 1;
+
+        this._submitElementToRegistry(DOM, element);
+
+        // keep the reference for comparison.
+        this._lastDOMParent = _parentDOM;
+
+        // A new branch. Queue the new branch.
+        this._queue.push(() => {
+          this._submitElementToRegistry(_parentDOM, {
+            id: parentID,
+            depth: parentDepth,
+            // Default value for inserted parent element.
+            readonly: true,
+          });
+        });
+
+        this.queueTimeoutId = setTimeout(() => {
+          this._handleQueue();
+        }, 0);
+      } else {
+        this._submitElementToRegistry(DOM, element);
+      }
+
+      if (typeof doneCallback === "function") {
+        doneCallback();
+      }
+
+      return true;
+    });
   }
 
   getElmWithDOM(id: string): GetElmWithDOMOutput {
@@ -145,7 +255,7 @@ class DFlexBaseStore {
    *
    * @param id - element id.
    */
-  unregister(id: string) {
+  unregister(id: string): void {
     this.registry.delete(id);
   }
 
@@ -155,7 +265,7 @@ class DFlexBaseStore {
    *
    * @param SK - Siblings Key.
    */
-  destroyBranch(SK: string) {
+  destroyBranch(SK: string): void {
     this.DOMGen.destroyBranch(SK, (id) => {
       this.unregister(id);
     });
@@ -165,7 +275,7 @@ class DFlexBaseStore {
    * Destroys all branches and all their related instances in the store. This
    * method should be called when the app will no longer use the store.
    */
-  destroy() {
+  destroy(): void {
     this.DOMGen.forEachBranch((SK) => {
       this.DOMGen.destroyBranch(SK, (id) => {
         this.unregister(id);
