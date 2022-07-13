@@ -4,31 +4,6 @@ import type { IPointNum } from "@dflex/utils";
 import { DFLEX_ATTRIBUTES } from "./constants";
 import type { AllowedAttributes } from "./constants";
 
-function getElmDOMOrThrow(id: string): HTMLElement | null {
-  let DOM = document.getElementById(id);
-
-  if (!DOM) {
-    if (__DEV__) {
-      throw new Error(
-        `Attach: Element with ID: ${id} is not found.` +
-          `This could be due wrong ID or missing DOM element.`
-      );
-    }
-  }
-
-  if (!DOM || DOM.nodeType !== Node.ELEMENT_NODE) {
-    if (__DEV__) {
-      throw new Error(
-        `Attach: Invalid HTMLElement ${DOM} is passed to registry.`
-      );
-    }
-
-    DOM = null;
-  }
-
-  return DOM;
-}
-
 type AttributeSet = Set<Exclude<AllowedAttributes, "INDEX">>;
 
 class DFlexBaseNode {
@@ -51,10 +26,6 @@ class DFlexBaseNode {
   constructor(id: string) {
     this.id = id;
     this.isPaused = true;
-  }
-
-  getElmDOMOrThrow(): HTMLElement | null {
-    return getElmDOMOrThrow(this.id);
   }
 
   /**

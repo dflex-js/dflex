@@ -1,9 +1,12 @@
 import Store from "@dflex/store";
 import type { RegisterInputOpts } from "@dflex/store";
 
-import { Tracker, Scroll, canUseDOM, Dimensions } from "@dflex/utils";
+import { Tracker, canUseDOM, Dimensions } from "@dflex/utils";
 
-import { DFlexContainer } from "@dflex/core-instance";
+import {
+  DFlexParentContainer,
+  DFlexScrollContainer,
+} from "@dflex/core-instance";
 
 import initDFlexListeners, {
   DFlexListenerPlugin,
@@ -23,9 +26,9 @@ import {
 
 import { MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY } from "./constants";
 
-type Containers = Map<string, DFlexContainer>;
+type Containers = Map<string, DFlexParentContainer>;
 
-type Scrolls = Map<string, Scroll>;
+type Scrolls = Map<string, DFlexScrollContainer>;
 
 type UnifiedContainerDimensions = Map<number, Dimensions>;
 
@@ -85,7 +88,7 @@ class DnDStoreImp extends Store {
 
   initSiblingContainer(SK: string) {
     if (!this.containers.has(SK)) {
-      this.containers.set(SK, new DFlexContainer());
+      this.containers.set(SK, new DFlexParentContainer());
     }
 
     if (this.scrolls.has(SK)) {
@@ -94,7 +97,10 @@ class DnDStoreImp extends Store {
 
     const branch = this.DOMGen.getElmBranchByKey(SK);
 
-    const scroll = new Scroll(this.interactiveDOM.get(branch[0])!, SK);
+    const scroll = new DFlexScrollContainer(
+      this.interactiveDOM.get(branch[0])!,
+      SK
+    );
 
     const hasSiblings = branch.length > 1;
 
@@ -111,7 +117,7 @@ class DnDStoreImp extends Store {
     this.scrolls.set(SK, scroll);
 
     if (scroll.allowDynamicVisibility) {
-      scroll.scrollEventCallback = updateBranchVisibility.bind(null, this);
+      scroll.setScrollEventCallback(updateBranchVisibility.bind(null, this));
     }
   }
 
@@ -134,7 +140,11 @@ class DnDStoreImp extends Store {
 
     const scroll = this.scrolls.get(SK)!;
 
-    elm.resume(this.interactiveDOM.get(id)!, scroll.scrollX, scroll.scrollY);
+    elm.resume(
+      this.interactiveDOM.get(id)!,
+      scroll.scrollRect.left,
+      scroll.scrollRect.top
+    );
 
     // Using element grid zero to know if the element has been initiated inside
     // container or not.

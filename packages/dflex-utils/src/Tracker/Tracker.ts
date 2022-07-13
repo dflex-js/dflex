@@ -1,9 +1,15 @@
-import type { ITracker, Prefix } from "./types";
+export type Prefix = string | number;
 
-class Tracker implements ITracker {
+export interface ITracker {
+  travelID: number;
+  // eslint-disable-next-line no-unused-vars
+  newTravel(prefix?: Prefix): string;
+}
+
+class Tracker {
   travelID: number;
 
-  private prefix?: Prefix;
+  private _prefix?: Prefix;
 
   /**
    * Creates an instance of Tracker.
@@ -12,7 +18,7 @@ class Tracker implements ITracker {
     this.travelID = 0;
 
     if (prefix) {
-      this.prefix = prefix;
+      this._prefix = prefix;
     }
   }
 
@@ -20,7 +26,7 @@ class Tracker implements ITracker {
    * Increment travels and return the last one.
    */
   newTravel(prefix?: Prefix) {
-    const pre = prefix || this.prefix;
+    const pre = prefix || this._prefix;
 
     this.travelID += 1;
 

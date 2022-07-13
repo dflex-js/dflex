@@ -61,9 +61,11 @@ class Droppable extends DFlexUpdater {
       if (isScrollEnabled) {
         const { SK } = store.registry.get(draggedID)!.keys;
 
-        const { scrollX, scrollY } = store.scrolls.get(SK)!;
+        const {
+          scrollRect: { left, top },
+        } = store.scrolls.get(SK)!;
 
-        elm.resume(DOM, scrollX, scrollY);
+        elm.resume(DOM, left, top);
 
         return true;
       }
@@ -96,11 +98,11 @@ class Droppable extends DFlexUpdater {
 
     this.scrollAnimatedFrame = null;
 
-    const { scrollX, scrollY } = store.scrolls.get(
-      this.draggable.migration.latest().SK
-    )!;
+    const {
+      scrollRect: { left, top },
+    } = store.scrolls.get(this.draggable.migration.latest().SK)!;
 
-    this.initialScroll = new PointNum(scrollX, scrollY);
+    this.initialScroll = new PointNum(left, top);
 
     this.scrollSpeed = this.draggable.scroll.initialSpeed;
 
@@ -513,9 +515,9 @@ class Droppable extends DFlexUpdater {
     const { SK } = store.registry.get(this.draggable.draggedElm.id)!.keys;
 
     const {
-      scrollHeight,
-      DOM: scrollContainer,
-      scrollRect,
+      scrollRect: { height: scrollHeight },
+      scrollContainerDOM: scrollContainer,
+      scrollContainerRect: scrollRect,
     } = store.scrolls.get(SK)!;
 
     if (direction === 1) {
@@ -553,9 +555,9 @@ class Droppable extends DFlexUpdater {
     const { SK } = store.registry.get(this.draggable.draggedElm.id)!.keys;
 
     const {
-      scrollHeight,
-      DOM: scrollContainer,
-      scrollRect,
+      scrollRect: { height: scrollHeight },
+      scrollContainerDOM: scrollContainer,
+      scrollContainerRect: scrollRect,
     } = store.scrolls.get(SK)!;
 
     if (direction === 1) {
@@ -588,7 +590,7 @@ class Droppable extends DFlexUpdater {
     const scroll = store.scrolls.get(SK)!;
 
     // Prevent store from implementing any animation response.
-    scroll.hasThrottledFrame = 1;
+    scroll.pauseListeners(true);
 
     this.draggable.isViewportRestricted = false;
 
@@ -599,7 +601,7 @@ class Droppable extends DFlexUpdater {
 
       // Reset animation flags
       this.scrollAnimatedFrame = null;
-      scroll.hasThrottledFrame = null;
+      scroll.pauseListeners(false);
 
       this.scrollSpeed += this.draggable.scroll.initialSpeed;
     });
@@ -614,42 +616,33 @@ class Droppable extends DFlexUpdater {
     /**
      * Manage scrolling.
      */
-    if (
-      this.draggable.scroll.enable &&
-      this.scrollAnimatedFrame === null &&
-      scroll.hasThrottledFrame === null
-    ) {
-      if (scroll.hasOverflowY) {
-        const { scrollRect, scrollHeight, threshold } = scroll;
-        if (
-          this.draggable.threshold.isOut[draggedElm.id].isLeftFromBottom &&
-          y >= threshold!.thresholds[SK].bottom &&
-          this.scrollAxes.y + scrollRect.height < scrollHeight
-        ) {
+    if (this.draggable.scroll.enable && this.scrollAnimatedFrame === null) {
+      if (scroll.isOutThresholdV(y)) {
+        const { isLeftFromBottom } =
+          this.draggable.threshold.isOut[draggedElm.id];
+
+        if (isLeftFromBottom) {
           this.scrollElement(x, y, 1, "scrollElementOnY");
           return;
         }
 
-        if (y <= threshold!.thresholds[SK].top && this.scrollAxes.y > 0) {
-          this.scrollElement(x, y, -1, "scrollElementOnY");
-          return;
-        }
+        this.scrollElement(x, y, -1, "scrollElementOnY");
+
+        return;
       }
 
-      if (scroll.hasOverflowX) {
-        const { scrollRect, scrollHeight, threshold } = scroll;
-        if (
-          this.draggable.threshold.isOut[draggedElm.id].isLeftFromRight &&
-          x >= threshold!.thresholds[SK].right &&
-          this.scrollAxes.x + scrollRect.width < scrollHeight
-        ) {
+      if (scroll.isOutThresholdH(x)) {
+        const { isLeftFromRight } =
+          this.draggable.threshold.isOut[draggedElm.id];
+
+        if (isLeftFromRight) {
           this.scrollElement(x, y, 1, "scrollElementOnX");
           return;
         }
 
-        if (x <= threshold!.thresholds[SK].left && this.scrollAxes.x > 0) {
-          this.scrollElement(x, y, -1, "scrollElementOnX");
-        }
+        this.scrollElement(x, y, -1, "scrollElementOnX");
+
+        return;
       }
 
       /**

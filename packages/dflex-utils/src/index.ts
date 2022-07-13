@@ -2,14 +2,9 @@ export { Point, PointNum, PointBool } from "./Point";
 export type { IPointAxes, IPoint, IPointNum, IPointBool } from "./Point";
 
 export { Threshold } from "./Threshold";
-export type {
-  ThresholdInterface,
-  ThresholdCoordinate,
-  ThresholdPercentages,
-} from "./Threshold";
+export type { ThresholdPercentages } from "./Threshold";
 
-export { Tracker } from "./Tracker";
-export type { ITracker } from "./Tracker";
+export { default as Tracker } from "./Tracker";
 
 export { Migration } from "./Migration";
 export type { IAbstract, IMigration } from "./Migration";
@@ -22,9 +17,6 @@ export type {
   Axis,
   Direction,
 } from "./types";
-
-export { Scroll } from "./Scroll";
-export type { IScroll } from "./Scroll";
 
 export { combineKeys, dirtyAssignBiggestRect } from "./collections";
 
