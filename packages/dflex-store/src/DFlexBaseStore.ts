@@ -87,7 +87,7 @@ class DFlexBaseStore {
 
     queue.forEach((fn) => fn());
 
-    if (this.queueTimeoutId) {
+    if (this.queueTimeoutId !== undefined) {
       clearTimeout(this.queueTimeoutId);
     }
   }

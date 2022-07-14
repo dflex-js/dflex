@@ -161,7 +161,7 @@ class DnDStoreImp extends Store {
       elm.grid.clone(container.grid);
     }
 
-    updateElementVisibility(this.interactiveDOM.get(id)!, elm, scroll, false);
+    updateElementVisibility(this.interactiveDOM.get(id)!, elm, scroll);
   }
 
   register(element: RegisterInputOpts) {
@@ -318,6 +318,10 @@ class DnDStoreImp extends Store {
    *
    */
   unregister(id: string) {
+    if (!this.registry.has(id)) {
+      return;
+    }
+
     const {
       keys: { SK },
       order: { self },

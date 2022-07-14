@@ -89,22 +89,38 @@ function hasMoreThanHalfOverFlow(
 }
 
 class DFlexScrollContainer {
-  private _threshold: Threshold | null;
+  private _innerThreshold: Threshold | null;
+
+  private _outerThreshold: Threshold | null;
 
   private _SK: string;
 
   private _scrollEventCallback: ScrollEventCallback | null;
 
+  /**
+   * scroll container in the viewport. Only in the visible area.
+   */
   scrollContainerRect!: RectDimensions;
 
+  /**
+   * The entire scroll rect visible and invisible.
+   */
   scrollRect!: RectDimensions;
 
   hasOverflowX!: boolean;
 
   hasOverflowY!: boolean;
 
+  /**
+   * Some containers are overflown but in small percentages of the container
+   * doesn't require adding visible scroll listeners and all the related events
+   * and functionality. Current percentage is set to 0.5.
+   */
   allowDynamicVisibility!: boolean;
 
+  /**
+   * The parent element that is owning the scroll.
+   */
   scrollContainerDOM!: HTMLElement;
 
   private _hasThrottledFrame: number | null;
@@ -112,7 +128,8 @@ class DFlexScrollContainer {
   hasDocumentAsContainer!: boolean;
 
   constructor(element: HTMLElement, SK: string) {
-    this._threshold = null;
+    this._innerThreshold = null;
+    this._outerThreshold = null;
     this._hasThrottledFrame = null;
     this._SK = SK;
     this._scrollEventCallback = null;
@@ -137,7 +154,7 @@ class DFlexScrollContainer {
       height: scrollHeight,
     });
 
-    let scrollContainerRect;
+    let scrollContainerRect: RectDimensions;
 
     if (!this.hasDocumentAsContainer) {
       const { height, width, left, top } =
@@ -179,11 +196,6 @@ class DFlexScrollContainer {
       "x"
     );
 
-    /**
-     * Deciding when to active visibility and pausing for element branch. We
-     * don't want to active a method with a listeners because just two elements
-     * are not visible.
-     */
     this.allowDynamicVisibility = false;
 
     if (
@@ -251,11 +263,19 @@ class DFlexScrollContainer {
   }
 
   setThreshold(threshold: ThresholdPercentages) {
-    this._threshold = new Threshold(threshold);
-    this._threshold.setMainThreshold(
+    this._innerThreshold = new Threshold(threshold);
+
+    this._innerThreshold.setMainThreshold(
       `scroll-${this._SK}`,
       this.scrollContainerRect,
       true
+    );
+
+    this._outerThreshold = new Threshold(threshold);
+
+    this._outerThreshold.setMainThreshold(
+      `scroll-2${this._SK}`,
+      this.scrollContainerRect
     );
   }
 
@@ -265,7 +285,7 @@ class DFlexScrollContainer {
 
   private _isScrollAvailable(isVertical: boolean): boolean {
     if (__DEV__) {
-      if (this._threshold === null) {
+      if (this._innerThreshold === null) {
         throw new Error("Scroll threshold is not set.");
       }
     }
@@ -278,14 +298,14 @@ class DFlexScrollContainer {
   isOutThresholdV(y: number): boolean {
     return (
       this._isScrollAvailable(true) &&
-      this._threshold!.isOutThresholdV(`scroll-${this._SK}`, y, y)
+      this._innerThreshold!.isOutThresholdV(`scroll-${this._SK}`, y, y)
     );
   }
 
   isOutThresholdH(x: number): boolean {
     return (
       this._isScrollAvailable(false) &&
-      this._threshold!.isOutThresholdV(`scroll-${this._SK}`, x, x)
+      this._innerThreshold!.isOutThresholdV(`scroll-${this._SK}`, x, x)
     );
   }
 
@@ -303,15 +323,23 @@ class DFlexScrollContainer {
 
   isElementVisibleViewportX(currentLeft: number): boolean {
     return (
-      currentLeft >= this.scrollRect.left &&
-      currentLeft <= this.getMaximumScrollContainerLeft()
+      currentLeft <= this.getMaximumScrollContainerLeft() &&
+      currentLeft >= this.scrollRect.left
     );
   }
 
   isElementVisibleViewportY(currentTop: number): boolean {
+    // const { top, height } = this.scrollContainerRect;
+
+    // const x = this._outerThreshold?.isOutThresholdV(
+    //   `scroll-2${this._SK}`,
+    //   currentTop,
+    //   currentTop
+    // );
+
     return (
-      currentTop >= this.scrollRect.top &&
-      currentTop <= this.getMaximumScrollContainerTop()
+      currentTop <= this.getMaximumScrollContainerTop() &&
+      currentTop >= this.scrollRect.top
     );
   }
 
@@ -344,9 +372,9 @@ class DFlexScrollContainer {
   };
 
   destroy() {
-    if (this._threshold !== null) {
-      this._threshold.destroy();
-      this._threshold = null;
+    if (this._innerThreshold !== null) {
+      this._innerThreshold.destroy();
+      this._innerThreshold = null;
     }
     this._scrollEventCallback = null;
     this._setResizeAndScrollListeners(false);
