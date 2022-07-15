@@ -259,12 +259,16 @@ class DFlexUpdater {
       draggedElm: { id, initialOffset },
     } = this.draggable;
 
-    threshold.setMainThreshold(id, {
-      width: initialOffset.width,
-      height: initialOffset.height,
-      left: x,
-      top: y,
-    });
+    threshold.setMainThreshold(
+      id,
+      {
+        width: initialOffset.width,
+        height: initialOffset.height,
+        left: x,
+        top: y,
+      },
+      false
+    );
   }
 
   private addDraggedOffsetToElm(

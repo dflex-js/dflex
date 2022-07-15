@@ -24,8 +24,6 @@ import {
   updateElementVisibility,
 } from "./DFlexVisibilityUpdater";
 
-import { MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY } from "./constants";
-
 type Containers = Map<string, DFlexParentContainer>;
 
 type Scrolls = Map<string, DFlexScrollContainer>;
@@ -97,28 +95,15 @@ class DnDStoreImp extends Store {
 
     const branch = this.DOMGen.getElmBranchByKey(SK);
 
-    const scroll = new DFlexScrollContainer(
-      this.interactiveDOM.get(branch[0])!,
-      SK
+    this.scrolls.set(
+      SK,
+      new DFlexScrollContainer(
+        this.interactiveDOM.get(branch[0])!,
+        SK,
+        branch.length,
+        updateBranchVisibility.bind(null, this)
+      )
     );
-
-    const hasSiblings = branch.length > 1;
-
-    // Override allowDynamicVisibility taking into consideration the length of
-    // the branch itself. Iterate for a limited number of elements won't be a problem.
-    if (
-      hasSiblings &&
-      scroll.allowDynamicVisibility &&
-      branch.length <= MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY
-    ) {
-      scroll.allowDynamicVisibility = false;
-    }
-
-    this.scrolls.set(SK, scroll);
-
-    if (scroll.allowDynamicVisibility) {
-      scroll.setScrollEventCallback(updateBranchVisibility.bind(null, this));
-    }
   }
 
   /**

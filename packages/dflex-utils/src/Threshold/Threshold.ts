@@ -91,6 +91,16 @@ class DFlexThreshold {
     dirtyAssignBiggestRect($, this.thresholds[key]);
   }
 
+  /**
+   * Set the main threshold for the element based on the element's dimensions
+   * and threshold types. For dragged and containers threshold type is outer
+   * `isInner=false` and for the rest of the elements `isInner=true.`
+   * Note: Duplicate threshold keys will throw an error.
+   *
+   * @param key
+   * @param rect
+   * @param isInner
+   */
   setMainThreshold(key: string, rect: RectDimensions, isInner: boolean): void {
     this._setPixels(rect);
 

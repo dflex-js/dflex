@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { getParentElm, Threshold } from "@dflex/utils";
 import type { ThresholdPercentages, RectDimensions } from "@dflex/utils";
 
@@ -107,16 +108,16 @@ class DFlexScrollContainer {
    */
   scrollRect!: RectDimensions;
 
-  hasOverflowX!: boolean;
+  hasOverflowX: boolean;
 
-  hasOverflowY!: boolean;
+  hasOverflowY: boolean;
 
   /**
    * Some containers are overflown but in small percentages of the container
    * doesn't require adding visible scroll listeners and all the related events
    * and functionality. Current percentage is set to 0.5.
    */
-  allowDynamicVisibility!: boolean;
+  allowDynamicVisibility: boolean;
 
   /**
    * The parent element that is owning the scroll.
@@ -131,13 +132,30 @@ class DFlexScrollContainer {
 
   private _threshold_outer_key: string;
 
-  constructor(element: HTMLElement, SK: string) {
+  private static _OUTER_THRESHOLD: ThresholdPercentages = {
+    horizontal: 35,
+    vertical: 35,
+  };
+
+  private static _MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
+
+  constructor(
+    element: HTMLElement,
+    SK: string,
+    branchLength: number,
+    scrollEventCallback: ScrollEventCallback
+  ) {
+    this.allowDynamicVisibility = false;
+    this.hasOverflowX = false;
+    this.hasOverflowY = false;
+
     this._innerThreshold = null;
     this._outerThreshold = null;
-    this._hasThrottledFrame = null;
     this._SK = SK;
     this._threshold_inner_key = `scroll_inner_${SK}`;
     this._threshold_outer_key = `scroll_outer_${SK}`;
+
+    this._hasThrottledFrame = null;
 
     this._scrollEventCallback = null;
 
@@ -145,7 +163,29 @@ class DFlexScrollContainer {
       getScrollContainer(element);
 
     this._setScrollRects();
-    this._setOverflow();
+
+    // Check allowDynamicVisibility after taking into consideration the length of
+    // the branch itself.
+    if (
+      branchLength >
+      DFlexScrollContainer._MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY
+    ) {
+      this._setOverflow();
+
+      if (this.allowDynamicVisibility) {
+        this._scrollEventCallback = scrollEventCallback;
+
+        this._outerThreshold = new Threshold(
+          DFlexScrollContainer._OUTER_THRESHOLD
+        );
+
+        this._outerThreshold.setMainThreshold(
+          this._threshold_outer_key,
+          this.scrollContainerRect,
+          false
+        );
+      }
+    }
 
     this._setResizeAndScrollListeners();
   }
@@ -284,10 +324,6 @@ class DFlexScrollContainer {
       this.scrollContainerRect,
       false
     );
-  }
-
-  setScrollEventCallback(cb: ScrollEventCallback): void {
-    this._scrollEventCallback = cb;
   }
 
   private _isScrollAvailable(isVertical: boolean): boolean {
