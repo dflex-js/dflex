@@ -89,7 +89,9 @@ function hasMoreThanHalfOverFlow(
 }
 
 class DFlexScrollContainer {
-  private _threshold: Threshold | null;
+  private _innerThreshold: Threshold | null;
+
+  private _outerThreshold: Threshold | null;
 
   private _SK: string;
 
@@ -130,7 +132,8 @@ class DFlexScrollContainer {
   private _threshold_outer_key: string;
 
   constructor(element: HTMLElement, SK: string) {
-    this._threshold = null;
+    this._innerThreshold = null;
+    this._outerThreshold = null;
     this._hasThrottledFrame = null;
     this._SK = SK;
     this._threshold_inner_key = `scroll_inner_${SK}`;
@@ -267,15 +270,16 @@ class DFlexScrollContainer {
   }
 
   setThreshold(threshold: ThresholdPercentages) {
-    this._threshold = new Threshold(threshold);
+    this._innerThreshold = new Threshold(threshold);
+    this._outerThreshold = new Threshold(threshold);
 
-    this._threshold.setMainThreshold(
+    this._innerThreshold.setMainThreshold(
       this._threshold_inner_key,
       this.scrollContainerRect,
       true
     );
 
-    this._threshold.setMainThreshold(
+    this._outerThreshold.setMainThreshold(
       this._threshold_outer_key,
       this.scrollContainerRect,
       false
@@ -288,7 +292,7 @@ class DFlexScrollContainer {
 
   private _isScrollAvailable(isVertical: boolean): boolean {
     if (__DEV__) {
-      if (this._threshold === null) {
+      if (this._innerThreshold === null) {
         throw new Error("Scroll threshold is not set.");
       }
     }
@@ -301,14 +305,14 @@ class DFlexScrollContainer {
   isOutThresholdV(y: number): boolean {
     return (
       this._isScrollAvailable(true) &&
-      this._threshold!.isOutThresholdV(this._threshold_inner_key, y, y)
+      this._innerThreshold!.isOutThresholdV(this._threshold_inner_key, y, y)
     );
   }
 
   isOutThresholdH(x: number): boolean {
     return (
       this._isScrollAvailable(false) &&
-      this._threshold!.isOutThresholdV(this._threshold_inner_key, x, x)
+      this._innerThreshold!.isOutThresholdV(this._threshold_inner_key, x, x)
     );
   }
 
@@ -332,12 +336,10 @@ class DFlexScrollContainer {
   }
 
   isElementVisibleViewportY(currentTop: number): boolean {
-    // const { top, height } = this.scrollContainerRect;
-
     // const x = this._outerThreshold?.isOutThresholdV(
-    //   `scroll-2${this._SK}`,
+    //   this._threshold_outer_key,
     //   currentTop,
-    //   currentTop
+    //   currentTop + 20
     // );
 
     return (
@@ -375,9 +377,9 @@ class DFlexScrollContainer {
   };
 
   destroy() {
-    if (this._threshold !== null) {
-      this._threshold.destroy();
-      this._threshold = null;
+    if (this._innerThreshold !== null) {
+      this._innerThreshold.destroy();
+      this._innerThreshold = null;
     }
     this._scrollEventCallback = null;
     this._setResizeAndScrollListeners(false);
