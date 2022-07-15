@@ -1,7 +1,7 @@
 export { Point, PointNum, PointBool } from "./Point";
 export type { IPointAxes, IPoint, IPointNum, IPointBool } from "./Point";
 
-export { Threshold } from "./Threshold";
+export { DFlexThreshold as Threshold } from "./Threshold";
 export type { ThresholdPercentages } from "./Threshold";
 
 export { default as Tracker } from "./Tracker";

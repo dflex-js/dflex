@@ -1,17 +1,13 @@
 class FourDirectionsBool {
-  isLeftFromTop!: boolean;
+  isLeftFromTop: boolean;
 
-  isLeftFromBottom!: boolean;
+  isLeftFromBottom: boolean;
 
-  isLeftFromLeft!: boolean;
+  isLeftFromLeft: boolean;
 
-  isLeftFromRight!: boolean;
+  isLeftFromRight: boolean;
 
   constructor() {
-    this.reset();
-  }
-
-  reset() {
     this.isLeftFromTop = false;
     this.isLeftFromBottom = false;
 

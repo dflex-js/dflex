@@ -1,18 +1,10 @@
 import { PointNum } from "../Point";
-import type { IPointNum } from "../Point";
 
 import type { RectDimensions, RectBoundaries, Dimensions } from "../types";
 
 import FourDirectionsBool from "./FourDirectionsBool";
 
-import { combineKeys, dirtyAssignBiggestRect } from "../collections";
-
-type ThresholdCoordinate = {
-  top: number;
-  left: number;
-  right: number;
-  bottom: number;
-};
+import { dirtyAssignBiggestRect } from "../collections";
 
 export interface ThresholdPercentages {
   /** vertical threshold in percentage from 0-100 */
@@ -22,10 +14,10 @@ export interface ThresholdPercentages {
   horizontal: number;
 }
 
-class Threshold {
-  readonly thresholds: Record<string, ThresholdCoordinate>;
+class DFlexThreshold {
+  readonly thresholds: Record<string, RectBoundaries>;
 
-  private _pixels!: IPointNum;
+  private _pixels!: PointNum;
 
   private _percentages: ThresholdPercentages;
 
@@ -48,7 +40,7 @@ class Threshold {
   private _createThreshold(
     key: string,
     rect: RectBoundaries,
-    isInner?: true
+    isInner: boolean
   ): void {
     const { top, left, bottom, right } = rect;
 
@@ -68,6 +60,12 @@ class Threshold {
           bottom: bottom + y,
         };
 
+    if (__DEV__) {
+      if (this.thresholds[key]) {
+        throw new Error(`Threshold ${key} already exists`);
+      }
+    }
+
     this.thresholds[key] = Object.seal(threshold);
 
     this.isOut[key] = new FourDirectionsBool();
@@ -77,9 +75,13 @@ class Threshold {
     const dp = `${depth}`;
 
     if (!this.thresholds[dp]) {
-      this._createThreshold(dp, {
-        ...this.thresholds[key],
-      });
+      this._createThreshold(
+        dp,
+        {
+          ...this.thresholds[key],
+        },
+        false
+      );
 
       return;
     }
@@ -89,7 +91,7 @@ class Threshold {
     dirtyAssignBiggestRect($, this.thresholds[key]);
   }
 
-  setMainThreshold(key: string, rect: RectDimensions, isInner?: true): void {
+  setMainThreshold(key: string, rect: RectDimensions, isInner: boolean): void {
     this._setPixels(rect);
 
     const { top, left, height, width } = rect;
@@ -104,27 +106,45 @@ class Threshold {
     this._createThreshold(key, rectBoundaries, isInner);
   }
 
+  /**
+   * Assign outer threshold for the container. Along with another threshold
+   * called insertion threshold which defines the area where the element can be
+   * inserted during the migration taking into consideration the biggest hight
+   * and width for the depth by using `unifiedContainerDimensions`. And create
+   * accumulated depth threshold.
+   *
+   * @param SK
+   * @param childDepth
+   * @param containerRect
+   * @param unifiedContainerDimensions
+   */
   setContainerThreshold(
-    key: string,
-    depth: number,
-    rect: RectBoundaries,
+    SK: string,
+    insertionLayerKey: string,
+    childDepth: number,
+    containerRect: RectBoundaries,
     unifiedContainerDimensions: Dimensions
   ): void {
-    this._createThreshold(key, rect);
+    // Regular threshold.
+    this._createThreshold(SK, containerRect, false);
 
-    const { top, left } = rect;
+    const { top, left } = containerRect;
     const { height, width } = unifiedContainerDimensions;
 
-    const composedK = combineKeys(depth, key);
+    // Insertion threshold.
+    this._createThreshold(
+      insertionLayerKey,
+      {
+        left,
+        top,
+        right: left + width,
+        bottom: top + height,
+      },
+      false
+    );
 
-    this._createThreshold(composedK, {
-      left,
-      top,
-      right: left + width,
-      bottom: top + height,
-    });
-
-    this._addDepthThreshold(composedK, depth);
+    // Accumulated depth threshold. Accumulation based on insertion layer.
+    this._addDepthThreshold(insertionLayerKey, childDepth);
   }
 
   isOutThresholdH(key: string, XLeft: number, XRight: number): boolean {
@@ -154,4 +174,4 @@ class Threshold {
   }
 }
 
-export default Threshold;
+export default DFlexThreshold;

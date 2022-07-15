@@ -98,12 +98,16 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
 
     this.threshold = new Threshold(opts.threshold);
 
-    this.threshold.setMainThreshold(id, {
-      width,
-      height,
-      left: currentPosition.x,
-      top: currentPosition.y,
-    });
+    this.threshold.setMainThreshold(
+      id,
+      {
+        width,
+        height,
+        left: currentPosition.x,
+        top: currentPosition.y,
+      },
+      false
+    );
 
     this.appendDraggedToContainerDimensions(true);
 
@@ -118,8 +122,11 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
         }
       }
 
+      const composedK = combineKeys(depth, key);
+
       this.threshold.setContainerThreshold(
         key,
+        composedK,
         depth,
         boundaries,
         store.unifiedContainerDimensions.get(depth)!

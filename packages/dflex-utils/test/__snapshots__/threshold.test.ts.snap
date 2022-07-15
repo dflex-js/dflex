@@ -1,0 +1,136 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DFlexThreshold Dragged Threshold Container threshold Add threshold for container, it's inner by default 1`] = `
+DFlexThreshold {
+  "_percentages": Object {
+    "horizontal": 60,
+    "vertical": 60,
+  },
+  "_pixels": PointNum {
+    "x": 102,
+    "y": 30,
+  },
+  "isOut": Object {
+    "0": FourDirectionsBool {
+      "isLeftFromBottom": false,
+      "isLeftFromLeft": false,
+      "isLeftFromRight": false,
+      "isLeftFromTop": false,
+    },
+    "0-container-sk": FourDirectionsBool {
+      "isLeftFromBottom": false,
+      "isLeftFromLeft": false,
+      "isLeftFromRight": false,
+      "isLeftFromTop": false,
+    },
+    "container-sk": FourDirectionsBool {
+      "isLeftFromBottom": false,
+      "isLeftFromLeft": false,
+      "isLeftFromRight": false,
+      "isLeftFromTop": false,
+    },
+    "dflex-dragged": FourDirectionsBool {
+      "isLeftFromBottom": false,
+      "isLeftFromLeft": false,
+      "isLeftFromRight": false,
+      "isLeftFromTop": false,
+    },
+  },
+  "thresholds": Object {
+    "0": Object {
+      "bottom": 572,
+      "left": -182,
+      "right": 450,
+      "top": 54,
+    },
+    "0-container-sk": Object {
+      "bottom": 542,
+      "left": -80,
+      "right": 348,
+      "top": 84,
+    },
+    "container-sk": Object {
+      "bottom": 194,
+      "left": -80,
+      "right": 294,
+      "top": 84,
+    },
+    "dflex-dragged": Object {
+      "bottom": 194,
+      "left": 348,
+      "right": 722,
+      "top": 84,
+    },
+  },
+}
+`;
+
+exports[`DFlexThreshold Scroll Threshold Scroll inner threshold Add main inner threshold for scroll 1`] = `
+DFlexThreshold {
+  "_percentages": Object {
+    "horizontal": 15,
+    "vertical": 15,
+  },
+  "_pixels": PointNum {
+    "x": 133,
+    "y": 99,
+  },
+  "isOut": Object {
+    "scroll-id-inner": FourDirectionsBool {
+      "isLeftFromBottom": false,
+      "isLeftFromLeft": false,
+      "isLeftFromRight": false,
+      "isLeftFromTop": false,
+    },
+  },
+  "thresholds": Object {
+    "scroll-id-inner": Object {
+      "bottom": 558,
+      "left": 133,
+      "right": 752,
+      "top": 99,
+    },
+  },
+}
+`;
+
+exports[`DFlexThreshold Scroll Threshold Scroll outer threshold Add main outer threshold for scroll 1`] = `
+DFlexThreshold {
+  "_percentages": Object {
+    "horizontal": 15,
+    "vertical": 15,
+  },
+  "_pixels": PointNum {
+    "x": 133,
+    "y": 99,
+  },
+  "isOut": Object {
+    "scroll-id-inner": FourDirectionsBool {
+      "isLeftFromBottom": false,
+      "isLeftFromLeft": false,
+      "isLeftFromRight": false,
+      "isLeftFromTop": false,
+    },
+    "scroll-id-outer": FourDirectionsBool {
+      "isLeftFromBottom": false,
+      "isLeftFromLeft": false,
+      "isLeftFromRight": false,
+      "isLeftFromTop": false,
+    },
+  },
+  "thresholds": Object {
+    "scroll-id-inner": Object {
+      "bottom": 558,
+      "left": 133,
+      "right": 752,
+      "top": 99,
+    },
+    "scroll-id-outer": Object {
+      "bottom": 756,
+      "left": -133,
+      "right": 1018,
+      "top": -99,
+    },
+  },
+}
+`;

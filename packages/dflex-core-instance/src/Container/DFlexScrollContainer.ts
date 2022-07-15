@@ -89,9 +89,7 @@ function hasMoreThanHalfOverFlow(
 }
 
 class DFlexScrollContainer {
-  private _innerThreshold: Threshold | null;
-
-  private _outerThreshold: Threshold | null;
+  private _threshold: Threshold | null;
 
   private _SK: string;
 
@@ -127,11 +125,17 @@ class DFlexScrollContainer {
 
   hasDocumentAsContainer!: boolean;
 
+  private _threshold_inner_key: string;
+
+  private _threshold_outer_key: string;
+
   constructor(element: HTMLElement, SK: string) {
-    this._innerThreshold = null;
-    this._outerThreshold = null;
+    this._threshold = null;
     this._hasThrottledFrame = null;
     this._SK = SK;
+    this._threshold_inner_key = `scroll_inner_${SK}`;
+    this._threshold_outer_key = `scroll_outer_${SK}`;
+
     this._scrollEventCallback = null;
 
     [this.scrollContainerDOM, this.hasDocumentAsContainer] =
@@ -263,19 +267,18 @@ class DFlexScrollContainer {
   }
 
   setThreshold(threshold: ThresholdPercentages) {
-    this._innerThreshold = new Threshold(threshold);
+    this._threshold = new Threshold(threshold);
 
-    this._innerThreshold.setMainThreshold(
-      `scroll-${this._SK}`,
+    this._threshold.setMainThreshold(
+      this._threshold_inner_key,
       this.scrollContainerRect,
       true
     );
 
-    this._outerThreshold = new Threshold(threshold);
-
-    this._outerThreshold.setMainThreshold(
-      `scroll-2${this._SK}`,
-      this.scrollContainerRect
+    this._threshold.setMainThreshold(
+      this._threshold_outer_key,
+      this.scrollContainerRect,
+      false
     );
   }
 
@@ -285,7 +288,7 @@ class DFlexScrollContainer {
 
   private _isScrollAvailable(isVertical: boolean): boolean {
     if (__DEV__) {
-      if (this._innerThreshold === null) {
+      if (this._threshold === null) {
         throw new Error("Scroll threshold is not set.");
       }
     }
@@ -298,14 +301,14 @@ class DFlexScrollContainer {
   isOutThresholdV(y: number): boolean {
     return (
       this._isScrollAvailable(true) &&
-      this._innerThreshold!.isOutThresholdV(`scroll-${this._SK}`, y, y)
+      this._threshold!.isOutThresholdV(this._threshold_inner_key, y, y)
     );
   }
 
   isOutThresholdH(x: number): boolean {
     return (
       this._isScrollAvailable(false) &&
-      this._innerThreshold!.isOutThresholdV(`scroll-${this._SK}`, x, x)
+      this._threshold!.isOutThresholdV(this._threshold_inner_key, x, x)
     );
   }
 
@@ -372,9 +375,9 @@ class DFlexScrollContainer {
   };
 
   destroy() {
-    if (this._innerThreshold !== null) {
-      this._innerThreshold.destroy();
-      this._innerThreshold = null;
+    if (this._threshold !== null) {
+      this._threshold.destroy();
+      this._threshold = null;
     }
     this._scrollEventCallback = null;
     this._setResizeAndScrollListeners(false);

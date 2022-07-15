@@ -1,3 +1,3 @@
-export { default as Threshold } from "./Threshold";
+export { default as DFlexThreshold } from "./Threshold";
 
 export type { ThresholdPercentages } from "./Threshold";
