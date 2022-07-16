@@ -290,19 +290,17 @@ class DFlexScrollContainer {
 
     container[type]("resize", this.animatedResizeListener, opts);
 
-    if (!hasScrollListener) return;
-
-    container[type]("scroll", this.animatedScrollListener, opts);
+    if (hasScrollListener && this.allowDynamicVisibility) {
+      container[type]("scroll", this.animatedScrollListener, opts);
+    }
 
     if (isAttachListener) {
       this.scrollContainerDOM.dataset[
         `dflexScrollListener-${this._SK}`
       ] = `${this.allowDynamicVisibility}`;
-
-      return;
+    } else {
+      delete this.scrollContainerDOM.dataset.dflexScrollListener;
     }
-
-    delete this.scrollContainerDOM.dataset.dflexScrollListener;
   }
 
   pauseListeners(pausePlease: boolean): void {

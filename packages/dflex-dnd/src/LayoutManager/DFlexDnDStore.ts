@@ -75,6 +75,9 @@ class DnDStoreImp extends Store {
     this.updatesQueue = [];
     this.listeners = initDFlexListeners();
     this.update = scheduler;
+
+    this._initBranchScrollAndVisibility =
+      this._initBranchScrollAndVisibility.bind(this);
   }
 
   private _initWhenRegister() {
@@ -82,28 +85,6 @@ class DnDStoreImp extends Store {
       layoutState: "pending",
       type: "layoutState",
     });
-  }
-
-  initSiblingContainer(SK: string) {
-    if (!this.containers.has(SK)) {
-      this.containers.set(SK, new DFlexParentContainer());
-    }
-
-    if (this.scrolls.has(SK)) {
-      return;
-    }
-
-    const branch = this.DOMGen.getElmBranchByKey(SK);
-
-    this.scrolls.set(
-      SK,
-      new DFlexScrollContainer(
-        this.interactiveDOM.get(branch[0])!,
-        SK,
-        branch.length,
-        updateBranchVisibility.bind(null, this)
-      )
-    );
   }
 
   /**
@@ -115,38 +96,68 @@ class DnDStoreImp extends Store {
    *
    * @param id
    */
-  private _initElmDOMInstance(id: string) {
-    const elm = this.registry.get(id)!;
+  private _initElmDOMInstance(
+    id: string,
+    scroll: DFlexScrollContainer,
+    container: DFlexParentContainer
+  ) {
+    const [dflexNode, DOM] = this.getElmWithDOM(id);
 
-    const {
-      keys: { SK },
-      depth,
-    } = elm;
-
-    const scroll = this.scrolls.get(SK)!;
-
-    elm.resume(
-      this.interactiveDOM.get(id)!,
-      scroll.scrollRect.left,
-      scroll.scrollRect.top
-    );
+    dflexNode.resume(DOM, scroll.scrollRect.left, scroll.scrollRect.top);
 
     // Using element grid zero to know if the element has been initiated inside
     // container or not.
-    if (elm.grid.x === 0) {
-      const container = this.containers.get(SK)!;
-
-      const { initialOffset } = elm;
+    if (dflexNode.grid.x === 0) {
+      const { initialOffset } = dflexNode;
 
       container.registerNewElm(
         initialOffset,
-        this.unifiedContainerDimensions.get(depth)!
+        this.unifiedContainerDimensions.get(dflexNode.depth)!
       );
 
-      elm.grid.clone(container.grid);
+      dflexNode.grid.clone(container.grid);
     }
 
-    updateElementVisibility(this.interactiveDOM.get(id)!, elm, scroll);
+    updateElementVisibility(DOM, dflexNode, scroll);
+  }
+
+  private _initBranchScrollAndVisibility(SK: string, depth: number) {
+    console.log("file: DFlexDnDStore.ts ~ line 125 ~ depth", depth);
+    let container: DFlexParentContainer;
+    let scroll: DFlexScrollContainer;
+
+    if (!this.unifiedContainerDimensions.has(depth)) {
+      this.unifiedContainerDimensions.set(depth, {
+        width: 0,
+        height: 0,
+      });
+    }
+
+    if (!this.containers.has(SK)) {
+      container = new DFlexParentContainer();
+
+      this.containers.set(SK, container);
+    } else {
+      container = this.containers.get(SK)!;
+    }
+
+    if (!this.scrolls.has(SK)) {
+      const branch = this.DOMGen.getElmBranchByKey(SK);
+      scroll = new DFlexScrollContainer(
+        this.interactiveDOM.get(branch[0])!,
+        SK,
+        branch.length,
+        updateBranchVisibility.bind(null, this)
+      );
+
+      this.scrolls.set(SK, scroll);
+    } else {
+      scroll = this.scrolls.get(SK)!;
+    }
+
+    this.getElmBranchByKey(SK).forEach((id) => {
+      this._initElmDOMInstance(id, scroll, container);
+    });
   }
 
   register(element: RegisterInputOpts) {
@@ -184,24 +195,7 @@ class DnDStoreImp extends Store {
         };
 
         // Create an instance of DFlexCoreNode and gets the DOM element into the store.
-        super.register(coreInput, () => {
-          const {
-            depth,
-            keys: { SK },
-          } = this.registry.get(id)!;
-
-          if (!this.containers.has(SK)) {
-            this.initSiblingContainer(SK);
-            if (!this.unifiedContainerDimensions.has(depth)) {
-              this.unifiedContainerDimensions.set(depth, {
-                width: 0,
-                height: 0,
-              });
-            }
-          }
-
-          this._initElmDOMInstance(id);
-        });
+        super.register(coreInput, this._initBranchScrollAndVisibility);
       },
       null
     );

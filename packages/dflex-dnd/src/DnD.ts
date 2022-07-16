@@ -37,7 +37,7 @@ class DnD extends Droppable {
      */
     store.getBranchesByDepth(depth).forEach((SK) => {
       if (!store.containers.has(SK)) {
-        store.initSiblingContainer(SK);
+        store._initBranchScrollAndVisibility(SK);
       }
     });
 

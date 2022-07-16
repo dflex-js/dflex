@@ -25,5 +25,3 @@ export const DFLEX_EVENTS = Object.freeze({
   ...INTERACTIVITY_EVT,
   ...SIBLINGS_EVT,
 });
-
-export const PREFIX_ID = "dflex-id";
