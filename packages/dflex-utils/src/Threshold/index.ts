@@ -1,7 +1,3 @@
-export { default as Threshold } from "./Threshold";
+export { default as DFlexThreshold } from "./Threshold";
 
-export type {
-  ThresholdInterface,
-  ThresholdCoordinate,
-  ThresholdPercentages,
-} from "./types";
+export type { ThresholdPercentages } from "./Threshold";

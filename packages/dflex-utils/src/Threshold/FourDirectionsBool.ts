@@ -14,7 +14,6 @@ class FourDirectionsBool {
   reset() {
     this.isLeftFromTop = false;
     this.isLeftFromBottom = false;
-
     this.isLeftFromLeft = false;
     this.isLeftFromRight = false;
   }

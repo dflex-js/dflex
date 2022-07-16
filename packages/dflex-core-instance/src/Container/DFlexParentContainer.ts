@@ -9,10 +9,8 @@ import type {
   RectDimensions,
 } from "@dflex/utils";
 
-class DFlexContainer {
-  private _boundariesByRow: {
-    [row: number]: RectBoundaries;
-  };
+class DFlexParentContainer {
+  private _boundariesByRow: Record<number, RectBoundaries>;
 
   /** Strict Rect for siblings containers. */
   boundaries!: RectBoundaries;
@@ -38,7 +36,7 @@ class DFlexContainer {
 
   constructor() {
     this.grid = new PointNum(1, 1);
-    this.originLength = DFlexContainer.OUT_OF_RANGE;
+    this.originLength = DFlexParentContainer.OUT_OF_RANGE;
     this._boundariesByRow = {};
     this._gridSiblingsHasNewRow = false;
   }
@@ -136,4 +134,4 @@ class DFlexContainer {
   }
 }
 
-export default DFlexContainer;
+export default DFlexParentContainer;

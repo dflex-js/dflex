@@ -1,4 +1,5 @@
-import Generator from "@dflex/dom-gen";
+/* eslint-disable no-underscore-dangle */
+import Generator, { ELmBranch } from "@dflex/dom-gen";
 
 import { DFlexNode, DFlexNodeInput } from "@dflex/core-instance";
 import { getParentElm, Tracker } from "@dflex/utils";
@@ -28,6 +29,13 @@ export type RegisterInputOpts = {
 export type RegisterInputBase = DeepNonNullable<RegisterInputOpts>;
 
 type GetElmWithDOMOutput = [DFlexNode, HTMLElement];
+
+type BranchComposedCallBackFunction = (
+  // eslint-disable-next-line no-unused-vars
+  childrenKey: string,
+  // eslint-disable-next-line no-unused-vars
+  childrenDepth: number
+) => void;
 
 function getElmDOMOrThrow(id: string): HTMLElement | null {
   let DOM = document.getElementById(id);
@@ -67,6 +75,8 @@ class DFlexBaseStore {
 
   private queueTimeoutId?: ReturnType<typeof setTimeout>;
 
+  private static _PREFIX_ID = "dflex-id";
+
   constructor() {
     this._lastDOMParent = null;
     this._queue = [];
@@ -74,25 +84,32 @@ class DFlexBaseStore {
     this.registry = new Map();
     this.interactiveDOM = new Map();
     this.DOMGen = new Generator();
+    this._handleQueue = this._handleQueue.bind(this);
   }
 
   private _handleQueue() {
-    if (this._queue.length === 0) {
-      return;
-    }
+    try {
+      if (this._queue.length === 0) {
+        return;
+      }
 
-    const queue = this._queue;
+      const queue = this._queue;
 
-    this._queue = [];
+      this._queue = [];
 
-    queue.forEach((fn) => fn());
-
-    if (this.queueTimeoutId) {
-      clearTimeout(this.queueTimeoutId);
+      queue.forEach((fn) => fn());
+    } finally {
+      if (this.queueTimeoutId !== undefined) {
+        clearTimeout(this.queueTimeoutId);
+      }
     }
   }
 
-  private _submitElementToRegistry(DOM: HTMLElement, elm: RegisterInputBase) {
+  private _submitElementToRegistry(
+    DOM: HTMLElement,
+    elm: RegisterInputBase,
+    branchComposedCallBack: BranchComposedCallBackFunction | null
+  ): void {
     const { id, depth, readonly } = elm;
 
     if (!this.interactiveDOM.has(id)) {
@@ -144,6 +161,10 @@ class DFlexBaseStore {
       }
 
       DOM.dataset.dflexKey = keys.CHK;
+
+      if (typeof branchComposedCallBack === "function") {
+        branchComposedCallBack(keys.CHK, depth - 1);
+      }
     }
   }
 
@@ -153,7 +174,10 @@ class DFlexBaseStore {
    * @param element - element to register
    * @returns
    */
-  register(element: RegisterInputBase, doneCallback?: () => void): void {
+  register(
+    element: RegisterInputBase,
+    branchComposedCallBack?: BranchComposedCallBackFunction
+  ): void {
     const { id, depth } = element;
 
     const DOM = this.interactiveDOM.has(id)
@@ -171,7 +195,7 @@ class DFlexBaseStore {
         let { id: parentID } = _parentDOM;
 
         if (!parentID) {
-          parentID = this.tracker.newTravel("DFlex-id");
+          parentID = this.tracker.newTravel(DFlexBaseStore._PREFIX_ID);
           _parentDOM.id = parentID;
         }
 
@@ -179,30 +203,28 @@ class DFlexBaseStore {
 
         const parentDepth = depth + 1;
 
-        this._submitElementToRegistry(DOM, element);
+        this._submitElementToRegistry(DOM, element, null);
 
         // keep the reference for comparison.
         this._lastDOMParent = _parentDOM;
 
         // A new branch. Queue the new branch.
         this._queue.push(() => {
-          this._submitElementToRegistry(_parentDOM, {
-            id: parentID,
-            depth: parentDepth,
-            // Default value for inserted parent element.
-            readonly: true,
-          });
+          this._submitElementToRegistry(
+            _parentDOM,
+            {
+              id: parentID,
+              depth: parentDepth,
+              // Default value for inserted parent element.
+              readonly: true,
+            },
+            branchComposedCallBack || null
+          );
         });
 
-        this.queueTimeoutId = setTimeout(() => {
-          this._handleQueue();
-        }, 0);
+        this.queueTimeoutId = setTimeout(this._handleQueue, 0);
       } else {
-        this._submitElementToRegistry(DOM, element);
-      }
-
-      if (typeof doneCallback === "function") {
-        doneCallback();
+        this._submitElementToRegistry(DOM, element, null);
       }
 
       return true;
@@ -238,7 +260,7 @@ class DFlexBaseStore {
    * @param SK - Siblings Key.
    * @returns
    */
-  getElmBranchByKey(SK: string) {
+  getElmBranchByKey(SK: string): ELmBranch {
     return this.DOMGen.getElmBranchByKey(SK);
   }
 
@@ -248,18 +270,18 @@ class DFlexBaseStore {
    * @param dp - depth.
    * @returns
    */
-  getBranchesByDepth(dp: number) {
+  getBranchesByDepth(dp: number): ELmBranch {
     return this.DOMGen.getBranchByDepth(dp);
   }
 
   /**
    * Mutates branch in the generated DOM tree.
    *
-   * @param SK - Siblings Key.
-   * @param newOrder
+   * @param SK
+   * @param newBranch
    */
-  updateBranch(SK: string, newOrder: string[]) {
-    return this.DOMGen.updateBranch(SK, newOrder);
+  updateBranch(SK: string, newBranch: ELmBranch): void {
+    return this.DOMGen.updateBranch(SK, newBranch);
   }
 
   /**
@@ -293,6 +315,10 @@ class DFlexBaseStore {
         this.unregister(id);
       });
     });
+
+    this.interactiveDOM.clear();
+    this.registry.clear();
+    this._lastDOMParent = null;
   }
 }
 

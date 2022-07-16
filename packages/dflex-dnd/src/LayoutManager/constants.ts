@@ -25,7 +25,3 @@ export const DFLEX_EVENTS = Object.freeze({
   ...INTERACTIVITY_EVT,
   ...SIBLINGS_EVT,
 });
-
-export const MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
-
-export const PREFIX_ID = "dflex-id";

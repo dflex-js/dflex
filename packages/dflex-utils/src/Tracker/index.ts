@@ -1,3 +1,3 @@
-export { default as Tracker } from "./Tracker";
+import Tracker from "./Tracker";
 
-export type { ITracker } from "./types";
+export default Tracker;

@@ -1,154 +1,374 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`DnD Store Shallow test the store Element is initiated 1`] = `
-Map {
-  "id-1" => DFlexNode {
-    "_hasAttribute": Set {},
-    "animatedFrame": 1,
-    "currentPosition": PointNum {
-      "x": 0,
-      "y": 0,
+exports[`DFlex DnD Shallow test the store Element is initiated 1`] = `
+DnDStoreImp {
+  "DOMGen": Generator {
+    "_branches": Object {
+      "0-0": Array [
+        "id-1",
+        "id-2",
+        "id-3",
+        "id-4",
+      ],
+      "1-0": Array [
+        "dflex-id-1",
+      ],
     },
-    "depth": 0,
-    "grid": PointNum {
-      "x": 1,
-      "y": 1,
+    "_branchesByDepth": Object {
+      "0": Array [
+        "0-0",
+      ],
+      "1": Array [
+        "1-0",
+      ],
     },
-    "hasPendingTransform": false,
-    "id": "id-1",
-    "initialOffset": Object {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
+    "_indicator": Object {
+      "0": 3,
+      "1": 1,
+      "2": 0,
+      "3": 0,
     },
-    "isPaused": false,
-    "isVisible": true,
-    "keys": Object {
-      "CHK": null,
-      "PK": "1-0",
-      "SK": "0-0",
-    },
-    "order": Object {
-      "parent": 0,
-      "self": 0,
-    },
-    "readonly": false,
-    "translate": PointNum {
-      "x": 0,
-      "y": 0,
+    "_prevDepth": 1,
+    "_prevKey": "1-0",
+  },
+  "_handleQueue": [Function],
+  "_initBranchScrollAndVisibility": [Function],
+  "_isDOM": true,
+  "_isInitialized": true,
+  "_lastDOMParent": <div
+    data-dflex-key="0-0"
+    data-index="0"
+    id="dflex-id-1"
+  >
+    <div
+      data-index="0"
+      id="id-1"
+    />
+    <div
+      data-index="1"
+      id="id-2"
+    />
+    <div
+      data-index="2"
+      id="id-3"
+    />
+    <div
+      data-index="3"
+      id="id-4"
+    />
+  </div>,
+  "_queue": Array [],
+  "containers": Map {
+    "0-0" => DFlexParentContainer {
+      "_boundariesByRow": Object {
+        "1": Object {
+          "bottom": 0,
+          "left": 0,
+          "right": 0,
+          "top": 0,
+        },
+      },
+      "_gridSiblingsHasNewRow": false,
+      "boundaries": Object {
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+      },
+      "grid": PointNum {
+        "x": 1,
+        "y": 1,
+      },
+      "originLength": -1,
     },
   },
-  "id-2" => DFlexNode {
-    "_hasAttribute": Set {},
-    "animatedFrame": null,
-    "currentPosition": PointNum {
-      "x": 0,
-      "y": 0,
+  "deferred": Array [],
+  "interactiveDOM": Map {
+    "dflex-id-1" => <div
+      data-dflex-key="0-0"
+      data-index="0"
+      id="dflex-id-1"
+    >
+      <div
+        data-index="0"
+        id="id-1"
+      />
+      <div
+        data-index="1"
+        id="id-2"
+      />
+      <div
+        data-index="2"
+        id="id-3"
+      />
+      <div
+        data-index="3"
+        id="id-4"
+      />
+    </div>,
+    "id-1" => <div
+      data-index="0"
+      id="id-1"
+    />,
+    "id-2" => <div
+      data-index="1"
+      id="id-2"
+    />,
+    "id-3" => <div
+      data-index="2"
+      id="id-3"
+    />,
+    "id-4" => <div
+      data-index="3"
+      id="id-4"
+    />,
+  },
+  "isUpdating": false,
+  "listeners": Object {
+    "clear": [Function],
+    "notify": [Function],
+    "subscribe": [Function],
+  },
+  "observer": null,
+  "queueTimeoutId": 1000000000000,
+  "registry": Map {
+    "id-1" => DFlexNode {
+      "_hasAttribute": Set {},
+      "animatedFrame": 1000000000001,
+      "currentPosition": PointNum {
+        "x": 0,
+        "y": 0,
+      },
+      "depth": 0,
+      "grid": PointNum {
+        "x": 1,
+        "y": 1,
+      },
+      "hasPendingTransform": false,
+      "id": "id-1",
+      "initialOffset": Object {
+        "height": 0,
+        "left": 0,
+        "top": 0,
+        "width": 0,
+      },
+      "isPaused": false,
+      "isVisible": true,
+      "keys": Object {
+        "CHK": null,
+        "PK": "1-0",
+        "SK": "0-0",
+      },
+      "order": Object {
+        "parent": 0,
+        "self": 0,
+      },
+      "readonly": false,
+      "translate": PointNum {
+        "x": 0,
+        "y": 0,
+      },
     },
-    "depth": 0,
-    "grid": PointNum {
-      "x": 1,
-      "y": 1,
+    "id-2" => DFlexNode {
+      "_hasAttribute": Set {},
+      "animatedFrame": null,
+      "currentPosition": PointNum {
+        "x": 0,
+        "y": 0,
+      },
+      "depth": 0,
+      "grid": PointNum {
+        "x": 1,
+        "y": 1,
+      },
+      "hasPendingTransform": false,
+      "id": "id-2",
+      "initialOffset": Object {
+        "height": 0,
+        "left": 0,
+        "top": 0,
+        "width": 0,
+      },
+      "isPaused": false,
+      "isVisible": true,
+      "keys": Object {
+        "CHK": null,
+        "PK": "1-0",
+        "SK": "0-0",
+      },
+      "order": Object {
+        "parent": 0,
+        "self": 1,
+      },
+      "readonly": false,
+      "translate": PointNum {
+        "x": 0,
+        "y": 0,
+      },
     },
-    "hasPendingTransform": false,
-    "id": "id-2",
-    "initialOffset": Object {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
+    "id-3" => DFlexNode {
+      "_hasAttribute": Set {},
+      "animatedFrame": null,
+      "currentPosition": PointNum {
+        "x": 0,
+        "y": 0,
+      },
+      "depth": 0,
+      "grid": PointNum {
+        "x": 1,
+        "y": 1,
+      },
+      "hasPendingTransform": false,
+      "id": "id-3",
+      "initialOffset": Object {
+        "height": 0,
+        "left": 0,
+        "top": 0,
+        "width": 0,
+      },
+      "isPaused": false,
+      "isVisible": true,
+      "keys": Object {
+        "CHK": null,
+        "PK": "1-0",
+        "SK": "0-0",
+      },
+      "order": Object {
+        "parent": 0,
+        "self": 2,
+      },
+      "readonly": false,
+      "translate": PointNum {
+        "x": 0,
+        "y": 0,
+      },
     },
-    "isPaused": false,
-    "isVisible": true,
-    "keys": Object {
-      "CHK": null,
-      "PK": "1-0",
-      "SK": "0-0",
+    "id-4" => DFlexNode {
+      "_hasAttribute": Set {},
+      "animatedFrame": null,
+      "currentPosition": PointNum {
+        "x": 0,
+        "y": 0,
+      },
+      "depth": 0,
+      "grid": PointNum {
+        "x": 1,
+        "y": 1,
+      },
+      "hasPendingTransform": false,
+      "id": "id-4",
+      "initialOffset": Object {
+        "height": 0,
+        "left": 0,
+        "top": 0,
+        "width": 0,
+      },
+      "isPaused": false,
+      "isVisible": true,
+      "keys": Object {
+        "CHK": null,
+        "PK": "1-0",
+        "SK": "0-0",
+      },
+      "order": Object {
+        "parent": 0,
+        "self": 3,
+      },
+      "readonly": false,
+      "translate": PointNum {
+        "x": 0,
+        "y": 0,
+      },
     },
-    "order": Object {
-      "parent": 0,
-      "self": 1,
-    },
-    "readonly": false,
-    "translate": PointNum {
-      "x": 0,
-      "y": 0,
+    "dflex-id-1" => DFlexNode {
+      "animatedFrame": null,
+      "depth": 1,
+      "id": "dflex-id-1",
+      "isPaused": false,
+      "isVisible": true,
+      "keys": Object {
+        "CHK": "0-0",
+        "PK": "2-0",
+        "SK": "1-0",
+      },
+      "order": Object {
+        "parent": 0,
+        "self": 0,
+      },
+      "readonly": true,
     },
   },
-  "id-3" => DFlexNode {
-    "_hasAttribute": Set {},
-    "animatedFrame": null,
-    "currentPosition": PointNum {
-      "x": 0,
-      "y": 0,
-    },
-    "depth": 0,
-    "grid": PointNum {
-      "x": 1,
-      "y": 1,
-    },
-    "hasPendingTransform": false,
-    "id": "id-3",
-    "initialOffset": Object {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
-    "isPaused": false,
-    "isVisible": true,
-    "keys": Object {
-      "CHK": null,
-      "PK": "1-0",
-      "SK": "0-0",
-    },
-    "order": Object {
-      "parent": 0,
-      "self": 2,
-    },
-    "readonly": false,
-    "translate": PointNum {
-      "x": 0,
-      "y": 0,
-    },
-  },
-  "id-4" => DFlexNode {
-    "_hasAttribute": Set {},
-    "animatedFrame": null,
-    "currentPosition": PointNum {
-      "x": 0,
-      "y": 0,
-    },
-    "depth": 0,
-    "grid": PointNum {
-      "x": 1,
-      "y": 1,
-    },
-    "hasPendingTransform": false,
-    "id": "id-4",
-    "initialOffset": Object {
-      "height": 0,
-      "left": 0,
-      "top": 0,
-      "width": 0,
-    },
-    "isPaused": false,
-    "isVisible": true,
-    "keys": Object {
-      "CHK": null,
-      "PK": "1-0",
-      "SK": "0-0",
-    },
-    "order": Object {
-      "parent": 0,
-      "self": 3,
-    },
-    "readonly": false,
-    "translate": PointNum {
-      "x": 0,
-      "y": 0,
+  "scrolls": Map {
+    "0-0" => DFlexScrollContainer {
+      "_SK": "0-0",
+      "_hasThrottledFrame": null,
+      "_innerThreshold": null,
+      "_listenerDataset": "dflexScrollListener-0-0",
+      "_outerThreshold": null,
+      "_scrollEventCallback": null,
+      "_threshold_inner_key": "scroll_inner_0-0",
+      "_threshold_outer_key": "scroll_outer_0-0",
+      "allowDynamicVisibility": false,
+      "animatedResizeListener": [Function],
+      "animatedScrollListener": [Function],
+      "hasDocumentAsContainer": true,
+      "hasOverflowX": false,
+      "hasOverflowY": false,
+      "scrollContainerDOM": <html>
+        <head />
+        <body
+          data-dflex-scroll-listener-0-0="false"
+        >
+          <div>
+            <div
+              data-dflex-key="0-0"
+              data-index="0"
+              id="dflex-id-1"
+            >
+              <div
+                data-index="0"
+                id="id-1"
+              />
+              <div
+                data-index="1"
+                id="id-2"
+              />
+              <div
+                data-index="2"
+                id="id-3"
+              />
+              <div
+                data-index="3"
+                id="id-4"
+              />
+            </div>
+          </div>
+        </body>
+      </html>,
+      "scrollContainerRect": Object {
+        "height": 768,
+        "left": 0,
+        "top": 0,
+        "width": 1024,
+      },
+      "scrollRect": Object {
+        "height": 0,
+        "left": 0,
+        "top": 0,
+        "width": 0,
+      },
     },
   },
+  "tracker": Tracker {
+    "travelID": 1,
+  },
+  "unifiedContainerDimensions": Map {
+    0 => Object {
+      "height": 0,
+      "width": 0,
+    },
+  },
+  "update": [Function],
+  "updatesQueue": Array [],
 }
 `;

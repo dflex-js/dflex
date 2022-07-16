@@ -1,8 +1,8 @@
-import { DFlexContainer } from "../src";
+import { DFlexParentContainer } from "../src";
 
 // TODO: Add more cases to cover the grid. This is just a shallow test.
 describe("Container", () => {
-  let container: DFlexContainer;
+  let container: DFlexParentContainer;
 
   const elmR1Col1 = {
     top: 0,
@@ -24,7 +24,7 @@ describe("Container", () => {
   };
 
   beforeAll(() => {
-    container = new DFlexContainer();
+    container = new DFlexParentContainer();
   });
 
   it("Registers two elements in the same row", () => {

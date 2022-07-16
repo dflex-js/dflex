@@ -60,7 +60,7 @@ class DraggableInteractive extends DraggableAxes {
     if (this.scroll.enable) {
       this.isViewportRestricted = false;
 
-      scroll.setThresholdMatrix(this.scroll.threshold);
+      scroll.setInnerThreshold(this.scroll.threshold);
 
       if (!scroll.hasDocumentAsContainer) {
         /**

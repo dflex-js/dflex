@@ -9,14 +9,13 @@ import {
   getParentElm,
 } from "@dflex/utils";
 import type {
-  ThresholdInterface,
   IPointNum,
   IPointBool,
   IMigration,
   IPointAxes,
 } from "@dflex/utils";
 
-import { DFlexContainer, DFlexNode } from "@dflex/core-instance";
+import { DFlexParentContainer, DFlexNode } from "@dflex/core-instance";
 
 import {
   initDFlexEvent,
@@ -39,7 +38,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
 
   migration: IMigration;
 
-  threshold: ThresholdInterface;
+  threshold: Threshold;
 
   isViewportRestricted: boolean;
 
@@ -99,12 +98,16 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
 
     this.threshold = new Threshold(opts.threshold);
 
-    this.threshold.setMainThreshold(id, {
-      width,
-      height,
-      left: currentPosition.x,
-      top: currentPosition.y,
-    });
+    this.threshold.setMainThreshold(
+      id,
+      {
+        width,
+        height,
+        left: currentPosition.x,
+        top: currentPosition.y,
+      },
+      false
+    );
 
     this.appendDraggedToContainerDimensions(true);
 
@@ -119,14 +122,17 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
         }
       }
 
+      const composedK = combineKeys(depth, key);
+
       this.threshold.setContainerThreshold(
         key,
+        composedK,
         depth,
         boundaries,
         store.unifiedContainerDimensions.get(depth)!
       );
 
-      if (elmContainer.originLength === DFlexContainer.OUT_OF_RANGE) {
+      if (elmContainer.originLength === DFlexParentContainer.OUT_OF_RANGE) {
         const { length } = store.getElmBranchByKey(key);
         elmContainer.originLength = length;
       }
