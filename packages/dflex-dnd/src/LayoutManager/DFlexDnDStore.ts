@@ -122,7 +122,6 @@ class DnDStoreImp extends Store {
   }
 
   private _initBranchScrollAndVisibility(SK: string, depth: number) {
-    console.log("file: DFlexDnDStore.ts ~ line 125 ~ depth", depth);
     let container: DFlexParentContainer;
     let scroll: DFlexScrollContainer;
 
@@ -138,6 +137,13 @@ class DnDStoreImp extends Store {
 
       this.containers.set(SK, container);
     } else {
+      if (__DEV__) {
+        throw new Error(
+          `_initBranchScrollAndVisibility: Container with key:${SK} already exists.` +
+            `This function supposed to be called once when initializing the branch during the registration.`
+        );
+      }
+
       container = this.containers.get(SK)!;
     }
 
@@ -152,6 +158,13 @@ class DnDStoreImp extends Store {
 
       this.scrolls.set(SK, scroll);
     } else {
+      if (__DEV__) {
+        throw new Error(
+          `_initBranchScrollAndVisibility: Scroll with key:${SK} already exists.` +
+            `This function supposed to be called once when initializing the branch during the registration.`
+        );
+      }
+
       scroll = this.scrolls.get(SK)!;
     }
 

@@ -29,18 +29,6 @@ class DnD extends Droppable {
 
     const options = extractOpts(opts);
 
-    const { depth } = store.registry.get(id)!;
-
-    /**
-     * In case it is not already initiated in the store. We do it here guarantee
-     * all the branch is updated. Could happen if it's render in the server.
-     */
-    store.getBranchesByDepth(depth).forEach((SK) => {
-      if (!store.containers.has(SK)) {
-        store._initBranchScrollAndVisibility(SK);
-      }
-    });
-
     const draggable = new DraggableInteractive(
       id,
       initCoordinates,

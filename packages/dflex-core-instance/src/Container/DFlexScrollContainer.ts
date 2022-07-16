@@ -132,6 +132,8 @@ class DFlexScrollContainer {
 
   private _threshold_outer_key: string;
 
+  private _listenerDataset: string;
+
   private static _OUTER_THRESHOLD: ThresholdPercentages = {
     horizontal: 35,
     vertical: 35,
@@ -154,6 +156,7 @@ class DFlexScrollContainer {
     this._SK = SK;
     this._threshold_inner_key = `scroll_inner_${SK}`;
     this._threshold_outer_key = `scroll_outer_${SK}`;
+    this._listenerDataset = `dflexScrollListener-${SK}`;
 
     this._hasThrottledFrame = null;
 
@@ -294,12 +297,16 @@ class DFlexScrollContainer {
       container[type]("scroll", this.animatedScrollListener, opts);
     }
 
+    const elmHoldDataset = this.hasDocumentAsContainer
+      ? document.body
+      : this.scrollContainerDOM;
+
     if (isAttachListener) {
-      this.scrollContainerDOM.dataset[
-        `dflexScrollListener-${this._SK}`
+      elmHoldDataset.dataset[
+        this._listenerDataset
       ] = `${this.allowDynamicVisibility}`;
     } else {
-      delete this.scrollContainerDOM.dataset.dflexScrollListener;
+      delete elmHoldDataset.dataset[this._listenerDataset];
     }
   }
 
@@ -307,20 +314,13 @@ class DFlexScrollContainer {
     this._hasThrottledFrame = pausePlease ? 1 : null;
   }
 
-  setThreshold(threshold: ThresholdPercentages) {
+  setInnerThreshold(threshold: ThresholdPercentages) {
     this._innerThreshold = new Threshold(threshold);
-    this._outerThreshold = new Threshold(threshold);
 
     this._innerThreshold.setMainThreshold(
       this._threshold_inner_key,
       this.scrollContainerRect,
       true
-    );
-
-    this._outerThreshold.setMainThreshold(
-      this._threshold_outer_key,
-      this.scrollContainerRect,
-      false
     );
   }
 

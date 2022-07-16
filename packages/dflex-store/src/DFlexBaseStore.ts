@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import Generator from "@dflex/dom-gen";
+import Generator, { ELmBranch } from "@dflex/dom-gen";
 
 import { DFlexNode, DFlexNodeInput } from "@dflex/core-instance";
 import { getParentElm, Tracker } from "@dflex/utils";
@@ -29,6 +29,13 @@ export type RegisterInputOpts = {
 export type RegisterInputBase = DeepNonNullable<RegisterInputOpts>;
 
 type GetElmWithDOMOutput = [DFlexNode, HTMLElement];
+
+type BranchComposedCallBackFunction = (
+  // eslint-disable-next-line no-unused-vars
+  childrenKey: string,
+  // eslint-disable-next-line no-unused-vars
+  childrenDepth: number
+) => void;
 
 function getElmDOMOrThrow(id: string): HTMLElement | null {
   let DOM = document.getElementById(id);
@@ -100,8 +107,7 @@ class DFlexBaseStore {
   private _submitElementToRegistry(
     DOM: HTMLElement,
     elm: RegisterInputBase,
-    // eslint-disable-next-line no-unused-vars
-    branchComposedCallBack: ((SK: string, depth: number) => void) | null
+    branchComposedCallBack: BranchComposedCallBackFunction | null
   ): void {
     const { id, depth, readonly } = elm;
 
@@ -169,8 +175,7 @@ class DFlexBaseStore {
    */
   register(
     element: RegisterInputBase,
-    // eslint-disable-next-line no-unused-vars
-    branchComposedCallBack?: (SK: string, depth: number) => void
+    branchComposedCallBack?: BranchComposedCallBackFunction
   ): void {
     const { id, depth } = element;
 
@@ -256,7 +261,7 @@ class DFlexBaseStore {
    * @param SK - Siblings Key.
    * @returns
    */
-  getElmBranchByKey(SK: string) {
+  getElmBranchByKey(SK: string): ELmBranch {
     return this.DOMGen.getElmBranchByKey(SK);
   }
 
@@ -266,18 +271,18 @@ class DFlexBaseStore {
    * @param dp - depth.
    * @returns
    */
-  getBranchesByDepth(dp: number) {
+  getBranchesByDepth(dp: number): ELmBranch {
     return this.DOMGen.getBranchByDepth(dp);
   }
 
   /**
    * Mutates branch in the generated DOM tree.
    *
-   * @param SK - Siblings Key.
-   * @param newOrder
+   * @param SK
+   * @param newBranch
    */
-  updateBranch(SK: string, newOrder: string[]) {
-    return this.DOMGen.updateBranch(SK, newOrder);
+  updateBranch(SK: string, newBranch: ELmBranch): void {
+    return this.DOMGen.updateBranch(SK, newBranch);
   }
 
   /**
