@@ -84,6 +84,7 @@ class DFlexBaseStore {
     this.registry = new Map();
     this.interactiveDOM = new Map();
     this.DOMGen = new Generator();
+    this._handleQueue = this._handleQueue.bind(this);
   }
 
   private _handleQueue() {
@@ -221,9 +222,7 @@ class DFlexBaseStore {
           );
         });
 
-        this.queueTimeoutId = setTimeout(() => {
-          this._handleQueue();
-        }, 0);
+        this.queueTimeoutId = setTimeout(this._handleQueue, 0);
       } else {
         this._submitElementToRegistry(DOM, element, null);
       }

@@ -6,46 +6,44 @@ import { Root, createRoot } from "react-dom/client";
 import { store } from "../src/LayoutManager";
 import { getInsertionELmMeta } from "../src/Droppable/DFlexUpdater";
 
-describe("DnD Store", () => {
+describe("DFlex DnD", () => {
   const elm1 = {
     id: "id-1",
     depth: 0,
-    parentID: "",
     readonly: false,
   };
 
   const elm2 = {
     id: "id-2",
     depth: 0,
-    parentID: "",
     readonly: false,
   };
 
   const elm3 = {
     id: "id-3",
     depth: 0,
-    parentID: "",
     readonly: false,
   };
 
   const elm4 = {
     id: "id-4",
     depth: 0,
-    parentID: "",
     readonly: false,
   };
 
   let container: HTMLDivElement | null;
   let reactRoot: Root;
 
-  const positions: { [k: string]: DOMRect } = {};
+  const positions: Record<string, DOMRect> = {};
 
   beforeAll(() => {
+    jest.useFakeTimers();
+
     container = document.createElement("div");
     reactRoot = createRoot(container);
     document.body.appendChild(container);
 
-    function render(elm: typeof elm3) {
+    function DnDComponent(elm: typeof elm3) {
       const ref = React.createRef<HTMLDivElement>();
 
       React.useEffect(() => {
@@ -65,7 +63,13 @@ describe("DnD Store", () => {
 
     function init() {
       function TestBase() {
-        return <div>{[elm1, elm2, elm3, elm4].map((elm) => render(elm))}</div>;
+        const ref = React.createRef<HTMLDivElement>();
+
+        return (
+          <div ref={ref}>
+            {[elm1, elm2, elm3, elm4].map((elm) => DnDComponent(elm))}
+          </div>
+        );
       }
 
       ReactTestUtils.act(() => {
@@ -74,6 +78,7 @@ describe("DnD Store", () => {
     }
 
     init();
+    jest.runAllTimers();
   });
 
   afterAll(() => {
@@ -84,7 +89,7 @@ describe("DnD Store", () => {
   describe("Shallow test the store", () => {
     it("Element is initiated", () => {
       store.register(elm1);
-      expect(store.registry).toMatchSnapshot();
+      expect(store).toMatchSnapshot();
     });
   });
 
