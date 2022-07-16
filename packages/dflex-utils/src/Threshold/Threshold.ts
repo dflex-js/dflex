@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import { PointNum } from "../Point";
 
 import type { RectDimensions, RectBoundaries, Dimensions } from "../types";
@@ -12,6 +13,15 @@ export interface ThresholdPercentages {
 
   /** horizontal threshold in percentage from 0-100 */
   horizontal: number;
+}
+
+function getBoundariesFromDimensions(rect: RectDimensions): RectBoundaries {
+  return {
+    top: rect.top,
+    left: rect.left,
+    bottom: rect.top + rect.height,
+    right: rect.left + rect.width,
+  };
 }
 
 class DFlexThreshold {
@@ -36,17 +46,15 @@ class DFlexThreshold {
     this._pixels = new PointNum(x, y);
   }
 
-  /** Assign threshold property and create new instance for is out indicators */
-  private _createThreshold(
-    key: string,
+  private _getThreshold(
     rect: RectBoundaries,
     isInner: boolean
-  ): void {
-    const { top, left, bottom, right } = rect;
-
+  ): RectBoundaries {
     const { x, y } = this._pixels;
 
-    const threshold = isInner
+    const { top, left, bottom, right } = rect;
+
+    return isInner
       ? {
           left: left + x,
           right: right - x,
@@ -59,6 +67,15 @@ class DFlexThreshold {
           top: top - y,
           bottom: bottom + y,
         };
+  }
+
+  /** Assign threshold property and create new instance for is out indicators */
+  private _createThreshold(
+    key: string,
+    rect: RectBoundaries,
+    isInner: boolean
+  ): void {
+    const threshold = this._getThreshold(rect, isInner);
 
     if (__DEV__) {
       if (this.thresholds[key]) {
@@ -104,16 +121,35 @@ class DFlexThreshold {
   setMainThreshold(key: string, rect: RectDimensions, isInner: boolean): void {
     this._setPixels(rect);
 
-    const { top, left, height, width } = rect;
+    this._createThreshold(key, getBoundariesFromDimensions(rect), isInner);
+  }
 
-    const rectBoundaries = {
-      top,
-      left,
-      right: left + width,
-      bottom: top + height,
-    };
+  /**
+   * Update existing threshold with new dimensions.
+   *
+   * @param key
+   * @param rect
+   * @param isInner
+   */
+  updateMainThreshold(
+    key: string,
+    rect: RectDimensions,
+    isInner: boolean
+  ): void {
+    const threshold = this._getThreshold(
+      getBoundariesFromDimensions(rect),
+      isInner
+    );
 
-    this._createThreshold(key, rectBoundaries, isInner);
+    if (__DEV__) {
+      if (!this.thresholds[key]) {
+        throw new Error(`Threshold ${key} does not exist.`);
+      }
+    }
+
+    Object.assign(this.thresholds[key], threshold);
+
+    this.isOut[key].reset();
   }
 
   /**

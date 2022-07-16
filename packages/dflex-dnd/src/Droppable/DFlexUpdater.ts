@@ -259,7 +259,7 @@ class DFlexUpdater {
       draggedElm: { id, initialOffset },
     } = this.draggable;
 
-    threshold.setMainThreshold(
+    threshold.updateMainThreshold(
       id,
       {
         width: initialOffset.width,
