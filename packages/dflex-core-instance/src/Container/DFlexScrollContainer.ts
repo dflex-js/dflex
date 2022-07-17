@@ -135,8 +135,8 @@ class DFlexScrollContainer {
   private _listenerDataset: string;
 
   private static _OUTER_THRESHOLD: ThresholdPercentages = {
-    horizontal: 35,
-    vertical: 35,
+    horizontal: 25,
+    vertical: 25,
   };
 
   private static _MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
@@ -362,24 +362,24 @@ class DFlexScrollContainer {
     return top + height + this.scrollRect.top;
   }
 
-  isElementVisibleViewportX(currentLeft: number): boolean {
-    return (
-      currentLeft <= this.getMaximumScrollContainerLeft() &&
-      currentLeft >= this.scrollRect.left
+  isElementVisibleViewportX(currentLeft: number, width: number): boolean {
+    const isNotVisible = this._outerThreshold!.isOutThresholdH(
+      this._threshold_outer_key,
+      currentLeft,
+      currentLeft + width
     );
+
+    return !isNotVisible;
   }
 
-  isElementVisibleViewportY(currentTop: number): boolean {
-    // const x = this._outerThreshold?.isOutThresholdV(
-    //   this._threshold_outer_key,
-    //   currentTop,
-    //   currentTop + 20
-    // );
-
-    return (
-      currentTop <= this.getMaximumScrollContainerTop() &&
-      currentTop >= this.scrollRect.top
+  isElementVisibleViewportY(currentTop: number, hight: number): boolean {
+    const isNotVisible = this._outerThreshold!.isOutThresholdV(
+      this._threshold_outer_key,
+      currentTop,
+      currentTop + hight
     );
+
+    return !isNotVisible;
   }
 
   private animatedListener(
