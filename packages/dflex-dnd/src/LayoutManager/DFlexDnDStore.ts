@@ -1,14 +1,7 @@
 import Store from "@dflex/store";
 import type { RegisterInputOpts } from "@dflex/store";
 
-import {
-  Tracker,
-  canUseDOM,
-  Dimensions,
-  combineKeys,
-  Threshold,
-  ThresholdPercentages,
-} from "@dflex/utils";
+import { Tracker, canUseDOM, Dimensions } from "@dflex/utils";
 
 import {
   DFlexParentContainer,
@@ -26,10 +19,7 @@ import scheduler, {
   UpdateFn,
 } from "./DFlexScheduler";
 
-import {
-  updateBranchVisibility,
-  updateElementVisibility,
-} from "./DFlexVisibilityUpdater";
+import { updateBranchVisibility } from "./DFlexVisibilityUpdater";
 import { initMutationObserver } from "./DFlexMutations";
 
 type Containers = Map<string, DFlexParentContainer>;
@@ -51,10 +41,6 @@ class DnDStoreImp extends Store {
 
   scrolls: Scrolls;
 
-  containerThresholds: Threshold;
-
-  private _hasEnabledContainerThresholds: boolean;
-
   unifiedContainerDimensions: UnifiedContainerDimensions;
 
   observer: Observer;
@@ -73,22 +59,12 @@ class DnDStoreImp extends Store {
 
   private _isInitialized: boolean;
 
-  private static _CONTAINER_OUTER_THRESHOLD: ThresholdPercentages = {
-    horizontal: 60,
-    vertical: 60,
-  };
-
   constructor() {
     super();
     this.containers = new Map();
     this.scrolls = new Map();
     this.unifiedContainerDimensions = new Map();
     this.tracker = new Tracker();
-    this.containerThresholds = new Threshold(
-      // eslint-disable-next-line no-underscore-dangle
-      DnDStoreImp._CONTAINER_OUTER_THRESHOLD
-    );
-    this._hasEnabledContainerThresholds = false;
     this._isInitialized = false;
     this._isDOM = false;
     this.observer = null;
@@ -118,7 +94,7 @@ class DnDStoreImp extends Store {
    *
    * @param id
    */
-  private _initElmDOMInstance(
+  private _initElmGrid(
     id: string,
     scroll: DFlexScrollContainer,
     container: DFlexParentContainer
@@ -139,36 +115,6 @@ class DnDStoreImp extends Store {
 
       dflexNode.grid.clone(container.grid);
     }
-
-    updateElementVisibility(DOM, dflexNode, scroll);
-  }
-
-  setContainerThresholds(depth: number) {
-    if (this._hasEnabledContainerThresholds) return;
-
-    this.getBranchesByDepth(depth).forEach((key) => {
-      const elmContainer = this.containers.get(key)!;
-
-      const { boundaries } = elmContainer;
-
-      if (__DEV__) {
-        if (!boundaries) {
-          throw new Error(`Siblings boundaries for ${key} not found.`);
-        }
-      }
-
-      const insertionLayerKey = combineKeys(depth, key);
-
-      this.containerThresholds.setContainerThreshold(
-        key,
-        insertionLayerKey,
-        depth,
-        boundaries,
-        this.unifiedContainerDimensions.get(depth)!
-      );
-    });
-
-    this._hasEnabledContainerThresholds = true;
   }
 
   private _initBranchScrollAndVisibility(
@@ -187,26 +133,6 @@ class DnDStoreImp extends Store {
     }
 
     const branch = this.DOMGen.getElmBranchByKey(SK);
-
-    if (!this.containers.has(SK)) {
-      const lastElm = this.registry.get(branch[branch.length - 1])!;
-
-      container = new DFlexParentContainer(
-        branch.length,
-        lastElm.currentPosition
-      );
-
-      this.containers.set(SK, container);
-    } else {
-      if (__DEV__) {
-        throw new Error(
-          `_initBranchScrollAndVisibility: Container with key:${SK} already exists.` +
-            `This function supposed to be called once when initializing the branch during the registration.`
-        );
-      }
-
-      container = this.containers.get(SK)!;
-    }
 
     if (!this.scrolls.has(SK)) {
       scroll = new DFlexScrollContainer(
@@ -228,9 +154,30 @@ class DnDStoreImp extends Store {
       scroll = this.scrolls.get(SK)!;
     }
 
-    this.getElmBranchByKey(SK).forEach((id) => {
-      this._initElmDOMInstance(id, scroll, container);
+    if (!this.containers.has(SK)) {
+      container = new DFlexParentContainer(branch.length);
+
+      this.containers.set(SK, container);
+    } else {
+      if (__DEV__) {
+        throw new Error(
+          `_initBranchScrollAndVisibility: Container with key:${SK} already exists.` +
+            `This function supposed to be called once when initializing the branch during the registration.`
+        );
+      }
+
+      container = this.containers.get(SK)!;
+    }
+
+    branch.forEach((id) => {
+      this._initElmGrid(id, scroll, container);
     });
+
+    updateBranchVisibility(this, SK);
+
+    const lastElm = this.registry.get(branch[branch.length - 1])!;
+
+    container.preservePosition(lastElm.currentPosition);
 
     initMutationObserver(this, DOM);
   }
@@ -397,8 +344,6 @@ class DnDStoreImp extends Store {
 
     // Destroys all registered instances.
     super.destroy();
-
-    this.containerThresholds.destroy();
 
     if (this.observer) {
       this.observer.disconnect();

@@ -7,6 +7,8 @@ import {
   Migration,
   combineKeys,
   IPointAxes,
+  RectDimensions,
+  ThresholdPercentages,
 } from "@dflex/utils";
 
 import type { DFlexNode } from "@dflex/core-instance";
@@ -27,7 +29,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
 
   migration: Migration;
 
-  threshold: Threshold;
+  threshold!: Threshold;
 
   isViewportRestricted: boolean;
 
@@ -77,9 +79,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
 
     this.containersTransition = opts.containersTransition;
 
-    this.threshold = new Threshold(opts.threshold);
-
-    this.threshold.setMainThreshold(
+    this._initThresholds(
       id,
       {
         width,
@@ -87,10 +87,9 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
         left: currentPosition.x,
         top: currentPosition.y,
       },
-      false
+      depth,
+      opts.threshold
     );
-
-    store.setContainerThresholds(depth);
 
     this.appendDraggedToContainerDimensions(true);
 
@@ -127,6 +126,39 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
       siblings !== null &&
       (opts.restrictionsStatus.isContainerRestricted ||
         opts.restrictionsStatus.isSelfRestricted);
+  }
+
+  private _initThresholds(
+    id: string,
+    rect: RectDimensions,
+    depth: number,
+    thresholdPercentage: ThresholdPercentages
+  ) {
+    this.threshold = new Threshold(thresholdPercentage);
+
+    this.threshold.setMainThreshold(id, rect, false);
+
+    store.getBranchesByDepth(depth).forEach((key) => {
+      const elmContainer = store.containers.get(key)!;
+
+      const { boundaries } = elmContainer;
+
+      if (__DEV__) {
+        if (!boundaries) {
+          throw new Error(`Siblings boundaries for ${key} not found.`);
+        }
+      }
+
+      const insertionLayerKey = combineKeys(depth, key);
+
+      this.threshold.setContainerThreshold(
+        key,
+        insertionLayerKey,
+        depth,
+        boundaries,
+        store.unifiedContainerDimensions.get(depth)!
+      );
+    });
   }
 
   protected appendDraggedToContainerDimensions(isAppend: boolean) {

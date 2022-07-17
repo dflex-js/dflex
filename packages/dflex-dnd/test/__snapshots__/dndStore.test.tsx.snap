@@ -79,7 +79,11 @@ DnDStoreImp {
         "x": 1,
         "y": 1,
       },
-      "originLength": -1,
+      "lastElmPosition": PointNum {
+        "x": 0,
+        "y": 0,
+      },
+      "originLength": 4,
     },
   },
   "deferred": Array [],
@@ -129,7 +133,7 @@ DnDStoreImp {
     "notify": [Function],
     "subscribe": [Function],
   },
-  "observer": null,
+  "observer": MutationObserver {},
   "queueTimeoutId": 1000000000000,
   "registry": Map {
     "id-1" => DFlexNode {

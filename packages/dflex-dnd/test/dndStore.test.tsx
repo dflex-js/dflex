@@ -115,7 +115,7 @@ describe("DFlex DnD", () => {
           Object {
             "isEmpty": false,
             "isOrphan": false,
-            "isRestoredLastPosition": false,
+            "isRestoredLastPosition": true,
             "position": PointNum {
               "x": 0,
               "y": 0,

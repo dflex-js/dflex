@@ -33,10 +33,10 @@ class DFlexParentContainer {
 
   static OUT_OF_RANGE = -1;
 
-  constructor(originLength: number, lastElmPosition: PointNum) {
+  constructor(originLength: number) {
     this.grid = new PointNum(1, 1);
     this.originLength = originLength;
-    this.lastElmPosition = new PointNum(lastElmPosition.x, lastElmPosition.y);
+    this.lastElmPosition = new PointNum(0, 0);
     this._boundariesByRow = {};
     this._gridSiblingsHasNewRow = false;
   }
