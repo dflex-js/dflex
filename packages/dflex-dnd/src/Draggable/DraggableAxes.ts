@@ -6,23 +6,12 @@ import {
   PointBool,
   Migration,
   combineKeys,
-  getParentElm,
-} from "@dflex/utils";
-import type {
-  IPointNum,
-  IPointBool,
-  IMigration,
   IPointAxes,
 } from "@dflex/utils";
 
-import { DFlexParentContainer, DFlexNode } from "@dflex/core-instance";
+import type { DFlexNode } from "@dflex/core-instance";
 
-import {
-  initDFlexEvent,
-  initMutationObserver,
-  scheduler,
-  store,
-} from "../LayoutManager";
+import { initDFlexEvent, scheduler, store } from "../LayoutManager";
 
 import type {
   ContainersTransition,
@@ -32,19 +21,19 @@ import type {
 } from "../types";
 
 class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
-  positionPlaceholder: IPointNum;
+  positionPlaceholder: PointNum;
 
-  gridPlaceholder: IPointNum;
+  gridPlaceholder: PointNum;
 
-  migration: IMigration;
+  migration: Migration;
 
   threshold: Threshold;
 
   isViewportRestricted: boolean;
 
-  isMovingAwayFrom: IPointBool;
+  isMovingAwayFrom: PointBool;
 
-  readonly innerOffset: IPointNum;
+  readonly innerOffset: PointNum;
 
   private isLayoutStateUpdated: boolean;
 
@@ -58,7 +47,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
 
   private readonly marginX: number;
 
-  private readonly initCoordinates: IPointNum;
+  private readonly initCoordinates: PointNum;
 
   events: ReturnType<typeof initDFlexEvent>;
 
@@ -74,8 +63,8 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
       grid,
       currentPosition,
       keys: { SK },
-      initialOffset: { width, height },
       depth,
+      initialOffset: { width, height },
     } = element;
 
     this.gridPlaceholder = new PointNum(grid.x, grid.y);
@@ -83,14 +72,6 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
     const siblings = store.getElmBranchByKey(SK);
 
     this.migration = new Migration(order.self, SK, store.tracker.newTravel());
-
-    const container = store.containers.get(SK)!;
-
-    if (!container.lastElmPosition) {
-      const lastElm = store.registry.get(siblings[siblings.length - 1])!;
-
-      container.preservePosition(lastElm.currentPosition);
-    }
 
     this.isViewportRestricted = true;
 
@@ -109,53 +90,9 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
       false
     );
 
+    store.setContainerThresholds(depth);
+
     this.appendDraggedToContainerDimensions(true);
-
-    store.getBranchesByDepth(depth).forEach((key) => {
-      const elmContainer = store.containers.get(key)!;
-
-      const { boundaries } = elmContainer;
-
-      if (__DEV__) {
-        if (!boundaries) {
-          throw new Error(`Siblings boundaries for ${key} not found.`);
-        }
-      }
-
-      const composedK = combineKeys(depth, key);
-
-      this.threshold.setContainerThreshold(
-        key,
-        composedK,
-        depth,
-        boundaries,
-        store.unifiedContainerDimensions.get(depth)!
-      );
-
-      if (elmContainer.originLength === DFlexParentContainer.OUT_OF_RANGE) {
-        const { length } = store.getElmBranchByKey(key);
-        elmContainer.originLength = length;
-      }
-
-      if (!store.interactiveDOM.has(key)) {
-        scheduler(
-          store,
-          () => {
-            const childDOM = store.interactiveDOM.get(
-              store.getElmBranchByKey(key)[0]
-            )!;
-
-            getParentElm(childDOM, (parentDOM) => {
-              parentDOM.dataset.dflexKey = key;
-              store.interactiveDOM.set(key, parentDOM);
-              initMutationObserver(store, parentDOM);
-              return true;
-            });
-          },
-          null
-        );
-      }
-    });
 
     this.isMovingAwayFrom = new PointBool(false, false);
 

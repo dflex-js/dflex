@@ -3,7 +3,6 @@ import { PointNum, dirtyAssignBiggestRect } from "@dflex/utils";
 
 import type {
   Dimensions,
-  IPointNum,
   IPointAxes,
   RectBoundaries,
   RectDimensions,
@@ -16,7 +15,7 @@ class DFlexParentContainer {
   boundaries!: RectBoundaries;
 
   /** Numbers of total columns and rows each container has.  */
-  grid: IPointNum;
+  grid: PointNum;
 
   /**
    * Origin length for container before being transformed used to prevent
@@ -30,13 +29,14 @@ class DFlexParentContainer {
    * Preserve the last element position in the list .
    * Usage: Getting this position when the dragged is going back from the tail.
    */
-  lastElmPosition!: IPointNum;
+  lastElmPosition!: PointNum;
 
   static OUT_OF_RANGE = -1;
 
-  constructor() {
+  constructor(originLength: number, lastElmPosition: PointNum) {
     this.grid = new PointNum(1, 1);
-    this.originLength = DFlexParentContainer.OUT_OF_RANGE;
+    this.originLength = originLength;
+    this.lastElmPosition = new PointNum(lastElmPosition.x, lastElmPosition.y);
     this._boundariesByRow = {};
     this._gridSiblingsHasNewRow = false;
   }

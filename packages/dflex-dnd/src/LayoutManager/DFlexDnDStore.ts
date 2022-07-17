@@ -1,7 +1,14 @@
 import Store from "@dflex/store";
 import type { RegisterInputOpts } from "@dflex/store";
 
-import { Tracker, canUseDOM, Dimensions } from "@dflex/utils";
+import {
+  Tracker,
+  canUseDOM,
+  Dimensions,
+  combineKeys,
+  Threshold,
+  ThresholdPercentages,
+} from "@dflex/utils";
 
 import {
   DFlexParentContainer,
@@ -23,6 +30,7 @@ import {
   updateBranchVisibility,
   updateElementVisibility,
 } from "./DFlexVisibilityUpdater";
+import { initMutationObserver } from "./DFlexMutations";
 
 type Containers = Map<string, DFlexParentContainer>;
 
@@ -43,6 +51,10 @@ class DnDStoreImp extends Store {
 
   scrolls: Scrolls;
 
+  containerThresholds: Threshold;
+
+  private _hasEnabledContainerThresholds: boolean;
+
   unifiedContainerDimensions: UnifiedContainerDimensions;
 
   observer: Observer;
@@ -61,12 +73,22 @@ class DnDStoreImp extends Store {
 
   private _isInitialized: boolean;
 
+  private static _CONTAINER_OUTER_THRESHOLD: ThresholdPercentages = {
+    horizontal: 60,
+    vertical: 60,
+  };
+
   constructor() {
     super();
     this.containers = new Map();
     this.scrolls = new Map();
     this.unifiedContainerDimensions = new Map();
     this.tracker = new Tracker();
+    this.containerThresholds = new Threshold(
+      // eslint-disable-next-line no-underscore-dangle
+      DnDStoreImp._CONTAINER_OUTER_THRESHOLD
+    );
+    this._hasEnabledContainerThresholds = false;
     this._isInitialized = false;
     this._isDOM = false;
     this.observer = null;
@@ -121,7 +143,39 @@ class DnDStoreImp extends Store {
     updateElementVisibility(DOM, dflexNode, scroll);
   }
 
-  private _initBranchScrollAndVisibility(SK: string, depth: number) {
+  setContainerThresholds(depth: number) {
+    if (this._hasEnabledContainerThresholds) return;
+
+    this.getBranchesByDepth(depth).forEach((key) => {
+      const elmContainer = this.containers.get(key)!;
+
+      const { boundaries } = elmContainer;
+
+      if (__DEV__) {
+        if (!boundaries) {
+          throw new Error(`Siblings boundaries for ${key} not found.`);
+        }
+      }
+
+      const insertionLayerKey = combineKeys(depth, key);
+
+      this.containerThresholds.setContainerThreshold(
+        key,
+        insertionLayerKey,
+        depth,
+        boundaries,
+        this.unifiedContainerDimensions.get(depth)!
+      );
+    });
+
+    this._hasEnabledContainerThresholds = true;
+  }
+
+  private _initBranchScrollAndVisibility(
+    SK: string,
+    depth: number,
+    DOM: HTMLElement
+  ) {
     let container: DFlexParentContainer;
     let scroll: DFlexScrollContainer;
 
@@ -132,8 +186,15 @@ class DnDStoreImp extends Store {
       });
     }
 
+    const branch = this.DOMGen.getElmBranchByKey(SK);
+
     if (!this.containers.has(SK)) {
-      container = new DFlexParentContainer();
+      const lastElm = this.registry.get(branch[branch.length - 1])!;
+
+      container = new DFlexParentContainer(
+        branch.length,
+        lastElm.currentPosition
+      );
 
       this.containers.set(SK, container);
     } else {
@@ -148,7 +209,6 @@ class DnDStoreImp extends Store {
     }
 
     if (!this.scrolls.has(SK)) {
-      const branch = this.DOMGen.getElmBranchByKey(SK);
       scroll = new DFlexScrollContainer(
         this.interactiveDOM.get(branch[0])!,
         SK,
@@ -171,6 +231,8 @@ class DnDStoreImp extends Store {
     this.getElmBranchByKey(SK).forEach((id) => {
       this._initElmDOMInstance(id, scroll, container);
     });
+
+    initMutationObserver(this, DOM);
   }
 
   register(element: RegisterInputOpts) {
@@ -335,6 +397,8 @@ class DnDStoreImp extends Store {
 
     // Destroys all registered instances.
     super.destroy();
+
+    this.containerThresholds.destroy();
 
     if (this.observer) {
       this.observer.disconnect();

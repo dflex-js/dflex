@@ -34,7 +34,9 @@ type BranchComposedCallBackFunction = (
   // eslint-disable-next-line no-unused-vars
   childrenKey: string,
   // eslint-disable-next-line no-unused-vars
-  childrenDepth: number
+  childrenDepth: number,
+  // eslint-disable-next-line no-unused-vars
+  parentDOM: HTMLElement
 ) => void;
 
 function getElmDOMOrThrow(id: string): HTMLElement | null {
@@ -163,7 +165,7 @@ class DFlexBaseStore {
       DOM.dataset.dflexKey = keys.CHK;
 
       if (typeof branchComposedCallBack === "function") {
-        branchComposedCallBack(keys.CHK, depth - 1);
+        branchComposedCallBack(keys.CHK, depth - 1, DOM);
       }
     }
   }
