@@ -33,7 +33,7 @@ class Droppable extends DFlexUpdater {
 
   private scrollSpeed: number;
 
-  private regularDragging: boolean;
+  private _isRegularDragging: boolean;
 
   private isOnDragOutThresholdEvtEmitted: boolean;
 
@@ -121,7 +121,7 @@ class Droppable extends DFlexUpdater {
      * This is true until there's a scrolling. Then, the scroll will handle the
      * scroll with dragging to ensure both are executed in the same frame.
      */
-    this.regularDragging = true;
+    this._isRegularDragging = true;
 
     if (this.draggable.isDraggedPositionFixed) {
       // @ts-expect-error
@@ -502,6 +502,7 @@ class Droppable extends DFlexUpdater {
   // TODO: Merge scrollElementOnY/scrollElementOnx with one method scrollElement.
   private scrollElementOnY(x: number, y: number, direction: 1 | -1) {
     let nextScrollTop = this.scrollAxes.y;
+    console.log("file: Droppable.ts ~ line 505 ~ nextScrollTop", nextScrollTop);
 
     nextScrollTop += direction * this.scrollSpeed;
 
@@ -594,7 +595,7 @@ class Droppable extends DFlexUpdater {
 
     this.draggable.isViewportRestricted = false;
 
-    this.regularDragging = false;
+    this._isRegularDragging = false;
 
     this.scrollAnimatedFrame = requestAnimationFrame(() => {
       this[on](x, y, direction);
@@ -626,6 +627,8 @@ class Droppable extends DFlexUpdater {
       );
 
       if (isOutV) {
+        this.scrollElement(x, y, 1, "scrollElementOnY");
+
         if (isLeftFromBottom) {
           this.scrollElement(x, y, 1, "scrollElementOnY");
           return;
@@ -656,7 +659,7 @@ class Droppable extends DFlexUpdater {
        * Scroll turns the flag off. But regular dragging will be resumed
        * when the drag is outside the auto scrolling area.
        */
-      this.regularDragging = true;
+      this._isRegularDragging = true;
 
       /**
        * Reset scrollSpeed.
@@ -666,7 +669,7 @@ class Droppable extends DFlexUpdater {
   }
 
   dragAt(x: number, y: number) {
-    if (this.regularDragging) {
+    if (this._isRegularDragging) {
       this.draggable.dragAt(
         x + this.scrollAxes.x - this.initialScroll.x,
         y + this.scrollAxes.y - this.initialScroll.y
@@ -711,13 +714,11 @@ class Droppable extends DFlexUpdater {
       // when it's out, and on of theses is true then it's happening.
       if (!isOutSiblingsContainer) {
         if (this.animatedDraggedInsertionFrame === null) {
-          this.animatedDraggedInsertionFrame = window.requestAnimationFrame(
-            () => {
-              this.detectNearestElm();
+          this.animatedDraggedInsertionFrame = requestAnimationFrame(() => {
+            this.detectNearestElm();
 
-              this.animatedDraggedInsertionFrame = null;
-            }
-          );
+            this.animatedDraggedInsertionFrame = null;
+          });
         }
 
         return;
@@ -770,13 +771,11 @@ class Droppable extends DFlexUpdater {
       }
 
       if (this.animatedDraggedInsertionFrame === null) {
-        this.animatedDraggedInsertionFrame = window.requestAnimationFrame(
-          () => {
-            this.detectNearestElm();
+        this.animatedDraggedInsertionFrame = requestAnimationFrame(() => {
+          this.detectNearestElm();
 
-            this.animatedDraggedInsertionFrame = null;
-          }
-        );
+          this.animatedDraggedInsertionFrame = null;
+        });
       }
     }
   }

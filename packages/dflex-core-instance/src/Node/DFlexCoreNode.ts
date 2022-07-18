@@ -166,10 +166,10 @@ class DFlexCoreNode extends DFlexBaseNode {
 
   transform(DOM: HTMLElement): void {
     if (this.animatedFrame !== null) {
-      window.cancelAnimationFrame(this.animatedFrame);
+      cancelAnimationFrame(this.animatedFrame);
     }
 
-    this.animatedFrame = window.requestAnimationFrame(() => {
+    this.animatedFrame = requestAnimationFrame(() => {
       DFlexCoreNode.transform(DOM, this.translate!.x, this.translate!.y);
       this.animatedFrame = null;
     });

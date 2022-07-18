@@ -104,6 +104,7 @@ class DFlexBaseDraggable<T extends DFlexBaseNode> {
 
       return;
     }
+
     /**
      * Not active: end of dragging.
      */

@@ -380,20 +380,24 @@ class DFlexScrollContainer {
   }
 
   isElementVisibleViewportH(currentLeft: number, width: number): boolean {
+    const currentTopWithScroll = currentLeft - this.scrollRect.left;
+
     const isNotVisible = this._outerThreshold!.isOutThresholdH(
       this._threshold_outer_key,
-      currentLeft,
-      currentLeft + width
+      currentTopWithScroll,
+      currentTopWithScroll + width
     );
 
     return !isNotVisible;
   }
 
   isElementVisibleViewportV(currentTop: number, hight: number): boolean {
+    const currentTopWithScroll = currentTop - this.scrollRect.top;
+
     const isNotVisible = this._outerThreshold!.isOutThresholdV(
       this._threshold_outer_key,
-      currentTop,
-      currentTop + hight
+      currentTopWithScroll,
+      currentTopWithScroll + hight
     );
 
     return !isNotVisible;

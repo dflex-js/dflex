@@ -104,7 +104,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
       Math.round(y - currentPosition.y)
     );
 
-    const style = window.getComputedStyle(DOM);
+    const style = getComputedStyle(DOM);
 
     // get element margin
     const rm = Math.round(parseFloat(style.marginRight));
