@@ -1,30 +1,34 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`DFlex DnD Shallow test the store Element is initiated 1`] = `
+exports[`DFlex DnD DFlex DnD Store registration Element is initiated 1`] = `
 DnDStoreImp {
   "DOMGen": Generator {
     "_branches": Object {
       "0-0": Array [
         "id-1",
+      ],
+      "0-1": Array [
         "id-2",
         "id-3",
         "id-4",
       ],
       "1-0": Array [
         "dflex-id-1",
+        "dflex-id-2",
       ],
     },
     "_branchesByDepth": Object {
       "0": Array [
         "0-0",
+        "0-1",
       ],
       "1": Array [
         "1-0",
       ],
     },
     "_indicator": Object {
-      "0": 3,
-      "1": 1,
+      "0": 2,
+      "1": 2,
       "2": 0,
       "3": 0,
     },
@@ -32,28 +36,24 @@ DnDStoreImp {
     "_prevKey": "1-0",
   },
   "_handleQueue": [Function],
-  "_initBranchScrollAndVisibility": [Function],
+  "_initBranch": [Function],
   "_isDOM": true,
   "_isInitialized": true,
   "_lastDOMParent": <div
-    data-dflex-key="0-0"
-    data-index="0"
-    id="dflex-id-1"
+    data-dflex-key="0-1"
+    data-index="1"
+    id="dflex-id-2"
   >
     <div
       data-index="0"
-      id="id-1"
-    />
-    <div
-      data-index="1"
       id="id-2"
     />
     <div
-      data-index="2"
+      data-index="1"
       id="id-3"
     />
     <div
-      data-index="3"
+      data-index="2"
       id="id-4"
     />
   </div>,
@@ -83,7 +83,33 @@ DnDStoreImp {
         "x": 0,
         "y": 0,
       },
-      "originLength": 4,
+      "originLength": 1,
+    },
+    "0-1" => DFlexParentContainer {
+      "_boundariesByRow": Object {
+        "1": Object {
+          "bottom": 0,
+          "left": 0,
+          "right": 0,
+          "top": 0,
+        },
+      },
+      "_gridSiblingsHasNewRow": false,
+      "boundaries": Object {
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+      },
+      "grid": PointNum {
+        "x": 1,
+        "y": 1,
+      },
+      "lastElmPosition": PointNum {
+        "x": 0,
+        "y": 0,
+      },
+      "originLength": 3,
     },
   },
   "deferred": Array [],
@@ -97,33 +123,39 @@ DnDStoreImp {
         data-index="0"
         id="id-1"
       />
-      <div
-        data-index="1"
-        id="id-2"
-      />
-      <div
-        data-index="2"
-        id="id-3"
-      />
-      <div
-        data-index="3"
-        id="id-4"
-      />
     </div>,
     "id-1" => <div
       data-index="0"
       id="id-1"
     />,
-    "id-2" => <div
+    "dflex-id-2" => <div
+      data-dflex-key="0-1"
       data-index="1"
+      id="dflex-id-2"
+    >
+      <div
+        data-index="0"
+        id="id-2"
+      />
+      <div
+        data-index="1"
+        id="id-3"
+      />
+      <div
+        data-index="2"
+        id="id-4"
+      />
+    </div>,
+    "id-2" => <div
+      data-index="0"
       id="id-2"
     />,
     "id-3" => <div
-      data-index="2"
+      data-index="1"
       id="id-3"
     />,
     "id-4" => <div
-      data-index="3"
+      data-index="2"
       id="id-4"
     />,
   },
@@ -134,11 +166,11 @@ DnDStoreImp {
     "subscribe": [Function],
   },
   "observer": MutationObserver {},
-  "queueTimeoutId": 1000000000000,
+  "queueTimeoutId": 1000000000001,
   "registry": Map {
     "id-1" => DFlexNode {
       "_hasAttribute": Set {},
-      "animatedFrame": 1000000000001,
+      "animatedFrame": 1000000000002,
       "currentPosition": PointNum {
         "x": 0,
         "y": 0,
@@ -173,6 +205,23 @@ DnDStoreImp {
         "y": 0,
       },
     },
+    "dflex-id-1" => DFlexNode {
+      "animatedFrame": null,
+      "depth": 1,
+      "id": "dflex-id-1",
+      "isPaused": false,
+      "isVisible": true,
+      "keys": Object {
+        "CHK": "0-0",
+        "PK": "2-0",
+        "SK": "1-0",
+      },
+      "order": Object {
+        "parent": 0,
+        "self": 0,
+      },
+      "readonly": true,
+    },
     "id-2" => DFlexNode {
       "_hasAttribute": Set {},
       "animatedFrame": null,
@@ -198,11 +247,11 @@ DnDStoreImp {
       "keys": Object {
         "CHK": null,
         "PK": "1-0",
-        "SK": "0-0",
+        "SK": "0-1",
       },
       "order": Object {
-        "parent": 0,
-        "self": 1,
+        "parent": 1,
+        "self": 0,
       },
       "readonly": false,
       "translate": PointNum {
@@ -235,11 +284,11 @@ DnDStoreImp {
       "keys": Object {
         "CHK": null,
         "PK": "1-0",
-        "SK": "0-0",
+        "SK": "0-1",
       },
       "order": Object {
-        "parent": 0,
-        "self": 2,
+        "parent": 1,
+        "self": 1,
       },
       "readonly": false,
       "translate": PointNum {
@@ -272,11 +321,11 @@ DnDStoreImp {
       "keys": Object {
         "CHK": null,
         "PK": "1-0",
-        "SK": "0-0",
+        "SK": "0-1",
       },
       "order": Object {
-        "parent": 0,
-        "self": 3,
+        "parent": 1,
+        "self": 2,
       },
       "readonly": false,
       "translate": PointNum {
@@ -284,20 +333,20 @@ DnDStoreImp {
         "y": 0,
       },
     },
-    "dflex-id-1" => DFlexNode {
+    "dflex-id-2" => DFlexNode {
       "animatedFrame": null,
       "depth": 1,
-      "id": "dflex-id-1",
+      "id": "dflex-id-2",
       "isPaused": false,
       "isVisible": true,
       "keys": Object {
-        "CHK": "0-0",
+        "CHK": "0-1",
         "PK": "2-0",
         "SK": "1-0",
       },
       "order": Object {
         "parent": 0,
-        "self": 0,
+        "self": 1,
       },
       "readonly": true,
     },
@@ -322,29 +371,106 @@ DnDStoreImp {
         <head />
         <body
           data-dflex-scroll-listener-0-0="false"
+          data-dflex-scroll-listener-0-1="false"
         >
           <div>
-            <div
-              data-dflex-key="0-0"
-              data-index="0"
-              id="dflex-id-1"
-            >
+            <div>
               <div
+                data-dflex-key="0-0"
                 data-index="0"
-                id="id-1"
-              />
+                id="dflex-id-1"
+              >
+                <div
+                  data-index="0"
+                  id="id-1"
+                />
+              </div>
               <div
+                data-dflex-key="0-1"
                 data-index="1"
-                id="id-2"
-              />
+                id="dflex-id-2"
+              >
+                <div
+                  data-index="0"
+                  id="id-2"
+                />
+                <div
+                  data-index="1"
+                  id="id-3"
+                />
+                <div
+                  data-index="2"
+                  id="id-4"
+                />
+              </div>
+            </div>
+          </div>
+        </body>
+      </html>,
+      "scrollContainerRect": Object {
+        "height": 768,
+        "left": 0,
+        "top": 0,
+        "width": 1024,
+      },
+      "scrollRect": Object {
+        "height": 0,
+        "left": 0,
+        "top": 0,
+        "width": 0,
+      },
+    },
+    "0-1" => DFlexScrollContainer {
+      "_SK": "0-1",
+      "_hasThrottledFrame": null,
+      "_innerThreshold": null,
+      "_listenerDataset": "dflexScrollListener-0-1",
+      "_outerThreshold": null,
+      "_scrollEventCallback": null,
+      "_threshold_inner_key": "scroll_inner_0-1",
+      "_threshold_outer_key": "scroll_outer_0-1",
+      "allowDynamicVisibility": false,
+      "animatedResizeListener": [Function],
+      "animatedScrollListener": [Function],
+      "hasDocumentAsContainer": true,
+      "hasOverflowX": false,
+      "hasOverflowY": false,
+      "scrollContainerDOM": <html>
+        <head />
+        <body
+          data-dflex-scroll-listener-0-0="false"
+          data-dflex-scroll-listener-0-1="false"
+        >
+          <div>
+            <div>
               <div
-                data-index="2"
-                id="id-3"
-              />
+                data-dflex-key="0-0"
+                data-index="0"
+                id="dflex-id-1"
+              >
+                <div
+                  data-index="0"
+                  id="id-1"
+                />
+              </div>
               <div
-                data-index="3"
-                id="id-4"
-              />
+                data-dflex-key="0-1"
+                data-index="1"
+                id="dflex-id-2"
+              >
+                <div
+                  data-index="0"
+                  id="id-2"
+                />
+                <div
+                  data-index="1"
+                  id="id-3"
+                />
+                <div
+                  data-index="2"
+                  id="id-4"
+                />
+              </div>
             </div>
           </div>
         </body>
@@ -364,7 +490,7 @@ DnDStoreImp {
     },
   },
   "tracker": Tracker {
-    "travelID": 1,
+    "travelID": 2,
   },
   "unifiedContainerDimensions": Map {
     0 => Object {

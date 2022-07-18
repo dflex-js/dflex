@@ -74,8 +74,7 @@ class DnDStoreImp extends Store {
     this.listeners = initDFlexListeners();
     this.update = scheduler;
 
-    this._initBranchScrollAndVisibility =
-      this._initBranchScrollAndVisibility.bind(this);
+    this._initBranch = this._initBranch.bind(this);
   }
 
   private _initWhenRegister() {
@@ -85,19 +84,10 @@ class DnDStoreImp extends Store {
     });
   }
 
-  /**
-   * Complete initializing the task:
-   * 1- Gets element DOM rect.
-   * 2- Check visibility.
-   * 2- Update the element grid.
-   * 3- Update the container grid.
-   *
-   * @param id
-   */
   private _initElmGrid(
-    id: string,
     scroll: DFlexScrollContainer,
-    container: DFlexParentContainer
+    container: DFlexParentContainer,
+    id: string
   ) {
     const [dflexNode, DOM] = this.getElmWithDOM(id);
 
@@ -117,11 +107,7 @@ class DnDStoreImp extends Store {
     }
   }
 
-  private _initBranchScrollAndVisibility(
-    SK: string,
-    depth: number,
-    DOM: HTMLElement
-  ) {
+  private _initBranch(SK: string, depth: number, DOM: HTMLElement) {
     let container: DFlexParentContainer;
     let scroll: DFlexScrollContainer;
 
@@ -169,9 +155,9 @@ class DnDStoreImp extends Store {
       container = this.containers.get(SK)!;
     }
 
-    branch.forEach((id) => {
-      this._initElmGrid(id, scroll, container);
-    });
+    const initElmGrid = this._initElmGrid.bind(this, scroll, container);
+
+    branch.forEach(initElmGrid);
 
     updateBranchVisibility(this, SK);
 
@@ -217,7 +203,7 @@ class DnDStoreImp extends Store {
         };
 
         // Create an instance of DFlexCoreNode and gets the DOM element into the store.
-        super.register(coreInput, this._initBranchScrollAndVisibility);
+        super.register(coreInput, this._initBranch);
       },
       null
     );
