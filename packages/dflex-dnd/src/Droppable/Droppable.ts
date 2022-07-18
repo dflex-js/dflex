@@ -616,11 +616,16 @@ class Droppable extends DFlexUpdater {
     /**
      * Manage scrolling.
      */
-    if (this.draggable.scroll.enable && this.scrollAnimatedFrame === null) {
-      if (scroll.isOutThresholdV(y)) {
-        const { isLeftFromBottom } =
-          this.draggable.threshold.isOut[draggedElm.id];
+    if (this.scrollAnimatedFrame === null) {
+      const { isLeftFromBottom } =
+        this.draggable.threshold.isOut[draggedElm.id];
 
+      const isOutV = scroll.isOutThresholdV(
+        y,
+        this.draggable.draggedElm.initialOffset.height
+      );
+
+      if (isOutV) {
         if (isLeftFromBottom) {
           this.scrollElement(x, y, 1, "scrollElementOnY");
           return;
@@ -631,7 +636,9 @@ class Droppable extends DFlexUpdater {
         return;
       }
 
-      if (scroll.isOutThresholdH(x)) {
+      if (
+        scroll.isOutThresholdH(x, this.draggable.draggedElm.initialOffset.width)
+      ) {
         const { isLeftFromRight } =
           this.draggable.threshold.isOut[draggedElm.id];
 
@@ -678,7 +685,7 @@ class Droppable extends DFlexUpdater {
         index: this.getDraggedTempIndex(),
       });
 
-      this.scrollManager(x, y);
+      if (this.draggable.scroll.enable) this.scrollManager(x, y);
 
       if (!this.isParentLocked) {
         this.draggable.draggedElm.setAttribute(

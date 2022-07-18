@@ -10,12 +10,12 @@ function updateElementVisibility(
   let isVisibleY = true;
   let isVisibleX = true;
 
-  isVisibleY = scroll.isElementVisibleViewportY(
+  isVisibleY = scroll.isElementVisibleViewportV(
     elm.currentPosition.y,
     elm.initialOffset.height
   );
 
-  isVisibleX = scroll.isElementVisibleViewportX(
+  isVisibleX = scroll.isElementVisibleViewportH(
     elm.currentPosition.x,
     elm.initialOffset.width
   );

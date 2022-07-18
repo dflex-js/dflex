@@ -165,7 +165,8 @@ class DFlexScrollContainer {
     [this.scrollContainerDOM, this.hasDocumentAsContainer] =
       getScrollContainer(element);
 
-    this._setScrollRects();
+    this._initScrollContainerDOM();
+    this._setScrollContainerRect(false);
 
     // Check allowDynamicVisibility after taking into consideration the length of
     // the branch itself.
@@ -193,7 +194,7 @@ class DFlexScrollContainer {
     this._setResizeAndScrollListeners();
   }
 
-  private _setScrollRects(): void {
+  private _initScrollContainerDOM() {
     const { scrollHeight, scrollWidth, scrollLeft, scrollTop } =
       this.scrollContainerDOM;
 
@@ -203,15 +204,12 @@ class DFlexScrollContainer {
       width: scrollWidth,
       height: scrollHeight,
     });
+  }
 
+  private _setScrollContainerRect(update = true): void {
     let scrollContainerRect: RectDimensions;
 
-    if (!this.hasDocumentAsContainer) {
-      const { height, width, left, top } =
-        this.scrollContainerDOM.getBoundingClientRect();
-
-      scrollContainerRect = { height, width, left, top };
-    } else {
+    if (this.hasDocumentAsContainer) {
       const viewportHeight = Math.max(
         this.scrollContainerDOM.clientHeight || 0,
         window.innerHeight || 0
@@ -228,6 +226,17 @@ class DFlexScrollContainer {
         left: 0,
         top: 0,
       };
+    } else {
+      const { height, width, left, top } =
+        this.scrollContainerDOM.getBoundingClientRect();
+
+      scrollContainerRect = { height, width, left, top };
+    }
+
+    if (update) {
+      Object.assign(this.scrollContainerRect, scrollContainerRect);
+
+      return;
     }
 
     this.scrollContainerRect = Object.seal(scrollContainerRect);
@@ -336,17 +345,25 @@ class DFlexScrollContainer {
       : this.hasOverflowX;
   }
 
-  isOutThresholdV(y: number): boolean {
+  isOutThresholdV(y: number, height: number): boolean {
     return (
       this._isScrollAvailable(true) &&
-      this._innerThreshold!.isOutThresholdV(this._threshold_inner_key, y, y)
+      this._innerThreshold!.isOutThresholdV(
+        this._threshold_inner_key,
+        y,
+        y + height
+      )
     );
   }
 
-  isOutThresholdH(x: number): boolean {
+  isOutThresholdH(x: number, width: number): boolean {
     return (
       this._isScrollAvailable(false) &&
-      this._innerThreshold!.isOutThresholdV(this._threshold_inner_key, x, x)
+      this._innerThreshold!.isOutThresholdV(
+        this._threshold_inner_key,
+        x,
+        x + width
+      )
     );
   }
 
@@ -362,7 +379,7 @@ class DFlexScrollContainer {
     return top + height + this.scrollRect.top;
   }
 
-  isElementVisibleViewportX(currentLeft: number, width: number): boolean {
+  isElementVisibleViewportH(currentLeft: number, width: number): boolean {
     const isNotVisible = this._outerThreshold!.isOutThresholdH(
       this._threshold_outer_key,
       currentLeft,
@@ -372,7 +389,7 @@ class DFlexScrollContainer {
     return !isNotVisible;
   }
 
-  isElementVisibleViewportY(currentTop: number, hight: number): boolean {
+  isElementVisibleViewportV(currentTop: number, hight: number): boolean {
     const isNotVisible = this._outerThreshold!.isOutThresholdV(
       this._threshold_outer_key,
       currentTop,
@@ -383,7 +400,7 @@ class DFlexScrollContainer {
   }
 
   private animatedListener(
-    setter: "_setScrollRects" | "_updateScrollCoordinates",
+    setter: "_setScrollContainerRect" | "_updateScrollCoordinates",
     cb: ScrollEventCallback | null
   ) {
     if (this._hasThrottledFrame !== null) return;
@@ -407,7 +424,7 @@ class DFlexScrollContainer {
   };
 
   private animatedResizeListener = () => {
-    this.animatedListener.call(this, "_setScrollRects", null);
+    this.animatedListener.call(this, "_setScrollContainerRect", null);
   };
 
   destroy() {
