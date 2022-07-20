@@ -1,5 +1,5 @@
 import type { DFlexBaseNode } from "@dflex/core-instance";
-import type { IPointAxes } from "@dflex/utils";
+import type { AxesPoint } from "@dflex/utils";
 
 import store from "./DFlexDraggableStore";
 import DFlexBaseDraggable from "./DFlexBaseDraggable";
@@ -12,7 +12,7 @@ class DFlexDraggable extends DFlexBaseDraggable<DFlexBaseNode> {
    * @param id - elementId
    * @param clickCoordinates -
    */
-  constructor(id: string, clickCoordinates: IPointAxes) {
+  constructor(id: string, clickCoordinates: AxesPoint) {
     const [element, DOM] = store.getElmWithDOM(id);
     super(element, DOM, clickCoordinates);
   }

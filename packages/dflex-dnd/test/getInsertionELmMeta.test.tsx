@@ -4,7 +4,7 @@ import * as ReactTestUtils from "react-dom/test-utils";
 import { Root, createRoot } from "react-dom/client";
 
 import { store } from "../src/LayoutManager";
-import { getInsertionELmMeta } from "../src/Droppable/DFlexUpdater";
+import { getInsertionELmMeta } from "../src/Droppable/DFlexPositionUpdater";
 
 describe("getInsertionELmMeta", () => {
   const elm1 = {

@@ -3,7 +3,7 @@ import { PointNum, dirtyAssignBiggestRect } from "@dflex/utils";
 
 import type {
   Dimensions,
-  IPointAxes,
+  AxesPoint,
   RectBoundaries,
   RectDimensions,
 } from "@dflex/utils";
@@ -129,7 +129,7 @@ class DFlexParentContainer {
     this._gridSiblingsHasNewRow = false;
   }
 
-  preservePosition(position: IPointAxes): void {
+  preservePosition(position: AxesPoint): void {
     this.lastElmPosition = new PointNum(position.x, position.y);
   }
 }

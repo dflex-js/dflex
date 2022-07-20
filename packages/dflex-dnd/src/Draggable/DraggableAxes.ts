@@ -6,7 +6,7 @@ import {
   PointBool,
   Migration,
   combineKeys,
-  IPointAxes,
+  AxesPoint,
   RectDimensions,
   ThresholdPercentages,
 } from "@dflex/utils";
@@ -53,7 +53,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
 
   events: ReturnType<typeof initDFlexEvent>;
 
-  constructor(id: string, initCoordinates: IPointAxes, opts: FinalDndOpts) {
+  constructor(id: string, initCoordinates: AxesPoint, opts: FinalDndOpts) {
     const [element, DOM] = store.getElmWithDOM(id);
 
     super(element, DOM, initCoordinates);
@@ -102,6 +102,11 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
     this.innerOffset = new PointNum(
       Math.round(x - currentPosition.x),
       Math.round(y - currentPosition.y)
+    );
+
+    console.log(
+      "file: DraggableAxes.ts ~ line 106 ~ this.innerOffset",
+      this.innerOffset
     );
 
     const style = getComputedStyle(DOM);

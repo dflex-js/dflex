@@ -1,7 +1,6 @@
 import Point from "./Point";
-import type { IPointBool } from "./types";
 
-class PointBool extends Point<boolean> implements IPointBool {
+class PointBool extends Point<boolean> {
   isOneTruthy() {
     return this.x || this.y;
   }

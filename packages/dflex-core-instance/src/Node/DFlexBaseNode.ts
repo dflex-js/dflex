@@ -1,5 +1,4 @@
 import { PointNum } from "@dflex/utils";
-import type { IPointNum } from "@dflex/utils";
 
 import { DFLEX_ATTRIBUTES } from "./constants";
 import type { AllowedAttributes } from "./constants";
@@ -9,7 +8,7 @@ type AttributeSet = Set<Exclude<AllowedAttributes, "INDEX">>;
 class DFlexBaseNode {
   id: string;
 
-  translate!: IPointNum;
+  translate!: PointNum;
 
   isPaused!: boolean;
 

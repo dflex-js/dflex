@@ -1,4 +1,4 @@
-import type { Axis, IPointAxes } from "@dflex/utils";
+import type { Axis, AxesPoint } from "@dflex/utils";
 import DFlexCoreNode from "./DFlexCoreNode";
 
 class DFlexNode extends DFlexCoreNode {
@@ -6,7 +6,7 @@ class DFlexNode extends DFlexCoreNode {
     return axis === "x" ? "width" : "height";
   }
 
-  static getDistance(currentPosition: IPointAxes, elm: DFlexNode, axis: Axis) {
+  static getDistance(currentPosition: AxesPoint, elm: DFlexNode, axis: Axis) {
     let diff = currentPosition[axis] - elm.currentPosition[axis];
 
     diff += elm.translate![axis];
@@ -15,7 +15,7 @@ class DFlexNode extends DFlexCoreNode {
   }
 
   static getDisplacement(
-    currentPosition: IPointAxes,
+    currentPosition: AxesPoint,
     elm: DFlexNode,
     axis: Axis
   ) {

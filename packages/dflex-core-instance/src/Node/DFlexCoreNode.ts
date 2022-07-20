@@ -1,11 +1,5 @@
 import { PointNum } from "@dflex/utils";
-import type {
-  RectDimensions,
-  Direction,
-  Axes,
-  IPointNum,
-  IPointAxes,
-} from "@dflex/utils";
+import type { RectDimensions, Direction, Axes, AxesPoint } from "@dflex/utils";
 
 import DFlexBaseNode from "./DFlexBaseNode";
 
@@ -13,8 +7,8 @@ export type SerializedDFlexCoreNode = {
   type: string;
   version: 3;
   id: string;
-  translate: IPointNum | null;
-  grid: IPointNum;
+  translate: PointNum | null;
+  grid: PointNum;
   order: DOMGenOrder;
   initialOffset: RectDimensions;
   currentOffset: RectDimensions;
@@ -26,7 +20,7 @@ export type SerializedDFlexCoreNode = {
 type TransitionHistory = {
   ID: string;
   axis: Axes;
-  translate: IPointAxes;
+  translate: AxesPoint;
 };
 
 /**
@@ -57,7 +51,7 @@ export interface DFlexNodeInput {
 class DFlexCoreNode extends DFlexBaseNode {
   readonly initialOffset!: RectDimensions;
 
-  currentPosition!: IPointNum;
+  currentPosition!: PointNum;
 
   order: DOMGenOrder;
 
@@ -65,7 +59,7 @@ class DFlexCoreNode extends DFlexBaseNode {
 
   depth: number;
 
-  grid!: IPointNum;
+  grid!: PointNum;
 
   isVisible: boolean;
 
@@ -131,7 +125,7 @@ class DFlexCoreNode extends DFlexBaseNode {
     this.hasPendingTransform = false;
   }
 
-  private _updateCurrentIndicators(space: IPointAxes): void {
+  private _updateCurrentIndicators(space: AxesPoint): void {
     this.translate!.increase(space);
 
     const { left, top } = this.initialOffset!;
@@ -233,7 +227,7 @@ class DFlexCoreNode extends DFlexBaseNode {
    */
   private _seTranslate(
     DOM: HTMLElement,
-    elmSpace: IPointAxes,
+    elmSpace: AxesPoint,
     axis: Axes,
     operationID?: string,
     isForceTransform = false
@@ -276,7 +270,7 @@ class DFlexCoreNode extends DFlexBaseNode {
     DOM: HTMLElement,
     iDsInOrder: string[],
     direction: Direction,
-    elmSpace: IPointNum,
+    elmSpace: PointNum,
     operationID: string,
     axis: Axes
   ): void {

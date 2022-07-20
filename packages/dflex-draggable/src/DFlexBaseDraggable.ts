@@ -1,6 +1,6 @@
 import { DFlexBaseNode } from "@dflex/core-instance";
 import { PointNum, getSelection } from "@dflex/utils";
-import type { IPointNum, IPointAxes } from "@dflex/utils";
+import type { AxesPoint } from "@dflex/utils";
 
 export type DraggedStyle = Array<{
   prop: string;
@@ -23,9 +23,9 @@ class DFlexBaseDraggable<T extends DFlexBaseNode> {
    * equating: initX = X. Taking into considerations translate value.
    *
    */
-  outerOffset: IPointNum;
+  outerOffset: PointNum;
 
-  translatePlaceholder: IPointNum;
+  translatePlaceholder: PointNum;
 
   static draggedStyle: DraggedStyle = [
     {
@@ -56,7 +56,7 @@ class DFlexBaseDraggable<T extends DFlexBaseNode> {
   constructor(
     abstractCoreElm: T,
     DOM: HTMLElement,
-    { x: initX, y: initY }: IPointAxes
+    { x: initX, y: initY }: AxesPoint
   ) {
     this.draggedElm = abstractCoreElm;
     this.draggedDOM = DOM;

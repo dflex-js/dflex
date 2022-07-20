@@ -1,7 +1,7 @@
 import type { DraggedStyle } from "@dflex/draggable";
 
 import { PointNum } from "@dflex/utils";
-import type { IPointNum, IPointAxes } from "@dflex/utils";
+import type { AxesPoint } from "@dflex/utils";
 
 import { store } from "../LayoutManager";
 
@@ -12,15 +12,15 @@ import DraggableAxes from "./DraggableAxes";
 class DraggableInteractive extends DraggableAxes {
   scroll: ScrollOpts;
 
-  occupiedPosition: IPointNum;
+  occupiedPosition: PointNum;
 
-  occupiedTranslate: IPointNum;
+  occupiedTranslate: PointNum;
 
   isDraggedPositionFixed: boolean;
 
   private changeToFixedStyleProps: DraggedStyle;
 
-  constructor(id: string, initCoordinates: IPointAxes, opts: FinalDndOpts) {
+  constructor(id: string, initCoordinates: AxesPoint, opts: FinalDndOpts) {
     super(id, initCoordinates, opts);
 
     this.scroll = { ...opts.scroll };

@@ -1,6 +1,6 @@
-import type { IPoint } from "./types";
+import type { AxesPoint } from "./types";
 
-class Point<T = number> implements IPoint<T> {
+class Point<T = number> {
   x!: T;
 
   y!: T;
@@ -14,7 +14,7 @@ class Point<T = number> implements IPoint<T> {
     this.y = y;
   }
 
-  clone(target: IPoint<T>) {
+  clone(target: Point<T> | AxesPoint<T>) {
     this.setAxes(target.x, target.y);
   }
 
@@ -25,7 +25,7 @@ class Point<T = number> implements IPoint<T> {
     };
   }
 
-  isEqual(target: IPoint<T>) {
+  isEqual(target: Point<T> | AxesPoint<T>) {
     return this.x === target.x && this.y === target.y;
   }
 }

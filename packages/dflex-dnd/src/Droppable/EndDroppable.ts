@@ -1,10 +1,12 @@
 /* eslint-disable no-param-reassign */
 import { scheduler, store } from "../LayoutManager";
-import Droppable, { isIDEligible } from "./Droppable";
+import DFlexMechanismController, {
+  isIDEligible,
+} from "./DFlexMechanismController";
 
 import type DraggableInteractive from "../Draggable";
 
-class EndDroppable extends Droppable {
+class EndDroppable extends DFlexMechanismController {
   private spliceAt: number;
 
   constructor(draggable: DraggableInteractive) {

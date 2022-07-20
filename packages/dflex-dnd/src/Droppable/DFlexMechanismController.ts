@@ -1,15 +1,14 @@
-import { IPointAxes, PointNum } from "@dflex/utils";
-import type { IPointNum } from "@dflex/utils";
+import { Direction, AxesPoint, Point, PointNum } from "@dflex/utils";
 
 import { store } from "../LayoutManager";
-
 import type DraggableInteractive from "../Draggable";
 
-import DFlexUpdater, {
+import {
   APPEND_EMPTY_ELM_ID,
   handleElmMigration,
   isEmptyBranch,
-} from "./DFlexUpdater";
+} from "./DFlexPositionUpdater";
+import DFlexScrollableElement from "./DFlexScrollableElement";
 
 export function isIDEligible(elmID: string, draggedID: string): boolean {
   return (
@@ -21,19 +20,10 @@ export function isIDEligible(elmID: string, draggedID: string): boolean {
   );
 }
 
-/**
- * Class includes all transformation methods related to droppable.
- */
-class Droppable extends DFlexUpdater {
-  private scrollAnimatedFrame: number | null;
+class DFlexMechanismController extends DFlexScrollableElement {
+  private _prevMousePosition: PointNum;
 
-  private readonly initialScroll: IPointNum;
-
-  private readonly scrollAxes: IPointNum;
-
-  private scrollSpeed: number;
-
-  private _isRegularDragging: boolean;
+  private _prevMouseDirection: Point<Direction>;
 
   private isOnDragOutThresholdEvtEmitted: boolean;
 
@@ -41,7 +31,7 @@ class Droppable extends DFlexUpdater {
    * transformation. */
   private animatedDraggedInsertionFrame: number | null;
 
-  private listAppendPosition: IPointAxes | null;
+  private listAppendPosition: AxesPoint | null;
 
   static INDEX_OUT_CONTAINER = NaN;
 
@@ -85,7 +75,7 @@ class Droppable extends DFlexUpdater {
   static getTheLastValidElm(lst: string[], draggedID: string) {
     for (let i = lst.length - 1; i >= 0; i -= 1) {
       const id = lst[i];
-      if (Droppable.isIDEligible2Move(id, draggedID, false)) {
+      if (DFlexMechanismController.isIDEligible2Move(id, draggedID, false)) {
         return store.registry.get(id)!;
       }
     }
@@ -96,32 +86,8 @@ class Droppable extends DFlexUpdater {
   constructor(draggable: DraggableInteractive) {
     super(draggable);
 
-    this.scrollAnimatedFrame = null;
-
-    const {
-      scrollRect: { left, top },
-    } = store.scrolls.get(this.draggable.migration.latest().SK)!;
-
-    this.initialScroll = new PointNum(left, top);
-
-    this.scrollSpeed = this.draggable.scroll.initialSpeed;
-
-    /*
-     * The reason for using this instance instead of calling the store
-     * instance/listeners:
-     * - There's a delay. Change of scrollY/X is not updated immediately. You
-     *   have to wait for the next frame, as it's throttled and then get the value.
-     * - The store instance is not available if there's no overflow.
-     * - Guarantee same position for dragging. In scrolling/overflow case, or
-     *   regular scrolling.
-     */
-    this.scrollAxes = new PointNum(this.initialScroll.x, this.initialScroll.y);
-
-    /**
-     * This is true until there's a scrolling. Then, the scroll will handle the
-     * scroll with dragging to ensure both are executed in the same frame.
-     */
-    this._isRegularDragging = true;
+    this._prevMousePosition = new PointNum(0, 0);
+    this._prevMouseDirection = new Point<Direction>(-1, -1);
 
     if (this.draggable.isDraggedPositionFixed) {
       // @ts-expect-error
@@ -154,7 +120,7 @@ class Droppable extends DFlexUpdater {
       const id = siblings[i];
 
       if (
-        Droppable.isIDEligible2Move(
+        DFlexMechanismController.isIDEligible2Move(
           id,
           this.draggable.draggedElm.id,
           this.draggable.scroll.enable
@@ -216,8 +182,8 @@ class Droppable extends DFlexUpdater {
 
     this.lockParent(false);
 
-    let draggedTransition: IPointAxes;
-    let draggedGrid: IPointNum;
+    let draggedTransition: AxesPoint;
+    let draggedGrid: PointNum;
 
     if (migration.isTransitioning) {
       ({ translate: draggedTransition, grid: draggedGrid } =
@@ -337,7 +303,7 @@ class Droppable extends DFlexUpdater {
     const id = siblings![elmIndex];
 
     if (
-      Droppable.isIDEligible2Move(
+      DFlexMechanismController.isIDEligible2Move(
         id,
         this.draggable.draggedElm.id,
         this.draggable.scroll.enable
@@ -390,7 +356,9 @@ class Droppable extends DFlexUpdater {
       to: siblings.length,
     });
 
-    this.draggable.setDraggedTempIndex(Droppable.INDEX_OUT_CONTAINER);
+    this.draggable.setDraggedTempIndex(
+      DFlexMechanismController.INDEX_OUT_CONTAINER
+    );
 
     for (let i = from; i < siblings.length; i += 1) {
       /**
@@ -400,7 +368,7 @@ class Droppable extends DFlexUpdater {
       const id = siblings[i];
 
       if (
-        Droppable.isIDEligible2Move(
+        DFlexMechanismController.isIDEligible2Move(
           id,
           this.draggable.draggedElm.id,
           this.draggable.scroll.enable
@@ -430,7 +398,7 @@ class Droppable extends DFlexUpdater {
       const id = siblings[i];
 
       if (
-        Droppable.isIDEligible2Move(
+        DFlexMechanismController.isIDEligible2Move(
           id,
           this.draggable.draggedElm.id,
           this.draggable.scroll.enable
@@ -499,180 +467,11 @@ class Droppable extends DFlexUpdater {
     this.isParentLocked = isOut;
   }
 
-  // TODO: Merge scrollElementOnY/scrollElementOnx with one method scrollElement.
-  private scrollElementOnY(x: number, y: number, direction: 1 | -1) {
-    let nextScrollTop = this.scrollAxes.y;
-    console.log("file: Droppable.ts ~ line 505 ~ nextScrollTop", nextScrollTop);
-
-    nextScrollTop += direction * this.scrollSpeed;
-
-    const draggedYShift = y + nextScrollTop - this.initialScroll.y;
-
-    const currentTop = draggedYShift - this.draggable.innerOffset.y;
-
-    const currentBottom =
-      currentTop + this.draggable.draggedElm.initialOffset.height;
-
-    const { SK } = store.registry.get(this.draggable.draggedElm.id)!.keys;
-
-    const {
-      scrollRect: { height: scrollHeight },
-      scrollContainerDOM: scrollContainer,
-      scrollContainerRect: scrollRect,
-    } = store.scrolls.get(SK)!;
-
-    if (direction === 1) {
-      if (currentBottom <= scrollHeight) {
-        this.scrollAxes.y = nextScrollTop;
-      } else {
-        this.scrollAxes.y = scrollHeight - scrollRect.height;
-      }
-    } else if (currentTop >= 0) {
-      this.scrollAxes.y = nextScrollTop;
-    } else {
-      this.scrollAxes.y = 0;
-    }
-
-    scrollContainer.scrollTop = this.scrollAxes.y;
-
-    this.draggable.dragAt(
-      x + this.scrollAxes.x - this.initialScroll.x,
-      y + this.scrollAxes.y - this.initialScroll.y
-    );
-  }
-
-  private scrollElementOnX(x: number, y: number, direction: 1 | -1) {
-    let nextScrollLeft = this.scrollAxes.x;
-
-    nextScrollLeft += direction * this.scrollSpeed;
-
-    const draggedXShift = x + nextScrollLeft - this.initialScroll.x;
-
-    const currentLeft = draggedXShift - this.draggable.innerOffset.x;
-
-    const currentRight =
-      currentLeft + this.draggable.draggedElm.initialOffset.width;
-
-    const { SK } = store.registry.get(this.draggable.draggedElm.id)!.keys;
-
-    const {
-      scrollRect: { height: scrollHeight },
-      scrollContainerDOM: scrollContainer,
-      scrollContainerRect: scrollRect,
-    } = store.scrolls.get(SK)!;
-
-    if (direction === 1) {
-      if (currentRight <= scrollHeight) {
-        this.scrollAxes.x = nextScrollLeft;
-      } else {
-        this.scrollAxes.x = scrollHeight - scrollRect.width;
-      }
-    } else if (currentRight >= 0) {
-      this.scrollAxes.x = currentRight;
-    } else {
-      this.scrollAxes.x = 0;
-    }
-
-    scrollContainer.scrollLeft = this.scrollAxes.x;
-
-    this.draggable.dragAt(
-      x + this.scrollAxes.x - this.initialScroll.x,
-      y + this.scrollAxes.y - this.initialScroll.y
-    );
-  }
-
-  private scrollElement(
-    x: number,
-    y: number,
-    direction: 1 | -1,
-    on: "scrollElementOnX" | "scrollElementOnY"
-  ) {
-    const { SK } = store.registry.get(this.draggable.draggedElm.id)!.keys;
-    const scroll = store.scrolls.get(SK)!;
-
-    // Prevent store from implementing any animation response.
-    scroll.pauseListeners(true);
-
-    this.draggable.isViewportRestricted = false;
-
-    this._isRegularDragging = false;
-
-    this.scrollAnimatedFrame = requestAnimationFrame(() => {
-      this[on](x, y, direction);
-
-      // Reset animation flags
-      this.scrollAnimatedFrame = null;
-      scroll.pauseListeners(false);
-
-      this.scrollSpeed += this.draggable.scroll.initialSpeed;
-    });
-  }
-
-  private scrollManager(x: number, y: number) {
-    const { draggedElm } = this.draggable;
-
-    const { SK } = store.registry.get(draggedElm.id)!.keys;
-    const scroll = store.scrolls.get(SK)!;
-
-    /**
-     * Manage scrolling.
-     */
-    if (this.scrollAnimatedFrame === null) {
-      const { isLeftFromBottom } =
-        this.draggable.threshold.isOut[draggedElm.id];
-
-      const isOutV = scroll.isOutThresholdV(
-        y,
-        this.draggable.draggedElm.initialOffset.height
-      );
-
-      if (isOutV) {
-        this.scrollElement(x, y, 1, "scrollElementOnY");
-
-        if (isLeftFromBottom) {
-          this.scrollElement(x, y, 1, "scrollElementOnY");
-          return;
-        }
-
-        this.scrollElement(x, y, -1, "scrollElementOnY");
-
-        return;
-      }
-
-      if (
-        scroll.isOutThresholdH(x, this.draggable.draggedElm.initialOffset.width)
-      ) {
-        const { isLeftFromRight } =
-          this.draggable.threshold.isOut[draggedElm.id];
-
-        if (isLeftFromRight) {
-          this.scrollElement(x, y, 1, "scrollElementOnX");
-          return;
-        }
-
-        this.scrollElement(x, y, -1, "scrollElementOnX");
-
-        return;
-      }
-
-      /**
-       * Scroll turns the flag off. But regular dragging will be resumed
-       * when the drag is outside the auto scrolling area.
-       */
-      this._isRegularDragging = true;
-
-      /**
-       * Reset scrollSpeed.
-       */
-      this.scrollSpeed = this.draggable.scroll.initialSpeed;
-    }
-  }
-
   dragAt(x: number, y: number) {
-    if (this._isRegularDragging) {
+    if (this.isRegularDragging) {
       this.draggable.dragAt(
-        x + this.scrollAxes.x - this.initialScroll.x,
-        y + this.scrollAxes.y - this.initialScroll.y
+        x + this.currentScrollAxes.x - this.initialScrollPosition.x,
+        y + this.currentScrollAxes.y - this.initialScrollPosition.y
       );
     }
 
@@ -688,7 +487,31 @@ class Droppable extends DFlexUpdater {
         index: this.getDraggedTempIndex(),
       });
 
-      if (this.draggable.scroll.enable) this.scrollManager(x, y);
+      if (this.draggable.scroll.enable) {
+        const directionH: Direction = x < this._prevMousePosition.x ? -1 : 1;
+        const directionV: Direction = y < this._prevMousePosition.y ? -1 : 1;
+
+        const directionChangedH: boolean =
+          directionH !== this._prevMouseDirection.x;
+
+        const directionChangedV: boolean =
+          directionV !== this._prevMouseDirection.y;
+
+        // Skip if there's undergoing a scroll.
+        if (this.isScrollingIdle()) {
+          this.scrollManager(
+            x,
+            y,
+            directionH,
+            directionV,
+            directionChangedH,
+            directionChangedV
+          );
+        }
+
+        this._prevMousePosition.setAxes(x, y);
+        this._prevMouseDirection.setAxes(directionH, directionV);
+      }
 
       if (!this.isParentLocked) {
         this.draggable.draggedElm.setAttribute(
@@ -781,4 +604,4 @@ class Droppable extends DFlexUpdater {
   }
 }
 
-export default Droppable;
+export default DFlexMechanismController;

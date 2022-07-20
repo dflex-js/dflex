@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
 import { DFlexNode } from "@dflex/core-instance";
 
-import { Direction, IPointAxes, PointNum } from "@dflex/utils";
-import type { IPointNum, Axis, RectDimensions } from "@dflex/utils";
+import { Direction, AxesPoint, PointNum } from "@dflex/utils";
+import type { Axis, RectDimensions } from "@dflex/utils";
 
 import type DraggableInteractive from "../Draggable";
 
@@ -42,7 +42,7 @@ function composeElmMeta(element: DFlexNode) {
 
 type InsertionELmMeta = {
   isRestoredLastPosition: boolean;
-  position: IPointNum;
+  position: PointNum;
   isEmpty: boolean;
   isOrphan: boolean;
   elm: DFlexNode | null;
@@ -167,14 +167,14 @@ export function handleElmMigration(
   containerOrigin.preservePosition(lastInOrigin.currentPosition);
 }
 
-class DFlexUpdater {
+class DFlexPositionUpdater {
   protected draggable: DraggableInteractive;
 
-  private elmTransition: IPointNum;
+  private elmTransition: PointNum;
 
-  private draggedPositionOffset: IPointNum;
+  private draggedPositionOffset: PointNum;
 
-  private draggedTransition: IPointNum;
+  private draggedTransition: PointNum;
 
   /** Isolated form the threshold and predict is-out based on the controllers */
   protected isParentLocked: boolean;
@@ -272,7 +272,7 @@ class DFlexUpdater {
   }
 
   private addDraggedOffsetToElm(
-    position: IPointAxes,
+    position: AxesPoint,
     elm: DFlexNode,
     axis: Axis
   ) {
@@ -480,4 +480,4 @@ class DFlexUpdater {
   }
 }
 
-export default DFlexUpdater;
+export default DFlexPositionUpdater;
