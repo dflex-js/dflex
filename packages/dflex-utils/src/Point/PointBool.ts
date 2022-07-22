@@ -1,15 +1,15 @@
 import Point from "./Point";
 
 class PointBool extends Point<boolean> {
-  isOneTruthy() {
+  isOneTruthy(): boolean {
     return this.x || this.y;
   }
 
-  isAllFalsy() {
+  isAllFalsy(): boolean {
     return !this.x && !this.y;
   }
 
-  setFalsy() {
+  setFalsy(): void {
     this.x = false;
     this.y = false;
   }

@@ -106,7 +106,7 @@ export function getInsertionELmMeta(
         if (length <= originLength) {
           position.clone(lastElmPosition);
           // Did we retorted the same element?
-          isRestoredLastPosition = !lastElmPosition.isEqual(
+          isRestoredLastPosition = !lastElmPosition.isInstanceEqual(
             elm.currentPosition
           );
         } else {

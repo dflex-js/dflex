@@ -419,8 +419,8 @@ class DFlexMechanismController extends DFlexScrollableElement {
     const { SK } = store.registry.get(id)!.keys;
     const { grid: siblingsGrid } = store.containers.get(SK)!;
 
-    if (isOut[id].isOutY()) {
-      const newRow = isOut[id].isLeftFromBottom
+    if (isOut[id].outVertical.isOneTruthy()) {
+      const newRow = isOut[id].outVertical.y
         ? gridPlaceholder.y + 1
         : gridPlaceholder.y - 1;
 
@@ -442,12 +442,12 @@ class DFlexMechanismController extends DFlexScrollableElement {
         return;
       }
 
-      this.switchElement(isOut[id].isLeftFromBottom);
+      this.switchElement(isOut[id].outVertical.y);
 
       return;
     }
 
-    const newCol = isOut[id].isLeftFromRight
+    const newCol = isOut[id].outHorizontal.y
       ? gridPlaceholder.x + 1
       : gridPlaceholder.x - 1;
 
@@ -460,7 +460,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       return;
     }
 
-    this.switchElement(isOut[id].isLeftFromRight);
+    this.switchElement(isOut[id].outHorizontal.y);
   }
 
   private lockParent(isOut: boolean) {
@@ -489,6 +489,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
       if (this.draggable.scroll.enable) {
         const directionH: Direction = x < this._prevMousePosition.x ? -1 : 1;
+
         const directionV: Direction = y < this._prevMousePosition.y ? -1 : 1;
 
         const directionChangedH: boolean =
@@ -497,8 +498,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         const directionChangedV: boolean =
           directionV !== this._prevMouseDirection.y;
 
-        // Skip if there's undergoing a scroll.
-        if (this.isScrollingIdle()) {
+        if (!this.isScrollThrottled()) {
           this.scrollManager(
             x,
             y,
@@ -507,6 +507,8 @@ class DFlexMechanismController extends DFlexScrollableElement {
             directionChangedH,
             directionChangedV
           );
+        } else {
+          console.log("scroll throttled");
         }
 
         this._prevMousePosition.setAxes(x, y);

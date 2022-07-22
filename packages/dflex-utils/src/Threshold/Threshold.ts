@@ -193,20 +193,60 @@ class DFlexThreshold {
     this._addDepthThreshold(insertionLayerKey, childDepth);
   }
 
+  isOutLeftThreshold(key: string, XLeft: number): boolean {
+    const { left } = this.thresholds[key];
+
+    const is = XLeft < left;
+
+    this.isOut[key].outHorizontal.setAxes(is, this.isOut[key].outHorizontal.y);
+
+    return is;
+  }
+
+  isOutRightThreshold(key: string, XRight: number): boolean {
+    const { right } = this.thresholds[key];
+
+    const is = XRight > right;
+
+    this.isOut[key].outHorizontal.setAxes(this.isOut[key].outHorizontal.x, is);
+
+    return is;
+  }
+
+  isOutTopThreshold(key: string, YTop: number): boolean {
+    const { top } = this.thresholds[key];
+
+    const is = YTop < top;
+
+    this.isOut[key].outVertical.setAxes(is, this.isOut[key].outVertical.y);
+
+    return is;
+  }
+
+  isOutBottomThreshold(key: string, YBottom: number): boolean {
+    const { bottom } = this.thresholds[key];
+
+    const is = YBottom > bottom;
+
+    this.isOut[key].outVertical.setAxes(this.isOut[key].outVertical.x, is);
+
+    return is;
+  }
+
   isOutThresholdH(key: string, XLeft: number, XRight: number): boolean {
     const { left, right } = this.thresholds[key];
 
-    this.isOut[key].setOutX(XLeft < left, XRight > right);
+    this.isOut[key].outHorizontal.setAxes(XLeft < left, XRight > right);
 
-    return this.isOut[key].isOutX();
+    return this.isOut[key].outHorizontal.isOneTruthy();
   }
 
   isOutThresholdV(key: string, YTop: number, YBottom: number): boolean {
     const { top, bottom } = this.thresholds[key];
 
-    this.isOut[key].setOutY(YTop < top, YBottom > bottom);
+    this.isOut[key].outVertical.setAxes(YTop < top, YBottom > bottom);
 
-    return this.isOut[key].isOutY();
+    return this.isOut[key].outVertical.isOneTruthy();
   }
 
   destroy(): void {

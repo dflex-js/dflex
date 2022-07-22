@@ -5,8 +5,15 @@ import DFlexPositionUpdater from "./DFlexPositionUpdater";
 import type DraggableInteractive from "../Draggable";
 import { store } from "../LayoutManager";
 
+const THROTTLE_FRAME_RATE_MS = 60;
+const EXECUTION_FRAME_RATE_MS = 2000;
+
 class DFlexScrollableElement extends DFlexPositionUpdater {
   private _scrollAnimatedFrame: number | null;
+
+  private _timeout: ReturnType<typeof setTimeout> | null = null;
+
+  private _isScrollThrottled: boolean;
 
   protected readonly initialScrollPosition: PointNum;
 
@@ -20,6 +27,10 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     super(draggable);
 
     this._scrollAnimatedFrame = null;
+    this._timeout = null;
+    this._isScrollThrottled = false;
+
+    this._clearScrollAnimatedFrame = this._clearScrollAnimatedFrame.bind(this);
 
     const {
       scrollRect: { left, top },
@@ -50,8 +61,43 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     this.isRegularDragging = true;
   }
 
-  isScrollingIdle(): boolean {
-    return this._scrollAnimatedFrame === null;
+  isScrollThrottled(): boolean {
+    return this._isScrollThrottled;
+  }
+
+  private _clearScrollAnimatedFrame(): void {
+    this._scrollAnimatedFrame = null;
+
+    this._isScrollThrottled = false;
+
+    console.log("scrollAnimatedFrame is cleared...");
+  }
+
+  private _cancelAndThrottleScrolling() {
+    console.log("Throttling...");
+
+    if (this._scrollAnimatedFrame !== null) {
+      cancelAnimationFrame(this._scrollAnimatedFrame!);
+    }
+
+    /**
+     * Reset scrollSpeed.
+     */
+    this._lastScrollSpeed = this.draggable.scroll.initialSpeed;
+
+    /**
+     * Scroll turns the flag off. But regular dragging will be resumed
+     * when the drag is outside the auto scrolling area.
+     */
+    this.isRegularDragging = true;
+
+    this._isScrollThrottled = true;
+
+    if (this._timeout !== null) {
+      clearTimeout(this._timeout);
+    }
+
+    setTimeout(this._clearScrollAnimatedFrame, THROTTLE_FRAME_RATE_MS);
   }
 
   private _scroll(
@@ -60,7 +106,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     axis: Axis,
     x: number,
     y: number,
-    direction: 1 | -1
+    direction: Direction
   ): void {
     let nextScrollPosition =
       this.currentScrollAxes[axis] +
@@ -112,6 +158,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     directionChangedH: boolean,
     directionChangedV: boolean
   ): void {
+    console.log("scrollManager");
     const { draggedElm } = this.draggable;
 
     const {
@@ -119,40 +166,64 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       initialOffset,
     } = draggedElm;
 
-    const scroll = store.scrolls.get(SK)!;
+    const hasSuddenChangeInDirection: boolean =
+      directionChangedV || directionChangedH;
 
-    const isOutV = scroll.isOutThresholdV(y, initialOffset.height);
-    const isOutH = scroll.isOutThresholdH(x, initialOffset.width);
-
-    // If it's out with the a sudden change of the direction, then the user
-    // decided to change the behavior but they still in the threshold. It's okay
-    // user, we got you.
-    const shouldHaltUntilNextTask =
-      (isOutV && directionChangedV) || (isOutH && directionChangedH);
-
-    if (shouldHaltUntilNextTask) {
-      this._lastScrollSpeed = this.draggable.scroll.initialSpeed;
-
-      // Pause until next task.
-      this._scrollAnimatedFrame = 1;
-
-      setTimeout(() => {
-        this._scrollAnimatedFrame = null;
-      }, 0);
+    if (hasSuddenChangeInDirection && this._scrollAnimatedFrame !== null) {
+      this._cancelAndThrottleScrolling();
 
       return;
     }
 
-    if (isOutV || isOutH) {
-      // Prevent store from implementing any animation response.
+    const scroll = store.scrolls.get(SK)!;
+
+    const isOutV = scroll.isOutThresholdV(y, initialOffset.height, directionV);
+    const isOutH = scroll.isOutThresholdH(x, initialOffset.width, directionH);
+
+    const isOut = isOutV || isOutH;
+
+    if (!isOut) {
+      console.log("isOut is false...", isOutV, isOutH);
+
+      return;
+    }
+
+    const canScroll = (): boolean =>
+      (isOutV && scroll.hasInvisibleSpace("y", directionV)) ||
+      (isOutH && scroll.hasInvisibleSpace("x", directionH));
+
+    if (!canScroll()) {
+      this._cancelAndThrottleScrolling();
+
+      return;
+    }
+
+    if (this._scrollAnimatedFrame !== null) {
+      console.log(
+        "scrollAnimatedFrame is already running...",
+        this._scrollAnimatedFrame
+      );
+
+      return;
+    }
+
+    let startingTime: number;
+    let prevTimestamp: number;
+
+    const scrollAnimatedFrame = (timestamp: number) => {
+      console.log("scrollAnimatedFrame...");
       scroll.pauseListeners(true);
 
       // Allow the draggable to be dragged outside the restriction area.
       this.draggable.isViewportRestricted = false;
 
-      this._scrollAnimatedFrame = requestAnimationFrame(() => {
-        // scroll goes here.
+      if (startingTime === undefined) {
+        startingTime = timestamp;
+      }
 
+      const elapsed = timestamp - startingTime;
+
+      if (prevTimestamp !== timestamp) {
         if (isOutV) {
           this._scroll(scroll, initialOffset, "y", x, y, directionV);
         }
@@ -169,29 +240,41 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
           y + this.currentScrollAxes.y - this.initialScrollPosition.y
         );
 
-        // Reset animation flags.
-        this._scrollAnimatedFrame = null;
-        scroll.pauseListeners(false);
+        scroll.updateInvisibleDistance(
+          this.currentScrollAxes.x,
+          this.currentScrollAxes.y
+        );
 
         // Increase scroll speed.
-        this._lastScrollSpeed += this.draggable.scroll.initialSpeed;
-      });
+        // this._lastScrollSpeed += this.draggable.scroll.initialSpeed;
+      }
 
-      return;
-    }
+      // Stop the animation after 2 seconds
+      if (elapsed < EXECUTION_FRAME_RATE_MS || canScroll()) {
+        prevTimestamp = timestamp;
 
-    if (!this.isRegularDragging) {
-      /**
-       * Scroll turns the flag off. But regular dragging will be resumed
-       * when the drag is outside the auto scrolling area.
-       */
-      this.isRegularDragging = true;
+        console.log("Another cycle...");
+        this._scrollAnimatedFrame = requestAnimationFrame(scrollAnimatedFrame);
 
-      /**
-       * Reset scrollSpeed.
-       */
-      this._lastScrollSpeed = this.draggable.scroll.initialSpeed;
-    }
+        return;
+      }
+
+      console.log("scrollAnimatedFrame is done...");
+
+      if (this._timeout !== null) {
+        clearTimeout(this._timeout);
+      }
+
+      this._timeout = setTimeout(
+        this._clearScrollAnimatedFrame,
+        THROTTLE_FRAME_RATE_MS
+      );
+
+      scroll.pauseListeners(false);
+    };
+
+    console.log("scrollAnimatedFrame is started...");
+    this._scrollAnimatedFrame = requestAnimationFrame(scrollAnimatedFrame);
   }
 }
 

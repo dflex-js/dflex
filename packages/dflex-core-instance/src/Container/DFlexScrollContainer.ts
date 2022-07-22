@@ -1,5 +1,12 @@
 /* eslint-disable no-underscore-dangle */
-import { getParentElm, Threshold } from "@dflex/utils";
+import {
+  Axis,
+  Direction,
+  getParentElm,
+  PointBool,
+  PointNum,
+  Threshold,
+} from "@dflex/utils";
 import type { ThresholdPercentages, RectDimensions } from "@dflex/utils";
 
 // eslint-disable-next-line no-unused-vars
@@ -94,6 +101,10 @@ class DFlexScrollContainer {
 
   private _outerThreshold: Threshold | null;
 
+  private _threshold_inner_key: string;
+
+  private _threshold_outer_key: string;
+
   private _SK: string;
 
   private _scrollEventCallback: ScrollEventCallback | null;
@@ -108,9 +119,9 @@ class DFlexScrollContainer {
    */
   scrollRect!: RectDimensions;
 
-  hasOverflowX: boolean;
+  hasOverflow: PointBool;
 
-  hasOverflowY: boolean;
+  invisibleDistance: PointNum;
 
   /**
    * Some containers are overflown but in small percentages of the container
@@ -128,10 +139,6 @@ class DFlexScrollContainer {
 
   hasDocumentAsContainer!: boolean;
 
-  private _threshold_inner_key: string;
-
-  private _threshold_outer_key: string;
-
   private _listenerDataset: string;
 
   private static _OUTER_THRESHOLD: ThresholdPercentages = {
@@ -148,8 +155,8 @@ class DFlexScrollContainer {
     scrollEventCallback: ScrollEventCallback
   ) {
     this.allowDynamicVisibility = false;
-    this.hasOverflowX = false;
-    this.hasOverflowY = false;
+    this.hasOverflow = new PointBool(false, false);
+    this.invisibleDistance = new PointNum(0, 0);
 
     this._innerThreshold = null;
     this._outerThreshold = null;
@@ -165,8 +172,8 @@ class DFlexScrollContainer {
     [this.scrollContainerDOM, this.hasDocumentAsContainer] =
       getScrollContainer(element);
 
-    this._initScrollContainerDOM();
-    this._setScrollContainerRect(false);
+    this._setScrollRect();
+    this.updateInvisibleDistance();
 
     // Check allowDynamicVisibility after taking into consideration the length of
     // the branch itself.
@@ -194,7 +201,7 @@ class DFlexScrollContainer {
     this._setResizeAndScrollListeners();
   }
 
-  private _initScrollContainerDOM() {
+  private _setScrollRect(): void {
     const { scrollHeight, scrollWidth, scrollLeft, scrollTop } =
       this.scrollContainerDOM;
 
@@ -204,61 +211,42 @@ class DFlexScrollContainer {
       width: scrollWidth,
       height: scrollHeight,
     });
-  }
 
-  private _setScrollContainerRect(update = true): void {
     let scrollContainerRect: RectDimensions;
 
-    if (this.hasDocumentAsContainer) {
-      const viewportHeight = Math.max(
-        this.scrollContainerDOM.clientHeight || 0,
-        window.innerHeight || 0
-      );
+    const { clientHeight, clientWidth } = this.scrollContainerDOM;
 
-      const viewportWidth = Math.max(
-        this.scrollContainerDOM.clientWidth || 0,
-        window.innerWidth || 0
-      );
+    scrollContainerRect = {
+      height: clientHeight,
+      width: clientWidth,
+      left: 0,
+      top: 0,
+    };
+
+    if (!this.hasDocumentAsContainer) {
+      const { left, top } = this.scrollContainerDOM.getBoundingClientRect();
 
       scrollContainerRect = {
-        height: viewportHeight,
-        width: viewportWidth,
-        left: 0,
-        top: 0,
+        height: clientHeight,
+        width: clientWidth,
+        left,
+        top,
       };
-    } else {
-      const { height, width, left, top } =
-        this.scrollContainerDOM.getBoundingClientRect();
-
-      scrollContainerRect = { height, width, left, top };
-    }
-
-    if (update) {
-      Object.assign(this.scrollContainerRect, scrollContainerRect);
-
-      return;
     }
 
     this.scrollContainerRect = Object.seal(scrollContainerRect);
   }
 
   private _setOverflow(): void {
-    this.hasOverflowY = hasOverFlow(
-      this.scrollRect,
-      this.scrollContainerRect,
-      "y"
-    );
-
-    this.hasOverflowX = hasOverFlow(
-      this.scrollRect,
-      this.scrollContainerRect,
-      "x"
+    this.hasOverflow.setAxes(
+      hasOverFlow(this.scrollRect, this.scrollContainerRect, "x"),
+      hasOverFlow(this.scrollRect, this.scrollContainerRect, "y")
     );
 
     this.allowDynamicVisibility = false;
 
     if (
-      this.hasOverflowY &&
+      this.hasOverflow.y &&
       hasMoreThanHalfOverFlow(this.scrollRect, this.scrollContainerRect, "y")
     ) {
       this.allowDynamicVisibility = true;
@@ -267,30 +255,80 @@ class DFlexScrollContainer {
     }
 
     if (
-      this.hasOverflowX &&
+      this.hasOverflow.x &&
       hasMoreThanHalfOverFlow(this.scrollRect, this.scrollContainerRect, "x")
     ) {
       this.allowDynamicVisibility = true;
     }
   }
 
-  private _updateScrollCoordinates() {
+  private _updateScrollCoordinates(): boolean {
     const { scrollLeft, scrollTop } = this.scrollContainerDOM;
 
     const isUpdated =
       scrollTop !== this.scrollRect.top || scrollLeft !== this.scrollRect.left;
 
+    if (!isUpdated) {
+      return false;
+    }
+
     this.scrollRect.top = scrollTop;
     this.scrollRect.left = scrollLeft;
 
+    this.updateInvisibleDistance();
+
     return isUpdated;
+  }
+
+  /**
+   * When the scroll container is scrolled, the invisible distance is updated
+   * with synthetic values instead of DOM listener values.
+   *
+   * @param syntheticLeft
+   * @param syntheticTop
+   */
+  updateInvisibleDistance(syntheticLeft?: number, syntheticTop?: number): void {
+    let left = syntheticLeft;
+    let top = syntheticTop;
+
+    let triggerUpdateCB = false;
+
+    if (left === undefined && top === undefined) {
+      ({ left, top } = this.scrollRect);
+    } else {
+      this.scrollRect.top = top!;
+      this.scrollRect.left = left!;
+
+      triggerUpdateCB = this._scrollEventCallback !== null;
+    }
+
+    this.invisibleDistance.setAxes(
+      this.scrollRect.width - (left! + this.scrollContainerRect.width),
+      this.scrollRect.height - (top! + this.scrollContainerRect.height)
+    );
+
+    if (triggerUpdateCB) {
+      this._scrollEventCallback!(this._SK);
+    }
+  }
+
+  hasInvisibleSpace(axis: Axis, direction: Direction): boolean {
+    // When it's going down, then check if there is enough space to scroll.
+    if (direction === 1) {
+      return this.invisibleDistance[axis] > 0;
+    }
+
+    return (
+      this.invisibleDistance[axis] <
+      (axis === "y" ? this.scrollRect.top : this.scrollRect.left)
+    );
   }
 
   private _setResizeAndScrollListeners(isAttachListener = true): void {
     /**
      * No need to set scroll listener if there is no scroll.
      */
-    const hasScrollListener = this.hasOverflowX || this.hasOverflowY;
+    const hasScrollListener = this.hasOverflow.isOneTruthy();
 
     const type = isAttachListener ? "addEventListener" : "removeEventListener";
 
@@ -333,38 +371,22 @@ class DFlexScrollContainer {
     );
   }
 
-  private _isScrollAvailable(isVertical: boolean): boolean {
-    if (__DEV__) {
-      if (this._innerThreshold === null) {
-        throw new Error("Scroll threshold is not set.");
-      }
-    }
-
-    return this._hasThrottledFrame === null && isVertical
-      ? this.hasOverflowY
-      : this.hasOverflowX;
+  isOutThresholdV(y: number, height: number, direction: Direction): boolean {
+    return direction === 1
+      ? this._innerThreshold!.isOutBottomThreshold(this._threshold_inner_key, y)
+      : this._innerThreshold!.isOutTopThreshold(
+          this._threshold_inner_key,
+          y + height
+        );
   }
 
-  isOutThresholdV(y: number, height: number): boolean {
-    return (
-      this._isScrollAvailable(true) &&
-      this._innerThreshold!.isOutThresholdV(
-        this._threshold_inner_key,
-        y,
-        y + height
-      )
-    );
-  }
-
-  isOutThresholdH(x: number, width: number): boolean {
-    return (
-      this._isScrollAvailable(false) &&
-      this._innerThreshold!.isOutThresholdV(
-        this._threshold_inner_key,
-        x,
-        x + width
-      )
-    );
+  isOutThresholdH(x: number, width: number, direction: Direction): boolean {
+    return direction === 1
+      ? this._innerThreshold!.isOutRightThreshold(
+          this._threshold_inner_key,
+          x + width
+        )
+      : this._innerThreshold!.isOutLeftThreshold(this._threshold_inner_key, x);
   }
 
   getMaximumScrollContainerLeft() {
@@ -404,7 +426,7 @@ class DFlexScrollContainer {
   }
 
   private animatedListener(
-    setter: "_setScrollContainerRect" | "_updateScrollCoordinates",
+    setter: "_setScrollRect" | "_updateScrollCoordinates",
     cb: ScrollEventCallback | null
   ) {
     if (this._hasThrottledFrame !== null) return;
@@ -428,7 +450,7 @@ class DFlexScrollContainer {
   };
 
   private animatedResizeListener = () => {
-    this.animatedListener.call(this, "_setScrollContainerRect", null);
+    this.animatedListener.call(this, "_setScrollRect", null);
   };
 
   destroy() {

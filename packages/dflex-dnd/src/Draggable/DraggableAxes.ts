@@ -104,11 +104,6 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
       Math.round(y - currentPosition.y)
     );
 
-    console.log(
-      "file: DraggableAxes.ts ~ line 106 ~ this.innerOffset",
-      this.innerOffset
-    );
-
     const style = getComputedStyle(DOM);
 
     // get element margin

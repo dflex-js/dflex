@@ -1,49 +1,18 @@
+import { PointBool } from "../Point";
+
 class FourDirectionsBool {
-  isLeftFromTop!: boolean;
+  outVertical: PointBool;
 
-  isLeftFromBottom!: boolean;
-
-  isLeftFromLeft!: boolean;
-
-  isLeftFromRight!: boolean;
+  outHorizontal: PointBool;
 
   constructor() {
-    this.reset();
+    this.outHorizontal = new PointBool(false, false);
+    this.outVertical = new PointBool(false, false);
   }
 
-  reset() {
-    this.isLeftFromTop = false;
-    this.isLeftFromBottom = false;
-    this.isLeftFromLeft = false;
-    this.isLeftFromRight = false;
-  }
-
-  isOutY() {
-    return this.isLeftFromTop || this.isLeftFromBottom;
-  }
-
-  setOutY(up: boolean, down: boolean) {
-    this.isLeftFromTop = up;
-    this.isLeftFromBottom = down;
-  }
-
-  setOutYFalsy() {
-    this.isLeftFromTop = false;
-    this.isLeftFromBottom = false;
-  }
-
-  isOutX() {
-    return this.isLeftFromLeft || this.isLeftFromRight;
-  }
-
-  setOutX(left: boolean, right: boolean) {
-    this.isLeftFromLeft = left;
-    this.isLeftFromRight = right;
-  }
-
-  setOutXFalsy() {
-    this.isLeftFromLeft = false;
-    this.isLeftFromRight = false;
+  reset(): void {
+    this.outHorizontal.setFalsy();
+    this.outVertical.setFalsy();
   }
 }
 

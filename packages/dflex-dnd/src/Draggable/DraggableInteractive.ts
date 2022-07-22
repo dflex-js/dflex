@@ -28,7 +28,7 @@ class DraggableInteractive extends DraggableAxes {
     const { SK } = store.registry.get(id)!.keys;
     const scroll = store.scrolls.get(SK)!;
 
-    const { hasOverflowX, hasOverflowY } = scroll;
+    const { hasOverflow } = scroll;
 
     const siblings = store.getElmBranchByKey(this.migration.latest().SK);
 
@@ -52,7 +52,7 @@ class DraggableInteractive extends DraggableAxes {
       },
     ];
 
-    if (siblings === null || (!hasOverflowY && !hasOverflowX)) {
+    if (siblings.length <= 1 || hasOverflow.isAllFalsy()) {
       // Override the default options. (FYI, this is the only privilege I have.)
       this.scroll.enable = false;
     }
@@ -92,7 +92,7 @@ class DraggableInteractive extends DraggableAxes {
     const hasToUndo =
       isFallback ||
       // dragged in position but has been clicked.
-      this.occupiedPosition.isEqual(this.draggedElm.currentPosition);
+      this.occupiedPosition.isInstanceEqual(this.draggedElm.currentPosition);
 
     if (hasToUndo) {
       /**
@@ -105,7 +105,9 @@ class DraggableInteractive extends DraggableAxes {
        * dragged depends on extra instance to float in layout that is not related to element
        * instance.
        */
-      if (!this.draggedElm.translate.isEqual(this.translatePlaceholder)) {
+      if (
+        !this.draggedElm.translate.isInstanceEqual(this.translatePlaceholder)
+      ) {
         this.draggedElm.transform(this.draggedDOM);
         this.draggedElm.setAttribute(
           this.draggedDOM,
