@@ -23,6 +23,10 @@ const moduleResolution = [
     find: "@dflex/dom-gen",
     replacement: path.resolve("../dflex-dom-gen/src/index.ts"),
   },
+  {
+    find: "@dflex/draggable",
+    replacement: path.resolve("../dflex-draggable/src/index.ts"),
+  },
 ];
 
 const config: UserConfigExport = {
