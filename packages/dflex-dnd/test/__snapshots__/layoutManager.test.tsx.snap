@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DFlex DnD DFlex DnD Store registration Element is initiated 1`] = `
-DnDStoreImp {
+DFlexDnDStore {
   "DOMGen": Generator {
     "_branches": Object {
       "0-0": Array [
@@ -365,8 +365,14 @@ DnDStoreImp {
       "animatedResizeListener": [Function],
       "animatedScrollListener": [Function],
       "hasDocumentAsContainer": true,
-      "hasOverflowX": false,
-      "hasOverflowY": false,
+      "hasOverflow": PointBool {
+        "x": false,
+        "y": false,
+      },
+      "invisibleDistance": PointNum {
+        "x": 0,
+        "y": 0,
+      },
       "scrollContainerDOM": <html>
         <head />
         <body
@@ -408,10 +414,10 @@ DnDStoreImp {
         </body>
       </html>,
       "scrollContainerRect": Object {
-        "height": 768,
+        "height": 0,
         "left": 0,
         "top": 0,
-        "width": 1024,
+        "width": 0,
       },
       "scrollRect": Object {
         "height": 0,
@@ -433,8 +439,14 @@ DnDStoreImp {
       "animatedResizeListener": [Function],
       "animatedScrollListener": [Function],
       "hasDocumentAsContainer": true,
-      "hasOverflowX": false,
-      "hasOverflowY": false,
+      "hasOverflow": PointBool {
+        "x": false,
+        "y": false,
+      },
+      "invisibleDistance": PointNum {
+        "x": 0,
+        "y": 0,
+      },
       "scrollContainerDOM": <html>
         <head />
         <body
@@ -476,10 +488,10 @@ DnDStoreImp {
         </body>
       </html>,
       "scrollContainerRect": Object {
-        "height": 768,
+        "height": 0,
         "left": 0,
         "top": 0,
-        "width": 1024,
+        "width": 0,
       },
       "scrollRect": Object {
         "height": 0,

@@ -12,28 +12,44 @@ DFlexThreshold {
   },
   "isOut": Object {
     "0": FourDirectionsBool {
-      "isLeftFromBottom": false,
-      "isLeftFromLeft": false,
-      "isLeftFromRight": false,
-      "isLeftFromTop": false,
+      "outHorizontal": PointBool {
+        "x": false,
+        "y": false,
+      },
+      "outVertical": PointBool {
+        "x": false,
+        "y": false,
+      },
     },
     "0-container-sk": FourDirectionsBool {
-      "isLeftFromBottom": false,
-      "isLeftFromLeft": false,
-      "isLeftFromRight": false,
-      "isLeftFromTop": false,
+      "outHorizontal": PointBool {
+        "x": false,
+        "y": false,
+      },
+      "outVertical": PointBool {
+        "x": false,
+        "y": false,
+      },
     },
     "container-sk": FourDirectionsBool {
-      "isLeftFromBottom": false,
-      "isLeftFromLeft": false,
-      "isLeftFromRight": false,
-      "isLeftFromTop": false,
+      "outHorizontal": PointBool {
+        "x": false,
+        "y": false,
+      },
+      "outVertical": PointBool {
+        "x": false,
+        "y": false,
+      },
     },
     "dflex-dragged": FourDirectionsBool {
-      "isLeftFromBottom": false,
-      "isLeftFromLeft": false,
-      "isLeftFromRight": false,
-      "isLeftFromTop": false,
+      "outHorizontal": PointBool {
+        "x": false,
+        "y": false,
+      },
+      "outVertical": PointBool {
+        "x": false,
+        "y": false,
+      },
     },
   },
   "thresholds": Object {
@@ -77,10 +93,14 @@ DFlexThreshold {
   },
   "isOut": Object {
     "scroll-id-inner": FourDirectionsBool {
-      "isLeftFromBottom": false,
-      "isLeftFromLeft": false,
-      "isLeftFromRight": false,
-      "isLeftFromTop": false,
+      "outHorizontal": PointBool {
+        "x": false,
+        "y": false,
+      },
+      "outVertical": PointBool {
+        "x": false,
+        "y": false,
+      },
     },
   },
   "thresholds": Object {
@@ -106,16 +126,24 @@ DFlexThreshold {
   },
   "isOut": Object {
     "scroll-id-inner": FourDirectionsBool {
-      "isLeftFromBottom": false,
-      "isLeftFromLeft": false,
-      "isLeftFromRight": false,
-      "isLeftFromTop": false,
+      "outHorizontal": PointBool {
+        "x": false,
+        "y": false,
+      },
+      "outVertical": PointBool {
+        "x": false,
+        "y": false,
+      },
     },
     "scroll-id-outer": FourDirectionsBool {
-      "isLeftFromBottom": false,
-      "isLeftFromLeft": false,
-      "isLeftFromRight": false,
-      "isLeftFromTop": false,
+      "outHorizontal": PointBool {
+        "x": false,
+        "y": false,
+      },
+      "outVertical": PointBool {
+        "x": false,
+        "y": false,
+      },
     },
   },
   "thresholds": Object {
