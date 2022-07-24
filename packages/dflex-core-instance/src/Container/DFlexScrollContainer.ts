@@ -436,18 +436,20 @@ class DFlexScrollContainer {
     return !isNotVisible;
   }
 
+  // TODO: Remove string and pass reference.
   private animatedListener(
     setter: "_setScrollRect" | "_updateScrollCoordinates",
     cb: ScrollEventCallback | null
   ) {
     if (this._hasThrottledFrame !== null) return;
 
-    this._hasThrottledFrame = window.requestAnimationFrame(() => {
+    this._hasThrottledFrame = requestAnimationFrame(() => {
       const isUpdated = this[setter]();
 
       if (isUpdated && cb) {
         cb(this._SK);
       }
+
       this._hasThrottledFrame = null;
     });
   }

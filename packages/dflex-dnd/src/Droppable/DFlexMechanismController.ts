@@ -442,6 +442,10 @@ class DFlexMechanismController extends DFlexScrollableElement {
       events,
     } = this.draggable;
 
+    const { SK } = migration.latest();
+
+    let isOutSiblingsContainer = false;
+
     if (scroll.enable) {
       this.scrollFeed(x, y);
 
@@ -449,6 +453,13 @@ class DFlexMechanismController extends DFlexScrollableElement {
         console.log("scrolling......");
 
         if (!this._hasBeenScrolling) {
+          isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
+
+          // When it's inside the container, then the siblings are not lifted
+          if (!isOutSiblingsContainer) {
+            this._fillHeadUp();
+          }
+
           this._hasBeenScrolling = true;
         }
 
@@ -460,7 +471,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
         console.log("scrolling ended......");
 
-        this._fillHeadUp();
         this._detectNearestElm();
 
         this._hasBeenScrolling = false;
@@ -480,8 +490,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
       return;
     }
 
-    let isOutSiblingsContainer = false;
-
     if (this.draggable.isOutThreshold()) {
       events.dispatch("ON_OUT_THRESHOLD", {
         id: draggedElm.id,
@@ -498,9 +506,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
       draggedElm.removeAttribute(draggedDOM, "OUT_POS");
 
-      isOutSiblingsContainer = this.draggable.isOutThreshold(
-        migration.latest().SK
-      );
+      isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
       // when it's out, and on of theses is true then it's happening.
       if (!isOutSiblingsContainer) {
@@ -547,9 +553,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
      * When dragged is out parent and returning to it.
      */
     if (this.isParentLocked) {
-      isOutSiblingsContainer = this.draggable.isOutThreshold(
-        migration.latest().SK
-      );
+      isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
       if (isOutSiblingsContainer) {
         return;

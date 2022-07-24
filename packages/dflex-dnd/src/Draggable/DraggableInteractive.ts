@@ -157,22 +157,6 @@ class DraggableInteractive extends DraggableAxes {
     this.appendDraggedToContainerDimensions(false);
 
     this.threshold.destroy();
-
-    // TODO: add type to this.
-    const properties = [
-      "threshold",
-      "gridPlaceholder",
-      "isMovingAwayFrom",
-      "positionPlaceholder",
-      "occupiedOffset",
-      "occupiedTranslate",
-      "initCoordinates",
-    ];
-
-    properties.forEach((property) => {
-      // @ts-expect-error
-      this[property] = null;
-    });
   }
 }
 

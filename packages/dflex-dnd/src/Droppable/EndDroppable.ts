@@ -168,19 +168,26 @@ class EndDroppable extends DFlexMechanismController {
   }
 
   endDragging() {
-    const siblings = store.getElmBranchByKey(
-      this.draggable.migration.latest().SK
-    );
+    const { migration } = this.draggable;
+    const { SK: activeSK, id: activeID } = migration.latest();
+
+    const activeSiblings = store.getElmBranchByKey(activeSK);
 
     let isFallback = false;
 
-    if (this.draggable.isNotSettled() || !this.verify(siblings)) {
+    if (this.isScrolling()) {
       isFallback = true;
 
-      this.draggable.migration.getALlMigrations().forEach((migration) => {
-        const lst = store.getElmBranchByKey(migration.SK);
+      this.cancelAndThrottleScrolling(store.scrolls.get(activeSK)!);
 
-        this.undoList(lst, migration.id);
+      this.undoList(activeSiblings, activeID);
+    } else if (this.draggable.isNotSettled() || !this.verify(activeSiblings)) {
+      isFallback = true;
+
+      migration.getALlMigrations().forEach(({ SK, id }) => {
+        const lst = store.getElmBranchByKey(SK);
+
+        this.undoList(lst, id);
       });
     }
 

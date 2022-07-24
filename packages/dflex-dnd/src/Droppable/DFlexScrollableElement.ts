@@ -60,7 +60,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
      * - Guarantee same position for dragging. In scrolling/overflow case, or
      *   regular scrolling.
      */
-    this.currentScrollAxes = new Proxy(new PointNum(left, top), {});
+    this.currentScrollAxes = new PointNum(left, top);
   }
 
   isScrolling(): boolean {
@@ -75,7 +75,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     console.log("scrollAnimatedFrame is cleared...");
   }
 
-  private _cancelAndThrottleScrolling(scroll: DFlexScrollContainer): void {
+  protected cancelAndThrottleScrolling(scroll: DFlexScrollContainer): void {
     console.log("Throttling...");
 
     if (this._scrollAnimatedFrame !== null) {
@@ -172,7 +172,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       if (hasSuddenChangeInDirection) {
         const scroll = store.scrolls.get(SK)!;
 
-        this._cancelAndThrottleScrolling(scroll);
+        this.cancelAndThrottleScrolling(scroll);
       }
 
       console.log(
@@ -202,7 +202,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     // If there's not scrollable area, we don't need to scroll.
     if (!canScroll()) {
-      this._cancelAndThrottleScrolling(scroll);
+      this.cancelAndThrottleScrolling(scroll);
 
       return;
     }
