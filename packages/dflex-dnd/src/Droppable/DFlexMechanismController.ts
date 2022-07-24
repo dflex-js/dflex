@@ -456,7 +456,9 @@ class DFlexMechanismController extends DFlexScrollableElement {
           isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
           // When it's inside the container, then the siblings are not lifted
-          if (!isOutSiblingsContainer) {
+          if (!isOutSiblingsContainer && !this.isParentLocked) {
+            this.lockParent(true);
+
             this._fillHeadUp();
           }
 

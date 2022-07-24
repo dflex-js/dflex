@@ -5,16 +5,6 @@ import DFlexPositionUpdater from "./DFlexPositionUpdater";
 import type DraggableInteractive from "../Draggable";
 import { store } from "../LayoutManager";
 
-const THROTTLE_FRAME_RATE_MS = 30;
-const EXECUTION_FRAME_RATE_MS = 2000;
-
-function easeOutCubic(t: number) {
-  // eslint-disable-next-line no-plusplus
-  return --t * t * t + 1;
-}
-
-// NOTE: This is directly related to active parent container, migration script
-// should take into consideration this class indicators.
 class DFlexScrollableElement extends DFlexPositionUpdater {
   private _prevMousePosition: PointNum;
 
@@ -31,6 +21,13 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
   protected readonly initialScrollPosition: PointNum;
 
   protected currentScrollAxes: PointNum;
+
+  private static THROTTLE_FRAME_RATE_MS = 0;
+
+  private static easeOutCubic(t: number) {
+    // eslint-disable-next-line no-plusplus
+    return --t * t * t + 1;
+  }
 
   constructor(draggable: DraggableInteractive) {
     super(draggable);
@@ -49,7 +46,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     this.initialScrollPosition = new PointNum(left, top);
 
-    this._lastScrollSpeed = this.draggable.scroll.initialSpeed;
+    this._lastScrollSpeed = 0;
 
     /*
      * The reason for using this instance instead of calling the store
@@ -93,7 +90,10 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     clearTimeout(this._timeout);
 
-    setTimeout(this._clearScrollAnimatedFrame, THROTTLE_FRAME_RATE_MS);
+    setTimeout(
+      this._clearScrollAnimatedFrame,
+      DFlexScrollableElement.THROTTLE_FRAME_RATE_MS
+    );
   }
 
   private _scroll(
@@ -210,6 +210,9 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     let startingTime: number;
     let prevTimestamp: number;
 
+    const EXECUTION_FRAME_RATE_MS_V = scroll.scrollRect.height / 2.5;
+    const EXECUTION_FRAME_RATE_MS_H = scroll.scrollRect.width / 2.5;
+
     const scrollAnimatedFrame = (timestamp: number) => {
       console.log("scrollAnimatedFrame...");
       scroll.pauseListeners(true);
@@ -233,6 +236,17 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
           this._scroll(scroll, initialOffset, "x", x, y, directionH);
         }
 
+        const acc = isOutV
+          ? DFlexScrollableElement.easeOutCubic(
+              elapsed / EXECUTION_FRAME_RATE_MS_V
+            )
+          : DFlexScrollableElement.easeOutCubic(
+              elapsed / EXECUTION_FRAME_RATE_MS_H
+            );
+
+        // Increase scroll speed.
+        this._lastScrollSpeed += acc;
+
         scroll.updateInvisibleDistance(
           this.currentScrollAxes.x,
           this.currentScrollAxes.y
@@ -245,16 +259,10 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
         scroll.scrollContainerDOM.scrollTop = this.currentScrollAxes.y;
         scroll.scrollContainerDOM.scrollLeft = this.currentScrollAxes.x;
-
-        const acc = easeOutCubic(elapsed / EXECUTION_FRAME_RATE_MS);
-        console.log("file: DFlexScrollableElement.ts ~ line 254 ~ acc", acc);
-
-        // Increase scroll speed.
-        this._lastScrollSpeed += acc;
       }
 
       // Stop the animation after 2 seconds
-      if (elapsed < EXECUTION_FRAME_RATE_MS) {
+      if (elapsed < EXECUTION_FRAME_RATE_MS_V) {
         prevTimestamp = timestamp;
 
         if (canScroll()) {
@@ -272,7 +280,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
       this._timeout = setTimeout(
         this._clearScrollAnimatedFrame,
-        THROTTLE_FRAME_RATE_MS
+        DFlexScrollableElement.THROTTLE_FRAME_RATE_MS
       );
 
       scroll.pauseListeners(false);
