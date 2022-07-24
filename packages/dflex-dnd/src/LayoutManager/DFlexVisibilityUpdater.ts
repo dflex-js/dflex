@@ -22,6 +22,10 @@ function updateElementVisibility(
 
   isVisible = isVisibleY && isVisibleX;
 
+  if (isVisible) {
+    console.log("isVisible", elm.id);
+  }
+
   elm.changeVisibility(DOM, isVisible);
 }
 

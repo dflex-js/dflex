@@ -1,4 +1,4 @@
-import Store from "@dflex/store";
+import DFlexBaseStore from "@dflex/store";
 import type { RegisterInputOpts } from "@dflex/store";
 
 import { Tracker, canUseDOM, Dimensions } from "@dflex/utils";
@@ -36,7 +36,7 @@ type UpdatesQueue = Array<
 
 type Deferred = Array<() => void>;
 
-class DnDStoreImp extends Store {
+class DFlexDnDStore extends DFlexBaseStore {
   containers: Containers;
 
   scrolls: Scrolls;
@@ -91,7 +91,9 @@ class DnDStoreImp extends Store {
   ) {
     const [dflexNode, DOM] = this.getElmWithDOM(id);
 
-    dflexNode.resume(DOM, scroll.scrollRect.left, scroll.scrollRect.top);
+    const { scrollRect } = scroll;
+
+    dflexNode.resume(DOM, scrollRect.left, scrollRect.top);
 
     // Using element grid zero to know if the element has been initiated inside
     // container or not.
@@ -337,4 +339,4 @@ class DnDStoreImp extends Store {
   }
 }
 
-export default DnDStoreImp;
+export default DFlexDnDStore;

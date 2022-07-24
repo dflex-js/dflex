@@ -284,6 +284,9 @@ class DFlexScrollContainer {
    * When the scroll container is scrolled, the invisible distance is updated
    * with synthetic values instead of DOM listener values.
    *
+   * One way binding, because when the scroll container is scrolled then the
+   * is not dragging anymore.
+   *
    * @param syntheticLeft
    * @param syntheticTop
    */
@@ -389,12 +392,20 @@ class DFlexScrollContainer {
       : this._innerThreshold!.isOutLeftThreshold(this._threshold_inner_key, x);
   }
 
+  /**
+   * @deprecated - Should be removed when refactoring retractions.
+   * @returns
+   */
   getMaximumScrollContainerLeft() {
     const { left, width } = this.scrollContainerRect;
 
     return left + width + this.scrollRect.left;
   }
 
+  /**
+   * @deprecated - Should be removed when refactoring retractions.
+   * @returns
+   */
   getMaximumScrollContainerTop() {
     const { top, height } = this.scrollContainerRect;
 

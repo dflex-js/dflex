@@ -1,13 +1,13 @@
 import { canUseDOM } from "@dflex/utils";
-import DnDStoreImp from "./DFlexDnDStore";
+import DFlexDnDStore from "./DFlexDnDStore";
 
 declare global {
   // eslint-disable-next-line
-  var $DFlex: DnDStoreImp;
+  var $DFlex: DFlexDnDStore;
 }
 
 export default (function createStoreInstance() {
-  const store = new DnDStoreImp();
+  const store = new DFlexDnDStore();
 
   if (__DEV__) {
     if (canUseDOM()) {

@@ -17,6 +17,8 @@ class AbstractMigration implements IAbstract {
     this.index = index;
     this.SK = SK;
     this.id = id;
+
+    // TODO: Replace this with PointNum.
     this.marginBottom = null;
     this.marginTop = null;
   }

@@ -52,8 +52,8 @@ class DraggableInteractive extends DraggableAxes {
       },
     ];
 
+    // Override the default options When no siblings or no overflow.
     if (siblings.length <= 1 || hasOverflow.isAllFalsy()) {
-      // Override the default options. (FYI, this is the only privilege I have.)
       this.scroll.enable = false;
     }
 
