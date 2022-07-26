@@ -380,7 +380,7 @@ class DFlexCoreNode extends DFlexBaseNode {
     };
   }
 
-  getSerializedElm(): SerializedDFlexCoreNode {
+  getSerializedInstance(): SerializedDFlexCoreNode {
     return {
       type: DFlexCoreNode.getType(),
       version: 3,

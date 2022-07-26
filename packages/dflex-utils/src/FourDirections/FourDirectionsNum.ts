@@ -1,18 +1,18 @@
 import { PointNum } from "../Point";
 
 class FourDirectionsNum {
-  outVertical: PointNum;
+  verticalDistance: PointNum;
 
-  outHorizontal: PointNum;
+  horizontalDistance: PointNum;
 
   constructor() {
-    this.outHorizontal = new PointNum(0, 0);
-    this.outVertical = new PointNum(0, 0);
+    this.horizontalDistance = new PointNum(0, 0);
+    this.verticalDistance = new PointNum(0, 0);
   }
 
   reset(): void {
-    this.outHorizontal.setAxes(0, 0);
-    this.outVertical.setAxes(0, 0);
+    this.horizontalDistance.setAxes(0, 0);
+    this.verticalDistance.setAxes(0, 0);
   }
 }
 

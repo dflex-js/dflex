@@ -19,7 +19,7 @@ import scheduler, {
   UpdateFn,
 } from "./DFlexScheduler";
 
-import { updateBranchVisibility } from "./DFlexVisibilityUpdater";
+import updateBranchVisibilityLinearly from "./DFlexVisibilityUpdater";
 import { initMutationObserver } from "./DFlexMutations";
 
 type Containers = Map<string, DFlexParentContainer>;
@@ -127,7 +127,7 @@ class DFlexDnDStore extends DFlexBaseStore {
         this.interactiveDOM.get(branch[0])!,
         SK,
         branch.length,
-        updateBranchVisibility.bind(null, this)
+        updateBranchVisibilityLinearly.bind(null, this)
       );
 
       this.scrolls.set(SK, scroll);
@@ -161,7 +161,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     branch.forEach(initElmGrid);
 
-    updateBranchVisibility(this, SK);
+    updateBranchVisibilityLinearly(this, SK);
 
     const lastElm = this.registry.get(branch[branch.length - 1])!;
 
@@ -283,7 +283,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     }
 
     return this.registry.has(id)
-      ? this.registry.get(id)!.getSerializedElm()
+      ? this.registry.get(id)!.getSerializedInstance()
       : null;
   }
 

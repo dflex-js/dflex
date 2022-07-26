@@ -1,16 +1,37 @@
 /* eslint-disable no-underscore-dangle */
 import {
+  AxesPoint,
   Axis,
+  Dimensions,
   Direction,
+  FourDirectionsNum,
   getParentElm,
   PointBool,
-  PointNum,
   Threshold,
 } from "@dflex/utils";
 import type { ThresholdPercentages, RectDimensions } from "@dflex/utils";
 
 // eslint-disable-next-line no-unused-vars
 type ScrollEventCallback = (SK: string) => void;
+
+type OutputInvisibleDistance = {
+  up: number;
+  down: number;
+  left: number;
+  right: number;
+};
+
+export type SerializedScrollContainer = {
+  type: string;
+  version: 3;
+  key: string;
+  hasOverFlow: AxesPoint<boolean>;
+  hasDocumentAsContainer: boolean;
+  scrollRect: RectDimensions;
+  scrollContainerRect: RectDimensions;
+  invisibleDistance: OutputInvisibleDistance;
+  visibleScreen: Dimensions;
+};
 
 const OVERFLOW_REGEX = /(auto|scroll|overlay)/;
 
@@ -121,7 +142,7 @@ class DFlexScrollContainer {
 
   hasOverflow: PointBool;
 
-  invisibleDistance: PointNum;
+  invisibleDistance: FourDirectionsNum;
 
   /**
    * Some containers are overflown but in small percentages of the container
@@ -148,6 +169,10 @@ class DFlexScrollContainer {
 
   private static _MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
 
+  static getType(): string {
+    return "scroll:container";
+  }
+
   constructor(
     element: HTMLElement,
     SK: string,
@@ -156,7 +181,7 @@ class DFlexScrollContainer {
   ) {
     this.allowDynamicVisibility = false;
     this.hasOverflow = new PointBool(false, false);
-    this.invisibleDistance = new PointNum(0, 0);
+    this.invisibleDistance = new FourDirectionsNum();
 
     this._innerThreshold = null;
     this._outerThreshold = null;
@@ -173,7 +198,8 @@ class DFlexScrollContainer {
       getScrollContainer(element);
 
     this._setScrollRect();
-    this.updateInvisibleDistance();
+
+    this._updateScrollCoordinates();
 
     // Check allowDynamicVisibility after taking into consideration the length of
     // the branch itself.
@@ -272,52 +298,44 @@ class DFlexScrollContainer {
       return false;
     }
 
-    this.scrollRect.top = scrollTop;
-    this.scrollRect.left = scrollLeft;
-
-    this.updateInvisibleDistance();
+    this.updateInvisibleDistance(scrollLeft, scrollTop, false);
 
     return isUpdated;
   }
 
   /**
-   * When the scroll container is scrolled, the invisible distance is updated
+   * When the scroll container is scrolling, the invisible distance is updated
    * with synthetic values instead of DOM listener values.
    *
    * One way binding, because when the scroll container is scrolled then the
    * is not dragging anymore.
    *
-   * @param syntheticLeft
-   * @param syntheticTop
+   * @param scrollLeft
+   * @param scrollTop
    */
-  updateInvisibleDistance(syntheticLeft?: number, syntheticTop?: number): void {
-    let left = syntheticLeft;
-    let top = syntheticTop;
+  updateInvisibleDistance(
+    scrollLeft: number,
+    scrollTop: number,
+    triggerScrollEventCallback: boolean
+  ): void {
+    this.scrollRect.top = scrollTop!;
+    this.scrollRect.left = scrollLeft!;
 
-    let triggerUpdateCB = false;
+    const invisibleYTop = this.scrollRect.height - scrollTop;
+    const invisibleXLeft = this.scrollRect.width - scrollLeft;
 
-    if (left === undefined && top === undefined) {
-      ({ left, top } = this.scrollRect);
-    } else {
-      this.scrollRect.top = top!;
-      this.scrollRect.left = left!;
-
-      triggerUpdateCB = this._scrollEventCallback !== null;
-    }
-
-    console.log(
-      "updateInvisibleDistance",
-      this.scrollRect.height,
-      this.scrollRect.height - top! + this.scrollContainerRect.height
+    this.invisibleDistance.verticalDistance.setAxes(
+      scrollTop,
+      invisibleYTop - this.scrollContainerRect.height
     );
 
-    this.invisibleDistance.setAxes(
-      this.scrollRect.width - (left! + this.scrollContainerRect.width),
-      this.scrollRect.height - top! + this.scrollContainerRect.height
+    this.invisibleDistance.horizontalDistance.setAxes(
+      scrollLeft,
+      invisibleXLeft + this.scrollContainerRect.width
     );
 
-    if (triggerUpdateCB) {
-      this._scrollEventCallback!(this._SK);
+    if (triggerScrollEventCallback && this._scrollEventCallback !== null) {
+      this._scrollEventCallback(this._SK);
     }
   }
 
@@ -328,22 +346,42 @@ class DFlexScrollContainer {
    * @returns
    */
   hasInvisibleSpace(axis: Axis, direction: Direction): boolean {
+    const ref =
+      axis === "y"
+        ? this.invisibleDistance.verticalDistance
+        : this.invisibleDistance.horizontalDistance;
+
     // When it's going down, then check if there is enough space to scroll.
     if (direction === 1) {
-      return this.invisibleDistance[axis] > 0;
+      return ref.y > 0;
     }
 
     return (
-      this.invisibleDistance[axis] <
-      (axis === "y" ? this.scrollRect.height : this.scrollRect.width)
+      ref.x < (axis === "y" ? this.scrollRect.height : this.scrollRect.width)
     );
+  }
+
+  private _tagDOMString(
+    isAttachListener: boolean,
+    hasScrollListener: boolean
+  ): void {
+    const elmHoldDataset = this.hasDocumentAsContainer
+      ? document.body
+      : this.scrollContainerDOM;
+
+    if (isAttachListener) {
+      elmHoldDataset.dataset[this._listenerDataset] = `${hasScrollListener}`;
+    } else {
+      delete elmHoldDataset.dataset[this._listenerDataset];
+    }
   }
 
   private _setResizeAndScrollListeners(isAttachListener = true): void {
     /**
      * No need to set scroll listener if there is no scroll.
      */
-    const hasScrollListener = this.hasOverflow.isOneTruthy();
+    const hasScrollListener =
+      this.hasOverflow.isOneTruthy() && this.allowDynamicVisibility;
 
     const type = isAttachListener ? "addEventListener" : "removeEventListener";
 
@@ -355,20 +393,16 @@ class DFlexScrollContainer {
 
     container[type]("resize", this.animatedResizeListener, opts);
 
-    if (hasScrollListener && this.allowDynamicVisibility) {
+    if (hasScrollListener) {
       container[type]("scroll", this.animatedScrollListener, opts);
+
+      this._tagDOMString(isAttachListener, true);
+
+      return;
     }
 
-    const elmHoldDataset = this.hasDocumentAsContainer
-      ? document.body
-      : this.scrollContainerDOM;
-
-    if (isAttachListener) {
-      elmHoldDataset.dataset[
-        this._listenerDataset
-      ] = `${this.allowDynamicVisibility}`;
-    } else {
-      delete elmHoldDataset.dataset[this._listenerDataset];
+    if (!this.hasDocumentAsContainer) {
+      this._tagDOMString(isAttachListener, false);
     }
   }
 
@@ -386,7 +420,7 @@ class DFlexScrollContainer {
     this._hasThrottledFrame = pausePlease ? 1 : null;
   }
 
-  private _garbageCollectionInnerThreshold() {
+  private _garbageCollectInnerThreshold() {
     if (this._innerThreshold !== null) {
       this._innerThreshold.destroy();
       this._innerThreshold = null;
@@ -403,7 +437,7 @@ class DFlexScrollContainer {
    * @param threshold
    */
   setInnerThreshold(threshold: ThresholdPercentages) {
-    this._garbageCollectionInnerThreshold();
+    this._garbageCollectInnerThreshold();
 
     this._innerThreshold = new Threshold(threshold);
 
@@ -536,11 +570,45 @@ class DFlexScrollContainer {
     this.animatedListener.call(this, "_setScrollRect", null);
   };
 
+  private _getInvisibleDistance(): OutputInvisibleDistance {
+    const { horizontalDistance, verticalDistance } = this.invisibleDistance;
+
+    return {
+      up: horizontalDistance.x,
+      down: horizontalDistance.y,
+      left: verticalDistance.x,
+      right: verticalDistance.y,
+    };
+  }
+
+  private _getVisibleScreen(): Dimensions {
+    const { height, width } = this.scrollContainerRect;
+
+    return {
+      height,
+      width,
+    };
+  }
+
+  getSerializedInstance(): SerializedScrollContainer {
+    return {
+      type: DFlexScrollContainer.getType(),
+      version: 3,
+      key: this._SK,
+      hasOverFlow: this.hasOverflow.getInstance(),
+      hasDocumentAsContainer: this.hasDocumentAsContainer,
+      scrollRect: this.scrollRect,
+      scrollContainerRect: this.scrollContainerRect,
+      invisibleDistance: this._getInvisibleDistance(),
+      visibleScreen: this._getVisibleScreen(),
+    };
+  }
+
   /**
    * Clean up the container instances.
    */
   destroy(): void {
-    this._garbageCollectionInnerThreshold();
+    this._garbageCollectInnerThreshold();
     this._scrollEventCallback = null;
     this._setResizeAndScrollListeners(false);
     // @ts-expect-error

@@ -100,10 +100,9 @@ class DFlexBaseStore {
       this._queue = [];
 
       queue.forEach((fn) => fn());
+      console.log("queue handled...");
     } finally {
-      if (this.queueTimeoutId !== undefined) {
-        clearTimeout(this.queueTimeoutId);
-      }
+      this.queueTimeoutId = undefined;
     }
   }
 
@@ -223,6 +222,10 @@ class DFlexBaseStore {
             branchComposedCallBack || null
           );
         });
+
+        if (this.queueTimeoutId === undefined) {
+          clearTimeout(this.queueTimeoutId);
+        }
 
         this.queueTimeoutId = setTimeout(this._handleQueue, 0);
       } else {

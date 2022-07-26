@@ -6,21 +6,21 @@ import type DraggableInteractive from "../Draggable";
 import { store } from "../LayoutManager";
 
 class DFlexScrollableElement extends DFlexPositionUpdater {
-  private _prevMousePosition: PointNum;
+  private _prevMousePosition!: PointNum;
 
-  private _prevMouseDirection: Point<Direction>;
+  private _prevMouseDirection!: Point<Direction>;
 
-  private _scrollAnimatedFrame: number | null;
+  private _scrollAnimatedFrame!: number | null;
 
   private _timeout?: ReturnType<typeof setTimeout>;
 
-  private _isScrollThrottled: boolean;
+  private _isScrollThrottled!: boolean;
 
-  private _lastScrollSpeed: number;
+  private _lastScrollSpeed!: number;
 
-  protected readonly initialScrollPosition: PointNum;
+  protected readonly initialScrollPosition!: PointNum;
 
-  protected currentScrollAxes: PointNum;
+  protected currentScrollAxes!: PointNum;
 
   private static THROTTLE_FRAME_RATE_MS = 0;
 
@@ -32,21 +32,11 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
   constructor(draggable: DraggableInteractive) {
     super(draggable);
 
-    this._prevMousePosition = new PointNum(0, 0);
-    this._prevMouseDirection = new Point<Direction>(-1, -1);
+    const { SK } = this.draggable.migration.latest();
 
     this._scrollAnimatedFrame = null;
-    this._isScrollThrottled = false;
 
-    this._clearScrollAnimatedFrame = this._clearScrollAnimatedFrame.bind(this);
-
-    const {
-      scrollRect: { left, top },
-    } = store.scrolls.get(this.draggable.migration.latest().SK)!;
-
-    this.initialScrollPosition = new PointNum(left, top);
-
-    this._lastScrollSpeed = 0;
+    this.initialScrollPosition = new PointNum(0, 0);
 
     /*
      * The reason for using this instance instead of calling the store
@@ -57,7 +47,27 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
      * - Guarantee same position for dragging. In scrolling/overflow case, or
      *   regular scrolling.
      */
-    this.currentScrollAxes = new PointNum(left, top);
+    this.currentScrollAxes = new PointNum(0, 0);
+
+    // If no scroll don't initialize.
+    if (!store.scrolls.has(SK)) {
+      return;
+    }
+
+    this._isScrollThrottled = false;
+    this._prevMousePosition = new PointNum(0, 0);
+    this._prevMouseDirection = new Point<Direction>(-1, -1);
+
+    this._lastScrollSpeed = 0;
+
+    this._clearScrollAnimatedFrame = this._clearScrollAnimatedFrame.bind(this);
+
+    const {
+      scrollRect: { left, top },
+    } = store.scrolls.get(this.draggable.migration.latest().SK)!;
+
+    this.initialScrollPosition.setAxes(left, top);
+    this.currentScrollAxes.setAxes(left, top);
   }
 
   isScrolling(): boolean {
@@ -260,7 +270,8 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
         scroll.updateInvisibleDistance(
           this.currentScrollAxes.x,
-          this.currentScrollAxes.y
+          this.currentScrollAxes.y,
+          true
         );
 
         this.draggable.dragAt(
