@@ -3,7 +3,7 @@ import { PointNum } from "../Point";
 
 import type { RectDimensions, RectBoundaries, Dimensions } from "../types";
 
-import FourDirectionsBool from "./FourDirectionsBool";
+import { FourDirectionsBool } from "../FourDirections";
 
 import { dirtyAssignBiggestRect } from "../collections";
 
@@ -192,6 +192,9 @@ class DFlexThreshold {
     // Accumulated depth threshold. Accumulation based on insertion layer.
     this._addDepthThreshold(insertionLayerKey, childDepth);
   }
+
+  // TODO: Functions bellow seems one function that's repeated for different
+  // parameters. It needs enhancement maybe one function for all the parameters.
 
   isOutLeftThreshold(key: string, XLeft: number): boolean {
     const { left } = this.thresholds[key];

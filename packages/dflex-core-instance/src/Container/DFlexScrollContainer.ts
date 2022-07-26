@@ -305,9 +305,15 @@ class DFlexScrollContainer {
       triggerUpdateCB = this._scrollEventCallback !== null;
     }
 
+    console.log(
+      "updateInvisibleDistance",
+      this.scrollRect.height,
+      this.scrollRect.height - top! + this.scrollContainerRect.height
+    );
+
     this.invisibleDistance.setAxes(
       this.scrollRect.width - (left! + this.scrollContainerRect.width),
-      this.scrollRect.height - (top! + this.scrollContainerRect.height)
+      this.scrollRect.height - top! + this.scrollContainerRect.height
     );
 
     if (triggerUpdateCB) {
@@ -315,6 +321,12 @@ class DFlexScrollContainer {
     }
   }
 
+  /**
+   *
+   * @param axis
+   * @param direction
+   * @returns
+   */
   hasInvisibleSpace(axis: Axis, direction: Direction): boolean {
     // When it's going down, then check if there is enough space to scroll.
     if (direction === 1) {
@@ -323,7 +335,7 @@ class DFlexScrollContainer {
 
     return (
       this.invisibleDistance[axis] <
-      (axis === "y" ? this.scrollRect.top : this.scrollRect.left)
+      (axis === "y" ? this.scrollRect.height : this.scrollRect.width)
     );
   }
 
@@ -360,11 +372,39 @@ class DFlexScrollContainer {
     }
   }
 
+  /**
+   * Pausing and resuming the scroll listener. This method should be associated
+   * with scrolling animation to prevent the scroll listener from being called
+   * while scrolling which is causing latency and performance issues.
+   *
+   * Note: when listener is off make sure you call `updateInvisibleDistance` to
+   * keep the the container in sync with the scrollable instance.
+   *
+   * @param pausePlease
+   */
   pauseListeners(pausePlease: boolean): void {
     this._hasThrottledFrame = pausePlease ? 1 : null;
   }
 
+  private _garbageCollectionInnerThreshold() {
+    if (this._innerThreshold !== null) {
+      this._innerThreshold.destroy();
+      this._innerThreshold = null;
+    }
+  }
+
+  /**
+   * Cerate and set inner threshold for the scroll container that is responsible
+   * for checking if dragged element is out of the scroll container or not.
+   *
+   * Note: this method is called when dragged is triggered so it gives the user
+   * more flexibility to choose the threshold in relation to the dragged element.
+   *
+   * @param threshold
+   */
   setInnerThreshold(threshold: ThresholdPercentages) {
+    this._garbageCollectionInnerThreshold();
+
     this._innerThreshold = new Threshold(threshold);
 
     this._innerThreshold.setMainThreshold(
@@ -374,6 +414,14 @@ class DFlexScrollContainer {
     );
   }
 
+  /**
+   * Check if the element is out inner threshold vertically.
+   *
+   * @param y
+   * @param height
+   * @param direction
+   * @returns
+   */
   isOutThresholdV(y: number, height: number, direction: Direction): boolean {
     return direction === 1
       ? this._innerThreshold!.isOutBottomThreshold(this._threshold_inner_key, y)
@@ -383,6 +431,14 @@ class DFlexScrollContainer {
         );
   }
 
+  /**
+   * Check if the element is out inner threshold horizontally.
+   *
+   * @param x
+   * @param width
+   * @param direction
+   * @returns
+   */
   isOutThresholdH(x: number, width: number, direction: Direction): boolean {
     return direction === 1
       ? this._innerThreshold!.isOutRightThreshold(
@@ -412,6 +468,13 @@ class DFlexScrollContainer {
     return top + height + this.scrollRect.top;
   }
 
+  /**
+   * Check if the element is visible in the container viewport horizontally.
+   *
+   * @param currentLeft
+   * @param width
+   * @returns
+   */
   isElementVisibleViewportH(currentLeft: number, width: number): boolean {
     const currentTopWithScroll = currentLeft - this.scrollRect.left;
 
@@ -424,6 +487,13 @@ class DFlexScrollContainer {
     return !isNotVisible;
   }
 
+  /**
+   * Check if the element is visible in the container viewport vertically.
+   *
+   * @param currentTop
+   * @param hight
+   * @returns
+   */
   isElementVisibleViewportV(currentTop: number, hight: number): boolean {
     const currentTopWithScroll = currentTop - this.scrollRect.top;
 
@@ -436,7 +506,7 @@ class DFlexScrollContainer {
     return !isNotVisible;
   }
 
-  // TODO: Remove string and pass reference.
+  // TODO: Remove string and pass references instead.
   private animatedListener(
     setter: "_setScrollRect" | "_updateScrollCoordinates",
     cb: ScrollEventCallback | null
@@ -466,11 +536,11 @@ class DFlexScrollContainer {
     this.animatedListener.call(this, "_setScrollRect", null);
   };
 
-  destroy() {
-    if (this._innerThreshold !== null) {
-      this._innerThreshold.destroy();
-      this._innerThreshold = null;
-    }
+  /**
+   * Clean up the container instances.
+   */
+  destroy(): void {
+    this._garbageCollectionInnerThreshold();
     this._scrollEventCallback = null;
     this._setResizeAndScrollListeners(false);
     // @ts-expect-error

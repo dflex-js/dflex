@@ -6,8 +6,9 @@ export type { ThresholdPercentages } from "./Threshold";
 
 export { default as Tracker } from "./Tracker";
 
-export { Migration } from "./Migration";
-export type { IAbstract, IMigration } from "./Migration";
+export { default as Migration } from "./Migration";
+
+export { FourDirectionsNum, FourDirectionsBool } from "./FourDirections";
 
 export type {
   Dimensions,

@@ -105,9 +105,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     direction: Direction
   ): void {
     let nextScrollPosition =
-      this.currentScrollAxes[axis] +
-      direction * this._lastScrollSpeed -
-      this.initialScrollPosition[axis];
+      this.currentScrollAxes[axis] + direction * this._lastScrollSpeed;
 
     if (axis === "y") {
       const nextDraggedTop =
@@ -121,9 +119,21 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       if (direction === 1) {
         if (nextDraggedBottom > scrollRect.height) {
           nextScrollPosition = scrollRect.height - scrollContainerRect.height;
+          console.log(
+            "file: DFlexScrollableElement.ts ~ line 128 ~ nextScrollPosition",
+            nextScrollPosition
+          );
         }
-      } else if (nextDraggedTop < 0) {
-        nextScrollPosition = 0;
+      } else {
+        console.log(
+          `nextDraggedTop ${nextDraggedTop}`,
+          `height ${scrollRect.height}`
+        );
+
+        if (Math.abs(nextDraggedTop) > scrollRect.height) {
+          nextScrollPosition = 0;
+          debugger;
+        }
       }
     } else {
       const nextDraggedLeft =
@@ -138,7 +148,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
         if (nextDraggedRight > scrollRect.width) {
           nextScrollPosition = scrollRect.width - scrollContainerRect.width;
         }
-      } else if (nextDraggedLeft < 0) {
+      } else if (Math.abs(nextDraggedLeft) < 0) {
         nextScrollPosition = 0;
       }
     }
@@ -202,6 +212,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     // If there's not scrollable area, we don't need to scroll.
     if (!canScroll()) {
+      console.log("cant scroll...");
       this.cancelAndThrottleScrolling(scroll);
 
       return;
@@ -210,8 +221,8 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     let startingTime: number;
     let prevTimestamp: number;
 
-    const EXECUTION_FRAME_RATE_MS_V = scroll.scrollRect.height / 2.5;
-    const EXECUTION_FRAME_RATE_MS_H = scroll.scrollRect.width / 2.5;
+    const EXECUTION_FRAME_RATE_MS_V = Math.round(scroll.scrollRect.height / 2);
+    const EXECUTION_FRAME_RATE_MS_H = Math.round(scroll.scrollRect.width / 2);
 
     const scrollAnimatedFrame = (timestamp: number) => {
       console.log("scrollAnimatedFrame...");
@@ -245,7 +256,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
             );
 
         // Increase scroll speed.
-        this._lastScrollSpeed += acc;
+        this._lastScrollSpeed += Math.round(acc);
 
         scroll.updateInvisibleDistance(
           this.currentScrollAxes.x,
