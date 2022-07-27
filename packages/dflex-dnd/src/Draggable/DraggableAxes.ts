@@ -33,8 +33,15 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
 
   isViewportRestricted: boolean;
 
+  /** *@deprecated */
   isMovingAwayFrom: PointBool;
 
+  /**
+   * The inner distance between the mouse coordinates and the element position.
+   *
+   * innerOffset.x: represents the distance from mouse.x to element.x
+   * innerOffset.x: represents the distance from mouse.y to element.y
+   */
   readonly innerOffset: PointNum;
 
   private isLayoutStateUpdated: boolean;

@@ -1,18 +1,22 @@
-import { PointBool } from "../Point";
+import type { Axis } from "../types";
+import FourDirections from "./FourDirections";
 
-class FourDirectionsBool {
-  outVertical: PointBool;
-
-  outHorizontal: PointBool;
-
+class FourDirectionsBool extends FourDirections<boolean> {
   constructor() {
-    this.outHorizontal = new PointBool(false, false);
-    this.outVertical = new PointBool(false, false);
+    super(false, false, false, false);
   }
 
   reset(): void {
-    this.outHorizontal.setFalsy();
-    this.outVertical.setFalsy();
+    this.setAll(false, false, false, false);
+  }
+
+  isOneTruthy(axis: Axis): boolean {
+    switch (axis) {
+      case "x":
+        return this.left || this.right;
+      default:
+        return this.top || this.bottom;
+    }
   }
 }
 

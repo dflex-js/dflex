@@ -4,7 +4,7 @@ import {
   Axis,
   Dimensions,
   Direction,
-  FourDirectionsNum,
+  FourDirections,
   getParentElm,
   PointBool,
   Threshold,
@@ -16,7 +16,7 @@ type ScrollEventCallback = (SK: string) => void;
 
 type OutputInvisibleDistance = {
   up: number;
-  down: number;
+  bottom: number;
   left: number;
   right: number;
 };
@@ -142,7 +142,7 @@ class DFlexScrollContainer {
 
   hasOverflow: PointBool;
 
-  invisibleDistance: FourDirectionsNum;
+  invisibleDistance: FourDirections<number>;
 
   /**
    * Some containers are overflown but in small percentages of the container
@@ -181,7 +181,7 @@ class DFlexScrollContainer {
   ) {
     this.allowDynamicVisibility = false;
     this.hasOverflow = new PointBool(false, false);
-    this.invisibleDistance = new FourDirectionsNum();
+    this.invisibleDistance = new FourDirections(0, 0, 0, 0);
 
     this._innerThreshold = null;
     this._outerThreshold = null;
@@ -326,14 +326,11 @@ class DFlexScrollContainer {
     const invisibleYTop = this.scrollRect.height - scrollTop;
     const invisibleXLeft = this.scrollRect.width - scrollLeft;
 
-    this.invisibleDistance.verticalDistance.setAxes(
+    this.invisibleDistance.setAll(
       scrollTop,
-      invisibleYTop - this.scrollContainerRect.height
-    );
-
-    this.invisibleDistance.horizontalDistance.setAxes(
-      scrollLeft,
-      invisibleXLeft - this.scrollContainerRect.width
+      invisibleXLeft - this.scrollContainerRect.width,
+      invisibleYTop - this.scrollContainerRect.height,
+      scrollLeft
     );
 
     console.log(
@@ -353,21 +350,9 @@ class DFlexScrollContainer {
    * @returns
    */
   hasInvisibleSpace(axis: Axis, direction: Direction): boolean {
-    const ref =
-      axis === "y"
-        ? this.invisibleDistance.verticalDistance
-        : this.invisibleDistance.horizontalDistance;
+    const val = this.invisibleDistance.getOne(axis, direction);
 
-    console.log("file: DFlexScrollContainer.ts ~ line 350 ~ ref", ref);
-
-    // When it's going down, then check if there is enough space to scroll.
-    if (direction === 1) {
-      return ref.y > 0;
-    }
-
-    return (
-      ref.x < (axis === "y" ? this.scrollRect.height : this.scrollRect.width)
-    );
+    return val > 0;
   }
 
   private _tagDOMString(
@@ -591,17 +576,6 @@ class DFlexScrollContainer {
     this.animatedListener.call(this, "_setScrollRect", null);
   };
 
-  private _getInvisibleDistance(): OutputInvisibleDistance {
-    const { horizontalDistance, verticalDistance } = this.invisibleDistance;
-
-    return {
-      up: horizontalDistance.x,
-      down: horizontalDistance.y,
-      left: verticalDistance.x,
-      right: verticalDistance.y,
-    };
-  }
-
   private _getVisibleScreen(): Dimensions {
     const { height, width } = this.scrollContainerRect;
 
@@ -620,7 +594,7 @@ class DFlexScrollContainer {
       hasDocumentAsContainer: this.hasDocumentAsContainer,
       scrollRect: this.scrollRect,
       scrollContainerRect: this.scrollContainerRect,
-      invisibleDistance: this._getInvisibleDistance(),
+      invisibleDistance: this.invisibleDistance.getAll(),
       visibleScreen: this._getVisibleScreen(),
     };
   }

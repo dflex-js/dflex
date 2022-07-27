@@ -1,6 +1,6 @@
 import type { AxesPoint, PointNum } from "@dflex/utils";
 
-import { store } from "../LayoutManager";
+import { scheduler, store } from "../LayoutManager";
 import type DraggableInteractive from "../Draggable";
 
 import {
@@ -380,8 +380,8 @@ class DFlexMechanismController extends DFlexScrollableElement {
     const { SK } = store.registry.get(id)!.keys;
     const { grid: siblingsGrid } = store.containers.get(SK)!;
 
-    if (isOut[id].outVertical.isOneTruthy()) {
-      const newRow = isOut[id].outVertical.y
+    if (isOut[id].isOneTruthy("y")) {
+      const newRow = isOut[id].bottom
         ? gridPlaceholder.y + 1
         : gridPlaceholder.y - 1;
 
@@ -404,12 +404,12 @@ class DFlexMechanismController extends DFlexScrollableElement {
       }
 
       console.log(`newRow: ${newRow}`);
-      this._switchElementPosition(isOut[id].outVertical.y);
+      this._switchElementPosition(isOut[id].bottom);
 
       return;
     }
 
-    const newCol = isOut[id].outHorizontal.y
+    const newCol = isOut[id].right
       ? gridPlaceholder.x + 1
       : gridPlaceholder.x - 1;
 
@@ -424,7 +424,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     console.log(`newCol: ${newCol}`);
 
-    this._switchElementPosition(isOut[id].outHorizontal.y);
+    this._switchElementPosition(isOut[id].right);
   }
 
   private lockParent(isOut: boolean) {
@@ -452,14 +452,18 @@ class DFlexMechanismController extends DFlexScrollableElement {
         console.log("scrolling......");
 
         if (!this._hasBeenScrolling) {
-          isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
+          scheduler(store, null, {
+            onUpdate: () => {
+              isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
-          // When it's inside the container, then the siblings are not lifted
-          if (!isOutSiblingsContainer && !this.isParentLocked) {
-            this.lockParent(true);
+              // When it's inside the container, then the siblings are not lifted
+              if (!isOutSiblingsContainer && !this.isParentLocked) {
+                this.lockParent(true);
 
-            this._fillHeadUp();
-          }
+                this._fillHeadUp();
+              }
+            },
+          });
 
           this._hasBeenScrolling = true;
         }
@@ -535,8 +539,10 @@ class DFlexMechanismController extends DFlexScrollableElement {
         this._detectNearestContainer();
 
         if (migration.isTransitioning) {
-          queueMicrotask(() => {
-            this._detectNearestElm();
+          scheduler(store, null, {
+            onUpdate: () => {
+              this._detectNearestElm();
+            },
           });
 
           return;

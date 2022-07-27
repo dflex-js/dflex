@@ -201,7 +201,7 @@ class DFlexThreshold {
 
     const is = XLeft < left;
 
-    this.isOut[key].outHorizontal.setAxes(is, this.isOut[key].outHorizontal.y);
+    this.isOut[key].setOne("x", -1, is);
 
     return is;
   }
@@ -211,7 +211,7 @@ class DFlexThreshold {
 
     const is = XRight > right;
 
-    this.isOut[key].outHorizontal.setAxes(this.isOut[key].outHorizontal.x, is);
+    this.isOut[key].setOne("x", 1, is);
 
     return is;
   }
@@ -221,7 +221,7 @@ class DFlexThreshold {
 
     const is = YTop < top;
 
-    this.isOut[key].outVertical.setAxes(is, this.isOut[key].outVertical.y);
+    this.isOut[key].setOne("y", -1, is);
 
     return is;
   }
@@ -231,7 +231,7 @@ class DFlexThreshold {
 
     const is = YBottom > bottom;
 
-    this.isOut[key].outVertical.setAxes(this.isOut[key].outVertical.x, is);
+    this.isOut[key].setOne("y", 1, is);
 
     return is;
   }
@@ -239,17 +239,17 @@ class DFlexThreshold {
   isOutThresholdH(key: string, XLeft: number, XRight: number): boolean {
     const { left, right } = this.thresholds[key];
 
-    this.isOut[key].outHorizontal.setAxes(XLeft < left, XRight > right);
+    this.isOut[key].setByAxis("x", XLeft < left, XRight > right);
 
-    return this.isOut[key].outHorizontal.isOneTruthy();
+    return this.isOut[key].isOneTruthy("x");
   }
 
   isOutThresholdV(key: string, YTop: number, YBottom: number): boolean {
     const { top, bottom } = this.thresholds[key];
 
-    this.isOut[key].outVertical.setAxes(YTop < top, YBottom > bottom);
+    this.isOut[key].setByAxis("y", YTop < top, YBottom > bottom);
 
-    return this.isOut[key].outVertical.isOneTruthy();
+    return this.isOut[key].isOneTruthy("y");
   }
 
   destroy(): void {

@@ -110,16 +110,15 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     scroll: DFlexScrollContainer,
     draggedOffset: RectDimensions,
     axis: Axis,
-    x: number,
-    y: number,
+    edgeCurrentPositionX: number,
+    edgeCurrentPositionY: number,
     direction: Direction
   ): void {
     let nextScrollPosition =
       this.currentScrollAxes[axis] + direction * this._lastScrollSpeed;
 
     if (axis === "y") {
-      const nextDraggedTop =
-        nextScrollPosition + y + this.draggable.innerOffset[axis];
+      const nextDraggedTop = nextScrollPosition + edgeCurrentPositionY;
 
       const nextDraggedBottom = nextDraggedTop + draggedOffset.height;
 
@@ -129,24 +128,25 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       if (direction === 1) {
         if (nextDraggedBottom > scrollRect.height) {
           nextScrollPosition = scrollRect.height - scrollContainerRect.height;
-          console.log(
-            "file: DFlexScrollableElement.ts ~ line 128 ~ nextScrollPosition",
-            nextScrollPosition
-          );
         }
       } else {
         console.log(
           `nextDraggedTop ${nextDraggedTop}`,
-          `height ${scrollRect.height}`
+          `height ${scrollRect.height}`,
+          nextDraggedBottom,
+          scrollRect.height - Math.abs(nextDraggedTop)
         );
 
-        if (Math.abs(nextDraggedTop) > scrollRect.height) {
-          nextScrollPosition = 0;
+        if (
+          Math.abs(nextDraggedTop) >
+          scrollRect.height - scrollContainerRect.height
+        ) {
+          // debugger;
+          nextScrollPosition = -1 * scrollContainerRect.height;
         }
       }
     } else {
-      const nextDraggedLeft =
-        nextScrollPosition + x + this.draggable.innerOffset[axis];
+      const nextDraggedLeft = nextScrollPosition + edgeCurrentPositionX;
 
       const nextDraggedRight = nextDraggedLeft + draggedOffset.width;
 
@@ -174,7 +174,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     directionChangedV: boolean
   ): void {
     console.log("scrollManager");
-    const { draggedElm } = this.draggable;
+    const { draggedElm, innerOffset } = this.draggable;
 
     const {
       keys: { SK },
@@ -204,8 +204,20 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     const scroll = store.scrolls.get(SK)!;
 
-    const isOutV = scroll.isOutThresholdV(y, initialOffset.height, directionV);
-    const isOutH = scroll.isOutThresholdH(x, initialOffset.width, directionH);
+    const edgeCurrentPositionX = x + innerOffset.x;
+    const edgeCurrentPositionY = y + innerOffset.y;
+
+    const isOutV = scroll.isOutThresholdV(
+      edgeCurrentPositionX,
+      initialOffset.height,
+      directionV
+    );
+
+    const isOutH = scroll.isOutThresholdH(
+      edgeCurrentPositionY,
+      initialOffset.width,
+      directionH
+    );
 
     const isOut = isOutV || isOutH;
 
@@ -249,11 +261,25 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
       if (prevTimestamp !== timestamp) {
         if (isOutV) {
-          this._scroll(scroll, initialOffset, "y", x, y, directionV);
+          this._scroll(
+            scroll,
+            initialOffset,
+            "y",
+            edgeCurrentPositionX,
+            edgeCurrentPositionY,
+            directionV
+          );
         }
 
         if (isOutH) {
-          this._scroll(scroll, initialOffset, "x", x, y, directionH);
+          this._scroll(
+            scroll,
+            initialOffset,
+            "x",
+            edgeCurrentPositionX,
+            edgeCurrentPositionY,
+            directionH
+          );
         }
 
         const acc = isOutV
