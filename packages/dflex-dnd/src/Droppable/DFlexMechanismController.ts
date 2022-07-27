@@ -78,7 +78,11 @@ class DFlexMechanismController extends DFlexScrollableElement {
   private _detectDroppableIndex(): number | null {
     let droppableIndex = null;
 
-    const { positionPlaceholder, draggedElm, migration } = this.draggable;
+    const {
+      currentPosition: edgeCurrentPosition,
+      draggedElm,
+      migration,
+    } = this.draggable;
 
     const { SK } = migration.latest();
 
@@ -90,7 +94,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       if (isIDEligible(id, draggedElm.id)) {
         const element = store.registry.get(id)!;
 
-        const isQualified = element.isPositionedUnder(positionPlaceholder.y);
+        const isQualified = element.isPositionedUnder(edgeCurrentPosition.top);
 
         if (isQualified) {
           droppableIndex = i;

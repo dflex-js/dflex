@@ -9,6 +9,7 @@ import {
   AxesPoint,
   RectDimensions,
   ThresholdPercentages,
+  FourDirections,
 } from "@dflex/utils";
 
 import type { DFlexNode } from "@dflex/core-instance";
@@ -23,8 +24,6 @@ import type {
 } from "../types";
 
 class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
-  positionPlaceholder: PointNum;
-
   gridPlaceholder: PointNum;
 
   migration: Migration;
@@ -43,6 +42,8 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
    * innerOffset.x: represents the distance from mouse.y to element.y
    */
   readonly innerOffset: PointNum;
+
+  currentPosition: FourDirections<number>;
 
   private isLayoutStateUpdated: boolean;
 
@@ -118,9 +119,11 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
     const lm = Math.round(parseFloat(style.marginLeft));
     this.marginX = rm + lm;
 
-    this.positionPlaceholder = new PointNum(
-      currentPosition.x,
-      currentPosition.y
+    this.currentPosition = new FourDirections(
+      currentPosition.y,
+      currentPosition.x + width,
+      currentPosition.y + height,
+      currentPosition.x
     );
 
     this.restrictions = opts.restrictions;
@@ -317,23 +320,28 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
 
     this.translate(filteredX, filteredY);
 
+    const edgeCurrentPositionLeft = filteredX - this.innerOffset.x;
+    const edgeCurrentPositionTop = filteredX - this.innerOffset.y;
+
+    const {
+      initialOffset: { width, height },
+    } = this.draggedElm;
+
     /**
      * Every time we got new translate, offset should be updated
      */
-    this.positionPlaceholder.setAxes(
-      filteredX - this.innerOffset.x,
-      filteredY - this.innerOffset.y
+    this.currentPosition.setAll(
+      edgeCurrentPositionTop,
+      edgeCurrentPositionLeft + width,
+      edgeCurrentPositionTop + height,
+      edgeCurrentPositionLeft
     );
   }
 
   isOutThreshold(SK?: string, useInsertionThreshold?: boolean) {
-    const {
-      id,
-      depth,
-      initialOffset: { height, width },
-    } = this.draggedElm;
+    const { id, depth } = this.draggedElm;
 
-    const { x, y } = this.positionPlaceholder;
+    const { top, right, bottom, left } = this.currentPosition;
 
     let key = SK || id;
 
@@ -342,8 +350,8 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
     }
 
     return (
-      this.threshold.isOutThresholdV(key, y, y + height) ||
-      this.threshold.isOutThresholdH(key, x, x + width)
+      this.threshold.isOutThresholdV(key, top, bottom) ||
+      this.threshold.isOutThresholdH(key, left, right)
     );
   }
 

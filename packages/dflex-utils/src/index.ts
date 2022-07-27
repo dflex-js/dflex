@@ -8,7 +8,11 @@ export { default as Tracker } from "./Tracker";
 
 export { default as Migration } from "./Migration";
 
-export { FourDirections, FourDirectionsBool } from "./FourDirections";
+export {
+  FourDirections,
+  FourDirectionsBool,
+  FourDirectionsNum,
+} from "./FourDirections";
 
 export type {
   Dimensions,

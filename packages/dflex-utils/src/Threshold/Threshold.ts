@@ -236,18 +236,18 @@ class DFlexThreshold {
     return is;
   }
 
-  isOutThresholdH(key: string, XLeft: number, XRight: number): boolean {
+  isOutThresholdH(key: string, leftPos: number, rightPos: number): boolean {
     const { left, right } = this.thresholds[key];
 
-    this.isOut[key].setByAxis("x", XLeft < left, XRight > right);
+    this.isOut[key].setByAxis("x", leftPos < left, rightPos > right);
 
     return this.isOut[key].isOneTruthy("x");
   }
 
-  isOutThresholdV(key: string, YTop: number, YBottom: number): boolean {
+  isOutThresholdV(key: string, topPos: number, bottomPos: number): boolean {
     const { top, bottom } = this.thresholds[key];
 
-    this.isOut[key].setByAxis("y", YTop < top, YBottom > bottom);
+    this.isOut[key].setByAxis("y", topPos < top, bottomPos > bottom);
 
     return this.isOut[key].isOneTruthy("y");
   }

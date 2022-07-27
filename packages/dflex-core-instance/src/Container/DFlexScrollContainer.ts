@@ -445,22 +445,26 @@ class DFlexScrollContainer {
   /**
    * Check if the element is out inner threshold vertically.
    *
-   * @param y
-   * @param height
+   * @param topPos
+   * @param bottomPos
    * @param direction
    * @returns
    */
-  isOutThresholdV(y: number, height: number, direction: Direction): boolean {
+  isOutThresholdV(
+    topPos: number,
+    bottomPos: number,
+    direction: Direction
+  ): boolean {
     return (
       this.hasOverflow.y &&
       (direction === 1
         ? this._innerThreshold!.isOutBottomThreshold(
             this._threshold_inner_key,
-            y
+            topPos
           )
         : this._innerThreshold!.isOutTopThreshold(
             this._threshold_inner_key,
-            y + height
+            topPos + bottomPos
           ))
     );
   }
@@ -468,22 +472,26 @@ class DFlexScrollContainer {
   /**
    * Check if the element is out inner threshold horizontally.
    *
-   * @param x
-   * @param width
+   * @param lefPos
+   * @param rightPos
    * @param direction
    * @returns
    */
-  isOutThresholdH(x: number, width: number, direction: Direction): boolean {
+  isOutThresholdH(
+    lefPos: number,
+    rightPos: number,
+    direction: Direction
+  ): boolean {
     return (
       this.hasOverflow.x &&
       (direction === 1
         ? this._innerThreshold!.isOutRightThreshold(
             this._threshold_inner_key,
-            x + width
+            rightPos
           )
         : this._innerThreshold!.isOutLeftThreshold(
             this._threshold_inner_key,
-            x
+            lefPos
           ))
     );
   }
