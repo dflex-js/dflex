@@ -166,7 +166,7 @@ DFlexDnDStore {
     "subscribe": [Function],
   },
   "observer": MutationObserver {},
-  "queueTimeoutId": 1000000000001,
+  "queueTimeoutId": undefined,
   "registry": Map {
     "id-1" => DFlexNode {
       "_hasAttribute": Set {},
@@ -369,16 +369,15 @@ DFlexDnDStore {
         "x": false,
         "y": false,
       },
-      "invisibleDistance": PointNum {
-        "x": 0,
-        "y": 0,
+      "invisibleDistance": FourDirections {
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
       },
       "scrollContainerDOM": <html>
         <head />
-        <body
-          data-dflex-scroll-listener-0-0="false"
-          data-dflex-scroll-listener-0-1="false"
-        >
+        <body>
           <div>
             <div>
               <div
@@ -443,16 +442,15 @@ DFlexDnDStore {
         "x": false,
         "y": false,
       },
-      "invisibleDistance": PointNum {
-        "x": 0,
-        "y": 0,
+      "invisibleDistance": FourDirections {
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
       },
       "scrollContainerDOM": <html>
         <head />
-        <body
-          data-dflex-scroll-listener-0-0="false"
-          data-dflex-scroll-listener-0-1="false"
-        >
+        <body>
           <div>
             <div>
               <div

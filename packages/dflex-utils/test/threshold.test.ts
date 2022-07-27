@@ -4,14 +4,10 @@ import type { Dimensions } from "../src/types";
 
 describe("DFlexThreshold", () => {
   const DEFAULT_IS_OUT_INDICATORS = {
-    outHorizontal: {
-      x: false,
-      y: false,
-    },
-    outVertical: {
-      x: false,
-      y: false,
-    },
+    top: false,
+    right: false,
+    bottom: false,
+    left: false,
   };
 
   describe("Dragged Threshold", () => {
