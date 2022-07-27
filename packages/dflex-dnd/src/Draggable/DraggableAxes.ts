@@ -321,7 +321,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
     this.translate(filteredX, filteredY);
 
     const edgeCurrentPositionLeft = filteredX - this.innerOffset.x;
-    const edgeCurrentPositionTop = filteredX - this.innerOffset.y;
+    const edgeCurrentPositionTop = filteredY - this.innerOffset.y;
 
     const {
       initialOffset: { width, height },
