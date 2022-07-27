@@ -142,7 +142,6 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
         if (Math.abs(nextDraggedTop) > scrollRect.height) {
           nextScrollPosition = 0;
-          debugger;
         }
       }
     } else {

@@ -199,7 +199,9 @@ class DFlexScrollContainer {
 
     this._setScrollRect();
 
-    this._updateScrollCoordinates();
+    const { scrollLeft, scrollTop } = this.scrollContainerDOM;
+
+    this.updateInvisibleDistance(scrollLeft, scrollTop, false);
 
     // Check allowDynamicVisibility after taking into consideration the length of
     // the branch itself.
@@ -331,7 +333,12 @@ class DFlexScrollContainer {
 
     this.invisibleDistance.horizontalDistance.setAxes(
       scrollLeft,
-      invisibleXLeft + this.scrollContainerRect.width
+      invisibleXLeft - this.scrollContainerRect.width
+    );
+
+    console.log(
+      "file: DFlexScrollContainer.ts ~ line 331 ~ this.invisibleDistance",
+      this.invisibleDistance
     );
 
     if (triggerScrollEventCallback && this._scrollEventCallback !== null) {
@@ -350,6 +357,8 @@ class DFlexScrollContainer {
       axis === "y"
         ? this.invisibleDistance.verticalDistance
         : this.invisibleDistance.horizontalDistance;
+
+    console.log("file: DFlexScrollContainer.ts ~ line 350 ~ ref", ref);
 
     // When it's going down, then check if there is enough space to scroll.
     if (direction === 1) {
@@ -457,12 +466,18 @@ class DFlexScrollContainer {
    * @returns
    */
   isOutThresholdV(y: number, height: number, direction: Direction): boolean {
-    return direction === 1
-      ? this._innerThreshold!.isOutBottomThreshold(this._threshold_inner_key, y)
-      : this._innerThreshold!.isOutTopThreshold(
-          this._threshold_inner_key,
-          y + height
-        );
+    return (
+      this.hasOverflow.y &&
+      (direction === 1
+        ? this._innerThreshold!.isOutBottomThreshold(
+            this._threshold_inner_key,
+            y
+          )
+        : this._innerThreshold!.isOutTopThreshold(
+            this._threshold_inner_key,
+            y + height
+          ))
+    );
   }
 
   /**
@@ -474,12 +489,18 @@ class DFlexScrollContainer {
    * @returns
    */
   isOutThresholdH(x: number, width: number, direction: Direction): boolean {
-    return direction === 1
-      ? this._innerThreshold!.isOutRightThreshold(
-          this._threshold_inner_key,
-          x + width
-        )
-      : this._innerThreshold!.isOutLeftThreshold(this._threshold_inner_key, x);
+    return (
+      this.hasOverflow.x &&
+      (direction === 1
+        ? this._innerThreshold!.isOutRightThreshold(
+            this._threshold_inner_key,
+            x + width
+          )
+        : this._innerThreshold!.isOutLeftThreshold(
+            this._threshold_inner_key,
+            x
+          ))
+    );
   }
 
   /**

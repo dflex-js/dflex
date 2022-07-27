@@ -334,7 +334,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
       const id = siblings[i];
 
       if (isIDEligible(id, draggedElm.id)) {
-        console.log("file: DFlexMechanismController.ts ~ line 335 ~ id", id);
         this.updateElement(id, true);
       }
     }

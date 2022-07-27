@@ -2,7 +2,7 @@ import type { DFlexNode, DFlexScrollContainer } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
-let prevVisibility: boolean;
+let prevVisibility = false;
 
 function updateElementVisibility(
   DOM: HTMLElement,
@@ -48,7 +48,7 @@ function setBranchVisibility(
   from: number,
   to: number,
   value: boolean
-) {
+): void {
   console.log("setBranchVisibility", from, to, value);
   for (let i = from; i < to; i += 1) {
     const elmID = branch[i];
@@ -61,7 +61,10 @@ function setBranchVisibility(
   }
 }
 
-function updateBranchVisibilityLinearly(store: DFlexDnDStore, SK: string) {
+function updateBranchVisibilityLinearly(
+  store: DFlexDnDStore,
+  SK: string
+): void {
   const branch = store.getElmBranchByKey(SK);
   const scroll = store.scrolls.get(SK)!;
 
