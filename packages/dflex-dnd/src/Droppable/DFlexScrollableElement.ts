@@ -1,4 +1,4 @@
-import { Axis, PointNum, Direction, Point, FourDirections } from "@dflex/utils";
+import { Axis, PointNum, Direction, Point } from "@dflex/utils";
 import type { DFlexScrollContainer } from "@dflex/core-instance";
 import DFlexPositionUpdater from "./DFlexPositionUpdater";
 
@@ -115,57 +115,9 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     setTimeout(this._clearScrollAnimatedFrame, this._scrollThrottleMS);
   }
 
-  private _scroll(
-    axis: Axis,
-    direction: Direction,
-    scroll: DFlexScrollContainer,
-    draggedPos: FourDirections<number>
-  ): void {
+  private _scroll(axis: Axis, direction: Direction): void {
     const nextScrollPosition =
       this.currentScrollAxes[axis] + direction * this._lastScrollSpeed;
-
-    // if (axis === "y") {
-    //   const nextDraggedTop = nextScrollPosition + draggedPos.top;
-    //   const nextDraggedBottom = nextDraggedTop + draggedPos.bottom;
-
-    //   const { scrollRect, scrollContainerRect } = scroll;
-
-    //   // If it's increasing, it's going to be out of the scroll container..
-    //   if (direction === 1) {
-    //     if (nextDraggedBottom > scrollRect.height) {
-    //       nextScrollPosition = scrollRect.height - scrollContainerRect.height;
-    //     }
-    //   } else {
-    //     console.log(
-    //       `nextDraggedTop ${nextDraggedTop}`,
-    //       `height ${scrollRect.height}`,
-    //       nextDraggedBottom,
-    //       scrollRect.height - Math.abs(nextDraggedTop)
-    //     );
-
-    //     if (
-    //       Math.abs(nextDraggedTop) >
-    //       scrollRect.height - scrollContainerRect.height
-    //     ) {
-    //       // debugger;
-    //       nextScrollPosition = -1 * scrollContainerRect.height;
-    //     }
-    //   }
-    // } else {
-    //   const nextDraggedLeft = nextScrollPosition + draggedPos.left;
-    //   const nextDraggedRight = nextDraggedLeft + draggedPos.right;
-
-    //   const { scrollRect, scrollContainerRect } = scroll;
-
-    //   // If it's increasing, it's going to be out of the scroll container..
-    //   if (direction === 1) {
-    //     if (nextDraggedRight > scrollRect.width) {
-    //       nextScrollPosition = scrollRect.width - scrollContainerRect.width;
-    //     }
-    //   } else if (Math.abs(nextDraggedLeft) < 0) {
-    //     nextScrollPosition = 0;
-    //   }
-    // }
 
     this.currentScrollAxes[axis] = nextScrollPosition;
   }
@@ -265,11 +217,11 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
       if (prevTimestamp !== timestamp) {
         if (isOutV) {
-          this._scroll("y", draggedDirV, scroll, draggedPos);
+          this._scroll("y", draggedDirV);
         }
 
         if (isOutH) {
-          this._scroll("x", draggedDirH, scroll, draggedPos);
+          this._scroll("x", draggedDirH);
         }
 
         const acc = isOutV

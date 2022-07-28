@@ -355,9 +355,9 @@ DFlexDnDStore {
     "0-0" => DFlexScrollContainer {
       "_SK": "0-0",
       "_hasThrottledFrame": null,
-      "_innerThreshold": null,
+      "_innerThresholdInViewport": null,
       "_listenerDataset": "dflexScrollListener-0-0",
-      "_outerThreshold": null,
+      "_outerThresholdInViewport": null,
       "_scrollEventCallback": null,
       "_threshold_inner_key": "scroll_inner_0-0",
       "_threshold_outer_key": "scroll_outer_0-0",
@@ -428,9 +428,9 @@ DFlexDnDStore {
     "0-1" => DFlexScrollContainer {
       "_SK": "0-1",
       "_hasThrottledFrame": null,
-      "_innerThreshold": null,
+      "_innerThresholdInViewport": null,
       "_listenerDataset": "dflexScrollListener-0-1",
-      "_outerThreshold": null,
+      "_outerThresholdInViewport": null,
       "_scrollEventCallback": null,
       "_threshold_inner_key": "scroll_inner_0-1",
       "_threshold_outer_key": "scroll_outer_0-1",
