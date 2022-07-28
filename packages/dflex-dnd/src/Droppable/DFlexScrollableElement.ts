@@ -16,13 +16,13 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
   private _isScrollThrottled!: boolean;
 
+  private _scrollThrottleMS!: number;
+
   private _lastScrollSpeed!: number;
 
   protected readonly initialScrollPosition!: PointNum;
 
   protected currentScrollAxes!: PointNum;
-
-  private static THROTTLE_FRAME_RATE_MS = 0;
 
   private static easeOutCubic(t: number) {
     // eslint-disable-next-line no-plusplus
@@ -58,20 +58,32 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     this._prevMousePosition = new PointNum(0, 0);
     this._prevMouseDirection = new Point<Direction>(-1, -1);
 
-    this._lastScrollSpeed = 0;
+    this._lastScrollSpeed = 10;
 
     this._clearScrollAnimatedFrame = this._clearScrollAnimatedFrame.bind(this);
 
     const {
       scrollRect: { left, top },
+      scrollContainerRect: { width, height },
     } = store.scrolls.get(this.draggable.migration.latest().SK)!;
+
+    this._scrollThrottleMS = Math.round(
+      width > height ? width / 8.5 : height / 8.5
+    );
+
+    console.log(
+      "file: DFlexScrollableElement.ts ~ line 73 ~ this._scrollThrottleMS",
+      this._scrollThrottleMS
+    );
 
     this.initialScrollPosition.setAxes(left, top);
     this.currentScrollAxes.setAxes(left, top);
   }
 
   isScrolling(): boolean {
-    return this._scrollAnimatedFrame !== null;
+    // Depending on scroll animated creates latency in the dragger. Cause it
+    // clears by cancelAnimationFrame. So, we need to check throttled flag.
+    return !this._isScrollThrottled && this._scrollAnimatedFrame !== null;
   }
 
   private _clearScrollAnimatedFrame(): void {
@@ -100,10 +112,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     clearTimeout(this._timeout);
 
-    setTimeout(
-      this._clearScrollAnimatedFrame,
-      DFlexScrollableElement.THROTTLE_FRAME_RATE_MS
-    );
+    setTimeout(this._clearScrollAnimatedFrame, this._scrollThrottleMS);
   }
 
   private _scroll(
@@ -301,7 +310,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
       this._timeout = setTimeout(
         this._clearScrollAnimatedFrame,
-        DFlexScrollableElement.THROTTLE_FRAME_RATE_MS
+        this._scrollThrottleMS
       );
 
       scroll.pauseListeners(false);
