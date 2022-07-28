@@ -199,6 +199,18 @@ class DFlexThreshold {
     this._addDepthThreshold(insertionLayerKey, childDepth);
   }
 
+  /**
+   * Check if the element is out of the threshold from given axis.
+   *
+   * Note: This method checks and sets so the result is always preserved.
+   *
+   *
+   * @param axis
+   * @param key
+   * @param startingPos
+   * @param endingPos
+   * @returns
+   */
   isOutThresholdByAxis(
     axis: Axis,
     key: string,
@@ -218,25 +230,19 @@ class DFlexThreshold {
     return this.isOut[key].isOneTruthyByAxis(axis);
   }
 
-  isOutThreshold(
-    key: string,
-    top: number,
-    right: number,
-    bottom: number,
-    left: number
-  ): boolean {
-    const ref = this.thresholds[key];
-
-    this.isOut[key].setAll(
-      top < ref.top,
-      right > ref.right,
-      bottom > ref.bottom,
-      left < ref.left
-    );
-
-    return this.isOut[key].isOneTruthy();
-  }
-
+  /**
+   * Check if the element is out of the threshold from one direction based only
+   * on axis and element direction.
+   *
+   * Note: This method checks and sets so the result is always preserved
+   *
+   * @param axis
+   * @param direction
+   * @param key
+   * @param startingPos
+   * @param endingPos
+   * @returns
+   */
   isOutThresholdByDirection(
     axis: Axis,
     direction: Direction,
@@ -258,6 +264,66 @@ class DFlexThreshold {
     this.isOut[key].setOne(axis, direction, is);
 
     return is;
+  }
+
+  /**
+   * Check if the element is out of the threshold from all directions.
+   *
+   * Note: This method checks and sets so the result is always preserved.
+   *
+   * @param key
+   * @param top
+   * @param right
+   * @param bottom
+   * @param left
+   * @returns
+   */
+  isOutThreshold(
+    key: string,
+    top: number,
+    right: number,
+    bottom: number,
+    left: number
+  ): boolean {
+    const ref = this.thresholds[key];
+
+    this.isOut[key].setAll(
+      top < ref.top,
+      right > ref.right,
+      bottom > ref.bottom,
+      left < ref.left
+    );
+
+    return this.isOut[key].isOneTruthy();
+  }
+
+  /**
+   * Check if the element is out of the threshold from all directions.
+   *
+   * Note: This method doesn't preserve the result.
+   *
+   * @param key
+   * @param top
+   * @param right
+   * @param bottom
+   * @param left
+   * @returns
+   */
+  isShallowOutThreshold(
+    key: string,
+    top: number,
+    right: number,
+    bottom: number,
+    left: number
+  ): boolean {
+    const ref = this.thresholds[key];
+
+    return (
+      top < ref.top ||
+      right > ref.right ||
+      bottom > ref.bottom ||
+      left < ref.left
+    );
   }
 
   destroy(): void {

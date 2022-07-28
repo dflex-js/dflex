@@ -502,7 +502,7 @@ class DFlexScrollContainer {
     const currentTopWithScroll = leftPos - this.scrollRect.left;
     const currentLeftWithScroll = topPos - this.scrollRect.top;
 
-    const isOutThreshold = this._outerThreshold!.isOutThreshold(
+    const isOutThreshold = this._outerThreshold!.isShallowOutThreshold(
       this._threshold_outer_key,
       currentTopWithScroll,
       currentLeftWithScroll + width,
