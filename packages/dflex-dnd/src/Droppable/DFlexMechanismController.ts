@@ -79,7 +79,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     let droppableIndex = null;
 
     const {
-      currentPosition: edgeCurrentPosition,
+      currentPositionWithScroll: edgeCurrentPosition,
       draggedElm,
       migration,
     } = this.draggable;
@@ -476,15 +476,15 @@ class DFlexMechanismController extends DFlexScrollableElement {
       }
 
       if (this._hasBeenScrolling) {
-        // this._switchElementPosition(true);
-
         console.log("scrolling ended......");
 
-        this._detectNearestElm();
+        isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
+
+        if (!isOutSiblingsContainer && this.isParentLocked) {
+          this._detectNearestElm();
+        }
 
         this._hasBeenScrolling = false;
-
-        // debugger;
 
         return;
       }

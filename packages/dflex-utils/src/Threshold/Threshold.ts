@@ -251,6 +251,7 @@ class DFlexThreshold {
     endingPos: number
   ): boolean {
     const { left, right, top, bottom } = this.thresholds[key];
+    console.log("file: Threshold.ts ~ line 254 ~ top", top);
 
     const is =
       axis === "x"

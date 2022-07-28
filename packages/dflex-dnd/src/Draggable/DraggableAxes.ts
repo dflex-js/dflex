@@ -45,8 +45,10 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
 
   /**
    * Dragged edge current position including the inner offset.
+   *
+   * Note: Scroll position included, these points ignore viewport.
    */
-  currentPosition: FourDirections<number>;
+  currentPositionWithScroll: FourDirections<number>;
 
   private isLayoutStateUpdated: boolean;
 
@@ -122,7 +124,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
     const lm = Math.round(parseFloat(style.marginLeft));
     this.marginX = rm + lm;
 
-    this.currentPosition = new FourDirections(
+    this.currentPositionWithScroll = new FourDirections(
       currentPosition.y,
       currentPosition.x + width,
       currentPosition.y + height,
@@ -333,7 +335,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
     /**
      * Every time we got new translate, offset should be updated
      */
-    this.currentPosition.setAll(
+    this.currentPositionWithScroll.setAll(
       edgeCurrentPositionTop,
       edgeCurrentPositionLeft + width,
       edgeCurrentPositionTop + height,
@@ -344,7 +346,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
   isOutThreshold(SK?: string, useInsertionThreshold?: boolean) {
     const { id, depth } = this.draggedElm;
 
-    const { top, right, bottom, left } = this.currentPosition;
+    const { top, right, bottom, left } = this.currentPositionWithScroll;
 
     let key = SK || id;
 

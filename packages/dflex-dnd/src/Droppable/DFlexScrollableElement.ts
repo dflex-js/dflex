@@ -170,7 +170,8 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     directionChangedV: boolean
   ): void {
     console.log("scrollManager");
-    const { draggedElm, currentPosition: draggedPos } = this.draggable;
+    const { draggedElm, currentPositionWithScroll: draggedPos } =
+      this.draggable;
 
     const {
       keys: { SK },

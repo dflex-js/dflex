@@ -118,9 +118,9 @@ function hasMoreThanHalfOverFlow(
 }
 
 class DFlexScrollContainer {
-  private _innerThreshold: Threshold | null;
+  private _innerThresholdInViewport: Threshold | null;
 
-  private _outerThreshold: Threshold | null;
+  private _outerThresholdInViewport: Threshold | null;
 
   private _threshold_inner_key: string;
 
@@ -183,8 +183,8 @@ class DFlexScrollContainer {
     this.hasOverflow = new PointBool(false, false);
     this.invisibleDistance = new FourDirections(0, 0, 0, 0);
 
-    this._innerThreshold = null;
-    this._outerThreshold = null;
+    this._innerThresholdInViewport = null;
+    this._outerThresholdInViewport = null;
     this._SK = SK;
     this._threshold_inner_key = `scroll_inner_${SK}`;
     this._threshold_outer_key = `scroll_outer_${SK}`;
@@ -214,11 +214,11 @@ class DFlexScrollContainer {
       if (this.allowDynamicVisibility) {
         this._scrollEventCallback = scrollEventCallback;
 
-        this._outerThreshold = new Threshold(
+        this._outerThresholdInViewport = new Threshold(
           DFlexScrollContainer._OUTER_THRESHOLD
         );
 
-        this._outerThreshold.setMainThreshold(
+        this._outerThresholdInViewport.setMainThreshold(
           this._threshold_outer_key,
           this.scrollContainerRect,
           false
@@ -428,9 +428,9 @@ class DFlexScrollContainer {
   }
 
   private _garbageCollectInnerThreshold() {
-    if (this._innerThreshold !== null) {
-      this._innerThreshold.destroy();
-      this._innerThreshold = null;
+    if (this._innerThresholdInViewport !== null) {
+      this._innerThresholdInViewport.destroy();
+      this._innerThresholdInViewport = null;
     }
   }
 
@@ -446,9 +446,9 @@ class DFlexScrollContainer {
   setInnerThreshold(threshold: ThresholdPercentages) {
     this._garbageCollectInnerThreshold();
 
-    this._innerThreshold = new Threshold(threshold);
+    this._innerThresholdInViewport = new Threshold(threshold);
 
-    this._innerThreshold.setMainThreshold(
+    this._innerThresholdInViewport.setMainThreshold(
       this._threshold_inner_key,
       this.scrollContainerRect,
       true
@@ -461,14 +461,19 @@ class DFlexScrollContainer {
     startingPos: number,
     endingPos: number
   ): boolean {
+    console.log("direction", axis, direction, startingPos);
+
+    const adjustToViewport =
+      axis === "y" ? this.scrollRect.top : this.scrollRect.left;
+
     return (
       this.hasOverflow[axis] &&
-      this._innerThreshold!.isOutThresholdByDirection(
+      this._innerThresholdInViewport!.isOutThresholdByDirection(
         axis,
         direction,
         this._threshold_inner_key,
-        startingPos,
-        endingPos
+        startingPos - adjustToViewport,
+        endingPos - adjustToViewport
       )
     );
   }
@@ -502,13 +507,14 @@ class DFlexScrollContainer {
     const currentTopWithScroll = leftPos - this.scrollRect.left;
     const currentLeftWithScroll = topPos - this.scrollRect.top;
 
-    const isOutThreshold = this._outerThreshold!.isShallowOutThreshold(
-      this._threshold_outer_key,
-      currentTopWithScroll,
-      currentLeftWithScroll + width,
-      currentTopWithScroll + height,
-      currentLeftWithScroll
-    );
+    const isOutThreshold =
+      this._outerThresholdInViewport!.isShallowOutThreshold(
+        this._threshold_outer_key,
+        currentTopWithScroll,
+        currentLeftWithScroll + width,
+        currentTopWithScroll + height,
+        currentLeftWithScroll
+      );
 
     return !isOutThreshold;
   }
@@ -518,7 +524,9 @@ class DFlexScrollContainer {
     setter: "_setScrollRect" | "_updateScrollCoordinates",
     cb: ScrollEventCallback | null
   ) {
-    if (this._hasThrottledFrame !== null) return;
+    if (this._hasThrottledFrame !== null) {
+      cancelAnimationFrame(this._hasThrottledFrame);
+    }
 
     this._hasThrottledFrame = requestAnimationFrame(() => {
       const isUpdated = this[setter]();
