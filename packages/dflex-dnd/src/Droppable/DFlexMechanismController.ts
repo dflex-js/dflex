@@ -384,7 +384,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     const { SK } = store.registry.get(id)!.keys;
     const { grid: siblingsGrid } = store.containers.get(SK)!;
 
-    if (isOut[id].isOneTruthy("y")) {
+    if (isOut[id].isOneTruthyByAxis("y")) {
       const newRow = isOut[id].bottom
         ? gridPlaceholder.y + 1
         : gridPlaceholder.y - 1;

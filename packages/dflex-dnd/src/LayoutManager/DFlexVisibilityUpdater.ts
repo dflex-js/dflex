@@ -10,22 +10,17 @@ function updateElementVisibility(
   scroll: DFlexScrollContainer
 ): boolean {
   let isVisible = true;
-  let isVisibleY = true;
-  let isVisibleX = true;
 
   let isBreakable = false;
 
-  isVisibleY = scroll.isElementVisibleViewportV(
-    elm.currentPosition.y,
-    elm.initialOffset.height
-  );
+  const { currentPosition, initialOffset } = elm;
 
-  isVisibleX = scroll.isElementVisibleViewportH(
-    elm.currentPosition.x,
-    elm.initialOffset.width
+  isVisible = scroll.isElementVisibleViewport(
+    currentPosition.y,
+    currentPosition.x,
+    initialOffset.height,
+    initialOffset.width
   );
-
-  isVisible = isVisibleY && isVisibleX;
 
   if (prevVisibility === true && isVisible === false) {
     isBreakable = true;

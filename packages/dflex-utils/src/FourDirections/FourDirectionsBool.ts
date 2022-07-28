@@ -10,13 +10,17 @@ class FourDirectionsBool extends FourDirections<boolean> {
     this.setAll(false, false, false, false);
   }
 
-  isOneTruthy(axis: Axis): boolean {
+  isOneTruthyByAxis(axis: Axis): boolean {
     switch (axis) {
       case "x":
         return this.left || this.right;
       default:
         return this.top || this.bottom;
     }
+  }
+
+  isOneTruthy(): boolean {
+    return this.left || this.right || this.top || this.bottom;
   }
 }
 

@@ -43,6 +43,9 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
    */
   readonly innerOffset: PointNum;
 
+  /**
+   * Dragged edge current position including the inner offset.
+   */
   currentPosition: FourDirections<number>;
 
   private isLayoutStateUpdated: boolean;
@@ -349,10 +352,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
       key = combineKeys(depth, key);
     }
 
-    return (
-      this.threshold.isOutThresholdV(key, top, bottom) ||
-      this.threshold.isOutThresholdH(key, left, right)
-    );
+    return this.threshold.isOutThreshold(key, top, right, bottom, left);
   }
 
   private isLeavingFromBottom() {

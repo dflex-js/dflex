@@ -201,7 +201,7 @@ class DFlexScrollContainer {
 
     const { scrollLeft, scrollTop } = this.scrollContainerDOM;
 
-    this.updateInvisibleDistance(scrollLeft, scrollTop, false);
+    this._updateInvisibleDistance(scrollLeft, scrollTop, false);
 
     // Check allowDynamicVisibility after taking into consideration the length of
     // the branch itself.
@@ -300,7 +300,7 @@ class DFlexScrollContainer {
       return false;
     }
 
-    this.updateInvisibleDistance(scrollLeft, scrollTop, false);
+    this._updateInvisibleDistance(scrollLeft, scrollTop, false);
 
     return isUpdated;
   }
@@ -315,7 +315,7 @@ class DFlexScrollContainer {
    * @param scrollLeft
    * @param scrollTop
    */
-  updateInvisibleDistance(
+  private _updateInvisibleDistance(
     scrollLeft: number,
     scrollTop: number,
     triggerScrollEventCallback: boolean
@@ -343,6 +343,13 @@ class DFlexScrollContainer {
     }
   }
 
+  scrollTo(x: number, y: number): void {
+    this._updateInvisibleDistance(x, y, true);
+
+    this.scrollContainerDOM.scrollTop = y;
+    this.scrollContainerDOM.scrollLeft = x;
+  }
+
   /**
    *
    * @param axis
@@ -351,6 +358,12 @@ class DFlexScrollContainer {
    */
   hasInvisibleSpace(axis: Axis, direction: Direction): boolean {
     const val = this.invisibleDistance.getOne(axis, direction);
+    console.log(
+      "file: DFlexScrollContainer.ts ~ line 361 ~ val",
+      axis,
+      direction,
+      val
+    );
 
     return val > 0;
   }
@@ -442,57 +455,21 @@ class DFlexScrollContainer {
     );
   }
 
-  /**
-   * Check if the element is out inner threshold vertically.
-   *
-   * @param topPos
-   * @param bottomPos
-   * @param direction
-   * @returns
-   */
-  isOutThresholdV(
-    topPos: number,
-    bottomPos: number,
-    direction: Direction
+  isOutThreshold(
+    axis: Axis,
+    direction: Direction,
+    startingPos: number,
+    endingPos: number
   ): boolean {
     return (
-      this.hasOverflow.y &&
-      (direction === 1
-        ? this._innerThreshold!.isOutBottomThreshold(
-            this._threshold_inner_key,
-            topPos
-          )
-        : this._innerThreshold!.isOutTopThreshold(
-            this._threshold_inner_key,
-            topPos + bottomPos
-          ))
-    );
-  }
-
-  /**
-   * Check if the element is out inner threshold horizontally.
-   *
-   * @param lefPos
-   * @param rightPos
-   * @param direction
-   * @returns
-   */
-  isOutThresholdH(
-    lefPos: number,
-    rightPos: number,
-    direction: Direction
-  ): boolean {
-    return (
-      this.hasOverflow.x &&
-      (direction === 1
-        ? this._innerThreshold!.isOutRightThreshold(
-            this._threshold_inner_key,
-            rightPos
-          )
-        : this._innerThreshold!.isOutLeftThreshold(
-            this._threshold_inner_key,
-            lefPos
-          ))
+      this.hasOverflow[axis] &&
+      this._innerThreshold!.isOutThresholdByDirection(
+        axis,
+        direction,
+        this._threshold_inner_key,
+        startingPos,
+        endingPos
+      )
     );
   }
 
@@ -516,42 +493,24 @@ class DFlexScrollContainer {
     return top + height + this.scrollRect.top;
   }
 
-  /**
-   * Check if the element is visible in the container viewport horizontally.
-   *
-   * @param currentLeft
-   * @param width
-   * @returns
-   */
-  isElementVisibleViewportH(currentLeft: number, width: number): boolean {
-    const currentTopWithScroll = currentLeft - this.scrollRect.left;
+  isElementVisibleViewport(
+    topPos: number,
+    leftPos: number,
+    height: number,
+    width: number
+  ): boolean {
+    const currentTopWithScroll = leftPos - this.scrollRect.left;
+    const currentLeftWithScroll = topPos - this.scrollRect.top;
 
-    const isNotVisible = this._outerThreshold!.isOutThresholdH(
+    const isOutThreshold = this._outerThreshold!.isOutThreshold(
       this._threshold_outer_key,
       currentTopWithScroll,
-      currentTopWithScroll + width
+      currentLeftWithScroll + width,
+      currentTopWithScroll + height,
+      currentLeftWithScroll
     );
 
-    return !isNotVisible;
-  }
-
-  /**
-   * Check if the element is visible in the container viewport vertically.
-   *
-   * @param currentTop
-   * @param hight
-   * @returns
-   */
-  isElementVisibleViewportV(currentTop: number, hight: number): boolean {
-    const currentTopWithScroll = currentTop - this.scrollRect.top;
-
-    const isNotVisible = this._outerThreshold!.isOutThresholdV(
-      this._threshold_outer_key,
-      currentTopWithScroll,
-      currentTopWithScroll + hight
-    );
-
-    return !isNotVisible;
+    return !isOutThreshold;
   }
 
   // TODO: Remove string and pass references instead.

@@ -1,4 +1,4 @@
-import { Axis, PointNum, RectDimensions, Direction, Point } from "@dflex/utils";
+import { Axis, PointNum, Direction, Point, FourDirections } from "@dflex/utils";
 import type { DFlexScrollContainer } from "@dflex/core-instance";
 import DFlexPositionUpdater from "./DFlexPositionUpdater";
 
@@ -107,60 +107,56 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
   }
 
   private _scroll(
-    scroll: DFlexScrollContainer,
-    draggedOffset: RectDimensions,
     axis: Axis,
-    edgeCurrentPositionX: number,
-    edgeCurrentPositionY: number,
-    direction: Direction
+    direction: Direction,
+    scroll: DFlexScrollContainer,
+    draggedPos: FourDirections<number>
   ): void {
-    let nextScrollPosition =
+    const nextScrollPosition =
       this.currentScrollAxes[axis] + direction * this._lastScrollSpeed;
 
-    if (axis === "y") {
-      const nextDraggedTop = nextScrollPosition + edgeCurrentPositionY;
+    // if (axis === "y") {
+    //   const nextDraggedTop = nextScrollPosition + draggedPos.top;
+    //   const nextDraggedBottom = nextDraggedTop + draggedPos.bottom;
 
-      const nextDraggedBottom = nextDraggedTop + draggedOffset.height;
+    //   const { scrollRect, scrollContainerRect } = scroll;
 
-      const { scrollRect, scrollContainerRect } = scroll;
+    //   // If it's increasing, it's going to be out of the scroll container..
+    //   if (direction === 1) {
+    //     if (nextDraggedBottom > scrollRect.height) {
+    //       nextScrollPosition = scrollRect.height - scrollContainerRect.height;
+    //     }
+    //   } else {
+    //     console.log(
+    //       `nextDraggedTop ${nextDraggedTop}`,
+    //       `height ${scrollRect.height}`,
+    //       nextDraggedBottom,
+    //       scrollRect.height - Math.abs(nextDraggedTop)
+    //     );
 
-      // If it's increasing, it's going to be out of the scroll container..
-      if (direction === 1) {
-        if (nextDraggedBottom > scrollRect.height) {
-          nextScrollPosition = scrollRect.height - scrollContainerRect.height;
-        }
-      } else {
-        console.log(
-          `nextDraggedTop ${nextDraggedTop}`,
-          `height ${scrollRect.height}`,
-          nextDraggedBottom,
-          scrollRect.height - Math.abs(nextDraggedTop)
-        );
+    //     if (
+    //       Math.abs(nextDraggedTop) >
+    //       scrollRect.height - scrollContainerRect.height
+    //     ) {
+    //       // debugger;
+    //       nextScrollPosition = -1 * scrollContainerRect.height;
+    //     }
+    //   }
+    // } else {
+    //   const nextDraggedLeft = nextScrollPosition + draggedPos.left;
+    //   const nextDraggedRight = nextDraggedLeft + draggedPos.right;
 
-        if (
-          Math.abs(nextDraggedTop) >
-          scrollRect.height - scrollContainerRect.height
-        ) {
-          // debugger;
-          nextScrollPosition = -1 * scrollContainerRect.height;
-        }
-      }
-    } else {
-      const nextDraggedLeft = nextScrollPosition + edgeCurrentPositionX;
+    //   const { scrollRect, scrollContainerRect } = scroll;
 
-      const nextDraggedRight = nextDraggedLeft + draggedOffset.width;
-
-      const { scrollRect, scrollContainerRect } = scroll;
-
-      // If it's increasing, it's going to be out of the scroll container..
-      if (direction === 1) {
-        if (nextDraggedRight > scrollRect.width) {
-          nextScrollPosition = scrollRect.width - scrollContainerRect.width;
-        }
-      } else if (Math.abs(nextDraggedLeft) < 0) {
-        nextScrollPosition = 0;
-      }
-    }
+    //   // If it's increasing, it's going to be out of the scroll container..
+    //   if (direction === 1) {
+    //     if (nextDraggedRight > scrollRect.width) {
+    //       nextScrollPosition = scrollRect.width - scrollContainerRect.width;
+    //     }
+    //   } else if (Math.abs(nextDraggedLeft) < 0) {
+    //     nextScrollPosition = 0;
+    //   }
+    // }
 
     this.currentScrollAxes[axis] = nextScrollPosition;
   }
@@ -168,17 +164,16 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
   private _scrollManager(
     x: number,
     y: number,
-    directionH: Direction,
-    directionV: Direction,
+    draggedDirH: Direction,
+    draggedDirV: Direction,
     directionChangedH: boolean,
     directionChangedV: boolean
   ): void {
     console.log("scrollManager");
-    const { draggedElm, currentPosition } = this.draggable;
+    const { draggedElm, currentPosition: draggedPos } = this.draggable;
 
     const {
       keys: { SK },
-      initialOffset,
     } = draggedElm;
 
     // IS scrollAnimatedFrame is already running?
@@ -204,10 +199,19 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     const scroll = store.scrolls.get(SK)!;
 
-    const { top, right, bottom, left } = currentPosition;
+    const isOutV = scroll.isOutThreshold(
+      "y",
+      draggedDirV,
+      draggedPos.top,
+      draggedPos.bottom
+    );
 
-    const isOutV = scroll.isOutThresholdV(top, bottom, directionV);
-    const isOutH = scroll.isOutThresholdH(left, right, directionH);
+    const isOutH = scroll.isOutThreshold(
+      "x",
+      draggedDirH,
+      draggedPos.left,
+      draggedPos.right
+    );
 
     const isOut = isOutV || isOutH;
 
@@ -218,8 +222,8 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     }
 
     const canScroll = (): boolean =>
-      (isOutV && scroll.hasInvisibleSpace("y", directionV)) ||
-      (isOutH && scroll.hasInvisibleSpace("x", directionH));
+      (isOutV && scroll.hasInvisibleSpace("y", draggedDirV)) ||
+      (isOutH && scroll.hasInvisibleSpace("x", draggedDirH));
 
     // If there's not scrollable area, we don't need to scroll.
     if (!canScroll()) {
@@ -251,11 +255,11 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
       if (prevTimestamp !== timestamp) {
         if (isOutV) {
-          this._scroll(scroll, initialOffset, "y", left, top, directionV);
+          this._scroll("y", draggedDirV, scroll, draggedPos);
         }
 
         if (isOutH) {
-          this._scroll(scroll, initialOffset, "x", left, top, directionH);
+          this._scroll("x", draggedDirH, scroll, draggedPos);
         }
 
         const acc = isOutV
@@ -269,19 +273,12 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
         // Increase scroll speed.
         this._lastScrollSpeed += Math.round(acc);
 
-        scroll.updateInvisibleDistance(
-          this.currentScrollAxes.x,
-          this.currentScrollAxes.y,
-          true
-        );
+        scroll.scrollTo(this.currentScrollAxes.x, this.currentScrollAxes.y);
 
         this.draggable.dragAt(
           x + this.currentScrollAxes.x - this.initialScrollPosition.x,
           y + this.currentScrollAxes.y - this.initialScrollPosition.y
         );
-
-        scroll.scrollContainerDOM.scrollTop = this.currentScrollAxes.y;
-        scroll.scrollContainerDOM.scrollLeft = this.currentScrollAxes.x;
       }
 
       // Stop the animation after 2 seconds
@@ -314,22 +311,21 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
   }
 
   protected scrollFeed(x: number, y: number): void {
-    const directionH: Direction = x < this._prevMousePosition.x ? -1 : 1;
-
-    const directionV: Direction = y < this._prevMousePosition.y ? -1 : 1;
+    const draggedDirH: Direction = x < this._prevMousePosition.x ? -1 : 1;
+    const draggedDirV: Direction = y < this._prevMousePosition.y ? -1 : 1;
 
     const directionChangedH: boolean =
-      directionH !== this._prevMouseDirection.x;
+      draggedDirH !== this._prevMouseDirection.x;
 
     const directionChangedV: boolean =
-      directionV !== this._prevMouseDirection.y;
+      draggedDirV !== this._prevMouseDirection.y;
 
     if (!this._isScrollThrottled) {
       this._scrollManager(
         x,
         y,
-        directionH,
-        directionV,
+        draggedDirH,
+        draggedDirV,
         directionChangedH,
         directionChangedV
       );
@@ -338,7 +334,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     }
 
     this._prevMousePosition.setAxes(x, y);
-    this._prevMouseDirection.setAxes(directionH, directionV);
+    this._prevMouseDirection.setAxes(draggedDirH, draggedDirV);
   }
 }
 

@@ -1,7 +1,13 @@
 /* eslint-disable max-classes-per-file */
 import { PointNum } from "../Point";
 
-import type { RectDimensions, RectBoundaries, Dimensions } from "../types";
+import type {
+  RectDimensions,
+  RectBoundaries,
+  Dimensions,
+  Axis,
+  Direction,
+} from "../types";
 
 import { FourDirectionsBool } from "../FourDirections";
 
@@ -193,63 +199,65 @@ class DFlexThreshold {
     this._addDepthThreshold(insertionLayerKey, childDepth);
   }
 
-  // TODO: Functions bellow seems one function that's repeated for different
-  // parameters. It needs enhancement maybe one function for all the parameters.
+  isOutThresholdByAxis(
+    axis: Axis,
+    key: string,
+    startingPos: number,
+    endingPos: number
+  ): boolean {
+    const { left, right, top, bottom } = this.thresholds[key];
 
-  isOutLeftThreshold(key: string, XLeft: number): boolean {
-    const { left } = this.thresholds[key];
+    if (axis === "x") {
+      this.isOut[key].setByAxis(axis, startingPos < left, endingPos > right);
+    }
 
-    const is = XLeft < left;
+    if (axis === "y") {
+      this.isOut[key].setByAxis(axis, startingPos < top, endingPos > bottom);
+    }
 
-    this.isOut[key].setOne("x", -1, is);
+    return this.isOut[key].isOneTruthyByAxis(axis);
+  }
+
+  isOutThreshold(
+    key: string,
+    top: number,
+    right: number,
+    bottom: number,
+    left: number
+  ): boolean {
+    const ref = this.thresholds[key];
+
+    this.isOut[key].setAll(
+      top < ref.top,
+      right > ref.right,
+      bottom > ref.bottom,
+      left < ref.left
+    );
+
+    return this.isOut[key].isOneTruthy();
+  }
+
+  isOutThresholdByDirection(
+    axis: Axis,
+    direction: Direction,
+    key: string,
+    startingPos: number,
+    endingPos: number
+  ): boolean {
+    const { left, right, top, bottom } = this.thresholds[key];
+
+    const is =
+      axis === "x"
+        ? direction === -1
+          ? startingPos < left
+          : endingPos > right
+        : direction === -1
+        ? startingPos < top
+        : endingPos > bottom;
+
+    this.isOut[key].setOne(axis, direction, is);
 
     return is;
-  }
-
-  isOutRightThreshold(key: string, XRight: number): boolean {
-    const { right } = this.thresholds[key];
-
-    const is = XRight > right;
-
-    this.isOut[key].setOne("x", 1, is);
-
-    return is;
-  }
-
-  isOutTopThreshold(key: string, YTop: number): boolean {
-    const { top } = this.thresholds[key];
-
-    const is = YTop < top;
-
-    this.isOut[key].setOne("y", -1, is);
-
-    return is;
-  }
-
-  isOutBottomThreshold(key: string, YBottom: number): boolean {
-    const { bottom } = this.thresholds[key];
-
-    const is = YBottom > bottom;
-
-    this.isOut[key].setOne("y", 1, is);
-
-    return is;
-  }
-
-  isOutThresholdH(key: string, leftPos: number, rightPos: number): boolean {
-    const { left, right } = this.thresholds[key];
-
-    this.isOut[key].setByAxis("x", leftPos < left, rightPos > right);
-
-    return this.isOut[key].isOneTruthy("x");
-  }
-
-  isOutThresholdV(key: string, topPos: number, bottomPos: number): boolean {
-    const { top, bottom } = this.thresholds[key];
-
-    this.isOut[key].setByAxis("y", topPos < top, bottomPos > bottom);
-
-    return this.isOut[key].isOneTruthy("y");
   }
 
   destroy(): void {
