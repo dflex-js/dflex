@@ -26,7 +26,7 @@ type Containers = Map<string, DFlexParentContainer>;
 
 type Scrolls = Map<string, DFlexScrollContainer>;
 
-type UnifiedContainerDimensions = Map<number, Dimensions>;
+type UnifiedContainerDimensions = Record<number, Dimensions>;
 
 type Observer = MutationObserver | null;
 
@@ -63,7 +63,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     super();
     this.containers = new Map();
     this.scrolls = new Map();
-    this.unifiedContainerDimensions = new Map();
+    this.unifiedContainerDimensions = {};
     this.tracker = new Tracker();
     this._isInitialized = false;
     this._isDOM = false;
@@ -102,7 +102,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
       container.registerNewElm(
         initialOffset,
-        this.unifiedContainerDimensions.get(dflexNode.depth)!
+        this.unifiedContainerDimensions[dflexNode.depth]
       );
 
       dflexNode.grid.clone(container.grid);
@@ -113,8 +113,8 @@ class DFlexDnDStore extends DFlexBaseStore {
     let container: DFlexParentContainer;
     let scroll: DFlexScrollContainer;
 
-    if (!this.unifiedContainerDimensions.has(depth)) {
-      this.unifiedContainerDimensions.set(depth, {
+    if (!this.unifiedContainerDimensions[depth]) {
+      this.unifiedContainerDimensions[depth] = Object.seal({
         width: 0,
         height: 0,
       });

@@ -42,9 +42,7 @@ class DFlexParentContainer {
 
   private _addNewElmToGridIndicator(rect: RectBoundaries): void {
     if (!this._boundariesByRow[this.grid.x]) {
-      this._boundariesByRow[this.grid.x] = {
-        ...rect,
-      };
+      this._boundariesByRow[this.grid.x] = Object.seal({ ...rect });
 
       return;
     }
