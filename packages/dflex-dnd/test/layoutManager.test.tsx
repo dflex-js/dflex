@@ -127,7 +127,7 @@ describe("DFlex DnD", () => {
         expect(container2.originLength).toBe(3);
       });
 
-      it("Containers initialized `lastElmPosition`", () => {
+      it.skip("Containers initialized `lastElmPosition`", () => {
         const container1 = store.containers.get(
           store.registry.get(elm1.id)!.keys.SK
         )!;

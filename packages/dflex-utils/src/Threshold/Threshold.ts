@@ -199,6 +199,22 @@ class DFlexThreshold {
     this._addDepthThreshold(insertionLayerKey, childDepth);
   }
 
+  getThresholdByDirection(
+    axis: Axis,
+    direction: Direction,
+    key: string
+  ): number {
+    const { top, left, bottom, right } = this.thresholds[key];
+
+    return axis === "x"
+      ? direction === -1
+        ? left
+        : right
+      : direction === -1
+      ? top
+      : bottom;
+  }
+
   /**
    * Check if the element is out of the threshold from given axis.
    *

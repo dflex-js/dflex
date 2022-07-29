@@ -163,10 +163,6 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     updateBranchVisibilityLinearly(this, SK);
 
-    const lastElm = this.registry.get(branch[branch.length - 1])!;
-
-    container.preservePosition(lastElm.currentPosition);
-
     initMutationObserver(this, DOM);
   }
 

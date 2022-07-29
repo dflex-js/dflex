@@ -79,10 +79,6 @@ DFlexDnDStore {
         "x": 1,
         "y": 1,
       },
-      "lastElmPosition": PointNum {
-        "x": 0,
-        "y": 0,
-      },
       "originLength": 1,
     },
     "0-1" => DFlexParentContainer {
@@ -104,10 +100,6 @@ DFlexDnDStore {
       "grid": PointNum {
         "x": 1,
         "y": 1,
-      },
-      "lastElmPosition": PointNum {
-        "x": 0,
-        "y": 0,
       },
       "originLength": 3,
     },

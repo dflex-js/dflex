@@ -105,7 +105,7 @@ describe("getInsertionELmMeta", () => {
           Object {
             "isEmpty": false,
             "isOrphan": false,
-            "isRestoredLastPosition": true,
+            "isRestoredLastPosition": false,
             "position": PointNum {
               "x": 0,
               "y": 0,

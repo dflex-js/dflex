@@ -362,7 +362,8 @@ class DFlexScrollContainer {
       "file: DFlexScrollContainer.ts ~ line 361 ~ val",
       axis,
       direction,
-      val
+      val,
+      this._outerThresholdInViewport!
     );
 
     return val > 0;

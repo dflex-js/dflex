@@ -14,6 +14,7 @@ import {
 
 import type { DFlexNode } from "@dflex/core-instance";
 
+import type { ELmBranch } from "@dflex/dom-gen";
 import { initDFlexEvent, scheduler, store } from "../LayoutManager";
 
 import type {
@@ -22,6 +23,50 @@ import type {
   Restrictions,
   RestrictionsStatus,
 } from "../types";
+
+function initContainers(SK: string, siblings: ELmBranch) {
+  const container = store.containers.get(SK)!;
+
+  if (!container.lastElmPosition) {
+    const lastElm = store.registry.get(siblings[siblings.length - 1])!;
+
+    container.preservePosition(lastElm.currentPosition);
+  }
+}
+
+function initThresholds(
+  draggedID: string,
+  draggedRect: RectDimensions,
+  draggedDepth: number,
+  threshold: Threshold,
+  thresholdPercentage: ThresholdPercentages
+) {
+  threshold = new Threshold(thresholdPercentage);
+
+  threshold.setMainThreshold(draggedID, draggedRect, false);
+
+  store.getBranchesByDepth(draggedDepth).forEach((key) => {
+    const elmContainer = store.containers.get(key)!;
+
+    const { boundaries } = elmContainer;
+
+    if (__DEV__) {
+      if (!boundaries) {
+        throw new Error(`Siblings boundaries for ${key} not found.`);
+      }
+    }
+
+    const insertionLayerKey = combineKeys(draggedDepth, key);
+
+    threshold.setContainerThreshold(
+      key,
+      insertionLayerKey,
+      draggedDepth,
+      boundaries,
+      store.unifiedContainerDimensions.get(draggedDepth)!
+    );
+  });
+}
 
 class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
   gridPlaceholder: PointNum;
@@ -92,7 +137,9 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
 
     this.containersTransition = opts.containersTransition;
 
-    this._initThresholds(
+    initContainers(SK, siblings);
+
+    initThresholds(
       id,
       {
         width,
@@ -101,6 +148,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
         top: currentPosition.y,
       },
       depth,
+      this.threshold,
       opts.threshold
     );
 
@@ -141,39 +189,6 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
       siblings !== null &&
       (opts.restrictionsStatus.isContainerRestricted ||
         opts.restrictionsStatus.isSelfRestricted);
-  }
-
-  private _initThresholds(
-    id: string,
-    rect: RectDimensions,
-    depth: number,
-    thresholdPercentage: ThresholdPercentages
-  ) {
-    this.threshold = new Threshold(thresholdPercentage);
-
-    this.threshold.setMainThreshold(id, rect, false);
-
-    store.getBranchesByDepth(depth).forEach((key) => {
-      const elmContainer = store.containers.get(key)!;
-
-      const { boundaries } = elmContainer;
-
-      if (__DEV__) {
-        if (!boundaries) {
-          throw new Error(`Siblings boundaries for ${key} not found.`);
-        }
-      }
-
-      const insertionLayerKey = combineKeys(depth, key);
-
-      this.threshold.setContainerThreshold(
-        key,
-        insertionLayerKey,
-        depth,
-        boundaries,
-        store.unifiedContainerDimensions.get(depth)!
-      );
-    });
   }
 
   protected appendDraggedToContainerDimensions(isAppend: boolean) {
