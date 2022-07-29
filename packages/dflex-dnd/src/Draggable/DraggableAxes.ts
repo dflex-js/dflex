@@ -8,7 +8,6 @@ import {
   combineKeys,
   AxesPoint,
   RectDimensions,
-  ThresholdPercentages,
   FourDirections,
 } from "@dflex/utils";
 
@@ -38,11 +37,8 @@ function initThresholds(
   draggedID: string,
   draggedRect: RectDimensions,
   draggedDepth: number,
-  threshold: Threshold,
-  thresholdPercentage: ThresholdPercentages
+  threshold: Threshold
 ) {
-  threshold = new Threshold(thresholdPercentage);
-
   threshold.setMainThreshold(draggedID, draggedRect, false);
 
   store.getBranchesByDepth(draggedDepth).forEach((key) => {
@@ -139,6 +135,8 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
 
     initContainers(SK, siblings);
 
+    this.threshold = new Threshold(opts.threshold);
+
     initThresholds(
       id,
       {
@@ -148,8 +146,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
         top: currentPosition.y,
       },
       depth,
-      this.threshold,
-      opts.threshold
+      this.threshold
     );
 
     this.appendDraggedToContainerDimensions(true);
