@@ -71,11 +71,6 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       width > height ? width / 8.5 : height / 8.5
     );
 
-    console.log(
-      "file: DFlexScrollableElement.ts ~ line 73 ~ this._scrollThrottleMS",
-      this._scrollThrottleMS
-    );
-
     this.initialScrollPosition.setAxes(left, top);
     this.currentScrollAxes.setAxes(left, top);
   }
@@ -90,13 +85,9 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     this._scrollAnimatedFrame = null;
 
     this._isScrollThrottled = false;
-
-    console.log("scrollAnimatedFrame is cleared...");
   }
 
   protected cancelAndThrottleScrolling(scroll: DFlexScrollContainer): void {
-    console.log("Throttling...");
-
     if (this._scrollAnimatedFrame !== null) {
       cancelAnimationFrame(this._scrollAnimatedFrame!);
 
@@ -130,7 +121,6 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     directionChangedH: boolean,
     directionChangedV: boolean
   ): void {
-    console.log("scrollManager");
     const { draggedElm, currentPositionWithScroll: draggedPos } =
       this.draggable;
 
@@ -150,11 +140,6 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
         this.cancelAndThrottleScrolling(scroll);
       }
-
-      console.log(
-        "scrollAnimatedFrame is already running...",
-        this._scrollAnimatedFrame
-      );
 
       return;
     }
@@ -178,8 +163,6 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     const isOut = isOutV || isOutH;
 
     if (!isOut) {
-      console.log("isOut is false...", isOutV, isOutH);
-
       return;
     }
 
@@ -189,7 +172,6 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     // If there's not scrollable area, we don't need to scroll.
     if (!canScroll()) {
-      console.log("cant scroll...");
       this.cancelAndThrottleScrolling(scroll);
 
       return;
@@ -202,7 +184,6 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     const EXECUTION_FRAME_RATE_MS_H = Math.round(scroll.scrollRect.width / 2);
 
     const scrollAnimatedFrame = (timestamp: number) => {
-      console.log("scrollAnimatedFrame...");
       scroll.pauseListeners(true);
 
       if (startingTime === undefined) {
@@ -210,10 +191,6 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       }
 
       const elapsed = timestamp - startingTime;
-      console.log(
-        "file: DFlexScrollableElement.ts ~ line 226 ~ elapsed",
-        elapsed
-      );
 
       if (prevTimestamp !== timestamp) {
         if (isOutV) {
@@ -248,15 +225,12 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
         prevTimestamp = timestamp;
 
         if (canScroll()) {
-          console.log("Another cycle...");
           this._scrollAnimatedFrame =
             requestAnimationFrame(scrollAnimatedFrame);
         }
 
         return;
       }
-
-      console.log("scrollAnimatedFrame is done...");
 
       clearTimeout(this._timeout);
 
@@ -268,7 +242,6 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       scroll.pauseListeners(false);
     };
 
-    console.log("scrollAnimatedFrame is started...");
     this._scrollAnimatedFrame = requestAnimationFrame(scrollAnimatedFrame);
   }
 
@@ -291,8 +264,6 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
         directionChangedH,
         directionChangedV
       );
-    } else {
-      console.log("scroll throttled");
     }
 
     this._prevMousePosition.setAxes(x, y);

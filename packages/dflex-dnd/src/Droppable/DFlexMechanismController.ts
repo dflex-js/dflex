@@ -108,9 +108,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
   }
 
   private _detectNearestElm(): void {
-    console.log(
-      "file: DFlexMechanismController.ts ~ line 107 ~ _detectNearestElm...."
-    );
     const { migration, draggedElm, occupiedTranslate, gridPlaceholder } =
       this.draggable;
 
@@ -166,12 +163,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
     // empty branch.
     if (hasToMoveSiblingsDown && !isEmpty) {
       this._moveDown(insertAt);
-      console.log(
-        "file: DFlexMechanismController.ts ~ line 165 ~ insertAt",
-        insertAt
-      );
-
-      // debugger;
     }
 
     draggedElm.removeAttribute(this.draggable.draggedDOM, "OUT_CONTAINER");
@@ -279,9 +270,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
       this.draggable.setDraggedTempIndex(elmIndex);
 
       this.updateElement(id, isIncrease);
-      console.log(`element updated: ${id}`);
-    } else {
-      console.log(`element is not eligible: ${id}`);
     }
   }
 
@@ -363,18 +351,11 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
       if (isIDEligible(id, draggedElm.id)) {
         this.updateElement(id, false);
-        console.log(
-          "file: DFlexMechanismController.ts ~ line 362 ~ _moveDown id...",
-          id
-        );
       }
     }
   }
 
   private _draggedOutPositionNotifier(): void {
-    console.log(
-      "file: DFlexMechanismController.ts ~ line 406 ~ _draggedOutPositionNotifier"
-    );
     const {
       draggedElm: { id },
       threshold: { isOut },
@@ -407,7 +388,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
         return;
       }
 
-      console.log(`newRow: ${newRow}`);
       this._switchElementPosition(isOut[id].bottom);
 
       return;
@@ -425,8 +405,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
       return;
     }
-
-    console.log(`newCol: ${newCol}`);
 
     this._switchElementPosition(isOut[id].right);
   }
@@ -453,8 +431,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
       this.scrollFeed(x, y);
 
       if (this.isScrolling()) {
-        console.log("scrolling......");
-
         if (!this._hasBeenScrolling) {
           scheduler(store, null, {
             onUpdate: () => {
@@ -476,8 +452,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
       }
 
       if (this._hasBeenScrolling) {
-        console.log("scrolling ended......");
-
         isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
         if (!isOutSiblingsContainer && this.isParentLocked) {

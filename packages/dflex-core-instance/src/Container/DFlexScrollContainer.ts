@@ -333,11 +333,6 @@ class DFlexScrollContainer {
       scrollLeft
     );
 
-    console.log(
-      "file: DFlexScrollContainer.ts ~ line 331 ~ this.invisibleDistance",
-      this.invisibleDistance
-    );
-
     if (triggerScrollEventCallback && this._scrollEventCallback !== null) {
       this._scrollEventCallback(this._SK);
     }
@@ -358,14 +353,8 @@ class DFlexScrollContainer {
    */
   hasInvisibleSpace(axis: Axis, direction: Direction): boolean {
     const val = this.invisibleDistance.getOne(axis, direction);
-    console.log(
-      "file: DFlexScrollContainer.ts ~ line 361 ~ val",
-      axis,
-      direction,
-      val,
-      this._outerThresholdInViewport!
-    );
 
+    // TODO: replace zero with container plus dragged distance boundaries.
     return val > 0;
   }
 
@@ -462,8 +451,6 @@ class DFlexScrollContainer {
     startingPos: number,
     endingPos: number
   ): boolean {
-    console.log("direction", axis, direction, startingPos);
-
     const adjustToViewport =
       axis === "y" ? this.scrollRect.top : this.scrollRect.left;
 

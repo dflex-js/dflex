@@ -28,10 +28,6 @@ function updateElementVisibility(
 
   prevVisibility = isVisible;
 
-  if (isVisible) {
-    console.log("isVisible", elm.id);
-  }
-
   elm.changeVisibility(DOM, isVisible);
 
   return isBreakable;
@@ -44,7 +40,6 @@ function setBranchVisibility(
   to: number,
   value: boolean
 ): void {
-  console.log("setBranchVisibility", from, to, value);
   for (let i = from; i < to; i += 1) {
     const elmID = branch[i];
 
