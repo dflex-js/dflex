@@ -3,7 +3,6 @@ import { DFlexBaseDraggable } from "@dflex/draggable";
 import {
   Threshold,
   PointNum,
-  PointBool,
   Migration,
   combineKeys,
   AxesPoint,
@@ -72,9 +71,6 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
   threshold!: Threshold;
 
   isViewportRestricted: boolean;
-
-  /** *@deprecated */
-  isMovingAwayFrom: PointBool;
 
   /**
    * The inner distance between the mouse coordinates and the element position.
@@ -150,8 +146,6 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
       depth,
       this.threshold
     );
-
-    this.isMovingAwayFrom = new PointBool(false, false);
 
     const { x, y } = initCoordinates;
 
