@@ -1,13 +1,13 @@
 import Point from "./Point";
-import type { IPointAxes } from "./types";
+import type { AxesPoint } from "./types";
 
 class PointNum extends Point<number> {
-  increase(point: IPointAxes) {
+  increase(point: AxesPoint) {
     this.x += point.x;
     this.y += point.y;
   }
 
-  decrease(point: IPointAxes) {
+  decrease(point: AxesPoint) {
     this.x -= point.x;
     this.y -= point.y;
   }

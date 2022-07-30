@@ -4,10 +4,10 @@ import type { Dimensions } from "../src/types";
 
 describe("DFlexThreshold", () => {
   const DEFAULT_IS_OUT_INDICATORS = {
-    isLeftFromBottom: false,
-    isLeftFromLeft: false,
-    isLeftFromRight: false,
-    isLeftFromTop: false,
+    top: false,
+    right: false,
+    bottom: false,
+    left: false,
   };
 
   describe("Dragged Threshold", () => {
@@ -65,7 +65,6 @@ describe("DFlexThreshold", () => {
       width: 224,
     };
 
-    // Got this from console.log(threshold);
     const pixels = {
       x: 102,
       y: 30,

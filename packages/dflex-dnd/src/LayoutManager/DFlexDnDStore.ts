@@ -1,4 +1,4 @@
-import Store from "@dflex/store";
+import DFlexBaseStore from "@dflex/store";
 import type { RegisterInputOpts } from "@dflex/store";
 
 import { Tracker, canUseDOM, Dimensions } from "@dflex/utils";
@@ -19,16 +19,14 @@ import scheduler, {
   UpdateFn,
 } from "./DFlexScheduler";
 
-import {
-  updateBranchVisibility,
-  updateElementVisibility,
-} from "./DFlexVisibilityUpdater";
+import updateBranchVisibilityLinearly from "./DFlexVisibilityUpdater";
+import { initMutationObserver } from "./DFlexMutations";
 
 type Containers = Map<string, DFlexParentContainer>;
 
 type Scrolls = Map<string, DFlexScrollContainer>;
 
-type UnifiedContainerDimensions = Map<number, Dimensions>;
+type UnifiedContainerDimensions = Record<number, Dimensions>;
 
 type Observer = MutationObserver | null;
 
@@ -38,7 +36,7 @@ type UpdatesQueue = Array<
 
 type Deferred = Array<() => void>;
 
-class DnDStoreImp extends Store {
+class DFlexDnDStore extends DFlexBaseStore {
   containers: Containers;
 
   scrolls: Scrolls;
@@ -65,7 +63,7 @@ class DnDStoreImp extends Store {
     super();
     this.containers = new Map();
     this.scrolls = new Map();
-    this.unifiedContainerDimensions = new Map();
+    this.unifiedContainerDimensions = {};
     this.tracker = new Tracker();
     this._isInitialized = false;
     this._isDOM = false;
@@ -76,8 +74,7 @@ class DnDStoreImp extends Store {
     this.listeners = initDFlexListeners();
     this.update = scheduler;
 
-    this._initBranchScrollAndVisibility =
-      this._initBranchScrollAndVisibility.bind(this);
+    this._initBranch = this._initBranch.bind(this);
   }
 
   private _initWhenRegister() {
@@ -87,23 +84,16 @@ class DnDStoreImp extends Store {
     });
   }
 
-  /**
-   * Complete initializing the task:
-   * 1- Gets element DOM rect.
-   * 2- Check visibility.
-   * 2- Update the element grid.
-   * 3- Update the container grid.
-   *
-   * @param id
-   */
-  private _initElmDOMInstance(
-    id: string,
+  private _initElmGrid(
     scroll: DFlexScrollContainer,
-    container: DFlexParentContainer
+    container: DFlexParentContainer,
+    id: string
   ) {
     const [dflexNode, DOM] = this.getElmWithDOM(id);
 
-    dflexNode.resume(DOM, scroll.scrollRect.left, scroll.scrollRect.top);
+    const { scrollRect } = scroll;
+
+    dflexNode.resume(DOM, scrollRect.left, scrollRect.top);
 
     // Using element grid zero to know if the element has been initiated inside
     // container or not.
@@ -112,48 +102,32 @@ class DnDStoreImp extends Store {
 
       container.registerNewElm(
         initialOffset,
-        this.unifiedContainerDimensions.get(dflexNode.depth)!
+        this.unifiedContainerDimensions[dflexNode.depth]
       );
 
       dflexNode.grid.clone(container.grid);
     }
-
-    updateElementVisibility(DOM, dflexNode, scroll);
   }
 
-  private _initBranchScrollAndVisibility(SK: string, depth: number) {
+  private _initBranch(SK: string, depth: number, DOM: HTMLElement) {
     let container: DFlexParentContainer;
     let scroll: DFlexScrollContainer;
 
-    if (!this.unifiedContainerDimensions.has(depth)) {
-      this.unifiedContainerDimensions.set(depth, {
+    if (!this.unifiedContainerDimensions[depth]) {
+      this.unifiedContainerDimensions[depth] = Object.seal({
         width: 0,
         height: 0,
       });
     }
 
-    if (!this.containers.has(SK)) {
-      container = new DFlexParentContainer();
-
-      this.containers.set(SK, container);
-    } else {
-      if (__DEV__) {
-        throw new Error(
-          `_initBranchScrollAndVisibility: Container with key:${SK} already exists.` +
-            `This function supposed to be called once when initializing the branch during the registration.`
-        );
-      }
-
-      container = this.containers.get(SK)!;
-    }
+    const branch = this.DOMGen.getElmBranchByKey(SK);
 
     if (!this.scrolls.has(SK)) {
-      const branch = this.DOMGen.getElmBranchByKey(SK);
       scroll = new DFlexScrollContainer(
         this.interactiveDOM.get(branch[0])!,
         SK,
         branch.length,
-        updateBranchVisibility.bind(null, this)
+        updateBranchVisibilityLinearly.bind(null, this)
       );
 
       this.scrolls.set(SK, scroll);
@@ -168,9 +142,28 @@ class DnDStoreImp extends Store {
       scroll = this.scrolls.get(SK)!;
     }
 
-    this.getElmBranchByKey(SK).forEach((id) => {
-      this._initElmDOMInstance(id, scroll, container);
-    });
+    if (!this.containers.has(SK)) {
+      container = new DFlexParentContainer(branch.length);
+
+      this.containers.set(SK, container);
+    } else {
+      if (__DEV__) {
+        throw new Error(
+          `_initBranchScrollAndVisibility: Container with key:${SK} already exists.` +
+            `This function supposed to be called once when initializing the branch during the registration.`
+        );
+      }
+
+      container = this.containers.get(SK)!;
+    }
+
+    const initElmGrid = this._initElmGrid.bind(this, scroll, container);
+
+    branch.forEach(initElmGrid);
+
+    updateBranchVisibilityLinearly(this, SK);
+
+    initMutationObserver(this, DOM);
   }
 
   register(element: RegisterInputOpts) {
@@ -208,7 +201,7 @@ class DnDStoreImp extends Store {
         };
 
         // Create an instance of DFlexCoreNode and gets the DOM element into the store.
-        super.register(coreInput, this._initBranchScrollAndVisibility);
+        super.register(coreInput, this._initBranch);
       },
       null
     );
@@ -286,7 +279,7 @@ class DnDStoreImp extends Store {
     }
 
     return this.registry.has(id)
-      ? this.registry.get(id)!.getSerializedElm()
+      ? this.registry.get(id)!.getSerializedInstance()
       : null;
   }
 
@@ -342,4 +335,4 @@ class DnDStoreImp extends Store {
   }
 }
 
-export default DnDStoreImp;
+export default DFlexDnDStore;

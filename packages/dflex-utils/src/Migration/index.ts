@@ -1,3 +1,3 @@
-export { default as Migration } from "./Migration";
+import Migration from "./Migration";
 
-export type { IAbstract, IMigration } from "./types";
+export default Migration;

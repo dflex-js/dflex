@@ -3,8 +3,7 @@ import { PointNum, dirtyAssignBiggestRect } from "@dflex/utils";
 
 import type {
   Dimensions,
-  IPointNum,
-  IPointAxes,
+  AxesPoint,
   RectBoundaries,
   RectDimensions,
 } from "@dflex/utils";
@@ -16,7 +15,7 @@ class DFlexParentContainer {
   boundaries!: RectBoundaries;
 
   /** Numbers of total columns and rows each container has.  */
-  grid: IPointNum;
+  grid: PointNum;
 
   /**
    * Origin length for container before being transformed used to prevent
@@ -30,22 +29,20 @@ class DFlexParentContainer {
    * Preserve the last element position in the list .
    * Usage: Getting this position when the dragged is going back from the tail.
    */
-  lastElmPosition!: IPointNum;
+  lastElmPosition!: PointNum;
 
   static OUT_OF_RANGE = -1;
 
-  constructor() {
+  constructor(originLength: number) {
     this.grid = new PointNum(1, 1);
-    this.originLength = DFlexParentContainer.OUT_OF_RANGE;
+    this.originLength = originLength;
     this._boundariesByRow = {};
     this._gridSiblingsHasNewRow = false;
   }
 
   private _addNewElmToGridIndicator(rect: RectBoundaries): void {
     if (!this._boundariesByRow[this.grid.x]) {
-      this._boundariesByRow[this.grid.x] = {
-        ...rect,
-      };
+      this._boundariesByRow[this.grid.x] = Object.seal({ ...rect });
 
       return;
     }
@@ -129,8 +126,12 @@ class DFlexParentContainer {
     this._gridSiblingsHasNewRow = false;
   }
 
-  preservePosition(position: IPointAxes): void {
-    this.lastElmPosition = new PointNum(position.x, position.y);
+  preservePosition(position: AxesPoint): void {
+    if (!this.lastElmPosition) {
+      this.lastElmPosition = new PointNum(position.x, position.y);
+    } else {
+      this.lastElmPosition.setAxes(position.x, position.y);
+    }
   }
 }
 

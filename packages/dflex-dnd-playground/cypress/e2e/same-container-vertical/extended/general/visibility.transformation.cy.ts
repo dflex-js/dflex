@@ -1,4 +1,4 @@
-context("Visible elements have transformation", () => {
+context.skip("Visible elements have transformation", () => {
   let elmBox: DOMRect;
   let startingPointX: number;
   // eslint-disable-next-line no-unused-vars

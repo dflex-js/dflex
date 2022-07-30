@@ -10,10 +10,10 @@
     "@rollup/plugin-commonjs": "^22.0.1",
     "@rollup/plugin-node-resolve": "^13.3.0",
     "@rollup/plugin-replace": "^4.0.0",
-    "esbuild": "^0.14.48",
+    "esbuild": "^0.14.49",
     "minimist": "^1.2.6",
     "npm-packages": "workspace:*",
-    "rollup": "^2.75.7",
+    "rollup": "^2.77.0",
     "rollup-plugin-esbuild": "^4.9.1",
     "rollup-plugin-terser": "^7.0.2"
   }

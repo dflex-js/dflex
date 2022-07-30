@@ -24,7 +24,7 @@ describe("Container", () => {
   };
 
   beforeAll(() => {
-    container = new DFlexParentContainer();
+    container = new DFlexParentContainer(3);
   });
 
   it("Registers two elements in the same row", () => {

@@ -1,9 +1,15 @@
 /* eslint-disable max-classes-per-file */
 import { PointNum } from "../Point";
 
-import type { RectDimensions, RectBoundaries, Dimensions } from "../types";
+import type {
+  RectDimensions,
+  RectBoundaries,
+  Dimensions,
+  Axis,
+  Direction,
+} from "../types";
 
-import FourDirectionsBool from "./FourDirectionsBool";
+import { FourDirectionsBool } from "../FourDirections";
 
 import { dirtyAssignBiggestRect } from "../collections";
 
@@ -193,27 +199,153 @@ class DFlexThreshold {
     this._addDepthThreshold(insertionLayerKey, childDepth);
   }
 
-  isOutThresholdH(key: string, XLeft: number, XRight: number): boolean {
-    const { left, right } = this.thresholds[key];
+  getThresholdByDirection(
+    axis: Axis,
+    direction: Direction,
+    key: string
+  ): number {
+    const { top, left, bottom, right } = this.thresholds[key];
 
-    this.isOut[key].setOutX(XLeft < left, XRight > right);
-
-    return this.isOut[key].isOutX();
+    return axis === "x"
+      ? direction === -1
+        ? left
+        : right
+      : direction === -1
+      ? top
+      : bottom;
   }
 
-  isOutThresholdV(key: string, YTop: number, YBottom: number): boolean {
-    const { top, bottom } = this.thresholds[key];
+  /**
+   * Check if the element is out of the threshold from given axis.
+   *
+   * Note: This method checks and sets so the result is always preserved.
+   *
+   *
+   * @param axis
+   * @param key
+   * @param startingPos
+   * @param endingPos
+   * @returns
+   */
+  isOutThresholdByAxis(
+    axis: Axis,
+    key: string,
+    startingPos: number,
+    endingPos: number
+  ): boolean {
+    const { left, right, top, bottom } = this.thresholds[key];
 
-    this.isOut[key].setOutY(YTop < top, YBottom > bottom);
+    if (axis === "x") {
+      this.isOut[key].setByAxis(axis, startingPos < left, endingPos > right);
+    }
 
-    return this.isOut[key].isOutY();
+    if (axis === "y") {
+      this.isOut[key].setByAxis(axis, startingPos < top, endingPos > bottom);
+    }
+
+    return this.isOut[key].isOneTruthyByAxis(axis);
+  }
+
+  /**
+   * Check if the element is out of the threshold from one direction based only
+   * on axis and element direction.
+   *
+   * Note: This method checks and sets so the result is always preserved
+   *
+   * @param axis
+   * @param direction
+   * @param key
+   * @param startingPos
+   * @param endingPos
+   * @returns
+   */
+  isOutThresholdByDirection(
+    axis: Axis,
+    direction: Direction,
+    key: string,
+    startingPos: number,
+    endingPos: number
+  ): boolean {
+    const { left, right, top, bottom } = this.thresholds[key];
+
+    const is =
+      axis === "x"
+        ? direction === -1
+          ? startingPos < left
+          : endingPos > right
+        : direction === -1
+        ? startingPos < top
+        : endingPos > bottom;
+
+    this.isOut[key].setOne(axis, direction, is);
+
+    return is;
+  }
+
+  /**
+   * Check if the element is out of the threshold from all directions.
+   *
+   * Note: This method checks and sets so the result is always preserved.
+   *
+   * @param key
+   * @param top
+   * @param right
+   * @param bottom
+   * @param left
+   * @returns
+   */
+  isOutThreshold(
+    key: string,
+    top: number,
+    right: number,
+    bottom: number,
+    left: number
+  ): boolean {
+    const ref = this.thresholds[key];
+
+    this.isOut[key].setAll(
+      top < ref.top,
+      right > ref.right,
+      bottom > ref.bottom,
+      left < ref.left
+    );
+
+    return this.isOut[key].isOneTruthy();
+  }
+
+  /**
+   * Check if the element is out of the threshold from all directions.
+   *
+   * Note: This method doesn't preserve the result.
+   *
+   * @param key
+   * @param top
+   * @param right
+   * @param bottom
+   * @param left
+   * @returns
+   */
+  isShallowOutThreshold(
+    key: string,
+    top: number,
+    right: number,
+    bottom: number,
+    left: number
+  ): boolean {
+    const ref = this.thresholds[key];
+
+    return (
+      top < ref.top ||
+      right > ref.right ||
+      bottom > ref.bottom ||
+      left < ref.left
+    );
   }
 
   destroy(): void {
     Object.keys(this.thresholds).forEach((key) => {
       delete this.thresholds[key];
     });
-
     Object.keys(this.isOut).forEach((key) => {
       delete this.isOut[key];
     });

@@ -34,7 +34,9 @@ type BranchComposedCallBackFunction = (
   // eslint-disable-next-line no-unused-vars
   childrenKey: string,
   // eslint-disable-next-line no-unused-vars
-  childrenDepth: number
+  childrenDepth: number,
+  // eslint-disable-next-line no-unused-vars
+  parentDOM: HTMLElement
 ) => void;
 
 function getElmDOMOrThrow(id: string): HTMLElement | null {
@@ -99,9 +101,7 @@ class DFlexBaseStore {
 
       queue.forEach((fn) => fn());
     } finally {
-      if (this.queueTimeoutId !== undefined) {
-        clearTimeout(this.queueTimeoutId);
-      }
+      this.queueTimeoutId = undefined;
     }
   }
 
@@ -163,7 +163,7 @@ class DFlexBaseStore {
       DOM.dataset.dflexKey = keys.CHK;
 
       if (typeof branchComposedCallBack === "function") {
-        branchComposedCallBack(keys.CHK, depth - 1);
+        branchComposedCallBack(keys.CHK, depth - 1, DOM);
       }
     }
   }
@@ -222,6 +222,10 @@ class DFlexBaseStore {
           );
         });
 
+        if (this.queueTimeoutId === undefined) {
+          clearTimeout(this.queueTimeoutId);
+        }
+
         this.queueTimeoutId = setTimeout(this._handleQueue, 0);
       } else {
         this._submitElementToRegistry(DOM, element, null);
@@ -238,6 +242,12 @@ class DFlexBaseStore {
    * @returns
    */
   getElmWithDOM(id: string): GetElmWithDOMOutput {
+    if (__DEV__) {
+      if (!this.registry.has(id) || !this.interactiveDOM.has(id)) {
+        throw new Error(`getElmWithDOM: Unable to find element with ID: ${id}`);
+      }
+    }
+
     const elm = this.registry.get(id)!;
     const DOM = this.interactiveDOM.get(id)!;
 

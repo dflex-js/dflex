@@ -1,13 +1,18 @@
 export { Point, PointNum, PointBool } from "./Point";
-export type { IPointAxes, IPoint, IPointNum, IPointBool } from "./Point";
+export type { AxesPoint } from "./Point";
 
 export { DFlexThreshold as Threshold } from "./Threshold";
 export type { ThresholdPercentages } from "./Threshold";
 
 export { default as Tracker } from "./Tracker";
 
-export { Migration } from "./Migration";
-export type { IAbstract, IMigration } from "./Migration";
+export { default as Migration } from "./Migration";
+
+export {
+  FourDirections,
+  FourDirectionsBool,
+  FourDirectionsNum,
+} from "./FourDirections";
 
 export type {
   Dimensions,

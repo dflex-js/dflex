@@ -54,7 +54,7 @@ export const DFlexDnDComponent = ({
 
   const onDFlexEvent = (e: DFlexEvents) => {
     // eslint-disable-next-line no-console
-    console.log("onDFlexEvent", e.detail);
+    console.log(`onDFlexEvent: ${e.type}`, e.detail);
   };
 
   const onMouseMove = (e: MouseEvent) => {

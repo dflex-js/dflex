@@ -1,10 +1,12 @@
 /* eslint-disable no-param-reassign */
 import { scheduler, store } from "../LayoutManager";
-import Droppable, { isIDEligible } from "./Droppable";
+import DFlexMechanismController, {
+  isIDEligible,
+} from "./DFlexMechanismController";
 
 import type DraggableInteractive from "../Draggable";
 
-class EndDroppable extends Droppable {
+class EndDroppable extends DFlexMechanismController {
   private spliceAt: number;
 
   constructor(draggable: DraggableInteractive) {
@@ -138,7 +140,7 @@ class EndDroppable extends Droppable {
       },
     } = this.draggable;
 
-    if (this.isParentLocked || threshold.isOut[id].isLeftFromBottom) {
+    if (this.isParentLocked || threshold.isOut[id].bottom) {
       this.loopAscWithAnimationFrame(from, lst, operationID);
     } else {
       /**
@@ -166,19 +168,26 @@ class EndDroppable extends Droppable {
   }
 
   endDragging() {
-    const siblings = store.getElmBranchByKey(
-      this.draggable.migration.latest().SK
-    );
+    const { migration } = this.draggable;
+    const { SK: activeSK, id: activeID } = migration.latest();
+
+    const activeSiblings = store.getElmBranchByKey(activeSK);
 
     let isFallback = false;
 
-    if (this.draggable.isNotSettled() || !this.verify(siblings)) {
+    if (this.isScrolling()) {
       isFallback = true;
 
-      this.draggable.migration.getALlMigrations().forEach((migration) => {
-        const lst = store.getElmBranchByKey(migration.SK);
+      this.cancelAndThrottleScrolling(store.scrolls.get(activeSK)!);
 
-        this.undoList(lst, migration.id);
+      this.undoList(activeSiblings, activeID);
+    } else if (this.draggable.isNotSettled() || !this.verify(activeSiblings)) {
+      isFallback = true;
+
+      migration.getALlMigrations().forEach(({ SK, id }) => {
+        const lst = store.getElmBranchByKey(SK);
+
+        this.undoList(lst, id);
       });
     }
 
@@ -193,18 +202,6 @@ class EndDroppable extends Droppable {
         type: "layoutState",
       }
     );
-
-    [
-      "elmTransition",
-      "draggedOffset",
-      "draggedAccumulatedTransition",
-      "siblingsEmptyElmIndex",
-      "initialScroll",
-      "scrollAxes",
-    ].forEach((instance) => {
-      // @ts-expect-error
-      this[instance] = null;
-    });
   }
 }
 

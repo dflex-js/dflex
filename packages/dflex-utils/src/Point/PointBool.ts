@@ -1,16 +1,15 @@
 import Point from "./Point";
-import type { IPointBool } from "./types";
 
-class PointBool extends Point<boolean> implements IPointBool {
-  isOneTruthy() {
+class PointBool extends Point<boolean> {
+  isOneTruthy(): boolean {
     return this.x || this.y;
   }
 
-  isAllFalsy() {
+  isAllFalsy(): boolean {
     return !this.x && !this.y;
   }
 
-  setFalsy() {
+  setFalsy(): void {
     this.x = false;
     this.y = false;
   }

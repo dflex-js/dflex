@@ -1,32 +1,53 @@
-import type { IPoint } from "./types";
+import type { AxesPoint } from "./types";
 
-class Point<T = number> implements IPoint<T> {
+class Point<T = number> {
   x!: T;
 
   y!: T;
 
   constructor(x: T, y: T) {
     this.setAxes(x, y);
+    Object.seal(this);
   }
 
-  setAxes(x: T, y: T) {
+  setAxes(x: T, y: T): void {
     this.x = x;
     this.y = y;
   }
 
-  clone(target: IPoint<T>) {
+  /**
+   * Clone a given point into local instance.
+   *
+   * @param target
+   */
+  clone(target: Point<T> | AxesPoint<T>): void {
     this.setAxes(target.x, target.y);
   }
 
-  getInstance() {
+  /**
+   * Get local instance of point.
+   *
+   * @returns
+   */
+  getInstance(): AxesPoint<T> {
     return {
       x: this.x,
       y: this.y,
     };
   }
 
-  isEqual(target: IPoint<T>) {
+  /**
+   *  True when both axes match the same value.
+   *
+   * @param target
+   * @returns
+   */
+  isInstanceEqual(target: Point<T> | AxesPoint<T>): boolean {
     return this.x === target.x && this.y === target.y;
+  }
+
+  isEqual(x: T, y: T): boolean {
+    return this.x === x && this.y === y;
   }
 }
 

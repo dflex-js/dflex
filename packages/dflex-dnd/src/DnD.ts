@@ -1,4 +1,4 @@
-import type { IPointAxes } from "@dflex/utils";
+import type { AxesPoint } from "@dflex/utils";
 
 import DraggableInteractive from "./Draggable";
 import Droppable from "./Droppable";
@@ -18,7 +18,7 @@ class DnD extends Droppable {
    */
   constructor(
     id: string,
-    initCoordinates: IPointAxes,
+    initCoordinates: AxesPoint,
     opts: DFlexDnDOpts = defaultOpts
   ) {
     if (__DEV__) {

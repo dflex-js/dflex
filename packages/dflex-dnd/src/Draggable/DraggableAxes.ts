@@ -6,23 +6,15 @@ import {
   PointBool,
   Migration,
   combineKeys,
-  getParentElm,
-} from "@dflex/utils";
-import type {
-  IPointNum,
-  IPointBool,
-  IMigration,
-  IPointAxes,
+  AxesPoint,
+  RectDimensions,
+  FourDirections,
 } from "@dflex/utils";
 
-import { DFlexParentContainer, DFlexNode } from "@dflex/core-instance";
+import type { DFlexNode } from "@dflex/core-instance";
 
-import {
-  initDFlexEvent,
-  initMutationObserver,
-  scheduler,
-  store,
-} from "../LayoutManager";
+import type { ELmBranch } from "@dflex/dom-gen";
+import { initDFlexEvent, scheduler, store } from "../LayoutManager";
 
 import type {
   ContainersTransition,
@@ -31,20 +23,73 @@ import type {
   RestrictionsStatus,
 } from "../types";
 
+function initContainers(SK: string, siblings: ELmBranch) {
+  const container = store.containers.get(SK)!;
+
+  if (!container.lastElmPosition) {
+    const lastElm = store.registry.get(siblings[siblings.length - 1])!;
+
+    container.preservePosition(lastElm.currentPosition);
+  }
+}
+
+function initThresholds(
+  draggedID: string,
+  draggedRect: RectDimensions,
+  draggedDepth: number,
+  threshold: Threshold
+) {
+  threshold.setMainThreshold(draggedID, draggedRect, false);
+
+  store.getBranchesByDepth(draggedDepth).forEach((SK) => {
+    const elmContainer = store.containers.get(SK)!;
+
+    const { boundaries } = elmContainer;
+
+    if (__DEV__) {
+      if (!boundaries) {
+        throw new Error(`Siblings boundaries for ${SK} not found.`);
+      }
+    }
+
+    const insertionLayerKey = combineKeys(draggedDepth, SK);
+
+    threshold.setContainerThreshold(
+      SK,
+      insertionLayerKey,
+      draggedDepth,
+      boundaries,
+      store.unifiedContainerDimensions[draggedDepth]
+    );
+  });
+}
+
 class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
-  positionPlaceholder: IPointNum;
+  gridPlaceholder: PointNum;
 
-  gridPlaceholder: IPointNum;
+  migration: Migration;
 
-  migration: IMigration;
-
-  threshold: Threshold;
+  threshold!: Threshold;
 
   isViewportRestricted: boolean;
 
-  isMovingAwayFrom: IPointBool;
+  /** *@deprecated */
+  isMovingAwayFrom: PointBool;
 
-  readonly innerOffset: IPointNum;
+  /**
+   * The inner distance between the mouse coordinates and the element position.
+   *
+   * innerOffset.x: represents the distance from mouse.x to element.x
+   * innerOffset.x: represents the distance from mouse.y to element.y
+   */
+  readonly innerOffset: PointNum;
+
+  /**
+   * Dragged edge current position including the inner offset.
+   *
+   * Note: Scroll position included, these points ignore viewport.
+   */
+  currentPositionWithScroll: FourDirections<number>;
 
   private isLayoutStateUpdated: boolean;
 
@@ -58,11 +103,11 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
 
   private readonly marginX: number;
 
-  private readonly initCoordinates: IPointNum;
+  private readonly initCoordinates: PointNum;
 
   events: ReturnType<typeof initDFlexEvent>;
 
-  constructor(id: string, initCoordinates: IPointAxes, opts: FinalDndOpts) {
+  constructor(id: string, initCoordinates: AxesPoint, opts: FinalDndOpts) {
     const [element, DOM] = store.getElmWithDOM(id);
 
     super(element, DOM, initCoordinates);
@@ -74,8 +119,8 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
       grid,
       currentPosition,
       keys: { SK },
-      initialOffset: { width, height },
       depth,
+      initialOffset: { width, height },
     } = element;
 
     this.gridPlaceholder = new PointNum(grid.x, grid.y);
@@ -84,21 +129,17 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
 
     this.migration = new Migration(order.self, SK, store.tracker.newTravel());
 
-    const container = store.containers.get(SK)!;
-
-    if (!container.lastElmPosition) {
-      const lastElm = store.registry.get(siblings[siblings.length - 1])!;
-
-      container.preservePosition(lastElm.currentPosition);
-    }
-
     this.isViewportRestricted = true;
 
     this.containersTransition = opts.containersTransition;
 
+    initContainers(SK, siblings);
+
+    this.appendDraggedToContainerDimensions(true);
+
     this.threshold = new Threshold(opts.threshold);
 
-    this.threshold.setMainThreshold(
+    initThresholds(
       id,
       {
         width,
@@ -106,56 +147,9 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
         left: currentPosition.x,
         top: currentPosition.y,
       },
-      false
+      depth,
+      this.threshold
     );
-
-    this.appendDraggedToContainerDimensions(true);
-
-    store.getBranchesByDepth(depth).forEach((key) => {
-      const elmContainer = store.containers.get(key)!;
-
-      const { boundaries } = elmContainer;
-
-      if (__DEV__) {
-        if (!boundaries) {
-          throw new Error(`Siblings boundaries for ${key} not found.`);
-        }
-      }
-
-      const composedK = combineKeys(depth, key);
-
-      this.threshold.setContainerThreshold(
-        key,
-        composedK,
-        depth,
-        boundaries,
-        store.unifiedContainerDimensions.get(depth)!
-      );
-
-      if (elmContainer.originLength === DFlexParentContainer.OUT_OF_RANGE) {
-        const { length } = store.getElmBranchByKey(key);
-        elmContainer.originLength = length;
-      }
-
-      if (!store.interactiveDOM.has(key)) {
-        scheduler(
-          store,
-          () => {
-            const childDOM = store.interactiveDOM.get(
-              store.getElmBranchByKey(key)[0]
-            )!;
-
-            getParentElm(childDOM, (parentDOM) => {
-              parentDOM.dataset.dflexKey = key;
-              store.interactiveDOM.set(key, parentDOM);
-              initMutationObserver(store, parentDOM);
-              return true;
-            });
-          },
-          null
-        );
-      }
-    });
 
     this.isMovingAwayFrom = new PointBool(false, false);
 
@@ -168,16 +162,18 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
       Math.round(y - currentPosition.y)
     );
 
-    const style = window.getComputedStyle(DOM);
+    const style = getComputedStyle(DOM);
 
     // get element margin
     const rm = Math.round(parseFloat(style.marginRight));
     const lm = Math.round(parseFloat(style.marginLeft));
     this.marginX = rm + lm;
 
-    this.positionPlaceholder = new PointNum(
-      currentPosition.x,
-      currentPosition.y
+    this.currentPositionWithScroll = new FourDirections(
+      currentPosition.y,
+      currentPosition.x + width,
+      currentPosition.y + height,
+      currentPosition.x
     );
 
     this.restrictions = opts.restrictions;
@@ -200,7 +196,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
 
     const maneuverDistance = height;
 
-    store.unifiedContainerDimensions.get(depth)!.height += isAppend
+    store.unifiedContainerDimensions[depth].height += isAppend
       ? maneuverDistance
       : -1 * maneuverDistance;
   }
@@ -341,23 +337,28 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
 
     this.translate(filteredX, filteredY);
 
+    const edgeCurrentPositionLeft = filteredX - this.innerOffset.x;
+    const edgeCurrentPositionTop = filteredY - this.innerOffset.y;
+
+    const {
+      initialOffset: { width, height },
+    } = this.draggedElm;
+
     /**
      * Every time we got new translate, offset should be updated
      */
-    this.positionPlaceholder.setAxes(
-      filteredX - this.innerOffset.x,
-      filteredY - this.innerOffset.y
+    this.currentPositionWithScroll.setAll(
+      edgeCurrentPositionTop,
+      edgeCurrentPositionLeft + width,
+      edgeCurrentPositionTop + height,
+      edgeCurrentPositionLeft
     );
   }
 
   isOutThreshold(SK?: string, useInsertionThreshold?: boolean) {
-    const {
-      id,
-      depth,
-      initialOffset: { height, width },
-    } = this.draggedElm;
+    const { id, depth } = this.draggedElm;
 
-    const { x, y } = this.positionPlaceholder;
+    const { top, right, bottom, left } = this.currentPositionWithScroll;
 
     let key = SK || id;
 
@@ -365,10 +366,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
       key = combineKeys(depth, key);
     }
 
-    return (
-      this.threshold.isOutThresholdV(key, y, y + height) ||
-      this.threshold.isOutThresholdH(key, x, x + width)
-    );
+    return this.threshold.isOutThreshold(key, top, right, bottom, left);
   }
 
   private isLeavingFromBottom() {

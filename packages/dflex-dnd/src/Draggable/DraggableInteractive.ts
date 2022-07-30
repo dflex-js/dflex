@@ -1,7 +1,7 @@
 import type { DraggedStyle } from "@dflex/draggable";
 
 import { PointNum } from "@dflex/utils";
-import type { IPointNum, IPointAxes } from "@dflex/utils";
+import type { AxesPoint } from "@dflex/utils";
 
 import { store } from "../LayoutManager";
 
@@ -12,15 +12,15 @@ import DraggableAxes from "./DraggableAxes";
 class DraggableInteractive extends DraggableAxes {
   scroll: ScrollOpts;
 
-  occupiedPosition: IPointNum;
+  occupiedPosition: PointNum;
 
-  occupiedTranslate: IPointNum;
+  occupiedTranslate: PointNum;
 
   isDraggedPositionFixed: boolean;
 
   private changeToFixedStyleProps: DraggedStyle;
 
-  constructor(id: string, initCoordinates: IPointAxes, opts: FinalDndOpts) {
+  constructor(id: string, initCoordinates: AxesPoint, opts: FinalDndOpts) {
     super(id, initCoordinates, opts);
 
     this.scroll = { ...opts.scroll };
@@ -28,7 +28,7 @@ class DraggableInteractive extends DraggableAxes {
     const { SK } = store.registry.get(id)!.keys;
     const scroll = store.scrolls.get(SK)!;
 
-    const { hasOverflowX, hasOverflowY } = scroll;
+    const { hasOverflow } = scroll;
 
     const siblings = store.getElmBranchByKey(this.migration.latest().SK);
 
@@ -52,8 +52,8 @@ class DraggableInteractive extends DraggableAxes {
       },
     ];
 
-    if (siblings === null || (!hasOverflowY && !hasOverflowX)) {
-      // Override the default options. (FYI, this is the only privilege I have.)
+    // Override the default options When no siblings or no overflow.
+    if (siblings.length <= 1 || hasOverflow.isAllFalsy()) {
       this.scroll.enable = false;
     }
 
@@ -92,7 +92,7 @@ class DraggableInteractive extends DraggableAxes {
     const hasToUndo =
       isFallback ||
       // dragged in position but has been clicked.
-      this.occupiedPosition.isEqual(this.draggedElm.currentPosition);
+      this.occupiedPosition.isInstanceEqual(this.draggedElm.currentPosition);
 
     if (hasToUndo) {
       /**
@@ -105,7 +105,9 @@ class DraggableInteractive extends DraggableAxes {
        * dragged depends on extra instance to float in layout that is not related to element
        * instance.
        */
-      if (!this.draggedElm.translate.isEqual(this.translatePlaceholder)) {
+      if (
+        !this.draggedElm.translate.isInstanceEqual(this.translatePlaceholder)
+      ) {
         this.draggedElm.transform(this.draggedDOM);
         this.draggedElm.setAttribute(
           this.draggedDOM,
@@ -155,22 +157,6 @@ class DraggableInteractive extends DraggableAxes {
     this.appendDraggedToContainerDimensions(false);
 
     this.threshold.destroy();
-
-    // TODO: add type to this.
-    const properties = [
-      "threshold",
-      "gridPlaceholder",
-      "isMovingAwayFrom",
-      "positionPlaceholder",
-      "occupiedOffset",
-      "occupiedTranslate",
-      "initCoordinates",
-    ];
-
-    properties.forEach((property) => {
-      // @ts-expect-error
-      this[property] = null;
-    });
   }
 }
 
