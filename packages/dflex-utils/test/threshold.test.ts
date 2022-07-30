@@ -65,7 +65,6 @@ describe("DFlexThreshold", () => {
       width: 224,
     };
 
-    // Got this from console.log(threshold);
     const pixels = {
       x: 102,
       y: 30,

@@ -494,8 +494,8 @@ DFlexDnDStore {
   "tracker": Tracker {
     "travelID": 2,
   },
-  "unifiedContainerDimensions": Map {
-    0 => Object {
+  "unifiedContainerDimensions": Object {
+    "0": Object {
       "height": 0,
       "width": 0,
     },

@@ -100,7 +100,6 @@ class DFlexBaseStore {
       this._queue = [];
 
       queue.forEach((fn) => fn());
-      console.log("queue handled...");
     } finally {
       this.queueTimeoutId = undefined;
     }
