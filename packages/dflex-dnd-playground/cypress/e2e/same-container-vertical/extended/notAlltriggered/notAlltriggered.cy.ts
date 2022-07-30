@@ -1,4 +1,4 @@
-context(
+context.skip(
   "Testing not all elements transformed when dragging still inside viewport",
   () => {
     let elmBox: DOMRect;
