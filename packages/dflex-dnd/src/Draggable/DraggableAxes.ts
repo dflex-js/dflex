@@ -41,25 +41,25 @@ function initThresholds(
 ) {
   threshold.setMainThreshold(draggedID, draggedRect, false);
 
-  store.getBranchesByDepth(draggedDepth).forEach((key) => {
-    const elmContainer = store.containers.get(key)!;
+  store.getBranchesByDepth(draggedDepth).forEach((SK) => {
+    const elmContainer = store.containers.get(SK)!;
 
     const { boundaries } = elmContainer;
 
     if (__DEV__) {
       if (!boundaries) {
-        throw new Error(`Siblings boundaries for ${key} not found.`);
+        throw new Error(`Siblings boundaries for ${SK} not found.`);
       }
     }
 
-    const insertionLayerKey = combineKeys(draggedDepth, key);
+    const insertionLayerKey = combineKeys(draggedDepth, SK);
 
     threshold.setContainerThreshold(
-      key,
+      SK,
       insertionLayerKey,
       draggedDepth,
       boundaries,
-      store.unifiedContainerDimensions.get(draggedDepth)!
+      store.unifiedContainerDimensions[draggedDepth]
     );
   });
 }
@@ -135,6 +135,8 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
 
     initContainers(SK, siblings);
 
+    this.appendDraggedToContainerDimensions(true);
+
     this.threshold = new Threshold(opts.threshold);
 
     initThresholds(
@@ -148,8 +150,6 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
       depth,
       this.threshold
     );
-
-    this.appendDraggedToContainerDimensions(true);
 
     this.isMovingAwayFrom = new PointBool(false, false);
 
@@ -196,7 +196,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
 
     const maneuverDistance = height;
 
-    store.unifiedContainerDimensions.get(depth)!.height += isAppend
+    store.unifiedContainerDimensions[depth].height += isAppend
       ? maneuverDistance
       : -1 * maneuverDistance;
   }

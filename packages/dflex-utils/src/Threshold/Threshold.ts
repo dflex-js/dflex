@@ -182,6 +182,10 @@ class DFlexThreshold {
 
     const { top, left } = containerRect;
     const { height, width } = unifiedContainerDimensions;
+    console.log(
+      "file: Threshold.ts ~ line 185 ~ unifiedContainerDimensions",
+      unifiedContainerDimensions
+    );
 
     // Insertion threshold.
     this._createThreshold(
@@ -344,13 +348,12 @@ class DFlexThreshold {
   }
 
   destroy(): void {
-    Object.keys(this.thresholds).forEach((key) => {
-      delete this.thresholds[key];
-    });
-
-    Object.keys(this.isOut).forEach((key) => {
-      delete this.isOut[key];
-    });
+    // Object.keys(this.thresholds).forEach((key) => {
+    //   delete this.thresholds[key];
+    // });
+    // Object.keys(this.isOut).forEach((key) => {
+    //   delete this.isOut[key];
+    // });
   }
 }
 
