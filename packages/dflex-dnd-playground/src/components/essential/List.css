@@ -44,7 +44,6 @@
   border-image: initial;
   border-color: transparent;
   padding: 8px;
-  transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1) 0s;
 }
 
 .list-container-grid {
