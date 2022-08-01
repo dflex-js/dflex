@@ -203,14 +203,14 @@ class DFlexScrollContainer {
 
     this._updateInvisibleDistance(scrollLeft, scrollTop, false);
 
+    this._setOverflow();
+
     // Check allowDynamicVisibility after taking into consideration the length of
     // the branch itself.
     if (
       branchLength >
       DFlexScrollContainer._MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY
     ) {
-      this._setOverflow();
-
       if (this.allowDynamicVisibility) {
         this._scrollEventCallback = scrollEventCallback;
 
