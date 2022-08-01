@@ -1,6 +1,6 @@
 {
   "name": "@dflex/dom-gen",
-  "version": "3.6.1",
+  "version": "3.6.2",
   "description": "DFlex DOM relations generator algorithm",
   "author": "Jalal Maskoun",
   "main": "./dist/dflex-dom.js",
@@ -45,7 +45,7 @@
     "@dflex/dnd"
   ],
   "devDependencies": {
-    "@dflex/utils": "workspace:^3.6.1"
+    "@dflex/utils": "workspace:^3.6.2"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
