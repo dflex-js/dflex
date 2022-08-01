@@ -58,7 +58,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     this._prevMousePosition = new PointNum(0, 0);
     this._prevMouseDirection = new Point<Direction>(-1, -1);
 
-    this._lastScrollSpeed = 10;
+    this._lastScrollSpeed = this.draggable.scroll.initialSpeed;
 
     this._clearScrollAnimatedFrame = this._clearScrollAnimatedFrame.bind(this);
 
