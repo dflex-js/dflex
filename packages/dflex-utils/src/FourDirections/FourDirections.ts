@@ -22,6 +22,14 @@ class FourDirections<T> {
     Object.seal(this);
   }
 
+  /**
+   * Set all directions.
+   *
+   * @param top
+   * @param right
+   * @param bottom
+   * @param left
+   */
   setAll(top: T, right: T, bottom: T, left: T): void {
     this.top = top;
     this.right = right;
@@ -29,6 +37,11 @@ class FourDirections<T> {
     this.left = left;
   }
 
+  /**
+   * Get an instance of FourDirections.
+   *
+   * @returns
+   */
   getAll(): GetAllOutput<T> {
     return {
       up: this.top,
@@ -38,6 +51,13 @@ class FourDirections<T> {
     };
   }
 
+  /**
+   * Set one axis only.
+   *
+   * @param axis
+   * @param x
+   * @param y
+   */
   setByAxis(axis: Axis, x: T, y: T): void {
     switch (axis) {
       case "x":
@@ -51,6 +71,13 @@ class FourDirections<T> {
     }
   }
 
+  /**
+   * Set one direction only.
+   *
+   * @param axis
+   * @param direction
+   * @param value
+   */
   setOne(axis: Axis, direction: Direction, value: T): void {
     switch (axis) {
       case "x":
@@ -70,6 +97,13 @@ class FourDirections<T> {
     }
   }
 
+  /**
+   * Get the value of one direction.
+   *
+   * @param axis
+   * @param direction
+   * @returns
+   */
   getOne(axis: Axis, direction: Direction): T {
     switch (axis) {
       case "x":

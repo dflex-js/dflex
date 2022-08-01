@@ -10,6 +10,12 @@ class Point<T = number> {
     Object.seal(this);
   }
 
+  /**
+   * Assigns the given values to the local instance.
+   *
+   * @param x
+   * @param y
+   */
   setAxes(x: T, y: T): void {
     this.x = x;
     this.y = y;
@@ -46,6 +52,13 @@ class Point<T = number> {
     return this.x === target.x && this.y === target.y;
   }
 
+  /**
+   * True when both axes match the same value.
+   *
+   * @param x
+   * @param y
+   * @returns
+   */
   isEqual(x: T, y: T): boolean {
     return this.x === x && this.y === y;
   }

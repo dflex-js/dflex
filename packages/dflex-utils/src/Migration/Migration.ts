@@ -57,6 +57,8 @@ class Migration {
    * We only update indexes considering migration definition when it happens
    * outside container but not moving inside it.
    * So we update an index but we add key.
+   *
+   * @param index
    */
   setIndex(index: number): void {
     this.latest().index = index;
@@ -73,17 +75,25 @@ class Migration {
 
   /**
    * Add new migration.
+   *
+   * @param index
+   * @param key
+   * @param id
    */
   add(index: number, key: string, id: string): void {
     this.migrations.push(new AbstractMigration(index, key, id));
   }
 
-  /** start transitioning. */
+  /**
+   * start transitioning
+   */
   start(): void {
     this.isTransitioning = true;
   }
 
-  /** Get the migration done  */
+  /**
+   * Get the migration done
+   */
   complete(): void {
     this.isTransitioning = false;
 
