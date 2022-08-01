@@ -2,22 +2,33 @@ import Point from "./Point";
 import type { AxesPoint } from "./types";
 
 class PointNum extends Point<number> {
-  increase(point: AxesPoint) {
+  /**
+   * Increase the current point by the given another point.
+   *
+   * @param point
+   */
+  increase(point: AxesPoint): void {
     this.x += point.x;
     this.y += point.y;
   }
 
-  decrease(point: AxesPoint) {
-    this.x -= point.x;
-    this.y -= point.y;
-  }
-
-  multiplyAll(val: number) {
+  /**
+   * Multiplies the point by the given value.
+   *
+   * @param val
+   */
+  multiplyAll(val: number): void {
     this.x *= val;
     this.y *= val;
   }
 
-  getMultiplied(val: number) {
+  /**
+   * Gets new instance of PointNum multiplied by the given value.
+   *
+   * @param val
+   * @returns
+   */
+  getMultiplied(val: number): AxesPoint {
     return { x: this.x * val, y: this.y * val };
   }
 }
