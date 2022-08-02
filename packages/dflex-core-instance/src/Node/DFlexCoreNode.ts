@@ -1,10 +1,16 @@
 import { PointNum } from "@dflex/utils";
-import type { RectDimensions, Direction, Axes, AxesPoint } from "@dflex/utils";
+import type {
+  RectDimensions,
+  Direction,
+  Axes,
+  AxesPoint,
+  DFlexElmType,
+} from "@dflex/utils";
 
 import DFlexBaseNode from "./DFlexBaseNode";
 
 export type SerializedDFlexCoreNode = {
-  type: string;
+  type: DFlexElmType;
   version: 3;
   id: string;
   translate: PointNum | null;
@@ -46,6 +52,7 @@ export interface DFlexNodeInput {
   keys: Keys;
   depth: number;
   readonly: boolean;
+  type: DFlexElmType;
 }
 
 class DFlexCoreNode extends DFlexBaseNode {
@@ -71,16 +78,12 @@ class DFlexCoreNode extends DFlexBaseNode {
 
   private _translateHistory?: TransitionHistory[];
 
-  static getType(): string {
-    return "core:node";
-  }
-
   static transform = DFlexBaseNode.transform;
 
   constructor(eleWithPointer: DFlexNodeInput) {
-    const { order, keys, depth, readonly, id } = eleWithPointer;
+    const { order, keys, depth, readonly, id, type } = eleWithPointer;
 
-    super(id);
+    super(id, type);
 
     this.order = order;
     this.keys = keys;
@@ -382,7 +385,7 @@ class DFlexCoreNode extends DFlexBaseNode {
 
   getSerializedInstance(): SerializedDFlexCoreNode {
     return {
-      type: DFlexCoreNode.getType(),
+      type: this.getType(),
       version: 3,
       id: this.id,
       grid: this.grid,

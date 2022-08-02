@@ -1,4 +1,4 @@
-import { PointNum } from "@dflex/utils";
+import { PointNum, DFlexElmType } from "@dflex/utils";
 
 import { DFLEX_ATTRIBUTES } from "./constants";
 import type { AllowedAttributes } from "./constants";
@@ -14,17 +14,20 @@ class DFlexBaseNode {
 
   private _hasAttribute?: AttributeSet;
 
-  static getType(): string {
-    return "base:node";
-  }
+  private readonly _type: DFlexElmType;
 
   static transform(DOM: HTMLElement, x: number, y: number): void {
     DOM.style.transform = `translate3d(${x}px,${y}px, 0)`;
   }
 
-  constructor(id: string) {
+  constructor(id: string, type: DFlexElmType) {
     this.id = id;
+    this._type = type;
     this.isPaused = true;
+  }
+
+  getType(): DFlexElmType {
+    return this._type;
   }
 
   /**
@@ -42,7 +45,7 @@ class DFlexBaseNode {
   setAttribute(
     DOM: HTMLElement,
     key: AllowedAttributes,
-    value: string | number
+    value: string | number = "true"
   ): void {
     if (key === "INDEX") {
       DOM.setAttribute(DFLEX_ATTRIBUTES[key], `${value}`);

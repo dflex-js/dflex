@@ -2,7 +2,7 @@
 import Generator, { ELmBranch } from "@dflex/dom-gen";
 
 import { DFlexNode, DFlexNodeInput } from "@dflex/core-instance";
-import { getParentElm, Tracker } from "@dflex/utils";
+import { getParentElm, Tracker, DFlexElmType } from "@dflex/utils";
 
 // https://github.com/microsoft/TypeScript/issues/28374#issuecomment-536521051
 type DeepNonNullable<T> = {
@@ -24,6 +24,8 @@ export type RegisterInputOpts = {
    * same interactive container.
    * */
   readonly?: boolean;
+
+  type?: DFlexElmType;
 };
 
 export type RegisterInputBase = DeepNonNullable<RegisterInputOpts>;
@@ -110,7 +112,7 @@ class DFlexBaseStore {
     elm: RegisterInputBase,
     branchComposedCallBack: BranchComposedCallBackFunction | null
   ): void {
-    const { id, depth, readonly } = elm;
+    const { id, depth, readonly, type } = elm;
 
     if (!this.interactiveDOM.has(id)) {
       this.interactiveDOM.set(id, DOM);
@@ -140,6 +142,7 @@ class DFlexBaseStore {
       keys,
       depth,
       readonly,
+      type,
     };
 
     const dflexElm = new DFlexNode(coreElement);
@@ -147,6 +150,7 @@ class DFlexBaseStore {
     this.registry.set(id, dflexElm);
 
     dflexElm.setAttribute(DOM, "INDEX", dflexElm.order.self);
+    dflexElm.setAttribute(DOM, "DRAGGABLE", "true");
 
     if (depth >= 1) {
       if (keys.CHK === null) {
@@ -176,9 +180,9 @@ class DFlexBaseStore {
    */
   register(
     element: RegisterInputBase,
-    branchComposedCallBack?: BranchComposedCallBackFunction
+    branchComposedCallBack: BranchComposedCallBackFunction | null = null
   ): void {
-    const { id, depth } = element;
+    const { id, depth, type } = element;
 
     const DOM = this.interactiveDOM.has(id)
       ? this.interactiveDOM.get(id)!
@@ -217,8 +221,9 @@ class DFlexBaseStore {
               depth: parentDepth,
               // Default value for inserted parent element.
               readonly: true,
+              type,
             },
-            branchComposedCallBack || null
+            branchComposedCallBack
           );
         });
 

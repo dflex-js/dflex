@@ -36,6 +36,8 @@ type UpdatesQueue = Array<
 
 type Deferred = Array<() => void>;
 
+const INTERACTIVE_ELM = "interactive";
+
 class DFlexDnDStore extends DFlexBaseStore {
   containers: Containers;
 
@@ -198,6 +200,7 @@ class DFlexDnDStore extends DFlexBaseStore {
           id,
           readonly: !!element.readonly,
           depth: element.depth || 0,
+          type: element.type || INTERACTIVE_ELM,
         };
 
         // Create an instance of DFlexCoreNode and gets the DOM element into the store.

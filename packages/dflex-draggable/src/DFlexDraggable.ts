@@ -18,6 +18,15 @@ class DFlexDraggable extends DFlexBaseDraggable<DFlexBaseNode> {
   }
 
   dragAt(x: number, y: number) {
+    if (this.draggedElm.getType() === "droppable") {
+      if (__DEV__) {
+        // eslint-disable-next-line no-console
+        console.warn("Droppable element can't be dragged");
+      }
+
+      return;
+    }
+
     this.translate(x, y);
 
     this.draggedElm.translate.clone(this.translatePlaceholder);

@@ -22,3 +22,5 @@ export type Axis = "x" | "y";
 
 /** Bi-directional Axis. */
 export type Axes = Axis | "z";
+
+export type DFlexElmType = "interactive" | "droppable" | "draggable";
