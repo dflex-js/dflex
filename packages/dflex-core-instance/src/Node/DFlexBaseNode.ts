@@ -14,7 +14,7 @@ class DFlexBaseNode {
 
   private _hasAttribute?: AttributeSet;
 
-  private readonly _type: DFlexElmType;
+  private _type: DFlexElmType;
 
   static transform(DOM: HTMLElement, x: number, y: number): void {
     DOM.style.transform = `translate3d(${x}px,${y}px, 0)`;
@@ -28,6 +28,15 @@ class DFlexBaseNode {
 
   getType(): DFlexElmType {
     return this._type;
+  }
+
+  /**
+   * This only happens during the registration.
+   *
+   * @param type
+   */
+  setType(type: DFlexElmType): void {
+    this._type = type;
   }
 
   /**
@@ -45,12 +54,22 @@ class DFlexBaseNode {
   setAttribute(
     DOM: HTMLElement,
     key: AllowedAttributes,
-    value: string | number = "true"
+    value: "true" | "false" | DFlexElmType | number
   ): void {
     if (key === "INDEX") {
       DOM.setAttribute(DFLEX_ATTRIBUTES[key], `${value}`);
 
       return;
+    }
+
+    if (__DEV__) {
+      if (this._hasAttribute === undefined) {
+        throw new Error(`setAttribute: Attribute set is not initialized`);
+      }
+
+      if (!DFLEX_ATTRIBUTES[key]) {
+        throw new Error(`setAttribute: Invalid attribute key: ${key}`);
+      }
     }
 
     if (this._hasAttribute!.has(key)) return;

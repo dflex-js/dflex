@@ -11,3 +11,5 @@ export type {
   DFlexEventsTypes,
   DFlexListenerEvents,
 } from "./LayoutManager";
+
+export type { DFlexElmType } from "@dflex/utils";

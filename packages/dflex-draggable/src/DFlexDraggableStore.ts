@@ -19,6 +19,7 @@ class DFlexDraggableStore extends DFlexBaseStore {
     const [dflexNode, DOM] = this.getElmWithDOM(id);
 
     dflexNode.resume(DOM, 0, 0);
+    dflexNode.setAttribute(DOM, "ELM_TYPE", DRAGGABLE_ELM);
   }
 
   private _initBranch(SK: string) {
@@ -37,7 +38,6 @@ class DFlexDraggableStore extends DFlexBaseStore {
       {
         id,
         depth: 0,
-        readonly: false,
         type: DRAGGABLE_ELM,
       },
       this._initBranch

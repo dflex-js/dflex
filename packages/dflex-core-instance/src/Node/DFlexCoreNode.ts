@@ -51,7 +51,6 @@ export interface DFlexNodeInput {
   order: DOMGenOrder;
   keys: Keys;
   depth: number;
-  readonly: boolean;
   type: DFlexElmType;
 }
 
@@ -72,8 +71,6 @@ class DFlexCoreNode extends DFlexBaseNode {
 
   hasPendingTransform!: boolean;
 
-  readonly: boolean;
-
   animatedFrame: number | null;
 
   private _translateHistory?: TransitionHistory[];
@@ -81,14 +78,13 @@ class DFlexCoreNode extends DFlexBaseNode {
   static transform = DFlexBaseNode.transform;
 
   constructor(eleWithPointer: DFlexNodeInput) {
-    const { order, keys, depth, readonly, id, type } = eleWithPointer;
+    const { order, keys, depth, id, type } = eleWithPointer;
 
     super(id, type);
 
     this.order = order;
     this.keys = keys;
     this.depth = depth;
-    this.readonly = readonly;
     this.isPaused = false;
     this.isVisible = !this.isPaused;
     this.animatedFrame = null;

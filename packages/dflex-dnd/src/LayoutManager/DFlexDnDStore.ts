@@ -91,24 +91,27 @@ class DFlexDnDStore extends DFlexBaseStore {
     container: DFlexParentContainer,
     id: string
   ) {
-    const [dflexNode, DOM] = this.getElmWithDOM(id);
+    const [dflexElm, DOM] = this.getElmWithDOM(id);
 
     const { scrollRect } = scroll;
 
-    dflexNode.resume(DOM, scrollRect.left, scrollRect.top);
+    dflexElm.resume(DOM, scrollRect.left, scrollRect.top);
 
     // Using element grid zero to know if the element has been initiated inside
     // container or not.
-    if (dflexNode.grid.x === 0) {
-      const { initialOffset } = dflexNode;
+    if (dflexElm.grid.x === 0) {
+      const { initialOffset } = dflexElm;
 
       container.registerNewElm(
         initialOffset,
-        this.unifiedContainerDimensions[dflexNode.depth]
+        this.unifiedContainerDimensions[dflexElm.depth]
       );
 
-      dflexNode.grid.clone(container.grid);
+      dflexElm.grid.clone(container.grid);
     }
+
+    dflexElm.setAttribute(DOM, "INDEX", dflexElm.order.self);
+    dflexElm.setAttribute(DOM, "ELM_TYPE", dflexElm.getType());
   }
 
   private _initBranch(SK: string, depth: number, DOM: HTMLElement) {
@@ -198,7 +201,6 @@ class DFlexDnDStore extends DFlexBaseStore {
       () => {
         const coreInput = {
           id,
-          readonly: !!element.readonly,
           depth: element.depth || 0,
           type: element.type || INTERACTIVE_ELM,
         };
