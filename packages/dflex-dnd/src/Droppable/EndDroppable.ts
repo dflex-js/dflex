@@ -140,7 +140,7 @@ class EndDroppable extends DFlexMechanismController {
       },
     } = this.draggable;
 
-    if (this.isParentLocked || threshold.isOut[id].bottom) {
+    if (this.getIsParentLocked() || threshold.isOut[id].bottom) {
       this.loopAscWithAnimationFrame(from, lst, operationID);
     } else {
       /**

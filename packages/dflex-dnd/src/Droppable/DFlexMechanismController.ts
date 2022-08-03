@@ -77,6 +77,10 @@ class DFlexMechanismController extends DFlexScrollableElement {
     return this.draggable.migration.latest().index;
   }
 
+  getIsParentLocked(): boolean {
+    return this._isParentLocked;
+  }
+
   private _detectDroppableIndex(): number | null {
     let droppableIndex = null;
 
