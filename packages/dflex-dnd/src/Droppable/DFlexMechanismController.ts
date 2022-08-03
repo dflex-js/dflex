@@ -16,7 +16,7 @@ export function isIDEligible(elmID: string, draggedID: string): boolean {
     elmID.length > 0 &&
     elmID !== draggedID &&
     store.has(elmID) &&
-    !store.registry.get(elmID)!.readonly
+    store.registry.get(elmID)!.getType() === "interactive"
   );
 }
 

@@ -6,6 +6,8 @@ declare global {
   var $DFlex_Draggable: DFlexDraggableStore;
 }
 
+const DRAGGABLE_ELM = "draggable";
+
 class DFlexDraggableStore extends DFlexBaseStore {
   constructor() {
     super();
@@ -17,6 +19,7 @@ class DFlexDraggableStore extends DFlexBaseStore {
     const [dflexNode, DOM] = this.getElmWithDOM(id);
 
     dflexNode.resume(DOM, 0, 0);
+    dflexNode.setAttribute(DOM, "ELM_TYPE", DRAGGABLE_ELM);
   }
 
   private _initBranch(SK: string) {
@@ -29,11 +32,13 @@ class DFlexDraggableStore extends DFlexBaseStore {
    */
   // @ts-ignore
   register(id: string) {
+    if (!canUseDOM()) return;
+
     super.register(
       {
         id,
         depth: 0,
-        readonly: false,
+        type: DRAGGABLE_ELM,
       },
       this._initBranch
     );

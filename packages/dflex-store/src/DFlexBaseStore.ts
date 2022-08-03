@@ -2,7 +2,7 @@
 import Generator, { ELmBranch } from "@dflex/dom-gen";
 
 import { DFlexNode, DFlexNodeInput } from "@dflex/core-instance";
-import { getParentElm, Tracker } from "@dflex/utils";
+import { getParentElm, Tracker, DFlexElmType } from "@dflex/utils";
 
 // https://github.com/microsoft/TypeScript/issues/28374#issuecomment-536521051
 type DeepNonNullable<T> = {
@@ -19,11 +19,7 @@ export type RegisterInputOpts = {
   /** The depth of targeted element starting from zero (The default value is zero).  */
   depth?: number;
 
-  /**
-   * True for elements that won't be transformed during DnD but belongs to the
-   * same interactive container.
-   * */
-  readonly?: boolean;
+  type?: DFlexElmType;
 };
 
 export type RegisterInputBase = DeepNonNullable<RegisterInputOpts>;
@@ -110,7 +106,7 @@ class DFlexBaseStore {
     elm: RegisterInputBase,
     branchComposedCallBack: BranchComposedCallBackFunction | null
   ): void {
-    const { id, depth, readonly } = elm;
+    const { id, depth, type } = elm;
 
     if (!this.interactiveDOM.has(id)) {
       this.interactiveDOM.set(id, DOM);
@@ -122,7 +118,7 @@ class DFlexBaseStore {
       // This is the only difference between register by default and register
       // with a user only. In the future if there's new options then this should
       // be updated.
-      elmInRegistry!.readonly = readonly;
+      elmInRegistry!.setType(type);
 
       if (__DEV__) {
         // eslint-disable-next-line no-console
@@ -139,14 +135,12 @@ class DFlexBaseStore {
       order,
       keys,
       depth,
-      readonly,
+      type,
     };
 
     const dflexElm = new DFlexNode(coreElement);
 
     this.registry.set(id, dflexElm);
-
-    dflexElm.setAttribute(DOM, "INDEX", dflexElm.order.self);
 
     if (depth >= 1) {
       if (keys.CHK === null) {
@@ -176,7 +170,7 @@ class DFlexBaseStore {
    */
   register(
     element: RegisterInputBase,
-    branchComposedCallBack?: BranchComposedCallBackFunction
+    branchComposedCallBack: BranchComposedCallBackFunction | null = null
   ): void {
     const { id, depth } = element;
 
@@ -215,10 +209,10 @@ class DFlexBaseStore {
             {
               id: parentID,
               depth: parentDepth,
-              // Default value for inserted parent element.
-              readonly: true,
+              // Dropped elements are not interactive.
+              type: "droppable",
             },
-            branchComposedCallBack || null
+            branchComposedCallBack
           );
         });
 

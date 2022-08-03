@@ -117,6 +117,7 @@
   padding: 8px;
   border: 12px #ffee93 solid;
   border-radius: 18px;
+  overflow: auto;
 }
 
 .list-migration li {

@@ -1,5 +1,6 @@
 export { default as Depth1 } from "./depth";
 export { default as ExtendedList } from "./extended";
+export { default as LayoutWithDroppable } from "./droppable";
 
 export {
   AllRestrictedContainer,

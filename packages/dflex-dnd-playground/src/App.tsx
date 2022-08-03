@@ -15,6 +15,7 @@ import {
   ContainerBasedEvent,
   ScrollMultiLists,
   ListMigration,
+  LayoutWithDroppable,
 } from "./components";
 
 function App() {
@@ -61,6 +62,7 @@ function App() {
         <Route path="/todo" element={<TodoListWithEvents />} />
         <Route path="/migration" element={<ListMigration />} />
         <Route path="/commit" element={<ListMigration withCommitBtn />} />
+        <Route path="/droppable" element={<LayoutWithDroppable />} />
         <Route
           path="/component-based-event"
           element={

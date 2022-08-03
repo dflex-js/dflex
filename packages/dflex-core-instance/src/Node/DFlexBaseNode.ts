@@ -1,4 +1,4 @@
-import { PointNum } from "@dflex/utils";
+import { PointNum, DFlexElmType } from "@dflex/utils";
 
 import { DFLEX_ATTRIBUTES } from "./constants";
 import type { AllowedAttributes } from "./constants";
@@ -14,17 +14,29 @@ class DFlexBaseNode {
 
   private _hasAttribute?: AttributeSet;
 
-  static getType(): string {
-    return "base:node";
-  }
+  private _type: DFlexElmType;
 
   static transform(DOM: HTMLElement, x: number, y: number): void {
     DOM.style.transform = `translate3d(${x}px,${y}px, 0)`;
   }
 
-  constructor(id: string) {
+  constructor(id: string, type: DFlexElmType) {
     this.id = id;
+    this._type = type;
     this.isPaused = true;
+  }
+
+  getType(): DFlexElmType {
+    return this._type;
+  }
+
+  /**
+   * This only happens during the registration.
+   *
+   * @param type
+   */
+  setType(type: DFlexElmType): void {
+    this._type = type;
   }
 
   /**
@@ -42,12 +54,22 @@ class DFlexBaseNode {
   setAttribute(
     DOM: HTMLElement,
     key: AllowedAttributes,
-    value: string | number
+    value: "true" | "false" | DFlexElmType | number
   ): void {
     if (key === "INDEX") {
       DOM.setAttribute(DFLEX_ATTRIBUTES[key], `${value}`);
 
       return;
+    }
+
+    if (__DEV__) {
+      if (this._hasAttribute === undefined) {
+        throw new Error(`setAttribute: Attribute set is not initialized`);
+      }
+
+      if (!DFLEX_ATTRIBUTES[key]) {
+        throw new Error(`setAttribute: Invalid attribute key: ${key}`);
+      }
     }
 
     if (this._hasAttribute!.has(key)) return;

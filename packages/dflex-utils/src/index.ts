@@ -21,6 +21,7 @@ export type {
   Axes,
   Axis,
   Direction,
+  DFlexElmType,
 } from "./types";
 
 export { combineKeys, dirtyAssignBiggestRect } from "./collections";
