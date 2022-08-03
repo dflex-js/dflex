@@ -443,25 +443,25 @@ class DFlexPositionUpdater {
     this.updateIndicators(element, axis, elmDirection);
 
     // TODO: always true for the first element
-    if (!this.isParentLocked) {
-      /**
-       * By updating the dragged translate, we guarantee that dragged
-       * transformation will not triggered until dragged is over threshold
-       * which will be detected by isDraggedOutPosition.
-       *
-       * However, this is only effective when dragged is fit in its new
-       * translate.
-       *
-       * And we have new translate only once. The first element matched the
-       * condition is the breaking point element.
-       */
+    // if (!this.isParentLocked) {
+    /**
+     * By updating the dragged translate, we guarantee that dragged
+     * transformation will not triggered until dragged is over threshold
+     * which will be detected by isDraggedOutPosition.
+     *
+     * However, this is only effective when dragged is fit in its new
+     * translate.
+     *
+     * And we have new translate only once. The first element matched the
+     * condition is the breaking point element.
+     */
 
-      const {
-        currentPosition: { x, y },
-      } = element;
+    const {
+      currentPosition: { x, y },
+    } = element;
 
-      this.updateDraggedThresholdPosition(x, y);
-    }
+    this.updateDraggedThresholdPosition(x, y);
+    // }
 
     this.draggable.events.dispatch("ON_DRAG_OVER", composeElmMeta(element));
 
