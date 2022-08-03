@@ -144,8 +144,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     this.draggable.setDraggedTempIndex(insertAt);
 
-    this.lockParent(false);
-
     let draggedTransition: AxesPoint;
     let draggedGrid: PointNum;
 
@@ -162,7 +160,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     // If it has solo empty id then there's no need to move down. Because it's
     // empty branch.
     if (hasToMoveSiblingsDown && !isEmpty) {
-      this._moveDown(insertAt);
+      this._moveDownProcess(insertAt);
     }
 
     draggedElm.removeAttribute(this.draggable.draggedDOM, "OUT_CONTAINER");
@@ -331,6 +329,11 @@ class DFlexMechanismController extends DFlexScrollableElement {
     }
   }
 
+  private _fillHeadUpProcess(): void {
+    this.lockParent(true);
+    this._fillHeadUp();
+  }
+
   /**
    *
    * @param to - index
@@ -355,6 +358,11 @@ class DFlexMechanismController extends DFlexScrollableElement {
     }
   }
 
+  private _moveDownProcess(to: number): void {
+    this.lockParent(false);
+    this._moveDown(to);
+  }
+
   private _draggedOutPositionNotifier(): void {
     const {
       draggedElm: { id },
@@ -372,10 +380,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
       // Leaving from top.
       if (newRow === 0) {
-        // lock the parent
-        this.lockParent(true);
-
-        this._fillHeadUp();
+        this._fillHeadUpProcess();
 
         return;
       }
@@ -398,10 +403,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       : gridPlaceholder.x - 1;
 
     if (newCol <= 0 || newCol > siblingsGrid.x) {
-      // lock the parent
-      this.lockParent(true);
-
-      this._fillHeadUp();
+      this._fillHeadUpProcess();
 
       return;
     }
@@ -438,9 +440,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
               // When it's inside the container, then the siblings are not lifted
               if (!isOutSiblingsContainer && !this.isParentLocked) {
-                this.lockParent(true);
-
-                this._fillHeadUp();
+                this._fillHeadUpProcess();
               }
             },
           });
