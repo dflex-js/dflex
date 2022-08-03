@@ -31,6 +31,8 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
   private listAppendPosition: AxesPoint | null;
 
+  private _isParentLocked: boolean;
+
   static INDEX_OUT_CONTAINER = NaN;
 
   /**
@@ -65,7 +67,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     this.animatedDraggedInsertionFrame = null;
     this.listAppendPosition = null;
 
-    this.isParentLocked = false;
+    this._isParentLocked = false;
   }
 
   /**
@@ -330,7 +332,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
   }
 
   private _fillHeadUpProcess(): void {
-    this.lockParent(true);
+    this._isParentLocked = true;
     this._fillHeadUp();
   }
 
@@ -359,7 +361,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
   }
 
   private _moveDownProcess(to: number): void {
-    this.lockParent(false);
+    this._isParentLocked = false;
     this._moveDown(to);
   }
 
@@ -388,7 +390,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       // Leaving from bottom.
       if (newRow > siblingsGrid.y) {
         // lock the parent
-        this.lockParent(true);
+        this._isParentLocked = true;
 
         return;
       }
@@ -409,10 +411,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
     }
 
     this._switchElementPosition(isOut[id].right);
-  }
-
-  private lockParent(isOut: boolean) {
-    this.isParentLocked = isOut;
   }
 
   dragAt(x: number, y: number) {
@@ -439,7 +437,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
               isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
               // When it's inside the container, then the siblings are not lifted
-              if (!isOutSiblingsContainer && !this.isParentLocked) {
+              if (!isOutSiblingsContainer && !this._isParentLocked) {
                 this._fillHeadUpProcess();
               }
             },
@@ -454,7 +452,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       if (this._hasBeenScrolling) {
         isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
-        if (!isOutSiblingsContainer && this.isParentLocked) {
+        if (!isOutSiblingsContainer && this._isParentLocked) {
           this._detectNearestElm();
         }
 
@@ -479,7 +477,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         index: this.getDraggedTempIndex(),
       });
 
-      if (!this.isParentLocked) {
+      if (!this._isParentLocked) {
         draggedElm.setAttribute(draggedDOM, "OUT_POS", "true");
 
         this._draggedOutPositionNotifier();
@@ -511,7 +509,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         index: this.getDraggedTempIndex(),
       });
 
-      this.isParentLocked = true;
+      this._isParentLocked = true;
 
       if (containersTransition.enable) {
         this._detectNearestContainer();
@@ -537,7 +535,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     /**
      * When dragged is out parent and returning to it.
      */
-    if (this.isParentLocked) {
+    if (this._isParentLocked) {
       isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
       if (isOutSiblingsContainer) {

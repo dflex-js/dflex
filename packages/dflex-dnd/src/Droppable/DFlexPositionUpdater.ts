@@ -176,9 +176,6 @@ class DFlexPositionUpdater {
 
   private draggedTransition: PointNum;
 
-  /** Isolated form the threshold and predict is-out based on the controllers */
-  protected isParentLocked: boolean;
-
   constructor(draggable: DraggableInteractive) {
     this.draggable = draggable;
 
@@ -193,8 +190,6 @@ class DFlexPositionUpdater {
     this.draggedPositionOffset = new PointNum(0, 0);
 
     this.draggedTransition = new PointNum(0, 0);
-
-    this.isParentLocked = false;
   }
 
   private setDistanceBtwPositions(
@@ -442,8 +437,6 @@ class DFlexPositionUpdater {
 
     this.updateIndicators(element, axis, elmDirection);
 
-    // TODO: always true for the first element
-    // if (!this.isParentLocked) {
     /**
      * By updating the dragged translate, we guarantee that dragged
      * transformation will not triggered until dragged is over threshold
@@ -461,7 +454,6 @@ class DFlexPositionUpdater {
     } = element;
 
     this.updateDraggedThresholdPosition(x, y);
-    // }
 
     this.draggable.events.dispatch("ON_DRAG_OVER", composeElmMeta(element));
 
