@@ -25,8 +25,7 @@ class DraggableInteractive extends DraggableAxes {
 
     this.scroll = { ...opts.scroll };
 
-    const { SK } = store.registry.get(id)!.keys;
-    const scroll = store.scrolls.get(SK)!;
+    const scroll = store.getScrollByID(id);
 
     const { hasOverflow } = scroll;
 

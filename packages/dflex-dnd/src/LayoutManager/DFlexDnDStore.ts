@@ -6,6 +6,7 @@ import { Tracker, canUseDOM, Dimensions } from "@dflex/utils";
 import {
   DFlexParentContainer,
   DFlexScrollContainer,
+  SerializedDFlexCoreNode,
 } from "@dflex/core-instance";
 
 import initDFlexListeners, {
@@ -269,7 +270,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     );
   }
 
-  getSerializedElm(id: string) {
+  getSerializedElm(id: string): SerializedDFlexCoreNode | null {
     if (__DEV__) {
       if (!this.registry.has(id)) {
         throw new Error(
@@ -281,6 +282,22 @@ class DFlexDnDStore extends DFlexBaseStore {
     return this.registry.has(id)
       ? this.registry.get(id)!.getSerializedInstance()
       : null;
+  }
+
+  /**
+   * Returns DFlexScrollContainer for a given element id.
+   *
+   * @param id
+   * @returns
+   */
+  getScrollByID(id: string): DFlexScrollContainer {
+    const {
+      keys: { SK },
+    } = this.registry.get(id)!;
+
+    const scroll = this.scrolls.get(SK)!;
+
+    return scroll;
   }
 
   private _clearBranchesScroll() {
