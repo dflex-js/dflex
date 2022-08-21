@@ -1,15 +1,9 @@
 /* eslint-disable max-classes-per-file */
 import { PointNum } from "../Point";
 
-import type {
-  RectDimensions,
-  RectBoundaries,
-  Dimensions,
-  Axis,
-  Direction,
-} from "../types";
+import type { Dimensions, Axis, Direction } from "../types";
 
-import { FourDirectionsBool } from "../FourDirections";
+import { AbstractBox, BoxBool, BoxRectAbstract } from "../Box";
 
 import { dirtyAssignBiggestRect } from "../collections";
 
@@ -21,23 +15,14 @@ export interface ThresholdPercentages {
   horizontal: number;
 }
 
-function getBoundariesFromDimensions(rect: RectDimensions): RectBoundaries {
-  return {
-    top: rect.top,
-    left: rect.left,
-    bottom: rect.top + rect.height,
-    right: rect.left + rect.width,
-  };
-}
-
 class DFlexThreshold {
-  readonly thresholds: Record<string, RectBoundaries>;
+  readonly thresholds: Record<string, AbstractBox>;
 
   private _pixels!: PointNum;
 
   private _percentages: ThresholdPercentages;
 
-  isOut: Record<string, FourDirectionsBool>;
+  isOut: Record<string, BoxBool>;
 
   constructor(percentages: ThresholdPercentages) {
     this._percentages = percentages;
@@ -45,17 +30,14 @@ class DFlexThreshold {
     this.isOut = {};
   }
 
-  private _setPixels({ width, height }: RectDimensions): void {
+  private _setPixels({ width, height }: Dimensions): void {
     const x = Math.round((this._percentages.horizontal * width) / 100);
     const y = Math.round((this._percentages.vertical * height) / 100);
 
     this._pixels = new PointNum(x, y);
   }
 
-  private _getThreshold(
-    rect: RectBoundaries,
-    isInner: boolean
-  ): RectBoundaries {
+  private _getThreshold(rect: AbstractBox, isInner: boolean): AbstractBox {
     const { x, y } = this._pixels;
 
     const { top, left, bottom, right } = rect;
@@ -78,7 +60,7 @@ class DFlexThreshold {
   /** Assign threshold property and create new instance for is out indicators */
   private _createThreshold(
     key: string,
-    rect: RectBoundaries,
+    rect: AbstractBox,
     isInner: boolean
   ): void {
     const threshold = this._getThreshold(rect, isInner);
@@ -91,7 +73,7 @@ class DFlexThreshold {
 
     this.thresholds[key] = Object.seal(threshold);
 
-    this.isOut[key] = new FourDirectionsBool();
+    this.isOut[key] = new BoxBool(false, false, false, false);
   }
 
   private _addDepthThreshold(key: string, depth: number): void {
@@ -121,13 +103,17 @@ class DFlexThreshold {
    * Note: Duplicate threshold keys will throw an error.
    *
    * @param key
-   * @param rect
+   * @param boxRect
    * @param isInner
    */
-  setMainThreshold(key: string, rect: RectDimensions, isInner: boolean): void {
-    this._setPixels(rect);
+  setMainThreshold(
+    key: string,
+    boxRect: BoxRectAbstract,
+    isInner: boolean
+  ): void {
+    this._setPixels(boxRect);
 
-    this._createThreshold(key, getBoundariesFromDimensions(rect), isInner);
+    this._createThreshold(key, boxRect, isInner);
   }
 
   /**
@@ -137,15 +123,8 @@ class DFlexThreshold {
    * @param rect
    * @param isInner
    */
-  updateMainThreshold(
-    key: string,
-    rect: RectDimensions,
-    isInner: boolean
-  ): void {
-    const threshold = this._getThreshold(
-      getBoundariesFromDimensions(rect),
-      isInner
-    );
+  updateMainThreshold(key: string, rect: AbstractBox, isInner: boolean): void {
+    const threshold = this._getThreshold(rect, isInner);
 
     if (__DEV__) {
       if (!this.thresholds[key]) {
@@ -155,7 +134,7 @@ class DFlexThreshold {
 
     Object.assign(this.thresholds[key], threshold);
 
-    this.isOut[key].reset();
+    this.isOut[key].setFalsy();
   }
 
   /**
@@ -174,7 +153,7 @@ class DFlexThreshold {
     SK: string,
     insertionLayerKey: string,
     childDepth: number,
-    containerRect: RectBoundaries,
+    containerRect: AbstractBox,
     unifiedContainerDimensions: Dimensions
   ): void {
     // Regular threshold.
@@ -287,7 +266,7 @@ class DFlexThreshold {
   ): boolean {
     const ref = this.thresholds[key];
 
-    this.isOut[key].setAll(
+    this.isOut[key].setBox(
       top < ref.top,
       right > ref.right,
       bottom > ref.bottom,

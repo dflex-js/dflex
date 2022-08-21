@@ -1,9 +1,10 @@
 /* eslint-disable no-param-reassign */
 import { DFlexNode } from "@dflex/core-instance";
 
-import { Direction, AxesPoint, PointNum } from "@dflex/utils";
-import type { Axis, RectDimensions } from "@dflex/utils";
+import { PointNum } from "@dflex/utils";
+import type { AxesPoint, Direction, Axis, AbstractBox } from "@dflex/utils";
 
+import type { ELmBranch } from "@dflex/dom-gen";
 import type DraggableInteractive from "../Draggable";
 
 import { store } from "../LayoutManager";
@@ -35,7 +36,7 @@ function throwOnInfiniteTransformation(id: string) {
 function composeElmMeta(element: DFlexNode) {
   return {
     id: element.id,
-    index: element.order.self,
+    index: element.VDOMOrder.self,
     target: store.interactiveDOM.get(element.id),
   };
 }
@@ -101,24 +102,25 @@ export function getInsertionELmMeta(
       }
 
       elm = store.registry.get(lst[at])!;
+      const pos = elm.rect.getPosition();
 
       if (lastElmPosition) {
         if (length <= originLength) {
           position.clone(lastElmPosition);
           // Did we retorted the same element?
-          isRestoredLastPosition = !lastElmPosition.isInstanceEqual(
-            elm.currentPosition
-          );
+          isRestoredLastPosition = !lastElmPosition.isInstanceEqual(pos);
         } else {
           isRestoredLastPosition = false;
-          position.clone(elm.currentPosition);
+          position.clone(pos);
         }
       } else {
-        position.clone(elm.currentPosition);
+        position.clone(pos);
       }
     } else {
       elm = store.registry.get(lst[insertAt])!;
-      position.clone(elm.currentPosition);
+      const pos = elm.rect.getPosition();
+
+      position.clone(pos);
     }
 
     // Assign the previous element if not orphan.
@@ -138,33 +140,40 @@ export function getInsertionELmMeta(
 }
 
 export function handleElmMigration(
-  SK: string,
+  distSK: string,
   originSK: string,
-  appendOffset: RectDimensions
+  rect: AbstractBox
 ) {
-  const containerDist = store.containers.get(SK)!;
+  // Handle the migration.
+  const containerDist = store.containers.get(distSK)!;
 
   // Append the newest element to the end of the branch.
-  containerDist.registerNewElm(appendOffset);
+  containerDist.registerNewElm(rect);
 
-  const origin = store.getElmBranchByKey(originSK);
+  const originBranch = store.getElmBranchByKey(originSK);
 
   // Don't reset empty branch keep the boundaries.
-  if (origin.length === 0) return;
+  if (originBranch.length === 0) {
+    return;
+  }
+
   const containerOrigin = store.containers.get(originSK)!;
 
-  containerOrigin.resetIndicators();
+  containerOrigin.resetIndicators(originBranch.length);
 
-  origin.forEach((elmID) => {
+  originBranch.forEach((elmID) => {
     const elm = store.registry.get(elmID)!;
 
-    containerOrigin.registerNewElm(elm.getOffset());
-    elm.grid.clone(containerOrigin.grid);
+    containerOrigin.registerNewElm(elm.rect);
+
+    elm.DOMGrid.clone(containerOrigin.grid);
   });
 
-  const lastInOrigin = store.registry.get(origin[origin.length - 1])!;
+  const lastInOrigin = store.registry.get(
+    originBranch[originBranch.length - 1]
+  )!;
 
-  containerOrigin.preservePosition(lastInOrigin.currentPosition);
+  containerOrigin.preservePosition(lastInOrigin.rect.getPosition());
 }
 
 class DFlexPositionUpdater {
@@ -205,7 +214,7 @@ class DFlexPositionUpdater {
     const { occupiedPosition, draggedElm } = this.draggable;
 
     const positionDiff = Math.abs(
-      element.currentPosition[axis] - occupiedPosition[axis]
+      element.rect[axis === "x" ? "left" : "top"] - occupiedPosition[axis]
     );
 
     const rectDiff = element.getRectDiff(draggedElm, axis);
@@ -224,11 +233,11 @@ class DFlexPositionUpdater {
   }
 
   private updateDraggable(element: DFlexNode, elmDirection: Direction) {
-    const { currentPosition, grid } = element;
+    const { rect, DOMGrid: grid } = element;
 
     this.draggable.occupiedPosition.setAxes(
-      currentPosition.x + this.draggedPositionOffset.x,
-      currentPosition.y + this.draggedPositionOffset.y
+      rect.left + this.draggedPositionOffset.x,
+      rect.top + this.draggedPositionOffset.y
     );
 
     const draggedDirection = -1 * elmDirection;
@@ -253,22 +262,33 @@ class DFlexPositionUpdater {
     this.updateDraggable(element, elmDirection);
   }
 
-  protected updateDraggedThresholdPosition(x: number, y: number) {
+  protected updateDraggedThresholdPosition(
+    x: number,
+    y: number,
+    rect: AbstractBox | null
+  ) {
     const {
       threshold,
-      draggedElm: { id, initialOffset },
+      draggedElm: {
+        id,
+        rect: { width, height },
+      },
     } = this.draggable;
 
-    threshold.updateMainThreshold(
-      id,
-      {
-        width: initialOffset.width,
-        height: initialOffset.height,
-        left: x,
-        top: y,
-      },
-      false
-    );
+    if (rect) {
+      threshold.updateMainThreshold(id, rect, false);
+
+      return;
+    }
+
+    const composedBox = {
+      top: y,
+      right: x + width,
+      bottom: y + height,
+      left: x,
+    };
+
+    threshold.updateMainThreshold(id, composedBox, false);
   }
 
   private addDraggedOffsetToElm(
@@ -281,10 +301,9 @@ class DFlexPositionUpdater {
     const { draggedElm } = this.draggable;
 
     // This initiation needs to append dragged rect based on targeted axis.
-    position[axis] += draggedElm.initialOffset[rectType];
+    position[axis] += draggedElm.rect[rectType];
 
-    const rectDiff =
-      elm.initialOffset[rectType] - draggedElm.initialOffset[rectType];
+    const rectDiff = elm.rect[rectType] - draggedElm.rect[rectType];
 
     position[axis] += rectDiff;
   }
@@ -318,33 +337,36 @@ class DFlexPositionUpdater {
     // Get the stored position if the branch is empty.
     if (!isEmpty) {
       if (!isOrphan) {
-        const { grid } = elm!;
+        const { DOMGrid: grid } = elm!;
 
         composedGrid.clone(grid);
       }
 
       if (insertFromTop) {
         // Don't decrease the first element.
-        if (composedGrid[axis] - 1 >= 1) composedGrid[axis] -= 1;
+        if (composedGrid[axis] - 1 >= 1) {
+          composedGrid[axis] -= 1;
+        }
       } else {
         composedGrid[axis] += 1;
 
         const { marginBottom: mb, marginTop: mt } = migration.prev();
 
         this.addDraggedOffsetToElm(composedTranslate, elm!, axis);
-        composedTranslate[axis] += !isOrphan
-          ? DFlexNode.getDisplacement(position, prevElm!, axis)
-          : typeof mt === "number"
-          ? mt
-          : typeof mb === "number"
-          ? mb
-          : containersTransition.margin;
+        composedTranslate[axis] += isOrphan
+          ? typeof mt === "number"
+            ? mt
+            : typeof mb === "number"
+            ? mb
+            : containersTransition.margin
+          : DFlexNode.getDisplacement(position, prevElm!, axis);
       }
     }
 
     this.updateDraggedThresholdPosition(
       composedTranslate.x,
-      composedTranslate.y
+      composedTranslate.y,
+      null
     );
 
     return { translate: composedTranslate, grid: composedGrid };
@@ -377,7 +399,7 @@ class DFlexPositionUpdater {
 
     // The essential insertion position is the last element in the container
     // but also on some cases it's different from retrieved position.
-    const composedPosition = elm!.currentPosition.getInstance();
+    const composedPosition = elm!.rect.getPosition();
 
     this.addDraggedOffsetToElm(composedPosition, elm!, axis);
 
@@ -388,13 +410,13 @@ class DFlexPositionUpdater {
     // Give the priority to the destination first then check the origin.
     const marginBottom = isRestoredLastPosition
       ? DFlexNode.getDisplacement(position, elm!, axis)
-      : !isOrphan
-      ? DFlexNode.getDisplacement(position, prevElm!, axis)
-      : typeof mt === "number"
-      ? mt
-      : typeof mb === "number"
-      ? mb
-      : containersTransition.margin; // orphan to orphan.
+      : isOrphan
+      ? typeof mt === "number"
+        ? mt
+        : typeof mb === "number"
+        ? mb
+        : containersTransition.margin
+      : DFlexNode.getDisplacement(position, prevElm!, axis); // orphan to orphan.
 
     composedPosition[axis] += Math.abs(marginBottom);
 
@@ -405,7 +427,12 @@ class DFlexPositionUpdater {
    * Updates element instance and calculates the required transform distance. It
    * invokes for each eligible element in the parent container.
    */
-  protected updateElement(id: string, isIncrease: boolean) {
+  protected updateElement(
+    id: string,
+    siblings: ELmBranch,
+    processID: string,
+    isIncrease: boolean
+  ) {
     if (__DEV__) {
       // DFLex doesn't have error msg transformer yet for production.
       throwOnInfiniteTransformation(id);
@@ -424,7 +451,9 @@ class DFlexPositionUpdater {
 
     let axis: Axis;
 
-    if (!isContainerHasCol) {
+    if (isContainerHasCol) {
+      axis = "x";
+    } else {
       axis = "y";
 
       // const isContainerHasRowAbove =
@@ -434,8 +463,6 @@ class DFlexPositionUpdater {
       //   // Bi-directional
       //   axis = "z";
       // }
-    } else {
-      axis = "x";
     }
 
     const elmDirection: Direction = isIncrease ? -1 : 1;
@@ -456,24 +483,20 @@ class DFlexPositionUpdater {
        * condition is the breaking point element.
        */
 
-      const {
-        currentPosition: { x, y },
-      } = element;
+      const { rect } = element;
 
-      this.updateDraggedThresholdPosition(x, y);
+      this.updateDraggedThresholdPosition(-1, -1, rect);
     }
 
     this.draggable.events.dispatch("ON_DRAG_OVER", composeElmMeta(element));
 
-    const { migration } = this.draggable;
-
-    element.setPosition(
-      DOM,
-      store.getElmBranchByKey(migration.latest().SK),
+    element.reconcilePosition(
+      axis,
       elmDirection,
+      DOM,
+      siblings,
       this.elmTransition,
-      migration.latest().id,
-      axis
+      processID
     );
 
     this.draggable.events.dispatch("ON_DRAG_LEAVE", composeElmMeta(element));

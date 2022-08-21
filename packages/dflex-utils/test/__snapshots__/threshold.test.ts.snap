@@ -11,25 +11,25 @@ DFlexThreshold {
     "y": 30,
   },
   "isOut": Object {
-    "0": FourDirectionsBool {
+    "0": BoxBool {
       "bottom": false,
       "left": false,
       "right": false,
       "top": false,
     },
-    "0-container-sk": FourDirectionsBool {
+    "0-container-sk": BoxBool {
       "bottom": false,
       "left": false,
       "right": false,
       "top": false,
     },
-    "container-sk": FourDirectionsBool {
+    "container-sk": BoxBool {
       "bottom": false,
       "left": false,
       "right": false,
       "top": false,
     },
-    "dflex-dragged": FourDirectionsBool {
+    "dflex-dragged": BoxBool {
       "bottom": false,
       "left": false,
       "right": false,
@@ -76,7 +76,7 @@ DFlexThreshold {
     "y": 99,
   },
   "isOut": Object {
-    "scroll-id-inner": FourDirectionsBool {
+    "scroll-id-inner": BoxBool {
       "bottom": false,
       "left": false,
       "right": false,
@@ -105,13 +105,13 @@ DFlexThreshold {
     "y": 99,
   },
   "isOut": Object {
-    "scroll-id-inner": FourDirectionsBool {
+    "scroll-id-inner": BoxBool {
       "bottom": false,
       "left": false,
       "right": false,
       "top": false,
     },
-    "scroll-id-outer": FourDirectionsBool {
+    "scroll-id-outer": BoxBool {
       "bottom": false,
       "left": false,
       "right": false,

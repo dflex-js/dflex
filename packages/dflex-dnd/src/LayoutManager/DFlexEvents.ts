@@ -32,7 +32,7 @@ interface SiblingsEventPayload {
   to: number;
 
   /** Returns an array of sibling ids in order  */
-  siblings: Array<string>;
+  siblings: string[];
 }
 
 type DFlexEventPayload =
@@ -84,7 +84,9 @@ function dispatchDFlexEvent(
   payload: DFlexEventPayload
 ): void {
   // Throttle the dispatched event
-  if (dispatchedSet.has(evt)) return;
+  if (dispatchedSet.has(evt)) {
+    return;
+  }
 
   const event = new CustomEvent(DFLEX_EVENTS[evt], getEvtConfig(payload));
   dispatcher.dispatchEvent(event);

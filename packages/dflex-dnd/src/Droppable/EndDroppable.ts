@@ -136,7 +136,7 @@ class EndDroppable extends DFlexMechanismController {
       threshold,
       draggedElm: {
         id,
-        order: { self: from },
+        VDOMOrder: { self: from },
       },
     } = this.draggable;
 
@@ -164,11 +164,14 @@ class EndDroppable extends DFlexMechanismController {
 
     const element = store.registry.get(id)!;
 
-    return Math.floor(top) === Math.floor(element.currentPosition.y);
+    return Math.floor(top) === Math.floor(element.rect.top);
   }
 
   endDragging() {
-    const { migration } = this.draggable;
+    const {
+      migration,
+      // draggedElm: { depth },
+    } = this.draggable;
     const { SK: activeSK, id: activeID } = migration.latest();
 
     const activeSiblings = store.getElmBranchByKey(activeSK);
@@ -193,15 +196,17 @@ class EndDroppable extends DFlexMechanismController {
 
     scheduler(
       store,
-      () => {
-        this.draggable.endDragging(isFallback);
+      () => this.draggable.cleanup(isFallback, false),
+      {
+        rAF: true,
       },
-      null,
       {
         layoutState: isFallback ? "dragCancel" : "dragEnd",
         type: "layoutState",
       }
     );
+
+    // store.commit(null, depth);
   }
 }
 

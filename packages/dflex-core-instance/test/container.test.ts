@@ -5,17 +5,21 @@ describe("Container", () => {
   let container: DFlexParentContainer;
 
   const elmR1Col1 = {
-    top: 0,
-    left: 0,
-    width: 10,
     height: 10,
+    width: 10,
+    top: 0,
+    right: 10,
+    bottom: 10,
+    left: 0,
   };
 
   const elmR1Col2 = {
-    top: 8,
-    left: 20,
-    width: 10,
     height: 2,
+    width: 10,
+    top: 8,
+    right: 30,
+    bottom: 10,
+    left: 20,
   };
 
   const unifiedContainerDimensions = {
@@ -49,9 +53,9 @@ describe("Container", () => {
   it("Container has the correct boundaries", () => {
     expect(container.boundaries).toStrictEqual({
       top: 0,
-      left: 0,
       right: 30,
       bottom: 10,
+      left: 0,
     });
   });
 

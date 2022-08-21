@@ -6,8 +6,8 @@ import {
   Migration,
   combineKeys,
   AxesPoint,
-  RectDimensions,
-  FourDirections,
+  BoxNum,
+  BoxRectAbstract,
 } from "@dflex/utils";
 
 import type { DFlexNode } from "@dflex/core-instance";
@@ -28,13 +28,13 @@ function initContainers(SK: string, siblings: ELmBranch) {
   if (!container.lastElmPosition) {
     const lastElm = store.registry.get(siblings[siblings.length - 1])!;
 
-    container.preservePosition(lastElm.currentPosition);
+    container.preservePosition(lastElm.rect.getPosition());
   }
 }
 
 function initThresholds(
   draggedID: string,
-  draggedRect: RectDimensions,
+  draggedRect: BoxRectAbstract,
   draggedDepth: number,
   threshold: Threshold
 ) {
@@ -85,7 +85,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
    *
    * Note: Scroll position included, these points ignore viewport.
    */
-  currentPositionWithScroll: FourDirections<number>;
+  private _absoluteCurrentPosition: BoxNum;
 
   private isLayoutStateUpdated: boolean;
 
@@ -111,19 +111,22 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
     this.isLayoutStateUpdated = false;
 
     const {
-      order,
-      grid,
-      currentPosition,
+      VDOMOrder,
+      DOMGrid,
       keys: { SK },
       depth,
-      initialOffset: { width, height },
+      rect,
     } = element;
 
-    this.gridPlaceholder = new PointNum(grid.x, grid.y);
+    this.gridPlaceholder = new PointNum(DOMGrid.x, DOMGrid.y);
 
     const siblings = store.getElmBranchByKey(SK);
 
-    this.migration = new Migration(order.self, SK, store.tracker.newTravel());
+    this.migration = new Migration(
+      VDOMOrder.self,
+      SK,
+      store.tracker.newTravel()
+    );
 
     this.isViewportRestricted = true;
 
@@ -135,25 +138,15 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
 
     this.threshold = new Threshold(opts.threshold);
 
-    initThresholds(
-      id,
-      {
-        width,
-        height,
-        left: currentPosition.x,
-        top: currentPosition.y,
-      },
-      depth,
-      this.threshold
-    );
+    initThresholds(id, rect, depth, this.threshold);
 
     const { x, y } = initCoordinates;
 
     this.initCoordinates = new PointNum(x, y);
 
     this.innerOffset = new PointNum(
-      Math.round(x - currentPosition.x),
-      Math.round(y - currentPosition.y)
+      Math.round(x - rect.left),
+      Math.round(y - rect.top)
     );
 
     const style = getComputedStyle(DOM);
@@ -163,11 +156,11 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
     const lm = Math.round(parseFloat(style.marginLeft));
     this.marginX = rm + lm;
 
-    this.currentPositionWithScroll = new FourDirections(
-      currentPosition.y,
-      currentPosition.x + width,
-      currentPosition.y + height,
-      currentPosition.x
+    this._absoluteCurrentPosition = new BoxNum(
+      rect.top,
+      rect.right,
+      rect.bottom,
+      rect.left
     );
 
     this.restrictions = opts.restrictions;
@@ -183,12 +176,9 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
   }
 
   protected appendDraggedToContainerDimensions(isAppend: boolean) {
-    const {
-      depth,
-      initialOffset: { height },
-    } = this.draggedElm;
+    const { depth, rect } = this.draggedElm;
 
-    const maneuverDistance = height;
+    const maneuverDistance = rect.height;
 
     store.unifiedContainerDimensions[depth].height += isAppend
       ? maneuverDistance
@@ -204,7 +194,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
     isRestrictedToThreshold: boolean // if not. Then to self.
   ) {
     const currentTop = y - this.innerOffset.y;
-    const currentBottom = currentTop + this.draggedElm.initialOffset.height;
+    const currentBottom = currentTop + this.draggedElm.rect.height;
 
     if (!allowTop && currentTop <= topThreshold) {
       return isRestrictedToThreshold
@@ -214,9 +204,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
 
     if (!allowBottom && currentBottom >= bottomThreshold) {
       return isRestrictedToThreshold
-        ? bottomThreshold +
-            this.innerOffset.y -
-            this.draggedElm.initialOffset.height
+        ? bottomThreshold + this.innerOffset.y - this.draggedElm.rect.height
         : this.initCoordinates.y;
     }
 
@@ -232,7 +220,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
     restrictToThreshold: boolean // if not. Then to self.,
   ) {
     const currentLeft = x - this.innerOffset.x;
-    const currentRight = currentLeft + this.draggedElm.initialOffset.width;
+    const currentRight = currentLeft + this.draggedElm.rect.width;
 
     if (!allowLeft && currentLeft <= leftThreshold) {
       return restrictToThreshold
@@ -244,7 +232,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
       return restrictToThreshold
         ? rightThreshold +
             this.innerOffset.x -
-            this.draggedElm.initialOffset.width -
+            this.draggedElm.rect.width -
             this.marginX
         : this.initCoordinates.x;
     }
@@ -252,7 +240,43 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
     return x;
   }
 
-  dragAt(x: number, y: number) {
+  /**
+   *
+   * @param x
+   * @param y
+   */
+  setAbsoluteCurrentPosition(x: number, y: number): void {
+    const edgePosLeft = x - this.innerOffset.x;
+    const edgePosTop = y - this.innerOffset.y;
+
+    const {
+      rect: { width, height },
+    } = this.draggedElm;
+
+    this._absoluteCurrentPosition.setBox(
+      edgePosTop,
+      edgePosLeft + width,
+      edgePosTop + height,
+      edgePosLeft
+    );
+  }
+
+  /**
+   *
+   * @returns
+   */
+  getAbsoluteCurrentPosition(): BoxNum {
+    return this._absoluteCurrentPosition;
+  }
+
+  /**
+   *
+   * @param x
+   * @param y
+   * @param scrollOffsetX
+   * @param scrollOffsetY
+   */
+  dragAt(x: number, y: number, scrollOffsetX: number, scrollOffsetY: number) {
     if (!this.isLayoutStateUpdated) {
       this.isLayoutStateUpdated = true;
       scheduler(store, null, null, {
@@ -299,9 +323,8 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
         );
         filteredY = this.axesYFilter(
           y,
-          this.draggedElm.currentPosition.y,
-          this.draggedElm.currentPosition.y +
-            this.draggedElm.initialOffset.height,
+          this.draggedElm.rect.top,
+          this.draggedElm.rect.top + this.draggedElm.rect.height,
           this.restrictions.self.allowLeavingFromTop,
           this.restrictions.self.allowLeavingFromBottom,
           false
@@ -331,28 +354,16 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
 
     this.translate(filteredX, filteredY);
 
-    const edgeCurrentPositionLeft = filteredX - this.innerOffset.x;
-    const edgeCurrentPositionTop = filteredY - this.innerOffset.y;
-
-    const {
-      initialOffset: { width, height },
-    } = this.draggedElm;
-
-    /**
-     * Every time we got new translate, offset should be updated
-     */
-    this.currentPositionWithScroll.setAll(
-      edgeCurrentPositionTop,
-      edgeCurrentPositionLeft + width,
-      edgeCurrentPositionTop + height,
-      edgeCurrentPositionLeft
+    this.setAbsoluteCurrentPosition(
+      filteredX + scrollOffsetX,
+      filteredY + scrollOffsetY
     );
   }
 
   isOutThreshold(SK?: string, useInsertionThreshold?: boolean) {
     const { id, depth } = this.draggedElm;
 
-    const { top, right, bottom, left } = this.currentPositionWithScroll;
+    const { top, right, bottom, left } = this._absoluteCurrentPosition;
 
     let key = SK || id;
 

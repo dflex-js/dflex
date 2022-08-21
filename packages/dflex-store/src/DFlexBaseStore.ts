@@ -31,11 +31,9 @@ export type RegisterInputBase = DeepNonNullable<RegisterInputOpts>;
 type GetElmWithDOMOutput = [DFlexNode, HTMLElement];
 
 type BranchComposedCallBackFunction = (
-  // eslint-disable-next-line no-unused-vars
   childrenKey: string,
-  // eslint-disable-next-line no-unused-vars
   childrenDepth: number,
-  // eslint-disable-next-line no-unused-vars
+  containerID: string,
   parentDOM: HTMLElement
 ) => void;
 
@@ -45,8 +43,7 @@ function getElmDOMOrThrow(id: string): HTMLElement | null {
   if (!DOM) {
     if (__DEV__) {
       throw new Error(
-        `Element with ID: ${id} is not found.` +
-          `This could be due wrong ID or missing DOM element.`
+        `Element with ID: ${id} is not found.This could be due wrong ID or missing DOM element.`
       );
     }
   }
@@ -73,7 +70,7 @@ class DFlexBaseStore {
 
   private _lastDOMParent: HTMLElement | null;
 
-  private _queue: Array<() => void>;
+  private _queue: (() => void)[];
 
   private queueTimeoutId?: ReturnType<typeof setTimeout>;
 
@@ -146,14 +143,13 @@ class DFlexBaseStore {
 
     this.registry.set(id, dflexElm);
 
-    dflexElm.setAttribute(DOM, "INDEX", dflexElm.order.self);
+    dflexElm.setAttribute(DOM, "INDEX", dflexElm.VDOMOrder.self);
 
     if (depth >= 1) {
       if (keys.CHK === null) {
         if (__DEV__) {
           throw new Error(
-            `Invalid keys for element with ID: ${id}` +
-              `Elements over depth-1 must have a CHK key.`
+            `Invalid keys for element with ID: ${id} Elements over depth-1 must have a CHK key.`
           );
         }
 
@@ -163,7 +159,7 @@ class DFlexBaseStore {
       DOM.dataset.dflexKey = keys.CHK;
 
       if (typeof branchComposedCallBack === "function") {
-        branchComposedCallBack(keys.CHK, depth - 1, DOM);
+        branchComposedCallBack(keys.CHK, depth - 1, id, DOM);
       }
     }
   }
@@ -243,7 +239,7 @@ class DFlexBaseStore {
    */
   getElmWithDOM(id: string): GetElmWithDOMOutput {
     if (__DEV__) {
-      if (!this.registry.has(id) || !this.interactiveDOM.has(id)) {
+      if (!(this.registry.has(id) && this.interactiveDOM.has(id))) {
         throw new Error(`getElmWithDOM: Unable to find element with ID: ${id}`);
       }
     }
@@ -329,6 +325,11 @@ class DFlexBaseStore {
     this.interactiveDOM.clear();
     this.registry.clear();
     this._lastDOMParent = null;
+
+    if (__DEV__) {
+      // eslint-disable-next-line no-console
+      console.info("DFlexBaseStore destroyed.");
+    }
   }
 }
 

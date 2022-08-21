@@ -1,18 +1,13 @@
 /* eslint-disable no-param-reassign */
-import { PointNum, dirtyAssignBiggestRect } from "@dflex/utils";
+import { PointNum, dirtyAssignBiggestRect, AbstractBox } from "@dflex/utils";
 
-import type {
-  Dimensions,
-  AxesPoint,
-  RectBoundaries,
-  RectDimensions,
-} from "@dflex/utils";
+import type { Dimensions, AxesPoint } from "@dflex/utils";
 
 class DFlexParentContainer {
-  private _boundariesByRow: Record<number, RectBoundaries>;
+  private _boundariesByRow: Record<number, AbstractBox>;
 
   /** Strict Rect for siblings containers. */
-  boundaries!: RectBoundaries;
+  boundaries!: AbstractBox;
 
   /** Numbers of total columns and rows each container has.  */
   grid: PointNum;
@@ -22,6 +17,8 @@ class DFlexParentContainer {
    * layout shift.
    * */
   originLength: number;
+
+  id: string;
 
   private _gridSiblingsHasNewRow: boolean;
 
@@ -33,16 +30,22 @@ class DFlexParentContainer {
 
   static OUT_OF_RANGE = -1;
 
-  constructor(originLength: number) {
+  constructor(originLength: number, id: string) {
+    this.id = id;
     this.grid = new PointNum(1, 1);
     this.originLength = originLength;
     this._boundariesByRow = {};
     this._gridSiblingsHasNewRow = false;
   }
 
-  private _addNewElmToGridIndicator(rect: RectBoundaries): void {
+  private _addNewElmToGridIndicator(rect: AbstractBox): void {
     if (!this._boundariesByRow[this.grid.x]) {
-      this._boundariesByRow[this.grid.x] = Object.seal({ ...rect });
+      this._boundariesByRow[this.grid.x] = Object.seal({
+        bottom: rect.bottom,
+        left: rect.left,
+        right: rect.right,
+        top: rect.top,
+      });
 
       return;
     }
@@ -77,34 +80,29 @@ class DFlexParentContainer {
   // we reset and accumulate, it's inefficient. removeElmFromEdge() is a better.
 
   registerNewElm(
-    offset: RectDimensions,
+    rect: AbstractBox,
     unifiedContainerDimensions?: Dimensions
   ): void {
-    const { height, left, top, width } = offset;
-
-    const right = left + width;
-    const bottom = top + height;
-
-    const elmRectBoundaries = {
-      top,
-      left,
-      right,
-      bottom,
-    };
-
-    if (!this.boundaries) {
-      this.boundaries = elmRectBoundaries;
+    if (this.boundaries) {
+      dirtyAssignBiggestRect(this.boundaries, rect);
     } else {
-      dirtyAssignBiggestRect(this.boundaries, elmRectBoundaries);
+      this.boundaries = {
+        bottom: rect.bottom,
+        left: rect.left,
+        right: rect.right,
+        top: rect.top,
+      };
     }
 
-    this._addNewElmToGridIndicator(elmRectBoundaries);
+    this._addNewElmToGridIndicator(rect);
 
     const $ = this.boundaries;
 
     const uni = unifiedContainerDimensions;
 
-    if (!uni) return;
+    if (!uni) {
+      return;
+    }
 
     const $height = $.bottom - $.top;
     const $width = $.right - $.left;
@@ -118,19 +116,24 @@ class DFlexParentContainer {
     }
   }
 
-  resetIndicators(): void {
+  /**
+   *
+   * @param originLength
+   */
+  resetIndicators(originLength: number): void {
     // @ts-expect-error - Just resetting the boundaries.
     this.boundaries = null;
     this.grid.setAxes(1, 1);
     this._boundariesByRow = {};
     this._gridSiblingsHasNewRow = false;
+    this.originLength = originLength;
   }
 
-  preservePosition(position: AxesPoint): void {
-    if (!this.lastElmPosition) {
-      this.lastElmPosition = new PointNum(position.x, position.y);
+  preservePosition(pos: AxesPoint): void {
+    if (this.lastElmPosition) {
+      this.lastElmPosition.setAxes(pos.x, pos.y);
     } else {
-      this.lastElmPosition.setAxes(position.x, position.y);
+      this.lastElmPosition = new PointNum(pos.x, pos.y);
     }
   }
 }

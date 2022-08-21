@@ -16,11 +16,13 @@ context(
     context("Scroll to element 90", () => {
       it("Scroll to element 90", () => {
         cy.get("#90-extended").scrollIntoView({
-          duration: 0,
+          duration: 1000,
         });
       });
 
       it("Getting element (90)", () => {
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(0);
         cy.get("#90-extended").then((elm) => {
           elmBox = elm[0].getBoundingClientRect();
           // eslint-disable-next-line no-unused-vars
@@ -40,7 +42,7 @@ context(
             force: true,
           });
           // eslint-disable-next-line cypress/no-unnecessary-waiting
-          // cy.wait(0);
+          cy.wait(0);
         }
       });
 
@@ -103,7 +105,7 @@ context(
     context("Scroll to element 1", () => {
       it("Scroll to element 1", () => {
         cy.get("#1-extended").scrollIntoView({
-          duration: 0,
+          duration: 1000,
         });
       });
 
@@ -184,7 +186,7 @@ context(
     context("Scroll to element 60", () => {
       it("Scroll to element 60", () => {
         cy.get("#60-extended").scrollIntoView({
-          duration: 0,
+          duration: 1000,
         });
       });
 

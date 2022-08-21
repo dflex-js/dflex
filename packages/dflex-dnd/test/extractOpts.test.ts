@@ -1,6 +1,10 @@
 import { extractOpts } from "../src/utils/extractOpts";
 
 describe("extractOpts", () => {
+  beforeAll(() => {
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
+  });
+
   it("Returns default options when empty object is passed", () => {
     const opts = extractOpts({});
 

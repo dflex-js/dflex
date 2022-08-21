@@ -1,12 +1,8 @@
+/* eslint-disable no-dupe-class-members */
+/* eslint-disable no-unused-vars */
 import { DFlexBaseNode } from "@dflex/core-instance";
 import { PointNum, getSelection } from "@dflex/utils";
 import type { AxesPoint } from "@dflex/utils";
-
-export type DraggedStyle = Array<{
-  prop: string;
-  dragValue: string;
-  afterDragValue: string | null;
-}>;
 
 class DFlexBaseDraggable<T extends DFlexBaseNode> {
   draggedElm: T;
@@ -23,27 +19,13 @@ class DFlexBaseDraggable<T extends DFlexBaseNode> {
    * equating: initX = X. Taking into considerations translate value.
    *
    */
-  outerOffset: PointNum;
+  private _outerOffset: PointNum;
 
-  translatePlaceholder: PointNum;
+  private _restoreContentEditable: boolean;
 
-  static draggedStyle: DraggedStyle = [
-    {
-      prop: "position",
-      dragValue: "relative",
-      afterDragValue: "",
-    },
-    {
-      prop: "z-index",
-      dragValue: "99",
-      afterDragValue: "",
-    },
-    {
-      prop: "user-select",
-      dragValue: "none",
-      afterDragValue: "",
-    },
-  ];
+  private _preservedAriaDisabled: string | null;
+
+  protected translatePlaceholder: PointNum;
 
   /**
    * Creates an instance of AbstractDraggable.
@@ -56,43 +38,118 @@ class DFlexBaseDraggable<T extends DFlexBaseNode> {
   constructor(
     abstractCoreElm: T,
     DOM: HTMLElement,
-    { x: initX, y: initY }: AxesPoint
+    initCoordinates: AxesPoint
   ) {
     this.draggedElm = abstractCoreElm;
     this.draggedDOM = DOM;
 
     const { translate } = this.draggedElm;
 
-    this.outerOffset = new PointNum(-initX + translate.x, -initY + translate.y);
+    this._outerOffset = new PointNum(
+      -initCoordinates.x + translate.x,
+      -initCoordinates.y + translate.y
+    );
 
     this.translatePlaceholder = new PointNum(0, 0);
-
-    this.setDragged(true);
-  }
-
-  changeStyle(style: DraggedStyle, shouldAddPosition: boolean) {
-    if (shouldAddPosition) {
-      style.forEach(({ prop, dragValue }) => {
-        this.draggedDOM.style.setProperty(prop, dragValue);
-      });
-
-      return;
-    }
-
-    style.forEach(({ prop, afterDragValue }) => {
-      this.draggedDOM.style.setProperty(prop, afterDragValue);
-    });
+    this._restoreContentEditable = false;
+    this._preservedAriaDisabled = null;
   }
 
   /**
-   * Triggers twice. Once when constructor is initiated, the other when drag is
-   * ended. It adds/removes style.
    *
-   * @param isActive - is dragged operation active or it is ended.
+   * @param originDOM
+   * @param mirrorDOM
+   * @param isAddingProps
+   * @param dimensions
+   * @param viewportPos
+   * @returns
    */
-  protected setDragged(isActive: boolean) {
-    if (isActive) {
-      this.changeStyle(DFlexBaseDraggable.draggedStyle, true);
+  protected setDOMAttrAndStyle(
+    originDOM: HTMLElement,
+    mirrorDOM: HTMLElement,
+    isAddingProps: true,
+    isMigratedInScroll: false,
+    dimensions: PointNum,
+    viewportPos: [number, number]
+  ): void;
+
+  protected setDOMAttrAndStyle(
+    originDOM: HTMLElement,
+    mirrorDOM: HTMLElement,
+    isAddingProps: false,
+    isMigratedInScroll: true,
+    dimensions: PointNum,
+    viewportPos: null
+  ): void;
+
+  protected setDOMAttrAndStyle(
+    originDOM: HTMLElement,
+    mirrorDOM: HTMLElement,
+    isAddingProps: false,
+    isMigratedInScroll: false,
+    dimensions: null,
+    viewportPos: null
+  ): void;
+
+  protected setDOMAttrAndStyle(
+    originDOM: HTMLElement,
+    mirrorDOM: null,
+    isAddingProps: true,
+    isMigratedInScroll: false,
+    dimensions: null,
+    viewportPos: null
+  ): void;
+
+  protected setDOMAttrAndStyle(
+    originDOM: HTMLElement,
+    mirrorDOM: null,
+    isAddingProps: false,
+    isMigratedInScroll: false,
+    dimensions: null,
+    viewportPos: null
+  ): void;
+
+  protected setDOMAttrAndStyle(
+    originDOM: HTMLElement,
+    mirrorDOM: HTMLElement | null,
+    isAddingProps: boolean,
+    isMigratedInScroll: boolean,
+    dimensions: PointNum | null,
+    viewportPos: [number, number] | null
+  ): void {
+    const { style: originStyle } = originDOM;
+
+    if (isAddingProps) {
+      this._preservedAriaDisabled = originDOM.ariaDisabled;
+      originDOM.ariaDisabled = "true";
+      this.draggedElm.setAttribute(originDOM, "DRAGGED", "true");
+
+      if (mirrorDOM !== null) {
+        const { style: mirrorStyle } = mirrorDOM;
+
+        mirrorDOM.ariaLabel = "Draggable";
+        mirrorDOM.id = `dflex-draggable-mirror__${originDOM.id}`;
+        delete mirrorDOM.dataset.index;
+        mirrorStyle.setProperty("position", "fixed");
+        mirrorStyle.setProperty("top", `${viewportPos![0]}px`);
+        mirrorStyle.setProperty("left", `${viewportPos![1]}px`);
+        if (dimensions!.x > 0) {
+          mirrorStyle.setProperty("width", `${dimensions!.x}px`);
+        }
+        if (dimensions!.y > 0) {
+          mirrorStyle.setProperty("height", `${dimensions!.y}px`);
+        }
+        mirrorStyle.setProperty("z-index", "99");
+        mirrorStyle.setProperty("margin", "0");
+        originStyle.setProperty("opacity", "0");
+        mirrorStyle.backgroundColor = "red";
+      } else {
+        originDOM.ariaLabel = "Draggable";
+        originStyle.setProperty("position", "relative");
+        originStyle.setProperty("z-index", "99");
+      }
+
+      document.body.style.setProperty("user-select", "none");
 
       const domSelection = getSelection();
 
@@ -100,17 +157,43 @@ class DFlexBaseDraggable<T extends DFlexBaseNode> {
         domSelection.removeAllRanges();
       }
 
-      this.draggedElm.setAttribute(this.draggedDOM, "DRAGGED", "true");
-
       return;
     }
 
-    /**
-     * Not active: end of dragging.
-     */
-    this.changeStyle(DFlexBaseDraggable.draggedStyle, false);
+    document.body.style.removeProperty("user-select");
 
-    this.draggedElm.clearAttributes(this.draggedDOM);
+    if (this._restoreContentEditable) {
+      originDOM.contentEditable = "true";
+    }
+
+    originDOM.ariaLabel = null;
+    originDOM.ariaDisabled = this._preservedAriaDisabled;
+    this.draggedElm.clearAttributes(originDOM);
+
+    if (mirrorDOM !== null) {
+      if (isMigratedInScroll) {
+        originStyle.setProperty("position", "absolute");
+        if (dimensions!.x > 0) {
+          originStyle.setProperty("width", `${dimensions!.x}px`);
+        }
+        if (dimensions!.y > 0) {
+          originStyle.setProperty("height", `${dimensions!.y}px`);
+        }
+      }
+      originStyle.removeProperty("opacity");
+      mirrorDOM.remove();
+    } else {
+      originStyle.removeProperty("position");
+      originStyle.removeProperty("z-index");
+    }
+
+    if (!originDOM.getAttribute("style")) {
+      originDOM.removeAttribute("style");
+    }
+
+    if (!document.body.getAttribute("style")) {
+      document.body.removeAttribute("style");
+    }
   }
 
   /**
@@ -130,8 +213,8 @@ class DFlexBaseDraggable<T extends DFlexBaseNode> {
      * transform, that's why it is updated when dragging is done.
      */
     this.translatePlaceholder.setAxes(
-      x + this.outerOffset.x,
-      y + this.outerOffset.y
+      x + this._outerOffset.x,
+      y + this._outerOffset.y
     );
 
     DFlexBaseNode.transform(

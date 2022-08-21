@@ -2,6 +2,10 @@
 
 exports[`extractOpts Returns default options when empty object is passed 1`] = `
 Object {
+  "commit": Object {
+    "enableAfterEndingDrag": true,
+    "enableForScrollOnly": true,
+  },
   "containersTransition": Object {
     "enable": true,
     "margin": 10,
@@ -41,6 +45,10 @@ Object {
 
 exports[`extractOpts Returns the default options with input restrictions/allowLeavingFromBottom 1`] = `
 Object {
+  "commit": Object {
+    "enableAfterEndingDrag": true,
+    "enableForScrollOnly": true,
+  },
   "containersTransition": Object {
     "enable": true,
     "margin": 10,
@@ -80,6 +88,10 @@ Object {
 
 exports[`extractOpts Returns the default options with input restrictions/threshold/scroll 1`] = `
 Object {
+  "commit": Object {
+    "enableAfterEndingDrag": true,
+    "enableForScrollOnly": true,
+  },
   "containersTransition": Object {
     "enable": false,
     "margin": 10,
@@ -119,6 +131,10 @@ Object {
 
 exports[`extractOpts Returns the default options with input scroll/threshold 1`] = `
 Object {
+  "commit": Object {
+    "enableAfterEndingDrag": true,
+    "enableForScrollOnly": true,
+  },
   "containersTransition": Object {
     "enable": true,
     "margin": 10,
@@ -158,6 +174,10 @@ Object {
 
 exports[`extractOpts Returns the default options with input scroll/threshold/enable 1`] = `
 Object {
+  "commit": Object {
+    "enableAfterEndingDrag": true,
+    "enableForScrollOnly": true,
+  },
   "containersTransition": Object {
     "enable": true,
     "margin": 10,
@@ -197,6 +217,10 @@ Object {
 
 exports[`extractOpts Returns the default options with self restrictions/allowLeavingFromLeft+right 1`] = `
 Object {
+  "commit": Object {
+    "enableAfterEndingDrag": true,
+    "enableForScrollOnly": true,
+  },
   "containersTransition": Object {
     "enable": true,
     "margin": 10,

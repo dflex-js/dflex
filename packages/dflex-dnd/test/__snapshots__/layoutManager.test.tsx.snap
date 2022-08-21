@@ -79,6 +79,7 @@ DFlexDnDStore {
         "x": 1,
         "y": 1,
       },
+      "id": "dflex-id-1",
       "originLength": 1,
     },
     "0-1" => DFlexParentContainer {
@@ -101,6 +102,7 @@ DFlexDnDStore {
         "x": 1,
         "y": 1,
       },
+      "id": "dflex-id-2",
       "originLength": 3,
     },
   },
@@ -161,25 +163,28 @@ DFlexDnDStore {
   "queueTimeoutId": undefined,
   "registry": Map {
     "id-1" => DFlexNode {
-      "_hasAttribute": Set {},
-      "animatedFrame": 1000000000002,
-      "currentPosition": PointNum {
-        "x": 0,
-        "y": 0,
-      },
-      "depth": 0,
-      "grid": PointNum {
+      "DOMGrid": PointNum {
         "x": 1,
         "y": 1,
       },
+      "DOMOrder": Object {
+        "parent": 0,
+        "self": 0,
+      },
+      "VDOMOrder": Object {
+        "parent": 0,
+        "self": 0,
+      },
+      "_computedDimensions": null,
+      "_hasAttribute": Set {},
+      "_initialPosition": PointNum {
+        "x": 0,
+        "y": 0,
+      },
+      "animatedFrame": 1000000000002,
+      "depth": 0,
       "hasPendingTransform": false,
       "id": "id-1",
-      "initialOffset": Object {
-        "height": 0,
-        "left": 0,
-        "top": 0,
-        "width": 0,
-      },
       "isPaused": false,
       "isVisible": true,
       "keys": Object {
@@ -187,19 +192,41 @@ DFlexDnDStore {
         "PK": "1-0",
         "SK": "0-0",
       },
-      "order": Object {
-        "parent": 0,
-        "self": 0,
-      },
       "readonly": false,
+      "rect": BoxRect {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+      },
       "translate": PointNum {
         "x": 0,
         "y": 0,
       },
     },
     "dflex-id-1" => DFlexNode {
+      "DOMGrid": PointNum {
+        "x": 0,
+        "y": 0,
+      },
+      "DOMOrder": Object {
+        "parent": 0,
+        "self": 0,
+      },
+      "VDOMOrder": Object {
+        "parent": 0,
+        "self": 0,
+      },
+      "_computedDimensions": null,
+      "_initialPosition": PointNum {
+        "x": 0,
+        "y": 0,
+      },
       "animatedFrame": null,
       "depth": 1,
+      "hasPendingTransform": false,
       "id": "dflex-id-1",
       "isPaused": false,
       "isVisible": true,
@@ -208,32 +235,39 @@ DFlexDnDStore {
         "PK": "2-0",
         "SK": "1-0",
       },
-      "order": Object {
-        "parent": 0,
-        "self": 0,
-      },
       "readonly": true,
-    },
-    "id-2" => DFlexNode {
-      "_hasAttribute": Set {},
-      "animatedFrame": null,
-      "currentPosition": PointNum {
-        "x": 0,
-        "y": 0,
-      },
-      "depth": 0,
-      "grid": PointNum {
-        "x": 1,
-        "y": 1,
-      },
-      "hasPendingTransform": false,
-      "id": "id-2",
-      "initialOffset": Object {
+      "rect": BoxRect {
+        "bottom": 0,
         "height": 0,
         "left": 0,
+        "right": 0,
         "top": 0,
         "width": 0,
       },
+    },
+    "id-2" => DFlexNode {
+      "DOMGrid": PointNum {
+        "x": 1,
+        "y": 1,
+      },
+      "DOMOrder": Object {
+        "parent": 1,
+        "self": 0,
+      },
+      "VDOMOrder": Object {
+        "parent": 1,
+        "self": 0,
+      },
+      "_computedDimensions": null,
+      "_hasAttribute": Set {},
+      "_initialPosition": PointNum {
+        "x": 0,
+        "y": 0,
+      },
+      "animatedFrame": null,
+      "depth": 0,
+      "hasPendingTransform": false,
+      "id": "id-2",
       "isPaused": false,
       "isVisible": true,
       "keys": Object {
@@ -241,36 +275,43 @@ DFlexDnDStore {
         "PK": "1-0",
         "SK": "0-1",
       },
-      "order": Object {
-        "parent": 1,
-        "self": 0,
-      },
       "readonly": false,
+      "rect": BoxRect {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+      },
       "translate": PointNum {
         "x": 0,
         "y": 0,
       },
     },
     "id-3" => DFlexNode {
-      "_hasAttribute": Set {},
-      "animatedFrame": null,
-      "currentPosition": PointNum {
-        "x": 0,
-        "y": 0,
-      },
-      "depth": 0,
-      "grid": PointNum {
+      "DOMGrid": PointNum {
         "x": 1,
         "y": 1,
       },
+      "DOMOrder": Object {
+        "parent": 1,
+        "self": 1,
+      },
+      "VDOMOrder": Object {
+        "parent": 1,
+        "self": 1,
+      },
+      "_computedDimensions": null,
+      "_hasAttribute": Set {},
+      "_initialPosition": PointNum {
+        "x": 0,
+        "y": 0,
+      },
+      "animatedFrame": null,
+      "depth": 0,
       "hasPendingTransform": false,
       "id": "id-3",
-      "initialOffset": Object {
-        "height": 0,
-        "left": 0,
-        "top": 0,
-        "width": 0,
-      },
       "isPaused": false,
       "isVisible": true,
       "keys": Object {
@@ -278,36 +319,43 @@ DFlexDnDStore {
         "PK": "1-0",
         "SK": "0-1",
       },
-      "order": Object {
-        "parent": 1,
-        "self": 1,
-      },
       "readonly": false,
+      "rect": BoxRect {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+      },
       "translate": PointNum {
         "x": 0,
         "y": 0,
       },
     },
     "id-4" => DFlexNode {
-      "_hasAttribute": Set {},
-      "animatedFrame": null,
-      "currentPosition": PointNum {
-        "x": 0,
-        "y": 0,
-      },
-      "depth": 0,
-      "grid": PointNum {
+      "DOMGrid": PointNum {
         "x": 1,
         "y": 1,
       },
+      "DOMOrder": Object {
+        "parent": 1,
+        "self": 2,
+      },
+      "VDOMOrder": Object {
+        "parent": 1,
+        "self": 2,
+      },
+      "_computedDimensions": null,
+      "_hasAttribute": Set {},
+      "_initialPosition": PointNum {
+        "x": 0,
+        "y": 0,
+      },
+      "animatedFrame": null,
+      "depth": 0,
       "hasPendingTransform": false,
       "id": "id-4",
-      "initialOffset": Object {
-        "height": 0,
-        "left": 0,
-        "top": 0,
-        "width": 0,
-      },
       "isPaused": false,
       "isVisible": true,
       "keys": Object {
@@ -315,19 +363,41 @@ DFlexDnDStore {
         "PK": "1-0",
         "SK": "0-1",
       },
-      "order": Object {
-        "parent": 1,
-        "self": 2,
-      },
       "readonly": false,
+      "rect": BoxRect {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+      },
       "translate": PointNum {
         "x": 0,
         "y": 0,
       },
     },
     "dflex-id-2" => DFlexNode {
+      "DOMGrid": PointNum {
+        "x": 0,
+        "y": 0,
+      },
+      "DOMOrder": Object {
+        "parent": 0,
+        "self": 1,
+      },
+      "VDOMOrder": Object {
+        "parent": 0,
+        "self": 1,
+      },
+      "_computedDimensions": null,
+      "_initialPosition": PointNum {
+        "x": 0,
+        "y": 0,
+      },
       "animatedFrame": null,
       "depth": 1,
+      "hasPendingTransform": false,
       "id": "dflex-id-2",
       "isPaused": false,
       "isVisible": true,
@@ -336,11 +406,15 @@ DFlexDnDStore {
         "PK": "2-0",
         "SK": "1-0",
       },
-      "order": Object {
-        "parent": 0,
-        "self": 1,
-      },
       "readonly": true,
+      "rect": BoxRect {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+      },
     },
   },
   "scrolls": Map {
@@ -361,7 +435,7 @@ DFlexDnDStore {
         "x": false,
         "y": false,
       },
-      "invisibleDistance": FourDirections {
+      "invisibleDistance": BoxNum {
         "bottom": 0,
         "left": 0,
         "right": 0,
@@ -404,15 +478,19 @@ DFlexDnDStore {
           </div>
         </body>
       </html>,
-      "scrollContainerRect": Object {
+      "scrollContainerRect": BoxRect {
+        "bottom": 0,
         "height": 0,
         "left": 0,
+        "right": 0,
         "top": 0,
         "width": 0,
       },
-      "scrollRect": Object {
+      "scrollRect": BoxRect {
+        "bottom": 0,
         "height": 0,
         "left": 0,
+        "right": 0,
         "top": 0,
         "width": 0,
       },
@@ -434,7 +512,7 @@ DFlexDnDStore {
         "x": false,
         "y": false,
       },
-      "invisibleDistance": FourDirections {
+      "invisibleDistance": BoxNum {
         "bottom": 0,
         "left": 0,
         "right": 0,
@@ -477,15 +555,19 @@ DFlexDnDStore {
           </div>
         </body>
       </html>,
-      "scrollContainerRect": Object {
+      "scrollContainerRect": BoxRect {
+        "bottom": 0,
         "height": 0,
         "left": 0,
+        "right": 0,
         "top": 0,
         "width": 0,
       },
-      "scrollRect": Object {
+      "scrollRect": BoxRect {
+        "bottom": 0,
         "height": 0,
         "left": 0,
+        "right": 0,
         "top": 0,
         "width": 0,
       },

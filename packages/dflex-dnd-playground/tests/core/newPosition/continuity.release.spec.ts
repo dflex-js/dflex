@@ -16,7 +16,10 @@ test.describe.serial("Moving out then insert - Up/Down - Release", async () => {
 
   let context: BrowserContext;
 
-  test.beforeAll(async ({ browser, baseURL }) => {
+  test.beforeAll(async ({ browser, baseURL, browserName }) => {
+    // Slow response form firefox related to the firing event.
+    initialize(page, browserName === "firefox" ? 40 : 5);
+
     context = await browser.newContext();
 
     page = await context.newPage();

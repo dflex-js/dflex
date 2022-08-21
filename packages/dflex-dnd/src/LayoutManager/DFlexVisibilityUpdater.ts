@@ -4,7 +4,7 @@ import type DFlexDnDStore from "./DFlexDnDStore";
 
 let prevVisibility = false;
 
-function updateElementVisibility(
+function updateElmVisibility(
   DOM: HTMLElement,
   elm: DFlexNode,
   scroll: DFlexScrollContainer
@@ -13,13 +13,13 @@ function updateElementVisibility(
 
   let isBreakable = false;
 
-  const { currentPosition, initialOffset } = elm;
+  const { rect } = elm;
 
-  isVisible = scroll.isElementVisibleViewport(
-    currentPosition.y,
-    currentPosition.x,
-    initialOffset.height,
-    initialOffset.width
+  isVisible = scroll.isElmVisibleViewport(
+    rect.top,
+    rect.left,
+    rect.height,
+    rect.width
   );
 
   if (prevVisibility === true && isVisible === false) {
@@ -59,9 +59,7 @@ function updateBranchVisibilityLinearly(
   const scroll = store.scrolls.get(SK)!;
 
   // If not scroll, then all the elements are visible.
-  if (!scroll.allowDynamicVisibility) {
-    setBranchVisibility(branch, store, 0, branch.length, true);
-  } else {
+  if (scroll.allowDynamicVisibility) {
     let isBreakable = false;
     let breakAt = 0;
 
@@ -72,7 +70,7 @@ function updateBranchVisibilityLinearly(
         const [elm, DOM] = store.getElmWithDOM(elmID);
 
         // isBreakable when the element is visible and the next element is not.
-        isBreakable = updateElementVisibility(DOM, elm, scroll);
+        isBreakable = updateElmVisibility(DOM, elm, scroll);
       }
 
       if (isBreakable) {
@@ -88,6 +86,8 @@ function updateBranchVisibilityLinearly(
 
     // Resetting the flag.
     prevVisibility = false;
+  } else {
+    setBranchVisibility(branch, store, 0, branch.length, true);
   }
 }
 

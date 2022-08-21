@@ -15,6 +15,8 @@ context(
 
     context("Drag out first element (1)", () => {
       it("Getting the first element (1)", () => {
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(0);
         cy.get("#1-extended").then((elm) => {
           elmBox = elm[0].getBoundingClientRect();
           // eslint-disable-next-line no-unused-vars

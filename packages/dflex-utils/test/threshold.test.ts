@@ -17,10 +17,12 @@ describe("DFlexThreshold", () => {
       ID: "dflex-dragged",
       DP: 0,
       RECT: {
-        top: 114,
         height: 50,
-        left: 450,
         width: 170,
+        top: 114,
+        right: 620,
+        bottom: 164,
+        left: 450,
       },
       THRESHOLD: {
         top: 84,
@@ -33,10 +35,12 @@ describe("DFlexThreshold", () => {
     const CONTAINER = {
       SK: "container-sk",
       RECT: {
+        height: 50,
+        width: 170,
+        top: 114,
+        right: 192,
         bottom: 164,
         left: 22,
-        right: 192,
-        top: 114,
       },
       THRESHOLD: {
         bottom: 194,
@@ -48,10 +52,12 @@ describe("DFlexThreshold", () => {
 
     const DEPTH = {
       THRESHOLD: {
+        // heigh: 518,
+        // width: 643,
+        top: 54,
+        right: 450,
         bottom: 572,
         left: -182,
-        right: 450,
-        top: 54,
       },
     };
 
@@ -244,6 +250,8 @@ describe("DFlexThreshold", () => {
       ID_OUTER: "scroll-id-outer",
       RECT: {
         top: 0,
+        right: 885,
+        bottom: 657,
         left: 0,
         height: 657,
         width: 885,

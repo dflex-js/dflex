@@ -1,5 +1,12 @@
-import { PointNum } from "@dflex/utils";
-import type { RectDimensions, Direction, Axes, AxesPoint } from "@dflex/utils";
+import {
+  BoxRect,
+  BoxRectAbstract,
+  Dimensions,
+  featureFlags,
+  PointNum,
+  warnOnce,
+} from "@dflex/utils";
+import type { Direction, Axes, AxesPoint } from "@dflex/utils";
 
 import DFlexBaseNode from "./DFlexBaseNode";
 
@@ -10,8 +17,8 @@ export type SerializedDFlexCoreNode = {
   translate: PointNum | null;
   grid: PointNum;
   order: DOMGenOrder;
-  initialOffset: RectDimensions;
-  currentOffset: RectDimensions;
+  initialPosition: AxesPoint;
+  rect: BoxRectAbstract;
   hasTransformed: boolean;
   pendingTransform: boolean;
   isVisible: boolean;
@@ -48,22 +55,87 @@ export interface DFlexNodeInput {
   readonly: boolean;
 }
 
+let didThrowError = false;
+
+function assertElementPosition(DOM: HTMLElement, rect: BoxRectAbstract): void {
+  if (didThrowError) {
+    return;
+  }
+
+  const { top, left, bottom, right, width, height } =
+    DOM.getBoundingClientRect();
+
+  if (
+    top !== rect.top ||
+    left !== rect.left ||
+    bottom !== rect.bottom ||
+    right !== rect.right ||
+    width !== rect.width ||
+    height !== rect.height
+  ) {
+    didThrowError = true;
+
+    throw new Error(
+      `Element position assertion failed. \n Expected: ${JSON.stringify(
+        rect
+      )} \n Actual: ${JSON.stringify({
+        top,
+        left,
+        bottom,
+        right,
+        width,
+        height,
+      })} \n\n`
+    );
+  }
+}
+
+function getElementStyle(DOM: HTMLElement): Dimensions {
+  const computedStyle = window.getComputedStyle(DOM);
+
+  const { width: computedWidth, height: computedHeight } = computedStyle;
+
+  if (computedWidth.includes("%") || computedHeight.includes("%")) {
+    if (__DEV__) {
+      warnOnce(
+        "getElementStyle",
+        "Element cannot have a percentage width and/or height." +
+          "If you are expecting the element to cross multiple scroll containers, then this will cause unexpected dimension when the element is cloned."
+      );
+    }
+  }
+
+  const regex = /^([0-9]*\.[0-9]*|[0-9]*)(px|em|rem|vw|vh)$/;
+
+  const widthMatch = computedWidth.match(regex);
+  const heightMatch = computedHeight.match(regex);
+
+  const width = widthMatch ? parseFloat(widthMatch[1]) : 0;
+  const height = heightMatch ? parseFloat(heightMatch[1]) : 0;
+
+  return { width, height };
+}
+
 class DFlexCoreNode extends DFlexBaseNode {
-  readonly initialOffset!: RectDimensions;
+  private _initialPosition: PointNum;
 
-  currentPosition!: PointNum;
+  rect: BoxRect;
 
-  order: DOMGenOrder;
+  private _computedDimensions: PointNum | null;
+
+  VDOMOrder: DOMGenOrder;
+
+  DOMOrder: DOMGenOrder;
 
   keys: Keys;
 
   depth: number;
 
-  grid!: PointNum;
+  DOMGrid: PointNum;
 
   isVisible: boolean;
 
-  hasPendingTransform!: boolean;
+  hasPendingTransform: boolean;
 
   readonly: boolean;
 
@@ -77,25 +149,30 @@ class DFlexCoreNode extends DFlexBaseNode {
 
   static transform = DFlexBaseNode.transform;
 
+  static getElementStyle = getElementStyle;
+
   constructor(eleWithPointer: DFlexNodeInput) {
     const { order, keys, depth, readonly, id } = eleWithPointer;
 
     super(id);
 
-    this.order = order;
-    this.keys = keys;
+    this.VDOMOrder = Object.seal(order);
+    this.DOMOrder = Object.seal({ ...order });
+    this.keys = Object.seal(keys);
     this.depth = depth;
     this.readonly = readonly;
     this.isPaused = false;
     this.isVisible = !this.isPaused;
     this.animatedFrame = null;
+    this.hasPendingTransform = false;
+    this._computedDimensions = null;
+
+    this._initialPosition = new PointNum(0, 0);
+    this.rect = new BoxRect(0, 0, 0, 0);
+    this.DOMGrid = new PointNum(0, 0);
   }
 
-  private _initIndicators(
-    DOM: HTMLElement,
-    scrollX: number,
-    scrollY: number
-  ): void {
+  private _initIndicators(DOM: HTMLElement): void {
     const { height, width, left, top } = DOM.getBoundingClientRect();
 
     /**
@@ -103,52 +180,56 @@ class DFlexCoreNode extends DFlexBaseNode {
      * Instead, using currentOffset object as indicator to current
      * offset/position. This offset, is the init-offset.
      */
-    // @ts-ignore - Initial.
-    this.initialOffset = Object.freeze({
-      height,
-      width,
-      left: left + scrollX,
-      top: top + scrollY,
-    });
+    this._initialPosition.setAxes(left, top);
 
-    this.currentPosition = new PointNum(
-      this.initialOffset.left,
-      this.initialOffset.top
-    );
+    this.rect.setByPointAndDimensions(top, left, height, width);
 
-    /**
-     * Initializing grid comes later when the siblings boundaries are
-     * initialized and the element is visible.
-     */
-    this.grid = new PointNum(0, 0);
-
-    this.hasPendingTransform = false;
+    // This method also used for resetting.
+    this.DOMGrid.setAxes(0, 0);
   }
 
-  private _updateCurrentIndicators(space: AxesPoint): void {
-    this.translate!.increase(space);
-
-    const { left, top } = this.initialOffset!;
+  private _updateCurrentIndicators(newPos: AxesPoint): void {
+    this.translate!.increase(newPos);
 
     /**
      * This offset related directly to translate Y and Y. It's isolated from
      * element current offset and effects only top and left.
      */
-    this.currentPosition!.setAxes(
-      left + this.translate!.x,
-      top + this.translate!.y
+    this.rect.setAxes(
+      this._initialPosition.x + this.translate!.x,
+      this._initialPosition.y + this.translate!.y
     );
 
-    if (!this.isVisible) this.hasPendingTransform = true;
+    if (!this.isVisible) {
+      this.hasPendingTransform = true;
+    }
   }
 
-  resume(DOM: HTMLElement, scrollX: number, scrollY: number): void {
+  getDimensions(DOM: HTMLElement): PointNum {
+    if (this._computedDimensions) {
+      return this._computedDimensions;
+    }
+
+    const { width, height } = DFlexCoreNode.getElementStyle(DOM);
+
+    this._computedDimensions = new PointNum(width, height);
+
+    return this._computedDimensions;
+  }
+
+  getInitialPosition(): PointNum {
+    return this._initialPosition;
+  }
+
+  resume(DOM: HTMLElement): void {
     this.initTranslate();
-    this._initIndicators(DOM, scrollX, scrollY);
+    this._initIndicators(DOM);
   }
 
   changeVisibility(DOM: HTMLElement, isVisible: boolean): void {
-    if (isVisible === this.isVisible) return;
+    if (isVisible === this.isVisible) {
+      return;
+    }
 
     this.isVisible = isVisible;
 
@@ -170,11 +251,11 @@ class DFlexCoreNode extends DFlexBaseNode {
   }
 
   private _updateOrderIndexing(DOM: HTMLElement, i: number) {
-    const { self: oldIndex } = this.order;
+    const { self: oldIndex } = this.VDOMOrder;
 
     const newIndex = oldIndex + i;
 
-    this.order.self = newIndex;
+    this.VDOMOrder.self = newIndex;
 
     this.setAttribute(DOM, "INDEX", newIndex);
 
@@ -226,9 +307,9 @@ class DFlexCoreNode extends DFlexBaseNode {
    *  Set a new translate position and store the old one.
    */
   private _seTranslate(
-    DOM: HTMLElement,
-    elmSpace: AxesPoint,
     axis: Axes,
+    DOM: HTMLElement,
+    elmPos: AxesPoint,
     operationID?: string,
     isForceTransform = false
   ): void {
@@ -239,16 +320,16 @@ class DFlexCoreNode extends DFlexBaseNode {
         translate: { x: this.translate!.x, y: this.translate!.y },
       };
 
-      if (!Array.isArray(this._translateHistory)) {
-        this._translateHistory = [elmAxesHistory];
-      } else {
+      if (Array.isArray(this._translateHistory)) {
         this._translateHistory.push(elmAxesHistory);
+      } else {
+        this._translateHistory = [elmAxesHistory];
       }
     }
 
-    this._updateCurrentIndicators(elmSpace);
+    this._updateCurrentIndicators(elmPos);
 
-    if (!isForceTransform && !this.isVisible) {
+    if (!(isForceTransform || this.isVisible)) {
       this.hasPendingTransform = true;
 
       return;
@@ -261,18 +342,20 @@ class DFlexCoreNode extends DFlexBaseNode {
 
   /**
    *
-   * @param iDsInOrder -
-   * @param direction - (+1/-1)
-   * @param elmSpace - space between dragged and the immediate next element.
-   * @param operationID - A unique ID used to store translate history
+   * @param DOM
+   * @param siblings
+   * @param direction
+   * @param elmPos
+   * @param operationID
+   * @param axis
    */
-  setPosition(
-    DOM: HTMLElement,
-    iDsInOrder: string[],
+  reconcilePosition(
+    axis: Axes,
     direction: Direction,
-    elmSpace: PointNum,
-    operationID: string,
-    axis: Axes
+    DOM: HTMLElement,
+    siblings: string[],
+    elmPos: PointNum,
+    operationID: string
   ): void {
     const numberOfPassedElm = 1;
 
@@ -281,12 +364,12 @@ class DFlexCoreNode extends DFlexBaseNode {
      * If the element is dragged to the left, the effectedElemDirection is -1.
      */
     if (axis === "z") {
-      elmSpace.multiplyAll(direction);
+      elmPos.multiplyAll(direction);
     } else {
-      elmSpace[axis] *= direction;
+      elmPos[axis] *= direction;
     }
 
-    this._seTranslate(DOM, elmSpace, axis, operationID);
+    this._seTranslate(axis, DOM, elmPos, operationID);
 
     const { oldIndex, newIndex } = this._updateOrderIndexing(
       DOM,
@@ -295,12 +378,22 @@ class DFlexCoreNode extends DFlexBaseNode {
 
     if (axis === "z") {
       const inc = direction * numberOfPassedElm;
-      this.grid.increase({ x: inc, y: inc });
+      this.DOMGrid.increase({ x: inc, y: inc });
     } else {
-      this.grid[axis] += direction * numberOfPassedElm;
+      this.DOMGrid[axis] += direction * numberOfPassedElm;
     }
 
-    this._leaveToNewPosition(iDsInOrder, newIndex, oldIndex);
+    this._leaveToNewPosition(siblings, newIndex, oldIndex);
+
+    if (__DEV__) {
+      if (featureFlags.enablePositionAssertion) {
+        if (!this.hasPendingTransform) {
+          setTimeout(() => {
+            assertElementPosition(DOM, this.rect);
+          }, 1000);
+        }
+      }
+    }
   }
 
   /**
@@ -327,7 +420,7 @@ class DFlexCoreNode extends DFlexBaseNode {
 
     const { translate: preTranslate, axis } = lastMovement;
 
-    const elmSpace = {
+    const elmPos = {
       x: preTranslate.x - this.translate!.x,
       y: preTranslate.y - this.translate!.y,
     };
@@ -335,49 +428,51 @@ class DFlexCoreNode extends DFlexBaseNode {
     let increment = 0;
 
     if (axis === "z") {
-      increment = elmSpace.x > 0 || elmSpace.y > 0 ? 1 : -1;
+      increment = elmPos.x > 0 || elmPos.y > 0 ? 1 : -1;
 
-      this.grid.increase({ x: increment, y: increment });
+      this.DOMGrid.increase({ x: increment, y: increment });
     } else {
-      increment = elmSpace[axis] > 0 ? 1 : -1;
+      increment = elmPos[axis] > 0 ? 1 : -1;
 
-      this.grid[axis] += increment;
+      this.DOMGrid[axis] += increment;
     }
 
     // Don't update UI if it's zero and wasn't transformed.
-    this._seTranslate(DOM, elmSpace, axis, undefined, isForceTransform);
+    this._seTranslate(axis, DOM, elmPos, undefined, isForceTransform);
 
     this._updateOrderIndexing(DOM, increment);
 
     this.rollBack(DOM, operationID, isForceTransform);
   }
 
-  flushIndicators(DOM: HTMLElement): void {
-    if (Array.isArray(this._translateHistory)) {
-      this._translateHistory = [];
-    }
-
-    if (this.translate instanceof PointNum) {
-      this.translate.setAxes(0, 0);
-    }
-
-    this._initIndicators(DOM, 0, 0);
-  }
-
   hasTransformed(): boolean {
-    return (
-      this.translate instanceof PointNum &&
-      (this.translate.x !== 0 || this.translate.y !== 0)
-    );
+    return this._initialPosition.isNotEqual(this.rect.left, this.rect.top);
   }
 
-  getOffset(): RectDimensions {
-    return {
-      width: this.initialOffset.width,
-      height: this.initialOffset.height,
-      top: this.currentPosition.y,
-      left: this.currentPosition.x,
-    };
+  flushIndicators(DOM: HTMLElement): void {
+    console.log(
+      "🚀 ~ file: DFlexCoreNode.ts ~ line 445 ~ DFlexCoreNode ~ flushIndicators ~ DOM",
+      DOM,
+      this.VDOMOrder.self
+    );
+    this._translateHistory = undefined;
+
+    this.translate.setAxes(0, 0);
+
+    this._initialPosition.setAxes(this.rect.left, this.rect.top);
+
+    // This method also used for resetting.
+    this.DOMGrid.setAxes(0, 0);
+
+    this.DOMOrder.self = this.VDOMOrder.self;
+
+    this.hasPendingTransform = false;
+
+    DOM.style.removeProperty("transform");
+
+    if (!DOM.getAttribute("style")) {
+      DOM.removeAttribute("style");
+    }
   }
 
   getSerializedInstance(): SerializedDFlexCoreNode {
@@ -385,11 +480,11 @@ class DFlexCoreNode extends DFlexBaseNode {
       type: DFlexCoreNode.getType(),
       version: 3,
       id: this.id,
-      grid: this.grid,
+      grid: this.DOMGrid,
       translate: this.translate instanceof PointNum ? this.translate : null,
-      order: this.order,
-      initialOffset: this.initialOffset,
-      currentOffset: this.getOffset(),
+      order: this.VDOMOrder,
+      initialPosition: this._initialPosition.getInstance(),
+      rect: this.rect.getRect(),
       hasTransformed: this.hasTransformed(),
       isVisible: this.isVisible,
       pendingTransform: this.hasPendingTransform,

@@ -25,7 +25,7 @@ test.describe
 
     page = await context.newPage();
     // Slow response form firefox related to the firing event.
-    initialize(page, browserName === "firefox" ? 10 : 5);
+    initialize(page, browserName === "firefox" ? 40 : 5);
 
     [elm09, elm10, elm11, elm12] = await Promise.all([
       page.locator("#id-9"),

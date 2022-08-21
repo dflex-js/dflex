@@ -1,5 +1,6 @@
-export { Point, PointNum, PointBool } from "./Point";
-export type { AxesPoint } from "./Point";
+export { AxesPoint, Point, PointNum, PointBool } from "./Point";
+export { AbstractBox, Box, BoxBool, BoxNum, BoxRect } from "./Box";
+export type { BoxRectAbstract } from "./Box";
 
 export { DFlexThreshold as Threshold } from "./Threshold";
 export type { ThresholdPercentages } from "./Threshold";
@@ -7,12 +8,6 @@ export type { ThresholdPercentages } from "./Threshold";
 export { default as Tracker } from "./Tracker";
 
 export { default as Migration } from "./Migration";
-
-export {
-  FourDirections,
-  FourDirectionsBool,
-  FourDirectionsNum,
-} from "./FourDirections";
 
 export type {
   Dimensions,
@@ -23,6 +18,8 @@ export type {
   Direction,
 } from "./types";
 
-export { combineKeys, dirtyAssignBiggestRect } from "./collections";
+export { combineKeys, dirtyAssignBiggestRect, warnOnce } from "./collections";
 
 export { canUseDOM, getSelection, getParentElm } from "./dom";
+
+export * as featureFlags from "./FeatureFlags";

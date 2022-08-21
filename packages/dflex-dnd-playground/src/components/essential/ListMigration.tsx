@@ -113,7 +113,7 @@ const ListMigration = ({ withCommitBtn }: Props) => {
           <button
             className="button-solo"
             onClick={() => {
-              store.commit();
+              store.commit(null, 0);
             }}
           >
             Commit

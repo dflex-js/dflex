@@ -13,6 +13,8 @@ context(
     });
 
     it("Getting the first element (#item-rest-1)", () => {
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(0);
       cy.get("#item-rest-1").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
         startingPointX = elmBox.x + elmBox.width / 2;

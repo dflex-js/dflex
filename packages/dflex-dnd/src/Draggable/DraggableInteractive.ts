@@ -1,5 +1,3 @@
-import type { DraggedStyle } from "@dflex/draggable";
-
 import { PointNum } from "@dflex/utils";
 import type { AxesPoint } from "@dflex/utils";
 
@@ -10,151 +8,183 @@ import type { ScrollOpts, FinalDndOpts } from "../types";
 import DraggableAxes from "./DraggableAxes";
 
 class DraggableInteractive extends DraggableAxes {
+  mirrorDOM: HTMLElement | null;
+
   scroll: ScrollOpts;
+
+  enableCommit: boolean;
 
   occupiedPosition: PointNum;
 
   occupiedTranslate: PointNum;
 
-  isDraggedPositionFixed: boolean;
-
-  private changeToFixedStyleProps: DraggedStyle;
-
   constructor(id: string, initCoordinates: AxesPoint, opts: FinalDndOpts) {
     super(id, initCoordinates, opts);
 
+    this.mirrorDOM = null;
+
     this.scroll = { ...opts.scroll };
 
-    const { SK } = store.registry.get(id)!.keys;
-    const scroll = store.scrolls.get(SK)!;
+    this.enableCommit = opts.commit.enableAfterEndingDrag;
+
+    const [scroll, siblings] = store.getScrollWithSiblingsByID(id);
+    const { rect, translate } = this.draggedElm;
 
     const { hasOverflow } = scroll;
 
-    const siblings = store.getElmBranchByKey(this.migration.latest().SK);
-
-    this.isDraggedPositionFixed = false;
-
-    this.changeToFixedStyleProps = [
-      {
-        prop: "top",
-        dragValue: `${this.draggedElm.currentPosition.y}px`,
-        afterDragValue: "",
-      },
-      {
-        prop: "left",
-        dragValue: `${this.draggedElm.currentPosition.x}px`,
-        afterDragValue: "",
-      },
-      {
-        prop: "position",
-        dragValue: "fixed",
-        afterDragValue: "",
-      },
-    ];
+    if (siblings.length <= 1) {
+      this.enableCommit = false;
+    }
 
     // Override the default options When no siblings or no overflow.
-    if (siblings.length <= 1 || hasOverflow.isAllFalsy()) {
+    if (hasOverflow.isAllFalsy()) {
       this.scroll.enable = false;
     }
 
     if (this.scroll.enable) {
       this.isViewportRestricted = false;
 
-      scroll.setInnerThreshold(this.scroll.threshold);
-
-      if (!scroll.hasDocumentAsContainer) {
-        /**
-         * When the scroll is the document it's good. The restriction is to the
-         * document which guarantees the free movement. Otherwise, let's do it.
-         * Change the position and transform siblings.
-         */
-        // this.isDraggedPositionFixed = true;
+      // Initialize all the scroll containers in the same depth to enable migration.
+      if (opts.containersTransition.enable) {
+        store.getBranchesByDepth(this.draggedElm.depth).forEach((SK) => {
+          store.scrolls.get(SK)!.setInnerThreshold(opts.threshold);
+        });
       }
+
+      const draggedDOM = store.interactiveDOM.get(this.draggedElm.id)!;
+
+      this.mirrorDOM = draggedDOM.cloneNode(true) as HTMLElement;
+
+      const initPos = this.draggedElm.getInitialPosition();
+
+      const viewportPos = scroll.getElmPositionInViewport(initPos.y, initPos.x);
+
+      this.setDOMAttrAndStyle(
+        this.draggedDOM,
+        this.mirrorDOM,
+        true,
+        false,
+        this.draggedElm.getDimensions(draggedDOM),
+        viewportPos
+      );
+
+      this.draggedDOM.parentNode!.insertBefore(this.mirrorDOM, this.draggedDOM);
+      this.draggedDOM = this.mirrorDOM;
+    } else {
+      this.setDOMAttrAndStyle(this.draggedDOM, null, true, false, null, null);
     }
 
-    const { currentPosition, translate } = this.draggedElm;
-
-    this.occupiedPosition = new PointNum(currentPosition.x, currentPosition.y);
+    this.occupiedPosition = new PointNum(rect.left, rect.top);
     this.occupiedTranslate = new PointNum(translate.x, translate.y);
   }
 
-  setDraggedTempIndex(i: number) {
-    if (!Number.isNaN(i)) {
-      this.migration.setIndex(i);
+  /**
+   * Update the position of the dragged element and assign the new position to
+   * migration handler.
+   *
+   * @param index
+   */
+  setDraggedTempIndex(index: number) {
+    if (!Number.isNaN(index)) {
+      this.migration.setIndex(index);
     }
 
-    this.draggedElm.setAttribute(this.draggedDOM, "INDEX", i);
+    const draggedDOM = store.interactiveDOM.get(this.draggedElm.id)!;
+
+    this.draggedElm.setAttribute(draggedDOM, "INDEX", index);
   }
 
-  setDraggedTransformPosition(isFallback: boolean) {
-    const siblings = store.getElmBranchByKey(this.migration.latest().SK);
+  /**
+   * Handle all the instances related to dragged.
+   *
+   * @param isFallback
+   * @returns
+   */
+  setDraggedTransformProcess(isFallback: boolean) {
+    const { SK, index } = this.migration.latest();
+    const { rect, translate, id, VDOMOrder, DOMGrid } = this.draggedElm;
+    const siblings = store.getElmBranchByKey(SK);
+
+    // Get the original DOM to avoid manipulating the mirror/ghost DOM.
+    const draggedDOM = store.interactiveDOM.get(id)!;
 
     const hasToUndo =
       isFallback ||
       // dragged in position but has been clicked.
-      this.occupiedPosition.isInstanceEqual(this.draggedElm.currentPosition);
+      this.occupiedPosition.isEqual(rect.left, rect.top);
 
     if (hasToUndo) {
-      /**
-       * If not isDraggedOutPosition, it means dragged is out its position, inside
-       * list but didn't reach another element to replace.
-       *
-       * List's elements is in their position, just undo dragged.
-       *
-       * Restore dragged position (translateX, translateY) directly. Why? Because,
-       * dragged depends on extra instance to float in layout that is not related to element
-       * instance.
-       */
-      if (
-        !this.draggedElm.translate.isInstanceEqual(this.translatePlaceholder)
-      ) {
-        this.draggedElm.transform(this.draggedDOM);
-        this.draggedElm.setAttribute(
-          this.draggedDOM,
-          "INDEX",
-          this.draggedElm.order.self
-        );
+      // If it didn't move, then do nothing.
+      if (translate.isInstanceEqual(this.translatePlaceholder)) {
+        return;
+      }
 
-        /**
-         * There's a rare case where dragged leaves and returns to the same
-         * position. In this case, undo won't be triggered so that we have to do
-         * it manually here. Otherwise, undoing will handle repositioning. I
-         * don't like it but it is what it is.
-         */
-        if (siblings[this.draggedElm.order.self] !== this.draggedElm.id) {
-          this.draggedElm.assignNewPosition(
-            siblings,
-            this.draggedElm.order.self
-          );
-        }
+      this.draggedElm.transform(draggedDOM);
+      this.draggedElm.setAttribute(draggedDOM, "INDEX", VDOMOrder.self);
+
+      /**
+       * There's a rare case where dragged leaves and returns to the same
+       * position. In this case, undo won't be triggered so that we have to do
+       * it manually here. Otherwise, undoing will handle repositioning. I
+       * don't like it but it is what it is.
+       */
+      if (siblings[VDOMOrder.self] !== id) {
+        this.draggedElm.assignNewPosition(siblings, VDOMOrder.self);
       }
 
       return;
     }
 
-    this.draggedElm.currentPosition.clone(this.occupiedPosition);
-    this.draggedElm.translate.clone(this.occupiedTranslate);
+    this.draggedElm.rect.setAxes(
+      this.occupiedPosition.x,
+      this.occupiedPosition.y
+    );
 
-    this.draggedElm.grid.clone(this.gridPlaceholder);
+    translate.clone(this.occupiedTranslate);
 
-    this.draggedElm.transform(this.draggedDOM);
+    DOMGrid.clone(this.gridPlaceholder);
 
-    this.draggedElm.assignNewPosition(siblings, this.migration.latest().index);
+    VDOMOrder.self = index;
 
-    this.draggedElm.order.self = this.migration.latest().index;
+    this.draggedElm.transform(draggedDOM);
+
+    this.draggedElm.assignNewPosition(siblings, index);
   }
 
-  endDragging(isFallback: boolean) {
-    this.setDragged(false);
-    this.setDraggedTransformPosition(isFallback);
+  /**
+   *
+   * @param isFallback
+   * @param isMigratedInScroll
+   */
+  cleanup(isFallback: boolean, isMigratedInScroll: boolean) {
+    const draggedDOM = store.interactiveDOM.get(this.draggedElm.id)!;
 
-    if (isFallback) this.migration.dispose();
-
-    if (this.isDraggedPositionFixed) {
-      this.changeStyle(this.changeToFixedStyleProps, false);
+    if (isMigratedInScroll) {
+      this.setDOMAttrAndStyle(
+        draggedDOM,
+        this.mirrorDOM!,
+        false,
+        true,
+        this.draggedElm.getDimensions(draggedDOM),
+        null
+      );
+    } else {
+      this.setDOMAttrAndStyle(
+        draggedDOM,
+        this.mirrorDOM!,
+        false,
+        false,
+        null,
+        null
+      );
     }
 
     this.appendDraggedToContainerDimensions(false);
+    this.setDraggedTransformProcess(isFallback);
+
+    if (isFallback) {
+      this.migration.dispose();
+    }
 
     this.threshold.destroy();
   }
