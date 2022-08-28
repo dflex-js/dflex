@@ -1,6 +1,6 @@
-import type { AxesPoint, PointNum } from "@dflex/utils";
+import type {AxesPoint, PointNum} from "@dflex/utils";
 
-import { scheduler, store } from "../LayoutManager";
+import {scheduler, store} from "../LayoutManager";
 import type DraggableInteractive from "../Draggable";
 
 import {
@@ -70,9 +70,9 @@ class DFlexMechanismController extends DFlexScrollableElement {
   private _detectDroppableIndex(): number | null {
     let droppableIndex = null;
 
-    const { draggedElm, migration } = this.draggable;
+    const {draggedElm, migration} = this.draggable;
 
-    const { SK } = migration.latest();
+    const {SK} = migration.latest();
 
     const siblings = store.getElmBranchByKey(SK);
 
@@ -98,10 +98,10 @@ class DFlexMechanismController extends DFlexScrollableElement {
   }
 
   private _detectNearestElm(): void {
-    const { migration, draggedElm, occupiedTranslate, gridPlaceholder } =
+    const {migration, draggedElm, occupiedTranslate, gridPlaceholder} =
       this.draggable;
 
-    const { SK } = migration.latest();
+    const {SK} = migration.latest();
 
     const siblings = store.getElmBranchByKey(SK);
     const container = store.containers.get(SK)!;
@@ -119,7 +119,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     // Enforce attaching it from the bottom since it's already inside the container.
     if (typeof insertAt !== "number") {
       // Restore the last element position from the bottom.
-      const { lastElmPosition } = container;
+      const {lastElmPosition} = container;
       if (!migration.isTransitioning && lastElmPosition) {
         this.updateDraggedThresholdPosition(
           lastElmPosition.x,
@@ -141,7 +141,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     let draggedGrid: PointNum;
 
     if (migration.isTransitioning) {
-      ({ translate: draggedTransition, grid: draggedGrid } =
+      ({translate: draggedTransition, grid: draggedGrid} =
         this.getComposedOccupiedTranslateAndGrid(
           SK,
           insertAt,
@@ -181,7 +181,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         const lastElm = store.registry.get(siblings[siblings.length - 1])!;
 
         if (lastElm) {
-          ({ DOMGrid } = lastElm);
+          ({DOMGrid} = lastElm);
 
           if (DOMGrid.y < draggedGrid.y) {
             DOMGrid = draggedGrid;
@@ -198,9 +198,9 @@ class DFlexMechanismController extends DFlexScrollableElement {
   }
 
   private _detectNearestContainer(): void {
-    const { migration, draggedElm } = this.draggable;
+    const {migration, draggedElm} = this.draggable;
 
-    const { depth } = draggedElm;
+    const {depth} = draggedElm;
 
     let newSK;
 
@@ -212,7 +212,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     const dp = store.getBranchesByDepth(depth);
 
-    const { SK: originSK } = migration.latest();
+    const {SK: originSK} = migration.latest();
 
     for (let i = 0; i < dp.length; i += 1) {
       newSK = dp[i];
@@ -255,8 +255,8 @@ class DFlexMechanismController extends DFlexScrollableElement {
   }
 
   private _switchElementPosition(isIncrease: boolean): void {
-    const { migration, draggedElm } = this.draggable;
-    const { SK, index, cycleID } = migration.latest();
+    const {migration, draggedElm} = this.draggable;
+    const {SK, index, cycleID} = migration.latest();
 
     const siblings = store.getElmBranchByKey(SK);
 
@@ -275,9 +275,9 @@ class DFlexMechanismController extends DFlexScrollableElement {
    * Filling the space when the head of the list is leaving the list.
    */
   private _fillHeadUp(): void {
-    const { migration, occupiedPosition, draggedElm, events } = this.draggable;
+    const {migration, occupiedPosition, draggedElm, events} = this.draggable;
 
-    const { SK, index, cycleID } = migration.latest();
+    const {SK, index, cycleID} = migration.latest();
 
     const siblings = store.getElmBranchByKey(SK);
 
@@ -335,8 +335,8 @@ class DFlexMechanismController extends DFlexScrollableElement {
    * @param to - index
    */
   private _moveDown(to: number): void {
-    const { migration, events, draggedElm } = this.draggable;
-    const { SK, cycleID } = migration.latest();
+    const {migration, events, draggedElm} = this.draggable;
+    const {SK, cycleID} = migration.latest();
 
     const siblings = store.getElmBranchByKey(SK);
 
@@ -357,13 +357,13 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
   private _draggedOutPositionNotifier(): void {
     const {
-      draggedElm: { id },
-      threshold: { isOut },
+      draggedElm: {id},
+      threshold: {isOut},
       gridPlaceholder,
     } = this.draggable;
 
-    const { SK } = store.registry.get(id)!.keys;
-    const { grid: siblingsGrid } = store.containers.get(SK)!;
+    const {SK} = store.registry.get(id)!.keys;
+    const {grid: siblingsGrid} = store.containers.get(SK)!;
 
     if (isOut[id].isOneTruthyByAxis("y")) {
       const newRow = isOut[id].bottom
@@ -423,7 +423,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       events,
     } = this.draggable;
 
-    const { SK } = migration.latest();
+    const {SK} = migration.latest();
 
     let isOutSiblingsContainer = false;
 
