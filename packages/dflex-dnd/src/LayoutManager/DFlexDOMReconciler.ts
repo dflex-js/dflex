@@ -14,7 +14,7 @@ function prependElm(
   for (let i = elmIndex + 1; i < branchIDs.length; i += 1) {
     const dflexNextElm = store.registry.get(branchIDs[i])!;
 
-    if (dflexNextElm.hasTransformed()) {
+    if (dflexNextElm.hasTransformedFromOrigin()) {
       dflexNextElm.DOMOrder.self += 1;
     }
   }
@@ -33,7 +33,7 @@ function switchElmUp(
 
   branchDOM.insertBefore(elmDOM, domNextElm);
 
-  if (dflexNextElm.hasTransformed()) {
+  if (dflexNextElm.hasTransformedFromOrigin()) {
     dflexNextElm.DOMOrder.self += 1;
   }
 }
@@ -55,7 +55,7 @@ function commitElm(
 
   const isBreak = false;
 
-  if (dflexElm.hasTransformed()) {
+  if (dflexElm.hasTransformedFromOrigin()) {
     if (elmIndex === 0) {
       prependElm(branchIDs, branchDOM, store, elmIndex, elmDOM);
     } else if (elmIndex !== dflexElm.DOMOrder.self) {

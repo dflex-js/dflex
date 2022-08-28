@@ -31,9 +31,13 @@ export type RegisterInputBase = DeepNonNullable<RegisterInputOpts>;
 type GetElmWithDOMOutput = [DFlexNode, HTMLElement];
 
 type BranchComposedCallBackFunction = (
+  // eslint-disable-next-line no-unused-vars
   childrenKey: string,
+  // eslint-disable-next-line no-unused-vars
   childrenDepth: number,
+  // eslint-disable-next-line no-unused-vars
   containerID: string,
+  // eslint-disable-next-line no-unused-vars
   parentDOM: HTMLElement
 ) => void;
 
@@ -146,6 +150,8 @@ class DFlexBaseStore {
     dflexElm.setAttribute(DOM, "INDEX", dflexElm.VDOMOrder.self);
 
     if (depth >= 1) {
+      DFlexNode.setRelativePosition(DOM);
+
       if (keys.CHK === null) {
         if (__DEV__) {
           throw new Error(

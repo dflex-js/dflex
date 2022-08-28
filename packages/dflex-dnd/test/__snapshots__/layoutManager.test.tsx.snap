@@ -153,13 +153,17 @@ DFlexDnDStore {
       id="id-4"
     />,
   },
+  "isTransforming": false,
   "isUpdating": false,
   "listeners": Object {
     "clear": [Function],
     "notify": [Function],
     "subscribe": [Function],
   },
-  "observer": MutationObserver {},
+  "observer": Map {
+    "0-0" => MutationObserver {},
+    "0-1" => MutationObserver {},
+  },
   "queueTimeoutId": undefined,
   "registry": Map {
     "id-1" => DFlexNode {
@@ -181,7 +185,7 @@ DFlexDnDStore {
         "x": 0,
         "y": 0,
       },
-      "animatedFrame": 1000000000002,
+      "animatedFrame": 1000000000006,
       "depth": 0,
       "hasPendingTransform": false,
       "id": "id-1",

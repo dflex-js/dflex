@@ -33,6 +33,10 @@ const Container = ({
             containersTransition: {
               enable: false,
             },
+            commit: {
+              enableAfterEndingDrag: false,
+              enableForScrollOnly: false,
+            },
           }
         );
 

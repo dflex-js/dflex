@@ -63,6 +63,12 @@ const NestedList = () => {
               <DFlexDnDComponent
                 Component="li"
                 registerInput={{ id, depth }}
+                opts={{
+                  commit: {
+                    enableAfterEndingDrag: false,
+                    enableForScrollOnly: false,
+                  },
+                }}
                 key={id}
               >
                 {task}

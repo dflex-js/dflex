@@ -19,7 +19,7 @@ export type SerializedDFlexCoreNode = {
   order: DOMGenOrder;
   initialPosition: AxesPoint;
   rect: BoxRectAbstract;
-  hasTransformed: boolean;
+  hasTransformedFromOrigin: boolean;
   pendingTransform: boolean;
   isVisible: boolean;
 };
@@ -90,10 +90,27 @@ function assertElementPosition(DOM: HTMLElement, rect: BoxRectAbstract): void {
   }
 }
 
-function getElementStyle(DOM: HTMLElement): Dimensions {
-  const computedStyle = window.getComputedStyle(DOM);
+function setRelativePosition(DOM: HTMLElement): void {
+  const computedStyle = getComputedStyle(DOM);
 
-  const { width: computedWidth, height: computedHeight } = computedStyle;
+  const position = computedStyle.getPropertyValue("position");
+
+  if (position === "absolute" || position === "fixed") {
+    if (__DEV__) {
+      throw new Error(
+        `Element ${DOM.id}, must be positioned as relative. Received: ${position}.`
+      );
+    }
+
+    DOM.style.position = "relative";
+  }
+}
+
+function getElementStyle(DOM: HTMLElement): Dimensions {
+  const computedStyle = getComputedStyle(DOM);
+
+  const computedWidth = computedStyle.getPropertyValue("width");
+  const computedHeight = computedStyle.getPropertyValue("height");
 
   if (computedWidth.includes("%") || computedHeight.includes("%")) {
     if (__DEV__) {
@@ -144,21 +161,23 @@ class DFlexCoreNode extends DFlexBaseNode {
   private _translateHistory?: TransitionHistory[];
 
   static getType(): string {
-    return "core:node";
+    return "core:element";
   }
 
   static transform = DFlexBaseNode.transform;
 
   static getElementStyle = getElementStyle;
 
+  static setRelativePosition = setRelativePosition;
+
   constructor(eleWithPointer: DFlexNodeInput) {
     const { order, keys, depth, readonly, id } = eleWithPointer;
 
     super(id);
 
-    this.VDOMOrder = Object.seal(order);
+    this.VDOMOrder = Object.seal({ ...order });
     this.DOMOrder = Object.seal({ ...order });
-    this.keys = Object.seal(keys);
+    this.keys = Object.seal({ ...keys });
     this.depth = depth;
     this.readonly = readonly;
     this.isPaused = false;
@@ -246,6 +265,11 @@ class DFlexCoreNode extends DFlexBaseNode {
 
     this.animatedFrame = requestAnimationFrame(() => {
       DFlexCoreNode.transform(DOM, this.translate!.x, this.translate!.y);
+
+      if (this.hasPendingTransform) {
+        this.hasPendingTransform = false;
+      }
+
       this.animatedFrame = null;
     });
   }
@@ -311,7 +335,7 @@ class DFlexCoreNode extends DFlexBaseNode {
     DOM: HTMLElement,
     elmPos: AxesPoint,
     operationID?: string,
-    isForceTransform = false
+    hasToFlushTransform = false
   ): void {
     if (operationID) {
       const elmAxesHistory: TransitionHistory = {
@@ -329,15 +353,25 @@ class DFlexCoreNode extends DFlexBaseNode {
 
     this._updateCurrentIndicators(elmPos);
 
-    if (!(isForceTransform || this.isVisible)) {
+    if (hasToFlushTransform) {
+      if (!this.isVisible && this.hasPendingTransform) {
+        this.hasPendingTransform = false;
+
+        return;
+      }
+
+      this.transform(DOM);
+
+      return;
+    }
+
+    if (!this.isVisible) {
       this.hasPendingTransform = true;
 
       return;
     }
 
     this.transform(DOM);
-
-    this.hasPendingTransform = false;
   }
 
   /**
@@ -396,27 +430,31 @@ class DFlexCoreNode extends DFlexBaseNode {
     }
   }
 
+  hasTransformed(): boolean {
+    return (
+      Array.isArray(this._translateHistory) && this._translateHistory.length > 0
+    );
+  }
+
+  hasTransformedFromOrigin(): boolean {
+    return this._initialPosition.isNotEqual(this.rect.left, this.rect.top);
+  }
+
   /**
    * Roll back element position.
    *
    * @param operationID
-   * @param isForceTransform
    */
-  rollBack(
-    DOM: HTMLElement,
-    operationID: string,
-    isForceTransform: boolean
-  ): void {
+  rollBack(DOM: HTMLElement, operationID: string): void {
     if (
-      !Array.isArray(this._translateHistory) ||
-      this._translateHistory.length === 0 ||
-      this._translateHistory[this._translateHistory.length - 1].ID !==
+      !this.hasTransformed() ||
+      this._translateHistory![this._translateHistory!.length - 1].ID !==
         operationID
     ) {
       return;
     }
 
-    const lastMovement = this._translateHistory.pop()!;
+    const lastMovement = this._translateHistory!.pop()!;
 
     const { translate: preTranslate, axis } = lastMovement;
 
@@ -438,23 +476,14 @@ class DFlexCoreNode extends DFlexBaseNode {
     }
 
     // Don't update UI if it's zero and wasn't transformed.
-    this._seTranslate(axis, DOM, elmPos, undefined, isForceTransform);
+    this._seTranslate(axis, DOM, elmPos, undefined, true);
 
     this._updateOrderIndexing(DOM, increment);
 
-    this.rollBack(DOM, operationID, isForceTransform);
-  }
-
-  hasTransformed(): boolean {
-    return this._initialPosition.isNotEqual(this.rect.left, this.rect.top);
+    this.rollBack(DOM, operationID);
   }
 
   flushIndicators(DOM: HTMLElement): void {
-    console.log(
-      "🚀 ~ file: DFlexCoreNode.ts ~ line 445 ~ DFlexCoreNode ~ flushIndicators ~ DOM",
-      DOM,
-      this.VDOMOrder.self
-    );
     this._translateHistory = undefined;
 
     this.translate.setAxes(0, 0);
@@ -485,7 +514,7 @@ class DFlexCoreNode extends DFlexBaseNode {
       order: this.VDOMOrder,
       initialPosition: this._initialPosition.getInstance(),
       rect: this.rect.getRect(),
-      hasTransformed: this.hasTransformed(),
+      hasTransformedFromOrigin: this.hasTransformedFromOrigin(),
       isVisible: this.isVisible,
       pendingTransform: this.hasPendingTransform,
     };

@@ -19,7 +19,7 @@ class DFlexBaseNode {
   private _hasAttribute?: AttributeSet;
 
   static getType(): string {
-    return "base:node";
+    return "base:element";
   }
 
   static transform = transform;

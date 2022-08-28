@@ -28,7 +28,7 @@ describe("Container", () => {
   };
 
   beforeAll(() => {
-    container = new DFlexParentContainer(3);
+    container = new DFlexParentContainer(3, "id-parent-container");
   });
 
   it("Registers two elements in the same row", () => {
@@ -60,7 +60,7 @@ describe("Container", () => {
   });
 
   it("Resets the boundaries and grid", () => {
-    container.resetIndicators();
+    container.resetIndicators(3);
 
     expect(container.grid.x).toBe(1);
     expect(container.grid.y).toBe(1);

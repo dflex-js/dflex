@@ -3,7 +3,7 @@ import type { AxesPoint } from "@dflex/utils";
 
 import { store } from "../LayoutManager";
 
-import type { ScrollOpts, FinalDndOpts } from "../types";
+import type { ScrollOpts, FinalDndOpts, Commit } from "../types";
 
 import DraggableAxes from "./DraggableAxes";
 
@@ -12,7 +12,7 @@ class DraggableInteractive extends DraggableAxes {
 
   scroll: ScrollOpts;
 
-  enableCommit: boolean;
+  enableCommit: Commit;
 
   occupiedPosition: PointNum;
 
@@ -25,16 +25,13 @@ class DraggableInteractive extends DraggableAxes {
 
     this.scroll = { ...opts.scroll };
 
-    this.enableCommit = opts.commit.enableAfterEndingDrag;
+    this.enableCommit = { ...opts.commit };
 
-    const [scroll, siblings] = store.getScrollWithSiblingsByID(id);
+    const [scroll] = store.getScrollWithSiblingsByID(id);
+
     const { rect, translate } = this.draggedElm;
 
     const { hasOverflow } = scroll;
-
-    if (siblings.length <= 1) {
-      this.enableCommit = false;
-    }
 
     // Override the default options When no siblings or no overflow.
     if (hasOverflow.isAllFalsy()) {

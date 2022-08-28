@@ -108,6 +108,10 @@ const SelRestricted = () => {
               style={style}
               opts={{
                 restrictions,
+                commit: {
+                  enableAfterEndingDrag: false,
+                  enableForScrollOnly: false,
+                },
               }}
             >
               {item}

@@ -25,6 +25,12 @@ const TodoListWithEvents = () => {
               registerInput={{ id }}
               key={id}
               style={style}
+              opts={{
+                commit: {
+                  enableAfterEndingDrag: false,
+                  enableForScrollOnly: false,
+                },
+              }}
             >
               {msg}
             </DFlexDnDComponent>

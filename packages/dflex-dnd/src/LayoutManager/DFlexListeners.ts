@@ -8,30 +8,26 @@ type ElmMutationType = "committed";
 
 type ElmTransformationType = "transformed" | "reordered" | "visible" | "hidden";
 
-const layoutState = "layoutState";
-const mutation = "mutation";
-const transformation = "transformation";
-const error = "error";
-
 interface DFlexLayoutStateEvent {
-  type: typeof layoutState;
+  type: "layoutState";
   layoutState: LayoutState;
 }
 
 interface DFlexElmMutationEvent {
-  type: typeof mutation;
+  type: "mutation";
   mutation: ElmMutationType;
-  targets: Array<HTMLElement>;
+  target: HTMLElement;
+  ids: string[];
 }
 
 interface DFlexElmTransformationEvent {
-  type: typeof transformation;
+  type: "transformation";
   transformation: ElmTransformationType;
   element: SerializedDFlexCoreNode;
 }
 
 interface DFlexErrorEvent {
-  type: typeof error;
+  type: "error";
   error: Error;
 }
 

@@ -3,7 +3,7 @@
 import DFlexBaseStore from "@dflex/store";
 import type { RegisterInputOpts } from "@dflex/store";
 
-import { Tracker, canUseDOM, Dimensions } from "@dflex/utils";
+import { Tracker, canUseDOM, Dimensions, featureFlags } from "@dflex/utils";
 
 import {
   DFlexParentContainer,
@@ -24,7 +24,7 @@ import scheduler, {
 } from "./DFlexScheduler";
 
 import updateBranchVisibilityLinearly from "./DFlexVisibilityUpdater";
-import { initMutationObserver } from "./DFlexMutations";
+import { addMutationObserver } from "./DFlexMutations";
 import DOMReconciler from "./DFlexDOMReconciler";
 
 type Containers = Map<string, DFlexParentContainer>;
@@ -50,13 +50,15 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   unifiedContainerDimensions: UnifiedContainerDimensions;
 
-  observer: Observer;
+  observer: Map<string, Observer>;
 
   listeners: DFlexListenerPlugin;
 
   updatesQueue: UpdatesQueue;
 
   isUpdating: boolean;
+
+  isTransforming: boolean;
 
   deferred: Deferred;
 
@@ -74,7 +76,8 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.tracker = new Tracker();
     this._isInitialized = false;
     this._isDOM = false;
-    this.observer = null;
+    this.observer = new Map();
+    this.isTransforming = false;
     this.isUpdating = false;
     this.deferred = [];
     this.updatesQueue = [];
@@ -82,6 +85,18 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.update = scheduler;
 
     this._initBranch = this._initBranch.bind(this);
+  }
+
+  isIDle(): boolean {
+    return (
+      !this.isUpdating &&
+      this.updatesQueue.length === 0 &&
+      this.deferred.length === 0
+    );
+  }
+
+  isLayoutAvailable(): boolean {
+    return !this.isTransforming && this.isIDle();
   }
 
   private _initWhenRegister() {
@@ -92,21 +107,21 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   private _initElmGrid(container: DFlexParentContainer, id: string) {
-    const [dflexNode, DOM] = this.getElmWithDOM(id);
+    const [dflexElm, DOM] = this.getElmWithDOM(id);
 
-    dflexNode.resume(DOM);
+    dflexElm.resume(DOM);
 
     // Using element grid zero to know if the element has been initiated inside
     // container or not.
-    if (dflexNode.DOMGrid.x === 0) {
-      const { rect } = dflexNode;
+    if (dflexElm.DOMGrid.x === 0) {
+      const { rect } = dflexElm;
 
       container.registerNewElm(
         rect,
-        this.unifiedContainerDimensions[dflexNode.depth]
+        this.unifiedContainerDimensions[dflexElm.depth]
       );
 
-      dflexNode.DOMGrid.clone(container.grid);
+      dflexElm.DOMGrid.clone(container.grid);
     }
   }
 
@@ -163,7 +178,11 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     updateBranchVisibilityLinearly(this, SK);
 
-    initMutationObserver(this, DOM);
+    // This is not right, but it's workaround. The ideal solution is to observe the layer itself.
+    // E.g, find a solution where we have the higher order parent.
+    if (depth === 0) {
+      addMutationObserver(this, SK, DOM);
+    }
   }
 
   register(element: RegisterInputOpts) {
@@ -209,20 +228,53 @@ class DFlexDnDStore extends DFlexBaseStore {
     );
   }
 
+  reconcileBranch(SK: string) {
+    const container = this.containers.get(SK)!;
+    const branch = this.getElmBranchByKey(SK);
+    const parentDOM = this.interactiveDOM.get(container.id)!;
+
+    scheduler(
+      this,
+      () => {
+        if (__DEV__) {
+          if (!parentDOM) {
+            throw new Error(
+              `Unable to commit: No DOM found for ${container.id}`
+            );
+          }
+
+          if (featureFlags.enableCommit) {
+            // eslint-disable-next-line no-console
+            console.info("Reconcile branch: ", branch);
+          }
+        }
+
+        this.observer.get(SK)!.disconnect();
+        DOMReconciler(branch, parentDOM, this, container, true);
+      },
+      {
+        onUpdate: () => {
+          addMutationObserver(this, SK, parentDOM);
+        },
+      },
+      {
+        type: "mutation",
+        mutation: "committed",
+        target: parentDOM,
+        ids: branch,
+      }
+    );
+  }
+
   /**
    *
    * @param id
-   * @param depth
    * @returns
    */
-  commit(id: string, depth?: never): void;
+  commit(id?: string): void {
+    let dp = 0;
 
-  commit(id: null, depth: number): void;
-
-  commit(id: string | null, depth?: number): void {
-    let dp;
-
-    if (id !== null) {
+    if (id !== undefined) {
       const dflexElm = this.registry.get(id);
 
       if (!dflexElm) {
@@ -236,39 +288,9 @@ class DFlexDnDStore extends DFlexBaseStore {
       }
 
       dp = dflexElm.depth;
-    } else {
-      dp = depth || 0;
     }
 
-    this.getBranchesByDepth(dp).forEach((key) => {
-      scheduler(
-        this,
-        () => {
-          const container = this.containers.get(key)!;
-          const branch = this.getElmBranchByKey(key);
-          const parentDOM = this.interactiveDOM.get(container.id)!;
-
-          if (__DEV__) {
-            if (!parentDOM) {
-              throw new Error(
-                `Unable to commit: No DOM found for ${container.id}`
-              );
-            }
-          }
-
-          DOMReconciler(branch, parentDOM, this, container, true);
-        },
-        {
-          rAF: true,
-        }
-        // {
-        //   type: "mutation",
-        //   mutation: "committed",
-        //   target: parentDOM,
-        //   ids: branch,
-        // }
-      );
-    });
+    this.getBranchesByDepth(dp).forEach(this.reconcileBranch);
   }
 
   getSerializedElm(id: string) {
@@ -366,9 +388,11 @@ class DFlexDnDStore extends DFlexBaseStore {
     // Destroys all registered instances.
     super.destroy();
 
-    if (this.observer) {
-      this.observer.disconnect();
-    }
+    // Destroys all connected observers.
+    this.observer.forEach((observer) => {
+      observer!.disconnect();
+    });
+    this.observer.clear();
   }
 }
 

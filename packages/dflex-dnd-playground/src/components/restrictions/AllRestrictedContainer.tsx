@@ -49,6 +49,10 @@ const AllRestrictedContainer = () => {
                     allowLeavingFromRight: false,
                   },
                 },
+                commit: {
+                  enableAfterEndingDrag: false,
+                  enableForScrollOnly: false,
+                },
               }}
             >
               {item}

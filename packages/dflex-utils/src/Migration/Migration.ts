@@ -7,7 +7,11 @@ class AbstractMigration {
   /** Transition siblings key. */
   SK: string;
 
-  id: string;
+  cycleID: string;
+
+  hasScroll: boolean;
+
+  numberOfTransformedELm: number;
 
   /** Defined during the transition. */
   marginBottom: number | null;
@@ -15,10 +19,12 @@ class AbstractMigration {
   /** Defined during the transition. */
   marginTop: number | null;
 
-  constructor(index: number, SK: string, id: string) {
+  constructor(index: number, SK: string, id: string, hasScroll: boolean) {
     this.index = index;
     this.SK = SK;
-    this.id = id;
+    this.cycleID = id;
+    this.hasScroll = hasScroll;
+    this.numberOfTransformedELm = 0;
 
     // TODO: Replace this with PointNum.
     this.marginBottom = null;
@@ -29,13 +35,13 @@ class AbstractMigration {
 }
 
 class Migration {
-  private migrations: Array<AbstractMigration>;
+  private migrations: AbstractMigration[];
 
   /** Only true when transitioning. */
   isTransitioning!: boolean;
 
-  constructor(index: number, SK: string, id: string) {
-    this.migrations = [new AbstractMigration(index, SK, id)];
+  constructor(index: number, SK: string, id: string, hasScroll: boolean) {
+    this.migrations = [new AbstractMigration(index, SK, id, hasScroll)];
     this.complete();
   }
 
@@ -49,7 +55,7 @@ class Migration {
     return this.migrations[this.migrations.length - 2];
   }
 
-  getALlMigrations(): Array<AbstractMigration> {
+  getALlMigrations(): AbstractMigration[] {
     return this.migrations;
   }
 
@@ -62,6 +68,7 @@ class Migration {
    */
   setIndex(index: number): void {
     this.latest().index = index;
+    this.latest().numberOfTransformedELm += 1;
   }
 
   preserveVerticalMargin(type: "top" | "bottom", m: number | null): void {
@@ -79,9 +86,10 @@ class Migration {
    * @param index
    * @param key
    * @param id
+   * @param hasScroll
    */
-  add(index: number, key: string, id: string): void {
-    this.migrations.push(new AbstractMigration(index, key, id));
+  add(index: number, key: string, id: string, hasScroll: boolean): void {
+    this.migrations.push(new AbstractMigration(index, key, id, hasScroll));
   }
 
   /**

@@ -63,6 +63,10 @@ const Core = ({
             containersTransition: {
               enable: enableContainersTransition,
             },
+            commit: {
+              enableAfterEndingDrag: false,
+              enableForScrollOnly: false,
+            },
           }
         );
 

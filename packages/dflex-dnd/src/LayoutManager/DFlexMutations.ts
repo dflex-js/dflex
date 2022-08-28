@@ -150,27 +150,40 @@ const observerConfig = Object.freeze({
   attributeOldValue: true,
 });
 
-function initMutationObserver(store: DFlexDnDStore, DOMTarget: HTMLElement) {
+function initMutationObserver(store: DFlexDnDStore, SK: string) {
   const terminatedDOMiDs: TerminatedDOMiDs = new Set();
   const changedIds: ChangedIds = new Set();
 
-  store.observer = new MutationObserver(
-    (mutations: MutationRecord[], observer: MutationObserver) => {
-      DOMmutationHandler(
-        store,
-        mutations,
-        observer,
-        changedIds,
-        terminatedDOMiDs
-      );
-    }
+  store.observer.set(
+    SK,
+    new MutationObserver(
+      (mutations: MutationRecord[], observer: MutationObserver) => {
+        DOMmutationHandler(
+          store,
+          mutations,
+          observer,
+          changedIds,
+          terminatedDOMiDs
+        );
+      }
+    )
   );
-
-  store.observer.observe(DOMTarget, observerConfig);
 }
 
-type DFlexLMutationPlugin = ReturnType<typeof initMutationObserver>;
+function addMutationObserver(
+  store: DFlexDnDStore,
+  SK: string,
+  DOMTarget: HTMLElement
+) {
+  if (!store.observer.has(SK)) {
+    initMutationObserver(store, SK);
+  }
+
+  store.observer.get(SK)!.observe(DOMTarget, observerConfig);
+}
+
+type DFlexLMutationPlugin = ReturnType<typeof addMutationObserver>;
 
 export type { DFlexLMutationPlugin };
 
-export { getIsProcessingMutations, initMutationObserver };
+export { getIsProcessingMutations, addMutationObserver };

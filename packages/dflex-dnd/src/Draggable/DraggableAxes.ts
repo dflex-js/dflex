@@ -125,7 +125,9 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
     this.migration = new Migration(
       VDOMOrder.self,
       SK,
-      store.tracker.newTravel()
+      store.tracker.newTravel(),
+      // TODO: refactor this to use if the dragged belongs to scroll container or not.
+      false
     );
 
     this.isViewportRestricted = true;
