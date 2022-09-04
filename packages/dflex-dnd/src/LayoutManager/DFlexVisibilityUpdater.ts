@@ -1,4 +1,4 @@
-import type { DFlexNode, DFlexScrollContainer } from "@dflex/core-instance";
+import type { DFlexElement, DFlexScrollContainer } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
@@ -6,7 +6,7 @@ let prevVisibility = false;
 
 function updateElmVisibility(
   DOM: HTMLElement,
-  elm: DFlexNode,
+  elm: DFlexElement,
   scroll: DFlexScrollContainer
 ): boolean {
   let isVisible = true;

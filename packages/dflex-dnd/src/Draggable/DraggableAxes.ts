@@ -3,14 +3,15 @@ import { DFlexBaseDraggable } from "@dflex/draggable";
 import {
   Threshold,
   PointNum,
-  Migration,
+  DFlexCycle,
   combineKeys,
   AxesPoint,
   BoxNum,
   BoxRectAbstract,
+  Tracker,
 } from "@dflex/utils";
 
-import type { DFlexNode } from "@dflex/core-instance";
+import type { DFlexElement } from "@dflex/core-instance";
 
 import type { ELmBranch } from "@dflex/dom-gen";
 import { initDFlexEvent, scheduler, store } from "../LayoutManager";
@@ -63,14 +64,18 @@ function initThresholds(
   });
 }
 
-class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
+class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
   gridPlaceholder: PointNum;
-
-  migration: Migration;
 
   threshold!: Threshold;
 
   isViewportRestricted: boolean;
+
+  /**
+   * Contains the collection of cycles-id that's done during the session.
+   * Session: Starts when dragging is triggered and end with it.
+   */
+  session: string[];
 
   /**
    * The inner distance between the mouse coordinates and the element position.
@@ -122,13 +127,27 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
 
     const siblings = store.getElmBranchByKey(SK);
 
-    this.migration = new Migration(
-      VDOMOrder.self,
-      SK,
-      store.tracker.newTravel(),
-      // TODO: refactor this to use if the dragged belongs to scroll container or not.
-      false
-    );
+    const cycleID = store.tracker.newTravel(Tracker.PREFIX_CYCLE);
+
+    this.session = [cycleID];
+
+    if (store.migration === null) {
+      store.migration = new DFlexCycle(
+        VDOMOrder.self,
+        SK,
+        cycleID,
+        // TODO: refactor this to use if the dragged belongs to scroll container or not.
+        false
+      );
+    } else {
+      store.migration.add(
+        VDOMOrder.self,
+        SK,
+        cycleID,
+        // TODO: refactor this to use if the dragged belongs to scroll container or not.
+        false
+      );
+    }
 
     this.isViewportRestricted = true;
 
@@ -282,8 +301,8 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
     if (!this.isLayoutStateUpdated) {
       this.isLayoutStateUpdated = true;
       scheduler(store, null, null, {
-        layoutState: "dragging",
         type: "layoutState",
+        status: "dragging",
       });
     }
 
@@ -376,17 +395,15 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexNode> {
     return this.threshold.isOutThreshold(key, top, right, bottom, left);
   }
 
-  private isLeavingFromBottom() {
-    const lastElm =
-      store.getElmBranchByKey(this.migration.latest().SK).length - 1;
-
-    return this.migration.latest().index === lastElm;
-  }
-
   isNotSettled() {
+    const { SK, index } = store.migration.latest();
+
+    const lastElm = store.getElmBranchByKey(SK).length - 1;
+
+    const isLeavingFromBottom = index === lastElm;
+
     return (
-      !this.isLeavingFromBottom() &&
-      (this.isOutThreshold() || this.isOutThreshold(this.migration.latest().SK))
+      !isLeavingFromBottom && (this.isOutThreshold() || this.isOutThreshold(SK))
     );
   }
 }

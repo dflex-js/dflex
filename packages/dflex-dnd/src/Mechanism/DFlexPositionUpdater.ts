@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { DFlexNode } from "@dflex/core-instance";
+import { DFlexElement } from "@dflex/core-instance";
 
 import { PointNum } from "@dflex/utils";
 import type { AxesPoint, Direction, Axis, AbstractBox } from "@dflex/utils";
@@ -33,7 +33,7 @@ function throwOnInfiniteTransformation(id: string) {
   }
 }
 
-function composeElmMeta(element: DFlexNode) {
+function composeElmMeta(element: DFlexElement) {
   return {
     id: element.id,
     index: element.VDOMOrder.self,
@@ -46,8 +46,8 @@ type InsertionELmMeta = {
   position: PointNum;
   isEmpty: boolean;
   isOrphan: boolean;
-  elm: DFlexNode | null;
-  prevElm: DFlexNode | null;
+  elm: DFlexElement | null;
+  prevElm: DFlexElement | null;
 };
 
 export const APPEND_EMPTY_ELM_ID = "";
@@ -79,8 +79,8 @@ export function getInsertionELmMeta(
 
   let isRestoredLastPosition = false;
 
-  let elm: null | DFlexNode = null;
-  let prevElm: null | DFlexNode = null;
+  let elm: null | DFlexElement = null;
+  let prevElm: null | DFlexElement = null;
 
   if (lastElmPosition) {
     // If empty then restore it.
@@ -207,7 +207,7 @@ class DFlexPositionUpdater {
   }
 
   private setDistanceBtwPositions(
-    element: DFlexNode,
+    element: DFlexElement,
     axis: Axis,
     elmDirection: Direction
   ) {
@@ -232,7 +232,7 @@ class DFlexPositionUpdater {
     }
   }
 
-  private updateDraggable(element: DFlexNode, elmDirection: Direction) {
+  private updateDraggable(element: DFlexElement, elmDirection: Direction) {
     const { rect, DOMGrid: grid } = element;
 
     this.draggable.occupiedPosition.setAxes(
@@ -250,7 +250,7 @@ class DFlexPositionUpdater {
   }
 
   private updateIndicators(
-    element: DFlexNode,
+    element: DFlexElement,
     axis: Axis,
     elmDirection: Direction
   ) {
@@ -293,10 +293,10 @@ class DFlexPositionUpdater {
 
   private addDraggedOffsetToElm(
     position: AxesPoint,
-    elm: DFlexNode,
+    elm: DFlexElement,
     axis: Axis
   ) {
-    const rectType = DFlexNode.getRectByAxis(axis);
+    const rectType = DFlexElement.getRectByAxis(axis);
 
     const { draggedElm } = this.draggable;
 
@@ -323,13 +323,14 @@ class DFlexPositionUpdater {
       SK
     );
 
-    const { draggedElm, migration, containersTransition } = this.draggable;
+    const { draggedElm, containersTransition } = this.draggable;
+    const { migration } = store;
 
     // Getting diff with `currentPosition` includes the element transition
     // as well.
     const composedTranslate = {
-      x: DFlexNode.getDistance(position, draggedElm, "x"),
-      y: DFlexNode.getDistance(position, draggedElm, "y"),
+      x: DFlexElement.getDistance(position, draggedElm, "x"),
+      y: DFlexElement.getDistance(position, draggedElm, "y"),
     };
 
     const composedGrid = new PointNum(1, 1);
@@ -359,7 +360,7 @@ class DFlexPositionUpdater {
             : typeof mb === "number"
             ? mb
             : containersTransition.margin
-          : DFlexNode.getDisplacement(position, prevElm!, axis);
+          : DFlexElement.getDisplacement(position, prevElm!, axis);
       }
     }
 
@@ -403,20 +404,21 @@ class DFlexPositionUpdater {
 
     this.addDraggedOffsetToElm(composedPosition, elm!, axis);
 
-    const { migration, containersTransition } = this.draggable;
+    const { containersTransition } = this.draggable;
+    const { migration } = store;
 
     const { marginBottom: mb, marginTop: mt } = migration.latest();
 
     // Give the priority to the destination first then check the origin.
     const marginBottom = isRestoredLastPosition
-      ? DFlexNode.getDisplacement(position, elm!, axis)
+      ? DFlexElement.getDisplacement(position, elm!, axis)
       : isOrphan
       ? typeof mt === "number"
         ? mt
         : typeof mb === "number"
         ? mb
         : containersTransition.margin
-      : DFlexNode.getDisplacement(position, prevElm!, axis); // orphan to orphan.
+      : DFlexElement.getDisplacement(position, prevElm!, axis); // orphan to orphan.
 
     composedPosition[axis] += Math.abs(marginBottom);
 

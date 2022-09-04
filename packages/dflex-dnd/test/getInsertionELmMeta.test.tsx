@@ -103,17 +103,17 @@ describe("getInsertionELmMeta", () => {
       const { elm, ...rest } = getInsertionELmMeta(0, SK);
 
       expect(rest).toMatchInlineSnapshot(`
-          Object {
-            "isEmpty": false,
-            "isOrphan": false,
-            "isRestoredLastPosition": false,
-            "position": PointNum {
-              "x": 0,
-              "y": 0,
-            },
-            "prevElm": null,
-          }
-        `);
+        {
+          "isEmpty": false,
+          "isOrphan": false,
+          "isRestoredLastPosition": false,
+          "position": PointNum {
+            "x": 0,
+            "y": 0,
+          },
+          "prevElm": null,
+        }
+      `);
     });
 
     it("Register three elements in the store", () => {
@@ -134,12 +134,12 @@ describe("getInsertionELmMeta", () => {
       const { elm, prevElm, position, ...rest } = getInsertionELmMeta(3, SK);
 
       expect(rest).toMatchInlineSnapshot(`
-                  Object {
-                    "isEmpty": false,
-                    "isOrphan": false,
-                    "isRestoredLastPosition": false,
-                  }
-              `);
+        {
+          "isEmpty": false,
+          "isOrphan": false,
+          "isRestoredLastPosition": false,
+        }
+      `);
 
       const pos = positions[elm4.id];
 
@@ -163,12 +163,12 @@ describe("getInsertionELmMeta", () => {
       const { elm, prevElm, position, ...rest } = getInsertionELmMeta(3, SK);
 
       expect(rest).toMatchInlineSnapshot(`
-                  Object {
-                    "isEmpty": false,
-                    "isOrphan": false,
-                    "isRestoredLastPosition": true,
-                  }
-              `);
+        {
+          "isEmpty": false,
+          "isOrphan": false,
+          "isRestoredLastPosition": true,
+        }
+      `);
 
       expect(position.getInstance()).toStrictEqual(preservePosition);
 
@@ -180,12 +180,12 @@ describe("getInsertionELmMeta", () => {
       const { elm, prevElm, position, ...rest } = getInsertionELmMeta(2, SK);
 
       expect(rest).toMatchInlineSnapshot(`
-                  Object {
-                    "isEmpty": false,
-                    "isOrphan": false,
-                    "isRestoredLastPosition": true,
-                  }
-              `);
+        {
+          "isEmpty": false,
+          "isOrphan": false,
+          "isRestoredLastPosition": true,
+        }
+      `);
 
       const pos = positions[elm3.id];
 
@@ -202,12 +202,12 @@ describe("getInsertionELmMeta", () => {
       const { elm, prevElm, position, ...rest } = getInsertionELmMeta(0, SK);
 
       expect(rest).toMatchInlineSnapshot(`
-                  Object {
-                    "isEmpty": false,
-                    "isOrphan": false,
-                    "isRestoredLastPosition": true,
-                  }
-              `);
+        {
+          "isEmpty": false,
+          "isOrphan": false,
+          "isRestoredLastPosition": true,
+        }
+      `);
 
       const pos = positions[elm1.id];
 
@@ -240,12 +240,12 @@ describe("getInsertionELmMeta", () => {
       const { elm, prevElm, position, ...rest } = getInsertionELmMeta(4, SK);
 
       expect(rest).toMatchInlineSnapshot(`
-                  Object {
-                    "isEmpty": false,
-                    "isOrphan": false,
-                    "isRestoredLastPosition": false,
-                  }
-              `);
+        {
+          "isEmpty": false,
+          "isOrphan": false,
+          "isRestoredLastPosition": false,
+        }
+      `);
 
       const pos = positions[elm4.id];
 
@@ -262,12 +262,12 @@ describe("getInsertionELmMeta", () => {
       const { elm, prevElm, position, ...rest } = getInsertionELmMeta(3, SK);
 
       expect(rest).toMatchInlineSnapshot(`
-                  Object {
-                    "isEmpty": false,
-                    "isOrphan": false,
-                    "isRestoredLastPosition": true,
-                  }
-              `);
+        {
+          "isEmpty": false,
+          "isOrphan": false,
+          "isRestoredLastPosition": true,
+        }
+      `);
 
       const pos = positions[elm4.id];
 
@@ -284,12 +284,12 @@ describe("getInsertionELmMeta", () => {
       const { elm, prevElm, position, ...rest } = getInsertionELmMeta(0, SK);
 
       expect(rest).toMatchInlineSnapshot(`
-                  Object {
-                    "isEmpty": false,
-                    "isOrphan": false,
-                    "isRestoredLastPosition": true,
-                  }
-              `);
+        {
+          "isEmpty": false,
+          "isOrphan": false,
+          "isRestoredLastPosition": true,
+        }
+      `);
 
       const pos = positions[elm1.id];
 

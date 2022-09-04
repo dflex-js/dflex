@@ -7,7 +7,8 @@ export type { ThresholdPercentages } from "./Threshold";
 
 export { default as Tracker } from "./Tracker";
 
-export { default as Migration } from "./Migration";
+export { DFlexCycle } from "./DFlexCycle";
+export type { AbstractDFlexCycle } from "./DFlexCycle";
 
 export type {
   Dimensions,

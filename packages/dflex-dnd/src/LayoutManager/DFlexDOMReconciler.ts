@@ -1,90 +1,52 @@
-import type { DFlexNode, DFlexParentContainer } from "@dflex/core-instance";
+import type { DFlexElement, DFlexParentContainer } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
-function prependElm(
+function switchElmDOMPosition(
   branchIDs: ELmBranch,
   branchDOM: HTMLElement,
   store: DFlexDnDStore,
-  elmIndex: number,
-  elmDOM: HTMLElement
-): void {
-  branchDOM.prepend(elmDOM);
-
-  for (let i = elmIndex + 1; i < branchIDs.length; i += 1) {
-    const dflexNextElm = store.registry.get(branchIDs[i])!;
-
-    if (dflexNextElm.hasTransformedFromOrigin()) {
-      dflexNextElm.DOMOrder.self += 1;
-    }
-  }
-}
-
-function switchElmUp(
-  branchIDs: ELmBranch,
-  branchDOM: HTMLElement,
-  store: DFlexDnDStore,
-  elmIndex: number,
+  dflexElm: DFlexElement,
   elmDOM: HTMLElement
 ) {
-  const [dflexNextElm, domNextElm] = store.getElmWithDOM(
-    branchIDs[elmIndex + 1]
-  )!;
+  const VDOMIndex = dflexElm.VDOMOrder.self;
+  const DOMIndex = dflexElm.DOMOrder.self;
 
-  branchDOM.insertBefore(elmDOM, domNextElm);
+  // Is it the last element?
+  if (VDOMIndex + 1 === branchIDs.length) {
+    branchDOM.appendChild(elmDOM);
+  } else {
+    const PevElmDOM = store.interactiveDOM.get(branchIDs[VDOMIndex + 1])!;
 
-  if (dflexNextElm.hasTransformedFromOrigin()) {
-    dflexNextElm.DOMOrder.self += 1;
+    branchDOM.insertBefore(elmDOM, PevElmDOM);
   }
-}
 
-function updateELmGrid(container: DFlexParentContainer, dflexElm: DFlexNode) {
-  container.registerNewElm(dflexElm.rect);
-  dflexElm.DOMGrid.clone(container.grid);
+  const shiftDirection = VDOMIndex > DOMIndex ? 1 : -1;
+
+  for (let i = VDOMIndex - 1; i >= DOMIndex; i -= 1) {
+    const dflexNextElm = store.registry.get(branchIDs[i])!;
+
+    dflexNextElm.DOMOrder.self += shiftDirection;
+  }
+
+  dflexElm.DOMOrder.self = VDOMIndex;
 }
 
 function commitElm(
   branchIDs: ELmBranch,
   branchDOM: HTMLElement,
   store: DFlexDnDStore,
-  container: DFlexParentContainer,
-  elmID: string,
-  elmIndex: number
-): boolean {
+  elmID: string
+): void {
   const [dflexElm, elmDOM] = store.getElmWithDOM(elmID);
 
-  const isBreak = false;
-
   if (dflexElm.hasTransformedFromOrigin()) {
-    if (elmIndex === 0) {
-      prependElm(branchIDs, branchDOM, store, elmIndex, elmDOM);
-    } else if (elmIndex !== dflexElm.DOMOrder.self) {
-      switchElmUp(branchIDs, branchDOM, store, elmIndex, elmDOM);
+    if (dflexElm.needReconciliation()) {
+      switchElmDOMPosition(branchIDs, branchDOM, store, dflexElm, elmDOM);
     }
 
     dflexElm.flushIndicators(elmDOM);
   }
-
-  updateELmGrid(container, dflexElm);
-
-  return isBreak;
-}
-
-function commitBranch(
-  branchIDs: ELmBranch,
-  branchDOM: HTMLElement,
-  store: DFlexDnDStore,
-  container: DFlexParentContainer
-): void {
-  const orderedDOMS = branchIDs.map((id) => store.interactiveDOM.get(id)!);
-
-  branchDOM.replaceChildren(...orderedDOMS);
-
-  orderedDOMS.forEach((elmDOM) => {
-    const dflexElm = store.registry.get(elmDOM.id)!;
-    dflexElm.flushIndicators(elmDOM);
-    updateELmGrid(container, dflexElm);
-  });
 }
 
 /**
@@ -93,38 +55,53 @@ function commitBranch(
  * @param branchDOM
  * @param store
  * @param container
- * @param isPartial
  * @returns
  */
 function DFlexDOMReconciler(
   branchIDs: ELmBranch,
   branchDOM: HTMLElement,
   store: DFlexDnDStore,
-  container: DFlexParentContainer,
-  isPartial: boolean
+  container: DFlexParentContainer
 ): void {
   container.resetIndicators(branchIDs.length);
 
-  if (isPartial) {
-    for (let i = 0; i < branchIDs.length; i += 1) {
-      const isBreak = commitElm(
-        branchIDs,
-        branchDOM,
-        store,
-        container,
-        branchIDs[i],
-        i
-      );
-
-      if (isBreak) {
-        break;
-      }
-    }
-
-    return;
+  for (let i = branchIDs.length - 1; i >= 0; i -= 1) {
+    commitElm(branchIDs, branchDOM, store, branchIDs[i]);
   }
 
-  commitBranch(branchIDs, branchDOM, store, container);
+  // TODO:
+  // This can be optimized, like targeting only the effected element. But I
+  // don't want to play with grid since it's not fully implemented.
+  for (let i = 0; i <= branchIDs.length - 1; i += 1) {
+    const dflexElm = store.registry.get(branchIDs[i])!;
+
+    store.setElmGridBridge(container, dflexElm);
+
+    if (__DEV__) {
+      if (
+        i !== dflexElm.DOMOrder.self ||
+        dflexElm.DOMOrder.self !== dflexElm.VDOMOrder.self
+      ) {
+        // eslint-disable-next-line no-console
+        console.error(
+          `Error in DOM order reconciliation.\n id: ${dflexElm.id}. Expected DOM order: ${dflexElm.DOMOrder.self} to match VDOM order: ${dflexElm.VDOMOrder.self}`
+        );
+      }
+
+      if (
+        !branchDOM.children[i].isSameNode(
+          store.interactiveDOM.get(branchIDs[i])!
+        )
+      ) {
+        // eslint-disable-next-line no-console
+        console.error(
+          `Error in DOM order reconciliation.\n. ${
+            branchDOM.children[i]
+          } doesn't match ${store.interactiveDOM.get(branchIDs[i])!}`
+        );
+      }
+    }
+  }
 }
 
 export default DFlexDOMReconciler;

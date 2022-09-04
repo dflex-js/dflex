@@ -1,4 +1,4 @@
-import { PointNum } from "@dflex/utils";
+import { AbstractDFlexCycle, PointNum } from "@dflex/utils";
 import type { AxesPoint } from "@dflex/utils";
 
 import { store } from "../LayoutManager";
@@ -83,7 +83,7 @@ class DraggableInteractive extends DraggableAxes {
    */
   setDraggedTempIndex(index: number) {
     if (!Number.isNaN(index)) {
-      this.migration.setIndex(index);
+      store.migration.setIndex(index);
     }
 
     const draggedDOM = store.interactiveDOM.get(this.draggedElm.id)!;
@@ -95,10 +95,14 @@ class DraggableInteractive extends DraggableAxes {
    * Handle all the instances related to dragged.
    *
    * @param isFallback
+   * @param  latestCycle
    * @returns
    */
-  setDraggedTransformProcess(isFallback: boolean) {
-    const { SK, index } = this.migration.latest();
+  setDraggedTransformProcess(
+    isFallback: boolean,
+    latestCycle: AbstractDFlexCycle
+  ) {
+    const { SK, index } = latestCycle;
     const { rect, translate, id, VDOMOrder, DOMGrid } = this.draggedElm;
     const siblings = store.getElmBranchByKey(SK);
 
@@ -153,7 +157,11 @@ class DraggableInteractive extends DraggableAxes {
    * @param isFallback
    * @param isMigratedInScroll
    */
-  cleanup(isFallback: boolean, isMigratedInScroll: boolean) {
+  cleanup(
+    isFallback: boolean,
+    isMigratedInScroll: boolean,
+    latestCycle: AbstractDFlexCycle
+  ) {
     const draggedDOM = store.interactiveDOM.get(this.draggedElm.id)!;
 
     if (isMigratedInScroll) {
@@ -177,11 +185,7 @@ class DraggableInteractive extends DraggableAxes {
     }
 
     this.appendDraggedToContainerDimensions(false);
-    this.setDraggedTransformProcess(isFallback);
-
-    if (isFallback) {
-      this.migration.dispose();
-    }
+    this.setDraggedTransformProcess(isFallback, latestCycle);
 
     this.threshold.destroy();
   }

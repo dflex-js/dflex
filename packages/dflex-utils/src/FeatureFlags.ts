@@ -10,4 +10,4 @@ export const enablePositionAssertion = false;
  */
 export const enableCommit = false;
 
-export const enableUndoSiblingsDebugger = true;
+export const enableUndoSiblingsDebugger = false;

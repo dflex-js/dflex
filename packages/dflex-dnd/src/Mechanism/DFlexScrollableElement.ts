@@ -32,7 +32,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
   constructor(draggable: DraggableInteractive) {
     super(draggable);
 
-    const { SK } = this.draggable.migration.latest();
+    const { SK } = store.migration.latest();
 
     this._scrollAnimatedFrame = null;
 
@@ -65,7 +65,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     const {
       scrollRect: { left, top },
       scrollContainerRect: { width, height },
-    } = store.scrolls.get(this.draggable.migration.latest().SK)!;
+    } = store.scrolls.get(SK)!;
 
     this._scrollThrottleMS = Math.round(
       width > height ? width / 8.5 : height / 8.5

@@ -1,5 +1,3 @@
-import type { SerializedDFlexCoreNode } from "@dflex/core-instance";
-
 /* eslint-disable no-unused-vars */
 
 type LayoutState = "pending" | "ready" | "dragging" | "dragEnd" | "dragCancel";
@@ -10,20 +8,26 @@ type ElmTransformationType = "transformed" | "reordered" | "visible" | "hidden";
 
 interface DFlexLayoutStateEvent {
   type: "layoutState";
-  layoutState: LayoutState;
+  status: LayoutState;
+  payload?: never;
 }
 
 interface DFlexElmMutationEvent {
   type: "mutation";
-  mutation: ElmMutationType;
-  target: HTMLElement;
-  ids: string[];
+  status: ElmMutationType;
+  payload: {
+    target: HTMLElement;
+    ids: string[];
+  };
 }
 
+// This feature is not implemented yet.
 interface DFlexElmTransformationEvent {
   type: "transformation";
-  transformation: ElmTransformationType;
-  element: SerializedDFlexCoreNode;
+  status: ElmTransformationType;
+  payload: {
+    id: string;
+  };
 }
 
 interface DFlexErrorEvent {

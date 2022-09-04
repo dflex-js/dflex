@@ -9,7 +9,7 @@ function transform(DOM: HTMLElement, x: number, y: number): void {
   DOM.style.transform = `translate3d(${x}px,${y}px, 0)`;
 }
 
-class DFlexBaseNode {
+class DFlexBaseElement {
   id: string;
 
   translate!: PointNum;
@@ -78,4 +78,4 @@ class DFlexBaseNode {
   }
 }
 
-export default DFlexBaseNode;
+export default DFlexBaseElement;

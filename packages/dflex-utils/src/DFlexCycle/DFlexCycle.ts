@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file */
 
-class AbstractMigration {
+class AbstractDFlexCycle {
   /** Last known index for draggable before transitioning. */
   index: number;
 
@@ -34,29 +34,74 @@ class AbstractMigration {
   }
 }
 
-class Migration {
-  private migrations: AbstractMigration[];
+class DFlexCycle {
+  private _migrations: AbstractDFlexCycle[];
+
+  containerKeys: Set<string>;
 
   /** Only true when transitioning. */
   isTransitioning!: boolean;
 
   constructor(index: number, SK: string, id: string, hasScroll: boolean) {
-    this.migrations = [new AbstractMigration(index, SK, id, hasScroll)];
+    this._migrations = [new AbstractDFlexCycle(index, SK, id, hasScroll)];
+    this.containerKeys = new Set([SK]);
     this.complete();
   }
 
   /** Get the latest migrations instance */
-  latest(): AbstractMigration {
-    return this.migrations[this.migrations.length - 1];
+  latest(): AbstractDFlexCycle {
+    return this._migrations[this._migrations.length - 1];
   }
 
   /** Get the previous migrations instance */
-  prev(): AbstractMigration {
-    return this.migrations[this.migrations.length - 2];
+  prev(): AbstractDFlexCycle {
+    return this._migrations[this._migrations.length - 2];
   }
 
-  getALlMigrations(): AbstractMigration[] {
-    return this.migrations;
+  getAll(): AbstractDFlexCycle[] {
+    return this._migrations;
+  }
+
+  /**
+   * Get all cycles filtered by ids.
+   *
+   * @param cycleIDs
+   * @returns
+   */
+  filter(cycleIDs: string[]): AbstractDFlexCycle[] {
+    return this._migrations.filter((_) =>
+      cycleIDs.find((i) => i === _.cycleID)
+    );
+  }
+
+  flush(cycleIDs: string[]): void {
+    const removedKeys = new Set<string>();
+
+    this._migrations = this._migrations.filter((_) => {
+      const shouldDelete = cycleIDs.find((id) => {
+        if (id === _.SK) {
+          removedKeys.add(_.SK);
+
+          return true;
+        }
+
+        return false;
+      });
+
+      if (shouldDelete === undefined) {
+        return true;
+      }
+
+      if (removedKeys.has(_.SK)) {
+        removedKeys.delete(_.SK);
+      }
+
+      return false;
+    });
+
+    removedKeys.forEach((ky) => {
+      this.containerKeys.delete(ky);
+    });
   }
 
   /**
@@ -75,7 +120,7 @@ class Migration {
     this.latest()[type === "bottom" ? "marginBottom" : "marginTop"] = m;
   }
 
-  clearMargins(): void {
+  clearMargin(): void {
     this.latest().marginBottom = null;
     this.latest().marginTop = null;
   }
@@ -84,12 +129,13 @@ class Migration {
    * Add new migration.
    *
    * @param index
-   * @param key
+   * @param SK
    * @param id
    * @param hasScroll
    */
-  add(index: number, key: string, id: string, hasScroll: boolean): void {
-    this.migrations.push(new AbstractMigration(index, key, id, hasScroll));
+  add(index: number, SK: string, id: string, hasScroll: boolean): void {
+    this._migrations.push(new AbstractDFlexCycle(index, SK, id, hasScroll));
+    this.containerKeys.add(SK);
   }
 
   /**
@@ -109,9 +155,11 @@ class Migration {
     this.preserveVerticalMargin("bottom", null);
   }
 
-  dispose(): void {
-    this.migrations = [];
+  clear(): void {
+    this._migrations = [];
+    this.containerKeys.clear();
   }
 }
 
-export default Migration;
+export type { AbstractDFlexCycle };
+export default DFlexCycle;

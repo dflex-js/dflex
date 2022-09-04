@@ -1,10 +1,10 @@
 /* eslint-disable no-dupe-class-members */
 /* eslint-disable no-unused-vars */
-import { DFlexBaseNode } from "@dflex/core-instance";
+import { DFlexBaseElement } from "@dflex/core-instance";
 import { PointNum, getSelection } from "@dflex/utils";
 import type { AxesPoint } from "@dflex/utils";
 
-class DFlexBaseDraggable<T extends DFlexBaseNode> {
+class DFlexBaseDraggable<T extends DFlexBaseElement> {
   draggedElm: T;
 
   draggedDOM: HTMLElement;
@@ -217,7 +217,7 @@ class DFlexBaseDraggable<T extends DFlexBaseNode> {
       y + this._outerOffset.y
     );
 
-    DFlexBaseNode.transform(
+    DFlexBaseElement.transform(
       this.draggedDOM,
       this.translatePlaceholder.x,
       this.translatePlaceholder.y

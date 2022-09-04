@@ -91,7 +91,7 @@ describe("extractOpts", () => {
     expect(opts.restrictions.self.allowLeavingFromTop).toEqual(false);
 
     expect(opts.containersTransition).toMatchInlineSnapshot(`
-      Object {
+      {
         "enable": false,
         "margin": 10,
       }

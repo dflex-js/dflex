@@ -8,9 +8,9 @@ import {
 } from "@dflex/utils";
 import type { Direction, Axes, AxesPoint } from "@dflex/utils";
 
-import DFlexBaseNode from "./DFlexBaseNode";
+import DFlexBaseElement from "./DFlexBaseElement";
 
-export type SerializedDFlexCoreNode = {
+export type SerializedDFlexElement = {
   type: string;
   version: 3;
   id: string;
@@ -47,7 +47,7 @@ export interface DOMGenOrder {
   parent: number;
 }
 
-export interface DFlexNodeInput {
+export interface DFlexElementInput {
   id: string;
   order: DOMGenOrder;
   keys: Keys;
@@ -133,7 +133,7 @@ function getElementStyle(DOM: HTMLElement): Dimensions {
   return { width, height };
 }
 
-class DFlexCoreNode extends DFlexBaseNode {
+class DFlexCoreElement extends DFlexBaseElement {
   private _initialPosition: PointNum;
 
   rect: BoxRect;
@@ -164,13 +164,13 @@ class DFlexCoreNode extends DFlexBaseNode {
     return "core:element";
   }
 
-  static transform = DFlexBaseNode.transform;
+  static transform = DFlexBaseElement.transform;
 
   static getElementStyle = getElementStyle;
 
   static setRelativePosition = setRelativePosition;
 
-  constructor(eleWithPointer: DFlexNodeInput) {
+  constructor(eleWithPointer: DFlexElementInput) {
     const { order, keys, depth, readonly, id } = eleWithPointer;
 
     super(id);
@@ -229,7 +229,7 @@ class DFlexCoreNode extends DFlexBaseNode {
       return this._computedDimensions;
     }
 
-    const { width, height } = DFlexCoreNode.getElementStyle(DOM);
+    const { width, height } = DFlexCoreElement.getElementStyle(DOM);
 
     this._computedDimensions = new PointNum(width, height);
 
@@ -264,7 +264,7 @@ class DFlexCoreNode extends DFlexBaseNode {
     }
 
     this.animatedFrame = requestAnimationFrame(() => {
-      DFlexCoreNode.transform(DOM, this.translate!.x, this.translate!.y);
+      DFlexCoreElement.transform(DOM, this.translate!.x, this.translate!.y);
 
       if (this.hasPendingTransform) {
         this.hasPendingTransform = false;
@@ -440,16 +440,19 @@ class DFlexCoreNode extends DFlexBaseNode {
     return this._initialPosition.isNotEqual(this.rect.left, this.rect.top);
   }
 
+  needReconciliation(): boolean {
+    return this.VDOMOrder.self !== this.DOMOrder.self;
+  }
+
   /**
    * Roll back element position.
    *
-   * @param operationID
+   * @param cycleID
    */
-  rollBack(DOM: HTMLElement, operationID: string): void {
+  rollBack(DOM: HTMLElement, cycleID: string): void {
     if (
       !this.hasTransformed() ||
-      this._translateHistory![this._translateHistory!.length - 1].ID !==
-        operationID
+      this._translateHistory![this._translateHistory!.length - 1].ID !== cycleID
     ) {
       return;
     }
@@ -480,7 +483,7 @@ class DFlexCoreNode extends DFlexBaseNode {
 
     this._updateOrderIndexing(DOM, increment);
 
-    this.rollBack(DOM, operationID);
+    this.rollBack(DOM, cycleID);
   }
 
   flushIndicators(DOM: HTMLElement): void {
@@ -489,9 +492,6 @@ class DFlexCoreNode extends DFlexBaseNode {
     this.translate.setAxes(0, 0);
 
     this._initialPosition.setAxes(this.rect.left, this.rect.top);
-
-    // This method also used for resetting.
-    this.DOMGrid.setAxes(0, 0);
 
     this.DOMOrder.self = this.VDOMOrder.self;
 
@@ -504,9 +504,9 @@ class DFlexCoreNode extends DFlexBaseNode {
     }
   }
 
-  getSerializedInstance(): SerializedDFlexCoreNode {
+  getSerializedInstance(): SerializedDFlexElement {
     return {
-      type: DFlexCoreNode.getType(),
+      type: DFlexCoreElement.getType(),
       version: 3,
       id: this.id,
       grid: this.DOMGrid,
@@ -521,4 +521,4 @@ class DFlexCoreNode extends DFlexBaseNode {
   }
 }
 
-export default DFlexCoreNode;
+export default DFlexCoreElement;

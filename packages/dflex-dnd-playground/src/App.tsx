@@ -18,23 +18,50 @@ import {
 } from "./components";
 
 function App() {
+  const commitWhenKyPressed = (e: KeyboardEvent) => {
+    if (e.key === "c") {
+      store.commit();
+    }
+  };
+
   React.useEffect(() => {
-    const unsubscribeLayout = store.listeners.subscribe((e) => {
-      console.info("new layout state", e);
-    }, "layoutState");
+    // For testing purpose only.
+    document.addEventListener("keyup", commitWhenKyPressed);
+
+    console.info("Press c to commit changed to DOM.");
 
     return () => {
-      unsubscribeLayout();
+      document.removeEventListener("keyup", commitWhenKyPressed);
     };
   }, []);
 
   React.useEffect(() => {
-    const unsubscribeMutation = store.listeners.subscribe((e) => {
+    const unsubscribe = store.listeners.subscribe((e) => {
+      console.info("new layout state", e);
+    }, "layoutState");
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  React.useEffect(() => {
+    const unsubscribe = store.listeners.subscribe((e) => {
       console.info("new mutation state", e);
     }, "mutation");
 
     return () => {
-      unsubscribeMutation();
+      unsubscribe();
+    };
+  }, []);
+
+  React.useEffect(() => {
+    const unsubscribe = store.listeners.subscribe((e) => {
+      console.info("new DFlex error", e);
+    }, "error");
+
+    return () => {
+      unsubscribe();
     };
   }, []);
 

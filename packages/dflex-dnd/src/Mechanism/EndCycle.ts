@@ -1,22 +1,24 @@
 /* eslint-disable no-param-reassign */
-import { featureFlags } from "@dflex/utils";
+import { AbstractDFlexCycle, featureFlags } from "@dflex/utils";
 import { scheduler, store } from "../LayoutManager";
 import DFlexMechanismController, {
   isIDEligible,
 } from "./DFlexMechanismController";
 
 class EndCycle extends DFlexMechanismController {
-  private _undoSiblingsPositions(siblings: string[], cycleID: string) {
+  private _undoSiblingsPositions(
+    siblings: string[],
+    cycle: AbstractDFlexCycle
+  ) {
     const {
       threshold,
-      migration,
       draggedElm: {
         id: draggedID,
         VDOMOrder: { self: from },
       },
     } = this.draggable;
 
-    const { index: tempIndex } = migration.latest();
+    const { index: tempIndex, cycleID } = cycle;
 
     const isElmLiftedUp =
       this.isParentLocked || threshold.isOut[draggedID].bottom;
@@ -61,82 +63,84 @@ class EndCycle extends DFlexMechanismController {
   }
 
   endDragging() {
-    const { migration, enableCommit } = this.draggable;
+    const { enableCommit, session } = this.draggable;
+    const { migration } = store;
+    const latestCycle = migration.latest();
 
-    const {
-      SK: activeSK,
-      cycleID,
-      hasScroll,
-      numberOfTransformedELm,
-    } = migration.latest();
-
-    const activeSiblings = store.getElmBranchByKey(activeSK);
+    const sessionCycles = migration.filter(session);
 
     let isFallback = false;
 
     if (this.isScrolling()) {
       isFallback = true;
-
-      this.cancelAndThrottleScrolling(store.scrolls.get(activeSK)!);
-
-      this._undoSiblingsPositions(activeSiblings, cycleID);
+      this.cancelAndThrottleScrolling(store.scrolls.get(latestCycle.SK)!);
     } else {
-      const all = migration.getALlMigrations();
+      isFallback = this.draggable.isNotSettled();
+    }
 
-      isFallback =
-        this.draggable.isNotSettled() ||
-        !(all.length > 1 || numberOfTransformedELm > 0);
+    if (isFallback) {
+      scheduler(
+        store,
+        () => {
+          sessionCycles.forEach((_) => {
+            const siblings = store.getElmBranchByKey(_.SK);
+            this._undoSiblingsPositions(siblings, _);
+          });
+        },
+        {
+          onUpdate: () => {
+            this.draggable.cleanup(true, false, latestCycle);
+            migration.flush(session);
+            store.isTransforming = false;
+          },
+        },
+        {
+          type: "layoutState",
+          status: "dragCancel",
+        }
+      );
 
-      if (isFallback) {
-        all.forEach((_) => {
-          const siblings = store.getElmBranchByKey(_.SK);
-          this._undoSiblingsPositions(siblings, _.cycleID);
-        });
-      }
+      return;
     }
 
     // If length is zero, means it's original and no need to migrate.
     const isMigratedInScroll =
-      !isFallback && hasScroll && migration.getALlMigrations().length > 1;
+      latestCycle.hasScroll && sessionCycles.length > 1;
+
+    const { enableAfterEndingDrag, enableForScrollOnly } = enableCommit;
+
+    const hasToReconcile =
+      (isMigratedInScroll && enableForScrollOnly) || enableAfterEndingDrag;
 
     scheduler(
       store,
-      () => this.draggable.cleanup(isFallback, isMigratedInScroll),
+      () => this.draggable.cleanup(isFallback, isMigratedInScroll, latestCycle),
       null,
       {
-        layoutState: isFallback ? "dragCancel" : "dragEnd",
         type: "layoutState",
+        status: "dragEnd",
       }
     );
 
-    // Nothing to reconcile.
-    if (isFallback) {
-      if (__DEV__) {
-        if (featureFlags.enableCommit) {
-          // eslint-disable-next-line no-console
-          console.warn("No changes detected to reconcile.");
-        }
-      }
-      return;
-    }
-
     if (__DEV__) {
       if (featureFlags.enableCommit) {
-        migration.getALlMigrations().forEach((_) => {
-          store.reconcileBranch(_.SK);
-        });
+        store.commit();
 
         return;
       }
     }
 
-    const { enableAfterEndingDrag, enableForScrollOnly } = enableCommit;
-
-    if ((isMigratedInScroll && enableForScrollOnly) || enableAfterEndingDrag) {
-      migration.getALlMigrations().forEach((_) => {
-        store.reconcileBranch(_.SK);
-      });
+    if (hasToReconcile) {
+      store.commit();
     }
+
+    // TODO.
+    // Of course this is not ideal. Because all the mutation and reconciliation
+    // will happen asynchronously so this mean `isTransforming` will be false
+    // while it still actually transforming.
+    // Not a big deal since we don't depend on it directly when to check if it's
+    // available or not. But it should be fixed though.
+    store.isTransforming = false;
   }
 }
 

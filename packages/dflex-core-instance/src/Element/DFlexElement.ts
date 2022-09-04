@@ -1,12 +1,16 @@
 import type { Axis, AxesPoint } from "@dflex/utils";
-import DFlexCoreNode from "./DFlexCoreNode";
+import DFlexCoreNode from "./DFlexCoreElement";
 
-class DFlexNode extends DFlexCoreNode {
+class DFlexElement extends DFlexCoreNode {
   static getRectByAxis(axis: Axis) {
     return axis === "x" ? "width" : "height";
   }
 
-  static getDistance(currentPosition: AxesPoint, elm: DFlexNode, axis: Axis) {
+  static getDistance(
+    currentPosition: AxesPoint,
+    elm: DFlexElement,
+    axis: Axis
+  ) {
     let diff = currentPosition[axis] - elm.rect[axis === "x" ? "left" : "top"];
 
     diff += elm.translate![axis];
@@ -16,7 +20,7 @@ class DFlexNode extends DFlexCoreNode {
 
   static getDisplacement(
     currentPosition: AxesPoint,
-    elm: DFlexNode,
+    elm: DFlexElement,
     axis: Axis
   ) {
     const diff = axis === "x" ? elm.rect.right : elm.rect.bottom;
@@ -25,18 +29,18 @@ class DFlexNode extends DFlexCoreNode {
   }
 
   getRectDiff(elm: this, axis: Axis) {
-    const rectType = DFlexNode.getRectByAxis(axis);
+    const rectType = DFlexElement.getRectByAxis(axis);
 
     return this.rect[rectType] - elm.rect[rectType];
   }
 
   getDisplacement(elm: this, axis: Axis): number {
-    return DFlexNode.getDisplacement(this.rect.getPosition(), elm, axis);
+    return DFlexElement.getDisplacement(this.rect.getPosition(), elm, axis);
   }
 
   getDistance(elm: this, axis: Axis): number {
-    return DFlexNode.getDistance(this.rect.getPosition(), elm, axis);
+    return DFlexElement.getDistance(this.rect.getPosition(), elm, axis);
   }
 }
 
-export default DFlexNode;
+export default DFlexElement;

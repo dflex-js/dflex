@@ -1,10 +1,10 @@
-import type { DFlexBaseNode } from "@dflex/core-instance";
+import type { DFlexBaseElement } from "@dflex/core-instance";
 import type { AxesPoint } from "@dflex/utils";
 
 import store from "./DFlexDraggableStore";
 import DFlexBaseDraggable from "./DFlexBaseDraggable";
 
-class DFlexDraggable extends DFlexBaseDraggable<DFlexBaseNode> {
+class DFlexDraggable extends DFlexBaseDraggable<DFlexBaseElement> {
   /**
    * Creates an instance of Draggable.
    * Works Only on dragged element level.

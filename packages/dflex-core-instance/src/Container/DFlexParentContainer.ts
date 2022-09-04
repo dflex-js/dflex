@@ -36,6 +36,10 @@ class DFlexParentContainer {
     this.originLength = originLength;
     this._boundariesByRow = {};
     this._gridSiblingsHasNewRow = false;
+    // @ts-expect-error - Just resetting the boundaries.
+    this.boundaries = null;
+    // @ts-expect-error
+    this.lastElmPosition = null;
   }
 
   private _addNewElmToGridIndicator(rect: AbstractBox): void {
@@ -121,12 +125,14 @@ class DFlexParentContainer {
    * @param originLength
    */
   resetIndicators(originLength: number): void {
-    // @ts-expect-error - Just resetting the boundaries.
-    this.boundaries = null;
     this.grid.setAxes(1, 1);
+    this.originLength = originLength;
     this._boundariesByRow = {};
     this._gridSiblingsHasNewRow = false;
-    this.originLength = originLength;
+    // @ts-expect-error - Just resetting the boundaries.
+    this.boundaries = null;
+    // @ts-expect-error
+    this.lastElmPosition = null;
   }
 
   preservePosition(pos: AxesPoint): void {

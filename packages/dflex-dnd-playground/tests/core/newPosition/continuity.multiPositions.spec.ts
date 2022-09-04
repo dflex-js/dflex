@@ -10,8 +10,6 @@ test.describe.serial("Drag and release multiples positions", async () => {
   let page: Page;
   let context: BrowserContext;
 
-  //   const draggedID = "#id-9";
-
   let draggedRect: DraggedRect;
 
   let elm10: Locator;

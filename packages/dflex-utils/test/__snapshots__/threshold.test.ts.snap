@@ -2,7 +2,7 @@
 
 exports[`DFlexThreshold Dragged Threshold Container threshold Add threshold for container, it's inner by default 1`] = `
 DFlexThreshold {
-  "_percentages": Object {
+  "_percentages": {
     "horizontal": 60,
     "vertical": 60,
   },
@@ -10,7 +10,7 @@ DFlexThreshold {
     "x": 102,
     "y": 30,
   },
-  "isOut": Object {
+  "isOut": {
     "0": BoxBool {
       "bottom": false,
       "left": false,
@@ -36,26 +36,26 @@ DFlexThreshold {
       "top": false,
     },
   },
-  "thresholds": Object {
-    "0": Object {
+  "thresholds": {
+    "0": {
       "bottom": 572,
       "left": -182,
       "right": 450,
       "top": 54,
     },
-    "0-container-sk": Object {
+    "0-container-sk": {
       "bottom": 542,
       "left": -80,
       "right": 348,
       "top": 84,
     },
-    "container-sk": Object {
+    "container-sk": {
       "bottom": 194,
       "left": -80,
       "right": 294,
       "top": 84,
     },
-    "dflex-dragged": Object {
+    "dflex-dragged": {
       "bottom": 194,
       "left": 348,
       "right": 722,
@@ -67,7 +67,7 @@ DFlexThreshold {
 
 exports[`DFlexThreshold Scroll Threshold Scroll inner threshold Add main inner threshold for scroll 1`] = `
 DFlexThreshold {
-  "_percentages": Object {
+  "_percentages": {
     "horizontal": 15,
     "vertical": 15,
   },
@@ -75,7 +75,7 @@ DFlexThreshold {
     "x": 133,
     "y": 99,
   },
-  "isOut": Object {
+  "isOut": {
     "scroll-id-inner": BoxBool {
       "bottom": false,
       "left": false,
@@ -83,8 +83,8 @@ DFlexThreshold {
       "top": false,
     },
   },
-  "thresholds": Object {
-    "scroll-id-inner": Object {
+  "thresholds": {
+    "scroll-id-inner": {
       "bottom": 558,
       "left": 133,
       "right": 752,
@@ -96,7 +96,7 @@ DFlexThreshold {
 
 exports[`DFlexThreshold Scroll Threshold Scroll outer threshold Add main outer threshold for scroll 1`] = `
 DFlexThreshold {
-  "_percentages": Object {
+  "_percentages": {
     "horizontal": 15,
     "vertical": 15,
   },
@@ -104,7 +104,7 @@ DFlexThreshold {
     "x": 133,
     "y": 99,
   },
-  "isOut": Object {
+  "isOut": {
     "scroll-id-inner": BoxBool {
       "bottom": false,
       "left": false,
@@ -118,14 +118,14 @@ DFlexThreshold {
       "top": false,
     },
   },
-  "thresholds": Object {
-    "scroll-id-inner": Object {
+  "thresholds": {
+    "scroll-id-inner": {
       "bottom": 558,
       "left": 133,
       "right": 752,
       "top": 99,
     },
-    "scroll-id-outer": Object {
+    "scroll-id-outer": {
       "bottom": 756,
       "left": -133,
       "right": 1018,

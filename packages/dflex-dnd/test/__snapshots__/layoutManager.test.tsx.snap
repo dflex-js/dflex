@@ -3,30 +3,30 @@
 exports[`DFlex DnD DFlex DnD Store registration Element is initiated 1`] = `
 DFlexDnDStore {
   "DOMGen": Generator {
-    "_branches": Object {
-      "0-0": Array [
+    "_branches": {
+      "0-0": [
         "id-1",
       ],
-      "0-1": Array [
+      "0-1": [
         "id-2",
         "id-3",
         "id-4",
       ],
-      "1-0": Array [
-        "dflex-id-1",
-        "dflex-id-2",
+      "1-0": [
+        "dflex_id_0",
+        "dflex_id_1",
       ],
     },
-    "_branchesByDepth": Object {
-      "0": Array [
+    "_branchesByDepth": {
+      "0": [
         "0-0",
         "0-1",
       ],
-      "1": Array [
+      "1": [
         "1-0",
       ],
     },
-    "_indicator": Object {
+    "_indicator": {
       "0": 2,
       "1": 2,
       "2": 0,
@@ -42,7 +42,7 @@ DFlexDnDStore {
   "_lastDOMParent": <div
     data-dflex-key="0-1"
     data-index="1"
-    id="dflex-id-2"
+    id="dflex_id_1"
   >
     <div
       data-index="0"
@@ -57,11 +57,11 @@ DFlexDnDStore {
       id="id-4"
     />
   </div>,
-  "_queue": Array [],
+  "_queue": [],
   "containers": Map {
     "0-0" => DFlexParentContainer {
-      "_boundariesByRow": Object {
-        "1": Object {
+      "_boundariesByRow": {
+        "1": {
           "bottom": 0,
           "left": 0,
           "right": 0,
@@ -69,7 +69,7 @@ DFlexDnDStore {
         },
       },
       "_gridSiblingsHasNewRow": false,
-      "boundaries": Object {
+      "boundaries": {
         "bottom": 0,
         "left": 0,
         "right": 0,
@@ -79,12 +79,13 @@ DFlexDnDStore {
         "x": 1,
         "y": 1,
       },
-      "id": "dflex-id-1",
+      "id": "dflex_id_0",
+      "lastElmPosition": null,
       "originLength": 1,
     },
     "0-1" => DFlexParentContainer {
-      "_boundariesByRow": Object {
-        "1": Object {
+      "_boundariesByRow": {
+        "1": {
           "bottom": 0,
           "left": 0,
           "right": 0,
@@ -92,7 +93,7 @@ DFlexDnDStore {
         },
       },
       "_gridSiblingsHasNewRow": false,
-      "boundaries": Object {
+      "boundaries": {
         "bottom": 0,
         "left": 0,
         "right": 0,
@@ -102,16 +103,17 @@ DFlexDnDStore {
         "x": 1,
         "y": 1,
       },
-      "id": "dflex-id-2",
+      "id": "dflex_id_1",
+      "lastElmPosition": null,
       "originLength": 3,
     },
   },
-  "deferred": Array [],
+  "deferred": [],
   "interactiveDOM": Map {
-    "dflex-id-1" => <div
+    "dflex_id_0" => <div
       data-dflex-key="0-0"
       data-index="0"
-      id="dflex-id-1"
+      id="dflex_id_0"
     >
       <div
         data-index="0"
@@ -122,10 +124,10 @@ DFlexDnDStore {
       data-index="0"
       id="id-1"
     />,
-    "dflex-id-2" => <div
+    "dflex_id_1" => <div
       data-dflex-key="0-1"
       data-index="1"
-      id="dflex-id-2"
+      id="dflex_id_1"
     >
       <div
         data-index="0"
@@ -155,27 +157,28 @@ DFlexDnDStore {
   },
   "isTransforming": false,
   "isUpdating": false,
-  "listeners": Object {
+  "listeners": {
     "clear": [Function],
     "notify": [Function],
     "subscribe": [Function],
   },
+  "migration": null,
   "observer": Map {
     "0-0" => MutationObserver {},
     "0-1" => MutationObserver {},
   },
   "queueTimeoutId": undefined,
   "registry": Map {
-    "id-1" => DFlexNode {
+    "id-1" => DFlexElement {
       "DOMGrid": PointNum {
         "x": 1,
         "y": 1,
       },
-      "DOMOrder": Object {
+      "DOMOrder": {
         "parent": 0,
         "self": 0,
       },
-      "VDOMOrder": Object {
+      "VDOMOrder": {
         "parent": 0,
         "self": 0,
       },
@@ -185,13 +188,13 @@ DFlexDnDStore {
         "x": 0,
         "y": 0,
       },
-      "animatedFrame": 1000000000006,
+      "animatedFrame": 1000000000002,
       "depth": 0,
       "hasPendingTransform": false,
       "id": "id-1",
       "isPaused": false,
       "isVisible": true,
-      "keys": Object {
+      "keys": {
         "CHK": null,
         "PK": "1-0",
         "SK": "0-0",
@@ -210,16 +213,16 @@ DFlexDnDStore {
         "y": 0,
       },
     },
-    "dflex-id-1" => DFlexNode {
+    "dflex_id_0" => DFlexElement {
       "DOMGrid": PointNum {
         "x": 0,
         "y": 0,
       },
-      "DOMOrder": Object {
+      "DOMOrder": {
         "parent": 0,
         "self": 0,
       },
-      "VDOMOrder": Object {
+      "VDOMOrder": {
         "parent": 0,
         "self": 0,
       },
@@ -231,10 +234,10 @@ DFlexDnDStore {
       "animatedFrame": null,
       "depth": 1,
       "hasPendingTransform": false,
-      "id": "dflex-id-1",
+      "id": "dflex_id_0",
       "isPaused": false,
       "isVisible": true,
-      "keys": Object {
+      "keys": {
         "CHK": "0-0",
         "PK": "2-0",
         "SK": "1-0",
@@ -249,16 +252,16 @@ DFlexDnDStore {
         "width": 0,
       },
     },
-    "id-2" => DFlexNode {
+    "id-2" => DFlexElement {
       "DOMGrid": PointNum {
         "x": 1,
         "y": 1,
       },
-      "DOMOrder": Object {
+      "DOMOrder": {
         "parent": 1,
         "self": 0,
       },
-      "VDOMOrder": Object {
+      "VDOMOrder": {
         "parent": 1,
         "self": 0,
       },
@@ -274,7 +277,7 @@ DFlexDnDStore {
       "id": "id-2",
       "isPaused": false,
       "isVisible": true,
-      "keys": Object {
+      "keys": {
         "CHK": null,
         "PK": "1-0",
         "SK": "0-1",
@@ -293,16 +296,16 @@ DFlexDnDStore {
         "y": 0,
       },
     },
-    "id-3" => DFlexNode {
+    "id-3" => DFlexElement {
       "DOMGrid": PointNum {
         "x": 1,
         "y": 1,
       },
-      "DOMOrder": Object {
+      "DOMOrder": {
         "parent": 1,
         "self": 1,
       },
-      "VDOMOrder": Object {
+      "VDOMOrder": {
         "parent": 1,
         "self": 1,
       },
@@ -318,7 +321,7 @@ DFlexDnDStore {
       "id": "id-3",
       "isPaused": false,
       "isVisible": true,
-      "keys": Object {
+      "keys": {
         "CHK": null,
         "PK": "1-0",
         "SK": "0-1",
@@ -337,16 +340,16 @@ DFlexDnDStore {
         "y": 0,
       },
     },
-    "id-4" => DFlexNode {
+    "id-4" => DFlexElement {
       "DOMGrid": PointNum {
         "x": 1,
         "y": 1,
       },
-      "DOMOrder": Object {
+      "DOMOrder": {
         "parent": 1,
         "self": 2,
       },
-      "VDOMOrder": Object {
+      "VDOMOrder": {
         "parent": 1,
         "self": 2,
       },
@@ -362,7 +365,7 @@ DFlexDnDStore {
       "id": "id-4",
       "isPaused": false,
       "isVisible": true,
-      "keys": Object {
+      "keys": {
         "CHK": null,
         "PK": "1-0",
         "SK": "0-1",
@@ -381,16 +384,16 @@ DFlexDnDStore {
         "y": 0,
       },
     },
-    "dflex-id-2" => DFlexNode {
+    "dflex_id_1" => DFlexElement {
       "DOMGrid": PointNum {
         "x": 0,
         "y": 0,
       },
-      "DOMOrder": Object {
+      "DOMOrder": {
         "parent": 0,
         "self": 1,
       },
-      "VDOMOrder": Object {
+      "VDOMOrder": {
         "parent": 0,
         "self": 1,
       },
@@ -402,10 +405,10 @@ DFlexDnDStore {
       "animatedFrame": null,
       "depth": 1,
       "hasPendingTransform": false,
-      "id": "dflex-id-2",
+      "id": "dflex_id_1",
       "isPaused": false,
       "isVisible": true,
-      "keys": Object {
+      "keys": {
         "CHK": "0-1",
         "PK": "2-0",
         "SK": "1-0",
@@ -453,7 +456,7 @@ DFlexDnDStore {
               <div
                 data-dflex-key="0-0"
                 data-index="0"
-                id="dflex-id-1"
+                id="dflex_id_0"
               >
                 <div
                   data-index="0"
@@ -463,7 +466,7 @@ DFlexDnDStore {
               <div
                 data-dflex-key="0-1"
                 data-index="1"
-                id="dflex-id-2"
+                id="dflex_id_1"
               >
                 <div
                   data-index="0"
@@ -530,7 +533,7 @@ DFlexDnDStore {
               <div
                 data-dflex-key="0-0"
                 data-index="0"
-                id="dflex-id-1"
+                id="dflex_id_0"
               >
                 <div
                   data-index="0"
@@ -540,7 +543,7 @@ DFlexDnDStore {
               <div
                 data-dflex-key="0-1"
                 data-index="1"
-                id="dflex-id-2"
+                id="dflex_id_1"
               >
                 <div
                   data-index="0"
@@ -578,15 +581,16 @@ DFlexDnDStore {
     },
   },
   "tracker": Tracker {
-    "travelID": 2,
+    "_travelID": {
+      "dflex_id_": 1,
+    },
   },
-  "unifiedContainerDimensions": Object {
-    "0": Object {
+  "unifiedContainerDimensions": {
+    "0": {
       "height": 0,
       "width": 0,
     },
   },
-  "update": [Function],
-  "updatesQueue": Array [],
+  "updatesQueue": [],
 }
 `;

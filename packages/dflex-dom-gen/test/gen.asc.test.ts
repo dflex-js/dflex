@@ -92,7 +92,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
 
     it("Preserve the branch key grouped with its depth", () => {
       expect(domGen.getBranchByDepth(0)).toMatchInlineSnapshot(`
-        Array [
+        [
           "0-0",
         ]
       `);

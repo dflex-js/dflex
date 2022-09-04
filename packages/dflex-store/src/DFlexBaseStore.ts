@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import Generator, { ELmBranch } from "@dflex/dom-gen";
 
-import { DFlexNode, DFlexNodeInput } from "@dflex/core-instance";
+import { DFlexElement, DFlexElementInput } from "@dflex/core-instance";
 import { getParentElm, Tracker } from "@dflex/utils";
 
 // https://github.com/microsoft/TypeScript/issues/28374#issuecomment-536521051
@@ -28,7 +28,7 @@ export type RegisterInputOpts = {
 
 export type RegisterInputBase = DeepNonNullable<RegisterInputOpts>;
 
-type GetElmWithDOMOutput = [DFlexNode, HTMLElement];
+type GetElmWithDOMOutput = [DFlexElement, HTMLElement];
 
 type BranchComposedCallBackFunction = (
   // eslint-disable-next-line no-unused-vars
@@ -64,7 +64,7 @@ function getElmDOMOrThrow(id: string): HTMLElement | null {
 }
 
 class DFlexBaseStore {
-  registry: Map<string, DFlexNode>;
+  registry: Map<string, DFlexElement>;
 
   interactiveDOM: Map<string, HTMLElement>;
 
@@ -77,8 +77,6 @@ class DFlexBaseStore {
   private _queue: (() => void)[];
 
   private queueTimeoutId?: ReturnType<typeof setTimeout>;
-
-  private static _PREFIX_ID = "dflex-id";
 
   constructor() {
     this._lastDOMParent = null;
@@ -135,7 +133,7 @@ class DFlexBaseStore {
 
     const { order, keys } = this.DOMGen.register(id, depth);
 
-    const coreElement: DFlexNodeInput = {
+    const coreElement: DFlexElementInput = {
       id,
       order,
       keys,
@@ -143,14 +141,14 @@ class DFlexBaseStore {
       readonly,
     };
 
-    const dflexElm = new DFlexNode(coreElement);
+    const dflexElm = new DFlexElement(coreElement);
 
     this.registry.set(id, dflexElm);
 
     dflexElm.setAttribute(DOM, "INDEX", dflexElm.VDOMOrder.self);
 
     if (depth >= 1) {
-      DFlexNode.setRelativePosition(DOM);
+      DFlexElement.setRelativePosition(DOM);
 
       if (keys.CHK === null) {
         if (__DEV__) {
@@ -197,7 +195,7 @@ class DFlexBaseStore {
         let { id: parentID } = _parentDOM;
 
         if (!parentID) {
-          parentID = this.tracker.newTravel(DFlexBaseStore._PREFIX_ID);
+          parentID = this.tracker.newTravel(Tracker.PREFIX_ID);
           _parentDOM.id = parentID;
         }
 

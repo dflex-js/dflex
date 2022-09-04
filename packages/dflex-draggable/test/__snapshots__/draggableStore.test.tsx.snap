@@ -2,16 +2,16 @@
 
 exports[`Draggable Store Registers element and initiates translateX,Y 1`] = `
 Map {
-  "id-0" => DFlexNode {
+  "id-0" => DFlexElement {
     "DOMGrid": PointNum {
       "x": 0,
       "y": 0,
     },
-    "DOMOrder": Object {
+    "DOMOrder": {
       "parent": 0,
       "self": 0,
     },
-    "VDOMOrder": Object {
+    "VDOMOrder": {
       "parent": 0,
       "self": 0,
     },
@@ -26,7 +26,7 @@ Map {
     "id": "id-0",
     "isPaused": false,
     "isVisible": true,
-    "keys": Object {
+    "keys": {
       "CHK": null,
       "PK": "1-0",
       "SK": "0-0",
