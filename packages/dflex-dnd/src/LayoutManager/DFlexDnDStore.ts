@@ -15,7 +15,8 @@ import {
   DFlexElement,
   DFlexParentContainer,
   DFlexScrollContainer,
-  SerializedDFlexElement,
+  DFlexSerializedElement,
+  DFlexSerializedScroll,
 } from "@dflex/core-instance";
 
 import type { ELmBranch } from "@dflex/dom-gen";
@@ -320,7 +321,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.migration.clear();
   }
 
-  getSerializedElm(id: string): SerializedDFlexElement | null {
+  getSerializedElm(id: string): DFlexSerializedElement | null {
     if (__DEV__) {
       if (!this.registry.has(id)) {
         throw new Error(
@@ -351,6 +352,24 @@ class DFlexDnDStore extends DFlexBaseStore {
     const siblings = this.getElmBranchByKey(SK);
 
     return [scroll, siblings];
+  }
+
+  getSerializedScrollContainer(id: string): DFlexSerializedScroll | null {
+    if (!this.registry.has(id)) {
+      return null;
+    }
+
+    const {
+      keys: { SK },
+    } = this.registry.get(id)!;
+
+    if (!this.scrolls.has(SK)) {
+      return null;
+    }
+
+    const scroll = this.scrolls.get(SK)!;
+
+    return scroll.getSerializedInstance();
   }
 
   /**

@@ -115,14 +115,6 @@ class DraggableInteractive extends DraggableAxes {
       this.occupiedPosition.isEqual(rect.left, rect.top);
 
     if (hasToUndo) {
-      // If it didn't move, then do nothing.
-      if (translate.isInstanceEqual(this.translatePlaceholder)) {
-        return;
-      }
-
-      this.draggedElm.transform(draggedDOM);
-      this.draggedElm.setAttribute(draggedDOM, "INDEX", VDOMOrder.self);
-
       /**
        * There's a rare case where dragged leaves and returns to the same
        * position. In this case, undo won't be triggered so that we have to do
@@ -132,6 +124,14 @@ class DraggableInteractive extends DraggableAxes {
       if (siblings[VDOMOrder.self] !== id) {
         this.draggedElm.assignNewPosition(siblings, VDOMOrder.self);
       }
+
+      // If it didn't move, then do nothing.
+      if (translate.isInstanceEqual(this.translatePlaceholder)) {
+        return;
+      }
+
+      this.draggedElm.transform(draggedDOM);
+      this.draggedElm.setAttribute(draggedDOM, "INDEX", VDOMOrder.self);
 
       return;
     }

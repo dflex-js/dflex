@@ -6,12 +6,12 @@ import { store, Draggable } from "@dflex/draggable";
 import "./button.css";
 
 // shared dragged event
-let draggedEvent: Draggable;
+let dflexDraggable: Draggable;
+
+const id = "DFlex-draggable-solo";
 
 const DraggableSolo = () => {
   const ref = React.createRef() as React.MutableRefObject<HTMLButtonElement>;
-
-  const id = "DFlex-draggable-solo";
 
   React.useEffect(() => {
     if (ref.current) {
@@ -24,17 +24,17 @@ const DraggableSolo = () => {
   }, [ref]);
 
   const onMouseMove = (e: MouseEvent) => {
-    if (draggedEvent) {
+    if (dflexDraggable) {
       const { clientX, clientY } = e;
 
       // Drag when mouse is moving!
-      draggedEvent.dragAt(clientX, clientY);
+      dflexDraggable.dragAt(clientX, clientY);
     }
   };
 
   const onMouseUp = () => {
-    if (draggedEvent) {
-      draggedEvent.endDragging();
+    if (dflexDraggable) {
+      dflexDraggable.endDragging();
 
       document.removeEventListener("mouseup", onMouseUp);
       document.removeEventListener("mousemove", onMouseMove);
@@ -47,7 +47,7 @@ const DraggableSolo = () => {
     // Avoid right mouse click and ensure id
     if (typeof button === "number" && button === 0) {
       if (id) {
-        draggedEvent = new Draggable(id, { x: clientX, y: clientY });
+        dflexDraggable = new Draggable(id, { x: clientX, y: clientY });
 
         document.addEventListener("mouseup", onMouseUp);
         document.addEventListener("mousemove", onMouseMove);

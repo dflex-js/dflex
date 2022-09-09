@@ -10,17 +10,17 @@ import type { Direction, Axes, AxesPoint } from "@dflex/utils";
 
 import DFlexBaseElement from "./DFlexBaseElement";
 
-export type SerializedDFlexElement = {
+export type DFlexSerializedElement = {
   type: string;
   version: 3;
   id: string;
   translate: PointNum | null;
   grid: PointNum;
-  order: DOMGenOrder;
+  order: DFlexDOMGenOrder;
   initialPosition: AxesPoint;
   rect: BoxRectAbstract;
   hasTransformedFromOrigin: boolean;
-  pendingTransform: boolean;
+  hasPendingTransformation: boolean;
   isVisible: boolean;
 };
 
@@ -42,14 +42,14 @@ export interface Keys {
 /**
  * Element order in its branch & higher branch
  */
-export interface DOMGenOrder {
+export interface DFlexDOMGenOrder {
   self: number;
   parent: number;
 }
 
 export interface DFlexElementInput {
   id: string;
-  order: DOMGenOrder;
+  order: DFlexDOMGenOrder;
   keys: Keys;
   depth: number;
   readonly: boolean;
@@ -140,9 +140,9 @@ class DFlexCoreElement extends DFlexBaseElement {
 
   private _computedDimensions: PointNum | null;
 
-  VDOMOrder: DOMGenOrder;
+  VDOMOrder: DFlexDOMGenOrder;
 
-  DOMOrder: DOMGenOrder;
+  DOMOrder: DFlexDOMGenOrder;
 
   keys: Keys;
 
@@ -504,7 +504,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     }
   }
 
-  getSerializedInstance(): SerializedDFlexElement {
+  getSerializedInstance(): DFlexSerializedElement {
     return {
       type: DFlexCoreElement.getType(),
       version: 3,
@@ -515,8 +515,8 @@ class DFlexCoreElement extends DFlexBaseElement {
       initialPosition: this._initialPosition.getInstance(),
       rect: this.rect.getRect(),
       hasTransformedFromOrigin: this.hasTransformedFromOrigin(),
+      hasPendingTransformation: this.hasPendingTransform,
       isVisible: this.isVisible,
-      pendingTransform: this.hasPendingTransform,
     };
   }
 }

@@ -7,7 +7,7 @@ import type { AxesPoint, Direction, Axis, AbstractBox } from "@dflex/utils";
 import type { ELmBranch } from "@dflex/dom-gen";
 import type DraggableInteractive from "../Draggable";
 
-import { store } from "../LayoutManager";
+import { store, DFLEX_EVENTS } from "../LayoutManager";
 
 const MAX_TRANSFORM_COUNT = 99; /** Infinite transform count */
 
@@ -490,7 +490,10 @@ class DFlexPositionUpdater {
       this.updateDraggedThresholdPosition(-1, -1, rect);
     }
 
-    this.draggable.events.dispatch("ON_DRAG_OVER", composeElmMeta(element));
+    this.draggable.events.dispatch(
+      DFLEX_EVENTS.ON_DRAG_OVER,
+      composeElmMeta(element)
+    );
 
     element.reconcilePosition(
       axis,
@@ -501,7 +504,10 @@ class DFlexPositionUpdater {
       cycleID
     );
 
-    this.draggable.events.dispatch("ON_DRAG_LEAVE", composeElmMeta(element));
+    this.draggable.events.dispatch(
+      DFLEX_EVENTS.ON_DRAG_LEAVE,
+      composeElmMeta(element)
+    );
   }
 }
 

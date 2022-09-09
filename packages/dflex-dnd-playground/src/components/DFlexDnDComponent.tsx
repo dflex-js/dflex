@@ -14,8 +14,7 @@ import type { DFlexDnDOpts, DFlexEvents } from "@dflex/dnd";
 //   "$onMoveDownSiblings",
 // ]);
 
-// shared dragged event
-let dndEvent: DnD | null;
+let dflexDnD: DnD | null;
 
 interface Props {
   Component: string | React.JSXElementConstructor<any>;
@@ -30,7 +29,7 @@ interface Props {
   opts?: DFlexDnDOpts;
 }
 
-export const DFlexDnDComponent = ({
+const DFlexDnDComponent = ({
   Component,
   registerInput,
   style,
@@ -58,18 +57,18 @@ export const DFlexDnDComponent = ({
   };
 
   const onMouseMove = (e: MouseEvent) => {
-    if (dndEvent) {
+    if (dflexDnD) {
       const { clientX, clientY } = e;
 
-      dndEvent.dragAt(clientX, clientY);
+      dflexDnD.dragAt(clientX, clientY);
     }
   };
 
   const onMouseUp = () => {
-    if (dndEvent) {
-      dndEvent.endDragging();
+    if (dflexDnD) {
+      dflexDnD.endDragging();
 
-      dndEvent = null;
+      dflexDnD = null;
 
       document.removeEventListener("mouseup", onMouseUp);
       document.removeEventListener("mousemove", onMouseMove);
@@ -86,7 +85,7 @@ export const DFlexDnDComponent = ({
       if (id) {
         document.addEventListener("mouseup", onMouseUp);
         document.addEventListener("mousemove", onMouseMove);
-        dndEvent = new DnD(id, { x: clientX, y: clientY }, opts);
+        dflexDnD = new DnD(id, { x: clientX, y: clientY }, opts);
 
         document.addEventListener("$onDragLeave", onDFlexEvent);
       }

@@ -142,7 +142,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
         mirrorStyle.setProperty("z-index", "99");
         mirrorStyle.setProperty("margin", "0");
         originStyle.setProperty("opacity", "0");
-        mirrorStyle.backgroundColor = "red";
+        // mirrorStyle.backgroundColor = "red";
       } else {
         originDOM.ariaLabel = "Draggable";
         originStyle.setProperty("position", "relative");

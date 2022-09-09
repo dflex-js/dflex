@@ -17,7 +17,7 @@ import {
   ListMigration,
 } from "./components";
 
-function App() {
+const App = () => {
   const commitWhenKyPressed = (e: KeyboardEvent) => {
     if (e.key === "c") {
       store.commit();
@@ -122,6 +122,6 @@ function App() {
       </Routes>
     </BrowserRouter>
   );
-}
+};
 
 export default App;

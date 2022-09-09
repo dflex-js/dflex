@@ -14,7 +14,12 @@ import {
 import type { DFlexElement } from "@dflex/core-instance";
 
 import type { ELmBranch } from "@dflex/dom-gen";
-import { initDFlexEvent, scheduler, store } from "../LayoutManager";
+import {
+  DFlexEventPlugin,
+  initDFlexEvent,
+  scheduler,
+  store,
+} from "../LayoutManager";
 
 import type {
   ContainersTransition,
@@ -106,7 +111,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
 
   private readonly initCoordinates: PointNum;
 
-  events: ReturnType<typeof initDFlexEvent>;
+  events: DFlexEventPlugin;
 
   constructor(id: string, initCoordinates: AxesPoint, opts: FinalDndOpts) {
     const [element, DOM] = store.getElmWithDOM(id);

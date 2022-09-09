@@ -1,6 +1,6 @@
 ---
 title: DFlex Drag and Drop API
-description: "DFlex Drag and Drop API."
+description: "DFlex Drag and Drop API"
 ---
 
 ## Installation
@@ -11,7 +11,7 @@ npm install @dflex/dnd
 
 ## API
 
-DFlex depends on three principles to achieve DOM interactivity:
+DFlex DnD depends on three principles to achieve DOM interactivity:
 
 - Register element in the store.
 - Start dragging when mouse is down.
@@ -23,11 +23,11 @@ import { store, DnD } from "@dflex/dnd";
 
 ### Register element
 
-Each element should be registered in DnD store in order to be active for drag
+Each element should be registered in DFlex DnD Store in order to be active for drag
 and drop later.
 
 ```ts
-store.register(RegisterInputOpts);
+store.register(RegisterInputOpts): void;
 ```
 
 Where `RegisterInputOpts` is an object with the following properties:
@@ -37,51 +37,49 @@ Where `RegisterInputOpts` is an object with the following properties:
 - `readonly?: boolean` True for elements that won't be transformed during DnD
   but belongs to the same interactive container.
 
-### Create responsive DnD event
+### Create Drag and Drop Session
 
-The responsive drag and drop event should be created when `onmousedown` is
+The responsive drag and drop session should be created when `onmousedown` is
 fired. So it can initialize the element and its siblings before start dragging.
 
 ```ts
-const dndEvent = new DnD(id, clickCoordinates, opts);
+const dflexDnD = new DnD(id, coordinate, opts);
 ```
 
 - `id: string` registered element-id in the store.
-- `clickCoordinates` is an object with `{x: number, y: number}` contains the coordinates of the
+- `coordinate: AxesPoint` is an object with `{x: number, y: number}` contains the coordinates of the
   mouse/touch click.
-- `opts?` is DnD options object. You can see [options full documentation by
-  clicking here.](/docs/drag-drop/api/#options)
+- `opts?: DFlexDnDOpts` is DnD options object. You can see [DFlex DnD options
+  full documentation by clicking here.](#options)
 
 ### Start responsive dragging
 
 ```ts
-dndEvent.dragAt(x, y);
+dflexDnD.dragAt(x, y);
 ```
 
 - `x: number` is event.clientX, the horizontal click coordinate.
 - `y: number` is event.clientY, the vertical click coordinate.
 
-### End DnD event
+### End Drag and Drop Session
 
 ```ts
-dndEvent.endDragging();
+dflexDnD.endDragging();
 ```
 
 ### Cleanup element
 
 It's necessary to cleanup the element from store when the element won't be used
-or will be removed/unmounted from the DOM to prevent memory leaks.
+or will be removed/unmounted from the DOM to prevent any potential memory leaks.
 
 ```ts
-store.unregister(id);
+store.unregister(id: string): void
 ```
-
-- `id: string` registered element-id.
 
 ## Options
 
-You can pass options when creating DnD event that controls each element
-individually. So your options can be different for each element.
+You can pass options when creating a DnD instance that controls each element
+individually. So your options can be different from each other.
 
 ### Dragging Threshold
 
@@ -103,7 +101,7 @@ interface ThresholdPercentages {
 #### Threshold Definition
 
 ```ts
-interface DndOpts {
+interface DFlexDnDOpts {
   // ... other options.
   threshold?: Partial<ThresholdPercentages>;
 }
@@ -111,7 +109,7 @@ interface DndOpts {
 
 #### Threshold Default Value
 
-```js
+```json
 {
   "threshold": {
     "vertical": 60,
@@ -120,11 +118,49 @@ interface DndOpts {
 }
 ```
 
+### Commit changes to DOM
+
+DFlex is built to manipulate DOM elements with transformation indefinitely. This
+means you can always drag and drop elements without reconstruction of the DOM.
+Still, it comes with a reconciler that tracks elements' changes and only
+reconciles the elements that have changed their position from their origin.
+
+#### Commit Interface
+
+```ts
+interface CommitInterface {
+  enableAfterEndingDrag: boolean;
+  enableForScrollOnly: boolean;
+}
+```
+
+#### Commit Definition
+
+```ts
+interface DFlexDnDOpts {
+  // ... other options.
+  commit?: Partial<CommitInterface>;
+}
+```
+
+#### Commit Default Value
+
+```json
+{
+  "commit": {
+    "enableAfterEndingDrag": true,
+    "enableForScrollOnly": true
+  }
+}
+```
+
 ### Dragging Restrictions
 
-You can define the dragging restrictions for each element relative to its
-position or the parent container. Note that elements with no auto-scroll are
-automatically restricted to the viewport.
+You can define the dragging restrictions for each element relative:
+
+1. Element position.
+2. Element parent container.
+3. Screen viewport (automatically enabled).
 
 #### Restrictions Interface
 
@@ -148,7 +184,7 @@ interface Restrictions {
 #### Restrictions Definition
 
 ```ts
-interface DndOpts {
+interface DFlexDnDOpts {
   // ... other options.
   restrictions?: {
     self?: Partial<Restrictions["self"]>;
@@ -159,22 +195,22 @@ interface DndOpts {
 
 #### Restrictions Default Value
 
-```js
+```json
 {
   "restrictions": {
     "self": {
       "allowLeavingFromTop": true,
       "allowLeavingFromBottom": true,
       "allowLeavingFromLeft": true,
-      "allowLeavingFromRight": true,
+      "allowLeavingFromRight": true
     },
     "container": {
       "allowLeavingFromTop": true,
       "allowLeavingFromBottom": true,
       "allowLeavingFromLeft": true,
-      "allowLeavingFromRight": true,
-    },
-  },
+      "allowLeavingFromRight": true
+    }
+  }
 }
 ```
 
@@ -193,7 +229,7 @@ interface ScrollOptions {
 #### Auto-Scroll Definition
 
 ```ts
-interface DndOpts {
+interface DFlexDnDOpts {
   // ... other options.
   scroll?: Partial<ScrollOptions>;
 }
@@ -201,93 +237,93 @@ interface DndOpts {
 
 #### Auto-Scroll Default Value
 
-```js
+```json
 {
   "scroll": {
     "enable": true,
     "initialSpeed": 10,
     "threshold": {
-      "vertical": 15, // vertical threshold in percentage from 0-100
-      "horizontal": 15, // horizontal threshold in percentage from 0-100
-    },
-  },
+      "vertical": 15,
+      "horizontal": 15
+    }
+  }
 }
 ```
 
-### Events
+## Events
 
-There are four(4) categories of DnD custom events:
-[DraggedEvent](#dragged-event), [InteractivityEvent](#interactivity-event),
-[SiblingsEvent](#siblings-event) and [LayoutStateEvent](#layoutstate-event).
+DFlex has three (3) types of [custom
+events](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent).
 
-#### Events Definition
+1. [DFlex Dragged Event.](#dragged-event)
+2. [DFlex Interactivity Event.](#interactivity-event)
+3. [DFlex Siblings Event.](#siblings-event)
 
-```ts
-interface DndOpts {
-  // ... other options.
-  events?: Partial<Events>;
-}
+### Event Usage
+
+```js
+// DFlex event handler.
+const onDFlexEvent = (e: DFlexEvents) => {
+  // Do something.
+  console.log(`onDFlexEvent: ${e.type}`, e.detail);
+};
+
+// Dragged Events.
+const ON_OUT_CONTAINER = "$onDragOutContainer";
+const ON_OUT_THRESHOLD = "$onDragOutThreshold";
+
+//  Interactivity Events.
+const ON_DRAG_OVER = "$onDragOver";
+const ON_DRAG_LEAVE = "$onDragLeave";
+
+// Sibling Events.
+const ON_LIFT_UP = "$onLiftUpSiblings";
+const ON_MOVE_DOWN = "$onMoveDownSiblings";
+
+// Capture DFlex event.
+document.addEventListener(
+  ON_OUT_CONTAINER /** or another event */,
+  onDFlexEvent
+);
+
+// Remove it later when dragging is done.
+document.removeEventListener(
+  ON_OUT_CONTAINER /** or another event */,
+  onDFlexEvent
+);
 ```
 
-#### Events Interface
+### Dragged Event
+
+It's an event related to capturing dragged positions. This event is fired when
+the dragged is out of its threshold position `$onDragOutContainer` or out of its
+container `$onDragOutThreshold`.
+
+#### DraggedEvent interface
 
 ```ts
-interface Events {
-  /** Drag events  */
-  onDragOutContainer: (event: DraggedEvent) => unknown;
-  onDragOutThreshold: (event: DraggedEvent) => unknown;
-
-  /** Interactivity events  */
-  onDragOver: (event: InteractivityEvent) => unknown;
-  onDragLeave: (event: InteractivityEvent) => unknown;
-
-  /** Sibling events  */
-  onLiftUpSiblings: (event: SiblingsEvent) => unknown;
-  onMoveDownSiblings: (event: SiblingsEvent) => unknown;
-
-  /** Layout events  */
-  onStateChange: (layoutState: LayoutStateEvent) => unknown;
-}
-```
-
-#### Dragged Event
-
-It's an event related to the dragged element. This event is fired with
-`onDragOutContainer` and `onDragOutThreshold` event listeners.
-
-##### DraggedEvent interface
-
-```ts
-interface DraggedEvent {
-  /** Returns the element that is being dragged */
-  type: "onDragOutContainer" | "onDragOutThreshold";
-
-  /** Returns the time at which the event was created  */
-  timeStamp: number;
-
+interface PayloadDraggedEvent {
   /** Returns element id in the registry  */
   id: string;
 
   /** Returns dragged temp index */
   index: number;
 }
+
+/** For dragged out of threshold or container event. */
+type DFlexDraggedEvent = CustomEvent<PayloadDraggedEvent>;
 ```
 
 #### Interactivity Event
 
-It's an event related to elements that interacted with the dragged. This event
-is fired with `onDragOver` and `onDragLeave` event listeners.
+It's an event related to capturing dragged interactions with other elements.
+This event is fired when the dragged is over another element `$onDragOver` or
+when the dragged is leaving the occupied position `$onDragLeave`.
 
 ##### InteractivityEvent interface
 
 ```ts
-interface InteractivityEvent {
-  /** Returns the element that is being dragged */
-  type: "onDragOver" | "onDragLeave";
-
-  /** Returns the time at which the event was created  */
-  timeStamp: number;
-
+interface PayloadInteractivityEvent {
   /** Returns element id in the registry  */
   id: string;
 
@@ -297,23 +333,20 @@ interface InteractivityEvent {
   /** Returns the element that triggered the event  */
   target: HTMLElement;
 }
+
+/** For dragged over an element or leaving an element. */
+type DFlexInteractivityEvent = CustomEvent<PayloadInteractivityEvent>;
 ```
 
 #### Siblings Event
 
-It's an Events related to the active list/branch: siblings. This event
-is fired `onLiftUpSiblings` and `onMoveDownSiblings` event listeners.
+It's an event related to capturing siblings' positions. This event is fired when
+the siblings are lifting up `$onLiftUpSiblings` or moving down `$onMoveDownSiblings`
 
 ##### SiblingsEvent interface
 
 ```ts
-interface SiblingsEvent {
-  /** Returns the element that is being dragged */
-  type: "onLiftUpSiblings" | "onMoveDownSiblings";
-
-  /** Returns the time at which the event was created  */
-  timeStamp: number;
-
+interface PayloadSiblingsEvent {
   /** Returns the index where the dragged left  */
   from: number;
 
@@ -321,16 +354,48 @@ interface SiblingsEvent {
   to: number;
 
   /** Returns an array of sibling ids in order  */
-  siblings: Array<string>;
+  siblings: string[];
 }
+
+/** When dragged movement triggers the siblings up/down. */
+type DFlexSiblingsEvent = CustomEvent<PayloadSiblingsEvent>;
 ```
 
-#### LayoutState Event
+## Listeners
 
-It's an Events related to the layout current phase. This event
-is fired `onStateChange` event listeners.
+DFlex listeners are more generic than the custom events and responsible for
+monitoring the entire layout and reporting back to you.
 
-##### LayoutStateEvent interface
+DFlex has two (2) types of listeners:
+
+1. [Layout state listener.](#layout-state-listener)
+2. [Mutation listener.](#mutation-listener)
+
+### Listener Usage
+
+```js
+// app/index.js
+
+const unsubscribeLayout = store.listeners.subscribe((e) => {
+  console.info("new layout state", e);
+}, "layoutState");
+
+// call it later for clear listeners from memory.
+unsubscribeLayout();
+
+const unsubscribeMutation = store.listeners.subscribe((e) => {
+  console.info("new mutation state", e);
+}, "mutation");
+
+// call it later for clear listeners from memory.
+unsubscribeMutation();
+```
+
+### Layout state listener
+
+Responsible for monitoring any change that happens to layout interactivity.
+
+#### Layout state listener interface
 
 ```ts
 type LayoutState =
@@ -340,97 +405,106 @@ type LayoutState =
   | "dragEnd" // as expected.
   | "dragCancel"; // When releasing the drag without settling in the new position.
 
-interface LayoutStateEvent {
-  /** Returns the element that is being dragged */
-  type: "onStateChange";
+interface DFlexLayoutStateEvent {
+  type: "layoutState";
+  status: LayoutState;
+}
+```
 
-  /** Returns the time at which the event was created  */
-  timeStamp: number;
+### Mutation listener
 
-  /** Returns the current state of the interactive layout */
-  layoutState: LayoutState;
+Responsible for monitoring DOM mutation that happens during reconciliation.
+
+#### Mutation listener interface
+
+```ts
+type ElmMutationType = "committed";
+
+interface DFlexElmMutationEvent {
+  type: "mutation";
+  status: ElmMutationType;
+  payload: {
+    target: HTMLElement; // HTML element container.
+    ids: string[]; // Committed Elements' id in order.
+  };
 }
 ```
 
 ## Advanced
 
-### DnD Event API
+### getSerializedElm
 
-#### getDraggedTempIndex
-
-In case you need to know the current index of dragged element.
+DFlex elements are serialized and exported accordingly.
 
 ```ts
-dndEvent.getDraggedTempIndex() : number
-```
+store.getSerializedElm(elmID: string): DFlexSerializedElement | null
 
-### Store Instance API
-
-#### destroy
-
-To cleanup the store from all registered elements. This is probably what you
-should do when you are done with DnD completely or your app is about to be closed.
-
-```ts
-store.destroy(): void;
-```
-
-#### getELmTranslateById
-
-In case you need to know the current translate value as it's stored in the store. This
-is so much faster than using `getElementById` or `getComputedStyle` methods.
-
-```ts
-store.getELmTranslateById(id: string): {
-  translateX: number;
-  translateY: number;
+type DFlexSerializedElement = {
+  type: string;
+  version: number;
+  id: string;
+  translate: PointNum | null;
+  grid: PointNum;
+  order: DFlexDOMGenOrder;
+  initialPosition: AxesPoint;
+  rect: BoxRectAbstract;
+  hasTransformedFromOrigin: boolean;
+  hasPendingTransformation: boolean;
+  isVisible: boolean;
 };
 ```
 
-#### getElmSiblingsById
+### getSerializedScrollContainer
 
-The easiest and fastest way to get the siblings of an element in order.
+DFlex scroll containers are serialized and exported accordingly. You can get any
+scroll container for any registered element id.
 
 ```ts
-store.getElmSiblingsById(id: string): string | Array<string> | null;
+store.getSerializedScrollContainer(elmID: string): DFlexSerializedScroll | null
+
+type DFlexSerializedScroll = {
+  type: string;
+  version: number;
+  key: string;
+  hasOverFlow: AxesPoint<boolean>;
+  hasDocumentAsContainer: boolean;
+  scrollRect: AbstractBox;
+  scrollContainerRect: AbstractBox;
+  invisibleDistance: AbstractBox;
+  visibleScreen: Dimensions;
+};
 ```
 
-#### getInitialELmRectById
+### commit
 
-Returns the initial DOMRect object of the element.
+Commit changes to the DOM. `commit` will always do surgical reconciliation. and
+it's the same function that's used in the [options](#commit-changes-to-dom)
 
 ```ts
-getInitialELmRectById(id: string): Rect | undefined;
+store.commit(): void
 ```
 
-##### Rect Interface
+### isLayoutAvailable
+
+True when DFlex is not transforming any elements and not executing any task.
 
 ```ts
-interface Rect {
-  height: number;
-  width: number;
-  left: number;
-  top: number;
-}
+isLayoutAvailable(): boolean
 ```
 
-#### getElmTreeById
+### unregister
+
+safely removing element from store.
 
 ```ts
-store.getElmTreeById(id: string) : ElmTree
+store.unregister(id: string): void
 ```
 
-##### ElmTree Interface
+### destroy
+
+To destroy all DFlex instances. This is what you should do when you are done
+with DnD completely and your app is about to be closed.
 
 ```ts
-type ElmBranch = string | Array<string> | null;
-
-interface ElmTree {
-  element: CoreInstanceInterface;
-  parent: CoreInstanceInterface | null;
-  branches: {
-    siblings: ElmBranch;
-    parents: ElmBranch;
-  };
-}
+store.destroy(): void;
 ```

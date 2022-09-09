@@ -1,6 +1,11 @@
 /* eslint-disable no-unused-vars */
 
-type LayoutState = "pending" | "ready" | "dragging" | "dragEnd" | "dragCancel";
+type LayoutState =
+  | "pending" // when DnD is initiated but not activated yet.
+  | "ready" // When clicking over the registered element. The element is ready but not being dragged.
+  | "dragging" // as expected.
+  | "dragEnd" // as expected.
+  | "dragCancel"; // When releasing the drag without settling in the new position.
 
 type ElmMutationType = "committed";
 
@@ -16,8 +21,8 @@ interface DFlexElmMutationEvent {
   type: "mutation";
   status: ElmMutationType;
   payload: {
-    target: HTMLElement;
-    ids: string[];
+    target: HTMLElement; // HTML element container.
+    ids: string[]; // Committed Elements' id in order.
   };
 }
 

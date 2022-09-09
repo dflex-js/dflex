@@ -1,5 +1,18 @@
-import { test, expect, Page, Locator, BrowserContext } from "@playwright/test";
-import { getDraggedRect, initialize, moveDragged } from "../../utils";
+import {
+  test,
+  expect,
+  Page,
+  Locator,
+  BrowserContext,
+  // Browser,
+} from "@playwright/test";
+import {
+  assertChildrenOrderIDs,
+  getDraggedRect,
+  initialize,
+  invokeKeyboardAndAssertEmittedMsg,
+  moveDragged,
+} from "../../utils";
 
 test.describe
   .serial("Moving out then insert - Up/Down - No release", async () => {
@@ -14,33 +27,36 @@ test.describe
   let elm6: Locator;
   let elm7: Locator;
   let elm8: Locator;
+  let parentLocater: Locator;
 
   let context: BrowserContext;
+  // let activeBrowser: Browser;
+
+  const FINAL_IDS = ["id-3", "id-2", "id-4", "id-5", "id-6", "id-7", "id-8"];
 
   test.beforeAll(async ({ browser, baseURL, browserName }) => {
-    // Slow response form firefox related to the firing event.
-    initialize(page, browserName === "firefox" ? 40 : 5);
-
     context = await browser.newContext();
-
     page = await context.newPage();
-    initialize(page, 20);
+    initialize(page, browserName);
     await page.goto(baseURL!);
 
-    [elm2, elm3, elm4, elm5, elm6, elm7, elm8] = await Promise.all([
-      page.locator("#id-2"),
-      page.locator("#id-3"),
-      page.locator("#id-4"),
-      page.locator("#id-5"),
-      page.locator("#id-6"),
-      page.locator("#id-7"),
-      page.locator("#id-8"),
-    ]);
+    [parentLocater, elm2, elm3, elm4, elm5, elm6, elm7, elm8] =
+      await Promise.all([
+        page.locator("#id-p2"),
+        page.locator("#id-2"),
+        page.locator("#id-3"),
+        page.locator("#id-4"),
+        page.locator("#id-5"),
+        page.locator("#id-6"),
+        page.locator("#id-7"),
+        page.locator("#id-8"),
+      ]);
   });
 
   test.afterAll(async () => {
     await page.close();
     await context.close();
+    // await activeBrowser.close();
   });
 
   test("Moving dragged element down two siblings", async () => {
@@ -113,5 +129,30 @@ test.describe
       expect(elm7).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
       expect(elm8).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
     ]);
+  });
+
+  test("Trigger key `c` to commit the transformed elements and read the emitted message for mutation", async () => {
+    await invokeKeyboardAndAssertEmittedMsg(FINAL_IDS);
+  });
+
+  test("Siblings that still have the same origin positions have zero transformation", async () => {
+    await Promise.all([
+      expect(elm4).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+      expect(elm5).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+      expect(elm6).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+      expect(elm7).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+      expect(elm8).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+    ]);
+  });
+
+  test("Siblings that have reconciled don't have transformation", async () => {
+    await Promise.all([
+      expect(elm2).toHaveCSS("transform", "none"),
+      expect(elm3).toHaveCSS("transform", "none"),
+    ]);
+  });
+
+  test("Siblings have the correct order", async () => {
+    await assertChildrenOrderIDs(parentLocater, FINAL_IDS);
   });
 });

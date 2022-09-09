@@ -6,7 +6,7 @@
   </a>
 </h1>
 
-<h1 align="center">DFlex Utilities</h1>
+<h1 align="center">DFlex Draggable Playground</h1>
 
 <p align="center">
   <a href="https://github.com/dflex-js/dflex">
@@ -41,9 +41,9 @@
   </a>
 </p>
 
-# @dflex/utils
+# DFlex Draggable Playground
 
-DFlex utilities is an internal DFlex package.
+This playground has basic DFlex draggable implementation for React.
 
 ## Documentation 📖
 

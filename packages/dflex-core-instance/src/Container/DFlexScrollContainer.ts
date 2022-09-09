@@ -16,7 +16,7 @@ import type { ThresholdPercentages, AbstractBox } from "@dflex/utils";
 // eslint-disable-next-line no-unused-vars
 type ScrollEventCallback = (SK: string) => void;
 
-export type SerializedScrollContainer = {
+export type DFlexSerializedScroll = {
   type: string;
   version: 3;
   key: string;
@@ -556,7 +556,7 @@ class DFlexScrollContainer {
     };
   }
 
-  getSerializedInstance(): SerializedScrollContainer {
+  getSerializedInstance(): DFlexSerializedScroll {
     return {
       type: DFlexScrollContainer.getType(),
       version: 3,

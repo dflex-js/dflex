@@ -13,4 +13,10 @@ export type {
   DFlexEventPlugin,
 } from "./DFlexEvents";
 
-export type { DFlexListenerEvents } from "./DFlexListeners";
+export type {
+  DFlexListenerEvents,
+  DFlexLayoutStateEvent,
+  DFlexElmMutationEvent,
+} from "./DFlexListeners";
+
+export { DFLEX_EVENTS } from "./constants";

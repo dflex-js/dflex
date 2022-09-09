@@ -1,8 +1,13 @@
-import type { Page, Locator } from "@playwright/test";
+import { Page, Locator, expect } from "@playwright/test";
 
 let page: Page;
 let steps = 0;
-export function initialize(createdPage: Page, mouseSteps: number = 5) {
+
+export function initialize(
+  createdPage: Page,
+  browserName?: string,
+  mouseSteps: number = browserName ? (browserName === "chromium" ? 5 : 40) : 5
+) {
   page = createdPage;
   steps = mouseSteps;
 }
@@ -55,4 +60,44 @@ export async function moveDragged(stepsX: number, stepsY: number) {
       steps,
     }
   );
+}
+
+export async function invokeKeyboard(k = "c") {
+  await page.keyboard.press(k);
+}
+
+export async function invokeKeyboardAndAssertEmittedMsg(FINAL_IDS: string[]) {
+  // Get the next console log
+  const [msg] = await Promise.all([
+    page.waitForEvent("console"),
+    invokeKeyboard(),
+  ]);
+
+  // TODO:
+  // cast the type for `emittedMsg`
+  const emittedMsg = await msg.args()[1].jsonValue();
+
+  const { type, status, payload } = emittedMsg;
+
+  expect(type).toBe("mutation");
+  expect(status).toBe("committed");
+  expect(payload).toEqual({
+    target: "ref: <Node>",
+    ids: FINAL_IDS,
+  });
+}
+
+export async function assertChildrenOrderIDs(
+  parentLocater: Locator,
+  FINAL_IDS: string[]
+) {
+  const childrenIDs = await parentLocater.evaluate((elm) => {
+    const ids: string[] = [];
+    for (let i = 0; i < elm.children.length; i += 1) {
+      ids.push(elm.children[i].id);
+    }
+    return ids;
+  });
+
+  expect(childrenIDs).toEqual(FINAL_IDS);
 }

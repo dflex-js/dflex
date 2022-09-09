@@ -1,6 +1,6 @@
 ---
 title: Drag and Drop Examples
-description: "DFlex drag and drop component example built with React."
+description: "DFlex drag and drop component example built with React"
 ---
 
 ### Three principles
@@ -13,11 +13,11 @@ In all DFlex examples it's important to focus on three principles:
 
 ### Building DnD Component
 
-```jsx
+```tsx
 import { store, DnD } from "@dflex/dnd";
+import type { DFlexDnDOpts, DFlexEvents } from "@dflex/dnd";
 
-// shared dragged event
-let dndEvent: DnD | null;
+let dflexDnD: DnD | null;
 
 interface Props {
   Component: string | React.JSXElementConstructor<any>;
@@ -32,7 +32,7 @@ interface Props {
   opts?: DFlexDnDOpts;
 }
 
-export const DFlexDnDComponent = ({
+const DFlexDnDComponent = ({
   Component,
   registerInput,
   style,
@@ -40,37 +40,38 @@ export const DFlexDnDComponent = ({
   children,
   opts,
 }: Props) => {
-  const ref = React.useRef() as React.MutableRefObject<HTMLLIElement>;
+  const dndCompRef = React.useRef() as React.MutableRefObject<HTMLLIElement>;
 
   const { id, depth, readonly } = registerInput;
 
   React.useEffect(() => {
-    if (ref.current) {
+    if (dndCompRef.current) {
       store.register({ id, depth, readonly });
     }
 
     return () => {
       store.unregister(id);
     };
-  }, [ref.current]);
+  }, [dndCompRef.current]);
 
   const onDFlexEvent = (e: DFlexEvents) => {
-    console.log("onDFlexEvent", e.detail);
+    // eslint-disable-next-line no-console
+    console.log(`onDFlexEvent: ${e.type}`, e.detail);
   };
 
   const onMouseMove = (e: MouseEvent) => {
-    if (dndEvent) {
+    if (dflexDnD) {
       const { clientX, clientY } = e;
 
-      dndEvent.dragAt(clientX, clientY);
+      dflexDnD.dragAt(clientX, clientY);
     }
   };
 
   const onMouseUp = () => {
-    if (dndEvent) {
-      dndEvent.endDragging();
+    if (dflexDnD) {
+      dflexDnD.endDragging();
 
-      dndEvent = null;
+      dflexDnD = null;
 
       document.removeEventListener("mouseup", onMouseUp);
       document.removeEventListener("mousemove", onMouseMove);
@@ -87,9 +88,8 @@ export const DFlexDnDComponent = ({
       if (id) {
         document.addEventListener("mouseup", onMouseUp);
         document.addEventListener("mousemove", onMouseMove);
-        dndEvent = new DnD(id, { x: clientX, y: clientY }, opts);
+        dflexDnD = new DnD(id, { x: clientX, y: clientY }, opts);
 
-      // Passe the name of required DFlex event here.
         document.addEventListener("$onDragLeave", onDFlexEvent);
       }
     }
@@ -97,7 +97,7 @@ export const DFlexDnDComponent = ({
 
   return (
     <Component
-      ref={ref}
+      ref={dndCompRef}
       id={id}
       onMouseDown={onMouseDown}
       className={className}
@@ -106,6 +106,42 @@ export const DFlexDnDComponent = ({
       {children}
     </Component>
   );
+};
+```
+
+### Subscribe to layout
+
+```tsx
+import { store } from "@dflex/dnd";
+
+const App = () => {
+  React.useEffect(() => {
+    const unsubscribe = store.listeners.subscribe((e) => {
+      console.info("new layout state", e);
+    }, "layoutState");
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  React.useEffect(() => {
+    const unsubscribe = store.listeners.subscribe((e) => {
+      console.info("new mutation state", e);
+    }, "mutation");
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  React.useEffect(() => {
+    return () => {
+      store.destroy();
+    };
+  }, []);
+
+  return <MYDnDComponents />;
 };
 ```
 
