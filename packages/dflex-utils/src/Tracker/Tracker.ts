@@ -1,36 +1,34 @@
-export type Prefix = string | number;
-
-export interface ITracker {
-  travelID: number;
-  // eslint-disable-next-line no-unused-vars
-  newTravel(prefix?: Prefix): string;
-}
-
 class Tracker {
-  travelID: number;
+  private _travelID: Record<string, number>;
 
-  private _prefix?: Prefix;
+  static PREFIX_CYCLE = "dflex_cycle_";
+
+  static PREFIX_ID = "dflex_id_";
 
   /**
    * Creates an instance of Tracker.
    */
-  constructor(prefix?: Prefix) {
-    this.travelID = 0;
-
-    if (prefix) {
-      this._prefix = prefix;
-    }
+  constructor() {
+    this._travelID = {};
   }
 
   /**
    * Increment travels and return the last one.
    */
-  newTravel(prefix?: Prefix) {
-    const pre = prefix || this._prefix;
+  newTravel(prefix: string): string {
+    const pre = prefix;
 
-    this.travelID += 1;
+    let travel = this._travelID[pre];
 
-    return pre ? `${pre}-${this.travelID}` : `${this.travelID}`;
+    if (travel !== undefined) {
+      travel += 1;
+    } else {
+      travel = 0;
+    }
+
+    this._travelID[pre] = travel;
+
+    return `${prefix}${travel}`;
   }
 }
 

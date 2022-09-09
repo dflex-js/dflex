@@ -1,10 +1,10 @@
-import type { DFlexBaseNode } from "@dflex/core-instance";
+import type { DFlexBaseElement } from "@dflex/core-instance";
 import type { AxesPoint } from "@dflex/utils";
 
 import store from "./DFlexDraggableStore";
 import DFlexBaseDraggable from "./DFlexBaseDraggable";
 
-class DFlexDraggable extends DFlexBaseDraggable<DFlexBaseNode> {
+class DFlexDraggable extends DFlexBaseDraggable<DFlexBaseElement> {
   /**
    * Creates an instance of Draggable.
    * Works Only on dragged element level.
@@ -15,6 +15,8 @@ class DFlexDraggable extends DFlexBaseDraggable<DFlexBaseNode> {
   constructor(id: string, clickCoordinates: AxesPoint) {
     const [element, DOM] = store.getElmWithDOM(id);
     super(element, DOM, clickCoordinates);
+
+    this.setDOMAttrAndStyle(this.draggedDOM, null, true, false, null, null);
   }
 
   dragAt(x: number, y: number) {
@@ -24,7 +26,7 @@ class DFlexDraggable extends DFlexBaseDraggable<DFlexBaseNode> {
   }
 
   endDragging() {
-    this.setDragged(false);
+    this.setDOMAttrAndStyle(this.draggedDOM, null, false, false, null, null);
   }
 }
 

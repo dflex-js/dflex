@@ -14,7 +14,7 @@ class PointBool extends Point<boolean> {
    * @returns
    */
   isAllFalsy(): boolean {
-    return !this.x && !this.y;
+    return !(this.x || this.y);
   }
 
   /**

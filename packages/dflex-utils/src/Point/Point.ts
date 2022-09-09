@@ -1,15 +1,6 @@
-import type { AxesPoint } from "./types";
+import AxesPoint from "./AxesPoint";
 
-class Point<T = number> {
-  x!: T;
-
-  y!: T;
-
-  constructor(x: T, y: T) {
-    this.setAxes(x, y);
-    Object.seal(this);
-  }
-
+class Point<T> extends AxesPoint<T> {
   /**
    * Assigns the given values to the local instance.
    *
@@ -61,6 +52,17 @@ class Point<T = number> {
    */
   isEqual(x: T, y: T): boolean {
     return this.x === x && this.y === y;
+  }
+
+  /**
+   * True when both axes doesn't match the given value.
+   *
+   * @param x
+   * @param y
+   * @returns
+   */
+  isNotEqual(x: T, y: T): boolean {
+    return this.x !== x || this.y !== y;
   }
 }
 

@@ -32,7 +32,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
   constructor(draggable: DraggableInteractive) {
     super(draggable);
 
-    const { SK } = this.draggable.migration.latest();
+    const { SK } = store.migration.latest();
 
     this._scrollAnimatedFrame = null;
 
@@ -65,7 +65,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     const {
       scrollRect: { left, top },
       scrollContainerRect: { width, height },
-    } = store.scrolls.get(this.draggable.migration.latest().SK)!;
+    } = store.scrolls.get(SK)!;
 
     this._scrollThrottleMS = Math.round(
       width > height ? width / 8.5 : height / 8.5
@@ -114,15 +114,12 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
   }
 
   private _scrollManager(
-    x: number,
-    y: number,
     draggedDirH: Direction,
     draggedDirV: Direction,
     directionChangedH: boolean,
     directionChangedV: boolean
   ): void {
-    const { draggedElm, currentPositionWithScroll: draggedPos } =
-      this.draggable;
+    const { draggedElm } = this.draggable;
 
     const {
       keys: { SK },
@@ -146,18 +143,20 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     const scroll = store.scrolls.get(SK)!;
 
+    const absPos = this.draggable.getAbsoluteCurrentPosition();
+
     const isOutV = scroll.isOutThreshold(
       "y",
       draggedDirV,
-      draggedPos.top,
-      draggedPos.bottom
+      absPos.top,
+      absPos.bottom
     );
 
     const isOutH = scroll.isOutThreshold(
       "x",
       draggedDirH,
-      draggedPos.left,
-      draggedPos.right
+      absPos.left,
+      absPos.right
     );
 
     const isOut = isOutV || isOutH;
@@ -212,11 +211,10 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
         // Increase scroll speed.
         this._lastScrollSpeed += Math.round(acc);
 
-        scroll.scrollTo(this.currentScrollAxes.x, this.currentScrollAxes.y);
-
-        this.draggable.dragAt(
-          x + this.currentScrollAxes.x - this.initialScrollPosition.x,
-          y + this.currentScrollAxes.y - this.initialScrollPosition.y
+        scroll.scrollTo(
+          this.currentScrollAxes.x,
+          this.currentScrollAxes.y,
+          true
         );
       }
 
@@ -257,8 +255,6 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     if (!this._isScrollThrottled) {
       this._scrollManager(
-        x,
-        y,
         draggedDirH,
         draggedDirV,
         directionChangedH,

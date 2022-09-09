@@ -1,5 +1,5 @@
 import Point from "./Point";
-import type { AxesPoint } from "./types";
+import type AxesPoint from "./AxesPoint";
 
 class PointNum extends Point<number> {
   /**

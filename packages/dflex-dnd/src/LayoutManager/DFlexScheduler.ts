@@ -2,10 +2,11 @@ import type { DFlexListenerEvents } from "./DFlexListeners";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
 type UpdateFn = () => void;
-type Deferred = Array<() => void>;
+type Deferred = (() => void)[];
 
 type SchedulerOptions = {
   onUpdate?: () => void;
+  rAF?: boolean;
 };
 
 function execDeferredFn(store: DFlexDnDStore, deferred: Deferred) {
@@ -19,20 +20,20 @@ function execTask(
   options: SchedulerOptions | null,
   evt?: DFlexListenerEvents
 ) {
-  if (evt) {
-    store.deferred.push(store.listeners.notify.bind(null, evt));
+  if (options && options.onUpdate) {
+    store.deferred.push(options.onUpdate);
   }
 
-  if (options) {
-    if (options.onUpdate) {
-      store.deferred.push(options.onUpdate);
-    }
+  if (updateFn === null) {
+    return;
   }
-
-  if (updateFn === null) return;
 
   try {
-    updateFn();
+    if (options && options.rAF) {
+      requestAnimationFrame(updateFn);
+    } else {
+      updateFn();
+    }
   } catch (error: unknown) {
     if (error instanceof Error) {
       store.deferred.push(
@@ -41,6 +42,10 @@ function execTask(
           error,
         })
       );
+    }
+  } finally {
+    if (evt) {
+      store.deferred.push(store.listeners.notify.bind(null, evt));
     }
   }
 }

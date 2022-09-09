@@ -31,7 +31,7 @@ function cleanupBranchElements(
       if (terminatedDOMiDs.has(elmID)) {
         store.unregister(elmID);
       } else {
-        elm.order.self = connectedNodesID.push(elmID) - 1;
+        elm.VDOMOrder.self = connectedNodesID.push(elmID) - 1;
       }
     }
 
@@ -50,7 +50,7 @@ function mutateIDs(store: DFlexDnDStore, changedIds: ChangedIds) {
       store.registry.delete(idSet.oldId);
 
       // Update DOM-gen branch.
-      elmBranch[elm.order.self] = idSet.newId;
+      elmBranch[elm.VDOMOrder.self] = idSet.newId;
 
       // Update instance.
       // @ts-ignore
@@ -73,10 +73,18 @@ function checkMutations(
     if (target instanceof HTMLElement) {
       if (type === "childList") {
         if (addedNodes.length > 0) {
+          if (
+            addedNodes.length === 1 &&
+            addedNodes[0] instanceof HTMLElement &&
+            addedNodes[0].id.includes("dflex-draggable-mirror")
+          ) {
+            return;
+          }
+
           if (__DEV__) {
             // eslint-disable-next-line no-console
             console.warn(
-              `Insertion of DOM elements is not supported outside the registry. Ignore this message if you are using commit().`
+              "Insertion of DOM elements is not supported outside DFlex registry. Ignore this message if you are using commit()."
             );
           }
 
@@ -142,27 +150,40 @@ const observerConfig = Object.freeze({
   attributeOldValue: true,
 });
 
-function initMutationObserver(store: DFlexDnDStore, DOMTarget: HTMLElement) {
+function initMutationObserver(store: DFlexDnDStore, SK: string) {
   const terminatedDOMiDs: TerminatedDOMiDs = new Set();
   const changedIds: ChangedIds = new Set();
 
-  store.observer = new MutationObserver(
-    (mutations: Array<MutationRecord>, observer: MutationObserver) => {
-      DOMmutationHandler(
-        store,
-        mutations,
-        observer,
-        changedIds,
-        terminatedDOMiDs
-      );
-    }
+  store.observer.set(
+    SK,
+    new MutationObserver(
+      (mutations: MutationRecord[], observer: MutationObserver) => {
+        DOMmutationHandler(
+          store,
+          mutations,
+          observer,
+          changedIds,
+          terminatedDOMiDs
+        );
+      }
+    )
   );
-
-  store.observer.observe(DOMTarget, observerConfig);
 }
 
-type DFlexLMutationPlugin = ReturnType<typeof initMutationObserver>;
+function addMutationObserver(
+  store: DFlexDnDStore,
+  SK: string,
+  DOMTarget: HTMLElement
+) {
+  if (!store.observer.has(SK)) {
+    initMutationObserver(store, SK);
+  }
+
+  store.observer.get(SK)!.observe(DOMTarget, observerConfig);
+}
+
+type DFlexLMutationPlugin = ReturnType<typeof addMutationObserver>;
 
 export type { DFlexLMutationPlugin };
 
-export { getIsProcessingMutations, initMutationObserver };
+export { getIsProcessingMutations, addMutationObserver };

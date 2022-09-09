@@ -1,37 +1,42 @@
-import type { SerializedDFlexCoreNode } from "@dflex/core-instance";
-
 /* eslint-disable no-unused-vars */
 
-type LayoutState = "pending" | "ready" | "dragging" | "dragEnd" | "dragCancel";
+type LayoutState =
+  | "pending" // when DnD is initiated but not activated yet.
+  | "ready" // When clicking over the registered element. The element is ready but not being dragged.
+  | "dragging" // as expected.
+  | "dragEnd" // as expected.
+  | "dragCancel"; // When releasing the drag without settling in the new position.
 
 type ElmMutationType = "committed";
 
 type ElmTransformationType = "transformed" | "reordered" | "visible" | "hidden";
 
-const layoutState = "layoutState";
-const mutation = "mutation";
-const transformation = "transformation";
-const error = "error";
-
 interface DFlexLayoutStateEvent {
-  type: typeof layoutState;
-  layoutState: LayoutState;
+  type: "layoutState";
+  status: LayoutState;
+  payload?: never;
 }
 
 interface DFlexElmMutationEvent {
-  type: typeof mutation;
-  mutation: ElmMutationType;
-  targets: Array<HTMLElement>;
+  type: "mutation";
+  status: ElmMutationType;
+  payload: {
+    target: HTMLElement; // HTML element container.
+    ids: string[]; // Committed Elements' id in order.
+  };
 }
 
+// This feature is not implemented yet.
 interface DFlexElmTransformationEvent {
-  type: typeof transformation;
-  transformation: ElmTransformationType;
-  element: SerializedDFlexCoreNode;
+  type: "transformation";
+  status: ElmTransformationType;
+  payload: {
+    id: string;
+  };
 }
 
 interface DFlexErrorEvent {
-  type: typeof error;
+  type: "error";
   error: Error;
 }
 

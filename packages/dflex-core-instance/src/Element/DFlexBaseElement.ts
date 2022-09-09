@@ -5,22 +5,24 @@ import type { AllowedAttributes } from "./constants";
 
 type AttributeSet = Set<Exclude<AllowedAttributes, "INDEX">>;
 
-class DFlexBaseNode {
+function transform(DOM: HTMLElement, x: number, y: number): void {
+  DOM.style.transform = `translate3d(${x}px,${y}px, 0)`;
+}
+
+class DFlexBaseElement {
   id: string;
 
   translate!: PointNum;
 
-  isPaused!: boolean;
+  isPaused: boolean;
 
   private _hasAttribute?: AttributeSet;
 
   static getType(): string {
-    return "base:node";
+    return "base:element";
   }
 
-  static transform(DOM: HTMLElement, x: number, y: number): void {
-    DOM.style.transform = `translate3d(${x}px,${y}px, 0)`;
-  }
+  static transform = transform;
 
   constructor(id: string) {
     this.id = id;
@@ -50,13 +52,19 @@ class DFlexBaseNode {
       return;
     }
 
-    if (this._hasAttribute!.has(key)) return;
+    if (this._hasAttribute!.has(key)) {
+      return;
+    }
+
     DOM.setAttribute(DFLEX_ATTRIBUTES[key], `${value}`);
     this._hasAttribute!.add(key);
   }
 
   removeAttribute(DOM: HTMLElement, key: AllowedAttributes): void {
-    if (key === "INDEX" || !this._hasAttribute!.has(key)) return;
+    if (key === "INDEX" || !this._hasAttribute!.has(key)) {
+      return;
+    }
+
     DOM.removeAttribute(DFLEX_ATTRIBUTES[key]);
     this._hasAttribute!.delete(key);
   }
@@ -65,8 +73,9 @@ class DFlexBaseNode {
     this._hasAttribute!.forEach((key) => {
       this.removeAttribute(DOM, key);
     });
+
     this._hasAttribute!.clear();
   }
 }
 
-export default DFlexBaseNode;
+export default DFlexBaseElement;

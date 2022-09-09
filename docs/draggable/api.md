@@ -1,9 +1,7 @@
 ---
 title: Draggable API
-description: "DFlex draggable installation and API."
+description: "DFlex draggable installation and API"
 ---
-
-> Dragging elements without interacting with other elements is the layout.
 
 ## Installation
 
@@ -13,8 +11,11 @@ npm install @dflex/draggable
 
 ## API
 
-If you already read the [Drag and Drop API documentation](docs/drag-drop/ap),
-you can skip this section. All the mechanisms are the same.
+DFlex Draggable depends on three principles to achieve DOM interactivity:
+
+- Register element in the store.
+- Start dragging when mouse is down.
+- End dragging to release element when mouse is up.
 
 ```js
 import { store, Draggable } from "@dflex/draggable";
@@ -25,33 +26,25 @@ import { store, Draggable } from "@dflex/draggable";
 Each element should be registered in draggable store in order to be dragged later.
 
 ```ts
-store.register(RegisterInput);
+store.register(id: string);
 ```
 
-Where `RegisterInput` is an object with the following properties:
+### Create dragging instance
 
-- `id?: string` is a unique identifier for an element in the registry. Duplicate
-  ids will cause confusion and prevent DnD from working properly.
-- `ref?: HTMLElement` targeted DOM element. Should be provided if you haven't
-  provided the id.
-
-### Create dragging event
-
-The dragging event should be created when `onmousedown` is fired. So you
+The dragging instance should be created when `onmousedown` is fired. So you
 initialized the element before start dragging.
 
 ```ts
-const draggableEvent = new Draggable(id, clickCoordinates);
+const dflexDraggable = new Draggable(id, clickCoordinates);
 ```
 
 - `id: string` registered element-id in the store.
-- `clickCoordinates` is an object with `{x: number, y: number}` contains the coordinates of the
-  mouse/touch click.
+- `coordinate: AxesPoint` is an object with `{x: number, y: number}` contains the coordinates of the
 
 ### Start dragging
 
 ```ts
-draggableEvent.dragAt(x, y);
+dflexDraggable.dragAt(x, y);
 ```
 
 - `x: number` is event.clientX, the horizontal click coordinate.
@@ -60,7 +53,7 @@ draggableEvent.dragAt(x, y);
 ### End dragging
 
 ```ts
-draggableEvent.endDragging();
+dflexDraggable.endDragging();
 ```
 
 ### Cleanup element
@@ -73,40 +66,3 @@ store.unregister(id);
 ```
 
 - `id: string` registered element-id.
-
-### Add Custom Style
-
-You can also control the few style properties that Draggable use when dragging
-the registered element with the static property `draggedStyle`.
-
-#### DraggedStyle Interface
-
-```ts
-interface DraggedStyle = {
-  prop: string;
-  dragValue: string;
-  afterDragValue: string | null;
-}[];
-```
-
-#### DraggedStyle Default Value
-
-```js
-const draggedStyle = [
-  {
-    prop: "position",
-    dragValue: "relative",
-    afterDragValue: "",
-  },
-  {
-    prop: "zIndex",
-    dragValue: "99",
-    afterDragValue: "",
-  },
-  {
-    prop: "userSelect",
-    dragValue: "none",
-    afterDragValue: "",
-  },
-];
-```

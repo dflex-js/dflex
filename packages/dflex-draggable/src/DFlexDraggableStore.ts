@@ -16,7 +16,7 @@ class DFlexDraggableStore extends DFlexBaseStore {
   private _initElmDOMInstance(id: string) {
     const [dflexNode, DOM] = this.getElmWithDOM(id);
 
-    dflexNode.resume(DOM, 0, 0);
+    dflexNode.resume(DOM);
   }
 
   private _initBranch(SK: string) {

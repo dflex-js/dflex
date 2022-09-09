@@ -11,6 +11,8 @@ context(
 
     context("Top only", () => {
       it("Getting element (#item-rest-container-top)", () => {
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(0);
         cy.get("#item-rest-container-top").then((elm) => {
           elmBox = elm[0].getBoundingClientRect();
           startingPointX = elmBox.x + elmBox.width / 2;

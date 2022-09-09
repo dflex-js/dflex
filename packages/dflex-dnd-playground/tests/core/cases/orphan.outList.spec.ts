@@ -1,4 +1,11 @@
-import { test, expect, Page, Locator, BrowserContext } from "@playwright/test";
+import {
+  test,
+  expect,
+  Page,
+  Locator,
+  BrowserContext,
+  Browser,
+} from "@playwright/test";
 import {
   DraggedRect,
   getDraggedRect,
@@ -16,12 +23,14 @@ test.describe.serial("Orphan dragged won't break", async () => {
   let elmP1: Locator;
 
   let context: BrowserContext;
+  let activeBrowser: Browser;
 
-  test.beforeAll(async ({ browser, baseURL }) => {
-    context = await browser.newContext();
+  test.beforeAll(async ({ browser, browserName, baseURL }) => {
+    activeBrowser = browser;
+    context = await activeBrowser.newContext();
 
     page = await context.newPage();
-    initialize(page, 5);
+    initialize(page, browserName);
     await page.goto(baseURL!);
 
     elmP1 = page.locator(draggedID);
@@ -30,6 +39,7 @@ test.describe.serial("Orphan dragged won't break", async () => {
   test.afterAll(async () => {
     await page.close();
     await context.close();
+    // await activeBrowser.close();
   });
 
   test("Moving dragged element list horizontally and vertically", async () => {

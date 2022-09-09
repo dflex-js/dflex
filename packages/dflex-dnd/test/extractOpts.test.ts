@@ -1,6 +1,10 @@
 import { extractOpts } from "../src/utils/extractOpts";
 
 describe("extractOpts", () => {
+  beforeAll(() => {
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
+  });
+
   it("Returns default options when empty object is passed", () => {
     const opts = extractOpts({});
 
@@ -87,7 +91,7 @@ describe("extractOpts", () => {
     expect(opts.restrictions.self.allowLeavingFromTop).toEqual(false);
 
     expect(opts.containersTransition).toMatchInlineSnapshot(`
-      Object {
+      {
         "enable": false,
         "margin": 10,
       }

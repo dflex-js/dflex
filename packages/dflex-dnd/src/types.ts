@@ -59,11 +59,20 @@ export interface ContainersTransition {
   margin: number;
 }
 
+export interface Commit {
+  /** Default=true */
+  enableAfterEndingDrag: boolean;
+
+  /** Default=true */
+  enableForScrollOnly: boolean;
+}
+
 export interface DefaultDndOpts {
   containersTransition: ContainersTransition;
   threshold: ThresholdPercentages;
   restrictions: Restrictions;
   scroll: ScrollOpts;
+  commit: Commit;
 }
 
 export interface RestrictionsStatus {
@@ -80,4 +89,5 @@ export interface DFlexDnDOpts {
   threshold?: Partial<ThresholdPercentages>;
   restrictions?: RestrictionsPartial;
   scroll?: Partial<ScrollOptPartialThreshold>;
+  commit?: Partial<Commit>;
 }

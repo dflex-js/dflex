@@ -1,7 +1,7 @@
 import type { AxesPoint } from "@dflex/utils";
 
 import DraggableInteractive from "./Draggable";
-import Droppable from "./Droppable";
+import Mechanism from "./Mechanism";
 import { scheduler, store } from "./LayoutManager";
 
 import type { DFlexDnDOpts, FinalDndOpts } from "./types";
@@ -9,7 +9,7 @@ import type { DFlexDnDOpts, FinalDndOpts } from "./types";
 import { extractOpts } from "./utils/extractOpts";
 import { defaultOpts } from "./utils/constants";
 
-class DnD extends Droppable {
+class DnD extends Mechanism {
   /**
    *
    * @param id -
@@ -37,7 +37,9 @@ class DnD extends Droppable {
 
     super(draggable);
 
-    scheduler(store, null, null, { layoutState: "ready", type: "layoutState" });
+    scheduler(store, null, null, { type: "layoutState", status: "ready" });
+
+    store.isTransforming = true;
   }
 }
 

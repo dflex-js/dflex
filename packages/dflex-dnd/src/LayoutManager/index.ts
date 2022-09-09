@@ -2,7 +2,7 @@ export { default as store } from "./DFlexDnDStoreSingleton";
 export { default as initDFlexEvent } from "./DFlexEvents";
 export { default as initDFlexListeners } from "./DFlexListeners";
 export { default as scheduler } from "./DFlexScheduler";
-export { initMutationObserver } from "./DFlexMutations";
+export { addMutationObserver as initMutationObserver } from "./DFlexMutations";
 
 export type {
   DFlexDraggedEvent,
@@ -13,4 +13,10 @@ export type {
   DFlexEventPlugin,
 } from "./DFlexEvents";
 
-export type { DFlexListenerEvents } from "./DFlexListeners";
+export type {
+  DFlexListenerEvents,
+  DFlexLayoutStateEvent,
+  DFlexElmMutationEvent,
+} from "./DFlexListeners";
+
+export { DFLEX_EVENTS } from "./constants";

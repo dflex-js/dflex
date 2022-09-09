@@ -1,38 +1,42 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`extractOpts Returns default options when empty object is passed 1`] = `
-Object {
-  "containersTransition": Object {
+{
+  "commit": {
+    "enableAfterEndingDrag": true,
+    "enableForScrollOnly": true,
+  },
+  "containersTransition": {
     "enable": true,
     "margin": 10,
   },
-  "restrictions": Object {
-    "container": Object {
+  "restrictions": {
+    "container": {
       "allowLeavingFromBottom": true,
       "allowLeavingFromLeft": true,
       "allowLeavingFromRight": true,
       "allowLeavingFromTop": true,
     },
-    "self": Object {
+    "self": {
       "allowLeavingFromBottom": true,
       "allowLeavingFromLeft": true,
       "allowLeavingFromRight": true,
       "allowLeavingFromTop": true,
     },
   },
-  "restrictionsStatus": Object {
+  "restrictionsStatus": {
     "isContainerRestricted": false,
     "isSelfRestricted": false,
   },
-  "scroll": Object {
+  "scroll": {
     "enable": true,
     "initialSpeed": 10,
-    "threshold": Object {
+    "threshold": {
       "horizontal": 15,
       "vertical": 15,
     },
   },
-  "threshold": Object {
+  "threshold": {
     "horizontal": 60,
     "vertical": 60,
   },
@@ -40,38 +44,42 @@ Object {
 `;
 
 exports[`extractOpts Returns the default options with input restrictions/allowLeavingFromBottom 1`] = `
-Object {
-  "containersTransition": Object {
+{
+  "commit": {
+    "enableAfterEndingDrag": true,
+    "enableForScrollOnly": true,
+  },
+  "containersTransition": {
     "enable": true,
     "margin": 10,
   },
-  "restrictions": Object {
-    "container": Object {
+  "restrictions": {
+    "container": {
       "allowLeavingFromBottom": false,
       "allowLeavingFromLeft": true,
       "allowLeavingFromRight": true,
       "allowLeavingFromTop": true,
     },
-    "self": Object {
+    "self": {
       "allowLeavingFromBottom": true,
       "allowLeavingFromLeft": true,
       "allowLeavingFromRight": true,
       "allowLeavingFromTop": true,
     },
   },
-  "restrictionsStatus": Object {
+  "restrictionsStatus": {
     "isContainerRestricted": true,
     "isSelfRestricted": false,
   },
-  "scroll": Object {
+  "scroll": {
     "enable": true,
     "initialSpeed": 10,
-    "threshold": Object {
+    "threshold": {
       "horizontal": 15,
       "vertical": 15,
     },
   },
-  "threshold": Object {
+  "threshold": {
     "horizontal": 60,
     "vertical": 60,
   },
@@ -79,38 +87,42 @@ Object {
 `;
 
 exports[`extractOpts Returns the default options with input restrictions/threshold/scroll 1`] = `
-Object {
-  "containersTransition": Object {
+{
+  "commit": {
+    "enableAfterEndingDrag": true,
+    "enableForScrollOnly": true,
+  },
+  "containersTransition": {
     "enable": false,
     "margin": 10,
   },
-  "restrictions": Object {
-    "container": Object {
+  "restrictions": {
+    "container": {
       "allowLeavingFromBottom": false,
       "allowLeavingFromLeft": true,
       "allowLeavingFromRight": true,
       "allowLeavingFromTop": true,
     },
-    "self": Object {
+    "self": {
       "allowLeavingFromBottom": true,
       "allowLeavingFromLeft": true,
       "allowLeavingFromRight": true,
       "allowLeavingFromTop": false,
     },
   },
-  "restrictionsStatus": Object {
+  "restrictionsStatus": {
     "isContainerRestricted": true,
     "isSelfRestricted": true,
   },
-  "scroll": Object {
+  "scroll": {
     "enable": true,
     "initialSpeed": 10,
-    "threshold": Object {
+    "threshold": {
       "horizontal": 9000,
       "vertical": 15,
     },
   },
-  "threshold": Object {
+  "threshold": {
     "horizontal": 9000,
     "vertical": 60,
   },
@@ -118,38 +130,42 @@ Object {
 `;
 
 exports[`extractOpts Returns the default options with input scroll/threshold 1`] = `
-Object {
-  "containersTransition": Object {
+{
+  "commit": {
+    "enableAfterEndingDrag": true,
+    "enableForScrollOnly": true,
+  },
+  "containersTransition": {
     "enable": true,
     "margin": 10,
   },
-  "restrictions": Object {
-    "container": Object {
+  "restrictions": {
+    "container": {
       "allowLeavingFromBottom": true,
       "allowLeavingFromLeft": true,
       "allowLeavingFromRight": true,
       "allowLeavingFromTop": true,
     },
-    "self": Object {
+    "self": {
       "allowLeavingFromBottom": true,
       "allowLeavingFromLeft": true,
       "allowLeavingFromRight": true,
       "allowLeavingFromTop": true,
     },
   },
-  "restrictionsStatus": Object {
+  "restrictionsStatus": {
     "isContainerRestricted": false,
     "isSelfRestricted": false,
   },
-  "scroll": Object {
+  "scroll": {
     "enable": true,
     "initialSpeed": 10,
-    "threshold": Object {
+    "threshold": {
       "horizontal": 1000,
       "vertical": 15,
     },
   },
-  "threshold": Object {
+  "threshold": {
     "horizontal": 60,
     "vertical": 60,
   },
@@ -157,38 +173,42 @@ Object {
 `;
 
 exports[`extractOpts Returns the default options with input scroll/threshold/enable 1`] = `
-Object {
-  "containersTransition": Object {
+{
+  "commit": {
+    "enableAfterEndingDrag": true,
+    "enableForScrollOnly": true,
+  },
+  "containersTransition": {
     "enable": true,
     "margin": 10,
   },
-  "restrictions": Object {
-    "container": Object {
+  "restrictions": {
+    "container": {
       "allowLeavingFromBottom": true,
       "allowLeavingFromLeft": true,
       "allowLeavingFromRight": true,
       "allowLeavingFromTop": true,
     },
-    "self": Object {
+    "self": {
       "allowLeavingFromBottom": true,
       "allowLeavingFromLeft": true,
       "allowLeavingFromRight": true,
       "allowLeavingFromTop": true,
     },
   },
-  "restrictionsStatus": Object {
+  "restrictionsStatus": {
     "isContainerRestricted": false,
     "isSelfRestricted": false,
   },
-  "scroll": Object {
+  "scroll": {
     "enable": false,
     "initialSpeed": 10,
-    "threshold": Object {
+    "threshold": {
       "horizontal": 1000,
       "vertical": 15,
     },
   },
-  "threshold": Object {
+  "threshold": {
     "horizontal": 60,
     "vertical": 60,
   },
@@ -196,38 +216,42 @@ Object {
 `;
 
 exports[`extractOpts Returns the default options with self restrictions/allowLeavingFromLeft+right 1`] = `
-Object {
-  "containersTransition": Object {
+{
+  "commit": {
+    "enableAfterEndingDrag": true,
+    "enableForScrollOnly": true,
+  },
+  "containersTransition": {
     "enable": true,
     "margin": 10,
   },
-  "restrictions": Object {
-    "container": Object {
+  "restrictions": {
+    "container": {
       "allowLeavingFromBottom": true,
       "allowLeavingFromLeft": true,
       "allowLeavingFromRight": true,
       "allowLeavingFromTop": true,
     },
-    "self": Object {
+    "self": {
       "allowLeavingFromBottom": true,
       "allowLeavingFromLeft": false,
       "allowLeavingFromRight": false,
       "allowLeavingFromTop": true,
     },
   },
-  "restrictionsStatus": Object {
+  "restrictionsStatus": {
     "isContainerRestricted": false,
     "isSelfRestricted": true,
   },
-  "scroll": Object {
+  "scroll": {
     "enable": true,
     "initialSpeed": 10,
-    "threshold": Object {
+    "threshold": {
       "horizontal": 15,
       "vertical": 15,
     },
   },
-  "threshold": Object {
+  "threshold": {
     "horizontal": 60,
     "vertical": 60,
   },

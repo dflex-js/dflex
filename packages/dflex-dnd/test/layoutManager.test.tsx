@@ -38,6 +38,7 @@ describe("DFlex DnD", () => {
 
   beforeAll(() => {
     jest.useFakeTimers();
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
     container = document.createElement("div");
     reactRoot = createRoot(container);

@@ -12,6 +12,8 @@ context("Checking restrictions continuity for the first element", () => {
 
   context("First element", () => {
     it("Getting the first element (#item-rest-1)", () => {
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(0);
       cy.get("#item-rest-1").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
         startingPointX = elmBox.x + elmBox.width / 2;
@@ -30,7 +32,7 @@ context("Checking restrictions continuity for the first element", () => {
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // // // // cy.wait(0));
+        cy.wait(0);
       }
 
       stepsY += 2;
@@ -43,7 +45,7 @@ context("Checking restrictions continuity for the first element", () => {
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0);
+        cy.wait(0);
       }
 
       stepsY += 100;
@@ -64,7 +66,7 @@ context("Checking restrictions continuity for the first element", () => {
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // // // cy.wait(0));
+        cy.wait(0);
       }
       stepsX += 210;
     });
@@ -84,7 +86,7 @@ context("Checking restrictions continuity for the first element", () => {
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // // // cy.wait(0));
+        cy.wait(0);
       }
 
       stepsX += -370;
@@ -123,13 +125,11 @@ context("Checking restrictions continuity for the first element", () => {
         elmBox = elm[0].getBoundingClientRect();
         startingPointX = elmBox.x + elmBox.width / 2;
         startingPointY = elmBox.y + elmBox.height / 2;
-
         cy.get("#item-rest-5").trigger("mousedown", {
           button: 0,
         });
       });
     });
-
     it("Transforms element (#item-rest-5) up", () => {
       for (let i = 0; i <= 400; i += 10) {
         cy.get("#item-rest-5").trigger("mousemove", {
@@ -137,16 +137,13 @@ context("Checking restrictions continuity for the first element", () => {
           force: true,
         });
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        // cy.wait(0));
+        cy.wait(0);
       }
-
       stepsY = 400;
     });
-
     it("Triggers mouseup", () => {
       cy.get("#item-rest-5").trigger("mouseup", { force: true });
     });
-
     it("Siblings have new positions", () => {
       for (let i = 2; i < 5; i += 1) {
         cy.get(`#item-rest-${i}`).should(
@@ -156,27 +153,23 @@ context("Checking restrictions continuity for the first element", () => {
         );
       }
     });
-
     it("Dragged has new position", () => {
-      cy.get(`#item-rest-5`).should(
+      cy.get("#item-rest-5").should(
         "have.css",
         "transform",
         "matrix(1, 0, 0, 1, 0, -404.75)"
       );
     });
-
     it("Getting the element 5 (#item-rest-5) again", () => {
       cy.get("#item-rest-5").then((elm) => {
         elmBox = elm[0].getBoundingClientRect();
         startingPointX = elmBox.x + elmBox.width / 2;
         startingPointY = elmBox.y + elmBox.height / 2;
-
         cy.get("#item-rest-5").trigger("mousedown", {
           button: 0,
         });
       });
     });
-
     it("Transforms element (#item-rest-5) down to the end", () => {
       for (let i = 0; i <= 400; i += 10) {
         cy.get("#item-rest-5").trigger("mousemove", {
@@ -186,14 +179,11 @@ context("Checking restrictions continuity for the first element", () => {
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(0);
       }
-
       stepsY = 400;
     });
-
     it("Triggers mouseup", () => {
       cy.get("#item-rest-5").trigger("mouseup", { force: true });
     });
-
     it("All elements returns to the initial positions", () => {
       for (let i = 1; i <= 5; i += 1) {
         cy.get(`#item-rest-${i}`).should(

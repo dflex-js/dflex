@@ -1,4 +1,11 @@
-import { test, expect, Page, Locator, BrowserContext } from "@playwright/test";
+import {
+  test,
+  expect,
+  Page,
+  Locator,
+  BrowserContext,
+  Browser,
+} from "@playwright/test";
 import {
   DraggedRect,
   getDraggedRect,
@@ -9,6 +16,7 @@ import {
 test.describe.serial("Dragged is out position vertically", async () => {
   let page: Page;
   let context: BrowserContext;
+  let activeBrowser: Browser;
 
   let draggedID = "#id-10";
 
@@ -19,11 +27,12 @@ test.describe.serial("Dragged is out position vertically", async () => {
   let elm11: Locator;
   let elm12: Locator;
 
-  test.beforeAll(async ({ browser }) => {
-    context = await browser.newContext();
+  test.beforeAll(async ({ browser, browserName }) => {
+    activeBrowser = browser;
 
+    context = await activeBrowser.newContext();
     page = await context.newPage();
-    initialize(page, 5);
+    initialize(page, browserName);
 
     [elm09, elm10, elm11, elm12] = await Promise.all([
       page.locator("#id-9"),
@@ -36,6 +45,7 @@ test.describe.serial("Dragged is out position vertically", async () => {
   test.afterAll(async () => {
     await page.close();
     await context.close();
+    // await activeBrowser.close();
   });
 
   [
@@ -53,7 +63,7 @@ test.describe.serial("Dragged is out position vertically", async () => {
         await page.goto(testCase.url);
       });
 
-      test.describe(`Moving vertically container3`, () => {
+      test.describe("Moving vertically container3", () => {
         test.describe("Strictly out form the bottom", async () => {
           test("Moving dragged element to the bottom", async () => {
             draggedRect = await getDraggedRect(elm10);

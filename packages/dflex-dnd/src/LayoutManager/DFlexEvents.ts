@@ -1,11 +1,8 @@
-import {
-  DFLEX_EVENTS,
-  DRAG_EVT,
-  INTERACTIVITY_EVT,
-  SIBLINGS_EVT,
-} from "./constants";
+/* eslint-disable no-redeclare */
+/* eslint-disable no-unused-vars */
+import type { DRAG_EVT, INTERACTIVITY_EVT, SIBLINGS_EVT } from "./constants";
 
-interface DraggedEventPayload {
+interface PayloadDraggedEvent {
   /** Returns element id in the registry  */
   id: string;
 
@@ -13,7 +10,7 @@ interface DraggedEventPayload {
   index: number;
 }
 
-interface InteractivityEventPayload {
+interface PayloadInteractivityEvent {
   /** Returns element id in the registry  */
   id: string;
 
@@ -24,7 +21,7 @@ interface InteractivityEventPayload {
   target: HTMLElement;
 }
 
-interface SiblingsEventPayload {
+interface PayloadSiblingsEvent {
   /** Returns the index where the dragged left  */
   from: number;
 
@@ -32,22 +29,22 @@ interface SiblingsEventPayload {
   to: number;
 
   /** Returns an array of sibling ids in order  */
-  siblings: Array<string>;
+  siblings: string[];
 }
 
 type DFlexEventPayload =
-  | DraggedEventPayload
-  | InteractivityEventPayload
-  | SiblingsEventPayload;
+  | PayloadDraggedEvent
+  | PayloadInteractivityEvent
+  | PayloadSiblingsEvent;
 
 /** For dragged out of threshold or container event. */
-type DFlexDraggedEvent = CustomEvent<DraggedEventPayload>;
+type DFlexDraggedEvent = CustomEvent<PayloadDraggedEvent>;
 
 /** For dragged over an element or leaving an element. */
-type DFlexInteractivityEvent = CustomEvent<InteractivityEventPayload>;
+type DFlexInteractivityEvent = CustomEvent<PayloadInteractivityEvent>;
 
 /** When dragged movement triggers the siblings up/down. */
-type DFlexSiblingsEvent = CustomEvent<SiblingsEventPayload>;
+type DFlexSiblingsEvent = CustomEvent<PayloadSiblingsEvent>;
 
 /** All available DFlex events combined. */
 type DFlexEvents =
@@ -55,38 +52,61 @@ type DFlexEvents =
   | DFlexInteractivityEvent
   | DFlexSiblingsEvent;
 
-type DFlexEventsMeta = typeof DRAG_EVT &
-  typeof INTERACTIVITY_EVT &
-  typeof SIBLINGS_EVT;
+type EvtDrag = typeof DRAG_EVT[keyof typeof DRAG_EVT];
+
+type EvtInteractivity =
+  typeof INTERACTIVITY_EVT[keyof typeof INTERACTIVITY_EVT];
+
+type EvtSiblings = typeof SIBLINGS_EVT[keyof typeof SIBLINGS_EVT];
 
 /** Types of DFlex events. */
-type DFlexEventsTypes =
-  | typeof DRAG_EVT[keyof typeof DRAG_EVT]
-  | typeof INTERACTIVITY_EVT[keyof typeof INTERACTIVITY_EVT]
-  | typeof SIBLINGS_EVT[keyof typeof SIBLINGS_EVT];
+type DFlexEventsTypes = EvtDrag | EvtInteractivity | EvtSiblings;
 
-const EVT_CONFIG = {
+const EVT_CONFIG = Object.freeze({
   bubbles: true,
   cancelable: true,
   composed: true,
-};
+});
 
 function getEvtConfig(payload: DFlexEventPayload) {
   return Object.assign(EVT_CONFIG, { detail: payload });
 }
 
-type DispatchedSet = Set<keyof DFlexEventsMeta>;
+type DispatchedSet = Set<DFlexEventsTypes>;
 
 function dispatchDFlexEvent(
   dispatcher: HTMLElement,
   dispatchedSet: DispatchedSet,
-  evt: keyof DFlexEventsMeta,
+  evt: EvtDrag,
+  payload: PayloadDraggedEvent
+): void;
+
+function dispatchDFlexEvent(
+  dispatcher: HTMLElement,
+  dispatchedSet: DispatchedSet,
+  evt: EvtInteractivity,
+  payload: PayloadInteractivityEvent
+): void;
+
+function dispatchDFlexEvent(
+  dispatcher: HTMLElement,
+  dispatchedSet: DispatchedSet,
+  evt: EvtSiblings,
+  payload: PayloadSiblingsEvent
+): void;
+
+function dispatchDFlexEvent(
+  dispatcher: HTMLElement,
+  dispatchedSet: DispatchedSet,
+  evt: DFlexEventsTypes,
   payload: DFlexEventPayload
 ): void {
   // Throttle the dispatched event
-  if (dispatchedSet.has(evt)) return;
+  if (dispatchedSet.has(evt)) {
+    return;
+  }
 
-  const event = new CustomEvent(DFLEX_EVENTS[evt], getEvtConfig(payload));
+  const event = new CustomEvent(evt, getEvtConfig(payload));
   dispatcher.dispatchEvent(event);
 
   dispatchedSet.add(evt);
@@ -99,20 +119,37 @@ function clear(dispatchedSet: DispatchedSet): void {
   }
 }
 
-function initDFlexEvent(dispatcher: HTMLElement): {
-  // eslint-disable-next-line no-unused-vars
-  dispatch: (evt: keyof DFlexEventsMeta, payload: DFlexEventPayload) => void;
+type DispatchEvtDrag = (evt: EvtDrag, payload: PayloadDraggedEvent) => void;
+
+type DispatchEvtInteractivity = (
+  evt: EvtInteractivity,
+  payload: PayloadInteractivityEvent
+) => void;
+
+type DispatchEvtSiblings = (
+  evt: EvtSiblings,
+  payload: PayloadSiblingsEvent
+) => void;
+
+type DispatchEvt = (evt: DFlexEventsTypes, payload: DFlexEventPayload) => void;
+
+type DFlexEventPlugin = {
+  dispatch: (DispatchEvtDrag | DispatchEvtSiblings | DispatchEvtInteractivity) &
+    DispatchEvt;
   clean: () => void;
-} {
-  const dispatchedSet: DispatchedSet = new Set();
+};
+
+function initDFlexEvent(dispatcher: HTMLElement): DFlexEventPlugin {
+  const dispatchedSet = new Set<DFlexEventsTypes>();
+
+  const dispatch = () =>
+    dispatchDFlexEvent.bind(null, dispatcher, dispatchedSet);
 
   return {
-    dispatch: dispatchDFlexEvent.bind(null, dispatcher, dispatchedSet),
+    dispatch,
     clean: clear.bind(null, dispatchedSet),
   };
 }
-
-type DFlexEventPlugin = ReturnType<typeof initDFlexEvent>;
 
 export type {
   DFlexDraggedEvent,

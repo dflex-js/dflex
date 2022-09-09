@@ -1,4 +1,11 @@
-export type { SerializedDFlexCoreNode, DFlexNodeInput } from "./Node";
-export { DFlexNode, DFlexBaseNode } from "./Node";
+export type {
+  DFlexSerializedElement,
+  DFlexElementInput,
+  DFlexDOMGenOrder,
+} from "./Element";
+
+export { DFlexElement, DFlexBaseElement } from "./Element";
 
 export { DFlexParentContainer, DFlexScrollContainer } from "./Container";
+
+export type { DFlexSerializedScroll } from "./Container";

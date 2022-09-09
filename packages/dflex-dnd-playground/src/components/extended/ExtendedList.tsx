@@ -17,7 +17,17 @@ const ExtendedList = () => {
       <div className="extended">
         <ul>
           {tasks.map(({ task, id, key }) => (
-            <DFlexDnDComponent Component="li" registerInput={{ id }} key={key}>
+            <DFlexDnDComponent
+              Component="li"
+              registerInput={{ id }}
+              key={key}
+              opts={{
+                commit: {
+                  enableAfterEndingDrag: false,
+                  enableForScrollOnly: false,
+                },
+              }}
+            >
               {task}
             </DFlexDnDComponent>
           ))}

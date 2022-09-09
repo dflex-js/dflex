@@ -38,6 +38,12 @@ const TodoListWithReadonly = () => {
             <DFlexDnDComponent
               Component={"li"}
               registerInput={{ id, readonly }}
+              opts={{
+                commit: {
+                  enableAfterEndingDrag: false,
+                  enableForScrollOnly: false,
+                },
+              }}
               key={id}
               style={style}
             >
