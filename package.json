@@ -1,6 +1,6 @@
 {
   "name": "dflex-monorepo",
-  "description": "DFlex is a JavaScript Project to Manipulate DOM Elements.",
+  "description": "DFlex is a Javascript library for modern Drag and Drop apps.",
   "private": true,
   "license": "MIT",
   "workspaces": [
