@@ -2,21 +2,19 @@
 
 /* eslint-disable no-console */
 
-import { watch, rollup as _rollup } from "rollup";
+import { rollup as _rollup } from "rollup";
 import { resolve, join } from "path";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import replace from "@rollup/plugin-replace";
 import alias from "@rollup/plugin-alias";
 import commonjs from "@rollup/plugin-commonjs";
 import esbuild from "rollup-plugin-esbuild";
-import { terser } from "rollup-plugin-terser";
+import terser from "@rollup/plugin-terser";
 import minimist from "minimist";
 import packages from "npm-packages";
 
 const argv = minimist(process.argv.slice(2));
 
-/** @type boolean */
-const $isWatchMode = argv.watch;
 /** @type boolean */
 const $isProduction = argv.production;
 /** @type boolean */
@@ -30,6 +28,7 @@ const moduleResolution = packages.map((pkg) => ({
   find: pkg.pkgName,
   replacement: resolve(
     pkg.sourcePath,
+    // @ts-expect-error
     pkg.modules.find((m) => m.format === "cjs").sourceFileName
   ),
 }));
@@ -92,54 +91,16 @@ async function build(name, format, inputFile, outputFile, isProd, isMinify) {
     plugins: plugins(isProd, isMinify),
   };
 
-  /**
-   * @typedef {object} OutputOpts
-   * @property {boolean} OutputOpts.externalLiveBindings
-   * @property {boolean} OutputOpts.freeze
-   * @property {boolean} OutputOpts.interop
-   * @property {string} OutputOpts.file
-   * @property {"auto"} OutputOpts.exports
-   * @property {"cjs"|"es"} OutputOpts.format
-   * */
+  const result = await _rollup(inputOptions);
 
-  /** @type OutputOpts */
-  const outputOptions = {
+  await result.write({
     externalLiveBindings: false,
     format,
     exports: "auto",
     file: outputFile,
     freeze: false,
-    interop: false,
-  };
-
-  if ($isWatchMode) {
-    const watcher = watch({
-      ...inputOptions,
-      output: outputOptions,
-    });
-
-    watcher.on("event", async (event) => {
-      switch (event.code) {
-        case "BUNDLE_START":
-          console.log(`Building ${name}`);
-          break;
-        case "BUNDLE_END":
-          console.log(`Built ${name}`);
-          break;
-        case "ERROR":
-          console.error(`Build failed for ${name}:\n\n${event.error}`);
-          break;
-
-        default:
-          console.log(event);
-      }
-    });
-
-    return;
-  }
-
-  const result = await _rollup(inputOptions);
-  await result.write(outputOptions);
+    interop: undefined,
+  });
 }
 
 const buildPromise = packages.map((pkg) => {
