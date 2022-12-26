@@ -13,7 +13,7 @@ interface Props {
 }
 
 const Core = ({
-  component: CoreComponent = "div",
+  component: Component = "div",
   id,
   children,
   depth,
@@ -26,9 +26,9 @@ const Core = ({
   }, [ref]);
 
   return (
-    <CoreComponent ref={ref} key={id} id={id} {...rest}>
+    <Component ref={ref} key={id} id={id} {...rest}>
       {children}
-    </CoreComponent>
+    </Component>
   );
 };
 
