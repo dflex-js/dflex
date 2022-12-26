@@ -1,4 +1,3 @@
-import Core from "./Core";
-import Container from "./Container";
+import DFlexDnDComponent from "./Core";
 
-export { Core, Container };
+export default DFlexDnDComponent;

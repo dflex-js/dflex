@@ -3,7 +3,7 @@ import React from "react";
 import "./List.css";
 
 import { store } from "@dflex/dnd";
-import { Core, Container } from "./component-based-event";
+import Core from "./component-based-event";
 
 const firstContainer = [
   {
@@ -51,7 +51,7 @@ interface Props {
 const ListMigration = ({ withCommitBtn }: Props) => {
   return (
     <>
-      <Container className="list-migration">
+      <div className="list-migration">
         <Core
           enableContainersTransition
           id={`id-${ID_PARENT_1}`}
@@ -119,7 +119,7 @@ const ListMigration = ({ withCommitBtn }: Props) => {
             Commit
           </button>
         )}
-      </Container>
+      </div>
     </>
   );
 };

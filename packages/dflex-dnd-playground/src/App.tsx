@@ -103,13 +103,13 @@ const App = () => {
           element={
             <ContainerBasedEvent isHorizontal isIncludeOneContainer={false} />
           }
-        ></Route>
+        />
         <Route
           path="/grid"
           element={
             <ContainerBasedEvent isHorizontal isIncludeOneContainer grid />
           }
-        ></Route>
+        />
         <Route
           path="/"
           element={
@@ -118,7 +118,7 @@ const App = () => {
               isIncludeOneContainer={false}
             />
           }
-        ></Route>
+        />
       </Routes>
     </BrowserRouter>
   );

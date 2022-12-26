@@ -7,10 +7,7 @@ import {
   Container as ContainerInContainerBasedEvent,
 } from "./container-based-event";
 
-import {
-  Core as CoreInComponentBasedEvent,
-  Container as ContainerInComponentBasedEvent,
-} from "./component-based-event";
+import CoreInComponentBasedEvent from "./component-based-event";
 
 const firstContainer = [{ label: "container1 |> elm-1", id: "1" }];
 
@@ -36,10 +33,7 @@ const ID_PARENT_2 = "p2";
 const ID_PARENT_3 = "p3";
 
 interface PropsBase {
-  Container:
-    | typeof ContainerInComponentBasedEvent
-    | typeof ContainerInContainerBasedEvent;
-
+  Container: typeof ContainerInContainerBasedEvent | string;
   Core: typeof CoreInComponentBasedEvent | typeof CoreInContainerBasedEvent;
   isIncludeOneContainer: boolean;
   isHorizontal: boolean;
@@ -98,11 +92,7 @@ interface IProps {
 
 function ComponentBasedEvent(props: IProps) {
   return (
-    <BaseApp
-      {...props}
-      Core={CoreInComponentBasedEvent}
-      Container={ContainerInComponentBasedEvent}
-    />
+    <BaseApp {...props} Core={CoreInComponentBasedEvent} Container="div" />
   );
 }
 

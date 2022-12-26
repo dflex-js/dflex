@@ -1,4 +1,4 @@
 # Component Based Event
 
-In this case, event is triggered form the child parent has nothing to do with
-the event. Typical behavior in most apps.
+Drag and Drop happens at the component level. In this case, the event is
+triggered from the component and the parent is unaware of any event.
