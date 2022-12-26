@@ -77,14 +77,12 @@ importers:
   packages/dflex-dnd-playground:
     specifiers:
       '@dflex/dnd': workspace:^3.7.0
-      '@folo/utils': ^0.1.5
       cypress: ^12.2.0
       eslint: ^8.30.0
       eslint-config-dflex-react: workspace:*
       eslint-plugin-cypress: ^2.12.1
     dependencies:
       '@dflex/dnd': link:../dflex-dnd
-      '@folo/utils': 0.1.5
     devDependencies:
       cypress: 12.2.0
       eslint: 8.30.0
@@ -984,10 +982,6 @@ packages:
       strip-json-comments: 3.1.1
     transitivePeerDependencies:
       - supports-color
-
-  /@folo/utils/0.1.5:
-    resolution: {integrity: sha512-uEGJMN5UnhV0bxdp1KkflHLV8wls2/lIaaK4N+907atXqRidAkO75nhhZG4iPkwo9sE8Qfhp09aWYc9b7GZ/Jw==}
-    dev: false
 
   /@hapi/hoek/9.3.0:
     resolution: {integrity: sha512-/c6rf4UJlmHlC9b5BaNvzAcFv7HZ2QHaV0D4/HNlBdvFnvQq8RI4kYdhyPCl7Xj+oWvTWQ8ujhqS53LIgAe6KQ==}
