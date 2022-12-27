@@ -20,7 +20,7 @@ function execTask(
   options: SchedulerOptions | null,
   evt?: DFlexListenerEvents
 ) {
-  if (options && options.onUpdate) {
+  if (options?.onUpdate) {
     store.deferred.push(options.onUpdate);
   }
 
@@ -29,7 +29,7 @@ function execTask(
   }
 
   try {
-    if (options && options.rAF) {
+    if (options?.rAF) {
       requestAnimationFrame(updateFn);
     } else {
       updateFn();
