@@ -139,6 +139,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     if (store.migration === null) {
       store.migration = new DFlexCycle(
         VDOMOrder.self,
+        this.draggedElm.id,
         SK,
         cycleID,
         // TODO: refactor this to use if the dragged belongs to scroll container or not.
@@ -147,6 +148,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     } else {
       store.migration.add(
         VDOMOrder.self,
+        this.draggedElm.id,
         SK,
         cycleID,
         // TODO: refactor this to use if the dragged belongs to scroll container or not.

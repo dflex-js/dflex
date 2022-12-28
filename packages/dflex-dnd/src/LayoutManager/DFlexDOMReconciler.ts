@@ -41,7 +41,13 @@ function commitElm(
   const [dflexElm, elmDOM] = store.getElmWithDOM(elmID);
 
   if (dflexElm.hasTransformedFromOrigin()) {
-    if (dflexElm.needReconciliation()) {
+    if (
+      dflexElm.needReconciliation() ||
+      // Until the element owns its transformation between containers history we
+      // can't rely only on the local indicators as it only reflects the
+      // elements movement inside the origin container.
+      store.migration.filter([dflexElm.id], false)
+    ) {
       switchElmDOMPosition(branchIDs, branchDOM, store, dflexElm, elmDOM);
     }
 

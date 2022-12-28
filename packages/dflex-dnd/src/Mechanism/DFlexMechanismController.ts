@@ -242,6 +242,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
         migration.add(
           NaN,
+          draggedElm.id,
           newSK,
           cycleID,
           store.scrolls.get(newSK)!.hasOverflow.isOneTruthy()

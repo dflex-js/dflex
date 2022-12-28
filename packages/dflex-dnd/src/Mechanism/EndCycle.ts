@@ -67,7 +67,7 @@ class EndCycle extends DFlexMechanismController {
     const { migration } = store;
     const latestCycle = migration.latest();
 
-    const sessionCycles = migration.filter(session);
+    const sessionCycles = migration.filter(session, true);
 
     let isFallback = false;
 
