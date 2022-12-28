@@ -242,7 +242,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     );
   }
 
-  reconcileBranch(SK: string): void {
+  private reconcileBranch(SK: string): void {
     const container = this.containers.get(SK)!;
     const branch = this.getElmBranchByKey(SK);
     const parentDOM = this.interactiveDOM.get(container.id)!;
@@ -258,14 +258,9 @@ class DFlexDnDStore extends DFlexBaseStore {
           }
         }
 
-        this.observer.get(SK)!.disconnect();
         DOMReconciler(branch, parentDOM, this, container);
       },
-      {
-        onUpdate: () => {
-          addMutationObserver(this, SK, parentDOM);
-        },
-      },
+      null,
       {
         type: "mutation",
         status: "committed",
@@ -314,11 +309,26 @@ class DFlexDnDStore extends DFlexBaseStore {
       return;
     }
 
+    this.observer.forEach((observer) => {
+      observer!.disconnect();
+    });
+
     this.migration.containerKeys.forEach((k) => {
       this.reconcileBranch(k);
     });
 
-    this.migration.clear();
+    scheduler(this, null, {
+      onUpdate: () => {
+        // Done reconciliation.
+        this.migration.containerKeys.forEach((k) => {
+          const container = this.containers.get(k)!;
+          const parentDOM = this.interactiveDOM.get(container.id)!;
+          addMutationObserver(this, k, parentDOM);
+        });
+
+        this.migration.clear();
+      },
+    });
   }
 
   getSerializedElm(id: string): DFlexSerializedElement | null {

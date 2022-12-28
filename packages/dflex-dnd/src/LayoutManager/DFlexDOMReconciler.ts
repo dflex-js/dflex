@@ -3,7 +3,7 @@ import type { ELmBranch } from "@dflex/dom-gen";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
 function switchElmDOMPosition(
-  branchIDs: ELmBranch,
+  branchIDs: Readonly<ELmBranch>,
   branchDOM: HTMLElement,
   store: DFlexDnDStore,
   dflexElm: DFlexElement,
@@ -33,7 +33,7 @@ function switchElmDOMPosition(
 }
 
 function commitElm(
-  branchIDs: ELmBranch,
+  branchIDs: Readonly<ELmBranch>,
   branchDOM: HTMLElement,
   store: DFlexDnDStore,
   elmID: string
@@ -58,7 +58,7 @@ function commitElm(
  * @returns
  */
 function DFlexDOMReconciler(
-  branchIDs: ELmBranch,
+  branchIDs: Readonly<ELmBranch>,
   branchDOM: HTMLElement,
   store: DFlexDnDStore,
   container: DFlexParentContainer
