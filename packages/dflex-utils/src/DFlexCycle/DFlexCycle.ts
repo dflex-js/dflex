@@ -1,6 +1,9 @@
 /* eslint-disable max-classes-per-file */
 
 class AbstractDFlexCycle {
+  /** Transitioning element ID. */
+  id: string;
+
   /** Last known index for draggable before transitioning. */
   index: number;
 
@@ -19,10 +22,17 @@ class AbstractDFlexCycle {
   /** Defined during the transition. */
   marginTop: number | null;
 
-  constructor(index: number, SK: string, id: string, hasScroll: boolean) {
+  constructor(
+    index: number,
+    id: string,
+    SK: string,
+    cycleID: string,
+    hasScroll: boolean
+  ) {
     this.index = index;
     this.SK = SK;
-    this.cycleID = id;
+    this.id = id;
+    this.cycleID = cycleID;
     this.hasScroll = hasScroll;
     this.numberOfTransformedELm = 0;
 
@@ -42,8 +52,16 @@ class DFlexCycle {
   /** Only true when transitioning. */
   isTransitioning!: boolean;
 
-  constructor(index: number, SK: string, id: string, hasScroll: boolean) {
-    this._migrations = [new AbstractDFlexCycle(index, SK, id, hasScroll)];
+  constructor(
+    index: number,
+    id: string,
+    SK: string,
+    cycleID: string,
+    hasScroll: boolean
+  ) {
+    this._migrations = [
+      new AbstractDFlexCycle(index, id, SK, cycleID, hasScroll),
+    ];
     this.containerKeys = new Set([SK]);
     this.complete();
   }
@@ -63,15 +81,16 @@ class DFlexCycle {
   }
 
   /**
-   * Get all cycles filtered by ids.
+   * Get all cycles filtered by cycleI-IDs or element-IDs.
    *
    * @param cycleIDs
+   * @param byCycleID
    * @returns
    */
-  filter(cycleIDs: string[]): AbstractDFlexCycle[] {
-    return this._migrations.filter((_) =>
-      cycleIDs.find((i) => i === _.cycleID)
-    );
+  filter(cycleIDs: string[], byCycleID: boolean): AbstractDFlexCycle[] {
+    return byCycleID
+      ? this._migrations.filter((_) => cycleIDs.find((i) => i === _.cycleID))
+      : this._migrations.filter((_) => cycleIDs.find((i) => i === _.id));
   }
 
   flush(cycleIDs: string[]): void {
@@ -130,11 +149,19 @@ class DFlexCycle {
    *
    * @param index
    * @param SK
-   * @param id
+   * @param cycleID
    * @param hasScroll
    */
-  add(index: number, SK: string, id: string, hasScroll: boolean): void {
-    this._migrations.push(new AbstractDFlexCycle(index, SK, id, hasScroll));
+  add(
+    index: number,
+    id: string,
+    SK: string,
+    cycleID: string,
+    hasScroll: boolean
+  ): void {
+    this._migrations.push(
+      new AbstractDFlexCycle(index, id, SK, cycleID, hasScroll)
+    );
     this.containerKeys.add(SK);
   }
 
