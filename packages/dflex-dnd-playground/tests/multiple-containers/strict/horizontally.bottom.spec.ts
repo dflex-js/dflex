@@ -6,7 +6,6 @@ import {
   BrowserContext,
   Browser,
 } from "@playwright/test";
-import { describe } from "node:test";
 
 import {
   assertChildrenOrderIDs,
@@ -75,7 +74,7 @@ test.describe
     // await activeBrowser.close();
   });
 
-  describe("Migrating (#c3-2) and commit it to the C2 container", () => {
+  test.describe("Migrating (#c3-2) and commit it to the C2 container", () => {
     test("Transforms element (#c3-2) - outside the origin container(3) inside container(2)", async () => {
       await getDraggedRect(elmC3E2);
       await moveDragged(-230, -1);
@@ -115,7 +114,7 @@ test.describe
     });
   });
 
-  describe("Migrating (#c3-1) and commit it to the C2 container", () => {
+  test.describe("Migrating (#c3-1) and commit it to the C2 container", () => {
     test("Transforms element (#c3-1) - outside the origin container(3) inside container(2)", async () => {
       await getDraggedRect(elmC3E1);
       await moveDragged(-230, -1);
