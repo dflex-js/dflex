@@ -23,17 +23,17 @@ test.describe
   let activeBrowser: Browser;
 
   // Second container.
-  let elmC2_parent: Locator;
-  let elmC2_1: Locator;
-  let elmC2_2: Locator;
-  let elmC2_3: Locator;
-  let elmC2_4: Locator;
-  let elmC2_5: Locator;
+  let elmC2Parent: Locator;
+  let elmC2E1: Locator;
+  let elmC2E2: Locator;
+  let elmC2E3: Locator;
+  let elmC2E4: Locator;
+  let elmC2E5: Locator;
 
   // Third container
-  let elmC3_parent: Locator;
-  let elmC3_1: Locator;
-  let elmC3_2: Locator;
+  let elmC3Parent: Locator;
+  let elmC3E1: Locator;
+  let elmC3E2: Locator;
 
   test.beforeAll(async ({ browser, browserName }) => {
     activeBrowser = browser;
@@ -44,16 +44,16 @@ test.describe
     await page.goto("/migration");
 
     [
-      elmC3_parent,
-      elmC3_1,
-      elmC3_2,
+      elmC3Parent,
+      elmC3E1,
+      elmC3E2,
 
-      elmC2_parent,
-      elmC2_1,
-      elmC2_2,
-      elmC2_3,
-      elmC2_4,
-      elmC2_5,
+      elmC2Parent,
+      elmC2E1,
+      elmC2E2,
+      elmC2E3,
+      elmC2E4,
+      elmC2E5,
     ] = await Promise.all([
       page.locator("#id-p3"),
       page.locator("#c3-1"),
@@ -75,7 +75,7 @@ test.describe
   });
 
   test("Transforms element (#c3-2) - outside the origin container(3) inside container(2)", async () => {
-    await getDraggedRect(elmC3_2);
+    await getDraggedRect(elmC3E2);
     await moveDragged(-230, -1);
   });
 
@@ -85,18 +85,18 @@ test.describe
 
   test("Siblings from the original container positioned correctly", async () => {
     await Promise.all([
-      expect(elmC3_1).toHaveCSS("transform", "none"),
-      expect(elmC3_2).toHaveCSS("transform", "matrix(1, 0, 0, 1, -226, 12)"),
+      expect(elmC3E1).toHaveCSS("transform", "none"),
+      expect(elmC3E2).toHaveCSS("transform", "matrix(1, 0, 0, 1, -226, 12)"),
     ]);
   });
 
   test("Siblings from the destination container positioned correctly", async () => {
     await Promise.all([
-      expect(elmC2_1).toHaveCSS("transform", "none"),
-      expect(elmC2_2).toHaveCSS("transform", "none"),
-      expect(elmC2_3).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 112)"),
-      expect(elmC2_4).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 112)"),
-      expect(elmC2_5).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 112)"),
+      expect(elmC2E1).toHaveCSS("transform", "none"),
+      expect(elmC2E2).toHaveCSS("transform", "none"),
+      expect(elmC2E3).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 112)"),
+      expect(elmC2E4).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 112)"),
+      expect(elmC2E5).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 112)"),
     ]);
   });
 
@@ -105,11 +105,11 @@ test.describe
   });
 
   test("Siblings have the correct order in origin container(C3)", async () => {
-    await assertChildrenOrderIDs(elmC3_parent, ["c3-1"]);
+    await assertChildrenOrderIDs(elmC3Parent, ["c3-1"]);
   });
 
   test("Siblings have the correct order in destination container(C2)", async () => {
-    await assertChildrenOrderIDs(elmC2_parent, [
+    await assertChildrenOrderIDs(elmC2Parent, [
       "c2-1",
       "c2-2",
       "c3-2", // The new child.
