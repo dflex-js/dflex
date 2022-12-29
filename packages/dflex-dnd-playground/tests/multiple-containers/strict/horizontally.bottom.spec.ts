@@ -6,6 +6,7 @@ import {
   BrowserContext,
   Browser,
 } from "@playwright/test";
+import { describe } from "node:test";
 
 import {
   assertChildrenOrderIDs,
@@ -74,48 +75,85 @@ test.describe
     // await activeBrowser.close();
   });
 
-  test("Transforms element (#c3-2) - outside the origin container(3) inside container(2)", async () => {
-    await getDraggedRect(elmC3E2);
-    await moveDragged(-230, -1);
+  describe("Migrating (#c3-2) and commit it to the C2 container", () => {
+    test("Transforms element (#c3-2) - outside the origin container(3) inside container(2)", async () => {
+      await getDraggedRect(elmC3E2);
+      await moveDragged(-230, -1);
+
+      await page.mouse.up({ button: "left", clickCount: 1 });
+    });
+
+    test("Siblings from the destination and original container positioned correctly including (#c3-2)", async () => {
+      await Promise.all([
+        expect(elmC3E1).toHaveCSS("transform", "none"),
+        expect(elmC3E2).toHaveCSS("transform", "matrix(1, 0, 0, 1, -226, 12)"),
+
+        expect(elmC2E1).toHaveCSS("transform", "none"),
+        expect(elmC2E2).toHaveCSS("transform", "none"),
+        expect(elmC2E3).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 112)"),
+        expect(elmC2E4).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 112)"),
+        expect(elmC2E5).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 112)"),
+      ]);
+    });
+
+    test("Trigger key `c` to commit the transformed elements and read the emitted message for mutation caused by (#c3-2)", async () => {
+      await invokeKeyboardAndAssertEmittedMsg(["c3-1"]);
+    });
+
+    test("Siblings have the correct order in destination container(C2) including the new merged element (#c3-2)", async () => {
+      await Promise.all([
+        assertChildrenOrderIDs(elmC3Parent, ["c3-1"]),
+        assertChildrenOrderIDs(elmC2Parent, [
+          "c2-1",
+          "c2-2",
+          "c3-2", // The new child.
+          "c2-3",
+          "c2-4",
+          "c2-5",
+        ]),
+      ]);
+    });
   });
 
-  test("Triggers mouseup", async () => {
-    await page.mouse.up({ button: "left", clickCount: 1 });
-  });
+  describe("Migrating (#c3-1) and commit it to the C2 container", () => {
+    test("Transforms element (#c3-1) - outside the origin container(3) inside container(2)", async () => {
+      await getDraggedRect(elmC3E1);
+      await moveDragged(-230, -1);
 
-  test("Siblings from the original container positioned correctly", async () => {
-    await Promise.all([
-      expect(elmC3E1).toHaveCSS("transform", "none"),
-      expect(elmC3E2).toHaveCSS("transform", "matrix(1, 0, 0, 1, -226, 12)"),
-    ]);
-  });
+      await page.mouse.up({ button: "left", clickCount: 1 });
+    });
 
-  test("Siblings from the destination container positioned correctly", async () => {
-    await Promise.all([
-      expect(elmC2E1).toHaveCSS("transform", "none"),
-      expect(elmC2E2).toHaveCSS("transform", "none"),
-      expect(elmC2E3).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 112)"),
-      expect(elmC2E4).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 112)"),
-      expect(elmC2E5).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 112)"),
-    ]);
-  });
+    test("Siblings from the destination and original container positioned correctly including (#c3-1)", async () => {
+      await Promise.all([
+        expect(elmC3E1).toHaveCSS("transform", "matrix(1, 0, 0, 1, -226, 0)"),
 
-  test("Trigger key `c` to commit the transformed elements and read the emitted message for mutation", async () => {
-    await invokeKeyboardAndAssertEmittedMsg(["c3-1"]);
-  });
+        expect(elmC2E1).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 112)"),
+        expect(elmC2E2).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 112)"),
+        expect(elmC3E2).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 112)"), // Previously merged.
+        expect(elmC2E3).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 112)"),
+        expect(elmC2E4).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 112)"),
+        expect(elmC2E5).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 112)"),
+      ]);
+    });
 
-  test("Siblings have the correct order in origin container(C3)", async () => {
-    await assertChildrenOrderIDs(elmC3Parent, ["c3-1"]);
-  });
+    test("Trigger key `c` to commit the transformed elements and read the emitted message for mutation caused by (#c3-1)", async () => {
+      //All elements have been merged into different container.
+      await invokeKeyboardAndAssertEmittedMsg([]);
+    });
 
-  test("Siblings have the correct order in destination container(C2)", async () => {
-    await assertChildrenOrderIDs(elmC2Parent, [
-      "c2-1",
-      "c2-2",
-      "c3-2", // The new child.
-      "c2-3",
-      "c2-4",
-      "c2-5",
-    ]);
+    test("Siblings have the correct order in destination container(C2) including the new merged element (#c3-1)", async () => {
+      await Promise.all([
+        assertChildrenOrderIDs(elmC3Parent, []),
+        assertChildrenOrderIDs(elmC2Parent, [
+          "c3-1", // The new child.
+          "c2-1",
+          "c2-2",
+          "c3-2", // The previously merged child.
+          "c2-3",
+          "c2-4",
+          "c2-5",
+        ]),
+      ]);
+    });
   });
 });
