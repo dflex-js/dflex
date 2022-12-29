@@ -8,7 +8,8 @@ import {
 } from "@playwright/test";
 
 import {
-  DraggedRect,
+  assertChildrenOrderIDs,
+  // DraggedRect,
   getDraggedRect,
   initialize,
   invokeKeyboardAndAssertEmittedMsg,
@@ -21,9 +22,8 @@ test.describe
   let context: BrowserContext;
   let activeBrowser: Browser;
 
-  let draggedRect: DraggedRect;
-
   // Second container.
+  let elmC2_parent: Locator;
   let elmC2_1: Locator;
   let elmC2_2: Locator;
   let elmC2_3: Locator;
@@ -31,6 +31,7 @@ test.describe
   let elmC2_5: Locator;
 
   // Third container
+  let elmC3_parent: Locator;
   let elmC3_1: Locator;
   let elmC3_2: Locator;
 
@@ -42,16 +43,29 @@ test.describe
     initialize(page, browserName);
     await page.goto("/migration");
 
-    [elmC3_1, elmC3_2, elmC2_1, elmC2_2, elmC2_3, elmC2_4, elmC2_5] =
-      await Promise.all([
-        page.locator("#c3-1"),
-        page.locator("#c3-2"),
-        page.locator("#c2-1"),
-        page.locator("#c2-2"),
-        page.locator("#c2-3"),
-        page.locator("#c2-4"),
-        page.locator("#c2-5"),
-      ]);
+    [
+      elmC3_parent,
+      elmC3_1,
+      elmC3_2,
+
+      elmC2_parent,
+      elmC2_1,
+      elmC2_2,
+      elmC2_3,
+      elmC2_4,
+      elmC2_5,
+    ] = await Promise.all([
+      page.locator("#id-p3"),
+      page.locator("#c3-1"),
+      page.locator("#c3-2"),
+
+      page.locator("#id-p2"),
+      page.locator("#c2-1"),
+      page.locator("#c2-2"),
+      page.locator("#c2-3"),
+      page.locator("#c2-4"),
+      page.locator("#c2-5"),
+    ]);
   });
 
   test.afterAll(async () => {
@@ -61,7 +75,7 @@ test.describe
   });
 
   test("Transforms element (#c3-2) - outside the origin container(3) inside container(2)", async () => {
-    draggedRect = await getDraggedRect(elmC3_2);
+    await getDraggedRect(elmC3_2);
     await moveDragged(-230, -1);
   });
 
@@ -86,7 +100,22 @@ test.describe
     ]);
   });
 
-  // test("Trigger key `c` to commit the transformed elements and read the emitted message for mutation", async () => {
-  //   await invokeKeyboardAndAssertEmittedMsg([]);
-  // });
+  test("Trigger key `c` to commit the transformed elements and read the emitted message for mutation", async () => {
+    await invokeKeyboardAndAssertEmittedMsg(["c3-1"]);
+  });
+
+  test("Siblings have the correct order in origin container(C3)", async () => {
+    await assertChildrenOrderIDs(elmC3_parent, ["c3-1"]);
+  });
+
+  test("Siblings have the correct order in destination container(C2)", async () => {
+    await assertChildrenOrderIDs(elmC2_parent, [
+      "c2-1",
+      "c2-2",
+      "c3-2", // The new child.
+      "c2-3",
+      "c2-4",
+      "c2-5",
+    ]);
+  });
 });
