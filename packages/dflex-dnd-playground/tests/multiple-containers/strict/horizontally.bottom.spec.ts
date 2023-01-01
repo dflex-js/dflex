@@ -155,4 +155,13 @@ test.describe
       ]);
     });
   });
+
+  test.describe("Transforming elements inside C2 container", () => {
+    test("Transforms element (#c3-1) - moving element down", async () => {
+      await getDraggedRect(elmC3E1);
+      await moveDragged(-1, -230);
+
+      // await page.mouse.up({ button: "left", clickCount: 1 });
+    });
+  });
 });
