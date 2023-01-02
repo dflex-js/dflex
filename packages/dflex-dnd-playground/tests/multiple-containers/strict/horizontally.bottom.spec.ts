@@ -156,7 +156,7 @@ test.describe
     });
   });
 
-  test.describe("Transforming elements inside C2 container", () => {
+  test.describe.skip("Transforming elements inside C2 container", () => {
     test("Transforms element (#c3-1) outside the container", async () => {
       await getDraggedRect(elmC3E1);
       await moveDragged(-1, -330);

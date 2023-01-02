@@ -16,6 +16,9 @@ class DFlexParentContainer {
   /** Strict Rect for siblings containers. */
   strictBoundaries: AbstractBox;
 
+  /** Relaxed Rect for parent containers. */
+  containerBoundaries?: AbstractBox;
+
   /** Numbers of total columns and rows each container has.  */
   grid: PointNum;
 
