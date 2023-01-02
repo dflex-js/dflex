@@ -49,10 +49,10 @@ function initThresholds(
   store.getBranchesByDepth(draggedDepth).forEach((SK) => {
     const elmContainer = store.containers.get(SK)!;
 
-    const { boundaries } = elmContainer;
+    const { strictBoundaries } = elmContainer;
 
     if (__DEV__) {
-      if (!boundaries) {
+      if (!strictBoundaries) {
         throw new Error(`Siblings boundaries for ${SK} not found.`);
       }
     }
@@ -63,7 +63,7 @@ function initThresholds(
       SK,
       insertionLayerKey,
       draggedDepth,
-      boundaries,
+      strictBoundaries,
       store.unifiedContainerDimensions[draggedDepth]
     );
   });
@@ -320,7 +320,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     const container = store.containers.get(SK)!;
 
     if (this.axesFilterNeeded) {
-      const { boundaries } = container;
+      const { strictBoundaries: boundaries } = container;
       const { top, bottom, left: maxLeft, right: minRight } = boundaries;
 
       if (this.restrictionsStatus.isContainerRestricted) {

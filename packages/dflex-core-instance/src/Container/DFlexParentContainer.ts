@@ -3,7 +3,7 @@ import { PointNum, dirtyAssignBiggestRect, AbstractBox } from "@dflex/utils";
 
 import type { Dimensions, AxesPoint } from "@dflex/utils";
 
-const defaultBoundaries = {
+const defaultStrictBoundaries = {
   bottom: 0,
   left: 0,
   right: 0,
@@ -14,7 +14,7 @@ class DFlexParentContainer {
   private _boundariesByRow: Record<number, AbstractBox>;
 
   /** Strict Rect for siblings containers. */
-  boundaries: AbstractBox;
+  strictBoundaries: AbstractBox;
 
   /** Numbers of total columns and rows each container has.  */
   grid: PointNum;
@@ -43,7 +43,7 @@ class DFlexParentContainer {
     this.originLength = originLength;
     this._boundariesByRow = {};
     this._gridSiblingsHasNewRow = false;
-    this.boundaries = Object.assign({}, defaultBoundaries);
+    this.strictBoundaries = Object.assign({}, defaultStrictBoundaries);
     // @ts-expect-error
     this.lastElmPosition = null;
   }
@@ -93,11 +93,11 @@ class DFlexParentContainer {
     rect: AbstractBox,
     unifiedContainerDimensions?: Dimensions
   ): void {
-    dirtyAssignBiggestRect(this.boundaries, rect);
+    dirtyAssignBiggestRect(this.strictBoundaries, rect);
 
     this._addNewElmToGridIndicator(rect);
 
-    const $ = this.boundaries;
+    const $ = this.strictBoundaries;
 
     const uni = unifiedContainerDimensions;
 
@@ -126,7 +126,7 @@ class DFlexParentContainer {
     this.originLength = originLength;
     this._boundariesByRow = {};
     this._gridSiblingsHasNewRow = false;
-    this.boundaries = Object.assign({}, defaultBoundaries);
+    this.strictBoundaries = Object.assign({}, defaultStrictBoundaries);
     // @ts-expect-error
     this.lastElmPosition = null;
   }
