@@ -54,6 +54,8 @@ function initThresholds(
     if (__DEV__) {
       if (boundaries === null) {
         console.warn(`Siblings boundaries for ${SK} is not found.`);
+        console.warn();
+        console.warn(`${SK} container must be empty.`);
         return;
       }
     }
