@@ -52,16 +52,9 @@ function initThresholds(
     const { boundaries } = elmContainer;
 
     if (__DEV__) {
-      if (boundaries === null) {
-        console.warn(`Siblings boundaries for ${SK} is not found.`);
-        console.warn();
-        console.warn(`${SK} container must be empty.`);
-        return;
+      if (!boundaries) {
+        throw new Error(`Siblings boundaries for ${SK} not found.`);
       }
-    }
-
-    if (boundaries === null) {
-      return;
     }
 
     const insertionLayerKey = combineKeys(draggedDepth, SK);
