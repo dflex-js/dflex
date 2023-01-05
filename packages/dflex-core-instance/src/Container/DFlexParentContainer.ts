@@ -1,23 +1,20 @@
 /* eslint-disable no-param-reassign */
-import { PointNum, dirtyAssignBiggestRect, AbstractBox } from "@dflex/utils";
+import {
+  PointNum,
+  dirtyAssignBiggestRect,
+  AbstractBox,
+  BoxRect,
+} from "@dflex/utils";
 
 import type { Dimensions, AxesPoint } from "@dflex/utils";
-
-const defaultStrictBoundaries = {
-  bottom: 0,
-  left: 0,
-  right: 0,
-  top: 0,
-};
 
 class DFlexParentContainer {
   private _boundariesByRow: Record<number, AbstractBox>;
 
   /** Strict Rect for siblings containers. */
-  strictBoundaries: AbstractBox;
+  private _siblingBoundaries: AbstractBox | null;
 
-  /** Relaxed Rect for parent containers. */
-  containerBoundaries?: AbstractBox;
+  private _rect!: BoxRect;
 
   /** Numbers of total columns and rows each container has.  */
   grid: PointNum;
@@ -40,15 +37,22 @@ class DFlexParentContainer {
 
   static OUT_OF_RANGE = -1;
 
-  constructor(originLength: number, id: string) {
+  constructor(DOM: HTMLElement, originLength: number, id: string) {
     this.id = id;
     this.grid = new PointNum(1, 1);
     this.originLength = originLength;
     this._boundariesByRow = {};
     this._gridSiblingsHasNewRow = false;
-    this.strictBoundaries = Object.assign({}, defaultStrictBoundaries);
+    this._siblingBoundaries = null;
+    this._initRect(DOM);
     // @ts-expect-error
     this.lastElmPosition = null;
+  }
+
+  private _initRect(DOM: HTMLElement): void {
+    const { left, top, right, bottom } = DOM.getBoundingClientRect();
+
+    this._rect = new BoxRect(top, right, bottom, left);
   }
 
   private _addNewElmToGridIndicator(rect: AbstractBox): void {
@@ -96,11 +100,20 @@ class DFlexParentContainer {
     rect: AbstractBox,
     unifiedContainerDimensions?: Dimensions
   ): void {
-    dirtyAssignBiggestRect(this.strictBoundaries, rect);
+    if (this._siblingBoundaries) {
+      dirtyAssignBiggestRect(this._siblingBoundaries, rect);
+    } else {
+      this._siblingBoundaries = {
+        bottom: rect.bottom,
+        left: rect.left,
+        right: rect.right,
+        top: rect.top,
+      };
+    }
 
     this._addNewElmToGridIndicator(rect);
 
-    const $ = this.strictBoundaries;
+    const $ = this._siblingBoundaries;
 
     const uni = unifiedContainerDimensions;
 
@@ -121,6 +134,15 @@ class DFlexParentContainer {
   }
 
   /**
+   * If container doesn't have siblings then it returns the container rect.
+   *
+   * @returns
+   */
+  getBoundaries(): AbstractBox<number> {
+    return this._siblingBoundaries || this._rect.getBox();
+  }
+
+  /**
    *
    * @param originLength
    */
@@ -129,7 +151,7 @@ class DFlexParentContainer {
     this.originLength = originLength;
     this._boundariesByRow = {};
     this._gridSiblingsHasNewRow = false;
-    this.strictBoundaries = Object.assign({}, defaultStrictBoundaries);
+    this._siblingBoundaries = null;
     // @ts-expect-error
     this.lastElmPosition = null;
   }

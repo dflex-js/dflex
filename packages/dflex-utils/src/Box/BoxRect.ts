@@ -15,6 +15,14 @@ class BoxRect extends BoxNum {
 
   height: number;
 
+  /**
+   * clockwise
+   *
+   * @param top
+   * @param right
+   * @param bottom
+   * @param left
+   */
   constructor(top: number, right: number, bottom: number, left: number) {
     super(top, right, bottom, left);
     this.width = right - left;
