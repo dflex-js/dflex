@@ -189,7 +189,6 @@ test.describe
       await Promise.all([
         expect(elmC3E1).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
         expect(elmC3E2).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
-
         expect(elmC2E1).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
         expect(elmC2E2).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
         expect(elmC2E3).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
