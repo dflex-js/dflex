@@ -78,8 +78,10 @@ test.describe
     test("Transforms element (#c3-2) - outside the origin container(3) inside container(2)", async () => {
       await getDraggedRect(elmC3E2);
       await moveDragged(-230, -1);
-
-      await page.mouse.up({ button: "left", clickCount: 1 });
+      await page.dispatchEvent("#c3-2", "mouseup", {
+        button: 0,
+        force: true,
+      });
     });
 
     test("Siblings from the destination and original container positioned correctly including (#c3-2)", async () => {
@@ -118,8 +120,10 @@ test.describe
     test("Transforms element (#c3-1) - outside the origin container(3) inside container(2)", async () => {
       await getDraggedRect(elmC3E1);
       await moveDragged(-230, -1);
-
-      await page.mouse.up({ button: "left", clickCount: 1 });
+      await page.dispatchEvent("#c3-1", "mouseup", {
+        button: 0,
+        force: true,
+      });
     });
 
     test("Siblings from the destination and original container positioned correctly including (#c3-1)", async () => {
@@ -156,7 +160,7 @@ test.describe
     });
   });
 
-  test.describe.skip("Transforming elements inside C2 container", () => {
+  test.describe("Transforming elements inside C2 container", () => {
     test("Transforms element (#c3-1) outside the container", async () => {
       await getDraggedRect(elmC3E1);
       await moveDragged(-1, -330);
@@ -175,7 +179,10 @@ test.describe
     });
 
     test("Release dragged", async () => {
-      await page.mouse.up({ button: "left", clickCount: 1 });
+      await page.dispatchEvent("#c3-1", "mouseup", {
+        button: 0,
+        force: true,
+      });
     });
 
     test("siblings are back to zero position", async () => {
