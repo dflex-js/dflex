@@ -181,7 +181,17 @@ class DFlexDnDStore extends DFlexBaseStore {
 
       container = this.containers.get(SK)!;
     } else {
-      container = new DFlexParentContainer(branch.length, id);
+      if (__DEV__) {
+        if (!this.interactiveDOM.has(id)) {
+          throw new Error(`Container DOM element doesn't exist.`);
+        }
+      }
+
+      container = new DFlexParentContainer(
+        this.interactiveDOM.get(id)!,
+        branch.length,
+        id
+      );
 
       this.containers.set(SK, container);
     }

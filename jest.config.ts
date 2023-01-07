@@ -1,15 +1,12 @@
-import type { InitialOptionsTsJest } from "ts-jest";
+import type { JestConfigWithTsJest } from "ts-jest";
 
-const tsJestConfig: InitialOptionsTsJest = {
+const tsJestConfig: JestConfigWithTsJest = {
   clearMocks: true,
   moduleFileExtensions: ["js", "ts", "tsx", "json"],
   globals: {
     __DEV__: true,
     // https://github.com/testing-library/react-testing-library/issues/1061#issuecomment-1117450890
     IS_REACT_ACT_ENVIRONMENT: true,
-    "ts-jest": {
-      tsconfig: "tsconfig.test.json",
-    },
   },
   moduleNameMapper: {
     "^./dist/(.+)": "./src/$1",
@@ -23,9 +20,13 @@ const tsJestConfig: InitialOptionsTsJest = {
   },
   testEnvironment: "jsdom",
   testPathIgnorePatterns: ["cypress"],
-  preset: "ts-jest",
   transform: {
-    "^.+\\.ts?$": "ts-jest",
+    "^.+\\.(ts|tsx)?$": [
+      "ts-jest",
+      {
+        tsconfig: "tsconfig.test.json",
+      },
+    ],
   },
   testMatch: ["**/test/**/*.test{.ts,.tsx,.js,.jsx}"],
 };
