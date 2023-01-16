@@ -537,13 +537,13 @@ class DFlexScrollContainer {
   private animatedScrollListener = () => {
     this._animatedListener.call(
       this,
-      this._updateScrollCoordinates,
+      this._updateScrollCoordinates.bind(this),
       this._scrollEventCallback
     );
   };
 
   private animatedResizeListener = () => {
-    this._animatedListener.call(this, this._setScrollRect, null);
+    this._animatedListener.call(this, this._setScrollRect.bind(this), null);
   };
 
   private _getVisibleScreen(): Dimensions {
