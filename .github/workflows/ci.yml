@@ -322,6 +322,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Build packages
+        run: "pnpm clean && pnpm build --production --release --minify"
+
       - name: Build DnD React App
         run: pnpm -F dflex-dnd-playground build
 
@@ -373,6 +376,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Build packages
+        run: "pnpm clean && pnpm build --production --release --minify"
+
       - name: Build DnD React App
         run: pnpm -F dflex-dnd-playground build
 
@@ -422,6 +428,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
+
+      - name: Build packages
+        run: "pnpm clean && pnpm build --production --release --minify"
 
       - name: Build DnD React App
         run: pnpm -F dflex-dnd-playground build
