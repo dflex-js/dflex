@@ -515,9 +515,8 @@ class DFlexScrollContainer {
     return !isOutThreshold;
   }
 
-  // TODO: Remove string and pass references instead.
-  private animatedListener(
-    setter: "_setScrollRect" | "_updateScrollCoordinates",
+  private _animatedListener(
+    listener: typeof this._setScrollRect | typeof this._updateScrollCoordinates,
     cb: ScrollEventCallback | null
   ) {
     if (this._hasThrottledFrame !== null) {
@@ -525,7 +524,7 @@ class DFlexScrollContainer {
     }
 
     this._hasThrottledFrame = requestAnimationFrame(() => {
-      const isUpdated = this[setter]();
+      const isUpdated = listener();
 
       if (isUpdated && cb) {
         cb(this._SK);
@@ -536,15 +535,15 @@ class DFlexScrollContainer {
   }
 
   private animatedScrollListener = () => {
-    this.animatedListener.call(
+    this._animatedListener.call(
       this,
-      "_updateScrollCoordinates",
+      this._updateScrollCoordinates.bind(this),
       this._scrollEventCallback
     );
   };
 
   private animatedResizeListener = () => {
-    this.animatedListener.call(this, "_setScrollRect", null);
+    this._animatedListener.call(this, this._setScrollRect.bind(this), null);
   };
 
   private _getVisibleScreen(): Dimensions {
