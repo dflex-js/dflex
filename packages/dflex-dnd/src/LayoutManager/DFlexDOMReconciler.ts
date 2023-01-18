@@ -1,5 +1,6 @@
 import type { DFlexElement, DFlexParentContainer } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
+import { assertElementPosition, featureFlags } from "@dflex/utils";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
 function switchElmDOMPosition(
@@ -104,6 +105,14 @@ function DFlexDOMReconciler(
           `Error in DOM order reconciliation.\n. ${
             branchDOM.children[i]
           } doesn't match ${store.interactiveDOM.get(branchIDs[i])!}`
+        );
+      }
+
+      // dflexElm._initIndicators(store.interactiveDOM.get(branchIDs[i])!);
+      if (featureFlags.enablePositionAssertion) {
+        assertElementPosition(
+          store.interactiveDOM.get(branchIDs[i])!,
+          dflexElm.rect
         );
       }
     }

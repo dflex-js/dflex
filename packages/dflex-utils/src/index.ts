@@ -24,6 +24,8 @@ export {
   dirtyAssignBiggestRect,
   warnOnce,
   assertElementPosition,
+  getElmComputedStyle,
+  clearComputedStyleMap,
 } from "./collections";
 
 export { canUseDOM, getSelection, getParentElm } from "./dom";

@@ -6,6 +6,7 @@ import {
   PointNum,
   warnOnce,
   assertElementPosition,
+  getElmComputedStyle,
 } from "@dflex/utils";
 import type { Direction, Axes, AxesPoint } from "@dflex/utils";
 
@@ -57,7 +58,7 @@ export interface DFlexElementInput {
 }
 
 function setRelativePosition(DOM: HTMLElement): void {
-  const computedStyle = getComputedStyle(DOM);
+  const computedStyle = getElmComputedStyle(DOM);
 
   const position = computedStyle.getPropertyValue("position");
 
@@ -72,8 +73,8 @@ function setRelativePosition(DOM: HTMLElement): void {
   }
 }
 
-function getElementStyle(DOM: HTMLElement): Dimensions {
-  const computedStyle = getComputedStyle(DOM);
+function getElmComputedDimensions(DOM: HTMLElement): Dimensions {
+  const computedStyle = getElmComputedStyle(DOM);
 
   const computedWidth = computedStyle.getPropertyValue("width");
   const computedHeight = computedStyle.getPropertyValue("height");
@@ -132,7 +133,7 @@ class DFlexCoreElement extends DFlexBaseElement {
 
   static transform = DFlexBaseElement.transform;
 
-  static getElementStyle = getElementStyle;
+  static getElmComputedDimensions = getElmComputedDimensions;
 
   static setRelativePosition = setRelativePosition;
 
@@ -157,7 +158,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.DOMGrid = new PointNum(0, 0);
   }
 
-  private _initIndicators(DOM: HTMLElement): void {
+  _initIndicators(DOM: HTMLElement): void {
     const { height, width, left, top } = DOM.getBoundingClientRect();
 
     /**
@@ -195,7 +196,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       return this._computedDimensions;
     }
 
-    const { width, height } = DFlexCoreElement.getElementStyle(DOM);
+    const { width, height } = DFlexCoreElement.getElmComputedDimensions(DOM);
 
     this._computedDimensions = new PointNum(width, height);
 
