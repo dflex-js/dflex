@@ -1,4 +1,9 @@
-import { AbstractDFlexCycle, PointNum } from "@dflex/utils";
+import {
+  AbstractDFlexCycle,
+  assertElementPosition,
+  featureFlags,
+  PointNum,
+} from "@dflex/utils";
 import type { AxesPoint } from "@dflex/utils";
 
 import { store } from "../LayoutManager";
@@ -92,7 +97,7 @@ class DraggableInteractive extends DraggableAxes {
   }
 
   /**
-   * Handle all the instances related to dragged.
+   * Handle all the instances related to dragged ending process.
    *
    * @param isFallback
    * @param  latestCycle
@@ -140,6 +145,14 @@ class DraggableInteractive extends DraggableAxes {
       this.occupiedPosition.x,
       this.occupiedPosition.y
     );
+
+    if (__DEV__) {
+      if (featureFlags.enablePositionAssertion) {
+        setTimeout(() => {
+          assertElementPosition(draggedDOM, this.draggedElm.rect);
+        }, 1000);
+      }
+    }
 
     translate.clone(this.occupiedTranslate);
 

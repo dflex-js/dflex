@@ -5,6 +5,7 @@ import {
   featureFlags,
   PointNum,
   warnOnce,
+  assertElementPosition,
 } from "@dflex/utils";
 import type { Direction, Axes, AxesPoint } from "@dflex/utils";
 
@@ -53,41 +54,6 @@ export interface DFlexElementInput {
   keys: Keys;
   depth: number;
   readonly: boolean;
-}
-
-let didThrowError = false;
-
-function assertElementPosition(DOM: HTMLElement, rect: BoxRectAbstract): void {
-  if (didThrowError) {
-    return;
-  }
-
-  const { top, left, bottom, right, width, height } =
-    DOM.getBoundingClientRect();
-
-  if (
-    top !== rect.top ||
-    left !== rect.left ||
-    bottom !== rect.bottom ||
-    right !== rect.right ||
-    width !== rect.width ||
-    height !== rect.height
-  ) {
-    didThrowError = true;
-
-    throw new Error(
-      `Element position assertion failed. \n Expected: ${JSON.stringify(
-        rect
-      )} \n Actual: ${JSON.stringify({
-        top,
-        left,
-        bottom,
-        right,
-        width,
-        height,
-      })} \n\n`
-    );
-  }
 }
 
 function setRelativePosition(DOM: HTMLElement): void {
