@@ -108,6 +108,12 @@ class DFlexBaseStore {
    * @param globals
    */
   config(globals: DFlexGlobalConfig) {
+    if (globals.removeContainerWhenEmpty) {
+      if (__DEV__) {
+        throw new Error("removeContainerWhenEmpty is not supported yet.");
+      }
+    }
+
     Object.assign(this.globals, globals);
   }
 
