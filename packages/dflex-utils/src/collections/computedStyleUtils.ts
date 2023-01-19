@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 import type { Dimensions } from "../types";
 import warnOnce from "./warnOnce";
 
