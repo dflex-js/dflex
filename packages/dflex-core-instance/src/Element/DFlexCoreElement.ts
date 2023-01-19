@@ -109,7 +109,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.DOMGrid = new PointNum(0, 0);
   }
 
-  _initIndicators(DOM: HTMLElement): void {
+  private _initIndicators(DOM: HTMLElement): void {
     const { height, width, left, top } = DOM.getBoundingClientRect();
 
     /**
@@ -404,12 +404,10 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.rollBack(DOM, cycleID);
   }
 
-  flushIndicators(DOM: HTMLElement): void {
+  refreshIndicators(DOM: HTMLElement): void {
     this._translateHistory = undefined;
 
     this.translate.setAxes(0, 0);
-
-    this._initialPosition.setAxes(this.rect.left, this.rect.top);
 
     this.DOMOrder.self = this.VDOMOrder.self;
 
@@ -420,6 +418,8 @@ class DFlexCoreElement extends DFlexBaseElement {
     if (!DOM.getAttribute("style")) {
       DOM.removeAttribute("style");
     }
+
+    this._initIndicators(DOM);
   }
 
   getSerializedInstance(): DFlexSerializedElement {

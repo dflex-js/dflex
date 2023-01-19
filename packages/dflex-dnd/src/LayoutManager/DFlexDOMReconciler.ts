@@ -51,8 +51,6 @@ function commitElm(
     ) {
       switchElmDOMPosition(branchIDs, branchDOM, store, dflexElm, elmDOM);
     }
-
-    dflexElm.flushIndicators(elmDOM);
   }
 }
 
@@ -80,7 +78,11 @@ function DFlexDOMReconciler(
   // This can be optimized, like targeting only the effected element. But I
   // don't want to play with grid since it's not fully implemented.
   for (let i = 0; i <= branchIDs.length - 1; i += 1) {
+    const DOM = store.interactiveDOM.get(branchIDs[i])!;
+
     const dflexElm = store.registry.get(branchIDs[i])!;
+
+    dflexElm.refreshIndicators(DOM);
 
     store.setElmGridBridge(container, dflexElm);
 
