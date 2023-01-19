@@ -5,4 +5,7 @@ export { default as assertElementPosition } from "./assertElementPosition";
 export {
   getElmComputedStyle,
   clearComputedStyleMap,
-} from "./getElmComputedStyle";
+  setRelativePosition,
+  setFixedWidth,
+  getElmComputedDimensions,
+} from "./computedStyleUtils";

@@ -2,7 +2,12 @@
 import Generator, { ELmBranch } from "@dflex/dom-gen";
 
 import { DFlexElement, DFlexElementInput } from "@dflex/core-instance";
-import { getParentElm, Tracker } from "@dflex/utils";
+import {
+  getParentElm,
+  setFixedWidth,
+  setRelativePosition,
+  Tracker,
+} from "@dflex/utils";
 
 // https://github.com/microsoft/TypeScript/issues/28374#issuecomment-536521051
 type DeepNonNullable<T> = {
@@ -166,10 +171,11 @@ class DFlexBaseStore {
     dflexElm.setAttribute(DOM, "INDEX", dflexElm.VDOMOrder.self);
 
     if (depth >= 1) {
-      DFlexElement.setRelativePosition(
-        DOM,
-        this.globals.removeContainerWhenEmpty
-      );
+      setRelativePosition(DOM);
+
+      if (!this.globals.removeContainerWhenEmpty) {
+        setFixedWidth(DOM);
+      }
 
       if (keys.CHK === null) {
         if (__DEV__) {

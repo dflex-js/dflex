@@ -2,12 +2,10 @@
 import {
   BoxRect,
   BoxRectAbstract,
-  Dimensions,
   featureFlags,
   PointNum,
-  warnOnce,
   assertElementPosition,
-  getElmComputedStyle,
+  getElmComputedDimensions,
 } from "@dflex/utils";
 import type { Direction, Axes, AxesPoint } from "@dflex/utils";
 
@@ -58,96 +56,6 @@ export interface DFlexElementInput {
   readonly: boolean;
 }
 
-// TODO: Improve regex.
-const CSS_VAL_REGEX = /^([0-9]*\.[0-9]*|[0-9]*)(px|em|rem|vw|vh)$/;
-const CSS_UNIT_REGEX = /px|em|rem|vw|vh/;
-const CSS_AUTO_VAL_REGEX = /auto|none/;
-
-function isValueSet(v: string): boolean {
-  return !(
-    parseFloat((v.match(CSS_UNIT_REGEX) || [])[1]) === 0 ||
-    CSS_AUTO_VAL_REGEX.test(v) ||
-    v.includes("%")
-  );
-}
-
-function setRelativePosition(
-  DOM: HTMLElement,
-  removeContainerWhenEmpty: boolean
-): void {
-  const computedStyle = getElmComputedStyle(DOM);
-
-  const position = computedStyle.getPropertyValue("position");
-
-  if (position === "absolute" || position === "fixed") {
-    if (__DEV__) {
-      throw new Error(
-        `Containers must be positioned as relative. Received: ${position}. Element: ${DOM.id}.`
-      );
-    }
-
-    DOM.style.position = "relative";
-  }
-
-  if (!removeContainerWhenEmpty) {
-    const minWidth = computedStyle.getPropertyValue("min-width");
-    const maxWidth = computedStyle.getPropertyValue("max-width");
-
-    if (isValueSet(minWidth)) {
-      DOM.style.setProperty("min-width", "none");
-
-      if (__DEV__) {
-        console.error(
-          `Containers must have a fixed width. Received min-width: ${minWidth}. Element: ${DOM.id}.`
-        );
-      }
-    }
-
-    if (isValueSet(maxWidth)) {
-      DOM.style.setProperty("max-width", "none");
-
-      if (__DEV__) {
-        console.error(
-          `Containers must have a fixed width. Received max-width: ${maxWidth}. Element: ${DOM.id}.`
-        );
-      }
-    }
-
-    DOM.style.setProperty("width", computedStyle.getPropertyValue("width"));
-  }
-}
-
-function getComputedDimension(
-  computedStyle: CSSStyleDeclaration,
-  dimension: "width" | "height"
-) {
-  const computedUnit = computedStyle.getPropertyValue(dimension);
-  const match = computedUnit.match(CSS_VAL_REGEX);
-  return match ? parseFloat(match[1]) : 0;
-}
-
-function getElmComputedDimensions(DOM: HTMLElement): Dimensions {
-  const computedStyle = getElmComputedStyle(DOM);
-
-  if (__DEV__) {
-    const computedWidth = computedStyle.getPropertyValue("width");
-    const computedHeight = computedStyle.getPropertyValue("height");
-
-    if (computedWidth.includes("%") || computedHeight.includes("%")) {
-      warnOnce(
-        "getElementStyle",
-        "Element cannot have a percentage width and/or height." +
-          "If you are expecting the element to cross multiple scroll containers, then this will cause unexpected dimension when the element is cloned."
-      );
-    }
-  }
-
-  const width = getComputedDimension(computedStyle, "width");
-  const height = getComputedDimension(computedStyle, "height");
-
-  return { width, height };
-}
-
 class DFlexCoreElement extends DFlexBaseElement {
   private _initialPosition: PointNum;
 
@@ -180,10 +88,6 @@ class DFlexCoreElement extends DFlexBaseElement {
   }
 
   static transform = DFlexBaseElement.transform;
-
-  static getElmComputedDimensions = getElmComputedDimensions;
-
-  static setRelativePosition = setRelativePosition;
 
   constructor(eleWithPointer: DFlexElementInput) {
     const { order, keys, depth, readonly, id } = eleWithPointer;
@@ -244,7 +148,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       return this._computedDimensions;
     }
 
-    const { width, height } = DFlexCoreElement.getElmComputedDimensions(DOM);
+    const { width, height } = getElmComputedDimensions(DOM);
 
     this._computedDimensions = new PointNum(width, height);
 

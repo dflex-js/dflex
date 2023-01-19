@@ -26,6 +26,9 @@ export {
   assertElementPosition,
   getElmComputedStyle,
   clearComputedStyleMap,
+  setRelativePosition,
+  setFixedWidth,
+  getElmComputedDimensions,
 } from "./collections";
 
 export { canUseDOM, getSelection, getParentElm } from "./dom";
