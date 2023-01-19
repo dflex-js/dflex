@@ -57,7 +57,7 @@ export interface DFlexElementInput {
   readonly: boolean;
 }
 
-function setRelativePosition(DOM: HTMLElement): void {
+function setRelativePosition(DOM: HTMLElement, hasFixedWidth: boolean): void {
   const computedStyle = getElmComputedStyle(DOM);
 
   const position = computedStyle.getPropertyValue("position");

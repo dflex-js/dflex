@@ -2,6 +2,7 @@ import type { ThresholdPercentages } from "@dflex/utils";
 import type { DFlexEventsTypes } from "./LayoutManager";
 
 type DFlexEventsMap = {
+  // TODO replace `any` with DFlex custom events here.
   [K in DFlexEventsTypes]: CustomEvent<any>;
 };
 
@@ -48,6 +49,9 @@ export interface ScrollOpts extends ScrollOptsBase {
   threshold: ThresholdPercentages;
 }
 
+/**
+ * Control element transformation between containers.
+ */
 export interface ContainersTransition {
   /** Default=true */
   enable: boolean;

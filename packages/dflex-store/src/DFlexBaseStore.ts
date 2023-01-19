@@ -28,6 +28,10 @@ export type RegisterInputOpts = {
 
 export type RegisterInputBase = DeepNonNullable<RegisterInputOpts>;
 
+export type DFlexGlobalConfig = {
+  removeContainerWhenEmpty: boolean;
+};
+
 type GetElmWithDOMOutput = [DFlexElement, HTMLElement];
 
 type BranchComposedCallBackFunction = (
@@ -64,6 +68,8 @@ function getElmDOMOrThrow(id: string): HTMLElement | null {
 }
 
 class DFlexBaseStore {
+  globals: DFlexGlobalConfig;
+
   registry: Map<string, DFlexElement>;
 
   interactiveDOM: Map<string, HTMLElement>;
@@ -79,6 +85,9 @@ class DFlexBaseStore {
   private queueTimeoutId?: ReturnType<typeof setTimeout>;
 
   constructor() {
+    this.globals = {
+      removeContainerWhenEmpty: false,
+    };
     this._lastDOMParent = null;
     this._queue = [];
     this.tracker = new Tracker();
@@ -86,6 +95,15 @@ class DFlexBaseStore {
     this.interactiveDOM = new Map();
     this.DOMGen = new Generator();
     this._handleQueue = this._handleQueue.bind(this);
+  }
+
+  /**
+   * Sets DFlex global configurations.
+   *
+   * @param globals
+   */
+  config(globals: DFlexGlobalConfig) {
+    Object.assign(this.globals, globals);
   }
 
   private _handleQueue() {
@@ -148,7 +166,10 @@ class DFlexBaseStore {
     dflexElm.setAttribute(DOM, "INDEX", dflexElm.VDOMOrder.self);
 
     if (depth >= 1) {
-      DFlexElement.setRelativePosition(DOM);
+      DFlexElement.setRelativePosition(
+        DOM,
+        this.globals.removeContainerWhenEmpty
+      );
 
       if (keys.CHK === null) {
         if (__DEV__) {

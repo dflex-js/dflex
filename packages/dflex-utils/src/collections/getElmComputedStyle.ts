@@ -1,5 +1,11 @@
 let computedStyleMap = new WeakMap<HTMLElement, CSSStyleDeclaration>();
 
+/**
+ * Gets cached computed style if available.
+ *
+ * @param DOM
+ * @returns
+ */
 function getElmComputedStyle(DOM: HTMLElement): CSSStyleDeclaration {
   if (computedStyleMap.has(DOM)) {
     return computedStyleMap.get(DOM)!;
