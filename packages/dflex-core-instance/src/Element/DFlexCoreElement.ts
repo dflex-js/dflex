@@ -404,22 +404,24 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.rollBack(DOM, cycleID);
   }
 
-  refreshIndicators(DOM: HTMLElement): void {
+  refreshIndicators(DOM: HTMLElement, includeDOM: boolean): void {
     this._translateHistory = undefined;
 
     this.translate.setAxes(0, 0);
 
-    this.DOMOrder.self = this.VDOMOrder.self;
-
     this.hasPendingTransform = false;
 
-    DOM.style.removeProperty("transform");
+    if (includeDOM) {
+      this.DOMOrder.self = this.VDOMOrder.self;
 
-    if (!DOM.getAttribute("style")) {
-      DOM.removeAttribute("style");
+      DOM.style.removeProperty("transform");
+
+      if (!DOM.getAttribute("style")) {
+        DOM.removeAttribute("style");
+      }
+
+      this._initIndicators(DOM);
     }
-
-    this._initIndicators(DOM);
   }
 
   getSerializedInstance(): DFlexSerializedElement {
