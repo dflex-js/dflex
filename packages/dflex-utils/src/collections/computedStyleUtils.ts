@@ -63,16 +63,6 @@ function setFixedWidth(DOM: HTMLElement): void {
   const minWidth = computedStyle.getPropertyValue("min-width");
   const maxWidth = computedStyle.getPropertyValue("max-width");
 
-  if (isCSSComputedValueSet(minWidth)) {
-    DOM.style.setProperty("min-width", "none");
-
-    if (__DEV__) {
-      console.error(
-        `Containers must have a fixed width. Received min-width: ${minWidth}. Element: ${DOM.id}.`
-      );
-    }
-  }
-
   if (isCSSComputedValueSet(maxWidth)) {
     DOM.style.setProperty("max-width", "none");
 
@@ -81,6 +71,10 @@ function setFixedWidth(DOM: HTMLElement): void {
         `Containers must have a fixed width. Received max-width: ${maxWidth}. Element: ${DOM.id}.`
       );
     }
+  }
+
+  if (isCSSComputedValueSet(minWidth)) {
+    return;
   }
 
   DOM.style.setProperty("width", computedStyle.getPropertyValue("width"));
