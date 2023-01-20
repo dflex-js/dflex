@@ -25,6 +25,12 @@ const App = () => {
   };
 
   React.useEffect(() => {
+    store.config({
+      removeContainerWhenEmpty: false,
+    });
+  }, []);
+
+  React.useEffect(() => {
     // For testing purpose only.
     document.addEventListener("keyup", commitWhenKyPressed);
 

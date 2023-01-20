@@ -9,6 +9,7 @@ import {
   Dimensions,
   featureFlags,
   DFlexCycle,
+  clearComputedStyleMap,
 } from "@dflex/utils";
 
 import {
@@ -337,6 +338,7 @@ class DFlexDnDStore extends DFlexBaseStore {
         });
 
         this.migration.clear();
+        clearComputedStyleMap();
       },
     });
   }

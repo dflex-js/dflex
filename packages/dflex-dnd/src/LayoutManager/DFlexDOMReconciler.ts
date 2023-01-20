@@ -1,5 +1,6 @@
 import type { DFlexElement, DFlexParentContainer } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
+import { assertElementPosition, featureFlags } from "@dflex/utils";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
 function switchElmDOMPosition(
@@ -51,7 +52,11 @@ function commitElm(
       switchElmDOMPosition(branchIDs, branchDOM, store, dflexElm, elmDOM);
     }
 
-    dflexElm.flushIndicators(elmDOM);
+    // If the reconciliation is restricted in one container just reset the
+    // elements. Because, the parent container size is the same height.
+    if (store.migration.containerKeys.size === 1) {
+      dflexElm.refreshIndicators(elmDOM);
+    }
   }
 }
 
@@ -79,7 +84,11 @@ function DFlexDOMReconciler(
   // This can be optimized, like targeting only the effected element. But I
   // don't want to play with grid since it's not fully implemented.
   for (let i = 0; i <= branchIDs.length - 1; i += 1) {
-    const dflexElm = store.registry.get(branchIDs[i])!;
+    const [dflexElm, elmDOM] = store.getElmWithDOM(branchIDs[i]);
+
+    if (store.migration.containerKeys.size > 1) {
+      dflexElm.refreshIndicators(elmDOM);
+    }
 
     store.setElmGridBridge(container, dflexElm);
 
@@ -104,6 +113,14 @@ function DFlexDOMReconciler(
           `Error in DOM order reconciliation.\n. ${
             branchDOM.children[i]
           } doesn't match ${store.interactiveDOM.get(branchIDs[i])!}`
+        );
+      }
+
+      // dflexElm._initIndicators(store.interactiveDOM.get(branchIDs[i])!);
+      if (featureFlags.enablePositionAssertion) {
+        assertElementPosition(
+          store.interactiveDOM.get(branchIDs[i])!,
+          dflexElm.rect
         );
       }
     }

@@ -2,7 +2,12 @@
 import Generator, { ELmBranch } from "@dflex/dom-gen";
 
 import { DFlexElement, DFlexElementInput } from "@dflex/core-instance";
-import { getParentElm, Tracker } from "@dflex/utils";
+import {
+  getParentElm,
+  setFixedWidth,
+  setRelativePosition,
+  Tracker,
+} from "@dflex/utils";
 
 // https://github.com/microsoft/TypeScript/issues/28374#issuecomment-536521051
 type DeepNonNullable<T> = {
@@ -27,6 +32,10 @@ export type RegisterInputOpts = {
 };
 
 export type RegisterInputBase = DeepNonNullable<RegisterInputOpts>;
+
+export type DFlexGlobalConfig = {
+  removeContainerWhenEmpty: boolean;
+};
 
 type GetElmWithDOMOutput = [DFlexElement, HTMLElement];
 
@@ -64,6 +73,8 @@ function getElmDOMOrThrow(id: string): HTMLElement | null {
 }
 
 class DFlexBaseStore {
+  globals: DFlexGlobalConfig;
+
   registry: Map<string, DFlexElement>;
 
   interactiveDOM: Map<string, HTMLElement>;
@@ -79,6 +90,9 @@ class DFlexBaseStore {
   private queueTimeoutId?: ReturnType<typeof setTimeout>;
 
   constructor() {
+    this.globals = {
+      removeContainerWhenEmpty: false,
+    };
     this._lastDOMParent = null;
     this._queue = [];
     this.tracker = new Tracker();
@@ -86,6 +100,21 @@ class DFlexBaseStore {
     this.interactiveDOM = new Map();
     this.DOMGen = new Generator();
     this._handleQueue = this._handleQueue.bind(this);
+  }
+
+  /**
+   * Sets DFlex global configurations.
+   *
+   * @param globals
+   */
+  config(globals: DFlexGlobalConfig) {
+    if (globals.removeContainerWhenEmpty) {
+      if (__DEV__) {
+        throw new Error("removeContainerWhenEmpty is not supported yet.");
+      }
+    }
+
+    Object.assign(this.globals, globals);
   }
 
   private _handleQueue() {
@@ -148,7 +177,11 @@ class DFlexBaseStore {
     dflexElm.setAttribute(DOM, "INDEX", dflexElm.VDOMOrder.self);
 
     if (depth >= 1) {
-      DFlexElement.setRelativePosition(DOM);
+      setRelativePosition(DOM);
+
+      if (!this.globals.removeContainerWhenEmpty) {
+        setFixedWidth(DOM);
+      }
 
       if (keys.CHK === null) {
         if (__DEV__) {

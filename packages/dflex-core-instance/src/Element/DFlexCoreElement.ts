@@ -1,10 +1,10 @@
 import {
   BoxRect,
   BoxRectAbstract,
-  Dimensions,
   featureFlags,
   PointNum,
-  warnOnce,
+  assertElementPosition,
+  getElmComputedDimensions,
 } from "@dflex/utils";
 import type { Direction, Axes, AxesPoint } from "@dflex/utils";
 
@@ -55,84 +55,6 @@ export interface DFlexElementInput {
   readonly: boolean;
 }
 
-let didThrowError = false;
-
-function assertElementPosition(DOM: HTMLElement, rect: BoxRectAbstract): void {
-  if (didThrowError) {
-    return;
-  }
-
-  const { top, left, bottom, right, width, height } =
-    DOM.getBoundingClientRect();
-
-  if (
-    top !== rect.top ||
-    left !== rect.left ||
-    bottom !== rect.bottom ||
-    right !== rect.right ||
-    width !== rect.width ||
-    height !== rect.height
-  ) {
-    didThrowError = true;
-
-    throw new Error(
-      `Element position assertion failed. \n Expected: ${JSON.stringify(
-        rect
-      )} \n Actual: ${JSON.stringify({
-        top,
-        left,
-        bottom,
-        right,
-        width,
-        height,
-      })} \n\n`
-    );
-  }
-}
-
-function setRelativePosition(DOM: HTMLElement): void {
-  const computedStyle = getComputedStyle(DOM);
-
-  const position = computedStyle.getPropertyValue("position");
-
-  if (position === "absolute" || position === "fixed") {
-    if (__DEV__) {
-      throw new Error(
-        `Element ${DOM.id}, must be positioned as relative. Received: ${position}.`
-      );
-    }
-
-    DOM.style.position = "relative";
-  }
-}
-
-function getElementStyle(DOM: HTMLElement): Dimensions {
-  const computedStyle = getComputedStyle(DOM);
-
-  const computedWidth = computedStyle.getPropertyValue("width");
-  const computedHeight = computedStyle.getPropertyValue("height");
-
-  if (computedWidth.includes("%") || computedHeight.includes("%")) {
-    if (__DEV__) {
-      warnOnce(
-        "getElementStyle",
-        "Element cannot have a percentage width and/or height." +
-          "If you are expecting the element to cross multiple scroll containers, then this will cause unexpected dimension when the element is cloned."
-      );
-    }
-  }
-
-  const regex = /^([0-9]*\.[0-9]*|[0-9]*)(px|em|rem|vw|vh)$/;
-
-  const widthMatch = computedWidth.match(regex);
-  const heightMatch = computedHeight.match(regex);
-
-  const width = widthMatch ? parseFloat(widthMatch[1]) : 0;
-  const height = heightMatch ? parseFloat(heightMatch[1]) : 0;
-
-  return { width, height };
-}
-
 class DFlexCoreElement extends DFlexBaseElement {
   private _initialPosition: PointNum;
 
@@ -165,10 +87,6 @@ class DFlexCoreElement extends DFlexBaseElement {
   }
 
   static transform = DFlexBaseElement.transform;
-
-  static getElementStyle = getElementStyle;
-
-  static setRelativePosition = setRelativePosition;
 
   constructor(eleWithPointer: DFlexElementInput) {
     const { order, keys, depth, readonly, id } = eleWithPointer;
@@ -229,7 +147,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       return this._computedDimensions;
     }
 
-    const { width, height } = DFlexCoreElement.getElementStyle(DOM);
+    const { width, height } = getElmComputedDimensions(DOM);
 
     this._computedDimensions = new PointNum(width, height);
 
@@ -486,22 +404,22 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.rollBack(DOM, cycleID);
   }
 
-  flushIndicators(DOM: HTMLElement): void {
+  refreshIndicators(DOM: HTMLElement): void {
     this._translateHistory = undefined;
 
     this.translate.setAxes(0, 0);
 
-    this._initialPosition.setAxes(this.rect.left, this.rect.top);
+    this.hasPendingTransform = false;
 
     this.DOMOrder.self = this.VDOMOrder.self;
-
-    this.hasPendingTransform = false;
 
     DOM.style.removeProperty("transform");
 
     if (!DOM.getAttribute("style")) {
       DOM.removeAttribute("style");
     }
+
+    this._initIndicators(DOM);
   }
 
   getSerializedInstance(): DFlexSerializedElement {

@@ -19,7 +19,17 @@ export type {
   Direction,
 } from "./types";
 
-export { combineKeys, dirtyAssignBiggestRect, warnOnce } from "./collections";
+export {
+  combineKeys,
+  dirtyAssignBiggestRect,
+  warnOnce,
+  assertElementPosition,
+  getElmComputedStyle,
+  clearComputedStyleMap,
+  setRelativePosition,
+  setFixedWidth,
+  getElmComputedDimensions,
+} from "./collections";
 
 export { canUseDOM, getSelection, getParentElm } from "./dom";
 

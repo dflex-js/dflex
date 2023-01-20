@@ -20,7 +20,7 @@ export type {
   DFlexDOMGenOrder,
 } from "@dflex/core-instance";
 
-export type { RegisterInputOpts } from "@dflex/store";
+export type { RegisterInputOpts, DFlexGlobalConfig } from "@dflex/store";
 
 export type {
   AxesPoint,
