@@ -52,9 +52,11 @@ function commitElm(
       switchElmDOMPosition(branchIDs, branchDOM, store, dflexElm, elmDOM);
     }
 
-    dflexElm.refreshIndicators(elmDOM, true);
-  } else {
-    dflexElm.refreshIndicators(elmDOM, false);
+    // If the reconciliation is restricted in one container just reset the
+    // elements. Because, the parent container size is the same height.
+    if (store.migration.containerKeys.size === 1) {
+      dflexElm.refreshIndicators(elmDOM);
+    }
   }
 }
 
@@ -82,7 +84,11 @@ function DFlexDOMReconciler(
   // This can be optimized, like targeting only the effected element. But I
   // don't want to play with grid since it's not fully implemented.
   for (let i = 0; i <= branchIDs.length - 1; i += 1) {
-    const dflexElm = store.registry.get(branchIDs[i])!;
+    const [dflexElm, elmDOM] = store.getElmWithDOM(branchIDs[i]);
+
+    if (store.migration.containerKeys.size > 1) {
+      dflexElm.refreshIndicators(elmDOM);
+    }
 
     store.setElmGridBridge(container, dflexElm);
 
