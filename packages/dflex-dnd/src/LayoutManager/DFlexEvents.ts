@@ -52,12 +52,12 @@ type DFlexEvents =
   | DFlexInteractivityEvent
   | DFlexSiblingsEvent;
 
-type EvtDrag = typeof DRAG_EVT[keyof typeof DRAG_EVT];
+type EvtDrag = (typeof DRAG_EVT)[keyof typeof DRAG_EVT];
 
 type EvtInteractivity =
-  typeof INTERACTIVITY_EVT[keyof typeof INTERACTIVITY_EVT];
+  (typeof INTERACTIVITY_EVT)[keyof typeof INTERACTIVITY_EVT];
 
-type EvtSiblings = typeof SIBLINGS_EVT[keyof typeof SIBLINGS_EVT];
+type EvtSiblings = (typeof SIBLINGS_EVT)[keyof typeof SIBLINGS_EVT];
 
 /** Types of DFlex events. */
 type DFlexEventsTypes = EvtDrag | EvtInteractivity | EvtSiblings;
