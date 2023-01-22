@@ -196,7 +196,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
   }
 
   private _detectNearestContainer(): void {
-    console.log("... _detectNearestContainer");
     const { draggedElm } = this.draggable;
     const { migration } = store;
 
@@ -364,7 +363,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
   }
 
   private _draggedOutPositionNotifier(): void {
-    console.log("_draggedOutPositionNotifier");
     const {
       draggedElm: { id },
       threshold: { isOut },
@@ -510,7 +508,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
       draggedElm.removeAttribute(draggedDOM, "OUT_POS");
 
       isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
-      console.log("isOutSiblingsContainer", isOutSiblingsContainer);
 
       // When it's out but still inside its container.
       if (!isOutSiblingsContainer) {
