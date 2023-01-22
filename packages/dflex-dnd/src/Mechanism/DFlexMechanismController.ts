@@ -25,7 +25,11 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
   /** This is only related to insert method as the each element has it's own for
    * transformation. */
-  private animatedDraggedInsertionFrame: number | null;
+  private _animatedDraggedInsertionFrame: number | null;
+
+  private _detectNearestContainerTimeoutID: ReturnType<
+    typeof setTimeout
+  > | null;
 
   private _hasBeenScrolling: boolean;
 
@@ -55,7 +59,8 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     this._hasBeenScrolling = false;
     this.isOnDragOutThresholdEvtEmitted = false;
-    this.animatedDraggedInsertionFrame = null;
+    this._animatedDraggedInsertionFrame = null;
+    this._detectNearestContainerTimeoutID = null;
     this.listAppendPosition = null;
     this.isParentLocked = false;
   }
@@ -128,7 +133,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     this.draggable.setDraggedTempIndex(insertAt);
 
-    this.lockParent(false);
+    this._lockParent(false);
 
     let draggedTransition: AxesPoint;
     let draggedGrid: PointNum;
@@ -375,7 +380,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       // Leaving from top.
       if (newRow === 0) {
         // lock the parent
-        this.lockParent(true);
+        this._lockParent(true);
 
         this._fillHeadUp();
 
@@ -385,7 +390,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       // Leaving from bottom.
       if (newRow > siblingsGrid.y) {
         // lock the parent
-        this.lockParent(true);
+        this._lockParent(true);
 
         return;
       }
@@ -401,7 +406,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     if (newCol <= 0 || newCol > siblingsGrid.x) {
       // lock the parent
-      this.lockParent(true);
+      this._lockParent(true);
 
       this._fillHeadUp();
 
@@ -411,7 +416,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     this._switchElementPosition(isOut[id].right);
   }
 
-  private lockParent(isOut: boolean) {
+  private _lockParent(isOut: boolean) {
     this.isParentLocked = isOut;
   }
 
@@ -439,7 +444,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
               // When it's inside the container, then the siblings are not lifted
               if (!(isOutSiblingsContainer || this.isParentLocked)) {
-                this.lockParent(true);
+                this._lockParent(true);
 
                 this._fillHeadUp();
               }
@@ -504,13 +509,13 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
       isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
-      // when it's out, and on of theses is true then it's happening.
+      // When it's out but still inside its container.
       if (!isOutSiblingsContainer) {
-        if (this.animatedDraggedInsertionFrame === null) {
-          this.animatedDraggedInsertionFrame = requestAnimationFrame(() => {
+        if (this._animatedDraggedInsertionFrame === null) {
+          this._animatedDraggedInsertionFrame = requestAnimationFrame(() => {
             this._detectNearestElm();
 
-            this.animatedDraggedInsertionFrame = null;
+            this._animatedDraggedInsertionFrame = null;
           });
         }
 
@@ -527,17 +532,23 @@ class DFlexMechanismController extends DFlexScrollableElement {
       this.isParentLocked = true;
 
       if (containersTransition.enable) {
-        this._detectNearestContainer();
-
-        if (migration.isTransitioning) {
-          scheduler(store, null, {
-            onUpdate: () => {
-              this._detectNearestElm();
-            },
-          });
-
-          return;
+        if (this._detectNearestContainerTimeoutID !== null) {
+          clearTimeout(this._detectNearestContainerTimeoutID);
         }
+
+        this._detectNearestContainerTimeoutID = setTimeout(() => {
+          this._detectNearestContainer();
+
+          if (migration.isTransitioning) {
+            scheduler(store, null, {
+              onUpdate: () => {
+                this._detectNearestElm();
+              },
+            });
+          }
+        }, 0);
+
+        return;
       }
 
       return;
@@ -557,11 +568,11 @@ class DFlexMechanismController extends DFlexScrollableElement {
         return;
       }
 
-      if (this.animatedDraggedInsertionFrame === null) {
-        this.animatedDraggedInsertionFrame = requestAnimationFrame(() => {
+      if (this._animatedDraggedInsertionFrame === null) {
+        this._animatedDraggedInsertionFrame = requestAnimationFrame(() => {
           this._detectNearestElm();
 
-          this.animatedDraggedInsertionFrame = null;
+          this._animatedDraggedInsertionFrame = null;
         });
       }
     }
