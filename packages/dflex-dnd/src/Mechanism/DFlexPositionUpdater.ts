@@ -373,7 +373,10 @@ class DFlexPositionUpdater {
     return { translate: composedTranslate, grid: composedGrid };
   }
 
-  protected getComposedOccupiedPosition(SK: string, axis: Axis) {
+  protected getComposedOccupiedPosition(
+    SK: string,
+    axis: Axis
+  ): AxesPoint<number> {
     const distLst = store.getElmBranchByKey(SK);
 
     const { length } = distLst;
@@ -390,9 +393,12 @@ class DFlexPositionUpdater {
     // Get the stored position if the branch is empty.
     if (isEmpty) {
       if (!isRestoredLastPosition) {
-        throw new Error(
-          "Transformation into an empty container in not supported yet."
-        );
+        // Transformation into an empty container.
+
+        // TODO: Calculate positions inside container.
+        // container Rect + container padding + element margin.
+        // Until it's done we fake the number to zero.
+        return new PointNum(0, 0);
       }
 
       return position;

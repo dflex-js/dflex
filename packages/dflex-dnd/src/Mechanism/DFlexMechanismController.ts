@@ -162,13 +162,15 @@ class DFlexMechanismController extends DFlexScrollableElement {
     if (migration.isTransitioning) {
       // Compose container boundaries and refresh the store.
       queueMicrotask(() => {
+        const { x, y } = this.listAppendPosition!;
+
         // offset to append.
         // It has to be the biggest element offset. The last element in the list.
         const offset = {
-          top: this.listAppendPosition!.y,
-          right: this.listAppendPosition!.x + draggedElm.rect.width,
-          bottom: this.listAppendPosition!.y + draggedElm.rect.height,
-          left: this.listAppendPosition!.x,
+          top: y,
+          right: x + draggedElm.rect.width,
+          bottom: y + draggedElm.rect.height,
+          left: x,
         };
 
         occupiedTranslate.clone(draggedTransition);
@@ -187,6 +189,19 @@ class DFlexMechanismController extends DFlexScrollableElement {
         }
 
         handleElmMigration(SK, migration.prev().SK, offset);
+
+        if (x === 0 && y === 0) {
+          if (!this.draggable.enableCommit.enableAfterEndingDrag) {
+            if (__DEV__) {
+              // eslint-disable-next-line no-console
+              console.warn(
+                "Override enable commit to true. Transformation into empty container is not enabled yet."
+              );
+            }
+
+            this.draggable.enableCommit.enableAfterEndingDrag = true;
+          }
+        }
 
         this.listAppendPosition = null;
 

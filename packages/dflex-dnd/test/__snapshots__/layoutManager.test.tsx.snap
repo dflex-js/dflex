@@ -43,7 +43,6 @@ DFlexDnDStore {
     data-dflex-key="0-1"
     data-index="1"
     id="dflex_id_1"
-    style="max-width: none;"
   >
     <div
       data-index="0"
@@ -134,7 +133,6 @@ DFlexDnDStore {
       data-dflex-key="0-0"
       data-index="0"
       id="dflex_id_0"
-      style="max-width: none;"
     >
       <div
         data-index="0"
@@ -149,7 +147,6 @@ DFlexDnDStore {
       data-dflex-key="0-1"
       data-index="1"
       id="dflex_id_1"
-      style="max-width: none;"
     >
       <div
         data-index="0"
@@ -177,7 +174,7 @@ DFlexDnDStore {
       id="id-4"
     />,
   },
-  "isTransforming": false,
+  "isComposing": false,
   "isUpdating": false,
   "listeners": {
     "clear": [Function],
@@ -479,7 +476,6 @@ DFlexDnDStore {
                 data-dflex-key="0-0"
                 data-index="0"
                 id="dflex_id_0"
-                style="max-width: none;"
               >
                 <div
                   data-index="0"
@@ -490,7 +486,6 @@ DFlexDnDStore {
                 data-dflex-key="0-1"
                 data-index="1"
                 id="dflex_id_1"
-                style="max-width: none;"
               >
                 <div
                   data-index="0"
@@ -558,7 +553,6 @@ DFlexDnDStore {
                 data-dflex-key="0-0"
                 data-index="0"
                 id="dflex_id_0"
-                style="max-width: none;"
               >
                 <div
                   data-index="0"
@@ -569,7 +563,6 @@ DFlexDnDStore {
                 data-dflex-key="0-1"
                 data-index="1"
                 id="dflex_id_1"
-                style="max-width: none;"
               >
                 <div
                   data-index="0"

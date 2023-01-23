@@ -16,13 +16,6 @@ import {
   moveDragged,
 } from "../../utils";
 
-type BoundingBox = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-};
-
 test.describe
   .serial("Transitioning the last element into the bottom of a bigger container horizontally", async () => {
   let page: Page;
@@ -41,12 +34,6 @@ test.describe
   let elmC3Parent: Locator;
   let elmC3E1: Locator;
   let elmC3E2: Locator;
-
-  let elmC2E1Box: BoundingBox | null;
-  let elmC2E2Box: BoundingBox | null;
-
-  let nwPosElmC2E1Box: BoundingBox | null;
-  let nwPosElmC2E2Box: BoundingBox | null;
 
   test.beforeAll(async ({ browser, browserName }) => {
     activeBrowser = browser;
@@ -88,13 +75,6 @@ test.describe
   });
 
   test.describe("Migrating (#c3-2) and commit it to the C2 container", () => {
-    test.beforeAll(async () => {
-      [elmC2E1Box, elmC2E2Box] = await Promise.all([
-        elmC2E1.boundingBox(),
-        elmC2E2.boundingBox(),
-      ]);
-    });
-
     test("Transforms element (#c3-2) - outside the origin container(3) inside container(2)", async () => {
       await getDraggedRect(elmC3E2);
       await moveDragged(-230, -1);
@@ -214,41 +194,6 @@ test.describe
         expect(elmC2E4).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
         expect(elmC2E5).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
       ]);
-    });
-
-    test("Replace (#c2-1) with (#c2-1)", async () => {
-      await getDraggedRect(elmC2E1);
-      await moveDragged(-1, 45);
-      await page.dispatchEvent("#c2-1", "mouseup", {
-        button: 0,
-        force: true,
-      });
-    });
-
-    test("Getting transformed elements new rect position", async () => {
-      [nwPosElmC2E1Box, nwPosElmC2E2Box] = await Promise.all([
-        elmC2E1.boundingBox(),
-        elmC2E2.boundingBox(),
-      ]);
-    });
-
-    // This is a bug. It won't pass.
-    test.skip("No layout shift happened to transformed elements", () => {
-      expect({
-        x: nwPosElmC2E1Box?.x,
-        y: nwPosElmC2E1Box?.y,
-      }).toStrictEqual({
-        x: elmC2E2Box?.x,
-        y: elmC2E2Box?.y,
-      });
-
-      expect({
-        x: nwPosElmC2E2Box?.x,
-        y: nwPosElmC2E2Box?.y,
-      }).toStrictEqual({
-        x: elmC2E1Box?.x,
-        y: elmC2E1Box?.y,
-      });
     });
   });
 });

@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 
+import { BoxRect } from "../Box";
 import type { Dimensions } from "../types";
 import warnOnce from "./warnOnce";
 
@@ -28,16 +29,21 @@ function clearComputedStyleMap() {
 }
 
 // TODO: Improve regex.
-const CSS_VAL_REGEX = /^([0-9]*\.[0-9]*|[0-9]*)(px|em|rem|vw|vh)$/;
-const CSS_UNIT_REGEX = /px|em|rem|vw|vh/;
+const CSS_VAL_REGEX = /^([0-9]*\.[0-9]*|[0-9]*)(px)$/;
+const CSS_UNIT_REGEX = /px/;
 const CSS_AUTO_VAL_REGEX = /auto|none/;
 const CSS_FORBIDDEN_POSITION_REGEX = /absolute|fixed/;
 
+function getCSSSingleValue(computedCSSValue: string) {
+  const splittedVal = computedCSSValue.split(CSS_UNIT_REGEX) || [];
+
+  return splittedVal.length === 0 ? NaN : parseFloat(splittedVal[0]);
+}
+
 function isCSSComputedValueSet(computedCSSValue: string): boolean {
   return !(
-    parseFloat((computedCSSValue.match(CSS_UNIT_REGEX) || [])[1]) === 0 ||
     CSS_AUTO_VAL_REGEX.test(computedCSSValue) ||
-    computedCSSValue.includes("%")
+    Number.isNaN(getCSSSingleValue(computedCSSValue))
   );
 }
 
@@ -117,10 +123,28 @@ function getElmComputedDimensions(DOM: HTMLElement): Dimensions {
   return { width, height };
 }
 
+function getElmMargin() {
+  // const computedStyle = getElmComputedStyle(DOM);
+
+  // const computedMargin = computedStyle.getPropertyValue("margin");
+
+  // const splittedVal = computedMargin.split(CSS_UNIT_REGEX) || [];
+
+  const margin = new BoxRect(0, 0, 0, 0);
+
+  // if (splittedVal.length === 4) {
+  // } else if (splittedVal.length === 3) {
+  // } else if (splittedVal.length === 1) {
+  // }
+
+  return margin;
+}
+
 export {
   getElmComputedStyle,
   clearComputedStyleMap,
   setRelativePosition,
   setFixedWidth,
   getElmComputedDimensions,
+  getElmMargin,
 };

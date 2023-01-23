@@ -38,8 +38,6 @@ class DnD extends Mechanism {
     super(draggable);
 
     scheduler(store, null, null, { type: "layoutState", status: "ready" });
-
-    store.isTransforming = true;
   }
 }
 
