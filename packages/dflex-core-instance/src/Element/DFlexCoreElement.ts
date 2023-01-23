@@ -62,7 +62,7 @@ class DFlexCoreElement extends DFlexBaseElement {
 
   private _computedDimensions: PointNum | null;
 
-  margin: BoxRect | null;
+  // margin: BoxRect | null;
 
   VDOMOrder: DFlexDOMGenOrder;
 
@@ -107,7 +107,7 @@ class DFlexCoreElement extends DFlexBaseElement {
 
     // CSS
     this._computedDimensions = null;
-    this.margin = null;
+    // this.margin = null;
     this._initialPosition = new PointNum(0, 0);
     this.rect = new BoxRect(0, 0, 0, 0);
     this.DOMGrid = new PointNum(0, 0);
@@ -158,17 +158,17 @@ class DFlexCoreElement extends DFlexBaseElement {
     return this._computedDimensions;
   }
 
-  getMargin(DOM: HTMLElement): BoxRect {
-    if (this.margin) {
-      return this.margin;
-    }
+  // getMargin(DOM: HTMLElement): BoxRect {
+  //   if (this.margin) {
+  //     return this.margin;
+  //   }
 
-    const { width, height } = getElmComputedDimensions(DOM);
+  //   const { width, height } = getElmComputedDimensions(DOM);
 
-    this.margin = new BoxRect(width, height, height, height);
+  //   this.margin = new BoxRect(width, height, height, height);
 
-    return this.margin;
-  }
+  //   return this.margin;
+  // }
 
   getInitialPosition(): PointNum {
     return this._initialPosition;
