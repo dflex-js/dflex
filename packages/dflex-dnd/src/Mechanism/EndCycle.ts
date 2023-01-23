@@ -91,7 +91,6 @@ class EndCycle extends DFlexMechanismController {
           onUpdate: () => {
             this.draggable.cleanup(true, false, latestCycle);
             migration.flush(session);
-            store.isTransforming = false;
           },
         },
         {
@@ -133,14 +132,6 @@ class EndCycle extends DFlexMechanismController {
     if (hasToReconcile) {
       store.commit();
     }
-
-    // TODO.
-    // Of course this is not ideal. Because all the mutation and reconciliation
-    // will happen asynchronously so this mean `isTransforming` will be false
-    // while it still actually transforming.
-    // Not a big deal since we don't depend on it directly when to check if it's
-    // available or not. But it should be fixed though.
-    store.isTransforming = false;
   }
 }
 

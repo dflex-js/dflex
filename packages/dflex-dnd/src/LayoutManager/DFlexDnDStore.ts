@@ -66,7 +66,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   isUpdating: boolean;
 
-  isTransforming: boolean;
+  isComposing: boolean;
 
   deferred: Deferred;
 
@@ -85,7 +85,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     this._isInitialized = false;
     this._isDOM = false;
     this.observer = new Map();
-    this.isTransforming = false;
+    this.isComposing = false;
     this.isUpdating = false;
     this.deferred = [];
     this.updatesQueue = [];
@@ -103,7 +103,7 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   isLayoutAvailable(): boolean {
-    return !this.isTransforming && this.isIDle();
+    return !this.isComposing && this.isIDle();
   }
 
   private _initWhenRegister() {
@@ -287,7 +287,9 @@ class DFlexDnDStore extends DFlexBaseStore {
    *
    * @returns
    */
-  commit(): void {
+  commit(callback: (() => void) | null = null): void {
+    this.isComposing = true;
+
     if (__DEV__) {
       if (featureFlags.enableCommit) {
         if (this.migration === null) {
@@ -328,7 +330,7 @@ class DFlexDnDStore extends DFlexBaseStore {
       this.reconcileBranch(k);
     });
 
-    scheduler(this, null, {
+    scheduler(this, callback, {
       onUpdate: () => {
         // Done reconciliation.
         this.migration.containerKeys.forEach((k) => {
@@ -339,6 +341,8 @@ class DFlexDnDStore extends DFlexBaseStore {
 
         this.migration.clear();
         clearComputedStyleMap();
+
+        this.isComposing = false;
       },
     });
   }
