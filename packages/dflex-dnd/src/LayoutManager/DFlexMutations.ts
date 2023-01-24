@@ -182,33 +182,8 @@ function addMutationObserver(
   store.mutationObserverMap.get(SK)!.observe(DOMTarget, observerConfig);
 }
 
-function initResizeObserver(store: DFlexDnDStore, SK: string) {
-  store.resizeObserverMap.set(
-    SK,
-    new ResizeObserver((entries: ResizeObserverEntry[]) => {
-      entries.forEach((entry) => {
-        const {
-          target: { id },
-        } = entry;
-      });
-    })
-  );
-}
-
-function addResizeObserver(
-  store: DFlexDnDStore,
-  SK: string,
-  DOMTarget: HTMLElement
-) {
-  if (!store.resizeObserverMap.has(SK)) {
-    initResizeObserver(store, SK);
-  }
-
-  store.resizeObserverMap.get(SK)!.observe(DOMTarget);
-}
-
 type DFlexLMutationPlugin = ReturnType<typeof addMutationObserver>;
 
 export type { DFlexLMutationPlugin };
 
-export { getIsProcessingMutations, addMutationObserver, addResizeObserver };
+export { getIsProcessingMutations, addMutationObserver };
