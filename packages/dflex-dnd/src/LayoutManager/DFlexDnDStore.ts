@@ -20,7 +20,7 @@ import {
   DFlexSerializedScroll,
 } from "@dflex/core-instance";
 
-import type { ELmBranch } from "@dflex/dom-gen";
+import type { ELmBranch, Keys } from "@dflex/dom-gen";
 
 import initDFlexListeners, {
   DFlexListenerPlugin,
@@ -65,6 +65,8 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   resizeObserverMap: Map<string, resizeObserverValue>;
 
+  private _observerHighestDepth: number;
+
   listeners: DFlexListenerPlugin;
 
   migration: DFlexCycle;
@@ -95,6 +97,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     // Observers.
     this.mutationObserverMap = new Map();
     this.resizeObserverMap = new Map();
+    this._observerHighestDepth = 0;
 
     this.isComposing = false;
     this.isUpdating = false;
@@ -151,7 +154,19 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.setElmGridBridge(container, dflexElm);
   }
 
-  private _initBranch(SK: string, depth: number, id: string, DOM: HTMLElement) {
+  private _initBranch(keys: Keys, depth: number, id: string, DOM: HTMLElement) {
+    const { CHK, SK } = keys;
+
+    if (!CHK) {
+      if (__DEV__) {
+        throw new Error(
+          `_initBranch: Unexpected error while initializing the branch. CHK is not defined in depth: ${depth}.`
+        );
+      }
+
+      return;
+    }
+
     let container: DFlexParentContainer;
     let scroll: DFlexScrollContainer;
 
@@ -164,40 +179,40 @@ class DFlexDnDStore extends DFlexBaseStore {
       });
     }
 
-    const branch = this.DOMGen.getElmBranchByKey(SK);
+    const branch = this.DOMGen.getElmBranchByKey(CHK);
 
-    if (this.scrolls.has(SK)) {
+    if (this.scrolls.has(CHK)) {
       if (__DEV__) {
-        throw new Error(
-          `_initBranchScrollAndVisibility: Scroll with key:${SK} already exists.`
-        );
+        throw new Error(`_initBranch: Scroll with key:${CHK} already exists.`);
       }
 
-      scroll = this.scrolls.get(SK)!;
+      scroll = this.scrolls.get(CHK)!;
     } else {
       scroll = new DFlexScrollContainer(
         this.interactiveDOM.get(branch[0])!,
-        SK,
+        CHK,
         branch.length,
         true,
         updateBranchVisibilityLinearly.bind(null, this)
       );
 
-      this.scrolls.set(SK, scroll);
+      this.scrolls.set(CHK, scroll);
     }
 
-    if (this.containers.has(SK)) {
+    if (this.containers.has(CHK)) {
       if (__DEV__) {
         throw new Error(
-          `_initBranchScrollAndVisibility: Container with key:${SK} already exists.`
+          `_initBranch: Container with key:${CHK} already exists.`
         );
       }
 
-      container = this.containers.get(SK)!;
+      container = this.containers.get(CHK)!;
     } else {
       if (__DEV__) {
         if (!this.interactiveDOM.has(id)) {
-          throw new Error(`Container DOM element doesn't exist.`);
+          throw new Error(
+            `_initBranch: DOM element for container-id ${id} doesn't exist.`
+          );
         }
       }
 
@@ -207,16 +222,41 @@ class DFlexDnDStore extends DFlexBaseStore {
         id
       );
 
-      this.containers.set(SK, container);
+      this.containers.set(CHK, container);
     }
 
     const initElmGrid = this._resumeAndInitElmGrid.bind(this, container);
 
     branch.forEach(initElmGrid);
 
-    updateBranchVisibilityLinearly(this, SK);
+    updateBranchVisibilityLinearly(this, CHK);
 
-    addMutationObserver(this, SK, DOM);
+    if (__DEV__) {
+      if (depth === 0) {
+        throw new Error(
+          "_initBranch: Received element with depth zero. This method is restricted to containers only."
+        );
+      }
+    }
+
+    if (depth > 1) {
+      const keysByDepths = this.DOMGen.getBranchByDepth(depth - 1);
+
+      // Delete observers in lower layers.
+      keysByDepths.forEach((k) => {
+        const has = this.mutationObserverMap.has(k);
+
+        if (has) {
+          this.mutationObserverMap.get(k)!.disconnect();
+          this.mutationObserverMap.delete(k);
+        }
+      });
+    }
+
+    if (depth > this._observerHighestDepth) {
+      addMutationObserver(this, SK, DOM);
+      this._observerHighestDepth = depth;
+    }
   }
 
   register(element: RegisterInputOpts) {
@@ -474,6 +514,7 @@ class DFlexDnDStore extends DFlexBaseStore {
       observer!.disconnect();
     });
     this.mutationObserverMap.clear();
+    this._observerHighestDepth = 0;
 
     this.migration.clear();
   }
