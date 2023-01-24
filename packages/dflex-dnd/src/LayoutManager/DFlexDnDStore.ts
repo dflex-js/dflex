@@ -30,7 +30,10 @@ import initDFlexListeners, {
 import scheduler, { SchedulerOptions, UpdateFn } from "./DFlexScheduler";
 
 import updateBranchVisibilityLinearly from "./DFlexVisibilityUpdater";
-import { addMutationObserver } from "./DFlexMutations";
+import {
+  addMutationObserver,
+  getIsProcessingMutations,
+} from "./DFlexMutations";
 import DOMReconciler from "./DFlexDOMReconciler";
 
 type Containers = Map<string, DFlexParentContainer>;
@@ -39,7 +42,9 @@ type Scrolls = Map<string, DFlexScrollContainer>;
 
 type UnifiedContainerDimensions = Record<number, Dimensions>;
 
-type Observer = MutationObserver | null;
+type MutationObserverValue = MutationObserver | null;
+
+type resizeObserverValue = ResizeObserver | null;
 
 type UpdatesQueue = [
   UpdateFn | null,
@@ -56,7 +61,9 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   unifiedContainerDimensions: UnifiedContainerDimensions;
 
-  observer: Map<string, Observer>;
+  mutationObserverMap: Map<string, MutationObserverValue>;
+
+  resizeObserverMap: Map<string, resizeObserverValue>;
 
   listeners: DFlexListenerPlugin;
 
@@ -84,7 +91,11 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.migration = null;
     this._isInitialized = false;
     this._isDOM = false;
-    this.observer = new Map();
+
+    // Observers.
+    this.mutationObserverMap = new Map();
+    this.resizeObserverMap = new Map();
+
     this.isComposing = false;
     this.isUpdating = false;
     this.deferred = [];
@@ -103,7 +114,7 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   isLayoutAvailable(): boolean {
-    return !this.isComposing && this.isIDle();
+    return !(this.isComposing || getIsProcessingMutations()) && this.isIDle();
   }
 
   private _initWhenRegister() {
@@ -322,7 +333,7 @@ class DFlexDnDStore extends DFlexBaseStore {
       return;
     }
 
-    this.observer.forEach((observer) => {
+    this.mutationObserverMap.forEach((observer) => {
       observer!.disconnect();
     });
 
@@ -461,10 +472,10 @@ class DFlexDnDStore extends DFlexBaseStore {
     super.destroy();
 
     // Destroys all connected observers.
-    this.observer.forEach((observer) => {
+    this.mutationObserverMap.forEach((observer) => {
       observer!.disconnect();
     });
-    this.observer.clear();
+    this.mutationObserverMap.clear();
 
     this.migration.clear();
   }
