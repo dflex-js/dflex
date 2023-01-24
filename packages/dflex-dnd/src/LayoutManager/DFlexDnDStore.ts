@@ -155,8 +155,10 @@ class DFlexDnDStore extends DFlexBaseStore {
     let container: DFlexParentContainer;
     let scroll: DFlexScrollContainer;
 
-    if (!this.unifiedContainerDimensions[depth]) {
-      this.unifiedContainerDimensions[depth] = Object.seal({
+    const targetingLayerDepth = depth - 1;
+
+    if (!this.unifiedContainerDimensions[targetingLayerDepth]) {
+      this.unifiedContainerDimensions[targetingLayerDepth] = Object.seal({
         width: 0,
         height: 0,
       });
@@ -214,11 +216,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     updateBranchVisibilityLinearly(this, SK);
 
-    // This is not right, but it's workaround. The ideal solution is to observe the layer itself.
-    // E.g, find a solution where we have the higher order parent.
-    if (depth === 0) {
-      addMutationObserver(this, SK, DOM);
-    }
+    addMutationObserver(this, SK, DOM);
   }
 
   register(element: RegisterInputOpts) {

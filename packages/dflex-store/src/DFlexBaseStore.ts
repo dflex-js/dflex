@@ -196,7 +196,7 @@ class DFlexBaseStore {
       DOM.dataset.dflexKey = keys.CHK;
 
       if (typeof branchComposedCallBack === "function") {
-        branchComposedCallBack(keys.CHK, depth - 1, id, DOM);
+        branchComposedCallBack(keys.CHK, depth, id, DOM);
       }
     }
   }
