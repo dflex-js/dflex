@@ -32,6 +32,7 @@ import scheduler, { SchedulerOptions, UpdateFn } from "./DFlexScheduler";
 import updateBranchVisibilityLinearly from "./DFlexVisibilityUpdater";
 import {
   addMutationObserver,
+  addResizeObserver,
   getIsProcessingMutations,
 } from "./DFlexMutations";
 import DOMReconciler from "./DFlexDOMReconciler";
@@ -61,9 +62,9 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   unifiedContainerDimensions: UnifiedContainerDimensions;
 
-  mutationObserverMap: Map<string, MutationObserverValue>;
+  private _mutationObserverMap: Map<string, MutationObserverValue>;
 
-  resizeObserverMap: Map<string, resizeObserverValue>;
+  private _resizeObserverMap: Map<string, resizeObserverValue>;
 
   private _observerHighestDepth: number;
 
@@ -95,8 +96,8 @@ class DFlexDnDStore extends DFlexBaseStore {
     this._isDOM = false;
 
     // Observers.
-    this.mutationObserverMap = new Map();
-    this.resizeObserverMap = new Map();
+    this._mutationObserverMap = new Map();
+    this._resizeObserverMap = new Map();
     this._observerHighestDepth = 0;
 
     this.isComposing = false;
@@ -152,6 +153,42 @@ class DFlexDnDStore extends DFlexBaseStore {
     dflexElm.resume(DOM);
 
     this.setElmGridBridge(container, dflexElm);
+  }
+
+  /**
+   * Add observer to the highest container.
+   *
+   * @param observer
+   * @param connectFunc
+   * @param depth
+   * @param SK
+   * @param DOM
+   */
+  private _addObserver(
+    observer: typeof this._mutationObserverMap | typeof this._resizeObserverMap,
+    connectFunc: typeof addMutationObserver | typeof addResizeObserver,
+    depth: number,
+    SK: string,
+    DOM: HTMLElement
+  ) {
+    if (depth > 1) {
+      const keysByDepths = this.DOMGen.getBranchByDepth(depth - 1);
+
+      // Delete observers in lower layers.
+      keysByDepths.forEach((k) => {
+        const hasMutation = observer.has(k);
+
+        if (hasMutation) {
+          observer.get(k)!.disconnect();
+          observer.delete(k);
+        }
+      });
+    }
+
+    if (depth > this._observerHighestDepth) {
+      connectFunc(this, SK, DOM);
+      this._observerHighestDepth = depth;
+    }
   }
 
   private _initBranch(keys: Keys, depth: number, id: string, DOM: HTMLElement) {
@@ -239,24 +276,13 @@ class DFlexDnDStore extends DFlexBaseStore {
       }
     }
 
-    if (depth > 1) {
-      const keysByDepths = this.DOMGen.getBranchByDepth(depth - 1);
-
-      // Delete observers in lower layers.
-      keysByDepths.forEach((k) => {
-        const has = this.mutationObserverMap.has(k);
-
-        if (has) {
-          this.mutationObserverMap.get(k)!.disconnect();
-          this.mutationObserverMap.delete(k);
-        }
-      });
-    }
-
-    if (depth > this._observerHighestDepth) {
-      addMutationObserver(this, SK, DOM);
-      this._observerHighestDepth = depth;
-    }
+    this._addObserver(
+      this._mutationObserverMap,
+      addMutationObserver,
+      depth,
+      SK,
+      DOM
+    );
   }
 
   register(element: RegisterInputOpts) {
@@ -371,7 +397,7 @@ class DFlexDnDStore extends DFlexBaseStore {
       return;
     }
 
-    this.mutationObserverMap.forEach((observer) => {
+    this._mutationObserverMap.forEach((observer) => {
       observer!.disconnect();
     });
 
@@ -510,10 +536,18 @@ class DFlexDnDStore extends DFlexBaseStore {
     super.destroy();
 
     // Destroys all connected observers.
-    this.mutationObserverMap.forEach((observer) => {
+    this._mutationObserverMap.forEach((observer) => {
       observer!.disconnect();
     });
-    this.mutationObserverMap.clear();
+
+    this._mutationObserverMap.clear();
+
+    this._resizeObserverMap.forEach((observer) => {
+      observer!.disconnect();
+    });
+
+    this._resizeObserverMap.clear();
+
     this._observerHighestDepth = 0;
 
     this.migration.clear();
