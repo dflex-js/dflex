@@ -300,11 +300,15 @@ class DFlexDnDStore extends DFlexBaseStore {
     );
   }
 
-  private _refreshAfterReconciliation() {
+  private _refreshBranchesRect(excludeMigratedContainers: boolean) {
     this.containers.forEach((container, containerKy) => {
       const branch = this.getElmBranchByKey(containerKy);
 
-      if (!this.migration.containerKeys.has(containerKy)) {
+      const is = excludeMigratedContainers
+        ? !this.migration.containerKeys.has(containerKy)
+        : true;
+
+      if (is) {
         branch.forEach((elmID) => {
           const [dflexElm, elmDOM] = this.getElmWithDOM(elmID);
 
@@ -317,17 +321,20 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   private _windowResizeHandler() {
-    // Reconcile and update Rects.
+    // Reconcile then update Rects.
     if (this.migration !== null) {
-      this.commit(this._refreshAfterReconciliation);
+      this.commit(() => this._refreshBranchesRect(true));
 
       return;
     }
 
-    console.log("oh no.");
+    this._refreshBranchesRect(false);
   }
 
-  private _reconcileBranch(SK: string): void {
+  private _reconcileBranch(
+    SK: string,
+    refreshAllBranchElements: boolean
+  ): void {
     const container = this.containers.get(SK)!;
     const branch = this.getElmBranchByKey(SK);
     const parentDOM = this.interactiveDOM.get(container.id)!;
@@ -343,7 +350,13 @@ class DFlexDnDStore extends DFlexBaseStore {
           }
         }
 
-        DOMReconciler(branch, parentDOM, this, container);
+        DOMReconciler(
+          branch,
+          parentDOM,
+          this,
+          container,
+          refreshAllBranchElements
+        );
       },
       null,
       {
@@ -364,6 +377,9 @@ class DFlexDnDStore extends DFlexBaseStore {
   commit(callback: (() => void) | null = null): void {
     this.isComposing = true;
 
+    // If more than one container involved reset all.
+    const refreshAllBranchElements = this.migration.containerKeys.size > 1;
+
     if (__DEV__) {
       if (featureFlags.enableCommit) {
         if (this.migration === null) {
@@ -374,13 +390,15 @@ class DFlexDnDStore extends DFlexBaseStore {
           // eslint-disable-next-line no-console
           console.warn("Executing commit for zero depth layer.");
 
-          this.getBranchesByDepth(0).forEach((k) => this._reconcileBranch(k));
+          this.getBranchesByDepth(0).forEach((k) =>
+            this._reconcileBranch(k, refreshAllBranchElements)
+          );
 
           return;
         }
 
         this.migration.containerKeys.forEach((k) => {
-          this._reconcileBranch(k);
+          this._reconcileBranch(k, refreshAllBranchElements);
         });
 
         return;
@@ -401,7 +419,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     });
 
     this.migration.containerKeys.forEach((k) => {
-      this._reconcileBranch(k);
+      this._reconcileBranch(k, refreshAllBranchElements);
     });
 
     scheduler(this, callback, {

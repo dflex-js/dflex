@@ -3,7 +3,7 @@ import type { ELmBranch } from "@dflex/dom-gen";
 import { assertElementPosition, featureFlags } from "@dflex/utils";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
-function setElmGridAndAssert(
+function setElmGridAndAssertPosition(
   elmID: string,
   dflexElm: DFlexElement,
   elmIndex: number,
@@ -101,13 +101,16 @@ function commitElm(
  * @param branchDOM
  * @param store
  * @param container
+ * @param refreshAllBranchElements - When true, all element in the reconciled
+ * brach will update their Rect regardless of their transformation status.
  * @returns
  */
 function DFlexDOMReconciler(
   branchIDs: Readonly<ELmBranch>,
   branchDOM: HTMLElement,
   store: DFlexDnDStore,
-  container: DFlexParentContainer
+  container: DFlexParentContainer,
+  refreshAllBranchElements: boolean
 ): void {
   container.resetIndicators(branchIDs.length);
 
@@ -117,17 +120,17 @@ function DFlexDOMReconciler(
 
   let isUpdateElmGrid = true;
 
-  // If more than one container involved reset all.
-  if (store.migration.containerKeys.size > 1) {
+  if (refreshAllBranchElements) {
     isUpdateElmGrid = false;
+    reconciledElmQueue = [];
 
     for (let i = 0; i <= branchIDs.length - 1; i += 1) {
       const [dflexElm, elmDOM] = store.getElmWithDOM(branchIDs[i]);
 
-      dflexElm.refreshIndicators(elmDOM);
+      dflexElm.refreshIndicators(elmDOM, true);
 
       if (__DEV__) {
-        setElmGridAndAssert(
+        setElmGridAndAssertPosition(
           branchIDs[i],
           dflexElm,
           i,
@@ -141,13 +144,11 @@ function DFlexDOMReconciler(
 
       store.setElmGridBridge(container, dflexElm);
     }
-
-    reconciledElmQueue = [];
   } else {
     while (reconciledElmQueue.length) {
       const [dflexElm, elmDOM] = reconciledElmQueue.pop()!;
 
-      dflexElm.refreshIndicators(elmDOM);
+      dflexElm.refreshIndicators(elmDOM, true);
     }
   }
 
@@ -155,7 +156,7 @@ function DFlexDOMReconciler(
     for (let i = 0; i <= branchIDs.length - 1; i += 1) {
       const dflexElm = store.registry.get(branchIDs[i])!;
 
-      setElmGridAndAssert(
+      setElmGridAndAssertPosition(
         branchIDs[i],
         dflexElm,
         i,

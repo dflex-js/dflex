@@ -420,7 +420,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.rollBack(DOM, cycleID);
   }
 
-  refreshIndicators(DOM: HTMLElement): void {
+  refreshIndicators(DOM: HTMLElement, initElmRect: boolean): void {
     this._translateHistory = undefined;
 
     this.translate.setAxes(0, 0);
@@ -435,7 +435,9 @@ class DFlexCoreElement extends DFlexBaseElement {
       DOM.removeAttribute("style");
     }
 
-    this.initElmRect(DOM);
+    if (initElmRect) {
+      this.initElmRect(DOM);
+    }
   }
 
   getSerializedInstance(): DFlexSerializedElement {
