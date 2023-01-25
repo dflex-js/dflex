@@ -101,6 +101,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.listeners = initDFlexListeners();
 
     this._initBranch = this._initBranch.bind(this);
+    this._windowResizeHandler = this._windowResizeHandler.bind(this);
   }
 
   isIDle(): boolean {
@@ -116,6 +117,8 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   private _initWhenRegister() {
+    window.addEventListener("resize", this._windowResizeHandler);
+
     scheduler(this, null, null, {
       type: "layoutState",
       status: "pending",
@@ -297,7 +300,34 @@ class DFlexDnDStore extends DFlexBaseStore {
     );
   }
 
-  private reconcileBranch(SK: string): void {
+  private _refreshAfterReconciliation() {
+    this.containers.forEach((container, containerKy) => {
+      const branch = this.getElmBranchByKey(containerKy);
+
+      if (!this.migration.containerKeys.has(containerKy)) {
+        branch.forEach((elmID) => {
+          const [dflexElm, elmDOM] = this.getElmWithDOM(elmID);
+
+          dflexElm.initElmRect(elmDOM);
+
+          this.setElmGridBridge(container, dflexElm);
+        });
+      }
+    });
+  }
+
+  private _windowResizeHandler() {
+    // Reconcile and update Rects.
+    if (this.migration !== null) {
+      this.commit(this._refreshAfterReconciliation);
+
+      return;
+    }
+
+    console.log("oh no.");
+  }
+
+  private _reconcileBranch(SK: string): void {
     const container = this.containers.get(SK)!;
     const branch = this.getElmBranchByKey(SK);
     const parentDOM = this.interactiveDOM.get(container.id)!;
@@ -344,13 +374,13 @@ class DFlexDnDStore extends DFlexBaseStore {
           // eslint-disable-next-line no-console
           console.warn("Executing commit for zero depth layer.");
 
-          this.getBranchesByDepth(0).forEach((k) => this.reconcileBranch(k));
+          this.getBranchesByDepth(0).forEach((k) => this._reconcileBranch(k));
 
           return;
         }
 
         this.migration.containerKeys.forEach((k) => {
-          this.reconcileBranch(k);
+          this._reconcileBranch(k);
         });
 
         return;
@@ -371,7 +401,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     });
 
     this.migration.containerKeys.forEach((k) => {
-      this.reconcileBranch(k);
+      this._reconcileBranch(k);
     });
 
     scheduler(this, callback, {
@@ -514,6 +544,8 @@ class DFlexDnDStore extends DFlexBaseStore {
     this._observerHighestDepth = 0;
 
     this.migration.clear();
+
+    window.removeEventListener("resize", this._windowResizeHandler);
   }
 }
 

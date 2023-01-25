@@ -113,7 +113,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.DOMGrid = new PointNum(0, 0);
   }
 
-  private _initIndicators(DOM: HTMLElement): void {
+  initElmRect(DOM: HTMLElement): void {
     const { height, width, left, top } = DOM.getBoundingClientRect();
 
     /**
@@ -176,7 +176,7 @@ class DFlexCoreElement extends DFlexBaseElement {
 
   resume(DOM: HTMLElement): void {
     this.initTranslate();
-    this._initIndicators(DOM);
+    this.initElmRect(DOM);
   }
 
   changeVisibility(DOM: HTMLElement, isVisible: boolean): void {
@@ -435,7 +435,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       DOM.removeAttribute("style");
     }
 
-    this._initIndicators(DOM);
+    this.initElmRect(DOM);
   }
 
   getSerializedInstance(): DFlexSerializedElement {
