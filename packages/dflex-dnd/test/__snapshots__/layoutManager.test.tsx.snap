@@ -57,7 +57,9 @@ DFlexDnDStore {
       id="id-4"
     />
   </div>,
+  "_observerHighestDepth": 1,
   "_queue": [],
+  "_windowResizeHandler": [Function],
   "containers": Map {
     "0-0" => DFlexParentContainer {
       "_boundariesByRow": {
@@ -182,9 +184,8 @@ DFlexDnDStore {
     "subscribe": [Function],
   },
   "migration": null,
-  "observer": Map {
-    "0-0" => MutationObserver {},
-    "0-1" => MutationObserver {},
+  "mutationObserverMap": Map {
+    "1-0" => MutationObserver {},
   },
   "queueTimeoutId": undefined,
   "registry": Map {
