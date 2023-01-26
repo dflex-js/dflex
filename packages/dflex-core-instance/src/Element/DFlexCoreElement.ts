@@ -124,9 +124,6 @@ class DFlexCoreElement extends DFlexBaseElement {
     this._initialPosition.setAxes(left, top);
 
     this.rect.setByPointAndDimensions(top, left, height, width);
-
-    // This method also used for resetting.
-    this.DOMGrid.setAxes(0, 0);
   }
 
   private _updateCurrentIndicators(newPos: AxesPoint): void {
@@ -420,7 +417,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.rollBack(DOM, cycleID);
   }
 
-  refreshIndicators(DOM: HTMLElement, initElmRect: boolean): void {
+  refreshIndicators(DOM: HTMLElement): void {
     this._translateHistory = undefined;
 
     this.translate.setAxes(0, 0);
@@ -435,9 +432,9 @@ class DFlexCoreElement extends DFlexBaseElement {
       DOM.removeAttribute("style");
     }
 
-    if (initElmRect) {
-      this.initElmRect(DOM);
-    }
+    this.initElmRect(DOM);
+
+    this.DOMGrid.setAxes(0, 0);
   }
 
   getSerializedInstance(): DFlexSerializedElement {

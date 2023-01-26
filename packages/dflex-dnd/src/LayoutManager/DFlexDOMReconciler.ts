@@ -127,7 +127,7 @@ function DFlexDOMReconciler(
     for (let i = 0; i <= branchIDs.length - 1; i += 1) {
       const [dflexElm, elmDOM] = store.getElmWithDOM(branchIDs[i]);
 
-      dflexElm.refreshIndicators(elmDOM, true);
+      dflexElm.refreshIndicators(elmDOM);
 
       if (__DEV__) {
         setElmGridAndAssertPosition(
@@ -138,17 +138,15 @@ function DFlexDOMReconciler(
           store,
           container
         );
-
-        return;
+      } else {
+        store.setElmGridBridge(container, dflexElm);
       }
-
-      store.setElmGridBridge(container, dflexElm);
     }
   } else {
     while (reconciledElmQueue.length) {
       const [dflexElm, elmDOM] = reconciledElmQueue.pop()!;
 
-      dflexElm.refreshIndicators(elmDOM, true);
+      dflexElm.refreshIndicators(elmDOM);
     }
   }
 
@@ -156,14 +154,18 @@ function DFlexDOMReconciler(
     for (let i = 0; i <= branchIDs.length - 1; i += 1) {
       const dflexElm = store.registry.get(branchIDs[i])!;
 
-      setElmGridAndAssertPosition(
-        branchIDs[i],
-        dflexElm,
-        i,
-        branchDOM,
-        store,
-        container
-      );
+      if (__DEV__) {
+        setElmGridAndAssertPosition(
+          branchIDs[i],
+          dflexElm,
+          i,
+          branchDOM,
+          store,
+          container
+        );
+      } else {
+        store.setElmGridBridge(container, dflexElm);
+      }
     }
   }
 }

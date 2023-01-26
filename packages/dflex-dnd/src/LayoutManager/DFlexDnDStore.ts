@@ -79,6 +79,8 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   private _isInitialized: boolean;
 
+  private _refreshAllElmBranchWhileReconcile?: boolean;
+
   constructor() {
     super();
     this.containers = new Map();
@@ -314,21 +316,26 @@ class DFlexDnDStore extends DFlexBaseStore {
 
           dflexElm.initElmRect(elmDOM);
 
-          this.setElmGridBridge(container, dflexElm);
+          container.registerNewElm(
+            dflexElm.rect,
+            this.unifiedContainerDimensions[dflexElm.depth]
+          );
         });
       }
     });
   }
 
   private _windowResizeHandler() {
-    // Reconcile then update Rects.
-    if (this.migration !== null) {
-      this.commit(() => this._refreshBranchesRect(true));
+    this._refreshAllElmBranchWhileReconcile = true;
+
+    if (this.migration === null || this.migration.containerKeys.size === 0) {
+      this._refreshBranchesRect(false);
 
       return;
     }
 
-    this._refreshBranchesRect(false);
+    // Reconcile then update Rects.
+    this.commit(() => this._refreshBranchesRect(true));
   }
 
   private _reconcileBranch(
@@ -377,8 +384,11 @@ class DFlexDnDStore extends DFlexBaseStore {
   commit(callback: (() => void) | null = null): void {
     this.isComposing = true;
 
-    // If more than one container involved reset all.
-    const refreshAllBranchElements = this.migration.containerKeys.size > 1;
+    const refreshAllBranchElements =
+      this._refreshAllElmBranchWhileReconcile === undefined
+        ? // If more than one container involved reset all.
+          this.migration.containerKeys.size > 1
+        : this._refreshAllElmBranchWhileReconcile;
 
     if (__DEV__) {
       if (featureFlags.enableCommit) {
@@ -434,6 +444,7 @@ class DFlexDnDStore extends DFlexBaseStore {
         this.migration.clear();
         clearComputedStyleMap();
 
+        this._refreshAllElmBranchWhileReconcile = undefined;
         this.isComposing = false;
       },
     });
