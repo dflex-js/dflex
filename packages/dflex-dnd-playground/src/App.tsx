@@ -61,21 +61,21 @@ const App = () => {
     };
   }, []);
 
-  React.useEffect(() => {
-    const unsubscribe = store.listeners.subscribe((e) => {
-      console.info("new DFlex error", e);
-    }, "error");
+  // React.useEffect(() => {
+  //   const unsubscribe = store.listeners.subscribe((e) => {
+  //     console.info("new DFlex error", e);
+  //   }, "error");
 
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+  //   return () => {
+  //     unsubscribe();
+  //   };
+  // }, []);
 
-  React.useEffect(() => {
-    return () => {
-      // store.destroy();
-    };
-  }, []);
+  // React.useEffect(() => {
+  //   return () => {
+  //     store.destroy();
+  //   };
+  // }, []);
 
   return (
     <BrowserRouter>

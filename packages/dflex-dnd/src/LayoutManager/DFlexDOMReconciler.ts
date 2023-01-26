@@ -1,36 +1,47 @@
+/* eslint-disable no-console */
 import type { DFlexElement, DFlexParentContainer } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
 import { assertElementPosition, featureFlags } from "@dflex/utils";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
+let didThrowError = false;
+
 function setElmGridAndAssertPosition(
   elmID: string,
   dflexElm: DFlexElement,
   elmIndex: number,
-  branchDOM: HTMLElement,
+  containerDOM: HTMLElement,
   store: DFlexDnDStore,
   container: DFlexParentContainer
 ) {
   store.setElmGridBridge(container, dflexElm);
 
+  if (didThrowError) {
+    return;
+  }
+
   if (
     elmIndex !== dflexElm.DOMOrder.self ||
     dflexElm.DOMOrder.self !== dflexElm.VDOMOrder.self
   ) {
-    // eslint-disable-next-line no-console
-    console.error(
+    didThrowError = true;
+
+    throw new Error(
       `Error in DOM order reconciliation.\n id: ${dflexElm.id}. Expected DOM order: ${dflexElm.DOMOrder.self} to match VDOM order: ${dflexElm.VDOMOrder.self}`
     );
   }
 
   if (
-    !branchDOM.children[elmIndex].isSameNode(store.interactiveDOM.get(elmID)!)
+    !containerDOM.children[elmIndex].isSameNode(
+      store.interactiveDOM.get(elmID)!
+    )
   ) {
-    // eslint-disable-next-line no-console
-    console.error(
+    didThrowError = true;
+
+    throw new Error(
       `Error in DOM order reconciliation.\n. ${
-        branchDOM.children[elmIndex]
-      } doesn't match ${store.interactiveDOM.get(elmID)!}`
+        containerDOM.children[elmIndex]
+      } doesn't match ${store.interactiveDOM.get(elmID)}`
     );
   }
 
