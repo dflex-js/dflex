@@ -14,7 +14,7 @@ import {
   initialize,
   invokeKeyboardAndAssertEmittedMsg,
   moveDragged,
-} from "../../utils";
+} from "../utils";
 
 test.describe
   .serial("Transitioning the last element into the bottom of a bigger container horizontally", async () => {
