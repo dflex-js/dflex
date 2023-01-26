@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import Generator, { ELmBranch } from "@dflex/dom-gen";
+import Generator, { ELmBranch, Keys } from "@dflex/dom-gen";
 
 import { DFlexElement, DFlexElementInput } from "@dflex/core-instance";
 import {
@@ -41,7 +41,7 @@ type GetElmWithDOMOutput = [DFlexElement, HTMLElement];
 
 type BranchComposedCallBackFunction = (
   // eslint-disable-next-line no-unused-vars
-  childrenKey: string,
+  keys: Keys,
   // eslint-disable-next-line no-unused-vars
   childrenDepth: number,
   // eslint-disable-next-line no-unused-vars
@@ -196,7 +196,7 @@ class DFlexBaseStore {
       DOM.dataset.dflexKey = keys.CHK;
 
       if (typeof branchComposedCallBack === "function") {
-        branchComposedCallBack(keys.CHK, depth - 1, id, DOM);
+        branchComposedCallBack(keys, depth, id, DOM);
       }
     }
   }

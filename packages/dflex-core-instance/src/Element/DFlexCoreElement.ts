@@ -113,7 +113,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.DOMGrid = new PointNum(0, 0);
   }
 
-  private _initIndicators(DOM: HTMLElement): void {
+  initElmRect(DOM: HTMLElement): void {
     const { height, width, left, top } = DOM.getBoundingClientRect();
 
     /**
@@ -124,9 +124,6 @@ class DFlexCoreElement extends DFlexBaseElement {
     this._initialPosition.setAxes(left, top);
 
     this.rect.setByPointAndDimensions(top, left, height, width);
-
-    // This method also used for resetting.
-    this.DOMGrid.setAxes(0, 0);
   }
 
   private _updateCurrentIndicators(newPos: AxesPoint): void {
@@ -176,7 +173,7 @@ class DFlexCoreElement extends DFlexBaseElement {
 
   resume(DOM: HTMLElement): void {
     this.initTranslate();
-    this._initIndicators(DOM);
+    this.initElmRect(DOM);
   }
 
   changeVisibility(DOM: HTMLElement, isVisible: boolean): void {
@@ -435,7 +432,9 @@ class DFlexCoreElement extends DFlexBaseElement {
       DOM.removeAttribute("style");
     }
 
-    this._initIndicators(DOM);
+    this.initElmRect(DOM);
+
+    this.DOMGrid.setAxes(0, 0);
   }
 
   getSerializedInstance(): DFlexSerializedElement {

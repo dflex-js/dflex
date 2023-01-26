@@ -154,7 +154,7 @@ function initMutationObserver(store: DFlexDnDStore, SK: string) {
   const terminatedDOMiDs: TerminatedDOMiDs = new Set();
   const changedIds: ChangedIds = new Set();
 
-  store.observer.set(
+  store.mutationObserverMap.set(
     SK,
     new MutationObserver(
       (mutations: MutationRecord[], observer: MutationObserver) => {
@@ -175,11 +175,11 @@ function addMutationObserver(
   SK: string,
   DOMTarget: HTMLElement
 ) {
-  if (!store.observer.has(SK)) {
+  if (!store.mutationObserverMap.has(SK)) {
     initMutationObserver(store, SK);
   }
 
-  store.observer.get(SK)!.observe(DOMTarget, observerConfig);
+  store.mutationObserverMap.get(SK)!.observe(DOMTarget, observerConfig);
 }
 
 type DFlexLMutationPlugin = ReturnType<typeof addMutationObserver>;

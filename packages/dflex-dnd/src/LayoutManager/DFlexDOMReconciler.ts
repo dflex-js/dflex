@@ -3,6 +3,43 @@ import type { ELmBranch } from "@dflex/dom-gen";
 import { assertElementPosition, featureFlags } from "@dflex/utils";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
+function setElmGridAndAssertPosition(
+  elmID: string,
+  dflexElm: DFlexElement,
+  elmIndex: number,
+  branchDOM: HTMLElement,
+  store: DFlexDnDStore,
+  container: DFlexParentContainer
+) {
+  store.setElmGridBridge(container, dflexElm);
+
+  if (
+    elmIndex !== dflexElm.DOMOrder.self ||
+    dflexElm.DOMOrder.self !== dflexElm.VDOMOrder.self
+  ) {
+    // eslint-disable-next-line no-console
+    console.error(
+      `Error in DOM order reconciliation.\n id: ${dflexElm.id}. Expected DOM order: ${dflexElm.DOMOrder.self} to match VDOM order: ${dflexElm.VDOMOrder.self}`
+    );
+  }
+
+  if (
+    !branchDOM.children[elmIndex].isSameNode(store.interactiveDOM.get(elmID)!)
+  ) {
+    // eslint-disable-next-line no-console
+    console.error(
+      `Error in DOM order reconciliation.\n. ${
+        branchDOM.children[elmIndex]
+      } doesn't match ${store.interactiveDOM.get(elmID)!}`
+    );
+  }
+
+  // dflexElm._initIndicators(store.interactiveDOM.get(elmID)!);
+  if (featureFlags.enablePositionAssertion) {
+    assertElementPosition(store.interactiveDOM.get(elmID)!, dflexElm.rect);
+  }
+}
+
 function switchElmDOMPosition(
   branchIDs: Readonly<ELmBranch>,
   branchDOM: HTMLElement,
@@ -33,6 +70,8 @@ function switchElmDOMPosition(
   dflexElm.DOMOrder.self = VDOMIndex;
 }
 
+let reconciledElmQueue: [DFlexElement, HTMLElement][] = [];
+
 function commitElm(
   branchIDs: Readonly<ELmBranch>,
   branchDOM: HTMLElement,
@@ -52,11 +91,7 @@ function commitElm(
       switchElmDOMPosition(branchIDs, branchDOM, store, dflexElm, elmDOM);
     }
 
-    // If the reconciliation is restricted in one container just reset the
-    // elements. Because, the parent container size is the same height.
-    if (store.migration.containerKeys.size === 1) {
-      dflexElm.refreshIndicators(elmDOM);
-    }
+    reconciledElmQueue.push([dflexElm, elmDOM]);
   }
 }
 
@@ -66,13 +101,16 @@ function commitElm(
  * @param branchDOM
  * @param store
  * @param container
+ * @param refreshAllBranchElements - When true, all element in the reconciled
+ * brach will update their Rect regardless of their transformation status.
  * @returns
  */
 function DFlexDOMReconciler(
   branchIDs: Readonly<ELmBranch>,
   branchDOM: HTMLElement,
   store: DFlexDnDStore,
-  container: DFlexParentContainer
+  container: DFlexParentContainer,
+  refreshAllBranchElements: boolean
 ): void {
   container.resetIndicators(branchIDs.length);
 
@@ -80,48 +118,53 @@ function DFlexDOMReconciler(
     commitElm(branchIDs, branchDOM, store, branchIDs[i]);
   }
 
-  // TODO:
-  // This can be optimized, like targeting only the effected element. But I
-  // don't want to play with grid since it's not fully implemented.
-  for (let i = 0; i <= branchIDs.length - 1; i += 1) {
-    const [dflexElm, elmDOM] = store.getElmWithDOM(branchIDs[i]);
+  let isUpdateElmGrid = true;
 
-    if (store.migration.containerKeys.size > 1) {
+  if (refreshAllBranchElements) {
+    isUpdateElmGrid = false;
+    reconciledElmQueue = [];
+
+    for (let i = 0; i <= branchIDs.length - 1; i += 1) {
+      const [dflexElm, elmDOM] = store.getElmWithDOM(branchIDs[i]);
+
+      dflexElm.refreshIndicators(elmDOM);
+
+      if (__DEV__) {
+        setElmGridAndAssertPosition(
+          branchIDs[i],
+          dflexElm,
+          i,
+          branchDOM,
+          store,
+          container
+        );
+      } else {
+        store.setElmGridBridge(container, dflexElm);
+      }
+    }
+  } else {
+    while (reconciledElmQueue.length) {
+      const [dflexElm, elmDOM] = reconciledElmQueue.pop()!;
+
       dflexElm.refreshIndicators(elmDOM);
     }
+  }
 
-    store.setElmGridBridge(container, dflexElm);
+  if (isUpdateElmGrid) {
+    for (let i = 0; i <= branchIDs.length - 1; i += 1) {
+      const dflexElm = store.registry.get(branchIDs[i])!;
 
-    if (__DEV__) {
-      if (
-        i !== dflexElm.DOMOrder.self ||
-        dflexElm.DOMOrder.self !== dflexElm.VDOMOrder.self
-      ) {
-        // eslint-disable-next-line no-console
-        console.error(
-          `Error in DOM order reconciliation.\n id: ${dflexElm.id}. Expected DOM order: ${dflexElm.DOMOrder.self} to match VDOM order: ${dflexElm.VDOMOrder.self}`
+      if (__DEV__) {
+        setElmGridAndAssertPosition(
+          branchIDs[i],
+          dflexElm,
+          i,
+          branchDOM,
+          store,
+          container
         );
-      }
-
-      if (
-        !branchDOM.children[i].isSameNode(
-          store.interactiveDOM.get(branchIDs[i])!
-        )
-      ) {
-        // eslint-disable-next-line no-console
-        console.error(
-          `Error in DOM order reconciliation.\n. ${
-            branchDOM.children[i]
-          } doesn't match ${store.interactiveDOM.get(branchIDs[i])!}`
-        );
-      }
-
-      // dflexElm._initIndicators(store.interactiveDOM.get(branchIDs[i])!);
-      if (featureFlags.enablePositionAssertion) {
-        assertElementPosition(
-          store.interactiveDOM.get(branchIDs[i])!,
-          dflexElm.rect
-        );
+      } else {
+        store.setElmGridBridge(container, dflexElm);
       }
     }
   }

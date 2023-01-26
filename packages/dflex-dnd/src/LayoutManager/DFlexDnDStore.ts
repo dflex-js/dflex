@@ -20,7 +20,7 @@ import {
   DFlexSerializedScroll,
 } from "@dflex/core-instance";
 
-import type { ELmBranch } from "@dflex/dom-gen";
+import type { ELmBranch, Keys } from "@dflex/dom-gen";
 
 import initDFlexListeners, {
   DFlexListenerPlugin,
@@ -30,7 +30,10 @@ import initDFlexListeners, {
 import scheduler, { SchedulerOptions, UpdateFn } from "./DFlexScheduler";
 
 import updateBranchVisibilityLinearly from "./DFlexVisibilityUpdater";
-import { addMutationObserver } from "./DFlexMutations";
+import {
+  addMutationObserver,
+  getIsProcessingMutations,
+} from "./DFlexMutations";
 import DOMReconciler from "./DFlexDOMReconciler";
 
 type Containers = Map<string, DFlexParentContainer>;
@@ -39,7 +42,7 @@ type Scrolls = Map<string, DFlexScrollContainer>;
 
 type UnifiedContainerDimensions = Record<number, Dimensions>;
 
-type Observer = MutationObserver | null;
+type MutationObserverValue = MutationObserver | null;
 
 type UpdatesQueue = [
   UpdateFn | null,
@@ -56,7 +59,9 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   unifiedContainerDimensions: UnifiedContainerDimensions;
 
-  observer: Map<string, Observer>;
+  mutationObserverMap: Map<string, MutationObserverValue>;
+
+  private _observerHighestDepth: number;
 
   listeners: DFlexListenerPlugin;
 
@@ -74,6 +79,8 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   private _isInitialized: boolean;
 
+  private _refreshAllElmBranchWhileReconcile?: boolean;
+
   constructor() {
     super();
     this.containers = new Map();
@@ -84,7 +91,11 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.migration = null;
     this._isInitialized = false;
     this._isDOM = false;
-    this.observer = new Map();
+
+    // Observers.
+    this.mutationObserverMap = new Map();
+    this._observerHighestDepth = 0;
+
     this.isComposing = false;
     this.isUpdating = false;
     this.deferred = [];
@@ -92,6 +103,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.listeners = initDFlexListeners();
 
     this._initBranch = this._initBranch.bind(this);
+    this._windowResizeHandler = this._windowResizeHandler.bind(this);
   }
 
   isIDle(): boolean {
@@ -103,10 +115,12 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   isLayoutAvailable(): boolean {
-    return !this.isComposing && this.isIDle();
+    return !(this.isComposing || getIsProcessingMutations()) && this.isIDle();
   }
 
   private _initWhenRegister() {
+    window.addEventListener("resize", this._windowResizeHandler);
+
     scheduler(this, null, null, {
       type: "layoutState",
       status: "pending",
@@ -140,51 +154,65 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.setElmGridBridge(container, dflexElm);
   }
 
-  private _initBranch(SK: string, depth: number, id: string, DOM: HTMLElement) {
+  private _initBranch(keys: Keys, depth: number, id: string, DOM: HTMLElement) {
+    const { CHK, SK } = keys;
+
+    if (!CHK) {
+      if (__DEV__) {
+        throw new Error(
+          `_initBranch: Unexpected error while initializing the branch. CHK is not defined in depth: ${depth}.`
+        );
+      }
+
+      return;
+    }
+
     let container: DFlexParentContainer;
     let scroll: DFlexScrollContainer;
 
-    if (!this.unifiedContainerDimensions[depth]) {
-      this.unifiedContainerDimensions[depth] = Object.seal({
+    const targetingLayerDepth = depth - 1;
+
+    if (!this.unifiedContainerDimensions[targetingLayerDepth]) {
+      this.unifiedContainerDimensions[targetingLayerDepth] = Object.seal({
         width: 0,
         height: 0,
       });
     }
 
-    const branch = this.DOMGen.getElmBranchByKey(SK);
+    const branch = this.DOMGen.getElmBranchByKey(CHK);
 
-    if (this.scrolls.has(SK)) {
+    if (this.scrolls.has(CHK)) {
       if (__DEV__) {
-        throw new Error(
-          `_initBranchScrollAndVisibility: Scroll with key:${SK} already exists.`
-        );
+        throw new Error(`_initBranch: Scroll with key:${CHK} already exists.`);
       }
 
-      scroll = this.scrolls.get(SK)!;
+      scroll = this.scrolls.get(CHK)!;
     } else {
       scroll = new DFlexScrollContainer(
         this.interactiveDOM.get(branch[0])!,
-        SK,
+        CHK,
         branch.length,
         true,
         updateBranchVisibilityLinearly.bind(null, this)
       );
 
-      this.scrolls.set(SK, scroll);
+      this.scrolls.set(CHK, scroll);
     }
 
-    if (this.containers.has(SK)) {
+    if (this.containers.has(CHK)) {
       if (__DEV__) {
         throw new Error(
-          `_initBranchScrollAndVisibility: Container with key:${SK} already exists.`
+          `_initBranch: Container with key:${CHK} already exists.`
         );
       }
 
-      container = this.containers.get(SK)!;
+      container = this.containers.get(CHK)!;
     } else {
       if (__DEV__) {
         if (!this.interactiveDOM.has(id)) {
-          throw new Error(`Container DOM element doesn't exist.`);
+          throw new Error(
+            `_initBranch: DOM element for container-id ${id} doesn't exist.`
+          );
         }
       }
 
@@ -194,19 +222,40 @@ class DFlexDnDStore extends DFlexBaseStore {
         id
       );
 
-      this.containers.set(SK, container);
+      this.containers.set(CHK, container);
     }
 
     const initElmGrid = this._resumeAndInitElmGrid.bind(this, container);
 
     branch.forEach(initElmGrid);
 
-    updateBranchVisibilityLinearly(this, SK);
+    updateBranchVisibilityLinearly(this, CHK);
 
-    // This is not right, but it's workaround. The ideal solution is to observe the layer itself.
-    // E.g, find a solution where we have the higher order parent.
-    if (depth === 0) {
+    if (__DEV__) {
+      if (depth === 0) {
+        throw new Error(
+          "_initBranch: Received element with depth zero. This method is restricted to containers only."
+        );
+      }
+    }
+
+    if (depth > 1) {
+      const keysByDepths = this.DOMGen.getBranchByDepth(depth - 1);
+
+      // Delete observers in lower layers.
+      keysByDepths.forEach((k) => {
+        const hasMutation = this.mutationObserverMap.has(k);
+
+        if (hasMutation) {
+          this.mutationObserverMap.get(k)!.disconnect();
+          this.mutationObserverMap.delete(k);
+        }
+      });
+    }
+
+    if (depth > this._observerHighestDepth) {
       addMutationObserver(this, SK, DOM);
+      this._observerHighestDepth = depth;
     }
   }
 
@@ -253,7 +302,46 @@ class DFlexDnDStore extends DFlexBaseStore {
     );
   }
 
-  private reconcileBranch(SK: string): void {
+  private _refreshBranchesRect(excludeMigratedContainers: boolean) {
+    this.containers.forEach((container, containerKy) => {
+      const branch = this.getElmBranchByKey(containerKy);
+
+      const is = excludeMigratedContainers
+        ? !this.migration.containerKeys.has(containerKy)
+        : true;
+
+      if (is) {
+        branch.forEach((elmID) => {
+          const [dflexElm, elmDOM] = this.getElmWithDOM(elmID);
+
+          dflexElm.initElmRect(elmDOM);
+
+          container.registerNewElm(
+            dflexElm.rect,
+            this.unifiedContainerDimensions[dflexElm.depth]
+          );
+        });
+      }
+    });
+  }
+
+  private _windowResizeHandler() {
+    this._refreshAllElmBranchWhileReconcile = true;
+
+    if (this.migration === null || this.migration.containerKeys.size === 0) {
+      this._refreshBranchesRect(false);
+
+      return;
+    }
+
+    // Reconcile then update Rects.
+    this.commit(() => this._refreshBranchesRect(true));
+  }
+
+  private _reconcileBranch(
+    SK: string,
+    refreshAllBranchElements: boolean
+  ): void {
     const container = this.containers.get(SK)!;
     const branch = this.getElmBranchByKey(SK);
     const parentDOM = this.interactiveDOM.get(container.id)!;
@@ -269,7 +357,13 @@ class DFlexDnDStore extends DFlexBaseStore {
           }
         }
 
-        DOMReconciler(branch, parentDOM, this, container);
+        DOMReconciler(
+          branch,
+          parentDOM,
+          this,
+          container,
+          refreshAllBranchElements
+        );
       },
       null,
       {
@@ -290,6 +384,12 @@ class DFlexDnDStore extends DFlexBaseStore {
   commit(callback: (() => void) | null = null): void {
     this.isComposing = true;
 
+    const refreshAllBranchElements =
+      this._refreshAllElmBranchWhileReconcile === undefined
+        ? // If more than one container involved reset all.
+          this.migration.containerKeys.size > 1
+        : this._refreshAllElmBranchWhileReconcile;
+
     if (__DEV__) {
       if (featureFlags.enableCommit) {
         if (this.migration === null) {
@@ -300,13 +400,15 @@ class DFlexDnDStore extends DFlexBaseStore {
           // eslint-disable-next-line no-console
           console.warn("Executing commit for zero depth layer.");
 
-          this.getBranchesByDepth(0).forEach((k) => this.reconcileBranch(k));
+          this.getBranchesByDepth(0).forEach((k) =>
+            this._reconcileBranch(k, refreshAllBranchElements)
+          );
 
           return;
         }
 
         this.migration.containerKeys.forEach((k) => {
-          this.reconcileBranch(k);
+          this._reconcileBranch(k, refreshAllBranchElements);
         });
 
         return;
@@ -322,12 +424,12 @@ class DFlexDnDStore extends DFlexBaseStore {
       return;
     }
 
-    this.observer.forEach((observer) => {
+    this.mutationObserverMap.forEach((observer) => {
       observer!.disconnect();
     });
 
     this.migration.containerKeys.forEach((k) => {
-      this.reconcileBranch(k);
+      this._reconcileBranch(k, refreshAllBranchElements);
     });
 
     scheduler(this, callback, {
@@ -342,6 +444,7 @@ class DFlexDnDStore extends DFlexBaseStore {
         this.migration.clear();
         clearComputedStyleMap();
 
+        this._refreshAllElmBranchWhileReconcile = undefined;
         this.isComposing = false;
       },
     });
@@ -461,12 +564,17 @@ class DFlexDnDStore extends DFlexBaseStore {
     super.destroy();
 
     // Destroys all connected observers.
-    this.observer.forEach((observer) => {
+    this.mutationObserverMap.forEach((observer) => {
       observer!.disconnect();
     });
-    this.observer.clear();
+
+    this.mutationObserverMap.clear();
+
+    this._observerHighestDepth = 0;
 
     this.migration.clear();
+
+    window.removeEventListener("resize", this._windowResizeHandler);
   }
 }
 
