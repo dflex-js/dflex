@@ -18,7 +18,7 @@ import {
 } from "../utils";
 
 test.describe
-  .serial("Transitioning the last element into the bottom of a bigger container horizontally", async () => {
+  .serial("Resizing window will automatically reconcile elements and refresh elements DOMRect", async () => {
   let page: Page;
   let context: BrowserContext;
   let activeBrowser: Browser;
