@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from "@playwright/test";
+import { Page, Locator, expect, ConsoleMessage } from "@playwright/test";
 
 let page: Page;
 let steps = 0;
@@ -66,13 +66,7 @@ export async function invokeKeyboard(k = "c") {
   await page.keyboard.press(k);
 }
 
-export async function invokeKeyboardAndAssertEmittedMsg(FINAL_IDS: string[]) {
-  // Get the next console log
-  const [msg] = await Promise.all([
-    page.waitForEvent("console"),
-    invokeKeyboard(),
-  ]);
-
+async function assertEmittedMsg(msg: ConsoleMessage, FINAL_IDS: string[]) {
   // TODO:
   // cast the type for `emittedMsg`
   const emittedMsg = await msg.args()[1].jsonValue();
@@ -85,6 +79,23 @@ export async function invokeKeyboardAndAssertEmittedMsg(FINAL_IDS: string[]) {
     target: "ref: <Node>",
     ids: FINAL_IDS,
   });
+}
+
+export async function assertConsoleMsg(FINAL_IDS: string[]) {
+  // Get the next console log
+  const [msg] = await Promise.all([page.waitForEvent("console")]);
+
+  await assertEmittedMsg(msg, FINAL_IDS);
+}
+
+export async function invokeKeyboardAndAssertEmittedMsg(FINAL_IDS: string[]) {
+  // Get the next console log
+  const [msg] = await Promise.all([
+    page.waitForEvent("console"),
+    invokeKeyboard(),
+  ]);
+
+  await assertEmittedMsg(msg, FINAL_IDS);
 }
 
 export async function assertChildrenOrderIDs(

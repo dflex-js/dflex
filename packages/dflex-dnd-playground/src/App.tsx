@@ -71,11 +71,11 @@ const App = () => {
   //   };
   // }, []);
 
-  // React.useEffect(() => {
-  //   return () => {
-  //     store.destroy();
-  //   };
-  // }, []);
+  React.useEffect(() => {
+    return () => {
+      store.destroy();
+    };
+  }, []);
 
   return (
     <BrowserRouter>
