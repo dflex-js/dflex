@@ -15,6 +15,7 @@ import {
   ContainerBasedEvent,
   ScrollMultiLists,
   ListMigration,
+  ContinuouslyUpdatingTodo,
 } from "./components";
 
 const App = () => {
@@ -116,6 +117,7 @@ const App = () => {
             <ContainerBasedEvent isHorizontal isIncludeOneContainer grid />
           }
         />
+        <Route path="/stream" element={<ContinuouslyUpdatingTodo />} />
         <Route
           path="/"
           element={
