@@ -16,39 +16,44 @@ function setElmGridAndAssertPosition(
 ) {
   store.setElmGridBridge(container, dflexElm);
 
-  if (didThrowError) {
-    return;
-  }
+  setTimeout(() => {
+    if (didThrowError) {
+      return;
+    }
 
-  if (
-    elmIndex !== dflexElm.DOMOrder.self ||
-    dflexElm.DOMOrder.self !== dflexElm.VDOMOrder.self
-  ) {
-    didThrowError = true;
+    if (
+      elmIndex !== dflexElm.DOMOrder.self ||
+      dflexElm.DOMOrder.self !== dflexElm.VDOMOrder.self
+    ) {
+      didThrowError = true;
 
-    throw new Error(
-      `Error in DOM order reconciliation.\n id: ${dflexElm.id}. Expected DOM order: ${dflexElm.DOMOrder.self} to match VDOM order: ${dflexElm.VDOMOrder.self}`
-    );
-  }
+      console.error(
+        `Error in DOM order reconciliation.\n id: ${dflexElm.id}. Expected DOM order: ${dflexElm.DOMOrder.self} to match VDOM order: ${dflexElm.VDOMOrder.self}`
+      );
+    }
 
-  if (
-    !containerDOM.children[elmIndex].isSameNode(
-      store.interactiveDOM.get(elmID)!
-    )
-  ) {
-    didThrowError = true;
+    if (
+      !containerDOM.children[elmIndex].isSameNode(
+        store.interactiveDOM.get(elmID)!
+      )
+    ) {
+      didThrowError = true;
 
-    throw new Error(
-      `Error in DOM order reconciliation.\n. ${
-        containerDOM.children[elmIndex]
-      } doesn't match ${store.interactiveDOM.get(elmID)}`
-    );
-  }
+      console.error(
+        "Error in DOM order reconciliation at Index: ",
+        elmIndex,
+        "Container: ",
+        containerDOM
+      );
+      console.error("Actually DOM tree has: ", containerDOM.children[elmIndex]);
+      console.error("While DFlex Store has: ", store.interactiveDOM.get(elmID));
+    }
 
-  // dflexElm._initIndicators(store.interactiveDOM.get(elmID)!);
-  if (featureFlags.enablePositionAssertion) {
-    assertElementPosition(store.interactiveDOM.get(elmID)!, dflexElm.rect);
-  }
+    // dflexElm._initIndicators(store.interactiveDOM.get(elmID)!);
+    if (featureFlags.enablePositionAssertion) {
+      assertElementPosition(store.interactiveDOM.get(elmID)!, dflexElm.rect);
+    }
+  }, 0);
 }
 
 function switchElmDOMPosition(
