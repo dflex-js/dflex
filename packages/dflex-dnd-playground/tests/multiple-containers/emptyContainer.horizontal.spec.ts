@@ -124,7 +124,7 @@ test.describe
 
     test("Siblings in both containers are reconciled", async () => {
       await Promise.all([
-        expect(elmC1E1).toHaveCSS("transform", "matrix(1, 0, 0, 1, 226, 0)"),
+        expect(elmC1E1).toHaveCSS("transform", "none"),
 
         expect(elmC2E1).toHaveCSS("transform", "none"),
         expect(elmC2E2).toHaveCSS("transform", "none"),
@@ -136,9 +136,10 @@ test.describe
 
     test("Siblings have the correct order in destination container(C2) including the new merged element (#c1-1)", async () => {
       await Promise.all([
-        assertChildrenOrderIDs(elmC1Parent, []),
+        assertChildrenOrderIDs(elmC1Parent, [
+          "c1-1", // It's back.
+        ]),
         assertChildrenOrderIDs(elmC2Parent, [
-          "c1-1", // The new child.
           "c2-1",
           "c2-2",
           "c2-3",

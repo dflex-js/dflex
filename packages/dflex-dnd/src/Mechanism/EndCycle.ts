@@ -78,6 +78,7 @@ class EndCycle extends DFlexMechanismController {
       isFallback = this.draggable.isNotSettled();
     }
 
+    // If it's falling back then we won't trigger reconciliation.
     if (isFallback) {
       scheduler(
         store,
@@ -89,7 +90,7 @@ class EndCycle extends DFlexMechanismController {
         },
         {
           onUpdate: () => {
-            this.draggable.cleanup(true, false, latestCycle);
+            this.draggable.cleanup(true, false, latestCycle, false);
             migration.flush(session);
           },
         },
@@ -113,7 +114,13 @@ class EndCycle extends DFlexMechanismController {
 
     scheduler(
       store,
-      () => this.draggable.cleanup(isFallback, isMigratedInScroll, latestCycle),
+      () =>
+        this.draggable.cleanup(
+          isFallback,
+          isMigratedInScroll,
+          latestCycle,
+          hasToReconcile
+        ),
       null,
       {
         type: "layoutState",
