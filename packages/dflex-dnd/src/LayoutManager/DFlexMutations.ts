@@ -120,24 +120,24 @@ function DOMmutationHandler(
   try {
     isProcessingMutations = true;
 
-    checkMutations(store, mutations, changedIds, terminatedDOMiDs);
+    // checkMutations(store, mutations, changedIds, terminatedDOMiDs);
 
-    // fetch all pending mutations and clear the queue.
-    const records = observer.takeRecords();
+    // // fetch all pending mutations and clear the queue.
+    // const records = observer.takeRecords();
 
-    if (records.length > 0) {
-      checkMutations(store, records, changedIds, terminatedDOMiDs);
-    }
+    // if (records.length > 0) {
+    //   checkMutations(store, records, changedIds, terminatedDOMiDs);
+    // }
 
-    if (changedIds.size > 0) {
-      mutateIDs(store, changedIds);
-      changedIds.clear();
-    }
+    // if (changedIds.size > 0) {
+    //   mutateIDs(store, changedIds);
+    //   changedIds.clear();
+    // }
 
-    if (terminatedDOMiDs.size > 0) {
-      cleanupBranchElements(store, terminatedDOMiDs);
-      terminatedDOMiDs.clear();
-    }
+    // if (terminatedDOMiDs.size > 0) {
+    //   cleanupBranchElements(store, terminatedDOMiDs);
+    //   terminatedDOMiDs.clear();
+    // }
   } finally {
     isProcessingMutations = false;
   }

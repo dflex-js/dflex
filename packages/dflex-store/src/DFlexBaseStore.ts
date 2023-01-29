@@ -186,7 +186,7 @@ class DFlexBaseStore {
       if (keys.CHK === null) {
         if (__DEV__) {
           throw new Error(
-            `Invalid keys for element with ID: ${id} Elements over depth-1 must have a CHK key.`
+            `_submitElementToRegistry: Invalid keys for element with ID: ${id} Elements over depth-1 must have a CHK key.`
           );
         }
 
@@ -197,6 +197,43 @@ class DFlexBaseStore {
 
       if (typeof branchComposedCallBack === "function") {
         branchComposedCallBack(keys, depth, id, DOM);
+      }
+    }
+  }
+
+  private _checkParentDOMHistory() {
+    if (this._lastDOMParent !== null) {
+      const { id } = this._lastDOMParent;
+
+      if (id && this.registry.has(id)) {
+        const registeredParentElm = this.registry.get(id)!;
+
+        const {
+          keys: { CHK },
+        } = registeredParentElm;
+
+        if (__DEV__) {
+          if (!CHK) {
+            throw new Error(
+              `register: Invalid keys for element with ID: ${id} Elements over depth-1 must have a CHK key.`
+            );
+          }
+        }
+
+        if (CHK) {
+          const l = this.DOMGen.getElmBranchByKey(CHK).length;
+
+          // If the element is registered, already exists and has zero children.
+          // Then the container is changing its children while maintaining the
+          // its DOM. By resitting `this._lastDOMParent` we allow the registry
+          // to start fresh and trigger associated methods responsible for making
+          // decision about parent/child.
+          if (l === 0) {
+            this.registry.delete(id);
+
+            console.log("Resitting the parent DOM...");
+          }
+        }
       }
     }
   }
@@ -216,6 +253,9 @@ class DFlexBaseStore {
     const DOM = this.interactiveDOM.has(id)
       ? this.interactiveDOM.get(id)!
       : getElmDOMOrThrow(id)!;
+
+    // if (this._checkParentDOMHistory()) {
+    // }
 
     getParentElm(DOM, (_parentDOM) => {
       if (
@@ -261,6 +301,7 @@ class DFlexBaseStore {
 
         this.queueTimeoutId = setTimeout(this._handleQueue, 0);
       } else {
+        console.log("no parent found");
         this._submitElementToRegistry(DOM, element, null);
       }
 
@@ -332,8 +373,15 @@ class DFlexBaseStore {
    *
    * @param id - element id.
    */
-  unregister(id: string): void {
+  unregister(id: string, SK?: string): void {
     this.registry.delete(id);
+
+    if (SK) {
+      console.log(this.DOMGen.getElmBranchByKey(SK).length);
+    }
+    if (SK && this.DOMGen.getElmBranchByKey(SK).length === 0) {
+      this._lastDOMParent = null;
+    }
   }
 
   /**

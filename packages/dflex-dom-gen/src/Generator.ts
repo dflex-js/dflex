@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { combineKeys } from "@dflex/utils";
+import { combineKeys, featureFlags } from "@dflex/utils";
 import type { IGenerator, Keys, Order, Pointer, ELmBranch } from "./types";
 
 /**
@@ -194,6 +194,12 @@ class Generator implements IGenerator {
 
       if (this._branches[SK]!.length === 0) {
         delete this._branches[SK];
+
+        if (__DEV__) {
+          if (featureFlags.enableDOMGenDebugger) {
+            console.info(`Branch ${SK} is empty`);
+          }
+        }
       }
 
       return deletedElmID;

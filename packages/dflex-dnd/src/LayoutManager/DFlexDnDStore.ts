@@ -147,6 +147,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     container: DFlexParentContainer,
     id: string
   ): void {
+    console.log("_resumeAndInitElmGrid");
     const [dflexElm, DOM] = this.getElmWithDOM(id);
 
     dflexElm.resume(DOM);
@@ -155,6 +156,8 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   private _initBranch(keys: Keys, depth: number, id: string, DOM: HTMLElement) {
+    console.log("_initBranch");
+
     const { CHK, SK } = keys;
 
     if (!CHK) {
@@ -274,8 +277,10 @@ class DFlexDnDStore extends DFlexBaseStore {
     }
 
     const { id } = element;
+    console.log("register", id);
 
     if (this.has(id)) {
+      console.log("has", id);
       const [elm, DOM] = this.getElmWithDOM(id);
 
       if (elm.isVisible) {
@@ -538,6 +543,11 @@ class DFlexDnDStore extends DFlexBaseStore {
    */
   unregister(id: string): void {
     if (!this.registry.has(id)) {
+      if (__DEV__) {
+        throw new Error(
+          `unregister: You are trying to unregister a nonexistent element: ${id}`
+        );
+      }
       return;
     }
 
@@ -546,9 +556,9 @@ class DFlexDnDStore extends DFlexBaseStore {
       VDOMOrder: { self },
     } = this.registry.get(id)!;
 
-    this.DOMGen.removeElmIDFromBranch(SK, self);
+    const x = this.DOMGen.removeElmIDFromBranch(SK, self);
 
-    super.unregister(id);
+    super.unregister(id, SK);
 
     // Nothing left?
     // Reset the branch instances.
