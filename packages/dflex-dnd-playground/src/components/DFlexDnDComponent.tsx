@@ -49,7 +49,7 @@ const DFlexDnDComponent = ({
     return () => {
       store.unregister(id);
     };
-  }, [taskRef.current]);
+  }, [taskRef]);
 
   const onDFlexEvent = (e: DFlexEvents) => {
     // eslint-disable-next-line no-console

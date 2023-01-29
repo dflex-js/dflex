@@ -15,6 +15,7 @@ import {
   ContainerBasedEvent,
   ScrollMultiLists,
   ListMigration,
+  ContinuouslyUpdatingTodo,
 } from "./components";
 
 const App = () => {
@@ -61,19 +62,19 @@ const App = () => {
     };
   }, []);
 
-  React.useEffect(() => {
-    const unsubscribe = store.listeners.subscribe((e) => {
-      console.info("new DFlex error", e);
-    }, "error");
+  // React.useEffect(() => {
+  //   const unsubscribe = store.listeners.subscribe((e) => {
+  //     console.info("new DFlex error", e);
+  //   }, "error");
 
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+  //   return () => {
+  //     unsubscribe();
+  //   };
+  // }, []);
 
   React.useEffect(() => {
     return () => {
-      // store.destroy();
+      store.destroy();
     };
   }, []);
 
@@ -116,6 +117,7 @@ const App = () => {
             <ContainerBasedEvent isHorizontal isIncludeOneContainer grid />
           }
         />
+        <Route path="/stream" element={<ContinuouslyUpdatingTodo />} />
         <Route
           path="/"
           element={

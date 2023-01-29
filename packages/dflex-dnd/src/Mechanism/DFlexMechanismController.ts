@@ -319,7 +319,17 @@ class DFlexMechanismController extends DFlexScrollableElement {
       return;
     }
 
-    const nextElm = store.registry.get(siblings[from])!;
+    const nextElm = store.registry.get(siblings[from]);
+
+    if (!nextElm) {
+      if (__DEV__) {
+        throw new Error(
+          `_fillHeadUp: Error in calculating next element.\n Siblings: ${siblings}\n Calculated index: ${from}`
+        );
+      }
+
+      return;
+    }
 
     // Store it before lost it when the index is changed to the next one.
     migration.preserveVerticalMargin(

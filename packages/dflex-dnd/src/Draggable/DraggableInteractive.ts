@@ -101,11 +101,13 @@ class DraggableInteractive extends DraggableAxes {
    *
    * @param isFallback
    * @param  latestCycle
+   * @param  willReconcile
    * @returns
    */
   setDraggedTransformProcess(
     isFallback: boolean,
-    latestCycle: AbstractDFlexCycle
+    latestCycle: AbstractDFlexCycle,
+    willReconcile: boolean
   ) {
     const { SK, index } = latestCycle;
     const { rect, translate, id, VDOMOrder, DOMGrid } = this.draggedElm;
@@ -154,26 +156,32 @@ class DraggableInteractive extends DraggableAxes {
       }
     }
 
-    translate.clone(this.occupiedTranslate);
-
     DOMGrid.clone(this.gridPlaceholder);
 
     VDOMOrder.self = index;
 
-    this.draggedElm.transform(draggedDOM);
-
     this.draggedElm.assignNewPosition(siblings, index);
+
+    // If it's going to reconcile to the DOM then there's no need to update the
+    // transformation here.
+    if (!willReconcile) {
+      translate.clone(this.occupiedTranslate);
+      this.draggedElm.transform(draggedDOM);
+    }
   }
 
   /**
    *
    * @param isFallback
    * @param isMigratedInScroll
+   * @param latestCycle
+   * @param willReconcile
    */
   cleanup(
     isFallback: boolean,
     isMigratedInScroll: boolean,
-    latestCycle: AbstractDFlexCycle
+    latestCycle: AbstractDFlexCycle,
+    willReconcile: boolean
   ) {
     const draggedDOM = store.interactiveDOM.get(this.draggedElm.id)!;
 
@@ -198,7 +206,8 @@ class DraggableInteractive extends DraggableAxes {
     }
 
     this.appendDraggedToContainerDimensions(false);
-    this.setDraggedTransformProcess(isFallback, latestCycle);
+
+    this.setDraggedTransformProcess(isFallback, latestCycle, willReconcile);
 
     this.threshold.destroy();
   }

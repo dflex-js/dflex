@@ -1,43 +1,59 @@
+/* eslint-disable no-console */
 import type { DFlexElement, DFlexParentContainer } from "@dflex/core-instance";
 import type { ELmBranch } from "@dflex/dom-gen";
 import { assertElementPosition, featureFlags } from "@dflex/utils";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
+let didThrowError = false;
+
 function setElmGridAndAssertPosition(
   elmID: string,
   dflexElm: DFlexElement,
   elmIndex: number,
-  branchDOM: HTMLElement,
+  containerDOM: HTMLElement,
   store: DFlexDnDStore,
   container: DFlexParentContainer
 ) {
   store.setElmGridBridge(container, dflexElm);
 
-  if (
-    elmIndex !== dflexElm.DOMOrder.self ||
-    dflexElm.DOMOrder.self !== dflexElm.VDOMOrder.self
-  ) {
-    // eslint-disable-next-line no-console
-    console.error(
-      `Error in DOM order reconciliation.\n id: ${dflexElm.id}. Expected DOM order: ${dflexElm.DOMOrder.self} to match VDOM order: ${dflexElm.VDOMOrder.self}`
-    );
-  }
+  setTimeout(() => {
+    if (didThrowError) {
+      return;
+    }
 
-  if (
-    !branchDOM.children[elmIndex].isSameNode(store.interactiveDOM.get(elmID)!)
-  ) {
-    // eslint-disable-next-line no-console
-    console.error(
-      `Error in DOM order reconciliation.\n. ${
-        branchDOM.children[elmIndex]
-      } doesn't match ${store.interactiveDOM.get(elmID)!}`
-    );
-  }
+    if (
+      elmIndex !== dflexElm.DOMOrder.self ||
+      dflexElm.DOMOrder.self !== dflexElm.VDOMOrder.self
+    ) {
+      didThrowError = true;
 
-  // dflexElm._initIndicators(store.interactiveDOM.get(elmID)!);
-  if (featureFlags.enablePositionAssertion) {
-    assertElementPosition(store.interactiveDOM.get(elmID)!, dflexElm.rect);
-  }
+      console.error(
+        `Error in DOM order reconciliation.\n id: ${dflexElm.id}. Expected DOM order: ${dflexElm.DOMOrder.self} to match VDOM order: ${dflexElm.VDOMOrder.self}`
+      );
+    }
+
+    if (
+      !containerDOM.children[elmIndex].isSameNode(
+        store.interactiveDOM.get(elmID)!
+      )
+    ) {
+      didThrowError = true;
+
+      console.error(
+        "Error in DOM order reconciliation at Index: ",
+        elmIndex,
+        "Container: ",
+        containerDOM
+      );
+      console.error("Actually DOM tree has: ", containerDOM.children[elmIndex]);
+      console.error("While DFlex Store has: ", store.interactiveDOM.get(elmID));
+    }
+
+    // dflexElm._initIndicators(store.interactiveDOM.get(elmID)!);
+    if (featureFlags.enablePositionAssertion) {
+      assertElementPosition(store.interactiveDOM.get(elmID)!, dflexElm.rect);
+    }
+  }, 0);
 }
 
 function switchElmDOMPosition(
