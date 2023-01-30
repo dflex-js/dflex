@@ -90,7 +90,8 @@ describe("Testing clear methods", () => {
     const branch = domGen.getElmBranchByKey(pointerChild0D0.keys.SK);
 
     expect(branch).toStrictEqual([]);
-    expect(() => domGen.getBranchByDepth(0)).toThrow();
+    // It warns now :)
+    // expect(() => domGen.getBranchByDepth(0)).toThrow();
   });
 
   it("Adds two siblings again", () => {

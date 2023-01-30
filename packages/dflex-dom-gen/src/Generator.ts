@@ -106,7 +106,7 @@ class Generator implements IGenerator {
     return selfIndex;
   }
 
-  accumulateIndicators(depth: number, hasSiblingInSameLevel: boolean) {
+  accumulateIndicators(depth: number, hasSiblingInSameLevel = false) {
     if (depth !== this._prevDepth) {
       this._initIndicators(depth);
     }
@@ -168,7 +168,7 @@ class Generator implements IGenerator {
     });
   }
 
-  register(id: string, depth: number, hasSiblingInSameLevel: boolean): Pointer {
+  register(id: string, depth: number, hasSiblingInSameLevel = false): Pointer {
     const { CHK, SK, PK, parentIndex } = this.accumulateIndicators(
       depth,
       hasSiblingInSameLevel
