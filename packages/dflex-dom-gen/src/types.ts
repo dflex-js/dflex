@@ -34,7 +34,10 @@ export type ELmBranch = string[];
  * DOM Generator class interface.
  */
 export interface IGenerator {
-  accumulateIndicators(depth: number): Keys & {
+  accumulateIndicators(
+    depth: number,
+    hasSiblingInSameLevel: boolean
+  ): Keys & {
     parentIndex: number;
   };
 
@@ -59,7 +62,7 @@ export interface IGenerator {
    * @param id - element id
    * @param depth - element depth
    */
-  register(id: string, depth: number): Pointer;
+  register(id: string, depth: number, hasSiblingInSameLevel: boolean): Pointer;
 
   /**
    * Removes element from its branch.

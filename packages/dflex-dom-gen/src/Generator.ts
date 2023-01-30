@@ -184,8 +184,6 @@ class Generator implements IGenerator {
       CHK,
     };
 
-    console.log("id", id, "dp", depth, "keys", keys);
-
     const order: Order = {
       self: selfIndex,
       parent: parentIndex,
@@ -207,6 +205,25 @@ class Generator implements IGenerator {
     }
 
     this._branches[SK].push(id);
+  }
+
+  removeElmIDFromBranch(SK: string, index: number) {
+    let deletedElmID: string;
+
+    if (
+      Array.isArray(this._branches[SK]) &&
+      this._branches[SK]![index] !== undefined
+    ) {
+      [deletedElmID] = this._branches[SK]!.splice(index, 1);
+
+      if (this._branches[SK]!.length === 0) {
+        delete this._branches[SK];
+      }
+
+      return deletedElmID;
+    }
+
+    return null;
   }
 
   getBranchByDepth(dp: number): ELmBranch {
