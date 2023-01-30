@@ -18,6 +18,9 @@ function cleanupBranchElements(
 
   terminatedDOMiDs.forEach((id) => {
     keys.add(store.registry.get(id)!.keys.SK);
+
+    store.registry.delete(id);
+    store.interactiveDOM.delete(id);
   });
 
   keys.forEach((key) => {
@@ -28,14 +31,19 @@ function cleanupBranchElements(
 
       const elm = store.registry.get(elmID)!;
 
-      if (terminatedDOMiDs.has(elmID)) {
-        store.unregister(elmID);
-      } else {
+      if (!terminatedDOMiDs.has(elmID)) {
         elm.VDOMOrder.self = connectedNodesID.push(elmID) - 1;
       }
     }
 
-    store.updateBranch(key, connectedNodesID);
+    if (connectedNodesID.length > 0) {
+      store.updateBranch(key, connectedNodesID);
+    } else {
+      store.DOMGen.destroyBranch(key);
+      store.containers.delete(key);
+      store.scrolls.delete(key);
+      store._lastDOMParent = null;
+    }
   });
 }
 

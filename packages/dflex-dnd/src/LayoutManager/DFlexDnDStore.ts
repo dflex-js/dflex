@@ -188,6 +188,14 @@ class DFlexDnDStore extends DFlexBaseStore {
 
       scroll = this.scrolls.get(CHK)!;
     } else {
+      if (__DEV__) {
+        if (!this.interactiveDOM.has(branch[0])) {
+          throw new Error(
+            `_initBranch: Unable to find DOM element for branchL ${branch} at index: ${0}`
+          );
+        }
+      }
+
       scroll = new DFlexScrollContainer(
         this.interactiveDOM.get(branch[0])!,
         CHK,
@@ -521,6 +529,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.scrolls.forEach((scroll) => {
       scroll.destroy();
     });
+
     this.scrolls.clear();
   }
 
@@ -542,8 +551,9 @@ class DFlexDnDStore extends DFlexBaseStore {
     }
 
     const {
-      keys: { SK },
+      keys: { SK, PK },
       VDOMOrder: { self },
+      depth,
     } = this.registry.get(id)!;
 
     this.DOMGen.removeElmIDFromBranch(SK, self);
@@ -554,6 +564,22 @@ class DFlexDnDStore extends DFlexBaseStore {
     // Reset the branch instances.
     if (this.DOMGen.getElmBranchByKey(SK).length === 0) {
       this._clearBranchesScroll();
+      // this.DOMGen.getElmBranchByKey(PK);
+
+      // if (depth >= 1) {
+      //   this.registry.forEach((dflexElm) => {
+      //     // Found the parent
+      //     if (PK === dflexElm.keys.SK) {
+      //       if (__DEV__) {
+      //         console.info("Recursively removing parent", dflexElm.id);
+      //       }
+
+      //       this.unregister(dflexElm.id);
+      //     } else {
+      //       console.log(`no parent found for ${id}`);
+      //     }
+      //   });
+      // }
     }
   }
 

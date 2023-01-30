@@ -96,7 +96,7 @@ class Generator implements IGenerator {
    * @param  SK - Siblings Key.
    */
   private _addElementIDToSiblingsBranch(id: string, SK: string) {
-    if (!(SK in this._branches)) {
+    if (!Array.isArray(this._branches[SK])) {
       this._branches[SK] = [];
     }
 
@@ -186,17 +186,21 @@ class Generator implements IGenerator {
   removeElmIDFromBranch(SK: string, index: number) {
     let deletedElmID: string;
 
-    if (
-      Array.isArray(this._branches[SK]) &&
-      this._branches[SK]![index] !== undefined
-    ) {
-      [deletedElmID] = this._branches[SK]!.splice(index, 1);
+    if (Array.isArray(this._branches[SK])) {
+      const i = this._branches[SK].findIndex();
+
+      [deletedElmID] = this._branches[SK]!.splice(i, 1);
 
       if (this._branches[SK]!.length === 0) {
         delete this._branches[SK];
       }
 
       return deletedElmID;
+    }
+    if (__DEV__) {
+      throw new Error(
+        `removeElmIDFromBranch: Unable to remove element with SK: ${SK} and index: ${index} in branch: ${this._branches[SK]}`
+      );
     }
 
     return null;
@@ -232,20 +236,24 @@ class Generator implements IGenerator {
     return this._branches[SK] || [];
   }
 
-  destroyBranch(SK: string, cb: (elmID: string) => void) {
-    if (!this._branches[SK]) return;
+  destroyBranch(SK: string, cb?: (elmID: string) => void) {
+    if (!this._branches[SK]) {
+      if (__DEV__) {
+        throw new Error(
+          `destroyBranch: You are trying to destroy nonexistence branch ${SK}`
+        );
+      }
 
-    const elmID = this._branches[SK].pop();
-
-    if (!elmID) return;
-
-    cb(elmID);
-
-    if (this._branches[SK]!.length > 0) {
-      this.destroyBranch(SK, cb);
-    } else {
-      delete this._branches[SK];
+      return;
     }
+
+    if (cb) {
+      while (this._branches[SK].length) {
+        cb(this._branches[SK].pop()!);
+      }
+    }
+
+    delete this._branches[SK];
 
     Object.keys(this._branchesByDepth).forEach((dp) => {
       const dpNum = Number(dp);
