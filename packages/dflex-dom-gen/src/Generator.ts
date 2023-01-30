@@ -262,14 +262,6 @@ class Generator implements IGenerator {
   }
 
   getBranchByDepth(dp: number): ELmBranch {
-    if (__DEV__) {
-      if (!Array.isArray(this._branchesByDepth[dp])) {
-        // eslint-disable-next-line no-console
-        console.warn(
-          `getBranchesByDepth: Depth ${dp} does not exist in the registry. Check your elements depth that was passed to the registry.`
-        );
-      }
-    }
     return this._branchesByDepth[dp] || [];
   }
 
@@ -319,7 +311,7 @@ class Generator implements IGenerator {
       this.branchDeletedKeys = new Map();
     }
 
-    this.branchDeletedKeys.set(deletedElmKeys!.PK, deletedElmKeys!);
+    this.branchDeletedKeys.set(deletedElmKeys.PK, deletedElmKeys);
   }
 }
 
