@@ -106,7 +106,7 @@ class Generator implements IGenerator {
     return selfIndex;
   }
 
-  accumulateIndicators(depth: number) {
+  accumulateIndicators(depth: number, isParentChanged: boolean) {
     if (depth !== this._prevDepth) {
       this._initIndicators(depth);
     }
@@ -115,6 +115,7 @@ class Generator implements IGenerator {
      * Get parent index.
      */
     const parentIndex = this._indicator[depth + 1];
+    console.log("parentIndex", parentIndex);
 
     /**
      * get siblings unique key (sK) and parents key (pK)
@@ -126,10 +127,11 @@ class Generator implements IGenerator {
     const CHK = depth === 0 ? null : this._prevKey;
 
     this._prevKey = SK;
-
     this._indicator[depth] += 1;
 
     if (depth < this._prevDepth) {
+      console.error("new Branch...");
+
       /**
        * Start new branch.
        */
@@ -162,8 +164,11 @@ class Generator implements IGenerator {
     });
   }
 
-  register(id: string, depth: number): Pointer {
-    const { CHK, SK, PK, parentIndex } = this.accumulateIndicators(depth);
+  register(id: string, depth: number, isParentChanged: boolean): Pointer {
+    const { CHK, SK, PK, parentIndex } = this.accumulateIndicators(
+      depth,
+      isParentChanged
+    );
 
     this._addElementIDToDepthCollection(SK, depth);
 
@@ -175,35 +180,14 @@ class Generator implements IGenerator {
       CHK,
     };
 
+    console.log("id", id, "dp", depth, "keys", keys);
+
     const order: Order = {
       self: selfIndex,
       parent: parentIndex,
     };
 
     return { order, keys };
-  }
-
-  removeElmIDFromBranch(SK: string, index: number) {
-    let deletedElmID: string;
-
-    if (Array.isArray(this._branches[SK])) {
-      const i = this._branches[SK].findIndex();
-
-      [deletedElmID] = this._branches[SK]!.splice(i, 1);
-
-      if (this._branches[SK]!.length === 0) {
-        delete this._branches[SK];
-      }
-
-      return deletedElmID;
-    }
-    if (__DEV__) {
-      throw new Error(
-        `removeElmIDFromBranch: Unable to remove element with SK: ${SK} and index: ${index} in branch: ${this._branches[SK]}`
-      );
-    }
-
-    return null;
   }
 
   addElmIDToBranch(SK: string, id: string) {

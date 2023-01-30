@@ -136,6 +136,7 @@ class DFlexBaseStore {
   private _submitElementToRegistry(
     DOM: HTMLElement,
     elm: RegisterInputBase,
+    isParentChanged: boolean,
     branchComposedCallBack: BranchComposedCallBackFunction | null
   ): void {
     const { id, depth, readonly } = elm;
@@ -160,7 +161,7 @@ class DFlexBaseStore {
       return;
     }
 
-    const { order, keys } = this.DOMGen.register(id, depth);
+    const { order, keys } = this.DOMGen.register(id, depth, isParentChanged);
 
     const coreElement: DFlexElementInput = {
       id,
@@ -218,42 +219,61 @@ class DFlexBaseStore {
       : getElmDOMOrThrow(id)!;
 
     getParentElm(DOM, (_parentDOM) => {
-      if (
+      let { id: parentID } = _parentDOM;
+
+      if (!parentID) {
+        parentID = this.tracker.newTravel(Tracker.PREFIX_ID);
+        _parentDOM.id = parentID;
+      }
+
+      const isParentChanged =
         this._lastDOMParent === null ||
-        !this._lastDOMParent.isSameNode(_parentDOM)
-      ) {
+        !this._lastDOMParent.isSameNode(_parentDOM);
+
+      const parentRegistered = !isParentChanged && this.registry.has(parentID);
+
+      if (isParentChanged || parentRegistered) {
         // Parent DOM changed empty the queue.
         this._handleQueue();
 
-        let { id: parentID } = _parentDOM;
+        this._submitElementToRegistry(DOM, element, isParentChanged, null);
 
-        if (!parentID) {
-          parentID = this.tracker.newTravel(Tracker.PREFIX_ID);
-          _parentDOM.id = parentID;
+        if (isParentChanged) {
+          this.interactiveDOM.set(parentID, _parentDOM);
+
+          const parentDepth = depth + 1;
+
+          // keep the reference for comparison.
+          this._lastDOMParent = _parentDOM;
+
+          // A new branch. Queue the new branch.
+          this._queue.push(() => {
+            this._submitElementToRegistry(
+              _parentDOM,
+              {
+                id: parentID,
+                depth: parentDepth,
+                // Default value for inserted parent element.
+                readonly: true,
+              },
+              isParentChanged,
+              branchComposedCallBack || null
+            );
+          });
+        } else {
+          // typeof branchComposedCallBack === "function";
+          const dflexParentElm = this.registry.get(parentID)!;
+
+          // A new branch. Queue the new branch.
+          this._queue.push(() => {
+            branchComposedCallBack!(
+              dflexParentElm.keys,
+              dflexParentElm.depth,
+              parentID,
+              _parentDOM
+            );
+          });
         }
-
-        this.interactiveDOM.set(parentID, _parentDOM);
-
-        const parentDepth = depth + 1;
-
-        this._submitElementToRegistry(DOM, element, null);
-
-        // keep the reference for comparison.
-        this._lastDOMParent = _parentDOM;
-
-        // A new branch. Queue the new branch.
-        this._queue.push(() => {
-          this._submitElementToRegistry(
-            _parentDOM,
-            {
-              id: parentID,
-              depth: parentDepth,
-              // Default value for inserted parent element.
-              readonly: true,
-            },
-            branchComposedCallBack || null
-          );
-        });
 
         if (this.queueTimeoutId === undefined) {
           clearTimeout(this.queueTimeoutId);
@@ -261,7 +281,7 @@ class DFlexBaseStore {
 
         this.queueTimeoutId = setTimeout(this._handleQueue, 0);
       } else {
-        this._submitElementToRegistry(DOM, element, null);
+        this._submitElementToRegistry(DOM, element, false, null);
       }
 
       return true;
@@ -334,6 +354,7 @@ class DFlexBaseStore {
    */
   unregister(id: string): void {
     this.registry.delete(id);
+    this.interactiveDOM.delete(id);
   }
 
   /**
