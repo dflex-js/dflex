@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import Generator, { ELmBranch, Keys } from "@dflex/dom-gen";
+import Generator, { ELmBranch, Keys, Pointer } from "@dflex/dom-gen";
 
 import { DFlexElement, DFlexElementInput } from "@dflex/core-instance";
 import {
@@ -133,7 +133,7 @@ class DFlexBaseStore {
     }
   }
 
-  private _submitElementToRegistry(
+  private _insertElementToRegistry(
     DOM: HTMLElement,
     elm: RegisterInputBase,
     branchComposedCallBack: BranchComposedCallBackFunction | null
@@ -233,6 +233,104 @@ class DFlexBaseStore {
     }
   }
 
+  private _submitElementToRegistry(
+    DOM: HTMLElement,
+    elm: RegisterInputBase,
+    elmPointer: null | Pointer,
+    branchComposedCallBack: BranchComposedCallBackFunction | null
+  ): void {
+    const { id, depth, readonly } = elm;
+
+    if (!this.interactiveDOM.has(id)) {
+      this.interactiveDOM.set(id, DOM);
+    }
+
+    if (this.registry.has(id)) {
+      const elmInRegistry = this.registry.get(id);
+
+      // This is the only difference between register by default and register
+      // with a user only. In the future if there's new options then this should
+      // be updated.
+      elmInRegistry!.readonly = readonly;
+
+      if (__DEV__) {
+        // eslint-disable-next-line no-console
+        console.warn(`Element with ID: ${id} is already registered.`);
+      }
+
+      return;
+    }
+
+    let hasSiblingInSameLevel = false;
+
+    // If it's a container
+    if (depth > 0) {
+      // Does the element share the same parent with the previous  element in the
+      // same depth?
+
+      const branchesByDp = this.DOMGen.getBranchByDepth(depth);
+
+      const branchesByDpLength = branchesByDp.length;
+
+      if (branchesByDpLength > 0) {
+        const lastSKInSameDP = this.DOMGen.getElmBranchByKey(
+          branchesByDp[branchesByDpLength - 1]
+        );
+
+        const lastSKInSameDPLength = lastSKInSameDP.length;
+
+        if (lastSKInSameDPLength > 0) {
+          const allegedPrevSiblingID = lastSKInSameDP[lastSKInSameDPLength - 1];
+
+          hasSiblingInSameLevel = DOM.previousElementSibling!.isSameNode(
+            this.interactiveDOM.get(allegedPrevSiblingID)!
+          );
+        }
+      }
+    }
+
+    const { order, keys } =
+      elmPointer || this.DOMGen.register(id, depth, hasSiblingInSameLevel);
+
+    const coreElement: DFlexElementInput = {
+      id,
+      order,
+      keys,
+      depth,
+      readonly,
+    };
+
+    const dflexElm = new DFlexElement(coreElement);
+
+    this.registry.set(id, dflexElm);
+
+    dflexElm.setAttribute(DOM, "INDEX", dflexElm.VDOMOrder.self);
+
+    if (depth >= 1) {
+      setRelativePosition(DOM);
+
+      if (!this.globals.removeContainerWhenEmpty) {
+        setFixedWidth(DOM);
+      }
+
+      if (keys.CHK === null) {
+        if (__DEV__) {
+          throw new Error(
+            `Invalid keys for element with ID: ${id} Elements over depth-1 must have a CHK key.`
+          );
+        }
+
+        return;
+      }
+
+      DOM.dataset.dflexKey = keys.CHK;
+
+      if (typeof branchComposedCallBack === "function") {
+        branchComposedCallBack(keys, depth, id, DOM);
+      }
+    }
+  }
+
   /**
    * Registers an element to the store.
    *
@@ -261,41 +359,52 @@ class DFlexBaseStore {
         this._lastDOMParent === null ||
         !this._lastDOMParent.isSameNode(_parentDOM);
 
-      const parentRegistered = !isParentChanged && this.registry.has(parentID);
+      let isParentRegistered = false;
 
-      if (isParentChanged || parentRegistered) {
+      if (isParentChanged) {
         // Parent DOM changed empty the queue.
         this._handleQueue();
 
-        this._submitElementToRegistry(DOM, element, null);
+        this._submitElementToRegistry(DOM, element, null, null);
 
-        if (isParentChanged) {
-          this.interactiveDOM.set(parentID, _parentDOM);
+        this.interactiveDOM.set(parentID, _parentDOM);
 
-          const parentDepth = depth + 1;
+        const parentDepth = depth + 1;
 
-          // keep the reference for comparison.
-          this._lastDOMParent = _parentDOM;
+        // keep the reference for comparison.
+        this._lastDOMParent = _parentDOM;
 
-          // A new branch. Queue the new branch.
-          this._queue.push(() => {
-            this._submitElementToRegistry(
-              _parentDOM,
-              {
-                id: parentID,
-                depth: parentDepth,
-                // Default value for inserted parent element.
-                readonly: true,
-              },
-              branchComposedCallBack || null
-            );
-          });
-        } else {
-          // typeof branchComposedCallBack === "function";
+        // A new branch. Queue the new branch.
+        this._queue.push(() => {
+          this._submitElementToRegistry(
+            _parentDOM,
+            {
+              id: parentID,
+              depth: parentDepth,
+              // Default value for inserted parent element.
+              readonly: true,
+            },
+            null,
+            branchComposedCallBack || null
+          );
+        });
+      } else {
+        isParentRegistered = this.registry.has(parentID);
+
+        if (isParentRegistered) {
           const dflexParentElm = this.registry.get(parentID)!;
 
+          const elementPointer = this.DOMGen.insertElmBtwLayers(
+            id,
+            depth,
+            dflexParentElm.keys.SK
+          );
+
+          this._submitElementToRegistry(DOM, element, elementPointer, null);
+
           // A new branch. Queue the new branch.
           this._queue.push(() => {
+            // typeof branchComposedCallBack === "function";
             branchComposedCallBack!(
               dflexParentElm.keys,
               dflexParentElm.depth,
@@ -304,14 +413,16 @@ class DFlexBaseStore {
             );
           });
         }
+      }
 
+      if (isParentChanged || isParentRegistered) {
         if (this.queueTimeoutId === undefined) {
           clearTimeout(this.queueTimeoutId);
         }
 
         this.queueTimeoutId = setTimeout(this._handleQueue, 0);
       } else {
-        this._submitElementToRegistry(DOM, element, null);
+        this._submitElementToRegistry(DOM, element, null, null);
       }
 
       return true;

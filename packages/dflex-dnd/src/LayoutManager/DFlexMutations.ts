@@ -1,3 +1,4 @@
+import type { Keys } from "@dflex/dom-gen";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
 type ChangedIds = Set<{ oldId: string; newId: string }>;
@@ -18,8 +19,9 @@ function cleanupBranchElements(
 
   terminatedDOMiDs.forEach((id) => {
     keys.add(store.registry.get(id)!.keys.SK);
-    store.unregister(id);
   });
+
+  let deletedElmKeys: (Keys & { parentIndex: number }) | null = null;
 
   keys.forEach((key) => {
     const branch = store.getElmBranchByKey(key);
@@ -29,7 +31,12 @@ function cleanupBranchElements(
 
       const elm = store.registry.get(elmID)!;
 
-      if (!terminatedDOMiDs.has(elmID)) {
+      if (terminatedDOMiDs.has(elmID)) {
+        if (!deletedElmKeys) {
+          deletedElmKeys = { ...elm.keys, parentIndex: elm.DOMOrder.parent };
+        }
+        store.unregister(elmID);
+      } else if (!deletedElmKeys) {
         elm.VDOMOrder.self = connectedNodesID.push(elmID) - 1;
       }
     }
@@ -37,7 +44,7 @@ function cleanupBranchElements(
     if (connectedNodesID.length > 0) {
       store.updateBranch(key, connectedNodesID);
     } else {
-      store.cleanupBranchInstances(key);
+      store.cleanupBranchInstances(key, deletedElmKeys!);
     }
   });
 }

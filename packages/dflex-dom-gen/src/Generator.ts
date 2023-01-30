@@ -27,6 +27,8 @@ class Generator implements IGenerator {
     [depth: number]: ELmBranch;
   };
 
+  branchDeletedKeys: Map<string, Keys & { parentIndex: number }> | null;
+
   private _prevDepth: number;
 
   private _prevKey: string;
@@ -35,6 +37,7 @@ class Generator implements IGenerator {
     this._indicator = {};
     this._branches = {};
     this._branchesByDepth = {};
+    this.branchDeletedKeys = null;
     this._prevDepth = -99;
     this._prevKey = combineKeys(0, 0);
   }
@@ -168,21 +171,15 @@ class Generator implements IGenerator {
     });
   }
 
-  register(id: string, depth: number, hasSiblingInSameLevel = false): Pointer {
-    const { CHK, SK, PK, parentIndex } = this._accumulateIndicators(
-      depth,
-      hasSiblingInSameLevel
-    );
+  private _composePointer(
+    id: string,
+    depth: number,
+    keys: Keys,
+    parentIndex: number
+  ) {
+    this._addElementIDToDepthCollection(keys.SK, depth);
 
-    this._addElementIDToDepthCollection(SK, depth);
-
-    const selfIndex = this._addElementIDToSiblingsBranch(id, SK);
-
-    const keys: Keys = {
-      SK,
-      PK,
-      CHK,
-    };
+    const selfIndex = this._addElementIDToSiblingsBranch(id, keys.SK);
 
     const order: Order = {
       self: selfIndex,
@@ -190,6 +187,37 @@ class Generator implements IGenerator {
     };
 
     return { order, keys };
+  }
+
+  insertElmBtwLayers(id: string, depth: number, PK: string): Pointer {
+    if (__DEV__) {
+      if (this.branchDeletedKeys === null) {
+        throw new Error();
+      }
+
+      if (!this.branchDeletedKeys.has(PK)) {
+        throw new Error();
+      }
+    }
+
+    const { parentIndex, ...keys } = this.branchDeletedKeys!.get(PK)!;
+
+    return this._composePointer(id, depth, keys, parentIndex);
+  }
+
+  register(id: string, depth: number, hasSiblingInSameLevel = false): Pointer {
+    const { CHK, SK, PK, parentIndex } = this._accumulateIndicators(
+      depth,
+      hasSiblingInSameLevel
+    );
+
+    const keys: Keys = {
+      SK,
+      PK,
+      CHK,
+    };
+
+    return this._composePointer(id, depth, keys, parentIndex);
   }
 
   addElmIDToBranch(SK: string, id: string) {
@@ -242,7 +270,11 @@ class Generator implements IGenerator {
     return this._branches[SK] || [];
   }
 
-  destroyBranch(SK: string, cb?: (elmID: string) => void) {
+  destroyBranch(
+    SK: string,
+    cb?: ((elmID: string) => void) | null,
+    deletedElmKeys?: Keys & { parentIndex: number }
+  ) {
     if (!this._branches[SK]) {
       if (__DEV__) {
         throw new Error(
@@ -253,7 +285,7 @@ class Generator implements IGenerator {
       return;
     }
 
-    if (cb) {
+    if (typeof cb === "function") {
       while (this._branches[SK].length) {
         cb(this._branches[SK].pop()!);
       }
@@ -271,6 +303,12 @@ class Generator implements IGenerator {
         delete this._branchesByDepth[dpNum];
       }
     });
+
+    if (!this.branchDeletedKeys) {
+      this.branchDeletedKeys = new Map();
+    }
+
+    this.branchDeletedKeys.set(deletedElmKeys!.PK, deletedElmKeys!);
   }
 }
 

@@ -3,7 +3,7 @@ import React from "react";
 
 import DFlexDnDComponent from "../DFlexDnDComponent";
 
-const NUM_INTERVAL = 2;
+const NUM_INTERVAL = 1;
 
 const rowMap = {
   0: 5,
