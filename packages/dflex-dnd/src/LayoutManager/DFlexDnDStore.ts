@@ -533,54 +533,10 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.scrolls.clear();
   }
 
-  /**
-   * Unregister DnD element.
-   *
-   * Note: This will remove the element registry and the branch array. But,
-   * in case all the branches will be removed.
-   * This means, if, in rare cases when the user removes one element and keeps
-   * the rest this methods going to generate a bug. It's going to remove an
-   * element without updating the indexes inside registry instances.
-   *
-   * @param id -
-   *
-   */
-  unregister(id: string): void {
-    if (!this.registry.has(id)) {
-      return;
-    }
-
-    const {
-      keys: { SK, PK },
-      VDOMOrder: { self },
-      depth,
-    } = this.registry.get(id)!;
-
-    this.DOMGen.removeElmIDFromBranch(SK, self);
-
-    super.unregister(id);
-
-    // Nothing left?
-    // Reset the branch instances.
-    if (this.DOMGen.getElmBranchByKey(SK).length === 0) {
-      this._clearBranchesScroll();
-      // this.DOMGen.getElmBranchByKey(PK);
-
-      // if (depth >= 1) {
-      //   this.registry.forEach((dflexElm) => {
-      //     // Found the parent
-      //     if (PK === dflexElm.keys.SK) {
-      //       if (__DEV__) {
-      //         console.info("Recursively removing parent", dflexElm.id);
-      //       }
-
-      //       this.unregister(dflexElm.id);
-      //     } else {
-      //       console.log(`no parent found for ${id}`);
-      //     }
-      //   });
-      // }
-    }
+  cleanupBranchInstances(SK: string): void {
+    this.DOMGen.destroyBranch(SK);
+    this.containers.delete(SK);
+    this.scrolls.delete(SK);
   }
 
   destroy(): void {
