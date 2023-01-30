@@ -35,7 +35,7 @@ function cleanupBranchElements(
         if (!deletedElmKeys) {
           deletedElmKeys = { ...elm.keys, parentIndex: elm.DOMOrder.parent };
         }
-        store.unregister(elmID);
+        store.clearElm(elmID);
       } else if (!deletedElmKeys) {
         elm.VDOMOrder.self = connectedNodesID.push(elmID) - 1;
       }

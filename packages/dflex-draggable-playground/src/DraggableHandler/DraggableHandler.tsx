@@ -20,7 +20,7 @@ const DraggableHandler = () => {
     }
 
     return () => {
-      store.unregister(id);
+      store.clearElm(id);
     };
   }, [ref]);
 

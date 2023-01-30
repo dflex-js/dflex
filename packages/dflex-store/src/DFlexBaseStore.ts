@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable class-methods-use-this */
 /* eslint-disable no-underscore-dangle */
 import Generator, { ELmBranch, Keys } from "@dflex/dom-gen";
 
@@ -384,11 +386,17 @@ class DFlexBaseStore {
   }
 
   /**
+   * @deprecated
+   * @param _id
+   */
+  unregister(_id: string): void {}
+
+  /**
    * Removes an element from the store.
    *
    * @param id - element id.
    */
-  unregister(id: string): void {
+  clearElm(id: string): void {
     this.registry.delete(id);
     this.interactiveDOM.delete(id);
   }
@@ -401,7 +409,7 @@ class DFlexBaseStore {
    */
   destroyBranch(SK: string): void {
     this.DOMGen.destroyBranch(SK, (id) => {
-      this.unregister(id);
+      this.clearElm(id);
     });
   }
 
@@ -412,7 +420,7 @@ class DFlexBaseStore {
   destroy(): void {
     this.DOMGen.forEachBranch((SK) => {
       this.DOMGen.destroyBranch(SK, (id) => {
-        this.unregister(id);
+        this.clearElm(id);
       });
     });
 
