@@ -106,7 +106,7 @@ class Generator implements IGenerator {
     return selfIndex;
   }
 
-  accumulateIndicators(depth: number, hasSiblingInSameLevel = false) {
+  private _accumulateIndicators(depth: number, hasSiblingInSameLevel = false) {
     if (depth !== this._prevDepth) {
       this._initIndicators(depth);
     }
@@ -169,7 +169,7 @@ class Generator implements IGenerator {
   }
 
   register(id: string, depth: number, hasSiblingInSameLevel = false): Pointer {
-    const { CHK, SK, PK, parentIndex } = this.accumulateIndicators(
+    const { CHK, SK, PK, parentIndex } = this._accumulateIndicators(
       depth,
       hasSiblingInSameLevel
     );
@@ -229,6 +229,7 @@ class Generator implements IGenerator {
   getBranchByDepth(dp: number): ELmBranch {
     if (__DEV__) {
       if (!Array.isArray(this._branchesByDepth[dp])) {
+        // eslint-disable-next-line no-console
         console.warn(
           `getBranchesByDepth: Depth ${dp} does not exist in the registry. Check your elements depth that was passed to the registry.`
         );

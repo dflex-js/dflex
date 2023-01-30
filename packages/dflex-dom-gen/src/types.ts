@@ -34,12 +34,12 @@ export type ELmBranch = string[];
  * DOM Generator class interface.
  */
 export interface IGenerator {
-  accumulateIndicators(
-    depth: number,
-    hasSiblingInSameLevel?: false
-  ): Keys & {
-    parentIndex: number;
-  };
+  // accumulateIndicators(
+  //   depth: number,
+  //   hasSiblingInSameLevel?: false
+  // ): Keys & {
+  //   parentIndex: number;
+  // };
 
   /**
    * Update current branch.
