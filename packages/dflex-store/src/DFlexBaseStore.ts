@@ -136,7 +136,6 @@ class DFlexBaseStore {
   private _submitElementToRegistry(
     DOM: HTMLElement,
     elm: RegisterInputBase,
-    isParentChanged: boolean,
     branchComposedCallBack: BranchComposedCallBackFunction | null
   ): void {
     const { id, depth, readonly } = elm;
@@ -161,7 +160,39 @@ class DFlexBaseStore {
       return;
     }
 
-    const { order, keys } = this.DOMGen.register(id, depth, isParentChanged);
+    let hasSiblingInSameLevel = false;
+
+    // If it's a container
+    if (depth > 0) {
+      // Does the element share the same parent with the previous  element in the
+      // same depth?
+
+      const branchesByDp = this.DOMGen.getBranchByDepth(depth);
+
+      const branchesByDpLength = branchesByDp.length;
+
+      if (branchesByDpLength > 0) {
+        const lastSKInSameDP = this.DOMGen.getElmBranchByKey(
+          branchesByDp[branchesByDpLength - 1]
+        );
+
+        const lastSKInSameDPLength = lastSKInSameDP.length;
+
+        if (lastSKInSameDPLength > 0) {
+          const allegedPrevSiblingID = lastSKInSameDP[lastSKInSameDPLength - 1];
+
+          hasSiblingInSameLevel = DOM.previousElementSibling!.isSameNode(
+            this.interactiveDOM.get(allegedPrevSiblingID)!
+          );
+        }
+      }
+    }
+
+    const { order, keys } = this.DOMGen.register(
+      id,
+      depth,
+      hasSiblingInSameLevel
+    );
 
     const coreElement: DFlexElementInput = {
       id,
@@ -236,7 +267,7 @@ class DFlexBaseStore {
         // Parent DOM changed empty the queue.
         this._handleQueue();
 
-        this._submitElementToRegistry(DOM, element, isParentChanged, null);
+        this._submitElementToRegistry(DOM, element, null);
 
         if (isParentChanged) {
           this.interactiveDOM.set(parentID, _parentDOM);
@@ -256,7 +287,6 @@ class DFlexBaseStore {
                 // Default value for inserted parent element.
                 readonly: true,
               },
-              isParentChanged,
               branchComposedCallBack || null
             );
           });
@@ -281,7 +311,7 @@ class DFlexBaseStore {
 
         this.queueTimeoutId = setTimeout(this._handleQueue, 0);
       } else {
-        this._submitElementToRegistry(DOM, element, false, null);
+        this._submitElementToRegistry(DOM, element, null);
       }
 
       return true;

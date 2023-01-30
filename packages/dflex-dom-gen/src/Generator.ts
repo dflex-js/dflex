@@ -106,16 +106,21 @@ class Generator implements IGenerator {
     return selfIndex;
   }
 
-  accumulateIndicators(depth: number, isParentChanged: boolean) {
+  accumulateIndicators(depth: number, hasSiblingInSameLevel: boolean) {
     if (depth !== this._prevDepth) {
       this._initIndicators(depth);
+    }
+
+    // If hasSiblingInSameLevel then don't increment.
+    // Revers the accumulator.
+    if (hasSiblingInSameLevel && this._indicator[depth + 1] > 0) {
+      this._indicator[depth + 1] -= 1;
     }
 
     /**
      * Get parent index.
      */
     const parentIndex = this._indicator[depth + 1];
-    console.log("parentIndex", parentIndex);
 
     /**
      * get siblings unique key (sK) and parents key (pK)
@@ -127,14 +132,13 @@ class Generator implements IGenerator {
     const CHK = depth === 0 ? null : this._prevKey;
 
     this._prevKey = SK;
+
     this._indicator[depth] += 1;
 
+    /**
+     * Start new branch.
+     */
     if (depth < this._prevDepth) {
-      console.error("new Branch...");
-
-      /**
-       * Start new branch.
-       */
       this._indicator[0] = 0;
     }
 
@@ -164,10 +168,10 @@ class Generator implements IGenerator {
     });
   }
 
-  register(id: string, depth: number, isParentChanged: boolean): Pointer {
+  register(id: string, depth: number, hasSiblingInSameLevel: boolean): Pointer {
     const { CHK, SK, PK, parentIndex } = this.accumulateIndicators(
       depth,
-      isParentChanged
+      hasSiblingInSameLevel
     );
 
     this._addElementIDToDepthCollection(SK, depth);
@@ -208,7 +212,7 @@ class Generator implements IGenerator {
   getBranchByDepth(dp: number): ELmBranch {
     if (__DEV__) {
       if (!Array.isArray(this._branchesByDepth[dp])) {
-        throw new Error(
+        console.warn(
           `getBranchesByDepth: Depth ${dp} does not exist in the registry. Check your elements depth that was passed to the registry.`
         );
       }
