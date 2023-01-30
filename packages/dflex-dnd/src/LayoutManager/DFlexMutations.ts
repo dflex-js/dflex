@@ -1,4 +1,4 @@
-import type { Keys } from "@dflex/dom-gen";
+import type { DeletedElmKeys } from "@dflex/dom-gen";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
 type ChangedIds = Set<{ oldId: string; newId: string }>;
@@ -21,7 +21,7 @@ function cleanupBranchElements(
     keys.add(store.registry.get(id)!.keys.SK);
   });
 
-  let deletedElmKeys: (Keys & { parentIndex: number }) | null = null;
+  let deletedElmKeys: DeletedElmKeys | null = null;
 
   keys.forEach((key) => {
     const branch = store.getElmBranchByKey(key);

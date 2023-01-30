@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import Generator, { ELmBranch, Keys, Pointer } from "@dflex/dom-gen";
+import Generator, { ELmBranch, Keys } from "@dflex/dom-gen";
 
 import { DFlexElement, DFlexElementInput } from "@dflex/core-instance";
 import {
@@ -133,110 +133,10 @@ class DFlexBaseStore {
     }
   }
 
-  private _insertElementToRegistry(
-    DOM: HTMLElement,
-    elm: RegisterInputBase,
-    branchComposedCallBack: BranchComposedCallBackFunction | null
-  ): void {
-    const { id, depth, readonly } = elm;
-
-    if (!this.interactiveDOM.has(id)) {
-      this.interactiveDOM.set(id, DOM);
-    }
-
-    if (this.registry.has(id)) {
-      const elmInRegistry = this.registry.get(id);
-
-      // This is the only difference between register by default and register
-      // with a user only. In the future if there's new options then this should
-      // be updated.
-      elmInRegistry!.readonly = readonly;
-
-      if (__DEV__) {
-        // eslint-disable-next-line no-console
-        console.warn(`Element with ID: ${id} is already registered.`);
-      }
-
-      return;
-    }
-
-    let hasSiblingInSameLevel = false;
-
-    // If it's a container
-    if (depth > 0) {
-      // Does the element share the same parent with the previous  element in the
-      // same depth?
-
-      const branchesByDp = this.DOMGen.getBranchByDepth(depth);
-
-      const branchesByDpLength = branchesByDp.length;
-
-      if (branchesByDpLength > 0) {
-        const lastSKInSameDP = this.DOMGen.getElmBranchByKey(
-          branchesByDp[branchesByDpLength - 1]
-        );
-
-        const lastSKInSameDPLength = lastSKInSameDP.length;
-
-        if (lastSKInSameDPLength > 0) {
-          const allegedPrevSiblingID = lastSKInSameDP[lastSKInSameDPLength - 1];
-
-          hasSiblingInSameLevel = DOM.previousElementSibling!.isSameNode(
-            this.interactiveDOM.get(allegedPrevSiblingID)!
-          );
-        }
-      }
-    }
-
-    const { order, keys } = this.DOMGen.register(
-      id,
-      depth,
-      hasSiblingInSameLevel
-    );
-
-    const coreElement: DFlexElementInput = {
-      id,
-      order,
-      keys,
-      depth,
-      readonly,
-    };
-
-    const dflexElm = new DFlexElement(coreElement);
-
-    this.registry.set(id, dflexElm);
-
-    dflexElm.setAttribute(DOM, "INDEX", dflexElm.VDOMOrder.self);
-
-    if (depth >= 1) {
-      setRelativePosition(DOM);
-
-      if (!this.globals.removeContainerWhenEmpty) {
-        setFixedWidth(DOM);
-      }
-
-      if (keys.CHK === null) {
-        if (__DEV__) {
-          throw new Error(
-            `Invalid keys for element with ID: ${id} Elements over depth-1 must have a CHK key.`
-          );
-        }
-
-        return;
-      }
-
-      DOM.dataset.dflexKey = keys.CHK;
-
-      if (typeof branchComposedCallBack === "function") {
-        branchComposedCallBack(keys, depth, id, DOM);
-      }
-    }
-  }
-
   private _submitElementToRegistry(
     DOM: HTMLElement,
     elm: RegisterInputBase,
-    elmPointer: null | Pointer,
+    dflexParentElm: null | DFlexElement,
     branchComposedCallBack: BranchComposedCallBackFunction | null
   ): void {
     const { id, depth, readonly } = elm;
@@ -289,8 +189,9 @@ class DFlexBaseStore {
       }
     }
 
-    const { order, keys } =
-      elmPointer || this.DOMGen.register(id, depth, hasSiblingInSameLevel);
+    const { order, keys } = dflexParentElm
+      ? this.DOMGen.insertElmBtwLayers(id, depth, dflexParentElm.keys.SK)
+      : this.DOMGen.register(id, depth, hasSiblingInSameLevel);
 
     const coreElement: DFlexElementInput = {
       id,
@@ -394,13 +295,7 @@ class DFlexBaseStore {
         if (isParentRegistered) {
           const dflexParentElm = this.registry.get(parentID)!;
 
-          const elementPointer = this.DOMGen.insertElmBtwLayers(
-            id,
-            depth,
-            dflexParentElm.keys.SK
-          );
-
-          this._submitElementToRegistry(DOM, element, elementPointer, null);
+          this._submitElementToRegistry(DOM, element, dflexParentElm, null);
 
           // A new branch. Queue the new branch.
           this._queue.push(() => {

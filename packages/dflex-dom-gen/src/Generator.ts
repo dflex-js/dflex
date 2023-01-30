@@ -1,6 +1,13 @@
 /* eslint-disable no-unused-vars */
 import { combineKeys } from "@dflex/utils";
-import type { IGenerator, Keys, Order, Pointer, ELmBranch } from "./types";
+import type {
+  IGenerator,
+  Keys,
+  Order,
+  Pointer,
+  ELmBranch,
+  DeletedElmKeys,
+} from "./types";
 
 /**
  * Generate keys to connect relations between DOM-elements depending on tree
@@ -273,7 +280,7 @@ class Generator implements IGenerator {
   destroyBranch(
     SK: string,
     cb?: ((elmID: string) => void) | null,
-    deletedElmKeys?: Keys & { parentIndex: number }
+    deletedElmKeys?: DeletedElmKeys
   ) {
     if (!this._branches[SK]) {
       if (__DEV__) {
@@ -303,6 +310,10 @@ class Generator implements IGenerator {
         delete this._branchesByDepth[dpNum];
       }
     });
+
+    if (!deletedElmKeys) {
+      return;
+    }
 
     if (!this.branchDeletedKeys) {
       this.branchDeletedKeys = new Map();

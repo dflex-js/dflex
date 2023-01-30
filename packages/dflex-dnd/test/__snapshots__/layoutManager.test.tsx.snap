@@ -34,6 +34,7 @@ DFlexDnDStore {
     },
     "_prevDepth": 1,
     "_prevKey": "1-0",
+    "branchDeletedKeys": null,
   },
   "_handleQueue": [Function],
   "_initBranch": [Function],
@@ -131,6 +132,10 @@ DFlexDnDStore {
     "removeContainerWhenEmpty": false,
   },
   "interactiveDOM": Map {
+    "id-1" => <div
+      data-index="0"
+      id="id-1"
+    />,
     "dflex_id_0" => <div
       data-dflex-key="0-0"
       data-index="0"
@@ -141,9 +146,9 @@ DFlexDnDStore {
         id="id-1"
       />
     </div>,
-    "id-1" => <div
+    "id-2" => <div
       data-index="0"
-      id="id-1"
+      id="id-2"
     />,
     "dflex_id_1" => <div
       data-dflex-key="0-1"
@@ -163,10 +168,6 @@ DFlexDnDStore {
         id="id-4"
       />
     </div>,
-    "id-2" => <div
-      data-index="0"
-      id="id-2"
-    />,
     "id-3" => <div
       data-index="1"
       id="id-3"

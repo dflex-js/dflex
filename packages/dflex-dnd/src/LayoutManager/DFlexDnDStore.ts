@@ -20,7 +20,7 @@ import {
   DFlexSerializedScroll,
 } from "@dflex/core-instance";
 
-import type { ELmBranch, Keys, Pointer } from "@dflex/dom-gen";
+import type { DeletedElmKeys, ELmBranch, Keys } from "@dflex/dom-gen";
 
 import initDFlexListeners, {
   DFlexListenerPlugin,
@@ -533,10 +533,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.scrolls.clear();
   }
 
-  cleanupBranchInstances(
-    SK: string,
-    deletedElmKeys: Keys & { parentIndex: number }
-  ): void {
+  cleanupBranchInstances(SK: string, deletedElmKeys: DeletedElmKeys): void {
     this.DOMGen.destroyBranch(SK, null, deletedElmKeys);
     this.containers.delete(SK);
     this.scrolls.delete(SK);
