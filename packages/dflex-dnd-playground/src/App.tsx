@@ -73,9 +73,9 @@ const App = () => {
   // }, []);
 
   React.useEffect(() => {
-    // return () => {
-    //   store.destroy();
-    // };
+    return () => {
+      store.destroy();
+    };
   }, []);
 
   return (
