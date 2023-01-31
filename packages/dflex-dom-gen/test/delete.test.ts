@@ -52,7 +52,7 @@ describe("Testing clear methods", () => {
   });
 
   it("Remove the first siblings", () => {
-    const elmID = domGen.removeElmIDFromBranch(KEYS_CHILDREN_D0.SK, 0);
+    const elmID = domGen.removeElmIDFromBranch(KEYS_CHILDREN_D0.SK, "id-0");
 
     expect(elmID).toBe("id-0");
   });
