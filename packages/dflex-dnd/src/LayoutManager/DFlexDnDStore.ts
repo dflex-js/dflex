@@ -536,24 +536,22 @@ class DFlexDnDStore extends DFlexBaseStore {
   cleanupBranchInstances(SK: string, deletedElmKeys: DeletedElmKeys): void {
     this.DOMGen.destroyBranch(SK, null, deletedElmKeys);
 
+    const deletedContainer = this.containers.delete(SK);
+    const deletedScroll = this.scrolls.delete(SK);
+
     if (__DEV__) {
-      if (!this.containers.delete(SK)) {
+      if (!deletedContainer) {
         throw new Error(
-          `cleanupBranchInstances: Container with SK${SK} doesn't exists`
+          `cleanupBranchInstances: Container with SK: ${SK} doesn't exists`
         );
       }
 
-      if (!this.scrolls.delete(SK)) {
+      if (!deletedScroll) {
         throw new Error(
-          `cleanupBranchInstances: Scroll container with SK${SK} doesn't exists`
+          `cleanupBranchInstances: Scroll container with SK: ${SK} doesn't exists`
         );
       }
-
-      return;
     }
-
-    this.containers.delete(SK);
-    this.scrolls.delete(SK);
   }
 
   destroy(): void {

@@ -199,11 +199,15 @@ class Generator implements IGenerator {
   insertElmBtwLayers(id: string, depth: number, PK: string): Pointer {
     if (__DEV__) {
       if (this.branchDeletedKeys === null) {
-        throw new Error();
+        throw new Error(
+          "insertElmBtwLayers: branchDeletedKeys is not initiated yet."
+        );
       }
 
       if (!this.branchDeletedKeys.has(PK)) {
-        throw new Error();
+        throw new Error(
+          `insertElmBtwLayers: branchDeletedKeys doesn't have key: ${PK}. Check if this method has been invoked multiple times.`
+        );
       }
     }
 

@@ -87,6 +87,8 @@ class DFlexBaseStore {
 
   private _lastDOMParent: HTMLElement | null;
 
+  private _isParentQueued: Set<string> = new Set();
+
   private _queue: (() => void)[];
 
   private queueTimeoutId?: ReturnType<typeof setTimeout>;
@@ -96,6 +98,8 @@ class DFlexBaseStore {
       removeContainerWhenEmpty: false,
     };
     this._lastDOMParent = null;
+    this._isParentQueued = new Set();
+
     this._queue = [];
     this.tracker = new Tracker();
     this.registry = new Map();
@@ -295,20 +299,29 @@ class DFlexBaseStore {
         isParentRegistered = this.registry.has(parentID);
 
         if (isParentRegistered) {
+          this._lastDOMParent = _parentDOM;
+
           const dflexParentElm = this.registry.get(parentID)!;
 
           this._submitElementToRegistry(DOM, element, dflexParentElm, null);
 
-          // A new branch. Queue the new branch.
-          this._queue.push(() => {
-            // typeof branchComposedCallBack === "function";
-            branchComposedCallBack!(
-              dflexParentElm.keys,
-              dflexParentElm.depth,
-              parentID,
-              _parentDOM
-            );
-          });
+          if (!this._isParentQueued.has(parentID)) {
+            this._isParentQueued.add(parentID);
+
+            // A new branch. Queue the new branch.
+            this._queue.push(() => {
+              // typeof branchComposedCallBack === "function";
+              branchComposedCallBack!(
+                dflexParentElm.keys,
+                dflexParentElm.depth,
+                parentID,
+                _parentDOM
+              );
+
+              // To support continuos streaming.
+              this._isParentQueued.delete(parentID);
+            });
+          }
         }
       }
 
