@@ -569,6 +569,9 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     this._observerHighestDepth = 0;
 
+    this.containers.clear();
+    this.listeners.clear();
+
     // TODO:
     // Migration is initiated with null. But it's not typed as such.
     if (this.migration) {

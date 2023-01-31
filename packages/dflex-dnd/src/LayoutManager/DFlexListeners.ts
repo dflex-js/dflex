@@ -98,7 +98,7 @@ function initDFlexListeners(): {
     type: ListenerTypes
   ) => CleanupFunction;
   notify: (event: DFlexListenerEvents) => void;
-  clear: (type: ListenerTypes) => void;
+  clear: () => void;
 } {
   const listeners: ListenersMap = new Map();
 

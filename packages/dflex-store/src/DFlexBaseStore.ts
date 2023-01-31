@@ -87,7 +87,7 @@ class DFlexBaseStore {
 
   private _lastDOMParent: HTMLElement | null;
 
-  private _isParentQueued: Set<string> = new Set();
+  private _isParentQueued: Set<string>;
 
   private _queue: (() => void)[];
 
@@ -432,14 +432,17 @@ class DFlexBaseStore {
    */
   destroy(): void {
     this.DOMGen.forEachBranch((SK) => {
-      this.DOMGen.destroyBranch(SK, (id) => {
-        this.clearElm(id);
-      });
+      this.DOMGen.destroyBranch(SK);
     });
 
     this.interactiveDOM.clear();
     this.registry.clear();
+
     this._lastDOMParent = null;
+    this._isParentQueued.clear();
+
+    // @ts-expect-error - Cleaning up.
+    this.tracker = undefined;
 
     if (__DEV__) {
       // eslint-disable-next-line no-console
