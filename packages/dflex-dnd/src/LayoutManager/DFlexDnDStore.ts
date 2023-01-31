@@ -556,27 +556,23 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   destroy(): void {
     this._clearBranchesScroll();
-
-    // Destroys all registered local instances in parent class.
-    super.destroy();
-
+    this.containers.clear();
+    this.listeners.clear();
     // Destroys all connected observers.
     this.mutationObserverMap.forEach((observer) => {
       observer!.disconnect();
     });
-
     this.mutationObserverMap.clear();
-
     this._observerHighestDepth = 0;
-
-    this.containers.clear();
-    this.listeners.clear();
 
     // TODO:
     // Migration is initiated with null. But it's not typed as such.
     if (this.migration) {
       this.migration.clear();
     }
+
+    // Destroys all registered local instances in parent class.
+    super.destroy();
 
     window.removeEventListener("resize", this._windowResizeHandler);
   }
