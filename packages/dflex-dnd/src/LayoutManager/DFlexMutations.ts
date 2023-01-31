@@ -82,16 +82,21 @@ function checkMutations(
 
     if (target instanceof HTMLElement) {
       if (type === "childList") {
-        if (addedNodes.length > 0) {
-          if (
-            addedNodes.length === 1 &&
-            addedNodes[0] instanceof HTMLElement &&
-            addedNodes[0].id.includes("dflex-draggable-mirror")
-          ) {
+        if (
+          addedNodes.length > 0 &&
+          addedNodes.length === 1 &&
+          addedNodes[0] instanceof HTMLElement
+        ) {
+          if (addedNodes[0].id.includes("dflex-draggable-mirror")) {
             return;
           }
 
           if (__DEV__) {
+            // TODO: Fix this warning.
+            // if (store.registry.has(addedNodes[0].id)) {
+            //   return;
+            // }
+
             // eslint-disable-next-line no-console
             console.warn(
               "Insertion of DOM elements is not supported outside DFlex registry. Ignore this message if you are using commit()."

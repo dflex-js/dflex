@@ -554,6 +554,39 @@ class DFlexDnDStore extends DFlexBaseStore {
     }
   }
 
+  /**
+   * Removing instance from super
+   *
+   * @param id
+   */
+  clearElm(id: string) {
+    super.unregister(id);
+  }
+
+  /**
+   * Unregister DnD element.
+   *
+   * @param id.
+   *
+   */
+  unregister(id: string): void {
+    // Unregister is caught by mutation.
+    if (getIsProcessingMutations()) {
+      return;
+    }
+
+    // Been removed before.
+    if (!this.registry.has(id)) {
+      return;
+    }
+
+    if (__DEV__) {
+      throw new Error(
+        `unregister: Element with id: ${id} isn't caught by mutation observer.`
+      );
+    }
+  }
+
   destroy(): void {
     this._clearBranchesScroll();
     this.containers.clear();

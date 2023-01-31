@@ -19,7 +19,7 @@ const DraggableSolo = () => {
     }
 
     return () => {
-      store.clearElm(id);
+      store.unregister(id);
     };
   }, [ref]);
 

@@ -399,17 +399,11 @@ class DFlexBaseStore {
   }
 
   /**
-   * @deprecated
-   * @param _id
-   */
-  unregister(_id: string): void {}
-
-  /**
    * Removes an element from the store.
    *
    * @param id - element id.
    */
-  clearElm(id: string): void {
+  unregister(id: string): void {
     this.registry.delete(id);
     this.interactiveDOM.delete(id);
   }
@@ -422,7 +416,7 @@ class DFlexBaseStore {
    */
   destroyBranch(SK: string): void {
     this.DOMGen.destroyBranch(SK, (id) => {
-      this.clearElm(id);
+      this.unregister(id);
     });
   }
 

@@ -69,11 +69,12 @@ export interface IGenerator {
   /**
    * Removes element from its branch.
    *
+   * @deprecated
    * @param SK - siblings key.
-   * @param index - index of element in siblings array.
+   * @param id - element id in the siblings array.
    * @returns
    */
-  removeElmIDFromBranch(SK: string, index: number): string | null;
+  removeElmIDFromBranch(SK: string, id: string): string | null;
 
   /**
    * Adds element to existed branch.

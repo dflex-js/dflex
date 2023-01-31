@@ -246,23 +246,36 @@ class Generator implements IGenerator {
     this._branches[SK].push(id);
   }
 
-  removeElmIDFromBranch(SK: string, index: number) {
-    let deletedElmID: string;
-
-    if (
-      Array.isArray(this._branches[SK]) &&
-      this._branches[SK]![index] !== undefined
-    ) {
-      [deletedElmID] = this._branches[SK]!.splice(index, 1);
-
-      if (this._branches[SK]!.length === 0) {
-        delete this._branches[SK];
+  removeElmIDFromBranch(SK: string, id: string) {
+    if (!Array.isArray(this._branches[SK])) {
+      if (__DEV__) {
+        throw new Error(
+          `removeElmIDFromBranch: Element with id: ${id} doesn't belong to any existing branch`
+        );
       }
 
-      return deletedElmID;
+      return null;
     }
 
-    return null;
+    const index = this._branches[SK].findIndex((elmID) => elmID === id);
+
+    if (index === -1) {
+      if (__DEV__) {
+        throw new Error(
+          `removeElmIDFromBranch: Element with id: ${id} doesn't belong to branch: ${this._branches[SK]}.`
+        );
+      }
+
+      return null;
+    }
+
+    const [deletedElmID] = this._branches[SK]!.splice(index, 1);
+
+    if (this._branches[SK]!.length === 0) {
+      delete this._branches[SK];
+    }
+
+    return deletedElmID;
   }
 
   getBranchByDepth(dp: number): ELmBranch {
