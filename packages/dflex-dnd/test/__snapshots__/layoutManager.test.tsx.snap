@@ -40,6 +40,7 @@ DFlexDnDStore {
   "_initBranch": [Function],
   "_isDOM": true,
   "_isInitialized": true,
+  "_isParentQueued": Set {},
   "_lastDOMParent": <div
     data-dflex-key="0-1"
     data-index="1"
