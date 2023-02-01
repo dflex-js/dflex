@@ -30,12 +30,14 @@ class DraggableInteractive extends DraggableAxes {
 
     this.scroll = { ...opts.scroll };
 
-    this.enableCommit = this.containersTransition.enable
-      ? { ...opts.commit }
-      : {
-          enableAfterEndingDrag: false,
-          enableForScrollOnly: false,
-        };
+    this.enableCommit =
+      this.containersTransition.enable &&
+      store.getElmBranchByKey(this.draggedElm.keys.SK).length > 1
+        ? { ...opts.commit }
+        : {
+            enableAfterEndingDrag: false,
+            enableForScrollOnly: false,
+          };
 
     const [scroll] = store.getScrollWithSiblingsByID(id);
 
