@@ -581,7 +581,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     }
 
     if (__DEV__) {
-      throw new Error(
+      console.warn(
         `unregister: Element with id: ${id} isn't caught by mutation observer.`
       );
     }
