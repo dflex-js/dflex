@@ -152,7 +152,13 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
 
     this.isViewportRestricted = true;
 
-    this.containersTransition = opts.containersTransition;
+    // Override containersTransition option when we have an orphan branch.
+    this.containersTransition =
+      store.getBranchesByDepth(depth).length > 1
+        ? opts.containersTransition
+        : Object.assign({}, opts.containersTransition, {
+            enable: false,
+          });
 
     initContainers(SK, siblings);
 
