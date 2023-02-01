@@ -186,7 +186,7 @@ class DFlexScrollContainer {
     this._SK = SK;
     this._threshold_inner_key = `scroll_inner_${SK}`;
     this._threshold_outer_key = `scroll_outer_${SK}`;
-    this._listenerDataset = `dflexScrollListener-${SK}`;
+    this._listenerDataset = `dflexScrollListener_${SK}`;
 
     this._hasThrottledFrame = null;
 
