@@ -9,6 +9,8 @@ import type {
   DeletedElmKeys,
 } from "./types";
 
+const PREFIX_DOM_GEN = "DOMgen";
+
 /**
  * Generate keys to connect relations between DOM-elements depending on tree
  * depth.
@@ -135,9 +137,13 @@ class Generator implements IGenerator {
     /**
      * get siblings unique key (sK) and parents key (pK)
      */
-    const SK = combineKeys(depth, parentIndex);
+    const SK = combineKeys(depth, parentIndex, PREFIX_DOM_GEN);
 
-    const PK = combineKeys(depth + 1, this._indicator[depth + 2]);
+    const PK = combineKeys(
+      depth + 1,
+      this._indicator[depth + 2],
+      PREFIX_DOM_GEN
+    );
 
     const CHK = depth === 0 ? null : this._prevKey;
 
