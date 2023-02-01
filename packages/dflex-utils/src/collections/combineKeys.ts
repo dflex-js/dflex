@@ -1,9 +1,7 @@
 type KY = number | string;
 
-function combineKeys(k1: KY, k2: KY, pref: string | null = null) {
-  const k = `${k1}-${k2}`;
-
-  return pref ? `${pref}-${k}` : k;
+function combineKeys(k1: KY, k2: KY) {
+  return `${k1}_${k2}`;
 }
 
 export default combineKeys;

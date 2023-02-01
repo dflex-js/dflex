@@ -1,9 +1,11 @@
 class Tracker {
   private _travelID: Record<string, number>;
 
-  static PREFIX_CYCLE = "dflex_cycle_";
+  public static readonly PREFIX_CYCLE = "dflex_cycle_";
 
-  static PREFIX_ID = "dflex_id_";
+  public static readonly PREFIX_ID = "dflex_id_";
+
+  public static readonly PREFIX_ky = "dflex_ky_";
 
   /**
    * Creates an instance of Tracker.
@@ -16,19 +18,13 @@ class Tracker {
    * Increment travels and return the last one.
    */
   newTravel(prefix: string): string {
-    const pre = prefix;
-
-    let travel = this._travelID[pre];
-
-    if (travel !== undefined) {
-      travel += 1;
+    if (this._travelID[prefix] === undefined) {
+      this._travelID[prefix] = 0;
     } else {
-      travel = 0;
+      this._travelID[prefix] += 1;
     }
 
-    this._travelID[pre] = travel;
-
-    return `${prefix}${travel}`;
+    return `${prefix}${this._travelID[prefix]}`;
   }
 }
 

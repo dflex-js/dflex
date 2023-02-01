@@ -17,7 +17,7 @@ DFlexThreshold {
       "right": false,
       "top": false,
     },
-    "0-container-sk": BoxBool {
+    "0_container-sk": BoxBool {
       "bottom": false,
       "left": false,
       "right": false,
@@ -43,7 +43,7 @@ DFlexThreshold {
       "right": 450,
       "top": 54,
     },
-    "0-container-sk": {
+    "0_container-sk": {
       "bottom": 542,
       "left": -80,
       "right": 348,
