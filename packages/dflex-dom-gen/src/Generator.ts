@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { combineKeys } from "@dflex/utils";
+import { combineKeys, Tracker } from "@dflex/utils";
 import type {
   IGenerator,
   Keys,
@@ -46,7 +46,7 @@ class Generator implements IGenerator {
     this._branchesByDepth = {};
     this.branchDeletedKeys = null;
     this._prevDepth = -99;
-    this._prevKey = combineKeys(0, 0);
+    this._prevKey = `${Tracker.PREFIX_ky}${combineKeys(0, 0)}`;
   }
 
   /**
@@ -135,9 +135,12 @@ class Generator implements IGenerator {
     /**
      * get siblings unique key (sK) and parents key (pK)
      */
-    const SK = combineKeys(depth, parentIndex);
+    const SK = `${Tracker.PREFIX_ky}${combineKeys(depth, parentIndex)}`;
 
-    const PK = combineKeys(depth + 1, this._indicator[depth + 2]);
+    const PK = `${Tracker.PREFIX_ky}${combineKeys(
+      depth + 1,
+      this._indicator[depth + 2]
+    )}`;
 
     const CHK = depth === 0 ? null : this._prevKey;
 

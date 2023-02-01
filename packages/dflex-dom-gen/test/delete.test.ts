@@ -1,3 +1,4 @@
+import { Tracker } from "@dflex/utils";
 import Generator, { Pointer } from "../src";
 
 const domGen = new Generator();
@@ -7,8 +8,8 @@ let pointerChild1D0: Pointer;
 
 const KEYS_CHILDREN_D0 = {
   CHK: null,
-  PK: "1-0",
-  SK: "0-0",
+  PK: `${Tracker.PREFIX_ky}1_0`,
+  SK: `${Tracker.PREFIX_ky}0_0`,
 };
 
 describe("Testing clear methods", () => {
@@ -48,7 +49,9 @@ describe("Testing clear methods", () => {
   });
 
   it("The new generated branch has its key inside the branch depth array", () => {
-    expect(domGen.getBranchByDepth(0)).toStrictEqual(["0-0"]);
+    expect(domGen.getBranchByDepth(0)).toStrictEqual([
+      `${Tracker.PREFIX_ky}0_0`,
+    ]);
   });
 
   it("Remove the first siblings", () => {
@@ -64,7 +67,9 @@ describe("Testing clear methods", () => {
   });
 
   it("The branch depth array still has the branch key", () => {
-    expect(domGen.getBranchByDepth(0)).toStrictEqual(["0-0"]);
+    expect(domGen.getBranchByDepth(0)).toStrictEqual([
+      `${Tracker.PREFIX_ky}0_0`,
+    ]);
   });
 
   it("Add new element after deleting the old one to check indicators working correctly", () => {
@@ -81,7 +86,9 @@ describe("Testing clear methods", () => {
     const branch = domGen.getElmBranchByKey(pointerChild0D0.keys.SK);
 
     expect(branch).toStrictEqual(["id-1", "id-0"]);
-    expect(domGen.getBranchByDepth(0)).toStrictEqual(["0-0"]);
+    expect(domGen.getBranchByDepth(0)).toStrictEqual([
+      `${Tracker.PREFIX_ky}0_0`,
+    ]);
   });
 
   it("Destroy branch", () => {
@@ -123,6 +130,8 @@ describe("Testing clear methods", () => {
     const branch = domGen.getElmBranchByKey(pointerChild0D0.keys.SK);
 
     expect(branch).toStrictEqual(["id-0", "id-1"]);
-    expect(domGen.getBranchByDepth(0)).toStrictEqual(["0-0"]);
+    expect(domGen.getBranchByDepth(0)).toStrictEqual([
+      `${Tracker.PREFIX_ky}0_0`,
+    ]);
   });
 });
