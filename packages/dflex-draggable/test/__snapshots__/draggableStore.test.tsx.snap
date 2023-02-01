@@ -28,8 +28,8 @@ Map {
     "isVisible": true,
     "keys": {
       "CHK": null,
-      "PK": "1-0",
-      "SK": "0-0",
+      "PK": "dflex_ky_1_0",
+      "SK": "dflex_ky_0_0",
     },
     "readonly": false,
     "rect": BoxRect {

@@ -30,13 +30,18 @@ export interface Pointer {
 
 export type ELmBranch = string[];
 
+export type DeletedElmKeys = Keys & { parentIndex: number };
+
 /**
  * DOM Generator class interface.
  */
 export interface IGenerator {
-  accumulateIndicators(depth: number): Keys & {
-    parentIndex: number;
-  };
+  // accumulateIndicators(
+  //   depth: number,
+  //   hasSiblingInSameLevel?: false
+  // ): Keys & {
+  //   parentIndex: number;
+  // };
 
   /**
    * Update current branch.
@@ -59,16 +64,17 @@ export interface IGenerator {
    * @param id - element id
    * @param depth - element depth
    */
-  register(id: string, depth: number): Pointer;
+  register(id: string, depth: number, hasSiblingInSameLevel?: false): Pointer;
 
   /**
    * Removes element from its branch.
    *
+   * @deprecated
    * @param SK - siblings key.
-   * @param index - index of element in siblings array.
+   * @param id - element id in the siblings array.
    * @returns
    */
-  removeElmIDFromBranch(SK: string, index: number): string | null;
+  removeElmIDFromBranch(SK: string, id: string): string | null;
 
   /**
    * Adds element to existed branch.

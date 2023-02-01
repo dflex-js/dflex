@@ -20,7 +20,7 @@ import {
   DFlexSerializedScroll,
 } from "@dflex/core-instance";
 
-import type { ELmBranch, Keys } from "@dflex/dom-gen";
+import type { DeletedElmKeys, ELmBranch, Keys } from "@dflex/dom-gen";
 
 import initDFlexListeners, {
   DFlexListenerPlugin,
@@ -188,6 +188,14 @@ class DFlexDnDStore extends DFlexBaseStore {
 
       scroll = this.scrolls.get(CHK)!;
     } else {
+      if (__DEV__) {
+        if (!this.interactiveDOM.has(branch[0])) {
+          throw new Error(
+            `_initBranch: Unable to find DOM element for branchL ${branch} at index: ${0}`
+          );
+        }
+      }
+
       scroll = new DFlexScrollContainer(
         this.interactiveDOM.get(branch[0])!,
         CHK,
@@ -521,58 +529,83 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.scrolls.forEach((scroll) => {
       scroll.destroy();
     });
+
     this.scrolls.clear();
+  }
+
+  cleanupBranchInstances(SK: string, deletedElmKeys: DeletedElmKeys): void {
+    this.DOMGen.destroyBranch(SK, null, deletedElmKeys);
+
+    const deletedContainer = this.containers.delete(SK);
+    const deletedScroll = this.scrolls.delete(SK);
+
+    if (__DEV__) {
+      if (!deletedContainer) {
+        throw new Error(
+          `cleanupBranchInstances: Container with SK: ${SK} doesn't exists`
+        );
+      }
+
+      if (!deletedScroll) {
+        throw new Error(
+          `cleanupBranchInstances: Scroll container with SK: ${SK} doesn't exists`
+        );
+      }
+    }
+  }
+
+  /**
+   * Removing instance from super
+   *
+   * @param id
+   */
+  clearElm(id: string) {
+    super.unregister(id);
   }
 
   /**
    * Unregister DnD element.
    *
-   * Note: This will remove the element registry and the branch array. But,
-   * in case all the branches will be removed.
-   * This means, if, in rare cases when the user removes one element and keeps
-   * the rest this methods going to generate a bug. It's going to remove an
-   * element without updating the indexes inside registry instances.
-   *
-   * @param id -
+   * @param id.
    *
    */
   unregister(id: string): void {
+    // Unregister is caught by mutation.
+    if (getIsProcessingMutations()) {
+      return;
+    }
+
+    // Been removed before.
     if (!this.registry.has(id)) {
       return;
     }
 
-    const {
-      keys: { SK },
-      VDOMOrder: { self },
-    } = this.registry.get(id)!;
-
-    this.DOMGen.removeElmIDFromBranch(SK, self);
-
-    super.unregister(id);
-
-    // Nothing left?
-    // Reset the branch instances.
-    if (this.DOMGen.getElmBranchByKey(SK).length === 0) {
-      this._clearBranchesScroll();
+    if (__DEV__) {
+      console.warn(
+        `unregister: Element with id: ${id} isn't caught by mutation observer.`
+      );
     }
   }
 
   destroy(): void {
     this._clearBranchesScroll();
-
-    // Destroys all registered local instances in parent class.
-    super.destroy();
-
+    this.containers.clear();
+    this.listeners.clear();
     // Destroys all connected observers.
     this.mutationObserverMap.forEach((observer) => {
       observer!.disconnect();
     });
-
     this.mutationObserverMap.clear();
-
     this._observerHighestDepth = 0;
 
-    this.migration.clear();
+    // TODO:
+    // Migration is initiated with null. But it's not typed as such.
+    if (this.migration) {
+      this.migration.clear();
+    }
+
+    // Destroys all registered local instances in parent class.
+    super.destroy();
 
     window.removeEventListener("resize", this._windowResizeHandler);
   }

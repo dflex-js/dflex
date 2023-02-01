@@ -1,3 +1,4 @@
+import type { DeletedElmKeys } from "@dflex/dom-gen";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
 type ChangedIds = Set<{ oldId: string; newId: string }>;
@@ -20,6 +21,8 @@ function cleanupBranchElements(
     keys.add(store.registry.get(id)!.keys.SK);
   });
 
+  let deletedElmKeys: DeletedElmKeys | null = null;
+
   keys.forEach((key) => {
     const branch = store.getElmBranchByKey(key);
 
@@ -29,13 +32,20 @@ function cleanupBranchElements(
       const elm = store.registry.get(elmID)!;
 
       if (terminatedDOMiDs.has(elmID)) {
-        store.unregister(elmID);
-      } else {
+        if (!deletedElmKeys) {
+          deletedElmKeys = { ...elm.keys, parentIndex: elm.DOMOrder.parent };
+        }
+        store.clearElm(elmID);
+      } else if (!deletedElmKeys) {
         elm.VDOMOrder.self = connectedNodesID.push(elmID) - 1;
       }
     }
 
-    store.updateBranch(key, connectedNodesID);
+    if (connectedNodesID.length > 0) {
+      store.updateBranch(key, connectedNodesID);
+    } else {
+      store.cleanupBranchInstances(key, deletedElmKeys!);
+    }
   });
 }
 
@@ -72,16 +82,21 @@ function checkMutations(
 
     if (target instanceof HTMLElement) {
       if (type === "childList") {
-        if (addedNodes.length > 0) {
-          if (
-            addedNodes.length === 1 &&
-            addedNodes[0] instanceof HTMLElement &&
-            addedNodes[0].id.includes("dflex-draggable-mirror")
-          ) {
+        if (
+          addedNodes.length > 0 &&
+          addedNodes.length === 1 &&
+          addedNodes[0] instanceof HTMLElement
+        ) {
+          if (addedNodes[0].id.includes("dflex-draggable-mirror")) {
             return;
           }
 
           if (__DEV__) {
+            // TODO: Fix this warning.
+            // if (store.registry.has(addedNodes[0].id)) {
+            //   return;
+            // }
+
             // eslint-disable-next-line no-console
             console.warn(
               "Insertion of DOM elements is not supported outside DFlex registry. Ignore this message if you are using commit()."

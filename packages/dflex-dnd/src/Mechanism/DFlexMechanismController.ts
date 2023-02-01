@@ -446,6 +446,10 @@ class DFlexMechanismController extends DFlexScrollableElement {
   }
 
   dragAt(x: number, y: number) {
+    if (!store.isLayoutAvailable) {
+      return;
+    }
+
     const { draggedElm, draggedDOM, containersTransition, scroll, events } =
       this.draggable;
 

@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable class-methods-use-this */
 /* eslint-disable no-underscore-dangle */
 import Generator, { ELmBranch, Keys } from "@dflex/dom-gen";
 
@@ -85,6 +87,8 @@ class DFlexBaseStore {
 
   private _lastDOMParent: HTMLElement | null;
 
+  private _isParentQueued: Set<string>;
+
   private _queue: (() => void)[];
 
   private queueTimeoutId?: ReturnType<typeof setTimeout>;
@@ -94,6 +98,8 @@ class DFlexBaseStore {
       removeContainerWhenEmpty: false,
     };
     this._lastDOMParent = null;
+    this._isParentQueued = new Set();
+
     this._queue = [];
     this.tracker = new Tracker();
     this.registry = new Map();
@@ -136,6 +142,7 @@ class DFlexBaseStore {
   private _submitElementToRegistry(
     DOM: HTMLElement,
     elm: RegisterInputBase,
+    dflexParentElm: null | DFlexElement,
     branchComposedCallBack: BranchComposedCallBackFunction | null
   ): void {
     const { id, depth, readonly } = elm;
@@ -160,7 +167,37 @@ class DFlexBaseStore {
       return;
     }
 
-    const { order, keys } = this.DOMGen.register(id, depth);
+    let hasSiblingInSameLevel = false;
+
+    // If it's a container
+    if (depth > 0) {
+      // Does the element share the same parent with the previous  element in the
+      // same depth?
+
+      const branchesByDp = this.DOMGen.getBranchByDepth(depth);
+
+      const branchesByDpLength = branchesByDp.length;
+
+      if (branchesByDpLength > 0) {
+        const lastSKInSameDP = this.DOMGen.getElmBranchByKey(
+          branchesByDp[branchesByDpLength - 1]
+        );
+
+        const lastSKInSameDPLength = lastSKInSameDP.length;
+
+        if (lastSKInSameDPLength > 0) {
+          const allegedPrevSiblingID = lastSKInSameDP[lastSKInSameDPLength - 1];
+
+          hasSiblingInSameLevel = DOM.previousElementSibling!.isSameNode(
+            this.interactiveDOM.get(allegedPrevSiblingID)!
+          );
+        }
+      }
+    }
+
+    const { order, keys } = dflexParentElm
+      ? this.DOMGen.insertElmBtwLayers(id, depth, dflexParentElm.keys.SK)
+      : this.DOMGen.register(id, depth, hasSiblingInSameLevel);
 
     const coreElement: DFlexElementInput = {
       id,
@@ -218,25 +255,28 @@ class DFlexBaseStore {
       : getElmDOMOrThrow(id)!;
 
     getParentElm(DOM, (_parentDOM) => {
-      if (
+      let { id: parentID } = _parentDOM;
+
+      if (!parentID) {
+        parentID = this.tracker.newTravel(Tracker.PREFIX_ID);
+        _parentDOM.id = parentID;
+      }
+
+      const isParentChanged =
         this._lastDOMParent === null ||
-        !this._lastDOMParent.isSameNode(_parentDOM)
-      ) {
+        !this._lastDOMParent.isSameNode(_parentDOM);
+
+      let isParentRegistered = false;
+
+      if (isParentChanged) {
         // Parent DOM changed empty the queue.
         this._handleQueue();
 
-        let { id: parentID } = _parentDOM;
-
-        if (!parentID) {
-          parentID = this.tracker.newTravel(Tracker.PREFIX_ID);
-          _parentDOM.id = parentID;
-        }
+        this._submitElementToRegistry(DOM, element, null, null);
 
         this.interactiveDOM.set(parentID, _parentDOM);
 
         const parentDepth = depth + 1;
-
-        this._submitElementToRegistry(DOM, element, null);
 
         // keep the reference for comparison.
         this._lastDOMParent = _parentDOM;
@@ -251,17 +291,48 @@ class DFlexBaseStore {
               // Default value for inserted parent element.
               readonly: true,
             },
+            null,
             branchComposedCallBack || null
           );
         });
+      } else {
+        isParentRegistered = this.registry.has(parentID);
 
+        if (isParentRegistered) {
+          this._lastDOMParent = _parentDOM;
+
+          const dflexParentElm = this.registry.get(parentID)!;
+
+          this._submitElementToRegistry(DOM, element, dflexParentElm, null);
+
+          if (!this._isParentQueued.has(parentID)) {
+            this._isParentQueued.add(parentID);
+
+            // A new branch. Queue the new branch.
+            this._queue.push(() => {
+              // typeof branchComposedCallBack === "function";
+              branchComposedCallBack!(
+                dflexParentElm.keys,
+                dflexParentElm.depth,
+                parentID,
+                _parentDOM
+              );
+
+              // To support continuos streaming.
+              this._isParentQueued.delete(parentID);
+            });
+          }
+        }
+      }
+
+      if (isParentChanged || isParentRegistered) {
         if (this.queueTimeoutId === undefined) {
           clearTimeout(this.queueTimeoutId);
         }
 
         this.queueTimeoutId = setTimeout(this._handleQueue, 0);
       } else {
-        this._submitElementToRegistry(DOM, element, null);
+        this._submitElementToRegistry(DOM, element, null, null);
       }
 
       return true;
@@ -334,6 +405,7 @@ class DFlexBaseStore {
    */
   unregister(id: string): void {
     this.registry.delete(id);
+    this.interactiveDOM.delete(id);
   }
 
   /**
@@ -354,14 +426,17 @@ class DFlexBaseStore {
    */
   destroy(): void {
     this.DOMGen.forEachBranch((SK) => {
-      this.DOMGen.destroyBranch(SK, (id) => {
-        this.unregister(id);
-      });
+      this.DOMGen.destroyBranch(SK);
     });
 
     this.interactiveDOM.clear();
     this.registry.clear();
+
     this._lastDOMParent = null;
+    this._isParentQueued.clear();
+
+    // @ts-expect-error - Cleaning up.
+    this.tracker = undefined;
 
     if (__DEV__) {
       // eslint-disable-next-line no-console
