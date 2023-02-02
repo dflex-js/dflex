@@ -75,6 +75,46 @@ function getElmDOMOrThrow(id: string): HTMLElement | null {
   return DOM;
 }
 
+/**
+ * Does the element share the same parent with the previous element in the same depth?
+ *
+ * @param DOM
+ * @param DOMGen
+ * @param interactiveDOM
+ * @param depth
+ * @returns
+ */
+function hasSiblingInSameLevel(
+  DOM: HTMLElement,
+  DOMGen: Generator,
+  interactiveDOM: Map<string, HTMLElement>,
+  depth: number
+) {
+  let has = false;
+
+  const branchesByDp = DOMGen.getBranchByDepth(depth);
+
+  const branchesByDpLength = branchesByDp.length;
+
+  if (branchesByDpLength > 0) {
+    const lastSKInSameDP = DOMGen.getElmBranchByKey(
+      branchesByDp[branchesByDpLength - 1]
+    );
+
+    const lastSKInSameDPLength = lastSKInSameDP.length;
+
+    if (lastSKInSameDPLength > 0) {
+      const allegedPrevSiblingID = lastSKInSameDP[lastSKInSameDPLength - 1];
+
+      has = DOM.previousElementSibling!.isSameNode(
+        interactiveDOM.get(allegedPrevSiblingID)!
+      );
+    }
+  }
+
+  return has;
+}
+
 class DFlexBaseStore {
   globals: DFlexGlobalConfig;
 
@@ -168,37 +208,27 @@ class DFlexBaseStore {
       return;
     }
 
-    let hasSiblingInSameLevel = false;
+    let _hasSiblingInSameLevel = false;
 
     // If it's a container
     if (depth > 0) {
-      // Does the element share the same parent with the previous  element in the
-      // same depth?
+      _hasSiblingInSameLevel = hasSiblingInSameLevel(
+        DOM,
+        this.DOMGen,
+        this.interactiveDOM,
+        depth
+      );
 
-      const branchesByDp = this.DOMGen.getBranchByDepth(depth);
+      setRelativePosition(DOM);
 
-      const branchesByDpLength = branchesByDp.length;
-
-      if (branchesByDpLength > 0) {
-        const lastSKInSameDP = this.DOMGen.getElmBranchByKey(
-          branchesByDp[branchesByDpLength - 1]
-        );
-
-        const lastSKInSameDPLength = lastSKInSameDP.length;
-
-        if (lastSKInSameDPLength > 0) {
-          const allegedPrevSiblingID = lastSKInSameDP[lastSKInSameDPLength - 1];
-
-          hasSiblingInSameLevel = DOM.previousElementSibling!.isSameNode(
-            this.interactiveDOM.get(allegedPrevSiblingID)!
-          );
-        }
+      if (!this.globals.removeContainerWhenEmpty) {
+        setFixedWidth(DOM);
       }
     }
 
     const { order, keys } = dflexParentElm
       ? this.DOMGen.insertElmBtwLayers(id, depth, dflexParentElm.keys.SK)
-      : this.DOMGen.register(id, depth, hasSiblingInSameLevel);
+      : this.DOMGen.register(id, depth, _hasSiblingInSameLevel);
 
     const coreElement: DFlexElementInput = {
       id,
@@ -214,13 +244,7 @@ class DFlexBaseStore {
 
     dflexElm.setAttribute(DOM, "INDEX", dflexElm.VDOMOrder.self);
 
-    if (depth >= 1) {
-      setRelativePosition(DOM);
-
-      if (!this.globals.removeContainerWhenEmpty) {
-        setFixedWidth(DOM);
-      }
-
+    if (depth > 0) {
       if (keys.CHK === null) {
         if (__DEV__) {
           throw new Error(
@@ -235,8 +259,54 @@ class DFlexBaseStore {
 
       if (typeof branchComposedCallBack === "function") {
         branchComposedCallBack(keys, depth, id, DOM);
+
+        if (_hasSiblingInSameLevel) {
+          this._registerParent(DOM, depth, branchComposedCallBack);
+        }
       }
     }
+  }
+
+  _registerParent(
+    parentDOM: HTMLElement,
+    parentDepth: number,
+    branchComposedCallBack: BranchComposedCallBackFunction
+  ): void {
+    let { id: parentID } = parentDOM;
+
+    if (!parentID) {
+      parentID = this.tracker.newTravel(Tracker.PREFIX_ID);
+      parentDOM.id = parentID;
+    }
+
+    // Parent DOM changed empty the queue.
+    this._handleQueue();
+
+    this.interactiveDOM.set(parentID, parentDOM);
+
+    // keep the reference for comparison.
+    this._lastDOMParent = parentDOM;
+
+    // A new branch. Queue the new branch.
+    this._queue.push(() => {
+      this._submitElementToRegistry(
+        parentDOM,
+        {
+          id: parentID,
+          depth: parentDepth,
+          // Default value for inserted parent element.
+          readonly: true,
+        },
+        null,
+        branchComposedCallBack
+      );
+    });
+
+    if (this.queueTimeoutId === undefined) {
+      clearTimeout(this.queueTimeoutId);
+    }
+
+    this.queueTimeoutId = setTimeout(this._handleQueue, 0);
   }
 
   /**
