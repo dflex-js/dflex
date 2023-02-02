@@ -5,15 +5,14 @@ type ChangedIds = Set<{ oldId: string; newId: string }>;
 type TerminatedDOMiDs = Set<string>;
 
 let isProcessingMutations = false;
+const terminatedDOMiDs: TerminatedDOMiDs = new Set();
+const changedIds: ChangedIds = new Set();
 
 function getIsProcessingMutations(): boolean {
   return isProcessingMutations;
 }
 
-function cleanupBranchElements(
-  store: DFlexDnDStore,
-  terminatedDOMiDs: TerminatedDOMiDs
-) {
+function cleanupBranchElements(store: DFlexDnDStore) {
   const keys = new Set<string>();
   const connectedNodesID: string[] = [];
 
@@ -49,7 +48,8 @@ function cleanupBranchElements(
   });
 }
 
-function mutateIDs(store: DFlexDnDStore, changedIds: ChangedIds) {
+// Needs refactoring and testing.
+function mutateIDs(store: DFlexDnDStore) {
   changedIds.forEach((idSet) => {
     if (store.registry.has(idSet.oldId)) {
       const elm = store.registry.get(idSet.oldId)!;
@@ -69,12 +69,7 @@ function mutateIDs(store: DFlexDnDStore, changedIds: ChangedIds) {
   });
 }
 
-function checkMutations(
-  store: DFlexDnDStore,
-  mutations: MutationRecord[],
-  changedIds: ChangedIds,
-  terminatedDOMiDs: TerminatedDOMiDs
-) {
+function checkMutations(store: DFlexDnDStore, mutations: MutationRecord[]) {
   for (let i = 0; i < mutations.length; i += 1) {
     const mutation = mutations[i];
     const { type, target, addedNodes, removedNodes, attributeName, oldValue } =
@@ -128,29 +123,27 @@ function checkMutations(
 function DOMmutationHandler(
   store: DFlexDnDStore,
   mutations: MutationRecord[],
-  observer: MutationObserver,
-  changedIds: ChangedIds,
-  terminatedDOMiDs: TerminatedDOMiDs
+  observer: MutationObserver
 ) {
   try {
     isProcessingMutations = true;
 
-    checkMutations(store, mutations, changedIds, terminatedDOMiDs);
+    checkMutations(store, mutations);
 
     // fetch all pending mutations and clear the queue.
     const records = observer.takeRecords();
 
     if (records.length > 0) {
-      checkMutations(store, records, changedIds, terminatedDOMiDs);
+      checkMutations(store, records);
     }
 
     if (changedIds.size > 0) {
-      mutateIDs(store, changedIds);
+      mutateIDs(store);
       changedIds.clear();
     }
 
     if (terminatedDOMiDs.size > 0) {
-      cleanupBranchElements(store, terminatedDOMiDs);
+      cleanupBranchElements(store);
       terminatedDOMiDs.clear();
     }
   } finally {
@@ -166,20 +159,11 @@ const observerConfig = Object.freeze({
 });
 
 function initMutationObserver(store: DFlexDnDStore, SK: string) {
-  const terminatedDOMiDs: TerminatedDOMiDs = new Set();
-  const changedIds: ChangedIds = new Set();
-
   store.mutationObserverMap.set(
     SK,
     new MutationObserver(
       (mutations: MutationRecord[], observer: MutationObserver) => {
-        DOMmutationHandler(
-          store,
-          mutations,
-          observer,
-          changedIds,
-          terminatedDOMiDs
-        );
+        DOMmutationHandler(store, mutations, observer);
       }
     )
   );
@@ -201,4 +185,4 @@ type DFlexLMutationPlugin = ReturnType<typeof addMutationObserver>;
 
 export type { DFlexLMutationPlugin };
 
-export { getIsProcessingMutations, addMutationObserver };
+export { getIsProcessingMutations, addMutationObserver, unregisterQueue };

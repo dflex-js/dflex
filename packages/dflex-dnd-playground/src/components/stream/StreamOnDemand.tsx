@@ -68,22 +68,25 @@ const StreamOnDemand = () => {
     };
   }, []);
 
-  return (
-    <div className="root">
-      <div className="todo">
-        <ul>
-          {todo.map(({ msg, id, key }) => (
-            <DFlexDnDComponent
-              Component={"li"}
-              registerInput={{ id }}
-              key={key}
-            >
-              {msg}
-            </DFlexDnDComponent>
-          ))}
-        </ul>
+  return React.useMemo(
+    () => (
+      <div className="root">
+        <div className="todo">
+          <ul>
+            {todo.map(({ msg, id, key }) => (
+              <DFlexDnDComponent
+                Component={"li"}
+                registerInput={{ id }}
+                key={key}
+              >
+                {msg}
+              </DFlexDnDComponent>
+            ))}
+          </ul>
+        </div>
       </div>
-    </div>
+    ),
+    [todo]
   );
 };
 

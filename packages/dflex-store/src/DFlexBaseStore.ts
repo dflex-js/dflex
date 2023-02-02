@@ -10,6 +10,7 @@ import {
   setRelativePosition,
   Tracker,
 } from "@dflex/utils";
+import { scheduler } from "timers/promises";
 
 // https://github.com/microsoft/TypeScript/issues/28374#issuecomment-536521051
 type DeepNonNullable<T> = {
@@ -303,24 +304,36 @@ class DFlexBaseStore {
 
           const dflexParentElm = this.registry.get(parentID)!;
 
-          this._submitElementToRegistry(DOM, element, dflexParentElm, null);
+          const submit = () => {
+            this._submitElementToRegistry(DOM, element, dflexParentElm, null);
 
-          if (!this._isParentQueued.has(parentID)) {
-            this._isParentQueued.add(parentID);
+            if (!this._isParentQueued.has(parentID)) {
+              this._isParentQueued.add(parentID);
 
-            // A new branch. Queue the new branch.
-            this._queue.push(() => {
-              // typeof branchComposedCallBack === "function";
-              branchComposedCallBack!(
-                dflexParentElm.keys,
-                dflexParentElm.depth,
-                parentID,
-                _parentDOM
-              );
+              // A new branch. Queue the new branch.
+              this._queue.push(() => {
+                // typeof branchComposedCallBack === "function";
+                branchComposedCallBack!(
+                  dflexParentElm.keys,
+                  dflexParentElm.depth,
+                  parentID,
+                  _parentDOM
+                );
 
-              // To support continuos streaming.
-              this._isParentQueued.delete(parentID);
-            });
+                // To support continuos streaming.
+                this._isParentQueued.delete(parentID);
+              });
+            }
+          };
+
+          const dlKys = this.DOMGen.branchDeletedKeys;
+
+          // Mutation observer is not fired yet. Wait until it's done.
+          // When it's fired then `branchDeletedKeys` should be defined.
+          if (dlKys === null || !dlKys.has(dflexParentElm.keys.SK)) {
+            queueMicrotask(submit);
+          } else {
+            submit();
           }
         }
       }
