@@ -10,7 +10,6 @@ import {
   setRelativePosition,
   Tracker,
 } from "@dflex/utils";
-import { scheduler } from "timers/promises";
 
 // https://github.com/microsoft/TypeScript/issues/28374#issuecomment-536521051
 type DeepNonNullable<T> = {
@@ -89,7 +88,7 @@ function hasSiblingInSameLevel(
   DOMGen: Generator,
   interactiveDOM: Map<string, HTMLElement>,
   depth: number
-) {
+): boolean {
   let has = false;
 
   const branchesByDp = DOMGen.getBranchByDepth(depth);
@@ -154,7 +153,7 @@ class DFlexBaseStore {
    *
    * @param globals
    */
-  config(globals: DFlexGlobalConfig) {
+  config(globals: DFlexGlobalConfig): void {
     if (globals.removeContainerWhenEmpty) {
       if (__DEV__) {
         throw new Error("removeContainerWhenEmpty is not supported yet.");
@@ -164,7 +163,7 @@ class DFlexBaseStore {
     Object.assign(this.globals, globals);
   }
 
-  private _handleQueue() {
+  private _handleQueue(): void {
     try {
       if (this._queue.length === 0) {
         return;
@@ -261,16 +260,24 @@ class DFlexBaseStore {
         branchComposedCallBack(keys, depth, id, DOM);
 
         if (_hasSiblingInSameLevel) {
-          this._registerParent(DOM, depth, branchComposedCallBack);
+          getParentElm(DOM, (_parentDOM) => {
+            this._registerParentInQueue(
+              _parentDOM,
+              depth + 1,
+              branchComposedCallBack
+            );
+
+            return true;
+          });
         }
       }
     }
   }
 
-  _registerParent(
+  private _registerParentInQueue(
     parentDOM: HTMLElement,
     parentDepth: number,
-    branchComposedCallBack: BranchComposedCallBackFunction
+    branchComposedCallBack: BranchComposedCallBackFunction | null
   ): void {
     let { id: parentID } = parentDOM;
 
@@ -302,11 +309,61 @@ class DFlexBaseStore {
       );
     });
 
-    if (this.queueTimeoutId === undefined) {
+    if (this.queueTimeoutId !== undefined) {
       clearTimeout(this.queueTimeoutId);
     }
 
     this.queueTimeoutId = setTimeout(this._handleQueue, 0);
+  }
+
+  private _insertElmAndInitBranch(
+    element: RegisterInputBase,
+    childDOM: HTMLElement,
+    parentDOM: HTMLElement,
+    branchComposedCallBack: BranchComposedCallBackFunction
+  ): void {
+    this._lastDOMParent = parentDOM;
+
+    const parentID = parentDOM.id;
+
+    const dflexParentElm = this.registry.get(parentID)!;
+
+    const submit = () => {
+      this._submitElementToRegistry(childDOM, element, dflexParentElm, null);
+
+      if (!this._isParentQueued.has(parentID)) {
+        this._isParentQueued.add(parentID);
+
+        // A new branch. Queue the new branch.
+        this._queue.push(() => {
+          branchComposedCallBack!(
+            dflexParentElm.keys,
+            dflexParentElm.depth,
+            parentID,
+            parentDOM
+          );
+
+          // To support continuos streaming.
+          this._isParentQueued.delete(parentID);
+        });
+
+        if (this.queueTimeoutId !== undefined) {
+          clearTimeout(this.queueTimeoutId);
+        }
+
+        this.queueTimeoutId = setTimeout(this._handleQueue, 0);
+      }
+    };
+
+    const dlKys = this.DOMGen.branchDeletedKeys;
+
+    // Mutation observer is not fired yet. Wait until it's done.
+    // When it's fired then `branchDeletedKeys` should be defined.
+    if (dlKys === null || !dlKys.has(dflexParentElm.keys.SK)) {
+      queueMicrotask(submit);
+    } else {
+      submit();
+    }
   }
 
   /**
@@ -326,13 +383,6 @@ class DFlexBaseStore {
       : getElmDOMOrThrow(id)!;
 
     getParentElm(DOM, (_parentDOM) => {
-      let { id: parentID } = _parentDOM;
-
-      if (!parentID) {
-        parentID = this.tracker.newTravel(Tracker.PREFIX_ID);
-        _parentDOM.id = parentID;
-      }
-
       const isParentChanged =
         this._lastDOMParent === null ||
         !this._lastDOMParent.isSameNode(_parentDOM);
@@ -340,81 +390,29 @@ class DFlexBaseStore {
       let isParentRegistered = false;
 
       if (isParentChanged) {
-        // Parent DOM changed empty the queue.
-        this._handleQueue();
-
-        this._submitElementToRegistry(DOM, element, null, null);
-
-        this.interactiveDOM.set(parentID, _parentDOM);
-
         const parentDepth = depth + 1;
 
-        // keep the reference for comparison.
-        this._lastDOMParent = _parentDOM;
+        this._registerParentInQueue(
+          _parentDOM,
+          parentDepth,
+          branchComposedCallBack || null
+        );
 
-        // A new branch. Queue the new branch.
-        this._queue.push(() => {
-          this._submitElementToRegistry(
-            _parentDOM,
-            {
-              id: parentID,
-              depth: parentDepth,
-              // Default value for inserted parent element.
-              readonly: true,
-            },
-            null,
-            branchComposedCallBack || null
-          );
-        });
+        this._submitElementToRegistry(DOM, element, null, null);
       } else {
-        isParentRegistered = this.registry.has(parentID);
+        isParentRegistered = this.registry.has(_parentDOM.id);
 
         if (isParentRegistered) {
-          this._lastDOMParent = _parentDOM;
-
-          const dflexParentElm = this.registry.get(parentID)!;
-
-          const submit = () => {
-            this._submitElementToRegistry(DOM, element, dflexParentElm, null);
-
-            if (!this._isParentQueued.has(parentID)) {
-              this._isParentQueued.add(parentID);
-
-              // A new branch. Queue the new branch.
-              this._queue.push(() => {
-                // typeof branchComposedCallBack === "function";
-                branchComposedCallBack!(
-                  dflexParentElm.keys,
-                  dflexParentElm.depth,
-                  parentID,
-                  _parentDOM
-                );
-
-                // To support continuos streaming.
-                this._isParentQueued.delete(parentID);
-              });
-            }
-          };
-
-          const dlKys = this.DOMGen.branchDeletedKeys;
-
-          // Mutation observer is not fired yet. Wait until it's done.
-          // When it's fired then `branchDeletedKeys` should be defined.
-          if (dlKys === null || !dlKys.has(dflexParentElm.keys.SK)) {
-            queueMicrotask(submit);
-          } else {
-            submit();
-          }
+          this._insertElmAndInitBranch(
+            element,
+            DOM,
+            _parentDOM,
+            branchComposedCallBack!
+          );
         }
       }
 
-      if (isParentChanged || isParentRegistered) {
-        if (this.queueTimeoutId === undefined) {
-          clearTimeout(this.queueTimeoutId);
-        }
-
-        this.queueTimeoutId = setTimeout(this._handleQueue, 0);
-      } else {
+      if (!(isParentChanged || isParentRegistered)) {
         this._submitElementToRegistry(DOM, element, null, null);
       }
 
