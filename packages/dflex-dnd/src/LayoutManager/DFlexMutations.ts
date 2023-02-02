@@ -185,4 +185,4 @@ type DFlexLMutationPlugin = ReturnType<typeof addMutationObserver>;
 
 export type { DFlexLMutationPlugin };
 
-export { getIsProcessingMutations, addMutationObserver, unregisterQueue };
+export { getIsProcessingMutations, addMutationObserver };

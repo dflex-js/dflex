@@ -12,31 +12,37 @@ const rowMap = {
   4: 25,
 };
 
+const initStateA = [{ msg: "a-1", id: "a-1", key: "a-1" }];
+const initStateB = [{ msg: "b-1", id: "b-1", key: "b-1" }];
+
 const StreamOnDemand = () => {
-  const [todo, updateTodo] = React.useState<
+  const [todoListA, updateTodoListA] = React.useState<
     {
       msg: string;
       id: string;
       key: string;
     }[]
-  >([{ msg: "1", id: "1", key: "1" }]);
+  >(initStateA);
+
+  const [todoListB, updateTodoListB] = React.useState<
+    {
+      msg: string;
+      id: string;
+      key: string;
+    }[]
+  >(initStateB);
 
   const numberOfUpdates = React.useRef(0);
 
-  const refreshList = () => {
-    if (numberOfUpdates.current === NUM_INTERVAL) {
-      // eslint-disable-next-line no-console
-      console.info(`Number of refreshing amount is ${NUM_INTERVAL}`);
-
-      return;
-    }
+  const refreshList = (listA: boolean) => {
+    const pre = listA ? "a" : "b";
 
     // @ts-ignore - TODO: Fix the type issue.
     const arr = new Array(rowMap[numberOfUpdates.current])
 
       .fill(null)
       .map((_v, i) => {
-        const unique = `${numberOfUpdates.current}-${i}`;
+        const unique = `${pre}-${numberOfUpdates.current}-${i}`;
 
         return {
           msg: unique,
@@ -45,14 +51,26 @@ const StreamOnDemand = () => {
         };
       });
 
-    updateTodo(arr);
-
-    numberOfUpdates.current += 1;
+    if (listA) {
+      updateTodoListA(arr);
+    } else {
+      updateTodoListB(arr);
+    }
   };
 
   const commitWhenKyPressed = (e: KeyboardEvent) => {
     if (e.key === "r") {
-      refreshList();
+      if (numberOfUpdates.current === NUM_INTERVAL) {
+        // eslint-disable-next-line no-console
+        console.info(`Number of refreshing amount is ${NUM_INTERVAL}`);
+
+        return;
+      }
+
+      refreshList(true);
+      refreshList(false);
+
+      numberOfUpdates.current += 1;
     }
   };
 
@@ -71,9 +89,27 @@ const StreamOnDemand = () => {
   return React.useMemo(
     () => (
       <div className="root">
-        <div className="todo">
+        <div
+          className="todo"
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: "7px",
+          }}
+        >
           <ul>
-            {todo.map(({ msg, id, key }) => (
+            {todoListA.map(({ msg, id, key }) => (
+              <DFlexDnDComponent
+                Component={"li"}
+                registerInput={{ id }}
+                key={key}
+              >
+                {msg}
+              </DFlexDnDComponent>
+            ))}
+          </ul>
+          <ul>
+            {todoListB.map(({ msg, id, key }) => (
               <DFlexDnDComponent
                 Component={"li"}
                 registerInput={{ id }}
@@ -86,7 +122,7 @@ const StreamOnDemand = () => {
         </div>
       </div>
     ),
-    [todo]
+    [todoListA]
   );
 };
 
