@@ -1,2 +1,2 @@
-/* eslint-disable import/prefer-default-export */
-export { default as ContinuouslyUpdatingTodo } from "./ContinuouslyUpdatingTodo";
+export { default as StreamInterval } from "./StreamInterval";
+export { default as StreamOnDemand } from "./StreamOnDemand";

@@ -17,4 +17,4 @@ export {
 
 export { ScrollMultiLists } from "./scroll";
 
-export { ContinuouslyUpdatingTodo } from "./stream";
+export { StreamInterval, StreamOnDemand } from "./stream";
