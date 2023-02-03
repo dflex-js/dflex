@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 /* eslint-disable import/no-extraneous-dependencies */
 import * as React from "react";
 import * as ReactTestUtils from "react-dom/test-utils";
@@ -225,7 +224,7 @@ describe("getInsertionELmMeta", () => {
   describe("Injected branch with empty string", () => {
     it("Inject empty string", () => {
       // @ts-ignore - this is a test
-      store.DOMGen._branches[SK].push("");
+      store.DOMGen.updateBranch(SK, ["id-1", "id-2", "id-3", "id-4", ""]);
 
       // @ts-ignore - this is a test
       expect(store.DOMGen.getElmBranchByKey(SK)).toStrictEqual([

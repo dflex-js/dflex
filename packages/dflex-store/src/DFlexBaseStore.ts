@@ -258,18 +258,6 @@ class DFlexBaseStore {
 
       if (typeof branchComposedCallBack === "function") {
         branchComposedCallBack(dflexElm, DOM);
-
-        if (_hasSiblingInSameLevel) {
-          getParentElm(DOM, (_parentDOM) => {
-            this._registerParentInQueue(
-              _parentDOM,
-              depth + 1,
-              branchComposedCallBack
-            );
-
-            return true;
-          });
-        }
       }
     }
   }

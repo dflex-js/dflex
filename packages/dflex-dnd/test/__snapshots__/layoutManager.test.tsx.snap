@@ -11,7 +11,6 @@ DFlexDnDStore {
       "dflex_bk_1": [
         "dflex_ky_0_1",
         "dflex_ky_1_0",
-        "dflex_ky_2_0",
       ],
     },
     "_SKByDepth": {
@@ -22,21 +21,17 @@ DFlexDnDStore {
       "1": [
         "dflex_ky_1_0",
       ],
-      "2": [
-        "dflex_ky_2_0",
-      ],
     },
     "_branchDeletedSK": null,
     "_branchIndicator": 1,
     "_depthIndicator": {
       "0": 2,
       "1": 2,
-      "2": 1,
+      "2": 0,
       "3": 0,
-      "4": 0,
     },
-    "_prevDepth": 2,
-    "_prevSK": "dflex_ky_2_0",
+    "_prevDepth": 1,
+    "_prevSK": "dflex_ky_1_0",
     "_siblings": {
       "dflex_ky_0_0": [
         "id-1",
@@ -50,9 +45,6 @@ DFlexDnDStore {
         "dflex_id_0",
         "dflex_id_1",
       ],
-      "dflex_ky_2_0": [
-        "dflex_id_2",
-      ],
     },
   },
   "_handleQueue": [Function],
@@ -61,40 +53,24 @@ DFlexDnDStore {
   "_isInitialized": true,
   "_isParentQueued": Set {},
   "_lastDOMParent": <div
-    data-dflex-key="dflex_ky_1_0"
-    data-index="0"
-    id="dflex_id_2"
+    data-dflex-key="dflex_ky_0_1"
+    data-index="1"
+    id="dflex_id_1"
   >
     <div
-      data-dflex-key="dflex_ky_0_0"
       data-index="0"
-      id="dflex_id_0"
-    >
-      <div
-        data-index="0"
-        id="id-1"
-      />
-    </div>
+      id="id-2"
+    />
     <div
-      data-dflex-key="dflex_ky_0_1"
       data-index="1"
-      id="dflex_id_1"
-    >
-      <div
-        data-index="0"
-        id="id-2"
-      />
-      <div
-        data-index="1"
-        id="id-3"
-      />
-      <div
-        data-index="2"
-        id="id-4"
-      />
-    </div>
+      id="id-3"
+    />
+    <div
+      data-index="2"
+      id="id-4"
+    />
   </div>,
-  "_observerHighestDepth": 2,
+  "_observerHighestDepth": 1,
   "_queue": [],
   "_windowResizeHandler": [Function],
   "containers": Map {
@@ -162,38 +138,6 @@ DFlexDnDStore {
       "lastElmPosition": null,
       "originLength": 3,
     },
-    "dflex_ky_1_0" => DFlexParentContainer {
-      "_boundariesByRow": {
-        "1": {
-          "bottom": 0,
-          "left": 0,
-          "right": 0,
-          "top": 0,
-        },
-      },
-      "_gridSiblingsHasNewRow": false,
-      "_rect": BoxRect {
-        "bottom": 0,
-        "height": 0,
-        "left": 0,
-        "right": 0,
-        "top": 0,
-        "width": 0,
-      },
-      "_siblingBoundaries": {
-        "bottom": 0,
-        "left": 0,
-        "right": 0,
-        "top": 0,
-      },
-      "grid": PointNum {
-        "x": 1,
-        "y": 1,
-      },
-      "id": "dflex_id_2",
-      "lastElmPosition": null,
-      "originLength": 2,
-    },
   },
   "deferred": [],
   "globals": {
@@ -244,40 +188,6 @@ DFlexDnDStore {
       data-index="2"
       id="id-4"
     />,
-    "dflex_id_2" => <div
-      data-dflex-key="dflex_ky_1_0"
-      data-index="0"
-      id="dflex_id_2"
-    >
-      <div
-        data-dflex-key="dflex_ky_0_0"
-        data-index="0"
-        id="dflex_id_0"
-      >
-        <div
-          data-index="0"
-          id="id-1"
-        />
-      </div>
-      <div
-        data-dflex-key="dflex_ky_0_1"
-        data-index="1"
-        id="dflex_id_1"
-      >
-        <div
-          data-index="0"
-          id="id-2"
-        />
-        <div
-          data-index="1"
-          id="id-3"
-        />
-        <div
-          data-index="2"
-          id="id-4"
-        />
-      </div>
-    </div>,
   },
   "isComposing": false,
   "isUpdating": false,
@@ -288,7 +198,7 @@ DFlexDnDStore {
   },
   "migration": null,
   "mutationObserverMap": Map {
-    "dflex_ky_2_0" => MutationObserver {},
+    "dflex_ky_1_0" => MutationObserver {},
   },
   "queueTimeoutId": undefined,
   "registry": Map {
@@ -311,7 +221,7 @@ DFlexDnDStore {
         "x": 0,
         "y": 0,
       },
-      "animatedFrame": 1000000000003,
+      "animatedFrame": 1000000000002,
       "depth": 0,
       "hasPendingTransform": false,
       "id": "id-1",
@@ -338,8 +248,8 @@ DFlexDnDStore {
     },
     "dflex_id_0" => DFlexElement {
       "DOMGrid": PointNum {
-        "x": 1,
-        "y": 1,
+        "x": 0,
+        "y": 0,
       },
       "DOMOrder": {
         "parent": 0,
@@ -350,7 +260,6 @@ DFlexDnDStore {
         "self": 0,
       },
       "_computedDimensions": null,
-      "_hasAttribute": Set {},
       "_initialPosition": PointNum {
         "x": 0,
         "y": 0,
@@ -374,10 +283,6 @@ DFlexDnDStore {
         "right": 0,
         "top": 0,
         "width": 0,
-      },
-      "translate": PointNum {
-        "x": 0,
-        "y": 0,
       },
     },
     "id-2" => DFlexElement {
@@ -514,8 +419,8 @@ DFlexDnDStore {
     },
     "dflex_id_1" => DFlexElement {
       "DOMGrid": PointNum {
-        "x": 1,
-        "y": 1,
+        "x": 0,
+        "y": 0,
       },
       "DOMOrder": {
         "parent": 0,
@@ -526,7 +431,6 @@ DFlexDnDStore {
         "self": 1,
       },
       "_computedDimensions": null,
-      "_hasAttribute": Set {},
       "_initialPosition": PointNum {
         "x": 0,
         "y": 0,
@@ -541,49 +445,6 @@ DFlexDnDStore {
         "CHK": "dflex_ky_0_1",
         "PK": "dflex_ky_2_0",
         "SK": "dflex_ky_1_0",
-      },
-      "readonly": true,
-      "rect": BoxRect {
-        "bottom": 0,
-        "height": 0,
-        "left": 0,
-        "right": 0,
-        "top": 0,
-        "width": 0,
-      },
-      "translate": PointNum {
-        "x": 0,
-        "y": 0,
-      },
-    },
-    "dflex_id_2" => DFlexElement {
-      "DOMGrid": PointNum {
-        "x": 0,
-        "y": 0,
-      },
-      "DOMOrder": {
-        "parent": 0,
-        "self": 0,
-      },
-      "VDOMOrder": {
-        "parent": 0,
-        "self": 0,
-      },
-      "_computedDimensions": null,
-      "_initialPosition": PointNum {
-        "x": 0,
-        "y": 0,
-      },
-      "animatedFrame": null,
-      "depth": 2,
-      "hasPendingTransform": false,
-      "id": "dflex_id_2",
-      "isPaused": false,
-      "isVisible": true,
-      "keys": {
-        "CHK": "dflex_ky_1_0",
-        "PK": "dflex_ky_3_0",
-        "SK": "dflex_ky_2_0",
       },
       "readonly": true,
       "rect": BoxRect {
@@ -624,11 +485,7 @@ DFlexDnDStore {
         <head />
         <body>
           <div>
-            <div
-              data-dflex-key="dflex_ky_1_0"
-              data-index="0"
-              id="dflex_id_2"
-            >
+            <div>
               <div
                 data-dflex-key="dflex_ky_0_0"
                 data-index="0"
@@ -705,92 +562,7 @@ DFlexDnDStore {
         <head />
         <body>
           <div>
-            <div
-              data-dflex-key="dflex_ky_1_0"
-              data-index="0"
-              id="dflex_id_2"
-            >
-              <div
-                data-dflex-key="dflex_ky_0_0"
-                data-index="0"
-                id="dflex_id_0"
-              >
-                <div
-                  data-index="0"
-                  id="id-1"
-                />
-              </div>
-              <div
-                data-dflex-key="dflex_ky_0_1"
-                data-index="1"
-                id="dflex_id_1"
-              >
-                <div
-                  data-index="0"
-                  id="id-2"
-                />
-                <div
-                  data-index="1"
-                  id="id-3"
-                />
-                <div
-                  data-index="2"
-                  id="id-4"
-                />
-              </div>
-            </div>
-          </div>
-        </body>
-      </html>,
-      "scrollContainerRect": BoxRect {
-        "bottom": 0,
-        "height": 0,
-        "left": 0,
-        "right": 0,
-        "top": 0,
-        "width": 0,
-      },
-      "scrollRect": BoxRect {
-        "bottom": 0,
-        "height": 0,
-        "left": 0,
-        "right": 0,
-        "top": 0,
-        "width": 0,
-      },
-    },
-    "dflex_ky_1_0" => DFlexScrollContainer {
-      "_SK": "dflex_ky_1_0",
-      "_hasThrottledFrame": null,
-      "_innerThresholdInViewport": null,
-      "_listenerDataset": "dflexScrollListener_dflex_ky_1_0",
-      "_outerThresholdInViewport": null,
-      "_scrollEventCallback": null,
-      "_threshold_inner_key": "scroll_inner_dflex_ky_1_0",
-      "_threshold_outer_key": "scroll_outer_dflex_ky_1_0",
-      "allowDynamicVisibility": false,
-      "animatedResizeListener": [Function],
-      "animatedScrollListener": [Function],
-      "hasDocumentAsContainer": true,
-      "hasOverflow": PointBool {
-        "x": false,
-        "y": false,
-      },
-      "invisibleDistance": BoxNum {
-        "bottom": 0,
-        "left": 0,
-        "right": 0,
-        "top": 0,
-      },
-      "scrollContainerDOM": <html>
-        <head />
-        <body>
-          <div>
-            <div
-              data-dflex-key="dflex_ky_1_0"
-              data-index="0"
-              id="dflex_id_2"
-            >
+            <div>
               <div
                 data-dflex-key="dflex_ky_0_0"
                 data-index="0"
@@ -843,15 +615,11 @@ DFlexDnDStore {
   },
   "tracker": Tracker {
     "_travelID": {
-      "dflex_id_": 2,
+      "dflex_id_": 1,
     },
   },
   "unifiedContainerDimensions": {
     "0": {
-      "height": 0,
-      "width": 0,
-    },
-    "1": {
       "height": 0,
       "width": 0,
     },

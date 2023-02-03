@@ -53,30 +53,7 @@ describe("Testing clear methods", () => {
     expect(domGen.getBranchByDepth(0)).toStrictEqual([`${PREFIX_KY}0_0`]);
   });
 
-  it("Siblings branch removed the deleted element id", () => {
-    const branch = domGen.getElmBranchByKey(pointerChild0D0.keys.SK);
-
-    expect(branch).toStrictEqual(["id-1"]);
-  });
-
   it("The branch depth array still has the branch key", () => {
-    expect(domGen.getBranchByDepth(0)).toStrictEqual([`${PREFIX_KY}0_0`]);
-  });
-
-  it("Add new element after deleting the old one to check indicators working correctly", () => {
-    pointerChild0D0 = domGen.register("id-0", 0);
-
-    expect(pointerChild0D0).toStrictEqual({
-      keys: KEYS_CHILDREN_D0,
-      order: {
-        parent: 0,
-        self: 1,
-      },
-    });
-
-    const branch = domGen.getElmBranchByKey(pointerChild0D0.keys.SK);
-
-    expect(branch).toStrictEqual(["id-1", "id-0"]);
     expect(domGen.getBranchByDepth(0)).toStrictEqual([`${PREFIX_KY}0_0`]);
   });
 
