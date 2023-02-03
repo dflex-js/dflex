@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { combineKeys, Tracker } from "@dflex/utils";
+import { combineKeys } from "@dflex/utils";
 import type {
   IGenerator,
   Keys,
@@ -8,6 +8,10 @@ import type {
   ELmBranch,
   DeletedElmKeys,
 } from "./types";
+
+const PREFIX_SK = "dflex_Sk_";
+const PREFIX_PK = "dflex_Pk_";
+const PREFIX_BK = "dflex_Bk_";
 
 /**
  * Generate keys to connect relations between DOM-elements depending on tree
@@ -62,7 +66,7 @@ class Generator implements IGenerator {
     this._SKByBranch = {};
     this.branchDeletedKeys = null;
     this._prevDepth = NaN;
-    this._prevSK = `${Tracker.PREFIX_ky}${combineKeys(0, 0)}`;
+    this._prevSK = `${PREFIX_SK}${combineKeys(0, 0)}`;
   }
 
   /**
@@ -151,9 +155,9 @@ class Generator implements IGenerator {
     /**
      * get siblings unique key (sK) and parents key (pK)
      */
-    const SK = `${Tracker.PREFIX_ky}${combineKeys(depth, parentIndex)}`;
+    const SK = `${PREFIX_SK}${combineKeys(depth, parentIndex)}`;
 
-    const PK = `${Tracker.PREFIX_ky}${combineKeys(
+    const PK = `${PREFIX_PK}${combineKeys(
       depth + 1,
       this._depthIndicator[depth + 2]
     )}`;
@@ -172,15 +176,15 @@ class Generator implements IGenerator {
       this._branchIndicator += 1;
     }
 
-    const BK = `${Tracker.PREFIX_ky}${this._branchIndicator}`;
+    const BK = `${PREFIX_BK}${this._branchIndicator}`;
 
     if (!Array.isArray(this._SKByBranch[BK])) {
       this._SKByBranch[BK] = [];
     }
 
-    const has = this._SKByBranch[BK].find((e) => e === SK);
+    const branchHasSK = this._SKByBranch[BK].find((e) => e === SK);
 
-    if (!has) {
+    if (!branchHasSK) {
       this._SKByBranch[BK].push(SK);
     }
 

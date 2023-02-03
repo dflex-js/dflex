@@ -20,7 +20,7 @@ import {
   DFlexSerializedScroll,
 } from "@dflex/core-instance";
 
-import type { DeletedElmKeys, ELmBranch, Keys } from "@dflex/dom-gen";
+import type { DeletedElmKeys, ELmBranch } from "@dflex/dom-gen";
 
 import initDFlexListeners, {
   DFlexListenerPlugin,

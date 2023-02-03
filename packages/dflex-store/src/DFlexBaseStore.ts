@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-underscore-dangle */
-import Generator, { ELmBranch, Keys } from "@dflex/dom-gen";
+import Generator, { ELmBranch } from "@dflex/dom-gen";
 
 import { DFlexElement, DFlexElementInput } from "@dflex/core-instance";
 import {
