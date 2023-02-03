@@ -30,7 +30,7 @@ export interface Pointer {
 
 export type ELmBranch = string[];
 
-export type DeletedElmKeys = Keys & { parentIndex: number };
+export type DeletedElmKeys = Map<string, Keys & { parentIndex: number }>;
 
 /**
  * DOM Generator class interface.

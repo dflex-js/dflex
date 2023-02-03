@@ -18,35 +18,51 @@ class Generator implements IGenerator {
    * Counter store. Each depth has it's own indicator. Allowing us to go
    * for endless layers (levels).
    */
-  private _indicator: {
+  private _depthIndicator: {
     [keys: number]: number;
   };
 
+  private _branchIndicator: number;
+
   /**
-   * A collection of registered elements stored in arrays represents each
-   * branch.
+   * A collection of registered elements stored in arrays represents siblings in
+   * each branch.
    */
-  private _branches: {
-    [keys: string]: ELmBranch;
+  private _siblings: {
+    [SK: string]: ELmBranch;
   };
 
-  private _branchesByDepth: {
+  /**
+   * A collection of siblings keys stored belong to the same depth.
+   * Horizontal scale.
+   */
+  private _SKByDepth: {
     [depth: number]: ELmBranch;
+  };
+
+  /**
+   * A collection of siblings keys stored belong to the same branch.
+   * Vertical scale.
+   */
+  private _SKByBranch: {
+    [BK: string]: ELmBranch;
   };
 
   branchDeletedKeys: Map<string, Keys & { parentIndex: number }> | null;
 
   private _prevDepth: number;
 
-  private _prevKey: string;
+  private _prevSK: string;
 
   constructor() {
-    this._indicator = {};
-    this._branches = {};
-    this._branchesByDepth = {};
+    this._depthIndicator = {};
+    this._branchIndicator = 0;
+    this._siblings = {};
+    this._SKByDepth = {};
+    this._SKByBranch = {};
     this.branchDeletedKeys = null;
-    this._prevDepth = -99;
-    this._prevKey = `${Tracker.PREFIX_ky}${combineKeys(0, 0)}`;
+    this._prevDepth = NaN;
+    this._prevSK = `${Tracker.PREFIX_ky}${combineKeys(0, 0)}`;
   }
 
   /**
@@ -68,34 +84,34 @@ class Generator implements IGenerator {
      *
      * By adding this, we can deal with parents coming first before children.
      */
-    if (this._indicator[dp] === undefined) {
-      this._indicator[dp] = -1;
+    if (this._depthIndicator[dp] === undefined) {
+      this._depthIndicator[dp] = -1;
     }
 
     /**
      * initiate parents from zero.
      * this.#indicator[dp+1] = 0
      */
-    if (this._indicator[dp + 1] === undefined) {
-      this._indicator[dp + 1] = 0;
+    if (this._depthIndicator[dp + 1] === undefined) {
+      this._depthIndicator[dp + 1] = 0;
     }
 
-    if (this._indicator[dp + 2] === undefined) {
-      this._indicator[dp + 2] = 0;
+    if (this._depthIndicator[dp + 2] === undefined) {
+      this._depthIndicator[dp + 2] = 0;
     }
   }
 
   private _addElementIDToDepthCollection(SK: string, depth: number) {
-    if (!Array.isArray(this._branchesByDepth[depth])) {
-      this._branchesByDepth[depth] = [SK];
+    if (!Array.isArray(this._SKByDepth[depth])) {
+      this._SKByDepth[depth] = [SK];
 
       return;
     }
 
-    const is = this._branchesByDepth[depth].find((k) => k === SK);
+    const is = this._SKByDepth[depth].find((k) => k === SK);
 
     if (!is) {
-      this._branchesByDepth[depth].push(SK);
+      this._SKByDepth[depth].push(SK);
     }
   }
 
@@ -106,12 +122,12 @@ class Generator implements IGenerator {
    * @param  SK - Siblings Key.
    */
   private _addElementIDToSiblingsBranch(id: string, SK: string) {
-    if (!Array.isArray(this._branches[SK])) {
-      this._branches[SK] = [];
+    if (!Array.isArray(this._siblings[SK])) {
+      this._siblings[SK] = [];
     }
 
     // @ts-ignore
-    const selfIndex = this._branches[SK].push(id) - 1;
+    const selfIndex = this._siblings[SK].push(id) - 1;
 
     return selfIndex;
   }
@@ -123,14 +139,14 @@ class Generator implements IGenerator {
 
     // If hasSiblingInSameLevel then don't increment.
     // Revers the accumulator.
-    if (hasSiblingInSameLevel && this._indicator[depth + 1] > 0) {
-      this._indicator[depth + 1] -= 1;
+    if (hasSiblingInSameLevel && this._depthIndicator[depth + 1] > 0) {
+      this._depthIndicator[depth + 1] -= 1;
     }
 
     /**
      * Get parent index.
      */
-    const parentIndex = this._indicator[depth + 1];
+    const parentIndex = this._depthIndicator[depth + 1];
 
     /**
      * get siblings unique key (sK) and parents key (pK)
@@ -139,20 +155,33 @@ class Generator implements IGenerator {
 
     const PK = `${Tracker.PREFIX_ky}${combineKeys(
       depth + 1,
-      this._indicator[depth + 2]
+      this._depthIndicator[depth + 2]
     )}`;
 
-    const CHK = depth === 0 ? null : this._prevKey;
+    const CHK = depth === 0 ? null : this._prevSK;
 
-    this._prevKey = SK;
+    this._prevSK = SK;
 
-    this._indicator[depth] += 1;
+    this._depthIndicator[depth] += 1;
 
     /**
      * Start new branch.
      */
     if (depth < this._prevDepth) {
-      this._indicator[0] = 0;
+      this._depthIndicator[0] = 0;
+      this._branchIndicator += 1;
+    }
+
+    const BK = `${Tracker.PREFIX_ky}${this._branchIndicator}`;
+
+    if (!Array.isArray(this._SKByBranch[BK])) {
+      this._SKByBranch[BK] = [];
+    }
+
+    const has = this._SKByBranch[BK].find((e) => e === SK);
+
+    if (!has) {
+      this._SKByBranch[BK].push(SK);
     }
 
     this._prevDepth = depth;
@@ -166,8 +195,8 @@ class Generator implements IGenerator {
   }
 
   updateBranch(SK: string, branch: ELmBranch) {
-    if (SK in this._branches) {
-      Object.assign(this._branches, { [SK]: branch });
+    if (SK in this._siblings) {
+      Object.assign(this._siblings, { [SK]: branch });
     } else if (__DEV__) {
       throw new Error(
         `updateELmBranch: Branch with key:${SK} is not registered.`
@@ -176,8 +205,8 @@ class Generator implements IGenerator {
   }
 
   forEachBranch(cb: (SK: string, branch: ELmBranch) => void) {
-    Object.keys(this._branches).forEach((SK) => {
-      cb(SK, this._branches[SK]);
+    Object.keys(this._siblings).forEach((SK) => {
+      cb(SK, this._siblings[SK]);
     });
   }
 
@@ -235,7 +264,7 @@ class Generator implements IGenerator {
   }
 
   addElmIDToBranch(SK: string, id: string) {
-    if (!Array.isArray(this._branches[SK])) {
+    if (!Array.isArray(this._siblings[SK])) {
       if (__DEV__) {
         throw new Error(
           `addElmIDToBranch: You are trying to add an element to the branch with key:${SK} that is not registered at all.` +
@@ -246,11 +275,11 @@ class Generator implements IGenerator {
       return;
     }
 
-    this._branches[SK].push(id);
+    this._siblings[SK].push(id);
   }
 
   removeElmIDFromBranch(SK: string, id: string) {
-    if (!Array.isArray(this._branches[SK])) {
+    if (!Array.isArray(this._siblings[SK])) {
       if (__DEV__) {
         throw new Error(
           `removeElmIDFromBranch: Element with id: ${id} doesn't belong to any existing branch`
@@ -260,33 +289,33 @@ class Generator implements IGenerator {
       return null;
     }
 
-    const index = this._branches[SK].findIndex((elmID) => elmID === id);
+    const index = this._siblings[SK].findIndex((elmID) => elmID === id);
 
     if (index === -1) {
       if (__DEV__) {
         throw new Error(
-          `removeElmIDFromBranch: Element with id: ${id} doesn't belong to branch: ${this._branches[SK]}.`
+          `removeElmIDFromBranch: Element with id: ${id} doesn't belong to branch: ${this._siblings[SK]}.`
         );
       }
 
       return null;
     }
 
-    const [deletedElmID] = this._branches[SK]!.splice(index, 1);
+    const [deletedElmID] = this._siblings[SK]!.splice(index, 1);
 
-    if (this._branches[SK]!.length === 0) {
-      delete this._branches[SK];
+    if (this._siblings[SK]!.length === 0) {
+      delete this._siblings[SK];
     }
 
     return deletedElmID;
   }
 
   getBranchByDepth(dp: number): ELmBranch {
-    return this._branchesByDepth[dp] || [];
+    return this._SKByDepth[dp] || [];
   }
 
   getElmBranchByKey(SK: string): ELmBranch {
-    return this._branches[SK] || [];
+    return this._siblings[SK] || [];
   }
 
   destroyBranch(
@@ -294,7 +323,7 @@ class Generator implements IGenerator {
     cb?: ((elmID: string) => void) | null,
     deletedElmKeys?: DeletedElmKeys
   ) {
-    if (!this._branches[SK]) {
+    if (!this._siblings[SK]) {
       if (__DEV__) {
         throw new Error(
           `destroyBranch: You are trying to destroy nonexistence branch ${SK}`
@@ -305,21 +334,21 @@ class Generator implements IGenerator {
     }
 
     if (typeof cb === "function") {
-      while (this._branches[SK].length) {
-        cb(this._branches[SK].pop()!);
+      while (this._siblings[SK].length) {
+        cb(this._siblings[SK].pop()!);
       }
     }
 
-    delete this._branches[SK];
+    delete this._siblings[SK];
 
-    Object.keys(this._branchesByDepth).forEach((dp) => {
+    Object.keys(this._SKByDepth).forEach((dp) => {
       const dpNum = Number(dp);
-      this._branchesByDepth[dpNum] = this._branchesByDepth[dpNum].filter(
+      this._SKByDepth[dpNum] = this._SKByDepth[dpNum].filter(
         (key) => key !== SK
       );
 
-      if (this._branchesByDepth[dpNum].length === 0) {
-        delete this._branchesByDepth[dpNum];
+      if (this._SKByDepth[dpNum].length === 0) {
+        delete this._SKByDepth[dpNum];
       }
     });
 
