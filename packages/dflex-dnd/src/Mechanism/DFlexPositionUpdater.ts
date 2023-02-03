@@ -4,7 +4,7 @@ import { DFlexElement } from "@dflex/core-instance";
 import { PointNum } from "@dflex/utils";
 import type { AxesPoint, Direction, Axis, AbstractBox } from "@dflex/utils";
 
-import type { ELmBranch } from "@dflex/dom-gen";
+import type { Siblings } from "@dflex/dom-gen";
 import type DraggableInteractive from "../Draggable";
 
 import { store, DFLEX_EVENTS } from "../LayoutManager";
@@ -437,7 +437,7 @@ class DFlexPositionUpdater {
    */
   protected updateElement(
     id: string,
-    siblings: ELmBranch,
+    siblings: Siblings,
     cycleID: string,
     isIncrease: boolean
   ) {

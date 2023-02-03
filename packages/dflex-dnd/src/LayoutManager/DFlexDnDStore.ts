@@ -20,7 +20,7 @@ import {
   DFlexSerializedScroll,
 } from "@dflex/core-instance";
 
-import type { DeletedElmKeys, ELmBranch } from "@dflex/dom-gen";
+import type { DeletedElmKeys, Siblings } from "@dflex/dom-gen";
 
 import initDFlexListeners, {
   DFlexListenerPlugin,
@@ -484,7 +484,7 @@ class DFlexDnDStore extends DFlexBaseStore {
    * @param id
    * @returns
    */
-  getScrollWithSiblingsByID(id: string): [DFlexScrollContainer, ELmBranch] {
+  getScrollWithSiblingsByID(id: string): [DFlexScrollContainer, Siblings] {
     const {
       keys: { SK },
     } = this.registry.get(id)!;

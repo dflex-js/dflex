@@ -1,5 +1,6 @@
-import { Tracker } from "@dflex/utils";
 import Generator, { Pointer } from "../src";
+
+const PREFIX_KY = "dflex_ky_";
 
 const domGen = new Generator();
 
@@ -9,8 +10,8 @@ let pointerChild2D0: Pointer;
 
 const KEYS_CHILDREN_D0 = {
   CHK: null,
-  PK: `${Tracker.PREFIX_ky}1_0`,
-  SK: `${Tracker.PREFIX_ky}0_0`,
+  PK: `${PREFIX_KY}1_0`,
+  SK: `${PREFIX_KY}0_0`,
 };
 
 let pointerParent0D1: Pointer;
@@ -44,9 +45,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
     });
 
     it("Adds the new branch into its depth", () => {
-      expect(domGen.getBranchByDepth(0)).toStrictEqual([
-        `${Tracker.PREFIX_ky}0_0`,
-      ]);
+      expect(domGen.getBranchByDepth(0)).toStrictEqual([`${PREFIX_KY}0_0`]);
     });
 
     it("Preserves keys and parent index for element with same level", () => {
@@ -121,9 +120,9 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
 
       expect(pointerParent0D1).toStrictEqual({
         keys: {
-          CHK: `${Tracker.PREFIX_ky}0_0`,
-          PK: `${Tracker.PREFIX_ky}2_0`,
-          SK: `${Tracker.PREFIX_ky}1_0`,
+          CHK: `${PREFIX_KY}0_0`,
+          PK: `${PREFIX_KY}2_0`,
+          SK: `${PREFIX_KY}1_0`,
         },
         order: {
           parent: 0,
@@ -137,12 +136,8 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
     });
 
     it("Add the new branch key (parent branch) to its depth", () => {
-      expect(domGen.getBranchByDepth(0)).toStrictEqual([
-        `${Tracker.PREFIX_ky}0_0`,
-      ]);
-      expect(domGen.getBranchByDepth(1)).toStrictEqual([
-        `${Tracker.PREFIX_ky}1_0`,
-      ]);
+      expect(domGen.getBranchByDepth(0)).toStrictEqual([`${PREFIX_KY}0_0`]);
+      expect(domGen.getBranchByDepth(1)).toStrictEqual([`${PREFIX_KY}1_0`]);
     });
 
     it("Identifies grand parent connects its branch", () => {
@@ -163,9 +158,9 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
 
       expect(pointerGrandParent0D2).toStrictEqual({
         keys: {
-          CHK: `${Tracker.PREFIX_ky}1_0`,
-          PK: `${Tracker.PREFIX_ky}3_0`,
-          SK: `${Tracker.PREFIX_ky}2_0`,
+          CHK: `${PREFIX_KY}1_0`,
+          PK: `${PREFIX_KY}3_0`,
+          SK: `${PREFIX_KY}2_0`,
         },
         order: {
           parent: 0,
@@ -179,15 +174,9 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
     });
 
     it("Add the new branch key (grand branch) to its depth", () => {
-      expect(domGen.getBranchByDepth(0)).toStrictEqual([
-        `${Tracker.PREFIX_ky}0_0`,
-      ]);
-      expect(domGen.getBranchByDepth(1)).toStrictEqual([
-        `${Tracker.PREFIX_ky}1_0`,
-      ]);
-      expect(domGen.getBranchByDepth(2)).toStrictEqual([
-        `${Tracker.PREFIX_ky}2_0`,
-      ]);
+      expect(domGen.getBranchByDepth(0)).toStrictEqual([`${PREFIX_KY}0_0`]);
+      expect(domGen.getBranchByDepth(1)).toStrictEqual([`${PREFIX_KY}1_0`]);
+      expect(domGen.getBranchByDepth(2)).toStrictEqual([`${PREFIX_KY}2_0`]);
     });
   });
 
@@ -217,8 +206,8 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
       expect(pointerChild3D0).toStrictEqual({
         keys: {
           CHK: null,
-          PK: `${Tracker.PREFIX_ky}1_1`,
-          SK: `${Tracker.PREFIX_ky}0_1`,
+          PK: `${PREFIX_KY}1_1`,
+          SK: `${PREFIX_KY}0_1`,
         },
         order: {
           parent: 1,
@@ -233,15 +222,11 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
 
     it("Add the new branch key to the existing depth array", () => {
       expect(domGen.getBranchByDepth(0)).toStrictEqual([
-        `${Tracker.PREFIX_ky}0_0`,
-        `${Tracker.PREFIX_ky}0_1`,
+        `${PREFIX_KY}0_0`,
+        `${PREFIX_KY}0_1`,
       ]);
-      expect(domGen.getBranchByDepth(1)).toStrictEqual([
-        `${Tracker.PREFIX_ky}1_0`,
-      ]);
-      expect(domGen.getBranchByDepth(2)).toStrictEqual([
-        `${Tracker.PREFIX_ky}2_0`,
-      ]);
+      expect(domGen.getBranchByDepth(1)).toStrictEqual([`${PREFIX_KY}1_0`]);
+      expect(domGen.getBranchByDepth(2)).toStrictEqual([`${PREFIX_KY}2_0`]);
     });
 
     it("Throws when updating non-existing branch", () => {

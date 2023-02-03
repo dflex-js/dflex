@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-underscore-dangle */
-import Generator, { ELmBranch } from "@dflex/dom-gen";
+import Generator, { Siblings } from "@dflex/dom-gen";
 
 import { DFlexElement, DFlexElementInput } from "@dflex/core-instance";
 import {
@@ -450,7 +450,7 @@ class DFlexBaseStore {
    * @param SK - Siblings Key.
    * @returns
    */
-  getElmBranchByKey(SK: string): ELmBranch {
+  getElmBranchByKey(SK: string): Siblings {
     return this.DOMGen.getElmBranchByKey(SK);
   }
 
@@ -460,7 +460,7 @@ class DFlexBaseStore {
    * @param dp - depth.
    * @returns
    */
-  getBranchesByDepth(dp: number): ELmBranch {
+  getBranchesByDepth(dp: number): Siblings {
     return this.DOMGen.getBranchByDepth(dp);
   }
 
@@ -470,7 +470,7 @@ class DFlexBaseStore {
    * @param SK
    * @param newBranch
    */
-  updateBranch(SK: string, newBranch: ELmBranch): void {
+  updateBranch(SK: string, newBranch: Siblings): void {
     return this.DOMGen.updateBranch(SK, newBranch);
   }
 

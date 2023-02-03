@@ -4,7 +4,7 @@ export type {
   Keys,
   Order,
   Pointer,
-  Siblings as ELmBranch,
+  Siblings,
   DeletedElmKeys,
 } from "./Generator";
 

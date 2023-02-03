@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import type { DFlexElement, DFlexParentContainer } from "@dflex/core-instance";
-import type { ELmBranch } from "@dflex/dom-gen";
+import type { Siblings } from "@dflex/dom-gen";
 import { assertElementPosition, featureFlags } from "@dflex/utils";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
@@ -57,7 +57,7 @@ function setElmGridAndAssertPosition(
 }
 
 function switchElmDOMPosition(
-  branchIDs: Readonly<ELmBranch>,
+  branchIDs: Readonly<Siblings>,
   branchDOM: HTMLElement,
   store: DFlexDnDStore,
   dflexElm: DFlexElement,
@@ -89,7 +89,7 @@ function switchElmDOMPosition(
 let reconciledElmQueue: [DFlexElement, HTMLElement][] = [];
 
 function commitElm(
-  branchIDs: Readonly<ELmBranch>,
+  branchIDs: Readonly<Siblings>,
   branchDOM: HTMLElement,
   store: DFlexDnDStore,
   elmID: string
@@ -122,7 +122,7 @@ function commitElm(
  * @returns
  */
 function DFlexDOMReconciler(
-  branchIDs: Readonly<ELmBranch>,
+  branchIDs: Readonly<Siblings>,
   branchDOM: HTMLElement,
   store: DFlexDnDStore,
   container: DFlexParentContainer,

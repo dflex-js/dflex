@@ -1,9 +1,8 @@
 /* eslint-disable no-unused-vars */
 import { combineKeys } from "@dflex/utils";
 
-const PREFIX_SK = "dflex_Sk_";
-const PREFIX_PK = "dflex_Pk_";
-const PREFIX_BK = "dflex_Bk_";
+const PREFIX_POINTER_KEY = "dflex_ky_";
+const PREFIX_BRANCH_KEY = "dflex_bk_";
 
 /**
  * Element generated unique keys in DOM tree.
@@ -97,7 +96,7 @@ class Generator {
     this._SKByBranch = {};
     this._branchDeletedSK = null;
     this._prevDepth = NaN;
-    this._prevSK = `${PREFIX_SK}${combineKeys(0, 0)}`;
+    this._prevSK = `${PREFIX_POINTER_KEY}${combineKeys(0, 0)}`;
   }
 
   /**
@@ -183,9 +182,9 @@ class Generator {
     /**
      * get siblings unique key (sK) and parents key (pK)
      */
-    const SK = `${PREFIX_SK}${combineKeys(depth, parentIndex)}`;
+    const SK = `${PREFIX_POINTER_KEY}${combineKeys(depth, parentIndex)}`;
 
-    const PK = `${PREFIX_PK}${combineKeys(
+    const PK = `${PREFIX_POINTER_KEY}${combineKeys(
       depth + 1,
       this._depthIndicator[depth + 2]
     )}`;
@@ -204,7 +203,7 @@ class Generator {
       this._branchIndicator += 1;
     }
 
-    const BK = `${PREFIX_BK}${this._branchIndicator}`;
+    const BK = `${PREFIX_BRANCH_KEY}${this._branchIndicator}`;
 
     if (!Array.isArray(this._SKByBranch[BK])) {
       this._SKByBranch[BK] = [];

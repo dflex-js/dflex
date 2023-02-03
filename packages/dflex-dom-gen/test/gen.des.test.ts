@@ -1,5 +1,6 @@
-import { Tracker } from "@dflex/utils";
 import Generator, { Pointer } from "../src";
+
+const PREFIX_KY = "dflex_ky_";
 
 const domGen = new Generator();
 
@@ -25,9 +26,9 @@ describe("DOM Relationship Generator: Descending-Simple", () => {
 
       expect(pointerParent0D3).toStrictEqual({
         keys: {
-          CHK: `${Tracker.PREFIX_ky}0_0`,
-          PK: `${Tracker.PREFIX_ky}4_0`,
-          SK: `${Tracker.PREFIX_ky}3_0`,
+          CHK: `${PREFIX_KY}0_0`,
+          PK: `${PREFIX_KY}4_0`,
+          SK: `${PREFIX_KY}3_0`,
         },
         order: {
           parent: 0,
@@ -55,8 +56,8 @@ describe("DOM Relationship Generator: Descending-Simple", () => {
     it("Preserves index incrementing", () => {
       expect(pointerParent1D3).toStrictEqual({
         keys: {
-          CHK: `${Tracker.PREFIX_ky}3_0`,
-          PK: `${Tracker.PREFIX_ky}4_0`,
+          CHK: `${PREFIX_KY}3_0`,
+          PK: `${PREFIX_KY}4_0`,
           SK: pointerParent0D3.keys.SK, // "3-0",
         },
         order: {
@@ -81,9 +82,9 @@ describe("DOM Relationship Generator: Descending-Simple", () => {
 
       expect(pointerChild0D2).toStrictEqual({
         keys: {
-          CHK: `${Tracker.PREFIX_ky}3_0`,
+          CHK: `${PREFIX_KY}3_0`,
           PK: pointerParent1D3.keys.CHK,
-          SK: `${Tracker.PREFIX_ky}2_1`,
+          SK: `${PREFIX_KY}2_1`,
         },
         order: {
           parent: pointerParent1D3.order.self, // 1
@@ -107,9 +108,9 @@ describe("DOM Relationship Generator: Descending-Simple", () => {
 
       expect(pointeGrandChild0D1).toStrictEqual({
         keys: {
-          CHK: `${Tracker.PREFIX_ky}2_1`,
+          CHK: `${PREFIX_KY}2_1`,
           PK: pointeGrandChild0D1.keys.CHK,
-          SK: `${Tracker.PREFIX_ky}1_0`,
+          SK: `${PREFIX_KY}1_0`,
         },
         order: {
           parent: pointeGrandChild0D1.order.self, // 1

@@ -13,7 +13,7 @@ import {
 
 import type { DFlexElement } from "@dflex/core-instance";
 
-import type { ELmBranch } from "@dflex/dom-gen";
+import type { Siblings } from "@dflex/dom-gen";
 import {
   DFlexEventPlugin,
   initDFlexEvent,
@@ -28,7 +28,7 @@ import type {
   RestrictionsStatus,
 } from "../types";
 
-function initContainers(SK: string, siblings: ELmBranch) {
+function initContainers(SK: string, siblings: Siblings) {
   const container = store.containers.get(SK)!;
 
   if (!container.lastElmPosition) {
@@ -156,9 +156,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     this.containersTransition =
       store.getBranchesByDepth(depth).length > 1
         ? opts.containersTransition
-        : Object.assign({}, opts.containersTransition, {
-            enable: false,
-          });
+        : { ...opts.containersTransition, enable: false };
 
     initContainers(SK, siblings);
 
