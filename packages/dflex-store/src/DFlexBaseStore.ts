@@ -350,14 +350,14 @@ class DFlexBaseStore {
       }
     };
 
-    const dlKys = this.DOMGen.branchDeletedKeys;
-
     // Mutation observer is not fired yet. Wait until it's done.
     // When it's fired then `branchDeletedKeys` should be defined.
-    if (dlKys === null || !dlKys.has(dflexParentElm.keys.SK)) {
-      queueMicrotask(submit);
-    } else {
+    const hasDelKeys = this.DOMGen.getBranchDeletedKeys(dflexParentElm.keys.SK);
+
+    if (hasDelKeys) {
       submit();
+    } else {
+      queueMicrotask(submit);
     }
   }
 

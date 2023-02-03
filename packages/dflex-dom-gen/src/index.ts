@@ -4,9 +4,8 @@ export type {
   Keys,
   Order,
   Pointer,
-  ELmBranch,
-  IGenerator,
+  Siblings as ELmBranch,
   DeletedElmKeys,
-} from "./types";
+} from "./Generator";
 
 export default Generator;

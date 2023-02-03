@@ -1,23 +1,51 @@
 /* eslint-disable no-unused-vars */
 import { combineKeys } from "@dflex/utils";
-import type {
-  IGenerator,
-  Keys,
-  Order,
-  Pointer,
-  ELmBranch,
-  DeletedElmKeys,
-} from "./types";
 
 const PREFIX_SK = "dflex_Sk_";
 const PREFIX_PK = "dflex_Pk_";
 const PREFIX_BK = "dflex_Bk_";
 
 /**
+ * Element generated unique keys in DOM tree.
+ */
+export interface Keys {
+  /** Siblings key - The main key. */
+  SK: string;
+  /** Parent key. */
+  PK: string;
+  /** Children key. */
+  CHK: string | null;
+}
+
+/**
+ * Element order in its siblings & its parent.
+ */
+export interface Order {
+  /** Self index in its siblings. */
+  self: number;
+  /** Parent index in higher siblings. */
+  parent: number;
+}
+
+/**
+ * Generated element pointer consists of keys and order.
+ */
+export interface Pointer {
+  keys: Keys;
+  order: Order;
+}
+
+export type Siblings = string[];
+
+export type DeletedElmKeys = Keys & { parentIndex: number };
+
+export type BranchDeletedKeys = Map<string, DeletedElmKeys> | null;
+
+/**
  * Generate keys to connect relations between DOM-elements depending on tree
  * depth.
  */
-class Generator implements IGenerator {
+class Generator {
   /**
    * Counter store. Each depth has it's own indicator. Allowing us to go
    * for endless layers (levels).
@@ -33,7 +61,7 @@ class Generator implements IGenerator {
    * each branch.
    */
   private _siblings: {
-    [SK: string]: ELmBranch;
+    [SK: string]: Siblings;
   };
 
   /**
@@ -41,7 +69,7 @@ class Generator implements IGenerator {
    * Horizontal scale.
    */
   private _SKByDepth: {
-    [depth: number]: ELmBranch;
+    [depth: number]: Siblings;
   };
 
   /**
@@ -49,10 +77,13 @@ class Generator implements IGenerator {
    * Vertical scale.
    */
   private _SKByBranch: {
-    [BK: string]: ELmBranch;
+    [BK: string]: Siblings;
   };
 
-  branchDeletedKeys: Map<string, Keys & { parentIndex: number }> | null;
+  /**
+   * Preserve deleted SK for each branch.
+   */
+  private _branchDeletedSK: BranchDeletedKeys;
 
   private _prevDepth: number;
 
@@ -64,7 +95,7 @@ class Generator implements IGenerator {
     this._siblings = {};
     this._SKByDepth = {};
     this._SKByBranch = {};
-    this.branchDeletedKeys = null;
+    this._branchDeletedSK = null;
     this._prevDepth = NaN;
     this._prevSK = `${PREFIX_SK}${combineKeys(0, 0)}`;
   }
@@ -74,7 +105,7 @@ class Generator implements IGenerator {
    *
    * @param dp - element depth
    */
-  private _initIndicators(dp: number) {
+  private _initIndicators(dp: number): void {
     /**
      * initiate self from -1 since self is incremented after the id is added so
      * it's children won't be confused about their parent indicator.
@@ -105,7 +136,7 @@ class Generator implements IGenerator {
     }
   }
 
-  private _addElementIDToDepthCollection(SK: string, depth: number) {
+  private _addElementIDToDepthCollection(SK: string, depth: number): void {
     if (!Array.isArray(this._SKByDepth[depth])) {
       this._SKByDepth[depth] = [SK];
 
@@ -119,13 +150,7 @@ class Generator implements IGenerator {
     }
   }
 
-  /**
-   * Adds elements to its siblings.
-   *
-   * @param id - element id.
-   * @param  SK - Siblings Key.
-   */
-  private _addElementIDToSiblingsBranch(id: string, SK: string) {
+  private _addElementIDToSiblingsBranch(id: string, SK: string): number {
     if (!Array.isArray(this._siblings[SK])) {
       this._siblings[SK] = [];
     }
@@ -136,7 +161,10 @@ class Generator implements IGenerator {
     return selfIndex;
   }
 
-  private _accumulateIndicators(depth: number, hasSiblingInSameLevel = false) {
+  private _accumulateIndicators(
+    depth: number,
+    hasSiblingInSameLevel = false
+  ): Keys & { parentIndex: number } {
     if (depth !== this._prevDepth) {
       this._initIndicators(depth);
     }
@@ -198,7 +226,13 @@ class Generator implements IGenerator {
     };
   }
 
-  updateBranch(SK: string, branch: ELmBranch) {
+  /**
+   * Update current branch.
+   *
+   * @param SK - Siblings Key
+   * @param branch - new branch to be added
+   */
+  updateBranch(SK: string, branch: Siblings): void {
     if (SK in this._siblings) {
       Object.assign(this._siblings, { [SK]: branch });
     } else if (__DEV__) {
@@ -208,7 +242,12 @@ class Generator implements IGenerator {
     }
   }
 
-  forEachBranch(cb: (SK: string, branch: ELmBranch) => void) {
+  /**
+   * Iterates throw all registered branches.
+   *
+   * @param cb - callback function to be called for each element
+   */
+  forEachBranch(cb: (SK: string, branch: Siblings) => void) {
     Object.keys(this._siblings).forEach((SK) => {
       cb(SK, this._siblings[SK]);
     });
@@ -219,7 +258,7 @@ class Generator implements IGenerator {
     depth: number,
     keys: Keys,
     parentIndex: number
-  ) {
+  ): Pointer {
     this._addElementIDToDepthCollection(keys.SK, depth);
 
     const selfIndex = this._addElementIDToSiblingsBranch(id, keys.SK);
@@ -234,24 +273,32 @@ class Generator implements IGenerator {
 
   insertElmBtwLayers(id: string, depth: number, PK: string): Pointer {
     if (__DEV__) {
-      if (this.branchDeletedKeys === null) {
+      if (this._branchDeletedSK === null) {
         throw new Error(
           "insertElmBtwLayers: branchDeletedKeys is not initiated yet."
         );
       }
 
-      if (!this.branchDeletedKeys.has(PK)) {
+      if (!this._branchDeletedSK.has(PK)) {
         throw new Error(
           `insertElmBtwLayers: branchDeletedKeys doesn't have key: ${PK}. Check if this method has been invoked multiple times.`
         );
       }
     }
 
-    const { parentIndex, ...keys } = this.branchDeletedKeys!.get(PK)!;
+    const { parentIndex, ...keys } = this._branchDeletedSK!.get(PK)!;
 
     return this._composePointer(id, depth, keys, parentIndex);
   }
 
+  /**
+   * Registers element to branches.
+   *
+   * @param id
+   * @param depth
+   * @param hasSiblingInSameLevel
+   * @returns
+   */
   register(id: string, depth: number, hasSiblingInSameLevel = false): Pointer {
     const { CHK, SK, PK, parentIndex } = this._accumulateIndicators(
       depth,
@@ -267,66 +314,49 @@ class Generator implements IGenerator {
     return this._composePointer(id, depth, keys, parentIndex);
   }
 
-  addElmIDToBranch(SK: string, id: string) {
-    if (!Array.isArray(this._siblings[SK])) {
-      if (__DEV__) {
-        throw new Error(
-          `addElmIDToBranch: You are trying to add an element to the branch with key:${SK} that is not registered at all.` +
-            `You can call this method with existing branch. If you want to create a new branch, use register method.`
-        );
-      }
-
-      return;
-    }
-
-    this._siblings[SK].push(id);
-  }
-
-  removeElmIDFromBranch(SK: string, id: string) {
-    if (!Array.isArray(this._siblings[SK])) {
-      if (__DEV__) {
-        throw new Error(
-          `removeElmIDFromBranch: Element with id: ${id} doesn't belong to any existing branch`
-        );
-      }
-
-      return null;
-    }
-
-    const index = this._siblings[SK].findIndex((elmID) => elmID === id);
-
-    if (index === -1) {
-      if (__DEV__) {
-        throw new Error(
-          `removeElmIDFromBranch: Element with id: ${id} doesn't belong to branch: ${this._siblings[SK]}.`
-        );
-      }
-
-      return null;
-    }
-
-    const [deletedElmID] = this._siblings[SK]!.splice(index, 1);
-
-    if (this._siblings[SK]!.length === 0) {
-      delete this._siblings[SK];
-    }
-
-    return deletedElmID;
-  }
-
-  getBranchByDepth(dp: number): ELmBranch {
+  /**
+   * Gets all branches key in the same depth.
+   *
+   * @param dp
+   * @returns
+   */
+  getBranchByDepth(dp: number): Siblings {
     return this._SKByDepth[dp] || [];
   }
 
-  getElmBranchByKey(SK: string): ELmBranch {
+  /**
+   * Gets all element IDs in given node represented by sk.
+   *
+   * @param  SK - Siblings Key
+   */
+  getElmBranchByKey(SK: string): Siblings {
     return this._siblings[SK] || [];
   }
 
+  getBranchDeletedKeys(PK: string): DeletedElmKeys | null {
+    const dlKys = this._branchDeletedSK;
+
+    if (dlKys && dlKys.has(PK)) {
+      return dlKys!.get(PK) || null;
+    }
+
+    return null;
+  }
+
+  /**
+   * Removes entire branch from registry.
+   *
+   * @param SK - Sibling keys.
+   * @param cb - Callback function.
+   * @param deletedSK - Deleted keys related to the branch. Stored for time
+   * travel later.
+   * @returns
+   */
   destroyBranch(
     SK: string,
     cb?: ((elmID: string) => void) | null,
-    deletedElmKeys?: DeletedElmKeys
-  ) {
+    deletedSK?: DeletedElmKeys
+  ): void {
     if (!this._siblings[SK]) {
       if (__DEV__) {
         throw new Error(
@@ -356,15 +386,15 @@ class Generator implements IGenerator {
       }
     });
 
-    if (!deletedElmKeys) {
+    if (!deletedSK) {
       return;
     }
 
-    if (!this.branchDeletedKeys) {
-      this.branchDeletedKeys = new Map();
+    if (!this._branchDeletedSK) {
+      this._branchDeletedSK = new Map();
     }
 
-    this.branchDeletedKeys.set(deletedElmKeys.PK, deletedElmKeys);
+    this._branchDeletedSK.set(deletedSK.PK, deletedSK);
   }
 }
 
