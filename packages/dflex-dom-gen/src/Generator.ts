@@ -393,7 +393,7 @@ class Generator {
       this._branchDeletedSK = new Map();
     }
 
-    this._branchDeletedSK.set(deletedSK.PK, deletedSK);
+    this._branchDeletedSK.set(deletedSK.SK, deletedSK);
   }
 }
 

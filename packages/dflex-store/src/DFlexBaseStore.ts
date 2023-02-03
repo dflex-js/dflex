@@ -226,7 +226,7 @@ class DFlexBaseStore {
     }
 
     const { order, keys } = dflexParentElm
-      ? this.DOMGen.insertElmBtwLayers(id, depth, dflexParentElm.keys.SK)
+      ? this.DOMGen.insertElmBtwLayers(id, depth, dflexParentElm.keys.CHK!)
       : this.DOMGen.register(id, depth, _hasSiblingInSameLevel);
 
     const coreElement: DFlexElementInput = {
@@ -340,7 +340,9 @@ class DFlexBaseStore {
 
     // Mutation observer is not fired yet. Wait until it's done.
     // When it's fired then `branchDeletedKeys` should be defined.
-    const hasDelKeys = this.DOMGen.getBranchDeletedKeys(dflexParentElm.keys.SK);
+    const hasDelKeys = this.DOMGen.getBranchDeletedKeys(
+      dflexParentElm.keys.CHK!
+    );
 
     if (hasDelKeys) {
       submit();
