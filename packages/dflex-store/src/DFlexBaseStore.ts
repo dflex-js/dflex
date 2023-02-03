@@ -43,11 +43,7 @@ type GetElmWithDOMOutput = [DFlexElement, HTMLElement];
 
 type BranchComposedCallBackFunction = (
   // eslint-disable-next-line no-unused-vars
-  keys: Keys,
-  // eslint-disable-next-line no-unused-vars
-  childrenDepth: number,
-  // eslint-disable-next-line no-unused-vars
-  containerID: string,
+  dflexElm: DFlexElement,
   // eslint-disable-next-line no-unused-vars
   parentDOM: HTMLElement
 ) => void;
@@ -105,9 +101,13 @@ function hasSiblingInSameLevel(
     if (lastSKInSameDPLength > 0) {
       const allegedPrevSiblingID = lastSKInSameDP[lastSKInSameDPLength - 1];
 
-      has = DOM.previousElementSibling!.isSameNode(
-        interactiveDOM.get(allegedPrevSiblingID)!
-      );
+      const { previousElementSibling } = DOM;
+
+      if (previousElementSibling) {
+        has = previousElementSibling.isSameNode(
+          interactiveDOM.get(allegedPrevSiblingID)!
+        );
+      }
     }
   }
 
@@ -257,7 +257,7 @@ class DFlexBaseStore {
       DOM.dataset.dflexKey = keys.CHK;
 
       if (typeof branchComposedCallBack === "function") {
-        branchComposedCallBack(keys, depth, id, DOM);
+        branchComposedCallBack(dflexElm, DOM);
 
         if (_hasSiblingInSameLevel) {
           getParentElm(DOM, (_parentDOM) => {
@@ -336,12 +336,7 @@ class DFlexBaseStore {
 
         // A new branch. Queue the new branch.
         this._queue.push(() => {
-          branchComposedCallBack!(
-            dflexParentElm.keys,
-            dflexParentElm.depth,
-            parentID,
-            parentDOM
-          );
+          branchComposedCallBack!(dflexParentElm, parentDOM);
 
           // To support continuos streaming.
           this._isParentQueued.delete(parentID);

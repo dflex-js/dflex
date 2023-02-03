@@ -154,8 +154,12 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.setElmGridBridge(container, dflexElm);
   }
 
-  private _initBranch(keys: Keys, depth: number, id: string, DOM: HTMLElement) {
-    const { CHK, SK } = keys;
+  private _initBranch(dflexParentElm: DFlexElement, DOM: HTMLElement) {
+    const {
+      id,
+      depth,
+      keys: { CHK, SK },
+    } = dflexParentElm;
 
     if (!CHK) {
       if (__DEV__) {
