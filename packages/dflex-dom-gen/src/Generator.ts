@@ -71,6 +71,10 @@ class Generator {
     [depth: number]: Siblings;
   };
 
+  private _PKByDepth: {
+    [depth: number]: string;
+  };
+
   /**
    * A collection of siblings keys stored belong to the same branch.
    * Vertical scale.
@@ -94,6 +98,7 @@ class Generator {
     this._siblings = {};
     this._SKByDepth = {};
     this._SKByBranch = {};
+    this._PKByDepth = {};
     this._branchDeletedSK = null;
     this._prevDepth = NaN;
     this._prevSK = `${PREFIX_POINTER_KEY}${combineKeys(0, 0)}`;
@@ -184,10 +189,28 @@ class Generator {
      */
     const SK = `${PREFIX_POINTER_KEY}${combineKeys(depth, parentIndex)}`;
 
-    const PK = `${PREFIX_POINTER_KEY}${combineKeys(
-      depth + 1,
-      this._depthIndicator[depth + 2]
-    )}`;
+    let PK: string;
+
+    if (hasSiblingInSameLevel) {
+      if (__DEV__) {
+        if (!this._PKByDepth[depth]) {
+          throw new Error(
+            `Unable to restore PK for the depth ${depth} with the shared parent.`
+          );
+        }
+      }
+      // Restore the parent key. So all siblings with shared parent have the
+      // same key.
+      PK = this._PKByDepth[depth];
+    } else {
+      // Generate new one.
+      PK = `${PREFIX_POINTER_KEY}${combineKeys(
+        depth + 1,
+        this._depthIndicator[depth + 2]
+      )}`;
+
+      this._PKByDepth[depth] = PK;
+    }
 
     const CHK = depth === 0 ? null : this._prevSK;
 
