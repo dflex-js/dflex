@@ -1,11 +1,9 @@
 /* eslint-disable no-unused-vars */
 import { combineKeys } from "@dflex/utils";
 
-const PREFIX_CONNECTOR_KEY = "dflex_ky_";
+const PREFIX_POINTER_KEY = "dflex_ky_";
 const PREFIX_SIBLINGS_KEY = "dflex_sk_";
 const PREFIX_BRANCH_KEY = "dflex_bk_";
-
-const uniqueKeysDev: Set<string> = new Set();
 
 /**
  * Element generated unique keys in DOM tree.
@@ -103,8 +101,44 @@ class Generator {
     this._SKByBranch = {};
     this._PKByDepth = {};
     this._branchDeletedSK = null;
-    this._prevDepth = -99;
-    this._prevPK = `${PREFIX_CONNECTOR_KEY}${combineKeys(0, 0)}`;
+    this._prevDepth = -999;
+    this._prevPK = `${PREFIX_POINTER_KEY}${combineKeys(0, 0)}`;
+  }
+
+  /**
+   * Initiates self and parent indicators if not.
+   *
+   * @param dp - element depth
+   */
+  private _initIndicators(dp: number): void {
+    /**
+     * initiate self from -1 since self is incremented after the id is added so
+     * it's children won't be confused about their parent indicator.
+     *
+     * if start from /dp = 1/
+     * - this.#indicator[1] = -1
+     * - element added
+     * -  this.#indicator[1] + 1
+     * Now, If we get /dp = 0/
+     * - this.#indicator[dp+1] = 0 which is what we want.
+     *
+     * By adding this, we can deal with parents coming first before children.
+     */
+    if (this._depthIndicator[dp] === undefined) {
+      this._depthIndicator[dp] = -1;
+    }
+
+    /**
+     * initiate parents from zero.
+     * this.#indicator[dp+1] = 0
+     */
+    if (this._depthIndicator[dp + 1] === undefined) {
+      this._depthIndicator[dp + 1] = 0;
+    }
+
+    if (this._depthIndicator[dp + 2] === undefined) {
+      this._depthIndicator[dp + 2] = 0;
+    }
   }
 
   private _addElementIDToDepthCollection(SK: string, depth: number): void {
@@ -132,13 +166,70 @@ class Generator {
     return selfIndex;
   }
 
-  private _composeKeys(depth: number, hasSiblingInSameLevel = false): Keys {
-    const isNewBranch = depth < this._prevDepth;
+  private _accumulateIndicators(
+    depth: number,
+    hasSiblingInSameLevel = false
+  ): Keys & { parentIndex: number } {
+    if (depth !== this._prevDepth) {
+      this._initIndicators(depth);
+    }
+
+    // If hasSiblingInSameLevel then don't increment.
+    // Revers the accumulator.
+    if (hasSiblingInSameLevel && this._depthIndicator[depth + 1] > 0) {
+      this._depthIndicator[depth + 1] -= 1;
+    }
+
+    /**
+     * Get parent index.
+     */
+    const parentIndex = this._depthIndicator[depth + 1];
+
+    /**
+     * get siblings unique key (sK) and parents key (pK)
+     */
+    const SK = `${PREFIX_SIBLINGS_KEY}${combineKeys(depth, parentIndex)}`;
+
+    let PK: string;
+
+    if (hasSiblingInSameLevel) {
+      if (__DEV__) {
+        if (!this._PKByDepth[depth]) {
+          throw new Error(
+            `Unable to restore PK for the depth ${depth} with the shared parent.`
+          );
+        }
+      }
+      // Restore the parent key. So all siblings with shared parent have the
+      // same key.
+      PK = this._PKByDepth[depth];
+    } else {
+      // Generate new one.
+      PK = `${PREFIX_POINTER_KEY}${combineKeys(
+        depth + 1,
+        this._depthIndicator[depth + 2]
+      )}`;
+
+      this._PKByDepth[depth] = PK;
+    }
+
+    let CHK: string | null;
+
+    if (depth === 0) {
+      CHK = null;
+    } else {
+      CHK = this._prevPK;
+    }
+
+    this._prevPK = PK;
+
+    this._depthIndicator[depth] += 1;
 
     /**
      * Start new branch.
      */
-    if (isNewBranch) {
+    if (depth < this._prevDepth) {
+      console.log("new branch...");
       this._depthIndicator[0] = 0;
       this._branchIndicator += 1;
     }
@@ -148,37 +239,6 @@ class Generator {
     if (!Array.isArray(this._SKByBranch[BK])) {
       this._SKByBranch[BK] = [];
     }
-
-    /**
-     * get siblings unique key (sK) and parents key (pK)
-     */
-    const SK = `${PREFIX_SIBLINGS_KEY}${combineKeys(
-      depth,
-      this._branchIndicator
-    )}`;
-
-    // Generate new one.
-    let PK = `${PREFIX_CONNECTOR_KEY}${combineKeys(
-      depth + 1,
-      this._branchIndicator
-    )}`;
-
-    if (hasSiblingInSameLevel) {
-      // Restore the parent key. So all siblings with shared parent have the
-      // same key.
-      PK = this._PKByDepth[depth];
-    } else {
-      // Store the new generated one
-      this._PKByDepth[depth] = PK;
-    }
-
-    let CHK: string | null = null;
-
-    if (depth > 0) {
-      CHK = this._prevPK;
-    }
-
-    this._prevPK = PK;
 
     const branchHasSK = this._SKByBranch[BK].find((e) => e === SK);
 
@@ -198,25 +258,11 @@ class Generator {
 
     this._prevDepth = depth;
 
-    if (__DEV__) {
-      if (isNewBranch) {
-        if (uniqueKeysDev.has(SK)) {
-          throw new Error(`SK: ${SK} already exist.`);
-        }
-
-        if (uniqueKeysDev.has(PK)) {
-          throw new Error(`PK: ${PK} already exist.`);
-        }
-
-        uniqueKeysDev.add(SK);
-        uniqueKeysDev.add(PK);
-      }
-    }
-
     return {
       CHK,
       SK,
       PK,
+      parentIndex,
     };
   }
 
@@ -304,7 +350,11 @@ class Generator {
    * @returns
    */
   register(id: string, depth: number, hasSiblingInSameLevel = false): Pointer {
-    const { CHK, SK, PK } = this._composeKeys(depth, hasSiblingInSameLevel);
+    console.log("register id", id, depth);
+    const { CHK, SK, PK, parentIndex } = this._accumulateIndicators(
+      depth,
+      hasSiblingInSameLevel
+    );
 
     const keys: Keys = {
       SK,
@@ -312,7 +362,7 @@ class Generator {
       CHK,
     };
 
-    return this._composePointer(id, depth, keys, -99);
+    return this._composePointer(id, depth, keys, parentIndex);
   }
 
   /**

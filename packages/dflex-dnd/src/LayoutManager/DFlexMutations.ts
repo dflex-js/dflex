@@ -1,4 +1,4 @@
-import type { DeletedElmKeys } from "@dflex/dom-gen";
+import type { Keys } from "@dflex/dom-gen";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
 type ChangedIds = Set<{ oldId: string; newId: string }>;
@@ -20,10 +20,11 @@ function cleanupBranchElements(store: DFlexDnDStore) {
     keys.add(store.registry.get(id)!.keys.SK);
   });
 
-  let deletedElmKeys: DeletedElmKeys | null = null;
-
   keys.forEach((key) => {
     const branch = store.getElmBranchByKey(key);
+
+    let deletedElmKeys: Keys | null = null;
+    let deletedParentIndex: number | null = null;
 
     for (let i = 0; i < branch.length; i += 1) {
       const elmID = branch[i];
@@ -32,10 +33,11 @@ function cleanupBranchElements(store: DFlexDnDStore) {
 
       if (terminatedDOMiDs.has(elmID)) {
         if (!deletedElmKeys) {
-          deletedElmKeys = { ...elm.keys, parentIndex: elm.DOMOrder.parent };
+          deletedElmKeys = { ...elm.keys };
+          deletedParentIndex = elm.VDOMOrder.parent;
         }
         store.clearElm(elmID);
-      } else if (!deletedElmKeys) {
+      } else {
         elm.VDOMOrder.self = connectedNodesID.push(elmID) - 1;
       }
     }
@@ -43,7 +45,15 @@ function cleanupBranchElements(store: DFlexDnDStore) {
     if (connectedNodesID.length > 0) {
       store.updateBranch(key, connectedNodesID);
     } else {
-      store.cleanupBranchInstances(key, deletedElmKeys!);
+      if (__DEV__) {
+        if (!(deletedElmKeys && typeof deletedParentIndex === "number")) {
+          throw new Error(
+            `cleanupBranchElements: deletedElmKeys is still null despite removing the entire ${key} branch.`
+          );
+        }
+      }
+
+      store.cleanupBranchInstances(key, deletedElmKeys!, deletedParentIndex!);
     }
   });
 }
