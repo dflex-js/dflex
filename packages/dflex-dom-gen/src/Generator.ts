@@ -74,6 +74,10 @@ class Generator {
     [depth: number]: Siblings;
   };
 
+  private _PKByDepth: {
+    [depth: number]: string;
+  };
+
   /**
    * A collection of siblings keys stored belong to the same branch.
    * Vertical scale.
