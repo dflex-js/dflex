@@ -86,10 +86,6 @@ class Generator {
     [BK: string]: Siblings;
   };
 
-  private _PKByDepth: {
-    [depth: number]: string;
-  };
-
   /**
    * Preserve deleted SK for each branch.
    */
