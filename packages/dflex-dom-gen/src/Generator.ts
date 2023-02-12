@@ -52,7 +52,7 @@ class Generator {
    * Counter store. Each depth has it's own indicator. Allowing us to go
    * for endless layers (levels).
    */
-  private _depthIndicator: {
+  private _siblingsCount: {
     [keys: number]: number;
   };
 
@@ -96,7 +96,7 @@ class Generator {
   private _prevPK: string;
 
   constructor() {
-    this._depthIndicator = {};
+    this._siblingsCount = {};
     this._branchIndicator = 0;
     this._siblings = {};
     this._SKByDepth = {};
@@ -132,15 +132,60 @@ class Generator {
     return selfIndex;
   }
 
-  private _composeKeys(depth: number, hasSiblingInSameLevel = false): Keys {
+  private _initIndicators(dp: number) {
+    /**
+     * initiate self from -1 since self is incremented after the id is added so
+     * it's children won't be confused about their parent indicator.
+     *
+     * if start from /dp = 1/
+     * - this.#indicator[1] = -1
+     * - element added
+     * -  this.#indicator[1] + 1
+     * Now, If we get /dp = 0/
+     * - this.#indicator[dp+1] = 0 which is what we want.
+     *
+     * By adding this, we can deal with parents coming first before children.
+     */
+    if (this._siblingsCount[dp] === undefined) {
+      this._siblingsCount[dp] = 0;
+    }
+
+    /**
+     * initiate parents from zero.
+     * this.#indicator[dp+1] = 0
+     */
+    if (this._siblingsCount[dp + 1] === undefined) {
+      this._siblingsCount[dp + 1] = 0;
+    }
+
+    if (this._siblingsCount[dp + 2] === undefined) {
+      this._siblingsCount[dp + 2] = 0;
+    }
+  }
+
+  private _composeKeys(
+    depth: number,
+    hasSiblingInSameLevel = false
+  ): Keys & { parentIndex: number } {
+    const parentDepth = depth + 1;
+
+    if (typeof this._siblingsCount[parentDepth] === "undefined") {
+      this._initIndicators(depth);
+    }
+
     const isNewBranch = depth < this._prevDepth;
 
     /**
      * Start new branch.
      */
     if (isNewBranch) {
-      this._depthIndicator[0] = 0;
       this._branchIndicator += 1;
+
+      const until = hasSiblingInSameLevel ? depth : depth - 1;
+
+      for (let i = 0; i <= until; i += 1) {
+        this._siblingsCount[i] = 0;
+      }
     }
 
     const BK = `${PREFIX_BRANCH_KEY}${this._branchIndicator}`;
@@ -149,13 +194,21 @@ class Generator {
       this._SKByBranch[BK] = [];
     }
 
+    // If hasSiblingInSameLevel then don't increment.
+    // Revers the accumulator.
+    if (hasSiblingInSameLevel && this._siblingsCount[parentDepth] > 0) {
+      this._siblingsCount[parentDepth] -= 1;
+    }
+
+    /**
+     * Get parent index.
+     */
+    const parentIndex = this._siblingsCount[parentDepth];
+
     /**
      * get siblings unique key (sK) and parents key (pK)
      */
-    const SK = `${PREFIX_SIBLINGS_KEY}${combineKeys(
-      depth,
-      this._branchIndicator
-    )}`;
+    const SK = `${PREFIX_SIBLINGS_KEY}${combineKeys(depth, parentIndex)}`;
 
     // Generate new one.
     let PK = `${PREFIX_CONNECTOR_KEY}${combineKeys(
@@ -188,8 +241,16 @@ class Generator {
 
     if (hasSiblingInSameLevel) {
       const preBranchKey = `${PREFIX_BRANCH_KEY}${this._branchIndicator - 1}`;
-      const preBranchLength = this._SKByBranch[preBranchKey].length;
-      const lastElm = this._SKByBranch[preBranchKey][preBranchLength - 1];
+      const preBranch = this._SKByBranch[preBranchKey];
+      if (__DEV__) {
+        if (!Array.isArray(preBranch)) {
+          throw new Error(
+            `_composeKeys: Unable to find the previous branch using key: ${preBranchKey}`
+          );
+        }
+      }
+      const preBranchLength = preBranch.length;
+      const lastElm = preBranch[preBranchLength - 1];
 
       // If same level then the parent from previous branch is the same parent
       // for this element.
@@ -197,6 +258,8 @@ class Generator {
     }
 
     this._prevDepth = depth;
+
+    this._siblingsCount[depth] += 1;
 
     if (__DEV__) {
       if (isNewBranch) {
@@ -214,6 +277,7 @@ class Generator {
     }
 
     return {
+      parentIndex,
       CHK,
       SK,
       PK,
@@ -304,7 +368,10 @@ class Generator {
    * @returns
    */
   register(id: string, depth: number, hasSiblingInSameLevel = false): Pointer {
-    const { CHK, SK, PK } = this._composeKeys(depth, hasSiblingInSameLevel);
+    const { CHK, SK, PK, parentIndex } = this._composeKeys(
+      depth,
+      hasSiblingInSameLevel
+    );
 
     const keys: Keys = {
       SK,
@@ -312,7 +379,7 @@ class Generator {
       CHK,
     };
 
-    return this._composePointer(id, depth, keys, -99);
+    return this._composePointer(id, depth, keys, parentIndex);
   }
 
   /**
@@ -370,6 +437,7 @@ class Generator {
     deletedKeys?: Keys,
     parentIndex?: number
   ): void {
+    console.log("destroy branch");
     if (!this._siblings[SK]) {
       if (__DEV__) {
         throw new Error(

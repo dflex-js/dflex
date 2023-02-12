@@ -6,6 +6,7 @@ export { DFlexThreshold as Threshold } from "./Threshold";
 export type { ThresholdPercentages } from "./Threshold";
 
 export { default as Tracker } from "./Tracker";
+export { default as TaskQueue } from "./TaskQueue";
 
 export { DFlexCycle } from "./DFlexCycle";
 export type { AbstractDFlexCycle } from "./DFlexCycle";

@@ -154,17 +154,13 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.setElmGridBridge(container, dflexElm);
   }
 
-  private _initBranch(
-    childrenKeys: Keys,
-    parentDepth: number,
-    parentDOM: HTMLElement
-  ) {
-    console.log("_initBranch", parentDOM.id);
+  private _initBranch(SK: string, parentDepth: number, parentDOM: HTMLElement) {
+    // console.log("_initBranch", parentDOM.id);
 
     let container: DFlexParentContainer;
     let scroll: DFlexScrollContainer;
 
-    const { SK } = childrenKeys;
+    // const { SK } = childrenKeys;
 
     // Unified dimension is for siblings/children depth.
     if (!this.unifiedContainerDimensions[parentDepth - 1]) {
@@ -175,6 +171,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     }
 
     const branch = this.DOMGen.getElmSiblingsByKey(SK);
+    console.log("_initBranch", branch);
 
     if (__DEV__) {
       if (branch.length === 0 || !this.interactiveDOM.has(branch[0])) {
