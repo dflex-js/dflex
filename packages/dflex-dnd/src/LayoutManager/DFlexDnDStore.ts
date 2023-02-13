@@ -102,7 +102,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.updatesQueue = [];
     this.listeners = initDFlexListeners();
 
-    this._initBranch = this._initBranch.bind(this);
+    this._initSiblings = this._initSiblings.bind(this);
     this._windowResizeHandler = this._windowResizeHandler.bind(this);
   }
 
@@ -154,13 +154,13 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.setElmGridBridge(container, dflexElm);
   }
 
-  private _initBranch(SK: string, parentDepth: number, parentDOM: HTMLElement) {
-    // console.log("_initBranch", parentDOM.id);
-
+  private _initSiblings(
+    SK: string,
+    parentDepth: number,
+    parentDOM: HTMLElement
+  ) {
     let container: DFlexParentContainer;
     let scroll: DFlexScrollContainer;
-
-    // const { SK } = childrenKeys;
 
     // Unified dimension is for siblings/children depth.
     if (!this.unifiedContainerDimensions[parentDepth - 1]) {
@@ -171,19 +171,23 @@ class DFlexDnDStore extends DFlexBaseStore {
     }
 
     const branch = this.DOMGen.getElmSiblingsByKey(SK);
-    console.log("_initBranch", branch);
 
     if (__DEV__) {
+      if (featureFlags.enableRegisterDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(`initBranch: ${SK}`, branch);
+      }
+
       if (branch.length === 0 || !this.interactiveDOM.has(branch[0])) {
         throw new Error(
-          `_initBranch: Unable to find DOM element for branch ${branch} at index: ${0}`
+          `_initSiblings: Unable to find DOM element for branch ${branch} at index: ${0}`
         );
       }
     }
 
     if (this.scrolls.has(SK)) {
       if (__DEV__) {
-        throw new Error(`_initBranch: Scroll with key:${SK} already exists.`);
+        throw new Error(`_initSiblings: Scroll with key:${SK} already exists.`);
       }
 
       scroll = this.scrolls.get(SK)!;
@@ -202,7 +206,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     if (this.containers.has(SK)) {
       if (__DEV__) {
         throw new Error(
-          `_initBranch: Container with key:${SK} already exists.`
+          `_initSiblings: Container with key:${SK} already exists.`
         );
       }
 
@@ -299,7 +303,7 @@ class DFlexDnDStore extends DFlexBaseStore {
         };
 
         // Create an instance of DFlexCoreNode and gets the DOM element into the store.
-        super.register(coreInput, this._initBranch);
+        super.register(coreInput, this._initSiblings);
       },
       null
     );

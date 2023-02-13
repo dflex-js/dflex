@@ -244,24 +244,35 @@ class DFlexBaseStore {
     let isElmRegistered = this.registry.has(id);
 
     if (__DEV__) {
+      if (isElmRegistered) {
+        // eslint-disable-next-line no-console
+        console.warn(`${id} is already registered.`);
+      }
+
       if (featureFlags.enableRegisterDebugger) {
         // eslint-disable-next-line no-console
-        console.log(`Checking ${id}: ${isElmRegistered}`);
+        console.log(`Receiving: ${id}`);
       }
     }
 
-    const DOM = isElmRegistered
-      ? this.interactiveDOM.get(id)!
-      : getElmDOMOrThrow(id)!;
+    let DOM: HTMLElement;
+    let SK: string;
 
-    getParentElm(DOM, (_parentDOM) => {
+    if (isElmRegistered) {
+      DOM = this.interactiveDOM.get(id)!;
+      SK = this.registry.get(id)!.keys.SK;
+    } else {
+      DOM = getElmDOMOrThrow(id)!;
+    }
+
+    getParentElm(DOM, (parentDOM) => {
       let isParentRegistered = false;
 
-      let { id: parentID } = _parentDOM;
+      let { id: parentID } = parentDOM;
 
       if (!parentID) {
         parentID = this.tracker.newTravel(Tracker.PREFIX_ID);
-        _parentDOM.id = parentID;
+        parentDOM.id = parentID;
       } else {
         isParentRegistered = this.registry.has(parentID);
       }
@@ -275,14 +286,22 @@ class DFlexBaseStore {
           }
         }
 
-        this._registerTaskQ.handleQueue();
+        [SK] = this._registerTaskQ.handleQueue() as string[];
+
+        if (__DEV__) {
+          if (!SK) {
+            throw new Error(
+              "register: Executing element in the queue has't returned SK."
+            );
+          }
+        }
 
         isElmRegistered = true;
       }
 
       const isNewParent =
         this._lastDOMParent === null ||
-        !this._lastDOMParent.isSameNode(_parentDOM);
+        !this._lastDOMParent.isSameNode(parentDOM);
 
       if (isNewParent) {
         if (__DEV__) {
@@ -293,7 +312,7 @@ class DFlexBaseStore {
         }
 
         // keep the reference for comparison.
-        this._lastDOMParent = _parentDOM;
+        this._lastDOMParent = parentDOM;
 
         if (!isParentRegistered) {
           // If it's a new parent then execute the previous one.
@@ -308,7 +327,18 @@ class DFlexBaseStore {
 
           const parentDepth = depth + 1;
 
-          const submitParentElm = () => {
+          if (!isElmRegistered) {
+            ({ SK } = this._submitElementToRegistry(DOM, element, null)!);
+            isElmRegistered = true;
+          }
+
+          if (__DEV__) {
+            if (!SK) {
+              throw new Error("register: Executing element has't returned SK.");
+            }
+          }
+
+          const submitParentElm = (): string => {
             if (__DEV__) {
               if (featureFlags.enableRegisterDebugger) {
                 // eslint-disable-next-line no-console
@@ -316,8 +346,8 @@ class DFlexBaseStore {
               }
             }
 
-            this._submitElementToRegistry(
-              _parentDOM,
+            const { SK: _ } = this._submitElementToRegistry(
+              parentDOM,
               {
                 id: parentID,
                 depth: parentDepth,
@@ -325,7 +355,9 @@ class DFlexBaseStore {
                 readonly: true,
               },
               null
-            );
+            )!;
+
+            return _;
           };
 
           if (__DEV__) {
@@ -342,13 +374,9 @@ class DFlexBaseStore {
           this._registerTaskQ.scheduleNextTask();
 
           if (typeof branchComposedCallBack === "function") {
-            this._submitTaskQ.reset();
+            const fn = () => branchComposedCallBack(SK, parentDepth, parentDOM);
 
-            this._submitTaskQ.add(() => {
-              this.DOMGen.forEachBranch((SK) => {
-                branchComposedCallBack(SK, parentDepth, _parentDOM);
-              });
-            });
+            this._submitTaskQ.add(fn);
           }
         }
       }
@@ -450,7 +478,7 @@ class DFlexBaseStore {
    * method should be called when the app will no longer use the store.
    */
   destroy(): void {
-    this.DOMGen.forEachBranch((SK) => {
+    this.DOMGen.forEachSibling((SK) => {
       this.DOMGen.destroyBranch(SK);
     });
 
@@ -459,8 +487,8 @@ class DFlexBaseStore {
 
     this._lastDOMParent = null;
 
-    this._registerTaskQ.cancelQueuedTask();
-    this._submitTaskQ.cancelQueuedTask();
+    this._registerTaskQ.clear();
+    this._submitTaskQ.clear();
 
     // @ts-expect-error - Cleaning up.
     this._registerTaskQ = undefined;
@@ -468,6 +496,8 @@ class DFlexBaseStore {
     this._submitTaskQ = undefined;
     // @ts-expect-error - Cleaning up.
     this.tracker = undefined;
+    // @ts-expect-error - Cleaning up.
+    this.DOMGen = undefined;
 
     if (__DEV__) {
       // eslint-disable-next-line no-console

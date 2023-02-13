@@ -107,7 +107,7 @@ class Generator {
     this._prevPK = `${PREFIX_CONNECTOR_KEY}${combineKeys(0, 0)}`;
   }
 
-  private _addElementIDToDepthCollection(SK: string, depth: number): void {
+  private _addElmSKToDepthCollection(SK: string, depth: number): void {
     if (!Array.isArray(this._SKByDepth[depth])) {
       this._SKByDepth[depth] = [SK];
 
@@ -121,7 +121,7 @@ class Generator {
     }
   }
 
-  private _addElementIDToSiblingsBranch(id: string, SK: string): number {
+  private _addElmIDToSiblings(id: string, SK: string): number {
     if (!Array.isArray(this._siblings[SK])) {
       this._siblings[SK] = [];
     }
@@ -301,11 +301,11 @@ class Generator {
   }
 
   /**
-   * Iterates throw all registered branches.
+   * Iterates throw all registered siblings.
    *
    * @param cb - callback function to be called for each element
    */
-  forEachBranch(cb: (SK: string, branch: Siblings) => void) {
+  forEachSibling(cb: (SK: string, branch: Siblings) => void) {
     Object.keys(this._siblings).forEach((SK) => {
       cb(SK, this._siblings[SK]);
     });
@@ -317,9 +317,9 @@ class Generator {
     keys: Keys,
     parentIndex: number
   ): Pointer {
-    this._addElementIDToDepthCollection(keys.SK, depth);
+    this._addElmSKToDepthCollection(keys.SK, depth);
 
-    const selfIndex = this._addElementIDToSiblingsBranch(id, keys.SK);
+    const selfIndex = this._addElmIDToSiblings(id, keys.SK);
 
     const order: Order = {
       self: selfIndex,

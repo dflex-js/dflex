@@ -43,6 +43,10 @@ function execTask(
         })
       );
     }
+
+    if (__DEV__) {
+      console.error(error);
+    }
   } finally {
     if (evt) {
       store.deferred.push(store.listeners.notify.bind(null, evt));

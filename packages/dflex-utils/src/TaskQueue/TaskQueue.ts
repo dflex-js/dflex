@@ -3,7 +3,7 @@ class TaskQueue {
 
   private _elmInQueue: Set<string>;
 
-  private _queue: (() => void)[];
+  private _queue: (() => unknown)[];
 
   constructor() {
     this._queue = [];
@@ -26,7 +26,7 @@ class TaskQueue {
     }
   }
 
-  reset(): void {
+  clear(): void {
     this.cancelQueuedTask();
     this._queue = [];
     this._elmInQueue.clear();
@@ -36,19 +36,26 @@ class TaskQueue {
     return this._elmInQueue.has(elmKey);
   }
 
-  handleQueue(): void {
+  handleQueue(): unknown[] {
+    const res: unknown[] = [];
+
     try {
       if (this._queue.length === 0) {
-        return;
+        return res;
       }
 
       const q = this._queue;
       this._queue = [];
-      q.forEach((fn) => fn());
+      q.forEach((fn) => {
+        const r = fn();
+        res.push(r);
+      });
     } finally {
       this._timeoutId = undefined;
       this._elmInQueue.clear();
     }
+
+    return res;
   }
 
   private _schedule(): void {
