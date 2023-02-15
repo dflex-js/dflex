@@ -424,7 +424,7 @@ class Generator {
 
   private _cleanupSKFromBranchCollection(SK: string): void {
     Object.keys(this._SKByBranch).forEach((BK) => {
-      this._SKByBranch[BK] = this._SKByBranch[BK].filter((k) => k !== SK);
+      this._SKByBranch[BK] = this._SKByBranch[BK].filter((k) => k.SK !== SK);
 
       if (this._SKByBranch[BK].length === 0) {
         delete this._SKByBranch[BK];

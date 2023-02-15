@@ -118,6 +118,10 @@ function hasSiblingInSameLevel(
   return has;
 }
 
+const REGISTER_Q = "registerQ";
+
+const CB_Q = "submitQ";
+
 class DFlexBaseStore {
   globals: DFlexGlobalConfig;
 
@@ -131,9 +135,7 @@ class DFlexBaseStore {
 
   private _lastDOMParent: HTMLElement | null;
 
-  private _submitTaskQ: TaskQueue;
-
-  private _registerTaskQ: TaskQueue;
+  private _taskQ: TaskQueue;
 
   constructor() {
     this.globals = {
@@ -141,8 +143,7 @@ class DFlexBaseStore {
     };
     this._lastDOMParent = null;
     this.tracker = new Tracker();
-    this._submitTaskQ = new TaskQueue();
-    this._registerTaskQ = new TaskQueue();
+    this._taskQ = new TaskQueue();
     this.registry = new Map();
     this.interactiveDOM = new Map();
     this.DOMGen = new Generator();
@@ -240,7 +241,7 @@ class DFlexBaseStore {
     highestContainerComposedCallBack?: HighestContainerComposedCallBack
   ) {
     // Don't execute the parent registration if there's new element in the branch.
-    this._registerTaskQ.cancelQueuedTask();
+    this._taskQ.cancelQueuedTask();
 
     const { id, depth } = element;
 
@@ -281,7 +282,7 @@ class DFlexBaseStore {
       }
 
       // Is this element already queued as parent?
-      if (this._registerTaskQ.hasElm(id)) {
+      if (this._taskQ.hasElm(id)) {
         if (__DEV__) {
           if (featureFlags.enableRegisterDebugger) {
             // eslint-disable-next-line no-console
@@ -289,7 +290,7 @@ class DFlexBaseStore {
           }
         }
 
-        [SK] = this._registerTaskQ.handleQueue() as string[];
+        [SK] = this._taskQ.handleQueue(REGISTER_Q) as string[];
 
         if (__DEV__) {
           if (!SK) {
@@ -326,7 +327,7 @@ class DFlexBaseStore {
             }
           }
 
-          this._registerTaskQ.handleQueue();
+          this._taskQ.handleQueue(REGISTER_Q);
 
           const parentDepth = depth + 1;
 
@@ -371,20 +372,25 @@ class DFlexBaseStore {
           }
 
           // A new branch. Queue the new branch.
-          this._registerTaskQ.add(submitParentElm, parentID);
-
-          // In case it's the only parent. Then it won't be triggered manually.
-          this._registerTaskQ.scheduleNextTask();
+          this._taskQ.add(submitParentElm, REGISTER_Q, parentID);
 
           if (
             typeof branchComposedCallBack === "function" &&
             typeof highestContainerComposedCallBack === "function"
           ) {
+            if (__DEV__) {
+              if (featureFlags.enableRegisterDebugger) {
+                // eslint-disable-next-line no-console
+                console.log("Add callback functions to queue.");
+              }
+            }
+
             const fn = () => branchComposedCallBack(SK, parentDepth, parentDOM);
 
-            this._submitTaskQ.insertBeforeEnd(
+            this._taskQ.insertBeforeEnd(
               highestContainerComposedCallBack,
-              fn
+              fn,
+              CB_Q
             );
           }
         }
@@ -394,8 +400,7 @@ class DFlexBaseStore {
         this._submitElementToRegistry(DOM, element, null);
       }
 
-      this._submitTaskQ.scheduleNextTask();
-      this._registerTaskQ.scheduleNextTask();
+      this._taskQ.scheduleNextTask([REGISTER_Q, CB_Q]);
 
       return true;
     });
@@ -494,13 +499,10 @@ class DFlexBaseStore {
 
     this._lastDOMParent = null;
 
-    this._registerTaskQ.clear();
-    this._submitTaskQ.clear();
+    this._taskQ.clear();
 
     // @ts-expect-error - Cleaning up.
-    this._registerTaskQ = undefined;
-    // @ts-expect-error - Cleaning up.
-    this._submitTaskQ = undefined;
+    this._taskQ = undefined;
     // @ts-expect-error - Cleaning up.
     this.tracker = undefined;
     // @ts-expect-error - Cleaning up.
