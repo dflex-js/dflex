@@ -61,8 +61,6 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   mutationObserverMap: Map<string, MutationObserverValue>;
 
-  private _observerHighestDepth: number;
-
   listeners: DFlexListenerPlugin;
 
   migration: DFlexCycle;
@@ -94,7 +92,6 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     // Observers.
     this.mutationObserverMap = new Map();
-    this._observerHighestDepth = 0;
 
     this.isComposing = false;
     this.isUpdating = false;
@@ -103,6 +100,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.listeners = initDFlexListeners();
 
     this._initSiblings = this._initSiblings.bind(this);
+    this._initObservers = this._initObservers.bind(this);
     this._windowResizeHandler = this._windowResizeHandler.bind(this);
   }
 
@@ -175,7 +173,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     if (__DEV__) {
       if (featureFlags.enableRegisterDebugger) {
         // eslint-disable-next-line no-console
-        console.log(`initBranch: ${SK}`, branch);
+        console.log(`_initBranch: ${SK}`, branch);
       }
 
       if (branch.length === 0 || !this.interactiveDOM.has(branch[0])) {
@@ -226,44 +224,27 @@ class DFlexDnDStore extends DFlexBaseStore {
     branch.forEach(initElmGrid);
 
     updateBranchVisibilityLinearly(this, SK);
+  }
 
-    // let connect = true;
+  _initObservers() {
+    const highestSKInAllBranches = this.DOMGen.getHighestSKInAllBranches();
 
-    // if (parentDepth > 1) {
-    //   // Disconnect the children.
-    //   this.registry.forEach((e) => {
-    //     if (childrenKeys.CHK === e.keys.PK) {
-    //       const hasMutation = this.mutationObserverMap.has(e.keys.SK);
+    highestSKInAllBranches.forEach(({ id }) => {
+      if (__DEV__) {
+        if (!this.interactiveDOM.has(id)) {
+          throw new Error(`_initObservers: Unable to find DOM for SK: ${id}`);
+        }
 
-    //       if (hasMutation) {
-    //         // console.log("found children e", e.keys.SK, e.id);
-    //         // console.log("disconnection children", e.keys.SK, e.id);
+        if (featureFlags.enableRegisterDebugger) {
+          // eslint-disable-next-line no-console
+          console.log(`_initObservers: ${id}`);
+        }
+      }
 
-    //         this.mutationObserverMap.get(e.keys.SK)!.disconnect();
-    //         this.mutationObserverMap.delete(e.keys.SK);
-    //       }
-    //     }
-    //   });
-    // } else {
-    //   // Check if parent is connected then don't connect the child.
-    //   this.registry.forEach((e) => {
-    //     if (childrenKeys.PK === e.keys.CHK) {
-    //       const hasMutation = this.mutationObserverMap.has(e.keys.SK);
+      const parentDOM = this.interactiveDOM.get(id)!;
 
-    //       if (hasMutation) {
-    //         // console.log("found one parent connected", e.keys.SK, e.id);
-    //         // console.log("don't add", SK);
-    //         connect = false;
-    //       }
-    //     }
-    //   });
-    // }
-
-    // if (connect) {
-    //   console.log("adding...", SK);
-
-    //   addMutationObserver(this, SK, parentDOM);
-    // }
+      addMutationObserver(this, id, parentDOM);
+    });
   }
 
   register(element: RegisterInputOpts) {
@@ -303,7 +284,7 @@ class DFlexDnDStore extends DFlexBaseStore {
         };
 
         // Create an instance of DFlexCoreNode and gets the DOM element into the store.
-        super.register(coreInput, this._initSiblings);
+        super.register(coreInput, this._initSiblings, this._initObservers);
       },
       null
     );
@@ -407,7 +388,7 @@ class DFlexDnDStore extends DFlexBaseStore {
           // eslint-disable-next-line no-console
           console.warn("Executing commit for zero depth layer.");
 
-          this.getBranchesByDepth(0).forEach((k) =>
+          this.getSiblingKeysByDepth(0).forEach((k) =>
             this._reconcileBranch(k, refreshAllBranchElements)
           );
 
@@ -537,7 +518,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     deletedElmKeys: Keys,
     parentIndex: number
   ): void {
-    this.DOMGen.destroyBranch(SK, null, deletedElmKeys, parentIndex);
+    this.DOMGen.destroySiblings(SK, null, deletedElmKeys, parentIndex);
 
     const deletedContainer = this.containers.delete(SK);
     const deletedScroll = this.scrolls.delete(SK);

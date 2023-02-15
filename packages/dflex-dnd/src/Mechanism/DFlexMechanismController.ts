@@ -224,7 +224,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       return;
     }
 
-    const dp = store.getBranchesByDepth(depth);
+    const dp = store.getSiblingKeysByDepth(depth);
 
     const { SK: originSK } = migration.latest();
 

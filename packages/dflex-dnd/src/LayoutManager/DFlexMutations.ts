@@ -43,7 +43,7 @@ function cleanupBranchElements(store: DFlexDnDStore) {
     }
 
     if (connectedNodesID.length > 0) {
-      store.updateBranch(key, connectedNodesID);
+      store.mutateSiblings(key, connectedNodesID);
     } else {
       if (__DEV__) {
         if (!(deletedElmKeys && typeof deletedParentIndex === "number")) {
@@ -183,7 +183,7 @@ function addMutationObserver(
   store: DFlexDnDStore,
   SK: string,
   DOMTarget: HTMLElement
-) {
+): void {
   if (!store.mutationObserverMap.has(SK)) {
     initMutationObserver(store, SK);
   }

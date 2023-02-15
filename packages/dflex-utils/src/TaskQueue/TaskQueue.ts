@@ -10,7 +10,22 @@ class TaskQueue {
     this._elmInQueue = new Set();
   }
 
-  add(fn: () => void, elmKey?: string): void {
+  insertBeforeEnd(
+    lastElmFn: () => unknown,
+    fnBeforeEnd: () => unknown,
+    elmKey?: string
+  ): void {
+    const l = this._queue.length;
+
+    this._queue[l - 1] = fnBeforeEnd;
+    this._queue.push(lastElmFn);
+
+    if (elmKey) {
+      this._elmInQueue.add(elmKey);
+    }
+  }
+
+  add(fn: () => unknown, elmKey?: string): void {
     this._queue.push(fn);
 
     if (elmKey) {

@@ -50,6 +50,8 @@ type BranchComposedCallBackFunction = (
   parentDOM: HTMLElement
 ) => void;
 
+type HighestContainerComposedCallBack = () => void;
+
 function getElmDOMOrThrow(id: string): HTMLElement | null {
   let DOM = document.getElementById(id);
 
@@ -89,7 +91,7 @@ function hasSiblingInSameLevel(
 ): boolean {
   let has = false;
 
-  const branchesByDp = DOMGen.getSKByDepth(depth);
+  const branchesByDp = DOMGen.getSiblingKeysByDepth(depth);
 
   const branchesByDpLength = branchesByDp.length;
 
@@ -234,7 +236,8 @@ class DFlexBaseStore {
 
   register(
     element: RegisterInputBase,
-    branchComposedCallBack?: BranchComposedCallBackFunction
+    branchComposedCallBack?: BranchComposedCallBackFunction,
+    highestContainerComposedCallBack?: HighestContainerComposedCallBack
   ) {
     // Don't execute the parent registration if there's new element in the branch.
     this._registerTaskQ.cancelQueuedTask();
@@ -373,10 +376,16 @@ class DFlexBaseStore {
           // In case it's the only parent. Then it won't be triggered manually.
           this._registerTaskQ.scheduleNextTask();
 
-          if (typeof branchComposedCallBack === "function") {
+          if (
+            typeof branchComposedCallBack === "function" &&
+            typeof highestContainerComposedCallBack === "function"
+          ) {
             const fn = () => branchComposedCallBack(SK, parentDepth, parentDOM);
 
-            this._submitTaskQ.add(fn);
+            this._submitTaskQ.insertBeforeEnd(
+              highestContainerComposedCallBack,
+              fn
+            );
           }
         }
       }
@@ -437,18 +446,18 @@ class DFlexBaseStore {
    * @param dp - depth.
    * @returns
    */
-  getBranchesByDepth(dp: number): Siblings {
-    return this.DOMGen.getSKByDepth(dp);
+  getSiblingKeysByDepth(dp: number): Siblings {
+    return this.DOMGen.getSiblingKeysByDepth(dp);
   }
 
   /**
-   * Mutates branch in the generated DOM tree.
+   * Mutates siblings in the generated DOM tree.
    *
    * @param SK
-   * @param newBranch
+   * @param newSiblings
    */
-  updateBranch(SK: string, newBranch: Siblings): void {
-    return this.DOMGen.updateBranch(SK, newBranch);
+  mutateSiblings(SK: string, newSiblings: Siblings): void {
+    return this.DOMGen.mutateSiblings(SK, newSiblings);
   }
 
   /**
@@ -467,8 +476,8 @@ class DFlexBaseStore {
    *
    * @param SK - Siblings Key.
    */
-  destroyBranch(SK: string): void {
-    this.DOMGen.destroyBranch(SK, (id) => {
+  destroySiblings(SK: string): void {
+    this.DOMGen.destroySiblings(SK, (id) => {
       this.unregister(id);
     });
   }
@@ -478,9 +487,7 @@ class DFlexBaseStore {
    * method should be called when the app will no longer use the store.
    */
   destroy(): void {
-    this.DOMGen.forEachSibling((SK) => {
-      this.DOMGen.destroyBranch(SK);
-    });
+    this.DOMGen.forEachSibling((SK) => this.DOMGen.destroySiblings(SK));
 
     this.interactiveDOM.clear();
     this.registry.clear();

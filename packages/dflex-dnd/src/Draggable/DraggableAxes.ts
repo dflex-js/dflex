@@ -46,7 +46,7 @@ function initThresholds(
 ) {
   threshold.setMainThreshold(draggedID, draggedRect, false);
 
-  store.getBranchesByDepth(draggedDepth).forEach((SK) => {
+  store.getSiblingKeysByDepth(draggedDepth).forEach((SK) => {
     const elmContainer = store.containers.get(SK)!;
 
     const boundaries = elmContainer.getBoundaries();
@@ -154,7 +154,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
 
     // Override containersTransition option when we have an orphan branch.
     this.containersTransition =
-      store.getBranchesByDepth(depth).length > 1
+      store.getSiblingKeysByDepth(depth).length > 1
         ? opts.containersTransition
         : { ...opts.containersTransition, enable: false };
 
