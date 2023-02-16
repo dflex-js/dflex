@@ -62,7 +62,7 @@ export function getInsertionELmMeta(
   insertAt: number,
   SK: string
 ): InsertionELmMeta {
-  const lst = store.getElmBranchByKey(SK);
+  const lst = store.getElmSiblingsByKey(SK);
 
   const { length } = lst;
 
@@ -150,7 +150,7 @@ export function handleElmMigration(
   // Append the newest element to the end of the branch.
   containerDist.registerNewElm(rect);
 
-  const originBranch = store.getElmBranchByKey(originSK);
+  const originBranch = store.getElmSiblingsByKey(originSK);
 
   // Don't reset empty branch keep the boundaries.
   if (originBranch.length === 0) {
@@ -377,7 +377,7 @@ class DFlexPositionUpdater {
     SK: string,
     axis: Axis
   ): AxesPoint<number> {
-    const distLst = store.getElmBranchByKey(SK);
+    const distLst = store.getElmSiblingsByKey(SK);
 
     const { length } = distLst;
 

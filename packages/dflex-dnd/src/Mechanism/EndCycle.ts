@@ -84,7 +84,7 @@ class EndCycle extends DFlexMechanismController {
         store,
         () => {
           sessionCycles.forEach((_) => {
-            const siblings = store.getElmBranchByKey(_.SK);
+            const siblings = store.getElmSiblingsByKey(_.SK);
             this._undoSiblingsPositions(siblings, _);
           });
         },

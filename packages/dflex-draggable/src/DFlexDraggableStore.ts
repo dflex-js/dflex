@@ -20,7 +20,7 @@ class DFlexDraggableStore extends DFlexBaseStore {
   }
 
   private _initBranch(SK: string) {
-    this.getElmBranchByKey(SK).forEach(this._initElmDOMInstance);
+    this.getElmSiblingsByKey(SK).forEach(this._initElmDOMInstance);
   }
 
   /**

@@ -55,7 +55,7 @@ function updateBranchVisibilityLinearly(
   store: DFlexDnDStore,
   SK: string
 ): void {
-  const branch = store.getElmBranchByKey(SK);
+  const branch = store.getElmSiblingsByKey(SK);
   const scroll = store.scrolls.get(SK)!;
 
   // If not scroll, then all the elements are visible.

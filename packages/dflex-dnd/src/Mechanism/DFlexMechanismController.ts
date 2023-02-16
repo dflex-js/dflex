@@ -72,7 +72,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     const { SK } = store.migration.latest();
 
-    const siblings = store.getElmBranchByKey(SK);
+    const siblings = store.getElmSiblingsByKey(SK);
 
     for (let i = 0; i < siblings.length; i += 1) {
       const id = siblings[i];
@@ -101,7 +101,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     const { SK } = migration.latest();
 
-    const siblings = store.getElmBranchByKey(SK);
+    const siblings = store.getElmSiblingsByKey(SK);
     const container = store.containers.get(SK)!;
 
     /**
@@ -235,11 +235,11 @@ class DFlexMechanismController extends DFlexScrollableElement {
       if (newSK !== originSK && !this.draggable.isOutThreshold(newSK, true)) {
         migration.start();
 
-        const destination = store.getElmBranchByKey(newSK);
+        const destination = store.getElmSiblingsByKey(newSK);
 
         this.listAppendPosition = this.getComposedOccupiedPosition(newSK, "y");
 
-        const origin = store.getElmBranchByKey(originSK);
+        const origin = store.getElmSiblingsByKey(originSK);
 
         // Remove the last element from the original list.
         // when the dragged is out of the container, the last element is the
@@ -277,7 +277,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     const { draggedElm } = this.draggable;
     const { SK, index, cycleID } = store.migration.latest();
 
-    const siblings = store.getElmBranchByKey(SK);
+    const siblings = store.getElmSiblingsByKey(SK);
 
     const elmIndex = index + -1 * (isIncrease ? -1 : 1);
 
@@ -299,7 +299,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     const { SK, index, cycleID } = migration.latest();
 
-    const siblings = store.getElmBranchByKey(SK);
+    const siblings = store.getElmSiblingsByKey(SK);
 
     const from = index + 1;
 
@@ -370,7 +370,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     const { SK, cycleID } = migration.latest();
 
-    const siblings = store.getElmBranchByKey(SK);
+    const siblings = store.getElmSiblingsByKey(SK);
 
     events.dispatch(DFLEX_EVENTS.ON_MOVE_DOWN, {
       siblings,

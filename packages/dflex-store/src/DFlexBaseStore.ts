@@ -441,7 +441,7 @@ class DFlexBaseStore {
    * @param SK - Siblings Key.
    * @returns
    */
-  getElmBranchByKey(SK: string): Siblings {
+  getElmSiblingsByKey(SK: string): Siblings {
     return this.DOMGen.getElmSiblingsByKey(SK);
   }
 

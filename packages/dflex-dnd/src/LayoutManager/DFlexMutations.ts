@@ -12,7 +12,7 @@ function getIsProcessingMutations(): boolean {
   return isProcessingMutations;
 }
 
-function cleanupBranchElements(store: DFlexDnDStore) {
+function cleanupSiblings(store: DFlexDnDStore) {
   const keys = new Set<string>();
   const connectedNodesID: string[] = [];
 
@@ -21,7 +21,7 @@ function cleanupBranchElements(store: DFlexDnDStore) {
   });
 
   keys.forEach((key) => {
-    const branch = store.getElmBranchByKey(key);
+    const branch = store.getElmSiblingsByKey(key);
 
     let deletedElmKeys: Keys | null = null;
     let deletedParentIndex: number | null = null;
@@ -63,7 +63,7 @@ function mutateIDs(store: DFlexDnDStore) {
   changedIds.forEach((idSet) => {
     if (store.registry.has(idSet.oldId)) {
       const elm = store.registry.get(idSet.oldId)!;
-      const elmBranch = store.getElmBranchByKey(elm.keys.SK);
+      const elmBranch = store.getElmSiblingsByKey(elm.keys.SK);
 
       // Update registry.
       store.registry.set(idSet.newId, elm);
@@ -153,7 +153,7 @@ function DOMmutationHandler(
     }
 
     if (terminatedDOMiDs.size > 0) {
-      cleanupBranchElements(store);
+      cleanupSiblings(store);
       terminatedDOMiDs.clear();
     }
   } finally {

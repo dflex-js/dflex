@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable no-dupe-class-members */
 import DFlexBaseStore from "@dflex/store";
 import type { RegisterInputOpts } from "@dflex/store";
 
@@ -296,7 +295,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   private _refreshBranchesRect(excludeMigratedContainers: boolean) {
     this.containers.forEach((container, containerKy) => {
-      const branch = this.getElmBranchByKey(containerKy);
+      const branch = this.getElmSiblingsByKey(containerKy);
 
       const is = excludeMigratedContainers
         ? !this.migration.containerKeys.has(containerKy)
@@ -335,7 +334,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     refreshAllBranchElements: boolean
   ): void {
     const container = this.containers.get(SK)!;
-    const branch = this.getElmBranchByKey(SK);
+    const branch = this.getElmSiblingsByKey(SK);
     const parentDOM = this.interactiveDOM.get(container.id)!;
 
     scheduler(
@@ -470,7 +469,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     } = this.registry.get(id)!;
 
     const scroll = this.scrolls.get(SK)!;
-    const siblings = this.getElmBranchByKey(SK);
+    const siblings = this.getElmSiblingsByKey(SK);
 
     return [scroll, siblings];
   }

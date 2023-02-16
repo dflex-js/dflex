@@ -124,7 +124,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
 
     this.gridPlaceholder = new PointNum(DOMGrid.x, DOMGrid.y);
 
-    const siblings = store.getElmBranchByKey(SK);
+    const siblings = store.getElmSiblingsByKey(SK);
 
     const cycleID = store.tracker.newTravel(Tracker.PREFIX_CYCLE);
 
@@ -403,7 +403,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
   isNotSettled() {
     const { SK, index } = store.migration.latest();
 
-    const lastElm = store.getElmBranchByKey(SK).length - 1;
+    const lastElm = store.getElmSiblingsByKey(SK).length - 1;
 
     const isLeavingFromBottom = index === lastElm;
 
