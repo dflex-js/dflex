@@ -93,7 +93,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     // Observers.
     this.mutationObserverMap = new Map();
 
-    this.isComposing = false;
+    this.isComposing = true;
     this.isUpdating = false;
     this.deferred = [];
     this.updatesQueue = [];
@@ -245,6 +245,10 @@ class DFlexDnDStore extends DFlexBaseStore {
 
       addMutationObserver(this, id, parentDOM);
     });
+
+    this.isComposing = false;
+
+    scheduler(this, null, null, { type: "layoutState", status: "ready" });
   }
 
   register(element: RegisterInputOpts) {
@@ -565,6 +569,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     }
 
     if (__DEV__) {
+      // eslint-disable-next-line no-console
       console.warn(
         `unregister: Element with id: ${id} isn't caught by mutation observer.`
       );
@@ -580,7 +585,6 @@ class DFlexDnDStore extends DFlexBaseStore {
       observer!.disconnect();
     });
     this.mutationObserverMap.clear();
-    this._observerHighestDepth = 0;
 
     // TODO:
     // Migration is initiated with null. But it's not typed as such.

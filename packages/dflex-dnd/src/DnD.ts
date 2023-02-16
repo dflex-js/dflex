@@ -2,7 +2,7 @@ import type { AxesPoint } from "@dflex/utils";
 
 import DraggableInteractive from "./Draggable";
 import Mechanism from "./Mechanism";
-import { scheduler, store } from "./LayoutManager";
+import { store } from "./LayoutManager";
 
 import type { DFlexDnDOpts, FinalDndOpts } from "./types";
 
@@ -36,8 +36,6 @@ class DnD extends Mechanism {
     );
 
     super(draggable);
-
-    scheduler(store, null, null, { type: "layoutState", status: "ready" });
   }
 }
 

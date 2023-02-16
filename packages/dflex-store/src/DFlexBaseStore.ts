@@ -492,7 +492,7 @@ class DFlexBaseStore {
    * method should be called when the app will no longer use the store.
    */
   destroy(): void {
-    this.DOMGen.forEachSibling((SK) => this.DOMGen.destroySiblings(SK));
+    this.DOMGen.clear();
 
     this.interactiveDOM.clear();
     this.registry.clear();

@@ -6,6 +6,7 @@ const PREFIX_SIBLINGS_KEY = "dflex_sk_";
 const PREFIX_BRANCH_KEY = "dflex_bk_";
 
 const uniqueKeysDev: Set<string> = new Set();
+const equalKeysDev: Set<string> = new Set();
 
 type Depth = number;
 
@@ -68,40 +69,44 @@ class Generator {
    * Counter store. Each depth has it's own indicator. Allowing us to go
    * for endless layers (levels).
    */
-  private _siblingsCount: Record<Depth, number>;
+  private _siblingsCount!: Record<Depth, number>;
 
-  private _branchIndicator: number;
+  private _branchIndicator!: number;
 
   /**
    * A collection of registered elements stored in arrays represents siblings in
    * each branch.
    */
-  private _siblings: Record<SiblingKey, Siblings>;
+  private _siblings!: Record<SiblingKey, Siblings>;
 
   /**
    * A collection of siblings keys stored belong to the same depth.
    * Horizontal scale.
    */
-  private _SKByDepth: Record<Depth, Siblings>;
+  private _SKByDepth!: Record<Depth, Siblings>;
 
-  private _PKByDepth: Record<Depth, ParentKey>;
+  private _PKByDepth!: Record<Depth, ParentKey>;
 
   /**
    * A collection of siblings keys stored belong to the same branch.
    * Vertical scale.
    */
-  private _SKByBranch: Record<BranchKey, SKID[]>;
+  private _SKByBranch!: Record<BranchKey, SKID[]>;
 
   /**
    * Preserve deleted SK for each branch.
    */
-  private _branchDeletedSK: BranchDeletedKeys;
+  private _branchDeletedSK!: BranchDeletedKeys;
 
-  private _prevDepth: number;
+  private _prevDepth!: number;
 
-  private _prevPK: string;
+  private _prevPK!: string;
 
   constructor() {
+    this._init();
+  }
+
+  private _init() {
     this._siblingsCount = {};
     this._branchIndicator = 0;
     this._siblings = {};
@@ -150,7 +155,7 @@ class Generator {
     depth: number,
     id: string,
     hasSiblingInSameLevel = false
-  ): Keys & { parentIndex: number } {
+  ): Keys & { siblingsIndex: number } {
     const parentDepth = depth + 1;
 
     if (this._siblingsCount[parentDepth] === undefined) {
@@ -185,14 +190,14 @@ class Generator {
     }
 
     /**
-     * Get parent index.
+     * Get sibling index.
      */
-    const parentIndex = this._siblingsCount[parentDepth];
+    const siblingsIndex = this._siblingsCount[parentDepth];
 
     /**
      * get siblings unique key (sK) and parents key (pK)
      */
-    const SK = `${PREFIX_SIBLINGS_KEY}${combineKeys(depth, parentIndex)}`;
+    const SK = `${PREFIX_SIBLINGS_KEY}${combineKeys(depth, siblingsIndex)}`;
 
     // Generate new one.
     let PK = `${PREFIX_CONNECTOR_KEY}${combineKeys(
@@ -241,27 +246,68 @@ class Generator {
       this._SKByBranch[BK].push(lastElm);
     }
 
+    if (__DEV__) {
+      const uniqueSK = SK + siblingsIndex;
+
+      // Assert uniqueness for new branches.
+      if (isNewBranch) {
+        if (uniqueKeysDev.has(uniqueSK)) {
+          throw new Error(
+            `SK: ${SK} with ${siblingsIndex} already exist.\n This combination supposed to be unique for each branch.`
+          );
+        }
+
+        if (uniqueKeysDev.has(SK)) {
+          throw new Error(
+            `SK: ${SK} already exist.\n This combination supposed to be unique for each branch.`
+          );
+        }
+
+        if (uniqueKeysDev.has(PK)) {
+          throw new Error(
+            `PK: ${PK} already exist.\n This combination supposed to be unique for each branch.`
+          );
+        }
+
+        uniqueKeysDev.add(SK);
+        uniqueKeysDev.add(uniqueSK);
+        uniqueKeysDev.add(PK);
+      } else if (depth === this._prevDepth) {
+        // Assert equalities for the same depth.
+        if (equalKeysDev.size === 0) {
+          equalKeysDev.add(SK);
+          equalKeysDev.add(uniqueSK);
+          equalKeysDev.add(PK);
+        }
+
+        if (!equalKeysDev.has(uniqueSK)) {
+          throw new Error(
+            `SK: ${SK} with ${siblingsIndex} doesn't exist.\n This combination supposed to be identical for the same branch.`
+          );
+        }
+
+        if (!equalKeysDev.has(SK)) {
+          throw new Error(
+            `SK: ${SK} doesn't exist.\n This combination supposed to be identical for the same branch.`
+          );
+        }
+
+        if (!equalKeysDev.has(PK)) {
+          throw new Error(
+            `PK: ${PK} doesn't exist.\n This combination supposed to be identical for the same branch.`
+          );
+        }
+      } else {
+        equalKeysDev.clear();
+      }
+    }
+
     this._prevDepth = depth;
 
     this._siblingsCount[depth] += 1;
 
-    if (__DEV__) {
-      if (isNewBranch) {
-        if (uniqueKeysDev.has(SK)) {
-          throw new Error(`SK: ${SK} already exist.`);
-        }
-
-        if (uniqueKeysDev.has(PK)) {
-          throw new Error(`PK: ${PK} already exist.`);
-        }
-
-        uniqueKeysDev.add(SK);
-        uniqueKeysDev.add(PK);
-      }
-    }
-
     return {
-      parentIndex,
+      siblingsIndex,
       CHK,
       SK,
       PK,
@@ -272,7 +318,7 @@ class Generator {
     id: string,
     depth: number,
     keys: Keys,
-    parentIndex: number
+    siblingsIndex: number
   ): Pointer {
     this._addElmSKToDepthCollection(keys.SK, depth);
 
@@ -280,7 +326,7 @@ class Generator {
 
     const order: Order = {
       self: selfIndex,
-      parent: parentIndex,
+      parent: siblingsIndex,
     };
 
     return { order, keys };
@@ -325,7 +371,7 @@ class Generator {
    * @returns
    */
   register(id: string, depth: number, hasSiblingInSameLevel = false): Pointer {
-    const { CHK, SK, PK, parentIndex } = this._composeKeys(
+    const { CHK, SK, PK, siblingsIndex } = this._composeKeys(
       depth,
       id,
       hasSiblingInSameLevel
@@ -337,7 +383,7 @@ class Generator {
       CHK,
     };
 
-    return this._composePointer(id, depth, keys, parentIndex);
+    return this._composePointer(id, depth, keys, siblingsIndex);
   }
 
   /**
@@ -398,12 +444,18 @@ class Generator {
     return highestSKInAllBranches;
   }
 
+  private _isSKDeleted(SK: SiblingKey): boolean {
+    const dlKys = this._branchDeletedSK;
+
+    return dlKys!! && dlKys.has(SK);
+  }
+
   getBranchDeletedKeys(PK: string, parentIndex: number): Keys | null {
     const k = PK + parentIndex;
 
     const dlKys = this._branchDeletedSK;
 
-    if (dlKys && dlKys.has(k)) {
+    if (this._isSKDeleted(PK)) {
       return dlKys!.get(k) || null;
     }
 
@@ -477,6 +529,15 @@ class Generator {
     }
 
     this._branchDeletedSK.set(deletedKeys.PK + parentIndex, deletedKeys);
+  }
+
+  clear() {
+    this._init();
+
+    if (__DEV__) {
+      uniqueKeysDev.clear();
+      equalKeysDev.clear();
+    }
   }
 }
 

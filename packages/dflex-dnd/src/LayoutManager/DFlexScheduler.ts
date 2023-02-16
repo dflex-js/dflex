@@ -45,6 +45,7 @@ function execTask(
     }
 
     if (__DEV__) {
+      // eslint-disable-next-line no-console
       console.error(error);
     }
   } finally {

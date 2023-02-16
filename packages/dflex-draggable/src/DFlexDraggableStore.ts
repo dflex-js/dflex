@@ -1,4 +1,3 @@
-import type { Keys } from "@dflex/dom-gen";
 import DFlexBaseStore from "@dflex/store";
 import { canUseDOM } from "@dflex/utils";
 
@@ -20,9 +19,7 @@ class DFlexDraggableStore extends DFlexBaseStore {
     dflexNode.resume(DOM);
   }
 
-  private _initBranch({ keys }: { keys: Keys }) {
-    const { SK } = keys;
-
+  private _initBranch(SK: string) {
     this.getElmBranchByKey(SK).forEach(this._initElmDOMInstance);
   }
 
