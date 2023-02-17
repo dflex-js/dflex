@@ -91,13 +91,13 @@ function hasSiblingInSameLevel(
 ): boolean {
   let has = false;
 
-  const branchesByDp = DOMGen.getSiblingKeysByDepth(depth);
+  const siblingsByDp = DOMGen.getSiblingKeysByDepth(depth);
 
-  const branchesByDpLength = branchesByDp.length;
+  const siblingsByDpLength = siblingsByDp.length;
 
-  if (branchesByDpLength > 0) {
+  if (siblingsByDpLength > 0) {
     const lastSKInSameDP = DOMGen.getElmSiblingsByKey(
-      branchesByDp[branchesByDpLength - 1]
+      siblingsByDp[siblingsByDpLength - 1]
     );
 
     const lastSKInSameDPLength = lastSKInSameDP.length;
@@ -235,6 +235,33 @@ class DFlexBaseStore {
     return keys;
   }
 
+  private _submitContainerChildren(parentDOM: HTMLElement, depth: number) {
+    let SK: string | null = null;
+
+    parentDOM.childNodes.forEach((DOM) => {
+      if (DOM instanceof HTMLElement) {
+        let { id } = DOM;
+
+        if (!id) {
+          id = this.tracker.newTravel(Tracker.PREFIX_ID);
+          DOM.id = id;
+        }
+
+        ({ SK } = this._submitElementToRegistry(
+          DOM,
+          {
+            depth,
+            readonly: true,
+            id,
+          },
+          null
+        )!);
+      }
+    });
+
+    return SK;
+  }
+
   register(
     element: RegisterInputBase,
     branchComposedCallBack?: BranchComposedCallBackFunction,
@@ -243,7 +270,7 @@ class DFlexBaseStore {
     // Don't execute the parent registration if there's new element in the branch.
     this._taskQ.cancelQueuedTask();
 
-    const { id, depth } = element;
+    const { id, depth, readonly } = element;
 
     let isElmRegistered = this.registry.has(id);
 
@@ -264,7 +291,11 @@ class DFlexBaseStore {
 
     if (isElmRegistered) {
       DOM = this.interactiveDOM.get(id)!;
-      SK = this.registry.get(id)!.keys.SK;
+
+      const dflexElm = this.registry.get(id)!;
+      // Update `readonly` cause default is `true.`
+      dflexElm.readonly = readonly;
+      ({ SK } = dflexElm.keys);
     } else {
       DOM = getElmDOMOrThrow(id)!;
     }
@@ -311,7 +342,9 @@ class DFlexBaseStore {
         if (__DEV__) {
           if (featureFlags.enableRegisterDebugger) {
             // eslint-disable-next-line no-console
-            console.log(`New parent: ${parentID}`);
+            console.log(
+              `New parent: ${parentID}, isParentRegistered: ${isParentRegistered}`
+            );
           }
         }
 
@@ -332,7 +365,14 @@ class DFlexBaseStore {
           const parentDepth = depth + 1;
 
           if (!isElmRegistered) {
-            ({ SK } = this._submitElementToRegistry(DOM, element, null)!);
+            if (__DEV__) {
+              if (featureFlags.enableRegisterDebugger) {
+                // eslint-disable-next-line no-console
+                console.log("Submit container children.");
+              }
+            }
+
+            SK = this._submitContainerChildren(parentDOM, depth)!;
             isElmRegistered = true;
           }
 
@@ -397,7 +437,11 @@ class DFlexBaseStore {
       }
 
       if (!isElmRegistered) {
-        this._submitElementToRegistry(DOM, element, null);
+        this._submitElementToRegistry(
+          DOM,
+          element,
+          isParentRegistered ? this.registry.get(parentID)! : null
+        );
       }
 
       this._taskQ.scheduleNextTask([REGISTER_Q, CB_Q]);
