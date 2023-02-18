@@ -197,14 +197,12 @@ class DFlexBaseStore {
       }
     }
 
-    const { order, keys } = dflexParentElm
-      ? this.DOMGen.insertElmBtwLayers(
-          id,
-          depth,
-          dflexParentElm.keys.CHK!,
-          dflexParentElm.VDOMOrder.self
-        )
-      : this.DOMGen.register(id, depth, _hasSiblingInSameLevel);
+    const { order, keys } = this.DOMGen.register(
+      id,
+      depth,
+      dflexParentElm ? dflexParentElm.keys : null,
+      _hasSiblingInSameLevel
+    );
 
     const coreElement: DFlexElementInput = {
       id,
@@ -275,12 +273,12 @@ class DFlexBaseStore {
     let isElmRegistered = this.registry.has(id);
 
     if (__DEV__) {
-      if (isElmRegistered) {
-        // eslint-disable-next-line no-console
-        console.warn(`${id} is already registered.`);
-      }
-
       if (featureFlags.enableRegisterDebugger) {
+        if (isElmRegistered) {
+          // eslint-disable-next-line no-console
+          console.warn(`${id} is already registered.`);
+        }
+
         // eslint-disable-next-line no-console
         console.log(`Receiving: ${id}`);
       }
@@ -322,6 +320,10 @@ class DFlexBaseStore {
         }
 
         [SK] = this._taskQ.handleQueue(REGISTER_Q) as string[];
+
+        const dflexElm = this.registry.get(id)!;
+        // Update `readonly` cause default is `true.`
+        dflexElm.readonly = readonly;
 
         if (__DEV__) {
           if (!SK) {

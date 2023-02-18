@@ -1,4 +1,3 @@
-import type { Keys } from "@dflex/dom-gen";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
 type ChangedIds = Set<{ oldId: string; newId: string }>;
@@ -13,6 +12,9 @@ function getIsProcessingMutations(): boolean {
 }
 
 function cleanupSiblings(store: DFlexDnDStore) {
+  console.log(
+    "🚀 ~ file: DFlexMutations.ts:16 ~ cleanupSiblings ~ cleanupSiblings"
+  );
   const keys = new Set<string>();
   const connectedNodesID: string[] = [];
 
@@ -21,22 +23,15 @@ function cleanupSiblings(store: DFlexDnDStore) {
   });
 
   keys.forEach((key) => {
-    const branch = store.getElmSiblingsByKey(key);
+    const siblings = store.getElmSiblingsByKey(key);
 
-    let deletedElmKeys: Keys | null = null;
-    let deletedParentIndex: number | null = null;
-
-    for (let i = 0; i < branch.length; i += 1) {
-      const elmID = branch[i];
+    for (let i = 0; i < siblings.length; i += 1) {
+      const elmID = siblings[i];
 
       const elm = store.registry.get(elmID)!;
 
       if (terminatedDOMiDs.has(elmID)) {
-        if (!deletedElmKeys) {
-          deletedElmKeys = { ...elm.keys };
-          deletedParentIndex = elm.VDOMOrder.parent;
-        }
-        store.clearElm(elmID);
+        store.rmElmFromRegistry(elmID);
       } else {
         elm.VDOMOrder.self = connectedNodesID.push(elmID) - 1;
       }
@@ -45,15 +40,7 @@ function cleanupSiblings(store: DFlexDnDStore) {
     if (connectedNodesID.length > 0) {
       store.mutateSiblings(key, connectedNodesID);
     } else {
-      if (__DEV__) {
-        if (!(deletedElmKeys && typeof deletedParentIndex === "number")) {
-          throw new Error(
-            `cleanupBranchElements: deletedElmKeys is still null despite removing the entire ${key} branch.`
-          );
-        }
-      }
-
-      store.cleanupBranchInstances(key, deletedElmKeys!, deletedParentIndex!);
+      store.cleanupSiblingsInstance(key);
     }
   });
 }
@@ -156,6 +143,8 @@ function DOMmutationHandler(
       cleanupSiblings(store);
       terminatedDOMiDs.clear();
     }
+  } catch (e) {
+    console.log(e);
   } finally {
     isProcessingMutations = false;
   }

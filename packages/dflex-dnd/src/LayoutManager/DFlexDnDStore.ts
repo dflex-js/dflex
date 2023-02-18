@@ -19,7 +19,7 @@ import {
   DFlexSerializedScroll,
 } from "@dflex/core-instance";
 
-import type { Keys, Siblings } from "@dflex/dom-gen";
+import type { Siblings } from "@dflex/dom-gen";
 
 import initDFlexListeners, {
   DFlexListenerPlugin,
@@ -516,12 +516,8 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.scrolls.clear();
   }
 
-  cleanupBranchInstances(
-    SK: string,
-    deletedElmKeys: Keys,
-    parentIndex: number
-  ): void {
-    this.DOMGen.destroySiblings(SK, null, deletedElmKeys, parentIndex);
+  cleanupSiblingsInstance(SK: string): void {
+    this.DOMGen.destroySiblings(SK, null);
 
     const deletedContainer = this.containers.delete(SK);
     const deletedScroll = this.scrolls.delete(SK);
@@ -546,7 +542,7 @@ class DFlexDnDStore extends DFlexBaseStore {
    *
    * @param id
    */
-  clearElm(id: string) {
+  rmElmFromRegistry(id: string) {
     super.unregister(id);
   }
 

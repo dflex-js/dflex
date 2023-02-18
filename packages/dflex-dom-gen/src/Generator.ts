@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { combineKeys } from "@dflex/utils";
+import { combineKeys, featureFlags } from "@dflex/utils";
 
 const PREFIX_CONNECTOR_KEY = "dflex_ky_";
 const PREFIX_SIBLINGS_KEY = "dflex_sk_";
@@ -28,6 +28,7 @@ type SKID = { SK: SiblingKey; id: ElmID };
  * Element generated unique keys in DOM tree.
  */
 export interface Keys {
+  BK: BranchKey;
   /** Siblings key - The main key. */
   SK: SiblingKey;
   /** Parent key. */
@@ -58,7 +59,10 @@ export type Siblings = SiblingKey[];
 
 export type SKCollection = SiblingKey[];
 
-export type BranchDeletedKeys = Map<string, Keys> | null;
+type RestoreKey = {
+  BK: string;
+  PK: string;
+};
 
 /**
  * Generate keys to connect relations between DOM-elements depending on tree
@@ -93,11 +97,6 @@ class Generator {
    */
   private _SKByBranch!: Record<BranchKey, SKID[]>;
 
-  /**
-   * Preserve deleted SK for each branch.
-   */
-  private _branchDeletedSK!: BranchDeletedKeys;
-
   private _prevDepth!: number;
 
   private _prevPK!: string;
@@ -113,7 +112,6 @@ class Generator {
     this._SKByDepth = {};
     this._SKByBranch = {};
     this._PKByDepth = {};
-    this._branchDeletedSK = null;
     this._prevDepth = -99;
     this._prevPK = `${PREFIX_CONNECTOR_KEY}${combineKeys(0, 0)}`;
   }
@@ -154,7 +152,8 @@ class Generator {
   private _composeKeys(
     depth: number,
     id: string,
-    hasSiblingInSameLevel = false
+    restoredKeys: RestoreKey | null,
+    hasSiblingInSameLevel: boolean
   ): Keys & { siblingsIndex: number } {
     const parentDepth = depth + 1;
 
@@ -177,7 +176,9 @@ class Generator {
       }
     }
 
-    const BK = `${PREFIX_BRANCH_KEY}${this._branchIndicator}`;
+    const BK = restoredKeys
+      ? restoredKeys.BK
+      : `${PREFIX_BRANCH_KEY}${this._branchIndicator}`;
 
     if (!Array.isArray(this._SKByBranch[BK])) {
       this._SKByBranch[BK] = [];
@@ -200,10 +201,12 @@ class Generator {
     const SK = `${PREFIX_SIBLINGS_KEY}${combineKeys(depth, siblingsIndex)}`;
 
     // Generate new one.
-    let PK = `${PREFIX_CONNECTOR_KEY}${combineKeys(
-      depth + 1,
-      this._branchIndicator
-    )}`;
+    let PK = restoredKeys
+      ? restoredKeys.PK
+      : `${PREFIX_CONNECTOR_KEY}${combineKeys(
+          depth + 1,
+          this._branchIndicator
+        )}`;
 
     if (hasSiblingInSameLevel) {
       // Restore the parent key. So all siblings with shared parent have the
@@ -239,11 +242,25 @@ class Generator {
         }
       }
       const preBranchLength = preBranch.length;
-      const lastElm = preBranch[preBranchLength - 1];
 
-      // If same level then the parent from previous branch is the same parent
-      // for this element.
-      this._SKByBranch[BK].push(lastElm);
+      // If adding a new element will make the new branch ahead then ignore `hasSiblingInSameLevel`.
+      // It's when two has the same parent but only `depth=0` is registered.
+      // In this case, `depth=1` is shared but the registry doesn't' reach `depth=2`
+      // where the shared parent is.
+      if (preBranchLength === this._SKByBranch[BK].length + 1) {
+        const lastElm = preBranch[preBranchLength - 1];
+
+        // If same level then the parent from previous branch is the same parent
+        // for this element.
+        this._SKByBranch[BK].push(lastElm);
+      } else if (__DEV__) {
+        if (featureFlags.enableRegisterDebugger) {
+          // eslint-disable-next-line no-console
+          console.log(
+            "_composeKeys: Ignore siblings with the same parent since the shared parent is not registered."
+          );
+        }
+      }
     }
 
     if (__DEV__) {
@@ -263,7 +280,7 @@ class Generator {
           );
         }
 
-        if (uniqueKeysDev.has(PK)) {
+        if (!restoredKeys && uniqueKeysDev.has(PK)) {
           throw new Error(
             `PK: ${PK} already exist.\n This combination supposed to be unique for each branch.`
           );
@@ -272,7 +289,7 @@ class Generator {
         uniqueKeysDev.add(SK);
         uniqueKeysDev.add(uniqueSK);
         uniqueKeysDev.add(PK);
-      } else if (depth === this._prevDepth) {
+      } else if (depth === this._prevDepth && !restoredKeys) {
         // Assert equalities for the same depth.
         if (equalKeysDev.size === 0) {
           equalKeysDev.add(SK);
@@ -311,6 +328,7 @@ class Generator {
       CHK,
       SK,
       PK,
+      BK,
     };
   }
 
@@ -332,36 +350,6 @@ class Generator {
     return { order, keys };
   }
 
-  insertElmBtwLayers(
-    id: string,
-    depth: number,
-    PK: string,
-    parentIndex: number
-  ): Pointer {
-    const k = PK + parentIndex;
-
-    if (__DEV__) {
-      if (this._branchDeletedSK === null) {
-        throw new Error(
-          "insertElmBtwLayers: branchDeletedKeys is not initiated yet."
-        );
-      }
-
-      if (!this._branchDeletedSK.has(k)) {
-        throw new Error(
-          `insertElmBtwLayers: branchDeletedKeys doesn't have key: ${k}. Check if this method has been invoked multiple times.`
-        );
-      }
-    }
-
-    return this._composePointer(
-      id,
-      depth,
-      this._branchDeletedSK!.get(k)!,
-      parentIndex
-    );
-  }
-
   /**
    * Registers element to branches.
    *
@@ -370,17 +358,24 @@ class Generator {
    * @param hasSiblingInSameLevel
    * @returns
    */
-  register(id: string, depth: number, hasSiblingInSameLevel = false): Pointer {
-    const { CHK, SK, PK, siblingsIndex } = this._composeKeys(
+  register(
+    id: string,
+    depth: number,
+    restoredKeys: RestoreKey | null,
+    hasSiblingInSameLevel: boolean
+  ): Pointer {
+    const { CHK, SK, PK, BK, siblingsIndex } = this._composeKeys(
       depth,
       id,
+      restoredKeys,
       hasSiblingInSameLevel
     );
 
     const keys: Keys = {
+      CHK,
       SK,
       PK,
-      CHK,
+      BK,
     };
 
     return this._composePointer(id, depth, keys, siblingsIndex);
@@ -444,24 +439,6 @@ class Generator {
     return highestSKInAllBranches;
   }
 
-  private _isSKDeleted(SK: SiblingKey): boolean {
-    const dlKys = this._branchDeletedSK;
-
-    return dlKys!! && dlKys.has(SK);
-  }
-
-  getBranchDeletedKeys(PK: string, parentIndex: number): Keys | null {
-    const k = PK + parentIndex;
-
-    const dlKys = this._branchDeletedSK;
-
-    if (this._isSKDeleted(PK)) {
-      return dlKys!.get(k) || null;
-    }
-
-    return null;
-  }
-
   private _cleanupSKFromDepthCollection(SK: string): void {
     Object.keys(this._SKByDepth).forEach((dp) => {
       const dpNum = Number(dp);
@@ -489,16 +466,9 @@ class Generator {
    *
    * @param SK - Sibling keys.
    * @param cb - Callback function.
-   * @param deletedKeys - Deleted keys related to the siblings. Stored for time
-   * travel later.
    * @returns
    */
-  destroySiblings(
-    SK: string,
-    cb?: ((elmID: string) => void) | null,
-    deletedKeys?: Keys,
-    parentIndex?: number
-  ): void {
+  destroySiblings(SK: string, cb?: ((elmID: string) => void) | null): void {
     if (!this._siblings[SK]) {
       if (__DEV__) {
         throw new Error(
@@ -519,16 +489,6 @@ class Generator {
 
     this._cleanupSKFromDepthCollection(SK);
     this._cleanupSKFromBranchCollection(SK);
-
-    if (!deletedKeys) {
-      return;
-    }
-
-    if (!this._branchDeletedSK) {
-      this._branchDeletedSK = new Map();
-    }
-
-    this._branchDeletedSK.set(deletedKeys.PK + parentIndex, deletedKeys);
   }
 
   clear() {

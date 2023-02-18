@@ -34,6 +34,7 @@ type TransitionHistory = {
  * Element unique keys in DOM tree.
  */
 export interface Keys {
+  BK: string;
   SK: string;
   PK: string;
   CHK: string | null;
