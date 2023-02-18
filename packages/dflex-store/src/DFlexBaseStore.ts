@@ -233,32 +233,36 @@ class DFlexBaseStore {
     return keys;
   }
 
-  // private _submitContainerChildren(parentDOM: HTMLElement, depth: number) {
-  //   let SK: string | null = null;
+  private _submitContainerChildren(parentDOM: HTMLElement, depth: number) {
+    let SK: string | null = null;
 
-  //   parentDOM.childNodes.forEach((DOM) => {
-  //     if (DOM instanceof HTMLElement) {
-  //       let { id } = DOM;
+    parentDOM.childNodes.forEach((DOM) => {
+      if (DOM instanceof HTMLElement) {
+        let { id } = DOM;
 
-  //       if (!id) {
-  //         id = this.tracker.newTravel(Tracker.PREFIX_ID);
-  //         DOM.id = id;
-  //       }
+        if (!id) {
+          id = this.tracker.newTravel(Tracker.PREFIX_ID);
+          DOM.id = id;
+        }
 
-  //       ({ SK } = this._submitElementToRegistry(
-  //         DOM,
-  //         {
-  //           depth,
-  //           readonly: true,
-  //           id,
-  //         },
-  //         null
-  //       )!);
-  //     }
-  //   });
+        ({ SK } = this._submitElementToRegistry(
+          DOM,
+          {
+            depth,
+            readonly: false,
+            id,
+          },
+          null
+        )!);
+      } else if (__DEV__) {
+        throw new Error(
+          "_submitContainerChildren: Received an element that's not an instanceof HTMLElement"
+        );
+      }
+    });
 
-  //   return SK;
-  // }
+    return SK;
+  }
 
   register(
     element: RegisterInputBase,
@@ -277,10 +281,10 @@ class DFlexBaseStore {
         if (isElmRegistered) {
           // eslint-disable-next-line no-console
           console.warn(`${id} is already registered.`);
+        } else {
+          // eslint-disable-next-line no-console
+          console.log(`Receiving: ${id}`);
         }
-
-        // eslint-disable-next-line no-console
-        console.log(`Receiving: ${id}`);
       }
     }
 
@@ -374,7 +378,9 @@ class DFlexBaseStore {
               }
             }
 
-            SK = this._submitElementToRegistry(DOM, element, null)!.SK;
+            SK = this._submitContainerChildren(parentDOM, depth)!;
+
+            // SK = this._submitElementToRegistry(DOM, element, null)!.SK;
             isElmRegistered = true;
           }
 
