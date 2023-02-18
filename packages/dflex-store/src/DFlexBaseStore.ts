@@ -197,11 +197,22 @@ class DFlexBaseStore {
       }
     }
 
+    let restoredKeys;
+    let restoredSiblingsIndex;
+
+    if (dflexParentElm) {
+      ({
+        keys: restoredKeys,
+        VDOMOrder: { self: restoredSiblingsIndex },
+      } = dflexParentElm);
+    }
+
     const { order, keys } = this.DOMGen.register(
       id,
       depth,
-      dflexParentElm ? dflexParentElm.keys : null,
-      _hasSiblingInSameLevel
+      _hasSiblingInSameLevel,
+      restoredKeys,
+      restoredSiblingsIndex
     );
 
     const coreElement: DFlexElementInput = {
@@ -236,7 +247,8 @@ class DFlexBaseStore {
   private _submitContainerChildren(
     parentDOM: HTMLElement,
     depth: number,
-    registeredElmID: string
+    registeredElmID: string,
+    dflexParentElm: DFlexElement | null
   ) {
     let SK: string | null = null;
 
@@ -249,15 +261,13 @@ class DFlexBaseStore {
           DOM.id = id;
         }
 
-        ({ SK } = this._submitElementToRegistry(
-          DOM,
-          {
-            depth,
-            readonly: registeredElmID !== id,
-            id,
-          },
-          null
-        )!);
+        const elm = {
+          depth,
+          readonly: registeredElmID !== id,
+          id,
+        };
+
+        ({ SK } = this._submitElementToRegistry(DOM, elm, dflexParentElm)!);
       } else if (__DEV__) {
         throw new Error(
           `_submitContainerChildren: Received an element that's not an instanceof HTMLElement at index: ${i}`
@@ -355,7 +365,7 @@ class DFlexBaseStore {
         isElmRegistered = true;
       }
 
-      const registerAllChildren = () => {
+      const registerAllChildren = (dflexParentElm: DFlexElement | null) => {
         if (__DEV__) {
           if (featureFlags.enableRegisterDebugger) {
             // eslint-disable-next-line no-console
@@ -363,7 +373,12 @@ class DFlexBaseStore {
           }
         }
 
-        SK = this._submitContainerChildren(parentDOM, depth, id)!;
+        SK = this._submitContainerChildren(
+          parentDOM,
+          depth,
+          id,
+          dflexParentElm
+        )!;
 
         isElmRegistered = true;
       };
@@ -399,7 +414,7 @@ class DFlexBaseStore {
           const parentDepth = depth + 1;
 
           if (!isElmRegistered) {
-            registerAllChildren();
+            registerAllChildren(null);
           }
 
           if (__DEV__) {
@@ -462,16 +477,32 @@ class DFlexBaseStore {
         } else if (!isElmRegistered) {
           // Streaming case.
           // Registration finished but one of the layer has changed.
-          registerAllChildren();
+          registerAllChildren(this.registry.get(parentID)!);
+
+          if (
+            typeof branchComposedCallBack === "function" &&
+            typeof highestContainerComposedCallBack === "function"
+          ) {
+            if (__DEV__) {
+              if (featureFlags.enableRegisterDebugger) {
+                // eslint-disable-next-line no-console
+                console.log("Add callback functions to queue.");
+              }
+            }
+
+            const fn = () => branchComposedCallBack(SK, 1, parentDOM);
+
+            this._taskQ.add(fn, CB_Q);
+          }
         }
       }
 
-      if (!isElmRegistered) {
-        this._submitElementToRegistry(
-          DOM,
-          element,
-          isParentRegistered ? this.registry.get(parentID)! : null
-        );
+      if (__DEV__) {
+        if (!isElmRegistered) {
+          throw new Error(
+            `register: Element ${id} has not been registered. Element should be registered when detecting its parent.`
+          );
+        }
       }
 
       this._taskQ.scheduleNextTask([REGISTER_Q, CB_Q]);

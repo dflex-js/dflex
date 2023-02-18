@@ -101,6 +101,8 @@ class Generator {
 
   private _prevPK!: string;
 
+  private _preBK!: string | null;
+
   constructor() {
     this._init();
   }
@@ -113,6 +115,7 @@ class Generator {
     this._SKByBranch = {};
     this._PKByDepth = {};
     this._prevDepth = -99;
+    this._preBK = null;
     this._prevPK = `${PREFIX_CONNECTOR_KEY}${combineKeys(0, 0)}`;
   }
 
@@ -149,10 +152,47 @@ class Generator {
     }
   }
 
+  private _insertLayer(
+    depth: number,
+    id: string,
+    restoredKeys: RestoreKey,
+    siblingsIndex: number
+  ): Keys & { siblingsIndex: number } {
+    const { BK, PK } = restoredKeys;
+
+    const isNewLayer = BK !== this._preBK;
+    this._preBK = BK;
+
+    /**
+     * get siblings unique key (sK) and parents key (pK)
+     */
+    const SK = `${PREFIX_SIBLINGS_KEY}${combineKeys(depth, siblingsIndex)}`;
+
+    let CHK: string | null = null;
+
+    if (depth > 0) {
+      CHK = this._prevPK;
+    }
+
+    if (isNewLayer) {
+      this._siblingsCount[depth] = 0;
+      this._SKByBranch[BK].push({ SK, id });
+    }
+
+    this._siblingsCount[depth] += 1;
+
+    return {
+      siblingsIndex,
+      CHK,
+      SK,
+      PK,
+      BK,
+    };
+  }
+
   private _composeKeys(
     depth: number,
     id: string,
-    restoredKeys: RestoreKey | null,
     hasSiblingInSameLevel: boolean
   ): Keys & { siblingsIndex: number } {
     const parentDepth = depth + 1;
@@ -176,9 +216,7 @@ class Generator {
       }
     }
 
-    const BK = restoredKeys
-      ? restoredKeys.BK
-      : `${PREFIX_BRANCH_KEY}${this._branchIndicator}`;
+    const BK = `${PREFIX_BRANCH_KEY}${this._branchIndicator}`;
 
     if (!Array.isArray(this._SKByBranch[BK])) {
       this._SKByBranch[BK] = [];
@@ -201,12 +239,10 @@ class Generator {
     const SK = `${PREFIX_SIBLINGS_KEY}${combineKeys(depth, siblingsIndex)}`;
 
     // Generate new one.
-    let PK = restoredKeys
-      ? restoredKeys.PK
-      : `${PREFIX_CONNECTOR_KEY}${combineKeys(
-          depth + 1,
-          this._branchIndicator
-        )}`;
+    let PK = `${PREFIX_CONNECTOR_KEY}${combineKeys(
+      depth + 1,
+      this._branchIndicator
+    )}`;
 
     if (hasSiblingInSameLevel) {
       // Restore the parent key. So all siblings with shared parent have the
@@ -280,7 +316,7 @@ class Generator {
           );
         }
 
-        if (!restoredKeys && uniqueKeysDev.has(PK)) {
+        if (uniqueKeysDev.has(PK)) {
           throw new Error(
             `PK: ${PK} already exist.\n This combination supposed to be unique for each branch.`
           );
@@ -289,7 +325,7 @@ class Generator {
         uniqueKeysDev.add(SK);
         uniqueKeysDev.add(uniqueSK);
         uniqueKeysDev.add(PK);
-      } else if (depth === this._prevDepth && !restoredKeys) {
+      } else if (depth === this._prevDepth) {
         // Assert equalities for the same depth.
         if (equalKeysDev.size === 0) {
           equalKeysDev.add(SK);
@@ -361,15 +397,13 @@ class Generator {
   register(
     id: string,
     depth: number,
-    restoredKeys: RestoreKey | null,
-    hasSiblingInSameLevel: boolean
+    hasSiblingInSameLevel: boolean,
+    restoredKeys?: RestoreKey,
+    restoredKeysSiblingsIndex?: number
   ): Pointer {
-    const { CHK, SK, PK, BK, siblingsIndex } = this._composeKeys(
-      depth,
-      id,
-      restoredKeys,
-      hasSiblingInSameLevel
-    );
+    const { CHK, SK, PK, BK, siblingsIndex } = restoredKeys
+      ? this._insertLayer(depth, id, restoredKeys, restoredKeysSiblingsIndex!)
+      : this._composeKeys(depth, id, hasSiblingInSameLevel);
 
     const keys: Keys = {
       CHK,
