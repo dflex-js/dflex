@@ -233,32 +233,32 @@ class DFlexBaseStore {
     return keys;
   }
 
-  private _submitContainerChildren(parentDOM: HTMLElement, depth: number) {
-    let SK: string | null = null;
+  // private _submitContainerChildren(parentDOM: HTMLElement, depth: number) {
+  //   let SK: string | null = null;
 
-    parentDOM.childNodes.forEach((DOM) => {
-      if (DOM instanceof HTMLElement) {
-        let { id } = DOM;
+  //   parentDOM.childNodes.forEach((DOM) => {
+  //     if (DOM instanceof HTMLElement) {
+  //       let { id } = DOM;
 
-        if (!id) {
-          id = this.tracker.newTravel(Tracker.PREFIX_ID);
-          DOM.id = id;
-        }
+  //       if (!id) {
+  //         id = this.tracker.newTravel(Tracker.PREFIX_ID);
+  //         DOM.id = id;
+  //       }
 
-        ({ SK } = this._submitElementToRegistry(
-          DOM,
-          {
-            depth,
-            readonly: true,
-            id,
-          },
-          null
-        )!);
-      }
-    });
+  //       ({ SK } = this._submitElementToRegistry(
+  //         DOM,
+  //         {
+  //           depth,
+  //           readonly: true,
+  //           id,
+  //         },
+  //         null
+  //       )!);
+  //     }
+  //   });
 
-    return SK;
-  }
+  //   return SK;
+  // }
 
   register(
     element: RegisterInputBase,
@@ -374,7 +374,7 @@ class DFlexBaseStore {
               }
             }
 
-            SK = this._submitContainerChildren(parentDOM, depth)!;
+            SK = this._submitElementToRegistry(DOM, element, null)!.SK;
             isElmRegistered = true;
           }
 
