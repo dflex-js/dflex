@@ -233,10 +233,14 @@ class DFlexBaseStore {
     return keys;
   }
 
-  private _submitContainerChildren(parentDOM: HTMLElement, depth: number) {
+  private _submitContainerChildren(
+    parentDOM: HTMLElement,
+    depth: number,
+    registeredElmID: string
+  ) {
     let SK: string | null = null;
 
-    parentDOM.childNodes.forEach((DOM) => {
+    parentDOM.childNodes.forEach((DOM, i) => {
       if (DOM instanceof HTMLElement) {
         let { id } = DOM;
 
@@ -249,19 +253,30 @@ class DFlexBaseStore {
           DOM,
           {
             depth,
-            readonly: false,
+            readonly: registeredElmID !== id,
             id,
           },
           null
         )!);
       } else if (__DEV__) {
         throw new Error(
-          "_submitContainerChildren: Received an element that's not an instanceof HTMLElement"
+          `_submitContainerChildren: Received an element that's not an instanceof HTMLElement at index: ${i}`
         );
       }
     });
 
     return SK;
+  }
+
+  endRegistration() {
+    this._lastDOMParent = null;
+
+    if (__DEV__) {
+      if (featureFlags.enableRegisterDebugger) {
+        // eslint-disable-next-line no-console
+        console.log("Registration has been ended");
+      }
+    }
   }
 
   register(
@@ -340,6 +355,19 @@ class DFlexBaseStore {
         isElmRegistered = true;
       }
 
+      const registerAllChildren = () => {
+        if (__DEV__) {
+          if (featureFlags.enableRegisterDebugger) {
+            // eslint-disable-next-line no-console
+            console.log("Submit container children.");
+          }
+        }
+
+        SK = this._submitContainerChildren(parentDOM, depth, id)!;
+
+        isElmRegistered = true;
+      };
+
       const isNewParent =
         this._lastDOMParent === null ||
         !this._lastDOMParent.isSameNode(parentDOM);
@@ -371,17 +399,7 @@ class DFlexBaseStore {
           const parentDepth = depth + 1;
 
           if (!isElmRegistered) {
-            if (__DEV__) {
-              if (featureFlags.enableRegisterDebugger) {
-                // eslint-disable-next-line no-console
-                console.log("Submit container children.");
-              }
-            }
-
-            SK = this._submitContainerChildren(parentDOM, depth)!;
-
-            // SK = this._submitElementToRegistry(DOM, element, null)!.SK;
-            isElmRegistered = true;
+            registerAllChildren();
           }
 
           if (__DEV__) {
@@ -441,6 +459,10 @@ class DFlexBaseStore {
               CB_Q
             );
           }
+        } else if (!isElmRegistered) {
+          // Streaming case.
+          // Registration finished but one of the layer has changed.
+          registerAllChildren();
         }
       }
 

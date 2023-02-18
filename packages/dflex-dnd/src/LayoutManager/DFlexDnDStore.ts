@@ -247,6 +247,8 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     this.isComposing = false;
 
+    this.endRegistration();
+
     scheduler(this, null, null, { type: "layoutState", status: "ready" });
   }
 
@@ -265,17 +267,6 @@ class DFlexDnDStore extends DFlexBaseStore {
     }
 
     const { id } = element;
-
-    if (this.has(id)) {
-      const [elm, DOM] = this.getElmWithDOM(id);
-
-      if (elm.isVisible) {
-        // Preserves last changes.
-        elm.transform(DOM);
-      }
-
-      return;
-    }
 
     scheduler(
       this,
