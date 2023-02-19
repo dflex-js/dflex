@@ -1,4 +1,3 @@
-import type { DeletedElmKeys } from "@dflex/dom-gen";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
 type ChangedIds = Set<{ oldId: string; newId: string }>;
@@ -12,7 +11,7 @@ function getIsProcessingMutations(): boolean {
   return isProcessingMutations;
 }
 
-function cleanupBranchElements(store: DFlexDnDStore) {
+function cleanupSiblings(store: DFlexDnDStore) {
   const keys = new Set<string>();
   const connectedNodesID: string[] = [];
 
@@ -20,30 +19,25 @@ function cleanupBranchElements(store: DFlexDnDStore) {
     keys.add(store.registry.get(id)!.keys.SK);
   });
 
-  let deletedElmKeys: DeletedElmKeys | null = null;
-
   keys.forEach((key) => {
-    const branch = store.getElmBranchByKey(key);
+    const siblings = store.getElmSiblingsByKey(key);
 
-    for (let i = 0; i < branch.length; i += 1) {
-      const elmID = branch[i];
+    for (let i = 0; i < siblings.length; i += 1) {
+      const elmID = siblings[i];
 
       const elm = store.registry.get(elmID)!;
 
       if (terminatedDOMiDs.has(elmID)) {
-        if (!deletedElmKeys) {
-          deletedElmKeys = { ...elm.keys, parentIndex: elm.DOMOrder.parent };
-        }
-        store.clearElm(elmID);
-      } else if (!deletedElmKeys) {
+        store.rmElmFromRegistry(elmID);
+      } else {
         elm.VDOMOrder.self = connectedNodesID.push(elmID) - 1;
       }
     }
 
     if (connectedNodesID.length > 0) {
-      store.updateBranch(key, connectedNodesID);
+      store.mutateSiblings(key, connectedNodesID);
     } else {
-      store.cleanupBranchInstances(key, deletedElmKeys!);
+      store.cleanupSiblingsInstance(key, true);
     }
   });
 }
@@ -53,7 +47,7 @@ function mutateIDs(store: DFlexDnDStore) {
   changedIds.forEach((idSet) => {
     if (store.registry.has(idSet.oldId)) {
       const elm = store.registry.get(idSet.oldId)!;
-      const elmBranch = store.getElmBranchByKey(elm.keys.SK);
+      const elmBranch = store.getElmSiblingsByKey(elm.keys.SK);
 
       // Update registry.
       store.registry.set(idSet.newId, elm);
@@ -104,6 +98,7 @@ function checkMutations(store: DFlexDnDStore, mutations: MutationRecord[]) {
         removedNodes.forEach((node) => {
           if (node instanceof HTMLElement) {
             const { id } = node;
+
             if (store.registry.has(id)) {
               terminatedDOMiDs.add(id);
             }
@@ -143,7 +138,7 @@ function DOMmutationHandler(
     }
 
     if (terminatedDOMiDs.size > 0) {
-      cleanupBranchElements(store);
+      cleanupSiblings(store);
       terminatedDOMiDs.clear();
     }
   } finally {
@@ -173,7 +168,7 @@ function addMutationObserver(
   store: DFlexDnDStore,
   SK: string,
   DOMTarget: HTMLElement
-) {
+): void {
   if (!store.mutationObserverMap.has(SK)) {
     initMutationObserver(store, SK);
   }

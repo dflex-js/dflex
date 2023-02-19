@@ -32,7 +32,7 @@ class DraggableInteractive extends DraggableAxes {
 
     this.enableCommit =
       this.containersTransition.enable &&
-      store.getElmBranchByKey(this.draggedElm.keys.SK).length > 1
+      store.getElmSiblingsByKey(this.draggedElm.keys.SK).length > 1
         ? { ...opts.commit }
         : {
             enableAfterEndingDrag: false,
@@ -55,7 +55,7 @@ class DraggableInteractive extends DraggableAxes {
 
       // Initialize all the scroll containers in the same depth to enable migration.
       if (opts.containersTransition.enable) {
-        store.getBranchesByDepth(this.draggedElm.depth).forEach((SK) => {
+        store.getSiblingKeysByDepth(this.draggedElm.depth).forEach((SK) => {
           store.scrolls.get(SK)!.setInnerThreshold(opts.threshold);
         });
       }
@@ -118,7 +118,7 @@ class DraggableInteractive extends DraggableAxes {
   ) {
     const { SK, index } = latestCycle;
     const { rect, translate, id, VDOMOrder, DOMGrid } = this.draggedElm;
-    const siblings = store.getElmBranchByKey(SK);
+    const siblings = store.getElmSiblingsByKey(SK);
 
     // Get the original DOM to avoid manipulating the mirror/ghost DOM.
     const draggedDOM = store.interactiveDOM.get(id)!;

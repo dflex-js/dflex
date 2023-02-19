@@ -46,7 +46,7 @@ function initThresholds(
 ) {
   threshold.setMainThreshold(draggedID, draggedRect, false);
 
-  store.getBranchesByDepth(draggedDepth).forEach((SK) => {
+  store.getSiblingKeysByDepth(draggedDepth).forEach((SK) => {
     const elmContainer = store.containers.get(SK)!;
 
     const boundaries = elmContainer.getBoundaries();
@@ -124,7 +124,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
 
     this.gridPlaceholder = new PointNum(DOMGrid.x, DOMGrid.y);
 
-    const siblings = store.getElmBranchByKey(SK);
+    const siblings = store.getElmSiblingsByKey(SK);
 
     const cycleID = store.tracker.newTravel(Tracker.PREFIX_CYCLE);
 
@@ -154,7 +154,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
 
     // Override containersTransition option when we have an orphan branch.
     this.containersTransition =
-      store.getBranchesByDepth(depth).length > 1
+      store.getSiblingKeysByDepth(depth).length > 1
         ? opts.containersTransition
         : { ...opts.containersTransition, enable: false };
 
@@ -403,7 +403,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
   isNotSettled() {
     const { SK, index } = store.migration.latest();
 
-    const lastElm = store.getElmBranchByKey(SK).length - 1;
+    const lastElm = store.getElmSiblingsByKey(SK).length - 1;
 
     const isLeavingFromBottom = index === lastElm;
 

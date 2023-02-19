@@ -1,13 +1,13 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable class-methods-use-this */
 /* eslint-disable no-underscore-dangle */
-import Generator, { Siblings } from "@dflex/dom-gen";
+import Generator, { Keys, Siblings } from "@dflex/dom-gen";
 
 import { DFlexElement, DFlexElementInput } from "@dflex/core-instance";
 import {
+  featureFlags,
   getParentElm,
   setFixedWidth,
   setRelativePosition,
+  TaskQueue,
   Tracker,
 } from "@dflex/utils";
 
@@ -43,10 +43,14 @@ type GetElmWithDOMOutput = [DFlexElement, HTMLElement];
 
 type BranchComposedCallBackFunction = (
   // eslint-disable-next-line no-unused-vars
-  dflexElm: DFlexElement,
+  childrenSK: string,
+  // eslint-disable-next-line no-unused-vars
+  parentDepth: number,
   // eslint-disable-next-line no-unused-vars
   parentDOM: HTMLElement
 ) => void;
+
+type HighestContainerComposedCallBack = () => void;
 
 function getElmDOMOrThrow(id: string): HTMLElement | null {
   let DOM = document.getElementById(id);
@@ -87,13 +91,13 @@ function hasSiblingInSameLevel(
 ): boolean {
   let has = false;
 
-  const branchesByDp = DOMGen.getBranchByDepth(depth);
+  const siblingsByDp = DOMGen.getSiblingKeysByDepth(depth);
 
-  const branchesByDpLength = branchesByDp.length;
+  const siblingsByDpLength = siblingsByDp.length;
 
-  if (branchesByDpLength > 0) {
-    const lastSKInSameDP = DOMGen.getElmBranchByKey(
-      branchesByDp[branchesByDpLength - 1]
+  if (siblingsByDpLength > 0) {
+    const lastSKInSameDP = DOMGen.getElmSiblingsByKey(
+      siblingsByDp[siblingsByDpLength - 1]
     );
 
     const lastSKInSameDPLength = lastSKInSameDP.length;
@@ -114,6 +118,10 @@ function hasSiblingInSameLevel(
   return has;
 }
 
+const REGISTER_Q = "registerQ";
+
+const CB_Q = "submitQ";
+
 class DFlexBaseStore {
   globals: DFlexGlobalConfig;
 
@@ -127,25 +135,18 @@ class DFlexBaseStore {
 
   private _lastDOMParent: HTMLElement | null;
 
-  private _isParentQueued: Set<string>;
-
-  private _queue: (() => void)[];
-
-  private queueTimeoutId?: ReturnType<typeof setTimeout>;
+  private _taskQ: TaskQueue;
 
   constructor() {
     this.globals = {
       removeContainerWhenEmpty: false,
     };
     this._lastDOMParent = null;
-    this._isParentQueued = new Set();
-
-    this._queue = [];
     this.tracker = new Tracker();
+    this._taskQ = new TaskQueue();
     this.registry = new Map();
     this.interactiveDOM = new Map();
     this.DOMGen = new Generator();
-    this._handleQueue = this._handleQueue.bind(this);
   }
 
   /**
@@ -163,48 +164,19 @@ class DFlexBaseStore {
     Object.assign(this.globals, globals);
   }
 
-  private _handleQueue(): void {
-    try {
-      if (this._queue.length === 0) {
-        return;
-      }
-
-      const queue = this._queue;
-
-      this._queue = [];
-
-      queue.forEach((fn) => fn());
-    } finally {
-      this.queueTimeoutId = undefined;
-    }
-  }
-
   private _submitElementToRegistry(
     DOM: HTMLElement,
     elm: RegisterInputBase,
-    dflexParentElm: null | DFlexElement,
-    branchComposedCallBack: BranchComposedCallBackFunction | null
-  ): void {
+    dflexParentElm: null | DFlexElement
+  ): Keys | null {
     const { id, depth, readonly } = elm;
 
-    if (!this.interactiveDOM.has(id)) {
-      this.interactiveDOM.set(id, DOM);
-    }
-
-    if (this.registry.has(id)) {
-      const elmInRegistry = this.registry.get(id);
-
-      // This is the only difference between register by default and register
-      // with a user only. In the future if there's new options then this should
-      // be updated.
-      elmInRegistry!.readonly = readonly;
-
-      if (__DEV__) {
-        // eslint-disable-next-line no-console
-        console.warn(`Element with ID: ${id} is already registered.`);
+    if (__DEV__) {
+      if (this.registry.has(id) || this.interactiveDOM.has(id)) {
+        throw new Error(
+          `_submitElementToRegistry: Element with id: ${id} is already registered.`
+        );
       }
-
-      return;
     }
 
     let _hasSiblingInSameLevel = false;
@@ -225,9 +197,23 @@ class DFlexBaseStore {
       }
     }
 
-    const { order, keys } = dflexParentElm
-      ? this.DOMGen.insertElmBtwLayers(id, depth, dflexParentElm.keys.CHK!)
-      : this.DOMGen.register(id, depth, _hasSiblingInSameLevel);
+    let restoredKeys;
+    let restoredSiblingsIndex;
+
+    if (dflexParentElm) {
+      ({
+        keys: restoredKeys,
+        VDOMOrder: { self: restoredSiblingsIndex },
+      } = dflexParentElm);
+    }
+
+    const { order, keys } = this.DOMGen.register(
+      id,
+      depth,
+      _hasSiblingInSameLevel,
+      restoredKeys,
+      restoredSiblingsIndex
+    );
 
     const coreElement: DFlexElementInput = {
       id,
@@ -239,167 +225,287 @@ class DFlexBaseStore {
 
     const dflexElm = new DFlexElement(coreElement);
 
+    if (__DEV__) {
+      if (featureFlags.enableRegisterDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(`${id}: is created`);
+      }
+    }
+
     this.registry.set(id, dflexElm);
+    this.interactiveDOM.set(id, DOM);
 
     dflexElm.setAttribute(DOM, "INDEX", dflexElm.VDOMOrder.self);
 
     if (depth > 0) {
-      if (keys.CHK === null) {
-        if (__DEV__) {
-          throw new Error(
-            `Invalid keys for element with ID: ${id} Elements over depth-1 must have a CHK key.`
-          );
-        }
-
-        return;
-      }
-
-      DOM.dataset.dflexKey = keys.CHK;
-
-      if (typeof branchComposedCallBack === "function") {
-        branchComposedCallBack(dflexElm, DOM);
-      }
+      DOM.dataset.dflexKey = keys.SK;
     }
+
+    return keys;
   }
 
-  private _registerParentInQueue(
+  private _submitContainerChildren(
     parentDOM: HTMLElement,
-    parentDepth: number,
-    branchComposedCallBack: BranchComposedCallBackFunction | null
-  ): void {
-    let { id: parentID } = parentDOM;
+    depth: number,
+    registeredElmID: string,
+    dflexParentElm: DFlexElement | null
+  ) {
+    let SK: string | null = null;
 
-    if (!parentID) {
-      parentID = this.tracker.newTravel(Tracker.PREFIX_ID);
-      parentDOM.id = parentID;
-    }
+    parentDOM.childNodes.forEach((DOM, i) => {
+      if (DOM instanceof HTMLElement) {
+        let { id } = DOM;
 
-    // Parent DOM changed empty the queue.
-    this._handleQueue();
+        if (!id) {
+          id = this.tracker.newTravel(Tracker.PREFIX_ID);
+          DOM.id = id;
+        }
 
-    this.interactiveDOM.set(parentID, parentDOM);
+        const elm = {
+          depth,
+          readonly: registeredElmID !== id,
+          id,
+        };
 
-    // keep the reference for comparison.
-    this._lastDOMParent = parentDOM;
-
-    // A new branch. Queue the new branch.
-    this._queue.push(() => {
-      this._submitElementToRegistry(
-        parentDOM,
-        {
-          id: parentID,
-          depth: parentDepth,
-          // Default value for inserted parent element.
-          readonly: true,
-        },
-        null,
-        branchComposedCallBack
-      );
+        ({ SK } = this._submitElementToRegistry(DOM, elm, dflexParentElm)!);
+      } else if (__DEV__) {
+        throw new Error(
+          `_submitContainerChildren: Received an element that's not an instanceof HTMLElement at index: ${i}`
+        );
+      }
     });
 
-    if (this.queueTimeoutId !== undefined) {
-      clearTimeout(this.queueTimeoutId);
-    }
-
-    this.queueTimeoutId = setTimeout(this._handleQueue, 0);
+    return SK;
   }
 
-  private _insertElmAndInitBranch(
-    element: RegisterInputBase,
-    childDOM: HTMLElement,
-    parentDOM: HTMLElement,
-    branchComposedCallBack: BranchComposedCallBackFunction
-  ): void {
-    this._lastDOMParent = parentDOM;
+  endRegistration() {
+    this._lastDOMParent = null;
 
-    const parentID = parentDOM.id;
-
-    const dflexParentElm = this.registry.get(parentID)!;
-
-    const submit = () => {
-      this._submitElementToRegistry(childDOM, element, dflexParentElm, null);
-
-      if (!this._isParentQueued.has(parentID)) {
-        this._isParentQueued.add(parentID);
-
-        // A new branch. Queue the new branch.
-        this._queue.push(() => {
-          branchComposedCallBack!(dflexParentElm, parentDOM);
-
-          // To support continuos streaming.
-          this._isParentQueued.delete(parentID);
-        });
-
-        if (this.queueTimeoutId !== undefined) {
-          clearTimeout(this.queueTimeoutId);
-        }
-
-        this.queueTimeoutId = setTimeout(this._handleQueue, 0);
+    if (__DEV__) {
+      if (featureFlags.enableRegisterDebugger) {
+        // eslint-disable-next-line no-console
+        console.log("Registration has been ended");
       }
-    };
-
-    // Mutation observer is not fired yet. Wait until it's done.
-    // When it's fired then `branchDeletedKeys` should be defined.
-    const hasDelKeys = this.DOMGen.getBranchDeletedKeys(
-      dflexParentElm.keys.CHK!
-    );
-
-    if (hasDelKeys) {
-      submit();
-    } else {
-      queueMicrotask(submit);
     }
   }
 
-  /**
-   * Registers an element to the store.
-   *
-   * @param element - element to register
-   * @returns
-   */
   register(
     element: RegisterInputBase,
-    branchComposedCallBack?: BranchComposedCallBackFunction
-  ): void {
-    const { id, depth } = element;
+    branchComposedCallBack?: BranchComposedCallBackFunction,
+    highestContainerComposedCallBack?: HighestContainerComposedCallBack
+  ) {
+    // Don't execute the parent registration if there's new element in the branch.
+    this._taskQ.cancelQueuedTask();
 
-    const DOM = this.interactiveDOM.has(id)
-      ? this.interactiveDOM.get(id)!
-      : getElmDOMOrThrow(id)!;
+    const { id, depth, readonly } = element;
 
-    getParentElm(DOM, (_parentDOM) => {
-      const isParentChanged =
-        this._lastDOMParent === null ||
-        !this._lastDOMParent.isSameNode(_parentDOM);
+    let isElmRegistered = this.registry.has(id);
 
+    if (__DEV__) {
+      if (featureFlags.enableRegisterDebugger) {
+        if (isElmRegistered) {
+          // eslint-disable-next-line no-console
+          console.warn(`${id} is already registered.`);
+        } else {
+          // eslint-disable-next-line no-console
+          console.log(`Receiving: ${id}`);
+        }
+      }
+    }
+
+    let DOM: HTMLElement;
+    let SK: string;
+
+    if (isElmRegistered) {
+      DOM = this.interactiveDOM.get(id)!;
+
+      const dflexElm = this.registry.get(id)!;
+      // Update `readonly` cause default is `true.`
+      dflexElm.readonly = readonly;
+      ({ SK } = dflexElm.keys);
+    } else {
+      DOM = getElmDOMOrThrow(id)!;
+    }
+
+    getParentElm(DOM, (parentDOM) => {
       let isParentRegistered = false;
 
-      if (isParentChanged) {
-        const parentDepth = depth + 1;
+      let { id: parentID } = parentDOM;
 
-        this._registerParentInQueue(
-          _parentDOM,
-          parentDepth,
-          branchComposedCallBack || null
-        );
-
-        this._submitElementToRegistry(DOM, element, null, null);
+      if (!parentID) {
+        parentID = this.tracker.newTravel(Tracker.PREFIX_ID);
+        parentDOM.id = parentID;
       } else {
-        isParentRegistered = this.registry.has(_parentDOM.id);
+        isParentRegistered = this.registry.has(parentID);
+      }
 
-        if (isParentRegistered) {
-          this._insertElmAndInitBranch(
-            element,
-            DOM,
-            _parentDOM,
-            branchComposedCallBack!
+      // Is this element already queued as parent?
+      if (this._taskQ.hasElm(id)) {
+        if (__DEV__) {
+          if (featureFlags.enableRegisterDebugger) {
+            // eslint-disable-next-line no-console
+            console.log("Empty the queue cause element's waiting");
+          }
+        }
+
+        [SK] = this._taskQ.handleQueue(REGISTER_Q) as string[];
+
+        const dflexElm = this.registry.get(id)!;
+        // Update `readonly` cause default is `true.`
+        dflexElm.readonly = readonly;
+
+        if (__DEV__) {
+          if (!SK) {
+            throw new Error(
+              "register: Executing element in the queue has't returned SK."
+            );
+          }
+        }
+
+        isElmRegistered = true;
+      }
+
+      const registerAllChildren = (dflexParentElm: DFlexElement | null) => {
+        if (__DEV__) {
+          if (featureFlags.enableRegisterDebugger) {
+            // eslint-disable-next-line no-console
+            console.log("Submit container children.");
+          }
+        }
+
+        SK = this._submitContainerChildren(
+          parentDOM,
+          depth,
+          id,
+          dflexParentElm
+        )!;
+
+        isElmRegistered = true;
+      };
+
+      const isNewParent =
+        this._lastDOMParent === null ||
+        !this._lastDOMParent.isSameNode(parentDOM);
+
+      if (isNewParent) {
+        if (__DEV__) {
+          if (featureFlags.enableRegisterDebugger) {
+            // eslint-disable-next-line no-console
+            console.log(
+              `New parent: ${parentID}, isParentRegistered: ${isParentRegistered}`
+            );
+          }
+        }
+
+        // keep the reference for comparison.
+        this._lastDOMParent = parentDOM;
+
+        if (!isParentRegistered) {
+          // If it's a new parent then execute the previous one.
+          if (__DEV__) {
+            if (featureFlags.enableRegisterDebugger) {
+              // eslint-disable-next-line no-console
+              console.log("New parent empty the queue");
+            }
+          }
+
+          this._taskQ.handleQueue(REGISTER_Q);
+
+          const parentDepth = depth + 1;
+
+          if (!isElmRegistered) {
+            registerAllChildren(null);
+          }
+
+          if (__DEV__) {
+            if (!SK) {
+              throw new Error("register: Executing element has't returned SK.");
+            }
+          }
+
+          const submitParentElm = (): string => {
+            if (__DEV__) {
+              if (featureFlags.enableRegisterDebugger) {
+                // eslint-disable-next-line no-console
+                console.log("Executing parent element.");
+              }
+            }
+
+            const { SK: _ } = this._submitElementToRegistry(
+              parentDOM,
+              {
+                id: parentID,
+                depth: parentDepth,
+                // Default value for inserted parent element.
+                readonly: true,
+              },
+              null
+            )!;
+
+            return _;
+          };
+
+          if (__DEV__) {
+            if (featureFlags.enableRegisterDebugger) {
+              // eslint-disable-next-line no-console
+              console.log(`Add parent ${parentID} to queue.`);
+            }
+          }
+
+          // A new branch. Queue the new branch.
+          this._taskQ.add(submitParentElm, REGISTER_Q, parentID);
+
+          if (
+            typeof branchComposedCallBack === "function" &&
+            typeof highestContainerComposedCallBack === "function"
+          ) {
+            if (__DEV__) {
+              if (featureFlags.enableRegisterDebugger) {
+                // eslint-disable-next-line no-console
+                console.log("Add callback functions to queue.");
+              }
+            }
+
+            const fn = () => branchComposedCallBack(SK, parentDepth, parentDOM);
+
+            this._taskQ.insertBeforeEnd(
+              highestContainerComposedCallBack,
+              fn,
+              CB_Q
+            );
+          }
+        } else if (!isElmRegistered) {
+          // Streaming case.
+          // Registration finished but one of the layer has changed.
+          registerAllChildren(this.registry.get(parentID)!);
+
+          if (
+            typeof branchComposedCallBack === "function" &&
+            typeof highestContainerComposedCallBack === "function"
+          ) {
+            if (__DEV__) {
+              if (featureFlags.enableRegisterDebugger) {
+                // eslint-disable-next-line no-console
+                console.log("Add callback functions to queue.");
+              }
+            }
+
+            const fn = () => branchComposedCallBack(SK, 1, parentDOM);
+
+            this._taskQ.add(fn, CB_Q);
+          }
+        }
+      }
+
+      if (__DEV__) {
+        if (!isElmRegistered) {
+          throw new Error(
+            `register: Element ${id} has not been registered. Element should be registered when detecting its parent.`
           );
         }
       }
 
-      if (!(isParentChanged || isParentRegistered)) {
-        this._submitElementToRegistry(DOM, element, null, null);
-      }
+      this._taskQ.scheduleNextTask([REGISTER_Q, CB_Q]);
 
       return true;
     });
@@ -440,8 +546,8 @@ class DFlexBaseStore {
    * @param SK - Siblings Key.
    * @returns
    */
-  getElmBranchByKey(SK: string): Siblings {
-    return this.DOMGen.getElmBranchByKey(SK);
+  getElmSiblingsByKey(SK: string): Siblings {
+    return this.DOMGen.getElmSiblingsByKey(SK);
   }
 
   /**
@@ -450,18 +556,18 @@ class DFlexBaseStore {
    * @param dp - depth.
    * @returns
    */
-  getBranchesByDepth(dp: number): Siblings {
-    return this.DOMGen.getBranchByDepth(dp);
+  getSiblingKeysByDepth(dp: number): Siblings {
+    return this.DOMGen.getSiblingKeysByDepth(dp);
   }
 
   /**
-   * Mutates branch in the generated DOM tree.
+   * Mutates siblings in the generated DOM tree.
    *
    * @param SK
-   * @param newBranch
+   * @param newSiblings
    */
-  updateBranch(SK: string, newBranch: Siblings): void {
-    return this.DOMGen.updateBranch(SK, newBranch);
+  mutateSiblings(SK: string, newSiblings: Siblings): void {
+    return this.DOMGen.mutateSiblings(SK, newSiblings);
   }
 
   /**
@@ -480,8 +586,8 @@ class DFlexBaseStore {
    *
    * @param SK - Siblings Key.
    */
-  destroyBranch(SK: string): void {
-    this.DOMGen.destroyBranch(SK, (id) => {
+  destroySiblings(SK: string): void {
+    this.DOMGen.destroySiblings(SK, (id) => {
       this.unregister(id);
     });
   }
@@ -491,18 +597,21 @@ class DFlexBaseStore {
    * method should be called when the app will no longer use the store.
    */
   destroy(): void {
-    this.DOMGen.forEachBranch((SK) => {
-      this.DOMGen.destroyBranch(SK);
-    });
+    this.DOMGen.clear();
 
     this.interactiveDOM.clear();
     this.registry.clear();
 
     this._lastDOMParent = null;
-    this._isParentQueued.clear();
+
+    this._taskQ.clear();
 
     // @ts-expect-error - Cleaning up.
+    this._taskQ = undefined;
+    // @ts-expect-error - Cleaning up.
     this.tracker = undefined;
+    // @ts-expect-error - Cleaning up.
+    this.DOMGen = undefined;
 
     if (__DEV__) {
       // eslint-disable-next-line no-console
