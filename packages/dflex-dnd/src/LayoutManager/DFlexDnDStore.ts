@@ -507,22 +507,29 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.scrolls.clear();
   }
 
-  cleanupSiblingsInstance(SK: string): void {
-    this.DOMGen.destroySiblings(SK, null);
+  cleanupSiblingsInstance(SK: string, destroySiblings: boolean): void {
+    if (destroySiblings) {
+      this.DOMGen.destroySiblings(SK, null);
+    }
 
     const deletedContainer = this.containers.delete(SK);
     const deletedScroll = this.scrolls.delete(SK);
 
     if (__DEV__) {
+      if (featureFlags.enableRegisterDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(`cleanupSiblingsInstance for SK: ${SK}`);
+      }
+
       if (!deletedContainer) {
         throw new Error(
-          `cleanupBranchInstances: Container with SK: ${SK} doesn't exists`
+          `cleanupSiblingsInstance: Container with SK: ${SK} doesn't exists`
         );
       }
 
       if (!deletedScroll) {
         throw new Error(
-          `cleanupBranchInstances: Scroll container with SK: ${SK} doesn't exists`
+          `cleanupSiblingsInstance: Scroll container with SK: ${SK} doesn't exists`
         );
       }
     }
@@ -554,11 +561,21 @@ class DFlexDnDStore extends DFlexBaseStore {
       return;
     }
 
-    if (__DEV__) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `unregister: Element with id: ${id} isn't caught by mutation observer.`
-      );
+    const {
+      keys: { SK },
+    } = this.registry.get(id)!;
+
+    const el = this.DOMGen.removeElmFromSiblings(SK, id);
+
+    super.unregister(id);
+
+    if (el) {
+      this.cleanupSiblingsInstance(SK, false);
+
+      if (__DEV__) {
+        // eslint-disable-next-line no-console
+        console.warn(`unregister: Siblings branch ${SK} has been deleted.`);
+      }
     }
   }
 

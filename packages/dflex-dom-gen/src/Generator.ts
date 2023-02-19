@@ -495,6 +495,10 @@ class Generator {
     });
   }
 
+  private _hasSK(SK: string) {
+    return Array.isArray(this._siblings[SK]);
+  }
+
   /**
    * Removes entire siblings from root.
    *
@@ -503,7 +507,7 @@ class Generator {
    * @returns
    */
   destroySiblings(SK: string, cb?: ((elmID: string) => void) | null): void {
-    if (!this._siblings[SK]) {
+    if (!this._hasSK(SK)) {
       if (__DEV__) {
         throw new Error(
           `destroySiblings: You are trying to destroy nonexistence branch ${SK}`
@@ -523,6 +527,40 @@ class Generator {
 
     this._cleanupSKFromDepthCollection(SK);
     this._cleanupSKFromBranchCollection(SK);
+  }
+
+  removeElmFromSiblings(SK: string, id: string): null | string | true {
+    if (!this._hasSK(SK)) {
+      if (__DEV__) {
+        throw new Error(
+          `removeElmFromSiblings: You are trying to destroy nonexistence siblings ${SK}`
+        );
+      }
+
+      return null;
+    }
+
+    const index = this._siblings[SK].findIndex((elmID) => elmID === id);
+
+    if (index === -1) {
+      if (__DEV__) {
+        throw new Error(
+          `removeElmFromSiblings: Element with id: ${id} doesn't belong to siblings: ${this._siblings[SK]}.`
+        );
+      }
+
+      return null;
+    }
+
+    const [deletedElmID] = this._siblings[SK].splice(index, 1);
+
+    if (this._siblings[SK].length === 0) {
+      this.destroySiblings(SK);
+
+      return true;
+    }
+
+    return deletedElmID;
   }
 
   clear() {

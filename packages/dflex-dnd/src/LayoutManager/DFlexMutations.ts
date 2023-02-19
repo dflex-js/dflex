@@ -12,9 +12,6 @@ function getIsProcessingMutations(): boolean {
 }
 
 function cleanupSiblings(store: DFlexDnDStore) {
-  console.log(
-    "🚀 ~ file: DFlexMutations.ts:16 ~ cleanupSiblings ~ cleanupSiblings"
-  );
   const keys = new Set<string>();
   const connectedNodesID: string[] = [];
 
@@ -40,7 +37,7 @@ function cleanupSiblings(store: DFlexDnDStore) {
     if (connectedNodesID.length > 0) {
       store.mutateSiblings(key, connectedNodesID);
     } else {
-      store.cleanupSiblingsInstance(key);
+      store.cleanupSiblingsInstance(key, true);
     }
   });
 }
@@ -101,6 +98,7 @@ function checkMutations(store: DFlexDnDStore, mutations: MutationRecord[]) {
         removedNodes.forEach((node) => {
           if (node instanceof HTMLElement) {
             const { id } = node;
+
             if (store.registry.has(id)) {
               terminatedDOMiDs.add(id);
             }
@@ -143,8 +141,6 @@ function DOMmutationHandler(
       cleanupSiblings(store);
       terminatedDOMiDs.clear();
     }
-  } catch (e) {
-    console.log(e);
   } finally {
     isProcessingMutations = false;
   }
