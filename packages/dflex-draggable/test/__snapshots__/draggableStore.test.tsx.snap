@@ -27,9 +27,10 @@ Map {
     "isPaused": false,
     "isVisible": true,
     "keys": {
+      "BK": "dflex_bk_0",
       "CHK": null,
       "PK": "dflex_ky_1_0",
-      "SK": "dflex_ky_0_0",
+      "SK": "dflex_sk_0_0",
     },
     "readonly": false,
     "rect": BoxRect {
