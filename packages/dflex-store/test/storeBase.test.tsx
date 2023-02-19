@@ -91,14 +91,23 @@ describe("Testing DFlex BaseStore", () => {
   it("Chaining works correctly", () => {
     const { keys: parentKeys } = store.registry.get(elm0DP1.id)!;
 
+    let SK: string;
+    let BK: string;
+
     [elm0DP0, elm1DP0, elm2DP0].forEach((elm) => {
       const { keys } = store.registry.get(elm.id)!;
 
+      if (!SK) {
+        SK = keys.SK;
+        BK = keys.BK;
+      }
+
       // Child parent key with parent sibling key.
-      expect(keys.PK).toBe(parentKeys.SK);
+      expect(keys.PK).toBe(parentKeys.CHK);
 
       // Child sibling key with parent children key.
-      expect(keys.SK).toBe(parentKeys.CHK);
+      expect(keys.SK).toBe(SK);
+      expect(keys.BK).toBe(BK);
 
       expect(keys.CHK).toBeNull();
     });
@@ -107,7 +116,7 @@ describe("Testing DFlex BaseStore", () => {
   it("Siblings belong to the same branch", () => {
     const { keys } = store.registry.get(elm0DP0.id)!;
 
-    expect(store.getElmBranchByKey(keys.SK)).toStrictEqual([
+    expect(store.getElmSiblingsByKey(keys.SK)).toStrictEqual([
       elm0DP0.id,
       elm1DP0.id,
       elm2DP0.id,
@@ -117,7 +126,7 @@ describe("Testing DFlex BaseStore", () => {
   it("Parents belong to the same branch", () => {
     const { keys } = store.registry.get(elm0DP1.id)!;
 
-    expect(store.getElmBranchByKey(keys.SK)).toStrictEqual([elm0DP1.id]);
+    expect(store.getElmSiblingsByKey(keys.SK)).toStrictEqual([elm0DP1.id]);
   });
 
   it("Children have the correct dataset index", () => {

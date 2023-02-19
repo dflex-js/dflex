@@ -98,11 +98,11 @@ describe("DFlex DnD", () => {
 
     describe("Checking the two branches, depth and keys", () => {
       it("Store has two branches", () => {
-        expect(store.getBranchesByDepth(0).length).toBe(2);
+        expect(store.getSiblingKeysByDepth(0).length).toBe(2);
       });
 
       it("Store depth zero matches branches Siblings key(SK)", () => {
-        const branches = store.getBranchesByDepth(0);
+        const branches = store.getSiblingKeysByDepth(0);
 
         expect(branches[0]).toBe(store.registry.get(elm1.id)!.keys.SK);
         expect(branches[1]).toBe(store.registry.get(elm2.id)!.keys.SK);
