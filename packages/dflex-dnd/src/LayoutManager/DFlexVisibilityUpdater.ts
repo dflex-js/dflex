@@ -1,5 +1,5 @@
 import type { DFlexElement, DFlexScrollContainer } from "@dflex/core-instance";
-import type { ELmBranch } from "@dflex/dom-gen";
+import type { Siblings } from "@dflex/dom-gen";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
 let prevVisibility = false;
@@ -34,7 +34,7 @@ function updateElmVisibility(
 }
 
 function setBranchVisibility(
-  branch: ELmBranch,
+  branch: Siblings,
   store: DFlexDnDStore,
   from: number,
   to: number,
@@ -55,7 +55,7 @@ function updateBranchVisibilityLinearly(
   store: DFlexDnDStore,
   SK: string
 ): void {
-  const branch = store.getElmBranchByKey(SK);
+  const branch = store.getElmSiblingsByKey(SK);
   const scroll = store.scrolls.get(SK)!;
 
   // If not scroll, then all the elements are visible.

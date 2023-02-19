@@ -15,7 +15,8 @@ import {
   ContainerBasedEvent,
   ScrollMultiLists,
   ListMigration,
-  ContinuouslyUpdatingTodo,
+  StreamInterval,
+  StreamOnDemand,
 } from "./components";
 
 const App = () => {
@@ -117,7 +118,8 @@ const App = () => {
             <ContainerBasedEvent isHorizontal isIncludeOneContainer grid />
           }
         />
-        <Route path="/stream" element={<ContinuouslyUpdatingTodo />} />
+        <Route path="/stream-interval" element={<StreamInterval />} />
+        <Route path="/stream-on-demand" element={<StreamOnDemand />} />
         <Route
           path="/"
           element={

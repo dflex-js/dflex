@@ -121,8 +121,7 @@ describe("getInsertionELmMeta", () => {
       store.register(elm3);
       store.register(elm4);
 
-      // @ts-ignore - this is a test
-      expect(store.DOMGen.getElmBranchByKey(SK)).toStrictEqual([
+      expect(store.getElmSiblingsByKey(SK)).toStrictEqual([
         "id-1",
         "id-2",
         "id-3",
@@ -224,10 +223,9 @@ describe("getInsertionELmMeta", () => {
   describe("Injected branch with empty string", () => {
     it("Inject empty string", () => {
       // @ts-ignore - this is a test
-      store.DOMGen.addElmIDToBranch(SK, "");
+      store.DOMGen.mutateSiblings(SK, ["id-1", "id-2", "id-3", "id-4", ""]);
 
-      // @ts-ignore - this is a test
-      expect(store.DOMGen.getElmBranchByKey(SK)).toStrictEqual([
+      expect(store.getElmSiblingsByKey(SK)).toStrictEqual([
         "id-1",
         "id-2",
         "id-3",

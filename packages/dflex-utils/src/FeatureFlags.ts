@@ -11,3 +11,5 @@ export const enablePositionAssertion = false;
 export const enableCommit = false;
 
 export const enableUndoSiblingsDebugger = false;
+
+export const enableRegisterDebugger = true;

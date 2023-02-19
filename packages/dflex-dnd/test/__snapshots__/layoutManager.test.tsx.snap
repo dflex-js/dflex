@@ -3,67 +3,90 @@
 exports[`DFlex DnD DFlex DnD Store registration Element is initiated 1`] = `
 DFlexDnDStore {
   "DOMGen": Generator {
-    "_branches": {
-      "dflex_ky_0_0": [
+    "_PKByDepth": {
+      "0": "dflex_ky_1_1",
+      "1": "dflex_ky_2_0",
+    },
+    "_SKByBranch": {
+      "dflex_bk_0": [
+        {
+          "SK": "dflex_sk_0_0",
+          "id": "id-1",
+        },
+        {
+          "SK": "dflex_sk_1_0",
+          "id": "dflex_id_0",
+        },
+      ],
+      "dflex_bk_1": [
+        {
+          "SK": "dflex_sk_0_1",
+          "id": "id-2",
+        },
+        {
+          "SK": "dflex_sk_1_0",
+          "id": "dflex_id_1",
+        },
+      ],
+    },
+    "_SKByDepth": {
+      "0": [
+        "dflex_sk_0_0",
+        "dflex_sk_0_1",
+      ],
+      "1": [
+        "dflex_sk_1_0",
+      ],
+    },
+    "_branchIndicator": 1,
+    "_preBK": null,
+    "_prevDepth": 1,
+    "_prevPK": "dflex_ky_2_0",
+    "_siblings": {
+      "dflex_sk_0_0": [
         "id-1",
       ],
-      "dflex_ky_0_1": [
+      "dflex_sk_0_1": [
         "id-2",
         "id-3",
         "id-4",
       ],
-      "dflex_ky_1_0": [
+      "dflex_sk_1_0": [
         "dflex_id_0",
         "dflex_id_1",
       ],
     },
-    "_branchesByDepth": {
-      "0": [
-        "dflex_ky_0_0",
-        "dflex_ky_0_1",
-      ],
-      "1": [
-        "dflex_ky_1_0",
-      ],
-    },
-    "_indicator": {
-      "0": 2,
+    "_siblingsCount": {
+      "0": 4,
       "1": 2,
       "2": 0,
-      "3": 0,
     },
-    "_prevDepth": 1,
-    "_prevKey": "dflex_ky_1_0",
-    "branchDeletedKeys": null,
   },
-  "_handleQueue": [Function],
-  "_initBranch": [Function],
+  "_initObservers": [Function],
+  "_initSiblings": [Function],
   "_isDOM": true,
   "_isInitialized": true,
-  "_isParentQueued": Set {},
   "_lastDOMParent": <div
-    data-dflex-key="dflex_ky_0_1"
-    data-index="1"
-    id="dflex_id_1"
+    data-dflex-key="dflex_sk_1_0"
+    data-index="0"
+    id="dflex_id_0"
   >
     <div
       data-index="0"
-      id="id-2"
-    />
-    <div
-      data-index="1"
-      id="id-3"
-    />
-    <div
-      data-index="2"
-      id="id-4"
+      id="id-1"
     />
   </div>,
-  "_observerHighestDepth": 1,
-  "_queue": [],
+  "_taskQ": TaskQueue {
+    "_elmInQueue": Set {},
+    "_queue": {
+      "registerQ": [],
+      "submitQ": [],
+    },
+    "_timeoutId": 1000000000004,
+  },
   "_windowResizeHandler": [Function],
   "containers": Map {
-    "dflex_ky_0_0" => DFlexParentContainer {
+    "dflex_sk_0_0" => DFlexParentContainer {
       "_boundariesByRow": {
         "1": {
           "bottom": 0,
@@ -95,7 +118,7 @@ DFlexDnDStore {
       "lastElmPosition": null,
       "originLength": 1,
     },
-    "dflex_ky_0_1" => DFlexParentContainer {
+    "dflex_sk_0_1" => DFlexParentContainer {
       "_boundariesByRow": {
         "1": {
           "bottom": 0,
@@ -138,7 +161,7 @@ DFlexDnDStore {
       id="id-1"
     />,
     "dflex_id_0" => <div
-      data-dflex-key="dflex_ky_0_0"
+      data-dflex-key="dflex_sk_1_0"
       data-index="0"
       id="dflex_id_0"
     >
@@ -151,8 +174,16 @@ DFlexDnDStore {
       data-index="0"
       id="id-2"
     />,
+    "id-3" => <div
+      data-index="1"
+      id="id-3"
+    />,
+    "id-4" => <div
+      data-index="2"
+      id="id-4"
+    />,
     "dflex_id_1" => <div
-      data-dflex-key="dflex_ky_0_1"
+      data-dflex-key="dflex_sk_1_0"
       data-index="1"
       id="dflex_id_1"
     >
@@ -169,17 +200,9 @@ DFlexDnDStore {
         id="id-4"
       />
     </div>,
-    "id-3" => <div
-      data-index="1"
-      id="id-3"
-    />,
-    "id-4" => <div
-      data-index="2"
-      id="id-4"
-    />,
   },
   "isComposing": false,
-  "isUpdating": false,
+  "isUpdating": true,
   "listeners": {
     "clear": [Function],
     "notify": [Function],
@@ -187,9 +210,9 @@ DFlexDnDStore {
   },
   "migration": null,
   "mutationObserverMap": Map {
-    "dflex_ky_1_0" => MutationObserver {},
+    "dflex_id_0" => MutationObserver {},
+    "dflex_id_1" => MutationObserver {},
   },
-  "queueTimeoutId": undefined,
   "registry": Map {
     "id-1" => DFlexElement {
       "DOMGrid": PointNum {
@@ -210,16 +233,17 @@ DFlexDnDStore {
         "x": 0,
         "y": 0,
       },
-      "animatedFrame": 1000000000002,
+      "animatedFrame": null,
       "depth": 0,
       "hasPendingTransform": false,
       "id": "id-1",
       "isPaused": false,
       "isVisible": true,
       "keys": {
+        "BK": "dflex_bk_0",
         "CHK": null,
         "PK": "dflex_ky_1_0",
-        "SK": "dflex_ky_0_0",
+        "SK": "dflex_sk_0_0",
       },
       "readonly": false,
       "rect": BoxRect {
@@ -260,9 +284,10 @@ DFlexDnDStore {
       "isPaused": false,
       "isVisible": true,
       "keys": {
-        "CHK": "dflex_ky_0_0",
+        "BK": "dflex_bk_0",
+        "CHK": "dflex_ky_1_0",
         "PK": "dflex_ky_2_0",
-        "SK": "dflex_ky_1_0",
+        "SK": "dflex_sk_1_0",
       },
       "readonly": true,
       "rect": BoxRect {
@@ -300,9 +325,10 @@ DFlexDnDStore {
       "isPaused": false,
       "isVisible": true,
       "keys": {
+        "BK": "dflex_bk_1",
         "CHK": null,
-        "PK": "dflex_ky_1_0",
-        "SK": "dflex_ky_0_1",
+        "PK": "dflex_ky_1_1",
+        "SK": "dflex_sk_0_1",
       },
       "readonly": false,
       "rect": BoxRect {
@@ -344,9 +370,10 @@ DFlexDnDStore {
       "isPaused": false,
       "isVisible": true,
       "keys": {
+        "BK": "dflex_bk_1",
         "CHK": null,
-        "PK": "dflex_ky_1_0",
-        "SK": "dflex_ky_0_1",
+        "PK": "dflex_ky_1_1",
+        "SK": "dflex_sk_0_1",
       },
       "readonly": false,
       "rect": BoxRect {
@@ -388,9 +415,10 @@ DFlexDnDStore {
       "isPaused": false,
       "isVisible": true,
       "keys": {
+        "BK": "dflex_bk_1",
         "CHK": null,
-        "PK": "dflex_ky_1_0",
-        "SK": "dflex_ky_0_1",
+        "PK": "dflex_ky_1_1",
+        "SK": "dflex_sk_0_1",
       },
       "readonly": false,
       "rect": BoxRect {
@@ -431,9 +459,10 @@ DFlexDnDStore {
       "isPaused": false,
       "isVisible": true,
       "keys": {
-        "CHK": "dflex_ky_0_1",
+        "BK": "dflex_bk_1",
+        "CHK": "dflex_ky_1_1",
         "PK": "dflex_ky_2_0",
-        "SK": "dflex_ky_1_0",
+        "SK": "dflex_sk_1_0",
       },
       "readonly": true,
       "rect": BoxRect {
@@ -447,15 +476,15 @@ DFlexDnDStore {
     },
   },
   "scrolls": Map {
-    "dflex_ky_0_0" => DFlexScrollContainer {
-      "_SK": "dflex_ky_0_0",
+    "dflex_sk_0_0" => DFlexScrollContainer {
+      "_SK": "dflex_sk_0_0",
       "_hasThrottledFrame": null,
       "_innerThresholdInViewport": null,
-      "_listenerDataset": "dflexScrollListener_dflex_ky_0_0",
+      "_listenerDataset": "dflexScrollListener_dflex_sk_0_0",
       "_outerThresholdInViewport": null,
       "_scrollEventCallback": null,
-      "_threshold_inner_key": "scroll_inner_dflex_ky_0_0",
-      "_threshold_outer_key": "scroll_outer_dflex_ky_0_0",
+      "_threshold_inner_key": "scroll_inner_dflex_sk_0_0",
+      "_threshold_outer_key": "scroll_outer_dflex_sk_0_0",
       "allowDynamicVisibility": false,
       "animatedResizeListener": [Function],
       "animatedScrollListener": [Function],
@@ -476,7 +505,7 @@ DFlexDnDStore {
           <div>
             <div>
               <div
-                data-dflex-key="dflex_ky_0_0"
+                data-dflex-key="dflex_sk_1_0"
                 data-index="0"
                 id="dflex_id_0"
               >
@@ -486,7 +515,7 @@ DFlexDnDStore {
                 />
               </div>
               <div
-                data-dflex-key="dflex_ky_0_1"
+                data-dflex-key="dflex_sk_1_0"
                 data-index="1"
                 id="dflex_id_1"
               >
@@ -524,15 +553,15 @@ DFlexDnDStore {
         "width": 0,
       },
     },
-    "dflex_ky_0_1" => DFlexScrollContainer {
-      "_SK": "dflex_ky_0_1",
+    "dflex_sk_0_1" => DFlexScrollContainer {
+      "_SK": "dflex_sk_0_1",
       "_hasThrottledFrame": null,
       "_innerThresholdInViewport": null,
-      "_listenerDataset": "dflexScrollListener_dflex_ky_0_1",
+      "_listenerDataset": "dflexScrollListener_dflex_sk_0_1",
       "_outerThresholdInViewport": null,
       "_scrollEventCallback": null,
-      "_threshold_inner_key": "scroll_inner_dflex_ky_0_1",
-      "_threshold_outer_key": "scroll_outer_dflex_ky_0_1",
+      "_threshold_inner_key": "scroll_inner_dflex_sk_0_1",
+      "_threshold_outer_key": "scroll_outer_dflex_sk_0_1",
       "allowDynamicVisibility": false,
       "animatedResizeListener": [Function],
       "animatedScrollListener": [Function],
@@ -553,7 +582,7 @@ DFlexDnDStore {
           <div>
             <div>
               <div
-                data-dflex-key="dflex_ky_0_0"
+                data-dflex-key="dflex_sk_1_0"
                 data-index="0"
                 id="dflex_id_0"
               >
@@ -563,7 +592,7 @@ DFlexDnDStore {
                 />
               </div>
               <div
-                data-dflex-key="dflex_ky_0_1"
+                data-dflex-key="dflex_sk_1_0"
                 data-index="1"
                 id="dflex_id_1"
               >

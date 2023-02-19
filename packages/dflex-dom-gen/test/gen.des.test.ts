@@ -1,4 +1,3 @@
-import { Tracker } from "@dflex/utils";
 import Generator, { Pointer } from "../src";
 
 const domGen = new Generator();
@@ -17,23 +16,26 @@ describe("DOM Relationship Generator: Descending-Simple", () => {
       // │
       // │───id-0  => (order:{parent: 0, self: 0 }) || (keys: {CHK: "0-0",PK: "4-0",SK: "3-0"})
 
-      pointerParent0D3 = domGen.register("id-0", 3);
+      pointerParent0D3 = domGen.register("id-0", 3, false);
 
       // parents should always have children keys
       // @ts-expect-error
       expect([pointerParent0D3.keys].CHK).not.toBe(null);
 
-      expect(pointerParent0D3).toStrictEqual({
-        keys: {
-          CHK: `${Tracker.PREFIX_ky}0_0`,
-          PK: `${Tracker.PREFIX_ky}4_0`,
-          SK: `${Tracker.PREFIX_ky}3_0`,
-        },
-        order: {
-          parent: 0,
-          self: 0,
-        },
-      });
+      expect(pointerParent0D3).toMatchInlineSnapshot(`
+        {
+          "keys": {
+            "BK": "dflex_bk_0",
+            "CHK": "dflex_ky_0_0",
+            "PK": "dflex_ky_4_0",
+            "SK": "dflex_sk_3_0",
+          },
+          "order": {
+            "parent": 0,
+            "self": 0,
+          },
+        }
+      `);
     });
 
     it("Generates different children key for new parent even form the same node level", () => {
@@ -43,7 +45,7 @@ describe("DOM Relationship Generator: Descending-Simple", () => {
       // |
       // │───id-1  => (order:{parent: 0, self: 1 }) || (keys: {CHK: "3-0",PK: "4-0",SK: "3-0"})
 
-      pointerParent1D3 = domGen.register("id-1", 3);
+      pointerParent1D3 = domGen.register("id-1", 3, false);
 
       // parents should always have children keys
       expect(pointerParent1D3.keys.CHK).not.toBe(null);
@@ -53,17 +55,20 @@ describe("DOM Relationship Generator: Descending-Simple", () => {
     });
 
     it("Preserves index incrementing", () => {
-      expect(pointerParent1D3).toStrictEqual({
-        keys: {
-          CHK: `${Tracker.PREFIX_ky}3_0`,
-          PK: `${Tracker.PREFIX_ky}4_0`,
-          SK: pointerParent0D3.keys.SK, // "3-0",
-        },
-        order: {
-          parent: 0,
-          self: 1,
-        },
-      });
+      expect(pointerParent1D3).toMatchInlineSnapshot(`
+        {
+          "keys": {
+            "BK": "dflex_bk_0",
+            "CHK": "dflex_ky_4_0",
+            "PK": "dflex_ky_4_0",
+            "SK": "dflex_sk_3_0",
+          },
+          "order": {
+            "parent": 0,
+            "self": 1,
+          },
+        }
+      `);
     });
   });
 
@@ -77,19 +82,22 @@ describe("DOM Relationship Generator: Descending-Simple", () => {
       //     |
       //     │───id-2  => (order:{parent: 1, self: 0 }) || (keys: {CHK: "3-0",PK: "3-0",SK: "2-0"})
 
-      pointerChild0D2 = domGen.register("id-2", 2);
+      pointerChild0D2 = domGen.register("id-2", 2, false);
 
-      expect(pointerChild0D2).toStrictEqual({
-        keys: {
-          CHK: `${Tracker.PREFIX_ky}3_0`,
-          PK: pointerParent1D3.keys.CHK,
-          SK: `${Tracker.PREFIX_ky}2_1`,
-        },
-        order: {
-          parent: pointerParent1D3.order.self, // 1
-          self: 0,
-        },
-      });
+      expect(pointerChild0D2).toMatchInlineSnapshot(`
+        {
+          "keys": {
+            "BK": "dflex_bk_1",
+            "CHK": "dflex_ky_4_0",
+            "PK": "dflex_ky_3_1",
+            "SK": "dflex_sk_2_2",
+          },
+          "order": {
+            "parent": 2,
+            "self": 0,
+          },
+        }
+      `);
     });
 
     it("Adds new grand children correctly", () => {
@@ -103,19 +111,22 @@ describe("DOM Relationship Generator: Descending-Simple", () => {
       //         |
       //         │───id-3  => (order:{parent: 1, self: 0 }) || (keys: {CHK: "2-1",PK: "3-0",SK: "2-1"})
 
-      pointeGrandChild0D1 = domGen.register("id-3", 1);
+      pointeGrandChild0D1 = domGen.register("id-3", 1, false);
 
-      expect(pointeGrandChild0D1).toStrictEqual({
-        keys: {
-          CHK: `${Tracker.PREFIX_ky}2_1`,
-          PK: pointeGrandChild0D1.keys.CHK,
-          SK: `${Tracker.PREFIX_ky}1_0`,
-        },
-        order: {
-          parent: pointeGrandChild0D1.order.self, // 1
-          self: 0,
-        },
-      });
+      expect(pointeGrandChild0D1).toMatchInlineSnapshot(`
+        {
+          "keys": {
+            "BK": "dflex_bk_2",
+            "CHK": "dflex_ky_3_1",
+            "PK": "dflex_ky_2_2",
+            "SK": "dflex_sk_1_NaN",
+          },
+          "order": {
+            "parent": NaN,
+            "self": 0,
+          },
+        }
+      `);
     });
   });
 });

@@ -1,5 +1,4 @@
 import React from "react";
-// import type { LayoutStateEvent } from "@dflex/dnd";
 
 import DFlexDnDComponent from "../DFlexDnDComponent";
 
@@ -13,7 +12,7 @@ const rowMap = {
   4: 25,
 };
 
-const TodoListWithEvents = () => {
+const StreamInterval = () => {
   const [todo, updateTodo] = React.useState<
     {
       msg: string;
@@ -45,7 +44,7 @@ const TodoListWithEvents = () => {
       updateTodo(arr);
 
       numberOfUpdates.current += 1;
-    }, 9000);
+    }, 1000);
 
     return () => {
       clearInterval(intervalID.current);
@@ -77,4 +76,4 @@ const TodoListWithEvents = () => {
   );
 };
 
-export default TodoListWithEvents;
+export default StreamInterval;

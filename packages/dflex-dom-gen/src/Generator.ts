@@ -1,173 +1,429 @@
 /* eslint-disable no-unused-vars */
-import { combineKeys, Tracker } from "@dflex/utils";
-import type {
-  IGenerator,
-  Keys,
-  Order,
-  Pointer,
-  ELmBranch,
-  DeletedElmKeys,
-} from "./types";
+import { combineKeys, featureFlags } from "@dflex/utils";
+
+const PREFIX_CONNECTOR_KEY = "dflex_ky_";
+const PREFIX_SIBLINGS_KEY = "dflex_sk_";
+const PREFIX_BRANCH_KEY = "dflex_bk_";
+
+const uniqueKeysDev: Set<string> = new Set();
+const equalKeysDev: Set<string> = new Set();
+
+type Depth = number;
+
+type ElmIndex = number;
+
+type SiblingKey = string;
+
+type ParentKey = string;
+
+type ChildKey = string;
+
+type BranchKey = string;
+
+type ElmID = string;
+
+type SKID = { SK: SiblingKey; id: ElmID };
+
+/**
+ * Element generated unique keys in DOM tree.
+ */
+export interface Keys {
+  BK: BranchKey;
+  /** Siblings key - The main key. */
+  SK: SiblingKey;
+  /** Parent key. */
+  PK: ParentKey;
+  /** Children key. */
+  CHK: ChildKey | null;
+}
+
+/**
+ * Element order in its siblings & its parent.
+ */
+export interface Order {
+  /** Self index in its siblings. */
+  self: ElmIndex;
+  /** Parent index in higher siblings. */
+  parent: ElmIndex;
+}
+
+/**
+ * Generated element pointer consists of keys and order.
+ */
+export interface Pointer {
+  keys: Keys;
+  order: Order;
+}
+
+export type Siblings = SiblingKey[];
+
+export type SKCollection = SiblingKey[];
+
+type RestoreKey = {
+  BK: string;
+  PK: string;
+};
 
 /**
  * Generate keys to connect relations between DOM-elements depending on tree
  * depth.
  */
-class Generator implements IGenerator {
+class Generator {
   /**
    * Counter store. Each depth has it's own indicator. Allowing us to go
    * for endless layers (levels).
    */
-  private _indicator: {
-    [keys: number]: number;
-  };
+  private _siblingsCount!: Record<Depth, number>;
+
+  private _branchIndicator!: number;
 
   /**
-   * A collection of registered elements stored in arrays represents each
-   * branch.
+   * A collection of registered elements stored in arrays represents siblings in
+   * each branch.
    */
-  private _branches: {
-    [keys: string]: ELmBranch;
-  };
+  private _siblings!: Record<SiblingKey, Siblings>;
 
-  private _branchesByDepth: {
-    [depth: number]: ELmBranch;
-  };
+  /**
+   * A collection of siblings keys stored belong to the same depth.
+   * Horizontal scale.
+   */
+  private _SKByDepth!: Record<Depth, Siblings>;
 
-  branchDeletedKeys: Map<string, Keys & { parentIndex: number }> | null;
+  private _PKByDepth!: Record<Depth, ParentKey>;
 
-  private _prevDepth: number;
+  /**
+   * A collection of siblings keys stored belong to the same branch.
+   * Vertical scale.
+   */
+  private _SKByBranch!: Record<BranchKey, SKID[]>;
 
-  private _prevKey: string;
+  private _prevDepth!: number;
+
+  private _prevPK!: string;
+
+  private _preBK!: string | null;
 
   constructor() {
-    this._indicator = {};
-    this._branches = {};
-    this._branchesByDepth = {};
-    this.branchDeletedKeys = null;
+    this._init();
+  }
+
+  private _init() {
+    this._siblingsCount = {};
+    this._branchIndicator = 0;
+    this._siblings = {};
+    this._SKByDepth = {};
+    this._SKByBranch = {};
+    this._PKByDepth = {};
     this._prevDepth = -99;
-    this._prevKey = `${Tracker.PREFIX_ky}${combineKeys(0, 0)}`;
+    this._preBK = null;
+    this._prevPK = `${PREFIX_CONNECTOR_KEY}${combineKeys(0, 0)}`;
   }
 
-  /**
-   * Initiates self and parent indicators if not.
-   *
-   * @param dp - element depth
-   */
-  private _initIndicators(dp: number) {
-    /**
-     * initiate self from -1 since self is incremented after the id is added so
-     * it's children won't be confused about their parent indicator.
-     *
-     * if start from /dp = 1/
-     * - this.#indicator[1] = -1
-     * - element added
-     * -  this.#indicator[1] + 1
-     * Now, If we get /dp = 0/
-     * - this.#indicator[dp+1] = 0 which is what we want.
-     *
-     * By adding this, we can deal with parents coming first before children.
-     */
-    if (this._indicator[dp] === undefined) {
-      this._indicator[dp] = -1;
-    }
-
-    /**
-     * initiate parents from zero.
-     * this.#indicator[dp+1] = 0
-     */
-    if (this._indicator[dp + 1] === undefined) {
-      this._indicator[dp + 1] = 0;
-    }
-
-    if (this._indicator[dp + 2] === undefined) {
-      this._indicator[dp + 2] = 0;
-    }
-  }
-
-  private _addElementIDToDepthCollection(SK: string, depth: number) {
-    if (!Array.isArray(this._branchesByDepth[depth])) {
-      this._branchesByDepth[depth] = [SK];
+  private _addElmSKToDepthCollection(SK: string, depth: number): void {
+    if (!Array.isArray(this._SKByDepth[depth])) {
+      this._SKByDepth[depth] = [SK];
 
       return;
     }
 
-    const is = this._branchesByDepth[depth].find((k) => k === SK);
+    const is = this._SKByDepth[depth].find((k) => k === SK);
 
     if (!is) {
-      this._branchesByDepth[depth].push(SK);
+      this._SKByDepth[depth].push(SK);
     }
   }
 
-  /**
-   * Adds elements to its siblings.
-   *
-   * @param id - element id.
-   * @param  SK - Siblings Key.
-   */
-  private _addElementIDToSiblingsBranch(id: string, SK: string) {
-    if (!Array.isArray(this._branches[SK])) {
-      this._branches[SK] = [];
+  private _addElmIDToSiblings(id: string, SK: string): number {
+    if (!Array.isArray(this._siblings[SK])) {
+      this._siblings[SK] = [];
     }
 
     // @ts-ignore
-    const selfIndex = this._branches[SK].push(id) - 1;
+    const selfIndex = this._siblings[SK].push(id) - 1;
 
     return selfIndex;
   }
 
-  private _accumulateIndicators(depth: number, hasSiblingInSameLevel = false) {
-    if (depth !== this._prevDepth) {
-      this._initIndicators(depth);
+  private _initIndicators(depth: number) {
+    for (let i = depth; i <= depth + 2; i += 1) {
+      if (this._siblingsCount[i] === undefined) {
+        this._siblingsCount[i] = 0;
+      }
     }
+  }
 
-    // If hasSiblingInSameLevel then don't increment.
-    // Revers the accumulator.
-    if (hasSiblingInSameLevel && this._indicator[depth + 1] > 0) {
-      this._indicator[depth + 1] -= 1;
-    }
+  private _insertLayer(
+    depth: number,
+    id: string,
+    restoredKeys: RestoreKey,
+    siblingsIndex: number
+  ): Keys & { siblingsIndex: number } {
+    const { BK, PK } = restoredKeys;
 
-    /**
-     * Get parent index.
-     */
-    const parentIndex = this._indicator[depth + 1];
+    const isNewLayer = BK !== this._preBK;
+    this._preBK = BK;
 
     /**
      * get siblings unique key (sK) and parents key (pK)
      */
-    const SK = `${Tracker.PREFIX_ky}${combineKeys(depth, parentIndex)}`;
+    const SK = `${PREFIX_SIBLINGS_KEY}${combineKeys(depth, siblingsIndex)}`;
 
-    const PK = `${Tracker.PREFIX_ky}${combineKeys(
-      depth + 1,
-      this._indicator[depth + 2]
-    )}`;
+    let CHK: string | null = null;
 
-    const CHK = depth === 0 ? null : this._prevKey;
+    if (depth > 0) {
+      CHK = this._prevPK;
+    }
 
-    this._prevKey = SK;
+    if (isNewLayer) {
+      this._siblingsCount[depth] = 0;
+      this._SKByBranch[BK].push({ SK, id });
+    }
 
-    this._indicator[depth] += 1;
+    this._siblingsCount[depth] += 1;
+
+    return {
+      siblingsIndex,
+      CHK,
+      SK,
+      PK,
+      BK,
+    };
+  }
+
+  private _composeKeys(
+    depth: number,
+    id: string,
+    hasSiblingInSameLevel: boolean
+  ): Keys & { siblingsIndex: number } {
+    const parentDepth = depth + 1;
+
+    if (this._siblingsCount[parentDepth] === undefined) {
+      this._initIndicators(depth);
+    }
+
+    const isNewBranch = depth < this._prevDepth;
 
     /**
      * Start new branch.
      */
-    if (depth < this._prevDepth) {
-      this._indicator[0] = 0;
+    if (isNewBranch) {
+      this._branchIndicator += 1;
+
+      const until = hasSiblingInSameLevel ? depth : depth - 1;
+
+      for (let i = 0; i <= until; i += 1) {
+        this._siblingsCount[i] = 0;
+      }
+    }
+
+    const BK = `${PREFIX_BRANCH_KEY}${this._branchIndicator}`;
+
+    if (!Array.isArray(this._SKByBranch[BK])) {
+      this._SKByBranch[BK] = [];
+    }
+
+    // If hasSiblingInSameLevel then don't increment.
+    // Revers the accumulator.
+    if (hasSiblingInSameLevel && this._siblingsCount[parentDepth] > 0) {
+      this._siblingsCount[parentDepth] -= 1;
+    }
+
+    /**
+     * Get sibling index.
+     */
+    const siblingsIndex = this._siblingsCount[parentDepth];
+
+    /**
+     * get siblings unique key (sK) and parents key (pK)
+     */
+    const SK = `${PREFIX_SIBLINGS_KEY}${combineKeys(depth, siblingsIndex)}`;
+
+    // Generate new one.
+    let PK = `${PREFIX_CONNECTOR_KEY}${combineKeys(
+      depth + 1,
+      this._branchIndicator
+    )}`;
+
+    if (hasSiblingInSameLevel) {
+      // Restore the parent key. So all siblings with shared parent have the
+      // same key.
+      PK = this._PKByDepth[depth];
+    } else {
+      // Store the new generated one
+      this._PKByDepth[depth] = PK;
+    }
+
+    let CHK: string | null = null;
+
+    if (depth > 0) {
+      CHK = this._prevPK;
+    }
+
+    this._prevPK = PK;
+
+    const branchHasSK = this._SKByBranch[BK].find(({ SK: _ }) => _ === SK);
+
+    if (!branchHasSK) {
+      this._SKByBranch[BK].push({ SK, id });
+    }
+
+    if (hasSiblingInSameLevel) {
+      const preBranchKey = `${PREFIX_BRANCH_KEY}${this._branchIndicator - 1}`;
+      const preBranch = this._SKByBranch[preBranchKey];
+      if (__DEV__) {
+        if (!Array.isArray(preBranch)) {
+          throw new Error(
+            `_composeKeys: Unable to find the previous branch using key: ${preBranchKey}`
+          );
+        }
+      }
+      const preBranchLength = preBranch.length;
+
+      // If adding a new element will make the new branch ahead then ignore `hasSiblingInSameLevel`.
+      // It's when two has the same parent but only `depth=0` is registered.
+      // In this case, `depth=1` is shared but the registry doesn't' reach `depth=2`
+      // where the shared parent is.
+      if (preBranchLength === this._SKByBranch[BK].length + 1) {
+        const lastElm = preBranch[preBranchLength - 1];
+
+        // If same level then the parent from previous branch is the same parent
+        // for this element.
+        this._SKByBranch[BK].push(lastElm);
+      } else if (__DEV__) {
+        if (featureFlags.enableRegisterDebugger) {
+          // eslint-disable-next-line no-console
+          console.log(
+            "_composeKeys: Ignore siblings with the same parent since the shared parent is not registered."
+          );
+        }
+      }
+    }
+
+    if (__DEV__) {
+      const uniqueSK = SK + siblingsIndex;
+
+      // Assert uniqueness for new branches.
+      if (isNewBranch) {
+        if (uniqueKeysDev.has(uniqueSK)) {
+          throw new Error(
+            `SK: ${SK} with ${siblingsIndex} already exist.\n This combination supposed to be unique for each branch.`
+          );
+        }
+
+        if (uniqueKeysDev.has(SK)) {
+          throw new Error(
+            `SK: ${SK} already exist.\n This combination supposed to be unique for each branch.`
+          );
+        }
+
+        if (uniqueKeysDev.has(PK)) {
+          throw new Error(
+            `PK: ${PK} already exist.\n This combination supposed to be unique for each branch.`
+          );
+        }
+
+        uniqueKeysDev.add(SK);
+        uniqueKeysDev.add(uniqueSK);
+        uniqueKeysDev.add(PK);
+      } else if (depth === this._prevDepth) {
+        // Assert equalities for the same depth.
+        if (equalKeysDev.size === 0) {
+          equalKeysDev.add(SK);
+          equalKeysDev.add(uniqueSK);
+          equalKeysDev.add(PK);
+        }
+
+        if (!equalKeysDev.has(uniqueSK)) {
+          throw new Error(
+            `SK: ${SK} with ${siblingsIndex} doesn't exist.\n This combination supposed to be identical for the same branch.`
+          );
+        }
+
+        if (!equalKeysDev.has(SK)) {
+          throw new Error(
+            `SK: ${SK} doesn't exist.\n This combination supposed to be identical for the same branch.`
+          );
+        }
+
+        if (!equalKeysDev.has(PK)) {
+          throw new Error(
+            `PK: ${PK} doesn't exist.\n This combination supposed to be identical for the same branch.`
+          );
+        }
+      } else {
+        equalKeysDev.clear();
+      }
     }
 
     this._prevDepth = depth;
 
+    this._siblingsCount[depth] += 1;
+
     return {
+      siblingsIndex,
       CHK,
       SK,
       PK,
-      parentIndex,
+      BK,
     };
   }
 
-  updateBranch(SK: string, branch: ELmBranch) {
-    if (SK in this._branches) {
-      Object.assign(this._branches, { [SK]: branch });
+  private _composePointer(
+    id: string,
+    depth: number,
+    keys: Keys,
+    siblingsIndex: number
+  ): Pointer {
+    this._addElmSKToDepthCollection(keys.SK, depth);
+
+    const selfIndex = this._addElmIDToSiblings(id, keys.SK);
+
+    const order: Order = {
+      self: selfIndex,
+      parent: siblingsIndex,
+    };
+
+    return { order, keys };
+  }
+
+  /**
+   * Registers element to branches.
+   *
+   * @param id
+   * @param depth
+   * @param hasSiblingInSameLevel
+   * @returns
+   */
+  register(
+    id: string,
+    depth: number,
+    hasSiblingInSameLevel: boolean,
+    restoredKeys?: RestoreKey,
+    restoredKeysSiblingsIndex?: number
+  ): Pointer {
+    const { CHK, SK, PK, BK, siblingsIndex } = restoredKeys
+      ? this._insertLayer(depth, id, restoredKeys, restoredKeysSiblingsIndex!)
+      : this._composeKeys(depth, id, hasSiblingInSameLevel);
+
+    const keys: Keys = {
+      CHK,
+      SK,
+      PK,
+      BK,
+    };
+
+    return this._composePointer(id, depth, keys, siblingsIndex);
+  }
+
+  /**
+   * Mutate a new siblings to the siblings root.
+   *
+   * @param SK - Siblings Key
+   * @param siblings - new siblings to be added
+   */
+  mutateSiblings(SK: string, siblings: Siblings): void {
+    if (SK in this._siblings) {
+      Object.assign(this._siblings, { [SK]: siblings });
     } else if (__DEV__) {
       throw new Error(
         `updateELmBranch: Branch with key:${SK} is not registered.`
@@ -175,129 +431,86 @@ class Generator implements IGenerator {
     }
   }
 
-  forEachBranch(cb: (SK: string, branch: ELmBranch) => void) {
-    Object.keys(this._branches).forEach((SK) => {
-      cb(SK, this._branches[SK]);
+  /**
+   * Iterates throw all registered siblings.
+   *
+   * @param cb - callback function to be called for each element
+   */
+  forEachSibling(cb: (SK: string, branch: Siblings) => void) {
+    Object.keys(this._siblings).forEach((SK) => {
+      cb(SK, this._siblings[SK]);
     });
   }
 
-  private _composePointer(
-    id: string,
-    depth: number,
-    keys: Keys,
-    parentIndex: number
-  ) {
-    this._addElementIDToDepthCollection(keys.SK, depth);
-
-    const selfIndex = this._addElementIDToSiblingsBranch(id, keys.SK);
-
-    const order: Order = {
-      self: selfIndex,
-      parent: parentIndex,
-    };
-
-    return { order, keys };
+  /**
+   * Gets all SK(s) in the same depth.
+   *
+   * @param dp
+   * @returns
+   */
+  getSiblingKeysByDepth(dp: number): SKCollection {
+    return this._SKByDepth[dp] || [];
   }
 
-  insertElmBtwLayers(id: string, depth: number, PK: string): Pointer {
-    if (__DEV__) {
-      if (this.branchDeletedKeys === null) {
-        throw new Error(
-          "insertElmBtwLayers: branchDeletedKeys is not initiated yet."
-        );
+  /**
+   * Gets all element IDs in given node represented by sk.
+   *
+   * @param  SK - Siblings Key
+   */
+  getElmSiblingsByKey(SK: string): Siblings {
+    return this._siblings[SK] || [];
+  }
+
+  getHighestSKInAllBranches(): Set<SKID> {
+    const highestSKInAllBranches = new Set<SKID>();
+
+    Object.keys(this._SKByBranch).forEach((BK) => {
+      const l = this._SKByBranch[BK].length;
+      const lastElm = this._SKByBranch[BK][l - 1];
+      highestSKInAllBranches.add(lastElm);
+    });
+
+    return highestSKInAllBranches;
+  }
+
+  private _cleanupSKFromDepthCollection(SK: string): void {
+    Object.keys(this._SKByDepth).forEach((dp) => {
+      const dpNum = Number(dp);
+
+      this._SKByDepth[dpNum] = this._SKByDepth[dpNum].filter((k) => k !== SK);
+
+      if (this._SKByDepth[dpNum].length === 0) {
+        delete this._SKByDepth[dpNum];
       }
+    });
+  }
 
-      if (!this.branchDeletedKeys.has(PK)) {
-        throw new Error(
-          `insertElmBtwLayers: branchDeletedKeys doesn't have key: ${PK}. Check if this method has been invoked multiple times.`
-        );
+  private _cleanupSKFromBranchCollection(SK: string): void {
+    Object.keys(this._SKByBranch).forEach((BK) => {
+      this._SKByBranch[BK] = this._SKByBranch[BK].filter((k) => k.SK !== SK);
+
+      if (this._SKByBranch[BK].length === 0) {
+        delete this._SKByBranch[BK];
       }
-    }
-
-    const { parentIndex, ...keys } = this.branchDeletedKeys!.get(PK)!;
-
-    return this._composePointer(id, depth, keys, parentIndex);
+    });
   }
 
-  register(id: string, depth: number, hasSiblingInSameLevel = false): Pointer {
-    const { CHK, SK, PK, parentIndex } = this._accumulateIndicators(
-      depth,
-      hasSiblingInSameLevel
-    );
-
-    const keys: Keys = {
-      SK,
-      PK,
-      CHK,
-    };
-
-    return this._composePointer(id, depth, keys, parentIndex);
+  private _hasSK(SK: string) {
+    return Array.isArray(this._siblings[SK]);
   }
 
-  addElmIDToBranch(SK: string, id: string) {
-    if (!Array.isArray(this._branches[SK])) {
+  /**
+   * Removes entire siblings from root.
+   *
+   * @param SK - Sibling keys.
+   * @param cb - Callback function.
+   * @returns
+   */
+  destroySiblings(SK: string, cb?: ((elmID: string) => void) | null): void {
+    if (!this._hasSK(SK)) {
       if (__DEV__) {
         throw new Error(
-          `addElmIDToBranch: You are trying to add an element to the branch with key:${SK} that is not registered at all.` +
-            `You can call this method with existing branch. If you want to create a new branch, use register method.`
-        );
-      }
-
-      return;
-    }
-
-    this._branches[SK].push(id);
-  }
-
-  removeElmIDFromBranch(SK: string, id: string) {
-    if (!Array.isArray(this._branches[SK])) {
-      if (__DEV__) {
-        throw new Error(
-          `removeElmIDFromBranch: Element with id: ${id} doesn't belong to any existing branch`
-        );
-      }
-
-      return null;
-    }
-
-    const index = this._branches[SK].findIndex((elmID) => elmID === id);
-
-    if (index === -1) {
-      if (__DEV__) {
-        throw new Error(
-          `removeElmIDFromBranch: Element with id: ${id} doesn't belong to branch: ${this._branches[SK]}.`
-        );
-      }
-
-      return null;
-    }
-
-    const [deletedElmID] = this._branches[SK]!.splice(index, 1);
-
-    if (this._branches[SK]!.length === 0) {
-      delete this._branches[SK];
-    }
-
-    return deletedElmID;
-  }
-
-  getBranchByDepth(dp: number): ELmBranch {
-    return this._branchesByDepth[dp] || [];
-  }
-
-  getElmBranchByKey(SK: string): ELmBranch {
-    return this._branches[SK] || [];
-  }
-
-  destroyBranch(
-    SK: string,
-    cb?: ((elmID: string) => void) | null,
-    deletedElmKeys?: DeletedElmKeys
-  ) {
-    if (!this._branches[SK]) {
-      if (__DEV__) {
-        throw new Error(
-          `destroyBranch: You are trying to destroy nonexistence branch ${SK}`
+          `destroySiblings: You are trying to destroy nonexistence branch ${SK}`
         );
       }
 
@@ -305,33 +518,58 @@ class Generator implements IGenerator {
     }
 
     if (typeof cb === "function") {
-      while (this._branches[SK].length) {
-        cb(this._branches[SK].pop()!);
+      while (this._siblings[SK].length) {
+        cb(this._siblings[SK].pop()!);
       }
     }
 
-    delete this._branches[SK];
+    delete this._siblings[SK];
 
-    Object.keys(this._branchesByDepth).forEach((dp) => {
-      const dpNum = Number(dp);
-      this._branchesByDepth[dpNum] = this._branchesByDepth[dpNum].filter(
-        (key) => key !== SK
-      );
+    this._cleanupSKFromDepthCollection(SK);
+    this._cleanupSKFromBranchCollection(SK);
+  }
 
-      if (this._branchesByDepth[dpNum].length === 0) {
-        delete this._branchesByDepth[dpNum];
+  removeElmFromSiblings(SK: string, id: string): null | string | true {
+    if (!this._hasSK(SK)) {
+      if (__DEV__) {
+        throw new Error(
+          `removeElmFromSiblings: You are trying to destroy nonexistence siblings ${SK}`
+        );
       }
-    });
 
-    if (!deletedElmKeys) {
-      return;
+      return null;
     }
 
-    if (!this.branchDeletedKeys) {
-      this.branchDeletedKeys = new Map();
+    const index = this._siblings[SK].findIndex((elmID) => elmID === id);
+
+    if (index === -1) {
+      if (__DEV__) {
+        throw new Error(
+          `removeElmFromSiblings: Element with id: ${id} doesn't belong to siblings: ${this._siblings[SK]}.`
+        );
+      }
+
+      return null;
     }
 
-    this.branchDeletedKeys.set(deletedElmKeys.PK, deletedElmKeys);
+    const [deletedElmID] = this._siblings[SK].splice(index, 1);
+
+    if (this._siblings[SK].length === 0) {
+      this.destroySiblings(SK);
+
+      return true;
+    }
+
+    return deletedElmID;
+  }
+
+  clear() {
+    this._init();
+
+    if (__DEV__) {
+      uniqueKeysDev.clear();
+      equalKeysDev.clear();
+    }
   }
 }
 

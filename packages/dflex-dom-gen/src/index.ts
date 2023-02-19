@@ -1,12 +1,5 @@
 import Generator from "./Generator";
 
-export type {
-  Keys,
-  Order,
-  Pointer,
-  ELmBranch,
-  IGenerator,
-  DeletedElmKeys,
-} from "./types";
+export type { Keys, Order, Pointer, Siblings } from "./Generator";
 
 export default Generator;
