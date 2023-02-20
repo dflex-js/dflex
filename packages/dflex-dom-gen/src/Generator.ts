@@ -163,6 +163,17 @@ class Generator {
     const isNewLayer = BK !== this._preBK;
     this._preBK = BK;
 
+    if (isNewLayer) {
+      if (featureFlags.enableRegisterDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(
+          `_insertLayer: resetting siblings count for the new layer starting with id: ${id}`
+        );
+      }
+
+      this._siblingsCount[depth] = 0;
+    }
+
     /**
      * get siblings unique key (sK) and parents key (pK)
      */
@@ -175,7 +186,6 @@ class Generator {
     }
 
     if (isNewLayer) {
-      this._siblingsCount[depth] = 0;
       this._SKByBranch[BK].push({ SK, id });
     }
 
@@ -432,17 +442,6 @@ class Generator {
   }
 
   /**
-   * Iterates throw all registered siblings.
-   *
-   * @param cb - callback function to be called for each element
-   */
-  forEachSibling(cb: (SK: string, branch: Siblings) => void) {
-    Object.keys(this._siblings).forEach((SK) => {
-      cb(SK, this._siblings[SK]);
-    });
-  }
-
-  /**
    * Gets all SK(s) in the same depth.
    *
    * @param dp
@@ -496,6 +495,12 @@ class Generator {
   }
 
   private _hasSK(SK: string) {
+    if (__DEV__) {
+      if (!Array.isArray(this._siblings[SK])) {
+        throw new Error(`_hasSK: Siblings with SK ${SK} doesn't exist.`);
+      }
+    }
+
     return Array.isArray(this._siblings[SK]);
   }
 
@@ -508,12 +513,6 @@ class Generator {
    */
   destroySiblings(SK: string, cb?: ((elmID: string) => void) | null): void {
     if (!this._hasSK(SK)) {
-      if (__DEV__) {
-        throw new Error(
-          `destroySiblings: You are trying to destroy nonexistence branch ${SK}`
-        );
-      }
-
       return;
     }
 
@@ -527,40 +526,15 @@ class Generator {
 
     this._cleanupSKFromDepthCollection(SK);
     this._cleanupSKFromBranchCollection(SK);
+
+    if (__DEV__) {
+      // eslint-disable-next-line no-console
+      console.log(`Deleted siblings: ${SK}`);
+    }
   }
 
-  removeElmFromSiblings(SK: string, id: string): null | string | true {
-    if (!this._hasSK(SK)) {
-      if (__DEV__) {
-        throw new Error(
-          `removeElmFromSiblings: You are trying to destroy nonexistence siblings ${SK}`
-        );
-      }
-
-      return null;
-    }
-
-    const index = this._siblings[SK].findIndex((elmID) => elmID === id);
-
-    if (index === -1) {
-      if (__DEV__) {
-        throw new Error(
-          `removeElmFromSiblings: Element with id: ${id} doesn't belong to siblings: ${this._siblings[SK]}.`
-        );
-      }
-
-      return null;
-    }
-
-    const [deletedElmID] = this._siblings[SK].splice(index, 1);
-
-    if (this._siblings[SK].length === 0) {
-      this.destroySiblings(SK);
-
-      return true;
-    }
-
-    return deletedElmID;
+  endRegistration() {
+    this._preBK = null;
   }
 
   clear() {

@@ -206,14 +206,17 @@ class DFlexCoreElement extends DFlexBaseElement {
     });
   }
 
+  updateIndex(DOM: HTMLElement, i: number) {
+    this.setAttribute(DOM, "INDEX", i);
+    this.VDOMOrder.self = i;
+  }
+
   private _updateOrderIndexing(DOM: HTMLElement, i: number) {
     const { self: oldIndex } = this.VDOMOrder;
 
     const newIndex = oldIndex + i;
 
-    this.VDOMOrder.self = newIndex;
-
-    this.setAttribute(DOM, "INDEX", newIndex);
+    this.updateIndex(DOM, newIndex);
 
     return { oldIndex, newIndex };
   }

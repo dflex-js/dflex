@@ -1,3 +1,4 @@
+import { featureFlags } from "@dflex/utils";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
 type ChangedIds = Set<{ oldId: string; newId: string }>;
@@ -28,9 +29,34 @@ function cleanupSiblings(store: DFlexDnDStore) {
       const elm = store.registry.get(elmID)!;
 
       if (terminatedDOMiDs.has(elmID)) {
+        if (featureFlags.enableRegisterDebugger) {
+          // eslint-disable-next-line no-console
+          console.log(`cleanupSiblings: removing ${elmID} from registry`);
+        }
         store.rmElmFromRegistry(elmID);
       } else {
-        elm.VDOMOrder.self = connectedNodesID.push(elmID) - 1;
+        const index = connectedNodesID.push(elmID) - 1;
+
+        if (index !== elm.VDOMOrder.self) {
+          elm.updateIndex(store.interactiveDOM.get(elmID)!, index);
+
+          if (featureFlags.enableRegisterDebugger) {
+            // eslint-disable-next-line no-console
+            console.log(
+              `cleanupSiblings: updating index for ${elmID} to ${index}`
+            );
+          }
+        }
+      }
+    }
+
+    if (__DEV__) {
+      if (featureFlags.enableRegisterDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(
+          `cleanupSiblings: Found ${connectedNodesID.length} connected`,
+          connectedNodesID
+        );
       }
     }
 
@@ -76,20 +102,25 @@ function checkMutations(store: DFlexDnDStore, mutations: MutationRecord[]) {
           addedNodes.length === 1 &&
           addedNodes[0] instanceof HTMLElement
         ) {
-          if (addedNodes[0].id.includes("dflex-draggable-mirror")) {
+          const { id } = addedNodes[0];
+
+          if (id.includes("dflex-draggable-mirror")) {
             return;
           }
 
           if (__DEV__) {
-            // TODO: Fix this warning.
-            // if (store.registry.has(addedNodes[0].id)) {
-            //   return;
-            // }
-
-            // eslint-disable-next-line no-console
-            console.warn(
-              "Insertion of DOM elements is not supported outside DFlex registry. Ignore this message if you are using commit()."
-            );
+            setTimeout(() => {
+              addedNodes.forEach((node) => {
+                // TODO: Fix this warning.
+                if (!store.registry.has((node as HTMLElement).id)) {
+                  // eslint-disable-next-line no-console
+                  console.error(
+                    // @ts-ignore
+                    `Insertion of DOM elements is not supported outside DFlex registry ${node.id}`
+                  );
+                }
+              });
+            }, 0);
           }
 
           return;
@@ -169,9 +200,7 @@ function addMutationObserver(
   SK: string,
   DOMTarget: HTMLElement
 ): void {
-  if (!store.mutationObserverMap.has(SK)) {
-    initMutationObserver(store, SK);
-  }
+  initMutationObserver(store, SK);
 
   store.mutationObserverMap.get(SK)!.observe(DOMTarget, observerConfig);
 }

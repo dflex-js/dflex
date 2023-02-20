@@ -280,6 +280,7 @@ class DFlexBaseStore {
 
   endRegistration() {
     this._lastDOMParent = null;
+    this.DOMGen.endRegistration();
 
     if (__DEV__) {
       if (featureFlags.enableRegisterDebugger) {
@@ -365,29 +366,48 @@ class DFlexBaseStore {
         isElmRegistered = true;
       }
 
-      const registerAllChildren = (dflexParentElm: DFlexElement | null) => {
-        if (__DEV__) {
-          if (featureFlags.enableRegisterDebugger) {
-            // eslint-disable-next-line no-console
-            console.log("Submit container children.");
-          }
-        }
-
-        SK = this._submitContainerChildren(
-          parentDOM,
-          depth,
-          id,
-          dflexParentElm
-        )!;
-
-        isElmRegistered = true;
-      };
-
       const isNewParent =
         this._lastDOMParent === null ||
         !this._lastDOMParent.isSameNode(parentDOM);
 
       if (isNewParent) {
+        const registerAllChildren = (dflexParentElm: DFlexElement | null) => {
+          if (__DEV__) {
+            if (featureFlags.enableRegisterDebugger) {
+              // eslint-disable-next-line no-console
+              console.log("Submit container children.");
+            }
+          }
+
+          SK = this._submitContainerChildren(
+            parentDOM,
+            depth,
+            id,
+            dflexParentElm
+          )!;
+
+          isElmRegistered = true;
+        };
+
+        const scheduleCBFunctions = () => {
+          if (branchComposedCallBack && highestContainerComposedCallBack) {
+            if (__DEV__) {
+              if (featureFlags.enableRegisterDebugger) {
+                // eslint-disable-next-line no-console
+                console.log("Add callback functions to queue.");
+              }
+            }
+
+            const fn = () => branchComposedCallBack(SK, depth + 1, parentDOM);
+
+            this._taskQ.insertBeforeEnd(
+              highestContainerComposedCallBack,
+              fn,
+              CB_Q
+            );
+          }
+        };
+
         if (__DEV__) {
           if (featureFlags.enableRegisterDebugger) {
             // eslint-disable-next-line no-console
@@ -455,45 +475,13 @@ class DFlexBaseStore {
           // A new branch. Queue the new branch.
           this._taskQ.add(submitParentElm, REGISTER_Q, parentID);
 
-          if (
-            typeof branchComposedCallBack === "function" &&
-            typeof highestContainerComposedCallBack === "function"
-          ) {
-            if (__DEV__) {
-              if (featureFlags.enableRegisterDebugger) {
-                // eslint-disable-next-line no-console
-                console.log("Add callback functions to queue.");
-              }
-            }
-
-            const fn = () => branchComposedCallBack(SK, parentDepth, parentDOM);
-
-            this._taskQ.insertBeforeEnd(
-              highestContainerComposedCallBack,
-              fn,
-              CB_Q
-            );
-          }
+          scheduleCBFunctions();
         } else if (!isElmRegistered) {
           // Streaming case.
           // Registration finished but one of the layer has changed.
           registerAllChildren(this.registry.get(parentID)!);
 
-          if (
-            typeof branchComposedCallBack === "function" &&
-            typeof highestContainerComposedCallBack === "function"
-          ) {
-            if (__DEV__) {
-              if (featureFlags.enableRegisterDebugger) {
-                // eslint-disable-next-line no-console
-                console.log("Add callback functions to queue.");
-              }
-            }
-
-            const fn = () => branchComposedCallBack(SK, 1, parentDOM);
-
-            this._taskQ.add(fn, CB_Q);
-          }
+          scheduleCBFunctions();
         }
       }
 

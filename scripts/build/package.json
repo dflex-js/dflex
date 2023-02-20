@@ -14,7 +14,7 @@
     "esbuild": "^0.17.9",
     "minimist": "^1.2.8",
     "npm-packages": "workspace:*",
-    "rollup": "^3.17.1",
+    "rollup": "^3.17.2",
     "rollup-plugin-esbuild": "^5.0.0"
   }
 }
