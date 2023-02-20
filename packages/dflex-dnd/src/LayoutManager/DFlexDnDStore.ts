@@ -230,16 +230,20 @@ class DFlexDnDStore extends DFlexBaseStore {
         if (!this.interactiveDOM.has(id)) {
           throw new Error(`_initObservers: Unable to find DOM for SK: ${id}`);
         }
-
-        if (featureFlags.enableRegisterDebugger) {
-          // eslint-disable-next-line no-console
-          console.log(`_initObservers: ${id}`);
-        }
       }
 
-      const parentDOM = this.interactiveDOM.get(id)!;
+      if (!this.mutationObserverMap.has(id)) {
+        const parentDOM = this.interactiveDOM.get(id)!;
 
-      addMutationObserver(this, id, parentDOM);
+        addMutationObserver(this, id, parentDOM);
+
+        if (__DEV__) {
+          if (featureFlags.enableRegisterDebugger) {
+            // eslint-disable-next-line no-console
+            console.log(`_initObservers: ${id}`);
+          }
+        }
+      }
     });
 
     this.isComposing = false;

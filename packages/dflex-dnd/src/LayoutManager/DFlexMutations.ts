@@ -200,9 +200,7 @@ function addMutationObserver(
   SK: string,
   DOMTarget: HTMLElement
 ): void {
-  if (!store.mutationObserverMap.has(SK)) {
-    initMutationObserver(store, SK);
-  }
+  initMutationObserver(store, SK);
 
   store.mutationObserverMap.get(SK)!.observe(DOMTarget, observerConfig);
 }
