@@ -98,19 +98,25 @@ function checkMutations(store: DFlexDnDStore, mutations: MutationRecord[]) {
           addedNodes.length === 1 &&
           addedNodes[0] instanceof HTMLElement
         ) {
-          if (addedNodes[0].id.includes("dflex-draggable-mirror")) {
+          const { id } = addedNodes[0];
+
+          if (id.includes("dflex-draggable-mirror")) {
             return;
           }
 
           if (__DEV__) {
-            // TODO: Fix this warning.
-            // if (store.registry.has(addedNodes[0].id)) {
-            //   return;
-            // }
-            // eslint-disable-next-line no-console
-            // console.warn(
-            //   "Insertion of DOM elements is not supported outside DFlex registry. Ignore this message if you are using commit()."
-            // );
+            setTimeout(() => {
+              addedNodes.forEach((node) => {
+                // TODO: Fix this warning.
+                if (!store.registry.has((node as HTMLElement).id)) {
+                  // eslint-disable-next-line no-console
+                  console.error(
+                    // @ts-ignore
+                    `Insertion of DOM elements is not supported outside DFlex registry ${node.id}`
+                  );
+                }
+              });
+            }, 0);
           }
 
           return;
