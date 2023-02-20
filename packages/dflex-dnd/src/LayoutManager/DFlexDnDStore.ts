@@ -156,9 +156,6 @@ class DFlexDnDStore extends DFlexBaseStore {
     parentDepth: number,
     parentDOM: HTMLElement
   ) {
-    let container: DFlexParentContainer;
-    let scroll: DFlexScrollContainer;
-
     // Unified dimension is for siblings/children depth.
     if (!this.unifiedContainerDimensions[parentDepth - 1]) {
       this.unifiedContainerDimensions[parentDepth - 1] = Object.seal({
@@ -167,60 +164,60 @@ class DFlexDnDStore extends DFlexBaseStore {
       });
     }
 
-    const branch = this.DOMGen.getElmSiblingsByKey(SK);
+    const siblings = this.DOMGen.getElmSiblingsByKey(SK);
 
     if (__DEV__) {
       if (featureFlags.enableRegisterDebugger) {
         // eslint-disable-next-line no-console
-        console.log(`_initBranch: ${SK}`, branch);
+        console.log(`_initSiblings: ${SK}`, siblings);
       }
 
-      if (branch.length === 0 || !this.interactiveDOM.has(branch[0])) {
+      if (siblings.length === 0 || !this.interactiveDOM.has(siblings[0])) {
         throw new Error(
-          `_initSiblings: Unable to find DOM element for branch ${branch} at index: ${0}`
+          `_initSiblings: Unable to find DOM element for branch ${siblings} at index: ${0}`
         );
       }
     }
+
+    const scroll = new DFlexScrollContainer(
+      this.interactiveDOM.get(siblings[0])!,
+      SK,
+      siblings.length,
+      true,
+      updateBranchVisibilityLinearly.bind(null, this)
+    );
 
     if (this.scrolls.has(SK)) {
       if (__DEV__) {
-        throw new Error(`_initSiblings: Scroll with key:${SK} already exists.`);
+        // eslint-disable-next-line no-console
+        console.warn(`_initSiblings: Scroll with key:${SK} already exists.`);
       }
 
-      scroll = this.scrolls.get(SK)!;
-    } else {
-      scroll = new DFlexScrollContainer(
-        this.interactiveDOM.get(branch[0])!,
-        SK,
-        branch.length,
-        true,
-        updateBranchVisibilityLinearly.bind(null, this)
-      );
-
-      this.scrolls.set(SK, scroll);
+      this.scrolls.get(SK)!.destroy();
     }
+
+    this.scrolls.set(SK, scroll);
+
+    const container = new DFlexParentContainer(
+      parentDOM,
+      siblings.length,
+      parentDOM.id
+    );
 
     if (this.containers.has(SK)) {
       if (__DEV__) {
-        throw new Error(
-          `_initSiblings: Container with key:${SK} already exists.`
-        );
+        // eslint-disable-next-line no-console
+        console.warn(`_initSiblings: Container with key:${SK} already exists.`);
       }
 
-      container = this.containers.get(SK)!;
-    } else {
-      container = new DFlexParentContainer(
-        parentDOM,
-        branch.length,
-        parentDOM.id
-      );
-
-      this.containers.set(SK, container);
+      // this.containers.get(SK)!.destroy();
     }
+
+    this.containers.set(SK, container);
 
     const initElmGrid = this._resumeAndInitElmGrid.bind(this, container);
 
-    branch.forEach(initElmGrid);
+    siblings.forEach(initElmGrid);
 
     updateBranchVisibilityLinearly(this, SK);
   }
@@ -546,38 +543,12 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   /**
    * Unregister DnD element.
-   *
+   * @deprecated
    * @param id.
    *
    */
-  unregister(id: string): void {
-    // Unregister is caught by mutation.
-    if (getIsProcessingMutations()) {
-      return;
-    }
-
-    // Been removed before.
-    if (!this.registry.has(id)) {
-      return;
-    }
-
-    const {
-      keys: { SK },
-    } = this.registry.get(id)!;
-
-    const el = this.DOMGen.removeElmFromSiblings(SK, id);
-
-    super.unregister(id);
-
-    if (el) {
-      this.cleanupSiblingsInstance(SK, false);
-
-      if (__DEV__) {
-        // eslint-disable-next-line no-console
-        console.warn(`unregister: Siblings branch ${SK} has been deleted.`);
-      }
-    }
-  }
+  // eslint-disable-next-line class-methods-use-this
+  unregister(_id: string): void {}
 
   destroy(): void {
     this._clearBranchesScroll();

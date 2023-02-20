@@ -1,3 +1,4 @@
+import { featureFlags } from "@dflex/utils";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
 type ChangedIds = Set<{ oldId: string; newId: string }>;
@@ -28,9 +29,30 @@ function cleanupSiblings(store: DFlexDnDStore) {
       const elm = store.registry.get(elmID)!;
 
       if (terminatedDOMiDs.has(elmID)) {
+        if (featureFlags.enableRegisterDebugger) {
+          // eslint-disable-next-line no-console
+          console.log(`cleanupSiblings: removing ${elmID} from registry`);
+        }
         store.rmElmFromRegistry(elmID);
       } else {
         elm.VDOMOrder.self = connectedNodesID.push(elmID) - 1;
+
+        if (featureFlags.enableRegisterDebugger) {
+          // eslint-disable-next-line no-console
+          console.log(
+            `cleanupSiblings: updating index for ${elmID} to ${elm.VDOMOrder.self}`
+          );
+        }
+      }
+    }
+
+    if (__DEV__) {
+      if (featureFlags.enableRegisterDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(
+          `cleanupSiblings: Found ${connectedNodesID.length} connected`,
+          connectedNodesID
+        );
       }
     }
 
@@ -85,11 +107,10 @@ function checkMutations(store: DFlexDnDStore, mutations: MutationRecord[]) {
             // if (store.registry.has(addedNodes[0].id)) {
             //   return;
             // }
-
             // eslint-disable-next-line no-console
-            console.warn(
-              "Insertion of DOM elements is not supported outside DFlex registry. Ignore this message if you are using commit()."
-            );
+            // console.warn(
+            //   "Insertion of DOM elements is not supported outside DFlex registry. Ignore this message if you are using commit()."
+            // );
           }
 
           return;
