@@ -280,6 +280,7 @@ class DFlexBaseStore {
 
   endRegistration() {
     this._lastDOMParent = null;
+    this.DOMGen.endRegistration();
 
     if (__DEV__) {
       if (featureFlags.enableRegisterDebugger) {

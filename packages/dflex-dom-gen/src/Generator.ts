@@ -163,6 +163,17 @@ class Generator {
     const isNewLayer = BK !== this._preBK;
     this._preBK = BK;
 
+    if (isNewLayer) {
+      if (featureFlags.enableRegisterDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(
+          `_insertLayer: resetting siblings count for the new layer starting with id: ${id}`
+        );
+      }
+
+      this._siblingsCount[depth] = 0;
+    }
+
     /**
      * get siblings unique key (sK) and parents key (pK)
      */
@@ -175,7 +186,6 @@ class Generator {
     }
 
     if (isNewLayer) {
-      this._siblingsCount[depth] = 0;
       this._SKByBranch[BK].push({ SK, id });
     }
 
@@ -521,6 +531,10 @@ class Generator {
       // eslint-disable-next-line no-console
       console.log(`Deleted siblings: ${SK}`);
     }
+  }
+
+  endRegistration() {
+    this._preBK = null;
   }
 
   clear() {

@@ -35,13 +35,17 @@ function cleanupSiblings(store: DFlexDnDStore) {
         }
         store.rmElmFromRegistry(elmID);
       } else {
-        elm.VDOMOrder.self = connectedNodesID.push(elmID) - 1;
+        const index = connectedNodesID.push(elmID) - 1;
 
-        if (featureFlags.enableRegisterDebugger) {
-          // eslint-disable-next-line no-console
-          console.log(
-            `cleanupSiblings: updating index for ${elmID} to ${elm.VDOMOrder.self}`
-          );
+        if (index !== elm.VDOMOrder.self) {
+          elm.updateIndex(store.interactiveDOM.get(elmID)!, index);
+
+          if (featureFlags.enableRegisterDebugger) {
+            // eslint-disable-next-line no-console
+            console.log(
+              `cleanupSiblings: updating index for ${elmID} to ${index}`
+            );
+          }
         }
       }
     }
