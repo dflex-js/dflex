@@ -261,13 +261,20 @@ class DFlexBaseStore {
           DOM.id = id;
         }
 
-        const elm = {
-          depth,
-          readonly: registeredElmID !== id,
-          id,
-        };
+        if (!this.registry.has(id)) {
+          const elm = {
+            depth,
+            readonly: registeredElmID !== id,
+            id,
+          };
 
-        ({ SK } = this._submitElementToRegistry(DOM, elm, dflexParentElm)!);
+          ({ SK } = this._submitElementToRegistry(DOM, elm, dflexParentElm)!);
+        } else if (__DEV__) {
+          if (featureFlags.enableRegisterDebugger) {
+            // eslint-disable-next-line no-console
+            console.warn(`${id} is already registered.`);
+          }
+        }
       } else if (__DEV__) {
         throw new Error(
           `_submitContainerChildren: Received an element that's not an instanceof HTMLElement at index: ${i}`
