@@ -45,10 +45,6 @@ const DFlexDnDComponent = ({
     if (taskRef.current) {
       store.register({ id, depth, readonly });
     }
-
-    return () => {
-      store.unregister(id);
-    };
   }, [taskRef]);
 
   const onDFlexEvent = (e: DFlexEvents) => {
