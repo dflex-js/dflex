@@ -13,32 +13,44 @@ function getIsProcessingMutations(): boolean {
 }
 
 function cleanupSiblings(store: DFlexDnDStore) {
-  const keys = new Set<string>();
+  const SKeys = new Set<string>();
   const connectedNodesID: string[] = [];
 
   terminatedDOMiDs.forEach((id) => {
-    keys.add(store.registry.get(id)!.keys.SK);
+    const {
+      keys: { SK },
+    } = store.registry.get(id)!;
+
+    SKeys.add(SK);
   });
 
-  keys.forEach((key) => {
-    const siblings = store.getElmSiblingsByKey(key);
+  SKeys.forEach((SK) => {
+    const siblings = store.getElmSiblingsByKey(SK);
+    let BK: string | undefined;
+    let depth: number | undefined;
 
     for (let i = 0; i < siblings.length; i += 1) {
       const elmID = siblings[i];
 
-      const elm = store.registry.get(elmID)!;
+      const dflexElm = store.registry.get(elmID)!;
 
       if (terminatedDOMiDs.has(elmID)) {
         if (featureFlags.enableRegisterDebugger) {
           // eslint-disable-next-line no-console
           console.log(`cleanupSiblings: removing ${elmID} from registry`);
         }
-        store.rmElmFromRegistry(elmID);
+
+        if (!BK) {
+          BK = dflexElm.keys.BK;
+          depth = dflexElm.depth;
+        }
+
+        store.cleanupElm(elmID, BK);
       } else {
         const index = connectedNodesID.push(elmID) - 1;
 
-        if (index !== elm.VDOMOrder.self) {
-          elm.updateIndex(store.interactiveDOM.get(elmID)!, index);
+        if (index !== dflexElm.VDOMOrder.self) {
+          dflexElm.updateIndex(store.interactiveDOM.get(elmID)!, index);
 
           if (featureFlags.enableRegisterDebugger) {
             // eslint-disable-next-line no-console
@@ -61,9 +73,9 @@ function cleanupSiblings(store: DFlexDnDStore) {
     }
 
     if (connectedNodesID.length > 0) {
-      store.mutateSiblings(key, connectedNodesID);
+      store.mutateSiblings(SK, connectedNodesID);
     } else {
-      store.cleanupSiblingsInstance(key, true);
+      store.cleanupSiblingsInstance(SK, BK!, depth!);
     }
   });
 }

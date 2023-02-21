@@ -240,8 +240,13 @@ class DFlexDnDStore extends DFlexBaseStore {
         if (__DEV__) {
           if (featureFlags.enableRegisterDebugger) {
             // eslint-disable-next-line no-console
-            console.log(`_initObservers: ${id}`);
+            console.log(`_initObservers: observe ${id}`);
           }
+        }
+      } else if (__DEV__) {
+        if (featureFlags.enableRegisterDebugger) {
+          // eslint-disable-next-line no-console
+          console.log(`_initObservers: ${id} already exist`);
         }
       }
     });
@@ -508,10 +513,8 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.scrolls.clear();
   }
 
-  cleanupSiblingsInstance(SK: string, destroySiblings: boolean): void {
-    if (destroySiblings) {
-      this.DOMGen.destroySiblings(SK, null);
-    }
+  cleanupSiblingsInstance(SK: string, BK: string, depth: number): void {
+    this.DOMGen.destroySiblings(SK, BK, depth);
 
     const deletedContainer = this.containers.delete(SK);
     const deletedScroll = this.scrolls.delete(SK);
@@ -534,15 +537,6 @@ class DFlexDnDStore extends DFlexBaseStore {
         );
       }
     }
-  }
-
-  /**
-   * Removing instance from super
-   *
-   * @param id
-   */
-  rmElmFromRegistry(id: string) {
-    super.unregister(id);
   }
 
   /**

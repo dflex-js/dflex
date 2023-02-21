@@ -186,7 +186,19 @@ class Generator {
     }
 
     if (isNewLayer) {
-      this._SKByBranch[BK].push({ SK, id });
+      if (__DEV__) {
+        if (!Array.isArray(this._SKByBranch[BK])) {
+          throw new Error(`_insertLayer: unable to find branch with BK ${BK}`);
+        }
+
+        if (!this._SKByBranch[BK][depth]) {
+          throw new Error(
+            `_insertLayer: unable to find element index ${depth} inside branch BK ${BK}`
+          );
+        }
+      }
+
+      this._SKByBranch[BK][depth] = { SK, id };
     }
 
     this._siblingsCount[depth] += 1;
@@ -472,28 +484,6 @@ class Generator {
     return highestSKInAllBranches;
   }
 
-  private _cleanupSKFromDepthCollection(SK: string): void {
-    Object.keys(this._SKByDepth).forEach((dp) => {
-      const dpNum = Number(dp);
-
-      this._SKByDepth[dpNum] = this._SKByDepth[dpNum].filter((k) => k !== SK);
-
-      if (this._SKByDepth[dpNum].length === 0) {
-        delete this._SKByDepth[dpNum];
-      }
-    });
-  }
-
-  private _cleanupSKFromBranchCollection(SK: string): void {
-    Object.keys(this._SKByBranch).forEach((BK) => {
-      this._SKByBranch[BK] = this._SKByBranch[BK].filter((k) => k.SK !== SK);
-
-      if (this._SKByBranch[BK].length === 0) {
-        delete this._SKByBranch[BK];
-      }
-    });
-  }
-
   private _hasSK(SK: string) {
     if (__DEV__) {
       if (!Array.isArray(this._siblings[SK])) {
@@ -504,6 +494,40 @@ class Generator {
     return Array.isArray(this._siblings[SK]);
   }
 
+  removeIDFromBranch(id: string, BK: string): void {
+    if (__DEV__) {
+      if (!Array.isArray(this._SKByBranch[BK])) {
+        throw new Error(
+          `removeIDFromBranch: Branch with SK ${BK} doesn't exist.`
+        );
+      }
+    }
+
+    this._SKByBranch[BK] = this._SKByBranch[BK].filter((k) => k.id !== id);
+  }
+
+  private _removeSKFromBranch(SK: string, BK: string): void {
+    this._SKByBranch[BK] = this._SKByBranch[BK].filter((k) => k.SK !== SK);
+
+    if (this._SKByBranch[BK].length === 0) {
+      if (__DEV__) {
+        // eslint-disable-next-line no-console
+        console.log(`Deleted branch: ${BK}`);
+      }
+    }
+  }
+
+  private _removeSKFromDepth(SK: string, depth: number): void {
+    this._SKByDepth[depth] = this._SKByDepth[depth].filter((k) => k !== SK);
+
+    if (this._SKByDepth[depth].length === 0) {
+      if (__DEV__) {
+        // eslint-disable-next-line no-console
+        console.log(`Deleted depth collection: ${depth}`);
+      }
+    }
+  }
+
   /**
    * Removes entire siblings from root.
    *
@@ -511,7 +535,12 @@ class Generator {
    * @param cb - Callback function.
    * @returns
    */
-  destroySiblings(SK: string, cb?: ((elmID: string) => void) | null): void {
+  destroySiblings(
+    SK: string,
+    BK: string,
+    depth: number,
+    cb?: ((elmID: string) => void) | null
+  ): void {
     if (!this._hasSK(SK)) {
       return;
     }
@@ -524,8 +553,8 @@ class Generator {
 
     delete this._siblings[SK];
 
-    this._cleanupSKFromDepthCollection(SK);
-    this._cleanupSKFromBranchCollection(SK);
+    this._removeSKFromDepth(SK, depth);
+    this._removeSKFromBranch(SK, BK);
 
     if (__DEV__) {
       // eslint-disable-next-line no-console

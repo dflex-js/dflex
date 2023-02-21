@@ -575,16 +575,9 @@ class DFlexBaseStore {
     this.interactiveDOM.delete(id);
   }
 
-  /**
-   * Destroys branch and all its related instances in the store. This method is
-   * automatically `unregister(id)`.
-   *
-   * @param SK - Siblings Key.
-   */
-  destroySiblings(SK: string): void {
-    this.DOMGen.destroySiblings(SK, (id) => {
-      this.unregister(id);
-    });
+  cleanupElm(id: string, BK: string): void {
+    this.unregister(id);
+    this.DOMGen.removeIDFromBranch(id, BK);
   }
 
   /**
