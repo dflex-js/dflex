@@ -95,7 +95,7 @@ class Generator {
    * A collection of siblings keys stored belong to the same branch.
    * Vertical scale.
    */
-  private _SKByBranch!: Record<BranchKey, SKID[]>;
+  private _SKByBranch!: Record<BranchKey, (SKID | null)[]>;
 
   private _prevDepth!: number;
 
@@ -191,10 +191,17 @@ class Generator {
           throw new Error(`_insertLayer: unable to find branch with BK ${BK}`);
         }
 
-        if (!this._SKByBranch[BK][depth]) {
-          throw new Error(
-            `_insertLayer: unable to find element index ${depth} inside branch BK ${BK}`
-          );
+        if (featureFlags.enableRegisterDebugger) {
+          if (this._SKByBranch[BK][depth] === null) {
+            // eslint-disable-next-line no-console
+            console.log("_insertLayer: new layer will be inserted");
+          } else {
+            // eslint-disable-next-line no-console
+            console.log(
+              "_insertLayer: new layer will replace",
+              this._SKByBranch[BK][depth]
+            );
+          }
         }
       }
 
@@ -283,7 +290,7 @@ class Generator {
 
     this._prevPK = PK;
 
-    const branchHasSK = this._SKByBranch[BK].find(({ SK: _ }) => _ === SK);
+    const branchHasSK = this._SKByBranch[BK].find((v) => v && v.SK === SK);
 
     if (!branchHasSK) {
       this._SKByBranch[BK].push({ SK, id });
@@ -448,7 +455,7 @@ class Generator {
       Object.assign(this._siblings, { [SK]: siblings });
     } else if (__DEV__) {
       throw new Error(
-        `updateELmBranch: Branch with key:${SK} is not registered.`
+        `mutateSiblings: Siblings with key:${SK} is not registered.`
       );
     }
   }
@@ -478,7 +485,14 @@ class Generator {
     Object.keys(this._SKByBranch).forEach((BK) => {
       const l = this._SKByBranch[BK].length;
       const lastElm = this._SKByBranch[BK][l - 1];
-      highestSKInAllBranches.add(lastElm);
+
+      if (lastElm) {
+        highestSKInAllBranches.add(lastElm);
+      } else if (__DEV__) {
+        throw new Error(
+          `getHighestSKInAllBranches: last element is empty: ${this._SKByBranch[BK]}`
+        );
+      }
     });
 
     return highestSKInAllBranches;
@@ -503,22 +517,21 @@ class Generator {
       }
     }
 
-    this._SKByBranch[BK] = this._SKByBranch[BK].filter((k) => k.id !== id);
-  }
-
-  private _removeSKFromBranch(SK: string, BK: string): void {
-    this._SKByBranch[BK] = this._SKByBranch[BK].filter((k) => k.SK !== SK);
-
-    if (this._SKByBranch[BK].length === 0) {
-      if (__DEV__) {
-        // eslint-disable-next-line no-console
-        console.log(`Deleted branch: ${BK}`);
-      }
+    if (this._SKByBranch[BK].find((e) => e && e.id === id)) {
+      this._SKByBranch[BK] = this._SKByBranch[BK].map((v) =>
+        v ? (v.id !== id ? v : null) : null
+      );
     }
   }
 
+  private _removeSKFromBranch(SK: string, BK: string): void {
+    this._SKByBranch[BK] = this._SKByBranch[BK].map((v) =>
+      v ? (v.SK !== SK ? v : null) : null
+    );
+  }
+
   private _removeSKFromDepth(SK: string, depth: number): void {
-    this._SKByDepth[depth] = this._SKByDepth[depth].filter((k) => k !== SK);
+    this._SKByDepth[depth] = this._SKByDepth[depth].filter((v) => v !== SK);
 
     if (this._SKByDepth[depth].length === 0) {
       if (__DEV__) {

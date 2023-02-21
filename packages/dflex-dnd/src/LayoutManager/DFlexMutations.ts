@@ -13,40 +13,42 @@ function getIsProcessingMutations(): boolean {
 }
 
 function cleanupSiblings(store: DFlexDnDStore) {
-  const SKeys = new Set<string>();
-  const connectedNodesID: string[] = [];
+  const SKeys = new Map<string, { BK: string; depth: number }>();
 
   terminatedDOMiDs.forEach((id) => {
     const {
-      keys: { SK },
+      keys: { SK, BK },
+      depth,
     } = store.registry.get(id)!;
 
-    SKeys.add(SK);
+    store.removeElmFromRegistry(id);
+
+    if (__DEV__) {
+      if (featureFlags.enableRegisterDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(`cleanupSiblings: removing ${id} from registry`);
+      }
+    }
+
+    if (!SKeys.has(SK)) {
+      SKeys.set(SK, { BK, depth });
+    }
   });
 
-  SKeys.forEach((SK) => {
+  SKeys.forEach(({ BK, depth }, SK) => {
+    const connectedNodesID: string[] = [];
+    const deletedNodesID: string[] = [];
+
     const siblings = store.getElmSiblingsByKey(SK);
-    let BK: string | undefined;
-    let depth: number | undefined;
 
     for (let i = 0; i < siblings.length; i += 1) {
       const elmID = siblings[i];
 
-      const dflexElm = store.registry.get(elmID)!;
-
       if (terminatedDOMiDs.has(elmID)) {
-        if (featureFlags.enableRegisterDebugger) {
-          // eslint-disable-next-line no-console
-          console.log(`cleanupSiblings: removing ${elmID} from registry`);
-        }
-
-        if (!BK) {
-          BK = dflexElm.keys.BK;
-          depth = dflexElm.depth;
-        }
-
-        store.cleanupElm(elmID, BK);
+        deletedNodesID.push(elmID);
       } else {
+        const dflexElm = store.registry.get(elmID)!;
+
         const index = connectedNodesID.push(elmID) - 1;
 
         if (index !== dflexElm.VDOMOrder.self) {
@@ -74,8 +76,12 @@ function cleanupSiblings(store: DFlexDnDStore) {
 
     if (connectedNodesID.length > 0) {
       store.mutateSiblings(SK, connectedNodesID);
+
+      deletedNodesID.forEach((id) => {
+        store.cleanupELmInstance(id, BK);
+      });
     } else {
-      store.cleanupSiblingsInstance(SK, BK!, depth!);
+      store.cleanupSiblingsInstance(SK, BK, depth);
     }
   });
 }

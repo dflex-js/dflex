@@ -562,7 +562,7 @@ class DFlexBaseStore {
    * @param newSiblings
    */
   mutateSiblings(SK: string, newSiblings: Siblings): void {
-    return this.DOMGen.mutateSiblings(SK, newSiblings);
+    this.DOMGen.mutateSiblings(SK, newSiblings);
   }
 
   /**
@@ -573,11 +573,6 @@ class DFlexBaseStore {
   unregister(id: string): void {
     this.registry.delete(id);
     this.interactiveDOM.delete(id);
-  }
-
-  cleanupElm(id: string, BK: string): void {
-    this.unregister(id);
-    this.DOMGen.removeIDFromBranch(id, BK);
   }
 
   /**
