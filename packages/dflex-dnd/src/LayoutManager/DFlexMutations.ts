@@ -148,7 +148,7 @@ function checkMutations(store: DFlexDnDStore, mutations: MutationRecord[]) {
           if (node instanceof HTMLElement) {
             const { id } = node;
 
-            if (store.registry.has(id)) {
+            if (id && store.registry.has(id)) {
               terminatedDOMiDs.add(id);
             }
           }
@@ -213,18 +213,65 @@ function initMutationObserver(store: DFlexDnDStore, SK: string) {
   );
 }
 
-function addMutationObserver(
+function addObserver(
   store: DFlexDnDStore,
   SK: string,
   DOMTarget: HTMLElement
 ): void {
-  initMutationObserver(store, SK);
+  if (!store.mutationObserverMap.has(SK)) {
+    if (__DEV__) {
+      if (featureFlags.enableRegisterDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(`addObserver: ${SK}`);
+      }
+    }
+
+    initMutationObserver(store, SK);
+  } else if (__DEV__) {
+    if (featureFlags.enableRegisterDebugger) {
+      // eslint-disable-next-line no-console
+      console.log(`addObserver: ${SK} already exist`);
+    }
+  }
 
   store.mutationObserverMap.get(SK)!.observe(DOMTarget, observerConfig);
 }
 
-type DFlexLMutationPlugin = ReturnType<typeof addMutationObserver>;
+function disconnectObservers(store: DFlexDnDStore) {
+  store.mutationObserverMap.forEach((observer, key) => {
+    if (__DEV__) {
+      if (!observer) {
+        throw new Error(
+          `disconnectObservers: unable to find observer for key: ${key}`
+        );
+      }
+    }
+
+    observer!.disconnect();
+  });
+}
+
+function connectObservers(store: DFlexDnDStore) {
+  store.mutationObserverMap.forEach((_, key) => {
+    const DOM = store.interactiveDOM.get(key)!;
+
+    if (__DEV__) {
+      if (!DOM) {
+        throw new Error(`connectObservers: unable to find DOM for key: ${key}`);
+      }
+    }
+
+    addObserver(store, key, DOM);
+  });
+}
+
+type DFlexLMutationPlugin = ReturnType<typeof addObserver>;
 
 export type { DFlexLMutationPlugin };
 
-export { getIsProcessingMutations, addMutationObserver };
+export {
+  getIsProcessingMutations,
+  addObserver,
+  disconnectObservers,
+  connectObservers,
+};

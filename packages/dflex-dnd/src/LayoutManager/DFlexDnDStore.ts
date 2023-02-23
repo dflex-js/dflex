@@ -29,10 +29,14 @@ import initDFlexListeners, {
 import scheduler, { SchedulerOptions, UpdateFn } from "./DFlexScheduler";
 
 import updateBranchVisibilityLinearly from "./DFlexVisibilityUpdater";
+
 import {
-  addMutationObserver,
+  addObserver,
+  connectObservers,
+  disconnectObservers,
   getIsProcessingMutations,
 } from "./DFlexMutations";
+
 import DOMReconciler from "./DFlexDOMReconciler";
 
 type Containers = Map<string, DFlexParentContainer>;
@@ -235,7 +239,7 @@ class DFlexDnDStore extends DFlexBaseStore {
       if (!this.mutationObserverMap.has(id)) {
         const parentDOM = this.interactiveDOM.get(id)!;
 
-        addMutationObserver(this, id, parentDOM);
+        addObserver(this, id, parentDOM);
 
         if (__DEV__) {
           if (featureFlags.enableRegisterDebugger) {
@@ -412,9 +416,7 @@ class DFlexDnDStore extends DFlexBaseStore {
       return;
     }
 
-    this.mutationObserverMap.forEach((observer) => {
-      observer!.disconnect();
-    });
+    disconnectObservers(this);
 
     this.migration.containerKeys.forEach((k) => {
       this._reconcileBranch(k, refreshAllBranchElements);
@@ -423,11 +425,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     scheduler(this, callback, {
       onUpdate: () => {
         // Done reconciliation.
-        this.migration.containerKeys.forEach((k) => {
-          const container = this.containers.get(k)!;
-          const parentDOM = this.interactiveDOM.get(container.id)!;
-          addMutationObserver(this, k, parentDOM);
-        });
+        connectObservers(this);
 
         this.migration.clear();
         clearComputedStyleMap();
@@ -561,9 +559,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.containers.clear();
     this.listeners.clear();
     // Destroys all connected observers.
-    this.mutationObserverMap.forEach((observer) => {
-      observer!.disconnect();
-    });
+    disconnectObservers(this);
     this.mutationObserverMap.clear();
 
     // TODO:

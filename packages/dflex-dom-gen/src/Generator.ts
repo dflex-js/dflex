@@ -192,16 +192,11 @@ class Generator {
         }
 
         if (featureFlags.enableRegisterDebugger) {
-          if (this._SKByBranch[BK][depth] === null) {
-            // eslint-disable-next-line no-console
-            console.log("_insertLayer: new layer will be inserted");
-          } else {
-            // eslint-disable-next-line no-console
-            console.log(
-              "_insertLayer: new layer will replace",
-              this._SKByBranch[BK][depth]
-            );
-          }
+          // eslint-disable-next-line no-console
+          console.log(
+            `_insertLayer: new layer will be inserted at: ${depth} in the branch:`,
+            [...this._SKByBranch[BK]]
+          );
         }
       }
 
