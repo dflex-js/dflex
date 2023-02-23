@@ -1,4 +1,11 @@
-import { test, Page, Locator, BrowserContext, Browser } from "@playwright/test";
+import {
+  test,
+  Page,
+  Locator,
+  BrowserContext,
+  Browser,
+  expect,
+} from "@playwright/test";
 
 import {
   assertChildrenOrderIDs,
@@ -8,13 +15,15 @@ import {
   moveDragged,
 } from "../utils";
 
-test.describe("Stream new element then transform mutate and check the new positions", async () => {
+test.describe("Stream incremental element then transform mutate and check the new positions", async () => {
   let page: Page;
   let context: BrowserContext;
   let activeBrowser: Browser;
 
   let elmAParent: Locator;
   let elmBParent: Locator;
+  let elmA00: Locator;
+  let elmB00: Locator;
 
   async function moveElmDown(elm: Locator, id: string) {
     await getDraggedRect(elm);
@@ -31,11 +40,13 @@ test.describe("Stream new element then transform mutate and check the new positi
     context = await activeBrowser.newContext();
     page = await context.newPage();
     initialize(page, browserName, 50);
-    await page.goto("/stream-new");
+    await page.goto("/stream-inc");
 
-    [elmAParent, elmBParent] = await Promise.all([
+    [elmAParent, elmA00, elmBParent, elmB00] = await Promise.all([
       page.locator("#dflex_id_0"),
+      page.locator("#a-0"),
       page.locator("#dflex_id_1"),
+      page.locator("#b-0"),
     ]);
   });
 
@@ -46,46 +57,37 @@ test.describe("Stream new element then transform mutate and check the new positi
   });
 
   test.describe("First round: 5 elements", () => {
-    let elmA00: Locator;
-    let elmB00: Locator;
-
     test.beforeAll(async () => {
-      [elmA00, elmB00] = await Promise.all([
-        page.locator("#a-0-0"),
-        page.locator("#b-0-0"),
-      ]);
+      await page.keyboard.press("r", { delay: 50 });
     });
 
-    test("Siblings index initiated correctly round 2", async () => {
-      await page.keyboard.press("r", { delay: 50 });
-
+    test("Siblings index initiated correctly", async () => {
       await Promise.all([
         assertDefaultChildrenIndex(elmAParent),
         assertDefaultChildrenIndex(elmBParent),
       ]);
     });
 
-    test("Transforms elements (#a-0-0) and (#b-0-0) - to the end", async () => {
-      await moveElmDown(elmA00, "#a-0-0");
-      await moveElmDown(elmB00, "#b-0-0");
+    test("Transforms elements (#a-0) and (#b-0) - to the end", async () => {
+      await moveElmDown(elmA00, "#a-0");
+      await moveElmDown(elmB00, "#b-0");
     });
 
     test("Siblings have the correct order in DOM", async () => {
+      const idsA = [];
+      const idsB = [];
+
+      for (let i = 1; i < 5; i += 1) {
+        idsA.push(`a-${i}`);
+        idsB.push(`b-${i}`);
+      }
+
+      idsA.push("a-0");
+      idsB.push("b-0");
+
       await Promise.all([
-        assertChildrenOrderIDs(elmAParent, [
-          "a-0-1",
-          "a-0-2",
-          "a-0-3",
-          "a-0-4",
-          "a-0-0",
-        ]),
-        assertChildrenOrderIDs(elmBParent, [
-          "b-0-1",
-          "b-0-2",
-          "b-0-3",
-          "b-0-4",
-          "b-0-0",
-        ]),
+        assertChildrenOrderIDs(elmAParent, idsA),
+        assertChildrenOrderIDs(elmBParent, idsB),
         assertDefaultChildrenIndex(elmAParent),
         assertDefaultChildrenIndex(elmBParent),
       ]);
@@ -118,6 +120,17 @@ test.describe("Stream new element then transform mutate and check the new positi
         assertDefaultChildrenIndex(elmAParent),
         assertDefaultChildrenIndex(elmBParent),
       ]);
+    });
+
+    test("Reconciled elements preserve their positions", async () => {
+      (
+        await Promise.all([
+          elmA00.getAttribute("data-index"),
+          elmB00.getAttribute("data-index"),
+        ])
+      ).forEach((_) => {
+        expect(_).toBe("4");
+      });
     });
   });
 });

@@ -12,4 +12,4 @@ export const enableCommit = false;
 
 export const enableUndoSiblingsDebugger = false;
 
-export const enableRegisterDebugger = true;
+export const enableRegisterDebugger = false;
