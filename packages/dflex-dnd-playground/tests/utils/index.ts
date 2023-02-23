@@ -112,3 +112,27 @@ export async function assertChildrenOrderIDs(
 
   expect(childrenIDs).toEqual(FINAL_IDS);
 }
+
+export async function getChildrenLength(parentLocater: Locator) {
+  return parentLocater.evaluate((elm) => {
+    return elm.children.length;
+  });
+}
+
+export async function assertDefaultChildrenIndex(parentLocater: Locator) {
+  const [childrenIndex, childrenLength] = await parentLocater.evaluate(
+    (elm) => {
+      const indexes: string[] = [];
+      const { length } = elm.children;
+
+      for (let i = 0; i < length; i += 1) {
+        indexes.push(elm.children[i].getAttribute("data-index")!);
+      }
+      return [indexes, length];
+    }
+  );
+
+  expect(childrenIndex).toEqual(
+    Array.from(Array(childrenLength), (_, i) => `${i}`)
+  );
+}

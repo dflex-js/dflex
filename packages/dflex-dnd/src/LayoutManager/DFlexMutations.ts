@@ -13,32 +13,46 @@ function getIsProcessingMutations(): boolean {
 }
 
 function cleanupSiblings(store: DFlexDnDStore) {
-  const keys = new Set<string>();
-  const connectedNodesID: string[] = [];
+  const SKeys = new Map<string, { BK: string; depth: number }>();
 
   terminatedDOMiDs.forEach((id) => {
-    keys.add(store.registry.get(id)!.keys.SK);
+    const {
+      keys: { SK, BK },
+      depth,
+    } = store.registry.get(id)!;
+
+    store.removeElmFromRegistry(id);
+
+    if (__DEV__) {
+      if (featureFlags.enableRegisterDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(`cleanupSiblings: removing ${id} from registry`);
+      }
+    }
+
+    if (!SKeys.has(SK)) {
+      SKeys.set(SK, { BK, depth });
+    }
   });
 
-  keys.forEach((key) => {
-    const siblings = store.getElmSiblingsByKey(key);
+  SKeys.forEach(({ BK, depth }, SK) => {
+    const connectedNodesID: string[] = [];
+    const deletedNodesID: string[] = [];
+
+    const siblings = store.getElmSiblingsByKey(SK);
 
     for (let i = 0; i < siblings.length; i += 1) {
       const elmID = siblings[i];
 
-      const elm = store.registry.get(elmID)!;
-
       if (terminatedDOMiDs.has(elmID)) {
-        if (featureFlags.enableRegisterDebugger) {
-          // eslint-disable-next-line no-console
-          console.log(`cleanupSiblings: removing ${elmID} from registry`);
-        }
-        store.rmElmFromRegistry(elmID);
+        deletedNodesID.push(elmID);
       } else {
+        const dflexElm = store.registry.get(elmID)!;
+
         const index = connectedNodesID.push(elmID) - 1;
 
-        if (index !== elm.VDOMOrder.self) {
-          elm.updateIndex(store.interactiveDOM.get(elmID)!, index);
+        if (index !== dflexElm.VDOMOrder.self) {
+          dflexElm.updateIndex(store.interactiveDOM.get(elmID)!, index);
 
           if (featureFlags.enableRegisterDebugger) {
             // eslint-disable-next-line no-console
@@ -61,9 +75,13 @@ function cleanupSiblings(store: DFlexDnDStore) {
     }
 
     if (connectedNodesID.length > 0) {
-      store.mutateSiblings(key, connectedNodesID);
+      store.mutateSiblings(SK, connectedNodesID);
+
+      deletedNodesID.forEach((id) => {
+        store.cleanupELmInstance(id, BK);
+      });
     } else {
-      store.cleanupSiblingsInstance(key, true);
+      store.cleanupSiblingsInstance(SK, BK, depth);
     }
   });
 }
@@ -130,7 +148,7 @@ function checkMutations(store: DFlexDnDStore, mutations: MutationRecord[]) {
           if (node instanceof HTMLElement) {
             const { id } = node;
 
-            if (store.registry.has(id)) {
+            if (id && store.registry.has(id)) {
               terminatedDOMiDs.add(id);
             }
           }
@@ -195,18 +213,65 @@ function initMutationObserver(store: DFlexDnDStore, SK: string) {
   );
 }
 
-function addMutationObserver(
+function addObserver(
   store: DFlexDnDStore,
   SK: string,
   DOMTarget: HTMLElement
 ): void {
-  initMutationObserver(store, SK);
+  if (!store.mutationObserverMap.has(SK)) {
+    if (__DEV__) {
+      if (featureFlags.enableRegisterDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(`addObserver: ${SK}`);
+      }
+    }
+
+    initMutationObserver(store, SK);
+  } else if (__DEV__) {
+    if (featureFlags.enableRegisterDebugger) {
+      // eslint-disable-next-line no-console
+      console.log(`addObserver: ${SK} already exist`);
+    }
+  }
 
   store.mutationObserverMap.get(SK)!.observe(DOMTarget, observerConfig);
 }
 
-type DFlexLMutationPlugin = ReturnType<typeof addMutationObserver>;
+function disconnectObservers(store: DFlexDnDStore) {
+  store.mutationObserverMap.forEach((observer, key) => {
+    if (__DEV__) {
+      if (!observer) {
+        throw new Error(
+          `disconnectObservers: unable to find observer for key: ${key}`
+        );
+      }
+    }
+
+    observer!.disconnect();
+  });
+}
+
+function connectObservers(store: DFlexDnDStore) {
+  store.mutationObserverMap.forEach((_, key) => {
+    const DOM = store.interactiveDOM.get(key)!;
+
+    if (__DEV__) {
+      if (!DOM) {
+        throw new Error(`connectObservers: unable to find DOM for key: ${key}`);
+      }
+    }
+
+    addObserver(store, key, DOM);
+  });
+}
+
+type DFlexLMutationPlugin = ReturnType<typeof addObserver>;
 
 export type { DFlexLMutationPlugin };
 
-export { getIsProcessingMutations, addMutationObserver };
+export {
+  getIsProcessingMutations,
+  addObserver,
+  disconnectObservers,
+  connectObservers,
+};

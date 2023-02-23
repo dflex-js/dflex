@@ -261,13 +261,20 @@ class DFlexBaseStore {
           DOM.id = id;
         }
 
-        const elm = {
-          depth,
-          readonly: registeredElmID !== id,
-          id,
-        };
+        if (!this.registry.has(id)) {
+          const elm = {
+            depth,
+            readonly: registeredElmID !== id,
+            id,
+          };
 
-        ({ SK } = this._submitElementToRegistry(DOM, elm, dflexParentElm)!);
+          ({ SK } = this._submitElementToRegistry(DOM, elm, dflexParentElm)!);
+        } else if (__DEV__) {
+          if (featureFlags.enableRegisterDebugger) {
+            // eslint-disable-next-line no-console
+            console.warn(`${id} is already registered.`);
+          }
+        }
       } else if (__DEV__) {
         throw new Error(
           `_submitContainerChildren: Received an element that's not an instanceof HTMLElement at index: ${i}`
@@ -555,7 +562,7 @@ class DFlexBaseStore {
    * @param newSiblings
    */
   mutateSiblings(SK: string, newSiblings: Siblings): void {
-    return this.DOMGen.mutateSiblings(SK, newSiblings);
+    this.DOMGen.mutateSiblings(SK, newSiblings);
   }
 
   /**
@@ -566,18 +573,6 @@ class DFlexBaseStore {
   unregister(id: string): void {
     this.registry.delete(id);
     this.interactiveDOM.delete(id);
-  }
-
-  /**
-   * Destroys branch and all its related instances in the store. This method is
-   * automatically `unregister(id)`.
-   *
-   * @param SK - Siblings Key.
-   */
-  destroySiblings(SK: string): void {
-    this.DOMGen.destroySiblings(SK, (id) => {
-      this.unregister(id);
-    });
   }
 
   /**

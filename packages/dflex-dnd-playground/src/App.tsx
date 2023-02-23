@@ -16,7 +16,8 @@ import {
   ScrollMultiLists,
   ListMigration,
   StreamInterval,
-  StreamOnDemand,
+  StreamNewELm,
+  StreamIncremental,
 } from "./components";
 
 const App = () => {
@@ -119,7 +120,8 @@ const App = () => {
           }
         />
         <Route path="/stream-interval" element={<StreamInterval />} />
-        <Route path="/stream-on-demand" element={<StreamOnDemand />} />
+        <Route path="/stream-new" element={<StreamNewELm />} />
+        <Route path="/stream-inc" element={<StreamIncremental />} />
         <Route
           path="/"
           element={

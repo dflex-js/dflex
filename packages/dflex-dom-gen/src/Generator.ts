@@ -95,7 +95,7 @@ class Generator {
    * A collection of siblings keys stored belong to the same branch.
    * Vertical scale.
    */
-  private _SKByBranch!: Record<BranchKey, SKID[]>;
+  private _SKByBranch!: Record<BranchKey, (SKID | null)[]>;
 
   private _prevDepth!: number;
 
@@ -186,7 +186,21 @@ class Generator {
     }
 
     if (isNewLayer) {
-      this._SKByBranch[BK].push({ SK, id });
+      if (__DEV__) {
+        if (!Array.isArray(this._SKByBranch[BK])) {
+          throw new Error(`_insertLayer: unable to find branch with BK ${BK}`);
+        }
+
+        if (featureFlags.enableRegisterDebugger) {
+          // eslint-disable-next-line no-console
+          console.log(
+            `_insertLayer: new layer will be inserted at: ${depth} in the branch:`,
+            [...this._SKByBranch[BK]]
+          );
+        }
+      }
+
+      this._SKByBranch[BK][depth] = { SK, id };
     }
 
     this._siblingsCount[depth] += 1;
@@ -271,7 +285,7 @@ class Generator {
 
     this._prevPK = PK;
 
-    const branchHasSK = this._SKByBranch[BK].find(({ SK: _ }) => _ === SK);
+    const branchHasSK = this._SKByBranch[BK].find((v) => v && v.SK === SK);
 
     if (!branchHasSK) {
       this._SKByBranch[BK].push({ SK, id });
@@ -436,7 +450,7 @@ class Generator {
       Object.assign(this._siblings, { [SK]: siblings });
     } else if (__DEV__) {
       throw new Error(
-        `updateELmBranch: Branch with key:${SK} is not registered.`
+        `mutateSiblings: Siblings with key:${SK} is not registered.`
       );
     }
   }
@@ -466,32 +480,17 @@ class Generator {
     Object.keys(this._SKByBranch).forEach((BK) => {
       const l = this._SKByBranch[BK].length;
       const lastElm = this._SKByBranch[BK][l - 1];
-      highestSKInAllBranches.add(lastElm);
+
+      if (lastElm) {
+        highestSKInAllBranches.add(lastElm);
+      } else if (__DEV__) {
+        throw new Error(
+          `getHighestSKInAllBranches: last element is empty: ${this._SKByBranch[BK]}`
+        );
+      }
     });
 
     return highestSKInAllBranches;
-  }
-
-  private _cleanupSKFromDepthCollection(SK: string): void {
-    Object.keys(this._SKByDepth).forEach((dp) => {
-      const dpNum = Number(dp);
-
-      this._SKByDepth[dpNum] = this._SKByDepth[dpNum].filter((k) => k !== SK);
-
-      if (this._SKByDepth[dpNum].length === 0) {
-        delete this._SKByDepth[dpNum];
-      }
-    });
-  }
-
-  private _cleanupSKFromBranchCollection(SK: string): void {
-    Object.keys(this._SKByBranch).forEach((BK) => {
-      this._SKByBranch[BK] = this._SKByBranch[BK].filter((k) => k.SK !== SK);
-
-      if (this._SKByBranch[BK].length === 0) {
-        delete this._SKByBranch[BK];
-      }
-    });
   }
 
   private _hasSK(SK: string) {
@@ -504,6 +503,39 @@ class Generator {
     return Array.isArray(this._siblings[SK]);
   }
 
+  removeIDFromBranch(id: string, BK: string): void {
+    if (__DEV__) {
+      if (!Array.isArray(this._SKByBranch[BK])) {
+        throw new Error(
+          `removeIDFromBranch: Branch with SK ${BK} doesn't exist.`
+        );
+      }
+    }
+
+    if (this._SKByBranch[BK].find((e) => e && e.id === id)) {
+      this._SKByBranch[BK] = this._SKByBranch[BK].map((v) =>
+        v ? (v.id !== id ? v : null) : null
+      );
+    }
+  }
+
+  private _removeSKFromBranch(SK: string, BK: string): void {
+    this._SKByBranch[BK] = this._SKByBranch[BK].map((v) =>
+      v ? (v.SK !== SK ? v : null) : null
+    );
+  }
+
+  private _removeSKFromDepth(SK: string, depth: number): void {
+    this._SKByDepth[depth] = this._SKByDepth[depth].filter((v) => v !== SK);
+
+    if (this._SKByDepth[depth].length === 0) {
+      if (__DEV__) {
+        // eslint-disable-next-line no-console
+        console.log(`Deleted depth collection: ${depth}`);
+      }
+    }
+  }
+
   /**
    * Removes entire siblings from root.
    *
@@ -511,7 +543,12 @@ class Generator {
    * @param cb - Callback function.
    * @returns
    */
-  destroySiblings(SK: string, cb?: ((elmID: string) => void) | null): void {
+  destroySiblings(
+    SK: string,
+    BK: string,
+    depth: number,
+    cb?: ((elmID: string) => void) | null
+  ): void {
     if (!this._hasSK(SK)) {
       return;
     }
@@ -524,8 +561,8 @@ class Generator {
 
     delete this._siblings[SK];
 
-    this._cleanupSKFromDepthCollection(SK);
-    this._cleanupSKFromBranchCollection(SK);
+    this._removeSKFromDepth(SK, depth);
+    this._removeSKFromBranch(SK, BK);
 
     if (__DEV__) {
       // eslint-disable-next-line no-console

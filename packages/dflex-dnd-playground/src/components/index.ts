@@ -17,4 +17,4 @@ export {
 
 export { ScrollMultiLists } from "./scroll";
 
-export { StreamInterval, StreamOnDemand } from "./stream";
+export { StreamInterval, StreamNewELm, StreamIncremental } from "./stream";
