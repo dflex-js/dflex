@@ -8,6 +8,7 @@ import {
 } from "@playwright/test";
 import {
   assertChildrenOrderIDs,
+  assertDefaultChildrenIndex,
   DraggedRect,
   getDraggedRect,
   initialize,
@@ -131,7 +132,10 @@ test.describe
       });
 
       test("Siblings have the correct order", async () => {
-        await assertChildrenOrderIDs(parentLocater, FINAL_IDS);
+        await Promise.all([
+          assertChildrenOrderIDs(parentLocater, FINAL_IDS),
+          assertDefaultChildrenIndex(parentLocater),
+        ]);
       });
     });
   });

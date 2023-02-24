@@ -9,6 +9,7 @@ import {
 
 import {
   assertChildrenOrderIDs,
+  assertDefaultChildrenIndex,
   // DraggedRect,
   getDraggedRect,
   initialize,
@@ -108,6 +109,8 @@ test.describe
           "c2-4",
           "c2-5",
         ]),
+        assertDefaultChildrenIndex(elmC1Parent),
+        assertDefaultChildrenIndex(elmC2Parent),
       ]);
     });
   });
@@ -146,6 +149,8 @@ test.describe
           "c2-4",
           "c2-5",
         ]),
+        assertDefaultChildrenIndex(elmC1Parent),
+        assertDefaultChildrenIndex(elmC2Parent),
       ]);
     });
   });
