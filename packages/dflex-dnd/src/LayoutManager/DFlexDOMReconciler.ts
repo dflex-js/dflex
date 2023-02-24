@@ -98,7 +98,7 @@ function commitElm(
 
   if (dflexElm.hasTransformedFromOrigin()) {
     if (
-      dflexElm.needReconciliation() ||
+      dflexElm.needDOMReconciliation() ||
       // Until the element owns its transformation between containers history we
       // can't rely only on the local indicators as it only reflects the
       // elements movement inside the origin container.

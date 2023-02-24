@@ -375,7 +375,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     return this._initialPosition.isNotEqual(this.rect.left, this.rect.top);
   }
 
-  needReconciliation(): boolean {
+  needDOMReconciliation(): boolean {
     return this.VDOMOrder.self !== this.DOMOrder.self;
   }
 
