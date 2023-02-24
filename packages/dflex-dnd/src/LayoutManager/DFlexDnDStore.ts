@@ -141,7 +141,7 @@ class DFlexDnDStore extends DFlexBaseStore {
       this.unifiedContainerDimensions[dflexElm.depth]
     );
 
-    dflexElm.DOMGrid.clone(container.grid);
+    dflexElm.DOMGrid.clone(container.siblingsGrid);
   }
 
   private _resumeAndInitElmGrid(

@@ -166,7 +166,7 @@ export function handleElmMigration(
 
     containerOrigin.registerNewElm(elm.rect);
 
-    elm.DOMGrid.clone(containerOrigin.grid);
+    elm.DOMGrid.clone(containerOrigin.siblingsGrid);
   });
 
   const lastInOrigin = store.registry.get(
@@ -452,7 +452,7 @@ class DFlexPositionUpdater {
       keys: { SK },
     } = element;
 
-    const { grid: siblingsGrid } = store.containers.get(SK)!;
+    const { siblingsGrid } = store.containers.get(SK)!;
 
     const isContainerHasCol =
       this.draggable.gridPlaceholder.x + 1 <= siblingsGrid.x;
