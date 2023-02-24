@@ -389,12 +389,14 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
   private _draggedOutPositionNotifier(): void {
     const {
-      draggedElm: { id },
+      draggedElm: {
+        id,
+        keys: { SK },
+      },
       threshold: { isOut },
       gridPlaceholder,
     } = this.draggable;
 
-    const { SK } = store.registry.get(id)!.keys;
     const { grid: siblingsGrid } = store.containers.get(SK)!;
 
     if (isOut[id].isOneTruthyByAxis("y")) {
