@@ -17,7 +17,7 @@ class DFlexParentContainer {
   private _rect!: BoxRect;
 
   /** Numbers of total columns and rows each container has.  */
-  siblingsGrid: PointNum;
+  grid: PointNum;
 
   /**
    * Origin length for container before being transformed used to prevent
@@ -39,7 +39,7 @@ class DFlexParentContainer {
 
   constructor(DOM: HTMLElement, originLength: number, id: string) {
     this.id = id;
-    this.siblingsGrid = new PointNum(1, 1);
+    this.grid = new PointNum(1, 1);
     this.originLength = originLength;
     this._boundariesByRow = {};
     this._gridSiblingsHasNewRow = false;
@@ -56,8 +56,8 @@ class DFlexParentContainer {
   }
 
   private _addNewElmToGridIndicator(rect: AbstractBox): void {
-    if (!this._boundariesByRow[this.siblingsGrid.x]) {
-      this._boundariesByRow[this.siblingsGrid.x] = Object.seal({
+    if (!this._boundariesByRow[this.grid.x]) {
+      this._boundariesByRow[this.grid.x] = Object.seal({
         bottom: rect.bottom,
         left: rect.left,
         right: rect.right,
@@ -67,11 +67,11 @@ class DFlexParentContainer {
       return;
     }
 
-    const $ = this._boundariesByRow[this.siblingsGrid.x];
+    const $ = this._boundariesByRow[this.grid.x];
 
     // Defining elements in different row.
     if (rect.bottom > $.bottom || rect.top < $.top) {
-      this.siblingsGrid.y += 1;
+      this.grid.y += 1;
 
       this._gridSiblingsHasNewRow = true;
 
@@ -82,11 +82,11 @@ class DFlexParentContainer {
     // Defining elements in different column.
     if (rect.left > $.right || rect.right < $.left) {
       if (this._gridSiblingsHasNewRow) {
-        this.siblingsGrid.x = 1;
+        this.grid.x = 1;
 
         this._gridSiblingsHasNewRow = false;
       } else {
-        this.siblingsGrid.x += 1;
+        this.grid.x += 1;
       }
     }
 
@@ -147,7 +147,7 @@ class DFlexParentContainer {
    * @param originLength
    */
   resetIndicators(originLength: number): void {
-    this.siblingsGrid.setAxes(1, 1);
+    this.grid.setAxes(1, 1);
     this.originLength = originLength;
     this._boundariesByRow = {};
     this._gridSiblingsHasNewRow = false;

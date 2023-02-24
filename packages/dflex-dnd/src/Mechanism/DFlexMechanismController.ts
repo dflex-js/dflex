@@ -405,7 +405,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       gridPlaceholder,
     } = this.draggable;
 
-    const { siblingsGrid } = store.containers.get(SK)!;
+    const { grid: siblingsGrid } = store.containers.get(SK)!;
 
     // Check if top or bottom.
     if (isOut[id].isOneTruthyByAxis("y")) {
