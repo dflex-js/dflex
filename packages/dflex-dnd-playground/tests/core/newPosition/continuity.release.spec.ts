@@ -8,6 +8,7 @@ import {
 } from "@playwright/test";
 import {
   assertChildrenOrderIDs,
+  assertDefaultChildrenIndex,
   getDraggedRect,
   initialize,
   invokeKeyboardAndAssertEmittedMsg,
@@ -152,6 +153,9 @@ test.describe.serial("Moving out then insert - Up/Down - Release", async () => {
   });
 
   test("Siblings have the correct order", async () => {
-    await assertChildrenOrderIDs(parentLocater, FINAL_IDS);
+    await Promise.all([
+      assertChildrenOrderIDs(parentLocater, FINAL_IDS),
+      assertDefaultChildrenIndex(parentLocater),
+    ]);
   });
 });

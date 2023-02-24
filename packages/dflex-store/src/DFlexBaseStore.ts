@@ -581,20 +581,10 @@ class DFlexBaseStore {
    */
   destroy(): void {
     this.DOMGen.clear();
-
     this.interactiveDOM.clear();
     this.registry.clear();
-
-    this._lastDOMParent = null;
-
     this._taskQ.clear();
-
-    // @ts-expect-error - Cleaning up.
-    this._taskQ = undefined;
-    // @ts-expect-error - Cleaning up.
-    this.tracker = undefined;
-    // @ts-expect-error - Cleaning up.
-    this.DOMGen = undefined;
+    this._lastDOMParent = null;
 
     if (__DEV__) {
       // eslint-disable-next-line no-console

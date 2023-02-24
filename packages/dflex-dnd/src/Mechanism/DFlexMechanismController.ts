@@ -1,4 +1,4 @@
-import { AxesPoint, PointNum, Tracker } from "@dflex/utils";
+import { AxesPoint, featureFlags, PointNum, Tracker } from "@dflex/utils";
 
 import { DFLEX_EVENTS, scheduler, store } from "../LayoutManager";
 import type DraggableInteractive from "../Draggable";
@@ -11,12 +11,13 @@ import {
 import DFlexScrollableElement from "./DFlexScrollableElement";
 
 export function isIDEligible(elmID: string, draggedID: string): boolean {
+  const { registry } = store;
+
   return (
-    !!elmID &&
     elmID.length > 0 &&
     elmID !== draggedID &&
-    store.has(elmID) &&
-    !store.registry.get(elmID)!.readonly
+    registry.has(elmID) &&
+    !registry.get(elmID)!.readonly
   );
 }
 
@@ -281,7 +282,14 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     const elmIndex = index + -1 * (isIncrease ? -1 : 1);
 
-    const id = siblings![elmIndex];
+    const id = siblings[elmIndex];
+
+    if (__DEV__) {
+      if (featureFlags.enableMechanismDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(`Switching element position to occupy: ${id}`);
+      }
+    }
 
     if (isIDEligible(id, draggedElm.id)) {
       this.draggable.setDraggedTempIndex(elmIndex);
@@ -389,18 +397,30 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
   private _draggedOutPositionNotifier(): void {
     const {
-      draggedElm: { id },
+      draggedElm: {
+        id,
+        keys: { SK },
+      },
       threshold: { isOut },
       gridPlaceholder,
     } = this.draggable;
 
-    const { SK } = store.registry.get(id)!.keys;
     const { grid: siblingsGrid } = store.containers.get(SK)!;
 
+    // Check if top or bottom.
     if (isOut[id].isOneTruthyByAxis("y")) {
       const newRow = isOut[id].bottom
         ? gridPlaceholder.y + 1
         : gridPlaceholder.y - 1;
+
+      if (__DEV__) {
+        if (featureFlags.enableMechanismDebugger) {
+          // eslint-disable-next-line no-console
+          console.log(
+            `Detecting dragged new row: ${newRow}. siblingsGrid-y is ${siblingsGrid.y}`
+          );
+        }
+      }
 
       // Leaving from top.
       if (newRow === 0) {
@@ -428,6 +448,15 @@ class DFlexMechanismController extends DFlexScrollableElement {
     const newCol = isOut[id].right
       ? gridPlaceholder.x + 1
       : gridPlaceholder.x - 1;
+
+    if (__DEV__) {
+      if (featureFlags.enableMechanismDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(
+          `Detecting dragged new col: ${newCol}. siblingsGrid-x is ${siblingsGrid.x}`
+        );
+      }
+    }
 
     if (newCol <= 0 || newCol > siblingsGrid.x) {
       // lock the parent
