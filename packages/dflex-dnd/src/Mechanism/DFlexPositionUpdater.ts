@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { DFlexElement } from "@dflex/core-instance";
 
-import { PointNum } from "@dflex/utils";
+import { featureFlags, PointNum } from "@dflex/utils";
 import type { AxesPoint, Direction, Axis, AbstractBox } from "@dflex/utils";
 
 import type { Siblings } from "@dflex/dom-gen";
@@ -471,6 +471,13 @@ class DFlexPositionUpdater {
       //   // Bi-directional
       //   axis = "z";
       // }
+    }
+
+    if (__DEV__) {
+      if (featureFlags.enableMechanismDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(`Switching element on axis: ${axis}`);
+      }
     }
 
     const elmDirection: Direction = isIncrease ? -1 : 1;
