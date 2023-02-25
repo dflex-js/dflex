@@ -183,10 +183,29 @@ class DFlexCoreElement extends DFlexBaseElement {
     }
 
     this.isVisible = isVisible;
-    this.transform(DOM, false);
+    this._transformIfVisible(DOM, false);
   }
 
-  transform(DOM: HTMLElement, isUndoTransformation: boolean): void {
+  transform(DOM: HTMLElement): void {
+    if (this.animatedFrame !== null) {
+      cancelAnimationFrame(this.animatedFrame);
+    }
+
+    this.animatedFrame = requestAnimationFrame(() => {
+      DFlexCoreElement.transform(DOM, this.translate!.x, this.translate!.y);
+
+      if (this.hasPendingTransform) {
+        this.hasPendingTransform = false;
+      }
+
+      this.animatedFrame = null;
+    });
+  }
+
+  private _transformIfVisible(
+    DOM: HTMLElement,
+    isUndoTransformation: boolean
+  ): void {
     if (this.isVisible) {
       if (this.hasPendingTransform) {
         this.hasPendingTransform = false;
@@ -203,34 +222,12 @@ class DFlexCoreElement extends DFlexBaseElement {
       return;
     }
 
-    if (this.animatedFrame !== null) {
-      cancelAnimationFrame(this.animatedFrame);
-    }
-
-    this.animatedFrame = requestAnimationFrame(() => {
-      DFlexCoreElement.transform(DOM, this.translate!.x, this.translate!.y);
-
-      if (this.hasPendingTransform) {
-        this.hasPendingTransform = false;
-      }
-
-      this.animatedFrame = null;
-    });
+    this.transform(DOM);
   }
 
   updateIndex(DOM: HTMLElement, i: number) {
     this.setAttribute(DOM, "INDEX", i);
     this.VDOMOrder.self = i;
-  }
-
-  private _updateOrderIndexing(DOM: HTMLElement, i: number) {
-    const { self: oldIndex } = this.VDOMOrder;
-
-    const newIndex = oldIndex + i;
-
-    this.updateIndex(DOM, newIndex);
-
-    return { oldIndex, newIndex };
   }
 
   assignNewPosition(branchIDsOrder: string[], newIndex: number): void {
@@ -293,10 +290,22 @@ class DFlexCoreElement extends DFlexBaseElement {
   /**
    *  Set a new translate position and store the old one.
    */
-  private _seTranslate(DOM: HTMLElement, elmPos: AxesPoint): void {
+  private _triggerTranslateProcess(
+    DOM: HTMLElement,
+    elmPos: AxesPoint,
+    incremental: number
+  ): [number, number] {
     this._updateCurrentIndicators(elmPos);
 
-    this.transform(DOM, false);
+    this._transformIfVisible(DOM, false);
+
+    const { self: oldIndex } = this.VDOMOrder;
+
+    const newIndex = oldIndex + incremental;
+
+    this.updateIndex(DOM, newIndex);
+
+    return [oldIndex, newIndex];
   }
 
   /**
@@ -329,10 +338,10 @@ class DFlexCoreElement extends DFlexBaseElement {
     }
 
     this._pushToTranslateHistory(axis, operationID);
-    this._seTranslate(DOM, elmPos);
 
-    const { oldIndex, newIndex } = this._updateOrderIndexing(
+    const [oldIndex, newIndex] = this._triggerTranslateProcess(
       DOM,
+      elmPos,
       direction * numberOfPassedElm
     );
 
@@ -405,10 +414,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     }
 
     // Don't update UI if it's zero and wasn't transformed.
-    this._seTranslate(DOM, elmPos);
-    this.transform(DOM, true);
-
-    this._updateOrderIndexing(DOM, increment);
+    this._triggerTranslateProcess(DOM, elmPos, increment);
 
     this.rollBack(DOM, cycleID);
   }
