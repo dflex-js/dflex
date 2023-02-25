@@ -385,16 +385,24 @@ class DFlexCoreElement extends DFlexBaseElement {
    * @param cycleID
    */
   rollBack(DOM: HTMLElement, cycleID: string): void {
-    if (
-      !this.hasTransformed() ||
-      this._translateHistory![this._translateHistory!.length - 1].ID !== cycleID
-    ) {
+    if (!Array.isArray(this._translateHistory)) {
       return;
     }
 
-    const lastMovement = this._translateHistory!.pop()!;
+    const { length } = this._translateHistory;
 
-    const { translate: preTranslate, axis } = lastMovement;
+    if (length === 0) {
+      this._translateHistory = undefined;
+      return;
+    }
+
+    const stillInSameCycle = this._translateHistory[length - 1].ID === cycleID;
+
+    if (!stillInSameCycle) {
+      return;
+    }
+
+    const { translate: preTranslate, axis } = this._translateHistory.pop()!;
 
     const elmPos = {
       x: preTranslate.x - this.translate!.x,
