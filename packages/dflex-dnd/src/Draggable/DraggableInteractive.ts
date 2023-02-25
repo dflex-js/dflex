@@ -144,7 +144,7 @@ class DraggableInteractive extends DraggableAxes {
         return;
       }
 
-      this.draggedElm.transform(draggedDOM);
+      this.draggedElm.transform(draggedDOM, false);
       this.draggedElm.setAttribute(draggedDOM, "INDEX", VDOMOrder.self);
 
       return;
@@ -173,7 +173,7 @@ class DraggableInteractive extends DraggableAxes {
     // transformation here.
     if (!willReconcile) {
       translate.clone(this.occupiedTranslate);
-      this.draggedElm.transform(draggedDOM);
+      this.draggedElm.transform(draggedDOM, false);
     }
   }
 
