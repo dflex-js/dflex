@@ -278,16 +278,10 @@ class DFlexCoreElement extends DFlexBaseElement {
     this._translateHistory.push(elmAxesHistory);
   }
 
-  /**
-   *  Set a new translate position and store the old one.
-   */
-  private _seTranslate(
+  private _transformOrPend(
     DOM: HTMLElement,
-    elmPos: AxesPoint,
-    hasToFlushTransform = false
+    hasToFlushTransform: boolean
   ): void {
-    this._updateCurrentIndicators(elmPos);
-
     if (hasToFlushTransform) {
       if (!this.isVisible && this.hasPendingTransform) {
         this.hasPendingTransform = false;
@@ -339,7 +333,8 @@ class DFlexCoreElement extends DFlexBaseElement {
     }
 
     this._pushToTranslateHistory(axis, operationID);
-    this._seTranslate(DOM, elmPos, false);
+    this._updateCurrentIndicators(elmPos);
+    this._transformOrPend(DOM, false);
 
     const { oldIndex, newIndex } = this._updateOrderIndexing(
       DOM,
@@ -422,8 +417,9 @@ class DFlexCoreElement extends DFlexBaseElement {
       this.DOMGrid[axis] += increment;
     }
 
+    this._updateCurrentIndicators(elmPos);
     // Don't update UI if it's zero and wasn't transformed.
-    this._seTranslate(DOM, elmPos, true);
+    this._transformOrPend(DOM, true);
 
     this._updateOrderIndexing(DOM, increment);
 
