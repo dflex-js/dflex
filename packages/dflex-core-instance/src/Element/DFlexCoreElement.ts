@@ -262,30 +262,30 @@ class DFlexCoreElement extends DFlexBaseElement {
     branchIDsOrder[newIndex] = this.id;
   }
 
+  private _pushToTranslateHistory(axis: Axes, operationID: string) {
+    const translate = this.translate.getInstance();
+
+    const elmAxesHistory: TransitionHistory = {
+      ID: operationID,
+      axis,
+      translate,
+    };
+
+    if (!Array.isArray(this._translateHistory)) {
+      this._translateHistory = [];
+    }
+
+    this._translateHistory.push(elmAxesHistory);
+  }
+
   /**
    *  Set a new translate position and store the old one.
    */
   private _seTranslate(
-    axis: Axes,
     DOM: HTMLElement,
     elmPos: AxesPoint,
-    operationID?: string,
     hasToFlushTransform = false
   ): void {
-    if (operationID) {
-      const elmAxesHistory: TransitionHistory = {
-        ID: operationID,
-        axis,
-        translate: { x: this.translate!.x, y: this.translate!.y },
-      };
-
-      if (Array.isArray(this._translateHistory)) {
-        this._translateHistory.push(elmAxesHistory);
-      } else {
-        this._translateHistory = [elmAxesHistory];
-      }
-    }
-
     this._updateCurrentIndicators(elmPos);
 
     if (hasToFlushTransform) {
@@ -338,7 +338,8 @@ class DFlexCoreElement extends DFlexBaseElement {
       elmPos[axis] *= direction;
     }
 
-    this._seTranslate(axis, DOM, elmPos, operationID);
+    this._pushToTranslateHistory(axis, operationID);
+    this._seTranslate(DOM, elmPos, false);
 
     const { oldIndex, newIndex } = this._updateOrderIndexing(
       DOM,
@@ -422,7 +423,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     }
 
     // Don't update UI if it's zero and wasn't transformed.
-    this._seTranslate(axis, DOM, elmPos, undefined, true);
+    this._seTranslate(DOM, elmPos, true);
 
     this._updateOrderIndexing(DOM, increment);
 
