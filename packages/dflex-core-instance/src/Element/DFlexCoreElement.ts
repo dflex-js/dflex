@@ -183,14 +183,26 @@ class DFlexCoreElement extends DFlexBaseElement {
     }
 
     this.isVisible = isVisible;
-
-    if (this.hasPendingTransform && this.isVisible) {
-      this.transform(DOM);
-      this.hasPendingTransform = false;
-    }
+    this.transform(DOM, false);
   }
 
-  transform(DOM: HTMLElement): void {
+  transform(DOM: HTMLElement, isUndoTransformation: boolean): void {
+    if (this.isVisible) {
+      if (this.hasPendingTransform) {
+        this.hasPendingTransform = false;
+      }
+    } else if (isUndoTransformation) {
+      if (this.hasPendingTransform) {
+        this.hasPendingTransform = false;
+
+        return;
+      }
+    } else {
+      this.hasPendingTransform = true;
+
+      return;
+    }
+
     if (this.animatedFrame !== null) {
       cancelAnimationFrame(this.animatedFrame);
     }
@@ -262,51 +274,29 @@ class DFlexCoreElement extends DFlexBaseElement {
     branchIDsOrder[newIndex] = this.id;
   }
 
+  private _pushToTranslateHistory(axis: Axes, operationID: string) {
+    const translate = this.translate.getClone();
+
+    const elmAxesHistory: TransitionHistory = {
+      ID: operationID,
+      axis,
+      translate,
+    };
+
+    if (!Array.isArray(this._translateHistory)) {
+      this._translateHistory = [];
+    }
+
+    this._translateHistory.push(elmAxesHistory);
+  }
+
   /**
    *  Set a new translate position and store the old one.
    */
-  private _seTranslate(
-    axis: Axes,
-    DOM: HTMLElement,
-    elmPos: AxesPoint,
-    operationID?: string,
-    hasToFlushTransform = false
-  ): void {
-    if (operationID) {
-      const elmAxesHistory: TransitionHistory = {
-        ID: operationID,
-        axis,
-        translate: { x: this.translate!.x, y: this.translate!.y },
-      };
-
-      if (Array.isArray(this._translateHistory)) {
-        this._translateHistory.push(elmAxesHistory);
-      } else {
-        this._translateHistory = [elmAxesHistory];
-      }
-    }
-
+  private _seTranslate(DOM: HTMLElement, elmPos: AxesPoint): void {
     this._updateCurrentIndicators(elmPos);
 
-    if (hasToFlushTransform) {
-      if (!this.isVisible && this.hasPendingTransform) {
-        this.hasPendingTransform = false;
-
-        return;
-      }
-
-      this.transform(DOM);
-
-      return;
-    }
-
-    if (!this.isVisible) {
-      this.hasPendingTransform = true;
-
-      return;
-    }
-
-    this.transform(DOM);
+    this.transform(DOM, false);
   }
 
   /**
@@ -338,7 +328,8 @@ class DFlexCoreElement extends DFlexBaseElement {
       elmPos[axis] *= direction;
     }
 
-    this._seTranslate(axis, DOM, elmPos, operationID);
+    this._pushToTranslateHistory(axis, operationID);
+    this._seTranslate(DOM, elmPos);
 
     const { oldIndex, newIndex } = this._updateOrderIndexing(
       DOM,
@@ -414,7 +405,8 @@ class DFlexCoreElement extends DFlexBaseElement {
     }
 
     // Don't update UI if it's zero and wasn't transformed.
-    this._seTranslate(axis, DOM, elmPos, undefined, true);
+    this._seTranslate(DOM, elmPos);
+    this.transform(DOM, true);
 
     this._updateOrderIndexing(DOM, increment);
 

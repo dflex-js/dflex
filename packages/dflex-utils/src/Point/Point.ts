@@ -22,6 +22,17 @@ class Point<T> extends AxesPoint<T> {
   }
 
   /**
+   * Get clone of local instance.
+   *
+   */
+  getClone(): AxesPoint<T> {
+    return {
+      x: this.x,
+      y: this.y,
+    };
+  }
+
+  /**
    * Get local instance of point.
    *
    * @returns
