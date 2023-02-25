@@ -127,22 +127,18 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.rect.setByPointAndDimensions(top, left, height, width);
   }
 
-  private _updateCurrentIndicators(newPos: AxesPoint): void {
-    this.translate!.increase(newPos);
+  // private _updateCurrentIndicators(newPos: AxesPoint): void {
+  //   this.translate.increase(newPos);
 
-    /**
-     * This offset related directly to translate Y and Y. It's isolated from
-     * element current offset and effects only top and left.
-     */
-    this.rect.setAxes(
-      this._initialPosition.x + this.translate!.x,
-      this._initialPosition.y + this.translate!.y
-    );
-
-    if (!this.isVisible) {
-      this.hasPendingTransform = true;
-    }
-  }
+  //   /**
+  //    * This offset related directly to translate Y and Y. It's isolated from
+  //    * element current offset and effects only top and left.
+  //    */
+  //   this.rect.setAxes(
+  //     this._initialPosition.x + this.translate.x,
+  //     this._initialPosition.y + this.translate.y
+  //   );
+  // }
 
   getDimensions(DOM: HTMLElement): PointNum {
     if (this._computedDimensions) {
@@ -196,7 +192,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     }
 
     this.animatedFrame = requestAnimationFrame(() => {
-      DFlexCoreElement.transform(DOM, this.translate!.x, this.translate!.y);
+      DFlexCoreElement.transform(DOM, this.translate.x, this.translate.y);
 
       if (this.hasPendingTransform) {
         this.hasPendingTransform = false;
@@ -211,15 +207,15 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.VDOMOrder.self = i;
   }
 
-  private _updateOrderIndexing(DOM: HTMLElement, i: number) {
-    const { self: oldIndex } = this.VDOMOrder;
+  // private _updateOrderIndexing(DOM: HTMLElement, i: number) {
+  //   const { self: oldIndex } = this.VDOMOrder;
 
-    const newIndex = oldIndex + i;
+  //   const newIndex = oldIndex + i;
 
-    this.updateIndex(DOM, newIndex);
+  //   this.updateIndex(DOM, newIndex);
 
-    return { oldIndex, newIndex };
-  }
+  //   return { oldIndex, newIndex };
+  // }
 
   assignNewPosition(branchIDsOrder: string[], newIndex: number): void {
     if (newIndex < 0 || newIndex > branchIDsOrder.length - 1) {
@@ -303,6 +299,34 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.transform(DOM);
   }
 
+  x(
+    DOM: HTMLElement,
+    newPos: AxesPoint,
+    hasToFlushTransform: boolean,
+    increment: number
+  ) {
+    this.translate.increase(newPos);
+
+    /**
+     * This offset related directly to translate Y and Y. It's isolated from
+     * element current offset and effects only top and left.
+     */
+    this.rect.setAxes(
+      this._initialPosition.x + this.translate.x,
+      this._initialPosition.y + this.translate.y
+    );
+
+    this._transformOrPend(DOM, hasToFlushTransform);
+
+    const { self: oldIndex } = this.VDOMOrder;
+
+    const newIndex = oldIndex + increment;
+
+    this.updateIndex(DOM, newIndex);
+
+    return { oldIndex, newIndex };
+  }
+
   /**
    *
    * @param DOM
@@ -333,11 +357,14 @@ class DFlexCoreElement extends DFlexBaseElement {
     }
 
     this._pushToTranslateHistory(axis, operationID);
-    this._updateCurrentIndicators(elmPos);
-    this._transformOrPend(DOM, false);
+    // this.x(DOM, elmPos, false, direction * numberOfPassedElm);
+    // this._updateCurrentIndicators(elmPos);
+    // this._transformOrPend(DOM, false);
 
-    const { oldIndex, newIndex } = this._updateOrderIndexing(
+    const { oldIndex, newIndex } = this.x(
       DOM,
+      elmPos,
+      false,
       direction * numberOfPassedElm
     );
 
@@ -401,8 +428,8 @@ class DFlexCoreElement extends DFlexBaseElement {
     const { translate: preTranslate, axis } = this._translateHistory.pop()!;
 
     const elmPos = {
-      x: preTranslate.x - this.translate!.x,
-      y: preTranslate.y - this.translate!.y,
+      x: preTranslate.x - this.translate.x,
+      y: preTranslate.y - this.translate.y,
     };
 
     let increment = 0;
@@ -417,11 +444,13 @@ class DFlexCoreElement extends DFlexBaseElement {
       this.DOMGrid[axis] += increment;
     }
 
-    this._updateCurrentIndicators(elmPos);
-    // Don't update UI if it's zero and wasn't transformed.
-    this._transformOrPend(DOM, true);
+    this.x(DOM, elmPos, true, increment);
 
-    this._updateOrderIndexing(DOM, increment);
+    // this._updateCurrentIndicators(elmPos);
+    // Don't update UI if it's zero and wasn't transformed.
+    // this._transformOrPend(DOM, true);
+
+    // this._updateOrderIndexing(DOM, increment);
 
     this.rollBack(DOM, cycleID);
   }
