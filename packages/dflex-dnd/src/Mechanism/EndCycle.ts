@@ -42,7 +42,7 @@ class EndCycle extends DFlexMechanismController {
          * Note: rolling back won't affect order array. It only deals with element
          * itself and totally ignore any instance related to store.
          */
-        dflexElm.rollBack(DOM, cycleID);
+        dflexElm.rollBackPosition(DOM, cycleID);
       }
     }
 

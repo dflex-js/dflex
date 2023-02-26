@@ -56,6 +56,14 @@ export interface DFlexElementInput {
   readonly: boolean;
 }
 
+function resetDOMStyle(DOM: HTMLElement): void {
+  DOM.style.removeProperty("transform");
+
+  if (!DOM.getAttribute("style")) {
+    DOM.removeAttribute("style");
+  }
+}
+
 class DFlexCoreElement extends DFlexBaseElement {
   private _initialPosition: PointNum;
 
@@ -168,12 +176,12 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.isVisible = isVisible;
 
     if (this.hasPendingTransform && this.isVisible) {
-      this.transform(DOM);
+      this._transform(DOM);
       this.hasPendingTransform = false;
     }
   }
 
-  transform(DOM: HTMLElement): void {
+  private _transform(DOM: HTMLElement, cb?: () => void): void {
     if (this.animatedFrame !== null) {
       cancelAnimationFrame(this.animatedFrame);
     }
@@ -185,6 +193,10 @@ class DFlexCoreElement extends DFlexBaseElement {
         this.hasPendingTransform = false;
       }
 
+      if (cb) {
+        cb();
+      }
+
       this.animatedFrame = null;
     });
   }
@@ -194,7 +206,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.VDOMOrder.self = i;
   }
 
-  assignNewPosition(branchIDsOrder: string[], newIndex: number): void {
+  assignNewIndex(branchIDsOrder: string[], newIndex: number): void {
     if (newIndex < 0 || newIndex > branchIDsOrder.length - 1) {
       if (__DEV__) {
         // eslint-disable-next-line no-console
@@ -225,7 +237,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     branchIDsOrder[newIndex] = this.id;
   }
 
-  private _leaveToNewPosition(
+  private _leaveToNewIndex(
     branchIDsOrder: string[],
     newIndex: number,
     oldIndex: number
@@ -262,7 +274,7 @@ class DFlexCoreElement extends DFlexBaseElement {
         return;
       }
 
-      this.transform(DOM);
+      this._transform(DOM);
 
       return;
     }
@@ -273,7 +285,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       return;
     }
 
-    this.transform(DOM);
+    this._transform(DOM);
   }
 
   private _transformationProcess(
@@ -349,7 +361,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       this.DOMGrid[axis] += direction * numberOfPassedElm;
     }
 
-    this._leaveToNewPosition(siblings, newIndex, oldIndex);
+    this._leaveToNewIndex(siblings, newIndex, oldIndex);
 
     if (__DEV__) {
       if (featureFlags.enablePositionAssertion) {
@@ -362,12 +374,15 @@ class DFlexCoreElement extends DFlexBaseElement {
     }
   }
 
-  hasTransformedFromOrigin(): boolean {
-    return this._initialPosition.isNotEqual(this.rect.left, this.rect.top);
+  restorePosition(DOM: HTMLElement): void {
+    this._transform(DOM);
+
+    this.setAttribute(DOM, "INDEX", this.VDOMOrder.self);
   }
 
-  needDOMReconciliation(): boolean {
-    return this.VDOMOrder.self !== this.DOMOrder.self;
+  assignNewPosition(DOM: HTMLElement, t: PointNum): void {
+    this.translate.clone(t);
+    this._transform(DOM);
   }
 
   /**
@@ -375,17 +390,12 @@ class DFlexCoreElement extends DFlexBaseElement {
    *
    * @param cycleID
    */
-  rollBack(DOM: HTMLElement, cycleID: string): void {
+  rollBackPosition(DOM: HTMLElement, cycleID: string): void {
     if (!Array.isArray(this._translateHistory)) {
       return;
     }
 
     const { length } = this._translateHistory;
-
-    if (length === 0) {
-      this._translateHistory = undefined;
-      return;
-    }
 
     const stillInSameCycle = this._translateHistory[length - 1].ID === cycleID;
 
@@ -414,7 +424,20 @@ class DFlexCoreElement extends DFlexBaseElement {
 
     this._transformationProcess(DOM, elmPos, true, increment);
 
-    this.rollBack(DOM, cycleID);
+    if (this._translateHistory.length === 0) {
+      this._translateHistory = undefined;
+      return;
+    }
+
+    this.rollBackPosition(DOM, cycleID);
+  }
+
+  hasTransformedFromOrigin(): boolean {
+    return this._initialPosition.isNotEqual(this.rect.left, this.rect.top);
+  }
+
+  needDOMReconciliation(): boolean {
+    return this.VDOMOrder.self !== this.DOMOrder.self;
   }
 
   refreshIndicators(DOM: HTMLElement): void {
@@ -426,11 +449,7 @@ class DFlexCoreElement extends DFlexBaseElement {
 
     this.DOMOrder.self = this.VDOMOrder.self;
 
-    DOM.style.removeProperty("transform");
-
-    if (!DOM.getAttribute("style")) {
-      DOM.removeAttribute("style");
-    }
+    resetDOMStyle(DOM);
 
     this.initElmRect(DOM);
 
