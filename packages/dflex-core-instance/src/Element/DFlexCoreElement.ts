@@ -127,19 +127,6 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.rect.setByPointAndDimensions(top, left, height, width);
   }
 
-  // private _updateCurrentIndicators(newPos: AxesPoint): void {
-  //   this.translate.increase(newPos);
-
-  //   /**
-  //    * This offset related directly to translate Y and Y. It's isolated from
-  //    * element current offset and effects only top and left.
-  //    */
-  //   this.rect.setAxes(
-  //     this._initialPosition.x + this.translate.x,
-  //     this._initialPosition.y + this.translate.y
-  //   );
-  // }
-
   getDimensions(DOM: HTMLElement): PointNum {
     if (this._computedDimensions) {
       return this._computedDimensions;
@@ -206,16 +193,6 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.setAttribute(DOM, "INDEX", i);
     this.VDOMOrder.self = i;
   }
-
-  // private _updateOrderIndexing(DOM: HTMLElement, i: number) {
-  //   const { self: oldIndex } = this.VDOMOrder;
-
-  //   const newIndex = oldIndex + i;
-
-  //   this.updateIndex(DOM, newIndex);
-
-  //   return { oldIndex, newIndex };
-  // }
 
   assignNewPosition(branchIDsOrder: string[], newIndex: number): void {
     if (newIndex < 0 || newIndex > branchIDsOrder.length - 1) {
@@ -299,7 +276,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.transform(DOM);
   }
 
-  x(
+  private _transformationProcess(
     DOM: HTMLElement,
     newPos: AxesPoint,
     hasToFlushTransform: boolean,
@@ -357,11 +334,8 @@ class DFlexCoreElement extends DFlexBaseElement {
     }
 
     this._pushToTranslateHistory(axis, operationID);
-    // this.x(DOM, elmPos, false, direction * numberOfPassedElm);
-    // this._updateCurrentIndicators(elmPos);
-    // this._transformOrPend(DOM, false);
 
-    const { oldIndex, newIndex } = this.x(
+    const { oldIndex, newIndex } = this._transformationProcess(
       DOM,
       elmPos,
       false,
@@ -386,12 +360,6 @@ class DFlexCoreElement extends DFlexBaseElement {
         }
       }
     }
-  }
-
-  hasTransformed(): boolean {
-    return (
-      Array.isArray(this._translateHistory) && this._translateHistory.length > 0
-    );
   }
 
   hasTransformedFromOrigin(): boolean {
@@ -444,13 +412,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       this.DOMGrid[axis] += increment;
     }
 
-    this.x(DOM, elmPos, true, increment);
-
-    // this._updateCurrentIndicators(elmPos);
-    // Don't update UI if it's zero and wasn't transformed.
-    // this._transformOrPend(DOM, true);
-
-    // this._updateOrderIndexing(DOM, increment);
+    this._transformationProcess(DOM, elmPos, true, increment);
 
     this.rollBack(DOM, cycleID);
   }
