@@ -1,4 +1,4 @@
-import type { Axis } from "../types";
+import { AXIS, Axis } from "../constants";
 import BoxNum from "./BoxNum";
 
 export type BoxRectAbstract = {
@@ -63,7 +63,7 @@ class BoxRect extends BoxNum {
    */
   setAxis(axis: Axis, value: number): this {
     switch (axis) {
-      case "x": {
+      case AXIS.X: {
         this.left = value;
         this.right = this.width + value;
         break;
