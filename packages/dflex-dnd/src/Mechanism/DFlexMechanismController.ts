@@ -21,6 +21,86 @@ export function isIDEligible(elmID: string, draggedID: string): boolean {
   );
 }
 
+// eslint-disable-next-line no-unused-vars
+type ForEachCB = (id: string, index: number) => boolean | void;
+
+export function forEachSiblings(
+  at: number,
+  incremental: boolean,
+  siblings: string[],
+  draggedID: string,
+  cb: ForEachCB
+) {
+  const filter = (id: string, i: number) => {
+    if (isIDEligible(id, draggedID)) {
+      return cb(id, i);
+    }
+
+    return false;
+  };
+
+  if (incremental) {
+    for (let i = at; i < siblings.length; i += 1) {
+      if (filter(siblings[i], i)) {
+        break;
+      }
+    }
+
+    return;
+  }
+
+  for (let i = siblings.length - 1; i >= at; i -= 1) {
+    if (filter(siblings[i], i)) {
+      break;
+    }
+  }
+}
+
+function forEachDraggedSiblings(
+  at: number,
+  incremental: boolean,
+  dispatch: boolean,
+  draggable: DraggableInteractive,
+  cb: ForEachCB
+) {
+  const {
+    events,
+    draggedElm: { id },
+  } = draggable;
+
+  const { migration } = store;
+
+  const { SK } = migration.latest();
+
+  const siblings = store.getElmSiblingsByKey(SK);
+
+  const { length } = siblings;
+
+  if (incremental) {
+    forEachSiblings(at, incremental, siblings, id, cb);
+
+    if (dispatch) {
+      events.dispatch(DFLEX_EVENTS.ON_LIFT_UP, {
+        siblings,
+        from: at,
+        to: length,
+      });
+    }
+
+    return;
+  }
+
+  forEachSiblings(at, incremental, siblings, id, cb);
+
+  if (dispatch) {
+    events.dispatch(DFLEX_EVENTS.ON_MOVE_DOWN, {
+      siblings,
+      from: length - 1,
+      to: at,
+    });
+  }
+}
+
 class DFlexMechanismController extends DFlexScrollableElement {
   private isOnDragOutThresholdEvtEmitted: boolean;
 
@@ -69,29 +149,23 @@ class DFlexMechanismController extends DFlexScrollableElement {
   private _detectDroppableIndex(): number | null {
     let droppableIndex = null;
 
-    const { draggedElm } = this.draggable;
+    const cb = (id: string, i: number) => {
+      const element = store.registry.get(id)!;
 
-    const { SK } = store.migration.latest();
+      const isQualified = element.rect.isIntersect(
+        this.draggable.getAbsoluteCurrentPosition()
+      );
 
-    const siblings = store.getElmSiblingsByKey(SK);
+      if (isQualified) {
+        droppableIndex = i;
 
-    for (let i = 0; i < siblings.length; i += 1) {
-      const id = siblings[i];
-
-      if (isIDEligible(id, draggedElm.id)) {
-        const element = store.registry.get(id)!;
-
-        const isQualified = element.rect.isIntersect(
-          this.draggable.getAbsoluteCurrentPosition()
-        );
-
-        if (isQualified) {
-          droppableIndex = i;
-
-          break;
-        }
+        return true;
       }
-    }
+
+      return false;
+    };
+
+    forEachDraggedSiblings(0, true, false, this.draggable, cb);
 
     return droppableIndex;
   }
@@ -302,7 +376,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
    * Filling the space when the head of the list is leaving the list.
    */
   private _fillHeadUp(): void {
-    const { occupiedPosition, draggedElm, events } = this.draggable;
+    const { occupiedPosition, draggedElm } = this.draggable;
     const { migration } = store;
 
     const { SK, index, cycleID } = migration.latest();
@@ -345,27 +419,13 @@ class DFlexMechanismController extends DFlexScrollableElement {
       nextElm.rect.top - (occupiedPosition.y + draggedElm.rect.height)
     );
 
-    events.dispatch(DFLEX_EVENTS.ON_LIFT_UP, {
-      siblings,
-      from,
-      to: siblings.length,
-    });
-
     this.draggable.setDraggedTempIndex(
       DFlexMechanismController.INDEX_OUT_CONTAINER
     );
 
-    for (let i = from; i < siblings.length; i += 1) {
-      /**
-       * Don't update translate because it's not permanent. Releasing dragged
-       * means undoing last position.
-       */
-      const id = siblings[i];
+    const cb = (id: string) => this.updateElement(id, siblings, cycleID, true);
 
-      if (isIDEligible(id, draggedElm.id)) {
-        this.updateElement(id, siblings, cycleID, true);
-      }
-    }
+    forEachDraggedSiblings(from, true, true, this.draggable, cb);
   }
 
   /**
@@ -373,26 +433,15 @@ class DFlexMechanismController extends DFlexScrollableElement {
    * @param to - index
    */
   private _moveDown(to: number): void {
-    const { events, draggedElm } = this.draggable;
     const { migration } = store;
 
     const { SK, cycleID } = migration.latest();
 
     const siblings = store.getElmSiblingsByKey(SK);
 
-    events.dispatch(DFLEX_EVENTS.ON_MOVE_DOWN, {
-      siblings,
-      from: siblings!.length - 1,
-      to: siblings.length,
-    });
+    const cb = (id: string) => this.updateElement(id, siblings, cycleID, false);
 
-    for (let i = siblings.length - 1; i >= to; i -= 1) {
-      const id = siblings[i];
-
-      if (isIDEligible(id, draggedElm.id)) {
-        this.updateElement(id, siblings, cycleID, false);
-      }
-    }
+    forEachDraggedSiblings(to, false, true, this.draggable, cb);
   }
 
   private _draggedOutPositionNotifier(): void {

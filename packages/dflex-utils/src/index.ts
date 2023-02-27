@@ -15,8 +15,6 @@ export type {
   Dimensions,
   RectDimensions,
   RectBoundaries,
-  Axes,
-  Axis,
   Direction,
 } from "./types";
 
@@ -35,3 +33,7 @@ export {
 export { canUseDOM, getSelection, getParentElm } from "./dom";
 
 export * as featureFlags from "./FeatureFlags";
+
+export { AXIS } from "./constants";
+
+export type { Axes, Axis } from "./constants";

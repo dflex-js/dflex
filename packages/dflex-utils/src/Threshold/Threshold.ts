@@ -1,11 +1,12 @@
 /* eslint-disable max-classes-per-file */
 import { PointNum } from "../Point";
 
-import type { Dimensions, Axis, Direction } from "../types";
+import type { Dimensions, Direction } from "../types";
 
 import { AbstractBox, BoxBool, BoxRectAbstract } from "../Box";
 
 import { dirtyAssignBiggestRect } from "../collections";
+import { AXIS, Axis } from "../constants";
 
 export interface ThresholdPercentages {
   /** vertical threshold in percentage from 0-100 */
@@ -198,11 +199,11 @@ class DFlexThreshold {
   ): boolean {
     const { left, right, top, bottom } = this.thresholds[key];
 
-    if (axis === "x") {
+    if (axis === AXIS.X) {
       this.isOut[key].setByAxis(axis, startingPos < left, endingPos > right);
     }
 
-    if (axis === "y") {
+    if (axis === AXIS.Y) {
       this.isOut[key].setByAxis(axis, startingPos < top, endingPos > bottom);
     }
 
@@ -232,7 +233,7 @@ class DFlexThreshold {
     const { left, right, top, bottom } = this.thresholds[key];
 
     const is =
-      axis === "x"
+      axis === AXIS.X
         ? direction === -1
           ? startingPos < left
           : endingPos > right

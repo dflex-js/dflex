@@ -206,10 +206,10 @@ class DFlexPositionUpdater {
     this.isParentLocked = false;
   }
 
-  private setDistanceBtwPositions(
-    element: DFlexElement,
+  private _setDistanceBtwPositions(
     axis: Axis,
-    elmDirection: Direction
+    elmDirection: Direction,
+    element: DFlexElement
   ) {
     const { occupiedPosition, draggedElm } = this.draggable;
 
@@ -249,16 +249,16 @@ class DFlexPositionUpdater {
     this.draggable.gridPlaceholder.clone(grid);
   }
 
-  private updateIndicators(
-    element: DFlexElement,
+  private _updateIndicators(
     axis: Axis,
-    elmDirection: Direction
+    elmDirection: Direction,
+    element: DFlexElement
   ) {
     this.elmTransition.setAxes(0, 0);
     this.draggedTransition.setAxes(0, 0);
     this.draggedPositionOffset.setAxes(0, 0);
 
-    this.setDistanceBtwPositions(element, axis, elmDirection);
+    this._setDistanceBtwPositions(axis, elmDirection, element);
     this.updateDraggable(element, elmDirection);
   }
 
@@ -482,7 +482,7 @@ class DFlexPositionUpdater {
 
     const elmDirection: Direction = isIncrease ? -1 : 1;
 
-    this.updateIndicators(element, axis, elmDirection);
+    this._updateIndicators(axis, elmDirection, element);
 
     // TODO: always true for the first element
     if (!this.isParentLocked) {

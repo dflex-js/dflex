@@ -1,5 +1,6 @@
+import { AXIS, Axis } from "../constants";
 import type { AxesPoint } from "../Point";
-import type { Axis, Direction } from "../types";
+import type { Direction } from "../types";
 import AbstractBox from "./AbstractBox";
 
 /** Four direction instance - clockwise */
@@ -44,7 +45,7 @@ class Box<T> extends AbstractBox<T> {
    */
   setByAxis(axis: Axis, x: T, y: T): void {
     switch (axis) {
-      case "x": {
+      case AXIS.X: {
         this.left = x;
         this.right = y;
         break;
@@ -65,7 +66,7 @@ class Box<T> extends AbstractBox<T> {
    */
   setOne(axis: Axis, direction: Direction, value: T): void {
     switch (axis) {
-      case "x": {
+      case AXIS.X: {
         if (direction === -1) {
           this.left = value;
         } else {
@@ -92,7 +93,7 @@ class Box<T> extends AbstractBox<T> {
    */
   getOne(axis: Axis, direction: Direction): T {
     switch (axis) {
-      case "x":
+      case AXIS.X:
         return direction === -1 ? this.left : this.right;
       default:
         return direction === -1 ? this.top : this.bottom;

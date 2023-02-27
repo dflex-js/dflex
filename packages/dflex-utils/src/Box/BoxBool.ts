@@ -1,4 +1,4 @@
-import type { Axis } from "../types";
+import { AXIS, Axis } from "../constants";
 import Box from "./Box";
 
 class BoxBool extends Box<boolean> {
@@ -26,7 +26,7 @@ class BoxBool extends Box<boolean> {
    */
   isOneTruthyByAxis(axis: Axis): boolean {
     switch (axis) {
-      case "x":
+      case AXIS.X:
         return this.left || this.right;
       default:
         return this.top || this.bottom;
