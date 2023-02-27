@@ -50,6 +50,10 @@ class BoxNum extends Box<number> {
   isOutside(box: BoxNum): boolean {
     return !this.isInside(box);
   }
+
+  isPositionedY(box: BoxNum) {
+    return this.bottom >= box.top || this.top <= box.bottom;
+  }
 }
 
 export default BoxNum;

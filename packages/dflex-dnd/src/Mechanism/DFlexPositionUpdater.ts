@@ -445,6 +445,11 @@ class DFlexPositionUpdater {
     if (__DEV__) {
       // DFLex doesn't have error msg transformer yet for production.
       throwOnInfiniteTransformation(id);
+
+      if (featureFlags.enableMechanismDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(`updateElement ${id}`);
+      }
     }
 
     const [element, DOM] = store.getElmWithDOM(id);
@@ -473,13 +478,6 @@ class DFlexPositionUpdater {
     //   //   axis = "z";
     //   // }
     // }
-
-    if (__DEV__) {
-      if (featureFlags.enableMechanismDebugger) {
-        // eslint-disable-next-line no-console
-        console.log(`Switching element on axis: ${axis}`);
-      }
-    }
 
     const elmDirection: Direction = isIncrease ? -1 : 1;
 
