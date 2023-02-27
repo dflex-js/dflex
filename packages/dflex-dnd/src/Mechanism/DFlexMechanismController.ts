@@ -1,4 +1,4 @@
-import { AxesPoint, featureFlags, PointNum, Tracker } from "@dflex/utils";
+import { AxesPoint, Axis, featureFlags, PointNum, Tracker } from "@dflex/utils";
 
 import { DFLEX_EVENTS, scheduler, store } from "../LayoutManager";
 import type DraggableInteractive from "../Draggable";
@@ -274,7 +274,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     }
   }
 
-  private _switchElementPosition(isIncrease: boolean): void {
+  private _switchElementPosition(isIncrease: boolean, axis?: Axis): void {
     const { draggedElm } = this.draggable;
     const { SK, index, cycleID } = store.migration.latest();
 
@@ -294,7 +294,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     if (isIDEligible(id, draggedElm.id)) {
       this.draggable.setDraggedTempIndex(elmIndex);
 
-      this.updateElement(id, siblings, cycleID, isIncrease);
+      this.updateElement(id, siblings, cycleID, isIncrease, axis);
     }
   }
 
@@ -407,8 +407,12 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     const { grid: siblingsGrid } = store.containers.get(SK)!;
 
+    let axis: Axis;
+
     // Check if top or bottom.
     if (isOut[id].isOneTruthyByAxis("y")) {
+      axis = "y";
+
       const newRow = isOut[id].bottom
         ? gridPlaceholder.y + 1
         : gridPlaceholder.y - 1;
@@ -445,6 +449,8 @@ class DFlexMechanismController extends DFlexScrollableElement {
       return;
     }
 
+    axis = "x";
+
     const newCol = isOut[id].right
       ? gridPlaceholder.x + 1
       : gridPlaceholder.x - 1;
@@ -467,7 +473,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       return;
     }
 
-    this._switchElementPosition(isOut[id].right);
+    this._switchElementPosition(isOut[id].right, axis);
   }
 
   private _lockParent(isOut: boolean) {

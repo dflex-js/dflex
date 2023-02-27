@@ -439,7 +439,8 @@ class DFlexPositionUpdater {
     id: string,
     siblings: Siblings,
     cycleID: string,
-    isIncrease: boolean
+    isIncrease: boolean,
+    axis: Axis = "y"
   ) {
     if (__DEV__) {
       // DFLex doesn't have error msg transformer yet for production.
@@ -448,30 +449,30 @@ class DFlexPositionUpdater {
 
     const [element, DOM] = store.getElmWithDOM(id);
 
-    const {
-      keys: { SK },
-    } = element;
+    // const {
+    //   keys: { SK },
+    // } = element;
 
-    const { grid: siblingsGrid } = store.containers.get(SK)!;
+    // const { grid: siblingsGrid } = store.containers.get(SK)!;
 
-    const isContainerHasCol =
-      this.draggable.gridPlaceholder.x + 1 <= siblingsGrid.x;
+    // const isContainerHasCol =
+    //   this.draggable.gridPlaceholder.x + 1 <= siblingsGrid.x;
 
-    let axis: Axis;
+    // let axis: Axis;
 
-    if (isContainerHasCol) {
-      axis = "x";
-    } else {
-      axis = "y";
+    // if (isContainerHasCol) {
+    //   axis = "x";
+    // } else {
+    //   axis = "y";
 
-      // const isContainerHasRowAbove =
-      //   this.draggable.gridPlaceholder.y + 1 <= siblingsGrid.y;
+    //   // const isContainerHasRowAbove =
+    //   //   this.draggable.gridPlaceholder.y + 1 <= siblingsGrid.y;
 
-      // if (isContainerHasRowAbove) {
-      //   // Bi-directional
-      //   axis = "z";
-      // }
-    }
+    //   // if (isContainerHasRowAbove) {
+    //   //   // Bi-directional
+    //   //   axis = "z";
+    //   // }
+    // }
 
     if (__DEV__) {
       if (featureFlags.enableMechanismDebugger) {
