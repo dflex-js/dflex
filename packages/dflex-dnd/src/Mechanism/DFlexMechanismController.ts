@@ -66,32 +66,75 @@ class DFlexMechanismController extends DFlexScrollableElement {
     this.isParentLocked = false;
   }
 
-  private _detectDroppableIndex(): number | null {
-    let droppableIndex = null;
+  private _forEachSiblings(
+    at: number,
+    incremental: boolean,
+    cb: (id: string, index: number) => boolean | void
+  ) {
+    const { draggedElm, events } = this.draggable;
+    const { migration } = store;
 
-    const { draggedElm } = this.draggable;
-
-    const { SK } = store.migration.latest();
+    const { SK } = migration.latest();
 
     const siblings = store.getElmSiblingsByKey(SK);
 
-    for (let i = 0; i < siblings.length; i += 1) {
+    if (incremental) {
+      for (let i = at; i < siblings.length; i += 1) {
+        const id = siblings[i];
+
+        if (isIDEligible(id, draggedElm.id)) {
+          if (cb(id, i)) {
+            break;
+          }
+        }
+      }
+
+      events.dispatch(DFLEX_EVENTS.ON_LIFT_UP, {
+        siblings,
+        from: at,
+        to: siblings.length,
+      });
+
+      return;
+    }
+
+    for (let i = siblings.length - 1; i >= at; i -= 1) {
       const id = siblings[i];
 
       if (isIDEligible(id, draggedElm.id)) {
-        const element = store.registry.get(id)!;
-
-        const isQualified = element.rect.isIntersect(
-          this.draggable.getAbsoluteCurrentPosition()
-        );
-
-        if (isQualified) {
-          droppableIndex = i;
-
+        if (cb(id, i)) {
           break;
         }
       }
     }
+
+    events.dispatch(DFLEX_EVENTS.ON_MOVE_DOWN, {
+      siblings,
+      from: siblings!.length - 1,
+      to: siblings.length,
+    });
+  }
+
+  private _detectDroppableIndex(): number | null {
+    let droppableIndex = null;
+
+    const cb = (id: string, i: number) => {
+      const element = store.registry.get(id)!;
+
+      const isQualified = element.rect.isIntersect(
+        this.draggable.getAbsoluteCurrentPosition()
+      );
+
+      if (isQualified) {
+        droppableIndex = i;
+
+        return true;
+      }
+
+      return false;
+    };
+
+    this._forEachSiblings(0, true, cb);
 
     return droppableIndex;
   }
@@ -302,7 +345,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
    * Filling the space when the head of the list is leaving the list.
    */
   private _fillHeadUp(): void {
-    const { occupiedPosition, draggedElm, events } = this.draggable;
+    const { occupiedPosition, draggedElm } = this.draggable;
     const { migration } = store;
 
     const { SK, index, cycleID } = migration.latest();
@@ -345,27 +388,13 @@ class DFlexMechanismController extends DFlexScrollableElement {
       nextElm.rect.top - (occupiedPosition.y + draggedElm.rect.height)
     );
 
-    events.dispatch(DFLEX_EVENTS.ON_LIFT_UP, {
-      siblings,
-      from,
-      to: siblings.length,
-    });
-
     this.draggable.setDraggedTempIndex(
       DFlexMechanismController.INDEX_OUT_CONTAINER
     );
 
-    for (let i = from; i < siblings.length; i += 1) {
-      /**
-       * Don't update translate because it's not permanent. Releasing dragged
-       * means undoing last position.
-       */
-      const id = siblings[i];
+    const cb = (id: string) => this.updateElement(id, siblings, cycleID, true);
 
-      if (isIDEligible(id, draggedElm.id)) {
-        this.updateElement(id, siblings, cycleID, true);
-      }
-    }
+    this._forEachSiblings(from, true, cb);
   }
 
   /**
@@ -373,26 +402,15 @@ class DFlexMechanismController extends DFlexScrollableElement {
    * @param to - index
    */
   private _moveDown(to: number): void {
-    const { events, draggedElm } = this.draggable;
     const { migration } = store;
 
     const { SK, cycleID } = migration.latest();
 
     const siblings = store.getElmSiblingsByKey(SK);
 
-    events.dispatch(DFLEX_EVENTS.ON_MOVE_DOWN, {
-      siblings,
-      from: siblings!.length - 1,
-      to: siblings.length,
-    });
+    const cb = (id: string) => this.updateElement(id, siblings, cycleID, false);
 
-    for (let i = siblings.length - 1; i >= to; i -= 1) {
-      const id = siblings[i];
-
-      if (isIDEligible(id, draggedElm.id)) {
-        this.updateElement(id, siblings, cycleID, false);
-      }
-    }
+    this._forEachSiblings(to, false, cb);
   }
 
   private _draggedOutPositionNotifier(): void {
