@@ -2,7 +2,7 @@
 import { AbstractDFlexCycle, featureFlags } from "@dflex/utils";
 import { scheduler, store } from "../LayoutManager";
 import DFlexMechanismController, {
-  isIDEligible,
+  forEachSiblings,
 } from "./DFlexMechanismController";
 
 class EndCycle extends DFlexMechanismController {
@@ -32,19 +32,17 @@ class EndCycle extends DFlexMechanismController {
       }
     }
 
-    for (let i = siblings.length - 1; i >= 0; i -= 1) {
-      const elmID = siblings[i];
+    const cb = (elmID: string) => {
+      const [dflexElm, DOM] = store.getElmWithDOM(elmID);
 
-      if (isIDEligible(elmID, draggedID)) {
-        const [dflexElm, DOM] = store.getElmWithDOM(elmID);
+      /**
+       * Note: rolling back won't affect order array. It only deals with element
+       * itself and totally ignore any instance related to store.
+       */
+      dflexElm.rollBackPosition(DOM, cycleID);
+    };
 
-        /**
-         * Note: rolling back won't affect order array. It only deals with element
-         * itself and totally ignore any instance related to store.
-         */
-        dflexElm.rollBackPosition(DOM, cycleID);
-      }
-    }
+    forEachSiblings(0, false, siblings, draggedID, cb);
 
     const spliceAt =
       this.isParentLocked || threshold.isOut[draggedID].bottom
