@@ -1,6 +1,7 @@
 import Point from "./Point";
 import type AxesPoint from "./AxesPoint";
 import { AbstractBox, BoxNum } from "../Box";
+import type { Axis } from "../types";
 
 class PointNum extends Point<number> {
   /**
@@ -44,6 +45,10 @@ class PointNum extends Point<number> {
           bottom + this.y,
           left - this.x
         );
+  }
+
+  onSameAxis(axis: Axis, point: AxesPoint) {
+    return axis === "y" ? point.x === this.x : point.y === this.y;
   }
 }
 

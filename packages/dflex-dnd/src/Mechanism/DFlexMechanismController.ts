@@ -1,5 +1,6 @@
-import { AxesPoint, featureFlags, PointNum, Tracker } from "@dflex/utils";
+import { AxesPoint, Axis, featureFlags, PointNum, Tracker } from "@dflex/utils";
 
+import type { DFlexElement } from "@dflex/core-instance";
 import { DFLEX_EVENTS, scheduler, store } from "../LayoutManager";
 import type DraggableInteractive from "../Draggable";
 
@@ -13,12 +14,48 @@ import DFlexScrollableElement from "./DFlexScrollableElement";
 export function isIDEligible(elmID: string, draggedID: string): boolean {
   const { registry } = store;
 
+  if (__DEV__) {
+    if (typeof elmID !== "string") {
+      throw new Error(
+        `isIDEligible: elmID should be string. Received: ${elmID}`
+      );
+    }
+  }
+
   return (
     elmID.length > 0 &&
     elmID !== draggedID &&
     registry.has(elmID) &&
     !registry.get(elmID)!.readonly
   );
+}
+
+function getDirectSibling(
+  at: number,
+  siblings: string[],
+  isNext: boolean
+): DFlexElement | null {
+  const nextIndex = isNext ? at + 1 : at - 1;
+
+  if (nextIndex === siblings.length) {
+    return null;
+  }
+
+  const id = siblings[nextIndex];
+
+  const nextElm = store.registry.get(id);
+
+  if (!nextElm) {
+    if (__DEV__) {
+      throw new Error(
+        `getNextELm: Error in calculating next element. Calculated: ${nextIndex} in ${siblings}`
+      );
+    }
+
+    return null;
+  }
+
+  return nextElm;
 }
 
 class DFlexMechanismController extends DFlexScrollableElement {
@@ -397,15 +434,41 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
   private _draggedOutPositionNotifier(): void {
     const {
-      draggedElm: {
-        id,
-        keys: { SK },
-      },
+      draggedElm,
       threshold: { isOut },
       gridPlaceholder,
+      occupiedPosition,
     } = this.draggable;
 
+    const { SK, index } = store.migration.latest();
+
     const { grid: siblingsGrid } = store.containers.get(SK)!;
+
+    const siblings = store.getElmSiblingsByKey(SK);
+
+    const isDraggedLastElm = siblings.length - 1 === index;
+
+    const directSibling = getDirectSibling(index, siblings, !isDraggedLastElm);
+
+    let positionAxis: Axis = "y";
+
+    if (directSibling) {
+      positionAxis = occupiedPosition.onSameAxis(
+        "y",
+        directSibling.rect.getPosition()
+      )
+        ? "y"
+        : "x";
+    }
+
+    if (__DEV__) {
+      if (featureFlags.enableMechanismDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(`Moving on ${positionAxis}.`);
+      }
+    }
+
+    const { id } = draggedElm;
 
     // Check if top or bottom.
     if (isOut[id].isOneTruthyByAxis("y")) {
