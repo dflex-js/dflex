@@ -1,3 +1,4 @@
+import type AbstractBox from "./AbstractBox";
 import Box from "./Box";
 
 class BoxNum extends Box<number> {
@@ -84,6 +85,26 @@ class BoxNum extends Box<number> {
       !this.isOnLeft(box) &&
       !this.isOneRight(box)
     );
+  }
+
+  assignBiggestBox(box: AbstractBox) {
+    const { top, left, right, bottom } = box;
+
+    if (left < this.left) {
+      this.left = left;
+    }
+
+    if (top < this.top) {
+      this.top = top;
+    }
+
+    if (right > this.right) {
+      this.right = right;
+    }
+
+    if (bottom > this.bottom) {
+      this.bottom = bottom;
+    }
   }
 }
 

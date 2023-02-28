@@ -1,10 +1,13 @@
-import type { RectBoundaries } from "../types";
+import type { AbstractBox, BoxNum } from "../Box";
 
 /**
  * Mutate the rect boundaries object to biggest rectangle if it is bigger than
  * the current one.
  */
-function dirtyAssignBiggestRect($: RectBoundaries, elm: RectBoundaries) {
+function dirtyAssignBiggestRect(
+  $: BoxNum | AbstractBox,
+  elm: BoxNum | AbstractBox
+) {
   const { top, left, right, bottom } = elm;
 
   if (left < $.left) {

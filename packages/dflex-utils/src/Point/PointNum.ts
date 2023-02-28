@@ -1,5 +1,6 @@
 import Point from "./Point";
 import type AxesPoint from "./AxesPoint";
+import { AbstractBox, BoxNum } from "../Box";
 
 class PointNum extends Point<number> {
   /**
@@ -30,6 +31,19 @@ class PointNum extends Point<number> {
    */
   getMultiplied(val: number): AxesPoint {
     return { x: this.x * val, y: this.y * val };
+  }
+
+  composeBox(box: BoxNum | AbstractBox, isInner: boolean): BoxNum {
+    const { top, left, bottom, right } = box;
+
+    return isInner
+      ? new BoxNum(top + this.y, right - this.x, bottom - this.y, left + this.x)
+      : new BoxNum(
+          top - this.y,
+          right + this.x,
+          bottom + this.y,
+          left - this.x
+        );
   }
 }
 
