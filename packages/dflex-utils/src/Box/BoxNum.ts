@@ -1,6 +1,33 @@
 import Box from "./Box";
 
 class BoxNum extends Box<number> {
+  clone(box: BoxNum) {
+    this.left = box.left;
+    this.top = box.top;
+    this.right = box.right;
+    this.bottom = box.bottom;
+  }
+
+  hasSamePoint(box: BoxNum) {
+    return this.left === box.left && this.top === box.top;
+  }
+
+  isUnder(box: BoxNum) {
+    return this.top > box.bottom;
+  }
+
+  isAbove(box: BoxNum) {
+    return this.bottom < box.top;
+  }
+
+  isOnLeft(box: BoxNum) {
+    return this.right < box.left;
+  }
+
+  isOneRight(box: BoxNum) {
+    return this.left > box.right;
+  }
+
   /**
    * True when it's not intersected with other box.
    *
@@ -9,10 +36,10 @@ class BoxNum extends Box<number> {
    */
   isNotIntersect(box: BoxNum): boolean {
     return (
-      this.top > box.bottom ||
-      this.right < box.left ||
-      this.bottom < box.top ||
-      this.left > box.right
+      this.isUnder(box) ||
+      this.isOnLeft(box) ||
+      this.isAbove(box) ||
+      this.isOneRight(box)
     );
   }
 
@@ -52,7 +79,11 @@ class BoxNum extends Box<number> {
   }
 
   isPositionedY(box: BoxNum) {
-    return this.bottom >= box.top || this.top <= box.bottom;
+    return (
+      (this.isUnder(box) || this.isAbove(box)) &&
+      !this.isOnLeft(box) &&
+      !this.isOneRight(box)
+    );
   }
 }
 

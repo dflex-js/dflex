@@ -30,8 +30,12 @@ export function isIDEligible(elmID: string, draggedID: string): boolean {
   );
 }
 
-function getNextELm(at: number, siblings: string[]): DFlexElement | null {
-  const nextIndex = at + 1;
+function getDirectSibling(
+  at: number,
+  siblings: string[],
+  isNext: boolean
+): DFlexElement | null {
+  const nextIndex = isNext ? at + 1 : at - 1;
 
   if (nextIndex === siblings.length) {
     return null;
@@ -280,7 +284,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         // placeholder as all the elements are stacked.
         origin.pop();
 
-        this.draggable.occupiedPosition.clone(this.listAppendPosition!);
+        this.draggable.occupiedPosition.setPosition(this.listAppendPosition!);
 
         this.draggable.gridPlaceholder.setAxes(1, 1);
 
@@ -365,7 +369,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       // Store it before lost it when the index is changed to the next one.
       migration.preserveVerticalMargin(
         "top",
-        occupiedPosition.y - prevElm.rect.bottom
+        occupiedPosition.top - prevElm.rect.bottom
       );
     }
 
@@ -388,7 +392,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     // Store it before lost it when the index is changed to the next one.
     migration.preserveVerticalMargin(
       "bottom",
-      nextElm.rect.top - (occupiedPosition.y + draggedElm.rect.height)
+      nextElm.rect.top - (occupiedPosition.top + draggedElm.rect.height)
     );
 
     events.dispatch(DFLEX_EVENTS.ON_LIFT_UP, {
@@ -446,6 +450,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       draggedElm: { id },
       threshold: { isOut },
       gridPlaceholder,
+      occupiedPosition,
     } = this.draggable;
 
     const { SK, index } = store.migration.latest();
@@ -454,13 +459,17 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     const siblings = store.getElmSiblingsByKey(SK);
 
-    const nexELm = getNextELm(index, siblings);
+    const isDraggedLastElm = siblings.length - 1 === index;
 
-    const positionAxis: Axis = nexELm
-      ? nexELm.rect.isPositionedY(this.draggable.getAbsoluteCurrentPosition())
+    const nextOrPrevElm = getDirectSibling(index, siblings, !isDraggedLastElm);
+
+    let positionAxis: Axis = "y";
+
+    if (nextOrPrevElm) {
+      positionAxis = nextOrPrevElm.rect.isPositionedY(occupiedPosition)
         ? "y"
-        : "x"
-      : "y";
+        : "x";
+    }
 
     if (__DEV__) {
       if (featureFlags.enableMechanismDebugger) {

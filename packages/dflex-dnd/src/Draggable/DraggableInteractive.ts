@@ -1,6 +1,7 @@
 import {
   AbstractDFlexCycle,
   assertElementPosition,
+  BoxNum,
   featureFlags,
   PointNum,
 } from "@dflex/utils";
@@ -19,7 +20,7 @@ class DraggableInteractive extends DraggableAxes {
 
   enableCommit: Commit;
 
-  occupiedPosition: PointNum;
+  occupiedPosition: BoxNum;
 
   occupiedTranslate: PointNum;
 
@@ -83,7 +84,13 @@ class DraggableInteractive extends DraggableAxes {
       this.setDOMAttrAndStyle(this.draggedDOM, null, true, false, null, null);
     }
 
-    this.occupiedPosition = new PointNum(rect.left, rect.top);
+    this.occupiedPosition = new BoxNum(
+      rect.top,
+      rect.right,
+      rect.bottom,
+      rect.left
+    );
+
     this.occupiedTranslate = new PointNum(translate.x, translate.y);
   }
 
@@ -126,7 +133,7 @@ class DraggableInteractive extends DraggableAxes {
     const hasToUndo =
       isFallback ||
       // dragged in position but has been clicked.
-      this.occupiedPosition.isEqual(rect.left, rect.top);
+      this.occupiedPosition.hasSamePoint(rect);
 
     if (hasToUndo) {
       /**
@@ -149,10 +156,7 @@ class DraggableInteractive extends DraggableAxes {
       return;
     }
 
-    this.draggedElm.rect.setAxes(
-      this.occupiedPosition.x,
-      this.occupiedPosition.y
-    );
+    this.draggedElm.rect.clone(this.occupiedPosition);
 
     if (__DEV__) {
       if (featureFlags.enablePositionAssertion) {

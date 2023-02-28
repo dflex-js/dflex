@@ -213,9 +213,9 @@ class DFlexPositionUpdater {
   ) {
     const { occupiedPosition, draggedElm } = this.draggable;
 
-    const positionDiff = Math.abs(
-      element.rect[axis === "x" ? "left" : "top"] - occupiedPosition[axis]
-    );
+    const b = axis === "x" ? "left" : "top";
+
+    const positionDiff = Math.abs(element.rect[b] - occupiedPosition[b]);
 
     const rectDiff = element.getRectDiff(draggedElm, axis);
 
@@ -235,10 +235,10 @@ class DFlexPositionUpdater {
   private updateDraggable(element: DFlexElement, elmDirection: Direction) {
     const { rect, DOMGrid: grid } = element;
 
-    this.draggable.occupiedPosition.setAxes(
-      rect.left + this.draggedPositionOffset.x,
-      rect.top + this.draggedPositionOffset.y
-    );
+    this.draggable.occupiedPosition.setPosition({
+      x: rect.left + this.draggedPositionOffset.x,
+      y: rect.top + this.draggedPositionOffset.y,
+    });
 
     const draggedDirection = -1 * elmDirection;
 
