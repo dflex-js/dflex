@@ -99,6 +99,16 @@ class Box<T> extends AbstractBox<T> {
     }
   }
 
+  setPositionInstance(point: AxesPoint<T>) {
+    this.top = point.y;
+    this.left = point.x;
+  }
+
+  setPosition(x: T, y: T) {
+    this.top = y;
+    this.left = x;
+  }
+
   /**
    * Get starting point instance.
    *
