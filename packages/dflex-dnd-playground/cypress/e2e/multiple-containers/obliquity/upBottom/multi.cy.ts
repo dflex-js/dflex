@@ -49,7 +49,7 @@ context("Split multiple containers form up bottom", () => {
   });
 
   it("Siblings in the destination have the correct position", () => {
-    cy.get("#c3-1").should("have.css", "transform", "matrix(1, 0, 0, 1, 0, 0)");
+    cy.get("#c3-1").should("have.css", "transform", "none");
     cy.get("#c3-2").should(
       "have.css",
       "transform",
