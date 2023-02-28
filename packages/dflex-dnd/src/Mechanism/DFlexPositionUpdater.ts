@@ -213,9 +213,9 @@ class DFlexPositionUpdater {
   ) {
     const { occupiedPosition, draggedElm } = this.draggable;
 
-    const positionDiff = Math.abs(
-      element.rect[axis === "x" ? "left" : "top"] - occupiedPosition[axis]
-    );
+    const b = axis === "x" ? "left" : "top";
+
+    const positionDiff = Math.abs(element.rect[b] - occupiedPosition[b]);
 
     const rectDiff = element.getRectDiff(draggedElm, axis);
 
@@ -235,10 +235,10 @@ class DFlexPositionUpdater {
   private updateDraggable(element: DFlexElement, elmDirection: Direction) {
     const { rect, DOMGrid: grid } = element;
 
-    this.draggable.occupiedPosition.setAxes(
-      rect.left + this.draggedPositionOffset.x,
-      rect.top + this.draggedPositionOffset.y
-    );
+    this.draggable.occupiedPosition.setPosition({
+      x: rect.left + this.draggedPositionOffset.x,
+      y: rect.top + this.draggedPositionOffset.y,
+    });
 
     const draggedDirection = -1 * elmDirection;
 
@@ -439,46 +439,45 @@ class DFlexPositionUpdater {
     id: string,
     siblings: Siblings,
     cycleID: string,
-    isIncrease: boolean
+    isIncrease: boolean,
+    axis: Axis = "y"
   ) {
     if (__DEV__) {
       // DFLex doesn't have error msg transformer yet for production.
       throwOnInfiniteTransformation(id);
+
+      if (featureFlags.enableMechanismDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(`updateElement ${id}`);
+      }
     }
 
     const [element, DOM] = store.getElmWithDOM(id);
 
-    const {
-      keys: { SK },
-    } = element;
+    // const {
+    //   keys: { SK },
+    // } = element;
 
-    const { grid: siblingsGrid } = store.containers.get(SK)!;
+    // const { grid: siblingsGrid } = store.containers.get(SK)!;
 
-    const isContainerHasCol =
-      this.draggable.gridPlaceholder.x + 1 <= siblingsGrid.x;
+    // const isContainerHasCol =
+    //   this.draggable.gridPlaceholder.x + 1 <= siblingsGrid.x;
 
-    let axis: Axis;
+    // let axis: Axis;
 
-    if (isContainerHasCol) {
-      axis = "x";
-    } else {
-      axis = "y";
+    // if (isContainerHasCol) {
+    //   axis = "x";
+    // } else {
+    //   axis = "y";
 
-      // const isContainerHasRowAbove =
-      //   this.draggable.gridPlaceholder.y + 1 <= siblingsGrid.y;
+    //   // const isContainerHasRowAbove =
+    //   //   this.draggable.gridPlaceholder.y + 1 <= siblingsGrid.y;
 
-      // if (isContainerHasRowAbove) {
-      //   // Bi-directional
-      //   axis = "z";
-      // }
-    }
-
-    if (__DEV__) {
-      if (featureFlags.enableMechanismDebugger) {
-        // eslint-disable-next-line no-console
-        console.log(`Switching element on axis: ${axis}`);
-      }
-    }
+    //   // if (isContainerHasRowAbove) {
+    //   //   // Bi-directional
+    //   //   axis = "z";
+    //   // }
+    // }
 
     const elmDirection: Direction = isIncrease ? -1 : 1;
 
