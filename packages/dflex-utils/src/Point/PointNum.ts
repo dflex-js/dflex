@@ -33,7 +33,7 @@ class PointNum extends Point<number> {
     return { x: this.x * val, y: this.y * val };
   }
 
-  composeBox(box: BoxNum | AbstractBox, isInner: boolean): BoxNum {
+  composeBox(box: AbstractBox, isInner: boolean): BoxNum {
     const { top, left, bottom, right } = box;
 
     return isInner

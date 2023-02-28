@@ -38,18 +38,16 @@ class DFlexThreshold {
   /** Assign threshold property and create new instance for is out indicators */
   private _createThreshold(
     key: string,
-    rect: BoxNum | AbstractBox,
+    rect: AbstractBox,
     isInner: boolean
   ): void {
-    const threshold = this._pixels.composeBox(rect, isInner);
-
     if (__DEV__) {
       if (this.thresholds[key] || this.isOut[key]) {
         throw new Error(`Threshold with key: ${key} already exists`);
       }
     }
 
-    this.thresholds[key] = threshold;
+    this.thresholds[key] = this._pixels.composeBox(rect, isInner);
 
     this.isOut[key] = new BoxBool(false, false, false, false);
   }
@@ -94,15 +92,13 @@ class DFlexThreshold {
    * @param isInner
    */
   updateMainThreshold(key: string, rect: AbstractBox, isInner: boolean): void {
-    const threshold = this._pixels.composeBox(rect, isInner);
-
     if (__DEV__) {
       if (!this.thresholds[key]) {
         throw new Error(`Threshold ${key} does not exist.`);
       }
     }
 
-    Object.assign(this.thresholds[key], threshold);
+    this.thresholds[key] = this._pixels.composeBox(rect, isInner);
 
     this.isOut[key].setFalsy();
   }
