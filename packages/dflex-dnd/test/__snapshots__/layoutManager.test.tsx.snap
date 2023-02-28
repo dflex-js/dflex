@@ -88,7 +88,7 @@ DFlexDnDStore {
   "containers": Map {
     "dflex_sk_0_0" => DFlexParentContainer {
       "_boundariesByRow": {
-        "1": {
+        "1": BoxNum {
           "bottom": 0,
           "left": 0,
           "right": 0,
@@ -104,7 +104,7 @@ DFlexDnDStore {
         "top": 0,
         "width": 0,
       },
-      "_siblingBoundaries": {
+      "_siblingBoundaries": BoxNum {
         "bottom": 0,
         "left": 0,
         "right": 0,
@@ -120,7 +120,7 @@ DFlexDnDStore {
     },
     "dflex_sk_0_1" => DFlexParentContainer {
       "_boundariesByRow": {
-        "1": {
+        "1": BoxNum {
           "bottom": 0,
           "left": 0,
           "right": 0,
@@ -136,7 +136,7 @@ DFlexDnDStore {
         "top": 0,
         "width": 0,
       },
-      "_siblingBoundaries": {
+      "_siblingBoundaries": BoxNum {
         "bottom": 0,
         "left": 0,
         "right": 0,

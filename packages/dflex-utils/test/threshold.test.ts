@@ -103,7 +103,7 @@ describe("DFlexThreshold", () => {
           DEFAULT_IS_OUT_INDICATORS
         );
 
-        expect(threshold.thresholds[DRAGGED.ID]).toStrictEqual(
+        expect(threshold.thresholds[DRAGGED.ID]).toMatchObject(
           DRAGGED.THRESHOLD
         );
       });
@@ -201,7 +201,7 @@ describe("DFlexThreshold", () => {
       });
 
       it("Define threshold for container", () => {
-        expect(threshold.thresholds[CONTAINER.SK]).toStrictEqual(
+        expect(threshold.thresholds[CONTAINER.SK]).toMatchObject(
           CONTAINER.THRESHOLD
         );
 
@@ -223,7 +223,7 @@ describe("DFlexThreshold", () => {
       });
 
       it("Define threshold for accumulated depth", () => {
-        expect(threshold.thresholds[DRAGGED.DP]).toStrictEqual(DEPTH.THRESHOLD);
+        expect(threshold.thresholds[DRAGGED.DP]).toMatchObject(DEPTH.THRESHOLD);
 
         expect(threshold.isOut[DRAGGED.DP]).toMatchObject(
           DEFAULT_IS_OUT_INDICATORS
@@ -231,7 +231,7 @@ describe("DFlexThreshold", () => {
       });
 
       it("Define threshold for biggest container in the given depth", () => {
-        expect(threshold.thresholds[INSERTION_LAYER.key]).toStrictEqual(
+        expect(threshold.thresholds[INSERTION_LAYER.key]).toMatchObject(
           INSERTION_LAYER.THRESHOLD
         );
 
@@ -304,7 +304,7 @@ describe("DFlexThreshold", () => {
           DEFAULT_IS_OUT_INDICATORS
         );
 
-        expect(threshold.thresholds[SCROLL.ID_INNER]).toStrictEqual(
+        expect(threshold.thresholds[SCROLL.ID_INNER]).toMatchObject(
           SCROLL.THRESHOLD_INNER
         );
       });
@@ -356,7 +356,7 @@ describe("DFlexThreshold", () => {
           DEFAULT_IS_OUT_INDICATORS
         );
 
-        expect(threshold.thresholds[SCROLL.ID_OUTER]).toStrictEqual(
+        expect(threshold.thresholds[SCROLL.ID_OUTER]).toMatchObject(
           SCROLL.THRESHOLD_OUTER
         );
       });
