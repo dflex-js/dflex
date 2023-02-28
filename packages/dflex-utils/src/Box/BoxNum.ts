@@ -2,9 +2,13 @@ import type AbstractBox from "./AbstractBox";
 import Box from "./Box";
 
 class BoxNum extends Box<number> {
-  clone(box: BoxNum) {
+  clonePosition(box: BoxNum) {
     this.left = box.left;
     this.top = box.top;
+  }
+
+  clone(box: BoxNum) {
+    this.clonePosition(box);
     this.right = box.right;
     this.bottom = box.bottom;
   }
