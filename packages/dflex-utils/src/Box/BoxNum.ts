@@ -1,6 +1,34 @@
+import type AbstractBox from "./AbstractBox";
 import Box from "./Box";
 
 class BoxNum extends Box<number> {
+  clone(box: BoxNum) {
+    this.left = box.left;
+    this.top = box.top;
+    this.right = box.right;
+    this.bottom = box.bottom;
+  }
+
+  hasSamePoint(box: BoxNum) {
+    return this.left === box.left && this.top === box.top;
+  }
+
+  isUnder(box: BoxNum) {
+    return this.top > box.bottom;
+  }
+
+  isAbove(box: BoxNum) {
+    return this.bottom < box.top;
+  }
+
+  isOnLeft(box: BoxNum) {
+    return this.right < box.left;
+  }
+
+  isOneRight(box: BoxNum) {
+    return this.left > box.right;
+  }
+
   /**
    * True when it's not intersected with other box.
    *
@@ -9,10 +37,10 @@ class BoxNum extends Box<number> {
    */
   isNotIntersect(box: BoxNum): boolean {
     return (
-      this.top > box.bottom ||
-      this.right < box.left ||
-      this.bottom < box.top ||
-      this.left > box.right
+      this.isUnder(box) ||
+      this.isOnLeft(box) ||
+      this.isAbove(box) ||
+      this.isOneRight(box)
     );
   }
 
@@ -49,6 +77,34 @@ class BoxNum extends Box<number> {
    */
   isOutside(box: BoxNum): boolean {
     return !this.isInside(box);
+  }
+
+  isPositionedY(box: BoxNum) {
+    return (
+      (this.isUnder(box) || this.isAbove(box)) &&
+      !this.isOnLeft(box) &&
+      !this.isOneRight(box)
+    );
+  }
+
+  assignBiggestBox(box: AbstractBox) {
+    const { top, left, right, bottom } = box;
+
+    if (left < this.left) {
+      this.left = left;
+    }
+
+    if (top < this.top) {
+      this.top = top;
+    }
+
+    if (right > this.right) {
+      this.right = right;
+    }
+
+    if (bottom > this.bottom) {
+      this.bottom = bottom;
+    }
   }
 }
 

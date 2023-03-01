@@ -14,7 +14,6 @@ export type { AbstractDFlexCycle } from "./DFlexCycle";
 export type {
   Dimensions,
   RectDimensions,
-  RectBoundaries,
   Axes,
   Axis,
   Direction,
@@ -22,7 +21,6 @@ export type {
 
 export {
   combineKeys,
-  dirtyAssignBiggestRect,
   warnOnce,
   assertElementPosition,
   getElmComputedStyle,

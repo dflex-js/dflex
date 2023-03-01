@@ -1,18 +1,13 @@
 /* eslint-disable no-param-reassign */
-import {
-  PointNum,
-  dirtyAssignBiggestRect,
-  AbstractBox,
-  BoxRect,
-} from "@dflex/utils";
+import { PointNum, AbstractBox, BoxRect, BoxNum } from "@dflex/utils";
 
 import type { Dimensions, AxesPoint } from "@dflex/utils";
 
 class DFlexParentContainer {
-  private _boundariesByRow: Record<number, AbstractBox>;
+  private _boundariesByRow: Record<number, BoxNum>;
 
   /** Strict Rect for siblings containers. */
-  private _siblingBoundaries: AbstractBox | null;
+  private _siblingBoundaries: BoxNum | null;
 
   private _rect!: BoxRect;
 
@@ -57,12 +52,12 @@ class DFlexParentContainer {
 
   private _addNewElmToGridIndicator(rect: AbstractBox): void {
     if (!this._boundariesByRow[this.grid.x]) {
-      this._boundariesByRow[this.grid.x] = Object.seal({
-        bottom: rect.bottom,
-        left: rect.left,
-        right: rect.right,
-        top: rect.top,
-      });
+      this._boundariesByRow[this.grid.x] = new BoxNum(
+        rect.top,
+        rect.right,
+        rect.bottom,
+        rect.left
+      );
 
       return;
     }
@@ -90,7 +85,7 @@ class DFlexParentContainer {
       }
     }
 
-    dirtyAssignBiggestRect($, rect);
+    $.assignBiggestBox(rect);
   }
 
   // TODO: How to unregister element from the edge of the container? Currently
@@ -101,14 +96,14 @@ class DFlexParentContainer {
     unifiedContainerDimensions?: Dimensions
   ): void {
     if (this._siblingBoundaries) {
-      dirtyAssignBiggestRect(this._siblingBoundaries, rect);
+      this._siblingBoundaries.assignBiggestBox(rect);
     } else {
-      this._siblingBoundaries = {
-        bottom: rect.bottom,
-        left: rect.left,
-        right: rect.right,
-        top: rect.top,
-      };
+      this._siblingBoundaries = new BoxNum(
+        rect.top,
+        rect.right,
+        rect.bottom,
+        rect.left
+      );
     }
 
     this._addNewElmToGridIndicator(rect);

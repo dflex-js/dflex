@@ -8,13 +8,6 @@ export interface RectDimensions extends Dimensions {
   left: number;
 }
 
-export interface RectBoundaries {
-  top: number;
-  left: number;
-  bottom: number;
-  right: number;
-}
-
 export type Direction = 1 | -1;
 
 /** Single Axis. */

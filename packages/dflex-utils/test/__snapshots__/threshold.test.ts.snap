@@ -37,25 +37,25 @@ DFlexThreshold {
     },
   },
   "thresholds": {
-    "0": {
+    "0": BoxNum {
       "bottom": 572,
       "left": -182,
       "right": 450,
       "top": 54,
     },
-    "0_container-sk": {
+    "0_container-sk": BoxNum {
       "bottom": 542,
       "left": -80,
       "right": 348,
       "top": 84,
     },
-    "container-sk": {
+    "container-sk": BoxNum {
       "bottom": 194,
       "left": -80,
       "right": 294,
       "top": 84,
     },
-    "dflex-dragged": {
+    "dflex-dragged": BoxNum {
       "bottom": 194,
       "left": 348,
       "right": 722,
@@ -84,7 +84,7 @@ DFlexThreshold {
     },
   },
   "thresholds": {
-    "scroll-id-inner": {
+    "scroll-id-inner": BoxNum {
       "bottom": 558,
       "left": 133,
       "right": 752,
@@ -119,13 +119,13 @@ DFlexThreshold {
     },
   },
   "thresholds": {
-    "scroll-id-inner": {
+    "scroll-id-inner": BoxNum {
       "bottom": 558,
       "left": 133,
       "right": 752,
       "top": 99,
     },
-    "scroll-id-outer": {
+    "scroll-id-outer": BoxNum {
       "bottom": 756,
       "left": -133,
       "right": 1018,

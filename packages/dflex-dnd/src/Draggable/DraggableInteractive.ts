@@ -136,7 +136,7 @@ class DraggableInteractive extends DraggableAxes {
        * don't like it but it is what it is.
        */
       if (siblings[VDOMOrder.self] !== id) {
-        this.draggedElm.assignNewPosition(siblings, VDOMOrder.self);
+        this.draggedElm.assignNewIndex(siblings, VDOMOrder.self);
       }
 
       // If it didn't move, then do nothing.
@@ -144,8 +144,7 @@ class DraggableInteractive extends DraggableAxes {
         return;
       }
 
-      this.draggedElm.transform(draggedDOM);
-      this.draggedElm.setAttribute(draggedDOM, "INDEX", VDOMOrder.self);
+      this.draggedElm.restorePosition(draggedDOM);
 
       return;
     }
@@ -167,13 +166,12 @@ class DraggableInteractive extends DraggableAxes {
 
     VDOMOrder.self = index;
 
-    this.draggedElm.assignNewPosition(siblings, index);
+    this.draggedElm.assignNewIndex(siblings, index);
 
     // If it's going to reconcile to the DOM then there's no need to update the
     // transformation here.
     if (!willReconcile) {
-      translate.clone(this.occupiedTranslate);
-      this.draggedElm.transform(draggedDOM);
+      this.draggedElm.assignNewPosition(draggedDOM, this.occupiedTranslate);
     }
   }
 
