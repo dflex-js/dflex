@@ -59,7 +59,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.1",
     "rimraf": "^4.1.2",
-    "start-server-and-test": "^1.15.4",
+    "start-server-and-test": "^2.0.0",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.5",
