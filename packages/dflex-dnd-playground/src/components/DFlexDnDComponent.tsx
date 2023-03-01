@@ -74,6 +74,8 @@ const DFlexDnDComponent = ({
   };
 
   const onMouseDown = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
     const { button, clientX, clientY } = e;
 
     // Avoid right mouse click and ensure id
