@@ -3,9 +3,7 @@ import { PointNum } from "../Point";
 
 import type { Dimensions, Axis, Direction } from "../types";
 
-import { AbstractBox, BoxBool, BoxRectAbstract } from "../Box";
-
-import { dirtyAssignBiggestRect } from "../collections";
+import { AbstractBox, BoxBool, BoxNum, BoxRectAbstract } from "../Box";
 
 export interface ThresholdPercentages {
   /** vertical threshold in percentage from 0-100 */
@@ -16,7 +14,7 @@ export interface ThresholdPercentages {
 }
 
 class DFlexThreshold {
-  readonly thresholds: Record<string, AbstractBox>;
+  readonly thresholds: Record<string, BoxNum>;
 
   private _pixels!: PointNum;
 
@@ -30,31 +28,11 @@ class DFlexThreshold {
     this.isOut = {};
   }
 
-  private _setPixels({ width, height }: Dimensions): void {
+  private _createPixels({ width, height }: Dimensions): void {
     const x = Math.round((this._percentages.horizontal * width) / 100);
     const y = Math.round((this._percentages.vertical * height) / 100);
 
     this._pixels = new PointNum(x, y);
-  }
-
-  private _getThreshold(rect: AbstractBox, isInner: boolean): AbstractBox {
-    const { x, y } = this._pixels;
-
-    const { top, left, bottom, right } = rect;
-
-    return isInner
-      ? {
-          left: left + x,
-          right: right - x,
-          top: top + y,
-          bottom: bottom - y,
-        }
-      : {
-          left: left - x,
-          right: right + x,
-          top: top - y,
-          bottom: bottom + y,
-        };
   }
 
   /** Assign threshold property and create new instance for is out indicators */
@@ -63,37 +41,27 @@ class DFlexThreshold {
     rect: AbstractBox,
     isInner: boolean
   ): void {
-    const threshold = this._getThreshold(rect, isInner);
-
     if (__DEV__) {
-      if (this.thresholds[key]) {
-        throw new Error(`Threshold ${key} already exists`);
+      if (this.thresholds[key] || this.isOut[key]) {
+        throw new Error(`Threshold with key: ${key} already exists`);
       }
     }
 
-    this.thresholds[key] = Object.seal(threshold);
+    this.thresholds[key] = this._pixels.composeBox(rect, isInner);
 
     this.isOut[key] = new BoxBool(false, false, false, false);
   }
 
-  private _addDepthThreshold(key: string, depth: number): void {
+  private _setDepthThreshold(key: string, depth: number): void {
     const dp = `${depth}`;
 
     if (!this.thresholds[dp]) {
-      this._createThreshold(
-        dp,
-        {
-          ...this.thresholds[key],
-        },
-        false
-      );
+      this._createThreshold(dp, this.thresholds[key], false);
 
       return;
     }
 
-    const $ = this.thresholds[depth];
-
-    dirtyAssignBiggestRect($, this.thresholds[key]);
+    this.thresholds[depth].assignBiggestBox(this.thresholds[key]);
   }
 
   /**
@@ -111,7 +79,7 @@ class DFlexThreshold {
     boxRect: BoxRectAbstract,
     isInner: boolean
   ): void {
-    this._setPixels(boxRect);
+    this._createPixels(boxRect);
 
     this._createThreshold(key, boxRect, isInner);
   }
@@ -124,15 +92,13 @@ class DFlexThreshold {
    * @param isInner
    */
   updateMainThreshold(key: string, rect: AbstractBox, isInner: boolean): void {
-    const threshold = this._getThreshold(rect, isInner);
-
     if (__DEV__) {
       if (!this.thresholds[key]) {
         throw new Error(`Threshold ${key} does not exist.`);
       }
     }
 
-    Object.assign(this.thresholds[key], threshold);
+    this.thresholds[key] = this._pixels.composeBox(rect, isInner);
 
     this.isOut[key].setFalsy();
   }
@@ -175,7 +141,7 @@ class DFlexThreshold {
     );
 
     // Accumulated depth threshold. Accumulation based on insertion layer.
-    this._addDepthThreshold(insertionLayerKey, childDepth);
+    this._setDepthThreshold(insertionLayerKey, childDepth);
   }
 
   /**

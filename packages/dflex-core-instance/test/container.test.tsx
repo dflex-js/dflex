@@ -56,7 +56,7 @@ describe("Container", () => {
 
         return (
           <div>
-            <div ref={ref} id={containerID}></div>
+            <div ref={ref} id={containerID} />
           </div>
         );
       }
@@ -94,7 +94,7 @@ describe("Container", () => {
   });
 
   it("Container has the correct boundaries", () => {
-    expect(container.getBoundaries()).toStrictEqual({
+    expect(container.getBoundaries()).toMatchObject({
       top: 0,
       right: 30,
       bottom: 10,

@@ -5,7 +5,7 @@ import React from "react";
 import { store, DnD } from "@dflex/dnd";
 
 // shared dragged event
-let draggedEvent: DnD | null;
+let dflexDnD: DnD | null;
 
 interface Props {
   component: string | React.JSXElementConstructor<any>;
@@ -24,7 +24,7 @@ const Core = ({
   enableContainersTransition = false,
   style,
 }: Props) => {
-  const ref = React.useRef(null) as React.MutableRefObject<any>;
+  const ref = React.useRef() as React.MutableRefObject<HTMLLIElement>;
 
   const [isDragged, setIsDragged] = React.useState(false);
 
@@ -32,19 +32,24 @@ const Core = ({
     if (ref.current) store.register({ id, depth });
   }, [ref]);
 
-  const onMouseUp = () => {
-    if (draggedEvent) {
-      draggedEvent.endDragging();
-      draggedEvent = null;
-      setIsDragged(false);
+  const onMouseMove = (e: MouseEvent) => {
+    if (dflexDnD) {
+      const { clientX, clientY } = e;
+
+      dflexDnD.dragAt(clientX, clientY);
     }
   };
 
-  const onMouseMove = (e: React.MouseEvent) => {
-    if (draggedEvent) {
-      const { clientX, clientY } = e;
+  const onMouseUp = () => {
+    if (dflexDnD) {
+      dflexDnD.endDragging();
 
-      draggedEvent.dragAt(clientX, clientY);
+      dflexDnD = null;
+
+      document.removeEventListener("mouseup", onMouseUp);
+      document.removeEventListener("mousemove", onMouseMove);
+
+      setIsDragged(false);
     }
   };
 
@@ -56,7 +61,10 @@ const Core = ({
     // avoid right mouse click and ensure id
     if (typeof button === "number" && button === 0) {
       if (id) {
-        draggedEvent = new DnD(
+        document.addEventListener("mouseup", onMouseUp);
+        document.addEventListener("mousemove", onMouseMove);
+
+        dflexDnD = new DnD(
           id,
           { x: clientX, y: clientY },
           {
@@ -81,8 +89,6 @@ const Core = ({
       key={id}
       id={id}
       onMouseDown={onMouseDown}
-      onMouseMove={onMouseMove}
-      onMouseUp={onMouseUp}
       style={{
         ...style,
         ...(isDragged
