@@ -80,11 +80,7 @@ class BoxNum extends Box<number> {
   }
 
   isPositionedY(box: AbstractBox) {
-    return (
-      (this.isUnder(box) || this.isAbove(box)) &&
-      !this.isOnLeft(box) &&
-      !this.isOneRight(box)
-    );
+    return this.isUnder(box) || this.isAbove(box);
   }
 
   assignBiggestBox(box: AbstractBox) {

@@ -177,69 +177,6 @@ export function handleElmMigration(
   containerOrigin.preservePosition(lastInOrigin.rect.getPosition());
 }
 
-/**
- * ["1","2","3"] (at=1) => 2
- *
- * ["","2", "3"] (at=0) => 2
- *
- * ["1","2", ""] (at=2) => 2
- *
- * ["1","", "3"] (at=1) => 3
- *
- * [""] at(0) => null
- *
- * [] at(0) => null
- *
- * @param at
- * @param siblings
- * @returns
- */
-function getInsertionElm(at: number, siblings: string[]): DFlexElement | null {
-  let id = siblings[at];
-
-  const { length } = siblings;
-
-  if (id === "" && length > 1) {
-    switch (at) {
-      case 0: // ["",1,2,3]
-        [, id] = siblings;
-        break;
-
-      case length - 1: //  [0,1,2,""]
-        id = siblings[length - 2];
-        break;
-
-      default: // [0,"",2]
-        id = siblings[length - 1];
-        break;
-    }
-
-    if (!id) {
-      if (__DEV__) {
-        throw new Error(
-          `getNextELm: failed to extract valid element in ${[...siblings]}`
-        );
-      }
-    }
-  }
-
-  const nextElm = store.registry.get(id);
-
-  if (!nextElm) {
-    if (__DEV__) {
-      throw new Error(
-        `getNextELm: Error in calculating next element. Calculated: ${at} in ${[
-          ...siblings,
-        ]}`
-      );
-    }
-
-    return null;
-  }
-
-  return nextElm;
-}
-
 class DFlexPositionUpdater {
   protected draggable: DraggableInteractive;
 
@@ -518,25 +455,22 @@ class DFlexPositionUpdater {
 
     const [element, DOM] = store.getElmWithDOM(id);
 
-    const { index } = store.migration.latest();
-
-    const directSibling = getInsertionElm(index, siblings);
-
-    // Default axis.
-    let axis: Axis = "y";
-
-    if (directSibling) {
-      axis = directSibling.rect.isPositionedY({
+    const axis: Axis =
+      occupiedPosition.onSameAxis("y", element.rect.getPosition()) ||
+      element.rect.isPositionedY({
         left: occupiedPosition.x,
         top: occupiedPosition.y,
-        bottom: draggedElm.rect.bottom,
-        right: draggedElm.rect.right,
+        bottom: occupiedPosition.y + draggedElm.rect.height,
+        right: occupiedPosition.x + draggedElm.rect.width,
       })
         ? "y"
         : "x";
-    }
 
     if (__DEV__) {
+      if (axis === "x") {
+        debugger;
+      }
+
       if (featureFlags.enableMechanismDebugger) {
         // eslint-disable-next-line no-console
         console.log(`Switching element on axis: ${axis}`);
