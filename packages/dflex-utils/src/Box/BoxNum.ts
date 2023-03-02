@@ -2,30 +2,30 @@ import type AbstractBox from "./AbstractBox";
 import Box from "./Box";
 
 class BoxNum extends Box<number> {
-  clone(box: BoxNum) {
+  clone(box: AbstractBox) {
     this.left = box.left;
     this.top = box.top;
     this.right = box.right;
     this.bottom = box.bottom;
   }
 
-  hasSamePoint(box: BoxNum) {
+  hasSamePoint(box: AbstractBox) {
     return this.left === box.left && this.top === box.top;
   }
 
-  isUnder(box: BoxNum) {
+  isUnder(box: AbstractBox) {
     return this.top > box.bottom;
   }
 
-  isAbove(box: BoxNum) {
+  isAbove(box: AbstractBox) {
     return this.bottom < box.top;
   }
 
-  isOnLeft(box: BoxNum) {
+  isOnLeft(box: AbstractBox) {
     return this.right < box.left;
   }
 
-  isOneRight(box: BoxNum) {
+  isOneRight(box: AbstractBox) {
     return this.left > box.right;
   }
 
@@ -35,7 +35,7 @@ class BoxNum extends Box<number> {
    * @param box
    * @returns
    */
-  isNotIntersect(box: BoxNum): boolean {
+  isNotIntersect(box: AbstractBox): boolean {
     return (
       this.isUnder(box) ||
       this.isOnLeft(box) ||
@@ -50,7 +50,7 @@ class BoxNum extends Box<number> {
    * @param box
    * @returns
    */
-  isIntersect(box: BoxNum): boolean {
+  isIntersect(box: AbstractBox): boolean {
     return !this.isNotIntersect(box);
   }
 
@@ -60,7 +60,7 @@ class BoxNum extends Box<number> {
    * @param box
    * @returns
    */
-  isInside(box: BoxNum): boolean {
+  isInside(box: AbstractBox): boolean {
     return (
       this.top >= box.top &&
       this.right <= box.right &&
@@ -75,11 +75,11 @@ class BoxNum extends Box<number> {
    * @param box
    * @returns
    */
-  isOutside(box: BoxNum): boolean {
+  isOutside(box: AbstractBox): boolean {
     return !this.isInside(box);
   }
 
-  isPositionedY(box: BoxNum) {
+  isPositionedY(box: AbstractBox) {
     return (
       (this.isUnder(box) || this.isAbove(box)) &&
       !this.isOnLeft(box) &&

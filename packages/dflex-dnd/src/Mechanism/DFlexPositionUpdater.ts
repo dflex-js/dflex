@@ -526,7 +526,12 @@ class DFlexPositionUpdater {
     let axis: Axis = "y";
 
     if (directSibling) {
-      axis = occupiedPosition.onSameAxis("y", directSibling.rect.getPosition())
+      axis = directSibling.rect.isPositionedY({
+        left: occupiedPosition.x,
+        top: occupiedPosition.y,
+        bottom: draggedElm.rect.bottom,
+        right: draggedElm.rect.right,
+      })
         ? "y"
         : "x";
     }
