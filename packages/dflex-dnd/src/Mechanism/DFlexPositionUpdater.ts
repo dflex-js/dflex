@@ -8,6 +8,7 @@ import type { Siblings } from "@dflex/dom-gen";
 import type DraggableInteractive from "../Draggable";
 
 import { store, DFLEX_EVENTS } from "../LayoutManager";
+import { isIDEligible } from "./DFlexMechanismController";
 
 const MAX_TRANSFORM_COUNT = 99; /** Infinite transform count */
 
@@ -62,17 +63,17 @@ export function getInsertionELmMeta(
   insertAt: number,
   SK: string
 ): InsertionELmMeta {
-  const lst = store.getElmSiblingsByKey(SK);
+  const siblings = store.getElmSiblingsByKey(SK);
 
-  const { length } = lst;
+  const { length } = siblings;
 
   // Restore the last known current position.
   const { lastElmPosition, originLength } = store.containers.get(SK)!;
 
   const position = new PointNum(0, 0);
-  const isEmpty = isEmptyBranch(lst);
+  const isEmpty = isEmptyBranch(siblings);
 
-  const isLastEmpty = lst[length - 1] === APPEND_EMPTY_ELM_ID;
+  const isLastEmpty = siblings[length - 1] === APPEND_EMPTY_ELM_ID;
 
   // ["id"] || ["id", ""]
   const isOrphan = !isEmpty && (length === 1 || (length === 2 && isLastEmpty));
@@ -101,7 +102,7 @@ export function getInsertionELmMeta(
         at -= 1;
       }
 
-      elm = store.registry.get(lst[at])!;
+      elm = store.registry.get(siblings[at])!;
       const pos = elm.rect.getPosition();
 
       if (lastElmPosition) {
@@ -117,7 +118,7 @@ export function getInsertionELmMeta(
         position.clone(pos);
       }
     } else {
-      elm = store.registry.get(lst[insertAt])!;
+      elm = store.registry.get(siblings[insertAt])!;
       const pos = elm.rect.getPosition();
 
       position.clone(pos);
@@ -125,7 +126,7 @@ export function getInsertionELmMeta(
 
     // Assign the previous element if not orphan.
     if (!isOrphan && prevIndex >= 0) {
-      prevElm = store.registry.get(lst[prevIndex])!;
+      prevElm = store.registry.get(siblings[prevIndex])!;
     }
   }
 
@@ -174,6 +175,69 @@ export function handleElmMigration(
   )!;
 
   containerOrigin.preservePosition(lastInOrigin.rect.getPosition());
+}
+
+/**
+ * ["1","2","3"] (at=1) => 2
+ *
+ * ["","2", "3"] (at=0) => 2
+ *
+ * ["1","2", ""] (at=2) => 2
+ *
+ * ["1","", "3"] (at=1) => 3
+ *
+ * [""] at(0) => null
+ *
+ * [] at(0) => null
+ *
+ * @param at
+ * @param siblings
+ * @returns
+ */
+function getInsertionElm(at: number, siblings: string[]): DFlexElement | null {
+  let id = siblings[at];
+
+  const { length } = siblings;
+
+  if (id === "" && length > 1) {
+    switch (at) {
+      case 0: // ["",1,2,3]
+        [, id] = siblings;
+        break;
+
+      case length - 1: //  [0,1,2,""]
+        id = siblings[length - 2];
+        break;
+
+      default: // [0,"",2]
+        id = siblings[length - 1];
+        break;
+    }
+
+    if (!id) {
+      if (__DEV__) {
+        throw new Error(
+          `getNextELm: failed to extract valid element in ${[...siblings]}`
+        );
+      }
+    }
+  }
+
+  const nextElm = store.registry.get(id);
+
+  if (!nextElm) {
+    if (__DEV__) {
+      throw new Error(
+        `getNextELm: Error in calculating next element. Calculated: ${at} in ${[
+          ...siblings,
+        ]}`
+      );
+    }
+
+    return null;
+  }
+
+  return nextElm;
 }
 
 class DFlexPositionUpdater {
@@ -441,6 +505,12 @@ class DFlexPositionUpdater {
     cycleID: string,
     isIncrease: boolean
   ) {
+    const { draggedElm, occupiedPosition } = this.draggable;
+
+    if (!isIDEligible(id, draggedElm.id)) {
+      return;
+    }
+
     if (__DEV__) {
       // DFLex doesn't have error msg transformer yet for production.
       throwOnInfiniteTransformation(id);
@@ -448,29 +518,17 @@ class DFlexPositionUpdater {
 
     const [element, DOM] = store.getElmWithDOM(id);
 
-    const {
-      keys: { SK },
-    } = element;
+    const { index } = store.migration.latest();
 
-    const { grid: siblingsGrid } = store.containers.get(SK)!;
+    const directSibling = getInsertionElm(index, siblings);
 
-    const isContainerHasCol =
-      this.draggable.gridPlaceholder.x + 1 <= siblingsGrid.x;
+    // Default axis.
+    const axis: Axis = "y";
 
-    let axis: Axis;
-
-    if (isContainerHasCol) {
-      axis = "x";
-    } else {
-      axis = "y";
-
-      // const isContainerHasRowAbove =
-      //   this.draggable.gridPlaceholder.y + 1 <= siblingsGrid.y;
-
-      // if (isContainerHasRowAbove) {
-      //   // Bi-directional
-      //   axis = "z";
-      // }
+    if (directSibling) {
+      // axis = occupiedPosition.onSameAxis("y", directSibling.rect.getPosition())
+      //   ? "y"
+      //   : "x";
     }
 
     if (__DEV__) {
