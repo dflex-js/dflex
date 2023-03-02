@@ -28,8 +28,7 @@ function throwOnInfiniteTransformation(id: string) {
 
   if (infiniteTransformCount > MAX_TRANSFORM_COUNT) {
     throw new Error(
-      `Element ${id} is being transformed endlessly. This is causing infinite recursion affecting the element updater.` +
-        `This is most likely caused by a wrong threshold calculations.`
+      `Element ${id} is being transformed endlessly. This is causing infinite recursion affecting the element updater. This is most likely caused by a wrong threshold calculations.`
     );
   }
 }
@@ -467,9 +466,9 @@ class DFlexPositionUpdater {
         : "x";
 
     if (__DEV__) {
-      if (axis === "x") {
-        debugger;
-      }
+      // if (axis === "x") {
+      //   debugger;
+      // }
 
       if (featureFlags.enableMechanismDebugger) {
         // eslint-disable-next-line no-console
