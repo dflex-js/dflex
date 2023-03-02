@@ -523,12 +523,12 @@ class DFlexPositionUpdater {
     const directSibling = getInsertionElm(index, siblings);
 
     // Default axis.
-    const axis: Axis = "y";
+    let axis: Axis = "y";
 
     if (directSibling) {
-      // axis = occupiedPosition.onSameAxis("y", directSibling.rect.getPosition())
-      //   ? "y"
-      //   : "x";
+      axis = occupiedPosition.onSameAxis("y", directSibling.rect.getPosition())
+        ? "y"
+        : "x";
     }
 
     if (__DEV__) {
