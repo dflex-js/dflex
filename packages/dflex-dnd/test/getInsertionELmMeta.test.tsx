@@ -4,7 +4,7 @@ import * as ReactTestUtils from "react-dom/test-utils";
 import { Root, createRoot } from "react-dom/client";
 
 import { store } from "../src/LayoutManager";
-import { getInsertionELmMeta } from "../src/Mechanism/DFlexPositionUpdater";
+import { getInsertionELmMeta } from "../src/Mechanism";
 
 describe("getInsertionELmMeta", () => {
   const elm1 = {
@@ -53,10 +53,6 @@ describe("getInsertionELmMeta", () => {
 
           positions[elm.id] = ref.current.getBoundingClientRect();
         }
-
-        return () => {
-          store.unregister(elm.id);
-        };
       }, [ref]);
 
       return <div id={elm.id} key={elm.id} ref={ref} />;
