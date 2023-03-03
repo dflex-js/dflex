@@ -8,6 +8,7 @@ import type { Siblings } from "@dflex/dom-gen";
 import type DraggableInteractive from "../Draggable";
 
 import { store, DFLEX_EVENTS } from "../LayoutManager";
+import { isIDEligible } from "./DFlexMechanismController";
 
 const MAX_TRANSFORM_COUNT = 99; /** Infinite transform count */
 
@@ -27,8 +28,7 @@ function throwOnInfiniteTransformation(id: string) {
 
   if (infiniteTransformCount > MAX_TRANSFORM_COUNT) {
     throw new Error(
-      `Element ${id} is being transformed endlessly. This is causing infinite recursion affecting the element updater.` +
-        `This is most likely caused by a wrong threshold calculations.`
+      `Element ${id} is being transformed endlessly. This is causing infinite recursion affecting the element updater. This is most likely caused by a wrong threshold calculations.`
     );
   }
 }
@@ -62,17 +62,17 @@ export function getInsertionELmMeta(
   insertAt: number,
   SK: string
 ): InsertionELmMeta {
-  const lst = store.getElmSiblingsByKey(SK);
+  const siblings = store.getElmSiblingsByKey(SK);
 
-  const { length } = lst;
+  const { length } = siblings;
 
   // Restore the last known current position.
   const { lastElmPosition, originLength } = store.containers.get(SK)!;
 
   const position = new PointNum(0, 0);
-  const isEmpty = isEmptyBranch(lst);
+  const isEmpty = isEmptyBranch(siblings);
 
-  const isLastEmpty = lst[length - 1] === APPEND_EMPTY_ELM_ID;
+  const isLastEmpty = siblings[length - 1] === APPEND_EMPTY_ELM_ID;
 
   // ["id"] || ["id", ""]
   const isOrphan = !isEmpty && (length === 1 || (length === 2 && isLastEmpty));
@@ -101,7 +101,7 @@ export function getInsertionELmMeta(
         at -= 1;
       }
 
-      elm = store.registry.get(lst[at])!;
+      elm = store.registry.get(siblings[at])!;
       const pos = elm.rect.getPosition();
 
       if (lastElmPosition) {
@@ -117,7 +117,7 @@ export function getInsertionELmMeta(
         position.clone(pos);
       }
     } else {
-      elm = store.registry.get(lst[insertAt])!;
+      elm = store.registry.get(siblings[insertAt])!;
       const pos = elm.rect.getPosition();
 
       position.clone(pos);
@@ -125,7 +125,7 @@ export function getInsertionELmMeta(
 
     // Assign the previous element if not orphan.
     if (!isOrphan && prevIndex >= 0) {
-      prevElm = store.registry.get(lst[prevIndex])!;
+      prevElm = store.registry.get(siblings[prevIndex])!;
     }
   }
 
@@ -441,6 +441,12 @@ class DFlexPositionUpdater {
     cycleID: string,
     isIncrease: boolean
   ) {
+    const { draggedElm, occupiedPosition } = this.draggable;
+
+    if (!isIDEligible(id, draggedElm.id)) {
+      return;
+    }
+
     if (__DEV__) {
       // DFLex doesn't have error msg transformer yet for production.
       throwOnInfiniteTransformation(id);
@@ -448,30 +454,16 @@ class DFlexPositionUpdater {
 
     const [element, DOM] = store.getElmWithDOM(id);
 
-    const {
-      keys: { SK },
-    } = element;
-
-    const { grid: siblingsGrid } = store.containers.get(SK)!;
-
-    const isContainerHasCol =
-      this.draggable.gridPlaceholder.x + 1 <= siblingsGrid.x;
-
-    let axis: Axis;
-
-    if (isContainerHasCol) {
-      axis = "x";
-    } else {
-      axis = "y";
-
-      // const isContainerHasRowAbove =
-      //   this.draggable.gridPlaceholder.y + 1 <= siblingsGrid.y;
-
-      // if (isContainerHasRowAbove) {
-      //   // Bi-directional
-      //   axis = "z";
-      // }
-    }
+    const axis: Axis =
+      occupiedPosition.onSameAxis("y", element.rect.getPosition()) ||
+      element.rect.isPositionedY({
+        left: occupiedPosition.x,
+        top: occupiedPosition.y,
+        bottom: occupiedPosition.y + draggedElm.rect.height,
+        right: occupiedPosition.x + draggedElm.rect.width,
+      })
+        ? "y"
+        : "x";
 
     if (__DEV__) {
       if (featureFlags.enableMechanismDebugger) {
