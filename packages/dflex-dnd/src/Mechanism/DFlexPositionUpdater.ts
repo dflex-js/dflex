@@ -466,10 +466,6 @@ class DFlexPositionUpdater {
         : "x";
 
     if (__DEV__) {
-      // if (axis === "x") {
-      //   debugger;
-      // }
-
       if (featureFlags.enableMechanismDebugger) {
         // eslint-disable-next-line no-console
         console.log(`Switching element on axis: ${axis}`);
