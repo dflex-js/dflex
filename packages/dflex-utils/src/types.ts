@@ -3,11 +3,6 @@ export interface Dimensions {
   width: number;
 }
 
-export interface RectDimensions extends Dimensions {
-  top: number;
-  left: number;
-}
-
 export type Direction = 1 | -1;
 
 /** Single Axis. */

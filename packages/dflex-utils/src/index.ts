@@ -11,13 +11,7 @@ export { default as TaskQueue } from "./TaskQueue";
 export { DFlexCycle } from "./DFlexCycle";
 export type { AbstractDFlexCycle } from "./DFlexCycle";
 
-export type {
-  Dimensions,
-  RectDimensions,
-  Axes,
-  Axis,
-  Direction,
-} from "./types";
+export type { Dimensions, Axes, Axis, Direction } from "./types";
 
 export {
   combineKeys,
