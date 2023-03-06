@@ -248,9 +248,10 @@ class DFlexPositionUpdater {
 
     if (axis !== "z") {
       this.draggedTransition[axis] *= draggedDirection;
+      this.draggable.occupiedTranslate[axis] += this.draggedTransition[axis];
     }
 
-    this.draggable.occupiedTranslate.clone(this.draggedTransition);
+    // this.draggable.occupiedTranslate.clone(this.draggedTransition);
 
     // this.draggable.occupiedTranslate.increase(
     //   this.draggedTransition.getMultiplied(draggedDirection)
