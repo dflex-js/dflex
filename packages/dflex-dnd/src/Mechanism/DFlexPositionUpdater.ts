@@ -472,7 +472,7 @@ class DFlexPositionUpdater {
 
     const [element, DOM] = store.getElmWithDOM(id);
 
-    let axis: Axes = element.rect.isPositionedY({
+    const axis: Axes = element.rect.isPositionedY({
       left: occupiedPosition.x,
       top: occupiedPosition.y,
       bottom: occupiedPosition.y + draggedElm.rect.height,
@@ -481,9 +481,9 @@ class DFlexPositionUpdater {
       ? "y"
       : "x";
 
-    if (!occupiedPosition.onSameAxis(axis, element.rect.getPosition())) {
-      axis = "z";
-    }
+    // if (!occupiedPosition.onSameAxis(axis, element.rect.getPosition())) {
+    //   axis = "z";
+    // }
 
     if (__DEV__) {
       if (featureFlags.enableMechanismDebugger) {
