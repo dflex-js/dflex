@@ -19,10 +19,10 @@ class PointNum extends Point<number> {
    *
    * @param val
    */
-  multiplyAll(val: number): void {
-    this.x *= val;
-    this.y *= val;
-  }
+  // multiplyAll(val: number): void {
+  //   this.x *= val;
+  //   this.y *= val;
+  // }
 
   /**
    * Gets new instance of PointNum multiplied by the given value.

@@ -12,6 +12,7 @@ export { DFlexCycle } from "./DFlexCycle";
 export type { AbstractDFlexCycle } from "./DFlexCycle";
 
 export type { Dimensions, Axes, Axis, Direction } from "./types";
+export { BOTH_AXIS } from "./types";
 
 export {
   combineKeys,

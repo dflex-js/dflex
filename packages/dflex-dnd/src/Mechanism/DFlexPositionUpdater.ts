@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { DFlexElement } from "@dflex/core-instance";
 
-import { featureFlags, PointNum } from "@dflex/utils";
+import { Axes, BOTH_AXIS, featureFlags, PointNum } from "@dflex/utils";
 import type { AxesPoint, Direction, Axis, AbstractBox } from "@dflex/utils";
 
 import type { Siblings } from "@dflex/dom-gen";
@@ -251,14 +251,21 @@ class DFlexPositionUpdater {
 
   private updateIndicators(
     element: DFlexElement,
-    axis: Axis,
+    axis: Axes,
     elmDirection: Direction
   ) {
     this.elmTransition.setAxes(0, 0);
     this.draggedTransition.setAxes(0, 0);
     this.draggedPositionOffset.setAxes(0, 0);
 
-    this.setDistanceBtwPositions(element, axis, elmDirection);
+    if (axis === "z") {
+      BOTH_AXIS.forEach((_axis) => {
+        this.setDistanceBtwPositions(element, _axis, elmDirection);
+      });
+    } else {
+      this.setDistanceBtwPositions(element, axis, elmDirection);
+    }
+
     this.updateDraggable(element, elmDirection);
   }
 
@@ -454,21 +461,23 @@ class DFlexPositionUpdater {
 
     const [element, DOM] = store.getElmWithDOM(id);
 
-    const axis: Axis =
-      occupiedPosition.onSameAxis("y", element.rect.getPosition()) ||
-      element.rect.isPositionedY({
-        left: occupiedPosition.x,
-        top: occupiedPosition.y,
-        bottom: occupiedPosition.y + draggedElm.rect.height,
-        right: occupiedPosition.x + draggedElm.rect.width,
-      })
-        ? "y"
-        : "x";
+    let axis: Axes = element.rect.isPositionedY({
+      left: occupiedPosition.x,
+      top: occupiedPosition.y,
+      bottom: occupiedPosition.y + draggedElm.rect.height,
+      right: occupiedPosition.x + draggedElm.rect.width,
+    })
+      ? "y"
+      : "x";
+
+    if (!occupiedPosition.onSameAxis(axis, element.rect.getPosition())) {
+      axis = "z";
+    }
 
     if (__DEV__) {
       if (featureFlags.enableMechanismDebugger) {
         // eslint-disable-next-line no-console
-        console.log(`Switching element on axis: ${axis}`);
+        console.log(`Switching element ${id} on axis: ${axis}`);
       }
     }
 
