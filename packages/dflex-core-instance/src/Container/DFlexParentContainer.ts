@@ -4,7 +4,7 @@ import { PointNum, AbstractBox, BoxRect, BoxNum } from "@dflex/utils";
 import type { Dimensions, AxesPoint } from "@dflex/utils";
 
 class DFlexParentContainer {
-  private _boundariesByRow: Record<number, BoxNum>;
+  private _boundariesByRow: BoxNum;
 
   /** Strict Rect for siblings containers. */
   private _siblingBoundaries: BoxNum | null;
@@ -22,8 +22,6 @@ class DFlexParentContainer {
 
   id: string;
 
-  private _gridSiblingsHasNewRow: boolean;
-
   /**
    * Preserve the last element position in the list .
    * Usage: Getting this position when the dragged is going back from the tail.
@@ -34,10 +32,9 @@ class DFlexParentContainer {
 
   constructor(DOM: HTMLElement, originLength: number, id: string) {
     this.id = id;
-    this.grid = new PointNum(1, 1);
+    this.grid = new PointNum(0, 0);
     this.originLength = originLength;
-    this._boundariesByRow = {};
-    this._gridSiblingsHasNewRow = false;
+    this._boundariesByRow = new BoxNum(0, 0, 0, 0);
     this._siblingBoundaries = null;
     this._initRect(DOM);
     // @ts-expect-error
@@ -51,38 +48,17 @@ class DFlexParentContainer {
   }
 
   private _addNewElmToGridIndicator(rect: AbstractBox): void {
-    if (!this._boundariesByRow[this.grid.x]) {
-      this._boundariesByRow[this.grid.x] = new BoxNum(
-        rect.top,
-        rect.right,
-        rect.bottom,
-        rect.left
-      );
-
-      return;
-    }
-
-    const $ = this._boundariesByRow[this.grid.x];
+    const $ = this._boundariesByRow;
 
     // Defining elements in different row.
-    if (rect.bottom > $.bottom || rect.top < $.top) {
+    const isNewRow = $.isPositionedY(rect);
+
+    if (isNewRow) {
       this.grid.y += 1;
-
-      this._gridSiblingsHasNewRow = true;
-
-      $.left = 0;
-      $.right = 0;
-    }
-
-    // Defining elements in different column.
-    if (rect.left > $.right || rect.right < $.left) {
-      if (this._gridSiblingsHasNewRow) {
-        this.grid.x = 1;
-
-        this._gridSiblingsHasNewRow = false;
-      } else {
-        this.grid.x += 1;
-      }
+      this.grid.x = 1;
+      this._boundariesByRow.setBox(0, 0, 0, 0);
+    } else {
+      this.grid.x += 1;
     }
 
     $.assignBiggestBox(rect);
@@ -142,10 +118,9 @@ class DFlexParentContainer {
    * @param originLength
    */
   resetIndicators(originLength: number): void {
-    this.grid.setAxes(1, 1);
+    this.grid.setAxes(0, 0);
     this.originLength = originLength;
-    this._boundariesByRow = {};
-    this._gridSiblingsHasNewRow = false;
+    this._boundariesByRow.setBox(0, 0, 0, 0);
     this._siblingBoundaries = null;
     // @ts-expect-error
     this.lastElmPosition = null;

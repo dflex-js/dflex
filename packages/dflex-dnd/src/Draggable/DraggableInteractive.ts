@@ -168,6 +168,11 @@ class DraggableInteractive extends DraggableAxes {
 
     this.draggedElm.assignNewIndex(siblings, index);
 
+    if (__DEV__) {
+      draggedDOM.dataset.x = `${DOMGrid.x}`;
+      draggedDOM.dataset.y = `${DOMGrid.y}`;
+    }
+
     // If it's going to reconcile to the DOM then there's no need to update the
     // transformation here.
     if (!willReconcile) {

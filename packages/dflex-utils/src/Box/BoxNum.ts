@@ -58,16 +58,6 @@ class BoxNum extends Box<number> {
   //   );
   // }
 
-  /**
-   * True when it's outside of other box.
-   *
-   * @param box
-   * @returns
-   */
-  // isOutside(box: AbstractBox): boolean {
-  //   return !this.isInside(box);
-  // }
-
   isPositionedY(box: AbstractBox) {
     return this._isUnder(box) || this._isAbove(box);
   }
