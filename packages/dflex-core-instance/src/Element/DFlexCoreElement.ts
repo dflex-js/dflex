@@ -206,6 +206,11 @@ class DFlexCoreElement extends DFlexBaseElement {
   updateIndex(DOM: HTMLElement, i: number) {
     this.setAttribute(DOM, "INDEX", i);
     this.VDOMOrder.self = i;
+
+    if (__DEV__) {
+      DOM.dataset.x = `${this.DOMGrid.x}`;
+      DOM.dataset.y = `${this.DOMGrid.y}`;
+    }
   }
 
   assignNewIndex(branchIDsOrder: string[], newIndex: number): void {
