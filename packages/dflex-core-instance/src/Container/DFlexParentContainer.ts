@@ -32,7 +32,7 @@ class DFlexParentContainer {
 
   constructor(DOM: HTMLElement, originLength: number, id: string) {
     this.id = id;
-    this.grid = new PointNum(0, 0);
+    this.grid = new PointNum(-1, -1);
     this.originLength = originLength;
     this._boundariesByRow = new BoxNum(0, 0, 0, 0);
     this._siblingBoundaries = null;
@@ -55,7 +55,7 @@ class DFlexParentContainer {
 
     if (isNewRow) {
       this.grid.y += 1;
-      this.grid.x = 1;
+      this.grid.x = 0;
       this._boundariesByRow.setBox(0, 0, 0, 0);
     } else {
       this.grid.x += 1;
@@ -118,7 +118,7 @@ class DFlexParentContainer {
    * @param originLength
    */
   resetIndicators(originLength: number): void {
-    this.grid.setAxes(0, 0);
+    this.grid.setAxes(-1, -1);
     this.originLength = originLength;
     this._boundariesByRow.setBox(0, 0, 0, 0);
     this._siblingBoundaries = null;
