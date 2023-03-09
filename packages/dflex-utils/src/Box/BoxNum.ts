@@ -3,19 +3,19 @@ import Box from "./Box";
 
 class BoxNum extends Box<number> {
   private _isUnder(box: AbstractBox) {
-    return this.top > box.bottom;
+    return this.top >= box.bottom;
   }
 
   private _isAbove(box: AbstractBox) {
-    return this.bottom < box.top;
+    return this.bottom <= box.top;
   }
 
   private _isOnLeft(box: AbstractBox) {
-    return this.right < box.left;
+    return this.right <= box.left;
   }
 
   private _isOneRight(box: AbstractBox) {
-    return this.left > box.right;
+    return this.left >= box.right;
   }
 
   /**
