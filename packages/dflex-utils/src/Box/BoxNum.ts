@@ -2,31 +2,20 @@ import type AbstractBox from "./AbstractBox";
 import Box from "./Box";
 
 class BoxNum extends Box<number> {
-  clone(box: AbstractBox) {
-    this.left = box.left;
-    this.top = box.top;
-    this.right = box.right;
-    this.bottom = box.bottom;
+  private _isUnder(box: AbstractBox) {
+    return this.top >= box.bottom;
   }
 
-  hasSamePoint(box: AbstractBox) {
-    return this.left === box.left && this.top === box.top;
+  private _isAbove(box: AbstractBox) {
+    return this.bottom <= box.top;
   }
 
-  isUnder(box: AbstractBox) {
-    return this.top > box.bottom;
+  private _isOnLeft(box: AbstractBox) {
+    return this.right <= box.left;
   }
 
-  isAbove(box: AbstractBox) {
-    return this.bottom < box.top;
-  }
-
-  isOnLeft(box: AbstractBox) {
-    return this.right < box.left;
-  }
-
-  isOneRight(box: AbstractBox) {
-    return this.left > box.right;
+  private _isOneRight(box: AbstractBox) {
+    return this.left >= box.right;
   }
 
   /**
@@ -37,10 +26,10 @@ class BoxNum extends Box<number> {
    */
   isNotIntersect(box: AbstractBox): boolean {
     return (
-      this.isUnder(box) ||
-      this.isOnLeft(box) ||
-      this.isAbove(box) ||
-      this.isOneRight(box)
+      this._isUnder(box) ||
+      this._isOnLeft(box) ||
+      this._isAbove(box) ||
+      this._isOneRight(box)
     );
   }
 
@@ -60,27 +49,17 @@ class BoxNum extends Box<number> {
    * @param box
    * @returns
    */
-  isInside(box: AbstractBox): boolean {
-    return (
-      this.top >= box.top &&
-      this.right <= box.right &&
-      this.bottom <= box.bottom &&
-      this.left >= box.left
-    );
-  }
-
-  /**
-   * True when it's outside of other box.
-   *
-   * @param box
-   * @returns
-   */
-  isOutside(box: AbstractBox): boolean {
-    return !this.isInside(box);
-  }
+  // isInside(box: AbstractBox): boolean {
+  //   return (
+  //     this.top >= box.top &&
+  //     this.right <= box.right &&
+  //     this.bottom <= box.bottom &&
+  //     this.left >= box.left
+  //   );
+  // }
 
   isPositionedY(box: AbstractBox) {
-    return this.isUnder(box) || this.isAbove(box);
+    return this._isUnder(box) || this._isAbove(box);
   }
 
   assignBiggestBox(box: AbstractBox) {

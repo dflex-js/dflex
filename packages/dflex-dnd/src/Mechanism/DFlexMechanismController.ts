@@ -423,7 +423,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       }
 
       // Leaving from top.
-      if (newRow === 0) {
+      if (newRow === -1) {
         // lock the parent
         this._lockParent(true);
 

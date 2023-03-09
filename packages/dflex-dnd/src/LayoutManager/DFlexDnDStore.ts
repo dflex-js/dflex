@@ -153,6 +153,11 @@ class DFlexDnDStore extends DFlexBaseStore {
     dflexElm.resume(DOM);
 
     this.setElmGridBridge(container, dflexElm);
+
+    if (__DEV__) {
+      DOM.dataset.x = `${dflexElm.DOMGrid.x}`;
+      DOM.dataset.y = `${dflexElm.DOMGrid.y}`;
+    }
   }
 
   private _initSiblings(

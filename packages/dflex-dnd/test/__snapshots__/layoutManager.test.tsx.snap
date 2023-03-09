@@ -73,6 +73,8 @@ DFlexDnDStore {
   >
     <div
       data-index="0"
+      data-x="0"
+      data-y="0"
       id="id-1"
     />
   </div>,
@@ -87,15 +89,12 @@ DFlexDnDStore {
   "_windowResizeHandler": [Function],
   "containers": Map {
     "dflex_sk_0_0" => DFlexParentContainer {
-      "_boundariesByRow": {
-        "1": BoxNum {
-          "bottom": 0,
-          "left": 0,
-          "right": 0,
-          "top": 0,
-        },
+      "_boundariesByRow": BoxNum {
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
       },
-      "_gridSiblingsHasNewRow": false,
       "_rect": BoxRect {
         "bottom": 0,
         "height": 0,
@@ -111,23 +110,20 @@ DFlexDnDStore {
         "top": 0,
       },
       "grid": PointNum {
-        "x": 1,
-        "y": 1,
+        "x": 0,
+        "y": 0,
       },
       "id": "dflex_id_0",
       "lastElmPosition": null,
       "originLength": 1,
     },
     "dflex_sk_0_1" => DFlexParentContainer {
-      "_boundariesByRow": {
-        "1": BoxNum {
-          "bottom": 0,
-          "left": 0,
-          "right": 0,
-          "top": 0,
-        },
+      "_boundariesByRow": BoxNum {
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
       },
-      "_gridSiblingsHasNewRow": false,
       "_rect": BoxRect {
         "bottom": 0,
         "height": 0,
@@ -143,8 +139,8 @@ DFlexDnDStore {
         "top": 0,
       },
       "grid": PointNum {
-        "x": 1,
-        "y": 1,
+        "x": 0,
+        "y": 2,
       },
       "id": "dflex_id_1",
       "lastElmPosition": null,
@@ -158,6 +154,8 @@ DFlexDnDStore {
   "interactiveDOM": Map {
     "id-1" => <div
       data-index="0"
+      data-x="0"
+      data-y="0"
       id="id-1"
     />,
     "dflex_id_0" => <div
@@ -167,19 +165,27 @@ DFlexDnDStore {
     >
       <div
         data-index="0"
+        data-x="0"
+        data-y="0"
         id="id-1"
       />
     </div>,
     "id-2" => <div
       data-index="0"
+      data-x="0"
+      data-y="0"
       id="id-2"
     />,
     "id-3" => <div
       data-index="1"
+      data-x="0"
+      data-y="1"
       id="id-3"
     />,
     "id-4" => <div
       data-index="2"
+      data-x="0"
+      data-y="2"
       id="id-4"
     />,
     "dflex_id_1" => <div
@@ -189,14 +195,20 @@ DFlexDnDStore {
     >
       <div
         data-index="0"
+        data-x="0"
+        data-y="0"
         id="id-2"
       />
       <div
         data-index="1"
+        data-x="0"
+        data-y="1"
         id="id-3"
       />
       <div
         data-index="2"
+        data-x="0"
+        data-y="2"
         id="id-4"
       />
     </div>,
@@ -216,8 +228,8 @@ DFlexDnDStore {
   "registry": Map {
     "id-1" => DFlexElement {
       "DOMGrid": PointNum {
-        "x": 1,
-        "y": 1,
+        "x": 0,
+        "y": 0,
       },
       "DOMOrder": {
         "parent": 0,
@@ -301,8 +313,8 @@ DFlexDnDStore {
     },
     "id-2" => DFlexElement {
       "DOMGrid": PointNum {
-        "x": 1,
-        "y": 1,
+        "x": 0,
+        "y": 0,
       },
       "DOMOrder": {
         "parent": 1,
@@ -346,7 +358,7 @@ DFlexDnDStore {
     },
     "id-3" => DFlexElement {
       "DOMGrid": PointNum {
-        "x": 1,
+        "x": 0,
         "y": 1,
       },
       "DOMOrder": {
@@ -391,8 +403,8 @@ DFlexDnDStore {
     },
     "id-4" => DFlexElement {
       "DOMGrid": PointNum {
-        "x": 1,
-        "y": 1,
+        "x": 0,
+        "y": 2,
       },
       "DOMOrder": {
         "parent": 1,
@@ -511,6 +523,8 @@ DFlexDnDStore {
               >
                 <div
                   data-index="0"
+                  data-x="0"
+                  data-y="0"
                   id="id-1"
                 />
               </div>
@@ -521,14 +535,20 @@ DFlexDnDStore {
               >
                 <div
                   data-index="0"
+                  data-x="0"
+                  data-y="0"
                   id="id-2"
                 />
                 <div
                   data-index="1"
+                  data-x="0"
+                  data-y="1"
                   id="id-3"
                 />
                 <div
                   data-index="2"
+                  data-x="0"
+                  data-y="2"
                   id="id-4"
                 />
               </div>
@@ -588,6 +608,8 @@ DFlexDnDStore {
               >
                 <div
                   data-index="0"
+                  data-x="0"
+                  data-y="0"
                   id="id-1"
                 />
               </div>
@@ -598,14 +620,20 @@ DFlexDnDStore {
               >
                 <div
                   data-index="0"
+                  data-x="0"
+                  data-y="0"
                   id="id-2"
                 />
                 <div
                   data-index="1"
+                  data-x="0"
+                  data-y="1"
                   id="id-3"
                 />
                 <div
                   data-index="2"
+                  data-x="0"
+                  data-y="2"
                   id="id-4"
                 />
               </div>

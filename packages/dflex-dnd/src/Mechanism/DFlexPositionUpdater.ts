@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { DFlexElement } from "@dflex/core-instance";
 
-import { featureFlags, PointNum } from "@dflex/utils";
+import { Axes, BOTH_AXIS, featureFlags, PointNum } from "@dflex/utils";
 import type { AxesPoint, Direction, Axis, AbstractBox } from "@dflex/utils";
 
 import type { Siblings } from "@dflex/dom-gen";
@@ -207,9 +207,9 @@ class DFlexPositionUpdater {
   }
 
   private setDistanceBtwPositions(
-    element: DFlexElement,
     axis: Axis,
-    elmDirection: Direction
+    elmDirection: Direction,
+    element: DFlexElement
   ) {
     const { occupiedPosition, draggedElm } = this.draggable;
 
@@ -232,7 +232,11 @@ class DFlexPositionUpdater {
     }
   }
 
-  private updateDraggable(element: DFlexElement, elmDirection: Direction) {
+  private updateDraggable(
+    axis: Axes,
+    elmDirection: Direction,
+    element: DFlexElement
+  ) {
     const { rect, DOMGrid: grid } = element;
 
     this.draggable.occupiedPosition.setAxes(
@@ -242,24 +246,38 @@ class DFlexPositionUpdater {
 
     const draggedDirection = -1 * elmDirection;
 
-    this.draggable.occupiedTranslate.increase(
-      this.draggedTransition.getMultiplied(draggedDirection)
-    );
+    if (axis !== "z") {
+      this.draggedTransition[axis] *= draggedDirection;
+      this.draggable.occupiedTranslate[axis] += this.draggedTransition[axis];
+    }
+
+    // this.draggable.occupiedTranslate.clone(this.draggedTransition);
+
+    // this.draggable.occupiedTranslate.increase(
+    //   this.draggedTransition.getMultiplied(draggedDirection)
+    // );
 
     this.draggable.gridPlaceholder.clone(grid);
   }
 
   private updateIndicators(
-    element: DFlexElement,
-    axis: Axis,
-    elmDirection: Direction
+    axis: Axes,
+    elmDirection: Direction,
+    element: DFlexElement
   ) {
     this.elmTransition.setAxes(0, 0);
     this.draggedTransition.setAxes(0, 0);
     this.draggedPositionOffset.setAxes(0, 0);
 
-    this.setDistanceBtwPositions(element, axis, elmDirection);
-    this.updateDraggable(element, elmDirection);
+    if (axis === "z") {
+      BOTH_AXIS.forEach((_axis) => {
+        this.setDistanceBtwPositions(_axis, elmDirection, element);
+      });
+    } else {
+      this.setDistanceBtwPositions(axis, elmDirection, element);
+    }
+
+    this.updateDraggable(axis, elmDirection, element);
   }
 
   protected updateDraggedThresholdPosition(
@@ -333,7 +351,7 @@ class DFlexPositionUpdater {
       y: DFlexElement.getDistance(position, draggedElm, "y"),
     };
 
-    const composedGrid = new PointNum(1, 1);
+    const composedGrid = new PointNum(0, 0);
 
     // Get the stored position if the branch is empty.
     if (!isEmpty) {
@@ -454,27 +472,29 @@ class DFlexPositionUpdater {
 
     const [element, DOM] = store.getElmWithDOM(id);
 
-    const axis: Axis =
-      occupiedPosition.onSameAxis("y", element.rect.getPosition()) ||
-      element.rect.isPositionedY({
-        left: occupiedPosition.x,
-        top: occupiedPosition.y,
-        bottom: occupiedPosition.y + draggedElm.rect.height,
-        right: occupiedPosition.x + draggedElm.rect.width,
-      })
-        ? "y"
-        : "x";
+    const axis: Axes = element.rect.isPositionedY({
+      left: occupiedPosition.x,
+      top: occupiedPosition.y,
+      bottom: occupiedPosition.y + draggedElm.rect.height,
+      right: occupiedPosition.x + draggedElm.rect.width,
+    })
+      ? "y"
+      : "x";
+
+    // if (!occupiedPosition.onSameAxis(axis, element.rect.getPosition())) {
+    //   axis = "z";
+    // }
 
     if (__DEV__) {
       if (featureFlags.enableMechanismDebugger) {
         // eslint-disable-next-line no-console
-        console.log(`Switching element on axis: ${axis}`);
+        console.log(`Switching element ${id} on axis: ${axis}`);
       }
     }
 
     const elmDirection: Direction = isIncrease ? -1 : 1;
 
-    this.updateIndicators(element, axis, elmDirection);
+    this.updateIndicators(axis, elmDirection, element);
 
     // TODO: always true for the first element
     if (!this.isParentLocked) {

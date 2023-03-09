@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   BoxRect,
   BoxRectAbstract,
@@ -5,6 +6,7 @@ import {
   PointNum,
   assertElementPosition,
   getElmComputedDimensions,
+  BOTH_AXIS,
 } from "@dflex/utils";
 import type { Direction, Axes, AxesPoint } from "@dflex/utils";
 
@@ -204,6 +206,11 @@ class DFlexCoreElement extends DFlexBaseElement {
   updateIndex(DOM: HTMLElement, i: number) {
     this.setAttribute(DOM, "INDEX", i);
     this.VDOMOrder.self = i;
+
+    if (__DEV__) {
+      DOM.dataset.x = `${this.DOMGrid.x}`;
+      DOM.dataset.y = `${this.DOMGrid.y}`;
+    }
   }
 
   assignNewIndex(branchIDsOrder: string[], newIndex: number): void {
@@ -320,14 +327,14 @@ class DFlexCoreElement extends DFlexBaseElement {
    *
    * @param DOM
    * @param siblings
-   * @param direction
+   * @param mainAxisDirection
    * @param elmPos
    * @param operationID
    * @param axis
    */
   reconcilePosition(
     axis: Axes,
-    direction: Direction,
+    mainAxisDirection: Direction,
     DOM: HTMLElement,
     siblings: string[],
     elmPos: PointNum,
@@ -336,13 +343,23 @@ class DFlexCoreElement extends DFlexBaseElement {
     const numberOfPassedElm = 1;
 
     /**
-     * effectedElemDirection decides the direction of the element, negative or positive.
-     * If the element is dragged to the left, the effectedElemDirection is -1.
+     * `mainAxisDirection` decides the direction of the element, negative or positive.
+     * If the element is dragged to the left, the `mainAxisDirection` is -1.
      */
     if (axis === "z") {
-      elmPos.multiplyAll(direction);
+      BOTH_AXIS.forEach((_axis, i) => {
+        // i=0 for `X` which is the opposite of the main axis(`Y`) when dragging on `Z`
+        const direction =
+          i === 0 ? (mainAxisDirection === 1 ? -1 : 1) : mainAxisDirection;
+
+        elmPos[_axis] *= direction;
+
+        this.DOMGrid[_axis] += mainAxisDirection * numberOfPassedElm;
+      });
     } else {
-      elmPos[axis] *= direction;
+      elmPos[axis] *= mainAxisDirection;
+
+      this.DOMGrid[axis] += mainAxisDirection * numberOfPassedElm;
     }
 
     this._pushToTranslateHistory(axis, operationID);
@@ -351,15 +368,8 @@ class DFlexCoreElement extends DFlexBaseElement {
       DOM,
       elmPos,
       false,
-      direction * numberOfPassedElm
+      mainAxisDirection * numberOfPassedElm
     );
-
-    if (axis === "z") {
-      const inc = direction * numberOfPassedElm;
-      this.DOMGrid.increase({ x: inc, y: inc });
-    } else {
-      this.DOMGrid[axis] += direction * numberOfPassedElm;
-    }
 
     this._leaveToNewIndex(siblings, newIndex, oldIndex);
 
