@@ -351,7 +351,7 @@ class DFlexPositionUpdater {
       y: DFlexElement.getDistance(position, draggedElm, "y"),
     };
 
-    const composedGrid = new PointNum(1, 1);
+    const composedGrid = new PointNum(0, 0);
 
     // Get the stored position if the branch is empty.
     if (!isEmpty) {
