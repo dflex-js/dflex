@@ -279,11 +279,7 @@ class DFlexPositionUpdater {
     this.updateDraggable(axis, elmDirection, element);
   }
 
-  protected updateDraggedThresholdPosition(
-    x: number,
-    y: number,
-    rect: AbstractBox | null
-  ) {
+  protected updateDraggedThresholdPosition(x: number, y: number) {
     const {
       threshold,
       draggedElm: {
@@ -291,12 +287,6 @@ class DFlexPositionUpdater {
         rect: { width, height },
       },
     } = this.draggable;
-
-    if (rect) {
-      threshold.updateMainThreshold(id, rect, false);
-
-      return;
-    }
 
     const composedBox = {
       top: y,
@@ -383,8 +373,7 @@ class DFlexPositionUpdater {
 
     this.updateDraggedThresholdPosition(
       composedTranslate.x,
-      composedTranslate.y,
-      null
+      composedTranslate.y
     );
 
     return { translate: composedTranslate, grid: composedGrid };
@@ -521,7 +510,7 @@ class DFlexPositionUpdater {
 
       const { rect } = element;
 
-      this.updateDraggedThresholdPosition(rect.left, rect.top, null);
+      this.updateDraggedThresholdPosition(rect.left, rect.top);
     }
 
     this.draggable.events.dispatch(

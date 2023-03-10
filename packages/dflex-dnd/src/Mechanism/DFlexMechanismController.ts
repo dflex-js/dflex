@@ -122,8 +122,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       if (!migration.isTransitioning && lastElmPosition) {
         this.updateDraggedThresholdPosition(
           lastElmPosition.x,
-          lastElmPosition.y,
-          null
+          lastElmPosition.y
         );
       }
 
