@@ -459,7 +459,7 @@ class DFlexPositionUpdater {
     cycleID: string,
     isIncrease: boolean
   ) {
-    const { draggedElm, occupiedPosition } = this.draggable;
+    const { draggedElm, occupiedPosition, gridPlaceholder } = this.draggable;
 
     if (!isIDEligible(id, draggedElm.id)) {
       return;
@@ -472,7 +472,7 @@ class DFlexPositionUpdater {
 
     const [element, DOM] = store.getElmWithDOM(id);
 
-    const axis: Axes = element.rect.isPositionedY({
+    let axis: Axes = element.rect.isPositionedY({
       left: occupiedPosition.x,
       top: occupiedPosition.y,
       bottom: occupiedPosition.y + draggedElm.rect.height,
@@ -481,9 +481,23 @@ class DFlexPositionUpdater {
       ? "y"
       : "x";
 
-    // if (!occupiedPosition.onSameAxis(axis, element.rect.getPosition())) {
-    //   axis = "z";
-    // }
+    const onSameAxis = occupiedPosition.onSameAxis(
+      axis,
+      element.rect.getPosition()
+    );
+
+    if (!onSameAxis) {
+      const isPartOfZGrid = (_axis: Axis) => {
+        // eslint-disable-next-line no-underscore-dangle
+        return element.DOMGrid[_axis] > 0 || gridPlaceholder[_axis] > 0;
+      };
+
+      if (axis === "y" && isPartOfZGrid("x")) {
+        axis = "z";
+      } else if (axis === "x" && isPartOfZGrid("y")) {
+        axis = "z";
+      }
+    }
 
     if (__DEV__) {
       if (featureFlags.enableMechanismDebugger) {
