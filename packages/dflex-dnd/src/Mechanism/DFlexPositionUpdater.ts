@@ -8,7 +8,6 @@ import type { Siblings } from "@dflex/dom-gen";
 import type DraggableInteractive from "../Draggable";
 
 import { store, DFLEX_EVENTS } from "../LayoutManager";
-import { isIDEligible } from "./DFlexMechanismController";
 
 const MAX_TRANSFORM_COUNT = 99; /** Infinite transform count */
 
@@ -461,10 +460,6 @@ class DFlexPositionUpdater {
   ) {
     const { draggedElm, occupiedPosition, gridPlaceholder } = this.draggable;
 
-    if (!isIDEligible(id, draggedElm.id)) {
-      return;
-    }
-
     if (__DEV__) {
       // DFLex doesn't have error msg transformer yet for production.
       throwOnInfiniteTransformation(id);
@@ -502,7 +497,7 @@ class DFlexPositionUpdater {
     if (__DEV__) {
       if (featureFlags.enableMechanismDebugger) {
         // eslint-disable-next-line no-console
-        console.log(`Switching element ${id} on axis: ${axis}`);
+        console.log(`Update element ${id} on axis: ${axis}`);
       }
     }
 
@@ -526,7 +521,7 @@ class DFlexPositionUpdater {
 
       const { rect } = element;
 
-      this.updateDraggedThresholdPosition(-1, -1, rect);
+      this.updateDraggedThresholdPosition(rect.left, rect.top, null);
     }
 
     this.draggable.events.dispatch(
