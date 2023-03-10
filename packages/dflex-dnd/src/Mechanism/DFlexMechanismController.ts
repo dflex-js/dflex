@@ -122,8 +122,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       if (!migration.isTransitioning && lastElmPosition) {
         this.updateDraggedThresholdPosition(
           lastElmPosition.x,
-          lastElmPosition.y,
-          null
+          lastElmPosition.y
         );
       }
 
@@ -327,6 +326,13 @@ class DFlexMechanismController extends DFlexScrollableElement {
       return;
     }
 
+    if (__DEV__) {
+      if (featureFlags.enableMechanismDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(`_fillHeadUp from: ${from}`);
+      }
+    }
+
     const nextElm = store.registry.get(siblings[from]);
 
     if (!nextElm) {
@@ -471,6 +477,13 @@ class DFlexMechanismController extends DFlexScrollableElement {
   }
 
   private _lockParent(isOut: boolean) {
+    if (__DEV__) {
+      if (featureFlags.enableMechanismDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(`_lockParent: ${isOut}.`);
+      }
+    }
+
     this.isParentLocked = isOut;
   }
 

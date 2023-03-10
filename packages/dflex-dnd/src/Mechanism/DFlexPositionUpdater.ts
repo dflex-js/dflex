@@ -8,7 +8,6 @@ import type { Siblings } from "@dflex/dom-gen";
 import type DraggableInteractive from "../Draggable";
 
 import { store, DFLEX_EVENTS } from "../LayoutManager";
-import { isIDEligible } from "./DFlexMechanismController";
 
 const MAX_TRANSFORM_COUNT = 99; /** Infinite transform count */
 
@@ -280,11 +279,7 @@ class DFlexPositionUpdater {
     this.updateDraggable(axis, elmDirection, element);
   }
 
-  protected updateDraggedThresholdPosition(
-    x: number,
-    y: number,
-    rect: AbstractBox | null
-  ) {
+  protected updateDraggedThresholdPosition(x: number, y: number) {
     const {
       threshold,
       draggedElm: {
@@ -292,12 +287,6 @@ class DFlexPositionUpdater {
         rect: { width, height },
       },
     } = this.draggable;
-
-    if (rect) {
-      threshold.updateMainThreshold(id, rect, false);
-
-      return;
-    }
 
     const composedBox = {
       top: y,
@@ -384,8 +373,7 @@ class DFlexPositionUpdater {
 
     this.updateDraggedThresholdPosition(
       composedTranslate.x,
-      composedTranslate.y,
-      null
+      composedTranslate.y
     );
 
     return { translate: composedTranslate, grid: composedGrid };
@@ -459,11 +447,7 @@ class DFlexPositionUpdater {
     cycleID: string,
     isIncrease: boolean
   ) {
-    const { draggedElm, occupiedPosition } = this.draggable;
-
-    if (!isIDEligible(id, draggedElm.id)) {
-      return;
-    }
+    const { draggedElm, occupiedPosition, gridPlaceholder } = this.draggable;
 
     if (__DEV__) {
       // DFLex doesn't have error msg transformer yet for production.
@@ -472,7 +456,7 @@ class DFlexPositionUpdater {
 
     const [element, DOM] = store.getElmWithDOM(id);
 
-    const axis: Axes = element.rect.isPositionedY({
+    let axis: Axes = element.rect.isPositionedY({
       left: occupiedPosition.x,
       top: occupiedPosition.y,
       bottom: occupiedPosition.y + draggedElm.rect.height,
@@ -481,14 +465,28 @@ class DFlexPositionUpdater {
       ? "y"
       : "x";
 
-    // if (!occupiedPosition.onSameAxis(axis, element.rect.getPosition())) {
-    //   axis = "z";
-    // }
+    const onSameAxis = occupiedPosition.onSameAxis(
+      axis,
+      element.rect.getPosition()
+    );
+
+    if (!onSameAxis) {
+      const isPartOfZGrid = (_axis: Axis) => {
+        // eslint-disable-next-line no-underscore-dangle
+        return element.DOMGrid[_axis] > 0 || gridPlaceholder[_axis] > 0;
+      };
+
+      if (axis === "y" && isPartOfZGrid("x")) {
+        axis = "z";
+      } else if (axis === "x" && isPartOfZGrid("y")) {
+        axis = "z";
+      }
+    }
 
     if (__DEV__) {
       if (featureFlags.enableMechanismDebugger) {
         // eslint-disable-next-line no-console
-        console.log(`Switching element ${id} on axis: ${axis}`);
+        console.log(`Update element ${id} on axis: ${axis}`);
       }
     }
 
@@ -512,7 +510,7 @@ class DFlexPositionUpdater {
 
       const { rect } = element;
 
-      this.updateDraggedThresholdPosition(-1, -1, rect);
+      this.updateDraggedThresholdPosition(rect.left, rect.top);
     }
 
     this.draggable.events.dispatch(
