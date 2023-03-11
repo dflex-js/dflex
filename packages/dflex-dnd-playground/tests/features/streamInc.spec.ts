@@ -74,8 +74,8 @@ test.describe("Stream incremental element then transform mutate and check the ne
     });
 
     test("Siblings have the correct order in DOM", async () => {
-      const idsA = [];
-      const idsB = [];
+      const idsA: string[] = [];
+      const idsB: string[] = [];
 
       for (let i = 1; i < 5; i += 1) {
         idsA.push(`a-${i}`);
