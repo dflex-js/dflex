@@ -1,6 +1,6 @@
 {
   "name": "dflex-dnd-playground",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@dflex/dnd": "workspace:^3.8.1"
+    "@dflex/dnd": "workspace:^3.8.2"
   },
   "devDependencies": {
     "cypress": "^12.7.0",
