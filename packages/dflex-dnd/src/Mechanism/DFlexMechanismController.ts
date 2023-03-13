@@ -449,7 +449,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         if (featureFlags.enableMechanismDebugger) {
           // eslint-disable-next-line no-console
           console.log(
-            `Detecting dragged new row: ${newPos}. siblingsGrid-y is ${grid.y}`
+            `Detecting dragged new row: ${newPos}. siblingsGrid-${axis} is ${grid[axis]}`
           );
         }
       }
