@@ -109,7 +109,7 @@ DFlexDnDStore {
         "right": 0,
         "top": 0,
       },
-      "grid": PointNum {
+      "gridIndex": PointNum {
         "x": 0,
         "y": 0,
       },
@@ -138,7 +138,7 @@ DFlexDnDStore {
         "right": 0,
         "top": 0,
       },
-      "grid": PointNum {
+      "gridIndex": PointNum {
         "x": 0,
         "y": 2,
       },

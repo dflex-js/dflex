@@ -77,13 +77,13 @@ describe("Container", () => {
   it("Registers two elements in the same row", () => {
     container.register(elmR1Col1, unifiedContainerDimensions);
 
-    expect(container.grid.x).toBe(0);
-    expect(container.grid.y).toBe(0);
+    expect(container.gridIndex.x).toBe(0);
+    expect(container.gridIndex.y).toBe(0);
 
     container.register(elmR1Col2, unifiedContainerDimensions);
 
-    expect(container.grid.x).toBe(1);
-    expect(container.grid.y).toBe(0);
+    expect(container.gridIndex.x).toBe(1);
+    expect(container.gridIndex.y).toBe(0);
   });
 
   it("Returns the correct dimensions", () => {
@@ -105,8 +105,8 @@ describe("Container", () => {
   it("Resets the boundaries and grid", () => {
     container.resetIndicators(3);
 
-    expect(container.grid.x).toBe(-1);
-    expect(container.grid.y).toBe(-1);
+    expect(container.gridIndex.x).toBe(-1);
+    expect(container.gridIndex.y).toBe(-1);
     // expect(container.boundaries).toBeNull();
   });
 
