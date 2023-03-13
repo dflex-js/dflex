@@ -12,7 +12,7 @@ class DFlexParentContainer {
   private _rect!: BoxRect;
 
   /** Numbers of total columns and rows each container has.  */
-  grid: PointNum;
+  gridIndex: PointNum;
 
   /**
    * Origin length for container before being transformed used to prevent
@@ -32,7 +32,7 @@ class DFlexParentContainer {
 
   constructor(DOM: HTMLElement, originLength: number, id: string) {
     this.id = id;
-    this.grid = new PointNum(-1, -1);
+    this.gridIndex = new PointNum(-1, -1);
     this.originLength = originLength;
     this._boundariesByRow = new BoxNum(0, 0, 0, 0);
     this._siblingBoundaries = null;
@@ -54,11 +54,11 @@ class DFlexParentContainer {
     const isNewRow = $.isPositionedY(rect);
 
     if (isNewRow) {
-      this.grid.y += 1;
-      this.grid.x = 0;
+      this.gridIndex.y += 1;
+      this.gridIndex.x = 0;
       this._boundariesByRow.setBox(0, 0, 0, 0);
     } else {
-      this.grid.x += 1;
+      this.gridIndex.x += 1;
     }
 
     $.assignBiggestBox(rect);
@@ -67,10 +67,7 @@ class DFlexParentContainer {
   // TODO: How to unregister element from the edge of the container? Currently
   // we reset and accumulate, it's inefficient. removeElmFromEdge() is a better.
 
-  registerNewElm(
-    rect: AbstractBox,
-    unifiedContainerDimensions?: Dimensions
-  ): void {
+  register(rect: AbstractBox, unifiedContainerDimensions?: Dimensions): void {
     if (this._siblingBoundaries) {
       this._siblingBoundaries.assignBiggestBox(rect);
     } else {
@@ -118,7 +115,7 @@ class DFlexParentContainer {
    * @param originLength
    */
   resetIndicators(originLength: number): void {
-    this.grid.setAxes(-1, -1);
+    this.gridIndex.setAxes(-1, -1);
     this.originLength = originLength;
     this._boundariesByRow.setBox(0, 0, 0, 0);
     this._siblingBoundaries = null;
