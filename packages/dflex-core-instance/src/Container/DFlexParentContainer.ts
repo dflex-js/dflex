@@ -14,6 +14,8 @@ class DFlexParentContainer {
   /** Numbers of total columns and rows each container has.  */
   gridIndex: PointNum;
 
+  grid: PointNum;
+
   /**
    * Origin length for container before being transformed used to prevent
    * layout shift.
@@ -33,6 +35,7 @@ class DFlexParentContainer {
   constructor(DOM: HTMLElement, originLength: number, id: string) {
     this.id = id;
     this.gridIndex = new PointNum(-1, -1);
+    this.grid = new PointNum(-1, -1);
     this.originLength = originLength;
     this._boundariesByRow = new BoxNum(0, 0, 0, 0);
     this._siblingBoundaries = null;
@@ -59,6 +62,14 @@ class DFlexParentContainer {
       this._boundariesByRow.setBox(0, 0, 0, 0);
     } else {
       this.gridIndex.x += 1;
+    }
+
+    if (this.gridIndex.x > this.grid.x) {
+      this.grid.x = this.gridIndex.x;
+    }
+
+    if (this.gridIndex.y > this.grid.y) {
+      this.grid.y = this.gridIndex.y;
     }
 
     $.assignBiggestBox(rect);

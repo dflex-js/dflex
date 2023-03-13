@@ -411,7 +411,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       gridPlaceholder,
     } = this.draggable;
 
-    const { gridIndex: siblingsGrid } = store.containers.get(SK)!;
+    const { grid } = store.containers.get(SK)!;
 
     // Check if top or bottom.
     if (isOut[id].isOneTruthyByAxis("y")) {
@@ -423,7 +423,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         if (featureFlags.enableMechanismDebugger) {
           // eslint-disable-next-line no-console
           console.log(
-            `Detecting dragged new row: ${newRow}. siblingsGrid-y is ${siblingsGrid.y}`
+            `Detecting dragged new row: ${newRow}. siblingsGrid-y is ${grid.y}`
           );
         }
       }
@@ -439,7 +439,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       }
 
       // Leaving from bottom.
-      if (newRow > siblingsGrid.y) {
+      if (newRow > grid.y) {
         // lock the parent
         this._lockParent(true);
 
@@ -459,12 +459,12 @@ class DFlexMechanismController extends DFlexScrollableElement {
       if (featureFlags.enableMechanismDebugger) {
         // eslint-disable-next-line no-console
         console.log(
-          `Detecting dragged new col: ${newCol}. siblingsGrid-x is ${siblingsGrid.x}`
+          `Detecting dragged new col: ${newCol}. siblingsGrid-x is ${grid.x}`
         );
       }
     }
 
-    if (newCol <= 0 || newCol > siblingsGrid.x) {
+    if (newCol <= 0 || newCol > grid.x) {
       // lock the parent
       this._lockParent(true);
 
