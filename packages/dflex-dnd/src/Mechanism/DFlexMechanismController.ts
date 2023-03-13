@@ -464,11 +464,20 @@ class DFlexMechanismController extends DFlexScrollableElement {
       }
     }
 
-    if (newCol <= 0 || newCol > grid.x) {
+    // Leaving from top.
+    if (newCol === -1) {
       // lock the parent
       this._lockParent(true);
 
       this._fillHeadUp();
+
+      return;
+    }
+
+    // Leaving from bottom.
+    if (newCol > grid.x) {
+      // lock the parent
+      this._lockParent(true);
 
       return;
     }
