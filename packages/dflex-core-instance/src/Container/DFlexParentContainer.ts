@@ -12,7 +12,7 @@ class DFlexParentContainer {
   private _rect!: BoxRect;
 
   /** Numbers of total columns and rows each container has.  */
-  gridIndex: PointNum;
+  private _gridIndex: PointNum;
 
   grid: PointNum;
 
@@ -34,7 +34,7 @@ class DFlexParentContainer {
 
   constructor(DOM: HTMLElement, originLength: number, id: string) {
     this.id = id;
-    this.gridIndex = new PointNum(-1, -1);
+    this._gridIndex = new PointNum(-1, -1);
     this.grid = new PointNum(-1, -1);
     this.originLength = originLength;
     this._boundariesByRow = new BoxNum(0, 0, 0, 0);
@@ -50,35 +50,39 @@ class DFlexParentContainer {
     this._rect = new BoxRect(top, right, bottom, left);
   }
 
-  private _addNewElmToGridIndicator(rect: AbstractBox): void {
+  private _addNewElmToGridIndicator(rect: AbstractBox): PointNum {
     const $ = this._boundariesByRow;
 
     // Defining elements in different row.
     const isNewRow = $.isPositionedY(rect);
 
     if (isNewRow) {
-      this.gridIndex.y += 1;
-      this.gridIndex.x = 0;
+      this._gridIndex.y += 1;
+      this._gridIndex.x = 0;
       this._boundariesByRow.setBox(0, 0, 0, 0);
     } else {
-      this.gridIndex.x += 1;
+      this._gridIndex.x += 1;
     }
 
-    if (this.gridIndex.x > this.grid.x) {
-      this.grid.x = this.gridIndex.x;
+    if (this._gridIndex.x > this.grid.x) {
+      this.grid.x = this._gridIndex.x;
     }
 
-    if (this.gridIndex.y > this.grid.y) {
-      this.grid.y = this.gridIndex.y;
+    if (this._gridIndex.y > this.grid.y) {
+      this.grid.y = this._gridIndex.y;
     }
 
     $.assignBiggestBox(rect);
+
+    return this._gridIndex;
   }
 
   // TODO: How to unregister element from the edge of the container? Currently
   // we reset and accumulate, it's inefficient. removeElmFromEdge() is a better.
-
-  register(rect: AbstractBox, unifiedContainerDimensions?: Dimensions): void {
+  register(
+    rect: AbstractBox,
+    unifiedContainerDimensions?: Dimensions
+  ): PointNum {
     if (this._siblingBoundaries) {
       this._siblingBoundaries.assignBiggestBox(rect);
     } else {
@@ -90,14 +94,14 @@ class DFlexParentContainer {
       );
     }
 
-    this._addNewElmToGridIndicator(rect);
+    const gridIndex = this._addNewElmToGridIndicator(rect);
 
     const $ = this._siblingBoundaries;
 
     const uni = unifiedContainerDimensions;
 
     if (!uni) {
-      return;
+      return gridIndex;
     }
 
     const $height = $.bottom - $.top;
@@ -110,6 +114,8 @@ class DFlexParentContainer {
     if (uni.width < $width) {
       uni.width = $height;
     }
+
+    return gridIndex;
   }
 
   /**
@@ -126,7 +132,8 @@ class DFlexParentContainer {
    * @param originLength
    */
   resetIndicators(originLength: number): void {
-    this.gridIndex.setAxes(-1, -1);
+    this._gridIndex.setAxes(-1, -1);
+    this.grid.setAxes(-1, -1);
     this.originLength = originLength;
     this._boundariesByRow.setBox(0, 0, 0, 0);
     this._siblingBoundaries = null;

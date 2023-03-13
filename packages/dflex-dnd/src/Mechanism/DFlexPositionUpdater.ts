@@ -163,9 +163,9 @@ export function handleElmMigration(
   originBranch.forEach((elmID) => {
     const elm = store.registry.get(elmID)!;
 
-    containerOrigin.register(elm.rect);
+    const gridIndex = containerOrigin.register(elm.rect);
 
-    elm.DOMGrid.clone(containerOrigin.gridIndex);
+    elm.DOMGrid.clone(gridIndex);
   });
 
   const lastInOrigin = store.registry.get(
