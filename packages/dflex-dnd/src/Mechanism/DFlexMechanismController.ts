@@ -451,6 +451,16 @@ class DFlexMechanismController extends DFlexScrollableElement {
       return;
     }
 
+    // Columns only.
+    if (grid.x === 0) {
+      // lock the parent
+      this._lockParent(true);
+
+      this._fillHeadUp();
+
+      return;
+    }
+
     const newCol = isOut[id].right
       ? gridPlaceholder.x + 1
       : gridPlaceholder.x - 1;
