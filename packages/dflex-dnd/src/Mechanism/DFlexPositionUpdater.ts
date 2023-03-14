@@ -147,7 +147,7 @@ export function handleElmMigration(
   const containerDist = store.containers.get(distSK)!;
 
   // Append the newest element to the end of the branch.
-  containerDist.registerNewElm(rect);
+  containerDist.register(rect);
 
   const originBranch = store.getElmSiblingsByKey(originSK);
 
@@ -163,9 +163,9 @@ export function handleElmMigration(
   originBranch.forEach((elmID) => {
     const elm = store.registry.get(elmID)!;
 
-    containerOrigin.registerNewElm(elm.rect);
+    const gridIndex = containerOrigin.register(elm.rect);
 
-    elm.DOMGrid.clone(containerOrigin.grid);
+    elm.DOMGrid.clone(gridIndex);
   });
 
   const lastInOrigin = store.registry.get(

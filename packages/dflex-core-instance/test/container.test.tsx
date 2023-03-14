@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable import/no-extraneous-dependencies */
 import * as React from "react";
 import * as ReactTestUtils from "react-dom/test-utils";
@@ -75,15 +76,19 @@ describe("Container", () => {
   });
 
   it("Registers two elements in the same row", () => {
-    container.registerNewElm(elmR1Col1, unifiedContainerDimensions);
+    container.register(elmR1Col1, unifiedContainerDimensions);
 
-    expect(container.grid.x).toBe(0);
-    expect(container.grid.y).toBe(0);
+    // @ts-expect-error
+    expect(container._gridIndex.x).toBe(0);
+    // @ts-expect-error
+    expect(container._gridIndex.y).toBe(0);
 
-    container.registerNewElm(elmR1Col2, unifiedContainerDimensions);
+    container.register(elmR1Col2, unifiedContainerDimensions);
 
-    expect(container.grid.x).toBe(1);
-    expect(container.grid.y).toBe(0);
+    // @ts-expect-error
+    expect(container._gridIndex.x).toBe(1);
+    // @ts-expect-error
+    expect(container._gridIndex.y).toBe(0);
   });
 
   it("Returns the correct dimensions", () => {
@@ -105,8 +110,10 @@ describe("Container", () => {
   it("Resets the boundaries and grid", () => {
     container.resetIndicators(3);
 
-    expect(container.grid.x).toBe(-1);
-    expect(container.grid.y).toBe(-1);
+    // @ts-expect-error
+    expect(container._gridIndex.x).toBe(-1);
+    // @ts-expect-error
+    expect(container._gridIndex.y).toBe(-1);
     // expect(container.boundaries).toBeNull();
   });
 

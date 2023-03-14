@@ -136,12 +136,12 @@ class DFlexDnDStore extends DFlexBaseStore {
     // container or not.
     const { rect } = dflexElm;
 
-    container.registerNewElm(
+    const gridIndex = container.register(
       rect,
       this.unifiedContainerDimensions[dflexElm.depth]
     );
 
-    dflexElm.DOMGrid.clone(container.grid);
+    dflexElm.DOMGrid.clone(gridIndex);
   }
 
   private _resumeAndInitElmGrid(
@@ -313,7 +313,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
           dflexElm.initElmRect(elmDOM);
 
-          container.registerNewElm(
+          container.register(
             dflexElm.rect,
             this.unifiedContainerDimensions[dflexElm.depth]
           );

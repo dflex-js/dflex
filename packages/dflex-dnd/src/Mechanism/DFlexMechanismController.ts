@@ -1,4 +1,4 @@
-import { AxesPoint, featureFlags, PointNum, Tracker } from "@dflex/utils";
+import { AxesPoint, Axis, featureFlags, PointNum, Tracker } from "@dflex/utils";
 
 import { DFLEX_EVENTS, scheduler, store } from "../LayoutManager";
 import type DraggableInteractive from "../Draggable";
@@ -401,7 +401,33 @@ class DFlexMechanismController extends DFlexScrollableElement {
     }
   }
 
-  private _draggedOutPositionNotifier(): void {
+  private _actionCaller(
+    newGridPos: number,
+    maxGrid: number,
+    isIncrease: boolean
+  ): void {
+    // Leaving from top.
+    if (newGridPos === -1) {
+      // lock the parent
+      this._lockParent(true);
+
+      this._fillHeadUp();
+
+      return;
+    }
+
+    // Leaving from bottom.
+    if (newGridPos > maxGrid) {
+      // lock the parent
+      this._lockParent(true);
+
+      return;
+    }
+
+    this._switchElementPosition(isIncrease);
+  }
+
+  private _actionByAxis(axis: Axis): boolean {
     const {
       draggedElm: {
         id,
@@ -411,69 +437,51 @@ class DFlexMechanismController extends DFlexScrollableElement {
       gridPlaceholder,
     } = this.draggable;
 
-    const { grid: siblingsGrid } = store.containers.get(SK)!;
+    const { grid } = store.containers.get(SK)!;
 
     // Check if top or bottom.
-    if (isOut[id].isOneTruthyByAxis("y")) {
-      const newRow = isOut[id].bottom
-        ? gridPlaceholder.y + 1
-        : gridPlaceholder.y - 1;
+    if (isOut[id].isOneTruthyByAxis(axis)) {
+      const newPos = (axis === "y" ? isOut[id].bottom : isOut[id].right)
+        ? gridPlaceholder[axis] + 1
+        : gridPlaceholder[axis] - 1;
 
       if (__DEV__) {
         if (featureFlags.enableMechanismDebugger) {
           // eslint-disable-next-line no-console
           console.log(
-            `Detecting dragged new row: ${newRow}. siblingsGrid-y is ${siblingsGrid.y}`
+            `Detecting dragged new row: ${newPos}. siblingsGrid-${axis} is ${grid[axis]}`
           );
         }
       }
 
-      // Leaving from top.
-      if (newRow === -1) {
-        // lock the parent
-        this._lockParent(true);
+      this._actionCaller(newPos, grid[axis], isOut[id].bottom);
 
-        this._fillHeadUp();
-
-        return;
-      }
-
-      // Leaving from bottom.
-      if (newRow > siblingsGrid.y) {
-        // lock the parent
-        this._lockParent(true);
-
-        return;
-      }
-
-      this._switchElementPosition(isOut[id].bottom);
-
-      return;
+      return true;
     }
 
-    const newCol = isOut[id].right
-      ? gridPlaceholder.x + 1
-      : gridPlaceholder.x - 1;
+    // One column or one row?
+    const opposite = axis === "y" ? "x" : "y";
 
-    if (__DEV__) {
-      if (featureFlags.enableMechanismDebugger) {
-        // eslint-disable-next-line no-console
-        console.log(
-          `Detecting dragged new col: ${newCol}. siblingsGrid-x is ${siblingsGrid.x}`
-        );
-      }
-    }
-
-    if (newCol <= 0 || newCol > siblingsGrid.x) {
+    if (grid[opposite] === 0) {
       // lock the parent
       this._lockParent(true);
 
       this._fillHeadUp();
 
+      return true;
+    }
+
+    return false;
+  }
+
+  private _draggedOutPositionNotifier(): void {
+    const isTriggered = this._actionByAxis("y");
+
+    if (isTriggered) {
       return;
     }
 
-    this._switchElementPosition(isOut[id].right);
+    this._actionByAxis("x");
   }
 
   private _lockParent(isOut: boolean) {
