@@ -279,36 +279,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
     }
   }
 
-  private _switchElementPosition(isIncrease: boolean): void {
-    const { draggedElm } = this.draggable;
-    const { SK, index, cycleID } = store.migration.latest();
-
-    const siblings = store.getElmSiblingsByKey(SK);
-
-    const elmIndex = index + -1 * (isIncrease ? -1 : 1);
-
-    const id = siblings[elmIndex];
-
-    if (__DEV__) {
-      if (!id) {
-        throw new Error(
-          `_switchElementPosition: incorrect element index: ${elmIndex} for siblings: ${siblings}`
-        );
-      }
-
-      if (featureFlags.enableMechanismDebugger) {
-        // eslint-disable-next-line no-console
-        console.log(`Switching element position to occupy: ${id}`);
-      }
-    }
-
-    if (isIDEligible(id, draggedElm.id)) {
-      this.draggable.setDraggedTempIndex(elmIndex);
-
-      this.updateElement(id, siblings, cycleID, isIncrease);
-    }
-  }
-
   /**
    * Filling the space when the head of the list is leaving the list.
    */
@@ -457,7 +427,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     const id = siblings[elmIndex];
 
     if (__DEV__) {
-      if (!id) {
+      if (!(id && isIDEligible(id, draggedID))) {
         throw new Error(
           `_actionCaller: incorrect element index: ${elmIndex} for siblings: ${siblings}`
         );
@@ -469,24 +439,34 @@ class DFlexMechanismController extends DFlexScrollableElement {
       }
     }
 
-    if (isIDEligible(id, draggedID)) {
-      const elmThreshold = this.draggable.threshold.getOrCreateElmMainThreshold(
-        id,
-        store.registry.get(id)!.rect,
-        false
-      );
+    const elmThreshold = this.draggable.threshold.getOrCreateElmMainThreshold(
+      id,
+      store.registry.get(id)!.rect,
+      false
+    );
 
-      const isIntersect = elmThreshold.isIntersect(
-        this.draggable.threshold.thresholds[draggedID]
-      );
+    const isIntersect = elmThreshold.isIntersect(
+      this.draggable.threshold.thresholds[draggedID]
+    );
 
-      if (isIntersect) {
-        this.draggable.setDraggedTempIndex(elmIndex);
-        this.updateElement(id, siblings, cycleID, isIncrease);
+    if (isIntersect) {
+      this.draggable.setDraggedTempIndex(elmIndex);
+      this.updateElement(id, siblings, cycleID, isIncrease);
+    } else {
+      if (__DEV__) {
+        if (featureFlags.enableMechanismDebugger) {
+          // eslint-disable-next-line no-console
+          console.warn(
+            "Switching element in not possible because elements threshold are not intersected"
+          );
+        }
       }
-    }
 
-    // this._switchElementPosition(isIncrease);
+      // lock the parent
+      this._lockParent(true);
+
+      this._fillHeadUp();
+    }
   }
 
   private _actionByAxis(axis: Axis): boolean {
