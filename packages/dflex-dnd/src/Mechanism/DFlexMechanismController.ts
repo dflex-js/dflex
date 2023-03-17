@@ -13,6 +13,12 @@ import DFlexScrollableElement from "./DFlexScrollableElement";
 export function isIDEligible(elmID: string, draggedID: string): boolean {
   const { registry } = store;
 
+  if (__DEV__) {
+    if (typeof elmID !== "string") {
+      throw new Error(`isIDEligible: elmID is not defined: ${elmID}`);
+    }
+  }
+
   return (
     elmID.length > 0 &&
     elmID !== draggedID &&
@@ -284,6 +290,12 @@ class DFlexMechanismController extends DFlexScrollableElement {
     const id = siblings[elmIndex];
 
     if (__DEV__) {
+      if (!id) {
+        throw new Error(
+          `_switchElementPosition: incorrect element index: ${elmIndex} for siblings: ${siblings}`
+        );
+      }
+
       if (featureFlags.enableMechanismDebugger) {
         // eslint-disable-next-line no-console
         console.log(`Switching element position to occupy: ${id}`);
@@ -406,6 +418,14 @@ class DFlexMechanismController extends DFlexScrollableElement {
     maxGrid: number,
     isIncrease: boolean
   ): void {
+    if (__DEV__) {
+      if (newGridPos < -1) {
+        throw new Error(
+          "_actionCaller: the new grid position can't be below -1"
+        );
+      }
+    }
+
     // Leaving from top.
     if (newGridPos === -1) {
       // lock the parent
@@ -424,7 +444,49 @@ class DFlexMechanismController extends DFlexScrollableElement {
       return;
     }
 
-    this._switchElementPosition(isIncrease);
+    const {
+      draggedElm: { id: draggedID },
+    } = this.draggable;
+
+    const { SK, index, cycleID } = store.migration.latest();
+
+    const siblings = store.getElmSiblingsByKey(SK);
+
+    const elmIndex = index + -1 * (isIncrease ? -1 : 1);
+
+    const id = siblings[elmIndex];
+
+    if (__DEV__) {
+      if (!id) {
+        throw new Error(
+          `_actionCaller: incorrect element index: ${elmIndex} for siblings: ${siblings}`
+        );
+      }
+
+      if (featureFlags.enableMechanismDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(`Switching element position to occupy: ${id}`);
+      }
+    }
+
+    if (isIDEligible(id, draggedID)) {
+      const elmThreshold = this.draggable.threshold.getOrCreateElmMainThreshold(
+        id,
+        store.registry.get(id)!.rect,
+        false
+      );
+
+      const isIntersect = elmThreshold.isIntersect(
+        this.draggable.threshold.thresholds[draggedID]
+      );
+
+      if (isIntersect) {
+        this.draggable.setDraggedTempIndex(elmIndex);
+        this.updateElement(id, siblings, cycleID, isIncrease);
+      }
+    }
+
+    // this._switchElementPosition(isIncrease);
   }
 
   private _actionByAxis(axis: Axis): boolean {
@@ -441,7 +503,9 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     // Check if top or bottom.
     if (isOut[id].isOneTruthyByAxis(axis)) {
-      const newPos = (axis === "y" ? isOut[id].bottom : isOut[id].right)
+      const shouldIncrease = axis === "y" ? isOut[id].bottom : isOut[id].right;
+
+      const newPos = shouldIncrease
         ? gridPlaceholder[axis] + 1
         : gridPlaceholder[axis] - 1;
 
@@ -449,7 +513,9 @@ class DFlexMechanismController extends DFlexScrollableElement {
         if (featureFlags.enableMechanismDebugger) {
           // eslint-disable-next-line no-console
           console.log(
-            `Detecting dragged new row: ${newPos}. siblingsGrid-${axis} is ${grid[axis]}`
+            `Detecting dragged new ${
+              axis === "x" ? "col" : "row"
+            }: ${newPos}. siblingsGrid-${axis} is ${grid[axis]}`
           );
         }
       }

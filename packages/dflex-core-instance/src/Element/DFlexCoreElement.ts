@@ -475,7 +475,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       translate: this.translate instanceof PointNum ? this.translate : null,
       order: this.VDOMOrder,
       initialPosition: this._initialPosition.getInstance(),
-      rect: this.rect.getRect(),
+      rect: this.rect,
       hasTransformedFromOrigin: this.hasTransformedFromOrigin(),
       hasPendingTransformation: this.hasPendingTransform,
       isVisible: this.isVisible,
