@@ -386,7 +386,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
   private _actionCaller(
     newGridPos: number,
     maxGrid: number,
-    isIncrease: boolean
+    shouldIncrease: boolean
   ): void {
     if (__DEV__) {
       if (newGridPos < -1) {
@@ -414,6 +414,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       return;
     }
 
+    // Switch elements if thresholds are intersected.
     const {
       draggedElm: { id: draggedID },
     } = this.draggable;
@@ -422,7 +423,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     const siblings = store.getElmSiblingsByKey(SK);
 
-    const elmIndex = index + -1 * (isIncrease ? -1 : 1);
+    const elmIndex = index + -1 * (shouldIncrease ? -1 : 1);
 
     const id = siblings[elmIndex];
 
@@ -449,9 +450,10 @@ class DFlexMechanismController extends DFlexScrollableElement {
       this.draggable.threshold.thresholds[draggedID]
     );
 
+    // TODO: This is not tested.
     if (isIntersect) {
       this.draggable.setDraggedTempIndex(elmIndex);
-      this.updateElement(id, siblings, cycleID, isIncrease);
+      this.updateElement(id, siblings, cycleID, shouldIncrease);
     } else {
       if (__DEV__) {
         if (featureFlags.enableMechanismDebugger) {
@@ -500,7 +502,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         }
       }
 
-      this._actionCaller(newPos, grid[axis], isOut[id].bottom);
+      this._actionCaller(newPos, grid[axis], shouldIncrease);
 
       return true;
     }
