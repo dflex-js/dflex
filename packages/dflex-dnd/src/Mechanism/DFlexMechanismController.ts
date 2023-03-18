@@ -1,4 +1,11 @@
-import { AxesPoint, Axis, featureFlags, PointNum, Tracker } from "@dflex/utils";
+import {
+  AbstractBox,
+  AxesPoint,
+  Axis,
+  featureFlags,
+  PointNum,
+  Tracker,
+} from "@dflex/utils";
 
 import { DFLEX_EVENTS, scheduler, store } from "../LayoutManager";
 import type DraggableInteractive from "../Draggable";
@@ -42,6 +49,8 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
   private listAppendPosition: AxesPoint | null;
 
+  private _deadZone: AbstractBox;
+
   static INDEX_OUT_CONTAINER = NaN;
 
   /**
@@ -70,6 +79,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     this._detectNearestContainerTimeoutID = null;
     this.listAppendPosition = null;
     this.isParentLocked = false;
+    this._deadZone = { bottom: 0, left: 0, right: 0, top: 0 };
   }
 
   private _detectDroppableIndex(): number | null {
@@ -452,6 +462,13 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     // TODO: This is not tested.
     if (isIntersect) {
+      // is inside dead zone?
+      this.draggable.getAbsoluteCurrentPosition();
+
+      this._deadZone = elmThreshold.getSurroundingBox(
+        this.draggable.threshold.thresholds[draggedID]
+      );
+
       this.draggable.setDraggedTempIndex(elmIndex);
       this.updateElement(id, siblings, cycleID, shouldIncrease);
     } else {
@@ -619,6 +636,13 @@ class DFlexMechanismController extends DFlexScrollableElement {
     }
 
     if (this.draggable.isOutThreshold()) {
+      // Ignore if draggable inside dead zone.
+      if (
+        this.draggable.getAbsoluteCurrentPosition().isInside(this._deadZone)
+      ) {
+        return;
+      }
+
       events.dispatch(DFLEX_EVENTS.ON_OUT_THRESHOLD, {
         id: draggedElm.id,
         index: store.migration.latest().index,
