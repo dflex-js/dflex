@@ -14,7 +14,7 @@ test.describe("Testing stabilizer between two intersected thresholds", async () 
   let context: BrowserContext;
   let activeBrowser: Browser;
 
-  let elmParent: Locator;
+  // let elmParent: Locator;
   let elm1: Locator;
   let elm2: Locator;
   let elm3: Locator;
@@ -31,7 +31,7 @@ test.describe("Testing stabilizer between two intersected thresholds", async () 
     initialize(page, browserName, 50);
     await page.goto("/grid");
 
-    [elmParent, elm1, elm2, elm3, elm4, elm5, elm6, elm7] = await Promise.all([
+    [elm1, elm2, elm3, elm4, elm5, elm6, elm7] = await Promise.all([
       page.locator("#id-p2"),
       page.locator("#id-2"),
       page.locator("#id-3"),
