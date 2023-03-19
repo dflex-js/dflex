@@ -103,16 +103,8 @@ class DFlexThreshold {
     this.isOut[key].setFalsy();
   }
 
-  getOrCreateElmMainThreshold(
-    key: string,
-    rect: AbstractBox,
-    isInner: boolean
-  ): BoxNum {
-    if (!this.thresholds[key]) {
-      this.thresholds[key] = this._pixels.composeBox(rect, isInner);
-    }
-
-    return this.thresholds[key];
+  getElmMainThreshold(rect: AbstractBox): BoxNum {
+    return this._pixels.composeBox(rect, false);
   }
 
   /**

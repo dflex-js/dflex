@@ -47,6 +47,7 @@ class BoxNum extends Box<number> {
     // Determine the coordinates of the new box
     const left = Math.min(box.left, this.left);
     const top = Math.min(box.top, this.top);
+
     const right = Math.max(box.right, this.right);
     const bottom = Math.max(box.bottom, this.bottom);
 
