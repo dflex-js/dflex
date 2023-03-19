@@ -49,9 +49,10 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
   private listAppendPosition: AxesPoint | null;
 
-  private _deadZoneStabilizer: BoxNum;
-
-  private _deadZoneDirection: Record<Axis, string>;
+  private _deadZoneStabilizer: {
+    area: BoxNum;
+    direction: Record<Axis, string>;
+  };
 
   static INDEX_OUT_CONTAINER = NaN;
 
@@ -81,9 +82,10 @@ class DFlexMechanismController extends DFlexScrollableElement {
     this._detectNearestContainerTimeoutID = null;
     this.listAppendPosition = null;
     this.isParentLocked = false;
-    this._deadZoneStabilizer = new BoxNum(0, 0, 0, 0);
-    // @ts-expect-error - TODO: why it's an error?
-    this._deadZoneDirection = {};
+    this._deadZoneStabilizer = Object.seal({
+      area: new BoxNum(0, 0, 0, 0),
+      direction: { x: "", y: "" },
+    });
   }
 
   private _detectDroppableIndex(): number | null {
@@ -472,8 +474,10 @@ class DFlexMechanismController extends DFlexScrollableElement {
       const surroundingBox = elmThreshold.getSurroundingBox(
         this.draggable.threshold.thresholds[draggedID]
       );
-      this._deadZoneStabilizer.clone(surroundingBox);
-      this._deadZoneDirection[axis] = this.draggable.getDirectionByAxis(axis);
+
+      this._deadZoneStabilizer.area.clone(surroundingBox);
+      this._deadZoneStabilizer.direction[axis] =
+        this.draggable.getDirectionByAxis(axis);
 
       this.draggable.setDraggedTempIndex(elmIndex);
       this.updateElement(id, siblings, cycleID, shouldIncrease);
@@ -512,12 +516,13 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
       const isInsideDeadZone = this.draggable
         .getAbsoluteCurrentPosition()
-        .isInside(this._deadZoneStabilizer);
+        .isInside(this._deadZoneStabilizer.area);
 
       if (isInsideDeadZone) {
         const currentDir = this.draggable.getDirectionByAxis(axis);
 
-        const withTheSameDir = currentDir === this._deadZoneDirection[axis];
+        const withTheSameDir =
+          currentDir === this._deadZoneStabilizer.direction[axis];
 
         // Ignore if draggable inside dead zone with the same direction.
         if (withTheSameDir) {
