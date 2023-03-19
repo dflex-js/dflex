@@ -43,20 +43,37 @@ class BoxNum extends Box<number> {
     return !this.isNotIntersect(box);
   }
 
+  getSurroundingBox(box: AbstractBox): AbstractBox {
+    // Determine the coordinates of the new box
+    const left = Math.min(box.left, this.left);
+    const top = Math.min(box.top, this.top);
+
+    const right = Math.max(box.right, this.right);
+    const bottom = Math.max(box.bottom, this.bottom);
+
+    // Create and return the new box
+    return {
+      left,
+      top,
+      right,
+      bottom,
+    };
+  }
+
   /**
    * True when it's inside of other box.
    *
    * @param box
    * @returns
    */
-  // isInside(box: AbstractBox): boolean {
-  //   return (
-  //     this.top >= box.top &&
-  //     this.right <= box.right &&
-  //     this.bottom <= box.bottom &&
-  //     this.left >= box.left
-  //   );
-  // }
+  isInside(box: AbstractBox): boolean {
+    return (
+      this.top >= box.top &&
+      this.right <= box.right &&
+      this.bottom <= box.bottom &&
+      this.left >= box.left
+    );
+  }
 
   isPositionedY(box: AbstractBox) {
     return this._isUnder(box) || this._isAbove(box);

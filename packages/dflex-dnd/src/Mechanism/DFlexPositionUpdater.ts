@@ -231,7 +231,7 @@ class DFlexPositionUpdater {
     }
   }
 
-  private updateDraggable(
+  private _updateDraggable(
     axis: Axes,
     elmDirection: Direction,
     element: DFlexElement
@@ -250,13 +250,17 @@ class DFlexPositionUpdater {
       this.draggable.occupiedTranslate[axis] += this.draggedTransition[axis];
     }
 
-    // this.draggable.occupiedTranslate.clone(this.draggedTransition);
-
-    // this.draggable.occupiedTranslate.increase(
-    //   this.draggedTransition.getMultiplied(draggedDirection)
-    // );
-
     this.draggable.gridPlaceholder.clone(grid);
+
+    if (__DEV__) {
+      if (featureFlags.enableMechanismDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(
+          "_updateDraggable: new grid is",
+          this.draggable.gridPlaceholder
+        );
+      }
+    }
   }
 
   private updateIndicators(
@@ -276,10 +280,17 @@ class DFlexPositionUpdater {
       this.setDistanceBtwPositions(axis, elmDirection, element);
     }
 
-    this.updateDraggable(axis, elmDirection, element);
+    this._updateDraggable(axis, elmDirection, element);
   }
 
   protected updateDraggedThresholdPosition(x: number, y: number) {
+    if (__DEV__) {
+      if (featureFlags.enableMechanismDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(`updateDraggedThresholdPosition: ${x}/${y}`);
+      }
+    }
+
     const {
       threshold,
       draggedElm: {

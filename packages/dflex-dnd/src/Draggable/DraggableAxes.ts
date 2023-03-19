@@ -9,6 +9,7 @@ import {
   BoxNum,
   BoxRectAbstract,
   Tracker,
+  Axis,
 } from "@dflex/utils";
 
 import type { DFlexElement } from "@dflex/core-instance";
@@ -90,6 +91,8 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
    * Note: Scroll position included, these points ignore viewport.
    */
   private _absoluteCurrentPosition: BoxNum;
+
+  private _prevPoint: PointNum;
 
   private isLayoutStateUpdated: boolean;
 
@@ -189,6 +192,8 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
       rect.left
     );
 
+    this._prevPoint = new PointNum(x, y);
+
     this.restrictions = opts.restrictions;
 
     this.restrictionsStatus = opts.restrictionsStatus;
@@ -272,6 +277,10 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
    * @param y
    */
   setAbsoluteCurrentPosition(x: number, y: number): void {
+    const pre = this._absoluteCurrentPosition;
+
+    this._prevPoint.setAxes(pre.left, pre.top);
+
     const edgePosLeft = x - this.innerOffset.x;
     const edgePosTop = y - this.innerOffset.y;
 
@@ -293,6 +302,29 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
    */
   getAbsoluteCurrentPosition(): BoxNum {
     return this._absoluteCurrentPosition;
+  }
+
+  getDirectionByAxis(axis: Axis): "r" | "l" | "d" | "u" {
+    const { x: previousX, y: previousY } = this._prevPoint;
+    const { left: currentX, top: currentY } = this._absoluteCurrentPosition;
+
+    if (axis === "x") {
+      if (currentX > previousX) {
+        // Box moved right
+        return "r";
+      }
+
+      // Box moved left
+      return "l";
+    }
+
+    if (currentY > previousY) {
+      // Box moved down
+      return "d";
+    }
+
+    // Box moved up
+    return "u";
   }
 
   /**

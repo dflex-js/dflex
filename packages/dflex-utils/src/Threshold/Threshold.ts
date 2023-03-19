@@ -103,6 +103,10 @@ class DFlexThreshold {
     this.isOut[key].setFalsy();
   }
 
+  getElmMainThreshold(rect: AbstractBox): BoxNum {
+    return this._pixels.composeBox(rect, false);
+  }
+
   /**
    * Assign outer threshold for the container. Along with another threshold
    * called insertion threshold which defines the area where the element can be

@@ -4,6 +4,13 @@ import AbstractBox from "./AbstractBox";
 
 /** Four direction instance - clockwise */
 class Box<T> extends AbstractBox<T> {
+  clone(box: AbstractBox<T>): void {
+    this.top = box.top;
+    this.right = box.right;
+    this.bottom = box.bottom;
+    this.left = box.left;
+  }
+
   /**
    * Set all directions.
    *

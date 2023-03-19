@@ -1,4 +1,11 @@
-import { AxesPoint, Axis, featureFlags, PointNum, Tracker } from "@dflex/utils";
+import {
+  AxesPoint,
+  Axis,
+  BoxNum,
+  featureFlags,
+  PointNum,
+  Tracker,
+} from "@dflex/utils";
 
 import { DFLEX_EVENTS, scheduler, store } from "../LayoutManager";
 import type DraggableInteractive from "../Draggable";
@@ -12,6 +19,12 @@ import DFlexScrollableElement from "./DFlexScrollableElement";
 
 export function isIDEligible(elmID: string, draggedID: string): boolean {
   const { registry } = store;
+
+  if (__DEV__) {
+    if (typeof elmID !== "string") {
+      throw new Error(`isIDEligible: elmID is not defined: ${elmID}`);
+    }
+  }
 
   return (
     elmID.length > 0 &&
@@ -35,6 +48,11 @@ class DFlexMechanismController extends DFlexScrollableElement {
   private _hasBeenScrolling: boolean;
 
   private listAppendPosition: AxesPoint | null;
+
+  private _deadZoneStabilizer: {
+    area: BoxNum;
+    direction: Record<Axis, string>;
+  };
 
   static INDEX_OUT_CONTAINER = NaN;
 
@@ -64,6 +82,10 @@ class DFlexMechanismController extends DFlexScrollableElement {
     this._detectNearestContainerTimeoutID = null;
     this.listAppendPosition = null;
     this.isParentLocked = false;
+    this._deadZoneStabilizer = Object.seal({
+      area: new BoxNum(0, 0, 0, 0),
+      direction: { x: "", y: "" },
+    });
   }
 
   private _detectDroppableIndex(): number | null {
@@ -273,30 +295,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
     }
   }
 
-  private _switchElementPosition(isIncrease: boolean): void {
-    const { draggedElm } = this.draggable;
-    const { SK, index, cycleID } = store.migration.latest();
-
-    const siblings = store.getElmSiblingsByKey(SK);
-
-    const elmIndex = index + -1 * (isIncrease ? -1 : 1);
-
-    const id = siblings[elmIndex];
-
-    if (__DEV__) {
-      if (featureFlags.enableMechanismDebugger) {
-        // eslint-disable-next-line no-console
-        console.log(`Switching element position to occupy: ${id}`);
-      }
-    }
-
-    if (isIDEligible(id, draggedElm.id)) {
-      this.draggable.setDraggedTempIndex(elmIndex);
-
-      this.updateElement(id, siblings, cycleID, isIncrease);
-    }
-  }
-
   /**
    * Filling the space when the head of the list is leaving the list.
    */
@@ -402,10 +400,19 @@ class DFlexMechanismController extends DFlexScrollableElement {
   }
 
   private _actionCaller(
+    axis: Axis,
     newGridPos: number,
     maxGrid: number,
-    isIncrease: boolean
+    shouldIncrease: boolean
   ): void {
+    if (__DEV__) {
+      if (newGridPos < -1) {
+        throw new Error(
+          "_actionCaller: the new grid position can't be below -1"
+        );
+      }
+    }
+
     // Leaving from top.
     if (newGridPos === -1) {
       // lock the parent
@@ -424,7 +431,71 @@ class DFlexMechanismController extends DFlexScrollableElement {
       return;
     }
 
-    this._switchElementPosition(isIncrease);
+    // Switch elements if thresholds are intersected.
+    const {
+      draggedElm: { id: draggedID },
+    } = this.draggable;
+
+    const { SK, index, cycleID } = store.migration.latest();
+
+    const siblings = store.getElmSiblingsByKey(SK);
+
+    const elmIndex = index + -1 * (shouldIncrease ? -1 : 1);
+
+    const id = siblings[elmIndex];
+
+    if (__DEV__) {
+      if (!(id && isIDEligible(id, draggedID))) {
+        throw new Error(
+          `_actionCaller: incorrect element index: ${elmIndex} for siblings: ${siblings}`
+        );
+      }
+
+      if (featureFlags.enableMechanismDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(`Switching element position to occupy: ${id}`);
+      }
+    }
+
+    const elmThreshold = this.draggable.threshold.getElmMainThreshold(
+      store.registry.get(id)!.rect
+    );
+
+    const isIntersect = elmThreshold.isIntersect(
+      this.draggable.threshold.thresholds[draggedID]
+    );
+
+    // TODO: `else` case is not tested.
+    if (isIntersect) {
+      // Create stabilizing zone to prevent dragged from being stuck between two
+      // intersected thresholds.
+      // E.g: Moved into new one but triggered the previous one because it's stuck
+      // inside the zone causing jarring behavior; the back and forth transition.
+      const surroundingBox = elmThreshold.getSurroundingBox(
+        this.draggable.threshold.thresholds[draggedID]
+      );
+
+      this._deadZoneStabilizer.area.clone(surroundingBox);
+      this._deadZoneStabilizer.direction[axis] =
+        this.draggable.getDirectionByAxis(axis);
+
+      this.draggable.setDraggedTempIndex(elmIndex);
+      this.updateElement(id, siblings, cycleID, shouldIncrease);
+    } else {
+      if (__DEV__) {
+        if (featureFlags.enableMechanismDebugger) {
+          // eslint-disable-next-line no-console
+          console.warn(
+            "Switching element in not possible because elements threshold are not intersected"
+          );
+        }
+      }
+
+      // lock the parent
+      this._lockParent(true);
+
+      this._fillHeadUp();
+    }
   }
 
   private _actionByAxis(axis: Axis): boolean {
@@ -441,7 +512,25 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     // Check if top or bottom.
     if (isOut[id].isOneTruthyByAxis(axis)) {
-      const newPos = (axis === "y" ? isOut[id].bottom : isOut[id].right)
+      const shouldIncrease = axis === "y" ? isOut[id].bottom : isOut[id].right;
+
+      const isInsideDeadZone = this.draggable
+        .getAbsoluteCurrentPosition()
+        .isInside(this._deadZoneStabilizer.area);
+
+      if (isInsideDeadZone) {
+        const currentDir = this.draggable.getDirectionByAxis(axis);
+
+        const withTheSameDir =
+          currentDir === this._deadZoneStabilizer.direction[axis];
+
+        // Ignore if draggable inside dead zone with the same direction.
+        if (withTheSameDir) {
+          return true;
+        }
+      }
+
+      const newPos = shouldIncrease
         ? gridPlaceholder[axis] + 1
         : gridPlaceholder[axis] - 1;
 
@@ -449,12 +538,14 @@ class DFlexMechanismController extends DFlexScrollableElement {
         if (featureFlags.enableMechanismDebugger) {
           // eslint-disable-next-line no-console
           console.log(
-            `Detecting dragged new row: ${newPos}. siblingsGrid-${axis} is ${grid[axis]}`
+            `Detecting dragged new ${
+              axis === "x" ? "col" : "row"
+            }: ${newPos}. siblingsGrid-${axis} is ${grid[axis]}`
           );
         }
       }
 
-      this._actionCaller(newPos, grid[axis], isOut[id].bottom);
+      this._actionCaller(axis, newPos, grid[axis], shouldIncrease);
 
       return true;
     }
