@@ -73,7 +73,7 @@ class DraggableInteractive extends DraggableAxes {
         this.mirrorDOM,
         true,
         false,
-        this.draggedElm.getDimensions(draggedDOM),
+        this.draggedElm.rect.getDimensions(),
         viewportPos
       );
 
@@ -201,7 +201,7 @@ class DraggableInteractive extends DraggableAxes {
         this.mirrorDOM!,
         false,
         true,
-        this.draggedElm.getDimensions(draggedDOM),
+        this.draggedElm.rect.getDimensions(),
         null
       );
     } else {

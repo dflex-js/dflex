@@ -5,7 +5,7 @@ import {
   featureFlags,
   PointNum,
   assertElementPosition,
-  getElmComputedDimensions,
+  // getElmComputedDimensions,
   BOTH_AXIS,
 } from "@dflex/utils";
 import type { Direction, Axes, AxesPoint } from "@dflex/utils";
@@ -71,7 +71,7 @@ class DFlexCoreElement extends DFlexBaseElement {
 
   rect: BoxRect;
 
-  private _computedDimensions: PointNum | null;
+  // private _computedDimensions: PointNum | null;
 
   // margin: BoxRect | null;
 
@@ -117,7 +117,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.hasPendingTransform = false;
 
     // CSS
-    this._computedDimensions = null;
+    // this._computedDimensions = null;
     // this.margin = null;
     this._initialPosition = new PointNum(0, 0);
     this.rect = new BoxRect(0, 0, 0, 0);
@@ -137,17 +137,17 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.rect.setByPointAndDimensions(top, left, height, width);
   }
 
-  getDimensions(DOM: HTMLElement): PointNum {
-    if (this._computedDimensions) {
-      return this._computedDimensions;
-    }
+  // getDimensions(DOM: HTMLElement): PointNum {
+  //   if (this._computedDimensions) {
+  //     return this._computedDimensions;
+  //   }
 
-    const { width, height } = getElmComputedDimensions(DOM);
+  //   const { width, height } = getElmComputedDimensions(DOM);
 
-    this._computedDimensions = new PointNum(width, height);
+  //   this._computedDimensions = new PointNum(width, height);
 
-    return this._computedDimensions;
-  }
+  //   return this._computedDimensions;
+  // }
 
   // getMargin(DOM: HTMLElement): BoxRect {
   //   if (this.margin) {

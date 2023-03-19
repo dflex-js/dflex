@@ -1,7 +1,7 @@
 /* eslint-disable no-dupe-class-members */
 /* eslint-disable no-unused-vars */
 import { DFlexBaseElement } from "@dflex/core-instance";
-import { PointNum, getSelection } from "@dflex/utils";
+import { PointNum, getSelection, Dimensions } from "@dflex/utils";
 import type { AxesPoint } from "@dflex/utils";
 
 class DFlexBaseDraggable<T extends DFlexBaseElement> {
@@ -69,7 +69,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     mirrorDOM: HTMLElement,
     isAddingProps: true,
     isMigratedInScroll: false,
-    dimensions: PointNum,
+    dimensions: Dimensions,
     viewportPos: [number, number]
   ): void;
 
@@ -78,7 +78,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     mirrorDOM: HTMLElement,
     isAddingProps: false,
     isMigratedInScroll: true,
-    dimensions: PointNum,
+    dimensions: Dimensions,
     viewportPos: null
   ): void;
 
@@ -114,7 +114,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     mirrorDOM: HTMLElement | null,
     isAddingProps: boolean,
     isMigratedInScroll: boolean,
-    dimensions: PointNum | null,
+    dimensions: Dimensions | null,
     viewportPos: [number, number] | null
   ): void {
     const { style: originStyle } = originDOM;
@@ -133,11 +133,11 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
         mirrorStyle.setProperty("position", "fixed");
         mirrorStyle.setProperty("top", `${viewportPos![0]}px`);
         mirrorStyle.setProperty("left", `${viewportPos![1]}px`);
-        if (dimensions!.x > 0) {
-          mirrorStyle.setProperty("width", `${dimensions!.x}px`);
+        if (dimensions!.width > 0) {
+          mirrorStyle.setProperty("width", `${dimensions!.width}px`);
         }
-        if (dimensions!.y > 0) {
-          mirrorStyle.setProperty("height", `${dimensions!.y}px`);
+        if (dimensions!.height > 0) {
+          mirrorStyle.setProperty("height", `${dimensions!.height}px`);
         }
         mirrorStyle.setProperty("z-index", "99");
         mirrorStyle.setProperty("margin", "0");
@@ -173,11 +173,11 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     if (mirrorDOM !== null) {
       if (isMigratedInScroll) {
         originStyle.setProperty("position", "absolute");
-        if (dimensions!.x > 0) {
-          originStyle.setProperty("width", `${dimensions!.x}px`);
+        if (dimensions!.width > 0) {
+          originStyle.setProperty("width", `${dimensions!.width}px`);
         }
-        if (dimensions!.y > 0) {
-          originStyle.setProperty("height", `${dimensions!.y}px`);
+        if (dimensions!.height > 0) {
+          originStyle.setProperty("height", `${dimensions!.height}px`);
         }
       }
       originStyle.removeProperty("opacity");

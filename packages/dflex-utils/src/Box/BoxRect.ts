@@ -1,4 +1,4 @@
-import type { Axis } from "../types";
+import type { Axis, Dimensions } from "../types";
 import BoxNum from "./BoxNum";
 
 export type BoxRectAbstract = {
@@ -92,6 +92,13 @@ class BoxRect extends BoxNum {
     this.bottom = this.height + y;
 
     return this;
+  }
+
+  getDimensions(): Dimensions {
+    return {
+      height: this.height,
+      width: this.width,
+    };
   }
 
   /**
