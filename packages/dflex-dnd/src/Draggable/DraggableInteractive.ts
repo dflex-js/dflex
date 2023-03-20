@@ -25,7 +25,9 @@ function throwWhenDuplicates(arr: string[]) {
     throw new Error(
       `Siblings ${JSON.stringify(
         arr
-      )} contains non-unique elements. Duplicate elements found: ${duplicates}`
+      )} contains non-unique elements. Duplicate elements found: ${JSON.stringify(
+        duplicates
+      )}`
     );
   }
 }
