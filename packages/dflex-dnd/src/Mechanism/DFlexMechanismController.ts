@@ -367,7 +367,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       const id = siblings[i];
 
       if (isIDEligible(id, draggedElm.id)) {
-        this.updateElement(id, siblings, cycleID, true);
+        this.updateElement(id, 1, siblings, cycleID, true);
       }
     }
   }
@@ -394,7 +394,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       const id = siblings[i];
 
       if (isIDEligible(id, draggedElm.id)) {
-        this.updateElement(id, siblings, cycleID, false);
+        this.updateElement(id, 1, siblings, cycleID, false);
       }
     }
   }
@@ -489,6 +489,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
             )}`
           );
         }
+
         return;
       }
     }
@@ -531,7 +532,23 @@ class DFlexMechanismController extends DFlexScrollableElement {
         this.draggable.getDirectionByAxis(axis);
 
       this.draggable.setDraggedTempIndex(elmIndex);
-      this.updateElement(id, siblings, cycleID, shouldDecrease);
+      const numberOfPassedElm = Math.abs(index - elmIndex);
+
+      if (__DEV__) {
+        if (numberOfPassedElm < 0 || numberOfPassedElm >= siblings.length) {
+          throw new Error(
+            `_actionCaller: invalid numberOfPassedElm: ${numberOfPassedElm}`
+          );
+        }
+      }
+
+      this.updateElement(
+        id,
+        numberOfPassedElm,
+        siblings,
+        cycleID,
+        shouldDecrease
+      );
     } else {
       if (__DEV__) {
         if (featureFlags.enableMechanismDebugger) {
