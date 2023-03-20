@@ -470,11 +470,15 @@ class DFlexMechanismController extends DFlexScrollableElement {
       occupiedGrid[oppositeAxis] = gridPlaceholder[oppositeAxis];
 
       elmIndex = siblings.findIndex((id) => {
-        const elm = store.registry.get(id)!;
+        if (isIDEligible(id, draggedID)) {
+          const elm = store.registry.get(id)!;
 
-        const is = elm.DOMGrid.isInstanceEqual(occupiedGrid);
+          const is = elm.DOMGrid.isInstanceEqual(occupiedGrid);
 
-        return is;
+          return is;
+        }
+
+        return false;
       });
 
       if (elmIndex === -1) {
@@ -600,7 +604,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
   // Guessing what axis the exit happened.
   private _draggedOutPositionNotifier(): void {
-
     const isTriggered = this._actionByAxis("y");
 
     if (isTriggered) {
