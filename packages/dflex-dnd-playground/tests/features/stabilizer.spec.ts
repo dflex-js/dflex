@@ -32,7 +32,6 @@ test.describe("Testing stabilizer between two intersected thresholds", async () 
     await page.goto("/grid");
 
     [elm1, elm2, elm3, elm4, elm5, elm6, elm7] = await Promise.all([
-      page.locator("#id-p2"),
       page.locator("#id-2"),
       page.locator("#id-3"),
       page.locator("#id-4"),
