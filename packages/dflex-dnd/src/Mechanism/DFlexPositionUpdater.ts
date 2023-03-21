@@ -544,6 +544,18 @@ class DFlexPositionUpdater {
       DFLEX_EVENTS.ON_DRAG_LEAVE,
       composeElmMeta(element)
     );
+
+    if (__DEV__) {
+      const { grid } = store.containers.get(element.keys.SK)!;
+
+      if (element.DOMGrid.x > grid.x || element.DOMGrid.y > grid.y) {
+        throw new Error(
+          `updateElement: DOMGrid for ${id} element can't be above grid container boundaries ${JSON.stringify(
+            element.DOMGrid
+          )}`
+        );
+      }
+    }
   }
 }
 

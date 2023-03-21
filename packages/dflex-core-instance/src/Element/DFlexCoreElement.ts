@@ -361,6 +361,14 @@ class DFlexCoreElement extends DFlexBaseElement {
       this.DOMGrid[axis] += mainAxisDirection * numberOfPassedElm;
     }
 
+    if (__DEV__) {
+      if (this.DOMGrid.x < 0 || this.DOMGrid.y < 0) {
+        throw new Error(
+          `reconcilePosition: DOMGrid for ${this.id} element can't be below zero.\nnumberOfPassedElm: ${numberOfPassedElm} mainAxisDirection: ${mainAxisDirection}`
+        );
+      }
+    }
+
     this._pushToTranslateHistory(axis, operationID);
 
     const { oldIndex, newIndex } = this._transformationProcess(
