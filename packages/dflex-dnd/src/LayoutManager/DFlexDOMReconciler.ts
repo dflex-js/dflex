@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import type { DFlexElement, DFlexParentContainer } from "@dflex/core-instance";
 import type { Siblings } from "@dflex/dom-gen";
-import { assertElementPosition, featureFlags } from "@dflex/utils";
+import { assertElementPosition } from "@dflex/utils";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
 let didThrowError = false;
@@ -49,10 +49,7 @@ function setElmGridAndAssertPosition(
       console.error("While DFlex Store has: ", store.interactiveDOM.get(elmID));
     }
 
-    // dflexElm._initIndicators(store.interactiveDOM.get(elmID)!);
-    if (featureFlags.enablePositionAssertion) {
-      assertElementPosition(store.interactiveDOM.get(elmID)!, dflexElm.rect);
-    }
+    assertElementPosition(store.interactiveDOM.get(elmID)!, dflexElm.rect);
   }, 0);
 }
 
