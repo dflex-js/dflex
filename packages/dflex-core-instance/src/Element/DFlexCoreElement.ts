@@ -2,7 +2,6 @@
 import {
   BoxRect,
   BoxRectAbstract,
-  featureFlags,
   PointNum,
   assertElementPosition,
   getElmComputedDimensions,
@@ -200,6 +199,10 @@ class DFlexCoreElement extends DFlexBaseElement {
       }
 
       this.animatedFrame = null;
+
+      if (__DEV__) {
+        assertElementPosition(DOM, this.rect);
+      }
     });
   }
 
@@ -371,16 +374,6 @@ class DFlexCoreElement extends DFlexBaseElement {
     );
 
     this._leaveToNewIndex(siblings, newIndex, oldIndex);
-
-    if (__DEV__) {
-      if (featureFlags.enablePositionAssertion) {
-        if (!this.hasPendingTransform) {
-          setTimeout(() => {
-            assertElementPosition(DOM, this.rect);
-          }, 1000);
-        }
-      }
-    }
   }
 
   restorePosition(DOM: HTMLElement): void {
