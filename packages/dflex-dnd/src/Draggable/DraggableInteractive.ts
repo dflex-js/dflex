@@ -12,6 +12,26 @@ import type { ScrollOpts, FinalDndOpts, Commit } from "../types";
 
 import DraggableAxes from "./DraggableAxes";
 
+function throwIfElmIsEmpty(arr: string[]) {
+  if (arr.some((item) => typeof item !== "string" || item.length === 0)) {
+    throw new Error("Siblings contains empty string");
+  }
+}
+
+function throwWhenDuplicates(arr: string[]) {
+  const duplicates = arr.filter((elem, index) => arr.indexOf(elem) !== index);
+
+  if (duplicates.length > 0) {
+    throw new Error(
+      `Siblings ${JSON.stringify(
+        arr
+      )} contains non-unique elements. Duplicate elements found: ${JSON.stringify(
+        duplicates
+      )}`
+    );
+  }
+}
+
 class DraggableInteractive extends DraggableAxes {
   mirrorDOM: HTMLElement | null;
 
@@ -168,15 +188,18 @@ class DraggableInteractive extends DraggableAxes {
 
     this.draggedElm.assignNewIndex(siblings, index);
 
-    if (__DEV__) {
-      draggedDOM.dataset.x = `${DOMGrid.x}`;
-      draggedDOM.dataset.y = `${DOMGrid.y}`;
-    }
-
     // If it's going to reconcile to the DOM then there's no need to update the
     // transformation here.
     if (!willReconcile) {
       this.draggedElm.assignNewPosition(draggedDOM, this.occupiedTranslate);
+    }
+
+    if (__DEV__) {
+      draggedDOM.dataset.x = `${DOMGrid.x}`;
+      draggedDOM.dataset.y = `${DOMGrid.y}`;
+
+      throwIfElmIsEmpty(siblings);
+      throwWhenDuplicates(siblings);
     }
   }
 

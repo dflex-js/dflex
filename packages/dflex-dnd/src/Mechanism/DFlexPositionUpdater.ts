@@ -454,6 +454,7 @@ class DFlexPositionUpdater {
    */
   protected updateElement(
     id: string,
+    numberOfPassedElm: number,
     siblings: Siblings,
     cycleID: string,
     isIncrease: boolean
@@ -535,6 +536,7 @@ class DFlexPositionUpdater {
       DOM,
       siblings,
       this.elmTransition,
+      numberOfPassedElm,
       cycleID
     );
 

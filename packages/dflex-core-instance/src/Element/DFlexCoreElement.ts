@@ -338,10 +338,9 @@ class DFlexCoreElement extends DFlexBaseElement {
     DOM: HTMLElement,
     siblings: string[],
     elmPos: PointNum,
+    numberOfPassedElm: number,
     operationID: string
   ): void {
-    const numberOfPassedElm = 1;
-
     /**
      * `mainAxisDirection` decides the direction of the element, negative or positive.
      * If the element is dragged to the left, the `mainAxisDirection` is -1.

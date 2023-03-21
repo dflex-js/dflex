@@ -367,7 +367,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       const id = siblings[i];
 
       if (isIDEligible(id, draggedElm.id)) {
-        this.updateElement(id, siblings, cycleID, true);
+        this.updateElement(id, 1, siblings, cycleID, true);
       }
     }
   }
@@ -394,27 +394,43 @@ class DFlexMechanismController extends DFlexScrollableElement {
       const id = siblings[i];
 
       if (isIDEligible(id, draggedElm.id)) {
-        this.updateElement(id, siblings, cycleID, false);
+        this.updateElement(id, 1, siblings, cycleID, false);
       }
     }
   }
 
   private _actionCaller(
     axis: Axis,
-    newGridPos: number,
-    maxGrid: number,
-    shouldIncrease: boolean
+    oppositeAxis: Axis,
+    grid: PointNum,
+    isMonoGrid: boolean,
+    shouldDecrease: boolean
   ): void {
+    const { gridPlaceholder } = this.draggable;
+
+    const newPos = shouldDecrease
+      ? gridPlaceholder[axis] + 1
+      : gridPlaceholder[axis] - 1;
+
     if (__DEV__) {
-      if (newGridPos < -1) {
+      if (newPos < -1) {
         throw new Error(
           "_actionCaller: the new grid position can't be below -1"
+        );
+      }
+
+      if (featureFlags.enableMechanismDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(
+          `Detecting dragged new ${
+            axis === "x" ? "col" : "row"
+          }: ${newPos}. siblingsGrid-${axis} is ${grid[axis]}`
         );
       }
     }
 
     // Leaving from top.
-    if (newGridPos === -1) {
+    if (newPos === -1) {
       // lock the parent
       this._lockParent(true);
 
@@ -424,7 +440,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     }
 
     // Leaving from bottom.
-    if (newGridPos > maxGrid) {
+    if (newPos > grid[axis]) {
       // lock the parent
       this._lockParent(true);
 
@@ -440,7 +456,43 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     const siblings = store.getElmSiblingsByKey(SK);
 
-    const elmIndex = index + -1 * (shouldIncrease ? -1 : 1);
+    let elmIndex: number;
+
+    if (isMonoGrid) {
+      elmIndex = index + (shouldDecrease ? 1 : -1);
+    } else {
+      const occupiedGrid = {
+        x: 0,
+        y: 0,
+      };
+
+      occupiedGrid[axis] = newPos;
+      occupiedGrid[oppositeAxis] = gridPlaceholder[oppositeAxis];
+
+      elmIndex = siblings.findIndex((id) => {
+        if (isIDEligible(id, draggedID)) {
+          const elm = store.registry.get(id)!;
+
+          const is = elm.DOMGrid.isInstanceEqual(occupiedGrid);
+
+          return is;
+        }
+
+        return false;
+      });
+
+      if (elmIndex === -1) {
+        if (__DEV__) {
+          throw new Error(
+            `_actionCaller: unable to find targeted element index for: ${JSON.stringify(
+              occupiedGrid
+            )}`
+          );
+        }
+
+        return;
+      }
+    }
 
     const id = siblings[elmIndex];
 
@@ -480,7 +532,23 @@ class DFlexMechanismController extends DFlexScrollableElement {
         this.draggable.getDirectionByAxis(axis);
 
       this.draggable.setDraggedTempIndex(elmIndex);
-      this.updateElement(id, siblings, cycleID, shouldIncrease);
+      const numberOfPassedElm = Math.abs(index - elmIndex);
+
+      if (__DEV__) {
+        if (numberOfPassedElm < 0 || numberOfPassedElm >= siblings.length) {
+          throw new Error(
+            `_actionCaller: invalid numberOfPassedElm: ${numberOfPassedElm}`
+          );
+        }
+      }
+
+      this.updateElement(
+        id,
+        numberOfPassedElm,
+        siblings,
+        cycleID,
+        shouldDecrease
+      );
     } else {
       if (__DEV__) {
         if (featureFlags.enableMechanismDebugger) {
@@ -505,14 +573,18 @@ class DFlexMechanismController extends DFlexScrollableElement {
         keys: { SK },
       },
       threshold: { isOut },
-      gridPlaceholder,
     } = this.draggable;
 
     const { grid } = store.containers.get(SK)!;
 
+    // One column or one row?
+    const oppositeAxis = axis === "y" ? "x" : "y";
+
+    const isMonoGrid = grid[oppositeAxis] === 0;
+
     // Check if top or bottom.
     if (isOut[id].isOneTruthyByAxis(axis)) {
-      const shouldIncrease = axis === "y" ? isOut[id].bottom : isOut[id].right;
+      const shouldDecrease = axis === "y" ? isOut[id].bottom : isOut[id].right;
 
       const isInsideDeadZone = this.draggable
         .getAbsoluteCurrentPosition()
@@ -530,30 +602,12 @@ class DFlexMechanismController extends DFlexScrollableElement {
         }
       }
 
-      const newPos = shouldIncrease
-        ? gridPlaceholder[axis] + 1
-        : gridPlaceholder[axis] - 1;
-
-      if (__DEV__) {
-        if (featureFlags.enableMechanismDebugger) {
-          // eslint-disable-next-line no-console
-          console.log(
-            `Detecting dragged new ${
-              axis === "x" ? "col" : "row"
-            }: ${newPos}. siblingsGrid-${axis} is ${grid[axis]}`
-          );
-        }
-      }
-
-      this._actionCaller(axis, newPos, grid[axis], shouldIncrease);
+      this._actionCaller(axis, oppositeAxis, grid, isMonoGrid, shouldDecrease);
 
       return true;
     }
 
-    // One column or one row?
-    const opposite = axis === "y" ? "x" : "y";
-
-    if (grid[opposite] === 0) {
+    if (isMonoGrid) {
       // lock the parent
       this._lockParent(true);
 
@@ -565,6 +619,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     return false;
   }
 
+  // Guessing what axis the exit happened.
   private _draggedOutPositionNotifier(): void {
     const isTriggered = this._actionByAxis("y");
 
