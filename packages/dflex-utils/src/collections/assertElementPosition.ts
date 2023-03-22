@@ -7,32 +7,22 @@ function assertElementPosition(DOM: HTMLElement, rect: BoxRectAbstract): void {
     return;
   }
 
-  const { top, left, bottom, right, width, height } =
-    DOM.getBoundingClientRect();
+  const DOMRect = DOM.getBoundingClientRect();
 
-  if (
-    top !== rect.top ||
-    left !== rect.left ||
-    bottom !== rect.bottom ||
-    right !== rect.right ||
-    width !== rect.width ||
-    height !== rect.height
-  ) {
-    didThrowError = true;
+  const keys = Object.keys(rect) as (keyof typeof rect)[];
 
-    throw new Error(
-      `Element position assertion failed. \n Expected: ${JSON.stringify(
-        rect
-      )} \n Actual: ${JSON.stringify({
-        top,
-        left,
-        bottom,
-        right,
-        width,
-        height,
-      })} \n\n`
-    );
-  }
+  keys.forEach((k) => {
+    if (
+      Object.prototype.hasOwnProperty.call(DOMRect, k) &&
+      DOMRect[k] !== rect[k]
+    ) {
+      didThrowError = true;
+
+      throw new Error(
+        `Element position assertion failed. Expected: ${DOMRect[k]} found: ${rect[k]}`
+      );
+    }
+  });
 }
 
 export default assertElementPosition;

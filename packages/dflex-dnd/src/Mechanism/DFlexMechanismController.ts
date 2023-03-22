@@ -302,7 +302,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     const { occupiedPosition, draggedElm, events } = this.draggable;
     const { migration } = store;
 
-    const { SK, index, cycleID } = migration.latest();
+    const { SK, index } = migration.latest();
 
     const siblings = store.getElmSiblingsByKey(SK);
 
@@ -367,7 +367,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       const id = siblings[i];
 
       if (isIDEligible(id, draggedElm.id)) {
-        this.updateElement(id, 1, siblings, cycleID, true);
+        this.updateElement(id, 1, true);
       }
     }
   }
@@ -380,7 +380,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     const { events, draggedElm } = this.draggable;
     const { migration } = store;
 
-    const { SK, cycleID } = migration.latest();
+    const { SK } = migration.latest();
 
     const siblings = store.getElmSiblingsByKey(SK);
 
@@ -394,7 +394,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       const id = siblings[i];
 
       if (isIDEligible(id, draggedElm.id)) {
-        this.updateElement(id, 1, siblings, cycleID, false);
+        this.updateElement(id, 1, false);
       }
     }
   }
@@ -452,7 +452,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       draggedElm: { id: draggedID },
     } = this.draggable;
 
-    const { SK, index, cycleID } = store.migration.latest();
+    const { SK, index } = store.migration.latest();
 
     const siblings = store.getElmSiblingsByKey(SK);
 
@@ -542,13 +542,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         }
       }
 
-      this.updateElement(
-        id,
-        numberOfPassedElm,
-        siblings,
-        cycleID,
-        shouldDecrease
-      );
+      this.updateElement(id, numberOfPassedElm, shouldDecrease);
     } else {
       if (__DEV__) {
         if (featureFlags.enableMechanismDebugger) {

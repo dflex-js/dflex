@@ -145,4 +145,90 @@ test.describe("Transformation inside grid container", async () => {
       ]);
     });
   });
+
+  test.describe("Moving elements vertically", () => {
+    const FINAL_IDS_ROUND_2 = [
+      "id-7",
+      "id-5",
+      "id-6",
+      "id-8",
+      "id-2",
+      "id-3",
+      "id-4",
+    ];
+
+    test("Move elm3 into elm7 position in the first col", async () => {
+      await getDraggedRect(elm3);
+      await moveDragged(-1, 210);
+      await page.dispatchEvent("#id-4", "mouseup", {
+        button: 0,
+        force: true,
+      });
+    });
+
+    test("Only siblings inside the row are transformed", async () => {
+      await Promise.all([
+        expect(elm1).toHaveCSS("transform", "none"),
+        expect(elm2).toHaveCSS("transform", "none"),
+        expect(elm3).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 210)"), // Same col
+        expect(elm4).toHaveCSS("transform", "none"),
+        expect(elm5).toHaveCSS("transform", "none"),
+        expect(elm6).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -105)"), // Same col
+        expect(elm7).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -105)"), // Same col
+      ]);
+    });
+
+    test("Move elm1 into elm4 position in the second col", async () => {
+      await getDraggedRect(elm1);
+      await moveDragged(-1, 140);
+      await page.dispatchEvent("#id-2", "mouseup", {
+        button: 0,
+        force: true,
+      });
+    });
+
+    test("Only siblings in first and second rows transformed", async () => {
+      await Promise.all([
+        expect(elm1).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 105)"), // Second col
+        expect(elm2).toHaveCSS("transform", "none"),
+        expect(elm3).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 210)"), // Same col
+        expect(elm4).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -105)"), // Second col
+        expect(elm5).toHaveCSS("transform", "none"),
+        expect(elm6).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -105)"), // Same col
+        expect(elm7).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -105)"), // Same col
+      ]);
+    });
+
+    test("Move elm122 into elm4 position in the third col", async () => {
+      await getDraggedRect(elm2);
+      await moveDragged(-1, 140);
+      await page.dispatchEvent("#id-3", "mouseup", {
+        button: 0,
+        force: true,
+      });
+    });
+
+    test("All siblings are transformed into different cols", async () => {
+      await Promise.all([
+        expect(elm1).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 105)"), // Second col
+        expect(elm2).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 105)"), // third col
+        expect(elm3).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 210)"), // Same col
+        expect(elm4).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -105)"), // Second col
+        expect(elm5).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -105)"), // third col
+        expect(elm6).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -105)"), // Same col
+        expect(elm7).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -105)"), // Same col
+      ]);
+    });
+
+    test("Trigger key `c` to commit the transformed elements and read the emitted message for mutation", async () => {
+      await invokeKeyboardAndAssertEmittedMsg(FINAL_IDS_ROUND_2);
+    });
+
+    test("Siblings have the correct DOM order in depth-1", async () => {
+      await Promise.all([
+        assertChildrenOrderIDs(elmParent, FINAL_IDS_ROUND_2),
+        assertDefaultChildrenIndex(elmParent),
+      ]);
+    });
+  });
 });
