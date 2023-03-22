@@ -66,30 +66,30 @@ function resetDOMStyle(DOM: HTMLElement): void {
   }
 }
 
-function assertGridBoundaries(
-  id: string,
-  DOMGrid: PointNum,
-  maxContainerGridBoundaries: PointNum
-) {
-  if (DOMGrid.x < 0 || DOMGrid.y < 0) {
-    throw new Error(
-      `reconcilePosition: DOMGrid for ${id} element can't be below zero. Found ${JSON.stringify(
-        DOMGrid
-      )}`
-    );
-  }
+// function assertGridBoundaries(
+//   id: string,
+//   DOMGrid: PointNum,
+//   maxContainerGridBoundaries: PointNum
+// ) {
+//   if (DOMGrid.x < 0 || DOMGrid.y < 0) {
+//     throw new Error(
+//       `assertGridBoundaries: DOMGrid for ${id} element can't be below zero. Found ${JSON.stringify(
+//         DOMGrid
+//       )}`
+//     );
+//   }
 
-  if (
-    DOMGrid.x > maxContainerGridBoundaries.x ||
-    DOMGrid.y > maxContainerGridBoundaries.y
-  ) {
-    throw new Error(
-      `reconcilePosition: DOMGrid for ${id} element can't be above grid container boundaries. Found ${JSON.stringify(
-        DOMGrid
-      )} for container ${JSON.stringify(maxContainerGridBoundaries)}.`
-    );
-  }
-}
+//   if (
+//     DOMGrid.x > maxContainerGridBoundaries.x ||
+//     DOMGrid.y > maxContainerGridBoundaries.y
+//   ) {
+//     throw new Error(
+//       `assertGridBoundaries: DOMGrid for ${id} element can't be above grid container boundaries. Found ${JSON.stringify(
+//         DOMGrid
+//       )} for container ${JSON.stringify(maxContainerGridBoundaries)}.`
+//     );
+//   }
+// }
 
 class DFlexCoreElement extends DFlexBaseElement {
   private _initialPosition: PointNum;
@@ -413,9 +413,9 @@ class DFlexCoreElement extends DFlexBaseElement {
       }
     }
 
-    if (__DEV__) {
-      assertGridBoundaries(this.id, this.DOMGrid, maxContainerGridBoundaries);
-    }
+    // if (__DEV__) {
+    //   assertGridBoundaries(this.id, this.DOMGrid, maxContainerGridBoundaries);
+    // }
 
     this._pushToTranslateHistory(axis, operationID);
 
