@@ -66,6 +66,31 @@ function resetDOMStyle(DOM: HTMLElement): void {
   }
 }
 
+function assertGridBoundaries(
+  id: string,
+  DOMGrid: PointNum,
+  maxContainerGridBoundaries: PointNum
+) {
+  if (DOMGrid.x < 0 || DOMGrid.y < 0) {
+    throw new Error(
+      `reconcilePosition: DOMGrid for ${id} element can't be below zero. Found ${JSON.stringify(
+        DOMGrid
+      )}`
+    );
+  }
+
+  if (
+    DOMGrid.x > maxContainerGridBoundaries.x ||
+    DOMGrid.y > maxContainerGridBoundaries.y
+  ) {
+    throw new Error(
+      `reconcilePosition: DOMGrid for ${id} element can't be above grid container boundaries. Found ${JSON.stringify(
+        DOMGrid
+      )} for container ${JSON.stringify(maxContainerGridBoundaries)}.`
+    );
+  }
+}
+
 class DFlexCoreElement extends DFlexBaseElement {
   private _initialPosition: PointNum;
 
@@ -200,6 +225,14 @@ class DFlexCoreElement extends DFlexBaseElement {
       }
 
       this.animatedFrame = null;
+
+      if (__DEV__) {
+        if (featureFlags.enablePositionAssertion) {
+          setTimeout(() => {
+            assertElementPosition(DOM, this.rect);
+          }, 1000);
+        }
+      }
     });
   }
 
@@ -339,6 +372,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     siblings: string[],
     elmPos: PointNum,
     numberOfPassedElm: number,
+    maxContainerGridBoundaries: PointNum,
     operationID: string
   ): void {
     /**
@@ -358,15 +392,29 @@ class DFlexCoreElement extends DFlexBaseElement {
     } else {
       elmPos[axis] *= mainAxisDirection;
 
-      this.DOMGrid[axis] += mainAxisDirection * numberOfPassedElm;
+      if (mainAxisDirection === -1) {
+        for (let i = 0; i < numberOfPassedElm; i += 1) {
+          this.DOMGrid.x -= 1;
+
+          if (this.DOMGrid.x < 0) {
+            this.DOMGrid.x = maxContainerGridBoundaries.x;
+            this.DOMGrid.y -= 1;
+          }
+        }
+      } else {
+        for (let i = 0; i < numberOfPassedElm; i += 1) {
+          this.DOMGrid.x += 1;
+
+          if (this.DOMGrid.x > maxContainerGridBoundaries.x) {
+            this.DOMGrid.x = 0;
+            this.DOMGrid.y += 1;
+          }
+        }
+      }
     }
 
     if (__DEV__) {
-      if (this.DOMGrid.x < 0 || this.DOMGrid.y < 0) {
-        throw new Error(
-          `reconcilePosition: DOMGrid for ${this.id} element can't be below zero.\nnumberOfPassedElm: ${numberOfPassedElm} mainAxisDirection: ${mainAxisDirection}`
-        );
-      }
+      assertGridBoundaries(this.id, this.DOMGrid, maxContainerGridBoundaries);
     }
 
     this._pushToTranslateHistory(axis, operationID);
@@ -379,16 +427,6 @@ class DFlexCoreElement extends DFlexBaseElement {
     );
 
     this._leaveToNewIndex(siblings, newIndex, oldIndex);
-
-    if (__DEV__) {
-      if (featureFlags.enablePositionAssertion) {
-        if (!this.hasPendingTransform) {
-          setTimeout(() => {
-            assertElementPosition(DOM, this.rect);
-          }, 1000);
-        }
-      }
-    }
   }
 
   restorePosition(DOM: HTMLElement): void {

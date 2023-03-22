@@ -4,7 +4,6 @@ import { DFlexElement } from "@dflex/core-instance";
 import { Axes, BOTH_AXIS, featureFlags, PointNum } from "@dflex/utils";
 import type { AxesPoint, Direction, Axis, AbstractBox } from "@dflex/utils";
 
-import type { Siblings } from "@dflex/dom-gen";
 import type DraggableInteractive from "../Draggable";
 
 import { store, DFLEX_EVENTS } from "../LayoutManager";
@@ -455,11 +454,15 @@ class DFlexPositionUpdater {
   protected updateElement(
     id: string,
     numberOfPassedElm: number,
-    siblings: Siblings,
-    cycleID: string,
     isIncrease: boolean
   ) {
     const { draggedElm, occupiedPosition, gridPlaceholder } = this.draggable;
+
+    const { SK, cycleID } = store.migration.latest();
+
+    const siblings = store.getElmSiblingsByKey(SK);
+
+    const { grid: maxContainerGridBoundaries } = store.containers.get(SK)!;
 
     if (__DEV__) {
       // DFLex doesn't have error msg transformer yet for production.
@@ -537,6 +540,7 @@ class DFlexPositionUpdater {
       siblings,
       this.elmTransition,
       numberOfPassedElm,
+      maxContainerGridBoundaries,
       cycleID
     );
 
@@ -544,18 +548,6 @@ class DFlexPositionUpdater {
       DFLEX_EVENTS.ON_DRAG_LEAVE,
       composeElmMeta(element)
     );
-
-    if (__DEV__) {
-      const { grid } = store.containers.get(element.keys.SK)!;
-
-      if (element.DOMGrid.x > grid.x || element.DOMGrid.y > grid.y) {
-        throw new Error(
-          `updateElement: DOMGrid for ${id} element can't be above grid container boundaries ${JSON.stringify(
-            element.DOMGrid
-          )}`
-        );
-      }
-    }
   }
 }
 

@@ -19,9 +19,7 @@ function assertElementPosition(DOM: HTMLElement, rect: BoxRectAbstract): void {
       didThrowError = true;
 
       throw new Error(
-        `Element position assertion failed. \n Expected: ${JSON.stringify(
-          rect
-        )} \n Actual: ${JSON.stringify(DOMRect)} \n\n`
+        `Element position assertion failed. Expected: ${DOMRect[k]} found: ${rect[k]}`
       );
     }
   });
