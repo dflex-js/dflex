@@ -40,8 +40,8 @@
     "update-version": "pnpm changeset version && pnpm install"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.26.0",
-    "@playwright/test": "^1.31.2",
+    "@changesets/cli": "^2.26.1",
+    "@playwright/test": "^1.32.0",
     "@types/jest": "^29.5.0",
     "@types/node": "^18.15.5",
     "@types/react": "^18.0.28",
@@ -58,7 +58,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.9.0",
-    "rimraf": "^4.4.0",
+    "rimraf": "^4.4.1",
     "start-server-and-test": "^2.0.0",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
