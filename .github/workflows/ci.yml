@@ -37,7 +37,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2.2.4
         with:
-          version: ^7.0.0
+          version: ^8.0.0
           run_install: true
 
       - name: Use latest version of Node.j
@@ -67,7 +67,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2.2.4
         with:
-          version: ^7.0.0
+          version: ^8.0.0
           run_install: true
 
       - name: Use latest version of Node.j
@@ -97,7 +97,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2.2.4
         with:
-          version: ^7.0.0
+          version: ^8.0.0
           run_install: true
 
       - name: Use latest version of Node.j
@@ -127,7 +127,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2.2.4
         with:
-          version: ^7.0.0
+          version: ^8.0.0
           run_install: true
 
       - name: Use latest version of Node.j
@@ -171,7 +171,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2.2.4
         with:
-          version: ^7.0.0
+          version: ^8.0.0
           run_install: true
 
       - name: Use latest version of Node.j
@@ -209,7 +209,7 @@ jobs:
 
   #     - uses: pnpm/action-setup@v2.2.4
   #       with:
-  #         version: ^7.0.0
+  #         version: ^8.0.0
   #         run_install: true
 
   #     - name: Use latest version of Node.j
@@ -262,7 +262,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2.2.4
         with:
-          version: ^7.0.0
+          version: ^8.0.0
           run_install: true
 
       - name: Use latest version of Node.j
@@ -303,7 +303,7 @@ jobs:
         name: Install pnpm
         id: pnpm-install
         with:
-          version: ^7.0.0
+          version: ^8.0.0
           run_install: false
 
       - name: Get pnpm store directory
@@ -354,7 +354,7 @@ jobs:
         name: Install pnpm
         id: pnpm-install
         with:
-          version: ^7.0.0
+          version: ^8.0.0
           run_install: false
 
       - name: Get pnpm store directory
@@ -404,7 +404,7 @@ jobs:
         name: Install pnpm
         id: pnpm-install
         with:
-          version: ^7.0.0
+          version: ^8.0.0
           run_install: false
 
       - name: Get pnpm store directory
@@ -473,7 +473,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2.2.4
         with:
-          version: ^7.0.0
+          version: ^8.0.0
           run_install: true
 
       - name: Use latest version of Node.j
