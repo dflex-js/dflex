@@ -22,7 +22,7 @@
     "emit": "tsc --emitDeclarationOnly"
   },
   "repository": "https://github.com/dflex-js/dflex",
-  "homepage": "https://github.com/dflex-js/dflex/tree/master/packages/utils",
+  "homepage": "https://github.com/dflex-js/dflex/tree/main/packages/utils",
   "license": "MIT",
   "files": [
     "dist",
