@@ -1,6 +1,6 @@
 {
   "name": "@dflex/core-instance",
-  "version": "3.8.2",
+  "version": "3.8.3",
   "description": "Core instance is a DFlex package for interactive DOM element",
   "author": "Jalal Maskoun",
   "main": "./dist/dflex-core.js",
@@ -30,7 +30,7 @@
     "LICENSE"
   ],
   "devDependencies": {
-    "@dflex/utils": "workspace:^3.8.2"
+    "@dflex/utils": "workspace:^3.8.3"
   },
   "keywords": [
     "drag-drop",
