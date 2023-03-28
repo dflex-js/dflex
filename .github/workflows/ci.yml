@@ -286,7 +286,7 @@ jobs:
     if: github.event.pull_request.draft != true
     strategy:
       matrix:
-        node-version: [18.12]
+        node-version: [18.15]
         browser: ["chromium", "firefox"]
     env:
       CI: true
@@ -337,7 +337,7 @@ jobs:
     if: github.event.pull_request.draft != true
     strategy:
       matrix:
-        node-version: [18.12]
+        node-version: [18.15]
         browser: ["chromium", "firefox"]
     env:
       CI: true
@@ -387,7 +387,7 @@ jobs:
     timeout-minutes: 12
     strategy:
       matrix:
-        node-version: [18.12]
+        node-version: [18.15]
         browser: ["chromium", "firefox", "webkit"]
     env:
       CI: true
