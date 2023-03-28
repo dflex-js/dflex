@@ -56,14 +56,14 @@ context(
       it("Dataset index updated for dragged", () => {
         cy.get(`#${1}-extended`).then((elm) => {
           const { index } = elm[0].dataset;
-          expect(index).to.be.eq(`NaN`);
+          expect(index).to.be.eq("NaN");
         });
       });
 
       it("dragged-element has dragged attribute", () => {
         cy.get(`#${1}-extended`).then((elm) => {
           const dragged = elm[0].getAttribute("dragged");
-          expect(dragged).to.be.eq(`true`);
+          expect(dragged).to.be.eq("true");
         });
       });
 
@@ -174,7 +174,7 @@ context(
 
       it("Checking dataset index stays the same", () => {
         for (let i = 1; i < 99; i += 1) {
-          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          // eslint-disable-next-line cypress/no-unnecessary-waiting, cypress/unsafe-to-chain-command
           cy.wait(0)
             .get(`#${i}-extended`)
             .then((elm) => {

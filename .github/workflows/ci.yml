@@ -37,7 +37,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2.2.4
         with:
-          version: ^7.0.0
+          version: ^8.0.0
           run_install: true
 
       - name: Use latest version of Node.j
@@ -67,7 +67,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2.2.4
         with:
-          version: ^7.0.0
+          version: ^8.0.0
           run_install: true
 
       - name: Use latest version of Node.j
@@ -97,7 +97,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2.2.4
         with:
-          version: ^7.0.0
+          version: ^8.0.0
           run_install: true
 
       - name: Use latest version of Node.j
@@ -127,7 +127,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2.2.4
         with:
-          version: ^7.0.0
+          version: ^8.0.0
           run_install: true
 
       - name: Use latest version of Node.j
@@ -171,7 +171,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2.2.4
         with:
-          version: ^7.0.0
+          version: ^8.0.0
           run_install: true
 
       - name: Use latest version of Node.j
@@ -209,7 +209,7 @@ jobs:
 
   #     - uses: pnpm/action-setup@v2.2.4
   #       with:
-  #         version: ^7.0.0
+  #         version: ^8.0.0
   #         run_install: true
 
   #     - name: Use latest version of Node.j
@@ -262,7 +262,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2.2.4
         with:
-          version: ^7.0.0
+          version: ^8.0.0
           run_install: true
 
       - name: Use latest version of Node.j
@@ -286,7 +286,7 @@ jobs:
     if: github.event.pull_request.draft != true
     strategy:
       matrix:
-        node-version: [16.8]
+        node-version: [18.15]
         browser: ["chromium", "firefox"]
     env:
       CI: true
@@ -303,7 +303,7 @@ jobs:
         name: Install pnpm
         id: pnpm-install
         with:
-          version: ^7.0.0
+          version: ^8.0.0
           run_install: false
 
       - name: Get pnpm store directory
@@ -337,7 +337,7 @@ jobs:
     if: github.event.pull_request.draft != true
     strategy:
       matrix:
-        node-version: [16.8]
+        node-version: [18.15]
         browser: ["chromium", "firefox"]
     env:
       CI: true
@@ -354,7 +354,7 @@ jobs:
         name: Install pnpm
         id: pnpm-install
         with:
-          version: ^7.0.0
+          version: ^8.0.0
           run_install: false
 
       - name: Get pnpm store directory
@@ -387,7 +387,7 @@ jobs:
     timeout-minutes: 12
     strategy:
       matrix:
-        node-version: [16.8]
+        node-version: [18.15]
         browser: ["chromium", "firefox", "webkit"]
     env:
       CI: true
@@ -404,7 +404,7 @@ jobs:
         name: Install pnpm
         id: pnpm-install
         with:
-          version: ^7.0.0
+          version: ^8.0.0
           run_install: false
 
       - name: Get pnpm store directory
@@ -473,7 +473,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2.2.4
         with:
-          version: ^7.0.0
+          version: ^8.0.0
           run_install: true
 
       - name: Use latest version of Node.j

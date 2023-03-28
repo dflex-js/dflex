@@ -22,7 +22,7 @@
     "compile": "pnpm clean && pnpm tsc -b",
     "emit": "tsc --emitDeclarationOnly"
   },
-  "homepage": "https://github.com/dflex-js/dflex/tree/master/packages/draggable",
+  "homepage": "https://github.com/dflex-js/dflex/tree/main/packages/draggable",
   "repository": "https://github.com/dflex-js/dflex",
   "license": "MIT",
   "files": [
