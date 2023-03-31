@@ -42,6 +42,10 @@ class DFlexParentContainer {
     this._initRect(DOM);
     // @ts-expect-error
     this.lastElmPosition = null;
+
+    if (__DEV__) {
+      Object.seal(this);
+    }
   }
 
   private _initRect(DOM: HTMLElement): void {
