@@ -1,7 +1,8 @@
+import { getDimensionTypeByAxis } from "../collections";
 import type { Axis } from "../types";
 import BoxNum from "./BoxNum";
 
-export type BoxRectAbstract = {
+export type AbstractBoxRect = {
   top: number;
   left: number;
   bottom: number;
@@ -25,6 +26,7 @@ class BoxRect extends BoxNum {
    */
   constructor(top: number, right: number, bottom: number, left: number) {
     super(top, right, bottom, left);
+
     this.width = right - left;
     this.height = bottom - top;
 
@@ -101,12 +103,18 @@ class BoxRect extends BoxNum {
    *
    * @returns
    */
-  getRect(): BoxRectAbstract {
+  getRect(): AbstractBoxRect {
     return {
       ...this.getBox(),
       height: this.height,
       width: this.width,
     };
+  }
+
+  getDimensionDiff(box: AbstractBoxRect, axis: Axis): number {
+    const dimensionType = getDimensionTypeByAxis(axis);
+
+    return this[dimensionType] - box[dimensionType];
   }
 }
 

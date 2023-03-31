@@ -143,45 +143,45 @@ export function handleElmMigration(
   rect: AbstractBox
 ) {
   // Handle the migration.
-  const containerDist = store.containers.get(distSK)!;
+  const destinationContainer = store.containers.get(distSK)!;
 
   // Append the newest element to the end of the branch.
-  containerDist.register(rect);
+  destinationContainer.register(rect);
 
-  const originBranch = store.getElmSiblingsByKey(originSK);
+  const originSiblings = store.getElmSiblingsByKey(originSK);
 
   // Don't reset empty branch keep the boundaries.
-  if (originBranch.length === 0) {
+  if (originSiblings.length === 0) {
     return;
   }
 
-  const containerOrigin = store.containers.get(originSK)!;
+  const originContainer = store.containers.get(originSK)!;
 
-  containerOrigin.resetIndicators(originBranch.length);
+  originContainer.resetIndicators(originSiblings.length);
 
-  originBranch.forEach((elmID) => {
+  originSiblings.forEach((elmID) => {
     const elm = store.registry.get(elmID)!;
 
-    const gridIndex = containerOrigin.register(elm.rect);
+    const gridIndex = originContainer.register(elm.rect);
 
     elm.DOMGrid.clone(gridIndex);
   });
 
   const lastInOrigin = store.registry.get(
-    originBranch[originBranch.length - 1]
+    originSiblings[originSiblings.length - 1]
   )!;
 
-  containerOrigin.preservePosition(lastInOrigin.rect.getPosition());
+  originContainer.preservePosition(lastInOrigin.rect.getPosition());
 }
 
 class DFlexPositionUpdater {
   protected draggable: DraggableInteractive;
 
-  private elmTransition: PointNum;
+  private _elmTransition: PointNum;
 
-  private draggedPositionOffset: PointNum;
+  private _draggedPositionOffset: PointNum;
 
-  private draggedTransition: PointNum;
+  private _draggedTransition: PointNum;
 
   /** Isolated form the threshold and predict is-out based on the controllers */
   protected isParentLocked: boolean;
@@ -192,19 +192,19 @@ class DFlexPositionUpdater {
     /**
      * Next element calculated transition space.
      */
-    this.elmTransition = new PointNum(0, 0);
+    this._elmTransition = new PointNum(0, 0);
 
     /**
      * Same as elmTransition but for dragged.
      */
-    this.draggedPositionOffset = new PointNum(0, 0);
+    this._draggedPositionOffset = new PointNum(0, 0);
 
-    this.draggedTransition = new PointNum(0, 0);
+    this._draggedTransition = new PointNum(0, 0);
 
     this.isParentLocked = false;
   }
 
-  private setDistanceBtwPositions(
+  private _setDistanceBtwPositions(
     axis: Axis,
     elmDirection: Direction,
     element: DFlexElement
@@ -215,18 +215,18 @@ class DFlexPositionUpdater {
       element.rect[axis === "x" ? "left" : "top"] - occupiedPosition[axis]
     );
 
-    const rectDiff = element.getRectDiff(draggedElm, axis);
+    const rectDiff = element.rect.getDimensionDiff(draggedElm.rect, axis);
 
     if (elmDirection === -1) {
-      this.draggedTransition[axis] = positionDiff + rectDiff;
-      this.draggedPositionOffset[axis] = rectDiff;
+      this._draggedTransition[axis] = positionDiff + rectDiff;
+      this._draggedPositionOffset[axis] = rectDiff;
 
-      this.elmTransition[axis] = positionDiff;
+      this._elmTransition[axis] = positionDiff;
     } else {
-      this.draggedTransition[axis] = positionDiff;
-      this.draggedPositionOffset[axis] = 0;
+      this._draggedTransition[axis] = positionDiff;
+      this._draggedPositionOffset[axis] = 0;
 
-      this.elmTransition[axis] = positionDiff - rectDiff;
+      this._elmTransition[axis] = positionDiff - rectDiff;
     }
   }
 
@@ -238,14 +238,14 @@ class DFlexPositionUpdater {
     const { rect, DOMGrid: grid } = element;
 
     this.draggable.occupiedPosition.setAxes(
-      rect.left + this.draggedPositionOffset.x,
-      rect.top + this.draggedPositionOffset.y
+      rect.left + this._draggedPositionOffset.x,
+      rect.top + this._draggedPositionOffset.y
     );
 
     const draggedDirection = -1 * elmDirection;
 
-    this.draggedTransition[axis] *= draggedDirection;
-    this.draggable.occupiedTranslate[axis] += this.draggedTransition[axis];
+    this._draggedTransition[axis] *= draggedDirection;
+    this.draggable.occupiedTranslate[axis] += this._draggedTransition[axis];
 
     this.draggable.gridPlaceholder.clone(grid);
 
@@ -258,19 +258,6 @@ class DFlexPositionUpdater {
         );
       }
     }
-  }
-
-  private updateIndicators(
-    axis: Axis,
-    elmDirection: Direction,
-    element: DFlexElement
-  ) {
-    this.elmTransition.setAxes(0, 0);
-    this.draggedTransition.setAxes(0, 0);
-    this.draggedPositionOffset.setAxes(0, 0);
-
-    this.setDistanceBtwPositions(axis, elmDirection, element);
-    this._updateDraggable(axis, elmDirection, element);
   }
 
   protected updateDraggedThresholdPosition(x: number, y: number) {
@@ -480,7 +467,13 @@ class DFlexPositionUpdater {
 
     const elmDirection: Direction = isIncrease ? -1 : 1;
 
-    this.updateIndicators(axis, elmDirection, element);
+    // Reset all indicators.
+    this._elmTransition.setAxes(0, 0);
+    this._draggedTransition.setAxes(0, 0);
+    this._draggedPositionOffset.setAxes(0, 0);
+
+    this._setDistanceBtwPositions(axis, elmDirection, element);
+    this._updateDraggable(axis, elmDirection, element);
 
     // TODO: always true for the first element
     if (!this.isParentLocked) {
@@ -511,7 +504,7 @@ class DFlexPositionUpdater {
       elmDirection,
       DOM,
       siblings,
-      this.elmTransition,
+      this._elmTransition,
       numberOfPassedElm,
       maxContainerGridBoundaries,
       cycleID

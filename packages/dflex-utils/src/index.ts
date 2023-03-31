@@ -23,6 +23,8 @@ export {
   setRelativePosition,
   setFixedWidth,
   getElmComputedDimensions,
+  getDimensionTypeByAxis,
+  getDirectionTypeByAxis,
 } from "./collections";
 
 export { canUseDOM, getSelection, getParentElm } from "./dom";
