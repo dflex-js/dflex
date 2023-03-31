@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { PointNum, AbstractBox, BoxRect, BoxNum } from "@dflex/utils";
+import { PointNum, AbstractBox, BoxRect, BoxNum, Axis } from "@dflex/utils";
 
 import type { Dimensions, AxesPoint } from "@dflex/utils";
 
@@ -22,7 +22,7 @@ class DFlexParentContainer {
    * */
   originLength: number;
 
-  id: string;
+  readonly id: string;
 
   /**
    * Preserve the last element position in the list .
@@ -116,6 +116,22 @@ class DFlexParentContainer {
     }
 
     return gridIndex;
+  }
+
+  extendGrid(axis: Axis) {
+    this.grid[axis] += 1;
+  }
+
+  reduceGrid(axis: Axis) {
+    this.grid[axis] -= 1;
+
+    if (__DEV__) {
+      if (this.grid[axis] < 0) {
+        throw new Error(
+          `reduceGrid: Cannot reduce grid on axis:${axis} to below zero`
+        );
+      }
+    }
   }
 
   /**
