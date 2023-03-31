@@ -6,9 +6,9 @@ import {
   PointNum,
   assertElementPosition,
   getElmComputedDimensions,
-  BOTH_AXIS,
+  Axis,
 } from "@dflex/utils";
-import type { Direction, Axes, AxesPoint } from "@dflex/utils";
+import type { Direction, AxesPoint } from "@dflex/utils";
 
 import DFlexBaseElement from "./DFlexBaseElement";
 
@@ -28,7 +28,7 @@ export type DFlexSerializedElement = {
 
 type TransitionHistory = {
   ID: string;
-  axis: Axes;
+  axis: Axis;
   translate: AxesPoint;
 };
 
@@ -288,7 +288,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     branchIDsOrder[newIndex] = this.id;
   }
 
-  private _pushToTranslateHistory(axis: Axes, operationID: string) {
+  private _pushToTranslateHistory(axis: Axis, operationID: string) {
     const translate = this.translate.getInstance();
 
     const elmAxesHistory: TransitionHistory = {
@@ -367,7 +367,7 @@ class DFlexCoreElement extends DFlexBaseElement {
    * @param axis
    */
   reconcilePosition(
-    axis: Axes,
+    axis: Axis,
     mainAxisDirection: Direction,
     DOM: HTMLElement,
     siblings: string[],
@@ -380,36 +380,24 @@ class DFlexCoreElement extends DFlexBaseElement {
      * `mainAxisDirection` decides the direction of the element, negative or positive.
      * If the element is dragged to the left, the `mainAxisDirection` is -1.
      */
-    if (axis === "z") {
-      BOTH_AXIS.forEach((_axis, i) => {
-        // i=0 for `X` which is the opposite of the main axis(`Y`) when dragging on `Z`
-        const direction =
-          i === 0 ? (mainAxisDirection === 1 ? -1 : 1) : mainAxisDirection;
+    elmPos[axis] *= mainAxisDirection;
 
-        elmPos[_axis] *= direction;
+    if (mainAxisDirection === -1) {
+      for (let i = 0; i < numberOfPassedElm; i += 1) {
+        this.DOMGrid.x -= 1;
 
-        this.DOMGrid[_axis] += mainAxisDirection * numberOfPassedElm;
-      });
-    } else {
-      elmPos[axis] *= mainAxisDirection;
-
-      if (mainAxisDirection === -1) {
-        for (let i = 0; i < numberOfPassedElm; i += 1) {
-          this.DOMGrid.x -= 1;
-
-          if (this.DOMGrid.x < 0) {
-            this.DOMGrid.x = maxContainerGridBoundaries.x;
-            this.DOMGrid.y -= 1;
-          }
+        if (this.DOMGrid.x < 0) {
+          this.DOMGrid.x = maxContainerGridBoundaries.x;
+          this.DOMGrid.y -= 1;
         }
-      } else {
-        for (let i = 0; i < numberOfPassedElm; i += 1) {
-          this.DOMGrid.x += 1;
+      }
+    } else {
+      for (let i = 0; i < numberOfPassedElm; i += 1) {
+        this.DOMGrid.x += 1;
 
-          if (this.DOMGrid.x > maxContainerGridBoundaries.x) {
-            this.DOMGrid.x = 0;
-            this.DOMGrid.y += 1;
-          }
+        if (this.DOMGrid.x > maxContainerGridBoundaries.x) {
+          this.DOMGrid.x = 0;
+          this.DOMGrid.y += 1;
         }
       }
     }
@@ -468,15 +456,9 @@ class DFlexCoreElement extends DFlexBaseElement {
 
     let increment = 0;
 
-    if (axis === "z") {
-      increment = elmPos.x > 0 || elmPos.y > 0 ? 1 : -1;
+    increment = elmPos[axis] > 0 ? 1 : -1;
 
-      this.DOMGrid.increase({ x: increment, y: increment });
-    } else {
-      increment = elmPos[axis] > 0 ? 1 : -1;
-
-      this.DOMGrid[axis] += increment;
-    }
+    this.DOMGrid[axis] += increment;
 
     this._transformationProcess(DOM, elmPos, true, increment);
 

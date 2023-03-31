@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { DFlexElement } from "@dflex/core-instance";
 
-import { Axes, BOTH_AXIS, featureFlags, PointNum } from "@dflex/utils";
+import { featureFlags, PointNum } from "@dflex/utils";
 import type { AxesPoint, Direction, Axis, AbstractBox } from "@dflex/utils";
 
 import type DraggableInteractive from "../Draggable";
@@ -231,7 +231,7 @@ class DFlexPositionUpdater {
   }
 
   private _updateDraggable(
-    axis: Axes,
+    axis: Axis,
     elmDirection: Direction,
     element: DFlexElement
   ) {
@@ -244,10 +244,8 @@ class DFlexPositionUpdater {
 
     const draggedDirection = -1 * elmDirection;
 
-    if (axis !== "z") {
-      this.draggedTransition[axis] *= draggedDirection;
-      this.draggable.occupiedTranslate[axis] += this.draggedTransition[axis];
-    }
+    this.draggedTransition[axis] *= draggedDirection;
+    this.draggable.occupiedTranslate[axis] += this.draggedTransition[axis];
 
     this.draggable.gridPlaceholder.clone(grid);
 
@@ -263,7 +261,7 @@ class DFlexPositionUpdater {
   }
 
   private updateIndicators(
-    axis: Axes,
+    axis: Axis,
     elmDirection: Direction,
     element: DFlexElement
   ) {
@@ -271,14 +269,7 @@ class DFlexPositionUpdater {
     this.draggedTransition.setAxes(0, 0);
     this.draggedPositionOffset.setAxes(0, 0);
 
-    if (axis === "z") {
-      BOTH_AXIS.forEach((_axis) => {
-        this.setDistanceBtwPositions(_axis, elmDirection, element);
-      });
-    } else {
-      this.setDistanceBtwPositions(axis, elmDirection, element);
-    }
-
+    this.setDistanceBtwPositions(axis, elmDirection, element);
     this._updateDraggable(axis, elmDirection, element);
   }
 
@@ -456,7 +447,7 @@ class DFlexPositionUpdater {
     numberOfPassedElm: number,
     isIncrease: boolean
   ) {
-    const { draggedElm, occupiedPosition, gridPlaceholder } = this.draggable;
+    const { draggedElm, occupiedPosition } = this.draggable;
 
     const { SK, cycleID } = store.migration.latest();
 
@@ -471,7 +462,7 @@ class DFlexPositionUpdater {
 
     const [element, DOM] = store.getElmWithDOM(id);
 
-    let axis: Axes = element.rect.isPositionedY({
+    const axis: Axis = element.rect.isPositionedY({
       left: occupiedPosition.x,
       top: occupiedPosition.y,
       bottom: occupiedPosition.y + draggedElm.rect.height,
@@ -479,24 +470,6 @@ class DFlexPositionUpdater {
     })
       ? "y"
       : "x";
-
-    const onSameAxis = occupiedPosition.onSameAxis(
-      axis,
-      element.rect.getPosition()
-    );
-
-    if (!onSameAxis) {
-      const isPartOfZGrid = (_axis: Axis) => {
-        // eslint-disable-next-line no-underscore-dangle
-        return element.DOMGrid[_axis] > 0 || gridPlaceholder[_axis] > 0;
-      };
-
-      if (axis === "y" && isPartOfZGrid("x")) {
-        axis = "z";
-      } else if (axis === "x" && isPartOfZGrid("y")) {
-        axis = "z";
-      }
-    }
 
     if (__DEV__) {
       if (featureFlags.enableMechanismDebugger) {
