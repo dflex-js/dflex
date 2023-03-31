@@ -126,9 +126,9 @@ class DFlexParentContainer {
     this.grid[axis] -= 1;
 
     if (__DEV__) {
-      if (this.grid[axis] < 0) {
+      if (this.grid[axis] < -1) {
         throw new Error(
-          `reduceGrid: Cannot reduce grid on axis:${axis} to below zero`
+          `reduceGrid: Cannot reduce grid on axis:${axis} to below -1`
         );
       }
     }
