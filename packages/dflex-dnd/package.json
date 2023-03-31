@@ -22,7 +22,7 @@
     "emit": "tsc --emitDeclarationOnly",
     "compile:w": "tsc -b -w"
   },
-  "homepage": "https://github.com/dflex-js/dflex/tree/main/packages/dnd",
+  "homepage": "https://github.com/dflex-js/dflex/tree/main/packages/dflex-dnd",
   "repository": "https://github.com/dflex-js/dflex",
   "license": "MIT",
   "files": [
