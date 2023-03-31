@@ -1,20 +1,23 @@
+import { getDirectionTypeByAxis } from "../collections";
+import { AxesPoint } from "../Point";
+import { Axis } from "../types";
 import type AbstractBox from "./AbstractBox";
 import Box from "./Box";
 
 class BoxNum extends Box<number> {
-  private _isUnder(box: AbstractBox) {
+  private _isUnder(box: AbstractBox): boolean {
     return this.top >= box.bottom;
   }
 
-  private _isAbove(box: AbstractBox) {
+  private _isAbove(box: AbstractBox): boolean {
     return this.bottom <= box.top;
   }
 
-  private _isOnLeft(box: AbstractBox) {
+  private _isOnLeft(box: AbstractBox): boolean {
     return this.right <= box.left;
   }
 
-  private _isOneRight(box: AbstractBox) {
+  private _isOneRight(box: AbstractBox): boolean {
     return this.left >= box.right;
   }
 
@@ -75,11 +78,11 @@ class BoxNum extends Box<number> {
     );
   }
 
-  isPositionedY(box: AbstractBox) {
+  isPositionedY(box: AbstractBox): boolean {
     return this._isUnder(box) || this._isAbove(box);
   }
 
-  assignBiggestBox(box: AbstractBox) {
+  assignBiggestBox(box: AbstractBox): void {
     const { top, left, right, bottom } = box;
 
     if (left < this.left) {
@@ -97,6 +100,14 @@ class BoxNum extends Box<number> {
     if (bottom > this.bottom) {
       this.bottom = bottom;
     }
+  }
+
+  getDirectionDiff(axis: Axis, point: AxesPoint): number {
+    const directionType = getDirectionTypeByAxis(axis);
+
+    const diff = this[directionType] - point[axis];
+
+    return Math.abs(diff);
   }
 }
 

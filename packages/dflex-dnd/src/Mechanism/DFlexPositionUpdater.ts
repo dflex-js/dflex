@@ -211,11 +211,9 @@ class DFlexPositionUpdater {
   ) {
     const { occupiedPosition, draggedElm } = this.draggable;
 
-    const positionDiff = Math.abs(
-      element.rect[axis === "x" ? "left" : "top"] - occupiedPosition[axis]
-    );
+    const positionDiff = element.rect.getDirectionDiff(axis, occupiedPosition);
 
-    const rectDiff = element.rect.getDimensionDiff(draggedElm.rect, axis);
+    const rectDiff = element.rect.getDimensionDiff(axis, draggedElm.rect);
 
     if (elmDirection === -1) {
       this._draggedTransition[axis] = positionDiff + rectDiff;

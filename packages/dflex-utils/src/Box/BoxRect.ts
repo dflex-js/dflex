@@ -111,10 +111,12 @@ class BoxRect extends BoxNum {
     };
   }
 
-  getDimensionDiff(box: AbstractBoxRect, axis: Axis): number {
+  getDimensionDiff(axis: Axis, box: AbstractBoxRect): number {
     const dimensionType = getDimensionTypeByAxis(axis);
 
-    return this[dimensionType] - box[dimensionType];
+    const diff = this[dimensionType] - box[dimensionType];
+
+    return Math.abs(diff);
   }
 }
 
