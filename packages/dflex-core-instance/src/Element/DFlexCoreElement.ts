@@ -131,15 +131,17 @@ class DFlexCoreElement extends DFlexBaseElement {
 
     super(id);
 
-    this.VDOMOrder = Object.seal({ ...order });
-    this.DOMOrder = Object.seal({ ...order });
-    this.keys = Object.seal({ ...keys });
+    this.VDOMOrder = { ...order };
+    this.DOMOrder = { ...order };
+    this.keys = { ...keys };
+
     this.depth = depth;
     this.readonly = readonly;
     this.isPaused = false;
     this.isVisible = !this.isPaused;
     this.animatedFrame = null;
     this.hasPendingTransform = false;
+    this._translateHistory = undefined;
 
     // CSS
     this._computedDimensions = null;
@@ -147,6 +149,10 @@ class DFlexCoreElement extends DFlexBaseElement {
     this._initialPosition = new PointNum(0, 0);
     this.rect = new BoxRect(0, 0, 0, 0);
     this.DOMGrid = new PointNum(0, 0);
+
+    if (__DEV__) {
+      Object.seal(this);
+    }
   }
 
   initElmRect(DOM: HTMLElement): void {
@@ -188,11 +194,6 @@ class DFlexCoreElement extends DFlexBaseElement {
 
   getInitialPosition(): PointNum {
     return this._initialPosition;
-  }
-
-  resume(DOM: HTMLElement): void {
-    this.initTranslate();
-    this.initElmRect(DOM);
   }
 
   changeVisibility(DOM: HTMLElement, isVisible: boolean): void {

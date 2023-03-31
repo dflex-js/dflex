@@ -27,7 +27,10 @@ class BoxRect extends BoxNum {
     super(top, right, bottom, left);
     this.width = right - left;
     this.height = bottom - top;
-    Object.seal(this);
+
+    if (__DEV__) {
+      Object.seal(this);
+    }
   }
 
   /**

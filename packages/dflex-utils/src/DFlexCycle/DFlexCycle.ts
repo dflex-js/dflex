@@ -40,7 +40,9 @@ class AbstractDFlexCycle {
     this.marginBottom = null;
     this.marginTop = null;
 
-    Object.seal(this);
+    if (__DEV__) {
+      Object.seal(this);
+    }
   }
 }
 

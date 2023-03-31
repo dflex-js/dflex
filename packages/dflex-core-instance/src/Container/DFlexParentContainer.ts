@@ -3,6 +3,8 @@ import { PointNum, AbstractBox, BoxRect, BoxNum, Axis } from "@dflex/utils";
 
 import type { Dimensions, AxesPoint } from "@dflex/utils";
 
+const EMPTY_GRID_INDEX = -1;
+
 class DFlexParentContainer {
   private _boundariesByRow: BoxNum;
 
@@ -30,12 +32,10 @@ class DFlexParentContainer {
    */
   lastElmPosition!: PointNum;
 
-  static OUT_OF_RANGE = -1;
-
   constructor(DOM: HTMLElement, originLength: number, id: string) {
     this.id = id;
-    this._gridIndex = new PointNum(-1, -1);
-    this.grid = new PointNum(-1, -1);
+    this._gridIndex = new PointNum(EMPTY_GRID_INDEX, EMPTY_GRID_INDEX);
+    this.grid = new PointNum(EMPTY_GRID_INDEX, EMPTY_GRID_INDEX);
     this.originLength = originLength;
     this._boundariesByRow = new BoxNum(0, 0, 0, 0);
     this._siblingBoundaries = null;
@@ -126,9 +126,9 @@ class DFlexParentContainer {
     this.grid[axis] -= 1;
 
     if (__DEV__) {
-      if (this.grid[axis] < -1) {
+      if (this.grid[axis] < EMPTY_GRID_INDEX) {
         throw new Error(
-          `reduceGrid: Cannot reduce grid on axis:${axis} to below -1`
+          `reduceGrid: Cannot reduce grid on axis:${axis} to below ${EMPTY_GRID_INDEX}`
         );
       }
     }

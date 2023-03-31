@@ -4,7 +4,10 @@ import Box from "./Box";
 class BoxBool extends Box<boolean> {
   constructor(top: boolean, right: boolean, bottom: boolean, left: boolean) {
     super(top, right, bottom, left);
-    Object.seal(this);
+
+    if (__DEV__) {
+      Object.seal(this);
+    }
   }
 
   /**

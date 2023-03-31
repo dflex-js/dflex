@@ -82,10 +82,15 @@ class DFlexMechanismController extends DFlexScrollableElement {
     this._detectNearestContainerTimeoutID = null;
     this.listAppendPosition = null;
     this.isParentLocked = false;
-    this._deadZoneStabilizer = Object.seal({
+
+    const deadZoneStabilizer = {
       area: new BoxNum(0, 0, 0, 0),
       direction: { x: "", y: "" },
-    });
+    };
+
+    this._deadZoneStabilizer = __DEV__
+      ? Object.seal(deadZoneStabilizer)
+      : deadZoneStabilizer;
   }
 
   private _detectDroppableIndex(): number | null {
