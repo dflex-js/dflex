@@ -116,7 +116,7 @@ class BoxRect extends BoxNum {
 
     const diff = this[dimensionType] - box[dimensionType];
 
-    return Math.abs(diff);
+    return diff;
   }
 }
 
