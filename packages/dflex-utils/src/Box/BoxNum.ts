@@ -105,9 +105,7 @@ class BoxNum extends Box<number> {
   getDirectionDiff(axis: Axis, point: AxesPoint): number {
     const directionType = getDirectionTypeByAxis(axis);
 
-    const diff = this[directionType] - point[axis];
-
-    return Math.abs(diff);
+    return this[directionType] - point[axis];
   }
 }
 
