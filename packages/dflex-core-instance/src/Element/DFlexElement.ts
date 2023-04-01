@@ -1,11 +1,8 @@
 import type { Axis, AxesPoint } from "@dflex/utils";
 import DFlexCoreNode from "./DFlexCoreElement";
 
+// TODO: Remove this class and depend entirely on Box/Rect classes instead.
 class DFlexElement extends DFlexCoreNode {
-  static getRectByAxis(axis: Axis) {
-    return axis === "x" ? "width" : "height";
-  }
-
   static getDistance(
     currentPosition: AxesPoint,
     elm: DFlexElement,
@@ -26,12 +23,6 @@ class DFlexElement extends DFlexCoreNode {
     const diff = axis === "x" ? elm.rect.right : elm.rect.bottom;
 
     return currentPosition[axis] - diff;
-  }
-
-  getRectDiff(elm: this, axis: Axis) {
-    const rectType = DFlexElement.getRectByAxis(axis);
-
-    return this.rect[rectType] - elm.rect[rectType];
   }
 
   getDisplacement(elm: this, axis: Axis): number {

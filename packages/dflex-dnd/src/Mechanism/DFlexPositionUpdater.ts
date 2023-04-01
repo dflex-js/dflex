@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { DFlexElement } from "@dflex/core-instance";
 
-import { featureFlags, PointNum } from "@dflex/utils";
+import { featureFlags, getDimensionTypeByAxis, PointNum } from "@dflex/utils";
 import type { AxesPoint, Direction, Axis, AbstractBox } from "@dflex/utils";
 
 import type DraggableInteractive from "../Draggable";
@@ -286,19 +286,19 @@ class DFlexPositionUpdater {
     threshold.updateMainThreshold(id, composedBox, false);
   }
 
-  private addDraggedOffsetToElm(
+  private _addDraggedOffsetToElm(
     position: AxesPoint,
     elm: DFlexElement,
     axis: Axis
   ) {
-    const rectType = DFlexElement.getRectByAxis(axis);
+    const dimensionType = getDimensionTypeByAxis(axis);
 
     const { draggedElm } = this.draggable;
 
     // This initiation needs to append dragged rect based on targeted axis.
-    position[axis] += draggedElm.rect[rectType];
+    position[axis] += draggedElm.rect[dimensionType];
 
-    const rectDiff = elm.rect[rectType] - draggedElm.rect[rectType];
+    const rectDiff = elm.rect.getDimensionDiff(axis, draggedElm.rect);
 
     position[axis] += rectDiff;
   }
@@ -348,7 +348,7 @@ class DFlexPositionUpdater {
 
         const { marginBottom: mb, marginTop: mt } = migration.prev();
 
-        this.addDraggedOffsetToElm(composedTranslate, elm!, axis);
+        this._addDraggedOffsetToElm(composedTranslate, elm!, axis);
         composedTranslate[axis] += isOrphan
           ? typeof mt === "number"
             ? mt
@@ -402,7 +402,7 @@ class DFlexPositionUpdater {
     // but also on some cases it's different from retrieved position.
     const composedPosition = elm!.rect.getPosition();
 
-    this.addDraggedOffsetToElm(composedPosition, elm!, axis);
+    this._addDraggedOffsetToElm(composedPosition, elm!, axis);
 
     const { containersTransition } = this.draggable;
     const { migration } = store;
