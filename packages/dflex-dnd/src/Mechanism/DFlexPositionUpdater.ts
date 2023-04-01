@@ -1,8 +1,19 @@
 /* eslint-disable no-param-reassign */
 import { DFlexElement } from "@dflex/core-instance";
 
-import { featureFlags, getDimensionTypeByAxis, PointNum } from "@dflex/utils";
-import type { AxesPoint, Direction, Axis, AbstractBox } from "@dflex/utils";
+import {
+  BOTH_AXIS,
+  featureFlags,
+  getDimensionTypeByAxis,
+  PointNum,
+} from "@dflex/utils";
+import type {
+  AxesPoint,
+  Direction,
+  Axis,
+  Axes,
+  AbstractBox,
+} from "@dflex/utils";
 
 import type DraggableInteractive from "../Draggable";
 
@@ -207,35 +218,35 @@ class DFlexPositionUpdater {
   private _setDistanceBtwPositions(
     axis: Axis,
     elmDirection: Direction,
-    element: DFlexElement
+    elm: DFlexElement
   ) {
     const { occupiedPosition, draggedElm } = this.draggable;
 
     const positionDiff = Math.abs(
-      element.rect.getDirectionDiff(axis, occupiedPosition)
+      elm.rect.getPositionDiff(axis, occupiedPosition)
     );
 
-    const rectDiff = element.rect.getDimensionDiff(axis, draggedElm.rect);
+    const dimensionDiff = elm.rect.getDimensionDiff(axis, draggedElm.rect);
 
     if (elmDirection === -1) {
-      this._draggedTransition[axis] = positionDiff + rectDiff;
-      this._draggedPositionOffset[axis] = rectDiff;
+      this._draggedTransition[axis] = positionDiff + dimensionDiff;
+      this._draggedPositionOffset[axis] = dimensionDiff;
 
       this._elmTransition[axis] = positionDiff;
     } else {
       this._draggedTransition[axis] = positionDiff;
       this._draggedPositionOffset[axis] = 0;
 
-      this._elmTransition[axis] = positionDiff - rectDiff;
+      this._elmTransition[axis] = positionDiff - dimensionDiff;
     }
   }
 
   private _updateDraggable(
     axis: Axis,
     elmDirection: Direction,
-    element: DFlexElement
+    elm: DFlexElement
   ) {
-    const { rect, DOMGrid: grid } = element;
+    const { rect, DOMGrid: grid } = elm;
 
     this.draggable.occupiedPosition.setAxes(
       rect.left + this._draggedPositionOffset.x,
@@ -258,6 +269,27 @@ class DFlexPositionUpdater {
         );
       }
     }
+  }
+
+  private _updateIndicators(
+    axis: Axes,
+    elmDirection: Direction,
+    elm: DFlexElement
+  ) {
+    // Reset all indicators.
+    this._elmTransition.setAxes(0, 0);
+    this._draggedTransition.setAxes(0, 0);
+    this._draggedPositionOffset.setAxes(0, 0);
+
+    const axisToProcess = axis === "z" ? BOTH_AXIS : [axis];
+
+    axisToProcess.forEach((_axis) => {
+      this._setDistanceBtwPositions(_axis, elmDirection, elm);
+      // if (elm.id === "id-5") {
+      //   console.log("......", _axis, this._elmTransition);
+      // }
+      this._updateDraggable(_axis, elmDirection, elm);
+    });
   }
 
   protected updateDraggedThresholdPosition(x: number, y: number) {
@@ -434,7 +466,7 @@ class DFlexPositionUpdater {
     numberOfPassedElm: number,
     isIncrease: boolean
   ) {
-    const { draggedElm, occupiedPosition } = this.draggable;
+    const { draggedElm, occupiedPosition, gridPlaceholder } = this.draggable;
 
     const { SK, cycleID } = store.migration.latest();
 
@@ -449,7 +481,7 @@ class DFlexPositionUpdater {
 
     const [element, DOM] = store.getElmWithDOM(id);
 
-    const axis: Axis = element.rect.isPositionedY({
+    let axis: Axes = element.rect.isPositionedY({
       left: occupiedPosition.x,
       top: occupiedPosition.y,
       bottom: occupiedPosition.y + draggedElm.rect.height,
@@ -457,6 +489,24 @@ class DFlexPositionUpdater {
     })
       ? "y"
       : "x";
+
+    const onSameAxis = occupiedPosition.onSameAxis(
+      axis,
+      element.rect.getPosition()
+    );
+
+    if (!onSameAxis) {
+      const isPartOfZGrid = (_axis: Axis) => {
+        // eslint-disable-next-line no-underscore-dangle
+        return element.DOMGrid[_axis] > 0 || gridPlaceholder[_axis] > 0;
+      };
+
+      if (axis === "y" && isPartOfZGrid("x")) {
+        axis = "z";
+      } else if (axis === "x" && isPartOfZGrid("y")) {
+        axis = "z";
+      }
+    }
 
     if (__DEV__) {
       if (featureFlags.enableMechanismDebugger) {
@@ -467,13 +517,7 @@ class DFlexPositionUpdater {
 
     const elmDirection: Direction = isIncrease ? -1 : 1;
 
-    // Reset all indicators.
-    this._elmTransition.setAxes(0, 0);
-    this._draggedTransition.setAxes(0, 0);
-    this._draggedPositionOffset.setAxes(0, 0);
-
-    this._setDistanceBtwPositions(axis, elmDirection, element);
-    this._updateDraggable(axis, elmDirection, element);
+    this._updateIndicators(axis, elmDirection, element);
 
     // TODO: always true for the first element
     if (!this.isParentLocked) {

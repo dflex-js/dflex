@@ -24,7 +24,7 @@ export type { RegisterInputOpts, DFlexGlobalConfig } from "@dflex/store";
 
 export type {
   AxesPoint,
-  BoxRectAbstract,
+  AbstractBoxRect as BoxRectAbstract,
   PointNum,
   AbstractBox,
   Dimensions,

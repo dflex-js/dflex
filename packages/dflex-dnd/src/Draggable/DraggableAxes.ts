@@ -7,7 +7,7 @@ import {
   combineKeys,
   AxesPoint,
   BoxNum,
-  BoxRectAbstract,
+  AbstractBoxRect,
   Tracker,
   Axis,
 } from "@dflex/utils";
@@ -41,7 +41,7 @@ function initContainers(SK: string, siblings: Siblings) {
 
 function initThresholds(
   draggedID: string,
-  draggedRect: BoxRectAbstract,
+  draggedRect: AbstractBoxRect,
   draggedDepth: number,
   threshold: Threshold
 ) {

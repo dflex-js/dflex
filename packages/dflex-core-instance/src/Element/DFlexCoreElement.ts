@@ -1,14 +1,14 @@
 /* eslint-disable no-underscore-dangle */
 import {
   BoxRect,
-  BoxRectAbstract,
+  AbstractBoxRect,
   featureFlags,
   PointNum,
   assertElementPosition,
   getElmComputedDimensions,
-  Axis,
+  BOTH_AXIS,
 } from "@dflex/utils";
-import type { Direction, AxesPoint } from "@dflex/utils";
+import type { Direction, Axes, AxesPoint } from "@dflex/utils";
 
 import DFlexBaseElement from "./DFlexBaseElement";
 
@@ -20,7 +20,7 @@ export type DFlexSerializedElement = {
   grid: PointNum;
   order: DFlexDOMGenOrder;
   initialPosition: AxesPoint;
-  rect: BoxRectAbstract;
+  rect: AbstractBoxRect;
   hasTransformedFromOrigin: boolean;
   hasPendingTransformation: boolean;
   isVisible: boolean;
@@ -28,7 +28,7 @@ export type DFlexSerializedElement = {
 
 type TransitionHistory = {
   ID: string;
-  axis: Axis;
+  axis: Axes;
   translate: AxesPoint;
 };
 
@@ -288,7 +288,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     branchIDsOrder[newIndex] = this.id;
   }
 
-  private _pushToTranslateHistory(axis: Axis, operationID: string) {
+  private _pushToTranslateHistory(axis: Axes, operationID: string) {
     const translate = this.translate.getInstance();
 
     const elmAxesHistory: TransitionHistory = {
@@ -331,11 +331,11 @@ class DFlexCoreElement extends DFlexBaseElement {
 
   private _transformationProcess(
     DOM: HTMLElement,
-    newPos: AxesPoint,
+    elmTransition: AxesPoint,
     hasToFlushTransform: boolean,
     increment: number
   ) {
-    this.translate.increase(newPos);
+    this.translate.increase(elmTransition);
 
     /**
      * This offset related directly to translate Y and Y. It's isolated from
@@ -357,32 +357,12 @@ class DFlexCoreElement extends DFlexBaseElement {
     return { oldIndex, newIndex };
   }
 
-  /**
-   *
-   * @param DOM
-   * @param siblings
-   * @param mainAxisDirection
-   * @param elmPos
-   * @param operationID
-   * @param axis
-   */
-  reconcilePosition(
-    axis: Axis,
-    mainAxisDirection: Direction,
-    DOM: HTMLElement,
-    siblings: string[],
-    elmPos: PointNum,
+  private _updateDOMGrid(
+    direction: Direction,
     numberOfPassedElm: number,
-    maxContainerGridBoundaries: PointNum,
-    operationID: string
-  ): void {
-    /**
-     * `mainAxisDirection` decides the direction of the element, negative or positive.
-     * If the element is dragged to the left, the `mainAxisDirection` is -1.
-     */
-    elmPos[axis] *= mainAxisDirection;
-
-    if (mainAxisDirection === -1) {
+    maxContainerGridBoundaries: PointNum
+  ) {
+    if (direction === -1) {
       for (let i = 0; i < numberOfPassedElm; i += 1) {
         this.DOMGrid.x -= 1;
 
@@ -391,15 +371,67 @@ class DFlexCoreElement extends DFlexBaseElement {
           this.DOMGrid.y -= 1;
         }
       }
-    } else {
-      for (let i = 0; i < numberOfPassedElm; i += 1) {
-        this.DOMGrid.x += 1;
 
-        if (this.DOMGrid.x > maxContainerGridBoundaries.x) {
-          this.DOMGrid.x = 0;
-          this.DOMGrid.y += 1;
-        }
+      return;
+    }
+
+    for (let i = 0; i < numberOfPassedElm; i += 1) {
+      this.DOMGrid.x += 1;
+
+      if (this.DOMGrid.x > maxContainerGridBoundaries.x) {
+        this.DOMGrid.x = 0;
+        this.DOMGrid.y += 1;
       }
+    }
+  }
+
+  /**
+   *
+   * @param DOM
+   * @param siblings
+   * @param mainAxisDirection
+   * @param elmTransition
+   * @param operationID
+   * @param axis
+   */
+  reconcilePosition(
+    axis: Axes,
+    mainAxisDirection: Direction,
+    DOM: HTMLElement,
+    siblings: string[],
+    elmTransition: AxesPoint,
+    numberOfPassedElm: number,
+    maxContainerGridBoundaries: PointNum,
+    operationID: string
+  ): void {
+    /**
+     * `mainAxisDirection` decides the direction of the element, negative or positive.
+     * If the element is dragged to the left, the `mainAxisDirection` is -1.
+     */
+    // const axisToProcess = axis === "z" ? BOTH_AXIS : [axis];
+
+    if (axis === "z") {
+      BOTH_AXIS.forEach((_axis, i) => {
+        // i=0 for `X` which is the opposite of the main axis(`Y`) when dragging on `Z`
+        const direction =
+          i === 0 ? (mainAxisDirection === 1 ? -1 : 1) : mainAxisDirection;
+
+        elmTransition[_axis] *= direction;
+
+        this._updateDOMGrid(
+          direction,
+          numberOfPassedElm,
+          maxContainerGridBoundaries
+        );
+      });
+    } else {
+      elmTransition[axis] *= mainAxisDirection;
+
+      this._updateDOMGrid(
+        mainAxisDirection,
+        numberOfPassedElm,
+        maxContainerGridBoundaries
+      );
     }
 
     if (__DEV__) {
@@ -410,7 +442,7 @@ class DFlexCoreElement extends DFlexBaseElement {
 
     const { oldIndex, newIndex } = this._transformationProcess(
       DOM,
-      elmPos,
+      elmTransition,
       false,
       mainAxisDirection * numberOfPassedElm
     );
@@ -456,9 +488,15 @@ class DFlexCoreElement extends DFlexBaseElement {
 
     let increment = 0;
 
-    increment = elmPos[axis] > 0 ? 1 : -1;
+    if (axis === "z") {
+      increment = elmPos.x > 0 || elmPos.y > 0 ? 1 : -1;
 
-    this.DOMGrid[axis] += increment;
+      this.DOMGrid.increase({ x: increment, y: increment });
+    } else {
+      increment = elmPos[axis] > 0 ? 1 : -1;
+
+      this.DOMGrid[axis] += increment;
+    }
 
     this._transformationProcess(DOM, elmPos, true, increment);
 

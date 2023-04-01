@@ -1,6 +1,3 @@
-import { getDirectionTypeByAxis } from "../collections";
-import { AxesPoint } from "../Point";
-import { Axis } from "../types";
 import type AbstractBox from "./AbstractBox";
 import Box from "./Box";
 
@@ -100,12 +97,6 @@ class BoxNum extends Box<number> {
     if (bottom > this.bottom) {
       this.bottom = bottom;
     }
-  }
-
-  getDirectionDiff(axis: Axis, point: AxesPoint): number {
-    const directionType = getDirectionTypeByAxis(axis);
-
-    return this[directionType] - point[axis];
   }
 }
 

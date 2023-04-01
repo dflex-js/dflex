@@ -3,7 +3,7 @@ import { PointNum } from "../Point";
 
 import type { Dimensions, Axis, Direction } from "../types";
 
-import { AbstractBox, BoxBool, BoxNum, BoxRectAbstract } from "../Box";
+import { AbstractBox, BoxBool, BoxNum, AbstractBoxRect } from "../Box";
 
 export interface ThresholdPercentages {
   /** vertical threshold in percentage from 0-100 */
@@ -76,7 +76,7 @@ class DFlexThreshold {
    */
   setMainThreshold(
     key: string,
-    boxRect: BoxRectAbstract,
+    boxRect: AbstractBoxRect,
     isInner: boolean
   ): void {
     this._createPixels(boxRect);

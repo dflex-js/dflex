@@ -1,6 +1,6 @@
 export { AxesPoint, Point, PointNum, PointBool } from "./Point";
 export { AbstractBox, Box, BoxBool, BoxNum, BoxRect } from "./Box";
-export type { BoxRectAbstract } from "./Box";
+export type { AbstractBoxRect } from "./Box";
 
 export { DFlexThreshold as Threshold } from "./Threshold";
 export type { ThresholdPercentages } from "./Threshold";
@@ -11,7 +11,7 @@ export { default as TaskQueue } from "./TaskQueue";
 export { DFlexCycle } from "./DFlexCycle";
 export type { AbstractDFlexCycle } from "./DFlexCycle";
 
-export type { Dimensions, Axis, Direction } from "./types";
+export type { Dimensions, Axis, Axes, Direction } from "./types";
 export { BOTH_AXIS } from "./types";
 
 export {
