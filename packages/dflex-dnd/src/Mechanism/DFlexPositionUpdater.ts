@@ -241,24 +241,11 @@ class DFlexPositionUpdater {
     }
   }
 
-  private _updateDraggable(
-    axis: Axis,
-    elmDirection: Direction,
-    elm: DFlexElement
-  ) {
-    const { rect, DOMGrid: grid } = elm;
-
-    this.draggable.occupiedPosition.setAxes(
-      rect.left + this._draggedPositionOffset.x,
-      rect.top + this._draggedPositionOffset.y
-    );
-
+  private _updateDraggable(axis: Axis, elmDirection: Direction) {
     const draggedDirection = -1 * elmDirection;
 
     this._draggedTransition[axis] *= draggedDirection;
     this.draggable.occupiedTranslate[axis] += this._draggedTransition[axis];
-
-    this.draggable.gridPlaceholder.clone(grid);
 
     if (__DEV__) {
       if (featureFlags.enableMechanismDebugger) {
@@ -281,15 +268,21 @@ class DFlexPositionUpdater {
     this._draggedTransition.setAxes(0, 0);
     this._draggedPositionOffset.setAxes(0, 0);
 
-    const axisToProcess = axis === "z" ? BOTH_AXIS : [axis];
+    const axisToProcess: readonly Axis[] = axis === "z" ? BOTH_AXIS : [axis];
 
     axisToProcess.forEach((_axis) => {
       this._setDistanceBtwPositions(_axis, elmDirection, elm);
-      // if (elm.id === "id-5") {
-      //   console.log("......", _axis, this._elmTransition);
-      // }
-      this._updateDraggable(_axis, elmDirection, elm);
+      this._updateDraggable(_axis, elmDirection);
     });
+
+    const { rect, DOMGrid: grid } = elm;
+
+    this.draggable.occupiedPosition.setAxes(
+      rect.left + this._draggedPositionOffset.x,
+      rect.top + this._draggedPositionOffset.y
+    );
+
+    this.draggable.gridPlaceholder.clone(grid);
   }
 
   protected updateDraggedThresholdPosition(x: number, y: number) {
