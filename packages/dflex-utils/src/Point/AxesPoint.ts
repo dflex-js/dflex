@@ -6,7 +6,10 @@ class AxesPoint<T = number> {
   constructor(x: T, y: T) {
     this.x = x;
     this.y = y;
-    Object.seal(this);
+
+    if (__DEV__) {
+      Object.seal(this);
+    }
   }
 }
 

@@ -1,8 +1,19 @@
 /* eslint-disable no-param-reassign */
 import { DFlexElement } from "@dflex/core-instance";
 
-import { Axes, BOTH_AXIS, featureFlags, PointNum } from "@dflex/utils";
-import type { AxesPoint, Direction, Axis, AbstractBox } from "@dflex/utils";
+import {
+  BOTH_AXIS,
+  featureFlags,
+  getDimensionTypeByAxis,
+  PointNum,
+} from "@dflex/utils";
+import type {
+  AxesPoint,
+  Direction,
+  Axis,
+  Axes,
+  AbstractBox,
+} from "@dflex/utils";
 
 import type DraggableInteractive from "../Draggable";
 
@@ -143,45 +154,45 @@ export function handleElmMigration(
   rect: AbstractBox
 ) {
   // Handle the migration.
-  const containerDist = store.containers.get(distSK)!;
+  const destinationContainer = store.containers.get(distSK)!;
 
   // Append the newest element to the end of the branch.
-  containerDist.register(rect);
+  destinationContainer.register(rect);
 
-  const originBranch = store.getElmSiblingsByKey(originSK);
+  const originSiblings = store.getElmSiblingsByKey(originSK);
 
   // Don't reset empty branch keep the boundaries.
-  if (originBranch.length === 0) {
+  if (originSiblings.length === 0) {
     return;
   }
 
-  const containerOrigin = store.containers.get(originSK)!;
+  const originContainer = store.containers.get(originSK)!;
 
-  containerOrigin.resetIndicators(originBranch.length);
+  originContainer.resetIndicators(originSiblings.length);
 
-  originBranch.forEach((elmID) => {
+  originSiblings.forEach((elmID) => {
     const elm = store.registry.get(elmID)!;
 
-    const gridIndex = containerOrigin.register(elm.rect);
+    const gridIndex = originContainer.register(elm.rect);
 
     elm.DOMGrid.clone(gridIndex);
   });
 
   const lastInOrigin = store.registry.get(
-    originBranch[originBranch.length - 1]
+    originSiblings[originSiblings.length - 1]
   )!;
 
-  containerOrigin.preservePosition(lastInOrigin.rect.getPosition());
+  originContainer.preservePosition(lastInOrigin.rect.getPosition());
 }
 
 class DFlexPositionUpdater {
   protected draggable: DraggableInteractive;
 
-  private elmTransition: PointNum;
+  private _elmTransition: PointNum;
 
-  private draggedPositionOffset: PointNum;
+  private _draggedPositionOffset: PointNum;
 
-  private draggedTransition: PointNum;
+  private _draggedTransition: PointNum;
 
   /** Isolated form the threshold and predict is-out based on the controllers */
   protected isParentLocked: boolean;
@@ -192,64 +203,49 @@ class DFlexPositionUpdater {
     /**
      * Next element calculated transition space.
      */
-    this.elmTransition = new PointNum(0, 0);
+    this._elmTransition = new PointNum(0, 0);
 
     /**
      * Same as elmTransition but for dragged.
      */
-    this.draggedPositionOffset = new PointNum(0, 0);
+    this._draggedPositionOffset = new PointNum(0, 0);
 
-    this.draggedTransition = new PointNum(0, 0);
+    this._draggedTransition = new PointNum(0, 0);
 
     this.isParentLocked = false;
   }
 
-  private setDistanceBtwPositions(
+  private _setDistanceBtwPositions(
     axis: Axis,
     elmDirection: Direction,
-    element: DFlexElement
+    elm: DFlexElement
   ) {
     const { occupiedPosition, draggedElm } = this.draggable;
 
     const positionDiff = Math.abs(
-      element.rect[axis === "x" ? "left" : "top"] - occupiedPosition[axis]
+      elm.rect.getPositionDiff(axis, occupiedPosition)
     );
 
-    const rectDiff = element.getRectDiff(draggedElm, axis);
+    const dimensionDiff = elm.rect.getDimensionDiff(axis, draggedElm.rect);
 
     if (elmDirection === -1) {
-      this.draggedTransition[axis] = positionDiff + rectDiff;
-      this.draggedPositionOffset[axis] = rectDiff;
+      this._draggedTransition[axis] = positionDiff + dimensionDiff;
+      this._draggedPositionOffset[axis] = dimensionDiff;
 
-      this.elmTransition[axis] = positionDiff;
+      this._elmTransition[axis] = positionDiff;
     } else {
-      this.draggedTransition[axis] = positionDiff;
-      this.draggedPositionOffset[axis] = 0;
+      this._draggedTransition[axis] = positionDiff;
+      this._draggedPositionOffset[axis] = 0;
 
-      this.elmTransition[axis] = positionDiff - rectDiff;
+      this._elmTransition[axis] = positionDiff - dimensionDiff;
     }
   }
 
-  private _updateDraggable(
-    axis: Axes,
-    elmDirection: Direction,
-    element: DFlexElement
-  ) {
-    const { rect, DOMGrid: grid } = element;
-
-    this.draggable.occupiedPosition.setAxes(
-      rect.left + this.draggedPositionOffset.x,
-      rect.top + this.draggedPositionOffset.y
-    );
-
+  private _updateDraggable(axis: Axis, elmDirection: Direction) {
     const draggedDirection = -1 * elmDirection;
 
-    if (axis !== "z") {
-      this.draggedTransition[axis] *= draggedDirection;
-      this.draggable.occupiedTranslate[axis] += this.draggedTransition[axis];
-    }
-
-    this.draggable.gridPlaceholder.clone(grid);
+    this._draggedTransition[axis] *= draggedDirection;
+    this.draggable.occupiedTranslate[axis] += this._draggedTransition[axis];
 
     if (__DEV__) {
       if (featureFlags.enableMechanismDebugger) {
@@ -262,24 +258,31 @@ class DFlexPositionUpdater {
     }
   }
 
-  private updateIndicators(
+  private _updateIndicators(
     axis: Axes,
     elmDirection: Direction,
-    element: DFlexElement
+    elm: DFlexElement
   ) {
-    this.elmTransition.setAxes(0, 0);
-    this.draggedTransition.setAxes(0, 0);
-    this.draggedPositionOffset.setAxes(0, 0);
+    // Reset all indicators.
+    this._elmTransition.setAxes(0, 0);
+    this._draggedTransition.setAxes(0, 0);
+    this._draggedPositionOffset.setAxes(0, 0);
 
-    if (axis === "z") {
-      BOTH_AXIS.forEach((_axis) => {
-        this.setDistanceBtwPositions(_axis, elmDirection, element);
-      });
-    } else {
-      this.setDistanceBtwPositions(axis, elmDirection, element);
-    }
+    const axisToProcess: readonly Axis[] = axis === "z" ? BOTH_AXIS : [axis];
 
-    this._updateDraggable(axis, elmDirection, element);
+    axisToProcess.forEach((_axis) => {
+      this._setDistanceBtwPositions(_axis, elmDirection, elm);
+      this._updateDraggable(_axis, elmDirection);
+    });
+
+    const { rect, DOMGrid: grid } = elm;
+
+    this.draggable.occupiedPosition.setAxes(
+      rect.left + this._draggedPositionOffset.x,
+      rect.top + this._draggedPositionOffset.y
+    );
+
+    this.draggable.gridPlaceholder.clone(grid);
   }
 
   protected updateDraggedThresholdPosition(x: number, y: number) {
@@ -308,19 +311,19 @@ class DFlexPositionUpdater {
     threshold.updateMainThreshold(id, composedBox, false);
   }
 
-  private addDraggedOffsetToElm(
+  private _addDraggedOffsetToElm(
     position: AxesPoint,
     elm: DFlexElement,
     axis: Axis
   ) {
-    const rectType = DFlexElement.getRectByAxis(axis);
+    const dimensionType = getDimensionTypeByAxis(axis);
 
     const { draggedElm } = this.draggable;
 
     // This initiation needs to append dragged rect based on targeted axis.
-    position[axis] += draggedElm.rect[rectType];
+    position[axis] += draggedElm.rect[dimensionType];
 
-    const rectDiff = elm.rect[rectType] - draggedElm.rect[rectType];
+    const rectDiff = elm.rect.getDimensionDiff(axis, draggedElm.rect);
 
     position[axis] += rectDiff;
   }
@@ -370,7 +373,7 @@ class DFlexPositionUpdater {
 
         const { marginBottom: mb, marginTop: mt } = migration.prev();
 
-        this.addDraggedOffsetToElm(composedTranslate, elm!, axis);
+        this._addDraggedOffsetToElm(composedTranslate, elm!, axis);
         composedTranslate[axis] += isOrphan
           ? typeof mt === "number"
             ? mt
@@ -424,7 +427,7 @@ class DFlexPositionUpdater {
     // but also on some cases it's different from retrieved position.
     const composedPosition = elm!.rect.getPosition();
 
-    this.addDraggedOffsetToElm(composedPosition, elm!, axis);
+    this._addDraggedOffsetToElm(composedPosition, elm!, axis);
 
     const { containersTransition } = this.draggable;
     const { migration } = store;
@@ -507,7 +510,7 @@ class DFlexPositionUpdater {
 
     const elmDirection: Direction = isIncrease ? -1 : 1;
 
-    this.updateIndicators(axis, elmDirection, element);
+    this._updateIndicators(axis, elmDirection, element);
 
     // TODO: always true for the first element
     if (!this.isParentLocked) {
@@ -538,7 +541,7 @@ class DFlexPositionUpdater {
       elmDirection,
       DOM,
       siblings,
-      this.elmTransition,
+      this._elmTransition,
       numberOfPassedElm,
       maxContainerGridBoundaries,
       cycleID

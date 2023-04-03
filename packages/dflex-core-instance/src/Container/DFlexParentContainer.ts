@@ -1,7 +1,9 @@
 /* eslint-disable no-param-reassign */
-import { PointNum, AbstractBox, BoxRect, BoxNum } from "@dflex/utils";
+import { PointNum, AbstractBox, BoxRect, BoxNum, Axis } from "@dflex/utils";
 
 import type { Dimensions, AxesPoint } from "@dflex/utils";
+
+const EMPTY_GRID_INDEX = -1;
 
 class DFlexParentContainer {
   private _boundariesByRow: BoxNum;
@@ -22,7 +24,7 @@ class DFlexParentContainer {
    * */
   originLength: number;
 
-  id: string;
+  readonly id: string;
 
   /**
    * Preserve the last element position in the list .
@@ -30,18 +32,20 @@ class DFlexParentContainer {
    */
   lastElmPosition!: PointNum;
 
-  static OUT_OF_RANGE = -1;
-
   constructor(DOM: HTMLElement, originLength: number, id: string) {
     this.id = id;
-    this._gridIndex = new PointNum(-1, -1);
-    this.grid = new PointNum(-1, -1);
+    this._gridIndex = new PointNum(EMPTY_GRID_INDEX, EMPTY_GRID_INDEX);
+    this.grid = new PointNum(EMPTY_GRID_INDEX, EMPTY_GRID_INDEX);
     this.originLength = originLength;
     this._boundariesByRow = new BoxNum(0, 0, 0, 0);
     this._siblingBoundaries = null;
     this._initRect(DOM);
     // @ts-expect-error
     this.lastElmPosition = null;
+
+    if (__DEV__) {
+      Object.seal(this);
+    }
   }
 
   private _initRect(DOM: HTMLElement): void {
@@ -116,6 +120,22 @@ class DFlexParentContainer {
     }
 
     return gridIndex;
+  }
+
+  extendGrid(axis: Axis) {
+    this.grid[axis] += 1;
+  }
+
+  reduceGrid(axis: Axis) {
+    this.grid[axis] -= 1;
+
+    if (__DEV__) {
+      if (this.grid[axis] < EMPTY_GRID_INDEX) {
+        throw new Error(
+          `reduceGrid: Cannot reduce grid on axis:${axis} to below ${EMPTY_GRID_INDEX}`
+        );
+      }
+    }
   }
 
   /**

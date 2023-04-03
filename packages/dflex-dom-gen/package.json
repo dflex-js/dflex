@@ -21,7 +21,7 @@
     "clean": "rimraf ./dist ./types tsconfig.tsbuildinfo",
     "emit": "tsc --emitDeclarationOnly"
   },
-  "homepage": "https://github.com/dflex-js/dflex/tree/main/packages/dom-gen",
+  "homepage": "https://github.com/dflex-js/dflex/tree/main/packages/dflex-dom-gen",
   "repository": "https://github.com/dflex-js/dflex",
   "license": "MIT",
   "files": [

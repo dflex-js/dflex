@@ -82,10 +82,15 @@ class DFlexMechanismController extends DFlexScrollableElement {
     this._detectNearestContainerTimeoutID = null;
     this.listAppendPosition = null;
     this.isParentLocked = false;
-    this._deadZoneStabilizer = Object.seal({
+
+    const deadZoneStabilizer = {
       area: new BoxNum(0, 0, 0, 0),
       direction: { x: "", y: "" },
-    });
+    };
+
+    this._deadZoneStabilizer = __DEV__
+      ? Object.seal(deadZoneStabilizer)
+      : deadZoneStabilizer;
   }
 
   private _detectDroppableIndex(): number | null {
@@ -257,16 +262,25 @@ class DFlexMechanismController extends DFlexScrollableElement {
       if (newSK !== originSK && !this.draggable.isOutThreshold(newSK, true)) {
         migration.start();
 
-        const destination = store.getElmSiblingsByKey(newSK);
+        const destinationSiblings = store.getElmSiblingsByKey(newSK);
+        const destinationContainer = store.containers.get(newSK)!;
 
-        this.listAppendPosition = this.getComposedOccupiedPosition(newSK, "y");
+        // TODO: This should be dynamic not hardcoded.
+        const insertionAxis: Axis = "y";
 
-        const origin = store.getElmSiblingsByKey(originSK);
+        this.listAppendPosition = this.getComposedOccupiedPosition(
+          newSK,
+          insertionAxis
+        );
+
+        const originSiblings = store.getElmSiblingsByKey(originSK);
+        const originContainer = store.containers.get(originSK)!;
 
         // Remove the last element from the original list.
         // when the dragged is out of the container, the last element is the
         // placeholder as all the elements are stacked.
-        origin.pop();
+        originSiblings.pop();
+        originContainer.reduceGrid(insertionAxis);
 
         this.draggable.occupiedPosition.clone(this.listAppendPosition!);
 
@@ -276,7 +290,8 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
         // Insert the element to the new list. Empty string because when dragged
         // is out the branch sets its index as "".
-        destination.push(APPEND_EMPTY_ELM_ID);
+        destinationSiblings.push(APPEND_EMPTY_ELM_ID);
+        destinationContainer.extendGrid(insertionAxis);
 
         const cycleID = store.tracker.newTravel(Tracker.PREFIX_CYCLE);
 

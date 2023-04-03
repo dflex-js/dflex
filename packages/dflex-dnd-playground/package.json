@@ -13,8 +13,8 @@
   },
   "devDependencies": {
     "cypress": "^12.9.0",
-    "eslint": "^8.36.0",
+    "eslint": "^8.37.0",
     "eslint-config-dflex-react": "workspace:*",
-    "eslint-plugin-cypress": "^2.13.1"
+    "eslint-plugin-cypress": "^2.13.2"
   }
 }

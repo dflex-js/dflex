@@ -1,14 +1,11 @@
-import type { Axis } from "../types";
+import { getDimensionTypeByAxis, getDirectionTypeByAxis } from "../collections";
+import { AxesPoint } from "../Point";
 import BoxNum from "./BoxNum";
 
-export type BoxRectAbstract = {
-  top: number;
-  left: number;
-  bottom: number;
-  right: number;
-  width: number;
-  height: number;
-};
+import type { Axis, Dimensions } from "../types";
+import type AbstractBox from "./AbstractBox";
+
+export type AbstractBoxRect = AbstractBox & Dimensions;
 
 class BoxRect extends BoxNum {
   width: number;
@@ -25,9 +22,13 @@ class BoxRect extends BoxNum {
    */
   constructor(top: number, right: number, bottom: number, left: number) {
     super(top, right, bottom, left);
+
     this.width = right - left;
     this.height = bottom - top;
-    Object.seal(this);
+
+    if (__DEV__) {
+      Object.seal(this);
+    }
   }
 
   /**
@@ -43,67 +44,54 @@ class BoxRect extends BoxNum {
     left: number,
     height: number,
     width: number
-  ): this {
+  ): void {
     this.top = top;
     this.left = left;
     this.width = width;
     this.height = height;
+
     this.right = left + width;
     this.bottom = top + height;
-
-    return this;
   }
 
   /**
-   * Update the box offset by axis.
-   *
-   * @param axis
-   * @param value
-   * @returns
-   */
-  setAxis(axis: Axis, value: number): this {
-    switch (axis) {
-      case "x": {
-        this.left = value;
-        this.right = this.width + value;
-        break;
-      }
-      default: {
-        this.top = value;
-        this.bottom = this.height + value;
-        break;
-      }
-    }
-
-    return this;
-  }
-
-  /**
-   * Update the box offset.
+   * Update the box point position.
    *
    * @param x
    * @param y
    * @returns
    */
-  setAxes(x: number, y: number): this {
+  setAxes(x: number, y: number): void {
     this.left = x;
     this.right = this.width + x;
     this.top = y;
     this.bottom = this.height + y;
-
-    return this;
   }
 
   /**
+   * Gets the width/height difference between two boxes based on axis.
    *
+   * @param axis
+   * @param box
    * @returns
    */
-  getRect(): BoxRectAbstract {
-    return {
-      ...this.getBox(),
-      height: this.height,
-      width: this.width,
-    };
+  getDimensionDiff(axis: Axis, box: AbstractBoxRect): number {
+    const dimensionType = getDimensionTypeByAxis(axis);
+
+    return this[dimensionType] - box[dimensionType];
+  }
+
+  /**
+   * Gets the  left/top difference between two points based on axis.
+   *
+   * @param axis
+   * @param point
+   * @returns
+   */
+  getPositionDiff(axis: Axis, point: AxesPoint): number {
+    const directionType = getDirectionTypeByAxis(axis);
+
+    return this[directionType] - point[axis];
   }
 }
 

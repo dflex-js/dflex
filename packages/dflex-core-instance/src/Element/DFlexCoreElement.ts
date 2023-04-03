@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import {
   BoxRect,
-  BoxRectAbstract,
+  AbstractBoxRect,
   featureFlags,
   PointNum,
   assertElementPosition,
@@ -20,7 +20,7 @@ export type DFlexSerializedElement = {
   grid: PointNum;
   order: DFlexDOMGenOrder;
   initialPosition: AxesPoint;
-  rect: BoxRectAbstract;
+  rect: AbstractBoxRect;
   hasTransformedFromOrigin: boolean;
   hasPendingTransformation: boolean;
   isVisible: boolean;
@@ -66,30 +66,30 @@ function resetDOMStyle(DOM: HTMLElement): void {
   }
 }
 
-// function assertGridBoundaries(
-//   id: string,
-//   DOMGrid: PointNum,
-//   maxContainerGridBoundaries: PointNum
-// ) {
-//   if (DOMGrid.x < 0 || DOMGrid.y < 0) {
-//     throw new Error(
-//       `assertGridBoundaries: DOMGrid for ${id} element can't be below zero. Found ${JSON.stringify(
-//         DOMGrid
-//       )}`
-//     );
-//   }
+function assertGridBoundaries(
+  id: string,
+  DOMGrid: PointNum,
+  maxContainerGridBoundaries: PointNum
+) {
+  if (DOMGrid.x < 0 || DOMGrid.y < 0) {
+    throw new Error(
+      `assertGridBoundaries: DOMGrid for ${id} element can't be below zero. Found ${JSON.stringify(
+        DOMGrid
+      )}`
+    );
+  }
 
-//   if (
-//     DOMGrid.x > maxContainerGridBoundaries.x ||
-//     DOMGrid.y > maxContainerGridBoundaries.y
-//   ) {
-//     throw new Error(
-//       `assertGridBoundaries: DOMGrid for ${id} element can't be above grid container boundaries. Found ${JSON.stringify(
-//         DOMGrid
-//       )} for container ${JSON.stringify(maxContainerGridBoundaries)}.`
-//     );
-//   }
-// }
+  if (
+    DOMGrid.x > maxContainerGridBoundaries.x ||
+    DOMGrid.y > maxContainerGridBoundaries.y
+  ) {
+    throw new Error(
+      `assertGridBoundaries: DOMGrid for ${id} element can't be above grid container boundaries. Found ${JSON.stringify(
+        DOMGrid
+      )} for container ${JSON.stringify(maxContainerGridBoundaries)}.`
+    );
+  }
+}
 
 class DFlexCoreElement extends DFlexBaseElement {
   private _initialPosition: PointNum;
@@ -131,15 +131,17 @@ class DFlexCoreElement extends DFlexBaseElement {
 
     super(id);
 
-    this.VDOMOrder = Object.seal({ ...order });
-    this.DOMOrder = Object.seal({ ...order });
-    this.keys = Object.seal({ ...keys });
+    this.VDOMOrder = { ...order };
+    this.DOMOrder = { ...order };
+    this.keys = { ...keys };
+
     this.depth = depth;
     this.readonly = readonly;
     this.isPaused = false;
     this.isVisible = !this.isPaused;
     this.animatedFrame = null;
     this.hasPendingTransform = false;
+    this._translateHistory = undefined;
 
     // CSS
     this._computedDimensions = null;
@@ -147,6 +149,10 @@ class DFlexCoreElement extends DFlexBaseElement {
     this._initialPosition = new PointNum(0, 0);
     this.rect = new BoxRect(0, 0, 0, 0);
     this.DOMGrid = new PointNum(0, 0);
+
+    if (__DEV__) {
+      Object.seal(this);
+    }
   }
 
   initElmRect(DOM: HTMLElement): void {
@@ -188,11 +194,6 @@ class DFlexCoreElement extends DFlexBaseElement {
 
   getInitialPosition(): PointNum {
     return this._initialPosition;
-  }
-
-  resume(DOM: HTMLElement): void {
-    this.initTranslate();
-    this.initElmRect(DOM);
   }
 
   changeVisibility(DOM: HTMLElement, isVisible: boolean): void {
@@ -330,11 +331,11 @@ class DFlexCoreElement extends DFlexBaseElement {
 
   private _transformationProcess(
     DOM: HTMLElement,
-    newPos: AxesPoint,
+    elmTransition: AxesPoint,
     hasToFlushTransform: boolean,
     increment: number
   ) {
-    this.translate.increase(newPos);
+    this.translate.increase(elmTransition);
 
     /**
      * This offset related directly to translate Y and Y. It's isolated from
@@ -356,12 +357,40 @@ class DFlexCoreElement extends DFlexBaseElement {
     return { oldIndex, newIndex };
   }
 
+  private _updateDOMGrid(
+    direction: Direction,
+    numberOfPassedElm: number,
+    maxContainerGridBoundaries: PointNum
+  ) {
+    if (direction === -1) {
+      for (let i = 0; i < numberOfPassedElm; i += 1) {
+        this.DOMGrid.x -= 1;
+
+        if (this.DOMGrid.x < 0) {
+          this.DOMGrid.x = maxContainerGridBoundaries.x;
+          this.DOMGrid.y -= 1;
+        }
+      }
+
+      return;
+    }
+
+    for (let i = 0; i < numberOfPassedElm; i += 1) {
+      this.DOMGrid.x += 1;
+
+      if (this.DOMGrid.x > maxContainerGridBoundaries.x) {
+        this.DOMGrid.x = 0;
+        this.DOMGrid.y += 1;
+      }
+    }
+  }
+
   /**
    *
    * @param DOM
    * @param siblings
    * @param mainAxisDirection
-   * @param elmPos
+   * @param elmTransition
    * @param operationID
    * @param axis
    */
@@ -370,7 +399,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     mainAxisDirection: Direction,
     DOM: HTMLElement,
     siblings: string[],
-    elmPos: PointNum,
+    elmTransition: AxesPoint,
     numberOfPassedElm: number,
     maxContainerGridBoundaries: PointNum,
     operationID: string
@@ -379,49 +408,41 @@ class DFlexCoreElement extends DFlexBaseElement {
      * `mainAxisDirection` decides the direction of the element, negative or positive.
      * If the element is dragged to the left, the `mainAxisDirection` is -1.
      */
+    // const axisToProcess = axis === "z" ? BOTH_AXIS : [axis];
+
     if (axis === "z") {
       BOTH_AXIS.forEach((_axis, i) => {
         // i=0 for `X` which is the opposite of the main axis(`Y`) when dragging on `Z`
         const direction =
           i === 0 ? (mainAxisDirection === 1 ? -1 : 1) : mainAxisDirection;
 
-        elmPos[_axis] *= direction;
+        elmTransition[_axis] *= direction;
 
-        this.DOMGrid[_axis] += mainAxisDirection * numberOfPassedElm;
+        this._updateDOMGrid(
+          direction,
+          numberOfPassedElm,
+          maxContainerGridBoundaries
+        );
       });
     } else {
-      elmPos[axis] *= mainAxisDirection;
+      elmTransition[axis] *= mainAxisDirection;
 
-      if (mainAxisDirection === -1) {
-        for (let i = 0; i < numberOfPassedElm; i += 1) {
-          this.DOMGrid.x -= 1;
-
-          if (this.DOMGrid.x < 0) {
-            this.DOMGrid.x = maxContainerGridBoundaries.x;
-            this.DOMGrid.y -= 1;
-          }
-        }
-      } else {
-        for (let i = 0; i < numberOfPassedElm; i += 1) {
-          this.DOMGrid.x += 1;
-
-          if (this.DOMGrid.x > maxContainerGridBoundaries.x) {
-            this.DOMGrid.x = 0;
-            this.DOMGrid.y += 1;
-          }
-        }
-      }
+      this._updateDOMGrid(
+        mainAxisDirection,
+        numberOfPassedElm,
+        maxContainerGridBoundaries
+      );
     }
 
-    // if (__DEV__) {
-    //   assertGridBoundaries(this.id, this.DOMGrid, maxContainerGridBoundaries);
-    // }
+    if (__DEV__) {
+      assertGridBoundaries(this.id, this.DOMGrid, maxContainerGridBoundaries);
+    }
 
     this._pushToTranslateHistory(axis, operationID);
 
     const { oldIndex, newIndex } = this._transformationProcess(
       DOM,
-      elmPos,
+      elmTransition,
       false,
       mainAxisDirection * numberOfPassedElm
     );

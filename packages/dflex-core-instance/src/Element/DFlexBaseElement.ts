@@ -26,19 +26,9 @@ class DFlexBaseElement {
 
   constructor(id: string) {
     this.id = id;
-    this.isPaused = true;
-  }
-
-  /**
-   * Initialize the translate AxesCoordinates as part of abstract instance and
-   * necessary for darg only movement.
-   */
-  initTranslate(): void {
-    if (!this.translate) {
-      this.translate = new PointNum(0, 0);
-    }
-    this._hasAttribute = new Set();
     this.isPaused = false;
+    this.translate = new PointNum(0, 0);
+    this._hasAttribute = new Set();
   }
 
   setAttribute(

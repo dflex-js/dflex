@@ -150,7 +150,7 @@ class DFlexDnDStore extends DFlexBaseStore {
   ): void {
     const [dflexElm, DOM] = this.getElmWithDOM(id);
 
-    dflexElm.resume(DOM);
+    dflexElm.initElmRect(DOM);
 
     this.setElmGridBridge(container, dflexElm);
 
@@ -167,10 +167,14 @@ class DFlexDnDStore extends DFlexBaseStore {
   ) {
     // Unified dimension is for siblings/children depth.
     if (!this.unifiedContainerDimensions[parentDepth - 1]) {
-      this.unifiedContainerDimensions[parentDepth - 1] = Object.seal({
+      const unifiedContainerDimensions = {
         width: 0,
         height: 0,
-      });
+      };
+
+      this.unifiedContainerDimensions[parentDepth - 1] = __DEV__
+        ? Object.seal(unifiedContainerDimensions)
+        : unifiedContainerDimensions;
     }
 
     const siblings = this.DOMGen.getElmSiblingsByKey(SK);

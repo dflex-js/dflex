@@ -16,10 +16,12 @@ Map {
       "self": 0,
     },
     "_computedDimensions": null,
+    "_hasAttribute": Set {},
     "_initialPosition": PointNum {
       "x": 0,
       "y": 0,
     },
+    "_translateHistory": undefined,
     "animatedFrame": null,
     "depth": 0,
     "hasPendingTransform": false,
@@ -40,6 +42,10 @@ Map {
       "right": 0,
       "top": 0,
       "width": 0,
+    },
+    "translate": PointNum {
+      "x": 0,
+      "y": 0,
     },
   },
 }
