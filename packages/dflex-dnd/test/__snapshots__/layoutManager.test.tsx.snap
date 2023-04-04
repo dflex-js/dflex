@@ -72,9 +72,9 @@ DFlexDnDStore {
     id="dflex_id_0"
   >
     <div
+      data-dev-x="0"
+      data-dev-y="0"
       data-index="0"
-      data-x="0"
-      data-y="0"
       id="id-1"
     />
   </div>,
@@ -161,9 +161,9 @@ DFlexDnDStore {
   },
   "interactiveDOM": Map {
     "id-1" => <div
+      data-dev-x="0"
+      data-dev-y="0"
       data-index="0"
-      data-x="0"
-      data-y="0"
       id="id-1"
     />,
     "dflex_id_0" => <div
@@ -172,28 +172,28 @@ DFlexDnDStore {
       id="dflex_id_0"
     >
       <div
+        data-dev-x="0"
+        data-dev-y="0"
         data-index="0"
-        data-x="0"
-        data-y="0"
         id="id-1"
       />
     </div>,
     "id-2" => <div
+      data-dev-x="0"
+      data-dev-y="0"
       data-index="0"
-      data-x="0"
-      data-y="0"
       id="id-2"
     />,
     "id-3" => <div
+      data-dev-x="0"
+      data-dev-y="1"
       data-index="1"
-      data-x="0"
-      data-y="1"
       id="id-3"
     />,
     "id-4" => <div
+      data-dev-x="0"
+      data-dev-y="2"
       data-index="2"
-      data-x="0"
-      data-y="2"
       id="id-4"
     />,
     "dflex_id_1" => <div
@@ -202,21 +202,21 @@ DFlexDnDStore {
       id="dflex_id_1"
     >
       <div
+        data-dev-x="0"
+        data-dev-y="0"
         data-index="0"
-        data-x="0"
-        data-y="0"
         id="id-2"
       />
       <div
+        data-dev-x="0"
+        data-dev-y="1"
         data-index="1"
-        data-x="0"
-        data-y="1"
         id="id-3"
       />
       <div
+        data-dev-x="0"
+        data-dev-y="2"
         data-index="2"
-        data-x="0"
-        data-y="2"
         id="id-4"
       />
     </div>,
@@ -546,9 +546,9 @@ DFlexDnDStore {
                 id="dflex_id_0"
               >
                 <div
+                  data-dev-x="0"
+                  data-dev-y="0"
                   data-index="0"
-                  data-x="0"
-                  data-y="0"
                   id="id-1"
                 />
               </div>
@@ -558,21 +558,21 @@ DFlexDnDStore {
                 id="dflex_id_1"
               >
                 <div
+                  data-dev-x="0"
+                  data-dev-y="0"
                   data-index="0"
-                  data-x="0"
-                  data-y="0"
                   id="id-2"
                 />
                 <div
+                  data-dev-x="0"
+                  data-dev-y="1"
                   data-index="1"
-                  data-x="0"
-                  data-y="1"
                   id="id-3"
                 />
                 <div
+                  data-dev-x="0"
+                  data-dev-y="2"
                   data-index="2"
-                  data-x="0"
-                  data-y="2"
                   id="id-4"
                 />
               </div>
@@ -631,9 +631,9 @@ DFlexDnDStore {
                 id="dflex_id_0"
               >
                 <div
+                  data-dev-x="0"
+                  data-dev-y="0"
                   data-index="0"
-                  data-x="0"
-                  data-y="0"
                   id="id-1"
                 />
               </div>
@@ -643,21 +643,21 @@ DFlexDnDStore {
                 id="dflex_id_1"
               >
                 <div
+                  data-dev-x="0"
+                  data-dev-y="0"
                   data-index="0"
-                  data-x="0"
-                  data-y="0"
                   id="id-2"
                 />
                 <div
+                  data-dev-x="0"
+                  data-dev-y="1"
                   data-index="1"
-                  data-x="0"
-                  data-y="1"
                   id="id-3"
                 />
                 <div
+                  data-dev-x="0"
+                  data-dev-y="2"
                   data-index="2"
-                  data-x="0"
-                  data-y="2"
                   id="id-4"
                 />
               </div>
