@@ -28,8 +28,8 @@ export type DFlexSerializedElement = {
 };
 
 type TransitionHistory = {
-  ID: string;
-  axis: Axes;
+  numberOfPassedElm: number;
+  axes: Axes;
   translate: AxesPoint;
 };
 
@@ -119,7 +119,7 @@ class DFlexCoreElement extends DFlexBaseElement {
 
   animatedFrame: number | null;
 
-  private _translateHistory?: TransitionHistory[];
+  private _translateHistory?: Map<string, TransitionHistory[]>;
 
   static getType(): string {
     return "core:element";
@@ -288,20 +288,28 @@ class DFlexCoreElement extends DFlexBaseElement {
     branchIDsOrder[newIndex] = this.id;
   }
 
-  private _pushToTranslateHistory(axis: Axes, operationID: string) {
+  private _pushToTranslateHistory(
+    axes: Axes,
+    cycleID: string,
+    numberOfPassedElm: number
+  ) {
     const translate = this.translate.getInstance();
 
     const elmAxesHistory: TransitionHistory = {
-      ID: operationID,
-      axis,
+      axes,
+      numberOfPassedElm,
       translate,
     };
 
-    if (!Array.isArray(this._translateHistory)) {
-      this._translateHistory = [];
+    if (this._translateHistory === undefined) {
+      this._translateHistory = new Map();
     }
 
-    this._translateHistory.push(elmAxesHistory);
+    if (!this._translateHistory.has(cycleID)) {
+      this._translateHistory.set(cycleID, []);
+    }
+
+    this._translateHistory.get(cycleID)!.push(elmAxesHistory);
   }
 
   private _transformOrPend(
@@ -334,7 +342,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     elmTransition: AxesPoint,
     hasToFlushTransform: boolean,
     increment: number
-  ) {
+  ): [number, number] {
     this.translate.increase(elmTransition);
 
     /**
@@ -354,7 +362,7 @@ class DFlexCoreElement extends DFlexBaseElement {
 
     this.updateIndex(DOM, newIndex);
 
-    return { oldIndex, newIndex };
+    return [oldIndex, newIndex];
   }
 
   private _updateDOMGrid(
@@ -438,9 +446,9 @@ class DFlexCoreElement extends DFlexBaseElement {
       assertGridBoundaries(this.id, this.DOMGrid, maxContainerGridBoundaries);
     }
 
-    this._pushToTranslateHistory(axis, operationID);
+    this._pushToTranslateHistory(axis, operationID, numberOfPassedElm);
 
-    const { oldIndex, newIndex } = this._transformationProcess(
+    const [oldIndex, newIndex] = this._transformationProcess(
       DOM,
       elmTransition,
       false,
@@ -467,19 +475,23 @@ class DFlexCoreElement extends DFlexBaseElement {
    * @param cycleID
    */
   rollBackPosition(DOM: HTMLElement, cycleID: string): void {
-    if (!Array.isArray(this._translateHistory)) {
+    if (
+      this._translateHistory === undefined ||
+      !this._translateHistory.has(cycleID)
+    ) {
       return;
     }
 
-    const { length } = this._translateHistory;
-
-    const stillInSameCycle = this._translateHistory[length - 1].ID === cycleID;
-
-    if (!stillInSameCycle) {
-      return;
+    if (__DEV__) {
+      if (!Array.isArray(this._translateHistory.get(cycleID))) {
+        throw new Error(
+          `rollBackPosition: cycleID: ${cycleID} doesn't have a valid array history`
+        );
+      }
     }
+    const lastMovement = this._translateHistory.get(cycleID)!;
 
-    const { translate: preTranslate, axis } = this._translateHistory.pop()!;
+    const { translate: preTranslate, axes } = lastMovement.pop()!;
 
     const elmPos = {
       x: preTranslate.x - this.translate.x,
@@ -488,20 +500,25 @@ class DFlexCoreElement extends DFlexBaseElement {
 
     let increment = 0;
 
-    if (axis === "z") {
+    if (axes === "z") {
       increment = elmPos.x > 0 || elmPos.y > 0 ? 1 : -1;
 
       this.DOMGrid.increase({ x: increment, y: increment });
     } else {
-      increment = elmPos[axis] > 0 ? 1 : -1;
+      increment = elmPos[axes] > 0 ? 1 : -1;
 
-      this.DOMGrid[axis] += increment;
+      this.DOMGrid[axes] += increment;
     }
 
     this._transformationProcess(DOM, elmPos, true, increment);
 
-    if (this._translateHistory.length === 0) {
-      this._translateHistory = undefined;
+    if (lastMovement.length === 0) {
+      this._translateHistory.delete(cycleID);
+
+      if (this._translateHistory.size === 0) {
+        this._translateHistory = undefined;
+      }
+
       return;
     }
 

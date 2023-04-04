@@ -33,6 +33,17 @@ function throwWhenDuplicates(arr: string[]) {
   }
 }
 
+function triggerAssertProcess(
+  DOM: HTMLElement,
+  siblings: string[],
+  grid: PointNum
+) {
+  updateELmDOMGrid(DOM, grid);
+
+  throwIfElmIsEmpty(siblings);
+  throwWhenDuplicates(siblings);
+}
+
 class DraggableInteractive extends DraggableAxes {
   mirrorDOM: HTMLElement | null;
 
@@ -167,6 +178,10 @@ class DraggableInteractive extends DraggableAxes {
 
       this.draggedElm.restorePosition(draggedDOM);
 
+      if (__DEV__) {
+        triggerAssertProcess(draggedDOM, siblings, DOMGrid);
+      }
+
       return;
     }
 
@@ -196,10 +211,7 @@ class DraggableInteractive extends DraggableAxes {
     }
 
     if (__DEV__) {
-      updateELmDOMGrid(draggedDOM, DOMGrid);
-
-      throwIfElmIsEmpty(siblings);
-      throwWhenDuplicates(siblings);
+      triggerAssertProcess(draggedDOM, siblings, DOMGrid);
     }
   }
 
