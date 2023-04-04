@@ -3,6 +3,7 @@ import {
   assertElementPosition,
   featureFlags,
   PointNum,
+  updateELmDOMGrid,
 } from "@dflex/utils";
 import type { AxesPoint } from "@dflex/utils";
 
@@ -195,8 +196,7 @@ class DraggableInteractive extends DraggableAxes {
     }
 
     if (__DEV__) {
-      draggedDOM.dataset.x = `${DOMGrid.x}`;
-      draggedDOM.dataset.y = `${DOMGrid.y}`;
+      updateELmDOMGrid(draggedDOM, DOMGrid);
 
       throwIfElmIsEmpty(siblings);
       throwWhenDuplicates(siblings);

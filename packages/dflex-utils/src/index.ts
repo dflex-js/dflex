@@ -25,6 +25,7 @@ export {
   getElmComputedDimensions,
   getDimensionTypeByAxis,
   getDirectionTypeByAxis,
+  updateELmDOMGrid,
 } from "./collections";
 
 export { canUseDOM, getSelection, getParentElm } from "./dom";

@@ -7,6 +7,7 @@ import {
   assertElementPosition,
   getElmComputedDimensions,
   BOTH_AXIS,
+  updateELmDOMGrid,
 } from "@dflex/utils";
 import type { Direction, Axes, AxesPoint } from "@dflex/utils";
 
@@ -242,8 +243,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.VDOMOrder.self = i;
 
     if (__DEV__) {
-      DOM.dataset.x = `${this.DOMGrid.x}`;
-      DOM.dataset.y = `${this.DOMGrid.y}`;
+      updateELmDOMGrid(DOM, this.DOMGrid);
     }
   }
 
