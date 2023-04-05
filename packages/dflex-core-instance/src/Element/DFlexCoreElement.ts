@@ -312,11 +312,8 @@ class DFlexCoreElement extends DFlexBaseElement {
     this._translateHistory.get(cycleID)!.push(elmAxesHistory);
   }
 
-  private _transformOrPend(
-    DOM: HTMLElement,
-    hasToFlushTransform: boolean
-  ): void {
-    if (hasToFlushTransform) {
+  private _transformOrPend(DOM: HTMLElement, enforceTransform: boolean): void {
+    if (enforceTransform) {
       if (!this.isVisible && this.hasPendingTransform) {
         this.hasPendingTransform = false;
 
@@ -340,8 +337,8 @@ class DFlexCoreElement extends DFlexBaseElement {
   private _transformationProcess(
     DOM: HTMLElement,
     elmTransition: AxesPoint,
-    hasToFlushTransform: boolean,
-    increment: number
+    enforceTransform: boolean,
+    indexIncrement: number
   ): [number, number] {
     this.translate.increase(elmTransition);
 
@@ -354,11 +351,11 @@ class DFlexCoreElement extends DFlexBaseElement {
       this._initialPosition.y + this.translate.y
     );
 
-    this._transformOrPend(DOM, hasToFlushTransform);
+    this._transformOrPend(DOM, enforceTransform);
 
     const { self: oldIndex } = this.VDOMOrder;
 
-    const newIndex = oldIndex + increment;
+    const newIndex = oldIndex + indexIncrement;
 
     this.updateIndex(DOM, newIndex);
 
@@ -399,7 +396,7 @@ class DFlexCoreElement extends DFlexBaseElement {
    * @param siblings
    * @param mainAxisDirection
    * @param elmTransition
-   * @param operationID
+   * @param cycleID
    * @param axis
    */
   reconcilePosition(
@@ -410,7 +407,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     elmTransition: AxesPoint,
     numberOfPassedElm: number,
     maxContainerGridBoundaries: PointNum,
-    operationID: string
+    cycleID: string
   ): void {
     /**
      * `mainAxisDirection` decides the direction of the element, negative or positive.
@@ -446,13 +443,15 @@ class DFlexCoreElement extends DFlexBaseElement {
       assertGridBoundaries(this.id, this.DOMGrid, maxContainerGridBoundaries);
     }
 
-    this._pushToTranslateHistory(axis, operationID, numberOfPassedElm);
+    this._pushToTranslateHistory(axis, cycleID, numberOfPassedElm);
+
+    const indexIncrement = mainAxisDirection * numberOfPassedElm;
 
     const [oldIndex, newIndex] = this._transformationProcess(
       DOM,
       elmTransition,
       false,
-      mainAxisDirection * numberOfPassedElm
+      indexIncrement
     );
 
     this._leaveToNewIndex(siblings, newIndex, oldIndex);
@@ -494,7 +493,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     const {
       translate: preTranslate,
       axes,
-      // numberOfPassedElm,
+      numberOfPassedElm,
     } = lastMovement.pop()!;
 
     const elmTransition = {
@@ -502,19 +501,27 @@ class DFlexCoreElement extends DFlexBaseElement {
       y: preTranslate.y - this.translate.y,
     };
 
-    let increment = 0;
+    let indexIncrement = 0;
+
+    const direction = {
+      x: elmTransition.x > 0 ? 1 : -1,
+      y: elmTransition.y > 0 ? 1 : -1,
+    };
 
     if (axes === "z") {
-      increment = elmTransition.x > 0 || elmTransition.y > 0 ? 1 : -1;
+      indexIncrement = elmTransition.x > 0 || elmTransition.y > 0 ? 1 : -1;
 
-      this.DOMGrid.increase({ x: increment, y: increment });
+      this.DOMGrid.increase({
+        x: direction.x * numberOfPassedElm,
+        y: direction.y * numberOfPassedElm,
+      });
     } else {
-      increment = elmTransition[axes] > 0 ? 1 : -1;
+      indexIncrement = direction[axes] * numberOfPassedElm;
 
-      this.DOMGrid[axes] += increment;
+      this.DOMGrid[axes] += indexIncrement;
     }
 
-    this._transformationProcess(DOM, elmTransition, true, increment);
+    this._transformationProcess(DOM, elmTransition, true, indexIncrement);
 
     if (lastMovement.length === 0) {
       this._translateHistory.delete(cycleID);

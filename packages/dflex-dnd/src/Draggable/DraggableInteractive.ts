@@ -15,7 +15,7 @@ import DraggableAxes from "./DraggableAxes";
 
 function throwIfElmIsEmpty(arr: string[]) {
   if (arr.some((item) => typeof item !== "string" || item.length === 0)) {
-    throw new Error("Siblings contains empty string");
+    throw new Error(`Siblings ${JSON.stringify(arr)} contains empty string`);
   }
 }
 
