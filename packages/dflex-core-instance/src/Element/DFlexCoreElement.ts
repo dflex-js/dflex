@@ -491,9 +491,13 @@ class DFlexCoreElement extends DFlexBaseElement {
     }
     const lastMovement = this._translateHistory.get(cycleID)!;
 
-    const { translate: preTranslate, axes } = lastMovement.pop()!;
+    const {
+      translate: preTranslate,
+      axes,
+      // numberOfPassedElm,
+    } = lastMovement.pop()!;
 
-    const elmPos = {
+    const elmTransition = {
       x: preTranslate.x - this.translate.x,
       y: preTranslate.y - this.translate.y,
     };
@@ -501,16 +505,16 @@ class DFlexCoreElement extends DFlexBaseElement {
     let increment = 0;
 
     if (axes === "z") {
-      increment = elmPos.x > 0 || elmPos.y > 0 ? 1 : -1;
+      increment = elmTransition.x > 0 || elmTransition.y > 0 ? 1 : -1;
 
       this.DOMGrid.increase({ x: increment, y: increment });
     } else {
-      increment = elmPos[axes] > 0 ? 1 : -1;
+      increment = elmTransition[axes] > 0 ? 1 : -1;
 
       this.DOMGrid[axes] += increment;
     }
 
-    this._transformationProcess(DOM, elmPos, true, increment);
+    this._transformationProcess(DOM, elmTransition, true, increment);
 
     if (lastMovement.length === 0) {
       this._translateHistory.delete(cycleID);
