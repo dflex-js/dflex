@@ -514,7 +514,9 @@ class DFlexMechanismController extends DFlexScrollableElement {
     if (__DEV__) {
       if (!(id && isIDEligible(id, draggedID))) {
         throw new Error(
-          `_actionCaller: incorrect element index: ${elmIndex} for siblings: ${siblings}`
+          `_actionCaller: incorrect element index: ${elmIndex} for siblings: ${JSON.stringify(
+            siblings
+          )}`
         );
       }
 
