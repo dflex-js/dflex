@@ -121,12 +121,12 @@ export async function getChildrenLength(parentLocater: Locator) {
 
 export async function assertDefaultChildrenIndex(parentLocater: Locator) {
   const [childrenIndex, childrenLength] = await parentLocater.evaluate(
-    (elm) => {
+    (parentElm) => {
       const indexes: string[] = [];
-      const { length } = elm.children;
+      const { length } = parentElm.children;
 
       for (let i = 0; i < length; i += 1) {
-        indexes.push(elm.children[i].getAttribute("data-index")!);
+        indexes.push(parentElm.children[i].getAttribute("data-index")!);
       }
       return [indexes, length];
     }
@@ -135,4 +135,28 @@ export async function assertDefaultChildrenIndex(parentLocater: Locator) {
   expect(childrenIndex).toEqual(
     Array.from(Array(childrenLength), (_, i) => `${i}`)
   );
+}
+
+export async function assertChildrenGrid(
+  parentLocater: Locator,
+  expectedChildrenGrid: { x: number; y: number }[]
+) {
+  const childrenGrid = await parentLocater.evaluate((parentElm) => {
+    const grid: { x: number; y: number }[] = [];
+
+    const { length } = parentElm.children;
+
+    for (let i = 0; i < length; i += 1) {
+      const child = parentElm.children[i];
+
+      const x = Number(child.getAttribute("data-dev-x") || 0);
+      const y = Number(child.getAttribute("data-dev-y") || 0);
+
+      grid.push({ x, y });
+    }
+
+    return grid;
+  });
+
+  expect(childrenGrid).toEqual(expectedChildrenGrid);
 }

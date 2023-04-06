@@ -30,6 +30,7 @@ export type DFlexSerializedElement = {
 
 type TransitionHistory = {
   numberOfPassedElm: number;
+  mainAxisDirection: Direction;
   axes: Axes;
   translate: AxesPoint;
 };
@@ -271,6 +272,7 @@ class DFlexCoreElement extends DFlexBaseElement {
   private _pushToTranslateHistory(
     axes: Axes,
     cycleID: string,
+    mainAxisDirection: Direction,
     numberOfPassedElm: number
   ) {
     const translate = this.translate.getInstance();
@@ -278,6 +280,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     const elmAxesHistory: TransitionHistory = {
       axes,
       numberOfPassedElm,
+      mainAxisDirection,
       translate,
     };
 
@@ -314,39 +317,11 @@ class DFlexCoreElement extends DFlexBaseElement {
     this._transform(DOM);
   }
 
-  private _transformationProcess(
-    DOM: HTMLElement,
-    elmTransition: AxesPoint,
-    enforceTransform: boolean,
-    indexIncrement: number
-  ): [number, number] {
-    this.translate.increase(elmTransition);
-
-    /**
-     * This offset related directly to translate Y and Y. It's isolated from
-     * element current offset and effects only top and left.
-     */
-    this.rect.setAxes(
-      this._initialPosition.x + this.translate.x,
-      this._initialPosition.y + this.translate.y
-    );
-
-    this._transformOrPend(DOM, enforceTransform);
-
-    const { self: oldIndex } = this.VDOMOrder;
-
-    const newIndex = oldIndex + indexIncrement;
-
-    this.updateIndex(DOM, newIndex);
-
-    return [oldIndex, newIndex];
-  }
-
   private _updateDOMGridOnAxes(
     direction: Direction,
     numberOfPassedElm: number,
     maxContainerGridBoundaries: PointNum
-  ) {
+  ): void {
     if (direction === -1) {
       for (let i = 0; i < numberOfPassedElm; i += 1) {
         this.DOMGrid.x -= 1;
@@ -370,25 +345,15 @@ class DFlexCoreElement extends DFlexBaseElement {
     }
   }
 
-  /**
-   *
-   * @param DOM
-   * @param siblings
-   * @param mainAxisDirection
-   * @param elmTransition
-   * @param cycleID
-   * @param axis
-   */
-  reconcilePosition(
+  _do(
     axis: Axes,
     mainAxisDirection: Direction,
     DOM: HTMLElement,
-    siblings: string[],
     elmTransition: AxesPoint,
     numberOfPassedElm: number,
     maxContainerGridBoundaries: PointNum,
-    cycleID: string
-  ): void {
+    enforceTransform: boolean
+  ) {
     /**
      * `mainAxisDirection` decides the direction of the element, negative or positive.
      * If the element is dragged to the left, the `mainAxisDirection` is -1.
@@ -421,15 +386,64 @@ class DFlexCoreElement extends DFlexBaseElement {
       assertGridBoundaries(this.id, this.DOMGrid, maxContainerGridBoundaries);
     }
 
-    this._pushToTranslateHistory(axis, cycleID, numberOfPassedElm);
-
     const indexIncrement = mainAxisDirection * numberOfPassedElm;
 
-    const [oldIndex, newIndex] = this._transformationProcess(
+    this.translate.increase(elmTransition);
+
+    /**
+     * This offset related directly to translate Y and Y. It's isolated from
+     * element current offset and effects only top and left.
+     */
+    this.rect.setAxes(
+      this._initialPosition.x + this.translate.x,
+      this._initialPosition.y + this.translate.y
+    );
+
+    this._transformOrPend(DOM, enforceTransform);
+
+    const { self: oldIndex } = this.VDOMOrder;
+
+    const newIndex = oldIndex + indexIncrement;
+
+    this.updateIndex(DOM, newIndex);
+
+    return [oldIndex, newIndex];
+  }
+
+  /**
+   *
+   * @param DOM
+   * @param siblings
+   * @param mainAxisDirection
+   * @param elmTransition
+   * @param cycleID
+   * @param axes
+   */
+  reconcilePosition(
+    axes: Axes,
+    mainAxisDirection: Direction,
+    DOM: HTMLElement,
+    siblings: string[],
+    elmTransition: AxesPoint,
+    numberOfPassedElm: number,
+    maxContainerGridBoundaries: PointNum,
+    cycleID: string
+  ): void {
+    const [oldIndex, newIndex] = this._do(
+      axes,
+      mainAxisDirection,
       DOM,
       elmTransition,
-      false,
-      indexIncrement
+      numberOfPassedElm,
+      maxContainerGridBoundaries,
+      false
+    );
+
+    this._pushToTranslateHistory(
+      axes,
+      cycleID,
+      mainAxisDirection,
+      numberOfPassedElm
     );
 
     siblings[oldIndex] = "";
@@ -447,12 +461,44 @@ class DFlexCoreElement extends DFlexBaseElement {
     this._transform(DOM);
   }
 
+  private _transformationProcess(
+    DOM: HTMLElement,
+    elmTransition: AxesPoint,
+    hasToFlushTransform: boolean,
+    increment: number
+  ) {
+    this.translate.increase(elmTransition);
+
+    /**
+     * This offset related directly to translate Y and Y. It's isolated from
+     * element current offset and effects only top and left.
+     */
+    this.rect.setAxes(
+      this._initialPosition.x + this.translate.x,
+      this._initialPosition.y + this.translate.y
+    );
+
+    this._transformOrPend(DOM, hasToFlushTransform);
+
+    const { self: oldIndex } = this.VDOMOrder;
+
+    const newIndex = oldIndex + increment;
+
+    this.updateIndex(DOM, newIndex);
+
+    return { oldIndex, newIndex };
+  }
+
   /**
    * Roll back element position.
    *
    * @param cycleID
    */
-  rollBackPosition(DOM: HTMLElement, cycleID: string): void {
+  rollBackPosition(
+    DOM: HTMLElement,
+    // maxContainerGridBoundaries: PointNum,
+    cycleID: string
+  ): void {
     if (
       this._translateHistory === undefined ||
       !this._translateHistory.has(cycleID)
@@ -473,6 +519,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       translate: preTranslate,
       axes,
       numberOfPassedElm,
+      // mainAxisDirection,
     } = lastMovement.pop()!;
 
     const elmTransition = {

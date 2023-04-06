@@ -8,6 +8,7 @@ import {
 } from "@playwright/test";
 
 import {
+  assertChildrenGrid,
   assertChildrenOrderIDs,
   assertDefaultChildrenIndex,
   getDraggedRect,
@@ -29,6 +30,18 @@ test.describe("Transformation inside grid container", async () => {
   let elm5: Locator;
   let elm6: Locator;
   let elm7: Locator;
+
+  const INITIAL_GRID = [
+    { x: 0, y: 0 }, // first row
+    { x: 1, y: 0 }, // first row
+    { x: 2, y: 0 }, // first row
+
+    { x: 0, y: 1 }, // second row
+    { x: 1, y: 1 }, // second row
+    { x: 2, y: 1 }, // second row
+
+    { x: 0, y: 2 }, // third row.
+  ];
 
   test.beforeAll(async ({ browser, browserName }) => {
     activeBrowser = browser;
@@ -67,6 +80,10 @@ test.describe("Transformation inside grid container", async () => {
       "id-8",
     ];
 
+    test("Check initial grid", async () => {
+      await assertChildrenGrid(elmParent, INITIAL_GRID);
+    });
+
     test("Move elm3 into elm1 position in the first row", async () => {
       await getDraggedRect(elm3);
       await moveDragged(-470, -1);
@@ -100,7 +117,21 @@ test.describe("Transformation inside grid container", async () => {
       ]);
     });
 
-    test("Move elm7 into elm1 position in the second row", async () => {
+    test("elements grid is calculated correctly", async () => {
+      await assertChildrenGrid(elmParent, [
+        { x: 1, y: 0 }, // first row - first change.
+        { x: 2, y: 0 }, // first row - first change.
+        { x: 0, y: 0 }, // first row - first change.
+
+        { x: 0, y: 1 }, // second row
+        { x: 1, y: 1 }, // second row
+        { x: 2, y: 1 }, // second row
+
+        { x: 0, y: 2 }, // third row.
+      ]);
+    });
+
+    test("Move elm7 into elm4 position in the second row", async () => {
       await getDraggedRect(elm6);
       await moveDragged(-470, -1);
     });
@@ -119,6 +150,20 @@ test.describe("Transformation inside grid container", async () => {
         expect(elm5).toHaveCSS("transform", "matrix(1, 0, 0, 1, 255, 0)"),
         expect(elm6).toHaveCSS("transform", "matrix(1, 0, 0, 1, -510, 0)"), // Dragged-2
         expect(elm7).toHaveCSS("transform", "none"),
+      ]);
+    });
+
+    test("elements grid is calculated correctly for first and second rows", async () => {
+      await assertChildrenGrid(elmParent, [
+        { x: 1, y: 0 }, // first row - first change.
+        { x: 2, y: 0 }, // first row - first change.
+        { x: 0, y: 0 }, // first row - first change.
+
+        { x: 1, y: 1 }, // second row - change this round
+        { x: 2, y: 1 }, // second row
+        { x: 0, y: 1 }, // second row
+
+        { x: 0, y: 2 }, // third row.
       ]);
     });
 
@@ -142,6 +187,7 @@ test.describe("Transformation inside grid container", async () => {
       await Promise.all([
         assertChildrenOrderIDs(elmParent, FINAL_IDS_ROUND_1),
         assertDefaultChildrenIndex(elmParent),
+        assertChildrenGrid(elmParent, INITIAL_GRID),
       ]);
     });
   });
@@ -157,6 +203,10 @@ test.describe("Transformation inside grid container", async () => {
       "id-4",
     ];
 
+    test("Check initial grid", async () => {
+      await assertChildrenGrid(elmParent, INITIAL_GRID);
+    });
+
     test("Move elm3 into elm7 position in the first col", async () => {
       await getDraggedRect(elm3);
       await moveDragged(-1, 210);
@@ -164,6 +214,20 @@ test.describe("Transformation inside grid container", async () => {
         button: 0,
         force: true,
       });
+    });
+
+    test("elements grid is calculated correctly", async () => {
+      await assertChildrenGrid(elmParent, [
+        { x: 0, y: 2 }, // ------> first swap
+        { x: 1, y: 0 }, // first row
+        { x: 2, y: 0 }, // first row
+
+        { x: 0, y: 0 }, // ------> first swap
+        { x: 1, y: 1 }, // second row
+        { x: 2, y: 1 }, // second row
+
+        { x: 0, y: 1 }, // ------> first swap
+      ]);
     });
 
     test("Only siblings inside the row are transformed", async () => {
@@ -199,6 +263,20 @@ test.describe("Transformation inside grid container", async () => {
       ]);
     });
 
+    test("elements grid is calculated correctly for two cols", async () => {
+      await assertChildrenGrid(elmParent, [
+        { x: 0, y: 2 }, // ------> first swap
+        { x: 1, y: 1 }, // ------> second swap
+        { x: 2, y: 0 }, // first row
+
+        { x: 0, y: 0 }, // ------> first swap
+        { x: 1, y: 0 }, // ------> second swap
+        { x: 2, y: 1 }, // second row
+
+        { x: 0, y: 1 }, // ------> first swap
+      ]);
+    });
+
     test("Move elm122 into elm4 position in the third col", async () => {
       await getDraggedRect(elm2);
       await moveDragged(-1, 140);
@@ -220,6 +298,20 @@ test.describe("Transformation inside grid container", async () => {
       ]);
     });
 
+    test("elements grid is calculated correctly for three cols", async () => {
+      await assertChildrenGrid(elmParent, [
+        { x: 0, y: 2 }, // ------> first swap
+        { x: 1, y: 1 }, // ------> second swap
+        { x: 2, y: 1 }, // ------> third swap
+
+        { x: 0, y: 0 }, // ------> first swap
+        { x: 1, y: 0 }, // ------> second swap
+        { x: 2, y: 0 }, // ------> third swap
+
+        { x: 0, y: 1 }, // ------> first swap
+      ]);
+    });
+
     test("Trigger key `c` to commit the transformed elements and read the emitted message for mutation", async () => {
       await invokeKeyboardAndAssertEmittedMsg(FINAL_IDS_ROUND_2);
     });
@@ -228,6 +320,7 @@ test.describe("Transformation inside grid container", async () => {
       await Promise.all([
         assertChildrenOrderIDs(elmParent, FINAL_IDS_ROUND_2),
         assertDefaultChildrenIndex(elmParent),
+        assertChildrenGrid(elmParent, INITIAL_GRID),
       ]);
     });
   });

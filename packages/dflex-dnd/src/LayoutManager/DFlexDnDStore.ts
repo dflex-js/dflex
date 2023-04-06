@@ -9,6 +9,7 @@ import {
   featureFlags,
   DFlexCycle,
   clearComputedStyleMap,
+  updateELmDOMGrid,
 } from "@dflex/utils";
 
 import {
@@ -155,8 +156,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.setElmGridBridge(container, dflexElm);
 
     if (__DEV__) {
-      DOM.dataset.x = `${dflexElm.DOMGrid.x}`;
-      DOM.dataset.y = `${dflexElm.DOMGrid.y}`;
+      updateELmDOMGrid(DOM, dflexElm.DOMGrid);
     }
   }
 
