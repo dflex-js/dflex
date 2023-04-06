@@ -8,6 +8,7 @@ import {
   getElmComputedDimensions,
   BOTH_AXIS,
   updateELmDOMGrid,
+  Axis,
 } from "@dflex/utils";
 import type { Direction, Axes, AxesPoint } from "@dflex/utils";
 
@@ -247,45 +248,24 @@ class DFlexCoreElement extends DFlexBaseElement {
     }
   }
 
-  assignNewIndex(branchIDsOrder: string[], newIndex: number): void {
-    if (newIndex < 0 || newIndex > branchIDsOrder.length - 1) {
-      if (__DEV__) {
-        // eslint-disable-next-line no-console
-        console.error(
-          `Illegal Attempt: Received an index:${newIndex} on siblings list:${
-            branchIDsOrder.length - 1
-          }.\n`
+  assignNewIndex(siblings: string[], newIndex: number): void {
+    if (__DEV__) {
+      if (newIndex < 0 || newIndex > siblings.length - 1) {
+        throw new Error(
+          `assignNewIndex: new index: ${newIndex} is outside siblings bound ${JSON.stringify(
+            siblings
+          )}`
         );
       }
 
-      return;
-    }
-
-    if (branchIDsOrder[newIndex].length > 0) {
-      if (__DEV__) {
-        // eslint-disable-next-line no-console
-        console.error(
-          "Illegal Attempt: Colliding in positions.\n",
-          `Element id: ${this.id}\n`,
-          `Collided at index: ${newIndex}\n`,
-          `Siblings list: ${branchIDsOrder}\n`
+      if (siblings[newIndex].length > 0) {
+        throw new Error(
+          `assignNewIndex: new index should occupy empty element at index: ${newIndex} but found ${siblings[newIndex]}`
         );
       }
-
-      return;
     }
 
-    branchIDsOrder[newIndex] = this.id;
-  }
-
-  private _leaveToNewIndex(
-    branchIDsOrder: string[],
-    newIndex: number,
-    oldIndex: number
-  ): void {
-    branchIDsOrder[oldIndex] = "";
-
-    branchIDsOrder[newIndex] = this.id;
+    siblings[newIndex] = this.id;
   }
 
   private _pushToTranslateHistory(
@@ -362,7 +342,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     return [oldIndex, newIndex];
   }
 
-  private _updateDOMGrid(
+  private _updateDOMGridOnAxes(
     direction: Direction,
     numberOfPassedElm: number,
     maxContainerGridBoundaries: PointNum
@@ -413,31 +393,29 @@ class DFlexCoreElement extends DFlexBaseElement {
      * `mainAxisDirection` decides the direction of the element, negative or positive.
      * If the element is dragged to the left, the `mainAxisDirection` is -1.
      */
-    // const axisToProcess = axis === "z" ? BOTH_AXIS : [axis];
+    let axisToProcess: readonly Axis[];
+
+    const direction = {
+      x: mainAxisDirection === 1 ? -1 : 1,
+      y: mainAxisDirection,
+    };
 
     if (axis === "z") {
-      BOTH_AXIS.forEach((_axis, i) => {
-        // i=0 for `X` which is the opposite of the main axis(`Y`) when dragging on `Z`
-        const direction =
-          i === 0 ? (mainAxisDirection === 1 ? -1 : 1) : mainAxisDirection;
-
-        elmTransition[_axis] *= direction;
-
-        this._updateDOMGrid(
-          direction,
-          numberOfPassedElm,
-          maxContainerGridBoundaries
-        );
-      });
+      axisToProcess = BOTH_AXIS;
     } else {
-      elmTransition[axis] *= mainAxisDirection;
+      axisToProcess = [axis];
+      direction[axis] = mainAxisDirection;
+    }
 
-      this._updateDOMGrid(
-        mainAxisDirection,
+    axisToProcess.forEach((_axis) => {
+      elmTransition[_axis] *= direction[_axis];
+
+      this._updateDOMGridOnAxes(
+        direction[_axis] as Direction,
         numberOfPassedElm,
         maxContainerGridBoundaries
       );
-    }
+    });
 
     if (__DEV__) {
       assertGridBoundaries(this.id, this.DOMGrid, maxContainerGridBoundaries);
@@ -454,7 +432,8 @@ class DFlexCoreElement extends DFlexBaseElement {
       indexIncrement
     );
 
-    this._leaveToNewIndex(siblings, newIndex, oldIndex);
+    siblings[oldIndex] = "";
+    siblings[newIndex] = this.id;
   }
 
   restorePosition(DOM: HTMLElement): void {
