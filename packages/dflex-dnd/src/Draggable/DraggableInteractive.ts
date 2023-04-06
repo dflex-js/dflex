@@ -13,23 +13,69 @@ import type { ScrollOpts, FinalDndOpts, Commit } from "../types";
 
 import DraggableAxes from "./DraggableAxes";
 
-function throwIfElmIsEmpty(arr: string[]) {
-  if (arr.some((item) => typeof item !== "string" || item.length === 0)) {
-    throw new Error(`Siblings ${JSON.stringify(arr)} contains empty string`);
+function throwIfElmIsEmpty(siblings: string[]) {
+  if (siblings.some((item) => typeof item !== "string" || item.length === 0)) {
+    throw new Error(
+      `Siblings ${JSON.stringify(siblings)} contains empty string`
+    );
   }
 }
 
-function throwWhenDuplicates(arr: string[]) {
-  const duplicates = arr.filter((elem, index) => arr.indexOf(elem) !== index);
+function throwWhenDuplicates(siblings: string[]) {
+  const duplicates = siblings.filter(
+    (elem, index) => siblings.indexOf(elem) !== index
+  );
 
   if (duplicates.length > 0) {
     throw new Error(
       `Siblings ${JSON.stringify(
-        arr
+        siblings
       )} contains non-unique elements. Duplicate elements found: ${JSON.stringify(
         duplicates
       )}`
     );
+  }
+}
+
+function throwWhenCollision(siblings: string[]) {
+  const positions = new Set();
+
+  for (let i = 0; i < siblings.length; i += 1) {
+    const id = siblings[i];
+
+    const { rect } = store.registry.get(id)!;
+
+    if (positions.has(rect)) {
+      throw new Error(`throwWhenCollision: found collision in ${id}-element`);
+    }
+
+    positions.add(rect);
+  }
+}
+
+function throwIfOutContainer(siblings: string[]) {
+  for (let i = 0; i < siblings.length; i += 1) {
+    const id = siblings[i];
+
+    const {
+      rect,
+      keys: { SK },
+    } = store.registry.get(id)!;
+
+    const container = store.containers.get(SK)!;
+
+    const boundaries = container.getBoundaries();
+
+    if (
+      rect.right < boundaries.left ||
+      rect.bottom < boundaries.top ||
+      rect.left > boundaries.right ||
+      rect.top > boundaries.bottom
+    ) {
+      throw new Error(
+        `throwIfOutContainer: element ${id} is outside its container.`
+      );
+    }
   }
 }
 
@@ -42,6 +88,8 @@ function triggerAssertProcess(
 
   throwIfElmIsEmpty(siblings);
   throwWhenDuplicates(siblings);
+  throwWhenCollision(siblings);
+  throwIfOutContainer(siblings);
 }
 
 class DraggableInteractive extends DraggableAxes {
