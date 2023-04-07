@@ -145,7 +145,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     // Enforce attaching it from the bottom since it's already inside the container.
     if (typeof insertAt !== "number") {
       // Restore the last element position from the bottom.
-      const { lastElmPosition } = container;
+      const lastElmPosition = container.getLastElmPosition();
       if (!migration.isTransitioning && lastElmPosition) {
         this.updateDraggedThresholdPosition(
           lastElmPosition.x,

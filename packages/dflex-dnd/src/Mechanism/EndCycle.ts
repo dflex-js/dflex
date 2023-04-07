@@ -32,7 +32,9 @@ class EndCycle extends DFlexMechanismController {
       }
     }
 
-    const { grid } = store.containers.get(SK)!;
+    const container = store.containers.get(SK)!;
+
+    const grid = container.getLastGrid() || container.grid;
 
     for (let i = siblings.length - 1; i >= 0; i -= 1) {
       const elmID = siblings[i];

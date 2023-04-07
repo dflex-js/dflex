@@ -66,10 +66,5 @@
     "typescript": "^5.0.3",
     "vite": "^4.2.1",
     "vite-plugin-replace": "^0.1.1"
-  },
-  "size-limit": [
-    {
-      "path": "packages/dflex-core-instance/dist/dflex-core.js"
-    }
-  ]
+  }
 }

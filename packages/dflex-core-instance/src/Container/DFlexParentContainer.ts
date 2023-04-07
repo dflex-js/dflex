@@ -5,6 +5,15 @@ import type { Dimensions, AxesPoint } from "@dflex/utils";
 
 const EMPTY_GRID_INDEX = -1;
 
+type TransitionHistory = {
+  /**
+   * Preserve the last element position in the list .
+   * Usage: Getting this position when the dragged is going back from the tail.
+   */
+  lastElmPosition: PointNum;
+  grid: PointNum;
+};
+
 class DFlexParentContainer {
   private _boundariesByRow: BoxNum;
 
@@ -30,7 +39,7 @@ class DFlexParentContainer {
    * Preserve the last element position in the list .
    * Usage: Getting this position when the dragged is going back from the tail.
    */
-  lastElmPosition!: PointNum;
+  private _translateHistory?: TransitionHistory[];
 
   constructor(DOM: HTMLElement, originLength: number, id: string) {
     this.id = id;
@@ -39,7 +48,9 @@ class DFlexParentContainer {
     this.originLength = originLength;
     this._boundariesByRow = new BoxNum(0, 0, 0, 0);
     this._siblingBoundaries = null;
+    this._translateHistory = undefined;
     this._initRect(DOM);
+
     // @ts-expect-error
     this.lastElmPosition = null;
 
@@ -161,12 +172,25 @@ class DFlexParentContainer {
     this.lastElmPosition = null;
   }
 
-  preservePosition(pos: AxesPoint): void {
-    if (this.lastElmPosition) {
-      this.lastElmPosition.setAxes(pos.x, pos.y);
-    } else {
-      this.lastElmPosition = new PointNum(pos.x, pos.y);
-    }
+  preservePosition(lastElmPosition: AxesPoint, grid: AxesPoint): void {
+    const elmAxesHistory: TransitionHistory = {
+      lastElmPosition: new PointNum(lastElmPosition.x, lastElmPosition.y),
+      grid: new PointNum(grid.x, grid.y),
+    };
+
+    this._translateHistory = [elmAxesHistory];
+  }
+
+  getLastElmPosition() {
+    return Array.isArray(this._translateHistory)
+      ? this._translateHistory[0].lastElmPosition
+      : null;
+  }
+
+  getLastGrid() {
+    return Array.isArray(this._translateHistory)
+      ? this._translateHistory[0].grid
+      : null;
   }
 }
 
