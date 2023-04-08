@@ -86,22 +86,22 @@ importers:
   packages/dflex-core-instance:
     devDependencies:
       '@dflex/utils':
-        specifier: workspace:^3.8.3
+        specifier: workspace:^3.8.4
         version: link:../dflex-utils
 
   packages/dflex-dnd:
     devDependencies:
       '@dflex/core-instance':
-        specifier: workspace:^3.8.3
+        specifier: workspace:^3.8.4
         version: link:../dflex-core-instance
       '@dflex/draggable':
-        specifier: workspace:^3.8.3
+        specifier: workspace:^3.8.4
         version: link:../dflex-draggable
       '@dflex/store':
-        specifier: workspace:^3.8.3
+        specifier: workspace:^3.8.4
         version: link:../dflex-store
       '@dflex/utils':
-        specifier: workspace:^3.8.3
+        specifier: workspace:^3.8.4
         version: link:../dflex-utils
 
   packages/dflex-dnd-playground:
@@ -126,19 +126,19 @@ importers:
   packages/dflex-dom-gen:
     devDependencies:
       '@dflex/utils':
-        specifier: workspace:^3.8.3
+        specifier: workspace:^3.8.4
         version: link:../dflex-utils
 
   packages/dflex-draggable:
     devDependencies:
       '@dflex/core-instance':
-        specifier: workspace:^3.8.3
+        specifier: workspace:^3.8.4
         version: link:../dflex-core-instance
       '@dflex/store':
-        specifier: workspace:^3.8.3
+        specifier: workspace:^3.8.4
         version: link:../dflex-store
       '@dflex/utils':
-        specifier: workspace:^3.8.3
+        specifier: workspace:^3.8.4
         version: link:../dflex-utils
       eslint-config-dflex-react:
         specifier: workspace:*
@@ -157,13 +157,13 @@ importers:
   packages/dflex-store:
     devDependencies:
       '@dflex/core-instance':
-        specifier: workspace:^3.8.3
+        specifier: workspace:^3.8.4
         version: link:../dflex-core-instance
       '@dflex/dom-gen':
-        specifier: workspace:^3.8.3
+        specifier: workspace:^3.8.4
         version: link:../dflex-dom-gen
       '@dflex/utils':
-        specifier: workspace:^3.8.3
+        specifier: workspace:^3.8.4
         version: link:../dflex-utils
 
   packages/dflex-utils: {}

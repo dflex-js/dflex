@@ -1,6 +1,6 @@
 {
   "name": "@dflex/draggable",
-  "version": "3.8.3",
+  "version": "3.8.4",
   "description": "Draggable only package for all JavaScript frameworks",
   "author": "Jalal Maskoun",
   "main": "./dist/dflex-draggable.js",
@@ -31,9 +31,9 @@
     "LICENSE"
   ],
   "devDependencies": {
-    "@dflex/core-instance": "workspace:^3.8.3",
-    "@dflex/store": "workspace:^3.8.3",
-    "@dflex/utils": "workspace:^3.8.3",
+    "@dflex/core-instance": "workspace:^3.8.4",
+    "@dflex/store": "workspace:^3.8.4",
+    "@dflex/utils": "workspace:^3.8.4",
     "eslint-config-dflex-react": "workspace:*"
   },
   "keywords": [
