@@ -58,7 +58,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.10.0",
-    "rimraf": "^4.4.1",
+    "rimraf": "^5.0.0",
     "rome": "^12.0.0",
     "start-server-and-test": "^2.0.0",
     "ts-jest": "^29.1.0",
