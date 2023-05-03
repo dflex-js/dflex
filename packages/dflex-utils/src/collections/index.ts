@@ -11,6 +11,6 @@ export {
   getElmComputedStyle,
   clearComputedStyleMap,
   setRelativePosition,
-  setFixedWidth,
+  setFixedDimensions,
   getElmComputedDimensions,
 } from "./computedStyleUtils";

@@ -21,7 +21,7 @@ export {
   getElmComputedStyle,
   clearComputedStyleMap,
   setRelativePosition,
-  setFixedWidth,
+  setFixedDimensions,
   getElmComputedDimensions,
   getDimensionTypeByAxis,
   getDirectionTypeByAxis,
