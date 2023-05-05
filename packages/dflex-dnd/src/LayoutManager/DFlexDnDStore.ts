@@ -345,12 +345,14 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     clearTimeout(this._resizeTimeoutId);
 
-    // Set a timeout to restore the styles after 200ms
+    // Set a timeout to restore the styles after 100ms
     this._resizeTimeoutId = setTimeout(() => {
+      clearComputedStyleMap();
+
       this._forEachContainerDOM((DOM) => {
         setFixedDimensions(DOM);
       });
-    }, 1);
+    }, 100);
 
     this._refreshAllElmBranchWhileReconcile = true;
 
@@ -462,7 +464,6 @@ class DFlexDnDStore extends DFlexBaseStore {
         connectObservers(this);
 
         this.migration.clear();
-        clearComputedStyleMap();
 
         this._refreshAllElmBranchWhileReconcile = undefined;
         this.isComposing = false;
