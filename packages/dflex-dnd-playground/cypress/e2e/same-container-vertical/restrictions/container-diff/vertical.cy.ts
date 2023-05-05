@@ -150,7 +150,7 @@ context(
         cy.get("#item-rest-container-top").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, -257.844)"
+          "matrix(1, 0, 0, 1, 0, -257)"
         );
       });
 
@@ -164,7 +164,7 @@ context(
         cy.get("#item-rest-container-top").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, -257.562)"
+          "matrix(1, 0, 0, 1, 0, -257.406)"
         );
 
         cy.get("#item-rest-container-left").should(
@@ -233,13 +233,13 @@ context(
         cy.get("#item-rest-container-top-bottom").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, -91.1875)"
+          "matrix(1, 0, 0, 1, 0, -91.0312)"
         );
 
         cy.get("#item-rest-container-all").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, -91.1875)"
+          "matrix(1, 0, 0, 1, 0, -91.0312)"
         );
       });
 
@@ -268,13 +268,13 @@ context(
         cy.get("#item-rest-container-top-bottom").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, -91.1875)"
+          "matrix(1, 0, 0, 1, 0, -91.0312)"
         );
 
         cy.get("#item-rest-container-all").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, -91.1875)"
+          "matrix(1, 0, 0, 1, 0, -91.0312)"
         );
       });
 
@@ -303,7 +303,7 @@ context(
         cy.get("#item-rest-container-bottom").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 166.719)"
+          "matrix(1, 0, 0, 1, 0, 166.562)"
         );
       });
 
@@ -350,19 +350,19 @@ context(
         cy.get("#item-rest-container-top").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, -257.562)"
+          "matrix(1, 0, 0, 1, 0, -257.406)"
         );
 
         cy.get("#item-rest-container-top-bottom").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, -91.1875)"
+          "matrix(1, 0, 0, 1, 0, -91.0312)"
         );
 
         cy.get("#item-rest-container-all").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, -91.1875)"
+          "matrix(1, 0, 0, 1, 0, -91.0312)"
         );
       });
 
