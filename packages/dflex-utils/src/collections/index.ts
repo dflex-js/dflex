@@ -9,7 +9,7 @@ export {
 
 export {
   getElmComputedStyle,
-  clearComputedStyleMap,
+  clearComputedStyleCache,
   setRelativePosition,
   setFixedDimensions,
   getElmComputedDimensions,

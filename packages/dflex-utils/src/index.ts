@@ -19,7 +19,7 @@ export {
   warnOnce,
   assertElementPosition,
   getElmComputedStyle,
-  clearComputedStyleMap,
+  clearComputedStyleCache,
   setRelativePosition,
   setFixedDimensions,
   getElmComputedDimensions,

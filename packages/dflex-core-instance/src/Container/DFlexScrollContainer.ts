@@ -9,6 +9,7 @@ import {
   getParentElm,
   PointBool,
   Threshold,
+  getElmComputedStyle,
 } from "@dflex/utils";
 
 import type { ThresholdPercentages, AbstractBox } from "@dflex/utils";
@@ -31,7 +32,7 @@ export type DFlexSerializedScroll = {
 const OVERFLOW_REGEX = /(auto|scroll|overlay)/;
 
 function isStaticallyPositioned(DOM: Element): boolean {
-  const computedStyle = getComputedStyle(DOM);
+  const computedStyle = getElmComputedStyle(DOM);
   const position = computedStyle.getPropertyValue("position");
   return position === "static";
 }
@@ -39,7 +40,7 @@ function isStaticallyPositioned(DOM: Element): boolean {
 function getScrollContainer(baseDOMElm: HTMLElement): [HTMLElement, boolean] {
   let hasDocumentAsContainer = false;
 
-  const baseComputedStyle = getComputedStyle(baseDOMElm);
+  const baseComputedStyle = getElmComputedStyle(baseDOMElm);
   const baseELmPosition = baseComputedStyle.getPropertyValue("position");
   const excludeStaticParents = baseELmPosition === "absolute";
 
@@ -48,7 +49,7 @@ function getScrollContainer(baseDOMElm: HTMLElement): [HTMLElement, boolean] {
       return false;
     }
 
-    const parentComputedStyle = getComputedStyle(parentDOM);
+    const parentComputedStyle = getElmComputedStyle(parentDOM);
 
     const parentRect = parentDOM.getBoundingClientRect();
 

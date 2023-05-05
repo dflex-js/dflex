@@ -8,7 +8,7 @@ import {
   Dimensions,
   featureFlags,
   DFlexCycle,
-  clearComputedStyleMap,
+  clearComputedStyleCache,
   updateELmDOMGrid,
   setFixedDimensions,
 } from "@dflex/utils";
@@ -347,7 +347,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     // Set a timeout to restore the styles after 100ms
     this._resizeTimeoutId = setTimeout(() => {
-      clearComputedStyleMap();
+      clearComputedStyleCache();
 
       this._forEachContainerDOM((DOM) => {
         setFixedDimensions(DOM);

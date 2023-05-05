@@ -5,7 +5,7 @@ import type { Dimensions } from "../types";
 import warnOnce from "./warnOnce";
 import * as CSSPropNames from "./constants";
 
-let computedStyleMap = new WeakMap<HTMLElement, CSSStyleDeclaration>();
+let computedStyleCache = new WeakMap<Element, CSSStyleDeclaration>();
 
 /**
  * Gets cached computed style if available.
@@ -13,20 +13,20 @@ let computedStyleMap = new WeakMap<HTMLElement, CSSStyleDeclaration>();
  * @param DOM
  * @returns
  */
-function getElmComputedStyle(DOM: HTMLElement): CSSStyleDeclaration {
-  if (computedStyleMap.has(DOM)) {
-    return computedStyleMap.get(DOM)!;
+function getElmComputedStyle(DOM: Element): CSSStyleDeclaration {
+  if (computedStyleCache.has(DOM)) {
+    return computedStyleCache.get(DOM)!;
   }
 
   const computedStyle = getComputedStyle(DOM);
 
-  computedStyleMap.set(DOM, computedStyle);
+  computedStyleCache.set(DOM, computedStyle);
 
   return computedStyle;
 }
 
-function clearComputedStyleMap() {
-  computedStyleMap = new WeakMap();
+function clearComputedStyleCache() {
+  computedStyleCache = new WeakMap();
 }
 
 const CSS_VAL_REGEX = /^([0-9]*\.[0-9]*|[0-9]*)(px)$/;
@@ -153,7 +153,7 @@ function getElmMargin() {
 
 export {
   getElmComputedStyle,
-  clearComputedStyleMap,
+  clearComputedStyleCache,
   setRelativePosition,
   setFixedDimensions,
   getElmComputedDimensions,
