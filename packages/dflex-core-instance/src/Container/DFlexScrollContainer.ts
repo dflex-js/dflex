@@ -10,6 +10,7 @@ import {
   PointBool,
   Threshold,
   getElmComputedStyle,
+  getDimensionTypeByAxis,
 } from "@dflex/utils";
 
 import type { ThresholdPercentages, AbstractBox } from "@dflex/utils";
@@ -81,29 +82,24 @@ function getScrollContainer(baseDOMElm: HTMLElement): [HTMLElement, boolean] {
   return [scrollContainerDOM, false];
 }
 
-function widthOrHeight(direction: "x" | "y"): "width" | "height" {
-  return direction === "x" ? "width" : "height";
-}
-
 function hasOverFlow(
   scrollRect: Dimensions,
   scrollContainerRect: Dimensions,
-  direction: "x" | "y"
+  axis: Axis,
+  checkHalf: boolean = false
 ): boolean {
-  const dir = widthOrHeight(direction);
+  const dimension = getDimensionTypeByAxis(axis);
+  const threshold = checkHalf ? 0.5 : 1;
 
-  return scrollRect[dir] > scrollContainerRect[dir];
+  return scrollRect[dimension] / threshold > scrollContainerRect[dimension];
 }
 
-function hasMoreThanHalfOverFlow(
-  scrollRect: Dimensions,
-  scrollContainerRect: Dimensions,
-  direction: "x" | "y"
-): boolean {
-  const dir = widthOrHeight(direction);
+const MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
 
-  return scrollRect[dir] / 2 > scrollContainerRect[dir];
-}
+const OUTER_THRESHOLD: ThresholdPercentages = {
+  horizontal: 25,
+  vertical: 25,
+};
 
 class DFlexScrollContainer {
   private _innerThresholdInViewport: Threshold | null;
@@ -150,13 +146,6 @@ class DFlexScrollContainer {
 
   private _listenerDataset: string;
 
-  private static _OUTER_THRESHOLD: ThresholdPercentages = {
-    horizontal: 25,
-    vertical: 25,
-  };
-
-  private static _MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
-
   static getType(): string {
     return "scroll:container";
   }
@@ -198,16 +187,11 @@ class DFlexScrollContainer {
 
     // Check allowDynamicVisibility after taking into consideration the length of
     // the branch itself.
-    if (
-      branchLength >
-      DFlexScrollContainer._MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY
-    ) {
+    if (branchLength > MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY) {
       if (this.allowDynamicVisibility) {
         this._scrollEventCallback = scrollEventCallback;
 
-        this._outerThresholdInViewport = new Threshold(
-          DFlexScrollContainer._OUTER_THRESHOLD
-        );
+        this._outerThresholdInViewport = new Threshold(OUTER_THRESHOLD);
 
         this._outerThresholdInViewport.setMainThreshold(
           this._threshold_outer_key,
@@ -270,7 +254,7 @@ class DFlexScrollContainer {
 
     if (
       this.hasOverflow.y &&
-      hasMoreThanHalfOverFlow(this.scrollRect, this.scrollContainerRect, "y")
+      hasOverFlow(this.scrollRect, this.scrollContainerRect, "y", true)
     ) {
       this.allowDynamicVisibility = true;
 
@@ -279,7 +263,7 @@ class DFlexScrollContainer {
 
     if (
       this.hasOverflow.x &&
-      hasMoreThanHalfOverFlow(this.scrollRect, this.scrollContainerRect, "x")
+      hasOverFlow(this.scrollRect, this.scrollContainerRect, "x", true)
     ) {
       this.allowDynamicVisibility = true;
     }
