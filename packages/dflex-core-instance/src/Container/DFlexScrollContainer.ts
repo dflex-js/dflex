@@ -9,7 +9,7 @@ import {
   getParentElm,
   PointBool,
   Threshold,
-  getElmComputedStyle,
+  getCachedComputedStyle,
   getDimensionTypeByAxis,
 } from "@dflex/utils";
 
@@ -33,7 +33,7 @@ export type DFlexSerializedScroll = {
 const OVERFLOW_REGEX = /(auto|scroll|overlay)/;
 
 function isStaticallyPositioned(DOM: Element): boolean {
-  const computedStyle = getElmComputedStyle(DOM);
+  const computedStyle = getCachedComputedStyle(DOM);
   const position = computedStyle.getPropertyValue("position");
   return position === "static";
 }
@@ -41,11 +41,11 @@ function isStaticallyPositioned(DOM: Element): boolean {
 function getScrollContainer(baseDOMElm: HTMLElement): [HTMLElement, boolean] {
   let hasDocumentAsContainer = false;
 
-  const { position: baseELmPosition } = getElmComputedStyle(baseDOMElm);
+  const { position: baseELmPosition } = getCachedComputedStyle(baseDOMElm);
   const excludeStaticParents = baseELmPosition === "absolute";
 
   const scrollContainerDOM = getParentElm(baseDOMElm, (parentDOM) => {
-    const { overflowX, overflowY } = getElmComputedStyle(parentDOM);
+    const { overflowX, overflowY } = getCachedComputedStyle(parentDOM);
     const parentRect = parentDOM.getBoundingClientRect();
 
     if (excludeStaticParents && isStaticallyPositioned(parentDOM)) {

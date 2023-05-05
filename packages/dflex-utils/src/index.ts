@@ -18,7 +18,7 @@ export {
   combineKeys,
   warnOnce,
   assertElementPosition,
-  getElmComputedStyle,
+  getCachedComputedStyle,
   clearComputedStyleCache,
   setRelativePosition,
   setFixedDimensions,

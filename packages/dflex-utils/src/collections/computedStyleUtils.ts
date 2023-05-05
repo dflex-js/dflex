@@ -13,7 +13,7 @@ let computedStyleCache = new WeakMap<Element, CSSStyleDeclaration>();
  * @param DOM
  * @returns
  */
-function getElmComputedStyle(DOM: Element): CSSStyleDeclaration {
+function getCachedComputedStyle(DOM: Element): CSSStyleDeclaration {
   if (computedStyleCache.has(DOM)) {
     return computedStyleCache.get(DOM)!;
   }
@@ -38,7 +38,7 @@ const ERROR_INVALID_POSITION = (id: string, actual: string, expected: string) =>
   `setRelativePosition: Element ${id} must be positioned as relative. Found: ${actual}. Expected: ${expected}.`;
 
 function setRelativePosition(DOM: HTMLElement): void {
-  const computedStyle = getElmComputedStyle(DOM);
+  const computedStyle = getCachedComputedStyle(DOM);
 
   const position = computedStyle.getPropertyValue("position");
 
@@ -116,7 +116,7 @@ function getComputedDimension(
  * @returns
  */
 function getElmComputedDimensions(DOM: HTMLElement): Dimensions {
-  const computedStyle = getElmComputedStyle(DOM);
+  const computedStyle = getCachedComputedStyle(DOM);
 
   if (__DEV__) {
     const computedWidth = computedStyle.getPropertyValue("width");
@@ -155,7 +155,7 @@ function getElmMargin() {
 }
 
 export {
-  getElmComputedStyle,
+  getCachedComputedStyle,
   clearComputedStyleCache,
   setRelativePosition,
   setFixedDimensions,
