@@ -151,10 +151,9 @@ class DFlexScrollContainer {
   }
 
   constructor(
-    element: HTMLElement,
+    firstELmDOM: HTMLElement,
     SK: string,
     branchLength: number,
-    hasToScrollToZero: boolean,
     scrollEventCallback: ScrollEventCallback
   ) {
     this.hasOverflow = new PointBool(false, false);
@@ -175,7 +174,7 @@ class DFlexScrollContainer {
     this._scrollEventCallback = null;
 
     [this.scrollContainerDOM, this.hasDocumentAsContainer] =
-      getScrollContainer(element);
+      getScrollContainer(firstELmDOM);
 
     this._setScrollRect();
 
@@ -203,10 +202,7 @@ class DFlexScrollContainer {
 
     this._setResizeAndScrollListeners();
 
-    if (
-      hasToScrollToZero &&
-      (this.scrollRect.top > 0 || this.scrollRect.left > 0)
-    ) {
+    if (true && (this.scrollRect.top > 0 || this.scrollRect.left > 0)) {
       // Scroll without callback.
       this.scrollTo(0, 0, false);
     }

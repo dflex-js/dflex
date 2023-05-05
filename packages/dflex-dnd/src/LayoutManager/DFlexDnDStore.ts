@@ -190,23 +190,26 @@ class DFlexDnDStore extends DFlexBaseStore {
 
       if (siblings.length === 0 || !this.interactiveDOM.has(siblings[0])) {
         throw new Error(
-          `_initSiblings: Unable to find DOM element for branch ${siblings} at index: ${0}`
+          `_initSiblings: Unable to find DOM element for siblings ${JSON.stringify(
+            siblings
+          )} at index 0.`
         );
       }
     }
 
+    const firstELmDOM = this.interactiveDOM.get(siblings[0])!;
+
     const scroll = new DFlexScrollContainer(
-      this.interactiveDOM.get(siblings[0])!,
+      firstELmDOM,
       SK,
       siblings.length,
-      true,
       updateBranchVisibilityLinearly.bind(null, this)
     );
 
     if (this.scrolls.has(SK)) {
       if (__DEV__) {
         // eslint-disable-next-line no-console
-        console.warn(`_initSiblings: Scroll with key:${SK} already exists.`);
+        console.warn(`_initSiblings: Scroll with key ${SK} already exists.`);
       }
 
       this.scrolls.get(SK)!.destroy();
