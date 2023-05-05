@@ -5,7 +5,7 @@ import { DFlexElement, DFlexElementInput } from "@dflex/core-instance";
 import {
   featureFlags,
   getParentElm,
-  setFixedWidth,
+  setFixedDimensions,
   setRelativePosition,
   TaskQueue,
   Tracker,
@@ -193,7 +193,7 @@ class DFlexBaseStore {
       setRelativePosition(DOM);
 
       if (!this.globals.removeContainerWhenEmpty) {
-        setFixedWidth(DOM);
+        setFixedDimensions(DOM);
       }
     }
 

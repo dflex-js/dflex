@@ -10,6 +10,7 @@ import {
   DFlexCycle,
   clearComputedStyleMap,
   updateELmDOMGrid,
+  setFixedDimensions,
 } from "@dflex/utils";
 
 import {
@@ -82,6 +83,8 @@ class DFlexDnDStore extends DFlexBaseStore {
   private _isInitialized: boolean;
 
   private _refreshAllElmBranchWhileReconcile?: boolean;
+
+  private _resizeTimeoutId?: ReturnType<typeof setTimeout>;
 
   constructor() {
     super();
@@ -326,7 +329,31 @@ class DFlexDnDStore extends DFlexBaseStore {
     });
   }
 
+  private _forEachContainerDOM(cb: (DOM: HTMLElement) => void) {
+    this.containers.forEach((container) => {
+      const DOM = this.interactiveDOM.get(container.id)!;
+
+      cb(DOM);
+    });
+  }
+
   private _windowResizeHandler() {
+    this._forEachContainerDOM((DOM) => {
+      DOM.style.removeProperty("width");
+      DOM.style.removeProperty("height");
+    });
+
+    clearTimeout(this._resizeTimeoutId);
+
+    // Set a timeout to restore the styles after 100ms
+    this._resizeTimeoutId = setTimeout(() => {
+      clearComputedStyleMap();
+
+      this._forEachContainerDOM((DOM) => {
+        setFixedDimensions(DOM);
+      });
+    }, 100);
+
     this._refreshAllElmBranchWhileReconcile = true;
 
     if (this.migration === null || this.migration.containerKeys.size === 0) {
@@ -437,7 +464,6 @@ class DFlexDnDStore extends DFlexBaseStore {
         connectObservers(this);
 
         this.migration.clear();
-        clearComputedStyleMap();
 
         this._refreshAllElmBranchWhileReconcile = undefined;
         this.isComposing = false;

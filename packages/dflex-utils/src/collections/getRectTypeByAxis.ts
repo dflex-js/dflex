@@ -1,10 +1,5 @@
 import { Axis } from "../types";
-
-const WIDTH = "width";
-const HEIGHT = "height";
-
-const LEFT = "left";
-const TOP = "top";
+import { HEIGHT, LEFT, TOP, WIDTH } from "./constants";
 
 function getDimensionTypeByAxis(axis: Axis) {
   return axis === "x" ? WIDTH : HEIGHT;

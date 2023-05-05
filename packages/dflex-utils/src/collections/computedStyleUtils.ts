@@ -3,6 +3,7 @@
 import { BoxRect } from "../Box";
 import type { Dimensions } from "../types";
 import warnOnce from "./warnOnce";
+import * as CSSPropNames from "./constants";
 
 let computedStyleMap = new WeakMap<HTMLElement, CSSStyleDeclaration>();
 
@@ -28,24 +29,8 @@ function clearComputedStyleMap() {
   computedStyleMap = new WeakMap();
 }
 
-// TODO: Improve regex.
 const CSS_VAL_REGEX = /^([0-9]*\.[0-9]*|[0-9]*)(px)$/;
-const CSS_UNIT_REGEX = /px/;
-const CSS_AUTO_VAL_REGEX = /auto|none/;
 const CSS_FORBIDDEN_POSITION_REGEX = /absolute|fixed/;
-
-function getCSSSingleValue(computedCSSValue: string) {
-  const splittedVal = computedCSSValue.split(CSS_UNIT_REGEX) || [];
-
-  return splittedVal.length === 0 ? NaN : parseFloat(splittedVal[0]);
-}
-
-function isCSSComputedValueSet(computedCSSValue: string): boolean {
-  return !(
-    CSS_AUTO_VAL_REGEX.test(computedCSSValue) ||
-    Number.isNaN(getCSSSingleValue(computedCSSValue))
-  );
-}
 
 function setRelativePosition(DOM: HTMLElement): void {
   const computedStyle = getElmComputedStyle(DOM);
@@ -63,32 +48,58 @@ function setRelativePosition(DOM: HTMLElement): void {
   }
 }
 
-function setFixedWidth(DOM: HTMLElement): void {
-  const computedStyle = getElmComputedStyle(DOM);
+function toNumber(val: string): number {
+  return parseInt(val, 10) || 0;
+}
 
-  const minWidth = computedStyle.getPropertyValue("min-width");
-  const maxWidth = computedStyle.getPropertyValue("max-width");
+type Dimension = "width" | "height";
 
-  if (isCSSComputedValueSet(maxWidth)) {
-    DOM.style.setProperty("max-width", "none");
+const DIMENSION_PROPS: Record<Dimension, (keyof CSSStyleDeclaration)[]> = {
+  height: [
+    CSSPropNames.BORDER_TOP_WIDTH,
+    CSSPropNames.BORDER_BOTTOM_WIDTH,
+    CSSPropNames.PADDING_TOP,
+    CSSPropNames.PADDING_BOTTOM,
+  ],
 
-    if (__DEV__) {
-      console.error(
-        `Containers must have a fixed width. Received max-width: ${maxWidth}. Element: ${DOM.id}.`
-      );
-    }
-  }
+  width: [
+    CSSPropNames.BORDER_LEFT_WIDTH,
+    CSSPropNames.BORDER_RIGHT_WIDTH,
+    CSSPropNames.PADDING_LEFT,
+    CSSPropNames.PADDING_RIGHT,
+  ],
+};
 
-  if (isCSSComputedValueSet(minWidth)) {
-    return;
-  }
+const OFFSET_PROPS: Record<Dimension, "offsetHeight" | "offsetWidth"> = {
+  height: CSSPropNames.OFFSET_HEIGHT,
+  width: CSSPropNames.OFFSET_WIDTH,
+};
 
-  DOM.style.setProperty("width", computedStyle.getPropertyValue("width"));
+function getVisibleDimension(DOM: HTMLElement, dimension: Dimension): number {
+  const computedStyle = getComputedStyle(DOM);
+
+  let outerSize = 0;
+
+  DIMENSION_PROPS[dimension].forEach((styleProp) => {
+    outerSize += toNumber(computedStyle[styleProp] as string);
+  });
+
+  const totalDimension = DOM[OFFSET_PROPS[dimension]] - outerSize;
+
+  return totalDimension;
+}
+
+function setFixedDimensions(DOM: HTMLElement): void {
+  const visibleHeight = getVisibleDimension(DOM, CSSPropNames.HEIGHT);
+  const visibleWidth = getVisibleDimension(DOM, CSSPropNames.WIDTH);
+
+  DOM.style.setProperty(CSSPropNames.HEIGHT, `${visibleHeight}px`);
+  DOM.style.setProperty(CSSPropNames.WIDTH, `${visibleWidth}px`);
 }
 
 function getComputedDimension(
   computedStyle: CSSStyleDeclaration,
-  dimension: "width" | "height"
+  dimension: Dimension
 ) {
   const computedUnit = computedStyle.getPropertyValue(dimension);
   const match = computedUnit.match(CSS_VAL_REGEX);
@@ -144,7 +155,7 @@ export {
   getElmComputedStyle,
   clearComputedStyleMap,
   setRelativePosition,
-  setFixedWidth,
+  setFixedDimensions,
   getElmComputedDimensions,
   getElmMargin,
 };
