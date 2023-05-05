@@ -32,6 +32,11 @@ function clearComputedStyleCache() {
 const CSS_VAL_REGEX = /^([0-9]*\.[0-9]*|[0-9]*)(px)$/;
 const CSS_FORBIDDEN_POSITION_REGEX = /absolute|fixed/;
 
+const EXPECTED_POS = "relative";
+
+const ERROR_INVALID_POSITION = (id: string, actual: string, expected: string) =>
+  `setRelativePosition: Element ${id} must be positioned as relative. Found: ${actual}. Expected: ${expected}.`;
+
 function setRelativePosition(DOM: HTMLElement): void {
   const computedStyle = getElmComputedStyle(DOM);
 
@@ -39,12 +44,10 @@ function setRelativePosition(DOM: HTMLElement): void {
 
   if (CSS_FORBIDDEN_POSITION_REGEX.test(position)) {
     if (__DEV__) {
-      throw new Error(
-        `Containers must be positioned as relative. Received: ${position}. Element: ${DOM.id}.`
-      );
+      throw new Error(ERROR_INVALID_POSITION(DOM.id, position, EXPECTED_POS));
     }
 
-    DOM.style.position = "relative";
+    DOM.style.position = EXPECTED_POS;
   }
 }
 
