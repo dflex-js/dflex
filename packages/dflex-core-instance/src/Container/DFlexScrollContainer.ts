@@ -40,36 +40,30 @@ function isStaticallyPositioned(DOM: Element): boolean {
 function getScrollContainer(baseDOMElm: HTMLElement): [HTMLElement, boolean] {
   let hasDocumentAsContainer = false;
 
-  const baseComputedStyle = getElmComputedStyle(baseDOMElm);
-  const baseELmPosition = baseComputedStyle.getPropertyValue("position");
+  const { position: baseELmPosition } = getElmComputedStyle(baseDOMElm);
   const excludeStaticParents = baseELmPosition === "absolute";
 
   const scrollContainerDOM = getParentElm(baseDOMElm, (parentDOM) => {
+    const { overflowX, overflowY } = getElmComputedStyle(parentDOM);
+    const parentRect = parentDOM.getBoundingClientRect();
+
     if (excludeStaticParents && isStaticallyPositioned(parentDOM)) {
       return false;
     }
 
-    const parentComputedStyle = getElmComputedStyle(parentDOM);
-
-    const parentRect = parentDOM.getBoundingClientRect();
-
-    const overflowY = parentComputedStyle.getPropertyValue("overflow-y");
-
-    if (OVERFLOW_REGEX.test(overflowY)) {
-      if (parentDOM.scrollHeight === Math.round(parentRect.height)) {
-        hasDocumentAsContainer = true;
-      }
-
+    if (
+      OVERFLOW_REGEX.test(overflowY) &&
+      parentDOM.scrollHeight === Math.round(parentRect.height)
+    ) {
+      hasDocumentAsContainer = true;
       return true;
     }
 
-    const overflowX = parentComputedStyle.getPropertyValue("overflow-x");
-
-    if (OVERFLOW_REGEX.test(overflowX)) {
-      if (parentDOM.scrollWidth === Math.round(parentRect.width)) {
-        hasDocumentAsContainer = true;
-      }
-
+    if (
+      OVERFLOW_REGEX.test(overflowX) &&
+      parentDOM.scrollWidth === Math.round(parentRect.width)
+    ) {
+      hasDocumentAsContainer = true;
       return true;
     }
 
@@ -81,12 +75,10 @@ function getScrollContainer(baseDOMElm: HTMLElement): [HTMLElement, boolean] {
     baseELmPosition === "fixed" ||
     !scrollContainerDOM
   ) {
-    hasDocumentAsContainer = true;
-
     return [document.documentElement, true];
   }
 
-  return [scrollContainerDOM, hasDocumentAsContainer];
+  return [scrollContainerDOM, false];
 }
 
 function widthOrHeight(direction: "x" | "y"): "width" | "height" {
