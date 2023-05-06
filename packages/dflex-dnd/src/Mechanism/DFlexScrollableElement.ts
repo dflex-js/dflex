@@ -63,8 +63,8 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     this._clearScrollAnimatedFrame = this._clearScrollAnimatedFrame.bind(this);
 
     const {
-      scrollRect: { left, top },
-      scrollContainerRect: { width, height },
+      totalScrollRect: { left, top },
+      visibleScrollRect: { width, height },
     } = store.scrolls.get(SK)!;
 
     this._scrollThrottleMS = Math.round(
@@ -166,8 +166,8 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     }
 
     const canScroll = (): boolean =>
-      (isOutV && scroll.hasInvisibleSpace("y", draggedDirV)) ||
-      (isOutH && scroll.hasInvisibleSpace("x", draggedDirH));
+      (isOutV && scroll.hasScrollableArea("y", draggedDirV)) ||
+      (isOutH && scroll.hasScrollableArea("x", draggedDirH));
 
     // If there's not scrollable area, we don't need to scroll.
     if (!canScroll()) {
@@ -179,8 +179,12 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     let startingTime: number;
     let prevTimestamp: number;
 
-    const EXECUTION_FRAME_RATE_MS_V = Math.round(scroll.scrollRect.height / 2);
-    const EXECUTION_FRAME_RATE_MS_H = Math.round(scroll.scrollRect.width / 2);
+    const EXECUTION_FRAME_RATE_MS_V = Math.round(
+      scroll.totalScrollRect.height / 2
+    );
+    const EXECUTION_FRAME_RATE_MS_H = Math.round(
+      scroll.totalScrollRect.width / 2
+    );
 
     const scrollAnimatedFrame = (timestamp: number) => {
       scroll.pauseListeners(true);
@@ -211,11 +215,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
         // Increase scroll speed.
         this._lastScrollSpeed += Math.round(acc);
 
-        scroll.scrollTo(
-          this.currentScrollAxes.x,
-          this.currentScrollAxes.y,
-          true
-        );
+        scroll.scrollTo(this.currentScrollAxes.x, this.currentScrollAxes.y);
       }
 
       // Stop the animation after 2 seconds

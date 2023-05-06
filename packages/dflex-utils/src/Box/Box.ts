@@ -116,6 +116,10 @@ class Box<T> extends AbstractBox<T> {
     this.left = x;
   }
 
+  hasEqualPosition(x: T, y: T): boolean {
+    return this.top === y || this.left === x;
+  }
+
   /**
    * Get starting point instance.
    *
