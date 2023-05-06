@@ -9,22 +9,16 @@ function updateElmVisibility(
   elm: DFlexElement,
   scroll: DFlexScrollContainer
 ): boolean {
-  let isVisible = true;
-
-  let isBreakable = false;
-
   const { rect } = elm;
 
-  isVisible = scroll.isElmVisibleViewport(
+  const isVisible = scroll.isElmVisibleViewport(
     rect.top,
     rect.left,
     rect.height,
     rect.width
   );
 
-  if (prevVisibility === true && isVisible === false) {
-    isBreakable = true;
-  }
+  const isBreakable = prevVisibility && !isVisible;
 
   prevVisibility = isVisible;
 
@@ -51,44 +45,62 @@ function setBranchVisibility(
   }
 }
 
-function updateBranchVisibilityLinearly(
+function updateSiblingsVisibilityLinearly(
   store: DFlexDnDStore,
   SK: string
 ): void {
-  const branch = store.getElmSiblingsByKey(SK);
+  if (__DEV__) {
+    const siblings = store.getElmSiblingsByKey(SK);
+
+    if (siblings.length === 0) {
+      throw new Error(
+        `updateSiblingsVisibilityLinearly: No siblings found for the given key ${SK}.`
+      );
+    }
+
+    const hsScroll = store.scrolls.has(SK);
+
+    if (!hsScroll) {
+      throw new Error(
+        `updateSiblingsVisibilityLinearly: No scroll found for the given key ${SK}`
+      );
+    }
+  }
+
+  const siblings = store.getElmSiblingsByKey(SK);
   const scroll = store.scrolls.get(SK)!;
 
   // If not scroll, then all the elements are visible.
   if (scroll.allowDynamicVisibility) {
-    let isBreakable = false;
     let breakAt = 0;
 
-    for (let i = 0; i < branch.length; i += 1) {
-      const elmID = branch[i];
+    for (let i = 0; i < siblings.length; i += 1) {
+      const elmID = siblings[i];
 
       if (elmID.length > 0) {
         const [elm, DOM] = store.getElmWithDOM(elmID);
 
         // isBreakable when the element is visible and the next element is not.
-        isBreakable = updateElmVisibility(DOM, elm, scroll);
-      }
+        const isBreakable = updateElmVisibility(DOM, elm, scroll);
 
-      if (isBreakable) {
-        breakAt = i;
+        if (isBreakable) {
+          breakAt = i;
 
-        break;
+          break;
+        }
       }
     }
 
-    if (isBreakable) {
-      setBranchVisibility(branch, store, breakAt, branch.length, false);
+    // Is it breakable?
+    if (breakAt > 0) {
+      setBranchVisibility(siblings, store, breakAt, siblings.length, false);
     }
 
     // Resetting the flag.
     prevVisibility = false;
   } else {
-    setBranchVisibility(branch, store, 0, branch.length, true);
+    setBranchVisibility(siblings, store, 0, siblings.length, true);
   }
 }
 
-export default updateBranchVisibilityLinearly;
+export default updateSiblingsVisibilityLinearly;

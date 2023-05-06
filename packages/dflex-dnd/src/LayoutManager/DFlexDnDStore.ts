@@ -30,7 +30,7 @@ import initDFlexListeners, {
 
 import scheduler, { SchedulerOptions, UpdateFn } from "./DFlexScheduler";
 
-import updateBranchVisibilityLinearly from "./DFlexVisibilityUpdater";
+import updateSiblingsVisibilityLinearly from "./DFlexVisibilityUpdater";
 
 import {
   addObserver,
@@ -203,7 +203,7 @@ class DFlexDnDStore extends DFlexBaseStore {
       firstELmDOM,
       SK,
       siblings.length,
-      updateBranchVisibilityLinearly.bind(null, this)
+      updateSiblingsVisibilityLinearly.bind(null, this)
     );
 
     if (this.scrolls.has(SK)) {
@@ -238,7 +238,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     siblings.forEach(initElmGrid);
 
-    updateBranchVisibilityLinearly(this, SK);
+    updateSiblingsVisibilityLinearly(this, SK);
   }
 
   _initObservers() {

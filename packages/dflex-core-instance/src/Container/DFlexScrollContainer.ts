@@ -181,7 +181,7 @@ class DFlexScrollContainer {
 
   isDocumentContainer!: boolean;
 
-  private _listenerDataset: string;
+  private _listenerDatasetKey: string;
 
   static getType(): string {
     return "scroll:container";
@@ -196,7 +196,7 @@ class DFlexScrollContainer {
     this._SK = SK;
     this._threshold_inner_key = `scroll_inner_${SK}`;
     this._threshold_outer_key = `scroll_outer_${SK}`;
-    this._listenerDataset = `dflexScrollListener_${SK}`;
+    this._listenerDatasetKey = `dflexScrollListener_${SK}`;
 
     this.hasOverflow = new PointBool(false, false);
     this.totalScrollRect = new BoxRect(0, 0, 0, 0);
@@ -234,7 +234,7 @@ class DFlexScrollContainer {
     this._attachResizeAndScrollListeners();
 
     if (this.totalScrollRect.top > 0 || this.totalScrollRect.left > 0) {
-      this.scrollTo(0, 0);
+      this._updateScrollPosition(0, 0, true);
     }
   }
 
@@ -377,7 +377,7 @@ class DFlexScrollContainer {
     isAttachListener: boolean,
     hasScrollListener: boolean
   ): void {
-    const datasetKey = this._listenerDataset;
+    const datasetKey = this._listenerDatasetKey;
     const datasetValue = hasScrollListener.toString();
     const targetElement = this.isDocumentContainer
       ? document.body
