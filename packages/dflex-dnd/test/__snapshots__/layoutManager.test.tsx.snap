@@ -523,6 +523,7 @@ DFlexDnDStore {
       "_scrollEventCallback": null,
       "_threshold_inner_key": "scroll_inner_dflex_sk_0_0",
       "_threshold_outer_key": "scroll_outer_dflex_sk_0_0",
+      "_throttledResizeHandler": [Function],
       "_throttledScrollHandler": [Function],
       "allowDynamicVisibility": false,
       "containerDOM": <html>
@@ -602,6 +603,7 @@ DFlexDnDStore {
       "_scrollEventCallback": null,
       "_threshold_inner_key": "scroll_inner_dflex_sk_0_1",
       "_threshold_outer_key": "scroll_outer_dflex_sk_0_1",
+      "_throttledResizeHandler": [Function],
       "_throttledScrollHandler": [Function],
       "allowDynamicVisibility": false,
       "containerDOM": <html>
