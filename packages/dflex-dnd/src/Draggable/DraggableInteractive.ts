@@ -146,7 +146,7 @@ class DraggableInteractive extends DraggableAxes {
 
       const initPos = this.draggedElm.getInitialPosition();
 
-      const viewportPos = scroll.getElmPositionInViewport(initPos.y, initPos.x);
+      const viewportPos = scroll.getElmViewportPosition(initPos.y, initPos.x);
 
       this.setDOMAttrAndStyle(
         this.draggedDOM,

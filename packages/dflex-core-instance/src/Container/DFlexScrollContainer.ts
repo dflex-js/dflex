@@ -471,30 +471,36 @@ class DFlexScrollContainer {
     return top + height + this.totalScrollRect.top;
   }
 
-  getElmPositionInViewport(topPos: number, leftPos: number): [number, number] {
-    const { top, left } = this.totalScrollRect;
+  getElmViewportPosition(
+    elmTopPos: number,
+    elmLeftPos: number
+  ): [number, number] {
+    const { top: totalScrollTop, left: totalScrollLeft } = this.totalScrollRect;
 
-    return [topPos - top, leftPos - left];
+    const viewportTop = elmTopPos - totalScrollTop;
+    const viewportLeft = elmLeftPos - totalScrollLeft;
+
+    return [viewportTop, viewportLeft];
   }
 
-  isElmVisibleViewport(
+  isElementInViewport(
     topPos: number,
     leftPos: number,
     height: number,
     width: number
   ): boolean {
-    const [top, left] = this.getElmPositionInViewport(topPos, leftPos);
-
-    const currentTopWithScroll = top;
-    const currentLeftWithScroll = left;
+    const [viewportTop, viewportLeft] = this.getElmViewportPosition(
+      topPos,
+      leftPos
+    );
 
     const isOutThreshold =
       this._outerThresholdInViewport!.isShallowOutThreshold(
         this._threshold_outer_key,
-        currentTopWithScroll,
-        currentLeftWithScroll + width,
-        currentTopWithScroll + height,
-        currentLeftWithScroll
+        viewportTop,
+        viewportLeft + width,
+        viewportTop + height,
+        viewportLeft
       );
 
     return !isOutThreshold;
