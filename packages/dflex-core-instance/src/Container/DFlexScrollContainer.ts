@@ -135,9 +135,9 @@ class DFlexScrollContainer {
   /**
    * The parent element that is owning the scroll.
    */
-  containerDOM!: HTMLElement;
+  private _containerDOM!: HTMLElement;
 
-  isDocumentContainer!: boolean;
+  private _isDocumentContainer!: boolean;
 
   private _listenerDatasetKey: string;
 
@@ -165,13 +165,13 @@ class DFlexScrollContainer {
     this._scrollEventCallback = null;
 
     const [containerDOM, isDocumentContainer] = getScrollContainer(firstELmDOM);
-    this.containerDOM = containerDOM;
-    this.isDocumentContainer = isDocumentContainer;
+    this._containerDOM = containerDOM;
+    this._isDocumentContainer = isDocumentContainer;
 
     this._updateScrollRect();
     this._updateScrollPosition(
-      this.containerDOM.scrollLeft,
-      this.containerDOM.scrollTop,
+      this._containerDOM.scrollLeft,
+      this._containerDOM.scrollTop,
       false
     );
     this._updateOverflowStatus();
@@ -239,7 +239,7 @@ class DFlexScrollContainer {
       scrollTop, // Vertical scroll position
       clientHeight, // Height of the visible portion of the container
       clientWidth, // Width of the visible portion of the container
-    } = this.containerDOM;
+    } = this._containerDOM;
 
     this.totalScrollRect.setByPointAndDimensions(
       scrollTop,
@@ -249,7 +249,7 @@ class DFlexScrollContainer {
     );
 
     // Calculate the visible portion of the container
-    if (this.isDocumentContainer) {
+    if (this._isDocumentContainer) {
       // For document container, the visible area is the entire client viewport
       this.visibleScrollRect.setByPointAndDimensions(
         0,
@@ -258,7 +258,7 @@ class DFlexScrollContainer {
         clientWidth
       );
     } else {
-      const { left, top } = this.containerDOM.getBoundingClientRect();
+      const { left, top } = this._containerDOM.getBoundingClientRect();
 
       this.visibleScrollRect.setByPointAndDimensions(
         top,
@@ -286,8 +286,8 @@ class DFlexScrollContainer {
     this.totalScrollRect.setPosition(scrollLeft, scrollTop);
 
     if (withDOM) {
-      this.containerDOM.scrollTop = scrollTop;
-      this.containerDOM.scrollLeft = scrollLeft;
+      this._containerDOM.scrollTop = scrollTop;
+      this._containerDOM.scrollLeft = scrollLeft;
     }
 
     return true;
@@ -337,9 +337,9 @@ class DFlexScrollContainer {
   ): void {
     const datasetKey = this._listenerDatasetKey;
     const datasetValue = hasScrollListener.toString();
-    const targetElement = this.isDocumentContainer
+    const targetElement = this._isDocumentContainer
       ? document.body
-      : this.containerDOM;
+      : this._containerDOM;
 
     if (isAttachListener) {
       targetElement.dataset[datasetKey] = datasetValue;
@@ -349,7 +349,7 @@ class DFlexScrollContainer {
   }
 
   private _throttledScrollHandler = eventDebounce(() => {
-    const { scrollLeft, scrollTop } = this.containerDOM;
+    const { scrollLeft, scrollTop } = this._containerDOM;
 
     const isUpdated = this._updateScrollPosition(scrollLeft, scrollTop, false);
 
@@ -369,7 +369,7 @@ class DFlexScrollContainer {
       ? "addEventListener"
       : "removeEventListener";
 
-    const container = this.isDocumentContainer ? window : this.containerDOM;
+    const container = this._isDocumentContainer ? window : this._containerDOM;
 
     const options = { passive: true };
 
@@ -379,7 +379,7 @@ class DFlexScrollContainer {
       container[eventAction]("scroll", this._throttledScrollHandler, options);
 
       this._updateDOMDataset(isAttachListener, true);
-    } else if (!this.isDocumentContainer) {
+    } else if (!this._isDocumentContainer) {
       this._updateDOMDataset(isAttachListener, false);
     }
   }
@@ -515,7 +515,7 @@ class DFlexScrollContainer {
       version: 3,
       key: this._SK,
       hasOverFlow: this.hasOverflow.getInstance(),
-      hasDocumentAsContainer: this.isDocumentContainer,
+      hasDocumentAsContainer: this._isDocumentContainer,
       scrollRect: this.totalScrollRect.getBox(),
       scrollContainerRect: this.visibleScrollRect.getBox(),
       visibleScreen: this._getVisibleScreen(),
@@ -530,7 +530,7 @@ class DFlexScrollContainer {
     this._scrollEventCallback = null;
     this._attachResizeAndScrollListeners(false);
     // @ts-expect-error
-    this.containerDOM = null;
+    this._containerDOM = null;
   }
 }
 
