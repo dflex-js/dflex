@@ -16,7 +16,7 @@ describe("eventDebounce", () => {
     jest.clearAllTimers();
   });
 
-  test("should execute the listener immediately if immediate flag is set", () => {
+  test("Executes the listener immediately if immediate flag is set", () => {
     debounceControl = eventDebounce(listener, true);
     debounceControl();
     expect(listener).toHaveBeenCalledTimes(0);
@@ -24,14 +24,14 @@ describe("eventDebounce", () => {
     expect(listener).toHaveBeenCalledTimes(1);
   });
 
-  test("should execute the listener after the throttle period", () => {
+  test("Executes the listener after the throttle period", () => {
     debounceControl();
     expect(listener).not.toHaveBeenCalled();
     jest.runAllTimers();
     expect(listener).toHaveBeenCalledTimes(1);
   });
 
-  test("should execute the last call one time", () => {
+  test("Executes the last call one time", () => {
     debounceControl();
     debounceControl();
     debounceControl();
@@ -41,7 +41,7 @@ describe("eventDebounce", () => {
     expect(listener).toHaveBeenCalledTimes(1);
   });
 
-  test("should pause and resume the debounce control", () => {
+  test("Pauses and resumes the debounce control", () => {
     debounceControl();
     debounceControl.pause();
     jest.runAllTimers();

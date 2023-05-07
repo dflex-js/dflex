@@ -358,9 +358,7 @@ class DFlexScrollContainer {
     }
   });
 
-  private _throttledResizeHandler() {
-    eventDebounce(this._updateScrollRect);
-  }
+  private _throttledResizeHandler = eventDebounce(this._updateScrollRect);
 
   private _attachResizeAndScrollListeners(isAttachListener = true): void {
     /**
