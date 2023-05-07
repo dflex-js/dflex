@@ -10,6 +10,7 @@ import {
   Threshold,
   getCachedComputedStyle,
   getDimensionTypeByAxis,
+  eventDebounce,
 } from "@dflex/utils";
 
 import type { ThresholdPercentages, AbstractBox } from "@dflex/utils";
@@ -90,49 +91,6 @@ function hasOverFlow(
   const threshold = checkHalf ? 0.5 : 1;
 
   return scrollRect[dimension] / threshold > scrollContainerRect[dimension];
-}
-
-type ThrottledListener = () => void;
-
-interface AnimatedThrottleControl extends ThrottledListener {
-  isPaused: () => boolean;
-  pause: () => void;
-  resume: () => void;
-}
-
-function animatedThrottle(listener: () => void): AnimatedThrottleControl {
-  let hasThrottledFrame: number | null = null;
-  let isPaused = false;
-
-  const throttledListener: AnimatedThrottleControl = () => {
-    if (hasThrottledFrame !== null) {
-      cancelAnimationFrame(hasThrottledFrame);
-    }
-
-    if (isPaused) {
-      return;
-    }
-
-    hasThrottledFrame = requestAnimationFrame(() => {
-      listener();
-      hasThrottledFrame = null;
-    });
-  };
-
-  throttledListener.isPaused = () => isPaused;
-
-  throttledListener.pause = () => {
-    isPaused = true;
-  };
-
-  throttledListener.resume = () => {
-    if (isPaused) {
-      isPaused = false;
-      throttledListener();
-    }
-  };
-
-  return throttledListener;
 }
 
 const MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
@@ -390,7 +348,7 @@ class DFlexScrollContainer {
     }
   }
 
-  private _throttledScrollHandler = animatedThrottle(() => {
+  private _throttledScrollHandler = eventDebounce(() => {
     const { scrollLeft, scrollTop } = this.containerDOM;
 
     const isUpdated = this._updateScrollPosition(scrollLeft, scrollTop, false);
@@ -401,7 +359,7 @@ class DFlexScrollContainer {
   });
 
   private _throttledResizeHandler() {
-    animatedThrottle(this._updateScrollRect);
+    eventDebounce(this._updateScrollRect);
   }
 
   private _attachResizeAndScrollListeners(isAttachListener = true): void {

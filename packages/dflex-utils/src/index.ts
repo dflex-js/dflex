@@ -7,6 +7,7 @@ export type { ThresholdPercentages } from "./Threshold";
 
 export { default as Tracker } from "./Tracker";
 export { default as TaskQueue } from "./TaskQueue";
+export { default as eventDebounce } from "./eventDebounce";
 
 export { DFlexCycle } from "./DFlexCycle";
 export type { AbstractDFlexCycle } from "./DFlexCycle";
