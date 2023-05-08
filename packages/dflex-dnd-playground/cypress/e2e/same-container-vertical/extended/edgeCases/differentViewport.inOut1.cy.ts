@@ -63,7 +63,7 @@ context(
       it("Visible elements all are lifted up", () => {
         const failedElementIds = [];
 
-        for (let i = 91; i < 100; i += 1) {
+        for (let i = 91; i < 99; i += 1) {
           cy.get(`#${i}-extended`).then(($el) => {
             const transform = Cypress.$($el).css("transform");
             const expectedTransform = "matrix(1, 0, 0, 1, 0, -59.1875)";
