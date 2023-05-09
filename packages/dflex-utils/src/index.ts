@@ -25,6 +25,7 @@ export {
 
 export {
   getCachedComputedStyle,
+  getCachedComputedStyleProperty,
   clearComputedStyleCache,
   setRelativePosition,
   setFixedDimensions,

@@ -32,7 +32,7 @@ export type DFlexSerializedScroll = {
 const OVERFLOW_REGEX = /(auto|scroll|overlay)/;
 
 function isStaticallyPositioned(DOM: Element): boolean {
-  const computedStyle = getCachedComputedStyle(DOM);
+  const { computedStyle } = getCachedComputedStyle(DOM);
   const position = computedStyle.getPropertyValue("position");
   return position === "static";
 }
@@ -40,11 +40,13 @@ function isStaticallyPositioned(DOM: Element): boolean {
 function getScrollContainer(baseDOMElm: HTMLElement): [HTMLElement, boolean] {
   let hasDocumentAsContainer = false;
 
-  const { position: baseELmPosition } = getCachedComputedStyle(baseDOMElm);
+  const { position: baseELmPosition } =
+    getCachedComputedStyle(baseDOMElm).computedStyle;
   const excludeStaticParents = baseELmPosition === "absolute";
 
   const scrollContainerDOM = getParentElm(baseDOMElm, (parentDOM) => {
-    const { overflowX, overflowY } = getCachedComputedStyle(parentDOM);
+    const { overflowX, overflowY } =
+      getCachedComputedStyle(parentDOM).computedStyle;
     const parentRect = parentDOM.getBoundingClientRect();
 
     if (excludeStaticParents && isStaticallyPositioned(parentDOM)) {
