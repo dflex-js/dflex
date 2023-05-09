@@ -1,8 +1,12 @@
+/* eslint-disable no-redeclare */
+/* eslint-disable no-shadow */
+/* eslint-disable no-unused-vars */
+
 import * as CSSPropNames from "../constants";
 
 type ComputedStyleCacheValue = {
   computedStyle: CSSStyleDeclaration;
-  parsedProperties: Map<string, number>;
+  parsedProperties: Map<string, string | number>;
 };
 
 let computedStyleCache = new WeakMap<Element, ComputedStyleCacheValue>();
@@ -29,15 +33,33 @@ function getCachedComputedStyle(DOM: Element): ComputedStyleCacheValue {
 
 function getCachedComputedStyleProperty(
   DOM: Element,
-  property: string
-): number {
-  const computedStyleCacheValue = getCachedComputedStyle(DOM);
-  const { parsedProperties } = computedStyleCacheValue;
+  property: string,
+  toNumber: true
+): number;
+
+function getCachedComputedStyleProperty(
+  DOM: Element,
+  property: string,
+  toNumber: false
+): string;
+
+function getCachedComputedStyleProperty(
+  DOM: Element,
+  property: string,
+  toNumber: boolean
+): number | string {
+  const cachedComputedStyle = getCachedComputedStyle(DOM);
+
+  const { parsedProperties, computedStyle } = cachedComputedStyle;
 
   const cachedValue = parsedProperties.get(property);
 
   if (cachedValue === undefined) {
-    const parsedPropertyValue = parseParsedPropertyValue(property);
+    const value = computedStyle.getPropertyValue(property);
+
+    const parsedPropertyValue = toNumber
+      ? parseParsedPropertyValue(value)
+      : value;
 
     parsedProperties.set(property, parsedPropertyValue);
 
