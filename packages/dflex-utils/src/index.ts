@@ -19,14 +19,17 @@ export {
   combineKeys,
   warnOnce,
   assertElementPosition,
+  getDimensionTypeByAxis,
+  getDirectionTypeByAxis,
+} from "./collections";
+
+export {
   getCachedComputedStyle,
   clearComputedStyleCache,
   setRelativePosition,
   setFixedDimensions,
   getElmComputedDimensions,
-  getDimensionTypeByAxis,
-  getDirectionTypeByAxis,
-} from "./collections";
+} from "./computedStyleUtils";
 
 export {
   canUseDOM,
