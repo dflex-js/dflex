@@ -31,6 +31,12 @@ function getCachedComputedStyle(DOM: Element): ComputedStyleCacheValue {
   return computedStyleCacheValue;
 }
 
+function throwIfCamelCase(str: string): void {
+  if (/[a-z][A-Z]/.test(str)) {
+    throw new Error(`The string "${str}" is in camelCase format.`);
+  }
+}
+
 function getCachedComputedStyleProperty(
   DOM: Element,
   property: string,
@@ -55,6 +61,10 @@ function getCachedComputedStyleProperty(
   const cachedValue = parsedProperties.get(property);
 
   if (cachedValue === undefined) {
+    if (__DEV__) {
+      throwIfCamelCase(property);
+    }
+
     const value = computedStyle.getPropertyValue(property);
 
     const parsedPropertyValue = toNumber
@@ -75,7 +85,7 @@ function clearComputedStyleCache() {
 
 type Dimension = "width" | "height";
 
-const DIMENSION_PROPS: Record<Dimension, (keyof CSSStyleDeclaration)[]> = {
+const DIMENSION_PROPS: Record<Dimension, string[]> = {
   height: [
     CSSPropNames.BORDER_TOP_WIDTH,
     CSSPropNames.BORDER_BOTTOM_WIDTH,
@@ -96,17 +106,11 @@ const OFFSET_PROPS: Record<Dimension, "offsetHeight" | "offsetWidth"> = {
   width: CSSPropNames.OFFSET_WIDTH,
 };
 
-function toNumber(val: string): number {
-  return parseInt(val, 10) || 0;
-}
-
 function getVisibleDimension(DOM: HTMLElement, dimension: Dimension): number {
-  const computedStyle = getComputedStyle(DOM);
-
   let outerSize = 0;
 
   DIMENSION_PROPS[dimension].forEach((styleProp) => {
-    outerSize += toNumber(computedStyle[styleProp] as string);
+    outerSize += getCachedComputedStyleProperty(DOM, styleProp as string, true);
   });
 
   const totalDimension = DOM[OFFSET_PROPS[dimension]] - outerSize;
