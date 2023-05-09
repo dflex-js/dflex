@@ -9,7 +9,7 @@ import {
   featureFlags,
   DFlexCycle,
   clearComputedStyleCache,
-  updateELmDOMGrid,
+  updateElmDatasetGrid,
   setFixedDimensions,
 } from "@dflex/utils";
 
@@ -159,7 +159,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.setElmGridBridge(container, dflexElm);
 
     if (__DEV__) {
-      updateELmDOMGrid(DOM, dflexElm.DOMGrid);
+      updateElmDatasetGrid(DOM, dflexElm.DOMGrid);
     }
   }
 
