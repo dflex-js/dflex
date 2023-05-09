@@ -16,8 +16,9 @@ function getParentElm(
       if (__DEV__) {
         if (iterationCounter > MAX_LOOP_ELEMENTS_TO_WARN) {
           throw new Error(
-            `getParentElm: DFlex detects performance issues during iterating for nearest parent element.` +
-              `Please check your registered interactive element at id:${baseElement.id}.`
+            `getParentElm: DFlex detected performance issues while iterating to find the nearest parent element. ` +
+              `The element with ID ${baseElement.id} may have an excessive number of ancestors. ` +
+              `Iteration count: ${iterationCounter}.`
           );
         }
       }

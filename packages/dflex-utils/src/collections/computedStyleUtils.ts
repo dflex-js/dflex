@@ -5,7 +5,7 @@ import type { Dimensions } from "../types";
 import warnOnce from "./warnOnce";
 import * as CSSPropNames from "./constants";
 
-let computedStyleMap = new WeakMap<HTMLElement, CSSStyleDeclaration>();
+let computedStyleCache = new WeakMap<Element, CSSStyleDeclaration>();
 
 /**
  * Gets cached computed style if available.
@@ -13,38 +13,41 @@ let computedStyleMap = new WeakMap<HTMLElement, CSSStyleDeclaration>();
  * @param DOM
  * @returns
  */
-function getElmComputedStyle(DOM: HTMLElement): CSSStyleDeclaration {
-  if (computedStyleMap.has(DOM)) {
-    return computedStyleMap.get(DOM)!;
+function getCachedComputedStyle(DOM: Element): CSSStyleDeclaration {
+  if (computedStyleCache.has(DOM)) {
+    return computedStyleCache.get(DOM)!;
   }
 
   const computedStyle = getComputedStyle(DOM);
 
-  computedStyleMap.set(DOM, computedStyle);
+  computedStyleCache.set(DOM, computedStyle);
 
   return computedStyle;
 }
 
-function clearComputedStyleMap() {
-  computedStyleMap = new WeakMap();
+function clearComputedStyleCache() {
+  computedStyleCache = new WeakMap();
 }
 
 const CSS_VAL_REGEX = /^([0-9]*\.[0-9]*|[0-9]*)(px)$/;
 const CSS_FORBIDDEN_POSITION_REGEX = /absolute|fixed/;
 
+const EXPECTED_POS = "relative";
+
+const ERROR_INVALID_POSITION = (id: string, actual: string, expected: string) =>
+  `setRelativePosition: Element ${id} must be positioned as relative. Found: ${actual}. Expected: ${expected}.`;
+
 function setRelativePosition(DOM: HTMLElement): void {
-  const computedStyle = getElmComputedStyle(DOM);
+  const computedStyle = getCachedComputedStyle(DOM);
 
   const position = computedStyle.getPropertyValue("position");
 
   if (CSS_FORBIDDEN_POSITION_REGEX.test(position)) {
     if (__DEV__) {
-      throw new Error(
-        `Containers must be positioned as relative. Received: ${position}. Element: ${DOM.id}.`
-      );
+      throw new Error(ERROR_INVALID_POSITION(DOM.id, position, EXPECTED_POS));
     }
 
-    DOM.style.position = "relative";
+    DOM.style.position = EXPECTED_POS;
   }
 }
 
@@ -113,7 +116,7 @@ function getComputedDimension(
  * @returns
  */
 function getElmComputedDimensions(DOM: HTMLElement): Dimensions {
-  const computedStyle = getElmComputedStyle(DOM);
+  const computedStyle = getCachedComputedStyle(DOM);
 
   if (__DEV__) {
     const computedWidth = computedStyle.getPropertyValue("width");
@@ -152,8 +155,8 @@ function getElmMargin() {
 }
 
 export {
-  getElmComputedStyle,
-  clearComputedStyleMap,
+  getCachedComputedStyle,
+  clearComputedStyleCache,
   setRelativePosition,
   setFixedDimensions,
   getElmComputedDimensions,

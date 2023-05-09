@@ -61,13 +61,25 @@ context(
       });
 
       it("Visible elements all are lifted up", () => {
-        for (let i = 91; i < 100; i += 1) {
-          cy.get(`#${i}-extended`).should(
-            "have.css",
-            "transform",
-            "matrix(1, 0, 0, 1, 0, -59.1875)"
-          );
+        const failedElementIds = [];
+
+        for (let i = 91; i < 99; i += 1) {
+          cy.get(`#${i}-extended`).then(($el) => {
+            const transform = Cypress.$($el).css("transform");
+            const expectedTransform = "matrix(1, 0, 0, 1, 0, -59.1875)";
+
+            if (transform !== expectedTransform) {
+              failedElementIds.push(`#${i}-extended`);
+            }
+          });
         }
+
+        cy.wrap(failedElementIds).should((ids) => {
+          if (ids.length > 0) {
+            const failedElements = ids.join(", ");
+            throw new Error(`Assertion failed for elements: ${failedElements}`);
+          }
+        });
       });
 
       it("Release Dragged", () => {

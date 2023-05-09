@@ -8,8 +8,8 @@ export {
 } from "./getRectTypeByAxis";
 
 export {
-  getElmComputedStyle,
-  clearComputedStyleMap,
+  getCachedComputedStyle,
+  clearComputedStyleCache,
   setRelativePosition,
   setFixedDimensions,
   getElmComputedDimensions,

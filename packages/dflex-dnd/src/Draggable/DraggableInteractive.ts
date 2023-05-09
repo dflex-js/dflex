@@ -14,10 +14,21 @@ import type { ScrollOpts, FinalDndOpts, Commit } from "../types";
 import DraggableAxes from "./DraggableAxes";
 
 function throwIfElmIsEmpty(siblings: string[]) {
+  const maxLength = 10; // Maximum number of siblings to include in the error message
+
   if (siblings.some((item) => typeof item !== "string" || item.length === 0)) {
-    throw new Error(
-      `Siblings ${JSON.stringify(siblings)} contains empty string`
-    );
+    let errorMessage = "throwIfElmIsEmpty: Siblings contain empty string";
+
+    const validSiblings = siblings.filter((item) => typeof item === "string");
+    if (validSiblings.length > maxLength) {
+      const remainingSiblings = validSiblings.length - maxLength;
+      const displayedSiblings = validSiblings.slice(0, maxLength).join(", ");
+      errorMessage += `. Displaying first ${maxLength} siblings: ${displayedSiblings}, and ${remainingSiblings} more.`;
+    } else {
+      errorMessage += `: ${validSiblings.join(", ")}`;
+    }
+
+    throw new Error(errorMessage);
   }
 }
 
@@ -146,7 +157,7 @@ class DraggableInteractive extends DraggableAxes {
 
       const initPos = this.draggedElm.getInitialPosition();
 
-      const viewportPos = scroll.getElmPositionInViewport(initPos.y, initPos.x);
+      const viewportPos = scroll.getElmViewportPosition(initPos.y, initPos.x);
 
       this.setDOMAttrAndStyle(
         this.draggedDOM,

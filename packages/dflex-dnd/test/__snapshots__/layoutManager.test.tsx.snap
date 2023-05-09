@@ -517,28 +517,7 @@ DFlexDnDStore {
   "scrolls": Map {
     "dflex_sk_0_0" => DFlexScrollContainer {
       "_SK": "dflex_sk_0_0",
-      "_hasThrottledFrame": null,
-      "_innerThresholdInViewport": null,
-      "_listenerDataset": "dflexScrollListener_dflex_sk_0_0",
-      "_outerThresholdInViewport": null,
-      "_scrollEventCallback": null,
-      "_threshold_inner_key": "scroll_inner_dflex_sk_0_0",
-      "_threshold_outer_key": "scroll_outer_dflex_sk_0_0",
-      "allowDynamicVisibility": false,
-      "animatedResizeListener": [Function],
-      "animatedScrollListener": [Function],
-      "hasDocumentAsContainer": true,
-      "hasOverflow": PointBool {
-        "x": false,
-        "y": false,
-      },
-      "invisibleDistance": BoxNum {
-        "bottom": 0,
-        "left": 0,
-        "right": 0,
-        "top": 0,
-      },
-      "scrollContainerDOM": <html>
+      "_containerDOM": <html>
         <head />
         <body>
           <div>
@@ -585,7 +564,21 @@ DFlexDnDStore {
           </div>
         </body>
       </html>,
-      "scrollContainerRect": BoxRect {
+      "_innerThresholdInViewport": null,
+      "_isDocumentContainer": true,
+      "_listenerDatasetKey": "dflexScrollListener_dflex_sk_0_0",
+      "_outerThresholdInViewport": null,
+      "_scrollEventCallback": null,
+      "_threshold_inner_key": "scroll_inner_dflex_sk_0_0",
+      "_threshold_outer_key": "scroll_outer_dflex_sk_0_0",
+      "_throttledResizeHandler": [Function],
+      "_throttledScrollHandler": [Function],
+      "allowDynamicVisibility": false,
+      "hasOverflow": PointBool {
+        "x": false,
+        "y": false,
+      },
+      "totalScrollRect": BoxRect {
         "bottom": 0,
         "height": 0,
         "left": 0,
@@ -593,7 +586,7 @@ DFlexDnDStore {
         "top": 0,
         "width": 0,
       },
-      "scrollRect": BoxRect {
+      "visibleScrollRect": BoxRect {
         "bottom": 0,
         "height": 0,
         "left": 0,
@@ -604,28 +597,7 @@ DFlexDnDStore {
     },
     "dflex_sk_0_1" => DFlexScrollContainer {
       "_SK": "dflex_sk_0_1",
-      "_hasThrottledFrame": null,
-      "_innerThresholdInViewport": null,
-      "_listenerDataset": "dflexScrollListener_dflex_sk_0_1",
-      "_outerThresholdInViewport": null,
-      "_scrollEventCallback": null,
-      "_threshold_inner_key": "scroll_inner_dflex_sk_0_1",
-      "_threshold_outer_key": "scroll_outer_dflex_sk_0_1",
-      "allowDynamicVisibility": false,
-      "animatedResizeListener": [Function],
-      "animatedScrollListener": [Function],
-      "hasDocumentAsContainer": true,
-      "hasOverflow": PointBool {
-        "x": false,
-        "y": false,
-      },
-      "invisibleDistance": BoxNum {
-        "bottom": 0,
-        "left": 0,
-        "right": 0,
-        "top": 0,
-      },
-      "scrollContainerDOM": <html>
+      "_containerDOM": <html>
         <head />
         <body>
           <div>
@@ -672,7 +644,21 @@ DFlexDnDStore {
           </div>
         </body>
       </html>,
-      "scrollContainerRect": BoxRect {
+      "_innerThresholdInViewport": null,
+      "_isDocumentContainer": true,
+      "_listenerDatasetKey": "dflexScrollListener_dflex_sk_0_1",
+      "_outerThresholdInViewport": null,
+      "_scrollEventCallback": null,
+      "_threshold_inner_key": "scroll_inner_dflex_sk_0_1",
+      "_threshold_outer_key": "scroll_outer_dflex_sk_0_1",
+      "_throttledResizeHandler": [Function],
+      "_throttledScrollHandler": [Function],
+      "allowDynamicVisibility": false,
+      "hasOverflow": PointBool {
+        "x": false,
+        "y": false,
+      },
+      "totalScrollRect": BoxRect {
         "bottom": 0,
         "height": 0,
         "left": 0,
@@ -680,7 +666,7 @@ DFlexDnDStore {
         "top": 0,
         "width": 0,
       },
-      "scrollRect": BoxRect {
+      "visibleScrollRect": BoxRect {
         "bottom": 0,
         "height": 0,
         "left": 0,
