@@ -24,7 +24,6 @@ export {
 } from "./collections";
 
 export {
-  getCachedComputedStyle,
   getCachedComputedStyleProperty,
   clearComputedStyleCache,
   setRelativePosition,

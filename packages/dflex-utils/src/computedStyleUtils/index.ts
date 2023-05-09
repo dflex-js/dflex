@@ -1,11 +1,8 @@
 export {
-  setRelativePosition,
-  getElmComputedDimensions,
-} from "./computedStyleUtils";
-
-export {
-  getCachedComputedStyle,
+  // getCachedComputedStyle,
   getCachedComputedStyleProperty,
   clearComputedStyleCache,
+  getElmComputedDimensions,
   setFixedDimensions,
-} from "./draft";
+  setRelativePosition,
+} from "./computedStyleUtils";
