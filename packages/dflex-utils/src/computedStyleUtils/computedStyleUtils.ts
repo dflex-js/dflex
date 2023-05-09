@@ -86,9 +86,9 @@ function clearComputedStyleCache() {
 }
 
 function getElmComputedDimensions(DOM: HTMLElement): Dimensions {
-  const { computedStyle } = getCachedComputedStyle(DOM);
-
   if (__DEV__) {
+    const { computedStyle } = getCachedComputedStyle(DOM);
+
     const computedWidth = computedStyle.getPropertyValue("width");
     const computedHeight = computedStyle.getPropertyValue("height");
 
