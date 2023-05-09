@@ -1,8 +1,7 @@
 /* eslint-disable no-console */
 
-import { BoxRect } from "../Box";
 import type { Dimensions } from "../types";
-import warnOnce from "./warnOnce";
+import warnOnce from "../collections/warnOnce";
 import * as CSSPropNames from "../constants";
 
 let computedStyleCache = new WeakMap<Element, CSSStyleDeclaration>();
@@ -137,28 +136,10 @@ function getElmComputedDimensions(DOM: HTMLElement): Dimensions {
   return { width, height };
 }
 
-function getElmMargin() {
-  // const computedStyle = getElmComputedStyle(DOM);
-
-  // const computedMargin = computedStyle.getPropertyValue("margin");
-
-  // const splittedVal = computedMargin.split(CSS_UNIT_REGEX) || [];
-
-  const margin = new BoxRect(0, 0, 0, 0);
-
-  // if (splittedVal.length === 4) {
-  // } else if (splittedVal.length === 3) {
-  // } else if (splittedVal.length === 1) {
-  // }
-
-  return margin;
-}
-
 export {
   getCachedComputedStyle,
   clearComputedStyleCache,
   setRelativePosition,
   setFixedDimensions,
   getElmComputedDimensions,
-  getElmMargin,
 };

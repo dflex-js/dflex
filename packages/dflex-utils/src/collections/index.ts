@@ -5,11 +5,3 @@ export {
   getDimensionTypeByAxis,
   getDirectionTypeByAxis,
 } from "./getRectTypeByAxis";
-
-export {
-  getCachedComputedStyle,
-  clearComputedStyleCache,
-  setRelativePosition,
-  setFixedDimensions,
-  getElmComputedDimensions,
-} from "./computedStyleUtils";
