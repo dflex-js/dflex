@@ -210,9 +210,9 @@ class DFlexScrollContainer {
       this._updateScrollPosition(0, 0, true);
     }
 
-    // if (__DEV__) {
-    //   Object.seal(this);
-    // }
+    if (__DEV__) {
+      Object.seal(this);
+    }
   }
 
   private _updateOverflowStatus(): void {
@@ -377,7 +377,9 @@ class DFlexScrollContainer {
     }
   });
 
-  private _throttledResizeHandler = eventDebounce(this._updateScrollRect);
+  private _throttledResizeHandler = eventDebounce(() =>
+    this._updateScrollRect()
+  );
 
   private _attachResizeAndScrollListeners(isAttachListener = true): void {
     /**
