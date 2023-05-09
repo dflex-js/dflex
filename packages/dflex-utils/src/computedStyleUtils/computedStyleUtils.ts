@@ -39,6 +39,16 @@ function throwIfCamelCase(str: string): void {
   }
 }
 
+function verifyTypeOrThrow(value: any, allegedType: string): void {
+  const actualType = typeof value;
+
+  if (actualType !== allegedType) {
+    throw new Error(
+      `Type mismatch. Expected type ${allegedType}, but got type ${actualType}.`
+    );
+  }
+}
+
 function getCachedComputedStyleProperty(
   DOM: Element,
   property: string,
@@ -78,6 +88,11 @@ function getCachedComputedStyleProperty(
     return parsedPropertyValue;
   }
 
+  // Check `cachedValue` is the same type required in the call.
+  if (__DEV__) {
+    verifyTypeOrThrow(cachedValue, toNumber ? "number" : "string");
+  }
+
   return cachedValue;
 }
 
@@ -101,8 +116,8 @@ function getElmComputedDimensions(DOM: HTMLElement): Dimensions {
     }
   }
 
-  const width = getCachedComputedStyleProperty(DOM, "width", true);
-  const height = getCachedComputedStyleProperty(DOM, "height", true);
+  const width = getCachedComputedStyleProperty(DOM, CSSPropNames.WIDTH, true);
+  const height = getCachedComputedStyleProperty(DOM, CSSPropNames.HEIGHT, true);
 
   return { width, height };
 }
