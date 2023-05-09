@@ -26,9 +26,13 @@ export {
   getElmComputedDimensions,
   getDimensionTypeByAxis,
   getDirectionTypeByAxis,
-  updateELmDOMGrid,
 } from "./collections";
 
-export { canUseDOM, getSelection, getParentElm } from "./dom";
+export {
+  canUseDOM,
+  getSelection,
+  getParentElm,
+  updateElmDatasetGrid,
+} from "./dom";
 
 export * as featureFlags from "./FeatureFlags";

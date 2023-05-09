@@ -194,6 +194,10 @@ class DFlexScrollContainer {
     if (this.totalScrollRect.top > 0 || this.totalScrollRect.left > 0) {
       this._updateScrollPosition(0, 0, true);
     }
+
+    if (__DEV__) {
+      Object.seal(this);
+    }
   }
 
   private _updateOverflowStatus(): void {
