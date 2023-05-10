@@ -83,14 +83,14 @@ class DFlexMechanismController extends DFlexScrollableElement {
     this.listAppendPosition = null;
     this.isParentLocked = false;
 
-    const deadZoneStabilizer = {
+    this._deadZoneStabilizer = {
       area: new BoxNum(0, 0, 0, 0),
       direction: { x: "", y: "" },
     };
 
-    this._deadZoneStabilizer = __DEV__
-      ? Object.seal(deadZoneStabilizer)
-      : deadZoneStabilizer;
+    if (__DEV__) {
+      Object.seal(this);
+    }
   }
 
   private _detectDroppableIndex(): number | null {
@@ -668,7 +668,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     let scrollOffsetY = 0;
 
     if (scroll.enable) {
-      this.scrollFeed(x, y);
+      this.scrollFeed(x, y, SK);
 
       if (this.isScrolling()) {
         if (!this._hasBeenScrolling) {
