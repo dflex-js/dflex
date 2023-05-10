@@ -11,6 +11,7 @@ import {
   getDimensionTypeByAxis,
   eventDebounce,
   getCachedComputedStyleProperty,
+  getDirectionTypeByAxis,
 } from "@dflex/utils";
 
 import type { ThresholdPercentages, AbstractBox } from "@dflex/utils";
@@ -327,27 +328,23 @@ class DFlexScrollContainer {
    * @returns
    */
   hasScrollableArea(axis: Axis, direction: Direction): boolean {
-    if (!this.hasOverflow[axis]) {
-      return false;
+    if (__DEV__) {
+      if (!this.hasOverflow[axis]) {
+        throw new Error(
+          `Cannot call hasScrollableArea when there is no overflow in the ${axis} direction.`
+        );
+      }
     }
 
-    const scrollRect =
-      axis === "x" ? this.totalScrollRect.width : this.totalScrollRect.height;
-
-    const visibleRect =
-      axis === "x"
-        ? this.visibleScrollRect.width
-        : this.visibleScrollRect.height;
+    const scrollRect = this.totalScrollRect[getDimensionTypeByAxis(axis)];
+    const visibleRect = this.visibleScrollRect[getDimensionTypeByAxis(axis)];
 
     if (direction === 1) {
       return scrollRect - visibleRect > 0;
     }
 
-    if (direction === -1) {
-      return visibleRect > 0;
-    }
-
-    return false;
+    // direction === -1;
+    return visibleRect > 0;
   }
 
   private _updateDOMDataset(
@@ -457,8 +454,7 @@ class DFlexScrollContainer {
     startingPos: number,
     endingPos: number
   ): boolean {
-    const adjustToViewport =
-      axis === "y" ? this.totalScrollRect.top : this.totalScrollRect.left;
+    const adjustToViewport = this.totalScrollRect[getDirectionTypeByAxis(axis)];
 
     return (
       this.hasOverflow[axis] &&
