@@ -1,4 +1,4 @@
-import { Axis, PointNum, Direction, Point } from "@dflex/utils";
+import { Axis, PointNum, Direction, Point, featureFlags } from "@dflex/utils";
 import type { DFlexScrollContainer } from "@dflex/core-instance";
 import DFlexPositionUpdater from "./DFlexPositionUpdater";
 
@@ -117,13 +117,10 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     draggedDirH: Direction,
     draggedDirV: Direction,
     directionChangedH: boolean,
-    directionChangedV: boolean
+    directionChangedV: boolean,
+    SK: string
   ): void {
-    const { draggedElm } = this.draggable;
-
-    const {
-      keys: { SK },
-    } = draggedElm;
+    const scroll = store.scrolls.get(SK)!;
 
     // IS scrollAnimatedFrame is already running?
     if (this._scrollAnimatedFrame !== null) {
@@ -133,15 +130,11 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       // When the direction changes, we need to cancel the animation and add
       // a little delay because we already at the threshold area.
       if (hasSuddenChangeInDirection) {
-        const scroll = store.scrolls.get(SK)!;
-
         this.cancelAndThrottleScrolling(scroll);
       }
 
       return;
     }
-
-    const scroll = store.scrolls.get(SK)!;
 
     const absPos = this.draggable.getAbsoluteCurrentPosition();
 
@@ -160,6 +153,19 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     );
 
     const isOut = isOutV || isOutH;
+
+    if (__DEV__) {
+      if (featureFlags.enableScrollDebugger) {
+        const direction = isOutV ? "V" : "H";
+
+        // eslint-disable-next-line no-console
+        console.log(
+          `Element is ${
+            isOut ? "out" : "in"
+          } of the scroll threshold (${direction}).`
+        );
+      }
+    }
 
     if (!isOut) {
       return;
@@ -243,7 +249,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     this._scrollAnimatedFrame = requestAnimationFrame(scrollAnimatedFrame);
   }
 
-  protected scrollFeed(x: number, y: number): void {
+  protected scrollFeed(x: number, y: number, SK: string): void {
     const draggedDirH: Direction = x < this._prevMousePosition.x ? -1 : 1;
     const draggedDirV: Direction = y < this._prevMousePosition.y ? -1 : 1;
 
@@ -258,7 +264,8 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
         draggedDirH,
         draggedDirV,
         directionChangedH,
-        directionChangedV
+        directionChangedV,
+        SK
       );
     }
 

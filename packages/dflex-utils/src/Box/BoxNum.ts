@@ -1,5 +1,6 @@
 import type AbstractBox from "./AbstractBox";
 import Box from "./Box";
+import BoxBool from "./BoxBool";
 
 class BoxNum extends Box<number> {
   private _isUnder(box: AbstractBox): boolean {
@@ -18,29 +19,55 @@ class BoxNum extends Box<number> {
     return this.left >= box.right;
   }
 
-  /**
-   * True when it's not intersected with other box.
-   *
-   * @param box
-   * @returns
-   */
-  isNotIntersect(box: AbstractBox): boolean {
-    return (
-      this._isUnder(box) ||
-      this._isOnLeft(box) ||
+  isIntersect(box: AbstractBox): boolean {
+    const isIntersect = !(
       this._isAbove(box) ||
-      this._isOneRight(box)
+      this._isOneRight(box) ||
+      this._isUnder(box) ||
+      this._isOnLeft(box)
     );
+
+    return isIntersect;
   }
 
-  /**
-   * True when it's intersected with other box.
-   *
-   * @param box
-   * @returns
-   */
-  isIntersect(box: AbstractBox): boolean {
-    return !this.isNotIntersect(box);
+  isNotIntersect(box: AbstractBox): boolean {
+    return !this.isIntersect(box);
+  }
+
+  isOutside(box: AbstractBox, outsideBox?: BoxBool): boolean {
+    if (outsideBox) {
+      outsideBox.setBox(false, false, false, false);
+    }
+
+    if (this._isAbove(box)) {
+      if (outsideBox) {
+        outsideBox.top = true;
+      }
+      return true;
+    }
+
+    if (this._isOneRight(box)) {
+      if (outsideBox) {
+        outsideBox.right = true;
+      }
+      return true;
+    }
+
+    if (this._isUnder(box)) {
+      if (outsideBox) {
+        outsideBox.bottom = true;
+      }
+      return true;
+    }
+
+    if (this._isOnLeft(box)) {
+      if (outsideBox) {
+        outsideBox.left = true;
+      }
+      return true;
+    }
+
+    return false;
   }
 
   getSurroundingBox(box: AbstractBox): AbstractBox {
