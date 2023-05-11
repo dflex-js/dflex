@@ -108,7 +108,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       if (isIDEligible(id, draggedElm.id)) {
         const element = store.registry.get(id)!;
 
-        const isQualified = element.rect.isIntersect(
+        const isQualified = element.rect.isBoxIntersect(
           this.draggable.getAbsoluteCurrentPosition()
         );
 
@@ -528,7 +528,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       store.registry.get(id)!.rect
     );
 
-    const isIntersect = elmThreshold.isIntersect(
+    const isIntersect = elmThreshold.isBoxIntersect(
       this.draggable.threshold.thresholds[draggedID]
     );
 
@@ -597,7 +597,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
       const isInsideDeadZone = this.draggable
         .getAbsoluteCurrentPosition()
-        .isInside(this._deadZoneStabilizer.area);
+        .isInsideThreshold(this._deadZoneStabilizer.area);
 
       if (isInsideDeadZone) {
         const currentDir = this.draggable.getDirectionByAxis(axis);

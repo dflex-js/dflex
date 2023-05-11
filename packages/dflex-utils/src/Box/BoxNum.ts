@@ -3,6 +3,7 @@ import Box from "./Box";
 import BoxBool from "./BoxBool";
 
 class BoxNum extends Box<number> {
+  // Outside box checkers.
   private _isUnder(box: AbstractBox): boolean {
     return this.top >= box.bottom;
   }
@@ -19,7 +20,41 @@ class BoxNum extends Box<number> {
     return this.left >= box.right;
   }
 
-  isIntersect(box: AbstractBox): boolean {
+  // Outside threshold checkers.
+  private _isAboveThresholdTop(threshold: AbstractBox): boolean {
+    return this.top < threshold.top;
+  }
+
+  private _isRightOfThresholdRight(threshold: AbstractBox): boolean {
+    return this.right > threshold.right;
+  }
+
+  private _isBelowThresholdBottom(threshold: AbstractBox): boolean {
+    return this.bottom > threshold.bottom;
+  }
+
+  private _isLeftOfThresholdLeft(threshold: AbstractBox): boolean {
+    return this.left < threshold.left;
+  }
+
+  // Inside threshold checkers.
+  private _isBelowOrEqualThresholdTop(threshold: AbstractBox): boolean {
+    return this.top >= threshold.top;
+  }
+
+  private _isLeftOrEqualThresholdRight(threshold: AbstractBox): boolean {
+    return this.right <= threshold.right;
+  }
+
+  private _isAboveOrEqualThresholdBottom(threshold: AbstractBox): boolean {
+    return this.bottom <= threshold.bottom;
+  }
+
+  private _isRightOrEqualThresholdLeft(threshold: AbstractBox): boolean {
+    return this.left >= threshold.left;
+  }
+
+  isBoxIntersect(box: AbstractBox): boolean {
     const isIntersect = !(
       this._isAbove(box) ||
       this._isOneRight(box) ||
@@ -31,10 +66,10 @@ class BoxNum extends Box<number> {
   }
 
   isNotIntersect(box: AbstractBox): boolean {
-    return !this.isIntersect(box);
+    return !this.isBoxIntersect(box);
   }
 
-  isOutside(box: AbstractBox, outsideBox?: BoxBool): boolean {
+  isOutsideBox(box: AbstractBox, outsideBox?: BoxBool): boolean {
     if (outsideBox) {
       outsideBox.setBox(false, false, false, false);
     }
@@ -70,6 +105,55 @@ class BoxNum extends Box<number> {
     return false;
   }
 
+  isOutThreshold(threshold: AbstractBox, isOut?: BoxBool) {
+    if (isOut) {
+      isOut.setBox(false, false, false, false);
+    }
+
+    if (this._isAboveThresholdTop(threshold)) {
+      if (isOut) {
+        isOut.top = true;
+      }
+
+      return true;
+    }
+
+    if (this._isRightOfThresholdRight(threshold)) {
+      if (isOut) {
+        isOut.right = true;
+      }
+
+      return true;
+    }
+
+    if (this._isBelowThresholdBottom(threshold)) {
+      if (isOut) {
+        isOut.bottom = true;
+      }
+
+      return true;
+    }
+
+    if (this._isLeftOfThresholdLeft(threshold)) {
+      if (isOut) {
+        isOut.left = true;
+      }
+
+      return true;
+    }
+
+    return false;
+  }
+
+  isInsideThreshold(threshold: AbstractBox): boolean {
+    return (
+      this._isBelowOrEqualThresholdTop(threshold) &&
+      this._isLeftOrEqualThresholdRight(threshold) &&
+      this._isAboveOrEqualThresholdBottom(threshold) &&
+      this._isRightOrEqualThresholdLeft(threshold)
+    );
+  }
+
   getSurroundingBox(box: AbstractBox): AbstractBox {
     // Determine the coordinates of the new box
     const left = Math.min(box.left, this.left);
@@ -85,21 +169,6 @@ class BoxNum extends Box<number> {
       right,
       bottom,
     };
-  }
-
-  /**
-   * True when it's inside of other box.
-   *
-   * @param box
-   * @returns
-   */
-  isInside(box: AbstractBox): boolean {
-    return (
-      this.top >= box.top &&
-      this.right <= box.right &&
-      this.bottom <= box.bottom &&
-      this.left >= box.left
-    );
   }
 
   isPositionedY(box: AbstractBox): boolean {
