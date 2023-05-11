@@ -215,20 +215,17 @@ class DFlexThreshold {
     return is;
   }
 
-  isOutThreshold(key: string, targetBox: BoxNum): boolean {
+  isOutThreshold(
+    key: string,
+    targetBox: BoxNum,
+    isPreserveResult: boolean
+  ): boolean {
     const thresholdBox = this.thresholds[key];
 
-    return targetBox.isOutThreshold(thresholdBox, this.isOut[key]);
-  }
-
-  // This method is the same as isOutThreshold but it doesn't preserve the
-  // result in the `isOut`.
-  // Also with one tweak, because the `targetBox` is not `BoxNum` it flips the
-  // call signature.
-  isShallowOutThreshold(key: string, targetBox: AbstractBox<number>): boolean {
-    const thresholdBox = this.thresholds[key];
-
-    return thresholdBox.isOutThreshold(targetBox);
+    return targetBox.isOutThreshold(
+      thresholdBox,
+      isPreserveResult ? this.isOut[key] : undefined
+    );
   }
 
   destroy(): void {

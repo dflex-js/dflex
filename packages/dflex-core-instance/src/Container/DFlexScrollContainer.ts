@@ -12,6 +12,7 @@ import {
   eventDebounce,
   getCachedComputedStyleProperty,
   getDirectionTypeByAxis,
+  BoxNum,
 } from "@dflex/utils";
 
 import type { ThresholdPercentages, AbstractBox } from "@dflex/utils";
@@ -511,18 +512,18 @@ class DFlexScrollContainer {
       leftPos
     );
 
-    const targetBox = {
-      top: viewportTop,
-      right: viewportLeft + width,
-      bottom: viewportTop + height,
-      left: viewportLeft,
-    };
+    const top = viewportTop;
+    const right = viewportLeft + width;
+    const bottom = viewportTop + height;
+    const left = viewportLeft;
 
-    const isOutThreshold =
-      this._outerThresholdInViewport!.isShallowOutThreshold(
-        this._threshold_outer_key,
-        targetBox
-      );
+    const targetBox = new BoxNum(top, right, bottom, left);
+
+    const isOutThreshold = this._outerThresholdInViewport!.isOutThreshold(
+      this._threshold_outer_key,
+      targetBox,
+      false
+    );
 
     return !isOutThreshold;
   }
