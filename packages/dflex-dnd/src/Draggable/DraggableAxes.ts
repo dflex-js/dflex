@@ -421,7 +421,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
   isOutThreshold(SK?: string, useInsertionThreshold?: boolean) {
     const { id, depth } = this.draggedElm;
 
-    const { top, right, bottom, left } = this._absoluteCurrentPosition;
+    // const { top, right, bottom, left } = this._absoluteCurrentPosition;
 
     let key = SK || id;
 
@@ -429,7 +429,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
       key = combineKeys(depth, key);
     }
 
-    return this.threshold.isOutThreshold(key, top, right, bottom, left);
+    return this.threshold.isOutThreshold(key, this._absoluteCurrentPosition);
   }
 
   isNotSettled() {

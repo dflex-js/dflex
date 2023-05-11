@@ -65,45 +65,45 @@ class BoxNum extends Box<number> {
     return isIntersect;
   }
 
-  isNotIntersect(box: AbstractBox): boolean {
-    return !this.isBoxIntersect(box);
-  }
+  // isNotIntersect(box: AbstractBox): boolean {
+  //   return !this.isBoxIntersect(box);
+  // }
 
-  isOutsideBox(box: AbstractBox, outsideBox?: BoxBool): boolean {
-    if (outsideBox) {
-      outsideBox.setBox(false, false, false, false);
-    }
+  // isOutsideBox(box: AbstractBox, outsideBox?: BoxBool): boolean {
+  //   if (outsideBox) {
+  //     outsideBox.setBox(false, false, false, false);
+  //   }
 
-    if (this._isAbove(box)) {
-      if (outsideBox) {
-        outsideBox.top = true;
-      }
-      return true;
-    }
+  //   if (this._isAbove(box)) {
+  //     if (outsideBox) {
+  //       outsideBox.top = true;
+  //     }
+  //     return true;
+  //   }
 
-    if (this._isOneRight(box)) {
-      if (outsideBox) {
-        outsideBox.right = true;
-      }
-      return true;
-    }
+  //   if (this._isOneRight(box)) {
+  //     if (outsideBox) {
+  //       outsideBox.right = true;
+  //     }
+  //     return true;
+  //   }
 
-    if (this._isUnder(box)) {
-      if (outsideBox) {
-        outsideBox.bottom = true;
-      }
-      return true;
-    }
+  //   if (this._isUnder(box)) {
+  //     if (outsideBox) {
+  //       outsideBox.bottom = true;
+  //     }
+  //     return true;
+  //   }
 
-    if (this._isOnLeft(box)) {
-      if (outsideBox) {
-        outsideBox.left = true;
-      }
-      return true;
-    }
+  //   if (this._isOnLeft(box)) {
+  //     if (outsideBox) {
+  //       outsideBox.left = true;
+  //     }
+  //     return true;
+  //   }
 
-    return false;
-  }
+  //   return false;
+  // }
 
   isOutThreshold(threshold: AbstractBox, isOut?: BoxBool) {
     if (isOut) {

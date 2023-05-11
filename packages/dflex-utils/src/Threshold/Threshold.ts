@@ -227,23 +227,10 @@ class DFlexThreshold {
    * @param left
    * @returns
    */
-  isOutThreshold(
-    key: string,
-    top: number,
-    right: number,
-    bottom: number,
-    left: number
-  ): boolean {
-    const ref = this.thresholds[key];
+  isOutThreshold(key: string, box: BoxNum): boolean {
+    const thresholdBox = this.thresholds[key];
 
-    this.isOut[key].setBox(
-      top < ref.top,
-      right > ref.right,
-      bottom > ref.bottom,
-      left < ref.left
-    );
-
-    return this.isOut[key].isOneTruthy();
+    return box.isOutThreshold(thresholdBox, this.isOut[key]);
   }
 
   /**
