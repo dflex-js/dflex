@@ -512,16 +512,24 @@ class DFlexMechanismController extends DFlexScrollableElement {
     const id = siblings[elmIndex];
 
     if (__DEV__) {
-      if (!(id && isIDEligible(id, draggedID))) {
-        throw new Error(
-          `_actionCaller: incorrect element index: ${elmIndex} for siblings: ${siblings}`
-        );
-      }
-
       if (featureFlags.enableMechanismDebugger) {
         // eslint-disable-next-line no-console
         console.log(`Switching element position to occupy: ${id}`);
       }
+    }
+
+    if (!(id && isIDEligible(id, draggedID))) {
+      if (__DEV__) {
+        // TODO: investigate this error here and why it happens when migrated between containers.
+        // eslint-disable-next-line no-console
+        console.warn(
+          `_actionCaller: incorrect element index: ${elmIndex} for siblings: ${JSON.stringify(
+            siblings
+          )}`
+        );
+      }
+
+      return;
     }
 
     const elmThreshold = this.draggable.threshold.getElmMainThreshold(

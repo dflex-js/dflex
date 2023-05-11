@@ -314,7 +314,6 @@ class DFlexScrollContainer {
   }
 
   scrollTo(x: number, y: number): void {
-    console.log("wtf?");
     this._updateScrollPosition(x, y, true);
 
     if (this._scrollEventCallback) {
@@ -456,14 +455,6 @@ class DFlexScrollContainer {
     endingPos: number
   ): boolean {
     const adjustToViewport = this.totalScrollRect[getDirectionTypeByAxis(axis)];
-    console.log(
-      "🚀 ~ file: DFlexScrollContainer.ts:459 ~ DFlexScrollContainer ~ this.totalScrollRect[:",
-      this.totalScrollRect
-    );
-    console.log(
-      "🚀 ~ file: DFlexScrollContainer.ts:459 ~ DFlexScrollContainer ~ adjustToViewport:",
-      adjustToViewport
-    );
 
     return (
       this.hasOverflow[axis] &&
