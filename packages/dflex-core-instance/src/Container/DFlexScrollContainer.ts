@@ -511,13 +511,17 @@ class DFlexScrollContainer {
       leftPos
     );
 
+    const targetBox = {
+      top: viewportTop,
+      right: viewportLeft + width,
+      bottom: viewportTop + height,
+      left: viewportLeft,
+    };
+
     const isOutThreshold =
       this._outerThresholdInViewport!.isShallowOutThreshold(
         this._threshold_outer_key,
-        viewportTop,
-        viewportLeft + width,
-        viewportTop + height,
-        viewportLeft
+        targetBox
       );
 
     return !isOutThreshold;

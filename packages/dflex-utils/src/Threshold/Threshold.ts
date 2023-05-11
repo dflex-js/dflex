@@ -215,51 +215,20 @@ class DFlexThreshold {
     return is;
   }
 
-  /**
-   * Check if the element is out of the threshold from all directions.
-   *
-   * Note: This method checks and sets so the result is always preserved.
-   *
-   * @param key
-   * @param top
-   * @param right
-   * @param bottom
-   * @param left
-   * @returns
-   */
-  isOutThreshold(key: string, box: BoxNum): boolean {
+  isOutThreshold(key: string, targetBox: BoxNum): boolean {
     const thresholdBox = this.thresholds[key];
 
-    return box.isOutThreshold(thresholdBox, this.isOut[key]);
+    return targetBox.isOutThreshold(thresholdBox, this.isOut[key]);
   }
 
-  /**
-   * Check if the element is out of the threshold from all directions.
-   *
-   * Note: This method doesn't preserve the result.
-   *
-   * @param key
-   * @param top
-   * @param right
-   * @param bottom
-   * @param left
-   * @returns
-   */
-  isShallowOutThreshold(
-    key: string,
-    top: number,
-    right: number,
-    bottom: number,
-    left: number
-  ): boolean {
-    const ref = this.thresholds[key];
+  // This method is the same as isOutThreshold but it doesn't preserve the
+  // result in the `isOut`.
+  // Also with one tweak, because the `targetBox` is not `BoxNum` it flips the
+  // call signature.
+  isShallowOutThreshold(key: string, targetBox: AbstractBox<number>): boolean {
+    const thresholdBox = this.thresholds[key];
 
-    return (
-      top < ref.top ||
-      right > ref.right ||
-      bottom > ref.bottom ||
-      left < ref.left
-    );
+    return thresholdBox.isOutThreshold(targetBox);
   }
 
   destroy(): void {
