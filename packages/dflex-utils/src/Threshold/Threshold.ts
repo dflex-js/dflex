@@ -38,7 +38,7 @@ class DFlexThreshold {
   /** Assign threshold property and create new instance for is out indicators */
   private _createThreshold(
     key: string,
-    rect: AbstractBox,
+    box: AbstractBox,
     isInner: boolean
   ): void {
     if (__DEV__) {
@@ -47,7 +47,8 @@ class DFlexThreshold {
       }
     }
 
-    this.thresholds[key] = this._pixels.composeBox(rect, isInner);
+    this.thresholds[key] = this._pixels.composeBox(box, isInner);
+    console.log("🚀 ~ file: Threshold.ts:51 ~ DFlexThreshold ~ box:", box);
 
     this.isOut[key] = new BoxBool(false, false, false, false);
   }
@@ -71,17 +72,13 @@ class DFlexThreshold {
    * Note: Duplicate threshold keys will throw an error.
    *
    * @param key
-   * @param boxRect
+   * @param box
    * @param isInner
    */
-  setMainThreshold(
-    key: string,
-    boxRect: AbstractBoxRect,
-    isInner: boolean
-  ): void {
-    this._createPixels(boxRect);
+  setMainThreshold(key: string, box: AbstractBoxRect, isInner: boolean): void {
+    this._createPixels(box);
 
-    this._createThreshold(key, boxRect, isInner);
+    this._createThreshold(key, box, isInner);
   }
 
   /**
@@ -215,14 +212,10 @@ class DFlexThreshold {
     return is;
   }
 
-  isOutThreshold(
-    key: string,
-    targetBox: BoxNum,
-    isPreserveResult: boolean
-  ): boolean {
+  isOutThreshold(key: string, box: BoxNum, isPreserveResult: boolean): boolean {
     const thresholdBox = this.thresholds[key];
 
-    return targetBox.isOutThreshold(
+    return box.isOutThreshold(
       thresholdBox,
       isPreserveResult ? this.isOut[key] : undefined
     );

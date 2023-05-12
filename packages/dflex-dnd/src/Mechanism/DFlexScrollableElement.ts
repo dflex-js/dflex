@@ -138,19 +138,21 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     const absPos = this.draggable.getAbsoluteCurrentPosition();
 
-    const isOutV = scroll.isOutThreshold(
+    const isOutV = scroll.isElmOutThreshold(
       "y",
       draggedDirV,
       absPos.top,
       absPos.bottom
     );
 
-    const isOutH = scroll.isOutThreshold(
-      "x",
-      draggedDirH,
-      absPos.left,
-      absPos.right
-    );
+    const isOutH = false;
+
+    // const isOutH = scroll.isOutThreshold(
+    //   "x",
+    //   draggedDirH,
+    //   absPos.left,
+    //   absPos.right
+    // );
 
     const isOut = isOutV || isOutH;
 

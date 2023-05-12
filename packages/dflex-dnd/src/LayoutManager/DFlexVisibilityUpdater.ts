@@ -11,7 +11,7 @@ function updateElmVisibility(
 ): boolean {
   const { rect } = elm;
 
-  const isVisible = scroll.isElementInViewport(
+  const isVisible = scroll.isElmInViewport(
     rect.top,
     rect.left,
     rect.height,
