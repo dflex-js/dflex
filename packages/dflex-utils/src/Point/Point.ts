@@ -21,6 +21,10 @@ class Point<T> extends AxesPoint<T> {
     this.setAxes(target.x, target.y);
   }
 
+  duplicate(): Point<T> {
+    return new Point(this.x, this.y);
+  }
+
   /**
    * Get local instance of point.
    *

@@ -32,10 +32,10 @@ import type {
 function initContainers(SK: string, siblings: Siblings) {
   const container = store.containers.get(SK)!;
 
-  if (!container.lastElmPosition) {
+  if (!container.getLastElmPosition()) {
     const lastElm = store.registry.get(siblings[siblings.length - 1])!;
 
-    container.preservePosition(lastElm.rect.getPosition());
+    container.preservePosition(lastElm.rect.getPosition(), container.grid);
   }
 }
 

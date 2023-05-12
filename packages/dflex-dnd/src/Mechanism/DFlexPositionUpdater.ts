@@ -76,7 +76,10 @@ export function getInsertionELmMeta(
   const { length } = siblings;
 
   // Restore the last known current position.
-  const { lastElmPosition, originLength } = store.containers.get(SK)!;
+  const container = store.containers.get(SK)!;
+
+  const { originLength } = container;
+  const lastElmPosition = container.getLastElmPosition();
 
   const position = new PointNum(0, 0);
   const isEmpty = isEmptyBranch(siblings);
@@ -182,7 +185,10 @@ export function handleElmMigration(
     originSiblings[originSiblings.length - 1]
   )!;
 
-  originContainer.preservePosition(lastInOrigin.rect.getPosition());
+  originContainer.preservePosition(
+    lastInOrigin.rect.getPosition(),
+    originContainer.grid
+  );
 }
 
 class DFlexPositionUpdater {

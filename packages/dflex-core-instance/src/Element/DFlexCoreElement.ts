@@ -93,6 +93,12 @@ function assertGridBoundaries(
   }
 }
 
+function getAxisToProcess(axes: Axes): readonly Axis[] {
+  const axisToProcess = axes === "z" ? BOTH_AXIS : [axes];
+
+  return axisToProcess;
+}
+
 class DFlexCoreElement extends DFlexBaseElement {
   private _initialPosition: PointNum;
 
@@ -342,7 +348,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     return [oldIndex, newIndex];
   }
 
-  private _updateDOMGridOnAxes(
+  private _updateDOMGridOnAxis(
     direction: Direction,
     numberOfPassedElm: number,
     maxContainerGridBoundaries: PointNum
@@ -377,10 +383,10 @@ class DFlexCoreElement extends DFlexBaseElement {
    * @param mainAxisDirection
    * @param elmTransition
    * @param cycleID
-   * @param axis
+   * @param axes
    */
   reconcilePosition(
-    axis: Axes,
+    axes: Axes,
     mainAxisDirection: Direction,
     DOM: HTMLElement,
     siblings: string[],
@@ -393,24 +399,22 @@ class DFlexCoreElement extends DFlexBaseElement {
      * `mainAxisDirection` decides the direction of the element, negative or positive.
      * If the element is dragged to the left, the `mainAxisDirection` is -1.
      */
-    let axisToProcess: readonly Axis[];
 
-    const direction = {
+    const direction: AxesPoint<Direction> = {
       x: mainAxisDirection === 1 ? -1 : 1,
       y: mainAxisDirection,
     };
 
-    if (axis === "z") {
-      axisToProcess = BOTH_AXIS;
-    } else {
-      axisToProcess = [axis];
-      direction[axis] = mainAxisDirection;
+    if (axes !== "z") {
+      direction[axes] = mainAxisDirection;
     }
+
+    const axisToProcess = getAxisToProcess(axes);
 
     axisToProcess.forEach((_axis) => {
       elmTransition[_axis] *= direction[_axis];
 
-      this._updateDOMGridOnAxes(
+      this._updateDOMGridOnAxis(
         direction[_axis] as Direction,
         numberOfPassedElm,
         maxContainerGridBoundaries
@@ -421,7 +425,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       assertGridBoundaries(this.id, this.DOMGrid, maxContainerGridBoundaries);
     }
 
-    this._pushToTranslateHistory(axis, cycleID, numberOfPassedElm);
+    this._pushToTranslateHistory(axes, cycleID, numberOfPassedElm);
 
     const indexIncrement = mainAxisDirection * numberOfPassedElm;
 
@@ -452,7 +456,11 @@ class DFlexCoreElement extends DFlexBaseElement {
    *
    * @param cycleID
    */
-  rollBackPosition(DOM: HTMLElement, cycleID: string): void {
+  rollBackPosition(
+    DOM: HTMLElement,
+    maxContainerGridBoundaries: PointNum,
+    cycleID: string
+  ): void {
     if (
       this._translateHistory === undefined ||
       !this._translateHistory.has(cycleID)
@@ -482,22 +490,29 @@ class DFlexCoreElement extends DFlexBaseElement {
 
     let indexIncrement = 0;
 
-    const direction = {
+    const direction: AxesPoint<Direction> = {
       x: elmTransition.x > 0 ? 1 : -1,
       y: elmTransition.y > 0 ? 1 : -1,
     };
 
-    if (axes === "z") {
-      indexIncrement = elmTransition.x > 0 || elmTransition.y > 0 ? 1 : -1;
+    const axisToProcess = getAxisToProcess(axes);
 
-      this.DOMGrid.increase({
-        x: direction.x * numberOfPassedElm,
-        y: direction.y * numberOfPassedElm,
-      });
+    axisToProcess.forEach((_axis) => {
+      this._updateDOMGridOnAxis(
+        direction[_axis] as Direction,
+        numberOfPassedElm,
+        maxContainerGridBoundaries
+      );
+    });
+
+    if (__DEV__) {
+      assertGridBoundaries(this.id, this.DOMGrid, maxContainerGridBoundaries);
+    }
+
+    if (axes === "z") {
+      indexIncrement = elmTransition.y > 0 ? 1 : -1;
     } else {
       indexIncrement = direction[axes] * numberOfPassedElm;
-
-      this.DOMGrid[axes] += indexIncrement;
     }
 
     this._transformationProcess(DOM, elmTransition, true, indexIncrement);
@@ -512,7 +527,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       return;
     }
 
-    this.rollBackPosition(DOM, cycleID);
+    this.rollBackPosition(DOM, maxContainerGridBoundaries, cycleID);
   }
 
   hasTransformedFromOrigin(): boolean {

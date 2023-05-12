@@ -18,7 +18,7 @@ class EndCycle extends DFlexMechanismController {
       },
     } = this.draggable;
 
-    const { index: tempIndex, cycleID } = cycle;
+    const { index: tempIndex, cycleID, SK } = cycle;
 
     const isElmLiftedUp =
       this.isParentLocked || threshold.isOut[draggedID].bottom;
@@ -32,6 +32,10 @@ class EndCycle extends DFlexMechanismController {
       }
     }
 
+    const container = store.containers.get(SK)!;
+
+    const grid = container.getLastGrid() || container.grid;
+
     for (let i = siblings.length - 1; i >= 0; i -= 1) {
       const elmID = siblings[i];
 
@@ -42,7 +46,7 @@ class EndCycle extends DFlexMechanismController {
          * Note: rolling back won't affect order array. It only deals with element
          * itself and totally ignore any instance related to store.
          */
-        dflexElm.rollBackPosition(DOM, cycleID);
+        dflexElm.rollBackPosition(DOM, grid, cycleID);
       }
     }
 
