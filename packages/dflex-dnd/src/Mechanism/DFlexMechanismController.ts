@@ -600,7 +600,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     const isMonoGrid = grid[oppositeAxis] === 0;
 
     // Check if top or bottom.
-    if (isOut[id].isOneTruthyByAxis(axis)) {
+    if (isOut[id].isTruthyByAxis(axis)) {
       const shouldDecrease = axis === "y" ? isOut[id].bottom : isOut[id].right;
 
       const isInsideDeadZone = this.draggable

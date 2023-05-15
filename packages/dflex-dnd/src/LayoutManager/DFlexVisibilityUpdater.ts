@@ -11,14 +11,17 @@ function updateElmVisibility(
 ): boolean {
   const { rect } = elm;
 
-  const isVisible = scroll.isElementInViewport(
+  const [isInvisible] = scroll.isElmOutViewport(
     rect.top,
     rect.left,
     rect.height,
-    rect.width
+    rect.width,
+    false
   );
 
-  const isBreakable = prevVisibility && !isVisible;
+  const isBreakable = prevVisibility && isInvisible;
+
+  const isVisible = !isInvisible;
 
   prevVisibility = isVisible;
 

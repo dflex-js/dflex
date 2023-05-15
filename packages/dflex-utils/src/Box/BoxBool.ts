@@ -1,4 +1,4 @@
-import type { Axis } from "../types";
+import type { Axis, Direction } from "../types";
 import Box from "./Box";
 
 class BoxBool extends Box<boolean> {
@@ -27,7 +27,7 @@ class BoxBool extends Box<boolean> {
    * @param axis
    * @returns
    */
-  isOneTruthyByAxis(axis: Axis): boolean {
+  isTruthyByAxis(axis: Axis): boolean {
     switch (axis) {
       case "x":
         return this.left || this.right;
@@ -36,12 +36,21 @@ class BoxBool extends Box<boolean> {
     }
   }
 
+  isTruthyOnSide(axis: Axis, direction: Direction) {
+    switch (axis) {
+      case "x":
+        return direction === 1 ? this.right : this.left;
+      default:
+        return direction === 1 ? this.bottom : this.top;
+    }
+  }
+
   /**
    * True when one of four directions is true.
    *
    * @returns
    */
-  isOneTruthy(): boolean {
+  isTruthy(): boolean {
     return this.left || this.right || this.top || this.bottom;
   }
 }
