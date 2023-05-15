@@ -288,6 +288,8 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
       rect: { width, height },
     } = this.draggedElm;
 
+    console.log(edgePosTop);
+
     this._absoluteCurrentPosition.setBox(
       edgePosTop,
       edgePosLeft + width,
@@ -306,7 +308,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
 
   getDirectionByAxis(axis: Axis): "r" | "l" | "d" | "u" {
     const { x: previousX, y: previousY } = this._prevPoint;
-    const { left: currentX, top: currentY } = this._absoluteCurrentPosition;
+    const { left: currentX, top: currentY } = this.getAbsoluteCurrentPosition();
 
     if (axis === "x") {
       if (currentX > previousX) {

@@ -600,7 +600,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     const isMonoGrid = grid[oppositeAxis] === 0;
 
     // Check if top or bottom.
-    if (isOut[id].isOneTruthyByAxis(axis)) {
+    if (isOut[id].isTruthyByAxis(axis)) {
       const shouldDecrease = axis === "y" ? isOut[id].bottom : isOut[id].right;
 
       const isInsideDeadZone = this.draggable
@@ -709,6 +709,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
           scrollOffsetY =
             this.currentScrollAxes.y - this.initialScrollPosition.y;
 
+          console.log("here?");
           // Update the position before calling the detector.
           this.draggable.setAbsoluteCurrentPosition(
             x + scrollOffsetX,
@@ -727,6 +728,12 @@ class DFlexMechanismController extends DFlexScrollableElement {
     scrollOffsetX = this.currentScrollAxes.x - this.initialScrollPosition.x;
     scrollOffsetY = this.currentScrollAxes.y - this.initialScrollPosition.y;
 
+    console.log("scrollOffsetX:", scrollOffsetX);
+    console.log("scrollOffsetY:", scrollOffsetY);
+
+    if (scrollOffsetY < 0) {
+      debugger;
+    }
     this.draggable.dragAt(x, y, scrollOffsetX, scrollOffsetY);
 
     if (migration.isTransitioning) {

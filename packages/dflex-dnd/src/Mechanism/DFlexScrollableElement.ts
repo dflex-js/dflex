@@ -138,14 +138,37 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     const absPos = this.draggable.getAbsoluteCurrentPosition();
 
-    const isOutV = scroll.isElmOutThreshold(
-      "y",
-      draggedDirV,
+    const { rect } = this.draggable.draggedElm;
+
+    const [isOut, _preservedBoxResult] = scroll.isElmOutViewport(
       absPos.top,
-      absPos.bottom
+      absPos.left,
+      rect.height,
+      rect.width,
+      true
     );
 
+    // scroll.is
+    // let isOutH = _preservedBoxResult.isTruthyByAxis("x");
     const isOutH = false;
+    let isOutV = _preservedBoxResult.isTruthyByAxis("y");
+    console.log(
+      "🚀 ~ file: DFlexScrollableElement.ts:154 ~ DFlexScrollableElement ~ _preservedBoxResult:",
+      isOut,
+      _preservedBoxResult,
+      _preservedBoxResult.isTruthyOnSide("y", draggedDirV)
+    );
+
+    if (
+      isOutV &&
+      (!scroll.hasOverflow.y ||
+        !_preservedBoxResult.isTruthyOnSide("y", draggedDirV))
+    ) {
+      console.log("_preservedBoxResult, enforce false state.");
+      isOutV = false;
+    }
+
+    _preservedBoxResult.setFalsy();
 
     // const isOutH = scroll.isOutThreshold(
     //   "x",
@@ -154,18 +177,14 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     //   absPos.right
     // );
 
-    const isOut = isOutV || isOutH;
+    // const isOut = isOutV || isOutH;
 
     if (__DEV__) {
-      if (featureFlags.enableScrollDebugger) {
+      if (featureFlags.enableScrollDebugger && isOut) {
         const direction = isOutV ? "V" : "H";
 
         // eslint-disable-next-line no-console
-        console.log(
-          `Element is ${
-            isOut ? "out" : "in"
-          } of the scroll threshold (${direction}).`
-        );
+        console.log(`Element is out of the scroll threshold (${direction}).`);
       }
     }
 

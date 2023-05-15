@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import { PointNum } from "../Point";
 
-import type { Dimensions, Axis, Direction } from "../types";
+import type { Dimensions } from "../types";
 
 import { AbstractBox, BoxBool, BoxNum, AbstractBoxRect } from "../Box";
 
@@ -48,7 +48,6 @@ class DFlexThreshold {
     }
 
     this.thresholds[key] = this._pixels.composeBox(box, isInner);
-    console.log("🚀 ~ file: Threshold.ts:51 ~ DFlexThreshold ~ box:", box);
 
     this.isOut[key] = new BoxBool(false, false, false, false);
   }
@@ -143,73 +142,6 @@ class DFlexThreshold {
 
     // Accumulated depth threshold. Accumulation based on insertion layer.
     this._setDepthThreshold(insertionLayerKey, childDepth);
-  }
-
-  /**
-   * Check if the element is out of the threshold from given axis.
-   *
-   * Note: This method checks and sets so the result is always preserved.
-   *
-   *
-   * @param axis
-   * @param key
-   * @param startingPos
-   * @param endingPos
-   * @returns
-   */
-  isOutThresholdByAxis(
-    axis: Axis,
-    key: string,
-    startingPos: number,
-    endingPos: number
-  ): boolean {
-    const { left, right, top, bottom } = this.thresholds[key];
-
-    if (axis === "x") {
-      this.isOut[key].setByAxis(axis, startingPos < left, endingPos > right);
-    }
-
-    if (axis === "y") {
-      this.isOut[key].setByAxis(axis, startingPos < top, endingPos > bottom);
-    }
-
-    return this.isOut[key].isOneTruthyByAxis(axis);
-  }
-
-  /**
-   * Check if the element is out of the threshold from one direction based only
-   * on axis and element direction.
-   *
-   * Note: This method checks and sets so the result is always preserved
-   *
-   * @param axis
-   * @param direction
-   * @param key
-   * @param startingPos
-   * @param endingPos
-   * @returns
-   */
-  isOutThresholdByDirection(
-    axis: Axis,
-    direction: Direction,
-    key: string,
-    startingPos: number,
-    endingPos: number
-  ): boolean {
-    const { left, right, top, bottom } = this.thresholds[key];
-
-    const is =
-      axis === "x"
-        ? direction === -1
-          ? startingPos < left
-          : endingPos > right
-        : direction === -1
-        ? startingPos < top
-        : endingPos > bottom;
-
-    this.isOut[key].setOne(axis, direction, is);
-
-    return is;
   }
 
   isOutThreshold(key: string, box: BoxNum, isPreserveResult: boolean): boolean {
