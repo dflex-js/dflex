@@ -29,6 +29,8 @@ export {
   setRelativePosition,
   setFixedDimensions,
   getElmComputedDimensions,
+  getElmPos,
+  getElmOverflow,
 } from "./computedStyleUtils";
 
 export {

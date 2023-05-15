@@ -10,7 +10,10 @@ import {
   Threshold,
   getDimensionTypeByAxis,
   eventDebounce,
-  getCachedComputedStyleProperty,
+  BoxNum,
+  getElmPos,
+  getElmOverflow,
+  BoxBool,
 } from "@dflex/utils";
 
 import type { ThresholdPercentages, AbstractBox } from "@dflex/utils";
@@ -31,38 +34,20 @@ export type DFlexSerializedScroll = {
 
 const OVERFLOW_REGEX = /(auto|scroll|overlay)/;
 
-function isStaticallyPositioned(DOM: Element): boolean {
-  const position = getCachedComputedStyleProperty(DOM, "position", false);
-  return position === "static";
-}
-
 function getScrollContainer(baseDOMElm: HTMLElement): [HTMLElement, boolean] {
   let hasDocumentAsContainer = false;
 
-  const baseELmPosition = getCachedComputedStyleProperty(
-    baseDOMElm,
-    "position",
-    false
-  );
+  const baseELmPosition = getElmPos(baseDOMElm);
 
   const excludeStaticParents = baseELmPosition === "absolute";
 
   const scrollContainerDOM = getParentElm(baseDOMElm, (parentDOM) => {
-    const overflowX = getCachedComputedStyleProperty(
-      baseDOMElm,
-      "overflow-x",
-      false
-    );
-
-    const overflowY = getCachedComputedStyleProperty(
-      baseDOMElm,
-      "overflow-y",
-      false
-    );
+    const overflowX = getElmOverflow(baseDOMElm, "overflow-x");
+    const overflowY = getElmOverflow(baseDOMElm, "overflow-y");
 
     const parentRect = parentDOM.getBoundingClientRect();
 
-    if (excludeStaticParents && isStaticallyPositioned(parentDOM)) {
+    if (excludeStaticParents && getElmPos(parentDOM) === "static") {
       return false;
     }
 
@@ -115,14 +100,23 @@ const OUTER_THRESHOLD: ThresholdPercentages = {
   vertical: 25,
 };
 
+// Note: (maybe TODO) It can be customized by the user later.
+const INNER_THRESHOLD: ThresholdPercentages = {
+  horizontal: 10,
+  vertical: 10,
+};
+
 class DFlexScrollContainer {
-  private _innerThresholdInViewport: Threshold | null;
-
-  private _outerThresholdInViewport: Threshold | null;
-
-  private _threshold_inner_key: string;
-
-  private _threshold_outer_key: string;
+  private _thresholdInViewport: {
+    inner: {
+      threshold: Threshold | null;
+      key: string;
+    };
+    outer: {
+      threshold: Threshold | null;
+      key: string;
+    };
+  };
 
   private _SK: string;
 
@@ -167,16 +161,24 @@ class DFlexScrollContainer {
     scrollEventCallback: ScrollEventCallback
   ) {
     this._SK = SK;
-    this._threshold_inner_key = `scroll_inner_${SK}`;
-    this._threshold_outer_key = `scroll_outer_${SK}`;
+
+    this._thresholdInViewport = {
+      inner: {
+        threshold: null,
+        key: `scroll_inner_${SK}`,
+      },
+      outer: {
+        threshold: null,
+        key: `scroll_outer_${SK}`,
+      },
+    };
+
     this._listenerDatasetKey = `dflexScrollListener_${SK}`;
 
     this.hasOverflow = new PointBool(false, false);
     this.totalScrollRect = new BoxRect(0, 0, 0, 0);
     this.visibleScrollRect = new BoxRect(0, 0, 0, 0);
     this.allowDynamicVisibility = false;
-    this._innerThresholdInViewport = null;
-    this._outerThresholdInViewport = null;
     this._scrollEventCallback = null;
 
     const [containerDOM, isDocumentContainer] = getScrollContainer(firstELmDOM);
@@ -196,12 +198,8 @@ class DFlexScrollContainer {
       this.allowDynamicVisibility
     ) {
       this._scrollEventCallback = scrollEventCallback;
-      this._outerThresholdInViewport = new Threshold(OUTER_THRESHOLD);
-      this._outerThresholdInViewport.setMainThreshold(
-        this._threshold_outer_key,
-        this.visibleScrollRect,
-        false
-      );
+
+      this._initializeThreshold("outer", OUTER_THRESHOLD);
     }
 
     this._attachResizeAndScrollListeners();
@@ -210,9 +208,23 @@ class DFlexScrollContainer {
       this._updateScrollPosition(0, 0, true);
     }
 
-    // if (__DEV__) {
-    //   Object.seal(this);
-    // }
+    if (__DEV__) {
+      Object.seal(this);
+    }
+  }
+
+  private _initializeThreshold(
+    type: "inner" | "outer",
+    thresholdValue: ThresholdPercentages
+  ): void {
+    const threshold = new Threshold(thresholdValue);
+    const instance = this._thresholdInViewport[type];
+    instance.threshold = threshold;
+    threshold.setMainThreshold(
+      instance.key,
+      this.visibleScrollRect,
+      type === "inner"
+    );
   }
 
   private _updateOverflowStatus(): void {
@@ -271,8 +283,8 @@ class DFlexScrollContainer {
     if (this._isDocumentContainer) {
       // For document container, the visible area is the entire client viewport
       this.visibleScrollRect.setByPointAndDimensions(
-        0,
-        0,
+        scrollTop,
+        scrollLeft,
         clientHeight,
         clientWidth
       );
@@ -327,27 +339,23 @@ class DFlexScrollContainer {
    * @returns
    */
   hasScrollableArea(axis: Axis, direction: Direction): boolean {
-    if (!this.hasOverflow[axis]) {
-      return false;
+    if (__DEV__) {
+      if (!this.hasOverflow[axis]) {
+        throw new Error(
+          `Cannot call hasScrollableArea when there is no overflow in the ${axis} direction.`
+        );
+      }
     }
 
-    const scrollRect =
-      axis === "x" ? this.totalScrollRect.width : this.totalScrollRect.height;
-
-    const visibleRect =
-      axis === "x"
-        ? this.visibleScrollRect.width
-        : this.visibleScrollRect.height;
+    const scrollRect = this.totalScrollRect[getDimensionTypeByAxis(axis)];
+    const visibleRect = this.visibleScrollRect[getDimensionTypeByAxis(axis)];
 
     if (direction === 1) {
       return scrollRect - visibleRect > 0;
     }
 
-    if (direction === -1) {
-      return visibleRect > 0;
-    }
-
-    return false;
+    // direction === -1;
+    return visibleRect > 0;
   }
 
   private _updateDOMDataset(
@@ -377,7 +385,19 @@ class DFlexScrollContainer {
     }
   });
 
-  private _throttledResizeHandler = eventDebounce(this._updateScrollRect);
+  private _throttledResizeHandler = eventDebounce(() => {
+    this._updateScrollRect();
+    this._updateOverflowStatus();
+
+    // If it's not initialized yet. Leave it as it is.
+    if (this._thresholdInViewport.outer) {
+      this._initializeThreshold("outer", OUTER_THRESHOLD);
+
+      if (this._thresholdInViewport.inner) {
+        this._initializeThreshold("inner", INNER_THRESHOLD);
+      }
+    }
+  });
 
   private _attachResizeAndScrollListeners(isAttachListener = true): void {
     /**
@@ -422,9 +442,9 @@ class DFlexScrollContainer {
   }
 
   private _clearInnerThreshold(): void {
-    if (this._innerThresholdInViewport) {
-      this._innerThresholdInViewport.destroy();
-      this._innerThresholdInViewport = null;
+    if (this._thresholdInViewport.inner.threshold) {
+      this._thresholdInViewport.inner.threshold.destroy();
+      this._thresholdInViewport.inner.threshold = null;
     }
   }
 
@@ -435,39 +455,23 @@ class DFlexScrollContainer {
    * Note: this method is called when dragged is triggered so it gives the user
    * more flexibility to choose the threshold in relation to the dragged element.
    *
-   * @param threshold
    */
-  setInnerThreshold(threshold: ThresholdPercentages) {
-    this._clearInnerThreshold();
+  setInnerThreshold() {
+    if (__DEV__) {
+      if (!this._thresholdInViewport.outer.threshold) {
+        throw new Error(
+          "setInnerThreshold: Cannot set inner threshold when the outer threshold is not set."
+        );
+      }
+    }
 
-    this._innerThresholdInViewport = new Threshold(threshold);
+    // If it's already exist. It means one of the siblings has been triggered
+    // previously and there's not need to initialize it again.
+    if (this._thresholdInViewport.inner.threshold) {
+      return;
+    }
 
-    this._innerThresholdInViewport.setMainThreshold(
-      this._threshold_inner_key,
-      this.visibleScrollRect,
-      true
-    );
-  }
-
-  isOutThreshold(
-    axis: Axis,
-    direction: Direction,
-    startingPos: number,
-    endingPos: number
-  ): boolean {
-    const adjustToViewport =
-      axis === "y" ? this.totalScrollRect.top : this.totalScrollRect.left;
-
-    return (
-      this.hasOverflow[axis] &&
-      this._innerThresholdInViewport!.isOutThresholdByDirection(
-        axis,
-        direction,
-        this._threshold_inner_key,
-        startingPos - adjustToViewport,
-        endingPos - adjustToViewport
-      )
-    );
+    this._initializeThreshold("inner", INNER_THRESHOLD);
   }
 
   /**
@@ -502,27 +506,44 @@ class DFlexScrollContainer {
     return [viewportTop, viewportLeft];
   }
 
-  isElementInViewport(
+  isElmOutViewport(
     topPos: number,
     leftPos: number,
     height: number,
-    width: number
-  ): boolean {
+    width: number,
+    isInner: boolean
+  ): [boolean, BoxBool] {
+    const instance = isInner
+      ? this._thresholdInViewport.inner
+      : this._thresholdInViewport.outer;
+
+    if (__DEV__) {
+      if (!instance) {
+        throw new Error(
+          "_thresholdInViewport is not initialized. Please call setInnerThreshold() method before using isElmOutViewport."
+        );
+      }
+    }
+
     const [viewportTop, viewportLeft] = this.getElmViewportPosition(
       topPos,
       leftPos
     );
 
-    const isOutThreshold =
-      this._outerThresholdInViewport!.isShallowOutThreshold(
-        this._threshold_outer_key,
-        viewportTop,
-        viewportLeft + width,
-        viewportTop + height,
-        viewportLeft
-      );
+    const top = viewportTop;
+    const right = viewportLeft + width;
+    const bottom = viewportTop + height;
+    const left = viewportLeft;
 
-    return !isOutThreshold;
+    const targetBox = new BoxNum(top, right, bottom, left);
+
+    const { threshold, key } = instance;
+
+    const isOutThreshold = threshold!.isOutThreshold(key, targetBox, isInner);
+
+    const preservedBoxResult = threshold!.isOut[key];
+
+    return [isOutThreshold, preservedBoxResult];
   }
 
   private _getVisibleScreen(): Dimensions {

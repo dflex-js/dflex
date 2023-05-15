@@ -147,7 +147,7 @@ class DraggableInteractive extends DraggableAxes {
       // Initialize all the scroll containers in the same depth to enable migration.
       if (opts.containersTransition.enable) {
         store.getSiblingKeysByDepth(this.draggedElm.depth).forEach((SK) => {
-          store.scrolls.get(SK)!.setInnerThreshold(opts.threshold);
+          store.scrolls.get(SK)!.setInnerThreshold();
         });
       }
 

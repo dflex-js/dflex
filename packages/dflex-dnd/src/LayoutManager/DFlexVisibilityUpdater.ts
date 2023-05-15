@@ -11,14 +11,17 @@ function updateElmVisibility(
 ): boolean {
   const { rect } = elm;
 
-  const isVisible = scroll.isElementInViewport(
+  const [isInvisible] = scroll.isElmOutViewport(
     rect.top,
     rect.left,
     rect.height,
-    rect.width
+    rect.width,
+    false
   );
 
-  const isBreakable = prevVisibility && !isVisible;
+  const isBreakable = prevVisibility && isInvisible;
+
+  const isVisible = !isInvisible;
 
   prevVisibility = isVisible;
 
@@ -27,15 +30,15 @@ function updateElmVisibility(
   return isBreakable;
 }
 
-function setBranchVisibility(
-  branch: Siblings,
+function updateSiblingsVisibility(
+  sibling: Siblings,
   store: DFlexDnDStore,
   from: number,
   to: number,
   value: boolean
 ): void {
   for (let i = from; i < to; i += 1) {
-    const elmID = branch[i];
+    const elmID = sibling[i];
 
     if (elmID.length > 0) {
       const [elm, DOM] = store.getElmWithDOM(elmID);
@@ -93,14 +96,20 @@ function updateSiblingsVisibilityLinearly(
 
     // Is it breakable?
     if (breakAt > 0) {
-      setBranchVisibility(siblings, store, breakAt, siblings.length, false);
+      updateSiblingsVisibility(
+        siblings,
+        store,
+        breakAt,
+        siblings.length,
+        false
+      );
     }
-
-    // Resetting the flag.
-    prevVisibility = false;
   } else {
-    setBranchVisibility(siblings, store, 0, siblings.length, true);
+    updateSiblingsVisibility(siblings, store, 0, siblings.length, true);
   }
+
+  // Resetting the flag.
+  prevVisibility = false;
 }
 
 export default updateSiblingsVisibilityLinearly;

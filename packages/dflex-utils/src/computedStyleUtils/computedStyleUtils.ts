@@ -167,20 +167,45 @@ function setFixedDimensions(DOM: HTMLElement): void {
 
 const CSS_FORBIDDEN_POSITION_REGEX = /absolute|fixed/;
 
-const EXPECTED_POS = "relative";
+const EXPECTED_POS: CSSPosition = "relative";
 
 const ERROR_INVALID_POSITION = (id: string, actual: string, expected: string) =>
   `setRelativePosition: Element ${id} must be positioned as relative. Found: ${actual}. Expected: ${expected}.`;
 
+type CSSPosition = "static" | "relative" | "absolute" | "fixed" | "sticky";
+
+function getElmPos(DOM: HTMLElement): CSSPosition {
+  return getCachedComputedStyleProperty(
+    DOM,
+    CSSPropNames.POSITION,
+    false
+  ) as CSSPosition;
+}
+
+type CSSOverflow = "visible" | "hidden" | "scroll" | "auto" | "overlay";
+
+type CSSOverflowType = "overflow" | "overflow-x" | "overflow-y";
+
+function getElmOverflow(
+  DOM: HTMLElement,
+  overflowType: CSSOverflowType
+): CSSOverflow {
+  return getCachedComputedStyleProperty(
+    DOM,
+    overflowType,
+    false
+  ) as CSSOverflow;
+}
+
 function setRelativePosition(DOM: HTMLElement): void {
-  const position = getCachedComputedStyleProperty(DOM, "position", false);
+  const position = getElmPos(DOM);
 
   if (CSS_FORBIDDEN_POSITION_REGEX.test(position)) {
     if (__DEV__) {
       throw new Error(ERROR_INVALID_POSITION(DOM.id, position, EXPECTED_POS));
     }
 
-    DOM.style.position = EXPECTED_POS;
+    DOM.style.setProperty(CSSPropNames.POSITION, EXPECTED_POS);
   }
 }
 
@@ -188,6 +213,8 @@ export {
   getCachedComputedStyle,
   getCachedComputedStyleProperty,
   clearComputedStyleCache,
+  getElmPos,
+  getElmOverflow,
   getElmComputedDimensions,
   setFixedDimensions,
   setRelativePosition,

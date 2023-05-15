@@ -1,7 +1,9 @@
 import type AbstractBox from "./AbstractBox";
 import Box from "./Box";
+import BoxBool from "./BoxBool";
 
 class BoxNum extends Box<number> {
+  // Outside box checkers.
   private _isUnder(box: AbstractBox): boolean {
     return this.top >= box.bottom;
   }
@@ -18,29 +20,138 @@ class BoxNum extends Box<number> {
     return this.left >= box.right;
   }
 
-  /**
-   * True when it's not intersected with other box.
-   *
-   * @param box
-   * @returns
-   */
-  isNotIntersect(box: AbstractBox): boolean {
-    return (
-      this._isUnder(box) ||
-      this._isOnLeft(box) ||
-      this._isAbove(box) ||
-      this._isOneRight(box)
-    );
+  // Outside threshold checkers.
+  private _isAboveThresholdTop(threshold: AbstractBox): boolean {
+    return this.top < threshold.top;
   }
 
-  /**
-   * True when it's intersected with other box.
-   *
-   * @param box
-   * @returns
-   */
-  isIntersect(box: AbstractBox): boolean {
-    return !this.isNotIntersect(box);
+  private _isRightOfThresholdRight(threshold: AbstractBox): boolean {
+    return this.right > threshold.right;
+  }
+
+  private _isBelowThresholdBottom(threshold: AbstractBox): boolean {
+    return this.bottom > threshold.bottom;
+  }
+
+  private _isLeftOfThresholdLeft(threshold: AbstractBox): boolean {
+    return this.left < threshold.left;
+  }
+
+  // Inside threshold checkers.
+  private _isBelowOrEqualThresholdTop(threshold: AbstractBox): boolean {
+    return this.top >= threshold.top;
+  }
+
+  private _isLeftOrEqualThresholdRight(threshold: AbstractBox): boolean {
+    return this.right <= threshold.right;
+  }
+
+  private _isAboveOrEqualThresholdBottom(threshold: AbstractBox): boolean {
+    return this.bottom <= threshold.bottom;
+  }
+
+  private _isRightOrEqualThresholdLeft(threshold: AbstractBox): boolean {
+    return this.left >= threshold.left;
+  }
+
+  isBoxIntersect(box: AbstractBox): boolean {
+    const isIntersect = !(
+      this._isAbove(box) ||
+      this._isOneRight(box) ||
+      this._isUnder(box) ||
+      this._isOnLeft(box)
+    );
+
+    return isIntersect;
+  }
+
+  // isNotIntersect(box: AbstractBox): boolean {
+  //   return !this.isBoxIntersect(box);
+  // }
+
+  // isOutsideBox(box: AbstractBox, outsideBox?: BoxBool): boolean {
+  //   if (outsideBox) {
+  //     outsideBox.setBox(false, false, false, false);
+  //   }
+
+  //   if (this._isAbove(box)) {
+  //     if (outsideBox) {
+  //       outsideBox.top = true;
+  //     }
+  //     return true;
+  //   }
+
+  //   if (this._isOneRight(box)) {
+  //     if (outsideBox) {
+  //       outsideBox.right = true;
+  //     }
+  //     return true;
+  //   }
+
+  //   if (this._isUnder(box)) {
+  //     if (outsideBox) {
+  //       outsideBox.bottom = true;
+  //     }
+  //     return true;
+  //   }
+
+  //   if (this._isOnLeft(box)) {
+  //     if (outsideBox) {
+  //       outsideBox.left = true;
+  //     }
+  //     return true;
+  //   }
+
+  //   return false;
+  // }
+
+  isOutThreshold(threshold: AbstractBox, isOut?: BoxBool) {
+    if (isOut) {
+      isOut.setBox(false, false, false, false);
+    }
+
+    if (this._isAboveThresholdTop(threshold)) {
+      if (isOut) {
+        isOut.top = true;
+      }
+
+      return true;
+    }
+
+    if (this._isRightOfThresholdRight(threshold)) {
+      if (isOut) {
+        isOut.right = true;
+      }
+
+      return true;
+    }
+
+    if (this._isBelowThresholdBottom(threshold)) {
+      if (isOut) {
+        isOut.bottom = true;
+      }
+
+      return true;
+    }
+
+    if (this._isLeftOfThresholdLeft(threshold)) {
+      if (isOut) {
+        isOut.left = true;
+      }
+
+      return true;
+    }
+
+    return false;
+  }
+
+  isInsideThreshold(threshold: AbstractBox): boolean {
+    return (
+      this._isBelowOrEqualThresholdTop(threshold) &&
+      this._isLeftOrEqualThresholdRight(threshold) &&
+      this._isAboveOrEqualThresholdBottom(threshold) &&
+      this._isRightOrEqualThresholdLeft(threshold)
+    );
   }
 
   getSurroundingBox(box: AbstractBox): AbstractBox {
@@ -58,21 +169,6 @@ class BoxNum extends Box<number> {
       right,
       bottom,
     };
-  }
-
-  /**
-   * True when it's inside of other box.
-   *
-   * @param box
-   * @returns
-   */
-  isInside(box: AbstractBox): boolean {
-    return (
-      this.top >= box.top &&
-      this.right <= box.right &&
-      this.bottom <= box.bottom &&
-      this.left >= box.left
-    );
   }
 
   isPositionedY(box: AbstractBox): boolean {

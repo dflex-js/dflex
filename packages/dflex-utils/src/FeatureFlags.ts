@@ -15,3 +15,5 @@ export const enableUndoSiblingsDebugger = false;
 export const enableRegisterDebugger = false;
 
 export const enableMechanismDebugger = false;
+
+export const enableScrollDebugger = true;

@@ -306,7 +306,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
 
   getDirectionByAxis(axis: Axis): "r" | "l" | "d" | "u" {
     const { x: previousX, y: previousY } = this._prevPoint;
-    const { left: currentX, top: currentY } = this._absoluteCurrentPosition;
+    const { left: currentX, top: currentY } = this.getAbsoluteCurrentPosition();
 
     if (axis === "x") {
       if (currentX > previousX) {
@@ -421,15 +421,17 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
   isOutThreshold(SK?: string, useInsertionThreshold?: boolean) {
     const { id, depth } = this.draggedElm;
 
-    const { top, right, bottom, left } = this._absoluteCurrentPosition;
-
     let key = SK || id;
 
     if (useInsertionThreshold) {
       key = combineKeys(depth, key);
     }
 
-    return this.threshold.isOutThreshold(key, top, right, bottom, left);
+    return this.threshold.isOutThreshold(
+      key,
+      this._absoluteCurrentPosition,
+      true
+    );
   }
 
   isNotSettled() {
