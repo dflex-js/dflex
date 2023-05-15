@@ -83,14 +83,14 @@ class DFlexMechanismController extends DFlexScrollableElement {
     this.listAppendPosition = null;
     this.isParentLocked = false;
 
-    const deadZoneStabilizer = {
+    this._deadZoneStabilizer = {
       area: new BoxNum(0, 0, 0, 0),
       direction: { x: "", y: "" },
     };
 
-    this._deadZoneStabilizer = __DEV__
-      ? Object.seal(deadZoneStabilizer)
-      : deadZoneStabilizer;
+    if (__DEV__) {
+      Object.seal(this);
+    }
   }
 
   private _detectDroppableIndex(): number | null {
@@ -108,7 +108,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       if (isIDEligible(id, draggedElm.id)) {
         const element = store.registry.get(id)!;
 
-        const isQualified = element.rect.isIntersect(
+        const isQualified = element.rect.isBoxIntersect(
           this.draggable.getAbsoluteCurrentPosition()
         );
 
@@ -512,23 +512,31 @@ class DFlexMechanismController extends DFlexScrollableElement {
     const id = siblings[elmIndex];
 
     if (__DEV__) {
-      if (!(id && isIDEligible(id, draggedID))) {
-        throw new Error(
-          `_actionCaller: incorrect element index: ${elmIndex} for siblings: ${siblings}`
-        );
-      }
-
       if (featureFlags.enableMechanismDebugger) {
         // eslint-disable-next-line no-console
         console.log(`Switching element position to occupy: ${id}`);
       }
     }
 
+    if (!(id && isIDEligible(id, draggedID))) {
+      if (__DEV__) {
+        // TODO: investigate this error here and why it happens when migrated between containers.
+        // eslint-disable-next-line no-console
+        console.warn(
+          `_actionCaller: incorrect element index: ${elmIndex} for siblings: ${JSON.stringify(
+            siblings
+          )}`
+        );
+      }
+
+      return;
+    }
+
     const elmThreshold = this.draggable.threshold.getElmMainThreshold(
       store.registry.get(id)!.rect
     );
 
-    const isIntersect = elmThreshold.isIntersect(
+    const isIntersect = elmThreshold.isBoxIntersect(
       this.draggable.threshold.thresholds[draggedID]
     );
 
@@ -592,12 +600,12 @@ class DFlexMechanismController extends DFlexScrollableElement {
     const isMonoGrid = grid[oppositeAxis] === 0;
 
     // Check if top or bottom.
-    if (isOut[id].isOneTruthyByAxis(axis)) {
+    if (isOut[id].isTruthyByAxis(axis)) {
       const shouldDecrease = axis === "y" ? isOut[id].bottom : isOut[id].right;
 
       const isInsideDeadZone = this.draggable
         .getAbsoluteCurrentPosition()
-        .isInside(this._deadZoneStabilizer.area);
+        .isInsideThreshold(this._deadZoneStabilizer.area);
 
       if (isInsideDeadZone) {
         const currentDir = this.draggable.getDirectionByAxis(axis);
@@ -668,7 +676,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     let scrollOffsetY = 0;
 
     if (scroll.enable) {
-      this.scrollFeed(x, y);
+      this.scrollFeed(x, y, SK);
 
       if (this.isScrolling()) {
         if (!this._hasBeenScrolling) {

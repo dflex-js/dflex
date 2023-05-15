@@ -1,4 +1,4 @@
-import { Axis, PointNum, Direction, Point } from "@dflex/utils";
+import { Axis, PointNum, Direction, Point, featureFlags } from "@dflex/utils";
 import type { DFlexScrollContainer } from "@dflex/core-instance";
 import DFlexPositionUpdater from "./DFlexPositionUpdater";
 
@@ -117,13 +117,10 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     draggedDirH: Direction,
     draggedDirV: Direction,
     directionChangedH: boolean,
-    directionChangedV: boolean
+    directionChangedV: boolean,
+    SK: string
   ): void {
-    const { draggedElm } = this.draggable;
-
-    const {
-      keys: { SK },
-    } = draggedElm;
+    const scroll = store.scrolls.get(SK)!;
 
     // IS scrollAnimatedFrame is already running?
     if (this._scrollAnimatedFrame !== null) {
@@ -133,33 +130,54 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       // When the direction changes, we need to cancel the animation and add
       // a little delay because we already at the threshold area.
       if (hasSuddenChangeInDirection) {
-        const scroll = store.scrolls.get(SK)!;
-
         this.cancelAndThrottleScrolling(scroll);
       }
 
       return;
     }
 
-    const scroll = store.scrolls.get(SK)!;
-
     const absPos = this.draggable.getAbsoluteCurrentPosition();
 
-    const isOutV = scroll.isOutThreshold(
-      "y",
-      draggedDirV,
+    const { rect } = this.draggable.draggedElm;
+
+    const [isOut, _preservedBoxResult] = scroll.isElmOutViewport(
       absPos.top,
-      absPos.bottom
-    );
-
-    const isOutH = scroll.isOutThreshold(
-      "x",
-      draggedDirH,
       absPos.left,
-      absPos.right
+      rect.height,
+      rect.width,
+      true
     );
 
-    const isOut = isOutV || isOutH;
+    let isOutH = _preservedBoxResult.isTruthyByAxis("x");
+    let isOutV = _preservedBoxResult.isTruthyByAxis("y");
+
+    // Enforce false state.
+    if (
+      isOutV &&
+      (!scroll.hasOverflow.y ||
+        !_preservedBoxResult.isTruthyOnSide("y", draggedDirV))
+    ) {
+      isOutV = false;
+    }
+
+    if (
+      isOutH &&
+      (!scroll.hasOverflow.x ||
+        !_preservedBoxResult.isTruthyOnSide("x", draggedDirH))
+    ) {
+      isOutH = false;
+    }
+
+    _preservedBoxResult.setFalsy();
+
+    if (__DEV__) {
+      if (featureFlags.enableScrollDebugger && isOut) {
+        const direction = isOutV ? "V" : "H";
+
+        // eslint-disable-next-line no-console
+        console.log(`Element is out of the scroll threshold (${direction}).`);
+      }
+    }
 
     if (!isOut) {
       return;
@@ -243,7 +261,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     this._scrollAnimatedFrame = requestAnimationFrame(scrollAnimatedFrame);
   }
 
-  protected scrollFeed(x: number, y: number): void {
+  protected scrollFeed(x: number, y: number, SK: string): void {
     const draggedDirH: Direction = x < this._prevMousePosition.x ? -1 : 1;
     const draggedDirV: Direction = y < this._prevMousePosition.y ? -1 : 1;
 
@@ -258,7 +276,8 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
         draggedDirH,
         draggedDirV,
         directionChangedH,
-        directionChangedV
+        directionChangedV,
+        SK
       );
     }
 

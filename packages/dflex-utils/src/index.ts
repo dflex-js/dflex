@@ -19,16 +19,25 @@ export {
   combineKeys,
   warnOnce,
   assertElementPosition,
-  getCachedComputedStyle,
+  getDimensionTypeByAxis,
+  getDirectionTypeByAxis,
+} from "./collections";
+
+export {
+  getCachedComputedStyleProperty,
   clearComputedStyleCache,
   setRelativePosition,
   setFixedDimensions,
   getElmComputedDimensions,
-  getDimensionTypeByAxis,
-  getDirectionTypeByAxis,
-  updateELmDOMGrid,
-} from "./collections";
+  getElmPos,
+  getElmOverflow,
+} from "./computedStyleUtils";
 
-export { canUseDOM, getSelection, getParentElm } from "./dom";
+export {
+  canUseDOM,
+  getSelection,
+  getParentElm,
+  updateElmDatasetGrid,
+} from "./dom";
 
 export * as featureFlags from "./FeatureFlags";

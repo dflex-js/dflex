@@ -3,7 +3,7 @@ import {
   assertElementPosition,
   featureFlags,
   PointNum,
-  updateELmDOMGrid,
+  updateElmDatasetGrid,
 } from "@dflex/utils";
 import type { AxesPoint } from "@dflex/utils";
 
@@ -95,7 +95,7 @@ function triggerAssertProcess(
   siblings: string[],
   grid: PointNum
 ) {
-  updateELmDOMGrid(DOM, grid);
+  updateElmDatasetGrid(DOM, grid);
 
   throwIfElmIsEmpty(siblings);
   throwWhenDuplicates(siblings);
@@ -147,7 +147,7 @@ class DraggableInteractive extends DraggableAxes {
       // Initialize all the scroll containers in the same depth to enable migration.
       if (opts.containersTransition.enable) {
         store.getSiblingKeysByDepth(this.draggedElm.depth).forEach((SK) => {
-          store.scrolls.get(SK)!.setInnerThreshold(opts.threshold);
+          store.scrolls.get(SK)!.setInnerThreshold();
         });
       }
 
