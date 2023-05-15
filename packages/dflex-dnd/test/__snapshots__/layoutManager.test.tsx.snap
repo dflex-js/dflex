@@ -564,13 +564,19 @@ DFlexDnDStore {
           </div>
         </body>
       </html>,
-      "_innerThresholdInViewport": null,
       "_isDocumentContainer": true,
       "_listenerDatasetKey": "dflexScrollListener_dflex_sk_0_0",
-      "_outerThresholdInViewport": null,
       "_scrollEventCallback": null,
-      "_threshold_inner_key": "scroll_inner_dflex_sk_0_0",
-      "_threshold_outer_key": "scroll_outer_dflex_sk_0_0",
+      "_thresholdInViewport": {
+        "inner": {
+          "key": "scroll_inner_dflex_sk_0_0",
+          "threshold": null,
+        },
+        "outer": {
+          "key": "scroll_outer_dflex_sk_0_0",
+          "threshold": null,
+        },
+      },
       "_throttledResizeHandler": [Function],
       "_throttledScrollHandler": [Function],
       "allowDynamicVisibility": false,
@@ -644,13 +650,19 @@ DFlexDnDStore {
           </div>
         </body>
       </html>,
-      "_innerThresholdInViewport": null,
       "_isDocumentContainer": true,
       "_listenerDatasetKey": "dflexScrollListener_dflex_sk_0_1",
-      "_outerThresholdInViewport": null,
       "_scrollEventCallback": null,
-      "_threshold_inner_key": "scroll_inner_dflex_sk_0_1",
-      "_threshold_outer_key": "scroll_outer_dflex_sk_0_1",
+      "_thresholdInViewport": {
+        "inner": {
+          "key": "scroll_inner_dflex_sk_0_1",
+          "threshold": null,
+        },
+        "outer": {
+          "key": "scroll_outer_dflex_sk_0_1",
+          "threshold": null,
+        },
+      },
       "_throttledResizeHandler": [Function],
       "_throttledScrollHandler": [Function],
       "allowDynamicVisibility": false,

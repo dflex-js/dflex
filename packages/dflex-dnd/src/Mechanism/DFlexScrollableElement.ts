@@ -148,36 +148,27 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       true
     );
 
-    // scroll.is
-    // let isOutH = _preservedBoxResult.isTruthyByAxis("x");
-    const isOutH = false;
+    let isOutH = _preservedBoxResult.isTruthyByAxis("x");
     let isOutV = _preservedBoxResult.isTruthyByAxis("y");
-    console.log(
-      "🚀 ~ file: DFlexScrollableElement.ts:154 ~ DFlexScrollableElement ~ _preservedBoxResult:",
-      isOut,
-      _preservedBoxResult,
-      _preservedBoxResult.isTruthyOnSide("y", draggedDirV)
-    );
 
+    // Enforce false state.
     if (
       isOutV &&
       (!scroll.hasOverflow.y ||
         !_preservedBoxResult.isTruthyOnSide("y", draggedDirV))
     ) {
-      console.log("_preservedBoxResult, enforce false state.");
       isOutV = false;
     }
 
+    if (
+      isOutH &&
+      (!scroll.hasOverflow.x ||
+        !_preservedBoxResult.isTruthyOnSide("x", draggedDirH))
+    ) {
+      isOutH = false;
+    }
+
     _preservedBoxResult.setFalsy();
-
-    // const isOutH = scroll.isOutThreshold(
-    //   "x",
-    //   draggedDirH,
-    //   absPos.left,
-    //   absPos.right
-    // );
-
-    // const isOut = isOutV || isOutH;
 
     if (__DEV__) {
       if (featureFlags.enableScrollDebugger && isOut) {

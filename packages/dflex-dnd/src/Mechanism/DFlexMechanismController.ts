@@ -709,7 +709,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
           scrollOffsetY =
             this.currentScrollAxes.y - this.initialScrollPosition.y;
 
-          console.log("here?");
           // Update the position before calling the detector.
           this.draggable.setAbsoluteCurrentPosition(
             x + scrollOffsetX,
@@ -728,12 +727,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
     scrollOffsetX = this.currentScrollAxes.x - this.initialScrollPosition.x;
     scrollOffsetY = this.currentScrollAxes.y - this.initialScrollPosition.y;
 
-    console.log("scrollOffsetX:", scrollOffsetX);
-    console.log("scrollOffsetY:", scrollOffsetY);
-
-    if (scrollOffsetY < 0) {
-      debugger;
-    }
     this.draggable.dragAt(x, y, scrollOffsetX, scrollOffsetY);
 
     if (migration.isTransitioning) {

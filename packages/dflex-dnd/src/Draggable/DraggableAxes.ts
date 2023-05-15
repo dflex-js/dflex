@@ -288,8 +288,6 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
       rect: { width, height },
     } = this.draggedElm;
 
-    console.log(edgePosTop);
-
     this._absoluteCurrentPosition.setBox(
       edgePosTop,
       edgePosLeft + width,
