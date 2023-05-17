@@ -327,14 +327,12 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     return "u";
   }
 
-  /**
-   *
-   * @param x
-   * @param y
-   * @param scrollOffsetX
-   * @param scrollOffsetY
-   */
-  dragAt(x: number, y: number, scrollOffsetX: number, scrollOffsetY: number) {
+  dragWithOffset(
+    x: number,
+    y: number,
+    scrollOffsetX: number,
+    scrollOffsetY: number
+  ) {
     if (!this.isLayoutStateUpdated) {
       this.isLayoutStateUpdated = true;
       scheduler(store, null, null, {

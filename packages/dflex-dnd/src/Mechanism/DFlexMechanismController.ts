@@ -727,7 +727,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     scrollOffsetX = this.currentScrollAxes.x - this.initialScrollPosition.x;
     scrollOffsetY = this.currentScrollAxes.y - this.initialScrollPosition.y;
 
-    this.draggable.dragAt(x, y, scrollOffsetX, scrollOffsetY);
+    this.draggable.dragWithOffset(x, y, scrollOffsetX, scrollOffsetY);
 
     if (migration.isTransitioning) {
       return;

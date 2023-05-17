@@ -14,6 +14,8 @@ import {
   getElmPos,
   getElmOverflow,
   BoxBool,
+  getStartingPointByAxis,
+  getEndingPointByAxis,
 } from "@dflex/utils";
 
 import type { ThresholdPercentages, AbstractBox } from "@dflex/utils";
@@ -347,15 +349,33 @@ class DFlexScrollContainer {
       }
     }
 
-    const scrollRect = this.totalScrollRect[getDimensionTypeByAxis(axis)];
-    const visibleRect = this.visibleScrollRect[getDimensionTypeByAxis(axis)];
+    const directionTypeStart = getStartingPointByAxis(axis);
+    const directionTypeEnd = getEndingPointByAxis(axis);
 
-    if (direction === 1) {
-      return scrollRect - visibleRect > 0;
-    }
+    const dimensionType = getDimensionTypeByAxis(axis);
 
-    // direction === -1;
-    return visibleRect > 0;
+    const scrollPosStart = this.totalScrollRect[directionTypeStart];
+    const scrollPosEnd = this.totalScrollRect[directionTypeEnd];
+
+    const scrollViewPortSize = this.visibleScrollRect[dimensionType];
+
+    console.log("hasScrollableArea visibleRect:", this.totalScrollRect);
+    console.log("hasScrollableArea scrollRect:", this.visibleScrollRect);
+    console.log(
+      "🚀 ~ file: DFlexScrollContainer.ts:352 ~ DFlexScrollContainer ~ hasScrollableArea ~ scrollSize:",
+      scrollPosStart,
+      scrollViewPortSize,
+      scrollPosEnd
+    );
+
+    const hasScrollableArea =
+      direction === 1
+        ? scrollPosStart + scrollViewPortSize < scrollPosEnd
+        : scrollViewPortSize > 0;
+
+    console.log("hasScrollableArea", hasScrollableArea);
+
+    return hasScrollableArea;
   }
 
   private _updateDOMDataset(

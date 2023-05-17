@@ -148,7 +148,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       true
     );
 
-    let isOutH = _preservedBoxResult.isTruthyByAxis("x");
+    const isOutH = false;
     let isOutV = _preservedBoxResult.isTruthyByAxis("y");
 
     // Enforce false state.
@@ -160,13 +160,13 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       isOutV = false;
     }
 
-    if (
-      isOutH &&
-      (!scroll.hasOverflow.x ||
-        !_preservedBoxResult.isTruthyOnSide("x", draggedDirH))
-    ) {
-      isOutH = false;
-    }
+    // if (
+    //   isOutH &&
+    //   (!scroll.hasOverflow.x ||
+    //     !_preservedBoxResult.isTruthyOnSide("x", draggedDirH))
+    // ) {
+    //   isOutH = false;
+    // }
 
     _preservedBoxResult.setFalsy();
 
@@ -186,6 +186,10 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     const canScroll = (): boolean =>
       (isOutV && scroll.hasScrollableArea("y", draggedDirV)) ||
       (isOutH && scroll.hasScrollableArea("x", draggedDirH));
+
+    // if (isOutV && scroll.hasScrollableArea("y", draggedDirV)) {
+    //   debugger;
+    // }
 
     // If there's not scrollable area, we don't need to scroll.
     if (!canScroll()) {
