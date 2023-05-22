@@ -4,6 +4,9 @@ export const WIDTH = "width";
 export const LEFT = "left";
 export const TOP = "top";
 
+export const RIGHT = "right";
+export const BOTTOM = "bottom";
+
 export const BORDER_TOP_WIDTH = "border-top-width";
 export const BORDER_BOTTOM_WIDTH = "border-bottom-width";
 export const PADDING_TOP = "padding-top";

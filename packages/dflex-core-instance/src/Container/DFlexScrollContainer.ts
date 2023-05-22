@@ -14,6 +14,9 @@ import {
   getElmPos,
   getElmOverflow,
   BoxBool,
+  getStartingPointByAxis,
+  getEndingPointByAxis,
+  featureFlags,
 } from "@dflex/utils";
 
 import type { ThresholdPercentages, AbstractBox } from "@dflex/utils";
@@ -332,12 +335,6 @@ class DFlexScrollContainer {
     }
   }
 
-  /**
-   *
-   * @param axis
-   * @param direction
-   * @returns
-   */
   hasScrollableArea(axis: Axis, direction: Direction): boolean {
     if (__DEV__) {
       if (!this.hasOverflow[axis]) {
@@ -347,15 +344,26 @@ class DFlexScrollContainer {
       }
     }
 
-    const scrollRect = this.totalScrollRect[getDimensionTypeByAxis(axis)];
-    const visibleRect = this.visibleScrollRect[getDimensionTypeByAxis(axis)];
+    const start = getStartingPointByAxis(axis);
+    const end = getEndingPointByAxis(axis);
+    const dimension = getDimensionTypeByAxis(axis);
 
-    if (direction === 1) {
-      return scrollRect - visibleRect > 0;
+    const startPos = this.totalScrollRect[start];
+    const endPos = this.totalScrollRect[end];
+
+    const viewportSize = this.visibleScrollRect[dimension];
+
+    const hasScrollableArea =
+      direction === 1 ? startPos + viewportSize < endPos : startPos > 0;
+
+    if (__DEV__) {
+      if (featureFlags.enableScrollDebugger) {
+        // eslint-disable-next-line no-console
+        console.log("hasScrollableArea", hasScrollableArea);
+      }
     }
 
-    // direction === -1;
-    return visibleRect > 0;
+    return hasScrollableArea;
   }
 
   private _updateDOMDataset(

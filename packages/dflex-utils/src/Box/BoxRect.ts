@@ -1,4 +1,4 @@
-import { getDimensionTypeByAxis, getDirectionTypeByAxis } from "../collections";
+import { getDimensionTypeByAxis, getStartingPointByAxis } from "../collections";
 import { AxesPoint } from "../Point";
 import BoxNum from "./BoxNum";
 
@@ -89,7 +89,7 @@ class BoxRect extends BoxNum {
    * @returns
    */
   getPositionDiff(axis: Axis, point: AxesPoint): number {
-    const directionType = getDirectionTypeByAxis(axis);
+    const directionType = getStartingPointByAxis(axis);
 
     return this[directionType] - point[axis];
   }

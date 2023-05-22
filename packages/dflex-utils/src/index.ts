@@ -20,7 +20,9 @@ export {
   warnOnce,
   assertElementPosition,
   getDimensionTypeByAxis,
-  getDirectionTypeByAxis,
+  getStartingPointByAxis,
+  getEndingPointByAxis,
+  getOppositeAxis,
 } from "./collections";
 
 export {

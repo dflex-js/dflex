@@ -3,5 +3,7 @@ export { default as warnOnce } from "./warnOnce";
 export { default as assertElementPosition } from "./assertElementPosition";
 export {
   getDimensionTypeByAxis,
-  getDirectionTypeByAxis,
+  getStartingPointByAxis,
+  getEndingPointByAxis,
+  getOppositeAxis,
 } from "./getRectTypeByAxis";
