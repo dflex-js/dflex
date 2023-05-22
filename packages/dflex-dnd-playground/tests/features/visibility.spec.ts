@@ -107,7 +107,40 @@ test.describe.serial("Visible elements have transformation test", async () => {
     );
   });
 
-  test("Siblings index initiated correctly round 4", async () => {
-    await assertDefaultChildrenIndex(elmParent);
+  test("Scroll page to the middle", async () => {
+    await page.evaluate(() => {
+      window.scrollTo(0, document.body.scrollHeight / 2);
+    });
+  });
+
+  test("Move elm51 one step down inside the container", async () => {
+    await getDraggedRect(elements[50]);
+    await moveDragged(-1, 65);
+    await page.dispatchEvent("[id='51-extended']", "mouseup", {
+      button: 0,
+      force: true,
+    });
+  });
+
+  test("Invisible elements below 51 don't have any transformation", async () => {
+    invisibleElements = elements.slice(60); // Extract elements from index 14 onwards
+
+    await Promise.all(
+      invisibleElements.map((element) =>
+        expect(element).toHaveCSS("transform", "none")
+      )
+    );
+  });
+
+  test("Scroll page to the end and check the non-transformed elements", async () => {
+    await page.evaluate(() => {
+      window.scrollTo(0, document.body.scrollHeight);
+    });
+
+    await Promise.all(
+      invisibleElements.map((element) =>
+        expect(element).toHaveCSS("transform", "none")
+      )
+    );
   });
 });
