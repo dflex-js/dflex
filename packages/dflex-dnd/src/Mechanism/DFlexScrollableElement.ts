@@ -5,6 +5,19 @@ import DFlexPositionUpdater from "./DFlexPositionUpdater";
 import type DraggableInteractive from "../Draggable";
 import { store } from "../LayoutManager";
 
+// Enforce false state if conditions are met.
+function enforceFalseStateIfNotValid(
+  isOutByDir: boolean,
+  hasOverflow: boolean,
+  isTruthyOnSide: boolean
+) {
+  if (isOutByDir && (!hasOverflow || !isTruthyOnSide)) {
+    return false;
+  }
+
+  return isOutByDir;
+}
+
 class DFlexScrollableElement extends DFlexPositionUpdater {
   private _prevMousePosition!: PointNum;
 
@@ -140,7 +153,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     const { rect } = this.draggable.draggedElm;
 
-    const [isOut, _preservedBoxResult] = scroll.isElmOutViewport(
+    const [isOut, preservedBoxResult] = scroll.isElmOutViewport(
       absPos.top,
       absPos.left,
       rect.height,
@@ -148,48 +161,45 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       true
     );
 
-    const isOutH = false;
-    let isOutV = _preservedBoxResult.isTruthyByAxis("y");
+    const isOutV = enforceFalseStateIfNotValid(
+      preservedBoxResult.isTruthyByAxis("y"),
+      scroll.hasOverflow.y,
+      preservedBoxResult.isTruthyOnSide("y", draggedDirV)
+    );
 
-    // Enforce false state.
-    if (
-      isOutV &&
-      (!scroll.hasOverflow.y ||
-        !_preservedBoxResult.isTruthyOnSide("y", draggedDirV))
-    ) {
-      isOutV = false;
-    }
+    const isOutH = enforceFalseStateIfNotValid(
+      preservedBoxResult.isTruthyByAxis("x"),
+      scroll.hasOverflow.x,
+      preservedBoxResult.isTruthyOnSide("x", draggedDirH)
+    );
 
-    // if (
-    //   isOutH &&
-    //   (!scroll.hasOverflow.x ||
-    //     !_preservedBoxResult.isTruthyOnSide("x", draggedDirH))
-    // ) {
-    //   isOutH = false;
-    // }
-
-    _preservedBoxResult.setFalsy();
+    preservedBoxResult.setFalsy();
 
     if (__DEV__) {
       if (featureFlags.enableScrollDebugger && isOut) {
         const direction = isOutV ? "V" : "H";
 
         // eslint-disable-next-line no-console
-        console.log(`Element is out of the scroll threshold (${direction}).`);
+        console.log(`Out of the scroll threshold (${direction}).`);
       }
     }
 
     if (!isOut) {
+      if (__DEV__) {
+        if (featureFlags.enableScrollDebugger && isOut) {
+          const direction = isOutV ? "V" : "H";
+
+          // eslint-disable-next-line no-console
+          console.log(`Inside scroll threshold (${direction}).`);
+        }
+      }
+
       return;
     }
 
     const canScroll = (): boolean =>
       (isOutV && scroll.hasScrollableArea("y", draggedDirV)) ||
       (isOutH && scroll.hasScrollableArea("x", draggedDirH));
-
-    // if (isOutV && scroll.hasScrollableArea("y", draggedDirV)) {
-    //   debugger;
-    // }
 
     // If there's not scrollable area, we don't need to scroll.
     if (!canScroll()) {

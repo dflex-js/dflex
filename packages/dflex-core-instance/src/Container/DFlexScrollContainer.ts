@@ -16,6 +16,7 @@ import {
   BoxBool,
   getStartingPointByAxis,
   getEndingPointByAxis,
+  featureFlags,
 } from "@dflex/utils";
 
 import type { ThresholdPercentages, AbstractBox } from "@dflex/utils";
@@ -334,12 +335,6 @@ class DFlexScrollContainer {
     }
   }
 
-  /**
-   *
-   * @param axis
-   * @param direction
-   * @returns
-   */
   hasScrollableArea(axis: Axis, direction: Direction): boolean {
     if (__DEV__) {
       if (!this.hasOverflow[axis]) {
@@ -349,31 +344,24 @@ class DFlexScrollContainer {
       }
     }
 
-    const directionTypeStart = getStartingPointByAxis(axis);
-    const directionTypeEnd = getEndingPointByAxis(axis);
+    const start = getStartingPointByAxis(axis);
+    const end = getEndingPointByAxis(axis);
+    const dimension = getDimensionTypeByAxis(axis);
 
-    const dimensionType = getDimensionTypeByAxis(axis);
+    const startPos = this.totalScrollRect[start];
+    const endPos = this.totalScrollRect[end];
 
-    const scrollPosStart = this.totalScrollRect[directionTypeStart];
-    const scrollPosEnd = this.totalScrollRect[directionTypeEnd];
-
-    const scrollViewPortSize = this.visibleScrollRect[dimensionType];
-
-    console.log("hasScrollableArea visibleRect:", this.totalScrollRect);
-    console.log("hasScrollableArea scrollRect:", this.visibleScrollRect);
-    console.log(
-      "🚀 ~ file: DFlexScrollContainer.ts:352 ~ DFlexScrollContainer ~ hasScrollableArea ~ scrollSize:",
-      scrollPosStart,
-      scrollViewPortSize,
-      scrollPosEnd
-    );
+    const viewportSize = this.visibleScrollRect[dimension];
 
     const hasScrollableArea =
-      direction === 1
-        ? scrollPosStart + scrollViewPortSize < scrollPosEnd
-        : scrollViewPortSize > 0;
+      direction === 1 ? startPos + viewportSize < endPos : startPos > 0;
 
-    console.log("hasScrollableArea", hasScrollableArea);
+    if (__DEV__) {
+      if (featureFlags.enableScrollDebugger) {
+        // eslint-disable-next-line no-console
+        console.log("hasScrollableArea", hasScrollableArea);
+      }
+    }
 
     return hasScrollableArea;
   }
