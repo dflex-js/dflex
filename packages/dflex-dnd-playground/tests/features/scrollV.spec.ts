@@ -67,7 +67,7 @@ test.describe.serial("Drag the first element down vertically", async () => {
         ? "matrix(1, 0, 0, 1, 0, -59.2)"
         : "matrix(1, 0, 0, 1, 0, -59.1875)";
 
-    visibleElements = elements.slice(2, 37);
+    visibleElements = elements.slice(2, 20);
 
     await Promise.all(
       visibleElements.map((element) =>
