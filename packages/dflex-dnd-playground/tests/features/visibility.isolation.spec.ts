@@ -62,9 +62,14 @@ test.describe
   });
 
   test("Scroll page to the middle to check visibility updater", async () => {
-    await page.evaluate(() => {
-      window.scrollTo(0, document.body.scrollHeight / 2);
-    });
+    const pageHeight = await page.evaluate(() => document.body.scrollHeight);
+    const middleScrollPosition = pageHeight / 2;
+
+    const { mouse } = page;
+    await mouse.wheel(0, middleScrollPosition);
+
+    // Without this the test fails.
+    await page.waitForTimeout(1000);
   });
 
   test("Move elm51 outside the container", async () => {
