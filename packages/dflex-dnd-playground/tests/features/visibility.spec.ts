@@ -109,23 +109,31 @@ test.describe.serial("Visible elements have transformation test", async () => {
     );
   });
 
-  test("Scroll page to the middle", async () => {
+  test("Scroll page to the middle to check visibility updater", async () => {
     await page.evaluate(() => {
       window.scrollTo(0, document.body.scrollHeight / 2);
     });
   });
 
-  test("Move elm51 one step down inside the container", async () => {
+  test("Move elm51 outside the container", async () => {
     await getDraggedRect(elements[50]);
-    await moveDragged(-1, 65);
+    await moveDragged(-270, -1);
     await page.dispatchEvent("[id='51-extended']", "mouseup", {
       button: 0,
       force: true,
     });
+
+    visibleElements = elements.slice(50, 64); // Extract elements from index 2 to index 12
+
+    await Promise.all(
+      visibleElements.map((element) =>
+        expect(element).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)")
+      )
+    );
   });
 
   test("Invisible elements below 51 don't have any transformation", async () => {
-    invisibleElements = elements.slice(60); // Extract elements from index 14 onwards
+    invisibleElements = elements.slice(65); // Extract elements from index 14 onwards
 
     await Promise.all(
       invisibleElements.map((element) =>
