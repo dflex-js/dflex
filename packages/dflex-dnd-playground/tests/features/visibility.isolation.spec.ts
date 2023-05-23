@@ -9,13 +9,14 @@ import {
 
 import {
   //   assertChildrenOrderIDs,
-  assertDefaultChildrenIndex,
+  // assertDefaultChildrenIndex,
   getDraggedRect,
   initialize,
   moveDragged,
 } from "../utils";
 
-test.describe.serial("Visible elements have transformation test", async () => {
+test.describe
+  .serial("Visible elements have transformation after scrolling in isolation", async () => {
   let page: Page;
   let context: BrowserContext;
   let activeBrowser: Browser;
@@ -24,8 +25,6 @@ test.describe.serial("Visible elements have transformation test", async () => {
   let elements: Locator[];
   let visibleElements: Locator[];
   let invisibleElements: Locator[];
-
-  let elmParent: Locator;
 
   test.beforeAll(async ({ browser, browserName }) => {
     activeBrowser = browser;
@@ -46,67 +45,12 @@ test.describe.serial("Visible elements have transformation test", async () => {
 
     visibleElements = elements.slice(2, 13); // Extract elements from index 2 to index 12
     invisibleElements = elements.slice(14); // Extract elements from index 14 onwards
-
-    elmParent = page.locator("#dflex_id_0");
   });
 
   test.afterAll(async () => {
     await page.close();
     await context.close();
     // await activeBrowser.close();
-  });
-
-  test("Siblings index initiated correctly", async () => {
-    await assertDefaultChildrenIndex(elmParent);
-  });
-
-  test("Move elm1 outside the container", async () => {
-    await getDraggedRect(elements[0]);
-    await moveDragged(-270, -1);
-  });
-
-  test("Only visible siblings are transformed", async ({ browserName }) => {
-    const expectedResult =
-      browserName === "firefox"
-        ? "matrix(1, 0, 0, 1, 0, -59.2)"
-        : "matrix(1, 0, 0, 1, 0, -59.1875)";
-
-    await Promise.all(
-      visibleElements.map((element) =>
-        expect(element).toHaveCSS("transform", expectedResult)
-      )
-    );
-  });
-
-  test("Invisible siblings are not transformed", async () => {
-    await Promise.all(
-      invisibleElements.map((element) =>
-        expect(element).toHaveCSS("transform", "none")
-      )
-    );
-  });
-
-  test("Release dragged", async () => {
-    await page.dispatchEvent("[id='1-extended']", "mouseup", {
-      button: 0,
-      force: true,
-    });
-  });
-
-  test("Visible siblings return to initial positions", async () => {
-    await Promise.all(
-      visibleElements.map((element) =>
-        expect(element).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)")
-      )
-    );
-  });
-
-  test("Invisible elements don't have any transformation", async () => {
-    await Promise.all(
-      invisibleElements.map((element) =>
-        expect(element).toHaveCSS("transform", "none")
-      )
-    );
   });
 
   test("Scroll page to the middle to check visibility updater", async () => {
@@ -133,7 +77,7 @@ test.describe.serial("Visible elements have transformation test", async () => {
   });
 
   test("Invisible elements below 51 don't have any transformation", async () => {
-    invisibleElements = elements.slice(65); // Extract elements from index 14 onwards
+    invisibleElements = elements.slice(0, 50).concat(elements.slice(66, 101));
 
     await Promise.all(
       invisibleElements.map((element) =>
