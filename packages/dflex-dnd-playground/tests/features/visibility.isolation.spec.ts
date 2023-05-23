@@ -9,7 +9,7 @@ import {
 
 import {
   //   assertChildrenOrderIDs,
-  // assertDefaultChildrenIndex,
+  assertDefaultChildrenIndex,
   getDraggedRect,
   initialize,
   moveDragged,
@@ -25,6 +25,8 @@ test.describe
   let elements: Locator[];
   let visibleElements: Locator[];
   let invisibleElements: Locator[];
+
+  let elmParent: Locator;
 
   test.beforeAll(async ({ browser, browserName }) => {
     activeBrowser = browser;
@@ -45,12 +47,18 @@ test.describe
 
     visibleElements = elements.slice(2, 13); // Extract elements from index 2 to index 12
     invisibleElements = elements.slice(14); // Extract elements from index 14 onwards
+
+    elmParent = page.locator("#dflex_id_0");
   });
 
   test.afterAll(async () => {
     await page.close();
     await context.close();
     // await activeBrowser.close();
+  });
+
+  test("Siblings index initiated correctly", async () => {
+    await assertDefaultChildrenIndex(elmParent);
   });
 
   test("Scroll page to the middle to check visibility updater", async () => {
@@ -77,7 +85,7 @@ test.describe
   });
 
   test("Invisible elements below 51 don't have any transformation", async () => {
-    invisibleElements = elements.slice(0, 50).concat(elements.slice(66, 101));
+    invisibleElements = elements.slice(0, 50);
 
     await Promise.all(
       invisibleElements.map((element) =>
@@ -86,10 +94,8 @@ test.describe
     );
   });
 
-  test("Scroll page to the end and check the non-transformed elements", async () => {
-    await page.evaluate(() => {
-      window.scrollTo(0, document.body.scrollHeight);
-    });
+  test("Invisible elements above 65 don't have any transformation", async () => {
+    invisibleElements = elements.slice(66, 101);
 
     await Promise.all(
       invisibleElements.map((element) =>
