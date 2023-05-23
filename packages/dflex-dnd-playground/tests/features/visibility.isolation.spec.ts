@@ -64,12 +64,21 @@ test.describe
   test("Scroll page to the middle to check visibility updater", async () => {
     const pageHeight = await page.evaluate(() => document.body.scrollHeight);
     const middleScrollPosition = pageHeight / 2;
+    const scrollStep = 100; // Number of pixels to scroll in each step
+    const scrollDelay = 100; // Delay in milliseconds between each scroll step
 
     const { mouse } = page;
-    await mouse.wheel(0, middleScrollPosition);
 
-    // Without this the test fails.
-    await page.waitForTimeout(1000);
+    for (
+      let scrollDistance = 0;
+      scrollDistance <= middleScrollPosition;
+      scrollDistance += scrollStep
+    ) {
+      // eslint-disable-next-line no-await-in-loop
+      await mouse.wheel(0, scrollStep);
+      // eslint-disable-next-line no-await-in-loop
+      await page.waitForTimeout(scrollDelay);
+    }
   });
 
   test("Move elm51 outside the container", async () => {
