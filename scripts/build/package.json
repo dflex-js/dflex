@@ -7,14 +7,14 @@
   "type": "module",
   "dependencies": {
     "@rollup/plugin-alias": "^5.0.0",
-    "@rollup/plugin-commonjs": "^24.1.0",
+    "@rollup/plugin-commonjs": "^25.0.0",
     "@rollup/plugin-node-resolve": "^15.0.2",
     "@rollup/plugin-replace": "^5.0.2",
-    "@rollup/plugin-terser": "^0.4.1",
-    "esbuild": "^0.17.18",
+    "@rollup/plugin-terser": "^0.4.3",
+    "esbuild": "^0.17.19",
     "minimist": "^1.2.8",
     "npm-packages": "workspace:*",
-    "rollup": "^3.21.6",
+    "rollup": "^3.23.0",
     "rollup-plugin-esbuild": "^5.0.0"
   }
 }
