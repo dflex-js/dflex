@@ -65,13 +65,15 @@ test.describe.serial("Visible elements have transformation test", async () => {
     await moveDragged(-270, -1);
   });
 
-  test("Only visible siblings are transformed", async () => {
+  test("Only visible siblings are transformed", async ({ browserName }) => {
+    const expectedResult =
+      browserName === "firefox"
+        ? "matrix(1, 0, 0, 1, 0, -59.2)"
+        : "matrix(1, 0, 0, 1, 0, -59.1875)";
+
     await Promise.all(
       visibleElements.map((element) =>
-        expect(element).toHaveCSS(
-          "transform",
-          "matrix(1, 0, 0, 1, 0, -59.1875)"
-        )
+        expect(element).toHaveCSS("transform", expectedResult)
       )
     );
   });
