@@ -9,7 +9,7 @@ import {
 
 import {
   //   assertChildrenOrderIDs,
-  //   assertDefaultChildrenIndex,
+  assertDefaultChildrenIndex,
   getDraggedRect,
   initialize,
   moveDragged,
@@ -25,7 +25,7 @@ test.describe.serial("Drag the first element down vertically", async () => {
   let visibleElements: Locator[];
   let invisibleElements: Locator[];
 
-  //   let elmParent: Locator;
+  let elmParent: Locator;
 
   let viewportHeight: number;
 
@@ -46,6 +46,8 @@ test.describe.serial("Drag the first element down vertically", async () => {
       Promise.all(elementSelectors.map((selector) => page.locator(selector))),
       page.evaluate(() => window.innerHeight),
     ]);
+
+    elmParent = page.locator("#dflex_id_0");
   });
 
   test.afterAll(async () => {
@@ -58,6 +60,10 @@ test.describe.serial("Drag the first element down vertically", async () => {
     ({ browserName }) => browserName === "firefox",
     "TODO.. If you see it please work on it."
   );
+
+  test("Siblings index initiated correctly", async () => {
+    await assertDefaultChildrenIndex(elmParent);
+  });
 
   test("Move elm1 outside the container down into elm38", async () => {
     await getDraggedRect(elements[0]);
