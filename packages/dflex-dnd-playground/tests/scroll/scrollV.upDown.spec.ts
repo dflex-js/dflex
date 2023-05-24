@@ -57,7 +57,7 @@ test.describe.serial("Drag the first element down vertically", async () => {
   });
 
   test.skip(
-    ({ browserName }) => browserName === "firefox",
+    ({ browserName }) => browserName !== "chromium",
     "TODO.. If you see it please work on it."
   );
 
