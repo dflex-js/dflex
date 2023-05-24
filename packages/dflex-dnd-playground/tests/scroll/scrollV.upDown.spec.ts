@@ -42,11 +42,10 @@ test.describe.serial("Drag the first element down vertically", async () => {
       (_, index) => `[id='${index + 1}-extended']`
     );
 
-    elements = await Promise.all(
-      elementSelectors.map((selector) => page.locator(selector))
-    );
-
-    viewportHeight = await page.evaluate(() => window.innerHeight);
+    [elements, viewportHeight] = await Promise.all([
+      Promise.all(elementSelectors.map((selector) => page.locator(selector))),
+      page.evaluate(() => window.innerHeight),
+    ]);
   });
 
   test.afterAll(async () => {
@@ -115,7 +114,6 @@ test.describe.serial("Drag the first element down vertically", async () => {
       button: 0,
       force: true,
     });
-    // await page.waitForTimeout(13 * 1000);
   });
 
   test("Pending elements still hold their old positions", async () => {
@@ -133,6 +131,22 @@ test.describe.serial("Drag the first element down vertically", async () => {
 
   test("Non-Pending elements are back to their positions", async () => {
     visibleElements = elements.slice(90);
+
+    await Promise.all(
+      visibleElements.map((element) =>
+        expect(element).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)")
+      )
+    );
+  });
+
+  test("Scroll page from bottom to top", async () => {
+    await page.evaluate(() => {
+      window.scrollTo(0, 0);
+    });
+  });
+
+  test("Visible elements in the top return to their position", async () => {
+    visibleElements = elements.slice(0, 10);
 
     await Promise.all(
       visibleElements.map((element) =>

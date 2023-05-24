@@ -100,8 +100,6 @@ class DFlexCoreElement extends DFlexBaseElement {
 
   private _computedDimensions: PointNum | null;
 
-  // margin: BoxRect | null;
-
   VDOMOrder: DFlexDOMGenOrder;
 
   DOMOrder: DFlexDOMGenOrder;
