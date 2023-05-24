@@ -100,8 +100,6 @@ class DFlexCoreElement extends DFlexBaseElement {
 
   private _computedDimensions: PointNum | null;
 
-  // margin: BoxRect | null;
-
   VDOMOrder: DFlexDOMGenOrder;
 
   DOMOrder: DFlexDOMGenOrder;
@@ -206,16 +204,17 @@ class DFlexCoreElement extends DFlexBaseElement {
   }
 
   private _transform(DOM: HTMLElement, cb?: () => void): void {
+    if (!this.isVisible) {
+      this.hasPendingTransform = true;
+      return;
+    }
+
     if (this.animatedFrame !== null) {
       cancelAnimationFrame(this.animatedFrame);
     }
 
     this.animatedFrame = requestAnimationFrame(() => {
       DFlexCoreElement.transform(DOM, this.translate.x, this.translate.y);
-
-      if (this.hasPendingTransform) {
-        this.hasPendingTransform = false;
-      }
 
       if (cb) {
         cb();
