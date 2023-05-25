@@ -23,6 +23,16 @@ function easeOutCubic(t: number) {
   return --t * t * t + 1;
 }
 
+function calculateScrollThrottleMS(width: number, height: number): number {
+  const throttleFactor: number = 8.5;
+
+  const scrollThrottleMS: number = Math.round(
+    width > height ? width / throttleFactor : height / throttleFactor
+  );
+
+  return scrollThrottleMS;
+}
+
 class DFlexScrollableElement extends DFlexPositionUpdater {
   private _prevMousePosition!: PointNum;
 
@@ -77,9 +87,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       visibleScrollRect: { width, height },
     } = store.scrolls.get(SK)!;
 
-    this._scrollThrottleMS = Math.round(
-      width > height ? width / 8.5 : height / 8.5
-    );
+    this._scrollThrottleMS = calculateScrollThrottleMS(width, height);
 
     this.initialScrollPosition.setAxes(left, top);
     this.currentScrollAxes.setAxes(left, top);
@@ -226,10 +234,14 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     let scrollingAxis: Axis = "y";
     let scrollingDirection: Direction = draggedDirV;
+    let EXECUTION_FRAME_RATE_MS = 0;
 
     if (isOutH) {
       scrollingAxis = "x";
       scrollingDirection = draggedDirV;
+      EXECUTION_FRAME_RATE_MS = Math.round(scroll.totalScrollRect.width / 2);
+    } else {
+      EXECUTION_FRAME_RATE_MS = Math.round(scroll.totalScrollRect.height / 2);
     }
 
     if (__DEV__) {
@@ -258,15 +270,10 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     let startingTime: number;
     let prevTimestamp: number;
 
-    const EXECUTION_FRAME_RATE_MS_V = Math.round(
-      scroll.totalScrollRect.height / 2
-    );
-    const EXECUTION_FRAME_RATE_MS_H = Math.round(
-      scroll.totalScrollRect.width / 2
-    );
-
     const scrollAnimatedFrame = (timestamp: number) => {
       scroll.pauseListeners(true);
+
+      // extract starts here..
 
       if (startingTime === undefined) {
         startingTime = timestamp;
@@ -275,17 +282,9 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       const elapsed = timestamp - startingTime;
 
       if (prevTimestamp !== timestamp) {
-        if (isOutV) {
-          this._scroll("y", draggedDirV);
-        }
+        this._scroll(scrollingAxis, scrollingDirection);
 
-        if (isOutH) {
-          this._scroll("x", draggedDirH);
-        }
-
-        const acc = isOutV
-          ? easeOutCubic(elapsed / EXECUTION_FRAME_RATE_MS_V)
-          : easeOutCubic(elapsed / EXECUTION_FRAME_RATE_MS_H);
+        const acc = easeOutCubic(elapsed / EXECUTION_FRAME_RATE_MS);
 
         // Increase scroll speed.
         this._lastScrollSpeed += Math.round(acc);
@@ -294,7 +293,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       }
 
       // Stop the animation after 2 seconds
-      if (elapsed < EXECUTION_FRAME_RATE_MS_V) {
+      if (elapsed < EXECUTION_FRAME_RATE_MS) {
         prevTimestamp = timestamp;
 
         if (canScroll) {
@@ -304,6 +303,8 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
         return;
       }
+
+      // extract ends here..
 
       this._throttleScrolling();
 
