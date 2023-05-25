@@ -71,9 +71,9 @@ class EndCycle extends DFlexMechanismController {
 
     let isFallback = false;
 
-    if (this.isScrolling()) {
+    if (this.hasActiveScrolling()) {
       isFallback = true;
-      this.cancelAndThrottleScrolling(store.scrolls.get(latestCycle.SK)!);
+      this.cancelScrolling(store.scrolls.get(latestCycle.SK)!);
     } else {
       isFallback = this.draggable.isNotSettled();
     }
