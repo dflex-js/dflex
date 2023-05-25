@@ -183,13 +183,17 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     const { rect } = this.draggable.draggedElm;
 
-    const [isOut, preservedBoxResult] = scroll.isElmOutViewport(
+    const [isOutInitial, preservedBoxResult] = scroll.isElmOutViewport(
       absPos.top,
       absPos.left,
       rect.height,
       rect.width,
       true
     );
+
+    if (!isOutInitial) {
+      return;
+    }
 
     const isOutV = enforceFalseStateIfNotValid(
       preservedBoxResult.isTruthyByAxis("y"),
@@ -203,36 +207,45 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       preservedBoxResult.isTruthyOnSide("x", draggedDirH)
     );
 
+    // Override the final result after overriding the subs.
+    const isOut = isOutV || isOutH;
+
     preservedBoxResult.setFalsy();
 
-    if (__DEV__) {
-      if (featureFlags.enableScrollDebugger && isOut) {
-        const direction = isOutV ? "V" : "H";
-
-        // eslint-disable-next-line no-console
-        console.log(`Out of the scroll threshold (${direction}).`);
-      }
-    }
-
     if (!isOut) {
-      if (__DEV__) {
-        if (featureFlags.enableScrollDebugger) {
-          const direction = isOutV ? "V" : "H";
-
-          // eslint-disable-next-line no-console
-          console.log(`Inside scroll threshold (${direction}).`);
-        }
-      }
-
       return;
     }
 
-    const canScroll = (): boolean =>
-      (isOutV && scroll.hasScrollableArea("y", draggedDirV)) ||
-      (isOutH && scroll.hasScrollableArea("x", draggedDirH));
+    if (__DEV__) {
+      if (isOutH && isOutV) {
+        throw new Error(
+          "_scrollManager: Invalid scroll direction Cannot scroll both horizontally and vertically simultaneously"
+        );
+      }
+    }
 
-    // If there's not scrollable area, we don't need to scroll.
-    if (!canScroll()) {
+    let scrollingAxis: Axis = "y";
+    let scrollingDirection: Direction = draggedDirV;
+
+    if (isOutH) {
+      scrollingAxis = "x";
+      scrollingDirection = draggedDirV;
+    }
+
+    if (__DEV__) {
+      if (featureFlags.enableScrollDebugger && isOut) {
+        // eslint-disable-next-line no-console
+        console.log(`Out of the scroll threshold (${scrollingAxis}).`);
+      }
+    }
+
+    const canScroll: boolean = scroll.hasScrollableArea(
+      scrollingAxis,
+      scrollingDirection
+    );
+
+    if (!canScroll) {
+      // If there's not scrollable area, we don't need to scroll.
       if (this._scrollAnimatedFrame !== null) {
         this.cancelScrolling(scroll);
       }
@@ -284,7 +297,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       if (elapsed < EXECUTION_FRAME_RATE_MS_V) {
         prevTimestamp = timestamp;
 
-        if (canScroll()) {
+        if (canScroll) {
           this._scrollAnimatedFrame =
             requestAnimationFrame(scrollAnimatedFrame);
         }
