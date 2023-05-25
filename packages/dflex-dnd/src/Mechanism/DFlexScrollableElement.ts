@@ -273,8 +273,6 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     const scrollAnimatedFrame = (timestamp: number) => {
       scroll.pauseListeners(true);
 
-      // extract starts here..
-
       if (startingTime === undefined) {
         startingTime = timestamp;
       }
@@ -303,8 +301,6 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
         return;
       }
-
-      // extract ends here..
 
       this._throttleScrolling();
 
