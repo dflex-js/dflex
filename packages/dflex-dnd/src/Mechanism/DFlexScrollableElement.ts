@@ -18,6 +18,11 @@ function enforceFalseStateIfNotValid(
   return isOutByDir;
 }
 
+function easeOutCubic(t: number) {
+  // eslint-disable-next-line no-plusplus
+  return --t * t * t + 1;
+}
+
 class DFlexScrollableElement extends DFlexPositionUpdater {
   private _prevMousePosition!: PointNum;
 
@@ -34,11 +39,6 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
   protected readonly initialScrollPosition!: PointNum;
 
   protected currentScrollAxes!: PointNum;
-
-  private static easeOutCubic(t: number) {
-    // eslint-disable-next-line no-plusplus
-    return --t * t * t + 1;
-  }
 
   constructor(draggable: DraggableInteractive) {
     super(draggable);
@@ -114,7 +114,8 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
   private _throttleScrolling(): void {
     if (__DEV__) {
       if (this._scrollThrottleTimeout !== undefined) {
-        throw new Error("_throttleScrolling: Scroll is already throttled.");
+        // eslint-disable-next-line no-console
+        console.log("_throttleScrolling: Scroll is already throttled.");
       }
 
       if (featureFlags.enableScrollDebugger) {
@@ -270,12 +271,8 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
         }
 
         const acc = isOutV
-          ? DFlexScrollableElement.easeOutCubic(
-              elapsed / EXECUTION_FRAME_RATE_MS_V
-            )
-          : DFlexScrollableElement.easeOutCubic(
-              elapsed / EXECUTION_FRAME_RATE_MS_H
-            );
+          ? easeOutCubic(elapsed / EXECUTION_FRAME_RATE_MS_V)
+          : easeOutCubic(elapsed / EXECUTION_FRAME_RATE_MS_H);
 
         // Increase scroll speed.
         this._lastScrollSpeed += Math.round(acc);
@@ -295,11 +292,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
         return;
       }
 
-      clearTimeout(this._scrollThrottleTimeout);
-
-      this._scrollThrottleTimeout = setTimeout(() => {
-        this._scrollThrottleTimeout = undefined;
-      }, this._scrollThrottleMS);
+      this._throttleScrolling();
 
       scroll.pauseListeners(false);
     };
