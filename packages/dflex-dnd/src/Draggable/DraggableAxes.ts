@@ -428,7 +428,8 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     return this.threshold.isOutThreshold(
       key,
       this._absoluteCurrentPosition,
-      true
+      true,
+      null
     );
   }
 

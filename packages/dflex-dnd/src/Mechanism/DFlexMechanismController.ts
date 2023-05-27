@@ -678,7 +678,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     if (scroll.enable) {
       this.scrollFeed(x, y, SK);
 
-      if (this.isScrolling()) {
+      if (this.hasActiveScrolling()) {
         if (!this._hasBeenScrolling) {
           scheduler(store, null, {
             onUpdate: () => {
