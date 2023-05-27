@@ -5,19 +5,6 @@ import DFlexPositionUpdater from "./DFlexPositionUpdater";
 import type DraggableInteractive from "../Draggable";
 import { store } from "../LayoutManager";
 
-// Enforce false state if conditions are met.
-function enforceFalseStateIfNotValid(
-  isOutByDir: boolean,
-  hasOverflow: boolean,
-  isTruthyOnSide: boolean
-) {
-  if (isOutByDir && (!hasOverflow || !isTruthyOnSide)) {
-    return false;
-  }
-
-  return isOutByDir;
-}
-
 function easeOutCubic(t: number) {
   // eslint-disable-next-line no-plusplus
   return --t * t * t + 1;
@@ -200,20 +187,18 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     );
 
     if (!isOutInitial) {
+      if (__DEV__) {
+        if (featureFlags.enableScrollDebugger) {
+          // eslint-disable-next-line no-console
+          console.log("Scroll initially is inside threshold.");
+        }
+      }
+
       return;
     }
 
-    const isOutV = enforceFalseStateIfNotValid(
-      preservedBoxResult.isTruthyByAxis("y"),
-      scroll.hasOverflow.y,
-      preservedBoxResult.isTruthyOnSide("y", draggedDirV)
-    );
-
-    const isOutH = enforceFalseStateIfNotValid(
-      preservedBoxResult.isTruthyByAxis("x"),
-      scroll.hasOverflow.x,
-      preservedBoxResult.isTruthyOnSide("x", draggedDirH)
-    );
+    const isOutV = preservedBoxResult.isTruthyOnSide("y", draggedDirV);
+    const isOutH = preservedBoxResult.isTruthyOnSide("x", draggedDirH);
 
     // Override the final result after overriding the subs.
     const isOut = isOutV || isOutH;
@@ -221,6 +206,13 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     preservedBoxResult.setFalsy();
 
     if (!isOut) {
+      if (__DEV__) {
+        if (featureFlags.enableScrollDebugger) {
+          // eslint-disable-next-line no-console
+          console.log("Scroll isOut is overwritten to false.");
+        }
+      }
+
       return;
     }
 

@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import { PointNum } from "../Point";
 
-import type { Dimensions } from "../types";
+import type { Axis, Dimensions } from "../types";
 
 import { AbstractBox, BoxBool, BoxNum, AbstractBoxRect } from "../Box";
 
@@ -144,12 +144,18 @@ class DFlexThreshold {
     this._setDepthThreshold(insertionLayerKey, childDepth);
   }
 
-  isOutThreshold(key: string, box: BoxNum, isPreserveResult: boolean): boolean {
+  isOutThreshold(
+    key: string,
+    box: BoxNum,
+    isPreserveResult: boolean,
+    axis: Axis | null
+  ): boolean {
     const thresholdBox = this.thresholds[key];
 
     return box.isOutThreshold(
       thresholdBox,
-      isPreserveResult ? this.isOut[key] : undefined
+      isPreserveResult ? this.isOut[key] : null,
+      axis
     );
   }
 

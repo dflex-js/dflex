@@ -1,3 +1,4 @@
+import { Axis } from "../types";
 import type AbstractBox from "./AbstractBox";
 import Box from "./Box";
 import BoxBool from "./BoxBool";
@@ -105,38 +106,58 @@ class BoxNum extends Box<number> {
   //   return false;
   // }
 
-  isOutThreshold(threshold: AbstractBox, isOut?: BoxBool) {
-    if (isOut) {
-      isOut.setBox(false, false, false, false);
+  isOutThreshold(
+    threshold: AbstractBox,
+    preservedBoxResult: BoxBool | null,
+    axis: Axis | null
+  ) {
+    if (preservedBoxResult) {
+      preservedBoxResult.setBox(false, false, false, false);
     }
 
-    if (this._isAboveThresholdTop(threshold)) {
-      if (isOut) {
-        isOut.top = true;
+    let checkTop: boolean = true;
+    let checkBottom: boolean = true;
+
+    let checkRight: boolean = true;
+    let checkLeft: boolean = true;
+
+    if (axis) {
+      if (axis === "y") {
+        checkRight = false;
+        checkLeft = false;
+      } else {
+        checkTop = false;
+        checkBottom = false;
+      }
+    }
+
+    if (checkTop && this._isAboveThresholdTop(threshold)) {
+      if (preservedBoxResult) {
+        preservedBoxResult.top = true;
       }
 
       return true;
     }
 
-    if (this._isRightOfThresholdRight(threshold)) {
-      if (isOut) {
-        isOut.right = true;
+    if (checkRight && this._isRightOfThresholdRight(threshold)) {
+      if (preservedBoxResult) {
+        preservedBoxResult.right = true;
       }
 
       return true;
     }
 
-    if (this._isBelowThresholdBottom(threshold)) {
-      if (isOut) {
-        isOut.bottom = true;
+    if (checkBottom && this._isBelowThresholdBottom(threshold)) {
+      if (preservedBoxResult) {
+        preservedBoxResult.bottom = true;
       }
 
       return true;
     }
 
-    if (this._isLeftOfThresholdLeft(threshold)) {
-      if (isOut) {
-        isOut.left = true;
+    if (checkLeft && this._isLeftOfThresholdLeft(threshold)) {
+      if (preservedBoxResult) {
+        preservedBoxResult.left = true;
       }
 
       return true;
