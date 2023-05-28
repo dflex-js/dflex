@@ -563,7 +563,6 @@ class DFlexScrollContainer {
     const isOutThreshold = threshold!.isOutThreshold(
       key,
       targetBox,
-      isInner,
       this.hasOverflow.y ? "y" : "x"
     );
 

@@ -108,12 +108,10 @@ class BoxNum extends Box<number> {
 
   isOutThreshold(
     threshold: AbstractBox,
-    preservedBoxResult: BoxBool | null,
+    preservedBoxResult: BoxBool,
     axis: Axis | null
   ) {
-    if (preservedBoxResult) {
-      preservedBoxResult.setBox(false, false, false, false);
-    }
+    preservedBoxResult.setBox(false, false, false, false);
 
     if (axis) {
       if (axis === "y") {
@@ -121,15 +119,11 @@ class BoxNum extends Box<number> {
         const isBelow = this._isBelowThresholdBottom(threshold);
 
         if (isAbove) {
-          if (preservedBoxResult) {
-            preservedBoxResult.top = true;
-          }
+          preservedBoxResult.top = true;
         }
 
         if (isBelow) {
-          if (preservedBoxResult) {
-            preservedBoxResult.bottom = true;
-          }
+          preservedBoxResult.bottom = true;
         }
 
         return isAbove || isBelow;
@@ -139,48 +133,36 @@ class BoxNum extends Box<number> {
       const isRight = this._isRightOfThresholdRight(threshold);
 
       if (isLeft) {
-        if (preservedBoxResult) {
-          preservedBoxResult.left = true;
-        }
+        preservedBoxResult.left = true;
       }
 
       if (isRight) {
-        if (preservedBoxResult) {
-          preservedBoxResult.right = true;
-        }
+        preservedBoxResult.right = true;
       }
 
       return isLeft || isRight;
     }
 
     if (this._isAboveThresholdTop(threshold)) {
-      if (preservedBoxResult) {
-        preservedBoxResult.top = true;
-      }
+      preservedBoxResult.top = true;
 
       return true;
     }
 
     if (this._isRightOfThresholdRight(threshold)) {
-      if (preservedBoxResult) {
-        preservedBoxResult.right = true;
-      }
+      preservedBoxResult.right = true;
 
       return true;
     }
 
     if (this._isBelowThresholdBottom(threshold)) {
-      if (preservedBoxResult) {
-        preservedBoxResult.bottom = true;
-      }
+      preservedBoxResult.bottom = true;
 
       return true;
     }
 
     if (this._isLeftOfThresholdLeft(threshold)) {
-      if (preservedBoxResult) {
-        preservedBoxResult.left = true;
-      }
+      preservedBoxResult.left = true;
 
       return true;
     }

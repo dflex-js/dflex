@@ -144,19 +144,10 @@ class DFlexThreshold {
     this._setDepthThreshold(insertionLayerKey, childDepth);
   }
 
-  isOutThreshold(
-    key: string,
-    box: BoxNum,
-    isPreserveResult: boolean,
-    axis: Axis | null
-  ): boolean {
+  isOutThreshold(key: string, box: BoxNum, axis: Axis | null): boolean {
     const thresholdBox = this.thresholds[key];
 
-    return box.isOutThreshold(
-      thresholdBox,
-      isPreserveResult ? this.isOut[key] : null,
-      axis
-    );
+    return box.isOutThreshold(thresholdBox, this.isOut[key], axis);
   }
 
   destroy(): void {
