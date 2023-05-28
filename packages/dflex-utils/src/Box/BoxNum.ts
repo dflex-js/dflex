@@ -115,23 +115,45 @@ class BoxNum extends Box<number> {
       preservedBoxResult.setBox(false, false, false, false);
     }
 
-    let checkTop: boolean = true;
-    let checkBottom: boolean = true;
-
-    let checkRight: boolean = true;
-    let checkLeft: boolean = true;
-
     if (axis) {
       if (axis === "y") {
-        checkRight = false;
-        checkLeft = false;
-      } else {
-        checkTop = false;
-        checkBottom = false;
+        const isAbove = this._isAboveThresholdTop(threshold);
+        const isBelow = this._isBelowThresholdBottom(threshold);
+
+        if (isAbove) {
+          if (preservedBoxResult) {
+            preservedBoxResult.top = true;
+          }
+        }
+
+        if (isBelow) {
+          if (preservedBoxResult) {
+            preservedBoxResult.bottom = true;
+          }
+        }
+
+        return isAbove || isBelow;
       }
+
+      const isLeft = this._isLeftOfThresholdLeft(threshold);
+      const isRight = this._isRightOfThresholdRight(threshold);
+
+      if (isLeft) {
+        if (preservedBoxResult) {
+          preservedBoxResult.left = true;
+        }
+      }
+
+      if (isRight) {
+        if (preservedBoxResult) {
+          preservedBoxResult.right = true;
+        }
+      }
+
+      return isLeft || isRight;
     }
 
-    if (checkTop && this._isAboveThresholdTop(threshold)) {
+    if (this._isAboveThresholdTop(threshold)) {
       if (preservedBoxResult) {
         preservedBoxResult.top = true;
       }
@@ -139,7 +161,7 @@ class BoxNum extends Box<number> {
       return true;
     }
 
-    if (checkRight && this._isRightOfThresholdRight(threshold)) {
+    if (this._isRightOfThresholdRight(threshold)) {
       if (preservedBoxResult) {
         preservedBoxResult.right = true;
       }
@@ -147,7 +169,7 @@ class BoxNum extends Box<number> {
       return true;
     }
 
-    if (checkBottom && this._isBelowThresholdBottom(threshold)) {
+    if (this._isBelowThresholdBottom(threshold)) {
       if (preservedBoxResult) {
         preservedBoxResult.bottom = true;
       }
@@ -155,7 +177,7 @@ class BoxNum extends Box<number> {
       return true;
     }
 
-    if (checkLeft && this._isLeftOfThresholdLeft(threshold)) {
+    if (this._isLeftOfThresholdLeft(threshold)) {
       if (preservedBoxResult) {
         preservedBoxResult.left = true;
       }
