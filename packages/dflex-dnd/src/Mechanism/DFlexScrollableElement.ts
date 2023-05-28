@@ -178,7 +178,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     const { rect } = this.draggable.draggedElm;
 
-    const [isOutInitial, preservedBoxResult] = scroll.isElmOutViewport(
+    const [isOut, preservedBoxResult] = scroll.isElmOutViewport(
       absPos.top,
       absPos.left,
       rect.height,
@@ -186,7 +186,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       true
     );
 
-    if (!isOutInitial) {
+    if (!isOut) {
       if (__DEV__) {
         if (featureFlags.enableScrollDebugger) {
           // eslint-disable-next-line no-console
@@ -200,29 +200,21 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     const isOutV = preservedBoxResult.isTruthyOnSide("y", draggedDirV);
     const isOutH = preservedBoxResult.isTruthyOnSide("x", draggedDirH);
 
-    // Override the final result after overriding the subs.
-    const isOut = isOutV || isOutH;
-
-    preservedBoxResult.setFalsy();
-
-    if (!isOut) {
+    if (!(isOutV || isOutH)) {
       if (__DEV__) {
         if (featureFlags.enableScrollDebugger) {
           // eslint-disable-next-line no-console
-          console.log("Scroll isOut is overwritten to false.");
+          console.warn(
+            "Scroll is initially outside the threshold, but the desired direction is inside. Scroll: ",
+            preservedBoxResult
+          );
         }
       }
 
       return;
     }
 
-    if (__DEV__) {
-      if (isOutH && isOutV) {
-        throw new Error(
-          "_scrollManager: Invalid scroll direction Cannot scroll both horizontally and vertically simultaneously"
-        );
-      }
-    }
+    preservedBoxResult.setFalsy();
 
     let scrollingAxis: Axis = "y";
     let scrollingDirection: Direction = draggedDirV;
