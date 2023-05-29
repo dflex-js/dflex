@@ -518,12 +518,9 @@ class DFlexScrollContainer {
     topPos: number,
     leftPos: number,
     height: number,
-    width: number,
-    isInner: boolean
+    width: number
   ): [boolean, BoxBool] {
-    const instance = isInner
-      ? this._thresholdInViewport.inner
-      : this._thresholdInViewport.outer;
+    const instance = this._thresholdInViewport.outer;
 
     if (__DEV__) {
       if (!instance) {
@@ -563,6 +560,43 @@ class DFlexScrollContainer {
     const isOutThreshold = threshold!.isOutThreshold(
       key,
       targetBox,
+      this.hasOverflow.y ? "y" : "x"
+    );
+
+    const preservedBoxResult = threshold!.isOut[key];
+
+    return [isOutThreshold, preservedBoxResult];
+  }
+
+  isElmOutViewport2(viewportPos: BoxNum): [boolean, BoxBool] {
+    const instance = this._thresholdInViewport.inner;
+
+    if (__DEV__) {
+      if (!instance) {
+        throw new Error(
+          "isElmOutViewport: _thresholdInViewport is not initialized. Please call setInnerThreshold() method before using isElmOutViewport()."
+        );
+      }
+
+      if (!this.hasOverflow) {
+        throw new Error(
+          "isElmOutViewport: Scrollable element does not have overflow."
+        );
+      }
+
+      if (this.hasOverflow.x && this.hasOverflow.y) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          "isElmOutViewport: Scrollable element has overflow in both x and y directions."
+        );
+      }
+    }
+
+    const { threshold, key } = instance;
+
+    const isOutThreshold = threshold!.isOutThreshold(
+      key,
+      viewportPos,
       this.hasOverflow.y ? "y" : "x"
     );
 

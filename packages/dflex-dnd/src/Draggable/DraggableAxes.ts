@@ -90,7 +90,9 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
    *
    * Note: Scroll position included, these points ignore viewport.
    */
-  private _absoluteCurrentPosition: BoxNum;
+  private _absoluteCurrentPos: BoxNum;
+
+  private _viewportCurrentPos: BoxNum;
 
   private _prevPoint: PointNum;
 
@@ -185,7 +187,14 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     const lm = Math.round(parseFloat(style.marginLeft));
     this.marginX = rm + lm;
 
-    this._absoluteCurrentPosition = new BoxNum(
+    this._absoluteCurrentPos = new BoxNum(
+      rect.top,
+      rect.right,
+      rect.bottom,
+      rect.left
+    );
+
+    this._viewportCurrentPos = new BoxNum(
       rect.top,
       rect.right,
       rect.bottom,
@@ -271,24 +280,43 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     return x;
   }
 
-  /**
-   *
-   * @param x
-   * @param y
-   */
-  setAbsoluteCurrentPosition(x: number, y: number): void {
-    const pre = this._absoluteCurrentPosition;
-
+  private _updatePrevPos() {
+    const pre = this._viewportCurrentPos;
     this._prevPoint.setAxes(pre.left, pre.top);
+  }
 
+  private _getEdgePos(x: number, y: number) {
     const edgePosLeft = x - this.innerOffset.x;
     const edgePosTop = y - this.innerOffset.y;
+
+    return [edgePosLeft, edgePosTop];
+  }
+
+  setAbsoluteCurrentPos(
+    x: number,
+    y: number,
+    scrollOffsetX: number,
+    scrollOffsetY: number
+  ): void {
+    this._updatePrevPos();
+
+    const [edgePosLeft, edgePosTop] = this._getEdgePos(x, y);
 
     const {
       rect: { width, height },
     } = this.draggedElm;
 
-    this._absoluteCurrentPosition.setBox(
+    const absTop = edgePosTop + scrollOffsetY;
+    const absLeft = edgePosLeft + scrollOffsetX;
+
+    this._absoluteCurrentPos.setBox(
+      absTop,
+      absLeft + width,
+      absTop + height,
+      absLeft
+    );
+
+    this._viewportCurrentPos.setBox(
       edgePosTop,
       edgePosLeft + width,
       edgePosTop + height,
@@ -296,17 +324,17 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     );
   }
 
-  /**
-   *
-   * @returns
-   */
-  getAbsoluteCurrentPosition(): BoxNum {
-    return this._absoluteCurrentPosition;
+  getAbsoluteCurrentPos(): BoxNum {
+    return this._absoluteCurrentPos;
+  }
+
+  getViewportCurrentPos(): BoxNum {
+    return this._viewportCurrentPos;
   }
 
   getDirectionByAxis(axis: Axis): "r" | "l" | "d" | "u" {
     const { x: previousX, y: previousY } = this._prevPoint;
-    const { left: currentX, top: currentY } = this.getAbsoluteCurrentPosition();
+    const { left: currentX, top: currentY } = this.getAbsoluteCurrentPos();
 
     if (axis === "x") {
       if (currentX > previousX) {
@@ -410,9 +438,11 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
 
     this.translate(filteredX, filteredY);
 
-    this.setAbsoluteCurrentPosition(
-      filteredX + scrollOffsetX,
-      filteredY + scrollOffsetY
+    this.setAbsoluteCurrentPos(
+      filteredX,
+      filteredY,
+      scrollOffsetX,
+      scrollOffsetY
     );
   }
 
@@ -425,11 +455,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
       key = combineKeys(depth, key);
     }
 
-    return this.threshold.isOutThreshold(
-      key,
-      this._absoluteCurrentPosition,
-      null
-    );
+    return this.threshold.isOutThreshold(key, this._absoluteCurrentPos, null);
   }
 
   isNotSettled() {

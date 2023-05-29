@@ -174,17 +174,9 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       return;
     }
 
-    const absPos = this.draggable.getAbsoluteCurrentPosition();
+    const viewportPos = this.draggable.getViewportCurrentPos();
 
-    const { rect } = this.draggable.draggedElm;
-
-    const [isOut, preservedBoxResult] = scroll.isElmOutViewport(
-      absPos.top,
-      absPos.left,
-      rect.height,
-      rect.width,
-      true
-    );
+    const [isOut, preservedBoxResult] = scroll.isElmOutViewport2(viewportPos);
 
     if (!isOut) {
       if (__DEV__) {
