@@ -10,11 +10,14 @@ function easeOutCubic(t: number) {
   return --t * t * t + 1;
 }
 
-function calculateScrollThrottleMS(width: number, height: number): number {
-  const throttleFactor: number = 8.5;
+const EXECUTION_FRAME_FACTOR = 1;
+const SCROLL_THROTTLE_FACTOR = 8.5;
 
+function calculateScrollThrottleMS(width: number, height: number): number {
   const scrollThrottleMS: number = Math.round(
-    width > height ? width / throttleFactor : height / throttleFactor
+    width > height
+      ? width / SCROLL_THROTTLE_FACTOR
+      : height / SCROLL_THROTTLE_FACTOR
   );
 
   return scrollThrottleMS;
@@ -215,9 +218,13 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     if (isOutH) {
       scrollingAxis = "x";
       scrollingDirection = draggedDirV;
-      EXECUTION_FRAME_RATE_MS = Math.round(scroll.totalScrollRect.width / 2);
+      EXECUTION_FRAME_RATE_MS = Math.round(
+        scroll.totalScrollRect.width / EXECUTION_FRAME_FACTOR
+      );
     } else {
-      EXECUTION_FRAME_RATE_MS = Math.round(scroll.totalScrollRect.height / 2);
+      EXECUTION_FRAME_RATE_MS = Math.round(
+        scroll.totalScrollRect.height / EXECUTION_FRAME_FACTOR
+      );
     }
 
     if (__DEV__) {

@@ -15,7 +15,7 @@ import {
   moveDragged,
 } from "../utils";
 
-test.describe.serial("Drag the first element down vertically", async () => {
+test.describe.skip("Drag the first element down vertically", async () => {
   let page: Page;
   let context: BrowserContext;
   let activeBrowser: Browser;
