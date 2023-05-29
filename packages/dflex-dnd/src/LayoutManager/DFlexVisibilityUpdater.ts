@@ -15,8 +15,7 @@ function updateElmVisibility(
     rect.top,
     rect.left,
     rect.height,
-    rect.width,
-    false
+    rect.width
   );
 
   const isBreakable = prevVisibility && isInvisible;
