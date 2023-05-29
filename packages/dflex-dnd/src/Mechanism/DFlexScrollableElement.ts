@@ -10,7 +10,7 @@ function easeOutCubic(t: number) {
   return --t * t * t + 1;
 }
 
-const EXECUTION_FRAME_FACTOR = 1;
+const EXECUTION_FRAME_FACTOR = 0.75;
 const SCROLL_THROTTLE_FACTOR = 8.5;
 
 function calculateScrollThrottleMS(width: number, height: number): number {
@@ -171,7 +171,6 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       // a little delay because we already at the threshold area.
       if (hasSuddenChangeInDirection) {
         this.cancelScrolling(scroll);
-        this._throttleScrolling();
       }
 
       return;
@@ -284,8 +283,6 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
         return;
       }
-
-      this._throttleScrolling();
 
       scroll.pauseListeners(false);
     };
