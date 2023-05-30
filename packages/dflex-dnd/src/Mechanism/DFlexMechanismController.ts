@@ -710,12 +710,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
             this.currentScrollAxes.y - this.initialScrollPosition.y;
 
           // Update the position before calling the detector.
-          this.draggable.setAbsoluteCurrentPos(
-            x,
-            y,
-            scrollOffsetX,
-            scrollOffsetY
-          );
+          this.draggable.setCurrentPos(x, y, scrollOffsetX, scrollOffsetY);
 
           this._detectNearestElm();
         }

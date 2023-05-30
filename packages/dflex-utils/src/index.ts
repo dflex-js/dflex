@@ -18,7 +18,7 @@ export { BOTH_AXIS } from "./types";
 export {
   combineKeys,
   warnOnce,
-  assertElementPosition,
+  assertElmPos,
   getDimensionTypeByAxis,
   getStartingPointByAxis,
   getEndingPointByAxis,

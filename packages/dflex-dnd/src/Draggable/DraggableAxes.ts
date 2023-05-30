@@ -10,6 +10,8 @@ import {
   AbstractBoxRect,
   Tracker,
   Axis,
+  assertElmPos,
+  featureFlags,
 } from "@dflex/utils";
 
 import type { DFlexElement } from "@dflex/core-instance";
@@ -187,6 +189,10 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     const lm = Math.round(parseFloat(style.marginLeft));
     this.marginX = rm + lm;
 
+    const {
+      totalScrollRect: { left, top },
+    } = store.scrolls.get(SK)!;
+
     this._absoluteCurrentPos = new BoxNum(
       rect.top,
       rect.right,
@@ -194,12 +200,21 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
       rect.left
     );
 
+    const viewportTop = rect.top - top;
+    const viewportLeft = rect.left - left;
+
     this._viewportCurrentPos = new BoxNum(
-      rect.top,
-      rect.right,
-      rect.bottom,
-      rect.left
+      viewportTop,
+      viewportLeft + rect.width,
+      viewportTop + rect.height,
+      viewportLeft
     );
+
+    if (__DEV__) {
+      if (featureFlags.enablePositionAssertion) {
+        assertElmPos(DOM, this._viewportCurrentPos);
+      }
+    }
 
     this._prevPoint = new PointNum(x, y);
 
@@ -292,7 +307,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     return [edgePosLeft, edgePosTop];
   }
 
-  setAbsoluteCurrentPos(
+  setCurrentPos(
     x: number,
     y: number,
     scrollOffsetX: number,
@@ -438,12 +453,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
 
     this.translate(filteredX, filteredY);
 
-    this.setAbsoluteCurrentPos(
-      filteredX,
-      filteredY,
-      scrollOffsetX,
-      scrollOffsetY
-    );
+    this.setCurrentPos(filteredX, filteredY, scrollOffsetX, scrollOffsetY);
   }
 
   isOutThreshold(SK?: string, useInsertionThreshold?: boolean) {

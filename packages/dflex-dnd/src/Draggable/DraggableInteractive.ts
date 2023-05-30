@@ -1,6 +1,6 @@
 import {
   AbstractDFlexCycle,
-  assertElementPosition,
+  assertElmPos,
   featureFlags,
   PointNum,
   updateElmDatasetGrid,
@@ -252,7 +252,7 @@ class DraggableInteractive extends DraggableAxes {
     if (__DEV__) {
       if (featureFlags.enablePositionAssertion) {
         setTimeout(() => {
-          assertElementPosition(draggedDOM, this.draggedElm.rect);
+          assertElmPos(draggedDOM, this.draggedElm.rect);
         }, 1000);
       }
     }
