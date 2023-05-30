@@ -9,7 +9,7 @@ import {
 
 import {
   //   assertChildrenOrderIDs,
-  // assertDefaultChildrenIndex,
+  assertDefaultChildrenIndex,
   getDraggedRect,
   initialize,
   moveDragged,
@@ -26,7 +26,7 @@ test.describe
   let visibleElements: Locator[];
   let invisibleElements: Locator[];
 
-  // let elmParent: Locator;
+  let elmParent: Locator;
 
   test.beforeAll(async ({ browser, browserName }) => {
     activeBrowser = browser;
@@ -48,13 +48,17 @@ test.describe
     visibleElements = elements.slice(2, 13); // Extract elements from index 2 to index 12
     invisibleElements = elements.slice(14); // Extract elements from index 14 onwards
 
-    // elmParent = page.locator("#dflex_id_0");
+    elmParent = page.locator("#dflex_id_0");
   });
 
   test.afterAll(async () => {
     await page.close();
     await context.close();
     // await activeBrowser.close();
+  });
+
+  test("Siblings index initiated correctly", async () => {
+    await assertDefaultChildrenIndex(elmParent);
   });
 
   test("Scroll page to the middle to check visibility updater", async () => {
