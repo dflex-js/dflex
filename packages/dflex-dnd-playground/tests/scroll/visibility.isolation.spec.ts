@@ -65,15 +65,19 @@ test.describe
     await page.evaluate(() => {
       window.scrollTo(0, document.body.scrollHeight / 2);
     });
+    await page.waitForTimeout(1000);
   });
 
   test("Move elm51 outside the container", async () => {
     await getDraggedRect(elements[50]);
+
     await moveDragged(-220, -1);
     await page.dispatchEvent("[id='51-extended']", "mouseup", {
       button: 0,
       force: true,
     });
+
+    await page.waitForTimeout(1000);
 
     visibleElements = elements.slice(50, 64); // Extract elements from index 2 to index 12
 
