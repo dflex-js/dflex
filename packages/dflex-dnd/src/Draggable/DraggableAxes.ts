@@ -85,7 +85,9 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
    * innerOffset.x: represents the distance from mouse.x to element.x
    * innerOffset.x: represents the distance from mouse.y to element.y
    */
-  readonly innerOffset: PointNum;
+  readonly absoluteInnerOffset: PointNum;
+
+  readonly viewportInnerOffset: PointNum;
 
   /**
    * Dragged edge current position including the inner offset.
@@ -173,15 +175,6 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
 
     initThresholds(id, rect, depth, this.threshold);
 
-    const { x, y } = initCoordinates;
-
-    this.initCoordinates = new PointNum(x, y);
-
-    this.innerOffset = new PointNum(
-      Math.round(x - rect.left),
-      Math.round(y - rect.top)
-    );
-
     const style = getComputedStyle(DOM);
 
     // get element margin
@@ -192,6 +185,20 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     const {
       totalScrollRect: { left, top },
     } = store.scrolls.get(SK)!;
+
+    const { x, y } = initCoordinates;
+
+    this.initCoordinates = new PointNum(x, y);
+
+    this.absoluteInnerOffset = new PointNum(
+      Math.round(x - rect.left),
+      Math.round(y - rect.top)
+    );
+
+    this.viewportInnerOffset = new PointNum(
+      Math.round(x - (rect.left - left)),
+      Math.round(y - (rect.top - top))
+    );
 
     this._absoluteCurrentPos = new BoxNum(
       rect.top,
@@ -248,18 +255,20 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     allowBottom: boolean,
     isRestrictedToThreshold: boolean // if not. Then to self.
   ) {
-    const currentTop = y - this.innerOffset.y;
+    const currentTop = y - this.absoluteInnerOffset.y;
     const currentBottom = currentTop + this.draggedElm.rect.height;
 
     if (!allowTop && currentTop <= topThreshold) {
       return isRestrictedToThreshold
-        ? topThreshold + this.innerOffset.y
+        ? topThreshold + this.absoluteInnerOffset.y
         : this.initCoordinates.y;
     }
 
     if (!allowBottom && currentBottom >= bottomThreshold) {
       return isRestrictedToThreshold
-        ? bottomThreshold + this.innerOffset.y - this.draggedElm.rect.height
+        ? bottomThreshold +
+            this.absoluteInnerOffset.y -
+            this.draggedElm.rect.height
         : this.initCoordinates.y;
     }
 
@@ -274,19 +283,19 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     allowRight: boolean,
     restrictToThreshold: boolean // if not. Then to self.,
   ) {
-    const currentLeft = x - this.innerOffset.x;
+    const currentLeft = x - this.absoluteInnerOffset.x;
     const currentRight = currentLeft + this.draggedElm.rect.width;
 
     if (!allowLeft && currentLeft <= leftThreshold) {
       return restrictToThreshold
-        ? leftThreshold + this.innerOffset.x
+        ? leftThreshold + this.absoluteInnerOffset.x
         : this.initCoordinates.x;
     }
 
     if (!allowRight && currentRight + this.marginX >= rightThreshold) {
       return restrictToThreshold
         ? rightThreshold +
-            this.innerOffset.x -
+            this.absoluteInnerOffset.x -
             this.draggedElm.rect.width -
             this.marginX
         : this.initCoordinates.x;
@@ -300,9 +309,16 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     this._prevPoint.setAxes(pre.left, pre.top);
   }
 
-  private _getEdgePos(x: number, y: number) {
-    const edgePosLeft = x - this.innerOffset.x;
-    const edgePosTop = y - this.innerOffset.y;
+  private _getAbsEdgePos(x: number, y: number) {
+    const edgePosLeft = x - this.absoluteInnerOffset.x;
+    const edgePosTop = y - this.absoluteInnerOffset.y;
+
+    return [edgePosLeft, edgePosTop];
+  }
+
+  private _getViewportEdgePos(x: number, y: number) {
+    const edgePosLeft = x - this.viewportInnerOffset.x;
+    const edgePosTop = y - this.viewportInnerOffset.y;
 
     return [edgePosLeft, edgePosTop];
   }
@@ -315,14 +331,15 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
   ): void {
     this._updatePrevPos();
 
-    const [edgePosLeft, edgePosTop] = this._getEdgePos(x, y);
+    const [absEdgePosLeft, absEdgePosTop] = this._getAbsEdgePos(x, y);
+    const [edgePosLeft, edgePosTop] = this._getViewportEdgePos(x, y);
 
     const {
       rect: { width, height },
     } = this.draggedElm;
 
-    const absTop = edgePosTop + scrollOffsetY;
-    const absLeft = edgePosLeft + scrollOffsetX;
+    const absTop = absEdgePosTop + scrollOffsetY;
+    const absLeft = absEdgePosLeft + scrollOffsetX;
 
     this._absoluteCurrentPos.setBox(
       absTop,

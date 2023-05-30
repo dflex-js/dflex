@@ -192,6 +192,22 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     }
 
     const isOutV = preservedBoxResult.isTruthyOnSide("y", draggedDirV);
+
+    // if (isOutV) {
+    //   if (draggedDirV === -1 && scroll.totalScrollRect.top > 0) {
+    //     console.log("inside confusion area from top.....");
+    //     // this._throttleScrolling();
+
+    //     // return;
+    //   }
+
+    //   // if (draggedDirV === 1 && scroll.totalScrollRect.bottom > 0) {
+    //   //   console.log("inside confusion area bottom.....");
+    //   //   this._throttleScrolling();
+
+    //   //   return;
+    //   // }
+    // }
     const isOutH = preservedBoxResult.isTruthyOnSide("x", draggedDirH);
 
     if (!(isOutV || isOutH)) {
@@ -200,7 +216,8 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
           // eslint-disable-next-line no-console
           console.warn(
             "Scroll is initially outside the threshold, but the desired direction is inside. Scroll: ",
-            preservedBoxResult
+            preservedBoxResult,
+            { draggedDirV, draggedDirH }
           );
         }
       }
@@ -208,7 +225,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       return;
     }
 
-    preservedBoxResult.setFalsy();
+    // is out but is out from the top and scroll there is not zero so throttle.
 
     let scrollingAxis: Axis = "y";
     let scrollingDirection: Direction = draggedDirV;
@@ -229,9 +246,15 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     if (__DEV__) {
       if (featureFlags.enableScrollDebugger && isOut) {
         // eslint-disable-next-line no-console
-        console.log(`Out of the scroll threshold (${scrollingAxis}).`);
+        console.log(
+          `Out of the scroll threshold (${scrollingAxis}).`,
+          preservedBoxResult,
+          { draggedDirV, draggedDirH }
+        );
       }
     }
+
+    preservedBoxResult.setFalsy();
 
     const canScroll: boolean = scroll.hasScrollableArea(
       scrollingAxis,
