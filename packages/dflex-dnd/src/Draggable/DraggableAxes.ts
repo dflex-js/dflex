@@ -85,9 +85,9 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
    * innerOffset.x: represents the distance from mouse.x to element.x
    * innerOffset.x: represents the distance from mouse.y to element.y
    */
-  readonly absoluteInnerOffset: PointNum;
+  private _absoluteInnerOffset: PointNum;
 
-  readonly viewportInnerOffset: PointNum;
+  private _viewportInnerOffset: PointNum;
 
   /**
    * Dragged edge current position including the inner offset.
@@ -190,12 +190,12 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
 
     this.initCoordinates = new PointNum(x, y);
 
-    this.absoluteInnerOffset = new PointNum(
+    this._absoluteInnerOffset = new PointNum(
       Math.round(x - rect.left),
       Math.round(y - rect.top)
     );
 
-    this.viewportInnerOffset = new PointNum(
+    this._viewportInnerOffset = new PointNum(
       Math.round(x - (rect.left - left)),
       Math.round(y - (rect.top - top))
     );
@@ -255,19 +255,19 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     allowBottom: boolean,
     isRestrictedToThreshold: boolean // if not. Then to self.
   ) {
-    const currentTop = y - this.absoluteInnerOffset.y;
+    const currentTop = y - this._absoluteInnerOffset.y;
     const currentBottom = currentTop + this.draggedElm.rect.height;
 
     if (!allowTop && currentTop <= topThreshold) {
       return isRestrictedToThreshold
-        ? topThreshold + this.absoluteInnerOffset.y
+        ? topThreshold + this._absoluteInnerOffset.y
         : this.initCoordinates.y;
     }
 
     if (!allowBottom && currentBottom >= bottomThreshold) {
       return isRestrictedToThreshold
         ? bottomThreshold +
-            this.absoluteInnerOffset.y -
+            this._absoluteInnerOffset.y -
             this.draggedElm.rect.height
         : this.initCoordinates.y;
     }
@@ -283,19 +283,19 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     allowRight: boolean,
     restrictToThreshold: boolean // if not. Then to self.,
   ) {
-    const currentLeft = x - this.absoluteInnerOffset.x;
+    const currentLeft = x - this._absoluteInnerOffset.x;
     const currentRight = currentLeft + this.draggedElm.rect.width;
 
     if (!allowLeft && currentLeft <= leftThreshold) {
       return restrictToThreshold
-        ? leftThreshold + this.absoluteInnerOffset.x
+        ? leftThreshold + this._absoluteInnerOffset.x
         : this.initCoordinates.x;
     }
 
     if (!allowRight && currentRight + this.marginX >= rightThreshold) {
       return restrictToThreshold
         ? rightThreshold +
-            this.absoluteInnerOffset.x -
+            this._absoluteInnerOffset.x -
             this.draggedElm.rect.width -
             this.marginX
         : this.initCoordinates.x;
@@ -310,15 +310,15 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
   }
 
   private _getAbsEdgePos(x: number, y: number) {
-    const edgePosLeft = x - this.absoluteInnerOffset.x;
-    const edgePosTop = y - this.absoluteInnerOffset.y;
+    const edgePosLeft = x - this._absoluteInnerOffset.x;
+    const edgePosTop = y - this._absoluteInnerOffset.y;
 
     return [edgePosLeft, edgePosTop];
   }
 
   private _getViewportEdgePos(x: number, y: number) {
-    const edgePosLeft = x - this.viewportInnerOffset.x;
-    const edgePosTop = y - this.viewportInnerOffset.y;
+    const edgePosLeft = x - this._viewportInnerOffset.x;
+    const edgePosTop = y - this._viewportInnerOffset.y;
 
     return [edgePosLeft, edgePosTop];
   }
