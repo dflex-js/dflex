@@ -178,7 +178,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     const viewportPos = this.draggable.getViewportCurrentPos();
 
-    const [isOut, preservedBoxResult] = scroll.isElmOutViewport2(viewportPos);
+    const [isOut, preservedBoxResult] = scroll.isElmOutViewport(viewportPos);
 
     if (!isOut) {
       if (__DEV__) {
@@ -192,22 +192,6 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     }
 
     const isOutV = preservedBoxResult.isTruthyOnSide("y", draggedDirV);
-
-    // if (isOutV) {
-    //   if (draggedDirV === -1 && scroll.totalScrollRect.top > 0) {
-    //     console.log("inside confusion area from top.....");
-    //     // this._throttleScrolling();
-
-    //     // return;
-    //   }
-
-    //   // if (draggedDirV === 1 && scroll.totalScrollRect.bottom > 0) {
-    //   //   console.log("inside confusion area bottom.....");
-    //   //   this._throttleScrolling();
-
-    //   //   return;
-    //   // }
-    // }
     const isOutH = preservedBoxResult.isTruthyOnSide("x", draggedDirH);
 
     if (!(isOutV || isOutH)) {
