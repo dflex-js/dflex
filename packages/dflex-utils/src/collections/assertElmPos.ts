@@ -1,8 +1,8 @@
-import type { AbstractBoxRect } from "../Box";
+import type { AbstractBox } from "../Box";
 
 let didThrowError = false;
 
-function assertElementPosition(DOM: HTMLElement, rect: AbstractBoxRect): void {
+function assertElementPosition(DOM: HTMLElement, rect: AbstractBox): void {
   if (didThrowError) {
     return;
   }

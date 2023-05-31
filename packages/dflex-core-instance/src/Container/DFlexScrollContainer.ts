@@ -109,16 +109,15 @@ const INNER_THRESHOLD: ThresholdPercentages = {
   vertical: 10,
 };
 
+type ScrollThreshold = {
+  threshold: Threshold | null;
+  key: string;
+};
+
 class DFlexScrollContainer {
   private _thresholdInViewport: {
-    inner: {
-      threshold: Threshold | null;
-      key: string;
-    };
-    outer: {
-      threshold: Threshold | null;
-      key: string;
-    };
+    inner: ScrollThreshold;
+    outer: ScrollThreshold;
   };
 
   private _SK: string;
@@ -514,16 +513,27 @@ class DFlexScrollContainer {
     return [viewportTop, viewportLeft];
   }
 
-  isElmOutViewport(
-    topPos: number,
-    leftPos: number,
-    height: number,
-    width: number,
-    isInner: boolean
-  ): [boolean, BoxBool] {
-    const instance = isInner
-      ? this._thresholdInViewport.inner
-      : this._thresholdInViewport.outer;
+  isElmOutViewport(absPos: BoxRect | BoxNum): [boolean, BoxBool] {
+    let viewportPos: BoxNum;
+    let instance: ScrollThreshold;
+
+    if (absPos instanceof BoxRect) {
+      const [viewportTop, viewportLeft] = this.getElmViewportPosition(
+        absPos.top,
+        absPos.left
+      );
+
+      const top = viewportTop;
+      const right = viewportLeft + absPos.width;
+      const bottom = viewportTop + absPos.height;
+      const left = viewportLeft;
+
+      viewportPos = new BoxNum(top, right, bottom, left);
+      instance = this._thresholdInViewport.outer;
+    } else {
+      viewportPos = absPos;
+      instance = this._thresholdInViewport.inner;
+    }
 
     if (__DEV__) {
       if (!instance) {
@@ -541,29 +551,16 @@ class DFlexScrollContainer {
       if (this.hasOverflow.x && this.hasOverflow.y) {
         // eslint-disable-next-line no-console
         console.warn(
-          "isElmOutViewport: Scrollable element has overflow in both x and y directions."
+          "isElmOutViewport: Scrollable element has overflow in both x and y directions.\nDFlex is not yet fully optimized to handle this scenario, and the results may be inaccurate."
         );
       }
     }
-
-    const [viewportTop, viewportLeft] = this.getElmViewportPosition(
-      topPos,
-      leftPos
-    );
-
-    const top = viewportTop;
-    const right = viewportLeft + width;
-    const bottom = viewportTop + height;
-    const left = viewportLeft;
-
-    const targetBox = new BoxNum(top, right, bottom, left);
 
     const { threshold, key } = instance;
 
     const isOutThreshold = threshold!.isOutThreshold(
       key,
-      targetBox,
-      isInner,
+      viewportPos,
       this.hasOverflow.y ? "y" : "x"
     );
 

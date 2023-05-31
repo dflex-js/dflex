@@ -4,7 +4,7 @@ import {
   AbstractBoxRect,
   featureFlags,
   PointNum,
-  assertElementPosition,
+  assertElmPos,
   getElmComputedDimensions,
   BOTH_AXIS,
   updateElmDatasetGrid,
@@ -225,7 +225,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       if (__DEV__) {
         if (featureFlags.enablePositionAssertion) {
           setTimeout(() => {
-            assertElementPosition(DOM, this.rect);
+            assertElmPos(DOM, this.rect);
           }, 1000);
         }
       }

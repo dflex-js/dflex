@@ -109,7 +109,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         const element = store.registry.get(id)!;
 
         const isQualified = element.rect.isBoxIntersect(
-          this.draggable.getAbsoluteCurrentPosition()
+          this.draggable.getAbsoluteCurrentPos()
         );
 
         if (isQualified) {
@@ -604,7 +604,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       const shouldDecrease = axis === "y" ? isOut[id].bottom : isOut[id].right;
 
       const isInsideDeadZone = this.draggable
-        .getAbsoluteCurrentPosition()
+        .getAbsoluteCurrentPos()
         .isInsideThreshold(this._deadZoneStabilizer.area);
 
       if (isInsideDeadZone) {
@@ -710,10 +710,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
             this.currentScrollAxes.y - this.initialScrollPosition.y;
 
           // Update the position before calling the detector.
-          this.draggable.setAbsoluteCurrentPosition(
-            x + scrollOffsetX,
-            y + scrollOffsetY
-          );
+          this.draggable.setCurrentPos(x, y, scrollOffsetX, scrollOffsetY);
 
           this._detectNearestElm();
         }

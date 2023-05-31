@@ -62,32 +62,22 @@ test.describe
   });
 
   test("Scroll page to the middle to check visibility updater", async () => {
-    const pageHeight = await page.evaluate(() => document.body.scrollHeight);
-    const middleScrollPosition = pageHeight / 2;
-    const scrollStep = 100; // Number of pixels to scroll in each step
-    const scrollDelay = 100; // Delay in milliseconds between each scroll step
-
-    const { mouse } = page;
-
-    for (
-      let scrollDistance = 0;
-      scrollDistance <= middleScrollPosition;
-      scrollDistance += scrollStep
-    ) {
-      // eslint-disable-next-line no-await-in-loop
-      await mouse.wheel(0, scrollStep);
-      // eslint-disable-next-line no-await-in-loop
-      await page.waitForTimeout(scrollDelay);
-    }
+    await page.evaluate(() => {
+      window.scrollTo(0, document.body.scrollHeight / 2);
+    });
+    await page.waitForTimeout(1000);
   });
 
   test("Move elm51 outside the container", async () => {
     await getDraggedRect(elements[50]);
-    await moveDragged(-270, -1);
+
+    await moveDragged(-220, -1);
     await page.dispatchEvent("[id='51-extended']", "mouseup", {
       button: 0,
       force: true,
     });
+
+    await page.waitForTimeout(1000);
 
     visibleElements = elements.slice(50, 64); // Extract elements from index 2 to index 12
 

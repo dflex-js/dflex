@@ -10,11 +10,14 @@ function easeOutCubic(t: number) {
   return --t * t * t + 1;
 }
 
-function calculateScrollThrottleMS(width: number, height: number): number {
-  const throttleFactor: number = 8.5;
+const EXECUTION_FRAME_FACTOR = 0.75;
+const SCROLL_THROTTLE_FACTOR = 8.5;
 
+function calculateScrollThrottleMS(width: number, height: number): number {
   const scrollThrottleMS: number = Math.round(
-    width > height ? width / throttleFactor : height / throttleFactor
+    width > height
+      ? width / SCROLL_THROTTLE_FACTOR
+      : height / SCROLL_THROTTLE_FACTOR
   );
 
   return scrollThrottleMS;
@@ -168,25 +171,16 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       // a little delay because we already at the threshold area.
       if (hasSuddenChangeInDirection) {
         this.cancelScrolling(scroll);
-        this._throttleScrolling();
       }
 
       return;
     }
 
-    const absPos = this.draggable.getAbsoluteCurrentPosition();
+    const viewportPos = this.draggable.getViewportCurrentPos();
 
-    const { rect } = this.draggable.draggedElm;
+    const [isOut, preservedBoxResult] = scroll.isElmOutViewport(viewportPos);
 
-    const [isOutInitial, preservedBoxResult] = scroll.isElmOutViewport(
-      absPos.top,
-      absPos.left,
-      rect.height,
-      rect.width,
-      true
-    );
-
-    if (!isOutInitial) {
+    if (!isOut) {
       if (__DEV__) {
         if (featureFlags.enableScrollDebugger) {
           // eslint-disable-next-line no-console
@@ -200,29 +194,22 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     const isOutV = preservedBoxResult.isTruthyOnSide("y", draggedDirV);
     const isOutH = preservedBoxResult.isTruthyOnSide("x", draggedDirH);
 
-    // Override the final result after overriding the subs.
-    const isOut = isOutV || isOutH;
-
-    preservedBoxResult.setFalsy();
-
-    if (!isOut) {
+    if (!(isOutV || isOutH)) {
       if (__DEV__) {
         if (featureFlags.enableScrollDebugger) {
           // eslint-disable-next-line no-console
-          console.log("Scroll isOut is overwritten to false.");
+          console.warn(
+            "Scroll is initially outside the threshold, but the desired direction is inside. Scroll: ",
+            preservedBoxResult,
+            { draggedDirV, draggedDirH }
+          );
         }
       }
 
       return;
     }
 
-    if (__DEV__) {
-      if (isOutH && isOutV) {
-        throw new Error(
-          "_scrollManager: Invalid scroll direction Cannot scroll both horizontally and vertically simultaneously"
-        );
-      }
-    }
+    // is out but is out from the top and scroll there is not zero so throttle.
 
     let scrollingAxis: Axis = "y";
     let scrollingDirection: Direction = draggedDirV;
@@ -231,17 +218,27 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     if (isOutH) {
       scrollingAxis = "x";
       scrollingDirection = draggedDirV;
-      EXECUTION_FRAME_RATE_MS = Math.round(scroll.totalScrollRect.width / 2);
+      EXECUTION_FRAME_RATE_MS = Math.round(
+        scroll.totalScrollRect.width / EXECUTION_FRAME_FACTOR
+      );
     } else {
-      EXECUTION_FRAME_RATE_MS = Math.round(scroll.totalScrollRect.height / 2);
+      EXECUTION_FRAME_RATE_MS = Math.round(
+        scroll.totalScrollRect.height / EXECUTION_FRAME_FACTOR
+      );
     }
 
     if (__DEV__) {
       if (featureFlags.enableScrollDebugger && isOut) {
         // eslint-disable-next-line no-console
-        console.log(`Out of the scroll threshold (${scrollingAxis}).`);
+        console.log(
+          `Out of the scroll threshold (${scrollingAxis}).`,
+          preservedBoxResult,
+          { draggedDirV, draggedDirH }
+        );
       }
     }
+
+    preservedBoxResult.setFalsy();
 
     const canScroll: boolean = scroll.hasScrollableArea(
       scrollingAxis,
@@ -293,8 +290,6 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
         return;
       }
-
-      this._throttleScrolling();
 
       scroll.pauseListeners(false);
     };

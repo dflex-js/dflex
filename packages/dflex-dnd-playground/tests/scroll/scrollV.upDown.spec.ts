@@ -69,7 +69,7 @@ test.describe.serial("Drag the first element down vertically", async () => {
     await getDraggedRect(elements[0]);
     await moveDragged(-220, -1);
     await moveDragged(-1, viewportHeight);
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(2000);
     await moveDragged(-1, viewportHeight / 2);
     await page.waitForTimeout(1000);
   });
