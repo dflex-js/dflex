@@ -73,7 +73,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
    */
   private _outerOffset: PointNum;
 
-  private _restoreContentEditable: string;
+  private _preservedContentEditable: string;
 
   private _preservedAriaDisabled: string | null;
 
@@ -98,20 +98,20 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     const { translate } = this.draggedElm;
 
     this._outerOffset = new PointNum(
-      -initCoordinates.x + translate.x,
-      -initCoordinates.y + translate.y
+      translate.x - initCoordinates.x,
+      translate.y - initCoordinates.y
     );
 
     this.translatePlaceholder = new PointNum(0, 0);
 
-    this._restoreContentEditable = "";
+    this._preservedContentEditable = "true";
     this._preservedAriaDisabled = null;
   }
 
   private _preserveDOMAttributes(DOM: HTMLElement, shouldSet: boolean): void {
     if (shouldSet) {
       this._preservedAriaDisabled = DOM.ariaDisabled;
-      this._restoreContentEditable = DOM.contentEditable;
+      this._preservedContentEditable = DOM.contentEditable;
 
       DOM.ariaDisabled = "true";
       DOM.contentEditable = "false";
@@ -120,7 +120,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     }
 
     DOM.ariaDisabled = this._preservedAriaDisabled;
-    DOM.contentEditable = this._restoreContentEditable;
+    DOM.contentEditable = this._preservedContentEditable;
   }
 
   /**
