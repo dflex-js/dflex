@@ -73,7 +73,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
    */
   private _outerOffset: PointNum;
 
-  private _restoreContentEditable: boolean;
+  private _restoreContentEditable: string;
 
   private _preservedAriaDisabled: string | null;
 
@@ -103,8 +103,24 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     );
 
     this.translatePlaceholder = new PointNum(0, 0);
-    this._restoreContentEditable = false;
+
+    this._restoreContentEditable = "";
     this._preservedAriaDisabled = null;
+  }
+
+  private _preserveDOMAttributes(DOM: HTMLElement, shouldSet: boolean): void {
+    if (shouldSet) {
+      this._preservedAriaDisabled = DOM.ariaDisabled;
+      this._restoreContentEditable = DOM.contentEditable;
+
+      DOM.ariaDisabled = "true";
+      DOM.contentEditable = "false";
+
+      return;
+    }
+
+    DOM.ariaDisabled = this._preservedAriaDisabled;
+    DOM.contentEditable = this._restoreContentEditable;
   }
 
   /**
@@ -172,19 +188,19 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     const { style: originStyle } = originDOM;
 
     if (isAddingProps) {
-      this._preservedAriaDisabled = originDOM.ariaDisabled;
-      originDOM.ariaDisabled = "true";
+      this._preserveDOMAttributes(originDOM, true);
+
       this.draggedElm.setAttribute(originDOM, "DRAGGED", "true");
 
       if (mirrorDOM !== null) {
         mirrorDOM.ariaLabel = "Draggable";
+
         mirrorDOM.id = `dflex-draggable-mirror__${originDOM.id}`;
         delete mirrorDOM.dataset.index;
 
         setMirrorStyle(mirrorDOM.style, viewportPos, dimensions);
 
         originStyle.setProperty("opacity", "0");
-        // mirrorStyle.backgroundColor = "red";
       } else {
         originDOM.ariaLabel = "Draggable";
 
@@ -204,12 +220,10 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
 
     document.body.style.removeProperty("user-select");
 
-    if (this._restoreContentEditable) {
-      originDOM.contentEditable = "true";
-    }
+    this._preserveDOMAttributes(originDOM, false);
 
     originDOM.ariaLabel = null;
-    originDOM.ariaDisabled = this._preservedAriaDisabled;
+
     this.draggedElm.clearAttributes(originDOM);
 
     if (mirrorDOM !== null) {
