@@ -9,30 +9,24 @@ import type { AxesPoint } from "@dflex/utils";
 //   viewportPos: [number, number] | null,
 //   dimensions: PointNum | null
 // ): void {
-//   let width = "auto";
-//   let height = "auto";
+//   const [top = 0, left = 0] = viewportPos || [];
+
+//   mirrorStyle.setProperty("position", "fixed");
+//   mirrorStyle.setProperty("top", `${top}px`);
+//   mirrorStyle.setProperty("left", `${left}px`);
 
 //   if (dimensions) {
 //     if (dimensions.y > 0) {
-//       height = `${dimensions.y}px`;
+//       mirrorStyle.setProperty("height", `${dimensions.y}px`);
 //     }
 
 //     if (dimensions.x > 0) {
-//       width = `${dimensions.x}px`;
+//       mirrorStyle.setProperty("width", `${dimensions.x}px`);
 //     }
 //   }
 
-//   const [top = 0, left = 0] = viewportPos || [];
-
-//   mirrorStyle.cssText = `
-//     position: fixed;
-//     top: ${top}px;
-//     left: ${left}px;
-//     width: ${width};
-//     height: ${height};
-//     z-index: 99;
-//     margin: 0;
-//   `;
+//   mirrorStyle.setProperty("z-index", "99");
+//   mirrorStyle.setProperty("margin", "0");
 // }
 
 function setOrUnsetOriginStyle(
@@ -40,10 +34,8 @@ function setOrUnsetOriginStyle(
   shouldSet: boolean
 ) {
   if (shouldSet) {
-    originStyle.cssText = `
-    position: relative;
-    z-index: 99;
-  `;
+    originStyle.setProperty("position", "relative");
+    originStyle.setProperty("z-index", "99");
 
     return;
   }
