@@ -4,6 +4,8 @@ import { DFlexBaseElement } from "@dflex/core-instance";
 import { PointNum, getSelection } from "@dflex/utils";
 import type { AxesPoint } from "@dflex/utils";
 
+const MIRROR_ID_PREFIX = "dflex-draggable-mirror";
+
 function setMirrorStyle(
   mirrorStyle: CSSStyleDeclaration,
   viewportPos: [number, number] | null,
@@ -195,7 +197,8 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
       if (mirrorDOM !== null) {
         mirrorDOM.ariaLabel = "Draggable";
 
-        mirrorDOM.id = `dflex-draggable-mirror__${originDOM.id}`;
+        mirrorDOM.id = `${MIRROR_ID_PREFIX}_${originDOM.id}`;
+
         delete mirrorDOM.dataset.index;
 
         setMirrorStyle(mirrorDOM.style, viewportPos, dimensions);
