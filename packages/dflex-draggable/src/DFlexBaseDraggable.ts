@@ -4,6 +4,60 @@ import { DFlexBaseElement } from "@dflex/core-instance";
 import { PointNum, getSelection } from "@dflex/utils";
 import type { AxesPoint } from "@dflex/utils";
 
+const MIRROR_ID_PREFIX = "dflex-draggable-mirror";
+
+function setMirrorStyle(
+  mirrorStyle: CSSStyleDeclaration,
+  viewportPos: [number, number] | null,
+  dimensions: PointNum | null
+): void {
+  const [top = 0, left = 0] = viewportPos || [];
+
+  mirrorStyle.setProperty("position", "fixed");
+  mirrorStyle.setProperty("top", `${top}px`);
+  mirrorStyle.setProperty("left", `${left}px`);
+
+  if (dimensions) {
+    if (dimensions.y > 0) {
+      mirrorStyle.setProperty("height", `${dimensions.y}px`);
+    }
+
+    if (dimensions.x > 0) {
+      mirrorStyle.setProperty("width", `${dimensions.x}px`);
+    }
+  }
+
+  mirrorStyle.setProperty("z-index", "99");
+  mirrorStyle.setProperty("margin", "0");
+}
+
+function setOrUnsetOriginStyle(
+  originStyle: CSSStyleDeclaration,
+  shouldSet: boolean
+) {
+  if (shouldSet) {
+    originStyle.setProperty("position", "relative");
+    originStyle.setProperty("z-index", "99");
+
+    return;
+  }
+
+  originStyle.removeProperty("position");
+  originStyle.removeProperty("z-index");
+}
+
+function rmEmptyAttr(DOM: HTMLElement, attribute: string) {
+  if (!DOM.hasAttribute(attribute)) {
+    return;
+  }
+
+  const value = DOM.getAttribute(attribute);
+
+  if (value && value.trim() === "") {
+    DOM.removeAttribute(attribute);
+  }
+}
+
 class DFlexBaseDraggable<T extends DFlexBaseElement> {
   draggedElm: T;
 
@@ -21,7 +75,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
    */
   private _outerOffset: PointNum;
 
-  private _restoreContentEditable: boolean;
+  private _preservedContentEditable: string;
 
   private _preservedAriaDisabled: string | null;
 
@@ -46,13 +100,29 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     const { translate } = this.draggedElm;
 
     this._outerOffset = new PointNum(
-      -initCoordinates.x + translate.x,
-      -initCoordinates.y + translate.y
+      translate.x - initCoordinates.x,
+      translate.y - initCoordinates.y
     );
 
     this.translatePlaceholder = new PointNum(0, 0);
-    this._restoreContentEditable = false;
+
+    this._preservedContentEditable = "true";
     this._preservedAriaDisabled = null;
+  }
+
+  private _preserveDOMAttributes(DOM: HTMLElement, shouldSet: boolean): void {
+    if (shouldSet) {
+      this._preservedAriaDisabled = DOM.ariaDisabled;
+      this._preservedContentEditable = DOM.contentEditable;
+
+      DOM.ariaDisabled = "true";
+      DOM.contentEditable = "false";
+
+      return;
+    }
+
+    DOM.ariaDisabled = this._preservedAriaDisabled;
+    DOM.contentEditable = this._preservedContentEditable;
   }
 
   /**
@@ -120,33 +190,24 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     const { style: originStyle } = originDOM;
 
     if (isAddingProps) {
-      this._preservedAriaDisabled = originDOM.ariaDisabled;
-      originDOM.ariaDisabled = "true";
+      this._preserveDOMAttributes(originDOM, true);
+
       this.draggedElm.setAttribute(originDOM, "DRAGGED", "true");
 
       if (mirrorDOM !== null) {
-        const { style: mirrorStyle } = mirrorDOM;
-
         mirrorDOM.ariaLabel = "Draggable";
-        mirrorDOM.id = `dflex-draggable-mirror__${originDOM.id}`;
+
+        mirrorDOM.id = `${MIRROR_ID_PREFIX}_${originDOM.id}`;
+
         delete mirrorDOM.dataset.index;
-        mirrorStyle.setProperty("position", "fixed");
-        mirrorStyle.setProperty("top", `${viewportPos![0]}px`);
-        mirrorStyle.setProperty("left", `${viewportPos![1]}px`);
-        if (dimensions!.x > 0) {
-          mirrorStyle.setProperty("width", `${dimensions!.x}px`);
-        }
-        if (dimensions!.y > 0) {
-          mirrorStyle.setProperty("height", `${dimensions!.y}px`);
-        }
-        mirrorStyle.setProperty("z-index", "99");
-        mirrorStyle.setProperty("margin", "0");
+
+        setMirrorStyle(mirrorDOM.style, viewportPos, dimensions);
+
         originStyle.setProperty("opacity", "0");
-        // mirrorStyle.backgroundColor = "red";
       } else {
         originDOM.ariaLabel = "Draggable";
-        originStyle.setProperty("position", "relative");
-        originStyle.setProperty("z-index", "99");
+
+        setOrUnsetOriginStyle(originStyle, true);
       }
 
       document.body.style.setProperty("user-select", "none");
@@ -162,12 +223,10 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
 
     document.body.style.removeProperty("user-select");
 
-    if (this._restoreContentEditable) {
-      originDOM.contentEditable = "true";
-    }
+    this._preserveDOMAttributes(originDOM, false);
 
     originDOM.ariaLabel = null;
-    originDOM.ariaDisabled = this._preservedAriaDisabled;
+
     this.draggedElm.clearAttributes(originDOM);
 
     if (mirrorDOM !== null) {
@@ -183,17 +242,11 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
       originStyle.removeProperty("opacity");
       mirrorDOM.remove();
     } else {
-      originStyle.removeProperty("position");
-      originStyle.removeProperty("z-index");
+      setOrUnsetOriginStyle(originStyle, false);
     }
 
-    if (!originDOM.getAttribute("style")) {
-      originDOM.removeAttribute("style");
-    }
-
-    if (!document.body.getAttribute("style")) {
-      document.body.removeAttribute("style");
-    }
+    rmEmptyAttr(originDOM, "style");
+    rmEmptyAttr(document.body, "style");
   }
 
   /**

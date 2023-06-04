@@ -498,6 +498,10 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
       if (elmIndex === -1) {
         if (__DEV__) {
+          if (draggedID.includes("dflex-draggable-mirror")) {
+            return;
+          }
+
           throw new Error(
             `_actionCaller: unable to find targeted element index for: ${JSON.stringify(
               occupiedGrid

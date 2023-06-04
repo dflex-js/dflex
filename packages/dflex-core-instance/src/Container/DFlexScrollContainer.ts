@@ -114,6 +114,10 @@ type ScrollThreshold = {
   key: string;
 };
 
+const LISTENER_DATASET_KEY_PREFIX = "dflexScrollListener";
+const INNER_KEY_PREFIX = "scroll_inner";
+const OUTER_KEY_PREFIX = "scroll_outer";
+
 class DFlexScrollContainer {
   private _thresholdInViewport: {
     inner: ScrollThreshold;
@@ -167,15 +171,15 @@ class DFlexScrollContainer {
     this._thresholdInViewport = {
       inner: {
         threshold: null,
-        key: `scroll_inner_${SK}`,
+        key: `${INNER_KEY_PREFIX}_${SK}`,
       },
       outer: {
         threshold: null,
-        key: `scroll_outer_${SK}`,
+        key: `${OUTER_KEY_PREFIX}_${SK}`,
       },
     };
 
-    this._listenerDatasetKey = `dflexScrollListener_${SK}`;
+    this._listenerDatasetKey = `${LISTENER_DATASET_KEY_PREFIX}_${SK}`;
 
     this.hasOverflow = new PointBool(false, false);
     this.totalScrollRect = new BoxRect(0, 0, 0, 0);
