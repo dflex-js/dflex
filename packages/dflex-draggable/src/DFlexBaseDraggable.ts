@@ -44,19 +44,17 @@ function setOrUnsetOriginStyle(
   originStyle.removeProperty("z-index");
 }
 
-// function disableUserSelect(): void {
-//   document.body.style.setProperty("user-select", "none");
+function rmEmptyAttr(DOM: HTMLElement, attribute: string) {
+  if (!DOM.hasAttribute(attribute)) {
+    return;
+  }
 
-//   const domSelection = getSelection();
+  const value = DOM.getAttribute(attribute);
 
-//   if (domSelection) {
-//     domSelection.removeAllRanges();
-//   }
-// }
-
-// function restoreUserSelect() {
-//   document.body.style.removeProperty("user-select");
-// }
+  if (value && value.trim() === "") {
+    DOM.removeAttribute(attribute);
+  }
+}
 
 class DFlexBaseDraggable<T extends DFlexBaseElement> {
   draggedElm: T;
@@ -230,13 +228,8 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
       setOrUnsetOriginStyle(originStyle, false);
     }
 
-    if (!originDOM.getAttribute("style")) {
-      originDOM.removeAttribute("style");
-    }
-
-    if (!document.body.getAttribute("style")) {
-      document.body.removeAttribute("style");
-    }
+    rmEmptyAttr(originDOM, "style");
+    rmEmptyAttr(document.body, "style");
   }
 
   /**
