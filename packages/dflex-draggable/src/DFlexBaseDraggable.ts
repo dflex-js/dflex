@@ -4,6 +4,68 @@ import { DFlexBaseElement } from "@dflex/core-instance";
 import { PointNum, getSelection } from "@dflex/utils";
 import type { AxesPoint } from "@dflex/utils";
 
+// function setMirrorStyle(
+//   mirrorStyle: CSSStyleDeclaration,
+//   viewportPos: [number, number] | null,
+//   dimensions: PointNum | null
+// ): void {
+//   let width = "auto";
+//   let height = "auto";
+
+//   if (dimensions) {
+//     if (dimensions.y > 0) {
+//       height = `${dimensions.y}px`;
+//     }
+
+//     if (dimensions.x > 0) {
+//       width = `${dimensions.x}px`;
+//     }
+//   }
+
+//   const [top = 0, left = 0] = viewportPos || [];
+
+//   mirrorStyle.cssText = `
+//     position: fixed;
+//     top: ${top}px;
+//     left: ${left}px;
+//     width: ${width};
+//     height: ${height};
+//     z-index: 99;
+//     margin: 0;
+//   `;
+// }
+
+function setOrUnsetOriginStyle(
+  originStyle: CSSStyleDeclaration,
+  shouldSet: boolean
+) {
+  if (shouldSet) {
+    originStyle.cssText = `
+    position: relative;
+    z-index: 99;
+  `;
+
+    return;
+  }
+
+  originStyle.removeProperty("position");
+  originStyle.removeProperty("z-index");
+}
+
+// function disableUserSelect(): void {
+//   document.body.style.setProperty("user-select", "none");
+
+//   const domSelection = getSelection();
+
+//   if (domSelection) {
+//     domSelection.removeAllRanges();
+//   }
+// }
+
+// function restoreUserSelect() {
+//   document.body.style.removeProperty("user-select");
+// }
+
 class DFlexBaseDraggable<T extends DFlexBaseElement> {
   draggedElm: T;
 
@@ -130,6 +192,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
         mirrorDOM.ariaLabel = "Draggable";
         mirrorDOM.id = `dflex-draggable-mirror__${originDOM.id}`;
         delete mirrorDOM.dataset.index;
+
         mirrorStyle.setProperty("position", "fixed");
         mirrorStyle.setProperty("top", `${viewportPos![0]}px`);
         mirrorStyle.setProperty("left", `${viewportPos![1]}px`);
@@ -141,12 +204,13 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
         }
         mirrorStyle.setProperty("z-index", "99");
         mirrorStyle.setProperty("margin", "0");
+
         originStyle.setProperty("opacity", "0");
         // mirrorStyle.backgroundColor = "red";
       } else {
         originDOM.ariaLabel = "Draggable";
-        originStyle.setProperty("position", "relative");
-        originStyle.setProperty("z-index", "99");
+
+        setOrUnsetOriginStyle(originStyle, true);
       }
 
       document.body.style.setProperty("user-select", "none");
@@ -183,8 +247,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
       originStyle.removeProperty("opacity");
       mirrorDOM.remove();
     } else {
-      originStyle.removeProperty("position");
-      originStyle.removeProperty("z-index");
+      setOrUnsetOriginStyle(originStyle, false);
     }
 
     if (!originDOM.getAttribute("style")) {
