@@ -4,6 +4,32 @@ import { DFlexBaseElement } from "@dflex/core-instance";
 import { PointNum, getSelection, rmEmptyAttr } from "@dflex/utils";
 import type { AxesPoint } from "@dflex/utils";
 
+const MIRROR_STYLE = {
+  POSITION: "position",
+  TOP: "top",
+  LEFT: "left",
+  WIDTH: "width",
+  HEIGHT: "height",
+  Z_INDEX: "z-index",
+  MARGIN: "margin",
+};
+
+const ORIGIN_STYLE = {
+  POSITION: "position",
+  Z_INDEX: "z-index",
+};
+
+const USER_SELECT_STYLE = {
+  PROPERTY: "user-select",
+  VALUE: "none",
+};
+
+if (__DEV__) {
+  Object.freeze(MIRROR_STYLE);
+  Object.freeze(ORIGIN_STYLE);
+  Object.freeze(USER_SELECT_STYLE);
+}
+
 function setMirrorStyle(
   mirrorStyle: CSSStyleDeclaration,
   viewportPos: [number, number] | null,
@@ -25,13 +51,13 @@ function setMirrorStyle(
   const [top = 0, left = 0] = viewportPos || [];
 
   mirrorStyle.cssText = `
-    position: fixed;
-    top: ${top}px;
-    left: ${left}px;
-    width: ${width};
-    height: ${height};
-    z-index: 99;
-    margin: 0;
+    ${MIRROR_STYLE.POSITION}: fixed;
+    ${MIRROR_STYLE.TOP}: ${top}px;
+    ${MIRROR_STYLE.LEFT}: ${left}px;
+    ${MIRROR_STYLE.WIDTH}: ${width};
+    ${MIRROR_STYLE.HEIGHT}: ${height};
+    ${MIRROR_STYLE.Z_INDEX}: 99;
+    ${MIRROR_STYLE.MARGIN}: 0;
   `;
 }
 
@@ -41,19 +67,22 @@ function setOrUnsetOriginStyle(
 ) {
   if (shouldSet) {
     originStyle.cssText = `
-    position: relative;
-    z-index: 99;
+    ${ORIGIN_STYLE.POSITION}: relative;
+    ${ORIGIN_STYLE.Z_INDEX}: 99;
   `;
 
     return;
   }
 
-  originStyle.removeProperty("position");
-  originStyle.removeProperty("z-index");
+  originStyle.removeProperty(ORIGIN_STYLE.POSITION);
+  originStyle.removeProperty(ORIGIN_STYLE.Z_INDEX);
 }
 
 function disableUserSelect(): void {
-  document.body.style.setProperty("user-select", "none");
+  document.body.style.setProperty(
+    USER_SELECT_STYLE.PROPERTY,
+    USER_SELECT_STYLE.VALUE
+  );
 
   const domSelection = getSelection();
 
@@ -63,7 +92,7 @@ function disableUserSelect(): void {
 }
 
 function restoreUserSelect() {
-  document.body.style.removeProperty("user-select");
+  document.body.style.removeProperty(USER_SELECT_STYLE.PROPERTY);
 }
 
 class DFlexBaseDraggable<T extends DFlexBaseElement> {

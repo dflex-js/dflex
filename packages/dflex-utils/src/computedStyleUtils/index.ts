@@ -7,4 +7,5 @@ export {
   getElmOverflow,
   setFixedDimensions,
   setRelativePosition,
+  rmEmptyAttr,
 } from "./computedStyleUtils";
