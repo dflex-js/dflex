@@ -4,30 +4,30 @@ import { DFlexBaseElement } from "@dflex/core-instance";
 import { PointNum, getSelection } from "@dflex/utils";
 import type { AxesPoint } from "@dflex/utils";
 
-// function setMirrorStyle(
-//   mirrorStyle: CSSStyleDeclaration,
-//   viewportPos: [number, number] | null,
-//   dimensions: PointNum | null
-// ): void {
-//   const [top = 0, left = 0] = viewportPos || [];
+function setMirrorStyle(
+  mirrorStyle: CSSStyleDeclaration,
+  viewportPos: [number, number] | null,
+  dimensions: PointNum | null
+): void {
+  const [top = 0, left = 0] = viewportPos || [];
 
-//   mirrorStyle.setProperty("position", "fixed");
-//   mirrorStyle.setProperty("top", `${top}px`);
-//   mirrorStyle.setProperty("left", `${left}px`);
+  mirrorStyle.setProperty("position", "fixed");
+  mirrorStyle.setProperty("top", `${top}px`);
+  mirrorStyle.setProperty("left", `${left}px`);
 
-//   if (dimensions) {
-//     if (dimensions.y > 0) {
-//       mirrorStyle.setProperty("height", `${dimensions.y}px`);
-//     }
+  if (dimensions) {
+    if (dimensions.y > 0) {
+      mirrorStyle.setProperty("height", `${dimensions.y}px`);
+    }
 
-//     if (dimensions.x > 0) {
-//       mirrorStyle.setProperty("width", `${dimensions.x}px`);
-//     }
-//   }
+    if (dimensions.x > 0) {
+      mirrorStyle.setProperty("width", `${dimensions.x}px`);
+    }
+  }
 
-//   mirrorStyle.setProperty("z-index", "99");
-//   mirrorStyle.setProperty("margin", "0");
-// }
+  mirrorStyle.setProperty("z-index", "99");
+  mirrorStyle.setProperty("margin", "0");
+}
 
 function setOrUnsetOriginStyle(
   originStyle: CSSStyleDeclaration,
@@ -179,23 +179,11 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
       this.draggedElm.setAttribute(originDOM, "DRAGGED", "true");
 
       if (mirrorDOM !== null) {
-        const { style: mirrorStyle } = mirrorDOM;
-
         mirrorDOM.ariaLabel = "Draggable";
         mirrorDOM.id = `dflex-draggable-mirror__${originDOM.id}`;
         delete mirrorDOM.dataset.index;
 
-        mirrorStyle.setProperty("position", "fixed");
-        mirrorStyle.setProperty("top", `${viewportPos![0]}px`);
-        mirrorStyle.setProperty("left", `${viewportPos![1]}px`);
-        if (dimensions!.x > 0) {
-          mirrorStyle.setProperty("width", `${dimensions!.x}px`);
-        }
-        if (dimensions!.y > 0) {
-          mirrorStyle.setProperty("height", `${dimensions!.y}px`);
-        }
-        mirrorStyle.setProperty("z-index", "99");
-        mirrorStyle.setProperty("margin", "0");
+        setMirrorStyle(mirrorDOM.style, viewportPos, dimensions);
 
         originStyle.setProperty("opacity", "0");
         // mirrorStyle.backgroundColor = "red";
