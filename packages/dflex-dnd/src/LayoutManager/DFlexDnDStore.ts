@@ -150,11 +150,16 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   private _resumeAndInitElmGrid(
     container: DFlexParentContainer,
+    scroll: DFlexScrollContainer,
     id: string
   ): void {
     const [dflexElm, DOM] = this.getElmWithDOM(id);
 
-    dflexElm.initElmRect(DOM);
+    const {
+      totalScrollRect: { left, top },
+    } = scroll;
+
+    dflexElm.initElmRect(DOM, left, top);
 
     this.setElmGridBridge(container, dflexElm);
 
@@ -234,7 +239,11 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     this.containers.set(SK, container);
 
-    const initElmGrid = this._resumeAndInitElmGrid.bind(this, container);
+    const initElmGrid = this._resumeAndInitElmGrid.bind(
+      this,
+      container,
+      scroll
+    );
 
     siblings.forEach(initElmGrid);
 
@@ -318,10 +327,16 @@ class DFlexDnDStore extends DFlexBaseStore {
         : true;
 
       if (is) {
+        const scroll = this.scrolls.get(containerKy)!;
+
+        const {
+          totalScrollRect: { left, top },
+        } = scroll;
+
         branch.forEach((elmID) => {
           const [dflexElm, elmDOM] = this.getElmWithDOM(elmID);
 
-          dflexElm.initElmRect(elmDOM);
+          dflexElm.initElmRect(elmDOM, left, top);
 
           container.register(
             dflexElm.rect,
@@ -374,6 +389,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     refreshAllBranchElements: boolean
   ): void {
     const container = this.containers.get(SK)!;
+    const scroll = this.scrolls.get(SK)!;
     const branch = this.getElmSiblingsByKey(SK);
     const parentDOM = this.interactiveDOM.get(container.id)!;
 
@@ -393,6 +409,7 @@ class DFlexDnDStore extends DFlexBaseStore {
           parentDOM,
           this,
           container,
+          scroll,
           refreshAllBranchElements
         );
       },

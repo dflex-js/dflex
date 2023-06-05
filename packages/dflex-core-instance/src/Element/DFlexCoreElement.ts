@@ -155,17 +155,24 @@ class DFlexCoreElement extends DFlexBaseElement {
     }
   }
 
-  initElmRect(DOM: HTMLElement): void {
+  initElmRect(DOM: HTMLElement, scrollLeft: number, scrollTop: number): void {
     const { height, width, left, top } = DOM.getBoundingClientRect();
 
     /**
-     * Element offset stored once without being triggered to re-calculate.
-     * Instead, using currentOffset object as indicator to current
-     * offset/position. This offset, is the init-offset.
+     * Calculate the element's position by adding the scroll position to the
+     * left and top values obtained from getBoundingClientRect.
      */
-    this._initialPosition.setAxes(left, top);
+    const elementLeft = left + scrollLeft;
+    const elementTop = top + scrollTop;
 
-    this.rect.setByPointAndDimensions(top, left, height, width);
+    /**
+     * Element offset stored once without being triggered to re-calculate.
+     * Instead, using currentOffset object as an indicator of the current
+     * offset/position. This offset is the initial offset.
+     */
+    this._initialPosition.setAxes(elementLeft, elementTop);
+
+    this.rect.setByPointAndDimensions(elementTop, elementLeft, height, width);
   }
 
   getDimensions(DOM: HTMLElement): PointNum {
@@ -516,7 +523,11 @@ class DFlexCoreElement extends DFlexBaseElement {
     return this.VDOMOrder.self !== this.DOMOrder.self;
   }
 
-  refreshIndicators(DOM: HTMLElement): void {
+  refreshIndicators(
+    DOM: HTMLElement,
+    scrollTop: number,
+    scrollLeft: number
+  ): void {
     this._translateHistory = undefined;
 
     this.translate.setAxes(0, 0);
@@ -527,7 +538,7 @@ class DFlexCoreElement extends DFlexBaseElement {
 
     resetDOMStyle(DOM);
 
-    this.initElmRect(DOM);
+    this.initElmRect(DOM, scrollTop, scrollLeft);
 
     this.DOMGrid.setAxes(0, 0);
   }
