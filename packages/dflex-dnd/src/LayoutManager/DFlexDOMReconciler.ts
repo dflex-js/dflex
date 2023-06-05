@@ -1,5 +1,9 @@
 /* eslint-disable no-console */
-import type { DFlexElement, DFlexParentContainer } from "@dflex/core-instance";
+import type {
+  DFlexElement,
+  DFlexParentContainer,
+  DFlexScrollContainer,
+} from "@dflex/core-instance";
 import type { Siblings } from "@dflex/dom-gen";
 import { assertElmPos, featureFlags } from "@dflex/utils";
 import type DFlexDnDStore from "./DFlexDnDStore";
@@ -126,6 +130,7 @@ function DFlexDOMReconciler(
   branchDOM: HTMLElement,
   store: DFlexDnDStore,
   container: DFlexParentContainer,
+  scroll: DFlexScrollContainer,
   refreshAllBranchElements: boolean
 ): void {
   container.resetIndicators(branchIDs.length);
@@ -136,6 +141,10 @@ function DFlexDOMReconciler(
 
   let isUpdateElmGrid = true;
 
+  const {
+    totalScrollRect: { left, top },
+  } = scroll;
+
   if (refreshAllBranchElements) {
     isUpdateElmGrid = false;
     reconciledElmQueue = [];
@@ -143,7 +152,7 @@ function DFlexDOMReconciler(
     for (let i = 0; i <= branchIDs.length - 1; i += 1) {
       const [dflexElm, elmDOM] = store.getElmWithDOM(branchIDs[i]);
 
-      dflexElm.refreshIndicators(elmDOM);
+      dflexElm.refreshIndicators(elmDOM, left, top);
 
       if (__DEV__) {
         setElmGridAndAssertPosition(
@@ -162,7 +171,7 @@ function DFlexDOMReconciler(
     while (reconciledElmQueue.length) {
       const [dflexElm, elmDOM] = reconciledElmQueue.pop()!;
 
-      dflexElm.refreshIndicators(elmDOM);
+      dflexElm.refreshIndicators(elmDOM, left, top);
     }
   }
 
