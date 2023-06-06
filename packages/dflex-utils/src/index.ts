@@ -33,6 +33,7 @@ export {
   getElmComputedDimensions,
   getElmPos,
   getElmOverflow,
+  getParsedElmTransform,
 } from "./computedStyleUtils";
 
 export {

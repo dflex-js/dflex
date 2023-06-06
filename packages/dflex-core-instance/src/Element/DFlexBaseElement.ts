@@ -12,7 +12,7 @@ function transform(DOM: HTMLElement, x: number, y: number): void {
 class DFlexBaseElement {
   id: string;
 
-  translate!: PointNum;
+  translate: PointNum;
 
   isPaused: boolean;
 

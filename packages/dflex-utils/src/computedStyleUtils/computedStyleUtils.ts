@@ -122,6 +122,35 @@ function getElmComputedDimensions(DOM: HTMLElement): Dimensions {
   return { width, height };
 }
 
+function parseTransformMatrix(transform: string): [number, number] | null {
+  // Check if the transform property contains a matrix transform
+  const matrixMatch = transform.match(
+    /matrix\(\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*([^)]+)\)/
+  );
+
+  if (matrixMatch) {
+    const translateX = parseFloat(matrixMatch[5]);
+    const translateY = parseFloat(matrixMatch[6]);
+
+    return [translateX, translateY];
+  }
+
+  // Return null if no matrix transform is found
+  return null;
+}
+
+function getParsedElmTransform(DOM: HTMLElement): [number, number] | null {
+  const transform = getCachedComputedStyleProperty(
+    DOM,
+    CSSPropNames.TRANSFORM,
+    false
+  );
+
+  const transformMatrix = parseTransformMatrix(transform);
+
+  return transformMatrix;
+}
+
 type Dimension = "width" | "height";
 
 const DIMENSION_PROPS: Record<Dimension, string[]> = {
@@ -216,6 +245,7 @@ export {
   getElmPos,
   getElmOverflow,
   getElmComputedDimensions,
+  getParsedElmTransform,
   setFixedDimensions,
   setRelativePosition,
 };
