@@ -281,7 +281,9 @@ class DFlexCoreElement extends DFlexBaseElement {
     DOM.addEventListener("transitionend", transitionComplete);
 
     this.animatedFrame = requestAnimationFrame(() => {
-      DFlexCoreElement.transition(DOM, 0, duration, "ease-out");
+      if (duration > 0) {
+        DFlexCoreElement.transition(DOM, 0, duration, "ease-out");
+      }
       DFlexCoreElement.transform(DOM, this.translate.x, this.translate.y);
     });
   }
