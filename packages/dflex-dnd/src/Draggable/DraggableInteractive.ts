@@ -90,13 +90,7 @@ function throwIfOutContainer(siblings: string[]) {
   }
 }
 
-function triggerAssertProcess(
-  DOM: HTMLElement,
-  siblings: string[],
-  grid: PointNum
-) {
-  updateElmDatasetGrid(DOM, grid);
-
+function triggerAssertProcess(siblings: string[]) {
   throwIfElmIsEmpty(siblings);
   throwWhenDuplicates(siblings);
   throwWhenCollision(siblings);
@@ -105,11 +99,7 @@ function triggerAssertProcess(
 
 let debouncedTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
-function debouncedTriggerAssertProcess(
-  DOM: HTMLElement,
-  siblings: string[],
-  grid: PointNum
-) {
+function debouncedTriggerAssertProcess(siblings: string[]) {
   // Cancel the previous setTimeout call
   if (debouncedTimeoutId !== null) {
     clearTimeout(debouncedTimeoutId);
@@ -117,7 +107,7 @@ function debouncedTriggerAssertProcess(
 
   // Schedule the function call inside setTimeout
   debouncedTimeoutId = setTimeout(() => {
-    triggerAssertProcess(DOM, siblings, grid);
+    triggerAssertProcess(siblings);
     debouncedTimeoutId = null;
   }, 40);
 }
@@ -257,7 +247,8 @@ class DraggableInteractive extends DraggableAxes {
       this.draggedElm.restorePosition(draggedDOM);
 
       if (__DEV__) {
-        debouncedTriggerAssertProcess(draggedDOM, siblings, DOMGrid);
+        updateElmDatasetGrid(draggedDOM, DOMGrid);
+        debouncedTriggerAssertProcess(siblings);
       }
 
       return;
@@ -289,7 +280,8 @@ class DraggableInteractive extends DraggableAxes {
     }
 
     if (__DEV__) {
-      debouncedTriggerAssertProcess(draggedDOM, siblings, DOMGrid);
+      updateElmDatasetGrid(draggedDOM, DOMGrid);
+      debouncedTriggerAssertProcess(siblings);
     }
   }
 
