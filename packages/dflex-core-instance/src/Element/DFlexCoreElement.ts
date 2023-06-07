@@ -385,7 +385,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       this._initialPosition.y + this.translate.y
     );
 
-    this._transformOrPend(DOM, enforceTransform, duration);
+    this._transformOrPend(DOM, enforceTransform, duration > 0 ? 0 : 0);
 
     const { self: oldIndex } = this.VDOMOrder;
 
