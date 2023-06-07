@@ -285,6 +285,10 @@ class DFlexCoreElement extends DFlexBaseElement {
         DFlexCoreElement.transition(DOM, 0, duration, "ease-out");
       }
       DFlexCoreElement.transform(DOM, this.translate.x, this.translate.y);
+
+      if (duration === 0) {
+        transitionComplete();
+      }
     });
   }
 
