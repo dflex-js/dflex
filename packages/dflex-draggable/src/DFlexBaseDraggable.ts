@@ -1,7 +1,7 @@
 /* eslint-disable no-dupe-class-members */
 /* eslint-disable no-unused-vars */
 import { DFlexBaseElement } from "@dflex/core-instance";
-import { PointNum, getSelection } from "@dflex/utils";
+import { PointNum, getSelection, rmEmptyAttr } from "@dflex/utils";
 import type { AxesPoint } from "@dflex/utils";
 
 const MIRROR_ID_PREFIX = "dflex-draggable-mirror";
@@ -44,18 +44,6 @@ function setOrUnsetOriginStyle(
 
   originStyle.removeProperty("position");
   originStyle.removeProperty("z-index");
-}
-
-function rmEmptyAttr(DOM: HTMLElement, attribute: string) {
-  if (!DOM.hasAttribute(attribute)) {
-    return;
-  }
-
-  const value = DOM.getAttribute(attribute);
-
-  if (value && value.trim() === "") {
-    DOM.removeAttribute(attribute);
-  }
 }
 
 class DFlexBaseDraggable<T extends DFlexBaseElement> {

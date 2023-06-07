@@ -10,6 +10,8 @@ import {
   updateElmDatasetGrid,
   Axis,
   getParsedElmTransform,
+  rmEmptyAttr,
+  noop,
 } from "@dflex/utils";
 import type { Direction, Axes, AxesPoint } from "@dflex/utils";
 
@@ -61,14 +63,6 @@ export interface DFlexElementInput {
   readonly: boolean;
 }
 
-function resetDOMStyle(DOM: HTMLElement): void {
-  DOM.style.removeProperty("transform");
-
-  if (!DOM.getAttribute("style")) {
-    DOM.removeAttribute("style");
-  }
-}
-
 function assertGridBoundaries(
   id: string,
   DOMGrid: PointNum,
@@ -92,6 +86,24 @@ function assertGridBoundaries(
       )} for container ${JSON.stringify(maxContainerGridBoundaries)}.`
     );
   }
+}
+
+const ANIMATION_SPEED = 20;
+
+function calculateAnimationDuration(from: AxesPoint, to: AxesPoint): number {
+  // Calculate the horizontal and vertical distance between from and to positions
+  const dx = from.x - to.x;
+  const dy = from.y - to.y;
+
+  // Calculate the total distance using the Pythagorean theorem
+  const distance = Math.sqrt(dx * dx + dy * dy);
+
+  // Calculate the duration based on the square root of the distance
+  // Adjust the coefficient as needed to control the animation speed
+  const duration = Math.sqrt(distance) * ANIMATION_SPEED;
+
+  // Return the calculated duration
+  return duration;
 }
 
 class DFlexCoreElement extends DFlexBaseElement {
@@ -146,7 +158,6 @@ class DFlexCoreElement extends DFlexBaseElement {
 
     // CSS
     this._computedDimensions = null;
-    // this.margin = null;
     this._initialPosition = new PointNum(0, 0);
     this.rect = new BoxRect(0, 0, 0, 0);
     this.DOMGrid = new PointNum(0, 0);
@@ -231,12 +242,16 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.isVisible = isVisible;
 
     if (this.hasPendingTransform && this.isVisible) {
-      this._transform(DOM);
+      this._transform(DOM, 0);
       this.hasPendingTransform = false;
     }
   }
 
-  private _transform(DOM: HTMLElement, cb?: () => void): void {
+  private _transform(
+    DOM: HTMLElement,
+    duration: number,
+    onComplete: () => void = noop
+  ): void {
     if (!this.isVisible) {
       this.hasPendingTransform = true;
       return;
@@ -244,16 +259,15 @@ class DFlexCoreElement extends DFlexBaseElement {
 
     if (this.animatedFrame !== null) {
       cancelAnimationFrame(this.animatedFrame);
+      this.animatedFrame = null;
     }
 
-    this.animatedFrame = requestAnimationFrame(() => {
-      DFlexCoreElement.transform(DOM, this.translate.x, this.translate.y);
-
-      if (cb) {
-        cb();
-      }
-
+    const transitionComplete = () => {
       this.animatedFrame = null;
+
+      onComplete();
+
+      DOM.removeEventListener("transitionend", transitionComplete);
 
       if (__DEV__) {
         if (featureFlags.enablePositionAssertion) {
@@ -262,6 +276,13 @@ class DFlexCoreElement extends DFlexBaseElement {
           }, 1000);
         }
       }
+    };
+
+    DOM.addEventListener("transitionend", transitionComplete);
+
+    this.animatedFrame = requestAnimationFrame(() => {
+      DFlexCoreElement.transition(DOM, 0, duration, "ease-out");
+      DFlexCoreElement.transform(DOM, this.translate.x, this.translate.y);
     });
   }
 
@@ -318,7 +339,11 @@ class DFlexCoreElement extends DFlexBaseElement {
     this._translateHistory.get(cycleID)!.push(elmAxesHistory);
   }
 
-  private _transformOrPend(DOM: HTMLElement, enforceTransform: boolean): void {
+  private _transformOrPend(
+    DOM: HTMLElement,
+    enforceTransform: boolean,
+    transformDuration: number
+  ): void {
     if (enforceTransform) {
       if (!this.isVisible && this.hasPendingTransform) {
         this.hasPendingTransform = false;
@@ -326,7 +351,7 @@ class DFlexCoreElement extends DFlexBaseElement {
         return;
       }
 
-      this._transform(DOM);
+      this._transform(DOM, transformDuration);
 
       return;
     }
@@ -337,7 +362,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       return;
     }
 
-    this._transform(DOM);
+    this._transform(DOM, transformDuration);
   }
 
   private _transformationProcess(
@@ -346,7 +371,10 @@ class DFlexCoreElement extends DFlexBaseElement {
     enforceTransform: boolean,
     indexIncrement: number
   ): [number, number] {
-    this.translate.increase(elmTransition);
+    const oldPoint = this.translate.getInstance();
+    const newPoint = this.translate.increase(elmTransition).getInstance();
+
+    const duration = calculateAnimationDuration(oldPoint, newPoint);
 
     /**
      * This offset related directly to translate Y and Y. It's isolated from
@@ -357,7 +385,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       this._initialPosition.y + this.translate.y
     );
 
-    this._transformOrPend(DOM, enforceTransform);
+    this._transformOrPend(DOM, enforceTransform, duration);
 
     const { self: oldIndex } = this.VDOMOrder;
 
@@ -463,14 +491,14 @@ class DFlexCoreElement extends DFlexBaseElement {
   }
 
   restorePosition(DOM: HTMLElement): void {
-    this._transform(DOM);
+    this._transform(DOM, 0);
 
     this.setAttribute(DOM, "INDEX", this.VDOMOrder.self);
   }
 
   assignNewPosition(DOM: HTMLElement, t: PointNum): void {
     this.translate.clone(t);
-    this._transform(DOM);
+    this._transform(DOM, 0);
   }
 
   /**
@@ -562,7 +590,9 @@ class DFlexCoreElement extends DFlexBaseElement {
 
     this.DOMOrder.self = this.VDOMOrder.self;
 
-    resetDOMStyle(DOM);
+    DOM.style.removeProperty("transform");
+
+    rmEmptyAttr(DOM, "style");
 
     this.initElmRect(DOM, scrollTop, scrollLeft);
 

@@ -16,6 +16,7 @@ export type { Dimensions, Axis, Axes, Direction } from "./types";
 export { BOTH_AXIS } from "./types";
 
 export {
+  noop,
   combineKeys,
   warnOnce,
   assertElmPos,
@@ -34,6 +35,7 @@ export {
   getElmPos,
   getElmOverflow,
   getParsedElmTransform,
+  rmEmptyAttr,
 } from "./computedStyleUtils";
 
 export {

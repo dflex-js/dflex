@@ -502,10 +502,11 @@ class DFlexMechanismController extends DFlexScrollableElement {
             return;
           }
 
-          throw new Error(
-            `_actionCaller: unable to find targeted element index for: ${JSON.stringify(
-              occupiedGrid
-            )}`
+          // eslint-disable-next-line no-console
+          console.warn(
+            `_actionCaller: unable to find targeted element index for: ${
+              (JSON.stringify(occupiedGrid), draggedID)
+            }`
           );
         }
 

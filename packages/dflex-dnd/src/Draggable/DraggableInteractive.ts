@@ -103,6 +103,25 @@ function triggerAssertProcess(
   throwIfOutContainer(siblings);
 }
 
+let debouncedTimeoutId: ReturnType<typeof setTimeout> | null = null;
+
+function debouncedTriggerAssertProcess(
+  DOM: HTMLElement,
+  siblings: string[],
+  grid: PointNum
+) {
+  // Cancel the previous setTimeout call
+  if (debouncedTimeoutId !== null) {
+    clearTimeout(debouncedTimeoutId);
+  }
+
+  // Schedule the function call inside setTimeout
+  debouncedTimeoutId = setTimeout(() => {
+    triggerAssertProcess(DOM, siblings, grid);
+    debouncedTimeoutId = null;
+  }, 40);
+}
+
 class DraggableInteractive extends DraggableAxes {
   mirrorDOM: HTMLElement | null;
 
@@ -238,7 +257,7 @@ class DraggableInteractive extends DraggableAxes {
       this.draggedElm.restorePosition(draggedDOM);
 
       if (__DEV__) {
-        triggerAssertProcess(draggedDOM, siblings, DOMGrid);
+        debouncedTriggerAssertProcess(draggedDOM, siblings, DOMGrid);
       }
 
       return;
@@ -270,7 +289,7 @@ class DraggableInteractive extends DraggableAxes {
     }
 
     if (__DEV__) {
-      triggerAssertProcess(draggedDOM, siblings, DOMGrid);
+      debouncedTriggerAssertProcess(draggedDOM, siblings, DOMGrid);
     }
   }
 

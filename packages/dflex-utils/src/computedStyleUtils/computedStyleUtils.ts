@@ -238,6 +238,18 @@ function setRelativePosition(DOM: HTMLElement): void {
   }
 }
 
+function rmEmptyAttr(DOM: HTMLElement, attribute: string) {
+  if (!DOM.hasAttribute(attribute)) {
+    return;
+  }
+
+  const value = DOM.getAttribute(attribute);
+
+  if (value && value.trim() === "") {
+    DOM.removeAttribute(attribute);
+  }
+}
+
 export {
   getCachedComputedStyle,
   getCachedComputedStyleProperty,
@@ -248,4 +260,5 @@ export {
   getParsedElmTransform,
   setFixedDimensions,
   setRelativePosition,
+  rmEmptyAttr,
 };
