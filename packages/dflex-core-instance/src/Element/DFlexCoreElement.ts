@@ -123,15 +123,15 @@ class DFlexCoreElement extends DFlexBaseElement {
 
   DOMGrid: PointNum;
 
-  isVisible: boolean;
+  private _isVisible: boolean;
 
-  hasPendingTransform: boolean;
+  private _hasPendingTransform: boolean;
 
   readonly: boolean;
 
   private _animatedFrame: number | null;
 
-  animation: AnimationOpts;
+  private _animation: AnimationOpts;
 
   private _translateHistory?: Map<string, TransitionHistory[]>;
 
@@ -152,12 +152,11 @@ class DFlexCoreElement extends DFlexBaseElement {
 
     this.depth = depth;
     this.readonly = readonly;
-    this.isPaused = false;
-    this.isVisible = !this.isPaused;
+    this._isVisible = true;
     this._animatedFrame = null;
-    this.hasPendingTransform = false;
+    this._hasPendingTransform = false;
     this._translateHistory = undefined;
-    this.animation = animation;
+    this._animation = animation;
 
     // CSS
     this._computedDimensions = null;
@@ -173,7 +172,7 @@ class DFlexCoreElement extends DFlexBaseElement {
 
   updateConfig(readonly: boolean, animation: AnimationOpts) {
     this.readonly = readonly;
-    this.animation = animation;
+    this._animation = animation;
   }
 
   initElmRect(DOM: HTMLElement, scrollLeft: number, scrollTop: number): void {
@@ -219,15 +218,15 @@ class DFlexCoreElement extends DFlexBaseElement {
       }
     }
 
-    if (isVisible === this.isVisible) {
+    if (isVisible === this._isVisible) {
       return;
     }
 
-    this.isVisible = isVisible;
+    this._isVisible = isVisible;
 
-    if (this.hasPendingTransform && this.isVisible) {
+    if (this._hasPendingTransform && this._isVisible) {
       this._transform(DOM, 0);
-      this.hasPendingTransform = false;
+      this._hasPendingTransform = false;
     }
   }
 
@@ -236,8 +235,8 @@ class DFlexCoreElement extends DFlexBaseElement {
     duration: number,
     onComplete: () => void = noop
   ): void {
-    if (!this.isVisible) {
-      this.hasPendingTransform = true;
+    if (!this._isVisible) {
+      this._hasPendingTransform = true;
       return;
     }
 
@@ -274,7 +273,7 @@ class DFlexCoreElement extends DFlexBaseElement {
           return;
         }
 
-        DFlexCoreElement.transition(DOM, 0, duration, this.animation.easing);
+        DFlexCoreElement.transition(DOM, 0, duration, this._animation.easing);
         DFlexCoreElement.transform(DOM, this.translate.x, this.translate.y);
       });
     } catch (error) {
@@ -344,8 +343,8 @@ class DFlexCoreElement extends DFlexBaseElement {
     transformDuration: number
   ): void {
     if (enforceTransform) {
-      if (!this.isVisible && this.hasPendingTransform) {
-        this.hasPendingTransform = false;
+      if (!this._isVisible && this._hasPendingTransform) {
+        this._hasPendingTransform = false;
 
         return;
       }
@@ -355,8 +354,8 @@ class DFlexCoreElement extends DFlexBaseElement {
       return;
     }
 
-    if (!this.isVisible) {
-      this.hasPendingTransform = true;
+    if (!this._isVisible) {
+      this._hasPendingTransform = true;
 
       return;
     }
@@ -372,9 +371,8 @@ class DFlexCoreElement extends DFlexBaseElement {
   ): [number, number] {
     let calculatedDuration = -1;
 
-    const { duration } = this.animation;
+    const { duration } = this._animation;
 
-    // eslint-disable-next-line no-constant-condition
     if (duration) {
       const oldPoint = this.translate.getInstance();
       const newPoint = this.translate.increase(elmTransition).getInstance();
@@ -597,7 +595,7 @@ class DFlexCoreElement extends DFlexBaseElement {
 
     this.translate.setAxes(0, 0);
 
-    this.hasPendingTransform = false;
+    this._hasPendingTransform = false;
 
     this.DOMOrder.self = this.VDOMOrder.self;
 
@@ -621,8 +619,8 @@ class DFlexCoreElement extends DFlexBaseElement {
       initialPosition: this._initialPosition.getInstance(),
       rect: this.rect,
       hasTransformedFromOrigin: this.hasTransformedFromOrigin(),
-      hasPendingTransformation: this.hasPendingTransform,
-      isVisible: this.isVisible,
+      hasPendingTransformation: this._hasPendingTransform,
+      isVisible: this._isVisible,
     };
   }
 }

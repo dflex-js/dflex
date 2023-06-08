@@ -100,8 +100,6 @@ class DFlexBaseElement {
 
   translate: PointNum;
 
-  isPaused: boolean;
-
   private _hasAttribute?: AttributeSet;
 
   static getType(): string {
@@ -114,7 +112,6 @@ class DFlexBaseElement {
 
   constructor(id: string) {
     this.id = id;
-    this.isPaused = false;
     this.translate = new PointNum(0, 0);
     this._hasAttribute = new Set();
   }
