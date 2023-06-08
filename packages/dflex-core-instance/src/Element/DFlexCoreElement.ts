@@ -10,6 +10,7 @@ import {
   updateElmDatasetGrid,
   Axis,
   rmEmptyAttr,
+  noop,
 } from "@dflex/utils";
 import type { Direction, Axes, AxesPoint, AnimationOpts } from "@dflex/utils";
 
@@ -87,6 +88,24 @@ function assertGridBoundaries(
   }
 }
 
+const ANIMATION_SPEED = 20;
+
+function calculateAnimationDuration(from: AxesPoint, to: AxesPoint): number {
+  // Calculate the horizontal and vertical distance between from and to positions
+  const dx = from.x - to.x;
+  const dy = from.y - to.y;
+
+  // Calculate the total distance using the Pythagorean theorem
+  const distance = Math.sqrt(dx * dx + dy * dy);
+
+  // Calculate the duration based on the square root of the distance
+  // Adjust the coefficient as needed to control the animation speed
+  const duration = Math.sqrt(distance) * ANIMATION_SPEED;
+
+  // Return the calculated duration
+  return duration;
+}
+
 class DFlexCoreElement extends DFlexBaseElement {
   private _initialPosition: PointNum;
 
@@ -110,7 +129,7 @@ class DFlexCoreElement extends DFlexBaseElement {
 
   readonly: boolean;
 
-  animatedFrame: number | null;
+  private _animatedFrame: number | null;
 
   animation: AnimationOpts;
 
@@ -135,7 +154,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.readonly = readonly;
     this.isPaused = false;
     this.isVisible = !this.isPaused;
-    this.animatedFrame = null;
+    this._animatedFrame = null;
     this.hasPendingTransform = false;
     this._translateHistory = undefined;
     this.animation = animation;
@@ -207,29 +226,32 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.isVisible = isVisible;
 
     if (this.hasPendingTransform && this.isVisible) {
-      this._transform(DOM);
+      this._transform(DOM, 0);
       this.hasPendingTransform = false;
     }
   }
 
-  private _transform(DOM: HTMLElement, cb?: () => void): void {
+  private _transform(
+    DOM: HTMLElement,
+    duration: number,
+    onComplete: () => void = noop
+  ): void {
     if (!this.isVisible) {
       this.hasPendingTransform = true;
       return;
     }
 
-    if (this.animatedFrame !== null) {
-      cancelAnimationFrame(this.animatedFrame);
+    if (this._animatedFrame !== null) {
+      cancelAnimationFrame(this._animatedFrame);
+      this._animatedFrame = null;
     }
 
-    this.animatedFrame = requestAnimationFrame(() => {
-      DFlexCoreElement.transform(DOM, this.translate.x, this.translate.y);
+    const transitionComplete = () => {
+      this._animatedFrame = null;
 
-      if (cb) {
-        cb();
-      }
+      onComplete();
 
-      this.animatedFrame = null;
+      DOM.removeEventListener("transitionend", transitionComplete);
 
       if (__DEV__) {
         if (featureFlags.enablePositionAssertion) {
@@ -238,7 +260,29 @@ class DFlexCoreElement extends DFlexBaseElement {
           }, 1000);
         }
       }
-    });
+    };
+
+    DOM.addEventListener("transitionend", transitionComplete);
+
+    try {
+      this._animatedFrame = requestAnimationFrame(() => {
+        // No animation is needed for the element.
+        if (duration === -1) {
+          DFlexCoreElement.transform(DOM, this.translate.x, this.translate.y);
+          transitionComplete();
+
+          return;
+        }
+
+        DFlexCoreElement.transition(DOM, 0, duration, this.animation.easing);
+        DFlexCoreElement.transform(DOM, this.translate.x, this.translate.y);
+      });
+    } catch (error) {
+      if (__DEV__) {
+        // eslint-disable-next-line no-console
+        console.log(error);
+      }
+    }
   }
 
   updateIndex(DOM: HTMLElement, i: number) {
@@ -294,7 +338,11 @@ class DFlexCoreElement extends DFlexBaseElement {
     this._translateHistory.get(cycleID)!.push(elmAxesHistory);
   }
 
-  private _transformOrPend(DOM: HTMLElement, enforceTransform: boolean): void {
+  private _transformOrPend(
+    DOM: HTMLElement,
+    enforceTransform: boolean,
+    transformDuration: number
+  ): void {
     if (enforceTransform) {
       if (!this.isVisible && this.hasPendingTransform) {
         this.hasPendingTransform = false;
@@ -302,7 +350,7 @@ class DFlexCoreElement extends DFlexBaseElement {
         return;
       }
 
-      this._transform(DOM);
+      this._transform(DOM, transformDuration);
 
       return;
     }
@@ -313,7 +361,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       return;
     }
 
-    this._transform(DOM);
+    this._transform(DOM, transformDuration);
   }
 
   private _transformationProcess(
@@ -322,7 +370,18 @@ class DFlexCoreElement extends DFlexBaseElement {
     enforceTransform: boolean,
     indexIncrement: number
   ): [number, number] {
-    this.translate.increase(elmTransition);
+    let calculatedDuration = -1;
+
+    // this.animation.duration > 0
+    // eslint-disable-next-line no-constant-condition
+    if (false) {
+      const oldPoint = this.translate.getInstance();
+      const newPoint = this.translate.increase(elmTransition).getInstance();
+
+      calculatedDuration = calculateAnimationDuration(oldPoint, newPoint);
+    } else {
+      this.translate.increase(elmTransition);
+    }
 
     /**
      * This offset related directly to translate Y and Y. It's isolated from
@@ -333,7 +392,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       this._initialPosition.y + this.translate.y
     );
 
-    this._transformOrPend(DOM, enforceTransform);
+    this._transformOrPend(DOM, enforceTransform, calculatedDuration);
 
     const { self: oldIndex } = this.VDOMOrder;
 
@@ -439,14 +498,14 @@ class DFlexCoreElement extends DFlexBaseElement {
   }
 
   restorePosition(DOM: HTMLElement): void {
-    this._transform(DOM);
+    this._transform(DOM, -1);
 
     this.setAttribute(DOM, "INDEX", this.VDOMOrder.self);
   }
 
   assignNewPosition(DOM: HTMLElement, t: PointNum): void {
     this.translate.clone(t);
-    this._transform(DOM);
+    this._transform(DOM, -1);
   }
 
   /**
