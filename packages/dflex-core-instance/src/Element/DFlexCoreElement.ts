@@ -9,6 +9,7 @@ import {
   BOTH_AXIS,
   updateElmDatasetGrid,
   Axis,
+  rmEmptyAttr,
 } from "@dflex/utils";
 import type { Direction, Axes, AxesPoint, AnimationOpts } from "@dflex/utils";
 
@@ -61,14 +62,6 @@ export interface DFlexElementInput {
   animation: AnimationOpts;
 }
 
-function resetDOMStyle(DOM: HTMLElement): void {
-  DOM.style.removeProperty("transform");
-
-  if (!DOM.getAttribute("style")) {
-    DOM.removeAttribute("style");
-  }
-}
-
 function assertGridBoundaries(
   id: string,
   DOMGrid: PointNum,
@@ -119,6 +112,8 @@ class DFlexCoreElement extends DFlexBaseElement {
 
   animatedFrame: number | null;
 
+  animation: AnimationOpts;
+
   private _translateHistory?: Map<string, TransitionHistory[]>;
 
   static getType(): string {
@@ -128,7 +123,7 @@ class DFlexCoreElement extends DFlexBaseElement {
   static transform = DFlexBaseElement.transform;
 
   constructor(eleWithPointer: DFlexElementInput) {
-    const { order, keys, depth, readonly, id } = eleWithPointer;
+    const { order, keys, depth, readonly, animation, id } = eleWithPointer;
 
     super(id);
 
@@ -143,6 +138,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.animatedFrame = null;
     this.hasPendingTransform = false;
     this._translateHistory = undefined;
+    this.animation = animation;
 
     // CSS
     this._computedDimensions = null;
@@ -154,6 +150,11 @@ class DFlexCoreElement extends DFlexBaseElement {
     if (__DEV__) {
       Object.seal(this);
     }
+  }
+
+  updateConfig(readonly: boolean, animation: AnimationOpts) {
+    this.readonly = readonly;
+    this.animation = animation;
   }
 
   initElmRect(DOM: HTMLElement, scrollLeft: number, scrollTop: number): void {
@@ -537,7 +538,9 @@ class DFlexCoreElement extends DFlexBaseElement {
 
     this.DOMOrder.self = this.VDOMOrder.self;
 
-    resetDOMStyle(DOM);
+    DOM.style.removeProperty("transform");
+
+    rmEmptyAttr(DOM, "style");
 
     this.initElmRect(DOM, scrollTop, scrollLeft);
 
