@@ -298,14 +298,14 @@ class DFlexBaseStore {
   }
 
   register(
-    element: RegisterInputBase,
+    element: RegisterInputOpts,
     branchComposedCallBack?: BranchComposedCallBackFunction,
     highestContainerComposedCallBack?: HighestContainerComposedCallBack
   ) {
     // Don't execute the parent registration if there's new element in the branch.
     this._taskQ.cancelQueuedTask();
 
-    const { id, depth, readonly } = element;
+    const { id, depth = 0, readonly = false } = element;
 
     let isElmRegistered = this.registry.has(id);
 
