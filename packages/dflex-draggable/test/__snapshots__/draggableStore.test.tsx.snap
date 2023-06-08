@@ -23,6 +23,10 @@ Map {
     },
     "_translateHistory": undefined,
     "animatedFrame": null,
+    "animation": {
+      "duration": "dynamic",
+      "easing": "ease-in",
+    },
     "depth": 0,
     "hasPendingTransform": false,
     "id": "id-0",

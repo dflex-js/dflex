@@ -32,6 +32,7 @@ export type AnimationOpts = {
   /**
    * The duration of the animation in milliseconds.
    * Specifies how long the animation should take to complete.
+   * (Default: 'dynamic')
    */
-  duration: number;
+  duration: null | number | "dynamic";
 };

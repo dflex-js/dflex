@@ -65,7 +65,7 @@ export function getAnimationOptions(
 ): Required<AnimationOpts> {
   const defaultAnimation: AnimationOpts = {
     easing: "ease-in",
-    duration: 0,
+    duration: "dynamic",
   };
 
   return animation ? { ...defaultAnimation, ...animation } : defaultAnimation;
