@@ -29,14 +29,12 @@ function removeTransition(DOM: HTMLElement) {
 function validateEasing(easing: string): void {
   const cubicBezierRegex = /^cubic-bezier\(([^,]+),([^,]+),([^,]+),([^)]+)\)$/;
 
-  const validEasingValues = [
+  const validEasingValues: CubicBezier[] = [
     "linear",
     "ease",
     "ease-in",
     "ease-out",
     "ease-in-out",
-    "step-start",
-    "step-end",
   ];
 
   if (!(cubicBezierRegex.test(easing) || validEasingValues.includes(easing))) {
