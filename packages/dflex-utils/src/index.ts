@@ -12,10 +12,18 @@ export { default as eventDebounce } from "./eventDebounce";
 export { DFlexCycle } from "./DFlexCycle";
 export type { AbstractDFlexCycle } from "./DFlexCycle";
 
-export type { Dimensions, Axis, Axes, Direction } from "./types";
+export type {
+  Dimensions,
+  Axis,
+  Axes,
+  Direction,
+  AnimationOpts,
+  CubicBezier,
+} from "./types";
 export { BOTH_AXIS } from "./types";
 
 export {
+  noop,
   combineKeys,
   warnOnce,
   assertElmPos,
@@ -33,6 +41,8 @@ export {
   getElmComputedDimensions,
   getElmPos,
   getElmOverflow,
+  getParsedElmTransform,
+  rmEmptyAttr,
 } from "./computedStyleUtils";
 
 export {
