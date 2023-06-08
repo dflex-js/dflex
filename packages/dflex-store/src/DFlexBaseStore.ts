@@ -3,6 +3,7 @@ import Generator, { Keys, Siblings } from "@dflex/dom-gen";
 
 import { DFlexElement, DFlexElementInput } from "@dflex/core-instance";
 import {
+  AnimationOpts,
   featureFlags,
   getParentElm,
   setFixedDimensions,
@@ -11,29 +12,36 @@ import {
   Tracker,
 } from "@dflex/utils";
 
-// https://github.com/microsoft/TypeScript/issues/28374#issuecomment-536521051
-type DeepNonNullable<T> = {
-  [P in keyof T]-?: NonNullable<T[P]>;
+type DeepRequired<T> = {
+  [K in keyof T]-?: T[K] extends object
+    ? DeepRequired<T[K]>
+    : NonNullable<T[K]>;
 };
 
 /**
  * The options for the `register` method in DnD store.
  */
 export type RegisterInputOpts = {
-  /** Targeted element-id. */
+  /** Targeted element ID. */
   id: string;
 
-  /** The depth of targeted element starting from zero (The default value is zero).  */
+  /** The depth of the targeted element starting from zero. (Default: 0) */
   depth?: number;
 
   /**
-   * True for elements that won't be transformed during DnD but belongs to the
-   * same interactive container.
-   * */
+   * Indicates whether the element is read-only and won't be transformed during DnD,
+   * but still belongs to the same interactive container.
+   */
   readonly?: boolean;
+
+  animation?: Partial<AnimationOpts>;
 };
 
-export type RegisterInputBase = DeepNonNullable<RegisterInputOpts>;
+export type RegisterInputBase = DeepRequired<
+  Omit<RegisterInputOpts, "animation">
+> & {
+  animation: AnimationOpts;
+};
 
 export type DFlexGlobalConfig = {
   removeContainerWhenEmpty: boolean;
@@ -51,6 +59,17 @@ type BranchComposedCallBackFunction = (
 ) => void;
 
 type HighestContainerComposedCallBack = () => void;
+
+export function getAnimationOptions(
+  animation?: Partial<AnimationOpts>
+): Required<AnimationOpts> {
+  const defaultAnimation: AnimationOpts = {
+    easing: "ease-in",
+    duration: 0,
+  };
+
+  return animation ? { ...defaultAnimation, ...animation } : defaultAnimation;
+}
 
 function getElmDOMOrThrow(id: string): HTMLElement | null {
   let DOM = document.getElementById(id);
@@ -169,7 +188,7 @@ class DFlexBaseStore {
     elm: RegisterInputBase,
     dflexParentElm: null | DFlexElement
   ): Keys | null {
-    const { id, depth, readonly } = elm;
+    const { id, depth, readonly, animation } = elm;
 
     if (__DEV__) {
       if (this.registry.has(id) || this.interactiveDOM.has(id)) {
@@ -221,6 +240,7 @@ class DFlexBaseStore {
       keys,
       depth,
       readonly,
+      animation,
     };
 
     const dflexElm = new DFlexElement(coreElement);
@@ -247,6 +267,7 @@ class DFlexBaseStore {
   private _submitContainerChildren(
     parentDOM: HTMLElement,
     depth: number,
+    animation: AnimationOpts,
     registeredElmID: string,
     dflexParentElm: DFlexElement | null
   ) {
@@ -262,9 +283,11 @@ class DFlexBaseStore {
         }
 
         if (!this.registry.has(id)) {
-          const elm = {
+          const elm: RegisterInputBase = {
             depth,
             readonly: registeredElmID !== id,
+            // Assuming all siblings have the same animation settings.
+            animation,
             id,
           };
 
@@ -306,6 +329,8 @@ class DFlexBaseStore {
     this._taskQ.cancelQueuedTask();
 
     const { id, depth = 0, readonly = false } = element;
+
+    const animation = getAnimationOptions(element.animation);
 
     let isElmRegistered = this.registry.has(id);
 
@@ -389,6 +414,7 @@ class DFlexBaseStore {
           SK = this._submitContainerChildren(
             parentDOM,
             depth,
+            animation,
             id,
             dflexParentElm
           )!;
@@ -463,8 +489,9 @@ class DFlexBaseStore {
               {
                 id: parentID,
                 depth: parentDepth,
-                // Default value for inserted parent element.
+                // Default values:
                 readonly: true,
+                animation: getAnimationOptions(),
               },
               null
             )!;

@@ -37,7 +37,12 @@ function validateEasing(easing: string): void {
     "ease-in-out",
   ];
 
-  if (!(cubicBezierRegex.test(easing) || validEasingValues.includes(easing))) {
+  if (
+    !(
+      cubicBezierRegex.test(easing) ||
+      validEasingValues.includes(easing as CubicBezier)
+    )
+  ) {
     throw new Error(`Invalid easing function: ${easing}`);
   }
 }

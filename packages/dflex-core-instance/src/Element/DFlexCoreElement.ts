@@ -10,7 +10,7 @@ import {
   updateElmDatasetGrid,
   Axis,
 } from "@dflex/utils";
-import type { Direction, Axes, AxesPoint } from "@dflex/utils";
+import type { Direction, Axes, AxesPoint, AnimationOpts } from "@dflex/utils";
 
 import DFlexBaseElement from "./DFlexBaseElement";
 
@@ -58,6 +58,7 @@ export interface DFlexElementInput {
   keys: Keys;
   depth: number;
   readonly: boolean;
+  animation: AnimationOpts;
 }
 
 function resetDOMStyle(DOM: HTMLElement): void {
