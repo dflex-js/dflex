@@ -353,8 +353,10 @@ class DFlexBaseStore {
       DOM = this.interactiveDOM.get(id)!;
 
       const dflexElm = this.registry.get(id)!;
-      // Update `readonly` cause default is `true.`
-      dflexElm.readonly = readonly;
+
+      // Update default values created earlier.
+      dflexElm.updateConfig(readonly, animation);
+
       ({ SK } = dflexElm.keys);
     } else {
       DOM = getElmDOMOrThrow(id)!;
@@ -384,8 +386,9 @@ class DFlexBaseStore {
         [SK] = this._taskQ.handleQueue(REGISTER_Q) as string[];
 
         const dflexElm = this.registry.get(id)!;
-        // Update `readonly` cause default is `true.`
-        dflexElm.readonly = readonly;
+
+        // Update default values created earlier.
+        dflexElm.updateConfig(readonly, animation);
 
         if (__DEV__) {
           if (!SK) {
