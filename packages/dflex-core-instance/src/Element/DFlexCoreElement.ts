@@ -372,13 +372,17 @@ class DFlexCoreElement extends DFlexBaseElement {
   ): [number, number] {
     let calculatedDuration = -1;
 
-    // this.animation.duration > 0
+    const { duration } = this.animation;
+
     // eslint-disable-next-line no-constant-condition
-    if (false) {
+    if (duration) {
       const oldPoint = this.translate.getInstance();
       const newPoint = this.translate.increase(elmTransition).getInstance();
 
-      calculatedDuration = calculateAnimationDuration(oldPoint, newPoint);
+      calculatedDuration =
+        typeof duration === "number"
+          ? duration
+          : calculateAnimationDuration(oldPoint, newPoint);
     } else {
       this.translate.increase(elmTransition);
     }
