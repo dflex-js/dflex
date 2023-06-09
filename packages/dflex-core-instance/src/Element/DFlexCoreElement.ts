@@ -291,6 +291,7 @@ class DFlexCoreElement extends DFlexBaseElement {
 
     try {
       this._animatedFrame = requestAnimationFrame(() => {
+        // With animation
         if (duration) {
           if (__DEV__) {
             if (!this._animation) {
@@ -299,7 +300,7 @@ class DFlexCoreElement extends DFlexBaseElement {
               );
             }
 
-            if (duration !== null && duration <= 0) {
+            if (duration <= 0) {
               throw new Error("Duration must be a positive value.");
             }
           }
@@ -311,7 +312,13 @@ class DFlexCoreElement extends DFlexBaseElement {
             this._animation!.easing
           );
           DFlexCoreElement.transform(DOM, this.translate.x, this.translate.y);
+
+          return;
         }
+
+        // No animation is needed for the element.
+        DFlexCoreElement.transform(DOM, this.translate.x, this.translate.y);
+        transitionComplete();
       });
     } catch (error) {
       if (__DEV__) {
