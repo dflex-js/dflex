@@ -34,6 +34,11 @@ export type RegisterInputOpts = {
    */
   readonly?: boolean;
 
+  /**
+   * Configuration options for animations applied to the element during drag and drop.
+   * If specified, the element will animate according to these options, overwriting the default values.
+   * To disable animation altogether, omit this property or set it to `null`.
+   */
   animation?: Partial<AnimationOpts>;
 };
 
@@ -61,14 +66,22 @@ type BranchComposedCallBackFunction = (
 type HighestContainerComposedCallBack = () => void;
 
 export function getAnimationOptions(
-  animation?: Partial<AnimationOpts>
-): Required<AnimationOpts> {
+  animation?: Partial<AnimationOpts> | null
+): Required<AnimationOpts> | null {
   const defaultAnimation: AnimationOpts = {
     easing: "ease-in",
     duration: "dynamic",
   };
 
-  return animation ? { ...defaultAnimation, ...animation } : defaultAnimation;
+  if (animation === undefined) {
+    return defaultAnimation;
+  }
+
+  if (animation === null) {
+    return null;
+  }
+
+  return { ...defaultAnimation, ...animation };
 }
 
 function getElmDOMOrThrow(id: string): HTMLElement | null {

@@ -107,6 +107,8 @@ function calculateAnimationDuration(from: AxesPoint, to: AxesPoint): number {
   return duration;
 }
 
+const TRANSITION_EVENT = "transitionend";
+
 class DFlexCoreElement extends DFlexBaseElement {
   private _initialPosition: PointNum;
 
@@ -258,7 +260,7 @@ class DFlexCoreElement extends DFlexBaseElement {
 
   private _transform(
     DOM: HTMLElement,
-    duration: number,
+    duration: number | null,
     onComplete: () => void = noop
   ): void {
     if (!this._isVisible) {
@@ -276,31 +278,40 @@ class DFlexCoreElement extends DFlexBaseElement {
 
       onComplete();
 
-      DOM.removeEventListener("transitionend", transitionComplete);
+      DOM.removeEventListener(TRANSITION_EVENT, transitionComplete);
 
       if (__DEV__) {
         if (featureFlags.enablePositionAssertion) {
-          setTimeout(() => {
-            assertElmPos(DOM, this.rect);
-          }, 1000);
+          assertElmPos(DOM, this.rect);
         }
       }
     };
 
-    DOM.addEventListener("transitionend", transitionComplete);
+    DOM.addEventListener(TRANSITION_EVENT, transitionComplete);
 
     try {
       this._animatedFrame = requestAnimationFrame(() => {
-        // No animation is needed for the element.
-        if (duration === -1) {
+        if (duration) {
+          if (__DEV__) {
+            if (!this._animation) {
+              throw new Error(
+                "Cannot pass duration without animation being defined."
+              );
+            }
+
+            if (duration !== null && duration <= 0) {
+              throw new Error("Duration must be a positive value.");
+            }
+          }
+
+          DFlexCoreElement.transition(
+            DOM,
+            0,
+            duration,
+            this._animation!.easing
+          );
           DFlexCoreElement.transform(DOM, this.translate.x, this.translate.y);
-          transitionComplete();
-
-          return;
         }
-
-        DFlexCoreElement.transition(DOM, 0, duration, this._animation.easing);
-        DFlexCoreElement.transform(DOM, this.translate.x, this.translate.y);
       });
     } catch (error) {
       if (__DEV__) {
@@ -366,7 +377,7 @@ class DFlexCoreElement extends DFlexBaseElement {
   private _transformOrPend(
     DOM: HTMLElement,
     enforceTransform: boolean,
-    transformDuration: number
+    transformDuration: number | null
   ): void {
     if (enforceTransform) {
       if (!this._isVisible && this._hasPendingTransform) {
@@ -395,11 +406,11 @@ class DFlexCoreElement extends DFlexBaseElement {
     enforceTransform: boolean,
     indexIncrement: number
   ): [number, number] {
-    let calculatedDuration = -1;
+    let calculatedDuration: number | null = null;
 
-    const { duration } = this._animation;
+    if (this._animation) {
+      const { duration } = this._animation;
 
-    if (duration) {
       const oldPoint = this.translate.getInstance();
       const newPoint = this.translate.increase(elmTransition).getInstance();
 
@@ -526,14 +537,14 @@ class DFlexCoreElement extends DFlexBaseElement {
   }
 
   restorePosition(DOM: HTMLElement): void {
-    this._transform(DOM, -1);
+    this._transform(DOM, null);
 
     this.setAttribute(DOM, "INDEX", this.VDOMOrder.self);
   }
 
   assignNewPosition(DOM: HTMLElement, t: PointNum): void {
     this.translate.clone(t);
-    this._transform(DOM, -1);
+    this._transform(DOM, null);
   }
 
   /**
