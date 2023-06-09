@@ -12,3 +12,27 @@ export type Axis = "x" | "y";
 export type Axes = Axis | "z";
 
 export const BOTH_AXIS: readonly Axis[] = Object.freeze(["x", "y"]);
+
+export type CubicBezier =
+  | "ease"
+  | "ease-in"
+  | "ease-out"
+  | "ease-in-out"
+  | "linear";
+
+export type AnimationOpts = {
+  /**
+   * The easing function to use for the animation.
+   * Specifies the speed curve of the animation.
+   * Example values: 'linear', 'ease-in', 'ease-out', 'ease-in-out'.
+   * (Default: 'ease-in')
+   */
+  easing: CubicBezier;
+
+  /**
+   * The duration of the animation in milliseconds.
+   * Specifies how long the animation should take to complete.
+   * (Default: 'dynamic')
+   */
+  duration: null | number | "dynamic";
+};

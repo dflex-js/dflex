@@ -9,9 +9,11 @@ class PointNum extends Point<number> {
    *
    * @param point
    */
-  increase(point: AxesPoint): void {
+  increase(point: AxesPoint): this {
     this.x += point.x;
     this.y += point.y;
+
+    return this;
   }
 
   composeBox(box: AbstractBox, isInner: boolean): BoxNum {

@@ -20,3 +20,5 @@ export const OFFSET_HEIGHT = "offsetHeight";
 export const OFFSET_WIDTH = "offsetWidth";
 
 export const POSITION = "position";
+
+export const TRANSFORM = "transform";
