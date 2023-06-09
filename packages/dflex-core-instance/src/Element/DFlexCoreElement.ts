@@ -11,6 +11,7 @@ import {
   Axis,
   rmEmptyAttr,
   noop,
+  getParsedElmTransform,
 } from "@dflex/utils";
 import type { Direction, Axes, AxesPoint, AnimationOpts } from "@dflex/utils";
 
@@ -193,6 +194,31 @@ class DFlexCoreElement extends DFlexBaseElement {
     this._initialPosition.setAxes(elementLeft, elementTop);
 
     this.rect.setByPointAndDimensions(elementTop, elementLeft, height, width);
+
+    this._initElmTranslate(DOM);
+  }
+
+  // TODO: need to be tested.
+  private _initElmTranslate(DOM: HTMLElement): void {
+    const transformMatrix = getParsedElmTransform(DOM);
+
+    if (transformMatrix) {
+      const [translateX, translateY] = transformMatrix;
+
+      const elementLeft = this._initialPosition.x - translateX;
+      const elementTop = this._initialPosition.y - translateY;
+
+      this._initialPosition.setAxes(elementLeft, elementTop);
+
+      this.rect.setByPointAndDimensions(
+        elementTop,
+        elementLeft,
+        this.rect.height,
+        this.rect.width
+      );
+
+      this.translate.setAxes(translateX, translateY);
+    }
   }
 
   getDimensions(DOM: HTMLElement): PointNum {
