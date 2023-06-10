@@ -65,16 +65,63 @@ function validateCSS(id: string, css?: CSS): void {
     );
   }
 
-  if (typeof css === "string" && css.trim().length === 0) {
-    throw new Error(
-      `Invalid CSS value for element ${id}. Expected a non-empty string.`
-    );
+  if (typeof css === "string") {
+    if (css.trim().length === 0) {
+      throw new Error(
+        `Invalid CSS value for element ${id}. Expected a non-empty string.`
+      );
+    }
+
+    const isCamelCase = /[A-Z]/.test(css);
+    if (isCamelCase) {
+      const snakeCase = css.replace(
+        /[A-Z]/g,
+        (match) => `-${match.toLowerCase()}`
+      );
+      throw new Error(
+        `Invalid CSS rule for element ${id}. The property '${css}' should be in snake_case. Use '${snakeCase}' instead.`
+      );
+    }
   }
 
   if (typeof css === "object" && Object.keys(css).length === 0) {
     throw new Error(
       `Invalid CSS value for element ${id}. Expected a non-empty object.`
     );
+  }
+
+  if (typeof css === "object") {
+    const convertedProperties: Record<string, string> = {};
+    Object.entries(css).forEach(([key, value]) => {
+      if (/[A-Z]/.test(key)) {
+        const snakeCaseKey = key.replace(
+          /[A-Z]/g,
+          (match) => `-${match.toLowerCase()}`
+        );
+        if (typeof value !== "string" && value !== null) {
+          throw new Error(
+            `Invalid CSS value for element ${id}. Property '${key}' should have a value of type null or string. Received: ${value}`
+          );
+        }
+        convertedProperties[snakeCaseKey] = value!;
+        if (snakeCaseKey !== key) {
+          throw new Error(
+            `Invalid CSS rule for element ${id}. The property '${key}' should be in snake_case. Use '${snakeCaseKey}' instead.`
+          );
+        }
+      } else {
+        if (typeof value === "object" && value !== null) {
+          throw new Error(
+            `Invalid CSS value for element ${id}. Property '${key}' should have a value of type null or string. Received: ${value}`
+          );
+        } else if (typeof value !== "string" && value !== null) {
+          throw new Error(
+            `Invalid CSS value for element ${id}. Property '${key}' should have a value of type null or string. Received: ${value}`
+          );
+        }
+        convertedProperties[key] = value as string;
+      }
+    });
   }
 }
 
