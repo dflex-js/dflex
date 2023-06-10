@@ -13,6 +13,7 @@ describe("Testing DFlex BaseStore", () => {
     depth: 0,
     readonly: false,
     animation: null,
+    dragCSS: null,
   };
 
   const elm1DP0 = {
@@ -20,6 +21,7 @@ describe("Testing DFlex BaseStore", () => {
     depth: 0,
     readonly: false,
     animation: null,
+    dragCSS: null,
   };
 
   const elm2DP0 = {
@@ -27,6 +29,7 @@ describe("Testing DFlex BaseStore", () => {
     depth: 0,
     readonly: false,
     animation: null,
+    dragCSS: null,
   };
 
   const elm0DP1 = {
@@ -34,6 +37,7 @@ describe("Testing DFlex BaseStore", () => {
     depth: 1,
     readonly: false,
     animation: null,
+    dragCSS: null,
   };
 
   let container: HTMLDivElement | null;
@@ -51,7 +55,7 @@ describe("Testing DFlex BaseStore", () => {
         React.useEffect(() => {
           if (ref.current) {
             [elm0DP0, elm1DP0, elm2DP0, elm0DP1].forEach((elm) => {
-              store.register(elm);
+              store.addElmToRegistry(elm);
             });
           }
 

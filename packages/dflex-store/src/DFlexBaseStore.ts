@@ -349,7 +349,7 @@ class DFlexBaseStore {
     }
   }
 
-  protected addElmToRegistry(
+  addElmToRegistry(
     element: RegisterInputProcessed,
     branchComposedCallBack?: BranchComposedCallBackFunction,
     highestContainerComposedCallBack?: HighestContainerComposedCallBack

@@ -21,6 +21,7 @@ Map {
       "easing": "ease-in",
     },
     "_computedDimensions": null,
+    "_dragCSS": null,
     "_hasAttribute": Set {},
     "_hasPendingTransform": false,
     "_initialPosition": PointNum {

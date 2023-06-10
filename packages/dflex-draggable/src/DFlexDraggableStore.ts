@@ -28,7 +28,7 @@ class DFlexDraggableStore extends DFlexBaseStore {
    * @param id
    */
   // @ts-ignore
-  registry(id: string) {
+  register(id: string) {
     this.addElmToRegistry(
       {
         id,
