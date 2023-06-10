@@ -16,7 +16,7 @@ const DraggableHandler = () => {
 
   React.useEffect(() => {
     if (ref.current) {
-      store.addElmToRegistry(id);
+      store.register(id);
     }
 
     return () => {
