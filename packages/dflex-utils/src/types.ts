@@ -34,5 +34,11 @@ export type AnimationOpts = {
    * Specifies how long the animation should take to complete.
    * (Default: 'dynamic')
    */
-  duration: null | number | "dynamic";
-};
+  duration: number | "dynamic";
+} | null;
+
+export type CSSStyle = Record<string, string | null>;
+
+export type CSSClass = string;
+
+export type CSS = CSSClass | CSSStyle;
