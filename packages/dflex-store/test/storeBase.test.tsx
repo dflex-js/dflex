@@ -3,10 +3,16 @@ import * as React from "react";
 import * as ReactTestUtils from "react-dom/test-utils";
 import { Root, createRoot } from "react-dom/client";
 
-import BaseStore from "../src";
+import BaseStore, { RegisterInputProcessed } from "../src";
 
 describe("Testing DFlex BaseStore", () => {
-  const store = new BaseStore();
+  class Store extends BaseStore {
+    register(element: RegisterInputProcessed) {
+      this.addElmToRegistry(element);
+    }
+  }
+
+  const store = new Store();
 
   const elm0DP0 = {
     id: "id-0",
@@ -55,7 +61,7 @@ describe("Testing DFlex BaseStore", () => {
         React.useEffect(() => {
           if (ref.current) {
             [elm0DP0, elm1DP0, elm2DP0, elm0DP1].forEach((elm) => {
-              store.addElmToRegistry(elm);
+              store.register(elm);
             });
           }
 
