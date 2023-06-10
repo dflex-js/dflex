@@ -403,18 +403,18 @@ class DFlexCoreElement extends DFlexBaseElement {
         rmTransition(DOM);
       }
 
-      onComplete();
-
-      DOM.removeEventListener(TRANSITION_EVENT, transitionComplete);
+      if (duration) {
+        DOM.removeEventListener(TRANSITION_EVENT, transitionComplete);
+      }
 
       if (__DEV__) {
         if (featureFlags.enablePositionAssertion) {
           assertElmPos(DOM, this.rect);
         }
       }
-    };
 
-    DOM.addEventListener(TRANSITION_EVENT, transitionComplete);
+      onComplete();
+    };
 
     this._animatedFrame = requestAnimationFrame(() => {
       if (this._dragCSS) {
@@ -443,6 +443,8 @@ class DFlexCoreElement extends DFlexBaseElement {
           throw new Error("Duration must be a positive value.");
         }
       }
+
+      DOM.addEventListener(TRANSITION_EVENT, transitionComplete);
 
       addTransition(DOM, 0, duration, this._animation!.easing);
 
