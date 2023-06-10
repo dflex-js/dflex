@@ -416,11 +416,6 @@ class DFlexCoreElement extends DFlexBaseElement {
 
     DOM.addEventListener(TRANSITION_EVENT, transitionComplete);
 
-    console.log(
-      "🚀 ~ file: DFlexCoreElement.ts:417 ~ DFlexCoreElement ~ this._animatedFrame=requestAnimationFrame ~ this._dragCSS:",
-      this._dragCSS
-    );
-
     this._animatedFrame = requestAnimationFrame(() => {
       if (this._dragCSS) {
         applyCSS(DOM, this._dragCSS);
