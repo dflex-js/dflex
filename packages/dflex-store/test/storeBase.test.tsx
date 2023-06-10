@@ -12,24 +12,28 @@ describe("Testing DFlex BaseStore", () => {
     id: "id-0",
     depth: 0,
     readonly: false,
+    animation: null,
   };
 
   const elm1DP0 = {
     id: "id-1",
     depth: 0,
     readonly: false,
+    animation: null,
   };
 
   const elm2DP0 = {
     id: "id-2",
     depth: 0,
     readonly: false,
+    animation: null,
   };
 
   const elm0DP1 = {
     id: "p-id-0",
     depth: 1,
     readonly: false,
+    animation: null,
   };
 
   let container: HTMLDivElement | null;
