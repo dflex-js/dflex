@@ -190,8 +190,10 @@ function setFixedDimensions(DOM: HTMLElement): void {
   const visibleHeight = getVisibleDimension(DOM, CSSPropNames.HEIGHT);
   const visibleWidth = getVisibleDimension(DOM, CSSPropNames.WIDTH);
 
-  DOM.style.setProperty(CSSPropNames.HEIGHT, `${visibleHeight}px`);
-  DOM.style.setProperty(CSSPropNames.WIDTH, `${visibleWidth}px`);
+  const { style } = DOM;
+
+  style.setProperty(CSSPropNames.HEIGHT, `${visibleHeight}px`);
+  style.setProperty(CSSPropNames.WIDTH, `${visibleWidth}px`);
 }
 
 const CSS_FORBIDDEN_POSITION_REGEX = /absolute|fixed/;

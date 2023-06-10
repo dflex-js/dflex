@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
-import DFlexBaseStore from "@dflex/store";
-import type { RegisterInputOpts } from "@dflex/store";
+import DFlexBaseStore, { getAnimationOptions } from "@dflex/store";
+import type { RegisterInputOpts, RegisterInputProcessed } from "@dflex/store";
 
 import {
   Tracker,
@@ -286,7 +286,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     scheduler(this, null, null, { type: "layoutState", status: "ready" });
   }
 
-  register(element: RegisterInputOpts) {
+  register(elm: RegisterInputOpts) {
     if (!this._isDOM) {
       this._isDOM = canUseDOM();
 
@@ -300,16 +300,22 @@ class DFlexDnDStore extends DFlexBaseStore {
       this._isInitialized = true;
     }
 
-    const { id } = element;
+    const { id, readonly = false, depth = 0, dragCSS } = elm;
 
     scheduler(
       this,
       () => {
-        const coreInput = {
+        const coreInput: RegisterInputProcessed = {
           id,
-          readonly: !!element.readonly,
-          depth: element.depth || 0,
+          readonly,
+          depth,
+          dragCSS,
+          animation: getAnimationOptions(elm.animation),
         };
+
+        if (__DEV__) {
+          Object.freeze(coreInput);
+        }
 
         // Create an instance of DFlexCoreNode and gets the DOM element into the store.
         super.register(coreInput, this._initSiblings, this._initObservers);

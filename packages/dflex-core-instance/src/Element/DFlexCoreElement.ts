@@ -12,6 +12,8 @@ import {
   rmEmptyAttr,
   noop,
   getParsedElmTransform,
+  // CSSStyle,
+  // CSSClass,
 } from "@dflex/utils";
 import type { Direction, Axes, AxesPoint, AnimationOpts } from "@dflex/utils";
 
@@ -106,6 +108,48 @@ function calculateAnimationDuration(from: AxesPoint, to: AxesPoint): number {
   // Return the calculated duration
   return duration;
 }
+
+// function applyCSSClass(DOM: HTMLElement, className: CSSClass): void {
+//   DOM.classList.add(className);
+// }
+
+// function removeCSSStyle(DOM: HTMLElement, properties: CSSStyle): void {
+//   Object.keys(properties).forEach((property) => {
+//     DOM.style.removeProperty(property);
+//   });
+// }
+
+// function applyCSSStyle(DOM: HTMLElement, style: CSSStyle): void {
+//   Object.entries(style).forEach(([property, value]) => {
+//     if (value !== null) {
+//       DOM.style.setProperty(property, value);
+//     }
+//   });
+// }
+
+// function removeCSSClass(DOM: HTMLElement, className: CSSClass): void {
+//   DOM.classList.remove(className);
+// }
+
+// function applyCSS(element: HTMLElement, css: CSSClass | CSSStyle): void {
+//   if (typeof css === "string") {
+//     applyCSSClass(element, css);
+
+//     return;
+//   }
+
+//   applyCSSStyle(element, css);
+// }
+
+// function removeCSS(element: HTMLElement, css: CSSClass | CSSStyle): void {
+//   if (typeof css === "string") {
+//     removeCSSClass(element, css);
+
+//     return;
+//   }
+
+//   removeCSSStyle(element, css);
+// }
 
 const TRANSITION_EVENT = "transitionend";
 

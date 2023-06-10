@@ -19,6 +19,8 @@ export type {
   Direction,
   AnimationOpts,
   CubicBezier,
+  CSSStyle,
+  CSSClass,
 } from "./types";
 export { BOTH_AXIS } from "./types";
 

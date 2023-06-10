@@ -36,3 +36,7 @@ export type AnimationOpts = {
    */
   duration: number | "dynamic";
 } | null;
+
+export type CSSStyle = Record<string, string | null>;
+
+export type CSSClass = string;

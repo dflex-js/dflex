@@ -4,6 +4,8 @@ import Generator, { Keys, Siblings } from "@dflex/dom-gen";
 import { DFlexElement, DFlexElementInput } from "@dflex/core-instance";
 import {
   AnimationOpts,
+  CSSClass,
+  CSSStyle,
   featureFlags,
   getParentElm,
   setFixedDimensions,
@@ -40,12 +42,24 @@ export type RegisterInputOpts = {
    * To disable animation altogether, omit this property or set it to `null`.
    */
   animation?: Partial<AnimationOpts>;
+
+  /**
+   * CSS to be applied to the element when it is being dragged.
+   * The CSS will be removed when the element is not being dragged.
+   */
+  dragCSS?: CSSClass | CSSStyle;
 };
 
-export type RegisterInputBase = DeepRequired<
-  Omit<RegisterInputOpts, "animation">
+type CSS = CSSClass | CSSStyle;
+
+/**
+ * The processed data from user input for the `register` method in DnD store.
+ */
+export type RegisterInputProcessed = DeepRequired<
+  Omit<RegisterInputOpts, "animation" | "dragCSS" | "releaseCSS">
 > & {
   animation: AnimationOpts;
+  dragCSS?: CSS;
 };
 
 export type DFlexGlobalConfig = {
@@ -64,6 +78,26 @@ type BranchComposedCallBackFunction = (
 ) => void;
 
 type HighestContainerComposedCallBack = () => void;
+
+function validateCSS(id: string, css?: CSS): void {
+  if (css !== undefined && typeof css !== "string" && typeof css !== "object") {
+    throw new Error(
+      `Invalid CSS type for element ${id}. Expected a non-empty string, non-empty object, or undefined.`
+    );
+  }
+
+  if (typeof css === "string" && css.trim().length === 0) {
+    throw new Error(
+      `Invalid CSS value for element ${id}. Expected a non-empty string.`
+    );
+  }
+
+  if (typeof css === "object" && Object.keys(css).length === 0) {
+    throw new Error(
+      `Invalid CSS value for element ${id}. Expected a non-empty object.`
+    );
+  }
+}
 
 export function getAnimationOptions(
   animation?: Partial<AnimationOpts> | null
@@ -198,7 +232,7 @@ class DFlexBaseStore {
 
   private _submitElementToRegistry(
     DOM: HTMLElement,
-    elm: RegisterInputBase,
+    elm: RegisterInputProcessed,
     dflexParentElm: null | DFlexElement
   ): Keys | null {
     const { id, depth, readonly, animation } = elm;
@@ -296,7 +330,7 @@ class DFlexBaseStore {
         }
 
         if (!this.registry.has(id)) {
-          const elm: RegisterInputBase = {
+          const elm: RegisterInputProcessed = {
             depth,
             readonly: registeredElmID !== id,
             // Assuming all siblings have the same animation settings.
@@ -334,20 +368,20 @@ class DFlexBaseStore {
   }
 
   register(
-    element: RegisterInputOpts,
+    element: RegisterInputProcessed,
     branchComposedCallBack?: BranchComposedCallBackFunction,
     highestContainerComposedCallBack?: HighestContainerComposedCallBack
   ) {
     // Don't execute the parent registration if there's new element in the branch.
     this._taskQ.cancelQueuedTask();
 
-    const { id, depth = 0, readonly = false } = element;
-
-    const animation = getAnimationOptions(element.animation);
+    const { id, depth, readonly, animation } = element;
 
     let isElmRegistered = this.registry.has(id);
 
     if (__DEV__) {
+      validateCSS(id, element.dragCSS);
+
       if (featureFlags.enableRegisterDebugger) {
         if (isElmRegistered) {
           // eslint-disable-next-line no-console

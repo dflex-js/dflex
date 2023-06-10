@@ -1,4 +1,4 @@
-import DFlexBaseStore from "@dflex/store";
+import DFlexBaseStore, { getAnimationOptions } from "@dflex/store";
 import { canUseDOM } from "@dflex/utils";
 
 declare global {
@@ -34,6 +34,7 @@ class DFlexDraggableStore extends DFlexBaseStore {
         id,
         depth: 0,
         readonly: false,
+        animation: getAnimationOptions(),
       },
       this._initBranch
     );
