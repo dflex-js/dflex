@@ -155,14 +155,12 @@ function addTransition(
   easing: CubicBezier
 ): void {
   if (__DEV__) {
-    if (easing) {
-      try {
-        validateEasing(easing);
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error(error);
-        return;
-      }
+    try {
+      validateEasing(easing);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
+      return;
     }
   }
 
