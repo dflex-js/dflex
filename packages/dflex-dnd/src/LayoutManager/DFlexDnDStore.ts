@@ -312,7 +312,11 @@ class DFlexDnDStore extends DFlexBaseStore {
         };
 
         // Create an instance of DFlexCoreNode and gets the DOM element into the store.
-        super.register(coreInput, this._initSiblings, this._initObservers);
+        this.addElmToRegistry(
+          coreInput,
+          this._initSiblings,
+          this._initObservers
+        );
       },
       null
     );

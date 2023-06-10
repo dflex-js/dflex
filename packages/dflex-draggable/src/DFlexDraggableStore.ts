@@ -29,7 +29,7 @@ class DFlexDraggableStore extends DFlexBaseStore {
    */
   // @ts-ignore
   register(id: string) {
-    super.register(
+    this.addElmToRegistry(
       {
         id,
         depth: 0,

@@ -37,7 +37,10 @@ export type RegisterInputOpts = {
   animation?: Partial<AnimationOpts>;
 };
 
-export type RegisterInputBase = DeepRequired<
+/**
+ * The processed data from user input for the `register` method in DnD store.
+ */
+export type RegisterInputProcessed = DeepRequired<
   Omit<RegisterInputOpts, "animation">
 > & {
   animation: AnimationOpts;
@@ -185,7 +188,7 @@ class DFlexBaseStore {
 
   private _submitElementToRegistry(
     DOM: HTMLElement,
-    elm: RegisterInputBase,
+    elm: RegisterInputProcessed,
     dflexParentElm: null | DFlexElement
   ): Keys | null {
     const { id, depth, readonly, animation } = elm;
@@ -283,7 +286,7 @@ class DFlexBaseStore {
         }
 
         if (!this.registry.has(id)) {
-          const elm: RegisterInputBase = {
+          const elm: RegisterInputProcessed = {
             depth,
             readonly: registeredElmID !== id,
             // Assuming all siblings have the same animation settings.
@@ -320,7 +323,7 @@ class DFlexBaseStore {
     }
   }
 
-  register(
+  protected addElmToRegistry(
     element: RegisterInputOpts,
     branchComposedCallBack?: BranchComposedCallBackFunction,
     highestContainerComposedCallBack?: HighestContainerComposedCallBack

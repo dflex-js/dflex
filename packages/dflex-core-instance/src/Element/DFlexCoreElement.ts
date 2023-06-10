@@ -258,7 +258,7 @@ class DFlexCoreElement extends DFlexBaseElement {
 
   private _transform(
     DOM: HTMLElement,
-    duration: number,
+    duration: number | null,
     onComplete: () => void = noop
   ): void {
     if (!this._isVisible) {
@@ -292,14 +292,14 @@ class DFlexCoreElement extends DFlexBaseElement {
     try {
       this._animatedFrame = requestAnimationFrame(() => {
         // No animation is needed for the element.
-        if (duration === -1) {
+        if (duration === null) {
           DFlexCoreElement.transform(DOM, this.translate.x, this.translate.y);
           transitionComplete();
 
           return;
         }
 
-        DFlexCoreElement.transition(DOM, 0, duration, this._animation.easing);
+        DFlexCoreElement.transition(DOM, 0, duration, this._animation!.easing);
         DFlexCoreElement.transform(DOM, this.translate.x, this.translate.y);
       });
     } catch (error) {
@@ -366,7 +366,7 @@ class DFlexCoreElement extends DFlexBaseElement {
   private _transformOrPend(
     DOM: HTMLElement,
     enforceTransform: boolean,
-    transformDuration: number
+    transformDuration: number | null
   ): void {
     if (enforceTransform) {
       if (!this._isVisible && this._hasPendingTransform) {
@@ -395,11 +395,11 @@ class DFlexCoreElement extends DFlexBaseElement {
     enforceTransform: boolean,
     indexIncrement: number
   ): [number, number] {
-    let calculatedDuration = -1;
+    let calculatedDuration: number | null = null;
 
-    const { duration } = this._animation;
+    if (this._animation) {
+      const { duration } = this._animation;
 
-    if (duration) {
       const oldPoint = this.translate.getInstance();
       const newPoint = this.translate.increase(elmTransition).getInstance();
 
