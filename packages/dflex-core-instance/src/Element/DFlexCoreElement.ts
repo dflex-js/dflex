@@ -370,7 +370,8 @@ class DFlexCoreElement extends DFlexBaseElement {
     this._isVisible = isVisible;
 
     if (this._hasPendingTransform && this._isVisible) {
-      this._transform(DOM, 0);
+      // TODO: Apply animation here.
+      this._transform(DOM, null);
       this._hasPendingTransform = false;
     }
   }
