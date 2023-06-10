@@ -47,6 +47,7 @@ const DFlexDnDComponent = ({
         id,
         depth,
         readonly,
+        animation: null,
         dragCSS: {
           background: "#ae51ff",
           "box-shadow": "0 0 8px 4px rgba(255, 255, 255, 0.5)",

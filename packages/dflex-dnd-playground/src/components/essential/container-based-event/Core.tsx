@@ -23,7 +23,7 @@ const Core = ({
 
   React.useEffect(() => {
     if (ref.current) {
-      store.register({ id, depth });
+      store.register({ id, depth, animation: null });
     }
   }, [ref]);
 
