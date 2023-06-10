@@ -15,7 +15,7 @@ const DraggableSolo = () => {
 
   React.useEffect(() => {
     if (ref.current) {
-      store.register(id);
+      store.addElmToRegistry(id);
     }
 
     return () => {

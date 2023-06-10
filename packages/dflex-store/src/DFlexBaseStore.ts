@@ -4,6 +4,7 @@ import Generator, { Keys, Siblings } from "@dflex/dom-gen";
 import { DFlexElement, DFlexElementInput } from "@dflex/core-instance";
 import {
   AnimationOpts,
+  CSS,
   CSSClass,
   CSSStyle,
   featureFlags,
@@ -50,8 +51,6 @@ export type RegisterInputOpts = {
   dragCSS?: CSSClass | CSSStyle;
 };
 
-type CSS = CSSClass | CSSStyle;
-
 /**
  * The processed data from user input for the `register` method in DnD store.
  */
@@ -59,7 +58,7 @@ export type RegisterInputProcessed = DeepRequired<
   Omit<RegisterInputOpts, "animation" | "dragCSS" | "releaseCSS">
 > & {
   animation: AnimationOpts;
-  dragCSS?: CSS;
+  dragCSS: CSS | null;
 };
 
 export type DFlexGlobalConfig = {
@@ -78,26 +77,6 @@ type BranchComposedCallBackFunction = (
 ) => void;
 
 type HighestContainerComposedCallBack = () => void;
-
-function validateCSS(id: string, css?: CSS): void {
-  if (css !== undefined && typeof css !== "string" && typeof css !== "object") {
-    throw new Error(
-      `Invalid CSS type for element ${id}. Expected a non-empty string, non-empty object, or undefined.`
-    );
-  }
-
-  if (typeof css === "string" && css.trim().length === 0) {
-    throw new Error(
-      `Invalid CSS value for element ${id}. Expected a non-empty string.`
-    );
-  }
-
-  if (typeof css === "object" && Object.keys(css).length === 0) {
-    throw new Error(
-      `Invalid CSS value for element ${id}. Expected a non-empty object.`
-    );
-  }
-}
 
 export function getAnimationOptions(
   animation?: Partial<AnimationOpts> | null
@@ -235,7 +214,7 @@ class DFlexBaseStore {
     elm: RegisterInputProcessed,
     dflexParentElm: null | DFlexElement
   ): Keys | null {
-    const { id, depth, readonly, animation } = elm;
+    const { id, depth, readonly, animation, dragCSS } = elm;
 
     if (__DEV__) {
       if (this.registry.has(id) || this.interactiveDOM.has(id)) {
@@ -288,6 +267,7 @@ class DFlexBaseStore {
       depth,
       readonly,
       animation,
+      dragCSS,
     };
 
     const dflexElm = new DFlexElement(coreElement);
@@ -315,6 +295,7 @@ class DFlexBaseStore {
     parentDOM: HTMLElement,
     depth: number,
     animation: AnimationOpts,
+    dragCSS: CSS | null,
     registeredElmID: string,
     dflexParentElm: DFlexElement | null
   ) {
@@ -336,6 +317,7 @@ class DFlexBaseStore {
             // Assuming all siblings have the same animation settings.
             animation,
             id,
+            dragCSS,
           };
 
           ({ SK } = this._submitElementToRegistry(DOM, elm, dflexParentElm)!);
@@ -367,21 +349,19 @@ class DFlexBaseStore {
     }
   }
 
-  register(
+  protected addElmToRegistry(
     element: RegisterInputProcessed,
     branchComposedCallBack?: BranchComposedCallBackFunction,
     highestContainerComposedCallBack?: HighestContainerComposedCallBack
-  ) {
+  ): void {
     // Don't execute the parent registration if there's new element in the branch.
     this._taskQ.cancelQueuedTask();
 
-    const { id, depth, readonly, animation } = element;
+    const { id, depth, readonly, animation, dragCSS } = element;
 
     let isElmRegistered = this.registry.has(id);
 
     if (__DEV__) {
-      validateCSS(id, element.dragCSS);
-
       if (featureFlags.enableRegisterDebugger) {
         if (isElmRegistered) {
           // eslint-disable-next-line no-console
@@ -402,7 +382,7 @@ class DFlexBaseStore {
       const dflexElm = this.registry.get(id)!;
 
       // Update default values created earlier.
-      dflexElm.updateConfig(readonly, animation);
+      dflexElm.updateConfig(readonly, animation, dragCSS);
 
       ({ SK } = dflexElm.keys);
     } else {
@@ -435,7 +415,7 @@ class DFlexBaseStore {
         const dflexElm = this.registry.get(id)!;
 
         // Update default values created earlier.
-        dflexElm.updateConfig(readonly, animation);
+        dflexElm.updateConfig(readonly, animation, dragCSS);
 
         if (__DEV__) {
           if (!SK) {
@@ -465,6 +445,7 @@ class DFlexBaseStore {
             parentDOM,
             depth,
             animation,
+            dragCSS,
             id,
             dflexParentElm
           )!;
@@ -542,6 +523,7 @@ class DFlexBaseStore {
                 // Default values:
                 readonly: true,
                 animation: getAnimationOptions(),
+                dragCSS: null,
               },
               null
             )!;

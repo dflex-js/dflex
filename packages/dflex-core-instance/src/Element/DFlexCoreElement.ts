@@ -12,8 +12,9 @@ import {
   rmEmptyAttr,
   noop,
   getParsedElmTransform,
-  // CSSStyle,
-  // CSSClass,
+  CSSStyle,
+  CSSClass,
+  CubicBezier,
 } from "@dflex/utils";
 import type { Direction, Axes, AxesPoint, AnimationOpts } from "@dflex/utils";
 
@@ -57,6 +58,8 @@ export interface DFlexDOMGenOrder {
   parent: number;
 }
 
+type CSS = CSSClass | CSSStyle;
+
 export interface DFlexElementInput {
   id: string;
   order: DFlexDOMGenOrder;
@@ -64,6 +67,7 @@ export interface DFlexElementInput {
   depth: number;
   readonly: boolean;
   animation: AnimationOpts;
+  dragCSS: CSS | null;
 }
 
 function assertGridBoundaries(
@@ -109,47 +113,109 @@ function calculateAnimationDuration(from: AxesPoint, to: AxesPoint): number {
   return duration;
 }
 
-// function applyCSSClass(DOM: HTMLElement, className: CSSClass): void {
-//   DOM.classList.add(className);
-// }
+const TRANSITION_PROPERTY = "transition-property";
+const TRANSITION_DELAY = "transition-delay";
+const TRANSITION_DURATION = "transition-duration";
+const TRANSITION_TIMING_FUNCTION = "transition-timing-function";
 
-// function removeCSSStyle(DOM: HTMLElement, properties: CSSStyle): void {
-//   Object.keys(properties).forEach((property) => {
-//     DOM.style.removeProperty(property);
-//   });
-// }
+function rmTransition(DOM: HTMLElement) {
+  const { style } = DOM;
 
-// function applyCSSStyle(DOM: HTMLElement, style: CSSStyle): void {
-//   Object.entries(style).forEach(([property, value]) => {
-//     if (value !== null) {
-//       DOM.style.setProperty(property, value);
-//     }
-//   });
-// }
+  style.removeProperty(TRANSITION_PROPERTY);
+  style.removeProperty(TRANSITION_DELAY);
+  style.removeProperty(TRANSITION_DURATION);
+  style.removeProperty(TRANSITION_TIMING_FUNCTION);
+}
 
-// function removeCSSClass(DOM: HTMLElement, className: CSSClass): void {
-//   DOM.classList.remove(className);
-// }
+function validateEasing(easing: string): void {
+  const cubicBezierRegex = /^cubic-bezier\(([^,]+),([^,]+),([^,]+),([^)]+)\)$/;
 
-// function applyCSS(element: HTMLElement, css: CSSClass | CSSStyle): void {
-//   if (typeof css === "string") {
-//     applyCSSClass(element, css);
+  const validEasingValues: CubicBezier[] = [
+    "linear",
+    "ease",
+    "ease-in",
+    "ease-out",
+    "ease-in-out",
+  ];
 
-//     return;
-//   }
+  if (
+    !(
+      cubicBezierRegex.test(easing) ||
+      validEasingValues.includes(easing as CubicBezier)
+    )
+  ) {
+    throw new Error(`Invalid easing function: ${easing}`);
+  }
+}
 
-//   applyCSSStyle(element, css);
-// }
+function addTransition(
+  DOM: HTMLElement,
+  delay: number,
+  duration: number,
+  easing: CubicBezier
+): void {
+  if (__DEV__) {
+    if (easing) {
+      try {
+        validateEasing(easing);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(error);
+        return;
+      }
+    }
+  }
 
-// function removeCSS(element: HTMLElement, css: CSSClass | CSSStyle): void {
-//   if (typeof css === "string") {
-//     removeCSSClass(element, css);
+  const { style } = DOM;
 
-//     return;
-//   }
+  // Set the transition properties using setProperty
+  style.setProperty(TRANSITION_PROPERTY, "transform");
+  style.setProperty(TRANSITION_DELAY, `${delay}ms`);
+  style.setProperty(TRANSITION_DURATION, `${duration}ms`);
+  style.setProperty(TRANSITION_TIMING_FUNCTION, easing);
+}
 
-//   removeCSSStyle(element, css);
-// }
+function applyCSSClass(DOM: HTMLElement, className: CSSClass): void {
+  DOM.classList.add(className);
+}
+
+function removeCSSStyle(DOM: HTMLElement, properties: CSSStyle): void {
+  Object.keys(properties).forEach((property) => {
+    DOM.style.removeProperty(property);
+  });
+}
+
+function applyCSSStyle(DOM: HTMLElement, style: CSSStyle): void {
+  Object.entries(style).forEach(([property, value]) => {
+    if (value !== null) {
+      DOM.style.setProperty(property, value);
+    }
+  });
+}
+
+function removeCSSClass(DOM: HTMLElement, className: CSSClass): void {
+  DOM.classList.remove(className);
+}
+
+function applyCSS(DOM: HTMLElement, css: CSS): void {
+  if (typeof css === "string") {
+    applyCSSClass(DOM, css);
+
+    return;
+  }
+
+  applyCSSStyle(DOM, css);
+}
+
+function removeCSS(DOM: HTMLElement, css: CSS): void {
+  if (typeof css === "string") {
+    removeCSSClass(DOM, css);
+
+    return;
+  }
+
+  removeCSSStyle(DOM, css);
+}
 
 const TRANSITION_EVENT = "transitionend";
 
@@ -180,6 +246,8 @@ class DFlexCoreElement extends DFlexBaseElement {
 
   private _animation: AnimationOpts;
 
+  private _dragCSS: CSS | null;
+
   private _translateHistory?: Map<string, TransitionHistory[]>;
 
   static getType(): string {
@@ -189,7 +257,8 @@ class DFlexCoreElement extends DFlexBaseElement {
   static transform = DFlexBaseElement.transform;
 
   constructor(eleWithPointer: DFlexElementInput) {
-    const { order, keys, depth, readonly, animation, id } = eleWithPointer;
+    const { order, keys, depth, readonly, animation, id, dragCSS } =
+      eleWithPointer;
 
     super(id);
 
@@ -204,6 +273,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     this._hasPendingTransform = false;
     this._translateHistory = undefined;
     this._animation = animation;
+    this._dragCSS = dragCSS;
 
     // CSS
     this._computedDimensions = null;
@@ -217,9 +287,14 @@ class DFlexCoreElement extends DFlexBaseElement {
     }
   }
 
-  updateConfig(readonly: boolean, animation: AnimationOpts) {
+  updateConfig(
+    readonly: boolean,
+    animation: AnimationOpts,
+    dragCSS: CSS | null
+  ): void {
     this.readonly = readonly;
     this._animation = animation;
+    this._dragCSS = dragCSS;
   }
 
   initElmRect(DOM: HTMLElement, scrollLeft: number, scrollTop: number): void {
@@ -320,6 +395,14 @@ class DFlexCoreElement extends DFlexBaseElement {
     const transitionComplete = () => {
       this._animatedFrame = null;
 
+      if (this._dragCSS) {
+        removeCSS(DOM, this._dragCSS);
+      }
+
+      if (this._animation) {
+        rmTransition(DOM);
+      }
+
       onComplete();
 
       DOM.removeEventListener(TRANSITION_EVENT, transitionComplete);
@@ -333,43 +416,43 @@ class DFlexCoreElement extends DFlexBaseElement {
 
     DOM.addEventListener(TRANSITION_EVENT, transitionComplete);
 
-    try {
-      this._animatedFrame = requestAnimationFrame(() => {
-        // With animation
-        if (duration) {
-          if (__DEV__) {
-            if (!this._animation) {
-              throw new Error(
-                "Cannot pass duration without animation being defined."
-              );
-            }
+    console.log(
+      "🚀 ~ file: DFlexCoreElement.ts:417 ~ DFlexCoreElement ~ this._animatedFrame=requestAnimationFrame ~ this._dragCSS:",
+      this._dragCSS
+    );
 
-            if (duration <= 0) {
-              throw new Error("Duration must be a positive value.");
-            }
-          }
+    this._animatedFrame = requestAnimationFrame(() => {
+      if (this._dragCSS) {
+        applyCSS(DOM, this._dragCSS);
+      }
 
-          DFlexCoreElement.transition(
-            DOM,
-            0,
-            duration,
-            this._animation!.easing
+      // No animation is needed for the element.
+      if (duration === null) {
+        DFlexCoreElement.transform(DOM, this.translate.x, this.translate.y);
+
+        // Trigger it manually because there's not transition event to trigger it.
+        transitionComplete();
+
+        return;
+      }
+
+      // With animation
+      if (__DEV__) {
+        if (!this._animation) {
+          throw new Error(
+            "Cannot pass duration without animation being defined."
           );
-          DFlexCoreElement.transform(DOM, this.translate.x, this.translate.y);
-
-          return;
         }
 
-        // No animation is needed for the element.
-        DFlexCoreElement.transform(DOM, this.translate.x, this.translate.y);
-        transitionComplete();
-      });
-    } catch (error) {
-      if (__DEV__) {
-        // eslint-disable-next-line no-console
-        console.log(error);
+        if (duration <= 0) {
+          throw new Error("Duration must be a positive value.");
+        }
       }
-    }
+
+      addTransition(DOM, 0, duration, this._animation!.easing);
+
+      DFlexCoreElement.transform(DOM, this.translate.x, this.translate.y);
+    });
   }
 
   updateIndex(DOM: HTMLElement, i: number) {

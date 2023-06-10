@@ -11,6 +11,7 @@ import {
   clearComputedStyleCache,
   updateElmDatasetGrid,
   setFixedDimensions,
+  CSS,
 } from "@dflex/utils";
 
 import {
@@ -56,6 +57,26 @@ type UpdatesQueue = [
 ][];
 
 type Deferred = (() => void)[];
+
+function validateCSS(id: string, css?: CSS): void {
+  if (css !== undefined && typeof css !== "string" && typeof css !== "object") {
+    throw new Error(
+      `Invalid CSS type for element ${id}. Expected a non-empty string, non-empty object, or undefined.`
+    );
+  }
+
+  if (typeof css === "string" && css.trim().length === 0) {
+    throw new Error(
+      `Invalid CSS value for element ${id}. Expected a non-empty string.`
+    );
+  }
+
+  if (typeof css === "object" && Object.keys(css).length === 0) {
+    throw new Error(
+      `Invalid CSS value for element ${id}. Expected a non-empty object.`
+    );
+  }
+}
 
 class DFlexDnDStore extends DFlexBaseStore {
   containers: Containers;
@@ -300,7 +321,12 @@ class DFlexDnDStore extends DFlexBaseStore {
       this._isInitialized = true;
     }
 
-    const { id, readonly = false, depth = 0, dragCSS } = elm;
+    const { id, readonly = false, depth = 0, dragCSS = null } = elm;
+
+    if (__DEV__) {
+      // Validate without initialize.
+      validateCSS(id, elm.dragCSS);
+    }
 
     scheduler(
       this,
@@ -318,7 +344,11 @@ class DFlexDnDStore extends DFlexBaseStore {
         }
 
         // Create an instance of DFlexCoreNode and gets the DOM element into the store.
-        super.register(coreInput, this._initSiblings, this._initObservers);
+        this.addElmToRegistry(
+          coreInput,
+          this._initSiblings,
+          this._initObservers
+        );
       },
       null
     );

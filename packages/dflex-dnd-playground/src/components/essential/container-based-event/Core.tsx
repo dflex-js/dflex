@@ -22,7 +22,9 @@ const Core = ({
   const ref = React.useRef(null) as React.MutableRefObject<any>;
 
   React.useEffect(() => {
-    if (ref.current) store.register({ id, depth });
+    if (ref.current) {
+      store.register({ id, depth });
+    }
   }, [ref]);
 
   return (

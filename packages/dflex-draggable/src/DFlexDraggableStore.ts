@@ -28,13 +28,14 @@ class DFlexDraggableStore extends DFlexBaseStore {
    * @param id
    */
   // @ts-ignore
-  register(id: string) {
-    super.register(
+  registry(id: string) {
+    this.addElmToRegistry(
       {
         id,
         depth: 0,
         readonly: false,
         animation: getAnimationOptions(),
+        dragCSS: null,
       },
       this._initBranch
     );
