@@ -91,6 +91,8 @@ function assertGridBoundaries(
 
 const ANIMATION_SPEED = 20;
 
+// @ts-ignore
+// eslint-disable-next-line no-unused-vars
 function calculateAnimationDuration(from: AxesPoint, to: AxesPoint): number {
   // Calculate the horizontal and vertical distance between from and to positions
   const dx = from.x - to.x;
@@ -395,21 +397,23 @@ class DFlexCoreElement extends DFlexBaseElement {
     enforceTransform: boolean,
     indexIncrement: number
   ): [number, number] {
-    let calculatedDuration: number | null = null;
+    const calculatedDuration: number | null = null;
 
-    if (this._animation) {
-      const { duration } = this._animation;
+    // if (this._animation) {
+    //   const { duration } = this._animation;
 
-      const oldPoint = this.translate.getInstance();
-      const newPoint = this.translate.increase(elmTransition).getInstance();
+    //   const oldPoint = this.translate.getInstance();
+    //   const newPoint = this.translate.increase(elmTransition).getInstance();
 
-      calculatedDuration =
-        typeof duration === "number"
-          ? duration
-          : calculateAnimationDuration(oldPoint, newPoint);
-    } else {
-      this.translate.increase(elmTransition);
-    }
+    //   calculatedDuration =
+    //     typeof duration === "number"
+    //       ? duration
+    //       : calculateAnimationDuration(oldPoint, newPoint);
+    // } else {
+    //   this.translate.increase(elmTransition);
+    // }
+
+    this.translate.increase(elmTransition);
 
     /**
      * This offset related directly to translate Y and Y. It's isolated from
