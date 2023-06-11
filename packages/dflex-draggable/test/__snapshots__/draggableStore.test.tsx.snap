@@ -15,13 +15,13 @@ Map {
       "parent": 0,
       "self": 0,
     },
+    "_CSSTransform": null,
     "_animatedFrame": null,
     "_animation": {
       "duration": "dynamic",
       "easing": "ease-in",
     },
     "_computedDimensions": null,
-    "_dragCSS": null,
     "_hasAttribute": Set {},
     "_hasPendingTransform": false,
     "_initialPosition": PointNum {

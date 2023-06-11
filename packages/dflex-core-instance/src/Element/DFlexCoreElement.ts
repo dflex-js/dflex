@@ -250,30 +250,33 @@ class DFlexCoreElement extends DFlexBaseElement {
     return "core:element";
   }
 
-  static transform = DFlexBaseElement.transform;
-
   constructor(eleWithPointer: DFlexElementInput) {
     const { order, keys, depth, readonly, animation, id, CSSTransform } =
       eleWithPointer;
 
     super(id);
 
+    // Unique keys
     this.VDOMOrder = { ...order };
     this.DOMOrder = { ...order };
     this.keys = { ...keys };
 
+    // Settings
     this.depth = depth;
     this.readonly = readonly;
-    this._isVisible = true;
-    this._animatedFrame = null;
-    this._hasPendingTransform = false;
-    this._translateHistory = undefined;
     this._animation = animation;
     this._CSSTransform = CSSTransform;
 
-    // CSS
+    // Movement
+    this._isVisible = true;
+    this._animatedFrame = null;
+    this._hasPendingTransform = false;
+
+    // Time travel
+    this._translateHistory = undefined;
+
+    // DOM
     this._computedDimensions = null;
-    // this.margin = null;
     this._initialPosition = new PointNum(0, 0);
     this.rect = new BoxRect(0, 0, 0, 0);
     this.DOMGrid = new PointNum(0, 0);

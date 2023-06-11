@@ -28,25 +28,39 @@ export type RegisterInputOpts = {
   /** Targeted element ID. */
   id: string;
 
-  /** The depth of the targeted element starting from zero. (Default: 0) */
-  depth?: number;
+  /**
+   * The depth of the targeted element within its container, starting from zero.
+   * A higher depth value means the element is visually positioned above elements with lower depth values.
+   * Default: 0
+   *
+   * `Example`: 1, 2, 3, ...
+   *
+   */ depth?: number;
 
   /**
-   * Indicates whether the element is read-only and won't be transformed during DnD,
-   * but still belongs to the same interactive container.
+   * Indicates whether the element is read-only and won't be transformed during drag and drop interactions,
+   * but it still belongs to the same interactive container.
+   * Default: false
+   *
    */
   readonly?: boolean;
 
   /**
-   * Configuration options for animations applied to the element during drag and drop.
+   * Configuration options for animations applied to the element being transformed during dragging.
    * If specified, the element will animate according to these options, overwriting the default values.
-   * To disable animation altogether, omit this property or set it to `null`.
+   * To disable animation altogether set the property to `null`.
+   *
+   * `Example`: { easing: 'ease-out', duration: 500 }
    */
   animation?: Partial<AnimationOpts>;
 
   /**
-   * CSS to be applied to the element when it is being dragged.
-   * The CSS will be removed when the element is not being dragged.
+   * CSS to be applied to the element when it is being transformed during dragging.
+   * The CSS will be removed when the element is settled in its new position.
+   *
+   * `Example`: "CSSTransform: 'dragged-element'" or "CSSTransform: { background: '#ff0000', opacity: 0.5 }"
+   *
+   * __Note__: CSS property names should be in snake_case.
    */
   CSSTransform?: CSSClass | CSSStyle;
 };
