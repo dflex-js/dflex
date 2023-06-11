@@ -19,7 +19,7 @@ describe("Testing DFlex BaseStore", () => {
     depth: 0,
     readonly: false,
     animation: null,
-    dragCSS: null,
+    CSSTransform: null,
   };
 
   const elm1DP0 = {
@@ -27,7 +27,7 @@ describe("Testing DFlex BaseStore", () => {
     depth: 0,
     readonly: false,
     animation: null,
-    dragCSS: null,
+    CSSTransform: null,
   };
 
   const elm2DP0 = {
@@ -35,7 +35,7 @@ describe("Testing DFlex BaseStore", () => {
     depth: 0,
     readonly: false,
     animation: null,
-    dragCSS: null,
+    CSSTransform: null,
   };
 
   const elm0DP1 = {
@@ -43,7 +43,7 @@ describe("Testing DFlex BaseStore", () => {
     depth: 1,
     readonly: false,
     animation: null,
-    dragCSS: null,
+    CSSTransform: null,
   };
 
   let container: HTMLDivElement | null;
