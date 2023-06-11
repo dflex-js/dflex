@@ -368,11 +368,11 @@ class DFlexDnDStore extends DFlexBaseStore {
       this._isInitialized = true;
     }
 
-    const { id, readonly = false, depth = 0, dragCSS = null } = elm;
+    const { id, readonly = false, depth = 0, CSSTransform = null } = elm;
 
     if (__DEV__) {
       // Validate without initialize.
-      validateCSS(id, elm.dragCSS);
+      validateCSS(id, elm.CSSTransform);
     }
 
     scheduler(
@@ -382,7 +382,7 @@ class DFlexDnDStore extends DFlexBaseStore {
           id,
           readonly,
           depth,
-          dragCSS,
+          CSSTransform,
           animation: getAnimationOptions(elm.animation),
         };
 

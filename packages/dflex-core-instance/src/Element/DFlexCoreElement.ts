@@ -67,7 +67,7 @@ export interface DFlexElementInput {
   depth: number;
   readonly: boolean;
   animation: AnimationOpts;
-  dragCSS: CSS | null;
+  CSSTransform: CSS | null;
 }
 
 function assertGridBoundaries(
@@ -118,7 +118,7 @@ const TRANSITION_DELAY = "transition-delay";
 const TRANSITION_DURATION = "transition-duration";
 const TRANSITION_TIMING_FUNCTION = "transition-timing-function";
 
-function rmTransition(DOM: HTMLElement) {
+function removeTransition(DOM: HTMLElement) {
   const { style } = DOM;
 
   style.removeProperty(TRANSITION_PROPERTY);
@@ -185,9 +185,7 @@ function removeCSSStyle(DOM: HTMLElement, properties: CSSStyle): void {
 
 function applyCSSStyle(DOM: HTMLElement, style: CSSStyle): void {
   Object.entries(style).forEach(([property, value]) => {
-    if (value !== null) {
-      DOM.style.setProperty(property, value);
-    }
+    DOM.style.setProperty(property, value);
   });
 }
 
@@ -244,7 +242,7 @@ class DFlexCoreElement extends DFlexBaseElement {
 
   private _animation: AnimationOpts;
 
-  private _dragCSS: CSS | null;
+  private _CSSTransform: CSS | null;
 
   private _translateHistory?: Map<string, TransitionHistory[]>;
 
@@ -255,7 +253,7 @@ class DFlexCoreElement extends DFlexBaseElement {
   static transform = DFlexBaseElement.transform;
 
   constructor(eleWithPointer: DFlexElementInput) {
-    const { order, keys, depth, readonly, animation, id, dragCSS } =
+    const { order, keys, depth, readonly, animation, id, CSSTransform } =
       eleWithPointer;
 
     super(id);
@@ -271,7 +269,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     this._hasPendingTransform = false;
     this._translateHistory = undefined;
     this._animation = animation;
-    this._dragCSS = dragCSS;
+    this._CSSTransform = CSSTransform;
 
     // CSS
     this._computedDimensions = null;
@@ -288,11 +286,11 @@ class DFlexCoreElement extends DFlexBaseElement {
   updateConfig(
     readonly: boolean,
     animation: AnimationOpts,
-    dragCSS: CSS | null
+    CSSTransform: CSS | null
   ): void {
     this.readonly = readonly;
     this._animation = animation;
-    this._dragCSS = dragCSS;
+    this._CSSTransform = CSSTransform;
   }
 
   initElmRect(DOM: HTMLElement, scrollLeft: number, scrollTop: number): void {
@@ -394,12 +392,12 @@ class DFlexCoreElement extends DFlexBaseElement {
     const transitionComplete = () => {
       this._animatedFrame = null;
 
-      if (this._dragCSS) {
-        removeCSS(DOM, this._dragCSS);
+      if (this._CSSTransform) {
+        removeCSS(DOM, this._CSSTransform);
       }
 
       if (this._animation) {
-        rmTransition(DOM);
+        removeTransition(DOM);
       }
 
       if (duration) {
@@ -416,8 +414,8 @@ class DFlexCoreElement extends DFlexBaseElement {
     };
 
     this._animatedFrame = requestAnimationFrame(() => {
-      if (this._dragCSS) {
-        applyCSS(DOM, this._dragCSS);
+      if (this._CSSTransform) {
+        applyCSS(DOM, this._CSSTransform);
       }
 
       // No animation is needed for the element.

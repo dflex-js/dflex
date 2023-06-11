@@ -48,17 +48,17 @@ export type RegisterInputOpts = {
    * CSS to be applied to the element when it is being dragged.
    * The CSS will be removed when the element is not being dragged.
    */
-  dragCSS?: CSSClass | CSSStyle;
+  CSSTransform?: CSSClass | CSSStyle;
 };
 
 /**
  * The processed data from user input for the `register` method in DnD store.
  */
 export type RegisterInputProcessed = DeepRequired<
-  Omit<RegisterInputOpts, "animation" | "dragCSS" | "releaseCSS">
+  Omit<RegisterInputOpts, "animation" | "CSSTransform">
 > & {
   animation: AnimationOpts;
-  dragCSS: CSS | null;
+  CSSTransform: CSS | null;
 };
 
 export type DFlexGlobalConfig = {
@@ -214,7 +214,7 @@ class DFlexBaseStore {
     elm: RegisterInputProcessed,
     dflexParentElm: null | DFlexElement
   ): Keys | null {
-    const { id, depth, readonly, animation, dragCSS } = elm;
+    const { id, depth, readonly, animation, CSSTransform } = elm;
 
     if (__DEV__) {
       if (this.registry.has(id) || this.interactiveDOM.has(id)) {
@@ -267,7 +267,7 @@ class DFlexBaseStore {
       depth,
       readonly,
       animation,
-      dragCSS,
+      CSSTransform,
     };
 
     const dflexElm = new DFlexElement(coreElement);
@@ -295,7 +295,7 @@ class DFlexBaseStore {
     parentDOM: HTMLElement,
     depth: number,
     animation: AnimationOpts,
-    dragCSS: CSS | null,
+    CSSTransform: CSS | null,
     registeredElmID: string,
     dflexParentElm: DFlexElement | null
   ) {
@@ -317,7 +317,7 @@ class DFlexBaseStore {
             // Assuming all siblings have the same animation settings.
             animation,
             id,
-            dragCSS,
+            CSSTransform,
           };
 
           ({ SK } = this._submitElementToRegistry(DOM, elm, dflexParentElm)!);
@@ -357,7 +357,7 @@ class DFlexBaseStore {
     // Don't execute the parent registration if there's new element in the branch.
     this._taskQ.cancelQueuedTask();
 
-    const { id, depth, readonly, animation, dragCSS } = element;
+    const { id, depth, readonly, animation, CSSTransform } = element;
 
     let isElmRegistered = this.registry.has(id);
 
@@ -382,7 +382,7 @@ class DFlexBaseStore {
       const dflexElm = this.registry.get(id)!;
 
       // Update default values created earlier.
-      dflexElm.updateConfig(readonly, animation, dragCSS);
+      dflexElm.updateConfig(readonly, animation, CSSTransform);
 
       ({ SK } = dflexElm.keys);
     } else {
@@ -415,7 +415,7 @@ class DFlexBaseStore {
         const dflexElm = this.registry.get(id)!;
 
         // Update default values created earlier.
-        dflexElm.updateConfig(readonly, animation, dragCSS);
+        dflexElm.updateConfig(readonly, animation, CSSTransform);
 
         if (__DEV__) {
           if (!SK) {
@@ -445,7 +445,7 @@ class DFlexBaseStore {
             parentDOM,
             depth,
             animation,
-            dragCSS,
+            CSSTransform,
             id,
             dflexParentElm
           )!;
@@ -523,7 +523,7 @@ class DFlexBaseStore {
                 // Default values:
                 readonly: true,
                 animation: getAnimationOptions(),
-                dragCSS: null,
+                CSSTransform: null,
               },
               null
             )!;
