@@ -240,6 +240,16 @@ function setRelativePosition(DOM: HTMLElement): void {
   }
 }
 
+function hasCSSTransition(DOM: HTMLElement) {
+  const transitionValue = getCachedComputedStyleProperty(
+    DOM,
+    "transition",
+    false
+  );
+
+  return transitionValue !== "none" && transitionValue.trim() !== "";
+}
+
 function rmEmptyAttr(DOM: HTMLElement, attribute: string) {
   if (!DOM.hasAttribute(attribute)) {
     return;
@@ -262,5 +272,6 @@ export {
   getParsedElmTransform,
   setFixedDimensions,
   setRelativePosition,
+  hasCSSTransition,
   rmEmptyAttr,
 };

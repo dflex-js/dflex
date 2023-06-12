@@ -45,6 +45,7 @@ export {
   getElmPos,
   getElmOverflow,
   getParsedElmTransform,
+  hasCSSTransition,
   rmEmptyAttr,
 } from "./computedStyleUtils";
 
