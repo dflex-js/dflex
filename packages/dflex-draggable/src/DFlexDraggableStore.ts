@@ -1,4 +1,4 @@
-import DFlexBaseStore from "@dflex/store";
+import DFlexBaseStore, { getAnimationOptions } from "@dflex/store";
 import { canUseDOM } from "@dflex/utils";
 
 declare global {
@@ -29,11 +29,13 @@ class DFlexDraggableStore extends DFlexBaseStore {
    */
   // @ts-ignore
   register(id: string) {
-    super.register(
+    this.addElmToRegistry(
       {
         id,
         depth: 0,
         readonly: false,
+        animation: getAnimationOptions(),
+        CSSTransform: null,
       },
       this._initBranch
     );

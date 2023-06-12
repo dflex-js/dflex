@@ -1,5 +1,11 @@
-import DFlexBaseStore from "./DFlexBaseStore";
+import DFlexBaseStore, { getAnimationOptions } from "./DFlexBaseStore";
 
-export type { RegisterInputOpts, DFlexGlobalConfig } from "./DFlexBaseStore";
+export type {
+  RegisterInputOpts,
+  RegisterInputProcessed,
+  DFlexGlobalConfig,
+} from "./DFlexBaseStore";
+
+export { getAnimationOptions };
 
 export default DFlexBaseStore;

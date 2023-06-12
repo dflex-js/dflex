@@ -43,7 +43,17 @@ const DFlexDnDComponent = ({
 
   React.useEffect(() => {
     if (taskRef.current) {
-      store.register({ id, depth, readonly });
+      store.register({
+        id,
+        depth,
+        readonly,
+        animation: null,
+        CSSTransform: {
+          background: "#ae51ff",
+          "box-shadow": "0 0 8px 4px rgba(255, 255, 255, 0.5)",
+          opacity: "0.8",
+        },
+      });
     }
   }, [taskRef]);
 

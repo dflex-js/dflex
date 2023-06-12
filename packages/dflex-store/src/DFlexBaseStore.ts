@@ -4,6 +4,9 @@ import Generator, { Keys, Siblings } from "@dflex/dom-gen";
 import { DFlexElement, DFlexElementInput } from "@dflex/core-instance";
 import {
   AnimationOpts,
+  CSS,
+  CSSClass,
+  CSSStyle,
   featureFlags,
   getParentElm,
   setFixedDimensions,
@@ -25,22 +28,51 @@ export type RegisterInputOpts = {
   /** Targeted element ID. */
   id: string;
 
-  /** The depth of the targeted element starting from zero. (Default: 0) */
-  depth?: number;
+  /**
+   * The depth of the targeted element within its container, starting from zero.
+   * A higher depth value means the element is visually positioned above elements with lower depth values.
+   * Default: 0
+   *
+   * `Example`: 1, 2, 3, ...
+   *
+   */ depth?: number;
 
   /**
-   * Indicates whether the element is read-only and won't be transformed during DnD,
-   * but still belongs to the same interactive container.
+   * Indicates whether the element is read-only and won't be transformed during drag and drop interactions,
+   * but it still belongs to the same interactive container.
+   * Default: false
+   *
    */
   readonly?: boolean;
 
+  /**
+   * Configuration options for animations applied to the element being transformed during dragging.
+   * If specified, the element will animate according to these options, overwriting the default values.
+   * To disable animation altogether set the property to `null`.
+   *
+   * `Example`: { easing: 'ease-out', duration: 500 }
+   */
   animation?: Partial<AnimationOpts>;
+
+  /**
+   * CSS to be applied to the element when it is being transformed during dragging.
+   * The CSS will be removed when the element is settled in its new position.
+   *
+   * `Example`: "CSSTransform: 'dragged-element'" or "CSSTransform: { background: '#ff0000', opacity: 0.5 }"
+   *
+   * __Note__: CSS property names should be in snake_case.
+   */
+  CSSTransform?: CSSClass | CSSStyle;
 };
 
-export type RegisterInputBase = DeepRequired<
-  Omit<RegisterInputOpts, "animation">
+/**
+ * The processed data from user input for the `register` method in DnD store.
+ */
+export type RegisterInputProcessed = DeepRequired<
+  Omit<RegisterInputOpts, "animation" | "CSSTransform">
 > & {
   animation: AnimationOpts;
+  CSSTransform: CSS | null;
 };
 
 export type DFlexGlobalConfig = {
@@ -61,14 +93,22 @@ type BranchComposedCallBackFunction = (
 type HighestContainerComposedCallBack = () => void;
 
 export function getAnimationOptions(
-  animation?: Partial<AnimationOpts>
-): Required<AnimationOpts> {
+  animation?: Partial<AnimationOpts> | null
+): Required<AnimationOpts> | null {
   const defaultAnimation: AnimationOpts = {
     easing: "ease-in",
     duration: "dynamic",
   };
 
-  return animation ? { ...defaultAnimation, ...animation } : defaultAnimation;
+  if (animation === undefined) {
+    return defaultAnimation;
+  }
+
+  if (animation === null) {
+    return null;
+  }
+
+  return { ...defaultAnimation, ...animation };
 }
 
 function getElmDOMOrThrow(id: string): HTMLElement | null {
@@ -185,10 +225,10 @@ class DFlexBaseStore {
 
   private _submitElementToRegistry(
     DOM: HTMLElement,
-    elm: RegisterInputBase,
+    elm: RegisterInputProcessed,
     dflexParentElm: null | DFlexElement
   ): Keys | null {
-    const { id, depth, readonly, animation } = elm;
+    const { id, depth, readonly, animation, CSSTransform } = elm;
 
     if (__DEV__) {
       if (this.registry.has(id) || this.interactiveDOM.has(id)) {
@@ -241,6 +281,7 @@ class DFlexBaseStore {
       depth,
       readonly,
       animation,
+      CSSTransform,
     };
 
     const dflexElm = new DFlexElement(coreElement);
@@ -268,6 +309,7 @@ class DFlexBaseStore {
     parentDOM: HTMLElement,
     depth: number,
     animation: AnimationOpts,
+    CSSTransform: CSS | null,
     registeredElmID: string,
     dflexParentElm: DFlexElement | null
   ) {
@@ -283,12 +325,13 @@ class DFlexBaseStore {
         }
 
         if (!this.registry.has(id)) {
-          const elm: RegisterInputBase = {
+          const elm: RegisterInputProcessed = {
             depth,
             readonly: registeredElmID !== id,
             // Assuming all siblings have the same animation settings.
             animation,
             id,
+            CSSTransform,
           };
 
           ({ SK } = this._submitElementToRegistry(DOM, elm, dflexParentElm)!);
@@ -320,17 +363,15 @@ class DFlexBaseStore {
     }
   }
 
-  register(
-    element: RegisterInputOpts,
+  protected addElmToRegistry(
+    element: RegisterInputProcessed,
     branchComposedCallBack?: BranchComposedCallBackFunction,
     highestContainerComposedCallBack?: HighestContainerComposedCallBack
-  ) {
+  ): void {
     // Don't execute the parent registration if there's new element in the branch.
     this._taskQ.cancelQueuedTask();
 
-    const { id, depth = 0, readonly = false } = element;
-
-    const animation = getAnimationOptions(element.animation);
+    const { id, depth, readonly, animation, CSSTransform } = element;
 
     let isElmRegistered = this.registry.has(id);
 
@@ -355,7 +396,7 @@ class DFlexBaseStore {
       const dflexElm = this.registry.get(id)!;
 
       // Update default values created earlier.
-      dflexElm.updateConfig(readonly, animation);
+      dflexElm.updateConfig(readonly, animation, CSSTransform);
 
       ({ SK } = dflexElm.keys);
     } else {
@@ -388,7 +429,7 @@ class DFlexBaseStore {
         const dflexElm = this.registry.get(id)!;
 
         // Update default values created earlier.
-        dflexElm.updateConfig(readonly, animation);
+        dflexElm.updateConfig(readonly, animation, CSSTransform);
 
         if (__DEV__) {
           if (!SK) {
@@ -418,6 +459,7 @@ class DFlexBaseStore {
             parentDOM,
             depth,
             animation,
+            CSSTransform,
             id,
             dflexParentElm
           )!;
@@ -495,6 +537,7 @@ class DFlexBaseStore {
                 // Default values:
                 readonly: true,
                 animation: getAnimationOptions(),
+                CSSTransform: null,
               },
               null
             )!;

@@ -15,6 +15,7 @@ Map {
       "parent": 0,
       "self": 0,
     },
+    "_CSSTransform": null,
     "_animatedFrame": null,
     "_animation": {
       "duration": "dynamic",

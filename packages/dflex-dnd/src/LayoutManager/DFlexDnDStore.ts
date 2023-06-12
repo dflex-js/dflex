@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
-import DFlexBaseStore from "@dflex/store";
-import type { RegisterInputOpts } from "@dflex/store";
+import DFlexBaseStore, { getAnimationOptions } from "@dflex/store";
+import type { RegisterInputOpts, RegisterInputProcessed } from "@dflex/store";
 
 import {
   Tracker,
@@ -11,6 +11,7 @@ import {
   clearComputedStyleCache,
   updateElmDatasetGrid,
   setFixedDimensions,
+  CSS,
 } from "@dflex/utils";
 
 import {
@@ -56,6 +57,73 @@ type UpdatesQueue = [
 ][];
 
 type Deferred = (() => void)[];
+
+function validateCSS(id: string, css?: CSS): void {
+  if (css !== undefined && typeof css !== "string" && typeof css !== "object") {
+    throw new Error(
+      `Invalid CSS type for element ${id}. Expected a non-empty string, non-empty object, or undefined.`
+    );
+  }
+
+  if (typeof css === "string") {
+    if (css.trim().length === 0) {
+      throw new Error(
+        `Invalid CSS value for element ${id}. Expected a non-empty string.`
+      );
+    }
+
+    const isCamelCase = /[A-Z]/.test(css);
+    if (isCamelCase) {
+      const snakeCase = css.replace(
+        /[A-Z]/g,
+        (match) => `-${match.toLowerCase()}`
+      );
+      throw new Error(
+        `Invalid CSS rule for element ${id}. The property '${css}' should be in snake_case. Use '${snakeCase}' instead.`
+      );
+    }
+  }
+
+  if (typeof css === "object" && Object.keys(css).length === 0) {
+    throw new Error(
+      `Invalid CSS value for element ${id}. Expected a non-empty object.`
+    );
+  }
+
+  if (typeof css === "object") {
+    const convertedProperties: Record<string, string> = {};
+    Object.entries(css).forEach(([key, value]) => {
+      if (/[A-Z]/.test(key)) {
+        const snakeCaseKey = key.replace(
+          /[A-Z]/g,
+          (match) => `-${match.toLowerCase()}`
+        );
+        if (typeof value !== "string" && value !== null) {
+          throw new Error(
+            `Invalid CSS value for element ${id}. Property '${key}' should have a value of type null or string. Received: ${value}`
+          );
+        }
+        convertedProperties[snakeCaseKey] = value!;
+        if (snakeCaseKey !== key) {
+          throw new Error(
+            `Invalid CSS rule for element ${id}. The property '${key}' should be in snake_case. Use '${snakeCaseKey}' instead.`
+          );
+        }
+      } else {
+        if (typeof value === "object" && value !== null) {
+          throw new Error(
+            `Invalid CSS value for element ${id}. Property '${key}' should have a value of type null or string. Received: ${value}`
+          );
+        } else if (typeof value !== "string" && value !== null) {
+          throw new Error(
+            `Invalid CSS value for element ${id}. Property '${key}' should have a value of type null or string. Received: ${value}`
+          );
+        }
+        convertedProperties[key] = value as string;
+      }
+    });
+  }
+}
 
 class DFlexDnDStore extends DFlexBaseStore {
   containers: Containers;
@@ -286,7 +354,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     scheduler(this, null, null, { type: "layoutState", status: "ready" });
   }
 
-  register(element: RegisterInputOpts) {
+  register(elm: RegisterInputOpts) {
     if (!this._isDOM) {
       this._isDOM = canUseDOM();
 
@@ -300,19 +368,34 @@ class DFlexDnDStore extends DFlexBaseStore {
       this._isInitialized = true;
     }
 
-    const { id } = element;
+    const { id, readonly = false, depth = 0, CSSTransform = null } = elm;
+
+    if (__DEV__) {
+      // Validate without initialize.
+      validateCSS(id, elm.CSSTransform);
+    }
 
     scheduler(
       this,
       () => {
-        const coreInput = {
+        const coreInput: RegisterInputProcessed = {
           id,
-          readonly: !!element.readonly,
-          depth: element.depth || 0,
+          readonly,
+          depth,
+          CSSTransform,
+          animation: getAnimationOptions(elm.animation),
         };
 
+        if (__DEV__) {
+          Object.freeze(coreInput);
+        }
+
         // Create an instance of DFlexCoreNode and gets the DOM element into the store.
-        super.register(coreInput, this._initSiblings, this._initObservers);
+        this.addElmToRegistry(
+          coreInput,
+          this._initSiblings,
+          this._initObservers
+        );
       },
       null
     );

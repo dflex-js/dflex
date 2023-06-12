@@ -190,8 +190,10 @@ function setFixedDimensions(DOM: HTMLElement): void {
   const visibleHeight = getVisibleDimension(DOM, CSSPropNames.HEIGHT);
   const visibleWidth = getVisibleDimension(DOM, CSSPropNames.WIDTH);
 
-  DOM.style.setProperty(CSSPropNames.HEIGHT, `${visibleHeight}px`);
-  DOM.style.setProperty(CSSPropNames.WIDTH, `${visibleWidth}px`);
+  const { style } = DOM;
+
+  style.setProperty(CSSPropNames.HEIGHT, `${visibleHeight}px`);
+  style.setProperty(CSSPropNames.WIDTH, `${visibleWidth}px`);
 }
 
 const CSS_FORBIDDEN_POSITION_REGEX = /absolute|fixed/;
@@ -238,6 +240,16 @@ function setRelativePosition(DOM: HTMLElement): void {
   }
 }
 
+function hasCSSTransition(DOM: HTMLElement) {
+  const transitionValue = getCachedComputedStyleProperty(
+    DOM,
+    "transition",
+    false
+  );
+
+  return transitionValue !== "none" && transitionValue.trim() !== "";
+}
+
 function rmEmptyAttr(DOM: HTMLElement, attribute: string) {
   if (!DOM.hasAttribute(attribute)) {
     return;
@@ -260,5 +272,6 @@ export {
   getParsedElmTransform,
   setFixedDimensions,
   setRelativePosition,
+  hasCSSTransition,
   rmEmptyAttr,
 };
