@@ -33,7 +33,24 @@ const moduleResolution = [
   },
 ];
 
+const moduleResolutionProd = [
+  {
+    find: "@dflex/dnd",
+    replacement: path.resolve("../dflex-dnd/dist/dflex-dnd.mjs"),
+  },
+];
+
+const { USE_PACKAGE_BUNDLE } = process.env;
+
+const shouldUsePackageBundle = USE_PACKAGE_BUNDLE === "true";
+
+// eslint-disable-next-line no-console
+console.info(
+  `Using ${shouldUsePackageBundle ? "package" : "self-built"} bundle.`
+);
+
 const config: UserConfigExport = {
+  clearScreen: false,
   plugins: [
     react(),
     replaceCodePlugin({
@@ -52,7 +69,7 @@ const config: UserConfigExport = {
     port: PORT,
   },
   resolve: {
-    alias: moduleResolution,
+    alias: USE_PACKAGE_BUNDLE ? moduleResolutionProd : moduleResolution,
   },
 };
 
