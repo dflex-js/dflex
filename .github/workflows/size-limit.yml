@@ -1,8 +1,9 @@
-name: Size Limit
+name: "size"
 
 on:
   pull_request:
-    types: [opened, edited, closed]
+    branches:
+      - main
 
 jobs:
   size-limit:
