@@ -40,9 +40,9 @@ const moduleResolutionProd = [
   },
 ];
 
-const { USE_PACKAGE_BUNDLE } = process.env;
+const { PACKAGE_BUNDLE } = process.env;
 
-const shouldUsePackageBundle = USE_PACKAGE_BUNDLE === "true";
+const shouldUsePackageBundle = PACKAGE_BUNDLE === "production";
 
 // eslint-disable-next-line no-console
 console.info(
@@ -69,7 +69,7 @@ const config: UserConfigExport = {
     port: PORT,
   },
   resolve: {
-    alias: USE_PACKAGE_BUNDLE ? moduleResolutionProd : moduleResolution,
+    alias: shouldUsePackageBundle ? moduleResolutionProd : moduleResolution,
   },
 };
 
