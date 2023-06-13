@@ -103,6 +103,9 @@ importers:
       '@dflex/utils':
         specifier: workspace:^3.9.0
         version: link:../dflex-utils
+      '@size-limit/preset-big-lib':
+        specifier: ^8.2.4
+        version: 8.2.4(size-limit@8.2.4)
 
   packages/dflex-dnd-playground:
     dependencies:
