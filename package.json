@@ -32,7 +32,7 @@
     "debug-test-e2e:webkit": "playwright test --debug --project=\"webkit\"",
     "clean": "pnpm -r --parallel clean",
     "build": "node scripts/build/index.js",
-    "build-prod": "pnpm clean && pnpm -r emit && pnpm build -- --production --release --minify",
+    "build-prod": "pnpm clean && pnpm -r emit && pnpm run build --production --release --minify",
     "check-types": "tsc --noEmit",
     "emit-types": "pnpm -r emit",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
@@ -65,5 +65,10 @@
     "typescript": "^5.1.3",
     "vite": "^4.3.9",
     "vite-plugin-replace": "^0.1.1"
-  }
+  },
+  "size-limit": [
+    {
+      "path": "packages/dflex-dnd/dist/dflex-dnd.mjs"
+    }
+  ]
 }

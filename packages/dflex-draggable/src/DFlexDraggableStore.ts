@@ -1,5 +1,5 @@
-import DFlexBaseStore, { getAnimationOptions } from "@dflex/store";
-import { canUseDOM } from "@dflex/utils";
+import DFlexBaseStore from "@dflex/store";
+import { canUseDOM, getAnimationOptions } from "@dflex/utils";
 
 declare global {
   // eslint-disable-next-line

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import DFlexBaseStore, { getAnimationOptions } from "@dflex/store";
+import DFlexBaseStore from "@dflex/store";
 import type { RegisterInputOpts, RegisterInputProcessed } from "@dflex/store";
 
 import {
@@ -12,6 +12,7 @@ import {
   updateElmDatasetGrid,
   setFixedDimensions,
   CSS,
+  getAnimationOptions,
 } from "@dflex/utils";
 
 import {
