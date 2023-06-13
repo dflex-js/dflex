@@ -72,6 +72,21 @@
   "size-limit": [
     {
       "path": "packages/dflex-dnd/dist/dflex-dnd.mjs"
+    },
+    {
+      "path": "packages/dflex-core-instance/dist/dflex-core.mjs"
+    },
+    {
+      "path": "packages/dflex-dom-gen/dist/dflex-dom.mjs"
+    },
+    {
+      "path": "packages/dflex-store/dist/dflex-store.mjs"
+    },
+    {
+      "path": "packages/dflex-utils/dist/dflex-utils.mjs"
+    },
+    {
+      "path": "packages/dflex-draggable/dist/dflex-draggable.mjs"
     }
   ]
 }
