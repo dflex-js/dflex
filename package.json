@@ -37,7 +37,8 @@
     "emit-types": "pnpm -r emit",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "prepare-release": "changeset",
-    "update-version": "pnpm changeset version && pnpm install"
+    "update-version": "pnpm changeset version && pnpm install",
+    "size": "pnpm build-prod && pnpm size-limit"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.1",

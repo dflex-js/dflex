@@ -34,9 +34,7 @@
     "@dflex/core-instance": "workspace:^3.9.0",
     "@dflex/draggable": "workspace:^3.9.0",
     "@dflex/store": "workspace:^3.9.0",
-    "@dflex/utils": "workspace:^3.9.0",
-    "@size-limit/preset-big-lib": "^8.2.4",
-    "size-limit": "^8.2.4"
+    "@dflex/utils": "workspace:^3.9.0"
   },
   "keywords": [
     "drag-drop",
