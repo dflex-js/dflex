@@ -8,12 +8,24 @@ on:
 jobs:
   size-limit:
     runs-on: ubuntu-latest
+    if: github.repository_owner == 'dflex-js' && github.event.pull_request.draft != true
     steps:
-      - uses: actions/checkout@v2
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Cache pnpm modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
+
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: ^8.0.0
           run_install: true
+
       - uses: andresz1/size-limit-action@dd31dce7dcc72a041fd3e49abf0502b13fc4ce05
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

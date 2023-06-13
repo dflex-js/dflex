@@ -235,8 +235,11 @@ jobs:
       matrix:
         node-version: [18.15]
         browser: ["chromium", "firefox"]
+        bundle: ["production", "development"]
     env:
       CI: true
+      PACKAGE_BUNDLE: ${{ matrix.bundle }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -268,6 +271,10 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
+
+      - name: Build packages
+        if: matrix.bundle == 'production'
+        run: "pnpm build --production --release --minify"
 
       - name: Build DnD React App
         run: pnpm -F dflex-dnd-playground build

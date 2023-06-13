@@ -1,12 +1,6 @@
 class Tracker {
   private _travelID: Record<string, number>;
 
-  public static readonly PREFIX_CYCLE = "dflex_cycle_";
-
-  public static readonly PREFIX_ID = "dflex_id_";
-
-  public static readonly PREFIX_ky = "dflex_ky_";
-
   /**
    * Creates an instance of Tracker.
    */

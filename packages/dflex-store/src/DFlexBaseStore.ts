@@ -10,6 +10,7 @@ import {
   featureFlags,
   getAnimationOptions,
   getParentElm,
+  PREFIX_ID,
   setFixedDimensions,
   setRelativePosition,
   TaskQueue,
@@ -302,7 +303,7 @@ class DFlexBaseStore {
         let { id } = DOM;
 
         if (!id) {
-          id = this.tracker.newTravel(Tracker.PREFIX_ID);
+          id = this.tracker.newTravel(PREFIX_ID);
           DOM.id = id;
         }
 
@@ -391,7 +392,7 @@ class DFlexBaseStore {
       let { id: parentID } = parentDOM;
 
       if (!parentID) {
-        parentID = this.tracker.newTravel(Tracker.PREFIX_ID);
+        parentID = this.tracker.newTravel(PREFIX_ID);
         parentDOM.id = parentID;
       } else {
         isParentRegistered = this.registry.has(parentID);
