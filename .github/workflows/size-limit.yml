@@ -1,0 +1,16 @@
+name: Size Limit
+
+on:
+  pull_request:
+    types: [opened, edited, closed]
+
+jobs:
+  size-limit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: pnpm/action@v2
+      - uses: andresz1/size-limit-action@v2
+        with:
+          package_manager: pnpm
+          limit: 100kb
