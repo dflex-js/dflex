@@ -34,6 +34,7 @@ export {
   getStartingPointByAxis,
   getEndingPointByAxis,
   getOppositeAxis,
+  getAnimationOptions,
 } from "./collections";
 
 export {

@@ -8,6 +8,7 @@ import {
   CSSClass,
   CSSStyle,
   featureFlags,
+  getAnimationOptions,
   getParentElm,
   setFixedDimensions,
   setRelativePosition,
@@ -91,25 +92,6 @@ type BranchComposedCallBackFunction = (
 ) => void;
 
 type HighestContainerComposedCallBack = () => void;
-
-export function getAnimationOptions(
-  animation?: Partial<AnimationOpts> | null
-): Required<AnimationOpts> | null {
-  const defaultAnimation: AnimationOpts = {
-    easing: "ease-in",
-    duration: "dynamic",
-  };
-
-  if (animation === undefined) {
-    return defaultAnimation;
-  }
-
-  if (animation === null) {
-    return null;
-  }
-
-  return { ...defaultAnimation, ...animation };
-}
 
 function getElmDOMOrThrow(id: string): HTMLElement | null {
   let DOM = document.getElementById(id);
