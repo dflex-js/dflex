@@ -8,6 +8,7 @@ on:
 jobs:
   size-limit:
     runs-on: ubuntu-latest
+    if: github.repository_owner == 'dflex-js' && github.event.pull_request.draft != true
     steps:
       - uses: actions/checkout@v2
       - uses: pnpm/action-setup@v2.2.4
