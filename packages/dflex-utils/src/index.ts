@@ -5,7 +5,8 @@ export type { AbstractBoxRect } from "./Box";
 export { DFlexThreshold as Threshold } from "./Threshold";
 export type { ThresholdPercentages } from "./Threshold";
 
-export { default as Tracker } from "./Tracker";
+export { Tracker, PREFIX_CYCLE, PREFIX_ID, PREFIX_KY } from "./Tracker";
+
 export { default as TaskQueue } from "./TaskQueue";
 export { default as eventDebounce } from "./eventDebounce";
 

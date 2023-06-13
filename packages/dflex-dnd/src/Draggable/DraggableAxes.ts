@@ -8,10 +8,10 @@ import {
   AxesPoint,
   BoxNum,
   AbstractBoxRect,
-  Tracker,
   Axis,
   assertElmPos,
   featureFlags,
+  PREFIX_CYCLE,
 } from "@dflex/utils";
 
 import type { DFlexElement } from "@dflex/core-instance";
@@ -135,7 +135,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
 
     const siblings = store.getElmSiblingsByKey(SK);
 
-    const cycleID = store.tracker.newTravel(Tracker.PREFIX_CYCLE);
+    const cycleID = store.tracker.newTravel(PREFIX_CYCLE);
 
     this.session = [cycleID];
 

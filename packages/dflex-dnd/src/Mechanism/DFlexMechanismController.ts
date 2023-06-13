@@ -4,7 +4,7 @@ import {
   BoxNum,
   featureFlags,
   PointNum,
-  Tracker,
+  PREFIX_CYCLE,
 } from "@dflex/utils";
 
 import { DFLEX_EVENTS, scheduler, store } from "../LayoutManager";
@@ -293,7 +293,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         destinationSiblings.push(APPEND_EMPTY_ELM_ID);
         destinationContainer.extendGrid(insertionAxis);
 
-        const cycleID = store.tracker.newTravel(Tracker.PREFIX_CYCLE);
+        const cycleID = store.tracker.newTravel(PREFIX_CYCLE);
 
         this.draggable.session.push(cycleID);
 
