@@ -12,5 +12,6 @@ jobs:
       - uses: actions/checkout@v2
       - uses: andresz1/size-limit-action@dd31dce7dcc72a041fd3e49abf0502b13fc4ce05
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           package_manager: pnpm
           build_script: "pnpm clean && pnpm -r emit && pnpm build --production --release --minify"
