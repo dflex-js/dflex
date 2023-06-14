@@ -10,7 +10,7 @@
   "repository": "https://github.com/dflex-js/dflex",
   "author": "Jalal Maskoun",
   "scripts": {
-    "start": "cross-env NODE_ENV=development pnpm -F dflex-dnd-playground dev",
+    "start": "cross-env NODE_ENV=production pnpm -F dflex-dnd-playground dev",
     "serve:dnd": "pnpm -F dflex-dnd-playground preview",
     "build-app": "pnpm -F dflex-dnd-playground build",
     "start:cy": "cross-env NODE_ENV=development && pnpm start-server-and-test 'pnpm run start' http-get://localhost:3001 'cypress open --env extended=true --project packages/dflex-dnd-playground'",
@@ -88,5 +88,8 @@
     {
       "path": "packages/dflex-draggable/dist/dflex-draggable.mjs"
     }
-  ]
+  ],
+  "dependencies": {
+    "@babel/preset-typescript": "^7.22.5"
+  }
 }

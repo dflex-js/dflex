@@ -8,7 +8,8 @@ import { nodeResolve } from "@rollup/plugin-node-resolve";
 import replace from "@rollup/plugin-replace";
 import alias from "@rollup/plugin-alias";
 import commonjs from "@rollup/plugin-commonjs";
-import esbuild from "rollup-plugin-esbuild";
+// import esbuild from "rollup-plugin-esbuild";
+import { babel } from "@rollup/plugin-babel";
 import terser from "@rollup/plugin-terser";
 import minimist from "minimist";
 import packages from "npm-packages";
@@ -44,9 +45,24 @@ const plugins = (isProd, isMinify) => [
   nodeResolve({
     extensions: [".js", ".ts"],
   }),
-  esbuild({
-    tsconfig: resolve("./tsconfig.json"),
+  babel({
+    babelHelpers: "bundled",
+    babelrc: false,
+    configFile: false,
+    exclude: "/**/node_modules/**",
+    extensions: [".js", ".jsx", ".ts", ".tsx"],
+    presets: [
+      [
+        "@babel/preset-typescript",
+        {
+          tsconfig: resolve("./tsconfig.json"),
+        },
+      ],
+    ],
   }),
+  // esbuild({
+  //   tsconfig: resolve("./tsconfig.json"),
+  // }),
   commonjs(),
   replace({
     __DEV__: isProd ? "false" : "true",
