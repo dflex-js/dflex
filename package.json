@@ -41,6 +41,7 @@
     "size": "pnpm build-prod && pnpm size-limit"
   },
   "devDependencies": {
+    "@babel/preset-typescript": "^7.22.5",
     "@changesets/cli": "^2.26.1",
     "@playwright/test": "^1.35.0",
     "@size-limit/preset-big-lib": "^8.2.4",
@@ -88,8 +89,5 @@
     {
       "path": "packages/dflex-draggable/dist/dflex-draggable.mjs"
     }
-  ],
-  "dependencies": {
-    "@babel/preset-typescript": "^7.22.5"
-  }
+  ]
 }
