@@ -8,7 +8,6 @@ import { nodeResolve } from "@rollup/plugin-node-resolve";
 import replace from "@rollup/plugin-replace";
 import alias from "@rollup/plugin-alias";
 import commonjs from "@rollup/plugin-commonjs";
-// import esbuild from "rollup-plugin-esbuild";
 import { babel } from "@rollup/plugin-babel";
 import terser from "@rollup/plugin-terser";
 import minimist from "minimist";
@@ -60,9 +59,6 @@ const plugins = (isProd, isMinify) => [
       ],
     ],
   }),
-  // esbuild({
-  //   tsconfig: resolve("./tsconfig.json"),
-  // }),
   commonjs(),
   replace({
     __DEV__: isProd ? "false" : "true",
