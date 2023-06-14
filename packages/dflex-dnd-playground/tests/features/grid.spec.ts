@@ -17,6 +17,11 @@ import {
   moveDragged,
 } from "../utils";
 
+const { PACKAGE_BUNDLE } = process.env;
+const isProd = PACKAGE_BUNDLE === "production";
+
+const SKIP_REASON = "This assertion works with development bundle only";
+
 test.describe("Transformation inside grid container", async () => {
   let page: Page;
   let context: BrowserContext;
@@ -81,6 +86,8 @@ test.describe("Transformation inside grid container", async () => {
     ];
 
     test("Check initial grid", async () => {
+      test.skip(isProd, SKIP_REASON);
+
       await assertChildrenGrid(elmParent, INITIAL_GRID);
     });
 
@@ -118,6 +125,8 @@ test.describe("Transformation inside grid container", async () => {
     });
 
     test("elements grid is calculated correctly", async () => {
+      test.skip(isProd, SKIP_REASON);
+
       await assertChildrenGrid(elmParent, [
         { x: 1, y: 0 }, // first row - first change.
         { x: 2, y: 0 }, // first row - first change.
@@ -154,6 +163,8 @@ test.describe("Transformation inside grid container", async () => {
     });
 
     test("elements grid is calculated correctly for first and second rows", async () => {
+      test.skip(isProd, SKIP_REASON);
+
       await assertChildrenGrid(elmParent, [
         { x: 1, y: 0 }, // first row - first change.
         { x: 2, y: 0 }, // first row - first change.
@@ -187,7 +198,9 @@ test.describe("Transformation inside grid container", async () => {
       await Promise.all([
         assertChildrenOrderIDs(elmParent, FINAL_IDS_ROUND_1),
         assertDefaultChildrenIndex(elmParent),
-        assertChildrenGrid(elmParent, INITIAL_GRID),
+        isProd
+          ? Promise.resolve()
+          : assertChildrenGrid(elmParent, INITIAL_GRID),
       ]);
     });
   });
@@ -204,6 +217,8 @@ test.describe("Transformation inside grid container", async () => {
     ];
 
     test("Check initial grid", async () => {
+      test.skip(isProd, SKIP_REASON);
+
       await assertChildrenGrid(elmParent, INITIAL_GRID);
     });
 
@@ -217,6 +232,8 @@ test.describe("Transformation inside grid container", async () => {
     });
 
     test("elements grid is calculated correctly", async () => {
+      test.skip(isProd, SKIP_REASON);
+
       await assertChildrenGrid(elmParent, [
         { x: 0, y: 2 }, // ------> first swap
         { x: 1, y: 0 }, // first row
@@ -264,6 +281,8 @@ test.describe("Transformation inside grid container", async () => {
     });
 
     test("elements grid is calculated correctly for two cols", async () => {
+      test.skip(isProd, SKIP_REASON);
+
       await assertChildrenGrid(elmParent, [
         { x: 0, y: 2 }, // ------> first swap
         { x: 1, y: 1 }, // ------> second swap
@@ -299,6 +318,8 @@ test.describe("Transformation inside grid container", async () => {
     });
 
     test("elements grid is calculated correctly for three cols", async () => {
+      test.skip(isProd, SKIP_REASON);
+
       await assertChildrenGrid(elmParent, [
         { x: 0, y: 2 }, // ------> first swap
         { x: 1, y: 1 }, // ------> second swap
@@ -320,7 +341,9 @@ test.describe("Transformation inside grid container", async () => {
       await Promise.all([
         assertChildrenOrderIDs(elmParent, FINAL_IDS_ROUND_2),
         assertDefaultChildrenIndex(elmParent),
-        assertChildrenGrid(elmParent, INITIAL_GRID),
+        isProd
+          ? Promise.resolve()
+          : assertChildrenGrid(elmParent, INITIAL_GRID),
       ]);
     });
   });
