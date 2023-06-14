@@ -140,7 +140,7 @@ jobs:
         run: "pnpm clean && pnpm -r emit && pnpm build --production --release --minify"
 
       - name: Build DnD React App
-        run: pnpm -F dflex-dnd-playground build
+        run: pnpm -F dflex-dnd-playground build --mode CI
 
       - name: Upload Package Artifacts
         uses: actions/upload-artifact@v3
@@ -277,7 +277,7 @@ jobs:
         run: "pnpm build --production --release --minify"
 
       - name: Build DnD React App
-        run: pnpm -F dflex-dnd-playground build
+        run: pnpm -F dflex-dnd-playground build --mode CI
 
       - name: Install Playwright
         run: npx playwright install --with-deps
@@ -328,7 +328,7 @@ jobs:
         run: pnpm install
 
       - name: Build DnD React App
-        run: pnpm -F dflex-dnd-playground build
+        run: pnpm -F dflex-dnd-playground build --mode CI
 
       - name: Install Playwright
         run: npx playwright install --with-deps
@@ -378,7 +378,7 @@ jobs:
         run: pnpm install
 
       - name: Build DnD React App
-        run: pnpm -F dflex-dnd-playground build
+        run: pnpm -F dflex-dnd-playground build --mode CI
 
       - name: Install Playwright
         run: npx playwright install --with-deps

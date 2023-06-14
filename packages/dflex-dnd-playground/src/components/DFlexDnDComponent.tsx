@@ -29,6 +29,8 @@ interface Props {
   opts?: DFlexDnDOpts;
 }
 
+const isCI = import.meta.env.MODE === "CI";
+
 const DFlexDnDComponent = ({
   Component,
   registerInput,
@@ -47,7 +49,7 @@ const DFlexDnDComponent = ({
         id,
         depth,
         readonly,
-        animation: null,
+        animation: isCI ? null : undefined,
         CSSTransform: {
           background: "#ae51ff",
           "box-shadow": "0 0 8px 4px rgba(255, 255, 255, 0.5)",
