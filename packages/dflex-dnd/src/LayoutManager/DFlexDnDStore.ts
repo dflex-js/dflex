@@ -319,7 +319,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     updateSiblingsVisibilityLinearly(this, SK);
   }
 
-  _initObservers() {
+  private _initObservers() {
     const highestSKInAllBranches = this.DOMGen.getHighestSKInAllBranches();
 
     highestSKInAllBranches.forEach(({ id }) => {
