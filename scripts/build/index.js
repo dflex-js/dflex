@@ -67,6 +67,11 @@ const plugins = (isProd, isMinify) => [
   }),
   isMinify &&
     terser({
+      compress: {
+        passes: 2,
+        pure_getters: true,
+        unsafe_math: true,
+      },
       mangle: {
         properties: {
           regex: /^_/,
