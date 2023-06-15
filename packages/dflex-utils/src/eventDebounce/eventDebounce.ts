@@ -14,14 +14,14 @@ function eventDebounce(
   let rAFid: number | null = null;
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
   let isPaused = false;
-  let lastCall = Date.now();
+  let lastCall = performance.now();
 
   const debouncedListener: DebounceControl = () => {
     if (isPaused) {
       return;
     }
 
-    const currentTime = Date.now();
+    const currentTime = performance.now();
     const timeSinceLastCall = currentTime - lastCall;
 
     const shouldCallListener = immediate || timeSinceLastCall >= throttle;
