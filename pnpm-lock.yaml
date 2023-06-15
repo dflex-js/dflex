@@ -92,28 +92,28 @@ importers:
   packages/dflex-core-instance:
     devDependencies:
       '@dflex/utils':
-        specifier: workspace:^3.9.0
+        specifier: workspace:^3.9.1
         version: link:../dflex-utils
 
   packages/dflex-dnd:
     devDependencies:
       '@dflex/core-instance':
-        specifier: workspace:^3.9.0
+        specifier: workspace:^3.9.1
         version: link:../dflex-core-instance
       '@dflex/draggable':
-        specifier: workspace:^3.9.0
+        specifier: workspace:^3.9.1
         version: link:../dflex-draggable
       '@dflex/store':
-        specifier: workspace:^3.9.0
+        specifier: workspace:^3.9.1
         version: link:../dflex-store
       '@dflex/utils':
-        specifier: workspace:^3.9.0
+        specifier: workspace:^3.9.1
         version: link:../dflex-utils
 
   packages/dflex-dnd-playground:
     dependencies:
       '@dflex/dnd':
-        specifier: workspace:^3.8.2
+        specifier: workspace:^3.9.1
         version: link:../dflex-dnd
     devDependencies:
       cypress:
@@ -132,19 +132,19 @@ importers:
   packages/dflex-dom-gen:
     devDependencies:
       '@dflex/utils':
-        specifier: workspace:^3.9.0
+        specifier: workspace:^3.9.1
         version: link:../dflex-utils
 
   packages/dflex-draggable:
     devDependencies:
       '@dflex/core-instance':
-        specifier: workspace:^3.9.0
+        specifier: workspace:^3.9.1
         version: link:../dflex-core-instance
       '@dflex/store':
-        specifier: workspace:^3.9.0
+        specifier: workspace:^3.9.1
         version: link:../dflex-store
       '@dflex/utils':
-        specifier: workspace:^3.9.0
+        specifier: workspace:^3.9.1
         version: link:../dflex-utils
       eslint-config-dflex-react:
         specifier: workspace:*
@@ -153,7 +153,7 @@ importers:
   packages/dflex-draggable-playground:
     dependencies:
       '@dflex/draggable':
-        specifier: workspace:^3.7.0
+        specifier: workspace:^3.9.1
         version: link:../dflex-draggable
     devDependencies:
       eslint-config-dflex-react:
@@ -163,13 +163,13 @@ importers:
   packages/dflex-store:
     devDependencies:
       '@dflex/core-instance':
-        specifier: workspace:^3.9.0
+        specifier: workspace:^3.9.1
         version: link:../dflex-core-instance
       '@dflex/dom-gen':
-        specifier: workspace:^3.9.0
+        specifier: workspace:^3.9.1
         version: link:../dflex-dom-gen
       '@dflex/utils':
-        specifier: workspace:^3.9.0
+        specifier: workspace:^3.9.1
         version: link:../dflex-utils
 
   packages/dflex-utils: {}

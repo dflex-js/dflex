@@ -1,6 +1,6 @@
 {
   "name": "dflex-draggable-playground",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "license": "MIT",
   "scripts": {
@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@dflex/draggable": "workspace:^3.7.0"
+    "@dflex/draggable": "workspace:^3.9.1"
   },
   "devDependencies": {
     "eslint-config-dflex-react": "workspace:*"
