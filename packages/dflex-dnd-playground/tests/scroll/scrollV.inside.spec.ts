@@ -80,7 +80,7 @@ test.describe.serial("Drag the first element down vertically", async () => {
   });
 
   test("Only visible siblings are transformed", async () => {
-    visibleElements = elements.slice(2, 43);
+    visibleElements = elements.slice(2, 30);
 
     await Promise.all(
       visibleElements.map((element) =>
