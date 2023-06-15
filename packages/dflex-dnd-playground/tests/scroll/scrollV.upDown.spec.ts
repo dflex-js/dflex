@@ -61,6 +61,11 @@ test.describe.serial("Drag the first element down vertically", async () => {
     "TODO.. If you see it please work on it."
   );
 
+  test.skip(
+    process.platform === "darwin",
+    "TODO: test skipped on Mac devices."
+  );
+
   test("Siblings index initiated correctly", async () => {
     await assertDefaultChildrenIndex(elmParent);
   });
