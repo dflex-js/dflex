@@ -42,11 +42,24 @@ const moduleResolutionProd = [
 
 const { PACKAGE_BUNDLE } = process.env;
 
-const shouldUsePackageBundle = PACKAGE_BUNDLE === "production";
+const isProdBundle = PACKAGE_BUNDLE === "production";
+
+const green = "\x1b[32m";
+const cyan = "\x1b[36m";
+const red = "\x1b[31m";
+const magenta = "\x1b[35m";
+const resetColor = "\x1b[0m";
+const yellow = "\x1b[33m";
 
 // eslint-disable-next-line no-console
+console.clear();
+// eslint-disable-next-line no-console
 console.info(
-  `Using ${shouldUsePackageBundle ? "package" : "self-built"} bundle.`
+  `${yellow}🚀 Using ${
+    isProdBundle ? `${green}package` : `${cyan}self-built`
+  } bundle. Running in ${
+    isProdBundle ? `${red}production` : `${magenta}development`
+  } mode. 🎉${resetColor}`
 );
 
 const config: UserConfigExport = {
@@ -69,7 +82,7 @@ const config: UserConfigExport = {
     port: PORT,
   },
   resolve: {
-    alias: shouldUsePackageBundle ? moduleResolutionProd : moduleResolution,
+    alias: isProdBundle ? moduleResolutionProd : moduleResolution,
   },
 };
 

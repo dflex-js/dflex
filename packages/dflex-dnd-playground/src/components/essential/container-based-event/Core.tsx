@@ -12,6 +12,8 @@ interface Props {
   depth: number;
 }
 
+const isCI = import.meta.env.MODE === "CI";
+
 const Core = ({
   component: Component = "div",
   id,
@@ -23,7 +25,7 @@ const Core = ({
 
   React.useEffect(() => {
     if (ref.current) {
-      store.register({ id, depth, animation: null });
+      store.register({ id, depth, animation: isCI ? null : undefined });
     }
   }, [ref]);
 
