@@ -1,13 +1,11 @@
+import createTimeout from "../dom/Timeout";
+
 type QKey = string;
 type Queue = (() => unknown)[];
 
-class TaskQueue {
-  /**
-   * Holds the timeout ID for scheduling the execution of queued tasks.
-   * Only one task is executed at a time.
-   */
-  private _timeoutId?: ReturnType<typeof setTimeout>;
+const [timeout, cancelTimeout] = createTimeout();
 
+class TaskQueue {
   private _elmInQueue: Set<string>;
 
   private _queue: Record<QKey, Queue>;
@@ -105,7 +103,7 @@ class TaskQueue {
         console.error(e);
       }
     } finally {
-      this._timeoutId = undefined;
+      cancelTimeout();
     }
 
     return res;
@@ -124,28 +122,20 @@ class TaskQueue {
       this._elmInQueue.clear();
     };
 
-    this._timeoutId = setTimeout(f, 0);
+    timeout(f, 0, true);
   }
 
   scheduleNextTask(keys: [QKey, QKey | undefined]): void {
-    if (__DEV__) {
-      if (this._timeoutId !== undefined) {
-        throw new Error(
-          `Cannot schedule the next task if the previous one is unhandled. Make sure to call handleQueue() to fix this error.`
-        );
-      }
-    }
-
     this._schedule(keys);
   }
 
+  // eslint-disable-next-line class-methods-use-this
   cancelQueuedTask(): void {
-    clearTimeout(this._timeoutId);
-    this._timeoutId = undefined;
+    cancelTimeout();
   }
 
   clear(): void {
-    this.cancelQueuedTask();
+    cancelTimeout();
     this._queue = {};
     this._elmInQueue.clear();
   }
