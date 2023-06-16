@@ -1,4 +1,4 @@
-import createTimeout from "../dom/Timeout";
+import { createTimeout } from "../environment";
 
 type QKey = string;
 type Queue = (() => unknown)[];

@@ -1,5 +1,4 @@
-import createRAF from "../dom/RAF";
-import createTimeout from "../dom/Timeout";
+import { createRAF, createTimeout } from "../environment";
 
 type DebouncedListener = () => void;
 

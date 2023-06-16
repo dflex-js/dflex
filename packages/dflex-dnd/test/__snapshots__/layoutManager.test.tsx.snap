@@ -85,7 +85,6 @@ DFlexDnDStore {
       "registerQ": [],
       "submitQ": [],
     },
-    "_timeoutId": 1000000000004,
   },
   "_windowResizeHandler": [Function],
   "containers": Map {

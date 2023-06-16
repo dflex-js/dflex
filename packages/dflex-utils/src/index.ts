@@ -56,6 +56,6 @@ export {
   getSelection,
   getParentElm,
   updateElmDatasetGrid,
-} from "./dom";
+} from "./environment";
 
 export * as featureFlags from "./FeatureFlags";
