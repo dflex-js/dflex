@@ -8,6 +8,7 @@ export {
   getParsedElmTransform,
   setFixedDimensions,
   setRelativePosition,
+  setStyleProperty,
   hasCSSTransition,
   rmEmptyAttr,
 } from "./computedStyleUtils";

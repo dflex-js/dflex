@@ -41,6 +41,7 @@ export {
 export {
   getCachedComputedStyleProperty,
   clearComputedStyleCache,
+  setStyleProperty,
   setRelativePosition,
   setFixedDimensions,
   getElmComputedDimensions,
@@ -56,6 +57,8 @@ export {
   getSelection,
   getParentElm,
   updateElmDatasetGrid,
+  createRAF,
+  createTimeout,
 } from "./environment";
 
 export * as featureFlags from "./FeatureFlags";

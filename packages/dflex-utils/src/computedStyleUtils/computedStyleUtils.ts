@@ -49,6 +49,14 @@ function verifyTypeOrThrow(value: any, allegedType: string): void {
   }
 }
 
+function setStyleProperty(
+  DOM: HTMLElement,
+  property: string,
+  value: string
+): void {
+  DOM.style.setProperty(property, value);
+}
+
 function getCachedComputedStyleProperty(
   DOM: Element,
   property: string,
@@ -190,10 +198,8 @@ function setFixedDimensions(DOM: HTMLElement): void {
   const visibleHeight = getVisibleDimension(DOM, CSSPropNames.HEIGHT);
   const visibleWidth = getVisibleDimension(DOM, CSSPropNames.WIDTH);
 
-  const { style } = DOM;
-
-  style.setProperty(CSSPropNames.HEIGHT, `${visibleHeight}px`);
-  style.setProperty(CSSPropNames.WIDTH, `${visibleWidth}px`);
+  setStyleProperty(DOM, CSSPropNames.HEIGHT, `${visibleHeight}px`);
+  setStyleProperty(DOM, CSSPropNames.WIDTH, `${visibleWidth}px`);
 }
 
 const CSS_FORBIDDEN_POSITION_REGEX = /absolute|fixed/;
@@ -236,7 +242,7 @@ function setRelativePosition(DOM: HTMLElement): void {
       throw new Error(ERROR_INVALID_POSITION(DOM.id, position, EXPECTED_POS));
     }
 
-    DOM.style.setProperty(CSSPropNames.POSITION, EXPECTED_POS);
+    setStyleProperty(DOM, CSSPropNames.POSITION, EXPECTED_POS);
   }
 }
 
@@ -270,6 +276,7 @@ export {
   getElmOverflow,
   getElmComputedDimensions,
   getParsedElmTransform,
+  setStyleProperty,
   setFixedDimensions,
   setRelativePosition,
   hasCSSTransition,
