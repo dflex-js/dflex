@@ -3,14 +3,16 @@ type AnimationFrameCallback = (timestamp: number) => void;
 
 type RAFCleanup = () => void;
 
-type RAFFunction = (
+export type RAFFunction = (
   // eslint-disable-next-line no-unused-vars
   callback: AnimationFrameCallback,
   // eslint-disable-next-line no-unused-vars
-  cancelPrevFrame?: boolean
+  cancelPrevFrame: boolean
 ) => void;
 
-function createRAF(): [RAFFunction, RAFCleanup] {
+type IsRAFActive = () => boolean;
+
+function createRAF(): [RAFFunction, RAFCleanup, IsRAFActive] {
   let id: number | null = null;
 
   const cleanup: RAFCleanup = (): void => {
@@ -28,10 +30,17 @@ function createRAF(): [RAFFunction, RAFCleanup] {
       cleanup();
     }
 
-    id = requestAnimationFrame(callback);
+    id = requestAnimationFrame((ts) => {
+      callback(ts);
+      id = null;
+    });
   }
 
-  return [RAF, cleanup];
+  function isRAFActive() {
+    return id !== null;
+  }
+
+  return [RAF, cleanup, isRAFActive];
 }
 
 export default createRAF;

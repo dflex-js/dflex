@@ -52,6 +52,8 @@ export {
   rmEmptyAttr,
 } from "./computedStyleUtils";
 
+export type { RAFFunction } from "./environment";
+
 export {
   canUseDOM,
   getSelection,

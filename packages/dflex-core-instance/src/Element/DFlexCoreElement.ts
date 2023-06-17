@@ -15,6 +15,8 @@ import {
   CSSStyle,
   CSSClass,
   CubicBezier,
+  RAFFunction,
+  createRAF,
 } from "@dflex/utils";
 import type { Direction, Axes, AxesPoint, AnimationOpts } from "@dflex/utils";
 
@@ -238,7 +240,7 @@ class DFlexCoreElement extends DFlexBaseElement {
 
   readonly: boolean;
 
-  private _animatedFrame: number | null;
+  private _RAF: RAFFunction;
 
   private _animation: AnimationOpts;
 
@@ -268,8 +270,8 @@ class DFlexCoreElement extends DFlexBaseElement {
     this._CSSTransform = CSSTransform;
 
     // Movement
+    [this._RAF] = createRAF();
     this._isVisible = true;
-    this._animatedFrame = null;
     this._hasPendingTransform = false;
 
     // Time travel
@@ -387,14 +389,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       return;
     }
 
-    if (this._animatedFrame !== null) {
-      cancelAnimationFrame(this._animatedFrame);
-      this._animatedFrame = null;
-    }
-
     const transitionComplete = () => {
-      this._animatedFrame = null;
-
       if (this._CSSTransform) {
         removeCSS(DOM, this._CSSTransform);
       }
@@ -416,7 +411,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       onComplete();
     };
 
-    this._animatedFrame = requestAnimationFrame(() => {
+    this._RAF(() => {
       if (this._CSSTransform) {
         applyCSS(DOM, this._CSSTransform);
       }
@@ -449,7 +444,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       addTransition(DOM, 0, duration, this._animation!.easing);
 
       DFlexCoreElement.transform(DOM, this.translate.x, this.translate.y);
-    });
+    }, true);
   }
 
   updateIndex(DOM: HTMLElement, i: number) {
