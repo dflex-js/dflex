@@ -250,7 +250,7 @@ DFlexDnDStore {
         "self": 0,
       },
       "_CSSTransform": null,
-      "_animatedFrame": null,
+      "_RAF": [Function],
       "_animation": {
         "duration": "dynamic",
         "easing": "ease-in",
@@ -300,7 +300,7 @@ DFlexDnDStore {
         "self": 0,
       },
       "_CSSTransform": null,
-      "_animatedFrame": null,
+      "_RAF": [Function],
       "_animation": {
         "duration": "dynamic",
         "easing": "ease-in",
@@ -350,7 +350,7 @@ DFlexDnDStore {
         "self": 0,
       },
       "_CSSTransform": null,
-      "_animatedFrame": null,
+      "_RAF": [Function],
       "_animation": {
         "duration": "dynamic",
         "easing": "ease-in",
@@ -400,7 +400,7 @@ DFlexDnDStore {
         "self": 1,
       },
       "_CSSTransform": null,
-      "_animatedFrame": null,
+      "_RAF": [Function],
       "_animation": {
         "duration": "dynamic",
         "easing": "ease-in",
@@ -450,7 +450,7 @@ DFlexDnDStore {
         "self": 2,
       },
       "_CSSTransform": null,
-      "_animatedFrame": null,
+      "_RAF": [Function],
       "_animation": {
         "duration": "dynamic",
         "easing": "ease-in",
@@ -500,7 +500,7 @@ DFlexDnDStore {
         "self": 1,
       },
       "_CSSTransform": null,
-      "_animatedFrame": null,
+      "_RAF": [Function],
       "_animation": {
         "duration": "dynamic",
         "easing": "ease-in",

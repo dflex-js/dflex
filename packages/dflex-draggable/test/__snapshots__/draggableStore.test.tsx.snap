@@ -16,7 +16,7 @@ Map {
       "self": 0,
     },
     "_CSSTransform": null,
-    "_animatedFrame": null,
+    "_RAF": [Function],
     "_animation": {
       "duration": "dynamic",
       "easing": "ease-in",

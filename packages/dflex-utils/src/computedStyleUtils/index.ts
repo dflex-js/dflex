@@ -9,6 +9,7 @@ export {
   setFixedDimensions,
   setRelativePosition,
   setStyleProperty,
+  removeStyleProperty,
   hasCSSTransition,
   rmEmptyAttr,
 } from "./computedStyleUtils";

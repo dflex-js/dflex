@@ -52,9 +52,13 @@ function verifyTypeOrThrow(value: any, allegedType: string): void {
 function setStyleProperty(
   DOM: HTMLElement,
   property: string,
-  value: string
+  value: string | null
 ): void {
   DOM.style.setProperty(property, value);
+}
+
+function removeStyleProperty(DOM: HTMLElement, property: string): void {
+  DOM.style.removeProperty(property);
 }
 
 function getCachedComputedStyleProperty(
@@ -277,6 +281,7 @@ export {
   getElmComputedDimensions,
   getParsedElmTransform,
   setStyleProperty,
+  removeStyleProperty,
   setFixedDimensions,
   setRelativePosition,
   hasCSSTransition,

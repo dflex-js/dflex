@@ -42,6 +42,7 @@ export {
   getCachedComputedStyleProperty,
   clearComputedStyleCache,
   setStyleProperty,
+  removeStyleProperty,
   setRelativePosition,
   setFixedDimensions,
   getElmComputedDimensions,
