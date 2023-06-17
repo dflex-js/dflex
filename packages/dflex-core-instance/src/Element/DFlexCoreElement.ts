@@ -760,7 +760,7 @@ class DFlexCoreElement extends DFlexBaseElement {
 
     this.DOMOrder.self = this.VDOMOrder.self;
 
-    DOM.style.removeProperty("transform");
+    removeStyleProperty(DOM, "transform");
 
     rmEmptyAttr(DOM, "style");
 

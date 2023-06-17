@@ -187,8 +187,6 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     dimensions: PointNum | null,
     viewportPos: [number, number] | null
   ): void {
-    const { style: originStyle } = originDOM;
-
     if (isAddingProps) {
       this._preserveDOMAttributes(originDOM, true);
 
@@ -221,7 +219,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
       return;
     }
 
-    document.body.style.removeProperty("user-select");
+    removeStyleProperty(document.body, "user-select");
 
     this._preserveDOMAttributes(originDOM, false);
 
@@ -239,7 +237,8 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
           setStyleProperty(originDOM, "height", `${dimensions!.y}px`);
         }
       }
-      originStyle.removeProperty("opacity");
+      removeStyleProperty(originDOM, "opacity");
+
       mirrorDOM.remove();
     } else {
       setOrUnsetOriginStyle(originDOM, false);

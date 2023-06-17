@@ -13,6 +13,7 @@ import {
   setFixedDimensions,
   CSS,
   getAnimationOptions,
+  removeStyleProperty,
 } from "@dflex/utils";
 
 import {
@@ -441,8 +442,8 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   private _windowResizeHandler() {
     this._forEachContainerDOM((DOM) => {
-      DOM.style.removeProperty("width");
-      DOM.style.removeProperty("height");
+      removeStyleProperty(DOM, "width");
+      removeStyleProperty(DOM, "height");
     });
 
     clearTimeout(this._resizeTimeoutId);
