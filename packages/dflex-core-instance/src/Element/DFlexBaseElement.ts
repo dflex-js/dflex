@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import { PointNum } from "@dflex/utils";
+import { PointNum, setStyleProperty } from "@dflex/utils";
 
 import { DFLEX_ATTRIBUTES } from "./constants";
 import type { AllowedAttributes } from "./constants";
@@ -9,7 +9,7 @@ type AttributeSet = Set<Exclude<AllowedAttributes, "INDEX">>;
 const TRANSFORM = "transform";
 
 function transform(DOM: HTMLElement, x: number, y: number): void {
-  DOM.style.setProperty(TRANSFORM, `translate3d(${x}px, ${y}px, 0)`);
+  setStyleProperty(DOM, TRANSFORM, `translate3d(${x}px, ${y}px, 0)`);
 }
 
 class DFlexBaseElement {

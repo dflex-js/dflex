@@ -1,49 +1,49 @@
 /* eslint-disable no-dupe-class-members */
 /* eslint-disable no-unused-vars */
 import { DFlexBaseElement } from "@dflex/core-instance";
-import { PointNum, getSelection } from "@dflex/utils";
+import {
+  PointNum,
+  getSelection,
+  removeStyleProperty,
+  setStyleProperty,
+} from "@dflex/utils";
 import type { AxesPoint } from "@dflex/utils";
 
 const MIRROR_ID_PREFIX = "dflex-draggable-mirror";
 
 function setMirrorStyle(
-  mirrorStyle: CSSStyleDeclaration,
+  mirrorDOM: HTMLElement,
   viewportPos: [number, number] | null,
   dimensions: PointNum | null
 ): void {
   const [top = 0, left = 0] = viewportPos || [];
 
-  mirrorStyle.setProperty("position", "fixed");
-  mirrorStyle.setProperty("top", `${top}px`);
-  mirrorStyle.setProperty("left", `${left}px`);
+  setStyleProperty(mirrorDOM, "position", "fixed");
+  setStyleProperty(mirrorDOM, "top", `${top}px`);
+  setStyleProperty(mirrorDOM, "left", `${left}px`);
 
   if (dimensions) {
     if (dimensions.y > 0) {
-      mirrorStyle.setProperty("height", `${dimensions.y}px`);
+      setStyleProperty(mirrorDOM, "height", `${dimensions.y}px`);
     }
 
     if (dimensions.x > 0) {
-      mirrorStyle.setProperty("width", `${dimensions.x}px`);
+      setStyleProperty(mirrorDOM, "width", `${dimensions.x}px`);
     }
   }
 
-  mirrorStyle.setProperty("z-index", "99");
-  mirrorStyle.setProperty("margin", "0");
+  setStyleProperty(mirrorDOM, "z-index", "99");
+  setStyleProperty(mirrorDOM, "margin", "0");
 }
 
-function setOrUnsetOriginStyle(
-  originStyle: CSSStyleDeclaration,
-  shouldSet: boolean
-) {
+function setOrUnsetOriginStyle(originDOM: HTMLElement, shouldSet: boolean) {
   if (shouldSet) {
-    originStyle.setProperty("position", "relative");
-    originStyle.setProperty("z-index", "99");
-
-    return;
+    setStyleProperty(originDOM, "position", "relative");
+    setStyleProperty(originDOM, "z-index", "99");
+  } else {
+    removeStyleProperty(originDOM, "position");
+    removeStyleProperty(originDOM, "z-index");
   }
-
-  originStyle.removeProperty("position");
-  originStyle.removeProperty("z-index");
 }
 
 function rmEmptyAttr(DOM: HTMLElement, attribute: string) {
@@ -201,16 +201,16 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
 
         delete mirrorDOM.dataset.index;
 
-        setMirrorStyle(mirrorDOM.style, viewportPos, dimensions);
+        setMirrorStyle(mirrorDOM, viewportPos, dimensions);
 
-        originStyle.setProperty("opacity", "0");
+        setStyleProperty(originDOM, "opacity", "0");
       } else {
         originDOM.ariaLabel = "Draggable";
 
-        setOrUnsetOriginStyle(originStyle, true);
+        setOrUnsetOriginStyle(originDOM, true);
       }
 
-      document.body.style.setProperty("user-select", "none");
+      setStyleProperty(document.body, "user-select", "none");
 
       const domSelection = getSelection();
 
@@ -231,18 +231,18 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
 
     if (mirrorDOM !== null) {
       if (isMigratedInScroll) {
-        originStyle.setProperty("position", "absolute");
+        setStyleProperty(originDOM, "position", "absolute");
         if (dimensions!.x > 0) {
-          originStyle.setProperty("width", `${dimensions!.x}px`);
+          setStyleProperty(originDOM, "width", `${dimensions!.x}px`);
         }
         if (dimensions!.y > 0) {
-          originStyle.setProperty("height", `${dimensions!.y}px`);
+          setStyleProperty(originDOM, "height", `${dimensions!.y}px`);
         }
       }
       originStyle.removeProperty("opacity");
       mirrorDOM.remove();
     } else {
-      setOrUnsetOriginStyle(originStyle, false);
+      setOrUnsetOriginStyle(originDOM, false);
     }
 
     rmEmptyAttr(originDOM, "style");
