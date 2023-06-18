@@ -14,12 +14,12 @@ type TimeoutFunction = (
 function createTimeout(): [TimeoutFunction, TimeoutCleanup] {
   let id: ReturnType<typeof setTimeout> | null = null;
 
-  const cleanup: TimeoutCleanup = (): void => {
+  function cleanup(): void {
     if (id) {
       clearTimeout(id);
       id = null;
     }
-  };
+  }
 
   function timeout(
     callback: TimeoutCallback,

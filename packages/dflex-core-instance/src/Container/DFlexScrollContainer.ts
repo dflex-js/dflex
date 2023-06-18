@@ -331,19 +331,35 @@ class DFlexScrollContainer {
   }
 
   scrollTo(x: number, y: number): void {
-    this._updateScrollPosition(x, y, true);
+    this._updateScrollPosition(
+      x === -1 ? this._containerDOM.scrollLeft : x,
+      y === -1 ? this._containerDOM.scrollTop : y,
+      true
+    );
 
     if (this._scrollEventCallback) {
       this._scrollEventCallback(this._SK);
     }
   }
 
-  private _calculateScrollableArea(axis: Axis, direction: Direction): number {
+  private _getNumbersFromPoints(axis: Axis): [number, number, number] {
     const start = getStartingPointByAxis(axis);
     const startPos = this.totalScrollRect[start];
-    const viewportSize = this.visibleScrollRect[getDimensionTypeByAxis(axis)];
 
-    const scrollableArea = direction === 1 ? startPos + viewportSize : startPos;
+    const end = getEndingPointByAxis(axis);
+    const endPos = this.totalScrollRect[end];
+
+    const dimension = getDimensionTypeByAxis(axis);
+    const viewportSize = this.visibleScrollRect[dimension];
+
+    return [startPos, endPos, viewportSize];
+  }
+
+  calculateDistance(axis: Axis, direction: Direction): number {
+    const [startPos, endPos, viewportSize] = this._getNumbersFromPoints(axis);
+
+    const scrollableArea =
+      direction === 1 ? endPos - (startPos + viewportSize) : startPos;
 
     if (__DEV__) {
       if (featureFlags.enableScrollDebugger) {
@@ -364,13 +380,10 @@ class DFlexScrollContainer {
       }
     }
 
-    const scrollableArea = this._calculateScrollableArea(axis, direction);
-
-    const end = getEndingPointByAxis(axis);
-    const endPos = this.totalScrollRect[end];
+    const [startPos, endPos, viewportSize] = this._getNumbersFromPoints(axis);
 
     const hasScrollableArea =
-      direction === 1 ? scrollableArea < endPos : scrollableArea > 0;
+      direction === 1 ? startPos + viewportSize < endPos : startPos > 0;
 
     if (__DEV__) {
       if (featureFlags.enableScrollDebugger) {

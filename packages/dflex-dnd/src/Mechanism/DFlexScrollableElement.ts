@@ -1,16 +1,20 @@
 import { Axis, PointNum, Direction, Point, featureFlags } from "@dflex/utils";
-import type { DFlexScrollContainer } from "@dflex/core-instance";
 import DFlexPositionUpdater from "./DFlexPositionUpdater";
 
 import type DraggableInteractive from "../Draggable";
 import { store } from "../LayoutManager";
 
-function easeOutCubic(t: number) {
-  // eslint-disable-next-line no-plusplus
-  return --t * t * t + 1;
+import scrollTransition, {
+  ScrollTransitionAbort,
+} from "./DFlexScrollTransition";
+
+function easeInOutCubic(t: number): number {
+  if (t < 0.5) {
+    return 4 * t ** 3;
+  }
+  return 1 - (-2 * t + 2) ** 3 / 2;
 }
 
-const EXECUTION_FRAME_FACTOR = 0.75;
 const SCROLL_THROTTLE_FACTOR = 8.5;
 
 function calculateScrollThrottleMS(width: number, height: number): number {
@@ -28,39 +32,24 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
   private _prevMouseDirection!: Point<Direction>;
 
-  private _scrollAnimatedFrame!: number | null;
+  cancelScrolling: ScrollTransitionAbort | null;
 
   private _scrollThrottleTimeout?: ReturnType<typeof setTimeout>;
 
   private _scrollThrottleMS!: number;
 
-  private _lastScrollSpeed!: number;
-
   protected readonly initialScrollPosition!: PointNum;
-
-  protected currentScrollAxes!: PointNum;
 
   constructor(draggable: DraggableInteractive) {
     super(draggable);
 
     const { SK } = store.migration.latest();
 
-    this._scrollAnimatedFrame = null;
+    this.cancelScrolling = null;
 
     this.initialScrollPosition = new PointNum(0, 0);
 
     this._scrollThrottleTimeout = undefined;
-
-    /*
-     * The reason for using this instance instead of calling the store
-     * instance/listeners:
-     * - There's a delay. Change of scrollY/X is not updated immediately. You
-     *   have to wait for the next frame, as it's throttled and then get the value.
-     * - The store instance is not available if there's no overflow.
-     * - Guarantee same position for dragging. In scrolling/overflow case, or
-     *   regular scrolling.
-     */
-    this.currentScrollAxes = new PointNum(0, 0);
 
     // If no scroll don't initialize.
     if (!store.scrolls.has(SK)) {
@@ -70,8 +59,6 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     this._prevMousePosition = new PointNum(0, 0);
     this._prevMouseDirection = new Point<Direction>(-1, -1);
 
-    this._lastScrollSpeed = this.draggable.scroll.initialSpeed;
-
     const {
       totalScrollRect: { left, top },
       visibleScrollRect: { width, height },
@@ -80,33 +67,6 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     this._scrollThrottleMS = calculateScrollThrottleMS(width, height);
 
     this.initialScrollPosition.setAxes(left, top);
-    this.currentScrollAxes.setAxes(left, top);
-  }
-
-  cancelScrolling(scroll: DFlexScrollContainer): void {
-    if (__DEV__) {
-      if (!this._scrollAnimatedFrame) {
-        // eslint-disable-next-line no-console
-        console.warn(
-          "cancelScrolling: Scroll animated frame is not available."
-        );
-      }
-
-      if (featureFlags.enableScrollDebugger) {
-        // eslint-disable-next-line no-console
-        console.log("Scroll is canceled.");
-      }
-    }
-
-    cancelAnimationFrame(this._scrollAnimatedFrame!);
-
-    this._scrollAnimatedFrame = null;
-
-    // Activate listeners.
-    scroll.pauseListeners(false);
-
-    // Reset scrollSpeed.
-    this._lastScrollSpeed = this.draggable.scroll.initialSpeed;
   }
 
   private _throttleScrolling(): void {
@@ -132,7 +92,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
   hasActiveScrolling(): boolean {
     // It's not throttled and it has animated frame.
     const isActive =
-      !this._scrollThrottleTimeout && this._scrollAnimatedFrame !== null;
+      !this._scrollThrottleTimeout && this.cancelScrolling !== null;
 
     if (__DEV__) {
       if (featureFlags.enableScrollDebugger) {
@@ -146,13 +106,6 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     return isActive;
   }
 
-  private _scroll(axis: Axis, direction: Direction): void {
-    const nextScrollPosition =
-      this.currentScrollAxes[axis] + direction * this._lastScrollSpeed;
-
-    this.currentScrollAxes[axis] = nextScrollPosition;
-  }
-
   private _scrollManager(
     draggedDirH: Direction,
     draggedDirV: Direction,
@@ -163,14 +116,14 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     const scroll = store.scrolls.get(SK)!;
 
     // IS scrollAnimatedFrame is already running?
-    if (this._scrollAnimatedFrame !== null) {
+    if (this.cancelScrolling) {
       const hasSuddenChangeInDirection: boolean =
         directionChangedV || directionChangedH;
 
       // When the direction changes, we need to cancel the animation and add
       // a little delay because we already at the threshold area.
       if (hasSuddenChangeInDirection) {
-        this.cancelScrolling(scroll);
+        this.cancelScrolling();
       }
 
       return;
@@ -211,27 +164,19 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     // is out but is out from the top and scroll there is not zero so throttle.
 
-    let scrollingAxis: Axis = "y";
-    let scrollingDirection: Direction = draggedDirV;
-    let EXECUTION_FRAME_RATE_MS = 0;
+    let axis: Axis = "y";
+    let direction: Direction = draggedDirV;
 
     if (isOutH) {
-      scrollingAxis = "x";
-      scrollingDirection = draggedDirV;
-      EXECUTION_FRAME_RATE_MS = Math.round(
-        scroll.totalScrollRect.width / EXECUTION_FRAME_FACTOR
-      );
-    } else {
-      EXECUTION_FRAME_RATE_MS = Math.round(
-        scroll.totalScrollRect.height / EXECUTION_FRAME_FACTOR
-      );
+      axis = "x";
+      direction = draggedDirV;
     }
 
     if (__DEV__) {
       if (featureFlags.enableScrollDebugger && isOut) {
         // eslint-disable-next-line no-console
         console.log(
-          `Out of the scroll threshold (${scrollingAxis}).`,
+          `Out of the scroll threshold (${axis}).`,
           preservedBoxResult,
           { draggedDirV, draggedDirH }
         );
@@ -240,15 +185,20 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     preservedBoxResult.setFalsy();
 
-    const canScroll: boolean = scroll.hasScrollableArea(
-      scrollingAxis,
-      scrollingDirection
-    );
+    const canScroll: boolean = scroll.hasScrollableArea(axis, direction);
 
     if (!canScroll) {
       // If there's not scrollable area, we don't need to scroll.
-      if (this._scrollAnimatedFrame !== null) {
-        this.cancelScrolling(scroll);
+
+      if (__DEV__) {
+        if (this.cancelScrolling) {
+          throw new Error(
+            "Scrolling should not occur if there is no scrollable area.\n" +
+              "The `DFlexScrollTransition` function calculates the distance to the end of the scroll, " +
+              "and this error indicates an incorrect distance calculation.\n" +
+              "Please ensure that there is a valid scrollable area before attempting to scroll."
+          );
+        }
       }
 
       this._throttleScrolling();
@@ -256,45 +206,37 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       return;
     }
 
-    let startingTime: number;
-    let prevTimestamp: number;
-
-    const scrollAnimatedFrame = (timestamp: number) => {
-      scroll.pauseListeners(true);
-
-      if (startingTime === undefined) {
-        startingTime = timestamp;
-      }
-
-      const elapsed = timestamp - startingTime;
-
-      if (prevTimestamp !== timestamp) {
-        this._scroll(scrollingAxis, scrollingDirection);
-
-        const acc = easeOutCubic(elapsed / EXECUTION_FRAME_RATE_MS);
-
-        // Increase scroll speed.
-        this._lastScrollSpeed += Math.round(acc);
-
-        scroll.scrollTo(this.currentScrollAxes.x, this.currentScrollAxes.y);
-      }
-
-      // Stop the animation after 2 seconds
-      if (elapsed < EXECUTION_FRAME_RATE_MS) {
-        prevTimestamp = timestamp;
-
-        if (canScroll) {
-          this._scrollAnimatedFrame =
-            requestAnimationFrame(scrollAnimatedFrame);
-        }
-
-        return;
-      }
-
+    const onComplete = () => {
       scroll.pauseListeners(false);
+      this.cancelScrolling = null;
+
+      if (featureFlags.enableScrollDebugger) {
+        // eslint-disable-next-line no-console
+        console.log("Scroll to the end is completed.");
+      }
     };
 
-    this._scrollAnimatedFrame = requestAnimationFrame(scrollAnimatedFrame);
+    const onAbort = () => {
+      scroll.pauseListeners(false);
+      this.cancelScrolling = null;
+
+      if (featureFlags.enableScrollDebugger) {
+        // eslint-disable-next-line no-console
+        console.log("Scroll is aborted.");
+      }
+    };
+
+    scroll.pauseListeners(true);
+
+    this.cancelScrolling = scrollTransition(
+      scroll,
+      axis,
+      direction,
+      null,
+      easeInOutCubic,
+      onComplete,
+      __DEV__ ? onAbort : onComplete
+    );
   }
 
   protected scrollFeed(x: number, y: number, SK: string): void {

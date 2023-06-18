@@ -703,15 +703,14 @@ class DFlexMechanismController extends DFlexScrollableElement {
         return;
       }
 
+      const { totalScrollRect } = store.scrolls.get(SK)!;
+
       if (this._hasBeenScrolling) {
         isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
         if (!isOutSiblingsContainer && this.isParentLocked) {
-          scrollOffsetX =
-            this.currentScrollAxes.x - this.initialScrollPosition.x;
-
-          scrollOffsetY =
-            this.currentScrollAxes.y - this.initialScrollPosition.y;
+          scrollOffsetX = totalScrollRect.left - this.initialScrollPosition.x;
+          scrollOffsetY = totalScrollRect.top - this.initialScrollPosition.y;
 
           // Update the position before calling the detector.
           this.draggable.setCurrentPos(x, y, scrollOffsetX, scrollOffsetY);
@@ -725,8 +724,10 @@ class DFlexMechanismController extends DFlexScrollableElement {
       }
     }
 
-    scrollOffsetX = this.currentScrollAxes.x - this.initialScrollPosition.x;
-    scrollOffsetY = this.currentScrollAxes.y - this.initialScrollPosition.y;
+    const { totalScrollRect } = store.scrolls.get(SK)!;
+
+    scrollOffsetX = totalScrollRect.left - this.initialScrollPosition.x;
+    scrollOffsetY = totalScrollRect.top - this.initialScrollPosition.y;
 
     this.draggable.dragWithOffset(x, y, scrollOffsetX, scrollOffsetY);
 

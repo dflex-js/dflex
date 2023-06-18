@@ -10,17 +10,15 @@ export type RAFFunction = (
   cancelPrevFrame: boolean
 ) => void;
 
-export type IsRAFActive = () => boolean;
-
-function createRAF(): [RAFFunction, RAFCleanup, IsRAFActive] {
+function createRAF(): [RAFFunction, RAFCleanup] {
   let id: number | null = null;
 
-  const cleanup: RAFCleanup = (): void => {
+  function cleanup(): void {
     if (id) {
       cancelAnimationFrame(id);
       id = null;
     }
-  };
+  }
 
   function RAF(
     callback: AnimationFrameCallback,
@@ -31,10 +29,7 @@ function createRAF(): [RAFFunction, RAFCleanup, IsRAFActive] {
     }
 
     try {
-      id = requestAnimationFrame((ts) => {
-        callback(ts);
-        id = null;
-      });
+      id = requestAnimationFrame(callback);
     } catch (error) {
       if (__DEV__) {
         // eslint-disable-next-line no-console
@@ -43,11 +38,7 @@ function createRAF(): [RAFFunction, RAFCleanup, IsRAFActive] {
     }
   }
 
-  function isRAFActive(): boolean {
-    return typeof id === "number";
-  }
-
-  return [RAF, cleanup, isRAFActive];
+  return [RAF, cleanup];
 }
 
 export default createRAF;
