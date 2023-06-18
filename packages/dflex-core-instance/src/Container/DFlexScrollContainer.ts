@@ -338,6 +338,23 @@ class DFlexScrollContainer {
     }
   }
 
+  private _calculateScrollableArea(axis: Axis, direction: Direction): number {
+    const start = getStartingPointByAxis(axis);
+    const startPos = this.totalScrollRect[start];
+    const viewportSize = this.visibleScrollRect[getDimensionTypeByAxis(axis)];
+
+    const scrollableArea = direction === 1 ? startPos + viewportSize : startPos;
+
+    if (__DEV__) {
+      if (featureFlags.enableScrollDebugger) {
+        // eslint-disable-next-line no-console
+        console.log("calculateDistance", scrollableArea);
+      }
+    }
+
+    return scrollableArea;
+  }
+
   hasScrollableArea(axis: Axis, direction: Direction): boolean {
     if (__DEV__) {
       if (!this.hasOverflow[axis]) {
@@ -347,17 +364,13 @@ class DFlexScrollContainer {
       }
     }
 
-    const start = getStartingPointByAxis(axis);
-    const end = getEndingPointByAxis(axis);
-    const dimension = getDimensionTypeByAxis(axis);
+    const scrollableArea = this._calculateScrollableArea(axis, direction);
 
-    const startPos = this.totalScrollRect[start];
+    const end = getEndingPointByAxis(axis);
     const endPos = this.totalScrollRect[end];
 
-    const viewportSize = this.visibleScrollRect[dimension];
-
     const hasScrollableArea =
-      direction === 1 ? startPos + viewportSize < endPos : startPos > 0;
+      direction === 1 ? scrollableArea < endPos : scrollableArea > 0;
 
     if (__DEV__) {
       if (featureFlags.enableScrollDebugger) {
