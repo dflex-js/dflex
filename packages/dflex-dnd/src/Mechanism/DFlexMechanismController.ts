@@ -502,7 +502,8 @@ class DFlexMechanismController extends DFlexScrollableElement {
             return;
           }
 
-          throw new Error(
+          // eslint-disable-next-line no-console
+          console.warn(
             `_actionCaller: unable to find targeted element index for: ${JSON.stringify(
               occupiedGrid
             )}`
