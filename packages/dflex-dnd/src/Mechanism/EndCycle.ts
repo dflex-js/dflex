@@ -87,7 +87,7 @@ class EndCycle extends DFlexMechanismController {
 
       this.cancelScrolling!();
     } else {
-      isFallback = this.draggable.isNotSettled();
+      isFallback = this.hasBeenScrolling || this.draggable.isNotSettled();
     }
 
     // If it's falling back then we won't trigger reconciliation.

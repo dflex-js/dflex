@@ -458,15 +458,15 @@ class DFlexCoreElement extends DFlexBaseElement {
     if (__DEV__) {
       if (newIndex < 0 || newIndex > siblings.length - 1) {
         throw new Error(
-          `assignNewIndex: new index: ${newIndex} is outside siblings bound ${JSON.stringify(
+          `assignNewIndex: The new index ${newIndex} is outside the siblings' bounds ${JSON.stringify(
             siblings
-          )}`
+          )}.`
         );
       }
 
       if (siblings[newIndex].length > 0) {
         throw new Error(
-          `assignNewIndex: new index should occupy empty element at index: ${newIndex} but found ${siblings[newIndex]}`
+          `assignNewIndex: The new index ${newIndex} should occupy an empty element, but found ${siblings[newIndex]}.`
         );
       }
     }

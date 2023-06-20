@@ -125,7 +125,6 @@ test.describe.serial("Drag the first element down vertically", async () => {
       button: 0,
       force: true,
     });
-    await page.waitForTimeout(6000);
   });
 
   test("Pending elements still hold their old positions", async () => {

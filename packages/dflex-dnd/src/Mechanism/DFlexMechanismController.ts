@@ -45,7 +45,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     typeof setTimeout
   > | null;
 
-  private _hasBeenScrolling: boolean;
+  protected hasBeenScrolling: boolean;
 
   private listAppendPosition: AxesPoint | null;
 
@@ -76,7 +76,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
   constructor(draggable: DraggableInteractive) {
     super(draggable);
 
-    this._hasBeenScrolling = false;
+    this.hasBeenScrolling = false;
     this.isOnDragOutThresholdEvtEmitted = false;
     this._animatedDraggedInsertionFrame = null;
     this._detectNearestContainerTimeoutID = null;
@@ -684,7 +684,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       this.scrollFeed(x, y, SK);
 
       if (this.hasActiveScrolling()) {
-        if (!this._hasBeenScrolling) {
+        if (!this.hasBeenScrolling) {
           scheduler(store, null, {
             onUpdate: () => {
               isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
@@ -698,7 +698,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
             },
           });
 
-          this._hasBeenScrolling = true;
+          this.hasBeenScrolling = true;
         }
 
         return;
@@ -706,7 +706,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
       const { totalScrollRect } = store.scrolls.get(SK)!;
 
-      if (this._hasBeenScrolling) {
+      if (this.hasBeenScrolling) {
         isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
         if (!isOutSiblingsContainer && this.isParentLocked) {
@@ -719,7 +719,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
           this._detectNearestElm();
         }
 
-        this._hasBeenScrolling = false;
+        this.hasBeenScrolling = false;
 
         return;
       }
