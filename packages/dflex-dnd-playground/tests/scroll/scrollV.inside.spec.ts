@@ -125,12 +125,10 @@ test.describe.serial("Drag the first element down vertically", async () => {
       button: 0,
       force: true,
     });
-    await page.waitForTimeout(3000);
+    await page.waitForTimeout(6000);
   });
 
   test("Pending elements still hold their old positions", async () => {
-    await page.waitForTimeout(3000);
-
     invisibleElements = elements.slice(1, 85);
 
     await Promise.all(
@@ -144,8 +142,6 @@ test.describe.serial("Drag the first element down vertically", async () => {
   });
 
   test("Non-Pending elements are back to their positions", async () => {
-    await page.waitForTimeout(3000);
-
     visibleElements = elements.slice(90);
 
     await Promise.all(
