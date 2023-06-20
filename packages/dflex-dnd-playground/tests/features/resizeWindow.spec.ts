@@ -1,5 +1,4 @@
 import {
-  test,
   expect,
   Page,
   Locator,
@@ -8,6 +7,7 @@ import {
 } from "@playwright/test";
 
 import {
+  DFlexPageTest as test,
   assertChildrenOrderIDs,
   assertConsoleMsg,
   assertDefaultChildrenIndex,

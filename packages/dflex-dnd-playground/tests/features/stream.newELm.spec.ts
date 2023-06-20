@@ -1,6 +1,7 @@
-import { test, Page, Locator, BrowserContext, Browser } from "@playwright/test";
+import { Page, Locator, BrowserContext, Browser } from "@playwright/test";
 
 import {
+  DFlexPageTest as test,
   assertChildrenOrderIDs,
   assertDefaultChildrenIndex,
   getDraggedRect,

@@ -1,5 +1,4 @@
 import {
-  test,
   Page,
   Locator,
   BrowserContext,
@@ -7,7 +6,12 @@ import {
   expect,
 } from "@playwright/test";
 
-import { getDraggedRect, initialize, moveDragged } from "../utils";
+import {
+  DFlexPageTest as test,
+  getDraggedRect,
+  initialize,
+  moveDragged,
+} from "../utils";
 
 test.describe("Testing stabilizer between two intersected thresholds", async () => {
   let page: Page;

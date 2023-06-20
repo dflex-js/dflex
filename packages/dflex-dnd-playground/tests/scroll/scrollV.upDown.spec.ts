@@ -13,6 +13,7 @@ import {
   getDraggedRect,
   initialize,
   moveDragged,
+  TransformTimeout,
 } from "../utils";
 
 test.describe.serial("Drag the first element down vertically", async () => {
@@ -134,7 +135,8 @@ test.describe.serial("Drag the first element down vertically", async () => {
       invisibleElements.map((element) =>
         expect(element).toHaveCSS(
           "transform",
-          "matrix(1, 0, 0, 1, 0, -59.1875)"
+          "matrix(1, 0, 0, 1, 0, -59.1875)",
+          TransformTimeout
         )
       )
     );
@@ -145,7 +147,11 @@ test.describe.serial("Drag the first element down vertically", async () => {
 
     await Promise.all(
       visibleElements.map((element) =>
-        expect(element).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)")
+        expect(element).toHaveCSS(
+          "transform",
+          "matrix(1, 0, 0, 1, 0, 0)",
+          TransformTimeout
+        )
       )
     );
   });
@@ -161,7 +167,11 @@ test.describe.serial("Drag the first element down vertically", async () => {
 
     await Promise.all(
       visibleElements.map((element) =>
-        expect(element).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)")
+        expect(element).toHaveCSS(
+          "transform",
+          "matrix(1, 0, 0, 1, 0, 0)",
+          TransformTimeout
+        )
       )
     );
   });

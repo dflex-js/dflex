@@ -162,3 +162,7 @@ export async function assertChildrenGrid(
 
   expect(childrenGrid).toEqual(expectedChildrenGrid);
 }
+
+export const TransformTimeout = {
+  timeout: 30000,
+};
