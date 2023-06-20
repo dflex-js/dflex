@@ -1,5 +1,7 @@
 import { Page, Locator, expect, ConsoleMessage } from "@playwright/test";
 
+export { DFlexPageTest } from "./DFlexPageTest";
+
 let page: Page;
 let steps = 0;
 
