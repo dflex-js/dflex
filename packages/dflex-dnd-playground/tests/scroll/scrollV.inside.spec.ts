@@ -104,7 +104,6 @@ test.describe.serial("Drag the first element down vertically", async () => {
 
   test("Move elm1 outside the container down again", async () => {
     await moveDragged(-1, viewportHeight + 200);
-    await page.waitForTimeout(1000);
   });
 
   test("All elements have been lifted up", async () => {
