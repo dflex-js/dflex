@@ -53,7 +53,12 @@ export {
   rmEmptyAttr,
 } from "./computedStyleUtils";
 
-export type { RAFFunction, RAFCleanup } from "./environment";
+export type {
+  RAFFunction,
+  RAFCleanup,
+  TimeoutCleanup,
+  TimeoutFunction,
+} from "./environment";
 
 export {
   canUseDOM,

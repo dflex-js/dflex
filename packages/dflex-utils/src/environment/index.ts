@@ -7,3 +7,4 @@ export { default as DFlexCreateRAF } from "./DFlexRAF";
 export type { RAFFunction, RAFCleanup } from "./DFlexRAF";
 
 export { default as DFlexCreateTimeout } from "./DFlexTimeout";
+export type { TimeoutCleanup, TimeoutFunction } from "./DFlexTimeout";

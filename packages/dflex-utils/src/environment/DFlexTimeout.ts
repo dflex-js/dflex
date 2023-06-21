@@ -1,8 +1,8 @@
 type TimeoutCallback = () => void;
 
-type TimeoutCleanup = () => void;
+export type TimeoutCleanup = () => void;
 
-type TimeoutFunction = (
+export type TimeoutFunction = (
   // eslint-disable-next-line no-unused-vars
   callback: TimeoutCallback,
   // eslint-disable-next-line no-unused-vars
