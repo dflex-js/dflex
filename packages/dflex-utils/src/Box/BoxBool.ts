@@ -15,8 +15,8 @@ class BoxBool extends Box<boolean> {
    *
    * @returns
    */
-  setFalsy(): this {
-    this.setBox(false, false, false, false);
+  _setFalsy(): this {
+    this._setBox(false, false, false, false);
 
     return this;
   }
@@ -27,7 +27,7 @@ class BoxBool extends Box<boolean> {
    * @param axis
    * @returns
    */
-  isTruthyByAxis(axis: Axis): boolean {
+  _isTruthyByAxis(axis: Axis): boolean {
     switch (axis) {
       case "x":
         return this.left || this.right;
@@ -36,7 +36,7 @@ class BoxBool extends Box<boolean> {
     }
   }
 
-  isTruthyOnSide(axis: Axis, direction: Direction) {
+  _isTruthyOnSide(axis: Axis, direction: Direction) {
     switch (axis) {
       case "x":
         return direction === 1 ? this.right : this.left;
@@ -50,7 +50,7 @@ class BoxBool extends Box<boolean> {
    *
    * @returns
    */
-  isTruthy(): boolean {
+  _isTruthy(): boolean {
     return this.left || this.right || this.top || this.bottom;
   }
 }

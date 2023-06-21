@@ -112,7 +112,7 @@ export function getInsertionELmMeta(
       }
 
       elm = store.registry.get(siblings[at])!;
-      const pos = elm.rect.getPosition();
+      const pos = elm.rect._getPosition();
 
       if (lastElmPosition) {
         if (length <= originLength) {
@@ -128,7 +128,7 @@ export function getInsertionELmMeta(
       }
     } else {
       elm = store.registry.get(siblings[insertAt])!;
-      const pos = elm.rect.getPosition();
+      const pos = elm.rect._getPosition();
 
       position.clone(pos);
     }
@@ -183,7 +183,7 @@ export function handleElmMigration(
     originSiblings[originSiblings.length - 1]
   )!;
 
-  originContainer._preservePosition(lastInOrigin.rect.getPosition());
+  originContainer._preservePosition(lastInOrigin.rect._getPosition());
 }
 
 class DFlexPositionUpdater {
@@ -224,10 +224,10 @@ class DFlexPositionUpdater {
     const { occupiedPosition, draggedElm } = this._draggable;
 
     const positionDiff = Math.abs(
-      elm.rect.getPositionDiff(axis, occupiedPosition)
+      elm.rect._getPositionDiff(axis, occupiedPosition)
     );
 
-    const dimensionDiff = elm.rect.getDimensionDiff(axis, draggedElm.rect);
+    const dimensionDiff = elm.rect._getDimensionDiff(axis, draggedElm.rect);
 
     if (elmDirection === -1) {
       this._draggedTransition[axis] = positionDiff + dimensionDiff;
@@ -324,7 +324,7 @@ class DFlexPositionUpdater {
     // This initiation needs to append dragged rect based on targeted axis.
     position[axis] += draggedElm.rect[dimensionType];
 
-    const rectDiff = elm.rect.getDimensionDiff(axis, draggedElm.rect);
+    const rectDiff = elm.rect._getDimensionDiff(axis, draggedElm.rect);
 
     position[axis] += rectDiff;
   }
@@ -426,7 +426,7 @@ class DFlexPositionUpdater {
 
     // The essential insertion position is the last element in the container
     // but also on some cases it's different from retrieved position.
-    const composedPosition = elm!.rect.getPosition();
+    const composedPosition = elm!.rect._getPosition();
 
     this._addDraggedOffsetToElm(composedPosition, elm!, axis);
 
@@ -475,7 +475,7 @@ class DFlexPositionUpdater {
 
     const [element, DOM] = store.getElmWithDOM(id);
 
-    let axis: Axes = element.rect.isPositionedY({
+    let axis: Axes = element.rect._isPositionedY({
       left: occupiedPosition.x,
       top: occupiedPosition.y,
       bottom: occupiedPosition.y + draggedElm.rect.height,
@@ -486,7 +486,7 @@ class DFlexPositionUpdater {
 
     const onSameAxis = occupiedPosition.onSameAxis(
       axis,
-      element.rect.getPosition()
+      element.rect._getPosition()
     );
 
     if (!onSameAxis) {

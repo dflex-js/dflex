@@ -142,7 +142,7 @@ function DFlexDOMReconciler(
   let isUpdateElmGrid = true;
 
   const {
-    _totalScrollRect: { left, top },
+    _totalScrollRect: { left: left, top: top },
   } = scroll;
 
   if (refreshAllBranchElements) {

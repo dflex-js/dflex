@@ -108,7 +108,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       if (isIDEligible(id, draggedElm._id)) {
         const element = store.registry.get(id)!;
 
-        const isQualified = element.rect.isBoxIntersect(
+        const isQualified = element.rect._isBoxIntersect(
           this._draggable.getAbsoluteCurrentPos()
         );
 
@@ -541,7 +541,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       store.registry.get(id)!.rect
     );
 
-    const isIntersect = elmThreshold.isBoxIntersect(
+    const isIntersect = elmThreshold._isBoxIntersect(
       this._draggable.threshold.thresholds[draggedID]
     );
 
@@ -551,11 +551,11 @@ class DFlexMechanismController extends DFlexScrollableElement {
       // intersected thresholds.
       // E.g: Moved into new one but triggered the previous one because it's stuck
       // inside the zone causing jarring behavior; the back and forth transition.
-      const surroundingBox = elmThreshold.getSurroundingBox(
+      const surroundingBox = elmThreshold._getSurroundingBox(
         this._draggable.threshold.thresholds[draggedID]
       );
 
-      this._deadZoneStabilizer.area.clone(surroundingBox);
+      this._deadZoneStabilizer.area._clone(surroundingBox);
       this._deadZoneStabilizer.direction[axis] =
         this._draggable.getDirectionByAxis(axis);
 
@@ -605,12 +605,12 @@ class DFlexMechanismController extends DFlexScrollableElement {
     const isMonoGrid = grid[oppositeAxis] === 0;
 
     // Check if top or bottom.
-    if (isOut[id].isTruthyByAxis(axis)) {
+    if (isOut[id]._isTruthyByAxis(axis)) {
       const shouldDecrease = axis === "y" ? isOut[id].bottom : isOut[id].right;
 
       const isInsideDeadZone = this._draggable
         .getAbsoluteCurrentPos()
-        .isInsideThreshold(this._deadZoneStabilizer.area);
+        ._isInsideThreshold(this._deadZoneStabilizer.area);
 
       if (isInsideDeadZone) {
         const currentDir = this._draggable.getDirectionByAxis(axis);

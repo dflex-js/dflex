@@ -55,7 +55,7 @@ class BoxNum extends Box<number> {
     return this.left >= threshold.left;
   }
 
-  isBoxIntersect(box: AbstractBox): boolean {
+  _isBoxIntersect(box: AbstractBox): boolean {
     const isIntersect = !(
       this._isAbove(box) ||
       this._isOneRight(box) ||
@@ -106,12 +106,12 @@ class BoxNum extends Box<number> {
   //   return false;
   // }
 
-  isOutThreshold(
+  _isOutThreshold(
     threshold: AbstractBox,
     preservedBoxResult: BoxBool,
     axis: Axis | null
   ) {
-    preservedBoxResult.setBox(false, false, false, false);
+    preservedBoxResult._setBox(false, false, false, false);
 
     if (axis) {
       if (axis === "y") {
@@ -170,7 +170,7 @@ class BoxNum extends Box<number> {
     return false;
   }
 
-  isInsideThreshold(threshold: AbstractBox): boolean {
+  _isInsideThreshold(threshold: AbstractBox): boolean {
     return (
       this._isBelowOrEqualThresholdTop(threshold) &&
       this._isLeftOrEqualThresholdRight(threshold) &&
@@ -179,7 +179,7 @@ class BoxNum extends Box<number> {
     );
   }
 
-  getSurroundingBox(box: AbstractBox): AbstractBox {
+  _getSurroundingBox(box: AbstractBox): AbstractBox {
     // Determine the coordinates of the new box
     const left = Math.min(box.left, this.left);
     const top = Math.min(box.top, this.top);
@@ -189,19 +189,19 @@ class BoxNum extends Box<number> {
 
     // Create and return the new box
     return {
-      left,
-      top,
-      right,
-      bottom,
+      left: left,
+      top: top,
+      right: right,
+      bottom: bottom,
     };
   }
 
-  isPositionedY(box: AbstractBox): boolean {
+  _isPositionedY(box: AbstractBox): boolean {
     return this._isUnder(box) || this._isAbove(box);
   }
 
-  assignBiggestBox(box: AbstractBox): void {
-    const { top, left, right, bottom } = box;
+  _assignBiggestBox(box: AbstractBox): void {
+    const { top: top, left: left, right: right, bottom: bottom } = box;
 
     if (left < this.left) {
       this.left = left;

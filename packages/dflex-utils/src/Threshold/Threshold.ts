@@ -61,7 +61,7 @@ class DFlexThreshold {
       return;
     }
 
-    this.thresholds[depth].assignBiggestBox(this.thresholds[key]);
+    this.thresholds[depth]._assignBiggestBox(this.thresholds[key]);
   }
 
   /**
@@ -96,7 +96,7 @@ class DFlexThreshold {
 
     this.thresholds[key] = this._pixels.composeBox(rect, isInner);
 
-    this.isOut[key].setFalsy();
+    this.isOut[key]._setFalsy();
   }
 
   getElmMainThreshold(rect: AbstractBox): BoxNum {
@@ -125,15 +125,15 @@ class DFlexThreshold {
     // Regular threshold.
     this._createThreshold(SK, containerRect, false);
 
-    const { top, left } = containerRect;
+    const { top: top, left: left } = containerRect;
     const { height, width } = unifiedContainerDimensions;
 
     // Insertion threshold.
     this._createThreshold(
       insertionLayerKey,
       {
-        left,
-        top,
+        left: left,
+        top: top,
         right: left + width,
         bottom: top + height,
       },
@@ -147,7 +147,7 @@ class DFlexThreshold {
   isOutThreshold(key: string, box: BoxNum, axis: Axis | null): boolean {
     const thresholdBox = this.thresholds[key];
 
-    return box.isOutThreshold(thresholdBox, this.isOut[key], axis);
+    return box._isOutThreshold(thresholdBox, this.isOut[key], axis);
   }
 
   destroy(): void {

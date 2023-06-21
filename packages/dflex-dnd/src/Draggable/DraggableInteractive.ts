@@ -250,7 +250,7 @@ class DraggableInteractive extends DraggableAxes {
       return;
     }
 
-    this.draggedElm.rect.setAxes(
+    this.draggedElm.rect._setAxes(
       this.occupiedPosition.x,
       this.occupiedPosition.y
     );

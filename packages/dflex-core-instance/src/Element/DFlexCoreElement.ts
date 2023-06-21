@@ -313,7 +313,7 @@ class DFlexCoreElement extends DFlexBaseElement {
      */
     this._initialPosition.setAxes(elementLeft, elementTop);
 
-    this.rect.setByPointAndDimensions(elementTop, elementLeft, height, width);
+    this.rect._setByPointAndDimensions(elementTop, elementLeft, height, width);
 
     this._initElmTranslate(DOM);
   }
@@ -330,7 +330,7 @@ class DFlexCoreElement extends DFlexBaseElement {
 
       this._initialPosition.setAxes(elementLeft, elementTop);
 
-      this.rect.setByPointAndDimensions(
+      this.rect._setByPointAndDimensions(
         elementTop,
         elementLeft,
         this.rect.height,
@@ -550,7 +550,7 @@ class DFlexCoreElement extends DFlexBaseElement {
      * This offset related directly to translate Y and Y. It's isolated from
      * element current offset and effects only top and left.
      */
-    this.rect.setAxes(
+    this.rect._setAxes(
       this._initialPosition.x + this._translate.x,
       this._initialPosition.y + this._translate.y
     );

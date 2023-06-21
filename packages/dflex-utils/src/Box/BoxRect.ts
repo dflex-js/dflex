@@ -39,7 +39,7 @@ class BoxRect extends BoxNum {
    * @param width
    * @returns
    */
-  setByPointAndDimensions(
+  _setByPointAndDimensions(
     top: number,
     left: number,
     height: number,
@@ -61,7 +61,7 @@ class BoxRect extends BoxNum {
    * @param y
    * @returns
    */
-  setAxes(x: number, y: number): void {
+  _setAxes(x: number, y: number): void {
     this.left = x;
     this.right = this.width + x;
     this.top = y;
@@ -75,7 +75,7 @@ class BoxRect extends BoxNum {
    * @param box
    * @returns
    */
-  getDimensionDiff(axis: Axis, box: AbstractBoxRect): number {
+  _getDimensionDiff(axis: Axis, box: AbstractBoxRect): number {
     const dimensionType = getDimensionTypeByAxis(axis);
 
     return this[dimensionType] - box[dimensionType];
@@ -88,7 +88,7 @@ class BoxRect extends BoxNum {
    * @param point
    * @returns
    */
-  getPositionDiff(axis: Axis, point: AxesPoint): number {
+  _getPositionDiff(axis: Axis, point: AxesPoint): number {
     const directionType = getStartingPointByAxis(axis);
 
     return this[directionType] - point[axis];

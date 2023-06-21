@@ -26,11 +26,11 @@ class DFlexElement extends DFlexCoreNode {
   }
 
   getDisplacement(elm: this, axis: Axis): number {
-    return DFlexElement.getDisplacement(this.rect.getPosition(), elm, axis);
+    return DFlexElement.getDisplacement(this.rect._getPosition(), elm, axis);
   }
 
   getDistance(elm: this, axis: Axis): number {
-    return DFlexElement.getDistance(this.rect.getPosition(), elm, axis);
+    return DFlexElement.getDistance(this.rect._getPosition(), elm, axis);
   }
 }
 

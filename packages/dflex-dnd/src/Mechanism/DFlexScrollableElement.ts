@@ -67,7 +67,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     this._prevMouseDirection = new Point<Direction>(-1, -1);
 
     const {
-      _totalScrollRect: { left, top },
+      _totalScrollRect: { left: left, top: top },
       _visibleScrollRect: { width, height },
     } = store.scrolls.get(SK)!;
 
@@ -134,8 +134,8 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       return;
     }
 
-    const isOutV = preservedBoxResult.isTruthyOnSide("y", draggedDirV);
-    const isOutH = preservedBoxResult.isTruthyOnSide("x", draggedDirH);
+    const isOutV = preservedBoxResult._isTruthyOnSide("y", draggedDirV);
+    const isOutH = preservedBoxResult._isTruthyOnSide("x", draggedDirH);
 
     if (!(isOutV || isOutH)) {
       if (__DEV__) {
@@ -173,7 +173,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       }
     }
 
-    preservedBoxResult.setFalsy();
+    preservedBoxResult._setFalsy();
 
     const canScroll: boolean = scroll._hasScrollableArea(axis, direction);
 

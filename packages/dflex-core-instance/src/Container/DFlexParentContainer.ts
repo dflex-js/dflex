@@ -58,12 +58,12 @@ class DFlexParentContainer {
     const $ = this._boundariesByRow;
 
     // Defining elements in different row.
-    const isNewRow = $.isPositionedY(rect);
+    const isNewRow = $._isPositionedY(rect);
 
     if (isNewRow) {
       this._gridIndex.y += 1;
       this._gridIndex.x = 0;
-      this._boundariesByRow.setBox(0, 0, 0, 0);
+      this._boundariesByRow._setBox(0, 0, 0, 0);
     } else {
       this._gridIndex.x += 1;
     }
@@ -76,7 +76,7 @@ class DFlexParentContainer {
       this._grid.y = this._gridIndex.y;
     }
 
-    $.assignBiggestBox(rect);
+    $._assignBiggestBox(rect);
 
     return this._gridIndex;
   }
@@ -88,7 +88,7 @@ class DFlexParentContainer {
     unifiedContainerDimensions?: Dimensions
   ): PointNum {
     if (this._siblingBoundaries) {
-      this._siblingBoundaries.assignBiggestBox(rect);
+      this._siblingBoundaries._assignBiggestBox(rect);
     } else {
       this._siblingBoundaries = new BoxNum(
         rect.top,
@@ -144,7 +144,7 @@ class DFlexParentContainer {
    * @returns
    */
   _getBoundaries(): AbstractBox<number> {
-    return this._siblingBoundaries || this._rect.getBox();
+    return this._siblingBoundaries || this._rect._getBox();
   }
 
   /**
@@ -155,7 +155,7 @@ class DFlexParentContainer {
     this._gridIndex.setAxes(-1, -1);
     this._grid.setAxes(-1, -1);
     this._originLength = originLength;
-    this._boundariesByRow.setBox(0, 0, 0, 0);
+    this._boundariesByRow._setBox(0, 0, 0, 0);
     this._siblingBoundaries = null;
     // @ts-expect-error
     this.lastElmPosition = null;

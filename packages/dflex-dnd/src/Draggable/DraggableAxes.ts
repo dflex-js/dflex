@@ -37,7 +37,7 @@ function initContainers(SK: string, siblings: Siblings) {
   if (!container.lastElmPosition) {
     const lastElm = store.registry.get(siblings[siblings.length - 1])!;
 
-    container._preservePosition(lastElm.rect.getPosition());
+    container._preservePosition(lastElm.rect._getPosition());
   }
 }
 
@@ -183,7 +183,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     this.marginX = rm + lm;
 
     const {
-      _totalScrollRect: { left, top },
+      _totalScrollRect: { left: left, top: top },
     } = store.scrolls.get(SK)!;
 
     const { x, y } = initCoordinates;
@@ -341,14 +341,14 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     const absTop = absEdgePosTop + scrollOffsetY;
     const absLeft = absEdgePosLeft + scrollOffsetX;
 
-    this._absoluteCurrentPos.setBox(
+    this._absoluteCurrentPos._setBox(
       absTop,
       absLeft + width,
       absTop + height,
       absLeft
     );
 
-    this._viewportCurrentPos.setBox(
+    this._viewportCurrentPos._setBox(
       edgePosTop,
       edgePosLeft + width,
       edgePosTop + height,
@@ -409,7 +409,12 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
 
     if (this.axesFilterNeeded) {
       const boundaries = container._getBoundaries();
-      const { top, bottom, left: maxLeft, right: minRight } = boundaries;
+      const {
+        top: top,
+        bottom: bottom,
+        left: maxLeft,
+        right: minRight,
+      } = boundaries;
 
       if (this.restrictionsStatus.isContainerRestricted) {
         filteredX = this.axesXFilter(

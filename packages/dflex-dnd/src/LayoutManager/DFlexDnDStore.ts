@@ -230,7 +230,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     const [dflexElm, DOM] = this.getElmWithDOM(id);
 
     const {
-      _totalScrollRect: { left, top },
+      _totalScrollRect: { left: left, top: top },
     } = scroll;
 
     dflexElm._initElmRect(DOM, left, top);
@@ -419,7 +419,7 @@ class DFlexDnDStore extends DFlexBaseStore {
         const scroll = this.scrolls.get(containerKy)!;
 
         const {
-          _totalScrollRect: { left, top },
+          _totalScrollRect: { left: left, top: top },
         } = scroll;
 
         branch.forEach((elmID) => {

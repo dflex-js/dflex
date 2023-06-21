@@ -274,7 +274,7 @@ class DFlexScrollContainer {
       clientWidth, // Width of the visible portion of the container
     } = this._containerDOM;
 
-    this._totalScrollRect.setByPointAndDimensions(
+    this._totalScrollRect._setByPointAndDimensions(
       scrollTop,
       scrollLeft,
       scrollHeight,
@@ -284,7 +284,7 @@ class DFlexScrollContainer {
     // Calculate the visible portion of the container
     if (this._isDocumentContainer) {
       // For document container, the visible area is the entire client viewport
-      this._visibleScrollRect.setByPointAndDimensions(
+      this._visibleScrollRect._setByPointAndDimensions(
         scrollTop,
         scrollLeft,
         clientHeight,
@@ -293,7 +293,7 @@ class DFlexScrollContainer {
     } else {
       const { left, top } = this._containerDOM.getBoundingClientRect();
 
-      this._visibleScrollRect.setByPointAndDimensions(
+      this._visibleScrollRect._setByPointAndDimensions(
         top,
         left,
         clientHeight,
@@ -307,7 +307,7 @@ class DFlexScrollContainer {
     scrollTop: number,
     withDOM: boolean
   ): boolean {
-    const shouldUpdate = this._totalScrollRect.hasEqualPosition(
+    const shouldUpdate = this._totalScrollRect._hasEqualPosition(
       scrollLeft,
       scrollTop
     );
@@ -316,7 +316,7 @@ class DFlexScrollContainer {
       return false;
     }
 
-    this._totalScrollRect.setPosition(scrollLeft, scrollTop);
+    this._totalScrollRect._setPosition(scrollLeft, scrollTop);
 
     if (withDOM) {
       this._containerDOM.scrollTop = scrollTop;
@@ -612,8 +612,8 @@ class DFlexScrollContainer {
       key: this._SK,
       hasOverFlow: this._hasOverflow.getInstance(),
       hasDocumentAsContainer: this._isDocumentContainer,
-      scrollRect: this._totalScrollRect.getBox(),
-      scrollContainerRect: this._visibleScrollRect.getBox(),
+      scrollRect: this._totalScrollRect._getBox(),
+      scrollContainerRect: this._visibleScrollRect._getBox(),
       visibleScreen: this._getVisibleScreen(),
     };
   }

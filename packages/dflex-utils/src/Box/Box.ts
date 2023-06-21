@@ -4,7 +4,7 @@ import AbstractBox from "./AbstractBox";
 
 /** Four direction instance - clockwise */
 class Box<T> extends AbstractBox<T> {
-  clone(box: AbstractBox<T>): void {
+  _clone(box: AbstractBox<T>): void {
     this.top = box.top;
     this.right = box.right;
     this.bottom = box.bottom;
@@ -19,7 +19,7 @@ class Box<T> extends AbstractBox<T> {
    * @param bottom
    * @param left
    */
-  setBox(top: T, right: T, bottom: T, left: T): this {
+  _setBox(top: T, right: T, bottom: T, left: T): this {
     this.top = top;
     this.right = right;
     this.bottom = bottom;
@@ -33,7 +33,7 @@ class Box<T> extends AbstractBox<T> {
    *
    * @returns
    */
-  getBox(): AbstractBox<T> {
+  _getBox(): AbstractBox<T> {
     return {
       top: this.top,
       right: this.right,
@@ -49,7 +49,7 @@ class Box<T> extends AbstractBox<T> {
    * @param x
    * @param y
    */
-  setByAxis(axis: Axis, x: T, y: T): void {
+  _setByAxis(axis: Axis, x: T, y: T): void {
     switch (axis) {
       case "x": {
         this.left = x;
@@ -70,7 +70,7 @@ class Box<T> extends AbstractBox<T> {
    * @param direction
    * @param value
    */
-  setOne(axis: Axis, direction: Direction, value: T): void {
+  _setOne(axis: Axis, direction: Direction, value: T): void {
     switch (axis) {
       case "x": {
         if (direction === -1) {
@@ -97,7 +97,7 @@ class Box<T> extends AbstractBox<T> {
    * @param direction
    * @returns
    */
-  getOne(axis: Axis, direction: Direction): T {
+  _getOne(axis: Axis, direction: Direction): T {
     switch (axis) {
       case "x":
         return direction === -1 ? this.left : this.right;
@@ -106,17 +106,17 @@ class Box<T> extends AbstractBox<T> {
     }
   }
 
-  setPositionInstance(point: AxesPoint<T>) {
+  _setPositionInstance(point: AxesPoint<T>) {
     this.top = point.y;
     this.left = point.x;
   }
 
-  setPosition(x: T, y: T) {
+  _setPosition(x: T, y: T) {
     this.top = y;
     this.left = x;
   }
 
-  hasEqualPosition(x: T, y: T): boolean {
+  _hasEqualPosition(x: T, y: T): boolean {
     return this.top === y || this.left === x;
   }
 
@@ -125,7 +125,7 @@ class Box<T> extends AbstractBox<T> {
    *
    * @returns
    */
-  getPosition(): AxesPoint<T> {
+  _getPosition(): AxesPoint<T> {
     return {
       x: this.left,
       y: this.top,
