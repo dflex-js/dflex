@@ -13,7 +13,7 @@ function DFlexEventDebounce(
   immediate = false,
   throttle = 200
 ): DebounceControl {
-  const [timeout, cancelTimeout] = DFlexCreateTimeout();
+  const [timeout, cancelTimeout] = DFlexCreateTimeout(throttle);
   const [RAF, cancelRAF] = DFlexCreateRAF();
 
   let lastCall = performance.now();
@@ -35,7 +35,7 @@ function DFlexEventDebounce(
       lastCall = currentTime;
     } else {
       // Schedule a delayed listener to be executed after the throttle period and cancel previous schedule.
-      timeout(debouncedListener, throttle, true);
+      timeout(debouncedListener, true);
     }
   };
 

@@ -43,11 +43,9 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
   cancelScrolling: ScrollTransitionAbort | null;
 
-  private _throttle: TimeoutFunction;
+  private _scrollThrottle!: TimeoutFunction;
 
-  private _isThrottled: IsThrottledFunction;
-
-  private _scrollThrottleMS!: number;
+  private _isScrollThrottled!: IsThrottledFunction;
 
   protected readonly initialScrollPosition!: PointNum;
 
@@ -59,8 +57,6 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     this.cancelScrolling = null;
 
     this.initialScrollPosition = new PointNum(0, 0);
-
-    [this._throttle, , this._isThrottled] = createTimeout();
 
     // If no scroll don't initialize.
     if (!store.scrolls.has(SK)) {
@@ -75,14 +71,18 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       visibleScrollRect: { width, height },
     } = store.scrolls.get(SK)!;
 
-    this._scrollThrottleMS = calculateScrollThrottleMS(width, height);
+    const scrollThrottleMS = calculateScrollThrottleMS(width, height);
+
+    [this._scrollThrottle, , this._isScrollThrottled] =
+      createTimeout(scrollThrottleMS);
 
     this.initialScrollPosition.setAxes(left, top);
   }
 
   hasActiveScrolling(): boolean {
     // It's not throttled and it has animated frame.
-    const isActive = !this._isThrottled() && this.cancelScrolling !== null;
+    const isActive =
+      !this._isScrollThrottled() && this.cancelScrolling !== null;
 
     if (__DEV__) {
       if (featureFlags.enableScrollDebugger) {
@@ -191,7 +191,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
         }
       }
 
-      this._throttle(null, this._scrollThrottleMS, true);
+      this._scrollThrottle(null, true);
 
       if (__DEV__) {
         if (featureFlags.enableScrollDebugger) {
@@ -248,14 +248,14 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     if (__DEV__) {
       if (featureFlags.enableScrollDebugger) {
-        if (this._isThrottled()) {
+        if (this._isScrollThrottled()) {
           // eslint-disable-next-line no-console
           console.log("Scroll is throttled");
         }
       }
     }
 
-    if (!this._isThrottled()) {
+    if (!this._isScrollThrottled()) {
       this._scrollManager(
         draggedDirH,
         draggedDirV,

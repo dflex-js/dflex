@@ -8,18 +8,14 @@ export type TimeoutFunction = (
   // eslint-disable-next-line no-unused-vars
   callback: TimeoutCallback | null,
   // eslint-disable-next-line no-unused-vars
-  delay: number,
-  // eslint-disable-next-line no-unused-vars
   cancelPrevSchedule: boolean
 ) => void;
 
 export type IsThrottledFunction = () => boolean;
 
-function DFlexCreateTimeout(): [
-  TimeoutFunction,
-  TimeoutCleanup,
-  IsThrottledFunction
-] {
+function DFlexCreateTimeout(
+  delay: number
+): [TimeoutFunction, TimeoutCleanup, IsThrottledFunction] {
   let id: ReturnType<typeof setTimeout> | null = null;
   let isThrottled: boolean = false;
 
@@ -32,7 +28,6 @@ function DFlexCreateTimeout(): [
 
   function timeout(
     callback: TimeoutCallback | null,
-    delay: number,
     cancelPrevSchedule: boolean
   ): void {
     const cb = callback || noop;

@@ -3,7 +3,7 @@ import { DFlexCreateTimeout } from "../environment";
 type QKey = string;
 type Queue = (() => unknown)[];
 
-const [timeout, cancelTimeout] = DFlexCreateTimeout();
+const [timeout, cancelTimeout] = DFlexCreateTimeout(0);
 
 class TaskQueue {
   private _elmInQueue: Set<string>;
@@ -122,7 +122,7 @@ class TaskQueue {
       this._elmInQueue.clear();
     };
 
-    timeout(f, 0, true);
+    timeout(f, true);
   }
 
   scheduleNextTask(keys: [QKey, QKey | undefined]): void {
