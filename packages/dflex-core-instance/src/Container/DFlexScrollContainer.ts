@@ -192,11 +192,7 @@ class DFlexScrollContainer {
     this._isDocumentContainer = isDocumentContainer;
 
     this._updateScrollRect();
-    this._updateScrollPosition(
-      this._containerDOM.scrollLeft,
-      this._containerDOM.scrollTop,
-      false
-    );
+
     this._updateOverflowStatus();
 
     if (
