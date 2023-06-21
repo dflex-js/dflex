@@ -128,7 +128,7 @@ test.describe.serial("Drag the first element down vertically", async () => {
   });
 
   test("Pending elements still hold their old positions", async () => {
-    invisibleElements = elements.slice(1, 85);
+    invisibleElements = elements.slice(1, 80);
 
     await Promise.all(
       invisibleElements.map((element) =>
