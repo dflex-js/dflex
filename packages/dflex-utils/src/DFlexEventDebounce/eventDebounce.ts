@@ -1,4 +1,4 @@
-import { createRAF, DFlexCreateTimeout } from "../environment";
+import { DFlexCreateRAF, DFlexCreateTimeout } from "../environment";
 
 type DebouncedListener = () => void;
 
@@ -8,13 +8,13 @@ interface DebounceControl extends DebouncedListener {
   resume: () => void;
 }
 
-function eventDebounce(
+function DFlexEventDebounce(
   listener: DebouncedListener,
   immediate = false,
   throttle = 200
 ): DebounceControl {
   const [timeout, cancelTimeout] = DFlexCreateTimeout();
-  const [RAF, cancelRAF] = createRAF();
+  const [RAF, cancelRAF] = DFlexCreateRAF();
 
   let lastCall = performance.now();
   let isPaused = false;
@@ -59,4 +59,4 @@ function eventDebounce(
   return debouncedListener;
 }
 
-export default eventDebounce;
+export default DFlexEventDebounce;
