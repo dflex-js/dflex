@@ -159,7 +159,7 @@ class DraggableInteractive extends DraggableAxes {
 
       const viewportPos = scroll.getElmViewportPosition(initPos.y, initPos.x);
 
-      this.setDOMAttrAndStyle(
+      this._setDOMAttrAndStyle(
         this.draggedDOM,
         this.mirrorDOM,
         true,
@@ -171,7 +171,7 @@ class DraggableInteractive extends DraggableAxes {
       this.draggedDOM.parentNode!.insertBefore(this.mirrorDOM, this.draggedDOM);
       this.draggedDOM = this.mirrorDOM;
     } else {
-      this.setDOMAttrAndStyle(this.draggedDOM, null, true, false, null, null);
+      this._setDOMAttrAndStyle(this.draggedDOM, null, true, false, null, null);
     }
 
     this.occupiedPosition = new PointNum(rect.left, rect.top);
@@ -231,7 +231,7 @@ class DraggableInteractive extends DraggableAxes {
       }
 
       // If it didn't move, then do nothing.
-      if (translate.isInstanceEqual(this.translatePlaceholder)) {
+      if (translate.isInstanceEqual(this._translatePlaceholder)) {
         return;
       }
 
@@ -290,7 +290,7 @@ class DraggableInteractive extends DraggableAxes {
     const draggedDOM = store.interactiveDOM.get(this.draggedElm.id)!;
 
     if (isMigratedInScroll) {
-      this.setDOMAttrAndStyle(
+      this._setDOMAttrAndStyle(
         draggedDOM,
         this.mirrorDOM!,
         false,
@@ -299,7 +299,7 @@ class DraggableInteractive extends DraggableAxes {
         null
       );
     } else {
-      this.setDOMAttrAndStyle(
+      this._setDOMAttrAndStyle(
         draggedDOM,
         this.mirrorDOM!,
         false,
@@ -309,7 +309,7 @@ class DraggableInteractive extends DraggableAxes {
       );
     }
 
-    this.appendDraggedToContainerDimensions(false);
+    this._appendDraggedToContainerDimensions(false);
 
     this.setDraggedTransformProcess(isFallback, latestCycle, willReconcile);
 

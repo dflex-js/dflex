@@ -173,7 +173,7 @@ class DFlexBaseStore {
 
   tracker: Tracker;
 
-  protected DOMGen: Generator;
+  protected _DOMGen: Generator;
 
   private _lastDOMParent: HTMLElement | null;
 
@@ -188,7 +188,7 @@ class DFlexBaseStore {
     this._taskQ = new TaskQueue();
     this.registry = new Map();
     this.interactiveDOM = new Map();
-    this.DOMGen = new Generator();
+    this._DOMGen = new Generator();
   }
 
   /**
@@ -227,7 +227,7 @@ class DFlexBaseStore {
     if (depth > 0) {
       _hasSiblingInSameLevel = hasSiblingInSameLevel(
         DOM,
-        this.DOMGen,
+        this._DOMGen,
         this.interactiveDOM,
         depth
       );
@@ -249,7 +249,7 @@ class DFlexBaseStore {
       } = dflexParentElm);
     }
 
-    const { order, keys } = this.DOMGen.register(
+    const { order, keys } = this._DOMGen.register(
       id,
       depth,
       _hasSiblingInSameLevel,
@@ -336,7 +336,7 @@ class DFlexBaseStore {
 
   endRegistration() {
     this._lastDOMParent = null;
-    this.DOMGen.endRegistration();
+    this._DOMGen.endRegistration();
 
     if (__DEV__) {
       if (featureFlags.enableRegisterDebugger) {
@@ -346,7 +346,7 @@ class DFlexBaseStore {
     }
   }
 
-  protected addElmToRegistry(
+  protected _addElmToRegistry(
     element: RegisterInputProcessed,
     branchComposedCallBack?: BranchComposedCallBackFunction,
     highestContainerComposedCallBack?: HighestContainerComposedCallBack
@@ -598,7 +598,7 @@ class DFlexBaseStore {
    * @returns
    */
   getElmSiblingsByKey(SK: string): Siblings {
-    return this.DOMGen.getElmSiblingsByKey(SK);
+    return this._DOMGen.getElmSiblingsByKey(SK);
   }
 
   /**
@@ -608,7 +608,7 @@ class DFlexBaseStore {
    * @returns
    */
   getSiblingKeysByDepth(dp: number): Siblings {
-    return this.DOMGen.getSiblingKeysByDepth(dp);
+    return this._DOMGen.getSiblingKeysByDepth(dp);
   }
 
   /**
@@ -618,7 +618,7 @@ class DFlexBaseStore {
    * @param newSiblings
    */
   mutateSiblings(SK: string, newSiblings: Siblings): void {
-    this.DOMGen.mutateSiblings(SK, newSiblings);
+    this._DOMGen.mutateSiblings(SK, newSiblings);
   }
 
   /**
@@ -636,7 +636,7 @@ class DFlexBaseStore {
    * method should be called when the app will no longer use the store.
    */
   destroy(): void {
-    this.DOMGen.clear();
+    this._DOMGen.clear();
     this.interactiveDOM.clear();
     this.registry.clear();
     this._taskQ.clear();

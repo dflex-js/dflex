@@ -169,7 +169,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
 
     initContainers(SK, siblings);
 
-    this.appendDraggedToContainerDimensions(true);
+    this._appendDraggedToContainerDimensions(true);
 
     this.threshold = new Threshold(opts.threshold);
 
@@ -237,7 +237,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
         opts.restrictionsStatus.isSelfRestricted);
   }
 
-  protected appendDraggedToContainerDimensions(isAppend: boolean) {
+  protected _appendDraggedToContainerDimensions(isAppend: boolean) {
     const { depth, rect } = this.draggedElm;
 
     const maneuverDistance = rect.height;
@@ -468,7 +468,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
       );
     }
 
-    this.translate(filteredX, filteredY);
+    this._translate(filteredX, filteredY);
 
     this.setCurrentPos(filteredX, filteredY, scrollOffsetX, scrollOffsetY);
   }

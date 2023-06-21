@@ -16,17 +16,17 @@ class DFlexDraggable extends DFlexBaseDraggable<DFlexBaseElement> {
     const [element, DOM] = store.getElmWithDOM(id);
     super(element, DOM, clickCoordinates);
 
-    this.setDOMAttrAndStyle(this.draggedDOM, null, true, false, null, null);
+    this._setDOMAttrAndStyle(this.draggedDOM, null, true, false, null, null);
   }
 
   dragAt(x: number, y: number) {
-    this.translate(x, y);
+    this._translate(x, y);
 
-    this.draggedElm.translate.clone(this.translatePlaceholder);
+    this.draggedElm.translate.clone(this._translatePlaceholder);
   }
 
   endDragging() {
-    this.setDOMAttrAndStyle(this.draggedDOM, null, false, false, null, null);
+    this._setDOMAttrAndStyle(this.draggedDOM, null, false, false, null, null);
   }
 }
 

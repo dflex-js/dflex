@@ -186,7 +186,7 @@ export function handleElmMigration(
 }
 
 class DFlexPositionUpdater {
-  protected draggable: DraggableInteractive;
+  protected _draggable: DraggableInteractive;
 
   private _elmTransition: PointNum;
 
@@ -195,10 +195,10 @@ class DFlexPositionUpdater {
   private _draggedTransition: PointNum;
 
   /** Isolated form the threshold and predict is-out based on the controllers */
-  protected isParentLocked: boolean;
+  protected _isParentLocked: boolean;
 
   constructor(draggable: DraggableInteractive) {
-    this.draggable = draggable;
+    this._draggable = draggable;
 
     /**
      * Next element calculated transition space.
@@ -212,7 +212,7 @@ class DFlexPositionUpdater {
 
     this._draggedTransition = new PointNum(0, 0);
 
-    this.isParentLocked = false;
+    this._isParentLocked = false;
   }
 
   private _setDistanceBtwPositions(
@@ -220,7 +220,7 @@ class DFlexPositionUpdater {
     elmDirection: Direction,
     elm: DFlexElement
   ) {
-    const { occupiedPosition, draggedElm } = this.draggable;
+    const { occupiedPosition, draggedElm } = this._draggable;
 
     const positionDiff = Math.abs(
       elm.rect.getPositionDiff(axis, occupiedPosition)
@@ -245,14 +245,14 @@ class DFlexPositionUpdater {
     const draggedDirection = -1 * elmDirection;
 
     this._draggedTransition[axis] *= draggedDirection;
-    this.draggable.occupiedTranslate[axis] += this._draggedTransition[axis];
+    this._draggable.occupiedTranslate[axis] += this._draggedTransition[axis];
 
     if (__DEV__) {
       if (featureFlags.enableMechanismDebugger) {
         // eslint-disable-next-line no-console
         console.log(
           "_updateDraggable: new grid is",
-          this.draggable.gridPlaceholder
+          this._draggable.gridPlaceholder
         );
       }
     }
@@ -277,15 +277,15 @@ class DFlexPositionUpdater {
 
     const { rect, DOMGrid: grid } = elm;
 
-    this.draggable.occupiedPosition.setAxes(
+    this._draggable.occupiedPosition.setAxes(
       rect.left + this._draggedPositionOffset.x,
       rect.top + this._draggedPositionOffset.y
     );
 
-    this.draggable.gridPlaceholder.clone(grid);
+    this._draggable.gridPlaceholder.clone(grid);
   }
 
-  protected updateDraggedThresholdPosition(x: number, y: number) {
+  protected _updateDraggedThresholdPosition(x: number, y: number) {
     if (__DEV__) {
       if (featureFlags.enableMechanismDebugger) {
         // eslint-disable-next-line no-console
@@ -299,7 +299,7 @@ class DFlexPositionUpdater {
         id,
         rect: { width, height },
       },
-    } = this.draggable;
+    } = this._draggable;
 
     const composedBox = {
       top: y,
@@ -318,7 +318,7 @@ class DFlexPositionUpdater {
   ) {
     const dimensionType = getDimensionTypeByAxis(axis);
 
-    const { draggedElm } = this.draggable;
+    const { draggedElm } = this._draggable;
 
     // This initiation needs to append dragged rect based on targeted axis.
     position[axis] += draggedElm.rect[dimensionType];
@@ -332,7 +332,7 @@ class DFlexPositionUpdater {
    * It calculates the new translate of the dragged element along with grid
    * position inside the container.
    */
-  protected getComposedOccupiedTranslateAndGrid(
+  protected _getComposedOccupiedTranslateAndGrid(
     SK: string,
     insertAt: number,
     insertFromTop: boolean,
@@ -343,7 +343,7 @@ class DFlexPositionUpdater {
       SK
     );
 
-    const { draggedElm, containersTransition } = this.draggable;
+    const { draggedElm, containersTransition } = this._draggable;
     const { migration } = store;
 
     // Getting diff with `currentPosition` includes the element transition
@@ -384,7 +384,7 @@ class DFlexPositionUpdater {
       }
     }
 
-    this.updateDraggedThresholdPosition(
+    this._updateDraggedThresholdPosition(
       composedTranslate.x,
       composedTranslate.y
     );
@@ -392,7 +392,7 @@ class DFlexPositionUpdater {
     return { translate: composedTranslate, grid: composedGrid };
   }
 
-  protected getComposedOccupiedPosition(
+  protected _getComposedOccupiedPosition(
     SK: string,
     axis: Axis
   ): AxesPoint<number> {
@@ -429,7 +429,7 @@ class DFlexPositionUpdater {
 
     this._addDraggedOffsetToElm(composedPosition, elm!, axis);
 
-    const { containersTransition } = this.draggable;
+    const { containersTransition } = this._draggable;
     const { migration } = store;
 
     const { marginBottom: mb, marginTop: mt } = migration.latest();
@@ -454,12 +454,12 @@ class DFlexPositionUpdater {
    * Updates element instance and calculates the required transform distance. It
    * invokes for each eligible element in the parent container.
    */
-  protected updateElement(
+  protected _updateElement(
     id: string,
     numberOfPassedElm: number,
     isIncrease: boolean
   ) {
-    const { draggedElm, occupiedPosition, gridPlaceholder } = this.draggable;
+    const { draggedElm, occupiedPosition, gridPlaceholder } = this._draggable;
 
     const { SK, cycleID } = store.migration.latest();
 
@@ -513,7 +513,7 @@ class DFlexPositionUpdater {
     this._updateIndicators(axis, elmDirection, element);
 
     // TODO: always true for the first element
-    if (!this.isParentLocked) {
+    if (!this._isParentLocked) {
       /**
        * By updating the dragged translate, we guarantee that dragged
        * transformation will not triggered until dragged is over threshold
@@ -528,10 +528,10 @@ class DFlexPositionUpdater {
 
       const { rect } = element;
 
-      this.updateDraggedThresholdPosition(rect.left, rect.top);
+      this._updateDraggedThresholdPosition(rect.left, rect.top);
     }
 
-    this.draggable.events.dispatch(
+    this._draggable.events.dispatch(
       DFLEX_EVENTS.ON_DRAG_OVER,
       composeElmMeta(element)
     );
@@ -547,7 +547,7 @@ class DFlexPositionUpdater {
       cycleID
     );
 
-    this.draggable.events.dispatch(
+    this._draggable.events.dispatch(
       DFLEX_EVENTS.ON_DRAG_LEAVE,
       composeElmMeta(element)
     );

@@ -259,7 +259,7 @@ class DFlexDnDStore extends DFlexBaseStore {
         : unifiedContainerDimensions;
     }
 
-    const siblings = this.DOMGen.getElmSiblingsByKey(SK);
+    const siblings = this._DOMGen.getElmSiblingsByKey(SK);
 
     if (__DEV__) {
       if (featureFlags.enableRegisterDebugger) {
@@ -325,7 +325,7 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   private _initObservers() {
-    const highestSKInAllBranches = this.DOMGen.getHighestSKInAllBranches();
+    const highestSKInAllBranches = this._DOMGen.getHighestSKInAllBranches();
 
     highestSKInAllBranches.forEach(({ id }) => {
       if (__DEV__) {
@@ -397,7 +397,7 @@ class DFlexDnDStore extends DFlexBaseStore {
         }
 
         // Create an instance of DFlexCoreNode and gets the DOM element into the store.
-        this.addElmToRegistry(
+        this._addElmToRegistry(
           coreInput,
           this._initSiblings,
           this._initObservers
@@ -659,11 +659,11 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   cleanupELmInstance(id: string, BK: string): void {
-    this.DOMGen.removeIDFromBranch(id, BK);
+    this._DOMGen.removeIDFromBranch(id, BK);
   }
 
   cleanupSiblingsInstance(SK: string, BK: string, depth: number): void {
-    this.DOMGen.destroySiblings(SK, BK, depth);
+    this._DOMGen.destroySiblings(SK, BK, depth);
 
     const deletedContainer = this.containers.delete(SK);
     const deletedScroll = this.scrolls.delete(SK);

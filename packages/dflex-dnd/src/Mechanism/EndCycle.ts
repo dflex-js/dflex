@@ -16,12 +16,12 @@ class EndCycle extends DFlexMechanismController {
         id: draggedID,
         VDOMOrder: { self: from },
       },
-    } = this.draggable;
+    } = this._draggable;
 
     const { index: tempIndex, cycleID } = cycle;
 
     const isElmLiftedUp =
-      this.isParentLocked || threshold.isOut[draggedID].bottom;
+      this._isParentLocked || threshold.isOut[draggedID].bottom;
 
     const to = isElmLiftedUp ? from : 0;
 
@@ -47,7 +47,7 @@ class EndCycle extends DFlexMechanismController {
     }
 
     const spliceAt =
-      this.isParentLocked || threshold.isOut[draggedID].bottom
+      this._isParentLocked || threshold.isOut[draggedID].bottom
         ? siblings.length - 1
         : tempIndex;
 
@@ -63,7 +63,7 @@ class EndCycle extends DFlexMechanismController {
   }
 
   endDragging() {
-    const { enableCommit, session } = this.draggable;
+    const { enableCommit, session } = this._draggable;
     const { migration } = store;
     const latestCycle = migration.latest();
 
@@ -87,7 +87,7 @@ class EndCycle extends DFlexMechanismController {
 
       this.cancelScrolling!();
     } else {
-      isFallback = this.hasBeenScrolling || this.draggable.isNotSettled();
+      isFallback = this._hasBeenScrolling || this._draggable.isNotSettled();
     }
 
     // If it's falling back then we won't trigger reconciliation.
@@ -102,7 +102,7 @@ class EndCycle extends DFlexMechanismController {
         },
         {
           onUpdate: () => {
-            this.draggable.cleanup(true, false, latestCycle, false);
+            this._draggable.cleanup(true, false, latestCycle, false);
             migration.flush(session);
           },
         },
@@ -127,7 +127,7 @@ class EndCycle extends DFlexMechanismController {
     scheduler(
       store,
       () =>
-        this.draggable.cleanup(
+        this._draggable.cleanup(
           isFallback,
           isMigratedInScroll,
           latestCycle,

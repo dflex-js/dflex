@@ -79,7 +79,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
 
   private _preservedAriaDisabled: string | null;
 
-  protected translatePlaceholder: PointNum;
+  protected _translatePlaceholder: PointNum;
 
   /**
    * Creates an instance of AbstractDraggable.
@@ -104,7 +104,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
       translate.y - initCoordinates.y
     );
 
-    this.translatePlaceholder = new PointNum(0, 0);
+    this._translatePlaceholder = new PointNum(0, 0);
 
     this._preservedContentEditable = "true";
     this._preservedAriaDisabled = null;
@@ -134,7 +134,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
    * @param viewportPos
    * @returns
    */
-  protected setDOMAttrAndStyle(
+  protected _setDOMAttrAndStyle(
     originDOM: HTMLElement,
     mirrorDOM: HTMLElement,
     isAddingProps: true,
@@ -143,7 +143,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     viewportPos: [number, number]
   ): void;
 
-  protected setDOMAttrAndStyle(
+  protected _setDOMAttrAndStyle(
     originDOM: HTMLElement,
     mirrorDOM: HTMLElement,
     isAddingProps: false,
@@ -152,7 +152,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     viewportPos: null
   ): void;
 
-  protected setDOMAttrAndStyle(
+  protected _setDOMAttrAndStyle(
     originDOM: HTMLElement,
     mirrorDOM: HTMLElement,
     isAddingProps: false,
@@ -161,7 +161,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     viewportPos: null
   ): void;
 
-  protected setDOMAttrAndStyle(
+  protected _setDOMAttrAndStyle(
     originDOM: HTMLElement,
     mirrorDOM: null,
     isAddingProps: true,
@@ -170,7 +170,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     viewportPos: null
   ): void;
 
-  protected setDOMAttrAndStyle(
+  protected _setDOMAttrAndStyle(
     originDOM: HTMLElement,
     mirrorDOM: null,
     isAddingProps: false,
@@ -179,7 +179,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     viewportPos: null
   ): void;
 
-  protected setDOMAttrAndStyle(
+  protected _setDOMAttrAndStyle(
     originDOM: HTMLElement,
     mirrorDOM: HTMLElement | null,
     isAddingProps: boolean,
@@ -256,7 +256,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
    * @param x - mouse x coordinates
    * @param y - mouse y coordinates
    */
-  protected translate(x: number, y: number) {
+  protected _translate(x: number, y: number) {
     /**
      * Calculates translate coordinates.
      *
@@ -264,15 +264,15 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
      * dropping process. Updating Y immediately will effect calculations in
      * transform, that's why it is updated when dragging is done.
      */
-    this.translatePlaceholder.setAxes(
+    this._translatePlaceholder.setAxes(
       x + this._outerOffset.x,
       y + this._outerOffset.y
     );
 
     DFlexBaseElement.transform(
       this.draggedDOM,
-      this.translatePlaceholder.x,
-      this.translatePlaceholder.y
+      this._translatePlaceholder.x,
+      this._translatePlaceholder.y
     );
   }
 }

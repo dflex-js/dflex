@@ -47,7 +47,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
   private _isScrollThrottled!: IsThrottledFunction;
 
-  protected readonly initialScrollPosition!: PointNum;
+  protected readonly _initialScrollPosition!: PointNum;
 
   constructor(draggable: DraggableInteractive) {
     super(draggable);
@@ -56,7 +56,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     this.cancelScrolling = null;
 
-    this.initialScrollPosition = new PointNum(0, 0);
+    this._initialScrollPosition = new PointNum(0, 0);
 
     // If no scroll don't initialize.
     if (!store.scrolls.has(SK)) {
@@ -76,7 +76,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     [this._scrollThrottle, , this._isScrollThrottled] =
       createTimeout(scrollThrottleMS);
 
-    this.initialScrollPosition.setAxes(left, top);
+    this._initialScrollPosition.setAxes(left, top);
   }
 
   hasActiveScrolling(): boolean {
@@ -119,7 +119,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       return;
     }
 
-    const viewportPos = this.draggable.getViewportCurrentPos();
+    const viewportPos = this._draggable.getViewportCurrentPos();
 
     const [isOut, preservedBoxResult] = scroll.isElmOutViewport(viewportPos);
 
@@ -236,7 +236,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     );
   }
 
-  protected scrollFeed(x: number, y: number, SK: string): void {
+  protected _scrollFeed(x: number, y: number, SK: string): void {
     const draggedDirH: Direction = x < this._prevMousePosition.x ? -1 : 1;
     const draggedDirV: Direction = y < this._prevMousePosition.y ? -1 : 1;
 
