@@ -19,7 +19,7 @@ function cleanupSiblings(store: DFlexDnDStore) {
     const {
       _keys: { SK, BK },
       _depth: depth,
-    } = store.registry.get(id)!;
+    } = store._registry.get(id)!;
 
     store.removeElmFromRegistry(id);
 
@@ -39,7 +39,7 @@ function cleanupSiblings(store: DFlexDnDStore) {
     const connectedNodesID: string[] = [];
     const deletedNodesID: string[] = [];
 
-    const siblings = store.getElmSiblingsByKey(SK);
+    const siblings = store._getElmSiblingsByKey(SK);
 
     for (let i = 0; i < siblings.length; i += 1) {
       const elmID = siblings[i];
@@ -47,12 +47,12 @@ function cleanupSiblings(store: DFlexDnDStore) {
       if (terminatedDOMiDs.has(elmID)) {
         deletedNodesID.push(elmID);
       } else {
-        const dflexElm = store.registry.get(elmID)!;
+        const dflexElm = store._registry.get(elmID)!;
 
         const index = connectedNodesID.push(elmID) - 1;
 
         if (index !== dflexElm._VDOMOrder.self) {
-          dflexElm._updateIndex(store.interactiveDOM.get(elmID)!, index);
+          dflexElm._updateIndex(store._interactiveDOM.get(elmID)!, index);
 
           if (featureFlags.enableRegisterDebugger) {
             // eslint-disable-next-line no-console
@@ -75,7 +75,7 @@ function cleanupSiblings(store: DFlexDnDStore) {
     }
 
     if (connectedNodesID.length > 0) {
-      store.mutateSiblings(SK, connectedNodesID);
+      store._mutateSiblings(SK, connectedNodesID);
 
       deletedNodesID.forEach((id) => {
         store.cleanupELmInstance(id, BK);
@@ -89,13 +89,13 @@ function cleanupSiblings(store: DFlexDnDStore) {
 // Needs refactoring and testing.
 function mutateIDs(store: DFlexDnDStore) {
   changedIds.forEach((idSet) => {
-    if (store.registry.has(idSet.oldId)) {
-      const elm = store.registry.get(idSet.oldId)!;
-      const elmBranch = store.getElmSiblingsByKey(elm._keys.SK);
+    if (store._registry.has(idSet.oldId)) {
+      const elm = store._registry.get(idSet.oldId)!;
+      const elmBranch = store._getElmSiblingsByKey(elm._keys.SK);
 
       // Update registry.
-      store.registry.set(idSet.newId, elm);
-      store.registry.delete(idSet.oldId);
+      store._registry.set(idSet.newId, elm);
+      store._registry.delete(idSet.oldId);
 
       // Update DOM-gen branch.
       elmBranch[elm._VDOMOrder.self] = idSet.newId;
@@ -130,7 +130,7 @@ function checkMutations(store: DFlexDnDStore, mutations: MutationRecord[]) {
             setTimeout(() => {
               addedNodes.forEach((node) => {
                 // TODO: Fix this warning.
-                if (!store.registry.has((node as HTMLElement).id)) {
+                if (!store._registry.has((node as HTMLElement).id)) {
                   // eslint-disable-next-line no-console
                   console.error(
                     // @ts-ignore
@@ -148,7 +148,7 @@ function checkMutations(store: DFlexDnDStore, mutations: MutationRecord[]) {
           if (node instanceof HTMLElement) {
             const { id } = node;
 
-            if (id && store.registry.has(id)) {
+            if (id && store._registry.has(id)) {
               terminatedDOMiDs.add(id);
             }
           }
@@ -253,7 +253,7 @@ function disconnectObservers(store: DFlexDnDStore) {
 
 function connectObservers(store: DFlexDnDStore) {
   store.mutationObserverMap.forEach((_, key) => {
-    const DOM = store.interactiveDOM.get(key)!;
+    const DOM = store._interactiveDOM.get(key)!;
 
     if (__DEV__) {
       if (!DOM) {

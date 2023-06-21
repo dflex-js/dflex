@@ -264,7 +264,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
      * dropping process. Updating Y immediately will effect calculations in
      * transform, that's why it is updated when dragging is done.
      */
-    this._translatePlaceholder.setAxes(
+    this._translatePlaceholder._setAxes(
       x + this._outerOffset.x,
       y + this._outerOffset.y
     );

@@ -13,7 +13,7 @@ class DFlexDraggable extends DFlexBaseDraggable<DFlexBaseElement> {
    * @param clickCoordinates -
    */
   constructor(id: string, clickCoordinates: AxesPoint) {
-    const [element, DOM] = store.getElmWithDOM(id);
+    const [element, DOM] = store.getDOMbyElmID(id);
     super(element, DOM, clickCoordinates);
 
     this._setDOMAttrAndStyle(this.draggedDOM, null, true, false, null, null);
@@ -22,7 +22,7 @@ class DFlexDraggable extends DFlexBaseDraggable<DFlexBaseElement> {
   dragAt(x: number, y: number) {
     this._translate(x, y);
 
-    this.draggedElm._translate.clone(this._translatePlaceholder);
+    this.draggedElm._translate._clone(this._translatePlaceholder);
   }
 
   endDragging() {

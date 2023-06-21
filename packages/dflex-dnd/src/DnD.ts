@@ -22,7 +22,7 @@ class DnD extends Mechanism {
     opts: DFlexDnDOpts = defaultOpts
   ) {
     if (__DEV__) {
-      if (!store.registry.has(id)) {
+      if (!store._registry.has(id)) {
         throw new Error(`DFlex: ${id} is not registered in the Store.`);
       }
     }

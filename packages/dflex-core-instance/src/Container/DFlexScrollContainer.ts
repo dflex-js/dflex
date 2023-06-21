@@ -222,7 +222,7 @@ class DFlexScrollContainer {
     const threshold = new Threshold(thresholdValue);
     const instance = this._thresholdInViewport[type];
     instance.threshold = threshold;
-    threshold.setMainThreshold(
+    threshold._setMainThreshold(
       instance.key,
       this._visibleScrollRect,
       type === "inner"
@@ -241,7 +241,7 @@ class DFlexScrollContainer {
     const hasOverflowX = checkOverflow("x");
     const hasOverflowY = checkOverflow("y");
 
-    this._hasOverflow.setAxes(hasOverflowX, hasOverflowY);
+    this._hasOverflow._setAxes(hasOverflowX, hasOverflowY);
     this._allowDynamicVisibility = false;
 
     if (hasOverflowY) {
@@ -447,7 +447,7 @@ class DFlexScrollContainer {
 
     container[eventAction]("resize", this._throttledResizeHandler, options);
 
-    if (this._hasOverflow.isOneTruthy()) {
+    if (this._hasOverflow._isOneTruthy()) {
       container[eventAction]("scroll", this._throttledScrollHandler, options);
 
       this._updateDOMDataset(isAttachListener, true);
@@ -476,7 +476,7 @@ class DFlexScrollContainer {
 
   private _clearInnerThreshold(): void {
     if (this._thresholdInViewport.inner.threshold) {
-      this._thresholdInViewport.inner.threshold.destroy();
+      this._thresholdInViewport.inner.threshold._destroy();
       this._thresholdInViewport.inner.threshold = null;
     }
   }
@@ -585,13 +585,13 @@ class DFlexScrollContainer {
 
     const { threshold, key } = instance;
 
-    const isOutThreshold = threshold!.isOutThreshold(
+    const isOutThreshold = threshold!._isOutThreshold(
       key,
       viewportPos,
       this._hasOverflow.y ? "y" : "x"
     );
 
-    const preservedBoxResult = threshold!.isOut[key];
+    const preservedBoxResult = threshold!._isOut[key];
 
     return [isOutThreshold, preservedBoxResult];
   }
@@ -610,7 +610,7 @@ class DFlexScrollContainer {
       type: DFlexScrollContainer.getType(),
       version: 3,
       key: this._SK,
-      hasOverFlow: this._hasOverflow.getInstance(),
+      hasOverFlow: this._hasOverflow._getInstance(),
       hasDocumentAsContainer: this._isDocumentContainer,
       scrollRect: this._totalScrollRect._getBox(),
       scrollContainerRect: this._visibleScrollRect._getBox(),

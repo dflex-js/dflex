@@ -11,7 +11,7 @@ class Tracker {
   /**
    * Increment travels and return the last one.
    */
-  newTravel(prefix: string): string {
+  _newTravel(prefix: string): string {
     if (this._travelID[prefix] === undefined) {
       this._travelID[prefix] = 0;
     } else {

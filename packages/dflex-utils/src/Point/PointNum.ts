@@ -9,15 +9,15 @@ class PointNum extends Point<number> {
    *
    * @param point
    */
-  increase(point: AxesPoint): this {
+  _increase(point: AxesPoint): this {
     this.x += point.x;
     this.y += point.y;
 
     return this;
   }
 
-  composeBox(box: AbstractBox, isInner: boolean): BoxNum {
-    const { top: top, left: left, bottom: bottom, right: right } = box;
+  _composeBox(box: AbstractBox, isInner: boolean): BoxNum {
+    const { top, left, bottom, right } = box;
 
     return isInner
       ? new BoxNum(top + this.y, right - this.x, bottom - this.y, left + this.x)
@@ -29,7 +29,7 @@ class PointNum extends Point<number> {
         );
   }
 
-  onSameAxis(axis: Axis, point: AxesPoint): boolean {
+  _onSameAxis(axis: Axis, point: AxesPoint): boolean {
     return axis === "y" ? point.x === this.x : point.y === this.y;
   }
 }

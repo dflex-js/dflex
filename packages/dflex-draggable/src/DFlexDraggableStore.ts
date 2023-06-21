@@ -14,13 +14,13 @@ class DFlexDraggableStore extends DFlexBaseStore {
   }
 
   private _initElmDOMInstance(id: string) {
-    const [dflexNode, DOM] = this.getElmWithDOM(id);
+    const [dflexNode, DOM] = this.getDOMbyElmID(id);
 
     dflexNode._initElmRect(DOM, 0, 0);
   }
 
   private _initBranch(SK: string) {
-    this.getElmSiblingsByKey(SK).forEach(this._initElmDOMInstance);
+    this._getElmSiblingsByKey(SK).forEach(this._initElmDOMInstance);
   }
 
   /**

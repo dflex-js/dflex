@@ -35,7 +35,7 @@ function updateSiblingsVisibility(
     const elmID = sibling[i];
 
     if (elmID.length > 0) {
-      const [elm, DOM] = store.getElmWithDOM(elmID);
+      const [elm, DOM] = store.getDOMbyElmID(elmID);
 
       elm._changeVisibility(DOM, value);
     }
@@ -47,7 +47,7 @@ function updateSiblingsVisibilityLinearly(
   SK: string
 ): void {
   if (__DEV__) {
-    const siblings = store.getElmSiblingsByKey(SK);
+    const siblings = store._getElmSiblingsByKey(SK);
 
     if (siblings.length === 0) {
       throw new Error(
@@ -64,7 +64,7 @@ function updateSiblingsVisibilityLinearly(
     }
   }
 
-  const siblings = store.getElmSiblingsByKey(SK);
+  const siblings = store._getElmSiblingsByKey(SK);
   const scroll = store.scrolls.get(SK)!;
 
   // If not scroll, then all the elements are visible.
@@ -75,7 +75,7 @@ function updateSiblingsVisibilityLinearly(
       const elmID = siblings[i];
 
       if (elmID.length > 0) {
-        const [elm, DOM] = store.getElmWithDOM(elmID);
+        const [elm, DOM] = store.getDOMbyElmID(elmID);
 
         // isBreakable when the element is visible and the next element is not.
         const isBreakable = updateElmVisibility(DOM, elm, scroll);

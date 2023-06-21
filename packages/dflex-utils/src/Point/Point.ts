@@ -7,7 +7,7 @@ class Point<T> extends AxesPoint<T> {
    * @param x
    * @param y
    */
-  setAxes(x: T, y: T): void {
+  _setAxes(x: T, y: T): void {
     this.x = x;
     this.y = y;
   }
@@ -17,8 +17,8 @@ class Point<T> extends AxesPoint<T> {
    *
    * @param target
    */
-  clone(target: Point<T> | AxesPoint<T>): void {
-    this.setAxes(target.x, target.y);
+  _clone(target: Point<T> | AxesPoint<T>): void {
+    this._setAxes(target.x, target.y);
   }
 
   /**
@@ -26,7 +26,7 @@ class Point<T> extends AxesPoint<T> {
    *
    * @returns
    */
-  getInstance(): AxesPoint<T> {
+  _getInstance(): AxesPoint<T> {
     return {
       x: this.x,
       y: this.y,
@@ -39,7 +39,7 @@ class Point<T> extends AxesPoint<T> {
    * @param target
    * @returns
    */
-  isInstanceEqual(target: Point<T> | AxesPoint<T>): boolean {
+  _isInstanceEqual(target: Point<T> | AxesPoint<T>): boolean {
     return this.x === target.x && this.y === target.y;
   }
 
@@ -50,7 +50,7 @@ class Point<T> extends AxesPoint<T> {
    * @param y
    * @returns
    */
-  isEqual(x: T, y: T): boolean {
+  _isEqual(x: T, y: T): boolean {
     return this.x === x && this.y === y;
   }
 
@@ -61,7 +61,7 @@ class Point<T> extends AxesPoint<T> {
    * @param y
    * @returns
    */
-  isNotEqual(x: T, y: T): boolean {
+  _isNotEqual(x: T, y: T): boolean {
     return this.x !== x || this.y !== y;
   }
 }

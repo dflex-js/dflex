@@ -18,10 +18,10 @@ class EndCycle extends DFlexMechanismController {
       },
     } = this._draggable;
 
-    const { index: tempIndex, cycleID } = cycle;
+    const { _index: tempIndex, _cycleID: cycleID } = cycle;
 
     const isElmLiftedUp =
-      this._isParentLocked || threshold.isOut[draggedID].bottom;
+      this._isParentLocked || threshold._isOut[draggedID].bottom;
 
     const to = isElmLiftedUp ? from : 0;
 
@@ -36,7 +36,7 @@ class EndCycle extends DFlexMechanismController {
       const elmID = siblings[i];
 
       if (isIDEligible(elmID, draggedID)) {
-        const [dflexElm, DOM] = store.getElmWithDOM(elmID);
+        const [dflexElm, DOM] = store.getDOMbyElmID(elmID);
 
         /**
          * Note: rolling back won't affect order array. It only deals with element
@@ -47,7 +47,7 @@ class EndCycle extends DFlexMechanismController {
     }
 
     const spliceAt =
-      this._isParentLocked || threshold.isOut[draggedID].bottom
+      this._isParentLocked || threshold._isOut[draggedID].bottom
         ? siblings.length - 1
         : tempIndex;
 
@@ -65,9 +65,9 @@ class EndCycle extends DFlexMechanismController {
   endDragging() {
     const { enableCommit, session } = this._draggable;
     const { migration } = store;
-    const latestCycle = migration.latest();
+    const latestCycle = migration._latest();
 
-    const sessionCycles = migration.filter(session, true);
+    const sessionCycles = migration._filter(session, true);
 
     let isFallback = false;
 
@@ -96,14 +96,14 @@ class EndCycle extends DFlexMechanismController {
         store,
         () => {
           sessionCycles.forEach((_) => {
-            const siblings = store.getElmSiblingsByKey(_.SK);
+            const siblings = store._getElmSiblingsByKey(_._SK);
             this._undoSiblingsPositions(siblings, _);
           });
         },
         {
           onUpdate: () => {
             this._draggable.cleanup(true, false, latestCycle, false);
-            migration.flush(session);
+            migration._flush(session);
           },
         },
         {
@@ -117,7 +117,7 @@ class EndCycle extends DFlexMechanismController {
 
     // If length is zero, means it's original and no need to migrate.
     const isMigratedInScroll =
-      latestCycle.hasScroll && sessionCycles.length > 1;
+      latestCycle._hasScroll && sessionCycles.length > 1;
 
     const { enableAfterEndingDrag, enableForScrollOnly } = enableCommit;
 

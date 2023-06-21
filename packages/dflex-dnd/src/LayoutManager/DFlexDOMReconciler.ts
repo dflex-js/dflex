@@ -38,7 +38,7 @@ function setElmGridAndAssertPosition(
 
     if (
       !containerDOM.children[elmIndex].isSameNode(
-        store.interactiveDOM.get(elmID)!
+        store._interactiveDOM.get(elmID)!
       )
     ) {
       didThrowError = true;
@@ -50,12 +50,15 @@ function setElmGridAndAssertPosition(
         containerDOM
       );
       console.error("Actually DOM tree has: ", containerDOM.children[elmIndex]);
-      console.error("While DFlex Store has: ", store.interactiveDOM.get(elmID));
+      console.error(
+        "While DFlex Store has: ",
+        store._interactiveDOM.get(elmID)
+      );
     }
 
     // dflexElm._initIndicators(store.interactiveDOM.get(elmID)!);
     if (featureFlags.enablePositionAssertion) {
-      assertElmPos(store.interactiveDOM.get(elmID)!, dflexElm.rect);
+      assertElmPos(store._interactiveDOM.get(elmID)!, dflexElm.rect);
     }
   }, 0);
 }
@@ -74,7 +77,7 @@ function switchElmDOMPosition(
   if (VDOMIndex + 1 === branchIDs.length) {
     branchDOM.appendChild(elmDOM);
   } else {
-    const PevElmDOM = store.interactiveDOM.get(branchIDs[VDOMIndex + 1])!;
+    const PevElmDOM = store._interactiveDOM.get(branchIDs[VDOMIndex + 1])!;
 
     branchDOM.insertBefore(elmDOM, PevElmDOM);
   }
@@ -82,7 +85,7 @@ function switchElmDOMPosition(
   const shiftDirection = VDOMIndex > DOMIndex ? 1 : -1;
 
   for (let i = VDOMIndex - 1; i >= DOMIndex; i -= 1) {
-    const dflexNextElm = store.registry.get(branchIDs[i])!;
+    const dflexNextElm = store._registry.get(branchIDs[i])!;
 
     dflexNextElm._DOMOrder.self += shiftDirection;
   }
@@ -98,7 +101,7 @@ function commitElm(
   store: DFlexDnDStore,
   elmID: string
 ): void {
-  const [dflexElm, elmDOM] = store.getElmWithDOM(elmID);
+  const [dflexElm, elmDOM] = store.getDOMbyElmID(elmID);
 
   if (dflexElm._hasTransformedFromOrigin()) {
     if (
@@ -106,7 +109,7 @@ function commitElm(
       // Until the element owns its transformation between containers history we
       // can't rely only on the local indicators as it only reflects the
       // elements movement inside the origin container.
-      store.migration.filter([dflexElm._id], false)
+      store.migration._filter([dflexElm._id], false)
     ) {
       switchElmDOMPosition(branchIDs, branchDOM, store, dflexElm, elmDOM);
     }
@@ -142,7 +145,7 @@ function DFlexDOMReconciler(
   let isUpdateElmGrid = true;
 
   const {
-    _totalScrollRect: { left: left, top: top },
+    _totalScrollRect: { left, top },
   } = scroll;
 
   if (refreshAllBranchElements) {
@@ -150,7 +153,7 @@ function DFlexDOMReconciler(
     reconciledElmQueue = [];
 
     for (let i = 0; i <= branchIDs.length - 1; i += 1) {
-      const [dflexElm, elmDOM] = store.getElmWithDOM(branchIDs[i]);
+      const [dflexElm, elmDOM] = store.getDOMbyElmID(branchIDs[i]);
 
       dflexElm._refreshIndicators(elmDOM, left, top);
 
@@ -177,7 +180,7 @@ function DFlexDOMReconciler(
 
   if (isUpdateElmGrid) {
     for (let i = 0; i <= branchIDs.length - 1; i += 1) {
-      const dflexElm = store.registry.get(branchIDs[i])!;
+      const dflexElm = store._registry.get(branchIDs[i])!;
 
       if (__DEV__) {
         setElmGridAndAssertPosition(

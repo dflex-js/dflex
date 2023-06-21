@@ -2,19 +2,19 @@
 
 class AbstractDFlexCycle {
   /** Transitioning element ID. */
-  id: string;
+  _id: string;
 
   /** Last known index for draggable before transitioning. */
-  index: number;
+  _index: number;
 
   /** Transition siblings key. */
-  SK: string;
+  _SK: string;
 
-  cycleID: string;
+  _cycleID: string;
 
-  hasScroll: boolean;
+  _hasScroll: boolean;
 
-  numberOfTransformedELm: number;
+  _numberOfTransformedELm: number;
 
   /** Defined during the transition. */
   marginBottom: number | null;
@@ -29,12 +29,12 @@ class AbstractDFlexCycle {
     cycleID: string,
     hasScroll: boolean
   ) {
-    this.index = index;
-    this.SK = SK;
-    this.id = id;
-    this.cycleID = cycleID;
-    this.hasScroll = hasScroll;
-    this.numberOfTransformedELm = 0;
+    this._index = index;
+    this._SK = SK;
+    this._id = id;
+    this._cycleID = cycleID;
+    this._hasScroll = hasScroll;
+    this._numberOfTransformedELm = 0;
 
     // TODO: Replace this with PointNum.
     this.marginBottom = null;
@@ -49,10 +49,10 @@ class AbstractDFlexCycle {
 class DFlexCycle {
   private _migrations: AbstractDFlexCycle[];
 
-  containerKeys: Set<string>;
+  _containerKeys: Set<string>;
 
   /** Only true when transitioning. */
-  isTransitioning!: boolean;
+  _isTransitioning!: boolean;
 
   constructor(
     index: number,
@@ -64,21 +64,21 @@ class DFlexCycle {
     this._migrations = [
       new AbstractDFlexCycle(index, id, SK, cycleID, hasScroll),
     ];
-    this.containerKeys = new Set([SK]);
-    this.complete();
+    this._containerKeys = new Set([SK]);
+    this._complete();
   }
 
   /** Get the latest migrations instance */
-  latest(): AbstractDFlexCycle {
+  _latest(): AbstractDFlexCycle {
     return this._migrations[this._migrations.length - 1];
   }
 
   /** Get the previous migrations instance */
-  prev(): AbstractDFlexCycle {
+  _prev(): AbstractDFlexCycle {
     return this._migrations[this._migrations.length - 2];
   }
 
-  getAll(): AbstractDFlexCycle[] {
+  _getAll(): AbstractDFlexCycle[] {
     return this._migrations;
   }
 
@@ -89,19 +89,19 @@ class DFlexCycle {
    * @param byCycleID
    * @returns
    */
-  filter(cycleIDs: string[], byCycleID: boolean): AbstractDFlexCycle[] {
+  _filter(cycleIDs: string[], byCycleID: boolean): AbstractDFlexCycle[] {
     return byCycleID
-      ? this._migrations.filter((_) => cycleIDs.find((i) => i === _.cycleID))
-      : this._migrations.filter((_) => cycleIDs.find((i) => i === _.id));
+      ? this._migrations.filter((_) => cycleIDs.find((i) => i === _._cycleID))
+      : this._migrations.filter((_) => cycleIDs.find((i) => i === _._id));
   }
 
-  flush(cycleIDs: string[]): void {
+  _flush(cycleIDs: string[]): void {
     const removedKeys = new Set<string>();
 
     this._migrations = this._migrations.filter((_) => {
       const shouldDelete = cycleIDs.find((id) => {
-        if (id === _.SK) {
-          removedKeys.add(_.SK);
+        if (id === _._SK) {
+          removedKeys.add(_._SK);
 
           return true;
         }
@@ -113,15 +113,15 @@ class DFlexCycle {
         return true;
       }
 
-      if (removedKeys.has(_.SK)) {
-        removedKeys.delete(_.SK);
+      if (removedKeys.has(_._SK)) {
+        removedKeys.delete(_._SK);
       }
 
       return false;
     });
 
     removedKeys.forEach((ky) => {
-      this.containerKeys.delete(ky);
+      this._containerKeys.delete(ky);
     });
   }
 
@@ -132,18 +132,18 @@ class DFlexCycle {
    *
    * @param index
    */
-  setIndex(index: number): void {
-    this.latest().index = index;
-    this.latest().numberOfTransformedELm += 1;
+  _setIndex(index: number): void {
+    this._latest()._index = index;
+    this._latest()._numberOfTransformedELm += 1;
   }
 
-  preserveVerticalMargin(type: "top" | "bottom", m: number | null): void {
-    this.latest()[type === "bottom" ? "marginBottom" : "marginTop"] = m;
+  _preserveVerticalMargin(type: "top" | "bottom", m: number | null): void {
+    this._latest()[type === "bottom" ? "marginBottom" : "marginTop"] = m;
   }
 
-  clearMargin(): void {
-    this.latest().marginBottom = null;
-    this.latest().marginTop = null;
+  _clearMargin(): void {
+    this._latest().marginBottom = null;
+    this._latest().marginTop = null;
   }
 
   /**
@@ -154,7 +154,7 @@ class DFlexCycle {
    * @param cycleID
    * @param hasScroll
    */
-  add(
+  _add(
     index: number,
     id: string,
     SK: string,
@@ -164,29 +164,29 @@ class DFlexCycle {
     this._migrations.push(
       new AbstractDFlexCycle(index, id, SK, cycleID, hasScroll)
     );
-    this.containerKeys.add(SK);
+    this._containerKeys.add(SK);
   }
 
   /**
    * start transitioning
    */
-  start(): void {
-    this.isTransitioning = true;
+  _start(): void {
+    this._isTransitioning = true;
   }
 
   /**
    * Get the migration done
    */
-  complete(): void {
-    this.isTransitioning = false;
+  _complete(): void {
+    this._isTransitioning = false;
 
-    this.preserveVerticalMargin("top", null);
-    this.preserveVerticalMargin("bottom", null);
+    this._preserveVerticalMargin("top", null);
+    this._preserveVerticalMargin("bottom", null);
   }
 
-  clear(): void {
+  _clear(): void {
     this._migrations = [];
-    this.containerKeys.clear();
+    this._containerKeys.clear();
   }
 }
 

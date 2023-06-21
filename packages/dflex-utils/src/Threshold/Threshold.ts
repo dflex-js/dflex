@@ -14,18 +14,18 @@ export interface ThresholdPercentages {
 }
 
 class DFlexThreshold {
-  readonly thresholds: Record<string, BoxNum>;
+  readonly _thresholds: Record<string, BoxNum>;
 
   private _pixels!: PointNum;
 
   private _percentages: ThresholdPercentages;
 
-  isOut: Record<string, BoxBool>;
+  _isOut: Record<string, BoxBool>;
 
   constructor(percentages: ThresholdPercentages) {
     this._percentages = percentages;
-    this.thresholds = {};
-    this.isOut = {};
+    this._thresholds = {};
+    this._isOut = {};
   }
 
   private _createPixels({ width, height }: Dimensions): void {
@@ -42,26 +42,26 @@ class DFlexThreshold {
     isInner: boolean
   ): void {
     if (__DEV__) {
-      if (this.thresholds[key] || this.isOut[key]) {
+      if (this._thresholds[key] || this._isOut[key]) {
         throw new Error(`Threshold with key: ${key} already exists`);
       }
     }
 
-    this.thresholds[key] = this._pixels.composeBox(box, isInner);
+    this._thresholds[key] = this._pixels._composeBox(box, isInner);
 
-    this.isOut[key] = new BoxBool(false, false, false, false);
+    this._isOut[key] = new BoxBool(false, false, false, false);
   }
 
   private _setDepthThreshold(key: string, depth: number): void {
     const dp = `${depth}`;
 
-    if (!this.thresholds[dp]) {
-      this._createThreshold(dp, this.thresholds[key], false);
+    if (!this._thresholds[dp]) {
+      this._createThreshold(dp, this._thresholds[key], false);
 
       return;
     }
 
-    this.thresholds[depth]._assignBiggestBox(this.thresholds[key]);
+    this._thresholds[depth]._assignBiggestBox(this._thresholds[key]);
   }
 
   /**
@@ -74,7 +74,7 @@ class DFlexThreshold {
    * @param box
    * @param isInner
    */
-  setMainThreshold(key: string, box: AbstractBoxRect, isInner: boolean): void {
+  _setMainThreshold(key: string, box: AbstractBoxRect, isInner: boolean): void {
     this._createPixels(box);
 
     this._createThreshold(key, box, isInner);
@@ -87,20 +87,20 @@ class DFlexThreshold {
    * @param rect
    * @param isInner
    */
-  updateMainThreshold(key: string, rect: AbstractBox, isInner: boolean): void {
+  _updateMainThreshold(key: string, rect: AbstractBox, isInner: boolean): void {
     if (__DEV__) {
-      if (!this.thresholds[key]) {
+      if (!this._thresholds[key]) {
         throw new Error(`Threshold ${key} does not exist.`);
       }
     }
 
-    this.thresholds[key] = this._pixels.composeBox(rect, isInner);
+    this._thresholds[key] = this._pixels._composeBox(rect, isInner);
 
-    this.isOut[key]._setFalsy();
+    this._isOut[key]._setFalsy();
   }
 
-  getElmMainThreshold(rect: AbstractBox): BoxNum {
-    return this._pixels.composeBox(rect, false);
+  _getElmMainThreshold(rect: AbstractBox): BoxNum {
+    return this._pixels._composeBox(rect, false);
   }
 
   /**
@@ -115,7 +115,7 @@ class DFlexThreshold {
    * @param containerRect
    * @param unifiedContainerDimensions
    */
-  setContainerThreshold(
+  _setContainerThreshold(
     SK: string,
     insertionLayerKey: string,
     childDepth: number,
@@ -125,15 +125,15 @@ class DFlexThreshold {
     // Regular threshold.
     this._createThreshold(SK, containerRect, false);
 
-    const { top: top, left: left } = containerRect;
+    const { top, left } = containerRect;
     const { height, width } = unifiedContainerDimensions;
 
     // Insertion threshold.
     this._createThreshold(
       insertionLayerKey,
       {
-        left: left,
-        top: top,
+        left,
+        top,
         right: left + width,
         bottom: top + height,
       },
@@ -144,18 +144,18 @@ class DFlexThreshold {
     this._setDepthThreshold(insertionLayerKey, childDepth);
   }
 
-  isOutThreshold(key: string, box: BoxNum, axis: Axis | null): boolean {
-    const thresholdBox = this.thresholds[key];
+  _isOutThreshold(key: string, box: BoxNum, axis: Axis | null): boolean {
+    const thresholdBox = this._thresholds[key];
 
-    return box._isOutThreshold(thresholdBox, this.isOut[key], axis);
+    return box._isOutThreshold(thresholdBox, this._isOut[key], axis);
   }
 
-  destroy(): void {
-    Object.keys(this.thresholds).forEach((key) => {
-      delete this.thresholds[key];
+  _destroy(): void {
+    Object.keys(this._thresholds).forEach((key) => {
+      delete this._thresholds[key];
     });
-    Object.keys(this.isOut).forEach((key) => {
-      delete this.isOut[key];
+    Object.keys(this._isOut).forEach((key) => {
+      delete this._isOut[key];
     });
   }
 }

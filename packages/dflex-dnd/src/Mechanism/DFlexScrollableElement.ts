@@ -52,7 +52,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
   constructor(draggable: DraggableInteractive) {
     super(draggable);
 
-    const { SK } = store.migration.latest();
+    const { _SK: SK } = store.migration._latest();
 
     this.cancelScrolling = null;
 
@@ -67,7 +67,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     this._prevMouseDirection = new Point<Direction>(-1, -1);
 
     const {
-      _totalScrollRect: { left: left, top: top },
+      _totalScrollRect: { left, top },
       _visibleScrollRect: { width, height },
     } = store.scrolls.get(SK)!;
 
@@ -76,7 +76,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     [this._scrollThrottle, , this._isScrollThrottled] =
       createTimeout(scrollThrottleMS);
 
-    this._initialScrollPosition.setAxes(left, top);
+    this._initialScrollPosition._setAxes(left, top);
   }
 
   hasActiveScrolling(): boolean {
@@ -265,8 +265,8 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       );
     }
 
-    this._prevMousePosition.setAxes(x, y);
-    this._prevMouseDirection.setAxes(draggedDirH, draggedDirV);
+    this._prevMousePosition._setAxes(x, y);
+    this._prevMouseDirection._setAxes(draggedDirH, draggedDirV);
   }
 }
 

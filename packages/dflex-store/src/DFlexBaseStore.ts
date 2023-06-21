@@ -165,13 +165,13 @@ const REGISTER_Q = "registerQ";
 const CB_Q = "submitQ";
 
 class DFlexBaseStore {
-  globals: DFlexGlobalConfig;
+  _globals: DFlexGlobalConfig;
 
-  registry: Map<string, DFlexElement>;
+  _registry: Map<string, DFlexElement>;
 
-  interactiveDOM: Map<string, HTMLElement>;
+  _interactiveDOM: Map<string, HTMLElement>;
 
-  tracker: Tracker;
+  _tracker: Tracker;
 
   protected _DOMGen: Generator;
 
@@ -180,14 +180,14 @@ class DFlexBaseStore {
   private _taskQ: TaskQueue;
 
   constructor() {
-    this.globals = {
+    this._globals = {
       removeContainerWhenEmpty: false,
     };
     this._lastDOMParent = null;
-    this.tracker = new Tracker();
+    this._tracker = new Tracker();
     this._taskQ = new TaskQueue();
-    this.registry = new Map();
-    this.interactiveDOM = new Map();
+    this._registry = new Map();
+    this._interactiveDOM = new Map();
     this._DOMGen = new Generator();
   }
 
@@ -203,7 +203,7 @@ class DFlexBaseStore {
       }
     }
 
-    Object.assign(this.globals, globals);
+    Object.assign(this._globals, globals);
   }
 
   private _submitElementToRegistry(
@@ -214,7 +214,7 @@ class DFlexBaseStore {
     const { id, depth, readonly, animation, CSSTransform } = elm;
 
     if (__DEV__) {
-      if (this.registry.has(id) || this.interactiveDOM.has(id)) {
+      if (this._registry.has(id) || this._interactiveDOM.has(id)) {
         throw new Error(
           `_submitElementToRegistry: Element with id: ${id} is already registered.`
         );
@@ -228,13 +228,13 @@ class DFlexBaseStore {
       _hasSiblingInSameLevel = hasSiblingInSameLevel(
         DOM,
         this._DOMGen,
-        this.interactiveDOM,
+        this._interactiveDOM,
         depth
       );
 
       setRelativePosition(DOM);
 
-      if (!this.globals.removeContainerWhenEmpty) {
+      if (!this._globals.removeContainerWhenEmpty) {
         setFixedDimensions(DOM);
       }
     }
@@ -276,8 +276,8 @@ class DFlexBaseStore {
       }
     }
 
-    this.registry.set(id, dflexElm);
-    this.interactiveDOM.set(id, DOM);
+    this._registry.set(id, dflexElm);
+    this._interactiveDOM.set(id, DOM);
 
     dflexElm._setAttribute(DOM, "INDEX", dflexElm._VDOMOrder.self);
 
@@ -303,11 +303,11 @@ class DFlexBaseStore {
         let { id } = DOM;
 
         if (!id) {
-          id = this.tracker.newTravel(PREFIX_ID);
+          id = this._tracker._newTravel(PREFIX_ID);
           DOM.id = id;
         }
 
-        if (!this.registry.has(id)) {
+        if (!this._registry.has(id)) {
           const elm: RegisterInputProcessed = {
             depth,
             readonly: registeredElmID !== id,
@@ -334,7 +334,7 @@ class DFlexBaseStore {
     return SK;
   }
 
-  endRegistration() {
+  _endRegistration() {
     this._lastDOMParent = null;
     this._DOMGen.endRegistration();
 
@@ -352,11 +352,11 @@ class DFlexBaseStore {
     highestContainerComposedCallBack?: HighestContainerComposedCallBack
   ): void {
     // Don't execute the parent registration if there's new element in the branch.
-    this._taskQ.cancelQueuedTask();
+    this._taskQ._cancelQueuedTask();
 
     const { id, depth, readonly, animation, CSSTransform } = element;
 
-    let isElmRegistered = this.registry.has(id);
+    let isElmRegistered = this._registry.has(id);
 
     if (__DEV__) {
       if (featureFlags.enableRegisterDebugger) {
@@ -374,9 +374,9 @@ class DFlexBaseStore {
     let SK: string;
 
     if (isElmRegistered) {
-      DOM = this.interactiveDOM.get(id)!;
+      DOM = this._interactiveDOM.get(id)!;
 
-      const dflexElm = this.registry.get(id)!;
+      const dflexElm = this._registry.get(id)!;
 
       // Update default values created earlier.
       dflexElm._updateConfig(readonly, animation, CSSTransform);
@@ -392,14 +392,14 @@ class DFlexBaseStore {
       let { id: parentID } = parentDOM;
 
       if (!parentID) {
-        parentID = this.tracker.newTravel(PREFIX_ID);
+        parentID = this._tracker._newTravel(PREFIX_ID);
         parentDOM.id = parentID;
       } else {
-        isParentRegistered = this.registry.has(parentID);
+        isParentRegistered = this._registry.has(parentID);
       }
 
       // Is this element already queued as parent?
-      if (this._taskQ.hasElm(id)) {
+      if (this._taskQ._hasElm(id)) {
         if (__DEV__) {
           if (featureFlags.enableRegisterDebugger) {
             // eslint-disable-next-line no-console
@@ -407,9 +407,9 @@ class DFlexBaseStore {
           }
         }
 
-        [SK] = this._taskQ.executeQueue(REGISTER_Q) as string[];
+        [SK] = this._taskQ._executeQueue(REGISTER_Q) as string[];
 
-        const dflexElm = this.registry.get(id)!;
+        const dflexElm = this._registry.get(id)!;
 
         // Update default values created earlier.
         dflexElm._updateConfig(readonly, animation, CSSTransform);
@@ -461,7 +461,7 @@ class DFlexBaseStore {
 
             const fn = () => branchComposedCallBack(SK, depth + 1, parentDOM);
 
-            this._taskQ.enqueueBeforeLast(
+            this._taskQ._enqueueBeforeLast(
               highestContainerComposedCallBack,
               fn,
               CB_Q
@@ -490,7 +490,7 @@ class DFlexBaseStore {
             }
           }
 
-          this._taskQ.executeQueue(REGISTER_Q);
+          this._taskQ._executeQueue(REGISTER_Q);
 
           const parentDepth = depth + 1;
 
@@ -536,13 +536,13 @@ class DFlexBaseStore {
           }
 
           // A new branch. Queue the new branch.
-          this._taskQ.enqueue(submitParentElm, REGISTER_Q, parentID);
+          this._taskQ._enqueue(submitParentElm, REGISTER_Q, parentID);
 
           scheduleCBFunctions();
         } else if (!isElmRegistered) {
           // Streaming case.
           // Registration finished but one of the layer has changed.
-          registerAllChildren(this.registry.get(parentID)!);
+          registerAllChildren(this._registry.get(parentID)!);
 
           scheduleCBFunctions();
         }
@@ -556,7 +556,7 @@ class DFlexBaseStore {
         }
       }
 
-      this._taskQ.scheduleNextTask([REGISTER_Q, CB_Q]);
+      this._taskQ._scheduleNextTask([REGISTER_Q, CB_Q]);
 
       return true;
     });
@@ -568,15 +568,15 @@ class DFlexBaseStore {
    * @param id
    * @returns
    */
-  getElmWithDOM(id: string): GetElmWithDOMOutput {
+  getDOMbyElmID(id: string): GetElmWithDOMOutput {
     if (__DEV__) {
-      if (!(this.registry.has(id) && this.interactiveDOM.has(id))) {
-        throw new Error(`getElmWithDOM: Unable to find element with ID: ${id}`);
+      if (!(this._registry.has(id) && this._interactiveDOM.has(id))) {
+        throw new Error(`getDOMbyElmID: Unable to find element with ID: ${id}`);
       }
     }
 
-    const elm = this.registry.get(id)!;
-    const DOM = this.interactiveDOM.get(id)!;
+    const elm = this._registry.get(id)!;
+    const DOM = this._interactiveDOM.get(id)!;
 
     return [elm, DOM];
   }
@@ -588,7 +588,7 @@ class DFlexBaseStore {
    * @returns
    */
   has(id: string): boolean {
-    return this.interactiveDOM.has(id) && this.registry.has(id);
+    return this._interactiveDOM.has(id) && this._registry.has(id);
   }
 
   /**
@@ -597,7 +597,7 @@ class DFlexBaseStore {
    * @param SK - Siblings Key.
    * @returns
    */
-  getElmSiblingsByKey(SK: string): Siblings {
+  _getElmSiblingsByKey(SK: string): Siblings {
     return this._DOMGen.getElmSiblingsByKey(SK);
   }
 
@@ -607,7 +607,7 @@ class DFlexBaseStore {
    * @param dp - depth.
    * @returns
    */
-  getSiblingKeysByDepth(dp: number): Siblings {
+  _getSiblingKeysByDepth(dp: number): Siblings {
     return this._DOMGen.getSiblingKeysByDepth(dp);
   }
 
@@ -617,7 +617,7 @@ class DFlexBaseStore {
    * @param SK
    * @param newSiblings
    */
-  mutateSiblings(SK: string, newSiblings: Siblings): void {
+  _mutateSiblings(SK: string, newSiblings: Siblings): void {
     this._DOMGen.mutateSiblings(SK, newSiblings);
   }
 
@@ -627,8 +627,8 @@ class DFlexBaseStore {
    * @param id - element id.
    */
   unregister(id: string): void {
-    this.registry.delete(id);
-    this.interactiveDOM.delete(id);
+    this._registry.delete(id);
+    this._interactiveDOM.delete(id);
   }
 
   /**
@@ -637,9 +637,9 @@ class DFlexBaseStore {
    */
   destroy(): void {
     this._DOMGen.clear();
-    this.interactiveDOM.clear();
-    this.registry.clear();
-    this._taskQ.clear();
+    this._interactiveDOM.clear();
+    this._registry.clear();
+    this._taskQ._clear();
     this._lastDOMParent = null;
 
     if (__DEV__) {

@@ -152,8 +152,8 @@ class DFlexParentContainer {
    * @param originLength
    */
   _resetIndicators(originLength: number): void {
-    this._gridIndex.setAxes(-1, -1);
-    this._grid.setAxes(-1, -1);
+    this._gridIndex._setAxes(-1, -1);
+    this._grid._setAxes(-1, -1);
     this._originLength = originLength;
     this._boundariesByRow._setBox(0, 0, 0, 0);
     this._siblingBoundaries = null;
@@ -163,7 +163,7 @@ class DFlexParentContainer {
 
   _preservePosition(pos: AxesPoint): void {
     if (this.lastElmPosition) {
-      this.lastElmPosition.setAxes(pos.x, pos.y);
+      this.lastElmPosition._setAxes(pos.x, pos.y);
     } else {
       this.lastElmPosition = new PointNum(pos.x, pos.y);
     }

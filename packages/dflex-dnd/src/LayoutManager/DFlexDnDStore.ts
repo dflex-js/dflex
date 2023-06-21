@@ -163,7 +163,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.containers = new Map();
     this.scrolls = new Map();
     this.unifiedContainerDimensions = {};
-    this.tracker = new Tracker();
+    this._tracker = new Tracker();
     // @ts-ignore- `null` until we have element to drag.
     this.migration = null;
     this._isInitialized = false;
@@ -219,7 +219,7 @@ class DFlexDnDStore extends DFlexBaseStore {
       this.unifiedContainerDimensions[dflexElm._depth]
     );
 
-    dflexElm._DOMGrid.clone(gridIndex);
+    dflexElm._DOMGrid._clone(gridIndex);
   }
 
   private _resumeAndInitElmGrid(
@@ -227,10 +227,10 @@ class DFlexDnDStore extends DFlexBaseStore {
     scroll: DFlexScrollContainer,
     id: string
   ): void {
-    const [dflexElm, DOM] = this.getElmWithDOM(id);
+    const [dflexElm, DOM] = this.getDOMbyElmID(id);
 
     const {
-      _totalScrollRect: { left: left, top: top },
+      _totalScrollRect: { left, top },
     } = scroll;
 
     dflexElm._initElmRect(DOM, left, top);
@@ -267,7 +267,7 @@ class DFlexDnDStore extends DFlexBaseStore {
         console.log(`_initSiblings: ${SK}`, siblings);
       }
 
-      if (siblings.length === 0 || !this.interactiveDOM.has(siblings[0])) {
+      if (siblings.length === 0 || !this._interactiveDOM.has(siblings[0])) {
         throw new Error(
           `_initSiblings: Unable to find DOM element for siblings ${JSON.stringify(
             siblings
@@ -276,7 +276,7 @@ class DFlexDnDStore extends DFlexBaseStore {
       }
     }
 
-    const firstELmDOM = this.interactiveDOM.get(siblings[0])!;
+    const firstELmDOM = this._interactiveDOM.get(siblings[0])!;
 
     const scroll = new DFlexScrollContainer(
       firstELmDOM,
@@ -329,13 +329,13 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     highestSKInAllBranches.forEach(({ id }) => {
       if (__DEV__) {
-        if (!this.interactiveDOM.has(id)) {
+        if (!this._interactiveDOM.has(id)) {
           throw new Error(`_initObservers: Unable to find DOM for SK: ${id}`);
         }
       }
 
       if (!this.mutationObserverMap.has(id)) {
-        const parentDOM = this.interactiveDOM.get(id)!;
+        const parentDOM = this._interactiveDOM.get(id)!;
 
         addObserver(this, id, parentDOM);
 
@@ -355,7 +355,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     this.isComposing = false;
 
-    this.endRegistration();
+    this._endRegistration();
 
     scheduler(this, null, null, { type: "layoutState", status: "ready" });
   }
@@ -409,21 +409,21 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   private _refreshBranchesRect(excludeMigratedContainers: boolean) {
     this.containers.forEach((container, containerKy) => {
-      const branch = this.getElmSiblingsByKey(containerKy);
+      const branch = this._getElmSiblingsByKey(containerKy);
 
       const is = excludeMigratedContainers
-        ? !this.migration.containerKeys.has(containerKy)
+        ? !this.migration._containerKeys.has(containerKy)
         : true;
 
       if (is) {
         const scroll = this.scrolls.get(containerKy)!;
 
         const {
-          _totalScrollRect: { left: left, top: top },
+          _totalScrollRect: { left, top },
         } = scroll;
 
         branch.forEach((elmID) => {
-          const [dflexElm, elmDOM] = this.getElmWithDOM(elmID);
+          const [dflexElm, elmDOM] = this.getDOMbyElmID(elmID);
 
           dflexElm._initElmRect(elmDOM, left, top);
 
@@ -438,7 +438,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   private _forEachContainerDOM(cb: (DOM: HTMLElement) => void) {
     this.containers.forEach((container) => {
-      const DOM = this.interactiveDOM.get(container._id)!;
+      const DOM = this._interactiveDOM.get(container._id)!;
 
       cb(DOM);
     });
@@ -462,7 +462,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     this._refreshAllElmBranchWhileReconcile = true;
 
-    if (this.migration === null || this.migration.containerKeys.size === 0) {
+    if (this.migration === null || this.migration._containerKeys.size === 0) {
       this._refreshBranchesRect(false);
 
       return;
@@ -478,8 +478,8 @@ class DFlexDnDStore extends DFlexBaseStore {
   ): void {
     const container = this.containers.get(SK)!;
     const scroll = this.scrolls.get(SK)!;
-    const branch = this.getElmSiblingsByKey(SK);
-    const parentDOM = this.interactiveDOM.get(container._id)!;
+    const branch = this._getElmSiblingsByKey(SK);
+    const parentDOM = this._interactiveDOM.get(container._id)!;
 
     scheduler(
       this,
@@ -523,7 +523,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     const refreshAllBranchElements =
       this._refreshAllElmBranchWhileReconcile === undefined
         ? // If more than one container involved reset all.
-          this.migration.containerKeys.size > 1
+          this.migration._containerKeys.size > 1
         : this._refreshAllElmBranchWhileReconcile;
 
     if (__DEV__) {
@@ -536,14 +536,14 @@ class DFlexDnDStore extends DFlexBaseStore {
           // eslint-disable-next-line no-console
           console.warn("Executing commit for zero depth layer.");
 
-          this.getSiblingKeysByDepth(0).forEach((k) =>
+          this._getSiblingKeysByDepth(0).forEach((k) =>
             this._reconcileBranch(k, refreshAllBranchElements)
           );
 
           return;
         }
 
-        this.migration.containerKeys.forEach((k) => {
+        this.migration._containerKeys.forEach((k) => {
           this._reconcileBranch(k, refreshAllBranchElements);
         });
 
@@ -551,7 +551,7 @@ class DFlexDnDStore extends DFlexBaseStore {
       }
     }
 
-    if (this.migration === null || this.migration.containerKeys.size === 0) {
+    if (this.migration === null || this.migration._containerKeys.size === 0) {
       if (__DEV__) {
         // eslint-disable-next-line no-console
         console.warn("Migration is empty. Nothing to commit.");
@@ -562,7 +562,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     disconnectObservers(this);
 
-    this.migration.containerKeys.forEach((k) => {
+    this.migration._containerKeys.forEach((k) => {
       this._reconcileBranch(k, refreshAllBranchElements);
     });
 
@@ -571,7 +571,7 @@ class DFlexDnDStore extends DFlexBaseStore {
         // Done reconciliation.
         connectObservers(this);
 
-        this.migration.clear();
+        this.migration._clear();
 
         this._refreshAllElmBranchWhileReconcile = undefined;
         this.isComposing = false;
@@ -581,15 +581,15 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   getSerializedElm(id: string): DFlexSerializedElement | null {
     if (__DEV__) {
-      if (!this.registry.has(id)) {
+      if (!this._registry.has(id)) {
         throw new Error(
           `getSerializedElm: Element with id ${id} does not exist in the registry.`
         );
       }
     }
 
-    return this.registry.has(id)
-      ? this.registry.get(id)!._getSerializedInstance()
+    return this._registry.has(id)
+      ? this._registry.get(id)!._getSerializedInstance()
       : null;
   }
 
@@ -604,22 +604,22 @@ class DFlexDnDStore extends DFlexBaseStore {
   getScrollWithSiblingsByID(id: string): [DFlexScrollContainer, Siblings] {
     const {
       _keys: { SK },
-    } = this.registry.get(id)!;
+    } = this._registry.get(id)!;
 
     const scroll = this.scrolls.get(SK)!;
-    const siblings = this.getElmSiblingsByKey(SK);
+    const siblings = this._getElmSiblingsByKey(SK);
 
     return [scroll, siblings];
   }
 
   getSerializedScrollContainer(id: string): DFlexSerializedScroll | null {
-    if (!this.registry.has(id)) {
+    if (!this._registry.has(id)) {
       return null;
     }
 
     const {
       _keys: { SK },
-    } = this.registry.get(id)!;
+    } = this._registry.get(id)!;
 
     if (!this.scrolls.has(SK)) {
       return null;
@@ -639,7 +639,7 @@ class DFlexDnDStore extends DFlexBaseStore {
   getContainerByID(id: string): DFlexParentContainer {
     const {
       _keys: { SK },
-    } = this.registry.get(id)!;
+    } = this._registry.get(id)!;
 
     const container = this.containers.get(SK)!;
 
@@ -708,7 +708,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     // TODO:
     // Migration is initiated with null. But it's not typed as such.
     if (this.migration) {
-      this.migration.clear();
+      this.migration._clear();
     }
 
     // Destroys all registered local instances in parent class.

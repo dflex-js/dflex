@@ -40,7 +40,7 @@ class TaskQueue {
     );
   }
 
-  hasElm(elmKey: string): boolean {
+  _hasElm(elmKey: string): boolean {
     if (__DEV__) {
       if (!this._elmInQueue.has) {
         throw new Error(
@@ -51,7 +51,7 @@ class TaskQueue {
     return this._elmInQueue.has(elmKey);
   }
 
-  enqueueBeforeLast(
+  _enqueueBeforeLast(
     lastElmFn: () => unknown,
     beforeLastFn: () => unknown,
     queueKey: QKey,
@@ -70,7 +70,7 @@ class TaskQueue {
     this._addFuncToQueueRecord(lastElmFn, queueKey, elmKey);
   }
 
-  enqueue(fn: () => unknown, queueKey: QKey, elmKey?: string): void {
+  _enqueue(fn: () => unknown, queueKey: QKey, elmKey?: string): void {
     this._intiQueueRecord(queueKey);
     this._addFuncToQueueRecord(fn, queueKey, elmKey);
   }
@@ -81,7 +81,7 @@ class TaskQueue {
    * @param queueKey - The key of the queue to execute.
    * @returns An array containing the results of executing the tasks in the queue.
    */
-  executeQueue(queueKey: QKey): unknown[] {
+  _executeQueue(queueKey: QKey): unknown[] {
     const res: unknown[] = [];
 
     if (this._isEmpty(queueKey)) {
@@ -112,10 +112,10 @@ class TaskQueue {
     const f = () => {
       const [k1, k2] = keys;
 
-      this.executeQueue(k1);
+      this._executeQueue(k1);
 
       if (k2) {
-        queueMicrotask(() => this.executeQueue(k2));
+        queueMicrotask(() => this._executeQueue(k2));
       }
 
       this._elmInQueue.clear();
@@ -124,16 +124,16 @@ class TaskQueue {
     timeout(f, true);
   }
 
-  scheduleNextTask(keys: [QKey, QKey | undefined]): void {
+  _scheduleNextTask(keys: [QKey, QKey | undefined]): void {
     this._schedule(keys);
   }
 
   // eslint-disable-next-line class-methods-use-this
-  cancelQueuedTask(): void {
+  _cancelQueuedTask(): void {
     cancelTimeout();
   }
 
-  clear(): void {
+  _clear(): void {
     cancelTimeout();
     this._queue = {};
     this._elmInQueue.clear();

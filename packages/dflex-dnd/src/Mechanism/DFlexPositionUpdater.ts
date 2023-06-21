@@ -46,7 +46,7 @@ function composeElmMeta(element: DFlexElement) {
   return {
     id: element._id,
     index: element._VDOMOrder.self,
-    target: store.interactiveDOM.get(element._id),
+    target: store._interactiveDOM.get(element._id),
   };
 }
 
@@ -71,7 +71,7 @@ export function getInsertionELmMeta(
   insertAt: number,
   SK: string
 ): InsertionELmMeta {
-  const siblings = store.getElmSiblingsByKey(SK);
+  const siblings = store._getElmSiblingsByKey(SK);
 
   const { length } = siblings;
 
@@ -94,7 +94,7 @@ export function getInsertionELmMeta(
 
   if (lastElmPosition) {
     // If empty then restore it.
-    position.clone(lastElmPosition);
+    position._clone(lastElmPosition);
     isRestoredLastPosition = true;
   }
 
@@ -111,31 +111,31 @@ export function getInsertionELmMeta(
         at -= 1;
       }
 
-      elm = store.registry.get(siblings[at])!;
+      elm = store._registry.get(siblings[at])!;
       const pos = elm.rect._getPosition();
 
       if (lastElmPosition) {
         if (length <= originLength) {
-          position.clone(lastElmPosition);
+          position._clone(lastElmPosition);
           // Did we retorted the same element?
-          isRestoredLastPosition = !lastElmPosition.isInstanceEqual(pos);
+          isRestoredLastPosition = !lastElmPosition._isInstanceEqual(pos);
         } else {
           isRestoredLastPosition = false;
-          position.clone(pos);
+          position._clone(pos);
         }
       } else {
-        position.clone(pos);
+        position._clone(pos);
       }
     } else {
-      elm = store.registry.get(siblings[insertAt])!;
+      elm = store._registry.get(siblings[insertAt])!;
       const pos = elm.rect._getPosition();
 
-      position.clone(pos);
+      position._clone(pos);
     }
 
     // Assign the previous element if not orphan.
     if (!isOrphan && prevIndex >= 0) {
-      prevElm = store.registry.get(siblings[prevIndex])!;
+      prevElm = store._registry.get(siblings[prevIndex])!;
     }
   }
 
@@ -160,7 +160,7 @@ export function handleElmMigration(
   // Append the newest element to the end of the branch.
   destinationContainer._register(rect);
 
-  const originSiblings = store.getElmSiblingsByKey(originSK);
+  const originSiblings = store._getElmSiblingsByKey(originSK);
 
   // Don't reset empty branch keep the boundaries.
   if (originSiblings.length === 0) {
@@ -172,14 +172,14 @@ export function handleElmMigration(
   originContainer._resetIndicators(originSiblings.length);
 
   originSiblings.forEach((elmID) => {
-    const elm = store.registry.get(elmID)!;
+    const elm = store._registry.get(elmID)!;
 
     const gridIndex = originContainer._register(elm.rect);
 
-    elm._DOMGrid.clone(gridIndex);
+    elm._DOMGrid._clone(gridIndex);
   });
 
-  const lastInOrigin = store.registry.get(
+  const lastInOrigin = store._registry.get(
     originSiblings[originSiblings.length - 1]
   )!;
 
@@ -265,9 +265,9 @@ class DFlexPositionUpdater {
     elm: DFlexElement
   ) {
     // Reset all indicators.
-    this._elmTransition.setAxes(0, 0);
-    this._draggedTransition.setAxes(0, 0);
-    this._draggedPositionOffset.setAxes(0, 0);
+    this._elmTransition._setAxes(0, 0);
+    this._draggedTransition._setAxes(0, 0);
+    this._draggedPositionOffset._setAxes(0, 0);
 
     const axisToProcess: readonly Axis[] = axis === "z" ? BOTH_AXIS : [axis];
 
@@ -278,12 +278,12 @@ class DFlexPositionUpdater {
 
     const { rect, _DOMGrid: grid } = elm;
 
-    this._draggable.occupiedPosition.setAxes(
+    this._draggable.occupiedPosition._setAxes(
       rect.left + this._draggedPositionOffset.x,
       rect.top + this._draggedPositionOffset.y
     );
 
-    this._draggable.gridPlaceholder.clone(grid);
+    this._draggable.gridPlaceholder._clone(grid);
   }
 
   protected _updateDraggedThresholdPosition(x: number, y: number) {
@@ -309,7 +309,7 @@ class DFlexPositionUpdater {
       left: x,
     };
 
-    threshold.updateMainThreshold(id, composedBox, false);
+    threshold._updateMainThreshold(id, composedBox, false);
   }
 
   private _addDraggedOffsetToElm(
@@ -361,7 +361,7 @@ class DFlexPositionUpdater {
       if (!isOrphan) {
         const { _DOMGrid: grid } = elm!;
 
-        composedGrid.clone(grid);
+        composedGrid._clone(grid);
       }
 
       if (insertFromTop) {
@@ -372,7 +372,7 @@ class DFlexPositionUpdater {
       } else {
         composedGrid[axis] += 1;
 
-        const { marginBottom: mb, marginTop: mt } = migration.prev();
+        const { marginBottom: mb, marginTop: mt } = migration._prev();
 
         this._addDraggedOffsetToElm(composedTranslate, elm!, axis);
         composedTranslate[axis] += isOrphan
@@ -397,7 +397,7 @@ class DFlexPositionUpdater {
     SK: string,
     axis: Axis
   ): AxesPoint<number> {
-    const distLst = store.getElmSiblingsByKey(SK);
+    const distLst = store._getElmSiblingsByKey(SK);
 
     const { length } = distLst;
 
@@ -433,7 +433,7 @@ class DFlexPositionUpdater {
     const { containersTransition } = this._draggable;
     const { migration } = store;
 
-    const { marginBottom: mb, marginTop: mt } = migration.latest();
+    const { marginBottom: mb, marginTop: mt } = migration._latest();
 
     // Give the priority to the destination first then check the origin.
     const marginBottom = isRestoredLastPosition
@@ -462,9 +462,9 @@ class DFlexPositionUpdater {
   ) {
     const { draggedElm, occupiedPosition, gridPlaceholder } = this._draggable;
 
-    const { SK, cycleID } = store.migration.latest();
+    const { _SK: SK, _cycleID: cycleID } = store.migration._latest();
 
-    const siblings = store.getElmSiblingsByKey(SK);
+    const siblings = store._getElmSiblingsByKey(SK);
 
     const { _grid: maxContainerGridBoundaries } = store.containers.get(SK)!;
 
@@ -473,7 +473,7 @@ class DFlexPositionUpdater {
       throwOnInfiniteTransformation(id);
     }
 
-    const [element, DOM] = store.getElmWithDOM(id);
+    const [element, DOM] = store.getDOMbyElmID(id);
 
     let axis: Axes = element.rect._isPositionedY({
       left: occupiedPosition.x,
@@ -484,7 +484,7 @@ class DFlexPositionUpdater {
       ? "y"
       : "x";
 
-    const onSameAxis = occupiedPosition.onSameAxis(
+    const onSameAxis = occupiedPosition._onSameAxis(
       axis,
       element.rect._getPosition()
     );

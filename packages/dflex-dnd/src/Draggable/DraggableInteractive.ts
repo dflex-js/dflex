@@ -54,7 +54,7 @@ function throwWhenCollision(siblings: string[]) {
   for (let i = 0; i < siblings.length; i += 1) {
     const id = siblings[i];
 
-    const { rect } = store.registry.get(id)!;
+    const { rect } = store._registry.get(id)!;
 
     if (positions.has(rect)) {
       throw new Error(`throwWhenCollision: found collision in ${id}-element`);
@@ -71,7 +71,7 @@ function throwIfOutContainer(siblings: string[]) {
     const {
       rect,
       _keys: { SK },
-    } = store.registry.get(id)!;
+    } = store._registry.get(id)!;
 
     const container = store.containers.get(SK)!;
 
@@ -123,7 +123,7 @@ class DraggableInteractive extends DraggableAxes {
 
     this.enableCommit =
       this.containersTransition.enable &&
-      store.getElmSiblingsByKey(this.draggedElm._keys.SK).length > 1
+      store._getElmSiblingsByKey(this.draggedElm._keys.SK).length > 1
         ? { ...opts.commit }
         : {
             enableAfterEndingDrag: false,
@@ -137,7 +137,7 @@ class DraggableInteractive extends DraggableAxes {
     const { _hasOverflow: hasOverflow } = scroll;
 
     // Override the default options When no siblings or no overflow.
-    if (hasOverflow.isAllFalsy()) {
+    if (hasOverflow._isAllFalsy()) {
       this.scroll.enable = false;
     }
 
@@ -146,12 +146,12 @@ class DraggableInteractive extends DraggableAxes {
 
       // Initialize all the scroll containers in the same depth to enable migration.
       if (opts.containersTransition.enable) {
-        store.getSiblingKeysByDepth(this.draggedElm._depth).forEach((SK) => {
+        store._getSiblingKeysByDepth(this.draggedElm._depth).forEach((SK) => {
           store.scrolls.get(SK)!._setInnerThreshold();
         });
       }
 
-      const draggedDOM = store.interactiveDOM.get(this.draggedElm._id)!;
+      const draggedDOM = store._interactiveDOM.get(this.draggedElm._id)!;
 
       this.mirrorDOM = draggedDOM.cloneNode(true) as HTMLElement;
 
@@ -186,10 +186,10 @@ class DraggableInteractive extends DraggableAxes {
    */
   setDraggedTempIndex(index: number) {
     if (!Number.isNaN(index)) {
-      store.migration.setIndex(index);
+      store.migration._setIndex(index);
     }
 
-    const draggedDOM = store.interactiveDOM.get(this.draggedElm._id)!;
+    const draggedDOM = store._interactiveDOM.get(this.draggedElm._id)!;
 
     this.draggedElm._setAttribute(draggedDOM, "INDEX", index);
   }
@@ -207,7 +207,7 @@ class DraggableInteractive extends DraggableAxes {
     latestCycle: AbstractDFlexCycle,
     willReconcile: boolean
   ) {
-    const { SK, index } = latestCycle;
+    const { _SK: SK, _index: index } = latestCycle;
     const {
       rect,
       _translate: translate,
@@ -215,15 +215,15 @@ class DraggableInteractive extends DraggableAxes {
       _VDOMOrder: VDOMOrder,
       _DOMGrid: DOMGrid,
     } = this.draggedElm;
-    const siblings = store.getElmSiblingsByKey(SK);
+    const siblings = store._getElmSiblingsByKey(SK);
 
     // Get the original DOM to avoid manipulating the mirror/ghost DOM.
-    const draggedDOM = store.interactiveDOM.get(id)!;
+    const draggedDOM = store._interactiveDOM.get(id)!;
 
     const hasToUndo =
       isFallback ||
       // dragged in position but has been clicked.
-      this.occupiedPosition.isEqual(rect.left, rect.top);
+      this.occupiedPosition._isEqual(rect.left, rect.top);
 
     if (hasToUndo) {
       /**
@@ -237,7 +237,7 @@ class DraggableInteractive extends DraggableAxes {
       }
 
       // If it didn't move, then do nothing.
-      if (translate.isInstanceEqual(this._translatePlaceholder)) {
+      if (translate._isInstanceEqual(this._translatePlaceholder)) {
         return;
       }
 
@@ -263,7 +263,7 @@ class DraggableInteractive extends DraggableAxes {
       }
     }
 
-    DOMGrid.clone(this.gridPlaceholder);
+    DOMGrid._clone(this.gridPlaceholder);
 
     VDOMOrder.self = index;
 
@@ -293,7 +293,7 @@ class DraggableInteractive extends DraggableAxes {
     latestCycle: AbstractDFlexCycle,
     willReconcile: boolean
   ) {
-    const draggedDOM = store.interactiveDOM.get(this.draggedElm._id)!;
+    const draggedDOM = store._interactiveDOM.get(this.draggedElm._id)!;
 
     if (isMigratedInScroll) {
       this._setDOMAttrAndStyle(
@@ -319,7 +319,7 @@ class DraggableInteractive extends DraggableAxes {
 
     this.setDraggedTransformProcess(isFallback, latestCycle, willReconcile);
 
-    this.threshold.destroy();
+    this.threshold._destroy();
   }
 }
 

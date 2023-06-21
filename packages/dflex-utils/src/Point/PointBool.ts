@@ -5,7 +5,7 @@ class PointBool extends Point<boolean> {
    * True when both points X and Y are true.
    * @returns
    */
-  isOneTruthy(): boolean {
+  _isOneTruthy(): boolean {
     return this.x || this.y;
   }
 
@@ -13,14 +13,14 @@ class PointBool extends Point<boolean> {
    * True when one point is false.
    * @returns
    */
-  isAllFalsy(): boolean {
+  _isAllFalsy(): boolean {
     return !(this.x || this.y);
   }
 
   /**
    * Set both x and y to false.
    */
-  setFalsy(): void {
+  _setFalsy(): void {
     this.x = false;
     this.y = false;
   }

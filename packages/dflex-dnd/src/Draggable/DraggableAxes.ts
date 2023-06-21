@@ -35,7 +35,7 @@ function initContainers(SK: string, siblings: Siblings) {
   const container = store.containers.get(SK)!;
 
   if (!container.lastElmPosition) {
-    const lastElm = store.registry.get(siblings[siblings.length - 1])!;
+    const lastElm = store._registry.get(siblings[siblings.length - 1])!;
 
     container._preservePosition(lastElm.rect._getPosition());
   }
@@ -47,16 +47,16 @@ function initThresholds(
   draggedDepth: number,
   threshold: Threshold
 ) {
-  threshold.setMainThreshold(draggedID, draggedRect, false);
+  threshold._setMainThreshold(draggedID, draggedRect, false);
 
-  store.getSiblingKeysByDepth(draggedDepth).forEach((SK) => {
+  store._getSiblingKeysByDepth(draggedDepth).forEach((SK) => {
     const elmContainer = store.containers.get(SK)!;
 
     const boundaries = elmContainer._getBoundaries();
 
     const insertionLayerKey = combineKeys(draggedDepth, SK);
 
-    threshold.setContainerThreshold(
+    threshold._setContainerThreshold(
       SK,
       insertionLayerKey,
       draggedDepth,
@@ -117,7 +117,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
   events: DFlexEventPlugin;
 
   constructor(id: string, initCoordinates: AxesPoint, opts: FinalDndOpts) {
-    const [element, DOM] = store.getElmWithDOM(id);
+    const [element, DOM] = store.getDOMbyElmID(id);
 
     super(element, DOM, initCoordinates);
 
@@ -133,9 +133,9 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
 
     this.gridPlaceholder = new PointNum(DOMGrid.x, DOMGrid.y);
 
-    const siblings = store.getElmSiblingsByKey(SK);
+    const siblings = store._getElmSiblingsByKey(SK);
 
-    const cycleID = store.tracker.newTravel(PREFIX_CYCLE);
+    const cycleID = store._tracker._newTravel(PREFIX_CYCLE);
 
     this.session = [cycleID];
 
@@ -149,7 +149,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
         false
       );
     } else {
-      store.migration.add(
+      store.migration._add(
         VDOMOrder.self,
         this.draggedElm._id,
         SK,
@@ -163,7 +163,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
 
     // Override containersTransition option when we have an orphan branch.
     this.containersTransition =
-      store.getSiblingKeysByDepth(depth).length > 1
+      store._getSiblingKeysByDepth(depth).length > 1
         ? opts.containersTransition
         : { ...opts.containersTransition, enable: false };
 
@@ -183,7 +183,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     this.marginX = rm + lm;
 
     const {
-      _totalScrollRect: { left: left, top: top },
+      _totalScrollRect: { left, top },
     } = store.scrolls.get(SK)!;
 
     const { x, y } = initCoordinates;
@@ -306,7 +306,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
 
   private _updatePrevPos() {
     const pre = this._viewportCurrentPos;
-    this._prevPoint.setAxes(pre.left, pre.top);
+    this._prevPoint._setAxes(pre.left, pre.top);
   }
 
   private _getAbsEdgePos(x: number, y: number) {
@@ -404,17 +404,12 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     let filteredY = y;
     let filteredX = x;
 
-    const { SK } = store.registry.get(this.draggedElm._id)!._keys;
+    const { SK } = store._registry.get(this.draggedElm._id)!._keys;
     const container = store.containers.get(SK)!;
 
     if (this.axesFilterNeeded) {
       const boundaries = container._getBoundaries();
-      const {
-        top: top,
-        bottom: bottom,
-        left: maxLeft,
-        right: minRight,
-      } = boundaries;
+      const { top, bottom, left: maxLeft, right: minRight } = boundaries;
 
       if (this.restrictionsStatus.isContainerRestricted) {
         filteredX = this.axesXFilter(
@@ -487,13 +482,13 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
       key = combineKeys(depth, key);
     }
 
-    return this.threshold.isOutThreshold(key, this._absoluteCurrentPos, null);
+    return this.threshold._isOutThreshold(key, this._absoluteCurrentPos, null);
   }
 
   isNotSettled() {
-    const { SK, index } = store.migration.latest();
+    const { _SK: SK, _index: index } = store.migration._latest();
 
-    const lastElm = store.getElmSiblingsByKey(SK).length - 1;
+    const lastElm = store._getElmSiblingsByKey(SK).length - 1;
 
     const isLeavingFromBottom = index === lastElm;
 
