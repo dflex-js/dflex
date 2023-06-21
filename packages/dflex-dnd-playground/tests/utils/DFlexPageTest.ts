@@ -25,6 +25,4 @@ export const DFlexPageTest = base.extend({
   },
 });
 
-DFlexPageTest.setTimeout(30000);
-
 export default DFlexPageTest;

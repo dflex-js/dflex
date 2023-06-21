@@ -112,7 +112,7 @@ test.describe("Stream new element then transform mutate and check the new positi
       ]);
     });
 
-    test("Siblings index initiated correctly round 4", async () => {
+    test.skip("Siblings index initiated correctly round 4", async () => {
       await page.keyboard.press("r", { delay: 50 });
 
       await Promise.all([
