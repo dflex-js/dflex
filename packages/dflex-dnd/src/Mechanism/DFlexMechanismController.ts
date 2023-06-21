@@ -2,9 +2,11 @@ import {
   AxesPoint,
   Axis,
   BoxNum,
+  createTimeout,
   featureFlags,
   PointNum,
   PREFIX_CYCLE,
+  TimeoutFunction,
 } from "@dflex/utils";
 
 import { DFLEX_EVENTS, scheduler, store } from "../LayoutManager";
@@ -41,9 +43,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
    * transformation. */
   private _animatedDraggedInsertionFrame: number | null;
 
-  private _detectNearestContainerTimeoutID: ReturnType<
-    typeof setTimeout
-  > | null;
+  private _detectNearestContainerThrottle: TimeoutFunction;
 
   protected hasBeenScrolling: boolean;
 
@@ -79,7 +79,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     this.hasBeenScrolling = false;
     this.isOnDragOutThresholdEvtEmitted = false;
     this._animatedDraggedInsertionFrame = null;
-    this._detectNearestContainerTimeoutID = null;
+    [this._detectNearestContainerThrottle] = createTimeout(0);
     this.listAppendPosition = null;
     this.isParentLocked = false;
 
@@ -777,11 +777,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       this.isParentLocked = true;
 
       if (containersTransition.enable) {
-        if (this._detectNearestContainerTimeoutID !== null) {
-          clearTimeout(this._detectNearestContainerTimeoutID);
-        }
-
-        this._detectNearestContainerTimeoutID = setTimeout(() => {
+        const cb = () => {
           this._detectNearestContainer();
 
           if (migration.isTransitioning) {
@@ -791,7 +787,9 @@ class DFlexMechanismController extends DFlexScrollableElement {
               },
             });
           }
-        }, 0);
+        };
+
+        this._detectNearestContainerThrottle(cb, true);
 
         return;
       }

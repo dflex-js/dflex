@@ -79,6 +79,7 @@ DFlexDnDStore {
       id="id-1"
     />
   </div>,
+  "_resizeThrottle": [Function],
   "_taskQ": TaskQueue {
     "_elmInQueue": Set {},
     "_queue": {
