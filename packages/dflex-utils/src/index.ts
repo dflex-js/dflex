@@ -58,6 +58,7 @@ export type {
   RAFCleanup,
   TimeoutCleanup,
   TimeoutFunction,
+  IsThrottledFunction,
 } from "./environment";
 
 export {

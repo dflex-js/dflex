@@ -1,18 +1,27 @@
+import { noop } from "../collections";
+
 type TimeoutCallback = () => void;
 
 export type TimeoutCleanup = () => void;
 
 export type TimeoutFunction = (
   // eslint-disable-next-line no-unused-vars
-  callback: TimeoutCallback,
+  callback: TimeoutCallback | null,
   // eslint-disable-next-line no-unused-vars
   delay: number,
   // eslint-disable-next-line no-unused-vars
   cancelPrevSchedule: boolean
 ) => void;
 
-function DFlexCreateTimeout(): [TimeoutFunction, TimeoutCleanup] {
+export type IsThrottledFunction = () => boolean;
+
+function DFlexCreateTimeout(): [
+  TimeoutFunction,
+  TimeoutCleanup,
+  IsThrottledFunction
+] {
   let id: ReturnType<typeof setTimeout> | null = null;
+  let isThrottled: boolean = false;
 
   function cleanup(): void {
     if (id) {
@@ -22,18 +31,28 @@ function DFlexCreateTimeout(): [TimeoutFunction, TimeoutCleanup] {
   }
 
   function timeout(
-    callback: TimeoutCallback,
+    callback: TimeoutCallback | null,
     delay: number,
     cancelPrevSchedule: boolean
   ): void {
+    const cb = callback || noop;
+    isThrottled = true;
+
     if (cancelPrevSchedule) {
       cleanup();
     }
 
-    id = setTimeout(callback, delay);
+    id = setTimeout(() => {
+      isThrottled = false;
+      cb();
+    }, delay);
   }
 
-  return [timeout, cleanup];
+  function getIsThrottled(): boolean {
+    return isThrottled;
+  }
+
+  return [timeout, cleanup, getIsThrottled];
 }
 
 export default DFlexCreateTimeout;

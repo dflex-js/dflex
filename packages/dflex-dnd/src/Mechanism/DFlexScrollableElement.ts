@@ -1,4 +1,13 @@
-import { Axis, PointNum, Direction, Point, featureFlags } from "@dflex/utils";
+import {
+  Axis,
+  PointNum,
+  Direction,
+  Point,
+  featureFlags,
+  createTimeout,
+  TimeoutFunction,
+  IsThrottledFunction,
+} from "@dflex/utils";
 import DFlexPositionUpdater from "./DFlexPositionUpdater";
 
 import type DraggableInteractive from "../Draggable";
@@ -34,7 +43,9 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
   cancelScrolling: ScrollTransitionAbort | null;
 
-  private _scrollThrottleTimeout?: ReturnType<typeof setTimeout>;
+  private _throttle: TimeoutFunction;
+
+  private _isThrottled: IsThrottledFunction;
 
   private _scrollThrottleMS!: number;
 
@@ -49,7 +60,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     this.initialScrollPosition = new PointNum(0, 0);
 
-    this._scrollThrottleTimeout = undefined;
+    [this._throttle, , this._isThrottled] = createTimeout();
 
     // If no scroll don't initialize.
     if (!store.scrolls.has(SK)) {
@@ -69,30 +80,9 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     this.initialScrollPosition.setAxes(left, top);
   }
 
-  private _throttleScrolling(): void {
-    if (__DEV__) {
-      if (this._scrollThrottleTimeout !== undefined) {
-        // eslint-disable-next-line no-console
-        console.log("_throttleScrolling: Scroll is already throttled.");
-      }
-
-      if (featureFlags.enableScrollDebugger) {
-        // eslint-disable-next-line no-console
-        console.log("Scroll is throttled.");
-      }
-    }
-
-    clearTimeout(this._scrollThrottleTimeout);
-
-    this._scrollThrottleTimeout = setTimeout(() => {
-      this._scrollThrottleTimeout = undefined;
-    }, this._scrollThrottleMS);
-  }
-
   hasActiveScrolling(): boolean {
     // It's not throttled and it has animated frame.
-    const isActive =
-      !this._scrollThrottleTimeout && this.cancelScrolling !== null;
+    const isActive = !this._isThrottled() && this.cancelScrolling !== null;
 
     if (__DEV__) {
       if (featureFlags.enableScrollDebugger) {
@@ -201,7 +191,14 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
         }
       }
 
-      this._throttleScrolling();
+      this._throttle(null, this._scrollThrottleMS, true);
+
+      if (__DEV__) {
+        if (featureFlags.enableScrollDebugger) {
+          // eslint-disable-next-line no-console
+          console.log("Scroll is throttled.");
+        }
+      }
 
       return;
     }
@@ -251,14 +248,14 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     if (__DEV__) {
       if (featureFlags.enableScrollDebugger) {
-        if (this._scrollThrottleTimeout) {
+        if (this._isThrottled()) {
           // eslint-disable-next-line no-console
-          console.log(`Scroll is throttled: ${this._scrollThrottleTimeout}`);
+          console.log("Scroll is throttled");
         }
       }
     }
 
-    if (!this._scrollThrottleTimeout) {
+    if (!this._isThrottled()) {
       this._scrollManager(
         draggedDirH,
         draggedDirV,
