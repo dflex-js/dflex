@@ -214,7 +214,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     // container or not.
     const { rect } = dflexElm;
 
-    const gridIndex = container.register(
+    const gridIndex = container._register(
       rect,
       this.unifiedContainerDimensions[dflexElm.depth]
     );
@@ -427,7 +427,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
           dflexElm.initElmRect(elmDOM, left, top);
 
-          container.register(
+          container._register(
             dflexElm.rect,
             this.unifiedContainerDimensions[dflexElm.depth]
           );
@@ -438,7 +438,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   private _forEachContainerDOM(cb: (DOM: HTMLElement) => void) {
     this.containers.forEach((container) => {
-      const DOM = this.interactiveDOM.get(container.id)!;
+      const DOM = this.interactiveDOM.get(container._id)!;
 
       cb(DOM);
     });
@@ -479,7 +479,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     const container = this.containers.get(SK)!;
     const scroll = this.scrolls.get(SK)!;
     const branch = this.getElmSiblingsByKey(SK);
-    const parentDOM = this.interactiveDOM.get(container.id)!;
+    const parentDOM = this.interactiveDOM.get(container._id)!;
 
     scheduler(
       this,
@@ -487,7 +487,7 @@ class DFlexDnDStore extends DFlexBaseStore {
         if (__DEV__) {
           if (!parentDOM) {
             throw new Error(
-              `Unable to commit: No DOM found for ${container.id}`
+              `Unable to commit: No DOM found for ${container._id}`
             );
           }
         }

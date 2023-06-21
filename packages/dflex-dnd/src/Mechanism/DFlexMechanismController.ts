@@ -280,7 +280,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         // when the dragged is out of the container, the last element is the
         // placeholder as all the elements are stacked.
         originSiblings.pop();
-        originContainer.reduceGrid(insertionAxis);
+        originContainer._reduceGrid(insertionAxis);
 
         this._draggable.occupiedPosition.clone(this._listAppendPosition!);
 
@@ -291,7 +291,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         // Insert the element to the new list. Empty string because when dragged
         // is out the branch sets its index as "".
         destinationSiblings.push(APPEND_EMPTY_ELM_ID);
-        destinationContainer.extendGrid(insertionAxis);
+        destinationContainer._extendGrid(insertionAxis);
 
         const cycleID = store.tracker.newTravel(PREFIX_CYCLE);
 
@@ -597,7 +597,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       threshold: { isOut },
     } = this._draggable;
 
-    const { grid } = store.containers.get(SK)!;
+    const { _grid: grid } = store.containers.get(SK)!;
 
     // One column or one row?
     const oppositeAxis = axis === "y" ? "x" : "y";

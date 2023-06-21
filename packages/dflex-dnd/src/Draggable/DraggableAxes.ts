@@ -37,7 +37,7 @@ function initContainers(SK: string, siblings: Siblings) {
   if (!container.lastElmPosition) {
     const lastElm = store.registry.get(siblings[siblings.length - 1])!;
 
-    container.preservePosition(lastElm.rect.getPosition());
+    container._preservePosition(lastElm.rect.getPosition());
   }
 }
 
@@ -52,7 +52,7 @@ function initThresholds(
   store.getSiblingKeysByDepth(draggedDepth).forEach((SK) => {
     const elmContainer = store.containers.get(SK)!;
 
-    const boundaries = elmContainer.getBoundaries();
+    const boundaries = elmContainer._getBoundaries();
 
     const insertionLayerKey = combineKeys(draggedDepth, SK);
 
@@ -408,7 +408,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     const container = store.containers.get(SK)!;
 
     if (this.axesFilterNeeded) {
-      const boundaries = container.getBoundaries();
+      const boundaries = container._getBoundaries();
       const { top, bottom, left: maxLeft, right: minRight } = boundaries;
 
       if (this.restrictionsStatus.isContainerRestricted) {

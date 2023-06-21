@@ -75,7 +75,7 @@ function throwIfOutContainer(siblings: string[]) {
 
     const container = store.containers.get(SK)!;
 
-    const boundaries = container.getBoundaries();
+    const boundaries = container._getBoundaries();
 
     if (
       rect.right < boundaries.left ||

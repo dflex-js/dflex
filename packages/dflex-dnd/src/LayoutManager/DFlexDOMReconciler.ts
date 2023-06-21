@@ -133,7 +133,7 @@ function DFlexDOMReconciler(
   scroll: DFlexScrollContainer,
   refreshAllBranchElements: boolean
 ): void {
-  container.resetIndicators(branchIDs.length);
+  container._resetIndicators(branchIDs.length);
 
   for (let i = branchIDs.length - 1; i >= 0; i -= 1) {
     commitElm(branchIDs, branchDOM, store, branchIDs[i]);

@@ -76,7 +76,8 @@ export function getInsertionELmMeta(
   const { length } = siblings;
 
   // Restore the last known current position.
-  const { lastElmPosition, originLength } = store.containers.get(SK)!;
+  const { lastElmPosition, _originLength: originLength } =
+    store.containers.get(SK)!;
 
   const position = new PointNum(0, 0);
   const isEmpty = isEmptyBranch(siblings);
@@ -157,7 +158,7 @@ export function handleElmMigration(
   const destinationContainer = store.containers.get(distSK)!;
 
   // Append the newest element to the end of the branch.
-  destinationContainer.register(rect);
+  destinationContainer._register(rect);
 
   const originSiblings = store.getElmSiblingsByKey(originSK);
 
@@ -168,12 +169,12 @@ export function handleElmMigration(
 
   const originContainer = store.containers.get(originSK)!;
 
-  originContainer.resetIndicators(originSiblings.length);
+  originContainer._resetIndicators(originSiblings.length);
 
   originSiblings.forEach((elmID) => {
     const elm = store.registry.get(elmID)!;
 
-    const gridIndex = originContainer.register(elm.rect);
+    const gridIndex = originContainer._register(elm.rect);
 
     elm.DOMGrid.clone(gridIndex);
   });
@@ -182,7 +183,7 @@ export function handleElmMigration(
     originSiblings[originSiblings.length - 1]
   )!;
 
-  originContainer.preservePosition(lastInOrigin.rect.getPosition());
+  originContainer._preservePosition(lastInOrigin.rect.getPosition());
 }
 
 class DFlexPositionUpdater {
@@ -465,7 +466,7 @@ class DFlexPositionUpdater {
 
     const siblings = store.getElmSiblingsByKey(SK);
 
-    const { grid: maxContainerGridBoundaries } = store.containers.get(SK)!;
+    const { _grid: maxContainerGridBoundaries } = store.containers.get(SK)!;
 
     if (__DEV__) {
       // DFLex doesn't have error msg transformer yet for production.
