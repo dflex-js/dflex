@@ -10,7 +10,7 @@ class DFlexElement extends DFlexCoreNode {
   ) {
     let diff = currentPosition[axis] - elm.rect[axis === "x" ? "left" : "top"];
 
-    diff += elm.translate![axis];
+    diff += elm._translate![axis];
 
     return diff;
   }

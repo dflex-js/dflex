@@ -22,7 +22,7 @@ class DFlexDraggable extends DFlexBaseDraggable<DFlexBaseElement> {
   dragAt(x: number, y: number) {
     this._translate(x, y);
 
-    this.draggedElm.translate.clone(this._translatePlaceholder);
+    this.draggedElm._translate.clone(this._translatePlaceholder);
   }
 
   endDragging() {

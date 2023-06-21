@@ -26,13 +26,13 @@ function setElmGridAndAssertPosition(
     }
 
     if (
-      elmIndex !== dflexElm.DOMOrder.self ||
-      dflexElm.DOMOrder.self !== dflexElm.VDOMOrder.self
+      elmIndex !== dflexElm._DOMOrder.self ||
+      dflexElm._DOMOrder.self !== dflexElm._VDOMOrder.self
     ) {
       didThrowError = true;
 
       console.error(
-        `Error in DOM order reconciliation.\n id: ${dflexElm.id}. Expected DOM order: ${dflexElm.DOMOrder.self} to match VDOM order: ${dflexElm.VDOMOrder.self}`
+        `Error in DOM order reconciliation.\n id: ${dflexElm._id}. Expected DOM order: ${dflexElm._DOMOrder.self} to match VDOM order: ${dflexElm._VDOMOrder.self}`
       );
     }
 
@@ -67,8 +67,8 @@ function switchElmDOMPosition(
   dflexElm: DFlexElement,
   elmDOM: HTMLElement
 ) {
-  const VDOMIndex = dflexElm.VDOMOrder.self;
-  const DOMIndex = dflexElm.DOMOrder.self;
+  const VDOMIndex = dflexElm._VDOMOrder.self;
+  const DOMIndex = dflexElm._DOMOrder.self;
 
   // Is it the last element?
   if (VDOMIndex + 1 === branchIDs.length) {
@@ -84,10 +84,10 @@ function switchElmDOMPosition(
   for (let i = VDOMIndex - 1; i >= DOMIndex; i -= 1) {
     const dflexNextElm = store.registry.get(branchIDs[i])!;
 
-    dflexNextElm.DOMOrder.self += shiftDirection;
+    dflexNextElm._DOMOrder.self += shiftDirection;
   }
 
-  dflexElm.DOMOrder.self = VDOMIndex;
+  dflexElm._DOMOrder.self = VDOMIndex;
 }
 
 let reconciledElmQueue: [DFlexElement, HTMLElement][] = [];
@@ -100,13 +100,13 @@ function commitElm(
 ): void {
   const [dflexElm, elmDOM] = store.getElmWithDOM(elmID);
 
-  if (dflexElm.hasTransformedFromOrigin()) {
+  if (dflexElm._hasTransformedFromOrigin()) {
     if (
-      dflexElm.needDOMReconciliation() ||
+      dflexElm._needDOMReconciliation() ||
       // Until the element owns its transformation between containers history we
       // can't rely only on the local indicators as it only reflects the
       // elements movement inside the origin container.
-      store.migration.filter([dflexElm.id], false)
+      store.migration.filter([dflexElm._id], false)
     ) {
       switchElmDOMPosition(branchIDs, branchDOM, store, dflexElm, elmDOM);
     }
@@ -142,7 +142,7 @@ function DFlexDOMReconciler(
   let isUpdateElmGrid = true;
 
   const {
-    totalScrollRect: { left, top },
+    _totalScrollRect: { left, top },
   } = scroll;
 
   if (refreshAllBranchElements) {
@@ -152,7 +152,7 @@ function DFlexDOMReconciler(
     for (let i = 0; i <= branchIDs.length - 1; i += 1) {
       const [dflexElm, elmDOM] = store.getElmWithDOM(branchIDs[i]);
 
-      dflexElm.refreshIndicators(elmDOM, left, top);
+      dflexElm._refreshIndicators(elmDOM, left, top);
 
       if (__DEV__) {
         setElmGridAndAssertPosition(
@@ -171,7 +171,7 @@ function DFlexDOMReconciler(
     while (reconciledElmQueue.length) {
       const [dflexElm, elmDOM] = reconciledElmQueue.pop()!;
 
-      dflexElm.refreshIndicators(elmDOM, left, top);
+      dflexElm._refreshIndicators(elmDOM, left, top);
     }
   }
 

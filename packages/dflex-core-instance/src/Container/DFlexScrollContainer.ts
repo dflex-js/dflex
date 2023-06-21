@@ -131,21 +131,21 @@ class DFlexScrollContainer {
   /**
    * scroll container in the viewport. Only in the visible area.
    */
-  visibleScrollRect: BoxRect;
+  _visibleScrollRect: BoxRect;
 
   /**
    * The entire scroll rect visible and invisible.
    */
-  totalScrollRect: BoxRect;
+  _totalScrollRect: BoxRect;
 
-  hasOverflow: PointBool;
+  _hasOverflow: PointBool;
 
   /**
    * Some containers are overflown but in small percentages of the container
    * doesn't require adding visible scroll listeners and all the related events
    * and functionality. Current percentage is set to 0.5.
    */
-  allowDynamicVisibility: boolean;
+  _allowDynamicVisibility: boolean;
 
   /**
    * The parent element that is owning the scroll.
@@ -181,10 +181,10 @@ class DFlexScrollContainer {
 
     this._listenerDatasetKey = `${LISTENER_DATASET_KEY_PREFIX}_${SK}`;
 
-    this.hasOverflow = new PointBool(false, false);
-    this.totalScrollRect = new BoxRect(0, 0, 0, 0);
-    this.visibleScrollRect = new BoxRect(0, 0, 0, 0);
-    this.allowDynamicVisibility = false;
+    this._hasOverflow = new PointBool(false, false);
+    this._totalScrollRect = new BoxRect(0, 0, 0, 0);
+    this._visibleScrollRect = new BoxRect(0, 0, 0, 0);
+    this._allowDynamicVisibility = false;
     this._scrollEventCallback = null;
 
     const [containerDOM, isDocumentContainer] = getScrollContainer(firstELmDOM);
@@ -197,7 +197,7 @@ class DFlexScrollContainer {
 
     if (
       branchLength > MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY &&
-      this.allowDynamicVisibility
+      this._allowDynamicVisibility
     ) {
       this._scrollEventCallback = scrollEventCallback;
 
@@ -206,7 +206,7 @@ class DFlexScrollContainer {
 
     this._attachResizeAndScrollListeners();
 
-    if (this.totalScrollRect.top > 0 || this.totalScrollRect.left > 0) {
+    if (this._totalScrollRect.top > 0 || this._totalScrollRect.left > 0) {
       this._updateScrollPosition(0, 0, true);
     }
 
@@ -224,7 +224,7 @@ class DFlexScrollContainer {
     instance.threshold = threshold;
     threshold.setMainThreshold(
       instance.key,
-      this.visibleScrollRect,
+      this._visibleScrollRect,
       type === "inner"
     );
   }
@@ -232,8 +232,8 @@ class DFlexScrollContainer {
   private _updateOverflowStatus(): void {
     const checkOverflow = (axis: Axis, checkHalf?: boolean) =>
       hasOverFlow(
-        this.totalScrollRect,
-        this.visibleScrollRect,
+        this._totalScrollRect,
+        this._visibleScrollRect,
         axis,
         checkHalf
       );
@@ -241,19 +241,19 @@ class DFlexScrollContainer {
     const hasOverflowX = checkOverflow("x");
     const hasOverflowY = checkOverflow("y");
 
-    this.hasOverflow.setAxes(hasOverflowX, hasOverflowY);
-    this.allowDynamicVisibility = false;
+    this._hasOverflow.setAxes(hasOverflowX, hasOverflowY);
+    this._allowDynamicVisibility = false;
 
     if (hasOverflowY) {
       // Check if the scrollRect dimension for the given axis is more than half of the scrollContainerRect dimension.
-      this.allowDynamicVisibility = checkOverflow("y", true);
+      this._allowDynamicVisibility = checkOverflow("y", true);
 
       return;
     }
 
     if (hasOverflowX) {
       // Check if the scrollRect dimension for the given axis is more than half of the scrollContainerRect dimension.
-      this.allowDynamicVisibility = checkOverflow("x", true);
+      this._allowDynamicVisibility = checkOverflow("x", true);
     }
   }
 
@@ -274,7 +274,7 @@ class DFlexScrollContainer {
       clientWidth, // Width of the visible portion of the container
     } = this._containerDOM;
 
-    this.totalScrollRect.setByPointAndDimensions(
+    this._totalScrollRect.setByPointAndDimensions(
       scrollTop,
       scrollLeft,
       scrollHeight,
@@ -284,7 +284,7 @@ class DFlexScrollContainer {
     // Calculate the visible portion of the container
     if (this._isDocumentContainer) {
       // For document container, the visible area is the entire client viewport
-      this.visibleScrollRect.setByPointAndDimensions(
+      this._visibleScrollRect.setByPointAndDimensions(
         scrollTop,
         scrollLeft,
         clientHeight,
@@ -293,7 +293,7 @@ class DFlexScrollContainer {
     } else {
       const { left, top } = this._containerDOM.getBoundingClientRect();
 
-      this.visibleScrollRect.setByPointAndDimensions(
+      this._visibleScrollRect.setByPointAndDimensions(
         top,
         left,
         clientHeight,
@@ -307,7 +307,7 @@ class DFlexScrollContainer {
     scrollTop: number,
     withDOM: boolean
   ): boolean {
-    const shouldUpdate = this.totalScrollRect.hasEqualPosition(
+    const shouldUpdate = this._totalScrollRect.hasEqualPosition(
       scrollLeft,
       scrollTop
     );
@@ -316,7 +316,7 @@ class DFlexScrollContainer {
       return false;
     }
 
-    this.totalScrollRect.setPosition(scrollLeft, scrollTop);
+    this._totalScrollRect.setPosition(scrollLeft, scrollTop);
 
     if (withDOM) {
       this._containerDOM.scrollTop = scrollTop;
@@ -326,7 +326,7 @@ class DFlexScrollContainer {
     return true;
   }
 
-  scrollTo(x: number, y: number): void {
+  _scrollTo(x: number, y: number): void {
     this._updateScrollPosition(
       x === -1 ? this._containerDOM.scrollLeft : x,
       y === -1 ? this._containerDOM.scrollTop : y,
@@ -340,18 +340,18 @@ class DFlexScrollContainer {
 
   private _getNumbersFromPoints(axis: Axis): [number, number, number] {
     const start = getStartingPointByAxis(axis);
-    const startPos = this.totalScrollRect[start];
+    const startPos = this._totalScrollRect[start];
 
     const end = getEndingPointByAxis(axis);
-    const endPos = this.totalScrollRect[end];
+    const endPos = this._totalScrollRect[end];
 
     const dimension = getDimensionTypeByAxis(axis);
-    const viewportSize = this.visibleScrollRect[dimension];
+    const viewportSize = this._visibleScrollRect[dimension];
 
     return [startPos, endPos, viewportSize];
   }
 
-  calculateDistance(axis: Axis, direction: Direction): number {
+  _calculateDistance(axis: Axis, direction: Direction): number {
     const [startPos, endPos, viewportSize] = this._getNumbersFromPoints(axis);
 
     const scrollableArea =
@@ -367,9 +367,9 @@ class DFlexScrollContainer {
     return scrollableArea;
   }
 
-  hasScrollableArea(axis: Axis, direction: Direction): boolean {
+  _hasScrollableArea(axis: Axis, direction: Direction): boolean {
     if (__DEV__) {
-      if (!this.hasOverflow[axis]) {
+      if (!this._hasOverflow[axis]) {
         throw new Error(
           `Cannot call hasScrollableArea when there is no overflow in the ${axis} direction.`
         );
@@ -447,7 +447,7 @@ class DFlexScrollContainer {
 
     container[eventAction]("resize", this._throttledResizeHandler, options);
 
-    if (this.hasOverflow.isOneTruthy()) {
+    if (this._hasOverflow.isOneTruthy()) {
       container[eventAction]("scroll", this._throttledScrollHandler, options);
 
       this._updateDOMDataset(isAttachListener, true);
@@ -466,7 +466,7 @@ class DFlexScrollContainer {
    *
    * @param pause
    */
-  pauseListeners(pause: boolean): void {
+  _pauseListeners(pause: boolean): void {
     if (pause) {
       this._throttledScrollHandler.pause();
     } else {
@@ -489,7 +489,7 @@ class DFlexScrollContainer {
    * more flexibility to choose the threshold in relation to the dragged element.
    *
    */
-  setInnerThreshold() {
+  _setInnerThreshold() {
     if (__DEV__) {
       if (!this._thresholdInViewport.outer.threshold) {
         throw new Error(
@@ -511,27 +511,28 @@ class DFlexScrollContainer {
    * @deprecated - Should be removed when refactoring retractions.
    * @returns
    */
-  getMaximumScrollContainerLeft() {
-    const { left, width } = this.visibleScrollRect;
+  _getMaximumScrollContainerLeft() {
+    const { left, width } = this._visibleScrollRect;
 
-    return left + width + this.totalScrollRect.left;
+    return left + width + this._totalScrollRect.left;
   }
 
   /**
    * @deprecated - Should be removed when refactoring retractions.
    * @returns
    */
-  getMaximumScrollContainerTop() {
-    const { top, height } = this.visibleScrollRect;
+  _getMaximumScrollContainerTop() {
+    const { top, height } = this._visibleScrollRect;
 
-    return top + height + this.totalScrollRect.top;
+    return top + height + this._totalScrollRect.top;
   }
 
-  getElmViewportPosition(
+  _getElmViewportPosition(
     elmTopPos: number,
     elmLeftPos: number
   ): [number, number] {
-    const { top: totalScrollTop, left: totalScrollLeft } = this.totalScrollRect;
+    const { top: totalScrollTop, left: totalScrollLeft } =
+      this._totalScrollRect;
 
     const viewportTop = elmTopPos - totalScrollTop;
     const viewportLeft = elmLeftPos - totalScrollLeft;
@@ -539,12 +540,12 @@ class DFlexScrollContainer {
     return [viewportTop, viewportLeft];
   }
 
-  isElmOutViewport(absPos: BoxRect | BoxNum): [boolean, BoxBool] {
+  _isElmOutViewport(absPos: BoxRect | BoxNum): [boolean, BoxBool] {
     let viewportPos: BoxNum;
     let instance: ScrollThreshold;
 
     if (absPos instanceof BoxRect) {
-      const [viewportTop, viewportLeft] = this.getElmViewportPosition(
+      const [viewportTop, viewportLeft] = this._getElmViewportPosition(
         absPos.top,
         absPos.left
       );
@@ -568,13 +569,13 @@ class DFlexScrollContainer {
         );
       }
 
-      if (!this.hasOverflow) {
+      if (!this._hasOverflow) {
         throw new Error(
           "isElmOutViewport: Scrollable element does not have overflow."
         );
       }
 
-      if (this.hasOverflow.x && this.hasOverflow.y) {
+      if (this._hasOverflow.x && this._hasOverflow.y) {
         // eslint-disable-next-line no-console
         console.warn(
           "isElmOutViewport: Scrollable element has overflow in both x and y directions.\nDFlex is not yet fully optimized to handle this scenario, and the results may be inaccurate."
@@ -587,7 +588,7 @@ class DFlexScrollContainer {
     const isOutThreshold = threshold!.isOutThreshold(
       key,
       viewportPos,
-      this.hasOverflow.y ? "y" : "x"
+      this._hasOverflow.y ? "y" : "x"
     );
 
     const preservedBoxResult = threshold!.isOut[key];
@@ -596,7 +597,7 @@ class DFlexScrollContainer {
   }
 
   private _getVisibleScreen(): Dimensions {
-    const { height, width } = this.visibleScrollRect;
+    const { height, width } = this._visibleScrollRect;
 
     return {
       height,
@@ -604,15 +605,15 @@ class DFlexScrollContainer {
     };
   }
 
-  getSerializedInstance(): DFlexSerializedScroll {
+  _getSerializedInstance(): DFlexSerializedScroll {
     return {
       type: DFlexScrollContainer.getType(),
       version: 3,
       key: this._SK,
-      hasOverFlow: this.hasOverflow.getInstance(),
+      hasOverFlow: this._hasOverflow.getInstance(),
       hasDocumentAsContainer: this._isDocumentContainer,
-      scrollRect: this.totalScrollRect.getBox(),
-      scrollContainerRect: this.visibleScrollRect.getBox(),
+      scrollRect: this._totalScrollRect.getBox(),
+      scrollContainerRect: this._visibleScrollRect.getBox(),
       visibleScreen: this._getVisibleScreen(),
     };
   }

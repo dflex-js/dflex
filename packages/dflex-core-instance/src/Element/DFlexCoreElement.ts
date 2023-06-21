@@ -222,21 +222,21 @@ class DFlexCoreElement extends DFlexBaseElement {
 
   private _computedDimensions: PointNum | null;
 
-  VDOMOrder: DFlexDOMGenOrder;
+  _VDOMOrder: DFlexDOMGenOrder;
 
-  DOMOrder: DFlexDOMGenOrder;
+  _DOMOrder: DFlexDOMGenOrder;
 
-  keys: Keys;
+  _keys: Keys;
 
-  depth: number;
+  _depth: number;
 
-  DOMGrid: PointNum;
+  _DOMGrid: PointNum;
 
   private _isVisible: boolean;
 
   private _hasPendingTransform: boolean;
 
-  readonly: boolean;
+  _readonly: boolean;
 
   private _RAF: RAFFunction;
 
@@ -257,13 +257,13 @@ class DFlexCoreElement extends DFlexBaseElement {
     super(id);
 
     // Unique keys
-    this.VDOMOrder = { ...order };
-    this.DOMOrder = { ...order };
-    this.keys = { ...keys };
+    this._VDOMOrder = { ...order };
+    this._DOMOrder = { ...order };
+    this._keys = { ...keys };
 
     // Settings
-    this.depth = depth;
-    this.readonly = readonly;
+    this._depth = depth;
+    this._readonly = readonly;
     this._animation = animation;
     this._CSSTransform = CSSTransform;
 
@@ -279,24 +279,24 @@ class DFlexCoreElement extends DFlexBaseElement {
     this._computedDimensions = null;
     this._initialPosition = new PointNum(0, 0);
     this.rect = new BoxRect(0, 0, 0, 0);
-    this.DOMGrid = new PointNum(0, 0);
+    this._DOMGrid = new PointNum(0, 0);
 
     if (__DEV__) {
       Object.seal(this);
     }
   }
 
-  updateConfig(
+  _updateConfig(
     readonly: boolean,
     animation: AnimationOpts,
     CSSTransform: CSS | null
   ): void {
-    this.readonly = readonly;
+    this._readonly = readonly;
     this._animation = animation;
     this._CSSTransform = CSSTransform;
   }
 
-  initElmRect(DOM: HTMLElement, scrollLeft: number, scrollTop: number): void {
+  _initElmRect(DOM: HTMLElement, scrollLeft: number, scrollTop: number): void {
     const { height, width, left, top } = DOM.getBoundingClientRect();
 
     /**
@@ -337,11 +337,11 @@ class DFlexCoreElement extends DFlexBaseElement {
         this.rect.width
       );
 
-      this.translate.setAxes(translateX, translateY);
+      this._translate.setAxes(translateX, translateY);
     }
   }
 
-  getDimensions(DOM: HTMLElement): PointNum {
+  _getDimensions(DOM: HTMLElement): PointNum {
     if (this._computedDimensions) {
       return this._computedDimensions;
     }
@@ -353,11 +353,11 @@ class DFlexCoreElement extends DFlexBaseElement {
     return this._computedDimensions;
   }
 
-  getInitialPosition(): PointNum {
+  _getInitialPosition(): PointNum {
     return this._initialPosition;
   }
 
-  changeVisibility(DOM: HTMLElement, isVisible: boolean): void {
+  _changeVisibility(DOM: HTMLElement, isVisible: boolean): void {
     if (__DEV__) {
       if (featureFlags.enableVisibilityDebugger) {
         DOM.dataset.visibility = `${isVisible}`;
@@ -416,7 +416,7 @@ class DFlexCoreElement extends DFlexBaseElement {
 
       // No animation is needed for the element.
       if (duration === null) {
-        DFlexCoreElement.transform(DOM, this.translate.x, this.translate.y);
+        DFlexCoreElement.transform(DOM, this._translate.x, this._translate.y);
 
         // Trigger it manually because there's not transition event to trigger it.
         transitionComplete();
@@ -441,20 +441,20 @@ class DFlexCoreElement extends DFlexBaseElement {
 
       addTransition(DOM, 0, duration, this._animation!.easing);
 
-      DFlexCoreElement.transform(DOM, this.translate.x, this.translate.y);
+      DFlexCoreElement.transform(DOM, this._translate.x, this._translate.y);
     }, true);
   }
 
-  updateIndex(DOM: HTMLElement, i: number) {
-    this.setAttribute(DOM, "INDEX", i);
-    this.VDOMOrder.self = i;
+  _updateIndex(DOM: HTMLElement, i: number) {
+    this._setAttribute(DOM, "INDEX", i);
+    this._VDOMOrder.self = i;
 
     if (__DEV__) {
-      updateElmDatasetGrid(DOM, this.DOMGrid);
+      updateElmDatasetGrid(DOM, this._DOMGrid);
     }
   }
 
-  assignNewIndex(siblings: string[], newIndex: number): void {
+  _assignNewIndex(siblings: string[], newIndex: number): void {
     if (__DEV__) {
       if (newIndex < 0 || newIndex > siblings.length - 1) {
         throw new Error(
@@ -471,7 +471,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       }
     }
 
-    siblings[newIndex] = this.id;
+    siblings[newIndex] = this._id;
   }
 
   private _pushToTranslateHistory(
@@ -479,7 +479,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     cycleID: string,
     numberOfPassedElm: number
   ) {
-    const translate = this.translate.getInstance();
+    const translate = this._translate.getInstance();
 
     const elmAxesHistory: TransitionHistory = {
       axes,
@@ -535,15 +535,15 @@ class DFlexCoreElement extends DFlexBaseElement {
     if (this._animation) {
       const { duration } = this._animation;
 
-      const oldPoint = this.translate.getInstance();
-      const newPoint = this.translate.increase(elmTransition).getInstance();
+      const oldPoint = this._translate.getInstance();
+      const newPoint = this._translate.increase(elmTransition).getInstance();
 
       calculatedDuration =
         typeof duration === "number"
           ? duration
           : calculateAnimationDuration(oldPoint, newPoint);
     } else {
-      this.translate.increase(elmTransition);
+      this._translate.increase(elmTransition);
     }
 
     /**
@@ -551,17 +551,17 @@ class DFlexCoreElement extends DFlexBaseElement {
      * element current offset and effects only top and left.
      */
     this.rect.setAxes(
-      this._initialPosition.x + this.translate.x,
-      this._initialPosition.y + this.translate.y
+      this._initialPosition.x + this._translate.x,
+      this._initialPosition.y + this._translate.y
     );
 
     this._transformOrPend(DOM, enforceTransform, calculatedDuration);
 
-    const { self: oldIndex } = this.VDOMOrder;
+    const { self: oldIndex } = this._VDOMOrder;
 
     const newIndex = oldIndex + indexIncrement;
 
-    this.updateIndex(DOM, newIndex);
+    this._updateIndex(DOM, newIndex);
 
     return [oldIndex, newIndex];
   }
@@ -573,11 +573,11 @@ class DFlexCoreElement extends DFlexBaseElement {
   ) {
     if (direction === -1) {
       for (let i = 0; i < numberOfPassedElm; i += 1) {
-        this.DOMGrid.x -= 1;
+        this._DOMGrid.x -= 1;
 
-        if (this.DOMGrid.x < 0) {
-          this.DOMGrid.x = maxContainerGridBoundaries.x;
-          this.DOMGrid.y -= 1;
+        if (this._DOMGrid.x < 0) {
+          this._DOMGrid.x = maxContainerGridBoundaries.x;
+          this._DOMGrid.y -= 1;
         }
       }
 
@@ -585,11 +585,11 @@ class DFlexCoreElement extends DFlexBaseElement {
     }
 
     for (let i = 0; i < numberOfPassedElm; i += 1) {
-      this.DOMGrid.x += 1;
+      this._DOMGrid.x += 1;
 
-      if (this.DOMGrid.x > maxContainerGridBoundaries.x) {
-        this.DOMGrid.x = 0;
-        this.DOMGrid.y += 1;
+      if (this._DOMGrid.x > maxContainerGridBoundaries.x) {
+        this._DOMGrid.x = 0;
+        this._DOMGrid.y += 1;
       }
     }
   }
@@ -603,7 +603,7 @@ class DFlexCoreElement extends DFlexBaseElement {
    * @param cycleID
    * @param axis
    */
-  reconcilePosition(
+  _reconcilePosition(
     axis: Axes,
     mainAxisDirection: Direction,
     DOM: HTMLElement,
@@ -642,7 +642,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     });
 
     if (__DEV__) {
-      assertGridBoundaries(this.id, this.DOMGrid, maxContainerGridBoundaries);
+      assertGridBoundaries(this._id, this._DOMGrid, maxContainerGridBoundaries);
     }
 
     this._pushToTranslateHistory(axis, cycleID, numberOfPassedElm);
@@ -657,17 +657,17 @@ class DFlexCoreElement extends DFlexBaseElement {
     );
 
     siblings[oldIndex] = "";
-    siblings[newIndex] = this.id;
+    siblings[newIndex] = this._id;
   }
 
-  restorePosition(DOM: HTMLElement): void {
+  _restorePosition(DOM: HTMLElement): void {
     this._transform(DOM, null);
 
-    this.setAttribute(DOM, "INDEX", this.VDOMOrder.self);
+    this._setAttribute(DOM, "INDEX", this._VDOMOrder.self);
   }
 
-  assignNewPosition(DOM: HTMLElement, t: PointNum): void {
-    this.translate.clone(t);
+  _assignNewPosition(DOM: HTMLElement, t: PointNum): void {
+    this._translate.clone(t);
     this._transform(DOM, null);
   }
 
@@ -676,7 +676,7 @@ class DFlexCoreElement extends DFlexBaseElement {
    *
    * @param cycleID
    */
-  rollBackPosition(DOM: HTMLElement, cycleID: string): void {
+  _rollBackPosition(DOM: HTMLElement, cycleID: string): void {
     if (
       this._translateHistory === undefined ||
       !this._translateHistory.has(cycleID)
@@ -700,8 +700,8 @@ class DFlexCoreElement extends DFlexBaseElement {
     } = lastMovement.pop()!;
 
     const elmTransition = {
-      x: preTranslate.x - this.translate.x,
-      y: preTranslate.y - this.translate.y,
+      x: preTranslate.x - this._translate.x,
+      y: preTranslate.y - this._translate.y,
     };
 
     let indexIncrement = 0;
@@ -714,14 +714,14 @@ class DFlexCoreElement extends DFlexBaseElement {
     if (axes === "z") {
       indexIncrement = elmTransition.x > 0 || elmTransition.y > 0 ? 1 : -1;
 
-      this.DOMGrid.increase({
+      this._DOMGrid.increase({
         x: direction.x * numberOfPassedElm,
         y: direction.y * numberOfPassedElm,
       });
     } else {
       indexIncrement = direction[axes] * numberOfPassedElm;
 
-      this.DOMGrid[axes] += indexIncrement;
+      this._DOMGrid[axes] += indexIncrement;
     }
 
     this._transformationProcess(DOM, elmTransition, true, indexIncrement);
@@ -736,50 +736,50 @@ class DFlexCoreElement extends DFlexBaseElement {
       return;
     }
 
-    this.rollBackPosition(DOM, cycleID);
+    this._rollBackPosition(DOM, cycleID);
   }
 
-  hasTransformedFromOrigin(): boolean {
+  _hasTransformedFromOrigin(): boolean {
     return this._initialPosition.isNotEqual(this.rect.left, this.rect.top);
   }
 
-  needDOMReconciliation(): boolean {
-    return this.VDOMOrder.self !== this.DOMOrder.self;
+  _needDOMReconciliation(): boolean {
+    return this._VDOMOrder.self !== this._DOMOrder.self;
   }
 
-  refreshIndicators(
+  _refreshIndicators(
     DOM: HTMLElement,
     scrollTop: number,
     scrollLeft: number
   ): void {
     this._translateHistory = undefined;
 
-    this.translate.setAxes(0, 0);
+    this._translate.setAxes(0, 0);
 
     this._hasPendingTransform = false;
 
-    this.DOMOrder.self = this.VDOMOrder.self;
+    this._DOMOrder.self = this._VDOMOrder.self;
 
     removeStyleProperty(DOM, "transform");
 
     rmEmptyAttr(DOM, "style");
 
-    this.initElmRect(DOM, scrollTop, scrollLeft);
+    this._initElmRect(DOM, scrollTop, scrollLeft);
 
-    this.DOMGrid.setAxes(0, 0);
+    this._DOMGrid.setAxes(0, 0);
   }
 
-  getSerializedInstance(): DFlexSerializedElement {
+  _getSerializedInstance(): DFlexSerializedElement {
     return {
       type: DFlexCoreElement.getType(),
       version: 3,
-      id: this.id,
-      grid: this.DOMGrid,
-      translate: this.translate instanceof PointNum ? this.translate : null,
-      order: this.VDOMOrder,
+      id: this._id,
+      grid: this._DOMGrid,
+      translate: this._translate instanceof PointNum ? this._translate : null,
+      order: this._VDOMOrder,
       initialPosition: this._initialPosition.getInstance(),
       rect: this.rect,
-      hasTransformedFromOrigin: this.hasTransformedFromOrigin(),
+      hasTransformedFromOrigin: this._hasTransformedFromOrigin(),
       hasPendingTransformation: this._hasPendingTransform,
       isVisible: this._isVisible,
     };

@@ -244,8 +244,8 @@ class DFlexBaseStore {
 
     if (dflexParentElm) {
       ({
-        keys: restoredKeys,
-        VDOMOrder: { self: restoredSiblingsIndex },
+        _keys: restoredKeys,
+        _VDOMOrder: { self: restoredSiblingsIndex },
       } = dflexParentElm);
     }
 
@@ -279,7 +279,7 @@ class DFlexBaseStore {
     this.registry.set(id, dflexElm);
     this.interactiveDOM.set(id, DOM);
 
-    dflexElm.setAttribute(DOM, "INDEX", dflexElm.VDOMOrder.self);
+    dflexElm._setAttribute(DOM, "INDEX", dflexElm._VDOMOrder.self);
 
     if (depth > 0) {
       DOM.dataset.dflexKey = keys.SK;
@@ -379,9 +379,9 @@ class DFlexBaseStore {
       const dflexElm = this.registry.get(id)!;
 
       // Update default values created earlier.
-      dflexElm.updateConfig(readonly, animation, CSSTransform);
+      dflexElm._updateConfig(readonly, animation, CSSTransform);
 
-      ({ SK } = dflexElm.keys);
+      ({ SK } = dflexElm._keys);
     } else {
       DOM = getElmDOMOrThrow(id)!;
     }
@@ -412,7 +412,7 @@ class DFlexBaseStore {
         const dflexElm = this.registry.get(id)!;
 
         // Update default values created earlier.
-        dflexElm.updateConfig(readonly, animation, CSSTransform);
+        dflexElm._updateConfig(readonly, animation, CSSTransform);
 
         if (__DEV__) {
           if (!SK) {

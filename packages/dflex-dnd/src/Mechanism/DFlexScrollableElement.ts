@@ -67,8 +67,8 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     this._prevMouseDirection = new Point<Direction>(-1, -1);
 
     const {
-      totalScrollRect: { left, top },
-      visibleScrollRect: { width, height },
+      _totalScrollRect: { left, top },
+      _visibleScrollRect: { width, height },
     } = store.scrolls.get(SK)!;
 
     const scrollThrottleMS = calculateScrollThrottleMS(width, height);
@@ -121,7 +121,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     const viewportPos = this._draggable.getViewportCurrentPos();
 
-    const [isOut, preservedBoxResult] = scroll.isElmOutViewport(viewportPos);
+    const [isOut, preservedBoxResult] = scroll._isElmOutViewport(viewportPos);
 
     if (!isOut) {
       if (__DEV__) {
@@ -175,7 +175,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     preservedBoxResult.setFalsy();
 
-    const canScroll: boolean = scroll.hasScrollableArea(axis, direction);
+    const canScroll: boolean = scroll._hasScrollableArea(axis, direction);
 
     if (!canScroll) {
       // If there's not scrollable area, we don't need to scroll.
@@ -204,7 +204,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     }
 
     const onComplete = () => {
-      scroll.pauseListeners(false);
+      scroll._pauseListeners(false);
       this.cancelScrolling = null;
 
       if (featureFlags.enableScrollDebugger) {
@@ -214,7 +214,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     };
 
     const onAbort = () => {
-      scroll.pauseListeners(false);
+      scroll._pauseListeners(false);
       this.cancelScrolling = null;
 
       if (featureFlags.enableScrollDebugger) {
@@ -223,7 +223,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       }
     };
 
-    scroll.pauseListeners(true);
+    scroll._pauseListeners(true);
 
     this.cancelScrolling = scrollTransition(
       scroll,

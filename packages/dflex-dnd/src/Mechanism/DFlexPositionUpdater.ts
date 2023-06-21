@@ -44,9 +44,9 @@ function throwOnInfiniteTransformation(id: string) {
 
 function composeElmMeta(element: DFlexElement) {
   return {
-    id: element.id,
-    index: element.VDOMOrder.self,
-    target: store.interactiveDOM.get(element.id),
+    id: element._id,
+    index: element._VDOMOrder.self,
+    target: store.interactiveDOM.get(element._id),
   };
 }
 
@@ -176,7 +176,7 @@ export function handleElmMigration(
 
     const gridIndex = originContainer._register(elm.rect);
 
-    elm.DOMGrid.clone(gridIndex);
+    elm._DOMGrid.clone(gridIndex);
   });
 
   const lastInOrigin = store.registry.get(
@@ -276,7 +276,7 @@ class DFlexPositionUpdater {
       this._updateDraggable(_axis, elmDirection);
     });
 
-    const { rect, DOMGrid: grid } = elm;
+    const { rect, _DOMGrid: grid } = elm;
 
     this._draggable.occupiedPosition.setAxes(
       rect.left + this._draggedPositionOffset.x,
@@ -297,7 +297,7 @@ class DFlexPositionUpdater {
     const {
       threshold,
       draggedElm: {
-        id,
+        _id: id,
         rect: { width, height },
       },
     } = this._draggable;
@@ -359,7 +359,7 @@ class DFlexPositionUpdater {
     // Get the stored position if the branch is empty.
     if (!isEmpty) {
       if (!isOrphan) {
-        const { DOMGrid: grid } = elm!;
+        const { _DOMGrid: grid } = elm!;
 
         composedGrid.clone(grid);
       }
@@ -492,7 +492,7 @@ class DFlexPositionUpdater {
     if (!onSameAxis) {
       const isPartOfZGrid = (_axis: Axis) => {
         // eslint-disable-next-line no-underscore-dangle
-        return element.DOMGrid[_axis] > 0 || gridPlaceholder[_axis] > 0;
+        return element._DOMGrid[_axis] > 0 || gridPlaceholder[_axis] > 0;
       };
 
       if (axis === "y" && isPartOfZGrid("x")) {
@@ -537,7 +537,7 @@ class DFlexPositionUpdater {
       composeElmMeta(element)
     );
 
-    element.reconcilePosition(
+    element._reconcilePosition(
       axis,
       elmDirection,
       DOM,

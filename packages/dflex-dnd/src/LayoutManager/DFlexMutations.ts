@@ -17,8 +17,8 @@ function cleanupSiblings(store: DFlexDnDStore) {
 
   terminatedDOMiDs.forEach((id) => {
     const {
-      keys: { SK, BK },
-      depth,
+      _keys: { SK, BK },
+      _depth: depth,
     } = store.registry.get(id)!;
 
     store.removeElmFromRegistry(id);
@@ -51,8 +51,8 @@ function cleanupSiblings(store: DFlexDnDStore) {
 
         const index = connectedNodesID.push(elmID) - 1;
 
-        if (index !== dflexElm.VDOMOrder.self) {
-          dflexElm.updateIndex(store.interactiveDOM.get(elmID)!, index);
+        if (index !== dflexElm._VDOMOrder.self) {
+          dflexElm._updateIndex(store.interactiveDOM.get(elmID)!, index);
 
           if (featureFlags.enableRegisterDebugger) {
             // eslint-disable-next-line no-console
@@ -91,18 +91,18 @@ function mutateIDs(store: DFlexDnDStore) {
   changedIds.forEach((idSet) => {
     if (store.registry.has(idSet.oldId)) {
       const elm = store.registry.get(idSet.oldId)!;
-      const elmBranch = store.getElmSiblingsByKey(elm.keys.SK);
+      const elmBranch = store.getElmSiblingsByKey(elm._keys.SK);
 
       // Update registry.
       store.registry.set(idSet.newId, elm);
       store.registry.delete(idSet.oldId);
 
       // Update DOM-gen branch.
-      elmBranch[elm.VDOMOrder.self] = idSet.newId;
+      elmBranch[elm._VDOMOrder.self] = idSet.newId;
 
       // Update instance.
       // @ts-ignore
-      elm.id = idSet.newId;
+      elm._id = idSet.newId;
     }
   });
 }

@@ -13,8 +13,8 @@ class EndCycle extends DFlexMechanismController {
     const {
       threshold,
       draggedElm: {
-        id: draggedID,
-        VDOMOrder: { self: from },
+        _id: draggedID,
+        _VDOMOrder: { self: from },
       },
     } = this._draggable;
 
@@ -42,7 +42,7 @@ class EndCycle extends DFlexMechanismController {
          * Note: rolling back won't affect order array. It only deals with element
          * itself and totally ignore any instance related to store.
          */
-        dflexElm.rollBackPosition(DOM, cycleID);
+        dflexElm._rollBackPosition(DOM, cycleID);
       }
     }
 

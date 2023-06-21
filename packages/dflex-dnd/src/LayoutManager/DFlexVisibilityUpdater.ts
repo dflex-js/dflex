@@ -11,7 +11,7 @@ function updateElmVisibility(
 ): boolean {
   const { rect } = elm;
 
-  const [isInvisible] = scroll.isElmOutViewport(rect);
+  const [isInvisible] = scroll._isElmOutViewport(rect);
 
   const isBreakable = prevVisibility && isInvisible;
 
@@ -19,7 +19,7 @@ function updateElmVisibility(
 
   prevVisibility = isVisible;
 
-  elm.changeVisibility(DOM, isVisible);
+  elm._changeVisibility(DOM, isVisible);
 
   return isBreakable;
 }
@@ -37,7 +37,7 @@ function updateSiblingsVisibility(
     if (elmID.length > 0) {
       const [elm, DOM] = store.getElmWithDOM(elmID);
 
-      elm.changeVisibility(DOM, value);
+      elm._changeVisibility(DOM, value);
     }
   }
 }
@@ -68,7 +68,7 @@ function updateSiblingsVisibilityLinearly(
   const scroll = store.scrolls.get(SK)!;
 
   // If not scroll, then all the elements are visible.
-  if (scroll.allowDynamicVisibility) {
+  if (scroll._allowDynamicVisibility) {
     let breakAt = 0;
 
     for (let i = 0; i < siblings.length; i += 1) {

@@ -34,8 +34,8 @@ function DFlexScrollTransition(
   const step = (timestamp: number) => {
     if (!startTime) {
       startTime = timestamp;
-      startScroll = scroll.totalScrollRect[getStartingPointByAxis(axis)];
-      distance = scroll.calculateDistance(axis, direction);
+      startScroll = scroll._totalScrollRect[getStartingPointByAxis(axis)];
+      distance = scroll._calculateDistance(axis, direction);
 
       calculatedDuration = calculatedDuration || Math.sqrt(distance) * 75;
     }
@@ -48,9 +48,9 @@ function DFlexScrollTransition(
     const scrollPosition = startScroll + direction * (distance * easedProgress);
 
     if (axis === "x") {
-      scroll.scrollTo(scrollPosition, -1);
+      scroll._scrollTo(scrollPosition, -1);
     } else {
-      scroll.scrollTo(-1, scrollPosition);
+      scroll._scrollTo(-1, scrollPosition);
     }
 
     if (!aborted && progress < 1) {

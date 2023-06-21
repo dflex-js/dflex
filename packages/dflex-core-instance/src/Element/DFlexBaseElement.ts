@@ -13,9 +13,9 @@ function transform(DOM: HTMLElement, x: number, y: number): void {
 }
 
 class DFlexBaseElement {
-  id: string;
+  _id: string;
 
-  translate: PointNum;
+  _translate: PointNum;
 
   private _hasAttribute?: AttributeSet;
 
@@ -26,12 +26,12 @@ class DFlexBaseElement {
   static transform = transform;
 
   constructor(id: string) {
-    this.id = id;
-    this.translate = new PointNum(0, 0);
+    this._id = id;
+    this._translate = new PointNum(0, 0);
     this._hasAttribute = new Set();
   }
 
-  setAttribute(
+  _setAttribute(
     DOM: HTMLElement,
     key: AllowedAttributes,
     value: string | number
@@ -50,7 +50,7 @@ class DFlexBaseElement {
     this._hasAttribute!.add(key);
   }
 
-  removeAttribute(DOM: HTMLElement, key: AllowedAttributes): void {
+  _removeAttribute(DOM: HTMLElement, key: AllowedAttributes): void {
     if (key === "INDEX" || !this._hasAttribute!.has(key)) {
       return;
     }
@@ -59,9 +59,9 @@ class DFlexBaseElement {
     this._hasAttribute!.delete(key);
   }
 
-  clearAttributes(DOM: HTMLElement): void {
+  _clearAttributes(DOM: HTMLElement): void {
     this._hasAttribute!.forEach((key) => {
-      this.removeAttribute(DOM, key);
+      this._removeAttribute(DOM, key);
     });
 
     this._hasAttribute!.clear();

@@ -124,10 +124,10 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     this.isLayoutStateUpdated = false;
 
     const {
-      VDOMOrder,
-      DOMGrid,
-      keys: { SK },
-      depth,
+      _VDOMOrder: VDOMOrder,
+      _DOMGrid: DOMGrid,
+      _keys: { SK },
+      _depth: depth,
       rect,
     } = element;
 
@@ -142,7 +142,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     if (store.migration === null) {
       store.migration = new DFlexCycle(
         VDOMOrder.self,
-        this.draggedElm.id,
+        this.draggedElm._id,
         SK,
         cycleID,
         // TODO: refactor this to use if the dragged belongs to scroll container or not.
@@ -151,7 +151,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     } else {
       store.migration.add(
         VDOMOrder.self,
-        this.draggedElm.id,
+        this.draggedElm._id,
         SK,
         cycleID,
         // TODO: refactor this to use if the dragged belongs to scroll container or not.
@@ -183,7 +183,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     this.marginX = rm + lm;
 
     const {
-      totalScrollRect: { left, top },
+      _totalScrollRect: { left, top },
     } = store.scrolls.get(SK)!;
 
     const { x, y } = initCoordinates;
@@ -238,7 +238,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
   }
 
   protected _appendDraggedToContainerDimensions(isAppend: boolean) {
-    const { depth, rect } = this.draggedElm;
+    const { _depth: depth, rect } = this.draggedElm;
 
     const maneuverDistance = rect.height;
 
@@ -404,7 +404,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     let filteredY = y;
     let filteredX = x;
 
-    const { SK } = store.registry.get(this.draggedElm.id)!.keys;
+    const { SK } = store.registry.get(this.draggedElm._id)!._keys;
     const container = store.containers.get(SK)!;
 
     if (this.axesFilterNeeded) {
@@ -453,7 +453,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
       filteredX = this.axesXFilter(
         x,
         0,
-        scroll.getMaximumScrollContainerLeft(),
+        scroll._getMaximumScrollContainerLeft(),
         false,
         false,
         true
@@ -461,7 +461,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
       filteredY = this.axesYFilter(
         y,
         0,
-        scroll.getMaximumScrollContainerTop(),
+        scroll._getMaximumScrollContainerTop(),
         false,
         false,
         true
@@ -474,7 +474,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
   }
 
   isOutThreshold(SK?: string, useInsertionThreshold?: boolean) {
-    const { id, depth } = this.draggedElm;
+    const { _id: id, _depth: depth } = this.draggedElm;
 
     let key = SK || id;
 

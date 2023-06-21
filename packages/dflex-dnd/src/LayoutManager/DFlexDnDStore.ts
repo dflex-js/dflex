@@ -216,10 +216,10 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     const gridIndex = container._register(
       rect,
-      this.unifiedContainerDimensions[dflexElm.depth]
+      this.unifiedContainerDimensions[dflexElm._depth]
     );
 
-    dflexElm.DOMGrid.clone(gridIndex);
+    dflexElm._DOMGrid.clone(gridIndex);
   }
 
   private _resumeAndInitElmGrid(
@@ -230,15 +230,15 @@ class DFlexDnDStore extends DFlexBaseStore {
     const [dflexElm, DOM] = this.getElmWithDOM(id);
 
     const {
-      totalScrollRect: { left, top },
+      _totalScrollRect: { left, top },
     } = scroll;
 
-    dflexElm.initElmRect(DOM, left, top);
+    dflexElm._initElmRect(DOM, left, top);
 
     this.setElmGridBridge(container, dflexElm);
 
     if (__DEV__) {
-      updateElmDatasetGrid(DOM, dflexElm.DOMGrid);
+      updateElmDatasetGrid(DOM, dflexElm._DOMGrid);
     }
   }
 
@@ -419,17 +419,17 @@ class DFlexDnDStore extends DFlexBaseStore {
         const scroll = this.scrolls.get(containerKy)!;
 
         const {
-          totalScrollRect: { left, top },
+          _totalScrollRect: { left, top },
         } = scroll;
 
         branch.forEach((elmID) => {
           const [dflexElm, elmDOM] = this.getElmWithDOM(elmID);
 
-          dflexElm.initElmRect(elmDOM, left, top);
+          dflexElm._initElmRect(elmDOM, left, top);
 
           container._register(
             dflexElm.rect,
-            this.unifiedContainerDimensions[dflexElm.depth]
+            this.unifiedContainerDimensions[dflexElm._depth]
           );
         });
       }
@@ -589,7 +589,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     }
 
     return this.registry.has(id)
-      ? this.registry.get(id)!.getSerializedInstance()
+      ? this.registry.get(id)!._getSerializedInstance()
       : null;
   }
 
@@ -603,7 +603,7 @@ class DFlexDnDStore extends DFlexBaseStore {
    */
   getScrollWithSiblingsByID(id: string): [DFlexScrollContainer, Siblings] {
     const {
-      keys: { SK },
+      _keys: { SK },
     } = this.registry.get(id)!;
 
     const scroll = this.scrolls.get(SK)!;
@@ -618,7 +618,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     }
 
     const {
-      keys: { SK },
+      _keys: { SK },
     } = this.registry.get(id)!;
 
     if (!this.scrolls.has(SK)) {
@@ -627,7 +627,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     const scroll = this.scrolls.get(SK)!;
 
-    return scroll.getSerializedInstance();
+    return scroll._getSerializedInstance();
   }
 
   /**
@@ -638,7 +638,7 @@ class DFlexDnDStore extends DFlexBaseStore {
    */
   getContainerByID(id: string): DFlexParentContainer {
     const {
-      keys: { SK },
+      _keys: { SK },
     } = this.registry.get(id)!;
 
     const container = this.containers.get(SK)!;

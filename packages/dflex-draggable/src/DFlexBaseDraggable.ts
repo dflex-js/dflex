@@ -97,7 +97,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     this.draggedElm = abstractCoreElm;
     this.draggedDOM = DOM;
 
-    const { translate } = this.draggedElm;
+    const { _translate: translate } = this.draggedElm;
 
     this._outerOffset = new PointNum(
       translate.x - initCoordinates.x,
@@ -190,7 +190,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     if (isAddingProps) {
       this._preserveDOMAttributes(originDOM, true);
 
-      this.draggedElm.setAttribute(originDOM, "DRAGGED", "true");
+      this.draggedElm._setAttribute(originDOM, "DRAGGED", "true");
 
       if (mirrorDOM !== null) {
         mirrorDOM.ariaLabel = "Draggable";
@@ -225,7 +225,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
 
     originDOM.ariaLabel = null;
 
-    this.draggedElm.clearAttributes(originDOM);
+    this.draggedElm._clearAttributes(originDOM);
 
     if (mirrorDOM !== null) {
       if (isMigratedInScroll) {
