@@ -30,6 +30,13 @@ interface Props {
 }
 
 const isCI = import.meta.env.MODE === "CI";
+const logColor = isCI ? "\x1b[31m" : "\x1b[32m"; // Red color for CI, Green color for non-CI
+const logMessage = `Running in ${logColor}${
+  isCI ? "CI" : "non-CI"
+}\x1b[0m environment.`;
+
+// eslint-disable-next-line no-console
+console.log(logMessage);
 
 const DFlexDnDComponent = ({
   Component,

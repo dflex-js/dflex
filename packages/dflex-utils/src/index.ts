@@ -8,7 +8,7 @@ export type { ThresholdPercentages } from "./Threshold";
 export { Tracker, PREFIX_CYCLE, PREFIX_ID, PREFIX_KY } from "./Tracker";
 
 export { default as TaskQueue } from "./TaskQueue";
-export { default as eventDebounce } from "./eventDebounce";
+export { default as eventDebounce } from "./DFlexEventDebounce";
 
 export { DFlexCycle } from "./DFlexCycle";
 export type { AbstractDFlexCycle } from "./DFlexCycle";
@@ -41,6 +41,8 @@ export {
 export {
   getCachedComputedStyleProperty,
   clearComputedStyleCache,
+  setStyleProperty,
+  removeStyleProperty,
   setRelativePosition,
   setFixedDimensions,
   getElmComputedDimensions,
@@ -51,11 +53,21 @@ export {
   rmEmptyAttr,
 } from "./computedStyleUtils";
 
+export type {
+  RAFFunction,
+  RAFCleanup,
+  TimeoutCleanup,
+  TimeoutFunction,
+  IsThrottledFunction,
+} from "./environment";
+
 export {
   canUseDOM,
   getSelection,
   getParentElm,
   updateElmDatasetGrid,
-} from "./dom";
+  DFlexCreateRAF as createRAF,
+  DFlexCreateTimeout as createTimeout,
+} from "./environment";
 
 export * as featureFlags from "./FeatureFlags";

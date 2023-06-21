@@ -16,6 +16,6 @@ export const enableRegisterDebugger = false;
 
 export const enableMechanismDebugger = false;
 
-export const enableScrollDebugger = false;
+export const enableScrollDebugger = true;
 
 export const enableVisibilityDebugger = false;

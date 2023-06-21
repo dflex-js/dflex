@@ -407,7 +407,7 @@ class DFlexBaseStore {
           }
         }
 
-        [SK] = this._taskQ.handleQueue(REGISTER_Q) as string[];
+        [SK] = this._taskQ.executeQueue(REGISTER_Q) as string[];
 
         const dflexElm = this.registry.get(id)!;
 
@@ -461,7 +461,7 @@ class DFlexBaseStore {
 
             const fn = () => branchComposedCallBack(SK, depth + 1, parentDOM);
 
-            this._taskQ.insertBeforeEnd(
+            this._taskQ.enqueueBeforeLast(
               highestContainerComposedCallBack,
               fn,
               CB_Q
@@ -490,7 +490,7 @@ class DFlexBaseStore {
             }
           }
 
-          this._taskQ.handleQueue(REGISTER_Q);
+          this._taskQ.executeQueue(REGISTER_Q);
 
           const parentDepth = depth + 1;
 
@@ -536,7 +536,7 @@ class DFlexBaseStore {
           }
 
           // A new branch. Queue the new branch.
-          this._taskQ.add(submitParentElm, REGISTER_Q, parentID);
+          this._taskQ.enqueue(submitParentElm, REGISTER_Q, parentID);
 
           scheduleCBFunctions();
         } else if (!isElmRegistered) {

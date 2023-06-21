@@ -13,6 +13,9 @@ import {
   setFixedDimensions,
   CSS,
   getAnimationOptions,
+  removeStyleProperty,
+  TimeoutFunction,
+  createTimeout,
 } from "@dflex/utils";
 
 import {
@@ -153,7 +156,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   private _refreshAllElmBranchWhileReconcile?: boolean;
 
-  private _resizeTimeoutId?: ReturnType<typeof setTimeout>;
+  private _resizeThrottle: TimeoutFunction;
 
   constructor() {
     super();
@@ -165,6 +168,8 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.migration = null;
     this._isInitialized = false;
     this._isDOM = false;
+
+    [this._resizeThrottle] = createTimeout(100);
 
     // Observers.
     this.mutationObserverMap = new Map();
@@ -319,7 +324,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     updateSiblingsVisibilityLinearly(this, SK);
   }
 
-  _initObservers() {
+  private _initObservers() {
     const highestSKInAllBranches = this.DOMGen.getHighestSKInAllBranches();
 
     highestSKInAllBranches.forEach(({ id }) => {
@@ -441,20 +446,19 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   private _windowResizeHandler() {
     this._forEachContainerDOM((DOM) => {
-      DOM.style.removeProperty("width");
-      DOM.style.removeProperty("height");
+      removeStyleProperty(DOM, "width");
+      removeStyleProperty(DOM, "height");
     });
 
-    clearTimeout(this._resizeTimeoutId);
-
-    // Set a timeout to restore the styles after 100ms
-    this._resizeTimeoutId = setTimeout(() => {
+    const throttleCB = () => {
       clearComputedStyleCache();
 
       this._forEachContainerDOM((DOM) => {
         setFixedDimensions(DOM);
       });
-    }, 100);
+    };
+
+    this._resizeThrottle(throttleCB, true);
 
     this._refreshAllElmBranchWhileReconcile = true;
 

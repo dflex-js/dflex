@@ -2,9 +2,11 @@ import {
   AxesPoint,
   Axis,
   BoxNum,
+  createTimeout,
   featureFlags,
   PointNum,
   PREFIX_CYCLE,
+  TimeoutFunction,
 } from "@dflex/utils";
 
 import { DFLEX_EVENTS, scheduler, store } from "../LayoutManager";
@@ -41,11 +43,9 @@ class DFlexMechanismController extends DFlexScrollableElement {
    * transformation. */
   private _animatedDraggedInsertionFrame: number | null;
 
-  private _detectNearestContainerTimeoutID: ReturnType<
-    typeof setTimeout
-  > | null;
+  private _detectNearestContainerThrottle: TimeoutFunction;
 
-  private _hasBeenScrolling: boolean;
+  protected hasBeenScrolling: boolean;
 
   private listAppendPosition: AxesPoint | null;
 
@@ -76,10 +76,10 @@ class DFlexMechanismController extends DFlexScrollableElement {
   constructor(draggable: DraggableInteractive) {
     super(draggable);
 
-    this._hasBeenScrolling = false;
+    this.hasBeenScrolling = false;
     this.isOnDragOutThresholdEvtEmitted = false;
     this._animatedDraggedInsertionFrame = null;
-    this._detectNearestContainerTimeoutID = null;
+    [this._detectNearestContainerThrottle] = createTimeout(0);
     this.listAppendPosition = null;
     this.isParentLocked = false;
 
@@ -502,7 +502,8 @@ class DFlexMechanismController extends DFlexScrollableElement {
             return;
           }
 
-          throw new Error(
+          // eslint-disable-next-line no-console
+          console.warn(
             `_actionCaller: unable to find targeted element index for: ${JSON.stringify(
               occupiedGrid
             )}`
@@ -683,7 +684,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       this.scrollFeed(x, y, SK);
 
       if (this.hasActiveScrolling()) {
-        if (!this._hasBeenScrolling) {
+        if (!this.hasBeenScrolling) {
           scheduler(store, null, {
             onUpdate: () => {
               isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
@@ -697,21 +698,20 @@ class DFlexMechanismController extends DFlexScrollableElement {
             },
           });
 
-          this._hasBeenScrolling = true;
+          this.hasBeenScrolling = true;
         }
 
         return;
       }
 
-      if (this._hasBeenScrolling) {
+      const { totalScrollRect } = store.scrolls.get(SK)!;
+
+      if (this.hasBeenScrolling) {
         isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
         if (!isOutSiblingsContainer && this.isParentLocked) {
-          scrollOffsetX =
-            this.currentScrollAxes.x - this.initialScrollPosition.x;
-
-          scrollOffsetY =
-            this.currentScrollAxes.y - this.initialScrollPosition.y;
+          scrollOffsetX = totalScrollRect.left - this.initialScrollPosition.x;
+          scrollOffsetY = totalScrollRect.top - this.initialScrollPosition.y;
 
           // Update the position before calling the detector.
           this.draggable.setCurrentPos(x, y, scrollOffsetX, scrollOffsetY);
@@ -719,14 +719,16 @@ class DFlexMechanismController extends DFlexScrollableElement {
           this._detectNearestElm();
         }
 
-        this._hasBeenScrolling = false;
+        this.hasBeenScrolling = false;
 
         return;
       }
     }
 
-    scrollOffsetX = this.currentScrollAxes.x - this.initialScrollPosition.x;
-    scrollOffsetY = this.currentScrollAxes.y - this.initialScrollPosition.y;
+    const { totalScrollRect } = store.scrolls.get(SK)!;
+
+    scrollOffsetX = totalScrollRect.left - this.initialScrollPosition.x;
+    scrollOffsetY = totalScrollRect.top - this.initialScrollPosition.y;
 
     this.draggable.dragWithOffset(x, y, scrollOffsetX, scrollOffsetY);
 
@@ -775,11 +777,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       this.isParentLocked = true;
 
       if (containersTransition.enable) {
-        if (this._detectNearestContainerTimeoutID !== null) {
-          clearTimeout(this._detectNearestContainerTimeoutID);
-        }
-
-        this._detectNearestContainerTimeoutID = setTimeout(() => {
+        const cb = () => {
           this._detectNearestContainer();
 
           if (migration.isTransitioning) {
@@ -789,7 +787,9 @@ class DFlexMechanismController extends DFlexScrollableElement {
               },
             });
           }
-        }, 0);
+        };
+
+        this._detectNearestContainerThrottle(cb, true);
 
         return;
       }

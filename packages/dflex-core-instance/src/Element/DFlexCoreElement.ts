@@ -15,6 +15,10 @@ import {
   CSSStyle,
   CSSClass,
   CubicBezier,
+  RAFFunction,
+  createRAF,
+  setStyleProperty,
+  removeStyleProperty,
 } from "@dflex/utils";
 import type { Direction, Axes, AxesPoint, AnimationOpts } from "@dflex/utils";
 
@@ -118,13 +122,11 @@ const TRANSITION_DELAY = "transition-delay";
 const TRANSITION_DURATION = "transition-duration";
 const TRANSITION_TIMING_FUNCTION = "transition-timing-function";
 
-function removeTransition(DOM: HTMLElement) {
-  const { style } = DOM;
-
-  style.removeProperty(TRANSITION_PROPERTY);
-  style.removeProperty(TRANSITION_DELAY);
-  style.removeProperty(TRANSITION_DURATION);
-  style.removeProperty(TRANSITION_TIMING_FUNCTION);
+function removeTransition(DOM: HTMLElement): void {
+  removeStyleProperty(DOM, TRANSITION_PROPERTY);
+  removeStyleProperty(DOM, TRANSITION_DELAY);
+  removeStyleProperty(DOM, TRANSITION_DURATION);
+  removeStyleProperty(DOM, TRANSITION_TIMING_FUNCTION);
 }
 
 function validateEasing(easing: string): void {
@@ -164,13 +166,11 @@ function addTransition(
     }
   }
 
-  const { style } = DOM;
-
   // Set the transition properties using setProperty
-  style.setProperty(TRANSITION_PROPERTY, "transform");
-  style.setProperty(TRANSITION_DELAY, `${delay}ms`);
-  style.setProperty(TRANSITION_DURATION, `${duration}ms`);
-  style.setProperty(TRANSITION_TIMING_FUNCTION, easing);
+  setStyleProperty(DOM, TRANSITION_PROPERTY, "transform");
+  setStyleProperty(DOM, TRANSITION_DELAY, `${delay}ms`);
+  setStyleProperty(DOM, TRANSITION_DURATION, `${duration}ms`);
+  setStyleProperty(DOM, TRANSITION_TIMING_FUNCTION, easing);
 }
 
 function applyCSSClass(DOM: HTMLElement, className: CSSClass): void {
@@ -179,13 +179,13 @@ function applyCSSClass(DOM: HTMLElement, className: CSSClass): void {
 
 function removeCSSStyle(DOM: HTMLElement, properties: CSSStyle): void {
   Object.keys(properties).forEach((property) => {
-    DOM.style.removeProperty(property);
+    removeStyleProperty(DOM, property);
   });
 }
 
 function applyCSSStyle(DOM: HTMLElement, style: CSSStyle): void {
   Object.entries(style).forEach(([property, value]) => {
-    DOM.style.setProperty(property, value);
+    setStyleProperty(DOM, property, value);
   });
 }
 
@@ -238,7 +238,7 @@ class DFlexCoreElement extends DFlexBaseElement {
 
   readonly: boolean;
 
-  private _animatedFrame: number | null;
+  private _RAF: RAFFunction;
 
   private _animation: AnimationOpts;
 
@@ -268,8 +268,8 @@ class DFlexCoreElement extends DFlexBaseElement {
     this._CSSTransform = CSSTransform;
 
     // Movement
+    [this._RAF] = createRAF();
     this._isVisible = true;
-    this._animatedFrame = null;
     this._hasPendingTransform = false;
 
     // Time travel
@@ -387,14 +387,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       return;
     }
 
-    if (this._animatedFrame !== null) {
-      cancelAnimationFrame(this._animatedFrame);
-      this._animatedFrame = null;
-    }
-
     const transitionComplete = () => {
-      this._animatedFrame = null;
-
       if (this._CSSTransform) {
         removeCSS(DOM, this._CSSTransform);
       }
@@ -416,7 +409,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       onComplete();
     };
 
-    this._animatedFrame = requestAnimationFrame(() => {
+    this._RAF(() => {
       if (this._CSSTransform) {
         applyCSS(DOM, this._CSSTransform);
       }
@@ -449,7 +442,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       addTransition(DOM, 0, duration, this._animation!.easing);
 
       DFlexCoreElement.transform(DOM, this.translate.x, this.translate.y);
-    });
+    }, true);
   }
 
   updateIndex(DOM: HTMLElement, i: number) {
@@ -465,15 +458,15 @@ class DFlexCoreElement extends DFlexBaseElement {
     if (__DEV__) {
       if (newIndex < 0 || newIndex > siblings.length - 1) {
         throw new Error(
-          `assignNewIndex: new index: ${newIndex} is outside siblings bound ${JSON.stringify(
+          `assignNewIndex: The new index ${newIndex} is outside the siblings' bounds ${JSON.stringify(
             siblings
-          )}`
+          )}.`
         );
       }
 
       if (siblings[newIndex].length > 0) {
         throw new Error(
-          `assignNewIndex: new index should occupy empty element at index: ${newIndex} but found ${siblings[newIndex]}`
+          `assignNewIndex: The new index ${newIndex} should occupy an empty element, but found ${siblings[newIndex]}.`
         );
       }
     }
@@ -767,7 +760,7 @@ class DFlexCoreElement extends DFlexBaseElement {
 
     this.DOMOrder.self = this.VDOMOrder.self;
 
-    DOM.style.removeProperty("transform");
+    removeStyleProperty(DOM, "transform");
 
     rmEmptyAttr(DOM, "style");
 

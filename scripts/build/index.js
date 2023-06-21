@@ -67,6 +67,13 @@ const plugins = (isProd, isMinify) => [
   }),
   isMinify &&
     terser({
+      toplevel: true,
+      module: true,
+      ecma: 2019,
+      compress: {
+        passes: 2,
+        pure_getters: true,
+      },
       mangle: {
         properties: {
           regex: /^_/,

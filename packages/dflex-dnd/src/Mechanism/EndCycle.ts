@@ -73,9 +73,21 @@ class EndCycle extends DFlexMechanismController {
 
     if (this.hasActiveScrolling()) {
       isFallback = true;
-      this.cancelScrolling(store.scrolls.get(latestCycle.SK)!);
+
+      if (__DEV__) {
+        if (this.cancelScrolling === null) {
+          throw new Error(
+            "Failed to initiate fallback scrolling. The 'cancelScrolling' function must be available when 'hasActiveScrolling' is true.\n" +
+              "Please check for any changes that may have affected the 'hasActiveScrolling' condition and ensure that:\n" +
+              "- 'cancelScrolling' is properly implemented,\n" +
+              "- 'cancelScrolling' is assigned and not null."
+          );
+        }
+      }
+
+      this.cancelScrolling!();
     } else {
-      isFallback = this.draggable.isNotSettled();
+      isFallback = this.hasBeenScrolling || this.draggable.isNotSettled();
     }
 
     // If it's falling back then we won't trigger reconciliation.

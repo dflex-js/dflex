@@ -1,3 +1,5 @@
+import { DFlexCreateRAF, DFlexCreateTimeout } from "../environment";
+
 type DebouncedListener = () => void;
 
 interface DebounceControl extends DebouncedListener {
@@ -6,49 +8,34 @@ interface DebounceControl extends DebouncedListener {
   resume: () => void;
 }
 
-function eventDebounce(
+function DFlexEventDebounce(
   listener: DebouncedListener,
   immediate = false,
   throttle = 200
 ): DebounceControl {
-  let rAFid: number | null = null;
-  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+  const [timeout, cancelTimeout] = DFlexCreateTimeout(throttle);
+  const [RAF, cancelRAF] = DFlexCreateRAF();
+
+  let lastCall = performance.now();
   let isPaused = false;
-  let lastCall = Date.now();
 
   const debouncedListener: DebounceControl = () => {
     if (isPaused) {
       return;
     }
 
-    const currentTime = Date.now();
+    const currentTime = performance.now();
     const timeSinceLastCall = currentTime - lastCall;
 
     const shouldCallListener = immediate || timeSinceLastCall >= throttle;
 
     if (shouldCallListener) {
-      if (rAFid) {
-        cancelAnimationFrame(rAFid);
-        rAFid = null;
-      }
-
-      rAFid = requestAnimationFrame(() => {
-        listener();
-        rAFid = null;
-      });
-
+      // Schedule a animated frame and cancel previous one.
+      RAF(listener, true);
       lastCall = currentTime;
     } else {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-        timeoutId = null;
-      }
-
-      // Schedule a delayed listener to be executed after the throttle period.
-      timeoutId = setTimeout(() => {
-        debouncedListener();
-        timeoutId = null;
-      }, throttle);
+      // Schedule a delayed listener to be executed after the throttle period and cancel previous schedule.
+      timeout(debouncedListener, true);
     }
   };
 
@@ -57,14 +44,8 @@ function eventDebounce(
   debouncedListener.pause = () => {
     if (!isPaused) {
       isPaused = true;
-      if (rAFid) {
-        cancelAnimationFrame(rAFid);
-        rAFid = null;
-      }
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-        timeoutId = null;
-      }
+      cancelRAF();
+      cancelTimeout();
     }
   };
 
@@ -78,4 +59,4 @@ function eventDebounce(
   return debouncedListener;
 }
 
-export default eventDebounce;
+export default DFlexEventDebounce;

@@ -1,9 +1,11 @@
+import { DFlexCreateTimeout } from "../environment";
+
 type QKey = string;
 type Queue = (() => unknown)[];
 
-class TaskQueue {
-  private _timeoutId?: ReturnType<typeof setTimeout>;
+const [timeout, cancelTimeout] = DFlexCreateTimeout(0);
 
+class TaskQueue {
   private _elmInQueue: Set<string>;
 
   private _queue: Record<QKey, Queue>;
@@ -13,36 +15,17 @@ class TaskQueue {
     this._elmInQueue = new Set();
   }
 
-  insertBeforeEnd(
-    lastElmFn: () => unknown,
-    fnBeforeEnd: () => unknown,
-    queueKey: QKey,
-    elmKey?: string
-  ): void {
+  private _intiQueueRecord(queueKey: string): void {
     if (!Array.isArray(this._queue[queueKey])) {
       this._queue[queueKey] = [];
-    }
-
-    const l = this._queue[queueKey].length;
-
-    if (l === 0) {
-      this._queue[queueKey].push(fnBeforeEnd);
-    } else {
-      this._queue[queueKey][l - 1] = fnBeforeEnd;
-    }
-
-    this._queue[queueKey].push(lastElmFn);
-
-    if (elmKey) {
-      this._elmInQueue.add(elmKey);
     }
   }
 
-  add(fn: () => unknown, queueKey: QKey, elmKey?: string): void {
-    if (!Array.isArray(this._queue[queueKey])) {
-      this._queue[queueKey] = [];
-    }
-
+  private _addFuncToQueueRecord(
+    fn: () => unknown,
+    queueKey: string,
+    elmKey?: string
+  ) {
     this._queue[queueKey].push(fn);
 
     if (elmKey) {
@@ -50,36 +33,66 @@ class TaskQueue {
     }
   }
 
-  cancelQueuedTask(): void {
-    if (this._timeoutId !== undefined) {
-      clearTimeout(this._timeoutId);
-      this._timeoutId = undefined;
-    }
-  }
-
-  clear(): void {
-    this.cancelQueuedTask();
-    this._queue = {};
-    this._elmInQueue.clear();
+  _isEmpty(queueKey: string): boolean {
+    return (
+      !Array.isArray(this._queue[queueKey]) ||
+      this._queue[queueKey].length === 0
+    );
   }
 
   hasElm(elmKey: string): boolean {
+    if (__DEV__) {
+      if (!this._elmInQueue.has) {
+        throw new Error(
+          `The element with key ${elmKey} does not exist in the queue.`
+        );
+      }
+    }
     return this._elmInQueue.has(elmKey);
   }
 
-  handleQueue(queueKey: QKey): unknown[] {
+  enqueueBeforeLast(
+    lastElmFn: () => unknown,
+    beforeLastFn: () => unknown,
+    queueKey: QKey,
+    elmKey?: string
+  ): void {
+    this._intiQueueRecord(queueKey);
+
+    const { length } = this._queue[queueKey];
+
+    if (length === 0) {
+      this._queue[queueKey].push(beforeLastFn);
+    } else {
+      this._queue[queueKey][length - 1] = beforeLastFn;
+    }
+
+    this._addFuncToQueueRecord(lastElmFn, queueKey, elmKey);
+  }
+
+  enqueue(fn: () => unknown, queueKey: QKey, elmKey?: string): void {
+    this._intiQueueRecord(queueKey);
+    this._addFuncToQueueRecord(fn, queueKey, elmKey);
+  }
+
+  /**
+   * Executes the queued tasks for the specified queue key, bypassing the scheduled execution.
+   *
+   * @param queueKey - The key of the queue to execute.
+   * @returns An array containing the results of executing the tasks in the queue.
+   */
+  executeQueue(queueKey: QKey): unknown[] {
     const res: unknown[] = [];
 
-    try {
-      if (
-        !Array.isArray(this._queue[queueKey]) ||
-        this._queue[queueKey].length === 0
-      ) {
-        return res;
-      }
+    if (this._isEmpty(queueKey)) {
+      return res;
+    }
 
+    try {
       const q = this._queue[queueKey];
+
       this._queue[queueKey] = [];
+
       q.forEach((fn) => {
         const r = fn();
         res.push(r);
@@ -90,24 +103,41 @@ class TaskQueue {
         console.error(e);
       }
     } finally {
-      this._timeoutId = undefined;
+      cancelTimeout();
     }
 
     return res;
   }
 
-  private _schedule(keys: QKey[]): void {
-    this._timeoutId = setTimeout(() => {
-      this.handleQueue(keys[0]);
-      queueMicrotask(() => this.handleQueue(keys[1]));
+  private _schedule(keys: [QKey, QKey | undefined]): void {
+    const f = () => {
+      const [k1, k2] = keys;
+
+      this.executeQueue(k1);
+
+      if (k2) {
+        queueMicrotask(() => this.executeQueue(k2));
+      }
+
       this._elmInQueue.clear();
-    }, 0);
+    };
+
+    timeout(f, true);
   }
 
-  scheduleNextTask(keys: QKey[]): void {
-    if (this._timeoutId === undefined) {
-      this._schedule(keys);
-    }
+  scheduleNextTask(keys: [QKey, QKey | undefined]): void {
+    this._schedule(keys);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  cancelQueuedTask(): void {
+    cancelTimeout();
+  }
+
+  clear(): void {
+    cancelTimeout();
+    this._queue = {};
+    this._elmInQueue.clear();
   }
 }
 

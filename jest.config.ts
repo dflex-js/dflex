@@ -4,6 +4,7 @@ const tsJestConfig: JestConfigWithTsJest = {
   clearMocks: true,
   moduleFileExtensions: ["js", "ts", "tsx", "json"],
   globals: {
+    fakeTimers: { enableGlobally: true },
     __DEV__: true,
     // https://github.com/testing-library/react-testing-library/issues/1061#issuecomment-1117450890
     IS_REACT_ACT_ENVIRONMENT: true,

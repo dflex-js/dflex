@@ -73,7 +73,7 @@ test.describe.serial("Drag the first element down vertically", async () => {
 
   test("Move elm1 outside the container down into elm38", async () => {
     await getDraggedRect(elements[0]);
-    await moveDragged(-220, -1);
+    await moveDragged(-1, 220);
     await moveDragged(-1, viewportHeight);
     await page.waitForTimeout(2000);
     await moveDragged(-1, viewportHeight / 2);
@@ -94,7 +94,7 @@ test.describe.serial("Drag the first element down vertically", async () => {
   });
 
   test("Invisible siblings are not transformed", async () => {
-    invisibleElements = elements.slice(50);
+    invisibleElements = elements.slice(60);
 
     await Promise.all(
       invisibleElements.map((element) =>
@@ -105,7 +105,6 @@ test.describe.serial("Drag the first element down vertically", async () => {
 
   test("Move elm1 outside the container down again", async () => {
     await moveDragged(-1, viewportHeight + 200);
-    await page.waitForTimeout(1000);
   });
 
   test("All elements have been lifted up", async () => {

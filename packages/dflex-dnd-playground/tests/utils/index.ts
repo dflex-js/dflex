@@ -1,5 +1,7 @@
 import { Page, Locator, expect, ConsoleMessage } from "@playwright/test";
 
+export { DFlexPageTest } from "./DFlexPageTest";
+
 let page: Page;
 let steps = 0;
 
@@ -160,3 +162,7 @@ export async function assertChildrenGrid(
 
   expect(childrenGrid).toEqual(expectedChildrenGrid);
 }
+
+export const TransformTimeout = {
+  timeout: 30000,
+};

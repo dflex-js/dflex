@@ -79,13 +79,13 @@ DFlexDnDStore {
       id="id-1"
     />
   </div>,
+  "_resizeThrottle": [Function],
   "_taskQ": TaskQueue {
     "_elmInQueue": Set {},
     "_queue": {
       "registerQ": [],
       "submitQ": [],
     },
-    "_timeoutId": 1000000000004,
   },
   "_windowResizeHandler": [Function],
   "containers": Map {
@@ -251,7 +251,7 @@ DFlexDnDStore {
         "self": 0,
       },
       "_CSSTransform": null,
-      "_animatedFrame": null,
+      "_RAF": [Function],
       "_animation": {
         "duration": "dynamic",
         "easing": "ease-in",
@@ -301,7 +301,7 @@ DFlexDnDStore {
         "self": 0,
       },
       "_CSSTransform": null,
-      "_animatedFrame": null,
+      "_RAF": [Function],
       "_animation": {
         "duration": "dynamic",
         "easing": "ease-in",
@@ -351,7 +351,7 @@ DFlexDnDStore {
         "self": 0,
       },
       "_CSSTransform": null,
-      "_animatedFrame": null,
+      "_RAF": [Function],
       "_animation": {
         "duration": "dynamic",
         "easing": "ease-in",
@@ -401,7 +401,7 @@ DFlexDnDStore {
         "self": 1,
       },
       "_CSSTransform": null,
-      "_animatedFrame": null,
+      "_RAF": [Function],
       "_animation": {
         "duration": "dynamic",
         "easing": "ease-in",
@@ -451,7 +451,7 @@ DFlexDnDStore {
         "self": 2,
       },
       "_CSSTransform": null,
-      "_animatedFrame": null,
+      "_RAF": [Function],
       "_animation": {
         "duration": "dynamic",
         "easing": "ease-in",
@@ -501,7 +501,7 @@ DFlexDnDStore {
         "self": 1,
       },
       "_CSSTransform": null,
-      "_animatedFrame": null,
+      "_RAF": [Function],
       "_animation": {
         "duration": "dynamic",
         "easing": "ease-in",
