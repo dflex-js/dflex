@@ -75,6 +75,7 @@ const plugins = (isProd, isMinify) => [
         pure_getters: true,
       },
       mangle: {
+        module: true,
         properties: {
           regex: /^_/,
         },
