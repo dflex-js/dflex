@@ -10,7 +10,7 @@ export type RAFFunction = (
   cancelPrevFrame: boolean
 ) => void;
 
-function createRAF(): [RAFFunction, RAFCleanup] {
+function DFlexCreateRAF(): [RAFFunction, RAFCleanup] {
   let id: number | null = null;
 
   function cleanup(): void {
@@ -41,4 +41,4 @@ function createRAF(): [RAFFunction, RAFCleanup] {
   return [RAF, cleanup];
 }
 
-export default createRAF;
+export default DFlexCreateRAF;

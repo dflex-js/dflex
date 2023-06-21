@@ -60,8 +60,8 @@ export {
   getSelection,
   getParentElm,
   updateElmDatasetGrid,
-  createRAF,
-  createTimeout,
+  DFlexCreateRAF as createRAF,
+  DFlexCreateTimeout as createTimeout,
 } from "./environment";
 
 export * as featureFlags from "./FeatureFlags";

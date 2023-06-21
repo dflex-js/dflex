@@ -11,7 +11,7 @@ type TimeoutFunction = (
   cancelPrevSchedule: boolean
 ) => void;
 
-function createTimeout(): [TimeoutFunction, TimeoutCleanup] {
+function DFlexCreateTimeout(): [TimeoutFunction, TimeoutCleanup] {
   let id: ReturnType<typeof setTimeout> | null = null;
 
   function cleanup(): void {
@@ -36,4 +36,4 @@ function createTimeout(): [TimeoutFunction, TimeoutCleanup] {
   return [timeout, cleanup];
 }
 
-export default createTimeout;
+export default DFlexCreateTimeout;

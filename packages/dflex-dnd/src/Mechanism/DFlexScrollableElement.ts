@@ -8,7 +8,7 @@ import scrollTransition, {
   ScrollTransitionAbort,
 } from "./DFlexScrollTransition";
 
-function easeInOutCubic(t: number): number {
+function DFlexEaseInOutCubic(t: number): number {
   if (t < 0.5) {
     return 4 * t ** 3;
   }
@@ -233,7 +233,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       axis,
       direction,
       null,
-      easeInOutCubic,
+      DFlexEaseInOutCubic,
       onComplete,
       __DEV__ ? onAbort : onComplete
     );

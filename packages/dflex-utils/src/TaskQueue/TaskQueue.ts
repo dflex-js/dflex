@@ -1,9 +1,9 @@
-import { createTimeout } from "../environment";
+import { DFlexCreateTimeout } from "../environment";
 
 type QKey = string;
 type Queue = (() => unknown)[];
 
-const [timeout, cancelTimeout] = createTimeout();
+const [timeout, cancelTimeout] = DFlexCreateTimeout();
 
 class TaskQueue {
   private _elmInQueue: Set<string>;
