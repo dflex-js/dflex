@@ -1,4 +1,5 @@
-export { store } from "./LayoutManager";
+export { default as store } from "./exportedStoreSingleton";
+
 export { default as DnD } from "./DnD";
 
 export type { DFlexDnDOpts } from "./types";

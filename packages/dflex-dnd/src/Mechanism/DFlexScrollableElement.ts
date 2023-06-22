@@ -41,7 +41,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
   private _prevMouseDirection!: Point<Direction>;
 
-  cancelScrolling: ScrollTransitionAbort | null;
+  protected cancelScrolling: ScrollTransitionAbort | null;
 
   private _scrollThrottle!: TimeoutFunction;
 
@@ -79,7 +79,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     this.initialScrollPosition.setAxes(left, top);
   }
 
-  hasActiveScrolling(): boolean {
+  protected hasActiveScrolling(): boolean {
     // It's not throttled and it has animated frame.
     const isActive =
       !this._isScrollThrottled() && this.cancelScrolling !== null;

@@ -688,15 +688,6 @@ class DFlexDnDStore extends DFlexBaseStore {
     }
   }
 
-  /**
-   * Unregister DnD element.
-   * @deprecated
-   * @param id.
-   *
-   */
-  // eslint-disable-next-line class-methods-use-this
-  unregister(_id: string): void {}
-
   destroy(): void {
     this._clearBranchesScroll();
     this.containers.clear();

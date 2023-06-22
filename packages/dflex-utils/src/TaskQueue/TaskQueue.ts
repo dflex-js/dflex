@@ -91,8 +91,6 @@ class TaskQueue {
     try {
       const q = this._queue[queueKey];
 
-      this._queue[queueKey] = [];
-
       q.forEach((fn) => {
         const r = fn();
         res.push(r);
@@ -104,6 +102,7 @@ class TaskQueue {
       }
     } finally {
       cancelTimeout();
+      delete this._queue[queueKey];
     }
 
     return res;

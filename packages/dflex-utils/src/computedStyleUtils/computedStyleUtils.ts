@@ -135,6 +135,12 @@ function getElmComputedDimensions(DOM: HTMLElement): Dimensions {
 }
 
 function parseTransformMatrix(transform: string): [number, number] | null {
+  const matrixPattern = /matrix\([^)]+\)/;
+
+  if (!matrixPattern.test(transform)) {
+    return null;
+  }
+
   // Check if the transform property contains a matrix transform
   const matrixMatch = transform.match(
     /matrix\(\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*([^)]+)\)/

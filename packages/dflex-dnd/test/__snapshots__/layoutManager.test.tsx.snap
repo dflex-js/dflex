@@ -82,10 +82,7 @@ DFlexDnDStore {
   "_resizeThrottle": [Function],
   "_taskQ": TaskQueue {
     "_elmInQueue": Set {},
-    "_queue": {
-      "registerQ": [],
-      "submitQ": [],
-    },
+    "_queue": {},
   },
   "_windowResizeHandler": [Function],
   "containers": Map {
