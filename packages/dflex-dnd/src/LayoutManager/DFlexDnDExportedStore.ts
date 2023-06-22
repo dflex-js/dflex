@@ -9,14 +9,14 @@ import { store } from ".";
 // TODO: I am not sure if this is the best approach or not.
 
 class DFlexDnDExportedStore {
-  private base: DFlexDnDStore;
+  private _base: DFlexDnDStore;
 
   listeners: DFlexDnDStore["listeners"];
 
   constructor() {
-    this.base = store;
+    this._base = store;
 
-    this.listeners = this.base.listeners;
+    this.listeners = this._base.listeners;
   }
 
   /**
@@ -25,7 +25,7 @@ class DFlexDnDExportedStore {
    * @param globals - Global configurations for DFlex.
    */
   config(globals: DFlexGlobalConfig): void {
-    this.base.config(globals);
+    this._base.config(globals);
   }
 
   /**
@@ -35,7 +35,7 @@ class DFlexDnDExportedStore {
    * @returns `true` if the element is registered, `false` otherwise.
    */
   has(id: string): boolean {
-    return this.base.has(id);
+    return this._base.has(id);
   }
 
   /**
@@ -45,7 +45,7 @@ class DFlexDnDExportedStore {
    * @returns An object containing the sibling element IDs.
    */
   getElmSiblingsByKey(SK: string): Siblings {
-    return this.base.getElmSiblingsByKey(SK);
+    return this._base.getElmSiblingsByKey(SK);
   }
 
   /**
@@ -54,7 +54,7 @@ class DFlexDnDExportedStore {
    * @returns `true` if DFlex is idle, `false` otherwise.
    */
   isIDle(): boolean {
-    return this.base.isIDle();
+    return this._base.isIDle();
   }
 
   /**
@@ -63,7 +63,7 @@ class DFlexDnDExportedStore {
    * @returns `true` if the layout is available, `false` otherwise.
    */
   isLayoutAvailable(): boolean {
-    return this.base.isLayoutAvailable();
+    return this._base.isLayoutAvailable();
   }
 
   /**
@@ -73,11 +73,11 @@ class DFlexDnDExportedStore {
    * @returns The registered element.
    */
   register(elm: RegisterInputOpts) {
-    return this.base.register(elm);
+    return this._base.register(elm);
   }
 
   commit(): void {
-    this.base.commit(null);
+    this._base.commit(null);
   }
 
   /**
@@ -94,7 +94,7 @@ class DFlexDnDExportedStore {
    * Destroys the DFlex instance.
    */
   destroy() {
-    return this.base.destroy();
+    return this._base.destroy();
   }
 }
 
