@@ -1,8 +1,4 @@
-import DFlexDnDExportedStore from "./LayoutManager/DFlexDnDExportedStore";
-
-const store = new DFlexDnDExportedStore();
-
-export { store };
+export { default as store } from "./exportedStoreSingleton";
 
 export { default as DnD } from "./DnD";
 
