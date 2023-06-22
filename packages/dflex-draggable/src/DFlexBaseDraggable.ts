@@ -112,7 +112,6 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
       this._preservedAriaDisabled = DOM.ariaDisabled;
 
       DOM.ariaDisabled = "true";
-      DOM.contentEditable = "false";
 
       return;
     }
