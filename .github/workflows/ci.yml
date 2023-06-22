@@ -386,6 +386,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
+      - name: Install dependencies
+        run: pnpm install
+
       - name: Build packages
         if: matrix.bundle == 'production'
         run: "pnpm build --production --release --minify"
