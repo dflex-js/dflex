@@ -6,7 +6,6 @@ type Deferred = (() => void)[];
 
 type SchedulerOptions = {
   onUpdate?: () => void;
-  rAF?: boolean;
 };
 
 function execDeferredFn(store: DFlexDnDStore, deferred: Deferred) {
@@ -20,7 +19,7 @@ function execTask(
   options: SchedulerOptions | null,
   evt?: DFlexListenerEvents
 ) {
-  if (options?.onUpdate) {
+  if (options && options.onUpdate) {
     store.deferred.push(options.onUpdate);
   }
 
@@ -29,11 +28,7 @@ function execTask(
   }
 
   try {
-    if (options?.rAF) {
-      requestAnimationFrame(updateFn);
-    } else {
-      updateFn();
-    }
+    updateFn();
   } catch (error: unknown) {
     if (error instanceof Error) {
       store.deferred.push(

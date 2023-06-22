@@ -332,8 +332,8 @@ class DFlexScrollContainer {
 
   scrollTo(x: number, y: number): void {
     this._updateScrollPosition(
-      x === -1 ? this._containerDOM.scrollLeft : x,
-      y === -1 ? this._containerDOM.scrollTop : y,
+      x === -1 ? this.totalScrollRect.left : x,
+      y === -1 ? this.totalScrollRect.right : y,
       true
     );
 

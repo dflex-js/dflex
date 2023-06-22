@@ -75,8 +75,6 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
    */
   private _outerOffset: PointNum;
 
-  private _preservedContentEditable: string;
-
   private _preservedAriaDisabled: string | null;
 
   protected translatePlaceholder: PointNum;
@@ -106,14 +104,12 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
 
     this.translatePlaceholder = new PointNum(0, 0);
 
-    this._preservedContentEditable = "true";
     this._preservedAriaDisabled = null;
   }
 
   private _preserveDOMAttributes(DOM: HTMLElement, shouldSet: boolean): void {
     if (shouldSet) {
       this._preservedAriaDisabled = DOM.ariaDisabled;
-      this._preservedContentEditable = DOM.contentEditable;
 
       DOM.ariaDisabled = "true";
       DOM.contentEditable = "false";
@@ -122,7 +118,6 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     }
 
     DOM.ariaDisabled = this._preservedAriaDisabled;
-    DOM.contentEditable = this._preservedContentEditable;
   }
 
   /**
