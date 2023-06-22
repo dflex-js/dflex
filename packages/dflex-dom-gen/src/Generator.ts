@@ -418,7 +418,7 @@ class Generator {
    * @param hasSiblingInSameLevel
    * @returns
    */
-  register(
+  _register(
     id: string,
     depth: number,
     hasSiblingInSameLevel: boolean,
@@ -445,7 +445,7 @@ class Generator {
    * @param SK - Siblings Key
    * @param siblings - new siblings to be added
    */
-  mutateSiblings(SK: string, siblings: Siblings): void {
+  _mutateSiblings(SK: string, siblings: Siblings): void {
     if (SK in this._siblings) {
       Object.assign(this._siblings, { [SK]: siblings });
     } else if (__DEV__) {
@@ -461,7 +461,7 @@ class Generator {
    * @param dp
    * @returns
    */
-  getSiblingKeysByDepth(dp: number): SKCollection {
+  _getSiblingKeysByDepth(dp: number): SKCollection {
     return this._SKByDepth[dp] || [];
   }
 
@@ -470,11 +470,11 @@ class Generator {
    *
    * @param  SK - Siblings Key
    */
-  getElmSiblingsByKey(SK: string): Siblings {
+  _getElmSiblingsByKey(SK: string): Siblings {
     return this._siblings[SK] || [];
   }
 
-  getHighestSKInAllBranches(): Set<SKID> {
+  _getHighestSKInAllBranches(): Set<SKID> {
     const highestSKInAllBranches = new Set<SKID>();
 
     Object.keys(this._SKByBranch).forEach((BK) => {
@@ -503,7 +503,7 @@ class Generator {
     return Array.isArray(this._siblings[SK]);
   }
 
-  removeIDFromBranch(id: string, BK: string): void {
+  _removeIDFromBranch(id: string, BK: string): void {
     if (__DEV__) {
       if (!Array.isArray(this._SKByBranch[BK])) {
         throw new Error(
@@ -543,7 +543,7 @@ class Generator {
    * @param cb - Callback function.
    * @returns
    */
-  destroySiblings(
+  _destroySiblings(
     SK: string,
     BK: string,
     depth: number,
@@ -570,11 +570,11 @@ class Generator {
     }
   }
 
-  endRegistration() {
+  _endRegistration() {
     this._preBK = null;
   }
 
-  clear() {
+  _clear() {
     this._init();
 
     if (__DEV__) {

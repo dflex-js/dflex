@@ -104,26 +104,26 @@ function triggerAssertProcess(
 }
 
 class DraggableInteractive extends DraggableAxes {
-  mirrorDOM: HTMLElement | null;
+  _mirrorDOM: HTMLElement | null;
 
-  scroll: ScrollOpts;
+  _scroll: ScrollOpts;
 
-  enableCommit: Commit;
+  _enableCommit: Commit;
 
-  occupiedPosition: PointNum;
+  _occupiedPosition: PointNum;
 
-  occupiedTranslate: PointNum;
+  _occupiedTranslate: PointNum;
 
   constructor(id: string, initCoordinates: AxesPoint, opts: FinalDndOpts) {
     super(id, initCoordinates, opts);
 
-    this.mirrorDOM = null;
+    this._mirrorDOM = null;
 
-    this.scroll = { ...opts.scroll };
+    this._scroll = { ...opts.scroll };
 
-    this.enableCommit =
-      this.containersTransition.enable &&
-      store._getElmSiblingsByKey(this.draggedElm._keys.SK).length > 1
+    this._enableCommit =
+      this._containersTransition.enable &&
+      store._getElmSiblingsByKey(this._draggedElm._keys.SK).length > 1
         ? { ...opts.commit }
         : {
             enableAfterEndingDrag: false,
@@ -132,50 +132,53 @@ class DraggableInteractive extends DraggableAxes {
 
     const [scroll] = store.getScrollWithSiblingsByID(id);
 
-    const { rect, _translate: translate } = this.draggedElm;
+    const { rect, _translate: translate } = this._draggedElm;
 
     const { _hasOverflow: hasOverflow } = scroll;
 
     // Override the default options When no siblings or no overflow.
     if (hasOverflow._isAllFalsy()) {
-      this.scroll.enable = false;
+      this._scroll.enable = false;
     }
 
-    if (this.scroll.enable) {
-      this.isViewportRestricted = false;
+    if (this._scroll.enable) {
+      this._isViewportRestricted = false;
 
       // Initialize all the scroll containers in the same depth to enable migration.
       if (opts.containersTransition.enable) {
-        store._getSiblingKeysByDepth(this.draggedElm._depth).forEach((SK) => {
+        store._getSiblingKeysByDepth(this._draggedElm._depth).forEach((SK) => {
           store.scrolls.get(SK)!._setInnerThreshold();
         });
       }
 
-      const draggedDOM = store._interactiveDOM.get(this.draggedElm._id)!;
+      const draggedDOM = store._interactiveDOM.get(this._draggedElm._id)!;
 
-      this.mirrorDOM = draggedDOM.cloneNode(true) as HTMLElement;
+      this._mirrorDOM = draggedDOM.cloneNode(true) as HTMLElement;
 
-      const initPos = this.draggedElm._getInitialPosition();
+      const initPos = this._draggedElm._getInitialPosition();
 
       const viewportPos = scroll._getElmViewportPosition(initPos.y, initPos.x);
 
       this._setDOMAttrAndStyle(
-        this.draggedDOM,
-        this.mirrorDOM,
+        this._draggedDOM,
+        this._mirrorDOM,
         true,
         false,
-        this.draggedElm._getDimensions(draggedDOM),
+        this._draggedElm._getDimensions(draggedDOM),
         viewportPos
       );
 
-      this.draggedDOM.parentNode!.insertBefore(this.mirrorDOM, this.draggedDOM);
-      this.draggedDOM = this.mirrorDOM;
+      this._draggedDOM.parentNode!.insertBefore(
+        this._mirrorDOM,
+        this._draggedDOM
+      );
+      this._draggedDOM = this._mirrorDOM;
     } else {
-      this._setDOMAttrAndStyle(this.draggedDOM, null, true, false, null, null);
+      this._setDOMAttrAndStyle(this._draggedDOM, null, true, false, null, null);
     }
 
-    this.occupiedPosition = new PointNum(rect.left, rect.top);
-    this.occupiedTranslate = new PointNum(translate.x, translate.y);
+    this._occupiedPosition = new PointNum(rect.left, rect.top);
+    this._occupiedTranslate = new PointNum(translate.x, translate.y);
   }
 
   /**
@@ -184,14 +187,14 @@ class DraggableInteractive extends DraggableAxes {
    *
    * @param index
    */
-  setDraggedTempIndex(index: number) {
+  _setDraggedTempIndex(index: number) {
     if (!Number.isNaN(index)) {
       store.migration._setIndex(index);
     }
 
-    const draggedDOM = store._interactiveDOM.get(this.draggedElm._id)!;
+    const draggedDOM = store._interactiveDOM.get(this._draggedElm._id)!;
 
-    this.draggedElm._setAttribute(draggedDOM, "INDEX", index);
+    this._draggedElm._setAttribute(draggedDOM, "INDEX", index);
   }
 
   /**
@@ -202,7 +205,7 @@ class DraggableInteractive extends DraggableAxes {
    * @param  willReconcile
    * @returns
    */
-  setDraggedTransformProcess(
+  _setDraggedTransformProcess(
     isFallback: boolean,
     latestCycle: AbstractDFlexCycle,
     willReconcile: boolean
@@ -214,7 +217,7 @@ class DraggableInteractive extends DraggableAxes {
       _id: id,
       _VDOMOrder: VDOMOrder,
       _DOMGrid: DOMGrid,
-    } = this.draggedElm;
+    } = this._draggedElm;
     const siblings = store._getElmSiblingsByKey(SK);
 
     // Get the original DOM to avoid manipulating the mirror/ghost DOM.
@@ -223,7 +226,7 @@ class DraggableInteractive extends DraggableAxes {
     const hasToUndo =
       isFallback ||
       // dragged in position but has been clicked.
-      this.occupiedPosition._isEqual(rect.left, rect.top);
+      this._occupiedPosition._isEqual(rect.left, rect.top);
 
     if (hasToUndo) {
       /**
@@ -233,7 +236,7 @@ class DraggableInteractive extends DraggableAxes {
        * don't like it but it is what it is.
        */
       if (siblings[VDOMOrder.self] !== id) {
-        this.draggedElm._assignNewIndex(siblings, VDOMOrder.self);
+        this._draggedElm._assignNewIndex(siblings, VDOMOrder.self);
       }
 
       // If it didn't move, then do nothing.
@@ -241,7 +244,7 @@ class DraggableInteractive extends DraggableAxes {
         return;
       }
 
-      this.draggedElm._restorePosition(draggedDOM);
+      this._draggedElm._restorePosition(draggedDOM);
 
       if (__DEV__) {
         triggerAssertProcess(draggedDOM, siblings, DOMGrid);
@@ -250,29 +253,29 @@ class DraggableInteractive extends DraggableAxes {
       return;
     }
 
-    this.draggedElm.rect._setAxes(
-      this.occupiedPosition.x,
-      this.occupiedPosition.y
+    this._draggedElm.rect._setAxes(
+      this._occupiedPosition.x,
+      this._occupiedPosition.y
     );
 
     if (__DEV__) {
       if (featureFlags.enablePositionAssertion) {
         setTimeout(() => {
-          assertElmPos(draggedDOM, this.draggedElm.rect);
+          assertElmPos(draggedDOM, this._draggedElm.rect);
         }, 1000);
       }
     }
 
-    DOMGrid._clone(this.gridPlaceholder);
+    DOMGrid._clone(this._gridPlaceholder);
 
     VDOMOrder.self = index;
 
-    this.draggedElm._assignNewIndex(siblings, index);
+    this._draggedElm._assignNewIndex(siblings, index);
 
     // If it's going to reconcile to the DOM then there's no need to update the
     // transformation here.
     if (!willReconcile) {
-      this.draggedElm._assignNewPosition(draggedDOM, this.occupiedTranslate);
+      this._draggedElm._assignNewPosition(draggedDOM, this._occupiedTranslate);
     }
 
     if (__DEV__) {
@@ -287,27 +290,27 @@ class DraggableInteractive extends DraggableAxes {
    * @param latestCycle
    * @param willReconcile
    */
-  cleanup(
+  _cleanup(
     isFallback: boolean,
     isMigratedInScroll: boolean,
     latestCycle: AbstractDFlexCycle,
     willReconcile: boolean
   ) {
-    const draggedDOM = store._interactiveDOM.get(this.draggedElm._id)!;
+    const draggedDOM = store._interactiveDOM.get(this._draggedElm._id)!;
 
     if (isMigratedInScroll) {
       this._setDOMAttrAndStyle(
         draggedDOM,
-        this.mirrorDOM!,
+        this._mirrorDOM!,
         false,
         true,
-        this.draggedElm._getDimensions(draggedDOM),
+        this._draggedElm._getDimensions(draggedDOM),
         null
       );
     } else {
       this._setDOMAttrAndStyle(
         draggedDOM,
-        this.mirrorDOM!,
+        this._mirrorDOM!,
         false,
         false,
         null,
@@ -317,9 +320,9 @@ class DraggableInteractive extends DraggableAxes {
 
     this._appendDraggedToContainerDimensions(false);
 
-    this.setDraggedTransformProcess(isFallback, latestCycle, willReconcile);
+    this._setDraggedTransformProcess(isFallback, latestCycle, willReconcile);
 
-    this.threshold._destroy();
+    this._threshold._destroy();
   }
 }
 

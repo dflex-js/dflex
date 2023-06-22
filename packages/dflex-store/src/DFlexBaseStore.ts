@@ -133,12 +133,12 @@ function hasSiblingInSameLevel(
 ): boolean {
   let has = false;
 
-  const siblingsByDp = DOMGen.getSiblingKeysByDepth(depth);
+  const siblingsByDp = DOMGen._getSiblingKeysByDepth(depth);
 
   const siblingsByDpLength = siblingsByDp.length;
 
   if (siblingsByDpLength > 0) {
-    const lastSKInSameDP = DOMGen.getElmSiblingsByKey(
+    const lastSKInSameDP = DOMGen._getElmSiblingsByKey(
       siblingsByDp[siblingsByDpLength - 1]
     );
 
@@ -249,7 +249,7 @@ class DFlexBaseStore {
       } = dflexParentElm);
     }
 
-    const { order, keys } = this._DOMGen.register(
+    const { order, keys } = this._DOMGen._register(
       id,
       depth,
       _hasSiblingInSameLevel,
@@ -336,7 +336,7 @@ class DFlexBaseStore {
 
   _endRegistration() {
     this._lastDOMParent = null;
-    this._DOMGen.endRegistration();
+    this._DOMGen._endRegistration();
 
     if (__DEV__) {
       if (featureFlags.enableRegisterDebugger) {
@@ -598,7 +598,7 @@ class DFlexBaseStore {
    * @returns
    */
   _getElmSiblingsByKey(SK: string): Siblings {
-    return this._DOMGen.getElmSiblingsByKey(SK);
+    return this._DOMGen._getElmSiblingsByKey(SK);
   }
 
   /**
@@ -608,7 +608,7 @@ class DFlexBaseStore {
    * @returns
    */
   _getSiblingKeysByDepth(dp: number): Siblings {
-    return this._DOMGen.getSiblingKeysByDepth(dp);
+    return this._DOMGen._getSiblingKeysByDepth(dp);
   }
 
   /**
@@ -618,7 +618,7 @@ class DFlexBaseStore {
    * @param newSiblings
    */
   _mutateSiblings(SK: string, newSiblings: Siblings): void {
-    this._DOMGen.mutateSiblings(SK, newSiblings);
+    this._DOMGen._mutateSiblings(SK, newSiblings);
   }
 
   /**
@@ -636,7 +636,7 @@ class DFlexBaseStore {
    * method should be called when the app will no longer use the store.
    */
   destroy(): void {
-    this._DOMGen.clear();
+    this._DOMGen._clear();
     this._interactiveDOM.clear();
     this._registry.clear();
     this._taskQ._clear();

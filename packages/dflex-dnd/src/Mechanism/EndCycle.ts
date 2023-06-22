@@ -11,8 +11,8 @@ class EndCycle extends DFlexMechanismController {
     cycle: AbstractDFlexCycle
   ) {
     const {
-      threshold,
-      draggedElm: {
+      _threshold: threshold,
+      _draggedElm: {
         _id: draggedID,
         _VDOMOrder: { self: from },
       },
@@ -63,7 +63,7 @@ class EndCycle extends DFlexMechanismController {
   }
 
   endDragging() {
-    const { enableCommit, session } = this._draggable;
+    const { _enableCommit: enableCommit, _session: session } = this._draggable;
     const { migration } = store;
     const latestCycle = migration._latest();
 
@@ -71,11 +71,11 @@ class EndCycle extends DFlexMechanismController {
 
     let isFallback = false;
 
-    if (this.hasActiveScrolling()) {
+    if (this._hasActiveScrolling()) {
       isFallback = true;
 
       if (__DEV__) {
-        if (this.cancelScrolling === null) {
+        if (this._cancelScrolling === null) {
           throw new Error(
             "Failed to initiate fallback scrolling. The 'cancelScrolling' function must be available when 'hasActiveScrolling' is true.\n" +
               "Please check for any changes that may have affected the 'hasActiveScrolling' condition and ensure that:\n" +
@@ -85,9 +85,9 @@ class EndCycle extends DFlexMechanismController {
         }
       }
 
-      this.cancelScrolling!();
+      this._cancelScrolling!();
     } else {
-      isFallback = this._hasBeenScrolling || this._draggable.isNotSettled();
+      isFallback = this._hasBeenScrolling || this._draggable._isNotSettled();
     }
 
     // If it's falling back then we won't trigger reconciliation.
@@ -102,7 +102,7 @@ class EndCycle extends DFlexMechanismController {
         },
         {
           onUpdate: () => {
-            this._draggable.cleanup(true, false, latestCycle, false);
+            this._draggable._cleanup(true, false, latestCycle, false);
             migration._flush(session);
           },
         },
@@ -127,7 +127,7 @@ class EndCycle extends DFlexMechanismController {
     scheduler(
       store,
       () =>
-        this._draggable.cleanup(
+        this._draggable._cleanup(
           isFallback,
           isMigratedInScroll,
           latestCycle,

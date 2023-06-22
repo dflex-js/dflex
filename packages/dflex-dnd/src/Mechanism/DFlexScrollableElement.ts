@@ -41,7 +41,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
   private _prevMouseDirection!: Point<Direction>;
 
-  cancelScrolling: ScrollTransitionAbort | null;
+  _cancelScrolling: ScrollTransitionAbort | null;
 
   private _scrollThrottle!: TimeoutFunction;
 
@@ -54,7 +54,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     const { _SK: SK } = store.migration._latest();
 
-    this.cancelScrolling = null;
+    this._cancelScrolling = null;
 
     this._initialScrollPosition = new PointNum(0, 0);
 
@@ -79,10 +79,10 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     this._initialScrollPosition._setAxes(left, top);
   }
 
-  hasActiveScrolling(): boolean {
+  _hasActiveScrolling(): boolean {
     // It's not throttled and it has animated frame.
     const isActive =
-      !this._isScrollThrottled() && this.cancelScrolling !== null;
+      !this._isScrollThrottled() && this._cancelScrolling !== null;
 
     if (__DEV__) {
       if (featureFlags.enableScrollDebugger) {
@@ -106,20 +106,20 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     const scroll = store.scrolls.get(SK)!;
 
     // IS scrollAnimatedFrame is already running?
-    if (this.cancelScrolling) {
+    if (this._cancelScrolling) {
       const hasSuddenChangeInDirection: boolean =
         directionChangedV || directionChangedH;
 
       // When the direction changes, we need to cancel the animation and add
       // a little delay because we already at the threshold area.
       if (hasSuddenChangeInDirection) {
-        this.cancelScrolling();
+        this._cancelScrolling();
       }
 
       return;
     }
 
-    const viewportPos = this._draggable.getViewportCurrentPos();
+    const viewportPos = this._draggable._getViewportCurrentPos();
 
     const [isOut, preservedBoxResult] = scroll._isElmOutViewport(viewportPos);
 
@@ -181,7 +181,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       // If there's not scrollable area, we don't need to scroll.
 
       if (__DEV__) {
-        if (this.cancelScrolling) {
+        if (this._cancelScrolling) {
           throw new Error(
             "Scrolling should not occur if there is no scrollable area.\n" +
               "The `DFlexScrollTransition` function calculates the distance to the end of the scroll, " +
@@ -205,7 +205,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     const onComplete = () => {
       scroll._pauseListeners(false);
-      this.cancelScrolling = null;
+      this._cancelScrolling = null;
 
       if (featureFlags.enableScrollDebugger) {
         // eslint-disable-next-line no-console
@@ -215,7 +215,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     const onAbort = () => {
       scroll._pauseListeners(false);
-      this.cancelScrolling = null;
+      this._cancelScrolling = null;
 
       if (featureFlags.enableScrollDebugger) {
         // eslint-disable-next-line no-console
@@ -225,7 +225,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
 
     scroll._pauseListeners(true);
 
-    this.cancelScrolling = scrollTransition(
+    this._cancelScrolling = scrollTransition(
       scroll,
       axis,
       direction,

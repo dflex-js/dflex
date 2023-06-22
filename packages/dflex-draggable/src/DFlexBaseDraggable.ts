@@ -59,9 +59,9 @@ function rmEmptyAttr(DOM: HTMLElement, attribute: string) {
 }
 
 class DFlexBaseDraggable<T extends DFlexBaseElement> {
-  draggedElm: T;
+  _draggedElm: T;
 
-  draggedDOM: HTMLElement;
+  _draggedDOM: HTMLElement;
 
   /**
    * When dragging start, element shouldn't jump from its translate. So, we
@@ -94,10 +94,10 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     DOM: HTMLElement,
     initCoordinates: AxesPoint
   ) {
-    this.draggedElm = abstractCoreElm;
-    this.draggedDOM = DOM;
+    this._draggedElm = abstractCoreElm;
+    this._draggedDOM = DOM;
 
-    const { _translate: translate } = this.draggedElm;
+    const { _translate: translate } = this._draggedElm;
 
     this._outerOffset = new PointNum(
       translate.x - initCoordinates.x,
@@ -190,7 +190,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     if (isAddingProps) {
       this._preserveDOMAttributes(originDOM, true);
 
-      this.draggedElm._setAttribute(originDOM, "DRAGGED", "true");
+      this._draggedElm._setAttribute(originDOM, "DRAGGED", "true");
 
       if (mirrorDOM !== null) {
         mirrorDOM.ariaLabel = "Draggable";
@@ -225,7 +225,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
 
     originDOM.ariaLabel = null;
 
-    this.draggedElm._clearAttributes(originDOM);
+    this._draggedElm._clearAttributes(originDOM);
 
     if (mirrorDOM !== null) {
       if (isMigratedInScroll) {
@@ -270,7 +270,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     );
 
     DFlexBaseElement.transform(
-      this.draggedDOM,
+      this._draggedDOM,
       this._translatePlaceholder.x,
       this._translatePlaceholder.y
     );
