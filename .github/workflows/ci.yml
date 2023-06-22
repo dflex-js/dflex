@@ -235,7 +235,7 @@ jobs:
       matrix:
         node-version: [18.15]
         browser: ["chromium", "firefox"]
-        bundle: ["production", "development"]
+        bundle: ["development"]
     env:
       CI: true
       PACKAGE_BUNDLE: ${{ matrix.bundle }}
@@ -283,7 +283,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Test Playwright
-        run: pnpm run test-e2e-core-ci:${{ matrix.browser }}
+        run: pnpm run test-e2e-ci:${{ matrix.browser }}
 
   e2e-windows:
     runs-on: windows-latest
@@ -293,8 +293,12 @@ jobs:
       matrix:
         node-version: [18.15]
         browser: ["chromium", "firefox"]
+        bundle: ["production"]
+
     env:
       CI: true
+      PACKAGE_BUNDLE: ${{ matrix.bundle }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -327,6 +331,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Build packages
+        if: matrix.bundle == 'production'
+        run: "pnpm build --production --release --minify"
+
       - name: Build DnD React App
         run: pnpm -F dflex-dnd-playground build --mode CI
 
@@ -334,7 +342,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Test Playwright
-        run: pnpm run test-e2e-core-ci:${{ matrix.browser }}
+        run: pnpm run test-e2e-ci:${{ matrix.browser }}
 
   e2e-mac:
     runs-on: macos-latest
@@ -343,8 +351,12 @@ jobs:
       matrix:
         node-version: [18.15]
         browser: ["chromium", "firefox", "webkit"]
+        bundle: ["production", "development"]
+
     env:
       CI: true
+      PACKAGE_BUNDLE: ${{ matrix.bundle }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -374,8 +386,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
-      - name: Install dependencies
-        run: pnpm install
+      - name: Build packages
+        if: matrix.bundle == 'production'
+        run: "pnpm build --production --release --minify"
 
       - name: Build DnD React App
         run: pnpm -F dflex-dnd-playground build --mode CI
@@ -384,7 +397,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Test Playwright
-        run: pnpm run test-e2e-core-ci:${{ matrix.browser }}
+        run: pnpm run test-e2e-ci:${{ matrix.browser }}
 
   release:
     name: Publish to NPM
