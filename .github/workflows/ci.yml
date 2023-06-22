@@ -235,7 +235,8 @@ jobs:
       matrix:
         node-version: [18.15]
         browser: ["chromium", "firefox"]
-        bundle: ["development"]
+        bundle: ["production"]
+
     env:
       CI: true
       PACKAGE_BUNDLE: ${{ matrix.bundle }}
