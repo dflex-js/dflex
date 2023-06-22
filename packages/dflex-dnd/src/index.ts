@@ -1,4 +1,9 @@
-export { store } from "./LayoutManager";
+import DFlexDnDExportedStore from "./LayoutManager/DFlexDnDExportedStore";
+
+const store = new DFlexDnDExportedStore();
+
+export { store };
+
 export { default as DnD } from "./DnD";
 
 export type { DFlexDnDOpts } from "./types";

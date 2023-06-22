@@ -33,6 +33,24 @@ const moduleResolution = packages.map((pkg) => ({
   ),
 }));
 
+// const reserved = [
+//   // Directions.
+//   "top",
+//   "left",
+//   "bottom",
+//   "right",
+//   "width",
+//   "height",
+
+//   // DFlex Cycle.
+//   "marginTop",
+//   "marginBottom",
+
+//   // DnD
+//   "dragAt",
+//   "endDragging",
+// ];
+
 /**
  * @param {boolean} isProd
  * @param {boolean} isMinify
