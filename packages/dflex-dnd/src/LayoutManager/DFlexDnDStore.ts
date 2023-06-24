@@ -518,6 +518,15 @@ class DFlexDnDStore extends DFlexBaseStore {
    * @returns
    */
   commit(callback: (() => void) | null = null): void {
+    if (this.migration === null || this.migration.containerKeys.size === 0) {
+      if (__DEV__) {
+        // eslint-disable-next-line no-console
+        console.warn("Migration is empty. Nothing to commit.");
+      }
+
+      return;
+    }
+
     this.isComposing = true;
 
     const refreshAllBranchElements =
@@ -549,15 +558,6 @@ class DFlexDnDStore extends DFlexBaseStore {
 
         return;
       }
-    }
-
-    if (this.migration === null || this.migration.containerKeys.size === 0) {
-      if (__DEV__) {
-        // eslint-disable-next-line no-console
-        console.warn("Migration is empty. Nothing to commit.");
-      }
-
-      return;
     }
 
     disconnectObservers(this);
