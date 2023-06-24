@@ -67,8 +67,8 @@ function updateSiblingsVisibilityLinearly(
   const siblings = store.getElmSiblingsByKey(SK);
   const scroll = store.scrolls.get(SK)!;
 
-  // If not scroll, then all the elements are visible.
-  if (scroll.allowDynamicVisibility) {
+  // If not dynamic, then all the elements are visible.
+  if (scroll.hasDynamicVisibility()) {
     let breakAt = 0;
 
     for (let i = 0; i < siblings.length; i += 1) {
