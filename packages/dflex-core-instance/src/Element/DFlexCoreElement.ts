@@ -433,7 +433,9 @@ class DFlexCoreElement extends DFlexBaseElement {
         }
 
         if (duration <= 0) {
-          throw new Error("Duration must be a positive value.");
+          throw new Error(
+            `Duration must be a positive value. Received: ${duration}`
+          );
         }
       }
 

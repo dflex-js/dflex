@@ -134,20 +134,22 @@ class DraggableInteractive extends DraggableAxes {
 
     const { rect, translate } = this.draggedElm;
 
-    const { hasOverflow } = scroll;
-
     // Override the default options When no siblings or no overflow.
-    if (hasOverflow.isAllFalsy()) {
+    if (scroll.hasOverflow.isAllFalsy()) {
       this.scroll.enable = false;
     }
 
     if (this.scroll.enable) {
       this.isViewportRestricted = false;
 
-      // Initialize all the scroll containers in the same depth to enable migration.
+      // Initialize all the scroll containers at the same depth to enable migration.
       if (opts.containersTransition.enable) {
         store.getSiblingKeysByDepth(this.draggedElm.depth).forEach((SK) => {
-          store.scrolls.get(SK)!.setInnerThreshold();
+          const scrollContainer = store.scrolls.get(SK)!;
+
+          if (scrollContainer.hasOverflow.isOneTruthy()) {
+            scrollContainer.setInnerThreshold();
+          }
         });
       }
 

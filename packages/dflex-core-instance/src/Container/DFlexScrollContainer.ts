@@ -508,14 +508,6 @@ class DFlexScrollContainer {
    *
    */
   setInnerThreshold() {
-    if (__DEV__) {
-      if (!this._thresholdInViewport.outer.threshold) {
-        throw new Error(
-          "setInnerThreshold: Cannot set inner threshold when the outer threshold is not set."
-        );
-      }
-    }
-
     // If it's already exist. It means one of the siblings has been triggered
     // previously and there's not need to initialize it again.
     if (this._thresholdInViewport.inner.threshold) {
