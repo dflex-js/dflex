@@ -14,8 +14,10 @@ export const enableUndoSiblingsDebugger = false;
 
 export const enableRegisterDebugger = false;
 
-export const enableMechanismDebugger = false;
+export const enableMechanismDebugger = true;
 
 export const enableScrollDebugger = false;
 
 export const enableVisibilityDebugger = false;
+
+export const enableObserverDebugger = true;

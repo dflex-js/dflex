@@ -24,7 +24,7 @@ function cleanupSiblings(store: DFlexDnDStore) {
     store.removeElmFromRegistry(id);
 
     if (__DEV__) {
-      if (featureFlags.enableRegisterDebugger) {
+      if (featureFlags.enableObserverDebugger) {
         // eslint-disable-next-line no-console
         console.log(`cleanupSiblings: removing ${id} from registry`);
       }
@@ -54,7 +54,7 @@ function cleanupSiblings(store: DFlexDnDStore) {
         if (index !== dflexElm.VDOMOrder.self) {
           dflexElm.updateIndex(store.interactiveDOM.get(elmID)!, index);
 
-          if (featureFlags.enableRegisterDebugger) {
+          if (featureFlags.enableObserverDebugger) {
             // eslint-disable-next-line no-console
             console.log(
               `cleanupSiblings: updating index for ${elmID} to ${index}`
@@ -65,7 +65,7 @@ function cleanupSiblings(store: DFlexDnDStore) {
     }
 
     if (__DEV__) {
-      if (featureFlags.enableRegisterDebugger) {
+      if (featureFlags.enableObserverDebugger) {
         // eslint-disable-next-line no-console
         console.log(
           `cleanupSiblings: Found ${connectedNodesID.length} connected`,
@@ -164,12 +164,19 @@ function checkMutations(store: DFlexDnDStore, mutations: MutationRecord[]) {
   }
 }
 
-function DOMmutationHandler(
+function onDOMMutation(
   store: DFlexDnDStore,
   mutations: MutationRecord[],
   observer: MutationObserver
 ) {
   try {
+    if (__DEV__) {
+      if (featureFlags.enableObserverDebugger) {
+        // eslint-disable-next-line no-console
+        console.log("onDOMMutation is triggered with:", mutations);
+      }
+    }
+
     isProcessingMutations = true;
 
     checkMutations(store, mutations);
@@ -195,22 +202,15 @@ function DOMmutationHandler(
   }
 }
 
-const observerConfig = Object.freeze({
+const observerConfig = {
   childList: true,
   subtree: true,
-  attributeFilter: ["id"],
-  attributeOldValue: true,
-});
+  // attributeFilter: ["id"],
+  // attributeOldValue: true,
+};
 
-function initMutationObserver(store: DFlexDnDStore, SK: string) {
-  store.mutationObserverMap.set(
-    SK,
-    new MutationObserver(
-      (mutations: MutationRecord[], observer: MutationObserver) => {
-        DOMmutationHandler(store, mutations, observer);
-      }
-    )
-  );
+if (__DEV__) {
+  Object.freeze(observerConfig);
 }
 
 function addObserver(
@@ -218,26 +218,44 @@ function addObserver(
   SK: string,
   DOMTarget: HTMLElement
 ): void {
-  if (!store.mutationObserverMap.has(SK)) {
+  if (store.mutationObserverMap.has(SK)) {
     if (__DEV__) {
-      if (featureFlags.enableRegisterDebugger) {
+      if (featureFlags.enableObserverDebugger) {
         // eslint-disable-next-line no-console
-        console.log(`addObserver: ${SK}`);
+        console.log(`addObserver: observe for ${SK} already exist`);
       }
     }
 
-    initMutationObserver(store, SK);
-  } else if (__DEV__) {
-    if (featureFlags.enableRegisterDebugger) {
+    return;
+  }
+
+  const observerCB = (
+    mutations: MutationRecord[],
+    observer: MutationObserver
+  ) => onDOMMutation(store, mutations, observer);
+
+  const observer = new MutationObserver(observerCB);
+
+  observer.observe(DOMTarget, observerConfig);
+
+  if (__DEV__) {
+    if (featureFlags.enableObserverDebugger) {
       // eslint-disable-next-line no-console
-      console.log(`addObserver: ${SK} already exist`);
+      console.log(`addObserver: for ${SK} to observe`, DOMTarget);
     }
   }
 
-  store.mutationObserverMap.get(SK)!.observe(DOMTarget, observerConfig);
+  store.mutationObserverMap.set(SK, observer);
 }
 
 function disconnectObservers(store: DFlexDnDStore) {
+  if (__DEV__) {
+    if (featureFlags.enableObserverDebugger) {
+      // eslint-disable-next-line no-console
+      console.log("Disconnect observers");
+    }
+  }
+
   store.mutationObserverMap.forEach((observer, key) => {
     if (__DEV__) {
       if (!observer) {

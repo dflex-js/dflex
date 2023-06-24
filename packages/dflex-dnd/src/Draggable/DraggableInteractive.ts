@@ -103,6 +103,15 @@ function triggerAssertProcess(
   throwIfOutContainer(siblings);
 }
 
+const NO_COMMIT = {
+  enableAfterEndingDrag: false,
+  enableForScrollOnly: false,
+};
+
+if (__DEV__) {
+  Object.freeze(NO_COMMIT);
+}
+
 class DraggableInteractive extends DraggableAxes {
   mirrorDOM: HTMLElement | null;
 
@@ -121,14 +130,18 @@ class DraggableInteractive extends DraggableAxes {
 
     this.scroll = { ...opts.scroll };
 
-    this.enableCommit =
-      this.containersTransition.enable &&
-      store.getElmSiblingsByKey(this.draggedElm.keys.SK).length > 1
-        ? { ...opts.commit }
-        : {
-            enableAfterEndingDrag: false,
-            enableForScrollOnly: false,
-          };
+    const element = store.registry.get(id)!;
+
+    const {
+      keys: { SK },
+    } = element;
+
+    const siblings = store.getElmSiblingsByKey(SK);
+
+    const hasSiblings = siblings.length > 1;
+    const useCommitFromOpts = this.containersTransition.enable || hasSiblings;
+
+    this.enableCommit = useCommitFromOpts ? { ...opts.commit } : NO_COMMIT;
 
     const [scroll] = store.getScrollWithSiblingsByID(id);
 
@@ -144,8 +157,8 @@ class DraggableInteractive extends DraggableAxes {
 
       // Initialize all the scroll containers at the same depth to enable migration.
       if (opts.containersTransition.enable) {
-        store.getSiblingKeysByDepth(this.draggedElm.depth).forEach((SK) => {
-          const scrollContainer = store.scrolls.get(SK)!;
+        store.getSiblingKeysByDepth(this.draggedElm.depth).forEach((_SK) => {
+          const scrollContainer = store.scrolls.get(_SK)!;
 
           if (scrollContainer.hasOverflow.isOneTruthy()) {
             scrollContainer.setInnerThreshold();

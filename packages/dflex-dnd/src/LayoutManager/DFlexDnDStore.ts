@@ -374,6 +374,16 @@ class DFlexDnDStore extends DFlexBaseStore {
       this._isInitialized = true;
     }
 
+    // This case happens when changing the routers in next-js which doesn't
+    // trigger observer.
+    if (this.registry.has(elm.id)) {
+      if (__DEV__) {
+        // eslint-disable-next-line no-console
+        console.log(`Element ${elm.id} is already registered in the store.`);
+      }
+      return;
+    }
+
     const { id, readonly = false, depth = 0, CSSTransform = null } = elm;
 
     if (__DEV__) {
