@@ -127,18 +127,17 @@ function getElmDOMOrThrow(id: string): HTMLElement | null {
  */
 function hasSiblingInSameLevel(
   DOM: HTMLElement,
-  DOMGen: Generator,
-  interactiveDOM: Map<string, HTMLElement>,
-  depth: number
+  depth: number,
+  store: DFlexBaseStore
 ): boolean {
   let has = false;
 
-  const siblingsByDp = DOMGen.getSiblingKeysByDepth(depth);
+  const siblingsByDp = store.DOMGen.getSiblingKeysByDepth(depth);
 
   const siblingsByDpLength = siblingsByDp.length;
 
   if (siblingsByDpLength > 0) {
-    const lastSKInSameDP = DOMGen.getElmSiblingsByKey(
+    const lastSKInSameDP = store.DOMGen.getElmSiblingsByKey(
       siblingsByDp[siblingsByDpLength - 1]
     );
 
@@ -151,13 +150,91 @@ function hasSiblingInSameLevel(
 
       if (previousElementSibling) {
         has = previousElementSibling.isSameNode(
-          interactiveDOM.get(allegedPrevSiblingID)!
+          store.interactiveDOM.get(allegedPrevSiblingID)!
         );
       }
     }
   }
 
   return has;
+}
+
+function submitToRegistry(
+  DOM: HTMLElement,
+  elm: RegisterInputProcessed,
+  dflexParentElm: null | DFlexElement,
+  store: DFlexBaseStore
+): Keys {
+  const { id, depth, readonly, animation, CSSTransform } = elm;
+
+  if (__DEV__) {
+    if (store.registry.has(id) || store.interactiveDOM.has(id)) {
+      throw new Error(
+        `submitToRegistry: Element with id: ${id} is already registered.`
+      );
+    }
+  }
+
+  let _hasSiblingInSameLevel = false;
+
+  // If it's a container
+  if (depth > 0) {
+    _hasSiblingInSameLevel = hasSiblingInSameLevel(DOM, depth, store);
+
+    setRelativePosition(DOM);
+
+    if (!store.globals.removeContainerWhenEmpty) {
+      setFixedDimensions(DOM);
+    }
+  }
+
+  let restoredKeys;
+  let restoredSiblingsIndex;
+
+  if (dflexParentElm) {
+    ({
+      keys: restoredKeys,
+      VDOMOrder: { self: restoredSiblingsIndex },
+    } = dflexParentElm);
+  }
+
+  const { order, keys } = store.DOMGen.register(
+    id,
+    depth,
+    _hasSiblingInSameLevel,
+    restoredKeys,
+    restoredSiblingsIndex
+  );
+
+  const coreElement: DFlexElementInput = {
+    id,
+    order,
+    keys,
+    depth,
+    readonly,
+    animation,
+    CSSTransform,
+  };
+
+  const dflexElm = new DFlexElement(coreElement);
+
+  if (__DEV__) {
+    if (featureFlags.enableRegisterDebugger) {
+      // eslint-disable-next-line no-console
+      console.log(`submitToRegistry: ${id} is created`);
+    }
+  }
+
+  store.registry.set(id, dflexElm);
+  store.interactiveDOM.set(id, DOM);
+
+  dflexElm.setAttribute(DOM, "INDEX", dflexElm.VDOMOrder.self);
+
+  if (depth > 0) {
+    DOM.dataset.dflexKey = keys.SK;
+  }
+
+  return keys;
 }
 
 const REGISTER_Q = "registerQ";
@@ -173,7 +250,7 @@ class DFlexBaseStore {
 
   tracker: Tracker;
 
-  protected DOMGen: Generator;
+  DOMGen: Generator;
 
   private _lastDOMParent: HTMLElement | null;
 
@@ -206,88 +283,6 @@ class DFlexBaseStore {
     Object.assign(this.globals, globals);
   }
 
-  private _submitElementToRegistry(
-    DOM: HTMLElement,
-    elm: RegisterInputProcessed,
-    dflexParentElm: null | DFlexElement
-  ): Keys | null {
-    const { id, depth, readonly, animation, CSSTransform } = elm;
-
-    if (__DEV__) {
-      if (this.registry.has(id) || this.interactiveDOM.has(id)) {
-        throw new Error(
-          `_submitElementToRegistry: Element with id: ${id} is already registered.`
-        );
-      }
-    }
-
-    let _hasSiblingInSameLevel = false;
-
-    // If it's a container
-    if (depth > 0) {
-      _hasSiblingInSameLevel = hasSiblingInSameLevel(
-        DOM,
-        this.DOMGen,
-        this.interactiveDOM,
-        depth
-      );
-
-      setRelativePosition(DOM);
-
-      if (!this.globals.removeContainerWhenEmpty) {
-        setFixedDimensions(DOM);
-      }
-    }
-
-    let restoredKeys;
-    let restoredSiblingsIndex;
-
-    if (dflexParentElm) {
-      ({
-        keys: restoredKeys,
-        VDOMOrder: { self: restoredSiblingsIndex },
-      } = dflexParentElm);
-    }
-
-    const { order, keys } = this.DOMGen.register(
-      id,
-      depth,
-      _hasSiblingInSameLevel,
-      restoredKeys,
-      restoredSiblingsIndex
-    );
-
-    const coreElement: DFlexElementInput = {
-      id,
-      order,
-      keys,
-      depth,
-      readonly,
-      animation,
-      CSSTransform,
-    };
-
-    const dflexElm = new DFlexElement(coreElement);
-
-    if (__DEV__) {
-      if (featureFlags.enableRegisterDebugger) {
-        // eslint-disable-next-line no-console
-        console.log(`${id}: is created`);
-      }
-    }
-
-    this.registry.set(id, dflexElm);
-    this.interactiveDOM.set(id, DOM);
-
-    dflexElm.setAttribute(DOM, "INDEX", dflexElm.VDOMOrder.self);
-
-    if (depth > 0) {
-      DOM.dataset.dflexKey = keys.SK;
-    }
-
-    return keys;
-  }
-
   private _submitContainerChildren(
     parentDOM: HTMLElement,
     depth: number,
@@ -317,7 +312,7 @@ class DFlexBaseStore {
             CSSTransform,
           };
 
-          ({ SK } = this._submitElementToRegistry(DOM, elm, dflexParentElm)!);
+          ({ SK } = submitToRegistry(DOM, elm, dflexParentElm, this));
         } else if (__DEV__) {
           if (featureFlags.enableRegisterDebugger) {
             // eslint-disable-next-line no-console
@@ -512,7 +507,7 @@ class DFlexBaseStore {
               }
             }
 
-            const { SK: _ } = this._submitElementToRegistry(
+            const { SK: _ } = submitToRegistry(
               parentDOM,
               {
                 id: parentID,
@@ -522,8 +517,9 @@ class DFlexBaseStore {
                 animation: getAnimationOptions(),
                 CSSTransform: null,
               },
-              null
-            )!;
+              null,
+              this
+            );
 
             return _;
           };
