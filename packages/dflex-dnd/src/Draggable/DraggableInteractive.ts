@@ -103,6 +103,15 @@ function triggerAssertProcess(
   throwIfOutContainer(siblings);
 }
 
+const NO_COMMIT = {
+  enableAfterEndingDrag: false,
+  enableForScrollOnly: false,
+};
+
+if (__DEV__) {
+  Object.freeze(NO_COMMIT);
+}
+
 class DraggableInteractive extends DraggableAxes {
   mirrorDOM: HTMLElement | null;
 
@@ -121,33 +130,43 @@ class DraggableInteractive extends DraggableAxes {
 
     this.scroll = { ...opts.scroll };
 
-    this.enableCommit =
-      this.containersTransition.enable &&
-      store.getElmSiblingsByKey(this.draggedElm.keys.SK).length > 1
-        ? { ...opts.commit }
-        : {
-            enableAfterEndingDrag: false,
-            enableForScrollOnly: false,
-          };
+    const element = store.registry.get(id)!;
+
+    const {
+      keys: { SK },
+    } = element;
+
+    const siblings = store.getElmSiblingsByKey(SK);
+    const depthSiblings = store.getSiblingKeysByDepth(this.draggedElm.depth);
+
+    const hasSiblings = siblings.length > 1;
+    const canTransitionInDepth = depthSiblings.length > 1;
+
+    const useCommitFromOpts =
+      hasSiblings || (this.containersTransition.enable && canTransitionInDepth);
+
+    this.enableCommit = useCommitFromOpts ? { ...opts.commit } : NO_COMMIT;
 
     const [scroll] = store.getScrollWithSiblingsByID(id);
 
     const { rect, translate } = this.draggedElm;
 
-    const { hasOverflow } = scroll;
-
     // Override the default options When no siblings or no overflow.
-    if (hasOverflow.isAllFalsy()) {
+    if (scroll.hasOverflow.isAllFalsy()) {
       this.scroll.enable = false;
     }
 
     if (this.scroll.enable) {
       this.isViewportRestricted = false;
 
-      // Initialize all the scroll containers in the same depth to enable migration.
+      // Initialize all the scroll containers at the same depth to enable migration.
       if (opts.containersTransition.enable) {
-        store.getSiblingKeysByDepth(this.draggedElm.depth).forEach((SK) => {
-          store.scrolls.get(SK)!.setInnerThreshold();
+        depthSiblings.forEach((_SK) => {
+          const scrollContainer = store.scrolls.get(_SK)!;
+
+          if (scrollContainer.hasOverflow.isOneTruthy()) {
+            scrollContainer.setInnerThreshold();
+          }
         });
       }
 

@@ -195,12 +195,16 @@ function DOMmutationHandler(
   }
 }
 
-const observerConfig = Object.freeze({
+const observerConfig = {
   childList: true,
   subtree: true,
   attributeFilter: ["id"],
   attributeOldValue: true,
-});
+};
+
+if (__DEV__) {
+  Object.freeze(observerConfig);
+}
 
 function initMutationObserver(store: DFlexDnDStore, SK: string) {
   store.mutationObserverMap.set(
