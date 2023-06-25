@@ -237,6 +237,60 @@ function submitToRegistry(
   return keys;
 }
 
+function assignElementId(DOM: HTMLElement, store: DFlexBaseStore) {
+  let { id } = DOM;
+
+  if (!id) {
+    id = store.tracker.newTravel(PREFIX_ID);
+    DOM.id = id;
+  }
+
+  return id;
+}
+
+function submitContainerChildren(
+  parentDOM: HTMLElement,
+  depth: number,
+  store: DFlexBaseStore,
+  animation: AnimationOpts,
+  CSSTransform: CSS | null,
+  registeredElmID: string,
+  dflexParentElm: DFlexElement | null
+) {
+  let SK: string | null = null;
+
+  parentDOM.childNodes.forEach((DOM, i) => {
+    if (DOM instanceof HTMLElement) {
+      const id = assignElementId(DOM, store);
+
+      if (!store.registry.has(id)) {
+        const elm: RegisterInputProcessed = {
+          depth,
+          readonly: registeredElmID !== id,
+          // Assuming all siblings have the same animation settings.
+          animation,
+          id,
+          CSSTransform,
+        };
+
+        ({ SK } = submitToRegistry(DOM, elm, dflexParentElm, store));
+      } else if (__DEV__) {
+        if (featureFlags.enableRegisterDebugger) {
+          throw new Error(
+            `submitContainerChildren: ${id} is already registered.`
+          );
+        }
+      }
+    } else if (__DEV__) {
+      throw new Error(
+        `_submitContainerChildren: Received an element that's not an instanceof HTMLElement at index: ${i}`
+      );
+    }
+  });
+
+  return SK;
+}
+
 const REGISTER_Q = "registerQ";
 
 const CB_Q = "submitQ";
@@ -281,52 +335,6 @@ class DFlexBaseStore {
     }
 
     Object.assign(this.globals, globals);
-  }
-
-  private _submitContainerChildren(
-    parentDOM: HTMLElement,
-    depth: number,
-    animation: AnimationOpts,
-    CSSTransform: CSS | null,
-    registeredElmID: string,
-    dflexParentElm: DFlexElement | null
-  ) {
-    let SK: string | null = null;
-
-    parentDOM.childNodes.forEach((DOM, i) => {
-      if (DOM instanceof HTMLElement) {
-        let { id } = DOM;
-
-        if (!id) {
-          id = this.tracker.newTravel(PREFIX_ID);
-          DOM.id = id;
-        }
-
-        if (!this.registry.has(id)) {
-          const elm: RegisterInputProcessed = {
-            depth,
-            readonly: registeredElmID !== id,
-            // Assuming all siblings have the same animation settings.
-            animation,
-            id,
-            CSSTransform,
-          };
-
-          ({ SK } = submitToRegistry(DOM, elm, dflexParentElm, this));
-        } else if (__DEV__) {
-          if (featureFlags.enableRegisterDebugger) {
-            // eslint-disable-next-line no-console
-            console.warn(`${id} is already registered.`);
-          }
-        }
-      } else if (__DEV__) {
-        throw new Error(
-          `_submitContainerChildren: Received an element that's not an instanceof HTMLElement at index: ${i}`
-        );
-      }
-    });
-
-    return SK;
   }
 
   endRegistration() {
@@ -433,9 +441,10 @@ class DFlexBaseStore {
             }
           }
 
-          SK = this._submitContainerChildren(
+          SK = submitContainerChildren(
             parentDOM,
             depth,
+            this,
             animation,
             CSSTransform,
             id,
