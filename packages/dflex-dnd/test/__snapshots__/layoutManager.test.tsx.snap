@@ -538,6 +538,7 @@ DFlexDnDStore {
   "scrolls": Map {
     "dflex_sk_0_0" => DFlexScrollContainer {
       "_SK": "dflex_sk_0_0",
+      "_allowDynamicVisibility": false,
       "_containerDOM": <html>
         <head />
         <body>
@@ -585,6 +586,7 @@ DFlexDnDStore {
           </div>
         </body>
       </html>,
+      "_isCandidateForDynamicVisibility": false,
       "_isDocumentContainer": true,
       "_listenerDatasetKey": "dflexScrollListener_dflex_sk_0_0",
       "_scrollEventCallback": null,
@@ -600,7 +602,6 @@ DFlexDnDStore {
       },
       "_throttledResizeHandler": [Function],
       "_throttledScrollHandler": [Function],
-      "allowDynamicVisibility": false,
       "hasOverflow": PointBool {
         "x": false,
         "y": false,
@@ -624,6 +625,7 @@ DFlexDnDStore {
     },
     "dflex_sk_0_1" => DFlexScrollContainer {
       "_SK": "dflex_sk_0_1",
+      "_allowDynamicVisibility": false,
       "_containerDOM": <html>
         <head />
         <body>
@@ -671,6 +673,7 @@ DFlexDnDStore {
           </div>
         </body>
       </html>,
+      "_isCandidateForDynamicVisibility": false,
       "_isDocumentContainer": true,
       "_listenerDatasetKey": "dflexScrollListener_dflex_sk_0_1",
       "_scrollEventCallback": null,
@@ -686,7 +689,6 @@ DFlexDnDStore {
       },
       "_throttledResizeHandler": [Function],
       "_throttledScrollHandler": [Function],
-      "allowDynamicVisibility": false,
       "hasOverflow": PointBool {
         "x": false,
         "y": false,
