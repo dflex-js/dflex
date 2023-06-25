@@ -20,6 +20,7 @@ import {
 } from "@dflex/utils";
 
 import type { ThresholdPercentages, AbstractBox } from "@dflex/utils";
+import getScrollContainerProperties from "./DFlexScrollContainerProperties";
 
 // eslint-disable-next-line no-unused-vars
 type ScrollEventCallback = (SK: string) => void;
@@ -37,6 +38,8 @@ export type DFlexSerializedScroll = {
 
 const OVERFLOW_REGEX = /(auto|scroll|overlay)/;
 
+// @ts-ignore
+// eslint-disable-next-line no-unused-vars
 function getScrollContainer(baseDOMElm: HTMLElement): [HTMLElement, boolean] {
   let hasDocumentAsContainer = false;
 
@@ -181,15 +184,13 @@ class DFlexScrollContainer {
 
     this._listenerDatasetKey = `${LISTENER_DATASET_KEY_PREFIX}_${SK}`;
 
-    this.hasOverflow = new PointBool(false, false);
     this.totalScrollRect = new BoxRect(0, 0, 0, 0);
     this.visibleScrollRect = new BoxRect(0, 0, 0, 0);
     this.allowDynamicVisibility = false;
     this._scrollEventCallback = null;
 
-    const [containerDOM, isDocumentContainer] = getScrollContainer(firstELmDOM);
-    this._containerDOM = containerDOM;
-    this._isDocumentContainer = isDocumentContainer;
+    [this._containerDOM, this._isDocumentContainer, this.hasOverflow] =
+      getScrollContainerProperties(firstELmDOM);
 
     this._updateScrollRect();
     this._updateScrollPosition(
