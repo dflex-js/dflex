@@ -112,7 +112,7 @@ function clearComputedStyleCache() {
   computedStyleCache = new WeakMap();
 }
 
-function getElmComputedDimensions(DOM: HTMLElement): Dimensions {
+function getElmDimensions(DOM: HTMLElement): Dimensions {
   if (__DEV__) {
     const { computedStyle } = getCachedComputedStyle(DOM);
 
@@ -284,7 +284,7 @@ export {
   clearComputedStyleCache,
   getElmPos,
   getElmOverflow,
-  getElmComputedDimensions,
+  getElmDimensions,
   getParsedElmTransform,
   setStyleProperty,
   removeStyleProperty,

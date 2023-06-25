@@ -5,7 +5,7 @@ import {
   featureFlags,
   PointNum,
   assertElmPos,
-  getElmComputedDimensions,
+  getElmDimensions,
   BOTH_AXIS,
   updateElmDatasetGrid,
   Axis,
@@ -346,7 +346,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       return this._computedDimensions;
     }
 
-    const { width, height } = getElmComputedDimensions(DOM);
+    const { width, height } = getElmDimensions(DOM);
 
     this._computedDimensions = new PointNum(width, height);
 

@@ -2,7 +2,7 @@ export {
   // getCachedComputedStyle,
   getCachedComputedStyleProperty,
   clearComputedStyleCache,
-  getElmComputedDimensions,
+  getElmDimensions,
   getElmPos,
   getElmOverflow,
   getParsedElmTransform,
