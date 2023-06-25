@@ -5,14 +5,11 @@ import {
   Dimensions,
   Direction,
   BoxRect,
-  getParentElm,
   PointBool,
   Threshold,
   getDimensionTypeByAxis,
   eventDebounce,
   BoxNum,
-  getElmPos,
-  getElmOverflow,
   BoxBool,
   getStartingPointByAxis,
   getEndingPointByAxis,
@@ -35,57 +32,6 @@ export type DFlexSerializedScroll = {
   scrollContainerRect: AbstractBox;
   visibleScreen: Dimensions;
 };
-
-const OVERFLOW_REGEX = /(auto|scroll|overlay)/;
-
-// @ts-ignore
-// eslint-disable-next-line no-unused-vars
-function getScrollContainer(baseDOMElm: HTMLElement): [HTMLElement, boolean] {
-  let hasDocumentAsContainer = false;
-
-  const baseELmPosition = getElmPos(baseDOMElm);
-
-  const excludeStaticParents = baseELmPosition === "absolute";
-
-  const scrollContainerDOM = getParentElm(baseDOMElm, (parentDOM) => {
-    const overflowX = getElmOverflow(baseDOMElm, "overflow-x");
-    const overflowY = getElmOverflow(baseDOMElm, "overflow-y");
-
-    const parentRect = parentDOM.getBoundingClientRect();
-
-    if (excludeStaticParents && getElmPos(parentDOM) === "static") {
-      return false;
-    }
-
-    if (
-      OVERFLOW_REGEX.test(overflowY) &&
-      parentDOM.scrollHeight === Math.round(parentRect.height)
-    ) {
-      hasDocumentAsContainer = true;
-      return true;
-    }
-
-    if (
-      OVERFLOW_REGEX.test(overflowX) &&
-      parentDOM.scrollWidth === Math.round(parentRect.width)
-    ) {
-      hasDocumentAsContainer = true;
-      return true;
-    }
-
-    return false;
-  });
-
-  if (
-    hasDocumentAsContainer ||
-    baseELmPosition === "fixed" ||
-    !scrollContainerDOM
-  ) {
-    return [document.documentElement, true];
-  }
-
-  return [scrollContainerDOM, false];
-}
 
 function hasOverFlow(
   scrollRect: Dimensions,
@@ -193,12 +139,12 @@ class DFlexScrollContainer {
       getScrollContainerProperties(firstELmDOM);
 
     this._updateScrollRect();
-    this._updateScrollPosition(
-      this._containerDOM.scrollLeft,
-      this._containerDOM.scrollTop,
-      false
-    );
-    this._updateOverflowStatus();
+
+    // If the container is not the document, there is no need to update the overflow status,
+    // as the overflow has already been detected during initialization.
+    if (this._isDocumentContainer) {
+      this._updateOverflowStatus();
+    }
 
     if (
       branchLength > MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY &&
