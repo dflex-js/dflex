@@ -216,6 +216,10 @@ function submitToRegistry(
     CSSTransform,
   };
 
+  if (__DEV__) {
+    Object.freeze(coreElement);
+  }
+
   const dflexElm = new DFlexElement(coreElement);
 
   if (__DEV__) {
@@ -256,7 +260,7 @@ function submitContainerChildren(
   CSSTransform: CSS | null,
   registeredElmID: string,
   dflexParentElm: DFlexElement | null
-) {
+): string | null {
   let SK: string | null = null;
 
   parentDOM.childNodes.forEach((DOM, i) => {
@@ -377,9 +381,9 @@ class DFlexBaseStore {
     let SK: string;
 
     if (isElmRegistered) {
-      DOM = this.interactiveDOM.get(id)!;
+      let dflexElm;
 
-      const dflexElm = this.registry.get(id)!;
+      [dflexElm, DOM] = this.getElmWithDOM(id);
 
       // Update default values created earlier.
       dflexElm.updateConfig(readonly, animation, CSSTransform);
@@ -389,17 +393,10 @@ class DFlexBaseStore {
       DOM = getElmDOMOrThrow(id)!;
     }
 
-    getParentElm(DOM, (parentDOM) => {
-      let isParentRegistered = false;
+    const getParentElmCallback = (parentDOM: HTMLElement) => {
+      const parentID = assignElementId(parentDOM, this);
 
-      let { id: parentID } = parentDOM;
-
-      if (!parentID) {
-        parentID = this.tracker.newTravel(PREFIX_ID);
-        parentDOM.id = parentID;
-      } else {
-        isParentRegistered = this.registry.has(parentID);
-      }
+      const isParentRegistered = this.registry.has(parentID);
 
       // Is this element already queued as parent?
       if (this._taskQ.hasElm(id)) {
@@ -450,6 +447,15 @@ class DFlexBaseStore {
             id,
             dflexParentElm
           )!;
+
+          if (!SK) {
+            if (__DEV__) {
+              throw new Error(
+                `The container '${parentID}' contains invalid HTML elements in its children. ` +
+                  `This is an unexpected scenario, and there are no elements to register.`
+              );
+            }
+          }
 
           isElmRegistered = true;
         };
@@ -564,7 +570,9 @@ class DFlexBaseStore {
       this._taskQ.scheduleNextTask([REGISTER_Q, CB_Q]);
 
       return true;
-    });
+    };
+
+    getParentElm(DOM, getParentElmCallback);
   }
 
   /**
