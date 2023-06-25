@@ -106,9 +106,9 @@ class DFlexScrollContainer {
   /**
    * The parent element that is owning the scroll.
    */
-  private _containerDOM!: HTMLElement;
+  private _containerDOM: HTMLElement;
 
-  private _isDocumentContainer!: boolean;
+  private _isDocumentContainer: boolean;
 
   private _listenerDatasetKey: string;
 

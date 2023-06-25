@@ -24,14 +24,11 @@ type GetScrollContainerRes = [
 
 const resolveScrollProps = (
   parentDOM: HTMLElement,
-  baseDOMElm: HTMLElement,
   baseELmPosition: string,
   res: ResolveScrollPropsInput
 ) => {
-  const overflowX = getElmOverflow(baseDOMElm, "overflow-x");
-  const overflowY = getElmOverflow(baseDOMElm, "overflow-y");
-
-  const parentRect = parentDOM.getBoundingClientRect();
+  const overflowX = getElmOverflow(parentDOM, "overflow-x");
+  const overflowY = getElmOverflow(parentDOM, "overflow-y");
 
   const excludeStaticParents = baseELmPosition === "absolute";
 
@@ -50,21 +47,15 @@ const resolveScrollProps = (
     }
   }
 
-  if (
-    OVERFLOW_REGEX.test(overflowY) &&
-    parentDOM.scrollHeight === Math.round(parentRect.height)
-  ) {
-    res[1] = true;
+  if (OVERFLOW_REGEX.test(overflowY)) {
     hasOverflow.y = true;
+
     return true;
   }
 
-  if (
-    OVERFLOW_REGEX.test(overflowX) &&
-    parentDOM.scrollWidth === Math.round(parentRect.width)
-  ) {
+  if (OVERFLOW_REGEX.test(overflowX)) {
     hasOverflow.x = true;
-    res[1] = true;
+
     return true;
   }
 
@@ -90,7 +81,7 @@ function getScrollContainerProperties(
   const scrollContainerDOM = getParentElm(
     baseDOMElm,
     (parentDOM: HTMLElement) =>
-      resolveScrollProps(parentDOM, baseDOMElm, baseELmPosition, res)
+      resolveScrollProps(parentDOM, baseELmPosition, res)
   );
 
   if (!res[3]) {
