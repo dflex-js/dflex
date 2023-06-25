@@ -90,11 +90,18 @@ class DFlexScrollContainer {
   hasOverflow: PointBool;
 
   /**
-   * Some containers are overflown but in small percentages of the container
-   * doesn't require adding visible scroll listeners and all the related events
-   * and functionality. Current percentage is set to 0.5.
+   * Indicates whether containers with small percentages of overflow
+   * should allow dynamic visibility. If the overflow percentage is below
+   * the threshold (0.5), it avoids the addition of visible scroll listeners
+   * and related events and functionality.
    */
-  allowDynamicVisibility: boolean;
+  private _allowDynamicVisibility: boolean;
+
+  /**
+   * Determines if the length of the branch exceeds the threshold for being
+   * considered a candidate for dynamic visibility.
+   */
+  private _isCandidateForDynamicVisibility: boolean;
 
   /**
    * The parent element that is owning the scroll.
@@ -132,7 +139,7 @@ class DFlexScrollContainer {
 
     this.totalScrollRect = new BoxRect(0, 0, 0, 0);
     this.visibleScrollRect = new BoxRect(0, 0, 0, 0);
-    this.allowDynamicVisibility = false;
+    this._allowDynamicVisibility = false;
     this._scrollEventCallback = null;
 
     [this._containerDOM, this._isDocumentContainer, this.hasOverflow] =
@@ -146,10 +153,10 @@ class DFlexScrollContainer {
       this._updateOverflowStatus();
     }
 
-    if (
-      branchLength > MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY &&
-      this.allowDynamicVisibility
-    ) {
+    this._isCandidateForDynamicVisibility =
+      branchLength > MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY;
+
+    if (this.hasDynamicVisibility()) {
       this._scrollEventCallback = scrollEventCallback;
 
       this._initializeThreshold("outer", OUTER_THRESHOLD);
@@ -157,13 +164,15 @@ class DFlexScrollContainer {
 
     this._attachResizeAndScrollListeners();
 
-    if (this.totalScrollRect.top > 0 || this.totalScrollRect.left > 0) {
-      this._updateScrollPosition(0, 0, true);
-    }
-
     if (__DEV__) {
       Object.seal(this);
     }
+  }
+
+  hasDynamicVisibility(): boolean {
+    return (
+      this._isCandidateForDynamicVisibility && this._allowDynamicVisibility
+    );
   }
 
   private _initializeThreshold(
@@ -193,18 +202,18 @@ class DFlexScrollContainer {
     const hasOverflowY = checkOverflow("y");
 
     this.hasOverflow.setAxes(hasOverflowX, hasOverflowY);
-    this.allowDynamicVisibility = false;
+    this._allowDynamicVisibility = false;
 
     if (hasOverflowY) {
       // Check if the scrollRect dimension for the given axis is more than half of the scrollContainerRect dimension.
-      this.allowDynamicVisibility = checkOverflow("y", true);
+      this._allowDynamicVisibility = checkOverflow("y", true);
 
       return;
     }
 
     if (hasOverflowX) {
       // Check if the scrollRect dimension for the given axis is more than half of the scrollContainerRect dimension.
-      this.allowDynamicVisibility = checkOverflow("x", true);
+      this._allowDynamicVisibility = checkOverflow("x", true);
     }
   }
 
