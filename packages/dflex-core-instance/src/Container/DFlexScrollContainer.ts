@@ -63,7 +63,7 @@ type ScrollThreshold = {
   key: string;
 };
 
-const LISTENER_DATASET_KEY_PREFIX = "dflexScrollListener";
+const LISTENER_DATASET_KEY_PREFIX = "scroll";
 const INNER_KEY_PREFIX = "scroll_inner";
 const OUTER_KEY_PREFIX = "scroll_outer";
 
@@ -135,7 +135,7 @@ class DFlexScrollContainer {
       },
     };
 
-    this._listenerDatasetKey = `${LISTENER_DATASET_KEY_PREFIX}_${SK}`;
+    this._listenerDatasetKey = `${LISTENER_DATASET_KEY_PREFIX}__${SK}`;
 
     this.totalScrollRect = new BoxRect(0, 0, 0, 0);
     this.visibleScrollRect = new BoxRect(0, 0, 0, 0);
