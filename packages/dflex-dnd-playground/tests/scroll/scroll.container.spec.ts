@@ -2,6 +2,7 @@ import {
   // Locator,
   BrowserContext,
   Locator,
+  Page,
   expect,
 } from "@playwright/test";
 
@@ -10,8 +11,8 @@ import { DFlexPageTest as test } from "../utils";
 test.describe.parallel("Resolve scroll container correctly", async () => {
   let context: BrowserContext;
 
-  let page1;
-  let page2;
+  let page1: Page;
+  let page2: Page;
 
   test.beforeAll(async ({ browser }) => {
     context = await browser.newContext();
