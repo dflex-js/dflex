@@ -159,17 +159,6 @@ class DraggableInteractive extends DraggableAxes {
     if (this.scroll.enable) {
       this.isViewportRestricted = false;
 
-      // Initialize all the scroll containers at the same depth to enable migration.
-      if (opts.containersTransition.enable) {
-        depthSiblings.forEach((_SK) => {
-          const scrollContainer = store.scrolls.get(_SK)!;
-
-          if (scrollContainer.hasOverflow.isOneTruthy()) {
-            scrollContainer.setInnerThreshold();
-          }
-        });
-      }
-
       const draggedDOM = store.interactiveDOM.get(this.draggedElm.id)!;
 
       this.mirrorDOM = draggedDOM.cloneNode(true) as HTMLElement;

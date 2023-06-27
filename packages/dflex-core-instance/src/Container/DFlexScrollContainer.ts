@@ -75,7 +75,7 @@ class DFlexScrollContainer {
 
   private _SK: string;
 
-  private _scrollEventCallback: ScrollEventCallback | null;
+  private _scrollEventCallback: ScrollEventCallback;
 
   /**
    * scroll container in the viewport. Only in the visible area.
@@ -88,14 +88,6 @@ class DFlexScrollContainer {
   totalScrollRect: BoxRect;
 
   hasOverflow: PointBool;
-
-  /**
-   * Indicates whether containers with small percentages of overflow
-   * should allow dynamic visibility. If the overflow percentage is below
-   * the threshold (0.5), it avoids the addition of visible scroll listeners
-   * and related events and functionality.
-   */
-  private _allowDynamicVisibility: boolean;
 
   /**
    * Determines if the length of the branch exceeds the threshold for being
@@ -122,14 +114,25 @@ class DFlexScrollContainer {
     branchLength: number,
     scrollEventCallback: ScrollEventCallback
   ) {
+    // Callbacks.
     this._SK = SK;
+    this._scrollEventCallback = scrollEventCallback;
 
+    /**
+     * Inner threshold: Determines the trigger for auto scroll when scrollable
+     * overflow exists. Set to null if there is no overflow.
+     *
+     * Outer threshold: Defines the visibility criteria for elements. Set to
+     * null if all elements are fully visible.
+     */
     this._thresholdInViewport = {
       inner: {
+        // The inner threshold for auto scroll when there is overflow
         threshold: null,
         key: `${INNER_KEY_PREFIX}_${SK}`,
       },
       outer: {
+        // The outer threshold for element visibility
         threshold: null,
         key: `${OUTER_KEY_PREFIX}_${SK}`,
       },
@@ -137,32 +140,27 @@ class DFlexScrollContainer {
 
     this._listenerDatasetKey = `${LISTENER_DATASET_KEY_PREFIX}__${SK}`;
 
-    this.totalScrollRect = new BoxRect(0, 0, 0, 0);
-    this.visibleScrollRect = new BoxRect(0, 0, 0, 0);
-    this._allowDynamicVisibility = false;
-    this._scrollEventCallback = null;
-
     [this._containerDOM, this._isDocumentContainer, this.hasOverflow] =
       getScrollContainerProperties(firstELmDOM);
 
+    // Rect.
+    this.totalScrollRect = new BoxRect(0, 0, 0, 0);
+    this.visibleScrollRect = new BoxRect(0, 0, 0, 0);
     this._updateScrollRect();
-
-    // If the container is not the document, there is no need to update the overflow status,
-    // as the overflow has already been detected during initialization.
-    if (this._isDocumentContainer) {
-      this._updateOverflowStatus();
-    }
 
     this._isCandidateForDynamicVisibility =
       branchLength > MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY;
 
-    if (this.hasDynamicVisibility()) {
-      this._scrollEventCallback = scrollEventCallback;
-
-      this._initializeThreshold("outer", OUTER_THRESHOLD);
+    // If the container is not the document, there is no need to update the overflow status,
+    // as the overflow has already been detected during initialization.
+    if (this._isDocumentContainer) {
+      this._updateOverflow();
+    } else {
+      // We certain there's overflow.
+      this._handleOverflowUpdate();
     }
 
-    this._attachResizeAndScrollListeners();
+    this._attachResizeAndScrollListeners(true);
 
     if (__DEV__) {
       Object.seal(this);
@@ -171,17 +169,29 @@ class DFlexScrollContainer {
 
   hasDynamicVisibility(): boolean {
     return (
-      this._isCandidateForDynamicVisibility && this._allowDynamicVisibility
+      this._isCandidateForDynamicVisibility && this.hasOverflow.isOneTruthy()
     );
   }
 
-  private _initializeThreshold(
+  private _initializeOrDestroyThreshold(
     type: "inner" | "outer",
-    thresholdValue: ThresholdPercentages
+    thresholdValue: ThresholdPercentages | null
   ): void {
-    const threshold = new Threshold(thresholdValue);
     const instance = this._thresholdInViewport[type];
+
+    // Then it's destroy.
+    if (!thresholdValue) {
+      if (instance.threshold) {
+        instance.threshold.destroy();
+        instance.threshold = null;
+      }
+
+      return;
+    }
+
+    const threshold = new Threshold(thresholdValue);
     instance.threshold = threshold;
+
     threshold.setMainThreshold(
       instance.key,
       this.visibleScrollRect,
@@ -189,7 +199,45 @@ class DFlexScrollContainer {
     );
   }
 
-  private _updateOverflowStatus(): void {
+  private _updateDOMDataset(
+    isAttachListener: boolean,
+    hasScrollListener: boolean
+  ): void {
+    const datasetKey = this._listenerDatasetKey;
+    const datasetValue = hasScrollListener.toString();
+    const targetElement = this._isDocumentContainer
+      ? document.body
+      : this._containerDOM;
+
+    if (isAttachListener) {
+      targetElement.dataset[datasetKey] = datasetValue;
+    } else {
+      delete targetElement.dataset[datasetKey];
+    }
+  }
+
+  private _handleOverflowUpdate() {
+    // No overflow. Reset.
+    if (this.hasOverflow.isAllFalsy()) {
+      this._initializeOrDestroyThreshold("inner", null);
+      this._initializeOrDestroyThreshold("outer", null);
+
+      return;
+    }
+
+    // Only tagged if there's overflow.
+    this._updateDOMDataset(true, true);
+
+    this._initializeOrDestroyThreshold("inner", null);
+    this._initializeOrDestroyThreshold("inner", INNER_THRESHOLD);
+
+    if (this.hasDynamicVisibility()) {
+      this._initializeOrDestroyThreshold("outer", null);
+      this._initializeOrDestroyThreshold("outer", OUTER_THRESHOLD);
+    }
+  }
+
+  private _updateOverflow(): void {
     const checkOverflow = (axis: Axis, checkHalf?: boolean) =>
       hasOverFlow(
         this.totalScrollRect,
@@ -202,19 +250,8 @@ class DFlexScrollContainer {
     const hasOverflowY = checkOverflow("y");
 
     this.hasOverflow.setAxes(hasOverflowX, hasOverflowY);
-    this._allowDynamicVisibility = false;
 
-    if (hasOverflowY) {
-      // Check if the scrollRect dimension for the given axis is more than half of the scrollContainerRect dimension.
-      this._allowDynamicVisibility = checkOverflow("y", true);
-
-      return;
-    }
-
-    if (hasOverflowX) {
-      // Check if the scrollRect dimension for the given axis is more than half of the scrollContainerRect dimension.
-      this._allowDynamicVisibility = checkOverflow("x", true);
-    }
+    this._handleOverflowUpdate();
   }
 
   /**
@@ -293,9 +330,7 @@ class DFlexScrollContainer {
       true
     );
 
-    if (this._scrollEventCallback) {
-      this._scrollEventCallback(this._SK);
-    }
+    this._scrollEventCallback(this._SK);
   }
 
   private _getNumbersFromPoints(axis: Axis): [number, number, number] {
@@ -351,48 +386,22 @@ class DFlexScrollContainer {
     return hasScrollableArea;
   }
 
-  private _updateDOMDataset(
-    isAttachListener: boolean,
-    hasScrollListener: boolean
-  ): void {
-    const datasetKey = this._listenerDatasetKey;
-    const datasetValue = hasScrollListener.toString();
-    const targetElement = this._isDocumentContainer
-      ? document.body
-      : this._containerDOM;
-
-    if (isAttachListener) {
-      targetElement.dataset[datasetKey] = datasetValue;
-    } else {
-      delete targetElement.dataset[datasetKey];
-    }
-  }
-
   private _throttledScrollHandler = eventDebounce(() => {
     const { scrollLeft, scrollTop } = this._containerDOM;
 
     const isUpdated = this._updateScrollPosition(scrollLeft, scrollTop, false);
 
-    if (isUpdated && this._scrollEventCallback) {
+    if (isUpdated) {
       this._scrollEventCallback(this._SK);
     }
   });
 
   private _throttledResizeHandler = eventDebounce(() => {
     this._updateScrollRect();
-    this._updateOverflowStatus();
-
-    // If it's not initialized yet. Leave it as it is.
-    if (this._thresholdInViewport.outer) {
-      this._initializeThreshold("outer", OUTER_THRESHOLD);
-
-      if (this._thresholdInViewport.inner) {
-        this._initializeThreshold("inner", INNER_THRESHOLD);
-      }
-    }
+    this._updateOverflow();
   });
 
-  private _attachResizeAndScrollListeners(isAttachListener = true): void {
+  private _attachResizeAndScrollListeners(isAttachListener: boolean): void {
     /**
      * No need to set scroll listener if there is no scroll.
      */
@@ -406,14 +415,7 @@ class DFlexScrollContainer {
     const options = { passive: true };
 
     container[eventAction]("resize", this._throttledResizeHandler, options);
-
-    if (this.hasOverflow.isOneTruthy()) {
-      container[eventAction]("scroll", this._throttledScrollHandler, options);
-
-      this._updateDOMDataset(isAttachListener, true);
-    } else if (!this._isDocumentContainer) {
-      this._updateDOMDataset(isAttachListener, false);
-    }
+    container[eventAction]("scroll", this._throttledScrollHandler, options);
   }
 
   /**
@@ -439,24 +441,6 @@ class DFlexScrollContainer {
       this._thresholdInViewport.inner.threshold.destroy();
       this._thresholdInViewport.inner.threshold = null;
     }
-  }
-
-  /**
-   * Cerate and set inner threshold for the scroll container that is responsible
-   * for checking if dragged element is out of the scroll container or not.
-   *
-   * Note: this method is called when dragged is triggered so it gives the user
-   * more flexibility to choose the threshold in relation to the dragged element.
-   *
-   */
-  setInnerThreshold() {
-    // If it's already exist. It means one of the siblings has been triggered
-    // previously and there's not need to initialize it again.
-    if (this._thresholdInViewport.inner.threshold) {
-      return;
-    }
-
-    this._initializeThreshold("inner", INNER_THRESHOLD);
   }
 
   /**
@@ -574,10 +558,13 @@ class DFlexScrollContainer {
    */
   destroy(): void {
     this._clearInnerThreshold();
-    this._scrollEventCallback = null;
-    this._attachResizeAndScrollListeners(false);
     // @ts-expect-error
-    this._containerDOM = null;
+    this._scrollEventCallback = undefined;
+    this._attachResizeAndScrollListeners(false);
+    this._updateDOMDataset(false, true);
+
+    // @ts-expect-error
+    this._containerDOM = undefined;
   }
 }
 
