@@ -5,8 +5,9 @@ import {
   createTimeout,
   featureFlags,
   PointNum,
-  PREFIX_CYCLE,
+  PREFIX_TRACKER_CYCLE,
   TimeoutFunction,
+  tracker,
 } from "@dflex/utils";
 
 import { DFLEX_EVENTS, scheduler, store } from "../LayoutManager";
@@ -293,7 +294,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         destinationSiblings.push(APPEND_EMPTY_ELM_ID);
         destinationContainer.extendGrid(insertionAxis);
 
-        const cycleID = store.tracker.newTravel(PREFIX_CYCLE);
+        const cycleID = tracker.newTravel(PREFIX_TRACKER_CYCLE);
 
         this.draggable.session.push(cycleID);
 
@@ -418,7 +419,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     axis: Axis,
     oppositeAxis: Axis,
     grid: PointNum,
-    isMonoGrid: boolean,
+    isSingleAxis: boolean,
     shouldDecrease: boolean
   ): void {
     const { gridPlaceholder } = this.draggable;
@@ -473,7 +474,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     let elmIndex: number;
 
-    if (isMonoGrid) {
+    if (isSingleAxis) {
       elmIndex = index + (shouldDecrease ? 1 : -1);
     } else {
       const occupiedGrid = {
@@ -502,11 +503,12 @@ class DFlexMechanismController extends DFlexScrollableElement {
             return;
           }
 
-          // eslint-disable-next-line no-console
-          console.warn(
-            `_actionCaller: unable to find targeted element index for: ${JSON.stringify(
+          throw new Error(
+            `Unable to find the target element index for the occupied grid: ${JSON.stringify(
               occupiedGrid
-            )}`
+            )}.\n` +
+              `This error occurs when attempting to calculate the index of the target element in a non-single axis scenario.\n` +
+              `Incorrect handling of 'isSingleAxis' can lead to issues in determining the target element index.`
           );
         }
 
@@ -602,7 +604,18 @@ class DFlexMechanismController extends DFlexScrollableElement {
     // One column or one row?
     const oppositeAxis = axis === "y" ? "x" : "y";
 
-    const isMonoGrid = grid[oppositeAxis] === 0;
+    const isSingleAxis = grid[oppositeAxis] === 0;
+
+    if (__DEV__) {
+      if (featureFlags.enableMechanismDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(
+          `Detecting that element has ${
+            isSingleAxis ? "single" : "multiple"
+          } axis`
+        );
+      }
+    }
 
     // Check if top or bottom.
     if (isOut[id].isTruthyByAxis(axis)) {
@@ -624,12 +637,18 @@ class DFlexMechanismController extends DFlexScrollableElement {
         }
       }
 
-      this._actionCaller(axis, oppositeAxis, grid, isMonoGrid, shouldDecrease);
+      this._actionCaller(
+        axis,
+        oppositeAxis,
+        grid,
+        isSingleAxis,
+        shouldDecrease
+      );
 
       return true;
     }
 
-    if (isMonoGrid) {
+    if (isSingleAxis) {
       // lock the parent
       this._lockParent(true);
 

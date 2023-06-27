@@ -5,7 +5,12 @@ export type { AbstractBoxRect } from "./Box";
 export { DFlexThreshold as Threshold } from "./Threshold";
 export type { ThresholdPercentages } from "./Threshold";
 
-export { Tracker, PREFIX_CYCLE, PREFIX_ID, PREFIX_KY } from "./Tracker";
+export {
+  tracker,
+  PREFIX_TRACKER_CYCLE,
+  PREFIX_TRACKER_ID,
+  PREFIX_TRACKER_KY,
+} from "./DFlexTracker";
 
 export { default as TaskQueue } from "./TaskQueue";
 export { default as eventDebounce } from "./DFlexEventDebounce";
@@ -45,7 +50,7 @@ export {
   removeStyleProperty,
   setRelativePosition,
   setFixedDimensions,
-  getElmComputedDimensions,
+  getElmDimensions,
   getElmPos,
   getElmOverflow,
   getParsedElmTransform,

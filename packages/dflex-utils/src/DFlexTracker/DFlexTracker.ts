@@ -1,4 +1,4 @@
-class Tracker {
+class DFlexTracker {
   private _travelID: Record<string, number>;
 
   /**
@@ -22,4 +22,4 @@ class Tracker {
   }
 }
 
-export default Tracker;
+export default DFlexTracker;
