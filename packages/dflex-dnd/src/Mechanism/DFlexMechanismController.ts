@@ -5,8 +5,9 @@ import {
   createTimeout,
   featureFlags,
   PointNum,
-  PREFIX_CYCLE,
+  PREFIX_TRACKER_CYCLE,
   TimeoutFunction,
+  tracker,
 } from "@dflex/utils";
 
 import { DFLEX_EVENTS, scheduler, store } from "../LayoutManager";
@@ -293,7 +294,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         destinationSiblings.push(APPEND_EMPTY_ELM_ID);
         destinationContainer.extendGrid(insertionAxis);
 
-        const cycleID = store.tracker.newTravel(PREFIX_CYCLE);
+        const cycleID = tracker.newTravel(PREFIX_TRACKER_CYCLE);
 
         this.draggable.session.push(cycleID);
 

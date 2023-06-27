@@ -709,11 +709,6 @@ DFlexDnDStore {
       },
     },
   },
-  "tracker": Tracker {
-    "_travelID": {
-      "dflex_id_": 1,
-    },
-  },
   "unifiedContainerDimensions": {
     "0": {
       "height": 0,

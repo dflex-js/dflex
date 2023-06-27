@@ -10,11 +10,11 @@ import {
   featureFlags,
   getAnimationOptions,
   getParentElm,
-  PREFIX_ID,
+  PREFIX_TRACKER_ID,
   setFixedDimensions,
   setRelativePosition,
   TaskQueue,
-  Tracker,
+  tracker,
 } from "@dflex/utils";
 
 type DeepRequired<T> = {
@@ -241,11 +241,11 @@ function submitToRegistry(
   return keys;
 }
 
-function assignElementId(DOM: HTMLElement, store: DFlexBaseStore) {
+function assignElementId(DOM: HTMLElement) {
   let { id } = DOM;
 
   if (!id) {
-    id = store.tracker.newTravel(PREFIX_ID);
+    id = tracker.newTravel(PREFIX_TRACKER_ID);
     DOM.id = id;
   }
 
@@ -265,7 +265,7 @@ function submitContainerChildren(
 
   parentDOM.childNodes.forEach((DOM, i) => {
     if (DOM instanceof HTMLElement) {
-      const id = assignElementId(DOM, store);
+      const id = assignElementId(DOM);
 
       if (!store.registry.has(id)) {
         const elm: RegisterInputProcessed = {
@@ -306,8 +306,6 @@ class DFlexBaseStore {
 
   interactiveDOM: Map<string, HTMLElement>;
 
-  tracker: Tracker;
-
   DOMGen: Generator;
 
   private _lastDOMParent: HTMLElement | null;
@@ -319,7 +317,6 @@ class DFlexBaseStore {
       removeContainerWhenEmpty: false,
     };
     this._lastDOMParent = null;
-    this.tracker = new Tracker();
     this._taskQ = new TaskQueue();
     this.registry = new Map();
     this.interactiveDOM = new Map();
@@ -394,7 +391,7 @@ class DFlexBaseStore {
     }
 
     const getParentElmCallback = (parentDOM: HTMLElement) => {
-      const parentID = assignElementId(parentDOM, this);
+      const parentID = assignElementId(parentDOM);
 
       const isParentRegistered = this.registry.has(parentID);
 

@@ -3,7 +3,6 @@ import DFlexBaseStore from "@dflex/store";
 import type { RegisterInputOpts, RegisterInputProcessed } from "@dflex/store";
 
 import {
-  Tracker,
   canUseDOM,
   Dimensions,
   featureFlags,
@@ -163,7 +162,6 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.containers = new Map();
     this.scrolls = new Map();
     this.unifiedContainerDimensions = {};
-    this.tracker = new Tracker();
     // @ts-ignore- `null` until we have element to drag.
     this.migration = null;
     this._isInitialized = false;
