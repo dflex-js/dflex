@@ -22,10 +22,7 @@ import {
   DFlexParentContainer,
   DFlexScrollContainer,
   DFlexSerializedElement,
-  DFlexSerializedScroll,
 } from "@dflex/core-instance";
-
-import type { Siblings } from "@dflex/dom-gen";
 
 import initDFlexListeners, {
   DFlexListenerPlugin,
@@ -591,57 +588,60 @@ class DFlexDnDStore extends DFlexBaseStore {
       : null;
   }
 
-  /**
-   * Returns DFlexScrollContainer and element siblings for a given id.
-   *
-   * Note: These are static siblings, not the dynamic siblings.
-   *
-   * @param id
-   * @returns
-   */
-  getScrollWithSiblingsByID(id: string): [DFlexScrollContainer, Siblings] {
-    const {
-      keys: { SK },
-    } = this.registry.get(id)!;
-
-    const scroll = this.scrolls.get(SK)!;
-    const siblings = this.getElmSiblingsByKey(SK);
-
-    return [scroll, siblings];
-  }
-
-  getSerializedScrollContainer(id: string): DFlexSerializedScroll | null {
-    if (!this.registry.has(id)) {
-      return null;
+  getElmKeyByID(id: string) {
+    if (__DEV__) {
+      if (!this.registry.has(id)) {
+        throw new Error(`Element with ID '${id}' is not registered.`);
+      }
     }
 
     const {
       keys: { SK },
     } = this.registry.get(id)!;
 
-    if (!this.scrolls.has(SK)) {
-      return null;
+    return SK;
+  }
+
+  getScrollByID(id: string): DFlexScrollContainer {
+    const SK = this.getElmKeyByID(id);
+
+    if (__DEV__) {
+      if (!this.scrolls.has(SK)) {
+        throw new Error(`Scroll with key '${SK}' is not found.`);
+      }
     }
 
     const scroll = this.scrolls.get(SK)!;
 
-    return scroll.getSerializedInstance();
+    return scroll;
   }
 
-  /**
-   * Returns DFlexParentContainer for a given element id.
-   *
-   * @param id
-   * @returns
-   */
   getContainerByID(id: string): DFlexParentContainer {
-    const {
-      keys: { SK },
-    } = this.registry.get(id)!;
+    const SK = this.getElmKeyByID(id);
+
+    if (__DEV__) {
+      if (!this.containers.has(SK)) {
+        throw new Error(`Container with key '${SK}' is not found.`);
+      }
+    }
 
     const container = this.containers.get(SK)!;
 
     return container;
+  }
+
+  getParentByElmID(id: string): [string, HTMLElement] {
+    const { id: parentID } = this.getContainerByID(id);
+
+    if (__DEV__) {
+      if (!this.interactiveDOM.has(id)) {
+        throw new Error(`DOM element for ID '${id}' is not found.`);
+      }
+    }
+
+    const parentDOM = this.interactiveDOM.get(id)!;
+
+    return [parentID, parentDOM];
   }
 
   private _clearBranchesScroll() {

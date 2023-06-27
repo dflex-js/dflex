@@ -2,22 +2,15 @@ import {
   getParentElm,
   getElmPos,
   getElmOverflow,
-  getElmDimensions,
   PointBool,
   Axis,
-  Dimensions,
 } from "@dflex/utils";
 
 const OVERFLOW_REGEX = /(auto|scroll|overlay)/;
 
-type ResolveScrollPropsInput = [
-  undefined | HTMLElement,
-  boolean,
-  PointBool,
-  undefined | Dimensions
-];
+type ResolveScrollPropsInput = [undefined | HTMLElement, boolean, PointBool];
 
-type GetScrollContainerRes = [HTMLElement, boolean, PointBool, Dimensions];
+type GetScrollContainerRes = [HTMLElement, boolean, PointBool];
 
 type Overflow = ReturnType<typeof getElmOverflow>;
 
@@ -58,16 +51,7 @@ const resolveScrollProps = (
     return false;
   }
 
-  const [, , hasOverflow, dimension] = res;
-
-  if (!dimension) {
-    // Get parent DOM dimension.
-    res[3] = getElmDimensions(parentDOM);
-
-    if (__DEV__) {
-      Object.freeze(dimension);
-    }
-  }
+  const [, , hasOverflow] = res;
 
   const checkOverflow = (axis: Axis, overflow: Overflow) =>
     hasScrollbar(axis, overflow, parentDOM, hasOverflow);
@@ -84,7 +68,6 @@ function getScrollContainerProperties(
     undefined,
     false,
     new PointBool(false, false),
-    undefined,
   ];
 
   if (__DEV__) {
@@ -96,10 +79,6 @@ function getScrollContainerProperties(
     (parentDOM: HTMLElement) =>
       resolveScrollProps(parentDOM, baseELmPosition, res)
   );
-
-  if (!res[3]) {
-    res[3] = getElmDimensions(document.documentElement);
-  }
 
   if (!scrollContainerDOM || baseELmPosition === "fixed") {
     res[0] = document.documentElement;
