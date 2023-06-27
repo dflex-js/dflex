@@ -222,6 +222,9 @@ class DFlexScrollContainer {
       this._initializeOrDestroyThreshold("inner", null);
       this._initializeOrDestroyThreshold("outer", null);
 
+      // Remove tag if there's no overflow.
+      this._updateDOMDataset(false, true);
+
       return;
     }
 
