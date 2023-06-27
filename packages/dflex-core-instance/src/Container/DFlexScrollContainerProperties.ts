@@ -4,6 +4,8 @@ import {
   getElmOverflow,
   getElmDimensions,
   PointBool,
+  Axis,
+  Dimensions,
 } from "@dflex/utils";
 
 const OVERFLOW_REGEX = /(auto|scroll|overlay)/;
@@ -12,15 +14,35 @@ type ResolveScrollPropsInput = [
   undefined | HTMLElement,
   boolean,
   PointBool,
-  undefined | ReturnType<typeof getElmDimensions>
+  undefined | Dimensions
 ];
 
-type GetScrollContainerRes = [
-  HTMLElement,
-  boolean,
-  PointBool,
-  ReturnType<typeof getElmDimensions>
-];
+type GetScrollContainerRes = [HTMLElement, boolean, PointBool, Dimensions];
+
+type Overflow = ReturnType<typeof getElmOverflow>;
+
+function hasScrollableContent(DOM: HTMLElement): boolean {
+  return DOM.scrollHeight > DOM.clientHeight;
+}
+
+const hasScrollbar = (
+  axis: Axis,
+  overflow: Overflow,
+  DOM: HTMLElement,
+  hasOverflow: PointBool
+) => {
+  if (OVERFLOW_REGEX.test(overflow)) {
+    const has = hasScrollableContent(DOM);
+
+    if (has) {
+      hasOverflow[axis] = true;
+
+      return true;
+    }
+  }
+
+  return false;
+};
 
 const resolveScrollProps = (
   parentDOM: HTMLElement,
@@ -47,19 +69,10 @@ const resolveScrollProps = (
     }
   }
 
-  if (OVERFLOW_REGEX.test(overflowY)) {
-    hasOverflow.y = true;
+  const checkOverflow = (axis: Axis, overflow: Overflow) =>
+    hasScrollbar(axis, overflow, parentDOM, hasOverflow);
 
-    return true;
-  }
-
-  if (OVERFLOW_REGEX.test(overflowX)) {
-    hasOverflow.x = true;
-
-    return true;
-  }
-
-  return false;
+  return checkOverflow("y", overflowY) || checkOverflow("x", overflowX);
 };
 
 function getScrollContainerProperties(
