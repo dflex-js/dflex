@@ -1,5 +1,12 @@
 /* eslint-disable no-param-reassign */
-import { PointNum, AbstractBox, BoxRect, BoxNum, Axis } from "@dflex/utils";
+import {
+  PointNum,
+  AbstractBox,
+  BoxRect,
+  BoxNum,
+  Axis,
+  getElmBoxRect,
+} from "@dflex/utils";
 
 import type { Dimensions, AxesPoint } from "@dflex/utils";
 
@@ -11,7 +18,7 @@ class DFlexParentContainer {
   /** Strict Rect for siblings containers. */
   private _siblingBoundaries: BoxNum | null;
 
-  private _rect!: BoxRect;
+  private _rect: BoxRect;
 
   /** Numbers of total columns and rows each container has.  */
   private _gridIndex: PointNum;
@@ -24,7 +31,7 @@ class DFlexParentContainer {
    * */
   originLength: number;
 
-  readonly id: string;
+  id: string;
 
   /**
    * Preserve the last element position in the list .
@@ -32,26 +39,31 @@ class DFlexParentContainer {
    */
   lastElmPosition!: PointNum;
 
-  constructor(DOM: HTMLElement, originLength: number, id: string) {
+  constructor(
+    id: string,
+    DOM: HTMLElement,
+    originLength: number,
+    scroll: BoxRect
+  ) {
     this.id = id;
+
     this._gridIndex = new PointNum(EMPTY_GRID_INDEX, EMPTY_GRID_INDEX);
     this.grid = new PointNum(EMPTY_GRID_INDEX, EMPTY_GRID_INDEX);
+
     this.originLength = originLength;
     this._boundariesByRow = new BoxNum(0, 0, 0, 0);
     this._siblingBoundaries = null;
-    this._initRect(DOM);
+
+    const { left, top } = scroll;
+
+    this._rect = getElmBoxRect(DOM, left, top);
+
     // @ts-expect-error
     this.lastElmPosition = null;
 
     if (__DEV__) {
       Object.seal(this);
     }
-  }
-
-  private _initRect(DOM: HTMLElement): void {
-    const { left, top, right, bottom } = DOM.getBoundingClientRect();
-
-    this._rect = new BoxRect(top, right, bottom, left);
   }
 
   private _addNewElmToGridIndicator(rect: AbstractBox): PointNum {

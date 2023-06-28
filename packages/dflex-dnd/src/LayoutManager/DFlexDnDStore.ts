@@ -292,9 +292,10 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.scrolls.set(SK, scroll);
 
     const container = new DFlexParentContainer(
+      parentDOM.id,
       parentDOM,
       siblings.length,
-      parentDOM.id
+      scroll.totalScrollRect
     );
 
     if (this.containers.has(SK)) {
@@ -402,31 +403,41 @@ class DFlexDnDStore extends DFlexBaseStore {
     );
   }
 
+  private _updateContainerRect(
+    container: DFlexParentContainer,
+    containerKy: string,
+    siblings: string[]
+  ) {
+    const scroll = this.scrolls.get(containerKy)!;
+
+    const {
+      totalScrollRect: { left, top },
+    } = scroll;
+
+    container.resetIndicators(siblings.length);
+
+    siblings.forEach((elmID) => {
+      const [dflexElm, elmDOM] = this.getElmWithDOM(elmID);
+
+      dflexElm.initElmRect(elmDOM, left, top);
+
+      container.register(
+        dflexElm.rect,
+        this.unifiedContainerDimensions[dflexElm.depth]
+      );
+    });
+  }
+
   private _refreshBranchesRect(excludeMigratedContainers: boolean) {
     this.containers.forEach((container, containerKy) => {
-      const branch = this.getElmSiblingsByKey(containerKy);
+      const shouldExcludeContainer =
+        excludeMigratedContainers &&
+        this.migration.containerKeys.has(containerKy);
 
-      const is = excludeMigratedContainers
-        ? !this.migration.containerKeys.has(containerKy)
-        : true;
+      if (!shouldExcludeContainer) {
+        const siblings = this.getElmSiblingsByKey(containerKy);
 
-      if (is) {
-        const scroll = this.scrolls.get(containerKy)!;
-
-        const {
-          totalScrollRect: { left, top },
-        } = scroll;
-
-        branch.forEach((elmID) => {
-          const [dflexElm, elmDOM] = this.getElmWithDOM(elmID);
-
-          dflexElm.initElmRect(elmDOM, left, top);
-
-          container.register(
-            dflexElm.rect,
-            this.unifiedContainerDimensions[dflexElm.depth]
-          );
-        });
+        this._updateContainerRect(container, containerKy, siblings);
       }
     });
   }

@@ -14,8 +14,10 @@ type GetScrollContainerRes = [HTMLElement, boolean, PointBool];
 
 type Overflow = ReturnType<typeof getElmOverflow>;
 
-function hasScrollableContent(DOM: HTMLElement): boolean {
-  return DOM.scrollHeight > DOM.clientHeight;
+function hasScrollableContent(DOM: HTMLElement, axis: Axis): boolean {
+  return axis === "y"
+    ? DOM.scrollHeight > DOM.clientHeight
+    : DOM.scrollWidth > DOM.clientWidth;
 }
 
 const hasScrollbar = (
@@ -25,7 +27,7 @@ const hasScrollbar = (
   hasOverflow: PointBool
 ) => {
   if (OVERFLOW_REGEX.test(overflow)) {
-    const has = hasScrollableContent(DOM);
+    const has = hasScrollableContent(DOM, axis);
 
     if (has) {
       hasOverflow[axis] = true;

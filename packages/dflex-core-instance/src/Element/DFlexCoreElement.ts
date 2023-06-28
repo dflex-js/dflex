@@ -19,6 +19,7 @@ import {
   createRAF,
   setStyleProperty,
   removeStyleProperty,
+  getElmBoxRect,
 } from "@dflex/utils";
 import type { Direction, Axes, AxesPoint, AnimationOpts } from "@dflex/utils";
 
@@ -297,23 +298,16 @@ class DFlexCoreElement extends DFlexBaseElement {
   }
 
   initElmRect(DOM: HTMLElement, scrollLeft: number, scrollTop: number): void {
-    const { height, width, left, top } = DOM.getBoundingClientRect();
+    this.rect = getElmBoxRect(DOM, scrollLeft, scrollTop);
 
-    /**
-     * Calculate the element's position by adding the scroll position to the
-     * left and top values obtained from getBoundingClientRect.
-     */
-    const elementLeft = left + scrollLeft;
-    const elementTop = top + scrollTop;
+    const { left, top } = this.rect;
 
     /**
      * Element offset stored once without being triggered to re-calculate.
      * Instead, using currentOffset object as an indicator of the current
      * offset/position. This offset is the initial offset.
      */
-    this._initialPosition.setAxes(elementLeft, elementTop);
-
-    this.rect.setByPointAndDimensions(elementTop, elementLeft, height, width);
+    this._initialPosition.setAxes(left, top);
 
     this._initElmTranslate(DOM);
   }

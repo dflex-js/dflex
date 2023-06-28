@@ -49,7 +49,16 @@ describe("Container", () => {
       function TestBase() {
         React.useEffect(() => {
           if (ref.current) {
-            container = new DFlexParentContainer(ref.current, 3, containerID);
+            container = new DFlexParentContainer(
+              containerID,
+              ref.current,
+              3,
+              // @ts-ignore
+              {
+                left: 0,
+                top: 0,
+              }
+            );
           }
 
           return () => {};
