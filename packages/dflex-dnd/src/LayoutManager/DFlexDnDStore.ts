@@ -356,7 +356,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     scheduler(this, null, null, { type: "layoutState", status: "ready" });
   }
 
-  register(elm: RegisterInputOpts) {
+  register(elm: RegisterInputOpts): void {
     if (!this._isDOM) {
       this._isDOM = canUseDOM();
 
@@ -371,6 +371,18 @@ class DFlexDnDStore extends DFlexBaseStore {
     }
 
     const { id, readonly = false, depth = 0, CSSTransform = null } = elm;
+
+    if (this.registry.has(id)) {
+      // check if it's the same element still connected.
+      const DOM = this.interactiveDOM.get(id)!;
+
+      if (DOM.isConnected) {
+        // do nothing
+        return;
+      }
+
+      this.unregister(id);
+    }
 
     if (__DEV__) {
       // Validate without initialize.

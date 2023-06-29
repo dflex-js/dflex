@@ -70,6 +70,7 @@ export {
   canUseDOM,
   getSelection,
   getParentElm,
+  getElmDOMOrThrow,
   updateElmDatasetGrid,
   DFlexCreateRAF as createRAF,
   DFlexCreateTimeout as createTimeout,
