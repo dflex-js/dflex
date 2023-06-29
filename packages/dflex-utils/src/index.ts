@@ -73,6 +73,7 @@ export {
   updateElmDatasetGrid,
   DFlexCreateRAF as createRAF,
   DFlexCreateTimeout as createTimeout,
+  getElmBoxRect,
 } from "./environment";
 
 export * as featureFlags from "./FeatureFlags";

@@ -4,6 +4,7 @@ import {
   BoxNum,
   createTimeout,
   featureFlags,
+  getOppositeAxis,
   PointNum,
   PREFIX_TRACKER_CYCLE,
   TimeoutFunction,
@@ -505,7 +506,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
           throw new Error(
             `Unable to find the target element index for the occupied grid: ${JSON.stringify(
-              occupiedGrid
+              grid
             )}.\n` +
               `This error occurs when attempting to calculate the index of the target element in a non-single axis scenario.\n` +
               `Incorrect handling of 'isSingleAxis' can lead to issues in determining the target element index.`
@@ -602,7 +603,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     const { grid } = store.containers.get(SK)!;
 
     // One column or one row?
-    const oppositeAxis = axis === "y" ? "x" : "y";
+    const oppositeAxis = getOppositeAxis(axis);
 
     const isSingleAxis = grid[oppositeAxis] === 0;
 

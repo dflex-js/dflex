@@ -2,25 +2,42 @@ import {
   getParentElm,
   getElmPos,
   getElmOverflow,
-  getElmDimensions,
   PointBool,
+  Axis,
 } from "@dflex/utils";
 
 const OVERFLOW_REGEX = /(auto|scroll|overlay)/;
 
-type ResolveScrollPropsInput = [
-  undefined | HTMLElement,
-  boolean,
-  PointBool,
-  undefined | ReturnType<typeof getElmDimensions>
-];
+type ResolveScrollPropsInput = [undefined | HTMLElement, boolean, PointBool];
 
-type GetScrollContainerRes = [
-  HTMLElement,
-  boolean,
-  PointBool,
-  ReturnType<typeof getElmDimensions>
-];
+type GetScrollContainerRes = [HTMLElement, boolean, PointBool];
+
+type Overflow = ReturnType<typeof getElmOverflow>;
+
+function hasScrollableContent(DOM: HTMLElement, axis: Axis): boolean {
+  return axis === "y"
+    ? DOM.scrollHeight > DOM.clientHeight
+    : DOM.scrollWidth > DOM.clientWidth;
+}
+
+const hasScrollbar = (
+  axis: Axis,
+  overflow: Overflow,
+  DOM: HTMLElement,
+  hasOverflow: PointBool
+) => {
+  if (OVERFLOW_REGEX.test(overflow)) {
+    const has = hasScrollableContent(DOM, axis);
+
+    if (has) {
+      hasOverflow[axis] = true;
+
+      return true;
+    }
+  }
+
+  return false;
+};
 
 const resolveScrollProps = (
   parentDOM: HTMLElement,
@@ -36,30 +53,12 @@ const resolveScrollProps = (
     return false;
   }
 
-  const [, , hasOverflow, dimension] = res;
+  const [, , hasOverflow] = res;
 
-  if (!dimension) {
-    // Get parent DOM dimension.
-    res[3] = getElmDimensions(parentDOM);
+  const checkOverflow = (axis: Axis, overflow: Overflow) =>
+    hasScrollbar(axis, overflow, parentDOM, hasOverflow);
 
-    if (__DEV__) {
-      Object.freeze(dimension);
-    }
-  }
-
-  if (OVERFLOW_REGEX.test(overflowY)) {
-    hasOverflow.y = true;
-
-    return true;
-  }
-
-  if (OVERFLOW_REGEX.test(overflowX)) {
-    hasOverflow.x = true;
-
-    return true;
-  }
-
-  return false;
+  return checkOverflow("y", overflowY) || checkOverflow("x", overflowX);
 };
 
 function getScrollContainerProperties(
@@ -71,7 +70,6 @@ function getScrollContainerProperties(
     undefined,
     false,
     new PointBool(false, false),
-    undefined,
   ];
 
   if (__DEV__) {
@@ -83,10 +81,6 @@ function getScrollContainerProperties(
     (parentDOM: HTMLElement) =>
       resolveScrollProps(parentDOM, baseELmPosition, res)
   );
-
-  if (!res[3]) {
-    res[3] = getElmDimensions(document.documentElement);
-  }
 
   if (!scrollContainerDOM || baseELmPosition === "fixed") {
     res[0] = document.documentElement;

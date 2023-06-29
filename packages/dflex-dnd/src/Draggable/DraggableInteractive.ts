@@ -147,7 +147,7 @@ class DraggableInteractive extends DraggableAxes {
 
     this.enableCommit = useCommitFromOpts ? { ...opts.commit } : NO_COMMIT;
 
-    const [scroll] = store.getScrollWithSiblingsByID(id);
+    const scroll = store.getScrollByID(id);
 
     const { rect, translate } = this.draggedElm;
 
