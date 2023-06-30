@@ -97,7 +97,6 @@ function cleanupIDs(store: DFlexDnDStore): void {
   SKeys.forEach(({ BK, depth }, SK) => cleanupSiblings(store, SK, BK, depth));
 }
 
-// Needs refactoring and testing.
 function mutateIDs(store: DFlexDnDStore) {
   changedIds.forEach((idSet) => {
     if (store.registry.has(idSet.oldId)) {
@@ -112,49 +111,18 @@ function mutateIDs(store: DFlexDnDStore) {
       elmBranch[elm.VDOMOrder.self] = idSet.newId;
 
       // Update instance.
-      // @ts-ignore
       elm.id = idSet.newId;
     }
   });
 }
 
-function checkMutations(store: DFlexDnDStore, mutations: MutationRecord[]) {
+function filterMutations(store: DFlexDnDStore, mutations: MutationRecord[]) {
   for (let i = 0; i < mutations.length; i += 1) {
     const mutation = mutations[i];
-    const { type, target, addedNodes, removedNodes, attributeName, oldValue } =
-      mutation;
+    const { type, target, removedNodes, attributeName, oldValue } = mutation;
 
     if (target instanceof HTMLElement) {
       if (type === "childList") {
-        if (
-          addedNodes.length > 0 &&
-          addedNodes.length === 1 &&
-          addedNodes[0] instanceof HTMLElement
-        ) {
-          const { id } = addedNodes[0];
-
-          if (id.includes("dflex-draggable-mirror")) {
-            return;
-          }
-
-          if (__DEV__) {
-            setTimeout(() => {
-              addedNodes.forEach((node) => {
-                // TODO: Fix this warning.
-                if (!store.registry.has((node as HTMLElement).id)) {
-                  // eslint-disable-next-line no-console
-                  console.error(
-                    // @ts-ignore
-                    `Insertion of DOM elements is not supported outside DFlex registry ${node.id}`
-                  );
-                }
-              });
-            }, 0);
-          }
-
-          return;
-        }
-
         removedNodes.forEach((node) => {
           if (node instanceof HTMLElement) {
             const { id } = node;
@@ -183,13 +151,13 @@ function DOMmutationHandler(
   try {
     isProcessingMutations = true;
 
-    checkMutations(store, mutations);
+    filterMutations(store, mutations);
 
     // fetch all pending mutations and clear the queue.
     const records = observer.takeRecords();
 
     if (records.length > 0) {
-      checkMutations(store, records);
+      filterMutations(store, records);
     }
 
     if (changedIds.size > 0) {
