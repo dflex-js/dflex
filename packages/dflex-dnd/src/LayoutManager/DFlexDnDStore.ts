@@ -667,46 +667,34 @@ class DFlexDnDStore extends DFlexBaseStore {
     return [parentID, parentDOM];
   }
 
-  private _clearBranchesScroll() {
-    this.scrolls.forEach((scroll) => {
-      scroll.destroy();
-    });
-
-    this.scrolls.clear();
-  }
-
-  removeElmFromRegistry(id: string): void {
-    super.unregister(id);
-  }
-
-  cleanupELmInstance(id: string, BK: string): void {
-    this.DOMGen.removeIDFromBranch(id, BK);
-  }
-
-  cleanupSiblingsInstance(SK: string, BK: string, depth: number): void {
-    this.DOMGen.destroySiblings(SK, BK, depth);
-
+  disposeContainers(SK: string): void {
     const deletedContainer = this.containers.delete(SK);
     const deletedScroll = this.scrolls.delete(SK);
 
     if (__DEV__) {
       if (featureFlags.enableRegisterDebugger) {
         // eslint-disable-next-line no-console
-        console.log(`cleanupSiblingsInstance for SK: ${SK}`);
+        console.log(`dispose for SK: ${SK}`);
       }
 
       if (!deletedContainer) {
-        throw new Error(
-          `cleanupSiblingsInstance: Container with SK: ${SK} doesn't exists`
-        );
+        throw new Error(`dispose: Container with SK: ${SK} doesn't exists`);
       }
 
       if (!deletedScroll) {
         throw new Error(
-          `cleanupSiblingsInstance: Scroll container with SK: ${SK} doesn't exists`
+          `dispose: Scroll container with SK: ${SK} doesn't exists`
         );
       }
     }
+  }
+
+  private _clearBranchesScroll() {
+    this.scrolls.forEach((scroll) => {
+      scroll.destroy();
+    });
+
+    this.scrolls.clear();
   }
 
   destroy(): void {

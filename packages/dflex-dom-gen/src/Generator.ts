@@ -64,6 +64,8 @@ type RestoreKey = {
   PK: string;
 };
 
+const { isArray } = Array;
+
 /**
  * Generate keys to connect relations between DOM-elements depending on tree
  * depth.
@@ -120,7 +122,7 @@ class Generator {
   }
 
   private _addElmSKToDepthCollection(SK: string, depth: number): void {
-    if (!Array.isArray(this._SKByDepth[depth])) {
+    if (!isArray(this._SKByDepth[depth])) {
       this._SKByDepth[depth] = [SK];
 
       return;
@@ -134,7 +136,7 @@ class Generator {
   }
 
   private _addElmIDToSiblings(id: string, SK: string): number {
-    if (!Array.isArray(this._siblings[SK])) {
+    if (!isArray(this._siblings[SK])) {
       this._siblings[SK] = [];
     }
 
@@ -187,7 +189,7 @@ class Generator {
 
     if (isNewLayer) {
       if (__DEV__) {
-        if (!Array.isArray(this._SKByBranch[BK])) {
+        if (!isArray(this._SKByBranch[BK])) {
           throw new Error(`_insertLayer: unable to find branch with BK ${BK}`);
         }
 
@@ -242,7 +244,7 @@ class Generator {
 
     const BK = `${PREFIX_BRANCH_KEY}${this._branchIndicator}`;
 
-    if (!Array.isArray(this._SKByBranch[BK])) {
+    if (!isArray(this._SKByBranch[BK])) {
       this._SKByBranch[BK] = [];
     }
 
@@ -295,7 +297,7 @@ class Generator {
       const preBranchKey = `${PREFIX_BRANCH_KEY}${this._branchIndicator - 1}`;
       const preBranch = this._SKByBranch[preBranchKey];
       if (__DEV__) {
-        if (!Array.isArray(preBranch)) {
+        if (!isArray(preBranch)) {
           throw new Error(
             `_composeKeys: Unable to find the previous branch using key: ${preBranchKey}`
           );
@@ -495,17 +497,17 @@ class Generator {
 
   private _hasSK(SK: string) {
     if (__DEV__) {
-      if (!Array.isArray(this._siblings[SK])) {
+      if (!isArray(this._siblings[SK])) {
         throw new Error(`_hasSK: Siblings with SK ${SK} doesn't exist.`);
       }
     }
 
-    return Array.isArray(this._siblings[SK]);
+    return isArray(this._siblings[SK]);
   }
 
   removeIDFromBranch(id: string, BK: string): void {
     if (__DEV__) {
-      if (!Array.isArray(this._SKByBranch[BK])) {
+      if (!isArray(this._SKByBranch[BK])) {
         throw new Error(
           `removeIDFromBranch: Branch with SK ${BK} doesn't exist.`
         );
