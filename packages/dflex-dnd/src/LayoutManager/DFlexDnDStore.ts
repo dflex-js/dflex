@@ -38,7 +38,7 @@ import {
   connectObservers,
   disconnectObservers,
   getIsProcessingMutations,
-} from "./DFlexMutations";
+} from "../Mutation";
 
 import DOMReconciler from "./DFlexDOMReconciler";
 

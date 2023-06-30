@@ -1,10 +1,11 @@
 import { featureFlags } from "@dflex/utils";
-import type DFlexDnDStore from "./DFlexDnDStore";
+import type DFlexDnDStore from "../LayoutManager/DFlexDnDStore";
 
-type ChangedIds = Set<{ oldId: string; newId: string }>;
-type TerminatedDOMiDs = Set<string>;
+import DFlexIdModifier, { ChangedIds } from "./DFlexIDModifier";
+import DFlexIdGC, { TerminatedDOMiDs } from "./DFlexIDGarbageCollector";
 
 let isProcessingMutations = false;
+
 const terminatedDOMiDs: TerminatedDOMiDs = new Set();
 const changedIds: ChangedIds = new Set();
 
@@ -12,111 +13,10 @@ function getIsProcessingMutations(): boolean {
   return isProcessingMutations;
 }
 
-function cleanupLeaves(store: DFlexDnDStore, SK: string): [string[], string[]] {
-  const connectedNodesID: string[] = [];
-  const deletedNodesID: string[] = [];
-
-  const siblings = store.getElmSiblingsByKey(SK);
-
-  for (let i = 0; i < siblings.length; i += 1) {
-    const elmID = siblings[i];
-
-    if (terminatedDOMiDs.has(elmID)) {
-      deletedNodesID.push(elmID);
-    } else {
-      const dflexElm = store.registry.get(elmID)!;
-
-      const index = connectedNodesID.push(elmID) - 1;
-
-      if (index !== dflexElm.VDOMOrder.self) {
-        dflexElm.updateIndex(store.interactiveDOM.get(elmID)!, index);
-
-        if (featureFlags.enableRegisterDebugger) {
-          // eslint-disable-next-line no-console
-          console.log(`cleanupLeaves: updating index for ${elmID} to ${index}`);
-        }
-      }
-    }
-  }
-
-  return [connectedNodesID, deletedNodesID];
-}
-
-function cleanupSiblings(
+function filterMutations(
   store: DFlexDnDStore,
-  SK: string,
-  BK: string,
-  depth: number
+  mutations: MutationRecord[]
 ): void {
-  const [connectedNodesID, deletedNodesID] = cleanupLeaves(store, SK);
-
-  if (__DEV__) {
-    if (featureFlags.enableRegisterDebugger) {
-      // eslint-disable-next-line no-console
-      console.log(
-        `cleanupSiblings: Found ${connectedNodesID.length} connected`,
-        connectedNodesID
-      );
-    }
-  }
-
-  if (connectedNodesID.length > 0) {
-    store.mutateSiblings(SK, connectedNodesID);
-
-    deletedNodesID.forEach((id) => {
-      store.cleanupELmInstance(id, BK);
-    });
-  } else {
-    store.cleanupSiblingsInstance(SK, BK, depth);
-  }
-}
-
-function cleanupIDs(store: DFlexDnDStore): void {
-  const SKeys = new Map<string, { BK: string; depth: number }>();
-
-  terminatedDOMiDs.forEach((id) => {
-    const {
-      keys: { SK, BK },
-      depth,
-    } = store.registry.get(id)!;
-
-    store.removeElmFromRegistry(id);
-
-    if (__DEV__) {
-      if (featureFlags.enableRegisterDebugger) {
-        // eslint-disable-next-line no-console
-        console.log(`cleanupIDs: removing ${id} from registry`);
-      }
-    }
-
-    if (!SKeys.has(SK)) {
-      SKeys.set(SK, { BK, depth });
-    }
-  });
-
-  SKeys.forEach(({ BK, depth }, SK) => cleanupSiblings(store, SK, BK, depth));
-}
-
-function mutateIDs(store: DFlexDnDStore) {
-  changedIds.forEach((idSet) => {
-    if (store.registry.has(idSet.oldId)) {
-      const elm = store.registry.get(idSet.oldId)!;
-      const elmBranch = store.getElmSiblingsByKey(elm.keys.SK);
-
-      // Update registry.
-      store.registry.set(idSet.newId, elm);
-      store.registry.delete(idSet.oldId);
-
-      // Update DOM-gen branch.
-      elmBranch[elm.VDOMOrder.self] = idSet.newId;
-
-      // Update instance.
-      elm.id = idSet.newId;
-    }
-  });
-}
-
-function filterMutations(store: DFlexDnDStore, mutations: MutationRecord[]) {
   for (let i = 0; i < mutations.length; i += 1) {
     const mutation = mutations[i];
     const { type, target, removedNodes, attributeName, oldValue } = mutation;
@@ -147,7 +47,7 @@ function DOMmutationHandler(
   store: DFlexDnDStore,
   mutations: MutationRecord[],
   observer: MutationObserver
-) {
+): void {
   try {
     isProcessingMutations = true;
 
@@ -161,12 +61,12 @@ function DOMmutationHandler(
     }
 
     if (changedIds.size > 0) {
-      mutateIDs(store);
+      DFlexIdModifier(store, changedIds);
       changedIds.clear();
     }
 
     if (terminatedDOMiDs.size > 0) {
-      cleanupIDs(store);
+      DFlexIdGC(store, terminatedDOMiDs);
       terminatedDOMiDs.clear();
     }
   } finally {
@@ -185,7 +85,7 @@ if (__DEV__) {
   Object.freeze(observerConfig);
 }
 
-function initMutationObserver(store: DFlexDnDStore, SK: string) {
+function initMutationObserver(store: DFlexDnDStore, SK: string): void {
   store.mutationObserverMap.set(
     SK,
     new MutationObserver(
@@ -220,7 +120,7 @@ function addObserver(
   store.mutationObserverMap.get(SK)!.observe(DOMTarget, observerConfig);
 }
 
-function disconnectObservers(store: DFlexDnDStore) {
+function disconnectObservers(store: DFlexDnDStore): void {
   store.mutationObserverMap.forEach((observer, key) => {
     if (__DEV__) {
       if (!observer) {
@@ -234,7 +134,7 @@ function disconnectObservers(store: DFlexDnDStore) {
   });
 }
 
-function connectObservers(store: DFlexDnDStore) {
+function connectObservers(store: DFlexDnDStore): void {
   store.mutationObserverMap.forEach((_, key) => {
     const DOM = store.interactiveDOM.get(key)!;
 
