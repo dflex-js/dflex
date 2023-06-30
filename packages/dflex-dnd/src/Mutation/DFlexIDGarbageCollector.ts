@@ -3,22 +3,20 @@ import type DFlexDnDStore from "../LayoutManager/DFlexDnDStore";
 
 export type TerminatedDOMiDs = Set<string>;
 
-function cleanupLeaves(
+function recomposeSiblings(
   store: DFlexDnDStore,
   terminatedDOMiDs: TerminatedDOMiDs,
+  { BK, depth }: SiblingKeyVal,
   SK: string
-): [string[], string[]] {
+): void {
   const connectedNodesID: string[] = [];
-  const deletedNodesID: string[] = [];
 
   const siblings = store.getElmSiblingsByKey(SK);
 
   for (let i = 0; i < siblings.length; i += 1) {
     const elmID = siblings[i];
 
-    if (terminatedDOMiDs.has(elmID)) {
-      deletedNodesID.push(elmID);
-    } else {
+    if (!terminatedDOMiDs.has(elmID)) {
       const dflexElm = store.registry.get(elmID)!;
 
       const index = connectedNodesID.push(elmID) - 1;
@@ -34,22 +32,6 @@ function cleanupLeaves(
     }
   }
 
-  return [connectedNodesID, deletedNodesID];
-}
-
-function cleanupSiblings(
-  store: DFlexDnDStore,
-  terminatedDOMiDs: TerminatedDOMiDs,
-  SK: string,
-  BK: string,
-  depth: number
-): void {
-  const [connectedNodesID, deletedNodesID] = cleanupLeaves(
-    store,
-    terminatedDOMiDs,
-    SK
-  );
-
   if (__DEV__) {
     if (featureFlags.enableRegisterDebugger) {
       // eslint-disable-next-line no-console
@@ -62,20 +44,18 @@ function cleanupSiblings(
 
   if (connectedNodesID.length > 0) {
     store.mutateSiblings(SK, connectedNodesID);
-
-    deletedNodesID.forEach((id) => {
-      store.cleanupELmInstance(id, BK);
-    });
   } else {
-    store.cleanupSiblingsInstance(SK, BK, depth);
+    store.deleteSiblings(SK, BK, depth);
   }
 }
+
+type SiblingKeyVal = { BK: string; depth: number };
 
 function DFlexIDGarbageCollector(
   store: DFlexDnDStore,
   terminatedDOMiDs: TerminatedDOMiDs
 ): void {
-  const SKeys = new Map<string, { BK: string; depth: number }>();
+  const SKeys = new Map<string, SiblingKeyVal>();
 
   terminatedDOMiDs.forEach((id) => {
     const {
@@ -83,7 +63,7 @@ function DFlexIDGarbageCollector(
       depth,
     } = store.registry.get(id)!;
 
-    store.removeElmFromRegistry(id);
+    store.deleteElm(id, BK);
 
     if (__DEV__) {
       if (featureFlags.enableRegisterDebugger) {
@@ -97,9 +77,10 @@ function DFlexIDGarbageCollector(
     }
   });
 
-  SKeys.forEach(({ BK, depth }, SK) =>
-    cleanupSiblings(store, terminatedDOMiDs, SK, BK, depth)
-  );
+  const recomposeFromKys = (v: SiblingKeyVal, k: string) =>
+    recomposeSiblings(store, terminatedDOMiDs, v, k);
+
+  SKeys.forEach(recomposeFromKys);
 }
 
 export default DFlexIDGarbageCollector;

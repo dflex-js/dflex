@@ -663,15 +663,13 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.scrolls.clear();
   }
 
-  removeElmFromRegistry(id: string): void {
+  deleteElm(id: string, BK: string): void {
+    this.DOMGen.removeIDFromBranch(id, BK);
+
     super.unregister(id);
   }
 
-  cleanupELmInstance(id: string, BK: string): void {
-    this.DOMGen.removeIDFromBranch(id, BK);
-  }
-
-  cleanupSiblingsInstance(SK: string, BK: string, depth: number): void {
+  deleteSiblings(SK: string, BK: string, depth: number): void {
     this.DOMGen.destroySiblings(SK, BK, depth);
 
     const deletedContainer = this.containers.delete(SK);
