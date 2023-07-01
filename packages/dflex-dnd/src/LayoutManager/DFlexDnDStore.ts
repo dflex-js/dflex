@@ -38,6 +38,7 @@ import {
   connectObservers,
   disconnectObservers,
   getIsProcessingMutations,
+  DFlexDirtyLeavesCollector,
 } from "../Mutation";
 
 import DOMReconciler from "./DFlexDOMReconciler";
@@ -371,6 +372,10 @@ class DFlexDnDStore extends DFlexBaseStore {
     }
 
     const { id, readonly = false, depth = 0, CSSTransform = null } = elm;
+
+    if (this.registry.has(id)) {
+      DFlexDirtyLeavesCollector(this, 0);
+    }
 
     if (__DEV__) {
       // Validate without initialize.
