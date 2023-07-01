@@ -15,10 +15,17 @@ function DFlexDirtyLeavesCollector(store: DFlexDnDStore, depth: number) {
     }
   });
 
+  if (terminatedDOMiDs.size === 0) {
+    return;
+  }
+
   if (__DEV__) {
     if (featureFlags.enableRegisterDebugger) {
       // eslint-disable-next-line no-console
-      console.log(`Found ${terminatedDOMiDs.size} dirty leaves`);
+      console.log(
+        `Found ${terminatedDOMiDs.size} dirty leaves`,
+        terminatedDOMiDs
+      );
     }
   }
 

@@ -98,34 +98,34 @@ function initMutationObserver(store: DFlexDnDStore, SK: string): void {
 
 function addObserver(
   store: DFlexDnDStore,
-  SK: string,
+  id: string,
   DOMTarget: HTMLElement
 ): void {
-  if (!store.mutationObserverMap.has(SK)) {
+  if (!store.mutationObserverMap.has(id)) {
+    initMutationObserver(store, id);
+
     if (__DEV__) {
       if (featureFlags.enableRegisterDebugger) {
         // eslint-disable-next-line no-console
-        console.log(`addObserver: ${SK}`);
+        console.log(`addObserver: ${id}`);
       }
     }
-
-    initMutationObserver(store, SK);
   } else if (__DEV__) {
     if (featureFlags.enableRegisterDebugger) {
       // eslint-disable-next-line no-console
-      console.log(`addObserver: ${SK} already exist`);
+      console.log(`addObserver: ${id} already exist`);
     }
   }
 
-  store.mutationObserverMap.get(SK)!.observe(DOMTarget, observerConfig);
+  store.mutationObserverMap.get(id)!.observe(DOMTarget, observerConfig);
 }
 
 function disconnectObservers(store: DFlexDnDStore): void {
-  store.mutationObserverMap.forEach((observer, key) => {
+  store.mutationObserverMap.forEach((observer, id) => {
     if (__DEV__) {
       if (!observer) {
         throw new Error(
-          `disconnectObservers: unable to find observer for key: ${key}`
+          `disconnectObservers: unable to find observer for id: ${id}`
         );
       }
     }
@@ -135,16 +135,16 @@ function disconnectObservers(store: DFlexDnDStore): void {
 }
 
 function connectObservers(store: DFlexDnDStore): void {
-  store.mutationObserverMap.forEach((_, key) => {
-    const DOM = store.interactiveDOM.get(key)!;
+  store.mutationObserverMap.forEach((_, id) => {
+    const DOM = store.interactiveDOM.get(id)!;
 
     if (__DEV__) {
       if (!DOM) {
-        throw new Error(`connectObservers: unable to find DOM for key: ${key}`);
+        throw new Error(`connectObservers: unable to find DOM for id: ${id}`);
       }
     }
 
-    addObserver(store, key, DOM);
+    addObserver(store, id, DOM);
   });
 }
 

@@ -680,21 +680,37 @@ class DFlexDnDStore extends DFlexBaseStore {
     const deletedContainer = this.containers.delete(SK);
     const deletedScroll = this.scrolls.delete(SK);
 
+    const SKIDs = this.DOMGen.getHighestSKInAllBranches();
+
+    SKIDs.forEach(({ SK: _SK, id }) => {
+      if (SK === _SK) {
+        const deletedObserver = this.mutationObserverMap.delete(id);
+
+        if (__DEV__) {
+          if (!deletedObserver) {
+            throw new Error(
+              `deleteSiblings: Mutation Observer with id: ${id} doesn't exists`
+            );
+          }
+        }
+      }
+    });
+
     if (__DEV__) {
       if (featureFlags.enableRegisterDebugger) {
         // eslint-disable-next-line no-console
-        console.log(`cleanupSiblingsInstance for SK: ${SK}`);
+        console.log(`deleteSiblings for SK: ${SK}`);
       }
 
       if (!deletedContainer) {
         throw new Error(
-          `cleanupSiblingsInstance: Container with SK: ${SK} doesn't exists`
+          `deleteSiblings: Container with SK: ${SK} doesn't exists`
         );
       }
 
       if (!deletedScroll) {
         throw new Error(
-          `cleanupSiblingsInstance: Scroll container with SK: ${SK} doesn't exists`
+          `deleteSiblings: Scroll container with SK: ${SK} doesn't exists`
         );
       }
     }
