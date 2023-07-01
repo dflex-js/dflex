@@ -14,6 +14,6 @@
     "@rollup/plugin-terser": "^0.4.3",
     "minimist": "^1.2.8",
     "npm-packages": "workspace:*",
-    "rollup": "^3.25.3"
+    "rollup": "^3.26.0"
   }
 }
