@@ -43,7 +43,7 @@ function recomposeSiblings(
   }
 
   if (connectedNodesID.length > 0) {
-    store.mutateSiblings(SK, connectedNodesID);
+    store.DOMGen.mutateSiblings(SK, connectedNodesID);
   } else {
     store.deleteSiblings(SK, BK, depth);
   }
