@@ -439,13 +439,6 @@ class DFlexScrollContainer {
     }
   }
 
-  private _clearInnerThreshold(): void {
-    if (this._thresholdInViewport.inner.threshold) {
-      this._thresholdInViewport.inner.threshold.destroy();
-      this._thresholdInViewport.inner.threshold = null;
-    }
-  }
-
   /**
    * @deprecated - Should be removed when refactoring retractions.
    * @returns
@@ -560,12 +553,13 @@ class DFlexScrollContainer {
    * Clean up the container instances.
    */
   destroy(): void {
-    this._clearInnerThreshold();
-    // @ts-expect-error
-    this._scrollEventCallback = undefined;
     this._attachResizeAndScrollListeners(false);
+    this._initializeOrDestroyThreshold("inner", null);
+    this._initializeOrDestroyThreshold("outer", null);
     this._updateDOMDataset(false, true);
 
+    // @ts-expect-error
+    this._scrollEventCallback = undefined;
     // @ts-expect-error
     this._containerDOM = undefined;
   }

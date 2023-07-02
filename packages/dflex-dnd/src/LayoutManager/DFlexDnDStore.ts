@@ -38,7 +38,8 @@ import {
   connectObservers,
   disconnectObservers,
   getIsProcessingMutations,
-} from "./DFlexMutations";
+  DFlexDirtyLeavesCollector,
+} from "../Mutation";
 
 import DOMReconciler from "./DFlexDOMReconciler";
 
@@ -273,11 +274,16 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     const firstELmDOM = this.interactiveDOM.get(siblings[0])!;
 
+    const scrollEventCallback = updateSiblingsVisibilityLinearly.bind(
+      null,
+      this
+    );
+
     const scroll = new DFlexScrollContainer(
       firstELmDOM,
       SK,
       siblings.length,
-      updateSiblingsVisibilityLinearly.bind(null, this)
+      scrollEventCallback
     );
 
     if (this.scrolls.has(SK)) {
@@ -371,6 +377,26 @@ class DFlexDnDStore extends DFlexBaseStore {
     }
 
     const { id, readonly = false, depth = 0, CSSTransform = null } = elm;
+
+    // DFlex optimizes registration so that when one sibling is registered, all
+    // the other siblings are automatically registered as well. Therefore, it is
+    // acceptable if the incoming element is already in the store. However, if
+    // the element is not connected to the DOM, we need to clean up the
+    // registry.
+    if (this.registry.has(id)) {
+      const DOM = this.interactiveDOM.get(id)!;
+
+      if (!DOM.isConnected) {
+        if (__DEV__) {
+          if (featureFlags.enableRegisterDebugger) {
+            // eslint-disable-next-line no-console
+            console.log(`element id: ${id} is already registered.`);
+          }
+        }
+
+        DFlexDirtyLeavesCollector(this, 0);
+      }
+    }
 
     if (__DEV__) {
       // Validate without initialize.
@@ -663,36 +689,61 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.scrolls.clear();
   }
 
-  removeElmFromRegistry(id: string): void {
+  deleteElm(id: string, BK: string): void {
+    this.DOMGen.removeIDFromBranch(id, BK);
+
     super.unregister(id);
   }
 
-  cleanupELmInstance(id: string, BK: string): void {
-    this.DOMGen.removeIDFromBranch(id, BK);
-  }
-
-  cleanupSiblingsInstance(SK: string, BK: string, depth: number): void {
+  deleteSiblings(SK: string, BK: string, depth: number): void {
     this.DOMGen.destroySiblings(SK, BK, depth);
 
+    const scroll = this.scrolls.get(SK)!;
+
+    if (__DEV__) {
+      if (!scroll) {
+        throw new Error(
+          `deleteSiblings: Scroll container with SK: ${SK} doesn't exists`
+        );
+      }
+    }
+
+    scroll.destroy();
+
+    this.scrolls.delete(SK);
+
     const deletedContainer = this.containers.delete(SK);
-    const deletedScroll = this.scrolls.delete(SK);
+
+    if (__DEV__) {
+      if (!deletedContainer) {
+        throw new Error(
+          `deleteSiblings: Container with SK: ${SK} doesn't exists`
+        );
+      }
+    }
+
+    const SKIDs = this.DOMGen.getHighestSKInAllBranches();
+
+    SKIDs.forEach(({ SK: _SK, id }) => {
+      if (SK === _SK) {
+        this.mutationObserverMap.get(id)!.disconnect();
+
+        const deletedObserver = this.mutationObserverMap.delete(id);
+
+        if (__DEV__) {
+          if (!deletedObserver) {
+            throw new Error(
+              `deleteSiblings: Mutation Observer with id: ${id} doesn't exists`
+            );
+          }
+        }
+      }
+    });
 
     if (__DEV__) {
       if (featureFlags.enableRegisterDebugger) {
         // eslint-disable-next-line no-console
-        console.log(`cleanupSiblingsInstance for SK: ${SK}`);
-      }
-
-      if (!deletedContainer) {
-        throw new Error(
-          `cleanupSiblingsInstance: Container with SK: ${SK} doesn't exists`
-        );
-      }
-
-      if (!deletedScroll) {
-        throw new Error(
-          `cleanupSiblingsInstance: Scroll container with SK: ${SK} doesn't exists`
-        );
+        console.log(`deleteSiblings for SK: ${SK}`);
       }
     }
   }
