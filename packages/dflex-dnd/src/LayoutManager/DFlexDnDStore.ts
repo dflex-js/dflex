@@ -37,7 +37,7 @@ import {
   addObserver,
   connectObservers,
   disconnectObservers,
-  getIsProcessingMutations,
+  getIsProcessingMutations as hasMutationsInProgress,
   DFlexDirtyLeavesCollector,
   TerminatedDOMiDs,
 } from "../Mutation";
@@ -167,7 +167,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.scrolls = new Map();
     this.unifiedContainerDimensions = {};
     this._terminatedDOMiDs = new Set();
-    [this._unregisterSchedule] = DFlexCreateTimeout(1);
+    [this._unregisterSchedule] = DFlexCreateTimeout(0);
 
     // @ts-ignore- `null` until we have element to drag.
     this.migration = null;
@@ -190,7 +190,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     this._windowResizeHandler = this._windowResizeHandler.bind(this);
   }
 
-  isIDle(): boolean {
+  isIdle(): boolean {
     return (
       !this.isUpdating &&
       this.updatesQueue.length === 0 &&
@@ -199,7 +199,7 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   isLayoutAvailable(): boolean {
-    return !(this.isComposing || getIsProcessingMutations()) && this.isIDle();
+    return !(this.isComposing || hasMutationsInProgress()) && this.isIdle();
   }
 
   private _initWhenRegister() {
@@ -398,8 +398,10 @@ class DFlexDnDStore extends DFlexBaseStore {
       if (!DOM.isConnected) {
         if (__DEV__) {
           if (featureFlags.enableRegisterDebugger) {
-            // eslint-disable-next-line no-console
-            console.log(`element id: ${id} is already registered.`);
+            throw new Error(
+              `The element with ID ${id} is already registered, but its DOM is not connected. This situation can lead to memory leaks and unpredictable behavior. ` +
+                `To prevent this, please make sure to call "store.unregister(${id})" to properly clean up the element before attempting to re-register it.`
+            );
           }
         }
 
@@ -441,10 +443,26 @@ class DFlexDnDStore extends DFlexBaseStore {
   unregister(id: string): void {
     this._terminatedDOMiDs.add(id);
 
-    this._unregisterSchedule(
-      () => DFlexIDGarbageCollector(this, this._terminatedDOMiDs),
-      true
-    );
+    this._unregisterSchedule(() => {
+      // Abort. Leave it to the observer.
+      if (hasMutationsInProgress()) {
+        this._terminatedDOMiDs.clear();
+
+        if (__DEV__) {
+          if (featureFlags.enableRegisterDebugger) {
+            // eslint-disable-next-line no-console
+            console.log(
+              "Aborting unregister. Cleanup handling will be performed by the mutation observer."
+            );
+          }
+        }
+
+        return;
+      }
+
+      DFlexIDGarbageCollector(this, this._terminatedDOMiDs);
+      this._terminatedDOMiDs.clear();
+    }, true);
   }
 
   private _updateContainerRect(

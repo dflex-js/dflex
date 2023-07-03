@@ -68,7 +68,7 @@ function DFlexIDGarbageCollector(
     if (__DEV__) {
       if (featureFlags.enableRegisterDebugger) {
         // eslint-disable-next-line no-console
-        console.log(`cleanupIDs: removing ${id} from registry`);
+        console.log(`DFlexIdGC: removing ${id} from registry`);
       }
     }
 

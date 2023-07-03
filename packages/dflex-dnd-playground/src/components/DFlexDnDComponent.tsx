@@ -64,6 +64,10 @@ const DFlexDnDComponent = ({
         },
       });
     }
+
+    return () => {
+      store.unregister(id);
+    };
   }, [taskRef]);
 
   const onDFlexEvent = (e: DFlexEvents) => {

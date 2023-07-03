@@ -8,6 +8,9 @@ import { store } from ".";
 
 // TODO: I am not sure if this is the best approach or not.
 
+/**
+ * Exported store for interacting with DFlex.
+ */
 class DFlexDnDExportedStore {
   private _base: DFlexDnDStore;
 
@@ -15,7 +18,6 @@ class DFlexDnDExportedStore {
 
   constructor() {
     this._base = store;
-
     this.listeners = this._base.listeners;
   }
 
@@ -53,8 +55,8 @@ class DFlexDnDExportedStore {
    *
    * @returns `true` if DFlex is idle, `false` otherwise.
    */
-  isIDle(): boolean {
-    return this._base.isIDle();
+  isIdle(): boolean {
+    return this._base.isIdle();
   }
 
   /**
@@ -70,12 +72,23 @@ class DFlexDnDExportedStore {
    * Registers an element with DFlex.
    *
    * @param elm - Element to register.
-   * @returns The registered element.
    */
-  register(elm: RegisterInputOpts) {
+  register(elm: RegisterInputOpts): void {
     return this._base.register(elm);
   }
 
+  /**
+   * Removes an element with the specified ID from DFlex.
+   *
+   * @param id - ID of the element to unregister.
+   */
+  unregister(id: string): void {
+    this._base.unregister(id);
+  }
+
+  /**
+   * Commits any pending changes to the DFlex instance.
+   */
   commit(): void {
     this._base.commit(null);
   }
@@ -87,13 +100,13 @@ class DFlexDnDExportedStore {
    * @returns The serialized element object or `null` if the element is not found.
    */
   getSerializedElm(id: string): DFlexSerializedElement | null {
-    return this.getSerializedElm(id);
+    return this._base.getSerializedElm(id);
   }
 
   /**
    * Destroys the DFlex instance.
    */
-  destroy() {
+  destroy(): void {
     return this._base.destroy();
   }
 }
