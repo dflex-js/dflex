@@ -37,7 +37,7 @@ import {
   addObserver,
   connectObservers,
   disconnectObservers,
-  getIsProcessingMutations as hasMutationsInProgress,
+  hasMutationsInProgress,
   DFlexDirtyLeavesCollector,
   TerminatedDOMiDs,
 } from "../Mutation";
