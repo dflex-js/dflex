@@ -71,8 +71,8 @@ export {
   getSelection,
   getParentElm,
   updateElmDatasetGrid,
-  DFlexCreateRAF as createRAF,
-  DFlexCreateTimeout as createTimeout,
+  DFlexCreateRAF,
+  DFlexCreateTimeout,
   getElmBoxRect,
 } from "./environment";
 

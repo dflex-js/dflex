@@ -2,7 +2,7 @@ import {
   AxesPoint,
   Axis,
   BoxNum,
-  createTimeout,
+  DFlexCreateTimeout,
   featureFlags,
   getOppositeAxis,
   PointNum,
@@ -81,7 +81,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     this.hasBeenScrolling = false;
     this.isOnDragOutThresholdEvtEmitted = false;
     this._animatedDraggedInsertionFrame = null;
-    [this._detectNearestContainerThrottle] = createTimeout(0);
+    [this._detectNearestContainerThrottle] = DFlexCreateTimeout(0);
     this.listAppendPosition = null;
     this.isParentLocked = false;
 
