@@ -14,7 +14,7 @@ import {
   getAnimationOptions,
   removeStyleProperty,
   TimeoutFunction,
-  createTimeout,
+  DFlexCreateTimeout,
 } from "@dflex/utils";
 
 import {
@@ -37,11 +37,13 @@ import {
   addObserver,
   connectObservers,
   disconnectObservers,
-  getIsProcessingMutations,
+  hasMutationsInProgress,
   DFlexDirtyLeavesCollector,
+  TerminatedDOMiDs,
 } from "../Mutation";
 
 import DOMReconciler from "./DFlexDOMReconciler";
+import DFlexIDGarbageCollector from "../Mutation/DFlexIDGarbageCollector";
 
 type Containers = Map<string, DFlexParentContainer>;
 
@@ -147,6 +149,10 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   deferred: Deferred;
 
+  private _terminatedDOMiDs: TerminatedDOMiDs;
+
+  private _unregisterSchedule: TimeoutFunction;
+
   private _isDOM: boolean;
 
   private _isInitialized: boolean;
@@ -160,12 +166,15 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.containers = new Map();
     this.scrolls = new Map();
     this.unifiedContainerDimensions = {};
+    this._terminatedDOMiDs = new Set();
+    [this._unregisterSchedule] = DFlexCreateTimeout(0);
+
     // @ts-ignore- `null` until we have element to drag.
     this.migration = null;
     this._isInitialized = false;
     this._isDOM = false;
 
-    [this._resizeThrottle] = createTimeout(100);
+    [this._resizeThrottle] = DFlexCreateTimeout(100);
 
     // Observers.
     this.mutationObserverMap = new Map();
@@ -181,7 +190,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     this._windowResizeHandler = this._windowResizeHandler.bind(this);
   }
 
-  isIDle(): boolean {
+  isIdle(): boolean {
     return (
       !this.isUpdating &&
       this.updatesQueue.length === 0 &&
@@ -190,7 +199,7 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   isLayoutAvailable(): boolean {
-    return !(this.isComposing || getIsProcessingMutations()) && this.isIDle();
+    return !(this.isComposing || hasMutationsInProgress()) && this.isIdle();
   }
 
   private _initWhenRegister() {
@@ -389,8 +398,10 @@ class DFlexDnDStore extends DFlexBaseStore {
       if (!DOM.isConnected) {
         if (__DEV__) {
           if (featureFlags.enableRegisterDebugger) {
-            // eslint-disable-next-line no-console
-            console.log(`element id: ${id} is already registered.`);
+            throw new Error(
+              `The element with ID ${id} is already registered, but its DOM is not connected. This situation can lead to memory leaks and unpredictable behavior. ` +
+                `To prevent this, please make sure to call "store.unregister(${id})" to properly clean up the element before attempting to re-register it.`
+            );
           }
         }
 
@@ -427,6 +438,31 @@ class DFlexDnDStore extends DFlexBaseStore {
       },
       null
     );
+  }
+
+  unregister(id: string): void {
+    this._terminatedDOMiDs.add(id);
+
+    this._unregisterSchedule(() => {
+      // Abort. Leave it to the observer.
+      if (hasMutationsInProgress()) {
+        this._terminatedDOMiDs.clear();
+
+        if (__DEV__) {
+          if (featureFlags.enableRegisterDebugger) {
+            // eslint-disable-next-line no-console
+            console.log(
+              "Aborting unregister. Cleanup handling will be performed by the mutation observer."
+            );
+          }
+        }
+
+        return;
+      }
+
+      DFlexIDGarbageCollector(this, this._terminatedDOMiDs);
+      this._terminatedDOMiDs.clear();
+    }, true);
   }
 
   private _updateContainerRect(
@@ -681,14 +717,6 @@ class DFlexDnDStore extends DFlexBaseStore {
     return [parentID, parentDOM];
   }
 
-  private _clearBranchesScroll() {
-    this.scrolls.forEach((scroll) => {
-      scroll.destroy();
-    });
-
-    this.scrolls.clear();
-  }
-
   deleteElm(id: string, BK: string): void {
     this.DOMGen.removeIDFromBranch(id, BK);
 
@@ -749,9 +777,15 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   destroy(): void {
-    this._clearBranchesScroll();
     this.containers.clear();
     this.listeners.clear();
+
+    // Destroys all scroll containers.
+    this.scrolls.forEach((scroll) => {
+      scroll.destroy();
+    });
+    this.scrolls.clear();
+
     // Destroys all connected observers.
     disconnectObservers(this);
     this.mutationObserverMap.clear();
@@ -766,6 +800,10 @@ class DFlexDnDStore extends DFlexBaseStore {
     super.destroy();
 
     window.removeEventListener("resize", this._windowResizeHandler);
+
+    this._initSiblings = undefined as any;
+    this._initObservers = undefined as any;
+    this._windowResizeHandler = undefined as any;
   }
 }
 

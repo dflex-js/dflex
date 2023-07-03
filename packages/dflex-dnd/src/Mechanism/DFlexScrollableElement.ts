@@ -4,7 +4,7 @@ import {
   Direction,
   Point,
   featureFlags,
-  createTimeout,
+  DFlexCreateTimeout,
   TimeoutFunction,
   IsThrottledFunction,
 } from "@dflex/utils";
@@ -74,7 +74,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     const scrollThrottleMS = calculateScrollThrottleMS(width, height);
 
     [this._scrollThrottle, , this._isScrollThrottled] =
-      createTimeout(scrollThrottleMS);
+      DFlexCreateTimeout(scrollThrottleMS);
 
     this.initialScrollPosition.setAxes(left, top);
   }

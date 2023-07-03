@@ -34,6 +34,10 @@ const Core = ({
     if (ref.current) {
       store.register({ id, depth, animation: isCI ? null : undefined });
     }
+
+    return () => {
+      store.unregister(id);
+    };
   }, [ref]);
 
   const onMouseMove = (e: MouseEvent) => {

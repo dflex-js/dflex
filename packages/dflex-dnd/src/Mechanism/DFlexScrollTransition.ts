@@ -1,7 +1,7 @@
 import {
   Axis,
   Direction,
-  createRAF,
+  DFlexCreateRAF,
   getStartingPointByAxis,
 } from "@dflex/utils";
 
@@ -29,7 +29,7 @@ function DFlexScrollTransition(
   let startTime: number;
   let aborted = false;
 
-  const [RAF, cancelRAF] = createRAF();
+  const [RAF, cancelRAF] = DFlexCreateRAF();
 
   const step = (timestamp: number) => {
     if (!startTime) {

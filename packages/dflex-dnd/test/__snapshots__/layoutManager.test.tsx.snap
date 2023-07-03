@@ -84,6 +84,8 @@ DFlexDnDStore {
     "_elmInQueue": Set {},
     "_queue": {},
   },
+  "_terminatedDOMiDs": Set {},
+  "_unregisterSchedule": [Function],
   "_windowResizeHandler": [Function],
   "containers": Map {
     "dflex_sk_0_0" => DFlexParentContainer {

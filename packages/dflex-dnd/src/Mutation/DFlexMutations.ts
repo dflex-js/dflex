@@ -9,7 +9,7 @@ let isProcessingMutations = false;
 const terminatedDOMiDs: TerminatedDOMiDs = new Set();
 const changedIds: ChangedIds = new Set();
 
-function getIsProcessingMutations(): boolean {
+function hasMutationsInProgress(): boolean {
   return isProcessingMutations;
 }
 
@@ -153,7 +153,7 @@ type DFlexLMutationPlugin = ReturnType<typeof addObserver>;
 export type { DFlexLMutationPlugin };
 
 export {
-  getIsProcessingMutations,
+  hasMutationsInProgress,
   addObserver,
   disconnectObservers,
   connectObservers,

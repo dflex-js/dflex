@@ -16,7 +16,7 @@ import {
   CSSClass,
   CubicBezier,
   RAFFunction,
-  createRAF,
+  DFlexCreateRAF,
   setStyleProperty,
   removeStyleProperty,
   getElmBoxRect,
@@ -269,7 +269,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     this._CSSTransform = CSSTransform;
 
     // Movement
-    [this._RAF] = createRAF();
+    [this._RAF] = DFlexCreateRAF();
     this._isVisible = true;
     this._hasPendingTransform = false;
 
