@@ -1,0 +1,71 @@
+.root {
+  @apply flex
+  flex-wrap lg:flex-nowrap
+  items-start 
+  justify-center
+  w-full
+  bg-gray-100
+  py-6 px-3
+  rounded-xl;
+}
+
+.buttonSolo {
+  @apply px-4 py-3 text-lg lg:text-2xl font-semibold w-56 mx-auto;
+}
+
+.todo {
+  @apply flex
+  flex-col 
+  items-center 
+  justify-center
+  text-white
+  w-full lg:w-1/2;
+}
+
+.todo p {
+  cursor: pointer;
+  @apply text-center
+  text-lg text-gray-50
+  w-full lg:w-1/2
+  rounded-t-xl;
+}
+
+.todo > ul {
+  @apply rounded-lg py-1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.todo > ul > li {
+  @apply flex items-center justify-center;
+  touch-action: none;
+  cursor: pointer;
+  width: 12rem;
+  padding: 1.5rem 1.5rem;
+  margin: 0.6rem 0.6rem;
+  font-weight: 500;
+  font-size: 1rem;
+  white-space: normal;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
+    rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+  outline: none;
+  transition: box-shadow 200ms cubic-bezier(0.18, 0.67, 0.6, 1.22);
+}
+
+.nested {
+  @apply rounded-xl py-6;
+}
+
+.nested > div {
+  @apply mb-3;
+}
+
+.extended > ul > li {
+  @apply h-5 my-2 mx-1;
+}
+
+.restricted > ul > li {
+  @apply text-base font-normal leading-none;
+}
