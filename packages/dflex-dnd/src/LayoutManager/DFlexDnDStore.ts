@@ -145,7 +145,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   isUpdating: boolean;
 
-  isComposing: boolean;
+  isProcessingRegistration: boolean;
 
   deferred: Deferred;
 
@@ -167,7 +167,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.scrolls = new Map();
     this.unifiedContainerDimensions = {};
     this._terminatedDOMiDs = new Set();
-    [this._unregisterSchedule] = DFlexCreateTimeout(0);
+    [this._unregisterSchedule] = DFlexCreateTimeout(10);
 
     // @ts-ignore- `null` until we have element to drag.
     this.migration = null;
@@ -179,7 +179,8 @@ class DFlexDnDStore extends DFlexBaseStore {
     // Observers.
     this.mutationObserverMap = new Map();
 
-    this.isComposing = true;
+    this.isProcessingRegistration = false;
+
     this.isUpdating = false;
     this.deferred = [];
     this.updatesQueue = [];
@@ -199,7 +200,10 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   isLayoutAvailable(): boolean {
-    return !(this.isComposing || hasMutationsInProgress()) && this.isIdle();
+    return (
+      !(this.isProcessingRegistration || hasMutationsInProgress()) &&
+      this.isIdle()
+    );
   }
 
   private _initWhenRegister() {
@@ -364,7 +368,7 @@ class DFlexDnDStore extends DFlexBaseStore {
       }
     });
 
-    this.isComposing = false;
+    this.isProcessingRegistration = false;
 
     this.endRegistration();
 
@@ -384,6 +388,8 @@ class DFlexDnDStore extends DFlexBaseStore {
       this._initWhenRegister();
       this._isInitialized = true;
     }
+
+    this.isProcessingRegistration = true;
 
     const { id, readonly = false, depth = 0, CSSTransform = null } = elm;
 
@@ -447,11 +453,16 @@ class DFlexDnDStore extends DFlexBaseStore {
       return;
     }
 
+    if (this.isProcessingRegistration) {
+      return;
+    }
+
     this._terminatedDOMiDs.add(id);
 
-    this._unregisterSchedule(() => {
-      // Abort. Leave it to the observer.
+    const performCleanup = () => {
+      // Abort & clear pending ids. Leave it to the observer.
       if (hasMutationsInProgress()) {
+        this._terminatedDOMiDs.clear();
         if (__DEV__) {
           if (featureFlags.enableRegisterDebugger) {
             // eslint-disable-next-line no-console
@@ -466,7 +477,11 @@ class DFlexDnDStore extends DFlexBaseStore {
 
       DFlexIDGarbageCollector(this, this._terminatedDOMiDs);
       this._terminatedDOMiDs.clear();
-    }, true);
+    };
+
+    // Don't execute immediately to prevent race condition with mutation observer.
+    // Instead reschedule and then check observer flag.
+    this._unregisterSchedule(performCleanup, true);
   }
 
   private _updateContainerRect(
@@ -599,7 +614,7 @@ class DFlexDnDStore extends DFlexBaseStore {
       return;
     }
 
-    this.isComposing = true;
+    this.isProcessingRegistration = true;
 
     const refreshAllBranchElements =
       this._refreshAllElmBranchWhileReconcile === undefined
@@ -646,7 +661,7 @@ class DFlexDnDStore extends DFlexBaseStore {
         this.migration.clear();
 
         this._refreshAllElmBranchWhileReconcile = undefined;
-        this.isComposing = false;
+        this.isProcessingRegistration = false;
       },
     });
   }

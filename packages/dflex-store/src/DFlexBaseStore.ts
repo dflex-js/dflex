@@ -558,7 +558,8 @@ class DFlexBaseStore {
 
       if (__DEV__) {
         if (!isElmRegistered) {
-          throw new Error(
+          // eslint-disable-next-line no-console
+          console.warn(
             `register: Element ${id} has not been registered. Element should be registered when detecting its parent.`
           );
         }

@@ -3,6 +3,7 @@ export { default as warnOnce } from "./warnOnce";
 export { default as assertElmPos } from "./assertElmPos";
 export { default as getAnimationOptions } from "./getAnimationOptions";
 export { default as noop } from "./utils";
+// export { default as waitForCondition } from "./waitForCondition";
 
 export {
   getDimensionTypeByAxis,
