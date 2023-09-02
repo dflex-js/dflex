@@ -33,14 +33,7 @@ const webpack = require("webpack");
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ["@dflex/dnd"],
-  devServer: {
-    port: 3002,
-  },
   webpack: (config) => {
-    // if (!isServer) {
-    // }
-
-    // Define a custom global variable to replace _dev_
     config.plugins.push(
       new webpack.DefinePlugin({
         __DEV__: JSON.stringify(process.env.NODE_ENV !== "production"),

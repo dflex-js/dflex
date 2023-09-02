@@ -169,47 +169,49 @@ function getParsedElmTransform(DOM: HTMLElement): [number, number] | null {
   return transformMatrix;
 }
 
-type Dimension = "width" | "height";
+// type Dimension = "width" | "height";
 
-const DIMENSION_PROPS: Record<Dimension, string[]> = {
-  height: [
-    CSSPropNames.BORDER_TOP_WIDTH,
-    CSSPropNames.BORDER_BOTTOM_WIDTH,
-    CSSPropNames.PADDING_TOP,
-    CSSPropNames.PADDING_BOTTOM,
-  ],
+// const DIMENSION_PROPS: Record<Dimension, string[]> = {
+//   height: [
+//     CSSPropNames.BORDER_TOP_WIDTH,
+//     CSSPropNames.BORDER_BOTTOM_WIDTH,
+//     CSSPropNames.PADDING_TOP,
+//     CSSPropNames.PADDING_BOTTOM,
+//   ],
 
-  width: [
-    CSSPropNames.BORDER_LEFT_WIDTH,
-    CSSPropNames.BORDER_RIGHT_WIDTH,
-    CSSPropNames.PADDING_LEFT,
-    CSSPropNames.PADDING_RIGHT,
-  ],
-};
+//   width: [
+//     CSSPropNames.BORDER_LEFT_WIDTH,
+//     CSSPropNames.BORDER_RIGHT_WIDTH,
+//     CSSPropNames.PADDING_LEFT,
+//     CSSPropNames.PADDING_RIGHT,
+//   ],
+// };
 
-const OFFSET_PROPS: Record<Dimension, "offsetHeight" | "offsetWidth"> = {
-  height: CSSPropNames.OFFSET_HEIGHT,
-  width: CSSPropNames.OFFSET_WIDTH,
-};
+// const OFFSET_PROPS: Record<Dimension, "offsetHeight" | "offsetWidth"> = {
+//   height: CSSPropNames.OFFSET_HEIGHT,
+//   width: CSSPropNames.OFFSET_WIDTH,
+// };
 
-function getVisibleDimension(DOM: HTMLElement, dimension: Dimension): number {
-  let outerSize = 0;
+// function getVisibleDimension(DOM: HTMLElement, dimension: Dimension): number {
+//   let outerSize = 0;
 
-  DIMENSION_PROPS[dimension].forEach((styleProp) => {
-    outerSize += getCachedComputedStyleProperty(DOM, styleProp as string, true);
-  });
+//   DIMENSION_PROPS[dimension].forEach((styleProp) => {
+//     outerSize += getCachedComputedStyleProperty(DOM, styleProp as string, true);
+//   });
 
-  const totalDimension = DOM[OFFSET_PROPS[dimension]] - outerSize;
+//   const totalDimension = DOM[OFFSET_PROPS[dimension]] - outerSize;
 
-  return totalDimension;
-}
+//   return totalDimension;
+// }
 
 function setFixedDimensions(DOM: HTMLElement): void {
-  const visibleHeight = getVisibleDimension(DOM, CSSPropNames.HEIGHT);
-  const visibleWidth = getVisibleDimension(DOM, CSSPropNames.WIDTH);
+  // const visibleHeight = getVisibleDimension(DOM, CSSPropNames.HEIGHT);
+  // const visibleWidth = getVisibleDimension(DOM, CSSPropNames.WIDTH);
 
-  setStyleProperty(DOM, CSSPropNames.HEIGHT, `${visibleHeight}px`);
-  setStyleProperty(DOM, CSSPropNames.WIDTH, `${visibleWidth}px`);
+  const { height, width } = getElmDimensions(DOM);
+
+  setStyleProperty(DOM, CSSPropNames.HEIGHT, `${height}px`);
+  setStyleProperty(DOM, CSSPropNames.WIDTH, `${width}px`);
 }
 
 const CSS_FORBIDDEN_POSITION_REGEX = /absolute|fixed/;
