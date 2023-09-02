@@ -28,7 +28,14 @@ export function TodoItem({
   const taskRef = React.useRef() as React.MutableRefObject<HTMLLIElement>;
 
   React.useEffect(() => {
-    store.register({ id, depth });
+    store.register({
+      id,
+      depth,
+      CSSTransform: {
+        background: "#67e8f9",
+        opacity: "0.5",
+      },
+    });
 
     return () => {
       store.unregister(id);
