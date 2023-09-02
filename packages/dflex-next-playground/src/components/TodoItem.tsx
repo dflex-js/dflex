@@ -30,9 +30,9 @@ export function TodoItem({
   React.useEffect(() => {
     store.register({ id, depth });
 
-    // return () => {
-    //   store.unregister(id);
-    // };
+    return () => {
+      store.unregister(id);
+    };
   }, [taskRef.current]);
 
   const onMouseMove = (e: MouseEvent) => {

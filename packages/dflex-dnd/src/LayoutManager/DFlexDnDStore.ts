@@ -441,13 +441,17 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   unregister(id: string): void {
+    // This is not supposed to happen.
+    // But in React/Next case, it triggers the cleanup in the ueeEffect before the registration.
+    if (!this.registry.has(id)) {
+      return;
+    }
+
     this._terminatedDOMiDs.add(id);
 
     this._unregisterSchedule(() => {
       // Abort. Leave it to the observer.
       if (hasMutationsInProgress()) {
-        this._terminatedDOMiDs.clear();
-
         if (__DEV__) {
           if (featureFlags.enableRegisterDebugger) {
             // eslint-disable-next-line no-console
