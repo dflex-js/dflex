@@ -122,7 +122,7 @@ const StreamOnDemand = () => {
         </div>
       </div>
     ),
-    [todoListA]
+    [todoListA],
   );
 };
 

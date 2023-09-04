@@ -83,7 +83,7 @@ const Core = ({
               enableAfterEndingDrag: false,
               enableForScrollOnly: false,
             },
-          }
+          },
         );
 
         setIsDragged(true);

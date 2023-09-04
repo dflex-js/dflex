@@ -109,7 +109,7 @@ class BoxNum extends Box<number> {
   isOutThreshold(
     threshold: AbstractBox,
     preservedBoxResult: BoxBool,
-    axis: Axis | null
+    axis: Axis | null,
   ) {
     preservedBoxResult.setBox(false, false, false, false);
 

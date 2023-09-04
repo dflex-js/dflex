@@ -100,47 +100,47 @@ describe("DFlexThreshold", () => {
         threshold.setMainThreshold(DRAGGED.ID, DRAGGED.RECT, false);
 
         expect(threshold.isOut[DRAGGED.ID]).toMatchObject(
-          DEFAULT_IS_OUT_INDICATORS
+          DEFAULT_IS_OUT_INDICATORS,
         );
 
         expect(threshold.thresholds[DRAGGED.ID]).toMatchObject(
-          DRAGGED.THRESHOLD
+          DRAGGED.THRESHOLD,
         );
       });
 
       it("Outer threshold is bigger than input rect", () => {
         expect(threshold.thresholds[DRAGGED.ID].bottom).toBeGreaterThan(
-          DRAGGED.RECT.top + DRAGGED.RECT.height
+          DRAGGED.RECT.top + DRAGGED.RECT.height,
         );
 
         expect(threshold.thresholds[DRAGGED.ID].top).toBeLessThan(
-          DRAGGED.RECT.top
+          DRAGGED.RECT.top,
         );
 
         expect(threshold.thresholds[DRAGGED.ID].left).toBeLessThan(
-          DRAGGED.RECT.left
+          DRAGGED.RECT.left,
         );
 
         expect(threshold.thresholds[DRAGGED.ID].right).toBeGreaterThan(
-          DRAGGED.RECT.left + DRAGGED.RECT.width
+          DRAGGED.RECT.left + DRAGGED.RECT.width,
         );
       });
 
       it("Calculate the threshold correctly", () => {
         expect(DRAGGED.RECT.top + DRAGGED.RECT.height + pixels.y).toBe(
-          threshold.thresholds[DRAGGED.ID].bottom
+          threshold.thresholds[DRAGGED.ID].bottom,
         );
 
         expect(DRAGGED.RECT.top - pixels.y).toBe(
-          threshold.thresholds[DRAGGED.ID].top
+          threshold.thresholds[DRAGGED.ID].top,
         );
 
         expect(DRAGGED.RECT.left + DRAGGED.RECT.width + pixels.x).toBe(
-          threshold.thresholds[DRAGGED.ID].right
+          threshold.thresholds[DRAGGED.ID].right,
         );
 
         expect(DRAGGED.RECT.left - pixels.x).toBe(
-          threshold.thresholds[DRAGGED.ID].left
+          threshold.thresholds[DRAGGED.ID].left,
         );
       });
 
@@ -158,7 +158,7 @@ describe("DFlexThreshold", () => {
           INSERTION_LAYER.key,
           DRAGGED.DP,
           CONTAINER.RECT,
-          UNIFIED_CONTAINER_DIMENSION
+          UNIFIED_CONTAINER_DIMENSION,
         );
 
         expect(threshold).toMatchSnapshot();
@@ -166,47 +166,47 @@ describe("DFlexThreshold", () => {
 
       it("Outer threshold is bigger than input rect", () => {
         expect(threshold.thresholds[CONTAINER.SK].bottom).toBeGreaterThan(
-          CONTAINER.RECT.bottom
+          CONTAINER.RECT.bottom,
         );
 
         expect(threshold.thresholds[CONTAINER.SK].top).toBeLessThan(
-          CONTAINER.RECT.top
+          CONTAINER.RECT.top,
         );
 
         expect(threshold.thresholds[CONTAINER.SK].left).toBeLessThan(
-          CONTAINER.RECT.left
+          CONTAINER.RECT.left,
         );
 
         expect(threshold.thresholds[CONTAINER.SK].right).toBeGreaterThan(
-          CONTAINER.RECT.right
+          CONTAINER.RECT.right,
         );
       });
 
       it("Calculate the threshold correctly", () => {
         expect(CONTAINER.RECT.bottom + pixels.y).toBe(
-          threshold.thresholds[CONTAINER.SK].bottom
+          threshold.thresholds[CONTAINER.SK].bottom,
         );
 
         expect(CONTAINER.RECT.top - pixels.y).toBe(
-          threshold.thresholds[CONTAINER.SK].top
+          threshold.thresholds[CONTAINER.SK].top,
         );
 
         expect(CONTAINER.RECT.right + pixels.x).toBe(
-          threshold.thresholds[CONTAINER.SK].right
+          threshold.thresholds[CONTAINER.SK].right,
         );
 
         expect(CONTAINER.RECT.left - pixels.x).toBe(
-          threshold.thresholds[CONTAINER.SK].left
+          threshold.thresholds[CONTAINER.SK].left,
         );
       });
 
       it("Define threshold for container", () => {
         expect(threshold.thresholds[CONTAINER.SK]).toMatchObject(
-          CONTAINER.THRESHOLD
+          CONTAINER.THRESHOLD,
         );
 
         expect(threshold.isOut[CONTAINER.SK]).toMatchObject(
-          DEFAULT_IS_OUT_INDICATORS
+          DEFAULT_IS_OUT_INDICATORS,
         );
       });
 
@@ -217,7 +217,7 @@ describe("DFlexThreshold", () => {
             INSERTION_LAYER.key,
             DRAGGED.DP,
             CONTAINER.RECT,
-            UNIFIED_CONTAINER_DIMENSION
+            UNIFIED_CONTAINER_DIMENSION,
           );
         }).toThrow();
       });
@@ -226,17 +226,17 @@ describe("DFlexThreshold", () => {
         expect(threshold.thresholds[DRAGGED.DP]).toMatchObject(DEPTH.THRESHOLD);
 
         expect(threshold.isOut[DRAGGED.DP]).toMatchObject(
-          DEFAULT_IS_OUT_INDICATORS
+          DEFAULT_IS_OUT_INDICATORS,
         );
       });
 
       it("Define threshold for biggest container in the given depth", () => {
         expect(threshold.thresholds[INSERTION_LAYER.key]).toMatchObject(
-          INSERTION_LAYER.THRESHOLD
+          INSERTION_LAYER.THRESHOLD,
         );
 
         expect(threshold.isOut[INSERTION_LAYER.key]).toMatchObject(
-          DEFAULT_IS_OUT_INDICATORS
+          DEFAULT_IS_OUT_INDICATORS,
         );
       });
     });
@@ -301,47 +301,47 @@ describe("DFlexThreshold", () => {
         expect(threshold).toMatchSnapshot();
 
         expect(threshold.isOut[SCROLL.ID_INNER]).toMatchObject(
-          DEFAULT_IS_OUT_INDICATORS
+          DEFAULT_IS_OUT_INDICATORS,
         );
 
         expect(threshold.thresholds[SCROLL.ID_INNER]).toMatchObject(
-          SCROLL.THRESHOLD_INNER
+          SCROLL.THRESHOLD_INNER,
         );
       });
 
       it("Inner threshold is less than input rect", () => {
         expect(threshold.thresholds[SCROLL.ID_INNER].bottom).toBeLessThan(
-          SCROLL.RECT.top + SCROLL.RECT.height
+          SCROLL.RECT.top + SCROLL.RECT.height,
         );
 
         expect(threshold.thresholds[SCROLL.ID_INNER].top).toBeGreaterThan(
-          SCROLL.RECT.top
+          SCROLL.RECT.top,
         );
 
         expect(threshold.thresholds[SCROLL.ID_INNER].left).toBeGreaterThan(
-          SCROLL.RECT.left
+          SCROLL.RECT.left,
         );
 
         expect(threshold.thresholds[SCROLL.ID_INNER].right).toBeLessThan(
-          SCROLL.RECT.left + SCROLL.RECT.width
+          SCROLL.RECT.left + SCROLL.RECT.width,
         );
       });
 
       it("Calculate the threshold correctly", () => {
         expect(SCROLL.RECT.top + SCROLL.RECT.height - pixels.y).toBe(
-          threshold.thresholds[SCROLL.ID_INNER].bottom
+          threshold.thresholds[SCROLL.ID_INNER].bottom,
         );
 
         expect(SCROLL.RECT.top + pixels.y).toBe(
-          threshold.thresholds[SCROLL.ID_INNER].top
+          threshold.thresholds[SCROLL.ID_INNER].top,
         );
 
         expect(SCROLL.RECT.left + SCROLL.RECT.width - pixels.x).toBe(
-          threshold.thresholds[SCROLL.ID_INNER].right
+          threshold.thresholds[SCROLL.ID_INNER].right,
         );
 
         expect(SCROLL.RECT.left + pixels.x).toBe(
-          threshold.thresholds[SCROLL.ID_INNER].left
+          threshold.thresholds[SCROLL.ID_INNER].left,
         );
       });
     });
@@ -353,29 +353,29 @@ describe("DFlexThreshold", () => {
         expect(threshold).toMatchSnapshot();
 
         expect(threshold.isOut[SCROLL.ID_OUTER]).toMatchObject(
-          DEFAULT_IS_OUT_INDICATORS
+          DEFAULT_IS_OUT_INDICATORS,
         );
 
         expect(threshold.thresholds[SCROLL.ID_OUTER]).toMatchObject(
-          SCROLL.THRESHOLD_OUTER
+          SCROLL.THRESHOLD_OUTER,
         );
       });
 
       it("Outer threshold is less bigger than input rect", () => {
         expect(threshold.thresholds[SCROLL.ID_OUTER].bottom).toBeGreaterThan(
-          SCROLL.RECT.top + SCROLL.RECT.height
+          SCROLL.RECT.top + SCROLL.RECT.height,
         );
 
         expect(threshold.thresholds[SCROLL.ID_OUTER].top).toBeLessThan(
-          SCROLL.RECT.top
+          SCROLL.RECT.top,
         );
 
         expect(threshold.thresholds[SCROLL.ID_OUTER].left).toBeLessThan(
-          SCROLL.RECT.left
+          SCROLL.RECT.left,
         );
 
         expect(threshold.thresholds[SCROLL.ID_OUTER].right).toBeGreaterThan(
-          SCROLL.RECT.left + SCROLL.RECT.width
+          SCROLL.RECT.left + SCROLL.RECT.width,
         );
       });
     });

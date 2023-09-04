@@ -56,7 +56,7 @@ type MutationObserverValue = MutationObserver | null;
 type UpdatesQueue = [
   UpdateFn | null,
   SchedulerOptions | null,
-  DFlexListenerEvents | undefined
+  DFlexListenerEvents | undefined,
 ][];
 
 type Deferred = (() => void)[];
@@ -64,14 +64,14 @@ type Deferred = (() => void)[];
 function validateCSS(id: string, css?: CSS): void {
   if (css !== undefined && typeof css !== "string" && typeof css !== "object") {
     throw new Error(
-      `Invalid CSS type for element ${id}. Expected a non-empty string, non-empty object, or undefined.`
+      `Invalid CSS type for element ${id}. Expected a non-empty string, non-empty object, or undefined.`,
     );
   }
 
   if (typeof css === "string") {
     if (css.trim().length === 0) {
       throw new Error(
-        `Invalid CSS value for element ${id}. Expected a non-empty string.`
+        `Invalid CSS value for element ${id}. Expected a non-empty string.`,
       );
     }
 
@@ -79,17 +79,17 @@ function validateCSS(id: string, css?: CSS): void {
     if (isCamelCase) {
       const snakeCase = css.replace(
         /[A-Z]/g,
-        (match) => `-${match.toLowerCase()}`
+        (match) => `-${match.toLowerCase()}`,
       );
       throw new Error(
-        `Invalid CSS rule for element ${id}. The property '${css}' should be in snake_case. Use '${snakeCase}' instead.`
+        `Invalid CSS rule for element ${id}. The property '${css}' should be in snake_case. Use '${snakeCase}' instead.`,
       );
     }
   }
 
   if (typeof css === "object" && Object.keys(css).length === 0) {
     throw new Error(
-      `Invalid CSS value for element ${id}. Expected a non-empty object.`
+      `Invalid CSS value for element ${id}. Expected a non-empty object.`,
     );
   }
 
@@ -99,27 +99,27 @@ function validateCSS(id: string, css?: CSS): void {
       if (/[A-Z]/.test(key)) {
         const snakeCaseKey = key.replace(
           /[A-Z]/g,
-          (match) => `-${match.toLowerCase()}`
+          (match) => `-${match.toLowerCase()}`,
         );
         if (typeof value !== "string" && value !== null) {
           throw new Error(
-            `Invalid CSS value for element ${id}. Property '${key}' should have a value of type null or string. Received: ${value}`
+            `Invalid CSS value for element ${id}. Property '${key}' should have a value of type null or string. Received: ${value}`,
           );
         }
         convertedProperties[snakeCaseKey] = value!;
         if (snakeCaseKey !== key) {
           throw new Error(
-            `Invalid CSS rule for element ${id}. The property '${key}' should be in snake_case. Use '${snakeCaseKey}' instead.`
+            `Invalid CSS rule for element ${id}. The property '${key}' should be in snake_case. Use '${snakeCaseKey}' instead.`,
           );
         }
       } else {
         if (typeof value === "object" && value !== null) {
           throw new Error(
-            `Invalid CSS value for element ${id}. Property '${key}' should have a value of type null or string. Received: ${value}`
+            `Invalid CSS value for element ${id}. Property '${key}' should have a value of type null or string. Received: ${value}`,
           );
         } else if (typeof value !== "string" && value !== null) {
           throw new Error(
-            `Invalid CSS value for element ${id}. Property '${key}' should have a value of type null or string. Received: ${value}`
+            `Invalid CSS value for element ${id}. Property '${key}' should have a value of type null or string. Received: ${value}`,
           );
         }
         convertedProperties[key] = value as string;
@@ -213,7 +213,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   setElmGridBridge(
     container: DFlexParentContainer,
-    dflexElm: DFlexElement
+    dflexElm: DFlexElement,
   ): void {
     // Using element grid zero to know if the element has been initiated inside
     // container or not.
@@ -221,7 +221,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     const gridIndex = container.register(
       rect,
-      this.unifiedContainerDimensions[dflexElm.depth]
+      this.unifiedContainerDimensions[dflexElm.depth],
     );
 
     dflexElm.DOMGrid.clone(gridIndex);
@@ -230,7 +230,7 @@ class DFlexDnDStore extends DFlexBaseStore {
   private _resumeAndInitElmGrid(
     container: DFlexParentContainer,
     scroll: DFlexScrollContainer,
-    id: string
+    id: string,
   ): void {
     const [dflexElm, DOM] = this.getElmWithDOM(id);
 
@@ -250,7 +250,7 @@ class DFlexDnDStore extends DFlexBaseStore {
   private _initSiblings(
     SK: string,
     parentDepth: number,
-    parentDOM: HTMLElement
+    parentDOM: HTMLElement,
   ) {
     // Unified dimension is for siblings/children depth.
     if (!this.unifiedContainerDimensions[parentDepth - 1]) {
@@ -275,8 +275,8 @@ class DFlexDnDStore extends DFlexBaseStore {
       if (siblings.length === 0 || !this.interactiveDOM.has(siblings[0])) {
         throw new Error(
           `_initSiblings: Unable to find DOM element for siblings ${JSON.stringify(
-            siblings
-          )} at index 0.`
+            siblings,
+          )} at index 0.`,
         );
       }
     }
@@ -285,14 +285,14 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     const scrollEventCallback = updateSiblingsVisibilityLinearly.bind(
       null,
-      this
+      this,
     );
 
     const scroll = new DFlexScrollContainer(
       firstELmDOM,
       SK,
       siblings.length,
-      scrollEventCallback
+      scrollEventCallback,
     );
 
     if (this.scrolls.has(SK)) {
@@ -310,7 +310,7 @@ class DFlexDnDStore extends DFlexBaseStore {
       parentDOM.id,
       parentDOM,
       siblings.length,
-      scroll.totalScrollRect
+      scroll.totalScrollRect,
     );
 
     if (this.containers.has(SK)) {
@@ -327,7 +327,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     const initElmGrid = this._resumeAndInitElmGrid.bind(
       this,
       container,
-      scroll
+      scroll,
     );
 
     siblings.forEach(initElmGrid);
@@ -400,7 +400,7 @@ class DFlexDnDStore extends DFlexBaseStore {
           if (featureFlags.enableRegisterDebugger) {
             throw new Error(
               `The element with ID ${id} is already registered, but its DOM is not connected. This situation can lead to memory leaks and unpredictable behavior. ` +
-                `To prevent this, please make sure to call "store.unregister(${id})" to properly clean up the element before attempting to re-register it.`
+                `To prevent this, please make sure to call "store.unregister(${id})" to properly clean up the element before attempting to re-register it.`,
             );
           }
         }
@@ -433,10 +433,10 @@ class DFlexDnDStore extends DFlexBaseStore {
         this.addElmToRegistry(
           coreInput,
           this._initSiblings,
-          this._initObservers
+          this._initObservers,
         );
       },
-      null
+      null,
     );
   }
 
@@ -452,7 +452,7 @@ class DFlexDnDStore extends DFlexBaseStore {
           if (featureFlags.enableRegisterDebugger) {
             // eslint-disable-next-line no-console
             console.log(
-              "Aborting unregister. Cleanup handling will be performed by the mutation observer."
+              "Aborting unregister. Cleanup handling will be performed by the mutation observer.",
             );
           }
         }
@@ -468,7 +468,7 @@ class DFlexDnDStore extends DFlexBaseStore {
   private _updateContainerRect(
     container: DFlexParentContainer,
     containerKy: string,
-    siblings: string[]
+    siblings: string[],
   ) {
     const scroll = this.scrolls.get(containerKy)!;
 
@@ -485,7 +485,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
       container.register(
         dflexElm.rect,
-        this.unifiedContainerDimensions[dflexElm.depth]
+        this.unifiedContainerDimensions[dflexElm.depth],
       );
     });
   }
@@ -542,7 +542,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   private _reconcileBranch(
     SK: string,
-    refreshAllBranchElements: boolean
+    refreshAllBranchElements: boolean,
   ): void {
     const container = this.containers.get(SK)!;
     const scroll = this.scrolls.get(SK)!;
@@ -555,7 +555,7 @@ class DFlexDnDStore extends DFlexBaseStore {
         if (__DEV__) {
           if (!parentDOM) {
             throw new Error(
-              `Unable to commit: No DOM found for ${container.id}`
+              `Unable to commit: No DOM found for ${container.id}`,
             );
           }
         }
@@ -566,7 +566,7 @@ class DFlexDnDStore extends DFlexBaseStore {
           this,
           container,
           scroll,
-          refreshAllBranchElements
+          refreshAllBranchElements,
         );
       },
       null,
@@ -577,7 +577,7 @@ class DFlexDnDStore extends DFlexBaseStore {
           target: parentDOM,
           ids: branch,
         },
-      }
+      },
     );
   }
 
@@ -614,7 +614,7 @@ class DFlexDnDStore extends DFlexBaseStore {
           console.warn("Executing commit for zero depth layer.");
 
           this.getSiblingKeysByDepth(0).forEach((k) =>
-            this._reconcileBranch(k, refreshAllBranchElements)
+            this._reconcileBranch(k, refreshAllBranchElements),
           );
 
           return;
@@ -651,7 +651,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     if (__DEV__) {
       if (!this.registry.has(id)) {
         throw new Error(
-          `getSerializedElm: Element with id ${id} does not exist in the registry.`
+          `getSerializedElm: Element with id ${id} does not exist in the registry.`,
         );
       }
     }
@@ -731,7 +731,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     if (__DEV__) {
       if (!scroll) {
         throw new Error(
-          `deleteSiblings: Scroll container with SK: ${SK} doesn't exists`
+          `deleteSiblings: Scroll container with SK: ${SK} doesn't exists`,
         );
       }
     }
@@ -745,7 +745,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     if (__DEV__) {
       if (!deletedContainer) {
         throw new Error(
-          `deleteSiblings: Container with SK: ${SK} doesn't exists`
+          `deleteSiblings: Container with SK: ${SK} doesn't exists`,
         );
       }
     }
@@ -761,7 +761,7 @@ class DFlexDnDStore extends DFlexBaseStore {
         if (__DEV__) {
           if (!deletedObserver) {
             throw new Error(
-              `deleteSiblings: Mutation Observer with id: ${id} doesn't exists`
+              `deleteSiblings: Mutation Observer with id: ${id} doesn't exists`,
             );
           }
         }

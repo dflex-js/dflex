@@ -53,7 +53,7 @@ context("Moving Elements Strict - Dragged is smaller - No Release", () => {
     cy.get("#org").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, -115.188)"
+      "matrix(1, 0, 0, 1, 0, -115.188)",
     );
 
     cy.get("#proj").should("have.css", "transform", "none");
@@ -78,13 +78,13 @@ context("Moving Elements Strict - Dragged is smaller - No Release", () => {
     cy.get("#org").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, -115.188)"
+      "matrix(1, 0, 0, 1, 0, -115.188)",
     );
 
     cy.get("#proj").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, -115.188)"
+      "matrix(1, 0, 0, 1, 0, -115.188)",
     );
 
     cy.get("#gym").should("have.css", "transform", "none");
@@ -107,19 +107,19 @@ context("Moving Elements Strict - Dragged is smaller - No Release", () => {
     cy.get("#org").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, -115.188)"
+      "matrix(1, 0, 0, 1, 0, -115.188)",
     );
 
     cy.get("#proj").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, -115.188)"
+      "matrix(1, 0, 0, 1, 0, -115.188)",
     );
 
     cy.get("#gym").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, -115.188)"
+      "matrix(1, 0, 0, 1, 0, -115.188)",
     );
   });
 
@@ -131,25 +131,25 @@ context("Moving Elements Strict - Dragged is smaller - No Release", () => {
     cy.get("#mtg").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, 457.562)"
+      "matrix(1, 0, 0, 1, 0, 457.562)",
     );
 
     cy.get("#org").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, -115.188)"
+      "matrix(1, 0, 0, 1, 0, -115.188)",
     );
 
     cy.get("#proj").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, -115.188)"
+      "matrix(1, 0, 0, 1, 0, -115.188)",
     );
 
     cy.get("#gym").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, -115.188)"
+      "matrix(1, 0, 0, 1, 0, -115.188)",
     );
   });
 

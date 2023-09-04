@@ -8,7 +8,7 @@ import DFlexMechanismController, {
 class EndCycle extends DFlexMechanismController {
   private _undoSiblingsPositions(
     siblings: string[],
-    cycle: AbstractDFlexCycle
+    cycle: AbstractDFlexCycle,
   ) {
     const {
       threshold,
@@ -80,7 +80,7 @@ class EndCycle extends DFlexMechanismController {
             "Failed to initiate fallback scrolling. The 'cancelScrolling' function must be available when 'hasActiveScrolling' is true.\n" +
               "Please check for any changes that may have affected the 'hasActiveScrolling' condition and ensure that:\n" +
               "- 'cancelScrolling' is properly implemented,\n" +
-              "- 'cancelScrolling' is assigned and not null."
+              "- 'cancelScrolling' is assigned and not null.",
           );
         }
       }
@@ -109,7 +109,7 @@ class EndCycle extends DFlexMechanismController {
         {
           type: "layoutState",
           status: "dragCancel",
-        }
+        },
       );
 
       return;
@@ -131,13 +131,13 @@ class EndCycle extends DFlexMechanismController {
           isFallback,
           isMigratedInScroll,
           latestCycle,
-          hasToReconcile
+          hasToReconcile,
         ),
       null,
       {
         type: "layoutState",
         status: "dragEnd",
-      }
+      },
     );
 
     if (__DEV__) {

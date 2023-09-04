@@ -7,7 +7,7 @@ let prevVisibility = false;
 function updateElmVisibility(
   DOM: HTMLElement,
   elm: DFlexElement,
-  scroll: DFlexScrollContainer
+  scroll: DFlexScrollContainer,
 ): boolean {
   const { rect } = elm;
 
@@ -29,7 +29,7 @@ function updateSiblingsVisibility(
   store: DFlexDnDStore,
   from: number,
   to: number,
-  value: boolean
+  value: boolean,
 ): void {
   for (let i = from; i < to; i += 1) {
     const elmID = sibling[i];
@@ -44,14 +44,14 @@ function updateSiblingsVisibility(
 
 function updateSiblingsVisibilityLinearly(
   store: DFlexDnDStore,
-  SK: string
+  SK: string,
 ): void {
   if (__DEV__) {
     const siblings = store.getElmSiblingsByKey(SK);
 
     if (siblings.length === 0) {
       throw new Error(
-        `updateSiblingsVisibilityLinearly: No siblings found for the given key ${SK}.`
+        `updateSiblingsVisibilityLinearly: No siblings found for the given key ${SK}.`,
       );
     }
 
@@ -59,7 +59,7 @@ function updateSiblingsVisibilityLinearly(
 
     if (!hsScroll) {
       throw new Error(
-        `updateSiblingsVisibilityLinearly: No scroll found for the given key ${SK}`
+        `updateSiblingsVisibilityLinearly: No scroll found for the given key ${SK}`,
       );
     }
   }
@@ -95,7 +95,7 @@ function updateSiblingsVisibilityLinearly(
         store,
         breakAt,
         siblings.length,
-        false
+        false,
       );
     }
   } else {

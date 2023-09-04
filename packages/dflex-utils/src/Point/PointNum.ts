@@ -25,7 +25,7 @@ class PointNum extends Point<number> {
           top - this.y,
           right + this.x,
           bottom + this.y,
-          left - this.x
+          left - this.x,
         );
   }
 

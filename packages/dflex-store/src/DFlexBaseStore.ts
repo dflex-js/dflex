@@ -89,7 +89,7 @@ type BranchComposedCallBackFunction = (
   // eslint-disable-next-line no-unused-vars
   parentDepth: number,
   // eslint-disable-next-line no-unused-vars
-  parentDOM: HTMLElement
+  parentDOM: HTMLElement,
 ) => void;
 
 type HighestContainerComposedCallBack = () => void;
@@ -100,7 +100,7 @@ function getElmDOMOrThrow(id: string): HTMLElement | null {
   if (!DOM) {
     if (__DEV__) {
       throw new Error(
-        `Element with ID: ${id} is not found.This could be due wrong ID or missing DOM element.`
+        `Element with ID: ${id} is not found.This could be due wrong ID or missing DOM element.`,
       );
     }
   }
@@ -128,7 +128,7 @@ function getElmDOMOrThrow(id: string): HTMLElement | null {
 function hasSiblingInSameLevel(
   DOM: HTMLElement,
   depth: number,
-  store: DFlexBaseStore
+  store: DFlexBaseStore,
 ): boolean {
   let has = false;
 
@@ -138,7 +138,7 @@ function hasSiblingInSameLevel(
 
   if (siblingsByDpLength > 0) {
     const lastSKInSameDP = store.DOMGen.getElmSiblingsByKey(
-      siblingsByDp[siblingsByDpLength - 1]
+      siblingsByDp[siblingsByDpLength - 1],
     );
 
     const lastSKInSameDPLength = lastSKInSameDP.length;
@@ -150,7 +150,7 @@ function hasSiblingInSameLevel(
 
       if (previousElementSibling) {
         has = previousElementSibling.isSameNode(
-          store.interactiveDOM.get(allegedPrevSiblingID)!
+          store.interactiveDOM.get(allegedPrevSiblingID)!,
         );
       }
     }
@@ -163,14 +163,14 @@ function submitToRegistry(
   DOM: HTMLElement,
   elm: RegisterInputProcessed,
   dflexParentElm: null | DFlexElement,
-  store: DFlexBaseStore
+  store: DFlexBaseStore,
 ): Keys {
   const { id, depth, readonly, animation, CSSTransform } = elm;
 
   if (__DEV__) {
     if (store.registry.has(id) || store.interactiveDOM.has(id)) {
       throw new Error(
-        `submitToRegistry: Element with id: ${id} is already registered.`
+        `submitToRegistry: Element with id: ${id} is already registered.`,
       );
     }
   }
@@ -203,7 +203,7 @@ function submitToRegistry(
     depth,
     _hasSiblingInSameLevel,
     restoredKeys,
-    restoredSiblingsIndex
+    restoredSiblingsIndex,
   );
 
   const coreElement: DFlexElementInput = {
@@ -259,7 +259,7 @@ function submitContainerChildren(
   animation: AnimationOpts,
   CSSTransform: CSS | null,
   registeredElmID: string,
-  dflexParentElm: DFlexElement | null
+  dflexParentElm: DFlexElement | null,
 ): string | null {
   let SK: string | null = null;
 
@@ -281,13 +281,13 @@ function submitContainerChildren(
       } else if (__DEV__) {
         if (featureFlags.enableRegisterDebugger) {
           throw new Error(
-            `submitContainerChildren: ${id} is already registered.`
+            `submitContainerChildren: ${id} is already registered.`,
           );
         }
       }
     } else if (__DEV__) {
       throw new Error(
-        `_submitContainerChildren: Received an element that's not an instanceof HTMLElement at index: ${i}`
+        `_submitContainerChildren: Received an element that's not an instanceof HTMLElement at index: ${i}`,
       );
     }
   });
@@ -353,7 +353,7 @@ class DFlexBaseStore {
   protected addElmToRegistry(
     element: RegisterInputProcessed,
     branchComposedCallBack?: BranchComposedCallBackFunction,
-    highestContainerComposedCallBack?: HighestContainerComposedCallBack
+    highestContainerComposedCallBack?: HighestContainerComposedCallBack,
   ): void {
     // Don't execute the parent registration if there's new element in the branch.
     this._taskQ.cancelQueuedTask();
@@ -414,7 +414,7 @@ class DFlexBaseStore {
         if (__DEV__) {
           if (!SK) {
             throw new Error(
-              "register: Executing element in the queue has't returned SK."
+              "register: Executing element in the queue has't returned SK.",
             );
           }
         }
@@ -442,14 +442,14 @@ class DFlexBaseStore {
             animation,
             CSSTransform,
             id,
-            dflexParentElm
+            dflexParentElm,
           )!;
 
           if (!SK) {
             if (__DEV__) {
               throw new Error(
                 `The container '${parentID}' contains invalid HTML elements in its children. ` +
-                  `This is an unexpected scenario, and there are no elements to register.`
+                  `This is an unexpected scenario, and there are no elements to register.`,
               );
             }
           }
@@ -471,7 +471,7 @@ class DFlexBaseStore {
             this._taskQ.enqueueBeforeLast(
               highestContainerComposedCallBack,
               fn,
-              CB_Q
+              CB_Q,
             );
           }
         };
@@ -480,7 +480,7 @@ class DFlexBaseStore {
           if (featureFlags.enableRegisterDebugger) {
             // eslint-disable-next-line no-console
             console.log(
-              `New parent: ${parentID}, isParentRegistered: ${isParentRegistered}`
+              `New parent: ${parentID}, isParentRegistered: ${isParentRegistered}`,
             );
           }
         }
@@ -530,7 +530,7 @@ class DFlexBaseStore {
                 CSSTransform: null,
               },
               null,
-              this
+              this,
             );
 
             return _;
@@ -559,7 +559,7 @@ class DFlexBaseStore {
       if (__DEV__) {
         if (!isElmRegistered) {
           throw new Error(
-            `register: Element ${id} has not been registered. Element should be registered when detecting its parent.`
+            `register: Element ${id} has not been registered. Element should be registered when detecting its parent.`,
           );
         }
       }

@@ -38,11 +38,11 @@ test.describe
 
     elementSelectors = Array.from(
       { length: 100 },
-      (_, index) => `[id='${index + 1}-extended']`
+      (_, index) => `[id='${index + 1}-extended']`,
     );
 
     elements = await Promise.all(
-      elementSelectors.map((selector) => page.locator(selector))
+      elementSelectors.map((selector) => page.locator(selector)),
     );
 
     visibleElements = elements.slice(2, 13); // Extract elements from index 2 to index 12
@@ -74,16 +74,16 @@ test.describe
 
     await Promise.all(
       visibleElements.map((element) =>
-        expect(element).toHaveCSS("transform", expectedResult)
-      )
+        expect(element).toHaveCSS("transform", expectedResult),
+      ),
     );
   });
 
   test("Invisible siblings are not transformed", async () => {
     await Promise.all(
       invisibleElements.map((element) =>
-        expect(element).toHaveCSS("transform", "none")
-      )
+        expect(element).toHaveCSS("transform", "none"),
+      ),
     );
   });
 
@@ -97,16 +97,16 @@ test.describe
   test("Visible siblings return to initial positions", async () => {
     await Promise.all(
       visibleElements.map((element) =>
-        expect(element).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)")
-      )
+        expect(element).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+      ),
     );
   });
 
   test("Invisible elements don't have any transformation", async () => {
     await Promise.all(
       invisibleElements.map((element) =>
-        expect(element).toHaveCSS("transform", "none")
-      )
+        expect(element).toHaveCSS("transform", "none"),
+      ),
     );
   });
 
@@ -128,8 +128,8 @@ test.describe
 
     await Promise.all(
       visibleElements.map((element) =>
-        expect(element).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)")
-      )
+        expect(element).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
+      ),
     );
   });
 
@@ -138,8 +138,8 @@ test.describe
 
     await Promise.all(
       invisibleElements.map((element) =>
-        expect(element).toHaveCSS("transform", "none")
-      )
+        expect(element).toHaveCSS("transform", "none"),
+      ),
     );
   });
 
@@ -150,8 +150,8 @@ test.describe
 
     await Promise.all(
       invisibleElements.map((element) =>
-        expect(element).toHaveCSS("transform", "none")
-      )
+        expect(element).toHaveCSS("transform", "none"),
+      ),
     );
   });
 });

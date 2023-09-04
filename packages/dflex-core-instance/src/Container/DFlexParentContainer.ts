@@ -43,7 +43,7 @@ class DFlexParentContainer {
     id: string,
     DOM: HTMLElement,
     originLength: number,
-    scroll: BoxRect
+    scroll: BoxRect,
   ) {
     this.id = id;
 
@@ -97,7 +97,7 @@ class DFlexParentContainer {
   // we reset and accumulate, it's inefficient. removeElmFromEdge() is a better.
   register(
     rect: AbstractBox,
-    unifiedContainerDimensions?: Dimensions
+    unifiedContainerDimensions?: Dimensions,
   ): PointNum {
     if (this._siblingBoundaries) {
       this._siblingBoundaries.assignBiggestBox(rect);
@@ -106,7 +106,7 @@ class DFlexParentContainer {
         rect.top,
         rect.right,
         rect.bottom,
-        rect.left
+        rect.left,
       );
     }
 
@@ -144,7 +144,7 @@ class DFlexParentContainer {
     if (__DEV__) {
       if (this.grid[axis] < EMPTY_GRID_INDEX) {
         throw new Error(
-          `reduceGrid: Cannot reduce grid on axis:${axis} to below ${EMPTY_GRID_INDEX}`
+          `reduceGrid: Cannot reduce grid on axis:${axis} to below ${EMPTY_GRID_INDEX}`,
         );
       }
     }

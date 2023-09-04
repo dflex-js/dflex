@@ -37,7 +37,7 @@ const Container = ({
               enableAfterEndingDrag: false,
               enableForScrollOnly: false,
             },
-          }
+          },
         );
 
         (target as HTMLElement).style.background = "pink";

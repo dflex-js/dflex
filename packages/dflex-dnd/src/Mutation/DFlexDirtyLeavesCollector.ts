@@ -24,7 +24,7 @@ function DFlexDirtyLeavesCollector(store: DFlexDnDStore, depth: number) {
       // eslint-disable-next-line no-console
       console.log(
         `Found ${terminatedDOMiDs.size} dirty leaves`,
-        terminatedDOMiDs
+        terminatedDOMiDs,
       );
     }
   }

@@ -36,7 +36,7 @@ test.describe.parallel("Resolve scroll container correctly", async () => {
 
   test("Identify document as scroll container", async () => {
     const hasDataScroll = await page1.evaluate(
-      () => document.body.getAttribute("data-scroll__dflex_sk_0_0") === "true"
+      () => document.body.getAttribute("data-scroll__dflex_sk_0_0") === "true",
     );
 
     expect(hasDataScroll).toBe(true);

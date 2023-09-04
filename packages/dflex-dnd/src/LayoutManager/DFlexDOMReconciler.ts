@@ -16,7 +16,7 @@ function setElmGridAndAssertPosition(
   elmIndex: number,
   containerDOM: HTMLElement,
   store: DFlexDnDStore,
-  container: DFlexParentContainer
+  container: DFlexParentContainer,
 ) {
   store.setElmGridBridge(container, dflexElm);
 
@@ -32,13 +32,13 @@ function setElmGridAndAssertPosition(
       didThrowError = true;
 
       console.error(
-        `Error in DOM order reconciliation.\n id: ${dflexElm.id}. Expected DOM order: ${dflexElm.DOMOrder.self} to match VDOM order: ${dflexElm.VDOMOrder.self}`
+        `Error in DOM order reconciliation.\n id: ${dflexElm.id}. Expected DOM order: ${dflexElm.DOMOrder.self} to match VDOM order: ${dflexElm.VDOMOrder.self}`,
       );
     }
 
     if (
       !containerDOM.children[elmIndex].isSameNode(
-        store.interactiveDOM.get(elmID)!
+        store.interactiveDOM.get(elmID)!,
       )
     ) {
       didThrowError = true;
@@ -47,7 +47,7 @@ function setElmGridAndAssertPosition(
         "Error in DOM order reconciliation at Index: ",
         elmIndex,
         "Container: ",
-        containerDOM
+        containerDOM,
       );
       console.error("Actually DOM tree has: ", containerDOM.children[elmIndex]);
       console.error("While DFlex Store has: ", store.interactiveDOM.get(elmID));
@@ -65,7 +65,7 @@ function switchElmDOMPosition(
   branchDOM: HTMLElement,
   store: DFlexDnDStore,
   dflexElm: DFlexElement,
-  elmDOM: HTMLElement
+  elmDOM: HTMLElement,
 ) {
   const VDOMIndex = dflexElm.VDOMOrder.self;
   const DOMIndex = dflexElm.DOMOrder.self;
@@ -96,7 +96,7 @@ function commitElm(
   branchIDs: Readonly<Siblings>,
   branchDOM: HTMLElement,
   store: DFlexDnDStore,
-  elmID: string
+  elmID: string,
 ): void {
   const [dflexElm, elmDOM] = store.getElmWithDOM(elmID);
 
@@ -131,7 +131,7 @@ function DFlexDOMReconciler(
   store: DFlexDnDStore,
   container: DFlexParentContainer,
   scroll: DFlexScrollContainer,
-  refreshAllBranchElements: boolean
+  refreshAllBranchElements: boolean,
 ): void {
   container.resetIndicators(branchIDs.length);
 
@@ -161,7 +161,7 @@ function DFlexDOMReconciler(
           i,
           branchDOM,
           store,
-          container
+          container,
         );
       } else {
         store.setElmGridBridge(container, dflexElm);
@@ -186,7 +186,7 @@ function DFlexDOMReconciler(
           i,
           branchDOM,
           store,
-          container
+          container,
         );
       } else {
         store.setElmGridBridge(container, dflexElm);

@@ -7,7 +7,7 @@ function recomposeSiblings(
   store: DFlexDnDStore,
   terminatedDOMiDs: TerminatedDOMiDs,
   { BK, depth }: SiblingKeyVal,
-  SK: string
+  SK: string,
 ): void {
   const connectedNodesID: string[] = [];
 
@@ -37,7 +37,7 @@ function recomposeSiblings(
       // eslint-disable-next-line no-console
       console.log(
         `cleanupSiblings: Found ${connectedNodesID.length} connected`,
-        connectedNodesID
+        connectedNodesID,
       );
     }
   }
@@ -53,7 +53,7 @@ type SiblingKeyVal = { BK: string; depth: number };
 
 function DFlexIDGarbageCollector(
   store: DFlexDnDStore,
-  terminatedDOMiDs: TerminatedDOMiDs
+  terminatedDOMiDs: TerminatedDOMiDs,
 ): void {
   const SKeys = new Map<string, SiblingKeyVal>();
 

@@ -57,7 +57,7 @@ describe("Container", () => {
               {
                 left: 0,
                 top: 0,
-              }
+              },
             );
           }
 

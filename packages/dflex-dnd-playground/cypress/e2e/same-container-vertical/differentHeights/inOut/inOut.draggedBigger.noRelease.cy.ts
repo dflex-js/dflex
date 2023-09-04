@@ -66,13 +66,13 @@ context(
       cy.get("#proj").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -171.188)"
+        "matrix(1, 0, 0, 1, 0, -171.188)",
       );
 
       cy.get("#gym").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -171.188)"
+        "matrix(1, 0, 0, 1, 0, -171.188)",
       );
     });
 
@@ -95,13 +95,13 @@ context(
       cy.get("#proj").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -171.188)"
+        "matrix(1, 0, 0, 1, 0, -171.188)",
       );
 
       cy.get("#gym").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
+        "matrix(1, 0, 0, 1, 0, 0)",
       );
     });
 
@@ -150,19 +150,19 @@ context(
       cy.get("#proj").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -171.188)"
+        "matrix(1, 0, 0, 1, 0, -171.188)",
       );
 
       cy.get("#gym").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -171.188)"
+        "matrix(1, 0, 0, 1, 0, -171.188)",
       );
 
       cy.get("#org").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 286.375)"
+        "matrix(1, 0, 0, 1, 0, 286.375)",
       );
     });
 
@@ -181,5 +181,5 @@ context(
         expect(elmRect2.bottom).to.equal(lastElmRect.bottom);
       });
     });
-  }
+  },
 );

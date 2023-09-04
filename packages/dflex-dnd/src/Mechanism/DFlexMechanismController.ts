@@ -111,7 +111,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         const element = store.registry.get(id)!;
 
         const isQualified = element.rect.isBoxIntersect(
-          this.draggable.getAbsoluteCurrentPos()
+          this.draggable.getAbsoluteCurrentPos(),
         );
 
         if (isQualified) {
@@ -151,7 +151,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       if (!migration.isTransitioning && lastElmPosition) {
         this.updateDraggedThresholdPosition(
           lastElmPosition.x,
-          lastElmPosition.y
+          lastElmPosition.y,
         );
       }
 
@@ -173,7 +173,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
           SK,
           insertAt,
           hasToMoveSiblingsDown,
-          "y"
+          "y",
         ));
     }
 
@@ -224,7 +224,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
             if (__DEV__) {
               // eslint-disable-next-line no-console
               console.warn(
-                "Override enable commit to true. Transformation into empty container is not enabled yet."
+                "Override enable commit to true. Transformation into empty container is not enabled yet.",
               );
             }
 
@@ -272,7 +272,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
         this.listAppendPosition = this.getComposedOccupiedPosition(
           newSK,
-          insertionAxis
+          insertionAxis,
         );
 
         const originSiblings = store.getElmSiblingsByKey(originSK);
@@ -304,7 +304,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
           draggedElm.id,
           newSK,
           cycleID,
-          store.scrolls.get(newSK)!.hasOverflow.isOneTruthy()
+          store.scrolls.get(newSK)!.hasOverflow.isOneTruthy(),
         );
 
         break;
@@ -327,13 +327,13 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     if (index > 0) {
       const prevElm = store.registry.get(
-        siblings[migration.latest().index - 1]
+        siblings[migration.latest().index - 1],
       )!;
 
       // Store it before lost it when the index is changed to the next one.
       migration.preserveVerticalMargin(
         "top",
-        occupiedPosition.y - prevElm.rect.bottom
+        occupiedPosition.y - prevElm.rect.bottom,
       );
     }
 
@@ -353,7 +353,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     if (!nextElm) {
       if (__DEV__) {
         throw new Error(
-          `_fillHeadUp: Error in calculating next element.\n Siblings: ${siblings}\n Calculated index: ${from}`
+          `_fillHeadUp: Error in calculating next element.\n Siblings: ${siblings}\n Calculated index: ${from}`,
         );
       }
 
@@ -363,7 +363,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     // Store it before lost it when the index is changed to the next one.
     migration.preserveVerticalMargin(
       "bottom",
-      nextElm.rect.top - (occupiedPosition.y + draggedElm.rect.height)
+      nextElm.rect.top - (occupiedPosition.y + draggedElm.rect.height),
     );
 
     events.dispatch(DFLEX_EVENTS.ON_LIFT_UP, {
@@ -373,7 +373,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     });
 
     this.draggable.setDraggedTempIndex(
-      DFlexMechanismController.INDEX_OUT_CONTAINER
+      DFlexMechanismController.INDEX_OUT_CONTAINER,
     );
 
     for (let i = from; i < siblings.length; i += 1) {
@@ -421,7 +421,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     oppositeAxis: Axis,
     grid: PointNum,
     isSingleAxis: boolean,
-    shouldDecrease: boolean
+    shouldDecrease: boolean,
   ): void {
     const { gridPlaceholder } = this.draggable;
 
@@ -432,7 +432,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     if (__DEV__) {
       if (newPos < -1) {
         throw new Error(
-          "_actionCaller: the new grid position can't be below -1"
+          "_actionCaller: the new grid position can't be below -1",
         );
       }
 
@@ -441,7 +441,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         console.log(
           `Detecting dragged new ${
             axis === "x" ? "col" : "row"
-          }: ${newPos}. siblingsGrid-${axis} is ${grid[axis]}`
+          }: ${newPos}. siblingsGrid-${axis} is ${grid[axis]}`,
         );
       }
     }
@@ -506,10 +506,10 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
           throw new Error(
             `Unable to find the target element index for the occupied grid: ${JSON.stringify(
-              grid
+              grid,
             )}.\n` +
               `This error occurs when attempting to calculate the index of the target element in a non-single axis scenario.\n` +
-              `Incorrect handling of 'isSingleAxis' can lead to issues in determining the target element index.`
+              `Incorrect handling of 'isSingleAxis' can lead to issues in determining the target element index.`,
           );
         }
 
@@ -532,8 +532,8 @@ class DFlexMechanismController extends DFlexScrollableElement {
         // eslint-disable-next-line no-console
         console.warn(
           `_actionCaller: incorrect element index: ${elmIndex} for siblings: ${JSON.stringify(
-            siblings
-          )}`
+            siblings,
+          )}`,
         );
       }
 
@@ -541,11 +541,11 @@ class DFlexMechanismController extends DFlexScrollableElement {
     }
 
     const elmThreshold = this.draggable.threshold.getElmMainThreshold(
-      store.registry.get(id)!.rect
+      store.registry.get(id)!.rect,
     );
 
     const isIntersect = elmThreshold.isBoxIntersect(
-      this.draggable.threshold.thresholds[draggedID]
+      this.draggable.threshold.thresholds[draggedID],
     );
 
     // TODO: `else` case is not tested.
@@ -555,7 +555,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       // E.g: Moved into new one but triggered the previous one because it's stuck
       // inside the zone causing jarring behavior; the back and forth transition.
       const surroundingBox = elmThreshold.getSurroundingBox(
-        this.draggable.threshold.thresholds[draggedID]
+        this.draggable.threshold.thresholds[draggedID],
       );
 
       this._deadZoneStabilizer.area.clone(surroundingBox);
@@ -568,7 +568,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       if (__DEV__) {
         if (numberOfPassedElm < 0 || numberOfPassedElm >= siblings.length) {
           throw new Error(
-            `_actionCaller: invalid numberOfPassedElm: ${numberOfPassedElm}`
+            `_actionCaller: invalid numberOfPassedElm: ${numberOfPassedElm}`,
           );
         }
       }
@@ -579,7 +579,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         if (featureFlags.enableMechanismDebugger) {
           // eslint-disable-next-line no-console
           console.warn(
-            "Switching element in not possible because elements threshold are not intersected"
+            "Switching element in not possible because elements threshold are not intersected",
           );
         }
       }
@@ -613,7 +613,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         console.log(
           `Detecting that element has ${
             isSingleAxis ? "single" : "multiple"
-          } axis`
+          } axis`,
         );
       }
     }
@@ -643,7 +643,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         oppositeAxis,
         grid,
         isSingleAxis,
-        shouldDecrease
+        shouldDecrease,
       );
 
       return true;

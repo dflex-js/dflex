@@ -53,7 +53,7 @@ context("Split multiple containers form up bottom", () => {
     cy.get("#c3-2").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, 92)"
+      "matrix(1, 0, 0, 1, 0, 92)",
     );
   });
 
@@ -61,7 +61,7 @@ context("Split multiple containers form up bottom", () => {
     cy.get("#c1-1").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 452, 112)"
+      "matrix(1, 0, 0, 1, 452, 112)",
     );
   });
 });

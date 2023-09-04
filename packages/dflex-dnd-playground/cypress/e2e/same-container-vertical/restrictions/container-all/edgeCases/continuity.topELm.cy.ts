@@ -55,7 +55,7 @@ context("Checking restrictions continuity for the first element", () => {
       cy.get("#item-rest-1").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -0.40625)" // what's causing this shift.
+        "matrix(1, 0, 0, 1, 0, -0.40625)", // what's causing this shift.
       );
     });
 
@@ -75,7 +75,7 @@ context("Checking restrictions continuity for the first element", () => {
       cy.get("#item-rest-1").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
+        "matrix(1, 0, 0, 1, 0, 0)",
       );
     });
 
@@ -96,7 +96,7 @@ context("Checking restrictions continuity for the first element", () => {
       cy.get("#item-rest-1").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
+        "matrix(1, 0, 0, 1, 0, 0)",
       );
     });
 
@@ -149,7 +149,7 @@ context("Checking restrictions continuity for the first element", () => {
         cy.get(`#item-rest-${i}`).should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 71.1875)"
+          "matrix(1, 0, 0, 1, 0, 71.1875)",
         );
       }
     });
@@ -157,7 +157,7 @@ context("Checking restrictions continuity for the first element", () => {
       cy.get("#item-rest-5").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -404.75)"
+        "matrix(1, 0, 0, 1, 0, -404.75)",
       );
     });
     it("Getting the element 5 (#item-rest-5) again", () => {
@@ -189,7 +189,7 @@ context("Checking restrictions continuity for the first element", () => {
         cy.get(`#item-rest-${i}`).should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 0)"
+          "matrix(1, 0, 0, 1, 0, 0)",
         );
       }
     });

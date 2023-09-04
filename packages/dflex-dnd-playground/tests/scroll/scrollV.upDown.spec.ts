@@ -40,7 +40,7 @@ test.describe.serial("Drag the first element down vertically", async () => {
 
     elementSelectors = Array.from(
       { length: 100 },
-      (_, index) => `[id='${index + 1}-extended']`
+      (_, index) => `[id='${index + 1}-extended']`,
     );
 
     [elements, viewportHeight] = await Promise.all([
@@ -59,12 +59,12 @@ test.describe.serial("Drag the first element down vertically", async () => {
 
   test.skip(
     ({ browserName }) => browserName !== "chromium",
-    "TODO.. If you see it please work on it."
+    "TODO.. If you see it please work on it.",
   );
 
   test.skip(
     process.platform === "darwin",
-    "TODO: test skipped on Mac devices."
+    "TODO: test skipped on Mac devices.",
   );
 
   test("Siblings index initiated correctly", async () => {
@@ -87,9 +87,9 @@ test.describe.serial("Drag the first element down vertically", async () => {
       visibleElements.map((element) =>
         expect(element).toHaveCSS(
           "transform",
-          "matrix(1, 0, 0, 1, 0, -59.1875)"
-        )
-      )
+          "matrix(1, 0, 0, 1, 0, -59.1875)",
+        ),
+      ),
     );
   });
 
@@ -98,8 +98,8 @@ test.describe.serial("Drag the first element down vertically", async () => {
 
     await Promise.all(
       invisibleElements.map((element) =>
-        expect(element).toHaveCSS("transform", "none")
-      )
+        expect(element).toHaveCSS("transform", "none"),
+      ),
     );
   });
 
@@ -115,9 +115,9 @@ test.describe.serial("Drag the first element down vertically", async () => {
       visibleElements.map((element) =>
         expect(element).toHaveCSS(
           "transform",
-          "matrix(1, 0, 0, 1, 0, -59.1875)"
-        )
-      )
+          "matrix(1, 0, 0, 1, 0, -59.1875)",
+        ),
+      ),
     );
   });
 
@@ -136,9 +136,9 @@ test.describe.serial("Drag the first element down vertically", async () => {
         expect(element).toHaveCSS(
           "transform",
           "matrix(1, 0, 0, 1, 0, -59.1875)",
-          TransformTimeout
-        )
-      )
+          TransformTimeout,
+        ),
+      ),
     );
   });
 
@@ -150,9 +150,9 @@ test.describe.serial("Drag the first element down vertically", async () => {
         expect(element).toHaveCSS(
           "transform",
           "matrix(1, 0, 0, 1, 0, 0)",
-          TransformTimeout
-        )
-      )
+          TransformTimeout,
+        ),
+      ),
     );
   });
 
@@ -170,9 +170,9 @@ test.describe.serial("Drag the first element down vertically", async () => {
         expect(element).toHaveCSS(
           "transform",
           "matrix(1, 0, 0, 1, 0, 0)",
-          TransformTimeout
-        )
-      )
+          TransformTimeout,
+        ),
+      ),
     );
   });
 });

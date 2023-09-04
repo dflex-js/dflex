@@ -48,7 +48,7 @@ context(
           cy.get(`#${i}-extended`).should(
             "have.css",
             "transform",
-            "matrix(1, 0, 0, 1, 0, -59.1875)"
+            "matrix(1, 0, 0, 1, 0, -59.1875)",
           );
         }
       });
@@ -100,7 +100,7 @@ context(
           cy.get(`#${i}-extended`).should(
             "have.css",
             "transform",
-            "matrix(1, 0, 0, 1, 0, 0)"
+            "matrix(1, 0, 0, 1, 0, 0)",
           );
         }
       });
@@ -163,7 +163,7 @@ context(
           cy.get(`#${i}-extended`).should(
             "have.css",
             "transform",
-            "matrix(1, 0, 0, 1, 0, -59.1875)"
+            "matrix(1, 0, 0, 1, 0, -59.1875)",
           );
         }
       });
@@ -185,5 +185,5 @@ context(
         }
       });
     });
-  }
+  },
 );

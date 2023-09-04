@@ -37,7 +37,7 @@ function throwOnInfiniteTransformation(id: string) {
 
   if (infiniteTransformCount > MAX_TRANSFORM_COUNT) {
     throw new Error(
-      `Element ${id} is being transformed endlessly. This is causing infinite recursion affecting the element updater. This is most likely caused by a wrong threshold calculations.`
+      `Element ${id} is being transformed endlessly. This is causing infinite recursion affecting the element updater. This is most likely caused by a wrong threshold calculations.`,
     );
   }
 }
@@ -69,7 +69,7 @@ export function isEmptyBranch(lst: string[]) {
 
 export function getInsertionELmMeta(
   insertAt: number,
-  SK: string
+  SK: string,
 ): InsertionELmMeta {
   const siblings = store.getElmSiblingsByKey(SK);
 
@@ -151,7 +151,7 @@ export function getInsertionELmMeta(
 export function handleElmMigration(
   distSK: string,
   originSK: string,
-  rect: AbstractBox
+  rect: AbstractBox,
 ) {
   // Handle the migration.
   const destinationContainer = store.containers.get(distSK)!;
@@ -179,7 +179,7 @@ export function handleElmMigration(
   });
 
   const lastInOrigin = store.registry.get(
-    originSiblings[originSiblings.length - 1]
+    originSiblings[originSiblings.length - 1],
   )!;
 
   originContainer.preservePosition(lastInOrigin.rect.getPosition());
@@ -218,12 +218,12 @@ class DFlexPositionUpdater {
   private _setDistanceBtwPositions(
     axis: Axis,
     elmDirection: Direction,
-    elm: DFlexElement
+    elm: DFlexElement,
   ) {
     const { occupiedPosition, draggedElm } = this.draggable;
 
     const positionDiff = Math.abs(
-      elm.rect.getPositionDiff(axis, occupiedPosition)
+      elm.rect.getPositionDiff(axis, occupiedPosition),
     );
 
     const dimensionDiff = elm.rect.getDimensionDiff(axis, draggedElm.rect);
@@ -252,7 +252,7 @@ class DFlexPositionUpdater {
         // eslint-disable-next-line no-console
         console.log(
           "_updateDraggable: new grid is",
-          this.draggable.gridPlaceholder
+          this.draggable.gridPlaceholder,
         );
       }
     }
@@ -261,7 +261,7 @@ class DFlexPositionUpdater {
   private _updateIndicators(
     axis: Axes,
     elmDirection: Direction,
-    elm: DFlexElement
+    elm: DFlexElement,
   ) {
     // Reset all indicators.
     this._elmTransition.setAxes(0, 0);
@@ -279,7 +279,7 @@ class DFlexPositionUpdater {
 
     this.draggable.occupiedPosition.setAxes(
       rect.left + this._draggedPositionOffset.x,
-      rect.top + this._draggedPositionOffset.y
+      rect.top + this._draggedPositionOffset.y,
     );
 
     this.draggable.gridPlaceholder.clone(grid);
@@ -314,7 +314,7 @@ class DFlexPositionUpdater {
   private _addDraggedOffsetToElm(
     position: AxesPoint,
     elm: DFlexElement,
-    axis: Axis
+    axis: Axis,
   ) {
     const dimensionType = getDimensionTypeByAxis(axis);
 
@@ -336,11 +336,11 @@ class DFlexPositionUpdater {
     SK: string,
     insertAt: number,
     insertFromTop: boolean,
-    axis: Axis
+    axis: Axis,
   ) {
     const { isEmpty, isOrphan, position, elm, prevElm } = getInsertionELmMeta(
       insertAt,
-      SK
+      SK,
     );
 
     const { draggedElm, containersTransition } = this.draggable;
@@ -386,7 +386,7 @@ class DFlexPositionUpdater {
 
     this.updateDraggedThresholdPosition(
       composedTranslate.x,
-      composedTranslate.y
+      composedTranslate.y,
     );
 
     return { translate: composedTranslate, grid: composedGrid };
@@ -394,7 +394,7 @@ class DFlexPositionUpdater {
 
   protected getComposedOccupiedPosition(
     SK: string,
-    axis: Axis
+    axis: Axis,
   ): AxesPoint<number> {
     const distLst = store.getElmSiblingsByKey(SK);
 
@@ -457,7 +457,7 @@ class DFlexPositionUpdater {
   protected updateElement(
     id: string,
     numberOfPassedElm: number,
-    isIncrease: boolean
+    isIncrease: boolean,
   ) {
     const { draggedElm, occupiedPosition, gridPlaceholder } = this.draggable;
 
@@ -485,7 +485,7 @@ class DFlexPositionUpdater {
 
     const onSameAxis = occupiedPosition.onSameAxis(
       axis,
-      element.rect.getPosition()
+      element.rect.getPosition(),
     );
 
     if (!onSameAxis) {
@@ -533,7 +533,7 @@ class DFlexPositionUpdater {
 
     this.draggable.events.dispatch(
       DFLEX_EVENTS.ON_DRAG_OVER,
-      composeElmMeta(element)
+      composeElmMeta(element),
     );
 
     element.reconcilePosition(
@@ -544,12 +544,12 @@ class DFlexPositionUpdater {
       this._elmTransition,
       numberOfPassedElm,
       maxContainerGridBoundaries,
-      cycleID
+      cycleID,
     );
 
     this.draggable.events.dispatch(
       DFLEX_EVENTS.ON_DRAG_LEAVE,
-      composeElmMeta(element)
+      composeElmMeta(element),
     );
   }
 }

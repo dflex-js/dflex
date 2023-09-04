@@ -48,13 +48,13 @@ context("Split one container from bottom up", () => {
     cy.get("#c2-4").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, -62)"
+      "matrix(1, 0, 0, 1, 0, -62)",
     );
 
     cy.get("#c2-5").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, -62)"
+      "matrix(1, 0, 0, 1, 0, -62)",
     );
   });
 
@@ -62,7 +62,7 @@ context("Split one container from bottom up", () => {
     cy.get("#c1-1").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, 62)"
+      "matrix(1, 0, 0, 1, 0, 62)",
     );
   });
 
@@ -70,7 +70,7 @@ context("Split one container from bottom up", () => {
     cy.get("#c2-3").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, -226, -124)"
+      "matrix(1, 0, 0, 1, -226, -124)",
     );
   });
 });

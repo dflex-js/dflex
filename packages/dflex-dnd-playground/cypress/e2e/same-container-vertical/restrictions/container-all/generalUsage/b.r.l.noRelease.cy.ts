@@ -43,7 +43,7 @@ context(
       cy.get("#item-rest-2").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -99.1875)"
+        "matrix(1, 0, 0, 1, 0, -99.1875)",
       );
     });
 
@@ -64,7 +64,7 @@ context(
       cy.get("#item-rest-2").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -99.1875)"
+        "matrix(1, 0, 0, 1, 0, -99.1875)",
       );
     });
 
@@ -90,19 +90,19 @@ context(
       cy.get("#item-rest-2").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -99.1875)"
+        "matrix(1, 0, 0, 1, 0, -99.1875)",
       );
 
       cy.get("#item-rest-3").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -99.1875)"
+        "matrix(1, 0, 0, 1, 0, -99.1875)",
       );
 
       cy.get("#item-rest-4").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -99.1875)"
+        "matrix(1, 0, 0, 1, 0, -99.1875)",
       );
     });
 
@@ -127,25 +127,25 @@ context(
       cy.get("#item-rest-2").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -99.1875)"
+        "matrix(1, 0, 0, 1, 0, -99.1875)",
       );
 
       cy.get("#item-rest-3").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -99.1875)"
+        "matrix(1, 0, 0, 1, 0, -99.1875)",
       );
 
       cy.get("#item-rest-4").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -99.1875)"
+        "matrix(1, 0, 0, 1, 0, -99.1875)",
       );
 
       cy.get("#item-rest-5").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -99.1875)"
+        "matrix(1, 0, 0, 1, 0, -99.1875)",
       );
     });
 
@@ -166,7 +166,7 @@ context(
       cy.get("#item-rest-1").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 376.344)"
+        "matrix(1, 0, 0, 1, 0, 376.344)",
       );
     });
 
@@ -187,7 +187,7 @@ context(
       cy.get("#item-rest-1").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 376)"
+        "matrix(1, 0, 0, 1, 0, 376)",
       );
     });
 
@@ -208,7 +208,7 @@ context(
       cy.get("#item-rest-1").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 376)"
+        "matrix(1, 0, 0, 1, 0, 376)",
       );
     });
 
@@ -220,26 +220,26 @@ context(
       cy.get("#item-rest-2").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -99.1875)"
+        "matrix(1, 0, 0, 1, 0, -99.1875)",
       );
 
       cy.get("#item-rest-3").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -99.1875)"
+        "matrix(1, 0, 0, 1, 0, -99.1875)",
       );
 
       cy.get("#item-rest-4").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -99.1875)"
+        "matrix(1, 0, 0, 1, 0, -99.1875)",
       );
 
       cy.get("#item-rest-5").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, -99.1875)"
+        "matrix(1, 0, 0, 1, 0, -99.1875)",
       );
     });
-  }
+  },
 );

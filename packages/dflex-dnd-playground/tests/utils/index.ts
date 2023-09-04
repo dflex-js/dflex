@@ -8,7 +8,7 @@ let steps = 0;
 export function initialize(
   createdPage: Page,
   browserName?: string,
-  mouseSteps: number = browserName ? (browserName === "chromium" ? 5 : 40) : 5
+  mouseSteps: number = browserName ? (browserName === "chromium" ? 5 : 40) : 5,
 ) {
   page = createdPage;
   steps = mouseSteps;
@@ -60,7 +60,7 @@ export async function moveDragged(stepsX: number, stepsY: number) {
     startingPointY + accStepsY,
     {
       steps,
-    }
+    },
   );
 }
 
@@ -102,7 +102,7 @@ export async function invokeKeyboardAndAssertEmittedMsg(FINAL_IDS: string[]) {
 
 export async function assertChildrenOrderIDs(
   parentLocater: Locator,
-  FINAL_IDS: string[]
+  FINAL_IDS: string[],
 ) {
   const childrenIDs = await parentLocater.evaluate((elm) => {
     const ids: string[] = [];
@@ -131,17 +131,17 @@ export async function assertDefaultChildrenIndex(parentLocater: Locator) {
         indexes.push(parentElm.children[i].getAttribute("data-index")!);
       }
       return [indexes, length];
-    }
+    },
   );
 
   expect(childrenIndex).toEqual(
-    Array.from(Array(childrenLength), (_, i) => `${i}`)
+    Array.from(Array(childrenLength), (_, i) => `${i}`),
   );
 }
 
 export async function assertChildrenGrid(
   parentLocater: Locator,
-  expectedChildrenGrid: { x: number; y: number }[]
+  expectedChildrenGrid: { x: number; y: number }[],
 ) {
   const childrenGrid = await parentLocater.evaluate((parentElm) => {
     const grid: { x: number; y: number }[] = [];

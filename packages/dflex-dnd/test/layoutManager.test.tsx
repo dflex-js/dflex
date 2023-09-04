@@ -116,13 +116,13 @@ describe("DFlex DnD", () => {
 
       it("Containers have the correct origin length", () => {
         const container1 = store.containers.get(
-          store.registry.get(elm1.id)!.keys.SK
+          store.registry.get(elm1.id)!.keys.SK,
         )!;
 
         expect(container1.originLength).toBe(1);
 
         const container2 = store.containers.get(
-          store.registry.get(elm2.id)!.keys.SK
+          store.registry.get(elm2.id)!.keys.SK,
         )!;
 
         expect(container2.originLength).toBe(3);
@@ -130,13 +130,13 @@ describe("DFlex DnD", () => {
 
       it.skip("Containers initialized `lastElmPosition`", () => {
         const container1 = store.containers.get(
-          store.registry.get(elm1.id)!.keys.SK
+          store.registry.get(elm1.id)!.keys.SK,
         )!;
 
         expect(container1.lastElmPosition).toBeInstanceOf(PointNum);
 
         const container2 = store.containers.get(
-          store.registry.get(elm2.id)!.keys.SK
+          store.registry.get(elm2.id)!.keys.SK,
         )!;
 
         expect(container2.lastElmPosition).toBeInstanceOf(PointNum);

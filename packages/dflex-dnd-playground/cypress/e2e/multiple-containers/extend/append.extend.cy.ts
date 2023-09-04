@@ -63,8 +63,8 @@ context(
       cy.get("#c1-1").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 226, 310)"
+        "matrix(1, 0, 0, 1, 226, 310)",
       );
     });
-  }
+  },
 );

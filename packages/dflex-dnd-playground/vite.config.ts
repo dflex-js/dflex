@@ -59,7 +59,7 @@ console.info(
     isProdBundle ? `${green}package` : `${cyan}self-built`
   } bundle. Running in ${
     isProdBundle ? `${red}production` : `${magenta}development`
-  } mode. 🎉${resetColor}`
+  } mode. 🎉${resetColor}`,
 );
 
 const config: UserConfigExport = {

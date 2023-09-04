@@ -34,16 +34,16 @@ function throwIfElmIsEmpty(siblings: string[]) {
 
 function throwWhenDuplicates(siblings: string[]) {
   const duplicates = siblings.filter(
-    (elem, index) => siblings.indexOf(elem) !== index
+    (elem, index) => siblings.indexOf(elem) !== index,
   );
 
   if (duplicates.length > 0) {
     throw new Error(
       `Siblings ${JSON.stringify(
-        siblings
+        siblings,
       )} contains non-unique elements. Duplicate elements found: ${JSON.stringify(
-        duplicates
-      )}`
+        duplicates,
+      )}`,
     );
   }
 }
@@ -84,7 +84,7 @@ function throwIfOutContainer(siblings: string[]) {
       rect.top > boundaries.bottom
     ) {
       throw new Error(
-        `throwIfOutContainer: element ${id} is outside its container.`
+        `throwIfOutContainer: element ${id} is outside its container.`,
       );
     }
   }
@@ -93,7 +93,7 @@ function throwIfOutContainer(siblings: string[]) {
 function triggerAssertProcess(
   DOM: HTMLElement,
   siblings: string[],
-  grid: PointNum
+  grid: PointNum,
 ) {
   updateElmDatasetGrid(DOM, grid);
 
@@ -173,7 +173,7 @@ class DraggableInteractive extends DraggableAxes {
         true,
         false,
         this.draggedElm.getDimensions(draggedDOM),
-        viewportPos
+        viewportPos,
       );
 
       this.draggedDOM.parentNode!.insertBefore(this.mirrorDOM, this.draggedDOM);
@@ -213,7 +213,7 @@ class DraggableInteractive extends DraggableAxes {
   setDraggedTransformProcess(
     isFallback: boolean,
     latestCycle: AbstractDFlexCycle,
-    willReconcile: boolean
+    willReconcile: boolean,
   ) {
     const { SK, index } = latestCycle;
     const { rect, translate, id, VDOMOrder, DOMGrid } = this.draggedElm;
@@ -254,7 +254,7 @@ class DraggableInteractive extends DraggableAxes {
 
     this.draggedElm.rect.setAxes(
       this.occupiedPosition.x,
-      this.occupiedPosition.y
+      this.occupiedPosition.y,
     );
 
     if (__DEV__) {
@@ -293,7 +293,7 @@ class DraggableInteractive extends DraggableAxes {
     isFallback: boolean,
     isMigratedInScroll: boolean,
     latestCycle: AbstractDFlexCycle,
-    willReconcile: boolean
+    willReconcile: boolean,
   ) {
     const draggedDOM = store.interactiveDOM.get(this.draggedElm.id)!;
 
@@ -304,7 +304,7 @@ class DraggableInteractive extends DraggableAxes {
         false,
         true,
         this.draggedElm.getDimensions(draggedDOM),
-        null
+        null,
       );
     } else {
       this.setDOMAttrAndStyle(
@@ -313,7 +313,7 @@ class DraggableInteractive extends DraggableAxes {
         false,
         false,
         null,
-        null
+        null,
       );
     }
 

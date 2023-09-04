@@ -46,7 +46,7 @@ function initThresholds(
   draggedID: string,
   draggedRect: AbstractBoxRect,
   draggedDepth: number,
-  threshold: Threshold
+  threshold: Threshold,
 ) {
   threshold.setMainThreshold(draggedID, draggedRect, false);
 
@@ -62,7 +62,7 @@ function initThresholds(
       insertionLayerKey,
       draggedDepth,
       boundaries,
-      store.unifiedContainerDimensions[draggedDepth]
+      store.unifiedContainerDimensions[draggedDepth],
     );
   });
 }
@@ -147,7 +147,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
         SK,
         cycleID,
         // TODO: refactor this to use if the dragged belongs to scroll container or not.
-        false
+        false,
       );
     } else {
       store.migration.add(
@@ -156,7 +156,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
         SK,
         cycleID,
         // TODO: refactor this to use if the dragged belongs to scroll container or not.
-        false
+        false,
       );
     }
 
@@ -193,19 +193,19 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
 
     this._absoluteInnerOffset = new PointNum(
       Math.round(x - rect.left),
-      Math.round(y - rect.top)
+      Math.round(y - rect.top),
     );
 
     this._viewportInnerOffset = new PointNum(
       Math.round(x - (rect.left - left)),
-      Math.round(y - (rect.top - top))
+      Math.round(y - (rect.top - top)),
     );
 
     this._absoluteCurrentPos = new BoxNum(
       rect.top,
       rect.right,
       rect.bottom,
-      rect.left
+      rect.left,
     );
 
     const viewportTop = rect.top - top;
@@ -215,7 +215,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
       viewportTop,
       viewportLeft + rect.width,
       viewportTop + rect.height,
-      viewportLeft
+      viewportLeft,
     );
 
     if (__DEV__) {
@@ -254,7 +254,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     bottomThreshold: number,
     allowTop: boolean,
     allowBottom: boolean,
-    isRestrictedToThreshold: boolean // if not. Then to self.
+    isRestrictedToThreshold: boolean, // if not. Then to self.
   ) {
     const currentTop = y - this._absoluteInnerOffset.y;
     const currentBottom = currentTop + this.draggedElm.rect.height;
@@ -282,7 +282,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     rightThreshold: number,
     allowLeft: boolean,
     allowRight: boolean,
-    restrictToThreshold: boolean // if not. Then to self.,
+    restrictToThreshold: boolean, // if not. Then to self.,
   ) {
     const currentLeft = x - this._absoluteInnerOffset.x;
     const currentRight = currentLeft + this.draggedElm.rect.width;
@@ -328,7 +328,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     x: number,
     y: number,
     scrollOffsetX: number,
-    scrollOffsetY: number
+    scrollOffsetY: number,
   ): void {
     this._updatePrevPos();
 
@@ -346,14 +346,14 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
       absTop,
       absLeft + width,
       absTop + height,
-      absLeft
+      absLeft,
     );
 
     this._viewportCurrentPos.setBox(
       edgePosTop,
       edgePosLeft + width,
       edgePosTop + height,
-      edgePosLeft
+      edgePosLeft,
     );
   }
 
@@ -392,7 +392,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     x: number,
     y: number,
     scrollOffsetX: number,
-    scrollOffsetY: number
+    scrollOffsetY: number,
   ) {
     if (!this.isLayoutStateUpdated) {
       this.isLayoutStateUpdated = true;
@@ -419,7 +419,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
           minRight,
           this.restrictions.container.allowLeavingFromLeft,
           this.restrictions.container.allowLeavingFromRight,
-          false
+          false,
         );
         filteredY = this.axesYFilter(
           y,
@@ -427,7 +427,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
           bottom,
           this.restrictions.container.allowLeavingFromTop,
           this.restrictions.container.allowLeavingFromBottom,
-          true
+          true,
         );
       } else if (this.restrictionsStatus.isSelfRestricted) {
         filteredX = this.axesXFilter(
@@ -436,7 +436,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
           minRight,
           this.restrictions.self.allowLeavingFromLeft,
           this.restrictions.self.allowLeavingFromRight,
-          false
+          false,
         );
         filteredY = this.axesYFilter(
           y,
@@ -444,7 +444,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
           this.draggedElm.rect.top + this.draggedElm.rect.height,
           this.restrictions.self.allowLeavingFromTop,
           this.restrictions.self.allowLeavingFromBottom,
-          false
+          false,
         );
       }
     } else if (this.isViewportRestricted) {
@@ -457,7 +457,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
         scroll.getMaximumScrollContainerLeft(),
         false,
         false,
-        true
+        true,
       );
       filteredY = this.axesYFilter(
         y,
@@ -465,7 +465,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
         scroll.getMaximumScrollContainerTop(),
         false,
         false,
-        true
+        true,
       );
     }
 

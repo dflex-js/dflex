@@ -14,7 +14,7 @@ const MIRROR_ID_PREFIX = "dflex-draggable-mirror";
 function setMirrorStyle(
   mirrorDOM: HTMLElement,
   viewportPos: [number, number] | null,
-  dimensions: PointNum | null
+  dimensions: PointNum | null,
 ): void {
   const [top = 0, left = 0] = viewportPos || [];
 
@@ -90,7 +90,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
   constructor(
     abstractCoreElm: T,
     DOM: HTMLElement,
-    initCoordinates: AxesPoint
+    initCoordinates: AxesPoint,
   ) {
     this.draggedElm = abstractCoreElm;
     this.draggedDOM = DOM;
@@ -99,7 +99,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
 
     this._outerOffset = new PointNum(
       translate.x - initCoordinates.x,
-      translate.y - initCoordinates.y
+      translate.y - initCoordinates.y,
     );
 
     this.translatePlaceholder = new PointNum(0, 0);
@@ -134,7 +134,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     isAddingProps: true,
     isMigratedInScroll: false,
     dimensions: PointNum,
-    viewportPos: [number, number]
+    viewportPos: [number, number],
   ): void;
 
   protected setDOMAttrAndStyle(
@@ -143,7 +143,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     isAddingProps: false,
     isMigratedInScroll: true,
     dimensions: PointNum,
-    viewportPos: null
+    viewportPos: null,
   ): void;
 
   protected setDOMAttrAndStyle(
@@ -152,7 +152,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     isAddingProps: false,
     isMigratedInScroll: false,
     dimensions: null,
-    viewportPos: null
+    viewportPos: null,
   ): void;
 
   protected setDOMAttrAndStyle(
@@ -161,7 +161,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     isAddingProps: true,
     isMigratedInScroll: false,
     dimensions: null,
-    viewportPos: null
+    viewportPos: null,
   ): void;
 
   protected setDOMAttrAndStyle(
@@ -170,7 +170,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     isAddingProps: false,
     isMigratedInScroll: false,
     dimensions: null,
-    viewportPos: null
+    viewportPos: null,
   ): void;
 
   protected setDOMAttrAndStyle(
@@ -179,7 +179,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     isAddingProps: boolean,
     isMigratedInScroll: boolean,
     dimensions: PointNum | null,
-    viewportPos: [number, number] | null
+    viewportPos: [number, number] | null,
   ): void {
     if (isAddingProps) {
       this._preserveDOMAttributes(originDOM, true);
@@ -260,13 +260,13 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
      */
     this.translatePlaceholder.setAxes(
       x + this._outerOffset.x,
-      y + this._outerOffset.y
+      y + this._outerOffset.y,
     );
 
     DFlexBaseElement.transform(
       this.draggedDOM,
       this.translatePlaceholder.x,
-      this.translatePlaceholder.y
+      this.translatePlaceholder.y,
     );
   }
 }

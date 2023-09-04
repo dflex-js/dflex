@@ -44,7 +44,7 @@ function verifyTypeOrThrow(value: any, allegedType: string): void {
 
   if (actualType !== allegedType) {
     throw new Error(
-      `Type mismatch. Expected type ${allegedType}, but got type ${actualType}.`
+      `Type mismatch. Expected type ${allegedType}, but got type ${actualType}.`,
     );
   }
 }
@@ -52,7 +52,7 @@ function verifyTypeOrThrow(value: any, allegedType: string): void {
 function setStyleProperty(
   DOM: HTMLElement,
   property: string,
-  value: string | null
+  value: string | null,
 ): void {
   DOM.style.setProperty(property, value);
 }
@@ -64,19 +64,19 @@ function removeStyleProperty(DOM: HTMLElement, property: string): void {
 function getCachedComputedStyleProperty(
   DOM: Element,
   property: string,
-  toNumber: true
+  toNumber: true,
 ): number;
 
 function getCachedComputedStyleProperty(
   DOM: Element,
   property: string,
-  toNumber: false
+  toNumber: false,
 ): string;
 
 function getCachedComputedStyleProperty(
   DOM: Element,
   property: string,
-  toNumber: boolean
+  toNumber: boolean,
 ): number | string {
   const cachedComputedStyle = getCachedComputedStyle(DOM);
 
@@ -123,7 +123,7 @@ function getElmDimensions(DOM: HTMLElement): Dimensions {
       warnOnce(
         "getElementStyle",
         "Element cannot have a percentage width and/or height." +
-          "If you are expecting the element to cross multiple scroll containers, then this will cause unexpected dimension when the element is cloned."
+          "If you are expecting the element to cross multiple scroll containers, then this will cause unexpected dimension when the element is cloned.",
       );
     }
   }
@@ -143,7 +143,7 @@ function parseTransformMatrix(transform: string): [number, number] | null {
 
   // Check if the transform property contains a matrix transform
   const matrixMatch = transform.match(
-    /matrix\(\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*([^)]+)\)/
+    /matrix\(\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*([^,]+),\s*([^)]+)\)/,
   );
 
   if (matrixMatch) {
@@ -161,7 +161,7 @@ function getParsedElmTransform(DOM: HTMLElement): [number, number] | null {
   const transform = getCachedComputedStyleProperty(
     DOM,
     CSSPropNames.TRANSFORM,
-    false
+    false,
   );
 
   const transformMatrix = parseTransformMatrix(transform);
@@ -225,7 +225,7 @@ function getElmPos(DOM: HTMLElement): CSSPosition {
   return getCachedComputedStyleProperty(
     DOM,
     CSSPropNames.POSITION,
-    false
+    false,
   ) as CSSPosition;
 }
 
@@ -235,12 +235,12 @@ type CSSOverflowType = "overflow" | "overflow-x" | "overflow-y";
 
 function getElmOverflow(
   DOM: HTMLElement,
-  overflowType: CSSOverflowType
+  overflowType: CSSOverflowType,
 ): CSSOverflow {
   return getCachedComputedStyleProperty(
     DOM,
     overflowType,
-    false
+    false,
   ) as CSSOverflow;
 }
 
@@ -260,7 +260,7 @@ function hasCSSTransition(DOM: HTMLElement) {
   const transitionValue = getCachedComputedStyleProperty(
     DOM,
     "transition",
-    false
+    false,
   );
 
   return transitionValue !== "none" && transitionValue.trim() !== "";

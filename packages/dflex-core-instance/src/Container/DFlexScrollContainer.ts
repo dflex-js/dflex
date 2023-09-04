@@ -37,7 +37,7 @@ function hasOverFlow(
   scrollRect: Dimensions,
   scrollContainerRect: Dimensions,
   axis: Axis,
-  checkHalf: boolean = false
+  checkHalf: boolean = false,
 ): boolean {
   const dimension = getDimensionTypeByAxis(axis);
   const threshold = checkHalf ? 0.5 : 1;
@@ -112,7 +112,7 @@ class DFlexScrollContainer {
     firstELmDOM: HTMLElement,
     SK: string,
     branchLength: number,
-    scrollEventCallback: ScrollEventCallback
+    scrollEventCallback: ScrollEventCallback,
   ) {
     // Callbacks.
     this._SK = SK;
@@ -175,7 +175,7 @@ class DFlexScrollContainer {
 
   private _initializeOrDestroyThreshold(
     type: "inner" | "outer",
-    thresholdValue: ThresholdPercentages | null
+    thresholdValue: ThresholdPercentages | null,
   ): void {
     const instance = this._thresholdInViewport[type];
 
@@ -195,13 +195,13 @@ class DFlexScrollContainer {
     threshold.setMainThreshold(
       instance.key,
       this.visibleScrollRect,
-      type === "inner"
+      type === "inner",
     );
   }
 
   private _updateDOMDataset(
     isAttachListener: boolean,
-    hasScrollListener: boolean
+    hasScrollListener: boolean,
   ): void {
     const datasetKey = this._listenerDatasetKey;
     const datasetValue = hasScrollListener.toString();
@@ -246,7 +246,7 @@ class DFlexScrollContainer {
         this.totalScrollRect,
         this.visibleScrollRect,
         axis,
-        checkHalf
+        checkHalf,
       );
 
     const hasOverflowX = checkOverflow("x");
@@ -278,7 +278,7 @@ class DFlexScrollContainer {
       scrollTop,
       scrollLeft,
       scrollHeight,
-      scrollWidth
+      scrollWidth,
     );
 
     // Calculate the visible portion of the container
@@ -288,7 +288,7 @@ class DFlexScrollContainer {
         scrollTop,
         scrollLeft,
         clientHeight,
-        clientWidth
+        clientWidth,
       );
     } else {
       const { left, top } = this._containerDOM.getBoundingClientRect();
@@ -297,7 +297,7 @@ class DFlexScrollContainer {
         top,
         left,
         clientHeight,
-        clientWidth
+        clientWidth,
       );
     }
   }
@@ -305,11 +305,11 @@ class DFlexScrollContainer {
   private _updateScrollPosition(
     scrollLeft: number,
     scrollTop: number,
-    withDOM: boolean
+    withDOM: boolean,
   ): boolean {
     const shouldUpdate = this.totalScrollRect.hasEqualPosition(
       scrollLeft,
-      scrollTop
+      scrollTop,
     );
 
     if (!shouldUpdate) {
@@ -330,7 +330,7 @@ class DFlexScrollContainer {
     this._updateScrollPosition(
       x === -1 ? this.totalScrollRect.left : x,
       y === -1 ? this.totalScrollRect.right : y,
-      true
+      true,
     );
 
     this._scrollEventCallback(this._SK);
@@ -369,7 +369,7 @@ class DFlexScrollContainer {
     if (__DEV__) {
       if (!this.hasOverflow[axis]) {
         throw new Error(
-          `Cannot call hasScrollableArea when there is no overflow in the ${axis} direction.`
+          `Cannot call hasScrollableArea when there is no overflow in the ${axis} direction.`,
         );
       }
     }
@@ -461,7 +461,7 @@ class DFlexScrollContainer {
 
   getElmViewportPosition(
     elmTopPos: number,
-    elmLeftPos: number
+    elmLeftPos: number,
   ): [number, number] {
     const { top: totalScrollTop, left: totalScrollLeft } = this.totalScrollRect;
 
@@ -478,7 +478,7 @@ class DFlexScrollContainer {
     if (absPos instanceof BoxRect) {
       const [viewportTop, viewportLeft] = this.getElmViewportPosition(
         absPos.top,
-        absPos.left
+        absPos.left,
       );
 
       const top = viewportTop;
@@ -496,20 +496,20 @@ class DFlexScrollContainer {
     if (__DEV__) {
       if (!instance) {
         throw new Error(
-          "isElmOutViewport: _thresholdInViewport is not initialized. Please call setInnerThreshold() method before using isElmOutViewport()."
+          "isElmOutViewport: _thresholdInViewport is not initialized. Please call setInnerThreshold() method before using isElmOutViewport().",
         );
       }
 
       if (!this.hasOverflow) {
         throw new Error(
-          "isElmOutViewport: Scrollable element does not have overflow."
+          "isElmOutViewport: Scrollable element does not have overflow.",
         );
       }
 
       if (this.hasOverflow.x && this.hasOverflow.y) {
         // eslint-disable-next-line no-console
         console.warn(
-          "isElmOutViewport: Scrollable element has overflow in both x and y directions.\nDFlex is not yet fully optimized to handle this scenario, and the results may be inaccurate."
+          "isElmOutViewport: Scrollable element has overflow in both x and y directions.\nDFlex is not yet fully optimized to handle this scenario, and the results may be inaccurate.",
         );
       }
     }
@@ -519,7 +519,7 @@ class DFlexScrollContainer {
     const isOutThreshold = threshold!.isOutThreshold(
       key,
       viewportPos,
-      this.hasOverflow.y ? "y" : "x"
+      this.hasOverflow.y ? "y" : "x",
     );
 
     const preservedBoxResult = threshold!.isOut[key];

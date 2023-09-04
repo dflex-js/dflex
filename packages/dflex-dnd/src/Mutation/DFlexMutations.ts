@@ -15,7 +15,7 @@ function hasMutationsInProgress(): boolean {
 
 function filterMutations(
   store: DFlexDnDStore,
-  mutations: MutationRecord[]
+  mutations: MutationRecord[],
 ): void {
   for (let i = 0; i < mutations.length; i += 1) {
     const mutation = mutations[i];
@@ -46,7 +46,7 @@ function filterMutations(
 function DOMmutationHandler(
   store: DFlexDnDStore,
   mutations: MutationRecord[],
-  observer: MutationObserver
+  observer: MutationObserver,
 ): void {
   try {
     isProcessingMutations = true;
@@ -91,15 +91,15 @@ function initMutationObserver(store: DFlexDnDStore, SK: string): void {
     new MutationObserver(
       (mutations: MutationRecord[], observer: MutationObserver) => {
         DOMmutationHandler(store, mutations, observer);
-      }
-    )
+      },
+    ),
   );
 }
 
 function addObserver(
   store: DFlexDnDStore,
   id: string,
-  DOMTarget: HTMLElement
+  DOMTarget: HTMLElement,
 ): void {
   if (!store.mutationObserverMap.has(id)) {
     initMutationObserver(store, id);
@@ -125,7 +125,7 @@ function disconnectObservers(store: DFlexDnDStore): void {
     if (__DEV__) {
       if (!observer) {
         throw new Error(
-          `disconnectObservers: unable to find observer for id: ${id}`
+          `disconnectObservers: unable to find observer for id: ${id}`,
         );
       }
     }
