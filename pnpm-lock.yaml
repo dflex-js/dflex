@@ -166,6 +166,9 @@ importers:
 
   packages/dflex-next-playground:
     dependencies:
+      '@dflex/dnd':
+        specifier: workspace:^3.9.4
+        version: link:../dflex-dnd
       '@types/node':
         specifier: ^20.5.9
         version: 20.5.9
@@ -196,6 +199,13 @@ importers:
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
+    devDependencies:
+      eslint:
+        specifier: ^8.48.0
+        version: 8.48.0
+      eslint-config-dflex-react:
+        specifier: workspace:*
+        version: link:../../scripts/eslint-config-dflex-react
 
   packages/dflex-store:
     devDependencies:
