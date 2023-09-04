@@ -109,52 +109,51 @@ jobs:
       - name: Run Test
         run: CI=true pnpm jest --coverage
 
-  install-build:
-    name: Build and upload artifacts
-    runs-on: ubuntu-latest
-    if: github.repository_owner == 'dflex-js' && github.event.pull_request.draft != true
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
+  # install-build:
+  #   name: Build and upload artifacts
+  #   runs-on: ubuntu-latest
+  #   if: github.repository_owner == 'dflex-js' && github.event.pull_request.draft != true
+  #   steps:
+  #     - name: Check out repository
+  #       uses: actions/checkout@v3
 
-      - name: Cache pnpm modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-
+  #     - name: Cache pnpm modules
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: ~/.pnpm-store
+  #         key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-
 
-      - uses: pnpm/action-setup@v2.4.0
-        with:
-          version: ^8.0.0
-          run_install: true
+  #     - uses: pnpm/action-setup@v2.4.0
+  #       with:
+  #         version: ^8.0.0
+  #         run_install: true
 
-      - name: Use latest version of Node.j
-        uses: actions/setup-node@v3
-        with:
-          node-version: "*"
-          cache: "pnpm"
+  #     - name: Use latest version of Node.j
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: "*"
+  #         cache: "pnpm"
 
-      - name: Build packages
-        run: "pnpm clean && pnpm -r emit && pnpm build --production --release --minify"
+  #     - name: Build packages
+  #       run: "pnpm clean && pnpm -r emit && pnpm build --production --release --minify"
 
-      - name: Build DnD React App
-        run: pnpm -F dflex-dnd-playground build --mode CI
+  #     - name: Build DnD React App
+  #       run: pnpm -F dflex-dnd-playground build --mode CI
 
-      - name: Upload Package Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: build
-          path: |
-            packages/**/dist
-            packages/**/types
-          if-no-files-found: error
+  #     - name: Upload Package Artifacts
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: build
+  #         path: |
+  #           packages/**/dist
+  #           packages/**/types
+  #         if-no-files-found: error
 
   e2e-same-container-vertical:
     name: One Container Vertically - Chrome
     runs-on: ubuntu-latest
-    needs: install-build
     timeout-minutes: 20
     if: github.repository_owner == 'dflex-js' && github.event.pull_request.draft != true
     steps:
@@ -180,11 +179,23 @@ jobs:
           node-version: "*"
           cache: "pnpm"
 
-      - name: Download Build Artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: build
-          path: ./packages
+      # - name: Download Build Artifacts
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: build
+      #     path: ./packages
+
+      # - name: Download Build Artifacts
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: build
+      #     path: ./packages
+
+      - name: Build packages
+        run: "pnpm clean && pnpm -r emit && pnpm build --production --release --minify"
+
+      - name: Build DnD React App
+        run: pnpm -F dflex-dnd-playground build --mode CI
 
       - name: Testing features for DnD with React APP - Chrome
         run: pnpm test-e2e-vertical:chrome
@@ -194,7 +205,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     if: github.repository_owner == 'dflex-js' && github.event.pull_request.draft != true
-    needs: install-build
+    # needs: install-build
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -218,11 +229,17 @@ jobs:
           node-version: "*"
           cache: "pnpm"
 
-      - name: Download Build Artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: build
-          path: ./packages
+      # - name: Download Build Artifacts
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: build
+      #     path: ./packages
+
+      - name: Build packages
+        run: "pnpm clean && pnpm -r emit && pnpm build --production --release --minify"
+
+      - name: Build DnD React App
+        run: pnpm -F dflex-dnd-playground build --mode CI
 
       - name: Testing features for DnD with React APP - Chrome
         run: pnpm test-e2e-multi:chrome
@@ -412,7 +429,6 @@ jobs:
         lint,
         unit-test,
         types,
-        install-build,
         e2e-same-container-vertical,
         e2e-multi-containers,
         e2e-mac,
@@ -445,11 +461,8 @@ jobs:
           node-version: "*"
           cache: "pnpm"
 
-      - name: Download Build Artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: build
-          path: ./packages
+      - name: Build packages for production
+        run: "pnpm clean && pnpm -r emit && pnpm build --production --release --minify"
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
