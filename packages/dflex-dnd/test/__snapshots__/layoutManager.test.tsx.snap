@@ -223,7 +223,7 @@ DFlexDnDStore {
       />
     </div>,
   },
-  "isComposing": false,
+  "isComposing": true,
   "isUpdating": true,
   "listeners": {
     "clear": [Function],
