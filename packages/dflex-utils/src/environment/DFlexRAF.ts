@@ -7,7 +7,7 @@ export type RAFFunction = (
   // eslint-disable-next-line no-unused-vars
   callback: AnimationFrameCallback,
   // eslint-disable-next-line no-unused-vars
-  cancelPrevFrame: boolean
+  cancelPrevFrame: boolean,
 ) => void;
 
 function DFlexCreateRAF(): [RAFFunction, RAFCleanup] {
@@ -22,7 +22,7 @@ function DFlexCreateRAF(): [RAFFunction, RAFCleanup] {
 
   function RAF(
     callback: AnimationFrameCallback,
-    cancelPrevFrame: boolean
+    cancelPrevFrame: boolean,
   ): void {
     if (cancelPrevFrame) {
       cleanup();

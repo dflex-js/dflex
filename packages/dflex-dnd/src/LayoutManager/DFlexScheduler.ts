@@ -17,7 +17,7 @@ function execTask(
   store: DFlexDnDStore,
   updateFn: UpdateFn | null,
   options: SchedulerOptions | null,
-  evt?: DFlexListenerEvents
+  evt?: DFlexListenerEvents,
 ) {
   if (options && options.onUpdate) {
     store.deferred.push(options.onUpdate);
@@ -35,7 +35,7 @@ function execTask(
         store.listeners.notify.bind(null, {
           type: "error",
           error,
-        })
+        }),
       );
     }
 
@@ -54,7 +54,7 @@ function scheduler(
   store: DFlexDnDStore,
   updateFn: UpdateFn | null,
   options: SchedulerOptions | null,
-  evt?: DFlexListenerEvents
+  evt?: DFlexListenerEvents,
 ) {
   if (store.isUpdating) {
     store.updatesQueue.push([updateFn, options, evt]);
@@ -91,7 +91,7 @@ type Scheduler = (
   // eslint-disable-next-line no-unused-vars
   options: SchedulerOptions | null,
   // eslint-disable-next-line no-unused-vars
-  evt?: DFlexListenerEvents
+  evt?: DFlexListenerEvents,
 ) => void;
 
 export type { Scheduler, SchedulerOptions, UpdateFn };

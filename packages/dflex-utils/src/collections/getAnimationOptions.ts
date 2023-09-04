@@ -1,7 +1,7 @@
 import type { AnimationOpts } from "../types";
 
 function getAnimationOptions(
-  animation?: Partial<AnimationOpts> | null
+  animation?: Partial<AnimationOpts> | null,
 ): Required<AnimationOpts> | null {
   const defaultAnimation: AnimationOpts = {
     easing: "ease-in",

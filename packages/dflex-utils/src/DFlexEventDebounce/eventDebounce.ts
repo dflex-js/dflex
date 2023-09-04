@@ -11,7 +11,7 @@ interface DebounceControl extends DebouncedListener {
 function DFlexEventDebounce(
   listener: DebouncedListener,
   immediate = false,
-  throttle = 200
+  throttle = 200,
 ): DebounceControl {
   const [timeout, cancelTimeout] = DFlexCreateTimeout(throttle);
   const [RAF, cancelRAF] = DFlexCreateRAF();

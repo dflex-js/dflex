@@ -156,7 +156,7 @@ class Generator {
     depth: number,
     id: string,
     restoredKeys: RestoreKey,
-    siblingsIndex: number
+    siblingsIndex: number,
   ): Keys & { siblingsIndex: number } {
     const { BK, PK } = restoredKeys;
 
@@ -167,7 +167,7 @@ class Generator {
       if (featureFlags.enableRegisterDebugger) {
         // eslint-disable-next-line no-console
         console.log(
-          `_insertLayer: resetting siblings count for the new layer starting with id: ${id}`
+          `_insertLayer: resetting siblings count for the new layer starting with id: ${id}`,
         );
       }
 
@@ -195,7 +195,7 @@ class Generator {
           // eslint-disable-next-line no-console
           console.log(
             `_insertLayer: new layer will be inserted at: ${depth} in the branch:`,
-            [...this._SKByBranch[BK]]
+            [...this._SKByBranch[BK]],
           );
         }
       }
@@ -217,7 +217,7 @@ class Generator {
   private _composeKeys(
     depth: number,
     id: string,
-    hasSiblingInSameLevel: boolean
+    hasSiblingInSameLevel: boolean,
   ): Keys & { siblingsIndex: number } {
     const parentDepth = depth + 1;
 
@@ -265,7 +265,7 @@ class Generator {
     // Generate new one.
     let PK = `${PREFIX_CONNECTOR_KEY}${combineKeys(
       depth + 1,
-      this._branchIndicator
+      this._branchIndicator,
     )}`;
 
     if (hasSiblingInSameLevel) {
@@ -297,7 +297,7 @@ class Generator {
       if (__DEV__) {
         if (!Array.isArray(preBranch)) {
           throw new Error(
-            `_composeKeys: Unable to find the previous branch using key: ${preBranchKey}`
+            `_composeKeys: Unable to find the previous branch using key: ${preBranchKey}`,
           );
         }
       }
@@ -317,7 +317,7 @@ class Generator {
         if (featureFlags.enableRegisterDebugger) {
           // eslint-disable-next-line no-console
           console.log(
-            "_composeKeys: Ignore siblings with the same parent since the shared parent is not registered."
+            "_composeKeys: Ignore siblings with the same parent since the shared parent is not registered.",
           );
         }
       }
@@ -330,19 +330,19 @@ class Generator {
       if (isNewBranch) {
         if (uniqueKeysDev.has(uniqueSK)) {
           throw new Error(
-            `SK: ${SK} with ${siblingsIndex} already exist.\n This combination supposed to be unique for each branch.`
+            `SK: ${SK} with ${siblingsIndex} already exist.\n This combination supposed to be unique for each branch.`,
           );
         }
 
         if (uniqueKeysDev.has(SK)) {
           throw new Error(
-            `SK: ${SK} already exist.\n This combination supposed to be unique for each branch.`
+            `SK: ${SK} already exist.\n This combination supposed to be unique for each branch.`,
           );
         }
 
         if (uniqueKeysDev.has(PK)) {
           throw new Error(
-            `PK: ${PK} already exist.\n This combination supposed to be unique for each branch.`
+            `PK: ${PK} already exist.\n This combination supposed to be unique for each branch.`,
           );
         }
 
@@ -359,19 +359,19 @@ class Generator {
 
         if (!equalKeysDev.has(uniqueSK)) {
           throw new Error(
-            `SK: ${SK} with ${siblingsIndex} doesn't exist.\n This combination supposed to be identical for the same branch.`
+            `SK: ${SK} with ${siblingsIndex} doesn't exist.\n This combination supposed to be identical for the same branch.`,
           );
         }
 
         if (!equalKeysDev.has(SK)) {
           throw new Error(
-            `SK: ${SK} doesn't exist.\n This combination supposed to be identical for the same branch.`
+            `SK: ${SK} doesn't exist.\n This combination supposed to be identical for the same branch.`,
           );
         }
 
         if (!equalKeysDev.has(PK)) {
           throw new Error(
-            `PK: ${PK} doesn't exist.\n This combination supposed to be identical for the same branch.`
+            `PK: ${PK} doesn't exist.\n This combination supposed to be identical for the same branch.`,
           );
         }
       } else {
@@ -396,7 +396,7 @@ class Generator {
     id: string,
     depth: number,
     keys: Keys,
-    siblingsIndex: number
+    siblingsIndex: number,
   ): Pointer {
     this._addElmSKToDepthCollection(keys.SK, depth);
 
@@ -423,7 +423,7 @@ class Generator {
     depth: number,
     hasSiblingInSameLevel: boolean,
     restoredKeys?: RestoreKey,
-    restoredKeysSiblingsIndex?: number
+    restoredKeysSiblingsIndex?: number,
   ): Pointer {
     const { CHK, SK, PK, BK, siblingsIndex } = restoredKeys
       ? this._insertLayer(depth, id, restoredKeys, restoredKeysSiblingsIndex!)
@@ -450,7 +450,7 @@ class Generator {
       Object.assign(this._siblings, { [SK]: siblings });
     } else if (__DEV__) {
       throw new Error(
-        `mutateSiblings: Siblings with key:${SK} is not registered.`
+        `mutateSiblings: Siblings with key:${SK} is not registered.`,
       );
     }
   }
@@ -485,7 +485,7 @@ class Generator {
         highestSKInAllBranches.add(lastElm);
       } else if (__DEV__) {
         throw new Error(
-          `getHighestSKInAllBranches: last element is empty: ${this._SKByBranch[BK]}`
+          `getHighestSKInAllBranches: last element is empty: ${this._SKByBranch[BK]}`,
         );
       }
     });
@@ -507,21 +507,21 @@ class Generator {
     if (__DEV__) {
       if (!Array.isArray(this._SKByBranch[BK])) {
         throw new Error(
-          `removeIDFromBranch: Branch with SK ${BK} doesn't exist.`
+          `removeIDFromBranch: Branch with SK ${BK} doesn't exist.`,
         );
       }
     }
 
     if (this._SKByBranch[BK].find((e) => e && e.id === id)) {
       this._SKByBranch[BK] = this._SKByBranch[BK].map((v) =>
-        v ? (v.id !== id ? v : null) : null
+        v ? (v.id !== id ? v : null) : null,
       );
     }
   }
 
   private _removeSKFromBranch(SK: string, BK: string): void {
     this._SKByBranch[BK] = this._SKByBranch[BK].map((v) =>
-      v ? (v.SK !== SK ? v : null) : null
+      v ? (v.SK !== SK ? v : null) : null,
     );
   }
 
@@ -547,7 +547,7 @@ class Generator {
     SK: string,
     BK: string,
     depth: number,
-    cb?: ((elmID: string) => void) | null
+    cb?: ((elmID: string) => void) | null,
   ): void {
     if (!this._hasSK(SK)) {
       return;

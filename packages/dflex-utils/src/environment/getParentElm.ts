@@ -3,7 +3,7 @@ const MAX_LOOP_ELEMENTS_TO_WARN = 49;
 function getParentElm(
   baseElement: HTMLElement,
   // eslint-disable-next-line no-unused-vars
-  cb: (arg: HTMLElement) => boolean
+  cb: (arg: HTMLElement) => boolean,
 ): null | HTMLElement {
   let iterationCounter = 0;
 
@@ -18,7 +18,7 @@ function getParentElm(
           throw new Error(
             `getParentElm: DFlex detected performance issues while iterating to find the nearest parent element. ` +
               `The element with ID ${baseElement.id} may have an excessive number of ancestors. ` +
-              `Iteration count: ${iterationCounter}.`
+              `Iteration count: ${iterationCounter}.`,
           );
         }
       }

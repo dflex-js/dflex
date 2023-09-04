@@ -3,7 +3,7 @@ import { BoxRect } from "../Box";
 function getElmBoxRect(
   DOM: HTMLElement,
   scrollLeft: number,
-  scrollTop: number
+  scrollTop: number,
 ): BoxRect {
   const { left, top, right, bottom, height, width } =
     DOM.getBoundingClientRect();

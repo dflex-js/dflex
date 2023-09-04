@@ -19,7 +19,7 @@ function DFlexScrollTransition(
   duration: number | null,
   accelerator: Accelerator,
   onComplete: () => void,
-  onAbort: () => void
+  onAbort: () => void,
 ): ScrollTransitionAbort {
   let startScroll: number;
   let distance: number;

@@ -78,13 +78,13 @@ export interface DFlexElementInput {
 function assertGridBoundaries(
   id: string,
   DOMGrid: PointNum,
-  maxContainerGridBoundaries: PointNum
+  maxContainerGridBoundaries: PointNum,
 ) {
   if (DOMGrid.x < 0 || DOMGrid.y < 0) {
     throw new Error(
       `assertGridBoundaries: DOMGrid for ${id} element can't be below zero. Found ${JSON.stringify(
-        DOMGrid
-      )}`
+        DOMGrid,
+      )}`,
     );
   }
 
@@ -94,8 +94,8 @@ function assertGridBoundaries(
   ) {
     throw new Error(
       `assertGridBoundaries: DOMGrid for ${id} element can't be above grid container boundaries. Found ${JSON.stringify(
-        DOMGrid
-      )} for container ${JSON.stringify(maxContainerGridBoundaries)}.`
+        DOMGrid,
+      )} for container ${JSON.stringify(maxContainerGridBoundaries)}.`,
     );
   }
 }
@@ -155,7 +155,7 @@ function addTransition(
   DOM: HTMLElement,
   delay: number,
   duration: number,
-  easing: CubicBezier
+  easing: CubicBezier,
 ): void {
   if (__DEV__) {
     try {
@@ -290,7 +290,7 @@ class DFlexCoreElement extends DFlexBaseElement {
   updateConfig(
     readonly: boolean,
     animation: AnimationOpts,
-    CSSTransform: CSS | null
+    CSSTransform: CSS | null,
   ): void {
     this.readonly = readonly;
     this._animation = animation;
@@ -328,7 +328,7 @@ class DFlexCoreElement extends DFlexBaseElement {
         elementTop,
         elementLeft,
         this.rect.height,
-        this.rect.width
+        this.rect.width,
       );
 
       this.translate.setAxes(translateX, translateY);
@@ -374,7 +374,7 @@ class DFlexCoreElement extends DFlexBaseElement {
   private _transform(
     DOM: HTMLElement,
     duration: number | null,
-    onComplete: () => void = noop
+    onComplete: () => void = noop,
   ): void {
     if (!this._isVisible) {
       this._hasPendingTransform = true;
@@ -422,13 +422,13 @@ class DFlexCoreElement extends DFlexBaseElement {
       if (__DEV__) {
         if (!this._animation) {
           throw new Error(
-            "Cannot pass duration without animation being defined."
+            "Cannot pass duration without animation being defined.",
           );
         }
 
         if (duration <= 0) {
           throw new Error(
-            `Duration must be a positive value. Received: ${duration}`
+            `Duration must be a positive value. Received: ${duration}`,
           );
         }
       }
@@ -455,14 +455,14 @@ class DFlexCoreElement extends DFlexBaseElement {
       if (newIndex < 0 || newIndex > siblings.length - 1) {
         throw new Error(
           `assignNewIndex: The new index ${newIndex} is outside the siblings' bounds ${JSON.stringify(
-            siblings
-          )}.`
+            siblings,
+          )}.`,
         );
       }
 
       if (siblings[newIndex].length > 0) {
         throw new Error(
-          `assignNewIndex: The new index ${newIndex} should occupy an empty element, but found ${siblings[newIndex]}.`
+          `assignNewIndex: The new index ${newIndex} should occupy an empty element, but found ${siblings[newIndex]}.`,
         );
       }
     }
@@ -473,7 +473,7 @@ class DFlexCoreElement extends DFlexBaseElement {
   private _pushToTranslateHistory(
     axes: Axes,
     cycleID: string,
-    numberOfPassedElm: number
+    numberOfPassedElm: number,
   ) {
     const translate = this.translate.getInstance();
 
@@ -497,7 +497,7 @@ class DFlexCoreElement extends DFlexBaseElement {
   private _transformOrPend(
     DOM: HTMLElement,
     enforceTransform: boolean,
-    transformDuration: number | null
+    transformDuration: number | null,
   ): void {
     if (enforceTransform) {
       if (!this._isVisible && this._hasPendingTransform) {
@@ -524,7 +524,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     DOM: HTMLElement,
     elmTransition: AxesPoint,
     enforceTransform: boolean,
-    indexIncrement: number
+    indexIncrement: number,
   ): [number, number] {
     let calculatedDuration: number | null = null;
 
@@ -548,7 +548,7 @@ class DFlexCoreElement extends DFlexBaseElement {
      */
     this.rect.setAxes(
       this._initialPosition.x + this.translate.x,
-      this._initialPosition.y + this.translate.y
+      this._initialPosition.y + this.translate.y,
     );
 
     this._transformOrPend(DOM, enforceTransform, calculatedDuration);
@@ -565,7 +565,7 @@ class DFlexCoreElement extends DFlexBaseElement {
   private _updateDOMGridOnAxes(
     direction: Direction,
     numberOfPassedElm: number,
-    maxContainerGridBoundaries: PointNum
+    maxContainerGridBoundaries: PointNum,
   ) {
     if (direction === -1) {
       for (let i = 0; i < numberOfPassedElm; i += 1) {
@@ -607,7 +607,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     elmTransition: AxesPoint,
     numberOfPassedElm: number,
     maxContainerGridBoundaries: PointNum,
-    cycleID: string
+    cycleID: string,
   ): void {
     /**
      * `mainAxisDirection` decides the direction of the element, negative or positive.
@@ -633,7 +633,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       this._updateDOMGridOnAxes(
         direction[_axis] as Direction,
         numberOfPassedElm,
-        maxContainerGridBoundaries
+        maxContainerGridBoundaries,
       );
     });
 
@@ -649,7 +649,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       DOM,
       elmTransition,
       false,
-      indexIncrement
+      indexIncrement,
     );
 
     siblings[oldIndex] = "";
@@ -683,7 +683,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     if (__DEV__) {
       if (!Array.isArray(this._translateHistory.get(cycleID))) {
         throw new Error(
-          `rollBackPosition: cycleID: ${cycleID} doesn't have a valid array history`
+          `rollBackPosition: cycleID: ${cycleID} doesn't have a valid array history`,
         );
       }
     }
@@ -746,7 +746,7 @@ class DFlexCoreElement extends DFlexBaseElement {
   refreshIndicators(
     DOM: HTMLElement,
     scrollTop: number,
-    scrollLeft: number
+    scrollLeft: number,
   ): void {
     this._translateHistory = undefined;
 

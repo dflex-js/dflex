@@ -24,7 +24,7 @@ const hasScrollbar = (
   axis: Axis,
   overflow: Overflow,
   DOM: HTMLElement,
-  hasOverflow: PointBool
+  hasOverflow: PointBool,
 ) => {
   if (OVERFLOW_REGEX.test(overflow)) {
     const has = hasScrollableContent(DOM, axis);
@@ -42,7 +42,7 @@ const hasScrollbar = (
 const resolveScrollProps = (
   parentDOM: HTMLElement,
   baseELmPosition: string,
-  res: ResolveScrollPropsInput
+  res: ResolveScrollPropsInput,
 ) => {
   const overflowX = getElmOverflow(parentDOM, "overflow-x");
   const overflowY = getElmOverflow(parentDOM, "overflow-y");
@@ -62,7 +62,7 @@ const resolveScrollProps = (
 };
 
 function getScrollContainerProperties(
-  baseDOMElm: HTMLElement
+  baseDOMElm: HTMLElement,
 ): GetScrollContainerRes {
   const baseELmPosition = getElmPos(baseDOMElm);
 
@@ -79,7 +79,7 @@ function getScrollContainerProperties(
   const scrollContainerDOM = getParentElm(
     baseDOMElm,
     (parentDOM: HTMLElement) =>
-      resolveScrollProps(parentDOM, baseELmPosition, res)
+      resolveScrollProps(parentDOM, baseELmPosition, res),
   );
 
   if (!scrollContainerDOM || baseELmPosition === "fixed") {

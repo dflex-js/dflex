@@ -54,7 +54,7 @@ context("Moving Elements Strict - Dragged is bigger - No Release", () => {
     cy.get("#proj").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, -171.188)"
+      "matrix(1, 0, 0, 1, 0, -171.188)",
     );
 
     cy.get("#gym").should("have.css", "transform", "none");
@@ -79,13 +79,13 @@ context("Moving Elements Strict - Dragged is bigger - No Release", () => {
     cy.get("#proj").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, -171.188)"
+      "matrix(1, 0, 0, 1, 0, -171.188)",
     );
 
     cy.get("#gym").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, -171.188)"
+      "matrix(1, 0, 0, 1, 0, -171.188)",
     );
   });
 
@@ -99,19 +99,19 @@ context("Moving Elements Strict - Dragged is bigger - No Release", () => {
     cy.get("#org").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, 286.375)"
+      "matrix(1, 0, 0, 1, 0, 286.375)",
     );
 
     cy.get("#proj").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, -171.188)"
+      "matrix(1, 0, 0, 1, 0, -171.188)",
     );
 
     cy.get("#gym").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, -171.188)"
+      "matrix(1, 0, 0, 1, 0, -171.188)",
     );
   });
 
@@ -147,7 +147,7 @@ context("Moving Elements Strict - Dragged is bigger - No Release", () => {
     cy.get("#proj").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, -171.188)"
+      "matrix(1, 0, 0, 1, 0, -171.188)",
     );
 
     cy.get("#gym").should("have.css", "transform", "matrix(1, 0, 0, 1, 0, 0)");
@@ -193,13 +193,13 @@ context("Moving Elements Strict - Dragged is bigger - No Release", () => {
     cy.get("#mtg").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, 171.188)"
+      "matrix(1, 0, 0, 1, 0, 171.188)",
     );
 
     cy.get("#org").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, -115.188)"
+      "matrix(1, 0, 0, 1, 0, -115.188)",
     );
 
     cy.get("#proj").should("have.css", "transform", "matrix(1, 0, 0, 1, 0, 0)");

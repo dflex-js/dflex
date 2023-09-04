@@ -27,7 +27,7 @@ class AbstractDFlexCycle {
     id: string,
     SK: string,
     cycleID: string,
-    hasScroll: boolean
+    hasScroll: boolean,
   ) {
     this.index = index;
     this.SK = SK;
@@ -59,7 +59,7 @@ class DFlexCycle {
     id: string,
     SK: string,
     cycleID: string,
-    hasScroll: boolean
+    hasScroll: boolean,
   ) {
     this._migrations = [
       new AbstractDFlexCycle(index, id, SK, cycleID, hasScroll),
@@ -159,10 +159,10 @@ class DFlexCycle {
     id: string,
     SK: string,
     cycleID: string,
-    hasScroll: boolean
+    hasScroll: boolean,
   ): void {
     this._migrations.push(
-      new AbstractDFlexCycle(index, id, SK, cycleID, hasScroll)
+      new AbstractDFlexCycle(index, id, SK, cycleID, hasScroll),
     );
     this.containerKeys.add(SK);
   }

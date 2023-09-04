@@ -24,7 +24,7 @@ class TaskQueue {
   private _addFuncToQueueRecord(
     fn: () => unknown,
     queueKey: string,
-    elmKey?: string
+    elmKey?: string,
   ) {
     this._queue[queueKey].push(fn);
 
@@ -44,7 +44,7 @@ class TaskQueue {
     if (__DEV__) {
       if (!this._elmInQueue.has) {
         throw new Error(
-          `The element with key ${elmKey} does not exist in the queue.`
+          `The element with key ${elmKey} does not exist in the queue.`,
         );
       }
     }
@@ -55,7 +55,7 @@ class TaskQueue {
     lastElmFn: () => unknown,
     beforeLastFn: () => unknown,
     queueKey: QKey,
-    elmKey?: string
+    elmKey?: string,
   ): void {
     this._intiQueueRecord(queueKey);
 

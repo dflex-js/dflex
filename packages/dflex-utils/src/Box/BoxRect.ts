@@ -43,7 +43,7 @@ class BoxRect extends BoxNum {
     top: number,
     left: number,
     height: number,
-    width: number
+    width: number,
   ): void {
     this.top = top;
     this.left = left;

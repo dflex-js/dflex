@@ -63,7 +63,7 @@ context(
       cy.get("#c2-5").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 226, -24)"
+        "matrix(1, 0, 0, 1, 226, -24)",
       );
     });
 
@@ -108,7 +108,7 @@ context(
       cy.get("#c2-5").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 0)"
+        "matrix(1, 0, 0, 1, 0, 0)",
       );
     });
 
@@ -119,5 +119,5 @@ context(
         expect(newElmBox).to.deep.equal(elmBox);
       });
     });
-  }
+  },
 );

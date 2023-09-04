@@ -30,7 +30,7 @@ function calculateScrollThrottleMS(width: number, height: number): number {
   const scrollThrottleMS: number = Math.round(
     width > height
       ? width / SCROLL_THROTTLE_FACTOR
-      : height / SCROLL_THROTTLE_FACTOR
+      : height / SCROLL_THROTTLE_FACTOR,
   );
 
   return scrollThrottleMS;
@@ -101,7 +101,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
     draggedDirV: Direction,
     directionChangedH: boolean,
     directionChangedV: boolean,
-    SK: string
+    SK: string,
   ): void {
     const scroll = store.scrolls.get(SK)!;
 
@@ -144,7 +144,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
           console.warn(
             "Scroll is initially outside the threshold, but the desired direction is inside. Scroll: ",
             preservedBoxResult,
-            { draggedDirV, draggedDirH }
+            { draggedDirV, draggedDirH },
           );
         }
       }
@@ -168,7 +168,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
         console.log(
           `Out of the scroll threshold (${axis}).`,
           preservedBoxResult,
-          { draggedDirV, draggedDirH }
+          { draggedDirV, draggedDirH },
         );
       }
     }
@@ -186,7 +186,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
             "Scrolling should not occur if there is no scrollable area.\n" +
               "The `DFlexScrollTransition` function calculates the distance to the end of the scroll, " +
               "and this error indicates an incorrect distance calculation.\n" +
-              "Please ensure that there is a valid scrollable area before attempting to scroll."
+              "Please ensure that there is a valid scrollable area before attempting to scroll.",
           );
         }
       }
@@ -232,7 +232,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
       null,
       DFlexEaseInOutCubic,
       onComplete,
-      __DEV__ ? onAbort : onComplete
+      __DEV__ ? onAbort : onComplete,
     );
   }
 
@@ -261,7 +261,7 @@ class DFlexScrollableElement extends DFlexPositionUpdater {
         draggedDirV,
         directionChangedH,
         directionChangedV,
-        SK
+        SK,
       );
     }
 

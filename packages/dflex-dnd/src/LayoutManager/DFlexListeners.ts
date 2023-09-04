@@ -57,7 +57,7 @@ type CleanupFunction = () => void;
 function subscribeLayoutState(
   listenersMap: ListenersMap,
   listener: ListenerFunction,
-  type: ListenerTypes
+  type: ListenerTypes,
 ): CleanupFunction {
   if (!listenersMap.has(type)) {
     listenersMap.set(type, new Set());
@@ -78,7 +78,7 @@ function subscribeLayoutState(
 
 function notifyLayoutState(
   listenersMap: ListenersMap,
-  event: DFlexListenerEvents
+  event: DFlexListenerEvents,
 ): void {
   if (!listenersMap.has(event.type)) {
     return;
@@ -95,7 +95,7 @@ function clear(listeners: ListenersMap): void {
 function initDFlexListeners(): {
   subscribe: (
     listener: ListenerFunction,
-    type: ListenerTypes
+    type: ListenerTypes,
   ) => CleanupFunction;
   notify: (event: DFlexListenerEvents) => void;
   clear: () => void;

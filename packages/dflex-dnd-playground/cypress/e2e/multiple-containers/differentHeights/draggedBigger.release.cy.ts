@@ -75,7 +75,7 @@ context(
         cy.get("#c1-1").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 226, 0)"
+          "matrix(1, 0, 0, 1, 226, 0)",
         );
       });
 
@@ -83,31 +83,31 @@ context(
         cy.get("#c2-1").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 92)"
+          "matrix(1, 0, 0, 1, 0, 92)",
         );
 
         cy.get("#c2-2").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 92)"
+          "matrix(1, 0, 0, 1, 0, 92)",
         );
 
         cy.get("#c2-3").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 92)"
+          "matrix(1, 0, 0, 1, 0, 92)",
         );
 
         cy.get("#c2-4").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 92)"
+          "matrix(1, 0, 0, 1, 0, 92)",
         );
 
         cy.get("#c2-5").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 92)"
+          "matrix(1, 0, 0, 1, 0, 92)",
         );
       });
     });
@@ -133,31 +133,31 @@ context(
         cy.get("#c2-1").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 0)"
+          "matrix(1, 0, 0, 1, 0, 0)",
         );
 
         cy.get("#c2-2").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 0)"
+          "matrix(1, 0, 0, 1, 0, 0)",
         );
 
         cy.get("#c2-3").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 0)"
+          "matrix(1, 0, 0, 1, 0, 0)",
         );
 
         cy.get("#c2-4").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 0)"
+          "matrix(1, 0, 0, 1, 0, 0)",
         );
 
         cy.get("#c2-5").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 0)"
+          "matrix(1, 0, 0, 1, 0, 0)",
         );
       });
 
@@ -189,31 +189,31 @@ context(
         cy.get("#c2-1").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 0)"
+          "matrix(1, 0, 0, 1, 0, 0)",
         );
 
         cy.get("#c2-2").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 0)"
+          "matrix(1, 0, 0, 1, 0, 0)",
         );
 
         cy.get("#c2-3").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 0)"
+          "matrix(1, 0, 0, 1, 0, 0)",
         );
 
         cy.get("#c2-4").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 0)"
+          "matrix(1, 0, 0, 1, 0, 0)",
         );
 
         cy.get("#c2-5").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 92)"
+          "matrix(1, 0, 0, 1, 0, 92)",
         );
       });
 
@@ -241,31 +241,31 @@ context(
         cy.get("#c2-1").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 0)"
+          "matrix(1, 0, 0, 1, 0, 0)",
         );
 
         cy.get("#c2-2").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 0)"
+          "matrix(1, 0, 0, 1, 0, 0)",
         );
 
         cy.get("#c2-3").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 0)"
+          "matrix(1, 0, 0, 1, 0, 0)",
         );
 
         cy.get("#c2-4").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 0)"
+          "matrix(1, 0, 0, 1, 0, 0)",
         );
 
         cy.get("#c2-5").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 0)"
+          "matrix(1, 0, 0, 1, 0, 0)",
         );
       });
 
@@ -273,7 +273,7 @@ context(
         cy.get("#c1-1").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 226, 310)"
+          "matrix(1, 0, 0, 1, 226, 310)",
         );
       });
     });
@@ -308,31 +308,31 @@ context(
         cy.get("#c2-2").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, -62)"
+          "matrix(1, 0, 0, 1, 0, -62)",
         );
 
         cy.get("#c2-3").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, -62)"
+          "matrix(1, 0, 0, 1, 0, -62)",
         );
 
         cy.get("#c2-4").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, -62)"
+          "matrix(1, 0, 0, 1, 0, -62)",
         );
 
         cy.get("#c2-5").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, -62)"
+          "matrix(1, 0, 0, 1, 0, -62)",
         );
 
         cy.get("#c1-1").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 226, 248)"
+          "matrix(1, 0, 0, 1, 226, 248)",
         );
       });
 
@@ -397,31 +397,31 @@ context(
         cy.get("#c2-1").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 112)"
+          "matrix(1, 0, 0, 1, 0, 112)",
         );
 
         cy.get("#c2-2").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 112)"
+          "matrix(1, 0, 0, 1, 0, 112)",
         );
 
         cy.get("#c2-3").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 112)"
+          "matrix(1, 0, 0, 1, 0, 112)",
         );
 
         cy.get("#c2-4").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 112)"
+          "matrix(1, 0, 0, 1, 0, 112)",
         );
 
         cy.get("#c2-5").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 112)"
+          "matrix(1, 0, 0, 1, 0, 112)",
         );
       });
 
@@ -451,31 +451,31 @@ context(
         cy.get("#c2-1").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 0)"
+          "matrix(1, 0, 0, 1, 0, 0)",
         );
 
         cy.get("#c2-2").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 0)"
+          "matrix(1, 0, 0, 1, 0, 0)",
         );
 
         cy.get("#c2-3").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 0)"
+          "matrix(1, 0, 0, 1, 0, 0)",
         );
 
         cy.get("#c2-4").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 0)"
+          "matrix(1, 0, 0, 1, 0, 0)",
         );
 
         cy.get("#c2-5").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 0, 0)"
+          "matrix(1, 0, 0, 1, 0, 0)",
         );
       });
 
@@ -483,15 +483,15 @@ context(
         cy.get("#c1-1").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, 226, 422)"
+          "matrix(1, 0, 0, 1, 226, 422)",
         );
 
         cy.get("#c3-1").should(
           "have.css",
           "transform",
-          "matrix(1, 0, 0, 1, -226, 310)"
+          "matrix(1, 0, 0, 1, -226, 310)",
         );
       });
     });
-  }
+  },
 );

@@ -6,7 +6,7 @@ class DFlexElement extends DFlexCoreNode {
   static getDistance(
     currentPosition: AxesPoint,
     elm: DFlexElement,
-    axis: Axis
+    axis: Axis,
   ) {
     let diff = currentPosition[axis] - elm.rect[axis === "x" ? "left" : "top"];
 
@@ -18,7 +18,7 @@ class DFlexElement extends DFlexCoreNode {
   static getDisplacement(
     currentPosition: AxesPoint,
     elm: DFlexElement,
-    axis: Axis
+    axis: Axis,
   ) {
     const diff = axis === "x" ? elm.rect.right : elm.rect.bottom;
 

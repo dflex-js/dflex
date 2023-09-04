@@ -75,7 +75,7 @@ test.describe.serial("Dragged is out position vertically", async () => {
               expect(elm09).toHaveCSS("transform", "none"),
               expect(elm11).toHaveCSS(
                 "transform",
-                "matrix(1, 0, 0, 1, 0, -58)"
+                "matrix(1, 0, 0, 1, 0, -58)",
               ),
               expect(elm12).toHaveCSS("transform", "none"),
             ]);
@@ -100,7 +100,7 @@ test.describe.serial("Dragged is out position vertically", async () => {
               expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 58)"),
               expect(elm11).toHaveCSS(
                 "transform",
-                "matrix(1, 0, 0, 1, 0, -58)"
+                "matrix(1, 0, 0, 1, 0, -58)",
               ),
             ]);
           });
@@ -153,11 +153,11 @@ test.describe.serial("Dragged is out position vertically", async () => {
               expect(elm09).toHaveCSS("transform", "none"),
               expect(elm11).toHaveCSS(
                 "transform",
-                "matrix(1, 0, 0, 1, 0, -58)"
+                "matrix(1, 0, 0, 1, 0, -58)",
               ),
               expect(elm12).toHaveCSS(
                 "transform",
-                "matrix(1, 0, 0, 1, 0, -58)"
+                "matrix(1, 0, 0, 1, 0, -58)",
               ),
             ]);
           });
@@ -171,11 +171,11 @@ test.describe.serial("Dragged is out position vertically", async () => {
               expect(elm09).toHaveCSS("transform", "none"),
               expect(elm11).toHaveCSS(
                 "transform",
-                "matrix(1, 0, 0, 1, 0, -58)"
+                "matrix(1, 0, 0, 1, 0, -58)",
               ),
               expect(elm12).toHaveCSS(
                 "transform",
-                "matrix(1, 0, 0, 1, 0, -58)"
+                "matrix(1, 0, 0, 1, 0, -58)",
               ),
             ]);
           });
@@ -195,11 +195,11 @@ test.describe.serial("Dragged is out position vertically", async () => {
             await Promise.all([
               expect(elm12).toHaveCSS(
                 "transform",
-                "matrix(1, 0, 0, 1, 0, -58)"
+                "matrix(1, 0, 0, 1, 0, -58)",
               ),
               expect(elm11).toHaveCSS(
                 "transform",
-                "matrix(1, 0, 0, 1, 0, -58)"
+                "matrix(1, 0, 0, 1, 0, -58)",
               ),
             ]);
           });
@@ -218,7 +218,7 @@ test.describe.serial("Dragged is out position vertically", async () => {
               expect(elm10).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 58)"),
               expect(elm12).toHaveCSS(
                 "transform",
-                "matrix(1, 0, 0, 1, 0, -116)"
+                "matrix(1, 0, 0, 1, 0, -116)",
               ),
             ]);
           });
@@ -235,15 +235,15 @@ test.describe.serial("Dragged is out position vertically", async () => {
               expect(elm09).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
               expect(elm10).toHaveCSS(
                 "transform",
-                "matrix(1, 0, 0, 1, 0, 116)"
+                "matrix(1, 0, 0, 1, 0, 116)",
               ),
               expect(elm11).toHaveCSS(
                 "transform",
-                "matrix(1, 0, 0, 1, 0, -58)"
+                "matrix(1, 0, 0, 1, 0, -58)",
               ),
               expect(elm12).toHaveCSS(
                 "transform",
-                "matrix(1, 0, 0, 1, 0, -58)"
+                "matrix(1, 0, 0, 1, 0, -58)",
               ),
             ]);
           });

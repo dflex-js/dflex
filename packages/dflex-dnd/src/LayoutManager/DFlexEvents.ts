@@ -78,28 +78,28 @@ function dispatchDFlexEvent(
   dispatcher: HTMLElement,
   dispatchedSet: DispatchedSet,
   evt: EvtDrag,
-  payload: PayloadDraggedEvent
+  payload: PayloadDraggedEvent,
 ): void;
 
 function dispatchDFlexEvent(
   dispatcher: HTMLElement,
   dispatchedSet: DispatchedSet,
   evt: EvtInteractivity,
-  payload: PayloadInteractivityEvent
+  payload: PayloadInteractivityEvent,
 ): void;
 
 function dispatchDFlexEvent(
   dispatcher: HTMLElement,
   dispatchedSet: DispatchedSet,
   evt: EvtSiblings,
-  payload: PayloadSiblingsEvent
+  payload: PayloadSiblingsEvent,
 ): void;
 
 function dispatchDFlexEvent(
   dispatcher: HTMLElement,
   dispatchedSet: DispatchedSet,
   evt: DFlexEventsTypes,
-  payload: DFlexEventPayload
+  payload: DFlexEventPayload,
 ): void {
   // Throttle the dispatched event
   if (dispatchedSet.has(evt)) {
@@ -123,12 +123,12 @@ type DispatchEvtDrag = (evt: EvtDrag, payload: PayloadDraggedEvent) => void;
 
 type DispatchEvtInteractivity = (
   evt: EvtInteractivity,
-  payload: PayloadInteractivityEvent
+  payload: PayloadInteractivityEvent,
 ) => void;
 
 type DispatchEvtSiblings = (
   evt: EvtSiblings,
-  payload: PayloadSiblingsEvent
+  payload: PayloadSiblingsEvent,
 ) => void;
 
 type DispatchEvt = (evt: DFlexEventsTypes, payload: DFlexEventPayload) => void;

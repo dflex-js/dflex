@@ -38,7 +38,7 @@ const MultiLists = () => {
               </DFlexDnDComponent>
             ))}
           </ul>
-        )
+        ),
       )}
     </div>
   );

@@ -19,7 +19,7 @@ class DnD extends Mechanism {
   constructor(
     id: string,
     initCoordinates: AxesPoint,
-    opts: DFlexDnDOpts = defaultOpts
+    opts: DFlexDnDOpts = defaultOpts,
   ) {
     if (__DEV__) {
       if (!store.registry.has(id)) {
@@ -32,7 +32,7 @@ class DnD extends Mechanism {
     const draggable = new DraggableInteractive(
       id,
       initCoordinates,
-      options as FinalDndOpts
+      options as FinalDndOpts,
     );
 
     super(draggable);

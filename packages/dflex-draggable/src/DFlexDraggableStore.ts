@@ -37,7 +37,7 @@ class DFlexDraggableStore extends DFlexBaseStore {
         animation: getAnimationOptions(),
         CSSTransform: null,
       },
-      this._initBranch
+      this._initBranch,
     );
   }
 }

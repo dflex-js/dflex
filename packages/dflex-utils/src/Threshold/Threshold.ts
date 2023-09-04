@@ -39,7 +39,7 @@ class DFlexThreshold {
   private _createThreshold(
     key: string,
     box: AbstractBox,
-    isInner: boolean
+    isInner: boolean,
   ): void {
     if (__DEV__) {
       if (this.thresholds[key] || this.isOut[key]) {
@@ -120,7 +120,7 @@ class DFlexThreshold {
     insertionLayerKey: string,
     childDepth: number,
     containerRect: AbstractBox,
-    unifiedContainerDimensions: Dimensions
+    unifiedContainerDimensions: Dimensions,
   ): void {
     // Regular threshold.
     this._createThreshold(SK, containerRect, false);
@@ -137,7 +137,7 @@ class DFlexThreshold {
         right: left + width,
         bottom: top + height,
       },
-      false
+      false,
     );
 
     // Accumulated depth threshold. Accumulation based on insertion layer.

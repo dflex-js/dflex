@@ -34,7 +34,7 @@ context("Elements can't be dragged outside the list", () => {
     cy.get("#id-9").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, -114)"
+      "matrix(1, 0, 0, 1, 0, -114)",
     );
   });
 
@@ -53,7 +53,7 @@ context("Elements can't be dragged outside the list", () => {
     cy.get("#id-9").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 0, 496)"
+      "matrix(1, 0, 0, 1, 0, 496)",
     );
   });
 
@@ -72,7 +72,7 @@ context("Elements can't be dragged outside the list", () => {
     cy.get("#id-9").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, -450, 496)"
+      "matrix(1, 0, 0, 1, -450, 496)",
     );
   });
 
@@ -91,7 +91,7 @@ context("Elements can't be dragged outside the list", () => {
     cy.get("#id-9").should(
       "have.css",
       "transform",
-      "matrix(1, 0, 0, 1, 380, 496)"
+      "matrix(1, 0, 0, 1, 380, 496)",
     );
   });
 

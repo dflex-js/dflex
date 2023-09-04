@@ -19,7 +19,7 @@ function assertElementPosition(DOM: HTMLElement, rect: AbstractBox): void {
       didThrowError = true;
 
       throw new Error(
-        `Element position assertion failed. Expected: ${DOMRect[k]} found: ${rect[k]}`
+        `Element position assertion failed. Expected: ${DOMRect[k]} found: ${rect[k]}`,
       );
     }
   });

@@ -248,7 +248,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
       // ├───id-00  (order:{parent: 1, self: 0 }) ||  (keys: {CHK: null,PK: "1-1",SK: "0-1"})
       pointerChild3D0 = domGen.register("id-00", 0, false);
       expect(pointerChild3D0.order.parent).not.toBe(
-        pointerChild0D0.order.parent
+        pointerChild0D0.order.parent,
       );
       expect(pointerChild3D0).toMatchInlineSnapshot(`
         {
@@ -307,7 +307,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
 
       domGen.mutateSiblings(pointerChild2D0.keys.SK, []);
       const updatedSiblings = domGen.getElmSiblingsByKey(
-        pointerChild2D0.keys.SK
+        pointerChild2D0.keys.SK,
       );
       expect(updatedSiblings).toStrictEqual([]);
     });

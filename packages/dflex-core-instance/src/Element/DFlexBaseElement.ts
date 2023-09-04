@@ -34,7 +34,7 @@ class DFlexBaseElement {
   setAttribute(
     DOM: HTMLElement,
     key: AllowedAttributes,
-    value: string | number
+    value: string | number,
   ): void {
     if (key === "INDEX") {
       DOM.setAttribute(DFLEX_ATTRIBUTES[key], `${value}`);

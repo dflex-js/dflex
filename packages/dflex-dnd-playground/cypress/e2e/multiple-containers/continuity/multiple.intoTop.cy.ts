@@ -130,7 +130,7 @@ context(
       cy.get("#c1-1").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, 0, 224)"
+        "matrix(1, 0, 0, 1, 0, 224)",
       );
     });
 
@@ -138,14 +138,14 @@ context(
       cy.get("#c3-1").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, -452, 112)"
+        "matrix(1, 0, 0, 1, -452, 112)",
       );
 
       cy.get("#c3-2").should(
         "have.css",
         "transform",
-        "matrix(1, 0, 0, 1, -452, -112)"
+        "matrix(1, 0, 0, 1, -452, -112)",
       );
     });
-  }
+  },
 );

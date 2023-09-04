@@ -29,7 +29,7 @@ const moduleResolution = packages.map((pkg) => ({
   replacement: resolve(
     pkg.sourcePath,
     // @ts-expect-error
-    pkg.modules.find((m) => m.format === "cjs").sourceFileName
+    pkg.modules.find((m) => m.format === "cjs").sourceFileName,
   ),
 }));
 
@@ -177,7 +177,7 @@ const buildPromise = packages.map((pkg) => {
       inputFile,
       outputFile,
       isProduction,
-      isMinify
+      isMinify,
     );
   });
 });
