@@ -1,6 +1,47 @@
 /** @type {import('next').NextConfig} */
+// const path = require("path");
+// eslint-disable-next-line import/no-unresolved
+const webpack = require("webpack");
+
+// const moduleResolution = [
+//   {
+//     find: "@dflex/dnd",
+//     replacement: path.resolve("../dflex-dnd/src/index.ts"),
+//   },
+//   {
+//     find: "@dflex/utils",
+//     replacement: path.resolve("../dflex-utils/src/index.ts"),
+//   },
+//   {
+//     find: "@dflex/core-instance",
+//     replacement: path.resolve("../dflex-core-instance/src/index.ts"),
+//   },
+//   {
+//     find: "@dflex/draggable",
+//     replacement: path.resolve("../dflex-draggable/src/index.ts"),
+//   },
+//   {
+//     find: "@dflex/store",
+//     replacement: path.resolve("../dflex-store/src/index.ts"),
+//   },
+//   {
+//     find: "@dflex/dom-gen",
+//     replacement: path.resolve("../dflex-dom-gen/src/index.ts"),
+//   },
+// ];
+
 const nextConfig = {
   reactStrictMode: true,
-}
+  transpilePackages: ["@dflex/dnd"],
+  webpack: (config) => {
+    config.plugins.push(
+      new webpack.DefinePlugin({
+        __DEV__: JSON.stringify(process.env.NODE_ENV !== "production"),
+      }),
+    );
 
-module.exports = nextConfig
+    return config;
+  },
+};
+
+module.exports = nextConfig;
