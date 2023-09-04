@@ -13,7 +13,7 @@ function ClickableBox({
   return (
     <Link
       href={link}
-      className="group rounded-lg border  px-5 py-4 transition-colors border-gray-300 hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
+      className="group rounded-lg border px-5 py-4 transition-colors border-gray-300 hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
     >
       <h2 className={`mb-3 text-2xl font-semibold`}>
         {title}
@@ -28,14 +28,22 @@ function ClickableBox({
 
 export default function Home() {
   return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-center p-24`}
-    >
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
+    <main className="flex min-h-screen flex-col items-center justify-center">
+      <div className="grid text-center lg:max-w-5xl lg:w-full lg:mb-0 md:grid-cols-2 lg:grid-cols-4 lg:text-left">
         <ClickableBox
-          desc="All list items has the same height and width"
+          desc="List items have the same height and width"
           title="Symmetric list"
           link="list/symmetric"
+        />
+        <ClickableBox
+          desc="List items have  different height or width"
+          title="Asymmetric list"
+          link="list/asymmetric"
+        />
+        <ClickableBox
+          desc="List items transformed without committing to the DOM"
+          title="Transformation only list"
+          link="list/transformation"
         />
       </div>
     </main>
