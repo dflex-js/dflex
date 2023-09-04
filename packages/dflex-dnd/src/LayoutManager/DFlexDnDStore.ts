@@ -179,7 +179,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     // Observers.
     this.mutationObserverMap = new Map();
 
-    this.isComposing = true;
+    this.isComposing = false;
     this.isUpdating = false;
     this.deferred = [];
     this.updatesQueue = [];
@@ -385,6 +385,8 @@ class DFlexDnDStore extends DFlexBaseStore {
       this._isInitialized = true;
     }
 
+    this.isComposing = true;
+
     const { id, readonly = false, depth = 0, CSSTransform = null } = elm;
 
     // DFlex optimizes registration so that when one sibling is registered, all
@@ -441,10 +443,22 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   unregister(id: string): void {
+    // This is not supposed to happen.
+    // But in React/Next case, it triggers the cleanup in the ueeEffect before the registration.
+    if (!this.registry.has(id)) {
+      return;
+    }
+
+    if (this.isComposing) {
+      return;
+    }
+
     this._terminatedDOMiDs.add(id);
 
+    // Don't execute immediately to prevent race condition with mutation observer.
+    // Instead reschedule and then check observer flag.
     this._unregisterSchedule(() => {
-      // Abort. Leave it to the observer.
+      // Abort & clear pending ids. Leave it to the observer.
       if (hasMutationsInProgress()) {
         this._terminatedDOMiDs.clear();
 
