@@ -443,21 +443,32 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   unregister(id: string): void {
-    // If the registration process is still ongoing and an 'unregister' has been
-    // called, then we should ignore this call.
     if (!this.registry.has(id)) {
+      if (__DEV__) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          "Ignoring unregister: Registration process still ongoing.",
+        );
+      }
+
       return;
     }
 
-    // Same scenario as above: The element is registered, but the process of
-    // registering siblings is still active.
     if (this.isComposing) {
+      if (__DEV__) {
+        // eslint-disable-next-line no-console
+        console.warn("Ignoring unregister: Registering siblings still active.");
+      }
+
       return;
     }
 
-    // If unregister has been triggered more than once, ignore any calls except
-    // the first one.
     if (this._terminatedDOMiDs.has(id)) {
+      if (__DEV__) {
+        // eslint-disable-next-line no-console
+        console.warn("Ignoring unregister: triggered more than once.");
+      }
+
       return;
     }
 
