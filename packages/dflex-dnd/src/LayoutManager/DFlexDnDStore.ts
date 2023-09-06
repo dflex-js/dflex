@@ -443,22 +443,30 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   unregister(id: string): void {
-    // This is not supposed to happen.
-    // But in React/Next case, it triggers the cleanup in the ueeEffect before the registration.
+    // If the regeneration process is still ongoing and an 'unregister' has been
+    // called, then we should ignore this call.
     if (!this.registry.has(id)) {
       return;
     }
 
+    // Same scenario as above: The element is registered, but the process of
+    // registering siblings is still active.
     if (this.isComposing) {
+      return;
+    }
+
+    // If unregister has been triggered more than once, ignore any calls except
+    // the first one.
+    if (this._terminatedDOMiDs.has(id)) {
       return;
     }
 
     this._terminatedDOMiDs.add(id);
 
-    // Don't execute immediately to prevent race condition with mutation observer.
-    // Instead reschedule and then check observer flag.
+    // Delay execution to prevent a race condition with the mutation observer.
+    // Instead, reschedule and then check the observer flag.
     this._unregisterSchedule(() => {
-      // Abort & clear pending ids. Leave it to the observer.
+      // Abort and clear pending IDs, allowing the observer to handle them.
       if (hasMutationsInProgress()) {
         this._terminatedDOMiDs.clear();
 
