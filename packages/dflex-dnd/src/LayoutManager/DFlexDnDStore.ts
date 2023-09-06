@@ -579,8 +579,36 @@ class DFlexDnDStore extends DFlexBaseStore {
   ): void {
     const container = this.containers.get(SK)!;
     const scroll = this.scrolls.get(SK)!;
+
+    if (__DEV__) {
+      if (!container) {
+        throw new Error(`Container is not defined for element with SK: ${SK}`);
+      }
+
+      if (!scroll) {
+        throw new Error(
+          `Scroll container is not defined for element with SK: ${SK}`,
+        );
+      }
+    }
+
     const branch = this.getElmSiblingsByKey(SK);
+
+    if (__DEV__) {
+      if (branch.length === 0) {
+        throw new Error(`No sibling elements found for SK: ${SK}`);
+      }
+    }
+
     const parentDOM = this.interactiveDOM.get(container.id)!;
+
+    if (__DEV__) {
+      if (!(parentDOM instanceof HTMLElement)) {
+        throw new Error(
+          `Parent DOM element is not of type HTMLElement for container with ID: ${container.id}`,
+        );
+      }
+    }
 
     scheduler(
       this,
