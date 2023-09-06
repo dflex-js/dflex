@@ -19,3 +19,5 @@ export const enableMechanismDebugger = false;
 export const enableScrollDebugger = false;
 
 export const enableVisibilityDebugger = false;
+
+export const enableMutationDebugger = false;

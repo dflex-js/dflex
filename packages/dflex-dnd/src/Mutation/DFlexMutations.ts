@@ -105,13 +105,13 @@ function addObserver(
     initMutationObserver(store, id);
 
     if (__DEV__) {
-      if (featureFlags.enableRegisterDebugger) {
+      if (featureFlags.enableMutationDebugger) {
         // eslint-disable-next-line no-console
         console.log(`addObserver: ${id}`);
       }
     }
   } else if (__DEV__) {
-    if (featureFlags.enableRegisterDebugger) {
+    if (featureFlags.enableMutationDebugger) {
       // eslint-disable-next-line no-console
       console.log(`addObserver: ${id} already exist`);
     }

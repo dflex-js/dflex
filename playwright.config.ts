@@ -11,7 +11,7 @@ const baseURL = "http://localhost:3001";
 const config: PlaywrightTestConfig = {
   forbidOnly: IS_CI,
   retries: IS_CI ? 4 : 1,
-  timeout: 60000,
+  timeout: 30000,
   use: {
     video: "retain-on-failure",
     navigationTimeout: 30000,

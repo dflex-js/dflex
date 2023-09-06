@@ -137,6 +137,8 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   mutationObserverMap: Map<string, MutationObserverValue>;
 
+  deletedElements: WeakSet<HTMLElement>;
+
   listeners: DFlexListenerPlugin;
 
   migration: DFlexCycle;
@@ -166,7 +168,12 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.containers = new Map();
     this.scrolls = new Map();
     this.unifiedContainerDimensions = {};
+
+    // Observers.
+    this.mutationObserverMap = new Map();
+
     this._terminatedDOMiDs = new Set();
+    this.deletedElements = new WeakSet();
     [this._unregisterSchedule] = DFlexCreateTimeout(0);
 
     // @ts-ignore- `null` until we have element to drag.
@@ -175,9 +182,6 @@ class DFlexDnDStore extends DFlexBaseStore {
     this._isDOM = false;
 
     [this._resizeThrottle] = DFlexCreateTimeout(100);
-
-    // Observers.
-    this.mutationObserverMap = new Map();
 
     this.isComposing = false;
     this.isUpdating = false;
@@ -442,28 +446,66 @@ class DFlexDnDStore extends DFlexBaseStore {
     );
   }
 
+  deleteFromRegistry(id: string): void {
+    super.unregister(id);
+  }
+
   unregister(id: string): void {
-    // This is not supposed to happen.
-    // But in React/Next case, it triggers the cleanup in the ueeEffect before the registration.
+    if (__DEV__) {
+      if (featureFlags.enableMutationDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(`Received id (${id}) to unregister`);
+      }
+    }
+
     if (!this.registry.has(id)) {
+      if (__DEV__) {
+        if (featureFlags.enableMutationDebugger) {
+          // eslint-disable-next-line no-console
+          console.warn(
+            "Ignoring unregister: Registration process still ongoing.",
+          );
+        }
+      }
+
       return;
     }
 
     if (this.isComposing) {
+      if (__DEV__) {
+        if (featureFlags.enableMutationDebugger) {
+          // eslint-disable-next-line no-console
+          console.warn(
+            "Ignoring unregister: Registering siblings still active.",
+          );
+        }
+      }
+
+      return;
+    }
+
+    if (this._terminatedDOMiDs.has(id)) {
+      if (__DEV__) {
+        if (featureFlags.enableMutationDebugger) {
+          // eslint-disable-next-line no-console
+          console.warn("Ignoring unregister: triggered more than once.");
+        }
+      }
+
       return;
     }
 
     this._terminatedDOMiDs.add(id);
 
-    // Don't execute immediately to prevent race condition with mutation observer.
-    // Instead reschedule and then check observer flag.
+    // Delay execution to prevent a race condition with the mutation observer.
+    // Instead, reschedule and then check the observer flag.
     this._unregisterSchedule(() => {
-      // Abort & clear pending ids. Leave it to the observer.
+      // Abort and clear pending IDs, allowing the observer to handle them.
       if (hasMutationsInProgress()) {
         this._terminatedDOMiDs.clear();
 
         if (__DEV__) {
-          if (featureFlags.enableRegisterDebugger) {
+          if (featureFlags.enableMutationDebugger) {
             // eslint-disable-next-line no-console
             console.log(
               "Aborting unregister. Cleanup handling will be performed by the mutation observer.",
@@ -560,8 +602,36 @@ class DFlexDnDStore extends DFlexBaseStore {
   ): void {
     const container = this.containers.get(SK)!;
     const scroll = this.scrolls.get(SK)!;
+
+    if (__DEV__) {
+      if (!container) {
+        throw new Error(`Container is not defined for element with SK: ${SK}`);
+      }
+
+      if (!scroll) {
+        throw new Error(
+          `Scroll container is not defined for element with SK: ${SK}`,
+        );
+      }
+    }
+
     const branch = this.getElmSiblingsByKey(SK);
+
+    if (__DEV__) {
+      if (branch.length === 0) {
+        throw new Error(`No sibling elements found for SK: ${SK}`);
+      }
+    }
+
     const parentDOM = this.interactiveDOM.get(container.id)!;
+
+    if (__DEV__) {
+      if (!(parentDOM instanceof HTMLElement)) {
+        throw new Error(
+          `Parent DOM element is not of type HTMLElement for container with ID: ${container.id}`,
+        );
+      }
+    }
 
     scheduler(
       this,
@@ -731,33 +801,33 @@ class DFlexDnDStore extends DFlexBaseStore {
     return [parentID, parentDOM];
   }
 
-  deleteElm(id: string, BK: string): void {
-    this.DOMGen.removeIDFromBranch(id, BK);
+  // deleteElm(id: string, BK: string): void {
+  //   this.DOMGen.removeIDFromBranch(id, BK);
 
-    super.unregister(id);
-  }
+  //   super.unregister(id);
+  // }
 
   deleteSiblings(SK: string, BK: string, depth: number): void {
-    this.DOMGen.destroySiblings(SK, BK, depth);
-
     const scroll = this.scrolls.get(SK)!;
 
     if (__DEV__) {
-      if (!scroll) {
+      if (!scroll && depth === 0) {
         throw new Error(
           `deleteSiblings: Scroll container with SK: ${SK} doesn't exists`,
         );
       }
     }
 
-    scroll.destroy();
+    if (scroll) {
+      scroll.destroy();
 
-    this.scrolls.delete(SK);
+      this.scrolls.delete(SK);
+    }
 
     const deletedContainer = this.containers.delete(SK);
 
     if (__DEV__) {
-      if (!deletedContainer) {
+      if (!deletedContainer && depth === 0) {
         throw new Error(
           `deleteSiblings: Container with SK: ${SK} doesn't exists`,
         );
@@ -781,6 +851,8 @@ class DFlexDnDStore extends DFlexBaseStore {
         }
       }
     });
+
+    this.DOMGen.destroySiblings(SK, BK, depth);
 
     if (__DEV__) {
       if (featureFlags.enableRegisterDebugger) {
