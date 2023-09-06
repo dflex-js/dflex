@@ -443,7 +443,7 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   unregister(id: string): void {
-    // If the regeneration process is still ongoing and an 'unregister' has been
+    // If the registration process is still ongoing and an 'unregister' has been
     // called, then we should ignore this call.
     if (!this.registry.has(id)) {
       return;
