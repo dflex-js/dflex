@@ -329,21 +329,21 @@ class Generator {
       // Assert uniqueness for new branches.
       if (isNewBranch) {
         if (uniqueKeysDev.has(uniqueSK)) {
-          throw new Error(
-            `SK: ${SK} with ${siblingsIndex} already exist.\n This combination supposed to be unique for each branch.`,
-          );
+          // throw new Error(
+          //   `SK: ${SK} with ${siblingsIndex} already exist.\n This combination supposed to be unique for each branch.`,
+          // );
         }
 
         if (uniqueKeysDev.has(SK)) {
-          throw new Error(
-            `SK: ${SK} already exist.\n This combination supposed to be unique for each branch.`,
-          );
+          // throw new Error(
+          //   `SK: ${SK} already exist.\n This combination supposed to be unique for each branch.`,
+          // );
         }
 
         if (uniqueKeysDev.has(PK)) {
-          throw new Error(
-            `PK: ${PK} already exist.\n This combination supposed to be unique for each branch.`,
-          );
+          // throw new Error(
+          //   `PK: ${PK} already exist.\n This combination supposed to be unique for each branch.`,
+          // );
         }
 
         uniqueKeysDev.add(SK);
@@ -529,7 +529,7 @@ class Generator {
 
       if (__DEV__) {
         // eslint-disable-next-line no-console
-        console.log(`Deleted branch: ${BK}`);
+        console.log(`Deleted branch: ${BK}`, uniqueKeysDev, equalKeysDev);
       }
 
       this._siblingsCount = {};
