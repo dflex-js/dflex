@@ -579,16 +579,16 @@ class DFlexBaseStore {
    * @returns
    */
   getElmWithDOM(id: string): GetElmWithDOMOutput {
-    if (__DEV__) {
-      if (!(this.registry.has(id) && this.interactiveDOM.has(id))) {
-        throw new Error(`getElmWithDOM: Unable to find element with ID: ${id}`);
-      }
-    }
+    // if (__DEV__) {
+    //   if (!(this.registry.has(id) && this.interactiveDOM.has(id))) {
+    //     throw new Error(`getElmWithDOM: Unable to find element with ID: ${id}`);
+    //   }
+    // }
 
-    const elm = this.registry.get(id)!;
+    const dflexElm = this.registry.get(id)!;
     const DOM = this.interactiveDOM.get(id)!;
 
-    return [elm, DOM];
+    return [dflexElm, DOM];
   }
 
   /**

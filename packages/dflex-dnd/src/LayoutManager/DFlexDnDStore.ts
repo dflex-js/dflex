@@ -137,6 +137,8 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   mutationObserverMap: Map<string, MutationObserverValue>;
 
+  deletedElm: WeakSet<HTMLElement>;
+
   listeners: DFlexListenerPlugin;
 
   migration: DFlexCycle;
@@ -166,7 +168,12 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.containers = new Map();
     this.scrolls = new Map();
     this.unifiedContainerDimensions = {};
+
+    // Observers.
+    this.mutationObserverMap = new Map();
+
     this._terminatedDOMiDs = new Set();
+    this.deletedElm = new WeakSet();
     [this._unregisterSchedule] = DFlexCreateTimeout(0);
 
     // @ts-ignore- `null` until we have element to drag.
@@ -175,9 +182,6 @@ class DFlexDnDStore extends DFlexBaseStore {
     this._isDOM = false;
 
     [this._resizeThrottle] = DFlexCreateTimeout(100);
-
-    // Observers.
-    this.mutationObserverMap = new Map();
 
     this.isComposing = false;
     this.isUpdating = false;
@@ -447,12 +451,21 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   unregister(id: string): void {
+    if (__DEV__) {
+      if (featureFlags.enableMutationDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(`Received id (${id}) to unregister`);
+      }
+    }
+
     if (!this.registry.has(id)) {
       if (__DEV__) {
-        // eslint-disable-next-line no-console
-        console.warn(
-          "Ignoring unregister: Registration process still ongoing.",
-        );
+        if (featureFlags.enableMutationDebugger) {
+          // eslint-disable-next-line no-console
+          console.warn(
+            "Ignoring unregister: Registration process still ongoing.",
+          );
+        }
       }
 
       return;
@@ -460,8 +473,12 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     if (this.isComposing) {
       if (__DEV__) {
-        // eslint-disable-next-line no-console
-        console.warn("Ignoring unregister: Registering siblings still active.");
+        if (featureFlags.enableMutationDebugger) {
+          // eslint-disable-next-line no-console
+          console.warn(
+            "Ignoring unregister: Registering siblings still active.",
+          );
+        }
       }
 
       return;
@@ -469,8 +486,10 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     if (this._terminatedDOMiDs.has(id)) {
       if (__DEV__) {
-        // eslint-disable-next-line no-console
-        console.warn("Ignoring unregister: triggered more than once.");
+        if (featureFlags.enableMutationDebugger) {
+          // eslint-disable-next-line no-console
+          console.warn("Ignoring unregister: triggered more than once.");
+        }
       }
 
       return;
@@ -486,7 +505,7 @@ class DFlexDnDStore extends DFlexBaseStore {
         this._terminatedDOMiDs.clear();
 
         if (__DEV__) {
-          if (featureFlags.enableRegisterDebugger) {
+          if (featureFlags.enableMutationDebugger) {
             // eslint-disable-next-line no-console
             console.log(
               "Aborting unregister. Cleanup handling will be performed by the mutation observer.",
