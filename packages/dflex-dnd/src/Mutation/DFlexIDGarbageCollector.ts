@@ -43,6 +43,10 @@ function recomposeSiblings(
   }
 
   if (connectedNodesID.length > 0) {
+    terminatedDOMiDs.forEach((id) => {
+      store.DOMGen.removeIDFromBranch(id, BK);
+    });
+
     store.DOMGen.mutateSiblings(SK, connectedNodesID);
   } else {
     store.deleteSiblings(SK, BK, depth);
@@ -57,13 +61,29 @@ function DFlexIDGarbageCollector(
 ): void {
   const SKeys = new Map<string, SiblingKeyVal>();
 
+  const terminatedParentDOMiDs: TerminatedDOMiDs = new Set();
+
+  terminatedDOMiDs.forEach((id) => {
+    const [parentID, parentHtml] = store.getParentByElmID(id);
+
+    if (!parentHtml.isConnected) {
+      terminatedParentDOMiDs.add(parentID);
+    }
+  });
+
+  if (terminatedParentDOMiDs.size > 0) {
+    terminatedParentDOMiDs.forEach((id) => {
+      terminatedDOMiDs.add(id);
+    });
+  }
+
   terminatedDOMiDs.forEach((id) => {
     const {
       keys: { SK, BK },
       depth,
     } = store.registry.get(id)!;
 
-    store.deleteElm(id, BK);
+    store.deleteFromRegistry(id);
 
     if (__DEV__) {
       if (featureFlags.enableRegisterDebugger) {
@@ -81,6 +101,14 @@ function DFlexIDGarbageCollector(
     recomposeSiblings(store, terminatedDOMiDs, v, k);
 
   SKeys.forEach(recomposeFromKys);
+
+  // terminatedDOMiDs.forEach((id) => {
+  //   const {
+  //     keys: { BK },
+  //   } = store.registry.get(id)!;
+
+  //   store.DOMGen.removeIDFromBranch(id, BK);
+  // });
 }
 
 export default DFlexIDGarbageCollector;

@@ -442,6 +442,10 @@ class DFlexDnDStore extends DFlexBaseStore {
     );
   }
 
+  deleteFromRegistry(id: string): void {
+    super.unregister(id);
+  }
+
   unregister(id: string): void {
     if (!this.registry.has(id)) {
       if (__DEV__) {
@@ -778,33 +782,33 @@ class DFlexDnDStore extends DFlexBaseStore {
     return [parentID, parentDOM];
   }
 
-  deleteElm(id: string, BK: string): void {
-    this.DOMGen.removeIDFromBranch(id, BK);
+  // deleteElm(id: string, BK: string): void {
+  //   this.DOMGen.removeIDFromBranch(id, BK);
 
-    super.unregister(id);
-  }
+  //   super.unregister(id);
+  // }
 
   deleteSiblings(SK: string, BK: string, depth: number): void {
-    this.DOMGen.destroySiblings(SK, BK, depth);
-
     const scroll = this.scrolls.get(SK)!;
 
     if (__DEV__) {
-      if (!scroll) {
+      if (!scroll && depth === 0) {
         throw new Error(
           `deleteSiblings: Scroll container with SK: ${SK} doesn't exists`,
         );
       }
     }
 
-    scroll.destroy();
+    if (scroll) {
+      scroll.destroy();
 
-    this.scrolls.delete(SK);
+      this.scrolls.delete(SK);
+    }
 
     const deletedContainer = this.containers.delete(SK);
 
     if (__DEV__) {
-      if (!deletedContainer) {
+      if (!deletedContainer && depth === 0) {
         throw new Error(
           `deleteSiblings: Container with SK: ${SK} doesn't exists`,
         );
@@ -828,6 +832,8 @@ class DFlexDnDStore extends DFlexBaseStore {
         }
       }
     });
+
+    this.DOMGen.destroySiblings(SK, BK, depth);
 
     if (__DEV__) {
       if (featureFlags.enableRegisterDebugger) {

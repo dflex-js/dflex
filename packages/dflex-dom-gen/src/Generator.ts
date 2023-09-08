@@ -523,6 +523,18 @@ class Generator {
     this._SKByBranch[BK] = this._SKByBranch[BK].map((v) =>
       v ? (v.SK !== SK ? v : null) : null,
     );
+
+    if (this._SKByBranch[BK].every((item) => item === null)) {
+      delete this._SKByBranch[BK];
+
+      if (__DEV__) {
+        // eslint-disable-next-line no-console
+        console.log(`Deleted branch: ${BK}`);
+      }
+
+      this._siblingsCount = {};
+      this._prevPK = "";
+    }
   }
 
   private _removeSKFromDepth(SK: string, depth: number): void {
