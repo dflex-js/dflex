@@ -62,7 +62,7 @@ function DFlexIDGarbageCollector(
   const SKeys = new Map<string, SiblingKeyVal>();
 
   terminatedDOMiDs.forEach((id) => {
-    const [dflexElm, DOM] = store.getElmWithDOM(id);
+    const [dflexElm, DOM] = store.getElmWithDOM(id, false);
 
     // hasAlreadyBeenRemoved
     if (!DOM || !dflexElm) {

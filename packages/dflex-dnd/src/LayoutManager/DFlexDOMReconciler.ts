@@ -60,24 +60,32 @@ function setElmGridAndAssertPosition(
   }, 0);
 }
 
+type ScrollPosTuple = [number, number];
+
 function switchElmDOMPosition(
   branchIDs: Readonly<Siblings>,
   branchDOM: HTMLElement,
   store: DFlexDnDStore,
+  scrollTuple: ScrollPosTuple,
   dflexElm: DFlexElement,
   elmDOM: HTMLElement,
 ) {
-  const VDOMIndex = dflexElm.VDOMOrder.self;
-  const DOMIndex = dflexElm.DOMOrder.self;
+  const { self: VDOMIndex } = dflexElm.VDOMOrder;
+  const { self: DOMIndex } = dflexElm.DOMOrder;
 
-  // Is it the last element?
-  if (VDOMIndex + 1 === branchIDs.length) {
+  const isLatElm = VDOMIndex + 1 === branchIDs.length;
+
+  if (isLatElm) {
     branchDOM.appendChild(elmDOM);
   } else {
-    const PevElmDOM = store.interactiveDOM.get(branchIDs[VDOMIndex + 1])!;
+    const PevDOMElm = store.interactiveDOM.get(branchIDs[VDOMIndex + 1])!;
 
-    branchDOM.insertBefore(elmDOM, PevElmDOM);
+    branchDOM.insertBefore(elmDOM, PevDOMElm);
   }
+
+  const [scrollTop, scrollLeft] = scrollTuple;
+
+  dflexElm.refreshIndicators(elmDOM, scrollTop, scrollLeft);
 
   const shiftDirection = VDOMIndex > DOMIndex ? 1 : -1;
 
@@ -90,30 +98,44 @@ function switchElmDOMPosition(
   dflexElm.DOMOrder.self = VDOMIndex;
 }
 
-let reconciledElmQueue: [DFlexElement, HTMLElement][] = [];
-
 function commitElm(
   branchIDs: Readonly<Siblings>,
   branchDOM: HTMLElement,
   store: DFlexDnDStore,
   elmID: string,
+  reconciledElmQueue: [DFlexElement, HTMLElement][],
+  scrollTuple: ScrollPosTuple,
 ): void {
-  const [dflexElm, elmDOM] = store.getElmWithDOM(elmID);
+  const elmWithDOm = store.getElmWithDOM(elmID);
 
-  if (dflexElm.hasTransformedFromOrigin()) {
-    if (
+  const [dflexElm, elmDOM] = elmWithDOm;
+
+  const hasTransformedFromOrigin = dflexElm.hasTransformedFromOrigin();
+
+  if (hasTransformedFromOrigin) {
+    const needsReconciliation =
       dflexElm.needDOMReconciliation() ||
       // Until the element owns its transformation between containers history we
       // can't rely only on the local indicators as it only reflects the
       // elements movement inside the origin container.
-      store.migration.filter([dflexElm.id], false)
-    ) {
-      switchElmDOMPosition(branchIDs, branchDOM, store, dflexElm, elmDOM);
+      store.migration.filter([dflexElm.id], false);
+
+    if (needsReconciliation) {
+      switchElmDOMPosition(
+        branchIDs,
+        branchDOM,
+        store,
+        scrollTuple,
+        dflexElm,
+        elmDOM,
+      );
     }
 
-    reconciledElmQueue.push([dflexElm, elmDOM]);
+    reconciledElmQueue.push(elmWithDOm);
   }
 }
+
+type ReconciledElementTuple = [DFlexElement, HTMLElement];
 
 /**
  *
@@ -132,22 +154,32 @@ function DFlexDOMReconciler(
   container: DFlexParentContainer,
   scroll: DFlexScrollContainer,
   refreshAllBranchElements: boolean,
-): void {
-  container.resetIndicators(branchIDs.length);
-
-  for (let i = branchIDs.length - 1; i >= 0; i -= 1) {
-    commitElm(branchIDs, branchDOM, store, branchIDs[i]);
-  }
-
-  let isUpdateElmGrid = true;
+): ReconciledElementTuple[] {
+  const reconciledElmQueue: ReconciledElementTuple[] = [];
 
   const {
     totalScrollRect: { left, top },
   } = scroll;
 
+  const scrollTuple: ScrollPosTuple = [top, left];
+
+  container.resetIndicators(branchIDs.length);
+
+  for (let i = branchIDs.length - 1; i >= 0; i -= 1) {
+    commitElm(
+      branchIDs,
+      branchDOM,
+      store,
+      branchIDs[i],
+      reconciledElmQueue,
+      scrollTuple,
+    );
+  }
+
+  let isUpdateElmGrid = true;
+
   if (refreshAllBranchElements) {
     isUpdateElmGrid = false;
-    reconciledElmQueue = [];
 
     for (let i = 0; i <= branchIDs.length - 1; i += 1) {
       const [dflexElm, elmDOM] = store.getElmWithDOM(branchIDs[i]);
@@ -166,12 +198,6 @@ function DFlexDOMReconciler(
       } else {
         store.setElmGridBridge(container, dflexElm);
       }
-    }
-  } else {
-    while (reconciledElmQueue.length) {
-      const [dflexElm, elmDOM] = reconciledElmQueue.pop()!;
-
-      dflexElm.refreshIndicators(elmDOM, left, top);
     }
   }
 
@@ -193,6 +219,8 @@ function DFlexDOMReconciler(
       }
     }
   }
+
+  return reconciledElmQueue;
 }
 
 export default DFlexDOMReconciler;
