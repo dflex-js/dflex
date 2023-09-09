@@ -10,12 +10,12 @@ import {
   featureFlags,
   getAnimationOptions,
   getParentElm,
-  PREFIX_TRACKER_ID,
   setFixedDimensions,
   setRelativePosition,
   TaskQueue,
-  tracker,
 } from "@dflex/utils";
+import DFlexDOMManager from "./DFlexDOMManager";
+import { getElmDOMOrThrow, assignElementID } from "./utils";
 
 type DeepRequired<T> = {
   [K in keyof T]-?: T[K] extends object
@@ -81,8 +81,6 @@ export type DFlexGlobalConfig = {
   removeContainerWhenEmpty: boolean;
 };
 
-type GetElmWithDOMOutput = [DFlexElement, HTMLElement];
-
 type BranchComposedCallBackFunction = (
   // eslint-disable-next-line no-unused-vars
   childrenSK: string,
@@ -93,28 +91,6 @@ type BranchComposedCallBackFunction = (
 ) => void;
 
 type HighestContainerComposedCallBack = () => void;
-
-function getElmDOMOrThrow(id: string): HTMLElement | null {
-  let DOM = document.getElementById(id);
-
-  if (!DOM) {
-    if (__DEV__) {
-      throw new Error(
-        `Element with ID: ${id} is not found.This could be due wrong ID or missing DOM element.`,
-      );
-    }
-  }
-
-  if (!DOM || DOM.nodeType !== Node.ELEMENT_NODE) {
-    if (__DEV__) {
-      throw new Error(`Invalid HTMLElement ${DOM} is passed to registry.`);
-    }
-
-    DOM = null;
-  }
-
-  return DOM;
-}
 
 /**
  * Does the element share the same parent with the previous element in the same depth?
@@ -241,17 +217,6 @@ function submitToRegistry(
   return keys;
 }
 
-function assignElementId(DOM: HTMLElement) {
-  let { id } = DOM;
-
-  if (!id) {
-    id = tracker.newTravel(PREFIX_TRACKER_ID);
-    DOM.id = id;
-  }
-
-  return id;
-}
-
 function submitContainerChildren(
   parentDOM: HTMLElement,
   depth: number,
@@ -265,7 +230,7 @@ function submitContainerChildren(
 
   parentDOM.childNodes.forEach((DOM, i) => {
     if (DOM instanceof HTMLElement) {
-      const id = assignElementId(DOM);
+      const id = assignElementID(DOM);
 
       if (!store.registry.has(id)) {
         const elm: RegisterInputProcessed = {
@@ -299,12 +264,8 @@ const REGISTER_Q = "registerQ";
 
 const CB_Q = "submitQ";
 
-class DFlexBaseStore {
+class DFlexBaseStore extends DFlexDOMManager {
   globals: DFlexGlobalConfig;
-
-  registry: Map<string, DFlexElement>;
-
-  interactiveDOM: Map<string, HTMLElement>;
 
   DOMGen: Generator;
 
@@ -313,13 +274,13 @@ class DFlexBaseStore {
   private _taskQ: TaskQueue;
 
   constructor() {
+    super();
+
     this.globals = {
       removeContainerWhenEmpty: false,
     };
     this._lastDOMParent = null;
     this._taskQ = new TaskQueue();
-    this.registry = new Map();
-    this.interactiveDOM = new Map();
     this.DOMGen = new Generator();
   }
 
@@ -391,7 +352,7 @@ class DFlexBaseStore {
     }
 
     const getParentElmCallback = (parentDOM: HTMLElement) => {
-      const parentID = assignElementId(parentDOM);
+      const parentID = assignElementID(parentDOM);
 
       const isParentRegistered = this.registry.has(parentID);
 
@@ -573,35 +534,6 @@ class DFlexBaseStore {
   }
 
   /**
-   * Gets DFlex element from the store along with its DOM element.
-   *
-   * @param id
-   * @returns
-   */
-  getElmWithDOM(id: string): GetElmWithDOMOutput {
-    // if (__DEV__) {
-    //   if (!(this.registry.has(id) && this.interactiveDOM.has(id))) {
-    //     throw new Error(`getElmWithDOM: Unable to find element with ID: ${id}`);
-    //   }
-    // }
-
-    const dflexElm = this.registry.get(id)!;
-    const DOM = this.interactiveDOM.get(id)!;
-
-    return [dflexElm, DOM];
-  }
-
-  /**
-   * True when the element is registered.
-   *
-   * @param id
-   * @returns
-   */
-  has(id: string): boolean {
-    return this.interactiveDOM.has(id) && this.registry.has(id);
-  }
-
-  /**
    * Gets all element IDs Siblings in given node represented by sibling key.
    *
    * @param SK - Siblings Key.
@@ -631,14 +563,8 @@ class DFlexBaseStore {
     this.DOMGen.mutateSiblings(SK, newSiblings);
   }
 
-  /**
-   * Removes an element from the store.
-   *
-   * @param id - element id.
-   */
   unregister(id: string): void {
-    this.registry.delete(id);
-    this.interactiveDOM.delete(id);
+    this.dispose(id);
   }
 
   /**
@@ -647,10 +573,10 @@ class DFlexBaseStore {
    */
   destroy(): void {
     this.DOMGen.clear();
-    this.interactiveDOM.clear();
-    this.registry.clear();
     this._taskQ.clear();
     this._lastDOMParent = null;
+
+    super.destroy();
 
     if (__DEV__) {
       // eslint-disable-next-line no-console
