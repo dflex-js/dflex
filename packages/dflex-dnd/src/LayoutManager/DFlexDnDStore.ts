@@ -42,7 +42,7 @@ import {
   TerminatedDOMiDs,
 } from "../Mutation";
 
-import DOMReconciler from "./DFlexDOMReconciler";
+import DFlexDOMReconciler from "./DFlexDOMReconciler";
 import DFlexIDGarbageCollector from "../Mutation/DFlexIDGarbageCollector";
 
 type Containers = Map<string, DFlexParentContainer>;
@@ -641,7 +641,7 @@ class DFlexDnDStore extends DFlexBaseStore {
           }
         }
 
-        DOMReconciler(
+        DFlexDOMReconciler(
           branch,
           parentDOM,
           this,
