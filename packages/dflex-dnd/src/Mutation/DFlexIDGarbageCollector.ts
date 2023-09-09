@@ -84,10 +84,10 @@ function DFlexIDGarbageCollector(
     // This function handles calls from two sources: the observer and unregister.
     // To prevent triggering the process twice, we check if it's the first time
     // or if it's already been deleted.
-    const hasAlreadyBeenRemoved = store.deletedElements.has(DOM);
+    const hasAlreadyBeenRemoved = store.deletedDOM.has(DOM);
 
     if (!hasAlreadyBeenRemoved) {
-      store.deletedElements.add(DOM);
+      store.deletedDOM.add(DOM);
 
       store.deleteFromRegistry(id);
 
