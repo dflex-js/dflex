@@ -137,8 +137,6 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   mutationObserverMap: Map<string, MutationObserverValue>;
 
-  deletedElements: WeakSet<HTMLElement>;
-
   listeners: DFlexListenerPlugin;
 
   migration: DFlexCycle;
@@ -173,7 +171,6 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.mutationObserverMap = new Map();
 
     this._terminatedDOMiDs = new Set();
-    this.deletedElements = new WeakSet();
     [this._unregisterSchedule] = DFlexCreateTimeout(0);
 
     // @ts-ignore- `null` until we have element to drag.
