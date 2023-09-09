@@ -31,13 +31,19 @@ class DFlexDOMManager {
   /**
    * Retrieves the DFlex element and its associated DOM element by ID.
    * @param id - The unique ID of the DFlex element.
+   * @param {boolean} [shouldThrowIfNotFound=true] - Whether to throw an error if the element is not found.
    * @returns A tuple containing the DFlex element and its corresponding DOM element.
    */
-  getElmWithDOM(id: string): [DFlexElement, HTMLElement] {
+  getElmWithDOM(
+    id: string,
+    shouldThrowIfNotFound: boolean = true,
+  ): [DFlexElement, HTMLElement] {
     if (__DEV__) {
-      if (!(this.registry.has(id) && this.interactiveDOM.has(id))) {
-        // eslint-disable-next-line no-console
-        console.warn(`getElmWithDOM: Unable to find element with ID: ${id}`);
+      if (
+        shouldThrowIfNotFound &&
+        !(this.registry.has(id) && this.interactiveDOM.has(id))
+      ) {
+        throw new Error(`getElmWithDOM: Unable to find element with ID: ${id}`);
       }
     }
 
