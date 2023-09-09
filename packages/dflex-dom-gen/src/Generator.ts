@@ -529,7 +529,7 @@ class Generator {
 
       if (__DEV__) {
         // eslint-disable-next-line no-console
-        console.log(`Deleted branch: ${BK}`, uniqueKeysDev, equalKeysDev);
+        console.log(`Deleted branch: ${BK}`);
       }
 
       this._siblingsCount = {};
