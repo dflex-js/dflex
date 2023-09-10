@@ -210,7 +210,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     });
   }
 
-  setElmGridBridge(
+  linkElmToContainerGrid(
     container: DFlexParentContainer,
     dflexElm: DFlexElement,
   ): void {
@@ -239,7 +239,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     dflexElm.initElmRect(DOM, left, top);
 
-    this.setElmGridBridge(container, dflexElm);
+    this.linkElmToContainerGrid(container, dflexElm);
 
     if (__DEV__) {
       updateElmDatasetGrid(DOM, dflexElm.DOMGrid);
