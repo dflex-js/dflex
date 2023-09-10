@@ -157,8 +157,6 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   private _isInitialized: boolean;
 
-  private _refreshAllElmBranchWhileReconcile?: boolean;
-
   private _resizeThrottle: TimeoutFunction;
 
   constructor() {
@@ -581,19 +579,19 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     this._resizeThrottle(throttleCB, true);
 
-    this._refreshAllElmBranchWhileReconcile = true;
-
     if (this.migration === null || this.migration.containerKeys.size === 0) {
       this._refreshBranchesRect(false);
 
       return;
     }
 
+    const commitCB = () => this._refreshBranchesRect(true);
+
     // Reconcile then update Rects.
-    this.commit(() => this._refreshBranchesRect(true));
+    this._commitChangesToDOM(true, commitCB);
   }
 
-  private _reconcileBranch(
+  private _reconcileSiblings(
     SK: string,
     refreshAllBranchElements: boolean,
   ): void {
@@ -612,10 +610,10 @@ class DFlexDnDStore extends DFlexBaseStore {
       }
     }
 
-    const branch = this.getElmSiblingsByKey(SK);
+    const siblings = this.getElmSiblingsByKey(SK);
 
     if (__DEV__) {
-      if (branch.length === 0) {
+      if (siblings.length === 0) {
         throw new Error(`No sibling elements found for SK: ${SK}`);
       }
     }
@@ -642,7 +640,7 @@ class DFlexDnDStore extends DFlexBaseStore {
         }
 
         DFlexDOMReconciler(
-          branch,
+          siblings,
           parentDOM,
           this,
           container,
@@ -656,17 +654,16 @@ class DFlexDnDStore extends DFlexBaseStore {
         status: "committed",
         payload: {
           target: parentDOM,
-          ids: branch,
+          ids: siblings,
         },
       },
     );
   }
 
-  /**
-   *
-   * @returns
-   */
-  commit(callback: (() => void) | null = null): void {
+  private _commitChangesToDOM(
+    reconcileAllBranches: boolean,
+    callback: (() => void) | null = null,
+  ) {
     if (this.migration === null || this.migration.containerKeys.size === 0) {
       if (__DEV__) {
         // eslint-disable-next-line no-console
@@ -678,11 +675,9 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     this.isComposing = true;
 
-    const refreshAllBranchElements =
-      this._refreshAllElmBranchWhileReconcile === undefined
-        ? // If more than one container involved reset all.
-          this.migration.containerKeys.size > 1
-        : this._refreshAllElmBranchWhileReconcile;
+    const reconcileAll =
+      // If more than one container involved reset all.
+      this.migration.containerKeys.size > 1 || reconcileAllBranches;
 
     if (__DEV__) {
       if (featureFlags.enableCommit) {
@@ -695,14 +690,14 @@ class DFlexDnDStore extends DFlexBaseStore {
           console.warn("Executing commit for zero depth layer.");
 
           this.getSiblingKeysByDepth(0).forEach((k) =>
-            this._reconcileBranch(k, refreshAllBranchElements),
+            this._reconcileSiblings(k, reconcileAll),
           );
 
           return;
         }
 
         this.migration.containerKeys.forEach((k) => {
-          this._reconcileBranch(k, refreshAllBranchElements);
+          this._reconcileSiblings(k, reconcileAll);
         });
 
         return;
@@ -712,7 +707,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     disconnectObservers(this);
 
     this.migration.containerKeys.forEach((k) => {
-      this._reconcileBranch(k, refreshAllBranchElements);
+      this._reconcileSiblings(k, reconcileAll);
     });
 
     scheduler(this, callback, {
@@ -722,10 +717,13 @@ class DFlexDnDStore extends DFlexBaseStore {
 
         this.migration.clear();
 
-        this._refreshAllElmBranchWhileReconcile = undefined;
         this.isComposing = false;
       },
     });
+  }
+
+  commit(callback: (() => void) | null): void {
+    this._commitChangesToDOM(false, callback);
   }
 
   getSerializedElm(id: string): DFlexSerializedElement | null {
@@ -797,12 +795,6 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     return [parentID, parentDOM];
   }
-
-  // deleteElm(id: string, BK: string): void {
-  //   this.DOMGen.removeIDFromBranch(id, BK);
-
-  //   super.unregister(id);
-  // }
 
   deleteSiblings(SK: string, BK: string, depth: number): void {
     const scroll = this.scrolls.get(SK)!;
