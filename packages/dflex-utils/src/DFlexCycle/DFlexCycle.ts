@@ -49,7 +49,7 @@ class AbstractDFlexCycle {
 class DFlexCycle {
   private _migrations: AbstractDFlexCycle[];
 
-  containerKeys: Set<string>;
+  SKs: string[];
 
   /** Only true when transitioning. */
   isTransitioning!: boolean;
@@ -64,7 +64,7 @@ class DFlexCycle {
     this._migrations = [
       new AbstractDFlexCycle(index, id, SK, cycleID, hasScroll),
     ];
-    this.containerKeys = new Set([SK]);
+    this.SKs = [SK];
     this.complete();
   }
 
@@ -95,6 +95,15 @@ class DFlexCycle {
       : this._migrations.filter((_) => cycleIDs.find((i) => i === _.id));
   }
 
+  /**
+   * Delete keys from the SKs array.
+   *
+   * @param keysToDelete - A set of keys to be deleted.
+   */
+  private _deleteKeysFromSKs(keysToDelete: Set<string>): void {
+    this.SKs = this.SKs.filter((key) => !keysToDelete.has(key));
+  }
+
   flush(cycleIDs: string[]): void {
     const removedKeys = new Set<string>();
 
@@ -120,9 +129,7 @@ class DFlexCycle {
       return false;
     });
 
-    removedKeys.forEach((ky) => {
-      this.containerKeys.delete(ky);
-    });
+    this._deleteKeysFromSKs(removedKeys);
   }
 
   /**
@@ -147,24 +154,37 @@ class DFlexCycle {
   }
 
   /**
-   * Add new migration.
+   * Add a new migration.
    *
-   * @param index
-   * @param SK
-   * @param cycleID
-   * @param hasScroll
+   * @param index - The index of the migration.
+   * @param id - The ID of the element.
+   * @param SK - The sibling key.
+   * @param isAddOperation - Indicates whether the operation is an "add" operation.
+   * @param cycleID - The cycle ID.
+   * @param hasScroll - Indicates whether the element has a scroll container.
    */
   add(
     index: number,
     id: string,
     SK: string,
+    isAddOperation: boolean,
     cycleID: string,
     hasScroll: boolean,
   ): void {
     this._migrations.push(
       new AbstractDFlexCycle(index, id, SK, cycleID, hasScroll),
     );
-    this.containerKeys.add(SK);
+
+    // Check if it's an "add" operation.
+    if (isAddOperation) {
+      // If it's an "add" operation, add the sibling key to the beginning of the SKs array.
+      // This ensures that "add" operations appear first in the array.
+      this.SKs.unshift(SK);
+    } else {
+      // If it's not an "add" operation (i.e., it's a "remove" operation), add the sibling key to the end of the SKs array.
+      // This ensures that "remove" operations appear after "add" operations in the array.
+      this.SKs.push(SK);
+    }
   }
 
   /**
@@ -186,7 +206,7 @@ class DFlexCycle {
 
   clear(): void {
     this._migrations = [];
-    this.containerKeys.clear();
+    this.SKs = [];
   }
 }
 

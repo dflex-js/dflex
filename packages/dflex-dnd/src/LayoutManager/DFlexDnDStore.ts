@@ -61,6 +61,9 @@ type UpdatesQueue = [
 
 type Deferred = (() => void)[];
 
+/**
+ * Represents the scroll position as a tuple of **left** and **top** coordinates.
+ */
 type ScrollPosTuple = [number, number];
 
 function validateCSS(id: string, css?: CSS): void {
@@ -582,7 +585,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   private _isEmptyMigration() {
     const isEmptyMigration =
-      this.migration === null || this.migration.containerKeys.size === 0;
+      this.migration === null || this.migration.SKs.length === 0;
 
     if (isEmptyMigration) {
       if (__DEV__) {
@@ -712,7 +715,7 @@ class DFlexDnDStore extends DFlexBaseStore {
           return;
         }
 
-        this.migration.containerKeys.forEach((k) => {
+        this.migration.SKs.forEach((k) => {
           this._reconcileSiblings(k);
         });
 
@@ -722,7 +725,11 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     disconnectObservers(this);
 
-    this.migration.containerKeys.forEach((k) => {
+    this.migration.SKs.forEach((k) => {
+      console.log(
+        "🚀 ~ file: DFlexDnDStore.ts:729 ~ DFlexDnDStore ~ this.migration.SKs.forEach ~ k:",
+        k,
+      );
       this._reconcileSiblings(k);
     });
 
