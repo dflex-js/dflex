@@ -21,3 +21,5 @@ export const enableScrollDebugger = false;
 export const enableVisibilityDebugger = false;
 
 export const enableMutationDebugger = false;
+
+export const enableReconcileDebugger = false;

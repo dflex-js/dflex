@@ -735,6 +735,14 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.rollBackPosition(DOM, cycleID);
   }
 
+  /**
+   * Checks if the element has transformed from its original position.
+   *
+   * @returns A boolean indicating if the element's initial position has changed
+   * by transformation or reconciliation.
+   *
+   * Note: The element's initial position will not be changed by reconciliation.
+   */
   hasTransformedFromOrigin(): boolean {
     return this._initialPosition.isNotEqual(this.rect.left, this.rect.top);
   }
@@ -743,11 +751,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     return this.VDOMOrder.self !== this.DOMOrder.self;
   }
 
-  refreshIndicators(
-    DOM: HTMLElement,
-    scrollTop: number,
-    scrollLeft: number,
-  ): void {
+  refreshIndicators(DOM: HTMLElement): void {
     this._translateHistory = undefined;
 
     this.translate.setAxes(0, 0);
@@ -760,9 +764,14 @@ class DFlexCoreElement extends DFlexBaseElement {
 
     rmEmptyAttr(DOM, "style");
 
-    this.initElmRect(DOM, scrollTop, scrollLeft);
-
     this.DOMGrid.setAxes(0, 0);
+
+    if (__DEV__) {
+      if (featureFlags.enableReconcileDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(`${this.id} indicators has been refreshed`);
+      }
+    }
   }
 
   getSerializedInstance(): DFlexSerializedElement {

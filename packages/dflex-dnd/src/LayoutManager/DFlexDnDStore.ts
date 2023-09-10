@@ -61,6 +61,8 @@ type UpdatesQueue = [
 
 type Deferred = (() => void)[];
 
+type ScrollPosTuple = [number, number];
+
 function validateCSS(id: string, css?: CSS): void {
   if (css !== undefined && typeof css !== "string" && typeof css !== "object") {
     throw new Error(
@@ -223,7 +225,45 @@ class DFlexDnDStore extends DFlexBaseStore {
       this.unifiedContainerDimensions[dflexElm.depth],
     );
 
+    if (__DEV__) {
+      if (featureFlags.enableReconcileDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(`${dflexElm.id} grid is`, JSON.stringify(gridIndex));
+      }
+    }
+
     dflexElm.DOMGrid.clone(gridIndex);
+  }
+
+  private _syncSiblingElmRectsWithGrid(
+    siblingsIDs: readonly string[],
+    container: DFlexParentContainer,
+    scrollTuple: ScrollPosTuple,
+  ) {
+    container.resetIndicators(siblingsIDs.length);
+
+    const [scrollLeft, scrollTop] = scrollTuple;
+
+    for (let i = 0; i <= siblingsIDs.length - 1; i += 1) {
+      const elmID = siblingsIDs[i];
+
+      const [dflexElm, elmDOM] = this.getElmWithDOM(elmID);
+
+      dflexElm.initElmRect(elmDOM, scrollLeft, scrollTop);
+
+      if (__DEV__) {
+        if (featureFlags.enableReconcileDebugger) {
+          // eslint-disable-next-line no-console
+          console.log(`initializing rect for ${dflexElm.id}`);
+        }
+      }
+
+      this.linkElmToContainerGrid(container, dflexElm);
+
+      if (__DEV__) {
+        updateElmDatasetGrid(elmDOM, dflexElm.DOMGrid);
+      }
+    }
   }
 
   private _resumeAndInitElmGrid(
@@ -516,42 +556,19 @@ class DFlexDnDStore extends DFlexBaseStore {
     }, true);
   }
 
-  private _updateContainerRect(
-    container: DFlexParentContainer,
-    containerKy: string,
-    siblings: string[],
-  ) {
-    const scroll = this.scrolls.get(containerKy)!;
-
-    const {
-      totalScrollRect: { left, top },
-    } = scroll;
-
-    container.resetIndicators(siblings.length);
-
-    siblings.forEach((elmID) => {
-      const [dflexElm, elmDOM] = this.getElmWithDOM(elmID);
-
-      dflexElm.initElmRect(elmDOM, left, top);
-
-      container.register(
-        dflexElm.rect,
-        this.unifiedContainerDimensions[dflexElm.depth],
-      );
-    });
-  }
-
-  private _refreshBranchesRect(excludeMigratedContainers: boolean) {
+  private _refreshBranchesRect() {
     this.containers.forEach((container, containerKy) => {
-      const shouldExcludeContainer =
-        excludeMigratedContainers &&
-        this.migration.containerKeys.has(containerKy);
+      const scroll = this.scrolls.get(containerKy)!;
 
-      if (!shouldExcludeContainer) {
-        const siblings = this.getElmSiblingsByKey(containerKy);
+      const {
+        totalScrollRect: { left, top },
+      } = scroll;
 
-        this._updateContainerRect(container, containerKy, siblings);
-      }
+      const scrollTuple: ScrollPosTuple = [left, top];
+
+      const siblings = this.getElmSiblingsByKey(containerKy);
+
+      this._syncSiblingElmRectsWithGrid(siblings, container, scrollTuple);
     });
   }
 
@@ -561,6 +578,20 @@ class DFlexDnDStore extends DFlexBaseStore {
 
       cb(DOM);
     });
+  }
+
+  private _isEmptyMigration() {
+    const isEmptyMigration =
+      this.migration === null || this.migration.containerKeys.size === 0;
+
+    if (isEmptyMigration) {
+      if (__DEV__) {
+        // eslint-disable-next-line no-console
+        console.warn("Migration is empty. Nothing to commit.");
+      }
+    }
+
+    return isEmptyMigration;
   }
 
   private _windowResizeHandler() {
@@ -579,22 +610,19 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     this._resizeThrottle(throttleCB, true);
 
-    if (this.migration === null || this.migration.containerKeys.size === 0) {
-      this._refreshBranchesRect(false);
+    if (this._isEmptyMigration()) {
+      this._refreshBranchesRect();
 
       return;
     }
 
-    const commitCB = () => this._refreshBranchesRect(true);
+    const commitCB = () => this._refreshBranchesRect();
 
-    // Reconcile then update Rects.
-    this._commitChangesToDOM(true, commitCB);
+    // Reconcile then update the rest of Rects.
+    this._commitChangesToDOM(commitCB);
   }
 
-  private _reconcileSiblings(
-    SK: string,
-    refreshAllBranchElements: boolean,
-  ): void {
+  private _reconcileSiblings(SK: string): void {
     const container = this.containers.get(SK)!;
     const scroll = this.scrolls.get(SK)!;
 
@@ -628,27 +656,22 @@ class DFlexDnDStore extends DFlexBaseStore {
       }
     }
 
+    const {
+      totalScrollRect: { left, top },
+    } = scroll;
+
+    const scrollTuple: ScrollPosTuple = [left, top];
+
     scheduler(
       this,
       () => {
-        if (__DEV__) {
-          if (!parentDOM) {
-            throw new Error(
-              `Unable to commit: No DOM found for ${container.id}`,
-            );
-          }
-        }
-
-        DFlexDOMReconciler(
-          siblings,
-          parentDOM,
-          this,
-          container,
-          scroll,
-          refreshAllBranchElements,
-        );
+        DFlexDOMReconciler(siblings, parentDOM, this);
       },
-      null,
+      {
+        onUpdate: () => {
+          this._syncSiblingElmRectsWithGrid(siblings, container, scrollTuple);
+        },
+      },
       {
         type: "mutation",
         status: "committed",
@@ -660,11 +683,8 @@ class DFlexDnDStore extends DFlexBaseStore {
     );
   }
 
-  private _commitChangesToDOM(
-    reconcileAllBranches: boolean,
-    callback: (() => void) | null = null,
-  ): void {
-    if (this.migration === null || this.migration.containerKeys.size === 0) {
+  private _commitChangesToDOM(callback: (() => void) | null = null): void {
+    if (this._isEmptyMigration()) {
       if (__DEV__) {
         // eslint-disable-next-line no-console
         console.warn("Migration is empty. Nothing to commit.");
@@ -674,10 +694,6 @@ class DFlexDnDStore extends DFlexBaseStore {
     }
 
     this.isComposing = true;
-
-    const reconcileAll =
-      // If more than one container involved reset all.
-      this.migration.containerKeys.size > 1 || reconcileAllBranches;
 
     if (__DEV__) {
       if (featureFlags.enableCommit) {
@@ -690,14 +706,14 @@ class DFlexDnDStore extends DFlexBaseStore {
           console.warn("Executing commit for zero depth layer.");
 
           this.getSiblingKeysByDepth(0).forEach((k) =>
-            this._reconcileSiblings(k, reconcileAll),
+            this._reconcileSiblings(k),
           );
 
           return;
         }
 
         this.migration.containerKeys.forEach((k) => {
-          this._reconcileSiblings(k, reconcileAll);
+          this._reconcileSiblings(k);
         });
 
         return;
@@ -707,7 +723,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     disconnectObservers(this);
 
     this.migration.containerKeys.forEach((k) => {
-      this._reconcileSiblings(k, reconcileAll);
+      this._reconcileSiblings(k);
     });
 
     scheduler(this, callback, {
@@ -723,7 +739,7 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   commit(callback?: () => void): void {
-    this._commitChangesToDOM(false, callback);
+    this._commitChangesToDOM(callback);
   }
 
   getSerializedElm(id: string): DFlexSerializedElement | null {

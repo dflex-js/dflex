@@ -2,11 +2,20 @@
 
 import { PlaywrightTestConfig, devices } from "@playwright/test";
 
-const { CI } = process.env;
+const { CI, PLAYGROUND_TYPE = "dflex-dnd" } = process.env;
 const IS_CI = CI === "true";
 
-const testDir = "./packages/dflex-dnd-playground/tests/";
-const baseURL = "http://localhost:3001";
+let testDir = "";
+let baseURL = "";
+
+if (PLAYGROUND_TYPE === "dflex-dnd") {
+  testDir = "./packages/dflex-dnd-playground/tests/";
+  baseURL = "http://localhost:3001";
+} else {
+  throw new Error(
+    "Invalid PLAYGROUND_TYPE. Please set PLAYGROUND_TYPE to 'dflex-dnd' for dflex-dnd playground.",
+  );
+}
 
 const config: PlaywrightTestConfig = {
   forbidOnly: IS_CI,
