@@ -726,10 +726,6 @@ class DFlexDnDStore extends DFlexBaseStore {
     disconnectObservers(this);
 
     this.migration.SKs.forEach((k) => {
-      console.log(
-        "🚀 ~ file: DFlexDnDStore.ts:729 ~ DFlexDnDStore ~ this.migration.SKs.forEach ~ k:",
-        k,
-      );
       this._reconcileSiblings(k);
     });
 
