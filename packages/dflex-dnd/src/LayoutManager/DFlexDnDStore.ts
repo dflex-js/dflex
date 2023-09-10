@@ -663,7 +663,7 @@ class DFlexDnDStore extends DFlexBaseStore {
   private _commitChangesToDOM(
     reconcileAllBranches: boolean,
     callback: (() => void) | null = null,
-  ) {
+  ): void {
     if (this.migration === null || this.migration.containerKeys.size === 0) {
       if (__DEV__) {
         // eslint-disable-next-line no-console
@@ -722,7 +722,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     });
   }
 
-  commit(callback: (() => void) | null): void {
+  commit(callback?: () => void): void {
     this._commitChangesToDOM(false, callback);
   }
 
