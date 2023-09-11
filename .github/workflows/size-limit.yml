@@ -11,7 +11,7 @@ jobs:
     if: github.repository_owner == 'dflex-js' && github.event.pull_request.draft != true
     steps:
       - name: Check out repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Cache pnpm modules
         uses: actions/cache@v3
