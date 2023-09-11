@@ -217,8 +217,19 @@ function removeCSS(DOM: HTMLElement, css: CSS): void {
 const TRANSITION_EVENT = "transitionend";
 
 class DFlexCoreElement extends DFlexBaseElement {
+  /**
+   * The initial position of the element before any transformations. This value
+   * is not updated during regular operations, only when the element undergoes
+   * reconciliation.
+   */
   private _initialPosition: PointNum;
 
+  /**
+   * The bounding box rectangle representing the element's position and
+   * dimensions.
+   * This value is updated with each transformation, ensuring it reflects the
+   * current state, even if the element is not yet reconciled.
+   */
   rect: BoxRect;
 
   private _computedDimensions: PointNum | null;
@@ -743,11 +754,7 @@ class DFlexCoreElement extends DFlexBaseElement {
     return this.VDOMOrder.self !== this.DOMOrder.self;
   }
 
-  refreshIndicators(
-    DOM: HTMLElement,
-    scrollTop: number,
-    scrollLeft: number,
-  ): void {
+  refreshIndicators(DOM: HTMLElement): void {
     this._translateHistory = undefined;
 
     this.translate.setAxes(0, 0);
@@ -760,9 +767,14 @@ class DFlexCoreElement extends DFlexBaseElement {
 
     rmEmptyAttr(DOM, "style");
 
-    this.initElmRect(DOM, scrollTop, scrollLeft);
-
     this.DOMGrid.setAxes(0, 0);
+
+    if (__DEV__) {
+      if (featureFlags.enableReconcileDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(`${this.id} indicators has been refreshed`);
+      }
+    }
   }
 
   getSerializedInstance(): DFlexSerializedElement {

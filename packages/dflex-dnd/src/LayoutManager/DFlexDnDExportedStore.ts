@@ -90,7 +90,7 @@ class DFlexDnDExportedStore {
    * Commits any pending changes to the DFlex instance.
    */
   commit(): void {
-    this._base.commit(null);
+    this._base.commit();
   }
 
   /**
