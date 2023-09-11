@@ -175,14 +175,18 @@ class DFlexCycle {
       new AbstractDFlexCycle(index, id, SK, cycleID, hasScroll),
     );
 
-    // Check if it's an "add" operation.
+    // The following logic ensures that addition operations are prioritized at
+    // the beginning of the array, while removal operations are placed towards
+    // the end. This arrangement ensures that when iterating through the array,
+    // you start from the most recently added containers and proceed to those
+    // containing omitted elements.
+
     if (isAddOperation) {
-      // If it's an "add" operation, add the sibling key to the beginning of the SKs array.
-      // This ensures that "add" operations appear first in the array.
+      // If it's an "add" operation, place the sibling key at the beginning of the SKs array.
       this.SKs.unshift(SK);
     } else {
-      // If it's not an "add" operation (i.e., it's a "remove" operation), add the sibling key to the end of the SKs array.
-      // This ensures that "remove" operations appear after "add" operations in the array.
+      // If it's not an "add" operation (i.e., it's a "remove" operation),
+      // append the sibling key to the end of the SKs array.
       this.SKs.push(SK);
     }
   }
