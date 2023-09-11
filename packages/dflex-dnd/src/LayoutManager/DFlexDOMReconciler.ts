@@ -51,17 +51,12 @@ function commitElm(
 
   const [dflexElm, elmDOM] = elmWithDOm;
 
-  const needsReconciliation =
-    dflexElm.needDOMReconciliation() ||
-    // Until the element owns its transformation between containers history we
-    // can't rely only on the local indicators as it only reflects the
-    // elements movement inside the origin container.
-    store.migration.filter([dflexElm.id], false);
+  const needsReconciliation = dflexElm.hasTransformedFromOrigin();
 
   if (needsReconciliation) {
     if (__DEV__) {
       if (featureFlags.enableReconcileDebugger) {
-        console.log(`${dflexElm.id} needs reconciliation`);
+        console.log(`${dflexElm.id} requires reconciliation.`);
       }
     }
 
@@ -89,13 +84,15 @@ type ReconciledElementIDs = Set<string>;
  * @param siblingIDs - An array of IDs representing the elements in the sibling group.
  * @param containerDOM - The DOM element of the sibling group container.
  * @param store - The DFlexDnDStore instance.
+ * @param cb - The callback function.
  * @returns An array of tuples containing the reconciled elements and their corresponding DOM elements.
  */
 function DFlexDOMReconciler(
   siblingsIDs: Readonly<Siblings>,
   containerDOM: HTMLElement,
+  SK: string,
   store: DFlexDnDStore,
-): ReconciledElementIDs {
+): void {
   const reconciledElementIDs: ReconciledElementIDs = new Set();
 
   for (let i = siblingsIDs.length - 1; i >= 0; i -= 1) {
@@ -108,6 +105,8 @@ function DFlexDOMReconciler(
     }
   }
 
+  store.migration.updateReconciledIDs(SK, reconciledElementIDs);
+
   if (__DEV__) {
     if (featureFlags.enableReconcileDebugger) {
       if (reconciledElementIDs.size === 0) {
@@ -115,8 +114,6 @@ function DFlexDOMReconciler(
       }
     }
   }
-
-  return reconciledElementIDs;
 }
 
 export default DFlexDOMReconciler;

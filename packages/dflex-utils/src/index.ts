@@ -33,6 +33,7 @@ export { BOTH_AXIS } from "./types";
 
 export {
   noop,
+  noopSet,
   combineKeys,
   warnOnce,
   assertElmPos,

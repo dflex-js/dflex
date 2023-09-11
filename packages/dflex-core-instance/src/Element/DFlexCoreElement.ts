@@ -217,8 +217,19 @@ function removeCSS(DOM: HTMLElement, css: CSS): void {
 const TRANSITION_EVENT = "transitionend";
 
 class DFlexCoreElement extends DFlexBaseElement {
+  /**
+   * The initial position of the element before any transformations. This value
+   * is not updated during regular operations, only when the element undergoes
+   * reconciliation.
+   */
   private _initialPosition: PointNum;
 
+  /**
+   * The bounding box rectangle representing the element's position and
+   * dimensions.
+   * This value is updated with each transformation, ensuring it reflects the
+   * current state, even if the element is not yet reconciled.
+   */
   rect: BoxRect;
 
   private _computedDimensions: PointNum | null;
@@ -735,14 +746,6 @@ class DFlexCoreElement extends DFlexBaseElement {
     this.rollBackPosition(DOM, cycleID);
   }
 
-  /**
-   * Checks if the element has transformed from its original position.
-   *
-   * @returns A boolean indicating if the element's initial position has changed
-   * by transformation or reconciliation.
-   *
-   * Note: The element's initial position will not be changed by reconciliation.
-   */
   hasTransformedFromOrigin(): boolean {
     return this._initialPosition.isNotEqual(this.rect.left, this.rect.top);
   }

@@ -1,5 +1,7 @@
 /* eslint-disable max-classes-per-file */
 
+import { noopSet } from "../collections";
+
 class AbstractDFlexCycle {
   /** Transitioning element ID. */
   id: string;
@@ -9,6 +11,8 @@ class AbstractDFlexCycle {
 
   /** Transition siblings key. */
   SK: string;
+
+  reconciledIDs: Set<string>;
 
   cycleID: string;
 
@@ -34,6 +38,7 @@ class AbstractDFlexCycle {
     this.id = id;
     this.cycleID = cycleID;
     this.hasScroll = hasScroll;
+    this.reconciledIDs = new Set();
     this.numberOfTransformedELm = 0;
 
     // TODO: Replace this with PointNum.
@@ -61,9 +66,15 @@ class DFlexCycle {
     cycleID: string,
     hasScroll: boolean,
   ) {
-    this._migrations = [
-      new AbstractDFlexCycle(index, id, SK, cycleID, hasScroll),
-    ];
+    const dflexCycle = new AbstractDFlexCycle(
+      index,
+      id,
+      SK,
+      cycleID,
+      hasScroll,
+    );
+
+    this._migrations = [dflexCycle];
     this.SKs = [SK];
     this.complete();
   }
@@ -189,6 +200,39 @@ class DFlexCycle {
       // append the sibling key to the end of the SKs array.
       this.SKs.push(SK);
     }
+  }
+
+  updateReconciledIDs(sk: string, reconciledIDs: Set<string>): void {
+    const migration = this._migrations.find((m) => m.SK === sk);
+
+    if (migration) {
+      migration.reconciledIDs.clear();
+      reconciledIDs.forEach((id) => migration.reconciledIDs.add(id));
+    } else if (__DEV__) {
+      throw new Error(`Migration with SK: ${sk} not found.`);
+    }
+  }
+
+  getMigrationBySK(sk: string): AbstractDFlexCycle | undefined {
+    return this._migrations.find((m) => m.SK === sk);
+  }
+
+  /**
+   * Get reconciled IDs by sibling key (SK).
+   *
+   * @param sk - The sibling key for which to retrieve reconciled IDs.
+   * @returns A Set of reconciled IDs for the specified sibling key.
+   */
+  getReconciledIDsBySK(sk: string): Set<string> {
+    const migration = this._migrations.find((m) => m.SK === sk);
+
+    if (__DEV__) {
+      if (!migration) {
+        throw new Error(`Migration with SK: ${sk} not found.`);
+      }
+    }
+
+    return migration ? migration.reconciledIDs : noopSet;
   }
 
   /**

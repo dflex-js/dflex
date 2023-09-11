@@ -245,47 +245,20 @@ class DFlexDnDStore extends DFlexBaseStore {
   ) {
     container.resetIndicators(siblingsIDs.length);
 
-    const [scrollLeft, scrollTop] = scrollTuple;
-
     for (let i = 0; i <= siblingsIDs.length - 1; i += 1) {
       const elmID = siblingsIDs[i];
 
-      const [dflexElm, elmDOM] = this.getElmWithDOM(elmID);
+      const [dflexElm, DOM] = this.getElmWithDOM(elmID);
 
-      dflexElm.initElmRect(elmDOM, scrollLeft, scrollTop);
+      const [scrollLeft, scrollTop] = scrollTuple;
 
-      if (__DEV__) {
-        if (featureFlags.enableReconcileDebugger) {
-          // eslint-disable-next-line no-console
-          console.log(`initializing rect for ${dflexElm.id}`);
-        }
-      }
+      dflexElm.initElmRect(DOM, scrollLeft, scrollTop);
 
       this.linkElmToContainerGrid(container, dflexElm);
 
       if (__DEV__) {
-        updateElmDatasetGrid(elmDOM, dflexElm.DOMGrid);
+        updateElmDatasetGrid(DOM, dflexElm.DOMGrid);
       }
-    }
-  }
-
-  private _resumeAndInitElmGrid(
-    container: DFlexParentContainer,
-    scroll: DFlexScrollContainer,
-    id: string,
-  ): void {
-    const [dflexElm, DOM] = this.getElmWithDOM(id);
-
-    const {
-      totalScrollRect: { left, top },
-    } = scroll;
-
-    dflexElm.initElmRect(DOM, left, top);
-
-    this.linkElmToContainerGrid(container, dflexElm);
-
-    if (__DEV__) {
-      updateElmDatasetGrid(DOM, dflexElm.DOMGrid);
     }
   }
 
@@ -366,13 +339,13 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     this.containers.set(SK, container);
 
-    const initElmGrid = this._resumeAndInitElmGrid.bind(
-      this,
-      container,
-      scroll,
-    );
+    const {
+      totalScrollRect: { left, top },
+    } = scroll;
 
-    siblings.forEach(initElmGrid);
+    const scrollTuple: ScrollPosTuple = [left, top];
+
+    this._syncSiblingElmRectsWithGrid(siblings, container, scrollTuple);
 
     updateSiblingsVisibilityLinearly(this, SK);
   }
@@ -560,18 +533,29 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   private _refreshBranchesRect() {
-    this.containers.forEach((container, containerKy) => {
-      const scroll = this.scrolls.get(containerKy)!;
+    this.containers.forEach((container, SK) => {
+      const hasContainerMigrated = this.migration.getMigrationBySK(SK);
 
-      const {
-        totalScrollRect: { left, top },
-      } = scroll;
+      // Ig migrated then the reconciler will trigger `_syncSiblingElmRectsWithGrid`.
+      if (!hasContainerMigrated) {
+        const scroll = this.scrolls.get(SK)!;
+        const siblings = this.getElmSiblingsByKey(SK);
 
-      const scrollTuple: ScrollPosTuple = [left, top];
+        const {
+          totalScrollRect: { left, top },
+        } = scroll;
 
-      const siblings = this.getElmSiblingsByKey(containerKy);
+        const scrollTuple: ScrollPosTuple = [left, top];
 
-      this._syncSiblingElmRectsWithGrid(siblings, container, scrollTuple);
+        this._syncSiblingElmRectsWithGrid(siblings, container, scrollTuple);
+      } else if (__DEV__) {
+        if (featureFlags.enableReconcileDebugger) {
+          // eslint-disable-next-line no-console
+          console.log(
+            `Container ${SK} is being passed for synchronization during reconciliation.`,
+          );
+        }
+      }
     });
   }
 
@@ -643,10 +627,15 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     const siblings = this.getElmSiblingsByKey(SK);
 
-    if (__DEV__) {
-      if (siblings.length === 0) {
-        throw new Error(`No sibling elements found for SK: ${SK}`);
+    if (siblings.length === 0) {
+      if (__DEV__) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `No sibling elements found for SK: ${SK}. Nothing to reconcile.`,
+        );
       }
+
+      return;
     }
 
     const parentDOM = this.interactiveDOM.get(container.id)!;
@@ -668,7 +657,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     scheduler(
       this,
       () => {
-        DFlexDOMReconciler(siblings, parentDOM, this);
+        DFlexDOMReconciler(siblings, parentDOM, SK, this);
       },
       {
         onUpdate: () => {
