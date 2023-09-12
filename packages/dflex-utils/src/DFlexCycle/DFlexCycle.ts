@@ -1,5 +1,7 @@
 /* eslint-disable max-classes-per-file */
 
+import { noopSet } from "../collections";
+
 class AbstractDFlexCycle {
   /** Transitioning element ID. */
   id: string;
@@ -9,6 +11,8 @@ class AbstractDFlexCycle {
 
   /** Transition siblings key. */
   SK: string;
+
+  reconciledIDs: Set<string>;
 
   cycleID: string;
 
@@ -34,6 +38,7 @@ class AbstractDFlexCycle {
     this.id = id;
     this.cycleID = cycleID;
     this.hasScroll = hasScroll;
+    this.reconciledIDs = new Set();
     this.numberOfTransformedELm = 0;
 
     // TODO: Replace this with PointNum.
@@ -49,7 +54,7 @@ class AbstractDFlexCycle {
 class DFlexCycle {
   private _migrations: AbstractDFlexCycle[];
 
-  containerKeys: Set<string>;
+  SKs: string[];
 
   /** Only true when transitioning. */
   isTransitioning!: boolean;
@@ -61,10 +66,16 @@ class DFlexCycle {
     cycleID: string,
     hasScroll: boolean,
   ) {
-    this._migrations = [
-      new AbstractDFlexCycle(index, id, SK, cycleID, hasScroll),
-    ];
-    this.containerKeys = new Set([SK]);
+    const dflexCycle = new AbstractDFlexCycle(
+      index,
+      id,
+      SK,
+      cycleID,
+      hasScroll,
+    );
+
+    this._migrations = [dflexCycle];
+    this.SKs = [SK];
     this.complete();
   }
 
@@ -95,6 +106,15 @@ class DFlexCycle {
       : this._migrations.filter((_) => cycleIDs.find((i) => i === _.id));
   }
 
+  /**
+   * Delete keys from the SKs array.
+   *
+   * @param keysToDelete - A set of keys to be deleted.
+   */
+  private _deleteKeysFromSKs(keysToDelete: Set<string>): void {
+    this.SKs = this.SKs.filter((key) => !keysToDelete.has(key));
+  }
+
   flush(cycleIDs: string[]): void {
     const removedKeys = new Set<string>();
 
@@ -120,9 +140,7 @@ class DFlexCycle {
       return false;
     });
 
-    removedKeys.forEach((ky) => {
-      this.containerKeys.delete(ky);
-    });
+    this._deleteKeysFromSKs(removedKeys);
   }
 
   /**
@@ -147,24 +165,74 @@ class DFlexCycle {
   }
 
   /**
-   * Add new migration.
+   * Add a new migration.
    *
-   * @param index
-   * @param SK
-   * @param cycleID
-   * @param hasScroll
+   * @param index - The index of the migration.
+   * @param id - The ID of the element.
+   * @param SK - The sibling key.
+   * @param isAddOperation - Indicates whether the operation is an "add" operation.
+   * @param cycleID - The cycle ID.
+   * @param hasScroll - Indicates whether the element has a scroll container.
    */
   add(
     index: number,
     id: string,
     SK: string,
+    isAddOperation: boolean,
     cycleID: string,
     hasScroll: boolean,
   ): void {
     this._migrations.push(
       new AbstractDFlexCycle(index, id, SK, cycleID, hasScroll),
     );
-    this.containerKeys.add(SK);
+
+    // The following logic ensures that addition operations are prioritized at
+    // the beginning of the array, while removal operations are placed towards
+    // the end. This arrangement ensures that when iterating through the array,
+    // you start from the most recently added containers and proceed to those
+    // containing omitted elements.
+
+    if (isAddOperation) {
+      // If it's an "add" operation, place the sibling key at the beginning of the SKs array.
+      this.SKs.unshift(SK);
+    } else {
+      // If it's not an "add" operation (i.e., it's a "remove" operation),
+      // append the sibling key to the end of the SKs array.
+      this.SKs.push(SK);
+    }
+  }
+
+  updateReconciledIDs(sk: string, reconciledIDs: Set<string>): void {
+    const migration = this._migrations.find((m) => m.SK === sk);
+
+    if (migration) {
+      migration.reconciledIDs.clear();
+      reconciledIDs.forEach((id) => migration.reconciledIDs.add(id));
+    } else if (__DEV__) {
+      throw new Error(`Migration with SK: ${sk} not found.`);
+    }
+  }
+
+  getMigrationBySK(sk: string): AbstractDFlexCycle | undefined {
+    return this._migrations.find((m) => m.SK === sk);
+  }
+
+  /**
+   * Get reconciled IDs by sibling key (SK).
+   *
+   * @param sk - The sibling key for which to retrieve reconciled IDs.
+   * @returns A Set of reconciled IDs for the specified sibling key.
+   */
+  getReconciledIDsBySK(sk: string): Set<string> {
+    const migration = this._migrations.find((m) => m.SK === sk);
+
+    if (__DEV__) {
+      if (!migration) {
+        throw new Error(`Migration with SK: ${sk} not found.`);
+      }
+    }
+
+    return migration ? migration.reconciledIDs : noopSet;
   }
 
   /**
@@ -186,7 +254,7 @@ class DFlexCycle {
 
   clear(): void {
     this._migrations = [];
-    this.containerKeys.clear();
+    this.SKs = [];
   }
 }
 

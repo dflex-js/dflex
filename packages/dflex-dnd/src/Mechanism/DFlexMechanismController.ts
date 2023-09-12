@@ -303,6 +303,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
           NaN,
           draggedElm.id,
           newSK,
+          true,
           cycleID,
           store.scrolls.get(newSK)!.hasOverflow.isOneTruthy(),
         );

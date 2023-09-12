@@ -24,7 +24,7 @@ function recomposeSiblings(
       if (index !== dflexElm.VDOMOrder.self) {
         dflexElm.updateIndex(store.interactiveDOM.get(elmID)!, index);
 
-        if (featureFlags.enableRegisterDebugger) {
+        if (featureFlags.enableMutationDebugger) {
           // eslint-disable-next-line no-console
           console.log(`cleanupLeaves: updating index for ${elmID} to ${index}`);
         }
@@ -33,7 +33,7 @@ function recomposeSiblings(
   }
 
   if (__DEV__) {
-    if (featureFlags.enableRegisterDebugger) {
+    if (featureFlags.enableMutationDebugger) {
       // eslint-disable-next-line no-console
       console.log(
         `cleanupSiblings: Found ${connectedNodesID.length} connected`,
@@ -43,6 +43,10 @@ function recomposeSiblings(
   }
 
   if (connectedNodesID.length > 0) {
+    terminatedDOMiDs.forEach((id) => {
+      store.DOMGen.removeIDFromBranch(id, BK);
+    });
+
     store.DOMGen.mutateSiblings(SK, connectedNodesID);
   } else {
     store.deleteSiblings(SK, BK, depth);
@@ -58,22 +62,52 @@ function DFlexIDGarbageCollector(
   const SKeys = new Map<string, SiblingKeyVal>();
 
   terminatedDOMiDs.forEach((id) => {
+    const [dflexElm, DOM] = store.getElmWithDOM(id, false);
+
+    // hasAlreadyBeenRemoved
+    if (!DOM || !dflexElm) {
+      if (featureFlags.enableMutationDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(
+          `Element with id: (${id}) has already been removed from registry`,
+        );
+      }
+
+      return;
+    }
+
     const {
       keys: { SK, BK },
       depth,
-    } = store.registry.get(id)!;
+    } = dflexElm;
 
-    store.deleteElm(id, BK);
+    // This function handles calls from two sources: the observer and unregister.
+    // To prevent triggering the process twice, we check if it's the first time
+    // or if it's already been deleted.
+    const hasAlreadyBeenRemoved = store.deletedDOM.has(DOM);
 
-    if (__DEV__) {
-      if (featureFlags.enableRegisterDebugger) {
-        // eslint-disable-next-line no-console
-        console.log(`DFlexIdGC: removing ${id} from registry`);
+    if (!hasAlreadyBeenRemoved) {
+      store.deletedDOM.add(DOM);
+
+      store.deleteFromRegistry(id);
+
+      if (__DEV__) {
+        if (featureFlags.enableMutationDebugger) {
+          // eslint-disable-next-line no-console
+          console.log(`DFlexIdGC: removing ${id} from registry`);
+        }
       }
-    }
 
-    if (!SKeys.has(SK)) {
-      SKeys.set(SK, { BK, depth });
+      if (!SKeys.has(SK)) {
+        SKeys.set(SK, { BK, depth });
+      }
+    } else if (__DEV__) {
+      if (featureFlags.enableMutationDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(
+          `Element with id: (${id}) has already been removed from registry`,
+        );
+      }
     }
   });
 

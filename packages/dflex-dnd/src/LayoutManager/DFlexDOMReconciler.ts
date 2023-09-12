@@ -1,64 +1,8 @@
 /* eslint-disable no-console */
-import type {
-  DFlexElement,
-  DFlexParentContainer,
-  DFlexScrollContainer,
-} from "@dflex/core-instance";
+import type { DFlexElement } from "@dflex/core-instance";
 import type { Siblings } from "@dflex/dom-gen";
-import { assertElmPos, featureFlags } from "@dflex/utils";
+import { featureFlags } from "@dflex/utils";
 import type DFlexDnDStore from "./DFlexDnDStore";
-
-let didThrowError = false;
-
-function setElmGridAndAssertPosition(
-  elmID: string,
-  dflexElm: DFlexElement,
-  elmIndex: number,
-  containerDOM: HTMLElement,
-  store: DFlexDnDStore,
-  container: DFlexParentContainer,
-) {
-  store.setElmGridBridge(container, dflexElm);
-
-  setTimeout(() => {
-    if (didThrowError) {
-      return;
-    }
-
-    if (
-      elmIndex !== dflexElm.DOMOrder.self ||
-      dflexElm.DOMOrder.self !== dflexElm.VDOMOrder.self
-    ) {
-      didThrowError = true;
-
-      console.error(
-        `Error in DOM order reconciliation.\n id: ${dflexElm.id}. Expected DOM order: ${dflexElm.DOMOrder.self} to match VDOM order: ${dflexElm.VDOMOrder.self}`,
-      );
-    }
-
-    if (
-      !containerDOM.children[elmIndex].isSameNode(
-        store.interactiveDOM.get(elmID)!,
-      )
-    ) {
-      didThrowError = true;
-
-      console.error(
-        "Error in DOM order reconciliation at Index: ",
-        elmIndex,
-        "Container: ",
-        containerDOM,
-      );
-      console.error("Actually DOM tree has: ", containerDOM.children[elmIndex]);
-      console.error("While DFlex Store has: ", store.interactiveDOM.get(elmID));
-    }
-
-    // dflexElm._initIndicators(store.interactiveDOM.get(elmID)!);
-    if (featureFlags.enablePositionAssertion) {
-      assertElmPos(store.interactiveDOM.get(elmID)!, dflexElm.rect);
-    }
-  }, 0);
-}
 
 function switchElmDOMPosition(
   branchIDs: Readonly<Siblings>,
@@ -67,16 +11,17 @@ function switchElmDOMPosition(
   dflexElm: DFlexElement,
   elmDOM: HTMLElement,
 ) {
-  const VDOMIndex = dflexElm.VDOMOrder.self;
-  const DOMIndex = dflexElm.DOMOrder.self;
+  const { self: VDOMIndex } = dflexElm.VDOMOrder;
+  const { self: DOMIndex } = dflexElm.DOMOrder;
 
-  // Is it the last element?
-  if (VDOMIndex + 1 === branchIDs.length) {
+  const isLatElm = VDOMIndex + 1 === branchIDs.length;
+
+  if (isLatElm) {
     branchDOM.appendChild(elmDOM);
   } else {
-    const PevElmDOM = store.interactiveDOM.get(branchIDs[VDOMIndex + 1])!;
+    const PevDOMElm = store.interactiveDOM.get(branchIDs[VDOMIndex + 1])!;
 
-    branchDOM.insertBefore(elmDOM, PevElmDOM);
+    branchDOM.insertBefore(elmDOM, PevDOMElm);
   }
 
   const shiftDirection = VDOMIndex > DOMIndex ? 1 : -1;
@@ -88,108 +33,84 @@ function switchElmDOMPosition(
   }
 
   dflexElm.DOMOrder.self = VDOMIndex;
-}
 
-let reconciledElmQueue: [DFlexElement, HTMLElement][] = [];
+  if (__DEV__) {
+    if (featureFlags.enableReconcileDebugger) {
+      console.log(`${dflexElm.id} is reconciled`);
+    }
+  }
+}
 
 function commitElm(
   branchIDs: Readonly<Siblings>,
   branchDOM: HTMLElement,
   store: DFlexDnDStore,
   elmID: string,
-): void {
-  const [dflexElm, elmDOM] = store.getElmWithDOM(elmID);
+): boolean {
+  const elmWithDOm = store.getElmWithDOM(elmID);
 
-  if (dflexElm.hasTransformedFromOrigin()) {
-    if (
-      dflexElm.needDOMReconciliation() ||
-      // Until the element owns its transformation between containers history we
-      // can't rely only on the local indicators as it only reflects the
-      // elements movement inside the origin container.
-      store.migration.filter([dflexElm.id], false)
-    ) {
-      switchElmDOMPosition(branchIDs, branchDOM, store, dflexElm, elmDOM);
-    }
+  const [dflexElm, elmDOM] = elmWithDOm;
 
-    reconciledElmQueue.push([dflexElm, elmDOM]);
-  }
-}
+  const needsReconciliation = dflexElm.hasTransformedFromOrigin();
 
-/**
- *
- * @param branchIDs
- * @param branchDOM
- * @param store
- * @param container
- * @param refreshAllBranchElements - When true, all element in the reconciled
- * brach will update their Rect regardless of their transformation status.
- * @returns
- */
-function DFlexDOMReconciler(
-  branchIDs: Readonly<Siblings>,
-  branchDOM: HTMLElement,
-  store: DFlexDnDStore,
-  container: DFlexParentContainer,
-  scroll: DFlexScrollContainer,
-  refreshAllBranchElements: boolean,
-): void {
-  container.resetIndicators(branchIDs.length);
-
-  for (let i = branchIDs.length - 1; i >= 0; i -= 1) {
-    commitElm(branchIDs, branchDOM, store, branchIDs[i]);
-  }
-
-  let isUpdateElmGrid = true;
-
-  const {
-    totalScrollRect: { left, top },
-  } = scroll;
-
-  if (refreshAllBranchElements) {
-    isUpdateElmGrid = false;
-    reconciledElmQueue = [];
-
-    for (let i = 0; i <= branchIDs.length - 1; i += 1) {
-      const [dflexElm, elmDOM] = store.getElmWithDOM(branchIDs[i]);
-
-      dflexElm.refreshIndicators(elmDOM, left, top);
-
-      if (__DEV__) {
-        setElmGridAndAssertPosition(
-          branchIDs[i],
-          dflexElm,
-          i,
-          branchDOM,
-          store,
-          container,
-        );
-      } else {
-        store.setElmGridBridge(container, dflexElm);
+  if (needsReconciliation) {
+    if (__DEV__) {
+      if (featureFlags.enableReconcileDebugger) {
+        console.log(`${dflexElm.id} requires reconciliation.`);
       }
     }
-  } else {
-    while (reconciledElmQueue.length) {
-      const [dflexElm, elmDOM] = reconciledElmQueue.pop()!;
 
-      dflexElm.refreshIndicators(elmDOM, left, top);
+    switchElmDOMPosition(branchIDs, branchDOM, store, dflexElm, elmDOM);
+
+    dflexElm.refreshIndicators(elmDOM);
+
+    return true;
+  }
+
+  if (__DEV__) {
+    if (featureFlags.enableReconcileDebugger) {
+      console.log(`Ignoring: ${dflexElm.id}`);
     }
   }
 
-  if (isUpdateElmGrid) {
-    for (let i = 0; i <= branchIDs.length - 1; i += 1) {
-      const dflexElm = store.registry.get(branchIDs[i])!;
+  return false;
+}
 
-      if (__DEV__) {
-        setElmGridAndAssertPosition(
-          branchIDs[i],
-          dflexElm,
-          i,
-          branchDOM,
-          store,
-          container,
-        );
-      } else {
-        store.setElmGridBridge(container, dflexElm);
+type ReconciledElementIDs = Set<string>;
+
+/**
+ * Reconciles the DOM elements in a sibling group.
+ *
+ * @param siblingIDs - An array of IDs representing the elements in the sibling group.
+ * @param containerDOM - The DOM element of the sibling group container.
+ * @param store - The DFlexDnDStore instance.
+ * @param cb - The callback function.
+ * @returns An array of tuples containing the reconciled elements and their corresponding DOM elements.
+ */
+function DFlexDOMReconciler(
+  siblingsIDs: Readonly<Siblings>,
+  containerDOM: HTMLElement,
+  SK: string,
+  store: DFlexDnDStore,
+): void {
+  const reconciledElementIDs: ReconciledElementIDs = new Set();
+
+  for (let i = siblingsIDs.length - 1; i >= 0; i -= 1) {
+    const elmID = siblingsIDs[i];
+
+    const hasReconciled = commitElm(siblingsIDs, containerDOM, store, elmID);
+
+    if (hasReconciled) {
+      reconciledElementIDs.add(elmID);
+    }
+  }
+
+  store.migration.updateReconciledIDs(SK, reconciledElementIDs);
+
+  if (__DEV__) {
+    if (featureFlags.enableReconcileDebugger) {
+      if (reconciledElementIDs.size === 0) {
+        console.warn("Elements are in their positions. Nothing to commit");
       }
     }
   }

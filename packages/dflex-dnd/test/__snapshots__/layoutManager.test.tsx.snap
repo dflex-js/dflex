@@ -156,6 +156,7 @@ DFlexDnDStore {
     },
   },
   "deferred": [],
+  "deletedDOM": WeakSet {},
   "globals": {
     "removeContainerWhenEmpty": false,
   },
