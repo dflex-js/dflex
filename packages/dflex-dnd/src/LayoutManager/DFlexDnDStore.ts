@@ -629,10 +629,12 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     if (siblings.length === 0) {
       if (__DEV__) {
-        // eslint-disable-next-line no-console
-        console.warn(
-          `No sibling elements found for SK: ${SK}. Nothing to reconcile.`,
-        );
+        if (featureFlags.enableReconcileDebugger) {
+          // eslint-disable-next-line no-console
+          console.warn(
+            `No sibling elements found for SK: ${SK}. Nothing to reconcile.`,
+          );
+        }
       }
 
       return;
