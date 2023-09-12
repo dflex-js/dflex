@@ -95,7 +95,14 @@ test.describe
     });
 
     test("Trigger key `c` to commit the transformed elements and read the emitted message for mutation caused by (#c1-1)", async () => {
-      await invokeKeyboardAndAssertEmittedMsg([]);
+      await invokeKeyboardAndAssertEmittedMsg([
+        "c1-1",
+        "c2-1",
+        "c2-2",
+        "c2-3",
+        "c2-4",
+        "c2-5",
+      ]);
     });
 
     test("Siblings have the correct order in destination container(C2) including the new merged element (#c1-1)", async () => {
@@ -123,6 +130,10 @@ test.describe
         button: 0,
         force: true,
       });
+    });
+
+    test("Trigger key `c` to commit the transformed elements and read the emitted message for mutation caused by (#c1-1)", async () => {
+      await invokeKeyboardAndAssertEmittedMsg(["c1-1"]);
     });
 
     test("Siblings in both containers are reconciled", async () => {
