@@ -242,6 +242,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     siblingsIDs: readonly string[],
     container: DFlexParentContainer,
     scrollTuple: ScrollPosTuple,
+    reconciledIDs: Set<string> | null,
   ) {
     container.resetIndicators(siblingsIDs.length);
 
@@ -250,9 +251,13 @@ class DFlexDnDStore extends DFlexBaseStore {
 
       const [dflexElm, DOM] = this.getElmWithDOM(elmID);
 
-      const [scrollLeft, scrollTop] = scrollTuple;
+      // If no `reconciledIDs` are provided, it means all elements need initialization.
+      // If `reconciledIDs` are specified, only the affected elements will be checked.
+      if (!reconciledIDs || reconciledIDs.has(elmID)) {
+        const [scrollLeft, scrollTop] = scrollTuple;
 
-      dflexElm.initElmRect(DOM, scrollLeft, scrollTop);
+        dflexElm.initElmRect(DOM, scrollLeft, scrollTop);
+      }
 
       this.linkElmToContainerGrid(container, dflexElm);
 
@@ -345,7 +350,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     const scrollTuple: ScrollPosTuple = [left, top];
 
-    this._syncSiblingElmRectsWithGrid(siblings, container, scrollTuple);
+    this._syncSiblingElmRectsWithGrid(siblings, container, scrollTuple, null);
 
     updateSiblingsVisibilityLinearly(this, SK);
   }
@@ -536,7 +541,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.containers.forEach((container, SK) => {
       const hasContainerMigrated = this.migration.getMigrationBySK(SK);
 
-      // Ig migrated then the reconciler will trigger `_syncSiblingElmRectsWithGrid`.
+      // If migrated then the reconciler will trigger `_syncSiblingElmRectsWithGrid`.
       if (!hasContainerMigrated) {
         const scroll = this.scrolls.get(SK)!;
         const siblings = this.getElmSiblingsByKey(SK);
@@ -547,7 +552,12 @@ class DFlexDnDStore extends DFlexBaseStore {
 
         const scrollTuple: ScrollPosTuple = [left, top];
 
-        this._syncSiblingElmRectsWithGrid(siblings, container, scrollTuple);
+        this._syncSiblingElmRectsWithGrid(
+          siblings,
+          container,
+          scrollTuple,
+          null,
+        );
       } else if (__DEV__) {
         if (featureFlags.enableReconcileDebugger) {
           // eslint-disable-next-line no-console
@@ -605,11 +615,10 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     const commitCB = () => this._refreshBranchesRect();
 
-    // Reconcile then update the rest of Rects.
-    this._commitChangesToDOM(commitCB);
+    this._commitChangesToDOM(true, commitCB);
   }
 
-  private _reconcileSiblings(SK: string): void {
+  private _reconcileSiblings(SK: string, syncAllSiblings: boolean): void {
     const container = this.containers.get(SK)!;
     const scroll = this.scrolls.get(SK)!;
 
@@ -663,7 +672,12 @@ class DFlexDnDStore extends DFlexBaseStore {
       },
       {
         onUpdate: () => {
-          this._syncSiblingElmRectsWithGrid(siblings, container, scrollTuple);
+          this._syncSiblingElmRectsWithGrid(
+            siblings,
+            container,
+            scrollTuple,
+            syncAllSiblings ? null : this.migration.getReconciledIDsBySK(SK),
+          );
         },
       },
       {
@@ -677,7 +691,10 @@ class DFlexDnDStore extends DFlexBaseStore {
     );
   }
 
-  private _commitChangesToDOM(callback: (() => void) | null = null): void {
+  private _commitChangesToDOM(
+    syncAllSiblings: boolean,
+    callback: (() => void) | null = null,
+  ): void {
     if (this._isEmptyMigration()) {
       if (__DEV__) {
         // eslint-disable-next-line no-console
@@ -689,6 +706,9 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     this.isComposing = true;
 
+    const reconcile = (SK: string) =>
+      this._reconcileSiblings(SK, syncAllSiblings);
+
     if (__DEV__) {
       if (featureFlags.enableCommit) {
         if (this.migration === null) {
@@ -699,16 +719,12 @@ class DFlexDnDStore extends DFlexBaseStore {
           // eslint-disable-next-line no-console
           console.warn("Executing commit for zero depth layer.");
 
-          this.getSiblingKeysByDepth(0).forEach((k) =>
-            this._reconcileSiblings(k),
-          );
+          this.getSiblingKeysByDepth(0).forEach(reconcile);
 
           return;
         }
 
-        this.migration.SKs.forEach((k) => {
-          this._reconcileSiblings(k);
-        });
+        this.migration.SKs.forEach(reconcile);
 
         return;
       }
@@ -716,9 +732,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     disconnectObservers(this);
 
-    this.migration.SKs.forEach((k) => {
-      this._reconcileSiblings(k);
-    });
+    this.migration.SKs.forEach(reconcile);
 
     scheduler(this, callback, {
       onUpdate: () => {
@@ -733,7 +747,7 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   commit(callback?: () => void): void {
-    this._commitChangesToDOM(callback);
+    this._commitChangesToDOM(false, callback);
   }
 
   getSerializedElm(id: string): DFlexSerializedElement | null {
