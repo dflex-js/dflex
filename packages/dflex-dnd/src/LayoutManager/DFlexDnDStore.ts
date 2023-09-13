@@ -249,16 +249,15 @@ class DFlexDnDStore extends DFlexBaseStore {
     for (let i = 0; i <= siblingsIDs.length - 1; i += 1) {
       const elmID = siblingsIDs[i];
 
-      // If reconciledIDs is provided, check if the element ID is in the set
-      if (reconciledIDs && !reconciledIDs.has(elmID)) {
-        continue; // Skip if not in reconciledIDs
-      }
-
       const [dflexElm, DOM] = this.getElmWithDOM(elmID);
 
-      const [scrollLeft, scrollTop] = scrollTuple;
+      // If no `reconciledIDs` are provided, it means all elements need initialization.
+      // If `reconciledIDs` are specified, only the affected elements will be checked.
+      if (!reconciledIDs || reconciledIDs.has(elmID)) {
+        const [scrollLeft, scrollTop] = scrollTuple;
 
-      dflexElm.initElmRect(DOM, scrollLeft, scrollTop);
+        dflexElm.initElmRect(DOM, scrollLeft, scrollTop);
+      }
 
       this.linkElmToContainerGrid(container, dflexElm);
 
