@@ -242,11 +242,17 @@ class DFlexDnDStore extends DFlexBaseStore {
     siblingsIDs: readonly string[],
     container: DFlexParentContainer,
     scrollTuple: ScrollPosTuple,
+    reconciledIDs?: Set<string>,
   ) {
     container.resetIndicators(siblingsIDs.length);
 
     for (let i = 0; i <= siblingsIDs.length - 1; i += 1) {
       const elmID = siblingsIDs[i];
+
+      // If reconciledIDs is provided, check if the element ID is in the set
+      if (reconciledIDs && !reconciledIDs.has(elmID)) {
+        continue; // Skip if not in reconciledIDs
+      }
 
       const [dflexElm, DOM] = this.getElmWithDOM(elmID);
 
@@ -663,7 +669,12 @@ class DFlexDnDStore extends DFlexBaseStore {
       },
       {
         onUpdate: () => {
-          this._syncSiblingElmRectsWithGrid(siblings, container, scrollTuple);
+          this._syncSiblingElmRectsWithGrid(
+            siblings,
+            container,
+            scrollTuple,
+            this.migration.getReconciledIDsBySK(SK),
+          );
         },
       },
       {
