@@ -20,12 +20,19 @@ class DFlexDOMManager {
   deletedDOM: WeakSet<HTMLElement>;
 
   /**
+   * Set to track unique element IDs.
+   * This ensures that each element has a globally unique identifier.
+   */
+  uniqueElementIDs: Set<string>;
+
+  /**
    * Constructs a new DFlexDOMManager instance.
    */
   constructor() {
     this.registry = new Map();
     this.interactiveDOM = new Map();
     this.deletedDOM = new WeakSet();
+    this.uniqueElementIDs = new Set();
   }
 
   /**
@@ -69,6 +76,7 @@ class DFlexDOMManager {
   dispose(id: string): void {
     this.registry.delete(id);
     this.interactiveDOM.delete(id);
+    this.uniqueElementIDs.delete(id);
   }
 
   /**
@@ -77,6 +85,7 @@ class DFlexDOMManager {
   destroy(): void {
     this.interactiveDOM.clear();
     this.registry.clear();
+    this.uniqueElementIDs.clear();
 
     if (__DEV__) {
       // eslint-disable-next-line no-console

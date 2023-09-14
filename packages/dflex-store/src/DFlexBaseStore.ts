@@ -230,7 +230,7 @@ function submitContainerChildren(
 
   parentDOM.childNodes.forEach((DOM, i) => {
     if (DOM instanceof HTMLElement) {
-      const id = assignElementID(DOM);
+      const id = assignElementID(DOM, store.uniqueElementIDs);
 
       if (!store.registry.has(id)) {
         const elm: RegisterInputProcessed = {
@@ -352,7 +352,7 @@ class DFlexBaseStore extends DFlexDOMManager {
     }
 
     const getParentElmCallback = (parentDOM: HTMLElement) => {
-      const parentID = assignElementID(parentDOM);
+      const parentID = assignElementID(parentDOM, this.uniqueElementIDs);
 
       const isParentRegistered = this.registry.has(parentID);
 
