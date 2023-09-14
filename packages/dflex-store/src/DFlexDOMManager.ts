@@ -1,4 +1,43 @@
 import { DFlexElement } from "@dflex/core-instance";
+import { PREFIX_TRACKER_ID, tracker } from "@dflex/utils";
+
+function generateID(DOM: HTMLElement): string {
+  const id = tracker.newTravel(PREFIX_TRACKER_ID);
+  DOM.id = id;
+
+  return id;
+}
+
+/**
+ * Assigns an element ID to an HTMLElement if it doesn't already have one.
+ *
+ * @param DOM - The HTMLElement to assign an ID to.
+ * @param uniqueElementIDs - Set of added IDs.
+ * @returns The assigned or existing ID of the element.
+ */
+function assignElementID(
+  DOM: HTMLElement,
+  uniqueElementIDs: Set<string>,
+): string {
+  let { id } = DOM;
+
+  if (!id) {
+    id = generateID(DOM);
+  } else if (uniqueElementIDs.has(id)) {
+    if (__DEV__) {
+      // eslint-disable-next-line no-console
+      console.warn("Element ID already assigned:", id);
+    }
+
+    DOM.dataset.oldId = id;
+
+    id = generateID(DOM);
+  }
+
+  uniqueElementIDs.add(id);
+
+  return id;
+}
 
 /**
  * DFlexDOMManager manages the elements registered in the DFlex framework.
@@ -23,7 +62,7 @@ class DFlexDOMManager {
    * Set to track unique element IDs.
    * This ensures that each element has a globally unique identifier.
    */
-  uniqueElementIDs: Set<string>;
+  private _uniqueElementIDs: Set<string>;
 
   /**
    * Constructs a new DFlexDOMManager instance.
@@ -32,7 +71,7 @@ class DFlexDOMManager {
     this.registry = new Map();
     this.interactiveDOM = new Map();
     this.deletedDOM = new WeakSet();
-    this.uniqueElementIDs = new Set();
+    this._uniqueElementIDs = new Set();
   }
 
   /**
@@ -67,13 +106,24 @@ class DFlexDOMManager {
   }
 
   /**
+   * Assigns a unique element ID to an HTMLElement if it doesn't already have one.
+   * If the element already has an ID, it ensures that it is unique globally.
+   *
+   * @param DOM - The HTMLElement to assign an ID to.
+   * @returns The assigned or existing unique ID of the element.
+   */
+  assignElementID(DOM: HTMLElement): string {
+    return assignElementID(DOM, this._uniqueElementIDs);
+  }
+
+  /**
    * Removes a DFlex element and its associated DOM element from the registry.
    * @param id - The unique ID of the DFlex element.
    */
   dispose(id: string): void {
     this.registry.delete(id);
     this.interactiveDOM.delete(id);
-    this.uniqueElementIDs.delete(id);
+    this._uniqueElementIDs.delete(id);
   }
 
   /**
@@ -82,7 +132,7 @@ class DFlexDOMManager {
   destroy(): void {
     this.interactiveDOM.clear();
     this.registry.clear();
-    this.uniqueElementIDs.clear();
+    this._uniqueElementIDs.clear();
 
     if (__DEV__) {
       // eslint-disable-next-line no-console

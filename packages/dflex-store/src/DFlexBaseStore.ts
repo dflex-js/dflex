@@ -15,7 +15,8 @@ import {
   TaskQueue,
 } from "@dflex/utils";
 import DFlexDOMManager from "./DFlexDOMManager";
-import { getElmDOMOrThrow, assignElementID } from "./utils";
+
+import getElmDOMOrThrow from "./utils";
 
 type DeepRequired<T> = {
   [K in keyof T]-?: T[K] extends object
@@ -230,7 +231,7 @@ function submitContainerChildren(
 
   parentDOM.childNodes.forEach((DOM, i) => {
     if (DOM instanceof HTMLElement) {
-      const id = assignElementID(DOM, store.uniqueElementIDs);
+      const id = store.assignElementID(DOM);
 
       if (!store.registry.has(id)) {
         const elm: RegisterInputProcessed = {
@@ -352,7 +353,7 @@ class DFlexBaseStore extends DFlexDOMManager {
     }
 
     const getParentElmCallback = (parentDOM: HTMLElement) => {
-      const parentID = assignElementID(parentDOM, this.uniqueElementIDs);
+      const parentID = this.assignElementID(parentDOM);
 
       const isParentRegistered = this.registry.has(parentID);
 
