@@ -64,6 +64,17 @@ type RestoreKey = {
   PK: string;
 };
 
+function addToCollection<K, V>(map: Map<K, V[]>, key: K, value: V): number {
+  if (!map.has(key)) {
+    map.set(key, [value]);
+    return 0;
+  }
+
+  const collection = map.get(key)!;
+  const selfIndex = collection.push(value) - 1;
+  return selfIndex;
+}
+
 /**
  * Generate keys to connect relations between DOM-elements depending on tree
  * depth.
@@ -78,16 +89,15 @@ class Generator {
   private _branchIndicator!: number;
 
   /**
-   * A collection of registered elements stored in arrays represents siblings in
-   * each branch.
+   * A siblings collection that stores arrays of Element IDs grouped by Sibling
+   * Key (SK).
    */
-  private _siblings!: Record<SiblingKey, Siblings>;
+  private _idsBySK: Map<SiblingKey, ElmID[]>;
 
   /**
-   * A collection of siblings keys stored belong to the same depth.
-   * Horizontal scale.
+   * A collection that stores arrays of Sibling Keys (SK) grouped by Depth.
    */
-  private _SKByDepth!: Record<Depth, Siblings>;
+  private _SKsByDepth: Map<Depth, SiblingKey[]>;
 
   private _PKByDepth!: Record<Depth, ParentKey>;
 
@@ -104,14 +114,15 @@ class Generator {
   private _preBK!: string | null;
 
   constructor() {
+    this._idsBySK = new Map();
+    this._SKsByDepth = new Map();
+
     this._init();
   }
 
   private _init() {
     this._siblingsCount = {};
     this._branchIndicator = 0;
-    this._siblings = {};
-    this._SKByDepth = {};
     this._SKByBranch = {};
     this._PKByDepth = {};
     this._prevDepth = -99;
@@ -119,29 +130,12 @@ class Generator {
     this._prevPK = `${PREFIX_CONNECTOR_KEY}${combineKeys(0, 0)}`;
   }
 
-  private _addElmSKToDepthCollection(SK: string, depth: number): void {
-    if (!Array.isArray(this._SKByDepth[depth])) {
-      this._SKByDepth[depth] = [SK];
-
-      return;
-    }
-
-    const is = this._SKByDepth[depth].find((k) => k === SK);
-
-    if (!is) {
-      this._SKByDepth[depth].push(SK);
-    }
+  private _addSKToDepth(depth: number, SK: string): number {
+    return addToCollection(this._SKsByDepth, depth, SK);
   }
 
-  private _addElmIDToSiblings(id: string, SK: string): number {
-    if (!Array.isArray(this._siblings[SK])) {
-      this._siblings[SK] = [];
-    }
-
-    // @ts-ignore
-    const selfIndex = this._siblings[SK].push(id) - 1;
-
-    return selfIndex;
+  private _addIDToSiblings(SK: string, id: string): number {
+    return addToCollection(this._idsBySK, SK, id);
   }
 
   private _initIndicators(depth: number) {
@@ -398,9 +392,9 @@ class Generator {
     keys: Keys,
     siblingsIndex: number,
   ): Pointer {
-    this._addElmSKToDepthCollection(keys.SK, depth);
+    this._addSKToDepth(depth, keys.SK);
 
-    const selfIndex = this._addElmIDToSiblings(id, keys.SK);
+    const selfIndex = this._addIDToSiblings(keys.SK, id);
 
     const order: Order = {
       self: selfIndex,
@@ -446,8 +440,8 @@ class Generator {
    * @param siblings - new siblings to be added
    */
   mutateSiblings(SK: string, siblings: Siblings): void {
-    if (SK in this._siblings) {
-      Object.assign(this._siblings, { [SK]: siblings });
+    if (SK in this._idsBySK) {
+      Object.assign(this._idsBySK, { [SK]: siblings });
     } else if (__DEV__) {
       throw new Error(
         `mutateSiblings: Siblings with key:${SK} is not registered.`,
@@ -462,7 +456,7 @@ class Generator {
    * @returns
    */
   getSiblingKeysByDepth(dp: number): SKCollection {
-    return this._SKByDepth[dp] || [];
+    return this._SKsByDepth.get(dp) || [];
   }
 
   /**
@@ -471,7 +465,7 @@ class Generator {
    * @param  SK - Siblings Key
    */
   getElmSiblingsByKey(SK: string): Siblings {
-    return this._siblings[SK] || [];
+    return this._idsBySK.get(SK) || [];
   }
 
   getHighestSKInAllBranches(): Set<SKID> {
@@ -491,16 +485,6 @@ class Generator {
     });
 
     return highestSKInAllBranches;
-  }
-
-  private _hasSK(SK: string) {
-    if (__DEV__) {
-      if (!Array.isArray(this._siblings[SK])) {
-        throw new Error(`_hasSK: Siblings with SK ${SK} doesn't exist.`);
-      }
-    }
-
-    return Array.isArray(this._siblings[SK]);
   }
 
   removeIDFromBranch(id: string, BK: string): void {
@@ -538,12 +522,20 @@ class Generator {
   }
 
   private _removeSKFromDepth(SK: string, depth: number): void {
-    this._SKByDepth[depth] = this._SKByDepth[depth].filter((v) => v !== SK);
+    const skArray = this._SKsByDepth.get(depth);
 
-    if (this._SKByDepth[depth].length === 0) {
-      if (__DEV__) {
-        // eslint-disable-next-line no-console
-        console.log(`Deleted depth collection: ${depth}`);
+    if (skArray) {
+      const filteredSKArray = skArray.filter((v) => v !== SK);
+
+      if (filteredSKArray.length === 0) {
+        this._SKsByDepth.delete(depth);
+
+        if (__DEV__) {
+          // eslint-disable-next-line no-console
+          console.log(`Deleted depth collection: ${depth}`);
+        }
+      } else {
+        this._SKsByDepth.set(depth, filteredSKArray);
       }
     }
   }
@@ -555,23 +547,12 @@ class Generator {
    * @param cb - Callback function.
    * @returns
    */
-  destroySiblings(
-    SK: string,
-    BK: string,
-    depth: number,
-    cb?: ((elmID: string) => void) | null,
-  ): void {
-    if (!this._hasSK(SK)) {
+  destroySiblings(SK: string, BK: string, depth: number): void {
+    if (!this._idsBySK.has(SK)) {
       return;
     }
 
-    if (typeof cb === "function") {
-      while (this._siblings[SK].length) {
-        cb(this._siblings[SK].pop()!);
-      }
-    }
-
-    delete this._siblings[SK];
+    this._idsBySK.delete(SK);
 
     this._removeSKFromDepth(SK, depth);
     this._removeSKFromBranch(SK, BK);
@@ -587,6 +568,9 @@ class Generator {
   }
 
   clear() {
+    this._idsBySK.clear();
+    this._SKsByDepth.clear();
+
     this._init();
 
     if (__DEV__) {
