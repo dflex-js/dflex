@@ -49,6 +49,8 @@ function recomposeSiblings(
 
     store.DOMGen.mutateSiblings(SK, connectedNodesID);
   } else {
+    // If the siblings are entirely gone. Then validate the parent.
+
     store.deleteSiblings(SK, BK, depth);
   }
 }
@@ -87,8 +89,6 @@ function DFlexIDGarbageCollector(
     const hasAlreadyBeenRemoved = store.deletedDOM.has(DOM);
 
     if (!hasAlreadyBeenRemoved) {
-      store.deletedDOM.add(DOM);
-
       store.deleteFromRegistry(id);
 
       if (__DEV__) {

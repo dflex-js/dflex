@@ -39,10 +39,7 @@ class DFlexDOMManager {
     shouldThrowIfNotFound: boolean = true,
   ): [DFlexElement, HTMLElement] {
     if (__DEV__) {
-      if (
-        shouldThrowIfNotFound &&
-        !(this.registry.has(id) && this.interactiveDOM.has(id))
-      ) {
+      if (shouldThrowIfNotFound && !this.has(id)) {
         throw new Error(`getElmWithDOM: Unable to find element with ID: ${id}`);
       }
     }
@@ -63,11 +60,36 @@ class DFlexDOMManager {
   }
 
   /**
+   * Retrieves the Sibling Key (SK) associated with a given element ID.
+   *
+   * @param {string} id - The unique element ID.
+   * @returns {string} The Sibling Key (SK) of the element.
+   * @throws {Error} Throws an error if the element with the provided ID is not registered.
+   */
+  getSKByID(id: string): string {
+    if (__DEV__) {
+      if (!this.has(id)) {
+        throw new Error(`Element with ID '${id}' is not registered.`);
+      }
+    }
+
+    const {
+      keys: { SK },
+    } = this.registry.get(id)!;
+
+    return SK;
+  }
+
+  /**
    * Removes a DFlex element and its associated DOM element from the registry.
    * @param id - The unique ID of the DFlex element.
    */
   dispose(id: string): void {
     this.registry.delete(id);
+
+    const DOM = this.interactiveDOM.get(id)!;
+    this.deletedDOM.add(DOM);
+
     this.interactiveDOM.delete(id);
   }
 

@@ -764,22 +764,8 @@ class DFlexDnDStore extends DFlexBaseStore {
       : null;
   }
 
-  getElmKeyByID(id: string) {
-    if (__DEV__) {
-      if (!this.registry.has(id)) {
-        throw new Error(`Element with ID '${id}' is not registered.`);
-      }
-    }
-
-    const {
-      keys: { SK },
-    } = this.registry.get(id)!;
-
-    return SK;
-  }
-
   getScrollByID(id: string): DFlexScrollContainer {
-    const SK = this.getElmKeyByID(id);
+    const SK = this.getSKByID(id);
 
     if (__DEV__) {
       if (!this.scrolls.has(SK)) {
@@ -793,7 +779,7 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   getContainerByID(id: string): DFlexParentContainer {
-    const SK = this.getElmKeyByID(id);
+    const SK = this.getSKByID(id);
 
     if (__DEV__) {
       if (!this.containers.has(SK)) {
