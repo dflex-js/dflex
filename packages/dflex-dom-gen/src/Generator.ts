@@ -440,8 +440,8 @@ class Generator {
    * @param siblings - new siblings to be added
    */
   mutateSiblings(SK: string, siblings: Siblings): void {
-    if (SK in this._idsBySK) {
-      Object.assign(this._idsBySK, { [SK]: siblings });
+    if (this._idsBySK.has(SK)) {
+      this._idsBySK.set(SK, siblings);
     } else if (__DEV__) {
       throw new Error(
         `mutateSiblings: Siblings with key:${SK} is not registered.`,
