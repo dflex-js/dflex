@@ -108,12 +108,12 @@ function hasSiblingInSameLevel(
 ): boolean {
   let has = false;
 
-  const siblingsByDp = store.DOMGen.getSiblingKeysByDepth(depth);
+  const siblingsByDp = store.DOMGen.getSKByDepth(depth);
 
   const siblingsByDpLength = siblingsByDp.length;
 
   if (siblingsByDpLength > 0) {
-    const lastSKInSameDP = store.DOMGen.getElmSiblingsByKey(
+    const lastSKInSameDP = store.DOMGen.getSiblingsByKey(
       siblingsByDp[siblingsByDpLength - 1],
     );
 
@@ -540,7 +540,7 @@ class DFlexBaseStore extends DFlexDOMManager {
    * @returns
    */
   getElmSiblingsByKey(SK: string): Siblings {
-    return this.DOMGen.getElmSiblingsByKey(SK);
+    return this.DOMGen.getSiblingsByKey(SK);
   }
 
   /**
@@ -550,7 +550,7 @@ class DFlexBaseStore extends DFlexDOMManager {
    * @returns
    */
   getSiblingKeysByDepth(dp: number): Siblings {
-    return this.DOMGen.getSiblingKeysByDepth(dp);
+    return this.DOMGen.getSKByDepth(dp);
   }
 
   /**

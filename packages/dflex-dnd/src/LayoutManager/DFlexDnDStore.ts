@@ -284,7 +284,7 @@ class DFlexDnDStore extends DFlexBaseStore {
         : unifiedContainerDimensions;
     }
 
-    const siblings = this.DOMGen.getElmSiblingsByKey(SK);
+    const siblings = this.DOMGen.getSiblingsByKey(SK);
 
     if (__DEV__) {
       if (featureFlags.enableRegisterDebugger) {
