@@ -46,10 +46,7 @@ class DFlexDOMManager {
     shouldThrowIfNotFound: boolean = true,
   ): [DFlexElement, HTMLElement] {
     if (__DEV__) {
-      if (
-        shouldThrowIfNotFound &&
-        !(this.registry.has(id) && this.interactiveDOM.has(id))
-      ) {
+      if (shouldThrowIfNotFound && !this.has(id)) {
         throw new Error(`getElmWithDOM: Unable to find element with ID: ${id}`);
       }
     }
