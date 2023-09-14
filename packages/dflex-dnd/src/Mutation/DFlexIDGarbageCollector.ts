@@ -3,6 +3,8 @@ import type DFlexDnDStore from "../LayoutManager/DFlexDnDStore";
 
 export type TerminatedDOMiDs = Set<string>;
 
+const enableParentCleanup = false;
+
 function recomposeSiblings(
   store: DFlexDnDStore,
   terminatedDOMiDs: TerminatedDOMiDs,
@@ -49,13 +51,58 @@ function recomposeSiblings(
 
     store.DOMGen.mutateSiblings(SK, connectedNodesID);
   } else {
-    // If the siblings are entirely gone. Then validate the parent.
-
     store.deleteSiblings(SK, BK, depth);
   }
 }
 
 type SiblingKeyVal = { BK: string; depth: number };
+type SKeysMap = Map<string, SiblingKeyVal>;
+
+function groupIDsBySK(store: DFlexDnDStore, SKeys: SKeysMap, id: string): void {
+  const [dflexElm, DOM] = store.getElmWithDOM(id, false);
+
+  // hasAlreadyBeenRemoved
+  if (!DOM || !dflexElm) {
+    if (featureFlags.enableMutationDebugger) {
+      // eslint-disable-next-line no-console
+      console.log(
+        `Element with id: (${id}) has already been removed from registry`,
+      );
+    }
+
+    return;
+  }
+
+  const {
+    keys: { SK, BK },
+    depth,
+  } = dflexElm;
+
+  // This function handles calls from two sources: the observer and unregister.
+  // To prevent triggering the process twice, we check if it's the first time
+  // or if it's already been deleted.
+  const hasAlreadyBeenRemoved = store.deletedDOM.has(DOM);
+
+  if (!hasAlreadyBeenRemoved) {
+    if (__DEV__) {
+      if (featureFlags.enableMutationDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(`Queue ${id} to be removed from registry`);
+      }
+    }
+
+    if (!SKeys.has(SK)) {
+      SKeys.set(SK, { BK, depth });
+    }
+  } else if (__DEV__) {
+    if (featureFlags.enableMutationDebugger) {
+      // eslint-disable-next-line no-console
+      console.log(
+        `Element with id: (${id}) has already been removed from registry`,
+      );
+    }
+  }
+}
 
 function DFlexIDGarbageCollector(
   store: DFlexDnDStore,
@@ -63,58 +110,62 @@ function DFlexIDGarbageCollector(
 ): void {
   const SKeys = new Map<string, SiblingKeyVal>();
 
-  terminatedDOMiDs.forEach((id) => {
-    const [dflexElm, DOM] = store.getElmWithDOM(id, false);
+  const group = (id: string) => groupIDsBySK(store, SKeys, id);
 
-    // hasAlreadyBeenRemoved
-    if (!DOM || !dflexElm) {
-      if (featureFlags.enableMutationDebugger) {
-        // eslint-disable-next-line no-console
-        console.log(
-          `Element with id: (${id}) has already been removed from registry`,
-        );
-      }
+  terminatedDOMiDs.forEach(group);
 
-      return;
+  if (SKeys.size === 0) {
+    if (featureFlags.enableMutationDebugger) {
+      // eslint-disable-next-line no-console
+      console.log(`Nothing to unregister.`);
     }
 
-    const {
-      keys: { SK, BK },
-      depth,
-    } = dflexElm;
+    return;
+  }
 
-    // This function handles calls from two sources: the observer and unregister.
-    // To prevent triggering the process twice, we check if it's the first time
-    // or if it's already been deleted.
-    const hasAlreadyBeenRemoved = store.deletedDOM.has(DOM);
+  SKeys.forEach((_, SK) => {
+    const siblings = store.getElmSiblingsByKey(SK);
 
-    if (!hasAlreadyBeenRemoved) {
-      store.deleteFromRegistry(id);
+    const id = siblings[0];
 
-      if (__DEV__) {
+    const parent = store.getParentByElmID(id);
+
+    if (enableParentCleanup && parent) {
+      const [parentID, parentDOM] = parent;
+
+      if (!parentDOM.isConnected) {
         if (featureFlags.enableMutationDebugger) {
           // eslint-disable-next-line no-console
-          console.log(`DFlexIdGC: removing ${id} from registry`);
+          console.log(
+            `Parent with id: (${parentID}) will be removed from registry`,
+          );
         }
-      }
 
-      if (!SKeys.has(SK)) {
-        SKeys.set(SK, { BK, depth });
-      }
-    } else if (__DEV__) {
-      if (featureFlags.enableMutationDebugger) {
-        // eslint-disable-next-line no-console
-        console.log(
-          `Element with id: (${id}) has already been removed from registry`,
-        );
+        siblings.forEach((eID) => {
+          store.deleteFromRegistry(eID);
+          terminatedDOMiDs.delete(eID);
+        });
+
+        DFlexIDGarbageCollector(store, new Set([parentID]));
       }
     }
   });
 
-  const recomposeFromKys = (v: SiblingKeyVal, k: string) =>
-    recomposeSiblings(store, terminatedDOMiDs, v, k);
+  terminatedDOMiDs.forEach((id) => {
+    store.deleteFromRegistry(id);
+  });
 
-  SKeys.forEach(recomposeFromKys);
+  if (terminatedDOMiDs.size > 0) {
+    const recompose = (v: SiblingKeyVal, k: string) =>
+      recomposeSiblings(store, terminatedDOMiDs, v, k);
+
+    SKeys.forEach(recompose);
+  } else if (__DEV__) {
+    if (featureFlags.enableMutationDebugger) {
+      // eslint-disable-next-line no-console
+      console.log(`Nothing to unregister.`);
+    }
+  }
 }
 
 export default DFlexIDGarbageCollector;

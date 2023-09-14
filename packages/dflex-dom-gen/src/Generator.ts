@@ -555,20 +555,9 @@ class Generator {
    * @param cb - Callback function.
    * @returns
    */
-  destroySiblings(
-    SK: string,
-    BK: string,
-    depth: number,
-    cb?: ((elmID: string) => void) | null,
-  ): void {
+  destroySiblings(SK: string, BK: string, depth: number): void {
     if (!this._hasSK(SK)) {
       return;
-    }
-
-    if (typeof cb === "function") {
-      while (this._siblings[SK].length) {
-        cb(this._siblings[SK].pop()!);
-      }
     }
 
     delete this._siblings[SK];
