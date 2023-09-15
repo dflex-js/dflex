@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { combineKeys, featureFlags } from "@dflex/utils";
-import DOMKeysManager from "./KeysManager";
+import DOMKeysManager from "./DOMKeysManager";
 
 const PREFIX_CONNECTOR_KEY = "dflex_ky_";
 const PREFIX_SIBLINGS_KEY = "dflex_sk_";
@@ -69,7 +69,7 @@ type RestoreKey = {
  * Generate keys to connect relations between DOM-elements depending on tree
  * depth.
  */
-class Generator extends DOMKeysManager {
+class DOMKeysGenerator extends DOMKeysManager {
   /**
    * Counter store. Each depth has it's own indicator. Allowing us to go
    * for endless layers (levels).
@@ -506,4 +506,4 @@ class Generator extends DOMKeysManager {
   }
 }
 
-export default Generator;
+export default DOMKeysGenerator;

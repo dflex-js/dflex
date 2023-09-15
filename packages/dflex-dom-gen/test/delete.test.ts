@@ -50,13 +50,13 @@ describe("Testing clear methods", () => {
   });
 
   it("The new generated branch has correct registered ids", () => {
-    const branch = domGen.getElmSiblingsByKey(pointerChild0D0.keys.SK);
+    const branch = domGen.getSiblingsByKey(pointerChild0D0.keys.SK);
 
     expect(branch).toStrictEqual(["id-0", "id-1"]);
   });
 
   it("The new generated branch has its key inside the branch depth array", () => {
-    expect(domGen.getSiblingKeysByDepth(0)).toMatchInlineSnapshot(`
+    expect(domGen.getSKByDepth(0)).toMatchInlineSnapshot(`
       [
         "dflex_sk_0_0",
       ]
@@ -64,7 +64,7 @@ describe("Testing clear methods", () => {
   });
 
   it("The branch depth array still has the branch key", () => {
-    expect(domGen.getSiblingKeysByDepth(0)).toMatchInlineSnapshot(`
+    expect(domGen.getSKByDepth(0)).toMatchInlineSnapshot(`
       [
         "dflex_sk_0_0",
       ]
@@ -74,7 +74,7 @@ describe("Testing clear methods", () => {
   // it("Destroy branch", () => {
   //   domGen.destroySiblings("dflex_sk_0_0");
 
-  //   const branch = domGen.getElmSiblingsByKey(pointerChild0D0.keys.SK);
+  //   const branch = domGen.getSiblingsByKey(pointerChild0D0.keys.SK);
 
   //   expect(branch).toStrictEqual([]);
   // });
@@ -119,7 +119,7 @@ describe("Testing clear methods", () => {
       }
     `);
 
-    const branch = domGen.getElmSiblingsByKey(pointerChild0D0.keys.SK);
+    const branch = domGen.getSiblingsByKey(pointerChild0D0.keys.SK);
 
     expect(branch).toMatchInlineSnapshot(`
       [
@@ -129,7 +129,7 @@ describe("Testing clear methods", () => {
         "id-1",
       ]
     `);
-    expect(domGen.getSiblingKeysByDepth(0)).toMatchInlineSnapshot(`
+    expect(domGen.getSKByDepth(0)).toMatchInlineSnapshot(`
       [
         "dflex_sk_0_0",
       ]

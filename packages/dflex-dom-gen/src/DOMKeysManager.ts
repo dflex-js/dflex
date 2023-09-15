@@ -129,11 +129,13 @@ class DOMKeysManager {
 
     if (latestDepth + 1 !== prevDepth) {
       if (__DEV__) {
-        throw new Error(
-          "_shareParentFromPrevBranch: Unable to add new higher depth and share the container. " +
-            "Both siblings must have the same highest depth " +
-            "for this operation to be possible.",
-        );
+        if (latestDepth !== prevDepth) {
+          throw new Error(
+            "_shareParentFromPrevBranch: Unable to add new higher depth and share the container. " +
+              "Both siblings must have the same highest depth " +
+              "for this operation to be possible.",
+          );
+        }
       }
       return;
     }

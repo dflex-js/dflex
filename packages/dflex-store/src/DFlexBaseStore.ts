@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import Generator, { Keys, Siblings } from "@dflex/dom-gen";
+import DOMKeysGenerator, { Keys, Siblings } from "@dflex/dom-gen";
 
 import { DFlexElement, DFlexElementInput } from "@dflex/core-instance";
 import {
@@ -267,7 +267,7 @@ const CB_Q = "submitQ";
 class DFlexBaseStore extends DFlexDOMManager {
   globals: DFlexGlobalConfig;
 
-  DOMGen: Generator;
+  DOMGen: DOMKeysGenerator;
 
   private _lastDOMParent: HTMLElement | null;
 
@@ -281,7 +281,7 @@ class DFlexBaseStore extends DFlexDOMManager {
     };
     this._lastDOMParent = null;
     this._taskQ = new TaskQueue();
-    this.DOMGen = new Generator();
+    this.DOMGen = new DOMKeysGenerator();
   }
 
   /**

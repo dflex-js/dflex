@@ -2,7 +2,7 @@
 
 exports[`DFlex DnD DFlex DnD Store registration Element is initiated 1`] = `
 DFlexDnDStore {
-  "DOMGen": Generator {
+  "DOMGen": DOMKeysGenerator {
     "_PKByDepth": {
       "0": "dflex_ky_1_1",
       "1": "dflex_ky_2_0",
@@ -29,33 +29,71 @@ DFlexDnDStore {
         },
       ],
     },
-    "_SKByDepth": {
-      "0": [
+    "_SKByDepth": Map {
+      0 => [
         "dflex_sk_0_0",
         "dflex_sk_0_1",
       ],
-      "1": [
+      1 => [
         "dflex_sk_1_0",
       ],
     },
     "_branchIndicator": 1,
-    "_preBK": null,
-    "_prevDepth": 1,
-    "_prevPK": "dflex_ky_2_0",
-    "_siblings": {
-      "dflex_sk_0_0": [
+    "_branchesRegistry": Map {
+      "dflex_bk_0" => Map {
+        0 => {
+          "SK": "dflex_sk_0_0",
+          "ids": [
+            "id-1",
+          ],
+        },
+        1 => {
+          "SK": "dflex_sk_1_0",
+          "ids": [
+            "dflex_id_0",
+            "dflex_id_1",
+          ],
+        },
+      },
+      "dflex_bk_1" => Map {
+        0 => {
+          "SK": "dflex_sk_0_1",
+          "ids": [
+            "id-2",
+            "id-3",
+            "id-4",
+          ],
+        },
+        1 => {
+          "SK": "dflex_sk_1_0",
+          "ids": [
+            "dflex_id_0",
+            "dflex_id_1",
+          ],
+        },
+      },
+    },
+    "_idsBySk": Map {
+      "dflex_sk_0_0" => [
         "id-1",
       ],
-      "dflex_sk_0_1": [
+      "dflex_sk_1_0" => [
+        "dflex_id_0",
+        "dflex_id_1",
+      ],
+      "dflex_sk_0_1" => [
         "id-2",
         "id-3",
         "id-4",
       ],
-      "dflex_sk_1_0": [
-        "dflex_id_0",
-        "dflex_id_1",
-      ],
     },
+    "_preBK": null,
+    "_prevBKs": [
+      "dflex_bk_0",
+      "dflex_bk_1",
+    ],
+    "_prevDepth": 1,
+    "_prevPK": "dflex_ky_2_0",
     "_siblingsCount": {
       "0": 4,
       "1": 2,
