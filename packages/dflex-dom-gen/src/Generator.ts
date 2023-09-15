@@ -360,10 +360,17 @@ class Generator extends DOMKeysManager {
     depth: number,
     keys: Keys,
     siblingsIndex: number,
+    hasSiblingInSameLevel: boolean,
   ): Pointer {
-    this._addSKToDepth(depth, keys.SK);
+    const { SK, BK } = keys;
 
-    const selfIndex = this.addDToSiblings(keys.SK, id);
+    const selfIndex = this.registerKeys(
+      id,
+      SK,
+      BK,
+      depth,
+      hasSiblingInSameLevel,
+    );
 
     const order: Order = {
       self: selfIndex,
@@ -399,7 +406,13 @@ class Generator extends DOMKeysManager {
       BK,
     };
 
-    return this._composePointer(id, depth, keys, siblingsIndex);
+    return this._composePointer(
+      id,
+      depth,
+      keys,
+      siblingsIndex,
+      hasSiblingInSameLevel,
+    );
   }
 
   getHighestSKInAllBranches(): Set<SKID> {
@@ -469,7 +482,7 @@ class Generator extends DOMKeysManager {
 
     this.deleteSiblings(SK);
 
-    this._removeSKFromDepth(SK, depth);
+    this.removeSKFromDepth(SK, depth);
     this._removeSKFromBranch(SK, BK);
 
     if (__DEV__) {
