@@ -284,7 +284,7 @@ class DFlexDnDStore extends DFlexBaseStore {
         : unifiedContainerDimensions;
     }
 
-    const siblings = this.DOMGen.getElmSiblingsByKey(SK);
+    const siblings = this.DOMGen.getSiblingsByKey(SK);
 
     if (__DEV__) {
       if (featureFlags.enableRegisterDebugger) {
@@ -764,22 +764,8 @@ class DFlexDnDStore extends DFlexBaseStore {
       : null;
   }
 
-  getElmKeyByID(id: string) {
-    if (__DEV__) {
-      if (!this.registry.has(id)) {
-        throw new Error(`Element with ID '${id}' is not registered.`);
-      }
-    }
-
-    const {
-      keys: { SK },
-    } = this.registry.get(id)!;
-
-    return SK;
-  }
-
   getScrollByID(id: string): DFlexScrollContainer {
-    const SK = this.getElmKeyByID(id);
+    const SK = this.getSKByID(id);
 
     if (__DEV__) {
       if (!this.scrolls.has(SK)) {
@@ -792,32 +778,41 @@ class DFlexDnDStore extends DFlexBaseStore {
     return scroll;
   }
 
-  getContainerByID(id: string): DFlexParentContainer {
-    const SK = this.getElmKeyByID(id);
+  getContainerByID(id: string): DFlexParentContainer | undefined {
+    const SK = this.getSKByID(id);
 
     if (__DEV__) {
       if (!this.containers.has(SK)) {
-        throw new Error(`Container with key '${SK}' is not found.`);
+        // eslint-disable-next-line no-console
+        console.warn(
+          `Container with key '${SK}' is not found. Ignore this warning If this element '${id}' is a parent.`,
+        );
       }
     }
 
-    const container = this.containers.get(SK)!;
+    const container = this.containers.get(SK);
 
     return container;
   }
 
-  getParentByElmID(id: string): [string, HTMLElement] {
-    const { id: parentID } = this.getContainerByID(id);
+  getParentByElmID(id: string): [string, HTMLElement] | undefined {
+    const container = this.getContainerByID(id);
 
-    if (__DEV__) {
-      if (!this.interactiveDOM.has(id)) {
-        throw new Error(`DOM element for ID '${id}' is not found.`);
+    if (container) {
+      const { id: parentID } = container;
+
+      if (__DEV__) {
+        if (!this.interactiveDOM.has(id)) {
+          throw new Error(`DOM element for ID '${id}' is not found.`);
+        }
       }
+
+      const parentDOM = this.interactiveDOM.get(id)!;
+
+      return [parentID, parentDOM];
     }
 
-    const parentDOM = this.interactiveDOM.get(id)!;
-
-    return [parentID, parentDOM];
+    return undefined;
   }
 
   deleteSiblings(SK: string, BK: string, depth: number): void {

@@ -1,5 +1,5 @@
-import Generator from "./Generator";
+import DOMKeysGenerator from "./DOMKeysGenerator";
 
-export type { Keys, Order, Pointer, Siblings } from "./Generator";
+export type { Keys, Order, Pointer, Siblings } from "./DOMKeysGenerator";
 
-export default Generator;
+export default DOMKeysGenerator;

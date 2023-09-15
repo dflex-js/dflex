@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import Generator, { Keys, Siblings } from "@dflex/dom-gen";
+import DOMKeysGenerator, { Keys, Siblings } from "@dflex/dom-gen";
 
 import { DFlexElement, DFlexElementInput } from "@dflex/core-instance";
 import {
@@ -108,12 +108,12 @@ function hasSiblingInSameLevel(
 ): boolean {
   let has = false;
 
-  const siblingsByDp = store.DOMGen.getSiblingKeysByDepth(depth);
+  const siblingsByDp = store.DOMGen.getSKByDepth(depth);
 
   const siblingsByDpLength = siblingsByDp.length;
 
   if (siblingsByDpLength > 0) {
-    const lastSKInSameDP = store.DOMGen.getElmSiblingsByKey(
+    const lastSKInSameDP = store.DOMGen.getSiblingsByKey(
       siblingsByDp[siblingsByDpLength - 1],
     );
 
@@ -267,7 +267,7 @@ const CB_Q = "submitQ";
 class DFlexBaseStore extends DFlexDOMManager {
   globals: DFlexGlobalConfig;
 
-  DOMGen: Generator;
+  DOMGen: DOMKeysGenerator;
 
   private _lastDOMParent: HTMLElement | null;
 
@@ -281,7 +281,7 @@ class DFlexBaseStore extends DFlexDOMManager {
     };
     this._lastDOMParent = null;
     this._taskQ = new TaskQueue();
-    this.DOMGen = new Generator();
+    this.DOMGen = new DOMKeysGenerator();
   }
 
   /**
@@ -540,7 +540,7 @@ class DFlexBaseStore extends DFlexDOMManager {
    * @returns
    */
   getElmSiblingsByKey(SK: string): Siblings {
-    return this.DOMGen.getElmSiblingsByKey(SK);
+    return this.DOMGen.getSiblingsByKey(SK);
   }
 
   /**
@@ -550,7 +550,7 @@ class DFlexBaseStore extends DFlexDOMManager {
    * @returns
    */
   getSiblingKeysByDepth(dp: number): Siblings {
-    return this.DOMGen.getSiblingKeysByDepth(dp);
+    return this.DOMGen.getSKByDepth(dp);
   }
 
   /**

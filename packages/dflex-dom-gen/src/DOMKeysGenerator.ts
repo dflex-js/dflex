@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { combineKeys, featureFlags } from "@dflex/utils";
+import DOMKeysManager from "./DOMKeysManager";
 
 const PREFIX_CONNECTOR_KEY = "dflex_ky_";
 const PREFIX_SIBLINGS_KEY = "dflex_sk_";
@@ -68,7 +69,7 @@ type RestoreKey = {
  * Generate keys to connect relations between DOM-elements depending on tree
  * depth.
  */
-class Generator {
+class DOMKeysGenerator extends DOMKeysManager {
   /**
    * Counter store. Each depth has it's own indicator. Allowing us to go
    * for endless layers (levels).
@@ -76,18 +77,6 @@ class Generator {
   private _siblingsCount!: Record<Depth, number>;
 
   private _branchIndicator!: number;
-
-  /**
-   * A collection of registered elements stored in arrays represents siblings in
-   * each branch.
-   */
-  private _siblings!: Record<SiblingKey, Siblings>;
-
-  /**
-   * A collection of siblings keys stored belong to the same depth.
-   * Horizontal scale.
-   */
-  private _SKByDepth!: Record<Depth, Siblings>;
 
   private _PKByDepth!: Record<Depth, ParentKey>;
 
@@ -104,44 +93,18 @@ class Generator {
   private _preBK!: string | null;
 
   constructor() {
+    super();
     this._init();
   }
 
   private _init() {
     this._siblingsCount = {};
     this._branchIndicator = 0;
-    this._siblings = {};
-    this._SKByDepth = {};
     this._SKByBranch = {};
     this._PKByDepth = {};
     this._prevDepth = -99;
     this._preBK = null;
     this._prevPK = `${PREFIX_CONNECTOR_KEY}${combineKeys(0, 0)}`;
-  }
-
-  private _addElmSKToDepthCollection(SK: string, depth: number): void {
-    if (!Array.isArray(this._SKByDepth[depth])) {
-      this._SKByDepth[depth] = [SK];
-
-      return;
-    }
-
-    const is = this._SKByDepth[depth].find((k) => k === SK);
-
-    if (!is) {
-      this._SKByDepth[depth].push(SK);
-    }
-  }
-
-  private _addElmIDToSiblings(id: string, SK: string): number {
-    if (!Array.isArray(this._siblings[SK])) {
-      this._siblings[SK] = [];
-    }
-
-    // @ts-ignore
-    const selfIndex = this._siblings[SK].push(id) - 1;
-
-    return selfIndex;
   }
 
   private _initIndicators(depth: number) {
@@ -397,10 +360,17 @@ class Generator {
     depth: number,
     keys: Keys,
     siblingsIndex: number,
+    hasSiblingInSameLevel: boolean,
   ): Pointer {
-    this._addElmSKToDepthCollection(keys.SK, depth);
+    const { SK, BK } = keys;
 
-    const selfIndex = this._addElmIDToSiblings(id, keys.SK);
+    const selfIndex = this.registerKeys(
+      id,
+      SK,
+      BK,
+      depth,
+      hasSiblingInSameLevel,
+    );
 
     const order: Order = {
       self: selfIndex,
@@ -436,42 +406,13 @@ class Generator {
       BK,
     };
 
-    return this._composePointer(id, depth, keys, siblingsIndex);
-  }
-
-  /**
-   * Mutate a new siblings to the siblings root.
-   *
-   * @param SK - Siblings Key
-   * @param siblings - new siblings to be added
-   */
-  mutateSiblings(SK: string, siblings: Siblings): void {
-    if (SK in this._siblings) {
-      Object.assign(this._siblings, { [SK]: siblings });
-    } else if (__DEV__) {
-      throw new Error(
-        `mutateSiblings: Siblings with key:${SK} is not registered.`,
-      );
-    }
-  }
-
-  /**
-   * Gets all SK(s) in the same depth.
-   *
-   * @param dp
-   * @returns
-   */
-  getSiblingKeysByDepth(dp: number): SKCollection {
-    return this._SKByDepth[dp] || [];
-  }
-
-  /**
-   * Gets all element IDs in given node represented by sk.
-   *
-   * @param  SK - Siblings Key
-   */
-  getElmSiblingsByKey(SK: string): Siblings {
-    return this._siblings[SK] || [];
+    return this._composePointer(
+      id,
+      depth,
+      keys,
+      siblingsIndex,
+      hasSiblingInSameLevel,
+    );
   }
 
   getHighestSKInAllBranches(): Set<SKID> {
@@ -491,16 +432,6 @@ class Generator {
     });
 
     return highestSKInAllBranches;
-  }
-
-  private _hasSK(SK: string) {
-    if (__DEV__) {
-      if (!Array.isArray(this._siblings[SK])) {
-        throw new Error(`_hasSK: Siblings with SK ${SK} doesn't exist.`);
-      }
-    }
-
-    return Array.isArray(this._siblings[SK]);
   }
 
   removeIDFromBranch(id: string, BK: string): void {
@@ -537,17 +468,6 @@ class Generator {
     }
   }
 
-  private _removeSKFromDepth(SK: string, depth: number): void {
-    this._SKByDepth[depth] = this._SKByDepth[depth].filter((v) => v !== SK);
-
-    if (this._SKByDepth[depth].length === 0) {
-      if (__DEV__) {
-        // eslint-disable-next-line no-console
-        console.log(`Deleted depth collection: ${depth}`);
-      }
-    }
-  }
-
   /**
    * Removes entire siblings from root.
    *
@@ -555,25 +475,14 @@ class Generator {
    * @param cb - Callback function.
    * @returns
    */
-  destroySiblings(
-    SK: string,
-    BK: string,
-    depth: number,
-    cb?: ((elmID: string) => void) | null,
-  ): void {
-    if (!this._hasSK(SK)) {
+  destroySiblings(SK: string, BK: string, depth: number): void {
+    if (!this.hasSK(SK)) {
       return;
     }
 
-    if (typeof cb === "function") {
-      while (this._siblings[SK].length) {
-        cb(this._siblings[SK].pop()!);
-      }
-    }
+    this.deleteSiblings(SK);
 
-    delete this._siblings[SK];
-
-    this._removeSKFromDepth(SK, depth);
+    this.removeSKFromDepth(SK, depth);
     this._removeSKFromBranch(SK, BK);
 
     if (__DEV__) {
@@ -588,6 +497,7 @@ class Generator {
 
   clear() {
     this._init();
+    super.destroy();
 
     if (__DEV__) {
       uniqueKeysDev.clear();
@@ -596,4 +506,4 @@ class Generator {
   }
 }
 
-export default Generator;
+export default DOMKeysGenerator;

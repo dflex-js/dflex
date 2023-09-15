@@ -39,7 +39,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
     });
 
     it("Has a new branch contains the registered element-id", () => {
-      const branch = domGen.getElmSiblingsByKey(pointerChild0D0.keys.SK);
+      const branch = domGen.getSiblingsByKey(pointerChild0D0.keys.SK);
       expect(branch).toMatchInlineSnapshot(`
         [
           "id-0",
@@ -48,7 +48,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
     });
 
     it("Adds the new branch into its depth", () => {
-      expect(domGen.getSiblingKeysByDepth(0)).toMatchInlineSnapshot(`
+      expect(domGen.getSKByDepth(0)).toMatchInlineSnapshot(`
         [
           "dflex_sk_0_0",
         ]
@@ -79,7 +79,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
         }
       `);
 
-      let siblings = domGen.getElmSiblingsByKey(pointerChild0D0.keys.SK);
+      let siblings = domGen.getSiblingsByKey(pointerChild0D0.keys.SK);
 
       expect(siblings).toMatchInlineSnapshot(`
         [
@@ -113,7 +113,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
         }
       `);
 
-      siblings = domGen.getElmSiblingsByKey(pointerChild2D0.keys.SK);
+      siblings = domGen.getSiblingsByKey(pointerChild2D0.keys.SK);
 
       expect(siblings).toMatchInlineSnapshot(`
         [
@@ -125,7 +125,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
     });
 
     it("Preserve the branch key grouped with its depth", () => {
-      expect(domGen.getSiblingKeysByDepth(0)).toMatchInlineSnapshot(`
+      expect(domGen.getSKByDepth(0)).toMatchInlineSnapshot(`
         [
           "dflex_sk_0_0",
         ]
@@ -161,7 +161,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
           },
         }
       `);
-      const siblings = domGen.getElmSiblingsByKey(pointerParent0D1.keys.SK);
+      const siblings = domGen.getSiblingsByKey(pointerParent0D1.keys.SK);
       expect(siblings).toMatchInlineSnapshot(`
         [
           "id-parent-1",
@@ -170,12 +170,12 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
     });
 
     it("Add the new branch key (parent branch) to its depth", () => {
-      expect(domGen.getSiblingKeysByDepth(0)).toMatchInlineSnapshot(`
+      expect(domGen.getSKByDepth(0)).toMatchInlineSnapshot(`
         [
           "dflex_sk_0_0",
         ]
       `);
-      expect(domGen.getSiblingKeysByDepth(1)).toMatchInlineSnapshot(`
+      expect(domGen.getSKByDepth(1)).toMatchInlineSnapshot(`
         [
           "dflex_sk_1_0",
         ]
@@ -209,22 +209,22 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
           },
         }
       `);
-      const branch = domGen.getElmSiblingsByKey(pointerGrandParent0D2.keys.SK);
+      const branch = domGen.getSiblingsByKey(pointerGrandParent0D2.keys.SK);
       expect(branch).toStrictEqual(["id-grand-parent-1"]);
     });
 
     it("Add the new branch key (grand branch) to its depth", () => {
-      expect(domGen.getSiblingKeysByDepth(0)).toMatchInlineSnapshot(`
+      expect(domGen.getSKByDepth(0)).toMatchInlineSnapshot(`
         [
           "dflex_sk_0_0",
         ]
       `);
-      expect(domGen.getSiblingKeysByDepth(1)).toMatchInlineSnapshot(`
+      expect(domGen.getSKByDepth(1)).toMatchInlineSnapshot(`
         [
           "dflex_sk_1_0",
         ]
       `);
-      expect(domGen.getSiblingKeysByDepth(2)).toMatchInlineSnapshot(`
+      expect(domGen.getSKByDepth(2)).toMatchInlineSnapshot(`
         [
           "dflex_sk_2_0",
         ]
@@ -264,7 +264,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
           },
         }
       `);
-      const siblings = domGen.getElmSiblingsByKey(pointerChild3D0.keys.SK);
+      const siblings = domGen.getSiblingsByKey(pointerChild3D0.keys.SK);
       expect(siblings).toMatchInlineSnapshot(`
         [
           "id-00",
@@ -273,18 +273,18 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
     });
 
     it("Add the new branch key to the existing depth array", () => {
-      expect(domGen.getSiblingKeysByDepth(0)).toMatchInlineSnapshot(`
+      expect(domGen.getSKByDepth(0)).toMatchInlineSnapshot(`
         [
           "dflex_sk_0_0",
           "dflex_sk_0_1",
         ]
       `);
-      expect(domGen.getSiblingKeysByDepth(1)).toMatchInlineSnapshot(`
+      expect(domGen.getSKByDepth(1)).toMatchInlineSnapshot(`
         [
           "dflex_sk_1_0",
         ]
       `);
-      expect(domGen.getSiblingKeysByDepth(2)).toMatchInlineSnapshot(`
+      expect(domGen.getSKByDepth(2)).toMatchInlineSnapshot(`
         [
           "dflex_sk_2_0",
         ]
@@ -296,7 +296,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
     });
 
     it("Updates branch by key", () => {
-      const siblings = domGen.getElmSiblingsByKey(pointerChild2D0.keys.SK);
+      const siblings = domGen.getSiblingsByKey(pointerChild2D0.keys.SK);
       expect(siblings).toMatchInlineSnapshot(`
         [
           "id-0",
@@ -306,9 +306,7 @@ describe("DOM Relationship Generator: Ascending-Simple", () => {
       `);
 
       domGen.mutateSiblings(pointerChild2D0.keys.SK, []);
-      const updatedSiblings = domGen.getElmSiblingsByKey(
-        pointerChild2D0.keys.SK,
-      );
+      const updatedSiblings = domGen.getSiblingsByKey(pointerChild2D0.keys.SK);
       expect(updatedSiblings).toStrictEqual([]);
     });
   });
