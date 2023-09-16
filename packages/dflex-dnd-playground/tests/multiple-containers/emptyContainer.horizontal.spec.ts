@@ -132,8 +132,14 @@ test.describe
       });
     });
 
-    test("Trigger key `c` to commit the transformed elements and read the emitted message for mutation caused by (#c1-1)", async () => {
+    test("Trigger key `c` to commit the transformed elements and read the emitted message for mutation caused by (#c1-1)", async ({
+      browserName,
+    }) => {
       await invokeKeyboardAndAssertEmittedMsg(["c1-1"]);
+
+      if (browserName === "firefox") {
+        await page.waitForTimeout(2000);
+      }
     });
 
     test("Siblings in both containers are reconciled", async () => {
