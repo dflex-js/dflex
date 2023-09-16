@@ -7,28 +7,6 @@ DFlexDnDStore {
       "0": "dflex_ky_1_1",
       "1": "dflex_ky_2_0",
     },
-    "_SKByBranch": {
-      "dflex_bk_0": [
-        {
-          "SK": "dflex_sk_0_0",
-          "id": "id-1",
-        },
-        {
-          "SK": "dflex_sk_1_0",
-          "id": "dflex_id_0",
-        },
-      ],
-      "dflex_bk_1": [
-        {
-          "SK": "dflex_sk_0_1",
-          "id": "id-2",
-        },
-        {
-          "SK": "dflex_sk_1_0",
-          "id": "dflex_id_1",
-        },
-      ],
-    },
     "_SKByDepth": Map {
       0 => [
         "dflex_sk_0_0",
@@ -272,7 +250,6 @@ DFlexDnDStore {
   "migration": null,
   "mutationObserverMap": Map {
     "dflex_id_0" => MutationObserver {},
-    "dflex_id_1" => MutationObserver {},
   },
   "registry": Map {
     "id-1" => DFlexElement {
