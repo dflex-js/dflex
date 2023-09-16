@@ -1,11 +1,10 @@
 /* eslint-disable no-console */
 import type { DFlexElement } from "@dflex/core-instance";
-import type { Siblings } from "@dflex/dom-gen";
 import { featureFlags } from "@dflex/utils";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
 function switchElmDOMPosition(
-  branchIDs: Readonly<Siblings>,
+  branchIDs: Readonly<string[]>,
   branchDOM: HTMLElement,
   store: DFlexDnDStore,
   dflexElm: DFlexElement,
@@ -42,7 +41,7 @@ function switchElmDOMPosition(
 }
 
 function commitElm(
-  branchIDs: Readonly<Siblings>,
+  branchIDs: Readonly<string[]>,
   branchDOM: HTMLElement,
   store: DFlexDnDStore,
   elmID: string,
@@ -88,7 +87,7 @@ type ReconciledElementIDs = Set<string>;
  * @returns An array of tuples containing the reconciled elements and their corresponding DOM elements.
  */
 function DFlexDOMReconciler(
-  siblingsIDs: Readonly<Siblings>,
+  siblingsIDs: Readonly<string[]>,
   containerDOM: HTMLElement,
   SK: string,
   store: DFlexDnDStore,

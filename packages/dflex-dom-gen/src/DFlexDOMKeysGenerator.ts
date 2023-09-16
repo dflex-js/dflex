@@ -52,19 +52,11 @@ export interface Pointer {
   order: Order;
 }
 
-export type Siblings = SiblingKey[];
-
-export type SKCollection = SiblingKey[];
-
 type RestoreKey = {
   BK: string;
   PK: string;
 };
 
-/**
- * Generate keys to connect relations between DOM-elements depending on tree
- * depth.
- */
 class DOMKeysGenerator extends DOMKeysManager {
   /**
    * Counter store. Each depth has it's own indicator. Allowing us to go

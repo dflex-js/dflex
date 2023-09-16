@@ -1,5 +1,4 @@
 import type { DFlexElement, DFlexScrollContainer } from "@dflex/core-instance";
-import type { Siblings } from "@dflex/dom-gen";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
 let prevVisibility = false;
@@ -25,7 +24,7 @@ function updateElmVisibility(
 }
 
 function updateSiblingsVisibility(
-  sibling: Siblings,
+  sibling: string[],
   store: DFlexDnDStore,
   from: number,
   to: number,

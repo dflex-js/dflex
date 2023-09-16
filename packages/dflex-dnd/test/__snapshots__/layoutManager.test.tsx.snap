@@ -29,7 +29,6 @@ DFlexDnDStore {
           "SK": "dflex_sk_1_0",
           "ids": [
             "dflex_id_0",
-            "dflex_id_1",
           ],
         },
       },
@@ -45,7 +44,6 @@ DFlexDnDStore {
         1 => {
           "SK": "dflex_sk_1_0",
           "ids": [
-            "dflex_id_0",
             "dflex_id_1",
           ],
         },
@@ -250,6 +248,7 @@ DFlexDnDStore {
   "migration": null,
   "mutationObserverMap": Map {
     "dflex_id_0" => MutationObserver {},
+    "dflex_id_1" => MutationObserver {},
   },
   "registry": Map {
     "id-1" => DFlexElement {

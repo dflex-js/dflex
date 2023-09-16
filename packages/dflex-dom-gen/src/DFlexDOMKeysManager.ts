@@ -8,16 +8,18 @@ type Depth = number;
 
 type BranchValue = { SK: SiblingKey; ids: ElmID[] };
 
-function deleteIDfromArr(siblings: string[], id: string): string[] {
+function deleteElmFromArr(siblings: string[], id: string): string[] {
   const updatedSiblings = siblings.filter((existingId) => existingId !== id);
 
   return updatedSiblings;
 }
 
-function addToUniqueArray<T>(arr: T[], element: T): void {
+function addToUniqueArray<T>(arr: T[], element: T): T[] {
   if (!arr.some((existingElement) => existingElement === element)) {
     arr.push(element);
   }
+
+  return arr;
 }
 
 class DOMKeysManager {
@@ -71,23 +73,23 @@ class DOMKeysManager {
   private _getHighestDepthInBranch(BK: string): [Depth, BranchValue] {
     const depthMap = this._branchesRegistry.get(BK)!;
 
-    const highestDepth = Math.max(...depthMap.keys());
+    const highestDepth = depthMap.size - 1;
 
     const highestDepthValue = depthMap.get(highestDepth)!;
 
     return [highestDepth, highestDepthValue];
   }
 
-  getAllHighestSKs(): Set<{ SK: string; id: string }> {
-    const allHighestSKs = new Set<{ SK: string; id: string }>();
+  getTopLevelSKs(): Set<{ SK: string; id: string }> {
+    const topLevelSKs = new Set<{ SK: string; id: string }>();
 
     this._branchesRegistry.forEach((_, BK) => {
       const [, { SK, ids }] = this._getHighestDepthInBranch(BK)!;
 
-      allHighestSKs.add({ SK, id: ids[0] });
+      topLevelSKs.add({ SK, id: ids[0] });
     });
 
-    return allHighestSKs;
+    return topLevelSKs;
   }
 
   private _updateBranchValue(
@@ -95,7 +97,15 @@ class DOMKeysManager {
     BK: string,
     depth: number,
   ): BranchValue {
-    const ids = this._idsBySk.get(SK)!;
+    let ids = this._idsBySk.get(SK)!;
+
+    // If depth equals to zero then it's all siblings.
+    // If not (meaning there are parent elements), then it's just the immediate parent.
+    if (depth > 0) {
+      // For non-zero depth, only include the immediate parent ID.
+      ids = [ids[ids.length - 1]];
+    }
+
     let branch = this._branchesRegistry.get(BK);
 
     if (!branch) {
@@ -120,7 +130,7 @@ class DOMKeysManager {
     return branchValue;
   }
 
-  private _shareParentFromPrevBranch(BK: BranchKey, latestDepth: number): void {
+  private _shareParentFromPrevBranch(BK: BranchKey, depth: number): void {
     const prevBK = this._findLastNotMatchingBK(BK);
 
     if (__DEV__) {
@@ -135,9 +145,10 @@ class DOMKeysManager {
 
     const [prevDepth, prevValue] = this._getHighestDepthInBranch(prevBK!)!;
 
-    if (latestDepth + 1 !== prevDepth) {
+    // Sharing the same parent in DOM but it's not in the registry.
+    if (depth + 1 !== prevDepth) {
       if (__DEV__) {
-        if (latestDepth !== prevDepth) {
+        if (depth !== prevDepth) {
           throw new Error(
             "_shareParentFromPrevBranch: Unable to add new higher depth and share the container. " +
               "Both siblings must have the same highest depth " +
@@ -148,6 +159,9 @@ class DOMKeysManager {
       return;
     }
 
+    // Update the current branch with previous values as they are shared.
+    // Essentially, we're informing the current branch that it shares a parent
+    // with the previous branch, so it should inherit the parent's values.
     this._updateBranchValue(prevValue.SK, BK, prevDepth);
   }
 
@@ -199,7 +213,7 @@ class DOMKeysManager {
   }
 
   private _deleteBKfromPrevBKs(BK: BranchKey): void {
-    deleteIDfromArr(this._prevBKs, BK);
+    deleteElmFromArr(this._prevBKs, BK);
   }
 
   private _deleteSKFromDepth(SK: string, depth: number): void {
@@ -234,7 +248,7 @@ class DOMKeysManager {
 
     const siblings = this._idsBySk.get(SK)!;
 
-    const updatedSiblings = deleteIDfromArr(siblings, id);
+    const updatedSiblings = deleteElmFromArr(siblings, id);
 
     if (updatedSiblings.length === 0) {
       this._idsBySk.delete(SK);
@@ -256,7 +270,7 @@ class DOMKeysManager {
 
     const deptVal = depthMap.get(depth)!;
 
-    const updatedSiblings = deleteIDfromArr(deptVal.ids, id);
+    const updatedSiblings = deleteElmFromArr(deptVal.ids, id);
 
     if (updatedSiblings.length === 0) {
       depthMap.delete(depth);

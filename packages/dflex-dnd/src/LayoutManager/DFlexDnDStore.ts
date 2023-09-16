@@ -356,9 +356,9 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   private _initObservers() {
-    const highestSKInAllBranches = this.DOMGen.getAllHighestSKs();
+    const containerIDs = this.DOMGen.getTopLevelSKs();
 
-    highestSKInAllBranches.forEach(({ id }) => {
+    containerIDs.forEach(({ id }) => {
       if (__DEV__) {
         if (!this.interactiveDOM.has(id)) {
           throw new Error(`_initObservers: Unable to find DOM for SK: ${id}`);
@@ -842,7 +842,7 @@ class DFlexDnDStore extends DFlexBaseStore {
       }
     }
 
-    const SKIDs = this.DOMGen.getAllHighestSKs();
+    const SKIDs = this.DOMGen.getTopLevelSKs();
 
     SKIDs.forEach(({ SK: _SK, id }) => {
       if (SK === _SK) {
