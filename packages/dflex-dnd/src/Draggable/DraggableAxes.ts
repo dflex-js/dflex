@@ -17,7 +17,6 @@ import {
 
 import type { DFlexElement } from "@dflex/core-instance";
 
-import type { Siblings } from "@dflex/dom-gen";
 import {
   DFlexEventPlugin,
   initDFlexEvent,
@@ -32,7 +31,7 @@ import type {
   RestrictionsStatus,
 } from "../types";
 
-function initContainers(SK: string, siblings: Siblings) {
+function initContainers(SK: string, siblings: string[]) {
   const container = store.containers.get(SK)!;
 
   if (!container.lastElmPosition) {
