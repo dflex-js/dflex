@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { combineKeys, featureFlags } from "@dflex/utils";
-import DOMKeysManager from "./DOMKeysManager";
+import DOMKeysManager from "./DFlexDOMKeysManager";
 
 const PREFIX_CONNECTOR_KEY = "dflex_ky_";
 const PREFIX_SIBLINGS_KEY = "dflex_sk_";
