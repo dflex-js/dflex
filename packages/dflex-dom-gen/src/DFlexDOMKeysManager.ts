@@ -8,6 +8,12 @@ type Depth = number;
 
 type BranchValue = { SK: SiblingKey; ids: ElmID[] };
 
+function deleteIDfromSiblings(siblings: string[], id: string): string[] {
+  const updatedSiblings = siblings.filter((existingId) => existingId !== id);
+
+  return updatedSiblings;
+}
+
 class DOMKeysManager {
   private _idsBySk: Map<SiblingKey, ElmID[]>;
 
@@ -78,6 +84,18 @@ class DOMKeysManager {
     }
 
     return [highestDepth, highestDepthValue];
+  }
+
+  getAllHighestSKs(): Set<{ SK: string; id: string }> {
+    const allHighestSKs = new Set<{ SK: string; id: string }>();
+
+    this._branchesRegistry.forEach((_, BK) => {
+      const [, { SK, ids }] = this._getHighestDepthInBranch(BK)!;
+
+      allHighestSKs.add({ SK, id: ids[0] });
+    });
+
+    return allHighestSKs;
   }
 
   private _updateBranchValue(
@@ -190,7 +208,7 @@ class DOMKeysManager {
     return this._SKByDepth.get(dp) || [];
   }
 
-  private _removeBKfromPrevBKs(BK: BranchKey): void {
+  private _deleteBKfromPrevBKs(BK: BranchKey): void {
     const index = this._prevBKs.findIndex((prevBK) => prevBK === BK);
 
     if (index !== -1) {
@@ -198,7 +216,7 @@ class DOMKeysManager {
     }
   }
 
-  private _removeSKFromDepth(SK: string, depth: number): void {
+  private _deleteSKFromDepth(SK: string, depth: number): void {
     if (!this._SKByDepth.has(depth)) {
       if (__DEV__) {
         throw new Error(`Depth ${depth} is not registered in _SKByDepth.`);
@@ -223,7 +241,45 @@ class DOMKeysManager {
     }
   }
 
-  destroySiblings(BK: string, SK: string, depth: number): void {
+  private _deleteIDFromSks(SK: string, id: string): void {
+    if (!this._idsBySk.has(SK)) {
+      return;
+    }
+
+    const siblings = this._idsBySk.get(SK)!;
+
+    const updatedSiblings = deleteIDfromSiblings(siblings, id);
+
+    if (updatedSiblings.length === 0) {
+      this._idsBySk.delete(SK);
+    } else {
+      this._idsBySk.set(SK, updatedSiblings);
+    }
+  }
+
+  deleteIDFromBranch(BK: string, SK: string, depth: number, id: string): void {
+    this._deleteIDFromSks(SK, id);
+
+    if (!this._branchesRegistry.has(BK)) {
+      if (__DEV__) {
+        throw new Error(`Branch ${BK} is not registered in _branchesRegistry.`);
+      }
+    }
+
+    const depthMap = this._branchesRegistry.get(BK)!;
+
+    const deptVal = depthMap.get(depth)!;
+
+    const updatedSiblings = deleteIDfromSiblings(deptVal.ids, id);
+
+    if (updatedSiblings.length === 0) {
+      depthMap.delete(depth);
+    } else {
+      depthMap.set(depth, { ids: updatedSiblings, SK: deptVal.SK });
+    }
+  }
+
+  deleteSiblings(BK: string, SK: string, depth: number): void {
     if (!this._idsBySk.has(SK)) {
       return;
     }
@@ -243,7 +299,7 @@ class DOMKeysManager {
     for (let i = depth; i >= 0; i -= 1) {
       const deletedBranchValue = depthMap.delete(depth);
 
-      this._removeSKFromDepth(SK, depth);
+      this._deleteSKFromDepth(SK, depth);
 
       if (__DEV__) {
         if (!deletedBranchValue) {
@@ -256,7 +312,7 @@ class DOMKeysManager {
 
     if (this._branchesRegistry.get(BK)!.size === 0) {
       this._branchesRegistry.delete(BK);
-      this._removeBKfromPrevBKs(BK);
+      this._deleteBKfromPrevBKs(BK);
 
       if (__DEV__) {
         // eslint-disable-next-line no-console
