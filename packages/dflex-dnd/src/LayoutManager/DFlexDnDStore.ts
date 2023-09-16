@@ -356,9 +356,9 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   private _initObservers() {
-    const highestSKInAllBranches = this.DOMGen.getHighestSKInAllBranches();
+    const containerIDs = this.DOMGen.getTopLevelSKs();
 
-    highestSKInAllBranches.forEach(({ id }) => {
+    containerIDs.forEach(({ id }) => {
       if (__DEV__) {
         if (!this.interactiveDOM.has(id)) {
           throw new Error(`_initObservers: Unable to find DOM for SK: ${id}`);
@@ -815,7 +815,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     return undefined;
   }
 
-  deleteSiblings(SK: string, BK: string, depth: number): void {
+  deleteSiblings(BK: string, SK: string, depth: number): void {
     const scroll = this.scrolls.get(SK)!;
 
     if (__DEV__) {
@@ -842,7 +842,7 @@ class DFlexDnDStore extends DFlexBaseStore {
       }
     }
 
-    const SKIDs = this.DOMGen.getHighestSKInAllBranches();
+    const SKIDs = this.DOMGen.getTopLevelSKs();
 
     SKIDs.forEach(({ SK: _SK, id }) => {
       if (SK === _SK) {
@@ -860,14 +860,7 @@ class DFlexDnDStore extends DFlexBaseStore {
       }
     });
 
-    this.DOMGen.destroySiblings(SK, BK, depth);
-
-    if (__DEV__) {
-      if (featureFlags.enableRegisterDebugger) {
-        // eslint-disable-next-line no-console
-        console.log(`deleteSiblings for SK: ${SK}`);
-      }
-    }
+    this.DOMGen.deleteSiblings(BK, SK, depth);
   }
 
   destroy(): void {

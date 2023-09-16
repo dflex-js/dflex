@@ -1,5 +1,5 @@
-import DOMKeysGenerator from "./DOMKeysGenerator";
+import DOMKeysGenerator from "./DFlexDOMKeysGenerator";
 
-export type { Keys, Order, Pointer, Siblings } from "./DOMKeysGenerator";
+export type { Keys, Order, Pointer } from "./DFlexDOMKeysGenerator";
 
 export default DOMKeysGenerator;

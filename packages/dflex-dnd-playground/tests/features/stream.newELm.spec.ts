@@ -57,8 +57,12 @@ test.describe("Stream new element then transform mutate and check the new positi
       ]);
     });
 
-    test("Siblings index initiated correctly round 2", async () => {
-      await page.keyboard.press("r", { delay: 50 });
+    test("Siblings index initiated correctly round 2", async ({
+      browserName,
+    }) => {
+      await page.keyboard.press("r", {
+        delay: browserName === "webkit" ? 150 : 50,
+      });
 
       await Promise.all([
         assertDefaultChildrenIndex(elmAParent),
@@ -94,8 +98,12 @@ test.describe("Stream new element then transform mutate and check the new positi
   });
 
   test.describe("Next rounds initialized positions", () => {
-    test("Siblings index initiated correctly round 2", async () => {
-      await page.keyboard.press("r", { delay: 50 });
+    test("Siblings index initiated correctly round 2", async ({
+      browserName,
+    }) => {
+      await page.keyboard.press("r", {
+        delay: browserName === "webkit" ? 150 : 50,
+      });
 
       await Promise.all([
         assertDefaultChildrenIndex(elmAParent),
@@ -103,8 +111,12 @@ test.describe("Stream new element then transform mutate and check the new positi
       ]);
     });
 
-    test("Siblings index initiated correctly round 3", async () => {
-      await page.keyboard.press("r", { delay: 50 });
+    test("Siblings index initiated correctly round 3", async ({
+      browserName,
+    }) => {
+      await page.keyboard.press("r", {
+        delay: browserName === "webkit" ? 150 : 50,
+      });
 
       await Promise.all([
         assertDefaultChildrenIndex(elmAParent),
@@ -112,8 +124,12 @@ test.describe("Stream new element then transform mutate and check the new positi
       ]);
     });
 
-    test.skip("Siblings index initiated correctly round 4", async () => {
-      await page.keyboard.press("r", { delay: 50 });
+    test.skip("Siblings index initiated correctly round 4", async ({
+      browserName,
+    }) => {
+      await page.keyboard.press("r", {
+        delay: browserName === "webkit" ? 150 : 50,
+      });
 
       await Promise.all([
         assertDefaultChildrenIndex(elmAParent),

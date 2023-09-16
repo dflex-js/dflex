@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { combineKeys, featureFlags } from "@dflex/utils";
-import DOMKeysManager from "./DOMKeysManager";
+import DOMKeysManager from "./DFlexDOMKeysManager";
 
 const PREFIX_CONNECTOR_KEY = "dflex_ky_";
 const PREFIX_SIBLINGS_KEY = "dflex_sk_";
@@ -20,10 +20,6 @@ type ParentKey = string;
 type ChildKey = string;
 
 type BranchKey = string;
-
-type ElmID = string;
-
-type SKID = { SK: SiblingKey; id: ElmID };
 
 /**
  * Element generated unique keys in DOM tree.
@@ -56,19 +52,11 @@ export interface Pointer {
   order: Order;
 }
 
-export type Siblings = SiblingKey[];
-
-export type SKCollection = SiblingKey[];
-
 type RestoreKey = {
   BK: string;
   PK: string;
 };
 
-/**
- * Generate keys to connect relations between DOM-elements depending on tree
- * depth.
- */
 class DOMKeysGenerator extends DOMKeysManager {
   /**
    * Counter store. Each depth has it's own indicator. Allowing us to go
@@ -79,12 +67,6 @@ class DOMKeysGenerator extends DOMKeysManager {
   private _branchIndicator!: number;
 
   private _PKByDepth!: Record<Depth, ParentKey>;
-
-  /**
-   * A collection of siblings keys stored belong to the same branch.
-   * Vertical scale.
-   */
-  private _SKByBranch!: Record<BranchKey, (SKID | null)[]>;
 
   private _prevDepth!: number;
 
@@ -100,7 +82,6 @@ class DOMKeysGenerator extends DOMKeysManager {
   private _init() {
     this._siblingsCount = {};
     this._branchIndicator = 0;
-    this._SKByBranch = {};
     this._PKByDepth = {};
     this._prevDepth = -99;
     this._preBK = null;
@@ -148,24 +129,6 @@ class DOMKeysGenerator extends DOMKeysManager {
       CHK = this._prevPK;
     }
 
-    if (isNewLayer) {
-      if (__DEV__) {
-        if (!Array.isArray(this._SKByBranch[BK])) {
-          throw new Error(`_insertLayer: unable to find branch with BK ${BK}`);
-        }
-
-        if (featureFlags.enableRegisterDebugger) {
-          // eslint-disable-next-line no-console
-          console.log(
-            `_insertLayer: new layer will be inserted at: ${depth} in the branch:`,
-            [...this._SKByBranch[BK]],
-          );
-        }
-      }
-
-      this._SKByBranch[BK][depth] = { SK, id };
-    }
-
     this._siblingsCount[depth] += 1;
 
     return {
@@ -179,7 +142,6 @@ class DOMKeysGenerator extends DOMKeysManager {
 
   private _composeKeys(
     depth: number,
-    id: string,
     hasSiblingInSameLevel: boolean,
   ): Keys & { siblingsIndex: number } {
     const parentDepth = depth + 1;
@@ -204,10 +166,6 @@ class DOMKeysGenerator extends DOMKeysManager {
     }
 
     const BK = `${PREFIX_BRANCH_KEY}${this._branchIndicator}`;
-
-    if (!Array.isArray(this._SKByBranch[BK])) {
-      this._SKByBranch[BK] = [];
-    }
 
     // If hasSiblingInSameLevel then don't increment.
     // Revers the accumulator.
@@ -247,44 +205,6 @@ class DOMKeysGenerator extends DOMKeysManager {
     }
 
     this._prevPK = PK;
-
-    const branchHasSK = this._SKByBranch[BK].find((v) => v && v.SK === SK);
-
-    if (!branchHasSK) {
-      this._SKByBranch[BK].push({ SK, id });
-    }
-
-    if (hasSiblingInSameLevel) {
-      const preBranchKey = `${PREFIX_BRANCH_KEY}${this._branchIndicator - 1}`;
-      const preBranch = this._SKByBranch[preBranchKey];
-      if (__DEV__) {
-        if (!Array.isArray(preBranch)) {
-          throw new Error(
-            `_composeKeys: Unable to find the previous branch using key: ${preBranchKey}`,
-          );
-        }
-      }
-      const preBranchLength = preBranch.length;
-
-      // If adding a new element will make the new branch ahead then ignore `hasSiblingInSameLevel`.
-      // It's when two has the same parent but only `depth=0` is registered.
-      // In this case, `depth=1` is shared but the registry doesn't' reach `depth=2`
-      // where the shared parent is.
-      if (preBranchLength === this._SKByBranch[BK].length + 1) {
-        const lastElm = preBranch[preBranchLength - 1];
-
-        // If same level then the parent from previous branch is the same parent
-        // for this element.
-        this._SKByBranch[BK].push(lastElm);
-      } else if (__DEV__) {
-        if (featureFlags.enableRegisterDebugger) {
-          // eslint-disable-next-line no-console
-          console.log(
-            "_composeKeys: Ignore siblings with the same parent since the shared parent is not registered.",
-          );
-        }
-      }
-    }
 
     if (__DEV__) {
       const uniqueSK = SK + siblingsIndex;
@@ -397,7 +317,7 @@ class DOMKeysGenerator extends DOMKeysManager {
   ): Pointer {
     const { CHK, SK, PK, BK, siblingsIndex } = restoredKeys
       ? this._insertLayer(depth, id, restoredKeys, restoredKeysSiblingsIndex!)
-      : this._composeKeys(depth, id, hasSiblingInSameLevel);
+      : this._composeKeys(depth, hasSiblingInSameLevel);
 
     const keys: Keys = {
       CHK,
@@ -413,82 +333,6 @@ class DOMKeysGenerator extends DOMKeysManager {
       siblingsIndex,
       hasSiblingInSameLevel,
     );
-  }
-
-  getHighestSKInAllBranches(): Set<SKID> {
-    const highestSKInAllBranches = new Set<SKID>();
-
-    Object.keys(this._SKByBranch).forEach((BK) => {
-      const l = this._SKByBranch[BK].length;
-      const lastElm = this._SKByBranch[BK][l - 1];
-
-      if (lastElm) {
-        highestSKInAllBranches.add(lastElm);
-      } else if (__DEV__) {
-        throw new Error(
-          `getHighestSKInAllBranches: last element is empty: ${this._SKByBranch[BK]}`,
-        );
-      }
-    });
-
-    return highestSKInAllBranches;
-  }
-
-  removeIDFromBranch(id: string, BK: string): void {
-    if (__DEV__) {
-      if (!Array.isArray(this._SKByBranch[BK])) {
-        throw new Error(
-          `removeIDFromBranch: Branch with SK ${BK} doesn't exist.`,
-        );
-      }
-    }
-
-    if (this._SKByBranch[BK].find((e) => e && e.id === id)) {
-      this._SKByBranch[BK] = this._SKByBranch[BK].map((v) =>
-        v ? (v.id !== id ? v : null) : null,
-      );
-    }
-  }
-
-  private _removeSKFromBranch(SK: string, BK: string): void {
-    this._SKByBranch[BK] = this._SKByBranch[BK].map((v) =>
-      v ? (v.SK !== SK ? v : null) : null,
-    );
-
-    if (this._SKByBranch[BK].every((item) => item === null)) {
-      delete this._SKByBranch[BK];
-
-      if (__DEV__) {
-        // eslint-disable-next-line no-console
-        console.log(`Deleted branch: ${BK}`);
-      }
-
-      this._siblingsCount = {};
-      this._prevPK = "";
-    }
-  }
-
-  /**
-   * Removes entire siblings from root.
-   *
-   * @param SK - Sibling keys.
-   * @param cb - Callback function.
-   * @returns
-   */
-  destroySiblings(SK: string, BK: string, depth: number): void {
-    if (!this.hasSK(SK)) {
-      return;
-    }
-
-    this.deleteSiblings(SK);
-
-    this.removeSKFromDepth(SK, depth);
-    this._removeSKFromBranch(SK, BK);
-
-    if (__DEV__) {
-      // eslint-disable-next-line no-console
-      console.log(`Deleted siblings: ${SK}`);
-    }
   }
 
   endRegistration() {

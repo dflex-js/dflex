@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import DOMKeysGenerator, { Keys, Siblings } from "@dflex/dom-gen";
+import DOMKeysGenerator, { Keys } from "@dflex/dom-gen";
 
 import { DFlexElement, DFlexElementInput } from "@dflex/core-instance";
 import {
@@ -539,7 +539,7 @@ class DFlexBaseStore extends DFlexDOMManager {
    * @param SK - Siblings Key.
    * @returns
    */
-  getElmSiblingsByKey(SK: string): Siblings {
+  getElmSiblingsByKey(SK: string): string[] {
     return this.DOMGen.getSiblingsByKey(SK);
   }
 
@@ -549,7 +549,7 @@ class DFlexBaseStore extends DFlexDOMManager {
    * @param dp - depth.
    * @returns
    */
-  getSiblingKeysByDepth(dp: number): Siblings {
+  getSiblingKeysByDepth(dp: number): string[] {
     return this.DOMGen.getSKByDepth(dp);
   }
 
@@ -559,7 +559,7 @@ class DFlexBaseStore extends DFlexDOMManager {
    * @param SK
    * @param newSiblings
    */
-  mutateSiblings(SK: string, newSiblings: Siblings): void {
+  mutateSiblings(SK: string, newSiblings: string[]): void {
     this.DOMGen.mutateSiblings(SK, newSiblings);
   }
 

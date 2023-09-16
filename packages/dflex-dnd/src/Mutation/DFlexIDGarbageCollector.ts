@@ -46,12 +46,12 @@ function recomposeSiblings(
 
   if (connectedNodesID.length > 0) {
     terminatedDOMiDs.forEach((id) => {
-      store.DOMGen.removeIDFromBranch(id, BK);
+      store.DOMGen.deleteIDFromBranch(BK, SK, depth, id);
     });
 
     store.DOMGen.mutateSiblings(SK, connectedNodesID);
   } else {
-    store.deleteSiblings(SK, BK, depth);
+    store.deleteSiblings(BK, SK, depth);
   }
 }
 

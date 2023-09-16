@@ -1,6 +1,5 @@
 import type { DFlexGlobalConfig, RegisterInputOpts } from "@dflex/store";
 import type { DFlexSerializedElement } from "@dflex/core-instance";
-import type { Siblings } from "@dflex/dom-gen";
 
 import DFlexDnDStore from "./DFlexDnDStore";
 
@@ -46,7 +45,7 @@ class DFlexDnDExportedStore {
    * @param SK - Sibling Key.
    * @returns An object containing the sibling element IDs.
    */
-  getElmSiblingsByKey(SK: string): Siblings {
+  getElmSiblingsByKey(SK: string): string[] {
     return this._base.getElmSiblingsByKey(SK);
   }
 
