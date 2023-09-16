@@ -8,10 +8,16 @@ type Depth = number;
 
 type BranchValue = { SK: SiblingKey; ids: ElmID[] };
 
-function deleteIDfromSiblings(siblings: string[], id: string): string[] {
+function deleteIDfromArr(siblings: string[], id: string): string[] {
   const updatedSiblings = siblings.filter((existingId) => existingId !== id);
 
   return updatedSiblings;
+}
+
+function addToUniqueArray<T>(arr: T[], element: T): void {
+  if (!arr.some((existingElement) => existingElement === element)) {
+    arr.push(element);
+  }
 }
 
 class DOMKeysManager {
@@ -45,17 +51,11 @@ class DOMKeysManager {
 
     const skList = this._SKByDepth.get(depth)!;
 
-    const skExists = skList.some((existingSK) => existingSK === SK);
-
-    if (!skExists) {
-      skList.push(SK);
-    }
+    addToUniqueArray<string>(skList, SK);
   }
 
   private _upsertBK(BK: string): void {
-    if (!this._prevBKs.some((prevBK) => prevBK === BK)) {
-      this._prevBKs.push(BK);
-    }
+    addToUniqueArray<string>(this._prevBKs, BK);
   }
 
   private _findLastNotMatchingBK(BK: string): string | null {
@@ -68,20 +68,12 @@ class DOMKeysManager {
     return null;
   }
 
-  private _getHighestDepthInBranch(BK: string): [Depth, BranchValue] | null {
-    const depthMap = this._branchesRegistry.get(BK);
-
-    if (!depthMap) {
-      return null;
-    }
+  private _getHighestDepthInBranch(BK: string): [Depth, BranchValue] {
+    const depthMap = this._branchesRegistry.get(BK)!;
 
     const highestDepth = Math.max(...depthMap.keys());
 
-    const highestDepthValue = depthMap.get(highestDepth);
-
-    if (!highestDepthValue) {
-      return null;
-    }
+    const highestDepthValue = depthMap.get(highestDepth)!;
 
     return [highestDepth, highestDepthValue];
   }
@@ -131,19 +123,17 @@ class DOMKeysManager {
   private _shareParentFromPrevBranch(BK: BranchKey, latestDepth: number): void {
     const prevBK = this._findLastNotMatchingBK(BK);
 
-    if (prevBK === null) {
-      if (__DEV__) {
+    if (__DEV__) {
+      if (prevBK === null) {
         throw new Error(
           `_shareParentFromPrevBranch: Unable to find the previous branch key. ` +
             `The previous branch key (_prevBK) is expected to have a valid value, ` +
             `but it is currently null.`,
         );
       }
-
-      return;
     }
 
-    const [prevDepth, prevValue] = this._getHighestDepthInBranch(prevBK)!;
+    const [prevDepth, prevValue] = this._getHighestDepthInBranch(prevBK!)!;
 
     if (latestDepth + 1 !== prevDepth) {
       if (__DEV__) {
@@ -209,20 +199,14 @@ class DOMKeysManager {
   }
 
   private _deleteBKfromPrevBKs(BK: BranchKey): void {
-    const index = this._prevBKs.findIndex((prevBK) => prevBK === BK);
-
-    if (index !== -1) {
-      this._prevBKs.splice(index, 1);
-    }
+    deleteIDfromArr(this._prevBKs, BK);
   }
 
   private _deleteSKFromDepth(SK: string, depth: number): void {
-    if (!this._SKByDepth.has(depth)) {
-      if (__DEV__) {
+    if (__DEV__) {
+      if (!this._SKByDepth.has(depth)) {
         throw new Error(`Depth ${depth} is not registered in _SKByDepth.`);
       }
-
-      return;
     }
 
     const skList = this._SKByDepth.get(depth)!;
@@ -242,13 +226,15 @@ class DOMKeysManager {
   }
 
   private _deleteIDFromSks(SK: string, id: string): void {
-    if (!this._idsBySk.has(SK)) {
-      return;
+    if (__DEV__) {
+      if (!this._idsBySk.has(SK)) {
+        throw new Error(`SK ${SK} is not registered in _idsBySk.`);
+      }
     }
 
     const siblings = this._idsBySk.get(SK)!;
 
-    const updatedSiblings = deleteIDfromSiblings(siblings, id);
+    const updatedSiblings = deleteIDfromArr(siblings, id);
 
     if (updatedSiblings.length === 0) {
       this._idsBySk.delete(SK);
@@ -260,8 +246,8 @@ class DOMKeysManager {
   deleteIDFromBranch(BK: string, SK: string, depth: number, id: string): void {
     this._deleteIDFromSks(SK, id);
 
-    if (!this._branchesRegistry.has(BK)) {
-      if (__DEV__) {
+    if (__DEV__) {
+      if (!this._branchesRegistry.has(BK)) {
         throw new Error(`Branch ${BK} is not registered in _branchesRegistry.`);
       }
     }
@@ -270,7 +256,7 @@ class DOMKeysManager {
 
     const deptVal = depthMap.get(depth)!;
 
-    const updatedSiblings = deleteIDfromSiblings(deptVal.ids, id);
+    const updatedSiblings = deleteIDfromArr(deptVal.ids, id);
 
     if (updatedSiblings.length === 0) {
       depthMap.delete(depth);
@@ -280,14 +266,16 @@ class DOMKeysManager {
   }
 
   deleteSiblings(BK: string, SK: string, depth: number): void {
-    if (!this._idsBySk.has(SK)) {
-      return;
+    if (__DEV__) {
+      if (!this._idsBySk.has(SK)) {
+        throw new Error(`SK ${SK} is not registered in _idsBySk.`);
+      }
     }
 
     this._idsBySk.delete(SK);
 
-    if (!this._branchesRegistry.has(BK)) {
-      if (__DEV__) {
+    if (__DEV__) {
+      if (!this._branchesRegistry.has(BK)) {
         throw new Error(`Branch ${BK} is not registered in _branchesRegistry.`);
       }
 
