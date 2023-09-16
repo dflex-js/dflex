@@ -860,14 +860,7 @@ class DFlexDnDStore extends DFlexBaseStore {
       }
     });
 
-    this.DOMGen.destroySiblings(SK, BK, depth);
-
-    if (__DEV__) {
-      if (featureFlags.enableRegisterDebugger) {
-        // eslint-disable-next-line no-console
-        console.log(`deleteSiblings for SK: ${SK}`);
-      }
-    }
+    this.DOMGen.destroySiblings(BK, SK, depth);
   }
 
   destroy(): void {

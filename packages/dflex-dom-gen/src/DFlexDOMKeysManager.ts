@@ -11,7 +11,7 @@ type BranchValue = { SK: SiblingKey; ids: ElmID[] };
 class DOMKeysManager {
   private _idsBySk: Map<SiblingKey, ElmID[]>;
 
-  private _SKByDepth: Map<Depth, ElmID[]>;
+  private _SKByDepth: Map<Depth, SiblingKey[]>;
 
   private _branchesRegistry: Map<BranchKey, Map<Depth, BranchValue>>;
 
@@ -174,14 +174,6 @@ class DOMKeysManager {
     return selfIndex;
   }
 
-  protected deleteSiblings(SK: string): void {
-    this._idsBySk.delete(SK);
-  }
-
-  protected hasSK(SK: string) {
-    return this._idsBySk.has(SK);
-  }
-
   mutateSiblings(SK: string, siblings: ElmID[]): void {
     if (this._idsBySk.has(SK)) {
       this._idsBySk.set(SK, siblings);
@@ -198,7 +190,15 @@ class DOMKeysManager {
     return this._SKByDepth.get(dp) || [];
   }
 
-  protected removeSKFromDepth(SK: string, depth: number): void {
+  private _removeBKfromPrevBKs(BK: BranchKey): void {
+    const index = this._prevBKs.findIndex((prevBK) => prevBK === BK);
+
+    if (index !== -1) {
+      this._prevBKs.splice(index, 1);
+    }
+  }
+
+  private _removeSKFromDepth(SK: string, depth: number): void {
     if (!this._SKByDepth.has(depth)) {
       if (__DEV__) {
         throw new Error(`Depth ${depth} is not registered in _SKByDepth.`);
@@ -214,11 +214,59 @@ class DOMKeysManager {
       skList.filter((existingSK) => existingSK !== SK),
     );
 
-    if (__DEV__) {
-      if (this._SKByDepth.get(depth)!.length === 0) {
+    if (this._SKByDepth.get(depth)!.length === 0) {
+      this._SKByDepth.delete(depth);
+      if (__DEV__) {
         // eslint-disable-next-line no-console
         console.log(`Deleted depth collection: ${depth}`);
       }
+    }
+  }
+
+  destroySiblings(BK: string, SK: string, depth: number): void {
+    if (!this._idsBySk.has(SK)) {
+      return;
+    }
+
+    this._idsBySk.delete(SK);
+
+    if (!this._branchesRegistry.has(BK)) {
+      if (__DEV__) {
+        throw new Error(`Branch ${BK} is not registered in _branchesRegistry.`);
+      }
+
+      return;
+    }
+
+    const depthMap = this._branchesRegistry.get(BK)!;
+
+    for (let i = depth; i >= 0; i -= 1) {
+      const deletedBranchValue = depthMap.delete(depth);
+
+      this._removeSKFromDepth(SK, depth);
+
+      if (__DEV__) {
+        if (!deletedBranchValue) {
+          throw new Error(
+            `Failed to delete branch value for depth ${depth} in branch key ${BK}`,
+          );
+        }
+      }
+    }
+
+    if (this._branchesRegistry.get(BK)!.size === 0) {
+      this._branchesRegistry.delete(BK);
+      this._removeBKfromPrevBKs(BK);
+
+      if (__DEV__) {
+        // eslint-disable-next-line no-console
+        console.log(`Deleted Branch Registry: ${BK}`);
+      }
+    }
+
+    if (__DEV__) {
+      // eslint-disable-next-line no-console
+      console.log(`Deleted siblings: ${SK}`);
     }
   }
 

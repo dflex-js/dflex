@@ -450,47 +450,6 @@ class DOMKeysGenerator extends DOMKeysManager {
     }
   }
 
-  private _removeSKFromBranch(SK: string, BK: string): void {
-    this._SKByBranch[BK] = this._SKByBranch[BK].map((v) =>
-      v ? (v.SK !== SK ? v : null) : null,
-    );
-
-    if (this._SKByBranch[BK].every((item) => item === null)) {
-      delete this._SKByBranch[BK];
-
-      if (__DEV__) {
-        // eslint-disable-next-line no-console
-        console.log(`Deleted branch: ${BK}`);
-      }
-
-      this._siblingsCount = {};
-      this._prevPK = "";
-    }
-  }
-
-  /**
-   * Removes entire siblings from root.
-   *
-   * @param SK - Sibling keys.
-   * @param cb - Callback function.
-   * @returns
-   */
-  destroySiblings(SK: string, BK: string, depth: number): void {
-    if (!this.hasSK(SK)) {
-      return;
-    }
-
-    this.deleteSiblings(SK);
-
-    this.removeSKFromDepth(SK, depth);
-    this._removeSKFromBranch(SK, BK);
-
-    if (__DEV__) {
-      // eslint-disable-next-line no-console
-      console.log(`Deleted siblings: ${SK}`);
-    }
-  }
-
   endRegistration() {
     this._preBK = null;
   }
