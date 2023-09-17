@@ -58,6 +58,10 @@ test.describe
     };
 
     test.beforeAll(async () => {
+      await page.waitForFunction(() => {
+        return window.$DFlex && window.$DFlex.DOMGen._DEV_getPrivateKeys;
+      });
+
       const handle = await page.evaluateHandle(() => {
         return window.$DFlex.DOMGen._DEV_getPrivateKeys()!;
       });
@@ -118,6 +122,10 @@ test.describe
     test.beforeAll(async ({ browserName }) => {
       await page.keyboard.press("r", {
         delay: browserName === "webkit" ? 150 : 50,
+      });
+
+      await page.waitForFunction(() => {
+        return window.$DFlex && window.$DFlex.DOMGen._DEV_getPrivateKeys;
       });
 
       const handle = await page.evaluateHandle(() => {
@@ -212,6 +220,10 @@ test.describe
     test.beforeAll(async ({ browserName }) => {
       await page.keyboard.press("r", {
         delay: browserName === "webkit" ? 150 : 50,
+      });
+
+      await page.waitForFunction(() => {
+        return window.$DFlex && window.$DFlex.DOMGen._DEV_getPrivateKeys;
       });
 
       const handle = await page.evaluateHandle(() => {
@@ -326,6 +338,10 @@ test.describe
     test.beforeAll(async ({ browserName }) => {
       await page.keyboard.press("r", {
         delay: browserName === "webkit" ? 150 : 50,
+      });
+
+      await page.waitForFunction(() => {
+        return window.$DFlex && window.$DFlex.DOMGen._DEV_getPrivateKeys;
       });
 
       const handle = await page.evaluateHandle(() => {
@@ -460,6 +476,10 @@ test.describe
     test.beforeAll(async ({ browserName }) => {
       await page.keyboard.press("r", {
         delay: browserName === "webkit" ? 150 : 50,
+      });
+
+      await page.waitForFunction(() => {
+        return window.$DFlex && window.$DFlex.DOMGen._DEV_getPrivateKeys;
       });
 
       const handle = await page.evaluateHandle(() => {

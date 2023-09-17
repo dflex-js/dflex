@@ -21,6 +21,9 @@ test.describe
   let DOMGenKeys: DOMGenKeysType;
 
   const idsBySk = {
+    // depth-2
+    dflex_sk_2_0: ["dflex_id_0"],
+
     // depth-1
     dflex_sk_1_0: ["id-p2"],
 
@@ -28,7 +31,11 @@ test.describe
     dflex_sk_0_0: ["id-2", "id-3", "id-4", "id-5", "id-6", "id-7", "id-8"],
   };
 
-  const SKByDepth = { "0": ["dflex_sk_0_0"], "1": ["dflex_sk_1_0"] };
+  const SKByDepth = {
+    "0": ["dflex_sk_0_0"],
+    "1": ["dflex_sk_1_0"],
+    "2": ["dflex_sk_2_0"],
+  };
 
   const branchesRegistry = {
     dflex_bk_0: {
@@ -37,6 +44,7 @@ test.describe
         SK: "dflex_sk_0_0",
       },
       "1": { ids: ["id-p2"], SK: "dflex_sk_1_0" },
+      "2": { ids: ["dflex_id_0"], SK: "dflex_sk_2_0" },
     },
   };
 
@@ -44,6 +52,10 @@ test.describe
     context = await browser.newContext();
     page = await context.newPage();
     await page.goto("/grid");
+    await page.waitForFunction(() => {
+      return window.$DFlex && window.$DFlex.DOMGen._DEV_getPrivateKeys;
+    });
+
     const handle = await page.evaluateHandle(() => {
       return window.$DFlex.DOMGen._DEV_getPrivateKeys()!;
     });
