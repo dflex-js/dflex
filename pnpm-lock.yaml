@@ -244,6 +244,9 @@ importers:
       '@rollup/plugin-terser':
         specifier: ^0.4.3
         version: 0.4.3(rollup@3.29.1)
+      '@rollup/pluginutils':
+        specifier: ^5.0.4
+        version: 5.0.4(rollup@3.29.1)
       minimist:
         specifier: ^1.2.8
         version: 1.2.8
