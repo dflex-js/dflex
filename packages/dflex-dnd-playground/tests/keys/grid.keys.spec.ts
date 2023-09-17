@@ -57,14 +57,14 @@ test.describe
   });
 
   test("Should correctly retrieve idsBySk", async () => {
-    expect(DOMGenKeys?.idsBySk).toStrictEqual(idsBySk);
+    expect(DOMGenKeys.idsBySk).toStrictEqual(idsBySk);
   });
 
   test("Should correctly retrieve SKByDepth", async () => {
-    expect(DOMGenKeys?.SKByDepth).toStrictEqual(SKByDepth);
+    expect(DOMGenKeys.SKByDepth).toStrictEqual(SKByDepth);
   });
 
   test("Should correctly retrieve branchesRegistry", async () => {
-    expect(DOMGenKeys?.branchesRegistry).toStrictEqual(branchesRegistry);
+    expect(DOMGenKeys.branchesRegistry).toStrictEqual(branchesRegistry);
   });
 });
