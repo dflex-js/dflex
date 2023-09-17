@@ -3,6 +3,12 @@ import { BrowserContext, Page, expect } from "@playwright/test";
 
 import { DFlexPageTest as test } from "../utils";
 
+const { PACKAGE_BUNDLE } = process.env;
+
+const isProdBundle = PACKAGE_BUNDLE === "production";
+
+const SKIP_REASON = "This assertion works with development bundle only";
+
 test.describe
   .parallel("Testing DFlex generated keys by accessing window", async () => {
   let context: BrowserContext;
@@ -20,6 +26,8 @@ test.describe
   });
 
   test("Keys are generated correctly for landing page", async () => {
+    test.skip(isProdBundle, SKIP_REASON);
+
     await page.goto("/");
 
     const handle = await page.evaluateHandle(() => {

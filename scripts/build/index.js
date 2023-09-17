@@ -83,9 +83,10 @@ function deleteMethodsPlugin(options = {}) {
  * @param {boolean} isMinify
  */
 const plugins = (isProd, isMinify) => [
-  deleteMethodsPlugin({
-    suffix: "_DEV_",
-  }),
+  isProd &&
+    deleteMethodsPlugin({
+      suffix: "_DEV_",
+    }),
   alias({
     entries: moduleResolution,
   }),
