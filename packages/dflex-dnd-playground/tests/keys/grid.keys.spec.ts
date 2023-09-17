@@ -2,6 +2,7 @@
 import { BrowserContext, Page, expect } from "@playwright/test";
 
 import { DFlexPageTest as test } from "../utils";
+import { DOMGenKeysType } from "./sharedTypes";
 
 const { PACKAGE_BUNDLE } = process.env;
 
@@ -17,7 +18,7 @@ test.describe
 
   let page: Page;
 
-  let DOMGenKeys;
+  let DOMGenKeys: DOMGenKeysType;
 
   const idsBySk = {
     // depth-1
@@ -44,7 +45,7 @@ test.describe
     page = await context.newPage();
     await page.goto("/grid");
     const handle = await page.evaluateHandle(() => {
-      return window.$DFlex.DOMGen._DEV_getPrivateKeys();
+      return window.$DFlex.DOMGen._DEV_getPrivateKeys()!;
     });
 
     DOMGenKeys = await handle.jsonValue();
