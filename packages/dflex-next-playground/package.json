@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@dflex/dnd": "workspace:^3.9.4",
-    "@types/node": "^20.6.0",
+    "@types/node": "^20.6.2",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
     "autoprefixer": "10.4.15",

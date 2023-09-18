@@ -334,6 +334,49 @@ class DOMKeysManager {
     this._branchesRegistry.clear();
     this._prevBKs = [];
   }
+
+  /**
+   * Retrieves private keys for debugging purposes.
+   *
+   * @note This method will be removed in production builds.
+   */
+  _DEV_getPrivateKeys() {
+    if (!__DEV__) {
+      return undefined;
+    }
+
+    const idsBySk: { [key: string]: ElmID[] } = {};
+
+    this._idsBySk.forEach((value, key) => {
+      idsBySk[key] = value;
+    });
+
+    const branchesObject: {
+      [key: string]: { [depth: number]: BranchValue };
+    } = {};
+
+    this._branchesRegistry.forEach((depthMap, branchKey) => {
+      const depthObject: { [depth: number]: BranchValue } = {};
+
+      depthMap.forEach((branchValue, depth) => {
+        depthObject[depth] = branchValue;
+      });
+
+      branchesObject[branchKey] = depthObject;
+    });
+
+    const depthBySk: { [key: string]: SiblingKey[] } = {};
+
+    this._SKByDepth.forEach((value, key) => {
+      depthBySk[key] = value;
+    });
+
+    return {
+      idsBySk,
+      branchesRegistry: branchesObject,
+      SKByDepth: depthBySk,
+    };
+  }
 }
 
 export default DOMKeysManager;

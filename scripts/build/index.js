@@ -10,6 +10,7 @@ import alias from "@rollup/plugin-alias";
 import commonjs from "@rollup/plugin-commonjs";
 import { babel } from "@rollup/plugin-babel";
 import terser from "@rollup/plugin-terser";
+import { createFilter } from "@rollup/pluginutils";
 import minimist from "minimist";
 import packages from "npm-packages";
 
@@ -51,11 +52,41 @@ const moduleResolution = packages.map((pkg) => ({
 //   "endDragging",
 // ];
 
+function deleteMethodsPlugin(options = {}) {
+  const { suffix } = options;
+  const filter = createFilter();
+
+  return {
+    name: "delete-methods",
+
+    /**
+     * Transform function to modify the code.
+     * @param {string} code - The code of the file being transformed.
+     * @returns {Object} Transformed code and source map.
+     */
+    transform(code) {
+      if (!filter(this.id)) return null;
+
+      return {
+        code: code.replace(
+          new RegExp(`\\b\\w+\\.${suffix}\\s*=\\s*function\\s*\\(`, "g"),
+          "",
+        ),
+        map: null,
+      };
+    },
+  };
+}
+
 /**
  * @param {boolean} isProd
  * @param {boolean} isMinify
  */
 const plugins = (isProd, isMinify) => [
+  isProd &&
+    deleteMethodsPlugin({
+      suffix: "_DEV_",
+    }),
   alias({
     entries: moduleResolution,
   }),
