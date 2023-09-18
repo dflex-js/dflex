@@ -15,6 +15,6 @@
     "@rollup/pluginutils": "^5.0.4",
     "minimist": "^1.2.8",
     "npm-packages": "workspace:*",
-    "rollup": "^3.29.1"
+    "rollup": "^3.29.2"
   }
 }
