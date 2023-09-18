@@ -1,18 +1,16 @@
 /* eslint-disable no-underscore-dangle */
 import { BrowserContext, Page, expect } from "@playwright/test";
 
-import { DFlexPageTest as test } from "../utils";
-import { DOMGenKeysType } from "./sharedTypes";
-
-const { PACKAGE_BUNDLE } = process.env;
-
-const isProdBundle = PACKAGE_BUNDLE === "production";
-
-const SKIP_REASON = "This assertion works with development bundle only";
+import {
+  DEVELOPMENT_ONLY_ASSERTION,
+  isProdBundle,
+  DFlexPageTest as test,
+} from "../utils";
+import { DOMGenKeysType } from "../utils/sharedTypes";
 
 test.describe
   .parallel("Testing DFlex generated keys by accessing window for landing page", async () => {
-  test.skip(isProdBundle, SKIP_REASON);
+  test.skip(isProdBundle, DEVELOPMENT_ONLY_ASSERTION);
 
   let context: BrowserContext;
 

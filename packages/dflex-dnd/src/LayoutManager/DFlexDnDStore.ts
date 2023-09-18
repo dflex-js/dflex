@@ -539,7 +539,8 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   private _refreshBranchesRect() {
     this.containers.forEach((container, SK) => {
-      const hasContainerMigrated = this.migration.getMigrationBySK(SK);
+      const hasContainerMigrated =
+        this.migration && this.migration.getMigrationBySK(SK);
 
       // If migrated then the reconciler will trigger `_syncSiblingElmRectsWithGrid`.
       if (!hasContainerMigrated) {
@@ -580,13 +581,6 @@ class DFlexDnDStore extends DFlexBaseStore {
   private _isEmptyMigration() {
     const isEmptyMigration =
       this.migration === null || this.migration.SKs.length === 0;
-
-    if (isEmptyMigration) {
-      if (__DEV__) {
-        // eslint-disable-next-line no-console
-        console.warn("Migration is empty. Nothing to commit.");
-      }
-    }
 
     return isEmptyMigration;
   }

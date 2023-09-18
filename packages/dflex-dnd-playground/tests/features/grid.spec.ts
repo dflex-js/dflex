@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   Page,
   Locator,
@@ -15,13 +16,10 @@ import {
   initialize,
   invokeKeyboardAndAssertEmittedMsg,
   moveDragged,
+  DEVELOPMENT_ONLY_ASSERTION,
+  isProdBundle,
 } from "../utils";
-
-const { PACKAGE_BUNDLE } = process.env;
-
-const isProdBundle = PACKAGE_BUNDLE === "production";
-
-const SKIP_REASON = "This assertion works with development bundle only";
+import { DOMGenKeysType } from "../utils/sharedTypes";
 
 test.describe("Transformation inside grid container", async () => {
   let page: Page;
@@ -87,7 +85,7 @@ test.describe("Transformation inside grid container", async () => {
     ];
 
     test("Check initial grid", async () => {
-      test.skip(isProdBundle, SKIP_REASON);
+      test.skip(isProdBundle, DEVELOPMENT_ONLY_ASSERTION);
 
       await assertChildrenGrid(elmParent, INITIAL_GRID);
     });
@@ -126,7 +124,7 @@ test.describe("Transformation inside grid container", async () => {
     });
 
     test("elements grid is calculated correctly", async () => {
-      test.skip(isProdBundle, SKIP_REASON);
+      test.skip(isProdBundle, DEVELOPMENT_ONLY_ASSERTION);
 
       await assertChildrenGrid(elmParent, [
         { x: 1, y: 0 }, // first row - first change.
@@ -164,7 +162,7 @@ test.describe("Transformation inside grid container", async () => {
     });
 
     test("elements grid is calculated correctly for first and second rows", async () => {
-      test.skip(isProdBundle, SKIP_REASON);
+      test.skip(isProdBundle, DEVELOPMENT_ONLY_ASSERTION);
 
       await assertChildrenGrid(elmParent, [
         { x: 1, y: 0 }, // first row - first change.
@@ -218,7 +216,7 @@ test.describe("Transformation inside grid container", async () => {
     ];
 
     test("Check initial grid", async () => {
-      test.skip(isProdBundle, SKIP_REASON);
+      test.skip(isProdBundle, DEVELOPMENT_ONLY_ASSERTION);
 
       await assertChildrenGrid(elmParent, INITIAL_GRID);
     });
@@ -233,7 +231,7 @@ test.describe("Transformation inside grid container", async () => {
     });
 
     test("elements grid is calculated correctly", async () => {
-      test.skip(isProdBundle, SKIP_REASON);
+      test.skip(isProdBundle, DEVELOPMENT_ONLY_ASSERTION);
 
       await assertChildrenGrid(elmParent, [
         { x: 0, y: 2 }, // ------> first swap
@@ -282,7 +280,7 @@ test.describe("Transformation inside grid container", async () => {
     });
 
     test("elements grid is calculated correctly for two cols", async () => {
-      test.skip(isProdBundle, SKIP_REASON);
+      test.skip(isProdBundle, DEVELOPMENT_ONLY_ASSERTION);
 
       await assertChildrenGrid(elmParent, [
         { x: 0, y: 2 }, // ------> first swap
@@ -319,7 +317,7 @@ test.describe("Transformation inside grid container", async () => {
     });
 
     test("elements grid is calculated correctly for three cols", async () => {
-      test.skip(isProdBundle, SKIP_REASON);
+      test.skip(isProdBundle, DEVELOPMENT_ONLY_ASSERTION);
 
       await assertChildrenGrid(elmParent, [
         { x: 0, y: 2 }, // ------> first swap
@@ -346,6 +344,64 @@ test.describe("Transformation inside grid container", async () => {
           ? Promise.resolve()
           : assertChildrenGrid(elmParent, INITIAL_GRID),
       ]);
+    });
+
+    test.describe("Generated keys have been updated successfully", async () => {
+      test.skip(isProdBundle, DEVELOPMENT_ONLY_ASSERTION);
+
+      let DOMGenKeys: DOMGenKeysType;
+
+      const idsBySk = {
+        // depth-2
+        dflex_sk_2_0: ["dflex_id_0"],
+
+        // depth-1
+        dflex_sk_1_0: ["id-p2"],
+
+        // depth-0
+        dflex_sk_0_0: FINAL_IDS_ROUND_2,
+      };
+
+      const SKByDepth = {
+        "0": ["dflex_sk_0_0"],
+        "1": ["dflex_sk_1_0"],
+        "2": ["dflex_sk_2_0"],
+      };
+
+      const branchesRegistry = {
+        dflex_bk_0: {
+          "0": {
+            ids: FINAL_IDS_ROUND_2,
+            SK: "dflex_sk_0_0",
+          },
+          "1": { ids: ["id-p2"], SK: "dflex_sk_1_0" },
+          "2": { ids: ["dflex_id_0"], SK: "dflex_sk_2_0" },
+        },
+      };
+
+      test.beforeAll(async () => {
+        await page.waitForFunction(() => {
+          return window.$DFlex && window.$DFlex.DOMGen._DEV_getPrivateKeys;
+        });
+
+        const handle = await page.evaluateHandle(() => {
+          return window.$DFlex.DOMGen._DEV_getPrivateKeys()!;
+        });
+
+        DOMGenKeys = await handle.jsonValue();
+      });
+
+      test("Should correctly retrieve idsBySk", async () => {
+        expect(DOMGenKeys.idsBySk).toStrictEqual(idsBySk);
+      });
+
+      test("Should correctly retrieve SKByDepth", async () => {
+        expect(DOMGenKeys.SKByDepth).toStrictEqual(SKByDepth);
+      });
+
+      test("Should correctly retrieve branchesRegistry", async () => {
+        expect(DOMGenKeys.branchesRegistry).toStrictEqual(branchesRegistry);
+      });
     });
   });
 });
