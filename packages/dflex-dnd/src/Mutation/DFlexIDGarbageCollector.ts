@@ -84,6 +84,25 @@ function groupIDsBySK(store: DFlexDnDStore, SKeys: SKeysMap, id: string): void {
   const hasAlreadyBeenRemoved = store.deletedDOM.has(DOM);
 
   if (!hasAlreadyBeenRemoved) {
+    // This section handles cases where DFlex receives a sequence of
+    // register/unregister/register calls.
+    // If an unregister is called while a registration is still active, the
+    // process is postponed until the registration completes. In such cases,
+    // DFlex will perform the entire registration process as a single operation.
+    // Once complete, it will trigger the unregister. To prevent this situation,
+    // we validate the DOM and if the element is active then we entirely bypass
+    // the unregister process.
+    if (DOM.isConnected) {
+      if (__DEV__) {
+        if (featureFlags.enableMutationDebugger) {
+          // eslint-disable-next-line no-console
+          console.warn(`The call is invalid. Element ${id} is still active.`);
+        }
+      }
+
+      return;
+    }
+
     if (__DEV__) {
       if (featureFlags.enableMutationDebugger) {
         // eslint-disable-next-line no-console

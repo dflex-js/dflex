@@ -133,6 +133,14 @@ function validateCSS(id: string, css?: CSS): void {
   }
 }
 
+// eslint-disable-next-line no-shadow
+enum PENDING_REASON {
+  REGISTER,
+  // UNREGISTER,
+}
+
+type PendingReason = PENDING_REASON.REGISTER;
+
 class DFlexDnDStore extends DFlexBaseStore {
   containers: Containers;
 
@@ -153,6 +161,8 @@ class DFlexDnDStore extends DFlexBaseStore {
   isComposing: boolean;
 
   deferred: Deferred;
+
+  pending: [() => void, PendingReason][];
 
   private _terminatedDOMiDs: TerminatedDOMiDs;
 
@@ -187,6 +197,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.isUpdating = false;
     this.deferred = [];
     this.updatesQueue = [];
+    this.pending = [];
     this.listeners = initDFlexListeners();
 
     this._initSiblings = this._initSiblings.bind(this);
@@ -355,6 +366,16 @@ class DFlexDnDStore extends DFlexBaseStore {
     updateSiblingsVisibilityLinearly(this, SK);
   }
 
+  private _executePendingFunctions(reason: PendingReason) {
+    this.pending.forEach(([fn, r]) => {
+      if (r === reason) {
+        scheduler(this, fn, null);
+      }
+    });
+
+    this.pending = this.pending.filter(([, r]) => r !== reason);
+  }
+
   private _initObservers() {
     const containerIDs = this.DOMGen.getTopLevelSKs();
 
@@ -387,6 +408,8 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.isComposing = false;
 
     this.endRegistration();
+
+    this._executePendingFunctions(PENDING_REASON.REGISTER);
 
     scheduler(this, null, null, { type: "layoutState", status: "ready" });
   }
@@ -434,6 +457,13 @@ class DFlexDnDStore extends DFlexBaseStore {
     if (__DEV__) {
       // Validate without initialize.
       validateCSS(id, elm.CSSTransform);
+    }
+
+    if (__DEV__) {
+      if (featureFlags.enableRegisterDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(`Received id (${id}) to register`);
+      }
     }
 
     scheduler(
@@ -488,23 +518,17 @@ class DFlexDnDStore extends DFlexBaseStore {
     }
 
     if (this.isComposing) {
+      const unregisterLater = () => {
+        this.unregister(id);
+      };
+
+      // Add the unregister function to the pending tasks.
+      this.pending.push([unregisterLater, PENDING_REASON.REGISTER]);
+
       if (__DEV__) {
         if (featureFlags.enableMutationDebugger) {
           // eslint-disable-next-line no-console
-          console.warn(
-            "Ignoring unregister: Registering siblings still active.",
-          );
-        }
-      }
-
-      return;
-    }
-
-    if (this._terminatedDOMiDs.has(id)) {
-      if (__DEV__) {
-        if (featureFlags.enableMutationDebugger) {
-          // eslint-disable-next-line no-console
-          console.warn("Ignoring unregister: triggered more than once.");
+          console.warn(`Postponed unregister for id (${id})`);
         }
       }
 
@@ -532,8 +556,13 @@ class DFlexDnDStore extends DFlexBaseStore {
         return;
       }
 
-      DFlexIDGarbageCollector(this, this._terminatedDOMiDs);
-      this._terminatedDOMiDs.clear();
+      scheduler(
+        this,
+        () => DFlexIDGarbageCollector(this, this._terminatedDOMiDs),
+        {
+          onUpdate: () => this._terminatedDOMiDs.clear(),
+        },
+      );
     }, true);
   }
 
