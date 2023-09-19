@@ -1,3 +1,5 @@
+import { featureFlags } from "@dflex/utils";
+
 type SiblingKey = string;
 
 type BranchKey = string;
@@ -212,10 +214,6 @@ class DOMKeysManager {
     return this._SKByDepth.get(dp) || [];
   }
 
-  private _deleteBKfromPrevBKs(BK: BranchKey): void {
-    deleteElmFromArr(this._prevBKs, BK);
-  }
-
   private _deleteSKFromDepth(SK: string, depth: number): void {
     if (__DEV__) {
       if (!this._SKByDepth.has(depth)) {
@@ -279,34 +277,26 @@ class DOMKeysManager {
     }
   }
 
-  deleteSiblings(BK: string, SK: string, depth: number): void {
-    if (__DEV__) {
-      if (!this._idsBySk.has(SK)) {
-        throw new Error(`SK ${SK} is not registered in _idsBySk.`);
-      }
-    }
-
-    this._idsBySk.delete(SK);
-
-    if (__DEV__) {
-      if (!this._branchesRegistry.has(BK)) {
-        throw new Error(`Branch ${BK} is not registered in _branchesRegistry.`);
-      }
-
-      return;
-    }
-
+  deleteSiblings(BK: string, depth: number): void {
     const depthMap = this._branchesRegistry.get(BK)!;
 
-    for (let i = depth; i >= 0; i -= 1) {
-      const deletedBranchValue = depthMap.delete(depth);
+    if (featureFlags.enableMutationDebugger) {
+      // eslint-disable-next-line no-console
+      console.log(`Branch ${BK} has`, new Map([...depthMap]));
+    }
 
-      this._deleteSKFromDepth(SK, depth);
+    for (let i = depth; i >= 0; i -= 1) {
+      const { SK } = depthMap.get(i)!;
+
+      this._deleteSKFromDepth(SK, i);
+      this._idsBySk.delete(SK);
+
+      const deletedBranchValue = depthMap.delete(i);
 
       if (__DEV__) {
         if (!deletedBranchValue) {
           throw new Error(
-            `Failed to delete branch value for depth ${depth} in branch key ${BK}`,
+            `Failed to delete branch value for depth ${i} in branch key ${BK}`,
           );
         }
       }
@@ -314,17 +304,12 @@ class DOMKeysManager {
 
     if (this._branchesRegistry.get(BK)!.size === 0) {
       this._branchesRegistry.delete(BK);
-      this._deleteBKfromPrevBKs(BK);
+      this._prevBKs = deleteElmFromArr(this._prevBKs, BK);
 
       if (__DEV__) {
         // eslint-disable-next-line no-console
         console.log(`Deleted Branch Registry: ${BK}`);
       }
-    }
-
-    if (__DEV__) {
-      // eslint-disable-next-line no-console
-      console.log(`Deleted siblings: ${SK}`);
     }
   }
 

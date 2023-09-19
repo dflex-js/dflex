@@ -854,7 +854,7 @@ class DFlexDnDStore extends DFlexBaseStore {
       }
     });
 
-    this.DOMGen.deleteSiblings(BK, SK, depth);
+    this.DOMGen.deleteSiblings(BK, depth);
   }
 
   destroy(): void {

@@ -110,18 +110,22 @@ function DFlexIDGarbageCollector(
 ): void {
   const SKeys = new Map<string, SiblingKeyVal>();
 
-  const group = (id: string) => groupIDsBySK(store, SKeys, id);
+  const groupBySK = (id: string) => groupIDsBySK(store, SKeys, id);
 
-  terminatedDOMiDs.forEach(group);
+  terminatedDOMiDs.forEach(groupBySK);
 
   if (SKeys.size === 0) {
     if (featureFlags.enableMutationDebugger) {
       // eslint-disable-next-line no-console
-      console.log(`Nothing to unregister.`);
+      console.log(
+        `No elements were unregistered. Another process may have prevented elements from being unregistered.`,
+      );
     }
 
     return;
   }
+
+  const terminatedParentDOMiDs = new Set<string>();
 
   SKeys.forEach((_, SK) => {
     const siblings = store.getElmSiblingsByKey(SK);
@@ -142,30 +146,40 @@ function DFlexIDGarbageCollector(
         }
 
         siblings.forEach((eID) => {
+          // Remove children because they will be recursively deleted when the
+          // paren is going to be deleted.
           store.deleteFromRegistry(eID);
           terminatedDOMiDs.delete(eID);
         });
 
-        DFlexIDGarbageCollector(store, new Set([parentID]));
+        terminatedParentDOMiDs.add(parentID);
       }
     }
   });
 
+  // If there's a connected parents. Remove them from FOM manger.
+  // Note: you cant dispose DOM before validate parents.
   terminatedDOMiDs.forEach((id) => {
     store.deleteFromRegistry(id);
   });
 
-  if (terminatedDOMiDs.size > 0) {
-    const recompose = (v: SiblingKeyVal, k: string) =>
-      recomposeSiblings(store, terminatedDOMiDs, v, k);
-
-    SKeys.forEach(recompose);
-  } else if (__DEV__) {
+  if (terminatedParentDOMiDs.size > 0) {
     if (featureFlags.enableMutationDebugger) {
       // eslint-disable-next-line no-console
-      console.log(`Nothing to unregister.`);
+      console.log(
+        "Ignoring Keys clean up for children as parents is going to be removed.",
+      );
     }
+
+    DFlexIDGarbageCollector(store, terminatedParentDOMiDs);
+
+    return;
   }
+
+  const recompose = (v: SiblingKeyVal, k: string) =>
+    recomposeSiblings(store, terminatedDOMiDs, v, k);
+
+  SKeys.forEach(recompose);
 }
 
 export default DFlexIDGarbageCollector;
