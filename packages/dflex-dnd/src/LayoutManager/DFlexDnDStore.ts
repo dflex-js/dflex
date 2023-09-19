@@ -437,7 +437,9 @@ class DFlexDnDStore extends DFlexBaseStore {
     // acceptable if the incoming element is already in the store. However, if
     // the element is not connected to the DOM, we need to clean up the
     // registry.
-    if (this.registry.has(id)) {
+    const dflexElm = this.registry.get(id);
+
+    if (dflexElm) {
       const DOM = this.interactiveDOM.get(id)!;
 
       if (!DOM.isConnected) {
@@ -451,6 +453,27 @@ class DFlexDnDStore extends DFlexBaseStore {
         }
 
         DFlexDirtyLeavesCollector(this, 0);
+      }
+
+      if (DOM.isSameNode(DOM)) {
+        // Update default values created earlier.
+        dflexElm.updateConfig(
+          readonly,
+          getAnimationOptions(elm.animation),
+          CSSTransform,
+        );
+
+        if (__DEV__) {
+          if (featureFlags.enableRegisterDebugger) {
+            // eslint-disable-next-line no-console
+            console.warn(
+              `Skipping registrations for ${id} because it's already registered.`,
+            );
+          }
+
+          validateCSS(id, elm.CSSTransform);
+        }
+        return;
       }
     }
 
