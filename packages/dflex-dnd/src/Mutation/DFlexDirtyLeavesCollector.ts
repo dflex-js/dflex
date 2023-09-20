@@ -1,6 +1,7 @@
 import { featureFlags } from "@dflex/utils";
 import DFlexDnDStore from "../LayoutManager/DFlexDnDStore";
-import DFlexIDGarbageCollector, {
+import {
+  DFlexIDGarbageCollector,
   TerminatedDOMiDs,
 } from "./DFlexIDGarbageCollector";
 

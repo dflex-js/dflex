@@ -306,7 +306,10 @@ class DFlexBaseStore extends DFlexDOMManager {
     if (__DEV__) {
       if (featureFlags.enableRegisterDebugger) {
         // eslint-disable-next-line no-console
-        console.log("Registration has been ended");
+        console.log(
+          "%cRegistration has been ended",
+          "color: blue; font-weight: bold;",
+        );
       }
     }
   }
@@ -551,16 +554,6 @@ class DFlexBaseStore extends DFlexDOMManager {
    */
   getSiblingKeysByDepth(dp: number): string[] {
     return this.DOMGen.getSKByDepth(dp);
-  }
-
-  /**
-   * Mutates siblings in the generated DOM tree.
-   *
-   * @param SK
-   * @param newSiblings
-   */
-  mutateSiblings(SK: string, newSiblings: string[]): void {
-    this.DOMGen.mutateSiblings(SK, newSiblings);
   }
 
   unregister(id: string): void {

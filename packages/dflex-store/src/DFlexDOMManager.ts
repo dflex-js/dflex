@@ -1,4 +1,5 @@
 import { DFlexElement } from "@dflex/core-instance";
+import { featureFlags } from "@dflex/utils";
 
 /**
  * DFlexDOMManager manages the elements registered in the DFlex framework.
@@ -91,6 +92,11 @@ class DFlexDOMManager {
     this.deletedDOM.add(DOM);
 
     this.interactiveDOM.delete(id);
+
+    if (featureFlags.enableMutationDebugger) {
+      // eslint-disable-next-line no-console
+      console.log(`Element with id ${id} has been disposed from DOM manager.`);
+    }
   }
 
   /**

@@ -50,15 +50,6 @@ class DFlexDnDExportedStore {
   }
 
   /**
-   * Checks if the DFlex instance is idle.
-   *
-   * @returns `true` if DFlex is idle, `false` otherwise.
-   */
-  isIdle(): boolean {
-    return this._base.isIdle();
-  }
-
-  /**
    * Checks if the layout is available.
    *
    * @returns `true` if the layout is available, `false` otherwise.

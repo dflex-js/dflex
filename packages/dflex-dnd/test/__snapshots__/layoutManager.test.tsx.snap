@@ -80,19 +80,7 @@ DFlexDnDStore {
   "_initSiblings": [Function],
   "_isDOM": true,
   "_isInitialized": true,
-  "_lastDOMParent": <div
-    data-dflex-key="dflex_sk_1_0"
-    data-index="0"
-    id="dflex_id_0"
-    style="height: 0px; width: 0px;"
-  >
-    <div
-      data-dev-x="0"
-      data-dev-y="0"
-      data-index="0"
-      id="id-1"
-    />
-  </div>,
+  "_lastDOMParent": null,
   "_resizeThrottle": [Function],
   "_taskQ": TaskQueue {
     "_elmInQueue": Set {},
@@ -239,7 +227,7 @@ DFlexDnDStore {
     </div>,
   },
   "isComposing": true,
-  "isUpdating": true,
+  "isUpdating": false,
   "listeners": {
     "clear": [Function],
     "notify": [Function],
@@ -250,6 +238,7 @@ DFlexDnDStore {
     "dflex_id_0" => MutationObserver {},
     "dflex_id_1" => MutationObserver {},
   },
+  "pending": [],
   "registry": Map {
     "id-1" => DFlexElement {
       "DOMGrid": PointNum {
