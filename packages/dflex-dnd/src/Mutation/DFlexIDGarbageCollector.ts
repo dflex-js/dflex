@@ -3,8 +3,6 @@ import type DFlexDnDStore from "../LayoutManager/DFlexDnDStore";
 
 export type TerminatedDOMiDs = Set<string>;
 
-const enableParentCleanup = true;
-
 let isGarbageCollectorActive = false;
 
 function hasGCInProgress(): boolean {
@@ -161,7 +159,7 @@ function DFlexIDGarbageCollector(
 
     const parent = store.getParentByElmID(id);
 
-    if (enableParentCleanup && parent) {
+    if (parent) {
       const [parentID, parentDOM] = parent;
 
       if (!parentDOM.isConnected) {
