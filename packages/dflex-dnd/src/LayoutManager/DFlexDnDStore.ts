@@ -868,7 +868,7 @@ class DFlexDnDStore extends DFlexBaseStore {
         }
       }
 
-      const parentDOM = this.interactiveDOM.get(id)!;
+      const parentDOM = this.interactiveDOM.get(parentID)!;
 
       return [parentID, parentDOM];
     }
