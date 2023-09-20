@@ -105,6 +105,7 @@ class DFlexDOMManager {
   destroy(): void {
     this.interactiveDOM.clear();
     this.registry.clear();
+    this.deletedDOM = new WeakSet();
 
     if (__DEV__) {
       // eslint-disable-next-line no-console

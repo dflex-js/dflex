@@ -3,7 +3,7 @@ import type DFlexDnDStore from "../LayoutManager/DFlexDnDStore";
 
 export type TerminatedDOMiDs = Set<string>;
 
-const enableParentCleanup = false;
+const enableParentCleanup = true;
 
 let isGarbageCollectorActive = false;
 
