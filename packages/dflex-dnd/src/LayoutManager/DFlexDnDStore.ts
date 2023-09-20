@@ -43,7 +43,10 @@ import {
 } from "../Mutation";
 
 import DFlexDOMReconciler from "./DFlexDOMReconciler";
-import DFlexIDGarbageCollector from "../Mutation/DFlexIDGarbageCollector";
+import {
+  DFlexIDGarbageCollector,
+  hasGCInProgress,
+} from "../Mutation/DFlexIDGarbageCollector";
 
 type Containers = Map<string, DFlexParentContainer>;
 
@@ -205,7 +208,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     this._windowResizeHandler = this._windowResizeHandler.bind(this);
   }
 
-  isIdle(): boolean {
+  private _isIdle(): boolean {
     return (
       !this.isUpdating &&
       this.updatesQueue.length === 0 &&
@@ -214,10 +217,14 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   isLayoutAvailable(): boolean {
-    return !(this.isComposing || hasMutationsInProgress()) && this.isIdle();
+    return (
+      this._isIdle() &&
+      this.pending.length === 0 &&
+      !(this.isComposing || hasGCInProgress() || hasMutationsInProgress())
+    );
   }
 
-  private _initWhenRegister() {
+  private _initWhenRegister(): void {
     window.addEventListener("resize", this._windowResizeHandler);
 
     scheduler(this, null, null, {
@@ -430,7 +437,15 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     this.isComposing = true;
 
-    const { id, readonly = false, depth = 0, CSSTransform = null } = elm;
+    const {
+      id,
+      readonly = false,
+      depth = 0,
+      CSSTransform = null,
+      animation: _userAnimation,
+    } = elm;
+
+    const animation = getAnimationOptions(_userAnimation);
 
     // DFlex optimizes registration so that when one sibling is registered, all
     // the other siblings are automatically registered as well. Therefore, it is
@@ -457,11 +472,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
       if (DOM.isSameNode(DOM)) {
         // Update default values created earlier.
-        dflexElm.updateConfig(
-          readonly,
-          getAnimationOptions(elm.animation),
-          CSSTransform,
-        );
+        dflexElm.updateConfig(readonly, animation, CSSTransform);
 
         if (__DEV__) {
           if (featureFlags.enableRegisterDebugger) {
@@ -478,14 +489,18 @@ class DFlexDnDStore extends DFlexBaseStore {
     }
 
     if (__DEV__) {
-      // Validate without initialize.
-      validateCSS(id, elm.CSSTransform);
-    }
-
-    if (__DEV__) {
       if (featureFlags.enableRegisterDebugger) {
         // eslint-disable-next-line no-console
         console.log(`Received id (${id}) to register`);
+      }
+
+      // Validate without initialize.
+      validateCSS(id, elm.CSSTransform);
+
+      if (hasGCInProgress()) {
+        throw new Error(
+          `Garbage Collector process is already in progress. Cannot register new elements.`,
+        );
       }
     }
 
@@ -497,7 +512,7 @@ class DFlexDnDStore extends DFlexBaseStore {
           readonly,
           depth,
           CSSTransform,
-          animation: getAnimationOptions(elm.animation),
+          animation,
         };
 
         if (__DEV__) {

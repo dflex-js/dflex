@@ -306,7 +306,10 @@ class DFlexBaseStore extends DFlexDOMManager {
     if (__DEV__) {
       if (featureFlags.enableRegisterDebugger) {
         // eslint-disable-next-line no-console
-        console.log("Registration has been ended");
+        console.log(
+          "%cRegistration has been ended",
+          "color: blue; font-weight: bold;",
+        );
       }
     }
   }

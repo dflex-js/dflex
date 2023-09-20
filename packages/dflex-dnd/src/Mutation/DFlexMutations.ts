@@ -2,7 +2,10 @@ import { featureFlags } from "@dflex/utils";
 import type DFlexDnDStore from "../LayoutManager/DFlexDnDStore";
 
 import DFlexIdModifier, { ChangedIds } from "./DFlexIDModifier";
-import DFlexIdGC, { TerminatedDOMiDs } from "./DFlexIDGarbageCollector";
+import {
+  DFlexIDGarbageCollector,
+  TerminatedDOMiDs,
+} from "./DFlexIDGarbageCollector";
 
 let isProcessingMutations = false;
 
@@ -66,7 +69,7 @@ function DOMmutationHandler(
     }
 
     if (terminatedDOMiDs.size > 0) {
-      DFlexIdGC(store, terminatedDOMiDs);
+      DFlexIDGarbageCollector(store, terminatedDOMiDs);
       terminatedDOMiDs.clear();
     }
   } finally {

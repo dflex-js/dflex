@@ -5,6 +5,12 @@ export type TerminatedDOMiDs = Set<string>;
 
 const enableParentCleanup = false;
 
+let isGarbageCollectorActive = false;
+
+function hasGCInProgress(): boolean {
+  return isGarbageCollectorActive;
+}
+
 function recomposeSiblings(
   store: DFlexDnDStore,
   terminatedDOMiDs: TerminatedDOMiDs,
@@ -134,11 +140,13 @@ function DFlexIDGarbageCollector(
   terminatedDOMiDs.forEach(groupBySK);
 
   if (SKeys.size === 0) {
-    if (featureFlags.enableMutationDebugger) {
-      // eslint-disable-next-line no-console
-      console.log(
-        `No elements were unregistered. Another process may have prevented elements from being unregistered.`,
-      );
+    if (__DEV__) {
+      if (featureFlags.enableMutationDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(
+          `No elements were unregistered. Another process may have prevented elements from being unregistered.`,
+        );
+      }
     }
 
     return;
@@ -157,11 +165,13 @@ function DFlexIDGarbageCollector(
       const [parentID, parentDOM] = parent;
 
       if (!parentDOM.isConnected) {
-        if (featureFlags.enableMutationDebugger) {
-          // eslint-disable-next-line no-console
-          console.log(
-            `Parent with id: (${parentID}) will be removed from registry`,
-          );
+        if (__DEV__) {
+          if (featureFlags.enableMutationDebugger) {
+            // eslint-disable-next-line no-console
+            console.log(
+              `Parent with id: (${parentID}) will be removed from registry`,
+            );
+          }
         }
 
         siblings.forEach((eID) => {
@@ -183,11 +193,13 @@ function DFlexIDGarbageCollector(
   });
 
   if (terminatedParentDOMiDs.size > 0) {
-    if (featureFlags.enableMutationDebugger) {
-      // eslint-disable-next-line no-console
-      console.log(
-        "Ignoring Keys clean up for children as parents is going to be removed.",
-      );
+    if (__DEV__) {
+      if (featureFlags.enableMutationDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(
+          "Ignoring Keys clean up for children as parents is going to be removed.",
+        );
+      }
     }
 
     DFlexIDGarbageCollector(store, terminatedParentDOMiDs);
@@ -201,4 +213,26 @@ function DFlexIDGarbageCollector(
   SKeys.forEach(recompose);
 }
 
-export default DFlexIDGarbageCollector;
+function garbageCollectorProcess(
+  store: DFlexDnDStore,
+  terminatedDOMiDs: TerminatedDOMiDs,
+) {
+  try {
+    isGarbageCollectorActive = true;
+    DFlexIDGarbageCollector(store, terminatedDOMiDs);
+  } finally {
+    isGarbageCollectorActive = false;
+
+    if (__DEV__) {
+      if (featureFlags.enableMutationDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(
+          "%cGarbage Collector Process has been ended",
+          "color: blue; font-weight: bold;",
+        );
+      }
+    }
+  }
+}
+
+export { garbageCollectorProcess as DFlexIDGarbageCollector, hasGCInProgress };
