@@ -1,0 +1,13 @@
+{
+  "name": "dflex-bundle-types",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "npm-packages": "workspace:*",
+    "rollup": "^3.29.2",
+    "rollup-plugin-dts": "^6.0.2"
+  }
+}
