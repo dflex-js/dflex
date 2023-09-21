@@ -1,10 +1,10 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["tests/**/*", "src/**/*", "../../dflex-env.d.ts"],
+  "include": ["src/**/*", "../../dflex-env.d.ts"],
   "compilerOptions": {
     "composite": true,
     "outDir": "./types",
-    "rootDir": "."
+    "rootDir": "./src"
   },
   "references": [{ "path": "../dflex-dnd" }, { "path": "../dflex-e2e-utils" }]
 }
