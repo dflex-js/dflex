@@ -257,6 +257,7 @@ jobs:
     env:
       CI: true
       PACKAGE_BUNDLE: ${{ matrix.bundle }}
+      PLAYGROUND_TYPE: "dflex-dnd"
 
     steps:
       - name: Checkout
@@ -316,6 +317,7 @@ jobs:
     env:
       CI: true
       PACKAGE_BUNDLE: ${{ matrix.bundle }}
+      PLAYGROUND_TYPE: "dflex-dnd"
 
     steps:
       - name: Checkout
@@ -374,6 +376,7 @@ jobs:
     env:
       CI: true
       PACKAGE_BUNDLE: ${{ matrix.bundle }}
+      PLAYGROUND_TYPE: "dflex-dnd"
 
     steps:
       - name: Checkout

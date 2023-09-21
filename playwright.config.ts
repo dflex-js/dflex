@@ -2,7 +2,7 @@
 
 import { PlaywrightTestConfig, devices } from "@playwright/test";
 
-const { CI, PLAYGROUND_TYPE = "dflex-dnd" } = process.env;
+const { CI, PLAYGROUND_TYPE } = process.env;
 const IS_CI = CI === "true";
 
 let testDir = "";
@@ -11,11 +11,18 @@ let baseURL = "";
 if (PLAYGROUND_TYPE === "dflex-dnd") {
   testDir = "./packages/dflex-dnd-playground/tests/";
   baseURL = "http://localhost:3001";
+} else if (PLAYGROUND_TYPE === "next-playground") {
+  testDir = "./packages/dflex-next-playground/tests/";
+  baseURL = "http://localhost:3002";
 } else {
   throw new Error(
-    "Invalid PLAYGROUND_TYPE. Please set PLAYGROUND_TYPE to 'dflex-dnd' for dflex-dnd playground.",
+    "Invalid PLAYGROUND_TYPE. Please set PLAYGROUND_TYPE to 'dflex-dnd' or 'next-playground'.",
   );
 }
+
+// Log CI and PLAYGROUND_TYPE in bold pink
+// eslint-disable-next-line no-console
+console.log(`\x1b[1m\x1b[95mPLAYGROUND_TYPE: ${PLAYGROUND_TYPE}\x1b[0m`);
 
 const config: PlaywrightTestConfig = {
   forbidOnly: IS_CI,
