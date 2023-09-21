@@ -13,7 +13,7 @@ import {
   initialize,
   invokeKeyboardAndAssertEmittedMsg,
   moveDragged,
-} from "../../utils";
+} from "dflex-e2e-utils";
 
 test.describe.serial("Dragging from bottom up", async () => {
   let page: Page;

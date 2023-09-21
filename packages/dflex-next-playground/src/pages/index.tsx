@@ -1,6 +1,10 @@
 import React from "react";
 import Link from "next/link";
 
+function replaceSlashWithUnderscore(inputString: string): string {
+  return inputString.replace(/\//g, "_");
+}
+
 function ClickableBox({
   link,
   title,
@@ -13,6 +17,7 @@ function ClickableBox({
   return (
     <Link
       href={link}
+      id={replaceSlashWithUnderscore(link)}
       className="group rounded-lg border px-5 py-4 transition-colors border-gray-300 hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
     >
       <h2 className={`mb-3 text-2xl font-semibold`}>

@@ -123,6 +123,9 @@ importers:
       cypress:
         specifier: ^13.2.0
         version: 13.2.0
+      dflex-e2e-utils:
+        specifier: workspace:^1.0.0
+        version: link:../dflex-e2e-utils
       eslint:
         specifier: ^8.49.0
         version: 8.49.0
@@ -164,6 +167,8 @@ importers:
         specifier: workspace:*
         version: link:../../scripts/eslint-config-dflex-react
 
+  packages/dflex-e2e-utils: {}
+
   packages/dflex-next-playground:
     dependencies:
       '@dflex/dnd':
@@ -203,6 +208,9 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2
     devDependencies:
+      dflex-e2e-utils:
+        specifier: workspace:^1.0.0
+        version: link:../dflex-e2e-utils
       eslint:
         specifier: ^8.49.0
         version: 8.49.0

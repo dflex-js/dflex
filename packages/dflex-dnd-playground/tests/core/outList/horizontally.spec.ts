@@ -14,7 +14,7 @@ import {
   initialize,
   invokeKeyboardAndAssertEmittedMsg,
   moveDragged,
-} from "../../utils";
+} from "dflex-e2e-utils";
 
 test.describe
   .serial("Dragged is strictly out container list horizontally", async () => {

@@ -15,7 +15,7 @@ import {
   initialize,
   invokeKeyboardAndAssertEmittedMsg,
   moveDragged,
-} from "../utils";
+} from "dflex-e2e-utils";
 
 test.describe
   .serial("Migrate element into new container reconcile then migrate to its origin container when it's empty", async () => {

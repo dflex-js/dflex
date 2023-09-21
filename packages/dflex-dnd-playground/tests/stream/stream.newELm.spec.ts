@@ -7,7 +7,7 @@ import {
   getDraggedRect,
   initialize,
   moveDragged,
-} from "../utils";
+} from "dflex-e2e-utils";
 
 test.describe("Stream new element then transform mutate and check the new positions", async () => {
   let page: Page;

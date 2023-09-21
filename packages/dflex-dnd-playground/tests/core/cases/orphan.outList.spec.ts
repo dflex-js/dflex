@@ -11,7 +11,7 @@ import {
   getDraggedRect,
   initialize,
   moveDragged,
-} from "../../utils";
+} from "dflex-e2e-utils";
 
 test.describe.serial("Orphan dragged won't break", async () => {
   let page: Page;

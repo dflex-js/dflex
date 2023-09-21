@@ -13,7 +13,7 @@ import {
   getDraggedRect,
   initialize,
   moveDragged,
-} from "../utils";
+} from "dflex-e2e-utils";
 
 test.describe
   .serial("Visible elements have transformation after scrolling in isolation", async () => {

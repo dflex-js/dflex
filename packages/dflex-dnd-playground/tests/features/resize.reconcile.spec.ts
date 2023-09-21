@@ -16,7 +16,7 @@ import {
   initialize,
   // invokeKeyboardAndAssertEmittedMsg,
   moveDragged,
-} from "../utils";
+} from "dflex-e2e-utils";
 
 test.describe
   .serial("Resizing window will automatically reconcile elements and refresh elements DOMRect", async () => {

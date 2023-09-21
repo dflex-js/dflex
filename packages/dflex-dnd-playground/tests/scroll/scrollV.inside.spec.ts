@@ -14,7 +14,7 @@ import {
   initialize,
   moveDragged,
   TransformTimeout,
-} from "../utils";
+} from "dflex-e2e-utils";
 
 test.describe.serial("Drag the first element down vertically", async () => {
   let page: Page;
