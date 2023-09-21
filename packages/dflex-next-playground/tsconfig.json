@@ -20,5 +20,5 @@
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"],
-  "references": [{ "path": "../dflex-dnd" }]
+  "references": [{ "path": "../dflex-dnd" }, { "path": "../dflex-e2e-utils" }]
 }

@@ -11,7 +11,7 @@ import {
   getDraggedRect,
   initialize,
   moveDragged,
-} from "../utils";
+} from "dflex-e2e-utils";
 
 test.describe("Testing stabilizer between two intersected thresholds", async () => {
   let page: Page;

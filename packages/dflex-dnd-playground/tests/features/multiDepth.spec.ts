@@ -14,7 +14,7 @@ import {
   initialize,
   invokeKeyboardAndAssertEmittedMsg,
   moveDragged,
-} from "../utils";
+} from "dflex-e2e-utils";
 
 test.describe("Testing horizontal transformation in depth (1). Vertical in depth (1)", async () => {
   let page: Page;

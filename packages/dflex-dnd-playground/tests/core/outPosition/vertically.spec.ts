@@ -11,7 +11,7 @@ import {
   getDraggedRect,
   initialize,
   moveDragged,
-} from "../../utils";
+} from "dflex-e2e-utils";
 
 test.describe.serial("Dragged is out position vertically", async () => {
   let page: Page;

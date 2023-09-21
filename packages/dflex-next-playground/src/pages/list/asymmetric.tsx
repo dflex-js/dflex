@@ -1,6 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 import React from "react";
-import TodoItem from "../../components/TodoItem";
+import { TodoItem, TodoContainer } from "../../components";
 
 const AsymmetricPage = () => {
   const tasks = [
@@ -27,15 +27,13 @@ const AsymmetricPage = () => {
   ];
 
   return (
-    <div className={`flex min-h-screen flex-col items-center p-6`}>
-      <ul className="bg-green-50 border-2 border-blue-50 rounded p-4">
-        {tasks.map(({ task, id }) => (
-          <TodoItem id={id} key={id} opts={{ scroll: { enable: false } }}>
-            {task}
-          </TodoItem>
-        ))}
-      </ul>
-    </div>
+    <TodoContainer>
+      {tasks.map(({ task, id }) => (
+        <TodoItem id={id} key={id} opts={{ scroll: { enable: false } }}>
+          {task}
+        </TodoItem>
+      ))}
+    </TodoContainer>
   );
 };
 

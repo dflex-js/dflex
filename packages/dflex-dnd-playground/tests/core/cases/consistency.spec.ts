@@ -14,7 +14,7 @@ import {
   initialize,
   invokeKeyboardAndAssertEmittedMsg,
   moveDragged,
-} from "../../utils";
+} from "dflex-e2e-utils";
 
 test.describe
   .serial("Moves out, goes back to the same position, settles in, moves another element", async () => {

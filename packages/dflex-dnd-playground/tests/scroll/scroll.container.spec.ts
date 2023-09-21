@@ -6,7 +6,7 @@ import {
   expect,
 } from "@playwright/test";
 
-import { DFlexPageTest as test } from "../utils";
+import { DFlexPageTest as test } from "dflex-e2e-utils";
 
 test.describe.parallel("Resolve scroll container correctly", async () => {
   let context: BrowserContext;

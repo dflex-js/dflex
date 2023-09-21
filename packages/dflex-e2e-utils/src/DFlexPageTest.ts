@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { test as base, expect } from "@playwright/test";
 
 export const DFlexPageTest = base.extend({

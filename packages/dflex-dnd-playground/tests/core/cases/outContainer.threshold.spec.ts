@@ -13,7 +13,7 @@ import {
   initialize,
   invokeKeyboardAndAssertEmittedMsg,
   moveDragged,
-} from "../../utils";
+} from "dflex-e2e-utils";
 
 test.describe
   .serial("Moves the element above the container testing threshold for coming back", async () => {

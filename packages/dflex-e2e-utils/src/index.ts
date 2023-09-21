@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { Page, Locator, expect, ConsoleMessage } from "@playwright/test";
 
 export { DFlexPageTest } from "./DFlexPageTest";

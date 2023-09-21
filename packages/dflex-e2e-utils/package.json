@@ -1,0 +1,10 @@
+{
+  "name": "dflex-e2e-utils",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "src/index.ts",
+  "private": true,
+  "scripts": {},
+  "dependencies": {},
+  "devDependencies": {}
+}
