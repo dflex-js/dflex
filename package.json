@@ -34,7 +34,7 @@
     "build": "node scripts/build/index.js",
     "build-prod": "pnpm clean && pnpm -r emit && pnpm run build --production --release --minify",
     "check-types": "tsc --noEmit",
-    "emit-types": "pnpm -r emit",
+    "bundle-types": "node scripts/dflex-bundle-types/index.js",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "prepare-release": "changeset",
     "update-version": "pnpm changeset version && pnpm install",

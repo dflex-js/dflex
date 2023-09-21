@@ -137,20 +137,8 @@ jobs:
           node-version: "*"
           cache: "pnpm"
 
-      # - name: Download Build Artifacts
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: build
-      #     path: ./packages
-
-      # - name: Download Build Artifacts
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: build
-      #     path: ./packages
-
       - name: Build packages
-        run: "pnpm clean && pnpm -r emit && pnpm build --production --release --minify"
+        run: "pnpm clean && pnpm bundle-types && pnpm build --production --release --minify"
 
       - name: Build DnD React App
         run: pnpm -F dflex-dnd-playground build --mode CI
@@ -187,7 +175,7 @@ jobs:
           node-version: "*"
           cache: "pnpm"
       - name: Build packages
-        run: "pnpm clean && pnpm -r emit && pnpm build --production --release --minify"
+        run: "pnpm clean && pnpm bundle-types && pnpm build --production --release --minify"
 
       - name: Build DnD React App
         run: pnpm -F dflex-dnd-playground build --mode CI
@@ -467,7 +455,7 @@ jobs:
           cache: "pnpm"
 
       - name: Build packages for production
-        run: "pnpm clean && pnpm -r emit && pnpm build --production --release --minify"
+        run: "pnpm clean && pnpm bundle-types && pnpm build --production --release --minify"
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
