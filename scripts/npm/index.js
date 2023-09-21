@@ -1,3 +1,21 @@
+/**
+ * @typedef {Object} Module
+ * @property {"cjs" | "es"} format
+ * @property {string} sourceFileName
+ * @property {string} outputFileName
+ *
+ * @typedef {Object} Package
+ * @property {string} name
+ * @property {string} pkgName
+ * @property {Module[]} modules
+ * @property {string} outputPath
+ * @property {string} sourcePath
+ * @property {string} typesPath
+ */
+
+/**
+ * @type {Package[]}
+ */
 const packages = [
   {
     name: "DFlex Utilities",

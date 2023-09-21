@@ -201,15 +201,7 @@ const buildPromise = packages.map((pkg) => {
 
     const outputFile = resolve(join(outputPath, outputFileName));
 
-    return build(
-      name,
-      // @ts-ignore
-      format,
-      inputFile,
-      outputFile,
-      isProduction,
-      isMinify,
-    );
+    return build(name, format, inputFile, outputFile, isProduction, isMinify);
   });
 });
 

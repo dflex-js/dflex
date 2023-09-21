@@ -33,12 +33,12 @@ const moduleResolution = [
   },
 ];
 
-const moduleResolutionProd = [
-  {
-    find: "@dflex/dnd",
-    replacement: path.resolve("../dflex-dnd/dist/dflex-dnd.mjs"),
-  },
-];
+// const moduleResolutionProd = [
+//   {
+//     find: "@dflex/dnd",
+//     replacement: path.resolve("../dflex-dnd/dist/dflex-dnd.mjs"),
+//   },
+// ];
 
 const { PACKAGE_BUNDLE } = process.env;
 
@@ -81,9 +81,12 @@ const config: UserConfigExport = {
   preview: {
     port: PORT,
   },
-  resolve: {
-    alias: isProdBundle ? moduleResolutionProd : moduleResolution,
-  },
+
+  resolve: isProdBundle
+    ? undefined
+    : {
+        alias: moduleResolution,
+      },
 };
 
 // https://vitejs.dev/config/
