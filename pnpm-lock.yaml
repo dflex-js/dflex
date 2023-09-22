@@ -96,28 +96,28 @@ importers:
   packages/dflex-core-instance:
     devDependencies:
       '@dflex/utils':
-        specifier: workspace:^3.9.6
+        specifier: workspace:^3.9.7
         version: link:../dflex-utils
 
   packages/dflex-dnd:
     devDependencies:
       '@dflex/core-instance':
-        specifier: workspace:^3.9.6
+        specifier: workspace:^3.9.7
         version: link:../dflex-core-instance
       '@dflex/draggable':
-        specifier: workspace:^3.9.6
+        specifier: workspace:^3.9.7
         version: link:../dflex-draggable
       '@dflex/store':
-        specifier: workspace:^3.9.6
+        specifier: workspace:^3.9.7
         version: link:../dflex-store
       '@dflex/utils':
-        specifier: workspace:^3.9.6
+        specifier: workspace:^3.9.7
         version: link:../dflex-utils
 
   packages/dflex-dnd-playground:
     dependencies:
       '@dflex/dnd':
-        specifier: workspace:^3.9.4
+        specifier: workspace:^3.9.7
         version: link:../dflex-dnd
     devDependencies:
       cypress:
@@ -139,19 +139,19 @@ importers:
   packages/dflex-dom-gen:
     devDependencies:
       '@dflex/utils':
-        specifier: workspace:^3.9.6
+        specifier: workspace:^3.9.7
         version: link:../dflex-utils
 
   packages/dflex-draggable:
     devDependencies:
       '@dflex/core-instance':
-        specifier: workspace:^3.9.6
+        specifier: workspace:^3.9.7
         version: link:../dflex-core-instance
       '@dflex/store':
-        specifier: workspace:^3.9.6
+        specifier: workspace:^3.9.7
         version: link:../dflex-store
       '@dflex/utils':
-        specifier: workspace:^3.9.6
+        specifier: workspace:^3.9.7
         version: link:../dflex-utils
       eslint-config-dflex-react:
         specifier: workspace:*
@@ -172,7 +172,7 @@ importers:
   packages/dflex-next-playground:
     dependencies:
       '@dflex/dnd':
-        specifier: workspace:^3.9.4
+        specifier: workspace:^3.9.7
         version: link:../dflex-dnd
       '@types/node':
         specifier: ^20.6.3
@@ -221,13 +221,13 @@ importers:
   packages/dflex-store:
     devDependencies:
       '@dflex/core-instance':
-        specifier: workspace:^3.9.6
+        specifier: workspace:^3.9.7
         version: link:../dflex-core-instance
       '@dflex/dom-gen':
-        specifier: workspace:^3.9.6
+        specifier: workspace:^3.9.7
         version: link:../dflex-dom-gen
       '@dflex/utils':
-        specifier: workspace:^3.9.6
+        specifier: workspace:^3.9.7
         version: link:../dflex-utils
 
   packages/dflex-utils: {}
