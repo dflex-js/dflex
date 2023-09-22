@@ -13,7 +13,8 @@
         "require": "./dist/dev.js"
       },
       "require": "./dist/dflex-utils.js",
-      "import": "./dist/dflex-utils.mjs"
+      "import": "./dist/dflex-utils.mjs",
+      "types": "./types/index.d.ts"
     },
     "./dist/*": "./dist/*"
   },
