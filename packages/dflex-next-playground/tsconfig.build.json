@@ -1,8 +1,5 @@
 {
   "compilerOptions": {
-    "composite": true,
-    "outDir": "./types",
-    "rootDir": ".",
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
