@@ -13,7 +13,8 @@
         "require": "./dist/dev.js"
       },
       "require": "./dist/dflex-dnd.js",
-      "import": "./dist/dflex-dnd.mjs"
+      "import": "./dist/dflex-dnd.mjs",
+      "types": "./types/index.d.ts"
     },
     "./dist/*": "./dist/*"
   },
