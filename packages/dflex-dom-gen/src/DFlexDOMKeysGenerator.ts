@@ -114,7 +114,7 @@ class DOMKeysGenerator extends DOMKeysManager {
     /**
      * get siblings unique key (sK) and parents key (pK)
      */
-    const SK = this.constructSK(depth, depth);
+    const SK = this.constructSK(depth, siblingsIndex);
 
     let CHK: string | null = null;
 
