@@ -70,7 +70,6 @@ class DOMKeysGenerator extends DOMKeysManager {
 
   constructor() {
     super();
-    this._preBK = this.constructPK(0);
     this._init();
   }
 
@@ -78,6 +77,7 @@ class DOMKeysGenerator extends DOMKeysManager {
     this._siblingsCount = {};
     this._PKByDepth = {};
     this._prevDepth = -99;
+    this._prevPK = this.constructPK(0);
     this._preBK = null;
   }
 

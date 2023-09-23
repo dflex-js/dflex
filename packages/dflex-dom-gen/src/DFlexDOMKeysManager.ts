@@ -113,7 +113,7 @@ class DOMKeysManager {
 
   protected constructPK(parentDepth: number): string {
     const PK = `${PREFIX_CONNECTOR_KEY}${combineKeys(
-      parentDepth + 1,
+      parentDepth,
       this._branchIndex,
     )}`;
 
