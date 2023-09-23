@@ -16,7 +16,7 @@ DFlexDnDStore {
         "dflex_sk_1_0",
       ],
     },
-    "_branchIndicator": 1,
+    "_branchIndex": 1,
     "_branchesRegistry": Map {
       "dflex_bk_0" => Map {
         0 => {

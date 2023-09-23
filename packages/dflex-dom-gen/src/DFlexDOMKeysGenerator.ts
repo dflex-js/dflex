@@ -1,10 +1,6 @@
 /* eslint-disable no-unused-vars */
-import { combineKeys, featureFlags } from "@dflex/utils";
+import { featureFlags } from "@dflex/utils";
 import DOMKeysManager from "./DFlexDOMKeysManager";
-
-const PREFIX_CONNECTOR_KEY = "dflex_ky_";
-const PREFIX_SIBLINGS_KEY = "dflex_sk_";
-const PREFIX_BRANCH_KEY = "dflex_bk_";
 
 const uniqueKeysDev: Set<string> = new Set();
 const equalKeysDev: Set<string> = new Set();
@@ -64,8 +60,6 @@ class DOMKeysGenerator extends DOMKeysManager {
    */
   private _siblingsCount!: Record<Depth, number>;
 
-  private _branchIndicator!: number;
-
   private _PKByDepth!: Record<Depth, ParentKey>;
 
   private _prevDepth!: number;
@@ -81,11 +75,10 @@ class DOMKeysGenerator extends DOMKeysManager {
 
   private _init() {
     this._siblingsCount = {};
-    this._branchIndicator = 0;
     this._PKByDepth = {};
     this._prevDepth = -99;
+    this._prevPK = this.constructPK(0);
     this._preBK = null;
-    this._prevPK = `${PREFIX_CONNECTOR_KEY}${combineKeys(0, 0)}`;
   }
 
   private _initIndicators(depth: number) {
@@ -121,7 +114,7 @@ class DOMKeysGenerator extends DOMKeysManager {
     /**
      * get siblings unique key (sK) and parents key (pK)
      */
-    const SK = `${PREFIX_SIBLINGS_KEY}${combineKeys(depth, siblingsIndex)}`;
+    const SK = this.constructSK(depth, siblingsIndex);
 
     let CHK: string | null = null;
 
@@ -156,8 +149,6 @@ class DOMKeysGenerator extends DOMKeysManager {
      * Start new branch.
      */
     if (isNewBranch) {
-      this._branchIndicator += 1;
-
       const until = hasSiblingInSameLevel ? depth : depth - 1;
 
       for (let i = 0; i <= until; i += 1) {
@@ -165,7 +156,7 @@ class DOMKeysGenerator extends DOMKeysManager {
       }
     }
 
-    const BK = `${PREFIX_BRANCH_KEY}${this._branchIndicator}`;
+    const BK = this.constructBK(isNewBranch);
 
     // If hasSiblingInSameLevel then don't increment.
     // Revers the accumulator.
@@ -181,13 +172,11 @@ class DOMKeysGenerator extends DOMKeysManager {
     /**
      * get siblings unique key (sK) and parents key (pK)
      */
-    const SK = `${PREFIX_SIBLINGS_KEY}${combineKeys(depth, siblingsIndex)}`;
+
+    const SK = this.constructSK(depth, siblingsIndex);
 
     // Generate new one.
-    let PK = `${PREFIX_CONNECTOR_KEY}${combineKeys(
-      depth + 1,
-      this._branchIndicator,
-    )}`;
+    let PK = this.constructPK(depth + 1);
 
     if (hasSiblingInSameLevel) {
       // Restore the parent key. So all siblings with shared parent have the

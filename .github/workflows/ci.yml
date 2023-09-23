@@ -140,7 +140,7 @@ jobs:
       - name: Build packages
         run: "pnpm clean && pnpm bundle-types && pnpm build --production --release --minify"
 
-      - name: Build DnD React App
+      - name: Building Vite DnD React App
         run: pnpm -F dflex-dnd-playground build --mode CI
 
       - name: Testing features for DnD with React APP - Chrome
@@ -177,7 +177,7 @@ jobs:
       - name: Build packages
         run: "pnpm clean && pnpm bundle-types && pnpm build --production --release --minify"
 
-      - name: Build DnD React App
+      - name: Building Vite DnD React App
         run: pnpm -F dflex-dnd-playground build --mode CI
 
       - name: Testing features for DnD with React APP - Chrome
@@ -233,7 +233,7 @@ jobs:
         if: matrix.bundle == 'production'
         run: "pnpm build --production --release --minify"
 
-      - name: Build DnD React App
+      - name: Building Vite DnD React App
         run: pnpm -F dflex-dnd-playground build --mode CI
 
       - name: Install browsers
@@ -292,7 +292,7 @@ jobs:
         if: matrix.bundle == 'production'
         run: "pnpm build --production --release --minify"
 
-      - name: Build DnD React App
+      - name: Building Vite DnD React App
         run: pnpm -F dflex-dnd-playground build --mode CI
 
       - name: Install browsers
@@ -350,7 +350,7 @@ jobs:
         if: matrix.bundle == 'production'
         run: "pnpm build --production --release --minify"
 
-      - name: Build DnD React App
+      - name: Building Vite DnD React App
         run: pnpm -F dflex-dnd-playground build --mode CI
 
       - name: Install browsers
@@ -359,59 +359,56 @@ jobs:
       - name: Test Playwright
         run: pnpm run test-e2e-ci:${{ matrix.browser }}
 
-  # e2e-mac-next:
-  #   runs-on: macos-latest
-  #   timeout-minutes: 20
-  #   strategy:
-  #     matrix:
-  #       node-version: [18.15]
-  #       browser: ["chromium"]
-  #       bundle: ["production", "development"]
+  e2e-mac-next:
+    runs-on: macos-latest
+    timeout-minutes: 20
+    strategy:
+      matrix:
+        node-version: [18.15]
+        browser: ["chromium"]
+        bundle: ["development"]
 
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-  #     - name: Use Node.js ${{ matrix.node-version }}
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: ${{ matrix.node-version }}
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
 
-  #     - uses: pnpm/action-setup@v2.4.0
-  #       name: Install pnpm
-  #       id: pnpm-install
-  #       with:
-  #         version: ^8.0.0
-  #         run_install: false
+      - uses: pnpm/action-setup@v2.4.0
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: ^8.0.0
+          run_install: false
 
-  #     - name: Get pnpm store directory
-  #       id: pnpm-cache
-  #       run: |
-  #         echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
 
-  #     - uses: actions/cache@v3
-  #       name: Setup pnpm cache
-  #       with:
-  #         path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-  #         key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-pnpm-store-
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
-  #     - name: Install dependencies
-  #       run: pnpm install
+      - name: Install dependencies
+        run: pnpm install
 
-  #     - name: Build packages
-  #       if: matrix.bundle == 'production'
-  #       run: "pnpm build --production --release --minify"
+      - name: Build packages
+        if: matrix.bundle == 'production'
+        run: "pnpm build --production --release --minify"
 
-  #     - name: Build DnD React App
-  #       run: pnpm -F dflex-next-playground build
+      - name: Install browsers
+        run: npx playwright install --with-deps
 
-  #     - name: Install browsers
-  #       run: npx playwright install --with-deps
-
-  #     - name: Test Playwright
-  #       run: pnpm run test-e2e-next:${{ matrix.browser }}
+      - name: Test Playwright
+        run: pnpm run test-e2e-next:${{ matrix.browser }}
 
   release:
     name: Publish to NPM
