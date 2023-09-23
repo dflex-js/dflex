@@ -5,8 +5,8 @@ import {
   DEVELOPMENT_ONLY_ASSERTION,
   isProdBundle,
   DFlexPageTest as test,
+  DOMGenKeysType,
 } from "dflex-e2e-utils";
-import { DOMGenKeysType } from "../utils/sharedTypes";
 
 test.describe
   .serial("Testing DFlex generated keys by accessing window for stream inc page", async () => {

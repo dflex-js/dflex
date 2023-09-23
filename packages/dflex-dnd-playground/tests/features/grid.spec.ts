@@ -18,8 +18,8 @@ import {
   moveDragged,
   DEVELOPMENT_ONLY_ASSERTION,
   isProdBundle,
+  DOMGenKeysType,
 } from "dflex-e2e-utils";
-import { DOMGenKeysType } from "../utils/sharedTypes";
 
 test.describe("Transformation inside grid container", async () => {
   let page: Page;
