@@ -2,10 +2,12 @@ import React from "react";
 import cn from "classnames";
 
 const TodoContainer = ({
+  id,
   children,
   isCenterV = true,
   isCenterH = true,
 }: {
+  id: string;
   children: React.ReactNode;
   isCenterH?: boolean;
   isCenterV?: boolean;
@@ -17,7 +19,7 @@ const TodoContainer = ({
 
   return (
     <div className={containerClasses}>
-      <ul className="bg-green-50 border-2 border-blue-50 rounded p-4">
+      <ul className="bg-green-50 border-2 border-blue-50 rounded p-4" id={id}>
         {children}
       </ul>
     </div>

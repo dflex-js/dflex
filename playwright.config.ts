@@ -11,12 +11,12 @@ let baseURL = "";
 if (PLAYGROUND_TYPE === "dflex-dnd") {
   testDir = "./packages/dflex-dnd-playground/tests/";
   baseURL = "http://localhost:3001";
-} else if (PLAYGROUND_TYPE === "next-playground") {
+} else if (PLAYGROUND_TYPE === "next-dnd") {
   testDir = "./packages/dflex-next-playground/tests/";
   baseURL = "http://localhost:3002";
 } else {
   throw new Error(
-    "Invalid PLAYGROUND_TYPE. Please set PLAYGROUND_TYPE to 'dflex-dnd' or 'next-playground'.",
+    "Invalid PLAYGROUND_TYPE. Please set PLAYGROUND_TYPE to 'dflex-dnd' or 'next-dnd'.",
   );
 }
 

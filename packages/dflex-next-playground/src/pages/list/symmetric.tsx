@@ -14,7 +14,7 @@ const SymmetricList = () => {
   ];
 
   return (
-    <TodoContainer>
+    <TodoContainer id="symmetric-container-list">
       {tasks.map(({ task, id }) => (
         <TodoItem id={id} key={id} opts={{ scroll: { enable: false } }}>
           {task}
