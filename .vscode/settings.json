@@ -5,5 +5,5 @@
   "eslint.alwaysShowStatus": true,
   "eslint.debug": true,
   "typescript.tsdk": "node_modules/typescript/lib",
-  "cSpell.words": ["dflex", "Jalal", "Maskoun", "pnpm", "VDOM"]
+  "cSpell.words": ["dflex", "Jalal", "Maskoun", "pnpm", "VDOM", "Vite"]
 }
