@@ -31,7 +31,6 @@ test.describe("Stress testing generated keys with client side rendering", async 
 
   async function clickAndNavigate(
     elementType: "symmetric" | "asymmetric" | "transformation",
-    goBack: boolean,
   ) {
     switch (elementType) {
       case "symmetric":
@@ -52,11 +51,9 @@ test.describe("Stress testing generated keys with client side rendering", async 
       default:
         throw new Error(`Invalid element type: ${elementType}`);
     }
+  }
 
-    if (!goBack) {
-      return;
-    }
-
+  async function returnToMainPageAndWait() {
     // Go back to the main page
     await page.goBack();
 
@@ -67,12 +64,10 @@ test.describe("Stress testing generated keys with client side rendering", async 
     await page.waitForSelector("div#main-page-content");
   }
 
-  const clickAndNavigateSymmetric = ({ goBack = true } = {}) =>
-    clickAndNavigate("symmetric", goBack);
-  const clickAndNavigateAsymmetric = ({ goBack = true } = {}) =>
-    clickAndNavigate("asymmetric", goBack);
-  const clickAndNavigateTransformation = ({ goBack = true } = {}) =>
-    clickAndNavigate("transformation", goBack);
+  const clickAndNavigateSymmetric = () => clickAndNavigate("symmetric");
+  const clickAndNavigateAsymmetric = () => clickAndNavigate("asymmetric");
+  const clickAndNavigateTransformation = () =>
+    clickAndNavigate("transformation");
 
   async function runTest(i: number, fn: () => Promise<void>) {
     if (i > 0) {
@@ -93,8 +88,6 @@ test.describe("Stress testing generated keys with client side rendering", async 
     });
 
     DOMGenKeys = await handle.jsonValue();
-
-    console.dir(DOMGenKeys, { depth: null });
   }
 
   function assertDOMGenKeys() {
@@ -104,7 +97,10 @@ test.describe("Stress testing generated keys with client side rendering", async 
   }
 
   test("Navigation and interaction to generate keys (Symmetric)", async () => {
-    await runTest(11, clickAndNavigateSymmetric);
+    await runTest(11, async () => {
+      await clickAndNavigateSymmetric();
+      await returnToMainPageAndWait();
+    });
   });
 
   test("Should correctly retrieve empty keys after Symmetric is done", async () => {
@@ -113,7 +109,10 @@ test.describe("Stress testing generated keys with client side rendering", async 
   });
 
   test("Navigation and interaction to generate keys (Asymmetric)", async () => {
-    await runTest(11, clickAndNavigateAsymmetric);
+    await runTest(11, async () => {
+      await clickAndNavigateAsymmetric();
+      await returnToMainPageAndWait();
+    });
   });
 
   test("Should correctly retrieve empty keys after Asymmetric is done", async () => {
@@ -122,7 +121,10 @@ test.describe("Stress testing generated keys with client side rendering", async 
   });
 
   test("Navigation and interaction to generate keys (Transformation)", async () => {
-    await runTest(11, clickAndNavigateTransformation);
+    await runTest(11, async () => {
+      await clickAndNavigateTransformation();
+      await returnToMainPageAndWait();
+    });
   });
 
   test("Should correctly retrieve empty keys after Transformation is done", async () => {
@@ -131,7 +133,7 @@ test.describe("Stress testing generated keys with client side rendering", async 
   });
 
   test("Navigation and interaction to generate keys (Symmetric) again", async () => {
-    await clickAndNavigateSymmetric({ goBack: false });
+    await clickAndNavigateSymmetric();
   });
 
   test("Should correctly retrieve correct keys after Symmetric is done", async () => {
@@ -155,6 +157,84 @@ test.describe("Stress testing generated keys with client side rendering", async 
         "1": { ids: ["symmetric-container-list"], SK: "dflex_sk_1_0" },
       },
     };
+
+    assertDOMGenKeys();
+    await returnToMainPageAndWait();
+  });
+
+  test("Navigation and interaction to generate keys (Asymmetric) again", async () => {
+    await clickAndNavigateAsymmetric();
+  });
+
+  test("Should correctly retrieve correct keys after Asymmetric is done", async () => {
+    await retrieveDOMGenPrivateKeys();
+
+    // Update the expected keys.
+    idsBySk = {
+      dflex_sk_0_34: [
+        "async-meeting-laura",
+        "async-weekly-meetup",
+        "async-project-work",
+        "async-gym-session",
+      ],
+      dflex_sk_1_0: ["asymmetric-container-list"],
+    };
+    SKByDepth = {
+      "0": ["dflex_sk_0_34"],
+      "1": ["dflex_sk_1_0"],
+    };
+    branchesRegistry = {
+      dflex_bk_34: {
+        "0": {
+          ids: [
+            "async-meeting-laura",
+            "async-weekly-meetup",
+            "async-project-work",
+            "async-gym-session",
+          ],
+          SK: "dflex_sk_0_34",
+        },
+        "1": { ids: ["asymmetric-container-list"], SK: "dflex_sk_1_0" },
+      },
+    };
+
+    assertDOMGenKeys();
+    await returnToMainPageAndWait();
+  });
+
+  test("Navigation and interaction to generate keys (Transformation) again", async () => {
+    await clickAndNavigateTransformation();
+  });
+
+  test("Should correctly retrieve correct keys after Transformation is done", async () => {
+    await retrieveDOMGenPrivateKeys();
+
+    // Update the expected keys.
+    idsBySk = {
+      dflex_sk_0_35: ["trans-clean", "trans-shop", "trans-gym"],
+      dflex_sk_1_0: ["trans-container-list"],
+    };
+    SKByDepth = { "0": ["dflex_sk_0_35"], "1": ["dflex_sk_1_0"] };
+    branchesRegistry = {
+      dflex_bk_35: {
+        "0": {
+          ids: ["trans-clean", "trans-shop", "trans-gym"],
+          SK: "dflex_sk_0_35",
+        },
+        "1": { ids: ["trans-container-list"], SK: "dflex_sk_1_0" },
+      },
+    };
+
+    assertDOMGenKeys();
+    await returnToMainPageAndWait();
+  });
+
+  test("Keys should be destroyed when returning to main page", async () => {
+    await retrieveDOMGenPrivateKeys();
+
+    idsBySk = {};
+    SKByDepth = {};
+    branchesRegistry = {};
 
     assertDOMGenKeys();
   });
