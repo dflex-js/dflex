@@ -1,4 +1,4 @@
-import { featureFlags } from "@dflex/utils";
+import { combineKeys, featureFlags } from "@dflex/utils";
 
 type SiblingKey = string;
 
@@ -24,6 +24,10 @@ function addToUniqueArray<T>(arr: T[], element: T): T[] {
   return arr;
 }
 
+const PREFIX_BRANCH_KEY = "dflex_bk_";
+const PREFIX_CONNECTOR_KEY = "dflex_ky_";
+const PREFIX_SIBLINGS_KEY = "dflex_sk_";
+
 class DOMKeysManager {
   private _idsBySk: Map<SiblingKey, ElmID[]>;
 
@@ -33,11 +37,14 @@ class DOMKeysManager {
 
   private _prevBKs: BranchKey[];
 
+  private _branchIndex: number;
+
   constructor() {
     this._idsBySk = new Map();
     this._SKByDepth = new Map();
     this._branchesRegistry = new Map();
     this._prevBKs = [];
+    this._branchIndex = 0;
   }
 
   private _addDToSiblings(SK: string, id: string): number {
@@ -92,6 +99,32 @@ class DOMKeysManager {
     });
 
     return topLevelSKs;
+  }
+
+  protected constructBK(isNewBranch: boolean): string {
+    if (isNewBranch) {
+      this._branchIndex += 1;
+    }
+
+    const BK = `${PREFIX_BRANCH_KEY}${this._branchIndex}`;
+
+    return BK;
+  }
+
+  protected constructPK(parentDepth: number): string {
+    const PK = `${PREFIX_CONNECTOR_KEY}${combineKeys(
+      parentDepth + 1,
+      this._branchIndex,
+    )}`;
+
+    return PK;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  protected constructSK(depth: number, siblingsIndex: number): string {
+    const SK = `${PREFIX_SIBLINGS_KEY}${combineKeys(depth, siblingsIndex)}`;
+
+    return SK;
   }
 
   private _updateBranchValue(
