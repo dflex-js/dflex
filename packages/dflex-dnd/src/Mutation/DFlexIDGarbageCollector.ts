@@ -219,7 +219,7 @@ function DFlexIDGarbageCollector(
       });
 
       // Trigger the siblings cleanup because the parent won't trigger it recursively.
-      store.cleanupSiblingsAttachments(SK, child.depth);
+      store.cleanupSiblingsAttachments(child.keys.BK, SK, child.depth);
     });
 
     DFlexIDGarbageCollector(store, terminatedParentDOMiDs);

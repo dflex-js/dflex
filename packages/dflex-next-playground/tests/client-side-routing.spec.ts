@@ -17,6 +17,7 @@ test.describe("Stress testing generated keys with client side rendering", async 
   let interactiveDOM: Map<string, HTMLElement>;
   let containers: Containers;
   let scrolls: Scrolls;
+  let mutationObservers: Map<string, MutationObserver | null>;
 
   let idsBySk = {};
 
@@ -91,21 +92,28 @@ test.describe("Stress testing generated keys with client side rendering", async 
       return window.$DFlex && window.$DFlex.DOMGen._DEV_getPrivateKeys;
     });
 
-    const [handleKeys, handledDOM, handleContainers, handleScrolls] =
-      await Promise.all([
-        page.evaluateHandle(() => window.$DFlex.DOMGen._DEV_getPrivateKeys()!),
-        page.evaluateHandle(() => window.$DFlex.interactiveDOM),
-        page.evaluateHandle(() => window.$DFlex.containers),
-        page.evaluateHandle(() => window.$DFlex.scrolls),
-        page.evaluateHandle(() => window.$DFlex.mutationObserverMap),
-      ]);
-
-    [DOMGenKeys, interactiveDOM, containers, scrolls] = await Promise.all([
-      handleKeys.jsonValue(),
-      handledDOM.jsonValue(),
-      handleContainers.jsonValue(),
-      handleScrolls.jsonValue(),
+    const [
+      handleKeys,
+      handledDOM,
+      handleContainers,
+      handleScrolls,
+      handleObservers,
+    ] = await Promise.all([
+      page.evaluateHandle(() => window.$DFlex.DOMGen._DEV_getPrivateKeys()!),
+      page.evaluateHandle(() => window.$DFlex.interactiveDOM),
+      page.evaluateHandle(() => window.$DFlex.containers),
+      page.evaluateHandle(() => window.$DFlex.scrolls),
+      page.evaluateHandle(() => window.$DFlex.mutationObserverMap),
     ]);
+
+    [DOMGenKeys, interactiveDOM, containers, scrolls, mutationObservers] =
+      await Promise.all([
+        handleKeys.jsonValue(),
+        handledDOM.jsonValue(),
+        handleContainers.jsonValue(),
+        handleScrolls.jsonValue(),
+        handleObservers.jsonValue(),
+      ]);
   }
 
   function assertDOMGenKeys() {
@@ -127,6 +135,7 @@ test.describe("Stress testing generated keys with client side rendering", async 
     expect(interactiveDOM.size).toBe(0);
     expect(containers.size).toBe(0);
     expect(scrolls.size).toBe(0);
+    expect(mutationObservers.size).toBe(0);
   });
 
   test("Navigation and interaction to generate keys (Asymmetric)", async () => {
@@ -142,6 +151,7 @@ test.describe("Stress testing generated keys with client side rendering", async 
     expect(interactiveDOM.size).toBe(0);
     expect(containers.size).toBe(0);
     expect(scrolls.size).toBe(0);
+    expect(mutationObservers.size).toBe(0);
   });
 
   test("Navigation and interaction to generate keys (Transformation)", async () => {
@@ -157,6 +167,7 @@ test.describe("Stress testing generated keys with client side rendering", async 
     expect(interactiveDOM.size).toBe(0);
     expect(containers.size).toBe(0);
     expect(scrolls.size).toBe(0);
+    expect(mutationObservers.size).toBe(0);
   });
 
   test("Navigation and interaction to generate keys (Symmetric) again", async () => {
@@ -189,6 +200,7 @@ test.describe("Stress testing generated keys with client side rendering", async 
     expect(interactiveDOM.size).toBe(5);
     expect(containers.size).toBe(1);
     expect(scrolls.size).toBe(1);
+    expect(mutationObservers.size).toBe(1);
     await returnToMainPageAndWait();
   });
 
@@ -232,6 +244,7 @@ test.describe("Stress testing generated keys with client side rendering", async 
     expect(interactiveDOM.size).toBe(5);
     expect(containers.size).toBe(1);
     expect(scrolls.size).toBe(1);
+    expect(mutationObservers.size).toBe(1);
     await returnToMainPageAndWait();
   });
 
@@ -262,6 +275,7 @@ test.describe("Stress testing generated keys with client side rendering", async 
     expect(interactiveDOM.size).toBe(4);
     expect(containers.size).toBe(1);
     expect(scrolls.size).toBe(1);
+    expect(mutationObservers.size).toBe(1);
     await returnToMainPageAndWait();
   });
 
@@ -276,5 +290,6 @@ test.describe("Stress testing generated keys with client side rendering", async 
     expect(interactiveDOM.size).toBe(0);
     expect(containers.size).toBe(0);
     expect(scrolls.size).toBe(0);
+    expect(mutationObservers.size).toBe(0);
   });
 });

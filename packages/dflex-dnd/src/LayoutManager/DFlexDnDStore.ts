@@ -876,7 +876,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     return undefined;
   }
 
-  cleanupSiblingsAttachments(SK: string, depth: number): void {
+  cleanupSiblingsAttachments(BK: string, SK: string, depth: number): void {
     const scroll = this.scrolls.get(SK)!;
 
     if (__DEV__) {
@@ -903,23 +903,21 @@ class DFlexDnDStore extends DFlexBaseStore {
       }
     }
 
-    const SKIDs = this.DOMGen.getTopLevelSKs();
+    const [, { ids }] = this.DOMGen.getHighestDepthInBranch(BK)!;
 
-    SKIDs.forEach(({ SK: _SK, id }) => {
-      if (SK === _SK) {
-        this.mutationObserverMap.get(id)!.disconnect();
+    const branchParentID = ids[0];
 
-        const deletedObserver = this.mutationObserverMap.delete(id);
+    this.mutationObserverMap.get(branchParentID)!.disconnect();
 
-        if (__DEV__) {
-          if (!deletedObserver) {
-            throw new Error(
-              `cleanupSiblingsAttachments: Mutation Observer with id: ${id} doesn't exists`,
-            );
-          }
-        }
+    const deletedObserver = this.mutationObserverMap.delete(branchParentID);
+
+    if (__DEV__) {
+      if (!deletedObserver) {
+        throw new Error(
+          `cleanupSiblingsAttachments: Mutation Observer with id: ${branchParentID} doesn't exists`,
+        );
       }
-    });
+    }
   }
 
   destroy(): void {
