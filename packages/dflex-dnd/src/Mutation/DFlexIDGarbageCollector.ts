@@ -12,9 +12,8 @@ function hasGCInProgress(): boolean {
 function recomposeSiblings(
   store: DFlexDnDStore,
   terminatedDOMiDs: TerminatedDOMiDs,
-  { BK, depth }: SiblingKeyVal,
   SK: string,
-): void {
+): string[] {
   const connectedNodesID: string[] = [];
 
   const siblings = store.getElmSiblingsByKey(SK);
@@ -32,11 +31,26 @@ function recomposeSiblings(
 
         if (featureFlags.enableMutationDebugger) {
           // eslint-disable-next-line no-console
-          console.log(`cleanupLeaves: updating index for ${elmID} to ${index}`);
+          console.log(
+            `recomposeSiblings: updating index for ${elmID} to ${index}`,
+          );
         }
       }
     }
   }
+
+  return connectedNodesID;
+}
+
+function cleanupSiblings(
+  store: DFlexDnDStore,
+  terminatedDOMiDs: TerminatedDOMiDs,
+  { BK, depth }: SiblingKeyVal,
+  SK: string,
+): void {
+  const connectedNodesID = recomposeSiblings(store, terminatedDOMiDs, SK);
+
+  const { DOMGen } = store;
 
   if (__DEV__) {
     if (featureFlags.enableMutationDebugger) {
@@ -50,12 +64,12 @@ function recomposeSiblings(
 
   if (connectedNodesID.length > 0) {
     terminatedDOMiDs.forEach((id) => {
-      store.DOMGen.deleteIDFromBranch(BK, SK, depth, id);
+      DOMGen.deleteIDFromBranch(BK, SK, depth, id);
     });
 
-    store.DOMGen.mutateSiblings(SK, connectedNodesID);
+    DOMGen.mutateSiblings(SK, connectedNodesID);
   } else {
-    store.deleteSiblings(BK, SK, depth);
+    DOMGen.deleteSiblings(BK, depth);
   }
 }
 
@@ -205,10 +219,10 @@ function DFlexIDGarbageCollector(
     return;
   }
 
-  const recompose = (v: SiblingKeyVal, k: string) =>
-    recomposeSiblings(store, terminatedDOMiDs, v, k);
+  const cleanup = (v: SiblingKeyVal, k: string) =>
+    cleanupSiblings(store, terminatedDOMiDs, v, k);
 
-  SKeys.forEach(recompose);
+  SKeys.forEach(cleanup);
 }
 
 function garbageCollectorProcess(

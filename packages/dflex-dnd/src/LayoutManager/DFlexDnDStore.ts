@@ -876,13 +876,13 @@ class DFlexDnDStore extends DFlexBaseStore {
     return undefined;
   }
 
-  deleteSiblings(BK: string, SK: string, depth: number): void {
+  cleanupSiblingsAttachments(SK: string, depth: number): void {
     const scroll = this.scrolls.get(SK)!;
 
     if (__DEV__) {
       if (!scroll && depth === 0) {
         throw new Error(
-          `deleteSiblings: Scroll container with SK: ${SK} doesn't exists`,
+          `cleanupSiblingsAttachments: Scroll container with SK: ${SK} doesn't exists`,
         );
       }
     }
@@ -898,7 +898,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     if (__DEV__) {
       if (!deletedContainer && depth === 0) {
         throw new Error(
-          `deleteSiblings: Container with SK: ${SK} doesn't exists`,
+          `cleanupSiblingsAttachments: Container with SK: ${SK} doesn't exists`,
         );
       }
     }
@@ -914,14 +914,12 @@ class DFlexDnDStore extends DFlexBaseStore {
         if (__DEV__) {
           if (!deletedObserver) {
             throw new Error(
-              `deleteSiblings: Mutation Observer with id: ${id} doesn't exists`,
+              `cleanupSiblingsAttachments: Mutation Observer with id: ${id} doesn't exists`,
             );
           }
         }
       }
     });
-
-    this.DOMGen.deleteSiblings(BK, depth);
   }
 
   destroy(): void {
