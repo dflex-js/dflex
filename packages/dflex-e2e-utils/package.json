@@ -5,6 +5,8 @@
   "main": "src/index.ts",
   "private": true,
   "scripts": {},
-  "dependencies": {},
+  "dependencies": {
+    "@dflex/core-instance": "workspace:^3.9.7"
+  },
   "devDependencies": {}
 }

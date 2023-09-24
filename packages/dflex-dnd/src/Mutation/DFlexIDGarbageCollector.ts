@@ -12,9 +12,8 @@ function hasGCInProgress(): boolean {
 function recomposeSiblings(
   store: DFlexDnDStore,
   terminatedDOMiDs: TerminatedDOMiDs,
-  { BK, depth }: SiblingKeyVal,
   SK: string,
-): void {
+): string[] {
   const connectedNodesID: string[] = [];
 
   const siblings = store.getElmSiblingsByKey(SK);
@@ -32,11 +31,26 @@ function recomposeSiblings(
 
         if (featureFlags.enableMutationDebugger) {
           // eslint-disable-next-line no-console
-          console.log(`cleanupLeaves: updating index for ${elmID} to ${index}`);
+          console.log(
+            `recomposeSiblings: updating index for ${elmID} to ${index}`,
+          );
         }
       }
     }
   }
+
+  return connectedNodesID;
+}
+
+function cleanupSiblings(
+  store: DFlexDnDStore,
+  terminatedDOMiDs: TerminatedDOMiDs,
+  { BK, depth }: SiblingKeyVal,
+  SK: string,
+): void {
+  const connectedNodesID = recomposeSiblings(store, terminatedDOMiDs, SK);
+
+  const { DOMGen } = store;
 
   if (__DEV__) {
     if (featureFlags.enableMutationDebugger) {
@@ -50,19 +64,25 @@ function recomposeSiblings(
 
   if (connectedNodesID.length > 0) {
     terminatedDOMiDs.forEach((id) => {
-      store.DOMGen.deleteIDFromBranch(BK, SK, depth, id);
+      DOMGen.deleteIDFromBranch(BK, SK, depth, id);
     });
 
-    store.DOMGen.mutateSiblings(SK, connectedNodesID);
+    DOMGen.mutateSiblings(SK, connectedNodesID);
   } else {
-    store.deleteSiblings(BK, SK, depth);
+    DOMGen.deleteSiblings(BK, depth);
   }
 }
 
 type SiblingKeyVal = { BK: string; depth: number };
 type SKeysMap = Map<string, SiblingKeyVal>;
 
-function groupIDsBySK(store: DFlexDnDStore, SKeys: SKeysMap, id: string): void {
+function groupIDsBySK(
+  store: DFlexDnDStore,
+  SKeys: SKeysMap,
+  terminatedParentDOMiDs: TerminatedDOMiDs,
+  terminatedSKs: TerminatedDOMiDs,
+  id: string,
+): void {
   const [dflexElm, DOM] = store.getElmWithDOM(id, false);
 
   // hasAlreadyBeenRemoved
@@ -116,6 +136,27 @@ function groupIDsBySK(store: DFlexDnDStore, SKeys: SKeysMap, id: string): void {
 
     if (!SKeys.has(SK)) {
       SKeys.set(SK, { BK, depth });
+
+      // For each siblings do:
+      const parent = store.getParentByElmID(id);
+
+      if (parent) {
+        const [parentID, parentDOM] = parent;
+
+        if (!parentDOM.isConnected) {
+          if (__DEV__) {
+            if (featureFlags.enableMutationDebugger) {
+              // eslint-disable-next-line no-console
+              console.log(
+                `Parent with id: (${parentID}) will be removed from registry`,
+              );
+            }
+          }
+
+          terminatedParentDOMiDs.add(parentID);
+          terminatedSKs.add(SK);
+        }
+      }
     }
   } else if (__DEV__) {
     if (featureFlags.enableMutationDebugger) {
@@ -132,8 +173,11 @@ function DFlexIDGarbageCollector(
   terminatedDOMiDs: TerminatedDOMiDs,
 ): void {
   const SKeys = new Map<string, SiblingKeyVal>();
+  const terminatedParentDOMiDs = new Set<string>();
+  const terminatedSKs = new Set<string>();
 
-  const groupBySK = (id: string) => groupIDsBySK(store, SKeys, id);
+  const groupBySK = (id: string) =>
+    groupIDsBySK(store, SKeys, terminatedParentDOMiDs, terminatedSKs, id);
 
   terminatedDOMiDs.forEach(groupBySK);
 
@@ -150,46 +194,6 @@ function DFlexIDGarbageCollector(
     return;
   }
 
-  const terminatedParentDOMiDs = new Set<string>();
-
-  SKeys.forEach((_, SK) => {
-    const siblings = store.getElmSiblingsByKey(SK);
-
-    const id = siblings[0];
-
-    const parent = store.getParentByElmID(id);
-
-    if (parent) {
-      const [parentID, parentDOM] = parent;
-
-      if (!parentDOM.isConnected) {
-        if (__DEV__) {
-          if (featureFlags.enableMutationDebugger) {
-            // eslint-disable-next-line no-console
-            console.log(
-              `Parent with id: (${parentID}) will be removed from registry`,
-            );
-          }
-        }
-
-        siblings.forEach((eID) => {
-          // Remove children because they will be recursively deleted when the
-          // paren is going to be deleted.
-          store.deleteFromRegistry(eID);
-          terminatedDOMiDs.delete(eID);
-        });
-
-        terminatedParentDOMiDs.add(parentID);
-      }
-    }
-  });
-
-  // If there's a connected parents. Remove them from FOM manger.
-  // Note: you cant dispose DOM before validate parents.
-  terminatedDOMiDs.forEach((id) => {
-    store.deleteFromRegistry(id);
-  });
-
   if (terminatedParentDOMiDs.size > 0) {
     if (__DEV__) {
       if (featureFlags.enableMutationDebugger) {
@@ -200,15 +204,37 @@ function DFlexIDGarbageCollector(
       }
     }
 
+    terminatedSKs.forEach((_, SK) => {
+      const siblings = store.getElmSiblingsByKey(SK);
+
+      const id = siblings[0];
+
+      const child = store.registry.get(id)!;
+
+      siblings.forEach((eID) => {
+        // Remove children because they will be recursively deleted when the
+        // paren is going to be deleted.
+        store.deleteFromRegistry(eID);
+        terminatedDOMiDs.delete(eID);
+      });
+
+      // Trigger the siblings cleanup because the parent won't trigger it recursively.
+      store.cleanupSiblingsAttachments(child.keys.BK, SK, child.depth);
+    });
+
     DFlexIDGarbageCollector(store, terminatedParentDOMiDs);
 
     return;
   }
 
-  const recompose = (v: SiblingKeyVal, k: string) =>
-    recomposeSiblings(store, terminatedDOMiDs, v, k);
+  terminatedDOMiDs.forEach((eID) => {
+    store.deleteFromRegistry(eID);
+  });
 
-  SKeys.forEach(recompose);
+  const cleanup = (v: SiblingKeyVal, k: string) =>
+    cleanupSiblings(store, terminatedDOMiDs, v, k);
+
+  SKeys.forEach(cleanup);
 }
 
 function garbageCollectorProcess(

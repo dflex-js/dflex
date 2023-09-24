@@ -6,5 +6,8 @@
     "outDir": "./types",
     "rootDir": "."
   },
-  "references": [{ "path": "../dflex-dnd" }]
+  "references": [
+    { "path": "../dflex-dnd" },
+    { "path": "../dflex-core-instance" }
+  ]
 }

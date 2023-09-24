@@ -79,7 +79,7 @@ class DOMKeysManager {
     return null;
   }
 
-  private _getHighestDepthInBranch(BK: string): [Depth, BranchValue] {
+  getHighestDepthInBranch(BK: string): [Depth, BranchValue] {
     const depthMap = this._branchesRegistry.get(BK)!;
 
     const highestDepth = depthMap.size - 1;
@@ -93,7 +93,7 @@ class DOMKeysManager {
     const topLevelSKs = new Set<{ SK: string; id: string }>();
 
     this._branchesRegistry.forEach((_, BK) => {
-      const [, { SK, ids }] = this._getHighestDepthInBranch(BK)!;
+      const [, { SK, ids }] = this.getHighestDepthInBranch(BK)!;
 
       topLevelSKs.add({ SK, id: ids[0] });
     });
@@ -178,7 +178,7 @@ class DOMKeysManager {
       }
     }
 
-    const [prevDepth, prevValue] = this._getHighestDepthInBranch(prevBK!)!;
+    const [prevDepth, prevValue] = this.getHighestDepthInBranch(prevBK!)!;
 
     // Sharing the same parent in DOM but it's not in the registry.
     if (depth + 1 !== prevDepth) {

@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@dflex/dnd": "workspace:^3.9.7",
-    "@types/node": "^20.6.3",
+    "@types/node": "^20.6.4",
     "@types/react": "^18.2.22",
     "@types/react-dom": "^18.2.7",
     "autoprefixer": "10.4.16",
@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "dflex-e2e-utils": "workspace:^1.0.0",
-    "eslint": "^8.49.0",
+    "eslint": "^8.50.0",
     "eslint-config-dflex-react": "workspace:*"
   }
 }

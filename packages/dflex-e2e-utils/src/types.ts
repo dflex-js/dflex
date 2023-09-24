@@ -1,4 +1,8 @@
-/* eslint-disable import/prefer-default-export */
+import type {
+  DFlexParentContainer,
+  DFlexScrollContainer,
+} from "@dflex/core-instance";
+
 interface DOMGenKeysType {
   idsBySk: {
     [key: string]: string[];
@@ -16,4 +20,16 @@ interface DOMGenKeysType {
   };
 }
 
-export type { DOMGenKeysType };
+interface StorE2EType {
+  containers: {
+    [k: string]: DFlexParentContainer;
+  };
+  scrolls: {
+    [k: string]: DFlexScrollContainer;
+  };
+  mutationObserverMap: {
+    [k: string]: MutationObserver | null;
+  };
+}
+
+export type { DOMGenKeysType, StorE2EType };

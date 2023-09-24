@@ -876,13 +876,13 @@ class DFlexDnDStore extends DFlexBaseStore {
     return undefined;
   }
 
-  deleteSiblings(BK: string, SK: string, depth: number): void {
+  cleanupSiblingsAttachments(BK: string, SK: string, depth: number): void {
     const scroll = this.scrolls.get(SK)!;
 
     if (__DEV__) {
       if (!scroll && depth === 0) {
         throw new Error(
-          `deleteSiblings: Scroll container with SK: ${SK} doesn't exists`,
+          `cleanupSiblingsAttachments: Scroll container with SK: ${SK} doesn't exists`,
         );
       }
     }
@@ -898,30 +898,39 @@ class DFlexDnDStore extends DFlexBaseStore {
     if (__DEV__) {
       if (!deletedContainer && depth === 0) {
         throw new Error(
-          `deleteSiblings: Container with SK: ${SK} doesn't exists`,
+          `cleanupSiblingsAttachments: Container with SK: ${SK} doesn't exists`,
         );
       }
     }
 
-    const SKIDs = this.DOMGen.getTopLevelSKs();
+    const [, { ids }] = this.DOMGen.getHighestDepthInBranch(BK)!;
 
-    SKIDs.forEach(({ SK: _SK, id }) => {
-      if (SK === _SK) {
-        this.mutationObserverMap.get(id)!.disconnect();
+    const branchParentID = ids[0];
 
-        const deletedObserver = this.mutationObserverMap.delete(id);
+    this.mutationObserverMap.get(branchParentID)!.disconnect();
 
-        if (__DEV__) {
-          if (!deletedObserver) {
-            throw new Error(
-              `deleteSiblings: Mutation Observer with id: ${id} doesn't exists`,
-            );
-          }
-        }
+    const deletedObserver = this.mutationObserverMap.delete(branchParentID);
+
+    if (__DEV__) {
+      if (!deletedObserver) {
+        throw new Error(
+          `cleanupSiblingsAttachments: Mutation Observer with id: ${branchParentID} doesn't exists`,
+        );
       }
-    });
+    }
+  }
 
-    this.DOMGen.deleteSiblings(BK, depth);
+  /**
+   * Retrieves store attachments for debugging purposes.
+   *
+   * @note This method will be removed in production builds.
+   */
+  _DEV_getStoreAttachments() {
+    return {
+      containers: Object.fromEntries(this.containers),
+      scrolls: Object.fromEntries(this.scrolls),
+      mutationObserverMap: Object.fromEntries(this.mutationObserverMap),
+    };
   }
 
   destroy(): void {

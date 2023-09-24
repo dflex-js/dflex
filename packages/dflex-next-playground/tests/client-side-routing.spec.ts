@@ -1,7 +1,11 @@
 /* eslint-disable no-underscore-dangle */
 import { Page, BrowserContext, Browser, expect } from "@playwright/test";
 
-import { DFlexPageTest as test, DOMGenKeysType } from "dflex-e2e-utils";
+import {
+  DFlexPageTest as test,
+  DOMGenKeysType,
+  StorE2EType,
+} from "dflex-e2e-utils";
 
 test.describe("Stress testing generated keys with client side rendering", async () => {
   let page: Page;
@@ -9,12 +13,15 @@ test.describe("Stress testing generated keys with client side rendering", async 
   let activeBrowser: Browser;
 
   let DOMGenKeys: DOMGenKeysType;
+  let store: StorE2EType;
 
   let idsBySk = {};
-
   let SKByDepth = {};
-
   let branchesRegistry = {};
+
+  const containers = {};
+  const mutationObserverMap = {};
+  const scrolls = {};
 
   test.beforeAll(async ({ browser, baseURL }) => {
     activeBrowser = browser;
@@ -83,17 +90,31 @@ test.describe("Stress testing generated keys with client side rendering", async 
       return window.$DFlex && window.$DFlex.DOMGen._DEV_getPrivateKeys;
     });
 
-    const handle = await page.evaluateHandle(() => {
-      return window.$DFlex.DOMGen._DEV_getPrivateKeys()!;
+    await page.waitForFunction(() => {
+      return window.$DFlex && window.$DFlex._DEV_getStoreAttachments;
     });
 
-    DOMGenKeys = await handle.jsonValue();
+    const [handleKeys, handleStore] = await Promise.all([
+      page.evaluateHandle(() => window.$DFlex.DOMGen._DEV_getPrivateKeys()!),
+      page.evaluateHandle(() => window.$DFlex._DEV_getStoreAttachments()!),
+    ]);
+
+    [DOMGenKeys, store] = await Promise.all([
+      handleKeys.jsonValue(),
+      handleStore.jsonValue(),
+    ]);
   }
 
   function assertDOMGenKeys() {
     expect(DOMGenKeys.idsBySk).toStrictEqual(idsBySk);
     expect(DOMGenKeys.SKByDepth).toStrictEqual(SKByDepth);
     expect(DOMGenKeys.branchesRegistry).toStrictEqual(branchesRegistry);
+  }
+
+  function assertAttachments() {
+    expect(store.containers).toStrictEqual(containers);
+    expect(store.mutationObserverMap).toStrictEqual(mutationObserverMap);
+    expect(store.scrolls).toStrictEqual(scrolls);
   }
 
   test("Navigation and interaction to generate keys (Symmetric)", async () => {
@@ -105,7 +126,9 @@ test.describe("Stress testing generated keys with client side rendering", async 
 
   test("Should correctly retrieve empty keys after Symmetric is done", async () => {
     await retrieveDOMGenPrivateKeys();
+
     assertDOMGenKeys();
+    assertAttachments();
   });
 
   test("Navigation and interaction to generate keys (Asymmetric)", async () => {
@@ -117,7 +140,9 @@ test.describe("Stress testing generated keys with client side rendering", async 
 
   test("Should correctly retrieve empty keys after Asymmetric is done", async () => {
     await retrieveDOMGenPrivateKeys();
+
     assertDOMGenKeys();
+    assertAttachments();
   });
 
   test("Navigation and interaction to generate keys (Transformation)", async () => {
@@ -129,7 +154,9 @@ test.describe("Stress testing generated keys with client side rendering", async 
 
   test("Should correctly retrieve empty keys after Transformation is done", async () => {
     await retrieveDOMGenPrivateKeys();
+
     assertDOMGenKeys();
+    assertAttachments();
   });
 
   test("Navigation and interaction to generate keys (Symmetric) again", async () => {
@@ -159,6 +186,13 @@ test.describe("Stress testing generated keys with client side rendering", async 
     };
 
     assertDOMGenKeys();
+
+    expect(Object.keys(store.containers).length).toBe(1);
+    expect(Object.keys(store.mutationObserverMap).length).toBe(1);
+    expect(Object.keys(store.scrolls).length).toBe(1);
+
+    expect(store.mutationObserverMap["symmetric-container-list"]).toBeDefined();
+
     await returnToMainPageAndWait();
   });
 
@@ -199,6 +233,15 @@ test.describe("Stress testing generated keys with client side rendering", async 
     };
 
     assertDOMGenKeys();
+
+    expect(Object.keys(store.containers).length).toBe(1);
+    expect(Object.keys(store.mutationObserverMap).length).toBe(1);
+    expect(Object.keys(store.scrolls).length).toBe(1);
+
+    expect(
+      store.mutationObserverMap["asymmetric-container-list"],
+    ).toBeDefined();
+
     await returnToMainPageAndWait();
   });
 
@@ -226,6 +269,13 @@ test.describe("Stress testing generated keys with client side rendering", async 
     };
 
     assertDOMGenKeys();
+
+    expect(Object.keys(store.containers).length).toBe(1);
+    expect(Object.keys(store.mutationObserverMap).length).toBe(1);
+    expect(Object.keys(store.scrolls).length).toBe(1);
+
+    expect(store.mutationObserverMap["trans-container-list"]).toBeDefined();
+
     await returnToMainPageAndWait();
   });
 
@@ -237,5 +287,6 @@ test.describe("Stress testing generated keys with client side rendering", async 
     branchesRegistry = {};
 
     assertDOMGenKeys();
+    assertAttachments();
   });
 });
