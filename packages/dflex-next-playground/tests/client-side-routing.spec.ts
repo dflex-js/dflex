@@ -1,7 +1,12 @@
 /* eslint-disable no-underscore-dangle */
 import { Page, BrowserContext, Browser, expect } from "@playwright/test";
 
-import { DFlexPageTest as test, DOMGenKeysType } from "dflex-e2e-utils";
+import {
+  DFlexPageTest as test,
+  DOMGenKeysType,
+  Containers,
+  Scrolls,
+} from "dflex-e2e-utils";
 
 test.describe("Stress testing generated keys with client side rendering", async () => {
   let page: Page;
@@ -9,6 +14,9 @@ test.describe("Stress testing generated keys with client side rendering", async 
   let activeBrowser: Browser;
 
   let DOMGenKeys: DOMGenKeysType;
+  let interactiveDOM: Map<string, HTMLElement>;
+  let containers: Containers;
+  let scrolls: Scrolls;
 
   let idsBySk = {};
 
@@ -83,11 +91,21 @@ test.describe("Stress testing generated keys with client side rendering", async 
       return window.$DFlex && window.$DFlex.DOMGen._DEV_getPrivateKeys;
     });
 
-    const handle = await page.evaluateHandle(() => {
-      return window.$DFlex.DOMGen._DEV_getPrivateKeys()!;
-    });
+    const [handleKeys, handledDOM, handleContainers, handleScrolls] =
+      await Promise.all([
+        page.evaluateHandle(() => window.$DFlex.DOMGen._DEV_getPrivateKeys()!),
+        page.evaluateHandle(() => window.$DFlex.interactiveDOM),
+        page.evaluateHandle(() => window.$DFlex.containers),
+        page.evaluateHandle(() => window.$DFlex.scrolls),
+        page.evaluateHandle(() => window.$DFlex.mutationObserverMap),
+      ]);
 
-    DOMGenKeys = await handle.jsonValue();
+    [DOMGenKeys, interactiveDOM, containers, scrolls] = await Promise.all([
+      handleKeys.jsonValue(),
+      handledDOM.jsonValue(),
+      handleContainers.jsonValue(),
+      handleScrolls.jsonValue(),
+    ]);
   }
 
   function assertDOMGenKeys() {
@@ -106,6 +124,9 @@ test.describe("Stress testing generated keys with client side rendering", async 
   test("Should correctly retrieve empty keys after Symmetric is done", async () => {
     await retrieveDOMGenPrivateKeys();
     assertDOMGenKeys();
+    expect(interactiveDOM.size).toBe(0);
+    expect(containers.size).toBe(0);
+    expect(scrolls.size).toBe(0);
   });
 
   test("Navigation and interaction to generate keys (Asymmetric)", async () => {
@@ -118,6 +139,9 @@ test.describe("Stress testing generated keys with client side rendering", async 
   test("Should correctly retrieve empty keys after Asymmetric is done", async () => {
     await retrieveDOMGenPrivateKeys();
     assertDOMGenKeys();
+    expect(interactiveDOM.size).toBe(0);
+    expect(containers.size).toBe(0);
+    expect(scrolls.size).toBe(0);
   });
 
   test("Navigation and interaction to generate keys (Transformation)", async () => {
@@ -130,6 +154,9 @@ test.describe("Stress testing generated keys with client side rendering", async 
   test("Should correctly retrieve empty keys after Transformation is done", async () => {
     await retrieveDOMGenPrivateKeys();
     assertDOMGenKeys();
+    expect(interactiveDOM.size).toBe(0);
+    expect(containers.size).toBe(0);
+    expect(scrolls.size).toBe(0);
   });
 
   test("Navigation and interaction to generate keys (Symmetric) again", async () => {
@@ -159,6 +186,9 @@ test.describe("Stress testing generated keys with client side rendering", async 
     };
 
     assertDOMGenKeys();
+    expect(interactiveDOM.size).toBe(5);
+    expect(containers.size).toBe(1);
+    expect(scrolls.size).toBe(1);
     await returnToMainPageAndWait();
   });
 
@@ -199,6 +229,9 @@ test.describe("Stress testing generated keys with client side rendering", async 
     };
 
     assertDOMGenKeys();
+    expect(interactiveDOM.size).toBe(5);
+    expect(containers.size).toBe(1);
+    expect(scrolls.size).toBe(1);
     await returnToMainPageAndWait();
   });
 
@@ -226,6 +259,9 @@ test.describe("Stress testing generated keys with client side rendering", async 
     };
 
     assertDOMGenKeys();
+    expect(interactiveDOM.size).toBe(4);
+    expect(containers.size).toBe(1);
+    expect(scrolls.size).toBe(1);
     await returnToMainPageAndWait();
   });
 
@@ -237,5 +273,8 @@ test.describe("Stress testing generated keys with client side rendering", async 
     branchesRegistry = {};
 
     assertDOMGenKeys();
+    expect(interactiveDOM.size).toBe(0);
+    expect(containers.size).toBe(0);
+    expect(scrolls.size).toBe(0);
   });
 });

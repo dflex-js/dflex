@@ -1,4 +1,8 @@
-/* eslint-disable import/prefer-default-export */
+import type {
+  DFlexParentContainer,
+  DFlexScrollContainer,
+} from "@dflex/core-instance";
+
 interface DOMGenKeysType {
   idsBySk: {
     [key: string]: string[];
@@ -16,4 +20,8 @@ interface DOMGenKeysType {
   };
 }
 
-export type { DOMGenKeysType };
+type Containers = Map<string, DFlexParentContainer>;
+
+type Scrolls = Map<string, DFlexScrollContainer>;
+
+export type { DOMGenKeysType, Containers, Scrolls };

@@ -167,7 +167,11 @@ importers:
         specifier: workspace:*
         version: link:../../scripts/eslint-config-dflex-react
 
-  packages/dflex-e2e-utils: {}
+  packages/dflex-e2e-utils:
+    dependencies:
+      '@dflex/core-instance':
+        specifier: workspace:^3.9.7
+        version: link:../dflex-core-instance
 
   packages/dflex-next-playground:
     dependencies:
