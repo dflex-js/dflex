@@ -53,6 +53,11 @@ export default function Home() {
           title="Transformation only list"
           link="list/transformation"
         />
+        <ClickableBox
+          desc="Unscrollable list positioned within a scrollable page."
+          title="Scrollable page with fixed list"
+          link="list/scrollable-page-content"
+        />
       </div>
     </main>
   );
