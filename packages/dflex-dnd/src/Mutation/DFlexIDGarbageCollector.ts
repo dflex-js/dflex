@@ -76,7 +76,13 @@ function cleanupSiblings(
 type SiblingKeyVal = { BK: string; depth: number };
 type SKeysMap = Map<string, SiblingKeyVal>;
 
-function groupIDsBySK(store: DFlexDnDStore, SKeys: SKeysMap, id: string): void {
+function groupIDsBySK(
+  store: DFlexDnDStore,
+  SKeys: SKeysMap,
+  terminatedParentDOMiDs: TerminatedDOMiDs,
+  terminatedSKs: TerminatedDOMiDs,
+  id: string,
+): void {
   const [dflexElm, DOM] = store.getElmWithDOM(id, false);
 
   // hasAlreadyBeenRemoved
@@ -130,6 +136,27 @@ function groupIDsBySK(store: DFlexDnDStore, SKeys: SKeysMap, id: string): void {
 
     if (!SKeys.has(SK)) {
       SKeys.set(SK, { BK, depth });
+
+      // For each siblings do:
+      const parent = store.getParentByElmID(id);
+
+      if (parent) {
+        const [parentID, parentDOM] = parent;
+
+        if (!parentDOM.isConnected) {
+          if (__DEV__) {
+            if (featureFlags.enableMutationDebugger) {
+              // eslint-disable-next-line no-console
+              console.log(
+                `Parent with id: (${parentID}) will be removed from registry`,
+              );
+            }
+          }
+
+          terminatedParentDOMiDs.add(parentID);
+          terminatedSKs.add(SK);
+        }
+      }
     }
   } else if (__DEV__) {
     if (featureFlags.enableMutationDebugger) {
@@ -141,49 +168,16 @@ function groupIDsBySK(store: DFlexDnDStore, SKeys: SKeysMap, id: string): void {
   }
 }
 
-function groupDisconnectedParents(
-  store: DFlexDnDStore,
-  SKeys: Map<string, SiblingKeyVal>,
-): [Set<string>, Set<string>] {
-  const terminatedParentDOMiDs = new Set<string>();
-  const terminatedSKs = new Set<string>();
-
-  SKeys.forEach((_, SK) => {
-    const siblings = store.getElmSiblingsByKey(SK);
-
-    const id = siblings[0];
-
-    const parent = store.getParentByElmID(id);
-
-    if (parent) {
-      const [parentID, parentDOM] = parent;
-
-      if (!parentDOM.isConnected) {
-        if (__DEV__) {
-          if (featureFlags.enableMutationDebugger) {
-            // eslint-disable-next-line no-console
-            console.log(
-              `Parent with id: (${parentID}) will be removed from registry`,
-            );
-          }
-        }
-
-        terminatedParentDOMiDs.add(parentID);
-        terminatedSKs.add(SK);
-      }
-    }
-  });
-
-  return [terminatedParentDOMiDs, terminatedSKs];
-}
-
 function DFlexIDGarbageCollector(
   store: DFlexDnDStore,
   terminatedDOMiDs: TerminatedDOMiDs,
 ): void {
   const SKeys = new Map<string, SiblingKeyVal>();
+  const terminatedParentDOMiDs = new Set<string>();
+  const terminatedSKs = new Set<string>();
 
-  const groupBySK = (id: string) => groupIDsBySK(store, SKeys, id);
+  const groupBySK = (id: string) =>
+    groupIDsBySK(store, SKeys, terminatedParentDOMiDs, terminatedSKs, id);
 
   terminatedDOMiDs.forEach(groupBySK);
 
@@ -199,11 +193,6 @@ function DFlexIDGarbageCollector(
 
     return;
   }
-
-  const [terminatedParentDOMiDs, terminatedSKs] = groupDisconnectedParents(
-    store,
-    SKeys,
-  );
 
   if (terminatedParentDOMiDs.size > 0) {
     if (__DEV__) {
@@ -237,6 +226,10 @@ function DFlexIDGarbageCollector(
 
     return;
   }
+
+  terminatedDOMiDs.forEach((eID) => {
+    store.deleteFromRegistry(eID);
+  });
 
   const cleanup = (v: SiblingKeyVal, k: string) =>
     cleanupSiblings(store, terminatedDOMiDs, v, k);
