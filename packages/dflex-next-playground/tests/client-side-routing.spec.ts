@@ -187,6 +187,12 @@ test.describe("Stress testing generated keys with client side rendering", async 
 
     assertDOMGenKeys();
 
+    expect(Object.keys(store.containers).length).toBe(1);
+    expect(Object.keys(store.mutationObserverMap).length).toBe(1);
+    expect(Object.keys(store.scrolls).length).toBe(1);
+
+    expect(store.mutationObserverMap["symmetric-container-list"]).toBeDefined();
+
     await returnToMainPageAndWait();
   });
 
@@ -228,6 +234,14 @@ test.describe("Stress testing generated keys with client side rendering", async 
 
     assertDOMGenKeys();
 
+    expect(Object.keys(store.containers).length).toBe(1);
+    expect(Object.keys(store.mutationObserverMap).length).toBe(1);
+    expect(Object.keys(store.scrolls).length).toBe(1);
+
+    expect(
+      store.mutationObserverMap["asymmetric-container-list"],
+    ).toBeDefined();
+
     await returnToMainPageAndWait();
   });
 
@@ -256,6 +270,12 @@ test.describe("Stress testing generated keys with client side rendering", async 
 
     assertDOMGenKeys();
 
+    expect(Object.keys(store.containers).length).toBe(1);
+    expect(Object.keys(store.mutationObserverMap).length).toBe(1);
+    expect(Object.keys(store.scrolls).length).toBe(1);
+
+    expect(store.mutationObserverMap["trans-container-list"]).toBeDefined();
+
     await returnToMainPageAndWait();
   });
 
@@ -267,5 +287,6 @@ test.describe("Stress testing generated keys with client side rendering", async 
     branchesRegistry = {};
 
     assertDOMGenKeys();
+    assertAttachments();
   });
 });
