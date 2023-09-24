@@ -20,8 +20,16 @@ interface DOMGenKeysType {
   };
 }
 
-type Containers = Map<string, DFlexParentContainer>;
+interface StorE2EType {
+  containers: {
+    [k: string]: DFlexParentContainer;
+  };
+  scrolls: {
+    [k: string]: DFlexScrollContainer;
+  };
+  mutationObserverMap: {
+    [k: string]: MutationObserver | null;
+  };
+}
 
-type Scrolls = Map<string, DFlexScrollContainer>;
-
-export type { DOMGenKeysType, Containers, Scrolls };
+export type { DOMGenKeysType, StorE2EType };

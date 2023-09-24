@@ -21,4 +21,4 @@ export {
 
 export { DFlexPageTest } from "./DFlexPageTest";
 
-export type { DOMGenKeysType, Containers, Scrolls } from "./types";
+export type { DOMGenKeysType, StorE2EType } from "./types";

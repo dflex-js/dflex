@@ -920,6 +920,19 @@ class DFlexDnDStore extends DFlexBaseStore {
     }
   }
 
+  /**
+   * Retrieves store attachments for debugging purposes.
+   *
+   * @note This method will be removed in production builds.
+   */
+  _DEV_getStoreAttachments() {
+    return {
+      containers: Object.fromEntries(this.containers),
+      scrolls: Object.fromEntries(this.scrolls),
+      mutationObserverMap: Object.fromEntries(this.mutationObserverMap),
+    };
+  }
+
   destroy(): void {
     this.containers.clear();
     this.listeners.clear();
