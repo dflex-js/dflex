@@ -186,6 +186,8 @@ function DFlexIDGarbageCollector(
           }
         }
 
+        const child = store.registry.get(id)!;
+
         siblings.forEach((eID) => {
           // Remove children because they will be recursively deleted when the
           // paren is going to be deleted.
@@ -194,6 +196,9 @@ function DFlexIDGarbageCollector(
         });
 
         terminatedParentDOMiDs.add(parentID);
+
+        // Trigger the siblings cleanup because the parent won't trigger it recursively.
+        store.cleanupSiblingsAttachments(SK, child.depth);
       }
     }
   });
