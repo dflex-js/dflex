@@ -21,7 +21,9 @@ function recomposeSiblings(
   for (let i = 0; i < siblings.length; i += 1) {
     const elmID = siblings[i];
 
-    if (!terminatedDOMiDs.has(elmID)) {
+    if (terminatedDOMiDs.has(elmID)) {
+      store.deleteFromRegistry(elmID);
+    } else {
       const dflexElm = store.registry.get(elmID)!;
 
       const index = connectedNodesID.push(elmID) - 1;
@@ -69,6 +71,7 @@ function cleanupSiblings(
 
     DOMGen.mutateSiblings(SK, connectedNodesID);
   } else {
+    store.cleanupSiblingsAttachments(BK, SK, depth);
     DOMGen.deleteSiblings(BK, depth);
   }
 }
@@ -226,10 +229,6 @@ function DFlexIDGarbageCollector(
 
     return;
   }
-
-  terminatedDOMiDs.forEach((eID) => {
-    store.deleteFromRegistry(eID);
-  });
 
   const cleanup = (v: SiblingKeyVal, k: string) =>
     cleanupSiblings(store, terminatedDOMiDs, v, k);

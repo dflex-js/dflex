@@ -907,16 +907,24 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     const branchParentID = ids[0];
 
-    this.mutationObserverMap.get(branchParentID)!.disconnect();
+    // At some point there's going to be a parent with dead end.
+    if (this.mutationObserverMap.has(branchParentID)) {
+      this.mutationObserverMap.get(branchParentID)!.disconnect();
 
-    const deletedObserver = this.mutationObserverMap.delete(branchParentID);
+      const deletedObserver = this.mutationObserverMap.delete(branchParentID);
 
-    if (__DEV__) {
-      if (!deletedObserver) {
-        throw new Error(
-          `cleanupSiblingsAttachments: Mutation Observer with id: ${branchParentID} doesn't exists`,
-        );
+      if (__DEV__) {
+        if (!deletedObserver) {
+          throw new Error(
+            `cleanupSiblingsAttachments: Mutation Observer with id: ${branchParentID} doesn't exists`,
+          );
+        }
       }
+    }
+
+    if (this.migration !== null) {
+      // migration.flush(session);
+      // this.migration._deleteKeysFromSKs(new Set([SK]));
     }
   }
 
