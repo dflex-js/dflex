@@ -647,7 +647,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   private _isEmptyMigration() {
     const isEmptyMigration =
-      this.migration === null || this.migration.SKs.length === 0;
+      this.migration === null || this.migration.getAll().length === 0;
 
     return isEmptyMigration;
   }
@@ -767,33 +767,12 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     this.isComposing = true;
 
-    const reconcile = (SK: string) =>
+    const reconcile = ({ SK }: { SK: string }) =>
       this._reconcileSiblings(SK, syncAllSiblings);
-
-    if (__DEV__) {
-      if (featureFlags.enableCommit) {
-        if (this.migration === null) {
-          // eslint-disable-next-line no-console
-          console.warn("Migration is not set yet. Nothing to commit.");
-          // eslint-disable-next-line no-console
-          console.warn();
-          // eslint-disable-next-line no-console
-          console.warn("Executing commit for zero depth layer.");
-
-          this.getSiblingKeysByDepth(0).forEach(reconcile);
-
-          return;
-        }
-
-        this.migration.SKs.forEach(reconcile);
-
-        return;
-      }
-    }
 
     disconnectObservers(this);
 
-    this.migration.SKs.forEach(reconcile);
+    this.migration.getAll().forEach(reconcile);
 
     scheduler(this, callback, {
       onUpdate: () => {

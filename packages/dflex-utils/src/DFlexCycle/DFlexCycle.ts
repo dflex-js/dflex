@@ -54,8 +54,6 @@ class AbstractDFlexCycle {
 class DFlexCycle {
   private _migrations: AbstractDFlexCycle[];
 
-  SKs: string[];
-
   /** Only true when transitioning. */
   isTransitioning!: boolean;
 
@@ -75,7 +73,6 @@ class DFlexCycle {
     );
 
     this._migrations = [dflexCycle];
-    this.SKs = [SK];
     this.complete();
   }
 
@@ -106,15 +103,6 @@ class DFlexCycle {
       : this._migrations.filter((_) => cycleIDs.find((i) => i === _.id));
   }
 
-  /**
-   * Delete keys from the SKs array.
-   *
-   * @param keysToDelete - A set of keys to be deleted.
-   */
-  private _deleteKeysFromSKs(keysToDelete: Set<string>): void {
-    this.SKs = this.SKs.filter((key) => !keysToDelete.has(key));
-  }
-
   flush(cycleIDs: string[]): void {
     const removedKeys = new Set<string>();
 
@@ -139,8 +127,6 @@ class DFlexCycle {
 
       return false;
     });
-
-    this._deleteKeysFromSKs(removedKeys);
   }
 
   /**
@@ -182,9 +168,7 @@ class DFlexCycle {
     cycleID: string,
     hasScroll: boolean,
   ): void {
-    this._migrations.push(
-      new AbstractDFlexCycle(index, id, SK, cycleID, hasScroll),
-    );
+    const cycle = new AbstractDFlexCycle(index, id, SK, cycleID, hasScroll);
 
     // The following logic ensures that addition operations are prioritized at
     // the beginning of the array, while removal operations are placed towards
@@ -194,11 +178,11 @@ class DFlexCycle {
 
     if (isAddOperation) {
       // If it's an "add" operation, place the sibling key at the beginning of the SKs array.
-      this.SKs.unshift(SK);
+      this._migrations.unshift(cycle);
     } else {
       // If it's not an "add" operation (i.e., it's a "remove" operation),
       // append the sibling key to the end of the SKs array.
-      this.SKs.push(SK);
+      this._migrations.push(cycle);
     }
   }
 
@@ -254,7 +238,6 @@ class DFlexCycle {
 
   clear(): void {
     this._migrations = [];
-    this.SKs = [];
   }
 }
 
