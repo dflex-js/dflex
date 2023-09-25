@@ -15,7 +15,16 @@ const TransformationPage = () => {
   return (
     <TodoContainer id="trans-container-list">
       {tasks.map(({ task, id }) => (
-        <TodoItem id={id} key={id} opts={{ scroll: { enable: false } }}>
+        <TodoItem
+          id={id}
+          key={id}
+          opts={{
+            scroll: { enable: false },
+            commit: {
+              enableAfterEndingDrag: false,
+            },
+          }}
+        >
           {task}
         </TodoItem>
       ))}
