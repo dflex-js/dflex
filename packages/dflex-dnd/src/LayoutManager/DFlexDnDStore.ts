@@ -922,9 +922,9 @@ class DFlexDnDStore extends DFlexBaseStore {
       }
     }
 
+    // Delete pending migration when the DOM element is no longer exists.
     if (this.migration !== null) {
-      // migration.flush(session);
-      // this.migration._deleteKeysFromSKs(new Set([SK]));
+      this.migration.pruneSKFromMigration(SK);
     }
   }
 

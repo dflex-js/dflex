@@ -143,6 +143,11 @@ class DFlexCycle {
     this._deleteKeysFromSKs(removedKeys);
   }
 
+  pruneSKFromMigration(SK: string): void {
+    this._migrations = this._migrations.filter((m) => m.SK !== SK);
+    this._deleteKeysFromSKs(new Set([SK]));
+  }
+
   /**
    * We only update indexes considering migration definition when it happens
    * outside container but not moving inside it.
