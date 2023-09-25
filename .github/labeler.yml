@@ -29,4 +29,24 @@ Store:
   - any: ["packages/dflex-store/**", "!packages/dflex-store/package.json"]
 
 Utils:
-  - any: ["packages/dflex-utils/**", "!packages/dflex-utils/package.json"]
+  - any:
+      [
+        "packages/dflex-utils/**",
+        "!packages/dflex-utils/package.json",
+
+        "packages/dflex-e2e-utils/**",
+        "!packages/dflex-e2e-utils/package.json",
+      ]
+
+Playground:
+  - any:
+      [
+        "packages/dflex-dnd-playground/**",
+        "!packages/dflex-dnd-playground/package.json",
+
+        "packages/dflex-next-playground/**",
+        "!packages/dflex-next-playground/package.json",
+
+        "packages/dflex-draggable-playground/**",
+        "!packages/dflex-draggable-playground/package.json",
+      ]
