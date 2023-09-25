@@ -10,6 +10,7 @@ interface Props {
   Component?: string | React.JSXElementConstructor<any>;
   id: string;
   style?: { [key: string]: string };
+  className?: string;
   opts?: DFlexDnDOpts;
   task?: string;
   depth?: number;
@@ -21,6 +22,7 @@ export function TodoItem({
   id,
   task,
   style,
+  className,
   children,
   opts,
   depth = 0,
@@ -119,6 +121,7 @@ export function TodoItem({
       className={cn(
         "border border-blue-300 bg-blue-100 rounded py-2 px-4 my-4 flex items-center justify-between",
         [!style && "h-16"],
+        className,
       )}
     >
       <div>{task || children}</div>

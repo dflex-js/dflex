@@ -4,18 +4,26 @@ import cn from "classnames";
 const TodoContainer = ({
   id,
   children,
+  className,
   isCenterV = true,
   isCenterH = true,
 }: {
   id: string;
   children: React.ReactNode;
+  className?: string;
   isCenterH?: boolean;
   isCenterV?: boolean;
 }) => {
-  const containerClasses = cn("flex", "min-h-screen", "p-6", {
-    "justify-center": isCenterV,
-    "items-center": isCenterH,
-  });
+  const containerClasses = cn(
+    "flex",
+    "min-h-screen",
+    "p-6",
+    {
+      "justify-center": isCenterV,
+      "items-center": isCenterH,
+    },
+    className,
+  );
 
   return (
     <div className={containerClasses}>
