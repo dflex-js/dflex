@@ -5,6 +5,9 @@ import {
   DFlexPageTest as test,
   DOMGenKeysType,
   StorE2EType,
+  initialize,
+  getDraggedRect,
+  moveDragged,
 } from "dflex-e2e-utils";
 
 test.describe("Stress testing generated keys with client side rendering", async () => {
@@ -14,6 +17,7 @@ test.describe("Stress testing generated keys with client side rendering", async 
 
   let DOMGenKeys: DOMGenKeysType;
   let store: StorE2EType;
+  let migrations: typeof window.$DFlex.migration;
 
   let idsBySk = {};
   let SKByDepth = {};
@@ -103,6 +107,18 @@ test.describe("Stress testing generated keys with client side rendering", async 
       handleKeys.jsonValue(),
       handleStore.jsonValue(),
     ]);
+  }
+
+  async function retrieveStoreMigrationInstance() {
+    await page.waitForFunction(() => {
+      return window.$DFlex && window.$DFlex.migration;
+    });
+
+    const [handleMigration] = await Promise.all([
+      page.evaluateHandle(() => window.$DFlex.migration),
+    ]);
+
+    [migrations] = await Promise.all([handleMigration.jsonValue()]);
   }
 
   function assertDOMGenKeys() {
@@ -275,11 +291,31 @@ test.describe("Stress testing generated keys with client side rendering", async 
     expect(Object.keys(store.scrolls).length).toBe(1);
 
     expect(store.mutationObserverMap["trans-container-list"]).toBeDefined();
-
-    await returnToMainPageAndWait();
   });
 
-  test("Keys should be destroyed when returning to main page", async () => {
+  test("Drag first element to create migration instance", async ({
+    browserName,
+  }) => {
+    initialize(page, browserName, 50);
+    const elm = page.locator("#trans-clean");
+    await getDraggedRect(elm);
+    await moveDragged(-1, 180);
+    await page.dispatchEvent("#trans-clean", "mouseup", {
+      button: 0,
+      force: true,
+    });
+  });
+
+  test("Migration instance has the correct data", async () => {
+    await retrieveStoreMigrationInstance();
+
+    expect(migrations.SKs).toStrictEqual(["dflex_sk_0_35"]);
+  });
+
+  test("Keys and Migration should be destroyed when returning to main page", async () => {
+    await returnToMainPageAndWait();
+
+    await retrieveStoreMigrationInstance();
     await retrieveDOMGenPrivateKeys();
 
     idsBySk = {};
@@ -288,5 +324,7 @@ test.describe("Stress testing generated keys with client side rendering", async 
 
     assertDOMGenKeys();
     assertAttachments();
+
+    expect(migrations.SKs).toStrictEqual([]);
   });
 });
