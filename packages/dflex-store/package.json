@@ -1,6 +1,6 @@
 {
   "name": "@dflex/store",
-  "version": "3.9.8",
+  "version": "3.9.9",
   "description": "DOM store allows you to traverse through the DOM tree with element-id",
   "author": "Jalal Maskoun",
   "main": "./dist/dflex-store.js",
@@ -31,9 +31,9 @@
     "LICENSE"
   ],
   "devDependencies": {
-    "@dflex/core-instance": "workspace:^3.9.8",
-    "@dflex/dom-gen": "workspace:^3.9.8",
-    "@dflex/utils": "workspace:^3.9.8"
+    "@dflex/core-instance": "workspace:^3.9.9",
+    "@dflex/dom-gen": "workspace:^3.9.9",
+    "@dflex/utils": "workspace:^3.9.9"
   },
   "keywords": [
     "drag-drop",
