@@ -3,7 +3,7 @@ import type { DFlexSerializedElement } from "@dflex/core-instance";
 
 import DFlexDnDStore from "./DFlexDnDStore";
 
-import { store } from ".";
+import storeInstance from "./DFlexDnDStoreSingleton";
 
 // TODO: I am not sure if this is the best approach or not.
 
@@ -15,8 +15,17 @@ class DFlexDnDExportedStore {
 
   listeners: DFlexDnDStore["listeners"];
 
+  private static instance: DFlexDnDExportedStore | null = null;
+
+  static getInstance(): DFlexDnDExportedStore {
+    if (!DFlexDnDExportedStore.instance) {
+      DFlexDnDExportedStore.instance = new DFlexDnDExportedStore();
+    }
+    return DFlexDnDExportedStore.instance;
+  }
+
   constructor() {
-    this._base = store;
+    this._base = storeInstance;
     this.listeners = this._base.listeners;
   }
 

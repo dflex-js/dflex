@@ -177,6 +177,15 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   private _resizeThrottle: TimeoutFunction;
 
+  private static instance: DFlexDnDStore | null = null;
+
+  static getInstance(): DFlexDnDStore {
+    if (!DFlexDnDStore.instance) {
+      DFlexDnDStore.instance = new DFlexDnDStore();
+    }
+    return DFlexDnDStore.instance;
+  }
+
   constructor() {
     super();
     this.containers = new Map();

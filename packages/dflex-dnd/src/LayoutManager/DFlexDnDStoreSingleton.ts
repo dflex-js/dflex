@@ -6,8 +6,8 @@ declare global {
   var $DFlex: DFlexDnDStore;
 }
 
-export default (function createStoreInstance() {
-  const store = new DFlexDnDStore();
+function createStoreInstance() {
+  const store = DFlexDnDStore.getInstance();
 
   if (__DEV__) {
     if (canUseDOM()) {
@@ -18,4 +18,6 @@ export default (function createStoreInstance() {
   }
 
   return store;
-})();
+}
+
+export default createStoreInstance();

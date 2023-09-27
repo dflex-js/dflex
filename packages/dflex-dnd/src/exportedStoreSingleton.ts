@@ -1,7 +1,9 @@
 import { DFlexDnDExportedStore } from "./LayoutManager";
 
-export default (function createStoreInstance() {
-  const store = new DFlexDnDExportedStore();
+function createStoreInstance() {
+  const store = DFlexDnDExportedStore.getInstance();
 
   return store;
-})();
+}
+
+export default createStoreInstance();
