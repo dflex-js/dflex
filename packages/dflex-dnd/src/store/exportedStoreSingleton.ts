@@ -1,4 +1,4 @@
-import { DFlexDnDExportedStore } from "./LayoutManager";
+import DFlexDnDExportedStore from "./DFlexDnDExportedStore";
 
 function createStoreInstance() {
   const store = DFlexDnDExportedStore.getInstance();

@@ -1,4 +1,4 @@
-export { default as store } from "./exportedStoreSingleton";
+export { exportedStoreSingleton as store } from "./store";
 
 export { default as DnD } from "./DnD";
 

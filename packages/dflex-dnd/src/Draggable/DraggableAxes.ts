@@ -17,12 +17,7 @@ import {
 
 import type { DFlexElement } from "@dflex/core-instance";
 
-import {
-  DFlexEventPlugin,
-  initDFlexEvent,
-  scheduler,
-  store,
-} from "../LayoutManager";
+import { DFlexEventPlugin, initDFlexEvent, scheduler } from "../LayoutManager";
 
 import type {
   ContainersTransition,
@@ -30,6 +25,8 @@ import type {
   Restrictions,
   RestrictionsStatus,
 } from "../types";
+
+import { store } from "../store";
 
 function initContainers(SK: string, siblings: string[]) {
   const container = store.containers.get(SK)!;

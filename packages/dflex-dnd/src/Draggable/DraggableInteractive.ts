@@ -7,7 +7,7 @@ import {
 } from "@dflex/utils";
 import type { AxesPoint } from "@dflex/utils";
 
-import { store } from "../LayoutManager";
+import { store } from "../store";
 
 import type { ScrollOpts, FinalDndOpts, Commit } from "../types";
 

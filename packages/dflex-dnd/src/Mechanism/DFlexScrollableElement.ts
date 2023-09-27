@@ -11,7 +11,7 @@ import {
 import DFlexPositionUpdater from "./DFlexPositionUpdater";
 
 import type DraggableInteractive from "../Draggable";
-import { store } from "../LayoutManager";
+import { store } from "../store";
 
 import scrollTransition, {
   ScrollTransitionAbort,

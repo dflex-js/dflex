@@ -11,7 +11,9 @@ import {
   tracker,
 } from "@dflex/utils";
 
-import { DFLEX_EVENTS, scheduler, store } from "../LayoutManager";
+import { DFLEX_EVENTS, scheduler } from "../LayoutManager";
+import { store } from "../store";
+
 import type DraggableInteractive from "../Draggable";
 
 import {

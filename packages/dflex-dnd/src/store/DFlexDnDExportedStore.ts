@@ -1,11 +1,9 @@
 import type { DFlexGlobalConfig, RegisterInputOpts } from "@dflex/store";
 import type { DFlexSerializedElement } from "@dflex/core-instance";
 
-import DFlexDnDStore from "./DFlexDnDStore";
+import { DFlexDnDStore } from "../LayoutManager";
 
-import storeInstance from "./DFlexDnDStoreSingleton";
-
-// TODO: I am not sure if this is the best approach or not.
+import storeInstance from "./storeSingleton";
 
 /**
  * Exported store for interacting with DFlex.

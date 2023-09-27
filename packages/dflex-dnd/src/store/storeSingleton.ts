@@ -1,5 +1,5 @@
 import { canUseDOM } from "@dflex/utils";
-import DFlexDnDStore from "./DFlexDnDStore";
+import { DFlexDnDStore } from "../LayoutManager";
 
 declare global {
   // eslint-disable-next-line

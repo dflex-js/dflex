@@ -2,7 +2,7 @@ import type { AxesPoint } from "@dflex/utils";
 
 import DraggableInteractive from "./Draggable";
 import Mechanism from "./Mechanism";
-import { store } from "./LayoutManager";
+import { store } from "./store";
 
 import type { DFlexDnDOpts, FinalDndOpts } from "./types";
 
