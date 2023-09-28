@@ -200,6 +200,32 @@ class DFlexDnDStore extends DFlexBaseStore {
     return DFlexDnDStore.instance;
   }
 
+  /**
+   * Registers an element with DFlex.
+   *
+   * @param elm - Element to register.
+   */
+  static register(elm: RegisterInputOpts): void {
+    DFlexDnDStore.instance!.register(elm);
+  }
+
+  /**
+   * Removes an element with the specified ID from DFlex.
+   *
+   * @param id - ID of the element to unregister.
+   */
+  static unregister(id: string): void {
+    DFlexDnDStore.instance!.unregister(id);
+    DFlexDnDStore.instance = null;
+  }
+
+  /**
+   * Destroys the DFlex instance.
+   */
+  static destroy(): void {
+    DFlexDnDStore.instance!.destroy();
+  }
+
   constructor() {
     super();
     this.containers = new Map();

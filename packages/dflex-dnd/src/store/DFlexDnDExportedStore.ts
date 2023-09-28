@@ -3,7 +3,7 @@ import type { DFlexSerializedElement } from "@dflex/core-instance";
 
 import { DFlexDnDStore } from "../LayoutManager";
 
-import storeInstance from "./storeSingleton";
+import storeInstance from "../LayoutManager/DFlexSingletonStore";
 
 /**
  * Exported store for interacting with DFlex.

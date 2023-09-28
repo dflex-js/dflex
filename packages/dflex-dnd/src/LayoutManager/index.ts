@@ -1,4 +1,5 @@
 export { default as DFlexDnDStore } from "./DFlexDnDStore";
+export { default as store } from "./DFlexSingletonStore";
 export { default as initDFlexEvent } from "./DFlexEvents";
 export { default as initDFlexListeners } from "./DFlexListeners";
 export { default as scheduler } from "./DFlexScheduler";

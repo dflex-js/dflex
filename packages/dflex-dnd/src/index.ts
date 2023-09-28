@@ -1,4 +1,4 @@
-export { exportedStoreSingleton as store } from "./store";
+export { store } from "./LayoutManager";
 
 export { default as DnD } from "./DnD";
 
