@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { AbstractDFlexCycle, featureFlags } from "@dflex/utils";
-import { scheduler } from "../LayoutManager";
-import { store } from "../store";
+import { scheduler, store } from "../LayoutManager";
+
 import DFlexMechanismController, {
   isIDEligible,
 } from "./DFlexMechanismController";

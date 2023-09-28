@@ -1,6 +1,10 @@
 /* eslint-disable no-unused-vars */
 import DFlexBaseStore from "@dflex/store";
-import type { RegisterInputOpts, RegisterInputProcessed } from "@dflex/store";
+import type {
+  DFlexGlobalConfig,
+  RegisterInputOpts,
+  RegisterInputProcessed,
+} from "@dflex/store";
 
 import {
   canUseDOM,
@@ -201,12 +205,60 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   /**
+   * Sets DFlex global configurations.
+   *
+   * @param globals - Global configurations for DFlex.
+   */
+  static config(globals: DFlexGlobalConfig): void {
+    DFlexDnDStore.getInstance();
+
+    DFlexDnDStore.instance!.config(globals);
+  }
+
+  /**
+   * Checks if an element with the specified ID is registered.
+   *
+   * @param id - ID of the element.
+   * @returns `true` if the element is registered, `false` otherwise.
+   */
+  static has(id: string): boolean {
+    DFlexDnDStore.getInstance();
+
+    return DFlexDnDStore.instance!.has(id);
+  }
+
+  /**
+   * Retrieves all element IDs of siblings in the given node represented by the sibling key.
+   *
+   * @param SK - Sibling Key.
+   * @returns An object containing the sibling element IDs.
+   */
+  static getElmSiblingsByKey(SK: string): string[] {
+    DFlexDnDStore.getInstance();
+
+    return DFlexDnDStore.instance!.getElmSiblingsByKey(SK);
+  }
+
+  /**
+   * Checks if the layout is available.
+   *
+   * @returns `true` if the layout is available, `false` otherwise.
+   */
+  static isLayoutAvailable(): boolean {
+    DFlexDnDStore.getInstance();
+
+    return DFlexDnDStore.instance!.isLayoutAvailable();
+  }
+
+  /**
    * Registers an element with DFlex.
    *
    * @param elm - Element to register.
    */
   static register(elm: RegisterInputOpts): void {
-    DFlexDnDStore.instance!.register(elm);
+    DFlexDnDStore.getInstance();
+
+    return DFlexDnDStore.instance!.register(elm);
   }
 
   /**
@@ -215,14 +267,38 @@ class DFlexDnDStore extends DFlexBaseStore {
    * @param id - ID of the element to unregister.
    */
   static unregister(id: string): void {
+    DFlexDnDStore.getInstance();
+
     DFlexDnDStore.instance!.unregister(id);
-    DFlexDnDStore.instance = null;
+  }
+
+  /**
+   * Commits any pending changes to the DFlex instance.
+   */
+  static commit(): void {
+    DFlexDnDStore.getInstance();
+
+    DFlexDnDStore.instance!.commit();
+  }
+
+  /**
+   * Retrieves the serialized representation of the element with the specified ID.
+   *
+   * @param id - ID of the element.
+   * @returns The serialized element object or `null` if the element is not found.
+   */
+  static getSerializedElm(id: string): DFlexSerializedElement | null {
+    DFlexDnDStore.getInstance();
+
+    return DFlexDnDStore.instance!.getSerializedElm(id);
   }
 
   /**
    * Destroys the DFlex instance.
    */
   static destroy(): void {
+    DFlexDnDStore.getInstance();
+
     DFlexDnDStore.instance!.destroy();
   }
 

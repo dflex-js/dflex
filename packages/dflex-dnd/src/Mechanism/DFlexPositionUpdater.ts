@@ -17,8 +17,7 @@ import type {
 
 import type DraggableInteractive from "../Draggable";
 
-import { DFLEX_EVENTS } from "../LayoutManager";
-import { store } from "../store";
+import { DFLEX_EVENTS, store } from "../LayoutManager";
 
 const MAX_TRANSFORM_COUNT = 99; /** Infinite transform count */
 
