@@ -48,6 +48,11 @@ import {
   hasGCInProgress,
 } from "../Mutation/DFlexIDGarbageCollector";
 
+declare global {
+  // eslint-disable-next-line
+  var $DFlex: DFlexDnDStore;
+}
+
 type Containers = Map<string, DFlexParentContainer>;
 
 type Scrolls = Map<string, DFlexScrollContainer>;
@@ -182,7 +187,16 @@ class DFlexDnDStore extends DFlexBaseStore {
   static getInstance(): DFlexDnDStore {
     if (!DFlexDnDStore.instance) {
       DFlexDnDStore.instance = new DFlexDnDStore();
+
+      if (__DEV__) {
+        if (canUseDOM()) {
+          if (!globalThis.$DFlex) {
+            globalThis.$DFlex = DFlexDnDStore.instance;
+          }
+        }
+      }
     }
+
     return DFlexDnDStore.instance;
   }
 
