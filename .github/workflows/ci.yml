@@ -455,6 +455,9 @@ jobs:
         if: matrix.bundle == 'production'
         run: "pnpm build --production --release --minify"
 
+      - name: Building Vite Draggable React App
+        run: pnpm -F dflex-draggable-playground build
+
       - name: Install browsers
         run: npx playwright install --with-deps
 
