@@ -14,9 +14,12 @@ if (PLAYGROUND_TYPE === "dflex-dnd") {
 } else if (PLAYGROUND_TYPE === "next-dnd") {
   testDir = "./packages/dflex-next-playground/tests/";
   baseURL = "http://localhost:3002";
+} else if (PLAYGROUND_TYPE === "dflex-draggable") {
+  testDir = "./packages/dflex-draggable-playground/tests/";
+  baseURL = "http://localhost:3000";
 } else {
   throw new Error(
-    "Invalid PLAYGROUND_TYPE. Please set PLAYGROUND_TYPE to 'dflex-dnd' or 'next-dnd'.",
+    "Invalid PLAYGROUND_TYPE. Please set PLAYGROUND_TYPE to 'dflex-dnd', 'next-dnd' or 'dflex-draggable'.",
   );
 }
 
