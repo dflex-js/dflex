@@ -926,6 +926,11 @@ class DFlexDnDStore extends DFlexBaseStore {
     if (this.migration !== null) {
       this.migration.pruneSKFromMigration(SK);
     }
+
+    // Self destroy the store and related instances.
+    if (this.registry.size === 0) {
+      this._cleanup();
+    }
   }
 
   /**
@@ -941,7 +946,18 @@ class DFlexDnDStore extends DFlexBaseStore {
     };
   }
 
+  private _cleanup(): void {
+    window.removeEventListener("resize", this._windowResizeHandler);
+
+    this._isInitialized = false;
+  }
+
   destroy(): void {
+    // Nothing to destroy.
+    if (this._isInitialized) {
+      return;
+    }
+
     this.containers.clear();
     this.listeners.clear();
 
@@ -964,11 +980,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     // Destroys all registered local instances in parent class.
     super.destroy();
 
-    window.removeEventListener("resize", this._windowResizeHandler);
-
-    this._initSiblings = undefined as any;
-    this._initObservers = undefined as any;
-    this._windowResizeHandler = undefined as any;
+    this._cleanup();
   }
 }
 
