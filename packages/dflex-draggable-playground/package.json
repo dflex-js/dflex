@@ -5,13 +5,14 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite",
-    "build-app": "vite build",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
     "@dflex/draggable": "workspace:^3.9.1"
   },
   "devDependencies": {
-    "eslint-config-dflex-react": "workspace:*"
+    "eslint-config-dflex-react": "workspace:*",
+    "dflex-e2e-utils": "workspace:^1.0.2"
   }
 }

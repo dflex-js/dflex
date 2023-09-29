@@ -163,6 +163,9 @@ importers:
         specifier: workspace:^3.9.1
         version: link:../dflex-draggable
     devDependencies:
+      dflex-e2e-utils:
+        specifier: workspace:^1.0.2
+        version: link:../dflex-e2e-utils
       eslint-config-dflex-react:
         specifier: workspace:*
         version: link:../../scripts/eslint-config-dflex-react

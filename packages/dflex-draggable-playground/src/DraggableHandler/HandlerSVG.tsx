@@ -1,13 +1,11 @@
 import React from "react";
-import "./draggableHandler.css";
 
 // eslint-disable-next-line no-unused-vars
 const HandlerSVG = (props: { onMouseDown: (e: React.MouseEvent) => void }) => (
   <svg
     className="handler"
-    width="10"
-    height="16px"
-    viewBox="0 0 10 16"
+    width="16"
+    height="16"
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
     {...props}

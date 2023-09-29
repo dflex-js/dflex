@@ -6,5 +6,8 @@
     "outDir": "./types",
     "rootDir": "./src"
   },
-  "references": [{ "path": "../dflex-draggable" }]
+  "references": [
+    { "path": "../dflex-draggable" },
+    { "path": "../dflex-e2e-utils" }
+  ]
 }

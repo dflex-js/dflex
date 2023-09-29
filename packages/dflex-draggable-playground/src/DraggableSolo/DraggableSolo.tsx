@@ -3,7 +3,6 @@
 import React from "react";
 
 import { store, Draggable } from "@dflex/draggable";
-import "./button.css";
 
 // shared dragged event
 let dflexDraggable: Draggable;
@@ -11,17 +10,15 @@ let dflexDraggable: Draggable;
 const id = "DFlex-draggable-solo";
 
 const DraggableSolo = () => {
-  const ref = React.createRef() as React.MutableRefObject<HTMLButtonElement>;
+  const [isDragged, setIsDragged] = React.useState(false);
 
   React.useEffect(() => {
-    if (ref.current) {
-      store.register(id);
-    }
+    store.register(id);
 
     return () => {
       store.unregister(id);
     };
-  }, [ref]);
+  }, []);
 
   const onMouseMove = (e: MouseEvent) => {
     if (dflexDraggable) {
@@ -38,6 +35,8 @@ const DraggableSolo = () => {
 
       document.removeEventListener("mouseup", onMouseUp);
       document.removeEventListener("mousemove", onMouseMove);
+
+      setIsDragged(false);
     }
   };
 
@@ -51,6 +50,8 @@ const DraggableSolo = () => {
 
         document.addEventListener("mouseup", onMouseUp);
         document.addEventListener("mousemove", onMouseMove);
+
+        setIsDragged(true);
       }
     }
   };
@@ -59,12 +60,11 @@ const DraggableSolo = () => {
     <button
       className="button-solo"
       type="button"
-      ref={ref}
       key={id}
       id={id}
       onMouseDown={onMouseDown}
     >
-      Drag me!
+      {isDragged ? <span>Being dragged</span> : <span>Drag me</span>}
     </button>
   );
 };

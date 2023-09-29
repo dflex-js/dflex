@@ -3,26 +3,22 @@
 import React from "react";
 
 import { store, Draggable } from "@dflex/draggable";
-import "./draggableHandler.css";
 import HandlerSVG from "./HandlerSVG";
 
 // shared dragged event
 let draggedEvent: Draggable;
+const id = "DFlex-draggable-with-handler";
 
 const DraggableHandler = () => {
-  const ref = React.createRef() as React.MutableRefObject<HTMLDivElement>;
-
-  const id = "DFlex-draggable-with-handler";
+  const [isDragged, setIsDragged] = React.useState(false);
 
   React.useEffect(() => {
-    if (ref.current) {
-      store.register(id);
-    }
+    store.register(id);
 
     return () => {
       store.unregister(id);
     };
-  }, [ref]);
+  }, []);
 
   const onMouseMove = (e: MouseEvent) => {
     if (draggedEvent) {
@@ -39,6 +35,8 @@ const DraggableHandler = () => {
 
       document.removeEventListener("mouseup", onMouseUp);
       document.removeEventListener("mousemove", onMouseMove);
+
+      setIsDragged(false);
     }
   };
 
@@ -52,13 +50,15 @@ const DraggableHandler = () => {
 
         document.addEventListener("mouseup", onMouseUp);
         document.addEventListener("mousemove", onMouseMove);
+
+        setIsDragged(true);
       }
     }
   };
 
   return (
-    <div className="draggable" ref={ref} key={id} id={id}>
-      <span className="text"> Drag me</span>
+    <div className="button-solo" id={id}>
+      {isDragged ? <span>Being dragged!</span> : <span>Drag me!</span>}
       <HandlerSVG onMouseDown={onMouseDown} />
     </div>
   );
