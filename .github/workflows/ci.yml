@@ -359,7 +359,7 @@ jobs:
       - name: Test Playwright
         run: pnpm run test-e2e-ci:${{ matrix.browser }}
 
-  e2e-mac-next:
+  e2e-persisted-store:
     runs-on: macos-latest
     timeout-minutes: 20
     strategy:
@@ -410,6 +410,57 @@ jobs:
       - name: Test Playwright
         run: pnpm run test-e2e-next:${{ matrix.browser }}
 
+  e2e-draggable-only:
+    runs-on: macos-latest
+    timeout-minutes: 20
+    strategy:
+      matrix:
+        node-version: [18.15]
+        browser: ["chromium"]
+        bundle: ["development"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - uses: pnpm/action-setup@v2.4.0
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: ^8.0.0
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build packages
+        if: matrix.bundle == 'production'
+        run: "pnpm build --production --release --minify"
+
+      - name: Install browsers
+        run: npx playwright install --with-deps
+
+      - name: Test Playwright
+        run: pnpm run test-e2e-ci-draggable:${{ matrix.browser }}
+
   release:
     name: Publish to NPM
     if: ${{ github.ref_name == 'main' && github.repository_owner == 'dflex-js' }}
@@ -424,6 +475,8 @@ jobs:
         e2e-mac,
         e2e-windows,
         e2e-linux,
+        e2e-persisted-store,
+        e2e-draggable-only,
       ]
     steps:
       - name: Check out repository
