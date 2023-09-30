@@ -7,7 +7,11 @@ export {
   SelRestricted,
 } from "./restrictions";
 
-export { TodoListWithEvents, TodoListWithReadonly } from "./todo";
+export {
+  TodoListWithEvents,
+  TodoListWithReadonly,
+  TodoListWithMargin,
+} from "./todo";
 
 export {
   ComponentBasedEvent,

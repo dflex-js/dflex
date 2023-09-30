@@ -10,6 +10,7 @@ import {
   SelRestricted,
   TodoListWithEvents,
   TodoListWithReadonly,
+  TodoListWithMargin,
   ExtendedList,
   ComponentBasedEvent,
   ContainerBasedEvent,
@@ -95,6 +96,7 @@ const App = () => {
         />
         <Route path="/restricted-self" element={<SelRestricted />} />
         <Route path="/todo" element={<TodoListWithEvents />} />
+        <Route path="/todo-margin" element={<TodoListWithMargin />} />
         <Route path="/migration" element={<ListMigration />} />
         <Route path="/commit" element={<ListMigration withCommitBtn />} />
         <Route
