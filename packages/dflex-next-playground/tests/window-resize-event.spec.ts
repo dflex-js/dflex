@@ -21,6 +21,17 @@ test.describe("Resize window when store in not active", async () => {
     // await activeBrowser.close();
   });
 
+  test("Initiate store by navigation to registered elements", async () => {
+    await page.click('a[href="/list/symmetric"]');
+    await page.waitForSelector("ul#symmetric-container-list");
+    await page.goBack();
+
+    // Wait for clean up to be done internally.
+    await page.waitForTimeout(500);
+
+    await page.waitForSelector("div#main-page-content");
+  });
+
   test("should not log errors on resize", async () => {
     // Add an event listener to capture console logs
     page.on("console", (msg) => {

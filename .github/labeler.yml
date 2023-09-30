@@ -38,7 +38,7 @@ Utils:
         "!packages/dflex-e2e-utils/package.json",
       ]
 
-Playground:
+"Playground ⚽":
   - any:
       [
         "packages/dflex-dnd-playground/**",
