@@ -10,11 +10,11 @@ import {
   SelRestricted,
   TodoListWithEvents,
   TodoListWithReadonly,
-  TodoListWithMargin,
-  ExtendedList,
   ComponentBasedEvent,
   ContainerBasedEvent,
+  ExtendedList,
   ScrollMultiLists,
+  ScrollablePage,
   ListMigration,
   StreamInterval,
   StreamNewELm,
@@ -86,6 +86,7 @@ const App = () => {
       <Routes>
         <Route path="/scroll" element={<ScrollMultiLists />} />
         <Route path="/extended" element={<ExtendedList />} />
+        <Route path="/scrollable-page" element={<ScrollablePage />} />
         <Route
           path="/restricted-container-all"
           element={<AllRestrictedContainer />}
@@ -96,7 +97,6 @@ const App = () => {
         />
         <Route path="/restricted-self" element={<SelRestricted />} />
         <Route path="/todo" element={<TodoListWithEvents />} />
-        <Route path="/todo-margin" element={<TodoListWithMargin />} />
         <Route path="/migration" element={<ListMigration />} />
         <Route path="/commit" element={<ListMigration withCommitBtn />} />
         <Route
