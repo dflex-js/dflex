@@ -1,5 +1,4 @@
 export { default as Depth1 } from "./depth";
-export { default as ExtendedList } from "./extended";
 
 export {
   AllRestrictedContainer,
@@ -7,11 +6,7 @@ export {
   SelRestricted,
 } from "./restrictions";
 
-export {
-  TodoListWithEvents,
-  TodoListWithReadonly,
-  TodoListWithMargin,
-} from "./todo";
+export { TodoListWithEvents, TodoListWithReadonly } from "./todo";
 
 export {
   ComponentBasedEvent,
@@ -19,6 +14,6 @@ export {
   ListMigration,
 } from "./essential";
 
-export { ScrollMultiLists } from "./scroll";
+export { ScrollMultiLists, scrollablePage, ExtendedList } from "./scroll";
 
 export { StreamInterval, StreamNewELm, StreamIncremental } from "./stream";

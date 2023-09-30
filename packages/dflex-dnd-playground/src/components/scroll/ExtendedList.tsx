@@ -3,6 +3,13 @@ import React from "react";
 
 import DFlexDnDComponent from "../DFlexDnDComponent";
 
+/**
+ * Extended List Component
+ *
+ * A list with overflow and a hundred elements. This playground is intended to:
+ * 1- Check elements visibility while scrolling.
+ * 2- Check the scroll performance for a list with an unusual amount of elements.
+ */
 const ExtendedList = () => {
   const tasks = [];
 

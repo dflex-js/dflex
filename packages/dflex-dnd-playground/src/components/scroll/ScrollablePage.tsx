@@ -2,7 +2,11 @@ import React from "react";
 
 import DFlexDnDComponent from "../DFlexDnDComponent";
 
-const TodoListWithMargin = () => {
+/**
+ *  A non-scrollable list with overflown page.
+ * @returns
+ */
+const ScrollablePage = () => {
   return (
     <div className="root">
       <div className="todo">
@@ -28,4 +32,4 @@ const TodoListWithMargin = () => {
   );
 };
 
-export default TodoListWithMargin;
+export default ScrollablePage;
