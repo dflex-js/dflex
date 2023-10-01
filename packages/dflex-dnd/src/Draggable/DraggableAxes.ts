@@ -54,11 +54,8 @@ function initThresholds(
 
     const boundaries = elmContainer.getBoundaries();
 
-    const insertionLayerKey = combineKeys(draggedDepth, SK);
-
     threshold.setContainerThreshold(
       SK,
-      insertionLayerKey,
       draggedDepth,
       boundaries,
       store.unifiedContainerDimensions[draggedDepth],

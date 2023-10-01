@@ -4,6 +4,7 @@ import { PointNum } from "../Point";
 import type { Axis, Dimensions } from "../types";
 
 import { AbstractBox, BoxBool, BoxNum, AbstractBoxRect } from "../Box";
+import { combineKeys } from "../collections";
 
 export interface ThresholdPercentages {
   /** vertical threshold in percentage from 0-100 */
@@ -50,18 +51,6 @@ class DFlexThreshold {
     this.thresholds[key] = this._pixels.composeBox(box, isInner);
 
     this.isOut[key] = new BoxBool(false, false, false, false);
-  }
-
-  private _setDepthThreshold(key: string, depth: number): void {
-    const dp = `${depth}`;
-
-    if (!this.thresholds[dp]) {
-      this._createThreshold(dp, this.thresholds[key], false);
-
-      return;
-    }
-
-    this.thresholds[depth].assignBiggestBox(this.thresholds[key]);
   }
 
   /**
@@ -111,14 +100,13 @@ class DFlexThreshold {
    * accumulated depth threshold.
    *
    * @param SK
-   * @param childDepth
+   * @param depth
    * @param containerRect
    * @param unifiedContainerDimensions
    */
   setContainerThreshold(
     SK: string,
-    insertionLayerKey: string,
-    childDepth: number,
+    depth: number,
     containerRect: AbstractBox,
     unifiedContainerDimensions: Dimensions,
   ): void {
@@ -128,9 +116,11 @@ class DFlexThreshold {
     const { top, left } = containerRect;
     const { height, width } = unifiedContainerDimensions;
 
+    const containerKey = combineKeys(depth, SK);
+
     // Insertion threshold.
     this._createThreshold(
-      insertionLayerKey,
+      containerKey,
       {
         left,
         top,
@@ -140,8 +130,16 @@ class DFlexThreshold {
       false,
     );
 
+    const dp = `${depth}`;
+
+    if (!this.thresholds[dp]) {
+      this._createThreshold(dp, this.thresholds[containerKey], false);
+
+      return;
+    }
+
     // Accumulated depth threshold. Accumulation based on insertion layer.
-    this._setDepthThreshold(insertionLayerKey, childDepth);
+    this.thresholds[depth].assignBiggestBox(this.thresholds[containerKey]);
   }
 
   isOutThreshold(key: string, box: BoxNum, axis: Axis | null): boolean {
