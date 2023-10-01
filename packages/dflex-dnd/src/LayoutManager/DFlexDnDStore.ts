@@ -448,7 +448,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     } = elm;
 
     if (__DEV__) {
-      if (!hasThrownForID && !Number.isNaN(id)) {
+      if (!hasThrownForID && /^\d+$/.test(id)) {
         hasThrownForID = true;
         // eslint-disable-next-line no-console
         console.error(
