@@ -14,7 +14,7 @@ const ScrollablePage = () => {
           {Array.from({ length: 4 }).map((_, i) => (
             <DFlexDnDComponent
               Component={"li"}
-              registerInput={{ id: `${i}` }}
+              registerInput={{ id: `id_${i}` }}
               key={`${i}`}
               opts={{
                 commit: {
