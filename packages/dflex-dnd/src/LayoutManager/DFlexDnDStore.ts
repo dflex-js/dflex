@@ -136,6 +136,8 @@ function validateCSS(id: string, css?: CSS): void {
   }
 }
 
+let hasThrownForID = false;
+
 // eslint-disable-next-line no-shadow
 enum PENDING_REASON {
   REGISTER,
@@ -444,6 +446,16 @@ class DFlexDnDStore extends DFlexBaseStore {
       CSSTransform = null,
       animation: _userAnimation,
     } = elm;
+
+    if (__DEV__) {
+      if (!hasThrownForID && !Number.isNaN(id)) {
+        hasThrownForID = true;
+        // eslint-disable-next-line no-console
+        console.error(
+          `DFlex register: Invalid ID (${id}) provided. Expected a non-numeric value, but received a number.`,
+        );
+      }
+    }
 
     const animation = getAnimationOptions(_userAnimation);
 
