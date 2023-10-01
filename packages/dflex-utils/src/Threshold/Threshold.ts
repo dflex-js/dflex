@@ -146,7 +146,7 @@ class DFlexThreshold {
     }
 
     // Accumulated depth threshold. Accumulation based on insertion layer.
-    this.thresholds[depth].assignBiggestBox(this.thresholds[containerKey]);
+    this.thresholds[depthKey].assignBiggestBox(this.thresholds[containerKey]);
   }
 
   isOutThreshold(key: string, box: BoxNum, axis: Axis | null): boolean {
