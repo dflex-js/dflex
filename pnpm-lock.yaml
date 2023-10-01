@@ -241,6 +241,9 @@ importers:
 
   packages/dflex-vue-playground:
     dependencies:
+      '@dflex/dnd':
+        specifier: workspace:^3.9.9
+        version: link:../dflex-dnd
       vue:
         specifier: ^3.3.4
         version: 3.3.4
@@ -290,6 +293,9 @@ importers:
       vite:
         specifier: ^4.4.9
         version: 4.4.9(@types/node@18.17.19)
+      vite-plugin-replace:
+        specifier: ^0.1.1
+        version: 0.1.1(vite@4.4.9)
       vue-tsc:
         specifier: ^1.8.11
         version: 1.8.15(typescript@5.2.2)
@@ -8225,7 +8231,7 @@ packages:
     peerDependencies:
       vite: ^2
     dependencies:
-      vite: 4.4.9(@types/node@20.6.4)
+      vite: 4.4.9(@types/node@18.17.19)
     dev: true
 
   /vite@4.4.9(@types/node@18.17.19):
