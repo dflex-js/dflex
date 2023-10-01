@@ -57,7 +57,7 @@
     "@types/react-router-dom": "^5.3.3",
     "@vitejs/plugin-react": "^4.0.4",
     "cross-env": "^7.0.3",
-    "cypress": "^13.2.0",
+    "cypress": "^13.3.0",
     "eslint-config-dflex": "workspace:*",
     "istanbul-lib-instrument": "^6.0.0",
     "jest": "^29.7.0",
