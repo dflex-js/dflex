@@ -155,7 +155,6 @@ describe("DFlexThreshold", () => {
       it("Add threshold for container, it's inner by default", () => {
         threshold.setContainerThreshold(
           CONTAINER.SK,
-          INSERTION_LAYER.key,
           DRAGGED.DP,
           CONTAINER.RECT,
           UNIFIED_CONTAINER_DIMENSION,
@@ -214,7 +213,6 @@ describe("DFlexThreshold", () => {
         expect(() => {
           threshold.setContainerThreshold(
             CONTAINER.SK,
-            INSERTION_LAYER.key,
             DRAGGED.DP,
             CONTAINER.RECT,
             UNIFIED_CONTAINER_DIMENSION,
@@ -223,9 +221,11 @@ describe("DFlexThreshold", () => {
       });
 
       it("Define threshold for accumulated depth", () => {
-        expect(threshold.thresholds[DRAGGED.DP]).toMatchObject(DEPTH.THRESHOLD);
+        expect(threshold.thresholds[`${DRAGGED.DP}_dp`]).toMatchObject(
+          DEPTH.THRESHOLD,
+        );
 
-        expect(threshold.isOut[DRAGGED.DP]).toMatchObject(
+        expect(threshold.isOut[`${DRAGGED.DP}_dp`]).toMatchObject(
           DEFAULT_IS_OUT_INDICATORS,
         );
       });

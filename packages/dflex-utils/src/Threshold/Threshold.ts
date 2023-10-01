@@ -124,12 +124,12 @@ class DFlexThreshold {
     const { top, left } = containerRect;
     const { height, width } = unifiedContainerDimensions;
 
-    const containerKey = DFlexThreshold.containerKey(depth, SK);
+    const insertionKey = DFlexThreshold.containerKey(depth, SK);
     const depthKey = DFlexThreshold.depthKey(depth);
 
     // Insertion threshold.
     this._createThreshold(
-      containerKey,
+      insertionKey,
       {
         left,
         top,
@@ -140,13 +140,13 @@ class DFlexThreshold {
     );
 
     if (!this.thresholds[depthKey]) {
-      this._createThreshold(depthKey, this.thresholds[containerKey], false);
+      this._createThreshold(depthKey, this.thresholds[insertionKey], false);
 
       return;
     }
 
     // Accumulated depth threshold. Accumulation based on insertion layer.
-    this.thresholds[depthKey].assignBiggestBox(this.thresholds[containerKey]);
+    this.thresholds[depthKey].assignBiggestBox(this.thresholds[insertionKey]);
   }
 
   isOutThreshold(key: string, box: BoxNum, axis: Axis | null): boolean {
