@@ -7,6 +7,7 @@ import {
   getOppositeAxis,
   PointNum,
   PREFIX_TRACKER_CYCLE,
+  Threshold,
   TimeoutFunction,
   tracker,
 } from "@dflex/utils";
@@ -247,7 +248,9 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     let newSK;
 
-    const isOutInsertionArea = this.draggable.isOutThreshold(`${depth}`);
+    const depthKey = Threshold.depthKey(depth);
+
+    const isOutInsertionArea = this.draggable.isOutThreshold(depthKey);
 
     if (isOutInsertionArea) {
       return;

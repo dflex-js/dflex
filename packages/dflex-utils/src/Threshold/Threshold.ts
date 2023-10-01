@@ -23,6 +23,14 @@ class DFlexThreshold {
 
   isOut: Record<string, BoxBool>;
 
+  static containerKey(depth: number, SK: string) {
+    return combineKeys(depth, SK);
+  }
+
+  static depthKey(depth: number) {
+    return combineKeys(depth, "dp");
+  }
+
   constructor(percentages: ThresholdPercentages) {
     this._percentages = percentages;
     this.thresholds = {};
@@ -116,7 +124,8 @@ class DFlexThreshold {
     const { top, left } = containerRect;
     const { height, width } = unifiedContainerDimensions;
 
-    const containerKey = combineKeys(depth, SK);
+    const containerKey = DFlexThreshold.containerKey(depth, SK);
+    const depthKey = DFlexThreshold.depthKey(depth);
 
     // Insertion threshold.
     this._createThreshold(
@@ -130,10 +139,8 @@ class DFlexThreshold {
       false,
     );
 
-    const dp = `${depth}`;
-
-    if (!this.thresholds[dp]) {
-      this._createThreshold(dp, this.thresholds[containerKey], false);
+    if (!this.thresholds[depthKey]) {
+      this._createThreshold(depthKey, this.thresholds[containerKey], false);
 
       return;
     }

@@ -4,7 +4,6 @@ import {
   Threshold,
   PointNum,
   DFlexCycle,
-  combineKeys,
   AxesPoint,
   BoxNum,
   AbstractBoxRect,
@@ -477,7 +476,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     let key = SK || id;
 
     if (useInsertionThreshold) {
-      key = combineKeys(depth, key);
+      key = Threshold.containerKey(depth, key);
     }
 
     return this.threshold.isOutThreshold(key, this._absoluteCurrentPos, null);
