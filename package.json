@@ -5,6 +5,7 @@
   "license": "MIT",
   "workspaces": [
     "packages/**",
+    "playgrounds/**",
     "scripts/*"
   ],
   "repository": "https://github.com/dflex-js/dflex",
