@@ -251,8 +251,10 @@ function submitContainerChildren(
         }
       }
     } else if (DOM.nodeValue) {
-      // This branch handles non-empty node values, which are disallowed in this context.
-      // However, if the node value is empty, it's acceptable since it doesn't have any dimensions.
+      // This branch handles non-empty node values, which are disallowed in this
+      // context.
+      // However, if the node value is empty, it's acceptable since it doesn't
+      // have any dimensions.
       // This specific case is related to Vue integration.
       // For more information, see: https://github.com/dflex-js/dflex/issues/729
       if (__DEV__) {
