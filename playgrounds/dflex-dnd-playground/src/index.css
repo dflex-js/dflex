@@ -52,19 +52,6 @@ code {
   color: white;
 }
 
-.todo p {
-  cursor: pointer;
-  text-align: center;
-  font-size: 1.125rem;
-  line-height: 1.75rem;
-  color: white;
-  background-color: #8917e0;
-  width: 50%;
-  border-top-left-radius: 0.75rem;
-  border-top-right-radius: 0.75rem;
-  margin: 0;
-}
-
 .todo > ul {
   display: flex;
   flex-direction: column;
@@ -89,7 +76,8 @@ code {
   font-weight: 500;
   font-size: 1rem;
   white-space: normal;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
+  box-shadow:
+    rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
     rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
   outline: none;
   /* transition: box-shadow 200ms cubic-bezier(0.18, 0.67, 0.6, 1.22); */
@@ -122,7 +110,6 @@ code {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  /* border-radius: 1px; */
   background-color: #070302;
   opacity: 0.95;
   padding: 0;
@@ -139,11 +126,9 @@ code {
   width: 168px;
   height: 40px;
   margin: 0.6rem 0.6rem;
-  /* font-weight: 500;
-  font-size: 1rem; */
   white-space: normal;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
+  box-shadow:
+    rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
     rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
   outline: none;
-  /* transition: box-shadow 200ms cubic-bezier(0.18, 0.67, 0.6, 1.22); */
 }

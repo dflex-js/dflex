@@ -70,19 +70,6 @@ export default {
   color: white;
 }
 
-.todo p {
-  cursor: pointer;
-  text-align: center;
-  font-size: 1.125rem;
-  line-height: 1.75rem;
-  color: white;
-  background-color: #8917e0;
-  width: 50%;
-  border-top-left-radius: 0.75rem;
-  border-top-right-radius: 0.75rem;
-  margin: 0;
-}
-
 .todo > ul {
   display: flex;
   flex-direction: column;
