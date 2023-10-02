@@ -96,40 +96,40 @@ importers:
   packages/dflex-core-instance:
     devDependencies:
       '@dflex/utils':
-        specifier: workspace:^3.9.9
+        specifier: workspace:^3.9.10
         version: link:../dflex-utils
 
   packages/dflex-dnd:
     devDependencies:
       '@dflex/core-instance':
-        specifier: workspace:^3.9.9
+        specifier: workspace:^3.9.10
         version: link:../dflex-core-instance
       '@dflex/draggable':
-        specifier: workspace:^3.9.9
+        specifier: workspace:^3.9.10
         version: link:../dflex-draggable
       '@dflex/store':
-        specifier: workspace:^3.9.9
+        specifier: workspace:^3.9.10
         version: link:../dflex-store
       '@dflex/utils':
-        specifier: workspace:^3.9.9
+        specifier: workspace:^3.9.10
         version: link:../dflex-utils
 
   packages/dflex-dom-gen:
     devDependencies:
       '@dflex/utils':
-        specifier: workspace:^3.9.9
+        specifier: workspace:^3.9.10
         version: link:../dflex-utils
 
   packages/dflex-draggable:
     devDependencies:
       '@dflex/core-instance':
-        specifier: workspace:^3.9.9
+        specifier: workspace:^3.9.10
         version: link:../dflex-core-instance
       '@dflex/store':
-        specifier: workspace:^3.9.9
+        specifier: workspace:^3.9.10
         version: link:../dflex-store
       '@dflex/utils':
-        specifier: workspace:^3.9.9
+        specifier: workspace:^3.9.10
         version: link:../dflex-utils
       eslint-config-dflex-react:
         specifier: workspace:*
@@ -138,13 +138,13 @@ importers:
   packages/dflex-store:
     devDependencies:
       '@dflex/core-instance':
-        specifier: workspace:^3.9.9
+        specifier: workspace:^3.9.10
         version: link:../dflex-core-instance
       '@dflex/dom-gen':
-        specifier: workspace:^3.9.9
+        specifier: workspace:^3.9.10
         version: link:../dflex-dom-gen
       '@dflex/utils':
-        specifier: workspace:^3.9.9
+        specifier: workspace:^3.9.10
         version: link:../dflex-utils
 
   packages/dflex-utils: {}
@@ -152,14 +152,14 @@ importers:
   playgrounds/dflex-dnd-playground:
     dependencies:
       '@dflex/dnd':
-        specifier: workspace:^3.9.7
+        specifier: workspace:^3.9.10
         version: link:../../packages/dflex-dnd
     devDependencies:
       cypress:
         specifier: ^13.3.0
         version: 13.3.0
       dflex-e2e-utils:
-        specifier: workspace:^1.0.0
+        specifier: workspace:^1.0.3
         version: link:../dflex-e2e-utils
       eslint:
         specifier: ^8.50.0
@@ -174,11 +174,11 @@ importers:
   playgrounds/dflex-draggable-playground:
     dependencies:
       '@dflex/draggable':
-        specifier: workspace:^3.9.1
+        specifier: workspace:^3.9.10
         version: link:../../packages/dflex-draggable
     devDependencies:
       dflex-e2e-utils:
-        specifier: workspace:^1.0.2
+        specifier: workspace:^1.0.3
         version: link:../dflex-e2e-utils
       eslint-config-dflex-react:
         specifier: workspace:*
@@ -187,13 +187,13 @@ importers:
   playgrounds/dflex-e2e-utils:
     dependencies:
       '@dflex/core-instance':
-        specifier: workspace:^3.9.9
+        specifier: workspace:^3.9.10
         version: link:../../packages/dflex-core-instance
 
   playgrounds/dflex-next-playground:
     dependencies:
       '@dflex/dnd':
-        specifier: workspace:^3.9.9
+        specifier: workspace:^3.9.10
         version: link:../../packages/dflex-dnd
       '@types/node':
         specifier: ^20.8.0
@@ -230,7 +230,7 @@ importers:
         version: 5.2.2
     devDependencies:
       dflex-e2e-utils:
-        specifier: workspace:^1.0.2
+        specifier: workspace:^1.0.3
         version: link:../dflex-e2e-utils
       eslint:
         specifier: ^8.50.0

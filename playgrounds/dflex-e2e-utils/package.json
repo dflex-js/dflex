@@ -1,12 +1,12 @@
 {
   "name": "dflex-e2e-utils",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "license": "MIT",
   "main": "src/index.ts",
   "private": true,
   "scripts": {},
   "dependencies": {
-    "@dflex/core-instance": "workspace:^3.9.9"
+    "@dflex/core-instance": "workspace:^3.9.10"
   },
   "devDependencies": {}
 }
