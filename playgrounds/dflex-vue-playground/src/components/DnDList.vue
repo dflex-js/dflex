@@ -111,6 +111,5 @@ export default {
     rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
     rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
   outline: none;
-  /* transition: box-shadow 200ms cubic-bezier(0.18, 0.67, 0.6, 1.22); */
 }
 </style>
