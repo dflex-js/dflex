@@ -13,7 +13,7 @@
     {
       "path": "./tsconfig.app.json"
     },
-    { "path": "../dflex-dnd" },
+    { "path": "../../packages/dflex-dnd" },
     { "path": "../dflex-e2e-utils" }
   ]
 }
