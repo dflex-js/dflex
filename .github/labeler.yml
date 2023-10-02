@@ -34,19 +34,19 @@ Utils:
         "packages/dflex-utils/**",
         "!packages/dflex-utils/package.json",
 
-        "packages/dflex-e2e-utils/**",
-        "!packages/dflex-e2e-utils/package.json",
+        "playgrounds/dflex-e2e-utils/**",
+        "!playgrounds/dflex-e2e-utils/package.json",
       ]
 
 "Playground ⚽":
   - any:
       [
-        "packages/dflex-dnd-playground/**",
+        "playgrounds/dflex-dnd-playground/**",
         "!packages/dflex-dnd-playground/package.json",
 
-        "packages/dflex-next-playground/**",
+        "playgrounds/dflex-next-playground/**",
         "!packages/dflex-next-playground/package.json",
 
-        "packages/dflex-draggable-playground/**",
+        "playgrounds/dflex-draggable-playground/**",
         "!packages/dflex-draggable-playground/package.json",
       ]

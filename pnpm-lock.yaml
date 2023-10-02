@@ -114,28 +114,6 @@ importers:
         specifier: workspace:^3.9.9
         version: link:../dflex-utils
 
-  packages/dflex-dnd-playground:
-    dependencies:
-      '@dflex/dnd':
-        specifier: workspace:^3.9.7
-        version: link:../dflex-dnd
-    devDependencies:
-      cypress:
-        specifier: ^13.3.0
-        version: 13.3.0
-      dflex-e2e-utils:
-        specifier: workspace:^1.0.0
-        version: link:../dflex-e2e-utils
-      eslint:
-        specifier: ^8.50.0
-        version: 8.50.0
-      eslint-config-dflex-react:
-        specifier: workspace:*
-        version: link:../../scripts/eslint-config-dflex-react
-      eslint-plugin-cypress:
-        specifier: ^2.15.1
-        version: 2.15.1(eslint@8.50.0)
-
   packages/dflex-dom-gen:
     devDependencies:
       '@dflex/utils':
@@ -157,11 +135,47 @@ importers:
         specifier: workspace:*
         version: link:../../scripts/eslint-config-dflex-react
 
-  packages/dflex-draggable-playground:
+  packages/dflex-store:
+    devDependencies:
+      '@dflex/core-instance':
+        specifier: workspace:^3.9.9
+        version: link:../dflex-core-instance
+      '@dflex/dom-gen':
+        specifier: workspace:^3.9.9
+        version: link:../dflex-dom-gen
+      '@dflex/utils':
+        specifier: workspace:^3.9.9
+        version: link:../dflex-utils
+
+  packages/dflex-utils: {}
+
+  playgrounds/dflex-dnd-playground:
+    dependencies:
+      '@dflex/dnd':
+        specifier: workspace:^3.9.7
+        version: link:../../packages/dflex-dnd
+    devDependencies:
+      cypress:
+        specifier: ^13.3.0
+        version: 13.3.0
+      dflex-e2e-utils:
+        specifier: workspace:^1.0.0
+        version: link:../dflex-e2e-utils
+      eslint:
+        specifier: ^8.50.0
+        version: 8.50.0
+      eslint-config-dflex-react:
+        specifier: workspace:*
+        version: link:../../scripts/eslint-config-dflex-react
+      eslint-plugin-cypress:
+        specifier: ^2.15.1
+        version: 2.15.1(eslint@8.50.0)
+
+  playgrounds/dflex-draggable-playground:
     dependencies:
       '@dflex/draggable':
         specifier: workspace:^3.9.1
-        version: link:../dflex-draggable
+        version: link:../../packages/dflex-draggable
     devDependencies:
       dflex-e2e-utils:
         specifier: workspace:^1.0.2
@@ -170,17 +184,17 @@ importers:
         specifier: workspace:*
         version: link:../../scripts/eslint-config-dflex-react
 
-  packages/dflex-e2e-utils:
+  playgrounds/dflex-e2e-utils:
     dependencies:
       '@dflex/core-instance':
         specifier: workspace:^3.9.9
-        version: link:../dflex-core-instance
+        version: link:../../packages/dflex-core-instance
 
-  packages/dflex-next-playground:
+  playgrounds/dflex-next-playground:
     dependencies:
       '@dflex/dnd':
         specifier: workspace:^3.9.9
-        version: link:../dflex-dnd
+        version: link:../../packages/dflex-dnd
       '@types/node':
         specifier: ^20.8.0
         version: 20.8.0
@@ -225,25 +239,11 @@ importers:
         specifier: workspace:*
         version: link:../../scripts/eslint-config-dflex-react
 
-  packages/dflex-store:
-    devDependencies:
-      '@dflex/core-instance':
-        specifier: workspace:^3.9.9
-        version: link:../dflex-core-instance
-      '@dflex/dom-gen':
-        specifier: workspace:^3.9.9
-        version: link:../dflex-dom-gen
-      '@dflex/utils':
-        specifier: workspace:^3.9.9
-        version: link:../dflex-utils
-
-  packages/dflex-utils: {}
-
-  packages/dflex-vue-playground:
+  playgrounds/dflex-vue-playground:
     dependencies:
       '@dflex/dnd':
         specifier: workspace:^3.9.9
-        version: link:../dflex-dnd
+        version: link:../../packages/dflex-dnd
       vue:
         specifier: ^3.3.4
         version: 3.3.4

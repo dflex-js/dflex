@@ -7,7 +7,7 @@
     "rootDir": "."
   },
   "references": [
-    { "path": "../dflex-dnd" },
-    { "path": "../dflex-core-instance" }
+    { "path": "../../packages/dflex-dnd" },
+    { "path": "../../packages/dflex-core-instance" }
   ]
 }

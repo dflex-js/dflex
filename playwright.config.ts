@@ -9,13 +9,13 @@ let testDir = "";
 let baseURL = "";
 
 if (PLAYGROUND_TYPE === "dflex-dnd") {
-  testDir = "./packages/dflex-dnd-playground/tests/";
+  testDir = "./playgrounds/dflex-dnd-playground/tests/";
   baseURL = "http://localhost:3001";
 } else if (PLAYGROUND_TYPE === "next-dnd") {
-  testDir = "./packages/dflex-next-playground/tests/";
+  testDir = "./playgrounds/dflex-next-playground/tests/";
   baseURL = "http://localhost:3002";
 } else if (PLAYGROUND_TYPE === "dflex-draggable") {
-  testDir = "./packages/dflex-draggable-playground/tests/";
+  testDir = "./playgrounds/dflex-draggable-playground/tests/";
   baseURL = "http://localhost:3000";
 } else {
   throw new Error(
