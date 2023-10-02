@@ -10,10 +10,11 @@ import {
   SelRestricted,
   TodoListWithEvents,
   TodoListWithReadonly,
-  ExtendedList,
   ComponentBasedEvent,
   ContainerBasedEvent,
+  ExtendedList,
   ScrollMultiLists,
+  ScrollablePage,
   ListMigration,
   StreamInterval,
   StreamNewELm,
@@ -85,6 +86,7 @@ const App = () => {
       <Routes>
         <Route path="/scroll" element={<ScrollMultiLists />} />
         <Route path="/extended" element={<ExtendedList />} />
+        <Route path="/scrollable-page" element={<ScrollablePage />} />
         <Route
           path="/restricted-container-all"
           element={<AllRestrictedContainer />}

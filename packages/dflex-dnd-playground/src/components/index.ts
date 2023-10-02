@@ -1,5 +1,4 @@
 export { default as Depth1 } from "./depth";
-export { default as ExtendedList } from "./extended";
 
 export {
   AllRestrictedContainer,
@@ -15,6 +14,6 @@ export {
   ListMigration,
 } from "./essential";
 
-export { ScrollMultiLists } from "./scroll";
+export { ScrollMultiLists, ScrollablePage, ExtendedList } from "./scroll";
 
 export { StreamInterval, StreamNewELm, StreamIncremental } from "./stream";

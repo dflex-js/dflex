@@ -4,7 +4,6 @@ import {
   Threshold,
   PointNum,
   DFlexCycle,
-  combineKeys,
   AxesPoint,
   BoxNum,
   AbstractBoxRect,
@@ -54,11 +53,8 @@ function initThresholds(
 
     const boundaries = elmContainer.getBoundaries();
 
-    const insertionLayerKey = combineKeys(draggedDepth, SK);
-
     threshold.setContainerThreshold(
       SK,
-      insertionLayerKey,
       draggedDepth,
       boundaries,
       store.unifiedContainerDimensions[draggedDepth],
@@ -480,7 +476,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     let key = SK || id;
 
     if (useInsertionThreshold) {
-      key = combineKeys(depth, key);
+      key = Threshold.containerKey(depth, key);
     }
 
     return this.threshold.isOutThreshold(key, this._absoluteCurrentPos, null);

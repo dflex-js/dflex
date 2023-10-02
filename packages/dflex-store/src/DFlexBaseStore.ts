@@ -250,10 +250,18 @@ function submitContainerChildren(
           );
         }
       }
-    } else if (__DEV__) {
-      throw new Error(
-        `_submitContainerChildren: Received an element that's not an instanceof HTMLElement at index: ${i}`,
-      );
+    } else if (DOM.nodeValue) {
+      // This branch handles non-empty node values, which are disallowed in this
+      // context.
+      // However, if the node value is empty, it's acceptable since it doesn't
+      // have any dimensions.
+      // This specific case is related to Vue integration.
+      // For more information, see: https://github.com/dflex-js/dflex/issues/729
+      if (__DEV__) {
+        throw new Error(
+          `_submitContainerChildren: Received an element with a non-empty node value that's not an instanceof HTMLElement at index: ${i}`,
+        );
+      }
     }
   });
 
