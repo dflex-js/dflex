@@ -6,5 +6,5 @@
     "outDir": "./types",
     "rootDir": "./src"
   },
-  "references": [{ "path": "../dflex-dnd" }, { "path": "../dflex-e2e-utils" }]
+  "references": [{ "path": "../../packages/dflex-dnd" }, { "path": "../../packages/dflex-e2e-utils" }]
 }

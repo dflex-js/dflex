@@ -34,6 +34,6 @@
     "esModuleInterop": true,
     "typeRoots": ["dflex-env.d.ts", "node_modules/@types"]
   },
-  "include": ["packages", "dflex-env.d.ts"],
+  "include": ["packages", "playgrounds", "dflex-env.d.ts"],
   "exclude": ["node_modules", "dist", "**/*.cy*", "**/*.test*"]
 }
