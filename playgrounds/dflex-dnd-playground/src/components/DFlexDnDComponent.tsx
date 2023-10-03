@@ -3,7 +3,7 @@
 import React from "react";
 
 import { store, DnD } from "@dflex/dnd";
-import type { DFlexDnDOpts, DFlexEvents } from "@dflex/dnd";
+import type { DFlexDnDOpts, DFlexEvents, RegisterInputOpts } from "@dflex/dnd";
 
 // const evts = new Set([
 //   "$onDragOutContainer",
@@ -21,11 +21,7 @@ interface Props {
   style?: React.CSSProperties;
   className?: string;
   children: React.ReactNode;
-  registerInput: {
-    id: string;
-    depth?: number;
-    readonly?: boolean;
-  };
+  registerInput: RegisterInputOpts;
   opts?: DFlexDnDOpts;
 }
 

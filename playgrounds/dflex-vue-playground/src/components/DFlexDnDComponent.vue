@@ -13,13 +13,7 @@
 
 <script lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import { store, DnD, DFlexEvents } from '@dflex/dnd'
-
-interface RegisterInput {
-  id: string
-  depth?: number
-  readonly?: boolean
-}
+import { store, DnD, DFlexEvents, RegisterInputOpts } from '@dflex/dnd'
 
 export default {
   props: {
@@ -27,7 +21,7 @@ export default {
     style: Object,
     className: String,
     registerInput: {
-      type: Object as () => RegisterInput,
+      type: Object as () => RegisterInputOpts,
       required: true
     },
     opts: Object
