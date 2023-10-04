@@ -51,13 +51,13 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
   protected hasBeenScrolling: boolean;
 
-  private listAppendPosition: AxesPoint | null;
+  private _listAppendPosition: AxesPoint | null;
 
   /**
    * Used to manage the stabilizing zone that prevents the dragged element from getting stuck
    * between two intersected thresholds.
    */
-  _thresholdDeadZone: ThresholdDeadZone;
+  private _thresholdDeadZone: ThresholdDeadZone;
 
   static INDEX_OUT_CONTAINER = NaN;
 
@@ -85,7 +85,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     this.isOnDragOutThresholdEvtEmitted = false;
     this._animatedDraggedInsertionFrame = null;
     [this._detectNearestContainerThrottle] = DFlexCreateTimeout(0);
-    this.listAppendPosition = null;
+    this._listAppendPosition = null;
     this.isParentLocked = false;
     this._thresholdDeadZone = new ThresholdDeadZone();
 
@@ -190,7 +190,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     if (migration.isTransitioning) {
       // Compose container boundaries and refresh the store.
       queueMicrotask(() => {
-        const { x, y } = this.listAppendPosition!;
+        const { x, y } = this._listAppendPosition!;
 
         // offset to append.
         // It has to be the biggest element offset. The last element in the list.
@@ -231,7 +231,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
           }
         }
 
-        this.listAppendPosition = null;
+        this._listAppendPosition = null;
 
         migration.complete();
       });
@@ -271,7 +271,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         // TODO: This should be dynamic not hardcoded.
         const insertionAxis: Axis = "y";
 
-        this.listAppendPosition = this.getComposedOccupiedPosition(
+        this._listAppendPosition = this.getComposedOccupiedPosition(
           newSK,
           insertionAxis,
         );
@@ -285,7 +285,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         originSiblings.pop();
         originContainer.reduceGrid(insertionAxis);
 
-        this.draggable.occupiedPosition.clone(this.listAppendPosition!);
+        this.draggable.occupiedPosition.clone(this._listAppendPosition!);
 
         this.draggable.gridPlaceholder.setAxes(1, 1);
 
@@ -632,14 +632,14 @@ class DFlexMechanismController extends DFlexScrollableElement {
       const currentMovementDir = this.draggable.getMovementDirection(axis);
       const draggedPos = this.draggable.getAbsoluteCurrentPos();
 
-      const hasMatchingDir = this._thresholdDeadZone.isInside(
+      const isInsideDeadZone = this._thresholdDeadZone.isInside(
         axis,
         currentMovementDir,
         draggedPos,
       );
 
       // Ignore if draggable inside dead zone with the same movement direction.
-      if (hasMatchingDir) {
+      if (isInsideDeadZone) {
         if (__DEV__) {
           if (featureFlags.enableMechanismDebugger) {
             // eslint-disable-next-line no-console

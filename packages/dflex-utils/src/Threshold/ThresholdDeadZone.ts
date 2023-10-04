@@ -1,4 +1,5 @@
 import { BoxNum } from "../Box";
+import { DFlexCreateTimeout, TimeoutFunction } from "../environment";
 
 import type { Axis } from "../types";
 
@@ -26,9 +27,12 @@ class ThresholdDeadZone {
    */
   private _movement: ThresholdDeadZoneMovement;
 
+  private _autoClear: TimeoutFunction;
+
   constructor() {
     this._area = new BoxNum(0, 0, 0, 0);
     this._movement = { ...INITIAL_MOVEMENT };
+    [this._autoClear] = DFlexCreateTimeout(0);
 
     if (__DEV__) {
       Object.seal(this);
@@ -58,6 +62,8 @@ class ThresholdDeadZone {
 
     // Record the direction of movement on the specified axis.
     this._movement[axis] = movementDirection;
+
+    this._autoClear(() => this.clear, true);
   }
 
   /**
