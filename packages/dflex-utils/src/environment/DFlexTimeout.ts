@@ -14,7 +14,7 @@ export type TimeoutFunction = (
 export type IsThrottledFunction = () => boolean;
 
 function DFlexCreateTimeout(
-  delay: number,
+  msDelay: number,
 ): [TimeoutFunction, TimeoutCleanup, IsThrottledFunction] {
   let id: ReturnType<typeof setTimeout> | null = null;
   let isThrottled: boolean = false;
@@ -40,7 +40,7 @@ function DFlexCreateTimeout(
     id = setTimeout(() => {
       isThrottled = false;
       cb();
-    }, delay);
+    }, msDelay);
   }
 
   function getIsThrottled(): boolean {
