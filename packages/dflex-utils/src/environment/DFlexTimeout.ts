@@ -58,6 +58,8 @@ function autoCleanupAllTimeouts(): void {
   timeoutInstances.forEach((cleanup) => {
     cleanup();
   });
+
+  timeoutInstances.length = 0;
 }
 
 export { autoCleanupAllTimeouts, DFlexCreateTimeout };
