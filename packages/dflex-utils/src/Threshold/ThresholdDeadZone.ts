@@ -11,10 +11,6 @@ type ThresholdDeadZoneMovement = {
 
 const INITIAL_MOVEMENT: ThresholdDeadZoneMovement = { x: null, y: null };
 
-if (__DEV__) {
-  Object.freeze(INITIAL_MOVEMENT);
-}
-
 /**
  * Represents a threshold dead zone used to manage the stabilizing zone that prevents
  * the dragged element from getting stuck between two intersected thresholds.
@@ -32,7 +28,7 @@ class ThresholdDeadZone {
 
   constructor() {
     this._area = new BoxNum(0, 0, 0, 0);
-    this._movement = INITIAL_MOVEMENT;
+    this._movement = { ...INITIAL_MOVEMENT };
 
     if (__DEV__) {
       Object.seal(this);
@@ -85,7 +81,7 @@ class ThresholdDeadZone {
    */
   clear(): void {
     this._area.setBox(0, 0, 0, 0);
-    this._movement = INITIAL_MOVEMENT;
+    this._movement = { ...INITIAL_MOVEMENT };
   }
 }
 
