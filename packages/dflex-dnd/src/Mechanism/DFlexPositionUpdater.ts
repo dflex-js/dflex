@@ -15,7 +15,7 @@ import type {
   AbstractBox,
 } from "@dflex/utils";
 
-import type DraggableInteractive from "../Draggable";
+import type { DraggableInteractive } from "../Draggable";
 
 import { store, DFLEX_EVENTS } from "../LayoutManager";
 

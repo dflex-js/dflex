@@ -1,3 +1,2 @@
-import DraggableInteractive from "./DraggableInteractive";
-
-export default DraggableInteractive;
+export type { MovementDirection } from "./DraggableAxes";
+export { default as DraggableInteractive } from "./DraggableInteractive";

@@ -62,6 +62,8 @@ function initThresholds(
   });
 }
 
+export type MovementDirection = "r" | "l" | "d" | "u";
+
 class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
   gridPlaceholder: PointNum;
 
@@ -361,7 +363,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     return this._viewportCurrentPos;
   }
 
-  getDirectionByAxis(axis: Axis): "r" | "l" | "d" | "u" {
+  getMovementDirection(axis: Axis): MovementDirection {
     const { x: previousX, y: previousY } = this._prevPoint;
     const { left: currentX, top: currentY } = this.getAbsoluteCurrentPos();
 

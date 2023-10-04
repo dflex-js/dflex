@@ -13,13 +13,14 @@ import {
 } from "@dflex/utils";
 
 import { DFLEX_EVENTS, scheduler, store } from "../LayoutManager";
-import type DraggableInteractive from "../Draggable";
+import { DraggableInteractive, MovementDirection } from "../Draggable";
 
 import {
   APPEND_EMPTY_ELM_ID,
   handleElmMigration,
   isEmptyBranch,
 } from "./DFlexPositionUpdater";
+
 import DFlexScrollableElement from "./DFlexScrollableElement";
 
 export function isIDEligible(elmID: string, draggedID: string): boolean {
@@ -52,9 +53,23 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
   private listAppendPosition: AxesPoint | null;
 
-  private _deadZoneStabilizer: {
+  /**
+   * Used to manage the stabilizing zone that prevents the dragged element from getting stuck
+   * between two intersected thresholds.
+   */
+  private _thresholdDeadZone: {
+    /**
+     * A bounding box representing the threshold dead zone.
+     */
     area: BoxNum;
-    direction: Record<Axis, string>;
+
+    /**
+     * Indicates movement directions for the each axes (x and y).
+     */
+    movement: {
+      x: MovementDirection;
+      y: MovementDirection;
+    };
   };
 
   static INDEX_OUT_CONTAINER = NaN;
@@ -86,9 +101,9 @@ class DFlexMechanismController extends DFlexScrollableElement {
     this.listAppendPosition = null;
     this.isParentLocked = false;
 
-    this._deadZoneStabilizer = {
+    this._thresholdDeadZone = {
       area: new BoxNum(0, 0, 0, 0),
-      direction: { x: "", y: "" },
+      movement: { x: "l", y: "l" },
     };
 
     if (__DEV__) {
@@ -548,25 +563,33 @@ class DFlexMechanismController extends DFlexScrollableElement {
       store.registry.get(id)!.rect,
     );
 
-    const isIntersect = elmThreshold.isBoxIntersect(
+    const isThresholdIntersected = elmThreshold.isBoxIntersect(
       this.draggable.threshold.thresholds[draggedID],
     );
 
     // TODO: `else` case is not tested.
-    if (isIntersect) {
-      // Create stabilizing zone to prevent dragged from being stuck between two
-      // intersected thresholds.
-      // E.g: Moved into new one but triggered the previous one because it's stuck
-      // inside the zone causing jarring behavior; the back and forth transition.
+    if (isThresholdIntersected) {
+      // Create a stabilizing zone to prevent the dragged element from getting stuck
+      // between two intersected thresholds. For example, if the element is moved into
+      // a new area but still triggers the previous threshold due to being stuck
+      // inside this zone, it can cause a jarring behavior with a back and forth
+      // transition.
+
+      // Calculate the surrounding bounding box for the stabilizing zone.
       const surroundingBox = elmThreshold.getSurroundingBox(
         this.draggable.threshold.thresholds[draggedID],
       );
 
-      this._deadZoneStabilizer.area.clone(surroundingBox);
-      this._deadZoneStabilizer.direction[axis] =
-        this.draggable.getDirectionByAxis(axis);
+      // Store the calculated area as the dead zone stabilizer.
+      this._thresholdDeadZone.area.clone(surroundingBox);
+
+      // Record the direction of movement on the specified axis.
+      const movementDirection = this.draggable.getMovementDirection(axis);
+
+      this._thresholdDeadZone.movement[axis] = movementDirection;
 
       this.draggable.setDraggedTempIndex(elmIndex);
+
       const numberOfPassedElm = Math.abs(index - elmIndex);
 
       if (__DEV__) {
@@ -617,7 +640,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         console.log(
           `Detecting that element has ${
             isSingleAxis ? "single" : "multiple"
-          } axis`,
+          } axis ${axis}`,
         );
       }
     }
@@ -628,13 +651,14 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
       const isInsideDeadZone = this.draggable
         .getAbsoluteCurrentPos()
-        .isInsideThreshold(this._deadZoneStabilizer.area);
+        .isInsideThreshold(this._thresholdDeadZone.area);
 
       if (isInsideDeadZone) {
-        const currentDir = this.draggable.getDirectionByAxis(axis);
+        const currentMovementDirection =
+          this.draggable.getMovementDirection(axis);
 
         const withTheSameDir =
-          currentDir === this._deadZoneStabilizer.direction[axis];
+          currentMovementDirection === this._thresholdDeadZone.movement[axis];
 
         // Ignore if draggable inside dead zone with the same direction.
         if (withTheSameDir) {
