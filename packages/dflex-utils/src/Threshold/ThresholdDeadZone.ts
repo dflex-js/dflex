@@ -35,6 +35,15 @@ class ThresholdDeadZone {
     }
   }
 
+  /**
+   * Sets up the stabilizing zone to prevent the dragged element from getting stuck
+   * between two intersected thresholds.
+   *
+   * @param axis - The axis (x or y) along which the stabilizing zone is applied.
+   * @param movementDirection - The direction of movement on the specified axis.
+   * @param firstThreshold - The bounding box representing the first threshold.
+   * @param secondThreshold - The bounding box representing the second threshold.
+   */
   setZone(
     axis: Axis,
     movementDirection: MovementDirection,

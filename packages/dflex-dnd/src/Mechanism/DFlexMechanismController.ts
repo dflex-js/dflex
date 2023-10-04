@@ -686,6 +686,13 @@ class DFlexMechanismController extends DFlexScrollableElement {
     this._actionByAxis("x");
   }
 
+  /**
+   * Locks or unlocks the parent container based on whether the dragged element
+   * is out of it. Additionally, it clears the threshold dead zone.
+   *
+   * @param isOut - A boolean indicating if the dragged element is out of its
+   * parent container.
+   */
   private _lockParent(isOut: boolean) {
     if (__DEV__) {
       if (featureFlags.enableMechanismDebugger) {
