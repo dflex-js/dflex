@@ -13,7 +13,7 @@ import {
 } from "@dflex/utils";
 
 import { DFLEX_EVENTS, scheduler, store } from "../LayoutManager";
-import { DraggableInteractive } from "../Draggable";
+import DraggableInteractive from "../Draggable";
 
 import {
   APPEND_EMPTY_ELM_ID,
