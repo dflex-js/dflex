@@ -562,7 +562,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       // Record the direction of movement on the specified axis.
       const movementDirection = this.draggable.getMovementDirection(axis);
 
-      this._thresholdDeadZone.setDeadZone(
+      this._thresholdDeadZone.setZone(
         axis,
         movementDirection,
         elmThreshold,
@@ -695,6 +695,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     }
 
     this.isParentLocked = isOut;
+    this._thresholdDeadZone.clear();
   }
 
   dragAt(x: number, y: number) {

@@ -35,7 +35,7 @@ class ThresholdDeadZone {
     }
   }
 
-  setDeadZone(
+  setZone(
     axis: Axis,
     movementDirection: MovementDirection,
     firstThreshold: BoxNum,
