@@ -74,6 +74,7 @@ export {
   updateElmDatasetGrid,
   DFlexCreateRAF,
   DFlexCreateTimeout,
+  autoCleanupAllTimeouts,
   getElmBoxRect,
 } from "./environment";
 
