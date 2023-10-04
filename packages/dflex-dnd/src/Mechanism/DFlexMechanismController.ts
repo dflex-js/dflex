@@ -1,19 +1,19 @@
 import {
   AxesPoint,
   Axis,
-  BoxNum,
   DFlexCreateTimeout,
   featureFlags,
   getOppositeAxis,
   PointNum,
   PREFIX_TRACKER_CYCLE,
   Threshold,
+  ThresholdDeadZone,
   TimeoutFunction,
   tracker,
 } from "@dflex/utils";
 
 import { DFLEX_EVENTS, scheduler, store } from "../LayoutManager";
-import { DraggableInteractive, MovementDirection } from "../Draggable";
+import { DraggableInteractive } from "../Draggable";
 
 import {
   APPEND_EMPTY_ELM_ID,
@@ -57,20 +57,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
    * Used to manage the stabilizing zone that prevents the dragged element from getting stuck
    * between two intersected thresholds.
    */
-  private _thresholdDeadZone: {
-    /**
-     * A bounding box representing the threshold dead zone.
-     */
-    area: BoxNum;
-
-    /**
-     * Indicates movement directions for the each axes (x and y).
-     */
-    movement: {
-      x: MovementDirection;
-      y: MovementDirection;
-    };
-  };
+  _thresholdDeadZone: ThresholdDeadZone;
 
   static INDEX_OUT_CONTAINER = NaN;
 
@@ -100,11 +87,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     [this._detectNearestContainerThrottle] = DFlexCreateTimeout(0);
     this.listAppendPosition = null;
     this.isParentLocked = false;
-
-    this._thresholdDeadZone = {
-      area: new BoxNum(0, 0, 0, 0),
-      movement: { x: "l", y: "l" },
-    };
+    this._thresholdDeadZone = new ThresholdDeadZone();
 
     if (__DEV__) {
       Object.seal(this);
@@ -562,6 +545,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     const elmThreshold = this.draggable.threshold.getElmMainThreshold(
       store.registry.get(id)!.rect,
     );
+    const draggedThreshold = this.draggable.threshold.thresholds[draggedID];
 
     const isThresholdIntersected = elmThreshold.isBoxIntersect(
       this.draggable.threshold.thresholds[draggedID],
@@ -575,18 +559,15 @@ class DFlexMechanismController extends DFlexScrollableElement {
       // inside this zone, it can cause a jarring behavior with a back and forth
       // transition.
 
-      // Calculate the surrounding bounding box for the stabilizing zone.
-      const surroundingBox = elmThreshold.getSurroundingBox(
-        this.draggable.threshold.thresholds[draggedID],
-      );
-
-      // Store the calculated area as the dead zone stabilizer.
-      this._thresholdDeadZone.area.clone(surroundingBox);
-
       // Record the direction of movement on the specified axis.
       const movementDirection = this.draggable.getMovementDirection(axis);
 
-      this._thresholdDeadZone.movement[axis] = movementDirection;
+      this._thresholdDeadZone.setDeadZone(
+        axis,
+        movementDirection,
+        elmThreshold,
+        draggedThreshold,
+      );
 
       this.draggable.setDraggedTempIndex(elmIndex);
 
@@ -648,22 +629,27 @@ class DFlexMechanismController extends DFlexScrollableElement {
     // Check if top or bottom.
     if (isOut[id].isTruthyByAxis(axis)) {
       const shouldDecrease = axis === "y" ? isOut[id].bottom : isOut[id].right;
+      const currentMovementDir = this.draggable.getMovementDirection(axis);
+      const draggedPos = this.draggable.getAbsoluteCurrentPos();
 
-      const isInsideDeadZone = this.draggable
-        .getAbsoluteCurrentPos()
-        .isInsideThreshold(this._thresholdDeadZone.area);
+      const hasMatchingDir = this._thresholdDeadZone.isInside(
+        axis,
+        currentMovementDir,
+        draggedPos,
+      );
 
-      if (isInsideDeadZone) {
-        const currentMovementDirection =
-          this.draggable.getMovementDirection(axis);
-
-        const withTheSameDir =
-          currentMovementDirection === this._thresholdDeadZone.movement[axis];
-
-        // Ignore if draggable inside dead zone with the same direction.
-        if (withTheSameDir) {
-          return true;
+      // Ignore if draggable inside dead zone with the same movement direction.
+      if (hasMatchingDir) {
+        if (__DEV__) {
+          if (featureFlags.enableMechanismDebugger) {
+            // eslint-disable-next-line no-console
+            console.log(
+              `Threshold trigger ignored: Dragged element is inside the dead zone.`,
+            );
+          }
         }
+
+        return true;
       }
 
       this._actionCaller(

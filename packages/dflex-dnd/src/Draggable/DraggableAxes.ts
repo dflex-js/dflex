@@ -62,7 +62,7 @@ function initThresholds(
   });
 }
 
-export type MovementDirection = "r" | "l" | "d" | "u";
+type MovementDirection = "r" | "l" | "d" | "u";
 
 class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
   gridPlaceholder: PointNum;
