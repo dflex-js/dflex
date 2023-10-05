@@ -7,7 +7,7 @@ import {
   PointNum,
 } from "@dflex/utils";
 
-type MovementDirection = "r" | "l" | "d" | "u";
+import type { MovementDirection } from "./types";
 
 class CurrentPosition {
   /**

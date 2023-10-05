@@ -6,7 +6,9 @@ import {
   BoxRect,
   PointNum,
 } from "@dflex/utils";
+
 import CurrentPosition from "./DraggedCurrentPosition";
+import type { MovementDirection } from "./types";
 
 class DraggablePositions {
   private _absolute: CurrentPosition;
@@ -55,7 +57,7 @@ class DraggablePositions {
     return this._getInstance(isAbsolute).getInnerOffset();
   }
 
-  getMovementDirection(axis: Axis, isAbsolute: boolean) {
+  getMovementDirection(axis: Axis, isAbsolute: boolean): MovementDirection {
     return this._getInstance(isAbsolute).getMovementDirection(axis);
   }
 }
