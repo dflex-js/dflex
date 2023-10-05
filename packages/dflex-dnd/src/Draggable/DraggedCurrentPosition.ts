@@ -1,10 +1,13 @@
 import {
   AbstractBoxRect,
   AxesPoint,
+  Axis,
   BoxNum,
   BoxRect,
   PointNum,
 } from "@dflex/utils";
+
+type MovementDirection = "r" | "l" | "d" | "u";
 
 class CurrentPosition {
   /**
@@ -23,13 +26,13 @@ class CurrentPosition {
    *
    * @param {AxesPoint} initCoordinates - The initial coordinates of the element.
    * @param {AbstractBoxRect} rect - The rectangle representing the element's position and dimensions.
-   * @param {BoxRect} totalScrollRect - The total scroll rectangle representing scroll offsets.
+   * @param {{ left: number; top: number }} totalScrollRect - The total scroll rectangle representing scroll offsets.
    *                                    Pass `0` for both values to calculate absolute position.
    */
   constructor(
     initCoordinates: AxesPoint,
     rect: AbstractBoxRect,
-    totalScrollRect: BoxRect,
+    totalScrollRect: { left: number; top: number },
   ) {
     const { x, y } = initCoordinates;
     const { left, top } = totalScrollRect;
@@ -88,6 +91,33 @@ class CurrentPosition {
 
   getPos(): BoxNum {
     return this._currentPos;
+  }
+
+  getInnerOffset(): PointNum {
+    return this._innerOffset;
+  }
+
+  getMovementDirection(axis: Axis): MovementDirection {
+    const { x: previousX, y: previousY } = this._prevPoint;
+    const { left: currentX, top: currentY } = this.getPos();
+
+    if (axis === "x") {
+      if (currentX > previousX) {
+        // Box moved right
+        return "r";
+      }
+
+      // Box moved left
+      return "l";
+    }
+
+    if (currentY > previousY) {
+      // Box moved down
+      return "d";
+    }
+
+    // Box moved up
+    return "u";
   }
 }
 
