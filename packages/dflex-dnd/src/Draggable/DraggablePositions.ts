@@ -1,6 +1,7 @@
 import {
   AbstractBoxRect,
   AxesPoint,
+  Axis,
   BoxNum,
   BoxRect,
   PointNum,
@@ -40,14 +41,22 @@ class DraggablePositions {
     this._absolute.setPos(x, y, scrollOffsetX, scrollOffsetY, draggedRect);
   }
 
+  private _getInstance(isAbsolute: boolean): CurrentPosition {
+    const $ = isAbsolute ? this._absolute : this._viewport;
+
+    return $;
+  }
+
   getPos(isAbsolute: boolean): BoxNum {
-    return isAbsolute ? this._absolute.getPos() : this._viewport.getPos();
+    return this._getInstance(isAbsolute).getPos();
   }
 
   getInnerOffset(isAbsolute: boolean): PointNum {
-    return isAbsolute
-      ? this._absolute.getInnerOffset()
-      : this._viewport.getInnerOffset();
+    return this._getInstance(isAbsolute).getInnerOffset();
+  }
+
+  getMovementDirection(axis: Axis, isAbsolute: boolean) {
+    return this._getInstance(isAbsolute).getMovementDirection(axis);
   }
 }
 
