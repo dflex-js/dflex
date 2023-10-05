@@ -15,6 +15,7 @@ import {
   removeStyleProperty,
   TimeoutFunction,
   DFlexCreateTimeout,
+  autoCleanupAllTimeouts,
 } from "@dflex/utils";
 
 import {
@@ -960,6 +961,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   private _cleanup(): void {
     window.removeEventListener("resize", this._windowResizeHandler);
+    autoCleanupAllTimeouts();
 
     this._isInitialized = false;
   }

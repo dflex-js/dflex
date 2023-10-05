@@ -13,8 +13,10 @@ export type TimeoutFunction = (
 
 export type IsThrottledFunction = () => boolean;
 
+const timeoutInstances: TimeoutCleanup[] = [];
+
 function DFlexCreateTimeout(
-  delay: number,
+  msDelay: number,
 ): [TimeoutFunction, TimeoutCleanup, IsThrottledFunction] {
   let id: ReturnType<typeof setTimeout> | null = null;
   let isThrottled: boolean = false;
@@ -40,14 +42,24 @@ function DFlexCreateTimeout(
     id = setTimeout(() => {
       isThrottled = false;
       cb();
-    }, delay);
+    }, msDelay);
   }
 
   function getIsThrottled(): boolean {
     return isThrottled;
   }
 
+  timeoutInstances.push(cleanup);
+
   return [timeout, cleanup, getIsThrottled];
 }
 
-export default DFlexCreateTimeout;
+function autoCleanupAllTimeouts(): void {
+  timeoutInstances.forEach((cleanup) => {
+    cleanup();
+  });
+
+  timeoutInstances.length = 0;
+}
+
+export { autoCleanupAllTimeouts, DFlexCreateTimeout };

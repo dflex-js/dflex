@@ -1,25 +1,26 @@
 import {
   AxesPoint,
   Axis,
-  BoxNum,
   DFlexCreateTimeout,
   featureFlags,
   getOppositeAxis,
   PointNum,
   PREFIX_TRACKER_CYCLE,
   Threshold,
+  ThresholdDeadZone,
   TimeoutFunction,
   tracker,
 } from "@dflex/utils";
 
 import { DFLEX_EVENTS, scheduler, store } from "../LayoutManager";
-import type DraggableInteractive from "../Draggable";
+import DraggableInteractive from "../Draggable";
 
 import {
   APPEND_EMPTY_ELM_ID,
   handleElmMigration,
   isEmptyBranch,
 } from "./DFlexPositionUpdater";
+
 import DFlexScrollableElement from "./DFlexScrollableElement";
 
 export function isIDEligible(elmID: string, draggedID: string): boolean {
@@ -50,12 +51,13 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
   protected hasBeenScrolling: boolean;
 
-  private listAppendPosition: AxesPoint | null;
+  private _listAppendPosition: AxesPoint | null;
 
-  private _deadZoneStabilizer: {
-    area: BoxNum;
-    direction: Record<Axis, string>;
-  };
+  /**
+   * Used to manage the stabilizing zone that prevents the dragged element from getting stuck
+   * between two intersected thresholds.
+   */
+  private _thresholdDeadZone: ThresholdDeadZone;
 
   static INDEX_OUT_CONTAINER = NaN;
 
@@ -83,13 +85,9 @@ class DFlexMechanismController extends DFlexScrollableElement {
     this.isOnDragOutThresholdEvtEmitted = false;
     this._animatedDraggedInsertionFrame = null;
     [this._detectNearestContainerThrottle] = DFlexCreateTimeout(0);
-    this.listAppendPosition = null;
+    this._listAppendPosition = null;
     this.isParentLocked = false;
-
-    this._deadZoneStabilizer = {
-      area: new BoxNum(0, 0, 0, 0),
-      direction: { x: "", y: "" },
-    };
+    this._thresholdDeadZone = new ThresholdDeadZone();
 
     if (__DEV__) {
       Object.seal(this);
@@ -112,7 +110,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         const element = store.registry.get(id)!;
 
         const isQualified = element.rect.isBoxIntersect(
-          this.draggable.getAbsoluteCurrentPos(),
+          this.draggable.positions.getPos(true),
         );
 
         if (isQualified) {
@@ -192,7 +190,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     if (migration.isTransitioning) {
       // Compose container boundaries and refresh the store.
       queueMicrotask(() => {
-        const { x, y } = this.listAppendPosition!;
+        const { x, y } = this._listAppendPosition!;
 
         // offset to append.
         // It has to be the biggest element offset. The last element in the list.
@@ -233,7 +231,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
           }
         }
 
-        this.listAppendPosition = null;
+        this._listAppendPosition = null;
 
         migration.complete();
       });
@@ -273,7 +271,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         // TODO: This should be dynamic not hardcoded.
         const insertionAxis: Axis = "y";
 
-        this.listAppendPosition = this.getComposedOccupiedPosition(
+        this._listAppendPosition = this.getComposedOccupiedPosition(
           newSK,
           insertionAxis,
         );
@@ -287,7 +285,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         originSiblings.pop();
         originContainer.reduceGrid(insertionAxis);
 
-        this.draggable.occupiedPosition.clone(this.listAppendPosition!);
+        this.draggable.occupiedPosition.clone(this._listAppendPosition!);
 
         this.draggable.gridPlaceholder.setAxes(1, 1);
 
@@ -547,26 +545,37 @@ class DFlexMechanismController extends DFlexScrollableElement {
     const elmThreshold = this.draggable.threshold.getElmMainThreshold(
       store.registry.get(id)!.rect,
     );
+    const draggedThreshold = this.draggable.threshold.thresholds[draggedID];
 
-    const isIntersect = elmThreshold.isBoxIntersect(
+    const isThresholdIntersected = elmThreshold.isBoxIntersect(
       this.draggable.threshold.thresholds[draggedID],
     );
 
     // TODO: `else` case is not tested.
-    if (isIntersect) {
-      // Create stabilizing zone to prevent dragged from being stuck between two
-      // intersected thresholds.
-      // E.g: Moved into new one but triggered the previous one because it's stuck
-      // inside the zone causing jarring behavior; the back and forth transition.
-      const surroundingBox = elmThreshold.getSurroundingBox(
-        this.draggable.threshold.thresholds[draggedID],
+    if (isThresholdIntersected) {
+      // Create a stabilizing zone to prevent the dragged element from getting stuck
+      // between two intersected thresholds. For example, if the element is moved into
+      // a new area but still triggers the previous threshold due to being stuck
+      // inside this zone, it can cause a jarring behavior with a back and forth
+      // transition.
+
+      const {
+        positions,
+        scroll: { enable },
+      } = this.draggable;
+
+      // Record the direction of movement on the specified axis.
+      const movementDirection = positions.getMovementDirection(axis, enable);
+
+      this._thresholdDeadZone.setZone(
+        axis,
+        movementDirection,
+        elmThreshold,
+        draggedThreshold,
       );
 
-      this._deadZoneStabilizer.area.clone(surroundingBox);
-      this._deadZoneStabilizer.direction[axis] =
-        this.draggable.getDirectionByAxis(axis);
-
       this.draggable.setDraggedTempIndex(elmIndex);
+
       const numberOfPassedElm = Math.abs(index - elmIndex);
 
       if (__DEV__) {
@@ -617,7 +626,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         console.log(
           `Detecting that element has ${
             isSingleAxis ? "single" : "multiple"
-          } axis`,
+          } axis ${axis}`,
         );
       }
     }
@@ -626,20 +635,32 @@ class DFlexMechanismController extends DFlexScrollableElement {
     if (isOut[id].isTruthyByAxis(axis)) {
       const shouldDecrease = axis === "y" ? isOut[id].bottom : isOut[id].right;
 
-      const isInsideDeadZone = this.draggable
-        .getAbsoluteCurrentPos()
-        .isInsideThreshold(this._deadZoneStabilizer.area);
+      const {
+        positions,
+        scroll: { enable },
+      } = this.draggable;
 
+      const currentMovementDir = positions.getMovementDirection(axis, enable);
+      const draggedPos = positions.getPos(false);
+
+      const isInsideDeadZone = this._thresholdDeadZone.isInside(
+        axis,
+        currentMovementDir,
+        draggedPos,
+      );
+
+      // Ignore if draggable inside dead zone with the same movement direction.
       if (isInsideDeadZone) {
-        const currentDir = this.draggable.getDirectionByAxis(axis);
-
-        const withTheSameDir =
-          currentDir === this._deadZoneStabilizer.direction[axis];
-
-        // Ignore if draggable inside dead zone with the same direction.
-        if (withTheSameDir) {
-          return true;
+        if (__DEV__) {
+          if (featureFlags.enableMechanismDebugger) {
+            // eslint-disable-next-line no-console
+            console.log(
+              `Threshold trigger ignored: Dragged element is inside the dead zone.`,
+            );
+          }
         }
+
+        return true;
       }
 
       this._actionCaller(
@@ -676,6 +697,13 @@ class DFlexMechanismController extends DFlexScrollableElement {
     this._actionByAxis("x");
   }
 
+  /**
+   * Locks or unlocks the parent container based on whether the dragged element
+   * is out of it. Additionally, it clears the threshold dead zone.
+   *
+   * @param isOut - A boolean indicating if the dragged element is out of its
+   * parent container.
+   */
   private _lockParent(isOut: boolean) {
     if (__DEV__) {
       if (featureFlags.enableMechanismDebugger) {
@@ -685,6 +713,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     }
 
     this.isParentLocked = isOut;
+    this._thresholdDeadZone.clear();
   }
 
   dragAt(x: number, y: number) {
@@ -738,7 +767,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
           scrollOffsetY = totalScrollRect.top - this.initialScrollPosition.y;
 
           // Update the position before calling the detector.
-          this.draggable.setCurrentPos(x, y, scrollOffsetX, scrollOffsetY);
+          this.draggable.positions.setPos(x, y, scrollOffsetX, scrollOffsetY);
 
           this._detectNearestElm();
         }

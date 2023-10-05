@@ -2,7 +2,7 @@ export { AxesPoint, Point, PointNum, PointBool } from "./Point";
 export { AbstractBox, Box, BoxBool, BoxNum, BoxRect } from "./Box";
 export type { AbstractBoxRect } from "./Box";
 
-export { DFlexThreshold as Threshold } from "./Threshold";
+export { DFlexThreshold as Threshold, ThresholdDeadZone } from "./Threshold";
 export type { ThresholdPercentages } from "./Threshold";
 
 export {
@@ -74,6 +74,7 @@ export {
   updateElmDatasetGrid,
   DFlexCreateRAF,
   DFlexCreateTimeout,
+  autoCleanupAllTimeouts,
   getElmBoxRect,
 } from "./environment";
 
