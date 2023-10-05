@@ -110,7 +110,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         const element = store.registry.get(id)!;
 
         const isQualified = element.rect.isBoxIntersect(
-          this.draggable.getAbsoluteCurrentPos(),
+          this.draggable.positions.getPos(true),
         );
 
         if (isQualified) {
@@ -559,8 +559,13 @@ class DFlexMechanismController extends DFlexScrollableElement {
       // inside this zone, it can cause a jarring behavior with a back and forth
       // transition.
 
+      const {
+        positions,
+        scroll: { enable },
+      } = this.draggable;
+
       // Record the direction of movement on the specified axis.
-      const movementDirection = this.draggable.getMovementDirection(axis);
+      const movementDirection = positions.getMovementDirection(axis, enable);
 
       this._thresholdDeadZone.setZone(
         axis,
@@ -629,8 +634,14 @@ class DFlexMechanismController extends DFlexScrollableElement {
     // Check if top or bottom.
     if (isOut[id].isTruthyByAxis(axis)) {
       const shouldDecrease = axis === "y" ? isOut[id].bottom : isOut[id].right;
-      const currentMovementDir = this.draggable.getMovementDirection(axis);
-      const draggedPos = this.draggable.getAbsoluteCurrentPos();
+
+      const {
+        positions,
+        scroll: { enable },
+      } = this.draggable;
+
+      const currentMovementDir = positions.getMovementDirection(axis, enable);
+      const draggedPos = positions.getPos(false);
 
       const isInsideDeadZone = this._thresholdDeadZone.isInside(
         axis,
@@ -756,7 +767,13 @@ class DFlexMechanismController extends DFlexScrollableElement {
           scrollOffsetY = totalScrollRect.top - this.initialScrollPosition.y;
 
           // Update the position before calling the detector.
-          this.draggable.setCurrentPos(x, y, scrollOffsetX, scrollOffsetY);
+          this.draggable.positions.setPos(
+            x,
+            y,
+            scrollOffsetX,
+            scrollOffsetY,
+            this.draggable.draggedElm.rect,
+          );
 
           this._detectNearestElm();
         }
