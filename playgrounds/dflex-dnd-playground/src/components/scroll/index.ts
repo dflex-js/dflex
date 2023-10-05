@@ -2,3 +2,4 @@
 export { default as ScrollMultiLists } from "./multiLists";
 export { default as ScrollablePage } from "./ScrollablePage";
 export { default as ExtendedList } from "./ExtendedList";
+export { default as WindowedDualList } from "./WindowedDualList";

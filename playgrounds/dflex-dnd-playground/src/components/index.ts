@@ -14,6 +14,11 @@ export {
   ListMigration,
 } from "./essential";
 
-export { ScrollMultiLists, ScrollablePage, ExtendedList } from "./scroll";
+export {
+  ScrollMultiLists,
+  ScrollablePage,
+  ExtendedList,
+  WindowedDualList,
+} from "./scroll";
 
 export { StreamInterval, StreamNewELm, StreamIncremental } from "./stream";
