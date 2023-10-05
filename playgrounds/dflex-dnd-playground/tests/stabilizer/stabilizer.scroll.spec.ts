@@ -52,11 +52,15 @@ test.describe("Stabilizer with scroll", async () => {
     await moveDragged(-1, 50);
   });
 
-  test("elm2 transformed into elm1 position", async () => {
-    await expect(elm2).toHaveCSS(
-      "transform",
-      "matrix(1, 0, 0, 1, 0, -88.1875)",
-    );
+  test("elm2 transformed into elm1 position", async ({ browserName }) => {
+    if (browserName === "firefox") {
+      await expect(elm2).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -88.2)");
+    } else {
+      await expect(elm2).toHaveCSS(
+        "transform",
+        "matrix(1, 0, 0, 1, 0, -88.1875)",
+      );
+    }
   });
 
   test("Move elm1 back into its position", async () => {
