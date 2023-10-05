@@ -37,10 +37,9 @@ class DraggablePositions {
     y: number,
     scrollOffsetX: number,
     scrollOffsetY: number,
-    draggedRect: BoxRect,
   ): void {
-    this._viewport.setPos(x, y, scrollOffsetX, scrollOffsetY, draggedRect);
-    this._absolute.setPos(x, y, scrollOffsetX, scrollOffsetY, draggedRect);
+    this._viewport.setPos(x, y, scrollOffsetX, scrollOffsetY);
+    this._absolute.setPos(x, y, scrollOffsetX, scrollOffsetY);
   }
 
   private _getInstance(isAbsolute: boolean): CurrentPosition {

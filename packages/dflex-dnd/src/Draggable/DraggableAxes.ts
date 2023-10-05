@@ -92,9 +92,9 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
   events: DFlexEventPlugin;
 
   constructor(id: string, initCoordinates: AxesPoint, opts: FinalDndOpts) {
-    const [element, DOM] = store.getElmWithDOM(id);
+    const [dflexElm, DOM] = store.getElmWithDOM(id);
 
-    super(element, DOM, initCoordinates);
+    super(dflexElm, DOM, initCoordinates);
 
     this.isLayoutStateUpdated = false;
 
@@ -104,7 +104,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
       keys: { SK },
       depth,
       rect,
-    } = element;
+    } = dflexElm;
 
     this.gridPlaceholder = new PointNum(DOMGrid.x, DOMGrid.y);
 
@@ -334,13 +334,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
 
     this.translate(filteredX, filteredY);
 
-    this.positions.setPos(
-      filteredX,
-      filteredY,
-      scrollOffsetX,
-      scrollOffsetY,
-      this.draggedElm.rect,
-    );
+    this.positions.setPos(filteredX, filteredY, scrollOffsetX, scrollOffsetY);
   }
 
   isOutThreshold(SK?: string, useInsertionThreshold?: boolean) {

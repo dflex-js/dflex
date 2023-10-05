@@ -3,7 +3,6 @@ import {
   AxesPoint,
   Axis,
   BoxNum,
-  BoxRect,
   PointNum,
 } from "@dflex/utils";
 
@@ -20,6 +19,8 @@ class CurrentPosition {
   private _currentPos: BoxNum;
 
   private _prevPoint: PointNum;
+
+  private _rect: AbstractBoxRect;
 
   /**
    * Constructs a Position object.
@@ -39,6 +40,8 @@ class CurrentPosition {
 
     // Store the previous point for reference
     this._prevPoint = new PointNum(x, y);
+
+    this._rect = rect;
 
     // Calculate the current position, accounting for scroll offsets
     const viewportTop = rect.top - top;
@@ -75,11 +78,10 @@ class CurrentPosition {
     y: number,
     scrollOffsetX: number,
     scrollOffsetY: number,
-    draggedRect: BoxRect,
   ): void {
     this._updatePrevPos();
 
-    const { width, height } = draggedRect;
+    const { width, height } = this._rect;
 
     const [edgePosLeft, edgePosTop] = this._getEdgePos(x, y);
 

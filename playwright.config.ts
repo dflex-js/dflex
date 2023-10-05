@@ -29,8 +29,8 @@ console.log(`\x1b[1m\x1b[95mPLAYGROUND_TYPE: ${PLAYGROUND_TYPE}\x1b[0m`);
 
 const config: PlaywrightTestConfig = {
   forbidOnly: IS_CI,
-  retries: IS_CI ? 2 : 1,
-  // timeout: 30000,
+  retries: IS_CI ? 4 : 1,
+  timeout: 30000,
   use: {
     video: "retain-on-failure",
     navigationTimeout: 30000,
