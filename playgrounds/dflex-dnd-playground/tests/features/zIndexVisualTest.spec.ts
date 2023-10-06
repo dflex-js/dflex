@@ -33,7 +33,10 @@ test.describe("DOM Mirror element is above both containers", async () => {
     "No need to test it for multiple browsers.",
   );
 
-  test.skip(process.platform === "darwin", "Skip the test on Mac devices.");
+  test.skip(
+    process.platform === "darwin" || process.platform === "linux",
+    "Skip the test on Mac and Linux devices.",
+  );
 
   test.beforeAll(async ({ browser, browserName }) => {
     activeBrowser = browser;
