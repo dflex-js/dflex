@@ -18,8 +18,8 @@ const WindowedDualList = () => {
   const tasks2 = [];
 
   for (let i = 1; i <= 15; i += 1) {
-    const uni1 = `${i}-list-a`;
-    const uni2 = `${i}-list-b`;
+    const uni1 = `list-a-${i}`;
+    const uni2 = `list-b-${i}`;
 
     tasks1.push({ id: uni1, key: uni1, task: `${i}-a` });
     tasks2.push({ id: uni2, key: uni2, task: `${i}-b` });
