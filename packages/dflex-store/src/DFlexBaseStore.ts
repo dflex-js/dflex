@@ -10,6 +10,7 @@ import {
   featureFlags,
   getAnimationOptions,
   getParentElm,
+  removeOpacity,
   setFixedDimensions,
   setRelativePosition,
   TaskQueue,
@@ -158,6 +159,7 @@ function submitToRegistry(
     _hasSiblingInSameLevel = hasSiblingInSameLevel(DOM, depth, store);
 
     setRelativePosition(DOM);
+    removeOpacity(DOM);
 
     if (!store.globals.removeContainerWhenEmpty) {
       setFixedDimensions(DOM);

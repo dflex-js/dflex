@@ -10,6 +10,7 @@ export {
   setRelativePosition,
   setStyleProperty,
   removeStyleProperty,
+  removeOpacity,
   hasCSSTransition,
   rmEmptyAttr,
 } from "./computedStyleUtils";

@@ -17,7 +17,7 @@ const WindowedDualList = () => {
   const tasks1 = [];
   const tasks2 = [];
 
-  for (let i = 1; i <= 100; i += 1) {
+  for (let i = 1; i <= 15; i += 1) {
     const uni1 = `${i}-list-a`;
     const uni2 = `${i}-list-b`;
 

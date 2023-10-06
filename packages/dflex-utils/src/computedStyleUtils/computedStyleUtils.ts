@@ -258,6 +258,23 @@ function setRelativePosition(DOM: HTMLElement): void {
   }
 }
 
+function removeOpacity(DOM: HTMLElement): void {
+  const opacityValue = getCachedComputedStyleProperty(DOM, "opacity", true);
+
+  if (opacityValue !== 1) {
+    if (__DEV__) {
+      // eslint-disable-next-line no-console
+      console.error(
+        `The application of opacity to the element with id '${DOM.id}' ` +
+          `may interfere with its z-index, which is crucial for establishing the visual hierarchy. ` +
+          `To ensure proper positioning of the drag element above others, DFlex will remove it.`,
+      );
+    }
+
+    DOM.style.opacity = "1";
+  }
+}
+
 function hasCSSTransition(DOM: HTMLElement) {
   const transitionValue = getCachedComputedStyleProperty(
     DOM,
@@ -289,6 +306,7 @@ export {
   getElmDimensions,
   getParsedElmTransform,
   setStyleProperty,
+  removeOpacity,
   removeStyleProperty,
   setFixedDimensions,
   setRelativePosition,
