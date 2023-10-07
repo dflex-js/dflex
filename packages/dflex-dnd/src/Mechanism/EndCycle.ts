@@ -102,7 +102,7 @@ class EndCycle extends DFlexMechanismController {
         },
         {
           onUpdate: () => {
-            this.draggable.cleanup(true, false, latestCycle, false);
+            this.draggable.cleanup(true, latestCycle, false);
             migration.flush(session);
           },
         },
@@ -126,13 +126,7 @@ class EndCycle extends DFlexMechanismController {
 
     scheduler(
       store,
-      () =>
-        this.draggable.cleanup(
-          isFallback,
-          isMigratedInScroll,
-          latestCycle,
-          hasToReconcile,
-        ),
+      () => this.draggable.cleanup(isFallback, latestCycle, hasToReconcile),
       null,
       {
         type: "layoutState",

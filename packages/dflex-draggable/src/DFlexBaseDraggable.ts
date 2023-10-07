@@ -132,34 +132,22 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     originDOM: HTMLElement,
     mirrorDOM: HTMLElement,
     isAddingProps: true,
-    isMigratedInScroll: false,
     dimensions: PointNum,
     viewportPos: [number, number],
   ): void;
 
   protected setDOMAttrAndStyle(
     originDOM: HTMLElement,
-    mirrorDOM: HTMLElement,
-    isAddingProps: false,
-    isMigratedInScroll: true,
-    dimensions: PointNum,
-    viewportPos: null,
-  ): void;
-
-  protected setDOMAttrAndStyle(
-    originDOM: HTMLElement,
-    mirrorDOM: HTMLElement,
-    isAddingProps: false,
-    isMigratedInScroll: false,
-    dimensions: null,
-    viewportPos: null,
-  ): void;
-
-  protected setDOMAttrAndStyle(
-    originDOM: HTMLElement,
     mirrorDOM: null,
     isAddingProps: true,
-    isMigratedInScroll: false,
+    dimensions: null,
+    viewportPos: null,
+  ): void;
+
+  protected setDOMAttrAndStyle(
+    originDOM: HTMLElement,
+    mirrorDOM: HTMLElement,
+    isAddingProps: false,
     dimensions: null,
     viewportPos: null,
   ): void;
@@ -168,7 +156,6 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     originDOM: HTMLElement,
     mirrorDOM: null,
     isAddingProps: false,
-    isMigratedInScroll: false,
     dimensions: null,
     viewportPos: null,
   ): void;
@@ -177,7 +164,6 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     originDOM: HTMLElement,
     mirrorDOM: HTMLElement | null,
     isAddingProps: boolean,
-    isMigratedInScroll: boolean,
     dimensions: PointNum | null,
     viewportPos: [number, number] | null,
   ): void {
@@ -222,15 +208,6 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     this.draggedElm.clearAttributes(originDOM);
 
     if (mirrorDOM !== null) {
-      // if (isMigratedInScroll) {
-      //   setStyleProperty(originDOM, "position", "absolute");
-      //   if (dimensions!.x > 0) {
-      //     setStyleProperty(originDOM, "width", `${dimensions!.x}px`);
-      //   }
-      //   if (dimensions!.y > 0) {
-      //     setStyleProperty(originDOM, "height", `${dimensions!.y}px`);
-      //   }
-      // }
       removeStyleProperty(originDOM, "opacity");
 
       mirrorDOM.remove();

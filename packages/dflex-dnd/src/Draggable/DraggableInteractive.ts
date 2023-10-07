@@ -171,7 +171,6 @@ class DraggableInteractive extends DraggableAxes {
         this.draggedDOM,
         this.mirrorDOM,
         true,
-        false,
         this.draggedElm.getDimensions(draggedDOM),
         viewportPos,
       );
@@ -179,7 +178,7 @@ class DraggableInteractive extends DraggableAxes {
       this.draggedDOM.parentNode!.insertBefore(this.mirrorDOM, this.draggedDOM);
       this.draggedDOM = this.mirrorDOM;
     } else {
-      this.setDOMAttrAndStyle(this.draggedDOM, null, true, false, null, null);
+      this.setDOMAttrAndStyle(this.draggedDOM, null, true, null, null);
     }
 
     this.occupiedPosition = new PointNum(rect.left, rect.top);
@@ -282,40 +281,15 @@ class DraggableInteractive extends DraggableAxes {
     }
   }
 
-  /**
-   *
-   * @param isFallback
-   * @param isMigratedInScroll
-   * @param latestCycle
-   * @param willReconcile
-   */
   cleanup(
     isFallback: boolean,
-    isMigratedInScroll: boolean,
     latestCycle: AbstractDFlexCycle,
     willReconcile: boolean,
   ) {
     const draggedDOM = store.interactiveDOM.get(this.draggedElm.id)!;
+    const mirrorElement = this.mirrorDOM || null;
 
-    if (isMigratedInScroll) {
-      this.setDOMAttrAndStyle(
-        draggedDOM,
-        this.mirrorDOM!,
-        false,
-        true,
-        this.draggedElm.getDimensions(draggedDOM),
-        null,
-      );
-    } else {
-      this.setDOMAttrAndStyle(
-        draggedDOM,
-        this.mirrorDOM!,
-        false,
-        false,
-        null,
-        null,
-      );
-    }
+    this.setDOMAttrAndStyle(draggedDOM, mirrorElement!, false, null, null);
 
     this.appendDraggedToContainerDimensions(false);
 
