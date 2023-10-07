@@ -259,7 +259,11 @@ function setRelativePosition(DOM: HTMLElement): void {
 }
 
 function removeOpacity(DOM: HTMLElement): void {
-  const opacityValue = getCachedComputedStyleProperty(DOM, "opacity", true);
+  const opacityValue = getCachedComputedStyleProperty(
+    DOM,
+    CSSPropNames.OPACITY,
+    true,
+  );
 
   if (opacityValue !== 1) {
     if (__DEV__) {
@@ -271,7 +275,28 @@ function removeOpacity(DOM: HTMLElement): void {
       );
     }
 
-    DOM.style.opacity = "1";
+    setStyleProperty(DOM, CSSPropNames.OPACITY, "1");
+  }
+}
+
+function setParentDimensions(DOM: HTMLElement): void {
+  const getStyle = (property: string) =>
+    getCachedComputedStyleProperty(DOM, property, false);
+
+  const height = getStyle(CSSPropNames.HEIGHT);
+  const width = getStyle(CSSPropNames.WIDTH);
+  const minHeight = getStyle(CSSPropNames.MIN_HEIGHT);
+  const minWidth = getStyle(CSSPropNames.MIN_HEIGHT);
+
+  const hasMinHeight = minHeight !== "auto";
+  const hasMinWidth = minWidth !== "auto";
+
+  if (!hasMinHeight) {
+    setStyleProperty(DOM, CSSPropNames.MIN_HEIGHT, height);
+  }
+
+  if (!hasMinWidth) {
+    setStyleProperty(DOM, CSSPropNames.MIN_WIDTH, width);
   }
 }
 
@@ -310,6 +335,7 @@ export {
   removeStyleProperty,
   setFixedDimensions,
   setRelativePosition,
+  setParentDimensions,
   hasCSSTransition,
   rmEmptyAttr,
 };

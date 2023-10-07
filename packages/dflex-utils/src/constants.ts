@@ -1,6 +1,9 @@
 export const HEIGHT = "height";
 export const WIDTH = "width";
 
+export const MIN_HEIGHT = "min-height";
+export const MIN_WIDTH = "min-width";
+
 export const LEFT = "left";
 export const TOP = "top";
 
@@ -20,5 +23,5 @@ export const OFFSET_HEIGHT = "offsetHeight";
 export const OFFSET_WIDTH = "offsetWidth";
 
 export const POSITION = "position";
-
 export const TRANSFORM = "transform";
+export const OPACITY = "opacity";

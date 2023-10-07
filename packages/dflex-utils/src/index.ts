@@ -52,6 +52,7 @@ export {
   removeStyleProperty,
   setRelativePosition,
   setFixedDimensions,
+  setParentDimensions,
   getElmDimensions,
   getElmPos,
   getElmOverflow,
