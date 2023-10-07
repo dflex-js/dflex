@@ -222,15 +222,15 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     this.draggedElm.clearAttributes(originDOM);
 
     if (mirrorDOM !== null) {
-      if (isMigratedInScroll) {
-        setStyleProperty(originDOM, "position", "absolute");
-        if (dimensions!.x > 0) {
-          setStyleProperty(originDOM, "width", `${dimensions!.x}px`);
-        }
-        if (dimensions!.y > 0) {
-          setStyleProperty(originDOM, "height", `${dimensions!.y}px`);
-        }
-      }
+      // if (isMigratedInScroll) {
+      //   setStyleProperty(originDOM, "position", "absolute");
+      //   if (dimensions!.x > 0) {
+      //     setStyleProperty(originDOM, "width", `${dimensions!.x}px`);
+      //   }
+      //   if (dimensions!.y > 0) {
+      //     setStyleProperty(originDOM, "height", `${dimensions!.y}px`);
+      //   }
+      // }
       removeStyleProperty(originDOM, "opacity");
 
       mirrorDOM.remove();
