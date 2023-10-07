@@ -733,12 +733,6 @@ class DFlexDnDStore extends DFlexBaseStore {
       }
     }
 
-    const {
-      totalScrollRect: { left, top },
-    } = scroll;
-
-    const scrollTuple: ScrollPosTuple = [left, top];
-
     scheduler(
       this,
       () => {
@@ -746,6 +740,18 @@ class DFlexDnDStore extends DFlexBaseStore {
       },
       {
         onUpdate: () => {
+          const hasChanged = scroll.hasScrollDimensionChanges();
+
+          if (hasChanged) {
+            scroll.refreshScrollAndVisibility(siblings.length);
+          }
+
+          const {
+            totalScrollRect: { left, top },
+          } = scroll;
+
+          const scrollTuple: ScrollPosTuple = [left, top];
+
           this._syncSiblingElmRectsWithGrid(
             siblings,
             container,
