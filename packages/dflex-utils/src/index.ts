@@ -48,6 +48,7 @@ export {
   getCachedComputedStyleProperty,
   clearComputedStyleCache,
   setStyleProperty,
+  removeOpacity,
   removeStyleProperty,
   setRelativePosition,
   setFixedDimensions,

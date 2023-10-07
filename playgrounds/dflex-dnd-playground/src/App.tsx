@@ -15,6 +15,7 @@ import {
   ExtendedList,
   ScrollMultiLists,
   ScrollablePage,
+  WindowedDualList,
   ListMigration,
   StreamInterval,
   StreamNewELm,
@@ -87,6 +88,7 @@ const App = () => {
         <Route path="/scroll" element={<ScrollMultiLists />} />
         <Route path="/extended" element={<ExtendedList />} />
         <Route path="/scrollable-page" element={<ScrollablePage />} />
+        <Route path="/windowed-dual-list" element={<WindowedDualList />} />
         <Route
           path="/restricted-container-all"
           element={<AllRestrictedContainer />}

@@ -173,7 +173,7 @@ DFlexDnDStore {
       data-dflex-key="dflex_sk_1_0"
       data-index="0"
       id="dflex_id_0"
-      style="height: 0px; width: 0px;"
+      style="opacity: 1; height: 0px; width: 0px;"
     >
       <div
         data-dev-x="0"
@@ -204,7 +204,7 @@ DFlexDnDStore {
       data-dflex-key="dflex_sk_1_0"
       data-index="1"
       id="dflex_id_1"
-      style="height: 0px; width: 0px;"
+      style="opacity: 1; height: 0px; width: 0px;"
     >
       <div
         data-dev-x="0"
@@ -553,7 +553,7 @@ DFlexDnDStore {
                 data-dflex-key="dflex_sk_1_0"
                 data-index="0"
                 id="dflex_id_0"
-                style="height: 0px; width: 0px;"
+                style="opacity: 1; height: 0px; width: 0px;"
               >
                 <div
                   data-dev-x="0"
@@ -566,7 +566,7 @@ DFlexDnDStore {
                 data-dflex-key="dflex_sk_1_0"
                 data-index="1"
                 id="dflex_id_1"
-                style="height: 0px; width: 0px;"
+                style="opacity: 1; height: 0px; width: 0px;"
               >
                 <div
                   data-dev-x="0"
@@ -639,7 +639,7 @@ DFlexDnDStore {
                 data-dflex-key="dflex_sk_1_0"
                 data-index="0"
                 id="dflex_id_0"
-                style="height: 0px; width: 0px;"
+                style="opacity: 1; height: 0px; width: 0px;"
               >
                 <div
                   data-dev-x="0"
@@ -652,7 +652,7 @@ DFlexDnDStore {
                 data-dflex-key="dflex_sk_1_0"
                 data-index="1"
                 id="dflex_id_1"
-                style="height: 0px; width: 0px;"
+                style="opacity: 1; height: 0px; width: 0px;"
               >
                 <div
                   data-dev-x="0"
