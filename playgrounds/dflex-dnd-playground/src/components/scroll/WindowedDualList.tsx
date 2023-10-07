@@ -30,17 +30,7 @@ const WindowedDualList = () => {
       <div className="extended">
         <ul>
           {tasks1.map(({ task, id, key }) => (
-            <DFlexDnDComponent
-              Component="li"
-              registerInput={{ id }}
-              key={key}
-              opts={{
-                commit: {
-                  enableAfterEndingDrag: false,
-                  enableForScrollOnly: false,
-                },
-              }}
-            >
+            <DFlexDnDComponent Component="li" registerInput={{ id }} key={key}>
               {task}
             </DFlexDnDComponent>
           ))}
