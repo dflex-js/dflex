@@ -8,6 +8,7 @@ export {
   getParsedElmTransform,
   setFixedDimensions,
   setRelativePosition,
+  setParentDimensions,
   setStyleProperty,
   removeStyleProperty,
   removeOpacity,

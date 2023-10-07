@@ -11,7 +11,7 @@ import {
   getAnimationOptions,
   getParentElm,
   removeOpacity,
-  setFixedDimensions,
+  setParentDimensions,
   setRelativePosition,
   TaskQueue,
 } from "@dflex/utils";
@@ -162,7 +162,7 @@ function submitToRegistry(
     removeOpacity(DOM);
 
     if (!store.globals.removeContainerWhenEmpty) {
-      setFixedDimensions(DOM);
+      setParentDimensions(DOM);
     }
   }
 
