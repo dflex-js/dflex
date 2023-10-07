@@ -2,7 +2,6 @@
 /* eslint-disable no-shadow */
 /* eslint-disable no-unused-vars */
 
-import { AbstractBox } from "../Box";
 import { warnOnce } from "../collections";
 import * as CSSPropNames from "../constants";
 import { Dimensions } from "../types";
