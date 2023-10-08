@@ -41,7 +41,6 @@ const TodoListWithReadonly = () => {
               opts={{
                 commit: {
                   enableAfterEndingDrag: false,
-                  enableForScrollOnly: false,
                 },
               }}
               key={id}

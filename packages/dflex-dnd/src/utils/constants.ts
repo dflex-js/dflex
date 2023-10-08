@@ -38,6 +38,5 @@ export const defaultOpts: DefaultDndOpts = Object.freeze({
 
   commit: {
     enableAfterEndingDrag: true,
-    enableForScrollOnly: true,
   },
 });

@@ -51,7 +51,6 @@ const AllRestrictedContainer = () => {
                 },
                 commit: {
                   enableAfterEndingDrag: false,
-                  enableForScrollOnly: false,
                 },
               }}
             >

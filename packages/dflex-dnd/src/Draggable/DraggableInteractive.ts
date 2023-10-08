@@ -105,7 +105,6 @@ function triggerAssertProcess(
 
 const NO_COMMIT = {
   enableAfterEndingDrag: false,
-  enableForScrollOnly: false,
 };
 
 if (__DEV__) {

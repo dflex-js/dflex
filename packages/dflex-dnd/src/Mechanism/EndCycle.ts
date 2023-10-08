@@ -119,10 +119,9 @@ class EndCycle extends DFlexMechanismController {
     const isMigratedInScroll =
       latestCycle.hasScroll && sessionCycles.length > 1;
 
-    const { enableAfterEndingDrag, enableForScrollOnly } = enableCommit;
+    const { enableAfterEndingDrag } = enableCommit;
 
-    const hasToReconcile =
-      (isMigratedInScroll && enableForScrollOnly) || enableAfterEndingDrag;
+    const hasToReconcile = enableAfterEndingDrag || isMigratedInScroll;
 
     scheduler(
       store,
