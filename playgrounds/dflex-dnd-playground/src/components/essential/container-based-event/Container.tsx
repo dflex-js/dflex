@@ -35,7 +35,6 @@ const Container = ({
             },
             commit: {
               enableAfterEndingDrag: false,
-              enableForScrollOnly: false,
             },
           },
         );

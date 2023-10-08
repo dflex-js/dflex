@@ -19,7 +19,6 @@ const ScrollablePage = () => {
               opts={{
                 commit: {
                   enableAfterEndingDrag: false,
-                  enableForScrollOnly: false,
                 },
               }}
             >

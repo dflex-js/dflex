@@ -10,8 +10,7 @@
           :style="style"
           :opts="{
             commit: {
-              enableAfterEndingDrag: false,
-              enableForScrollOnly: false
+              enableAfterEndingDrag: false
             }
           }"
         >

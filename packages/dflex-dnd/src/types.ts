@@ -66,9 +66,6 @@ export interface ContainersTransition {
 export interface Commit {
   /** Default=true */
   enableAfterEndingDrag: boolean;
-
-  /** Default=true */
-  enableForScrollOnly: boolean;
 }
 
 export interface DefaultDndOpts {

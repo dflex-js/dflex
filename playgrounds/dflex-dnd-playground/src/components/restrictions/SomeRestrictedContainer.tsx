@@ -112,7 +112,6 @@ const SomeRestrictedContainer = () => {
                 restrictions,
                 commit: {
                   enableAfterEndingDrag: false,
-                  enableForScrollOnly: false,
                 },
               }}
             >

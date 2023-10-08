@@ -28,7 +28,6 @@ const TodoListWithEvents = () => {
               opts={{
                 commit: {
                   enableAfterEndingDrag: false,
-                  enableForScrollOnly: false,
                 },
               }}
             >

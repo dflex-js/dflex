@@ -31,7 +31,6 @@ const ExtendedList = () => {
               opts={{
                 commit: {
                   enableAfterEndingDrag: false,
-                  enableForScrollOnly: false,
                 },
               }}
             >

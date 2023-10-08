@@ -4,7 +4,6 @@ exports[`extractOpts Returns default options when empty object is passed 1`] = `
 {
   "commit": {
     "enableAfterEndingDrag": true,
-    "enableForScrollOnly": true,
   },
   "containersTransition": {
     "enable": true,
@@ -47,7 +46,6 @@ exports[`extractOpts Returns the default options with input restrictions/allowLe
 {
   "commit": {
     "enableAfterEndingDrag": true,
-    "enableForScrollOnly": true,
   },
   "containersTransition": {
     "enable": true,
@@ -90,7 +88,6 @@ exports[`extractOpts Returns the default options with input restrictions/thresho
 {
   "commit": {
     "enableAfterEndingDrag": true,
-    "enableForScrollOnly": true,
   },
   "containersTransition": {
     "enable": false,
@@ -133,7 +130,6 @@ exports[`extractOpts Returns the default options with input scroll/threshold 1`]
 {
   "commit": {
     "enableAfterEndingDrag": true,
-    "enableForScrollOnly": true,
   },
   "containersTransition": {
     "enable": true,
@@ -176,7 +172,6 @@ exports[`extractOpts Returns the default options with input scroll/threshold/ena
 {
   "commit": {
     "enableAfterEndingDrag": true,
-    "enableForScrollOnly": true,
   },
   "containersTransition": {
     "enable": true,
@@ -219,7 +214,6 @@ exports[`extractOpts Returns the default options with self restrictions/allowLea
 {
   "commit": {
     "enableAfterEndingDrag": true,
-    "enableForScrollOnly": true,
   },
   "containersTransition": {
     "enable": true,

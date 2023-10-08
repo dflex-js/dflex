@@ -66,7 +66,6 @@ const NestedList = () => {
                 opts={{
                   commit: {
                     enableAfterEndingDrag: false,
-                    enableForScrollOnly: false,
                   },
                 }}
                 key={id}

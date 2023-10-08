@@ -110,7 +110,6 @@ const SelRestricted = () => {
                 restrictions,
                 commit: {
                   enableAfterEndingDrag: false,
-                  enableForScrollOnly: false,
                 },
               }}
             >

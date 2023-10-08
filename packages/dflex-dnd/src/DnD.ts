@@ -29,6 +29,10 @@ class DnD extends Mechanism {
 
     const options = extractOpts(opts);
 
+    if (__DEV__) {
+      Object.freeze(options);
+    }
+
     const draggable = new DraggableInteractive(
       id,
       initCoordinates,

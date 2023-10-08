@@ -81,7 +81,6 @@ const Core = ({
             },
             commit: {
               enableAfterEndingDrag: false,
-              enableForScrollOnly: false,
             },
           },
         );
