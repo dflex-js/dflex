@@ -9,7 +9,7 @@ import {
   PayloadSiblingsEvent,
   DFlexEvents,
   DFlexEventNames,
-  DFlexEventPayload,
+  DFlexEventPayloads,
 } from "./constants";
 
 const EVT_CONFIG = {
@@ -39,13 +39,13 @@ function dispatchDFlexEvent(
 function dispatchDFlexEvent(
   DOM: HTMLElement,
   eventName: DFlexEventNames,
-  payload: DFlexEventPayload,
+  payload: DFlexEventPayloads,
 ): void;
 
 function dispatchDFlexEvent(
   DOM: HTMLElement,
   eventName: DFlexEventNames,
-  payload: DFlexEventPayload,
+  payload: DFlexEventPayloads,
 ): void {
   const emittedEvent = Object.assign(EVT_CONFIG, { detail: payload });
 
@@ -74,7 +74,7 @@ function DFlexEvent(dispatcher: HTMLElement) {
 
   function dispatch(
     eventName: DFlexEventNames,
-    payload: DFlexEventPayload,
+    payload: DFlexEventPayloads,
   ): void {
     dispatchDFlexEvent(dispatcher, eventName, payload);
   }

@@ -17,17 +17,17 @@ const ON_DRAG_LEAVE = "$onDragLeave";
 const ON_LIFT_UP = "$onLiftUpSiblings";
 const ON_MOVE_DOWN = "$onMoveDownSiblings";
 
-export const DRAG_EVENT = {
+const DRAG_EVENT = {
   ON_OUT_CONTAINER,
   ON_OUT_THRESHOLD,
 } as const;
 
-export const INTERACTIVITY_EVENT = {
+const INTERACTIVITY_EVENT = {
   ON_DRAG_OVER,
   ON_DRAG_LEAVE,
 } as const;
 
-export const SIBLINGS_EVENT = {
+const SIBLINGS_EVENT = {
   ON_LIFT_UP,
   ON_MOVE_DOWN,
 } as const;
@@ -47,14 +47,6 @@ export const EVENT_TYPES = {
 if (__DEV__) {
   Object.freeze(DFLEX_EVENTS);
   Object.freeze(EVENT_TYPES);
-}
-
-export interface Events {
-  drag: typeof DRAG_EVENT;
-
-  interactivity: typeof INTERACTIVITY_EVENT;
-
-  siblings: typeof SIBLINGS_EVENT;
 }
 
 export type DragEventNames = (typeof DRAG_EVENT)[keyof typeof DRAG_EVENT];
@@ -101,7 +93,7 @@ export type PayloadSiblingsEvent = {
   siblings: string[];
 };
 
-export type DFlexEventPayload =
+export type DFlexEventPayloads =
   | PayloadDraggedEvent
   | PayloadInteractivityEvent
   | PayloadSiblingsEvent;
