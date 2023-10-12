@@ -1,16 +1,11 @@
 import type { ThresholdPercentages } from "@dflex/utils";
-import type { DFlexEventsTypes } from "./LayoutManager";
-
-type DFlexEventsMap = {
-  // TODO replace `any` with DFlex custom events here.
-  [K in DFlexEventsTypes]: CustomEvent<any>;
-};
+import type { DFlexEventsMap } from "./Events";
 
 declare global {
   interface Document {
-    addEventListener<key extends keyof DFlexEventsMap>(
-      DFlexEventType: key,
-      listener: (this: Document, evt: DFlexEventsMap[key]) => void,
+    addEventListener<k extends keyof DFlexEventsMap>(
+      DFlexEventType: k,
+      listener: (this: Document, evt: DFlexEventsMap[k]) => void,
     ): void;
     removeEventListener<K extends keyof DFlexEventsMap>(
       DFlexEventType: K,

@@ -3,16 +3,13 @@
 import React from "react";
 
 import { store, DnD } from "@dflex/dnd";
-import type { DFlexDnDOpts, DFlexEvents, RegisterInputOpts } from "@dflex/dnd";
-
-// const evts = new Set([
-//   "$onDragOutContainer",
-//   "$onDragOutThreshold",
-//   "$onDragOver",
-//   "$onDragLeave",
-//   "$onLiftUpSiblings",
-//   "$onMoveDownSiblings",
-// ]);
+import type {
+  DFlexDnDOpts,
+  RegisterInputOpts,
+  DFlexInteractivityEvent,
+  DFlexDraggedEvent,
+  DFlexSiblingsEvent,
+} from "@dflex/dnd";
 
 let dflexDnD: DnD | null;
 
@@ -23,6 +20,7 @@ interface Props {
   children: React.ReactNode;
   registerInput: RegisterInputOpts;
   opts?: DFlexDnDOpts;
+  useDFlexEvents?: boolean;
 }
 
 const isCI = import.meta.env.MODE === "CI";
@@ -41,6 +39,7 @@ const DFlexDnDComponent = ({
   className,
   children,
   opts,
+  useDFlexEvents = false,
 }: Props) => {
   const taskRef = React.useRef() as React.MutableRefObject<HTMLLIElement>;
 
@@ -66,7 +65,17 @@ const DFlexDnDComponent = ({
     };
   }, [taskRef]);
 
-  const onDFlexEvent = (e: DFlexEvents) => {
+  const onDFlexInteractivityEvent = (e: DFlexInteractivityEvent) => {
+    // eslint-disable-next-line no-console
+    console.log(`onDFlexEvent: ${e.type}`, e.detail);
+  };
+
+  const onDFlexDragEvent = (e: DFlexDraggedEvent) => {
+    // eslint-disable-next-line no-console
+    console.log(`onDFlexEvent: ${e.type}`, e.detail);
+  };
+
+  const onDFlexSiblingsEvent = (e: DFlexSiblingsEvent) => {
     // eslint-disable-next-line no-console
     console.log(`onDFlexEvent: ${e.type}`, e.detail);
   };
@@ -88,7 +97,19 @@ const DFlexDnDComponent = ({
       document.removeEventListener("mouseup", onMouseUp);
       document.removeEventListener("mousemove", onMouseMove);
 
-      document.removeEventListener("$onDragLeave", onDFlexEvent);
+      if (useDFlexEvents) {
+        document.removeEventListener("$onDragLeave", onDFlexInteractivityEvent);
+        document.removeEventListener("$onDragOver", onDFlexInteractivityEvent);
+
+        document.removeEventListener("$onDragOutContainer", onDFlexDragEvent);
+        document.removeEventListener("$onDragOutContainer", onDFlexDragEvent);
+
+        document.removeEventListener("$onLiftUpSiblings", onDFlexSiblingsEvent);
+        document.removeEventListener(
+          "$onMoveDownSiblings",
+          onDFlexSiblingsEvent,
+        );
+      }
     }
   };
 
@@ -104,7 +125,22 @@ const DFlexDnDComponent = ({
         document.addEventListener("mousemove", onMouseMove);
         dflexDnD = new DnD(id, { x: clientX, y: clientY }, opts);
 
-        document.addEventListener("$onDragLeave", onDFlexEvent);
+        if (useDFlexEvents) {
+          // Add interactivity events.
+          document.addEventListener("$onDragLeave", onDFlexInteractivityEvent);
+          document.addEventListener("$onDragOver", onDFlexInteractivityEvent);
+
+          // Add drag events.
+          document.addEventListener("$onDragOutContainer", onDFlexDragEvent);
+          document.addEventListener("$onDragOutContainer", onDFlexDragEvent);
+
+          // Add siblings events.
+          document.addEventListener("$onLiftUpSiblings", onDFlexSiblingsEvent);
+          document.addEventListener(
+            "$onMoveDownSiblings",
+            onDFlexSiblingsEvent,
+          );
+        }
       }
     }
   };
