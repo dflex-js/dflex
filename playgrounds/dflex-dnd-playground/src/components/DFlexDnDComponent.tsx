@@ -3,7 +3,11 @@
 import React from "react";
 
 import { store, DnD } from "@dflex/dnd";
-import type { DFlexDnDOpts, DFlexEvents, RegisterInputOpts } from "@dflex/dnd";
+import type {
+  DFlexDnDOpts,
+  RegisterInputOpts,
+  DFlexInteractivityEvent,
+} from "@dflex/dnd";
 
 // const evts = new Set([
 //   "$onDragOutContainer",
@@ -66,9 +70,9 @@ const DFlexDnDComponent = ({
     };
   }, [taskRef]);
 
-  const onDFlexEvent = (e: DFlexEvents) => {
+  const onDFlexEvent = (e: DFlexInteractivityEvent) => {
     // eslint-disable-next-line no-console
-    console.log(`onDFlexEvent: ${e.type}`, e.detail);
+    console.log(`onDFlexEvent: ${e.type}`, e.detail.type);
   };
 
   const onMouseMove = (e: MouseEvent) => {

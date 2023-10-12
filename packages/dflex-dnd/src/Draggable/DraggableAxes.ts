@@ -12,12 +12,9 @@ import {
 
 import type { DFlexElement } from "@dflex/core-instance";
 
-import {
-  DFlexEventPlugin,
-  initDFlexEvent,
-  scheduler,
-  store,
-} from "../LayoutManager";
+import { scheduler, store } from "../LayoutManager";
+
+import { DFlexEvent } from "../Events";
 
 import type {
   ContainersTransition,
@@ -89,7 +86,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
 
   private readonly initCoordinates: PointNum;
 
-  events: DFlexEventPlugin;
+  events: ReturnType<typeof DFlexEvent>;
 
   constructor(id: string, initCoordinates: AxesPoint, opts: FinalDndOpts) {
     const [dflexElm, DOM] = store.getElmWithDOM(id);
@@ -174,7 +171,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
 
     this.restrictionsStatus = opts.restrictionsStatus;
 
-    this.events = initDFlexEvent(DOM);
+    this.events = DFlexEvent(DOM);
 
     this.axesFilterNeeded =
       siblings !== null &&

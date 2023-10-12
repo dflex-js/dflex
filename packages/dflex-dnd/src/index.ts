@@ -5,15 +5,18 @@ export { default as DnD } from "./DnD";
 export type { DFlexDnDOpts } from "./types";
 
 export type {
+  DFlexLayoutStateEvent,
+  DFlexElmMutationEvent,
+  DFlexListenerEvents,
+} from "./LayoutManager";
+
+export type {
   DFlexDraggedEvent,
   DFlexInteractivityEvent,
   DFlexSiblingsEvent,
   DFlexEvents,
   DFlexEventsTypes,
-  DFlexLayoutStateEvent,
-  DFlexElmMutationEvent,
-  DFlexListenerEvents,
-} from "./LayoutManager";
+} from "./Events";
 
 export type {
   DFlexScrollContainer,
