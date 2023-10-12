@@ -11,15 +11,6 @@ import type {
   DFlexSiblingsEvent,
 } from "@dflex/dnd";
 
-// const evts = new Set([
-//   "$onDragOutContainer",
-//   "$onDragOutThreshold",
-//   "$onDragOver",
-//   "$onDragLeave",
-//   "$onLiftUpSiblings",
-//   "$onMoveDownSiblings",
-// ]);
-
 let dflexDnD: DnD | null;
 
 interface Props {
@@ -29,7 +20,7 @@ interface Props {
   children: React.ReactNode;
   registerInput: RegisterInputOpts;
   opts?: DFlexDnDOpts;
-  useDFlexEvents: boolean;
+  useDFlexEvents?: boolean;
 }
 
 const isCI = import.meta.env.MODE === "CI";
