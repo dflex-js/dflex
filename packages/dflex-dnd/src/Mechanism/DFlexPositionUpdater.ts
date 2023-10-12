@@ -51,12 +51,21 @@ function throwOnInfiniteTransformation(id: string) {
   }
 }
 
-function composeElmMeta(dflexELm: DFlexElement): PayloadInteractivityEvent {
+function createInteractivityPayload(
+  dflexELm: DFlexElement,
+): PayloadInteractivityEvent {
+  const {
+    id,
+    VDOMOrder: { self: index },
+  } = dflexELm;
+
+  const target = store.interactiveDOM.get(dflexELm.id)!;
+
   return {
     type: INTERACTIVITY_EVENT,
-    id: dflexELm.id,
-    index: dflexELm.VDOMOrder.self,
-    target: store.interactiveDOM.get(dflexELm.id)!,
+    id,
+    index,
+    target,
   };
 }
 
@@ -541,7 +550,10 @@ class DFlexPositionUpdater {
       this.updateDraggedThresholdPosition(rect.left, rect.top);
     }
 
-    this.draggable.events.dispatch(ON_DRAG_OVER, composeElmMeta(element));
+    this.draggable.events.dispatch(
+      ON_DRAG_OVER,
+      createInteractivityPayload(element),
+    );
 
     element.reconcilePosition(
       axis,
@@ -554,7 +566,10 @@ class DFlexPositionUpdater {
       cycleID,
     );
 
-    this.draggable.events.dispatch(ON_DRAG_LEAVE, composeElmMeta(element));
+    this.draggable.events.dispatch(
+      ON_DRAG_LEAVE,
+      createInteractivityPayload(element),
+    );
   }
 }
 
