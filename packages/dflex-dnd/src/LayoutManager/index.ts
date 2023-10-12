@@ -9,3 +9,5 @@ export type {
   DFlexLayoutStateEvent,
   DFlexElmMutationEvent,
 } from "./DFlexListeners";
+
+export type { default as DFlexDnDStore } from "./DFlexDnDStore";

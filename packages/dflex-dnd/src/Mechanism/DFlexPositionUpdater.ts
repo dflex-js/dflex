@@ -19,8 +19,7 @@ import type DraggableInteractive from "../Draggable";
 
 import { store } from "../LayoutManager";
 
-import { DFLEX_EVENTS, EVENT_TYPES } from "../Events";
-import { PayloadInteractivityEvent } from "../Events/constants";
+import { DFLEX_EVENTS, createInteractivityPayload } from "../Events";
 
 const MAX_TRANSFORM_COUNT = 99; /** Infinite transform count */
 
@@ -31,8 +30,6 @@ let prevElmInActiveArea: string | null = null;
 const {
   INTERACTIVITY_EVENT: { ON_DRAG_LEAVE, ON_DRAG_OVER },
 } = DFLEX_EVENTS;
-
-const { INTERACTIVITY_EVENT } = EVENT_TYPES;
 
 function throwOnInfiniteTransformation(id: string) {
   elmInActiveArea = id;
@@ -49,24 +46,6 @@ function throwOnInfiniteTransformation(id: string) {
       `Element ${id} is being transformed endlessly. This is causing infinite recursion affecting the element updater. This is most likely caused by a wrong threshold calculations.`,
     );
   }
-}
-
-function createInteractivityPayload(
-  dflexELm: DFlexElement,
-): PayloadInteractivityEvent {
-  const {
-    id,
-    VDOMOrder: { self: index },
-  } = dflexELm;
-
-  const target = store.interactiveDOM.get(dflexELm.id)!;
-
-  return {
-    type: INTERACTIVITY_EVENT,
-    id,
-    index,
-    target,
-  };
 }
 
 type InsertionELmMeta = {
@@ -552,7 +531,7 @@ class DFlexPositionUpdater {
 
     this.draggable.events.dispatch(
       ON_DRAG_OVER,
-      createInteractivityPayload(element),
+      createInteractivityPayload(element, store),
     );
 
     element.reconcilePosition(
@@ -568,7 +547,7 @@ class DFlexPositionUpdater {
 
     this.draggable.events.dispatch(
       ON_DRAG_LEAVE,
-      createInteractivityPayload(element),
+      createInteractivityPayload(element, store),
     );
   }
 }
