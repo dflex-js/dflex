@@ -14,7 +14,7 @@ import {
 
 import { scheduler, store } from "../LayoutManager";
 
-import { DFLEX_EVENTS } from "../Events";
+import { DFLEX_EVENTS, EVENT_TYPES } from "../Events";
 
 import DraggableInteractive from "../Draggable";
 
@@ -29,8 +29,9 @@ import DFlexScrollableElement from "./DFlexScrollableElement";
 const {
   DRAG_EVENT: { ON_OUT_CONTAINER, ON_OUT_THRESHOLD },
   SIBLINGS_EVENT: { ON_LIFT_UP, ON_MOVE_DOWN },
-  INTERACTIVITY_EVENT: { ON_DRAG_LEAVE, ON_DRAG_OVER },
 } = DFLEX_EVENTS;
+
+const { DRAG_EVENT, SIBLINGS_EVENT } = EVENT_TYPES;
 
 export function isIDEligible(elmID: string, draggedID: string): boolean {
   const { registry } = store;
@@ -378,7 +379,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     );
 
     events.dispatch(ON_LIFT_UP, {
-      type: "siblings",
+      type: SIBLINGS_EVENT,
       siblings,
       from,
       to: siblings.length,
@@ -414,6 +415,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     const siblings = store.getElmSiblingsByKey(SK);
 
     events.dispatch(ON_MOVE_DOWN, {
+      type: SIBLINGS_EVENT,
       siblings,
       from: siblings!.length - 1,
       to: siblings.length,
@@ -801,6 +803,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     if (this.draggable.isOutThreshold()) {
       events.dispatch(ON_OUT_THRESHOLD, {
+        type: DRAG_EVENT,
         id: draggedElm.id,
         index: store.migration.latest().index,
       });
@@ -833,6 +836,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       draggedElm.setAttribute(draggedDOM, "OUT_CONTAINER", "true");
 
       events.dispatch(ON_OUT_CONTAINER, {
+        type: DRAG_EVENT,
         id: draggedElm.id,
         index: store.migration.latest().index,
       });

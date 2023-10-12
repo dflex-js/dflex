@@ -17,13 +17,22 @@ import type {
 
 import type DraggableInteractive from "../Draggable";
 
-import { store, DFLEX_EVENTS } from "../LayoutManager";
+import { store } from "../LayoutManager";
+
+import { DFLEX_EVENTS, EVENT_TYPES } from "../Events";
+import { PayloadInteractivityEvent } from "../Events/constants";
 
 const MAX_TRANSFORM_COUNT = 99; /** Infinite transform count */
 
 let infiniteTransformCount: number = 0;
 let elmInActiveArea: string | null = null;
 let prevElmInActiveArea: string | null = null;
+
+const {
+  INTERACTIVITY_EVENT: { ON_DRAG_LEAVE, ON_DRAG_OVER },
+} = DFLEX_EVENTS;
+
+const { INTERACTIVITY_EVENT } = EVENT_TYPES;
 
 function throwOnInfiniteTransformation(id: string) {
   elmInActiveArea = id;
@@ -42,11 +51,12 @@ function throwOnInfiniteTransformation(id: string) {
   }
 }
 
-function composeElmMeta(element: DFlexElement) {
+function composeElmMeta(dflexELm: DFlexElement): PayloadInteractivityEvent {
   return {
-    id: element.id,
-    index: element.VDOMOrder.self,
-    target: store.interactiveDOM.get(element.id),
+    type: INTERACTIVITY_EVENT,
+    id: dflexELm.id,
+    index: dflexELm.VDOMOrder.self,
+    target: store.interactiveDOM.get(dflexELm.id)!,
   };
 }
 
@@ -531,10 +541,7 @@ class DFlexPositionUpdater {
       this.updateDraggedThresholdPosition(rect.left, rect.top);
     }
 
-    this.draggable.events.dispatch(
-      DFLEX_EVENTS.ON_DRAG_OVER,
-      composeElmMeta(element),
-    );
+    this.draggable.events.dispatch(ON_DRAG_OVER, composeElmMeta(element));
 
     element.reconcilePosition(
       axis,
@@ -547,10 +554,7 @@ class DFlexPositionUpdater {
       cycleID,
     );
 
-    this.draggable.events.dispatch(
-      DFLEX_EVENTS.ON_DRAG_LEAVE,
-      composeElmMeta(element),
-    );
+    this.draggable.events.dispatch(ON_DRAG_LEAVE, composeElmMeta(element));
   }
 }
 

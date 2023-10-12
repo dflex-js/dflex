@@ -38,8 +38,15 @@ export const DFLEX_EVENTS = {
   SIBLINGS_EVENT,
 } as const;
 
+export const EVENT_TYPES = {
+  DRAG_EVENT: "drag",
+  INTERACTIVITY_EVENT: "interactivity",
+  SIBLINGS_EVENT: "siblings",
+} as const;
+
 if (__DEV__) {
   Object.freeze(DFLEX_EVENTS);
+  Object.freeze(EVENT_TYPES);
 }
 
 export interface Events {
@@ -67,7 +74,7 @@ export type DFlexEventNames =
   | SiblingsEventNames;
 
 export type PayloadDraggedEvent = {
-  type: "drag";
+  type: typeof EVENT_TYPES.DRAG_EVENT;
   /** Returns element id in the registry */
   id: string;
   /** Returns dragged temp index */
@@ -75,7 +82,7 @@ export type PayloadDraggedEvent = {
 };
 
 export type PayloadInteractivityEvent = {
-  type: "interactivity";
+  type: typeof EVENT_TYPES.INTERACTIVITY_EVENT;
   /** Returns element id in the registry */
   id: string;
   /** Returns element current index */
@@ -85,7 +92,7 @@ export type PayloadInteractivityEvent = {
 };
 
 export type PayloadSiblingsEvent = {
-  type: "siblings";
+  type: typeof EVENT_TYPES.SIBLINGS_EVENT;
   /** Returns the index where the dragged left */
   from: number;
   /** Returns the last index effected of the dragged leaving/entering */
