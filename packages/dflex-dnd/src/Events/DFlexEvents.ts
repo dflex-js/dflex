@@ -10,7 +10,6 @@ import {
   DFlexEvents,
   DFlexEventNames,
   DFlexEventPayload,
-  DRAG_EVENT,
 } from "./constants";
 
 const EVT_CONFIG = {
@@ -41,6 +40,12 @@ function dispatchDFlexEvent(
   DOM: HTMLElement,
   eventName: DFlexEventNames,
   payload: DFlexEventPayload,
+): void;
+
+function dispatchDFlexEvent(
+  DOM: HTMLElement,
+  eventName: DFlexEventNames,
+  payload: DFlexEventPayload,
 ): void {
   const emittedEvent = Object.assign(EVT_CONFIG, { detail: payload });
 
@@ -58,18 +63,21 @@ function dispatchDFlexEvent(
 }
 
 function DFlexEvent(dispatcher: HTMLElement) {
-  const dispatch = (
-    eventName: DragEventNames,
-    payload: PayloadDraggedEvent,
-  ): void;
   function dispatch(
     eventName: InteractivityEventNames,
     payload: PayloadInteractivityEvent,
   ): void;
+
+  function dispatch(
+    eventName: DragEventNames,
+    payload: PayloadDraggedEvent,
+  ): void;
+
   function dispatch(
     eventName: SiblingsEventNames,
     payload: PayloadSiblingsEvent,
   ): void;
+
   function dispatch(
     eventName: DFlexEventNames,
     payload: DFlexEventPayload,
@@ -81,4 +89,5 @@ function DFlexEvent(dispatcher: HTMLElement) {
     dispatch,
   };
 }
+
 export default DFlexEvent;

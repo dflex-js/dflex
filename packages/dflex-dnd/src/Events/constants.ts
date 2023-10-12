@@ -32,6 +32,16 @@ export const SIBLINGS_EVENT = {
   ON_MOVE_DOWN,
 } as const;
 
+export const DFLEX_EVENTS = {
+  DRAG_EVENT,
+  INTERACTIVITY_EVENT,
+  SIBLINGS_EVENT,
+} as const;
+
+if (__DEV__) {
+  Object.freeze(DFLEX_EVENTS);
+}
+
 export interface Events {
   drag: typeof DRAG_EVENT;
 
