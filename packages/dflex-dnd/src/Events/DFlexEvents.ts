@@ -49,17 +49,11 @@ function dispatchDFlexEvent(
 ): void {
   const emittedEvent = Object.assign(EVT_CONFIG, { detail: payload });
 
-  if (__DEV__) {
-    Object.freeze(emittedEvent);
-  }
-
-  const event: DFlexEvents = new CustomEvent<
+  const dflexEvent: DFlexEvents = new CustomEvent<
     PayloadDraggedEvent | PayloadInteractivityEvent | PayloadSiblingsEvent
-  >(eventName, {
-    detail: payload,
-  });
+  >(eventName, emittedEvent);
 
-  DOM.dispatchEvent(event);
+  DOM.dispatchEvent(dflexEvent);
 }
 
 function DFlexEvent(dispatcher: HTMLElement) {
