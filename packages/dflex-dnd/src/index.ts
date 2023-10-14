@@ -10,6 +10,8 @@ export type {
   DFlexListenerEvents,
 } from "./LayoutManager";
 
+export { DFLEX_EVENTS, DFLEX_EVENTS_CAT } from "./Events";
+
 export type {
   DFlexDraggedEvent,
   DFlexInteractivityEvent,

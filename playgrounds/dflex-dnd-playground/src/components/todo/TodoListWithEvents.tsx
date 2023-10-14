@@ -1,5 +1,4 @@
 import React from "react";
-// import type { LayoutStateEvent } from "@dflex/dnd";
 
 import DFlexDnDComponent from "../DFlexDnDComponent";
 

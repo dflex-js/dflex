@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-redeclare */
-import {
+import type {
   DragEventNames,
   InteractivityEventNames,
   SiblingsEventNames,
@@ -10,13 +10,17 @@ import {
   DFlexEvents,
   DFlexEventNames,
   DFlexEventPayloads,
-} from "./constants";
+} from "./types";
 
 const EVT_CONFIG = {
   bubbles: true,
   cancelable: true,
   composed: true,
 };
+
+function domEventUpdater(DOM: HTMLElement, dflexEvent: DFlexEvents): void {
+  DOM.dispatchEvent(dflexEvent);
+}
 
 function dispatchDFlexEvent(
   DOM: HTMLElement,
@@ -53,7 +57,7 @@ function dispatchDFlexEvent(
     PayloadDraggedEvent | PayloadInteractivityEvent | PayloadSiblingsEvent
   >(eventName, emittedEvent);
 
-  DOM.dispatchEvent(dflexEvent);
+  domEventUpdater(DOM, dflexEvent);
 }
 
 function DFlexEvent(dispatcher: HTMLElement) {

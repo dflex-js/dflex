@@ -6,7 +6,7 @@ export {
   createDragPayload,
 } from "./payloads";
 
-export { DFLEX_EVENTS } from "./constants";
+export { DFLEX_EVENTS, DFLEX_EVENTS_CAT } from "./constants";
 
 export type {
   DFlexDraggedEvent,
@@ -15,4 +15,4 @@ export type {
   DFlexEvents,
   DFlexEventNames as DFlexEventsTypes,
   DFlexEventsMap,
-} from "./constants";
+} from "./types";
