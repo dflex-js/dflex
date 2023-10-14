@@ -1,6 +1,7 @@
 import {
   AxesPoint,
   Axis,
+  DFlexCreateRAF,
   DFlexCreateTimeout,
   featureFlags,
   getOppositeAxis,
@@ -53,11 +54,7 @@ export function isIDEligible(elmID: string, draggedID: string): boolean {
 }
 
 class DFlexMechanismController extends DFlexScrollableElement {
-  private isOnDragOutThresholdEvtEmitted: boolean;
-
-  /** This is only related to insert method as the each element has it's own for
-   * transformation. */
-  private _animatedDraggedInsertionFrame: number | null;
+  private _RAF: ReturnType<typeof DFlexCreateRAF>;
 
   private _detectNearestContainerThrottle: TimeoutFunction;
 
@@ -94,8 +91,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     super(draggable);
 
     this.hasBeenScrolling = false;
-    this.isOnDragOutThresholdEvtEmitted = false;
-    this._animatedDraggedInsertionFrame = null;
+    this._RAF = DFlexCreateRAF();
     [this._detectNearestContainerThrottle] = DFlexCreateTimeout(0);
     this._listAppendPosition = null;
     this.isParentLocked = false;
@@ -704,17 +700,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
     return false;
   }
 
-  // Guessing what axis the exit happened.
-  private _draggedOutPositionNotifier(): void {
-    const isTriggered = this._actionByAxis("y");
-
-    if (isTriggered) {
-      return;
-    }
-
-    this._actionByAxis("x");
-  }
-
   /**
    * Locks or unlocks the parent container based on whether the dragged element
    * is out of it. Additionally, it clears the threshold dead zone.
@@ -722,7 +707,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
    * @param isOut - A boolean indicating if the dragged element is out of its
    * parent container.
    */
-  private _lockParent(isOut: boolean) {
+  private _lockParent(isOut: boolean): void {
     if (__DEV__) {
       if (featureFlags.enableMechanismDebugger) {
         // eslint-disable-next-line no-console
@@ -734,13 +719,82 @@ class DFlexMechanismController extends DFlexScrollableElement {
     this._thresholdDeadZone.clear();
   }
 
-  dragAt(x: number, y: number) {
+  private _dragOutThreshold(): void {
+    const { draggedElm, draggedDOM, events } = this.draggable;
+
+    const { migration } = store;
+
+    draggedElm.setAttribute(draggedDOM, "OUT_POS", "true");
+
+    events.dispatch(
+      ON_OUT_THRESHOLD,
+      createDragPayload({
+        id: draggedElm.id,
+        index: migration.latest().index,
+      }),
+    );
+
+    // Guessing what axis the exit happened.
+    const isTriggered = this._actionByAxis("y");
+
+    if (isTriggered) {
+      return;
+    }
+
+    this._actionByAxis("x");
+  }
+
+  private _dragOutContainer(): void {
+    const { draggedElm, draggedDOM, containersTransition, events } =
+      this.draggable;
+
+    const { migration } = store;
+
+    draggedElm.setAttribute(draggedDOM, "OUT_CONTAINER", "true");
+
+    events.dispatch(
+      ON_OUT_CONTAINER,
+      createDragPayload({
+        id: draggedElm.id,
+        index: store.migration.latest().index,
+      }),
+    );
+
+    this._lockParent(true);
+
+    if (containersTransition.enable) {
+      const cb = () => {
+        this._detectNearestContainer();
+
+        if (migration.isTransitioning) {
+          scheduler(store, null, {
+            onUpdate: () => {
+              this._detectNearestElm();
+            },
+          });
+        }
+      };
+
+      this._detectNearestContainerThrottle(cb, true);
+    }
+  }
+
+  private _dragInsideContainer(): void {
+    const [RAF, , isCompleted] = this._RAF;
+
+    if (isCompleted()) {
+      RAF(() => {
+        this._detectNearestElm();
+      }, false);
+    }
+  }
+
+  dragAt(x: number, y: number): void {
     if (!store.isLayoutAvailable) {
       return;
     }
 
-    const { draggedElm, draggedDOM, containersTransition, scroll, events } =
-      this.draggable;
+    const { draggedElm, draggedDOM, scroll } = this.draggable;
 
     const { migration } = store;
 
@@ -808,18 +862,8 @@ class DFlexMechanismController extends DFlexScrollableElement {
     }
 
     if (this.draggable.isOutThreshold()) {
-      events.dispatch(
-        ON_OUT_THRESHOLD,
-        createDragPayload({
-          id: draggedElm.id,
-          index: store.migration.latest().index,
-        }),
-      );
-
       if (!this.isParentLocked) {
-        draggedElm.setAttribute(draggedDOM, "OUT_POS", "true");
-
-        this._draggedOutPositionNotifier();
+        this._dragOutThreshold();
 
         return;
       }
@@ -830,52 +874,14 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
       // When it's out but still inside its container.
       if (!isOutSiblingsContainer) {
-        if (this._animatedDraggedInsertionFrame === null) {
-          this._animatedDraggedInsertionFrame = requestAnimationFrame(() => {
-            this._detectNearestElm();
-
-            this._animatedDraggedInsertionFrame = null;
-          });
-        }
+        this._dragInsideContainer();
 
         return;
       }
 
-      draggedElm.setAttribute(draggedDOM, "OUT_CONTAINER", "true");
-
-      events.dispatch(
-        ON_OUT_CONTAINER,
-        createDragPayload({
-          id: draggedElm.id,
-          index: store.migration.latest().index,
-        }),
-      );
-
-      this.isParentLocked = true;
-
-      if (containersTransition.enable) {
-        const cb = () => {
-          this._detectNearestContainer();
-
-          if (migration.isTransitioning) {
-            scheduler(store, null, {
-              onUpdate: () => {
-                this._detectNearestElm();
-              },
-            });
-          }
-        };
-
-        this._detectNearestContainerThrottle(cb, true);
-
-        return;
-      }
+      this._dragOutContainer();
 
       return;
-    }
-
-    if (this.isOnDragOutThresholdEvtEmitted) {
-      this.isOnDragOutThresholdEvtEmitted = false;
     }
 
     /**
@@ -888,13 +894,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         return;
       }
 
-      if (this._animatedDraggedInsertionFrame === null) {
-        this._animatedDraggedInsertionFrame = requestAnimationFrame(() => {
-          this._detectNearestElm();
-
-          this._animatedDraggedInsertionFrame = null;
-        });
-      }
+      this._dragInsideContainer();
     }
   }
 }

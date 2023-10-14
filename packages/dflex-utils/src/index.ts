@@ -75,6 +75,7 @@ export {
   getParentElm,
   updateElmDatasetGrid,
   DFlexCreateRAF,
+  autoCleanupAllRAFs,
   DFlexCreateTimeout,
   autoCleanupAllTimeouts,
   getElmBoxRect,

@@ -1,16 +1,16 @@
 import type { DFlexElement } from "@dflex/core-instance";
 
-import { EVENT_TYPES } from "./constants";
+import { DFLEX_EVENTS_CAT } from "./constants";
 
 import type {
   PayloadDraggedEvent,
   PayloadInteractivityEvent,
   PayloadSiblingsEvent,
-} from "./constants";
+} from "./types";
 
 import type { DFlexDnDStore } from "../LayoutManager";
 
-const { INTERACTIVITY_EVENT, SIBLINGS_EVENT, DRAG_EVENT } = EVENT_TYPES;
+const { INTERACTIVITY_CAT, SIBLINGS_CAT, DRAG_CAT } = DFLEX_EVENTS_CAT;
 
 function createInteractivityPayload(
   dflexELm: DFlexElement,
@@ -24,7 +24,7 @@ function createInteractivityPayload(
   const target = store.interactiveDOM.get(dflexELm.id)!;
 
   return {
-    type: INTERACTIVITY_EVENT,
+    type: INTERACTIVITY_CAT,
     id,
     index,
     target,
@@ -37,7 +37,7 @@ function createSiblingsPayload({
   siblings,
 }: Omit<PayloadSiblingsEvent, "type">): PayloadSiblingsEvent {
   return {
-    type: SIBLINGS_EVENT,
+    type: SIBLINGS_CAT,
     from,
     to,
     siblings,
@@ -49,7 +49,7 @@ function createDragPayload({
   index,
 }: Omit<PayloadDraggedEvent, "type">): PayloadDraggedEvent {
   return {
-    type: DRAG_EVENT,
+    type: DRAG_CAT,
     id,
     index,
   };

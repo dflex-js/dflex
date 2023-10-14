@@ -6,9 +6,9 @@ interface EventInstance {
   eventCallback: EventCallback;
 }
 
-const eventInstances: EventInstance[] = [];
-
 export type EventCleanup = () => void;
+
+const eventInstances: EventInstance[] = [];
 
 function DFlexCreateEvent(
   eventName: string,
