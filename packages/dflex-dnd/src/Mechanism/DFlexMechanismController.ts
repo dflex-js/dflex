@@ -708,7 +708,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
    * @param isOut - A boolean indicating if the dragged element is out of its
    * parent container.
    */
-  private _lockParent(isOut: boolean) {
+  private _lockParent(isOut: boolean): void {
     if (__DEV__) {
       if (featureFlags.enableMechanismDebugger) {
         // eslint-disable-next-line no-console
@@ -720,7 +720,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     this._thresholdDeadZone.clear();
   }
 
-  private _dragOutThresholdHandler() {
+  private _dragOutThreshold(): void {
     const { draggedElm, draggedDOM, events } = this.draggable;
 
     const { migration } = store;
@@ -745,7 +745,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     this._actionByAxis("x");
   }
 
-  private _dragOutContainerHandler() {
+  private _dragOutContainer(): void {
     const { draggedElm, draggedDOM, containersTransition, events } =
       this.draggable;
 
@@ -780,7 +780,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     }
   }
 
-  private _dragInsideContainerHandler() {
+  private _dragInsideContainer(): void {
     if (this._animatedDraggedInsertionFrame === null) {
       this._animatedDraggedInsertionFrame = requestAnimationFrame(() => {
         this._detectNearestElm();
@@ -790,7 +790,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     }
   }
 
-  dragAt(x: number, y: number) {
+  dragAt(x: number, y: number): void {
     if (!store.isLayoutAvailable) {
       return;
     }
@@ -864,7 +864,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     if (this.draggable.isOutThreshold()) {
       if (!this.isParentLocked) {
-        this._dragOutThresholdHandler();
+        this._dragOutThreshold();
 
         return;
       }
@@ -875,12 +875,12 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
       // When it's out but still inside its container.
       if (!isOutSiblingsContainer) {
-        this._dragInsideContainerHandler();
+        this._dragInsideContainer();
 
         return;
       }
 
-      this._dragOutContainerHandler();
+      this._dragOutContainer();
 
       return;
     }
@@ -895,7 +895,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         return;
       }
 
-      this._dragInsideContainerHandler();
+      this._dragInsideContainer();
     }
   }
 }

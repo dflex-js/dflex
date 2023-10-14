@@ -10,6 +10,8 @@ export type RAFFunction = (
   cancelPrevFrame: boolean,
 ) => void;
 
+const rafInstances: number[] = [];
+
 function DFlexCreateRAF(): [RAFFunction, RAFCleanup] {
   let id: number | null = null;
 
@@ -30,6 +32,7 @@ function DFlexCreateRAF(): [RAFFunction, RAFCleanup] {
 
     try {
       id = requestAnimationFrame(callback);
+      rafInstances.push(id);
     } catch (error) {
       if (__DEV__) {
         // eslint-disable-next-line no-console
@@ -41,4 +44,14 @@ function DFlexCreateRAF(): [RAFFunction, RAFCleanup] {
   return [RAF, cleanup];
 }
 
-export default DFlexCreateRAF;
+function autoCleanupAllRAFs(): void {
+  rafInstances.forEach((rafId) => {
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+    }
+  });
+
+  rafInstances.length = 0;
+}
+
+export { DFlexCreateRAF, autoCleanupAllRAFs };
