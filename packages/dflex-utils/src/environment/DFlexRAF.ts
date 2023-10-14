@@ -1,6 +1,8 @@
 // eslint-disable-next-line no-unused-vars
 type AnimationFrameCallback = (timestamp: number) => void;
 
+type IsRafDone = () => boolean;
+
 export type RAFCleanup = () => void;
 
 export type RAFFunction = (
@@ -10,16 +12,40 @@ export type RAFFunction = (
   cancelPrevFrame: boolean,
 ) => void;
 
-const rafInstances: number[] = [];
+// Maintain array of active RAF ids
+const activeRAFIds: number[] = [];
 
-function DFlexCreateRAF(): [RAFFunction, RAFCleanup] {
-  let id: number | null = null;
+// Utility to cancel RAF
+function cancelRAF(rafId: number): void {
+  cancelAnimationFrame(rafId);
+}
+
+// Inject completion logic into callback
+function injectRAFCompleteCheck(
+  callback: AnimationFrameCallback,
+  rafDone: RAFCleanup,
+): AnimationFrameCallback {
+  return (timestamp: number) => {
+    callback(timestamp);
+    rafDone();
+  };
+}
+
+function DFlexCreateRAF(): [RAFFunction, RAFCleanup, IsRafDone] {
+  let rafId: number;
+  let isCompleted: boolean = true;
+
+  function rafDone(): void {
+    isCompleted = true;
+  }
+
+  function isRafDone(): boolean {
+    return isCompleted;
+  }
 
   function cleanup(): void {
-    if (id) {
-      cancelAnimationFrame(id);
-      id = null;
-    }
+    cancelRAF(rafId);
+    activeRAFIds.splice(activeRAFIds.indexOf(rafId), 1);
   }
 
   function RAF(
@@ -31,8 +57,10 @@ function DFlexCreateRAF(): [RAFFunction, RAFCleanup] {
     }
 
     try {
-      id = requestAnimationFrame(callback);
-      rafInstances.push(id);
+      isCompleted = false;
+      const wrappedCallback = injectRAFCompleteCheck(callback, rafDone);
+      rafId = requestAnimationFrame(wrappedCallback);
+      activeRAFIds.push(rafId);
     } catch (error) {
       if (__DEV__) {
         // eslint-disable-next-line no-console
@@ -41,17 +69,12 @@ function DFlexCreateRAF(): [RAFFunction, RAFCleanup] {
     }
   }
 
-  return [RAF, cleanup];
+  return [RAF, cleanup, isRafDone];
 }
 
 function autoCleanupAllRAFs(): void {
-  rafInstances.forEach((rafId) => {
-    if (rafId) {
-      cancelAnimationFrame(rafId);
-    }
-  });
-
-  rafInstances.length = 0;
+  activeRAFIds.forEach(cancelRAF);
+  activeRAFIds.length = 0;
 }
 
 export { DFlexCreateRAF, autoCleanupAllRAFs };

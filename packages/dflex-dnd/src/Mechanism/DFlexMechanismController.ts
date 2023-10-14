@@ -1,6 +1,7 @@
 import {
   AxesPoint,
   Axis,
+  DFlexCreateRAF,
   DFlexCreateTimeout,
   featureFlags,
   getOppositeAxis,
@@ -53,9 +54,7 @@ export function isIDEligible(elmID: string, draggedID: string): boolean {
 }
 
 class DFlexMechanismController extends DFlexScrollableElement {
-  /** This is only related to insert method as the each element has it's own for
-   * transformation. */
-  private _animatedDraggedInsertionFrame: number | null;
+  private _RAF: ReturnType<typeof DFlexCreateRAF>;
 
   private _detectNearestContainerThrottle: TimeoutFunction;
 
@@ -92,7 +91,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     super(draggable);
 
     this.hasBeenScrolling = false;
-    this._animatedDraggedInsertionFrame = null;
+    this._RAF = DFlexCreateRAF();
     [this._detectNearestContainerThrottle] = DFlexCreateTimeout(0);
     this._listAppendPosition = null;
     this.isParentLocked = false;
@@ -781,12 +780,12 @@ class DFlexMechanismController extends DFlexScrollableElement {
   }
 
   private _dragInsideContainer(): void {
-    if (this._animatedDraggedInsertionFrame === null) {
-      this._animatedDraggedInsertionFrame = requestAnimationFrame(() => {
-        this._detectNearestElm();
+    const [RAF, , isCompleted] = this._RAF;
 
-        this._animatedDraggedInsertionFrame = null;
-      });
+    if (isCompleted()) {
+      RAF(() => {
+        this._detectNearestElm();
+      }, false);
     }
   }
 
