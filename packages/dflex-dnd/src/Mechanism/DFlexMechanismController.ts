@@ -751,13 +751,57 @@ class DFlexMechanismController extends DFlexScrollableElement {
     this._actionByAxis("x");
   }
 
+  private _dragOutContainerHandler() {
+    const { draggedElm, draggedDOM, containersTransition, events } =
+      this.draggable;
+
+    const { migration } = store;
+
+    draggedElm.setAttribute(draggedDOM, "OUT_CONTAINER", "true");
+
+    events.dispatch(
+      ON_OUT_CONTAINER,
+      createDragPayload({
+        id: draggedElm.id,
+        index: store.migration.latest().index,
+      }),
+    );
+
+    this._lockParent(true);
+
+    if (containersTransition.enable) {
+      const cb = () => {
+        this._detectNearestContainer();
+
+        if (migration.isTransitioning) {
+          scheduler(store, null, {
+            onUpdate: () => {
+              this._detectNearestElm();
+            },
+          });
+        }
+      };
+
+      this._detectNearestContainerThrottle(cb, true);
+    }
+  }
+
+  private _dragInsideContainerHandler() {
+    if (this._animatedDraggedInsertionFrame === null) {
+      this._animatedDraggedInsertionFrame = requestAnimationFrame(() => {
+        this._detectNearestElm();
+
+        this._animatedDraggedInsertionFrame = null;
+      });
+    }
+  }
+
   dragAt(x: number, y: number) {
     if (!store.isLayoutAvailable) {
       return;
     }
 
-    const { draggedElm, draggedDOM, containersTransition, scroll, events } =
-      this.draggable;
+    const { draggedElm, draggedDOM, scroll } = this.draggable;
 
     const { migration } = store;
 
@@ -837,54 +881,14 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
       // When it's out but still inside its container.
       if (!isOutSiblingsContainer) {
-        if (this._animatedDraggedInsertionFrame === null) {
-          this._animatedDraggedInsertionFrame = requestAnimationFrame(() => {
-            this._detectNearestElm();
-
-            this._animatedDraggedInsertionFrame = null;
-          });
-        }
+        this._dragInsideContainerHandler();
 
         return;
       }
 
-      if (!this._hasEmittedDragEvent) {
-        draggedElm.setAttribute(draggedDOM, "OUT_CONTAINER", "true");
-
-        events.dispatch(
-          ON_OUT_CONTAINER,
-          createDragPayload({
-            id: draggedElm.id,
-            index: store.migration.latest().index,
-          }),
-        );
-      }
-
-      this.isParentLocked = true;
-
-      if (containersTransition.enable) {
-        const cb = () => {
-          this._detectNearestContainer();
-
-          if (migration.isTransitioning) {
-            scheduler(store, null, {
-              onUpdate: () => {
-                this._detectNearestElm();
-              },
-            });
-          }
-        };
-
-        this._detectNearestContainerThrottle(cb, true);
-
-        return;
-      }
+      this._dragOutContainerHandler();
 
       return;
-    }
-
-    if (this.isOnDragOutThresholdEvtEmitted) {
-      this.isOnDragOutThresholdEvtEmitted = false;
     }
 
     /**
@@ -897,13 +901,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         return;
       }
 
-      if (this._animatedDraggedInsertionFrame === null) {
-        this._animatedDraggedInsertionFrame = requestAnimationFrame(() => {
-          this._detectNearestElm();
-
-          this._animatedDraggedInsertionFrame = null;
-        });
-      }
+      this._dragInsideContainerHandler();
     }
   }
 }
