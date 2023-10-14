@@ -53,8 +53,6 @@ export function isIDEligible(elmID: string, draggedID: string): boolean {
 }
 
 class DFlexMechanismController extends DFlexScrollableElement {
-  private isOnDragOutThresholdEvtEmitted: boolean;
-
   /** This is only related to insert method as the each element has it's own for
    * transformation. */
   private _animatedDraggedInsertionFrame: number | null;
@@ -70,8 +68,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
    * between two intersected thresholds.
    */
   private _thresholdDeadZone: ThresholdDeadZone;
-
-  private _hasEmittedDragEvent: boolean;
 
   static INDEX_OUT_CONTAINER = NaN;
 
@@ -96,13 +92,11 @@ class DFlexMechanismController extends DFlexScrollableElement {
     super(draggable);
 
     this.hasBeenScrolling = false;
-    this.isOnDragOutThresholdEvtEmitted = false;
     this._animatedDraggedInsertionFrame = null;
     [this._detectNearestContainerThrottle] = DFlexCreateTimeout(0);
     this._listAppendPosition = null;
     this.isParentLocked = false;
     this._thresholdDeadZone = new ThresholdDeadZone();
-    this._hasEmittedDragEvent = false;
 
     if (__DEV__) {
       Object.seal(this);
