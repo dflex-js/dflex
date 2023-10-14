@@ -71,6 +71,8 @@ class DFlexMechanismController extends DFlexScrollableElement {
    */
   private _thresholdDeadZone: ThresholdDeadZone;
 
+  private _hasEmittedDragEvent: boolean;
+
   static INDEX_OUT_CONTAINER = NaN;
 
   /**
@@ -100,6 +102,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     this._listAppendPosition = null;
     this.isParentLocked = false;
     this._thresholdDeadZone = new ThresholdDeadZone();
+    this._hasEmittedDragEvent = false;
 
     if (__DEV__) {
       Object.seal(this);
@@ -704,17 +707,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
     return false;
   }
 
-  // Guessing what axis the exit happened.
-  private _draggedOutPositionNotifier(): void {
-    const isTriggered = this._actionByAxis("y");
-
-    if (isTriggered) {
-      return;
-    }
-
-    this._actionByAxis("x");
-  }
-
   /**
    * Locks or unlocks the parent container based on whether the dragged element
    * is out of it. Additionally, it clears the threshold dead zone.
@@ -732,6 +724,31 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     this.isParentLocked = isOut;
     this._thresholdDeadZone.clear();
+  }
+
+  private _dragOutThresholdHandler() {
+    const { draggedElm, draggedDOM, events } = this.draggable;
+
+    const { migration } = store;
+
+    draggedElm.setAttribute(draggedDOM, "OUT_POS", "true");
+
+    events.dispatch(
+      ON_OUT_THRESHOLD,
+      createDragPayload({
+        id: draggedElm.id,
+        index: migration.latest().index,
+      }),
+    );
+
+    // Guessing what axis the exit happened.
+    const isTriggered = this._actionByAxis("y");
+
+    if (isTriggered) {
+      return;
+    }
+
+    this._actionByAxis("x");
   }
 
   dragAt(x: number, y: number) {
@@ -808,18 +825,8 @@ class DFlexMechanismController extends DFlexScrollableElement {
     }
 
     if (this.draggable.isOutThreshold()) {
-      events.dispatch(
-        ON_OUT_THRESHOLD,
-        createDragPayload({
-          id: draggedElm.id,
-          index: store.migration.latest().index,
-        }),
-      );
-
       if (!this.isParentLocked) {
-        draggedElm.setAttribute(draggedDOM, "OUT_POS", "true");
-
-        this._draggedOutPositionNotifier();
+        this._dragOutThresholdHandler();
 
         return;
       }
@@ -841,15 +848,17 @@ class DFlexMechanismController extends DFlexScrollableElement {
         return;
       }
 
-      draggedElm.setAttribute(draggedDOM, "OUT_CONTAINER", "true");
+      if (!this._hasEmittedDragEvent) {
+        draggedElm.setAttribute(draggedDOM, "OUT_CONTAINER", "true");
 
-      events.dispatch(
-        ON_OUT_CONTAINER,
-        createDragPayload({
-          id: draggedElm.id,
-          index: store.migration.latest().index,
-        }),
-      );
+        events.dispatch(
+          ON_OUT_CONTAINER,
+          createDragPayload({
+            id: draggedElm.id,
+            index: store.migration.latest().index,
+          }),
+        );
+      }
 
       this.isParentLocked = true;
 
