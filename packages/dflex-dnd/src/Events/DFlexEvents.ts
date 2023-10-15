@@ -1,5 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-redeclare */
+import { DFLEX_EVENTS, DFLEX_ATTRS, DFLEX_EVENTS_CAT } from "./constants";
+
 import type {
   DragEventNames,
   InteractivityEventNames,
@@ -18,8 +20,53 @@ const EVT_CONFIG = {
   composed: true,
 };
 
-function domEventUpdater(DOM: HTMLElement, dflexEvent: DFlexEvents): void {
+const {
+  DRAG_EVENT: {
+    ON_ENTER_CONTAINER,
+    ON_ENTER_THRESHOLD,
+    ON_OUT_CONTAINER,
+    ON_OUT_THRESHOLD,
+  },
+} = DFLEX_EVENTS;
+
+const { DRAG_CAT } = DFLEX_EVENTS_CAT;
+
+const {
+  DRAG_ATTR: { OUT_CONTAINER, OUT_THRESHOLD },
+} = DFLEX_ATTRS;
+
+function domEventUpdater(
+  DOM: HTMLElement,
+  dflexEvent: DFlexEvents,
+  eventName: DFlexEventNames,
+): void {
   DOM.dispatchEvent(dflexEvent);
+
+  if (dflexEvent.detail.type === DRAG_CAT) {
+    switch (eventName) {
+      case ON_ENTER_CONTAINER:
+        DOM.removeAttribute(OUT_CONTAINER);
+        break;
+
+      case ON_ENTER_THRESHOLD:
+        DOM.removeAttribute(OUT_THRESHOLD);
+        break;
+
+      case ON_OUT_CONTAINER:
+        DOM.setAttribute(OUT_CONTAINER, `true`);
+        break;
+
+      case ON_OUT_THRESHOLD:
+        DOM.setAttribute(OUT_THRESHOLD, `true`);
+        break;
+
+      default:
+        if (__DEV__) {
+          throw new Error(`Unexpected event name: ${eventName}`);
+        }
+        break;
+    }
+  }
 }
 
 function dispatchDFlexEvent(
@@ -57,7 +104,7 @@ function dispatchDFlexEvent(
     PayloadDraggedEvent | PayloadInteractivityEvent | PayloadSiblingsEvent
   >(eventName, emittedEvent);
 
-  domEventUpdater(DOM, dflexEvent);
+  domEventUpdater(DOM, dflexEvent, eventName);
 }
 
 function DFlexEvent(dispatcher: HTMLElement) {

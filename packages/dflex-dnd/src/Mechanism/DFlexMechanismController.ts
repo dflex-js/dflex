@@ -32,7 +32,12 @@ import {
 import DFlexScrollableElement from "./DFlexScrollableElement";
 
 const {
-  DRAG_EVENT: { ON_OUT_CONTAINER, ON_OUT_THRESHOLD },
+  DRAG_EVENT: {
+    ON_OUT_CONTAINER,
+    ON_OUT_THRESHOLD,
+    ON_ENTER_CONTAINER,
+    ON_ENTER_THRESHOLD,
+  },
   SIBLINGS_EVENT: { ON_LIFT_UP, ON_MOVE_DOWN },
 } = DFLEX_EVENTS;
 
@@ -727,23 +732,15 @@ class DFlexMechanismController extends DFlexScrollableElement {
       return;
     }
 
-    const { draggedElm, draggedDOM, events } = this.draggable;
+    const { draggedElm, events } = this.draggable;
 
-    // Is out container? Then emit, then lock.
-    if (isOut) {
-      // Emit related events and lock the container.
-      draggedElm.setAttribute(draggedDOM, "OUT_CONTAINER", "true");
-
-      events.dispatch(
-        ON_OUT_CONTAINER,
-        createDragPayload({
-          id: draggedElm.id,
-          index: store.migration.latest().index,
-        }),
-      );
-    } else {
-      draggedElm.removeAttribute(draggedDOM, "OUT_CONTAINER");
-    }
+    events.dispatch(
+      isOut ? ON_OUT_CONTAINER : ON_ENTER_CONTAINER,
+      createDragPayload({
+        id: draggedElm.id,
+        index: store.migration.latest().index,
+      }),
+    );
 
     this.isParentLocked = isOut;
     this._thresholdDeadZone.clear();
@@ -776,24 +773,17 @@ class DFlexMechanismController extends DFlexScrollableElement {
       return;
     }
 
-    const { draggedElm, draggedDOM, events } = this.draggable;
+    const { draggedElm, events } = this.draggable;
 
     const { migration } = store;
 
-    // Has it exceeded the threshold? Emit related events and set the lock state.
-    if (isOut) {
-      draggedElm.setAttribute(draggedDOM, "OUT_POS", "true");
-
-      events.dispatch(
-        ON_OUT_THRESHOLD,
-        createDragPayload({
-          id: draggedElm.id,
-          index: migration.latest().index,
-        }),
-      );
-    } else {
-      draggedElm.removeAttribute(draggedDOM, "OUT_POS");
-    }
+    events.dispatch(
+      isOut ? ON_OUT_THRESHOLD : ON_ENTER_THRESHOLD,
+      createDragPayload({
+        id: draggedElm.id,
+        index: migration.latest().index,
+      }),
+    );
 
     this.isOutsideThreshold = isOut;
   }
