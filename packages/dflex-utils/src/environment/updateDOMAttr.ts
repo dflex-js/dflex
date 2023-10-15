@@ -1,7 +1,12 @@
-function updateDOMAttr<T>(DOM: HTMLElement, name: T, remove: boolean): void {
+function updateDOMAttr<T extends string>(
+  DOM: HTMLElement,
+  name: T,
+  isRemove: boolean,
+  value: string | undefined = "true",
+): void {
   const attrName = `data-${name}`;
 
-  if (remove) {
+  if (isRemove) {
     if (__DEV__) {
       if (!DOM.hasAttribute(attrName)) {
         throw new Error(`Attribute ${attrName} does not exist on the element.`);
@@ -13,7 +18,7 @@ function updateDOMAttr<T>(DOM: HTMLElement, name: T, remove: boolean): void {
     return;
   }
 
-  DOM.setAttribute(attrName, "true");
+  DOM.setAttribute(attrName, value);
 }
 
 export default updateDOMAttr;

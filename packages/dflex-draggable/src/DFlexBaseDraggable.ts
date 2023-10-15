@@ -6,6 +6,7 @@ import {
   getSelection,
   removeStyleProperty,
   setStyleProperty,
+  updateDOMAttr,
 } from "@dflex/utils";
 import type { AxesPoint } from "@dflex/utils";
 
@@ -170,7 +171,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     if (isAddingProps) {
       this._preserveDOMAttributes(originDOM, true);
 
-      this.draggedElm.setAttribute(originDOM, "DRAGGED", "true");
+      updateDOMAttr(originDOM, "dragged", false);
 
       if (mirrorDOM !== null) {
         mirrorDOM.ariaLabel = "Draggable";
@@ -205,7 +206,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
 
     originDOM.ariaLabel = null;
 
-    this.draggedElm.clearAttributes(originDOM);
+    updateDOMAttr(originDOM, "dragged", true);
 
     if (mirrorDOM !== null) {
       removeStyleProperty(originDOM, "opacity");
