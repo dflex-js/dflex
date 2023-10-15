@@ -14,7 +14,7 @@ import {
   setParentDimensions,
   setRelativePosition,
   TaskQueue,
-  updateDOMAttr,
+  updateIndexAttr,
 } from "@dflex/utils";
 import DFlexDOMManager from "./DFlexDOMManager";
 import { getElmDOMOrThrow, assignElementID } from "./utils";
@@ -211,7 +211,7 @@ function submitToRegistry(
   store.registry.set(id, dflexElm);
   store.interactiveDOM.set(id, DOM);
 
-  updateDOMAttr(DOM, "index", false, `${dflexElm.VDOMOrder.self}`);
+  updateIndexAttr(DOM, dflexElm.VDOMOrder.self);
 
   if (depth > 0) {
     DOM.dataset.dflexKey = keys.SK;

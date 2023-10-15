@@ -20,7 +20,7 @@ import {
   setStyleProperty,
   removeStyleProperty,
   getElmBoxRect,
-  updateDOMAttr,
+  updateIndexAttr,
 } from "@dflex/utils";
 import type { Direction, Axes, AxesPoint, AnimationOpts } from "@dflex/utils";
 
@@ -454,7 +454,7 @@ class DFlexCoreElement extends DFlexBaseElement {
   }
 
   updateIndex(DOM: HTMLElement, i: number) {
-    updateDOMAttr(DOM, "index", false, `${i}`);
+    updateIndexAttr(DOM, i);
 
     this.VDOMOrder.self = i;
 
@@ -672,7 +672,7 @@ class DFlexCoreElement extends DFlexBaseElement {
   restorePosition(DOM: HTMLElement): void {
     this._transform(DOM, null);
 
-    updateDOMAttr(DOM, "index", false, `${this.VDOMOrder.self}`);
+    updateIndexAttr(DOM, this.VDOMOrder.self);
   }
 
   assignNewPosition(DOM: HTMLElement, t: PointNum): void {

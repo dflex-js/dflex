@@ -2,10 +2,11 @@ function updateDOMAttr<T extends string>(
   DOM: HTMLElement,
   name: T,
   isRemove: boolean,
+  addPrefix: boolean = true,
   value: string | undefined = "true",
 ): void {
   // Keep dragged attribute as is.
-  const attrName = name === "dragged" ? name : `data-${name}`;
+  const attrName = addPrefix ? `data-${name}` : name;
 
   if (isRemove) {
     if (__DEV__) {
@@ -22,4 +23,8 @@ function updateDOMAttr<T extends string>(
   DOM.setAttribute(attrName, value);
 }
 
-export default updateDOMAttr;
+function updateIndexAttr(DOM: HTMLElement, value: number): void {
+  updateDOMAttr(DOM, "index", false, true, `${value}`);
+}
+
+export { updateDOMAttr, updateIndexAttr };
