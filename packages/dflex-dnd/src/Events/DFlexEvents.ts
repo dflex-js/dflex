@@ -12,6 +12,7 @@ import type {
   DFlexEvents,
   DFlexEventNames,
   DFlexEventPayloads,
+  DragAttr,
 } from "./types";
 
 const EVT_CONFIG = {
@@ -35,6 +36,28 @@ const {
   DRAG_ATTR: { OUT_CONTAINER, OUT_THRESHOLD },
 } = DFLEX_ATTRS;
 
+function updateDOMAttr(
+  DOM: HTMLElement,
+  name: DragAttr,
+  remove: boolean,
+): void {
+  const attrName = `data-${name}`;
+
+  if (remove) {
+    if (__DEV__) {
+      if (!DOM.hasAttribute(attrName)) {
+        throw new Error(`Attribute ${attrName} does not exist on the element.`);
+      }
+
+      DOM.removeAttribute(attrName);
+    }
+
+    return;
+  }
+
+  DOM.setAttribute(attrName, "true");
+}
+
 function domEventUpdater(
   DOM: HTMLElement,
   dflexEvent: DFlexEvents,
@@ -45,19 +68,22 @@ function domEventUpdater(
   if (dflexEvent.detail.type === DRAG_CAT) {
     switch (eventName) {
       case ON_ENTER_CONTAINER:
-        DOM.removeAttribute(OUT_CONTAINER);
+        updateDOMAttr(DOM, OUT_CONTAINER, true);
+
         break;
 
       case ON_ENTER_THRESHOLD:
-        DOM.removeAttribute(OUT_THRESHOLD);
+        updateDOMAttr(DOM, OUT_THRESHOLD, true);
+
         break;
 
       case ON_OUT_CONTAINER:
-        DOM.setAttribute(OUT_CONTAINER, `true`);
+        updateDOMAttr(DOM, OUT_CONTAINER, false);
         break;
 
       case ON_OUT_THRESHOLD:
-        DOM.setAttribute(OUT_THRESHOLD, `true`);
+        updateDOMAttr(DOM, OUT_THRESHOLD, false);
+
         break;
 
       default:

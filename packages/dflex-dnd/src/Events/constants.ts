@@ -7,7 +7,7 @@ const ON_ENTER_CONTAINER = "$onDragEnterContainer";
 const ON_ENTER_THRESHOLD = "$onDragEnterThreshold";
 
 // Prefixed attributes
-const DRAG_PREFIX = "data-dragged";
+const DRAG_PREFIX = "dragged";
 
 // DOM attributes
 const OUT_CONTAINER = `${DRAG_PREFIX}-out-container`;
