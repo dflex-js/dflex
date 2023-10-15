@@ -22,7 +22,6 @@ Map {
       "easing": "ease-in",
     },
     "_computedDimensions": null,
-    "_hasAttribute": Set {},
     "_hasPendingTransform": false,
     "_initialPosition": PointNum {
       "x": 0,
