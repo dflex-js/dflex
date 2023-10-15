@@ -60,6 +60,8 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
   protected hasBeenScrolling: boolean;
 
+  // private hasEmittedOutThreshold: boolean;
+
   private _listAppendPosition: AxesPoint | null;
 
   /**
@@ -91,10 +93,14 @@ class DFlexMechanismController extends DFlexScrollableElement {
     super(draggable);
 
     this.hasBeenScrolling = false;
+    // this.hasEmittedOutThreshold = false;
+
     this._RAF = DFlexCreateRAF();
     [this._detectNearestContainerThrottle] = DFlexCreateTimeout(0);
+
     this._listAppendPosition = null;
     this.isParentLocked = false;
+
     this._thresholdDeadZone = new ThresholdDeadZone();
 
     if (__DEV__) {
@@ -189,8 +195,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
     if (hasToMoveSiblingsDown && !isEmpty) {
       this._moveDown(insertAt);
     }
-
-    draggedElm.removeAttribute(this.draggable.draggedDOM, "OUT_CONTAINER");
 
     // Clear it since it's used for insertion calculation.
     migration.clearMargin();
@@ -715,6 +719,32 @@ class DFlexMechanismController extends DFlexScrollableElement {
       }
     }
 
+    if (isOut === this.isParentLocked) {
+      throw new Error(
+        `Invalid lock state. Parent is already ${
+          isOut ? "unlocked" : "locked"
+        }.`,
+      );
+    }
+
+    const { draggedElm, draggedDOM, events } = this.draggable;
+
+    // Is out container? Then emit, then lock.
+    if (isOut) {
+      // Emit related events and lock the container.
+      draggedElm.setAttribute(draggedDOM, "OUT_CONTAINER", "true");
+
+      events.dispatch(
+        ON_OUT_CONTAINER,
+        createDragPayload({
+          id: draggedElm.id,
+          index: store.migration.latest().index,
+        }),
+      );
+    } else {
+      draggedElm.removeAttribute(draggedDOM, "OUT_CONTAINER");
+    }
+
     this.isParentLocked = isOut;
     this._thresholdDeadZone.clear();
   }
@@ -745,22 +775,13 @@ class DFlexMechanismController extends DFlexScrollableElement {
   }
 
   private _dragOutContainer(): void {
-    const { draggedElm, draggedDOM, containersTransition, events } =
-      this.draggable;
+    const { containersTransition } = this.draggable;
 
     const { migration } = store;
 
-    draggedElm.setAttribute(draggedDOM, "OUT_CONTAINER", "true");
-
-    events.dispatch(
-      ON_OUT_CONTAINER,
-      createDragPayload({
-        id: draggedElm.id,
-        index: store.migration.latest().index,
-      }),
-    );
-
-    this._lockParent(true);
+    if (!this.isParentLocked) {
+      this._lockParent(true);
+    }
 
     if (containersTransition.enable) {
       const cb = () => {
