@@ -192,8 +192,23 @@ class DFlexPositionUpdater {
 
   private _draggedTransition: PointNum;
 
-  /** Isolated form the threshold and predict is-out based on the controllers */
+  /**
+   * Indicates whether the parent element is in a locked state.
+   * When locked, it signifies that the dragged element is currently outside the
+   * active/parent container.
+   * This state is used to control interactions, when the element is outside its
+   * designated area of operation.
+   */
   protected isParentLocked: boolean;
+
+  /**
+   * Indicates whether the dragged element is currently outside a specified threshold.
+   * When true, it means the element has surpassed a defined distance from its
+   * original position.
+   * This state can be used to trigger actions when the element exceeds a
+   * certain threshold.
+   */
+  protected isOutsideThreshold: boolean;
 
   constructor(draggable: DraggableInteractive) {
     this.draggable = draggable;
@@ -211,6 +226,7 @@ class DFlexPositionUpdater {
     this._draggedTransition = new PointNum(0, 0);
 
     this.isParentLocked = false;
+    this.isOutsideThreshold = false;
   }
 
   private _setDistanceBtwPositions(
