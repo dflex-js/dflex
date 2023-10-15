@@ -61,16 +61,32 @@ const DRAG_ATTR = {
   OUT_THRESHOLD,
 } as const;
 
+const DRAG_ATTR_STATUS: Record<
+  (typeof DRAG_ATTR)[keyof typeof DRAG_ATTR],
+  boolean
+> = {
+  [OUT_CONTAINER]: false,
+  [OUT_THRESHOLD]: false,
+};
+
 /** DFlex DOM attributes types */
 const DFLEX_ATTRS = {
   DRAG_ATTR,
 } as const;
 
-const { freeze } = Object;
+const DFLEX_ATTRS_STATUS = {
+  DRAG_ATTR_STATUS,
+};
+
+const { freeze, seal } = Object;
 
 // Always freeze it.
 freeze(DFLEX_EVENTS);
 freeze(DFLEX_EVENTS_CAT);
 freeze(DFLEX_ATTRS);
 
-export { DFLEX_EVENTS, DFLEX_EVENTS_CAT, DFLEX_ATTRS };
+if (__DEV__) {
+  seal(DFLEX_ATTRS_STATUS);
+}
+
+export { DFLEX_EVENTS, DFLEX_EVENTS_CAT, DFLEX_ATTRS, DFLEX_ATTRS_STATUS };
