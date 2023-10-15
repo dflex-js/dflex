@@ -74,6 +74,7 @@ export {
   getSelection,
   getParentElm,
   updateElmDatasetGrid,
+  updateDOMAttr,
   DFlexCreateRAF,
   autoCleanupAllRAFs,
   DFlexCreateTimeout,
