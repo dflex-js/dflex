@@ -4,7 +4,8 @@ function updateDOMAttr<T extends string>(
   isRemove: boolean,
   value: string | undefined = "true",
 ): void {
-  const attrName = `data-${name}`;
+  // Keep dragged attribute as is.
+  const attrName = name === "dragged" ? name : `data-${name}`;
 
   if (isRemove) {
     if (__DEV__) {
