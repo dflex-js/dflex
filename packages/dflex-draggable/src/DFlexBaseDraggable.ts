@@ -6,10 +6,15 @@ import {
   getSelection,
   removeStyleProperty,
   setStyleProperty,
+  updateDOMAttr,
 } from "@dflex/utils";
 import type { AxesPoint } from "@dflex/utils";
 
 const MIRROR_ID_PREFIX = "dflex-draggable-mirror";
+
+function updatedDraggedAttr(originDOM: HTMLElement, isRemove: boolean): void {
+  updateDOMAttr(originDOM, "dragged", isRemove, false);
+}
 
 function setMirrorStyle(
   mirrorDOM: HTMLElement,
@@ -170,7 +175,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
     if (isAddingProps) {
       this._preserveDOMAttributes(originDOM, true);
 
-      this.draggedElm.setAttribute(originDOM, "DRAGGED", "true");
+      updatedDraggedAttr(originDOM, false);
 
       if (mirrorDOM !== null) {
         mirrorDOM.ariaLabel = "Draggable";
@@ -205,7 +210,7 @@ class DFlexBaseDraggable<T extends DFlexBaseElement> {
 
     originDOM.ariaLabel = null;
 
-    this.draggedElm.clearAttributes(originDOM);
+    updatedDraggedAttr(originDOM, true);
 
     if (mirrorDOM !== null) {
       removeStyleProperty(originDOM, "opacity");

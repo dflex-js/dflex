@@ -1,7 +1,8 @@
-import { DFLEX_EVENTS, DFLEX_EVENTS_CAT } from "./constants";
+import { DFLEX_EVENTS, DFLEX_EVENTS_CAT, DFLEX_ATTRS } from "./constants";
 
 const { DRAG_EVENT, INTERACTIVITY_EVENT, SIBLINGS_EVENT } = DFLEX_EVENTS;
 const { DRAG_CAT, INTERACTIVITY_CAT, SIBLINGS_CAT } = DFLEX_EVENTS_CAT;
+const { DRAG_ATTR } = DFLEX_ATTRS;
 
 export type DragEventNames = (typeof DRAG_EVENT)[keyof typeof DRAG_EVENT];
 
@@ -10,6 +11,8 @@ export type InteractivityEventNames =
 
 export type SiblingsEventNames =
   (typeof SIBLINGS_EVENT)[keyof typeof SIBLINGS_EVENT];
+
+export type DragAttr = (typeof DRAG_ATTR)[keyof typeof DRAG_ATTR];
 
 /**
  * All available DFlex event names.

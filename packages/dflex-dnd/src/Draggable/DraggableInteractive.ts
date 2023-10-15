@@ -4,6 +4,7 @@ import {
   featureFlags,
   PointNum,
   updateElmDatasetGrid,
+  updateIndexAttr,
 } from "@dflex/utils";
 import type { AxesPoint } from "@dflex/utils";
 
@@ -197,7 +198,7 @@ class DraggableInteractive extends DraggableAxes {
 
     const draggedDOM = store.interactiveDOM.get(this.draggedElm.id)!;
 
-    this.draggedElm.setAttribute(draggedDOM, "INDEX", index);
+    updateIndexAttr(draggedDOM, index);
   }
 
   /**
@@ -293,6 +294,8 @@ class DraggableInteractive extends DraggableAxes {
     this.appendDraggedToContainerDimensions(false);
 
     this.setDraggedTransformProcess(isFallback, latestCycle, willReconcile);
+
+    this.events.cleanup();
 
     this.threshold.destroy();
   }

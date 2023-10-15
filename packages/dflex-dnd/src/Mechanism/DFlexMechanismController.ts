@@ -32,7 +32,12 @@ import {
 import DFlexScrollableElement from "./DFlexScrollableElement";
 
 const {
-  DRAG_EVENT: { ON_OUT_CONTAINER, ON_OUT_THRESHOLD },
+  DRAG_EVENT: {
+    ON_OUT_CONTAINER,
+    ON_OUT_THRESHOLD,
+    ON_ENTER_CONTAINER,
+    ON_ENTER_THRESHOLD,
+  },
   SIBLINGS_EVENT: { ON_LIFT_UP, ON_MOVE_DOWN },
 } = DFLEX_EVENTS;
 
@@ -91,10 +96,12 @@ class DFlexMechanismController extends DFlexScrollableElement {
     super(draggable);
 
     this.hasBeenScrolling = false;
+
     this._RAF = DFlexCreateRAF();
     [this._detectNearestContainerThrottle] = DFlexCreateTimeout(0);
+
     this._listAppendPosition = null;
-    this.isParentLocked = false;
+
     this._thresholdDeadZone = new ThresholdDeadZone();
 
     if (__DEV__) {
@@ -169,7 +176,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     this.draggable.setDraggedTempIndex(insertAt);
 
-    this._lockParent(false);
+    this._updateContainerLockState(false);
 
     let draggedTransition: AxesPoint;
     let draggedGrid: PointNum;
@@ -189,8 +196,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
     if (hasToMoveSiblingsDown && !isEmpty) {
       this._moveDown(insertAt);
     }
-
-    draggedElm.removeAttribute(this.draggable.draggedDOM, "OUT_CONTAINER");
 
     // Clear it since it's used for insertion calculation.
     migration.clearMargin();
@@ -465,7 +470,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     // Leaving from top.
     if (newPos === -1) {
       // lock the parent
-      this._lockParent(true);
+      this._updateContainerLockState(true);
 
       this._fillHeadUp();
 
@@ -475,7 +480,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     // Leaving from bottom.
     if (newPos > grid[axis]) {
       // lock the parent
-      this._lockParent(true);
+      this._updateContainerLockState(true);
 
       return;
     }
@@ -612,7 +617,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       }
 
       // lock the parent
-      this._lockParent(true);
+      this._updateContainerLockState(true);
 
       this._fillHeadUp();
     }
@@ -690,7 +695,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     if (isSingleAxis) {
       // lock the parent
-      this._lockParent(true);
+      this._updateContainerLockState(true);
 
       this._fillHeadUp();
 
@@ -701,13 +706,13 @@ class DFlexMechanismController extends DFlexScrollableElement {
   }
 
   /**
-   * Locks or unlocks the parent container based on whether the dragged element
+   * Updates the lock state of the parent container based on whether the dragged element
    * is out of it. Additionally, it clears the threshold dead zone.
    *
    * @param isOut - A boolean indicating if the dragged element is out of its
    * parent container.
    */
-  private _lockParent(isOut: boolean): void {
+  private _updateContainerLockState(isOut: boolean): void {
     if (__DEV__) {
       if (featureFlags.enableMechanismDebugger) {
         // eslint-disable-next-line no-console
@@ -715,24 +720,78 @@ class DFlexMechanismController extends DFlexScrollableElement {
       }
     }
 
+    if (isOut === this.isParentLocked) {
+      if (__DEV__) {
+        throw new Error(
+          `Invalid lock state. Parent is already ${
+            isOut ? "unlocked" : "locked"
+          }.`,
+        );
+      }
+
+      return;
+    }
+
+    const { draggedElm, events } = this.draggable;
+
+    events.dispatch(
+      isOut ? ON_OUT_CONTAINER : ON_ENTER_CONTAINER,
+      createDragPayload({
+        id: draggedElm.id,
+        index: store.migration.latest().index,
+      }),
+    );
+
     this.isParentLocked = isOut;
     this._thresholdDeadZone.clear();
   }
 
-  private _dragOutThreshold(): void {
-    const { draggedElm, draggedDOM, events } = this.draggable;
+  /**
+   * Updates the lock state based on whether the dragged element exceeds a
+   * specified threshold.
+   *
+   * @param isOut - A boolean indicating if the dragged element has
+   * exceeded the threshold.
+   */
+  private _updateThresholdLockState(isOut: boolean): void {
+    if (__DEV__) {
+      if (featureFlags.enableMechanismDebugger) {
+        // eslint-disable-next-line no-console
+        console.log(`_updateThresholdLockState: ${isOut}.`);
+      }
+    }
+
+    if (isOut === this.isOutsideThreshold) {
+      if (__DEV__) {
+        throw new Error(
+          `Invalid lock state. Threshold is already ${
+            isOut ? "out" : "within"
+          } limits.`,
+        );
+      }
+
+      return;
+    }
+
+    const { draggedElm, events } = this.draggable;
 
     const { migration } = store;
 
-    draggedElm.setAttribute(draggedDOM, "OUT_POS", "true");
-
     events.dispatch(
-      ON_OUT_THRESHOLD,
+      isOut ? ON_OUT_THRESHOLD : ON_ENTER_THRESHOLD,
       createDragPayload({
         id: draggedElm.id,
         index: migration.latest().index,
       }),
     );
+
+    this.isOutsideThreshold = isOut;
+  }
+
+  private _dragOutThreshold(): void {
+    if (!this.isOutsideThreshold) {
+      this._updateThresholdLockState(true);
+    }
 
     // Guessing what axis the exit happened.
     const isTriggered = this._actionByAxis("y");
@@ -745,22 +804,13 @@ class DFlexMechanismController extends DFlexScrollableElement {
   }
 
   private _dragOutContainer(): void {
-    const { draggedElm, draggedDOM, containersTransition, events } =
-      this.draggable;
+    const { containersTransition } = this.draggable;
 
     const { migration } = store;
 
-    draggedElm.setAttribute(draggedDOM, "OUT_CONTAINER", "true");
-
-    events.dispatch(
-      ON_OUT_CONTAINER,
-      createDragPayload({
-        id: draggedElm.id,
-        index: store.migration.latest().index,
-      }),
-    );
-
-    this._lockParent(true);
+    if (!this.isParentLocked) {
+      this._updateContainerLockState(true);
+    }
 
     if (containersTransition.enable) {
       const cb = () => {
@@ -794,7 +844,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       return;
     }
 
-    const { draggedElm, draggedDOM, scroll } = this.draggable;
+    const { scroll } = this.draggable;
 
     const { migration } = store;
 
@@ -816,7 +866,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
               // When it's inside the container, then the siblings are not lifted
               if (!(isOutSiblingsContainer || this.isParentLocked)) {
-                this._lockParent(true);
+                this._updateContainerLockState(true);
 
                 this._fillHeadUp();
               }
@@ -868,8 +918,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
         return;
       }
 
-      draggedElm.removeAttribute(draggedDOM, "OUT_POS");
-
       isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
       // When it's out but still inside its container.
@@ -895,6 +943,11 @@ class DFlexMechanismController extends DFlexScrollableElement {
       }
 
       this._dragInsideContainer();
+    }
+
+    // Still inside the threshold.
+    if (this.isOutsideThreshold) {
+      this._updateThresholdLockState(false);
     }
   }
 }
