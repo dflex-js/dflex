@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import DFlexBaseStore from "@dflex/store";
+
 import type { RegisterInputOpts, RegisterInputProcessed } from "@dflex/store";
 
 import {
@@ -26,7 +27,11 @@ import {
   DFlexSerializedElement,
 } from "@dflex/core-instance";
 
-import { DFlexListeners, DFlexListenerNotifications } from "../Listeners";
+import {
+  DFlexListeners,
+  DFlexListenerNotifications,
+  DFLEX_LISTENERS_CAT,
+} from "../Listeners";
 
 import scheduler, { SchedulerOptions, UpdateFn } from "./DFlexScheduler";
 
@@ -42,6 +47,7 @@ import {
 } from "../Mutation";
 
 import DFlexDOMReconciler from "./DFlexDOMReconciler";
+
 import {
   DFlexIDGarbageCollector,
   hasGCInProgress,
@@ -134,6 +140,8 @@ function validateCSS(id: string, css?: CSS): void {
     });
   }
 }
+
+const { MUTATION_CAT } = DFLEX_LISTENERS_CAT;
 
 let hasThrownForID = false;
 
@@ -759,7 +767,7 @@ class DFlexDnDStore extends DFlexBaseStore {
         },
       },
       {
-        type: "mutation",
+        type: MUTATION_CAT,
         payload: {
           target: parentDOM,
           ids: siblings,
