@@ -1,8 +1,9 @@
 export { default as initDFlexListeners } from "./DFlexListeners";
 
+export { DFLEX_LISTENERS_CAT } from "./constants";
+
 export type {
-  DFlexListenerPlugin,
-  DFlexListenerEvents,
-  DFlexLayoutStateEvent,
-  DFlexElmMutationEvent,
+  DFlexListenerNotifications,
+  DFlexLayoutStateNotification,
+  DFlexMutationNotification,
 } from "./DFlexListeners";

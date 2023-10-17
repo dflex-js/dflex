@@ -4,10 +4,12 @@ export { default as DnD } from "./DnD";
 
 export type { DFlexDnDOpts } from "./types";
 
+export { DFLEX_LISTENERS_CAT } from "./Listeners";
+
 export type {
-  DFlexLayoutStateEvent,
-  DFlexElmMutationEvent,
-  DFlexListenerEvents,
+  DFlexLayoutStateNotification,
+  DFlexMutationNotification,
+  DFlexListenerNotifications,
 } from "./Listeners";
 
 export { DFLEX_EVENTS, DFLEX_EVENTS_CAT, DFLEX_ATTRS } from "./Events";

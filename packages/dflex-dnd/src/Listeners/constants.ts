@@ -42,9 +42,16 @@ const MutationStates = {
   COMMITTED,
 } as const;
 
+const DFLEX_LISTENERS_CAT = {
+  LAYOUT_CAT: "layoutState",
+  MUTATION_CAT: "mutation",
+  ERROR_CAT: "error",
+} as const;
+
 const { freeze } = Object;
 
 freeze(LayoutStates);
 freeze(MutationStates);
+freeze(DFLEX_LISTENERS_CAT);
 
-export { LayoutStates, MutationStates };
+export { LayoutStates, MutationStates, DFLEX_LISTENERS_CAT };

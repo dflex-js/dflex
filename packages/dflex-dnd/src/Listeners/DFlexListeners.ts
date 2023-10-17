@@ -1,35 +1,15 @@
 /* eslint-disable no-unused-vars */
 
-import type { LayoutState, MutationState } from "./types";
+import type {
+  DFlexListenerNotifications,
+  DFlexLayoutStateNotification,
+  DFlexElmMutationNotification as DFlexMutationNotification,
+} from "./types";
 
-interface DFlexLayoutStateEvent {
-  type: "layoutState";
-  status: LayoutState;
-  payload?: never;
-}
+type ListenerTypes =
+  DFlexListenerNotifications[keyof DFlexListenerNotifications];
 
-interface DFlexElmMutationEvent {
-  type: "mutation";
-  status: MutationState;
-  payload: {
-    target: HTMLElement; // HTML element container.
-    ids: string[]; // Committed Elements' id in order.
-  };
-}
-
-interface DFlexErrorEvent {
-  type: "error";
-  error: Error;
-}
-
-type DFlexListenerEvents =
-  | DFlexLayoutStateEvent
-  | DFlexElmMutationEvent
-  | DFlexErrorEvent;
-
-type ListenerTypes = DFlexListenerEvents[keyof DFlexListenerEvents];
-
-type ListenerFunction = (event: DFlexListenerEvents) => void;
+type ListenerFunction = (event: DFlexListenerNotifications) => void;
 
 type ListenersMap = Map<ListenerTypes, Set<ListenerFunction>>;
 
@@ -59,7 +39,7 @@ function subscribeLayoutState(
 
 function notifyLayoutState(
   listenersMap: ListenersMap,
-  event: DFlexListenerEvents,
+  event: DFlexListenerNotifications,
 ): void {
   if (!listenersMap.has(event.type)) {
     return;
@@ -78,7 +58,7 @@ function initDFlexListeners(): {
     listener: ListenerFunction,
     type: ListenerTypes,
   ) => CleanupFunction;
-  notify: (event: DFlexListenerEvents) => void;
+  notify: (event: DFlexListenerNotifications) => void;
   clear: () => void;
 } {
   const listeners: ListenersMap = new Map();
@@ -93,9 +73,9 @@ function initDFlexListeners(): {
 type DFlexListenerPlugin = ReturnType<typeof initDFlexListeners>;
 
 export type {
-  DFlexListenerEvents,
-  DFlexLayoutStateEvent,
-  DFlexElmMutationEvent,
+  DFlexListenerNotifications,
+  DFlexLayoutStateNotification,
+  DFlexMutationNotification,
   DFlexListenerPlugin,
 };
 
