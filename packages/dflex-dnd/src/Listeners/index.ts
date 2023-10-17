@@ -1,4 +1,4 @@
-export { default as initDFlexListeners } from "./DFlexListeners";
+export { default as DFlexListeners } from "./DFlexListeners";
 
 export { DFLEX_LISTENERS_CAT } from "./constants";
 

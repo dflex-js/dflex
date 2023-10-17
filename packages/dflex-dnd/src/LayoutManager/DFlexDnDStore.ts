@@ -26,7 +26,7 @@ import {
   DFlexSerializedElement,
 } from "@dflex/core-instance";
 
-import { initDFlexListeners, DFlexListenerNotifications } from "../Listeners";
+import { DFlexListeners, DFlexListenerNotifications } from "../Listeners";
 
 import scheduler, { SchedulerOptions, UpdateFn } from "./DFlexScheduler";
 
@@ -154,7 +154,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   mutationObserverMap: Map<string, MutationObserverValue>;
 
-  listeners: ReturnType<typeof initDFlexListeners>;
+  listeners: ReturnType<typeof DFlexListeners>;
 
   migration: DFlexCycle;
 
@@ -202,7 +202,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.deferred = [];
     this.updatesQueue = [];
     this.pending = [];
-    this.listeners = initDFlexListeners();
+    this.listeners = DFlexListeners();
 
     this._initSiblings = this._initSiblings.bind(this);
     this._initObservers = this._initObservers.bind(this);
