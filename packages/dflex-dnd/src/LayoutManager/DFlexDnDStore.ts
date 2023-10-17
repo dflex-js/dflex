@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import DFlexBaseStore from "@dflex/store";
+
 import type { RegisterInputOpts, RegisterInputProcessed } from "@dflex/store";
 
 import {
@@ -26,10 +27,11 @@ import {
   DFlexSerializedElement,
 } from "@dflex/core-instance";
 
-import initDFlexListeners, {
-  DFlexListenerPlugin,
-  DFlexListenerEvents,
-} from "./DFlexListeners";
+import {
+  DFlexListeners,
+  DFlexListenerNotifications,
+  DFLEX_LISTENERS_CAT,
+} from "../Listeners";
 
 import scheduler, { SchedulerOptions, UpdateFn } from "./DFlexScheduler";
 
@@ -45,6 +47,7 @@ import {
 } from "../Mutation";
 
 import DFlexDOMReconciler from "./DFlexDOMReconciler";
+
 import {
   DFlexIDGarbageCollector,
   hasGCInProgress,
@@ -61,7 +64,7 @@ type MutationObserverValue = MutationObserver | null;
 type UpdatesQueue = [
   UpdateFn | null,
   SchedulerOptions | null,
-  DFlexListenerEvents | undefined,
+  DFlexListenerNotifications | undefined,
 ][];
 
 type Deferred = (() => void)[];
@@ -138,6 +141,8 @@ function validateCSS(id: string, css?: CSS): void {
   }
 }
 
+const { MUTATION_CAT } = DFLEX_LISTENERS_CAT;
+
 let hasThrownForID = false;
 
 // eslint-disable-next-line no-shadow
@@ -157,7 +162,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   mutationObserverMap: Map<string, MutationObserverValue>;
 
-  listeners: DFlexListenerPlugin;
+  listeners: ReturnType<typeof DFlexListeners>;
 
   migration: DFlexCycle;
 
@@ -205,7 +210,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.deferred = [];
     this.updatesQueue = [];
     this.pending = [];
-    this.listeners = initDFlexListeners();
+    this.listeners = DFlexListeners();
 
     this._initSiblings = this._initSiblings.bind(this);
     this._initObservers = this._initObservers.bind(this);
@@ -762,8 +767,7 @@ class DFlexDnDStore extends DFlexBaseStore {
         },
       },
       {
-        type: "mutation",
-        status: "committed",
+        type: MUTATION_CAT,
         payload: {
           target: parentDOM,
           ids: siblings,

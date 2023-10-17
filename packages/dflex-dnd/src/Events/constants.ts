@@ -49,11 +49,15 @@ const DFLEX_EVENTS = {
   SIBLINGS_EVENT,
 } as const;
 
+const DRAG_CAT = "drag";
+const INTERACTIVITY_CAT = "interactivity";
+const SIBLINGS_CAT = "siblings";
+
 /** DFlex events categories */
 const DFLEX_EVENTS_CAT = {
-  DRAG_CAT: "drag",
-  INTERACTIVITY_CAT: "interactivity",
-  SIBLINGS_CAT: "siblings",
+  DRAG_CAT,
+  INTERACTIVITY_CAT,
+  SIBLINGS_CAT,
 } as const;
 
 const DRAG_ATTR = {

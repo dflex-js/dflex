@@ -13,9 +13,9 @@ import type {
   DragEventNames,
   InteractivityEventNames,
   SiblingsEventNames,
-  PayloadDraggedEvent,
-  PayloadInteractivityEvent,
-  PayloadSiblingsEvent,
+  PayloadDragged,
+  PayloadInteractivity,
+  PayloadSiblings,
   DFlexEvents,
   DFlexEventNames,
   DFlexEventPayloads,
@@ -91,19 +91,19 @@ function domEventUpdater(
 function dispatchDFlexEvent(
   DOM: HTMLElement,
   eventType: DragEventNames,
-  payload: PayloadDraggedEvent,
+  payload: PayloadDragged,
 ): void;
 
 function dispatchDFlexEvent(
   DOM: HTMLElement,
   eventType: InteractivityEventNames,
-  payload: PayloadInteractivityEvent,
+  payload: PayloadInteractivity,
 ): void;
 
 function dispatchDFlexEvent(
   DOM: HTMLElement,
   eventType: SiblingsEventNames,
-  payload: PayloadSiblingsEvent,
+  payload: PayloadSiblings,
 ): void;
 
 function dispatchDFlexEvent(
@@ -120,7 +120,7 @@ function dispatchDFlexEvent(
   const emittedEvent = Object.assign(EVT_CONFIG, { detail: payload });
 
   const dflexEvent: DFlexEvents = new CustomEvent<
-    PayloadDraggedEvent | PayloadInteractivityEvent | PayloadSiblingsEvent
+    PayloadDragged | PayloadInteractivity | PayloadSiblings
   >(eventName, emittedEvent);
 
   domEventUpdater(DOM, dflexEvent, eventName);
@@ -129,17 +129,14 @@ function dispatchDFlexEvent(
 function DFlexEvent(dispatcher: HTMLElement) {
   function dispatch(
     eventName: InteractivityEventNames,
-    payload: PayloadInteractivityEvent,
+    payload: PayloadInteractivity,
   ): void;
 
-  function dispatch(
-    eventName: DragEventNames,
-    payload: PayloadDraggedEvent,
-  ): void;
+  function dispatch(eventName: DragEventNames, payload: PayloadDragged): void;
 
   function dispatch(
     eventName: SiblingsEventNames,
-    payload: PayloadSiblingsEvent,
+    payload: PayloadSiblings,
   ): void;
 
   function dispatch(

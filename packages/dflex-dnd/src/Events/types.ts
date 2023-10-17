@@ -22,62 +22,84 @@ export type DFlexEventNames =
   | InteractivityEventNames
   | SiblingsEventNames;
 
-export type PayloadDraggedEvent = {
+export type PayloadDragged = {
+  /** Represents the main category of the drag event. */
   type: typeof DRAG_CAT;
-  /** Returns element id in the registry */
+
+  /** Indicates the timestamp when the event occurred. */
+  timestamp: number;
+
+  /** Contains the unique identifier of the dragged element in the registry. */
   id: string;
-  /** Returns dragged temp index */
+
+  /** Indicates the temporary index of the dragged element. */
   index: number;
 };
 
-export type PayloadInteractivityEvent = {
+export type PayloadInteractivity = {
+  /** Represents the main category of the interactivity event. */
   type: typeof INTERACTIVITY_CAT;
-  /** Returns element id in the registry */
+
+  /** Indicates the timestamp when the event occurred. */
+  timestamp: number;
+
+  /** Contains the unique identifier of the element in the registry. */
   id: string;
-  /** Returns element current index */
+
+  /** Indicates the current index of the element. */
   index: number;
-  /** Returns the element that triggered the event */
+
+  /** Refers to the HTML element that triggered the event. */
   target: HTMLElement;
 };
 
-export type PayloadSiblingsEvent = {
+export type PayloadSiblings = {
+  /** Represents the main category of the siblings event. */
   type: typeof SIBLINGS_CAT;
-  /** Returns the index where the dragged left */
+
+  /** Indicates the timestamp when the event occurred. */
+  timestamp: number;
+
+  /** Indicates the index where the dragged element left. */
   from: number;
-  /** Returns the last index effected of the dragged leaving/entering */
+
+  /**
+   * Indicates the last index affected by the dragged element leaving/entering.
+   * */
   to: number;
-  /** Returns an array of sibling ids in order */
+
+  /** Contains an ordered array of sibling IDs. */
   siblings: string[];
 };
 
 export type DFlexEventPayloads =
-  | PayloadDraggedEvent
-  | PayloadInteractivityEvent
-  | PayloadSiblingsEvent;
+  | PayloadDragged
+  | PayloadInteractivity
+  | PayloadSiblings;
 
 /**
- * Event fired when drag exits threshold or container.
- * Contains drag event payload.
+ * Custom Event representing a dragged element event.
+ * Triggered when drag exits/enters threshold or container.
  */
-export type DFlexDraggedEvent = CustomEvent<PayloadDraggedEvent>;
+export type DFlexDraggedEvent = CustomEvent<PayloadDragged>;
 
 /**
- * Event fired when drag enters or leaves an element.
- * Contains interactivity event payload.
+ * Custom Event representing an interactivity event during drag.
+ * Triggered when drag enters or leaves an element.
  */
-export type DFlexInteractivityEvent = CustomEvent<PayloadInteractivityEvent>;
+export type DFlexInteractivityEvent = CustomEvent<PayloadInteractivity>;
 
 /**
- * Event fired when drag triggers sibling rearrangement.
- * Contains sibling event payload.
+ * Custom Event representing a sibling rearrangement event.
+ * Triggered when drag triggers sibling rearrangement.
  */
-export type DFlexSiblingsEvent = CustomEvent<PayloadSiblingsEvent>;
+export type DFlexSiblingsEvent = CustomEvent<PayloadSiblings>;
 
 /**
- * Union of all DFlex drag, interactivity and sibling events.
+ * Union type of all DFlex drag, interactivity, and sibling events.
  */
 export type DFlexEvents = CustomEvent<
-  PayloadDraggedEvent | PayloadInteractivityEvent | PayloadSiblingsEvent
+  PayloadDragged | PayloadInteractivity | PayloadSiblings
 >;
 
 export type DFlexEventsMap = {
