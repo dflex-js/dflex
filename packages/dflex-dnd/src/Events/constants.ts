@@ -18,7 +18,6 @@ const OUT_THRESHOLD = `${DRAG_PREFIX}-out-threshold`;
  */
 const ON_DRAG_OVER = "$onDragOver";
 const ON_DRAG_LEAVE = "$onDragLeave";
-const ON_DRAG_END = "$onDragEnd";
 
 /**
  * Sibling event name constants
@@ -36,7 +35,6 @@ const DRAG_EVENT = {
 const INTERACTIVITY_EVENT = {
   ON_DRAG_OVER,
   ON_DRAG_LEAVE,
-  ON_DRAG_END,
 } as const;
 
 const SIBLINGS_EVENT = {
