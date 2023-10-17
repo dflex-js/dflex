@@ -1,10 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-import type {
-  DFlexListenerNotifications,
-  DFlexLayoutStateNotification,
-  DFlexElmMutationNotification as DFlexMutationNotification,
-} from "./types";
+import type { DFlexListenerNotifications } from "./types";
 
 type ListenerTypes =
   DFlexListenerNotifications[keyof DFlexListenerNotifications];
@@ -53,7 +49,7 @@ function clear(listeners: ListenersMap): void {
   listeners.clear();
 }
 
-function initDFlexListeners(): {
+function DFlexListeners(): {
   subscribe: (
     listener: ListenerFunction,
     type: ListenerTypes,
@@ -70,13 +66,4 @@ function initDFlexListeners(): {
   };
 }
 
-type DFlexListenerPlugin = ReturnType<typeof initDFlexListeners>;
-
-export type {
-  DFlexListenerNotifications,
-  DFlexLayoutStateNotification,
-  DFlexMutationNotification,
-  DFlexListenerPlugin,
-};
-
-export default initDFlexListeners;
+export default DFlexListeners;

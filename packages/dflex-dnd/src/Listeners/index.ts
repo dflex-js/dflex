@@ -6,4 +6,4 @@ export type {
   DFlexListenerNotifications,
   DFlexLayoutStateNotification,
   DFlexMutationNotification,
-} from "./DFlexListeners";
+} from "./types";

@@ -11,7 +11,7 @@ export type DFlexLayoutStateNotification = {
   payload?: never;
 };
 
-export type DFlexElmMutationNotification = {
+export type DFlexMutationNotification = {
   type: typeof DFLEX_LISTENERS_CAT.MUTATION_CAT;
   status: MutationState;
   payload: {
@@ -27,5 +27,5 @@ export type DFlexErrorNotification = {
 
 export type DFlexListenerNotifications =
   | DFlexLayoutStateNotification
-  | DFlexElmMutationNotification
+  | DFlexMutationNotification
   | DFlexErrorNotification;
