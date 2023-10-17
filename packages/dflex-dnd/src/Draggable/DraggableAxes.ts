@@ -86,7 +86,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
 
   private readonly initCoordinates: PointNum;
 
-  events: ReturnType<typeof DFlexEvent>;
+  events: ReturnType<typeof DFlexEvent> | null;
 
   constructor(id: string, initCoordinates: AxesPoint, opts: FinalDndOpts) {
     const [dflexElm, DOM] = store.getElmWithDOM(id);
@@ -171,7 +171,11 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
 
     this.restrictionsStatus = opts.restrictionsStatus;
 
-    this.events = DFlexEvent(DOM);
+    const {
+      globals: { enableEvents },
+    } = store;
+
+    this.events = enableEvents ? DFlexEvent(DOM) : null;
 
     this.axesFilterNeeded =
       siblings !== null &&

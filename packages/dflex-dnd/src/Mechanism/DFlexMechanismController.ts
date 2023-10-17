@@ -381,14 +381,16 @@ class DFlexMechanismController extends DFlexScrollableElement {
       nextElm.rect.top - (occupiedPosition.y + draggedElm.rect.height),
     );
 
-    events.dispatch(
-      ON_LIFT_UP,
-      createSiblingsPayload({
-        siblings,
-        from,
-        to: siblings.length,
-      }),
-    );
+    if (events) {
+      events.dispatch(
+        ON_LIFT_UP,
+        createSiblingsPayload({
+          siblings,
+          from,
+          to: siblings.length,
+        }),
+      );
+    }
 
     this.draggable.setDraggedTempIndex(
       DFlexMechanismController.INDEX_OUT_CONTAINER,
@@ -419,14 +421,16 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     const siblings = store.getElmSiblingsByKey(SK);
 
-    events.dispatch(
-      ON_MOVE_DOWN,
-      createSiblingsPayload({
-        siblings,
-        from: siblings!.length - 1,
-        to: siblings.length,
-      }),
-    );
+    if (events) {
+      events.dispatch(
+        ON_MOVE_DOWN,
+        createSiblingsPayload({
+          siblings,
+          from: siblings!.length - 1,
+          to: siblings.length,
+        }),
+      );
+    }
 
     for (let i = siblings.length - 1; i >= to; i -= 1) {
       const id = siblings[i];
@@ -734,13 +738,15 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     const { draggedElm, events } = this.draggable;
 
-    events.dispatch(
-      isOut ? ON_OUT_CONTAINER : ON_ENTER_CONTAINER,
-      createDragPayload({
-        id: draggedElm.id,
-        index: store.migration.latest().index,
-      }),
-    );
+    if (events) {
+      events.dispatch(
+        isOut ? ON_OUT_CONTAINER : ON_ENTER_CONTAINER,
+        createDragPayload({
+          id: draggedElm.id,
+          index: store.migration.latest().index,
+        }),
+      );
+    }
 
     this.isParentLocked = isOut;
     this._thresholdDeadZone.clear();
@@ -775,15 +781,17 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     const { draggedElm, events } = this.draggable;
 
-    const { migration } = store;
+    if (events) {
+      const { migration } = store;
 
-    events.dispatch(
-      isOut ? ON_OUT_THRESHOLD : ON_ENTER_THRESHOLD,
-      createDragPayload({
-        id: draggedElm.id,
-        index: migration.latest().index,
-      }),
-    );
+      events.dispatch(
+        isOut ? ON_OUT_THRESHOLD : ON_ENTER_THRESHOLD,
+        createDragPayload({
+          id: draggedElm.id,
+          index: migration.latest().index,
+        }),
+      );
+    }
 
     this.isOutsideThreshold = isOut;
   }

@@ -80,8 +80,18 @@ export type RegisterInputProcessed = DeepRequired<
 };
 
 export type DFlexGlobalConfig = {
-  removeContainerWhenEmpty: boolean;
+  removeEmptyContainer: boolean;
+  enableEvents: boolean;
 };
+
+const DEFAULT_GLOBAL_CONFIG = {
+  removeEmptyContainer: false,
+  enableEvents: true,
+};
+
+if (__DEV__) {
+  Object.freeze(DEFAULT_GLOBAL_CONFIG);
+}
 
 type BranchComposedCallBackFunction = (
   // eslint-disable-next-line no-unused-vars
@@ -162,7 +172,11 @@ function submitToRegistry(
     setRelativePosition(DOM);
     removeOpacity(DOM);
 
-    if (!store.globals.removeContainerWhenEmpty) {
+    const {
+      globals: { removeEmptyContainer },
+    } = store;
+
+    if (!removeEmptyContainer) {
       setParentDimensions(DOM);
     }
   }
@@ -288,8 +302,9 @@ class DFlexBaseStore extends DFlexDOMManager {
     super();
 
     this.globals = {
-      removeContainerWhenEmpty: false,
+      ...DEFAULT_GLOBAL_CONFIG,
     };
+
     this._lastDOMParent = null;
     this._taskQ = new TaskQueue();
     this.DOMGen = new DOMKeysGenerator();
@@ -300,8 +315,8 @@ class DFlexBaseStore extends DFlexDOMManager {
    *
    * @param globals
    */
-  config(globals: DFlexGlobalConfig): void {
-    if (globals.removeContainerWhenEmpty) {
+  config(globals: Partial<DFlexGlobalConfig>): void {
+    if (globals.removeEmptyContainer) {
       if (__DEV__) {
         throw new Error("removeContainerWhenEmpty is not supported yet.");
       }

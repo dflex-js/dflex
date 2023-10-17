@@ -31,8 +31,10 @@ const App = () => {
   };
 
   React.useEffect(() => {
+    // Optional config.
     store.config({
-      removeContainerWhenEmpty: false,
+      enableEvents: true,
+      removeEmptyContainer: false,
     });
   }, []);
 

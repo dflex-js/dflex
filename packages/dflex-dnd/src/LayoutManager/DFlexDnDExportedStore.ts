@@ -25,7 +25,7 @@ class DFlexDnDExportedStore {
    *
    * @param globals - Global configurations for DFlex.
    */
-  config(globals: DFlexGlobalConfig): void {
+  config(globals: Partial<DFlexGlobalConfig>): void {
     this._base.config(globals);
   }
 
