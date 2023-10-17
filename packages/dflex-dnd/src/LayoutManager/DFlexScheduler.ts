@@ -1,4 +1,4 @@
-import type { DFlexListenerEvents } from "./DFlexListeners";
+import type { DFlexListenerEvents } from "../Listeners";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
 type UpdateFn = () => void;

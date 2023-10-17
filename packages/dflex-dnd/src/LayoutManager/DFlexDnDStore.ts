@@ -26,10 +26,11 @@ import {
   DFlexSerializedElement,
 } from "@dflex/core-instance";
 
-import initDFlexListeners, {
+import {
+  initDFlexListeners,
   DFlexListenerPlugin,
   DFlexListenerEvents,
-} from "./DFlexListeners";
+} from "../Listeners";
 
 import scheduler, { SchedulerOptions, UpdateFn } from "./DFlexScheduler";
 

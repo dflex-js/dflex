@@ -8,7 +8,7 @@ export type {
   DFlexLayoutStateEvent,
   DFlexElmMutationEvent,
   DFlexListenerEvents,
-} from "./LayoutManager";
+} from "./Listeners";
 
 export { DFLEX_EVENTS, DFLEX_EVENTS_CAT, DFLEX_ATTRS } from "./Events";
 
