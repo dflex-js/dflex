@@ -544,10 +544,13 @@ class DFlexPositionUpdater {
       const { rect } = element;
 
       this.updateDraggedThresholdPosition(rect.left, rect.top);
-    }
 
-    if (events) {
-      events.dispatch(ON_DRAG_OVER, createInteractivityPayload(element, store));
+      if (events) {
+        events.dispatch(
+          ON_DRAG_OVER,
+          createInteractivityPayload(element, store),
+        );
+      }
     }
 
     element.reconcilePosition(
@@ -561,7 +564,7 @@ class DFlexPositionUpdater {
       cycleID,
     );
 
-    if (events) {
+    if (!this.isParentLocked && events) {
       events.dispatch(
         ON_DRAG_LEAVE,
         createInteractivityPayload(element, store),

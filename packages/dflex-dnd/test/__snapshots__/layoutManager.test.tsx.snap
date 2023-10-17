@@ -160,7 +160,8 @@ DFlexDnDStore {
   "deferred": [],
   "deletedDOM": WeakSet {},
   "globals": {
-    "removeContainerWhenEmpty": false,
+    "enableEvents": true,
+    "removeEmptyContainer": false,
   },
   "interactiveDOM": Map {
     "id-1" => <div
