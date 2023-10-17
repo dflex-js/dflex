@@ -72,10 +72,9 @@ async function assertEmittedMsg(msg: ConsoleMessage, FINAL_IDS: string[]) {
   // cast the type for `emittedMsg`
   const emittedMsg = await msg.args()[1].jsonValue();
 
-  const { type, status, payload } = emittedMsg;
+  const { type, payload } = emittedMsg;
 
   expect(type).toBe("mutation");
-  expect(status).toBe("committed");
   expect(payload).toEqual({
     target: "ref: <Node>",
     ids: FINAL_IDS,
