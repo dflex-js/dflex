@@ -473,7 +473,8 @@ class DFlexPositionUpdater {
     numberOfPassedElm: number,
     isIncrease: boolean,
   ) {
-    const { draggedElm, occupiedPosition, gridPlaceholder } = this.draggable;
+    const { draggedElm, occupiedPosition, gridPlaceholder, events } =
+      this.draggable;
 
     const { SK, cycleID } = store.migration.latest();
 
@@ -543,12 +544,14 @@ class DFlexPositionUpdater {
       const { rect } = element;
 
       this.updateDraggedThresholdPosition(rect.left, rect.top);
-    }
 
-    this.draggable.events.dispatch(
-      ON_DRAG_OVER,
-      createInteractivityPayload(element, store),
-    );
+      if (events) {
+        events.dispatch(
+          ON_DRAG_OVER,
+          createInteractivityPayload(element, store),
+        );
+      }
+    }
 
     element.reconcilePosition(
       axis,
@@ -561,10 +564,12 @@ class DFlexPositionUpdater {
       cycleID,
     );
 
-    this.draggable.events.dispatch(
-      ON_DRAG_LEAVE,
-      createInteractivityPayload(element, store),
-    );
+    if (!this.isParentLocked && events) {
+      events.dispatch(
+        ON_DRAG_LEAVE,
+        createInteractivityPayload(element, store),
+      );
+    }
   }
 }
 
