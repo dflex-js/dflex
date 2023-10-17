@@ -2,8 +2,6 @@
 
 import type { LayoutState, MutationState } from "./types";
 
-type ElmTransformationType = "transformed" | "reordered" | "visible" | "hidden";
-
 interface DFlexLayoutStateEvent {
   type: "layoutState";
   status: LayoutState;
@@ -19,15 +17,6 @@ interface DFlexElmMutationEvent {
   };
 }
 
-// This feature is not implemented yet.
-interface DFlexElmTransformationEvent {
-  type: "transformation";
-  status: ElmTransformationType;
-  payload: {
-    id: string;
-  };
-}
-
 interface DFlexErrorEvent {
   type: "error";
   error: Error;
@@ -36,7 +25,6 @@ interface DFlexErrorEvent {
 type DFlexListenerEvents =
   | DFlexLayoutStateEvent
   | DFlexElmMutationEvent
-  | DFlexElmTransformationEvent
   | DFlexErrorEvent;
 
 type ListenerTypes = DFlexListenerEvents[keyof DFlexListenerEvents];
@@ -108,7 +96,6 @@ export type {
   DFlexListenerEvents,
   DFlexLayoutStateEvent,
   DFlexElmMutationEvent,
-  DFlexElmTransformationEvent,
   DFlexListenerPlugin,
 };
 
