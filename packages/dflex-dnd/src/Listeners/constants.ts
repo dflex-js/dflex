@@ -36,22 +36,21 @@ const LayoutStates = {
   DRAG_CANCEL,
 } as const;
 
-const COMMITTED = "committed";
-
-const MutationStates = {
-  COMMITTED,
-} as const;
+const LAYOUT_CAT = "layoutState";
+const MUTATION_CAT = "mutation";
+const COMMIT_CAT = "committed";
+const ERROR_CAT = "error";
 
 const DFLEX_LISTENERS_CAT = {
-  LAYOUT_CAT: "layoutState",
-  MUTATION_CAT: "mutation",
-  ERROR_CAT: "error",
+  LAYOUT_CAT,
+  MUTATION_CAT,
+  COMMIT_CAT,
+  ERROR_CAT,
 } as const;
 
 const { freeze } = Object;
 
 freeze(LayoutStates);
-freeze(MutationStates);
 freeze(DFLEX_LISTENERS_CAT);
 
-export { LayoutStates, MutationStates, DFLEX_LISTENERS_CAT };
+export { LayoutStates, DFLEX_LISTENERS_CAT };

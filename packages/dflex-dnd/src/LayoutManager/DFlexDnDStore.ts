@@ -760,7 +760,6 @@ class DFlexDnDStore extends DFlexBaseStore {
       },
       {
         type: "mutation",
-        status: "committed",
         payload: {
           target: parentDOM,
           ids: siblings,

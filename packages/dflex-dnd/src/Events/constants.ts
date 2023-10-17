@@ -18,6 +18,7 @@ const OUT_THRESHOLD = `${DRAG_PREFIX}-out-threshold`;
  */
 const ON_DRAG_OVER = "$onDragOver";
 const ON_DRAG_LEAVE = "$onDragLeave";
+const ON_DRAG_END = "$onDragEnd";
 
 /**
  * Sibling event name constants
@@ -35,6 +36,7 @@ const DRAG_EVENT = {
 const INTERACTIVITY_EVENT = {
   ON_DRAG_OVER,
   ON_DRAG_LEAVE,
+  ON_DRAG_END,
 } as const;
 
 const SIBLINGS_EVENT = {
@@ -49,11 +51,15 @@ const DFLEX_EVENTS = {
   SIBLINGS_EVENT,
 } as const;
 
+const DRAG_CAT = "drag";
+const INTERACTIVITY_CAT = "interactivity";
+const SIBLINGS_CAT = "siblings";
+
 /** DFlex events categories */
 const DFLEX_EVENTS_CAT = {
-  DRAG_CAT: "drag",
-  INTERACTIVITY_CAT: "interactivity",
-  SIBLINGS_CAT: "siblings",
+  DRAG_CAT,
+  INTERACTIVITY_CAT,
+  SIBLINGS_CAT,
 } as const;
 
 const DRAG_ATTR = {

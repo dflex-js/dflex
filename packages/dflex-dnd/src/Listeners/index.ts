@@ -5,5 +5,6 @@ export { DFLEX_LISTENERS_CAT } from "./constants";
 export type {
   DFlexListenerNotifications,
   DFlexLayoutStateNotification,
+  DFlexCommittedNotification,
   DFlexMutationNotification,
 } from "./types";
