@@ -38,13 +38,11 @@ const LayoutStates = {
 
 const LAYOUT_CAT = "layoutState";
 const MUTATION_CAT = "mutation";
-const COMMIT_CAT = "committed";
 const ERROR_CAT = "error";
 
 const DFLEX_LISTENERS_CAT = {
   LAYOUT_CAT,
   MUTATION_CAT,
-  COMMIT_CAT,
   ERROR_CAT,
 } as const;
 

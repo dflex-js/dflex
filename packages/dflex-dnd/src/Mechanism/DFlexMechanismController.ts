@@ -17,7 +17,7 @@ import { scheduler, store } from "../LayoutManager";
 
 import {
   createSiblingsPayload,
-  createDragPayload,
+  createDragMovedPayload,
   DFLEX_EVENTS,
 } from "../Events";
 
@@ -741,7 +741,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     if (events) {
       events.dispatch(
         isOut ? ON_OUT_CONTAINER : ON_ENTER_CONTAINER,
-        createDragPayload({
+        createDragMovedPayload({
           id: draggedElm.id,
           index: store.migration.latest().index,
         }),
@@ -786,7 +786,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
       events.dispatch(
         isOut ? ON_OUT_THRESHOLD : ON_ENTER_THRESHOLD,
-        createDragPayload({
+        createDragMovedPayload({
           id: draggedElm.id,
           index: migration.latest().index,
         }),
