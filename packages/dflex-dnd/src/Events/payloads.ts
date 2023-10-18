@@ -4,7 +4,8 @@ import { DFLEX_EVENTS_CAT } from "./constants";
 
 import type {
   PayloadDragMoved,
-  // PayloadDragCommitted,
+  PayloadDragCommitted,
+  PayloadDragTransformed,
   PayloadInteractivity,
   PayloadSiblings,
 } from "./types";
@@ -59,9 +60,11 @@ function createDragMovedPayload({
   };
 }
 
-function createDragCommittedPayload() {}
+// @ts-ignore
+function createDragCommittedPayload(): PayloadDragCommitted {}
 
-function createDragTransformedPayload() {}
+// @ts-ignore
+function createDragTransformedPayload(): PayloadDragTransformed {}
 
 export {
   createInteractivityPayload,

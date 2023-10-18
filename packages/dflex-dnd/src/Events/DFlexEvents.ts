@@ -20,6 +20,9 @@ import type {
   DFlexEventNames,
   DFlexEventPayloads,
   DragAttr,
+  PayloadDragMoved,
+  PayloadDragCommitted,
+  PayloadDragTransformed,
 } from "./types";
 
 const EVT_CONFIG = {
@@ -88,10 +91,30 @@ function domEventUpdater(
   }
 }
 
+type DragMovedEventNames = {
+  [K in DragEventNames]: K extends
+    | typeof DFLEX_EVENTS.DRAG_EVENT.ON_COMMITTED
+    | typeof DFLEX_EVENTS.DRAG_EVENT.ON_TRANSFORMED
+    ? never
+    : K;
+}[DragEventNames];
+
 function dispatchDFlexEvent(
   DOM: HTMLElement,
-  eventType: DragEventNames,
-  payload: PayloadDragged,
+  eventType: DragMovedEventNames,
+  payload: PayloadDragMoved,
+): void;
+
+function dispatchDFlexEvent(
+  DOM: HTMLElement,
+  eventType: typeof DFLEX_EVENTS.DRAG_EVENT.ON_COMMITTED,
+  payload: PayloadDragCommitted,
+): void;
+
+function dispatchDFlexEvent(
+  DOM: HTMLElement,
+  eventType: typeof DFLEX_EVENTS.DRAG_EVENT.ON_TRANSFORMED,
+  payload: PayloadDragTransformed,
 ): void;
 
 function dispatchDFlexEvent(
@@ -128,11 +151,24 @@ function dispatchDFlexEvent(
 
 function DFlexEvent(dispatcher: HTMLElement) {
   function dispatch(
+    eventType: DragMovedEventNames,
+    payload: PayloadDragMoved,
+  ): void;
+
+  function dispatch(
+    eventType: typeof DFLEX_EVENTS.DRAG_EVENT.ON_COMMITTED,
+    payload: PayloadDragCommitted,
+  ): void;
+
+  function dispatch(
+    eventType: typeof DFLEX_EVENTS.DRAG_EVENT.ON_TRANSFORMED,
+    payload: PayloadDragTransformed,
+  ): void;
+
+  function dispatch(
     eventName: InteractivityEventNames,
     payload: PayloadInteractivity,
   ): void;
-
-  function dispatch(eventName: DragEventNames, payload: PayloadDragged): void;
 
   function dispatch(
     eventName: SiblingsEventNames,

@@ -1,9 +1,21 @@
 /* eslint-disable no-param-reassign */
 import { AbstractDFlexCycle, featureFlags } from "@dflex/utils";
+
 import { scheduler, store } from "../LayoutManager";
+
 import DFlexMechanismController, {
   isIDEligible,
 } from "./DFlexMechanismController";
+
+import {
+  DFLEX_EVENTS,
+  createDragCommittedPayload,
+  createDragTransformedPayload,
+} from "../Events";
+
+const {
+  DRAG_EVENT: { ON_COMMITTED, ON_TRANSFORMED },
+} = DFLEX_EVENTS;
 
 class EndCycle extends DFlexMechanismController {
   private _undoSiblingsPositions(
@@ -63,7 +75,7 @@ class EndCycle extends DFlexMechanismController {
   }
 
   endDragging() {
-    const { enableCommit, session } = this.draggable;
+    const { enableCommit, session, events } = this.draggable;
     const { migration } = store;
     const latestCycle = migration.latest();
 
@@ -123,10 +135,26 @@ class EndCycle extends DFlexMechanismController {
 
     const hasToReconcile = enableAfterEndingDrag || isMigratedInScroll;
 
+    let onUpdate;
+
+    if (events) {
+      onUpdate = () => {
+        if (hasToReconcile) {
+          events.dispatch(ON_COMMITTED, createDragCommittedPayload());
+        } else {
+          events.dispatch(ON_TRANSFORMED, createDragTransformedPayload());
+        }
+
+        events.cleanup();
+      };
+    }
+
     scheduler(
       store,
       () => this.draggable.cleanup(isFallback, latestCycle, hasToReconcile),
-      null,
+      {
+        onUpdate,
+      },
       {
         type: "layoutState",
         status: "dragEnd",
