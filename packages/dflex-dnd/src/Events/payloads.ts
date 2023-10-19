@@ -3,7 +3,8 @@ import type { DFlexElement } from "@dflex/core-instance";
 import { DFLEX_EVENTS_CAT } from "./constants";
 
 import type {
-  PayloadDragged,
+  PayloadDragCommitted,
+  PayloadDragMoved,
   PayloadInteractivity,
   PayloadSiblings,
 } from "./types";
@@ -46,10 +47,10 @@ function createSiblingsPayload({
   };
 }
 
-function createDragPayload({
+function createDragMovedPayload({
   id,
   index,
-}: Omit<PayloadDragged, "type" | "timestamp">): PayloadDragged {
+}: Omit<PayloadDragMoved, "type" | "timestamp">): PayloadDragMoved {
   return {
     type: DRAG_CAT,
     timestamp: Date.now(),
@@ -58,4 +59,23 @@ function createDragPayload({
   };
 }
 
-export { createInteractivityPayload, createSiblingsPayload, createDragPayload };
+function createDragCommittedPayload({
+  element,
+  indexes,
+  containers,
+}: Omit<PayloadDragCommitted, "type" | "timestamp">): PayloadDragCommitted {
+  return {
+    type: DRAG_CAT,
+    timestamp: Date.now(),
+    containers,
+    element,
+    indexes,
+  };
+}
+
+export {
+  createInteractivityPayload,
+  createSiblingsPayload,
+  createDragMovedPayload,
+  createDragCommittedPayload,
+};

@@ -22,7 +22,7 @@ export type DFlexEventNames =
   | InteractivityEventNames
   | SiblingsEventNames;
 
-export type PayloadDragged = {
+export type PayloadDragMoved = {
   /** Represents the main category of the drag event. */
   type: typeof DRAG_CAT;
 
@@ -35,6 +35,35 @@ export type PayloadDragged = {
   /** Indicates the temporary index of the dragged element. */
   index: number;
 };
+
+export type PayloadDragCommitted = {
+  /** Represents the main category of the drag event. */
+  type: typeof DRAG_CAT;
+
+  /** Indicates the timestamp when the event occurred. */
+  timestamp: number;
+
+  /** Targeted elements */
+  element: HTMLElement;
+
+  indexes: {
+    /** The initial index of the moved element. */
+    initial: number;
+
+    /** The index where it was inserted in the receiving container. */
+    inserted: number;
+  };
+
+  containers: {
+    /** The container from which the element originated. */
+    origin: HTMLElement;
+
+    /** The container where the element is now located. */
+    target: HTMLElement;
+  };
+};
+
+export type PayloadDragged = PayloadDragCommitted | PayloadDragMoved;
 
 export type PayloadInteractivity = {
   /** Represents the main category of the interactivity event. */

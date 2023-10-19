@@ -6,6 +6,9 @@ const ON_OUT_THRESHOLD = "$onDragOutThreshold";
 const ON_ENTER_CONTAINER = "$onDragEnterContainer";
 const ON_ENTER_THRESHOLD = "$onDragEnterThreshold";
 
+const ON_COMMITTED = "$onDragCommitted";
+const ON_TRANSFORMED = "$onDragTransomed";
+
 // Prefixed attributes
 const DRAG_PREFIX = "dragged";
 
@@ -30,6 +33,8 @@ const DRAG_EVENT = {
   ON_OUT_THRESHOLD,
   ON_ENTER_CONTAINER,
   ON_ENTER_THRESHOLD,
+  ON_COMMITTED,
+  ON_TRANSFORMED,
 } as const;
 
 const INTERACTIVITY_EVENT = {
