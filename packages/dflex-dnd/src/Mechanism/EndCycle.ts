@@ -93,16 +93,17 @@ class EndCycle extends DFlexMechanismController {
     return isFallback;
   }
 
-  private _composeEventDispatcherCB(
+  private _composeDragMutationEvent(
     hasToReconcile: boolean,
   ): (() => void) | undefined {
     const { events, draggedElm } = this.draggable;
-    const { migration } = store;
-    const latestCycle = migration.latest();
 
-    let onUpdate;
+    let dispatchDragMutationEvent;
 
     if (events) {
+      const { migration } = store;
+      const latestCycle = migration.latest();
+
       const { index: inserted, SK } = latestCycle;
       const { SK: originSK } = migration.getAll()[0];
 
@@ -111,7 +112,7 @@ class EndCycle extends DFlexMechanismController {
         id,
       } = draggedElm;
 
-      onUpdate = () => {
+      dispatchDragMutationEvent = () => {
         // Use it instead of draggedElm because the dragged might be a mirror.
         const element = store.interactiveDOM.get(id)!;
 
@@ -139,7 +140,7 @@ class EndCycle extends DFlexMechanismController {
       };
     }
 
-    return onUpdate;
+    return dispatchDragMutationEvent;
   }
 
   endDragging(): void {
@@ -184,28 +185,25 @@ class EndCycle extends DFlexMechanismController {
 
     const hasToReconcile = enableAfterEndingDrag || isMigratedInScroll;
 
-    const onUpdate = this._composeEventDispatcherCB(hasToReconcile);
+    const dispatchDragMutationEvent =
+      this._composeDragMutationEvent(hasToReconcile);
 
     scheduler(
       store,
       () => this.draggable.cleanup(isFallback, latestCycle, hasToReconcile),
-      hasToReconcile ? null : { onUpdate },
+      null,
       {
         type: "layoutState",
         status: "dragEnd",
       },
     );
 
-    if (__DEV__) {
-      if (featureFlags.enableCommit) {
-        store.commit(onUpdate);
-
-        return;
-      }
+    if (hasToReconcile) {
+      store.commit();
     }
 
-    if (hasToReconcile) {
-      store.commit(onUpdate);
+    if (dispatchDragMutationEvent) {
+      dispatchDragMutationEvent();
     }
   }
 }
