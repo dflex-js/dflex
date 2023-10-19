@@ -295,6 +295,10 @@ class DraggableInteractive extends DraggableAxes {
 
     this.setDraggedTransformProcess(isFallback, latestCycle, willReconcile);
 
+    if (this.events) {
+      this.events.cleanup();
+    }
+
     this.threshold.destroy();
   }
 }

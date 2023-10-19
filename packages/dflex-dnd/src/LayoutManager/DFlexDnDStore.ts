@@ -900,6 +900,18 @@ class DFlexDnDStore extends DFlexBaseStore {
     return undefined;
   }
 
+  getParentBySK(SK: string): HTMLElement | undefined {
+    const container = this.containers.get(SK)!;
+
+    if (container) {
+      const target = this.interactiveDOM.get(container.id);
+
+      return target;
+    }
+
+    return undefined;
+  }
+
   cleanupSiblingsAttachments(BK: string, SK: string, depth: number): void {
     const scroll = this.scrolls.get(SK)!;
 

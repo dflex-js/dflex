@@ -77,6 +77,9 @@ class EndCycle extends DFlexMechanismController {
 
     let isFallback = false;
 
+    let onUpdate;
+    let updateFn;
+
     if (this.hasActiveScrolling()) {
       isFallback = true;
 
@@ -98,19 +101,23 @@ class EndCycle extends DFlexMechanismController {
 
     // If it's falling back then we won't trigger reconciliation.
     if (isFallback) {
+      onUpdate = () => {
+        this.draggable.cleanup(true, latestCycle, false);
+        migration.flush(session);
+      };
+
+      updateFn = () => {
+        sessionCycles.forEach((_) => {
+          const siblings = store.getElmSiblingsByKey(_.SK);
+          this._undoSiblingsPositions(siblings, _);
+        });
+      };
+
       scheduler(
         store,
-        () => {
-          sessionCycles.forEach((_) => {
-            const siblings = store.getElmSiblingsByKey(_.SK);
-            this._undoSiblingsPositions(siblings, _);
-          });
-        },
+        updateFn,
         {
-          onUpdate: () => {
-            this.draggable.cleanup(true, latestCycle, false);
-            migration.flush(session);
-          },
+          onUpdate,
         },
         {
           type: "layoutState",
@@ -129,8 +136,6 @@ class EndCycle extends DFlexMechanismController {
 
     const hasToReconcile = enableAfterEndingDrag || isMigratedInScroll;
 
-    let onUpdate;
-
     if (events) {
       const { index: inserted, SK } = latestCycle;
       const { SK: originSK } = migration.getAll()[0];
@@ -141,12 +146,11 @@ class EndCycle extends DFlexMechanismController {
       } = draggedElm;
 
       onUpdate = () => {
+        // Use it instead of draggedElm because the dragged might be a mirror.
         const element = store.interactiveDOM.get(id)!;
-        const container = store.containers.get(SK)!;
-        const target = store.interactiveDOM.get(container.id)!;
 
-        const originContainer = store.containers.get(originSK)!;
-        const origin = store.interactiveDOM.get(originContainer.id)!;
+        const target = store.getParentBySK(SK)!;
+        const origin = store.getParentBySK(originSK)!;
 
         const indexes = {
           initial,
@@ -166,20 +170,16 @@ class EndCycle extends DFlexMechanismController {
             containers,
           }),
         );
-
-        events.cleanup();
       };
     }
 
-    scheduler(
-      store,
-      () => this.draggable.cleanup(isFallback, latestCycle, hasToReconcile),
-      hasToReconcile ? null : { onUpdate },
-      {
-        type: "layoutState",
-        status: "dragEnd",
-      },
-    );
+    updateFn = () =>
+      this.draggable.cleanup(isFallback, latestCycle, hasToReconcile);
+
+    scheduler(store, updateFn, hasToReconcile ? null : { onUpdate }, {
+      type: "layoutState",
+      status: "dragEnd",
+    });
 
     if (__DEV__) {
       if (featureFlags.enableCommit) {
