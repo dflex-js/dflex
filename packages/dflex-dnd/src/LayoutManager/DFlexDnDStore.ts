@@ -141,8 +141,6 @@ function validateCSS(id: string, css?: CSS): void {
   }
 }
 
-const { MUTATION_CAT } = DFLEX_LISTENERS_CAT;
-
 let hasThrownForID = false;
 
 // eslint-disable-next-line no-shadow
