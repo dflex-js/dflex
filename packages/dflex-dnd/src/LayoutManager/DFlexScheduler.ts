@@ -17,7 +17,6 @@ function execTask(
   store: DFlexDnDStore,
   updateFn: UpdateFn | null,
   options: SchedulerOptions | null,
-  evt?: DFlexListenerNotifications,
 ) {
   const { deferred, listeners } = store;
 
@@ -45,10 +44,6 @@ function execTask(
       // eslint-disable-next-line no-console
       console.error(error);
     }
-  } finally {
-    if (evt && listeners) {
-      deferred.push(() => listeners.notify(evt));
-    }
   }
 }
 
@@ -56,10 +51,9 @@ function scheduler(
   store: DFlexDnDStore,
   updateFn: UpdateFn | null,
   options: SchedulerOptions | null,
-  evt?: DFlexListenerNotifications,
 ) {
   if (store.isUpdating) {
-    store.updatesQueue.push([updateFn, options, evt]);
+    store.updatesQueue.push([updateFn, options]);
 
     return;
   }
@@ -69,15 +63,15 @@ function scheduler(
   store.isUpdating = true;
 
   try {
-    execTask(store, updateFn, options, evt);
+    execTask(store, updateFn, options);
   } finally {
     queueMicrotask(() => {
       execDeferredFn(store, store.deferred);
 
       if (store.updatesQueue.length) {
-        const [_updateFn, _options, _evt] = store.updatesQueue.shift()!;
+        const [_updateFn, _options] = store.updatesQueue.shift()!;
         store.isUpdating = initialIsUpdating;
-        scheduler(store, _updateFn, _options, _evt);
+        scheduler(store, _updateFn, _options);
       }
 
       store.isUpdating = initialIsUpdating;

@@ -29,8 +29,9 @@ import {
 
 import {
   DFlexListeners,
-  DFlexListenerNotifications,
-  DFLEX_LISTENERS_CAT,
+  createLayoutStateNotification,
+  createMutationNotification,
+  LayoutStates,
 } from "../Listeners";
 
 import scheduler, { SchedulerOptions, UpdateFn } from "./DFlexScheduler";
@@ -61,11 +62,7 @@ type UnifiedContainerDimensions = Record<number, Dimensions>;
 
 type MutationObserverValue = MutationObserver | null;
 
-type UpdatesQueue = [
-  UpdateFn | null,
-  SchedulerOptions | null,
-  DFlexListenerNotifications | undefined,
-][];
+type UpdatesQueue = [UpdateFn | null, SchedulerOptions | null][];
 
 type Deferred = (() => void)[];
 
@@ -141,7 +138,7 @@ function validateCSS(id: string, css?: CSS): void {
   }
 }
 
-const { MUTATION_CAT } = DFLEX_LISTENERS_CAT;
+const { PENDING, READY } = LayoutStates;
 
 let hasThrownForID = false;
 
@@ -234,12 +231,11 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   private _initWhenRegister(): void {
-    window.addEventListener("resize", this._windowResizeHandler);
+    if (this.listeners) {
+      createLayoutStateNotification(this.listeners, PENDING);
+    }
 
-    scheduler(this, null, null, {
-      type: "layoutState",
-      status: "pending",
-    });
+    window.addEventListener("resize", this._windowResizeHandler);
   }
 
   linkElmToContainerGrid(
@@ -427,7 +423,9 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     this._executePendingFunctions(PENDING_REASON.REGISTER);
 
-    scheduler(this, null, null, { type: "layoutState", status: "ready" });
+    if (this.listeners) {
+      createLayoutStateNotification(this.listeners, READY);
+    }
   }
 
   register(elm: RegisterInputOpts) {
@@ -764,13 +762,10 @@ class DFlexDnDStore extends DFlexBaseStore {
             scrollTuple,
             syncAllSiblings ? null : this.migration.getReconciledIDsBySK(SK),
           );
-        },
-      },
-      {
-        type: MUTATION_CAT,
-        payload: {
-          target: parentDOM,
-          ids: siblings,
+
+          if (this.listeners) {
+            createMutationNotification(this.listeners, siblings, parentDOM);
+          }
         },
       },
     );
