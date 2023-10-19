@@ -20,6 +20,8 @@ import type {
   DFlexEventNames,
   DFlexEventPayloads,
   DragAttr,
+  PayloadDragMoved,
+  PayloadDragCommitted,
 } from "./types";
 
 const EVT_CONFIG = {
@@ -34,6 +36,8 @@ const {
     ON_ENTER_THRESHOLD,
     ON_OUT_CONTAINER,
     ON_OUT_THRESHOLD,
+    ON_COMMITTED,
+    ON_TRANSFORMED,
   },
 } = DFLEX_EVENTS;
 
@@ -52,7 +56,12 @@ function domEventUpdater(
 ): void {
   DOM.dispatchEvent(dflexEvent);
 
-  if (dflexEvent.detail.type === DRAG_CAT) {
+  const isDragEvent = dflexEvent.detail.type === DRAG_CAT;
+
+  const isNotSpecialEvent =
+    eventName !== ON_COMMITTED && eventName !== ON_TRANSFORMED;
+
+  if (isDragEvent && isNotSpecialEvent) {
     switch (eventName) {
       case ON_ENTER_CONTAINER:
         // Remove attr.
@@ -88,10 +97,24 @@ function domEventUpdater(
   }
 }
 
+type DragMovedEventNames = {
+  [K in DragEventNames]: K extends
+    | typeof DFLEX_EVENTS.DRAG_EVENT.ON_COMMITTED
+    | typeof DFLEX_EVENTS.DRAG_EVENT.ON_TRANSFORMED
+    ? never
+    : K;
+}[DragEventNames];
+
 function dispatchDFlexEvent(
   DOM: HTMLElement,
-  eventType: DragEventNames,
-  payload: PayloadDragged,
+  eventType: DragMovedEventNames,
+  payload: PayloadDragMoved,
+): void;
+
+function dispatchDFlexEvent(
+  DOM: HTMLElement,
+  eventType: typeof DFLEX_EVENTS.DRAG_EVENT.ON_COMMITTED,
+  payload: PayloadDragCommitted,
 ): void;
 
 function dispatchDFlexEvent(
@@ -128,11 +151,21 @@ function dispatchDFlexEvent(
 
 function DFlexEvent(dispatcher: HTMLElement) {
   function dispatch(
+    eventType: DragMovedEventNames,
+    payload: PayloadDragMoved,
+  ): void;
+
+  function dispatch(
+    eventType:
+      | typeof DFLEX_EVENTS.DRAG_EVENT.ON_COMMITTED
+      | typeof DFLEX_EVENTS.DRAG_EVENT.ON_TRANSFORMED,
+    payload: PayloadDragCommitted,
+  ): void;
+
+  function dispatch(
     eventName: InteractivityEventNames,
     payload: PayloadInteractivity,
   ): void;
-
-  function dispatch(eventName: DragEventNames, payload: PayloadDragged): void;
 
   function dispatch(
     eventName: SiblingsEventNames,

@@ -3,7 +3,7 @@ export { default as DFlexEvent } from "./DFlexEvents";
 export {
   createInteractivityPayload,
   createSiblingsPayload,
-  createDragPayload,
+  createDragMovedPayload,
 } from "./payloads";
 
 export { DFLEX_EVENTS, DFLEX_EVENTS_CAT, DFLEX_ATTRS } from "./constants";
