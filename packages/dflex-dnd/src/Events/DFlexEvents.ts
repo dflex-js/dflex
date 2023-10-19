@@ -179,7 +179,12 @@ function DFlexEvent(dispatcher: HTMLElement) {
     dispatchDFlexEvent(dispatcher, eventName, payload);
   }
 
-  function cleanup(): void {
+  /**
+   * Cleans up drag-related attributes.
+   * This function iterates over DRAG_ATTR_STATUS and updates corresponding DOM
+   * attributes.
+   */
+  function cleanupAttr(): void {
     (
       Object.keys(DRAG_ATTR_STATUS) as (keyof typeof DRAG_ATTR_STATUS)[]
     ).forEach((key) => {
@@ -191,7 +196,7 @@ function DFlexEvent(dispatcher: HTMLElement) {
 
   return {
     dispatch,
-    cleanup,
+    cleanupAttr,
   };
 }
 
