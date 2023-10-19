@@ -68,17 +68,8 @@ class EndCycle extends DFlexMechanismController {
     }
   }
 
-  endDragging() {
-    const { enableCommit, session, events, draggedElm } = this.draggable;
-    const { migration } = store;
-    const latestCycle = migration.latest();
-
-    const sessionCycles = migration.filter(session, true);
-
+  private _isCanceled(): boolean {
     let isFallback = false;
-
-    let onUpdate;
-    let updateFn;
 
     if (this.hasActiveScrolling()) {
       isFallback = true;
@@ -99,25 +90,33 @@ class EndCycle extends DFlexMechanismController {
       isFallback = this.hasBeenScrolling || this.draggable.isNotSettled();
     }
 
+    return isFallback;
+  }
+
+  endDragging() {
+    const { enableCommit, session, events, draggedElm } = this.draggable;
+    const { migration } = store;
+    const latestCycle = migration.latest();
+
+    const sessionCycles = migration.filter(session, true);
+
+    const isFallback = this._isCanceled();
+
     // If it's falling back then we won't trigger reconciliation.
     if (isFallback) {
-      onUpdate = () => {
-        this.draggable.cleanup(true, latestCycle, false);
-        migration.flush(session);
-      };
-
-      updateFn = () => {
-        sessionCycles.forEach((_) => {
-          const siblings = store.getElmSiblingsByKey(_.SK);
-          this._undoSiblingsPositions(siblings, _);
-        });
-      };
-
       scheduler(
         store,
-        updateFn,
+        () => {
+          sessionCycles.forEach((_) => {
+            const siblings = store.getElmSiblingsByKey(_.SK);
+            this._undoSiblingsPositions(siblings, _);
+          });
+        },
         {
-          onUpdate,
+          onUpdate: () => {
+            this.draggable.cleanup(true, latestCycle, false);
+            migration.flush(session);
+          },
         },
         {
           type: "layoutState",
@@ -135,6 +134,8 @@ class EndCycle extends DFlexMechanismController {
     const { enableAfterEndingDrag } = enableCommit;
 
     const hasToReconcile = enableAfterEndingDrag || isMigratedInScroll;
+
+    let onUpdate;
 
     if (events) {
       const { index: inserted, SK } = latestCycle;
@@ -173,13 +174,15 @@ class EndCycle extends DFlexMechanismController {
       };
     }
 
-    updateFn = () =>
-      this.draggable.cleanup(isFallback, latestCycle, hasToReconcile);
-
-    scheduler(store, updateFn, hasToReconcile ? null : { onUpdate }, {
-      type: "layoutState",
-      status: "dragEnd",
-    });
+    scheduler(
+      store,
+      () => this.draggable.cleanup(isFallback, latestCycle, hasToReconcile),
+      hasToReconcile ? null : { onUpdate },
+      {
+        type: "layoutState",
+        status: "dragEnd",
+      },
+    );
 
     if (__DEV__) {
       if (featureFlags.enableCommit) {
