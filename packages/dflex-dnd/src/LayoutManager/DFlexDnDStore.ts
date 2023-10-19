@@ -29,9 +29,9 @@ import {
 
 import {
   DFlexListeners,
-  createLayoutStateNotification,
-  createMutationNotification,
-  LayoutStates,
+  notifyLayoutStateListeners,
+  notifyMutationListeners,
+  LAYOUT_STATES,
 } from "../Listeners";
 
 import scheduler, { SchedulerOptions, UpdateFn } from "./DFlexScheduler";
@@ -138,7 +138,7 @@ function validateCSS(id: string, css?: CSS): void {
   }
 }
 
-const { PENDING, READY } = LayoutStates;
+const { PENDING, READY } = LAYOUT_STATES;
 
 let hasThrownForID = false;
 
@@ -232,7 +232,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   private _initWhenRegister(): void {
     if (this.listeners) {
-      createLayoutStateNotification(this.listeners, PENDING);
+      notifyLayoutStateListeners(this.listeners, PENDING);
     }
 
     window.addEventListener("resize", this._windowResizeHandler);
@@ -424,7 +424,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     this._executePendingFunctions(PENDING_REASON.REGISTER);
 
     if (this.listeners) {
-      createLayoutStateNotification(this.listeners, READY);
+      notifyLayoutStateListeners(this.listeners, READY);
     }
   }
 
@@ -764,7 +764,7 @@ class DFlexDnDStore extends DFlexBaseStore {
           );
 
           if (this.listeners) {
-            createMutationNotification(this.listeners, siblings, parentDOM);
+            notifyMutationListeners(this.listeners, siblings, parentDOM);
           }
         },
       },

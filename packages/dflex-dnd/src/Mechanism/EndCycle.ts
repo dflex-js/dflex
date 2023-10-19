@@ -7,13 +7,13 @@ import DFlexMechanismController, {
 
 import { DFLEX_EVENTS, createDragCommittedPayload } from "../Events";
 
-import { LayoutStates, createLayoutStateNotification } from "../Listeners";
+import { LAYOUT_STATES, notifyLayoutStateListeners } from "../Listeners";
 
 const {
   DRAG_EVENT: { ON_COMMITTED, ON_TRANSFORMED },
 } = DFLEX_EVENTS;
 
-const { DRAG_CANCEL, DRAG_END } = LayoutStates;
+const { DRAG_CANCEL, DRAG_END } = LAYOUT_STATES;
 
 class EndCycle extends DFlexMechanismController {
   private _undoSiblingsPositions(
@@ -172,7 +172,7 @@ class EndCycle extends DFlexMechanismController {
             migration.flush(session);
 
             if (listeners) {
-              createLayoutStateNotification(listeners, DRAG_CANCEL);
+              notifyLayoutStateListeners(listeners, DRAG_CANCEL);
             }
           },
         },
@@ -198,7 +198,7 @@ class EndCycle extends DFlexMechanismController {
       listeners
         ? {
             onUpdate: () => {
-              createLayoutStateNotification(listeners, DRAG_END);
+              notifyLayoutStateListeners(listeners, DRAG_END);
             },
           }
         : null,

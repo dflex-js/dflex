@@ -24,9 +24,9 @@ import type {
 } from "../types";
 
 import DraggablePositions from "./DraggablePositions";
-import { LayoutStates, createLayoutStateNotification } from "../Listeners";
+import { LAYOUT_STATES, notifyLayoutStateListeners } from "../Listeners";
 
-const { DRAGGING } = LayoutStates;
+const { DRAGGING } = LAYOUT_STATES;
 
 function initContainers(SK: string, siblings: string[]) {
   const container = store.containers.get(SK)!;
@@ -264,7 +264,7 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     if (!this.isLayoutStateUpdated) {
       this.isLayoutStateUpdated = true;
       if (store.listeners) {
-        createLayoutStateNotification(store.listeners, DRAGGING);
+        notifyLayoutStateListeners(store.listeners, DRAGGING);
       }
     }
 

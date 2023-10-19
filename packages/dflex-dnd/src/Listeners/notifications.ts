@@ -9,7 +9,7 @@ import type DFlexListeners from "./DFlexListeners";
 
 const { LAYOUT_CAT, MUTATION_CAT } = DFLEX_LISTENERS_CAT;
 
-function createLayoutStateNotification(
+function notifyLayoutStateListeners(
   listeners: ReturnType<typeof DFlexListeners>,
   status: DFlexLayoutStateNotification["status"],
 ): void {
@@ -19,7 +19,7 @@ function createLayoutStateNotification(
   });
 }
 
-function createMutationNotification(
+function notifyMutationListeners(
   listeners: ReturnType<typeof DFlexListeners>,
   ids: DFlexMutationNotification["payload"]["ids"],
   target: DFlexMutationNotification["payload"]["target"],
@@ -33,4 +33,4 @@ function createMutationNotification(
   });
 }
 
-export { createLayoutStateNotification, createMutationNotification };
+export { notifyLayoutStateListeners, notifyMutationListeners };

@@ -28,7 +28,7 @@ const DRAG_END = "dragEnd";
  */
 const DRAG_CANCEL = "dragCancel";
 
-const LayoutStates = {
+const LAYOUT_STATES = {
   PENDING,
   READY,
   DRAGGING,
@@ -48,7 +48,7 @@ const DFLEX_LISTENERS_CAT = {
 
 const { freeze } = Object;
 
-freeze(LayoutStates);
+freeze(LAYOUT_STATES);
 freeze(DFLEX_LISTENERS_CAT);
 
-export { LayoutStates, DFLEX_LISTENERS_CAT };
+export { LAYOUT_STATES, DFLEX_LISTENERS_CAT };

@@ -1,6 +1,6 @@
-import { DFLEX_LISTENERS_CAT, LayoutStates } from "./constants";
+import { DFLEX_LISTENERS_CAT, LAYOUT_STATES } from "./constants";
 
-export type LayoutState = (typeof LayoutStates)[keyof typeof LayoutStates];
+export type LayoutState = (typeof LAYOUT_STATES)[keyof typeof LAYOUT_STATES];
 
 type PayloadMutation = {
   /**

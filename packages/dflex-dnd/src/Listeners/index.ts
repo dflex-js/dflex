@@ -1,6 +1,6 @@
 export { default as DFlexListeners } from "./DFlexListeners";
 
-export { DFLEX_LISTENERS_CAT, LayoutStates } from "./constants";
+export { DFLEX_LISTENERS_CAT, LAYOUT_STATES } from "./constants";
 
 export type {
   DFlexListenerNotifications,
@@ -9,6 +9,6 @@ export type {
 } from "./types";
 
 export {
-  createLayoutStateNotification,
-  createMutationNotification,
+  notifyLayoutStateListeners,
+  notifyMutationListeners,
 } from "./notifications";
