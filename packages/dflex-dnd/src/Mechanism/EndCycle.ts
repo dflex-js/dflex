@@ -5,6 +5,12 @@ import DFlexMechanismController, {
   isIDEligible,
 } from "./DFlexMechanismController";
 
+import { DFLEX_EVENTS, createDragCommittedPayload } from "../Events";
+
+const {
+  DRAG_EVENT: { ON_COMMITTED, ON_TRANSFORMED },
+} = DFLEX_EVENTS;
+
 class EndCycle extends DFlexMechanismController {
   private _undoSiblingsPositions(
     siblings: string[],
@@ -63,7 +69,7 @@ class EndCycle extends DFlexMechanismController {
   }
 
   endDragging() {
-    const { enableCommit, session } = this.draggable;
+    const { enableCommit, session, events, draggedElm } = this.draggable;
     const { migration } = store;
     const latestCycle = migration.latest();
 
@@ -123,10 +129,52 @@ class EndCycle extends DFlexMechanismController {
 
     const hasToReconcile = enableAfterEndingDrag || isMigratedInScroll;
 
+    let onUpdate;
+
+    if (events) {
+      const { index: inserted, SK } = latestCycle;
+      const { SK: originSK } = migration.getAll()[0];
+
+      const {
+        VDOMOrder: { self: initial },
+        id,
+      } = draggedElm;
+
+      onUpdate = () => {
+        const element = store.interactiveDOM.get(id)!;
+        const container = store.containers.get(SK)!;
+        const target = store.interactiveDOM.get(container.id)!;
+
+        const originContainer = store.containers.get(originSK)!;
+        const origin = store.interactiveDOM.get(originContainer.id)!;
+
+        const indexes = {
+          initial,
+          inserted,
+        };
+
+        const containers = {
+          origin,
+          target,
+        };
+
+        events.dispatch(
+          hasToReconcile ? ON_COMMITTED : ON_TRANSFORMED,
+          createDragCommittedPayload({
+            element,
+            indexes,
+            containers,
+          }),
+        );
+
+        events.cleanup();
+      };
+    }
+
     scheduler(
       store,
       () => this.draggable.cleanup(isFallback, latestCycle, hasToReconcile),
-      null,
+      hasToReconcile ? null : { onUpdate },
       {
         type: "layoutState",
         status: "dragEnd",
@@ -142,7 +190,7 @@ class EndCycle extends DFlexMechanismController {
     }
 
     if (hasToReconcile) {
-      store.commit();
+      store.commit(onUpdate);
     }
   }
 }
