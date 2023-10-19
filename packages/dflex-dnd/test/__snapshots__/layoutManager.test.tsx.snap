@@ -161,6 +161,7 @@ DFlexDnDStore {
   "deletedDOM": WeakSet {},
   "globals": {
     "enableEvents": true,
+    "enableListeners": true,
     "removeEmptyContainer": false,
   },
   "interactiveDOM": Map {
