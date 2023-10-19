@@ -56,44 +56,50 @@ function domEventUpdater(
 ): void {
   DOM.dispatchEvent(dflexEvent);
 
-  const isDragEvent = dflexEvent.detail.type === DRAG_CAT;
+  const isDragMovementEvent = dflexEvent.detail.type === DRAG_CAT;
 
-  const isNotSpecialEvent =
-    eventName !== ON_COMMITTED && eventName !== ON_TRANSFORMED;
+  if (!isDragMovementEvent) {
+    return;
+  }
 
-  if (isDragEvent && isNotSpecialEvent) {
-    switch (eventName) {
-      case ON_ENTER_CONTAINER:
-        // Remove attr.
-        DRAG_ATTR_STATUS[OUT_CONTAINER] = false;
-        updateDOMAttr<DragAttr>(DOM, OUT_CONTAINER, true);
+  const isMutationEvent =
+    eventName === ON_COMMITTED || eventName === ON_TRANSFORMED;
 
-        break;
+  if (isMutationEvent) {
+    return;
+  }
 
-      case ON_ENTER_THRESHOLD:
-        // Remove attr.
-        DRAG_ATTR_STATUS[OUT_THRESHOLD] = false;
-        updateDOMAttr<DragAttr>(DOM, OUT_THRESHOLD, true);
+  switch (eventName) {
+    case ON_ENTER_CONTAINER:
+      // Remove attr.
+      DRAG_ATTR_STATUS[OUT_CONTAINER] = false;
+      updateDOMAttr<DragAttr>(DOM, OUT_CONTAINER, true);
 
-        break;
+      break;
 
-      case ON_OUT_CONTAINER:
-        DRAG_ATTR_STATUS[OUT_CONTAINER] = true;
-        updateDOMAttr<DragAttr>(DOM, OUT_CONTAINER, false);
-        break;
+    case ON_ENTER_THRESHOLD:
+      // Remove attr.
+      DRAG_ATTR_STATUS[OUT_THRESHOLD] = false;
+      updateDOMAttr<DragAttr>(DOM, OUT_THRESHOLD, true);
 
-      case ON_OUT_THRESHOLD:
-        DRAG_ATTR_STATUS[OUT_THRESHOLD] = true;
-        updateDOMAttr<DragAttr>(DOM, OUT_THRESHOLD, false);
+      break;
 
-        break;
+    case ON_OUT_CONTAINER:
+      DRAG_ATTR_STATUS[OUT_CONTAINER] = true;
+      updateDOMAttr<DragAttr>(DOM, OUT_CONTAINER, false);
+      break;
 
-      default:
-        if (__DEV__) {
-          throw new Error(`Unexpected event name: ${eventName}`);
-        }
-        break;
-    }
+    case ON_OUT_THRESHOLD:
+      DRAG_ATTR_STATUS[OUT_THRESHOLD] = true;
+      updateDOMAttr<DragAttr>(DOM, OUT_THRESHOLD, false);
+
+      break;
+
+    default:
+      if (__DEV__) {
+        throw new Error(`Unexpected event name: ${eventName}`);
+      }
+      break;
   }
 }
 
@@ -179,7 +185,12 @@ function DFlexEvent(dispatcher: HTMLElement) {
     dispatchDFlexEvent(dispatcher, eventName, payload);
   }
 
-  function cleanup(): void {
+  /**
+   * Cleans up drag-related attributes.
+   * This function iterates over DRAG_ATTR_STATUS and updates corresponding DOM
+   * attributes.
+   */
+  function cleanupAttr(): void {
     (
       Object.keys(DRAG_ATTR_STATUS) as (keyof typeof DRAG_ATTR_STATUS)[]
     ).forEach((key) => {
@@ -191,7 +202,7 @@ function DFlexEvent(dispatcher: HTMLElement) {
 
   return {
     dispatch,
-    cleanup,
+    cleanupAttr,
   };
 }
 

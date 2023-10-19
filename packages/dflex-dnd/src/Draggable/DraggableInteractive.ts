@@ -285,7 +285,7 @@ class DraggableInteractive extends DraggableAxes {
     isFallback: boolean,
     latestCycle: AbstractDFlexCycle,
     willReconcile: boolean,
-  ) {
+  ): void {
     const draggedDOM = store.interactiveDOM.get(this.draggedElm.id)!;
     const mirrorElement = this.mirrorDOM || null;
 
@@ -296,7 +296,7 @@ class DraggableInteractive extends DraggableAxes {
     this.setDraggedTransformProcess(isFallback, latestCycle, willReconcile);
 
     if (this.events) {
-      this.events.cleanup();
+      this.events.cleanupAttr();
     }
 
     this.threshold.destroy();

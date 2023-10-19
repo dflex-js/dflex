@@ -13,9 +13,9 @@ function updateDOMAttr<T extends string>(
       if (!DOM.hasAttribute(attrName)) {
         throw new Error(`Attribute ${attrName} does not exist on the element.`);
       }
-
-      DOM.removeAttribute(attrName);
     }
+
+    DOM.removeAttribute(attrName);
 
     return;
   }

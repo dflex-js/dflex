@@ -99,12 +99,21 @@ const DFlexDnDComponent = ({
       document.removeEventListener("mousemove", onMouseMove);
 
       if (useDFlexEvents) {
+        // Removing interactivity events.
         document.removeEventListener("$onDragLeave", onDFlexInteractivityEvent);
         document.removeEventListener("$onDragOver", onDFlexInteractivityEvent);
 
+        // Removing drag events.
         document.removeEventListener("$onDragOutContainer", onDFlexDragEvent);
-        document.removeEventListener("$onDragOutContainer", onDFlexDragEvent);
+        document.removeEventListener("$onDragEnterContainer", onDFlexDragEvent);
 
+        document.removeEventListener("$onDragOutThreshold", onDFlexDragEvent);
+        document.removeEventListener("$onDragEnterThreshold", onDFlexDragEvent);
+
+        document.removeEventListener("$onDragCommitted", onDFlexDragEvent);
+        document.removeEventListener("$onDragTransomed", onDFlexDragEvent);
+
+        // Removing siblings events.
         document.removeEventListener("$onLiftUpSiblings", onDFlexSiblingsEvent);
         document.removeEventListener(
           "$onMoveDownSiblings",
@@ -133,7 +142,13 @@ const DFlexDnDComponent = ({
 
           // Add drag events.
           document.addEventListener("$onDragOutContainer", onDFlexDragEvent);
-          document.addEventListener("$onDragOutContainer", onDFlexDragEvent);
+          document.addEventListener("$onDragEnterContainer", onDFlexDragEvent);
+
+          document.addEventListener("$onDragOutThreshold", onDFlexDragEvent);
+          document.addEventListener("$onDragEnterThreshold", onDFlexDragEvent);
+
+          document.addEventListener("$onDragCommitted", onDFlexDragEvent);
+          document.addEventListener("$onDragTransomed", onDFlexDragEvent);
 
           // Add siblings events.
           document.addEventListener("$onLiftUpSiblings", onDFlexSiblingsEvent);
