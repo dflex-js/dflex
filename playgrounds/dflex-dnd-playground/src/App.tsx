@@ -50,6 +50,10 @@ const App = () => {
   }, []);
 
   React.useEffect(() => {
+    if (!store.listeners) {
+      return undefined;
+    }
+
     const unsubscribe = store.listeners.subscribe((e) => {
       console.info("new layout state", e);
     }, "layoutState");
@@ -60,6 +64,10 @@ const App = () => {
   }, []);
 
   React.useEffect(() => {
+    if (!store.listeners) {
+      return undefined;
+    }
+
     const unsubscribe = store.listeners.subscribe((e) => {
       console.info("new mutation state", e);
     }, "mutation");

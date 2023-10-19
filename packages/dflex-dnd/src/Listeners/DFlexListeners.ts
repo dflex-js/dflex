@@ -11,58 +11,47 @@ type ListenersMap = Map<ListenerTypes, Set<ListenerFunction>>;
 
 type CleanupFunction = () => void;
 
-function subscribeLayoutState(
-  listenersMap: ListenersMap,
-  listener: ListenerFunction,
-  type: ListenerTypes,
+const eventListeners: ListenersMap = new Map();
+
+function subscribe(
+  callback: ListenerFunction,
+  eventType: ListenerTypes,
 ): CleanupFunction {
-  if (!listenersMap.has(type)) {
-    listenersMap.set(type, new Set());
+  if (!eventListeners.has(eventType)) {
+    eventListeners.set(eventType, new Set());
   }
 
-  const listenersStateSet = listenersMap.get(type)!;
+  const listenersStateSet = eventListeners.get(eventType)!;
 
-  listenersStateSet.add(listener);
+  listenersStateSet.add(callback);
 
   return () => {
-    listenersStateSet.delete(listener);
-
-    if (listenersStateSet.size === 0) {
-      listenersMap.delete(type);
-    }
+    listenersStateSet.delete(callback);
   };
 }
 
-function notifyLayoutState(
-  listenersMap: ListenersMap,
-  event: DFlexListenerNotifications,
-): void {
-  if (!listenersMap.has(event.type)) {
+function notify(event: DFlexListenerNotifications): void {
+  const { type } = event;
+
+  const listeners = eventListeners.get(type);
+
+  if (!listeners) {
     return;
   }
-  const listenersStateSet = listenersMap.get(event.type)!;
-  listenersStateSet.forEach((listener) => listener(event));
+
+  listeners.forEach((callback) => callback(event));
 }
 
-function clear(listeners: ListenersMap): void {
-  listeners.forEach((listenersSet) => listenersSet.clear());
-  listeners.clear();
+function clear(): void {
+  eventListeners.forEach((eventListenersSet) => eventListenersSet.clear());
+  eventListeners.clear();
 }
 
-function DFlexListeners(): {
-  subscribe: (
-    listener: ListenerFunction,
-    type: ListenerTypes,
-  ) => CleanupFunction;
-  notify: (event: DFlexListenerNotifications) => void;
-  clear: () => void;
-} {
-  const listeners: ListenersMap = new Map();
-
+function DFlexListeners() {
   return {
-    subscribe: subscribeLayoutState.bind(null, listeners),
-    notify: notifyLayoutState.bind(null, listeners),
-    clear: clear.bind(null, listeners),
+    subscribe,
+    notify,
+    clear,
   };
 }
 

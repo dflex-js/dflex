@@ -30,7 +30,7 @@ export type DFlexMutationNotification = {
 
 export type DFlexErrorNotification = {
   type: typeof DFLEX_LISTENERS_CAT.ERROR_CAT;
-  error: Error;
+  error: unknown;
 };
 
 export type DFlexListenerNotifications =

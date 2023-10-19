@@ -19,8 +19,10 @@ function execTask(
   options: SchedulerOptions | null,
   evt?: DFlexListenerNotifications,
 ) {
+  const { deferred, listeners } = store;
+
   if (options && options.onUpdate) {
-    store.deferred.push(options.onUpdate);
+    deferred.push(options.onUpdate);
   }
 
   if (updateFn === null) {
@@ -30,9 +32,9 @@ function execTask(
   try {
     updateFn();
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      store.deferred.push(
-        store.listeners.notify.bind(null, {
+    if (listeners && error instanceof Error) {
+      deferred.push(() =>
+        listeners.notify({
           type: "error",
           error,
         }),
@@ -44,8 +46,8 @@ function execTask(
       console.error(error);
     }
   } finally {
-    if (evt) {
-      store.deferred.push(store.listeners.notify.bind(null, evt));
+    if (evt && listeners) {
+      deferred.push(() => listeners.notify(evt));
     }
   }
 }

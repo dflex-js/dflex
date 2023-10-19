@@ -82,11 +82,13 @@ export type RegisterInputProcessed = DeepRequired<
 export type DFlexGlobalConfig = {
   removeEmptyContainer: boolean;
   enableEvents: boolean;
+  enableListeners: boolean;
 };
 
 const DEFAULT_GLOBAL_CONFIG = {
   removeEmptyContainer: false,
   enableEvents: true,
+  enableListeners: true,
 };
 
 if (__DEV__) {

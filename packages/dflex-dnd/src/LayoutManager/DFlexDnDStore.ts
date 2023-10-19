@@ -162,7 +162,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   mutationObserverMap: Map<string, MutationObserverValue>;
 
-  listeners: ReturnType<typeof DFlexListeners>;
+  listeners: ReturnType<typeof DFlexListeners> | null;
 
   migration: DFlexCycle;
 
@@ -210,7 +210,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.deferred = [];
     this.updatesQueue = [];
     this.pending = [];
-    this.listeners = DFlexListeners();
+    this.listeners = this.globals.enableListeners ? DFlexListeners() : null;
 
     this._initSiblings = this._initSiblings.bind(this);
     this._initObservers = this._initObservers.bind(this);
@@ -998,7 +998,10 @@ class DFlexDnDStore extends DFlexBaseStore {
     }
 
     this.containers.clear();
-    this.listeners.clear();
+
+    if (this.listeners) {
+      this.listeners.clear();
+    }
 
     // Destroys all scroll containers.
     this.scrolls.forEach((scroll) => {
