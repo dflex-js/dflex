@@ -16,40 +16,11 @@ type PayloadMutation = {
   ids: string[];
 };
 
-type PayloadCommitted = {
-  /** Targeted elements */
-  element: HTMLElement;
-
-  /** Indicates if the element is being dragged */
-  isDragged: boolean;
-
-  indexes: {
-    /** The initial index of the moved element. */
-    initial: number;
-
-    /** The index where it was inserted in the receiving container. */
-    inserted: number;
-  };
-
-  containers: {
-    /** The container from which the element originated. */
-    original: HTMLElement;
-
-    /** The container where the element is now located. */
-    receiving: HTMLElement;
-  };
-};
-
 export type DFlexLayoutStateNotification = {
   type: typeof DFLEX_LISTENERS_CAT.LAYOUT_CAT;
 
   /** The current status of the layout. */
   status: LayoutState;
-};
-
-export type DFlexCommittedNotification = {
-  type: typeof DFLEX_LISTENERS_CAT.COMMIT_CAT;
-  payload: PayloadCommitted;
 };
 
 export type DFlexMutationNotification = {
@@ -64,6 +35,5 @@ export type DFlexErrorNotification = {
 
 export type DFlexListenerNotifications =
   | DFlexLayoutStateNotification
-  | DFlexCommittedNotification
   | DFlexMutationNotification
   | DFlexErrorNotification;
