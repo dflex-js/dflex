@@ -15,7 +15,7 @@ class EndCycle extends DFlexMechanismController {
   private _undoSiblingsPositions(
     siblings: string[],
     cycle: AbstractDFlexCycle,
-  ) {
+  ): void {
     const {
       threshold,
       draggedElm: {
@@ -93,47 +93,12 @@ class EndCycle extends DFlexMechanismController {
     return isFallback;
   }
 
-  endDragging() {
-    const { enableCommit, session, events, draggedElm } = this.draggable;
+  private _composeEventDispatcherCB(
+    hasToReconcile: boolean,
+  ): (() => void) | undefined {
+    const { events, draggedElm } = this.draggable;
     const { migration } = store;
     const latestCycle = migration.latest();
-
-    const sessionCycles = migration.filter(session, true);
-
-    const isFallback = this._isCanceled();
-
-    // If it's falling back then we won't trigger reconciliation.
-    if (isFallback) {
-      scheduler(
-        store,
-        () => {
-          sessionCycles.forEach((_) => {
-            const siblings = store.getElmSiblingsByKey(_.SK);
-            this._undoSiblingsPositions(siblings, _);
-          });
-        },
-        {
-          onUpdate: () => {
-            this.draggable.cleanup(true, latestCycle, false);
-            migration.flush(session);
-          },
-        },
-        {
-          type: "layoutState",
-          status: "dragCancel",
-        },
-      );
-
-      return;
-    }
-
-    // If length is zero, means it's original and no need to migrate.
-    const isMigratedInScroll =
-      latestCycle.hasScroll && sessionCycles.length > 1;
-
-    const { enableAfterEndingDrag } = enableCommit;
-
-    const hasToReconcile = enableAfterEndingDrag || isMigratedInScroll;
 
     let onUpdate;
 
@@ -174,6 +139,53 @@ class EndCycle extends DFlexMechanismController {
       };
     }
 
+    return onUpdate;
+  }
+
+  endDragging(): void {
+    const { enableCommit, session } = this.draggable;
+    const { migration } = store;
+    const latestCycle = migration.latest();
+
+    const sessionCycles = migration.filter(session, true);
+
+    const isFallback = this._isCanceled();
+
+    // If it's falling back then we won't trigger reconciliation.
+    if (isFallback) {
+      scheduler(
+        store,
+        () => {
+          sessionCycles.forEach((_) => {
+            const siblings = store.getElmSiblingsByKey(_.SK);
+            this._undoSiblingsPositions(siblings, _);
+          });
+        },
+        {
+          onUpdate: () => {
+            this.draggable.cleanup(true, latestCycle, false);
+            migration.flush(session);
+          },
+        },
+        {
+          type: "layoutState",
+          status: "dragCancel",
+        },
+      );
+
+      return;
+    }
+
+    // If length is zero, means it's original and no need to migrate.
+    const isMigratedInScroll =
+      latestCycle.hasScroll && sessionCycles.length > 1;
+
+    const { enableAfterEndingDrag } = enableCommit;
+
+    const hasToReconcile = enableAfterEndingDrag || isMigratedInScroll;
+
+    const onUpdate = this._composeEventDispatcherCB(hasToReconcile);
+
     scheduler(
       store,
       () => this.draggable.cleanup(isFallback, latestCycle, hasToReconcile),
@@ -186,7 +198,7 @@ class EndCycle extends DFlexMechanismController {
 
     if (__DEV__) {
       if (featureFlags.enableCommit) {
-        store.commit();
+        store.commit(onUpdate);
 
         return;
       }
