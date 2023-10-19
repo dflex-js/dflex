@@ -21,7 +21,7 @@ import type {
   DFlexEventPayloads,
   DragAttr,
   PayloadDragMoved,
-  PayloadDragCommitted,
+  PayloadDragMutation,
 } from "./types";
 
 const EVT_CONFIG = {
@@ -114,7 +114,7 @@ function dispatchDFlexEvent(
 function dispatchDFlexEvent(
   DOM: HTMLElement,
   eventType: typeof DFLEX_EVENTS.DRAG_EVENT.ON_COMMITTED,
-  payload: PayloadDragCommitted,
+  payload: PayloadDragMutation,
 ): void;
 
 function dispatchDFlexEvent(
@@ -159,7 +159,7 @@ function DFlexEvent(dispatcher: HTMLElement) {
     eventType:
       | typeof DFLEX_EVENTS.DRAG_EVENT.ON_COMMITTED
       | typeof DFLEX_EVENTS.DRAG_EVENT.ON_TRANSFORMED,
-    payload: PayloadDragCommitted,
+    payload: PayloadDragMutation,
   ): void;
 
   function dispatch(

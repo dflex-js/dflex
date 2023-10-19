@@ -36,7 +36,7 @@ export type PayloadDragMoved = {
   index: number;
 };
 
-export type PayloadDragCommitted = {
+export type PayloadDragMutation = {
   /** Represents the main category of the drag event. */
   type: typeof DRAG_CAT;
 
@@ -63,7 +63,7 @@ export type PayloadDragCommitted = {
   };
 };
 
-export type PayloadDragged = PayloadDragCommitted | PayloadDragMoved;
+export type PayloadDragged = PayloadDragMutation | PayloadDragMoved;
 
 export type PayloadInteractivity = {
   /** Represents the main category of the interactivity event. */
