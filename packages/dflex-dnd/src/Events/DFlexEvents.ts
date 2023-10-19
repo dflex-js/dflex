@@ -22,7 +22,6 @@ import type {
   DragAttr,
   PayloadDragMoved,
   PayloadDragCommitted,
-  PayloadDragTransformed,
 } from "./types";
 
 const EVT_CONFIG = {
@@ -37,6 +36,8 @@ const {
     ON_ENTER_THRESHOLD,
     ON_OUT_CONTAINER,
     ON_OUT_THRESHOLD,
+    ON_COMMITTED,
+    ON_TRANSFORMED,
   },
 } = DFLEX_EVENTS;
 
@@ -55,7 +56,12 @@ function domEventUpdater(
 ): void {
   DOM.dispatchEvent(dflexEvent);
 
-  if (dflexEvent.detail.type === DRAG_CAT) {
+  const isDragEvent = dflexEvent.detail.type === DRAG_CAT;
+
+  const isNotSpecialEvent =
+    eventName !== ON_COMMITTED && eventName !== ON_TRANSFORMED;
+
+  if (isDragEvent && isNotSpecialEvent) {
     switch (eventName) {
       case ON_ENTER_CONTAINER:
         // Remove attr.
@@ -113,12 +119,6 @@ function dispatchDFlexEvent(
 
 function dispatchDFlexEvent(
   DOM: HTMLElement,
-  eventType: typeof DFLEX_EVENTS.DRAG_EVENT.ON_TRANSFORMED,
-  payload: PayloadDragTransformed,
-): void;
-
-function dispatchDFlexEvent(
-  DOM: HTMLElement,
   eventType: InteractivityEventNames,
   payload: PayloadInteractivity,
 ): void;
@@ -156,13 +156,10 @@ function DFlexEvent(dispatcher: HTMLElement) {
   ): void;
 
   function dispatch(
-    eventType: typeof DFLEX_EVENTS.DRAG_EVENT.ON_COMMITTED,
+    eventType:
+      | typeof DFLEX_EVENTS.DRAG_EVENT.ON_COMMITTED
+      | typeof DFLEX_EVENTS.DRAG_EVENT.ON_TRANSFORMED,
     payload: PayloadDragCommitted,
-  ): void;
-
-  function dispatch(
-    eventType: typeof DFLEX_EVENTS.DRAG_EVENT.ON_TRANSFORMED,
-    payload: PayloadDragTransformed,
   ): void;
 
   function dispatch(

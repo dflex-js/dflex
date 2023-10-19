@@ -767,7 +767,7 @@ class DFlexDnDStore extends DFlexBaseStore {
         },
       },
       {
-        type: MUTATION_CAT,
+        type: DFLEX_LISTENERS_CAT.MUTATION_CAT,
         payload: {
           target: parentDOM,
           ids: siblings,

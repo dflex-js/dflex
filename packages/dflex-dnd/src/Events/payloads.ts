@@ -5,7 +5,6 @@ import { DFLEX_EVENTS_CAT } from "./constants";
 import type {
   PayloadDragMoved,
   PayloadDragCommitted,
-  PayloadDragTransformed,
   PayloadInteractivity,
   PayloadSiblings,
 } from "./types";
@@ -60,16 +59,30 @@ function createDragMovedPayload({
   };
 }
 
-// @ts-ignore
-function createDragCommittedPayload(): PayloadDragCommitted {}
-
-// @ts-ignore
-function createDragTransformedPayload(): PayloadDragTransformed {}
+function createDragCommittedPayload({
+  element,
+  indexes,
+  containers,
+}: Omit<PayloadDragCommitted, "type" | "timestamp">): PayloadDragCommitted {
+  console.log({
+    type: DRAG_CAT,
+    timestamp: Date.now(),
+    containers,
+    element,
+    indexes,
+  });
+  return {
+    type: DRAG_CAT,
+    timestamp: Date.now(),
+    containers,
+    element,
+    indexes,
+  };
+}
 
 export {
   createInteractivityPayload,
   createSiblingsPayload,
   createDragMovedPayload,
   createDragCommittedPayload,
-  createDragTransformedPayload,
 };

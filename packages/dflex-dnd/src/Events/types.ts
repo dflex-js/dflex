@@ -63,21 +63,7 @@ export type PayloadDragCommitted = {
   };
 };
 
-export type PayloadDragTransformed = {
-  /** Represents the main category of the drag event. */
-  type: typeof DRAG_CAT;
-
-  /** Indicates the timestamp when the event occurred. */
-  timestamp: number;
-
-  /** Targeted elements */
-  element: HTMLElement;
-};
-
-export type PayloadDragged =
-  | PayloadDragCommitted
-  | PayloadDragTransformed
-  | PayloadDragMoved;
+export type PayloadDragged = PayloadDragCommitted | PayloadDragMoved;
 
 export type PayloadInteractivity = {
   /** Represents the main category of the interactivity event. */
