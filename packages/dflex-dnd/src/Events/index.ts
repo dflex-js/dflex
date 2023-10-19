@@ -4,6 +4,7 @@ export {
   createInteractivityPayload,
   createSiblingsPayload,
   createDragMovedPayload,
+  createDragCommittedPayload,
 } from "./payloads";
 
 export { DFLEX_EVENTS, DFLEX_EVENTS_CAT, DFLEX_ATTRS } from "./constants";
