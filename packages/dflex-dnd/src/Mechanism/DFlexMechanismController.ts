@@ -404,7 +404,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       const id = siblings[i];
 
       if (isIDEligible(id, draggedElm.id)) {
-        this.updateElement(id, 1, true);
+        this.updateElement(id, 1, true, false);
       }
     }
   }
@@ -436,7 +436,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       const id = siblings[i];
 
       if (isIDEligible(id, draggedElm.id)) {
-        this.updateElement(id, 1, false);
+        this.updateElement(id, 1, false, false);
       }
     }
   }
@@ -609,7 +609,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         }
       }
 
-      this.updateElement(id, numberOfPassedElm, shouldDecrease);
+      this.updateElement(id, numberOfPassedElm, shouldDecrease, true);
     } else {
       if (__DEV__) {
         if (featureFlags.enableMechanismDebugger) {
