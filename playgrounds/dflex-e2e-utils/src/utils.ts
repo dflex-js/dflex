@@ -1,5 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { Page, Locator, expect, ConsoleMessage } from "@playwright/test";
+import { Page, Locator, expect } from "@playwright/test";
+import { assertMutationListenerEmittedMsg } from "./listeners";
 
 let page: Page;
 let steps = 0;
@@ -67,25 +68,18 @@ export async function invokeKeyboard(k = "c") {
   await page.keyboard.press(k);
 }
 
-async function assertEmittedMsg(msg: ConsoleMessage, FINAL_IDS: string[]) {
-  // TODO:
-  // cast the type for `emittedMsg`
-  const emittedMsg = await msg.args()[1].jsonValue();
-
-  const { type, payload } = emittedMsg;
-
-  expect(type).toBe("mutation");
-  expect(payload).toEqual({
-    target: "ref: <Node>",
-    ids: FINAL_IDS,
-  });
-}
-
-export async function assertConsoleMsg(FINAL_IDS: string[]) {
+export async function assertConsoleDragMovementEvent(FINAL_IDS: string[]) {
   // Get the next console log
   const [msg] = await Promise.all([page.waitForEvent("console")]);
 
-  await assertEmittedMsg(msg, FINAL_IDS);
+  await assertMutationListenerEmittedMsg(msg, FINAL_IDS);
+}
+
+export async function assertConsoleMutationListener(FINAL_IDS: string[]) {
+  // Get the next console log
+  const [msg] = await Promise.all([page.waitForEvent("console")]);
+
+  await assertMutationListenerEmittedMsg(msg, FINAL_IDS);
 }
 
 export async function invokeKeyboardAndAssertEmittedMsg(FINAL_IDS: string[]) {
@@ -95,7 +89,7 @@ export async function invokeKeyboardAndAssertEmittedMsg(FINAL_IDS: string[]) {
     invokeKeyboard(),
   ]);
 
-  await assertEmittedMsg(msg, FINAL_IDS);
+  await assertMutationListenerEmittedMsg(msg, FINAL_IDS);
 }
 
 export async function assertChildrenOrderIDs(

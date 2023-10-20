@@ -6,6 +6,14 @@ const { DRAG_ATTR } = DFLEX_ATTRS;
 
 export type DragEventNames = (typeof DRAG_EVENT)[keyof typeof DRAG_EVENT];
 
+export type DragMutationEventNames =
+  | typeof DFLEX_EVENTS.DRAG_EVENT.ON_COMMITTED
+  | typeof DFLEX_EVENTS.DRAG_EVENT.ON_TRANSFORMED;
+
+export type DragMovedEventNames = {
+  [K in DragEventNames]: K extends DragMutationEventNames ? never : K;
+}[DragEventNames];
+
 export type InteractivityEventNames =
   (typeof INTERACTIVITY_EVENT)[keyof typeof INTERACTIVITY_EVENT];
 
@@ -24,7 +32,7 @@ export type DFlexEventNames =
 
 export type PayloadDragMoved = {
   /** Represents the main category of the drag event. */
-  type: typeof DRAG_CAT;
+  category: typeof DRAG_CAT;
 
   /** Indicates the timestamp when the event occurred. */
   timestamp: number;
@@ -38,7 +46,7 @@ export type PayloadDragMoved = {
 
 export type PayloadDragCommitted = {
   /** Represents the main category of the drag event. */
-  type: typeof DRAG_CAT;
+  category: typeof DRAG_CAT;
 
   /** Indicates the timestamp when the event occurred. */
   timestamp: number;
@@ -67,7 +75,7 @@ export type PayloadDragged = PayloadDragCommitted | PayloadDragMoved;
 
 export type PayloadInteractivity = {
   /** Represents the main category of the interactivity event. */
-  type: typeof INTERACTIVITY_CAT;
+  category: typeof INTERACTIVITY_CAT;
 
   /** Indicates the timestamp when the event occurred. */
   timestamp: number;
@@ -84,7 +92,7 @@ export type PayloadInteractivity = {
 
 export type PayloadSiblings = {
   /** Represents the main category of the siblings event. */
-  type: typeof SIBLINGS_CAT;
+  category: typeof SIBLINGS_CAT;
 
   /** Indicates the timestamp when the event occurred. */
   timestamp: number;

@@ -5,7 +5,7 @@ import DFlexMechanismController, {
   isIDEligible,
 } from "./DFlexMechanismController";
 
-import { DFLEX_EVENTS, createDragCommittedPayload } from "../Events";
+import { DFLEX_EVENTS, emitDragCommittedEvent } from "../Events";
 
 import { LAYOUT_STATES, notifyLayoutStateListeners } from "../Listeners";
 
@@ -133,13 +133,14 @@ class EndCycle extends DFlexMechanismController {
           target,
         };
 
-        events.dispatch(
+        emitDragCommittedEvent(
+          events,
           hasToReconcile ? ON_COMMITTED : ON_TRANSFORMED,
-          createDragCommittedPayload({
+          {
             element,
             indexes,
             containers,
-          }),
+          },
         );
       };
     }

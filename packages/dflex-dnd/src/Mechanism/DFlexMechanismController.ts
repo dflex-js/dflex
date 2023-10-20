@@ -15,11 +15,7 @@ import {
 
 import { scheduler, store } from "../LayoutManager";
 
-import {
-  createSiblingsPayload,
-  createDragMovedPayload,
-  DFLEX_EVENTS,
-} from "../Events";
+import { emitSiblingsEvent, emitDragMovedEvent, DFLEX_EVENTS } from "../Events";
 
 import DraggableInteractive from "../Draggable";
 
@@ -382,14 +378,11 @@ class DFlexMechanismController extends DFlexScrollableElement {
     );
 
     if (events) {
-      events.dispatch(
-        ON_LIFT_UP,
-        createSiblingsPayload({
-          siblings,
-          from,
-          to: siblings.length,
-        }),
-      );
+      emitSiblingsEvent(events, ON_LIFT_UP, {
+        siblings,
+        from,
+        to: siblings.length,
+      });
     }
 
     this.draggable.setDraggedTempIndex(
@@ -404,7 +397,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       const id = siblings[i];
 
       if (isIDEligible(id, draggedElm.id)) {
-        this.updateElement(id, 1, true);
+        this.updateElement(id, 1, true, true);
       }
     }
   }
@@ -422,21 +415,18 @@ class DFlexMechanismController extends DFlexScrollableElement {
     const siblings = store.getElmSiblingsByKey(SK);
 
     if (events) {
-      events.dispatch(
-        ON_MOVE_DOWN,
-        createSiblingsPayload({
-          siblings,
-          from: siblings!.length - 1,
-          to: siblings.length,
-        }),
-      );
+      emitSiblingsEvent(events, ON_MOVE_DOWN, {
+        siblings,
+        from: siblings!.length - 1,
+        to: siblings.length,
+      });
     }
 
     for (let i = siblings.length - 1; i >= to; i -= 1) {
       const id = siblings[i];
 
       if (isIDEligible(id, draggedElm.id)) {
-        this.updateElement(id, 1, false);
+        this.updateElement(id, 1, false, true);
       }
     }
   }
@@ -609,7 +599,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
         }
       }
 
-      this.updateElement(id, numberOfPassedElm, shouldDecrease);
+      this.updateElement(id, numberOfPassedElm, shouldDecrease, false);
     } else {
       if (__DEV__) {
         if (featureFlags.enableMechanismDebugger) {
@@ -739,12 +729,13 @@ class DFlexMechanismController extends DFlexScrollableElement {
     const { draggedElm, events } = this.draggable;
 
     if (events) {
-      events.dispatch(
+      emitDragMovedEvent(
+        events,
         isOut ? ON_OUT_CONTAINER : ON_ENTER_CONTAINER,
-        createDragMovedPayload({
+        {
           id: draggedElm.id,
           index: store.migration.latest().index,
-        }),
+        },
       );
     }
 
@@ -784,12 +775,13 @@ class DFlexMechanismController extends DFlexScrollableElement {
     if (events) {
       const { migration } = store;
 
-      events.dispatch(
+      emitDragMovedEvent(
+        events,
         isOut ? ON_OUT_THRESHOLD : ON_ENTER_THRESHOLD,
-        createDragMovedPayload({
+        {
           id: draggedElm.id,
           index: migration.latest().index,
-        }),
+        },
       );
     }
 

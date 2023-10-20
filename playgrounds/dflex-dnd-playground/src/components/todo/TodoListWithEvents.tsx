@@ -6,10 +6,7 @@ const TodoListWithEvents = () => {
   const tasks = [
     { id: "mtg", msg: "Meet with Laura" },
     { id: "org", msg: "Organize weekly meetup" },
-    {
-      id: "proj",
-      msg: "Continue working on the project",
-    },
+
     { id: "gym", msg: "Hit the gym" },
   ];
 
@@ -19,6 +16,7 @@ const TodoListWithEvents = () => {
         <ul>
           {tasks.map(({ msg, id }) => (
             <DFlexDnDComponent
+              style={{ margin: "25px" }}
               useDFlexEvents={true}
               Component={"li"}
               registerInput={{ id }}

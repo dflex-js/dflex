@@ -1,15 +1,16 @@
 export { default as DFlexEvent } from "./DFlexEvents";
 
 export {
-  createInteractivityPayload,
-  createSiblingsPayload,
-  createDragMovedPayload,
-  createDragCommittedPayload,
-} from "./payloads";
+  emitInteractivityEvent,
+  emitSiblingsEvent,
+  emitDragMovedEvent,
+  emitDragCommittedEvent,
+} from "./emitters";
 
 export { DFLEX_EVENTS, DFLEX_EVENTS_CAT, DFLEX_ATTRS } from "./constants";
 
 export type {
+  InteractivityEventNames,
   DFlexDraggedEvent,
   DFlexInteractivityEvent,
   DFlexSiblingsEvent,
