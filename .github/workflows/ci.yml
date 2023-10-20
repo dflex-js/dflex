@@ -237,7 +237,7 @@ jobs:
         run: pnpm -F dflex-dnd-playground build --mode CI
 
       - name: Install browsers
-        run: npx playwright install --with-deps
+        run: pnpm exec playwright install
 
       - name: Test Playwright
         run: pnpm run test-e2e-ci:${{ matrix.browser }}
@@ -296,7 +296,7 @@ jobs:
         run: pnpm -F dflex-dnd-playground build --mode CI
 
       - name: Install browsers
-        run: npx playwright install --with-deps
+        run: pnpm exec playwright install
 
       - name: Test Playwright
         run: pnpm run test-e2e-ci:${{ matrix.browser }}
@@ -354,7 +354,7 @@ jobs:
         run: pnpm -F dflex-dnd-playground build --mode CI
 
       - name: Install browsers
-        run: npx playwright install --with-deps
+        run: pnpm exec playwright install
 
       - name: Test Playwright
         run: pnpm run test-e2e-ci:${{ matrix.browser }}
@@ -405,7 +405,7 @@ jobs:
         run: "pnpm build --production --release --minify"
 
       - name: Install browsers
-        run: npx playwright install --with-deps
+        run: pnpm exec playwright install
 
       - name: Test Playwright
         run: pnpm run test-e2e-next:${{ matrix.browser }}
@@ -459,7 +459,7 @@ jobs:
         run: pnpm -F dflex-draggable-playground build
 
       - name: Install browsers
-        run: npx playwright install --with-deps
+        run: pnpm exec playwright install
 
       - name: Test Playwright
         run: pnpm run test-e2e-ci-draggable:${{ matrix.browser }}
