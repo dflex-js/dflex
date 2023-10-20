@@ -19,7 +19,11 @@ import type DraggableInteractive from "../Draggable";
 
 import { store } from "../LayoutManager";
 
-import { DFLEX_EVENTS, createInteractivityPayload } from "../Events";
+import {
+  DFLEX_EVENTS,
+  InteractivityEventNames,
+  emitInteractivityEvent,
+} from "../Events";
 
 const MAX_TRANSFORM_COUNT = 99; /** Infinite transform count */
 
@@ -528,7 +532,11 @@ class DFlexPositionUpdater {
 
     this._updateIndicators(axis, elmDirection, element);
 
-    const useEVents = events !== null && ignoreInteractivityEvents;
+    const emitEvent =
+      events !== null && !ignoreInteractivityEvents
+        ? (type: InteractivityEventNames) =>
+            emitInteractivityEvent(events, type, element, store)
+        : null;
 
     // TODO: always true for the first element
     if (!this.isParentLocked) {
@@ -549,8 +557,8 @@ class DFlexPositionUpdater {
       this.updateDraggedThresholdPosition(rect.left, rect.top);
     }
 
-    if (useEVents) {
-      events.dispatch(ON_DRAG_OVER, createInteractivityPayload(element, store));
+    if (emitEvent) {
+      emitEvent(ON_DRAG_OVER);
     }
 
     element.reconcilePosition(
@@ -564,11 +572,8 @@ class DFlexPositionUpdater {
       cycleID,
     );
 
-    if (!this.isParentLocked && useEVents) {
-      events.dispatch(
-        ON_DRAG_LEAVE,
-        createInteractivityPayload(element, store),
-      );
+    if (emitEvent) {
+      emitEvent(ON_DRAG_LEAVE);
     }
   }
 }

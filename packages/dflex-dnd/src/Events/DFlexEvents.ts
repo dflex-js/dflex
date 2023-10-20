@@ -10,7 +10,6 @@ import {
 } from "./constants";
 
 import type {
-  DragEventNames,
   InteractivityEventNames,
   SiblingsEventNames,
   PayloadDragged,
@@ -22,6 +21,8 @@ import type {
   DragAttr,
   PayloadDragMoved,
   PayloadDragCommitted,
+  DragMovedEventNames,
+  DragMutationEventNames,
 } from "./types";
 
 const EVT_CONFIG = {
@@ -56,7 +57,7 @@ function domEventUpdater(
 ): void {
   DOM.dispatchEvent(dflexEvent);
 
-  const isDragMovementEvent = dflexEvent.detail.type === DRAG_CAT;
+  const isDragMovementEvent = dflexEvent.detail.category === DRAG_CAT;
 
   if (!isDragMovementEvent) {
     return;
@@ -102,14 +103,6 @@ function domEventUpdater(
       break;
   }
 }
-
-type DragMovedEventNames = {
-  [K in DragEventNames]: K extends
-    | typeof DFLEX_EVENTS.DRAG_EVENT.ON_COMMITTED
-    | typeof DFLEX_EVENTS.DRAG_EVENT.ON_TRANSFORMED
-    ? never
-    : K;
-}[DragEventNames];
 
 function dispatchDFlexEvent(
   DOM: HTMLElement,
@@ -162,9 +155,7 @@ function DFlexEvent(dispatcher: HTMLElement) {
   ): void;
 
   function dispatch(
-    eventType:
-      | typeof DFLEX_EVENTS.DRAG_EVENT.ON_COMMITTED
-      | typeof DFLEX_EVENTS.DRAG_EVENT.ON_TRANSFORMED,
+    eventType: DragMutationEventNames,
     payload: PayloadDragCommitted,
   ): void;
 
