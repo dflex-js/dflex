@@ -3,7 +3,7 @@ export {
   getDraggedRect,
   moveDragged,
   invokeKeyboard,
-  assertConsoleMsg,
+  assertConsoleMutationListener,
   invokeKeyboardAndAssertEmittedMsg,
   assertChildrenOrderIDs,
   getChildrenLength,

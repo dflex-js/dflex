@@ -81,7 +81,7 @@ async function assertEmittedMsg(msg: ConsoleMessage, FINAL_IDS: string[]) {
   });
 }
 
-export async function assertConsoleMsg(FINAL_IDS: string[]) {
+export async function assertConsoleMutationListener(FINAL_IDS: string[]) {
   // Get the next console log
   const [msg] = await Promise.all([page.waitForEvent("console")]);
 
