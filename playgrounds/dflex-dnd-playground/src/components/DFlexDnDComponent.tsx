@@ -111,7 +111,7 @@ const DFlexDnDComponent = ({
         document.removeEventListener("$onDragEnterThreshold", onDFlexDragEvent);
 
         document.removeEventListener("$onDragCommitted", onDFlexDragEvent);
-        document.removeEventListener("$onDragTransomed", onDFlexDragEvent);
+        document.removeEventListener("$onDragTransformed", onDFlexDragEvent);
 
         // Removing siblings events.
         document.removeEventListener("$onLiftUpSiblings", onDFlexSiblingsEvent);
@@ -148,7 +148,7 @@ const DFlexDnDComponent = ({
           document.addEventListener("$onDragEnterThreshold", onDFlexDragEvent);
 
           document.addEventListener("$onDragCommitted", onDFlexDragEvent);
-          document.addEventListener("$onDragTransomed", onDFlexDragEvent);
+          document.addEventListener("$onDragTransformed", onDFlexDragEvent);
 
           // Add siblings events.
           document.addEventListener("$onLiftUpSiblings", onDFlexSiblingsEvent);

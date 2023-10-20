@@ -7,7 +7,7 @@ const ON_ENTER_CONTAINER = "$onDragEnterContainer";
 const ON_ENTER_THRESHOLD = "$onDragEnterThreshold";
 
 const ON_COMMITTED = "$onDragCommitted";
-const ON_TRANSFORMED = "$onDragTransomed";
+const ON_TRANSFORMED = "$onDragTransformed";
 
 // Prefixed attributes
 const DRAG_PREFIX = "dragged";
