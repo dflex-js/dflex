@@ -29,8 +29,9 @@ import {
 
 import {
   DFlexListeners,
-  DFlexListenerNotifications,
-  DFLEX_LISTENERS_CAT,
+  notifyLayoutStateListeners,
+  notifyMutationListeners,
+  LAYOUT_STATES,
 } from "../Listeners";
 
 import scheduler, { SchedulerOptions, UpdateFn } from "./DFlexScheduler";
@@ -61,11 +62,7 @@ type UnifiedContainerDimensions = Record<number, Dimensions>;
 
 type MutationObserverValue = MutationObserver | null;
 
-type UpdatesQueue = [
-  UpdateFn | null,
-  SchedulerOptions | null,
-  DFlexListenerNotifications | undefined,
-][];
+type UpdatesQueue = [UpdateFn | null, SchedulerOptions | null][];
 
 type Deferred = (() => void)[];
 
@@ -141,7 +138,7 @@ function validateCSS(id: string, css?: CSS): void {
   }
 }
 
-const { MUTATION_CAT } = DFLEX_LISTENERS_CAT;
+const { PENDING, READY } = LAYOUT_STATES;
 
 let hasThrownForID = false;
 
@@ -162,7 +159,7 @@ class DFlexDnDStore extends DFlexBaseStore {
 
   mutationObserverMap: Map<string, MutationObserverValue>;
 
-  listeners: ReturnType<typeof DFlexListeners>;
+  listeners: ReturnType<typeof DFlexListeners> | null;
 
   migration: DFlexCycle;
 
@@ -210,7 +207,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     this.deferred = [];
     this.updatesQueue = [];
     this.pending = [];
-    this.listeners = DFlexListeners();
+    this.listeners = this.globals.enableListeners ? DFlexListeners() : null;
 
     this._initSiblings = this._initSiblings.bind(this);
     this._initObservers = this._initObservers.bind(this);
@@ -234,12 +231,11 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   private _initWhenRegister(): void {
-    window.addEventListener("resize", this._windowResizeHandler);
+    if (this.listeners) {
+      notifyLayoutStateListeners(this.listeners, PENDING);
+    }
 
-    scheduler(this, null, null, {
-      type: "layoutState",
-      status: "pending",
-    });
+    window.addEventListener("resize", this._windowResizeHandler);
   }
 
   linkElmToContainerGrid(
@@ -427,7 +423,9 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     this._executePendingFunctions(PENDING_REASON.REGISTER);
 
-    scheduler(this, null, null, { type: "layoutState", status: "ready" });
+    if (this.listeners) {
+      notifyLayoutStateListeners(this.listeners, READY);
+    }
   }
 
   register(elm: RegisterInputOpts) {
@@ -764,13 +762,10 @@ class DFlexDnDStore extends DFlexBaseStore {
             scrollTuple,
             syncAllSiblings ? null : this.migration.getReconciledIDsBySK(SK),
           );
-        },
-      },
-      {
-        type: MUTATION_CAT,
-        payload: {
-          target: parentDOM,
-          ids: siblings,
+
+          if (this.listeners) {
+            notifyMutationListeners(this.listeners, siblings, parentDOM);
+          }
         },
       },
     );
@@ -998,7 +993,10 @@ class DFlexDnDStore extends DFlexBaseStore {
     }
 
     this.containers.clear();
-    this.listeners.clear();
+
+    if (this.listeners) {
+      this.listeners.clear();
+    }
 
     // Destroys all scroll containers.
     this.scrolls.forEach((scroll) => {

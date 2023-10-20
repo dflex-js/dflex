@@ -12,7 +12,7 @@ import {
 
 import type { DFlexElement } from "@dflex/core-instance";
 
-import { scheduler, store } from "../LayoutManager";
+import { store } from "../LayoutManager";
 
 import { DFlexEvent } from "../Events";
 
@@ -24,6 +24,9 @@ import type {
 } from "../types";
 
 import DraggablePositions from "./DraggablePositions";
+import { LAYOUT_STATES, notifyLayoutStateListeners } from "../Listeners";
+
+const { DRAGGING } = LAYOUT_STATES;
 
 function initContainers(SK: string, siblings: string[]) {
   const container = store.containers.get(SK)!;
@@ -260,10 +263,9 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
   ) {
     if (!this.isLayoutStateUpdated) {
       this.isLayoutStateUpdated = true;
-      scheduler(store, null, null, {
-        type: "layoutState",
-        status: "dragging",
-      });
+      if (store.listeners) {
+        notifyLayoutStateListeners(store.listeners, DRAGGING);
+      }
     }
 
     let filteredY = y;

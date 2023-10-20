@@ -7,9 +7,13 @@ import DFlexMechanismController, {
 
 import { DFLEX_EVENTS, createDragCommittedPayload } from "../Events";
 
+import { LAYOUT_STATES, notifyLayoutStateListeners } from "../Listeners";
+
 const {
   DRAG_EVENT: { ON_COMMITTED, ON_TRANSFORMED },
 } = DFLEX_EVENTS;
+
+const { DRAG_CANCEL, DRAG_END } = LAYOUT_STATES;
 
 class EndCycle extends DFlexMechanismController {
   private _undoSiblingsPositions(
@@ -145,7 +149,7 @@ class EndCycle extends DFlexMechanismController {
 
   endDragging(): void {
     const { enableCommit, session } = this.draggable;
-    const { migration } = store;
+    const { migration, listeners } = store;
     const latestCycle = migration.latest();
 
     const sessionCycles = migration.filter(session, true);
@@ -166,11 +170,11 @@ class EndCycle extends DFlexMechanismController {
           onUpdate: () => {
             this.draggable.cleanup(true, latestCycle, false);
             migration.flush(session);
+
+            if (listeners) {
+              notifyLayoutStateListeners(listeners, DRAG_CANCEL);
+            }
           },
-        },
-        {
-          type: "layoutState",
-          status: "dragCancel",
         },
       );
 
@@ -191,11 +195,13 @@ class EndCycle extends DFlexMechanismController {
     scheduler(
       store,
       () => this.draggable.cleanup(isFallback, latestCycle, hasToReconcile),
-      null,
-      {
-        type: "layoutState",
-        status: "dragEnd",
-      },
+      listeners
+        ? {
+            onUpdate: () => {
+              notifyLayoutStateListeners(listeners, DRAG_END);
+            },
+          }
+        : null,
     );
 
     if (hasToReconcile) {
