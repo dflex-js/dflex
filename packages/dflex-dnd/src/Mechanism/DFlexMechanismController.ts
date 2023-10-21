@@ -380,8 +380,8 @@ class DFlexMechanismController extends DFlexScrollableElement {
     if (events) {
       emitSiblingsEvent(events, ON_LIFT_UP, {
         siblings,
-        from,
-        to: siblings.length,
+        from: from - 1,
+        to: siblings.length - 1,
       });
     }
 
@@ -414,15 +414,17 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     const siblings = store.getElmSiblingsByKey(SK);
 
+    const { length } = siblings;
+
     if (events) {
       emitSiblingsEvent(events, ON_MOVE_DOWN, {
         siblings,
-        from: siblings!.length - 1,
-        to: siblings.length,
+        from: to,
+        to: length - 1,
       });
     }
 
-    for (let i = siblings.length - 1; i >= to; i -= 1) {
+    for (let i = length - 1; i >= to; i -= 1) {
       const id = siblings[i];
 
       if (isIDEligible(id, draggedElm.id)) {

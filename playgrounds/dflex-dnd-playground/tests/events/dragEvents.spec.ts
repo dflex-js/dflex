@@ -18,7 +18,7 @@ type ConsoleEmittedEvent = {
   details: any;
 };
 
-test.describe("DFlex custom events", async () => {
+test.describe("DFlex custom Drag events", async () => {
   let page: Page;
   let context: BrowserContext;
   let activeBrowser: Browser;
@@ -68,152 +68,150 @@ test.describe("DFlex custom events", async () => {
     // await activeBrowser.close();
   });
 
-  test.describe("Drag events", async () => {
-    test.describe("out events", async () => {
-      let outThresholdEvent: ConsoleEmittedEvent;
-      let outContainerEvent: ConsoleEmittedEvent;
+  test.describe("out events", async () => {
+    let outThresholdEvent: ConsoleEmittedEvent;
+    let outContainerEvent: ConsoleEmittedEvent;
 
-      test.beforeAll(async () => {
-        await getDraggedRect(elm1);
-        await moveDragged(-1, -45);
+    test.beforeAll(async () => {
+      await getDraggedRect(elm1);
+      await moveDragged(-1, -45);
 
-        await page.waitForTimeout(100);
+      await page.waitForTimeout(100);
 
-        [outThresholdEvent, outContainerEvent] = emittedEvents;
-      });
+      [outThresholdEvent, outContainerEvent] = emittedEvents;
+    });
 
-      test.afterAll(async () => {
-        emittedEvents.length = 0;
-        await page.evaluate(() => {
-          // eslint-disable-next-line no-console
-          console.clear();
-        });
-      });
-
-      test("Emits ($onDragOutThreshold) when dragged is out threshold", async () => {
-        const { details: { timestamp = "", ...rest } = {}, type } =
-          outThresholdEvent || {};
-
-        expect(type).toEqual("$onDragOutThreshold");
-
-        expect(rest).toEqual({
-          category: "drag",
-          id: "mtg",
-          index: 0,
-        });
-
-        expect(typeof timestamp).toBe("number");
-      });
-
-      test("Emits ($onDragOutContainer) when dragged is out container", async () => {
-        const { details: { timestamp = "", ...rest } = {}, type } =
-          outContainerEvent || {};
-
-        expect(type).toEqual("$onDragOutContainer");
-
-        expect(rest).toEqual({
-          category: "drag",
-          id: "mtg",
-          index: 0,
-        });
-
-        expect(typeof timestamp).toBe("number");
+    test.afterAll(async () => {
+      emittedEvents.length = 0;
+      await page.evaluate(() => {
+        // eslint-disable-next-line no-console
+        console.clear();
       });
     });
 
-    test.describe("in events", async () => {
-      let inThresholdEvent: ConsoleEmittedEvent;
-      let inContainerEvent: ConsoleEmittedEvent;
+    test("Emits ($onDragOutThreshold) when dragged is out threshold", async () => {
+      const { details: { timestamp = "", ...rest } = {}, type } =
+        outThresholdEvent || {};
 
-      test.beforeAll(async () => {
-        await moveDragged(-1, 0);
-        await page.waitForTimeout(100);
+      expect(type).toEqual("$onDragOutThreshold");
 
-        [inContainerEvent /* onMoveSiblings */, , inThresholdEvent] =
-          emittedEvents;
+      expect(rest).toEqual({
+        category: "drag",
+        id: "mtg",
+        index: 0,
       });
 
-      test.afterAll(async () => {
-        emittedEvents.length = 0;
-        await page.evaluate(() => {
-          // eslint-disable-next-line no-console
-          console.clear();
-        });
+      expect(typeof timestamp).toBe("number");
+    });
+
+    test("Emits ($onDragOutContainer) when dragged is out container", async () => {
+      const { details: { timestamp = "", ...rest } = {}, type } =
+        outContainerEvent || {};
+
+      expect(type).toEqual("$onDragOutContainer");
+
+      expect(rest).toEqual({
+        category: "drag",
+        id: "mtg",
+        index: 0,
       });
 
-      test("Emits ($onDragEnterContainer) when dragged enters container", async () => {
-        const { details: { timestamp = "", ...rest } = {}, type } =
-          inContainerEvent || {};
+      expect(typeof timestamp).toBe("number");
+    });
+  });
 
-        expect(type).toEqual("$onDragEnterContainer");
+  test.describe("in events", async () => {
+    let inThresholdEvent: ConsoleEmittedEvent;
+    let inContainerEvent: ConsoleEmittedEvent;
 
-        expect(rest).toEqual({
-          category: "drag",
-          id: "mtg",
-          index: 0,
-        });
+    test.beforeAll(async () => {
+      await moveDragged(-1, 0);
+      await page.waitForTimeout(100);
 
-        expect(typeof timestamp).toBe("number");
-      });
+      [inContainerEvent /* onMoveSiblings */, , inThresholdEvent] =
+        emittedEvents;
+    });
 
-      test("Emits ($onDragEnterThreshold) when dragged enters threshold", async () => {
-        const { details: { timestamp = "", ...rest } = {}, type } =
-          inThresholdEvent || {};
-
-        expect(type).toEqual("$onDragEnterThreshold");
-
-        expect(rest).toEqual({
-          category: "drag",
-          id: "mtg",
-          index: 0,
-        });
-
-        expect(typeof timestamp).toBe("number");
+    test.afterAll(async () => {
+      emittedEvents.length = 0;
+      await page.evaluate(() => {
+        // eslint-disable-next-line no-console
+        console.clear();
       });
     });
 
-    test.describe("mutation event", async () => {
-      let transformEvent: ConsoleEmittedEvent;
+    test("Emits ($onDragEnterContainer) when dragged enters container", async () => {
+      const { details: { timestamp = "", ...rest } = {}, type } =
+        inContainerEvent || {};
 
-      test.beforeAll(async () => {
-        await getDraggedRect(elm1);
-        await moveDragged(-1, 70);
-        await page.dispatchEvent("#mtg", "mouseup", {
-          button: 0,
-          force: true,
-        });
+      expect(type).toEqual("$onDragEnterContainer");
 
-        await page.waitForTimeout(100);
-
-        // eslint-disable-next-line prefer-destructuring
-        transformEvent = emittedEvents[4];
+      expect(rest).toEqual({
+        category: "drag",
+        id: "mtg",
+        index: 0,
       });
 
-      test.afterAll(async () => {
-        emittedEvents.length = 0;
+      expect(typeof timestamp).toBe("number");
+    });
+
+    test("Emits ($onDragEnterThreshold) when dragged enters threshold", async () => {
+      const { details: { timestamp = "", ...rest } = {}, type } =
+        inThresholdEvent || {};
+
+      expect(type).toEqual("$onDragEnterThreshold");
+
+      expect(rest).toEqual({
+        category: "drag",
+        id: "mtg",
+        index: 0,
       });
 
-      test("Emits ($onDragTransformed) when dragged transformed into new position", async () => {
-        const { details: { timestamp = "", ...rest } = {}, type } =
-          transformEvent || {};
+      expect(typeof timestamp).toBe("number");
+    });
+  });
 
-        expect(type).toEqual("$onDragTransformed");
+  test.describe("mutation event", async () => {
+    let transformEvent: ConsoleEmittedEvent;
 
-        expect(rest).toEqual({
-          category: "drag",
-          element: "ref: <Node>",
-          containers: {
-            origin: "ref: <Node>",
-            target: "ref: <Node>",
-          },
-          indexes: {
-            initial: 0,
-            inserted: 1,
-          },
-        });
-
-        expect(typeof timestamp).toBe("number");
+    test.beforeAll(async () => {
+      await getDraggedRect(elm1);
+      await moveDragged(-1, 70);
+      await page.dispatchEvent("#mtg", "mouseup", {
+        button: 0,
+        force: true,
       });
+
+      await page.waitForTimeout(100);
+
+      // eslint-disable-next-line prefer-destructuring
+      transformEvent = emittedEvents[4];
+    });
+
+    test.afterAll(async () => {
+      emittedEvents.length = 0;
+    });
+
+    test("Emits ($onDragTransformed) when dragged transformed into new position", async () => {
+      const { details: { timestamp = "", ...rest } = {}, type } =
+        transformEvent || {};
+
+      expect(type).toEqual("$onDragTransformed");
+
+      expect(rest).toEqual({
+        category: "drag",
+        element: "ref: <Node>",
+        containers: {
+          origin: "ref: <Node>",
+          target: "ref: <Node>",
+        },
+        indexes: {
+          initial: 0,
+          inserted: 1,
+        },
+      });
+
+      expect(typeof timestamp).toBe("number");
     });
   });
 });
