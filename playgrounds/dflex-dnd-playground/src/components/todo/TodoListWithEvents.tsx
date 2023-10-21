@@ -16,7 +16,7 @@ const TodoListWithEvents = () => {
         <ul>
           {tasks.map(({ msg, id }) => (
             <DFlexDnDComponent
-              style={{ margin: "25px" }}
+              // style={{ margin: "25px" }}
               useDFlexEvents={true}
               Component={"li"}
               registerInput={{ id }}
