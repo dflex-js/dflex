@@ -943,6 +943,8 @@ class DFlexMechanismController extends DFlexScrollableElement {
       }
 
       this._dragInsideContainer();
+
+      return;
     }
 
     // Still inside the threshold.
