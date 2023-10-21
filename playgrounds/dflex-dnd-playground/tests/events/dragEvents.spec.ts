@@ -77,7 +77,7 @@ test.describe("DFlex custom events", async () => {
         await getDraggedRect(elm1);
         await moveDragged(-1, -45);
 
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(100);
 
         [outThresholdEvent, outContainerEvent] = emittedEvents;
       });
@@ -127,7 +127,7 @@ test.describe("DFlex custom events", async () => {
 
       test.beforeAll(async () => {
         await moveDragged(-1, 0);
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(100);
 
         [inContainerEvent /* onMoveSiblings */, , inThresholdEvent] =
           emittedEvents;
@@ -183,7 +183,7 @@ test.describe("DFlex custom events", async () => {
           force: true,
         });
 
-        await page.waitForTimeout(200);
+        await page.waitForTimeout(100);
 
         // eslint-disable-next-line prefer-destructuring
         transformEvent = emittedEvents[4];
