@@ -39,11 +39,11 @@ const hasScrollbar = (
   return false;
 };
 
-const resolveScrollProps = (
+function resolveScrollProps(
   parentDOM: HTMLElement,
   baseELmPosition: string,
   res: ResolveScrollPropsInput,
-) => {
+): boolean {
   const overflowX = getElmOverflow(parentDOM, "overflow-x");
   const overflowY = getElmOverflow(parentDOM, "overflow-y");
 
@@ -59,12 +59,13 @@ const resolveScrollProps = (
     hasScrollbar(axis, overflow, parentDOM, hasOverflow);
 
   return checkOverflow("y", overflowY) || checkOverflow("x", overflowX);
-};
+}
 
 function getScrollContainerProperties(
-  baseDOMElm: HTMLElement,
+  baseDOMElm: HTMLElement | null,
 ): GetScrollContainerRes {
-  const baseELmPosition = getElmPos(baseDOMElm);
+  let scrollContainerDOM: HTMLElement | null = null;
+  let baseELmPosition = "fixed";
 
   const res: ResolveScrollPropsInput = [
     undefined,
@@ -72,15 +73,17 @@ function getScrollContainerProperties(
     new PointBool(false, false),
   ];
 
-  if (__DEV__) {
-    Object.seal(res);
-  }
+  if (baseDOMElm) {
+    baseELmPosition = getElmPos(baseDOMElm);
 
-  const scrollContainerDOM = getParentElm(
-    baseDOMElm,
-    (parentDOM: HTMLElement) =>
+    if (__DEV__) {
+      Object.seal(res);
+    }
+
+    scrollContainerDOM = getParentElm(baseDOMElm, (parentDOM: HTMLElement) =>
       resolveScrollProps(parentDOM, baseELmPosition, res),
-  );
+    );
+  }
 
   if (!scrollContainerDOM || baseELmPosition === "fixed") {
     res[0] = document.documentElement;

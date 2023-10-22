@@ -235,6 +235,10 @@ class DFlexDnDStore extends DFlexBaseStore {
       notifyLayoutStateListeners(this.listeners, PENDING);
     }
 
+    const scroll = new DFlexScrollContainer(null, null, null, null);
+
+    this.scrolls.set("global", scroll);
+
     window.addEventListener("resize", this._windowResizeHandler);
   }
 
@@ -982,6 +986,8 @@ class DFlexDnDStore extends DFlexBaseStore {
 
     autoCleanupAllTimeouts();
     autoCleanupAllRAFs();
+
+    this.scrolls.delete("global");
 
     this._isInitialized = false;
   }

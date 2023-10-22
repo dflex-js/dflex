@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-underscore-dangle */
 import {
   AxesPoint,
@@ -14,6 +15,7 @@ import {
   getStartingPointByAxis,
   getEndingPointByAxis,
   featureFlags,
+  noop,
 } from "@dflex/utils";
 
 import type { ThresholdPercentages, AbstractBox } from "@dflex/utils";
@@ -113,10 +115,29 @@ class DFlexScrollContainer {
     SK: string,
     branchLength: number,
     scrollEventCallback: ScrollEventCallback,
+  );
+
+  constructor(
+    firstELmDOM: null,
+    SK: null,
+    branchLength: null,
+    scrollEventCallback: null,
+  );
+
+  constructor(
+    firstELmDOM: HTMLElement | null,
+    SK: string | null,
+    branchLength: number | null,
+    scrollEventCallback: ScrollEventCallback | null,
   ) {
     // Callbacks.
-    this._SK = SK;
-    this._scrollEventCallback = scrollEventCallback;
+    if (SK && scrollEventCallback) {
+      this._SK = SK;
+      this._scrollEventCallback = scrollEventCallback;
+    } else {
+      this._SK = "none";
+      this._scrollEventCallback = noop;
+    }
 
     /**
      * Inner threshold: Determines the trigger for auto scroll when scrollable
@@ -148,7 +169,7 @@ class DFlexScrollContainer {
     this.visibleScrollRect = new BoxRect(0, 0, 0, 0);
     this._isCandidateForDynamicVisibility = false;
 
-    this.refreshScrollAndVisibility(branchLength);
+    this.refreshScrollAndVisibility(branchLength || 0);
 
     this._attachResizeAndScrollListeners(true);
 
