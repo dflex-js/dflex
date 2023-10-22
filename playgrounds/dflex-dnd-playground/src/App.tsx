@@ -21,6 +21,7 @@ import {
   StreamInterval,
   StreamNewELm,
   StreamIncremental,
+  BigGap,
 } from "./components";
 
 const App = () => {
@@ -99,6 +100,8 @@ const App = () => {
         <Route path="/scroll" element={<ScrollMultiLists />} />
         <Route path="/extended" element={<ExtendedList />} />
         <Route path="/scrollable-page" element={<ScrollablePage />} />
+        <Route path="/gap" element={<BigGap />} />
+
         <Route path="/windowed-dual-list" element={<WindowedDualList />} />
         <Route
           path="/restricted-container-all"

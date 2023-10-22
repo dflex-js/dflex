@@ -2,7 +2,7 @@ import React from "react";
 
 import DFlexDnDComponent from "../DFlexDnDComponent";
 
-const TodoListWithEvents = () => {
+const BigGap = () => {
   const tasks = [
     { id: "mtg", msg: "Meet with Laura" },
     { id: "org", msg: "Organize weekly meetup" },
@@ -16,7 +16,7 @@ const TodoListWithEvents = () => {
         <ul>
           {tasks.map(({ msg, id }) => (
             <DFlexDnDComponent
-              useDFlexEvents={true}
+              style={{ margin: "35px" }}
               Component={"li"}
               registerInput={{ id }}
               key={id}
@@ -35,4 +35,4 @@ const TodoListWithEvents = () => {
   );
 };
 
-export default TodoListWithEvents;
+export default BigGap;

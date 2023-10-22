@@ -83,12 +83,19 @@ export type DFlexGlobalConfig = {
   removeEmptyContainer: boolean;
   enableEvents: boolean;
   enableListeners: boolean;
+  /**
+   * If true, allows a dragged element to switch positions with another element
+   * and settle into the new position, even if the drag didn't end inside the
+   * new position bounds.
+   */
+  enableDragSettleOnSwitch: boolean;
 };
 
 const DEFAULT_GLOBAL_CONFIG = {
   removeEmptyContainer: false,
   enableEvents: true,
   enableListeners: true,
+  enableDragSettleOnSwitch: true,
 };
 
 if (__DEV__) {
