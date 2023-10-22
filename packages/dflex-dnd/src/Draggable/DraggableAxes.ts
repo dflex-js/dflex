@@ -354,15 +354,26 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     return this.threshold.isOutThreshold(key, absolute, null);
   }
 
-  isNotSettled() {
-    const { SK, index } = store.migration.latest();
+  isNotSettled(): boolean {
+    const {
+      migration,
+      globals: { enableDragSettleOnSwitch },
+    } = store;
+
+    const { SK, index, numberOfTransformedELm } = migration.latest();
 
     const lastElm = store.getElmSiblingsByKey(SK).length - 1;
 
     const isLeavingFromBottom = index === lastElm;
 
     return (
-      !isLeavingFromBottom && (this.isOutThreshold() || this.isOutThreshold(SK))
+      !isLeavingFromBottom &&
+      ((enableDragSettleOnSwitch
+        ? numberOfTransformedELm > 0
+          ? false
+          : this.isOutThreshold()
+        : this.isOutThreshold()) ||
+        this.isOutThreshold(SK))
     );
   }
 }

@@ -1,5 +1,7 @@
 export { default as Depth1 } from "./depth";
 
+export { default as BigGap } from "./gap";
+
 export {
   AllRestrictedContainer,
   SomeRestrictedContainer,
