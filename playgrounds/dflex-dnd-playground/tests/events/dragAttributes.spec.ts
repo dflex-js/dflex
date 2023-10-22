@@ -41,8 +41,6 @@ test.describe("DFlex custom DOM attributes", async () => {
     test.beforeAll(async () => {
       await getDraggedRect(elm1);
       await moveDragged(-1, -45);
-
-      await page.waitForTimeout(50);
     });
 
     test("dragged element has dragged attr", async () => {
@@ -76,8 +74,6 @@ test.describe("DFlex custom DOM attributes", async () => {
         button: 0,
         force: true,
       });
-
-      await page.waitForTimeout(50);
     });
 
     test("dragged element removed dragged attr", async () => {
@@ -109,8 +105,6 @@ test.describe("DFlex custom DOM attributes", async () => {
     test.beforeAll(async () => {
       await getDraggedRect(elm1);
       await moveDragged(-1, 44);
-
-      await page.waitForTimeout(50);
     });
 
     test("dragged element has dragged attr", async () => {
@@ -142,8 +136,6 @@ test.describe("DFlex custom DOM attributes", async () => {
     test.beforeAll(async () => {
       await getDraggedRect(elm1);
       await moveDragged(-1, 70);
-
-      await page.waitForTimeout(50);
     });
 
     test("dragged element has dragged attr", async () => {
@@ -177,8 +169,6 @@ test.describe("DFlex custom DOM attributes", async () => {
         button: 0,
         force: true,
       });
-
-      await page.waitForTimeout(50);
     });
 
     test("dragged element has dragged attr", async () => {
