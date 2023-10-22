@@ -53,7 +53,12 @@ test.describe("Testing (enableDragSettleOnSwitch) global flag", async () => {
     });
   });
 
-  test("siblings are transformed", async () => {
+  test("siblings are transformed", async ({ browserName }) => {
+    test.skip(
+      browserName !== "chromium",
+      "Transformation calculations may vary between different browsers.",
+    );
+
     if (process.platform === "win32") {
       await Promise.all([
         expect(elm1).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 139)"),
