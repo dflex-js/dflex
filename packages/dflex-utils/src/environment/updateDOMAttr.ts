@@ -11,7 +11,8 @@ function updateDOMAttr<T extends string>(
   if (isRemove) {
     if (__DEV__) {
       if (!DOM.hasAttribute(attrName)) {
-        throw new Error(`Attribute ${attrName} does not exist on the element.`);
+        // eslint-disable-next-line no-console
+        console.error(`Attribute ${attrName} does not exist on the element.`);
       }
     }
 

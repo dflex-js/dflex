@@ -354,8 +354,11 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
     return this.threshold.isOutThreshold(key, absolute, null);
   }
 
-  isNotSettled() {
-    const { migration } = store;
+  isNotSettled(): boolean {
+    const {
+      migration,
+      globals: { enableDragSettleOnSwitch },
+    } = store;
 
     const { SK, index, numberOfTransformedELm } = migration.latest();
 
@@ -365,7 +368,11 @@ class DraggableAxes extends DFlexBaseDraggable<DFlexElement> {
 
     return (
       !isLeavingFromBottom &&
-      ((numberOfTransformedELm > 0 ? false : this.isOutThreshold()) ||
+      ((enableDragSettleOnSwitch
+        ? numberOfTransformedELm > 0
+          ? false
+          : this.isOutThreshold()
+        : this.isOutThreshold()) ||
         this.isOutThreshold(SK))
     );
   }
