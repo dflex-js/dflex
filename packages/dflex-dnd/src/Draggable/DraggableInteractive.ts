@@ -191,7 +191,7 @@ class DraggableInteractive extends DraggableAxes {
    *
    * @param index
    */
-  setDraggedTempIndex(index: number) {
+  setDraggedTempIndex(index: number): void {
     if (!Number.isNaN(index)) {
       store.migration.setIndex(index);
     }
@@ -213,7 +213,7 @@ class DraggableInteractive extends DraggableAxes {
     isFallback: boolean,
     latestCycle: AbstractDFlexCycle,
     willReconcile: boolean,
-  ) {
+  ): void {
     const { SK, index } = latestCycle;
     const { rect, translate, id, VDOMOrder, DOMGrid } = this.draggedElm;
     const siblings = store.getElmSiblingsByKey(SK);
