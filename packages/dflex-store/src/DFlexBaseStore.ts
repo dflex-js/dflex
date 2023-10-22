@@ -35,7 +35,7 @@ export type RegisterInputOpts = {
   /**
    * The depth of the targeted element within its container, starting from zero.
    * A higher depth value means the element is visually positioned above elements with lower depth values.
-   * Default: 0
+   * @default 0
    *
    * `Example`: 1, 2, 3, ...
    *
@@ -44,7 +44,7 @@ export type RegisterInputOpts = {
   /**
    * Indicates whether the element is read-only and won't be transformed during drag and drop interactions,
    * but it still belongs to the same interactive container.
-   * Default: false
+   * @default false
    *
    */
   readonly?: boolean;
@@ -86,6 +86,7 @@ export type DFlexGlobalConfig = {
   /**
    * If set to true, empty containers will be automatically removed if all of
    * its elements have been successfully migrated.
+   * @default false
    */
   removeEmptyContainer: boolean;
 
@@ -93,16 +94,19 @@ export type DFlexGlobalConfig = {
    * If true, allows a dragged element to switch positions with another element
    * and settle into the new position, even if the drag didn't end inside the
    * new position bounds.
+   * @default true
    */
   enableDragSettleOnSwitch: boolean;
 
   /**
    * If true, enables DFlex events.
+   * @default true
    */
   enableEvents: boolean;
 
   /**
    * If true, enables DFlex listeners.
+   * @default true
    */
   enableListeners: boolean;
 };
