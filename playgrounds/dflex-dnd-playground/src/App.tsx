@@ -32,10 +32,12 @@ const App = () => {
   };
 
   React.useEffect(() => {
-    // Optional config.
+    // The default optional config.
     store.config({
       enableEvents: true,
+      enableListeners: true,
       removeEmptyContainer: false,
+      enableDragSettleOnSwitch: true,
     });
   }, []);
 

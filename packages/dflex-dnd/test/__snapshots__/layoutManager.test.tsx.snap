@@ -160,6 +160,7 @@ DFlexDnDStore {
   "deferred": [],
   "deletedDOM": WeakSet {},
   "globals": {
+    "enableDragSettleOnSwitch": true,
     "enableEvents": true,
     "enableListeners": true,
     "removeEmptyContainer": false,

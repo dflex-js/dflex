@@ -79,16 +79,32 @@ export type RegisterInputProcessed = DeepRequired<
   CSSTransform: CSS | null;
 };
 
+/**
+ * Configuration options for DFlex.
+ */
 export type DFlexGlobalConfig = {
+  /**
+   * If set to true, empty containers will be automatically removed if all of
+   * its elements have been successfully migrated.
+   */
   removeEmptyContainer: boolean;
-  enableEvents: boolean;
-  enableListeners: boolean;
+
   /**
    * If true, allows a dragged element to switch positions with another element
    * and settle into the new position, even if the drag didn't end inside the
    * new position bounds.
    */
   enableDragSettleOnSwitch: boolean;
+
+  /**
+   * If true, enables DFlex events.
+   */
+  enableEvents: boolean;
+
+  /**
+   * If true, enables DFlex listeners.
+   */
+  enableListeners: boolean;
 };
 
 const DEFAULT_GLOBAL_CONFIG = {
