@@ -379,6 +379,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     if (events) {
       emitSiblingsEvent(events, ON_LIFT_UP, {
+        drag: store.interactiveDOM.get(draggedElm.id)!,
         siblings,
         from: from - 1,
         to: siblings.length - 1,
@@ -418,6 +419,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     if (events) {
       emitSiblingsEvent(events, ON_MOVE_DOWN, {
+        drag: store.interactiveDOM.get(draggedElm.id)!,
         siblings,
         from: to,
         to: length - 1,
@@ -731,11 +733,16 @@ class DFlexMechanismController extends DFlexScrollableElement {
     const { draggedElm, events } = this.draggable;
 
     if (events) {
+      const { id } = draggedElm;
+
+      const element = store.interactiveDOM.get(id)!;
+
       emitDragMovedEvent(
         events,
         isOut ? ON_OUT_CONTAINER : ON_ENTER_CONTAINER,
         {
-          id: draggedElm.id,
+          id,
+          element,
           index: store.migration.latest().index,
         },
       );
@@ -775,13 +782,17 @@ class DFlexMechanismController extends DFlexScrollableElement {
     const { draggedElm, events } = this.draggable;
 
     if (events) {
+      const { id } = draggedElm;
       const { migration } = store;
+
+      const element = store.interactiveDOM.get(id)!;
 
       emitDragMovedEvent(
         events,
         isOut ? ON_OUT_THRESHOLD : ON_ENTER_THRESHOLD,
         {
-          id: draggedElm.id,
+          id,
+          element,
           index: migration.latest().index,
         },
       );

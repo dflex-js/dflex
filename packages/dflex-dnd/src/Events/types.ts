@@ -37,6 +37,9 @@ export type PayloadDragMoved = {
   /** Indicates the timestamp when the event occurred. */
   timestamp: number;
 
+  /** Targeted dragged element */
+  element: HTMLElement;
+
   /** Contains the unique identifier of the dragged element in the registry. */
   id: string;
 
@@ -51,7 +54,7 @@ export type PayloadDragCommitted = {
   /** Indicates the timestamp when the event occurred. */
   timestamp: number;
 
-  /** Targeted elements */
+  /** Targeted dragged element */
   element: HTMLElement;
 
   indexes: {
@@ -86,6 +89,9 @@ export type PayloadInteractivity = {
   /** Indicates the current index of the element. */
   index: number;
 
+  /** Targeted dragged element */
+  drag: HTMLElement;
+
   /** Refers to the HTML element that triggered the event. */
   target: HTMLElement;
 };
@@ -96,6 +102,9 @@ export type PayloadSiblings = {
 
   /** Indicates the timestamp when the event occurred. */
   timestamp: number;
+
+  /** Targeted dragged element */
+  drag: HTMLElement;
 
   /** Indicates the index where the dragged element left. */
   from: number;

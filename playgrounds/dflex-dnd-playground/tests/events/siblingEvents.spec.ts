@@ -96,6 +96,7 @@ test.describe("DFlex custom Siblings events", async () => {
       expect(type).toEqual("$onLiftUpSiblings");
 
       expect(rest).toEqual({
+        drag: "ref: <Node>",
         category: "siblings",
         siblings: ["mtg", "gym", ""],
         from: 1,
@@ -131,6 +132,7 @@ test.describe("DFlex custom Siblings events", async () => {
       expect(type).toEqual("$onMoveDownSiblings");
 
       expect(rest).toEqual({
+        drag: "ref: <Node>",
         category: "siblings",
         siblings: ["mtg", "", "gym"],
         from: 1,

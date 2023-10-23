@@ -96,6 +96,7 @@ test.describe("DFlex custom Drag events", async () => {
       expect(type).toEqual("$onDragOutThreshold");
 
       expect(rest).toEqual({
+        element: "ref: <Node>",
         category: "drag",
         id: "mtg",
         index: 0,
@@ -111,6 +112,7 @@ test.describe("DFlex custom Drag events", async () => {
       expect(type).toEqual("$onDragOutContainer");
 
       expect(rest).toEqual({
+        element: "ref: <Node>",
         category: "drag",
         id: "mtg",
         index: 0,
@@ -147,6 +149,7 @@ test.describe("DFlex custom Drag events", async () => {
       expect(type).toEqual("$onDragEnterContainer");
 
       expect(rest).toEqual({
+        element: "ref: <Node>",
         category: "drag",
         id: "mtg",
         index: 0,
@@ -162,6 +165,7 @@ test.describe("DFlex custom Drag events", async () => {
       expect(type).toEqual("$onDragEnterThreshold");
 
       expect(rest).toEqual({
+        element: "ref: <Node>",
         category: "drag",
         id: "mtg",
         index: 0,
