@@ -1,11 +1,8 @@
 import { getParentElm, getElmPos, PointBool } from "@dflex/utils";
 
-import {
-  isOverflowing,
-  isScrollPropagationAllowed,
-} from "./DFlexOverflowUtils";
+import { isOverflowing, isScrollPropagationAllowed } from "./DFlexOverflow";
 
-import type { CSSPosition } from "./DFlexOverflowUtils";
+import type { CSSPosition } from "./DFlexOverflow";
 
 type ResolveScrollPropsInput = [undefined | HTMLElement, boolean, PointBool];
 
@@ -28,9 +25,7 @@ function calculateOverflow(
   return hasOverflow.isOneTruthy();
 }
 
-function getScrollContainerProperties(
-  baseDOMElm: HTMLElement,
-): GetScrollContainerRes {
+function getScrollProps(baseDOMElm: HTMLElement): GetScrollContainerRes {
   const baseELmPosition = getElmPos(baseDOMElm);
 
   const res: ResolveScrollPropsInput = [
@@ -62,4 +57,4 @@ function getScrollContainerProperties(
   return res as GetScrollContainerRes;
 }
 
-export default getScrollContainerProperties;
+export default getScrollProps;

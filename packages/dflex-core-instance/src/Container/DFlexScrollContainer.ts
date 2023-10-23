@@ -17,8 +17,7 @@ import {
 } from "@dflex/utils";
 
 import type { ThresholdPercentages, AbstractBox } from "@dflex/utils";
-import getScrollContainerProperties from "./DFlexScrollContainerProperties";
-import { hasScrollableContent } from "./DFlexOverflowUtils";
+import { hasScrollableContent, getScrollProps } from "./scrollUtils";
 
 // eslint-disable-next-line no-unused-vars
 type ScrollEventCallback = (SK: string) => void;
@@ -130,7 +129,7 @@ class DFlexScrollContainer {
     this._listenerDatasetKey = `${LISTENER_DATASET_KEY_PREFIX}__${SK}`;
 
     [this._containerDOM, this._isDocumentContainer, this.hasOverflow] =
-      getScrollContainerProperties(firstELmDOM);
+      getScrollProps(firstELmDOM);
 
     // Rect.
     this.totalScrollRect = new BoxRect(0, 0, 0, 0);
