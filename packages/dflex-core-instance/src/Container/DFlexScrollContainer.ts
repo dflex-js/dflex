@@ -86,9 +86,9 @@ class DFlexScrollContainer {
   /**
    * The parent element that is owning the scroll.
    */
-  private _containerDOM: HTMLElement;
+  private _containerDOM!: HTMLElement;
 
-  private _isDocumentContainer: boolean;
+  private _isDocumentContainer!: boolean;
 
   private _listenerDatasetKey: string;
 
@@ -97,9 +97,9 @@ class DFlexScrollContainer {
   }
 
   constructor(
-    firstELmDOM: HTMLElement,
+    DOMRef: HTMLElement,
     SK: string,
-    branchLength: number,
+    siblingsLength: number,
     scrollEventCallback: ScrollEventCallback,
   ) {
     // Callbacks.
@@ -128,20 +128,40 @@ class DFlexScrollContainer {
 
     this._listenerDatasetKey = `${LISTENER_DATASET_KEY_PREFIX}__${SK}`;
 
-    [this._containerDOM, this._isDocumentContainer, this.hasOverflow] =
-      getScrollProps(firstELmDOM);
+    this.hasOverflow = new PointBool(false, false);
 
     // Rect.
     this.totalScrollRect = new BoxRect(0, 0, 0, 0);
     this.visibleScrollRect = new BoxRect(0, 0, 0, 0);
     this._isCandidateForDynamicVisibility = false;
 
-    this.refreshScrollAndVisibility(branchLength);
+    this.initialize(DOMRef, siblingsLength);
 
     this._attachResizeAndScrollListeners(true);
 
     if (__DEV__) {
       Object.seal(this);
+    }
+  }
+
+  initialize(DOMRef: HTMLElement, siblingsLength: number): void {
+    [this._containerDOM, this._isDocumentContainer] = getScrollProps(
+      DOMRef,
+      this.hasOverflow,
+    );
+
+    this._updateScrollRect();
+
+    this._isCandidateForDynamicVisibility =
+      siblingsLength > MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY;
+
+    // If the container is not the document, there is no need to update the overflow status,
+    // as the overflow has already been detected during initialization.
+    if (this._isDocumentContainer) {
+      this._updateOverflow();
+    } else {
+      // We certain there's overflow.
+      this._handleOverflowUpdate();
     }
   }
 
@@ -241,22 +261,6 @@ class DFlexScrollContainer {
       this._hasChangedScrollDimension("y", height) ||
       this._hasChangedScrollDimension("x", width)
     );
-  }
-
-  refreshScrollAndVisibility(branchLength: number): void {
-    this._updateScrollRect();
-
-    this._isCandidateForDynamicVisibility =
-      branchLength > MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY;
-
-    // If the container is not the document, there is no need to update the overflow status,
-    // as the overflow has already been detected during initialization.
-    if (this._isDocumentContainer) {
-      this._updateOverflow();
-    } else {
-      // We certain there's overflow.
-      this._handleOverflowUpdate();
-    }
   }
 
   /**

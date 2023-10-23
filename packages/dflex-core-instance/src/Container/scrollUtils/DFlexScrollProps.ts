@@ -4,7 +4,7 @@ import { isOverflowing, isScrollPropagationAllowed } from "./DFlexOverflow";
 
 import type { CSSPosition } from "./DFlexOverflow";
 
-type ScrollProps = [HTMLElement, boolean, PointBool];
+type ScrollProps = [HTMLElement, boolean];
 
 function calculateOverflow(
   parentDOM: HTMLElement,
@@ -23,28 +23,26 @@ function calculateOverflow(
   return hasOverflow.isOneTruthy();
 }
 
-function getScrollProps(baseDOMElm: HTMLElement): ScrollProps {
+function getScrollProps(
+  baseDOMElm: HTMLElement,
+  hasOverflow: PointBool,
+): ScrollProps {
   const baseELmPosition = getElmPos(baseDOMElm);
 
-  const scrollProps: ScrollProps = [
-    document.documentElement,
-    true,
-    new PointBool(false, false),
-  ];
+  const scrollProps: ScrollProps = [document.documentElement, true];
 
   if (__DEV__) {
     Object.seal(scrollProps);
   }
 
   const overflow = (parentDOM: HTMLElement) =>
-    calculateOverflow(parentDOM, baseELmPosition, scrollProps[2]);
+    calculateOverflow(parentDOM, baseELmPosition, hasOverflow);
 
   const scrollContainerDOM = getParentElm(baseDOMElm, overflow);
 
   if (scrollContainerDOM) {
     scrollProps[0] = scrollContainerDOM;
     scrollProps[1] = false;
-    // scrollProps[2] should be mutated by `calculateOverflow`
   }
 
   if (__DEV__) {

@@ -747,7 +747,12 @@ class DFlexDnDStore extends DFlexBaseStore {
           const hasChanged = scroll.hasScrollDimensionChanges();
 
           if (hasChanged) {
-            scroll.refreshScrollAndVisibility(siblings.length);
+            const { length } = siblings;
+
+            const refDOM: HTMLElement | null =
+              length > 0 ? this.interactiveDOM.get(siblings[0])! : null;
+
+            scroll.initialize(refDOM!, length);
           }
 
           const {
