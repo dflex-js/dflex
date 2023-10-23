@@ -18,6 +18,7 @@ import {
 
 import type { ThresholdPercentages, AbstractBox } from "@dflex/utils";
 import getScrollContainerProperties from "./DFlexScrollContainerProperties";
+import { hasScrollableContent } from "./DFlexOverflowUtils";
 
 // eslint-disable-next-line no-unused-vars
 type ScrollEventCallback = (SK: string) => void;
@@ -32,18 +33,6 @@ export type DFlexSerializedScroll = {
   scrollContainerRect: AbstractBox;
   visibleScreen: Dimensions;
 };
-
-function hasOverFlow(
-  scrollRect: Dimensions,
-  scrollContainerRect: Dimensions,
-  axis: Axis,
-  checkHalf: boolean = false,
-): boolean {
-  const dimension = getDimensionTypeByAxis(axis);
-  const threshold = checkHalf ? 0.5 : 1;
-
-  return scrollRect[dimension] / threshold > scrollContainerRect[dimension];
-}
 
 const MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
 
@@ -231,16 +220,8 @@ class DFlexScrollContainer {
   }
 
   private _updateOverflow(): void {
-    const checkOverflow = (axis: Axis, checkHalf?: boolean) =>
-      hasOverFlow(
-        this.totalScrollRect,
-        this.visibleScrollRect,
-        axis,
-        checkHalf,
-      );
-
-    const hasOverflowX = checkOverflow("x");
-    const hasOverflowY = checkOverflow("y");
+    const hasOverflowX = hasScrollableContent("x", this._containerDOM);
+    const hasOverflowY = hasScrollableContent("y", this._containerDOM);
 
     this.hasOverflow.setAxes(hasOverflowX, hasOverflowY);
 

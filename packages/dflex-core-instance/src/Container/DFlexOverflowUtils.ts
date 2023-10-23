@@ -1,8 +1,20 @@
-import { getElmOverflow, PointBool, Axis } from "@dflex/utils";
+import { getElmOverflow, Axis, getElmPos } from "@dflex/utils";
 
 const OVERFLOW_REGEX = /(auto|scroll|overlay)/;
 
 type CSSOverflow = ReturnType<typeof getElmOverflow>;
+type CSSPosition = ReturnType<typeof getElmPos>;
+
+function isScrollPropagationAllowed(
+  parentDOM: HTMLElement,
+  baseELmPosition: CSSPosition,
+): boolean {
+  if (baseELmPosition !== "absolute") {
+    return true;
+  }
+
+  return getElmPos(parentDOM) !== "static";
+}
 
 function hasScrollableContent(axis: Axis, DOM: HTMLElement): boolean {
   return axis === "y"
@@ -19,10 +31,12 @@ function hasOverflowProperty(axis: Axis, DOM: HTMLElement): boolean {
   return OVERFLOW_REGEX.test(overflow);
 }
 
-function hasOverflow(axis: Axis, DOM: HTMLElement): boolean {
+function isOverflowing(axis: Axis, DOM: HTMLElement): boolean {
   if (hasOverflowProperty(axis, DOM)) {
     return hasScrollableContent(axis, DOM);
   }
 
   return false;
 }
+
+export { isOverflowing, hasScrollableContent, isScrollPropagationAllowed };
