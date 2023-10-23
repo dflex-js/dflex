@@ -1,32 +1,32 @@
 import { getParentElm, getElmPos, PointBool } from "@dflex/utils";
+
 import {
   isOverflowing,
   isScrollPropagationAllowed,
 } from "./DFlexOverflowUtils";
 
+import type { CSSPosition } from "./DFlexOverflowUtils";
+
 type ResolveScrollPropsInput = [undefined | HTMLElement, boolean, PointBool];
 
 type GetScrollContainerRes = [HTMLElement, boolean, PointBool];
 
-const resolveScrollProps = (
+function calculateOverflow(
   parentDOM: HTMLElement,
-  baseELmPosition: string,
-  res: ResolveScrollPropsInput,
-) => {
-  // @ts-ignore
+  baseELmPosition: CSSPosition,
+  hasOverflow: PointBool,
+): boolean {
   const isPropagated = isScrollPropagationAllowed(parentDOM, baseELmPosition);
 
   if (!isPropagated) {
     return false;
   }
 
-  const [, , hasOverflow] = res;
-
   hasOverflow.x = isOverflowing("x", parentDOM);
   hasOverflow.y = isOverflowing("y", parentDOM);
 
   return hasOverflow.isOneTruthy();
-};
+}
 
 function getScrollContainerProperties(
   baseDOMElm: HTMLElement,
@@ -43,11 +43,10 @@ function getScrollContainerProperties(
     Object.seal(res);
   }
 
-  const scrollContainerDOM = getParentElm(
-    baseDOMElm,
-    (parentDOM: HTMLElement) =>
-      resolveScrollProps(parentDOM, baseELmPosition, res),
-  );
+  const overflow = (parentDOM: HTMLElement) =>
+    calculateOverflow(parentDOM, baseELmPosition, res[2]);
+
+  const scrollContainerDOM = getParentElm(baseDOMElm, overflow);
 
   if (!scrollContainerDOM || baseELmPosition === "fixed") {
     res[0] = document.documentElement;
