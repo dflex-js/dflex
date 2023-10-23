@@ -24,16 +24,20 @@ function calculateOverflow(
 }
 
 function getScrollProps(
-  baseDOMElm: HTMLElement,
+  baseDOMElm: HTMLElement | null,
   hasOverflow: PointBool,
 ): ScrollProps {
-  const baseELmPosition = getElmPos(baseDOMElm);
-
   const scrollProps: ScrollProps = [document.documentElement, true];
 
   if (__DEV__) {
     Object.seal(scrollProps);
   }
+
+  if (!baseDOMElm) {
+    return scrollProps;
+  }
+
+  const baseELmPosition = getElmPos(baseDOMElm);
 
   const overflow = (parentDOM: HTMLElement) =>
     calculateOverflow(parentDOM, baseELmPosition, hasOverflow);

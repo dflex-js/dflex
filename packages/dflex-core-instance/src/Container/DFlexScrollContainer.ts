@@ -97,7 +97,7 @@ class DFlexScrollContainer {
   }
 
   constructor(
-    DOMRef: HTMLElement,
+    DOMRef: HTMLElement | null,
     SK: string,
     siblingsLength: number,
     scrollEventCallback: ScrollEventCallback,
@@ -144,7 +144,7 @@ class DFlexScrollContainer {
     }
   }
 
-  initialize(DOMRef: HTMLElement, siblingsLength: number): void {
+  initialize(DOMRef: HTMLElement | null, siblingsLength: number): void {
     [this._containerDOM, this._isDocumentContainer] = getScrollProps(
       DOMRef,
       this.hasOverflow,
