@@ -17,7 +17,7 @@ import {
 } from "@dflex/utils";
 
 import type { ThresholdPercentages, AbstractBox } from "@dflex/utils";
-import getScrollContainerProperties from "./DFlexScrollContainerProperties";
+import { hasScrollableContent, getScrollProps } from "./scrollUtils";
 
 // eslint-disable-next-line no-unused-vars
 type ScrollEventCallback = (SK: string) => void;
@@ -32,18 +32,6 @@ export type DFlexSerializedScroll = {
   scrollContainerRect: AbstractBox;
   visibleScreen: Dimensions;
 };
-
-function hasOverFlow(
-  scrollRect: Dimensions,
-  scrollContainerRect: Dimensions,
-  axis: Axis,
-  checkHalf: boolean = false,
-): boolean {
-  const dimension = getDimensionTypeByAxis(axis);
-  const threshold = checkHalf ? 0.5 : 1;
-
-  return scrollRect[dimension] / threshold > scrollContainerRect[dimension];
-}
 
 const MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
 
@@ -98,9 +86,9 @@ class DFlexScrollContainer {
   /**
    * The parent element that is owning the scroll.
    */
-  private _containerDOM: HTMLElement;
+  private _containerDOM!: HTMLElement;
 
-  private _isDocumentContainer: boolean;
+  private _isDocumentContainer!: boolean;
 
   private _listenerDatasetKey: string;
 
@@ -109,9 +97,9 @@ class DFlexScrollContainer {
   }
 
   constructor(
-    firstELmDOM: HTMLElement,
+    DOMRef: HTMLElement | null,
     SK: string,
-    branchLength: number,
+    siblingsLength: number,
     scrollEventCallback: ScrollEventCallback,
   ) {
     // Callbacks.
@@ -140,20 +128,40 @@ class DFlexScrollContainer {
 
     this._listenerDatasetKey = `${LISTENER_DATASET_KEY_PREFIX}__${SK}`;
 
-    [this._containerDOM, this._isDocumentContainer, this.hasOverflow] =
-      getScrollContainerProperties(firstELmDOM);
+    this.hasOverflow = new PointBool(false, false);
 
     // Rect.
     this.totalScrollRect = new BoxRect(0, 0, 0, 0);
     this.visibleScrollRect = new BoxRect(0, 0, 0, 0);
     this._isCandidateForDynamicVisibility = false;
 
-    this.refreshScrollAndVisibility(branchLength);
+    this.initialize(DOMRef, siblingsLength);
 
     this._attachResizeAndScrollListeners(true);
 
     if (__DEV__) {
       Object.seal(this);
+    }
+  }
+
+  initialize(DOMRef: HTMLElement | null, siblingsLength: number): void {
+    [this._containerDOM, this._isDocumentContainer] = getScrollProps(
+      DOMRef,
+      this.hasOverflow,
+    );
+
+    this._updateScrollRect();
+
+    this._isCandidateForDynamicVisibility =
+      siblingsLength > MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY;
+
+    // If the container is not the document, there is no need to update the overflow status,
+    // as the overflow has already been detected during initialization.
+    if (this._isDocumentContainer) {
+      this._updateOverflow();
+    } else {
+      // We certain there's overflow.
+      this._handleOverflowUpdate();
     }
   }
 
@@ -231,16 +239,8 @@ class DFlexScrollContainer {
   }
 
   private _updateOverflow(): void {
-    const checkOverflow = (axis: Axis, checkHalf?: boolean) =>
-      hasOverFlow(
-        this.totalScrollRect,
-        this.visibleScrollRect,
-        axis,
-        checkHalf,
-      );
-
-    const hasOverflowX = checkOverflow("x");
-    const hasOverflowY = checkOverflow("y");
+    const hasOverflowX = hasScrollableContent("x", this._containerDOM);
+    const hasOverflowY = hasScrollableContent("y", this._containerDOM);
 
     this.hasOverflow.setAxes(hasOverflowX, hasOverflowY);
 
@@ -261,22 +261,6 @@ class DFlexScrollContainer {
       this._hasChangedScrollDimension("y", height) ||
       this._hasChangedScrollDimension("x", width)
     );
-  }
-
-  refreshScrollAndVisibility(branchLength: number): void {
-    this._updateScrollRect();
-
-    this._isCandidateForDynamicVisibility =
-      branchLength > MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY;
-
-    // If the container is not the document, there is no need to update the overflow status,
-    // as the overflow has already been detected during initialization.
-    if (this._isDocumentContainer) {
-      this._updateOverflow();
-    } else {
-      // We certain there's overflow.
-      this._handleOverflowUpdate();
-    }
   }
 
   /**
