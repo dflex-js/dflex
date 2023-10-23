@@ -1,6 +1,6 @@
 {
   "name": "dflex-dnd-playground",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -9,11 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@dflex/dnd": "workspace:^3.10.0"
+    "@dflex/dnd": "workspace:^3.10.3"
   },
   "devDependencies": {
     "cypress": "^13.3.2",
-    "dflex-e2e-utils": "workspace:^1.0.3",
+    "dflex-e2e-utils": "workspace:^1.0.4",
     "eslint": "^8.51.0",
     "eslint-config-dflex-react": "workspace:*",
     "eslint-plugin-cypress": "^2.15.1"

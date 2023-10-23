@@ -1,6 +1,6 @@
 {
   "name": "@dflex/utils",
-  "version": "3.10.2",
+  "version": "3.10.3",
   "description": "Utility package for DFlex",
   "author": "Jalal Maskoun",
   "main": "./dist/dflex-utils.js",
