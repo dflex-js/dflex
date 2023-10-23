@@ -109,9 +109,9 @@ class DFlexScrollContainer {
   }
 
   constructor(
-    firstELmDOM: HTMLElement,
+    refDOM: HTMLElement,
     SK: string,
-    branchLength: number,
+    siblingsLength: number,
     scrollEventCallback: ScrollEventCallback,
   ) {
     // Callbacks.
@@ -140,21 +140,33 @@ class DFlexScrollContainer {
 
     this._listenerDatasetKey = `${LISTENER_DATASET_KEY_PREFIX}__${SK}`;
 
-    [this._containerDOM, this._isDocumentContainer, this.hasOverflow] =
-      getScrollContainerProperties(firstELmDOM);
+    // Initiate instances
+
+    // it as window is the scroll container.
+    this._containerDOM = document.documentElement;
+    this._isDocumentContainer = true;
+    this.hasOverflow = new PointBool(false, false);
 
     // Rect.
     this.totalScrollRect = new BoxRect(0, 0, 0, 0);
     this.visibleScrollRect = new BoxRect(0, 0, 0, 0);
     this._isCandidateForDynamicVisibility = false;
 
-    this.refreshScrollAndVisibility(branchLength);
+    // Call
+    this.initScrollContainer(refDOM, siblingsLength);
 
     this._attachResizeAndScrollListeners(true);
 
     if (__DEV__) {
       Object.seal(this);
     }
+  }
+
+  initScrollContainer(refDOM: HTMLElement, siblingLength: number): void {
+    [this._containerDOM, this._isDocumentContainer, this.hasOverflow] =
+      getScrollContainerProperties(refDOM);
+
+    this._refreshScrollAndVisibility(siblingLength);
   }
 
   hasDynamicVisibility(): boolean {
@@ -263,11 +275,11 @@ class DFlexScrollContainer {
     );
   }
 
-  refreshScrollAndVisibility(branchLength: number): void {
+  private _refreshScrollAndVisibility(siblingsLength: number): void {
     this._updateScrollRect();
 
     this._isCandidateForDynamicVisibility =
-      branchLength > MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY;
+      siblingsLength > MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY;
 
     // If the container is not the document, there is no need to update the overflow status,
     // as the overflow has already been detected during initialization.
