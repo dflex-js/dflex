@@ -1,64 +1,31 @@
+import { getParentElm, getElmPos, PointBool } from "@dflex/utils";
 import {
-  getParentElm,
-  getElmPos,
-  getElmOverflow,
-  PointBool,
-  Axis,
-} from "@dflex/utils";
-
-const OVERFLOW_REGEX = /(auto|scroll|overlay)/;
+  isOverflowing,
+  isScrollPropagationAllowed,
+} from "./DFlexOverflowUtils";
 
 type ResolveScrollPropsInput = [undefined | HTMLElement, boolean, PointBool];
 
 type GetScrollContainerRes = [HTMLElement, boolean, PointBool];
-
-type Overflow = ReturnType<typeof getElmOverflow>;
-
-function hasScrollableContent(DOM: HTMLElement, axis: Axis): boolean {
-  return axis === "y"
-    ? DOM.scrollHeight > DOM.clientHeight
-    : DOM.scrollWidth > DOM.clientWidth;
-}
-
-const hasScrollbar = (
-  axis: Axis,
-  overflow: Overflow,
-  DOM: HTMLElement,
-  hasOverflow: PointBool,
-) => {
-  if (OVERFLOW_REGEX.test(overflow)) {
-    const has = hasScrollableContent(DOM, axis);
-
-    if (has) {
-      hasOverflow[axis] = true;
-
-      return true;
-    }
-  }
-
-  return false;
-};
 
 const resolveScrollProps = (
   parentDOM: HTMLElement,
   baseELmPosition: string,
   res: ResolveScrollPropsInput,
 ) => {
-  const overflowX = getElmOverflow(parentDOM, "overflow-x");
-  const overflowY = getElmOverflow(parentDOM, "overflow-y");
+  // @ts-ignore
+  const isPropagated = isScrollPropagationAllowed(parentDOM, baseELmPosition);
 
-  const excludeStaticParents = baseELmPosition === "absolute";
-
-  if (excludeStaticParents && getElmPos(parentDOM) === "static") {
+  if (!isPropagated) {
     return false;
   }
 
   const [, , hasOverflow] = res;
 
-  const checkOverflow = (axis: Axis, overflow: Overflow) =>
-    hasScrollbar(axis, overflow, parentDOM, hasOverflow);
+  hasOverflow.x = isOverflowing("x", parentDOM);
+  hasOverflow.y = isOverflowing("y", parentDOM);
 
-  return checkOverflow("y", overflowY) || checkOverflow("x", overflowX);
+  return hasOverflow.isOneTruthy();
 };
 
 function getScrollContainerProperties(
