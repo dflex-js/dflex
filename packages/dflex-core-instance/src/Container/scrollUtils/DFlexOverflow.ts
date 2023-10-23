@@ -9,11 +9,14 @@ function isScrollPropagationAllowed(
   parentDOM: HTMLElement,
   baseELmPosition: CSSPosition,
 ): boolean {
-  if (baseELmPosition !== "absolute") {
-    return true;
+  if (
+    baseELmPosition === "fixed" ||
+    (baseELmPosition === "absolute" && getElmPos(parentDOM) === "static")
+  ) {
+    return false;
   }
 
-  return getElmPos(parentDOM) !== "static";
+  return true;
 }
 
 function hasScrollableContent(axis: Axis, parentDOM: HTMLElement): boolean {

@@ -4,9 +4,7 @@ import { isOverflowing, isScrollPropagationAllowed } from "./DFlexOverflow";
 
 import type { CSSPosition } from "./DFlexOverflow";
 
-type ResolveScrollPropsInput = [undefined | HTMLElement, boolean, PointBool];
-
-type GetScrollContainerRes = [HTMLElement, boolean, PointBool];
+type ScrollProps = [HTMLElement, boolean, PointBool];
 
 function calculateOverflow(
   parentDOM: HTMLElement,
@@ -25,36 +23,35 @@ function calculateOverflow(
   return hasOverflow.isOneTruthy();
 }
 
-function getScrollProps(baseDOMElm: HTMLElement): GetScrollContainerRes {
+function getScrollProps(baseDOMElm: HTMLElement): ScrollProps {
   const baseELmPosition = getElmPos(baseDOMElm);
 
-  const res: ResolveScrollPropsInput = [
-    undefined,
-    false,
+  const scrollProps: ScrollProps = [
+    document.documentElement,
+    true,
     new PointBool(false, false),
   ];
 
   if (__DEV__) {
-    Object.seal(res);
+    Object.seal(scrollProps);
   }
 
   const overflow = (parentDOM: HTMLElement) =>
-    calculateOverflow(parentDOM, baseELmPosition, res[2]);
+    calculateOverflow(parentDOM, baseELmPosition, scrollProps[2]);
 
   const scrollContainerDOM = getParentElm(baseDOMElm, overflow);
 
-  if (!scrollContainerDOM || baseELmPosition === "fixed") {
-    res[0] = document.documentElement;
-    res[1] = true;
-  } else {
-    res[0] = scrollContainerDOM;
+  if (scrollContainerDOM) {
+    scrollProps[0] = scrollContainerDOM;
+    scrollProps[1] = false;
+    // scrollProps[2] should be mutated by `calculateOverflow`
   }
 
   if (__DEV__) {
-    Object.freeze(res);
+    Object.freeze(scrollProps);
   }
 
-  return res as GetScrollContainerRes;
+  return scrollProps;
 }
 
 export default getScrollProps;
