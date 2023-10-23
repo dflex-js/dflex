@@ -63,6 +63,18 @@ type ScrollThreshold = {
   key: string;
 };
 
+type ScrollProps = readonly [HTMLElement, boolean, PointBool];
+
+const INITIALIZE_SCROLL_PROPS: ScrollProps = [
+  document.documentElement,
+  true,
+  new PointBool(false, false),
+] as const;
+
+if (__DEV__) {
+  Object.freeze(INITIALIZE_SCROLL_PROPS);
+}
+
 const LISTENER_DATASET_KEY_PREFIX = "scroll";
 const INNER_KEY_PREFIX = "scroll_inner";
 const OUTER_KEY_PREFIX = "scroll_outer";
@@ -143,9 +155,9 @@ class DFlexScrollContainer {
     // Initiate instances
 
     // it as window is the scroll container.
-    this._containerDOM = document.documentElement;
-    this._isDocumentContainer = true;
-    this.hasOverflow = new PointBool(false, false);
+    [this._containerDOM, this._isDocumentContainer, this.hasOverflow] = [
+      ...INITIALIZE_SCROLL_PROPS,
+    ];
 
     // Rect.
     this.totalScrollRect = new BoxRect(0, 0, 0, 0);
@@ -163,8 +175,11 @@ class DFlexScrollContainer {
   }
 
   initScrollContainer(refDOM: HTMLElement, siblingLength: number): void {
-    [this._containerDOM, this._isDocumentContainer, this.hasOverflow] =
-      getScrollContainerProperties(refDOM);
+    getScrollContainerProperties(refDOM, [
+      this._containerDOM,
+      this._isDocumentContainer,
+      this.hasOverflow,
+    ]);
 
     this._refreshScrollAndVisibility(siblingLength);
   }

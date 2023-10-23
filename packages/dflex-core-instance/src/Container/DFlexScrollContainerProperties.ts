@@ -8,9 +8,7 @@ import {
 
 const OVERFLOW_REGEX = /(auto|scroll|overlay)/;
 
-type ResolveScrollPropsInput = [undefined | HTMLElement, boolean, PointBool];
-
-type GetScrollContainerRes = [HTMLElement, boolean, PointBool];
+type ScrollProps = [HTMLElement, boolean, PointBool];
 
 type Overflow = ReturnType<typeof getElmOverflow>;
 
@@ -42,7 +40,7 @@ const hasScrollbar = (
 const resolveScrollProps = (
   parentDOM: HTMLElement,
   baseELmPosition: string,
-  res: ResolveScrollPropsInput,
+  hasOverflow: PointBool,
 ) => {
   const overflowX = getElmOverflow(parentDOM, "overflow-x");
   const overflowY = getElmOverflow(parentDOM, "overflow-y");
@@ -53,8 +51,6 @@ const resolveScrollProps = (
     return false;
   }
 
-  const [, , hasOverflow] = res;
-
   const checkOverflow = (axis: Axis, overflow: Overflow) =>
     hasScrollbar(axis, overflow, parentDOM, hasOverflow);
 
@@ -63,37 +59,24 @@ const resolveScrollProps = (
 
 function getScrollContainerProperties(
   baseDOMElm: HTMLElement,
-): GetScrollContainerRes {
+  res: ScrollProps,
+): void {
   const baseELmPosition = getElmPos(baseDOMElm);
-
-  const res: ResolveScrollPropsInput = [
-    undefined,
-    false,
-    new PointBool(false, false),
-  ];
-
-  if (__DEV__) {
-    Object.seal(res);
-  }
 
   const scrollContainerDOM = getParentElm(
     baseDOMElm,
     (parentDOM: HTMLElement) =>
-      resolveScrollProps(parentDOM, baseELmPosition, res),
+      resolveScrollProps(parentDOM, baseELmPosition, res[2]),
   );
 
-  if (!scrollContainerDOM || baseELmPosition === "fixed") {
-    res[0] = document.documentElement;
-    res[1] = true;
-  } else {
+  if (scrollContainerDOM) {
     res[0] = scrollContainerDOM;
+    res[1] = false;
   }
 
   if (__DEV__) {
     Object.freeze(res);
   }
-
-  return res as GetScrollContainerRes;
 }
 
 export default getScrollContainerProperties;
