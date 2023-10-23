@@ -18,12 +18,12 @@ function hasScrollableContent(DOM: HTMLElement, axis: Axis): boolean {
     : DOM.scrollWidth > DOM.clientWidth;
 }
 
-const hasScrollbar = (
+function hasScrollbar(
   axis: Axis,
   overflow: Overflow,
   DOM: HTMLElement,
   hasOverflow: PointBool,
-) => {
+): boolean {
   if (OVERFLOW_REGEX.test(overflow)) {
     const has = hasScrollableContent(DOM, axis);
 
@@ -35,7 +35,7 @@ const hasScrollbar = (
   }
 
   return false;
-};
+}
 
 const resolveScrollProps = (
   parentDOM: HTMLElement,
@@ -51,32 +51,32 @@ const resolveScrollProps = (
     return false;
   }
 
-  const checkOverflow = (axis: Axis, overflow: Overflow) =>
+  const checkScrollbar = (axis: Axis, overflow: Overflow) =>
     hasScrollbar(axis, overflow, parentDOM, hasOverflow);
 
-  return checkOverflow("y", overflowY) || checkOverflow("x", overflowX);
+  return checkScrollbar("y", overflowY) || checkScrollbar("x", overflowX);
 };
 
-function getScrollContainerProperties(
+function getScrollProps(
   baseDOMElm: HTMLElement,
-  res: ScrollProps,
+  scrollProps: ScrollProps,
 ): void {
   const baseELmPosition = getElmPos(baseDOMElm);
 
   const scrollContainerDOM = getParentElm(
     baseDOMElm,
     (parentDOM: HTMLElement) =>
-      resolveScrollProps(parentDOM, baseELmPosition, res[2]),
+      resolveScrollProps(parentDOM, baseELmPosition, scrollProps[2]),
   );
 
   if (scrollContainerDOM) {
-    res[0] = scrollContainerDOM;
-    res[1] = false;
+    scrollProps[0] = scrollContainerDOM;
+    scrollProps[1] = false;
   }
 
   if (__DEV__) {
-    Object.freeze(res);
+    Object.freeze(scrollProps);
   }
 }
 
-export default getScrollContainerProperties;
+export { getScrollProps, hasScrollbar };
