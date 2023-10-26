@@ -15,6 +15,6 @@ export type {
   DFlexInteractivityEvent,
   DFlexSiblingsEvent,
   DFlexEvents,
-  DFlexEventNames as DFlexEventsTypes,
+  DFlexEventNames,
   DFlexEventsMap,
 } from "./types";
