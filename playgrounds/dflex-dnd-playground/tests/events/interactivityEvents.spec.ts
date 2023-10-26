@@ -99,6 +99,7 @@ test.describe("DFlex custom Interactivity events", async () => {
         category: "interactivity",
         id: "org",
         index: 1,
+        drag: "ref: <Node>",
         target: "ref: <Node>",
       });
 
@@ -115,6 +116,7 @@ test.describe("DFlex custom Interactivity events", async () => {
         category: "interactivity",
         id: "org",
         index: 0,
+        drag: "ref: <Node>",
         target: "ref: <Node>",
       });
 

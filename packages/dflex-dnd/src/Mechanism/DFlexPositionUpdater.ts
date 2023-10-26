@@ -535,7 +535,7 @@ class DFlexPositionUpdater {
     const emitEvent =
       events !== null && !ignoreInteractivityEvents
         ? (type: InteractivityEventNames) =>
-            emitInteractivityEvent(events, type, element, store)
+            emitInteractivityEvent(events, type, element, draggedElm.id, store)
         : null;
 
     // TODO: always true for the first element

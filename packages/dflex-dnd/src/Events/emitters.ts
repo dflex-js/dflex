@@ -21,6 +21,7 @@ function emitInteractivityEvent(
   events: ReturnType<typeof DFlexEvent>,
   type: InteractivityEventNames,
   dflexELm: DFlexElement,
+  draggedID: string,
   store: DFlexDnDStore,
 ): void {
   const {
@@ -29,12 +30,14 @@ function emitInteractivityEvent(
   } = dflexELm;
 
   const target = store.interactiveDOM.get(dflexELm.id)!;
+  const drag = store.interactiveDOM.get(draggedID)!;
 
   events.dispatch(type, {
     category: INTERACTIVITY_CAT,
     timestamp: Date.now(),
     id,
     index,
+    drag,
     target,
   });
 }
@@ -42,11 +45,12 @@ function emitInteractivityEvent(
 function emitSiblingsEvent(
   events: ReturnType<typeof DFlexEvent>,
   type: SiblingsEventNames,
-  { from, to, siblings }: Omit<PayloadSiblings, "category" | "timestamp">,
+  { from, to, siblings, drag }: Omit<PayloadSiblings, "category" | "timestamp">,
 ): void {
   events.dispatch(type, {
     category: SIBLINGS_CAT,
     timestamp: Date.now(),
+    drag,
     from,
     to,
     siblings,
@@ -56,11 +60,12 @@ function emitSiblingsEvent(
 function emitDragMovedEvent(
   events: ReturnType<typeof DFlexEvent>,
   type: DragMovedEventNames,
-  { id, index }: Omit<PayloadDragMoved, "category" | "timestamp">,
+  { id, index, element }: Omit<PayloadDragMoved, "category" | "timestamp">,
 ): void {
   events.dispatch(type, {
     category: DRAG_CAT,
     timestamp: Date.now(),
+    element,
     id,
     index,
   });
