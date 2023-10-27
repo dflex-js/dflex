@@ -68,7 +68,8 @@ test.describe
 
   test.skip(
     ({ browserName }) => browserName !== "chromium",
-    "TODO.. If you see it please work on it.",
+    "Each browser may exhibit different behavior regarding scroll numbers and distances. " +
+      "This test case is currently optimized for Chromium-based browsers.",
   );
 
   test.skip(
