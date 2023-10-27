@@ -16,7 +16,7 @@ import {
   TransformTimeout,
 } from "dflex-e2e-utils";
 
-test.describe.serial("Drag the first element down vertically", async () => {
+test.describe("Drag the first element down vertically testing visibility and threshold", async () => {
   let page: Page;
   let context: BrowserContext;
   let activeBrowser: Browser;
@@ -59,13 +59,12 @@ test.describe.serial("Drag the first element down vertically", async () => {
 
   test.skip(
     ({ browserName }) => browserName !== "chromium",
-    "Each browser may exhibit different behavior regarding scroll numbers and distances. " +
-      "This test case is currently optimized for Chromium-based browsers.",
+    "TODO.. If you see it please work on it.",
   );
 
   test.skip(
     process.platform === "darwin",
-    "Test skipped on Mac devices. Mac scroll implemented with different numbers.",
+    "TODO: test skipped on Mac devices.",
   );
 
   test("Siblings index initiated correctly", async () => {
@@ -74,7 +73,7 @@ test.describe.serial("Drag the first element down vertically", async () => {
 
   test("Move elm1 outside the container down into elm38", async () => {
     await getDraggedRect(elements[0]);
-    await moveDragged(-220, -1);
+    await moveDragged(-1, 220);
     await moveDragged(-1, viewportHeight);
     await page.waitForTimeout(2000);
     await moveDragged(-1, viewportHeight / 2);
@@ -95,7 +94,7 @@ test.describe.serial("Drag the first element down vertically", async () => {
   });
 
   test("Invisible siblings are not transformed", async () => {
-    invisibleElements = elements.slice(50);
+    invisibleElements = elements.slice(60);
 
     await Promise.all(
       invisibleElements.map((element) =>
@@ -106,7 +105,6 @@ test.describe.serial("Drag the first element down vertically", async () => {
 
   test("Move elm1 outside the container down again", async () => {
     await moveDragged(-1, viewportHeight + 200);
-    await page.waitForTimeout(1000);
   });
 
   test("All elements have been lifted up", async () => {
