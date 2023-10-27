@@ -477,22 +477,11 @@ class DFlexScrollContainer {
     return [viewportTop, viewportLeft];
   }
 
-  isElmOutViewport(absPos: BoxRect | BoxNum): [boolean, BoxBool] {
-    let viewportPos: BoxNum;
+  isElmOutViewport(absPos: BoxNum, isOuter: boolean): [boolean, BoxBool] {
+    let viewportPos: BoxNum = absPos;
     let instance: ScrollThreshold;
 
-    if (absPos instanceof BoxRect) {
-      const [viewportTop, viewportLeft] = this.getElmViewportPosition(
-        absPos.top,
-        absPos.left,
-      );
-
-      const top = viewportTop;
-      const right = viewportLeft + absPos.width;
-      const bottom = viewportTop + absPos.height;
-      const left = viewportLeft;
-
-      viewportPos = new BoxNum(top, right, bottom, left);
+    if (isOuter) {
       instance = this._thresholdInViewport.outer;
     } else {
       viewportPos = absPos;
