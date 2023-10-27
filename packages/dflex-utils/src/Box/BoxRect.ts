@@ -68,6 +68,17 @@ class BoxRect extends BoxNum {
     this.bottom = this.height + y;
   }
 
+  getElmViewportPos(viewportTop: number, viewportLeft: number): BoxNum {
+    const top = viewportTop;
+    const right = viewportLeft + this.width;
+    const bottom = viewportTop + this.height;
+    const left = viewportLeft;
+
+    const viewportBoxPos = new BoxNum(top, right, bottom, left);
+
+    return viewportBoxPos;
+  }
+
   /**
    * Gets the width/height difference between two boxes based on axis.
    *

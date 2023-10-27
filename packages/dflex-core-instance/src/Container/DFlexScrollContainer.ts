@@ -478,18 +478,13 @@ class DFlexScrollContainer {
   }
 
   isElmOutViewport(absPos: BoxNum, isOuter: boolean): [boolean, BoxBool] {
-    let viewportPos: BoxNum = absPos;
-    let instance: ScrollThreshold;
+    const viewportPos: BoxNum = absPos;
 
-    if (isOuter) {
-      instance = this._thresholdInViewport.outer;
-    } else {
-      viewportPos = absPos;
-      instance = this._thresholdInViewport.inner;
-    }
+    const scrollThreshold: ScrollThreshold =
+      this._thresholdInViewport[isOuter ? "outer" : "inner"];
 
     if (__DEV__) {
-      if (!instance) {
+      if (!scrollThreshold) {
         throw new Error(
           "isElmOutViewport: _thresholdInViewport is not initialized. Please call setInnerThreshold() method before using isElmOutViewport().",
         );
@@ -509,7 +504,7 @@ class DFlexScrollContainer {
       }
     }
 
-    const { threshold, key } = instance;
+    const { threshold, key } = scrollThreshold;
 
     const isOutThreshold = threshold!.isOutThreshold(
       key,

@@ -1,5 +1,4 @@
 import type { DFlexElement, DFlexScrollContainer } from "@dflex/core-instance";
-import { BoxNum } from "@dflex/utils";
 import type DFlexDnDStore from "./DFlexDnDStore";
 
 let prevVisibility = false;
@@ -16,14 +15,9 @@ function updateElmVisibility(
     rect.left,
   );
 
-  const top = viewportTop;
-  const right = viewportLeft + rect.width;
-  const bottom = viewportTop + rect.height;
-  const left = viewportLeft;
+  const viewportBoxPos = rect.getElmViewportPos(viewportTop, viewportLeft);
 
-  const viewportPos = new BoxNum(top, right, bottom, left);
-
-  const [isInvisible] = scroll.isElmOutViewport(viewportPos, true);
+  const [isInvisible] = scroll.isElmOutViewport(viewportBoxPos, true);
 
   const isBreakable = prevVisibility && isInvisible;
 
