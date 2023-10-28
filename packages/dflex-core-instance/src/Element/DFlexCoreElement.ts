@@ -31,17 +31,50 @@ import type {
 
 import DFlexBaseElement from "./DFlexBaseElement";
 
+/**
+ * Represents a serialized element in the DFlex framework.
+ */
 export type DFlexSerializedElement = {
+  /** The type of the element. */
   type: string;
+
+  /** The version of the serialized element. */
   version: 3;
+
+  /** The unique identifier of the element. */
   id: string;
+
+  /** The translation point of the element. */
   translate: AxesPoint;
+
+  /**
+   * The position of the element within a grid container, specified by its
+   * column and row orders.
+   * */
   grid: AxesPoint;
+
+  /**
+   * The order of the element in its container relative to its parent and
+   * siblings.
+   * */
   order: DFlexDOMGenOrder;
+
+  /** The initial position of the element. */
   initialPosition: AxesPoint;
+
+  /**
+   * The abstract box representing the element's position and dimensions in the
+   * viewport.
+   * */
   rect: AbstractBox;
+
+  /** Indicates whether the element has been transformed from its origin. */
   hasTransformedFromOrigin: boolean;
+
+  /** Indicates whether the element has pending transformations. */
   hasPendingTransformation: boolean;
+
+  /** Indicates whether the element is currently visible in the viewport. */
   isVisible: boolean;
 };
 

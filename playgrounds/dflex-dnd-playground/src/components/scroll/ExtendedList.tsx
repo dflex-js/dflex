@@ -25,7 +25,9 @@ const ExtendedList = () => {
       // Pick random id from the list.
       const siblings = store.getSiblingsByID(`${1}-extended`);
 
-      const serializedElms = siblings.map((id) => store.getSerializedElm(id));
+      const serializedElms = siblings.map((id) =>
+        store.getSerializedElement(id),
+      );
 
       // Log the serialized elements as a table
       // eslint-disable-next-line no-console
