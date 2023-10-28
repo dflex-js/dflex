@@ -13,7 +13,7 @@ import {
   // DraggedRect,
   getDraggedRect,
   initialize,
-  invokeKeyboardAndAssertEmittedMsg,
+  pressCKeyAndAssertEmittedMsg,
   moveDragged,
 } from "dflex-e2e-utils";
 
@@ -99,7 +99,7 @@ test.describe
     });
 
     test("Trigger key `c` to commit the transformed elements and read the emitted message for mutation caused by (#c3-2)", async () => {
-      await invokeKeyboardAndAssertEmittedMsg([
+      await pressCKeyAndAssertEmittedMsg([
         "c2-1",
         "c2-2",
         "c3-2",
@@ -151,7 +151,7 @@ test.describe
 
     test("Trigger key `c` to commit the transformed elements and read the emitted message for mutation caused by (#c3-1)", async () => {
       // All elements have been merged into different container.
-      await invokeKeyboardAndAssertEmittedMsg([
+      await pressCKeyAndAssertEmittedMsg([
         "c3-1",
         "c2-1",
         "c2-2",

@@ -14,7 +14,7 @@ import {
   assertDefaultChildrenIndex,
   getDraggedRect,
   initialize,
-  invokeKeyboardAndAssertEmittedMsg,
+  pressCKeyAndAssertEmittedMsg,
   moveDragged,
   DEVELOPMENT_ONLY_ASSERTION,
   isProdBundle,
@@ -178,7 +178,7 @@ test.describe("Transformation inside grid container", async () => {
     });
 
     test("Trigger key `c` to commit the transformed elements and read the emitted message for mutation", async () => {
-      await invokeKeyboardAndAssertEmittedMsg(FINAL_IDS_ROUND_1);
+      await pressCKeyAndAssertEmittedMsg(FINAL_IDS_ROUND_1);
     });
 
     test("Siblings have reconciled and don't have transformation", async () => {
@@ -333,7 +333,7 @@ test.describe("Transformation inside grid container", async () => {
     });
 
     test("Trigger key `c` to commit the transformed elements and read the emitted message for mutation", async () => {
-      await invokeKeyboardAndAssertEmittedMsg(FINAL_IDS_ROUND_2);
+      await pressCKeyAndAssertEmittedMsg(FINAL_IDS_ROUND_2);
     });
 
     test("Siblings have the correct DOM order in depth-1", async () => {

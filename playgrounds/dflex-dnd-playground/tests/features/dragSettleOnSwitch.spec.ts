@@ -11,7 +11,7 @@ import {
   getDraggedRect,
   initialize,
   moveDragged,
-  invokeKeyboardAndAssertEmittedMsg,
+  pressCKeyAndAssertEmittedMsg,
 } from "dflex-e2e-utils";
 
 test.describe("Testing (enableDragSettleOnSwitch) global flag", async () => {
@@ -75,7 +75,7 @@ test.describe("Testing (enableDragSettleOnSwitch) global flag", async () => {
   });
 
   test("Trigger key `c` to commit the transformed elements and read the emitted message for mutation", async () => {
-    await invokeKeyboardAndAssertEmittedMsg(["org", "mtg", "gym"]);
+    await pressCKeyAndAssertEmittedMsg(["org", "mtg", "gym"]);
   });
 
   test("siblings have none transformation", async () => {

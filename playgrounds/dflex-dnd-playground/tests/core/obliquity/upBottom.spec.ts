@@ -12,7 +12,7 @@ import {
   DraggedRect,
   getDraggedRect,
   initialize,
-  invokeKeyboardAndAssertEmittedMsg,
+  pressCKeyAndAssertEmittedMsg,
   moveDragged,
 } from "dflex-e2e-utils";
 
@@ -102,7 +102,7 @@ test.describe.serial("Dragging from bottom up", async () => {
   });
 
   test("Trigger key `c` to commit the transformed elements and read the emitted message for mutation", async () => {
-    await invokeKeyboardAndAssertEmittedMsg(FINAL_IDS);
+    await pressCKeyAndAssertEmittedMsg(FINAL_IDS);
   });
 
   test("Siblings that have reconciled don't have transformation", async () => {

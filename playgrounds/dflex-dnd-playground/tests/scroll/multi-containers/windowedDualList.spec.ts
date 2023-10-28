@@ -15,7 +15,7 @@ import {
   moveDragged,
   TransformTimeout,
   assertChildrenOrderIDs,
-  invokeKeyboardAndAssertEmittedMsg,
+  pressCKeyAndAssertEmittedMsg,
 } from "dflex-e2e-utils";
 
 test.describe
@@ -199,7 +199,7 @@ test.describe
   });
 
   test("Trigger key `c` to commit the transformed elements", async () => {
-    await invokeKeyboardAndAssertEmittedMsg([
+    await pressCKeyAndAssertEmittedMsg([
       "list-a-3",
       "list-a-2",
       "list-a-1",

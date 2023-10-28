@@ -12,7 +12,7 @@ import {
   assertDefaultChildrenIndex,
   getDraggedRect,
   initialize,
-  invokeKeyboardAndAssertEmittedMsg,
+  pressCKeyAndAssertEmittedMsg,
   moveDragged,
 } from "dflex-e2e-utils";
 
@@ -119,12 +119,7 @@ test.describe("Testing horizontal transformation in depth (1). Vertical in depth
   });
 
   test("Trigger key `c` to commit the transformed elements and read the emitted message for mutation", async () => {
-    await invokeKeyboardAndAssertEmittedMsg([
-      "id-10",
-      "id-9",
-      "id-11",
-      "id-12",
-    ]);
+    await pressCKeyAndAssertEmittedMsg(["id-10", "id-9", "id-11", "id-12"]);
   });
 
   test("Siblings have reconciled and don't have transformation", async () => {

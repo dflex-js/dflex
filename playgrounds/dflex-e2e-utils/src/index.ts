@@ -4,7 +4,7 @@ export {
   moveDragged,
   invokeKeyboard,
   assertConsoleMutationListener,
-  invokeKeyboardAndAssertEmittedMsg,
+  pressCKeyAndAssertEmittedMsg,
   assertChildrenOrderIDs,
   getChildrenLength,
   assertDefaultChildrenIndex,
