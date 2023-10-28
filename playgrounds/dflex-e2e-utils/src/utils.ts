@@ -64,7 +64,7 @@ export async function moveDragged(stepsX: number, stepsY: number) {
   );
 }
 
-export async function invokeKeyboard(k = "c") {
+export async function invokeKeyboard(k: string) {
   await page.keyboard.press(k);
 }
 
@@ -82,11 +82,21 @@ export async function assertConsoleMutationListener(FINAL_IDS: string[]) {
   await assertMutationListenerEmittedMsg(msg, FINAL_IDS);
 }
 
-export async function invokeKeyboardAndAssertEmittedMsg(FINAL_IDS: string[]) {
+export async function pressCKeyAndAssertEmittedMsg(FINAL_IDS: string[]) {
   // Get the next console log
   const [msg] = await Promise.all([
     page.waitForEvent("console"),
-    invokeKeyboard(),
+    invokeKeyboard("c"),
+  ]);
+
+  await assertMutationListenerEmittedMsg(msg, FINAL_IDS);
+}
+
+export async function pressGKeyAndAssertEmittedMsg(FINAL_IDS: string[]) {
+  // Get the next console log
+  const [msg] = await Promise.all([
+    page.waitForEvent("console"),
+    invokeKeyboard("g"),
   ]);
 
   await assertMutationListenerEmittedMsg(msg, FINAL_IDS);

@@ -15,7 +15,7 @@ import {
   moveDragged,
   TransformTimeout,
   assertChildrenOrderIDs,
-  invokeKeyboardAndAssertEmittedMsg,
+  pressCKeyAndAssertEmittedMsg,
 } from "dflex-e2e-utils";
 
 test.describe
@@ -68,7 +68,8 @@ test.describe
 
   test.skip(
     ({ browserName }) => browserName !== "chromium",
-    "TODO.. If you see it please work on it.",
+    "Each browser may exhibit different behavior regarding scroll numbers and distances. " +
+      "This test case is currently optimized for Chromium-based browsers.",
   );
 
   test.skip(
@@ -198,7 +199,7 @@ test.describe
   });
 
   test("Trigger key `c` to commit the transformed elements", async () => {
-    await invokeKeyboardAndAssertEmittedMsg([
+    await pressCKeyAndAssertEmittedMsg([
       "list-a-3",
       "list-a-2",
       "list-a-1",

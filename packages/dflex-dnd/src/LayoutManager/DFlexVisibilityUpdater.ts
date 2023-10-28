@@ -10,7 +10,14 @@ function updateElmVisibility(
 ): boolean {
   const { rect } = elm;
 
-  const [isInvisible] = scroll.isElmOutViewport(rect);
+  const [viewportTop, viewportLeft] = scroll.getElmViewportPosition(
+    rect.top,
+    rect.left,
+  );
+
+  const viewportBoxPos = rect.getViewportPos(viewportTop, viewportLeft, true);
+
+  const [isInvisible] = scroll.isElmOutViewport(viewportBoxPos, true);
 
   const isBreakable = prevVisibility && isInvisible;
 

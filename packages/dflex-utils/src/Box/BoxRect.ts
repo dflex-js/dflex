@@ -1,3 +1,5 @@
+/* eslint-disable no-dupe-class-members */
+/* eslint-disable no-unused-vars */
 import { getDimensionTypeByAxis, getStartingPointByAxis } from "../collections";
 import { AxesPoint } from "../Point";
 import BoxNum from "./BoxNum";
@@ -66,6 +68,52 @@ class BoxRect extends BoxNum {
     this.right = this.width + x;
     this.top = y;
     this.bottom = this.height + y;
+  }
+
+  getInstance(): AbstractBoxRect {
+    const { top, left, bottom, right, width, height } = this;
+
+    return { top, left, bottom, right, width, height };
+  }
+
+  getViewportPos(
+    viewportTop: number,
+    viewportLeft: number,
+    asBoxNum: true,
+  ): BoxNum;
+
+  getViewportPos(
+    viewportTop: number,
+    viewportLeft: number,
+    asBoxNum: false,
+  ): AbstractBox & Dimensions;
+
+  /**
+   * Converts absolute element position to viewport position based on scroll position.
+   * @param viewportTop - The top position of the viewport.
+   * @param viewportLeft - The left position of the viewport.
+   * @returns The position of the element within the viewport.
+   */
+  getViewportPos(
+    viewportTop: number,
+    viewportLeft: number,
+    asBoxNum: boolean,
+  ): BoxNum | (AbstractBox & Dimensions) {
+    const top = viewportTop;
+    const right = viewportLeft + this.width;
+    const bottom = viewportTop + this.height;
+    const left = viewportLeft;
+
+    return asBoxNum
+      ? new BoxNum(top, right, bottom, left)
+      : {
+          top,
+          right,
+          bottom,
+          left,
+          height: this.height,
+          width: this.width,
+        };
   }
 
   /**

@@ -2,7 +2,7 @@
 import React from "react";
 
 import { store } from "@dflex/dnd";
-import DFlexDnDComponent from "../DFlexDnDComponent";
+import { TodoItem, TodoContainer } from "../../components";
 
 /**
  * Extended List Component
@@ -44,26 +44,22 @@ const ExtendedList = () => {
   }, [handleKeyPress]);
 
   return (
-    <div className="root">
-      <div className="extended">
-        <ul>
-          {tasks.map(({ task, id, key }) => (
-            <DFlexDnDComponent
-              Component="li"
-              registerInput={{ id }}
-              key={key}
-              opts={{
-                commit: {
-                  enableAfterEndingDrag: false,
-                },
-              }}
-            >
-              {task}
-            </DFlexDnDComponent>
-          ))}
-        </ul>
-      </div>
-    </div>
+    <TodoContainer id="extended" isCenterH isCenterV>
+      {tasks.map(({ task, id, key }) => (
+        <TodoItem
+          className="w-36"
+          key={key}
+          id={id}
+          opts={{
+            commit: {
+              enableAfterEndingDrag: false,
+            },
+          }}
+        >
+          {task}
+        </TodoItem>
+      ))}
+    </TodoContainer>
   );
 };
 

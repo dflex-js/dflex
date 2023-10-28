@@ -1,7 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import {
   BoxRect,
-  AbstractBoxRect,
   featureFlags,
   PointNum,
   assertElmPos,
@@ -22,21 +21,61 @@ import {
   getElmBoxRect,
   updateIndexAttr,
 } from "@dflex/utils";
-import type { Direction, Axes, AxesPoint, AnimationOpts } from "@dflex/utils";
+import type {
+  Direction,
+  Axes,
+  AxesPoint,
+  AnimationOpts,
+  AbstractBox,
+  Dimensions,
+} from "@dflex/utils";
 
 import DFlexBaseElement from "./DFlexBaseElement";
 
+/**
+ * Represents a serialized element in the DFlex framework.
+ */
 export type DFlexSerializedElement = {
+  /** The type of the element. */
   type: string;
+
+  /** The version of the serialized element. */
   version: 3;
+
+  /** The unique identifier of the element. */
   id: string;
-  translate: PointNum | null;
-  grid: PointNum;
+
+  /** The translation point of the element. */
+  translate: AxesPoint;
+
+  /**
+   * The position of the element within a grid container, specified by its
+   * column and row orders.
+   * */
+  grid: AxesPoint;
+
+  /**
+   * The order of the element in its container relative to its parent and
+   * siblings.
+   * */
   order: DFlexDOMGenOrder;
+
+  /** The initial position of the element. */
   initialPosition: AxesPoint;
-  rect: AbstractBoxRect;
+
+  /**
+   * The abstract box representing the element's position and dimensions in the
+   * viewport.
+   * */
+  rect: AbstractBox & Dimensions;
+
+  /** Indicates whether the element has been transformed from its origin. */
   hasTransformedFromOrigin: boolean;
+
+  /** Indicates whether the element has pending transformations. */
   hasPendingTransformation: boolean;
+
+  /** Indicates whether the element is currently visible in the viewport. */
   isVisible: boolean;
 };
 
@@ -779,16 +818,19 @@ class DFlexCoreElement extends DFlexBaseElement {
     }
   }
 
-  getSerializedInstance(): DFlexSerializedElement {
+  serializedElm(
+    viewportTop: number,
+    viewportLeft: number,
+  ): DFlexSerializedElement {
     return {
       type: DFlexCoreElement.getType(),
       version: 3,
       id: this.id,
-      grid: this.DOMGrid,
-      translate: this.translate instanceof PointNum ? this.translate : null,
+      grid: this.DOMGrid.getInstance(),
       order: this.VDOMOrder,
+      translate: this.translate.getInstance(),
       initialPosition: this._initialPosition.getInstance(),
-      rect: this.rect,
+      rect: this.rect.getViewportPos(viewportTop, viewportLeft, false),
       hasTransformedFromOrigin: this.hasTransformedFromOrigin(),
       hasPendingTransformation: this._hasPendingTransform,
       isVisible: this._isVisible,

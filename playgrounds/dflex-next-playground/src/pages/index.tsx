@@ -33,6 +33,11 @@ export default function Home() {
           title="From list to another"
           link="from-to"
         />
+        <ClickableBox
+          desc="List with 100 elements"
+          title="Scroll extended list"
+          link="scroll/extended"
+        />
       </div>
     </main>
   );

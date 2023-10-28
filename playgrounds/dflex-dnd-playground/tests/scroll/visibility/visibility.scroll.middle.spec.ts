@@ -16,7 +16,7 @@ import {
 } from "dflex-e2e-utils";
 
 test.describe
-  .serial("Visible elements have transformation after scrolling in isolation", async () => {
+  .serial("Visible elements have transformation after scrolling to the middle then execute", async () => {
   let page: Page;
   let context: BrowserContext;
   let activeBrowser: Browser;
@@ -72,6 +72,7 @@ test.describe
     await getDraggedRect(elements[50]);
 
     await moveDragged(-220, -1);
+
     await page.dispatchEvent("[id='51-extended']", "mouseup", {
       button: 0,
       force: true,

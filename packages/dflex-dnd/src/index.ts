@@ -19,7 +19,7 @@ export type {
   DFlexInteractivityEvent,
   DFlexSiblingsEvent,
   DFlexEvents,
-  DFlexEventsTypes,
+  DFlexEventNames,
 } from "./Events";
 
 export type {

@@ -13,7 +13,7 @@ import {
   // DraggedRect,
   getDraggedRect,
   initialize,
-  invokeKeyboardAndAssertEmittedMsg,
+  pressCKeyAndAssertEmittedMsg,
   moveDragged,
 } from "dflex-e2e-utils";
 
@@ -95,7 +95,7 @@ test.describe
     });
 
     test("Trigger key `c` to commit the transformed elements and read the emitted message for mutation caused by (#c1-1)", async () => {
-      await invokeKeyboardAndAssertEmittedMsg([
+      await pressCKeyAndAssertEmittedMsg([
         "c1-1",
         "c2-1",
         "c2-2",
@@ -135,7 +135,7 @@ test.describe
     test("Trigger key `c` to commit the transformed elements and read the emitted message for mutation caused by (#c1-1)", async ({
       browserName,
     }) => {
-      await invokeKeyboardAndAssertEmittedMsg(["c1-1"]);
+      await pressCKeyAndAssertEmittedMsg(["c1-1"]);
 
       if (browserName === "firefox") {
         await page.waitForTimeout(2000);

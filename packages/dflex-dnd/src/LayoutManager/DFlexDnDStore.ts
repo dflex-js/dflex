@@ -844,9 +844,21 @@ class DFlexDnDStore extends DFlexBaseStore {
       }
     }
 
-    return this.registry.has(id)
-      ? this.registry.get(id)!.getSerializedInstance()
-      : null;
+    const scroll = this.getScrollByID(id);
+    const elm = this.registry.get(id);
+
+    if (!(scroll && elm)) {
+      return null;
+    }
+
+    const { rect } = elm;
+
+    const [viewportTop, viewportLeft] = scroll.getElmViewportPosition(
+      rect.top,
+      rect.left,
+    );
+
+    return elm.serializedElm(viewportTop, viewportLeft);
   }
 
   getScrollByID(id: string): DFlexScrollContainer {
