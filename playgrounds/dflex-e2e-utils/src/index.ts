@@ -5,6 +5,7 @@ export {
   invokeKeyboard,
   assertConsoleMutationListener,
   pressCKeyAndAssertEmittedMsg,
+  pressGKeyAndAssertEmittedMsg,
   assertChildrenOrderIDs,
   getChildrenLength,
   assertDefaultChildrenIndex,

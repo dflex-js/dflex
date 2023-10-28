@@ -92,6 +92,16 @@ export async function pressCKeyAndAssertEmittedMsg(FINAL_IDS: string[]) {
   await assertMutationListenerEmittedMsg(msg, FINAL_IDS);
 }
 
+export async function pressGKeyAndAssertEmittedMsg(FINAL_IDS: string[]) {
+  // Get the next console log
+  const [msg] = await Promise.all([
+    page.waitForEvent("console"),
+    invokeKeyboard("g"),
+  ]);
+
+  await assertMutationListenerEmittedMsg(msg, FINAL_IDS);
+}
+
 export async function assertChildrenOrderIDs(
   parentLocater: Locator,
   FINAL_IDS: string[],

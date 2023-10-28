@@ -15,7 +15,7 @@ function updateElmVisibility(
     rect.left,
   );
 
-  const viewportBoxPos = rect.getViewportPos(viewportTop, viewportLeft);
+  const viewportBoxPos = rect.getViewportPos(viewportTop, viewportLeft, true);
 
   const [isInvisible] = scroll.isElmOutViewport(viewportBoxPos, true);
 

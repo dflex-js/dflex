@@ -1,7 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import {
   BoxRect,
-  AbstractBoxRect,
   featureFlags,
   PointNum,
   assertElmPos,
@@ -22,7 +21,13 @@ import {
   getElmBoxRect,
   updateIndexAttr,
 } from "@dflex/utils";
-import type { Direction, Axes, AxesPoint, AnimationOpts } from "@dflex/utils";
+import type {
+  Direction,
+  Axes,
+  AxesPoint,
+  AnimationOpts,
+  AbstractBox,
+} from "@dflex/utils";
 
 import DFlexBaseElement from "./DFlexBaseElement";
 
@@ -30,11 +35,11 @@ export type DFlexSerializedElement = {
   type: string;
   version: 3;
   id: string;
-  translate: AxesPoint | null;
+  translate: AxesPoint;
   grid: AxesPoint;
   order: DFlexDOMGenOrder;
   initialPosition: AxesPoint;
-  rect: AbstractBoxRect;
+  rect: AbstractBox;
   hasTransformedFromOrigin: boolean;
   hasPendingTransformation: boolean;
   isVisible: boolean;
@@ -788,7 +793,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       order: this.VDOMOrder,
       translate: this.translate.getInstance(),
       initialPosition: this._initialPosition.getInstance(),
-      rect: this.rect.getInstance(),
+      rect: this.rect.getViewportPos(0, 0, false),
       hasTransformedFromOrigin: this.hasTransformedFromOrigin(),
       hasPendingTransformation: this._hasPendingTransform,
       isVisible: this._isVisible,
