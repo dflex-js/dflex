@@ -68,7 +68,19 @@ class BoxRect extends BoxNum {
     this.bottom = this.height + y;
   }
 
-  getElmViewportPos(viewportTop: number, viewportLeft: number): BoxNum {
+  getInstance(): AbstractBoxRect {
+    const { top, left, bottom, right, width, height } = this;
+
+    return { top, left, bottom, right, width, height };
+  }
+
+  /**
+   * Converts absolute element position to viewport position based on scroll position.
+   * @param viewportTop - The top position of the viewport.
+   * @param viewportLeft - The left position of the viewport.
+   * @returns The position of the element within the viewport.
+   */
+  getViewportPos(viewportTop: number, viewportLeft: number): BoxNum {
     const top = viewportTop;
     const right = viewportLeft + this.width;
     const bottom = viewportTop + this.height;

@@ -845,7 +845,7 @@ class DFlexDnDStore extends DFlexBaseStore {
     }
 
     return this.registry.has(id)
-      ? this.registry.get(id)!.getSerializedInstance()
+      ? this.registry.get(id)!.serializedElm()
       : null;
   }
 

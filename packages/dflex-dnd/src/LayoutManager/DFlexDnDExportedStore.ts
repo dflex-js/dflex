@@ -40,13 +40,25 @@ class DFlexDnDExportedStore {
   }
 
   /**
-   * Retrieves all element IDs of siblings in the given node represented by the sibling key.
+   * Retrieves all element IDs of siblings.
    *
-   * @param SK - Sibling Key.
-   * @returns An object containing the sibling element IDs.
+   * @param id - Element ID.
+   * @returns An array containing the IDs of sibling elements.
    */
-  getElmSiblingsByKey(SK: string): string[] {
-    return this._base.getElmSiblingsByKey(SK);
+  getSiblingsByID(id: string): string[] {
+    const SK = this._base.getSKByID(id);
+
+    return SK ? this._base.getElmSiblingsByKey(SK) : [];
+  }
+
+  /**
+   * Retrieves the serialized representation of the element with the specified ID.
+   *
+   * @param id - ID of the element.
+   * @returns The serialized element object or `null` if the element is not found.
+   */
+  getSerializedElm(id: string): DFlexSerializedElement | null {
+    return this._base.getSerializedElm(id);
   }
 
   /**
@@ -81,16 +93,6 @@ class DFlexDnDExportedStore {
    */
   commit(): void {
     this._base.commit();
-  }
-
-  /**
-   * Retrieves the serialized representation of the element with the specified ID.
-   *
-   * @param id - ID of the element.
-   * @returns The serialized element object or `null` if the element is not found.
-   */
-  getSerializedElm(id: string): DFlexSerializedElement | null {
-    return this._base.getSerializedElm(id);
   }
 
   /**

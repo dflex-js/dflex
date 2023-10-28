@@ -30,8 +30,8 @@ export type DFlexSerializedElement = {
   type: string;
   version: 3;
   id: string;
-  translate: PointNum | null;
-  grid: PointNum;
+  translate: AxesPoint | null;
+  grid: AxesPoint;
   order: DFlexDOMGenOrder;
   initialPosition: AxesPoint;
   rect: AbstractBoxRect;
@@ -779,16 +779,16 @@ class DFlexCoreElement extends DFlexBaseElement {
     }
   }
 
-  getSerializedInstance(): DFlexSerializedElement {
+  serializedElm(): DFlexSerializedElement {
     return {
       type: DFlexCoreElement.getType(),
       version: 3,
       id: this.id,
-      grid: this.DOMGrid,
-      translate: this.translate instanceof PointNum ? this.translate : null,
+      grid: this.DOMGrid.getInstance(),
       order: this.VDOMOrder,
+      translate: this.translate.getInstance(),
       initialPosition: this._initialPosition.getInstance(),
-      rect: this.rect,
+      rect: this.rect.getInstance(),
       hasTransformedFromOrigin: this.hasTransformedFromOrigin(),
       hasPendingTransformation: this._hasPendingTransform,
       isVisible: this._isVisible,

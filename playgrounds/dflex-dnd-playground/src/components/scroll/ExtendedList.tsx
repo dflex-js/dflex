@@ -1,6 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 import React from "react";
 
+import { store } from "@dflex/dnd";
 import DFlexDnDComponent from "../DFlexDnDComponent";
 
 /**
@@ -18,6 +19,27 @@ const ExtendedList = () => {
 
     tasks.push({ id: uni, key: uni, task: `${i}` });
   }
+
+  const handleKeyPress = (e: KeyboardEvent) => {
+    if (e.key === "g" || e.key === "G") {
+      // Pick random id from the list.
+      const siblings = store.getSiblingsByID(`${1}-extended`);
+
+      const serializedElms = siblings.map((id) => store.getSerializedElm(id));
+
+      // Log the serialized elements as a table
+      // eslint-disable-next-line no-console
+      console.table(serializedElms);
+    }
+  };
+
+  React.useEffect(() => {
+    document.addEventListener("keydown", handleKeyPress);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [handleKeyPress]);
 
   return (
     <div className="root">
