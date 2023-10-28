@@ -27,6 +27,7 @@ import type {
   AxesPoint,
   AnimationOpts,
   AbstractBox,
+  Dimensions,
 } from "@dflex/utils";
 
 import DFlexBaseElement from "./DFlexBaseElement";
@@ -66,7 +67,7 @@ export type DFlexSerializedElement = {
    * The abstract box representing the element's position and dimensions in the
    * viewport.
    * */
-  rect: AbstractBox;
+  rect: AbstractBox & Dimensions;
 
   /** Indicates whether the element has been transformed from its origin. */
   hasTransformedFromOrigin: boolean;
@@ -817,7 +818,10 @@ class DFlexCoreElement extends DFlexBaseElement {
     }
   }
 
-  serializedElm(): DFlexSerializedElement {
+  serializedElm(
+    viewportTop: number,
+    viewportLeft: number,
+  ): DFlexSerializedElement {
     return {
       type: DFlexCoreElement.getType(),
       version: 3,
@@ -826,7 +830,7 @@ class DFlexCoreElement extends DFlexBaseElement {
       order: this.VDOMOrder,
       translate: this.translate.getInstance(),
       initialPosition: this._initialPosition.getInstance(),
-      rect: this.rect.getViewportPos(0, 0, false),
+      rect: this.rect.getViewportPos(viewportTop, viewportLeft, false),
       hasTransformedFromOrigin: this.hasTransformedFromOrigin(),
       hasPendingTransformation: this._hasPendingTransform,
       isVisible: this._isVisible,

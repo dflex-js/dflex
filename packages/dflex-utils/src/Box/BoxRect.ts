@@ -86,7 +86,7 @@ class BoxRect extends BoxNum {
     viewportTop: number,
     viewportLeft: number,
     asBoxNum: false,
-  ): AbstractBox;
+  ): AbstractBox & Dimensions;
 
   /**
    * Converts absolute element position to viewport position based on scroll position.
@@ -98,7 +98,7 @@ class BoxRect extends BoxNum {
     viewportTop: number,
     viewportLeft: number,
     asBoxNum: boolean,
-  ): BoxNum | AbstractBox {
+  ): BoxNum | (AbstractBox & Dimensions) {
     const top = viewportTop;
     const right = viewportLeft + this.width;
     const bottom = viewportTop + this.height;
@@ -111,6 +111,8 @@ class BoxRect extends BoxNum {
           right,
           bottom,
           left,
+          height: this.height,
+          width: this.width,
         };
   }
 
