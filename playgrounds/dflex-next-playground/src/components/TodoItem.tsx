@@ -119,7 +119,7 @@ export function TodoItem({
       onMouseDown={onMouseDown}
       style={style}
       className={cn(
-        "border border-blue-300 bg-blue-100 rounded py-2 px-4 my-4 flex items-center justify-between",
+        "border border-blue-300 bg-blue-100 rounded py-2 px-4 my-4 flex items-center justify-center",
         [!style && "h-16"],
         className,
       )}
