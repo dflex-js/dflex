@@ -62,10 +62,10 @@ test.describe("Visible elements have transformation after loading in the the mid
         await page.reload();
       }
 
-      await page.waitForTimeout(500);
+      await page.waitForTimeout(1000);
 
       dflexElements = await getSerializedElementsAfterKeyPress();
-      await page.waitForTimeout(500);
+      await page.waitForTimeout(1000);
 
       // Slices elements from index 50 to 60 (inclusive)
       visibleDFlexElements = dflexElements.slice(50, 61);
