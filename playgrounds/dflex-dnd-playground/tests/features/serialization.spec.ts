@@ -52,12 +52,18 @@ test.describe("Visible elements have transformation after loading in the the mid
   });
 
   test.describe("in the middle", () => {
-    test.beforeAll(async () => {
+    test.beforeAll(async ({ browserName }) => {
       await page.evaluate(() => {
         window.scrollTo(0, document.body.scrollHeight / 2);
       });
-      await page.reload();
+
+      // Reloading in another browsers will move scroll to the start.
+      if (browserName === "chromium") {
+        await page.reload();
+      }
+
       await page.waitForTimeout(500);
+
       dflexElements = await getSerializedElementsAfterKeyPress();
       await page.waitForTimeout(500);
 
@@ -94,7 +100,7 @@ test.describe("Visible elements have transformation after loading in the the mid
       });
     });
 
-    test.skip("Visible elements have the correct flags", async () => {
+    test("Visible elements have the correct flags", async () => {
       visibleDFlexElements.forEach((dflexElm) => {
         const {
           hasTransformedFromOrigin,
