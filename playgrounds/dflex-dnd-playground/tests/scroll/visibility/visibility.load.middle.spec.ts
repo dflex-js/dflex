@@ -85,7 +85,9 @@ test.describe("Visible elements have transformation after loading in the the mid
     });
 
     await page.waitForTimeout(1000);
+  });
 
+  test("Visible elements have transformed", async () => {
     visibleElements = elements.slice(50, 64); // Extract elements from index 2 to index 12
 
     await Promise.all(
