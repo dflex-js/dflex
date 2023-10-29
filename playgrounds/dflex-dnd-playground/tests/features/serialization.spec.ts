@@ -93,5 +93,19 @@ test.describe("Visible elements have transformation after loading in the the mid
         });
       });
     });
+
+    test("Visible elements have the correct flags", async () => {
+      visibleDFlexElements.forEach((dflexElm) => {
+        const {
+          hasTransformedFromOrigin,
+          hasPendingTransformation,
+          isVisible,
+        } = dflexElm;
+
+        expect(hasTransformedFromOrigin).toBeFalsy();
+        expect(hasPendingTransformation).toBeFalsy();
+        expect(isVisible).toBeTruthy();
+      });
+    });
   });
 });
