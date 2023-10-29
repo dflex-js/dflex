@@ -291,17 +291,15 @@ class DFlexScrollContainer {
     if (this._isDocumentContainer) {
       // For document container, the visible area is the entire client viewport
       this.visibleScrollRect.setByPointAndDimensions(
-        scrollTop,
-        scrollLeft,
+        0,
+        0,
         clientHeight,
         clientWidth,
       );
     } else {
-      const { left, top } = this._containerDOM.getBoundingClientRect();
-
       this.visibleScrollRect.setByPointAndDimensions(
-        top,
-        left,
+        0,
+        0,
         clientHeight,
         clientWidth,
       );
