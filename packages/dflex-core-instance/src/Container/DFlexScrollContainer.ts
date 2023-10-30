@@ -481,11 +481,12 @@ class DFlexScrollContainer {
 
     const { threshold, key } = scrollThreshold;
 
-    const isOutThreshold = threshold!.isOutThreshold(
-      key,
-      viewportPos,
-      this.hasOverflow.y ? "y" : "x",
-    );
+    const isExceeded = (a: Axis) =>
+      threshold!.isOutThreshold(key, viewportPos, a);
+
+    const { x, y } = this.hasOverflow;
+
+    const isOutThreshold = (y && isExceeded("y")) || (x && isExceeded("x"));
 
     const preservedBoxResult = threshold!.isOut[key];
 
