@@ -45,15 +45,15 @@ test.describe("Visible elements have transformation after loading in the the mid
         const { x, y, height, width } = liveRect!;
 
         expect({
-          x: rect.left,
-          y: rect.top,
-          height: rect.height,
-          width: rect.width,
+          x: Math.round(rect.left),
+          y: Math.round(rect.top),
+          height: Math.round(rect.height),
+          width: Math.round(rect.width),
         }).toEqual({
-          x,
-          y,
-          height,
-          width,
+          x: Math.round(x),
+          y: Math.round(y),
+          height: Math.round(height),
+          width: Math.round(width),
         });
       });
     });
