@@ -315,8 +315,8 @@ importers:
         specifier: ^15.2.3
         version: 15.2.3(rollup@4.1.5)
       '@rollup/plugin-replace':
-        specifier: ^5.0.4
-        version: 5.0.4(rollup@4.1.5)
+        specifier: ^5.0.5
+        version: 5.0.5(rollup@4.1.5)
       '@rollup/plugin-terser':
         specifier: ^0.4.4
         version: 0.4.4(rollup@4.1.5)
@@ -909,7 +909,7 @@ packages:
       semver: 7.5.4
       spawndamnit: 2.0.0
       term-size: 2.2.1
-      tty-table: 4.2.2
+      tty-table: 4.2.3
     dev: true
 
   /@changesets/config@2.3.1:
@@ -1827,8 +1827,8 @@ packages:
       rollup: 4.1.5
     dev: false
 
-  /@rollup/plugin-replace@5.0.4(rollup@4.1.5):
-    resolution: {integrity: sha512-E2hmRnlh09K8HGT0rOnnri9OTh+BILGr7NVJGB30S4E3cLRn3J0xjdiyOZ74adPs4NiAMgrjUMGAZNJDBgsdmQ==}
+  /@rollup/plugin-replace@5.0.5(rollup@4.1.5):
+    resolution: {integrity: sha512-rYO4fOi8lMaTg/z5Jb+hKnrHHVn8j2lwkqwyS4kTRhKyWOLf2wST2sWXr4WzWiTcoHTp2sTjqUbqIj2E39slKQ==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
@@ -3027,7 +3027,7 @@ packages:
       postcss: ^8.1.0
     dependencies:
       browserslist: 4.22.1
-      caniuse-lite: 1.0.30001555
+      caniuse-lite: 1.0.30001558
       fraction.js: 4.3.7
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -3221,7 +3221,7 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001555
+      caniuse-lite: 1.0.30001558
       electron-to-chromium: 1.4.569
       node-releases: 2.0.13
       update-browserslist-db: 1.0.13(browserslist@4.22.1)
@@ -3316,8 +3316,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /caniuse-lite@1.0.30001555:
-    resolution: {integrity: sha512-NzbUFKUnJ3DTcq6YyZB6+qqhfD112uR3uoEnkmfzm2wVzUNsFkU7AwBjKQ654Sp5cau0JxhFyRSn/tQZ+XfygA==}
+  /caniuse-lite@1.0.30001558:
+    resolution: {integrity: sha512-/Et7DwLqpjS47JPEcz6VnxU9PwcIdVi0ciLXRWBQdj1XFye68pSQYpV0QtPTfUKWuOaEig+/Vez2l74eDc1tPQ==}
 
   /caseless@0.12.0:
     resolution: {integrity: sha512-4tYFyifaFfGacoiObjJegolkwSU4xQNGbVgUiNYVUxbQ2x2lUsFvY4hVgVzGiIe6WLOPqycWXA40l+PWsxthUw==}
@@ -6479,7 +6479,7 @@ packages:
       '@next/env': 14.0.0
       '@swc/helpers': 0.5.2
       busboy: 1.6.0
-      caniuse-lite: 1.0.30001555
+      caniuse-lite: 1.0.30001558
       postcss: 8.4.31
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
@@ -8156,8 +8156,8 @@ packages:
   /tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
 
-  /tty-table@4.2.2:
-    resolution: {integrity: sha512-2gvCArMZLxgvpZ2NvQKdnYWIFLe7I/z5JClMuhrDXunmKgSZcQKcZRjN9XjAFiToMz2pUo1dEIXyrm0AwgV5Tw==}
+  /tty-table@4.2.3:
+    resolution: {integrity: sha512-Fs15mu0vGzCrj8fmJNP7Ynxt5J7praPXqFN0leZeZBXJwkMxv9cb2D454k1ltrtUSJbZ4yH4e0CynsHLxmUfFA==}
     engines: {node: '>=8.0.0'}
     hasBin: true
     dependencies:

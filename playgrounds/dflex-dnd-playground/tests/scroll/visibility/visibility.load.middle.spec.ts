@@ -8,7 +8,6 @@ import {
 
 import {
   DFlexPageTest as test,
-  //   assertChildrenOrderIDs,
   assertDefaultChildrenIndex,
   getDraggedRect,
   initialize,
@@ -71,7 +70,7 @@ test.describe("Visible elements have transformation after loading in the the mid
     });
     await page.waitForTimeout(1000);
     await page.reload();
-    await page.waitForTimeout(1000);
+    await page.waitForLoadState();
   });
 
   test("Move elm51 outside the container", async () => {
