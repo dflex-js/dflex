@@ -131,6 +131,7 @@ test.describe("Visible elements have transformation after loading in the the mid
       // Reloading in another browsers will move scroll to the start.
       if (browserName === "chromium") {
         await page.reload();
+        await page.waitForLoadState();
       }
 
       await page.waitForTimeout(1000);
@@ -159,6 +160,7 @@ test.describe("Visible elements have transformation after loading in the the mid
       // Reloading in another browsers will move scroll to the start.
       if (browserName === "chromium") {
         await page.reload();
+        await page.waitForLoadState();
       }
 
       await page.waitForTimeout(1000);
@@ -190,6 +192,7 @@ test.describe("Visible elements have transformation after loading in the the mid
       // Reloading in another browsers will move scroll to the start.
       if (browserName === "chromium") {
         await page.reload();
+        await page.waitForLoadState();
       }
 
       await page.waitForTimeout(1000);
