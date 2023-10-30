@@ -23,9 +23,11 @@ test.describe("Visible elements have transformation after loading in the the mid
 
   let elements: Locator[];
   let visibleElements: Locator[];
+  // let invisibleElements: Locator[];
 
   let dflexElements: DFlexSerializedElements;
   let visibleDFlexElements: DFlexSerializedElements;
+  let invisibleDFlexElements: DFlexSerializedElements;
 
   test.beforeAll(async ({ browser, browserName }) => {
     activeBrowser = browser;
@@ -70,6 +72,13 @@ test.describe("Visible elements have transformation after loading in the the mid
       // Slices elements from index 50 to 60 (inclusive)
       visibleDFlexElements = dflexElements.slice(50, 61);
       visibleElements = elements.slice(50, 61);
+
+      // Generates elements from index 0 to 44 and from 66 to the end but with 5
+      // elements margin to take into consideration the threshold.
+      invisibleDFlexElements = [
+        ...dflexElements.slice(0, 45),
+        ...dflexElements.slice(66),
+      ];
     });
 
     test("DFlex Rect matches elements live Rect", async () => {
@@ -111,6 +120,31 @@ test.describe("Visible elements have transformation after loading in the the mid
         expect(hasTransformedFromOrigin).toBeFalsy();
         expect(hasPendingTransformation).toBeFalsy();
         expect(isVisible).toBeTruthy();
+      });
+    });
+
+    test("Invisible elements have the correct flags", async () => {
+      invisibleDFlexElements.forEach((dflexElm) => {
+        const {
+          hasTransformedFromOrigin,
+          hasPendingTransformation,
+          isVisible,
+        } = dflexElm;
+
+        expect(hasTransformedFromOrigin).toBeFalsy();
+        expect(hasPendingTransformation).toBeFalsy();
+        expect(isVisible).toBeFalsy();
+      });
+    });
+
+    test("Elements have the correct translate", async () => {
+      dflexElements.forEach((dflexElm) => {
+        const { translate } = dflexElm;
+
+        expect(translate).toEqual({
+          x: 0,
+          y: 0,
+        });
       });
     });
   });

@@ -69,7 +69,6 @@ test.describe("Visible elements have transformation after loading in the the mid
     await page.evaluate(() => {
       window.scrollTo(0, document.body.scrollHeight / 2);
     });
-    await page.waitForTimeout(1000);
     await page.reload();
     await page.waitForTimeout(1000);
   });
