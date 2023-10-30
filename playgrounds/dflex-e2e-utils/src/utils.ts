@@ -1,5 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { Page, Locator, expect } from "@playwright/test";
+import { DFlexSerializedElement } from "@dflex/core-instance";
 import { assertMutationListenerEmittedMsg } from "./listeners";
 
 let page: Page;
@@ -92,14 +93,20 @@ export async function pressCKeyAndAssertEmittedMsg(FINAL_IDS: string[]) {
   await assertMutationListenerEmittedMsg(msg, FINAL_IDS);
 }
 
-export async function pressGKeyAndAssertEmittedMsg(FINAL_IDS: string[]) {
+export async function getSerializedElementsAfterKeyPress(): Promise<
+  DFlexSerializedElement[]
+> {
   // Get the next console log
   const [msg] = await Promise.all([
     page.waitForEvent("console"),
     invokeKeyboard("g"),
   ]);
 
-  await assertMutationListenerEmittedMsg(msg, FINAL_IDS);
+  const serializedElements = (await msg
+    .args()[0]
+    .jsonValue()) as DFlexSerializedElement[];
+
+  return serializedElements;
 }
 
 export async function assertChildrenOrderIDs(

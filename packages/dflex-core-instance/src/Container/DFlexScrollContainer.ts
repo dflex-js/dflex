@@ -1,8 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import {
-  AxesPoint,
   Axis,
-  Dimensions,
   Direction,
   BoxRect,
   PointBool,
@@ -16,22 +14,11 @@ import {
   featureFlags,
 } from "@dflex/utils";
 
-import type { ThresholdPercentages, AbstractBox } from "@dflex/utils";
+import type { ThresholdPercentages } from "@dflex/utils";
 import { hasScrollableContent, getScrollProps } from "./scrollUtils";
 
 // eslint-disable-next-line no-unused-vars
 type ScrollEventCallback = (SK: string) => void;
-
-export type DFlexSerializedScroll = {
-  type: string;
-  version: 3;
-  key: string;
-  hasOverFlow: AxesPoint<boolean>;
-  hasDocumentAsContainer: boolean;
-  scrollRect: AbstractBox;
-  scrollContainerRect: AbstractBox;
-  visibleScreen: Dimensions;
-};
 
 const MAX_NUM_OF_SIBLINGS_BEFORE_DYNAMIC_VISIBILITY = 10;
 
@@ -288,24 +275,12 @@ class DFlexScrollContainer {
     );
 
     // Calculate the visible portion of the container
-    if (this._isDocumentContainer) {
-      // For document container, the visible area is the entire client viewport
-      this.visibleScrollRect.setByPointAndDimensions(
-        scrollTop,
-        scrollLeft,
-        clientHeight,
-        clientWidth,
-      );
-    } else {
-      const { left, top } = this._containerDOM.getBoundingClientRect();
-
-      this.visibleScrollRect.setByPointAndDimensions(
-        top,
-        left,
-        clientHeight,
-        clientWidth,
-      );
-    }
+    this.visibleScrollRect.setByPointAndDimensions(
+      0,
+      0,
+      clientHeight,
+      clientWidth,
+    );
   }
 
   private _updateScrollPosition(
@@ -515,28 +490,6 @@ class DFlexScrollContainer {
     const preservedBoxResult = threshold!.isOut[key];
 
     return [isOutThreshold, preservedBoxResult];
-  }
-
-  private _getVisibleScreen(): Dimensions {
-    const { height, width } = this.visibleScrollRect;
-
-    return {
-      height,
-      width,
-    };
-  }
-
-  getSerializedInstance(): DFlexSerializedScroll {
-    return {
-      type: DFlexScrollContainer.getType(),
-      version: 3,
-      key: this._SK,
-      hasOverFlow: this.hasOverflow.getInstance(),
-      hasDocumentAsContainer: this._isDocumentContainer,
-      scrollRect: this.totalScrollRect.getBox(),
-      scrollContainerRect: this.visibleScrollRect.getBox(),
-      visibleScreen: this._getVisibleScreen(),
-    };
   }
 
   /**

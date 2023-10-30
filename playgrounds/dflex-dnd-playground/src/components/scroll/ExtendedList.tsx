@@ -31,7 +31,7 @@ const ExtendedList = () => {
 
       // Log the serialized elements as a table
       // eslint-disable-next-line no-console
-      console.table(serializedElms);
+      console.log(serializedElms);
     }
   };
 
