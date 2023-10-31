@@ -38,7 +38,7 @@ class DraggablePositions {
     scrollOffsetX: number,
     scrollOffsetY: number,
   ): void {
-    this._viewport.setPos(x, y, scrollOffsetX, scrollOffsetY);
+    this._viewport.setPos(x, y, 0, 0);
     this._absolute.setPos(x, y, scrollOffsetX, scrollOffsetY);
   }
 
