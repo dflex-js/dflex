@@ -134,10 +134,10 @@ test.describe("Visible elements have transformation after loading in the the mid
         await page.waitForLoadState();
       }
 
-      await page.waitForTimeout(2000);
+      await page.waitForTimeout(1000);
 
       dflexElements = await getSerializedElementsAfterKeyPress();
-      await page.waitForTimeout(2000);
+      await page.waitForTimeout(1000);
 
       // Slices elements from index 0 to 10 (inclusive)
       visibleDFlexElements = dflexElements.slice(0, 11);
@@ -163,10 +163,10 @@ test.describe("Visible elements have transformation after loading in the the mid
         await page.waitForLoadState();
       }
 
-      await page.waitForTimeout(2000);
+      await page.waitForTimeout(1000);
 
       dflexElements = await getSerializedElementsAfterKeyPress();
-      await page.waitForTimeout(2000);
+      await page.waitForTimeout(1000);
 
       // Slices elements from index 50 to 60 (inclusive)
       visibleDFlexElements = dflexElements.slice(50, 61);
@@ -195,10 +195,9 @@ test.describe("Visible elements have transformation after loading in the the mid
         await page.waitForLoadState();
       }
 
-      await page.waitForTimeout(2000);
-
+      await page.waitForTimeout(1000);
       dflexElements = await getSerializedElementsAfterKeyPress();
-      await page.waitForTimeout(2000);
+      await page.waitForTimeout(1000);
 
       // Slices elements from index 90 to 100 (inclusive)
       visibleDFlexElements = dflexElements.slice(90, dflexElements.length);
