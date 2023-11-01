@@ -71,7 +71,23 @@ class DFlexDnDExportedStore {
    * elements are found.
    */
   getSerializedElements(id: string): DFlexSerializedElement[] {
-    return this.getSiblingsByID(id).map((_) => store.getSerializedElm(_)!);
+    const siblingIDs = this.getSiblingsByID(id);
+    const results: DFlexSerializedElement[] = [];
+
+    for (let i = 0; i < siblingIDs.length; i += 1) {
+      const siblingID = siblingIDs[i];
+
+      const serializedElement = store.getSerializedElm(
+        // This method may be invoked when a dragged element is present in the layout.
+        // If there is a dragged element (siblingID.length === 0),
+        // retrieve the dragged id from migration in this scenario.
+        siblingID.length > 0 ? siblingID : store.migration.latest().id,
+      )!;
+
+      results.push(serializedElement);
+    }
+
+    return results;
   }
 
   /**
