@@ -174,11 +174,11 @@ test.describe("Drag the first element down vertically testing visibility and thr
       await getDraggedRect(elements[0]);
       await moveDragged(-220, -1);
 
-      await page.waitForTimeout(1000);
+      await page.waitForTimeout(2000);
 
       dflexElements = await getSerializedElementsAfterKeyPress();
 
-      await page.waitForTimeout(1000);
+      await page.waitForTimeout(2000);
 
       // Slices elements from index 0 to 10 (inclusive)
       visibleDFlexElements = dflexElements.slice(1, 11);
@@ -211,11 +211,11 @@ test.describe("Drag the first element down vertically testing visibility and thr
       await page.waitForTimeout(2700);
       await moveDragged(-1, 500);
 
-      await page.waitForTimeout(1000);
+      await page.waitForTimeout(2000);
 
       dflexElements = await getSerializedElementsAfterKeyPress();
 
-      await page.waitForTimeout(1000);
+      await page.waitForTimeout(2000);
 
       // Slices elements from index 50 to 60 (inclusive)
       visibleDFlexElements = dflexElements.slice(50, 61);
@@ -241,11 +241,11 @@ test.describe("Drag the first element down vertically testing visibility and thr
       await page.waitForTimeout(2700);
       await moveDragged(-1, 500);
 
-      await page.waitForTimeout(1000);
+      await page.waitForTimeout(2000);
 
       dflexElements = await getSerializedElementsAfterKeyPress();
 
-      await page.waitForTimeout(1000);
+      await page.waitForTimeout(2000);
 
       // Slices elements from index 50 to 60 (inclusive)
       visibleDFlexElements = dflexElements.slice(90, dflexElements.length);
