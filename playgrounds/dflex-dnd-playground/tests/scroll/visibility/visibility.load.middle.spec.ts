@@ -70,7 +70,7 @@ test.describe("Visible elements have transformation after loading in the the mid
     });
     await page.waitForTimeout(1000);
     await page.reload();
-    await page.waitForLoadState();
+    await page.waitForTimeout(1000);
   });
 
   test("Move elm51 outside the container", async () => {
