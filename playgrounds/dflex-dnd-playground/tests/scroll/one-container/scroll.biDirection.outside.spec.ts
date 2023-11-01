@@ -19,6 +19,11 @@ type DFlexSerializedElements = Awaited<
 >;
 
 test.describe("Drag the first element down vertically testing visibility and threshold", async () => {
+  test.skip(
+    ({ browserName }) => browserName !== "chromium",
+    "Other browsers will move scroll to the beginning.",
+  );
+
   let page: Page;
   let context: BrowserContext;
   let activeBrowser: Browser;
