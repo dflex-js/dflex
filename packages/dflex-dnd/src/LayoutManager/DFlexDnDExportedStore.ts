@@ -8,6 +8,34 @@ import { store } from ".";
 // TODO: I am not sure if this is the best approach or not.
 
 /**
+ * Modifies an array of siblings by inserting a specified ID at a given index,
+ * while ensuring that any trailing empty strings are removed.
+ *
+ * @param {string[]} siblings - The array of sibling strings.
+ * @param {number} index - The index at which the ID should be inserted.
+ * @param {string} id - The ID to be inserted.
+ * @returns {string[]} The modified array of siblings.
+ */
+function updateSiblingsWithDragID(
+  siblings: string[],
+  index: number,
+  id: string,
+): string[] {
+  // Remove empty string from the end of the array
+  if (siblings[siblings.length - 1] === "") {
+    siblings.pop();
+
+    // Insert index and id
+    siblings.splice(index, 0, id);
+  } else {
+    // direct assign cause it's already empty by design.
+    siblings[index] = id;
+  }
+
+  return siblings;
+}
+
+/**
  * Exported store for interacting with DFlex.
  */
 class DFlexDnDExportedStore {
@@ -33,10 +61,18 @@ class DFlexDnDExportedStore {
    * Checks if an element with the specified ID is registered.
    *
    * @param id - ID of the element.
-   * @returns `true` if the element is registered, `false` otherwise.
+   * @returns {boolean} `true` if the element is registered, `false` otherwise.
    */
   has(id: string): boolean {
     return this._base.has(id);
+  }
+
+  /**
+   * Checks if there is an active drag operation.
+   * @returns {boolean} `true` if an active drag operation is in progress, `false` otherwise.
+   */
+  hasActiveDrag(): boolean {
+    return this._base.migration.isActive;
   }
 
   /**
@@ -47,8 +83,22 @@ class DFlexDnDExportedStore {
    */
   getSiblingsByID(id: string): string[] {
     const SK = this._base.getSKByID(id);
+    const siblings = [...this._base.getElmSiblingsByKey(SK)];
 
-    return this._base.getElmSiblingsByKey(SK);
+    if (this.hasActiveDrag()) {
+      const {
+        SK: latestSK,
+        id: draggedID,
+        index,
+      } = this._base.migration.latest();
+
+      // then the container has active dragging operation.
+      if (SK === latestSK) {
+        updateSiblingsWithDragID(siblings, index, draggedID);
+      }
+    }
+
+    return siblings;
   }
 
   /**
@@ -71,23 +121,7 @@ class DFlexDnDExportedStore {
    * elements are found.
    */
   getSerializedElements(id: string): DFlexSerializedElement[] {
-    const siblingIDs = this.getSiblingsByID(id);
-    const results: DFlexSerializedElement[] = [];
-
-    for (let i = 0; i < siblingIDs.length; i += 1) {
-      const siblingID = siblingIDs[i];
-
-      const serializedElement = store.getSerializedElm(
-        // This method may be invoked when a dragged element is present in the layout.
-        // If there is a dragged element (siblingID.length === 0),
-        // retrieve the dragged id from migration in this scenario.
-        siblingID.length > 0 ? siblingID : store.migration.latest().id,
-      )!;
-
-      results.push(serializedElement);
-    }
-
-    return results;
+    return this.getSiblingsByID(id).map((_) => store.getSerializedElm(_)!);
   }
 
   /**
