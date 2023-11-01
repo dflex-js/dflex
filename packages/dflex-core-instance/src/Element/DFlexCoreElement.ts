@@ -831,7 +831,8 @@ class DFlexCoreElement extends DFlexBaseElement {
       translate: this.translate.getInstance(),
       initialPosition: this._initialPosition.getInstance(),
       rect: this.rect.getViewportPos(viewportTop, viewportLeft, false),
-      hasTransformedFromOrigin: this.hasTransformedFromOrigin(),
+      hasTransformedFromOrigin:
+        !this._hasPendingTransform && this.hasTransformedFromOrigin(),
       hasPendingTransformation: this._hasPendingTransform,
       isVisible: this._isVisible,
     };
