@@ -263,13 +263,6 @@ class DFlexCycle {
     this.preserveVerticalMargin("bottom", null);
   }
 
-  /**
-   * When drag is ending but there's a pending, non-committed migration.
-   */
-  pause(): void {
-    this.isActive = false;
-  }
-
   clear(): void {
     this._migrations = [];
     this.SKs = [];

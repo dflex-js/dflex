@@ -72,7 +72,9 @@ class DFlexDnDExportedStore {
    * @returns {boolean} `true` if an active drag operation is in progress, `false` otherwise.
    */
   hasActiveDrag(): boolean {
-    return this._base.migration.isActive;
+    const { migration } = this._base;
+
+    return migration ? migration.isActive : false;
   }
 
   /**
