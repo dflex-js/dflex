@@ -179,93 +179,97 @@ test.describe("Drag the first element down vertically testing visibility and thr
     // await activeBrowser.close();
   });
 
-  test.describe("in the top", async () => {
-    test.beforeAll(async () => {
-      // Drag it outside the container.
-      await getDraggedRect(elements[0]);
-      await moveDragged(-220, -1);
+  test.describe("Up to down direction", () => {
+    test.describe("in the top", async () => {
+      test.beforeAll(async () => {
+        // Drag it outside the container.
+        await getDraggedRect(elements[0]);
+        await moveDragged(-220, -1);
 
-      await page.waitForTimeout(1000);
+        await page.waitForTimeout(1000);
 
-      dflexElements = await getSerializedElementsAfterKeyPress();
+        dflexElements = await getSerializedElementsAfterKeyPress();
 
-      // Slices elements from index 0 to 10 (inclusive)
-      visibleDFlexElements = dflexElements.slice(1, 11);
-      visibleElements = elements.slice(1, 11);
+        // Slices elements from index 0 to 10 (inclusive)
+        visibleDFlexElements = dflexElements.slice(1, 11);
+        visibleElements = elements.slice(1, 11);
 
-      // Generates elements from index 11 to the end but with 5
-      // elements margin to take into consideration the threshold.
-      invisibleElements = elements.slice(16);
-      invisibleDFlexElements = dflexElements.slice(16);
+        // Generates elements from index 11 to the end but with 5
+        // elements margin to take into consideration the threshold.
+        invisibleElements = elements.slice(16);
+        invisibleDFlexElements = dflexElements.slice(16);
 
-      invisibleElementsBeforeDrag = [];
-      invisibleDflexElementsBeforeDrag = [];
-    });
+        invisibleElementsBeforeDrag = [];
+        invisibleDflexElementsBeforeDrag = [];
+      });
 
-    await launchTestProcess(() => {
-      test("Invisible elements have not actually CSS transformed", async () => {
-        await Promise.all(
-          invisibleElements.map((element) =>
-            expect(element).toHaveCSS("transform", "none"),
-          ),
-        );
+      await launchTestProcess(() => {
+        test("Invisible elements have not actually CSS transformed", async () => {
+          await Promise.all(
+            invisibleElements.map((element) =>
+              expect(element).toHaveCSS("transform", "none"),
+            ),
+          );
+        });
       });
     });
-  });
 
-  test.describe("in the middle", async () => {
-    test.beforeAll(async () => {
-      // Move it to 50
-      await moveDragged(-1, 600);
-      await page.waitForTimeout(2700);
-      await moveDragged(-1, 500);
+    test.describe("in the middle", async () => {
+      test.beforeAll(async () => {
+        // Move it to 50
+        await moveDragged(-1, 600);
+        await page.waitForTimeout(2700);
+        await moveDragged(-1, 500);
 
-      await page.waitForTimeout(1000);
+        await page.waitForTimeout(1000);
 
-      dflexElements = await getSerializedElementsAfterKeyPress();
+        dflexElements = await getSerializedElementsAfterKeyPress();
 
-      // Slices elements from index 50 to 60 (inclusive)
-      visibleDFlexElements = dflexElements.slice(50, 61);
-      visibleElements = elements.slice(50, 61);
+        // Slices elements from index 50 to 60 (inclusive)
+        visibleDFlexElements = dflexElements.slice(50, 61);
+        visibleElements = elements.slice(50, 61);
 
-      // Generates elements from index 0 to 44 and from 66 to the end but with 5
-      // elements margin to take into consideration the threshold.
+        // Generates elements from index 0 to 44 and from 66 to the end but with 5
+        // elements margin to take into consideration the threshold.
 
-      invisibleElements = [...elements.slice(66)];
-      invisibleDFlexElements = [...dflexElements.slice(66)];
+        invisibleElements = [...elements.slice(66)];
+        invisibleDFlexElements = [...dflexElements.slice(66)];
 
-      invisibleElementsBeforeDrag = [...elements.slice(1, 45)];
-      invisibleDflexElementsBeforeDrag = [...dflexElements.slice(1, 45)];
+        invisibleElementsBeforeDrag = [...elements.slice(1, 45)];
+        invisibleDflexElementsBeforeDrag = [...dflexElements.slice(1, 45)];
+      });
+
+      await launchTestProcess();
     });
 
-    await launchTestProcess();
-  });
+    test.describe("in the end", async () => {
+      test.beforeAll(async () => {
+        // Move it to 50
+        await moveDragged(-1, 600);
+        await page.waitForTimeout(2700);
+        await moveDragged(-1, 500);
 
-  test.describe("in the end", async () => {
-    test.beforeAll(async () => {
-      // Move it to 50
-      await moveDragged(-1, 600);
-      await page.waitForTimeout(2700);
-      await moveDragged(-1, 500);
+        await page.waitForTimeout(1000);
 
-      await page.waitForTimeout(1000);
+        dflexElements = await getSerializedElementsAfterKeyPress();
 
-      dflexElements = await getSerializedElementsAfterKeyPress();
+        // Slices elements from index 50 to 60 (inclusive)
+        visibleDFlexElements = dflexElements.slice(90, dflexElements.length);
+        visibleElements = elements.slice(90, elements.length);
 
-      // Slices elements from index 50 to 60 (inclusive)
-      visibleDFlexElements = dflexElements.slice(90, dflexElements.length);
-      visibleElements = elements.slice(90, elements.length);
+        // Generates elements from index 0 to 44 and from 66 to the end but with 5
+        // elements margin to take into consideration the threshold.
 
-      // Generates elements from index 0 to 44 and from 66 to the end but with 5
-      // elements margin to take into consideration the threshold.
+        invisibleElements = [];
+        invisibleDFlexElements = [];
 
-      invisibleElements = [];
-      invisibleDFlexElements = [];
+        invisibleElementsBeforeDrag = [...elements.slice(1, 85)];
+        invisibleDflexElementsBeforeDrag = [...dflexElements.slice(1, 85)];
+      });
 
-      invisibleElementsBeforeDrag = [...elements.slice(1, 85)];
-      invisibleDflexElementsBeforeDrag = [...dflexElements.slice(1, 85)];
+      await launchTestProcess();
     });
-
-    await launchTestProcess();
   });
+
+  test.describe("down to up direction", () => {});
 });
