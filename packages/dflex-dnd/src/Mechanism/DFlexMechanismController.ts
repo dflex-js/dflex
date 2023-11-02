@@ -852,21 +852,13 @@ class DFlexMechanismController extends DFlexScrollableElement {
     }
   }
 
-  dragAt(x: number, y: number): void {
-    if (!store.isLayoutAvailable) {
-      return;
-    }
-
-    const { scroll } = this.draggable;
-
-    const { migration } = store;
-
-    const { SK } = migration.latest();
-
+  private _processScroll(x: number, y: number, SK: string): boolean {
     let isOutSiblingsContainer = false;
 
     let scrollOffsetX = 0;
     let scrollOffsetY = 0;
+
+    const { scroll } = this.draggable;
 
     if (scroll.enable) {
       this.scrollFeed(x, y, SK);
@@ -880,7 +872,6 @@ class DFlexMechanismController extends DFlexScrollableElement {
               // When it's inside the container, then the siblings are not lifted
               if (!(isOutSiblingsContainer || this.isParentLocked)) {
                 this._updateContainerLockState(true);
-
                 this._fillHeadUp();
               }
             },
@@ -889,7 +880,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
           this.hasBeenScrolling = true;
         }
 
-        return;
+        return true;
       }
 
       const { totalScrollRect } = store.scrolls.get(SK)!;
@@ -903,15 +894,35 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
           // Update the position before calling the detector.
           this.draggable.positions.setPos(x, y, scrollOffsetX, scrollOffsetY);
-
           this._detectNearestElm();
         }
 
         this.hasBeenScrolling = false;
 
-        return;
+        return true;
       }
     }
+
+    return false;
+  }
+
+  dragAt(x: number, y: number): void {
+    if (!store.isLayoutAvailable) {
+      return;
+    }
+
+    const { migration } = store;
+
+    const { SK } = migration.latest();
+
+    let isOutSiblingsContainer = false;
+
+    if (this._processScroll(x, y, SK)) {
+      return;
+    }
+
+    let scrollOffsetX = 0;
+    let scrollOffsetY = 0;
 
     const { totalScrollRect } = store.scrolls.get(SK)!;
 
