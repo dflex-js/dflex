@@ -8,7 +8,9 @@ import {
 
 import {
   DFlexPageTest as test,
+  getDraggedRect,
   initialize,
+  moveDragged,
   getSerializedElementsAfterKeyPress,
 } from "dflex-e2e-utils";
 
@@ -16,20 +18,35 @@ type DFlexSerializedElements = Awaited<
   ReturnType<typeof getSerializedElementsAfterKeyPress>
 >;
 
-test.describe("Visible elements have transformation after loading in the the middle then execute", async () => {
+test.describe("Drag the first element down vertically testing visibility and threshold", async () => {
+  test.skip(
+    ({ browserName }) => browserName !== "chromium",
+    "Each browser may exhibit different behavior regarding scroll numbers and distances. " +
+      "This test case is currently optimized for Chromium-based browsers.",
+  );
+
+  test.skip(
+    process.platform === "darwin",
+    "Test skipped on Mac devices. Mac scroll implemented with different numbers.",
+  );
+
   let page: Page;
   let context: BrowserContext;
   let activeBrowser: Browser;
 
+  let elementSelectors: string[];
   let elements: Locator[];
   let visibleElements: Locator[];
-  // let invisibleElements: Locator[];
+  let invisibleElements: Locator[];
+
+  let invisibleElementsBeforeDrag: Locator[];
 
   let dflexElements: DFlexSerializedElements;
   let visibleDFlexElements: DFlexSerializedElements;
   let invisibleDFlexElements: DFlexSerializedElements;
+  let invisibleDflexElementsBeforeDrag: DFlexSerializedElements;
 
-  async function launchTestProcess() {
+  async function launchTestProcess(cb?: () => void) {
     test("DFlex Rect matches elements live Rect", async () => {
       const boundingClientRectPromise = visibleElements.map((l) =>
         l.boundingBox(),
@@ -66,9 +83,20 @@ test.describe("Visible elements have transformation after loading in the the mid
           isVisible,
         } = dflexElm;
 
-        expect(hasTransformedFromOrigin).toBeFalsy();
+        expect(hasTransformedFromOrigin).toBeTruthy();
         expect(hasPendingTransformation).toBeFalsy();
         expect(isVisible).toBeTruthy();
+      });
+    });
+
+    test("Visible elements have the correct translate", async () => {
+      visibleDFlexElements.forEach((dflexElm) => {
+        const { translate } = dflexElm;
+
+        expect(translate).toEqual({
+          x: 0,
+          y: -59.1875,
+        });
       });
     });
 
@@ -81,21 +109,50 @@ test.describe("Visible elements have transformation after loading in the the mid
         } = dflexElm;
 
         expect(hasTransformedFromOrigin).toBeFalsy();
+        expect(hasPendingTransformation).toBeTruthy();
+        expect(isVisible).toBeFalsy();
+      });
+    });
+
+    test("Invisible elements have the correct pending translate", async () => {
+      invisibleDFlexElements.forEach((dflexElm) => {
+        const { translate } = dflexElm;
+
+        expect(translate).toEqual({
+          x: 0,
+          y: -59.1875,
+        });
+      });
+    });
+
+    test("Invisible elements before dragged have correct CSS transformation", async () => {
+      await Promise.all(
+        invisibleElementsBeforeDrag.map((element) =>
+          expect(element).toHaveCSS(
+            "transform",
+            "matrix(1, 0, 0, 1, 0, -59.1875)",
+          ),
+        ),
+      );
+    });
+
+    test("Invisible elements before dragged have transformed internally", async () => {
+      invisibleDflexElementsBeforeDrag.forEach((dflexElm) => {
+        const {
+          hasTransformedFromOrigin,
+          hasPendingTransformation,
+          isVisible,
+        } = dflexElm;
+
+        expect(hasTransformedFromOrigin).toBeTruthy();
         expect(hasPendingTransformation).toBeFalsy();
         expect(isVisible).toBeFalsy();
       });
     });
 
-    test("Elements have the correct translate", async () => {
-      dflexElements.forEach((dflexElm) => {
-        const { translate } = dflexElm;
-
-        expect(translate).toEqual({
-          x: 0,
-          y: 0,
-        });
-      });
-    });
+    if (cb) {
+      cb();
+    }
   }
 
   test.beforeAll(async ({ browser, browserName }) => {
@@ -103,10 +160,10 @@ test.describe("Visible elements have transformation after loading in the the mid
 
     context = await activeBrowser.newContext();
     page = await context.newPage();
-    initialize(page, browserName, 50);
+    initialize(page, browserName, 150);
     await page.goto("/extended");
 
-    const elementSelectors = Array.from(
+    elementSelectors = Array.from(
       { length: 100 },
       (_, index) => `[id='${index + 1}-extended']`,
     );
@@ -123,48 +180,45 @@ test.describe("Visible elements have transformation after loading in the the mid
   });
 
   test.describe("in the top", async () => {
-    test.beforeAll(async ({ browserName }) => {
-      await page.evaluate(() => {
-        window.scrollTo(0, 0);
-      });
-
-      // Reloading in another browsers will move scroll to the start.
-      if (browserName === "chromium") {
-        await page.reload();
-        await page.waitForLoadState();
-      }
+    test.beforeAll(async () => {
+      // Drag it outside the container.
+      await getDraggedRect(elements[0]);
+      await moveDragged(-220, -1);
 
       await page.waitForTimeout(1000);
 
       dflexElements = await getSerializedElementsAfterKeyPress();
 
       // Slices elements from index 0 to 10 (inclusive)
-      visibleDFlexElements = dflexElements.slice(0, 11);
-      visibleElements = elements.slice(0, 11);
+      visibleDFlexElements = dflexElements.slice(1, 11);
+      visibleElements = elements.slice(1, 11);
 
       // Generates elements from index 11 to the end but with 5
       // elements margin to take into consideration the threshold.
+      invisibleElements = elements.slice(16);
       invisibleDFlexElements = dflexElements.slice(16);
+
+      invisibleElementsBeforeDrag = [];
+      invisibleDflexElementsBeforeDrag = [];
     });
 
-    await launchTestProcess();
+    await launchTestProcess(() => {
+      test("Invisible elements have not actually CSS transformed", async () => {
+        await Promise.all(
+          invisibleElements.map((element) =>
+            expect(element).toHaveCSS("transform", "none"),
+          ),
+        );
+      });
+    });
   });
 
   test.describe("in the middle", async () => {
-    test.beforeAll(async ({ browserName }) => {
-      await page.evaluate(() => {
-        window.scrollTo(0, document.body.scrollHeight / 2);
-      });
-
-      await page.waitForTimeout(1000);
-
-      // Reloading in another browsers will move scroll to the start.
-      if (browserName === "chromium") {
-        await page.waitForTimeout(1000);
-
-        await page.reload();
-        await page.waitForLoadState();
-      }
+    test.beforeAll(async () => {
+      // Move it to 50
+      await moveDragged(-1, 600);
+      await page.waitForTimeout(2700);
+      await moveDragged(-1, 500);
 
       await page.waitForTimeout(1000);
 
@@ -176,40 +230,40 @@ test.describe("Visible elements have transformation after loading in the the mid
 
       // Generates elements from index 0 to 44 and from 66 to the end but with 5
       // elements margin to take into consideration the threshold.
-      invisibleDFlexElements = [
-        ...dflexElements.slice(0, 45),
-        ...dflexElements.slice(66),
-      ];
+
+      invisibleElements = [...elements.slice(66)];
+      invisibleDFlexElements = [...dflexElements.slice(66)];
+
+      invisibleElementsBeforeDrag = [...elements.slice(1, 45)];
+      invisibleDflexElementsBeforeDrag = [...dflexElements.slice(1, 45)];
     });
 
     await launchTestProcess();
   });
 
   test.describe("in the end", async () => {
-    test.beforeAll(async ({ browserName }) => {
-      await page.evaluate(() => {
-        window.scrollTo(0, document.body.scrollHeight);
-      });
-
-      await page.waitForTimeout(1000);
-
-      // Reloading in another browsers will move scroll to the start.
-      if (browserName === "chromium") {
-        await page.reload();
-        await page.waitForLoadState();
-      }
+    test.beforeAll(async () => {
+      // Move it to 50
+      await moveDragged(-1, 600);
+      await page.waitForTimeout(2700);
+      await moveDragged(-1, 500);
 
       await page.waitForTimeout(1000);
 
       dflexElements = await getSerializedElementsAfterKeyPress();
 
-      // Slices elements from index 90 to 100 (inclusive)
+      // Slices elements from index 50 to 60 (inclusive)
       visibleDFlexElements = dflexElements.slice(90, dflexElements.length);
       visibleElements = elements.slice(90, elements.length);
 
-      // Generates elements from index 0 to 85 with 5 elements margin to take
-      // into consideration the threshold.
-      invisibleDFlexElements = dflexElements.slice(0, 85);
+      // Generates elements from index 0 to 44 and from 66 to the end but with 5
+      // elements margin to take into consideration the threshold.
+
+      invisibleElements = [];
+      invisibleDFlexElements = [];
+
+      invisibleElementsBeforeDrag = [...elements.slice(1, 85)];
+      invisibleDflexElementsBeforeDrag = [...dflexElements.slice(1, 85)];
     });
 
     await launchTestProcess();

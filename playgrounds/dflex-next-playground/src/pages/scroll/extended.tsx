@@ -22,16 +22,10 @@ const ExtendedList = () => {
 
   const handleKeyPress = (e: KeyboardEvent) => {
     if (e.key === "g" || e.key === "G") {
-      // Pick random id from the list.
-      const siblings = store.getSiblingsByID(`${1}-extended`);
+      const serializedElms = store.getSerializedElements(`${1}-extended`);
 
-      const serializedElms = siblings.map((id) =>
-        store.getSerializedElement(id),
-      );
-
-      // Log the serialized elements as a table
       // eslint-disable-next-line no-console
-      console.table(serializedElms);
+      console.log(serializedElms);
     }
   };
 

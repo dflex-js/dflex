@@ -157,6 +157,11 @@ class EndCycle extends DFlexMechanismController {
 
     const isFallback = this._isCanceled();
 
+    const cleanup = (willReconcile: boolean) => {
+      this.draggable.cleanup(isFallback, latestCycle, willReconcile);
+      migration.isActive = false;
+    };
+
     // If it's falling back then we won't trigger reconciliation.
     if (isFallback) {
       scheduler(
@@ -169,7 +174,8 @@ class EndCycle extends DFlexMechanismController {
         },
         {
           onUpdate: () => {
-            this.draggable.cleanup(true, latestCycle, false);
+            cleanup(false);
+
             migration.flush(session);
 
             if (listeners) {
@@ -195,7 +201,7 @@ class EndCycle extends DFlexMechanismController {
 
     scheduler(
       store,
-      () => this.draggable.cleanup(isFallback, latestCycle, hasToReconcile),
+      () => cleanup(hasToReconcile),
       listeners
         ? {
             onUpdate: () => {

@@ -59,6 +59,11 @@ class DFlexCycle {
   /** Only true when transitioning. */
   isTransitioning!: boolean;
 
+  /**
+   * Indicates whether an active drag operation is in progress.
+   */
+  isActive: boolean;
+
   constructor(
     index: number,
     id: string,
@@ -77,6 +82,7 @@ class DFlexCycle {
     this._migrations = [dflexCycle];
     this.SKs = [SK];
     this.complete();
+    this.isActive = true;
   }
 
   /** Get the latest migrations instance */
@@ -260,6 +266,7 @@ class DFlexCycle {
   clear(): void {
     this._migrations = [];
     this.SKs = [];
+    this.isActive = false;
   }
 }
 
