@@ -852,11 +852,21 @@ class DFlexMechanismController extends DFlexScrollableElement {
     }
   }
 
+  private _calculateScrollOffsets(SK: string): [number, number] {
+    const {
+      totalScrollRect: { left, top },
+    } = store.scrolls.get(SK)!;
+
+    const { x, y } = this.initialScrollPosition;
+
+    const scrollOffsetX = left - x;
+    const scrollOffsetY = top - y;
+
+    return [scrollOffsetX, scrollOffsetY];
+  }
+
   private _processScroll(x: number, y: number, SK: string): boolean {
     let isOutSiblingsContainer = false;
-
-    let scrollOffsetX = 0;
-    let scrollOffsetY = 0;
 
     const { scroll } = this.draggable;
 
@@ -883,17 +893,16 @@ class DFlexMechanismController extends DFlexScrollableElement {
         return true;
       }
 
-      const { totalScrollRect } = store.scrolls.get(SK)!;
-
       if (this.hasBeenScrolling) {
         isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
         if (!isOutSiblingsContainer && this.isParentLocked) {
-          scrollOffsetX = totalScrollRect.left - this.initialScrollPosition.x;
-          scrollOffsetY = totalScrollRect.top - this.initialScrollPosition.y;
+          const [scrollOffsetX, scrollOffsetY] =
+            this._calculateScrollOffsets(SK);
 
           // Update the position before calling the detector.
           this.draggable.positions.setPos(x, y, scrollOffsetX, scrollOffsetY);
+
           this._detectNearestElm();
         }
 
@@ -921,13 +930,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       return;
     }
 
-    let scrollOffsetX = 0;
-    let scrollOffsetY = 0;
-
-    const { totalScrollRect } = store.scrolls.get(SK)!;
-
-    scrollOffsetX = totalScrollRect.left - this.initialScrollPosition.x;
-    scrollOffsetY = totalScrollRect.top - this.initialScrollPosition.y;
+    const [scrollOffsetX, scrollOffsetY] = this._calculateScrollOffsets(SK);
 
     this.draggable.dragWithOffset(x, y, scrollOffsetX, scrollOffsetY);
 
