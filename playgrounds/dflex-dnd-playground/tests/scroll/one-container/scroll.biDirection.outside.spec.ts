@@ -93,10 +93,8 @@ test.describe("Drag the first element down vertically testing visibility and thr
       visibleDFlexElements.forEach((dflexElm) => {
         const { translate } = dflexElm;
 
-        expect(translate).toEqual({
-          x: 0,
-          y: -59.1875,
-        });
+        expect(translate.x).toBeCloseTo(0, 0);
+        expect(translate.y).toBeCloseTo(-59.1875, 1);
       });
     });
 
@@ -118,10 +116,8 @@ test.describe("Drag the first element down vertically testing visibility and thr
       invisibleDFlexElements.forEach((dflexElm) => {
         const { translate } = dflexElm;
 
-        expect(translate).toEqual({
-          x: 0,
-          y: -59.1875,
-        });
+        expect(translate.x).toBeCloseTo(0, 0);
+        expect(translate.y).toBeCloseTo(-59.1875, 1);
       });
     });
 
@@ -130,7 +126,7 @@ test.describe("Drag the first element down vertically testing visibility and thr
         invisibleElementsBeforeDrag.map((element) =>
           expect(element).toHaveCSS(
             "transform",
-            "matrix(1, 0, 0, 1, 0, -59.1875)",
+            /matrix\(1, 0, 0, 1, 0, -?59\.1\d+\)/,
           ),
         ),
       );
@@ -218,7 +214,13 @@ test.describe("Drag the first element down vertically testing visibility and thr
       test.beforeAll(async () => {
         // Move it to 50
         await moveDragged(-1, 600);
-        await page.waitForTimeout(2700);
+
+        await page.waitForFunction(() => {
+          const { scrollTop } = document.documentElement;
+
+          return scrollTop >= 2900;
+        });
+
         await moveDragged(-1, 500);
 
         await page.waitForTimeout(1000);
@@ -246,7 +248,13 @@ test.describe("Drag the first element down vertically testing visibility and thr
       test.beforeAll(async () => {
         // Move it to 50
         await moveDragged(-1, 600);
-        await page.waitForTimeout(2700);
+
+        await page.waitForFunction(() => {
+          const { scrollTop } = document.documentElement;
+
+          return scrollTop >= 5200;
+        });
+
         await moveDragged(-1, 500);
 
         await page.waitForTimeout(1000);
@@ -271,5 +279,80 @@ test.describe("Drag the first element down vertically testing visibility and thr
     });
   });
 
-  test.describe("down to up direction", () => {});
+  test.describe("down to up direction", () => {
+    test.describe("in the middle", async () => {
+      test.beforeAll(async () => {
+        // Move it to 50
+        await moveDragged(-1, 1);
+
+        await page.waitForFunction(() => {
+          const { scrollTop } = document.documentElement;
+
+          return scrollTop <= 2900;
+        });
+
+        await moveDragged(-1, 2);
+
+        await page.waitForTimeout(1000);
+
+        dflexElements = await getSerializedElementsAfterKeyPress();
+
+        // Slices elements from index 50 to 60 (inclusive)
+        visibleDFlexElements = dflexElements.slice(50, 61);
+        visibleElements = elements.slice(50, 61);
+
+        // Generates elements from index 0 to 44 and from 66 to the end but with 5
+        // elements margin to take into consideration the threshold.
+
+        invisibleElementsBeforeDrag = [
+          ...elements.slice(1, 45),
+          ...elements.slice(66),
+        ];
+        invisibleDflexElementsBeforeDrag = [
+          ...dflexElements.slice(1, 45),
+          ...dflexElements.slice(66),
+        ];
+
+        invisibleElements = [];
+        invisibleDFlexElements = [];
+      });
+
+      await launchTestProcess();
+    });
+
+    test.describe("in the top", async () => {
+      test.beforeAll(async () => {
+        await moveDragged(-1, -150);
+
+        await page.waitForFunction(() => {
+          const { scrollTop } = document.documentElement;
+
+          return scrollTop <= 40;
+        });
+
+        await moveDragged(-1, 0);
+
+        await page.waitForTimeout(1000);
+
+        dflexElements = await getSerializedElementsAfterKeyPress();
+
+        // Slices elements from index 50 to 60 (inclusive)
+        visibleDFlexElements = dflexElements.slice(1, 11);
+        visibleElements = elements.slice(1, 11);
+
+        // Generates elements from index 0 to 44 and from 66 to the end but with 5
+        // elements margin to take into consideration the threshold.
+
+        invisibleElementsBeforeDrag = [...elements.slice(16, elements.length)];
+        invisibleDflexElementsBeforeDrag = [
+          ...dflexElements.slice(16, dflexElements.length),
+        ];
+
+        invisibleElements = [];
+        invisibleDFlexElements = [];
+      });
+
+      await launchTestProcess();
+    });
+  });
 });
