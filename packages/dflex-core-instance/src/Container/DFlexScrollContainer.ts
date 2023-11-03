@@ -55,6 +55,8 @@ class DFlexScrollContainer {
   /**
    * scroll container in the viewport. Only in the visible area.
    */
+  private _staticScrollViewport: BoxRect;
+
   visibleScrollRect: BoxRect;
 
   /**
@@ -120,6 +122,7 @@ class DFlexScrollContainer {
     // Rect.
     this.totalScrollRect = new BoxRect(0, 0, 0, 0);
     this.visibleScrollRect = new BoxRect(0, 0, 0, 0);
+    this._staticScrollViewport = new BoxRect(0, 0, 0, 0);
     this._isCandidateForDynamicVisibility = false;
 
     this.initialize(DOMRef, siblingsLength);
@@ -180,7 +183,7 @@ class DFlexScrollContainer {
 
     threshold.setMainThreshold(
       instance.key,
-      this.visibleScrollRect,
+      this._staticScrollViewport,
       type === "inner",
     );
   }
@@ -271,12 +274,32 @@ class DFlexScrollContainer {
     );
 
     // Calculate the visible portion of the container
-    this.visibleScrollRect.setByPointAndDimensions(
+    this._staticScrollViewport.setByPointAndDimensions(
       0,
       0,
       clientHeight,
       clientWidth,
     );
+
+    // Calculate the visible portion of the container
+    if (this._isDocumentContainer) {
+      // For document container, the visible area is the entire client viewport
+      this.visibleScrollRect.setByPointAndDimensions(
+        scrollTop,
+        scrollLeft,
+        clientHeight,
+        clientWidth,
+      );
+    } else {
+      const { left, top } = this._containerDOM.getBoundingClientRect();
+
+      this.visibleScrollRect.setByPointAndDimensions(
+        top,
+        left,
+        clientHeight,
+        clientWidth,
+      );
+    }
   }
 
   private _updateScrollPosition(
@@ -294,6 +317,15 @@ class DFlexScrollContainer {
     }
 
     this.totalScrollRect.setPosition(scrollLeft, scrollTop);
+
+    const { width, height } = this.visibleScrollRect;
+
+    this.visibleScrollRect.setBox(
+      scrollTop,
+      scrollLeft + width,
+      scrollTop + height,
+      scrollLeft,
+    );
 
     if (withDOM) {
       this._containerDOM.scrollTop = scrollTop;
@@ -321,7 +353,7 @@ class DFlexScrollContainer {
     const endPos = this.totalScrollRect[end];
 
     const dimension = getDimensionTypeByAxis(axis);
-    const viewportSize = this.visibleScrollRect[dimension];
+    const viewportSize = this._staticScrollViewport[dimension];
 
     return [startPos, endPos, viewportSize];
   }
@@ -421,7 +453,7 @@ class DFlexScrollContainer {
    * @returns
    */
   getMaximumScrollContainerLeft() {
-    const { left, width } = this.visibleScrollRect;
+    const { left, width } = this._staticScrollViewport;
 
     return left + width + this.totalScrollRect.left;
   }
@@ -431,7 +463,7 @@ class DFlexScrollContainer {
    * @returns
    */
   getMaximumScrollContainerTop() {
-    const { top, height } = this.visibleScrollRect;
+    const { top, height } = this._staticScrollViewport;
 
     return top + height + this.totalScrollRect.top;
   }
@@ -448,32 +480,9 @@ class DFlexScrollContainer {
     return [viewportTop, viewportLeft];
   }
 
-  isElmOutViewport(absPos: BoxNum, isOuter: boolean): [boolean, BoxBool] {
-    const viewportPos: BoxNum = absPos;
-
+  isElmOutViewport(viewportPos: BoxNum, isOuter: boolean): [boolean, BoxBool] {
     const scrollThreshold: ScrollThreshold =
       this._thresholdInViewport[isOuter ? "outer" : "inner"];
-
-    if (__DEV__) {
-      if (!scrollThreshold) {
-        throw new Error(
-          "isElmOutViewport: _thresholdInViewport is not initialized. Please call setInnerThreshold() method before using isElmOutViewport().",
-        );
-      }
-
-      if (!this.hasOverflow) {
-        throw new Error(
-          "isElmOutViewport: Scrollable element does not have overflow.",
-        );
-      }
-
-      if (this.hasOverflow.x && this.hasOverflow.y) {
-        // eslint-disable-next-line no-console
-        console.warn(
-          "isElmOutViewport: Scrollable element has overflow in both x and y directions.\nDFlex is not yet fully optimized to handle this scenario, and the results may be inaccurate.",
-        );
-      }
-    }
 
     const { threshold, key } = scrollThreshold;
 

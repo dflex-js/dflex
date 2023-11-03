@@ -879,12 +879,12 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     const [container, scroll] = store.getContainers(SK)!;
 
-    const viewportRect = container.getBoundaries();
+    const rect = container.getBoundaries();
 
-    const [isInvisible] = scroll.isElmOutViewport(viewportRect, true);
+    const isInside = rect.isInsideThreshold(scroll.visibleScrollRect);
 
     // If rect is entirely visible, do nothing.
-    if (!isInvisible) {
+    if (isInside) {
       return false;
     }
 
