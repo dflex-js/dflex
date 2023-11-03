@@ -16,7 +16,7 @@ class DFlexParentContainer {
   private _boundariesByRow: BoxNum;
 
   /** Strict Rect for siblings containers. */
-  private _siblingBoundaries: BoxNum | null;
+  private _siblingBoundaries: BoxRect | null;
 
   private _rect: BoxRect;
 
@@ -102,7 +102,7 @@ class DFlexParentContainer {
     if (this._siblingBoundaries) {
       this._siblingBoundaries.assignBiggestBox(rect);
     } else {
-      this._siblingBoundaries = new BoxNum(
+      this._siblingBoundaries = new BoxRect(
         rect.top,
         rect.right,
         rect.bottom,
@@ -155,8 +155,8 @@ class DFlexParentContainer {
    *
    * @returns
    */
-  getBoundaries(): AbstractBox<number> {
-    return this._siblingBoundaries || this._rect.getBox();
+  getBoundaries(): BoxRect {
+    return this._siblingBoundaries || this._rect;
   }
 
   /**

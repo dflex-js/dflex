@@ -868,48 +868,66 @@ class DFlexMechanismController extends DFlexScrollableElement {
   private _processScroll(x: number, y: number, SK: string): boolean {
     let isOutSiblingsContainer = false;
 
-    const { scroll } = this.draggable;
+    const {
+      scroll: { enable },
+    } = this.draggable;
 
-    if (scroll.enable) {
-      this.scrollFeed(x, y, SK);
+    // If scrolling is disable, do nothing.
+    if (!enable) {
+      return false;
+    }
 
-      if (this.hasActiveScrolling()) {
-        if (!this.hasBeenScrolling) {
-          scheduler(store, null, {
-            onUpdate: () => {
-              isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
+    const { containers, scrolls } = store;
 
-              // When it's inside the container, then the siblings are not lifted
-              if (!(isOutSiblingsContainer || this.isParentLocked)) {
-                this._updateContainerLockState(true);
-                this._fillHeadUp();
-              }
-            },
-          });
+    const container = containers.get(SK)!;
+    const scroll = scrolls.get(SK)!;
 
-          this.hasBeenScrolling = true;
-        }
+    const viewportRect = container.getBoundaries();
 
-        return true;
+    const [isInvisible] = scroll.isElmOutViewport(viewportRect, true);
+
+    // If rect is entirely visible, do nothing.
+    if (!isInvisible) {
+      return false;
+    }
+
+    this.scrollFeed(x, y, SK);
+
+    if (this.hasActiveScrolling()) {
+      if (!this.hasBeenScrolling) {
+        scheduler(store, null, {
+          onUpdate: () => {
+            isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
+
+            // When it's inside the container, then the siblings are not lifted
+            if (!(isOutSiblingsContainer || this.isParentLocked)) {
+              this._updateContainerLockState(true);
+              this._fillHeadUp();
+            }
+          },
+        });
+
+        this.hasBeenScrolling = true;
       }
 
-      if (this.hasBeenScrolling) {
-        isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
+      return true;
+    }
 
-        if (!isOutSiblingsContainer && this.isParentLocked) {
-          const [scrollOffsetX, scrollOffsetY] =
-            this._calculateScrollOffsets(SK);
+    if (this.hasBeenScrolling) {
+      isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
 
-          // Update the position before calling the detector.
-          this.draggable.positions.setPos(x, y, scrollOffsetX, scrollOffsetY);
+      if (!isOutSiblingsContainer && this.isParentLocked) {
+        const [scrollOffsetX, scrollOffsetY] = this._calculateScrollOffsets(SK);
 
-          this._detectNearestElm();
-        }
+        // Update the position before calling the detector.
+        this.draggable.positions.setPos(x, y, scrollOffsetX, scrollOffsetY);
 
-        this.hasBeenScrolling = false;
-
-        return true;
+        this._detectNearestElm();
       }
+
+      this.hasBeenScrolling = false;
+
+      return true;
     }
 
     return false;

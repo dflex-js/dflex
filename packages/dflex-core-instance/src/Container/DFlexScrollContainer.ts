@@ -219,10 +219,8 @@ class DFlexScrollContainer {
     this._initializeOrDestroyThreshold("inner", null);
     this._initializeOrDestroyThreshold("inner", INNER_THRESHOLD);
 
-    if (this.hasDynamicVisibility()) {
-      this._initializeOrDestroyThreshold("outer", null);
-      this._initializeOrDestroyThreshold("outer", OUTER_THRESHOLD);
-    }
+    this._initializeOrDestroyThreshold("outer", null);
+    this._initializeOrDestroyThreshold("outer", OUTER_THRESHOLD);
   }
 
   private _updateOverflow(): void {
