@@ -164,13 +164,14 @@ class DFlexScrollContainer {
   ): void {
     const instance = this._thresholdInViewport[type];
 
-    // Then it's destroy.
-    if (!thresholdValue) {
-      if (instance.threshold) {
-        instance.threshold.destroy();
-        instance.threshold = null;
-      }
+    // Always reset the threshold.
+    if (instance.threshold) {
+      instance.threshold.destroy();
+      instance.threshold = null;
+    }
 
+    // If not value, then destroy and leave.
+    if (!thresholdValue) {
       return;
     }
 
@@ -216,10 +217,7 @@ class DFlexScrollContainer {
     // Only tagged if there's overflow.
     this._updateDOMDataset(true, true);
 
-    this._initializeOrDestroyThreshold("inner", null);
     this._initializeOrDestroyThreshold("inner", INNER_THRESHOLD);
-
-    this._initializeOrDestroyThreshold("outer", null);
     this._initializeOrDestroyThreshold("outer", OUTER_THRESHOLD);
   }
 
