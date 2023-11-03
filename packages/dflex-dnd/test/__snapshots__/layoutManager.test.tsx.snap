@@ -109,11 +109,13 @@ DFlexDnDStore {
         "top": 0,
         "width": 0,
       },
-      "_siblingBoundaries": BoxNum {
+      "_siblingBoundaries": BoxRect {
         "bottom": 0,
+        "height": 0,
         "left": 0,
         "right": 0,
         "top": 0,
+        "width": 0,
       },
       "grid": PointNum {
         "x": 0,
@@ -142,11 +144,13 @@ DFlexDnDStore {
         "top": 0,
         "width": 0,
       },
-      "_siblingBoundaries": BoxNum {
+      "_siblingBoundaries": BoxRect {
         "bottom": 0,
+        "height": 0,
         "left": 0,
         "right": 0,
         "top": 0,
+        "width": 0,
       },
       "grid": PointNum {
         "x": 0,

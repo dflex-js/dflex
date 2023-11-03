@@ -877,10 +877,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
       return false;
     }
 
-    const { containers, scrolls } = store;
-
-    const container = containers.get(SK)!;
-    const scroll = scrolls.get(SK)!;
+    const [container, scroll] = store.getContainers(SK)!;
 
     const viewportRect = container.getBoundaries();
 
@@ -944,7 +941,9 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     let isOutSiblingsContainer = false;
 
-    if (this._processScroll(x, y, SK)) {
+    const isHandledByScroll = this._processScroll(x, y, SK);
+
+    if (isHandledByScroll) {
       return;
     }
 
