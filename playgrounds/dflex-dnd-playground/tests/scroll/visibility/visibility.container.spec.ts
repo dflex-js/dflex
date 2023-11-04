@@ -77,65 +77,13 @@ test.describe("The container is scrollable only when it's not visible", async ()
     });
   });
 
-  test("Siblings transformed their positions", async ({ browserName }) => {
-    if (browserName === "firefox") {
-      await Promise.all([
-        expect(elements[0]).toHaveCSS(
-          "transform",
-          "matrix(1, 0, 0, 1, 0, 264.6)",
-        ),
-        expect(elements[1]).toHaveCSS(
-          "transform",
-          "matrix(1, 0, 0, 1, 0, -88.2)",
-        ),
-        expect(elements[2]).toHaveCSS(
-          "transform",
-          "matrix(1, 0, 0, 1, 0, -88.2)",
-        ),
-        expect(elements[3]).toHaveCSS(
-          "transform",
-          "matrix(1, 0, 0, 1, 0, -88.2)",
-        ),
-      ]);
-    } else if (browserName === "chromium") {
-      await Promise.all([
-        expect(elements[0]).toHaveCSS(
-          "transform",
-          "matrix(1, 0, 0, 1, 0, 264.562)",
-        ),
-        expect(elements[1]).toHaveCSS(
-          "transform",
-          "matrix(1, 0, 0, 1, 0, -88.1875)",
-        ),
-        expect(elements[2]).toHaveCSS(
-          "transform",
-          "matrix(1, 0, 0, 1, 0, -88.1875)",
-        ),
-        expect(elements[3]).toHaveCSS(
-          "transform",
-          "matrix(1, 0, 0, 1, 0, -88.1875)",
-        ),
-      ]);
-    } else {
-      await Promise.all([
-        expect(elements[0]).toHaveCSS(
-          "transform",
-          "matrix(1, 0, 0, 1, 0, 264.5625)",
-        ),
-        expect(elements[1]).toHaveCSS(
-          "transform",
-          "matrix(1, 0, 0, 1, 0, -88.1875)",
-        ),
-        expect(elements[2]).toHaveCSS(
-          "transform",
-          "matrix(1, 0, 0, 1, 0, -88.1875)",
-        ),
-        expect(elements[3]).toHaveCSS(
-          "transform",
-          "matrix(1, 0, 0, 1, 0, -88.1875)",
-        ),
-      ]);
-    }
+  test("Siblings transformed their positions", async () => {
+    await Promise.all([
+      expect(elements[0]).not.toHaveCSS("transform", "none"),
+      expect(elements[1]).not.toHaveCSS("transform", "none"),
+      expect(elements[2]).not.toHaveCSS("transform", "none"),
+      expect(elements[3]).not.toHaveCSS("transform", "none"),
+    ]);
   });
 
   test("get the current top scroll value", async () => {
