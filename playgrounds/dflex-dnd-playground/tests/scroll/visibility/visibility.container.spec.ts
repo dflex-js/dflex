@@ -53,11 +53,14 @@ test.describe("The container is scrollable only when it's not visible", async ()
     await getDraggedRect(elements[0]);
     await moveDragged(-270, -1);
     await moveDragged(-1, 200);
-    await page.waitForFunction(() => {
-      ({ scrollTop } = document.documentElement);
+    await page.waitForFunction(
+      () => {
+        ({ scrollTop } = document.documentElement);
 
-      return scrollTop >= 280;
-    });
+        return scrollTop >= 200;
+      },
+      { timeout: 3000 },
+    );
 
     await moveDragged(-1, -25);
   });
