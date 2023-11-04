@@ -23,6 +23,8 @@ test.describe("The container is scrollable only when it's not visible", async ()
   let elementSelectors: string[];
   let elements: Locator[];
 
+  let scrollTop = 0;
+
   test.beforeAll(async ({ browser, browserName }) => {
     activeBrowser = browser;
 
@@ -52,7 +54,7 @@ test.describe("The container is scrollable only when it's not visible", async ()
     await moveDragged(-270, -1);
     await moveDragged(-1, 200);
     await page.waitForFunction(() => {
-      const { scrollTop } = document.documentElement;
+      ({ scrollTop } = document.documentElement);
 
       return scrollTop >= 280;
     });
@@ -61,9 +63,7 @@ test.describe("The container is scrollable only when it's not visible", async ()
   });
 
   test("the page is scrolled by the dragged", async () => {
-    const scrollTop = await page.evaluate(
-      () => document.documentElement.scrollTop,
-    );
+    scrollTop = await page.evaluate(() => document.documentElement.scrollTop);
 
     expect(scrollTop).toBeGreaterThan(100);
   });
@@ -71,20 +71,90 @@ test.describe("The container is scrollable only when it's not visible", async ()
   test("insert drag into the bottom of the container", async () => {
     await moveDragged(0, -1);
 
-    await page.waitForTimeout(1000);
-
     await page.dispatchEvent(elementSelectors[0], "mouseup", {
       button: 0,
       force: true,
     });
   });
 
-  test("Siblings transformed their positions", async () => {
-    await Promise.all([
-      expect(elements[0]).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
-      expect(elements[1]).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
-      expect(elements[2]).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
-      expect(elements[3]).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)"),
-    ]);
+  test("Siblings transformed their positions", async ({ browserName }) => {
+    if (browserName === "firefox") {
+      await Promise.all([
+        expect(elements[0]).toHaveCSS(
+          "transform",
+          "matrix(1, 0, 0, 1, 0, 264.6)",
+        ),
+        expect(elements[1]).toHaveCSS(
+          "transform",
+          "matrix(1, 0, 0, 1, 0, -88.2)",
+        ),
+        expect(elements[2]).toHaveCSS(
+          "transform",
+          "matrix(1, 0, 0, 1, 0, -88.2)",
+        ),
+        expect(elements[3]).toHaveCSS(
+          "transform",
+          "matrix(1, 0, 0, 1, 0, -88.2)",
+        ),
+      ]);
+    } else if (browserName === "chromium") {
+      await Promise.all([
+        expect(elements[0]).toHaveCSS(
+          "transform",
+          "matrix(1, 0, 0, 1, 0, 264.562)",
+        ),
+        expect(elements[1]).toHaveCSS(
+          "transform",
+          "matrix(1, 0, 0, 1, 0, -88.1875)",
+        ),
+        expect(elements[2]).toHaveCSS(
+          "transform",
+          "matrix(1, 0, 0, 1, 0, -88.1875)",
+        ),
+        expect(elements[3]).toHaveCSS(
+          "transform",
+          "matrix(1, 0, 0, 1, 0, -88.1875)",
+        ),
+      ]);
+    } else {
+      await Promise.all([
+        expect(elements[0]).toHaveCSS(
+          "transform",
+          "matrix(1, 0, 0, 1, 0, 264.5625)",
+        ),
+        expect(elements[1]).toHaveCSS(
+          "transform",
+          "matrix(1, 0, 0, 1, 0, -88.1875)",
+        ),
+        expect(elements[2]).toHaveCSS(
+          "transform",
+          "matrix(1, 0, 0, 1, 0, -88.1875)",
+        ),
+        expect(elements[3]).toHaveCSS(
+          "transform",
+          "matrix(1, 0, 0, 1, 0, -88.1875)",
+        ),
+      ]);
+    }
+  });
+
+  test("get the current top scroll value", async () => {
+    scrollTop = await page.evaluate(() => document.documentElement.scrollTop);
+  });
+
+  test("Move elm2 which is located first outside the container then scroll to the top", async () => {
+    await getDraggedRect(elements[1]);
+    await moveDragged(-270, -1);
+    await moveDragged(-1, -200);
+
+    await page.waitForTimeout(2000);
+  });
+
+  test("the page hasn't scrolled because container is visible", async () => {
+    const currentScrollTop = await page.evaluate(
+      () => document.documentElement.scrollTop,
+    );
+
+    expect(currentScrollTop).toBe(scrollTop);
   });
 });
