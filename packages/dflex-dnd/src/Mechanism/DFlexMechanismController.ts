@@ -852,6 +852,20 @@ class DFlexMechanismController extends DFlexScrollableElement {
     }
   }
 
+  private _postScrollDragHandler(SK: string, x: number, y: number): void {
+    const isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
+
+    if (!isOutSiblingsContainer && this.isParentLocked) {
+      const [scrollOffsetX, scrollOffsetY] = this._calculateScrollOffsets(SK);
+
+      // Update the position before calling the detector.
+      this.draggable.positions.setPos(x, y, scrollOffsetX, scrollOffsetY);
+      this._detectNearestElm();
+    }
+
+    this.hasBeenScrolling = false;
+  }
+
   private _calculateScrollOffsets(SK: string): [number, number] {
     const {
       totalScrollRect: { left, top },
@@ -885,6 +899,12 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     // If rect is entirely visible, do nothing.
     if (isInside) {
+      if (this.hasBeenScrolling) {
+        this._postScrollDragHandler(SK, x, y);
+
+        return true;
+      }
+
       return false;
     }
 
@@ -911,18 +931,7 @@ class DFlexMechanismController extends DFlexScrollableElement {
     }
 
     if (this.hasBeenScrolling) {
-      isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
-
-      if (!isOutSiblingsContainer && this.isParentLocked) {
-        const [scrollOffsetX, scrollOffsetY] = this._calculateScrollOffsets(SK);
-
-        // Update the position before calling the detector.
-        this.draggable.positions.setPos(x, y, scrollOffsetX, scrollOffsetY);
-
-        this._detectNearestElm();
-      }
-
-      this.hasBeenScrolling = false;
+      this._postScrollDragHandler(SK, x, y);
 
       return true;
     }
