@@ -1,6 +1,6 @@
 {
   "name": "@dflex/dnd",
-  "version": "3.10.5",
+  "version": "3.10.6",
   "description": "Modern drag and drop package for all JavaScript frameworks",
   "author": "Jalal Maskoun",
   "main": "./dist/dflex-dnd.js",
@@ -32,10 +32,10 @@
     "LICENSE"
   ],
   "devDependencies": {
-    "@dflex/core-instance": "workspace:^3.10.5",
-    "@dflex/draggable": "workspace:^3.10.5",
-    "@dflex/store": "workspace:^3.10.5",
-    "@dflex/utils": "workspace:^3.10.5"
+    "@dflex/core-instance": "workspace:^3.10.6",
+    "@dflex/draggable": "workspace:^3.10.6",
+    "@dflex/store": "workspace:^3.10.6",
+    "@dflex/utils": "workspace:^3.10.6"
   },
   "keywords": [
     "drag-drop",
