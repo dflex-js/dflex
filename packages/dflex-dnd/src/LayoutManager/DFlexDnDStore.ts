@@ -697,8 +697,7 @@ class DFlexDnDStore extends DFlexBaseStore {
   }
 
   private _reconcileSiblings(SK: string, syncAllSiblings: boolean): void {
-    const container = this.containers.get(SK)!;
-    const scroll = this.scrolls.get(SK)!;
+    const [container, scroll] = this.getContainers(SK);
 
     if (__DEV__) {
       if (!container) {
@@ -922,6 +921,13 @@ class DFlexDnDStore extends DFlexBaseStore {
     }
 
     return undefined;
+  }
+
+  getContainers(SK: string): [DFlexParentContainer, DFlexScrollContainer] {
+    const container = this.containers.get(SK)!;
+    const scroll = this.scrolls.get(SK)!;
+
+    return [container, scroll];
   }
 
   cleanupSiblingsAttachments(BK: string, SK: string, depth: number): void {

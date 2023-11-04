@@ -852,12 +852,88 @@ class DFlexMechanismController extends DFlexScrollableElement {
     }
   }
 
+  private _calculateScrollOffsets(SK: string): [number, number] {
+    const {
+      totalScrollRect: { left, top },
+    } = store.scrolls.get(SK)!;
+
+    const { x, y } = this.initialScrollPosition;
+
+    const scrollOffsetX = left - x;
+    const scrollOffsetY = top - y;
+
+    return [scrollOffsetX, scrollOffsetY];
+  }
+
+  private _processScroll(x: number, y: number, SK: string): boolean {
+    let isOutSiblingsContainer = false;
+
+    const {
+      scroll: { enable },
+    } = this.draggable;
+
+    // If scrolling is disable, do nothing.
+    if (!enable) {
+      return false;
+    }
+
+    const [container, scroll] = store.getContainers(SK)!;
+
+    const rect = container.getBoundaries();
+
+    const isInside = rect.isInsideThreshold(scroll.visibleScrollRect);
+
+    // If rect is entirely visible, do nothing.
+    if (isInside) {
+      return false;
+    }
+
+    this.scrollFeed(x, y, SK);
+
+    if (this.hasActiveScrolling()) {
+      if (!this.hasBeenScrolling) {
+        scheduler(store, null, {
+          onUpdate: () => {
+            isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
+
+            // When it's inside the container, then the siblings are not lifted
+            if (!(isOutSiblingsContainer || this.isParentLocked)) {
+              this._updateContainerLockState(true);
+              this._fillHeadUp();
+            }
+          },
+        });
+
+        this.hasBeenScrolling = true;
+      }
+
+      return true;
+    }
+
+    if (this.hasBeenScrolling) {
+      isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
+
+      if (!isOutSiblingsContainer && this.isParentLocked) {
+        const [scrollOffsetX, scrollOffsetY] = this._calculateScrollOffsets(SK);
+
+        // Update the position before calling the detector.
+        this.draggable.positions.setPos(x, y, scrollOffsetX, scrollOffsetY);
+
+        this._detectNearestElm();
+      }
+
+      this.hasBeenScrolling = false;
+
+      return true;
+    }
+
+    return false;
+  }
+
   dragAt(x: number, y: number): void {
     if (!store.isLayoutAvailable) {
       return;
     }
-
-    const { scroll } = this.draggable;
 
     const { migration } = store;
 
@@ -865,58 +941,13 @@ class DFlexMechanismController extends DFlexScrollableElement {
 
     let isOutSiblingsContainer = false;
 
-    let scrollOffsetX = 0;
-    let scrollOffsetY = 0;
+    const isHandledByScroll = this._processScroll(x, y, SK);
 
-    if (scroll.enable) {
-      this.scrollFeed(x, y, SK);
-
-      if (this.hasActiveScrolling()) {
-        if (!this.hasBeenScrolling) {
-          scheduler(store, null, {
-            onUpdate: () => {
-              isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
-
-              // When it's inside the container, then the siblings are not lifted
-              if (!(isOutSiblingsContainer || this.isParentLocked)) {
-                this._updateContainerLockState(true);
-
-                this._fillHeadUp();
-              }
-            },
-          });
-
-          this.hasBeenScrolling = true;
-        }
-
-        return;
-      }
-
-      const { totalScrollRect } = store.scrolls.get(SK)!;
-
-      if (this.hasBeenScrolling) {
-        isOutSiblingsContainer = this.draggable.isOutThreshold(SK);
-
-        if (!isOutSiblingsContainer && this.isParentLocked) {
-          scrollOffsetX = totalScrollRect.left - this.initialScrollPosition.x;
-          scrollOffsetY = totalScrollRect.top - this.initialScrollPosition.y;
-
-          // Update the position before calling the detector.
-          this.draggable.positions.setPos(x, y, scrollOffsetX, scrollOffsetY);
-
-          this._detectNearestElm();
-        }
-
-        this.hasBeenScrolling = false;
-
-        return;
-      }
+    if (isHandledByScroll) {
+      return;
     }
 
-    const { totalScrollRect } = store.scrolls.get(SK)!;
-
-    scrollOffsetX = totalScrollRect.left - this.initialScrollPosition.x;
-    scrollOffsetY = totalScrollRect.top - this.initialScrollPosition.y;
+    const [scrollOffsetX, scrollOffsetY] = this._calculateScrollOffsets(SK);
 
     this.draggable.dragWithOffset(x, y, scrollOffsetX, scrollOffsetY);
 

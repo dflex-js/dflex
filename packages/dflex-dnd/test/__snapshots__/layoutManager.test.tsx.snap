@@ -109,11 +109,13 @@ DFlexDnDStore {
         "top": 0,
         "width": 0,
       },
-      "_siblingBoundaries": BoxNum {
+      "_siblingBoundaries": BoxRect {
         "bottom": 0,
+        "height": 0,
         "left": 0,
         "right": 0,
         "top": 0,
+        "width": 0,
       },
       "grid": PointNum {
         "x": 0,
@@ -142,11 +144,13 @@ DFlexDnDStore {
         "top": 0,
         "width": 0,
       },
-      "_siblingBoundaries": BoxNum {
+      "_siblingBoundaries": BoxRect {
         "bottom": 0,
+        "height": 0,
         "left": 0,
         "right": 0,
         "top": 0,
+        "width": 0,
       },
       "grid": PointNum {
         "x": 0,
@@ -592,6 +596,14 @@ DFlexDnDStore {
       "_isDocumentContainer": true,
       "_listenerDatasetKey": "scroll__dflex_sk_0_0",
       "_scrollEventCallback": [Function],
+      "_staticScrollViewport": BoxRect {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+      },
       "_thresholdInViewport": {
         "inner": {
           "key": "scroll_inner_dflex_sk_0_0",
@@ -678,6 +690,14 @@ DFlexDnDStore {
       "_isDocumentContainer": true,
       "_listenerDatasetKey": "scroll__dflex_sk_0_1",
       "_scrollEventCallback": [Function],
+      "_staticScrollViewport": BoxRect {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+      },
       "_thresholdInViewport": {
         "inner": {
           "key": "scroll_inner_dflex_sk_0_1",
