@@ -10,7 +10,7 @@ const ScrollablePage = () => {
   return (
     <div className="root">
       <div className="todo">
-        <ul style={{ marginTop: "400px" }}>
+        <ul style={{ marginTop: "400px", marginBottom: "200px" }}>
           {Array.from({ length: 4 }).map((_, i) => (
             <DFlexDnDComponent
               Component={"li"}
