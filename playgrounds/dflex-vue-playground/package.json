@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@dflex/dnd": "workspace:^3.9.9",
-    "vue": "^3.3.7",
+    "vue": "^3.3.9",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
