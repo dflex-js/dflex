@@ -12,7 +12,7 @@
     "@dflex/dnd": "workspace:^3.9.10",
     "@types/node": "^20.8.10",
     "@types/react": "^18.2.34",
-    "@types/react-dom": "^18.2.14",
+    "@types/react-dom": "^18.2.17",
     "autoprefixer": "10.4.16",
     "classnames": "^2.3.2",
     "next": "14.0.1",
