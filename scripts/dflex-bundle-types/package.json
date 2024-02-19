@@ -7,7 +7,7 @@
   "type": "module",
   "dependencies": {
     "npm-packages": "workspace:*",
-    "rollup": "^4.3.0",
+    "rollup": "^4.5.2",
     "rollup-plugin-dts": "^6.1.0"
   }
 }

@@ -12,9 +12,9 @@
     "@dflex/dnd": "workspace:^3.10.6"
   },
   "devDependencies": {
-    "cypress": "^13.4.0",
+    "cypress": "^13.6.0",
     "dflex-e2e-utils": "workspace:^1.0.4",
-    "eslint": "^8.52.0",
+    "eslint": "^8.54.0",
     "eslint-config-dflex-react": "workspace:*",
     "eslint-plugin-cypress": "^2.15.1"
   }
