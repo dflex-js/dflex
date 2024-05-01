@@ -252,8 +252,8 @@ importers:
         version: 4.2.5(vue@3.3.7)
     devDependencies:
       '@rushstack/eslint-patch':
-        specifier: ^1.5.1
-        version: 1.5.1
+        specifier: ^1.10.2
+        version: 1.10.2
       '@tsconfig/node18':
         specifier: ^18.2.2
         version: 18.2.2
@@ -1967,8 +1967,8 @@ packages:
     dev: false
     optional: true
 
-  /@rushstack/eslint-patch@1.5.1:
-    resolution: {integrity: sha512-6i/8UoL0P5y4leBIGzvkZdS85RDMG9y1ihZzmTZQ5LdHUYmZ7pKFoj8X0236s3lusPs1Fa5HTQUpwI+UfTcmeA==}
+  /@rushstack/eslint-patch@1.10.2:
+    resolution: {integrity: sha512-hw437iINopmQuxWPSUEvqE56NCPsiU8N4AYtfHmJFckclktzK9YQJieD3XkDCDH4OjL+C7zgPUh73R/nrcHrqw==}
     dev: true
 
   /@sideway/address@4.1.4:
