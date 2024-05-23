@@ -31,9 +31,9 @@
     "LICENSE"
   ],
   "devDependencies": {
-    "@dflex/core-instance": "workspace:^3.10.6",
-    "@dflex/dom-gen": "workspace:^3.10.6",
-    "@dflex/utils": "workspace:^3.10.6"
+    "@dflex/core-instance": "workspace:^",
+    "@dflex/dom-gen": "workspace:^",
+    "@dflex/utils": "workspace:^"
   },
   "keywords": [
     "drag-drop",
