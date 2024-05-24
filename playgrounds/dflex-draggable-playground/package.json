@@ -9,10 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@dflex/draggable": "workspace:^3.9.10"
+    "@dflex/draggable": "workspace:^"
   },
   "devDependencies": {
-    "eslint-config-dflex-react": "workspace:*",
-    "dflex-e2e-utils": "workspace:^1.0.3"
+    "dflex-e2e-utils": "workspace:^1.0.3",
+    "eslint-config-dflex-react": "workspace:*"
   }
 }

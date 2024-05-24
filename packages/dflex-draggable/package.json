@@ -32,9 +32,9 @@
     "LICENSE"
   ],
   "devDependencies": {
-    "@dflex/core-instance": "workspace:^3.10.6",
-    "@dflex/store": "workspace:^3.10.6",
-    "@dflex/utils": "workspace:^3.10.6",
+    "@dflex/core-instance": "workspace:^",
+    "@dflex/store": "workspace:^",
+    "@dflex/utils": "workspace:^",
     "eslint-config-dflex-react": "workspace:*"
   },
   "keywords": [

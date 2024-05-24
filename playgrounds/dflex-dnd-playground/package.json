@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@dflex/dnd": "workspace:^3.10.6"
+    "@dflex/dnd": "workspace:^"
   },
   "devDependencies": {
     "cypress": "^13.4.0",

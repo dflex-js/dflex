@@ -46,7 +46,7 @@
     "@dflex/dnd"
   ],
   "devDependencies": {
-    "@dflex/utils": "workspace:^3.10.6"
+    "@dflex/utils": "workspace:^"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
