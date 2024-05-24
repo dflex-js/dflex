@@ -3,6 +3,7 @@
   "description": "DFlex is a Javascript library for modern Drag and Drop apps.",
   "private": true,
   "license": "MIT",
+  "type": "module",
   "workspaces": [
     "packages/**",
     "playgrounds/**",
