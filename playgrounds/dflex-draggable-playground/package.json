@@ -12,7 +12,7 @@
     "@dflex/draggable": "workspace:^"
   },
   "devDependencies": {
-    "dflex-e2e-utils": "workspace:^1.0.3",
+    "dflex-e2e-utils": "workspace:^",
     "eslint-config-dflex-react": "workspace:*"
   }
 }
