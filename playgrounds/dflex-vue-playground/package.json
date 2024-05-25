@@ -12,26 +12,26 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@dflex/dnd": "workspace:^3.9.9",
-    "vue": "^3.3.7",
-    "vue-router": "^4.2.5"
+    "@dflex/dnd": "workspace:^",
+    "vue": "^3.4.27",
+    "vue-router": "^4.3.2"
   },
   "devDependencies": {
-    "@rushstack/eslint-patch": "^1.5.1",
-    "@tsconfig/node18": "^18.2.2",
-    "@types/node": "^20.8.10",
-    "@vitejs/plugin-vue": "^4.4.0",
-    "@vitejs/plugin-vue-jsx": "^3.0.2",
-    "@vue/eslint-config-prettier": "^8.0.0",
-    "@vue/eslint-config-typescript": "^12.0.0",
-    "@vue/tsconfig": "^0.4.0",
-    "eslint": "^8.52.0",
-    "eslint-plugin-vue": "^9.18.1",
-    "npm-run-all2": "^6.1.1",
-    "prettier": "^3.0.3",
-    "typescript": "~5.2.2",
-    "vite": "^4.5.0",
+    "@rushstack/eslint-patch": "^1.10.3",
+    "@tsconfig/node18": "^18.2.4",
+    "@types/node": "^20.12.12",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "@vitejs/plugin-vue-jsx": "^3.1.0",
+    "@vue/eslint-config-prettier": "^9.0.0",
+    "@vue/eslint-config-typescript": "^13.0.0",
+    "@vue/tsconfig": "^0.5.1",
+    "eslint": "8.52.0",
+    "eslint-plugin-vue": "^9.26.0",
+    "npm-run-all2": "^6.2.0",
+    "prettier": "^3.2.5",
+    "typescript": "~5.4.5",
+    "vite": "^5.2.11",
     "vite-plugin-replace": "^0.1.1",
-    "vue-tsc": "^1.8.22"
+    "vue-tsc": "^2.0.19"
   }
 }

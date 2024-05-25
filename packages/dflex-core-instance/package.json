@@ -31,7 +31,7 @@
     "LICENSE"
   ],
   "devDependencies": {
-    "@dflex/utils": "workspace:^3.10.6"
+    "@dflex/utils": "workspace:^"
   },
   "keywords": [
     "drag-drop",
