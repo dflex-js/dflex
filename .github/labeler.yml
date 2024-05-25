@@ -1,8 +1,8 @@
 Action 🚨:
 - changed-files:
   - any-glob-to-any-file: '.github/workflows/**'
-  - any-glob-to-any-file: .github/dependabot.yml
-  - any-glob-to-any-file: .github/labeler.yml
+  - any-glob-to-any-file: '.github/dependabot.yml'
+  - any-glob-to-any-file: '.github/labeler.yml'
 
 Test 🧪:
 - changed-files:
@@ -15,9 +15,10 @@ documentation 📄:
   - any-glob-to-any-file: 'docs/**/*'
 
 Core:
-- changed-files:
-  - any-glob-to-any-file: 'packages/dflex-core-instance/**'
-  - all-globs-to-all-files: '!packages/dflex-core-instance/package.json'
+- all:
+  - changed-files:
+      - any-glob-to-any-file: 'packages/dflex-core-instance/**'
+      - all-globs-to-all-files: '!packages/dflex-core-instance/package.json'
 
 DnD:
 - changed-files:
