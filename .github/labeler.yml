@@ -4,13 +4,13 @@
   - any-glob-to-any-file: '.github/dependabot.yml'
   - any-glob-to-any-file: '.github/labeler.yml'
 
-Test 🧪:
+'Test 🧪':
 - changed-files:
   - any-glob-to-any-file: 
     - 'packages/**/*.test.ts'
     - 'packages/**/*.spec.ts'
 
-documentation 📄:
+'documentation 📄':
 - changed-files:
   - any-glob-to-any-file: 'docs/**/*'
 
@@ -53,7 +53,7 @@ Utils:
     - any-glob-to-any-file: 'playgrounds/dflex-e2e-utils/**'
     - all-globs-to-all-files: '!playgrounds/dflex-e2e-utils/package.json'
 
-Playground ⚽:
+'Playground ⚽':
 - all:
   - changed-files:
     - any-glob-to-any-file: 'playgrounds/dflex-dnd-playground/**'
