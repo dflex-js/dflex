@@ -189,7 +189,7 @@ jobs:
     if: github.repository_owner == 'dflex-js' && github.event.pull_request.draft != true
     strategy:
       matrix:
-        node-version: [18.15]
+        node-version: ['21.x']
         browser: ["chromium", "firefox"]
         bundle: ["production"]
 
@@ -248,7 +248,7 @@ jobs:
     if: github.repository_owner == 'dflex-js' && github.event.pull_request.draft != true
     strategy:
       matrix:
-        node-version: [18.15]
+        node-version: ['21.x']
         browser: ["chromium", "firefox"]
         bundle: ["production"]
 
@@ -306,7 +306,7 @@ jobs:
     timeout-minutes: 20
     strategy:
       matrix:
-        node-version: [18.15]
+        node-version: ['21.x']
         browser: ["chromium", "firefox", "webkit"]
         bundle: ["production", "development"]
 
@@ -364,7 +364,7 @@ jobs:
     timeout-minutes: 20
     strategy:
       matrix:
-        node-version: [18.15]
+        node-version: ['21.x']
         browser: ["chromium"]
         bundle: ["development"]
 
@@ -415,7 +415,7 @@ jobs:
     timeout-minutes: 20
     strategy:
       matrix:
-        node-version: [18.15]
+        node-version: ['21.x']
         browser: ["chromium"]
         bundle: ["development"]
 
