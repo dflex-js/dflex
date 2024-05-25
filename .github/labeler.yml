@@ -1,3 +1,13 @@
 Action 🚨:
 - changed-files:
   - any-glob-to-any-file: '.github/workflows/**'
+
+Test 🧪:
+- changed-files:
+  - any-glob-to-any-file: 
+    - packages/**/*.test.ts
+    - packages/**/*.spec.ts
+
+documentation 📄:
+- changed-files:
+  - any-glob-to-any-file: docs/**/*
