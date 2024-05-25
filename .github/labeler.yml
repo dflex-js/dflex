@@ -1,52 +1,74 @@
-"Action 🚨":
-  - .github/workflows/**
+'Action 🚨':
+- changed-files:
+  - any-glob-to-any-file: '.github/workflows/**'
+  - any-glob-to-any-file: '.github/dependabot.yml'
+  - any-glob-to-any-file: '.github/labeler.yml'
 
-"Test 🧪":
-  - packages/**/*.test.ts
-  - packages/**/*.spec.ts
+'Test 🧪':
+- changed-files:
+  - any-glob-to-any-file: 
+    - 'packages/**/*.test.ts'
+    - 'packages/**/*.spec.ts'
 
-"documentation 📄":
-  - docs/**/*
+'documentation 📄':
+- changed-files:
+  - any-glob-to-any-file: 'docs/**/*'
 
 Core:
-  - any:
-      [
-        "packages/dflex-core-instance/**",
-        "!packages/dflex-core-instance/package.json",
-      ]
+- all:
+  - changed-files:
+      - any-glob-to-any-file: 'packages/dflex-core-instance/**'
+      - all-globs-to-all-files: '!packages/dflex-core-instance/package.json'
 
 DnD:
-  - any: ["packages/dflex-dnd/**", "!packages/dflex-dnd/package.json"]
+- all:
+  - changed-files:
+    - any-glob-to-any-file: 'packages/dflex-dnd/**'
+    - all-globs-to-all-files: '!packages/dflex-dnd/package.json'
 
 Dom-Gen:
-  - any: ["packages/dflex-dom-gen/**", "!packages/dflex-dom-gen/package.json"]
+- all:
+  - changed-files:
+    - any-glob-to-any-file: 'packages/dflex-dom-gen/**'
+    - all-globs-to-all-files: '!packages/dflex-dom-gen/package.json'
 
 Draggable-only:
-  - any:
-      ["packages/dflex-draggable/**", "!packages/dflex-draggable/package.json"]
+- all:
+  - changed-files:
+    - any-glob-to-any-file: 'packages/dflex-draggable/**'
+    - all-globs-to-all-files: '!packages/dflex-draggable/package.json'
 
 Store:
-  - any: ["packages/dflex-store/**", "!packages/dflex-store/package.json"]
+- all:
+  - changed-files:
+    - any-glob-to-any-file: 'packages/dflex-store/**'
+    - all-globs-to-all-files: '!packages/dflex-store/package.json'
 
 Utils:
-  - any:
-      [
-        "packages/dflex-utils/**",
-        "!packages/dflex-utils/package.json",
+- all:
+  - changed-files:
+    - any-glob-to-any-file: 'packages/dflex-utils/**'
+    - all-globs-to-all-files: '!packages/dflex-utils/package.json'
 
-        "playgrounds/dflex-e2e-utils/**",
-        "!playgrounds/dflex-e2e-utils/package.json",
-      ]
+    - any-glob-to-any-file: 'playgrounds/dflex-e2e-utils/**'
+    - all-globs-to-all-files: '!playgrounds/dflex-e2e-utils/package.json'
 
-"Playground ⚽":
-  - any:
-      [
-        "playgrounds/dflex-dnd-playground/**",
-        "!packages/dflex-dnd-playground/package.json",
+'Playground ⚽':
+- all:
+  - changed-files:
+    - any-glob-to-any-file: 'playgrounds/dflex-dnd-playground/**'
+    - all-globs-to-all-files: '!packages/dflex-dnd-playground/package.json'
 
-        "playgrounds/dflex-next-playground/**",
-        "!packages/dflex-next-playground/package.json",
+    - any-glob-to-any-file: 'playgrounds/dflex-next-playground/**'
+    - all-globs-to-all-files: '!packages/dflex-next-playground/package.json'
 
-        "playgrounds/dflex-draggable-playground/**",
-        "!packages/dflex-draggable-playground/package.json",
-      ]
+    - any-glob-to-any-file: 'playgrounds/dflex-draggable-playground/**'
+    - all-globs-to-all-files: '!packages/dflex-draggable-playground/package.json'
+
+dependencies:
+- changed-files:
+  - any-glob-to-any-file: 'packages/**/package.json'
+  - any-glob-to-any-file: 'playgrounds/**/package.json'
+  - any-glob-to-any-file: 'scripts/**/package.json'
+
+
