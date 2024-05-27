@@ -9,13 +9,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@dflex/dnd": "workspace:^3.10.6"
+    "@dflex/dnd": "workspace:^"
   },
   "devDependencies": {
-    "cypress": "^13.4.0",
-    "dflex-e2e-utils": "workspace:^1.0.4",
-    "eslint": "^8.52.0",
+    "cypress": "^13.10.0",
+    "dflex-e2e-utils": "workspace:^",
+    "eslint": "^9.3.0",
     "eslint-config-dflex-react": "workspace:*",
-    "eslint-plugin-cypress": "^2.15.1"
+    "eslint-plugin-cypress": "^3.2.0"
   }
 }

@@ -1,1 +1,3 @@
-module.exports = require("./config.eslintrc");
+import dflex from "./eslint.config.js"
+
+export default dflex
