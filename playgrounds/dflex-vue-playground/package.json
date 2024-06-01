@@ -14,7 +14,7 @@
   "dependencies": {
     "@dflex/dnd": "workspace:^3.9.9",
     "vue": "^3.3.7",
-    "vue-router": "^4.2.5"
+    "vue-router": "^4.3.2"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.5.1",
